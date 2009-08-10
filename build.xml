@@ -10,10 +10,16 @@
           target: import              
          ================================= -->
     <target name="generate-config">
-        <copy todir="${output.dir}" filtering="on" verbose="true">
+        <pathconvert property="path.prefix" targetos="unix">
+            <path location="${EXTERNAL_CONFIG_DIR}"/>
+            <map from="c:" to=""/>
+        </pathconvert>
+        <dirname property="path.prefix" file="${path.prefix}/dummy.txt"/>
+        <copy todir="${output.dir}/${path.prefix}" filtering="on" verbose="true">
             <fileset dir="${src.dir}"/>
             <mapper type="regexp" from="(.*)BUILD_ENVIRONMENT(.*)" to="\1${BUILD_ENVIRONMENT}\2"/>
-            <filterset onmissingfiltersfile="ignore">
+            <!-- using custom begin/end to make it compatible with Maven -->
+            <filterset begintoken="${" endtoken="}" onmissingfiltersfile="ignore">
                 <filtersfile file="${user.home}/cukfs-build.properties" />
                 <filtersfile file="build.properties"/>
             </filterset>
