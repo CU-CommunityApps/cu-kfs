@@ -16,12 +16,19 @@
   </organization>
 
   <properties>
+  <!-- 
     <BUILD_ENVIRONMENT>**Define BUILD_ENVIRONMENT in cu-kfs build.properties**</BUILD_ENVIRONMENT>
     <APPSERVER_URL>**Define APPSERVER_URL in cu-kfs build.properties**</APPSERVER_URL>
     <EXTERNAL_CONFIG_DIR>**Define EXTERNAL_CONFIG_DIR in cu-kfs build.properties**</EXTERNAL_CONFIG_DIR>
+     -->
   </properties>
+
   
   <build>
+    <filters>
+      <filter>build.properties</filter>
+    </filters>
+  
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -45,18 +52,73 @@
               <nonFilteredFileExtension>class</nonFilteredFileExtension>
               <nonFilteredFileExtension>tld</nonFilteredFileExtension>
             </nonFilteredFileExtensions>
-            <!-- 
-            <warName>cynergy-standalone-${version}</warName>
-            -->
+
+            <warName>kfs-${BUILD_ENVIRONMENT}-${version}</warName>
+
+<!-- 
+            <webResources>
+              <resource>
+                <directory>src/main/webapp/WEB-INF/classes</directory>
+                <includes>
+                  <include>configuration.properties</include>
+                </includes>
+                <filtering>true</filtering>
+              </resource>
+            </webResources>
+             -->
+            
             <overlays>
               <overlay>
                 <groupId>edu.cornell.kfs</groupId>
                 <artifactId>kfs-stock-war</artifactId>
-                <filtered>true</filtered>
+                <filtered>false</filtered>
               </overlay>
             </overlays>
           </configuration>
       </plugin>
+      <!-- 
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>package</id>
+            <phase>package</phase>
+            <configuration>
+              <tasks>
+                <pathconvert property="path.prefix" targetos="unix">
+                    <path location="${EXTERNAL_CONFIG_DIR}"/>
+                    <map from="c:" to=""/>
+                </pathconvert>
+                <dirname property="path.prefix" file="${path.prefix}/dummy.txt"/>
+                <copy todir="target/config/${path.prefix}" filtering="on" verbose="true">
+                    <fileset dir="support/config"/>
+                    <mapper type="regexp" from="(.*)BUILD_ENVIRONMENT(.*)" to="\1${BUILD_ENVIRONMENT}\2"/>
+                    <filterset begintoken="${" endtoken="}">
+                        <filtersfile file="${user.home}/cukfs-build.properties" />
+                        <filtersfile file="build.properties"/>
+                    </filterset>
+                </copy>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>clean</id>
+            <phase>clean</phase>
+            <configuration>
+              <tasks>
+                <delete dir="target/config"/>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+       -->
     </plugins>
     
     <resources>
@@ -67,9 +129,6 @@
         </resource>
     </resources>
     
-    <filters>
-      <filter>build.properties</filter>
-    </filters>
   </build>
 
   <repositories>
