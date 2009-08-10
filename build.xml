@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="cu-kfs" default="generate-config">
+    <property file="${user.home}/cukfs-build.properties" />
+    <property file="build.properties" />
+
+    <property name="src.dir" value="support/config"/>
+    <property name="output.dir" value="target/config"/>
+
+    <!-- ================================= 
+          target: import              
+         ================================= -->
+    <target name="generate-config">
+        <copy todir="${output.dir}" filtering="on" verbose="true">
+            <fileset dir="${src.dir}"/>
+            <mapper type="regexp" from="(.*)BUILD_ENVIRONMENT(.*)" to="\1${BUILD_ENVIRONMENT}\2"/>
+            <filterset onmissingfiltersfile="ignore">
+                <filtersfile file="${user.home}/cukfs-build.properties" />
+                <filtersfile file="build.properties"/>
+            </filterset>
+        </copy>
+    </target>
+    
+    <target name="clean-generated-config">
+        <delete dir="${output.dir}"/>
+    </target>
+</project>
