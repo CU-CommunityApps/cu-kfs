@@ -8,13 +8,14 @@
 <listAttribute key="M2_PROPERTIES">
 <listEntry value="groupId=edu.cornell.kfs"/>
 <listEntry value="artifactId=kfs-stock-war"/>
-<listEntry value="file=kfs3-200907-SNAPSHOT.war"/>
+<listEntry value="file=kfs-3.0.200907-SNAPSHOT.war"/>
 <listEntry value="version=3.0.200907-SNAPSHOT"/>
 <listEntry value="packaging=war"/>
 <listEntry value="generatePom=true"/>
 <listEntry value="generatePom.description=KFS stock war"/>
 <listEntry value="uniqueVersion=false"/>
 <listEntry value="repositoryId=cornell-snapshots"/>
+<listEntry value="url=https://maven.cit.cornell.edu/snapshots"/>
 </listAttribute>
 <stringAttribute key="M2_RUNTIME" value="EMBEDDED"/>
 <booleanAttribute key="M2_SKIP_TESTS" value="true"/>

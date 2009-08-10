@@ -16,8 +16,9 @@
   </organization>
 
   <properties>
-    <BUILD_ENVIRONMENT>dev</BUILD_ENVIRONMENT>
-    <APPSERVER_URL>http://localhost:8080/</APPSERVER_URL>
+    <BUILD_ENVIRONMENT>**Define BUILD_ENVIRONMENT in cu-kfs build.properties**</BUILD_ENVIRONMENT>
+    <APPSERVER_URL>**Define APPSERVER_URL in cu-kfs build.properties**</APPSERVER_URL>
+    <EXTERNAL_CONFIG_DIR>**Define EXTERNAL_CONFIG_DIR in cu-kfs build.properties**</EXTERNAL_CONFIG_DIR>
   </properties>
   
   <build>
@@ -57,6 +58,18 @@
           </configuration>
       </plugin>
     </plugins>
+    
+    <resources>
+        <!-- the normal resource dir -->
+        <resource>
+          <directory>src/main/resources</directory>
+          <filtering>true</filtering>
+        </resource>
+    </resources>
+    
+    <filters>
+      <filter>build.properties</filter>
+    </filters>
   </build>
 
   <repositories>
