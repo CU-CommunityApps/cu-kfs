@@ -25,9 +25,11 @@
 
   
   <build>
+    <!-- 
     <filters>
       <filter>build.properties</filter>
     </filters>
+     -->
   
     <plugins>
       <plugin>
