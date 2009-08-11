@@ -44,13 +44,15 @@
                TO 2.1+ OR ABOVE, OR FILTERING WILL NOT WORK
                http://jira.codehaus.org/browse/MWAR-143
           -->
-          <version>2.1-alpha-2</version>
+          <version>2.1-beta-1</version>
           <configuration>
             <nonFilteredFileExtensions>
               <!-- default value contains jpg,jpeg,gif,bmp,png -->
               <nonFilteredFileExtension>jar</nonFilteredFileExtension>
               <nonFilteredFileExtension>class</nonFilteredFileExtension>
               <nonFilteredFileExtension>tld</nonFilteredFileExtension>
+              <nonFilteredFileExtension>jsp</nonFilteredFileExtension>
+			  <nonFilteredFileExtension>tag</nonFilteredFileExtension>
             </nonFilteredFileExtensions>
 
             <warName>kfs-${BUILD_ENVIRONMENT}-${version}</warName>
@@ -71,7 +73,7 @@
               <overlay>
                 <groupId>edu.cornell.kfs</groupId>
                 <artifactId>kfs-stock-war</artifactId>
-                <filtered>false</filtered>
+                <filtered>true</filtered>
               </overlay>
             </overlays>
           </configuration>
