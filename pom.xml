@@ -20,6 +20,7 @@
     <BUILD_ENVIRONMENT>**Define BUILD_ENVIRONMENT in cu-kfs build.properties**</BUILD_ENVIRONMENT>
     <APPSERVER_URL>**Define APPSERVER_URL in cu-kfs build.properties**</APPSERVER_URL>
     <EXTERNAL_CONFIG_DIR>**Define EXTERNAL_CONFIG_DIR in cu-kfs build.properties**</EXTERNAL_CONFIG_DIR>
+    <RICE_STANDALONE>**Define RICE_STANDALONE in cu-kfs build.properties**</RICE_STANDALONE>
      -->
   </properties>
 
