@@ -26,11 +26,9 @@
 
   
   <build>
-    <!-- 
     <filters>
       <filter>build.properties</filter>
     </filters>
-     -->
   
     <plugins>
       <plugin>
@@ -81,28 +79,17 @@
             </overlays>
           </configuration>
       </plugin>
-      <!-- 
+      <!--
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.2</version>
         <executions>
           <execution>
             <id>package</id>
             <phase>package</phase>
             <configuration>
               <tasks>
-                <pathconvert property="path.prefix" targetos="unix">
-                    <path location="${EXTERNAL_CONFIG_DIR}"/>
-                    <map from="c:" to=""/>
-                </pathconvert>
-                <dirname property="path.prefix" file="${path.prefix}/dummy.txt"/>
-                <copy todir="target/config/${path.prefix}" filtering="on" verbose="true">
-                    <fileset dir="support/config"/>
-                    <mapper type="regexp" from="(.*)BUILD_ENVIRONMENT(.*)" to="\1${BUILD_ENVIRONMENT}\2"/>
-                    <filterset begintoken="${" endtoken="}">
-                        <filtersfile file="${user.home}/cukfs-build.properties" />
-                        <filtersfile file="build.properties"/>
-                    </filterset>
-                </copy>
+                <ant antfile="build.xml" target="generate-config"/>
               </tasks>
             </configuration>
             <goals>
@@ -114,7 +101,7 @@
             <phase>clean</phase>
             <configuration>
               <tasks>
-                <delete dir="target/config"/>
+                <ant antfile="build.xml" target="clean-generated-config"/>
               </tasks>
             </configuration>
             <goals>
@@ -123,7 +110,39 @@
           </execution>
         </executions>
       </plugin>
-       -->
+      -->
+      <plugin>
+        <artifactId>exec-maven-plugin</artifactId>
+        <groupId>org.codehaus.mojo</groupId>
+        <executions>
+          <execution>
+            <id>package</id>
+            <phase>package</phase>
+            <configuration>
+              <executable>ant</executable>
+              <arguments>
+                <argument>generate-config</argument>
+              </arguments>
+            </configuration>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>clean</id>
+            <phase>clean</phase>
+            <configuration>
+              <executable>ant</executable>
+              <arguments>
+                <argument>clean-generated-config</argument>
+              </arguments>
+            </configuration>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
     
     <resources>
