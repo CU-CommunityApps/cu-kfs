@@ -16,6 +16,7 @@
   </organization>
 
   <properties>
+    <kfs.build>OVERRIDE ME</kfs.build>
   <!-- 
     <BUILD_ENVIRONMENT>**Define BUILD_ENVIRONMENT in cu-kfs build.properties**</BUILD_ENVIRONMENT>
     <APPSERVER_URL>**Define APPSERVER_URL in cu-kfs build.properties**</APPSERVER_URL>
