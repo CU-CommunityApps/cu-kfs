@@ -26,9 +26,11 @@
         <copy todir="${output.dir}/${path.prefix}" filtering="on" verbose="true">
             <fileset dir="${src.dir}"/>
             <mapper type="regexp" from="(.*)BUILD_ENVIRONMENT(.*)" to="\1${BUILD_ENVIRONMENT}\2"/>
-            <!-- using custom begin/end to make it compatible with Maven -->
-            <!-- double the $ so that it is escaped -->
-            <filterset begintoken="$${" endtoken="}" onmissingfiltersfile="ignore">
+            <filterset onmissingfiltersfile="ignore">
+              <filter token="BUILD_ENVIRONMENT" value="${BUILD_ENVIRONMENT}"/>
+              <filter token="APPSERVER_URL" value="${APPSERVER_URL}"/>
+              <filter token="EXTERNAL_CONFIG_DIR" value="${EXTERNAL_CONFIG_DIR}"/>
+              <filter token="RICE_STANDALONE" value="${RICE_STANDALONE}"/>
               <filtersfile file="${user.home}/cukfs-build.properties" />
               <filtersfile file="build.properties"/>
             </filterset>

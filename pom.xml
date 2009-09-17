@@ -4,7 +4,7 @@
   <artifactId>kfs-war</artifactId>
   <packaging>war</packaging>
   <name>KFS war</name>
-  <version>3.0.200907-SNAPSHOT</version>
+  <version>3.0.${kfs.build}-SNAPSHOT</version>
   <description>
     This project wraps the KFS war with a war overlay.
   </description>
@@ -189,7 +189,7 @@
     <dependency>
       <groupId>edu.cornell.kfs</groupId>
       <artifactId>kfs-stock-war</artifactId>
-      <version>3.0.200907-SNAPSHOT</version>
+      <version>3.0.${kfs.build}-SNAPSHOT</version>
       <type>war</type>
       <scope>runtime</scope>
     </dependency>
