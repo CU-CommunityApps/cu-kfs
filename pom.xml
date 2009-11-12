@@ -4,7 +4,7 @@
   <artifactId>kfs-war</artifactId>
   <packaging>war</packaging>
   <name>KFS war</name>
-  <version>3.0.${kfs.build}-SNAPSHOT</version>
+  <version>3.0-SNAPSHOT</version>
   <description>
     This project wraps the KFS war with a war overlay.
   </description>
@@ -16,7 +16,6 @@
   </organization>
 
   <properties>
-    <kfs.build>OVERRIDE ME</kfs.build>
   <!-- 
     <BUILD_ENVIRONMENT>**Define BUILD_ENVIRONMENT in cu-kfs build.properties**</BUILD_ENVIRONMENT>
     <APPSERVER_URL>**Define APPSERVER_URL in cu-kfs build.properties**</APPSERVER_URL>
@@ -186,11 +185,17 @@
   </repositories>
 
   <dependencies>
-    
+
+    <dependency>
+      <groupId>edu.cornell.cynergy</groupId>
+      <artifactId>cynergy-customizations</artifactId>
+      <version>2.0-rice1-SNAPSHOT</version>
+    </dependency>
+
     <dependency>
       <groupId>edu.cornell.kfs</groupId>
       <artifactId>kfs-stock-war</artifactId>
-      <version>3.0.${kfs.build}-SNAPSHOT</version>
+      <version>3.0-SNAPSHOT</version>
       <type>war</type>
       <scope>runtime</scope>
     </dependency>
