@@ -9,6 +9,7 @@
         <property name="useHttpHeaders"><value>${cynergy.cuwal.useHttpHeaders}</value></property>
     </bean>
     
+    <!-- We override the KFS impl so that we can read properties specified at runtime -->
    	<bean id="properties" class="edu.cornell.kfs.sys.context.PropertyLoadingFactoryBean" />
   	<bean id="securityProperties" class="edu.cornell.kfs.sys.context.PropertyLoadingFactoryBean"
     	p:secureMode="true" />

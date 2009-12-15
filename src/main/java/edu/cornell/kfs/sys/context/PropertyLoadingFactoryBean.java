@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.util.ClassLoaderUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
 
 
 /**
@@ -91,8 +92,11 @@ public class PropertyLoadingFactoryBean implements FactoryBean {
         InputStream propertyFileInputStream = null;
         try {
             try {
-                propertyFileInputStream = new DefaultResourceLoader(ClassLoaderUtils.getDefaultClassLoader()).getResource(propertyFileName).getInputStream();
-                props.load(propertyFileInputStream);
+            	Resource properties = new DefaultResourceLoader(ClassLoaderUtils.getDefaultClassLoader()).getResource(propertyFileName);
+            	if (properties.exists()) {
+	                propertyFileInputStream = properties.getInputStream();
+	                props.load(propertyFileInputStream);
+            	}
             }
             finally {
                 if (propertyFileInputStream != null) {

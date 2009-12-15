@@ -33,7 +33,7 @@
     p:secureMode="true" />
 
   <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
-    <property name="ignoreUnresolvablePlaceholders" value="true" />
+    <property name="ignoreUnresolvablePlaceholders" value="false" />
     <property name="propertiesArray">
       <list>
         <ref bean="properties" />
