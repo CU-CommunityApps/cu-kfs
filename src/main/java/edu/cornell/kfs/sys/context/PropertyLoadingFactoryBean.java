@@ -45,7 +45,7 @@ public class PropertyLoadingFactoryBean implements FactoryBean {
      * Loads properties from an external file.  Also merges in all System properties
      * @param props the properties object
      */
-    protected void loadExternalProperties(Properties props) {
+    protected static void loadExternalProperties(Properties props) {
     	//check if additional kfs config was provided and override properties
     	String externalConfigLocationPath = System.getProperty(PropertyLoadingFactoryBean.ADDITIONAL_KFS_CONFIG_LOCATIONS_PARAM);
     	if (StringUtils.isNotEmpty(externalConfigLocationPath)) {
@@ -69,9 +69,6 @@ public class PropertyLoadingFactoryBean implements FactoryBean {
             }          
         }
         
-        // CU customization to load external properties
-        loadExternalProperties(props);
-                
         if (StringUtils.isBlank(System.getProperty(HTTP_URL_PROPERTY_NAME))) {
         	props.put(KSB_REMOTING_URL_PROPERTY_NAME, props.getProperty(PropertyLoadingFactoryBean.APPLICATION_URL_KEY) + REMOTING_URL_SUFFIX);
         }
@@ -162,10 +159,11 @@ public class PropertyLoadingFactoryBean implements FactoryBean {
             loadProperties(BASE_PROPERTIES, new StringBuffer("classpath:").append(CONFIGURATION_FILE_NAME).append(".properties").toString());
             
         	//check if additional kfs config was provided and override BASE_PROPERTIES
-        	String externalConfigLocationPath = System.getProperty(PropertyLoadingFactoryBean.ADDITIONAL_KFS_CONFIG_LOCATIONS_PARAM);
-        	if (StringUtils.isNotEmpty(externalConfigLocationPath)) {
-        		loadProperties(BASE_PROPERTIES, new StringBuffer("file:").append(externalConfigLocationPath).toString());
-        	}
+            // CU customization to load external properties
+            loadExternalProperties(BASE_PROPERTIES);
+       	
+            BASE_PROPERTIES.putAll(System.getProperties());
+
         }
     }
 
