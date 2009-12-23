@@ -45,7 +45,7 @@ public class PropertyLoadingFactoryBean implements FactoryBean {
      * Loads properties from an external file.  Also merges in all System properties
      * @param props the properties object
      */
-    protected static void loadExternalProperties(Properties props) {
+    private static void loadExternalProperties(Properties props) {
     	//check if additional kfs config was provided and override properties
     	String externalConfigLocationPath = System.getProperty(PropertyLoadingFactoryBean.ADDITIONAL_KFS_CONFIG_LOCATIONS_PARAM);
     	if (StringUtils.isNotEmpty(externalConfigLocationPath)) {
@@ -61,8 +61,15 @@ public class PropertyLoadingFactoryBean implements FactoryBean {
         props.putAll(BASE_PROPERTIES);
                
         if (secureMode) {
-            loadPropertyList(props,SECURITY_PROPERTY_FILE_NAME_KEY);
+        	// don't fail on missing, since this file is typically stored externally
+        	// and it might not be present
+            loadPropertyList(props,SECURITY_PROPERTY_FILE_NAME_KEY, false);
         } else {
+        	// by default these are application resources properties...
+        	// to override these we'd have to double-load the external properties
+        	// or override this key
+        	// I don't know why some methods access the base properties directly
+        	// while the generated properties object contains this extra layer 
             loadPropertyList(props,PROPERTY_FILE_NAMES_KEY);
             if (testMode) {
                 loadPropertyList(props,PROPERTY_TEST_FILE_NAMES_KEY);
@@ -91,38 +98,28 @@ public class PropertyLoadingFactoryBean implements FactoryBean {
     }
 
     private static void loadPropertyList(Properties props, String listPropertyName) {
+    	loadPropertyList(props, listPropertyName, true);
+    }
+    private static void loadPropertyList(Properties props, String listPropertyName, boolean failOnMissing) {
         for (String propertyFileName : getBaseListProperty(listPropertyName)) {
-            loadProperties(props,propertyFileName);
+            loadProperties(props,propertyFileName, failOnMissing);
         }
     }
 
     private static void loadProperties( Properties props, String propertyFileName) {
+    	loadProperties(props, propertyFileName, true);
+    }
+
+    private static void loadProperties( Properties props, String propertyFileName, boolean failOnMissing) {
         InputStream propertyFileInputStream = null;
         try {
             try {
             	Resource properties = new DefaultResourceLoader(ClassLoaderUtils.getDefaultClassLoader()).getResource(propertyFileName);
-            	if (properties.exists()) {
+            	boolean attemptLoad = failOnMissing || properties.exists();
+            	if (attemptLoad) {
 	                propertyFileInputStream = properties.getInputStream();
 	                props.load(propertyFileInputStream);
             	}
-            }
-            finally {
-                if (propertyFileInputStream != null) {
-                    propertyFileInputStream.close();
-                }
-            }
-        }
-        catch (IOException e) {
-            throw new RuntimeException("PropertyLoadingFactoryBean unable to load property file: " + propertyFileName);
-        }
-    }
-
-    private static void loadExternalProperties( Properties props, String propertyFileName) {
-        InputStream propertyFileInputStream = null;
-        try {
-            try {
-                propertyFileInputStream = new FileInputStream(propertyFileName);
-                props.load(propertyFileInputStream);
             }
             finally {
                 if (propertyFileInputStream != null) {
