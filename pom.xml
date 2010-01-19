@@ -69,6 +69,9 @@
                 <groupId>edu.cornell.kfs</groupId>
                 <artifactId>kfs-stock-war</artifactId>
                 <filtered>false</filtered>
+                <excludes>
+                    <exclude>WEB-INF/lib/log4j*.jar</exclude>
+                </excludes>
               </overlay>
             </overlays>
           </configuration>
