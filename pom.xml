@@ -273,7 +273,7 @@
         <groupId>javax.transaction</groupId>
         <artifactId>jta</artifactId>
         <version>1.0.1B</version>
-        <scope>runtime</scope>
+        <scope>compile</scope>
     </dependency> 
     <dependency>
         <groupId>xapool</groupId>
