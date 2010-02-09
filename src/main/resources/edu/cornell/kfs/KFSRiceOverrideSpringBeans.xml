@@ -15,4 +15,9 @@
   	<bean id="securityProperties" class="edu.cornell.kfs.sys.context.PropertyLoadingFactoryBean"
     	p:secureMode="true" />
     	  -->
+    	  
+    <!-- 
+      Bringing the identity service overrides into KFS is not the preferred solution...
+    <import resource="classpath*:edu/cornell/cynergy/core/CynergyServerOverrideSpringBeans.xml"/>
+     -->
 </beans>
