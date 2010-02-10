@@ -69,8 +69,44 @@
                 <groupId>edu.cornell.kfs</groupId>
                 <artifactId>kfs-stock-war</artifactId>
                 <filtered>false</filtered>
+                <!-- Exclude libraries that come with KFS
+                     that are older than Rice libraries pulled in
+                     via Maven, or are simply a different file name than
+                     the same version Maven artifact. -->
                 <excludes>
                     <exclude>WEB-INF/lib/log4j*.jar</exclude>
+                    <exclude>WEB-INF/lib/activation-*.jar</exclude>
+                    <exclude>WEB-INF/lib/beanutils-*.jar</exclude>
+                    <exclude>WEB-INF/lib/digester-*.jar</exclude>
+                    <exclude>WEB-INF/lib/commons-logging*.jar</exclude>
+                    <exclude>WEB-INF/lib/commons-pool*.jar</exclude>
+                    <exclude>WEB-INF/lib/connector-*.jar</exclude>
+                    <exclude>WEB-INF/lib/db-ojb-*.jar</exclude> <!-- kfs has db-ojb-1.0.4-kuali-mods-debug.jar ?? -->
+                    <exclude>WEB-INF/lib/jaxb-xjc-*.jar</exclude>
+                    <!--
+                      KFS's is newer...
+                      <exclude>WEB-INF/lib/jaxen-*.jar</exclude> 
+                    -->
+                    <exclude>WEB-INF/lib/jotm*.jar</exclude>
+                    <exclude>WEB-INF/lib/ojdbc*.jar</exclude>
+                    <exclude>WEB-INF/lib/oscache*.jar</exclude>
+                    <exclude>WEB-INF/lib/spring*.jar</exclude>
+                    <exclude>WEB-INF/lib/xalan-*.jar</exclude>
+                    <exclude>WEB-INF/lib/xapool*.jar</exclude>
+                    <!--
+                      KFS's is newer... 
+                    <exclude>WEB-INF/lib/xercesImpl-*.jar</exclude>
+                    
+                    -->
+                    <!-- Rice includes this...not sure if it conflicts with newer xercesImpl
+                    <exclude>WEB-INF/lib/xmlParserAPIs-2.6.2.jar</exclude>
+                    -->
+                    <!--
+                      KFS's is newer...
+                    <exclude>WEB-INF/lib/xml-apis-*.jar</exclude>
+                    -->
+                    <exclude>WEB-INF/lib/xpp*</exclude>
+                    <exclude>WEB-INF/lib/wsdl4j*</exclude>
                 </excludes>
               </overlay>
             </overlays>
