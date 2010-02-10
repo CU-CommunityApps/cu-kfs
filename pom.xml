@@ -76,8 +76,11 @@
                 <excludes>
                     <exclude>WEB-INF/lib/log4j*.jar</exclude>
                     <exclude>WEB-INF/lib/activation-*.jar</exclude>
-                    <exclude>WEB-INF/lib/beanutils-*.jar</exclude>
-                    <exclude>WEB-INF/lib/digester-*.jar</exclude>
+                    <exclude>WEB-INF/lib/commons-beanutils-*.jar</exclude>
+                    <!--
+                      KFS's is newer
+                    <exclude>WEB-INF/lib/commons-digester-*.jar</exclude>
+                    -->
                     <exclude>WEB-INF/lib/commons-logging*.jar</exclude>
                     <exclude>WEB-INF/lib/commons-pool*.jar</exclude>
                     <exclude>WEB-INF/lib/connector-*.jar</exclude>
@@ -96,7 +99,6 @@
                     <!--
                       KFS's is newer... 
                     <exclude>WEB-INF/lib/xercesImpl-*.jar</exclude>
-                    
                     -->
                     <!-- Rice includes this...not sure if it conflicts with newer xercesImpl
                     <exclude>WEB-INF/lib/xmlParserAPIs-2.6.2.jar</exclude>
@@ -105,8 +107,12 @@
                       KFS's is newer...
                     <exclude>WEB-INF/lib/xml-apis-*.jar</exclude>
                     -->
-                    <exclude>WEB-INF/lib/xpp*</exclude>
-                    <exclude>WEB-INF/lib/wsdl4j*</exclude>
+                    <exclude>WEB-INF/lib/xpp*.jar</exclude>
+                    <exclude>WEB-INF/lib/wsdl4j*.jar</exclude>
+                    <!-- 
+                      KFS's is newer
+                    <exclude>WEB-INF/lib/itext-*.jar</exclude>
+                    -->
                 </excludes>
               </overlay>
             </overlays>
