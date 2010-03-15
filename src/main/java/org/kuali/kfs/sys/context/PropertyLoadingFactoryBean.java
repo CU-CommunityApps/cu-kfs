@@ -20,6 +20,12 @@ import org.springframework.core.io.Resource;
  * 
  * Adds an ability to load additional properties based 
  * on system variable called: additional.kfs.config.location
+ * 
+ * CU Note:
+ * The properties traditionally set via 'property.files' in the KFS build should be able to be
+ * set via the runtime kfs-config.properties.  This bean loads up the properties and then injects
+ * them into beans in Spring (including Rice).  So the KualiConfigurationService should still work.
+ * But we may need to double check next time we actually have a custom property to set.
  *
  */
 public class PropertyLoadingFactoryBean implements FactoryBean {
