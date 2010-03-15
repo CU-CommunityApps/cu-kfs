@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd"> 
+ 
+<bean id="AccountExtendedAttribute" parent="AccountExtendedAttribute-parentBean"/> 
+<bean id="AccountExtendedAttribute-parentBean" abstract="true" parent="BusinessObjectEntry"> 
+    <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute"/> 
+    <property name="objectLabel" value="AccountExtendedAttribute"/> 
+ 
+ 	<!--<property name="inquiryDefinition">
+      <ref bean="AccountExtendedAttribute-inquiryDefinition"/>
+    </property>
+    <property name="lookupDefinition">
+      <ref bean="AccountExtendedAttribute-lookupDefinition"/>
+    </property>
+ 
+    --><property name="attributes"> 
+      <list> 
+            <ref bean="AccountExtendedAttribute-programCode"/> 
+            <ref bean="AccountExtendedAttribute-subFundGroupCode" />
+            <ref bean="AccountExtendedAttribute-chartOfAccountsCode"/> 
+            <ref bean="AccountExtendedAttribute-accountNumber"/> 
+      </list> 
+    </property> 
+             
+            </bean> 
+             
+    <dd:boAttributeRef id="AccountExtendedAttribute-programCode" parent="SubFundProgram-programCode"/>
+    
+    <dd:boAttributeRef id="AccountExtendedAttribute-subFundGroupCode" parent="SubFundGroup-subFundGroupCode"/>
+ 
+    <dd:boAttributeRef id="AccountExtendedAttribute-chartOfAccountsCode" parent="Chart-chartOfAccountsCode"/> 
+     
+    <dd:boAttributeRef id="AccountExtendedAttribute-accountNumber" parent="Account-accountNumber"/><!-- 
+    
+    
+    
+    <bean id="AccountExtendedAttribute-inquiryDefinition" parent="AccountExtendedAttribute-inquiryDefinition-parentBean"/>
+
+  <bean id="AccountExtendedAttribute-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+    <property name="title" value="Sub-Fund Group Program Inquiry"/>
+    <property name="inquirySections">
+      <list>
+        <bean parent="InquirySectionDefinition">
+          <property name="title" value=""/>
+          <property name="numberOfColumns" value="1"/>
+          <property name="inquiryFields">
+            <list>
+              <bean parent="FieldDefinition" p:attributeName="programCode"/>
+              <bean parent="FieldDefinition" p:attributeName="subFundGroupCode"/>
+            </list>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+--><!-- Business Object Lookup Definition --><!--
+
+
+  <bean id="AccountExtendedAttribute-lookupDefinition" parent="AccountExtendedAttribute-lookupDefinition-parentBean"/>
+
+  <bean id="AccountExtendedAttribute-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+    <property name="title" value="Sub-Fund Group Program Lookup"/>
+    
+    <property name="defaultSort">
+      <bean parent="SortDefinition">
+        <property name="attributeNames">
+          <list>
+            <value>programCode</value>
+          </list>
+        </property>
+        <property name="sortAscending" value="false"/>
+      </bean>
+    </property>
+    <property name="lookupFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="programCode"/>
+        <bean parent="FieldDefinition" p:attributeName="subFundGroupCode"/>
+      </list>
+    </property>
+    <property name="resultFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="programCode"/>
+     	<bean parent="FieldDefinition" p:attributeName="subFundGroupCode"/>
+      </list>
+    </property>
+  </bean> 
+     
+--></beans> 

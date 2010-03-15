@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+
+<bean id="SubFundProgram" parent="SubFundProgram-parentBean"/>
+<bean id="SubFundProgram-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.SubFundProgram"/>
+    <property name="objectLabel" value="SubFundProgram"/>
+
+	<property name="titleAttribute" value="SubFundProgram"/>
+
+	 <property name="inquiryDefinition">
+      <ref bean="SubFundProgram-inquiryDefinition"/>
+    </property>
+    <property name="lookupDefinition">
+      <ref bean="SubFundProgram-lookupDefinition"/>
+    </property>
+
+	<property name="attributes">
+      <list>
+	    	<ref bean="SubFundProgram-programCode"/>
+	   		<ref bean="SubFundProgram-programName"/>
+	   		<ref bean="SubFundProgram-subFundGroupCode" />
+	    	<ref bean="SubFundProgram-programDescription"/>
+	    	<ref bean="SubFundProgram-active"/>
+	  </list>
+	</property>
+	<property name="relationships">
+		<list>
+	
+
+		<dd:relationship objectAttribute="subFundGroup">
+            <dd:primitiveAttribute source="subFundGroupCode" target="subFundGroupCode"/>
+        </dd:relationship>
+            </list>
+    </property>
+</bean>
+            
+    <bean id="SubFundProgram-programCode" parent="SubFundProgram-programCode-parentBean"/>
+    
+    <bean id="SubFundProgram-programCode-parentBean" abstract="true" parent="AttributeDefinition">
+    	<property name="name" value="programCode"/>
+    	<property name="label" value="Sub-Fund Program Code"/>
+    	<property name="shortLabel" value="Sub-Fund Program Code"/>
+    	<property name="maxLength" value="6"/>
+    	<property name="validationPattern">
+      		<bean parent="AlphaNumericValidationPattern">
+      			<property name="exactLength" value="6"/>
+      		</bean>
+    	</property>
+    	<property name="control">
+    	  	<bean parent="TextControlDefinition" p:size="7"/>
+    	</property>
+    </bean>
+    
+  	<bean id="SubFundProgram-programName" parent="SubFundProgram-programName-parentBean"/>
+    
+    <bean id="SubFundProgram-programName-parentBean" abstract="true" parent="AttributeDefinition">
+    	<property name="name" value="programName"/>
+    	<property name="label" value="Sub-Fund Program Name"/>
+    	<property name="shortLabel" value="Sub-Fund Program Name"/>
+    	<property name="maxLength" value="20"/>
+    	<property name="validationPattern">
+      		<bean parent="AlphaNumericValidationPattern">
+      			<property name="maxLength" value="20"/>
+      		</bean>
+    	</property>
+    	<property name="control">
+    	  	<bean parent="TextControlDefinition" p:size="22"/>
+    	</property>
+    </bean>
+    
+    <bean id="SubFundProgram-subFundGroupCode" parent="SubFundProgram-subFundGroupCode-parentBean"/>
+    <bean id="SubFundProgram-subFundGroupCode-parentBean" abstract="true" parent="AttributeDefinition">
+    	<property name="name" value="subFundGroupCode"/>
+    	<property name="label" value="Sub-Fund Group Code"/>
+    	<property name="shortLabel" value="Sub-Fund Group Code"/>
+    	<property name="maxLength" value="6"/>
+    	<property name="validationPattern">
+      		<bean parent="AlphaNumericValidationPattern">
+      			<property name="exactLength" value="6"/>
+      		</bean>
+    	</property>
+    	<property name="control">
+    	  	<bean parent="TextControlDefinition" p:size="7"/>
+    	</property>
+    </bean>
+  
+  	<bean id="SubFundProgram-programDescription" parent="SubFundProgram-programDescription-parentBean"/>
+  	
+  	 <bean id="SubFundProgram-programDescription-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="programDescription"/>
+    <property name="label" value="Sub-Fund Program Description"/>
+    <property name="shortLabel" value="Sub-Fund Program Description"/>
+    <property name="maxLength" value="40"/>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="40"/>
+    </property>
+  </bean>
+  
+ 
+  <bean id="SubFundProgram-active" parent="SubFundProgram-active-parentBean"/>
+  <bean id="SubFundProgram-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
+    <property name="name" value="active"/>
+  </bean>  
+
+	
+	<!-- Business Object Inquiry Definition -->
+
+
+  <bean id="SubFundProgram-inquiryDefinition" parent="SubFundProgram-inquiryDefinition-parentBean"/>
+
+  <bean id="SubFundProgram-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+    <property name="title" value="Sub-Fund Program Inquiry"/>
+    <property name="inquirySections">
+      <list>
+        <bean parent="InquirySectionDefinition">
+          <property name="title" value=""/>
+          <property name="numberOfColumns" value="1"/>
+          <property name="inquiryFields">
+            <list>
+              <bean parent="FieldDefinition" p:attributeName="programCode"/>
+              <bean parent="FieldDefinition" p:attributeName="programName"/>
+              <bean parent="FieldDefinition" p:attributeName="subFundGroupCode"/>
+              <bean parent="FieldDefinition" p:attributeName="programDescription"/>
+              <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+<!-- Business Object Lookup Definition -->
+
+
+  <bean id="SubFundProgram-lookupDefinition" parent="SubFundProgram-lookupDefinition-parentBean"/>
+
+  <bean id="SubFundProgram-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+    <property name="title" value="Sub-Fund Program Lookup"/>
+    
+    <property name="defaultSort">
+      <bean parent="SortDefinition">
+        <property name="attributeNames">
+          <list>
+            <value>programCode</value>
+          </list>
+        </property>
+        <property name="sortAscending" value="false"/>
+      </bean>
+    </property>
+    <property name="lookupFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="programCode"/>
+        <bean parent="FieldDefinition" p:attributeName="programName"/>
+        <bean parent="FieldDefinition" p:attributeName="subFundGroupCode"/>
+        <bean parent="FieldDefinition" p:attributeName="programDescription"/>
+        <bean parent="FieldDefinition" p:defaultValue="Y" p:attributeName="active"/>
+      </list>
+    </property>
+    <property name="resultFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="programCode"/>
+     	<bean parent="FieldDefinition" p:attributeName="programName"/>
+     	<bean parent="FieldDefinition" p:attributeName="subFundGroupCode"/>
+        <bean parent="FieldDefinition" p:attributeName="programDescription"/>
+        <bean parent="FieldDefinition" p:attributeName="active"/>
+      </list>
+    </property>
+  </bean>
+</beans>
