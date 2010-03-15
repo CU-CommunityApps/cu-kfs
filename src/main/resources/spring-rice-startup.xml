@@ -49,26 +49,6 @@
     </property>
   </bean>
 
-  <bean id="sample-coa" parent="coaModuleConfiguration-parentBean">
-		
-		<property name="packagePrefixes">
-            <list>
-                <value>edu.cornell.kfs.coa</value>
-            </list>
-        </property>
-		<property name="dataDictionaryPackages">
-			<list>
-                <value>edu/cornell/kfs/coa/document/datadictionary</value>
-                <value>edu/cornell/kfs/coa/businessobject/datadictionary</value>
-			</list>
-		</property>
-		<property name="databaseRepositoryFilePaths">
-			<list>
-				<value>edu/cornell/kfs/coa/cu-ojb-coa.xml</value>
-			</list>
-		</property>
-  </bean>
-
   <import resource="spring-jta.xml" />
   <import resource="spring-datasources.xml" />
   <import resource="spring-rice-configurer.xml" />
