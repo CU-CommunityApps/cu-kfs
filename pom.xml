@@ -285,6 +285,13 @@
       <scope>runtime</scope>
     </dependency>
     
+     <dependency>
+       <groupId>edu.cornell.kfs</groupId>
+       <artifactId>kfs-stock-lib</artifactId>
+       <version>3.0-tmp-SNAPSHOT</version>
+     </dependency>
+    
+    
 	<!-- our oracle is better -->
 	<dependency>
 		<groupId>com.oracle</groupId>
@@ -322,11 +329,6 @@
         <artifactId>xapool</artifactId>
         <version>1.5.0-patch</version>
         <scope>runtime</scope>
-    </dependency>
-    <dependency>
-    	<groupId>edu.cornell.kfs</groupId>
-    	<artifactId>kiti-customizations</artifactId>
-    	<version>1.0-kiti-SNAPSHOT</version>
     </dependency>
   </dependencies>
   
