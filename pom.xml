@@ -282,13 +282,12 @@
       <artifactId>kfs-stock-war</artifactId>
       <version>3.0.1-SNAPSHOT</version>
       <type>war</type>
-      <scope>runtime</scope>
     </dependency>
-    
+       
      <dependency>
        <groupId>edu.cornell.kfs</groupId>
        <artifactId>kfs-stock-lib</artifactId>
-       <version>3.0-tmp-SNAPSHOT</version>
+       <version>3.0.1-tmp-SNAPSHOT</version>
      </dependency>
     
     
