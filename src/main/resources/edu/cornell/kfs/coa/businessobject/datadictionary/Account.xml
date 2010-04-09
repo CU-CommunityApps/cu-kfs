@@ -807,6 +807,7 @@
               <dd:field attributeName="closed"/>
               <dd:field attributeName="accountTypeCode"/>
               <dd:field attributeName="subFundGroup.codeAndDescription"/>
+              <dd:field attributeName="extension.programCode"/>
               <dd:field attributeName="accountsFringesBnftIndicator"/>
               <dd:field attributeName="reportsToChartOfAccountsCode"/>
               <dd:field attributeName="reportsToAccountNumber"/>

@@ -6,7 +6,7 @@
         <field-descriptor name="programDescription" column="PROGRAM_DESC" jdbc-type="VARCHAR" />
         <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
         <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
-        <field-descriptor name="active" column="ROW_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.coa.util.OjbAccountActiveIndicatorConversion" />
+        <field-descriptor name="active" column="ROW_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
     </class-descriptor>
 
 	<class-descriptor class="edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute" table="CA_ACCOUNT_TX">

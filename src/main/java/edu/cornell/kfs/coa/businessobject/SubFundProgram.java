@@ -16,8 +16,6 @@ public class SubFundProgram extends PersistableBusinessObjectBase implements Ina
     private String programName;
     private String subFundGroupCode;
     
-    
-    
     private boolean active;
 
     private SubFundGroup subFundGroup;
@@ -26,27 +24,21 @@ public class SubFundProgram extends PersistableBusinessObjectBase implements Ina
         return programName;
     }
 
-
     public void setProgramName(String programName) {
         this.programName = programName;
     }
-
 
     public SubFundGroup getSubFundGroup() {
         return subFundGroup;
     }
 
-
     public void setSubFundGroup(SubFundGroup subFundGroup) {
         this.subFundGroup = subFundGroup;
     }
 
-
     public SubFundProgram() {
-        
     }
     
-   
     public String getProgramCode() {
         return programCode;
     }
@@ -93,21 +85,16 @@ public class SubFundProgram extends PersistableBusinessObjectBase implements Ina
         return subFundGroupCode;
     }
 
-
     public void setSubFundGroupCode(String subFundGroupCode) {
         this.subFundGroupCode = subFundGroupCode;
     }
-
     
     /**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();
-
         m.put("programCode", this.programCode);
-
-
         return m;
     }
 

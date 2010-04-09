@@ -86,6 +86,4 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
         this.programCode = programCode;
     }
     
-    
-    
 }
