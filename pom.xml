@@ -339,7 +339,7 @@
     <snapshotRepository>
       <id>cornell-snapshots</id>
       <name>cornell-snapshots</name>
-      <uniqueVersion>false</uniqueVersion>
+      <uniqueVersion>true</uniqueVersion>
       <url>https://maven.cit.cornell.edu/repository/snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
