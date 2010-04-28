@@ -54,8 +54,12 @@ public class PropertyLoadingFactoryBean implements FactoryBean {
     private static void loadExternalProperties(Properties props) {
     	//check if additional kfs config was provided and override properties
     	String externalConfigLocationPath = System.getProperty(PropertyLoadingFactoryBean.ADDITIONAL_KFS_CONFIG_LOCATIONS_PARAM);
-    	if (StringUtils.isNotEmpty(externalConfigLocationPath)) {
-    		loadProperties(props, new StringBuffer("file:").append(externalConfigLocationPath).toString());
+
+    	String[] files = externalConfigLocationPath.split(","); 
+    	for (String f: files) { 
+    	    if (StringUtils.isNotEmpty(f)) { 
+    	        loadProperties(props, new StringBuffer("file:").append(f).toString()); 
+    	    } 
     	}
     	
     	props.putAll(System.getProperties());
