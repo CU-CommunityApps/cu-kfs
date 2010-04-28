@@ -280,7 +280,7 @@
     <dependency>
       <groupId>edu.cornell.kfs</groupId>
       <artifactId>kfs-stock-war</artifactId>
-      <version>3.0.1-SNAPSHOT</version>
+      <version>3.0.1</version>
       <type>war</type>
     </dependency>
        
