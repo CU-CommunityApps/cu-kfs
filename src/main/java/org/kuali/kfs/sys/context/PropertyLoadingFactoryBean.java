@@ -65,7 +65,7 @@ public class PropertyLoadingFactoryBean implements FactoryBean {
         	String[] files = externalConfigLocationPaths.split(","); 
         	for (String f: files) { 
         	    if (StringUtils.isNotEmpty(f)) { 
-        	        System.err.println("Loading properties from " + externalConfigLocationPath);
+        	        System.err.println("Loading properties from " + f);
         	        loadProperties(props, new StringBuffer("file:").append(f).toString()); 
         	    } 
         	}
