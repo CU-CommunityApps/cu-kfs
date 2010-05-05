@@ -136,8 +136,11 @@ public class PropertyLoadingFactoryBean implements FactoryBean {
             	Resource properties = new DefaultResourceLoader(ClassLoaderUtils.getDefaultClassLoader()).getResource(propertyFileName);
             	boolean attemptLoad = failOnMissing || properties.exists();
             	if (attemptLoad) {
+            	    System.err.println("Reading properties " + propertyFileName);
 	                propertyFileInputStream = properties.getInputStream();
 	                props.load(propertyFileInputStream);
+	                // XXX: REMOVE THIS
+	                props.store(System.err, "printing for debugging purposes");
             	}
             }
             finally {
