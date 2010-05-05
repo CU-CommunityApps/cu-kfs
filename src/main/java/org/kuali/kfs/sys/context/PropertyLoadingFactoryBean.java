@@ -40,8 +40,9 @@ public class PropertyLoadingFactoryBean implements FactoryBean {
     private static final String REMOTING_URL_SUFFIX = "/remoting";
     private static final String APPLICATION_URL_KEY = "application.url";
     private static final String ENVIRONMENT_KEY = "environment";
-    private static final String ADDITIONAL_KFS_CONFIG_LOCATIONS_PARAM = "additional.kfs.config.location";
-   // private static final 
+    private static final String ADDITIONAL_KFS_CONFIG_LOCATION_PARAM = "additional.kfs.config.location";
+    // introduced a second parameter so that existing installations weren't broken by csv paths
+    private static final String ADDITIONAL_KFS_CONFIG_LOCATIONS_PARAM = "additional.kfs.config.locations";
     
     private Properties props = new Properties();
     private boolean testMode;
@@ -53,15 +54,19 @@ public class PropertyLoadingFactoryBean implements FactoryBean {
      */
     private static void loadExternalProperties(Properties props) {
     	//check if additional kfs config was provided and override properties
-    	String externalConfigLocationPath = System.getProperty(PropertyLoadingFactoryBean.ADDITIONAL_KFS_CONFIG_LOCATIONS_PARAM);
+    	String externalConfigLocationPath = System.getProperty(PropertyLoadingFactoryBean.ADDITIONAL_KFS_CONFIG_LOCATION_PARAM);
+    	if (StringUtils.isNotEmpty(externalConfigLocationPath)) {
+    	    loadProperties(props, new StringBuffer("file:").append(externalConfigLocationPath).toString());
+    	}
 
-    	String[] files = externalConfigLocationPath.split(","); 
+    	String externalConfigLocationPaths = System.getProperty(PropertyLoadingFactoryBean.ADDITIONAL_KFS_CONFIG_LOCATIONS_PARAM);
+    	String[] files = externalConfigLocationPaths.split(","); 
     	for (String f: files) { 
     	    if (StringUtils.isNotEmpty(f)) { 
     	        loadProperties(props, new StringBuffer("file:").append(f).toString()); 
     	    } 
     	}
-    	
+
     	props.putAll(System.getProperties());
     }
     
