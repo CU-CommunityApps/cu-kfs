@@ -922,6 +922,7 @@
         <dd:field attributeName="organizationCode"/>
         <dd:field attributeName="accountTypeCode"/>
         <dd:field attributeName="subFundGroupCode"/>
+        <dd:field attributeName="extension.programCode"/>
         <dd:field attributeName="accountFiscalOfficerUser.principalName"/>        
         <dd:field attributeName="closed" defaultValue="N"/>
       </list>
@@ -934,6 +935,7 @@
         <dd:field attributeName="organizationCode"/>
         <dd:field attributeName="accountTypeCode"/>
         <dd:field attributeName="subFundGroupCode"/>
+        <dd:field attributeName="extension.programCode"/>
         <dd:field attributeName="accountFiscalOfficerUser.name" inquiry="force"/>    
         <dd:field attributeName="closed"/>
         <dd:field attributeName="accountManagerUser.name" inquiry="force"/>
