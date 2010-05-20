@@ -15,11 +15,14 @@
  */
 package edu.cornell.kfs.coa.document.validation.impl;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.document.validation.impl.AccountRule;
+import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.service.BusinessObjectService;
@@ -54,18 +57,27 @@ public class AccountExtensionRule extends AccountRule {
             Map fieldValues = new HashMap();
             fieldValues.put("subFundGroupCode", subFundGroupCode);
             fieldValues.put("programCode", subFundProgramCode);
-            int matches = bos.countMatching(SubFundProgram.class, fieldValues);
-            if (matches == 0) {
+            
+            Collection<SubFundProgram> retVals = bos.findMatching(SubFundProgram.class, fieldValues);
+            
+            if (retVals.isEmpty()) {
                 success = false;
                 putFieldError("extension.programCode", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_NOT_GROUP_CODE, new String[] {subFundProgramCode, subFundGroupCode});
+            } else {
+            	for (SubFundProgram sfp : retVals) {
+            		if (!sfp.isActive()) {
+                        putFieldError("extension.programCode", KFSKeyConstants.ERROR_INACTIVE, getFieldLabel(Account.class, "extension.programCode"));
 
+            		}
+            	}
             }
+            
         } else {
         	// BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
              Map fieldValues = new HashMap();
              fieldValues.put("subFundGroupCode", subFundGroupCode);
-             int matches = bos.countMatching(SubFundProgram.class, fieldValues);
-             if (matches != 0) {
+             Collection<SubFundProgram> retVals = bos.findMatching(SubFundProgram.class, fieldValues);
+             if (!retVals.isEmpty()) {
                  success = false;
                  putFieldError("extension.programCode", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE, new String[] { subFundGroupCode});
 
