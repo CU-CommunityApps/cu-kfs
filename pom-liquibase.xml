@@ -1,0 +1,64 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.cornell.kfs</groupId>
+  <artifactId>kfs-db</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+
+  <properties>
+      <liquibase.contexts>all</liquibase.contexts>        
+      <liquibase.db.driverclass>oracle.jdbc.OracleDriver</liquibase.db.driverclass>
+      <liquibase.db.dropFirst>false</liquibase.db.dropFirst>
+      <liquibase.db.verbose>true</liquibase.db.verbose>
+      <liquibase.db.promptonnonlocal>false</liquibase.db.promptonnonlocal>
+      <liquibase.changelogfile>src/main/config/kfs-customizations.xml</liquibase.changelogfile>
+      <liquibase.db.jdbc>jdbc:oracle:thin:@ldap://oidmaster1.cit.cornell.edu:389/kfssb,cn=oraclecontext ldap://oidmaster2.cit.cornell.edu:389/kfssb,cn=oraclecontext</liquibase.db.jdbc>
+  </properties>
+  
+  <build>  	 	
+  	<plugins>
+  		<!-- 
+  			mvn help:describe -DgroupId=org.liquibase -DartifactId=liquibase-plugin -Dversion=1.9.5.0 -Dfull=true
+  			will give you hints about all available configuration parameters within the Liquibase maven plugin. 
+  		 -->
+    	<plugin>
+          <groupId>org.liquibase</groupId>
+          <artifactId>liquibase-plugin</artifactId>
+          <version>1.9.5.0</version>
+          <configuration>
+          	<contexts>${liquibase.contexts}</contexts>
+            <changeLogFile>${liquibase.changelogfile}</changeLogFile>
+            <driver>${liquibase.db.driverclass}</driver>
+            <url>${liquibase.db.jdbc}</url>
+            <username>${liquibase.db.user}</username>
+            <password>${liquibase.db.password}</password>
+            <verbose>true</verbose>
+            <dropFirst>${liquibase.db.dropFirst}</dropFirst>
+            <promptOnNonLocalDatabase>${liquibase.db.promptonnonlocal}</promptOnNonLocalDatabase>
+          </configuration>
+       </plugin>
+	</plugins>
+  </build>
+  <dependencies>
+  
+  	<!-- oracle jdbc -->
+  	<dependency>
+   		<groupId>com.oracle</groupId>
+        <artifactId>ojdbc14</artifactId>
+        <version>10.2.0.3.0</version>
+        <scope>runtime</scope>
+    </dependency>
+  	
+  	<dependency>
+    	<groupId>org.liquibase</groupId>
+    	<artifactId>liquibase-core</artifactId>
+    	<version>1.9.5</version>
+	</dependency>
+  
+  	<dependency>
+  		<groupId>org.liquibase</groupId>
+    	<artifactId>liquibase-plugin</artifactId>
+    	<version>1.9.5.0</version>	
+  	</dependency>
+  	
+  </dependencies>
+</project>
