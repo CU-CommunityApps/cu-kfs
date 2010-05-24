@@ -5,12 +5,14 @@
   <version>0.0.1-SNAPSHOT</version>
 
   <properties>
+      <!--
       <liquibase.contexts>all</liquibase.contexts>        
+      -->
       <liquibase.db.driverclass>oracle.jdbc.OracleDriver</liquibase.db.driverclass>
       <liquibase.db.dropFirst>false</liquibase.db.dropFirst>
       <liquibase.db.verbose>true</liquibase.db.verbose>
       <liquibase.db.promptonnonlocal>false</liquibase.db.promptonnonlocal>
-      <liquibase.changelogfile>./src/main/config/kfs-customizations.xml</liquibase.changelogfile>
+      <liquibase.changelogfile>src/main/config/kfs-customizations.xml</liquibase.changelogfile>
       <liquibase.db.jdbc>jdbc:oracle:thin:@ldap://oidmaster1.cit.cornell.edu:389/kfssb,cn=oraclecontext ldap://oidmaster2.cit.cornell.edu:389/kfssb,cn=oraclecontext</liquibase.db.jdbc>
   </properties>
   
@@ -25,7 +27,9 @@
           <artifactId>liquibase-plugin</artifactId>
           <version>1.9.5.0</version>
           <configuration>
+            <!-- not working?
           	<contexts>${liquibase.contexts}</contexts>
+            -->
             <changeLogFile>${liquibase.changelogfile}</changeLogFile>
             <driver>${liquibase.db.driverclass}</driver>
             <url>${liquibase.db.jdbc}</url>
