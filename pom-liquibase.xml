@@ -10,7 +10,7 @@
       <liquibase.db.dropFirst>false</liquibase.db.dropFirst>
       <liquibase.db.verbose>true</liquibase.db.verbose>
       <liquibase.db.promptonnonlocal>false</liquibase.db.promptonnonlocal>
-      <liquibase.changelogfile>src/main/config/kfs-customizations.xml</liquibase.changelogfile>
+      <liquibase.changelogfile>./src/main/config/kfs-customizations.xml</liquibase.changelogfile>
       <liquibase.db.jdbc>jdbc:oracle:thin:@ldap://oidmaster1.cit.cornell.edu:389/kfssb,cn=oraclecontext ldap://oidmaster2.cit.cornell.edu:389/kfssb,cn=oraclecontext</liquibase.db.jdbc>
   </properties>
   
