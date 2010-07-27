@@ -19,15 +19,23 @@ import org.kuali.rice.kns.bo.PersistableBusinessObjectExtensionBase;
 
 public class AccountExtendedAttribute extends PersistableBusinessObjectExtensionBase {
 
-    private String chartOfAccountsCode;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5894118108397111352L;
+	
+	private String chartOfAccountsCode;
     private String accountNumber;
-    private String subFundGroupCode;
     private String programCode;
+    private String appropriationAccountNumber;
+    private String subFundGroupCode;
+
+	private SubFundProgram subFundProgram;
+    private AppropriationAccount appropriationAccount;
     
     public AccountExtendedAttribute() {
         
     }
-    
     
     /**
      * Gets the chartOfAccountsCode attribute. 
@@ -57,33 +65,82 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
     public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
     }
-    /**
-     * Gets the subFundGroupCode attribute. 
-     * @return Returns the subFundGroupCode.
-     */
-    public String getSubFundGroupCode() {
-        return subFundGroupCode;
-    }
-    /**
-     * Sets the subFundGroupCode attribute value.
-     * @param subFundGroupCode The subFundGroupCode to set.
-     */
-    public void setSubFundGroupCode(String subFundGroupCode) {
-        this.subFundGroupCode = subFundGroupCode;
-    }
-    /**
-     * Gets the programCode attribute. 
-     * @return Returns the programCode.
-     */
-    public String getProgramCode() {
-        return programCode;
-    }
-    /**
-     * Sets the programCode attribute value.
-     * @param programCode The programCode to set.
-     */
-    public void setProgramCode(String programCode) {
-        this.programCode = programCode;
-    }
-    
+
+
+	/**
+	 * @return the subFundProgram
+	 */
+	public SubFundProgram getSubFundProgram() {
+		return subFundProgram;
+	}
+
+
+	/**
+	 * @param subFundProgram the subFundProgram to set
+	 */
+	public void setSubFundProgram(SubFundProgram subFundProgram) {
+		this.subFundProgram = subFundProgram;
+	}
+
+
+	/**
+	 * @return the appropriationAccount
+	 */
+	public AppropriationAccount getAppropriationAccount() {
+		return appropriationAccount;
+	}
+
+
+	/**
+	 * @param appropriationAccount the appropriationAccount to set
+	 */
+	public void setAppropriationAccount(AppropriationAccount appropriationAccount) {
+		this.appropriationAccount = appropriationAccount;
+	}
+
+	/**
+	 * @return the programCode
+	 */
+	public String getProgramCode() {
+		return programCode;
+	}
+
+
+	/**
+	 * @param programCode the programCode to set
+	 */
+	public void setProgramCode(String programCode) {
+		this.programCode = programCode;
+	}
+
+
+	/**
+	 * @return the appropriationAccountNumber
+	 */
+	public String getAppropriationAccountNumber() {
+		return appropriationAccountNumber;
+	}
+
+
+	/**
+	 * @param appropriationAccountNumber the appropriationAccountNumber to set
+	 */
+	public void setAppropriationAccountNumber(String appropriationAccountNumber) {
+		this.appropriationAccountNumber = appropriationAccountNumber;
+	}
+	/**
+	 * @return the subFundGroupCode
+	 */
+	public String getSubFundGroupCode() {
+	
+		return subFundGroupCode;
+	}
+	/**
+	 * @param subFundGroupCode the subFundGroupCode to set
+	 */
+	public void setSubFundGroupCode(String subFundGroupCode) {
+		this.subFundGroupCode = subFundGroupCode;
+	}
+
+
 }

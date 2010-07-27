@@ -27,7 +27,7 @@
 		<list>
 	
 
-		<dd:relationship objectAttribute="subFundGroup">
+		<dd:relationship objectAttribute="subFundGroup" targetClass="org.kuali.kfs.coa.businessobject.SubFundGroup">
             <dd:primitiveAttribute source="subFundGroupCode" target="subFundGroupCode"/>
         </dd:relationship>
             </list>

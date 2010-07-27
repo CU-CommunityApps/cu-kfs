@@ -17,7 +17,7 @@
 
   <bean id="AccountMaintenanceDocument" parent="AccountMaintenanceDocument-parentBean"/>
 
-  <bean id="AccountMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry" p:businessObjectClass="org.kuali.kfs.coa.businessobject.Account" p:maintainableClass="org.kuali.kfs.coa.document.KualiAccountMaintainableImpl">
+  <bean id="AccountMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry" p:businessObjectClass="org.kuali.kfs.coa.businessobject.Account" p:maintainableClass="edu.cornell.kfs.coa.document.CUAccountMaintainableImpl">
     <property name="maintainableSections">
       <list>
         <ref bean="AccountMaintenanceDocument-AccountMaintenance"/>
@@ -96,7 +96,8 @@
         <dd:maintField attributeName="closed"/>
         <dd:maintField attributeName="accountTypeCode" required="true"/>
         <dd:maintField attributeName="subFundGroupCode" required="true" javascriptLeaveFieldFunction="onblur_subFundGroup" javascriptLeaveFieldCallbackFunction="checkRestrictedStatusCode_Callback"/>
-       	<dd:maintField attributeName="extension.programCode" />
+       	<dd:maintField attributeName="extension.subFundProgram.programCode" />
+      	<dd:maintField attributeName="extension.appropriationAccount.appropriationAccountNumber" />
         <dd:maintField attributeName="accountsFringesBnftIndicator" defaultValue="true"/>
         <dd:maintField attributeName="reportsToChartOfAccountsCode"/>
         <dd:maintField attributeName="reportsToAccountNumber"/>
