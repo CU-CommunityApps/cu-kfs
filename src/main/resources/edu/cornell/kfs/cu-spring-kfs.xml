@@ -5,6 +5,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
   <import resource="coa/cu-spring-coa.xml" />
+  <import resource="module/cam/cu-spring-cam.xml" />
 
 
 </beans>

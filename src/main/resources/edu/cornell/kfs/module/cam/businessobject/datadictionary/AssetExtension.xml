@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" 
+xsi:schemaLocation="http://www.springframework.org/schema/beans 
+http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+<bean id="AssetExtension" parent="BusinessObjectEntry">
+  <property name="businessObjectClass" value="edu.cornell.kfs.module.cam.businessobject.AssetExtension"/>
+  <property name="objectLabel" value="AssetExtension"/>
+
+  <property name="attributes">
+    <list>
+      <ref bean="AssetExtension-serviceRateIndicator"/>
+      <ref bean="AssetExtension-capitalAssetNumber"/>
+    </list>
+  </property>
+</bean>
+
+<bean id="AssetExtension-serviceRateIndicator" parent="AssetExtension-serviceRateIndicator-parentBean" />
+
+<bean id="AssetExtension-serviceRateIndicator-parentBean" parent="GenericAttributes-genericBoolean">
+  <property name="name" value="serviceRateIndicator" />
+  <property name="label" value="Service Rate Indicator" />
+  <property name="shortLabel" value="Service Rate Indicator" />
+</bean>
+
+<bean id="AssetExtension-capitalAssetNumber" parent="Asset-capitalAssetNumber"/>
+
+</beans>
