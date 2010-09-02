@@ -19,10 +19,7 @@
 
   <bean id="VendorMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
     <property name="businessObjectClass" value="org.kuali.kfs.vnd.businessobject.VendorDetail"/>
-<!--     
     <property name="maintainableClass" value="org.kuali.kfs.vnd.document.VendorMaintainableImpl"/>
--->
-	<property name="maintainableClass" value="edu.cornell.kfs.vnd.document.CUVendorMaintainableImpl" />
     <property name="encryptDocumentDataInPersistentSessionStorage" value="true"/>
     <property name="maintainableSections">
       <list>
@@ -48,11 +45,9 @@
     
     
     <property name="documentTypeName" value="PVEN"/>
-    <property name="businessRulesClass" value="edu.cornell.kfs.vnd.document.validation.impl.VendorHeaderExtensionRule" />
-<!-- <property name="businessRulesClass" value="org.kuali.kfs.vnd.document.validation.impl.VendorRule"/> -->
+	<property name="businessRulesClass" value="org.kuali.kfs.vnd.document.validation.impl.VendorRule"/> 
     <property name="documentAuthorizerClass" value="org.kuali.kfs.vnd.document.authorization.VendorDocumentAuthorizer"/>
-<!-- <property name="documentPresentationControllerClass" value="org.kuali.kfs.vnd.document.authorization.VendorDocumentPresentationController"/> -->
-	<property name="documentPresentationControllerClass" value="edu.cornell.kfs.vnd.document.authorization.CUVendorDocumentPresentationController"/>
+	<property name="documentPresentationControllerClass" value="org.kuali.kfs.vnd.document.authorization.VendorDocumentPresentationController"/> 
     <property name="promptBeforeValidationClass" value="org.kuali.kfs.vnd.document.validation.impl.VendorPreRules"/>
     <property name="workflowAttributes">
     	<ref bean="VendorMaintenanceDocument-workflowAttributes"/>
@@ -89,7 +84,7 @@
         <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.vendorOwnershipCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.vendorOwnershipCategoryCode"/>
         <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.vendorW9ReceivedIndicator"/>
-        <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.extension.w9ReceivedDate"/>
+        <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.vendorW9ReceivedDate"/>
         <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.vendorW8BenReceivedIndicator"/>
         <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.vendorFederalWithholdingTaxBeginningDate"/>
         <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.vendorFederalWithholdingTaxEndDate"/>
@@ -279,7 +274,6 @@
               <bean parent="MaintainableFieldDefinition" p:name="vendorSupplierDiversityCode" p:required="true"/>
               <bean parent="MaintainableFieldDefinition" p:name="vendorHeaderGeneratedIdentifier" p:unconditionallyReadOnly="true"/>
               <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>
-              <bean parent="MaintainableFieldDefinition" p:name="extension.expirationDate"/>
               <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
             </list>
           </property>

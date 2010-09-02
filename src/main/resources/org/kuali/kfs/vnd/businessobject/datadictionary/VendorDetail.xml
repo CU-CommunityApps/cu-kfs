@@ -67,7 +67,7 @@
         <ref bean="VendorDetail-vendorHeader.vendorOwnershipCode"/>
         <ref bean="VendorDetail-vendorHeader.vendorOwnershipCategoryCode"/>
         <ref bean="VendorDetail-vendorHeader.vendorW9ReceivedIndicator"/>
-        <ref bean="VendorDetail-vendorHeader.extension.w9ReceivedDate"/>
+        <ref bean="VendorDetail-vendorHeader.vendorW9ReceivedDate"/>
         <ref bean="VendorDetail-vendorHeader.vendorW8BenReceivedIndicator"/>
         <ref bean="VendorDetail-vendorHeader.vendorFederalWithholdingTaxEndDate"/>
         <ref bean="VendorDetail-vendorHeader.vendorDebarredIndicator"/>
@@ -460,10 +460,10 @@
   <bean id="VendorDetail-vendorHeader.vendorW9ReceivedIndicator-parentBean" abstract="true" parent="VendorHeader-vendorW9ReceivedIndicator">
     <property name="name" value="vendorHeader.vendorW9ReceivedIndicator"/>
   </bean>
-  <bean id="VendorDetail-vendorHeader.extension.w9ReceivedDate" parent="VendorDetail-vendorHeader.extension.w9ReceivedDate-parentBean"/>
-
-  <bean id="VendorDetail-vendorHeader.extension.w9ReceivedDate-parentBean" abstract="true" parent="VendorHeader-extension-w9ReceivedDate">
-    <property name="name" value="vendorHeader.extension.w9ReceivedDate"/>
+  <bean id="VendorDetail-vendorHeader.vendorW9ReceivedDate" parent="VendorDetail-vendorHeader.vendorW9ReceivedDate-parentBean"/>
+																							   
+  <bean id="VendorDetail-vendorHeader.vendorW9ReceivedDate-parentBean" abstract="true" parent="VendorHeader-vendorW9ReceivedDate">
+    <property name="name" value="vendorHeader.vendorW9ReceivedDate"/>
   </bean>
   <bean id="VendorDetail-vendorHeader.vendorW8BenReceivedIndicator" parent="VendorDetail-vendorHeader.vendorW8BenReceivedIndicator-parentBean"/>
 

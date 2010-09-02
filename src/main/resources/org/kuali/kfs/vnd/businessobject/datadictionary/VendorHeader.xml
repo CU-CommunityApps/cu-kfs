@@ -33,9 +33,9 @@
         <ref bean="VendorHeader-vendorSupplierDiversities" />
         <ref bean="VendorHeader-vendorW8BenReceivedIndicator" />
         <ref bean="VendorHeader-vendorW9ReceivedIndicator" />
+        <ref bean="VendorHeader-vendorW9ReceivedDate" />
         <ref bean="VendorHeader-vendorDebarredIndicator" />
         <ref bean="VendorHeader-vendorForeignIndicator" />
-        <ref bean="VendorHeader-extension-w9ReceivedDate" />
       </list>
     </property>
   </bean>
@@ -205,6 +205,15 @@
       <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.rice.kns.lookup.keyvalues.IndicatorYNNullValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
+
+  <bean id="VendorHeader-vendorW9ReceivedDate" parent="VendorHeader-vendorW9ReceivedDate-parentBean" />
+
+  <bean id="VendorHeader-vendorW9ReceivedDate-parentBean" abstract="true" parent="GenericAttributes-genericDate">
+    <property name="name" value="vendorW9ReceivedDate" />
+    <property name="label" value="W9 Received Date" />
+    <property name="shortLabel" value="W9 Received Date" />
+    <property name="maxLength" value="10" />
+  </bean>
   <bean id="VendorHeader-vendorDebarredIndicator" parent="VendorHeader-vendorDebarredIndicator-parentBean" />
 
   <bean id="VendorHeader-vendorDebarredIndicator-parentBean" abstract="true" parent="AttributeDefinition">
@@ -229,12 +238,6 @@
       <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.rice.kns.lookup.keyvalues.IndicatorYNOnlyValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
-  
-  <bean id="VendorHeader-extension-w9ReceivedDate" parent="VendorHeader-extension-w9ReceivedDate-parentBean"/>
-
-  <bean id="VendorHeader-extension-w9ReceivedDate-parentBean" abstract="true" parent="VendorHeaderExtendedAttribute-w9ReceivedDate" >
-  	<property name="name" value="extension.w9ReceivedDate"/>
-  </bean>
-  
+   
   
 </beans>
