@@ -1,0 +1,42 @@
+<?xml version="1.0"?> 
+<project name="kfs" default="run-step" basedir="." 
+    xmlns:rsel="antlib:org.apache.tools.ant.types.resources.selectors" 
+    xmlns:rcmp="antlib:org.apache.tools.ant.types.resources.comparators"> 
+        <!-- target to check out the foundation and iu kfs projects, make-source, store war directory in temp location, delete projects, and rename war dir to ${environment}/${ant.project.name} --> 
+
+    <fail unless="build.environment" message="-Dbuild.environment=[env] (e.g. kualicup) must be passed on the ant command line"/> 
+
+   <!-- <property file="${user.home}/kfs-build.properties" /> --> 
+    <!-- /opt/kuali/kualicup/tomcat-home/work/Catalina/localhost/kualicup --> 
+    <property name="base.directory" location="/opt/kuali/${build.environment}"/> 
+
+    <property name="batch.deploy.path" location="${base.directory}/tomcat-home/webapps/${build.environment}" /> 
+
+    <property name="step.min.memory" value="40m" /> 
+    <property name="step.max.memory" value="1024m" /> 
+    <property name="step.max.permsize" value="256m" /> 
+
+
+    <target name="run-step"> 
+            <fail unless="step.name" message="-Dstep.name=[step name] must be passed on the ant command line"/> 
+                <java classname="org.kuali.kfs.sys.context.BatchStepRunner" fork="true" failonerror="true" > 
+            <jvmarg value="-Xms${step.min.memory}" /> 
+            <jvmarg value="-Xmx${step.max.memory}" /> 
+            <jvmarg value="-XX:MaxPermSize=${step.max.permsize}" /> 
+                        <arg value="${step.name}" /> 
+                        <classpath> 
+                                <!-- this is the path, because what we will be working with is an exploded war --> 
+                                <pathelement location="${batch.deploy.path}/WEB-INF/classes" /> 
+                            <fileset dir="${batch.deploy.path}/WEB-INF/lib"> 
+                    <include name="*.jar"/> 
+                </fileset> 
+                        </classpath> 
+                </java> 
+        </target> 
+
+        <target name="echo-properties" > 
+                <echoproperties /> 
+        </target> 
+
+
+</project>
