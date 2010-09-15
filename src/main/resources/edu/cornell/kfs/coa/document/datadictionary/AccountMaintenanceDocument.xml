@@ -121,7 +121,6 @@
         <dd:maintField attributeName="accountSupervisoryUser.principalName" required="true"/>
         <dd:maintField attributeName="accountManagerSystemIdentifier" unconditionallyReadOnly="true" required="true"/>
         <dd:maintField attributeName="accountManagerUser.principalName" required="true"/>
-
         <dd:maintField attributeName="continuationFinChrtOfAcctCd"/>
         <dd:maintField attributeName="continuationAccountNumber"/>
         <dd:maintField attributeName="incomeStreamFinancialCoaCode"/>
@@ -150,6 +149,10 @@
         <dd:maintField attributeName="indirectCostRecoveryAcctNbr"/>
         <dd:maintField attributeName="accountCfdaNumber"/>
         <dd:maintField attributeName="contractsAndGrantsAccountResponsibilityId"/>
+        <dd:maintField attributeName="extension.invoiceFrequency.invoiceFrequencyCode"/>
+        <dd:maintField attributeName="extension.invoiceType.invoiceTypeCode"/>
+        <dd:maintField attributeName="extension.everify"/>
+        
       </list>
     </property>
   </bean>

@@ -100,6 +100,11 @@
         <ref bean="Account-contractsAndGrantsAccountResponsibilityId"/>
       	<ref bean="Account-extension-subFundProgram-programCode"/>
       	<ref bean="Account-extension-appropriationAccount-appropriationAccountNumber"/>
+      	<ref bean="Account-extension-invoiceFrequency-invoiceFrequencyCode"/>
+      	<ref bean="Account-extension-invoiceType-invoiceTypeCode"/>
+      	<ref bean="Account-extension-everify"/>
+
+      	
       </list>
     </property>
     <property name="collections">
@@ -772,22 +777,33 @@
     <property name="control">
       <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.coa.businessobject.options.AccountResponsibilityIdFinder" p:includeKeyInLabel="false"/>
     </property>
-    
-    
   </bean>
 
   <bean id="Account-extension-subFundProgram-programCode" parent="Account-extension-subFundProgram-programCode-parentBean"/>
-
   <bean id="Account-extension-subFundProgram-programCode-parentBean" abstract="true" parent="AccountExtendedAttribute-programCode" >
   	<property name="name" value="extension.subFundProgram.programCode"/>
   </bean>
 
   <bean id="Account-extension-appropriationAccount-appropriationAccountNumber" parent="Account-extension-appropriationAccount-appropriationAccountNumber-parentBean"/>
-
   <bean id="Account-extension-appropriationAccount-appropriationAccountNumber-parentBean" abstract="true" parent="AccountExtendedAttribute-appropriationAccountNumber" >
   	<property name="name" value="extension.appropriationAccount.appropriationAccountNumber"/>
   </bean>
-	
+
+  <bean id="Account-extension-invoiceFrequency-invoiceFrequencyCode" parent="Account-extension-invoiceFrequency-invoiceFrequencyCode-parentBean"/>
+  <bean id="Account-extension-invoiceFrequency-invoiceFrequencyCode-parentBean" abstract="true" parent="AccountExtendedAttribute-invoiceFrequencyCode" >
+  	<property name="name" value="extension.invoiceFrequency.invoiceFrequencyCode"/>
+  </bean>
+
+  <bean id="Account-extension-invoiceType-invoiceTypeCode" parent="Account-extension-invoiceType-invoiceTypeCode-parentBean"/>
+  <bean id="Account-extension-invoiceType-invoiceTypeCode-parentBean" abstract="true" parent="AccountExtendedAttribute-invoiceTypeCode" >
+  	<property name="name" value="extension.invoiceType.invoiceTypeCode"/>
+  </bean>
+
+<bean id="Account-extension-everify" parent="Account-extension-everify-parentBean"/>
+  <bean id="Account-extension-everify-parentBean" abstract="true" parent="AccountExtendedAttribute-everify" >
+  	<property name="name" value="extension.everify"/>
+  </bean>
+
 
 
 <!-- Business Object Inquiry Definition -->

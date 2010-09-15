@@ -1,29 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd"> 
  
-<bean id="AccountExtendedAttribute" parent="AccountExtendedAttribute-parentBean"/> 
-<bean id="AccountExtendedAttribute-parentBean" abstract="true" parent="BusinessObjectEntry"> 
+  <bean id="AccountExtendedAttribute" parent="AccountExtendedAttribute-parentBean"/> 
+  <bean id="AccountExtendedAttribute-parentBean" abstract="true" parent="BusinessObjectEntry"> 
     <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute"/> 
     <property name="objectLabel" value="AccountExtendedAttribute"/> 
  
- <property name="attributes"> 
+ 	<property name="attributes"> 
       <list> 
             <ref bean="AccountExtendedAttribute-chartOfAccountsCode"/> 
             <ref bean="AccountExtendedAttribute-accountNumber"/> 
             <ref bean="AccountExtendedAttribute-subFundGroupCode"/>  
             <ref bean="AccountExtendedAttribute-programCode"/> 
             <ref bean="AccountExtendedAttribute-appropriationAccountNumber"/> 
+            <ref bean="AccountExtendedAttribute-invoiceFrequencyCode"/> 
+            <ref bean="AccountExtendedAttribute-invoiceTypeCode"/>
+            <ref bean="AccountExtendedAttribute-everify"/>
       </list> 
     </property> 
-   <property name="relationships">
+    <property name="relationships">
       <list>
       	<dd:relationship objectAttribute="subFundProgram" targetClass="edu.cornell.kfs.coa.businessobject.SubFundProgram">
             <dd:primitiveAttribute source="programCode" target="programCode"/>
-        <dd:primitiveAttribute source="subFundGroupCode" target="subFundGroupCode"/> 
+        	<dd:primitiveAttribute source="subFundGroupCode" target="subFundGroupCode"/> 
         </dd:relationship>
         <dd:relationship objectAttribute="appropriationAccount" targetClass="edu.cornell.kfs.coa.businessobject.AppropriationAccount">
             <dd:primitiveAttribute source="appropriationAccountNumber" target="appropriationAccountNumber"/>
             <dd:primitiveAttribute source="subFundGroupCode" target="subFundGroupCode"/> 
+        </dd:relationship>
+        <dd:relationship objectAttribute="invoiceFrequency" targetClass="edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency">
+            <dd:primitiveAttribute source="invoiceFrequencyCode" target="invoiceFrequencyCode"/>
+        </dd:relationship>
+        <dd:relationship objectAttribute="invoiceType" targetClass="edu.cornell.kfs.module.cg.businessobject.InvoiceType">
+            <dd:primitiveAttribute source="invoiceTypeCode" target="invoiceTypeCode"/>
         </dd:relationship>
        </list>  
       </property>        
@@ -38,6 +47,19 @@
     <dd:boAttributeRef id="AccountExtendedAttribute-programCode" parent="SubFundProgram-programCode"/>
      
     <dd:boAttributeRef id="AccountExtendedAttribute-appropriationAccountNumber" parent="AppropriationAccount-appropriationAccountNumber"/>
+    
+    <dd:boAttributeRef id="AccountExtendedAttribute-invoiceFrequencyCode" parent="InvoiceFrequency-invoiceFrequencyCode"/>
+    
+    <dd:boAttributeRef id="AccountExtendedAttribute-invoiceTypeCode" parent="InvoiceType-invoiceTypeCode"/>
  
-     
+  	<bean id="AccountExtendedAttribute-everify" parent="AttributeDefinition">
+  		<property name="name" value="everify"/>
+   		<property name="forceUppercase" value="false"/>
+    	<property name="label" value="eVerify Indicator"/>
+    	<property name="shortLabel" value="eVerify"/>
+    	<property name="maxLength" value="1"/>
+    	<property name="control" ref="CheckboxControl" />
+    	<property name="formatterClass" value="org.kuali.rice.kns.web.format.BooleanFormatter"/>
+  	</bean>
+    
 </beans> 

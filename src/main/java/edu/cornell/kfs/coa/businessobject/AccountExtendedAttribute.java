@@ -17,6 +17,9 @@ package edu.cornell.kfs.coa.businessobject;
 
 import org.kuali.rice.kns.bo.PersistableBusinessObjectExtensionBase;
 
+import edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency;
+import edu.cornell.kfs.module.cg.businessobject.InvoiceType;
+
 public class AccountExtendedAttribute extends PersistableBusinessObjectExtensionBase {
 
     /**
@@ -29,9 +32,15 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
     private String programCode;
     private String appropriationAccountNumber;
     private String subFundGroupCode;
-
+    private String invoiceFrequencyCode;
+    private String invoiceTypeCode;
+    private boolean everify;
+    
 	private SubFundProgram subFundProgram;
     private AppropriationAccount appropriationAccount;
+    private InvoiceFrequency invoiceFrequency;
+    private InvoiceType invoiceType;
+    
     
     public AccountExtendedAttribute() {
         
@@ -99,6 +108,34 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
 	}
 
 	/**
+	 * @return the invoiceFrequency
+	 */
+	public InvoiceFrequency getInvoiceFrequency() {
+		return invoiceFrequency;
+	}
+
+	/**
+	 * @param invoiceFrequency the invoiceFrequency to set
+	 */
+	public void setInvoiceFrequency(InvoiceFrequency invoiceFrequency) {
+		this.invoiceFrequency = invoiceFrequency;
+	}
+
+	/**
+	 * @return the invoiceType
+	 */
+	public InvoiceType getInvoiceType() {
+		return invoiceType;
+	}
+
+	/**
+	 * @param invoiceType the invoiceType to set
+	 */
+	public void setInvoiceType(InvoiceType invoiceType) {
+		this.invoiceType = invoiceType;
+	}
+
+	/**
 	 * @return the programCode
 	 */
 	public String getProgramCode() {
@@ -142,5 +179,46 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
 		this.subFundGroupCode = subFundGroupCode;
 	}
 
+	/**
+	 * @return the invoiceFrequencyCode
+	 */
+	public String getInvoiceFrequencyCode() {
+		return invoiceFrequencyCode;
+	}
+
+	/**
+	 * @param invoiceFrequencyCode the invoiceFrequencyCode to set
+	 */
+	public void setInvoiceFrequencyCode(String invoiceFrequencyCode) {
+		this.invoiceFrequencyCode = invoiceFrequencyCode;
+	}
+
+	/**
+	 * @return the invoiceTypeCode
+	 */
+	public String getInvoiceTypeCode() {
+		return invoiceTypeCode;
+	}
+
+	/**
+	 * @param invoiceTypeCode the invoiceTypeCode to set
+	 */
+	public void setInvoiceTypeCode(String invoiceTypeCode) {
+		this.invoiceTypeCode = invoiceTypeCode;
+	}
+
+	/**
+	 * @return the everify
+	 */
+	public boolean isEverify() {
+		return everify;
+	}
+
+	/**
+	 * @param everify the everify to set
+	 */
+	public void setEverify(boolean everify) {
+		this.everify = everify;
+	}
 
 }

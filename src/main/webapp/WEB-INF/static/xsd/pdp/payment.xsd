@@ -41,7 +41,7 @@
     <xsd:element name="payee_name" type="kfs:oneToFortyCharType"/>
     <xsd:element name="payee_own_cd" type="kfs:twoAlphaType"/>
     <xsd:element name="customer_institution_identifier" type="kfs:zeroToThirtyCharType"/>
-    <xsd:element name="address1" type="kfs:oneToFiftyFiveCharType"/>
+    <xsd:element name="address1" type="kfs:zeroToFiftyFiveCharType"/>
     <xsd:element name="address2" type="kfs:zeroToFiftyFiveCharType"/>
     <xsd:element name="address3" type="kfs:zeroToFiftyFiveCharType"/>
     <xsd:element name="address4" type="kfs:zeroToFiftyFiveCharType"/>
@@ -134,7 +134,7 @@
                 <xsd:element maxOccurs="1" minOccurs="0" ref="payee_id"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="payee_own_cd"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="customer_institution_identifier"/>
-                <xsd:element ref="address1"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="address1"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="address2"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="address3"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="address4"/>
