@@ -44,7 +44,9 @@
         <field-descriptor name="subFundGroupCode" column="SUB_FUND_GRP_CD" jdbc-type="VARCHAR" />
         <field-descriptor name="programCode" column="PROGRAM_CD" jdbc-type="VARCHAR" />
         <field-descriptor name="appropriationAccountNumber" column="APPR_ACCT_NBR" jdbc-type="VARCHAR" /> 
-        <field-descriptor name="eVerify" column="E_VERIFY_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+        <field-descriptor name="invoiceFrequencyCode" column="INV_FREQ_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="invoiceTypeCode" column="INV_TYPE_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="everify" column="E_VERIFY_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
         <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
         <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
         
@@ -56,6 +58,14 @@
     	<reference-descriptor name="appropriationAccount" class-ref="edu.cornell.kfs.coa.businessobject.AppropriationAccount" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
         	<foreignkey field-ref="appropriationAccountNumber" />
         	<foreignkey field-ref="subFundGroupCode" />
+    	</reference-descriptor>
+    	
+    	<reference-descriptor name="invoiceFrequency" class-ref="edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+      	  <foreignkey field-ref="invoiceFrequencyCode" />
+    	</reference-descriptor>
+
+    	<reference-descriptor name="invoiceType" class-ref="edu.cornell.kfs.module.cg.businessobject.InvoiceType" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+        	<foreignkey field-ref="invoiceTypeCode" />
     	</reference-descriptor>
         
     </class-descriptor>
