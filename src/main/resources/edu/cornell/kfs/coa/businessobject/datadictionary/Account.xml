@@ -153,9 +153,8 @@
         <dd:relationship objectAttribute="extension" targetClass="edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute">
             <dd:primitiveAttribute source="chartOfAccountsCode" target="chartOfAccountsCode"/>
             <dd:primitiveAttribute source="accountNumber" target="accountNumber"/>
-            <dd:primitiveAttribute source="subFundGroupCode" target="subFundGroupCode"/> 
-        </dd:relationship>        
-        
+            <dd:primitiveAttribute source="subFundGroupCode" target="subFundGroupCode"/>
+        </dd:relationship>   
         
       </list>
     </property>
@@ -792,11 +791,17 @@
   <bean id="Account-extension-invoiceFrequency-invoiceFrequencyCode" parent="Account-extension-invoiceFrequency-invoiceFrequencyCode-parentBean"/>
   <bean id="Account-extension-invoiceFrequency-invoiceFrequencyCode-parentBean" abstract="true" parent="AccountExtendedAttribute-invoiceFrequencyCode" >
   	<property name="name" value="extension.invoiceFrequency.invoiceFrequencyCode"/>
+  	<property name="control">
+      <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.module.cg.businessobject.options.InvoiceFrequencyValuesFinder" p:includeKeyInLabel="false"/>
+    </property>
   </bean>
 
   <bean id="Account-extension-invoiceType-invoiceTypeCode" parent="Account-extension-invoiceType-invoiceTypeCode-parentBean"/>
   <bean id="Account-extension-invoiceType-invoiceTypeCode-parentBean" abstract="true" parent="AccountExtendedAttribute-invoiceTypeCode" >
   	<property name="name" value="extension.invoiceType.invoiceTypeCode"/>
+  	<property name="control">
+      <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.module.cg.businessobject.options.InvoiceTypeValuesFinder" p:includeKeyInLabel="false"/>
+    </property>
   </bean>
 
 <bean id="Account-extension-everify" parent="Account-extension-everify-parentBean"/>

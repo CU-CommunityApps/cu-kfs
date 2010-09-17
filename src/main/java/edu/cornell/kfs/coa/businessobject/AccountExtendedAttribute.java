@@ -148,6 +148,7 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
 	 */
 	public void setProgramCode(String programCode) {
 		this.programCode = programCode;
+		subFundProgram.setProgramCode(programCode);
 	}
 
 
@@ -164,6 +165,7 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
 	 */
 	public void setAppropriationAccountNumber(String appropriationAccountNumber) {
 		this.appropriationAccountNumber = appropriationAccountNumber;
+		appropriationAccount.setAppropriationAccountNumber(appropriationAccountNumber);
 	}
 	/**
 	 * @return the subFundGroupCode
@@ -177,6 +179,7 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
 	 */
 	public void setSubFundGroupCode(String subFundGroupCode) {
 		this.subFundGroupCode = subFundGroupCode;
+		
 	}
 
 	/**
@@ -191,6 +194,7 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
 	 */
 	public void setInvoiceFrequencyCode(String invoiceFrequencyCode) {
 		this.invoiceFrequencyCode = invoiceFrequencyCode;
+		invoiceFrequency.setInvoiceFrequencyCode(invoiceFrequencyCode);
 	}
 
 	/**
@@ -205,6 +209,7 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
 	 */
 	public void setInvoiceTypeCode(String invoiceTypeCode) {
 		this.invoiceTypeCode = invoiceTypeCode;
+		invoiceType.setInvoiceTypeCode(invoiceTypeCode);
 	}
 
 	/**
