@@ -48,6 +48,7 @@ import org.kuali.kfs.vnd.businessobject.VendorCustomerNumber;
 import org.kuali.kfs.vnd.businessobject.VendorDefaultAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
+import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.businessobject.VendorType;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
@@ -197,6 +198,13 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         boolean valid = processValidation(document);
         
         valid &=checkW9ReceivedIndicatorAndDate(document);
+        valid &=checkGeneralLiabilityAmountAndExpiration(document);
+        valid &=checkAutoLiabilityAmountAndExpiration(document);
+        valid &=checkWorkmansCompAmountAndExpiration(document);
+        valid &=checkUmbrellaPolicyAmountAndExpiration(document);
+        valid &=checkHealthLicenseAndExpiration(document);
+        valid &=checkSupplierDiversityExpirationDate(document);
+        valid &=checkInsuranceRequired(document);
         
         return valid & super.processCustomRouteDocumentBusinessRules(document);
     }
@@ -1312,5 +1320,148 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 		return success;
 	}
 
+	protected boolean checkGeneralLiabilityAmountAndExpiration(MaintenanceDocument document) {
+		boolean success = true;
+		
+		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		
+		if (vendorDetail.getGeneralLiabilityCoverageAmount()!=null && vendorDetail.getGeneralLiabilityExpiration()==null) {
+			success = false;
+			putFieldError("generalLiabilityExpiration", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_GENERAL_LIABILITY_EXPR_DATE_NEEDED);
+		}
+		if (vendorDetail.getGeneralLiabilityCoverageAmount()==null && vendorDetail.getGeneralLiabilityExpiration()!=null) {
+			success = false;
+			putFieldError("generalLiabilityCoverageAmount", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_GENERAL_LIABILITY_COVERAGE_NEEDED);
+		}		
+		return success;
+	}
     
+	protected boolean checkAutoLiabilityAmountAndExpiration(MaintenanceDocument document) {
+		boolean success = true;
+		
+		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		
+		if (vendorDetail.getAutomobileLiabilityCoverageAmount()!=null && vendorDetail.getAutomobileLiabilityExpiration()==null) {
+			success = false;
+			putFieldError("automobileLiabilityExpiration", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_AUTO_EXPR_NEEDED);
+		}
+		if (vendorDetail.getAutomobileLiabilityCoverageAmount()==null && vendorDetail.getAutomobileLiabilityExpiration()!=null) {
+			success = false;
+			putFieldError("automobileLiabilityCoverageAmount", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_AUTO_COVERAGE_NEEDED);
+		}		
+		
+		return success;
+	}
+
+	protected boolean checkWorkmansCompAmountAndExpiration(MaintenanceDocument document) {
+		boolean success = true;
+
+		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+
+		if (vendorDetail.getWorkmansCompCoverageAmount()!=null && vendorDetail.getWorkmansCompExpiration()==null) {
+			success = false;
+			putFieldError("workmansCompExpiration", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_WC_EXPR_NEEDED);
+		}
+		if (vendorDetail.getWorkmansCompCoverageAmount()==null && vendorDetail.getWorkmansCompExpiration()!=null) {
+			success = false;
+			putFieldError("workmansCompCoverageAmount", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_WC_COVERAGE_NEEDED);
+		}		
+				
+		return success;
+	}
+
+	protected boolean checkUmbrellaPolicyAmountAndExpiration(MaintenanceDocument document) {
+		boolean success = true;
+		
+		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+
+		if (vendorDetail.getExcessLiabilityUmbrellaAmount()!=null && vendorDetail.getExcessLiabilityUmbExpiration()==null) {
+			success = false;
+			putFieldError("excessLiabilityUmbrellaAmount", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_UMB_EXPR_NEEDED);
+		}
+		if (vendorDetail.getExcessLiabilityUmbrellaAmount()==null && vendorDetail.getExcessLiabilityUmbExpiration()!=null) {
+			success = false;
+			putFieldError("excessLiabilityUmbExpiration", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_UMB_COVERAGE_NEEDED);
+		}		
+		
+		
+		return success;
+	}
+
+	protected boolean checkHealthLicenseAndExpiration(MaintenanceDocument document) {
+		boolean success = true;
+		
+		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+
+		Boolean offSiteCateringLicenseRequired = vendorDetail.getHealthOffSiteCateringLicenseReq();
+		
+		if (offSiteCateringLicenseRequired == null) {
+			offSiteCateringLicenseRequired = false;
+		}
+		
+		if ( offSiteCateringLicenseRequired && vendorDetail.getHealthOffSiteLicenseExpirationDate()==null) {
+			success = false;
+			putFieldError("healthOffSiteLicenseExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_HEALTH_LICENSE_EXPR_NEEDED);
+		}
+		if ( !offSiteCateringLicenseRequired && vendorDetail.getHealthOffSiteLicenseExpirationDate()!=null) {
+			success = false;
+			putFieldError("healthOffSiteCateringLicenseReq", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_HEALTH_LICENSE_NEEDED);
+		}				
+		
+		return success;
+	}
+
+	protected boolean checkSupplierDiversityExpirationDate(MaintenanceDocument document) {
+		boolean success = true;
+		
+		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		VendorHeader vendorHeader = vendorDetail.getVendorHeader();
+		List<VendorSupplierDiversity> vendorSupplierDiversities = vendorHeader.getVendorSupplierDiversities();
+		Date theDate = new Date();
+				
+		if (vendorSupplierDiversities.size() > 0)
+		{
+			int i = 0;
+			for(VendorSupplierDiversity vendor : vendorSupplierDiversities) {
+				if (vendor.getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
+					success = false;
+					putFieldError("vendorHeader.vendorSupplierDiversities[" + i + "].vendorSupplierDiversityExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
+				}
+				i++;
+			}
+		}
+		
+		return success;
+	}
+	
+	protected boolean checkInsuranceRequired(MaintenanceDocument document) {
+		boolean success = true;
+		boolean dataEntered = false;
+		
+		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+
+		if (vendorDetail.isInsuranceRequiredIndicator())
+		{
+			dataEntered |= (vendorDetail.getAutomobileLiabilityCoverageAmount()==null?false:true);
+			dataEntered |= (vendorDetail.getAutomobileLiabilityExpiration()==null?false:true);
+			dataEntered |= (vendorDetail.getCornellAdditionalInsuredIndicator()==null?false:true);
+			dataEntered |= (vendorDetail.getExcessLiabilityUmbExpiration()==null?false:true);
+			dataEntered |= (vendorDetail.getExcessLiabilityUmbrellaAmount()==null?false:true);
+			dataEntered |= (vendorDetail.getGeneralLiabilityCoverageAmount()==null?false:true);
+			dataEntered |= (vendorDetail.getGeneralLiabilityExpiration()==null?false:true);
+			dataEntered |= (vendorDetail.getWorkmansCompCoverageAmount()==null?false:true);
+			dataEntered |= (vendorDetail.getWorkmansCompExpiration()==null?false:true);
+			dataEntered |= (vendorDetail.getHealthOffSiteCateringLicenseReq()==null?false:true);
+			dataEntered |= (vendorDetail.getHealthOffSiteLicenseExpirationDate()==null?false:true);
+			dataEntered |= (vendorDetail.getInsuranceNotes()==null?false:true);
+		}
+		
+		if (!dataEntered) {
+			putFieldError("insuranceRequiredIndicator", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_INSURANCE_REQUIRED_USED_WO_DATA);
+			return false;
+		}
+		
+		return success;
+	}
+	
 }

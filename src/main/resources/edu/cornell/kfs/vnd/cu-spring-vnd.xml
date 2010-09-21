@@ -13,12 +13,11 @@
 		<property name="packagePrefixes">
             <list>
                 <value>edu.cornell.kfs.vnd</value>
+                <value>org.kuali.kfs.vnd</value>                
             </list>
         </property>
 		<property name="dataDictionaryPackages">
 			<list>
-                <value>edu/cornell/kfs/vnd/document/datadictionary</value>
-                <value>edu/cornell/kfs/vnd/businessobject/datadictionary</value>
                 <value>org/kuali/kfs/vnd/document/datadictionary</value>
                 <value>org/kuali/kfs/vnd/businessobject/datadictionary</value>                
 			</list>

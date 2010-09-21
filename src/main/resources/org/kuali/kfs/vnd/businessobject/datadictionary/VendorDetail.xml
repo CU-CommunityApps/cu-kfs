@@ -74,6 +74,7 @@
         <ref bean="VendorDetail-vendorHeader.vendorForeignIndicator"/>
         <ref bean="VendorDetail-vendorHeader.vendorTypeCode"/>
         <ref bean="VendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityCode"/>
+        <ref bean="VendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate"/>
         <ref bean="VendorDetail-vendorShippingSpecialConditions.vendorShippingSpecialConditionCode"/>
         <ref bean="VendorDetail-vendorAliases.vendorAliasName"/>
         <ref bean="VendorDetail-vendorPhoneNumbers.vendorPhoneTypeCode"/>
@@ -86,6 +87,21 @@
         <ref bean="VendorDetail-activeIndicator"/>
         <ref bean="VendorDetail-taxableIndicator"/>
         <ref bean="VendorDetail-vendorParentName"/>
+        <ref bean="VendorDetail-insuranceRequiredIndicator"/>
+        <ref bean="VendorDetail-insuranceRequirementsCompleteIndicator"/>
+        <ref bean="VendorDetail-cornellAdditionalInsuredIndicator"/>
+        <ref bean="VendorDetail-generalLiabilityCoverageAmount"/>
+        <ref bean="VendorDetail-generalLiabilityExpiration"/>
+        <ref bean="VendorDetail-automobileLiabilityCoverageAmount"/>
+        <ref bean="VendorDetail-automobileLiabilityExpiration"/>
+        <ref bean="VendorDetail-workmansCompCoverageAmount"/>
+        <ref bean="VendorDetail-workmansCompExpiration"/>
+        <ref bean="VendorDetail-excessLiabilityUmbrellaAmount"/>
+        <ref bean="VendorDetail-excessLiabilityUmbExpiration"/>
+        <ref bean="VendorDetail-healthOffSiteCateringLicenseReq"/>
+        <ref bean="VendorDetail-healthOffSiteLicenseExpirationDate"/>
+        <ref bean="VendorDetail-insuranceNotes"/>
+        <ref bean="VendorDetail-merchantNotes"/>   
       </list>
     </property>
     <property name="collections">
@@ -98,6 +114,7 @@
         <bean parent="CollectionDefinition" p:name="vendorAliases" p:label="Search Alias" p:shortLabel="Search Alias" p:elementLabel="Search Alias"/>
         <bean parent="CollectionDefinition" p:name="boNotes" p:label="Notes" p:shortLabel="Notes" p:elementLabel="Notes"/>
         <bean parent="CollectionDefinition" p:name="vendorCommodities" p:label="Commodity Codes" p:shortLabel="Commodity Codes"/>
+        <bean parent="CollectionDefinition" p:name="vendorCreditCardMerchants" p:label="Credit Card Merchant" p:elementLabel="Credit Card Merchant" />
       </list>
     </property>
     <property name="relationships">
@@ -495,6 +512,12 @@
   <bean id="VendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityCode-parentBean" abstract="true" parent="VendorSupplierDiversity-vendorSupplierDiversityCode">
     <property name="name" value="vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityCode"/>
   </bean>
+  <bean id="VendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate" parent="VendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate-parentBean"/>
+
+  <bean id="VendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate-parentBean" abstract="true" parent="VendorSupplierDiversity-vendorSupplierDiversityExpirationDate">
+    <property name="name" value="vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate"/>
+  </bean>
+  
   <bean id="VendorDetail-vendorShippingSpecialConditions.vendorShippingSpecialConditionCode" parent="VendorDetail-vendorShippingSpecialConditions.vendorShippingSpecialConditionCode-parentBean"/>
 
   <bean id="VendorDetail-vendorShippingSpecialConditions.vendorShippingSpecialConditionCode-parentBean" abstract="true" parent="VendorShippingSpecialCondition-vendorShippingSpecialConditionCode">
@@ -567,6 +590,169 @@
       <bean parent="TextControlDefinition" p:size="45"/>
     </property>
   </bean>
+  
+  <bean id="VendorDetail-insuranceRequiredIndicator" parent="VendorDetail-insuranceRequiredIndicator-parentBean"/>
+
+  <bean id="VendorDetail-insuranceRequiredIndicator-parentBean" abstract="true" parent="GenericAttributes-genericBoolean">
+    <property name="name" value="insuranceRequiredIndicator"/>
+    <property name="label" value="Insurance Required"/>
+    <property name="shortLabel" value="Insurance Required"/>
+  </bean>
+
+  <bean id="VendorDetail-insuranceRequirementsCompleteIndicator" parent="VendorDetail-insuranceRequirementsCompleteIndicator-parentBean"/>
+
+  <bean id="VendorDetail-insuranceRequirementsCompleteIndicator-parentBean" abstract="true" parent="VendorGenericAttributes-yesNoWithBlankIndicator">
+    <property name="name" value="insuranceRequirementsCompleteIndicator"/>
+    <property name="label" value="Insurance Requirements Complete"/>
+    <property name="shortLabel" value="Insurance Requirements Complete"/>
+  </bean>
+
+  <bean id="VendorDetail-cornellAdditionalInsuredIndicator" parent="VendorDetail-cornellAdditionalInsuredIndicator-parentBean"/>
+
+  <bean id="VendorDetail-cornellAdditionalInsuredIndicator-parentBean" abstract="true" parent="VendorGenericAttributes-yesNoWithBlankIndicator">
+    <property name="name" value="cornellAdditionalInsuredIndicator"/>
+    <property name="label" value="Cornell Additional Insured"/>
+    <property name="shortLabel" value="Cornell Additional Insured"/>
+  </bean>
+
+  <bean id="VendorDetail-generalLiabilityCoverageAmount" parent="VendorDetail-generalLiabilityCoverageAmount-parentBean"/>
+
+  <bean id="VendorDetail-generalLiabilityCoverageAmount-parentBean" abstract="true" parent="GenericAttributes-genericAmount">
+    <property name="name" value="generalLiabilityCoverageAmount"/>
+    <property name="label" value="General Liability Coverage Amount"/>
+    <property name="shortLabel" value="General Liability Coverage Amount"/>
+  </bean>
+
+  <bean id="VendorDetail-generalLiabilityExpiration" parent="VendorDetail-generalLiabilityExpiration-parentBean"/>
+
+  <bean id="VendorDetail-generalLiabilityExpiration-parentBean" abstract="true" parent="GenericAttributes-genericDate">
+    <property name="name" value="generalLiabilityExpiration"/>
+    <property name="label" value="General Liability Expiration"/>
+    <property name="shortLabel" value="General Liability Expiration"/>
+  </bean>
+
+  <bean id="VendorDetail-automobileLiabilityCoverageAmount" parent="VendorDetail-automobileLiabilityCoverageAmount-parentBean"/>
+
+  <bean id="VendorDetail-automobileLiabilityCoverageAmount-parentBean" abstract="true" parent="GenericAttributes-genericAmount">
+    <property name="name" value="automobileLiabilityCoverageAmount"/>
+    <property name="label" value="Automobile Liability Coverage Amount"/>
+    <property name="shortLabel" value="Automobile Liability Coverage Amount"/>
+  </bean>
+
+  <bean id="VendorDetail-automobileLiabilityExpiration" parent="VendorDetail-automobileLiabilityExpiration-parentBean"/>
+
+  <bean id="VendorDetail-automobileLiabilityExpiration-parentBean" abstract="true" parent="GenericAttributes-genericDate">
+    <property name="name" value="automobileLiabilityExpiration"/>
+    <property name="label" value="Automobile Liability Expiration"/>
+    <property name="shortLabel" value="Automobile Liability Expiration"/>
+  </bean>
+
+  <bean id="VendorDetail-workmansCompCoverageAmount" parent="VendorDetail-workmansCompCoverageAmount-parentBean"/>
+
+  <bean id="VendorDetail-workmansCompCoverageAmount-parentBean" abstract="true" parent="GenericAttributes-genericAmount">
+    <property name="name" value="workmansCompCoverageAmount"/>
+    <property name="label" value="Workman's Comp Coverage Amount"/>
+    <property name="shortLabel" value="Workman's Comp Coverage Amount"/>
+  </bean>
+
+  <bean id="VendorDetail-workmansCompExpiration" parent="VendorDetail-workmansCompExpiration-parentBean"/>
+
+  <bean id="VendorDetail-workmansCompExpiration-parentBean" abstract="true" parent="GenericAttributes-genericDate">
+    <property name="name" value="workmansCompExpiration"/>
+    <property name="label" value="Workman's Comp Expiration"/>
+    <property name="shortLabel" value="Workman's Comp Expiration"/>
+  </bean>
+  
+  <bean id="VendorDetail-excessLiabilityUmbrellaAmount" parent="VendorDetail-excessLiabilityUmbrellaAmount-parentBean"/>
+
+  <bean id="VendorDetail-excessLiabilityUmbrellaAmount-parentBean" abstract="true" parent="GenericAttributes-genericAmount">
+    <property name="name" value="excessLiabilityUmbrellaAmount"/>
+    <property name="label" value="Excess Liability Umbrella Policy Amount"/>
+    <property name="shortLabel" value="Excess Liability Umbrella Policy Amount"/>
+  </bean>
+  
+  <bean id="VendorDetail-excessLiabilityUmbExpiration" parent="VendorDetail-excessLiabilityUmbExpiration-parentBean"/>
+
+  <bean id="VendorDetail-excessLiabilityUmbExpiration-parentBean" abstract="true" parent="GenericAttributes-genericDate">
+    <property name="name" value="excessLiabilityUmbExpiration"/>
+    <property name="label" value="Excess Liability Umbrella Policy Expiration"/>
+    <property name="shortLabel" value="Excess Liability Umbrella Policy Expiration"/>
+  </bean>
+  
+  <bean id="VendorDetail-healthOffSiteCateringLicenseReq" parent="VendorDetail-healthOffSiteCateringLicenseReq-parentBean"/>
+
+  <bean id="VendorDetail-healthOffSiteCateringLicenseReq-parentBean" abstract="true" parent="VendorGenericAttributes-yesNoWithBlankIndicator">
+    <property name="name" value="healthOffSiteCateringLicenseReq"/>
+    <property name="label" value="Health Department Off-Site Catering License Required"/>
+    <property name="shortLabel" value="Health Department Off-Site Catering License Required"/>
+  </bean>
+
+  <bean id="VendorDetail-healthOffSiteLicenseExpirationDate" parent="VendorDetail-healthOffSiteLicenseExpirationDate-parentBean"/>
+
+  <bean id="VendorDetail-healthOffSiteLicenseExpirationDate-parentBean" abstract="true" parent="GenericAttributes-genericDate">
+    <property name="name" value="healthOffSiteLicenseExpirationDate"/>
+    <property name="label" value="Health Department License Expiration"/>
+    <property name="shortLabel" value="Health Department License Expiration"/>
+  </bean>
+
+  <bean id="VendorDetail-insuranceNotes" parent="VendorDetail-insuranceNotes-parentBean"/>
+
+  <bean id="VendorDetail-insuranceNotes-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="insuranceNotes"/>
+    <property name="label" value="Notes"/>
+    <property name="shortLabel" value="Notes"/>
+    <property name="maxLength" value="240"/>
+    <property name="validationPattern">
+      <ref bean="AnyCharacterWithWhitespaceValidation" />
+    </property>
+    <property name="control">
+      <bean parent="TextareaControlDefinition" p:rows="4" p:cols="60"/>
+    </property>
+  </bean>
+  
+  <bean id="VendorDetail-merchantNotes" parent="VendorDetail-merchantNotes-parentBean"/>
+
+  <bean id="VendorDetail-merchantNotes-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="merchantNotes"/>
+    <property name="label" value="Notes"/>
+    <property name="shortLabel" value="Notes"/>
+    <property name="maxLength" value="240"/>
+    <property name="validationPattern">
+      <ref bean="AnyCharacterWithWhitespaceValidation" />
+    </property>
+    <property name="control">
+      <bean parent="TextareaControlDefinition" p:rows="4" p:cols="60"/>
+    </property>
+  </bean>
+  
+  
+  <bean id="VendorDetail-vendorCreditCardMerchants.creditMerchantName" parent="VendorDetail-vendorCreditCardMerchants.creditMerchantName-parentBean"/>
+
+  <bean id="VendorDetail-vendorCreditCardMerchants.creditMerchantName-parentBean" abstract="true" parent="VendorCreditCardMerchant-creditMerchantName">
+    <property name="name" value="vendorCreditCardMerchants.creditMerchantName"/>
+  </bean>
+  <bean id="VendorDetail-vendorCreditCardMerchants.merchantCategoryCodeOne" parent="VendorDetail-vendorCreditCardMerchants.merchantCategoryCodeOne-parentBean"/>
+
+  <bean id="VendorDetail-vendorCreditCardMerchants.merchantCategoryCodeOne-parentBean" abstract="true" parent="VendorCreditCardMerchant-merchantCategoryCodeOne">
+    <property name="name" value="vendorCreditCardMerchants.merchantCategoryCodeOne"/>
+  </bean>
+  <bean id="VendorDetail-vendorCreditCardMerchants.merchantCategoryCodeTwo" parent="VendorDetail-vendorCreditCardMerchants.merchantCategoryCodeTwo-parentBean"/>
+
+  <bean id="VendorDetail-vendorCreditCardMerchants.merchantCategoryCodeTwo-parentBean" abstract="true" parent="VendorCreditCardMerchant-merchantCategoryCodeTwo">
+    <property name="name" value="vendorCreditCardMerchants.merchantCategoryCodeTwo"/>
+  </bean>
+  <bean id="VendorDetail-vendorCreditCardMerchants.merchantCategoryCodeThree" parent="VendorDetail-vendorCreditCardMerchants.merchantCategoryCodeThree-parentBean"/>
+
+  <bean id="VendorDetail-vendorCreditCardMerchants.merchantCategoryCodeThree-parentBean" abstract="true" parent="VendorCreditCardMerchant-merchantCategoryCodeThree">
+    <property name="name" value="vendorCreditCardMerchants.merchantCategoryCodeThree"/>
+  </bean>
+  <bean id="VendorDetail-vendorCreditCardMerchants.merchantCategoryCodeFour" parent="VendorDetail-vendorCreditCardMerchants.merchantCategoryCodeFour-parentBean"/>
+
+  <bean id="VendorDetail-vendorCreditCardMerchants.merchantCategoryCodeFour-parentBean" abstract="true" parent="VendorCreditCardMerchant-merchantCategoryCodeFour">
+    <property name="name" value="vendorCreditCardMerchants.merchantCategoryCodeFour"/>
+  </bean>
+                                                             
+  
   
 <!-- Business Object Inquiry Definition -->
 
