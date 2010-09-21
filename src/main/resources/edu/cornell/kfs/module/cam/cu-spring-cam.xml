@@ -8,7 +8,7 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-<bean id="cu-cam" parent="coaModuleConfiguration-parentBean">
+<bean id="cu-cam" parent="camModuleConfiguration-parentBean">
 		
 		<property name="packagePrefixes">
             <list>
