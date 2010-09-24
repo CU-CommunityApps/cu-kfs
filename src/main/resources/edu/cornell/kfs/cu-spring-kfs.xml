@@ -7,8 +7,8 @@
   <import resource="coa/cu-spring-coa.xml" />
  <!--  <import resource="vnd/cu-spring-vnd.xml" />  -->
   <import resource="module/cam/cu-spring-cam.xml" />
+  <import resource="sys/cu-spring-sys.xml" />
   <import resource="fp/cu-spring-fp.xml" />
   <import resource="module/cg/cu-spring-cg.xml" />
-
 
 </beans>
