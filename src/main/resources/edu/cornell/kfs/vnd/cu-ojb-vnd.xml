@@ -15,7 +15,7 @@
 -->
 <descriptor-repository version="1.0">
 
-<class-descriptor class="org.kuali.kfs.vnd.businessobject.VendorCreditCardMerchant" table="PUR_VNDR_CC_MERCHANT_T">
+<class-descriptor class="org.kuali.kfs.vnd.businessobject.VendorCreditCardMerchant" table="PUR_VNDR_CC_MERCHANT_TC">
     <field-descriptor name="vendorHeaderGeneratedIdentifier" column="VNDR_HDR_GNRTD_ID" jdbc-type="INTEGER" primarykey="true" index="true"/>
 	<field-descriptor name="vendorDetailAssignedIdentifier" column="VNDR_DTL_ASND_ID" jdbc-type="INTEGER" primarykey="true" index="true"/>
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
@@ -112,19 +112,19 @@
     <field-descriptor name="vendorFirstLastNameIndicator" column="VNDR_1ST_LST_NM_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>
     <field-descriptor name="taxableIndicator" column="COLLECT_TAX_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>
     
-    <field-descriptor name="insuranceRequiredIndicator" column="INSURANCE_REQUIRED_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>
-    <field-descriptor name="insuranceRequirementsCompleteIndicator" column="INSURANCE_REQ_COMPLETE_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>
+    <field-descriptor name="insuranceRequiredIndicator" column="INS_REQ_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>
+    <field-descriptor name="insuranceRequirementsCompleteIndicator" column="INS_REQ_COMPLETE_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>
     <field-descriptor name="cornellAdditionalInsuredIndicator" column="CU_ADDITIONAL_INSURED_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>
-    <field-descriptor name="generalLiabilityCoverageAmount" column="GEN_LIABILITY_COVERAGE_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
-    <field-descriptor name="generalLiabilityExpiration" column="GEN_LIABILITY_EXPIRATION_DATE" jdbc-type="DATE"/>
-    <field-descriptor name="automobileLiabilityCoverageAmount" column="AUTOMOBILE_LIABILITY_COVERAGE_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
-    <field-descriptor name="automobileLiabilityExpiration" column="AUTOMOBILE_LIABILITY_EXPIRATION_DATE" jdbc-type="DATE"/>
+    <field-descriptor name="generalLiabilityCoverageAmount" column="GEN_LIAB_COVERAGE_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+    <field-descriptor name="generalLiabilityExpiration" column="GEN_LIAB_EXPR_DATE" jdbc-type="DATE"/>
+    <field-descriptor name="automobileLiabilityCoverageAmount" column="AUTO_LIAB_COVERAGE_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+    <field-descriptor name="automobileLiabilityExpiration" column="AUTO_LIAB_EXPR_DATE" jdbc-type="DATE"/>
     <field-descriptor name="workmansCompCoverageAmount" column="WRKMANS_COMP_COVERAGE_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
-    <field-descriptor name="workmansCompExpiration" column="WRKMANS_COMP_EXPIRATION_DATE" jdbc-type="DATE"/>
-    <field-descriptor name="excessLiabilityUmbrellaAmount" column="EXCESS_LIABILITY_UMB_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
-    <field-descriptor name="excessLiabilityUmbExpiration" column="EXCESS_LIAB_UMB_EXPIR_DATE" jdbc-type="DATE"/>
+    <field-descriptor name="workmansCompExpiration" column="WRKMANS_COMP_EXPR_DT" jdbc-type="DATE"/>
+    <field-descriptor name="excessLiabilityUmbrellaAmount" column="EXCESS_LIAB_UMB_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+    <field-descriptor name="excessLiabilityUmbExpiration" column="EXCESS_LIAB_UMB_EXPR_DATE" jdbc-type="DATE"/>
     <field-descriptor name="healthOffSiteCateringLicenseReq" column="HEALTH_OFF_SITE_LICENSE_REQ" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>
-    <field-descriptor name="healthOffSiteLicenseExpirationDate" column="HEALTH_LICENSE_EXPIRATION_DATE" jdbc-type="DATE"/>
+    <field-descriptor name="healthOffSiteLicenseExpirationDate" column="HEALTH_LICENSE_EXPR_DATE" jdbc-type="DATE"/>
     <field-descriptor name="insuranceNotes" column="INSURANCE_NOTES" jdbc-type="VARCHAR"/>
 	<field-descriptor name="merchantNotes" column="MERCHANT_NOTES" jdbc-type="VARCHAR"/>
     
