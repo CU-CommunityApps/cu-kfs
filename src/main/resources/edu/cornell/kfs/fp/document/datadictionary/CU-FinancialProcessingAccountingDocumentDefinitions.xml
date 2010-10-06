@@ -5,9 +5,8 @@
         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
 
-
+<!-- Distribution Of Income and Expense, InternalBilling, Transfer of funds-->
 	<bean id="CU-FinancialProcessing-SalesTax-Description-accountingLineView" parent="CU-FinancialProcessing-SalesTax-Description-accountingLineView-parent" />
-
 	<bean id="CU-FinancialProcessing-SalesTax-Description-accountingLineView-parent" parent="FinancialProcessing-SalesTax-accountingLineView-parent" abstract="true">
 		<property name="elements">
 			<list>
@@ -18,13 +17,13 @@
 							<ref bean="accountingInformation" />
 							<ref bean="salesTaxInformation" />
 							<bean parent="AccountingLineView-line">
-							<property name="elementName" value="lineDescription"/>
-							<property name="fields">
-								<list>
-									<bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
-								</list>
-							</property>
-						</bean>
+								<property name="elementName" value="lineDescription"/>
+								<property name="fields">
+									<list>
+										<bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
+									</list>
+								</property>
+							</bean>
 						</list>
 					</property>
 				</bean>
@@ -35,4 +34,305 @@
 		</property>
 	</bean>
 	
+	<!--  PreEncumbrance -->
+	<bean id="CU-PreEncumbranceDocument-Description-accountingLineView" parent="CU-PreEncumbranceDocument-Description-accountingLineView-parent"/>
+	  <bean id="CU-PreEncumbranceDocument-Description-accountingLineView-parent" parent="PreEncumbranceDocument-accountingLineView-parent" abstract="true">
+		<property name="elements">
+			<list>
+				<bean parent="AccountingLineView-sequenceNumber"/>
+				<bean parent="AccountingLineView-lines">
+					<property name="lines">
+						<list>
+							<ref bean="accountingInformation"/>
+							<bean parent="AccountingLineView-line">
+								<property name="elementName" value="lineDescription"/>
+								<property name="fields">
+									<list>
+										<bean parent="AccountingLineView-field" p:name="referenceNumber" p:required="true"/>
+										<bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
+									</list>
+								</property>
+								
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="AccountingLineView-field" p:name="amount" p:required="true"/>
+				<bean parent="AccountingLineView-actions"/>
+			</list>
+		</property>
+	  </bean>
+	  
+	
+
+  
+	
+	<bean id="CU-IndirectCostAdjustmentDocument-description-accountingLineView" parent="CU-IndirectCostAdjustmentDocument-description-accountingLineView-parent"/>
+	<bean id="CU-IndirectCostAdjustmentDocument-description-accountingLineView-parent" parent="IndirectCostAdjustmentDocument-accountingLineView" abstract="true">
+		<property name="elements">
+			<list>
+				<bean parent="AccountingLineView-sequenceNumber"/>
+				<bean parent="AccountingLineView-lines">
+					<property name="lines">
+						<list>
+							<ref bean="IndirectCostAdjustmentDocument-accountingInformation"/>
+							<bean parent="AccountingLineView-line">
+								<property name="elementName" value="lineDescription"/>
+								<property name="fields">
+									<list>
+										<bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
+									</list>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="AccountingLineView-field" p:name="amount" p:required="true"/>
+				<bean parent="AccountingLineView-actions"/>
+			</list>
+		</property>
+	</bean>
+	
+ 
+ 
+ <!--  Journal Voucher Document -->	
+  <bean id="CU-Voucher-Description-accountingLineView" parent="CU-Voucher-Description-accountingLineView-parent" />
+  <bean id="CU-Voucher-Description-accountingLineView-parent" parent="AccountingLineView" abstract="true">
+	  <property name="elements">
+		<list>
+			<bean parent="AccountingLineView-sequenceNumber" />
+			<bean parent="AccountingLineView-lines">
+				<property name="lines">
+					<list>
+						<ref bean="VoucherInformation"/>
+						<bean parent="AccountingLineView-line">
+								<property name="elementName" value="lineDescription"/>
+								<property name="fields">
+									<list>
+										<bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
+									</list>
+								</property>
+							</bean>
+					</list>
+				</property>
+			</bean>
+			<bean parent="AccountingLineView-field" p:name="amount"	p:required="true" />
+			<bean parent="AccountingLineView-actions" />
+		</list>
+	</property>
+  </bean>
+  <!--  Journal Voucher Document -->	
+ <bean id="CU-Voucher-Description-accountingLineView-withExtEncumbrance" parent="CU-Voucher-Description-accountingLineView-withExtEncumbrance-parent" />
+  <bean id="CU-Voucher-Description-accountingLineView-withExtEncumbrance-parent" parent="AccountingLineView" abstract="true">
+	  <property name="elements">
+		<list>
+			<bean parent="AccountingLineView-sequenceNumber" />
+			<bean parent="AccountingLineView-lines">
+				<property name="lines">
+					<list>
+						<ref bean="VoucherInformation"/>
+						<ref bean="ExtEncumbranceInformation"/>
+						<bean parent="AccountingLineView-line">
+								<property name="elementName" value="lineDescription"/>
+								<property name="fields">
+									<list>
+										<bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
+									</list>
+								</property>
+							</bean>
+					</list>
+				</property>
+			</bean>
+			<bean parent="AccountingLineView-field" p:name="amount"	p:required="true" />
+			<bean parent="AccountingLineView-actions" />
+		</list>
+	</property>
+  </bean>       
+ 
+ <!--  Journal Voucher Document --> 
+  <bean id="CU-Voucher-Description-accountingLineView-withDebitCredit" parent="CU-Voucher-Description-accountingLineView-withDebitCredit-parent" />
+  <bean id="CU-Voucher-Description-accountingLineView-withDebitCredit-parent" parent="AccountingLineView" abstract="true">
+	  <property name="elements">
+		<list>
+			<bean parent="AccountingLineView-sequenceNumber" />
+			<bean parent="AccountingLineView-lines">
+				<property name="lines">
+					<list>
+						<ref bean="VoucherInformation"/>
+						<bean parent="AccountingLineView-line">
+								<property name="elementName" value="lineDescription"/>
+								<property name="fields">
+									<list>
+										<bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
+									</list>
+								</property>
+							</bean>
+					</list>
+				</property>
+			</bean>
+			<bean parent="AccountingLineView-debitCreditAmountField"  p:name="amount" p:required="true"/>
+			<bean parent="AccountingLineView-actions" />
+		</list>
+	</property>
+  </bean>
+	<!--  Journal Voucher Document --> 
+  <bean id="CU-Voucher-Description-accountingLineView-withDebitCreditExtEncumbrance" parent="CU-Voucher-Description-accountingLineView-withDebitCreditExtEncumbrance-parent" />
+  <bean id="CU-Voucher-Description-accountingLineView-withDebitCreditExtEncumbrance-parent" parent="AccountingLineView" abstract="true">
+	  <property name="elements">
+		<list>
+			<bean parent="AccountingLineView-sequenceNumber" />
+			<bean parent="AccountingLineView-lines">
+				<property name="lines">
+					<list>
+						<ref bean="VoucherInformation"/>
+						<ref bean="ExtEncumbranceInformation"/>
+							<bean parent="AccountingLineView-line">
+								<property name="elementName" value="lineDescription"/>
+								<property name="fields">
+									<list>
+										<bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
+									</list>
+								</property>
+							</bean>
+					</list>
+				</property>
+			</bean>
+			<bean parent="AccountingLineView-debitCreditAmountField" p:name="amount" p:required="true" />
+			<bean parent="AccountingLineView-actions" />
+		</list>
+	</property>
+  </bean> 
+  
+  <!--  Auxiliary Voucher Document -->
+  <bean id="CU-AuxiliaryVoucher-Description-accountingLineView" parent="CU-AuxiliaryVoucher-Description-accountingLineView-parent"/>
+  
+  <bean id="CU-AuxiliaryVoucher-Description-accountingLineView-parent" parent="AuxiliaryVoucher-accountingLineView-parent" abstract="true">
+  	<property name="elements">
+		<list>
+			<bean parent="AccountingLineView-sequenceNumber"/>
+			
+			<bean parent="AccountingLineView-field" p:name="chartOfAccountsCode" p:required="true" p:webUILeaveFieldFunction="loadChartInfo" p:dynamicLabelProperty="chart.finChartOfAccountDescription"/>
+			<bean parent="AccountingLineView-field" p:name="accountNumber" p:required="true" p:webUILeaveFieldFunction="loadAccountInfo" p:dynamicLabelProperty="account.accountName">
+				<property name="overrideFields">
+					<list>
+						<bean parent="AccountingLineView-overrideField" p:name="accountExpiredOverride"/>
+						<bean parent="AccountingLineView-overrideField" p:name="nonFringeAccountOverride"/>
+					</list>
+				</property>
+			</bean>
+			<bean parent="AccountingLineView-field" p:name="subAccountNumber" p:webUILeaveFieldFunction="loadSubAccountInfo" p:dynamicLabelProperty="subAccount.subAccountName"/>
+			<bean parent="AccountingLineView-field" p:name="financialObjectCode" p:required="true" p:dynamicNameLabelGeneratorBeanName="objectCodeDynamicNameLabelGenerator">
+				<property name="overrideFields">
+					<list>
+						<bean parent="AccountingLineView-overrideField" p:name="objectBudgetOverride"/>
+					</list>
+				</property>
+			</bean>
+			<bean parent="AccountingLineView-field" p:name="financialSubObjectCode" p:webUILeaveFieldFunction="loadSubObjectInfo" p:dynamicLabelProperty="subObjectCode.financialSubObjectCodeName"/>
+			<bean parent="AccountingLineView-field" p:name="projectCode" p:webUILeaveFieldFunction="loadProjectInfo" p:dynamicLabelProperty="project.projectDescription"/>
+			<bean parent="AccountingLineView-field" p:name="organizationReferenceId"/>
+
+			<bean parent="AccountingLineView-debitCreditAmountField"/>
+			<bean parent="AccountingLineView-lines">
+				<property name="lines">
+					<list>
+							<bean parent="AccountingLineView-line">
+								<property name="elementName" value="lineDescription"/>
+								<property name="fields">
+									<list>
+										<bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
+									</list>
+								</property>
+							</bean>
+					</list>
+				</property>
+			</bean>
+
+			<bean parent="AccountingLineView-actions"/>
+		</list>
+	</property>
+  </bean>
+ 
+ 
+ 
+ 	<bean id="CU-BudgetAdjustment-Description-accountingLineView" parent="CU-BudgetAdjustment-Description-accountingLineView-parent"/>
+	
+	<bean id="CU-BudgetAdjustment-Description-accountingLineView-parent" parent="AccountingLineView" abstract="true">
+	  <property name="elements">
+	    <list>
+	      <bean parent="AccountingLineView-sequenceNumber"/>
+	      <bean parent="AccountingLineView-lines">
+	        <property name="lines">
+	          <list>
+	            <bean parent="AccountingLineView-line">
+	              <property name="elementName" value="accountingInformation"/>
+	              <property name="fields">
+	                <list>
+	                  <bean parent="AccountingLineView-field" p:name="chartOfAccountsCode" p:required="true" p:webUILeaveFieldFunction="loadChartInfo" p:dynamicLabelProperty="chart.finChartOfAccountDescription"/>
+	                  <bean parent="AccountingLineView-field" p:name="accountNumber" p:required="true" p:webUILeaveFieldFunction="loadAccountInfo" p:dynamicLabelProperty="account.accountName">
+	                  	<property name="overrideFields">
+	                  		<list>
+	                  			<bean parent="AccountingLineView-overrideField" p:name="accountExpiredOverride"/>
+	                  			<bean parent="AccountingLineView-overrideField" p:name="nonFringeAccountOverride"/>
+	                  		</list>
+	                  	</property>
+	                  </bean>
+	                  <bean parent="AccountingLineView-field" p:name="subAccountNumber" p:webUILeaveFieldFunction="loadSubAccountInfo" p:dynamicLabelProperty="subAccount.subAccountName"/>
+	                  <bean parent="AccountingLineView-field" p:name="financialObjectCode" p:required="true" p:dynamicNameLabelGeneratorBeanName="objectCodeDynamicNameLabelGenerator" p:overrideLookupParameters="document.postingYear:universityFiscalYear">
+	                  <!--  	<property name="overrideFields">
+	                  		<list>
+	                  			<bean parent="AccountingLineView-overrideField" p:name="objectBudgetOverride"/>
+	                  		</list>
+	                  	</property>-->
+	                  </bean>
+	                  <bean parent="AccountingLineView-field" p:name="financialSubObjectCode" p:webUILeaveFieldFunction="loadSubObjectInfo" p:dynamicLabelProperty="subObjectCode.financialSubObjectCodeName"/>
+	                  <bean parent="AccountingLineView-field" p:name="projectCode" p:webUILeaveFieldFunction="loadProjectInfo" p:dynamicLabelProperty="project.projectDescription"/>
+	                  <bean parent="AccountingLineView-field" p:name="organizationReferenceId"/>
+	                </list>
+	              </property>
+	            </bean>
+				<bean parent="AccountingLineView-line">
+					<property name="elementName" value="lineDescription"/>
+					<property name="fields">
+						<list>
+							<bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
+						</list>
+					</property>
+				</bean>
+	            
+	            <bean parent="AccountingLineView-showHideLines" p:label="Monthly Lines" p:name="monthlyLinesHideShow">
+	            	<property name="lines">
+	            		<list>
+	            			<bean parent="AccountingLineView-columns" p:columnCount="2" p:name="monthlyLines">
+	            				<property name="fields">
+	            					<list>
+	            						<bean parent="AccountingLineView-field" p:name="financialDocumentMonth1LineAmount"/>
+	            						<bean parent="AccountingLineView-field" p:name="financialDocumentMonth2LineAmount"/>
+	            						<bean parent="AccountingLineView-field" p:name="financialDocumentMonth3LineAmount"/>
+	            						<bean parent="AccountingLineView-field" p:name="financialDocumentMonth4LineAmount"/>
+	            						<bean parent="AccountingLineView-field" p:name="financialDocumentMonth5LineAmount"/>
+	            						<bean parent="AccountingLineView-field" p:name="financialDocumentMonth6LineAmount"/>
+	            						<bean parent="AccountingLineView-field" p:name="financialDocumentMonth7LineAmount"/>
+	            						<bean parent="AccountingLineView-field" p:name="financialDocumentMonth8LineAmount"/>
+	            						<bean parent="AccountingLineView-field" p:name="financialDocumentMonth9LineAmount"/>
+	            						<bean parent="AccountingLineView-field" p:name="financialDocumentMonth10LineAmount"/>
+	            						<bean parent="AccountingLineView-field" p:name="financialDocumentMonth11LineAmount"/>
+	            						<bean parent="AccountingLineView-field" p:name="financialDocumentMonth12LineAmount"/>
+	            					</list>
+	            				</property>
+	            			</bean>
+	            		</list>
+	            	</property>
+	            </bean>
+	          </list>
+	        </property>
+	      </bean>
+	      <bean parent="AccountingLineView-currentBaseAmountField" p:useShortLabels="true"/>
+	      <bean parent="AccountingLineView-actions"/>
+	    </list>
+	  </property>
+	</bean>
+	
+ 
+  
 </beans>
