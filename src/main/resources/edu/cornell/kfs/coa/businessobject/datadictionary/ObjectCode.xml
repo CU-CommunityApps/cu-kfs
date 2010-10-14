@@ -221,7 +221,7 @@
               <bean parent="FieldDefinition" p:attributeName="financialObjectTypeCode"/>
               <bean parent="FieldDefinition" p:attributeName="financialObjectLevelCode"/>
               <bean parent="FieldDefinition" p:attributeName="financialObjectSubTypeCode"/>
-              <bean parent="FieldDefinition" p:attributeName="extension.sunyObjectCode"/>
+            <!--  <bean parent="FieldDefinition" p:attributeName="extension.sunyObjectCode"/>  --> 
               <bean parent="FieldDefinition" p:attributeName="historicalFinancialObjectCode"/>
               <bean parent="FieldDefinition" p:attributeName="active"/>
               <bean parent="FieldDefinition" p:attributeName="financialBudgetAggregationCd"/>
@@ -262,7 +262,7 @@
         <bean parent="FieldDefinition" p:attributeName="financialObjectLevelCode"/>
         <bean parent="FieldDefinition" p:attributeName="financialObjectTypeCode"/>
         <bean parent="FieldDefinition" p:attributeName="financialObjectSubTypeCode"/>
-        <bean parent="FieldDefinition" p:attributeName="extension.sunyObjectCode"/>
+    <!--    <bean parent="FieldDefinition" p:attributeName="extension.sunyObjectCode"/>  --> 
         <bean parent="FieldDefinition" p:attributeName="historicalFinancialObjectCode"/>
         <bean parent="FieldDefinition" p:attributeName="financialBudgetAggregationCd"/>
         <bean parent="FieldDefinition" p:defaultValue="Y" p:attributeName="active"/>
@@ -276,7 +276,7 @@
         <bean parent="FieldDefinition" p:attributeName="financialObjectCodeName"/>
         <bean parent="FieldDefinition" p:attributeName="financialObjectLevelCode"/>
         <bean parent="FieldDefinition" p:attributeName="financialObjectTypeCode"/>
-        <bean parent="FieldDefinition" p:attributeName="extension.sunyObjectCode"/>
+      <!--     <bean parent="FieldDefinition" p:attributeName="extension.sunyObjectCode"/> --> 
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
     </property>
