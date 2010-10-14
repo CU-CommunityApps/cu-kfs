@@ -819,6 +819,7 @@
                 <property name="numberOfColumns" value="2"/>
                 <property name="inquiryFields">
                   <list>
+                  	<bean parent="FieldDefinition" p:attributeName="vendorAddressGeneratedIdentifier"/>
                     <bean parent="FieldDefinition" p:attributeName="vendorAddressTypeCode"/>
                     <bean parent="FieldDefinition" p:attributeName="vendorCountryCode"/>
                     <bean parent="FieldDefinition" p:attributeName="vendorLine1Address"/>
