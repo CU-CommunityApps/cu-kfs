@@ -28,6 +28,13 @@
     
     <property name="documentTypeName" value="APPA"/>
     <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
+   
+   <property name="defaultExistenceChecks">
+        <list>
+	      	<bean parent="ReferenceDefinition" p:attributeName="subFundGroup" p:attributeToHighlightOnFail="subFundGroupCode" /> 
+  	    </list>   
+    </property>
+   
     <property name="workflowAttributes">
     	<ref bean="AppropriationAccountMaintenanceDocument-workflowAttributes"/>
     </property>
@@ -45,7 +52,7 @@
         <bean parent="MaintainableFieldDefinition" p:name="appropriationAccountNumber" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="appropriationAccountName" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="subFundGroupCode" p:required="true"/>
-        <bean parent="MaintainableFieldDefinition" p:name="projectNumber" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="projectNumber" p:required="false"/>
         <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
       </list>
     </property>

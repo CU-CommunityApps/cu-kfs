@@ -839,6 +839,7 @@
               <dd:field attributeName="accountTypeCode"/>
               <dd:field attributeName="subFundGroup.codeAndDescription"/>
               <dd:field attributeName="extension.subFundProgram.programCode"/>
+              <dd:field attributeName="extension.appropriationAccount.appropriationAccountNumber"/>
               <dd:field attributeName="accountsFringesBnftIndicator"/>
               <dd:field attributeName="reportsToChartOfAccountsCode"/>
               <dd:field attributeName="reportsToAccountNumber"/>
@@ -954,6 +955,7 @@
         <dd:field attributeName="accountTypeCode"/>
         <dd:field attributeName="subFundGroupCode"/>
         <dd:field attributeName="extension.subFundProgram.programCode"/>
+        <dd:field attributeName="extension.appropriationAccount.appropriationAccountNumber"/>
         <dd:field attributeName="accountFiscalOfficerUser.principalName"/>        
         <dd:field attributeName="closed" defaultValue="N"/>
       </list>
@@ -967,6 +969,7 @@
         <dd:field attributeName="accountTypeCode"/>
         <dd:field attributeName="subFundGroupCode"/>
         <dd:field attributeName="extension.subFundProgram.programCode"/>
+        <dd:field attributeName="extension.appropriationAccount.appropriationAccountNumber"/>
         <dd:field attributeName="accountFiscalOfficerUser.name" inquiry="force"/>    
         <dd:field attributeName="closed"/>
         <dd:field attributeName="accountManagerUser.name" inquiry="force"/>

@@ -70,6 +70,7 @@
     
     <bean id="SubFundProgram-subFundGroupCode" parent="SubFundProgram-subFundGroupCode-parentBean"/>
     <bean id="SubFundProgram-subFundGroupCode-parentBean" abstract="true" parent="AttributeDefinition">
+    	<property name="forceUppercase" value="true"/>
     	<property name="name" value="subFundGroupCode"/>
     	<property name="label" value="Sub-Fund Group Code"/>
     	<property name="shortLabel" value="Sub-Fund Group Code"/>
