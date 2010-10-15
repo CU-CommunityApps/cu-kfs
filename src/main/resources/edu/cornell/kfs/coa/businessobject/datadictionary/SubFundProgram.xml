@@ -59,7 +59,7 @@
     	<property name="shortLabel" value="Sub-Fund Program Name"/>
     	<property name="maxLength" value="20"/>
     	<property name="validationPattern">
-      		<bean parent="AlphaNumericValidationPattern">
+      		<bean parent="AlphaNumericWithWhitespaceValidation">
       			<property name="maxLength" value="20"/>
       		</bean>
     	</property>
