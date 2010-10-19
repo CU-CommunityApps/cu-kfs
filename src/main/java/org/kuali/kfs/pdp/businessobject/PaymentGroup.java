@@ -741,6 +741,12 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
      */
     public void setCustomerInstitutionNumber(String string) {
     	customerInstitutionNumber = string;
+    }
+    
+    /**
+     * @param string
+     */
+    public void setCustomerInstitutionNumberAndAddress(String string) {
         BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
         Map<String, String> fieldValues = new HashMap();
         fieldValues.put("vendorAddressGeneratedIdentifier", string);
@@ -748,6 +754,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
         
         VendorAddress addr = (VendorAddress)bos.findMatching(VendorAddress.class, fieldValues);
         if (ObjectUtils.isNotNull(addr)) {
+        	setCustomerInstitutionNumber(string);
             setLine1Address(addr.getVendorLine1Address());
             setLine2Address(addr.getVendorLine2Address());
             setCity(addr.getVendorCityName());
