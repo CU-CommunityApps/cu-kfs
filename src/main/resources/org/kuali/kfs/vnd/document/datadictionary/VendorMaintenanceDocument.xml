@@ -497,7 +497,7 @@
           </property>
           <property name="maintainableFields">
             <list>
-              <bean parent="MaintainableFieldDefinition" p:name="creditMerchantName"/>
+              <bean parent="MaintainableFieldDefinition" p:name="creditMerchantName" p:required="true"/>
               <bean parent="MaintainableFieldDefinition" p:name="merchantCategoryCodeOne"/>
               <bean parent="MaintainableFieldDefinition" p:name="merchantCategoryCodeTwo"/>
               <bean parent="MaintainableFieldDefinition" p:name="merchantCategoryCodeThree"/>

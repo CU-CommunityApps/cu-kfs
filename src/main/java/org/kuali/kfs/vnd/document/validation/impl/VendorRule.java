@@ -44,6 +44,7 @@ import org.kuali.kfs.vnd.businessobject.VendorCommodityCode;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
 import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorContractOrganization;
+import org.kuali.kfs.vnd.businessobject.VendorCreditCardMerchant;
 import org.kuali.kfs.vnd.businessobject.VendorCustomerNumber;
 import org.kuali.kfs.vnd.businessobject.VendorDefaultAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
@@ -1227,6 +1228,16 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
             success &= checkDefaultAddressCampus(vendorDetail, defaultAddress, parent);
         }
+        if (bo instanceof VendorCreditCardMerchant) {
+            VendorCreditCardMerchant vendorMerchant = (VendorCreditCardMerchant) bo;
+            VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+            success &=validateCreditCardMerchantAddition(vendorDetail, vendorMerchant);
+        }
+        if (bo instanceof VendorSupplierDiversity) {
+            VendorSupplierDiversity vendorSupplierDiversity = (VendorSupplierDiversity) bo;
+            success &=validateSupplierDiversityAddition( vendorSupplierDiversity);
+        }
+        
 
         return success;
     }
@@ -1290,6 +1301,31 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
                 return false;
             }
         }
+        if (collectionName.equals("vendorHeader.vendorSupplierDiversities")) {
+            VendorDetail vendorDetail = (VendorDetail)document.getDocumentBusinessObject();
+    		VendorHeader vendorHeader = vendorDetail.getVendorHeader();
+    		List<VendorSupplierDiversity> vendorSupplierDiversities = vendorHeader.getVendorSupplierDiversities();
+    		Date theDate = new Date();
+    		boolean success = true;
+    		if (vendorSupplierDiversities.size() > 0)
+    		{
+    			int i = 0;
+    			for(VendorSupplierDiversity vendor : vendorSupplierDiversities) {
+    				if (vendor.getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
+    					success = false;
+    					putFieldError("vendorHeader.vendorSupplierDiversities[" + i + "].vendorSupplierDiversityExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
+    				}
+    				i++;
+    			}
+    		}
+    		if (!success) {
+    			return success;
+    		}
+        }
+        if (collectionName.equals("vendorCreditCardMerchants")) {
+            System.out.println("trying to add a credit card merchant");
+        }
+        
         return super.processAddCollectionLineBusinessRules(document, collectionName, bo);
     }
     
@@ -1454,14 +1490,60 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 			dataEntered |= (vendorDetail.getHealthOffSiteCateringLicenseReq()==null?false:true);
 			dataEntered |= (vendorDetail.getHealthOffSiteLicenseExpirationDate()==null?false:true);
 			dataEntered |= (vendorDetail.getInsuranceNotes()==null?false:true);
-		}
-		
-		if (!dataEntered) {
-			putFieldError("insuranceRequiredIndicator", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_INSURANCE_REQUIRED_USED_WO_DATA);
-			return false;
-		}
+
+			if (!dataEntered) {
+				putFieldError("insuranceRequiredIndicator", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_INSURANCE_REQUIRED_USED_WO_DATA);
+				return false;
+			}
+		}		
 		
 		return success;
 	}
 	
+	protected boolean checkMerchantNameUniqueness(MaintenanceDocument document) {
+	    boolean success = true;
+       VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+       List<VendorCreditCardMerchant> vendorCreditCardMerchants = vendorDetail.getVendorCreditCardMerchants();
+       ArrayList<String> merchantNames = new ArrayList<String>();
+       int i = 0;
+       for (VendorCreditCardMerchant vendorCreditCardMerchant : vendorCreditCardMerchants) {
+           if (merchantNames.contains(vendorCreditCardMerchant.getCreditMerchantName())) {
+               putFieldError("vendorCreditCardMerchants[" + i + "].creditMerchantName", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_CREDIT_MERCHANT_NAME_DUPLICATE);
+               //can't have duplicate merchant names, part of the primary key for the table in the db
+               success = false;
+           }
+           if (vendorCreditCardMerchant.getCreditMerchantName()==null || vendorCreditCardMerchant.getCreditMerchantName().equals("")) {
+               //can't have a null or blank name, it's part of the primary key for this table in the db
+               putFieldError("vendorCreditCardMerchants[" + i + "].creditMerchantName", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_CREDIT_MERCHANT_NAME_BLANK);
+               success = false;
+           }
+           merchantNames.add(vendorCreditCardMerchant.getCreditMerchantName());
+           i++;
+       }
+       
+	   return success;
+	}
+	
+	protected boolean validateCreditCardMerchantAddition(VendorDetail vendorDetail, VendorCreditCardMerchant vendorCreditCardMerchant) {
+	    boolean success = true;
+	    List<VendorCreditCardMerchant> vendorCreditCardMerchants = vendorDetail.getVendorCreditCardMerchants();
+	    for (VendorCreditCardMerchant existingMerchant : vendorCreditCardMerchants) {
+	        if (existingMerchant.getCreditMerchantName().equals(vendorCreditCardMerchant.getCreditMerchantName())) {
+	               putFieldError("add.vendorCreditCardMerchants.creditMerchantName", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_CREDIT_MERCHANT_NAME_DUPLICATE);
+	               //can't have duplicate merchant names, part of the primary key for the table in the db
+	               success = false;
+	        }
+	    }
+	    return success;
+	}
+	
+	protected boolean validateSupplierDiversityAddition(VendorSupplierDiversity vendorSupplierDiversity) {
+	    boolean success = true;
+        if (vendorSupplierDiversity.getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
+            success = false;
+            putFieldError("add.vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
+        }
+
+	    return success;
+	}
 }

@@ -35,8 +35,8 @@
 
   <bean id="VendorSupplierDiversity-vendorSupplierDiversityExpirationDate-parentBean" abstract="true" parent="GenericAttributes-genericDate">
     <property name="name" value="vendorSupplierDiversityExpirationDate"/>
-    <property name="label" value="Vendor Supplier Diversity Expiration Date"/>
-    <property name="shortLabel" value="Vendor Supplier Diversity Expiration Date"/>
+    <property name="label" value="Supplier Diversity Certification Expiration Date"/>
+    <property name="shortLabel" value="Supplier Diversity Certification Expiration Date"/>
     <property name="required" value="true"/>
   </bean> 
   
