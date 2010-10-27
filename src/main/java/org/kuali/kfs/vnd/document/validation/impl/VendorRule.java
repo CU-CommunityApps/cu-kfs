@@ -1353,6 +1353,11 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 			putFieldError("vendorHeader.vendorW9ReceivedIndicator", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_W9RECEIVED_POPULATED_W_O_IND);
 		}			
 		
+		if (w9ReceivedDate!=null && w9ReceivedDate.after(new Date())) {
+			success = false;
+			putFieldError("vendorHeader.vendorW9ReceivedDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_DATE_IN_FUTURE);
+		}
+		
 		return success;
 	}
 
@@ -1368,7 +1373,11 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 		if (vendorDetail.getGeneralLiabilityCoverageAmount()==null && vendorDetail.getGeneralLiabilityExpiration()!=null) {
 			success = false;
 			putFieldError("generalLiabilityCoverageAmount", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_GENERAL_LIABILITY_COVERAGE_NEEDED);
-		}		
+		}
+		if (vendorDetail.getGeneralLiabilityExpiration()!= null && vendorDetail.getGeneralLiabilityExpiration().before(new Date())) {
+			success = false;
+			putFieldError("generalLiabilityExpiration", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_DATE_IN_PAST);
+		}
 		return success;
 	}
     
@@ -1385,7 +1394,10 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 			success = false;
 			putFieldError("automobileLiabilityCoverageAmount", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_AUTO_COVERAGE_NEEDED);
 		}		
-		
+		if (vendorDetail.getAutomobileLiabilityExpiration()!= null && vendorDetail.getAutomobileLiabilityExpiration().before(new Date())) {
+			success = false;
+			putFieldError("automobileLiabilityExpiration", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_DATE_IN_PAST);
+		}		
 		return success;
 	}
 
@@ -1402,7 +1414,11 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 			success = false;
 			putFieldError("workmansCompCoverageAmount", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_WC_COVERAGE_NEEDED);
 		}		
-				
+		if (vendorDetail.getWorkmansCompExpiration()!= null && vendorDetail.getWorkmansCompExpiration().before(new Date())) {
+			success = false;
+			putFieldError("workmansCompExpiration", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_DATE_IN_PAST);
+		}		
+		
 		return success;
 	}
 
@@ -1419,7 +1435,10 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 			success = false;
 			putFieldError("excessLiabilityUmbExpiration", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_UMB_COVERAGE_NEEDED);
 		}		
-		
+		if (vendorDetail.getExcessLiabilityUmbExpiration()!= null && vendorDetail.getExcessLiabilityUmbExpiration().before(new Date())) {
+			success = false;
+			putFieldError("excessLiabilityUmbExpiration", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_DATE_IN_PAST);
+		}
 		
 		return success;
 	}
@@ -1443,6 +1462,10 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 			success = false;
 			putFieldError("healthOffSiteCateringLicenseReq", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_HEALTH_LICENSE_NEEDED);
 		}				
+		if (vendorDetail.getHealthOffSiteLicenseExpirationDate()!= null && vendorDetail.getHealthOffSiteLicenseExpirationDate().before(new Date())) {
+			success = false;
+			putFieldError("healthOffSiteLicenseExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_DATE_IN_PAST);
+		}
 		
 		return success;
 	}

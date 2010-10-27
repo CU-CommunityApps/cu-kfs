@@ -100,5 +100,6 @@ public class VendorKeyConstants {
     
     public static final String ERROR_DOCUMENT_VNDMAINT_CREDIT_MERCHANT_NAME_DUPLICATE = "error.document.vendor.creditMerchantNameDuplicate";
     public static final String ERROR_DOCUMENT_VNDMAINT_CREDIT_MERCHANT_NAME_BLANK = "error.document.vendor.creditMerchantNameBlank";
-    
+    public static final String ERROR_DOCUMENT_VNDMAINT_DATE_IN_PAST = "error.document.vendor.dateInPast";
+    public static final String ERROR_DOCUMENT_VNDMAINT_DATE_IN_FUTURE = "error.document.vendor.dateInFuture";
 }
