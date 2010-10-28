@@ -706,7 +706,9 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
     @Override
     public boolean isSensitive() {
         for (PurchasingItemBase item : (List<PurchasingItemBase>)this.getItems()) {
-            if (item.getCommodityCode() != null && item.getCommodityCode().getSensitiveDataCode().length() != 0) {
+            if (item.getCommodityCode() != null 
+            		&& item.getCommodityCode().getSensitiveDataCode() != null 
+            		&& item.getCommodityCode().getSensitiveDataCode().length() != 0) {
                 return true;
             }
         }
