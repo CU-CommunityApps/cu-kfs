@@ -43,7 +43,6 @@
     <property name="maintainableItems">
       <list>
         <bean parent="MaintainableFieldDefinition" p:name="invoiceTypeCode" p:required="true"/>
-        <bean parent="MaintainableFieldDefinition" p:name="invoiceTypeName" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="invoiceTypeDescription" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
       </list>

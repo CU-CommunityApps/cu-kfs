@@ -12,7 +12,6 @@ public class InvoiceFrequency extends PersistableBusinessObjectBase implements I
 	 */
 	private static final long serialVersionUID = 1732078760215418467L;
 	private String invoiceFrequencyCode;
-	private String invoiceFrequencyName;
 	private String invoiceFrequencyDescription;
 	
     private boolean active;
@@ -30,20 +29,6 @@ public class InvoiceFrequency extends PersistableBusinessObjectBase implements I
 	 */
 	public void setInvoiceFrequencyCode(String invoiceFrequencyCode) {
 		this.invoiceFrequencyCode = invoiceFrequencyCode;
-	}
-
-	/**
-	 * @return the invoiceFrequencyName
-	 */
-	public String getInvoiceFrequencyName() {
-		return invoiceFrequencyName;
-	}
-
-	/**
-	 * @param invoiceFrequencyName the invoiceFrequencyName to set
-	 */
-	public void setInvoiceFrequencyName(String invoiceFrequencyName) {
-		this.invoiceFrequencyName = invoiceFrequencyName;
 	}
 
 	/**

@@ -17,7 +17,6 @@
 	<property name="attributes">
       <list>
 	    	<ref bean="InvoiceFrequency-invoiceFrequencyCode"/>
-	   		<ref bean="InvoiceFrequency-invoiceFrequencyName"/>
 	    	<ref bean="InvoiceFrequency-invoiceFrequencyDescription"/>
 	    	<ref bean="InvoiceFrequency-active"/>
 	  </list>
@@ -33,7 +32,7 @@
     	<property name="shortLabel" value="Inv. Freq. Code"/>
     	<property name="maxLength" value="10"/>
     	<property name="validationPattern">
-      		<bean parent="AlphaNumericValidationPattern">
+      		<bean parent="AnyCharacterWithWhitespaceValidation">
       			<property name="maxLength" value="10"/>
       		</bean>
     	</property>
@@ -42,23 +41,7 @@
     	</property>
     </bean>
     
-  	<bean id="InvoiceFrequency-invoiceFrequencyName" parent="InvoiceFrequency-invoiceFrequencyName-parentBean"/>
-    
-    <bean id="InvoiceFrequency-invoiceFrequencyName-parentBean" abstract="true" parent="AttributeDefinition">
-    	<property name="name" value="invoiceFrequencyName"/>
-    	<property name="label" value="Invoice Frequency Name"/>
-    	<property name="shortLabel" value="Inv. Freq. Name"/>
-    	<property name="maxLength" value="50"/>
-    	<property name="validationPattern">
-      		<bean parent="AlphaNumericValidationPattern">
-      			<property name="maxLength" value="20"/>
-      		</bean>
-    	</property>
-    	<property name="control">
-    	  	<bean parent="TextControlDefinition" p:size="22"/>
-    	</property>
-    </bean>
-    
+  	
   	<bean id="InvoiceFrequency-invoiceFrequencyDescription" parent="InvoiceFrequency-invoiceFrequencyDescription-parentBean"/>
   	
   	 <bean id="InvoiceFrequency-invoiceFrequencyDescription-parentBean" abstract="true" parent="AttributeDefinition">
@@ -93,7 +76,6 @@
           <property name="inquiryFields">
             <list>
               <bean parent="FieldDefinition" p:attributeName="invoiceFrequencyCode"/>
-              <bean parent="FieldDefinition" p:attributeName="invoiceFrequencyName"/>
               <bean parent="FieldDefinition" p:attributeName="invoiceFrequencyDescription"/>
               <bean parent="FieldDefinition" p:attributeName="active"/>
             </list>
@@ -124,7 +106,6 @@
     <property name="lookupFields">
       <list>
         <bean parent="FieldDefinition" p:attributeName="invoiceFrequencyCode"/>
-        <bean parent="FieldDefinition" p:attributeName="invoiceFrequencyName"/>
         <bean parent="FieldDefinition" p:attributeName="invoiceFrequencyDescription"/>
         <bean parent="FieldDefinition" p:defaultValue="Y" p:attributeName="active"/>
       </list>
@@ -132,7 +113,6 @@
     <property name="resultFields">
       <list>
         <bean parent="FieldDefinition" p:attributeName="invoiceFrequencyCode"/>
-     	<bean parent="FieldDefinition" p:attributeName="invoiceFrequencyName"/>
         <bean parent="FieldDefinition" p:attributeName="invoiceFrequencyDescription"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>

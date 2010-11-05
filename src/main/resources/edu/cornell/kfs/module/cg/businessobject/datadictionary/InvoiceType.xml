@@ -17,7 +17,6 @@
 	<property name="attributes">
       <list>
 	    	<ref bean="InvoiceType-invoiceTypeCode"/>
-	   		<ref bean="InvoiceType-invoiceTypeName"/>
 	    	<ref bean="InvoiceType-invoiceTypeDescription"/>
 	    	<ref bean="InvoiceType-active"/>
 	  </list>
@@ -33,29 +32,12 @@
     	<property name="shortLabel" value="Inv. Type Code"/>
     	<property name="maxLength" value="10"/>
     	<property name="validationPattern">
-      		<bean parent="AlphaNumericValidationPattern">
+      		<bean parent="AnyCharacterWithWhitespaceValidation">
       			<property name="maxLength" value="10"/>
       		</bean>
     	</property>
     	<property name="control">
     	  	<bean parent="TextControlDefinition" p:size="12"/>
-    	</property>
-    </bean>
-    
-  	<bean id="InvoiceType-invoiceTypeName" parent="InvoiceType-invoiceTypeName-parentBean"/>
-    
-    <bean id="InvoiceType-invoiceTypeName-parentBean" abstract="true" parent="AttributeDefinition">
-    	<property name="name" value="invoiceTypeName"/>
-    	<property name="label" value="Invoice Type Name"/>
-    	<property name="shortLabel" value="Inv. Type Name"/>
-    	<property name="maxLength" value="50"/>
-    	<property name="validationPattern">
-      		<bean parent="AlphaNumericValidationPattern">
-      			<property name="maxLength" value="20"/>
-      		</bean>
-    	</property>
-    	<property name="control">
-    	  	<bean parent="TextControlDefinition" p:size="22"/>
     	</property>
     </bean>
     
@@ -93,7 +75,6 @@
           <property name="inquiryFields">
             <list>
               <bean parent="FieldDefinition" p:attributeName="invoiceTypeCode"/>
-              <bean parent="FieldDefinition" p:attributeName="invoiceTypeName"/>
               <bean parent="FieldDefinition" p:attributeName="invoiceTypeDescription"/>
               <bean parent="FieldDefinition" p:attributeName="active"/>
             </list>
@@ -124,7 +105,6 @@
     <property name="lookupFields">
       <list>
         <bean parent="FieldDefinition" p:attributeName="invoiceTypeCode"/>
-        <bean parent="FieldDefinition" p:attributeName="invoiceTypeName"/>
         <bean parent="FieldDefinition" p:attributeName="invoiceTypeDescription"/>
         <bean parent="FieldDefinition" p:defaultValue="Y" p:attributeName="active"/>
       </list>
@@ -132,7 +112,6 @@
     <property name="resultFields">
       <list>
         <bean parent="FieldDefinition" p:attributeName="invoiceTypeCode"/>
-     	<bean parent="FieldDefinition" p:attributeName="invoiceTypeName"/>
         <bean parent="FieldDefinition" p:attributeName="invoiceTypeDescription"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>

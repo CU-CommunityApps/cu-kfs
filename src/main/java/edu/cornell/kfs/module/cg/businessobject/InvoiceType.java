@@ -12,7 +12,6 @@ public class InvoiceType extends PersistableBusinessObjectBase implements Inacti
 	 */
 	private static final long serialVersionUID = 6297347189341686751L;
 	private String invoiceTypeCode;
-	private String invoiceTypeName;
 	private String invoiceTypeDescription;
 	
     private boolean active;
@@ -30,20 +29,6 @@ public class InvoiceType extends PersistableBusinessObjectBase implements Inacti
 	 */
 	public void setInvoiceTypeCode(String invoiceTypeCode) {
 		this.invoiceTypeCode = invoiceTypeCode;
-	}
-
-	/**
-	 * @return the invoiceTypeName
-	 */
-	public String getInvoiceTypeName() {
-		return invoiceTypeName;
-	}
-
-	/**
-	 * @param invoiceTypeName the invoiceTypeName to set
-	 */
-	public void setInvoiceTypeName(String invoiceTypeName) {
-		this.invoiceTypeName = invoiceTypeName;
 	}
 
 	/**
