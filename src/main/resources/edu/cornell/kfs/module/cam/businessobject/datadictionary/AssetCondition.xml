@@ -15,6 +15,7 @@
  limitations under the License.
 -->
   
+  
   <bean id="AssetCondition-assetConditionCode" parent="AssetCondition-assetConditionCode-parentBean"/>
   <bean id="AssetCondition-assetConditionCode-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="assetConditionCode"/>
