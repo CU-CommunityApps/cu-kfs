@@ -11,19 +11,18 @@
 <bean id="cu-vnd" parent="vndModuleConfiguration-parentBean">
 		
 		<property name="packagePrefixes">
-            <list>
+            <list merge="true">
                 <value>edu.cornell.kfs.vnd</value>
-                <value>org.kuali.kfs.vnd</value>                
             </list>
         </property>
 		<property name="dataDictionaryPackages">
-			<list>
-                <value>org/kuali/kfs/vnd/document/datadictionary</value>
-                <value>org/kuali/kfs/vnd/businessobject/datadictionary</value>                
+			<list merge ="true">
+           <!--      <value>org/kuali/kfs/vnd/document/datadictionary</value>
+                <value>org/kuali/kfs/vnd/businessobject/datadictionary</value>  -->               
 			</list>
 		</property>
 		<property name="databaseRepositoryFilePaths">
-			<list>
+			<list merge ="true">
 				<value>edu/cornell/kfs/vnd/cu-ojb-vnd.xml</value>
 			</list>
 		</property>
