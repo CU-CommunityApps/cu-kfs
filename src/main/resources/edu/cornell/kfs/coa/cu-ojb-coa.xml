@@ -22,7 +22,6 @@
     
      <class-descriptor class="edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency" table="CG_INV_FREQ_TC">
         <field-descriptor name="invoiceFrequencyCode" column="INV_FREQ_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />  
-        <field-descriptor name="invoiceFrequencyName" column="INV_FREQ_NM" jdbc-type="VARCHAR" />  
         <field-descriptor name="invoiceFrequencyDescription" column="INV_FREQ_DESC" jdbc-type="VARCHAR" /> 
         <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
         <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
@@ -31,7 +30,6 @@
     
     <class-descriptor class="edu.cornell.kfs.module.cg.businessobject.InvoiceType" table="CG_INV_TYPE_TC">
         <field-descriptor name="invoiceTypeCode" column="INV_TYPE_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />  
-        <field-descriptor name="invoiceTypeName" column="INV_TYPE_NM" jdbc-type="VARCHAR" />  
         <field-descriptor name="invoiceTypeDescription" column="INV_TYPE_DESC" jdbc-type="VARCHAR" />  
         <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
         <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
