@@ -284,6 +284,16 @@
       </snapshots>
     </repository>
     <repository>
+      <id>cornell-external</id>
+      <url>https://maven.cit.cornell.edu/repository/external</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
       <id>cornell-snapshots</id>
       <url>https://maven.cit.cornell.edu/repository/snapshots</url>
       <releases>
