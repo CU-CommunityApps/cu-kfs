@@ -24,6 +24,31 @@
 		
 </bean>
 
-
+	<bean id="procurementCardCreateDocumentService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl">
+		<property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+		<property name="documentService">
+			<ref bean="documentService" />
+		</property>
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+		<property name="workflowDocumentService">
+			<ref bean="workflowDocumentService" />
+		</property>
+		<property name="accountingLineRuleUtil">
+			<ref bean="accountingLineRuleHelperService" />
+		</property>
+		<property name="capitalAssetBuilderModuleService">
+			<ref bean="capitalAssetBuilderModuleService" />
+		</property>
+	</bean>
 
 </beans>
