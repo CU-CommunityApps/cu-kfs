@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.module.purap.CUPurapParameterConstants;
+import org.kuali.kfs.module.purap.CUPurapWorkflowConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
@@ -126,9 +128,44 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
     public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
         if (nodeName.equals(PurapWorkflowConstants.HAS_ACCOUNTING_LINES)) return !isMissingAccountingLines();
         if (nodeName.equals(PurapWorkflowConstants.AMOUNT_REQUIRES_SEPARATION_OF_DUTIES_REVIEW_SPLIT)) return isSeparationOfDutiesReviewRequired();
+        if (nodeName.equals(CUPurapWorkflowConstants.B2B_AUTO_PURCHASE_ORDER)){ 
+        	boolean isB2BAutoPurchaseOrder =  isB2BAutoPurchaseOrder();
+        	if(isB2BAutoPurchaseOrder) this.paymentRequestPositiveApprovalIndicator=true;
+        	return isB2BAutoPurchaseOrder;
+        }
+        
         throw new UnsupportedOperationException("Cannot answer split question for this node you call \""+nodeName+"\"");
     }
 
+    protected boolean isB2BAutoPurchaseOrder(){
+    	boolean returnValue = false;
+ 
+    	VendorDetail vendorDetail = SpringContext.getBean(VendorService.class).getVendorDetail(this.getVendorHeaderGeneratedIdentifier(), this.getVendorDetailAssignedIdentifier());
+
+        if (vendorDetail.isB2BVendor())
+        	returnValue = isB2BTotalAmountForAutoPO();
+        else
+        	returnValue =  false;
+        
+        return returnValue;
+        
+    }
+    
+    protected boolean isB2BTotalAmountForAutoPO(){
+    	boolean returnValue = false;
+    	
+    	ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+        KualiDecimal autoPOAmount = new KualiDecimal(parameterService.getParameterValue(RequisitionDocument.class, CUPurapParameterConstants.B2B_TOTAL_AMOUNT_FOR_AUTO_PO));
+        KualiDecimal totalAmount = documentHeader.getFinancialDocumentTotalAmount();
+        if (ObjectUtils.isNotNull(autoPOAmount) && ObjectUtils.isNotNull(totalAmount) && (autoPOAmount.compareTo(totalAmount) >= 0)) 
+        	returnValue = true;
+        else 
+        	returnValue =  false;
+       
+        return returnValue;
+    }
+    
+    
     protected boolean isMissingAccountingLines() {
         for (Iterator iterator = getItems().iterator(); iterator.hasNext();) {
             RequisitionItem item = (RequisitionItem) iterator.next();
