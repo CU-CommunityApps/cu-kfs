@@ -23,7 +23,8 @@
       <routePaths>
         <routePath>
           <start name="AdHoc" nextNode="HasAccountingLines"/>
-          <split name="HasAccountingLines" nextNode="SubAccount">
+         
+          <split name="HasAccountingLines" nextNode="B2BAutoPurchaseOrder">
             <branch name="True">
               <simple name="NoOpHasAccountingLines" nextNode="JoinHasAccountingLines"/>
             </branch>
@@ -33,21 +34,30 @@
             <join name="JoinHasAccountingLines"/>
           </split>
           
-          <requests name="SubAccount" nextNode="Account"/>
-          <requests name="Account" nextNode="AccountingOrganizationHierarchy"/>
-          <requests name="AccountingOrganizationHierarchy" nextNode="Commodity"/>
-          <requests name="Commodity" nextNode="AmountRequiresSeparationOfDutiesReview"/>
-          <split name="AmountRequiresSeparationOfDutiesReview">
+          <split name="B2BAutoPurchaseOrder">
             <branch name="True">
-              <requests name="SeparationOfDuties" nextNode="Join"/>
+              <requests name="Commodity" nextNode="Join"/>
             </branch>
             <branch name="False">
-              <simple name="NoOp" nextNode="Join"/>
-            </branch>
-            <join name="Join"/>
+              <requests name="SubAccount" nextNode="Account"/>
+	          <requests name="Account" nextNode="AccountingOrganizationHierarchy"/>
+	          <requests name="AccountingOrganizationHierarchy" nextNode="Commodity"/>
+	          <requests name="Commodity" nextNode="AmountRequiresSeparationOfDutiesReview"/>
+	          <split name="AmountRequiresSeparationOfDutiesReview">
+	            <branch name="True">
+	              <requests name="SeparationOfDuties" nextNode="Join"/>
+	            </branch>
+	            <branch name="False">
+	              <simple name="NoOp" nextNode="Join"/>
+	            </branch>
+	            <join name="Join"/>
+	          </split>
+	        </branch>
+	         <join name="Join"/>
           </split>
         </routePath>
       </routePaths>
+
       <routeNodes>
         <start name="AdHoc"/>
         <role name="Organization">
@@ -57,6 +67,10 @@
         <split name="HasAccountingLines">
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
+        <split name="B2BAutoPurchaseOrder">
+          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+        </split>
+
         <role name="SubAccount">
           <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
