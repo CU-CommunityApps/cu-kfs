@@ -19,6 +19,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -750,10 +751,13 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
         BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
         Map<String, String> fieldValues = new HashMap();
         fieldValues.put("vendorAddressGeneratedIdentifier", string);
-        fieldValues.put("vendorHeaderGeneratedIdentifier", payeeId);
+        String[] headerDetails = payeeId.split("-");
+        fieldValues.put("vendorHeaderGeneratedIdentifier", headerDetails[0]/*payeeId*/);
+        fieldValues.put("vendorDetailAssignedIdentifier", headerDetails[1]);
         
-        VendorAddress addr = (VendorAddress)bos.findMatching(VendorAddress.class, fieldValues);
-        if (ObjectUtils.isNotNull(addr)) {
+        List addrs = (List)bos.findMatching(VendorAddress.class, fieldValues);
+        if (addrs.size() == 1) {
+        	VendorAddress addr = (VendorAddress) addrs.get(0);
         	setCustomerInstitutionNumber(string);
             setLine1Address(addr.getVendorLine1Address());
             setLine2Address(addr.getVendorLine2Address());
