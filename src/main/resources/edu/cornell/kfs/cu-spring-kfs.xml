@@ -10,5 +10,7 @@
   <import resource="sys/cu-spring-sys.xml" />
   <import resource="fp/cu-spring-fp.xml" />
   <import resource="module/cg/cu-spring-cg.xml" />
+  <import resource="module/purap/cu-spring-purap.xml" />
+  
 
 </beans>
