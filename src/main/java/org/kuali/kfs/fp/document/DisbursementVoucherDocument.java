@@ -1725,16 +1725,17 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         if (isPayeePurchaseOrderVendorHasWithholding()) {
             return true;
         }
-
+        
         boolean isEmployee = this.getDvPayeeDetail().isDisbVchrPayeeEmployeeCode();
         if (isEmployee) {
             return true;
         }
         
+// bypass all the time
         String payeeTypeCode = this.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode();
-        if (payeeTypeCode.equals(DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE)) {
-            return true;
-        }
+//        if (payeeTypeCode.equals(DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE)) {
+//            return true;
+//        }
         
         if (payeeTypeCode.equals(DisbursementVoucherConstants.DV_PAYEE_TYPE_VENDOR) && this.getVendorService().isVendorForeign(getDvPayeeDetail().getDisbVchrVendorHeaderIdNumberAsInteger())) {
             return true;
