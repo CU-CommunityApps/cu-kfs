@@ -176,7 +176,9 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
             return true;
         } 
         for (PurchasingItemBase item : (List<PurchasingItemBase>)this.getItems()) {
-            if (item.getCommodityCode() != null && !item.getCommodityCode().getSensitiveDataCode().isEmpty()) {
+        	if (item.getCommodityCode() != null 
+            		&& item.getCommodityCode().getSensitiveDataCode() != null 
+            		&& item.getCommodityCode().getSensitiveDataCode().length() != 0) {
                 return true;
             }
         }
