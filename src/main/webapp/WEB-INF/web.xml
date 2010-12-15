@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-
+	<filter>
+	  <filter-name>monitoring</filter-name>
+	  <filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
+	  <!-- Stops it from attempting to profile static content -->
+	  <init-param>
+	    <param-name>url-exclude-pattern</param-name>
+	    <param-value>/static/.*|/kr/static/.*|/kr/images/.*|/images-portal/.*</param-value>
+	  </init-param>
+	  <!-- Allows a user who can connect to the monitoring page to perform system-level actions such as:
+	        
+	       * Run the Garbage Collector
+	       * Invalidate HTTP sessions (individually and in bulk)
+	       * Kill server threads
+	  -->
+	  <init-param>
+	    <param-name>system-actions-enabled</param-name>
+	    <param-value>true</param-value>
+	  </init-param>
+	</filter>
+	<filter-mapping>
+	  <filter-name>monitoring</filter-name>
+	  <url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<listener>
+	  <listener-class>net.bull.javamelody.SessionListener</listener-class>
+	</listener>
+	
     <!--  FILTER DEFINITIONS -->
     <!-- Replace CAS with our own filter
     <filter>
