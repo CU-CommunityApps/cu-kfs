@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.module.purap.CUPurapParameterConstants;
 import org.kuali.kfs.module.purap.CUPurapWorkflowConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -37,6 +38,7 @@ import org.kuali.kfs.module.purap.PurapWorkflowConstants.RequisitionDocument.Nod
 import org.kuali.kfs.module.purap.businessobject.BillingAddress;
 import org.kuali.kfs.module.purap.businessobject.DefaultPrincipalAddress;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
+import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurchaseRequisitionItemUseTax;
 import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
 import org.kuali.kfs.module.purap.businessobject.RequisitionAccount;
@@ -128,12 +130,12 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
     public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
         if (nodeName.equals(PurapWorkflowConstants.HAS_ACCOUNTING_LINES)) return !isMissingAccountingLines();
         if (nodeName.equals(PurapWorkflowConstants.AMOUNT_REQUIRES_SEPARATION_OF_DUTIES_REVIEW_SPLIT)) return isSeparationOfDutiesReviewRequired();
+        if (nodeName.equals(PurapWorkflowConstants.AWARD_REVIEW_REQUIRED)) return isAwardReviewRequired();
         if (nodeName.equals(CUPurapWorkflowConstants.B2B_AUTO_PURCHASE_ORDER)){ 
         	boolean isB2BAutoPurchaseOrder =  isB2BAutoPurchaseOrder();
         	if(isB2BAutoPurchaseOrder) this.paymentRequestPositiveApprovalIndicator=true;
         	return isB2BAutoPurchaseOrder;
         }
-        
         throw new UnsupportedOperationException("Cannot answer split question for this node you call \""+nodeName+"\"");
     }
 
@@ -141,14 +143,15 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
     	boolean returnValue = false;
  
     	VendorDetail vendorDetail = SpringContext.getBean(VendorService.class).getVendorDetail(this.getVendorHeaderGeneratedIdentifier(), this.getVendorDetailAssignedIdentifier());
-
-        if (vendorDetail.isB2BVendor())
-        	returnValue = isB2BTotalAmountForAutoPO();
-        else
-        	returnValue =  false;
-        
-        return returnValue;
-        
+    	if (vendorDetail != null) {
+	        if (vendorDetail.isB2BVendor())
+	        	returnValue = isB2BTotalAmountForAutoPO();
+	        else
+	        	returnValue =  false;
+	        
+	        return returnValue;
+    	}
+    	return false;
     }
     
     protected boolean isB2BTotalAmountForAutoPO(){
@@ -752,5 +755,79 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
         return false;
     }
     
+	public static final String DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW = "DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW";
+
+    protected boolean isAwardReviewRequired() {
+    	
+    	this.getAccountsForRouting();
+        ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+        boolean objectCodeAllowed = isAwardAmountGreaterThanThreshold();
+        
+        for (PurApItem item : (List<PurApItem>) this.getItems()) {
+            for (PurApAccountingLine accountingLine : item.getSourceAccountingLines()) {
+                
+                objectCodeAllowed = isObjectCodeAllowedForAwardRouting(accountingLine, parameterService);
+                // We should return true as soon as we have at least one objectCodeAllowed=true so that the PO will stop at Award
+                // level.
+                if (objectCodeAllowed) {
+                    return objectCodeAllowed;
+                }
+
+            }
+        }
+        return objectCodeAllowed;        
+    }
+
+    protected boolean isObjectCodeAllowedForAwardRouting(PurApAccountingLine accountingLine, ParameterService parameterService) {
+        if (ObjectUtils.isNull(accountingLine.getObjectCode())) {
+            return false;
+        }
+
+        // make sure object code is active
+        if (!accountingLine.getObjectCode().isFinancialObjectActiveCode()) {
+            return false;
+        }
+
+        String chartCode = accountingLine.getChartOfAccountsCode();
+        // check object level is in permitted list for award routing
+        boolean objectCodeAllowed = parameterService.getParameterEvaluator(PurchaseOrderDocument.class, PurapParameterConstants.CG_ROUTE_OBJECT_LEVELS_BY_CHART, PurapParameterConstants.NO_CG_ROUTE_OBJECT_LEVELS_BY_CHART, chartCode, accountingLine.getObjectCode().getFinancialObjectLevelCode()).evaluationSucceeds();
+
+        if (!objectCodeAllowed) {
+            // If the object level is not permitting for award routing, then we need to also
+            // check object code is in permitted list for award routing
+            objectCodeAllowed = parameterService.getParameterEvaluator(PurchaseOrderDocument.class, PurapParameterConstants.CG_ROUTE_OBJECT_CODES_BY_CHART, PurapParameterConstants.NO_CG_ROUTE_OBJECT_CODES_BY_CHART, chartCode, accountingLine.getFinancialObjectCode()).evaluationSucceeds();
+        }
+        return objectCodeAllowed;
+    }
+
+    protected boolean isAwardAmountGreaterThanThreshold() {
+		ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+		String dollarThreshold = parameterService.getParameterValue("KFS-PURAP", "Requisition", DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW);
+		KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
+		if ( this.getTotalPreTaxDollarAmount().isGreaterEqual(dollarThresholdDecimal)) {
+			return true;
+		}				
+		return false;
+    }
+    
+    public List<Account> getAccountsForAwardRouting() {
+        List<Account> accounts = new ArrayList<Account>();
+        
+        ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+        for (PurApItem item : (List<PurApItem>) this.getItems()) {
+            for (PurApAccountingLine accountingLine : item.getSourceAccountingLines()) {
+                if (isObjectCodeAllowedForAwardRouting(accountingLine, parameterService)) {
+                    if (ObjectUtils.isNull(accountingLine.getAccount())) {
+                        accountingLine.refreshReferenceObject("account");
+                    }
+                    if (accountingLine.getAccount() != null && !accounts.contains(accountingLine.getAccount())) {
+                        accounts.add(accountingLine.getAccount());
+                    }
+                }
+            }
+        }
+        return accounts;
+    }
+
 }
 

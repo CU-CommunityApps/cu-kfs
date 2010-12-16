@@ -29,7 +29,8 @@
               <simple name="NoOpHasAccountingLines" nextNode="JoinHasAccountingLines"/>
             </branch>
             <branch name="False">
-              <requests name="Organization" nextNode="JoinHasAccountingLines"/>
+               <requests name="Organization" nextNode="JoinHasAccountingLines"/> 
+<!--              <requests name="Initiator" nextNode="JoinHasAccountingLines"/>-->
             </branch>
             <join name="JoinHasAccountingLines"/>
           </split>
@@ -42,7 +43,16 @@
               <requests name="SubAccount" nextNode="Account"/>
 	          <requests name="Account" nextNode="AccountingOrganizationHierarchy"/>
 	          <requests name="AccountingOrganizationHierarchy" nextNode="Commodity"/>
-	          <requests name="Commodity" nextNode="AmountRequiresSeparationOfDutiesReview"/>
+	          <requests name="Commodity" nextNode="RequiresAwardReview"/>
+	          <split name="RequiresAwardReview" nextNode="AmountRequiresSeparationOfDutiesReview">
+		  	    <branch name="True">
+		  		  <requests name="Award" nextNode="JoinRequiresAwardReview"/>
+		  	    </branch>
+		  	    <branch name="False">
+		  		  <requests name="NoOpRequiresAwardReview" nextNode="JoinRequiresAwardReview"/>
+		  	    </branch>
+		  	    <join name="JoinRequiresAwardReview"/>
+		      </split>	          
 	          <split name="AmountRequiresSeparationOfDutiesReview">
 	            <branch name="True">
 	              <requests name="SeparationOfDuties" nextNode="Join"/>
@@ -83,6 +93,10 @@
           <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
+        <role name="Award">
+          <qualifierResolverClass> org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver </qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
         <role name="Commodity">
           <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
@@ -91,6 +105,13 @@
           <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
+<!--         <role name="Initiator">-->
+<!--          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>-->
+<!--          <activationType>P</activationType>-->
+<!--        </role>-->
+        <split name="RequiresAwardReview">
+          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+        </split>
         <split name="AmountRequiresSeparationOfDutiesReview">
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
@@ -98,8 +119,10 @@
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
         </simple>
         <join name="Join"/>
-  
-        
+		<join name="JoinRequiresAwardReview"/>            
+        <simple name="NoOpRequiresAwardReview">
+          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+        </simple>                
         <simple name="NoOpHasAccountingLines">
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
         </simple>

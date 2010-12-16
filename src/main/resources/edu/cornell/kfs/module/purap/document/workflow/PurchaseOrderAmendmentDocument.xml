@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8'?> 
+<!--
+ Copyright 2009 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<data xmlns="ns:workflow" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
+  <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
+    <documentType>
+      <name>POA</name>
+      <parent>PO</parent>
+      <docHandler>${application.url}/purapPurchaseOrder.do?methodToCall=docHandler</docHandler>
+      <routePaths>
+        <routePath>
+          <start name="AdHoc" nextNode="HasAccountingLines"/>
+
+          <split name="HasAccountingLines" nextNode="SubAccount">
+            <branch name="True">
+              <simple name="NoOpHasAccountingLines" nextNode="JoinHasAccountingLines"/>
+            </branch>
+            <branch name="False">
+              <requests name="Organization" nextNode="JoinHasAccountingLines"/>
+            </branch>
+            <join name="JoinHasAccountingLines"/>
+          </split>
+
+          <requests name="SubAccount" nextNode="Account"/>
+
+          <requests name="Account" nextNode="AccountingOrganizationHierarchy"/>
+
+          <requests name="AccountingOrganizationHierarchy" nextNode="Commodity"/>
+
+          <requests name="Commodity" nextNode="RequiresAwardReview"/>
+
+		  <split name="RequiresAwardReview" nextNode="AmountRequiresSeparationOfDutiesReview">
+		  	<branch name="True">
+		  		<requests name="Award" nextNode="JoinRequiresAwardReview"/>
+		  	</branch>
+		  	<branch name="False">
+		  		<requests name="NoOpRequiresAwardReview" nextNode="JoinRequiresAwardReview"/>
+		  	</branch>
+		  	<join name="JoinRequiresAwardReview"/>
+		  </split>
+
+          <split name="AmountRequiresSeparationOfDutiesReview" nextNode="HasNewUnorderedItems">
+            <branch name="True">
+              <requests name="SeparationOfDuties" nextNode="JoinSOD"/>
+            </branch>
+            <branch name="False">
+              <simple name="NoOp" nextNode="JoinSOD"/>
+            </branch>
+            <join name="JoinSOD"/>
+          </split>
+
+        <split name="HasNewUnorderedItems">
+		  <branch name="True">
+		    <requests name="NewUnorderedItems" nextNode="Join"/>
+		  </branch>
+		  <branch name="False">
+		    <simple name="NoOpUnorderedItems" nextNode="Join"/>
+		  </branch>
+		  <join name="Join"/>
+        </split>
+
+        </routePath>
+      </routePaths>
+      <routeNodes>
+        <start name="AdHoc"/>
+        <role name="Organization">
+          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+        <role name="SubAccount">
+          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+        <role name="Account">
+          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+        <role name="AccountingOrganizationHierarchy">
+          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+        <role name="Award">
+          <qualifierResolverClass> org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver </qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+        <role name="Commodity">
+          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+        <role name="SeparationOfDuties">
+          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+        <role name="NewUnorderedItems">
+          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+        <split name="HasAccountingLines">
+          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+        </split>
+        <split name="RequiresAwardReview">
+          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+        </split>
+        <split name="AmountRequiresSeparationOfDutiesReview">
+          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+        </split>
+        <split name="HasNewUnorderedItems">
+          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+        </split>
+		<join name="JoinRequiresAwardReview"/>          
+        <join name="JoinHasAccountingLines"/>
+        <join name="Join"/>
+        <join name="JoinSOD"/>
+        <simple name="NoOpHasAccountingLines">
+          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+        </simple>
+        <simple name="NoOpRequiresAwardReview">
+          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+        </simple>
+        <simple name="NoOp">
+          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+        </simple>
+        <simple name="NoOpUnorderedItems">
+          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+        </simple>
+      </routeNodes>
+    </documentType>
+  </documentTypes>
+</data>

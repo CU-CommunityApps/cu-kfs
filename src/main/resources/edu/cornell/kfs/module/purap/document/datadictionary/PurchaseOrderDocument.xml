@@ -1513,7 +1513,6 @@
     	<property name="routingTypeDefinitions">
     		<map>
     		    <entry key="Commodity" value-ref="RoutingType-PurchasingDocument-Commodity"/>
-    			<entry key="Award" value-ref="RoutingType-PurchasingDocument-Award"/>
                 <entry key="Budget" value-ref="RoutingType-PurchaseOrderDocument-Budget"/>
                 <entry key="AccountingOrganizationHierarchy" value-ref="RoutingType-PurchasingAccountsPayableDocument-AccountingOrganizationHierarchy"/>
                 

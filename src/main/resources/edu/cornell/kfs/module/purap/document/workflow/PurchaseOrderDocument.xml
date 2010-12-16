@@ -46,7 +46,7 @@
       <routePaths>
         <routePath>
           <start name="AdHoc" nextNode="RequiresContractManagementReview"/>
-          <split name="RequiresContractManagementReview" nextNode="RequiresAwardReview">
+          <split name="RequiresContractManagementReview" nextNode="RequiresBudgetReview">
             <branch name="True">
               <requests name="ContractManagement" nextNode="JoinRequiresContractManagementReview"/>
             </branch>
@@ -54,15 +54,6 @@
               <requests name="NoOpRequiresContractManagementReview" nextNode="JoinRequiresContractManagementReview"/>
             </branch>
             <join name="JoinRequiresContractManagementReview"/>
-          </split>
-          <split name="RequiresAwardReview" nextNode="RequiresBudgetReview">
-            <branch name="True">
-              <requests name="Award" nextNode="JoinRequiresAwardReview"/>
-            </branch>
-            <branch name="False">
-              <requests name="NoOpRequiresAwardReview" nextNode="JoinRequiresAwardReview"/>
-            </branch>
-            <join name="JoinRequiresAwardReview"/>
           </split>
           <split name="RequiresBudgetReview" nextNode="VendorIsEmployeeOrNonResidentAlien">
             <branch name="True">
@@ -86,20 +77,13 @@
           
         </routePath>
       </routePaths>
-      
       <routeNodes>
         <start name="AdHoc"/>
         <role name="AccountingOrganizationHierarchy">
           <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
- 
         <role name="ContractManagement">
-          <qualifierResolverClass> org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver </qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-       
-        <role name="Award">
           <qualifierResolverClass> org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver </qualifierResolverClass>
           <activationType>P</activationType>
         </role>
@@ -114,18 +98,12 @@
         <split name="RequiresContractManagementReview">
           <type> org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode </type>
         </split>
-        <split name="RequiresAwardReview">
-          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-        </split>
         <split name="RequiresBudgetReview">
           <type> org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode </type>
         </split>
         <split name="VendorIsEmployeeOrNonResidentAlien">
           <type> org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode </type>
         </split>
-        <simple name="NoOpRequiresAwardReview">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
-        </simple>
         <simple name="NoOpRequiresContractManagementReview">
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
         </simple>
@@ -135,7 +113,6 @@
         <simple name="NoOpBudget">
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
         </simple>
-        <join name="JoinRequiresAwardReview"/>
         <join name="JoinRequiresBudgetReview"/>
         <join name="JoinVendorIsEmployeeOrNonResidentAlien"/>
         <join name="JoinRequiresContractManagementReview"/>
