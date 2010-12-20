@@ -12,5 +12,7 @@
   <import resource="module/cg/cu-spring-cg.xml" />
   <import resource="module/purap/cu-spring-purap.xml" />
   
+  <import resource="sys/kfs4fixes.xml" />
+  
 
 </beans>

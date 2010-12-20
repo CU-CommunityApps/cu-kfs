@@ -75,7 +75,7 @@
             <overlays>
               <overlay>
                 <groupId>edu.cornell.kfs</groupId>
-                <artifactId>kfs-stock-war</artifactId>
+                <artifactId>kfs-modded-war</artifactId>
                 <filtered>false</filtered>
                 <!-- Exclude libraries that come with KFS
                      that are older than Rice libraries pulled in
@@ -350,12 +350,12 @@
 
     <dependency>
       <groupId>edu.cornell.kfs</groupId>
-      <artifactId>kfs-stock-war</artifactId>
-      <version>3.0.1</version>
+      <artifactId>kfs-modded-war</artifactId>
+      <version>4.0-fixes-SNAPSHOT</version>
       <type>war</type>
     </dependency>
        
-     <dependency>
+    <dependency>
        <groupId>edu.cornell.kfs</groupId>
        <artifactId>kfs-stock-lib</artifactId>
        <version>3.0.1-tmp-SNAPSHOT</version>
