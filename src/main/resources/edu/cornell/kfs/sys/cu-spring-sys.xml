@@ -21,24 +21,6 @@
 		</property>
 	</bean>
 
- 	<!-- TODO Beans between the comments are to be removed if/when the flat file batch processing from IU gets incorporated into a release we move to -->
-
-	<bean id="FlatFileParser" abstract="true" class="org.kuali.kfs.sys.batch.FlatFileParserBase">    
-    	<property name="dateTimeService" ref="dateTimeService" />
-    </bean>
- 
-   	<bean id="FlatFileParseTracker" class="org.kuali.kfs.sys.batch.FlatFileParseTrackerImpl" scope="prototype" />
-   
-   	<bean id="FlatFileObjectSpecification" abstract="true" class="org.kuali.kfs.sys.batch.FlatFileObjectSpecification" />
-   
-    <bean id="FixedWidthFlatFileSpecification" abstract="true" class="org.kuali.kfs.sys.batch.FixedWidthFlatFileSpecification" />
-   
-   	<bean id="FixedWidthFlatFilePropertySpecification" abstract="true" class="org.kuali.kfs.sys.batch.FixedWidthFlatFilePropertySpecification" />
-   
-    <bean id="DelimitedFlatFileSpecification" abstract="true" class="org.kuali.kfs.sys.batch.DelimitedFlatFileSpecification" />
-        
-   	<bean id="DelimitedFlatFilePropertySpecification" abstract="true" class="org.kuali.kfs.sys.batch.DelimitedFlatFilePropertySpecification" />
-	
-	<!-- Here is the other comment -->
+ 	
 	
 </beans>
