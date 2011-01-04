@@ -31,22 +31,19 @@
 	<!-- Here is the other comment -->
 	
 	<bean id="cu-ld-4" parent="ldModuleConfiguration-parentBean">
+		<property name="namespaceCode" value="KFS-LD" />
 		<property name="jobNames">
-        	<list>
+        	<list merge="true">
                 <value>laborEnterpriseFeedJob</value>
-                <value>laborNightlyOutJob</value>
-                <value>laborScrubberJob</value>
-                <value>laborPosterJob</value>
-                <value>laborBalancingJob</value>
-                <value>laborBalancingHistorySyncJob</value>
-                <value>laborFeedJob</value>
-                <value>clearLaborPendingEntriesJob</value>
-                <value>laborBalanceForwardJob</value>
-                <value>laborPurgeJob</value>
-
             </list>
         </property>
 	</bean>
+	
+	<bean id="ldModuleService" parent="ldModuleService-parentBean" />
+
+    <bean id="ldModuleService-parentBean" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl" abstract="true">
+        <property name="moduleConfiguration" ref="cu-ld-4" />
+    </bean>
 	
 	<bean id="laborScrubberJob" parent="scheduledJobDescriptor">
         <property name="steps">
