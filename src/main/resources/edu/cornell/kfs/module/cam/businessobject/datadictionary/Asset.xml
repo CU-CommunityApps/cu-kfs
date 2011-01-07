@@ -669,19 +669,14 @@
   </bean>
   
   <bean id="Asset-manufacturerName" parent="Asset-manufacturerName-parentBean"/>
-  <bean id="Asset-manufacturerName-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="manufacturerName"/>
-    <property name="forceUppercase" value="false"/>
-    <property name="label" value="Manufacturer"/>
-    <property name="shortLabel" value="Manufacturer"/>
-    <property name="maxLength" value="40"/>
-    <property name="validationPattern">
-      <ref bean="AnyCharacterWithWhitespaceValidation" />
-    </property>
-    <property name="control">
-      <bean parent="TextControlDefinition" p:size="42"/>
-    </property>
-  </bean>
+   <bean id="Asset-manufacturerName-parentBean" abstract="true" parent="VendorDetail-vendorName">
+   <property name="name" value="manufacturerName"/>
+   <property name="label" value="Manufacturer"/>
+   <property name="shortLabel" value="Manufacturer"/>
+   <property name="control">
+     <bean parent="TextControlDefinition" p:size="47"/>
+   </property>
+ </bean>
   
   <bean id="Asset-oldTagNumber" parent="Asset-oldTagNumber-parentBean"/>
   <bean id="Asset-oldTagNumber-parentBean" abstract="true" parent="AttributeDefinition">
@@ -841,24 +836,17 @@
   </bean>
   
   <bean id="Asset-vendorName" parent="Asset-vendorName-parentBean"/>
-  <bean id="Asset-vendorName-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="vendorName"/>
-    <property name="forceUppercase" value="false"/>
-    <property name="label" value="Vendor Name"/>
-    <property name="shortLabel" value="Name"/>
-    <property name="maxLength" value="40"/>
-    <property name="validationPattern">
-      <ref bean="AnyCharacterWithWhitespaceValidation" />
-    </property>
-    <property name="control">
-      <bean parent="TextControlDefinition" p:size="42"/>
-    </property>
-    <property name="attributeSecurity">
-        <bean parent="AttributeSecurity">
-           <property name="readOnly" value="true"/>
-       </bean>
-    </property>
-  </bean>
+  <bean id="Asset-vendorName-parentBean" abstract="true" parent="VendorDetail-vendorName">
+   <property name="shortLabel" value="Name"/>
+   <property name="control">
+     <bean parent="TextControlDefinition" p:size="47"/>
+   </property>
+   <property name="attributeSecurity">
+       <bean parent="AttributeSecurity">
+          <property name="readOnly" value="true"/>
+      </bean>
+   </property>
+ </bean>
   
   <bean id="Asset-capitalAssetType.depreciableLifeLimit" parent="Asset-capitalAssetType.depreciableLifeLimit-parentBean"/>
   <bean id="Asset-capitalAssetType.depreciableLifeLimit-parentBean" abstract="true" parent="AssetType-depreciableLifeLimit">
