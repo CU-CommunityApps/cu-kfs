@@ -166,6 +166,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
     protected String disbVchrPdpBankCode;
 
     protected boolean payeeAssigned = false;
+    protected boolean editW9W8BENbox = false;
 
     protected DocumentHeader financialDocument;
     protected DisbursementVoucherDocumentationLocation disbVchrDocumentationLoc;
@@ -944,8 +945,15 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         this.getDvPayeeDetail().setDisbVchrEmployeePaidOutsidePayrollCode(getVendorService().isVendorInstitutionEmployee(vendor.getVendorHeaderGeneratedIdentifier()));
 
         this.getDvPayeeDetail().setHasMultipleVendorAddresses(1 < vendor.getVendorAddresses().size());
+        
+        boolean w9AndW8Checked = false;
+        if (ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW9ReceivedIndicator()) || ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW8BenReceivedIndicator())) {
+        	if (vendor.getVendorHeader().getVendorW9ReceivedIndicator() == true || vendor.getVendorHeader().getVendorW8BenReceivedIndicator() == true) {
+        		w9AndW8Checked = true;
+        	}
+        }
 
-        this.disbVchrPayeeW9CompleteCode = vendor.getVendorHeader().getVendorW9ReceivedIndicator() == null ? false : vendor.getVendorHeader().getVendorW9ReceivedIndicator();
+        this.disbVchrPayeeW9CompleteCode = w9AndW8Checked;
 
         Date vendorFederalWithholdingTaxBeginDate = vendor.getVendorHeader().getVendorFederalWithholdingTaxBeginningDate();
         Date vendorFederalWithholdingTaxEndDate = vendor.getVendorHeader().getVendorFederalWithholdingTaxEndDate();
@@ -1607,6 +1615,30 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         this.payeeAssigned = payeeAssigned;
     }
 
+    
+    /**
+     * Gets the editW9W8BENbox attribute. This method returns a flag that is used to indicate if the W9/W8BEN check box can be edited
+     * by the initiator on the DV. 
+     * 
+     * @return Returns the editW9W8BENbox.
+     */
+   public boolean isEditW9W8BENbox() {
+       String initiatorPrincipalID = this.getDocumentHeader().getWorkflowDocument().getRouteHeader().getInitiatorPrincipalId();
+       if (GlobalVariables.getUserSession().getPrincipalId().equals(initiatorPrincipalID)) {
+           editW9W8BENbox = true;            
+       }
+       return editW9W8BENbox;
+   }
+ 
+   /**
+     * Sets the editW9W8BENbox attribute value.
+     * 
+     * @param editW9W8BENbox The editW9W8BENbox to set.
+     */
+   public void setEditW9W8BENbox(boolean editW9W8BENbox) {
+       this.editW9W8BENbox = editW9W8BENbox;
+   }
+   
     /**
      * Gets the disbVchrPdpBankCode attribute.
      * 
