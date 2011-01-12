@@ -1758,15 +1758,19 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
             return true;
         }
         
-        boolean isEmployee = this.getDvPayeeDetail().isDisbVchrPayeeEmployeeCode();
-        if (isEmployee) {
-            return true;
-        }
+
+        //Since the two following blocks of code do essentially the same thing,
+        //commenting both out to implement functionality where tax review is bypassed
+        //if the payee is an employee
         
-// bypass all the time
+//        boolean isEmployee = this.getDvPayeeDetail().isDisbVchrPayeeEmployeeCode();
+//        if (isEmployee) {
+//            return true;
+//        }
+//        
         String payeeTypeCode = this.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode();
 //        if (payeeTypeCode.equals(DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE)) {
-//            return true;
+//           return true;
 //        }
         
         if (payeeTypeCode.equals(DisbursementVoucherConstants.DV_PAYEE_TYPE_VENDOR) && this.getVendorService().isVendorForeign(getDvPayeeDetail().getDisbVchrVendorHeaderIdNumberAsInteger())) {
