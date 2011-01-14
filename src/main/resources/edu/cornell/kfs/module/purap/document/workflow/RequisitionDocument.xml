@@ -29,22 +29,22 @@
               <simple name="NoOpHasAccountingLines" nextNode="JoinHasAccountingLines"/>
             </branch>
             <branch name="False">
-               <requests name="Organization" nextNode="JoinHasAccountingLines"/> 
+               <requests name="Organization" nextNode="JoinHasAccountingLines"/>
 <!--              <requests name="Initiator" nextNode="JoinHasAccountingLines"/>-->
             </branch>
             <join name="JoinHasAccountingLines"/>
           </split>
           
+          
           <split name="B2BAutoPurchaseOrder">
             <branch name="True">
-              <requests name="Commodity" nextNode="Join"/>
+              <requests name="NoOpB2B" nextNode="JoinB2BAPO"/>
             </branch>
             <branch name="False">
               <requests name="SubAccount" nextNode="Account"/>
 	          <requests name="Account" nextNode="AccountingOrganizationHierarchy"/>
-	          <requests name="AccountingOrganizationHierarchy" nextNode="Commodity"/>
-	          <requests name="Commodity" nextNode="RequiresAwardReview"/>
-	          <split name="RequiresAwardReview" nextNode="AmountRequiresSeparationOfDutiesReview">
+	          <requests name="AccountingOrganizationHierarchy" nextNode="RequiresAwardReview"/>
+	          <split name="RequiresAwardReview" nextNode="Commodity">
 		  	    <branch name="True">
 		  		  <requests name="Award" nextNode="JoinRequiresAwardReview"/>
 		  	    </branch>
@@ -52,18 +52,19 @@
 		  		  <requests name="NoOpRequiresAwardReview" nextNode="JoinRequiresAwardReview"/>
 		  	    </branch>
 		  	    <join name="JoinRequiresAwardReview"/>
-		      </split>	          
-	          <split name="AmountRequiresSeparationOfDutiesReview">
+		      </split>
+		      <requests name="Commodity" nextNode="AmountRequiresSeparationOfDutiesReview"/>	          
+	          <split name="AmountRequiresSeparationOfDutiesReview" nextNode="JoinB2BAPO">
 	            <branch name="True">
-	              <requests name="SeparationOfDuties" nextNode="Join"/>
+	              <requests name="SeparationOfDuties" nextNode="JoinSOD"/>
 	            </branch>
 	            <branch name="False">
-	              <simple name="NoOp" nextNode="Join"/>
+	              <simple name="NoOpSOD" nextNode="JoinSOD"/>
 	            </branch>
-	            <join name="Join"/>
+	            <join name="JoinSOD"/>
 	          </split>
 	        </branch>
-	         <join name="Join"/>
+	         <join name="JoinB2BAPO"/>
           </split>
         </routePath>
       </routePaths>
@@ -80,7 +81,6 @@
         <split name="B2BAutoPurchaseOrder">
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
-
         <role name="SubAccount">
           <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
@@ -115,15 +115,22 @@
         <split name="AmountRequiresSeparationOfDutiesReview">
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
-        <simple name="NoOp">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
-        </simple>
-        <join name="Join"/>
-		<join name="JoinRequiresAwardReview"/>            
+<!--        <simple name="NoOp">-->
+<!--          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>-->
+<!--        </simple>-->
+		<join name="JoinRequiresAwardReview"/>  
+		<join name="JoinB2BAPO"/>
+		<join name="JoinSOD"/>
         <simple name="NoOpRequiresAwardReview">
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
         </simple>                
         <simple name="NoOpHasAccountingLines">
+          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+        </simple>
+        <simple name="NoOpB2B">
+          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+        </simple>
+        <simple name="NoOpSOD">
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
         </simple>
         <join name="JoinHasAccountingLines"/>
