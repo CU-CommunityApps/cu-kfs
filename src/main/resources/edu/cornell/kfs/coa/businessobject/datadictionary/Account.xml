@@ -883,6 +883,9 @@
               <dd:field attributeName="indirectCostRecoveryAcctNbr"/>
               <dd:field attributeName="accountCfdaNumber"/>
               <dd:field attributeName="contractsAndGrantsAccountResponsibilityId"/>
+              <dd:field attributeName="extension.invoiceFrequency.invoiceFrequencyCode"/>
+        	  <dd:field attributeName="extension.invoiceType.invoiceTypeCode"/>
+        	  <dd:field attributeName="extension.everify"/>
             </list>
           </property>
         </bean>
