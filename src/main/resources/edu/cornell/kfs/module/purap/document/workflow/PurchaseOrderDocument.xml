@@ -73,12 +73,16 @@
             </branch>
             <join name="JoinVendorIsEmployeeOrNonResidentAlien"/>
           </split>
-          <requests name= "AccountingOrganizationHierarchy"/>
-          
+          <requests name="AccountingOrganizationHierarchy" nextNode="Organization"/>
+          <requests name="Organization" />
         </routePath>
       </routePaths>
       <routeNodes>
         <start name="AdHoc"/>
+        <role name="Organization">
+          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>        
         <role name="AccountingOrganizationHierarchy">
           <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
