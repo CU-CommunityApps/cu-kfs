@@ -947,11 +947,16 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         this.getDvPayeeDetail().setHasMultipleVendorAddresses(1 < vendor.getVendorAddresses().size());
         
         boolean w9AndW8Checked = false;
-        if (ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW9ReceivedIndicator()) || ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW8BenReceivedIndicator())) {
-        	if (vendor.getVendorHeader().getVendorW9ReceivedIndicator() == true || vendor.getVendorHeader().getVendorW8BenReceivedIndicator() == true) {
-        		w9AndW8Checked = true;
-        	}
-        }
+        boolean w9checked = false;
+        boolean w8checked = false;
+        if (ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW9ReceivedIndicator())) 
+        	w9checked = vendor.getVendorHeader().getVendorW9ReceivedIndicator();
+       
+        if (ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW8BenReceivedIndicator())) 
+        	w8checked = vendor.getVendorHeader().getVendorW8BenReceivedIndicator();
+        
+        if (w9checked || w8checked) 
+        	w9AndW8Checked = true;
 
         this.disbVchrPayeeW9CompleteCode = w9AndW8Checked;
 
