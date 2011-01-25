@@ -21,11 +21,11 @@
                 <value>edu/cornell/kfs/module/cg/businessobject/datadictionary</value>
 			</list>
 		</property>
-	<!-- 	<property name="databaseRepositoryFilePaths">
+		<property name="databaseRepositoryFilePaths">
 			<list>
-				<value>edu/cornell/kfs/module/cg/cu-ojb-coa.xml</value>
+				<value>edu/cornell/kfs/module/cg/cu-ojb-cg.xml</value>
 			</list>
-		</property> -->
+		</property>
 </bean>
 
 
