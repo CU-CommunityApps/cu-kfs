@@ -381,7 +381,7 @@ public class AccessSecurityServiceImpl implements AccessSecurityService {
      */
     protected boolean checkForEditLineOverrides(AccountingDocument document, AccountingLine line, Person person) {
         // account must be not be empty for override checks
-        if (line.getAccount() == null) {
+        if (line.getAccount() == null || line.getAccountNumber() == null) {
             return false;
         }
 
