@@ -11,6 +11,7 @@
   <import resource="module/cam/cu-spring-cam.xml" />
   <import resource="module/cg/cu-spring-cg.xml" />
   <import resource="module/purap/cu-spring-purap.xml" />
+<!--    <import resource="module/ezra/cu-spring-ezra.xml"/>-->
   
   <import resource="sys/kfs4fixes.xml" />
   

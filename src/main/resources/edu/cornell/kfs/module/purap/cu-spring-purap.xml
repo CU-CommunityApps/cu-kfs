@@ -11,17 +11,59 @@
 <bean id="cu-purap" parent="purapModuleConfiguration-parentBean">
 		
 		<property name="packagePrefixes">
-            <list>
+            <list merge="true">
                 <value>edu.cornell.kfs.module.purap</value>
             </list>
         </property>
 		<property name="dataDictionaryPackages">
-			<list>
+			<list merge="true">
                 <value>edu/cornell/kfs/module/purap/document/datadictionary</value>
  			</list>
 		</property>
+		<property name="databaseRepositoryFilePaths">
+			<list merge ="true">
+				<value>edu/cornell/kfs/module/purap/cu-ojb-purap.xml</value>
+			</list>
+		</property>
 </bean>
 
+<bean id="b2bPurchaseOrderService" class="org.kuali.kfs.module.purap.document.service.impl.B2BPurchaseOrderSciquestServiceImpl">
+        <property name="b2bDao" ref="b2bDao"/>
+        <property name="requisitionService" ref="requisitionService"/>
+        <property name="parameterService" ref="parameterService"/>
+        <property name="vendorService" ref="vendorService"/>
+        <property name="defaultDistributionFaxNumber" value="9704915523"/>        
+        <property name="b2bEnvironment">
+            <value>${b2b.environment}</value>
+        </property>
+        <property name="b2bPunchoutURL">
+            <value>${b2b.punch.out.url}</value>
+        </property>
+        <property name="b2bPunchbackURL">
+            <value>${b2b.punch.back.url}</value>
+        </property>
+        <property name="b2bUserAgent">
+            <value>${b2b.user.agent}</value>
+        </property>
+        <property name="b2bShoppingPassword">
+            <value>${b2b.shopping.password}</value>
+        </property>
+        <property name="b2bPurchaseOrderURL">
+            <value>${b2b.purchase.order.url}</value>
+        </property>
+        <property name="b2bPurchaseOrderPassword">
+            <value>${b2b.purchase.order.password}</value>
+        </property>
+    </bean>
 
+  <bean id="sciQuestDataAccess" parent="platformAwareDao"  
+          class="org.kuali.kfs.module.purap.dataaccess.impl.SciQuestDataAccessImpl" />
+    
+    <bean id="sciQuestService" parent="sciQuestService-parent"/>    
+    <bean id="sciQuestService-parent"
+          class="org.kuali.kfs.module.purap.document.service.impl.SciQuestServiceImpl">
+       <property name="sciquestDataAccess" ref="sciQuestDataAccess" />
+       <property name="businessObjectService" ref="businessObjectService" />
+    </bean> 
 
 </beans>

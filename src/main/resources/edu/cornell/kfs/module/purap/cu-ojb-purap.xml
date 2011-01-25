@@ -1,0 +1,66 @@
+<!--
+ Copyright 2005-2007 The Kuali Foundation.
+ 
+ Licensed under the Educational Community License, Version 1.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl1.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<descriptor-repository version="1.0">
+    <class-descriptor class="org.kuali.kfs.module.purap.businessobject.SciQuestPunchoutData" table="SQ_PUNCHOUT_T">
+
+        <field-descriptor name="punchoutId" column="SQ_PUNCHOUT_ID" jdbc-type="INTEGER" primarykey="true" sequence-name="SQ_PUNCHOUT_ID_SEQ" autoincrement="true"/>
+        <field-descriptor name="requisitionId" column="REQS_ID" jdbc-type="INTEGER" />
+        <field-descriptor name="requisitionName" column="REQUISITION_NM" jdbc-type="VARCHAR" />
+        <field-descriptor name="shipToAddressCode" column="SHIP_TO_ADDRESS_CD" jdbc-type="VARCHAR" />    
+        <!-- Common Fields -->
+        <field-descriptor name="lastUpdate" column="LST_UPDT_TS" jdbc-type="TIMESTAMP" />      
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+        <!-- Relationships -->
+        <reference-descriptor name="requisition" class-ref="org.kuali.kfs.module.purap.document.RequisitionDocument" auto-retrieve="true" auto-update="none" auto-delete="none">
+            <foreignkey field-ref="requisitionId" />
+        </reference-descriptor>  
+        <collection-descriptor  name="items" element-class-ref="org.kuali.kfs.module.purap.businessobject.SciQuestPunchoutDataItem" 
+           collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" 
+           auto-retrieve="true" 
+           auto-update="object" 
+           auto-delete="true">
+            <inverse-foreignkey field-ref="punchoutId" />
+        </collection-descriptor>
+    </class-descriptor>
+
+    <class-descriptor class="org.kuali.kfs.module.purap.businessobject.SciQuestPunchoutDataItem" table="SQ_PUNCHOUT_ITEM_T">
+        <field-descriptor name="punchoutItemId" column="SQ_PUNCHOUT_ITEM_ID" jdbc-type="INTEGER" primarykey="true" sequence-name="SQ_PUNCHOUT_ITEM_ID_SEQ" autoincrement="true"/>
+        <field-descriptor name="punchoutId" column="SQ_PUNCHOUT_ID" jdbc-type="INTEGER"/>
+        <field-descriptor name="spsc" column="SPSC" jdbc-type="VARCHAR" />
+        <field-descriptor name="unspsc" column="UNSPSC" jdbc-type="VARCHAR" />
+        <field-descriptor name="commodityCode" column="COMMODITY_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="productSource" column="PRODUCT_SRC" jdbc-type="VARCHAR" />
+        <field-descriptor name="controlled" column="CONTROLLED" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+        <field-descriptor name="green" column="GREEN" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+        <field-descriptor name="hazardous" column="HAZARDOUS" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+        <field-descriptor name="radioactive" column="RADIOACTIVE" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+        <field-descriptor name="radioactiveMinor" column="RADIO_ACTIVE_MINOR" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+        <field-descriptor name="selectAgent" column="SELECT_AGENT" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+        <field-descriptor name="toxin" column="TOXIN" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+        <!-- Common Fields -->
+        <field-descriptor name="lastUpdate" column="LST_UPDT_TS" jdbc-type="TIMESTAMP" />
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+        <!-- Relationships -->
+        <reference-descriptor name="punchoutData" class-ref="org.kuali.kfs.module.purap.businessobject.SciQuestPunchoutData" 
+           auto-retrieve="true" 
+           auto-update="none" 
+           auto-delete="none">
+            <foreignkey field-ref="punchoutId" />
+        </reference-descriptor>  
+    </class-descriptor>
+</descriptor-repository>
