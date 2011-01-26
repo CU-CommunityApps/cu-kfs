@@ -8,7 +8,7 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-<bean id="cu-cg" parent="cgModuleConfiguration-parentBean">
+	<bean id="cu-cg" parent="cgModuleConfiguration-parentBean">
 		
 		<property name="packagePrefixes">
             <list merge="true">
@@ -26,8 +26,11 @@
 				<value>edu/cornell/kfs/module/cg/cu-ojb-cg.xml</value>
 			</list>
 		</property>
-</bean>
+	</bean>
 
+	<bean id="cu-cgModuleService" parent="cgModuleService-parentBean">
+	 	<property name="moduleConfiguration" ref="cu-cg"/>
+	</bean>
 
 
 </beans>

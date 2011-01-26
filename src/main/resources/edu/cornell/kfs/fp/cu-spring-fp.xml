@@ -8,7 +8,7 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-<bean id="cu-fp" parent="fpModuleConfiguration-parentBean">
+	<bean id="cu-fp" parent="fpModuleConfiguration-parentBean">
 		
 		<property name="packagePrefixes">
             <list merge="true">
@@ -22,7 +22,10 @@
 			</list>
 		</property>
 		
-</bean>
+	</bean>
+	<bean id="cu-fpModuleService" parent="fpModuleService-parentBean">
+	 	<property name="moduleConfiguration" ref="cu-fp"/>
+	</bean>
 
 	<bean id="procurementCardCreateDocumentService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl">
 		<property name="parameterService">

@@ -8,7 +8,7 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-<bean id="cu-coa" parent="coaModuleConfiguration-parentBean">
+	<bean id="cu-coa" parent="coaModuleConfiguration-parentBean">
 		
 		<property name="packagePrefixes">
             <list merge="true">
@@ -26,18 +26,22 @@
 				<value>edu/cornell/kfs/coa/cu-ojb-coa.xml</value>
 			</list>
 		</property>
-</bean>
+	</bean>
 
-<bean id="accountVerificationWebService" class="edu.cornell.kfs.coa.service.impl.AccountVerificationWebServiceImpl">
+	<bean id="cu-coaModuleService" parent="coaModuleService-parentBean">
+	 	<property name="moduleConfiguration" ref="cu-coa"/>
+	</bean>
+
+	<bean id="accountVerificationWebService" class="edu.cornell.kfs.coa.service.impl.AccountVerificationWebServiceImpl">
 		<property name="accountService" ref ="accountService" />
 		<property name="subAccountService" ref ="subAccountService" />
 		<property name="objectCodeService" ref ="objectCodeService" />
 		<property name="subObjectCodeService" ref ="subObjectCodeService" />
 		<property name="projectCodeService" ref ="projectCodeService" />
-</bean>
+	</bean>
 
-<bean class="org.kuali.rice.ksb.messaging.KSBExporter"> 
-    <property name="serviceDefinition"> 
+	<bean class="org.kuali.rice.ksb.messaging.KSBExporter"> 
+    	<property name="serviceDefinition"> 
             <bean class="org.kuali.rice.ksb.messaging.SOAPServiceDefinition"> 
               <property name="service"> 
                 <ref bean="accountVerificationWebService" /> 
@@ -48,7 +52,5 @@
             </bean> 
         </property> 
     </bean> 
-
-
 
 </beans>
