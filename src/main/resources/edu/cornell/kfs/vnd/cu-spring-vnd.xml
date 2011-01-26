@@ -8,7 +8,7 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-<bean id="cu-vnd" parent="vndModuleConfiguration-parentBean">
+	<bean id="cu-vnd" parent="vndModuleConfiguration-parentBean">
 		
 		<property name="packagePrefixes">
             <list merge="true">
@@ -26,8 +26,10 @@
 				<value>edu/cornell/kfs/vnd/cu-ojb-vnd.xml</value>
 			</list>
 		</property>
-</bean>
+	</bean>
 
-
+	<bean id="cu-vndModuleService" parent="vndModuleService-parentBean">
+	 	<property name="moduleConfiguration" ref="cu-vnd"/>
+	</bean>
 
 </beans>
