@@ -29,9 +29,7 @@ import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants.NodeDetails;
 import org.kuali.kfs.module.purap.businessobject.ItemType;
-import org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
-import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineParser;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurApItemBase;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderView;
@@ -45,7 +43,6 @@ import org.kuali.kfs.module.purap.service.SensitiveDataService;
 import org.kuali.kfs.module.purap.util.PurApRelatedViews;
 import org.kuali.kfs.sys.KFSConstants.AdHocPaymentIndicator;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
-import org.kuali.kfs.sys.businessobject.AccountingLineParser;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
@@ -175,12 +172,16 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         if (ObjectUtils.isNotNull(sensitiveData) && !sensitiveData.isEmpty()) {
             return true;
         } 
-        for (PurchasingItemBase item : (List<PurchasingItemBase>)this.getItems()) {
-        	if (item.getCommodityCode() != null 
-            		&& item.getCommodityCode().getSensitiveDataCode() != null 
-            		&& item.getCommodityCode().getSensitiveDataCode().length() != 0) {
+        
+        for (PurApItem item : (List<PurApItem>)this.getItems()) {
+        	if (item instanceof PurchasingItemBase) {
+        		PurchasingItemBase pib = (PurchasingItemBase)item;
+        		if (pib.getCommodityCode() != null 
+        			&& pib.getCommodityCode().getSensitiveDataCode() != null 
+            		&& pib.getCommodityCode().getSensitiveDataCode().length() != 0) {
                 return true;
-            }
+        		}
+        	}
         }
         return false;
     }
