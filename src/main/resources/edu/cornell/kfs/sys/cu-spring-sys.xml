@@ -19,6 +19,9 @@
                 <value>edu/cornell/kfs/sys/businessobject/datadictionary</value>                
 			</list>
 		</property>
+		<property name="fiscalYearMakers">
+			<list/>
+		</property>
 	</bean>
 	
 	<bean id="cu-financialSystemModuleService" parent="financialSystemModuleService-parentBean">

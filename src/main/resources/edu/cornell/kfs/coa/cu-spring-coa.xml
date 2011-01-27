@@ -26,6 +26,9 @@
 				<value>edu/cornell/kfs/coa/cu-ojb-coa.xml</value>
 			</list>
 		</property>
+		<property name="fiscalYearMakers">
+			<list/>
+		</property>
 	</bean>
 
 	<bean id="cu-coaModuleService" parent="coaModuleService-parentBean">

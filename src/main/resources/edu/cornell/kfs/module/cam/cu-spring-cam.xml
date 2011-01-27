@@ -26,6 +26,9 @@
 				<value>edu/cornell/kfs/module/cam/cu-ojb-cam.xml</value>
 			</list>
 		</property>
+		<property name="fiscalYearMakers">
+			<list/>
+		</property>
 	</bean>
 
 	<bean id="cu-camModuleService" parent="camModuleService-parentBean">
