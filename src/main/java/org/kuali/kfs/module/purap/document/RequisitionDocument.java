@@ -745,14 +745,16 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
     
     @Override
     public boolean isSensitive() {
+    	boolean isSensitive =  super.isSensitive();
+
         for (PurchasingItemBase item : (List<PurchasingItemBase>)this.getItems()) {
             if (item.getCommodityCode() != null 
             		&& item.getCommodityCode().getSensitiveDataCode() != null 
             		&& item.getCommodityCode().getSensitiveDataCode().length() != 0) {
-                return true;
+                isSensitive |= true;
             }
         }
-        return false;
+        return isSensitive;
     }
     
 	public static final String DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW = "DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW";

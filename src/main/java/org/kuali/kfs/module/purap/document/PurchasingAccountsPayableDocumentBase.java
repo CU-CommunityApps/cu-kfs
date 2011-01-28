@@ -172,17 +172,6 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         if (ObjectUtils.isNotNull(sensitiveData) && !sensitiveData.isEmpty()) {
             return true;
         } 
-        
-        for (PurApItem item : (List<PurApItem>)this.getItems()) {
-        	if (item instanceof PurchasingItemBase) {
-        		PurchasingItemBase pib = (PurchasingItemBase)item;
-        		if (pib.getCommodityCode() != null 
-        			&& pib.getCommodityCode().getSensitiveDataCode() != null 
-            		&& pib.getCommodityCode().getSensitiveDataCode().length() != 0) {
-                return true;
-        		}
-        	}
-        }
         return false;
     }
 
