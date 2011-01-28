@@ -35,11 +35,11 @@
 
     <purap:delivery
         documentAttributes="${DataDictionary.RequisitionDocument.attributes}" 
-        showDefaultBuildingOption="true" 
-        showDeliveryRequiredDate="false" />
+        showDefaultBuildingOption="true"  />
 
-    <purap:vendorRequisition
-        documentAttributes="${DataDictionary.RequisitionDocument.attributes}"  />
+    <purap:vendor
+        documentAttributes="${DataDictionary.RequisitionDocument.attributes}"  
+        displayRequisitionFields="true" />
    
  
     <purap:puritems itemAttributes="${DataDictionary.RequisitionItem.attributes}"
