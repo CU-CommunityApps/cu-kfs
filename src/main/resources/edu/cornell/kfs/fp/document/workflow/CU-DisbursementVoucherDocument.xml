@@ -23,16 +23,7 @@
 			<docHandler>${application.url}/financialDisbursementVoucher.do?methodToCall=docHandler</docHandler>
 			<routePaths>
 				<routePath>
-					<start name="AdHoc" nextNode="PayeeIsPurchaseOrderVendor" />
-					<split name="PayeeIsPurchaseOrderVendor" nextNode="Account">
-						<branch name="True">
-							<requests name="Purchasing" nextNode="JoinPayeeIsPurchaseOrderVendor" />
-						</branch>
-						<branch name="False">
-							<simple name="NoOpPayee" nextNode="JoinPayeeIsPurchaseOrderVendor" />
-						</branch>
-						<join name="JoinPayeeIsPurchaseOrderVendor" />
-					</split>
+					<start name="AdHoc" nextNode="Account" />
 					<requests name="Account" nextNode="AccountingOrganizationHierarchy" />
 					<requests name="AccountingOrganizationHierarchy" nextNode="RequiresTaxReview" />
 					<split name="RequiresTaxReview" nextNode="RequiresAwardReview">
@@ -76,10 +67,6 @@
 			</routePaths>
 			<routeNodes>
 				<start name="AdHoc" />
-				<split name="PayeeIsPurchaseOrderVendor">
-					<type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode
-					</type>
-				</split>
 				<split name="RequiresTaxReview">
 					<type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode
 					</type>
@@ -96,9 +83,6 @@
 					<type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode
 					</type>
 				</split>
-				<simple name="NoOpPayee">
-					<type>org.kuali.rice.kew.engine.node.NoOpNode</type>
-				</simple>
 				<simple name="NoOpTaxReview">
 					<type>org.kuali.rice.kew.engine.node.NoOpNode</type>
 				</simple>
@@ -111,16 +95,10 @@
 				<simple name="NoOpCampusReview">
 					<type>org.kuali.rice.kew.engine.node.NoOpNode</type>
 				</simple>
-				<join name="JoinPayeeIsPurchaseOrderVendor" />
 				<join name="JoinRequiresTaxReview" />
 				<join name="JoinRequiresTravelReview" />
 				<join name="JoinRequiresCampusReview" />
 				<join name="JoinRequiresAwardReview" />
-				<role name="Purchasing">
-					<qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver
-					</qualifierResolverClass>
-					<activationType>P</activationType>
-				</role>
 				<role name="Account">
 					<qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver
 					</qualifierResolverClass>

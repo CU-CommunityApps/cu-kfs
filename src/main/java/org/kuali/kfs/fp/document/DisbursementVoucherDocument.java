@@ -1717,8 +1717,6 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 			return isCAndGReviewRequired();
 		if (nodeName.equals(DisbursementVoucherDocument.DOCUMENT_REQUIRES_CAMPUS_REVIEW_SPLIT))
 			return isCampusReviewRequired();
-    	if (nodeName.equals(DisbursementVoucherDocument.PAYEE_IS_PURCHASE_ORDER_VENDOR_SPLIT))
-            return isPayeePurchaseOrderVendor();
         if (nodeName.equals(DisbursementVoucherDocument.DOCUMENT_REQUIRES_TAX_REVIEW_SPLIT))
             return isTaxReviewRequired();
         if (nodeName.equals(DisbursementVoucherDocument.DOCUMENT_REQUIRES_TRAVEL_REVIEW_SPLIT))
@@ -1726,23 +1724,6 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         throw new UnsupportedOperationException("Cannot answer split question for this node you call \""+nodeName+"\"");
     }
     
-    /**
-     * @return true if the payee is a purchase order vendor and therefore should receive vendor review, false otherwise
-     */
-    protected boolean isPayeePurchaseOrderVendor() {
-    	
-        if (!this.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode().equals(DisbursementVoucherConstants.DV_PAYEE_TYPE_VENDOR)) {
-            return false;
-        }
-        
-        VendorDetail vendor = getVendorService().getByVendorNumber(this.getDvPayeeDetail().getDisbVchrPayeeIdNumber());
-        if (vendor == null) {
-            return false;
-        }
-        
-        vendor.refreshReferenceObject("vendorHeader");
-        return vendor.getVendorHeader().getVendorTypeCode().equals(DisbursementVoucherDocument.PURCHASE_ORDER_VENDOR_TYPE);
-    }
     
     /**
      * Tax review is required under the following circumstances: the payee was an employee the payee was a non-resident alien vendor
