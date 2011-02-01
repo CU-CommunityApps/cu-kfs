@@ -1823,9 +1823,10 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 		
 		for (AccountingLine alb : theList )
 		{
-			ParameterEvaluator objectCodes = parameterService.getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_TRAVEL_REVIEW, alb.getObjectCode().toString());
+			ParameterEvaluator objectCodes = parameterService.getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_TRAVEL_REVIEW, alb.getObjectCode().getFinancialObjectCode());
 			if (objectCodes.evaluationSucceeds())
 			{
+				LOG.info("Object Code " + alb.getObjectCode().getFinancialObjectCode() + " requires this document to undergo Travel review.");				
 				return true;
 			}
 		}
@@ -1922,9 +1923,10 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 		
 		for (AccountingLine alb : theList )
 		{
-			ParameterEvaluator objectCodes = parameterService.getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_AWARD_REVIEW);
+			ParameterEvaluator objectCodes = parameterService.getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_AWARD_REVIEW, alb.getObjectCode().getFinancialObjectCode());
 			if (objectCodes.evaluationSucceeds())
 			{
+				LOG.info("Object Code " + alb.getObjectCode().getFinancialObjectCode() + " requires this document to undergo Award review.");
 				return true;
 			}
 		}
@@ -1952,9 +1954,10 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 		
 		for (AccountingLine alb : theList )
 		{
-			ParameterEvaluator objectCodes = parameterService.getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_CAMPUS_REVIEW, alb.getObjectCode().toString());
+			ParameterEvaluator objectCodes = parameterService.getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_CAMPUS_REVIEW, alb.getObjectCode().getFinancialObjectCode());
 			if (objectCodes.evaluationSucceeds())
 			{
+				LOG.info("Object Code " + alb.getObjectCode().getFinancialObjectCode() + " requires this document to undergo Campus review.");
 				return true;
 			}
 		}
