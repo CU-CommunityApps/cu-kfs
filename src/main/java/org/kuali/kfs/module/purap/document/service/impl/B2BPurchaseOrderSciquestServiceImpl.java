@@ -76,7 +76,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 
     private String defaultDistributionFaxNumber;
     
-    private static final String NEWLINE = "\r\n";
+    private static final String NEWLINE = "\n";
     private static final String PREFIX = "--";
     private static final String MIME_BOUNDARY_FOR_ATTACHMENTS = "-----------------------------MIME_BOUNDARY_FOR_ATTACHMENTS";
     
