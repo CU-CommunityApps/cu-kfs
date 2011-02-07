@@ -187,6 +187,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     protected static final String VENDOR_IS_FOREIGN = "Foreign Vendor";
     protected static final String VENDOR_IS_FOREIGN_EMPLOYEE = "Foreign and Employee Vendor";
     
+    private boolean isSensitive = false;
     /**
      * Default constructor.
      */
@@ -616,6 +617,12 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         for (CapitalAssetSystem capitalAssetSystem : requisitionDocument.getPurchasingCapitalAssetSystems()) {
             this.getPurchasingCapitalAssetSystems().add(new PurchaseOrderCapitalAssetSystem((RequisitionCapitalAssetSystem)capitalAssetSystem));
         }
+        
+        if (requisitionDocument.isSensitive()) {
+        	
+        }
+        
+        this.isSensitive = requisitionDocument.isSensitive();
         
         this.fixItemReferences();
     }
@@ -1748,4 +1755,16 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         this.glOnlySourceAccountingLines = glOnlySourceAccountingLines;
     }
 
+    @Override
+    public boolean isSensitive() {
+    	boolean sensitive = super.isSensitive();
+    	if (!sensitive) {
+    		RequisitionDocument reqDoc = SpringContext.getBean(RequisitionService.class).getRequisitionById(getRequisitionIdentifier());
+    		
+    		return reqDoc.isSensitive(); 
+    	}
+    	
+    	return sensitive;
+    }
+    
 }
