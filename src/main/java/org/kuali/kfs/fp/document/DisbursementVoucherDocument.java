@@ -1734,11 +1734,6 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
      */
     protected boolean isTaxReviewRequired() {
     	
-		String dollarThreshold = parameterService.getParameterValue("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_TAX_REVIEW);
-		KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
-		if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
-			return true;
-		}
     	
         if (isPayeePurchaseOrderVendorHasWithholding()) {
             return true;
@@ -1777,8 +1772,16 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
             return true;
         }
         
+        boolean isOverDollarThreshold = false;
+		String dollarThreshold = parameterService.getParameterValue("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_TAX_REVIEW);
+		KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
+		if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
+			isOverDollarThreshold = true;
+		}
+
+        
         if (this.getParameterService().getParameterEvaluator(this.getClass(), DisbursementVoucherDocument.PAYMENT_REASONS_REQUIRING_TAX_REVIEW_PARAMETER_NAME, paymentReasonCode).evaluationSucceeds()) {
-            return true;
+            return isOverDollarThreshold &= true;
         }
         
         return false;
@@ -1831,17 +1834,20 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 			}
 		}
 		
+		
+		boolean overDollarThreshold = false;
 		String dollarThreshold = parameterService.getParameterValue("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_TRAVEL_REVIEW);
 		KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
 		if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
-			return true;
+			overDollarThreshold = true;
 		}
 
     	
-    	
+    	boolean paymentReasonCodeIsNorP = false;
         String paymentReasonCode = this.getDvPayeeDetail().getDisbVchrPaymentReasonCode();
-
-        return this.getDvPymentReasonService().isPrepaidTravelPaymentReason(paymentReasonCode) || this.getDvPymentReasonService().isNonEmployeeTravelPaymentReason(paymentReasonCode);
+        paymentReasonCodeIsNorP = this.getDvPymentReasonService().isPrepaidTravelPaymentReason(paymentReasonCode) || this.getDvPymentReasonService().isNonEmployeeTravelPaymentReason(paymentReasonCode);
+        
+        return paymentReasonCodeIsNorP && overDollarThreshold;
         }
 
     protected PersonService<Person> getPersonService() {
