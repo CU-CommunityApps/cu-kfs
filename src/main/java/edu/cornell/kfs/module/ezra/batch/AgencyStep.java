@@ -1,9 +1,13 @@
 package edu.cornell.kfs.module.ezra.batch;
 
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.kns.bo.Parameter;
+import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.ParameterService;
 
@@ -15,13 +19,9 @@ public class AgencyStep extends AbstractStep {
 	private ParameterService parameterService;
 	private static String LAST_SUCCESSFUL_RUN = "LAST_SUCCESSFUL_RUN";
 	
-	private static final String RUN_INDICATOR_PARAMETER_NAMESPACE_CODE = "KFS-BC";
-    private static final String RUN_INDICATOR_PARAMETER_NAMESPACE_STEP = "GenesisBatchStep";
-    private static final String RUN_INDICATOR_PARAMETER_VALUE = "N";
-    private static final String RUN_INDICATOR_PARAMETER_ALLOWED = "A";
-    private static final String RUN_INDICATOR_PARAMETER_DESCRIPTION = "Tells the job framework whether to run this job or not; set to know because the GenesisBatchJob needs to only be run once after database initialization.";
-    private static final String RUN_INDICATOR_PARAMETER_TYPE = "CONFG";
-    private static final String RUN_INDICATOR_PARAMETER_APPLICATION_NAMESPACE_CODE = "KFS";
+	private static final String PARAMETER_NAMESPACE_CODE = "KFS-EZRA";
+    private static final String PARAMETER_NAMESPACE_STEP = "AgencyStep";
+    private static final String PARAMETER_APPLICATION_NAMESPACE_CODE = "KFS";
 	
 	public boolean execute(String arg0, java.util.Date arg1) throws InterruptedException {
 		String dateString = parameterService.getParameterValue(AgencyStep.class, LAST_SUCCESSFUL_RUN);
@@ -40,7 +40,17 @@ public class AgencyStep extends AbstractStep {
 	            e.printStackTrace();
 	        }
 	        if (result) {
-	        	//parameterService.
+	        	BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+	        	Map<String,Object> fieldValues = new HashMap<String,Object>();
+	            fieldValues.put("parameterNamespaceCode",PARAMETER_NAMESPACE_CODE);
+	            fieldValues.put("parameterDetailTypeCode",PARAMETER_NAMESPACE_STEP);
+	            fieldValues.put("parameterName",LAST_SUCCESSFUL_RUN);
+	            fieldValues.put("parameterApplicationNamespaceCode", PARAMETER_APPLICATION_NAMESPACE_CODE);
+	        	
+	        	Parameter parm = (Parameter) bos.findByPrimaryKey(Parameter.class, fieldValues);
+	        	parm.setParameterValue(dtService.toDateTimeString(dtService.getCurrentSqlDate()));
+	        	bos.save(parm);
+	        //	//parameterService.
 	        }
 	        return result;
 	}

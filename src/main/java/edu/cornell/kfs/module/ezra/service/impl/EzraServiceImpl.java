@@ -31,6 +31,7 @@ public class EzraServiceImpl implements EzraService {
 	private BusinessObjectService businessObjectService;
 	private DocumentService documentService;
 	private SponsorDao sponsorDao;
+	private DateTimeService dateTimeService;
 	
 	public Agency createAgency() {
 		// TODO Auto-generated method stub
@@ -132,6 +133,9 @@ public class EzraServiceImpl implements EzraService {
 			 } catch (WorkflowException we) {
 				 
 			 }
+			 Date lastUpdated = dateTimeService.getCurrentSqlDate();
+			 sponsor.setLastUpdated(lastUpdated);
+			 businessObjectService.save(sponsor);
 		 }
 		 return true;
 
@@ -177,6 +181,20 @@ public class EzraServiceImpl implements EzraService {
 	 */
 	public void setSponsorDao(SponsorDao sponsorDao) {
 		this.sponsorDao = sponsorDao;
+	}
+
+	/**
+	 * @return the dateTimeService
+	 */
+	public DateTimeService getDateTimeService() {
+		return dateTimeService;
+	}
+
+	/**
+	 * @param dateTimeService the dateTimeService to set
+	 */
+	public void setDateTimeService(DateTimeService dateTimeService) {
+		this.dateTimeService = dateTimeService;
 	}
 	
 	
