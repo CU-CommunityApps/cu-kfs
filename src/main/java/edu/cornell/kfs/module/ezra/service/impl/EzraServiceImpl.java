@@ -118,7 +118,7 @@ public class EzraServiceImpl implements EzraService {
 			 try {
 				 agencyDoc = (MaintenanceDocument) documentService.getNewDocument("AGCY");
 			 } catch (WorkflowException we) {
-				 
+				 we.printStackTrace();
 			 }
 			 agencyDoc.getDocumentHeader().setDocumentDescription("Auto creation of new agency");
 			 if (ObjectUtils.isNotNull(oldAgency)) {
@@ -131,7 +131,7 @@ public class EzraServiceImpl implements EzraService {
 				 documentService.saveDocument(agencyDoc);
 				 agencyDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
 			 } catch (WorkflowException we) {
-				 
+				 we.printStackTrace();
 			 }
 			 Date lastUpdated = dateTimeService.getCurrentSqlDate();
 			 sponsor.setLastUpdated(lastUpdated);
