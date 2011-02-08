@@ -23,9 +23,9 @@
         <routePath>
           <start name="AdHoc" nextNode="Account"/>
           <requests name="Account" nextNode="OrganizationHierarchy"/>
-          <requests name="OrganizationHierarchy" nextNode="SubFund"/>
-          <requests name="SubFund" nextNode="Award"/>
-          <requests name="Award"/>
+          <requests name="OrganizationHierarchy" nextNode="Award"/>
+          <requests name="Award" nextNode="SubFund"/>
+          <requests name="SubFund"/>
         </routePath>
       </routePaths>
       <routeNodes>
