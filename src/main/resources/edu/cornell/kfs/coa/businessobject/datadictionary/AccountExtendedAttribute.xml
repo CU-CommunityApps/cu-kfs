@@ -19,7 +19,7 @@
       </list> 
     </property> 
     <property name="relationships">
-      <list>
+      <list> <!-- 
       	<dd:relationship objectAttribute="subFundProgram" targetClass="edu.cornell.kfs.coa.businessobject.SubFundProgram">
             <dd:primitiveAttribute source="programCode" target="programCode"/>
         	<dd:primitiveAttribute source="subFundGroupCode" target="subFundGroupCode"/> 
@@ -34,6 +34,7 @@
         <dd:relationship objectAttribute="invoiceType" targetClass="edu.cornell.kfs.module.cg.businessobject.InvoiceType">
             <dd:primitiveAttribute source="invoiceTypeCode" target="invoiceTypeCode"/>
         </dd:relationship>
+        -->
        </list>  
       </property>        
     </bean> 

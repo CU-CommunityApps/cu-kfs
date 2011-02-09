@@ -150,12 +150,26 @@
         <dd:relationship objectAttribute="accountPhysicalCampus">
             <dd:primitiveAttribute source="accountPhysicalCampusCode" target="campusCode"/>
         </dd:relationship>
-        <dd:relationship objectAttribute="extension" targetClass="edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute">
-            <dd:primitiveAttribute source="chartOfAccountsCode" target="chartOfAccountsCode"/>
-            <dd:primitiveAttribute source="accountNumber" target="accountNumber"/>
-            <dd:primitiveAttribute source="subFundGroupCode" target="subFundGroupCode"/>
-        </dd:relationship>   
+        <dd:relationship objectAttribute="extension.subFundProgram">
+            <dd:primitiveAttribute source="extension.subFundProgram.programCode" target="programCode"/>
+            <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode" />
+        </dd:relationship>
+        <dd:relationship objectAttribute="extension">
+            <dd:primitiveAttribute source="extension.programCode" target="programCode"/>
+            <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode"/>
+            <dd:supportAttribute source="extension.subFundProgram.programCode" target="subFundProgram.programCode"/>
+        </dd:relationship>
         
+        <dd:relationship objectAttribute="extension.appropriationAccount">
+            <dd:primitiveAttribute source="extension.appropriationAccount.appropriationAccountNumber" target="appropriationAccountNumber"/>
+            <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode" />
+        </dd:relationship>
+        <dd:relationship objectAttribute="extension">
+            <dd:primitiveAttribute source="extension.appropriationAccountNumber" target="appropriationAccountNumber"/>
+            <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode"/>
+            <dd:supportAttribute source="extension.appropriationAccount.appropriationAccountNumber" target="appropriationAccount.appropriationAccountNumber"/>
+        </dd:relationship>
+       
       </list>
     </property>
     <property name="inactivationBlockingDefinitions">

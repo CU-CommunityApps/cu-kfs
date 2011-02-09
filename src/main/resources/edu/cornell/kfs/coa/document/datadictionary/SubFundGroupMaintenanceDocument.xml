@@ -55,9 +55,7 @@
         <bean parent="MaintainableFieldDefinition" p:name="subFundGroupCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="subFundGroupDescription" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="fundGroupCode" p:required="true"/>
-        <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/><!--
-        <bean parent="MaintainableFieldDefinition" p:name="extension.programCode"/>
-        --><bean parent="MaintainableFieldDefinition" p:name="subFundGroupTypeCode" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/><bean parent="MaintainableFieldDefinition" p:name="subFundGroupTypeCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="accountRestrictedStatusCode"/>
         <bean parent="MaintainableFieldDefinition" p:name="financialReportingSortCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="subFundGroupWagesIndicator"/>
