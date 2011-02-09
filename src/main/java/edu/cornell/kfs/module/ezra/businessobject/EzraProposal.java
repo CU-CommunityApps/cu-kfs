@@ -13,7 +13,7 @@ import org.kuali.rice.kns.util.KualiDecimal;
  * @author kwk43
  *
  */
-public class Proposal extends PersistableBusinessObjectBase {
+public class EzraProposal extends PersistableBusinessObjectBase {
 
 	private String projectId; //PROJ_ID
 	private String awardProposalId; //AWARD_PROP_ID
@@ -211,6 +211,15 @@ public class Proposal extends PersistableBusinessObjectBase {
 	 */
 	public String getFederalPassThrough() {
 		return federalPassThrough;
+	}
+	/**
+	 * @return the federalPassThrough
+	 */
+	public boolean getFederalPassThroughBoolean() {
+		if (federalPassThrough == null || federalPassThrough.equalsIgnoreCase("N")) {
+			return false;
+		} else
+			return true;
 	}
 
 

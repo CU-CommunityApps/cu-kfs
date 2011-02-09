@@ -8,10 +8,8 @@ import org.kuali.kfs.module.cg.businessobject.Proposal;
 
 public interface EzraService {
 
-	public Agency createAgency();
-	public Award createAward();
-	public Proposal createProposal();
 	
 	public boolean updateSponsorsSince(Date date);
+	public boolean updateProposalsSince(Date date);
 	
 }

@@ -11,7 +11,7 @@
 		<field-descriptor name="lastUpdated" column="UPDATE_DT" jdbc-type="DATE"/>
 	</class-descriptor>
 	
-	<class-descriptor class="edu.cornell.kfs.module.ezra.businessobject.Proposal" table="EZRA_PROPOSAL_TC">
+	<class-descriptor class="edu.cornell.kfs.module.ezra.businessobject.EzraProposal" table="EZRA_PROPOSAL_TC">
 		<field-descriptor name="projectId" column="PROJ_ID" jdbc-type="VARCHAR" primarykey="true" index="true" />
 		<field-descriptor name="awardProposalId" column="AWARD_PROP_ID" jdbc-type="VARCHAR" primarykey="true" index="true" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
