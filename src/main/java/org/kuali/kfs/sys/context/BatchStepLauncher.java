@@ -32,9 +32,6 @@ public class BatchStepLauncher implements Runnable {
         //check arguments for the trigger
         checkArguments(args);
         
-        //add a shutdown hook to the Runtime which will remove the batch container semaphore file
-        setUp();
-        
         //run the Batch Container in its own thread
         startBatchContainer();
         
@@ -70,24 +67,6 @@ public class BatchStepLauncher implements Runnable {
         batchStepTriggerParms = new BatchStepTriggerParameters(args);
         
         logToOut("received valid arguments");
-    }
-    
-    /**
-     * Adds a shutdown hook to the Runtime which will execute the Thread.run method on VM shutdown
-     * The Thread.run method will remove the batch container semaphore file (.runlock).
-     */
-    private static void setUp() {
-        logToOut("adding Runtime shutdown hook for removing the .runlock file");
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            
-            public void run() {
-                if (batchStepTriggerParms != null) {
-                    removeBatchContainerSemaphore();
-                    confirmShutDown();
-                }
-            }
-            
-        });
     }
     
     /**
@@ -145,20 +124,6 @@ public class BatchStepLauncher implements Runnable {
         }
         
         logToOut("batch container semaphore file has been removed");
-    }
-    
-    /**
-     * Confirms that the batch container semaphore has been removed (used by the shutdown hook added to Runtime)
-     */
-    private static void confirmShutDown() {
-        logToOut("confirming batch container shut down");
-        
-        if (!batchStepTriggerParms.getBatchContainerDirectory().isBatchContainerRunning()) {
-            logToOut("batch container shut down successfully");
-        }
-        else {
-            logToOut("the batch container was not shut down successfully; .runlock still exists");
-        }
     }
     
     /**

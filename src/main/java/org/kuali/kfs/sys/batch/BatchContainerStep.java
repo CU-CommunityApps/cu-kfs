@@ -77,6 +77,7 @@ public class BatchContainerStep extends AbstractStep implements ContainerStepLis
 		try {			
 			//write batch container run lock file to indicate the batch container is running
 			directory.writeBatchContainerSemaphore(jobName, getName());
+			directory.addShutdownHook();
 			LOG.info("The BatchContainer is running");
 			
 	        ParameterService parameterService = getParameterService();

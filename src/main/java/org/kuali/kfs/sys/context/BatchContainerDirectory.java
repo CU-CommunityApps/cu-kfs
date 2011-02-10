@@ -327,6 +327,23 @@ public class BatchContainerDirectory {
         return "";
     }
     
+    /**
+     * Creates a shutdown hook and adds it to the local Runtime so that if the container's VM is shut down,
+     * the semaphore files will be removed
+     */
+    public void addShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            
+            public void run() {
+                removeBatchContainerSemaphore();
+                if (isBatchContainerRunning()) {
+                    LOG.info("the batch container was not shut down successfully; .runlock still exists.");
+                }
+            }
+            
+        });
+    }
+    
     /** 
      * Returns a List<String> containing each line in the file
      * 
