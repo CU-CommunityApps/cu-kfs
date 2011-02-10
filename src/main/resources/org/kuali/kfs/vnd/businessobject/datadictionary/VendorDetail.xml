@@ -776,6 +776,7 @@
               <bean parent="InquirySubSectionHeaderDefinition" p:attributeName="Corporate Information"/>
               <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorTypeCode"/>
               <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorW9ReceivedIndicator"/>
+              <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorW9ReceivedDate"/>
               <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorForeignIndicator"/>
               <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorW8BenReceivedIndicator"/>
               <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorTaxNumber"/>
@@ -941,6 +942,7 @@
                 <property name="inquiryFields">
                   <list>
                     <bean parent="FieldDefinition" p:attributeName="vendorSupplierDiversityCode"/>
+                    <bean parent="FieldDefinition" p:attributeName="vendorSupplierDiversityExpirationDate"/>
                     <bean parent="FieldDefinition" p:attributeName="active"/>
                   </list>
                 </property>
@@ -1146,6 +1148,64 @@
             </list>
           </property>
         </bean>
+        <bean parent="InquirySectionDefinition">
+          <property name="title" value="Vendor Insurance Tracking"/>
+          <property name="numberOfColumns" value="2"/>
+          <property name="inquiryFields">
+            <list>
+              <bean parent="FieldDefinition" p:attributeName="insuranceRequiredIndicator"/>
+              <bean parent="FieldDefinition" p:attributeName="insuranceRequirementsCompleteIndicator"/>
+              <bean parent="FieldDefinition" p:attributeName="cornellAdditionalInsuredIndicator"/>
+              <bean parent="FieldDefinition" p:attributeName="generalLiabilityCoverageAmount"/>
+              <bean parent="FieldDefinition" p:attributeName="generalLiabilityExpiration"/>
+              <bean parent="FieldDefinition" p:attributeName="automobileLiabilityCoverageAmount"/>
+              <bean parent="FieldDefinition" p:attributeName="automobileLiabilityExpiration"/>
+              <bean parent="FieldDefinition" p:attributeName="workmansCompCoverageAmount"/>
+              <bean parent="FieldDefinition" p:attributeName="workmansCompExpiration"/>
+              <bean parent="FieldDefinition" p:attributeName="excessLiabilityUmbrellaAmount"/>
+              <bean parent="FieldDefinition" p:attributeName="excessLiabilityUmbExpiration"/>
+              <bean parent="FieldDefinition" p:attributeName="healthOffSiteCateringLicenseReq"/>
+              <bean parent="FieldDefinition" p:attributeName="healthOffSiteLicenseExpirationDate"/>
+              <bean parent="InquirySubSectionHeaderDefinition" p:attributeName="**Alcohol permits are issued on an event-by-event basis; units are responsible for ensuring the chosen caterer/bartending service has the appropriate permit for the event."/>
+              <bean parent="FieldDefinition" p:attributeName="insuranceNotes"/>
+            </list>
+          </property>
+        </bean>
+        <bean parent="InquirySectionDefinition">
+          <property name="title" value="Credit Card Merchants"/>
+          <property name="numberOfColumns" value="1"/>
+          <property name="inquiryFields">
+            <list>
+              <bean parent="InquiryCollectionDefinition">
+                <property name="attributeName" value="vendorCreditCardMerchants"/>
+                <property name="businessObjectClass" value="org.kuali.kfs.vnd.businessobject.VendorCreditCardMerchant"/>
+                <property name="numberOfColumns" value="1"/>
+                <property name="inquiryFields">
+                  <list>
+                  	<bean parent="FieldDefinition" p:attributeName="creditMerchantName"/>
+                    <bean parent="FieldDefinition" p:attributeName="merchantCategoryCodeOne"/>
+                    <bean parent="FieldDefinition" p:attributeName="merchantCategoryCodeTwo"/>
+                    <bean parent="FieldDefinition" p:attributeName="merchantCategoryCodeThree"/>
+                    <bean parent="FieldDefinition" p:attributeName="merchantCategoryCodeFour"/>
+                    <bean parent="FieldDefinition" p:attributeName="active"/>
+                  </list>
+                </property>
+                <property name="summaryFields">
+                  <list>
+                  	<bean parent="FieldDefinition" p:attributeName="creditMerchantName"/>
+                    <bean parent="FieldDefinition" p:attributeName="merchantCategoryCodeOne"/>
+                    <bean parent="FieldDefinition" p:attributeName="merchantCategoryCodeTwo"/>
+                    <bean parent="FieldDefinition" p:attributeName="merchantCategoryCodeThree"/>
+                    <bean parent="FieldDefinition" p:attributeName="merchantCategoryCodeFour"/>
+                    <bean parent="FieldDefinition" p:attributeName="active"/>
+                  </list>
+                </property>
+              </bean>
+              <bean parent="InquirySubSectionHeaderDefinition" p:attributeName="Notes"/>
+              <bean parent="FieldDefinition" p:attributeName="merchantNotes" />
+            </list>
+          </property>
+        </bean>        
         <bean parent="InquirySectionDefinition">
           <property name="title" value="Notes"/>
           <property name="numberOfColumns" value="1"/>
