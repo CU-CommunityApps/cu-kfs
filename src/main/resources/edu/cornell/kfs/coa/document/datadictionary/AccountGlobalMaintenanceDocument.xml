@@ -169,7 +169,7 @@
    	<bean id="AccountGlobalMaintenanceDocument-DocumentCollectionPath-subFund" class="org.kuali.rice.kns.datadictionary.DocumentCollectionPath">
 		<property name="documentValues">
 	   		<list>
-	   			<value>subFundGroupCode</value>
+	   			<value>account.subFundGroupCode</value>
 	   		</list>
    		</property>
    	</bean>
