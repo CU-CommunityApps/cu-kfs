@@ -38,7 +38,7 @@
             <object-create-rule classname="org.kuali.kfs.pdp.businessobject.PaymentGroup" />
 
             <call-method-rule pattern="payee_name" methodname="setPayeeName" paramcount="0" />
-            <call-method-rule pattern="payee_id" methodname="setPayeeId" paramcount="0" />
+            <call-method-rule pattern="payee_id" methodname="setPayeeIdAndName" paramcount="0" />
             <alias attr-name="id_type" prop-name="payeeIdTypeCd" />
             <set-properties-rule pattern="payee_id" />
             

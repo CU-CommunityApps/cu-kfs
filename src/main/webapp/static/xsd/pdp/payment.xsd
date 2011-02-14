@@ -133,10 +133,10 @@
         <xsd:complexType>
             <xsd:sequence>
                 <xsd:element ref="payee_name"/>
-                <xsd:element maxOccurs="1" minOccurs="0" ref="payee_id"/>
+                <xsd:element maxOccurs="1" minOccurs="1" ref="payee_id"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="payee_own_cd"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="customer_institution_identifier"/>
-                <xsd:element ref="address1"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="address1"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="address2"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="address3"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="address4"/>
@@ -145,7 +145,7 @@
                 <xsd:element maxOccurs="1" minOccurs="0" ref="zip"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="country"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="campus_address_ind"/>
-                <xsd:element maxOccurs="1" minOccurs="0" ref="payment_date"/>
+                <xsd:element maxOccurs="1" minOccurs="1" ref="payment_date"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="attachment_ind"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="special_handling_ind"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="taxable_ind"/>
@@ -174,11 +174,11 @@
         <xsd:complexType>
             <xsd:sequence>
                 <xsd:element ref="source_doc_nbr"/>
-                <xsd:element maxOccurs="1" minOccurs="0" ref="invoice_nbr"/>
+                <xsd:element maxOccurs="1" minOccurs="1" ref="invoice_nbr"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="po_nbr"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="req_nbr"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="org_doc_nbr"/>
-                <xsd:element maxOccurs="1" minOccurs="0" ref="invoice_date"/>
+                <xsd:element maxOccurs="1" minOccurs="1" ref="invoice_date"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="orig_invoice_amt"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="net_payment_amt"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="invoice_tot_discount_amt"/>
