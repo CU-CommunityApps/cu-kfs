@@ -19,7 +19,6 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -36,7 +35,7 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.TimestampedBusinessObjectBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
-import org.kuali.kfs.vnd.document.service.VendorService;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.KeyValuesService;
@@ -44,7 +43,6 @@ import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.KualiInteger;
-import org.kuali.rice.kns.util.ObjectUtils;
 
 /**
  * This class represents the PaymentGroup
@@ -766,6 +764,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
             setZipCd(addr.getVendorZipCode());
             setCountry(addr.getVendorCountry().getPostalCountryName());
         } else {
+        	throw new RuntimeException("Invalid Address [ "+string+" ] for payee [ "+payeeId + " ]");
             // Need to handle bad data.
         }
     }
@@ -863,6 +862,27 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
     /**
      * @param string
      */
+    public void setPayeeIdAndName(String string) {
+        payeeId = string;
+    	
+        BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+        String[] headerDetails = payeeId.split("-");      
+        Map<String, String> fieldValues = new HashMap();
+        fieldValues.put("vendorHeaderGeneratedIdentifier", headerDetails[0]/*payeeId*/);
+        fieldValues.put("vendorDetailAssignedIdentifier", headerDetails[1]);
+        
+        List<VendorDetail> details = (List<VendorDetail>)bos.findMatching(VendorDetail.class, fieldValues);
+        if (details.size() == 1) {
+        	payeeName=details.get(0).getVendorName();
+        } else {
+        	throw new RuntimeException("Could not locate Vendor for payeeId [ "+ string+" ]");
+        }
+    }
+
+    
+    /**
+     * @param string
+     */
     public void setPayeeIdTypeCd(String string) {
         payeeIdTypeCd = string;
     }
@@ -878,7 +898,22 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
      * @param string
      */
     public void setPayeeOwnerCd(String string) {
-        payeeOwnerCd = string;
+    	
+       // payeeOwnerCd = string;
+        
+        
+        BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+        String[] headerDetails = payeeId.split("-");      
+        Map<String, String> fieldValues = new HashMap();
+        fieldValues.put("vendorHeaderGeneratedIdentifier", headerDetails[0]/*payeeId*/);
+        fieldValues.put("vendorDetailAssignedIdentifier", headerDetails[1]);
+        
+        List<VendorDetail> details = (List<VendorDetail>)bos.findMatching(VendorDetail.class, fieldValues);
+        if (details.size() == 1) {
+        	payeeOwnerCd=details.get(0).getVendorHeader().getVendorOwnershipCode();
+        } else {
+        	throw new RuntimeException("Could not locate Vendor Ownership Code for payeeId [ "+ string+" ]");
+        }
     }
 
     /**
