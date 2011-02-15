@@ -20,8 +20,8 @@
     xmlns:dd="http://www.kuali.org/kfs/sys/ddTypes"
     xmlns="http://www.kuali.org/kfs/pdp/payment" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
-    <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="http://localhost:8080/kfs-dev/static/xsd/sys/types.xsd" />
-    <xsd:import namespace="http://www.kuali.org/kfs/sys/ddTypes" schemaLocation="http://localhost:8080/kfs-dev/static/xsd/sys/ddTypes.xsd" />
+    <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="https://kfs-stg.adminapps.cornell.edu/kfs-stg/static/xsd/sys/types.xsd" />
+    <xsd:import namespace="http://www.kuali.org/kfs/sys/ddTypes" schemaLocation="https://kfs-stg.adminapps.cornell.edu/kfs-stg/static/xsd/sys/ddTypes.xsd" />
         
     <!-- simple data types -->
     <xsd:simpleType name="versionType">

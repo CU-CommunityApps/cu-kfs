@@ -20,15 +20,15 @@
     xmlns:dd="http://www.kuali.org/kfs/sys/ddTypes"
     xmlns="http://www.kuali.org/kfs/ar/customerInvoiceWriteoffBatch" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
-    <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="/static/xsd/sys/types.xsd" />
-    <xsd:import namespace="http://www.kuali.org/kfs/sys/ddTypes" schemaLocation="/static/xsd/sys/ddTypes.xsd" />
+    <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="https://kfs-stg.adminapps.cornell.edu/kfs-stg/static/xsd/sys/types.xsd" />
+    <xsd:import namespace="http://www.kuali.org/kfs/sys/ddTypes" schemaLocation="https://kfs-stg.adminapps.cornell.edu/kfs-stg/static/xsd/sys/ddTypes.xsd" />
   
 	<!--  elements -->
 	<xsd:element name="invoiceWriteoffBatch"   type="invoiceWriteoffBatchType" />
 	<xsd:element name="invoiceNumbers"         type="invoiceNumbersType" />
-	<xsd:element name="invoiceNumber"          type="${xsd:normalizedString,dd:CustomerInvoiceDocument.documentNumber}" />
-	<xsd:element name="submittedByPrincipalId" type="${xsd:normalizedString,dd:PersonImpl.principalName}" />
-	<xsd:element name="submittedOn"            type="${xsd:normalizedString,dd:GenericAttributes.genericTimestamp}" />
+	<xsd:element name="invoiceNumber"          type="xsd:normalizedString" />
+	<xsd:element name="submittedByPrincipalId" type="xsd:normalizedString" />
+	<xsd:element name="submittedOn"            type="xsd:normalizedString" />
 	<xsd:element name="note"                   type="oneToOneThousandCharType" />
 	
     <!-- simple data types -->
