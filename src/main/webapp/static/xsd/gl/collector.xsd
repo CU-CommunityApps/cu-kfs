@@ -20,56 +20,56 @@
     xmlns:dd="http://www.kuali.org/kfs/sys/ddTypes"
     xmlns="http://www.kuali.org/kfs/gl/collector" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
-    <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="/static/xsd/sys/types.xsd" />
-    <xsd:import namespace="http://www.kuali.org/kfs/sys/ddTypes" schemaLocation="/static/xsd/sys/ddTypes.xsd" />
+    <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="https://kfs-stg.adminapps.cornell.edu/kfs-stg/static/xsd/sys/types.xsd" />
+    <xsd:import namespace="http://www.kuali.org/kfs/sys/ddTypes" schemaLocation="https://kfs-stg.adminapps.cornell.edu/kfs-stg/static/xsd/sys/ddTypes.xsd" />
  
     <!-- header fields -->   
-    <xsd:element name="organizationCode" type="${xsd:normalizedString,dd:CollectorBatch.organizationCode}"/>
-    <xsd:element name="transmissionDate" type="${xsd:date,dd:CollectorBatch.transmissionDate}"/>
-   	<xsd:element name="batchSequenceNumber" type="${xsd:integer,dd:CollectorBatch.batchSequenceNumber}"/>
-   	<xsd:element name="personUserId" type="${xsd:normalizedString,dd:CollectorBatch.personUserID}"/>
-   	<xsd:element name="emailAddress" type="${xsd:normalizedString,dd:CollectorBatch.emailAddress}"/>
-	<xsd:element name="campusCode" type="${xsd:normalizedString,dd:CollectorBatch.campusCode}"/>
-	<xsd:element name="phoneNumber" type="${xsd:normalizedString,dd:CollectorBatch.phoneNumber}"/>
-	<xsd:element name="mailingAddress" type="${xsd:normalizedString,dd:CollectorBatch.mailingAddress}"/>
-	<xsd:element name="departmentName" type="${xsd:normalizedString,dd:CollectorBatch.departmentName}"/>
+    <xsd:element name="organizationCode" type="xsd:normalizedString"/>
+    <xsd:element name="transmissionDate" type="xsd:date"/>
+   	<xsd:element name="batchSequenceNumber" type="xsd:integer"/>
+   	<xsd:element name="personUserId" type="xsd:normalizedString"/>
+   	<xsd:element name="emailAddress" type="xsd:normalizedString"/>
+	<xsd:element name="campusCode" type="xsd:normalizedString"/>
+	<xsd:element name="phoneNumber" type="xsd:normalizedString"/>
+	<xsd:element name="mailingAddress" type="xsd:normalizedString"/>
+	<xsd:element name="departmentName" type="xsd:normalizedString"/>
    
        <!-- glEntry fields -->
-    <xsd:element name="universityFiscalYear" type="${xsd:normalizedString,dd:OriginEntryFull.universityFiscalYear}"/>
-    <xsd:element name="chartOfAccountsCode" type="${xsd:normalizedString,dd:OriginEntryFull.chartOfAccountsCode}"/>
-    <xsd:element name="accountNumber" type="${xsd:normalizedString,dd:OriginEntryFull.accountNumber}"/>
-    <xsd:element name="subAccountNumber" type="${xsd:normalizedString,dd:OriginEntryFull.subAccountNumber}"/>
-    <xsd:element name="objectCode" type="${xsd:normalizedString,dd:OriginEntryFull.financialObjectCode}"/>
-    <xsd:element name="subObjectCode" type="${xsd:normalizedString,dd:OriginEntryFull.financialSubObjectCode}"/>
-    <xsd:element name="balanceTypeCode" type="${xsd:normalizedString,dd:OriginEntryFull.financialBalanceTypeCode}"/>
-    <xsd:element name="objectTypeCode" type="${xsd:normalizedString,dd:OriginEntryFull.financialObjectTypeCode}"/>
-    <xsd:element name="universityFiscalAccountingPeriod" type="${xsd:normalizedString,dd:OriginEntryFull.universityFiscalPeriodCode}"/>
-    <xsd:element name="documentTypeCode" type="${xsd:normalizedString,dd:OriginEntryFull.financialDocumentTypeCode}"/>
-    <xsd:element name="originationCode" type="${xsd:normalizedString,dd:OriginEntryFull.financialSystemOriginationCode}"/>
-    <xsd:element name="documentNumber" type="${xsd:normalizedString,dd:OriginEntryFull.documentNumber}"/>
-    <xsd:element name="transactionEntrySequenceId" type="${xsd:integer,dd:OriginEntryFull.transactionLedgerEntrySequenceNumber}"/>
-    <xsd:element name="transactionLedgerEntryDescription" type="${xsd:normalizedString,dd:OriginEntryFull.transactionLedgerEntryDescription}"/>
-    <xsd:element name="transactionLedgerEntryAmount" type="${xsd:decimal,dd:OriginEntryFull.transactionLedgerEntryAmount}"/>
-    <xsd:element name="debitOrCreditCode" type="${xsd:normalizedString,dd:OriginEntryFull.transactionDebitCreditCode}"/>
-    <xsd:element name="transactionDate" type="${xsd:date,dd:OriginEntryFull.transactionDate}"/>
-    <xsd:element name="organizationDocumentNumber" type="${xsd:normalizedString,dd:OriginEntryFull.organizationDocumentNumber}"/>
-    <xsd:element name="projectCode" type="${xsd:normalizedString,dd:OriginEntryFull.projectCode}"/>
-    <xsd:element name="organizationReferenceId" type="${xsd:normalizedString,dd:OriginEntryFull.organizationReferenceId}"/>
-    <xsd:element name="referenceDocumentTypeCode" type="${xsd:normalizedString,dd:OriginEntryFull.referenceFinancialDocumentTypeCode}"/>
-    <xsd:element name="referenceOriginationCode" type="${xsd:normalizedString,dd:OriginEntryFull.referenceFinancialSystemOriginationCode}"/>
-    <xsd:element name="referenceDocumentNumber" type="${xsd:normalizedString,dd:OriginEntryFull.referenceFinancialDocumentNumber}"/>
-    <xsd:element name="documentReversalDate" type="${xsd:date,dd:OriginEntryFull.financialDocumentReversalDate}"/>
-    <xsd:element name="encumbranceUpdateCode" type="${xsd:normalizedString,dd:OriginEntryFull.transactionEncumbranceUpdateCode}"/>
+    <xsd:element name="universityFiscalYear" type="xsd:normalizedString"/>
+    <xsd:element name="chartOfAccountsCode" type="xsd:normalizedString"/>
+    <xsd:element name="accountNumber" type="xsd:normalizedString"/>
+    <xsd:element name="subAccountNumber" type="xsd:normalizedString"/>
+    <xsd:element name="objectCode" type="xsd:normalizedString"/>
+    <xsd:element name="subObjectCode" type="xsd:normalizedString"/>
+    <xsd:element name="balanceTypeCode" type="xsd:normalizedString"/>
+    <xsd:element name="objectTypeCode" type="xsd:normalizedString"/>
+    <xsd:element name="universityFiscalAccountingPeriod" type="xsd:normalizedString"/>
+    <xsd:element name="documentTypeCode" type="xsd:normalizedString"/>
+    <xsd:element name="originationCode" type="xsd:normalizedString"/>
+    <xsd:element name="documentNumber" type="xsd:normalizedString"/>
+    <xsd:element name="transactionEntrySequenceId" type="xsd:integer"/>
+    <xsd:element name="transactionLedgerEntryDescription" type="xsd:normalizedString"/>
+    <xsd:element name="transactionLedgerEntryAmount" type="xsd:decimal"/>
+    <xsd:element name="debitOrCreditCode" type="xsd:normalizedString"/>
+    <xsd:element name="transactionDate" type="xsd:date"/>
+    <xsd:element name="organizationDocumentNumber" type="xsd:normalizedString"/>
+    <xsd:element name="projectCode" type="xsd:normalizedString"/>
+    <xsd:element name="organizationReferenceId" type="xsd:normalizedString"/>
+    <xsd:element name="referenceDocumentTypeCode" type="xsd:normalizedString"/>
+    <xsd:element name="referenceOriginationCode" type="xsd:normalizedString"/>
+    <xsd:element name="referenceDocumentNumber" type="xsd:normalizedString"/>
+    <xsd:element name="documentReversalDate" type="xsd:date"/>
+    <xsd:element name="encumbranceUpdateCode" type="xsd:normalizedString"/>
 
     <!-- trailer -->
     <xsd:element name="totalRecords" type="xsd:integer"/>
     <xsd:element name="totalAmount" type="xsd:decimal"/>
 
     <!-- detail -->
-    <xsd:element name="createDate" type="${xsd:date, dd:CollectorDetail.createDate}" />
-    <xsd:element name="collectorDetailSequenceNumber" type="${xsd:normalizedString,dd:CollectorDetail.collectorDetailSequenceNumber}"/>
-    <xsd:element name="detailText" type="${xsd:normalizedString,dd:CollectorDetail.collectorDetailNoteText}"/>
-    <xsd:element name="amount" type="${xsd:decimal,dd:CollectorDetail.collectorDetailItemAmount}"/>
+    <xsd:element name="createDate" type="xsd:date" />
+    <xsd:element name="collectorDetailSequenceNumber" type="xsd:normalizedString"/>
+    <xsd:element name="detailText" type="xsd:normalizedString"/>
+    <xsd:element name="amount" type="xsd:decimal"/>
  
     <!-- definition of complex type elements -->
 

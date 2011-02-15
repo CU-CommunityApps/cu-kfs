@@ -23,8 +23,8 @@
  elementFormDefault="qualified"
  targetNamespace="http://www.kuali.org/kfs/pdp/check">
 
-  <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="/static/xsd/sys/types.xsd" />
-  <xsd:import namespace="http://www.kuali.org/kfs/sys/ddTypes" schemaLocation="/static/xsd/sys/ddTypes.xsd" />
+  <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="https://kfs-stg.adminapps.cornell.edu/kfs-stg/static/xsd/sys/types.xsd" />
+  <xsd:import namespace="http://www.kuali.org/kfs/sys/ddTypes" schemaLocation="https://kfs-stg.adminapps.cornell.edu/kfs-stg/static/xsd/sys/ddTypes.xsd" />
   
   <!-- simple data types -->
   <xsd:simpleType name="versionType">
@@ -34,40 +34,40 @@
   </xsd:simpleType>
  
   <!-- definition of simple type elements -->
-  <xsd:element name="chartCode" type="${xsd:normalizedString,dd:PaymentFileLoad.chart}"/>    
-  <xsd:element name="orgCode" type="${xsd:normalizedString,dd:Organization.organizationCode}"/>
-  <xsd:element name="subUnitCode" type="${xsd:normalizedString,dd:PaymentFileLoad.subUnit}"/> 
-  <xsd:element name="disbursementDate" type="${xsd:normalizedString,dd:PaymentGroup.disbursementDate}"/>
-  <xsd:element name="netAmount" type="${xsd:decimal,dd:PaymentAccountDetail.accountNetAmount}"/>
-  <xsd:element name="campusAddressIndicator" type="${xsd:normalizedString,dd:PaymentGroup.campusAddress}" /> 
+  <xsd:element name="chartCode" type="xsd:normalizedString"/>    
+  <xsd:element name="orgCode" type="xsd:normalizedString"/>
+  <xsd:element name="subUnitCode" type="xsd:normalizedString"/> 
+  <xsd:element name="disbursementDate" type="xsd:normalizedString"/>
+  <xsd:element name="netAmount" type="xsd:decimal"/>
+  <xsd:element name="campusAddressIndicator" type="xsd:normalizedString" /> 
   <xsd:element name="attachmentIndicator" type="${xsd:normalizedString,dd:PaymentGroup.pymtAttachment"/>
-  <xsd:element name="specialHandlingIndicator" type="${xsd:normalizedString,dd:PaymentGroup.pymtSpecialHandling}"/>
-  <xsd:element name="immediatePaymentIndicator" type="${xsd:normalizedString,dd:PaymentGroup.processImmediate}"/>
-  <xsd:element name="customerUnivNbr" type="${xsd:integer,dd:PaymentGroup.customerInstitutionNumber}"/>  
-  <xsd:element name="paymentDate" type="${xsd:normalizedString,dd:PaymentGroup.paymentDate}"/>  
-  <xsd:element name="custPaymentDocNbr" type="${xsd:normalizedString,dd:PaymentDetail.custPaymentDocNbr}"/>
-  <xsd:element name="invoiceNbr" type="${xsd:normalizedString,dd:PaymentDetail.invoiceNbr}"/>
-  <xsd:element name="purchaseOrderNbr" type="${xsd:normalizedString,dd:PaymentDetail.purchaseOrderNbr}"/>
-  <xsd:element name="requisitionNbr" type="${xsd:normalizedString,dd:PaymentDetail.requisitionNbr}"/>
-  <xsd:element name="payeeName" type="${xsd:normalizedString,dd:PaymentGroup.payeeName}"/>    
-  <xsd:element name="line1Address" type="${xsd:normalizedString,dd:PaymentGroup.line1Address}"/>  
-  <xsd:element name="line2Address" type="${xsd:normalizedString,dd:PaymentGroup.line2Address}"/>
-  <xsd:element name="line3Address" type="${xsd:normalizedString,dd:PaymentGroup.line3Address}"/>
-  <xsd:element name="line4Address" type="${xsd:normalizedString,dd:PaymentGroup.line4Address}"/>
-  <xsd:element name="city" type="${xsd:normalizedString,dd:PaymentGroup.city}"/>
-  <xsd:element name="state" type="${xsd:normalizedString,dd:PaymentGroup.state}"/>
-  <xsd:element name="zipCd" type="${xsd:normalizedString,dd:PaymentGroup.zipCd}"/>
-  <xsd:element name="country" type="${xsd:normalizedString,dd:PaymentGroup.country}"/>
-  <xsd:element name="invoiceDate" type="${xsd:date,dd:PaymentDetail.invoiceDate}"/>  
-  <xsd:element name="origInvoiceAmount" type="${xsd:decimal,dd:PaymentDetail.origInvoiceAmount}"/>
-  <xsd:element name="netPaymentAmount" type="${xsd:decimal,dd:PaymentDetail.netPaymentAmount}"/>
-  <xsd:element name="invTotDiscountAmount" type="${xsd:decimal,dd:PaymentDetail.invTotDiscountAmount}"/>
-  <xsd:element name="invTotShipAmount" type="${xsd:decimal,dd:PaymentDetail.invTotShipAmount}"/>
-  <xsd:element name="invTotOtherDebitAmount" type="${xsd:decimal,dd:PaymentDetail.invTotOtherDebitAmount}"/>
-  <xsd:element name="invTotOtherCreditAmount" type="${xsd:decimal,dd:PaymentDetail.invTotOtherCreditAmount}"/>
-  <xsd:element name="accountNumber" type="${xsd:normalizedString,dd:AchAccountNumber.achBankAccountNbr}"/>    
-  <xsd:element name="routingNumber" type="${xsd:integer,dd:ACHBank.bankRoutingNumber}"/> 
-  <xsd:element name="note" type="${xsd:normalizedString,dd:PaymentNoteText.customerNoteText}"/>
+  <xsd:element name="specialHandlingIndicator" type="xsd:normalizedString"/>
+  <xsd:element name="immediatePaymentIndicator" type="xsd:normalizedString"/>
+  <xsd:element name="customerUnivNbr" type="xsd:integer"/>  
+  <xsd:element name="paymentDate" type="xsd:normalizedString"/>  
+  <xsd:element name="custPaymentDocNbr" type="xsd:normalizedString"/>
+  <xsd:element name="invoiceNbr" type="xsd:normalizedString"/>
+  <xsd:element name="purchaseOrderNbr" type="xsd:normalizedString"/>
+  <xsd:element name="requisitionNbr" type="xsd:normalizedString"/>
+  <xsd:element name="payeeName" type="xsd:normalizedString"/>    
+  <xsd:element name="line1Address" type="xsd:normalizedString"/>  
+  <xsd:element name="line2Address" type="xsd:normalizedString"/>
+  <xsd:element name="line3Address" type="xsd:normalizedString"/>
+  <xsd:element name="line4Address" type="xsd:normalizedString"/>
+  <xsd:element name="city" type="xsd:normalizedString"/>
+  <xsd:element name="state" type="xsd:normalizedString"/>
+  <xsd:element name="zipCd" type="xsd:normalizedString"/>
+  <xsd:element name="country" type="xsd:normalizedString"/>
+  <xsd:element name="invoiceDate" type="xsd:date"/>  
+  <xsd:element name="origInvoiceAmount" type="xsd:decimal"/>
+  <xsd:element name="netPaymentAmount" type="xsd:decimal"/>
+  <xsd:element name="invTotDiscountAmount" type="xsd:decimal"/>
+  <xsd:element name="invTotShipAmount" type="xsd:decimal"/>
+  <xsd:element name="invTotOtherDebitAmount" type="xsd:decimal"/>
+  <xsd:element name="invTotOtherCreditAmount" type="xsd:decimal"/>
+  <xsd:element name="accountNumber" type="xsd:normalizedString"/>    
+  <xsd:element name="routingNumber" type="xsd:integer"/> 
+  <xsd:element name="note" type="xsd:normalizedString"/>
     
   <!-- definition of complex type elements --> 
   <xsd:element name="checks">

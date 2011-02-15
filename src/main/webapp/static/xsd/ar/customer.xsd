@@ -20,8 +20,8 @@
     xmlns:dd="http://www.kuali.org/kfs/sys/ddTypes"
     xmlns="http://www.kuali.org/kfs/ar/customer" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
-    <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="/static/xsd/sys/types.xsd" />
-    <xsd:import namespace="http://www.kuali.org/kfs/sys/ddTypes" schemaLocation="/static/xsd/sys/ddTypes.xsd" />
+    <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="https://kfs-stg.adminapps.cornell.edu/kfs-stg/static/xsd/sys/types.xsd" />
+    <xsd:import namespace="http://www.kuali.org/kfs/sys/ddTypes" schemaLocation="https://kfs-stg.adminapps.cornell.edu/kfs-stg/static/xsd/sys/ddTypes.xsd" />
   
 	<!--  elements -->
 	<xsd:element name="customers" type="customersType" />
@@ -29,38 +29,38 @@
 	<xsd:element name="addresses" type="addressesType" />
 	<xsd:element name="address" type="addressType" />
 	
-	<xsd:element name="customerNumber"                type="${xsd:normalizedString,dd:Customer.customerNumber}" />
-	<xsd:element name="customerName"                  type="${xsd:normalizedString,dd:Customer.customerName}" />
-	<xsd:element name="customerParentCompanyNumber"   type="${xsd:normalizedString,dd:Customer.customerParentCompanyNumber}" />
-	<xsd:element name="customerTypeCode"              type="${xsd:normalizedString,dd:Customer.customerTypeCode}" />
-	<xsd:element name="customerAddressChangeDate"     type="${xsd:date,dd:Customer.customerAddressChangeDate}" />
-	<xsd:element name="customerRecordAddDate"         type="${xsd:date,dd:Customer.customerRecordAddDate}" />
-	<xsd:element name="customerLastActivityDate"      type="${xsd:date,dd:Customer.customerLastActivityDate}" />
-	<xsd:element name="customerTaxTypeCode"           type="${xsd:normalizedString,dd:Customer.customerTaxTypeCode}" />
-	<xsd:element name="customerTaxNbr"                type="${xsd:normalizedString,dd:Customer.customerTaxNbr}" />
-	<xsd:element name="customerActiveIndicator"       type="${xsd:normalizedString,dd:Customer.active}" />
-	<xsd:element name="customerPhoneNumber"           type="${xsd:normalizedString,dd:Customer.customerPhoneNumber}" />
-	<xsd:element name="customer800PhoneNumber"        type="${xsd:normalizedString,dd:Customer.customer800PhoneNumber}" />
-	<xsd:element name="customerContactName"           type="${xsd:normalizedString,dd:Customer.customerContactName}" />
-	<xsd:element name="customerContactPhoneNumber"    type="${xsd:normalizedString,dd:Customer.customerContactPhoneNumber}" />
-	<xsd:element name="customerFaxNumber"             type="${xsd:normalizedString,dd:Customer.customerFaxNumber}" />
-	<xsd:element name="customerBirthDate"             type="${xsd:date,dd:Customer.customerBirthDate}" />
-	<xsd:element name="customerTaxExemptIndicator"    type="${xsd:normalizedString,dd:Customer.customerTaxExemptIndicator}" />
-	<xsd:element name="customerCreditLimitAmount"     type="${xsd:decimal,dd:Customer.customerCreditLimitAmount}" />
-	<xsd:element name="customerCreditApprovedByName"  type="${xsd:normalizedString,dd:Customer.customerCreditApprovedByName}" />
-	<xsd:element name="customerEmailAddress"          type="${xsd:normalizedString,dd:Customer.customerEmailAddress}" />
-	<xsd:element name="customerAddressIdentifier"     type="${xsd:normalizedString,dd:CustomerAddress.customerAddressIdentifier}" />
-	<xsd:element name="customerAddressName"           type="${xsd:normalizedString,dd:CustomerAddress.customerAddressName}" />
-	<xsd:element name="customerLine1StreetAddress"    type="${xsd:normalizedString,dd:CustomerAddress.customerLine1StreetAddress}" />
-	<xsd:element name="customerLine2StreetAddress"    type="${xsd:normalizedString,dd:CustomerAddress.customerLine2StreetAddress}" />
-	<xsd:element name="customerCityName"              type="${xsd:normalizedString,dd:CustomerAddress.customerCityName}" />
-	<xsd:element name="customerStateCode"             type="${xsd:normalizedString,dd:CustomerAddress.customerStateCode}" />
-	<xsd:element name="customerZipCode"               type="${xsd:normalizedString,dd:CustomerAddress.customerZipCode}" />
-	<xsd:element name="customerCountryCode"           type="${xsd:normalizedString,dd:CustomerAddress.customerCountryCode}" />
-	<xsd:element name="customerAddressInternationalProvinceName" type="${xsd:normalizedString,dd:CustomerAddress.customerAddressInternationalProvinceName}" />
-	<xsd:element name="customerInternationalMailCode" type="${xsd:normalizedString,dd:CustomerAddress.customerInternationalMailCode}" />
-	<xsd:element name="customerAddressTypeCode"       type="${xsd:normalizedString,dd:CustomerAddress.customerAddressTypeCode}" />
-	<xsd:element name="customerAddressEndDate"        type="${xsd:date,dd:CustomerAddress.customerAddressEndDate}" />
+	<xsd:element name="customerNumber"                type="xsd:normalizedString" />
+	<xsd:element name="customerName"                  type="xsd:normalizedString" />
+	<xsd:element name="customerParentCompanyNumber"   type="xsd:normalizedString" />
+	<xsd:element name="customerTypeCode"              type="xsd:normalizedString" />
+	<xsd:element name="customerAddressChangeDate"     type="xsd:date" />
+	<xsd:element name="customerRecordAddDate"         type="xsd:date" />
+	<xsd:element name="customerLastActivityDate"      type="xsd:date" />
+	<xsd:element name="customerTaxTypeCode"           type="xsd:normalizedString" />
+	<xsd:element name="customerTaxNbr"                type="xsd:normalizedString" />
+	<xsd:element name="customerActiveIndicator"       type="xsd:normalizedString" />
+	<xsd:element name="customerPhoneNumber"           type="xsd:normalizedString" />
+	<xsd:element name="customer800PhoneNumber"        type="xsd:normalizedString" />
+	<xsd:element name="customerContactName"           type="xsd:normalizedString" />
+	<xsd:element name="customerContactPhoneNumber"    type="xsd:normalizedString" />
+	<xsd:element name="customerFaxNumber"             type="xsd:normalizedString" />
+	<xsd:element name="customerBirthDate"             type="xsd:date" />
+	<xsd:element name="customerTaxExemptIndicator"    type="xsd:normalizedString" />
+	<xsd:element name="customerCreditLimitAmount"     type="xsd:decimal" />
+	<xsd:element name="customerCreditApprovedByName"  type="xsd:normalizedString" />
+	<xsd:element name="customerEmailAddress"          type="xsd:normalizedString" />
+	<xsd:element name="customerAddressIdentifier"     type="xsd:normalizedString" />
+	<xsd:element name="customerAddressName"           type="xsd:normalizedString" />
+	<xsd:element name="customerLine1StreetAddress"    type="xsd:normalizedString" />
+	<xsd:element name="customerLine2StreetAddress"    type="xsd:normalizedString" />
+	<xsd:element name="customerCityName"              type="xsd:normalizedString" />
+	<xsd:element name="customerStateCode"             type="xsd:normalizedString" />
+	<xsd:element name="customerZipCode"               type="xsd:normalizedString" />
+	<xsd:element name="customerCountryCode"           type="xsd:normalizedString" />
+	<xsd:element name="customerAddressInternationalProvinceName" type="xsd:normalizedString" />
+	<xsd:element name="customerInternationalMailCode" type="xsd:normalizedString" />
+	<xsd:element name="customerAddressTypeCode"       type="xsd:normalizedString" />
+	<xsd:element name="customerAddressEndDate"        type="xsd:date" />
 
     
     
