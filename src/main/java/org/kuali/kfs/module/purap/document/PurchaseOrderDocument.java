@@ -60,10 +60,13 @@ import org.kuali.kfs.module.purap.businessobject.PurchaseOrderVendorChoice;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderVendorQuote;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderVendorStipulation;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderView;
+import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
 import org.kuali.kfs.module.purap.businessobject.RecurringPaymentFrequency;
 import org.kuali.kfs.module.purap.businessobject.RequisitionCapitalAssetItem;
 import org.kuali.kfs.module.purap.businessobject.RequisitionCapitalAssetSystem;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
+import org.kuali.kfs.module.purap.businessobject.SensitiveData;
+import org.kuali.kfs.module.purap.businessobject.SensitiveDataAssignment;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.document.service.PurchasingDocumentSpecificService;
@@ -80,6 +83,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.MultiselectableDocSearchConversion;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.vnd.VendorConstants;
+import org.kuali.kfs.vnd.businessobject.CommodityCode;
 import org.kuali.kfs.vnd.businessobject.ContractManager;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.kfs.vnd.businessobject.ShippingPaymentTerms;
@@ -103,7 +107,6 @@ import org.kuali.rice.kns.rule.event.KualiDocumentEvent;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.DocumentHeaderService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.service.SequenceAccessorService;
 import org.kuali.rice.kns.util.GlobalVariables;
@@ -617,12 +620,39 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         for (CapitalAssetSystem capitalAssetSystem : requisitionDocument.getPurchasingCapitalAssetSystems()) {
             this.getPurchasingCapitalAssetSystems().add(new PurchaseOrderCapitalAssetSystem((RequisitionCapitalAssetSystem)capitalAssetSystem));
         }
-        
-        if (requisitionDocument.isSensitive()) {
-        	
+        if (ObjectUtils.isNull(getPurapDocumentIdentifier())) {
+            // need retrieve the next available PO id to save in GL entries (only do if purap id is null which should be on first
+            // save)
+            SequenceAccessorService sas = SpringContext.getBean(SequenceAccessorService.class);
+            Long poSequenceNumber = sas.getNextAvailableSequenceNumber("PO_ID", this.getClass());
+            setPurapDocumentIdentifier(poSequenceNumber.intValue());
         }
         
-        this.isSensitive = requisitionDocument.isSensitive();
+        if (requisitionDocument.isSensitive()) {
+        	for ( PurchasingItemBase pib : (List<PurchasingItemBase>)requisitionDocument.getItems()) {
+        		CommodityCode cc = pib.getCommodityCode(); 
+        		if (cc != null && cc.getSensitiveDataCode() != null) {
+        			if (purchaseOrderSensitiveData == null) {
+        				purchaseOrderSensitiveData = getPurchaseOrderSensitiveData();
+        			}
+        			purchaseOrderSensitiveData.add(new PurchaseOrderSensitiveData(getPurapDocumentIdentifier(),getRequisitionIdentifier(), cc.getSensitiveDataCode()));
+        		}
+        	}
+        }
+        
+     // update table SensitiveDataAssignment
+      //  SensitiveDataAssignment sda = new SensitiveDataAssignment(poId, poForm.getSensitiveDataAssignmentReason(), GlobalVariables.getUserSession().getPerson().getPrincipalName(), poForm.getSensitiveDatasAssigned());
+       // SpringContext.getBean(BusinessObjectService.class).save(sda);
+
+        // update table PurchaseOrderSensitiveData
+//        sdService.deletePurchaseOrderSensitiveDatas(poId);
+       // List<PurchaseOrderSensitiveData> posds = new ArrayList<PurchaseOrderSensitiveData>();
+       // for (SensitiveData sd : sds) {
+        //    posds.add(new PurchaseOrderSensitiveData(poId, po.getRequisitionIdentifier(), sd.getSensitiveDataCode()));
+      //  }
+        SpringContext.getBean(BusinessObjectService.class).save(purchaseOrderSensitiveData);
+        
+       // this.isSensitive = requisitionDocument.isSensitive();
         
         this.fixItemReferences();
     }
@@ -1755,16 +1785,16 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         this.glOnlySourceAccountingLines = glOnlySourceAccountingLines;
     }
 
-    @Override
-    public boolean isSensitive() {
-    	boolean sensitive = super.isSensitive();
-    	if (!sensitive) {
-    		RequisitionDocument reqDoc = SpringContext.getBean(RequisitionService.class).getRequisitionById(getRequisitionIdentifier());
-    		
-    		return reqDoc.isSensitive(); 
-    	}
-    	
-    	return sensitive;
-    }
+//    @Override
+//    public boolean isSensitive() {
+//    	boolean sensitive = super.isSensitive();
+//    	if (!sensitive) {
+//    		RequisitionDocument reqDoc = SpringContext.getBean(RequisitionService.class).getRequisitionById(getRequisitionIdentifier());
+//    		
+//    		return reqDoc.isSensitive(); 
+//    	}
+//    	
+//    	return sensitive;
+//    }
     
 }
