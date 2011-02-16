@@ -899,6 +899,15 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
      */
     public void setPayeeOwnerCd(String string) {
     	
+        payeeOwnerCd = string;
+        
+    }
+    
+    /**
+     * @param string
+     */
+    public void setPayeeOwnerCdFromVendor(String string) {
+    	
        // payeeOwnerCd = string;
         
         
