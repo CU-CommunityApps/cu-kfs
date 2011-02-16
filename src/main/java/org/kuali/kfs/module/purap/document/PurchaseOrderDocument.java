@@ -638,21 +638,11 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         			purchaseOrderSensitiveData.add(new PurchaseOrderSensitiveData(getPurapDocumentIdentifier(),getRequisitionIdentifier(), cc.getSensitiveDataCode()));
         		}
         	}
+        	
         }
         
-     // update table SensitiveDataAssignment
-      //  SensitiveDataAssignment sda = new SensitiveDataAssignment(poId, poForm.getSensitiveDataAssignmentReason(), GlobalVariables.getUserSession().getPerson().getPrincipalName(), poForm.getSensitiveDatasAssigned());
-       // SpringContext.getBean(BusinessObjectService.class).save(sda);
-
-        // update table PurchaseOrderSensitiveData
-//        sdService.deletePurchaseOrderSensitiveDatas(poId);
-       // List<PurchaseOrderSensitiveData> posds = new ArrayList<PurchaseOrderSensitiveData>();
-       // for (SensitiveData sd : sds) {
-        //    posds.add(new PurchaseOrderSensitiveData(poId, po.getRequisitionIdentifier(), sd.getSensitiveDataCode()));
-      //  }
-        SpringContext.getBean(BusinessObjectService.class).save(purchaseOrderSensitiveData);
-        
-       // this.isSensitive = requisitionDocument.isSensitive();
+        if (purchaseOrderSensitiveData != null)
+        	SpringContext.getBean(BusinessObjectService.class).save(purchaseOrderSensitiveData);
         
         this.fixItemReferences();
     }
