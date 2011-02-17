@@ -15,11 +15,7 @@
  */
 package org.kuali.kfs.module.purap.document.service.impl;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -38,18 +34,11 @@ import org.kuali.kfs.module.purap.util.PurApDateFormatUtils;
 import org.kuali.kfs.module.purap.util.cxml.B2BParserHelper;
 import org.kuali.kfs.module.purap.util.cxml.PurchaseOrderResponse;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.ContractManager;
-import org.kuali.kfs.vnd.businessobject.VendorAddress;
-import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kim.service.PersonService;
-import org.kuali.rice.kns.bo.Attachment;
-import org.kuali.rice.kns.bo.Note;
-import org.kuali.rice.kns.service.AttachmentService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,8 +51,6 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
     private RequisitionService requisitionService;
     private ParameterService parameterService;
     private PersonService<Person> personService;
-    private VendorService vendorService;
-
 
     // injected values
     private String b2bEnvironment;
@@ -74,61 +61,49 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
     private String b2bPurchaseOrderURL;
     private String b2bPurchaseOrderPassword;
 
-    private String defaultDistributionFaxNumber;
-    
-    private static final String NEWLINE = "\n";
-    private static final String PREFIX = "--";
-    private static final String MIME_BOUNDARY_FOR_ATTACHMENTS = "-----------------------------MIME_BOUNDARY_FOR_ATTACHMENTS";
-    
     /**
      * @see org.kuali.kfs.module.purap.document.service.B2BPurchaseOrderService#sendPurchaseOrder(org.kuali.kfs.module.purap.document.PurchaseOrderDocument)
      */
     public String sendPurchaseOrder(PurchaseOrderDocument purchaseOrder) {
-        // non-catalog POs might not have a vendor contract, so we need to get the contract manager from the PO which will always be there
-        ContractManager contractManager = null;
-        LOG.info("\n\npurchaseOrder.getRequisitionSourceCode() = " + purchaseOrder.getRequisitionSourceCode());
-        LOG.info("purchaseOrder.getRequisitionIdentifier() = " + purchaseOrder.getRequisitionIdentifier());
-        if (!PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
-    	   contractManager = purchaseOrder.getContractManager();
-        }
-        else {
-           contractManager = purchaseOrder.getVendorContract().getContractManager();
-        }
+        /*
+         * IMPORTANT DESIGN NOTE: We need the contract manager's name, phone number, and e-mail address. B2B orders that don’t
+         * qualify to become APO's will have contract managers on the PO, and the ones that DO become APO's will not. We decided to
+         * always get the contract manager from the B2B contract associated with the order, and for B2B orders to ignore the
+         * contract manager field on the PO. We pull the name and phone number from the contract manager table and get the e-mail
+         * address from the user data.
+         */
+
+        ContractManager contractManager = purchaseOrder.getVendorContract().getContractManager();
         String contractManagerEmail = getContractManagerEmail(contractManager);
+
         String vendorDuns = purchaseOrder.getVendorDetail().getVendorDunsNumber();
 
-        RequisitionDocument reqDocument = requisitionService.getRequisitionById(purchaseOrder.getRequisitionIdentifier());
-        KualiWorkflowDocument reqWorkflowDoc = reqDocument.getDocumentHeader().getWorkflowDocument();
+        RequisitionDocument r = requisitionService.getRequisitionById(purchaseOrder.getRequisitionIdentifier());
+        KualiWorkflowDocument reqWorkflowDoc = r.getDocumentHeader().getWorkflowDocument();
 
-        LOG.info("sendPurchaseOrder(): punchoutUrl is " + b2bPunchoutURL);
+        LOG.debug("sendPurchaseOrder(): punchoutUrl is " + b2bPunchoutURL);
 
-        if (PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
-          String validateErrors = verifyCxmlPOData(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns);
-          if (!StringUtils.isEmpty(validateErrors)) {
-              return validateErrors;
-          }
+        String validateErrors = verifyCxmlPOData(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns);
+        if (!StringUtils.isEmpty(validateErrors)) {
+            return validateErrors;
         }
 
         StringBuffer transmitErrors = new StringBuffer();
-        try {
-            LOG.info("sendPurchaseOrder() Generating cxml");
-            String cxml = "";
-            
-            if (PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
-                cxml = getCxml(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns);
-            }
-            else {
-                prepareNonB2BPurchaseOrderForTransmission(purchaseOrder);
-                cxml = getCxml(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns);
-            }
 
+        try {
+            LOG.debug("sendPurchaseOrder() Generating cxml");
+            String cxml = getCxml(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns);
+
+            LOG.info("sendPurchaseOrder() Sending cxml\n" + cxml);
             String responseCxml = b2bDao.sendPunchOutRequest(cxml, b2bPurchaseOrderURL);
-            
+
+            LOG.info("sendPurchaseOrder(): Response cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + ":" + responseCxml);
+
             PurchaseOrderResponse poResponse = B2BParserHelper.getInstance().parsePurchaseOrderResponse(responseCxml);
             String statusText = poResponse.getStatusText();
-            LOG.info("sendPurchaseOrder(): statusText is " + statusText);
+            LOG.debug("sendPurchaseOrder(): statusText is " + statusText);
             if (ObjectUtils.isNull(statusText) || (!"success".equalsIgnoreCase(statusText.trim()))) {
-                LOG.error("sendPurchaseOrder(): PO cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + " failed sending to SciQuest:" + NEWLINE + statusText);
+                LOG.error("sendPurchaseOrder(): PO cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + " failed sending to SciQuest:\n" + statusText);
                 transmitErrors.append("Unable to send Purchase Order: " + statusText);
 
                 // find any additional error messages that might have been sent
@@ -166,454 +141,184 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
      *      java.lang.String, java.lang.String)
      */
     public String getCxml(PurchaseOrderDocument purchaseOrder, String requisitionInitiatorId, String password, ContractManager contractManager, String contractManagerEmail, String vendorDuns) {
+
         StringBuffer cxml = new StringBuffer();
 
-        cxml.append(PREFIX + MIME_BOUNDARY_FOR_ATTACHMENTS + NEWLINE);
-        cxml.append("Content-Type: application/xop+xml;" + NEWLINE);
-        cxml.append("\tcharset=\"UTF-8\";" + NEWLINE);
-        cxml.append("\ttype=\"text/xml\"" + NEWLINE);
-        cxml.append("Content-Transfer-Encoding: 8bit" + NEWLINE);
-        cxml.append("Content-ID: <1222711868656.6893160141700477326@sciquest.com>" + NEWLINE + NEWLINE);
-
-        cxml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NEWLINE);
-        cxml.append("<!DOCTYPE PurchaseOrderMessage SYSTEM \"PO.dtd\">" + NEWLINE);
-        cxml.append("<PurchaseOrderMessage version=\"2.0\">" + NEWLINE);
-        cxml.append("  <Header>" + NEWLINE);
+        cxml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        cxml.append("<!DOCTYPE PurchaseOrderMessage SYSTEM \"PO.dtd\">\n");
+        cxml.append("<PurchaseOrderMessage version=\"2.0\">\n");
+        cxml.append("  <Header>\n");
 
         // MessageId - can be whatever you would like it to be. Just make it unique.
-        cxml.append("    <MessageId>KFS_cXML_PO</MessageId>" + NEWLINE);
+        cxml.append("    <MessageId>KFS_cXML_PO</MessageId>\n");
 
         // Timestamp - it doesn't matter what's in the timezone, just that it's there (need "T" space between date/time)
         Date d = SpringContext.getBean(DateTimeService.class).getCurrentDate();
         SimpleDateFormat date = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_DATE_FORMAT);
         SimpleDateFormat time = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_TIME_FORMAT);
-        cxml.append("    <Timestamp>").append(date.format(d)).append("T").append(time.format(d)).append("+05:30").append("</Timestamp>" + NEWLINE);
+        cxml.append("    <Timestamp>").append(date.format(d)).append("T").append(time.format(d)).append("+05:30").append("</Timestamp>\n");
 
-        cxml.append("    <Authentication>" + NEWLINE);
-        cxml.append("      <Identity>").append(b2bUserAgent).append("</Identity>" + NEWLINE);
-        cxml.append("      <SharedSecret>").append(password).append("</SharedSecret>" + NEWLINE);
-        cxml.append("    </Authentication>" + NEWLINE);
-        cxml.append("  </Header>" + NEWLINE);
-        cxml.append("  <PurchaseOrder>" + NEWLINE);
-        cxml.append("    <POHeader>" + NEWLINE);
-        cxml.append("      <PONumber>").append(purchaseOrder.getPurapDocumentIdentifier()).append("</PONumber>" + NEWLINE);
-        cxml.append("      <Requestor>" + NEWLINE);
-        cxml.append("        <UserProfile username=\"").append(requisitionInitiatorId.toUpperCase()).append("\">" + NEWLINE);
-        cxml.append("        </UserProfile>" + NEWLINE);
-        cxml.append("      </Requestor>" + NEWLINE);
-        cxml.append("      <Priority>High</Priority>" + NEWLINE);
-        cxml.append("      <AccountingDate>").append(purchaseOrder.getPurchaseOrderCreateTimestamp()).append("</AccountingDate>" + NEWLINE);
+        cxml.append("    <Authentication>\n");
+        cxml.append("      <Identity>").append(b2bUserAgent).append("</Identity>\n");
+        cxml.append("      <SharedSecret>").append(password).append("</SharedSecret>\n");
+        cxml.append("    </Authentication>\n");
+        cxml.append("  </Header>\n");
+        cxml.append("  <PurchaseOrder>\n");
+        cxml.append("    <POHeader>\n");
+        cxml.append("      <PONumber>").append(purchaseOrder.getPurapDocumentIdentifier()).append("</PONumber>\n");
+        cxml.append("      <Requestor>\n");
+        cxml.append("        <UserProfile username=\"").append(requisitionInitiatorId.toUpperCase()).append("\">\n");
+        cxml.append("        </UserProfile>\n");
+        cxml.append("      </Requestor>\n");
+        cxml.append("      <Priority>High</Priority>\n");
+        cxml.append("      <AccountingDate>").append(purchaseOrder.getPurchaseOrderCreateTimestamp()).append("</AccountingDate>\n");
 
+        /** *** SUPPLIER SECTION **** */
+        cxml.append("      <Supplier>\n");
+        cxml.append("        <DUNS>").append(vendorDuns).append("</DUNS>\n");
+        cxml.append("        <SupplierNumber>").append(purchaseOrder.getVendorNumber()).append("</SupplierNumber>\n");
 
-        if (PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
-            /** *** SUPPLIER SECTION **** */
-            cxml.append("      <Supplier>" + NEWLINE);
-            cxml.append("        <DUNS>").append(vendorDuns).append("</DUNS>" + NEWLINE);
-            cxml.append("        <SupplierNumber>").append(purchaseOrder.getVendorNumber()).append("</SupplierNumber>" + NEWLINE);
-
-            // Type attribute is required. Valid values: main and technical. Only main will be considered for POImport.
-            cxml.append("        <ContactInfo type=\"main\">" + NEWLINE);
-            // TelephoneNumber is required. With all fields, only numeric digits will be stored. Non-numeric characters are allowed, but
-            // will be stripped before storing.
-            cxml.append("          <Phone>" + NEWLINE);
-            cxml.append("            <TelephoneNumber>" + NEWLINE);
-            cxml.append("              <CountryCode>1</CountryCode>" + NEWLINE);
-            if (contractManager.getContractManagerPhoneNumber().length() > 4) {
-                cxml.append("              <AreaCode>").append(contractManager.getContractManagerPhoneNumber().substring(0, 3)).append("</AreaCode>" + NEWLINE);
-                cxml.append("              <Number>").append(contractManager.getContractManagerPhoneNumber().substring(3)).append("</Number>" + NEWLINE);
-            } else {
-                LOG.error("getCxml() The phone number is invalid for this contract manager: " + contractManager.getContractManagerUserIdentifier() + " " + contractManager.getContractManagerName());
-                cxml.append("              <AreaCode>555</AreaCode>" + NEWLINE);
-                cxml.append("              <Number>").append(contractManager.getContractManagerPhoneNumber()).append("</Number>" + NEWLINE);
-            }
-            cxml.append("            </TelephoneNumber>" + NEWLINE);
-            cxml.append("          </Phone>" + NEWLINE);
-            cxml.append("        </ContactInfo>" + NEWLINE);
-            cxml.append("      </Supplier>" + NEWLINE);
-        } else {
-
-            /** *** SUPPLIER SECTION **** */
-            cxml.append("      <Supplier>" + NEWLINE);
-            cxml.append("        <Name><![CDATA[").append(purchaseOrder.getVendorName()).append("]]></Name>" + NEWLINE);
-
-            // Type attribute is required. Valid values: main and technical. Only main will be considered for POImport.
-            cxml.append("        <ContactInfo type=\"main\">" + NEWLINE);
-            // TelephoneNumber is required. With all fields, only numeric digits will be stored. Non-numeric characters are allowed, but
-            // will be stripped before storing.
-            cxml.append("          <Phone>" + NEWLINE);
-            cxml.append("            <TelephoneNumber>" + NEWLINE);
-            cxml.append("              <CountryCode>1</CountryCode>" + NEWLINE);
-            if (StringUtils.isNotEmpty(purchaseOrder.getVendorPhoneNumber()) && purchaseOrder.getVendorPhoneNumber().length() > 4) {
-                cxml.append("              <AreaCode>").append(purchaseOrder.getVendorPhoneNumber().substring(0, 3)).append("</AreaCode>" + NEWLINE);
-                cxml.append("              <Number>").append(purchaseOrder.getVendorPhoneNumber().substring(3)).append("</Number>" + NEWLINE);
-            } else {
-
-                cxml.append("              <AreaCode>000</AreaCode>" + NEWLINE);
-                cxml.append("              <Number>-000-0000</Number>" + NEWLINE);
-            }
-
-            cxml.append("            </TelephoneNumber>" + NEWLINE);
-            cxml.append("          </Phone>" + NEWLINE);
-
-            cxml.append("          <ContactAddress>" + NEWLINE);
-            if (StringUtils.isNotEmpty(purchaseOrder.getVendorLine1Address())) {
-                cxml.append("          <AddressLine label=\"Street1\" linenumber=\"1\"><![CDATA[").append(purchaseOrder.getVendorLine1Address()).append("]]></AddressLine>" + NEWLINE);
-            }
-            if (StringUtils.isNotEmpty(purchaseOrder.getVendorLine2Address())) {
-                cxml.append("          <AddressLine label=\"Street2\" linenumber=\"2\"><![CDATA[").append(purchaseOrder.getVendorLine2Address()).append("]]></AddressLine>" + NEWLINE);
-            }
-            if (StringUtils.isNotEmpty(purchaseOrder.getVendorStateCode())) {
-                cxml.append("          <State>").append(purchaseOrder.getBillingStateCode()).append("</State>" + NEWLINE);
-            }
-            if (StringUtils.isNotEmpty(purchaseOrder.getVendorPostalCode())) {
-                cxml.append("          <PostalCode>").append(purchaseOrder.getBillingPostalCode()).append("</PostalCode>" + NEWLINE);
-            }
-            if (StringUtils.isNotEmpty(purchaseOrder.getVendorCountryCode())) {
-                cxml.append("          <Country isocountrycode=\"").append(purchaseOrder.getBillingCountryCode()).append("\">").append(purchaseOrder.getBillingCountryCode()).append("</Country>" + NEWLINE);
-            }
-            cxml.append("          </ContactAddress>" + NEWLINE);
-
-            cxml.append("        </ContactInfo>" + NEWLINE);
-            cxml.append("      </Supplier>" + NEWLINE);
-
-            /** *** DISTRIBUTION SECTION *** */
-            VendorAddress vendorAddress = vendorService.getVendorDefaultAddress(purchaseOrder.getVendorDetail().getVendorAddresses(), VendorConstants.AddressTypes.PURCHASE_ORDER, purchaseOrder.getDeliveryCampusCode());
-            cxml.append("      <OrderDistribution>" + NEWLINE);
-
-            // first take fax from PO, if empty then get fax number for PO default vendor address
-            String vendorFaxNumber = purchaseOrder.getVendorFaxNumber();
-            if (StringUtils.isBlank(vendorFaxNumber) && vendorAddress != null) {
-                vendorFaxNumber = vendorAddress.getVendorFaxNumber();
-            }
-
-            // use fax number if not blank, else use vendor email
-            if (StringUtils.isNotBlank(vendorFaxNumber) && vendorFaxNumber.length() > 4) {
-                cxml.append("        <DistributionMethod type=\"fax\">" + NEWLINE);
-                cxml.append("          <Fax>" + NEWLINE);
-                cxml.append("            <TelephoneNumber>" + NEWLINE);
-                cxml.append("              <CountryCode>1</CountryCode>" + NEWLINE);
-                cxml.append("              <AreaCode>").append(vendorFaxNumber.substring(0, 3)).append("</AreaCode>" + NEWLINE);
-                cxml.append("              <Number>").append(vendorFaxNumber.substring(3)).append("</Number>" + NEWLINE);
-                cxml.append("            </TelephoneNumber>" + NEWLINE);
-                cxml.append("          </Fax>" + NEWLINE);
-            } else {
-                String emailAddress = "";
-                if (vendorAddress != null) {
-                    emailAddress = vendorAddress.getVendorAddressEmailAddress();
-                }
-
-                if (StringUtils.isNotBlank(emailAddress)) {
-                    cxml.append("        <DistributionMethod type=\"email\">" + NEWLINE);
-                    cxml.append("          <Email><![CDATA[").append(emailAddress).append("]]></Email>" + NEWLINE);
-                } else {
-                    // default fax
-                    cxml.append("        <DistributionMethod type=\"fax\">" + NEWLINE);
-                    cxml.append("          <Fax>" + NEWLINE);
-                    cxml.append("            <TelephoneNumber>" + NEWLINE);
-                    cxml.append("              <CountryCode>1</CountryCode>" + NEWLINE);
-                    cxml.append("              <AreaCode>").append(defaultDistributionFaxNumber.substring(0, 3)).append("</AreaCode>" + NEWLINE);
-                    cxml.append("              <Number>").append(defaultDistributionFaxNumber.substring(3)).append("</Number>" + NEWLINE);
-                    cxml.append("            </TelephoneNumber>" + NEWLINE);
-                    cxml.append("          </Fax>" + NEWLINE);
-                }
-            }
-            cxml.append("        </DistributionMethod>" + NEWLINE);
-            cxml.append("      </OrderDistribution>" + NEWLINE);
+        // Type attribute is required. Valid values: main and technical. Only main will be considered for POImport.
+        cxml.append("        <ContactInfo type=\"main\">\n");
+        // TelephoneNumber is required. With all fields, only numeric digits will be stored. Non-numeric characters are allowed, but
+        // will be stripped before storing.
+        cxml.append("          <Phone>\n");
+        cxml.append("            <TelephoneNumber>\n");
+        cxml.append("              <CountryCode>1</CountryCode>\n");
+        if (contractManager.getContractManagerPhoneNumber().length() > 4) {
+            cxml.append("              <AreaCode>").append(contractManager.getContractManagerPhoneNumber().substring(0, 3)).append("</AreaCode>\n");
+            cxml.append("              <Number>").append(contractManager.getContractManagerPhoneNumber().substring(3)).append("</Number>\n");
         }
-
+        else {
+            LOG.error("getCxml() The phone number is invalid for this contract manager: " + contractManager.getContractManagerUserIdentifier() + " " + contractManager.getContractManagerName());
+            cxml.append("              <AreaCode>555</AreaCode>\n");
+            cxml.append("              <Number>").append(contractManager.getContractManagerPhoneNumber()).append("</Number>\n");
+        }
+        cxml.append("            </TelephoneNumber>\n");
+        cxml.append("          </Phone>\n");
+        cxml.append("        </ContactInfo>\n");
+        cxml.append("      </Supplier>\n");
 
         /** *** BILL TO SECTION **** */
-        cxml.append("      <BillTo>" + NEWLINE);
-        cxml.append("        <Address>" + NEWLINE);
-        cxml.append("          <TemplateName>Bill To</TemplateName>" + NEWLINE);
-        cxml.append("          <AddressCode>").append(purchaseOrder.getDeliveryCampusCode()).append("</AddressCode>" + NEWLINE);
+        cxml.append("      <BillTo>\n");
+        cxml.append("        <Address>\n");
+        cxml.append("          <TemplateName>Bill To</TemplateName>\n");
+        cxml.append("          <AddressCode>").append(purchaseOrder.getDeliveryCampusCode()).append("</AddressCode>\n");
         // Contact - There can be 0-5 Contact elements. The label attribute is optional.
-        cxml.append("          <Contact label=\"FirstName\" linenumber=\"1\"><![CDATA[Accounts]]></Contact>" + NEWLINE);
-        cxml.append("          <Contact label=\"LastName\" linenumber=\"2\"><![CDATA[Payable]]></Contact>" + NEWLINE);
-        cxml.append("          <Contact label=\"Company\" linenumber=\"3\"><![CDATA[").append(purchaseOrder.getBillingName().trim()).append("]]></Contact>" + NEWLINE);
-        cxml.append("          <Contact label=\"Phone\" linenumber=\"4\"><![CDATA[").append(purchaseOrder.getBillingPhoneNumber().trim()).append("]]></Contact>" + NEWLINE);
+        cxml.append("          <Contact label=\"FirstName\" linenumber=\"1\"><![CDATA[Accounts]]></Contact>\n");
+        cxml.append("          <Contact label=\"LastName\" linenumber=\"2\"><![CDATA[Payable]]></Contact>\n");
+        cxml.append("          <Contact label=\"Company\" linenumber=\"3\"><![CDATA[").append(purchaseOrder.getBillingName().trim()).append("]]></Contact>\n");
+        cxml.append("          <Contact label=\"Phone\" linenumber=\"4\"><![CDATA[").append(purchaseOrder.getBillingPhoneNumber().trim()).append("]]></Contact>\n");
         // There must be 1-5 AddressLine elements. The label attribute is optional.
-        cxml.append("          <AddressLine label=\"Street1\" linenumber=\"1\"><![CDATA[").append(purchaseOrder.getBillingLine1Address()).append("]]></AddressLine>" + NEWLINE);
-        cxml.append("          <AddressLine label=\"Street2\" linenumber=\"2\"><![CDATA[").append(purchaseOrder.getBillingLine2Address()).append("]]></AddressLine>" + NEWLINE);
-        cxml.append("          <City><![CDATA[").append(purchaseOrder.getBillingCityName()).append("]]></City>" + NEWLINE); // Required.
-        cxml.append("          <State>").append(purchaseOrder.getBillingStateCode()).append("</State>" + NEWLINE);
-        cxml.append("          <PostalCode>").append(purchaseOrder.getBillingPostalCode()).append("</PostalCode>" + NEWLINE); // Required.
-        cxml.append("          <Country isocountrycode=\"").append(purchaseOrder.getBillingCountryCode()).append("\">").append(purchaseOrder.getBillingCountryCode()).append("</Country>" + NEWLINE);
-        cxml.append("        </Address>" + NEWLINE);
-        cxml.append("      </BillTo>" + NEWLINE);
+        cxml.append("          <AddressLine label=\"Street1\" linenumber=\"1\"><![CDATA[").append(purchaseOrder.getBillingLine1Address()).append("]]></AddressLine>\n");
+        cxml.append("          <AddressLine label=\"Street2\" linenumber=\"2\"><![CDATA[").append(purchaseOrder.getBillingLine2Address()).append("]]></AddressLine>\n");
+        cxml.append("          <City><![CDATA[").append(purchaseOrder.getBillingCityName()).append("]]></City>\n"); // Required.
+        cxml.append("          <State>").append(purchaseOrder.getBillingStateCode()).append("</State>\n");
+        cxml.append("          <PostalCode>").append(purchaseOrder.getBillingPostalCode()).append("</PostalCode>\n"); // Required.
+        cxml.append("          <Country isocountrycode=\"").append(purchaseOrder.getBillingCountryCode()).append("\">").append(purchaseOrder.getBillingCountryCode()).append("</Country>\n");
+        cxml.append("        </Address>\n");
+        cxml.append("      </BillTo>\n");
 
         /** *** SHIP TO SECTION **** */
-        cxml.append("      <ShipTo>" + NEWLINE);
-        cxml.append("        <Address>" + NEWLINE);
-        cxml.append("          <TemplateName>Ship To</TemplateName>" + NEWLINE);
+        cxml.append("      <ShipTo>\n");
+        cxml.append("        <Address>\n");
+        cxml.append("          <TemplateName>Ship To</TemplateName>\n");
         // AddressCode. A code to identify the address, that is sent to the supplier.
-        cxml.append("          <AddressCode>").append(purchaseOrder.getReceivingName().trim()).append("</AddressCode>" + NEWLINE);
-        cxml.append("          <Contact label=\"Name\" linenumber=\"1\"><![CDATA[").append(purchaseOrder.getDeliveryToName().trim()).append("]]></Contact>" + NEWLINE);
-        cxml.append("          <Contact label=\"PurchasingEmail\" linenumber=\"2\"><![CDATA[").append(contractManagerEmail).append("]]></Contact>" + NEWLINE);
+        cxml.append("          <AddressCode>").append(purchaseOrder.getDeliveryCampusCode()).append(purchaseOrder.getOrganizationCode()).append("</AddressCode>\n");
+        cxml.append("          <Contact label=\"Name\" linenumber=\"1\"><![CDATA[").append(purchaseOrder.getDeliveryToName().trim()).append("]]></Contact>\n");
+        cxml.append("          <Contact label=\"PurchasingEmail\" linenumber=\"2\"><![CDATA[").append(contractManagerEmail).append("]]></Contact>\n");
         if (ObjectUtils.isNotNull(purchaseOrder.getInstitutionContactEmailAddress())) {
-            cxml.append("          <Contact label=\"ContactEmail\" linenumber=\"3\"><![CDATA[").append(purchaseOrder.getInstitutionContactEmailAddress()).append("]]></Contact>" + NEWLINE);
-        } else {
-            cxml.append("          <Contact label=\"ContactEmail\" linenumber=\"3\"><![CDATA[").append(purchaseOrder.getRequestorPersonEmailAddress()).append("]]></Contact>" + NEWLINE);
+            cxml.append("          <Contact label=\"ContactEmail\" linenumber=\"3\"><![CDATA[").append(purchaseOrder.getInstitutionContactEmailAddress()).append("]]></Contact>\n");
+        }
+        else {
+            cxml.append("          <Contact label=\"ContactEmail\" linenumber=\"3\"><![CDATA[").append(purchaseOrder.getRequestorPersonEmailAddress()).append("]]></Contact>\n");
         }
         if (ObjectUtils.isNotNull(purchaseOrder.getInstitutionContactPhoneNumber())) {
-            cxml.append("          <Contact label=\"Phone\" linenumber=\"4\"><![CDATA[").append(purchaseOrder.getInstitutionContactPhoneNumber().trim()).append("]]></Contact>" + NEWLINE);
-        } else {
-            cxml.append("          <Contact label=\"Phone\" linenumber=\"4\"><![CDATA[").append(purchaseOrder.getRequestorPersonPhoneNumber()).append("]]></Contact>" + NEWLINE);
+            cxml.append("          <Contact label=\"Phone\" linenumber=\"4\"><![CDATA[").append(purchaseOrder.getInstitutionContactPhoneNumber().trim()).append("]]></Contact>\n");
         }
-
+        else {
+            cxml.append("          <Contact label=\"Phone\" linenumber=\"4\"><![CDATA[").append(purchaseOrder.getRequestorPersonPhoneNumber()).append("]]></Contact>\n");
+        }
+        
         //check indicator to decide if receiving or delivery address should be sent to the vendor
         if (purchaseOrder.getAddressToVendorIndicator()) {  //use receiving address
-            if (StringUtils.isNotEmpty(purchaseOrder.getDeliveryBuildingName())) {
-                cxml.append("          <Contact label=\"Building\" linenumber=\"5\"><![CDATA[").append(purchaseOrder.getDeliveryBuildingName()).append(" - Rm ").append(purchaseOrder.getDeliveryBuildingRoomNumber()).append("]]></Contact>" + NEWLINE);
-            }
-            cxml.append("          <AddressLine label=\"Street1\" linenumber=\"1\"><![CDATA[").append(purchaseOrder.getReceivingName().trim()).append("]]></AddressLine>" + NEWLINE);
-            cxml.append("          <AddressLine label=\"Street2\" linenumber=\"2\"><![CDATA[").append(purchaseOrder.getReceivingLine1Address().trim()).append("]]></AddressLine>" + NEWLINE);
+            cxml.append("          <AddressLine label=\"Street1\" linenumber=\"1\"><![CDATA[").append(purchaseOrder.getReceivingName().trim()).append("]]></AddressLine>\n");
+            cxml.append("          <AddressLine label=\"Street2\" linenumber=\"2\"><![CDATA[").append(purchaseOrder.getReceivingLine1Address().trim()).append("]]></AddressLine>\n");
             if (ObjectUtils.isNull(purchaseOrder.getReceivingLine2Address())) {
-                cxml.append("          <AddressLine label=\"Street3\" linenumber=\"3\"><![CDATA[").append(" ").append("]]></AddressLine>" + NEWLINE);
-            } else {
-                cxml.append("          <AddressLine label=\"Street3\" linenumber=\"3\"><![CDATA[").append(purchaseOrder.getReceivingLine2Address()).append("]]></AddressLine>" + NEWLINE);
+                cxml.append("          <AddressLine label=\"Street3\" linenumber=\"3\"><![CDATA[").append(" ").append("]]></AddressLine>\n");
             }
-            cxml.append("          <City><![CDATA[").append(purchaseOrder.getReceivingCityName().trim()).append("]]></City>" + NEWLINE);
-            cxml.append("          <State>").append(purchaseOrder.getReceivingStateCode()).append("</State>" + NEWLINE);
-            cxml.append("          <PostalCode>").append(purchaseOrder.getReceivingPostalCode()).append("</PostalCode>" + NEWLINE);
-            cxml.append("          <Country isocountrycode=\"").append(purchaseOrder.getReceivingCountryCode()).append("\">").append(purchaseOrder.getReceivingCountryCode()).append("</Country>" + NEWLINE);
-        } else {
+            else {
+                cxml.append("          <AddressLine label=\"Street3\" linenumber=\"3\"><![CDATA[").append(purchaseOrder.getReceivingLine2Address()).append("]]></AddressLine>\n");
+            }
+            cxml.append("          <City><![CDATA[").append(purchaseOrder.getReceivingCityName().trim()).append("]]></City>\n");
+            cxml.append("          <State>").append(purchaseOrder.getReceivingStateCode()).append("</State>\n");
+            cxml.append("          <PostalCode>").append(purchaseOrder.getReceivingPostalCode()).append("</PostalCode>\n");
+            cxml.append("          <Country isocountrycode=\"").append(purchaseOrder.getReceivingCountryCode()).append("\">").append(purchaseOrder.getReceivingCountryCode()).append("</Country>\n");
+        }
+        else { //use final delivery address
             if (StringUtils.isNotEmpty(purchaseOrder.getDeliveryBuildingName())) {
-                cxml.append("          <Contact label=\"Building\" linenumber=\"5\"><![CDATA[").append(purchaseOrder.getDeliveryBuildingName()).append(" - Rm ").append(purchaseOrder.getDeliveryBuildingRoomNumber()).append("]]></Contact>" + NEWLINE);
+                cxml.append("          <Contact label=\"Building\" linenumber=\"5\"><![CDATA[").append(purchaseOrder.getDeliveryBuildingName()).append(" (").append(purchaseOrder.getDeliveryBuildingCode()).append(")]]></Contact>\n");
             }
-            cxml.append("          <AddressLine label=\"Street1\" linenumber=\"1\"><![CDATA[").append(purchaseOrder.getDeliveryBuildingLine1Address().trim()).append("]]></AddressLine>" + NEWLINE);
-            cxml.append("          <AddressLine label=\"Street2\" linenumber=\"2\"><![CDATA[Room #").append(purchaseOrder.getDeliveryBuildingRoomNumber().trim()).append("]]></AddressLine>" + NEWLINE);
-            cxml.append("          <AddressLine label=\"Company\" linenumber=\"4\"><![CDATA[").append(purchaseOrder.getBillingName().trim()).append("]]></AddressLine>" + NEWLINE);
+            cxml.append("          <AddressLine label=\"Street1\" linenumber=\"1\"><![CDATA[").append(purchaseOrder.getDeliveryBuildingLine1Address().trim()).append("]]></AddressLine>\n");
+            cxml.append("          <AddressLine label=\"Street2\" linenumber=\"2\"><![CDATA[Room #").append(purchaseOrder.getDeliveryBuildingRoomNumber().trim()).append("]]></AddressLine>\n");
+            cxml.append("          <AddressLine label=\"Company\" linenumber=\"4\"><![CDATA[").append(purchaseOrder.getBillingName().trim()).append("]]></AddressLine>\n");
             if (ObjectUtils.isNull(purchaseOrder.getDeliveryBuildingLine2Address())) {
-                cxml.append("          <AddressLine label=\"Street3\" linenumber=\"3\"><![CDATA[").append(" ").append("]]></AddressLine>" + NEWLINE);
-            } else {
-                cxml.append("          <AddressLine label=\"Street3\" linenumber=\"3\"><![CDATA[").append(purchaseOrder.getDeliveryBuildingLine2Address()).append("]]></AddressLine>" + NEWLINE);
+                cxml.append("          <AddressLine label=\"Street3\" linenumber=\"3\"><![CDATA[").append(" ").append("]]></AddressLine>\n");
             }
-            cxml.append("          <City><![CDATA[").append(purchaseOrder.getDeliveryCityName().trim()).append("]]></City>" + NEWLINE);
-            cxml.append("          <State>").append(purchaseOrder.getDeliveryStateCode()).append("</State>" + NEWLINE);
-            cxml.append("          <PostalCode>").append(purchaseOrder.getDeliveryPostalCode()).append("</PostalCode>" + NEWLINE);
-            cxml.append("          <Country isocountrycode=\"").append(purchaseOrder.getDeliveryCountryCode()).append("\">").append(purchaseOrder.getDeliveryCountryCode()).append("</Country>" + NEWLINE);
+            else {
+                cxml.append("          <AddressLine label=\"Street3\" linenumber=\"3\"><![CDATA[").append(purchaseOrder.getDeliveryBuildingLine2Address()).append("]]></AddressLine>\n");
+            }
+            cxml.append("          <City><![CDATA[").append(purchaseOrder.getDeliveryCityName().trim()).append("]]></City>\n");
+            cxml.append("          <State>").append(purchaseOrder.getDeliveryStateCode()).append("</State>\n");
+            cxml.append("          <PostalCode>").append(purchaseOrder.getDeliveryPostalCode()).append("</PostalCode>\n");
+            cxml.append("          <Country isocountrycode=\"").append(purchaseOrder.getDeliveryCountryCode()).append("\">").append(purchaseOrder.getDeliveryCountryCode()).append("</Country>\n");
         }
 
-        cxml.append("        </Address>" + NEWLINE);
-        cxml.append("      </ShipTo>" + NEWLINE);
-
-        // mjmc - Attachments must be defined in the xml part and must match info in MIME binary part
-        List<Note> notesToSendToVendor = getNotesToSendToVendor(purchaseOrder);
-        if (!notesToSendToVendor.isEmpty()) {
-            String allNotes = "";
-            String allNotesNoAttach = "";
-            cxml.append("      <ExternalInfo >" + NEWLINE);
-            cxml.append("        <Attachments xmlns:xop = \"http://www.w3.org/2004/08/xop/include/\" >" + NEWLINE);
-
-            for (int i = 0; i < notesToSendToVendor.size(); i++) {
-                Note note = notesToSendToVendor.get(i);
-                Attachment attachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
-                if (ObjectUtils.isNotNull(attachment)) {
-                    allNotes = allNotes + NEWLINE + "(" + (i + 1) + ") " + note.getNoteText() + "  ";
-                    cxml.append("          <Attachment id=\"" + attachment.getAttachmentIdentifier() + "\" type=\"file\">" + NEWLINE);
-                    cxml.append("            <AttachmentName><![CDATA[" + attachment.getAttachmentFileName() + "]]></AttachmentName>" + NEWLINE);
-                    cxml.append("            <AttachmentURL>http://usertest.sciquest.com/apps/Router/ReqAttachmentDownload?AttachmentId=" + attachment.getAttachmentIdentifier() +
-                            "&amp;DocId=" + purchaseOrder.getPurapDocumentIdentifier() +
-                            "&amp;OrgName=SQSupportTest&amp;AuthMethod=Local</AttachmentURL>" + NEWLINE);
-                    cxml.append("            <AttachmentSize>" + attachment.getAttachmentFileSize() / 1024 + "</AttachmentSize>" + NEWLINE);
-                    cxml.append("            <xop:Include href=\"cid:" + attachment.getAttachmentIdentifier() + "@sciquest.com\" />" + NEWLINE);
-                    cxml.append("          </Attachment>" + NEWLINE);
-                } else {
-                    allNotesNoAttach = allNotesNoAttach + "          ¥ " + note.getNoteText() + "          ";
-                }
-                /*
-          <Attachments xmlns:xop="http://www.w3.org/2004/08/xop/include/">
-            <Attachment id="9828" type="file">
-               <AttachmentName>ftest</AttachmentName>
-               <AttachmentURL>http://usertest.sciquest.com/apps/Router/ReqAttachmentDownload?AttachmentId=9828&amp;DocId=1041157&amp;OrgName=SQSupportTest&amp;AuthMethod=Local</AttachmentURL>
-               <AttachmentSize>11</AttachmentSize>
-               <xop:Include href="cid:9828@sciquest.com" />
-            </Attachment>
-         </Attachments>
-                 */
-            }
-            cxml.append("        </Attachments>" + NEWLINE);
-            cxml.append("          <Note><![CDATA[" + allNotesNoAttach + "          " + allNotes + "]]></Note>" + NEWLINE);
-            cxml.append("      </ExternalInfo>" + NEWLINE);
-        } // mjmc
-
-
-        cxml.append("      <CustomFieldValueSet name=\"SupplierAddress1\">" + NEWLINE);
-        cxml.append("        <CustomFieldValue>" + NEWLINE);
-        cxml.append("          <Value><![CDATA[").append(purchaseOrder.getVendorLine1Address()).append("]]></Value>" + NEWLINE);
-        cxml.append("         </CustomFieldValue>" + NEWLINE);
-        cxml.append("      </CustomFieldValueSet>" + NEWLINE);
-        cxml.append("      <CustomFieldValueSet name=\"SupplierCityStateZip\">" + NEWLINE);
-        cxml.append("        <CustomFieldValue>" + NEWLINE);
-        cxml.append("          <Value><![CDATA[").append(purchaseOrder.getVendorCityName()).append(", ").append(purchaseOrder.getVendorStateCode()).append(" ").append(purchaseOrder.getVendorPostalCode()).append("]]></Value>" + NEWLINE);
-        cxml.append("         </CustomFieldValue>" + NEWLINE);
-        cxml.append("      </CustomFieldValueSet>" + NEWLINE);
-
-        cxml.append("    </POHeader>" + NEWLINE);
+        cxml.append("        </Address>\n");
+        cxml.append("      </ShipTo>\n");
+        cxml.append("    </POHeader>\n");
 
         /** *** Items Section **** */
         List detailList = purchaseOrder.getItems();
-        KualiDecimal additionalCharges = null;
-
         for (Iterator iter = detailList.iterator(); iter.hasNext();) {
             PurchaseOrderItem poi = (PurchaseOrderItem) iter.next();
             if ((ObjectUtils.isNotNull(poi.getItemType())) && poi.getItemType().isLineItemIndicator()) {
-                String uom = poi.getItemUnitOfMeasureCode();
-                KualiDecimal quantity = poi.getItemQuantity();
-                if (quantity == null || quantity.isZero()) {
-                    quantity = new KualiDecimal(1);
-                    uom = "LOT";
-                }
-
-                cxml.append("    <POLine linenumber=\"").append(poi.getItemLineNumber()).append("\">" + NEWLINE);
-                cxml.append("      <Item>" + NEWLINE);
+                cxml.append("    <POLine linenumber=\"").append(poi.getItemLineNumber()).append("\">\n");
+                cxml.append("      <Item>\n");
                 // CatalogNumber - This is a string that the supplier uses to identify the item (i.e., SKU). Optional.
-                cxml.append("        <CatalogNumber><![CDATA[").append(poi.getItemCatalogNumber()).append("]]></CatalogNumber>" + NEWLINE);
+                cxml.append("        <CatalogNumber><![CDATA[").append(poi.getItemCatalogNumber()).append("]]></CatalogNumber>\n");
                 if (ObjectUtils.isNotNull(poi.getItemAuxiliaryPartIdentifier())) {
-                    cxml.append("        <AuxiliaryCatalogNumber><![CDATA[").append(poi.getItemAuxiliaryPartIdentifier()).append("]]></AuxiliaryCatalogNumber>" + NEWLINE);
+                    cxml.append("        <AuxiliaryCatalogNumber><![CDATA[").append(poi.getItemAuxiliaryPartIdentifier()).append("]]></AuxiliaryCatalogNumber>\n");
                 }
-                cxml.append("        <Description><![CDATA[").append(StringUtils.substring(poi.getItemDescription(), 0, 254)).append("]]></Description>" + NEWLINE); // Required.
-                cxml.append("        <ProductUnitOfMeasure type=\"supplier\"><Measurement><MeasurementValue><![CDATA[").append(uom).append("]]></MeasurementValue></Measurement></ProductUnitOfMeasure>" + NEWLINE);
-                cxml.append("        <ProductUnitOfMeasure type=\"system\"><Measurement><MeasurementValue><![CDATA[").append(uom).append("]]></MeasurementValue></Measurement></ProductUnitOfMeasure>" + NEWLINE);
-
-
-                if (PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
-
-                    // ProductReferenceNumber - Unique id for hosted products in SelectSite
-                    if (poi.getExternalOrganizationB2bProductTypeName().equals("Punchout")) {
-                        cxml.append("        <ProductReferenceNumber>null</ProductReferenceNumber>\n");
-                    } else {
-                        cxml.append("        <ProductReferenceNumber>").append(poi.getExternalOrganizationB2bProductReferenceNumber()).append("</ProductReferenceNumber>\n");
-                    }
-                    // ProductType - Describes the type of the product or service. Valid values: Catalog, Form, Punchout. Mandatory.
-                    cxml.append("        <ProductType>").append(poi.getExternalOrganizationB2bProductTypeName()).append("</ProductType>\n");
-
-                } else {
-
-
-                    cxml.append("        <ProductReferenceNumber>null</ProductReferenceNumber>" + NEWLINE);
-                    // non-catalog POs don't have product type so we send 'Form'
-                    cxml.append("        <ProductType>Form</ProductType>" + NEWLINE);
-
+                cxml.append("        <Description><![CDATA[").append(poi.getItemDescription()).append("]]></Description>\n"); // Required.
+                cxml.append("        <ProductUnitOfMeasure type=\"supplier\"><Measurement><MeasurementValue><![CDATA[").append(poi.getItemUnitOfMeasureCode()).append("]]></MeasurementValue></Measurement></ProductUnitOfMeasure>\n");
+                cxml.append("        <ProductUnitOfMeasure type=\"system\"><Measurement><MeasurementValue><![CDATA[").append(poi.getItemUnitOfMeasureCode()).append("]]></MeasurementValue></Measurement></ProductUnitOfMeasure>\n");
+                // ProductReferenceNumber - Unique id for hosted products in SelectSite
+                if (poi.getExternalOrganizationB2bProductTypeName().equals("Punchout")) {
+                    cxml.append("        <ProductReferenceNumber>null</ProductReferenceNumber>\n");
                 }
-
-
-
-
-
-                cxml.append("      </Item>" + NEWLINE);
-                cxml.append("      <Quantity>").append(quantity).append("</Quantity>" + NEWLINE);
+                else {
+                    cxml.append("        <ProductReferenceNumber>").append(poi.getExternalOrganizationB2bProductReferenceNumber()).append("</ProductReferenceNumber>\n");
+                }
+                // ProductType - Describes the type of the product or service. Valid values: Catalog, Form, Punchout. Mandatory.
+                cxml.append("        <ProductType>").append(poi.getExternalOrganizationB2bProductTypeName()).append("</ProductType>\n");
+                cxml.append("      </Item>\n");
+                cxml.append("      <Quantity>").append(poi.getItemQuantity()).append("</Quantity>\n");
                 // LineCharges - All the monetary charges for this line, including the price, tax, shipping, and handling.
                 // Required.
-                cxml.append("      <LineCharges>" + NEWLINE);
-                cxml.append("        <UnitPrice>" + NEWLINE);
-                cxml.append("          <Money currency=\"USD\">").append(poi.getItemUnitPrice()).append("</Money>" + NEWLINE);
-                cxml.append("        </UnitPrice>" + NEWLINE);
-                cxml.append("      </LineCharges>" + NEWLINE);
-                cxml.append("    </POLine>" + NEWLINE);
+                cxml.append("      <LineCharges>\n");
+                cxml.append("        <UnitPrice>\n");
+                cxml.append("          <Money currency=\"USD\">").append(poi.getItemUnitPrice()).append("</Money>\n");
+                cxml.append("        </UnitPrice>\n");
+                cxml.append("      </LineCharges>\n");
+                cxml.append("    </POLine>\n");
             }
-            /*else if (ObjectUtils.isNotNull(poi.getItemType()) && poi.getItemType().isAdditionalChargeIndicator()) {
-            	if (additionalCharges == null) additionalCharges = new KualiDecimal(0);
-            	additionalCharges.add(new KualiDecimal(poi.getItemUnitPrice()));
-            }*/
-        }
-        /*if (additionalCharges != null) {
-        	cxml.append("    <POLine linenumber=\"999\">"+NEWLINE);
-            cxml.append("      <Item>"+NEWLINE);
-            // CatalogNumber - This is a string that the supplier uses to identify the item (i.e., SKU). Optional.
-            cxml.append("        <CatalogNumber><![CDATA[").append(poi.getItemCatalogNumber()).append("]]></CatalogNumber>"+NEWLINE);
-            if (ObjectUtils.isNotNull(poi.getItemAuxiliaryPartIdentifier())) {
-                cxml.append("        <AuxiliaryCatalogNumber><![CDATA[").append(poi.getItemAuxiliaryPartIdentifier()).append("]]></AuxiliaryCatalogNumber>"+NEWLINE);
-            }
-            cxml.append("        <Description><![CDATA[").append(StringUtils.substring(poi.getItemDescription(), 0, 254)).append("]]></Description>"+NEWLINE); // Required.
-            cxml.append("        <ProductUnitOfMeasure type=\"supplier\"><Measurement><MeasurementValue><![CDATA[").append(uom).append("]]></MeasurementValue></Measurement></ProductUnitOfMeasure>"+NEWLINE);
-            cxml.append("        <ProductUnitOfMeasure type=\"system\"><Measurement><MeasurementValue><![CDATA[").append(uom).append("]]></MeasurementValue></Measurement></ProductUnitOfMeasure>"+NEWLINE);
-            cxml.append("        <ProductReferenceNumber>null</ProductReferenceNumber>"+NEWLINE);
-
-            // non-catalog POs don't have product type so we send 'Form'
-            cxml.append("        <ProductType>Form</ProductType>"+NEWLINE);
-            cxml.append("      </Item>"+NEWLINE);
-            cxml.append("      <Quantity>").append(quantity).append("</Quantity>"+NEWLINE);
-            // LineCharges - All the monetary charges for this line, including the price, tax, shipping, and handling.
-            // Required.
-            cxml.append("      <LineCharges>"+NEWLINE);
-            cxml.append("        <UnitPrice>"+NEWLINE);
-            cxml.append("          <Money currency=\"USD\">").append(poi.getItemUnitPrice()).append("</Money>"+NEWLINE);
-            cxml.append("        </UnitPrice>"+NEWLINE);
-            cxml.append("      </LineCharges>"+NEWLINE);
-            cxml.append("    </POLine>"+NEWLINE);
-        }*/
-        cxml.append("  </PurchaseOrder>" + NEWLINE);
-        cxml.append("</PurchaseOrderMessage>" + NEWLINE);
-
-        LOG.info("getCxml(): cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + ":" + NEWLINE + cxml.toString());
-
-        // mjmc *****************************************************************************************************************
-        // mjmc * This is where the attachment gets put into the xml as raw binary data                                         *
-        // mjmc *****************************************************************************************************************
-        if (!notesToSendToVendor.isEmpty()) {
-            for (int i = 0; i < notesToSendToVendor.size(); i++) {
-                Note note = notesToSendToVendor.get(i);
-                //Attachment poAttachment = note.getAttachment(); // mjmc - doesn't work! check in 3.0 and file Jira!
-                try {
-                    Attachment poAttachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
-                    if (ObjectUtils.isNotNull(poAttachment)) {
-                        cxml.append( PREFIX + MIME_BOUNDARY_FOR_ATTACHMENTS + NEWLINE);
-                        cxml.append("Content-Type: application/octet-stream" + NEWLINE);
-//    cxml.append("Content-Type: application/pdf"+NEWLINE);
-//    cxml.append("Content-Type: text"+NEWLINE);
-//    cxml.append("Content-Type: application"+NEWLINE);
-//    cxml.append("Content-Transfer-Encoding: text"+NEWLINE);  //mjmc - trying to fix binary corruption
-//    cxml.append("Content-Transfer-Encoding: base64"+NEWLINE);
-                        cxml.append("Content-Transfer-Encoding: binary" + NEWLINE);
-                        cxml.append("Content-ID: <" + poAttachment.getAttachmentIdentifier() + "@sciquest.com>" + NEWLINE);
-                        cxml.append("Content-Disposition: attachment; filename=\"" + poAttachment.getAttachmentFileName() + "\"" + NEWLINE + NEWLINE);
-
-
-                        InputStream attInputStream = poAttachment.getAttachmentContents();
-                        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                        int c;
-                        while ((c = attInputStream.read()) != -1) buffer.write(c);
-                        String binaryStream = new String(buffer.toByteArray());
-//                    LOG.info("\n\nbinaryStream = " + binaryStream);
-
-//                    InputStream attInputStream64 = poAttachment.getAttachmentContents();
-//                    ByteArrayOutputStream buffer64 = new ByteArrayOutputStream();
-//                    int c64;
-//                    while ((c64 = attInputStream64.read()) != -1) buffer64.write(c64);
-//                    String binaryStream64 = new String(Base64.encodeBase64(buffer64.toByteArray()));
-//                    LOG.info("\n\nbinaryStream64 = " + binaryStream64);
-//                    LOG.info("\n\n\n" + NEWLINE);
-//            cxml.append(binaryStream64);
-
-                        cxml.append(binaryStream+NEWLINE);
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-            }
-            cxml.append(PREFIX + MIME_BOUNDARY_FOR_ATTACHMENTS + PREFIX + NEWLINE);  // signals this is the last MIME boundary
-        } else {
-            cxml.append(NEWLINE + NEWLINE + PREFIX + MIME_BOUNDARY_FOR_ATTACHMENTS + PREFIX + NEWLINE);
         }
 
+        cxml.append("  </PurchaseOrder>\n");
+        cxml.append("</PurchaseOrderMessage>");
 
-
-
-// mjmc - for testing :
-//        FileOutputStream out;
-//        try {
-//            LOG.info("storing copy of po xml before sending it to sciquest: /tmp/po-" + purchaseOrder.getPurapDocumentIdentifier() + ".xml");
-//            out = new FileOutputStream("/tmp/po-" + purchaseOrder.getPurapDocumentIdentifier() + ".xml");
-//            out.write(cxml.toString().getBytes());           // used for testing with cURL
-//        } catch (IOException e) {
-//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//        }
-        
+        LOG.debug("getCxml(): cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + ":\n" + cxml.toString());
 
         return cxml.toString();
     }
@@ -765,53 +470,6 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
     } 
 
     /**
-     * Returns list of Note(s) that should be sent to the vendor
-     */
-    private List<Note> getNotesToSendToVendor(PurchaseOrderDocument purchaseOrder)  {
-        List notesToSend = new ArrayList();
-        for (int i = 0; i < purchaseOrder.getBoNotes().size(); i++) {
-            Note note = (Note) purchaseOrder.getBoNotes().get(i);
-            if (StringUtils.equalsIgnoreCase(note.getNoteTopicText(), "sendToVendor")) {
-               notesToSend.add(note);
-            }
-        }
-        return notesToSend;
-    }
-
-
-
-
-
-
-    /**
-     * Sets fields on the purchase order document that the are expected for the xml but might not be populated
-     * on non B2B documents (to prevent NPEs)
-     * 
-     * @param purchaseOrder document instance to prepare
-     */
-    protected void prepareNonB2BPurchaseOrderForTransmission(PurchaseOrderDocument purchaseOrder) {
-        List detailList = purchaseOrder.getItems();
-        for (Iterator iter = detailList.iterator(); iter.hasNext();) {
-            PurchaseOrderItem poi = (PurchaseOrderItem) iter.next();
-            
-            if (poi.getItemCatalogNumber() == null) {
-            	poi.setItemCatalogNumber("");
-            }
-            if (poi.getExternalOrganizationB2bProductTypeName() == null) {
-            	poi.setExternalOrganizationB2bProductTypeName("");
-            }
-            if (poi.getExternalOrganizationB2bProductReferenceNumber() == null) {
-            	poi.setExternalOrganizationB2bProductReferenceNumber("");
-            }
-            if (poi.getExternalOrganizationB2bProductTypeName() == null) {
-            	poi.setExternalOrganizationB2bProductTypeName("");
-            }
-        }    
-    }
-    
-    
-    
-    /**
      * Retrieve the Contract Manager's email
      */
     protected String getContractManagerEmail(ContractManager cm) {
@@ -870,14 +528,6 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         if(personService==null)
             personService = SpringContext.getBean(PersonService.class);
         return personService;
-    }
-    
-    public void setVendorService(VendorService vendorService) {
-        this.vendorService = vendorService;
-    }
-
-    public void setDefaultDistributionFaxNumber(String defaultDistributionFaxNumber) {
-        this.defaultDistributionFaxNumber = defaultDistributionFaxNumber;
     }
 
 }
