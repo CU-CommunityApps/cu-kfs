@@ -30,7 +30,7 @@
 	<bean id="cu-purapModuleService" parent="purapModuleService-parentBean">
 	 	<property name="moduleConfiguration" ref="cu-purap"/>
 	</bean>
-
+<!-- 
 <bean id="b2bPurchaseOrderService" class="org.kuali.kfs.module.purap.document.service.impl.B2BPurchaseOrderSciquestServiceImpl">
         <property name="b2bDao" ref="b2bDao"/>
         <property name="requisitionService" ref="requisitionService"/>
@@ -59,7 +59,7 @@
             <value>${b2b.purchase.order.password}</value>
         </property>
     </bean>
-
+ -->
   <bean id="sciQuestDataAccess" parent="platformAwareDao"  
           class="org.kuali.kfs.module.purap.dataaccess.impl.SciQuestDataAccessImpl" />
     
