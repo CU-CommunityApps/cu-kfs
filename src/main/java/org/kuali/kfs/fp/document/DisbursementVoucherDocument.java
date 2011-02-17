@@ -1919,26 +1919,21 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 		
 		String awardThreshold = parameterService.getParameterValue("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW);
 		KualiDecimal dollarThresholdDecimal = new KualiDecimal(awardThreshold);
-
 		if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
 			return true;
 		}
-
 		
-		List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;
-		
+		List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;		
 		for (AccountingLine alb : theList )
 		{
 			ParameterEvaluator objectCodes = parameterService.getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_AWARD_REVIEW, alb.getObjectCode().getFinancialObjectCode());
-			if (objectCodes.evaluationSucceeds())
-			{
+			if (objectCodes.evaluationSucceeds()) {
 				LOG.info("Object Code " + alb.getObjectCode().getFinancialObjectCode() + " requires this document to undergo Award review.");
 				return true;
 			}
 		}
 		
-
-		return true;
+		return false;
 	}
 	
 	protected boolean isCampusReviewRequired() {
