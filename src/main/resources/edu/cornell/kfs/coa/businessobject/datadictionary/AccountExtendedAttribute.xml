@@ -16,27 +16,9 @@
             <ref bean="AccountExtendedAttribute-invoiceFrequencyCode"/> 
             <ref bean="AccountExtendedAttribute-invoiceTypeCode"/>
             <ref bean="AccountExtendedAttribute-everify"/>
+            <ref bean="AccountExtendedAttribute-laborBenefitRateCategoryCode"/>
       </list> 
     </property> 
-    <property name="relationships">
-      <list> <!-- 
-      	<dd:relationship objectAttribute="subFundProgram" targetClass="edu.cornell.kfs.coa.businessobject.SubFundProgram">
-            <dd:primitiveAttribute source="programCode" target="programCode"/>
-        	<dd:primitiveAttribute source="subFundGroupCode" target="subFundGroupCode"/> 
-        </dd:relationship>
-        <dd:relationship objectAttribute="appropriationAccount" targetClass="edu.cornell.kfs.coa.businessobject.AppropriationAccount">
-            <dd:primitiveAttribute source="appropriationAccountNumber" target="appropriationAccountNumber"/>
-            <dd:primitiveAttribute source="subFundGroupCode" target="subFundGroupCode"/> 
-        </dd:relationship>
-        <dd:relationship objectAttribute="invoiceFrequency" targetClass="edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency">
-            <dd:primitiveAttribute source="invoiceFrequencyCode" target="invoiceFrequencyCode"/>
-        </dd:relationship>
-        <dd:relationship objectAttribute="invoiceType" targetClass="edu.cornell.kfs.module.cg.businessobject.InvoiceType">
-            <dd:primitiveAttribute source="invoiceTypeCode" target="invoiceTypeCode"/>
-        </dd:relationship>
-        -->
-       </list>  
-      </property>        
     </bean> 
   
     <dd:boAttributeRef id="AccountExtendedAttribute-chartOfAccountsCode" parent="Chart-chartOfAccountsCode"/> 
@@ -62,5 +44,7 @@
     	<property name="control" ref="CheckboxControl" />
     	<property name="formatterClass" value="org.kuali.rice.kns.web.format.BooleanFormatter"/>
   	</bean>
+    
+    <dd:boAttributeRef id="AccountExtendedAttribute-laborBenefitRateCategoryCode" parent="LaborBenefitRateCategory-code"/>
     
 </beans> 

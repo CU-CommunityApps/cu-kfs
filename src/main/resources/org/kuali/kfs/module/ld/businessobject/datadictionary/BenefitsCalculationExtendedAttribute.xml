@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd"> 
+ 
+  <bean id="BenefitsCalculationExtendedAttribute" parent="BenefitsCalculationExtendedAttribute-parentBean"/> 
+  <bean id="BenefitsCalculationExtendedAttribute-parentBean" abstract="true" parent="BusinessObjectEntry"> 
+    <property name="businessObjectClass" value="org.kuali.kfs.module.ld.businessobject.BenefitsCalculationExtendedAttribute"/> 
+    <property name="objectLabel" value="BenefitsCalculationExtendedAttribute"/> 
+ 
+ 	<property name="attributes"> 
+      <list> 
+      	    <ref bean="BenefitsCalculationExtendedAttribute-universityFiscalYear"/> 
+            <ref bean="BenefitsCalculationExtendedAttribute-chartOfAccountsCode"/> 
+            <ref bean="BenefitsCalculationExtendedAttribute-positionBenefitTypeCode"/>  
+            <ref bean="BenefitsCalculationExtendedAttribute-laborBenefitRateCategoryCode"/>
+      </list> 
+    </property> 
+    </bean> 
+  
+    <dd:boAttributeRef id="BenefitsCalculationExtendedAttribute-universityFiscalYear" parent="BenefitsCalculation-universityFiscalYear"/> 
+     
+    <dd:boAttributeRef id="BenefitsCalculationExtendedAttribute-chartOfAccountsCode" parent="BenefitsCalculation-chartOfAccountsCode"/>
+      
+    <dd:boAttributeRef id="BenefitsCalculationExtendedAttribute-positionBenefitTypeCode" parent="BenefitsCalculation-positionBenefitTypeCode"/>
+     
+    <dd:boAttributeRef id="BenefitsCalculationExtendedAttribute-laborBenefitRateCategoryCode" parent="LaborBenefitRateCategory-code"/>
+    
+</beans> 

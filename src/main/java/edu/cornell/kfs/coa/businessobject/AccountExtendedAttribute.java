@@ -15,6 +15,7 @@
  */
 package edu.cornell.kfs.coa.businessobject;
 
+import org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory;
 import org.kuali.rice.kns.bo.PersistableBusinessObjectExtensionBase;
 
 import edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency;
@@ -35,12 +36,15 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
     private String invoiceFrequencyCode;
     private String invoiceTypeCode;
     private boolean everify;
+    private String laborBenefitRateCategoryCode;
+
     
 	private SubFundProgram subFundProgram;
     private AppropriationAccount appropriationAccount;
     private InvoiceFrequency invoiceFrequency;
     private InvoiceType invoiceType;
-    
+    private LaborBenefitRateCategory laborBenefitRateCategory;
+
     
     public AccountExtendedAttribute() {
         
@@ -225,5 +229,37 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
 	public void setEverify(boolean everify) {
 		this.everify = everify;
 	}
+	
+	 /**
+     * Gets the laborBenefitRateCategoryCode attribute. 
+     * @return Returns the laborBenefitRateCategoryCode.
+     */
+    public String getLaborBenefitRateCategoryCode() {
+        return laborBenefitRateCategoryCode;
+    }
+
+    /**
+     * Sets the laborBenefitRateCategoryCode attribute value.
+     * @param laborBenefitRateCategoryCode The laborBenefitRateCategoryCode to set.
+     */
+    public void setLaborBenefitRateCategoryCode(String laborBenefitRateCategoryCode) {
+        this.laborBenefitRateCategoryCode = laborBenefitRateCategoryCode;
+    }
+
+    /**
+     * Gets the laborBenefitRateCategory attribute. 
+     * @return Returns the laborBenefitRateCategory.
+     */
+    public LaborBenefitRateCategory getLaborBenefitRateCategory() {
+        return laborBenefitRateCategory;
+    }
+
+    /**
+     * Sets the laborBenefitRateCategory attribute value.
+     * @param laborBenefitRateCategory The laborBenefitRateCategory to set.
+     */
+    public void setLaborBenefitRateCategory(LaborBenefitRateCategory laborBenefitRateCategory) {
+        this.laborBenefitRateCategory = laborBenefitRateCategory;
+    }
 
 }

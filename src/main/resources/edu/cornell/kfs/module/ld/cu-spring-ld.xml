@@ -1,0 +1,68 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+	<bean id="cu-ld" parent="ldModuleConfiguration-parentBean">
+		
+		<property name="databaseRepositoryFilePaths">
+			<list merge="true">
+				<value>org/kuali/kfs/module/ld/cu-ojb-ld.xml</value>
+			</list>
+		</property>
+		<property name="jobNames">
+			<list>
+                <value>laborEnterpriseFeedJob</value>
+				<value>laborNightlyOutJob</value>
+				<value>laborScrubberJob</value>
+				<value>laborPosterJob</value>
+				<value>laborBalancingJob</value>
+				<value>laborBalancingHistorySyncJob</value>
+				<value>laborFeedJob</value>
+				<value>clearLaborPendingEntriesJob</value>
+				<value>laborBalanceForwardJob</value>
+				<value>laborPurgeJob</value>
+			</list>
+		</property>
+		
+	</bean>
+
+	<bean id="ldModuleService" parent="coaModuleService-parentBean">
+	 	<property name="moduleConfiguration" ref="cu-ld"/>
+	</bean>
+
+
+	<bean id="laborScrubberJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="createLaborBackupGroupStep"/>
+				<ref bean="laborPreScrubberStep"/>
+				<ref bean="laborScrubberSortStep"/>
+				<ref bean="laborScrubberStep"/>
+				<ref bean="laborDemergerSortStep" />
+				<ref bean="laborDemergerStep" />
+				<ref bean="aggregateLaborScrubberReportsStep"/>
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+                <entry key="laborEnterpriseFeedJob" value="hardDependency" />
+				<entry key="laborNightlyOutJob" value="hardDependency"/>
+			</map>
+		</property>
+	</bean>	
+    
+    <bean id="laborEnterpriseFeedJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="laborEnterpriseFeedStep" />
+            </list>
+        </property>
+    </bean>
+
+</beans>

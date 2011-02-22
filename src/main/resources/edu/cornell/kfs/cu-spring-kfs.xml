@@ -10,6 +10,7 @@
   <import resource="vnd/cu-spring-vnd.xml" />
   <import resource="module/cam/cu-spring-cam.xml" />
   <import resource="module/cg/cu-spring-cg.xml" />
+  <import resource="module/ld/cu-spring-ld.xml" />
   <import resource="module/purap/cu-spring-purap.xml" />
   <!--  <import resource="module/ezra/cu-spring-ezra.xml"/>-->
     

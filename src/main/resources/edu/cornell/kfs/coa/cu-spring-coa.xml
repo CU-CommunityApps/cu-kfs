@@ -55,5 +55,14 @@
             </bean> 
         </property> 
     </bean> 
+	
+	<bean id="accountService" class="org.kuali.kfs.coa.service.impl.AccountServiceImpl">
+		<property name="accountDao">
+			<ref bean="accountDao" />
+		</property>
+		<property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
+	</bean>
 
 </beans>

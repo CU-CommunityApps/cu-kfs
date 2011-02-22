@@ -103,6 +103,7 @@
       	<ref bean="Account-extension-invoiceFrequency-invoiceFrequencyCode"/>
       	<ref bean="Account-extension-invoiceType-invoiceTypeCode"/>
       	<ref bean="Account-extension-everify"/>
+      	<ref bean="Account-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode"/>
 
       	
       </list>
@@ -159,7 +160,6 @@
             <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode"/>
             <dd:supportAttribute source="extension.subFundProgram.programCode" target="subFundProgram.programCode"/>
         </dd:relationship>
-        
         <dd:relationship objectAttribute="extension.appropriationAccount">
             <dd:primitiveAttribute source="extension.appropriationAccount.appropriationAccountNumber" target="appropriationAccountNumber"/>
             <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode" />
@@ -169,7 +169,18 @@
             <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode"/>
             <dd:supportAttribute source="extension.appropriationAccount.appropriationAccountNumber" target="appropriationAccount.appropriationAccountNumber"/>
         </dd:relationship>
-       
+        <!--  
+        <dd:relationship objectAttribute="extension.laborBenefitRateCategory">
+            <dd:primitiveAttribute source="extension.laborBenefitRateCategory.laborBenefitRateCategoryCode" target="laborBenefitRateCategoryCode"/>
+           <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode" /> 
+        </dd:relationship>
+        <dd:relationship objectAttribute="extension">
+            <dd:primitiveAttribute source="extension.laborBenefitRateCategory" target="laborBenefitRateCategoryCode"/>
+           <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode"/> 
+            <dd:supportAttribute source="extension.laborBenefitRateCategory.laborBenefitRateCategoryCode" target="laborBenefitRateCategory.laborBenefitRateCategoryCode"/>
+        </dd:relationship>
+        
+        -->
       </list>
     </property>
     <property name="inactivationBlockingDefinitions">
@@ -818,12 +829,15 @@
     </property>
   </bean>
 
-<bean id="Account-extension-everify" parent="Account-extension-everify-parentBean"/>
+  <bean id="Account-extension-everify" parent="Account-extension-everify-parentBean"/>
   <bean id="Account-extension-everify-parentBean" abstract="true" parent="AccountExtendedAttribute-everify" >
   	<property name="name" value="extension.everify"/>
   </bean>
 
-
+  <bean id="Account-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode" parent="Account-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode-parentBean"/>
+  <bean id="Account-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode-parentBean" abstract="true" parent="AccountExtendedAttribute-laborBenefitRateCategoryCode" >
+  	<property name="name" value="extension.laborBenefitRateCategory.laborBenefitRateCategoryCode"/>
+  </bean>
 
 <!-- Business Object Inquiry Definition -->
 

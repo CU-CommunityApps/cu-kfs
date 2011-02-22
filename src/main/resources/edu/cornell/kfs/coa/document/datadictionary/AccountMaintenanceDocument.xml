@@ -48,6 +48,7 @@
 	      	<bean parent="ReferenceDefinition" p:attributeName="subFundGroup" p:attributeToHighlightOnFail="subFundGroupCode" /> 
 	      	<bean parent="ReferenceDefinition" p:attributeName="budgetRecordingLevel" p:attributeToHighlightOnFail="budgetRecordingLevelCode" /> 
 	      	<bean parent="ReferenceDefinition" p:attributeName="acctIndirectCostRcvyType" p:attributeToHighlightOnFail="acctIndirectCostRcvyTypeCd" /> 
+		<!--  <bean parent="ReferenceDefinition" p:attributeName="extension.laborBenefitRateCategory" p:attributeToHighlightOnFail="laborBenefitRateCategoryCode" />  	    -->	
   	    </list>   
     </property>
     <property name="lockingKeys">
@@ -61,9 +62,11 @@
     <property name="businessRulesClass" value="edu.cornell.kfs.coa.document.validation.impl.AccountExtensionRule"/>
     <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
     <property name="promptBeforeValidationClass" value="org.kuali.kfs.coa.document.validation.impl.AccountPreRules"/>
+    <property name="documentPresentationControllerClass" value="org.kuali.kfs.coa.document.authorization.AccountDocumentPresentationController"/>
     <property name="webScriptFiles">
       <list>
         <value>../dwr/interface/SubFundGroupService.js</value>
+        <value>../dwr/interface/AccountService.js</value>
         <value>../scripts/coa/accountDocument.js</value>
       </list>
     </property>
@@ -94,13 +97,14 @@
         <dd:maintField attributeName="accountStreetAddress" required="true"/>
         <dd:maintField attributeName="accountOffCampusIndicator"/>
         <dd:maintField attributeName="closed"/>
-        <dd:maintField attributeName="accountTypeCode" required="true"/>
+        <dd:maintField attributeName="accountTypeCode" required="true" javascriptLeaveFieldFunction="update_laborBenefitRateCategoryCode"/>
         <dd:maintField attributeName="subFundGroupCode" required="true" javascriptLeaveFieldFunction="onblur_subFundGroup" javascriptLeaveFieldCallbackFunction="checkRestrictedStatusCode_Callback"/>
        	<dd:maintField attributeName="extension.subFundProgram.programCode" />
       	<dd:maintField attributeName="extension.appropriationAccount.appropriationAccountNumber" />
         <dd:maintField attributeName="accountsFringesBnftIndicator" defaultValue="true"/>
         <dd:maintField attributeName="reportsToChartOfAccountsCode"/>
         <dd:maintField attributeName="reportsToAccountNumber"/>
+        <dd:maintField attributeName="extension.laborBenefitRateCategoryCode" required="false" />
         <dd:maintField attributeName="financialHigherEdFunctionCd" required="true"/>
         <dd:maintField attributeName="accountRestrictedStatusCode" required="true" javascriptLeaveFieldFunction="onblur_accountRestrictedStatusCode" javascriptLeaveFieldCallbackFunction="checkRestrictedStatusCode_Callback"/>
         <dd:maintField attributeName="accountRestrictedStatusDate"/>
