@@ -103,7 +103,7 @@ public class RequestBenefitsLookupableHelperServiceImpl extends KualiLookupableH
                     Account account = (Account) businessObjectService.findByPrimaryKey(Account.class, accountLookupFields);
 
                     // create string to hold the labor benefit rate category code
-                    laborBenefitRateCategoryCode =  ((AccountExtendedAttribute)account.getExtension()).getLaborBenefitRateCategoryCode();
+                    laborBenefitRateCategoryCode =  ((AccountExtendedAttribute)account.getExtension()).getLaborBenefitRateCategory().getLaborBenefitRateCategoryCode();
 
                 }
                 else {

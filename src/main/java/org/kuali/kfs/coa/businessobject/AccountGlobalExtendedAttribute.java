@@ -16,6 +16,11 @@ public class AccountGlobalExtendedAttribute extends PersistableBusinessObjectExt
 
     private String laborBenefitRateCategoryCode;
     private LaborBenefitRateCategory laborBenefitRateCategory;
+    
+    public AccountGlobalExtendedAttribute() {
+    
+    }
+    
 	/**
 	 * @return the documentNumber
 	 */

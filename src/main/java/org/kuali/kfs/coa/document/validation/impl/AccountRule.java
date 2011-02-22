@@ -384,8 +384,8 @@ public class AccountRule extends KfsMaintenanceDocumentRuleBase {
             //if sysParam == Y then Labor Benefit Rate Category Code must be filled in
             if (sysParam.equalsIgnoreCase("Y")) {
                 //check to see if the labor benefit category code is empty
-                if (ObjectUtils.isNull(((AccountExtendedAttribute)newAccount.getExtension()).getLaborBenefitRateCategoryCode())) {
-                    putFieldError("laborBenefitRateCategoryCode", LaborKeyConstants.ERROR_EMPTY_LABOR_BENEFIT_CATEGORY_CODE);
+                if (ObjectUtils.isNull(((AccountExtendedAttribute)newAccount.getExtension()).getLaborBenefitRateCategory().getLaborBenefitRateCategoryCode())) {
+                    putFieldError("extension.laborBenefitRateCategory.laborBenefitRateCategoryCode", LaborKeyConstants.ERROR_EMPTY_LABOR_BENEFIT_CATEGORY_CODE);
                     success &= false;
                 }
             }

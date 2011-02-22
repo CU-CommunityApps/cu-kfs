@@ -212,7 +212,7 @@ public class AccountGlobal extends PersistableBusinessObjectBase implements Glob
                 }
                 
                 // LABOR BENEFIT RATE CATEGORY CODE 
-                String laborBenefitRateCategoryCode = ((AccountGlobalExtendedAttribute)extension).getLaborBenefitRateCategoryCode();
+                String laborBenefitRateCategoryCode = ((AccountGlobalExtendedAttribute)extension).getLaborBenefitRateCategory().getLaborBenefitRateCategoryCode();
                 if (StringUtils.isNotBlank(laborBenefitRateCategoryCode)){
                     ((AccountExtendedAttribute)account.getExtension()).setLaborBenefitRateCategoryCode(laborBenefitRateCategoryCode);
                 }

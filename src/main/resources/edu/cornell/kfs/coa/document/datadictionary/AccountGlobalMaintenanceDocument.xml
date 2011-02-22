@@ -89,7 +89,7 @@
         <bean parent="MaintainableFieldDefinition" p:name="financialHigherEdFunctionCd"/>
         <bean parent="MaintainableFieldDefinition" p:name="accountSufficientFundsCode"/>
         <bean parent="MaintainableFieldDefinition" p:name="pendingAcctSufficientFundsIndicator"/>
-        <bean parent="MaintainableFieldDefinition" p:name="extension.laborBenefitRateCategoryCode"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.laborBenefitRateCategory.laborBenefitRateCategoryCode"/>
       </list>
     </property>
   </bean>

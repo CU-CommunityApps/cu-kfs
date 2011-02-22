@@ -2,7 +2,7 @@ package org.kuali.kfs.module.ld.businessobject;
 
 import org.kuali.rice.kns.bo.PersistableBusinessObjectExtensionBase;
 
-public class BenefitsCalculationExtendedAttribute extends PersistableBusinessObjectExtensionBase{
+public class BenefitsCalculationExtendedAttribute extends PersistableBusinessObjectExtensionBase {
 
 	private Integer universityFiscalYear;
 	private String chartOfAccountsCode;
@@ -11,7 +11,9 @@ public class BenefitsCalculationExtendedAttribute extends PersistableBusinessObj
 
 	private LaborBenefitRateCategory laborBenefitRateCategory;
 
-
+	public BenefitsCalculationExtendedAttribute() {
+		
+	}
 
 	/**
 	 * @return the universityFiscalYear
