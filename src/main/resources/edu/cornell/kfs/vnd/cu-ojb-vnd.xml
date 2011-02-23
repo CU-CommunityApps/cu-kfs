@@ -21,7 +21,7 @@
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
 
-	<field-descriptor name="creditMerchantName" column="CREDIT_MERCHANT_NAME" jdbc-type="VARCHAR" />
+	<field-descriptor name="creditMerchantName" column="CREDIT_MERCHANT_NAME" jdbc-type="VARCHAR" primarykey="true" />
 	<field-descriptor name="merchantCategoryCodeOne" column="MRCHNT_CAT_CODE_ONE" jdbc-type="VARCHAR" />
 	<field-descriptor name="merchantCategoryCodeTwo" column="MRCHNT_CAT_CODE_TWO" jdbc-type="VARCHAR" />
 	<field-descriptor name="merchantCategoryCodeThree" column="MRCHNT_CAT_CODE_THREE" jdbc-type="VARCHAR" />

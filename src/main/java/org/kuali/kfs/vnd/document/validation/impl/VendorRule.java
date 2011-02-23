@@ -1311,7 +1311,11 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
     		{
     			int i = 0;
     			for(VendorSupplierDiversity vendor : vendorSupplierDiversities) {
-    				if (vendor.getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
+    				if (vendor.getVendorSupplierDiversityExpirationDate() == null ) {
+    					success = false;
+    					putFieldError("vendorHeader.vendorSupplierDiversities[" + i + "].vendorSupplierDiversityExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);
+    				}
+    				else if (vendor.getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
     					success = false;
     					putFieldError("vendorHeader.vendorSupplierDiversities[" + i + "].vendorSupplierDiversityExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
     				}
@@ -1321,9 +1325,6 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
     		if (!success) {
     			return success;
     		}
-        }
-        if (collectionName.equals("vendorCreditCardMerchants")) {
-            System.out.println("trying to add a credit card merchant");
         }
         
         return super.processAddCollectionLineBusinessRules(document, collectionName, bo);
@@ -1482,7 +1483,11 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 		{
 			int i = 0;
 			for(VendorSupplierDiversity vendor : vendorSupplierDiversities) {
-				if (vendor.getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
+				if (vendor.getVendorSupplierDiversityExpirationDate() == null ) {
+					success = false;
+					putFieldError("vendorHeader.vendorSupplierDiversities[" + i + "].vendorSupplierDiversityExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);				
+				}
+				else if (vendor.getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
 					success = false;
 					putFieldError("vendorHeader.vendorSupplierDiversities[" + i + "].vendorSupplierDiversityExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
 				}
@@ -1562,9 +1567,15 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 	
 	protected boolean validateSupplierDiversityAddition(VendorSupplierDiversity vendorSupplierDiversity) {
 	    boolean success = true;
+	    if (vendorSupplierDiversity.getVendorSupplierDiversityExpirationDate() == null) {
+	    	success = false;
+            putFieldError("add.vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);
+            return success;
+	    }
         if (vendorSupplierDiversity.getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
             success = false;
             putFieldError("add.vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
+            return success;
         }
 
 	    return success;
