@@ -3,12 +3,12 @@
 	<field-descriptor name="universityFiscalYear" column="UNIV_FISCAL_YR" jdbc-type="INTEGER" primarykey="true" index="true"/>
 	<field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true"/>
 	<field-descriptor name="positionBenefitTypeCode" column="POS_BENEFIT_TYP_CD" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+	<field-descriptor name="laborBenefitRateCategoryCode" column="LBR_BEN_RT_CAT_CD" primarykey="true" jdbc-type="VARCHAR" index="true"/>
 	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
 	<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
 	<field-descriptor name="positionFringeBenefitPercent" column="POS_FRNG_BENE_PCT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiPercentFieldConversion"/>
 	<field-descriptor name="positionFringeBenefitObjectCode" column="POS_FRNGBEN_OBJ_CD" jdbc-type="VARCHAR" index="true"/>
    	<field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>
-   	<field-descriptor name="laborBenefitRateCategoryCode" column="LBR_BEN_RT_CAT_CD" primarykey="true" jdbc-type="VARCHAR" index="true"/>
    	
 	<reference-descriptor name="positionFringeBenefitObject" class-ref="org.kuali.kfs.coa.businessobject.ObjectCode" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
 		<foreignkey field-ref="universityFiscalYear" />
@@ -36,7 +36,7 @@
 </class-descriptor>
 
 	<class-descriptor class="org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory" table="LD_LBR_BFT_RT_CAT_T">
-		<field-descriptor name="laborBenefitRateCategoryCode" primarykey="true" column="code" jdbc-type="VARCHAR"/>
+		<field-descriptor name="laborBenefitRateCategoryCode" primarykey="true" column="CODE" jdbc-type="VARCHAR"/>
 		<field-descriptor name="activeIndicator" column="ACT_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>
 		<field-descriptor name="codeDesc" column="CODE_DESC" jdbc-type="VARCHAR"/>
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR"/>
