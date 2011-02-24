@@ -18,7 +18,7 @@ package org.kuali.kfs.module.ld.document.validation.impl;
 import org.kuali.kfs.module.ld.LaborConstants;
 import org.kuali.kfs.module.ld.LaborKeyConstants;
 import org.kuali.kfs.module.ld.businessobject.BenefitsCalculation;
-import org.kuali.kfs.module.ld.businessobject.BenefitsCalculationExtendedAttribute;
+import org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.kns.document.MaintenanceDocument;
@@ -127,8 +127,7 @@ public class BenefitsCalculationDocumentRule extends MaintenanceDocumentRuleBase
             //if sysParam == Y then Labor Benefit Rate Category Code must be filled in
             if (sysParam.equalsIgnoreCase("Y")) {
                 //check to see if the labor benefit category code is empty
-            	String laborBenefitRateCategoryCode = ((BenefitsCalculationExtendedAttribute)newBenefitsCalculation.getExtension()).getLaborBenefitRateCategoryCode();
-                if (ObjectUtils.isNull(laborBenefitRateCategoryCode)) {
+                if (ObjectUtils.isNull(newBenefitsCalculation.getLaborBenefitRateCategoryCode())) {
                     putFieldError("laborBenefitRateCategoryCode", LaborKeyConstants.ERROR_EMPTY_LABOR_BENEFIT_CATEGORY_CODE);
                     success = false;
                 }

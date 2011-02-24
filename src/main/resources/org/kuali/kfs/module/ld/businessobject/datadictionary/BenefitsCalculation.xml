@@ -37,14 +37,13 @@
         <ref bean="BenefitsCalculation-positionBenefitTypeCode"/>
         <ref bean="BenefitsCalculation-positionFringeBenefitPercent"/>
         <ref bean="BenefitsCalculation-active"/>
-      	<ref bean="BenefitsCalculation-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode"/>
+        <ref bean="BenefitsCalculation-laborBenefitRateCategoryCode"/>
       </list>
     </property>
     <property name="inactivationBlockingDefinitions">
       <list>
         <bean parent="InactivationBlockingDefinition" p:blockedReferencePropertyName="positionBenefitType"/>
         <bean parent="InactivationBlockingDefinition" p:blockedReferencePropertyName="positionFringeBenefitObject"/>
-        
       </list>      
     </property>    
   </bean>
@@ -80,10 +79,10 @@
     <property name="name" value="positionFringeBenefitObjectCode"/>
   </bean>
   
-  
-  <bean id="BenefitsCalculation-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode" parent="BenefitsCalculation-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode-parentBean"/>
-  <bean id="BenefitsCalculation-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode-parentBean" abstract="true" parent="BenefitsCalculationExtendedAttribute-laborBenefitRateCategoryCode" >
-  	<property name="name" value="extension.laborBenefitRateCategoryCode"/>
+  <bean id="BenefitsCalculation-laborBenefitRateCategoryCode" parent="BenefitsCalculation-laborBenefitRateCategoryCode-parentBean"/>
+
+  <bean id="BenefitsCalculation-laborBenefitRateCategoryCode-parentBean" abstract="true" parent="LaborBenefitRateCategory-code">
+    <property name="name" value="laborBenefitRateCategoryCode"/>
   </bean>
   
   <bean id="BenefitsCalculation-positionBenefitTypeCode" parent="BenefitsCalculation-positionBenefitTypeCode-parentBean"/>
@@ -128,7 +127,7 @@
               <bean parent="FieldDefinition" p:attributeName="universityFiscalYear"/>
               <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
               <bean parent="FieldDefinition" p:attributeName="positionBenefitTypeCode"/>
-              <bean parent="FieldDefinition" p:attributeName="extension.laborBenefitRateCategoryCode"/>
+              <bean parent="FieldDefinition" p:attributeName="laborBenefitRateCategoryCode"/>
               <bean parent="FieldDefinition" p:attributeName="positionFringeBenefitObjectCode"/>
               <bean parent="FieldDefinition" p:attributeName="positionFringeBenefitPercent"/>
               <bean parent="FieldDefinition" p:attributeName="active"/>
@@ -156,7 +155,7 @@
         <bean parent="FieldDefinition" p:attributeName="universityFiscalYear"/>
         <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
         <bean parent="FieldDefinition" p:attributeName="positionBenefitTypeCode"/>
-        <bean parent="FieldDefinition" p:attributeName="extension.laborBenefitRateCategoryCode"/>
+        <bean parent="FieldDefinition" p:attributeName="laborBenefitRateCategoryCode"/>
         <bean parent="FieldDefinition" p:attributeName="positionFringeBenefitObjectCode"/>
         <bean parent="FieldDefinition" p:attributeName="positionFringeBenefitPercent"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
@@ -168,7 +167,7 @@
         <bean parent="FieldDefinition" p:attributeName="universityFiscalYear"/>
         <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
         <bean parent="FieldDefinition" p:attributeName="positionBenefitTypeCode"/>
-        <bean parent="FieldDefinition" p:attributeName="extension.laborBenefitRateCategoryCode"/>
+        <bean parent="FieldDefinition" p:attributeName="laborBenefitRateCategoryCode"/>
         <bean parent="FieldDefinition" p:attributeName="positionFringeBenefitObjectCode"/>
         <bean parent="FieldDefinition" p:attributeName="positionFringeBenefitPercent"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
