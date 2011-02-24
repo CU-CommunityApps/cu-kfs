@@ -52,7 +52,7 @@ public class AccountExtensionRule extends AccountRule {
         boolean success = true;
 
         String subFundGroupCode = newAccount.getSubFundGroupCode();
-        String subFundProgramCode = ((AccountExtendedAttribute)newAccount.getExtension()).getSubFundProgram().getProgramCode();
+        String subFundProgramCode = ((AccountExtendedAttribute)newAccount.getExtension()).getProgramCode();
         BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
 
         if (!StringUtils.isBlank(subFundProgramCode)) {
@@ -91,7 +91,7 @@ public class AccountExtensionRule extends AccountRule {
     	boolean success = true;
 
         String subFundGroupCode = newAccount.getSubFundGroupCode();
-        String appropriationAccountNumber = ((AccountExtendedAttribute)newAccount.getExtension()).getAppropriationAccount().getAppropriationAccountNumber();
+        String appropriationAccountNumber = ((AccountExtendedAttribute)newAccount.getExtension()).getAppropriationAccountNumber();
         BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
 
         if (!StringUtils.isBlank(appropriationAccountNumber)) {

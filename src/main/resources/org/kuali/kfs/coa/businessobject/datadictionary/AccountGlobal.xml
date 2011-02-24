@@ -245,6 +245,6 @@
   <bean id="AccountGlobal-laborBenefitRateCategoryCode" parent="AccountGlobal-laborBenefitRateCategoryCode-parentBean"/>
   <bean id="AccountGlobal-laborBenefitRateCategoryCode-parentBean" abstract="true" parent="AccountExtendedAttribute-laborBenefitRateCategoryCode">
     <property name="required" value="false"/>
-    <property name="name" value="extension.laborBenefitRateCategory.laborBenefitRateCategoryCode"/>
+    <property name="name" value="extension.laborBenefitRateCategoryCode"/>
   </bean>
 </beans>

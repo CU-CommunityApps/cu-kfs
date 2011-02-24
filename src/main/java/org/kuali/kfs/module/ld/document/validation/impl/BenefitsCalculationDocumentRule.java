@@ -127,7 +127,7 @@ public class BenefitsCalculationDocumentRule extends MaintenanceDocumentRuleBase
             //if sysParam == Y then Labor Benefit Rate Category Code must be filled in
             if (sysParam.equalsIgnoreCase("Y")) {
                 //check to see if the labor benefit category code is empty
-            	String laborBenefitRateCategoryCode = ((BenefitsCalculationExtendedAttribute)newBenefitsCalculation.getExtension()).getLaborBenefitRateCategory().getLaborBenefitRateCategoryCode();
+            	String laborBenefitRateCategoryCode = ((BenefitsCalculationExtendedAttribute)newBenefitsCalculation.getExtension()).getLaborBenefitRateCategoryCode();
                 if (ObjectUtils.isNull(laborBenefitRateCategoryCode)) {
                     putFieldError("laborBenefitRateCategoryCode", LaborKeyConstants.ERROR_EMPTY_LABOR_BENEFIT_CATEGORY_CODE);
                     success = false;

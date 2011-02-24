@@ -31,7 +31,7 @@
 		</property>
 	</bean>
 
-	<bean id="coaModuleService" parent="coaModuleService-parentBean">
+	<bean id="cu-coaModuleService" parent="coaModuleService-parentBean">
 	 	<property name="moduleConfiguration" ref="cu-coa"/>
 	</bean>
 

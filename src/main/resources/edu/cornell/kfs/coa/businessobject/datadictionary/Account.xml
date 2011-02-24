@@ -836,7 +836,7 @@
 
   <bean id="Account-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode" parent="Account-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode-parentBean"/>
   <bean id="Account-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode-parentBean" abstract="true" parent="AccountExtendedAttribute-laborBenefitRateCategoryCode" >
-  	<property name="name" value="extension.laborBenefitRateCategory.laborBenefitRateCategoryCode"/>
+  	<property name="name" value="extension.laborBenefitRateCategoryCode"/>
   </bean>
 
 <!-- Business Object Inquiry Definition -->

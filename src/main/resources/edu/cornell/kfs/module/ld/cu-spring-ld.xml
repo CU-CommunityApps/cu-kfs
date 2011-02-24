@@ -32,7 +32,7 @@
 		
 	</bean>
 
-	<bean id="ldModuleService" parent="coaModuleService-parentBean">
+	<bean id="cu-ldModuleService" parent="coaModuleService-parentBean">
 	 	<property name="moduleConfiguration" ref="cu-ld"/>
 	</bean>
 
