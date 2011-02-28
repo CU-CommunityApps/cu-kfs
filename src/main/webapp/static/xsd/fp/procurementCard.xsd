@@ -39,8 +39,8 @@
     <xsd:element name="transactionReferenceNumber" type="xsd:normalizedString"/>
     <xsd:element name="transactionMerchantCategoryCode" type="xsd:normalizedString"/>
     <xsd:element name="transactionPostingDate" type="xsd:date"/>
-    <xsd:element name="transactionOriginalCurrencyCode" type="xsd:date"/>
-    <xsd:element name="transactionBillingCurrencyCode" type="xsd:date"/>
+    <xsd:element name="transactionOriginalCurrencyCode" type="xsd:normalizedString"/>
+    <xsd:element name="transactionBillingCurrencyCode" type="xsd:normalizedString"/>
     <xsd:element name="transactionOriginalCurrencyAmount" type="xsd:decimal"/>
     <xsd:element name="transactionCurrencyExchangeRate" type="xsd:decimal"/>
     <xsd:element name="transactionSettlementAmount" type="xsd:decimal"/>
