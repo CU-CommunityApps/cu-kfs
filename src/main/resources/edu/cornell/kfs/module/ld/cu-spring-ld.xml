@@ -29,6 +29,9 @@
 				<value>laborPurgeJob</value>
 			</list>
 		</property>
+		<property name="fiscalYearMakers">
+			<list/>
+		</property>
 		
 	</bean>
 
