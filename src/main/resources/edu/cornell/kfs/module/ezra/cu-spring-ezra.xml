@@ -89,10 +89,17 @@
 		</property>
 	</bean>
 	
+	<bean id="proposalStep" class="edu.cornell.kfs.module.ezra.batch.ProposalStep" parent="step">
+		<property name="ezraService">
+			<ref bean="ezraService" />
+		</property>
+	</bean>
+	
 	<bean id="ezraUpdateBatchJob" parent="scheduledJobDescriptor">
 		<property name="steps">
 			<list>
 				<ref bean="agencyStep" />
+				<ref bean="proposalStep" />
 			</list>
 		</property>
 	</bean>

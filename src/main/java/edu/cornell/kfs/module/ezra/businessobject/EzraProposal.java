@@ -28,6 +28,7 @@ public class EzraProposal extends PersistableBusinessObjectBase {
 	private KualiDecimal totalAmt; //AWD_PROP_TOTAL
 	private String federalPassThrough; //FED_FLOW_THROUGH
 	private Long federalPassThroughAgencyNumber; //FLOWTHROUGH_SPONSOR_ID
+	private Long departmentId; //DEPT_ID
 	private Date lastUpdated;
 	
 	/**
@@ -246,6 +247,22 @@ public class EzraProposal extends PersistableBusinessObjectBase {
 			Long federalPassThroughAgencyNumber) {
 		this.federalPassThroughAgencyNumber = federalPassThroughAgencyNumber;
 	}
+
+	/**
+	 * @return the departmentId
+	 */
+	public Long getDepartmentId() {
+		return departmentId;
+	}
+
+
+	/**
+	 * @param departmentId the departmentId to set
+	 */
+	public void setDepartmentId(Long departmentId) {
+		this.departmentId = departmentId;
+	}
+
 
 	/**
 	 * @return the lastUpdated

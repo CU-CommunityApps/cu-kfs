@@ -13,6 +13,7 @@ import edu.cornell.kfs.module.ezra.dataaccess.SponsorDao;
 public class SponsorDaoOjb extends PlatformAwareDaoBaseOjb implements SponsorDao {
 
 	public List<Sponsor> getSponsorsUpdatedSince(Date date) {
+		
 		Criteria criteria = new Criteria();
         criteria.addLessThan("lastUpdated", date);
         Criteria criteria2 = new Criteria();
