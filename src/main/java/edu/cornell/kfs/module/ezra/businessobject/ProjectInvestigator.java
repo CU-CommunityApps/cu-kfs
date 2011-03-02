@@ -21,7 +21,7 @@ public class ProjectInvestigator extends PersistableBusinessObjectBase {
 	private String investigatorId;
 	private Date lastUpdated;
 	
-	private EzraProposal proposal;
+	private EzraProposalAward proposal;
 	
 	
 	/**
@@ -85,14 +85,14 @@ public class ProjectInvestigator extends PersistableBusinessObjectBase {
 	/**
 	 * @return the proposal
 	 */
-	public EzraProposal getProposal() {
+	public EzraProposalAward getProposal() {
 		return proposal;
 	}
 
 	/**
 	 * @param proposal the proposal to set
 	 */
-	public void setProposal(EzraProposal proposal) {
+	public void setProposal(EzraProposalAward proposal) {
 		this.proposal = proposal;
 	}
 

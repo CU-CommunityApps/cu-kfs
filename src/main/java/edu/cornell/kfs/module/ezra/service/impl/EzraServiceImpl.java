@@ -28,7 +28,7 @@ import edu.cornell.kfs.module.cg.businessobject.AgencyExtension;
 import edu.cornell.kfs.module.cg.businessobject.ProposalExtension;
 import edu.cornell.kfs.module.ezra.businessobject.Department;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProject;
-import edu.cornell.kfs.module.ezra.businessobject.EzraProposal;
+import edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward;
 import edu.cornell.kfs.module.ezra.businessobject.Investigator;
 import edu.cornell.kfs.module.ezra.businessobject.ProjectInvestigator;
 import edu.cornell.kfs.module.ezra.businessobject.Sponsor;
@@ -49,9 +49,9 @@ public class EzraServiceImpl implements EzraService {
 
 	public boolean updateProposalsSince(Date date) {
 		boolean result = false;
-		List<EzraProposal> proposals = ezraProposalDao.getProposalsUpdatedSince(date);
+		List<EzraProposalAward> proposals = ezraProposalDao.getProposalsUpdatedSince(date);
 		Map fields = new HashMap();
-		for (EzraProposal ezraProposal : proposals) {
+		for (EzraProposalAward ezraProposal : proposals) {
 			String proposalId = ezraProposal.getProjectId();
 			fields.clear();
 			fields.put("proposalNumber", proposalId);

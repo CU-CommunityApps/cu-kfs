@@ -36,7 +36,7 @@
 		<field-descriptor name="lastUpdated" column="UPDATE_DT" jdbc-type="DATE"/>
 	</class-descriptor>
 	
-	<class-descriptor class="edu.cornell.kfs.module.ezra.businessobject.EzraProposal" table="EZRA_PROPOSAL_TC">
+	<class-descriptor class="edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward" table="PROPOSAL">
 		<field-descriptor name="projectId" column="PROJ_ID" jdbc-type="VARCHAR" primarykey="true" index="true" />
 		<field-descriptor name="awardProposalId" column="AWARD_PROP_ID" jdbc-type="VARCHAR" primarykey="true" index="true" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
@@ -47,6 +47,7 @@
 		<field-descriptor name="cfdaNumber" column="CFDA_NMBR" jdbc-type="VARCHAR"/>
 		<field-descriptor name="status" column="STATUS_CD" jdbc-type="VARCHAR"/>
 		<field-descriptor name="purpose" column="PROJ_FUNCTION_CD" jdbc-type="VARCHAR"/>
+		<field-descriptor name="awardDescriptionCode" column="AWARD_DESC_CD" jdbc-type="VARCHAR"/>
 		<field-descriptor name="startDate" column="AWD_PROP_START_DT" jdbc-type="DATE"/>
 		<field-descriptor name="stopDate" column="AWD_PROP_END_DT" jdbc-type="DATE"/>
 		<field-descriptor name="totalAmt" column="AWD_PROP_TOTAL" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>

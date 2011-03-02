@@ -6,7 +6,7 @@ package edu.cornell.kfs.module.ezra.dataaccess;
 import java.sql.Date;
 import java.util.List;
 
-import edu.cornell.kfs.module.ezra.businessobject.EzraProposal;
+import edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward;
 
 /**
  * @author kwk43
@@ -14,6 +14,6 @@ import edu.cornell.kfs.module.ezra.businessobject.EzraProposal;
  */
 public interface EzraProposalDao {
 
-	public List<EzraProposal> getProposalsUpdatedSince(Date date);
+	public List<EzraProposalAward> getProposalsUpdatedSince(Date date);
 	
 }
