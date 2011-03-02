@@ -27,10 +27,8 @@
 		<field-descriptor name="lastUpdated" column="UPDATE_DT" jdbc-type="DATE"/>
 	</class-descriptor>
 
-	<class-descriptor class="edu.cornell.kfs.module.ezra.businessobject.Sponsor" table="EZRA_SPONSOR_TC">
+	<class-descriptor class="edu.cornell.kfs.module.ezra.businessobject.Sponsor" table="SPONSOR">
 		<field-descriptor name="sponsorId" column="SPONSOR_ID" jdbc-type="BIGINT" primarykey="true" index="true" />
-		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
-		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
 		<field-descriptor name="sponsorName" column="SPONSOR_NAME" jdbc-type="VARCHAR"/>
 		<field-descriptor name="sponsorLabel" column="SPONSOR_ABBREV" jdbc-type="VARCHAR"/>
 		<field-descriptor name="parentSponsor" column="PARENT_SPONSOR" jdbc-type="BIGINT"/>
