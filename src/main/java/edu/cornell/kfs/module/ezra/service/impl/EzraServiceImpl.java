@@ -257,7 +257,8 @@ public class EzraServiceImpl implements EzraService {
 		}
 
 		if (sponsor.getParentSponsor() != null && !StringUtils.equals(agency.getReportsToAgencyNumber(), sponsor.getParentSponsor().toString())) {
-			agency.setReportsToAgencyNumber(sponsor.getParentSponsor().toString());
+		//	agency.setReportsToAgencyNumber(sponsor.getParentSponsor().toString());
+			agency.setReportsToAgencyNumber(null);
 		}
 		String sponsorTypeCode = EzraUtils.getAgencyTypeMap().get(sponsor.getSourceCode().toString());
 		if (!StringUtils.equals(agency.getAgencyTypeCode(), sponsorTypeCode)) {
