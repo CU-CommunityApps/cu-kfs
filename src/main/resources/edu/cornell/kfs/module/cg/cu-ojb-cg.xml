@@ -1,5 +1,5 @@
 <descriptor-repository version="1.0">
-
+<!-- 
 	<class-descriptor class="edu.cornell.kfs.module.cg.businessobject.AgencyExtension" table="CG_AGENCY_TX">
     	<field-descriptor name="agencyNumber" column="CG_AGENCY_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
     	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
@@ -197,4 +197,6 @@
             <foreignkey field-ref="proposalNumber" />
 	</reference-descriptor>
 	</class-descriptor>
+	
+	 -->
 </descriptor-repository>
