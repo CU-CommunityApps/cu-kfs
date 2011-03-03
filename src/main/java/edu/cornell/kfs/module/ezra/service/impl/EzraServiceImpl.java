@@ -13,6 +13,7 @@ import org.kuali.kfs.module.cg.businessobject.ProposalOrganization;
 import org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
 import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kim.service.PersonService;
@@ -286,9 +287,9 @@ public class EzraServiceImpl implements EzraService {
 		}
 		agencyDoc.getDocumentHeader().setDocumentDescription("Auto creation of new agency");
 		if (ObjectUtils.isNotNull(oldAgency)) {
-			agencyDoc.getOldMaintainableObject().setBusinessObject(oldAgency);
+			agencyDoc.setOldMaintainableObject(new FinancialSystemMaintainable(oldAgency));
 		} 
-		agencyDoc.getNewMaintainableObject().setBusinessObject(agency);
+		agencyDoc.setNewMaintainableObject(new FinancialSystemMaintainable(agency));
 		try {
 			documentService.saveDocument(agencyDoc);
 			agencyDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
