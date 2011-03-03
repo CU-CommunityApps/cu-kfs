@@ -237,7 +237,7 @@ public class EzraServiceImpl implements EzraService {
 			ext = new AgencyExtension();
 		}
 		ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
-		ext.setAgencyNumber(agency.getAgencyNumber());
+		//ext.setAgencyNumber(agency.getAgencyNumber());
 		agency.setExtension(ext);
 		return agency;
 		
@@ -266,7 +266,7 @@ public class EzraServiceImpl implements EzraService {
 		if (ext == null) {
 			ext = new AgencyExtension();
 		}
-		ext.setAgencyNumber(agency.getAgencyNumber());
+		//ext.setAgencyNumber(agency.getAgencyNumber());
 		ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
 		agency.setExtension(ext);
 		agency.setActive(true);
