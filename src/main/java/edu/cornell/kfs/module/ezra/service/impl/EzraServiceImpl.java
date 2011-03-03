@@ -293,7 +293,7 @@ public class EzraServiceImpl implements EzraService {
 		agencyMaintainable.setBusinessObject(agency);
 		agencyDoc.setNewMaintainableObject(agencyMaintainable);
 		try {
-			documentService.saveDocument(agencyDoc);
+		//	documentService.saveDocument(agencyDoc);
 			agencyDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
 		} catch (WorkflowException we) {
 			we.printStackTrace();
