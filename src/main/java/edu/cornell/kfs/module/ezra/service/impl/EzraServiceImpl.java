@@ -203,9 +203,9 @@ public class EzraServiceImpl implements EzraService {
 				updateAgency(agency, sponsor);
 			}
 			routeAgencyDocument(agency, oldAgency);
-			Date lastUpdated = dateTimeService.getCurrentSqlDate();
-			sponsor.setLastUpdated(lastUpdated);
-			businessObjectService.save(sponsor);
+			//Date lastUpdated = dateTimeService.getCurrentSqlDate();
+			//sponsor.setLastUpdated(lastUpdated);
+			//businessObjectService.save(sponsor);
 		}
 		return result;
 
