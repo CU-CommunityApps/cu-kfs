@@ -16,6 +16,7 @@
 package com.rsmart.kuali.kfs.sec.businessobject;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.LinkedHashMap;
 
 import org.apache.commons.lang.StringUtils;
@@ -39,8 +40,8 @@ public class SecurityModelMember extends PersistableBusinessObjectBase {
     private KualiInteger modelId;
     private String memberId;
     private String memberTypeCode;
-    private Date activeFromDate;
-    private Date activeToDate;
+    private Timestamp activeFromDate;
+    private Timestamp activeToDate;
 
     private SecurityModel securityModel;
 
@@ -119,7 +120,7 @@ public class SecurityModelMember extends PersistableBusinessObjectBase {
      * 
      * @return Returns the activeFromDate.
      */
-    public Date getActiveFromDate() {
+    public Timestamp getActiveFromDate() {
         return activeFromDate;
     }
 
@@ -129,7 +130,7 @@ public class SecurityModelMember extends PersistableBusinessObjectBase {
      * 
      * @param activeFromDate The activeFromDate to set.
      */
-    public void setActiveFromDate(Date activeFromDate) {
+    public void setActiveFromDate(Timestamp activeFromDate) {
         this.activeFromDate = activeFromDate;
     }
 
@@ -139,7 +140,7 @@ public class SecurityModelMember extends PersistableBusinessObjectBase {
      * 
      * @return Returns the activeToDate.
      */
-    public Date getActiveToDate() {
+    public Timestamp getActiveToDate() {
         return activeToDate;
     }
 
@@ -149,7 +150,7 @@ public class SecurityModelMember extends PersistableBusinessObjectBase {
      * 
      * @param activeToDate The activeToDate to set.
      */
-    public void setActiveToDate(Date activeToDate) {
+    public void setActiveToDate(Timestamp activeToDate) {
         this.activeToDate = activeToDate;
     }
 

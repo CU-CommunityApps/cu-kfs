@@ -15,17 +15,11 @@
  */
 package com.rsmart.kuali.kfs.sec.businessobject;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 
-import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.kns.bo.TransientBusinessObjectBase;
 
 import com.rsmart.kuali.kfs.sec.SecPropertyConstants;
-import com.rsmart.kuali.kfs.sec.service.AccessPermissionEvaluator;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * Holds fields that provide metadata information for a security attribute

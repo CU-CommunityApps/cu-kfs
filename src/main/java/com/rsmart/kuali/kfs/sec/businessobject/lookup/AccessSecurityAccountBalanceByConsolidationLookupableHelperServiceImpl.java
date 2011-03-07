@@ -26,9 +26,11 @@ import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.gl.businessobject.AccountBalance;
 import org.kuali.kfs.gl.businessobject.TransientBalanceInquiryAttributes;
 import org.kuali.kfs.gl.businessobject.lookup.AccountBalanceByConsolidationLookupableHelperServiceImpl;
+import org.kuali.kfs.gl.service.AccountBalanceService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kns.bo.BusinessObject;
 import org.kuali.rice.kns.lookup.CollectionIncomplete;
 import org.kuali.rice.kns.service.KualiConfigurationService;
@@ -37,8 +39,6 @@ import org.kuali.rice.kns.util.GlobalVariables;
 import com.rsmart.kuali.kfs.sec.SecKeyConstants;
 import com.rsmart.kuali.kfs.sec.service.AccessSecurityService;
 import com.rsmart.kuali.kfs.sec.util.SecUtil;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * Override of AccountBalanceByConsolidation lookup helper to integrate access security
@@ -55,8 +55,10 @@ public class AccessSecurityAccountBalanceByConsolidationLookupableHelperServiceI
      * @see org.kuali.kfs.gl.businessobject.lookup.AccountBalanceByConsolidationLookupableHelperServiceImpl#getSearchResults(java.util.Map)
      */
     @Override
-    public List<? extends BusinessObject> getSearchResults(Map<String, String> fieldValues) {
-        List<? extends BusinessObject> results = super.getSearchResults(fieldValues);
+    public List<? extends BusinessObject> getSearchResults(Map fieldValues) {
+        AccountBalanceByConsolidationLookupableHelperServiceImpl helperServiceImpl = new AccountBalanceByConsolidationLookupableHelperServiceImpl();
+        helperServiceImpl.setAccountBalanceService(SpringContext.getBean(AccountBalanceService.class));
+        List<? extends BusinessObject> results = helperServiceImpl.getSearchResults(fieldValues);
 
         // first 7 items of results are total lines, so we need to check any detail lines after than
         if (results.size() > 7) {

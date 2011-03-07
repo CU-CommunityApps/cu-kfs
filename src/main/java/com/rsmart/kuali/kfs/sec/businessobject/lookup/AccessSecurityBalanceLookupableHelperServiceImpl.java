@@ -15,6 +15,7 @@
  */
 package com.rsmart.kuali.kfs.sec.businessobject.lookup;
 
+import java.beans.PropertyDescriptor;
 import java.sql.Date;
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,7 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.integration.ld.SegmentedBusinessObject;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kns.authorization.BusinessObjectRestrictions;
@@ -361,6 +364,13 @@ public class AccessSecurityBalanceLookupableHelperServiceImpl implements Lookupa
             if (getBusinessObjectDictionaryService().isExportable(getBusinessObjectClass())) {
                 row.setBusinessObject(element);
             }
+            
+            if(element instanceof SegmentedBusinessObject) {
+                for (String propertyName : ((SegmentedBusinessObject) element).getSegmentedPropertyNames()) {
+                    columns.add(setupResultsColumn(element, propertyName, businessObjectRestrictions));
+                }
+            }
+            
             if (element instanceof PersistableBusinessObject) {
                 row.setObjectId((((PersistableBusinessObject) element).getObjectId()));
             }
@@ -377,6 +387,83 @@ public class AccessSecurityBalanceLookupableHelperServiceImpl implements Lookupa
         lookupForm.setHasReturnableRow(hasReturnableRow);
 
         return displayList;
+    }
+    
+    /**
+     * @param element
+     * @param attributeName
+     * @return Column
+     */
+    protected Column setupResultsColumn(BusinessObject element, String attributeName, BusinessObjectRestrictions businessObjectRestrictions) {
+        Column col = new Column();
+
+        col.setPropertyName(attributeName);
+
+        String columnTitle = getDataDictionaryService().getAttributeLabel(getBusinessObjectClass(), attributeName);
+        if (StringUtils.isBlank(columnTitle)) {
+            columnTitle = getDataDictionaryService().getCollectionLabel(getBusinessObjectClass(), attributeName);
+        }
+        col.setColumnTitle(columnTitle);
+        col.setMaxLength(getDataDictionaryService().getAttributeMaxLength(getBusinessObjectClass(), attributeName));
+
+        Class formatterClass = getDataDictionaryService().getAttributeFormatter(getBusinessObjectClass(), attributeName);
+        Formatter formatter = null;
+        if (formatterClass != null) {
+            try {
+                formatter = (Formatter) formatterClass.newInstance();
+                col.setFormatter(formatter);
+            }
+            catch (InstantiationException e) {
+                throw new RuntimeException("Unable to get new instance of formatter class: " + formatterClass.getName());
+            }
+            catch (IllegalAccessException e) {
+                throw new RuntimeException("Unable to get new instance of formatter class: " + formatterClass.getName());
+            }
+        }
+
+        // pick off result column from result list, do formatting
+        String propValue = KFSConstants.EMPTY_STRING;
+        Object prop = ObjectUtils.getPropertyValue(element, attributeName);
+
+        // set comparator and formatter based on property type
+        Class propClass = null;
+        try {
+            PropertyDescriptor propDescriptor = PropertyUtils.getPropertyDescriptor(element, col.getPropertyName());
+            if (propDescriptor != null) {
+                propClass = propDescriptor.getPropertyType();
+            }
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Cannot access PropertyType for property " + "'" + col.getPropertyName() + "' " + " on an instance of '" + element.getClass().getName() + "'.", e);
+        }
+
+        // formatters
+        if (prop != null) {
+            // for Booleans, always use BooleanFormatter
+            if (prop instanceof Boolean) {
+                formatter = new BooleanFormatter();
+            }
+
+            if (formatter != null) {
+                propValue = (String) formatter.format(prop);
+            }
+            else {
+                propValue = prop.toString();
+            }
+        }
+
+        // comparator
+        col.setComparator(CellComparatorHelper.getAppropriateComparatorForPropertyClass(propClass));
+        col.setValueComparator(CellComparatorHelper.getAppropriateValueComparatorForPropertyClass(propClass));
+
+        propValue = maskValueIfNecessary(element.getClass(), col.getPropertyName(), propValue, businessObjectRestrictions);
+        col.setPropertyValue(propValue);
+
+
+        if (StringUtils.isNotBlank(propValue)) {
+            col.setColumnAnchor(getInquiryUrl(element, col.getPropertyName()));
+        }
+        return col;
     }
 
     /**
@@ -528,5 +615,10 @@ public class AccessSecurityBalanceLookupableHelperServiceImpl implements Lookupa
     public void setLaborInquiry(boolean laborInquiry) {
         this.laborInquiry = laborInquiry;
     }
+//
+//    @Override
+//    public void applyConditionalLogicForFieldDisplay() {
+//        // TODO Auto-generated method stub
+//    }
 
 }

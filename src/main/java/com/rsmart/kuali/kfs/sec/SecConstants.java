@@ -41,8 +41,8 @@ public class SecConstants {
     public final static String ACCOUNTING_GROUP_ERROR_KEY_PREFIX = "SecurityGroupErrors:";
     public final static String ALL_DOCUMENT_TYPE_NAME = "ALL";
     public final static String ALL_PARAMETER_DETAIL_COMPONENT = "All";
-    public final static String SECURITY_DEFINITION_ID_SEQUENCE_NAME = "ACC_SCRTY_DEFN_ID_SEQ";
-    public final static String SECURITY_MODEL_ID_SEQUENCE_NAME = "ACC_SCRTY_MDL_ID_SEQ";
+    public final static String SECURITY_DEFINITION_ID_SEQUENCE_NAME = "SEC_SCRTY_DEFN_ID_SEQ";
+    public final static String SECURITY_MODEL_ID_SEQUENCE_NAME = "SEC_SCRTY_MDL_ID_SEQ";
     public final static String ACCESS_DENIED_ERROR_FORWARD = "accessDeniedError";
     public final static String OPEN_DOCUMENT_SECURITY_ACCESS_DENIED_ERROR_KEY = "openDocumentSecurityAccessDeniedError";
     public final static String ACCESS_ERROR_STRING_REQUEST_KEY = "securityAccessErrorMessage";

@@ -178,7 +178,14 @@ public class SecurityModelMaintainableImpl extends FinancialSystemMaintainable {
                     membershipQualifications.put(SecKimAttributes.PROPERTY_VALUE, oldSecurityModelDefinition.getAttributeValue());
                     membershipQualifications.put(SecKimAttributes.OVERRIDE_DENY, Boolean.toString(oldSecurityModelDefinition.isOverrideDeny()));
 
-                    modelMembershipInfo = KimUtil.getRoleMembershipInfoForMemberType(definitionRoleInfo.getRoleId(), modelRoleInfo.getRoleId(), KimConstants.KimUIConstants.MEMBER_TYPE_ROLE_CODE, membershipQualifications);
+                    if (modelRoleInfo == null || definitionRoleInfo == null) {
+                        // this should throw an elegant error if either are null
+                        String error = "Apparent data problem with access security. model or definition is null. this should not happen";
+                        LOG.error(error);
+                        throw new RuntimeException(error);
+                    } else {
+                        modelMembershipInfo = KimUtil.getRoleMembershipInfoForMemberType(definitionRoleInfo.getRoleId(), modelRoleInfo.getRoleId(), KimConstants.KimUIConstants.MEMBER_TYPE_ROLE_CODE, membershipQualifications);
+                    }
                 }
             }
 
@@ -203,7 +210,14 @@ public class SecurityModelMaintainableImpl extends FinancialSystemMaintainable {
                 membershipQualifications.put(SecKimAttributes.PROPERTY_VALUE, securityModelDefinition.getAttributeValue());
                 membershipQualifications.put(SecKimAttributes.OVERRIDE_DENY, Boolean.toString(securityModelDefinition.isOverrideDeny()));
 
-                roleService.saveRoleMemberForRole(modelMembershipId, modelRoleInfo.getRoleId(), KimConstants.KimUIConstants.MEMBER_TYPE_ROLE_CODE, definitionRoleInfo.getRoleId(), membershipQualifications, null, null);
+                if (modelRoleInfo == null || definitionRoleInfo == null) {
+                    // this should throw an elegant error if either are null
+                    String error = "Apparent data problem with access security. model or definition is null. this should not happen";
+                    LOG.error(error);
+                    throw new RuntimeException(error);
+                } else {
+                    roleService.saveRoleMemberForRole(modelMembershipId, modelRoleInfo.getRoleId(), KimConstants.KimUIConstants.MEMBER_TYPE_ROLE_CODE, definitionRoleInfo.getRoleId(), membershipQualifications, null, null);
+                }
             }
         }
     }
@@ -218,17 +232,33 @@ public class SecurityModelMaintainableImpl extends FinancialSystemMaintainable {
 
         KimRoleInfo modelRoleInfo = roleService.getRole(securityModel.getRoleId());
 
-        for (SecurityModelMember modelMember : securityModel.getModelMembers()) {
-            RoleMembershipInfo membershipInfo = KimUtil.getRoleMembershipInfoForMemberType(modelRoleInfo.getRoleId(), modelMember.getMemberId(), modelMember.getMemberTypeCode(), null);
+        if (modelRoleInfo == null) {
+            // this should throw an elegant error if either are null
+            String error = "Apparent data problem with access security. model is null. this should not happen";
+            LOG.error(error);
+            throw new RuntimeException(error);
+        } else {
 
-            String membershipId = "";
-            if (membershipInfo != null) {
-                membershipId = membershipInfo.getRoleMemberId();
+            for (SecurityModelMember modelMember : securityModel.getModelMembers()) {
+                RoleMembershipInfo membershipInfo = KimUtil.getRoleMembershipInfoForMemberType(modelRoleInfo.getRoleId(), modelMember.getMemberId(), modelMember.getMemberTypeCode(), null);
+    
+                String membershipId = "";
+                if (membershipInfo != null) {
+                    membershipId = membershipInfo.getRoleMemberId();
+                }
+    
+                java.sql.Date fromDate = null;
+                java.sql.Date toDate = null;
+                if ( modelMember.getActiveFromDate() != null ) {
+                    fromDate = new java.sql.Date( modelMember.getActiveFromDate().getTime() ); 
+                }
+                if ( modelMember.getActiveToDate() != null ) {
+                    toDate = new java.sql.Date( modelMember.getActiveToDate().getTime() ); 
+                }
+                roleService.saveRoleMemberForRole(membershipId, modelMember.getMemberId(), modelMember.getMemberTypeCode(), modelRoleInfo.getRoleId(), new AttributeSet(), fromDate, toDate);
+    
+                createPrincipalSecurityRecords(modelMember.getMemberId(), modelMember.getMemberTypeCode());
             }
-
-            roleService.saveRoleMemberForRole(membershipId, modelMember.getMemberId(), modelMember.getMemberTypeCode(), modelRoleInfo.getRoleId(), new AttributeSet(), modelMember.getActiveFromDate(), modelMember.getActiveToDate());
-
-            createPrincipalSecurityRecords(modelMember.getMemberId(), modelMember.getMemberTypeCode());
         }
     }
 

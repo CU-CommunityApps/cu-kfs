@@ -174,7 +174,15 @@ public class SecurityPrincipalMaintainableImpl extends FinancialSystemMaintainab
                 membershipId = membershipInfo.getRoleMemberId();
             }
 
-            roleService.saveRoleMemberForRole(membershipId, principalId, KimConstants.KimUIConstants.MEMBER_TYPE_PRINCIPAL_CODE, modelRoleInfo.getRoleId(), new AttributeSet(), principalModel.getActiveFromDate(), principalModel.getActiveToDate());
+            java.sql.Date fromDate = null;
+            java.sql.Date toDate = null;
+            if ( principalModel.getActiveFromDate() != null ) {
+                fromDate = new java.sql.Date( principalModel.getActiveFromDate().getTime() ); 
+            }
+            if ( principalModel.getActiveToDate() != null ) {
+                toDate = new java.sql.Date( principalModel.getActiveToDate().getTime() ); 
+            }
+            roleService.saveRoleMemberForRole(membershipId, principalId, KimConstants.KimUIConstants.MEMBER_TYPE_PRINCIPAL_CODE, modelRoleInfo.getRoleId(), new AttributeSet(), fromDate, toDate);
         }
     }
 

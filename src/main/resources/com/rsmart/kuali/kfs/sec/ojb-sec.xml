@@ -15,7 +15,7 @@
 -->
 <descriptor-repository version="1.0">
 
-  <class-descriptor class="com.rsmart.kuali.kfs.sec.businessobject.SecurityAttribute" table="FS_ACC_SCRTY_ATTR_T">
+  <class-descriptor class="com.rsmart.kuali.kfs.sec.businessobject.SecurityAttribute" table="SEC_SCRTY_ATTR_T">
     <field-descriptor name="id" column="ATTR_ID" jdbc-type="BIGINT" primarykey="true" conversion="org.kuali.rice.kns.util.OjbKualiIntegerFieldConversion" />
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
@@ -23,8 +23,8 @@
     <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>
   </class-descriptor>
 
-  <class-descriptor class="com.rsmart.kuali.kfs.sec.businessobject.SecurityDefinition" table="FS_ACC_SCRTY_DEFN_T">
-    <field-descriptor name="id" column="DEFN_ID" jdbc-type="BIGINT" primarykey="true" sequence-name="ACC_SCRTY_DEFN_ID_SEQ" autoincrement="true" conversion="org.kuali.rice.kns.util.OjbKualiIntegerFieldConversion" />
+  <class-descriptor class="com.rsmart.kuali.kfs.sec.businessobject.SecurityDefinition" table="SEC_SCRTY_DEFN_T">
+    <field-descriptor name="id" column="DEFN_ID" jdbc-type="BIGINT" primarykey="true" sequence-name="SEC_SCRTY_DEFN_ID_SEQ" autoincrement="true" conversion="org.kuali.rice.kns.util.OjbKualiIntegerFieldConversion" />
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
     <field-descriptor name="name" column="DEFN_NM" jdbc-type="VARCHAR"/>
@@ -50,7 +50,7 @@
     </collection-descriptor>
   </class-descriptor>
   
-  <class-descriptor class="com.rsmart.kuali.kfs.sec.businessobject.SecurityDefinitionDocumentType" table="FS_ACC_SCRTY_DEFN_DOC_TYP_T">
+  <class-descriptor class="com.rsmart.kuali.kfs.sec.businessobject.SecurityDefinitionDocumentType" table="SEC_SCRTY_DEFN_DOC_TYP_T">
     <field-descriptor name="definitionId" column="DEFN_ID" jdbc-type="BIGINT" primarykey="true" conversion="org.kuali.rice.kns.util.OjbKualiIntegerFieldConversion" />
     <field-descriptor name="financialSystemDocumentTypeCode" column="DOC_TYP_NM" jdbc-type="VARCHAR" primarykey="true"/>
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
@@ -58,8 +58,8 @@
     <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>
   </class-descriptor>
   
-  <class-descriptor class="com.rsmart.kuali.kfs.sec.businessobject.SecurityModel" table="FS_ACC_SCRTY_MDL_T">
-    <field-descriptor name="id" column="MDL_ID" jdbc-type="BIGINT" primarykey="true" sequence-name="ACC_SCRTY_MDL_ID_SEQ" autoincrement="true" conversion="org.kuali.rice.kns.util.OjbKualiIntegerFieldConversion" />
+  <class-descriptor class="com.rsmart.kuali.kfs.sec.businessobject.SecurityModel" table="SEC_SCRTY_MDL_T">
+    <field-descriptor name="id" column="MDL_ID" jdbc-type="BIGINT" primarykey="true" sequence-name="SEC_SCRTY_MDL_ID_SEQ" autoincrement="true" conversion="org.kuali.rice.kns.util.OjbKualiIntegerFieldConversion" />
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
     <field-descriptor name="name" column="MDL_NM" jdbc-type="VARCHAR"/>
@@ -76,8 +76,8 @@
     </collection-descriptor>  
   </class-descriptor>
   
-  <class-descriptor class="com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition" table="FS_ACC_SCRTY_MDL_DEFN_T">
-    <field-descriptor name="modelDefinitionId" column="MDL_DEFN_ID" jdbc-type="BIGINT" primarykey="true" sequence-name="ACC_SCRTY_MDL_DEFN_ID_SEQ" autoincrement="true" conversion="org.kuali.rice.kns.util.OjbKualiIntegerFieldConversion" />
+  <class-descriptor class="com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition" table="SEC_SCRTY_MDL_DEFN_T">
+    <field-descriptor name="modelDefinitionId" column="MDL_DEFN_ID" jdbc-type="BIGINT" primarykey="true" sequence-name="SEC_SCRTY_MDL_DEFN_ID_SEQ" autoincrement="true" conversion="org.kuali.rice.kns.util.OjbKualiIntegerFieldConversion" />
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
     <field-descriptor name="modelId" column="MDL_ID" jdbc-type="BIGINT" conversion="org.kuali.rice.kns.util.OjbKualiIntegerFieldConversion" />
@@ -93,21 +93,21 @@
     </reference-descriptor>
   </class-descriptor>
   
-  <class-descriptor class="com.rsmart.kuali.kfs.sec.businessobject.SecurityModelMember" table="FS_ACC_SCRTY_MDL_MBR_T">
+  <class-descriptor class="com.rsmart.kuali.kfs.sec.businessobject.SecurityModelMember" table="SEC_SCRTY_MDL_MBR_T">
     <field-descriptor name="modelId" column="MDL_ID" jdbc-type="BIGINT" primarykey="true" conversion="org.kuali.rice.kns.util.OjbKualiIntegerFieldConversion" />
     <field-descriptor name="memberId" column="MBR_ID" jdbc-type="VARCHAR"  primarykey="true"/>
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
     <field-descriptor name="memberTypeCode" column="MBR_TYP_CD" jdbc-type="CHAR" />
-    <field-descriptor name="activeFromDate" column="ACTV_FRM_DT" jdbc-type="DATE" />
-    <field-descriptor name="activeToDate" column="ACTV_TO_DT" jdbc-type="DATE" />
+    <field-descriptor name="activeFromDate" column="ACTV_FRM_DT" jdbc-type="TIMESTAMP" />
+    <field-descriptor name="activeToDate" column="ACTV_TO_DT" jdbc-type="TIMESTAMP" />
     
     <reference-descriptor name="securityModel" class-ref="com.rsmart.kuali.kfs.sec.businessobject.SecurityModel" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
         <foreignkey field-ref="modelId" />
     </reference-descriptor>
   </class-descriptor>
 
-  <class-descriptor class="com.rsmart.kuali.kfs.sec.businessobject.SecurityPrincipal" table="FS_ACC_SCRTY_PRNCPL_T">
+  <class-descriptor class="com.rsmart.kuali.kfs.sec.businessobject.SecurityPrincipal" table="SEC_SCRTY_PRNCPL_T">
     <field-descriptor name="principalId" column="PRNCPL_ID" jdbc-type="VARCHAR" primarykey="true" />
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
@@ -124,8 +124,8 @@
     </collection-descriptor>  
   </class-descriptor>
   
-  <class-descriptor class="com.rsmart.kuali.kfs.sec.businessobject.SecurityPrincipalDefinition" table="FS_ACC_SCRTY_PRNCPL_DEFN_T">
-    <field-descriptor name="principalDefinitionId" column="PRNCPL_DEFN_ID" jdbc-type="BIGINT" primarykey="true" sequence-name="ACC_SCRTY_PRNCPL_DEFN_ID_SEQ" autoincrement="true" conversion="org.kuali.rice.kns.util.OjbKualiIntegerFieldConversion" />
+  <class-descriptor class="com.rsmart.kuali.kfs.sec.businessobject.SecurityPrincipalDefinition" table="SEC_SCRTY_PRNCPL_DEFN_T">
+    <field-descriptor name="principalDefinitionId" column="PRNCPL_DEFN_ID" jdbc-type="BIGINT" primarykey="true" sequence-name="SEC_SCRTY_PRNCPL_DEFN_ID_SEQ" autoincrement="true" conversion="org.kuali.rice.kns.util.OjbKualiIntegerFieldConversion" />
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
     <field-descriptor name="principalId" column="PRNCPL_ID" jdbc-type="VARCHAR" />
