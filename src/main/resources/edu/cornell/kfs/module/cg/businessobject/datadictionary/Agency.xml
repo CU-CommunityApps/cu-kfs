@@ -155,14 +155,14 @@
     <property name="label" value="Reports To Agency Number"/>
     <property name="shortLabel" value="Reports To Agency Number"/>
   </bean>
-  <!-- 
+ 
   <bean id="Agency-extension-lastUpdated" parent="Agency-extension-lastUpdated-parentBean"/>
   <bean id="Agency-extension-lastUpdated-parentBean" abstract="true" parent="GenericAttributes-genericDate" >
   	<property name="name" value="extension.lastUpdated"/>
   	<property name="label" value="Last Updated"/>
     <property name="shortLabel" value="Updated"/>
   </bean>
-   -->
+  
   <bean id="Agency-active" parent="Agency-active-parentBean"/>
 
   <bean id="Agency-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">

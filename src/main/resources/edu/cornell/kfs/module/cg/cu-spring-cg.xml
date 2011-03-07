@@ -21,13 +21,13 @@
                 <value>edu/cornell/kfs/module/cg/businessobject/datadictionary</value>
 			</list>
 		</property>
-		<!--  
+		
 		<property name="databaseRepositoryFilePaths">
 			<list>
 				<value>edu/cornell/kfs/module/cg/cu-ojb-cg.xml</value>
 			</list>
 		</property>
-		-->
+
 	</bean>
 
 	<bean id="cu-cgModuleService" parent="cgModuleService-parentBean">

@@ -233,13 +233,13 @@ public class EzraServiceImpl implements EzraService {
 		String sponsorTypeCode = EzraUtils.getAgencyTypeMap().get(sponsor.getSourceCode().toString());
 		agency.setAgencyTypeCode(sponsorTypeCode);
 		agency.setActive(true);
-		AgencyExtension ext = (AgencyExtension)agency.getExtension();
-		if (ext == null) {
-			ext = new AgencyExtension();
-		}
-		ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
-		//ext.setAgencyNumber(agency.getAgencyNumber());
-		agency.setExtension(ext);
+//		AgencyExtension ext = (AgencyExtension)agency.getExtension();
+//		if (ext == null) {
+//			ext = new AgencyExtension();
+//		}
+//		ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
+//		//ext.setAgencyNumber(agency.getAgencyNumber());
+//		agency.setExtension(ext);
 		return agency;
 		
 	}
@@ -257,21 +257,21 @@ public class EzraServiceImpl implements EzraService {
 		}
 
 		if (sponsor.getParentSponsor() != null && !StringUtils.equals(agency.getReportsToAgencyNumber(), sponsor.getParentSponsor().toString())) {
-		//	agency.setReportsToAgencyNumber(sponsor.getParentSponsor().toString());
-			agency.setReportsToAgencyNumber(null);
+			agency.setReportsToAgencyNumber(sponsor.getParentSponsor().toString());
 		}
 		String sponsorTypeCode = EzraUtils.getAgencyTypeMap().get(sponsor.getSourceCode().toString());
 		if (!StringUtils.equals(agency.getAgencyTypeCode(), sponsorTypeCode)) {
 			agency.setAgencyTypeCode(sponsorTypeCode);
 		}
-		AgencyExtension ext = (AgencyExtension)agency.getExtension();
-		if (ext == null) {
-			ext = new AgencyExtension();
-		}
-		//ext.setAgencyNumber(agency.getAgencyNumber());
-		ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
-		agency.setExtension(ext);
 		agency.setActive(true);
+//		AgencyExtension ext = (AgencyExtension)agency.getExtension();
+//		if (ext == null) {
+//			ext = new AgencyExtension();
+//		}
+//		//ext.setAgencyNumber(agency.getAgencyNumber());
+//		ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
+//		agency.setExtension(ext);
+//		agency.setActive(true);
 		// agency.refreshReferenceObject("extension");
 	//	businessObjectService.save(ext);
 		
@@ -294,8 +294,8 @@ public class EzraServiceImpl implements EzraService {
 		agencyMaintainable.setBusinessObject(agency);
 		agencyDoc.setNewMaintainableObject(agencyMaintainable);
 		try {
-		//	documentService.saveDocument(agencyDoc);
-			documentService.routeDocument(agencyDoc, "Automatically created and routed", null);
+			documentService.saveDocument(agencyDoc);
+			agencyDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		}

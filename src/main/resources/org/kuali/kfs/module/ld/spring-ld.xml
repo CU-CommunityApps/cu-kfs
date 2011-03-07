@@ -315,36 +315,39 @@
 		<property name="scrubberValidator">
 			<ref bean="laborScrubberValidator" />
 		</property>
-        <property name="laborAccountingCycleCachingService">
-		  	<ref bean="laborAccountingCycleCachingService" />
+		<property name="laborAccountingCycleCachingService">
+			<ref bean="laborAccountingCycleCachingService" />
 		</property>
-        <property name="laborMainReportWriterService">
-		  	<ref bean="laborMainReportWriterService" />
+		<property name="laborMainReportWriterService">
+			<ref bean="laborMainReportWriterService" />
 		</property>
 		<property name="llcpMainReportWriterService">
-			<ref bean="llcpMainReportWriterService"/>
+			<ref bean="llcpMainReportWriterService" />
 		</property>
-        <property name="laborLedgerReportWriterService">
-		  	<ref bean="laborLedgerReportWriterService" />
+		<property name="laborLedgerReportWriterService">
+			<ref bean="laborLedgerReportWriterService" />
 		</property>
 		<property name="llcpLedgerReportWriterService">
-		  	<ref bean="llcpLedgerReportWriterService" />
+			<ref bean="llcpLedgerReportWriterService" />
 		</property>
-        <property name="laborBadBalanceTypeReportWriterService">
-		  	<ref bean="laborBadBalanceTypeReportWriterService" />
-		</property>	
-        <property name="laborErrorListingReportWriterService">
-		  	<ref bean="laborErrorListingReportWriterService" />
-		</property>	
-        <property name="laborGeneratedTransactionsReportWriterService">
-		  	<ref bean="laborGeneratedTransactionsReportWriterService" />
-		</property>	
-        <property name="laborDemergerReportWriterService">
-		  	<ref bean="laborDemergerReportWriterService" />
-		</property>											
-		<property name="laborPreScrubberService" ref="laborPreScrubberService" />											
+		<property name="laborBadBalanceTypeReportWriterService">
+			<ref bean="laborBadBalanceTypeReportWriterService" />
+		</property>
+		<property name="laborErrorListingReportWriterService">
+			<ref bean="laborErrorListingReportWriterService" />
+		</property>
+		<property name="laborGeneratedTransactionsReportWriterService">
+			<ref bean="laborGeneratedTransactionsReportWriterService" />
+		</property>
+		<property name="laborDemergerReportWriterService">
+			<ref bean="laborDemergerReportWriterService" />
+		</property>
+	<!--  	<property name="parameterService">
+			<ref bean="parameterService" />
+		</property>-->
+		<property name="laborPreScrubberService" ref="laborPreScrubberService" />
 		<property name="llcpPreScrubberReportWriterService" ref="llcpPreScrubberReportWriterService" />
-		<property name="batchFileDirectoryName" value="${staging.directory}/ld/originEntry"/>
+		<property name="batchFileDirectoryName" value="${staging.directory}/ld/originEntry" />
 	</bean>
 	
 	<bean id="laborGLScrubberValidator" class="org.kuali.kfs.module.ld.batch.service.impl.LaborGLScrubberValidatorImpl" parent="scrubberValidator" />
