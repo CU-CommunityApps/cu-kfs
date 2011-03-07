@@ -203,9 +203,9 @@ public class EzraServiceImpl implements EzraService {
 				updateAgency(agency, sponsor);
 			}
 			routeAgencyDocument(agency, oldAgency);
-//			Date lastUpdated = dateTimeService.getCurrentSqlDate();
-//			sponsor.setLastUpdated(lastUpdated);
-//			businessObjectService.save(sponsor);
+			Date lastUpdated = dateTimeService.getCurrentSqlDate();
+			sponsor.setLastUpdated(lastUpdated);
+			businessObjectService.save(sponsor);
 		}
 		return result;
 
@@ -233,13 +233,13 @@ public class EzraServiceImpl implements EzraService {
 		String sponsorTypeCode = EzraUtils.getAgencyTypeMap().get(sponsor.getSourceCode().toString());
 		agency.setAgencyTypeCode(sponsorTypeCode);
 		agency.setActive(true);
-//		AgencyExtension ext = (AgencyExtension)agency.getExtension();
-//		if (ext == null) {
-//			ext = new AgencyExtension();
-//		}
-//		ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
-//		//ext.setAgencyNumber(agency.getAgencyNumber());
-//		agency.setExtension(ext);
+		AgencyExtension ext = (AgencyExtension)agency.getExtension();
+		if (ext == null) {
+			ext = new AgencyExtension();
+		}
+		ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
+		//ext.setAgencyNumber(agency.getAgencyNumber());
+		agency.setExtension(ext);
 		return agency;
 		
 	}
@@ -264,13 +264,13 @@ public class EzraServiceImpl implements EzraService {
 			agency.setAgencyTypeCode(sponsorTypeCode);
 		}
 		agency.setActive(true);
-//		AgencyExtension ext = (AgencyExtension)agency.getExtension();
-//		if (ext == null) {
-//			ext = new AgencyExtension();
-//		}
-//		//ext.setAgencyNumber(agency.getAgencyNumber());
-//		ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
-//		agency.setExtension(ext);
+		AgencyExtension ext = (AgencyExtension)agency.getExtension();
+		if (ext == null) {
+			ext = new AgencyExtension();
+		}
+		//ext.setAgencyNumber(agency.getAgencyNumber());
+		ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
+		agency.setExtension(ext);
 //		agency.setActive(true);
 		// agency.refreshReferenceObject("extension");
 	//	businessObjectService.save(ext);
