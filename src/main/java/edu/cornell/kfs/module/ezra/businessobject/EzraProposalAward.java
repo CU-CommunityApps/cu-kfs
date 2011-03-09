@@ -27,6 +27,7 @@ public class EzraProposalAward extends PersistableBusinessObjectBase {
 	private Date startDate; //AWD_PROP_START_DT
 	private Date stopDate; //AWD_PROP_END_DT
 	private KualiDecimal totalAmt; //AWD_PROP_TOTAL
+	private KualiDecimal budgetAmt; //BUDG_TOTAL
 	private String federalPassThrough; //FED_FLOW_THROUGH
 	private Long federalPassThroughAgencyNumber; //FLOWTHROUGH_SPONSOR_ID
 	private Long departmentId; //DEPT_ID
@@ -221,6 +222,22 @@ public class EzraProposalAward extends PersistableBusinessObjectBase {
 	 */
 	public void setTotalAmt(KualiDecimal totalAmt) {
 		this.totalAmt = totalAmt;
+	}
+
+
+	/**
+	 * @return the budgetAmt
+	 */
+	public KualiDecimal getBudgetAmt() {
+		return budgetAmt;
+	}
+
+
+	/**
+	 * @param budgetAmt the budgetAmt to set
+	 */
+	public void setBudgetAmt(KualiDecimal budgetAmt) {
+		this.budgetAmt = budgetAmt;
 	}
 
 

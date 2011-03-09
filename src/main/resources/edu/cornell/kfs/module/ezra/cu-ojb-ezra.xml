@@ -51,6 +51,7 @@
 		<field-descriptor name="startDate" column="AWD_PROP_START_DT" jdbc-type="DATE"/>
 		<field-descriptor name="stopDate" column="AWD_PROP_END_DT" jdbc-type="DATE"/>
 		<field-descriptor name="totalAmt" column="AWD_PROP_TOTAL" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+		<field-descriptor name="budgetAmt" column="BUDG_TOTAL" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
 		<field-descriptor name="federalPassThrough" column="FED_FLOW_THROUGH" jdbc-type="VARCHAR"/>
 		<field-descriptor name="federalPassThroughAgencyNumber" column="FLOWTHROUGH_SPONSOR_ID" jdbc-type="BIGINT"/>
 		<field-descriptor name="departmentId" column="DEPT_ID" jdbc-type="BIGINT"/>

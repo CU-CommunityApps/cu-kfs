@@ -30,6 +30,16 @@ public class EzraUtils {
 	public static Map<String, String> getProposalAwardStatusMap() {
 		if (proposalAwardStatusMap == null) {
 			proposalAwardStatusMap = new HashMap<String, String>();
+			proposalAwardStatusMap.put("AMAF", "AF");
+			proposalAwardStatusMap.put("AMNAC", "AF");
+			proposalAwardStatusMap.put("AMOH", "AH");
+			proposalAwardStatusMap.put("AMPC", "AC");
+			proposalAwardStatusMap.put("AMPFF", "AP");
+			proposalAwardStatusMap.put("AMRO", "AP");
+			proposalAwardStatusMap.put("AMSC", "AS");
+			proposalAwardStatusMap.put("AAF", "FD");
+			proposalAwardStatusMap.put("APFFF", "FT");
+			proposalAwardStatusMap.put("ARO", "OS");
 			proposalAwardStatusMap.put("AMURO", "AM");
 			proposalAwardStatusMap.put("AAC", "AW");
 			proposalAwardStatusMap.put("AC", "C");
