@@ -871,6 +871,7 @@
               <dd:field attributeName="accountsFringesBnftIndicator"/>
               <dd:field attributeName="reportsToChartOfAccountsCode"/>
               <dd:field attributeName="reportsToAccountNumber"/>
+              <dd:field attributeName="extension.laborBenefitRateCategoryCode"/>
               <dd:field attributeName="financialHigherEdFunction.codeAndDescription"/>
               <dd:field attributeName="accountRestrictedStatusCode"/>
               <dd:field attributeName="accountRestrictedStatusDate"/>
