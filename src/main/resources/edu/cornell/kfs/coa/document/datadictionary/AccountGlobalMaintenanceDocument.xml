@@ -19,7 +19,7 @@
 
   <bean id="AccountGlobalMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
     <property name="businessObjectClass" value="org.kuali.kfs.coa.businessobject.AccountGlobal"/>
-    <property name="maintainableClass" value="org.kuali.kfs.coa.document.AccountGlobalMaintainableImpl"/>
+    <property name="maintainableClass" value="edu.cornell.kfs.coa.document.CUAccountGlobalMaintainableImpl"/>
     <property name="maintainableSections">
       <list>
         <ref bean="AccountGlobalMaintenanceDocument-GlobalAccountMaintenance"/>
@@ -68,6 +68,7 @@
     <property name="title" value="Global Account Maintenance"/>
     <property name="maintainableItems">
       <list>
+        <bean parent="MaintainableFieldDefinition" p:name="documentNumber" p:unconditionallyReadOnly="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="accountFiscalOfficerSystemIdentifier" p:unconditionallyReadOnly="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="accountFiscalOfficerUser.principalName"/>
         <bean parent="MaintainableFieldDefinition" p:name="accountsSupervisorySystemsIdentifier" p:unconditionallyReadOnly="true"/>
