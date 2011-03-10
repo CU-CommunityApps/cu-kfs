@@ -157,18 +157,18 @@
         </dd:relationship>
         <dd:relationship objectAttribute="extension">
             <dd:primitiveAttribute source="extension.programCode" target="programCode"/>
+            <dd:primitiveAttribute source="extension.appropriationAccountNumber" target="appropriationAccountNumber"/>
             <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode"/>
             <dd:supportAttribute source="extension.subFundProgram.programCode" target="subFundProgram.programCode"/>
+            <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode"/>
+            <dd:supportAttribute source="extension.appropriationAccount.appropriationAccountNumber" target="appropriationAccount.appropriationAccountNumber"/>
         </dd:relationship>
         <dd:relationship objectAttribute="extension.appropriationAccount">
             <dd:primitiveAttribute source="extension.appropriationAccount.appropriationAccountNumber" target="appropriationAccountNumber"/>
             <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode" />
         </dd:relationship>
-        <dd:relationship objectAttribute="extension">
-            <dd:primitiveAttribute source="extension.appropriationAccountNumber" target="appropriationAccountNumber"/>
-            <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode"/>
-            <dd:supportAttribute source="extension.appropriationAccount.appropriationAccountNumber" target="appropriationAccount.appropriationAccountNumber"/>
-        </dd:relationship>
+<!--        <dd:relationship objectAttribute="extension">-->
+<!--        </dd:relationship>-->
         <!--  
         <dd:relationship objectAttribute="extension.laborBenefitRateCategory">
             <dd:primitiveAttribute source="extension.laborBenefitRateCategory.laborBenefitRateCategoryCode" target="laborBenefitRateCategoryCode"/>
