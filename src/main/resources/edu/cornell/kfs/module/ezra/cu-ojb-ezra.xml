@@ -39,8 +39,8 @@
 	<class-descriptor class="edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward" table="PROPOSAL">
 		<field-descriptor name="projectId" column="PROJ_ID" jdbc-type="VARCHAR" primarykey="true" index="true" />
 		<field-descriptor name="awardProposalId" column="AWARD_PROP_ID" jdbc-type="VARCHAR" primarykey="true" index="true" />
-		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
-		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+	<!-- 	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>  -->
 		<field-descriptor name="projectTitle" column="TITLE" jdbc-type="VARCHAR"/>
 		<field-descriptor name="sponsorNumber" column="SPONSOR_ID" jdbc-type="BIGINT"/>
 		<field-descriptor name="sponsorProjectId" column="SPONSOR_PROJ_ID" jdbc-type="VARCHAR"/>
