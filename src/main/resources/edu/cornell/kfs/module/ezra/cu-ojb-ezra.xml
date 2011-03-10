@@ -46,8 +46,8 @@
 		<field-descriptor name="sponsorProjectId" column="SPONSOR_PROJ_ID" jdbc-type="VARCHAR"/>
 		<field-descriptor name="cfdaNumber" column="CFDA_NMBR" jdbc-type="VARCHAR"/>
 		<field-descriptor name="status" column="STATUS_CD" jdbc-type="VARCHAR"/>
-		<field-descriptor name="purpose" column="PROJ_FUNCTION_CD" jdbc-type="VARCHAR"/>
-		<field-descriptor name="awardDescriptionCode" column="AWARD_DESC_CD" jdbc-type="VARCHAR"/>
+		<field-descriptor name="purpose" column="PROJ_FUNCTION_CD" jdbc-type="CHAR"/>
+		<field-descriptor name="awardDescriptionCode" column="AWARD_DESC_CD" jdbc-type="CHAR"/>
 		<field-descriptor name="startDate" column="AWD_PROP_START_DT" jdbc-type="DATE"/>
 		<field-descriptor name="stopDate" column="AWD_PROP_END_DT" jdbc-type="DATE"/>
 		<field-descriptor name="totalAmt" column="AWD_PROP_TOTAL" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
