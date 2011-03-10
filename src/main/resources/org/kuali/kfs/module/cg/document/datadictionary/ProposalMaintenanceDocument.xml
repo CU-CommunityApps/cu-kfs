@@ -98,6 +98,7 @@
         <bean parent="MaintainableFieldDefinition" p:name="proposalFellowName"/>
         <bean parent="MaintainableFieldDefinition" p:name="proposalDueDate"/>
         <bean parent="MaintainableFieldDefinition" p:name="proposalRejectedDate"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.lastUpdated"/>
         <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
       </list>
     </property>
