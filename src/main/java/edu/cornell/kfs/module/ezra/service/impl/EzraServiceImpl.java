@@ -61,27 +61,27 @@ public class EzraServiceImpl implements EzraService {
 			if (ObjectUtils.isNull(proposal)) {
 				proposal = new Proposal();
 				proposal.setProposalNumber(Long.valueOf(proposalId));
-				
+
 				Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getSponsorNumber().toString());
 				if (ObjectUtils.isNull(agency)) {
-					 agency = createAgency(ezraProposal.getSponsorNumber());
-					 routeAgencyDocument(agency, null);
+					agency = createAgency(ezraProposal.getSponsorNumber());
+					routeAgencyDocument(agency, null);
 				}
-				
+
 				Map projInvFields = new HashMap();
 				projInvFields.put("projectId", ezraProposal.getProjectId());
 				projInvFields.put("awardProposalId", ezraProposal.getAwardProposalId());
 				List<ProjectInvestigator> projInvs = (List<ProjectInvestigator>)businessObjectService.findMatching(ProjectInvestigator.class, projInvFields);
 				List<ProposalProjectDirector> ppds = createProjectDirectors(projInvs);
 				proposal.setProposalProjectDirectors(ppds);
-				
+
 				Map deptFields = new HashMap();
 				deptFields.put("departmentId", ezraProposal.getDepartmentId());
 				List<Department> depts = (List<Department>)businessObjectService.findMatching(Department.class, deptFields);
-				
+
 				List<ProposalOrganization> propOrgs = createProposalOrganizations(depts);
 				proposal.setProposalOrganizations(propOrgs);
-				
+
 				proposal.setAgencyNumber(ezraProposal.getSponsorNumber().toString());
 				//check to see if this is a real cfda 
 				proposal.setCfdaNumber(ezraProposal.getCfdaNumber());
@@ -104,79 +104,84 @@ public class EzraServiceImpl implements EzraService {
 				ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
 				ext.setProposalNumber(proposal.getProposalNumber());
 				proposal.setExtension(ext);
-			} else if (proposal.getExtension() != null){
-				ProposalExtension ext = (ProposalExtension)proposal.getExtension();
-				if ( ezraProposal.getLastUpdated().compareTo(ext.getLastUpdated()) != 0) {
-			
-					boolean changed = false;
-					Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getSponsorNumber().toString());
-					if (ObjectUtils.isNull(agency)) {
-						 agency = createAgency(ezraProposal.getSponsorNumber());
-						 routeAgencyDocument(agency, null);
-					}
-					if (!StringUtils.equals(proposal.getAgencyNumber(), ezraProposal.getSponsorNumber().toString())) {
-						proposal.setAgencyNumber(ezraProposal.getSponsorNumber().toString());
-						changed = true;
-					}
-					if (!StringUtils.equals(proposal.getCfdaNumber(), ezraProposal.getCfdaNumber())) {
-						//check to see if this is a real cfda 
-	
-						proposal.setCfdaNumber(ezraProposal.getCfdaNumber());
-						changed = true;
-					}
-					if (!StringUtils.equals(proposal.getProposalProjectTitle(), ezraProposal.getProjectTitle())) {
-						proposal.setProposalProjectTitle(ezraProposal.getProjectTitle());
-						changed = true;
-					}
-					if (!StringUtils.equals(proposal.getGrantNumber(), ezraProposal.getSponsorProjectId())) {
-						proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
-						changed = true;
-					}
-					if (!StringUtils.equals(proposal.getProposalStatusCode(), ezraProposal.getStatus())) {
-						proposal.setProposalStatusCode(ezraProposal.getStatus());
-						changed = true;
-					}
-					if (!StringUtils.equals(proposal.getProposalPurposeCode(), ezraProposal.getPurpose())) {
-						proposal.setProposalPurposeCode(ezraProposal.getPurpose());
-						changed = true;
-					}
-					if (dateTimeService.dateDiff(proposal.getProposalBeginningDate(), ezraProposal.getStartDate(), true) != 0) {
-						proposal.setProposalBeginningDate(ezraProposal.getStartDate());
-						changed = true;
-					}
-					if (dateTimeService.dateDiff(proposal.getProposalEndingDate(), ezraProposal.getStopDate(), true) != 0) {
-						proposal.setProposalEndingDate(ezraProposal.getStopDate());
-						changed = true;
-					}
-					if (proposal.getProposalTotalAmount().compareTo(ezraProposal.getTotalAmt()) != 0) {
-						proposal.setProposalTotalAmount(ezraProposal.getTotalAmt());
-						changed = true;
-					}
-					if (!StringUtils.equals(proposal.getFederalPassThroughAgencyNumber(), ezraProposal.getFederalPassThroughAgencyNumber().toString())) {
-						proposal.setFederalPassThroughAgencyNumber(ezraProposal.getFederalPassThroughAgencyNumber().toString());
-						changed = true;
-					}
-					if ( !(proposal.getProposalFederalPassThroughIndicator() ^ ezraProposal.getFederalPassThroughBoolean())) {
-						proposal.setProposalFederalPassThroughIndicator(ezraProposal.getFederalPassThroughBoolean());
-						changed = true;
-					} 
-					if (!StringUtils.equals(proposal.getProposalAwardTypeCode(), "Z")) {
-						proposal.setProposalAwardTypeCode("Z");
-						changed = true;
-					}
-	
-					proposal.setActive(true);
+			} else { 
+				//if (proposal.getExtension() != null){
+				//ProposalExtension ext = (ProposalExtension)proposal.getExtension();
+				//if ( ezraProposal.getLastUpdated().compareTo(ext.getLastUpdated()) != 0) {
+
+				boolean changed = false;
+				Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getSponsorNumber().toString());
+				if (ObjectUtils.isNull(agency)) {
+					agency = createAgency(ezraProposal.getSponsorNumber());
+					routeAgencyDocument(agency, null);
+				}
+				if (!StringUtils.equals(proposal.getAgencyNumber(), ezraProposal.getSponsorNumber().toString())) {
+					proposal.setAgencyNumber(ezraProposal.getSponsorNumber().toString());
+					changed = true;
+				}
+				if (!StringUtils.equals(proposal.getCfdaNumber(), ezraProposal.getCfdaNumber())) {
+					//check to see if this is a real cfda 
+
+					proposal.setCfdaNumber(ezraProposal.getCfdaNumber());
+					changed = true;
+				}
+				if (!StringUtils.equals(proposal.getProposalProjectTitle(), ezraProposal.getProjectTitle())) {
+					proposal.setProposalProjectTitle(ezraProposal.getProjectTitle());
+					changed = true;
+				}
+				if (!StringUtils.equals(proposal.getGrantNumber(), ezraProposal.getSponsorProjectId())) {
+					proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
+					changed = true;
+				}
+				if (!StringUtils.equals(proposal.getProposalStatusCode(), ezraProposal.getStatus())) {
+					proposal.setProposalStatusCode(ezraProposal.getStatus());
+					changed = true;
+				}
+				if (!StringUtils.equals(proposal.getProposalPurposeCode(), ezraProposal.getPurpose())) {
+					proposal.setProposalPurposeCode(ezraProposal.getPurpose());
+					changed = true;
+				}
+				if (dateTimeService.dateDiff(proposal.getProposalBeginningDate(), ezraProposal.getStartDate(), true) != 0) {
+					proposal.setProposalBeginningDate(ezraProposal.getStartDate());
+					changed = true;
+				}
+				if (dateTimeService.dateDiff(proposal.getProposalEndingDate(), ezraProposal.getStopDate(), true) != 0) {
+					proposal.setProposalEndingDate(ezraProposal.getStopDate());
+					changed = true;
+				}
+				if (proposal.getProposalTotalAmount().compareTo(ezraProposal.getTotalAmt()) != 0) {
+					proposal.setProposalTotalAmount(ezraProposal.getTotalAmt());
+					changed = true;
+				}
+				if (!StringUtils.equals(proposal.getFederalPassThroughAgencyNumber(), ezraProposal.getFederalPassThroughAgencyNumber().toString())) {
+					proposal.setFederalPassThroughAgencyNumber(ezraProposal.getFederalPassThroughAgencyNumber().toString());
+					changed = true;
+				}
+				if ( !(proposal.getProposalFederalPassThroughIndicator() ^ ezraProposal.getFederalPassThroughBoolean())) {
+					proposal.setProposalFederalPassThroughIndicator(ezraProposal.getFederalPassThroughBoolean());
+					changed = true;
+				} 
+				if (!StringUtils.equals(proposal.getProposalAwardTypeCode(), "Z")) {
+					proposal.setProposalAwardTypeCode("Z");
+					changed = true;
+				}
+
+				proposal.setActive(true);
+
+				if (changed) {
+
+					ProposalExtension ext = (ProposalExtension)proposal.getExtension();
 					if (ext == null) {
 						ext = new ProposalExtension();
 					}
 					ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
-					ext.setProposalNumber(proposal.getProposalNumber());
+					//	ext.setProposalNumber(proposal.getProposalNumber());
 					proposal.setExtension(ext);
-					if (!changed)
-						continue;
-				}
-				
-			//	businessObjectService.save(ext);
+				} else 
+					continue;
+				//		}
+
+				//	businessObjectService.save(ext);
 			}
 			GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
 			// DocumentService docService = SpringContext.getBean(DocumentService.class);
@@ -199,17 +204,17 @@ public class EzraServiceImpl implements EzraService {
 			} catch (WorkflowException we) {
 				we.printStackTrace();
 			}
-//			Date lastUpdated = dateTimeService.getCurrentSqlDate();
-//			proposal.setLastUpdated(lastUpdated);
-//			businessObjectService.save(sponsor);
+			//			Date lastUpdated = dateTimeService.getCurrentSqlDate();
+			//			proposal.setLastUpdated(lastUpdated);
+			//			businessObjectService.save(sponsor);
 		}
 
 
 		return result;
 	}
 
-	
-	
+
+
 	public boolean updateSponsorsSince(Date date) {
 		boolean result = false;
 		List<Sponsor> sponsors = sponsorDao.getSponsorsUpdatedSince(date);
@@ -222,7 +227,7 @@ public class EzraServiceImpl implements EzraService {
 			Agency oldAgency = agency;
 			if (ObjectUtils.isNull(agency)) {
 				agency = createAgency(sponsorId);
-				
+
 			} else {
 				updateAgency(agency, sponsor);
 			}
@@ -265,9 +270,9 @@ public class EzraServiceImpl implements EzraService {
 		//ext.setAgencyNumber(agency.getAgencyNumber());
 		agency.setExtension(ext);
 		return agency;
-		
+
 	}
-	
+
 	public void updateAgency(Agency agency, Sponsor sponsor) {
 		if (!StringUtils.equals(agency.getReportingName(), sponsor.getSponsorLabel())) {
 			agency.setReportingName(sponsor.getSponsorLabel());
@@ -295,12 +300,12 @@ public class EzraServiceImpl implements EzraService {
 		//ext.setAgencyNumber(agency.getAgencyNumber());
 		ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
 		agency.setExtension(ext);
-//		agency.setActive(true);
+		//		agency.setActive(true);
 		// agency.refreshReferenceObject("extension");
-	//	businessObjectService.save(ext);
-		
+		//	businessObjectService.save(ext);
+
 	}
-	
+
 	private void routeAgencyDocument(Agency agency, Agency oldAgency) {
 		GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
 		// DocumentService docService = SpringContext.getBean(DocumentService.class);
@@ -324,7 +329,7 @@ public class EzraServiceImpl implements EzraService {
 			we.printStackTrace();
 		}
 	}
-	
+
 	private List<ProposalProjectDirector> createProjectDirectors(List<ProjectInvestigator> projInvs) {
 		List<ProposalProjectDirector> projDirs = new ArrayList<ProposalProjectDirector>();
 		for (ProjectInvestigator projectInvestigator : projInvs) {
@@ -342,7 +347,7 @@ public class EzraServiceImpl implements EzraService {
 		}
 		return projDirs;
 	}
-	
+
 	private List<ProposalOrganization> createProposalOrganizations(List<Department> depts) {
 		List<ProposalOrganization> propOrgs = new ArrayList<ProposalOrganization>();
 		for (Department dept : depts) {
