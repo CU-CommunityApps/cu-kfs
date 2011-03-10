@@ -77,7 +77,7 @@ public class EzraServiceImpl implements EzraService {
 				proposal.setProposalProjectDirectors(ppds);
 
 				Map deptFields = new HashMap();
-				deptFields.put("departmentId", ezraProposal.getDepartmentId().toString());
+				deptFields.put("departmentId", ezraProposal.getDepartmentId());
 				List<Department> depts = (List<Department>)businessObjectService.findMatching(Department.class, deptFields);
 
 				List<ProposalOrganization> propOrgs = createProposalOrganizations(depts);
