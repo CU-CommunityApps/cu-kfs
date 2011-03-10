@@ -36,7 +36,7 @@
 	
 		<property name="triggerNames">
 			<list>
-				<value>ezraUpdateBatchJobTrigger</value>
+	<!-- 		<value>ezraUpdateBatchJobTrigger</value>  -->	
 			</list>
 		</property>
 		<!--
