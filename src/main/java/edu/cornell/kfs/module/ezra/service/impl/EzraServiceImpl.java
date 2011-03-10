@@ -15,6 +15,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.kim.service.KIMServiceLocator;
 import org.kuali.rice.kim.service.PersonService;
 import org.kuali.rice.kns.UserSession;
 import org.kuali.rice.kns.document.MaintenanceDocument;
@@ -343,6 +344,7 @@ public class EzraServiceImpl implements EzraService {
 			if (director.getPrincipalName().equals(ep.getProjectDirectorId()))
 				ppd.setProposalPrimaryProjectDirectorIndicator(true);
 			ppd.setActive(true);
+			KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), null, "Contracts & Grants Project Director", null);
 			projDirs.add(ppd);
 		}
 		return projDirs;

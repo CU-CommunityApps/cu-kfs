@@ -1,7 +1,7 @@
 <descriptor-repository version="1.0">
 
 	<class-descriptor class="edu.cornell.kfs.module.ezra.businessobject.ProjectInvestigator" table="INVS_PROJECTS">
-		<field-descriptor name="projInvId" column="INV_PROJECTS_ID" jdbc-type="BIGINT" primarykey="true" index="true" />
+		<field-descriptor name="projInvId" column="INVS_PROJECTS_ID" jdbc-type="BIGINT" primarykey="true" index="true" />
 		<field-descriptor name="projectId" column="PROJ_ID" jdbc-type="VARCHAR" index="true" />
 		<field-descriptor name="awardProposalId" column="AWARD_PROP_ID" jdbc-type="VARCHAR" index="true" />
 		<field-descriptor name="investigatorId" column="INV_ID" jdbc-type="VARCHAR"/>
