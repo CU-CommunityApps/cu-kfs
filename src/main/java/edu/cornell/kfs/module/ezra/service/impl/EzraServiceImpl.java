@@ -153,7 +153,7 @@ public class EzraServiceImpl implements EzraService {
 					proposal.setProposalTotalAmount(ezraProposal.getTotalAmt());
 					changed = true;
 				}
-				if (!StringUtils.equals(proposal.getFederalPassThroughAgencyNumber(), ezraProposal.getFederalPassThroughAgencyNumber().toString())) {
+				if (ezraProposal.getFederalPassThroughAgencyNumber() != null && !StringUtils.equals(proposal.getFederalPassThroughAgencyNumber(), ezraProposal.getFederalPassThroughAgencyNumber().toString())) {
 					proposal.setFederalPassThroughAgencyNumber(ezraProposal.getFederalPassThroughAgencyNumber().toString());
 					changed = true;
 				}
