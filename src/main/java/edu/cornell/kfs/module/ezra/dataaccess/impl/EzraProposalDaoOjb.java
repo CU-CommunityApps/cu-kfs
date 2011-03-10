@@ -16,7 +16,7 @@ public class EzraProposalDaoOjb extends PlatformAwareDaoBaseOjb implements EzraP
 	public List<EzraProposalAward> getProposalsUpdatedSince(Date date) {
 		Criteria criteria = new Criteria();
 		criteria.addLike("awardProposalId", "%A");
-		criteria.addGreaterThan("budgetAmt", '0');
+		criteria.addGreaterThan("budgetAmt", 0);
 		List excludeStatus = new ArrayList();
 		excludeStatus.add("AAC");
 		excludeStatus.add("AC");
