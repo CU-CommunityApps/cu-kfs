@@ -78,12 +78,12 @@
 	<bean id="ezraProposalDao" parent="platformAwareDao" class="edu.cornell.kfs.module.ezra.dataaccess.impl.EzraProposalDaoOjb" />
 
 
-	<bean id="ezraUpdateBatchJobTrigger" parent="cronTrigger">
+	<!--<bean id="ezraUpdateBatchJobTrigger" parent="cronTrigger">
 		<property name="jobName" value="ezraUpdateBatchJob" />
 		<property name="cronExpression" value="0 30 4 * * ?" />
 	</bean>
 	
-	<bean id="agencyStep" class="edu.cornell.kfs.module.ezra.batch.AgencyStep" parent="step">
+	--><bean id="agencyStep" class="edu.cornell.kfs.module.ezra.batch.AgencyStep" parent="step">
 		<property name="ezraService">
 			<ref bean="ezraService" />
 		</property>
@@ -95,10 +95,10 @@
 		</property>
 	</bean>
 	
-	<bean id="ezraUpdateBatchJob" parent="scheduledJobDescriptor">
+	<bean id="ezraUpdateBatchJob" parent="unscheduledJobDescriptor">
 		<property name="steps">
 			<list>
-				<ref bean="agencyStep" />
+				<!-- <ref bean="agencyStep" /> -->
 				<ref bean="proposalStep" />	
 			</list>
 		</property>
