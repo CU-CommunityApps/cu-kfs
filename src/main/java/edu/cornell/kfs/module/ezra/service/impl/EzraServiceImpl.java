@@ -66,7 +66,6 @@ public class EzraServiceImpl implements EzraService {
 				if (ObjectUtils.isNull(agency)) {
 					 agency = createAgency(ezraProposal.getSponsorNumber());
 					 routeAgencyDocument(agency, null);
-
 				}
 				
 				Map projInvFields = new HashMap();
@@ -105,54 +104,79 @@ public class EzraServiceImpl implements EzraService {
 				ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
 				ext.setProposalNumber(proposal.getProposalNumber());
 				proposal.setExtension(ext);
-			} else {
-
-				if (!StringUtils.equals(proposal.getAgencyNumber(), ezraProposal.getSponsorNumber().toString())) {
-					proposal.setAgencyNumber(ezraProposal.getSponsorNumber().toString());
-				}
-				if (!StringUtils.equals(proposal.getCfdaNumber(), ezraProposal.getCfdaNumber())) {
-					//check to see if this is a real cfda 
-
-					proposal.setCfdaNumber(ezraProposal.getCfdaNumber());
-				}
-				if (!StringUtils.equals(proposal.getProposalProjectTitle(), ezraProposal.getProjectTitle())) {
-					proposal.setProposalProjectTitle(ezraProposal.getProjectTitle());
-				}
-				if (!StringUtils.equals(proposal.getGrantNumber(), ezraProposal.getSponsorProjectId())) {
-					proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
-				}
-				if (!StringUtils.equals(proposal.getProposalStatusCode(), ezraProposal.getStatus())) {
-					proposal.setProposalStatusCode(ezraProposal.getStatus());
-				}
-				if (!StringUtils.equals(proposal.getProposalPurposeCode(), ezraProposal.getPurpose())) {
-					proposal.setProposalPurposeCode(ezraProposal.getPurpose());
-				}
-				if (dateTimeService.dateDiff(proposal.getProposalBeginningDate(), ezraProposal.getStartDate(), true) != 0) {
-					proposal.setProposalBeginningDate(ezraProposal.getStartDate());
-				}
-				if (dateTimeService.dateDiff(proposal.getProposalEndingDate(), ezraProposal.getStopDate(), true) != 0) {
-					proposal.setProposalEndingDate(ezraProposal.getStopDate());
-				}
-				if (proposal.getProposalTotalAmount().compareTo(ezraProposal.getTotalAmt()) != 0) {
-					proposal.setProposalTotalAmount(ezraProposal.getTotalAmt());
-				}
-				if (!StringUtils.equals(proposal.getFederalPassThroughAgencyNumber(), ezraProposal.getFederalPassThroughAgencyNumber().toString())) {
-					proposal.setFederalPassThroughAgencyNumber(ezraProposal.getFederalPassThroughAgencyNumber().toString());
-				}
-				if ( !(proposal.getProposalFederalPassThroughIndicator() ^ ezraProposal.getFederalPassThroughBoolean())) {
-					proposal.setProposalFederalPassThroughIndicator(ezraProposal.getFederalPassThroughBoolean());
-				}
-				proposal.setProposalAwardTypeCode("Z");
-
-				proposal.setActive(true);
+			} else if (proposal.getExtension() != null){
 				ProposalExtension ext = (ProposalExtension)proposal.getExtension();
-				if (ext == null) {
-					ext = new ProposalExtension();
+				if ( ezraProposal.getLastUpdated().compareTo(ext.getLastUpdated()) != 0) {
+			
+					boolean changed = false;
+					Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getSponsorNumber().toString());
+					if (ObjectUtils.isNull(agency)) {
+						 agency = createAgency(ezraProposal.getSponsorNumber());
+						 routeAgencyDocument(agency, null);
+					}
+					if (!StringUtils.equals(proposal.getAgencyNumber(), ezraProposal.getSponsorNumber().toString())) {
+						proposal.setAgencyNumber(ezraProposal.getSponsorNumber().toString());
+						changed = true;
+					}
+					if (!StringUtils.equals(proposal.getCfdaNumber(), ezraProposal.getCfdaNumber())) {
+						//check to see if this is a real cfda 
+	
+						proposal.setCfdaNumber(ezraProposal.getCfdaNumber());
+						changed = true;
+					}
+					if (!StringUtils.equals(proposal.getProposalProjectTitle(), ezraProposal.getProjectTitle())) {
+						proposal.setProposalProjectTitle(ezraProposal.getProjectTitle());
+						changed = true;
+					}
+					if (!StringUtils.equals(proposal.getGrantNumber(), ezraProposal.getSponsorProjectId())) {
+						proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
+						changed = true;
+					}
+					if (!StringUtils.equals(proposal.getProposalStatusCode(), ezraProposal.getStatus())) {
+						proposal.setProposalStatusCode(ezraProposal.getStatus());
+						changed = true;
+					}
+					if (!StringUtils.equals(proposal.getProposalPurposeCode(), ezraProposal.getPurpose())) {
+						proposal.setProposalPurposeCode(ezraProposal.getPurpose());
+						changed = true;
+					}
+					if (dateTimeService.dateDiff(proposal.getProposalBeginningDate(), ezraProposal.getStartDate(), true) != 0) {
+						proposal.setProposalBeginningDate(ezraProposal.getStartDate());
+						changed = true;
+					}
+					if (dateTimeService.dateDiff(proposal.getProposalEndingDate(), ezraProposal.getStopDate(), true) != 0) {
+						proposal.setProposalEndingDate(ezraProposal.getStopDate());
+						changed = true;
+					}
+					if (proposal.getProposalTotalAmount().compareTo(ezraProposal.getTotalAmt()) != 0) {
+						proposal.setProposalTotalAmount(ezraProposal.getTotalAmt());
+						changed = true;
+					}
+					if (!StringUtils.equals(proposal.getFederalPassThroughAgencyNumber(), ezraProposal.getFederalPassThroughAgencyNumber().toString())) {
+						proposal.setFederalPassThroughAgencyNumber(ezraProposal.getFederalPassThroughAgencyNumber().toString());
+						changed = true;
+					}
+					if ( !(proposal.getProposalFederalPassThroughIndicator() ^ ezraProposal.getFederalPassThroughBoolean())) {
+						proposal.setProposalFederalPassThroughIndicator(ezraProposal.getFederalPassThroughBoolean());
+						changed = true;
+					} 
+					if (!StringUtils.equals(proposal.getProposalAwardTypeCode(), "Z")) {
+						proposal.setProposalAwardTypeCode("Z");
+						changed = true;
+					}
+	
+					proposal.setActive(true);
+					if (ext == null) {
+						ext = new ProposalExtension();
+					}
+					ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
+					ext.setProposalNumber(proposal.getProposalNumber());
+					proposal.setExtension(ext);
+					if (!changed)
+						continue;
 				}
-				ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
-				ext.setProposalNumber(proposal.getProposalNumber());
-				proposal.setExtension(ext);
-				businessObjectService.save(ext);
+				
+			//	businessObjectService.save(ext);
 			}
 			GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
 			// DocumentService docService = SpringContext.getBean(DocumentService.class);
