@@ -15,7 +15,7 @@ import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
  */
 public class EzraProject extends PersistableBusinessObjectBase {
 
-	private String projectId;
+	private Long projectId;
 	private Long projectDirectorId;
 	private Long projectDepartmentId;
 	private Date lastUpdated;
@@ -24,14 +24,14 @@ public class EzraProject extends PersistableBusinessObjectBase {
 	/**
 	 * @return the projectId
 	 */
-	public String getProjectId() {
+	public Long getProjectId() {
 		return projectId;
 	}
 
 	/**
 	 * @param projectId the projectId to set
 	 */
-	public void setProjectId(String projectId) {
+	public void setProjectId(Long projectId) {
 		this.projectId = projectId;
 	}
 
