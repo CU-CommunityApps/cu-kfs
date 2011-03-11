@@ -34,6 +34,7 @@
       <c:when test="${fn:trim(ConfigProperties.environment) == fn:trim(ConfigProperties.production.environment.code)}" >
       </c:when>
       <c:otherwise> 
+      <c:set var="backdoorDetailType" value="<%=org.kuali.rice.kns.util.KNSConstants.DetailTypes.BACKDOOR_DETAIL_TYPE%>"/>
       <c:if test="${kfunc:getKNSParameterValue(KEWConstants.KEW_NAMESPACE, backdoorDetailType, KEWConstants.SHOW_BACK_DOOR_LOGIN_IND) == 'Y'}">
       <html:form action="/portal.do" method="post" style="margin:0;">
           <input name="backdoorId" type="text" class="searchbox" size="10" title="Enter your backdoor ID here.">
