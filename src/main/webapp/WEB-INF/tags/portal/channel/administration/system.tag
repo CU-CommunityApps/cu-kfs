@@ -28,10 +28,10 @@
 	</ul>
 	<strong>Security</strong>
     <ul class="chan">
-        <li><portal:portalLink displayTitle="true" title="Attribute" url="${ConfigProperties.cynergy.kr.url}/lookup.do?methodToCall=start&businessObjectClassName=com.rsmart.kuali.kfs.sec.businessobject.SecurityAttribute&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
-		<li><portal:portalLink displayTitle="true" title="Definition" url="${ConfigProperties.cynergy.kr.url}/lookup.do?methodToCall=start&businessObjectClassName=com.rsmart.kuali.kfs.sec.businessobject.SecurityDefinition&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
-    	<li><portal:portalLink displayTitle="true" title="Model" url="${ConfigProperties.cynergy.kr.url}/lookup.do?methodToCall=start&businessObjectClassName=com.rsmart.kuali.kfs.sec.businessobject.SecurityModel&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
-	    <li><portal:portalLink displayTitle="true" title="Principal" url="${ConfigProperties.cynergy.kr.url}/lookup.do?methodToCall=start&businessObjectClassName=com.rsmart.kuali.kfs.sec.businessobject.SecurityPrincipal&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
+        <li><portal:portalLink displayTitle="true" title="Attribute" url="${ConfigProperties.kr.url}/lookup.do?methodToCall=start&businessObjectClassName=com.rsmart.kuali.kfs.sec.businessobject.SecurityAttribute&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
+		<li><portal:portalLink displayTitle="true" title="Definition" url="${ConfigProperties.kr.url}/lookup.do?methodToCall=start&businessObjectClassName=com.rsmart.kuali.kfs.sec.businessobject.SecurityDefinition&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
+    	<li><portal:portalLink displayTitle="true" title="Model" url="${ConfigProperties.kr.url}/lookup.do?methodToCall=start&businessObjectClassName=com.rsmart.kuali.kfs.sec.businessobject.SecurityModel&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
+	    <li><portal:portalLink displayTitle="true" title="Principal" url="${ConfigProperties.kr.url}/lookup.do?methodToCall=start&businessObjectClassName=com.rsmart.kuali.kfs.sec.businessobject.SecurityPrincipal&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
 	</ul>	
 	<strong>Locations</strong>
     <ul class="chan">
