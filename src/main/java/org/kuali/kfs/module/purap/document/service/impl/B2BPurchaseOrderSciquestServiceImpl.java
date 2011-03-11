@@ -35,8 +35,10 @@ import org.kuali.kfs.module.purap.util.cxml.B2BParserHelper;
 import org.kuali.kfs.module.purap.util.cxml.PurchaseOrderResponse;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.ContractManager;
+import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kim.service.PersonService;
+import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.ObjectUtils;
@@ -142,6 +144,9 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
      */
     public String getCxml(PurchaseOrderDocument purchaseOrder, String requisitionInitiatorId, String password, ContractManager contractManager, String contractManagerEmail, String vendorDuns) {
 
+        KualiWorkflowDocument workFlowDocument = purchaseOrder.getDocumentHeader().getWorkflowDocument();
+        String documentType = workFlowDocument.getDocumentType();
+    	
         StringBuffer cxml = new StringBuffer();
 
         cxml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -164,10 +169,23 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("    </Authentication>\n");
         cxml.append("  </Header>\n");
         cxml.append("  <PurchaseOrder>\n");
-        cxml.append("    <POHeader>\n");
+        // void = VOPE      ammend = CGIN ?   ammend should =
+        if (purchaseOrder.getStatusCode().equals("VOPE") || documentType.equalsIgnoreCase(PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_VOID_DOCUMENT)) {
+            cxml.append("    <POHeader type=\"cancel\">\n");
+            cxml.append("    <DistributeRevision>false</DistributeRevision>\n");
+        } else if (documentType.equals(PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_AMENDMENT_DOCUMENT)) {
+            cxml.append("    <POHeader type=\"update\">\n");
+            cxml.append("    <DistributeRevision>false</DistributeRevision>\n");
+        } else  {
+            cxml.append("    <POHeader>\n");
+        }
         cxml.append("      <PONumber>").append(purchaseOrder.getPurapDocumentIdentifier()).append("</PONumber>\n");
         cxml.append("      <Requestor>\n");
-        cxml.append("        <UserProfile username=\"").append(requisitionInitiatorId.toUpperCase()).append("\">\n");
+        if(!"B2B".equalsIgnoreCase(purchaseOrder.getRequisitionSource().getRequisitionSourceCode())) {
+        	cxml.append("        <UserProfile username=\"KUALI\">\n");
+        } else {
+        	cxml.append("        <UserProfile username=\"").append(requisitionInitiatorId.toUpperCase()).append("\">\n");
+        }        
         cxml.append("        </UserProfile>\n");
         cxml.append("      </Requestor>\n");
         cxml.append("      <Priority>High</Priority>\n");
@@ -205,10 +223,10 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("          <TemplateName>Bill To</TemplateName>\n");
         cxml.append("          <AddressCode>").append(purchaseOrder.getDeliveryCampusCode()).append("</AddressCode>\n");
         // Contact - There can be 0-5 Contact elements. The label attribute is optional.
-        cxml.append("          <Contact label=\"FirstName\" linenumber=\"1\"><![CDATA[Accounts]]></Contact>\n");
-        cxml.append("          <Contact label=\"LastName\" linenumber=\"2\"><![CDATA[Payable]]></Contact>\n");
-        cxml.append("          <Contact label=\"Company\" linenumber=\"3\"><![CDATA[").append(purchaseOrder.getBillingName().trim()).append("]]></Contact>\n");
-        cxml.append("          <Contact label=\"Phone\" linenumber=\"4\"><![CDATA[").append(purchaseOrder.getBillingPhoneNumber().trim()).append("]]></Contact>\n");
+//        cxml.append("          <Contact label=\"FirstName\" linenumber=\"1\"><![CDATA[Accounts]]></Contact>\n");
+//        cxml.append("          <Contact label=\"LastName\" linenumber=\"2\"><![CDATA[Payable]]></Contact>\n");
+//        cxml.append("          <Contact label=\"Company\" linenumber=\"3\"><![CDATA[").append(purchaseOrder.getBillingName().trim()).append("]]></Contact>\n");
+        cxml.append("          <Contact label=\"Phone\" linenumber=\"1\"><![CDATA[").append(purchaseOrder.getBillingPhoneNumber().trim()).append("]]></Contact>\n");
         // There must be 1-5 AddressLine elements. The label attribute is optional.
         cxml.append("          <AddressLine label=\"Street1\" linenumber=\"1\"><![CDATA[").append(purchaseOrder.getBillingLine1Address()).append("]]></AddressLine>\n");
         cxml.append("          <AddressLine label=\"Street2\" linenumber=\"2\"><![CDATA[").append(purchaseOrder.getBillingLine2Address()).append("]]></AddressLine>\n");
@@ -224,7 +242,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("        <Address>\n");
         cxml.append("          <TemplateName>Ship To</TemplateName>\n");
         // AddressCode. A code to identify the address, that is sent to the supplier.
-        cxml.append("          <AddressCode>").append(purchaseOrder.getDeliveryCampusCode()).append(purchaseOrder.getOrganizationCode()).append("</AddressCode>\n");
+        cxml.append("          <AddressCode>").append(purchaseOrder.getDeliveryBuildingCode()).append("</AddressCode>\n");
         cxml.append("          <Contact label=\"Name\" linenumber=\"1\"><![CDATA[").append(purchaseOrder.getDeliveryToName().trim()).append("]]></Contact>\n");
         cxml.append("          <Contact label=\"PurchasingEmail\" linenumber=\"2\"><![CDATA[").append(contractManagerEmail).append("]]></Contact>\n");
         if (ObjectUtils.isNotNull(purchaseOrder.getInstitutionContactEmailAddress())) {
@@ -257,10 +275,10 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         }
         else { //use final delivery address
             if (StringUtils.isNotEmpty(purchaseOrder.getDeliveryBuildingName())) {
-                cxml.append("          <Contact label=\"Building\" linenumber=\"5\"><![CDATA[").append(purchaseOrder.getDeliveryBuildingName()).append(" (").append(purchaseOrder.getDeliveryBuildingCode()).append(")]]></Contact>\n");
+                cxml.append("          <Contact label=\"Building\" linenumber=\"5\"><![CDATA[").append(purchaseOrder.getDeliveryBuildingName()).append("]]></Contact>\n");
             }
             cxml.append("          <AddressLine label=\"Street1\" linenumber=\"1\"><![CDATA[").append(purchaseOrder.getDeliveryBuildingLine1Address().trim()).append("]]></AddressLine>\n");
-            cxml.append("          <AddressLine label=\"Street2\" linenumber=\"2\"><![CDATA[Room #").append(purchaseOrder.getDeliveryBuildingRoomNumber().trim()).append("]]></AddressLine>\n");
+            cxml.append("          <AddressLine label=\"Street2\" linenumber=\"2\"><![CDATA[Room: ").append(purchaseOrder.getDeliveryBuildingRoomNumber().trim()).append("]]></AddressLine>\n");
             cxml.append("          <AddressLine label=\"Company\" linenumber=\"4\"><![CDATA[").append(purchaseOrder.getBillingName().trim()).append("]]></AddressLine>\n");
             if (ObjectUtils.isNull(purchaseOrder.getDeliveryBuildingLine2Address())) {
                 cxml.append("          <AddressLine label=\"Street3\" linenumber=\"3\"><![CDATA[").append(" ").append("]]></AddressLine>\n");
@@ -276,6 +294,21 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 
         cxml.append("        </Address>\n");
         cxml.append("      </ShipTo>\n");
+        
+        // Get payment terms for the PO
+        PaymentTermType payTerm = SpringContext.getBean(BusinessObjectService.class).findBySinglePrimaryKey(PaymentTermType.class, purchaseOrder.getVendorPaymentTermsCode());
+        
+        cxml.append("      <PaymentInfo>\n");
+        cxml.append("        <Terms>\n");
+        if(payTerm.getVendorDiscountDueNumber() > 0) {
+        	cxml.append("          <Discount>").append(payTerm.getVendorDiscountDueNumber()).append("</Discount>\n");
+        } else if(payTerm.getVendorPaymentTermsPercent().intValue() > 0) {
+        	cxml.append("          <Discount>").append(payTerm.getVendorPaymentTermsPercent()).append("%</Discount>\n");
+        }
+//        cxml.append("          <Days>").append().append("</Days>\n");
+        cxml.append("          <Net>").append(payTerm.getVendorNetDueNumber()).append("</Net>\n");
+        cxml.append("        </Terms>\n");
+        cxml.append("      </PaymentInfo>\n");
         cxml.append("    </POHeader>\n");
 
         /** *** Items Section **** */
