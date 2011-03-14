@@ -64,12 +64,13 @@ public class EzraServiceImpl implements EzraService {
 				proposal = new Proposal();
 				proposal.setProposalNumber(Long.valueOf(proposalId));
 
-				Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getSponsorNumber().toString());
-				if (ObjectUtils.isNull(agency)) {
-					agency = createAgency(ezraProposal.getSponsorNumber());
-					routeAgencyDocument(agency, null);
+				if (ezraProposal.getSponsorNumber() != null) {
+					Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getSponsorNumber().toString());
+					if (ObjectUtils.isNull(agency)) {
+						agency = createAgency(ezraProposal.getSponsorNumber());
+						routeAgencyDocument(agency, null);
+					}
 				}
-
 				Map projInvFields = new HashMap();
 				projInvFields.put("projectId", ezraProposal.getProjectId());
 				projInvFields.put("awardProposalId", ezraProposal.getAwardProposalId());
