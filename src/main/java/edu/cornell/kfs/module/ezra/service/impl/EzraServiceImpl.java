@@ -337,16 +337,18 @@ public class EzraServiceImpl implements EzraService {
 		for (ProjectInvestigator projectInvestigator : projInvs) {
 			ProposalProjectDirector ppd = new ProposalProjectDirector();
 			Investigator investigator = businessObjectService.findBySinglePrimaryKey(Investigator.class, projectInvestigator.getInvestigatorId());
-			PersonService ps = SpringContext.getBean(PersonService.class);
-			Person director = ps.getPersonByPrincipalName(investigator.getNetId());
-			ppd.setPrincipalId(director.getPrincipalId());
-			ppd.setProposalNumber(new Long(projectInvestigator.getAwardProposalId()));
-			EzraProject ep = businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectInvestigator.getProjectId());
-			if (director.getPrincipalName().equals(ep.getProjectDirectorId()))
-				ppd.setProposalPrimaryProjectDirectorIndicator(true);
-			ppd.setActive(true);
-			KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), null, "Contracts & Grants Project Director", null);
-			projDirs.add(ppd);
+			if (investigator !=null) {
+				PersonService ps = SpringContext.getBean(PersonService.class);
+				Person director = ps.getPersonByPrincipalName(investigator.getNetId());
+				ppd.setPrincipalId(director.getPrincipalId());
+				ppd.setProposalNumber(new Long(projectInvestigator.getAwardProposalId()));
+				EzraProject ep = businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectInvestigator.getProjectId());
+				if (director.getPrincipalName().equals(ep.getProjectDirectorId()))
+					ppd.setProposalPrimaryProjectDirectorIndicator(true);
+				ppd.setActive(true);
+				KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), null, "Contracts & Grants Project Director", null);
+				projDirs.add(ppd);
+			}
 		}
 		return projDirs;
 	}
