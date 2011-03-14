@@ -15,7 +15,7 @@ import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
  */
 public class Department extends PersistableBusinessObjectBase {
 
-	private Long departmentId;
+	private String departmentId;
 	private String departmentCode;
 	private Date lastUpdated;
 	
@@ -23,14 +23,14 @@ public class Department extends PersistableBusinessObjectBase {
 	/**
 	 * @return the departmentId
 	 */
-	public Long getDepartmentId() {
+	public String getDepartmentId() {
 		return departmentId;
 	}
 
 	/**
 	 * @param departmentId the departmentId to set
 	 */
-	public void setDepartmentId(Long departmentId) {
+	public void setDepartmentId(String departmentId) {
 		this.departmentId = departmentId;
 	}
 

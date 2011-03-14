@@ -15,21 +15,21 @@ import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
  */
 public class Investigator extends PersistableBusinessObjectBase {
 
-	private Long investigatorId;
+	private String investigatorId;
 	private String netId;
 	private Date lastUpdated;
 	
 	/**
 	 * @return the investigatorId
 	 */
-	public Long getInvestigatorId() {
+	public String getInvestigatorId() {
 		return investigatorId;
 	}
 
 	/**
 	 * @param investigatorId the investigatorId to set
 	 */
-	public void setInvestigatorId(Long investigatorId) {
+	public void setInvestigatorId(String investigatorId) {
 		this.investigatorId = investigatorId;
 	}
 
