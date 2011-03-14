@@ -151,7 +151,7 @@ public class EzraServiceImpl implements EzraService {
 					proposal.setProposalEndingDate(ezraProposal.getStopDate());
 					changed = true;
 				}
-				if (proposal.getProposalTotalAmount().compareTo(ezraProposal.getTotalAmt()) != 0) {
+				if (proposal.getProposalTotalAmount()!= null && proposal.getProposalTotalAmount().compareTo(ezraProposal.getTotalAmt()) != 0) {
 					proposal.setProposalTotalAmount(ezraProposal.getTotalAmt());
 					changed = true;
 				}
