@@ -350,7 +350,7 @@ public class EzraServiceImpl implements EzraService {
 						ppd.setProposalPrimaryProjectDirectorIndicator(true);
 				}
 				ppd.setActive(true);
-				KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), null, "Contracts & Grants Project Director", null);
+				KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", null);
 				projDirs.add(ppd);
 			}
 		}
