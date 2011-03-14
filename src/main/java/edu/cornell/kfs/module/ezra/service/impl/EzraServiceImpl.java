@@ -341,7 +341,7 @@ public class EzraServiceImpl implements EzraService {
 				PersonService ps = SpringContext.getBean(PersonService.class);
 				Person director = ps.getPersonByPrincipalName(investigator.getNetId());
 				ppd.setPrincipalId(director.getPrincipalId());
-				ppd.setProposalNumber(new Long(projectInvestigator.getAwardProposalId()));
+				ppd.setProposalNumber(new Long(projectInvestigator.getProjectId()));
 				EzraProject ep = businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectInvestigator.getProjectId());
 				if (director.getPrincipalName().equals(ep.getProjectDirectorId()))
 					ppd.setProposalPrimaryProjectDirectorIndicator(true);
