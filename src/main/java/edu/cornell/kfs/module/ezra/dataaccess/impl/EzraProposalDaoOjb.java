@@ -22,9 +22,9 @@ public class EzraProposalDaoOjb extends PlatformAwareDaoBaseOjb implements EzraP
 		excludeStatus.add("AC");
 		excludeStatus.add("ACOSP");
 		
-		criteria.addNotIn("status", excludeStatus);
+	//	criteria.addNotIn("status", excludeStatus);
 		if (date != null) {
-			criteria.addLessThan("lastUpdated", date);
+		//	criteria.addLessThan("lastUpdated", date);
 		}
 
         return (List<EzraProposalAward>)getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(EzraProposalAward.class, criteria));
