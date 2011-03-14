@@ -17,7 +17,7 @@
 	<class-descriptor class="edu.cornell.kfs.module.ezra.businessobject.EzraProject" table="PROJECT">
 		<field-descriptor name="projectId" column="PROJ_ID" jdbc-type="VARCHAR" primarykey="true" index="true" />
 		<field-descriptor name="projectDirectorId" column="PROJ_DIRECTOR_ID" jdbc-type="BIGINT" index="true" />
-	    <field-descriptor name="projectDepartmentId" column="PROJ_DEPT_ID" jdbc-type="BIGINT" index="true" />
+	    <field-descriptor name="projectDepartmentId" column="PROJ_DEPT_ID" jdbc-type="VARCHAR" index="true" />
 		<field-descriptor name="lastUpdated" column="UPDATE_DT" jdbc-type="DATE"/>
 	</class-descriptor>
 	
@@ -52,7 +52,7 @@
 		<field-descriptor name="budgetAmt" column="BUDG_TOTAL" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
 		<field-descriptor name="federalPassThrough" column="FED_FLOW_THROUGH" jdbc-type="CHAR"/>
 		<field-descriptor name="federalPassThroughAgencyNumber" column="FLOWTHROUGH_SPONSOR_ID" jdbc-type="BIGINT"/>
-		<field-descriptor name="departmentId" column="DEPT_ID" jdbc-type="BIGINT"/>
+		<field-descriptor name="departmentId" column="DEPT_ID" jdbc-type="VARCHAR"/>
 		<field-descriptor name="lastUpdated" column="UPDATE_DT" jdbc-type="DATE"/>
 	</class-descriptor>
 
