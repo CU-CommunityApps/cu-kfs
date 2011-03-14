@@ -17,7 +17,7 @@ public class EzraProject extends PersistableBusinessObjectBase {
 
 	private String projectId;
 	private Long projectDirectorId;
-	private Long projectDepartmentId;
+	private String projectDepartmentId;
 	private Date lastUpdated;
 	
 	
@@ -53,14 +53,14 @@ public class EzraProject extends PersistableBusinessObjectBase {
 	/**
 	 * @return the projectDepartmentId
 	 */
-	public Long getProjectDepartmentId() {
+	public String getProjectDepartmentId() {
 		return projectDepartmentId;
 	}
 
 	/**
 	 * @param projectDepartmentId the projectDepartmentId to set
 	 */
-	public void setProjectDepartmentId(Long projectDepartmentId) {
+	public void setProjectDepartmentId(String projectDepartmentId) {
 		this.projectDepartmentId = projectDepartmentId;
 	}
 
