@@ -30,7 +30,7 @@ public class EzraProposalAward extends PersistableBusinessObjectBase {
 	private KualiDecimal budgetAmt; //BUDG_TOTAL
 	private String federalPassThrough; //FED_FLOW_THROUGH
 	private Long federalPassThroughAgencyNumber; //FLOWTHROUGH_SPONSOR_ID
-	private Long departmentId; //DEPT_ID
+	private String departmentId; //DEPT_ID
 	private Date lastUpdated;
 	
 	/**
@@ -285,7 +285,7 @@ public class EzraProposalAward extends PersistableBusinessObjectBase {
 	/**
 	 * @return the departmentId
 	 */
-	public Long getDepartmentId() {
+	public String getDepartmentId() {
 		return departmentId;
 	}
 
@@ -293,7 +293,7 @@ public class EzraProposalAward extends PersistableBusinessObjectBase {
 	/**
 	 * @param departmentId the departmentId to set
 	 */
-	public void setDepartmentId(Long departmentId) {
+	public void setDepartmentId(String departmentId) {
 		this.departmentId = departmentId;
 	}
 
