@@ -359,9 +359,13 @@ public class EzraServiceImpl implements EzraService {
 			ProposalOrganization po = new ProposalOrganization();
 			po.setChartOfAccountsCode("IT");
 			po.setOrganizationCode(dept.getDepartmentCode());
-			EzraProject ep = businessObjectService.findBySinglePrimaryKey(EzraProject.class, dept.getDepartmentId());
-			if (dept.getDepartmentCode().equals(ep.getProjectDepartmentId())) 
-				po.setProposalPrimaryOrganizationIndicator(true);
+			Map fieldValues = new HashMap();
+			fieldValues.put("departmentId", dept.getDepartmentId());
+			List<EzraProject> eps = (List<EzraProject>)businessObjectService.findMatching(EzraProject.class, fieldValues);
+			for (EzraProject ep : eps) {
+				if (dept.getDepartmentCode().equals(ep.getProjectDepartmentId())) 
+					po.setProposalPrimaryOrganizationIndicator(true);
+			}
 			po.setActive(true);
 			propOrgs.add(po);
 		}

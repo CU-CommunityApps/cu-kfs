@@ -10,7 +10,7 @@
 	
 	<class-descriptor class="edu.cornell.kfs.module.ezra.businessobject.Investigator" table="INVESTIGATOR">
 		<field-descriptor name="investigatorId" column="INV_ID" jdbc-type="VARCHAR" primarykey="true" index="true" />
-		<field-descriptor name="invNetId" column="INV_NETID" jdbc-type="VARCHAR" index="true" />
+		<field-descriptor name="netId" column="INV_NETID" jdbc-type="VARCHAR" index="true" />
 		<field-descriptor name="lastUpdated" column="UPDATE_DT" jdbc-type="DATE"/>
 	</class-descriptor>
 
