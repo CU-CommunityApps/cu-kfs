@@ -363,7 +363,8 @@ public class EzraServiceImpl implements EzraService {
 		for (Department dept : depts) {
 			ProposalOrganization po = new ProposalOrganization();
 			po.setChartOfAccountsCode("IT");
-			po.setOrganizationCode(dept.getDepartmentCode());
+		//	po.setOrganizationCode(dept.getDepartmentCode());
+			po.setOrganizationCode("3811");
 			Map fieldValues = new HashMap();
 			fieldValues.put("projectDepartmentId", dept.getDepartmentId());
 			List<EzraProject> eps = (List<EzraProject>)businessObjectService.findMatching(EzraProject.class, fieldValues);
