@@ -6,7 +6,9 @@ import java.util.List;
 
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryFactory;
+import org.kuali.kfs.module.cam.util.KualiDecimalUtils;
 import org.kuali.rice.kns.dao.impl.PlatformAwareDaoBaseOjb;
+import org.kuali.rice.kns.util.KualiDecimal;
 
 import edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward;
 import edu.cornell.kfs.module.ezra.dataaccess.EzraProposalDao;
@@ -16,15 +18,15 @@ public class EzraProposalDaoOjb extends PlatformAwareDaoBaseOjb implements EzraP
 	public List<EzraProposalAward> getProposalsUpdatedSince(Date date) {
 		Criteria criteria = new Criteria();
 		criteria.addLike("awardProposalId", "A%");
-		criteria.addGreaterThan("budgetAmt", 0);
+		criteria.addGreaterThan("budgetAmt",KualiDecimal.ZERO);
 		List excludeStatus = new ArrayList();
 		excludeStatus.add("AAC");
 		excludeStatus.add("AC");
 		excludeStatus.add("ACOSP");
 		
-	//	criteria.addNotIn("status", excludeStatus);
+		criteria.addNotIn("status", excludeStatus);
 		if (date != null) {
-		//	criteria.addLessThan("lastUpdated", date);
+			criteria.addLessThan("lastUpdated", date);
 		}
 
         return (List<EzraProposalAward>)getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(EzraProposalAward.class, criteria));
