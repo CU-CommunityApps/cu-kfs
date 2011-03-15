@@ -70,6 +70,8 @@ public class EzraServiceImpl implements EzraService {
 						agency = createAgency(ezraProposal.getSponsorNumber());
 						routeAgencyDocument(agency, null);
 					}
+					proposal.setAgencyNumber(ezraProposal.getSponsorNumber().toString());
+
 				}
 				Map projInvFields = new HashMap();
 				projInvFields.put("projectId", ezraProposal.getProjectId());
@@ -84,8 +86,6 @@ public class EzraServiceImpl implements EzraService {
 
 				List<ProposalOrganization> propOrgs = createProposalOrganizations(depts);
 				proposal.setProposalOrganizations(propOrgs);
-				if (ezraProposal.getSponsorNumber() != null)
-					proposal.setAgencyNumber(ezraProposal.getSponsorNumber().toString());
 				//check to see if this is a real cfda 
 				proposal.setCfdaNumber(ezraProposal.getCfdaNumber());
 				proposal.setProposalProjectTitle(ezraProposal.getProjectTitle());
@@ -109,6 +109,7 @@ public class EzraServiceImpl implements EzraService {
 				ext.setProposalNumber(proposal.getProposalNumber());
 				proposal.setExtension(ext);
 			} else { 
+				System.out.println("Populating Proposal: " +ezraProposal);
 				//if (proposal.getExtension() != null){
 				//ProposalExtension ext = (ProposalExtension)proposal.getExtension();
 				//if ( ezraProposal.getLastUpdated().compareTo(ext.getLastUpdated()) != 0) {
@@ -126,6 +127,25 @@ public class EzraServiceImpl implements EzraService {
 						changed = true;
 					}
 				}
+				
+				
+				
+//				Map projInvFields = new HashMap();
+//				projInvFields.put("projectId", ezraProposal.getProjectId());
+//				projInvFields.put("awardProposalId", ezraProposal.getAwardProposalId());
+//				List<ProjectInvestigator> projInvs = (List<ProjectInvestigator>)businessObjectService.findMatching(ProjectInvestigator.class, projInvFields);
+//				List<ProposalProjectDirector> ppds = createProjectDirectors(projInvs);
+//				
+//				
+//				proposal.setProposalProjectDirectors(ppds);
+//
+//				Map deptFields = new HashMap();
+//				deptFields.put("departmentId", ezraProposal.getDepartmentId());
+//				List<Department> depts = (List<Department>)businessObjectService.findMatching(Department.class, deptFields);
+//
+//				List<ProposalOrganization> propOrgs = createProposalOrganizations(depts);
+//				proposal.setProposalOrganizations(propOrgs);
+				
 				if (!StringUtils.equals(proposal.getCfdaNumber(), ezraProposal.getCfdaNumber())) {
 					//check to see if this is a real cfda 
 
@@ -342,7 +362,7 @@ public class EzraServiceImpl implements EzraService {
 		for (ProjectInvestigator projectInvestigator : projInvs) {
 			ProposalProjectDirector ppd = new ProposalProjectDirector();
 			Investigator investigator = businessObjectService.findBySinglePrimaryKey(Investigator.class, projectInvestigator.getInvestigatorId());
-			if (investigator !=null) {
+			if (investigator != null) {
 				PersonService ps = SpringContext.getBean(PersonService.class);
 				Person director = ps.getPersonByPrincipalName(investigator.getNetId());
 				ppd.setPrincipalId(director.getPrincipalId());
@@ -357,6 +377,8 @@ public class EzraServiceImpl implements EzraService {
 				ppd.setActive(true);
 				KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new AttributeSet());
 				projDirs.add(ppd);
+			} else {
+				System.out.println("Null investigator: "+ projectInvestigator.getInvestigatorId());
 			}
 		}
 		return projDirs;
@@ -373,6 +395,7 @@ public class EzraServiceImpl implements EzraService {
 			fieldValues.put("projectDepartmentId", dept.getDepartmentId());
 			List<EzraProject> eps = (List<EzraProject>)businessObjectService.findMatching(EzraProject.class, fieldValues);
 			for (EzraProject ep : eps) {
+				System.out.println("DEPT: "+ dept.getDepartmentCode() + " PRJ_DEPT: "+ep.getProjectDepartmentId() );
 				if (dept.getDepartmentCode().equals(ep.getProjectDepartmentId())) 
 					po.setProposalPrimaryOrganizationIndicator(true);
 			}
