@@ -309,6 +309,13 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("          <Net>").append(payTerm.getVendorNetDueNumber()).append("</Net>\n");
         cxml.append("        </Terms>\n");
         cxml.append("      </PaymentInfo>\n");
+        
+        cxml.append("      <CustomFieldValueSet name=\"InitiatorName\">\n");
+        cxml.append("        <CustomFieldValue>\n");
+        cxml.append("          <Value><![CDATA[").append(requisitionInitiatorId.toUpperCase()).append("]]></Value>\n");
+        cxml.append("         </CustomFieldValue>\n");
+        cxml.append("      </CustomFieldValueSet>\n");
+        
         cxml.append("    </POHeader>\n");
 
         /** *** Items Section **** */
