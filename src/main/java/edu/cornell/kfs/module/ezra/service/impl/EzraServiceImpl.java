@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.gl.batch.service.impl.ScrubberProcessImpl;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.businessobject.ProposalOrganization;
@@ -42,6 +43,9 @@ import edu.cornell.kfs.module.ezra.util.EzraUtils;
 
 public class EzraServiceImpl implements EzraService {
 
+    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(EzraServiceImpl.class);
+
+	
 	private BusinessObjectService businessObjectService;
 	private DocumentService documentService;
 	private SponsorDao sponsorDao;
@@ -109,7 +113,7 @@ public class EzraServiceImpl implements EzraService {
 				ext.setProposalNumber(proposal.getProposalNumber());
 				proposal.setExtension(ext);
 			} else { 
-				System.out.println("Populating Proposal: " +ezraProposal);
+			LOG.info("Populating Proposal: " +ezraProposal);
 				//if (proposal.getExtension() != null){
 				//ProposalExtension ext = (ProposalExtension)proposal.getExtension();
 				//if ( ezraProposal.getLastUpdated().compareTo(ext.getLastUpdated()) != 0) {
@@ -378,7 +382,7 @@ public class EzraServiceImpl implements EzraService {
 				KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new AttributeSet());
 				projDirs.add(ppd);
 			} else {
-				System.out.println("Null investigator: "+ projectInvestigator.getInvestigatorId());
+				LOG.info("Null investigator: "+ projectInvestigator.getInvestigatorId());
 			}
 		}
 		return projDirs;
@@ -395,7 +399,7 @@ public class EzraServiceImpl implements EzraService {
 			fieldValues.put("projectDepartmentId", dept.getDepartmentId());
 			List<EzraProject> eps = (List<EzraProject>)businessObjectService.findMatching(EzraProject.class, fieldValues);
 			for (EzraProject ep : eps) {
-				System.out.println("DEPT: "+ dept.getDepartmentCode() + " PRJ_DEPT: "+ep.getProjectDepartmentId() );
+				LOG.info("DEPT: "+ dept.getDepartmentCode() + " PRJ_DEPT: "+ep.getProjectDepartmentId() );
 				if (dept.getDepartmentCode().equals(ep.getProjectDepartmentId())) 
 					po.setProposalPrimaryOrganizationIndicator(true);
 			}
