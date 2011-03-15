@@ -114,14 +114,17 @@ public class EzraServiceImpl implements EzraService {
 				//if ( ezraProposal.getLastUpdated().compareTo(ext.getLastUpdated()) != 0) {
 
 				boolean changed = false;
-				Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getSponsorNumber().toString());
-				if (ObjectUtils.isNull(agency)) {
-					agency = createAgency(ezraProposal.getSponsorNumber());
-					routeAgencyDocument(agency, null);
-				}
-				if (!StringUtils.equals(proposal.getAgencyNumber(), ezraProposal.getSponsorNumber().toString())) {
-					proposal.setAgencyNumber(ezraProposal.getSponsorNumber().toString());
-					changed = true;
+				if (ezraProposal.getSponsorNumber() != null) {
+					Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getSponsorNumber().toString());
+					if (ObjectUtils.isNull(agency)) {
+						agency = createAgency(ezraProposal.getSponsorNumber());
+						routeAgencyDocument(agency, null);
+					}
+				
+					if (!StringUtils.equals(proposal.getAgencyNumber(), ezraProposal.getSponsorNumber().toString())) {
+						proposal.setAgencyNumber(ezraProposal.getSponsorNumber().toString());
+						changed = true;
+					}
 				}
 				if (!StringUtils.equals(proposal.getCfdaNumber(), ezraProposal.getCfdaNumber())) {
 					//check to see if this is a real cfda 
