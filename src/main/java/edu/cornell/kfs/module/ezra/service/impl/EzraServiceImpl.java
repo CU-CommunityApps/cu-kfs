@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.gl.batch.service.impl.ScrubberProcessImpl;
+import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.businessobject.ProposalOrganization;
@@ -85,8 +85,8 @@ public class EzraServiceImpl implements EzraService {
 				proposal.setProposalProjectDirectors(ppds);
 
 				Map deptFields = new HashMap();
-				deptFields.put("departmentId", ezraProposal.getDepartmentId());
-				List<Department> depts = (List<Department>)businessObjectService.findMatching(Department.class, deptFields);
+				deptFields.put("organizationCode", ezraProposal.getDepartmentId());
+				List<Organization> depts = (List<Organization>)businessObjectService.findMatching(Organization.class, deptFields);
 
 				List<ProposalOrganization> propOrgs = createProposalOrganizations(depts);
 				proposal.setProposalOrganizations(propOrgs);
@@ -388,19 +388,19 @@ public class EzraServiceImpl implements EzraService {
 		return projDirs;
 	}
 
-	private List<ProposalOrganization> createProposalOrganizations(List<Department> depts) {
+	private List<ProposalOrganization> createProposalOrganizations(List<Organization> orgs) {
 		List<ProposalOrganization> propOrgs = new ArrayList<ProposalOrganization>();
-		for (Department dept : depts) {
+		for (Organization org : orgs) {
 			ProposalOrganization po = new ProposalOrganization();
 			po.setChartOfAccountsCode("IT");
-		//	po.setOrganizationCode(dept.getDepartmentCode());
-			po.setOrganizationCode("3811");
+			po.setOrganizationCode(org.getOrganizationCode());
+			//po.setOrganizationCode("3811");
 			Map fieldValues = new HashMap();
-			fieldValues.put("projectDepartmentId", dept.getDepartmentId());
+			fieldValues.put("projectDepartmentId", org.getOrganizationCode());
 			List<EzraProject> eps = (List<EzraProject>)businessObjectService.findMatching(EzraProject.class, fieldValues);
 			for (EzraProject ep : eps) {
-				LOG.info("DEPT: "+ dept.getDepartmentCode() + " PRJ_DEPT: "+ep.getProjectDepartmentId() );
-				if (dept.getDepartmentCode().equals(ep.getProjectDepartmentId())) 
+				LOG.info("ORG: "+ org.getOrganizationCode() + " PRJ_DEPT: "+ep.getProjectDepartmentId() );
+				if (org.getOrganizationCode().equals(ep.getProjectDepartmentId())) 
 					po.setProposalPrimaryOrganizationIndicator(true);
 			}
 			po.setActive(true);
