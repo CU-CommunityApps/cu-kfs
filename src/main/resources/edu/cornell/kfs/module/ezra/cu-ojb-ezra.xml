@@ -20,12 +20,6 @@
 	    <field-descriptor name="projectDepartmentId" column="PROJ_DEPT_ID" jdbc-type="VARCHAR" index="true" />
 		<field-descriptor name="lastUpdated" column="UPDATE_DT" jdbc-type="DATE"/>
 	</class-descriptor>
-	
-	<class-descriptor class="edu.cornell.kfs.module.ezra.businessobject.Department" table="DEPT">
-		<field-descriptor name="departmentId" column="DEPT_ID" jdbc-type="VARCHAR" primarykey="true" index="true" />
-		<field-descriptor name="departmentCode" column="DEPT_CD" jdbc-type="VARCHAR" index="true" />
-		<field-descriptor name="lastUpdated" column="UPDATE_DT" jdbc-type="DATE"/>
-	</class-descriptor>
 
 	<class-descriptor class="edu.cornell.kfs.module.ezra.businessobject.Sponsor" table="SPONSOR">
 		<field-descriptor name="sponsorId" column="SPONSOR_ID" jdbc-type="BIGINT" primarykey="true" index="true" />

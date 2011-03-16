@@ -30,7 +30,6 @@ import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.module.cg.businessobject.AgencyExtension;
 import edu.cornell.kfs.module.cg.businessobject.ProposalExtension;
-import edu.cornell.kfs.module.ezra.businessobject.Department;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProject;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward;
 import edu.cornell.kfs.module.ezra.businessobject.Investigator;
