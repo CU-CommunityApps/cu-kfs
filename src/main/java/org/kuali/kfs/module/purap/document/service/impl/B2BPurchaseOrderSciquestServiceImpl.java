@@ -312,7 +312,11 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         
         cxml.append("      <CustomFieldValueSet label=\"Contact Name\" name=\"InitiatorName\">\n");
         cxml.append("        <CustomFieldValue>\n");
-        cxml.append("          <Value><![CDATA[").append(requisitionInitiatorId.toUpperCase()).append("]]></Value>\n");
+        if (ObjectUtils.isNotNull(purchaseOrder.getInstitutionContactName())) {
+        	cxml.append("          <Value><![CDATA[").append(purchaseOrder.getInstitutionContactName()).append("]]></Value>\n");
+        } else {
+            cxml.append("          <Value><![CDATA[").append(purchaseOrder.getRequestorPersonName()).append("]]></Value>\n");
+        }
         cxml.append("         </CustomFieldValue>\n");
         cxml.append("      </CustomFieldValueSet>\n");
         
