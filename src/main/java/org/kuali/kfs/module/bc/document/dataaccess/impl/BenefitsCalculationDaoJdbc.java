@@ -226,11 +226,15 @@ public class BenefitsCalculationDaoJdbc extends BudgetConstructionDaoJdbcBase im
         sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.FIN_COA_CD = ?)\n");
         sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.ACCOUNT_NBR = ?)\n");
         sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.SUB_ACCT_NBR = ?)\n");
-        sqlBuilder.append("  AND (EXISTS (SELECT 1 FROM LD_BENEFITS_CALC_T\n");
+        sqlBuilder.append("  AND (EXISTS (SELECT 1 FROM LD_BENEFITS_CALC_T, LD_BENEFITS_CALC_TX\n");
         sqlBuilder.append("               WHERE (LD_BENEFITS_CALC_T.UNIV_FISCAL_YR = LD_PND_BCNSTR_GL_T.UNIV_FISCAL_YR)\n");
         sqlBuilder.append("                 AND (LD_BENEFITS_CALC_T.FIN_COA_CD = LD_PND_BCNSTR_GL_T.FIN_COA_CD)\n");
-        sqlBuilder.append("                 AND (LD_BENEFITS_CALC_T.LBR_BEN_RT_CAT_CD = ?)\n");
+       // sqlBuilder.append("                 AND (LD_BENEFITS_CALC_T.LBR_BEN_RT_CAT_CD = ?)\n");
         sqlBuilder.append("                 AND (LD_BENEFITS_CALC_T.POS_FRNGBEN_OBJ_CD = LD_PND_BCNSTR_GL_T.FIN_OBJECT_CD)))");
+        sqlBuilder.append("               	AND (LD_BENEFITS_CALC_TX.UNIV_FISCAL_YR = LD_PND_BCNSTR_GL_T.UNIV_FISCAL_YR)\n");
+        sqlBuilder.append("                 AND (LD_BENEFITS_CALC_TX.FIN_COA_CD = LD_PND_BCNSTR_GL_T.FIN_COA_CD)\n");
+        sqlBuilder.append("                 AND (LD_BENEFITS_CALC_TX.LBR_BEN_RT_CAT_CD = ?)\n");
+        
         sqlAnnualSteps.add(new SQLForStep(sqlBuilder));
         sqlBuilder.delete(0, sqlBuilder.length());
         /**
@@ -241,7 +245,8 @@ public class BenefitsCalculationDaoJdbc extends BudgetConstructionDaoJdbcBase im
         sqlBuilder.append(" ROUND(SUM(LD_PND_BCNSTR_GL_T.ACLN_ANNL_BAL_AMT * (LD_BENEFITS_CALC_T.POS_FRNG_BENE_PCT/100.0)),0)\n ");
         sqlBuilder.append(" FROM LD_PND_BCNSTR_GL_T,\n");
         sqlBuilder.append("      LD_LBR_OBJ_BENE_T,\n");
-        sqlBuilder.append("      LD_BENEFITS_CALC_T\n");
+        sqlBuilder.append("      LD_BENEFITS_CALC_T,\n");
+        sqlBuilder.append("      LD_BENEFITS_CALC_TX\n");
         sqlBuilder.append(" WHERE (LD_PND_BCNSTR_GL_T.FDOC_NBR = ?)\n");
         sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.UNIV_FISCAL_YR = ?)\n");
         sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.FIN_COA_CD = ?)\n");
@@ -253,7 +258,9 @@ public class BenefitsCalculationDaoJdbc extends BudgetConstructionDaoJdbcBase im
         sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.fin_object_cd = LD_LBR_OBJ_BENE_T.fin_object_cd)\n");
         sqlBuilder.append("   AND (LD_LBR_OBJ_BENE_T.univ_fiscal_yr = LD_BENEFITS_CALC_T.univ_fiscal_yr)\n");
         sqlBuilder.append("   AND (LD_LBR_OBJ_BENE_T.fin_coa_cd = LD_BENEFITS_CALC_T.fin_coa_cd)\n");
-        sqlBuilder.append("   AND (LD_BENEFITS_CALC_T.LBR_BEN_RT_CAT_CD = ?)\n");
+        sqlBuilder.append("   AND (LD_LBR_OBJ_BENE_T.univ_fiscal_yr = LD_BENEFITS_CALC_TX.univ_fiscal_yr)\n");
+        sqlBuilder.append("   AND (LD_LBR_OBJ_BENE_T.fin_coa_cd = LD_BENEFITS_CALC_TX.fin_coa_cd)\n");
+        sqlBuilder.append("   AND (LD_BENEFITS_CALC_TX.LBR_BEN_RT_CAT_CD = ?)\n");
         sqlBuilder.append("   AND (LD_LBR_OBJ_BENE_T.finobj_bene_typ_cd = LD_BENEFITS_CALC_T.pos_benefit_typ_cd)\n");
         sqlBuilder.append(" GROUP BY LD_BENEFITS_CALC_T.pos_frngben_obj_cd)");
         sqlAnnualSteps.add(new SQLForStep(sqlBuilder));
