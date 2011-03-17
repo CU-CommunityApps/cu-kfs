@@ -23,6 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.gl.service.SufficientFundsService;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
@@ -36,7 +38,10 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
+import org.kuali.kfs.sys.businessobject.SufficientFundsItem;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.service.UniversityDateService;
+import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO;
 import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kim.bo.Person;
@@ -51,7 +56,7 @@ import org.kuali.rice.kns.util.ObjectUtils;
 public class PurchaseOrderAmendmentDocument extends PurchaseOrderDocument {
     protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PurchaseOrderAmendmentDocument.class);
 
-    boolean newUnorderedItem; //Used for routing
+    boolean newUnorderedItem = false; //Used for routing
     String receivingDeliveryCampusCode; //Used for routing
     
     /**
@@ -153,7 +158,7 @@ public class PurchaseOrderAmendmentDocument extends PurchaseOrderDocument {
    }
 
     public boolean isNewUnorderedItem() {
-        return newUnorderedItem;
+    	return newUnorderedItem;
     }
     
     public void setNewUnorderedItem(boolean newUnorderedItem) {
@@ -179,6 +184,9 @@ public class PurchaseOrderAmendmentDocument extends PurchaseOrderDocument {
         if (nodeName.equals(PurapWorkflowConstants.AMOUNT_REQUIRES_SEPARATION_OF_DUTIES_REVIEW_SPLIT)) return isSeparationOfDutiesReviewRequired();
         if (nodeName.equals(PurapWorkflowConstants.AWARD_REVIEW_REQUIRED)) return isAwardReviewRequired();
         if (nodeName.equals(PurapWorkflowConstants.HAS_NEW_UNORDERED_ITEMS)) return isNewUnorderedItem();
+        if (nodeName.equals(PurapWorkflowConstants.CONTRACT_MANAGEMENT_REVIEW_REQUIRED )) return isContractManagementReviewRequired();
+        if (nodeName.equals(PurapWorkflowConstants.BUDGET_REVIEW_REQUIRED )) return isContractManagementReviewRequired();
+        if (nodeName.equals(PurapWorkflowConstants.VENDOR_IS_EMPLOYEE_OR_NON_RESIDENT_ALIEN)) return isVendorEmployeeOrNonResidentAlien();
         throw new UnsupportedOperationException("Cannot answer split question for this node you call \""+nodeName+"\"");
     } 
 
@@ -193,6 +201,13 @@ public class PurchaseOrderAmendmentDocument extends PurchaseOrderDocument {
         return false;
     }
 
+    protected boolean isContractManagementReviewRequired() {
+        KualiDecimal internalPurchasingLimit = SpringContext.getBean(PurchaseOrderService.class).getInternalPurchasingDollarLimit(this);
+        return ((ObjectUtils.isNull(internalPurchasingLimit)) || (internalPurchasingLimit.compareTo(this.getTotalDollarAmount()) < 0));
+
+    }
+
+    
     protected boolean isSeparationOfDutiesReviewRequired() {
         try {
             Set<Person> priorApprovers = getDocumentHeader().getWorkflowDocument().getAllPriorApprovers();
@@ -216,5 +231,46 @@ public class PurchaseOrderAmendmentDocument extends PurchaseOrderDocument {
         }
     }
 
-    
+    protected boolean isBudgetReviewRequired() {
+        boolean alwaysRoutes = true;
+        String documentHeaderId = null;
+        String currentXpathExpression = null;
+        String documentFiscalYearString = this.getPostingYear().toString();
+
+        // if document's fiscal year is less than or equal to the current fiscal year
+        if (SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear().compareTo(Integer.valueOf(documentFiscalYearString)) >= 0) {
+            // get list of sufficientfundItems
+            List<SufficientFundsItem> fundsItems = SpringContext.getBean(SufficientFundsService.class).checkSufficientFunds(getPendingLedgerEntriesForSufficientFundsChecking());
+                for (SufficientFundsItem fundsItem : fundsItems) {
+                    if (this.getChartOfAccountsCode().equalsIgnoreCase(fundsItem.getAccount().getChartOfAccountsCode())) {
+                    LOG.debug("Chart code of rule extension matches chart code of at least one Sufficient Funds Item");
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    protected boolean isVendorEmployeeOrNonResidentAlien() {
+    	Integer vendorHeaderGeneratedIdentifier = this.getVendorHeaderGeneratedIdentifier();
+    	if (vendorHeaderGeneratedIdentifier!=null) {
+	    	String vendorHeaderGeneratedId = this.getVendorHeaderGeneratedIdentifier().toString();
+	        if (StringUtils.isBlank(vendorHeaderGeneratedId)) {
+	            // no vendor header id so can't check for proper tax routing
+	            return false;
+	        }
+	        VendorService vendorService = SpringContext.getBean(VendorService.class);
+	        boolean routeDocumentAsEmployeeVendor = vendorService.isVendorInstitutionEmployee(Integer.valueOf(vendorHeaderGeneratedId));
+	        boolean routeDocumentAsForeignVendor = vendorService.isVendorForeign(Integer.valueOf(vendorHeaderGeneratedId));
+	        if ((!routeDocumentAsEmployeeVendor) && (!routeDocumentAsForeignVendor)) {
+	            // no need to route
+	            return false;
+	        }
+	
+	        return true;
+    	}
+    	return false;
+    }
+
 }
