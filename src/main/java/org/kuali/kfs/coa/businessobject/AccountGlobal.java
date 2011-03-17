@@ -85,6 +85,10 @@ public class AccountGlobal extends PersistableBusinessObjectBase implements Glob
     private PostalCode postalZipCode;
     private SufficientFundsCode sufficientFundsCode;
     
+    //added for the employee labor benefit calculation
+    private String laborBenefitRateCategoryCode;
+    private LaborBenefitRateCategory laborBenefitRateCategory;
+
     /**
      * Default constructor.
      */
@@ -212,7 +216,7 @@ public class AccountGlobal extends PersistableBusinessObjectBase implements Glob
                 }
                 
                 // LABOR BENEFIT RATE CATEGORY CODE 
-                String laborBenefitRateCategoryCode = ((AccountGlobalExtendedAttribute)extension).getLaborBenefitRateCategory().getLaborBenefitRateCategoryCode();
+               // String laborBenefitRateCategoryCode = getLaborBenefitRateCategoryCode();
                 if (StringUtils.isNotBlank(laborBenefitRateCategoryCode)){
                     ((AccountExtendedAttribute)account.getExtension()).setLaborBenefitRateCategoryCode(laborBenefitRateCategoryCode);
                 }
@@ -940,5 +944,35 @@ public class AccountGlobal extends PersistableBusinessObjectBase implements Glob
         return managedLists;
     }
 
-   
+    /**
+     * Gets the laborBenefitRateCategoryCode attribute. 
+     * @return Returns the laborBenefitRateCategoryCode.
+     */
+    public String getLaborBenefitRateCategoryCode() {
+        return laborBenefitRateCategoryCode;
+    }
+
+    /**
+     * Sets the laborBenefitRateCategoryCode attribute value.
+     * @param laborBenefitRateCategoryCode The laborBenefitRateCategoryCode to set.
+     */
+    public void setLaborBenefitRateCategoryCode(String laborBenefitRateCategoryCode) {
+        this.laborBenefitRateCategoryCode = laborBenefitRateCategoryCode;
+    }
+
+    /**
+     * Gets the laborBenefitRateCategory attribute. 
+     * @return Returns the laborBenefitRateCategory.
+     */
+    public LaborBenefitRateCategory getLaborBenefitRateCategory() {
+        return laborBenefitRateCategory;
+    }
+
+    /**
+     * Sets the laborBenefitRateCategory attribute value.
+     * @param laborBenefitRateCategory The laborBenefitRateCategory to set.
+     */
+    public void setLaborBenefitRateCategory(LaborBenefitRateCategory laborBenefitRateCategory) {
+        this.laborBenefitRateCategory = laborBenefitRateCategory;
+    }
 }
