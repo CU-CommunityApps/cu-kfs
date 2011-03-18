@@ -34,8 +34,11 @@ import org.kuali.kfs.module.purap.util.PurApDateFormatUtils;
 import org.kuali.kfs.module.purap.util.cxml.B2BParserHelper;
 import org.kuali.kfs.module.purap.util.cxml.PurchaseOrderResponse;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.ContractManager;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
+import org.kuali.kfs.vnd.businessobject.VendorAddress;
+import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kim.service.PersonService;
 import org.kuali.rice.kns.service.BusinessObjectService;
@@ -264,7 +267,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
             cxml.append("      </Supplier>\n");
 
             /** *** DISTRIBUTION SECTION *** */
-            VendorAddress vendorAddress = vendorService.getVendorDefaultAddress(purchaseOrder.getVendorDetail().getVendorAddresses(), VendorConstants.AddressTypes.PURCHASE_ORDER, purchaseOrder.getDeliveryCampusCode());
+            VendorAddress vendorAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(purchaseOrder.getVendorDetail().getVendorAddresses(), VendorConstants.AddressTypes.PURCHASE_ORDER, purchaseOrder.getDeliveryCampusCode());
             cxml.append("      <OrderDistribution>\n");
 
             // first take fax from PO, if empty then get fax number for PO default vendor address
