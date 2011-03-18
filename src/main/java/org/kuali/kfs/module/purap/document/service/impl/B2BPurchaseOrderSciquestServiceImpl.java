@@ -191,31 +191,116 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("      <Priority>High</Priority>\n");
         cxml.append("      <AccountingDate>").append(purchaseOrder.getPurchaseOrderCreateTimestamp()).append("</AccountingDate>\n");
 
-        /** *** SUPPLIER SECTION **** */
-        cxml.append("      <Supplier>\n");
-        cxml.append("        <DUNS>").append(vendorDuns).append("</DUNS>\n");
-        cxml.append("        <SupplierNumber>").append(purchaseOrder.getVendorNumber()).append("</SupplierNumber>\n");
+        if (PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
+	        /** *** SUPPLIER SECTION **** */
+	        cxml.append("      <Supplier>\n");
+	        cxml.append("        <DUNS>").append(vendorDuns).append("</DUNS>\n");
+	        cxml.append("        <SupplierNumber>").append(purchaseOrder.getVendorNumber()).append("</SupplierNumber>\n");
+	
+	        // Type attribute is required. Valid values: main and technical. Only main will be considered for POImport.
+	        cxml.append("        <ContactInfo type=\"main\">\n");
+	        // TelephoneNumber is required. With all fields, only numeric digits will be stored. Non-numeric characters are allowed, but
+	        // will be stripped before storing.
+	        cxml.append("          <Phone>\n");
+	        cxml.append("            <TelephoneNumber>\n");
+	        cxml.append("              <CountryCode>1</CountryCode>\n");
+	        if (contractManager.getContractManagerPhoneNumber().length() > 4) {
+	            cxml.append("              <AreaCode>").append(contractManager.getContractManagerPhoneNumber().substring(0, 3)).append("</AreaCode>\n");
+	            cxml.append("              <Number>").append(contractManager.getContractManagerPhoneNumber().substring(3)).append("</Number>\n");
+	        }
+	        else {
+	            LOG.error("getCxml() The phone number is invalid for this contract manager: " + contractManager.getContractManagerUserIdentifier() + " " + contractManager.getContractManagerName());
+	            cxml.append("              <AreaCode>555</AreaCode>\n");
+	            cxml.append("              <Number>").append(contractManager.getContractManagerPhoneNumber()).append("</Number>\n");
+	        }
+	        cxml.append("            </TelephoneNumber>\n");
+	        cxml.append("          </Phone>\n");
+	        cxml.append("        </ContactInfo>\n");
+	        cxml.append("      </Supplier>\n");
+        } else {
 
-        // Type attribute is required. Valid values: main and technical. Only main will be considered for POImport.
-        cxml.append("        <ContactInfo type=\"main\">\n");
-        // TelephoneNumber is required. With all fields, only numeric digits will be stored. Non-numeric characters are allowed, but
-        // will be stripped before storing.
-        cxml.append("          <Phone>\n");
-        cxml.append("            <TelephoneNumber>\n");
-        cxml.append("              <CountryCode>1</CountryCode>\n");
-        if (contractManager.getContractManagerPhoneNumber().length() > 4) {
-            cxml.append("              <AreaCode>").append(contractManager.getContractManagerPhoneNumber().substring(0, 3)).append("</AreaCode>\n");
-            cxml.append("              <Number>").append(contractManager.getContractManagerPhoneNumber().substring(3)).append("</Number>\n");
+            /** *** SUPPLIER SECTION **** */
+            cxml.append("      <Supplier>\n");
+            cxml.append("        <Name><![CDATA[").append(purchaseOrder.getVendorName()).append("]]></Name>\n");
+
+            // Type attribute is required. Valid values: main and technical. Only main will be considered for POImport.
+            cxml.append("        <ContactInfo type=\"main\">\n");
+            // TelephoneNumber is required. With all fields, only numeric digits will be stored. Non-numeric characters are allowed, but
+            // will be stripped before storing.
+            cxml.append("          <Phone>\n");
+            cxml.append("            <TelephoneNumber>\n");
+            cxml.append("              <CountryCode>1</CountryCode>\n");
+            if (StringUtils.isNotEmpty(purchaseOrder.getVendorPhoneNumber()) && purchaseOrder.getVendorPhoneNumber().length() > 4) {
+                cxml.append("              <AreaCode>").append(purchaseOrder.getVendorPhoneNumber().substring(0, 3)).append("</AreaCode>\n");
+                cxml.append("              <Number>").append(purchaseOrder.getVendorPhoneNumber().substring(3)).append("</Number>\n");
+            } else {
+
+                cxml.append("              <AreaCode>000</AreaCode>\n");
+                cxml.append("              <Number>-000-0000</Number>\n");
+            }
+
+            cxml.append("            </TelephoneNumber>\n");
+            cxml.append("          </Phone>\n");
+
+            cxml.append("          <ContactAddress>\n");
+            if (StringUtils.isNotEmpty(purchaseOrder.getVendorLine1Address())) {
+                cxml.append("          <AddressLine label=\"Street1\" linenumber=\"1\"><![CDATA[").append(purchaseOrder.getVendorLine1Address()).append("]]></AddressLine>\n");
+            }
+            if (StringUtils.isNotEmpty(purchaseOrder.getVendorLine2Address())) {
+                cxml.append("          <AddressLine label=\"Street2\" linenumber=\"2\"><![CDATA[").append(purchaseOrder.getVendorLine2Address()).append("]]></AddressLine>\n");
+            }
+            if (StringUtils.isNotEmpty(purchaseOrder.getVendorStateCode())) {
+                cxml.append("          <State>").append(purchaseOrder.getBillingStateCode()).append("</State>\n");
+            }
+            if (StringUtils.isNotEmpty(purchaseOrder.getVendorPostalCode())) {
+                cxml.append("          <PostalCode>").append(purchaseOrder.getBillingPostalCode()).append("</PostalCode>\n");
+            }
+            if (StringUtils.isNotEmpty(purchaseOrder.getVendorCountryCode())) {
+                cxml.append("          <Country isocountrycode=\"").append(purchaseOrder.getBillingCountryCode()).append("\">").append(purchaseOrder.getBillingCountryCode()).append("</Country>\n");
+            }
+            cxml.append("          </ContactAddress>\n");
+
+            cxml.append("        </ContactInfo>\n");
+            cxml.append("      </Supplier>\n");
+
+            /** *** DISTRIBUTION SECTION *** */
+            VendorAddress vendorAddress = vendorService.getVendorDefaultAddress(purchaseOrder.getVendorDetail().getVendorAddresses(), VendorConstants.AddressTypes.PURCHASE_ORDER, purchaseOrder.getDeliveryCampusCode());
+            cxml.append("      <OrderDistribution>\n");
+
+            // first take fax from PO, if empty then get fax number for PO default vendor address
+            String vendorFaxNumber = purchaseOrder.getVendorFaxNumber();
+            if (StringUtils.isBlank(vendorFaxNumber) && vendorAddress != null) {
+                vendorFaxNumber = vendorAddress.getVendorFaxNumber();
+            }
+
+            String emailAddress = "";
+            if (vendorAddress != null) {
+                emailAddress = vendorAddress.getVendorAddressEmailAddress();
+            }
+
+            // use fax number if not blank
+            if (StringUtils.isNotBlank(vendorFaxNumber) && vendorFaxNumber.length() > 4) {
+                cxml.append("        <DistributionMethod type=\"fax\">\n");
+                cxml.append("          <Fax>\n");
+                cxml.append("            <TelephoneNumber>\n");
+                cxml.append("              <CountryCode>1</CountryCode>\n");
+                cxml.append("              <AreaCode>").append(vendorFaxNumber.substring(0, 3)).append("</AreaCode>\n");
+                cxml.append("              <Number>").append(vendorFaxNumber.substring(3)).append("</Number>\n");
+                cxml.append("            </TelephoneNumber>\n");
+                cxml.append("          </Fax>\n");
+            } else if (StringUtils.isNotBlank(emailAddress)) {
+            	// email
+                cxml.append("        <DistributionMethod type=\"email\">\n");
+                cxml.append("          <Email><![CDATA[").append(emailAddress).append("]]></Email>\n");
+            } else {
+                // manual
+                cxml.append("        <DistributionMethod type=\"manual\">\n");
+            } 
+            cxml.append("        </DistributionMethod>\n");
+            cxml.append("      </OrderDistribution>\n");
         }
-        else {
-            LOG.error("getCxml() The phone number is invalid for this contract manager: " + contractManager.getContractManagerUserIdentifier() + " " + contractManager.getContractManagerName());
-            cxml.append("              <AreaCode>555</AreaCode>\n");
-            cxml.append("              <Number>").append(contractManager.getContractManagerPhoneNumber()).append("</Number>\n");
-        }
-        cxml.append("            </TelephoneNumber>\n");
-        cxml.append("          </Phone>\n");
-        cxml.append("        </ContactInfo>\n");
-        cxml.append("      </Supplier>\n");
+
+
 
         /** *** BILL TO SECTION **** */
         cxml.append("      <BillTo>\n");
