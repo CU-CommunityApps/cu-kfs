@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.module.cg.businessobject.Agency;
+import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.businessobject.ProposalOrganization;
 import org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector;
@@ -29,7 +30,6 @@ import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.module.cg.businessobject.AgencyExtension;
-import edu.cornell.kfs.module.cg.businessobject.ProposalExtension;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProject;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward;
 import edu.cornell.kfs.module.ezra.businessobject.Investigator;
@@ -44,25 +44,21 @@ public class EzraServiceImpl implements EzraService {
 
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(EzraServiceImpl.class);
 
-	
-	private BusinessObjectService businessObjectService;
+    private BusinessObjectService businessObjectService;
 	private DocumentService documentService;
 	private SponsorDao sponsorDao;
 	private EzraProposalDao ezraProposalDao;
 	private DateTimeService dateTimeService;
 
-
-
-	public boolean updateProposalsSince(Date date) {
+	public boolean updateProposals() {
 		boolean result = false;
-		List<EzraProposalAward> proposals = ezraProposalDao.getProposalsUpdatedSince(date);
+		List<EzraProposalAward> proposals = ezraProposalDao.getProposals();
 		Map fields = new HashMap();
 		for (EzraProposalAward ezraProposal : proposals) {
 			String proposalId = ezraProposal.getProjectId();
 			fields.clear();
 			fields.put("proposalNumber", proposalId);
 			Proposal proposal = (Proposal)businessObjectService.findByPrimaryKey(Proposal.class, fields);
-			Proposal oldProposal = proposal;
 			if (ObjectUtils.isNull(proposal)) {
 				proposal = new Proposal();
 				proposal.setProposalNumber(Long.valueOf(proposalId));
@@ -74,7 +70,6 @@ public class EzraServiceImpl implements EzraService {
 						routeAgencyDocument(agency, null);
 					}
 					proposal.setAgencyNumber(ezraProposal.getSponsorNumber().toString());
-
 				}
 				Map projInvFields = new HashMap();
 				projInvFields.put("projectId", ezraProposal.getProjectId());
@@ -85,10 +80,10 @@ public class EzraServiceImpl implements EzraService {
 
 				Map deptFields = new HashMap();
 				deptFields.put("organizationCode", ezraProposal.getDepartmentId());
-				List<Organization> depts = (List<Organization>)businessObjectService.findMatching(Organization.class, deptFields);
-
-				List<ProposalOrganization> propOrgs = createProposalOrganizations(depts, proposal.getProposalNumber());
+				List<Organization> orgs = (List<Organization>)businessObjectService.findMatching(Organization.class, deptFields);
+				List<ProposalOrganization> propOrgs = createProposalOrganizations(orgs, proposal.getProposalNumber());
 				proposal.setProposalOrganizations(propOrgs);
+				
 				//check to see if this is a real cfda 
 				proposal.setCfdaNumber(ezraProposal.getCfdaNumber());
 				proposal.setProposalProjectTitle(ezraProposal.getProjectTitle());
@@ -104,146 +99,44 @@ public class EzraServiceImpl implements EzraService {
 				proposal.setProposalAwardTypeCode("Z");
 				proposal.setActive(true);
 
-				ProposalExtension ext = (ProposalExtension)proposal.getExtension();
-				if (ext == null) {
-					ext = new ProposalExtension();
+				
+				
+				
+//				ProposalExtension ext = (ProposalExtension)proposal.getExtension();
+//				if (ext == null) {
+//					ext = new ProposalExtension();
+//				}
+//				ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
+//				ext.setProposalNumber(proposal.getProposalNumber());
+//				proposal.setExtension(ext);
+			 
+				GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
+				MaintenanceDocument proposalDoc  = null;
+				try {
+					proposalDoc = (MaintenanceDocument) documentService.getNewDocument("PRPL");
+				} catch (WorkflowException we) {
+					we.printStackTrace();
 				}
-				ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
-				ext.setProposalNumber(proposal.getProposalNumber());
-				proposal.setExtension(ext);
-			} else { 
-			LOG.info("Populating Proposal: " +ezraProposal);
-				//if (proposal.getExtension() != null){
-				//ProposalExtension ext = (ProposalExtension)proposal.getExtension();
-				//if ( ezraProposal.getLastUpdated().compareTo(ext.getLastUpdated()) != 0) {
-
-				boolean changed = false;
-				if (ezraProposal.getSponsorNumber() != null) {
-					Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getSponsorNumber().toString());
-					if (ObjectUtils.isNull(agency)) {
-						agency = createAgency(ezraProposal.getSponsorNumber());
-						routeAgencyDocument(agency, null);
-					}
-				
-					if (!StringUtils.equals(proposal.getAgencyNumber(), ezraProposal.getSponsorNumber().toString())) {
-						proposal.setAgencyNumber(ezraProposal.getSponsorNumber().toString());
-						changed = true;
-					}
+				proposalDoc.getDocumentHeader().setDocumentDescription("Auto creation of new proposal");
+				proposalDoc.getNewMaintainableObject().setBusinessObject(proposal);
+				try {
+					documentService.saveDocument(proposalDoc);
+					proposalDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
+				} catch (WorkflowException we) {
+					we.printStackTrace();
 				}
-				
-				
-				
-//				Map projInvFields = new HashMap();
-//				projInvFields.put("projectId", ezraProposal.getProjectId());
-//				projInvFields.put("awardProposalId", ezraProposal.getAwardProposalId());
-//				List<ProjectInvestigator> projInvs = (List<ProjectInvestigator>)businessObjectService.findMatching(ProjectInvestigator.class, projInvFields);
-//				List<ProposalProjectDirector> ppds = createProjectDirectors(projInvs);
 //				
-//				
-//				proposal.setProposalProjectDirectors(ppds);
-//
-//				Map deptFields = new HashMap();
-//				deptFields.put("departmentId", ezraProposal.getDepartmentId());
-//				List<Department> depts = (List<Department>)businessObjectService.findMatching(Department.class, deptFields);
-//
-//				List<ProposalOrganization> propOrgs = createProposalOrganizations(depts);
-//				proposal.setProposalOrganizations(propOrgs);
-				
-				if (!StringUtils.equals(proposal.getCfdaNumber(), ezraProposal.getCfdaNumber())) {
-					//check to see if this is a real cfda 
-
-					proposal.setCfdaNumber(ezraProposal.getCfdaNumber());
-					changed = true;
-				}
-				if (!StringUtils.equals(proposal.getProposalProjectTitle(), ezraProposal.getProjectTitle())) {
-					proposal.setProposalProjectTitle(ezraProposal.getProjectTitle());
-					changed = true;
-				}
-				if (!StringUtils.equals(proposal.getGrantNumber(), ezraProposal.getSponsorProjectId())) {
-					proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
-					changed = true;
-				}
-				if (!StringUtils.equals(proposal.getProposalStatusCode(), EzraUtils.getProposalAwardStatusMap().get(ezraProposal.getStatus()))) {
-					proposal.setProposalStatusCode(EzraUtils.getProposalAwardStatusMap().get(ezraProposal.getStatus()));
-					changed = true;
-				}
-				if (!StringUtils.equals(proposal.getProposalPurposeCode(), EzraUtils.getProposalPurposeMap().get(ezraProposal.getPurpose()))) {
-					proposal.setProposalPurposeCode(EzraUtils.getProposalPurposeMap().get(ezraProposal.getPurpose()));
-					changed = true;
-				}
-				if (dateTimeService.dateDiff(proposal.getProposalBeginningDate(), ezraProposal.getStartDate(), true) != 0) {
-					proposal.setProposalBeginningDate(ezraProposal.getStartDate());
-					changed = true;
-				}
-				if (dateTimeService.dateDiff(proposal.getProposalEndingDate(), ezraProposal.getStopDate(), true) != 0) {
-					proposal.setProposalEndingDate(ezraProposal.getStopDate());
-					changed = true;
-				}
-				if (proposal.getProposalTotalAmount()!= null && proposal.getProposalTotalAmount().compareTo(ezraProposal.getTotalAmt()) != 0) {
-					proposal.setProposalTotalAmount(ezraProposal.getTotalAmt());
-					changed = true;
-				}
-				if (ezraProposal.getFederalPassThroughAgencyNumber() != null && !StringUtils.equals(proposal.getFederalPassThroughAgencyNumber(), ezraProposal.getFederalPassThroughAgencyNumber().toString())) {
-					proposal.setFederalPassThroughAgencyNumber(ezraProposal.getFederalPassThroughAgencyNumber().toString());
-					changed = true;
-				}
-				if ( !(proposal.getProposalFederalPassThroughIndicator() ^ ezraProposal.getFederalPassThroughBoolean())) {
-					proposal.setProposalFederalPassThroughIndicator(ezraProposal.getFederalPassThroughBoolean());
-					changed = true;
-				} 
-				if (!StringUtils.equals(proposal.getProposalAwardTypeCode(), "Z")) {
-					proposal.setProposalAwardTypeCode("Z");
-					changed = true;
-				}
-
-				proposal.setActive(true);
-
-				if (changed) {
-
-					ProposalExtension ext = (ProposalExtension)proposal.getExtension();
-					if (ext == null) {
-						ext = new ProposalExtension();
-					}
-					ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
-					//	ext.setProposalNumber(proposal.getProposalNumber());
-					proposal.setExtension(ext);
-				} else 
-					continue;
-				//		}
-
-				//	businessObjectService.save(ext);
+//				Award award = new Award(proposal);
+//				award.setAwardStatusCode(proposal.getProposalStatusCode());
+//				award.setAwardBeginningDate(proposal.getProposalBeginningDate());
+//				award.setAwardEndingDate(proposal.getProposalEndingDate());
+//				award.setAwardTotalAmount(proposal.getProposalTotalAmount());
+//				award.setAwardEntryDate(dateTimeService.getCurrentSqlDate());
+//				//award.setGran
 			}
-			GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
-			// DocumentService docService = SpringContext.getBean(DocumentService.class);
-			MaintenanceDocument proposalDoc  = null;
-			try {
-				proposalDoc = (MaintenanceDocument) documentService.getNewDocument("PRPL");
-			} catch (WorkflowException we) {
-				we.printStackTrace();
-			}
-			proposalDoc.getDocumentHeader().setDocumentDescription("Auto creation of new proposal");
-			if (ObjectUtils.isNotNull(oldProposal)) {
-				proposalDoc.getOldMaintainableObject().setBusinessObject(oldProposal);
-			} else {
-				// agencyDoc.setOldMaintainableObject(new KualiMaintainableImpl());
-			}
-			proposalDoc.getNewMaintainableObject().setBusinessObject(proposal);
-			try {
-				documentService.saveDocument(proposalDoc);
-				proposalDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
-			} catch (WorkflowException we) {
-				we.printStackTrace();
-			}
-			//			Date lastUpdated = dateTimeService.getCurrentSqlDate();
-			//			proposal.setLastUpdated(lastUpdated);
-			//			businessObjectService.save(sponsor);
 		}
-
-
 		return result;
 	}
-
-
 
 	public boolean updateSponsorsSince(Date date) {
 		boolean result = false;
@@ -262,9 +155,6 @@ public class EzraServiceImpl implements EzraService {
 				updateAgency(agency, sponsor);
 			}
 			routeAgencyDocument(agency, oldAgency);
-			//Date lastUpdated = dateTimeService.getCurrentSqlDate();
-			//sponsor.setLastUpdated(lastUpdated);
-			//businessObjectService.save(sponsor);
 		}
 		return result;
 
@@ -392,12 +282,7 @@ public class EzraServiceImpl implements EzraService {
 			ProposalOrganization po = new ProposalOrganization();
 			po.setChartOfAccountsCode("IT");
 			po.setOrganizationCode(org.getOrganizationCode());
-			//po.setOrganizationCode("3811");
-		//	Map fieldValues = new HashMap();
-		//	fieldValues.put("projectDepartmentId", org.getOrganizationCode());
 			EzraProject ep = (EzraProject)businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectId);
-			//for (EzraProject ep : eps) {
-			//	LOG.info("ORG: "+ org.getOrganizationCode() + " PRJ_DEPT: "+ep.getProjectDepartmentId() );
 			if (org.getOrganizationCode().equals(ep.getProjectDepartmentId())) {
 				po.setProposalPrimaryOrganizationIndicator(true);
 			}

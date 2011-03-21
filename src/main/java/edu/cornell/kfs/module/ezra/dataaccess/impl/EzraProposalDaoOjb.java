@@ -15,19 +15,14 @@ import edu.cornell.kfs.module.ezra.dataaccess.EzraProposalDao;
 
 public class EzraProposalDaoOjb extends PlatformAwareDaoBaseOjb implements EzraProposalDao {
 
-	public List<EzraProposalAward> getProposalsUpdatedSince(Date date) {
+	public List<EzraProposalAward> getProposals() {
 		Criteria criteria = new Criteria();
 		criteria.addLike("awardProposalId", "A%");
 		criteria.addGreaterThan("budgetAmt",KualiDecimal.ZERO);
-		List excludeStatus = new ArrayList();
-		excludeStatus.add("AAC");
-		excludeStatus.add("AC");
-		excludeStatus.add("ACOSP");
-		
-		criteria.addNotIn("status", excludeStatus);
-		if (date != null) {
-			criteria.addLessThan("lastUpdated", date);
-		}
+		criteria.addEqualTo("status", "ASAP");
+	//	if (date != null) {
+		//	criteria.addLessThan("lastUpdated", date);
+	//	}
 
         return (List<EzraProposalAward>)getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(EzraProposalAward.class, criteria));
 		
