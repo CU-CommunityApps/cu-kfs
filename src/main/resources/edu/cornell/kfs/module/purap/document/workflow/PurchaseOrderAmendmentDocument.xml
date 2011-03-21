@@ -23,74 +23,74 @@
       <routePaths>
         <routePath>
 		<start name="AdHoc" nextNode="HasNewUnorderedItems" />
-	
-		<split name="HasNewUnorderedItems">
-			<branch name="True">
-				<requests name="Account" nextNode="NewUnorderedItems" />
-				<requests name="NewUnorderedItems" nextNode="Join" />
-			</branch>
-			<branch name="False">			
-				<split name="HasAccountingLines" nextNode="SubAccount">
-					<branch name="True">
-						<simple name="NoOpHasAccountingLines" nextNode="JoinHasAccountingLines" />
-					</branch>
-					<branch name="False">
-						<requests name="Organization" nextNode="JoinHasAccountingLines" />
-					</branch>
-					<join name="JoinHasAccountingLines" />
-				</split>	
-				<requests name="SubAccount" nextNode="Account" />	
-				<requests name="Account" nextNode="AccountingOrganizationHierarchy" />	
-				<requests name="AccountingOrganizationHierarchy" nextNode="RequiresAwardReview" />	
-				<split name="RequiresAwardReview" nextNode="Commodity">
-					<branch name="True">
-						<requests name="Award" nextNode="JoinRequiresAwardReview" />
-					</branch>
-					<branch name="False">
-						<requests name="NoOpRequiresAwardReview" nextNode="JoinRequiresAwardReview" />
-					</branch>
-					<join name="JoinRequiresAwardReview" />
-				</split>
-				<requests name="Commodity" nextNode="AmountRequiresSeparationOfDutiesReview" />	
-				<split name="AmountRequiresSeparationOfDutiesReview" nextNode="RequiresContractManagementReview">
-					<branch name="True">
-						<requests name="SeparationOfDuties" nextNode="JoinSOD" />
-					</branch>
-					<branch name="False">
-						<simple name="NoOp" nextNode="JoinSOD" />
-					</branch>
-					<join name="JoinSOD" />
-				</split>	
-				<split name="RequiresContractManagementReview" nextNode="RequiresBudgetReview">
-	            <branch name="True">
-	              <requests name="ContractManagement" nextNode="JoinRequiresContractManagementReview"/>
-	            </branch>
-	            <branch name="False">
-	              <requests name="NoOpRequiresContractManagementReview" nextNode="JoinRequiresContractManagementReview"/>
-	            </branch>
-	            <join name="JoinRequiresContractManagementReview"/>
-	          </split>
-	          <split name="RequiresBudgetReview" nextNode="VendorIsEmployeeOrNonResidentAlien">
-	            <branch name="True">
-	              <requests name="Budget" nextNode="JoinRequiresBudgetReview"/>
-	            </branch>
-	            <branch name="False">
-	              <simple name="NoOpBudget" nextNode="JoinRequiresBudgetReview"/>
-	            </branch>
-	            <join name="JoinRequiresBudgetReview"/>
-	          </split>
-	          <split name="VendorIsEmployeeOrNonResidentAlien" nextNode="Join">
-	            <branch name="True">
-	              <requests name="Tax" nextNode="JoinVendorIsEmployeeOrNonResidentAlien"/>
-	            </branch>
-	            <branch name="False">
-	              <simple name="NoOpVendorIsEmployeeOrNonResidentAlien" nextNode="JoinVendorIsEmployeeOrNonResidentAlien"/>
-	 	        </branch>
-   	            <join name="JoinVendorIsEmployeeOrNonResidentAlien"/>
-	          </split>
-          	</branch>          
-		  <join name="Join" />
-		</split>
+			<split name="HasNewUnorderedItems" nextNode="HasAccountingLines">
+				<branch name="True">
+					<requests name="NewUnorderedItems" nextNode="JoinNewUnorderedItems" />
+				</branch>
+				<branch name="False">
+					<simple name="NoOpNewUnorderedItems" nextNode="JoinNewUnorderedItems" />
+				</branch>
+				<join name="JoinNewUnorderedItems" />
+			</split>
+			<split name="HasAccountingLines" nextNode="SubAccount">
+				<branch name="True">
+					<simple name="NoOpHasAccountingLines" nextNode="JoinHasAccountingLines" />
+				</branch>
+				<branch name="False">
+					<requests name="Organization" nextNode="JoinHasAccountingLines" />
+				</branch>
+				<join name="JoinHasAccountingLines" />
+			</split>	
+			<requests name="SubAccount" nextNode="Account" />	
+			<requests name="Account" nextNode="AccountingOrganizationHierarchy" />	
+			<requests name="AccountingOrganizationHierarchy" nextNode="RequiresAwardReview" />	
+			<split name="RequiresAwardReview" nextNode="Commodity">
+				<branch name="True">
+					<requests name="Award" nextNode="JoinRequiresAwardReview" />
+				</branch>
+				<branch name="False">
+					<requests name="NoOpRequiresAwardReview" nextNode="JoinRequiresAwardReview" />
+				</branch>
+				<join name="JoinRequiresAwardReview" />
+			</split>
+			<requests name="Commodity" nextNode="AmountRequiresSeparationOfDutiesReview" />	
+			<split name="AmountRequiresSeparationOfDutiesReview" nextNode="RequiresContractManagementReview">
+				<branch name="True">
+					<requests name="SeparationOfDuties" nextNode="JoinSOD" />
+				</branch>
+				<branch name="False">
+					<simple name="NoOp" nextNode="JoinSOD" />
+				</branch>
+				<join name="JoinSOD" />
+			</split>	
+			<split name="RequiresContractManagementReview" nextNode="RequiresBudgetReview">
+	           <branch name="True">
+	             <requests name="ContractManagement" nextNode="JoinRequiresContractManagementReview"/>
+	           </branch>
+	           <branch name="False">
+	             <requests name="NoOpRequiresContractManagementReview" nextNode="JoinRequiresContractManagementReview"/>
+	           </branch>
+	           <join name="JoinRequiresContractManagementReview"/>
+	        </split>
+	        <split name="RequiresBudgetReview" nextNode="VendorIsEmployeeOrNonResidentAlien">
+	          <branch name="True">
+	            <requests name="Budget" nextNode="JoinRequiresBudgetReview"/>
+	          </branch>
+	          <branch name="False">
+	            <simple name="NoOpBudget" nextNode="JoinRequiresBudgetReview"/>
+	          </branch>
+	          <join name="JoinRequiresBudgetReview"/>
+	        </split>
+	        <split name="VendorIsEmployeeOrNonResidentAlien" nextNode="NoOpFinal">
+	          <branch name="True">
+	            <requests name="Tax" nextNode="JoinVendorIsEmployeeOrNonResidentAlien"/>
+	          </branch>
+	          <branch name="False">
+	            <simple name="NoOpVendorIsEmployeeOrNonResidentAlien" nextNode="JoinVendorIsEmployeeOrNonResidentAlien"/>
+	 	      </branch>
+   	          <join name="JoinVendorIsEmployeeOrNonResidentAlien"/>
+	        </split>
+	        <simple name="NoOpFinal" />
         </routePath>
       </routePaths>
       <routeNodes>
@@ -141,7 +141,6 @@
         </split>
 		<join name="JoinRequiresAwardReview"/>          
         <join name="JoinHasAccountingLines"/>
-        <join name="Join"/>
         <join name="JoinSOD"/>
         <simple name="NoOpHasAccountingLines">
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
@@ -152,7 +151,7 @@
         <simple name="NoOp">
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
         </simple>
-                <role name="ContractManagement">
+        <role name="ContractManagement">
           <qualifierResolverClass> org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver </qualifierResolverClass>
           <activationType>P</activationType>
         </role>
@@ -182,10 +181,19 @@
         <simple name="NoOpBudget">
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
         </simple>
+        <simple name="NoOpNewUnorderedItems">
+          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+        </simple>
+        <simple name="NoOpFinal">
+          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+        </simple>        
         <join name="JoinRequiresBudgetReview"/>
         <join name="JoinVendorIsEmployeeOrNonResidentAlien"/>
         <join name="JoinRequiresContractManagementReview"/>        
+        <join name="JoinNewUnorderedItems"/>
       </routeNodes>
     </documentType>
   </documentTypes>
 </data>
+
+
