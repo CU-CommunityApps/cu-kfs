@@ -62,7 +62,7 @@ public class EzraServiceImpl implements EzraService {
 			if (ObjectUtils.isNull(proposal)) {
 				proposal = new Proposal();
 				proposal.setProposalNumber(Long.valueOf(proposalId));
-
+				LOG.info("Creating Proposal: "+proposalId);
 				if (ezraProposal.getSponsorNumber() != null) {
 					Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getSponsorNumber().toString());
 					if (ObjectUtils.isNull(agency)) {
@@ -147,6 +147,7 @@ public class EzraServiceImpl implements EzraService {
 	}
 
 	public Agency createAgency(Long sponsorId) {
+		LOG.info("Creating Agency: "+ sponsorId);
 		Sponsor sponsor = businessObjectService.findBySinglePrimaryKey(Sponsor.class, sponsorId);
 		Agency agency = new Agency();
 		agency.setAgencyNumber(sponsorId.toString());
@@ -245,7 +246,7 @@ public class EzraServiceImpl implements EzraService {
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		}
-		agencyDoc.getDocumentHeader().setDocumentDescription("Auto creation of new agency");
+		agencyDoc.getDocumentHeader().setDocumentDescription("Auto creation of new agency: "+ agency.getAgencyNumber());
 		if (ObjectUtils.isNotNull(oldAgency)) {
 			agencyDoc.getOldMaintainableObject().setBusinessObject(oldAgency);
 		} 
