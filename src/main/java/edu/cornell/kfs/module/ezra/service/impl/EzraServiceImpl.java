@@ -110,21 +110,7 @@ public class EzraServiceImpl implements EzraService {
 //				ext.setProposalNumber(proposal.getProposalNumber());
 //				proposal.setExtension(ext);
 			 
-				GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
-				MaintenanceDocument proposalDoc  = null;
-				try {
-					proposalDoc = (MaintenanceDocument) documentService.getNewDocument("PRPL");
-				} catch (WorkflowException we) {
-					we.printStackTrace();
-				}
-				proposalDoc.getDocumentHeader().setDocumentDescription("Auto creation of new proposal");
-				proposalDoc.getNewMaintainableObject().setBusinessObject(proposal);
-				try {
-					documentService.saveDocument(proposalDoc);
-					proposalDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
-				} catch (WorkflowException we) {
-					we.printStackTrace();
-				}
+				routeProposalDocument(proposal);
 //				
 //				Award award = new Award(proposal);
 //				award.setAwardStatusCode(proposal.getProposalStatusCode());
@@ -226,6 +212,30 @@ public class EzraServiceImpl implements EzraService {
 
 	}
 
+	private void routeProposalDocument(Proposal proposal) {
+		GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
+		MaintenanceDocument proposalDoc  = null;
+		try {
+			proposalDoc = (MaintenanceDocument) documentService.getNewDocument("PRPL");
+		} catch (WorkflowException we) {
+			we.printStackTrace();
+		}
+		proposalDoc.getDocumentHeader().setDocumentDescription("Auto creation of new proposal");
+		proposalDoc.getNewMaintainableObject().setBusinessObject(proposal);
+		try {
+			documentService.saveDocument(proposalDoc);
+			proposalDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
+		} catch (WorkflowException we) {
+			we.printStackTrace();
+		}
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	private void routeAgencyDocument(Agency agency, Agency oldAgency) {
 		GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
 		// DocumentService docService = SpringContext.getBean(DocumentService.class);
@@ -248,6 +258,13 @@ public class EzraServiceImpl implements EzraService {
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		}
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	private List<ProposalProjectDirector> createProjectDirectors(List<ProjectInvestigator> projInvs, Long projectId) {
