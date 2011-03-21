@@ -93,8 +93,14 @@ public class EzraServiceImpl implements EzraService {
 				proposal.setProposalBeginningDate(ezraProposal.getStartDate());
 				proposal.setProposalEndingDate(ezraProposal.getStopDate());
 				proposal.setProposalTotalAmount(ezraProposal.getTotalAmt());
-				if (ezraProposal.getFederalPassThroughAgencyNumber() != null)
+				if (ezraProposal.getFederalPassThroughAgencyNumber() != null) {
+					Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getFederalPassThroughAgencyNumber().toString());
+					if (ObjectUtils.isNull(agency)) {
+						agency = createAgency(ezraProposal.getFederalPassThroughAgencyNumber());
+						routeAgencyDocument(agency, null);
+					}
 					proposal.setFederalPassThroughAgencyNumber(ezraProposal.getFederalPassThroughAgencyNumber().toString());
+				}
 				proposal.setProposalFederalPassThroughIndicator(ezraProposal.getFederalPassThroughBoolean());
 				proposal.setProposalAwardTypeCode("Z");
 				proposal.setActive(true);
