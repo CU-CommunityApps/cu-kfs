@@ -73,8 +73,8 @@ public class EzraServiceImpl implements EzraService {
 				}
 				Map projInvFields = new HashMap();
 				projInvFields.put("projectId", ezraProposal.getProjectId());
-				projInvFields.put("awardProposalId", ezraProposal.getAwardProposalId());
-				List<ProjectInvestigator> projInvs = (List<ProjectInvestigator>)businessObjectService.findMatching(ProjectInvestigator.class, projInvFields);
+				//projInvFields.put("awardProposalId", ezraProposal.getAwardProposalId());
+				List<EzraProject> projInvs = (List<EzraProject>)businessObjectService.findMatching(EzraProject.class, projInvFields);
 				List<ProposalProjectDirector> ppds = createProjectDirectors(projInvs, proposal.getProposalNumber());
 				proposal.setProposalProjectDirectors(ppds);
 
@@ -117,14 +117,14 @@ public class EzraServiceImpl implements EzraService {
 //				proposal.setExtension(ext);
 			 
 				routeProposalDocument(proposal);
-//				
-//				Award award = new Award(proposal);
-//				award.setAwardStatusCode(proposal.getProposalStatusCode());
-//				award.setAwardBeginningDate(proposal.getProposalBeginningDate());
-//				award.setAwardEndingDate(proposal.getProposalEndingDate());
-//				award.setAwardTotalAmount(proposal.getProposalTotalAmount());
-//				award.setAwardEntryDate(dateTimeService.getCurrentSqlDate());
-//				//award.setGran
+				
+				Award award = new Award(proposal);
+				award.setAwardStatusCode(proposal.getProposalStatusCode());
+				award.setAwardBeginningDate(proposal.getProposalBeginningDate());
+				award.setAwardEndingDate(proposal.getProposalEndingDate());
+				award.setAwardTotalAmount(proposal.getProposalTotalAmount());
+				award.setAwardEntryDate(dateTimeService.getCurrentSqlDate());
+				//award.setGran
 			}
 		}
 		return result;
@@ -274,27 +274,27 @@ public class EzraServiceImpl implements EzraService {
 
 	}
 
-	private List<ProposalProjectDirector> createProjectDirectors(List<ProjectInvestigator> projInvs, Long projectId) {
+	private List<ProposalProjectDirector> createProjectDirectors(List<EzraProject> projInvs, Long projectId) {
 		List<ProposalProjectDirector> projDirs = new ArrayList<ProposalProjectDirector>();
-		for (ProjectInvestigator projectInvestigator : projInvs) {
+		for (EzraProject project : projInvs) {
 			ProposalProjectDirector ppd = new ProposalProjectDirector();
-			Investigator investigator = businessObjectService.findBySinglePrimaryKey(Investigator.class, projectInvestigator.getInvestigatorId());
+			Investigator investigator = businessObjectService.findBySinglePrimaryKey(Investigator.class, project.getProjectDirectorId());
 			if (investigator != null) {
 				PersonService ps = SpringContext.getBean(PersonService.class);
 				Person director = ps.getPersonByPrincipalName(investigator.getNetId());
 				ppd.setPrincipalId(director.getPrincipalId());
-				ppd.setProposalNumber(new Long(projectInvestigator.getProjectId()));
+				ppd.setProposalNumber(new Long(project.getProjectId()));
 				//Map fieldValues = new HashMap();
 				//fieldValues.put("projectId", projectInvestigator.getProjectId());
-				EzraProject ep = (EzraProject) businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectId);
-				if (director.getPrincipalName().equals(ep.getProjectDirectorId())) {
+				//EzraProject ep = (EzraProject) businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectId);
+				//if (director.getPrincipalName().equals(ep.getProjectDirectorId())) {
 					ppd.setProposalPrimaryProjectDirectorIndicator(true);
-				}
+			//	}
 				ppd.setActive(true);
 				KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new AttributeSet());
 				projDirs.add(ppd);
 			} else {
-				LOG.info("Null investigator: "+ projectInvestigator.getInvestigatorId());
+				LOG.info("Null investigator: "+ project.getProjectDirectorId());
 			}
 		}
 		return projDirs;
