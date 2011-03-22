@@ -78,7 +78,14 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
          * address from the user data.
          */
 
-        ContractManager contractManager = purchaseOrder.getVendorContract().getContractManager();
+        // non-catalog POs might not have a vendor contract, so we need to get the contract manager from the PO which will always be there
+        ContractManager contractManager = null;
+        
+        if (!PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
+        	contractManager = purchaseOrder.getContractManager();
+        } else {
+        	contractManager = purchaseOrder.getVendorContract().getContractManager();
+        }
         String contractManagerEmail = getContractManagerEmail(contractManager);
 
         String vendorDuns = purchaseOrder.getVendorDetail().getVendorDunsNumber();
