@@ -314,6 +314,7 @@ public class EzraServiceImpl implements EzraService {
 	}
 
 	private List<ProposalOrganization> createProposalOrganizations(List<Organization> orgs, Long projectId) {
+		LOG.info("Retrieved Orgs :"+ orgs.size() + " for Proposal "+ projectId);
 		List<ProposalOrganization> propOrgs = new ArrayList<ProposalOrganization>();
 		for (Organization org : orgs) {
 			ProposalOrganization po = new ProposalOrganization();
