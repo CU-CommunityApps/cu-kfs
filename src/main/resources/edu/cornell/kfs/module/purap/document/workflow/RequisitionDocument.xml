@@ -29,8 +29,8 @@
               <simple name="NoOpHasAccountingLines" nextNode="JoinHasAccountingLines"/>
             </branch>
             <branch name="False">
-               <requests name="Organization" nextNode="JoinHasAccountingLines"/>
-<!--              <requests name="Initiator" nextNode="JoinHasAccountingLines"/>-->
+              <!--  <requests name="Organization" nextNode="JoinHasAccountingLines"/>-->
+            <requests name="Initiator" nextNode="JoinHasAccountingLines"/>
             </branch>
             <join name="JoinHasAccountingLines"/>
           </split>
@@ -71,10 +71,12 @@
 
       <routeNodes>
         <start name="AdHoc"/>
+     <!--     
         <role name="Organization">
           <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
+        -->
         <split name="HasAccountingLines">
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
@@ -105,10 +107,10 @@
           <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
-<!--         <role name="Initiator">-->
-<!--          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>-->
-<!--          <activationType>P</activationType>-->
-<!--        </role>-->
+        <role name="Initiator">
+          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+       </role>
         <split name="RequiresAwardReview">
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
