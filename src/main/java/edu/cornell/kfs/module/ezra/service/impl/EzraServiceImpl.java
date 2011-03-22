@@ -71,11 +71,11 @@ public class EzraServiceImpl implements EzraService {
 					}
 					proposal.setAgencyNumber(ezraProposal.getSponsorNumber().toString());
 				}
-				Map projInvFields = new HashMap();
-				projInvFields.put("projectId", ezraProposal.getProjectId());
+			//	Map projInvFields = new HashMap();
+			//	projInvFields.put("projectId", ezraProposal.getProjectId());
 				//projInvFields.put("awardProposalId", ezraProposal.getAwardProposalId());
-				List<EzraProject> projInvs = (List<EzraProject>)businessObjectService.findMatching(EzraProject.class, projInvFields);
-				List<ProposalProjectDirector> ppds = createProjectDirectors(projInvs, proposal.getProposalNumber());
+		//		List<EzraProject> projInvs = (List<EzraProject>)businessObjectService.findMatching(EzraProject.class, projInvFields);
+				List<ProposalProjectDirector> ppds = createProjectDirectors(proposal.getProposalNumber());
 				proposal.setProposalProjectDirectors(ppds);
 
 				Map deptFields = new HashMap();
@@ -274,22 +274,34 @@ public class EzraServiceImpl implements EzraService {
 
 	}
 
-	private List<ProposalProjectDirector> createProjectDirectors(List<EzraProject> projInvs, Long projectId) {
+	private List<ProposalProjectDirector> createProjectDirectors(Long projectId) {
 		List<ProposalProjectDirector> projDirs = new ArrayList<ProposalProjectDirector>();
-		for (EzraProject project : projInvs) {
-			ProposalProjectDirector ppd = new ProposalProjectDirector();
-			Investigator investigator = businessObjectService.findBySinglePrimaryKey(Investigator.class, project.getProjectDirectorId());
+		EzraProject project = (EzraProject)businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectId.toString());
+		ProposalProjectDirector ppd = new ProposalProjectDirector();
+		Investigator investigator = (Investigator)businessObjectService.findBySinglePrimaryKey(Investigator.class, project.getProjectDirectorId());
+		if (investigator != null) {
+			PersonService ps = SpringContext.getBean(PersonService.class);
+			Person director = ps.getPersonByPrincipalName(investigator.getNetId());
+			ppd.setPrincipalId(director.getPrincipalId());
+			ppd.setProposalNumber(new Long(project.getProjectId()));
+			ppd.setProposalPrimaryProjectDirectorIndicator(true);
+			ppd.setActive(true);
+			KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new AttributeSet());
+			projDirs.add(ppd);
+		} else {
+			LOG.info("Null investigator: "+ project.getProjectDirectorId());
+		}
+		Map fieldValues = new HashMap();
+		fieldValues.put("projectId", projectId.toString());
+		List<ProjectInvestigator> pis = (List<ProjectInvestigator>)businessObjectService.findMatching(ProjectInvestigator.class, fieldValues);
+		for (ProjectInvestigator pi : pis) {
+			Investigator inv = (Investigator)businessObjectService.findBySinglePrimaryKey(Investigator.class, pi.getInvestigatorId());
 			if (investigator != null) {
 				PersonService ps = SpringContext.getBean(PersonService.class);
 				Person director = ps.getPersonByPrincipalName(investigator.getNetId());
 				ppd.setPrincipalId(director.getPrincipalId());
 				ppd.setProposalNumber(new Long(project.getProjectId()));
-				//Map fieldValues = new HashMap();
-				//fieldValues.put("projectId", projectInvestigator.getProjectId());
-				//EzraProject ep = (EzraProject) businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectId);
-				//if (director.getPrincipalName().equals(ep.getProjectDirectorId())) {
-					ppd.setProposalPrimaryProjectDirectorIndicator(true);
-			//	}
+				ppd.setProposalPrimaryProjectDirectorIndicator(false);
 				ppd.setActive(true);
 				KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new AttributeSet());
 				projDirs.add(ppd);
@@ -297,6 +309,7 @@ public class EzraServiceImpl implements EzraService {
 				LOG.info("Null investigator: "+ project.getProjectDirectorId());
 			}
 		}
+		
 		return projDirs;
 	}
 
