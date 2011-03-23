@@ -26,9 +26,9 @@ public class EzraAwardProposalDaoOjb extends PlatformAwareDaoBaseOjb implements 
 	
 	public List<EzraProposalAward> getAwardsUpdatedSince(Date date) {
 		Criteria criteria = new Criteria();
-		criteria.addLike("awardProposalId", "A%");
-		criteria.addGreaterThan("budgetAmt",KualiDecimal.ZERO);
-		criteria.addEqualTo("status", "ASAP");
+//		criteria.addLike("awardProposalId", "A%");
+//		criteria.addGreaterThan("budgetAmt",KualiDecimal.ZERO);
+//		criteria.addEqualTo("status", "ASAP");
 		
 		if (date != null) {
 			criteria.addLessThan("lastUpdated", date);

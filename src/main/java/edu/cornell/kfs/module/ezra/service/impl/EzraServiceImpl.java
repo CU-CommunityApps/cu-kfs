@@ -68,7 +68,7 @@ public class EzraServiceImpl implements EzraService {
 			 
 				routeProposalDocument(proposal);
 				
-				Award award = createAward(proposal);
+				Award award = createAward(proposal, null);
 				routeAwardDocument(award, null);
 			}
 		}
@@ -88,7 +88,7 @@ public class EzraServiceImpl implements EzraService {
 				LOG.error("Award: "+proposalId +" is null and probably should have already been created");
 			} else {
 				Proposal proposal = createProposal(ezraAward);
-				Award newAward = createAward(proposal);
+				Award newAward = createAward(proposal, award);
 				routeAwardDocument(newAward, award);
 				
 			}
@@ -118,17 +118,19 @@ public class EzraServiceImpl implements EzraService {
 
 	}
 	
-	protected Award createAward(Proposal proposal) {
+	protected Award createAward(Proposal proposal, Award oldAward) {
 		Award award = new Award(proposal);
 		award.setAwardStatusCode(proposal.getProposalStatusCode());
 		award.setAwardBeginningDate(proposal.getProposalBeginningDate());
 		award.setAwardEndingDate(proposal.getProposalEndingDate());
 		award.setAwardTotalAmount(proposal.getProposalTotalAmount());
 		award.setAwardEntryDate(dateTimeService.getCurrentSqlDate());
-		
-		List<AwardAccount> accounts = getAwardAccounts(proposal);
-		award.setAwardAccounts(accounts);
-
+		if (ObjectUtils.isNull(oldAward)) {
+			List<AwardAccount> accounts = getAwardAccounts(proposal);
+			award.setAwardAccounts(accounts);
+		} else {
+			award.setAwardAccounts(oldAward.getAwardAccounts());
+		}
 		return award;
 	}
 	
@@ -164,15 +166,15 @@ public class EzraServiceImpl implements EzraService {
 		proposal.setProposalBeginningDate(ezraProposal.getStartDate());
 		proposal.setProposalEndingDate(ezraProposal.getStopDate());
 		proposal.setProposalTotalAmount(ezraProposal.getTotalAmt());
-		if (ezraProposal.getFederalPassThroughAgencyNumber() != null) {
-			Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getFederalPassThroughAgencyNumber().toString());
-			if (ObjectUtils.isNull(agency)) {
-				agency = createAgency(ezraProposal.getFederalPassThroughAgencyNumber());
-				routeAgencyDocument(agency, null);
-			}
-			proposal.setFederalPassThroughAgencyNumber(ezraProposal.getFederalPassThroughAgencyNumber().toString());
-		}
-		proposal.setProposalFederalPassThroughIndicator(ezraProposal.getFederalPassThroughBoolean());
+//		if (ezraProposal.getFederalPassThroughAgencyNumber() != null) {
+//			Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getFederalPassThroughAgencyNumber().toString());
+//			if (ObjectUtils.isNull(agency)) {
+//				agency = createAgency(ezraProposal.getFederalPassThroughAgencyNumber());
+//				routeAgencyDocument(agency, null);
+//			}
+//			proposal.setFederalPassThroughAgencyNumber(ezraProposal.getFederalPassThroughAgencyNumber().toString());
+//		}
+//		proposal.setProposalFederalPassThroughIndicator(ezraProposal.getFederalPassThroughBoolean());
 		proposal.setProposalAwardTypeCode("Z");
 		proposal.setActive(true);
 		return proposal;
