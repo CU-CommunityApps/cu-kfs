@@ -72,6 +72,9 @@
 		<property name="dateTimeService">
 			<ref bean="dateTimeService" />
 		</property>
+		<property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
 	</bean>
 	
 	<bean id="sponsorDao" parent="platformAwareDao" class="edu.cornell.kfs.module.ezra.dataaccess.impl.SponsorDaoOjb" />
