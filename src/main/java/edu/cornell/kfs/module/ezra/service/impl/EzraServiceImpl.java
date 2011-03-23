@@ -165,7 +165,7 @@ public class EzraServiceImpl implements EzraService {
 		proposal.setProposalPurposeCode(EzraUtils.getProposalPurposeMap().get(ezraProposal.getPurpose()));
 		proposal.setProposalBeginningDate(ezraProposal.getStartDate());
 		proposal.setProposalEndingDate(ezraProposal.getStopDate());
-		proposal.setProposalTotalAmount(ezraProposal.getTotalAmt());
+		proposal.setProposalDirectCostAmount(ezraProposal.getTotalAmt());
 //		if (ezraProposal.getFederalPassThroughAgencyNumber() != null) {
 //			Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getFederalPassThroughAgencyNumber().toString());
 //			if (ObjectUtils.isNull(agency)) {
@@ -340,11 +340,11 @@ public class EzraServiceImpl implements EzraService {
 	private List<ProposalProjectDirector> createProjectDirectors(Long projectId) {
 		List<ProposalProjectDirector> projDirs = new ArrayList<ProposalProjectDirector>();
 		EzraProject project = (EzraProject)businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectId.toString());
-		ProposalProjectDirector ppd = new ProposalProjectDirector();
 		Investigator investigator = (Investigator)businessObjectService.findBySinglePrimaryKey(Investigator.class, project.getProjectDirectorId());
 		if (investigator != null) {
 			PersonService ps = SpringContext.getBean(PersonService.class);
 			Person director = ps.getPersonByPrincipalName(investigator.getNetId());
+			ProposalProjectDirector ppd = new ProposalProjectDirector();
 			ppd.setPrincipalId(director.getPrincipalId());
 			ppd.setProposalNumber(new Long(project.getProjectId()));
 			ppd.setProposalPrimaryProjectDirectorIndicator(true);
@@ -362,6 +362,7 @@ public class EzraServiceImpl implements EzraService {
 			if (investigator != null) {
 				PersonService ps = SpringContext.getBean(PersonService.class);
 				Person director = ps.getPersonByPrincipalName(investigator.getNetId());
+				ProposalProjectDirector ppd = new ProposalProjectDirector();
 				ppd.setPrincipalId(director.getPrincipalId());
 				ppd.setProposalNumber(new Long(project.getProjectId()));
 				ppd.setProposalPrimaryProjectDirectorIndicator(false);
