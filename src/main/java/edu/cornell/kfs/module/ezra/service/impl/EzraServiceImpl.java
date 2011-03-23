@@ -283,7 +283,7 @@ public class EzraServiceImpl implements EzraService {
 		// DocumentService docService = SpringContext.getBean(DocumentService.class);
 		MaintenanceDocument awardDoc  = null;
 		try {
-			awardDoc = (MaintenanceDocument) documentService.getNewDocument("AWD");
+			awardDoc = (MaintenanceDocument) documentService.getNewDocument("AWRD");
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		}
