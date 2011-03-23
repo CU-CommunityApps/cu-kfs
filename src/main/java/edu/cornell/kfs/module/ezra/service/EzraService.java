@@ -8,7 +8,7 @@ import edu.cornell.kfs.module.ezra.businessobject.Sponsor;
 
 public interface EzraService {
 
-	
+	public boolean updateAwardsSince(Date date);
 	public boolean updateSponsorsSince(Date date);
 	public boolean updateProposals();
 	public Agency createAgency(Long sponsorId);

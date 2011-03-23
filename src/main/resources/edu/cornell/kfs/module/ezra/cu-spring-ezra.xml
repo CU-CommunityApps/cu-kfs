@@ -83,7 +83,15 @@
 		<property name="cronExpression" value="0 30 4 * * ?" />
 	</bean>
 	
-	--><bean id="agencyStep" class="edu.cornell.kfs.module.ezra.batch.AgencyStep" parent="step">
+	-->
+	
+	<bean id="awardStep" class="edu.cornell.kfs.module.ezra.batch.AwardStep" parent="step">
+		<property name="ezraService">
+			<ref bean="ezraService" />
+		</property>
+	</bean>
+	
+	<bean id="agencyStep" class="edu.cornell.kfs.module.ezra.batch.AgencyStep" parent="step">
 		<property name="ezraService">
 			<ref bean="ezraService" />
 		</property>
@@ -100,6 +108,7 @@
 			<list>
 				<ref bean="proposalStep" />	
 				<ref bean="agencyStep" />
+				<ref bean="awardStep" />
 			</list>
 		</property>
 	</bean>
