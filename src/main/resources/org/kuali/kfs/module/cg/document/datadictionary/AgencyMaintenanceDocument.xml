@@ -64,9 +64,9 @@
         <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="inStateIndicator"/>
         <bean parent="MaintainableFieldDefinition" p:name="indirectAmount"/>
-        <bean parent="MaintainableFieldDefinition" p:name="reportsToAgencyNumber"/>
+        <bean parent="MaintainableFieldDefinition" p:name="reportsToAgencyNumber"/><!--
         <bean parent="MaintainableFieldDefinition" p:name="extension.lastUpdated"/>
-      </list>
+      --></list>
     </property>
   </bean>
   
