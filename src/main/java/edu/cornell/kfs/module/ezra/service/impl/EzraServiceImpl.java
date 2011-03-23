@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.kfs.module.cg.businessobject.AwardAccount;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.businessobject.ProposalOrganization;
 import org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector;
@@ -26,7 +27,9 @@ import org.kuali.rice.kns.maintenance.Maintainable;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.DocumentService;
+import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.module.cg.businessobject.AgencyExtension;
@@ -35,7 +38,7 @@ import edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward;
 import edu.cornell.kfs.module.ezra.businessobject.Investigator;
 import edu.cornell.kfs.module.ezra.businessobject.ProjectInvestigator;
 import edu.cornell.kfs.module.ezra.businessobject.Sponsor;
-import edu.cornell.kfs.module.ezra.dataaccess.EzraProposalDao;
+import edu.cornell.kfs.module.ezra.dataaccess.EzraAwardProposalDao;
 import edu.cornell.kfs.module.ezra.dataaccess.SponsorDao;
 import edu.cornell.kfs.module.ezra.service.EzraService;
 import edu.cornell.kfs.module.ezra.util.EzraUtils;
@@ -47,12 +50,13 @@ public class EzraServiceImpl implements EzraService {
     private BusinessObjectService businessObjectService;
 	private DocumentService documentService;
 	private SponsorDao sponsorDao;
-	private EzraProposalDao ezraProposalDao;
+	private EzraAwardProposalDao ezraAwardProposalDao;
 	private DateTimeService dateTimeService;
+	private ParameterService parameterService;
 
 	public boolean updateProposals() {
 		boolean result = false;
-		List<EzraProposalAward> proposals = ezraProposalDao.getProposals();
+		List<EzraProposalAward> proposals = ezraAwardProposalDao.getProposals();
 		Map fields = new HashMap();
 		for (EzraProposalAward ezraProposal : proposals) {
 			String proposalId = ezraProposal.getProjectId();
@@ -60,76 +64,38 @@ public class EzraServiceImpl implements EzraService {
 			fields.put("proposalNumber", proposalId);
 			Proposal proposal = (Proposal)businessObjectService.findByPrimaryKey(Proposal.class, fields);
 			if (ObjectUtils.isNull(proposal)) {
-				proposal = new Proposal();
-				proposal.setProposalNumber(Long.valueOf(proposalId));
-				LOG.info("Creating Proposal: "+proposalId);
-				if (ezraProposal.getSponsorNumber() != null) {
-					Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getSponsorNumber().toString());
-					if (ObjectUtils.isNull(agency)) {
-						agency = createAgency(ezraProposal.getSponsorNumber());
-						routeAgencyDocument(agency, null);
-					}
-					proposal.setAgencyNumber(ezraProposal.getSponsorNumber().toString());
-				}
-			//	Map projInvFields = new HashMap();
-			//	projInvFields.put("projectId", ezraProposal.getProjectId());
-				//projInvFields.put("awardProposalId", ezraProposal.getAwardProposalId());
-		//		List<EzraProject> projInvs = (List<EzraProject>)businessObjectService.findMatching(EzraProject.class, projInvFields);
-				List<ProposalProjectDirector> ppds = createProjectDirectors(proposal.getProposalNumber());
-				proposal.setProposalProjectDirectors(ppds);
-
-				Map deptFields = new HashMap();
-				deptFields.put("organizationCode", ezraProposal.getDepartmentId());
-				List<Organization> orgs = (List<Organization>)businessObjectService.findMatching(Organization.class, deptFields);
-				List<ProposalOrganization> propOrgs = createProposalOrganizations(orgs, proposal.getProposalNumber());
-				proposal.setProposalOrganizations(propOrgs);
-				
-				//check to see if this is a real cfda 
-				proposal.setCfdaNumber(ezraProposal.getCfdaNumber());
-				proposal.setProposalProjectTitle(ezraProposal.getProjectTitle());
-				proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
-				proposal.setProposalStatusCode(EzraUtils.getProposalAwardStatusMap().get(ezraProposal.getStatus()));
-				proposal.setProposalPurposeCode(EzraUtils.getProposalPurposeMap().get(ezraProposal.getPurpose()));
-				proposal.setProposalBeginningDate(ezraProposal.getStartDate());
-				proposal.setProposalEndingDate(ezraProposal.getStopDate());
-				proposal.setProposalTotalAmount(ezraProposal.getTotalAmt());
-				if (ezraProposal.getFederalPassThroughAgencyNumber() != null) {
-					Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getFederalPassThroughAgencyNumber().toString());
-					if (ObjectUtils.isNull(agency)) {
-						agency = createAgency(ezraProposal.getFederalPassThroughAgencyNumber());
-						routeAgencyDocument(agency, null);
-					}
-					proposal.setFederalPassThroughAgencyNumber(ezraProposal.getFederalPassThroughAgencyNumber().toString());
-				}
-				proposal.setProposalFederalPassThroughIndicator(ezraProposal.getFederalPassThroughBoolean());
-				proposal.setProposalAwardTypeCode("Z");
-				proposal.setActive(true);
-
-				
-				
-				
-//				ProposalExtension ext = (ProposalExtension)proposal.getExtension();
-//				if (ext == null) {
-//					ext = new ProposalExtension();
-//				}
-//				ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
-//				ext.setProposalNumber(proposal.getProposalNumber());
-//				proposal.setExtension(ext);
+				proposal = createProposal(ezraProposal);
 			 
 				routeProposalDocument(proposal);
 				
-				Award award = new Award(proposal);
-				award.setAwardStatusCode(proposal.getProposalStatusCode());
-				award.setAwardBeginningDate(proposal.getProposalBeginningDate());
-				award.setAwardEndingDate(proposal.getProposalEndingDate());
-				award.setAwardTotalAmount(proposal.getProposalTotalAmount());
-				award.setAwardEntryDate(dateTimeService.getCurrentSqlDate());
-				//award.setGran
+				Award award = createAward(proposal);
+				routeAwardDocument(award, null);
 			}
 		}
 		return result;
 	}
-
+	
+	public boolean updateAwardsSince(Date date) {
+		boolean result = true;
+		List<EzraProposalAward> awards = ezraAwardProposalDao.getAwardsUpdatedSince(date);
+		Map fields = new HashMap();
+		for (EzraProposalAward ezraAward : awards) {
+			String proposalId = ezraAward.getProjectId();
+			fields.clear();
+			fields.put("proposalNumber", proposalId);
+			Award award = (Award)businessObjectService.findByPrimaryKey(Award.class, fields);
+			if (award == null) {
+				LOG.error("Award: "+proposalId +" is null and probably should have already been created");
+			} else {
+				Proposal proposal = createProposal(ezraAward);
+				Award newAward = createAward(proposal);
+				routeAwardDocument(newAward, award);
+				
+			}
+		}
+		return result;
+	}
+	
 	public boolean updateSponsorsSince(Date date) {
 		boolean result = false;
 		List<Sponsor> sponsors = sponsorDao.getSponsorsUpdatedSince(date);
@@ -150,6 +116,66 @@ public class EzraServiceImpl implements EzraService {
 		}
 		return result;
 
+	}
+	
+	protected Award createAward(Proposal proposal) {
+		Award award = new Award(proposal);
+		award.setAwardStatusCode(proposal.getProposalStatusCode());
+		award.setAwardBeginningDate(proposal.getProposalBeginningDate());
+		award.setAwardEndingDate(proposal.getProposalEndingDate());
+		award.setAwardTotalAmount(proposal.getProposalTotalAmount());
+		award.setAwardEntryDate(dateTimeService.getCurrentSqlDate());
+		
+		List<AwardAccount> accounts = getAwardAccounts(proposal);
+		award.setAwardAccounts(accounts);
+
+		return award;
+	}
+	
+	protected Proposal createProposal(EzraProposalAward ezraProposal) {
+		String proposalId = ezraProposal.getProjectId();
+
+		Proposal proposal = new Proposal();
+		proposal.setProposalNumber(Long.valueOf(proposalId));
+		LOG.info("Creating Proposal: "+proposalId);
+		if (ezraProposal.getSponsorNumber() != null) {
+			Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getSponsorNumber().toString());
+			if (ObjectUtils.isNull(agency)) {
+				agency = createAgency(ezraProposal.getSponsorNumber());
+				routeAgencyDocument(agency, null);
+			}
+			proposal.setAgencyNumber(ezraProposal.getSponsorNumber().toString());
+		}
+		List<ProposalProjectDirector> ppds = createProjectDirectors(proposal.getProposalNumber());
+		proposal.setProposalProjectDirectors(ppds);
+
+		Map deptFields = new HashMap();
+		deptFields.put("organizationCode", ezraProposal.getDepartmentId());
+		List<Organization> orgs = (List<Organization>)businessObjectService.findMatching(Organization.class, deptFields);
+		List<ProposalOrganization> propOrgs = createProposalOrganizations(orgs, proposal.getProposalNumber());
+		proposal.setProposalOrganizations(propOrgs);
+		
+		//check to see if this is a real cfda 
+		proposal.setCfdaNumber(ezraProposal.getCfdaNumber());
+		proposal.setProposalProjectTitle(ezraProposal.getProjectTitle());
+		proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
+		proposal.setProposalStatusCode(EzraUtils.getProposalAwardStatusMap().get(ezraProposal.getStatus()));
+		proposal.setProposalPurposeCode(EzraUtils.getProposalPurposeMap().get(ezraProposal.getPurpose()));
+		proposal.setProposalBeginningDate(ezraProposal.getStartDate());
+		proposal.setProposalEndingDate(ezraProposal.getStopDate());
+		proposal.setProposalTotalAmount(ezraProposal.getTotalAmt());
+		if (ezraProposal.getFederalPassThroughAgencyNumber() != null) {
+			Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getFederalPassThroughAgencyNumber().toString());
+			if (ObjectUtils.isNull(agency)) {
+				agency = createAgency(ezraProposal.getFederalPassThroughAgencyNumber());
+				routeAgencyDocument(agency, null);
+			}
+			proposal.setFederalPassThroughAgencyNumber(ezraProposal.getFederalPassThroughAgencyNumber().toString());
+		}
+		proposal.setProposalFederalPassThroughIndicator(ezraProposal.getFederalPassThroughBoolean());
+		proposal.setProposalAwardTypeCode("Z");
+		proposal.setActive(true);
+		return proposal;
 	}
 
 	public Agency createAgency(Long sponsorId) {
@@ -218,30 +244,8 @@ public class EzraServiceImpl implements EzraService {
 		//	businessObjectService.save(ext);
 
 	}
-
-	private void routeProposalDocument(Proposal proposal) {
-		GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
-		MaintenanceDocument proposalDoc  = null;
-		try {
-			proposalDoc = (MaintenanceDocument) documentService.getNewDocument("PRPL");
-		} catch (WorkflowException we) {
-			we.printStackTrace();
-		}
-		proposalDoc.getDocumentHeader().setDocumentDescription("Auto creation of new proposal");
-		proposalDoc.getNewMaintainableObject().setBusinessObject(proposal);
-		try {
-			documentService.saveDocument(proposalDoc);
-			proposalDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
-		} catch (WorkflowException we) {
-			we.printStackTrace();
-		}
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
+	
 	
 	private void routeAgencyDocument(Agency agency, Agency oldAgency) {
 		GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
@@ -273,6 +277,63 @@ public class EzraServiceImpl implements EzraService {
 		}
 
 	}
+	
+	private void routeAwardDocument(Award award, Award oldAward) {
+		GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
+		// DocumentService docService = SpringContext.getBean(DocumentService.class);
+		MaintenanceDocument awardDoc  = null;
+		try {
+			awardDoc = (MaintenanceDocument) documentService.getNewDocument("AWD");
+		} catch (WorkflowException we) {
+			we.printStackTrace();
+		}
+		awardDoc.getDocumentHeader().setDocumentDescription("Auto creation of new award: "+ award.getProposalNumber());
+		if (ObjectUtils.isNotNull(oldAward)) {
+			awardDoc.getOldMaintainableObject().setBusinessObject(oldAward);
+		} 
+		Maintainable awardMaintainable = awardDoc.getNewMaintainableObject();
+		awardMaintainable.setBusinessObject(award);
+		awardDoc.setNewMaintainableObject(awardMaintainable);
+		try {
+			documentService.saveDocument(awardDoc);
+			awardDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
+		} catch (WorkflowException we) {
+			we.printStackTrace();
+		}
+		try {
+			Thread.sleep(15000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	private void routeProposalDocument(Proposal proposal) {
+		GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
+		MaintenanceDocument proposalDoc  = null;
+		try {
+			proposalDoc = (MaintenanceDocument) documentService.getNewDocument("PRPL");
+		} catch (WorkflowException we) {
+			we.printStackTrace();
+		}
+		proposalDoc.getDocumentHeader().setDocumentDescription("Auto creation of new proposal");
+		proposalDoc.getNewMaintainableObject().setBusinessObject(proposal);
+		try {
+			documentService.saveDocument(proposalDoc);
+			proposalDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
+		} catch (WorkflowException we) {
+			we.printStackTrace();
+		}
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 
 	private List<ProposalProjectDirector> createProjectDirectors(Long projectId) {
 		List<ProposalProjectDirector> projDirs = new ArrayList<ProposalProjectDirector>();
@@ -329,6 +390,29 @@ public class EzraServiceImpl implements EzraService {
 		}
 		return propOrgs;
 	}
+	
+	private  List<AwardAccount> getAwardAccounts(Proposal proposal) {
+		List<AwardAccount> awardAccounts = new ArrayList<AwardAccount>();
+
+		String principalId = parameterService.getParameterValue("KFS-EZRA", "Award", "DEFAULT_PROJECT_DIRECTOR");
+		String[] chartAcct = parameterService.getParameterValue("KFS-EZRA", "Award", "DEFAULT_AWARD_ACCOUNT").split(":");
+		String chart = chartAcct[0];
+		String acct = chartAcct[1];
+
+		AwardAccount account = new AwardAccount();
+		account.setProposalNumber(proposal.getProposalNumber());
+		account.setChartOfAccountsCode(chart);
+		account.setAccountNumber(acct);
+		account.setPrincipalId(principalId);
+		
+		awardAccounts.add(account);
+		
+		return awardAccounts;
+	}
+	
+	
+	
+	
 	/**
 	 * @return the businessObjectService
 	 */
@@ -375,15 +459,15 @@ public class EzraServiceImpl implements EzraService {
 	/**
 	 * @return the proposalDao
 	 */
-	public EzraProposalDao getEzraProposalDao() {
-		return ezraProposalDao;
+	public EzraAwardProposalDao getEzraAwardProposalDao() {
+		return ezraAwardProposalDao;
 	}
 
 	/**
 	 * @param proposalDao the proposalDao to set
 	 */
-	public void setEzraProposalDao(EzraProposalDao ezraProposalDao) {
-		this.ezraProposalDao = ezraProposalDao;
+	public void setEzraAwardProposalDao(EzraAwardProposalDao ezraAwardProposalDao) {
+		this.ezraAwardProposalDao = ezraAwardProposalDao;
 	}
 
 	/**
@@ -400,6 +484,18 @@ public class EzraServiceImpl implements EzraService {
 		this.dateTimeService = dateTimeService;
 	}
 
+	/**
+	 * @return the parameterService
+	 */
+	public ParameterService getParameterService() {
+		return parameterService;
+	}
 
+	/**
+	 * @param parameterService the parameterService to set
+	 */
+	public void setParameterService(ParameterService parameterService) {
+		this.parameterService = parameterService;
+	}
 
 }

@@ -12,8 +12,9 @@ import edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward;
  * @author kwk43
  *
  */
-public interface EzraProposalDao {
+public interface EzraAwardProposalDao {
 
 	public List<EzraProposalAward> getProposals();
+	public List<EzraProposalAward> getAwardsUpdatedSince(Date date);
 	
 }

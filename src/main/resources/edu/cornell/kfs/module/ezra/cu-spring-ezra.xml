@@ -60,8 +60,8 @@
 		<property name="sponsorDao">
 			<ref bean="sponsorDao" />
 		</property>
-		<property name="ezraProposalDao">
-			<ref bean="ezraProposalDao"/>
+		<property name="ezraAwardProposalDao">
+			<ref bean="ezraAwardProposalDao"/>
 		</property>
 		<property name="documentService">
 			<ref bean="documentService" />
@@ -75,7 +75,7 @@
 	</bean>
 	
 	<bean id="sponsorDao" parent="platformAwareDao" class="edu.cornell.kfs.module.ezra.dataaccess.impl.SponsorDaoOjb" />
-	<bean id="ezraProposalDao" parent="platformAwareDao" class="edu.cornell.kfs.module.ezra.dataaccess.impl.EzraProposalDaoOjb" />
+	<bean id="ezraAwardProposalDao" parent="platformAwareDao" class="edu.cornell.kfs.module.ezra.dataaccess.impl.EzraAwardProposalDaoOjb" />
 
 
 	<!--<bean id="ezraUpdateBatchJobTrigger" parent="cronTrigger">
