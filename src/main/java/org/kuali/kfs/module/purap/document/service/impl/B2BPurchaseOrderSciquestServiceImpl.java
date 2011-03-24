@@ -104,7 +104,15 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 
         try {
             LOG.debug("sendPurchaseOrder() Generating cxml");
-            String cxml = getCxml(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns);
+            String cxml = "";
+            
+            if (PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
+                cxml = getCxml(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns);
+            }
+            else {
+                prepareNonB2BPurchaseOrderForTransmission(purchaseOrder);
+                cxml = getCxml(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns);
+            }
 
             LOG.info("sendPurchaseOrder() Sending cxml\n" + cxml);
             String responseCxml = b2bDao.sendPunchOutRequest(cxml, b2bPurchaseOrderURL);
@@ -612,12 +620,41 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
      * Retrieve the Contract Manager's email
      */
     protected String getContractManagerEmail(ContractManager cm) {
-
+    	if(cm.getContractManagerCode().equals(PurapConstants.APO_CONTRACT_MANAGER)) {
+    		return "db18@cornell.edu"; // Hard coding for now... will be replaced with a parameter at a later time (See KITI-1759)
+    	} 
+    	
         Person contractManager = getPersonService().getPerson(cm.getContractManagerUserIdentifier());
         if (ObjectUtils.isNotNull(contractManager)) {
             return contractManager.getEmailAddressUnmasked();
         }
         return "";
+    }
+
+    /**
+     * Sets fields on the purchase order document that the are expected for the xml but might not be populated
+     * on non B2B documents (to prevent NPEs)
+     * 
+     * @param purchaseOrder document instance to prepare
+     */
+    protected void prepareNonB2BPurchaseOrderForTransmission(PurchaseOrderDocument purchaseOrder) {
+        List detailList = purchaseOrder.getItems();
+        for (Iterator iter = detailList.iterator(); iter.hasNext();) {
+            PurchaseOrderItem poi = (PurchaseOrderItem) iter.next();
+            
+            if (poi.getItemCatalogNumber() == null) {
+            	poi.setItemCatalogNumber("");
+            }
+            if (poi.getExternalOrganizationB2bProductTypeName() == null) {
+            	poi.setExternalOrganizationB2bProductTypeName("");
+            }
+            if (poi.getExternalOrganizationB2bProductReferenceNumber() == null) {
+            	poi.setExternalOrganizationB2bProductReferenceNumber("");
+            }
+            if (poi.getExternalOrganizationB2bProductTypeName() == null) {
+            	poi.setExternalOrganizationB2bProductTypeName("");
+            }
+        }    
     }
 
     public void setRequisitionService(RequisitionService requisitionService) {
