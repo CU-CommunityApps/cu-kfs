@@ -137,7 +137,7 @@
 	<bean id="AccountGlobalMaintenanceDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
 		<property name="routingTypeDefinitions">
     		<map>
-	    		<entry key="Chart" value-ref="AccountGlobalMaintenanceDocument-RoutingType-Chart"/>
+	    		<entry key="SubFund" value-ref="AccountGlobalMaintenanceDocument-RoutingType-SubFund"/>
     			<entry key="OrganizationHierarchy" value-ref="AccountGlobalMaintenanceDocument-RoutingType-OrganizationHierarchy"/>
     		</map>
 		</property>
@@ -176,6 +176,22 @@
    		</property>
    	</bean>
    	
+   	<bean id="AccountGlobalMaintenanceDocument-DocumentValuePathGroup-SubFund" class="org.kuali.rice.kns.datadictionary.DocumentValuePathGroup">
+    	<property name="documentCollectionPath">
+    		<bean parent="AccountGlobalMaintenanceDocument-DocumentCollectionPath-subfund">
+    			<property name="collectionPath" value="newMaintainableObject.businessObject.accountGlobalDetails"/>
+    		</bean>
+    	</property>
+   	</bean>
+   	
+   	 <bean id="AccountGlobalMaintenanceDocument-DocumentCollectionPath-subfund" class="org.kuali.rice.kns.datadictionary.DocumentCollectionPath" abstract="true">
+		<property name="documentValues">
+	   		<list>
+	   			<value>account.subFundGroupCode</value>
+	   		</list>
+   		</property>
+   	</bean>
+   	
    	<bean id="AccountGlobalMaintenanceDocument-RoutingType-OrganizationHierarchy" class="org.kuali.rice.kns.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
@@ -190,15 +206,15 @@
     	</property>
     </bean>
    	
-	<bean id="AccountGlobalMaintenanceDocument-RoutingType-Chart" class="org.kuali.rice.kns.datadictionary.RoutingTypeDefinition">
+	<bean id="AccountGlobalMaintenanceDocument-RoutingType-SubFund" class="org.kuali.rice.kns.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
-		        <ref bean="RoutingAttribute-Chart"/>
+		        <ref bean="RoutingAttribute-SubFund"/>
     		</list>
     	</property>
     	<property name="documentValuePathGroups">
     		<list>
-    			<ref bean="AccountGlobalMaintenanceDocument-DocumentValuePathGroup-Chart"/>
+    			<ref bean="AccountGlobalMaintenanceDocument-DocumentValuePathGroup-SubFund"/>
     		</list>
     	</property>
     </bean>
