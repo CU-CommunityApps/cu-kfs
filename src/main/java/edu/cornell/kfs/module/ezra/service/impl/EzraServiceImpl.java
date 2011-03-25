@@ -240,7 +240,7 @@ public class EzraServiceImpl implements EzraService {
 		}
 		//ext.setAgencyNumber(agency.getAgencyNumber());
 		ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
-		ext.setVersionNumber(ext.getVersionNumber()+1);
+		//ext.setVersionNumber(ext.getVersionNumber()+1);
 		agency.setExtension(ext);
 		//		agency.setActive(true);
 		// agency.refreshReferenceObject("extension");
