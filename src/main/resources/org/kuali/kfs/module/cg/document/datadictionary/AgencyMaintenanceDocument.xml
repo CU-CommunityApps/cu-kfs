@@ -57,7 +57,7 @@
     <property name="title" value="Edit Agency"/>
     <property name="maintainableItems">
       <list>
-        <bean parent="MaintainableFieldDefinition" p:name="agencyNumber" p:unconditionallyReadOnly="true" p:required="true" p:defaultValueFinderClass="org.kuali.kfs.module.cg.businessobject.defaultvalue.NextAgencyNumberFinder"/>
+        <bean parent="MaintainableFieldDefinition" p:name="agencyNumber" p:required="true" />
         <bean parent="MaintainableFieldDefinition" p:name="reportingName" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="fullName" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="agencyTypeCode" p:required="true"/>
