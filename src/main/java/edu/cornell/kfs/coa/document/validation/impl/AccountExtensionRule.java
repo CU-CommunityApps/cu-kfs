@@ -52,7 +52,7 @@ public class AccountExtensionRule extends AccountRule {
         boolean success = true;
 
         String subFundGroupCode = newAccount.getSubFundGroupCode();
-        String subFundProgramCode = ((AccountExtendedAttribute)newAccount.getExtension()).getProgramCode();
+        String subFundProgramCode = ((AccountExtendedAttribute)newAccount.getExtension()).getSubFundProgram().getProgramCode();
         BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
 
         if (!StringUtils.isBlank(subFundProgramCode)) {
@@ -81,7 +81,7 @@ public class AccountExtensionRule extends AccountRule {
              Collection<SubFundProgram> retVals = bos.findMatching(SubFundProgram.class, fieldValues);
              if (!retVals.isEmpty()) {
                  success = false;
-                 putFieldError("extension.SubFundProgram.programCode", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE, new String[] { subFundGroupCode});
+                 putFieldError("extension.subFundProgram.programCode", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE, new String[] { subFundGroupCode});
              }
         }
         return success; 
