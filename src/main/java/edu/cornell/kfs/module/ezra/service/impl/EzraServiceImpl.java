@@ -107,7 +107,7 @@ public class EzraServiceImpl implements EzraService {
 			Agency agency = (Agency)businessObjectService.findByPrimaryKey(Agency.class, fields);
 			Agency oldAgency = agency;
 			if (ObjectUtils.isNull(agency)) {
-				agency = createAgency(sponsorId);
+		//		agency = createAgency(sponsorId);
 
 			} else {
 				updateAgency(agency, sponsor);
