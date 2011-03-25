@@ -623,7 +623,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
     	if(cm.getContractManagerCode().equals(PurapConstants.APO_CONTRACT_MANAGER)) {
     		return "db18@cornell.edu"; // Hard coding for now... will be replaced with a parameter at a later time (See KITI-1759)
     	} 
-    	
+
         Person contractManager = getPersonService().getPerson(cm.getContractManagerUserIdentifier());
         if (ObjectUtils.isNotNull(contractManager)) {
             return contractManager.getEmailAddressUnmasked();
