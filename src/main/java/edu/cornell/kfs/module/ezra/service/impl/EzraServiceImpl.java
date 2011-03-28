@@ -295,7 +295,7 @@ public class EzraServiceImpl implements EzraService {
 		awardDoc.getDocumentHeader().setDocumentDescription("Auto creation of new award: "+ award.getProposalNumber());
 		if (ObjectUtils.isNotNull(oldAward)) {
 			awardDoc.getOldMaintainableObject().setBusinessObject(oldAward);
-			award.setVersionNumber(oldAward.getVersionNumber()+1);
+			//award.setVersionNumber(oldAward.getVersionNumber()+1);
 		} 
 		Maintainable awardMaintainable = awardDoc.getNewMaintainableObject();
 		awardMaintainable.setBusinessObject(award);
