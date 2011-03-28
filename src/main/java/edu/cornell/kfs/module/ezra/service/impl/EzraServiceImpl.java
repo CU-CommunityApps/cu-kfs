@@ -227,6 +227,13 @@ public class EzraServiceImpl implements EzraService {
 		}
 
 		if (sponsor.getParentSponsor() != null && !StringUtils.equals(agency.getReportsToAgencyNumber(), sponsor.getParentSponsor().toString())) {
+			
+			//Need to create the reports to agency hierarchy.
+			Agency rptsToAgency = businessObjectService.findBySinglePrimaryKey(Agency.class, sponsor.getParentSponsor());
+			if (rptsToAgency == null) {
+				rptsToAgency = createAgency(sponsor.getParentSponsor());
+				routeAgencyDocument(rptsToAgency, null);
+			}
 			agency.setReportsToAgencyNumber(sponsor.getParentSponsor().toString());
 		}
 		String sponsorTypeCode = EzraUtils.getAgencyTypeMap().get(sponsor.getSourceCode().toString());
@@ -273,7 +280,7 @@ public class EzraServiceImpl implements EzraService {
 			we.printStackTrace();
 		}
 		try {
-			Thread.sleep(15000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -304,7 +311,7 @@ public class EzraServiceImpl implements EzraService {
 			we.printStackTrace();
 		}
 		try {
-			Thread.sleep(15000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
