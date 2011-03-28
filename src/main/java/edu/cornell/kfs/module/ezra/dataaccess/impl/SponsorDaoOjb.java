@@ -18,6 +18,9 @@ public class SponsorDaoOjb extends PlatformAwareDaoBaseOjb implements SponsorDao
 		if (date != null) {
 			criteria.addLessThan("lastUpdated", date);
 		}
+		Criteria criteria2 = new Criteria();
+		criteria.addNotNull("lastUpdated");
+		criteria.addAndCriteria(criteria2);
 		
         return (List<Sponsor>)getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(Sponsor.class, criteria));
 		
