@@ -348,7 +348,13 @@ public class EzraServiceImpl implements EzraService {
 		if (investigator != null) {
 			PersonService ps = SpringContext.getBean(PersonService.class);
 			Person director = ps.getPersonByPrincipalName(investigator.getNetId());
-			ProposalProjectDirector ppd = new ProposalProjectDirector();
+			Map primaryKeys = new HashMap();
+			primaryKeys.put("principalId", director.getPrincipalId());
+			primaryKeys.put("proposalNumber", projectId);
+			ProposalProjectDirector ppd = (ProposalProjectDirector) businessObjectService.findByPrimaryKey(ProposalProjectDirector.class, primaryKeys);
+			if (ObjectUtils.isNull(ppd)) {
+				ppd = new ProposalProjectDirector();
+			}
 			ppd.setPrincipalId(director.getPrincipalId());
 			ppd.setProposalNumber(new Long(project.getProjectId()));
 			ppd.setProposalPrimaryProjectDirectorIndicator(true);
@@ -366,7 +372,13 @@ public class EzraServiceImpl implements EzraService {
 			if (investigator != null) {
 				PersonService ps = SpringContext.getBean(PersonService.class);
 				Person director = ps.getPersonByPrincipalName(investigator.getNetId());
-				ProposalProjectDirector ppd = new ProposalProjectDirector();
+				Map primaryKeys = new HashMap();
+				primaryKeys.put("principalId", director.getPrincipalId());
+				primaryKeys.put("proposalNumber", projectId);
+				ProposalProjectDirector ppd = (ProposalProjectDirector) businessObjectService.findByPrimaryKey(ProposalProjectDirector.class, primaryKeys);
+				if (ObjectUtils.isNull(ppd)) {
+					ppd = new ProposalProjectDirector();
+				}
 				ppd.setPrincipalId(director.getPrincipalId());
 				ppd.setProposalNumber(new Long(project.getProjectId()));
 				ppd.setProposalPrimaryProjectDirectorIndicator(false);
@@ -385,7 +397,14 @@ public class EzraServiceImpl implements EzraService {
 		LOG.info("Retrieved Orgs :"+ orgs.size() + " for Proposal "+ projectId);
 		List<ProposalOrganization> propOrgs = new ArrayList<ProposalOrganization>();
 		for (Organization org : orgs) {
-			ProposalOrganization po = new ProposalOrganization();
+			Map primaryKeys = new HashMap();
+			primaryKeys.put("chartOfAccountsCode", org.getChartOfAccountsCode());
+			primaryKeys.put("organizationCode", org.getOrganizationCode());
+			primaryKeys.put("proposalNumber", projectId);
+			ProposalOrganization po = (ProposalOrganization) businessObjectService.findByPrimaryKey(ProposalOrganization.class, primaryKeys);
+			if (ObjectUtils.isNull(po)) {
+				po = new ProposalOrganization();
+			}
 			po.setChartOfAccountsCode("IT");
 			po.setOrganizationCode(org.getOrganizationCode());
 			EzraProject ep = (EzraProject)businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectId);
