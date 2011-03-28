@@ -354,6 +354,8 @@ public class EzraServiceImpl implements EzraService {
 			ProposalProjectDirector ppd = (ProposalProjectDirector) businessObjectService.findByPrimaryKey(ProposalProjectDirector.class, primaryKeys);
 			if (ObjectUtils.isNull(ppd)) {
 				ppd = new ProposalProjectDirector();
+			} else {
+				ppd.setVersionNumber(ppd.getVersionNumber()+1);
 			}
 			ppd.setPrincipalId(director.getPrincipalId());
 			ppd.setProposalNumber(new Long(project.getProjectId()));
@@ -378,6 +380,8 @@ public class EzraServiceImpl implements EzraService {
 				ProposalProjectDirector ppd = (ProposalProjectDirector) businessObjectService.findByPrimaryKey(ProposalProjectDirector.class, primaryKeys);
 				if (ObjectUtils.isNull(ppd)) {
 					ppd = new ProposalProjectDirector();
+				} else {
+					ppd.setVersionNumber(ppd.getVersionNumber()+1);
 				}
 				ppd.setPrincipalId(director.getPrincipalId());
 				ppd.setProposalNumber(new Long(project.getProjectId()));
@@ -404,6 +408,8 @@ public class EzraServiceImpl implements EzraService {
 			ProposalOrganization po = (ProposalOrganization) businessObjectService.findByPrimaryKey(ProposalOrganization.class, primaryKeys);
 			if (ObjectUtils.isNull(po)) {
 				po = new ProposalOrganization();
+			} else {
+				po.setVersionNumber(po.getVersionNumber()+1);
 			}
 			po.setChartOfAccountsCode("IT");
 			po.setOrganizationCode(org.getOrganizationCode());
