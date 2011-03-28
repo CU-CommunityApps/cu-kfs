@@ -199,7 +199,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         }
         cxml.append("      <PONumber>").append(purchaseOrder.getPurapDocumentIdentifier()).append("</PONumber>\n");
         cxml.append("      <Requestor>\n");
-        if(!"B2B".equalsIgnoreCase(purchaseOrder.getRequisitionSource().getRequisitionSourceCode())) {
+        if(!PurapConstants.RequisitionSources.B2B.equalsIgnoreCase(purchaseOrder.getRequisitionSource().getRequisitionSourceCode())) {
         	cxml.append("        <UserProfile username=\"KUALI\">\n");
         } else {
         	cxml.append("        <UserProfile username=\"").append(requisitionInitiatorId.toUpperCase()).append("\">\n");
@@ -448,7 +448,11 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                     cxml.append("        <ProductReferenceNumber>").append(poi.getExternalOrganizationB2bProductReferenceNumber()).append("</ProductReferenceNumber>\n");
                 }
                 // ProductType - Describes the type of the product or service. Valid values: Catalog, Form, Punchout. Mandatory.
-                cxml.append("        <ProductType>").append(poi.getExternalOrganizationB2bProductTypeName()).append("</ProductType>\n");
+                if (PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
+                	cxml.append("        <ProductType>").append(poi.getExternalOrganizationB2bProductTypeName()).append("</ProductType>\n");
+                } else {
+                	cxml.append("        <ProductType>").append("Form").append("</ProductType>\n");
+                }
                 cxml.append("      </Item>\n");
                 cxml.append("      <Quantity>").append(poi.getItemQuantity()).append("</Quantity>\n");
                 // LineCharges - All the monetary charges for this line, including the price, tax, shipping, and handling.
@@ -598,7 +602,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                     LOG.error("verifyCxmlPOData()  The Unit Of Measure Code for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");
                     errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - Unit Of Measure\n");
                 }
-                if (StringUtils.isEmpty(poi.getExternalOrganizationB2bProductTypeName())) {
+                if (StringUtils.isEmpty(poi.getExternalOrganizationB2bProductTypeName()) && PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
                     LOG.error("verifyCxmlPOData()  The External Org B2B Product Type Name for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");
                     errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - External Org B2B Product Type Name\n");
                 }
@@ -623,7 +627,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
     	if(cm.getContractManagerCode().equals(PurapConstants.APO_CONTRACT_MANAGER)) {
     		return "db18@cornell.edu"; // Hard coding for now... will be replaced with a parameter at a later time (See KITI-1759)
     	} 
-
+    	
         Person contractManager = getPersonService().getPerson(cm.getContractManagerUserIdentifier());
         if (ObjectUtils.isNotNull(contractManager)) {
             return contractManager.getEmailAddressUnmasked();
