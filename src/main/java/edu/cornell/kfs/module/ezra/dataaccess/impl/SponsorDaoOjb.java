@@ -16,7 +16,7 @@ public class SponsorDaoOjb extends PlatformAwareDaoBaseOjb implements SponsorDao
 		
 		Criteria criteria = new Criteria();
 		if (date != null) {
-			criteria.addLessThan("lastUpdated", date);
+			criteria.addGreaterThan("lastUpdated", date);
 		}
 		Criteria criteria2 = new Criteria();
 		criteria.addNotNull("lastUpdated");
