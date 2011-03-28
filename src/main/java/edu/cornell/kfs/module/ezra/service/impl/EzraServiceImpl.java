@@ -29,10 +29,8 @@ import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 
-import edu.cornell.kfs.module.cg.businessobject.AgencyExtension;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProject;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward;
 import edu.cornell.kfs.module.ezra.businessobject.Investigator;
@@ -97,7 +95,7 @@ public class EzraServiceImpl implements EzraService {
 	}
 	
 	public boolean updateSponsorsSince(Date date) {
-		boolean result = false;
+		boolean result = true;
 		List<Sponsor> sponsors = sponsorDao.getSponsorsUpdatedSince(date);
 		Map fields = new HashMap();
 		for (Sponsor sponsor : sponsors) {
@@ -106,10 +104,7 @@ public class EzraServiceImpl implements EzraService {
 			fields.put("agencyNumber", sponsorId.toString());
 			Agency agency = (Agency)businessObjectService.findByPrimaryKey(Agency.class, fields);
 			Agency oldAgency = agency;
-			if (ObjectUtils.isNull(agency)) {
-		//		agency = createAgency(sponsorId);
-
-			} else {
+			if (!ObjectUtils.isNull(agency)) {
 				updateAgency(agency, sponsor);
 			}
 			routeAgencyDocument(agency, oldAgency);
@@ -203,13 +198,13 @@ public class EzraServiceImpl implements EzraService {
 		String sponsorTypeCode = EzraUtils.getAgencyTypeMap().get(sponsor.getSourceCode().toString());
 		agency.setAgencyTypeCode(sponsorTypeCode);
 		agency.setActive(true);
-		AgencyExtension ext = (AgencyExtension)agency.getExtension();
-		if (ext == null) {
-			ext = new AgencyExtension();
-		}
-		ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
-		//ext.setAgencyNumber(agency.getAgencyNumber());
-		agency.setExtension(ext);
+//		AgencyExtension ext = (AgencyExtension)agency.getExtension();
+//		if (ext == null) {
+//			ext = new AgencyExtension();
+//		}
+//		ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
+//		//ext.setAgencyNumber(agency.getAgencyNumber());
+//		agency.setExtension(ext);
 		return agency;
 
 	}
@@ -241,14 +236,14 @@ public class EzraServiceImpl implements EzraService {
 			agency.setAgencyTypeCode(sponsorTypeCode);
 		}
 		agency.setActive(true);
-		AgencyExtension ext = (AgencyExtension)agency.getExtension();
-		if (ext == null) {
-			ext = new AgencyExtension();
-		}
-		//ext.setAgencyNumber(agency.getAgencyNumber());
-		ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
-		//ext.setVersionNumber(ext.getVersionNumber()+1);
-		agency.setExtension(ext);
+//		AgencyExtension ext = (AgencyExtension)agency.getExtension();
+//		if (ext == null) {
+//			ext = new AgencyExtension();
+//		}
+//		//ext.setAgencyNumber(agency.getAgencyNumber());
+//		ext.setLastUpdated(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
+//		//ext.setVersionNumber(ext.getVersionNumber()+1);
+//		agency.setExtension(ext);
 		//		agency.setActive(true);
 		// agency.refreshReferenceObject("extension");
 		//	businessObjectService.save(ext);
