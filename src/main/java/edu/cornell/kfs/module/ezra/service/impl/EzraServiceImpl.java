@@ -356,7 +356,7 @@ public class EzraServiceImpl implements EzraService {
 			if (ObjectUtils.isNull(ppd)) {
 				ppd = new ProposalProjectDirector();
 			} else {
-				ppd.setVersionNumber(ppd.getVersionNumber()+1);
+				ppd.setVersionNumber(ppd.getVersionNumber());
 			}
 			ppd.setPrincipalId(director.getPrincipalId());
 			ppd.setProposalNumber(new Long(project.getProjectId()));
@@ -382,7 +382,7 @@ public class EzraServiceImpl implements EzraService {
 				if (ObjectUtils.isNull(ppd)) {
 					ppd = new ProposalProjectDirector();
 				} else {
-					ppd.setVersionNumber(ppd.getVersionNumber()+1);
+					ppd.setVersionNumber(ppd.getVersionNumber());
 				}
 				ppd.setPrincipalId(director.getPrincipalId());
 				ppd.setProposalNumber(new Long(project.getProjectId()));
