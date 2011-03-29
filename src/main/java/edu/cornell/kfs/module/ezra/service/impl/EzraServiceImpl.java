@@ -125,6 +125,7 @@ public class EzraServiceImpl implements EzraService {
 			award.setAwardAccounts(accounts);
 		} else {
 			award.setAwardAccounts(oldAward.getAwardAccounts());
+			award.setVersionNumber(oldAward.getVersionNumber());
 		}
 		return award;
 	}
