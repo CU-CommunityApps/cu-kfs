@@ -40,7 +40,7 @@ public class EzraAwardProposalDaoOjb extends PlatformAwareDaoBaseOjb implements 
 		criteria.addIn("projectId", awardNumbers);
 		
 		if (date != null) {
-			criteria.addLessThan("lastUpdated", date);
+			criteria.addGreaterThan("lastUpdated", date);
 		}
 
         return (List<EzraProposalAward>)getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(EzraProposalAward.class, criteria));
