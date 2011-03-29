@@ -136,7 +136,7 @@ public class EzraServiceImpl implements EzraService {
 			primaryKeys.put("proposalNumber", apd.getProposalNumber());
 			AwardProjectDirector projDir = (AwardProjectDirector) businessObjectService.findByPrimaryKey(AwardProjectDirector.class, primaryKeys);
 			if (ObjectUtils.isNotNull(projDir)) {
-				apd.setVersionNumber(projDir.getVersionNumber());
+				apd.setVersionNumber(projDir.getVersionNumber()+1);
 				apd.setObjectId(projDir.getObjectId());
 			}
 		
