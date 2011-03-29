@@ -78,6 +78,7 @@ public class EzraServiceImpl implements EzraService {
 		boolean result = true;
 		List<EzraProposalAward> awards = ezraAwardProposalDao.getAwardsUpdatedSince(date);
 		Map fields = new HashMap();
+		LOG.info("Retrieved : "+ awards.size()+" Awards to update since "+ date.toString());
 		for (EzraProposalAward ezraAward : awards) {
 			String proposalId = ezraAward.getProjectId();
 			fields.clear();
@@ -136,6 +137,7 @@ public class EzraServiceImpl implements EzraService {
 			AwardProjectDirector projDir = (AwardProjectDirector) businessObjectService.findByPrimaryKey(AwardProjectDirector.class, primaryKeys);
 			if (ObjectUtils.isNotNull(projDir)) {
 				apd.setVersionNumber(projDir.getVersionNumber());
+				apd.setObjectId(projDir.getObjectId());
 			}
 		
 		}
