@@ -130,19 +130,15 @@ public class EzraServiceImpl implements EzraService {
 			award.setVersionNumber(oldAward.getVersionNumber());
 		}
 		
-//		for (AwardProjectDirector apd : award.getAwardProjectDirectors()) {
-//			Map primaryKeys = new HashMap();
-//			primaryKeys.put("principalId", apd.getPrincipalId());
-//			primaryKeys.put("proposalNumber", apd.getProposalNumber());
-//			AwardProjectDirector projDir = (AwardProjectDirector) businessObjectService.findByPrimaryKey(AwardProjectDirector.class, primaryKeys);
-//			if (ObjectUtils.isNotNull(projDir)) {
-//				apd.setVersionNumber(projDir.getVersionNumber()+1);
-//				apd.setObjectId(projDir.getObjectId());
-//			} else {
-//				System.out.println("blah blah blah");
-//			}
-//		
-//		}
+		for (AwardProjectDirector apd : award.getAwardProjectDirectors()) {
+			Map primaryKeys = new HashMap();
+			primaryKeys.put("principalId", apd.getPrincipalId());
+			primaryKeys.put("proposalNumber", apd.getProposalNumber());
+			AwardProjectDirector projDir = (AwardProjectDirector) businessObjectService.findByPrimaryKey(AwardProjectDirector.class, primaryKeys);
+			if (ObjectUtils.isNotNull(projDir)) {
+				apd.setVersionNumber(projDir.getVersionNumber());
+			} 
+		}
 		return award;
 	}
 	
@@ -426,7 +422,7 @@ public class EzraServiceImpl implements EzraService {
 			if (ObjectUtils.isNull(po)) {
 				po = new ProposalOrganization();
 			} else {
-				po.setVersionNumber(po.getVersionNumber()+1);
+				po.setVersionNumber(po.getVersionNumber());
 			}
 			po.setChartOfAccountsCode("IT");
 			po.setOrganizationCode(org.getOrganizationCode());
