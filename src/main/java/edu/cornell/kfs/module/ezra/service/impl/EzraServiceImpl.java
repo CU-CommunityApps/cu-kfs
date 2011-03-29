@@ -11,6 +11,7 @@ import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.AwardAccount;
+import org.kuali.kfs.module.cg.businessobject.AwardProjectDirector;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.businessobject.ProposalOrganization;
 import org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector;
@@ -126,6 +127,17 @@ public class EzraServiceImpl implements EzraService {
 		} else {
 			award.setAwardAccounts(oldAward.getAwardAccounts());
 			award.setVersionNumber(oldAward.getVersionNumber());
+		}
+		
+		for (AwardProjectDirector apd : award.getAwardProjectDirectors()) {
+			Map primaryKeys = new HashMap();
+			primaryKeys.put("principalId", apd.getPrincipalId());
+			primaryKeys.put("proposalNumber", apd.getProposalNumber());
+			AwardProjectDirector projDir = (AwardProjectDirector) businessObjectService.findByPrimaryKey(AwardProjectDirector.class, primaryKeys);
+			if (ObjectUtils.isNotNull(projDir)) {
+				apd.setVersionNumber(projDir.getVersionNumber());
+			}
+		
 		}
 		return award;
 	}
