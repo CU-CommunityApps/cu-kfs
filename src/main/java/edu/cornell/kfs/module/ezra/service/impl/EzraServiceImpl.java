@@ -138,6 +138,8 @@ public class EzraServiceImpl implements EzraService {
 			if (ObjectUtils.isNotNull(projDir)) {
 				apd.setVersionNumber(projDir.getVersionNumber()+1);
 				apd.setObjectId(projDir.getObjectId());
+			} else {
+				System.out.println("blah blah blah");
 			}
 		
 		}
