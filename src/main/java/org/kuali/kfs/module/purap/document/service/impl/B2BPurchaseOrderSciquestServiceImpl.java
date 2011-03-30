@@ -308,11 +308,11 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                 cxml.append("              <Number>").append(vendorFaxNumber.substring(3)).append("</Number>\n");
                 cxml.append("            </TelephoneNumber>\n");
                 cxml.append("          </Fax>\n");
-            } else if ("EMAL".equalsIgnoreCase(poTransmissionCode)) {
+            } else if (PurapConstants.POTransmissionMethods.EMAIL.equalsIgnoreCase(poTransmissionCode)) {
             	// email
                 cxml.append("        <DistributionMethod type=\"html_email_attachments\">\n");
                 cxml.append("          <Email><![CDATA[").append(emailAddress).append("]]></Email>\n");
-            } else if("CONV".equalsIgnoreCase(poTransmissionCode)) {
+            } else if(PurapConstants.POTransmissionMethods.CONVERSION.equalsIgnoreCase(poTransmissionCode)) {
                 // manual
                 cxml.append("        <DistributionMethod type=\"manual\">\n");
             } else {
