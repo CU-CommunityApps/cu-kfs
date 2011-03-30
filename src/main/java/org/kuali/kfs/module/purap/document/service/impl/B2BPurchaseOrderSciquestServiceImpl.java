@@ -285,6 +285,8 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
             VendorAddress vendorAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(purchaseOrder.getVendorDetail().getVendorAddresses(), VendorConstants.AddressTypes.PURCHASE_ORDER, purchaseOrder.getDeliveryCampusCode());
             cxml.append("      <OrderDistribution>\n");
 
+            String poTransmissionCode = purchaseOrder.getPurchaseOrderTransmissionMethodCode();
+            
             // first take fax from PO, if empty then get fax number for PO default vendor address
             String vendorFaxNumber = purchaseOrder.getVendorFaxNumber();
             if (StringUtils.isBlank(vendorFaxNumber) && vendorAddress != null) {
@@ -296,8 +298,8 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                 emailAddress = vendorAddress.getVendorAddressEmailAddress();
             }
 
-            // use fax number if not blank
-            if (StringUtils.isNotBlank(vendorFaxNumber) && vendorFaxNumber.length() > 4) {
+            // fax
+            if(PurapConstants.POTransmissionMethods.FAX.equalsIgnoreCase(poTransmissionCode)) {
                 cxml.append("        <DistributionMethod type=\"fax\">\n");
                 cxml.append("          <Fax>\n");
                 cxml.append("            <TelephoneNumber>\n");
@@ -306,19 +308,20 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                 cxml.append("              <Number>").append(vendorFaxNumber.substring(3)).append("</Number>\n");
                 cxml.append("            </TelephoneNumber>\n");
                 cxml.append("          </Fax>\n");
-            } else if (StringUtils.isNotBlank(emailAddress)) {
+            } else if ("EMAL".equalsIgnoreCase(poTransmissionCode)) {
             	// email
-                cxml.append("        <DistributionMethod type=\"email\">\n");
+                cxml.append("        <DistributionMethod type=\"html_email_attachments\">\n");
                 cxml.append("          <Email><![CDATA[").append(emailAddress).append("]]></Email>\n");
-            } else {
+            } else if("CONV".equalsIgnoreCase(poTransmissionCode)) {
                 // manual
                 cxml.append("        <DistributionMethod type=\"manual\">\n");
-            } 
+            } else {
+                // manual
+                cxml.append("        <DistributionMethod type=\"conversion\">\n");
+            }
             cxml.append("        </DistributionMethod>\n");
             cxml.append("      </OrderDistribution>\n");
         }
-
-
 
         /** *** BILL TO SECTION **** */
         cxml.append("      <BillTo>\n");
