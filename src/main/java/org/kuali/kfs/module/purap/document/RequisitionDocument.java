@@ -760,24 +760,29 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
 	public static final String DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW = "DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW";
 
     protected boolean isAwardReviewRequired() {
+        boolean requiresAwardReview = false;
     	
     	this.getAccountsForRouting();
         ParameterService parameterService = SpringContext.getBean(ParameterService.class);
-        boolean objectCodeAllowed = isAwardAmountGreaterThanThreshold();
+        
+        // If the award amount is less than the threshold, then there's no reason to review the object codes, return false
+        if(!isAwardAmountGreaterThanThreshold()) {
+        	return requiresAwardReview;
+        }
         
         for (PurApItem item : (List<PurApItem>) this.getItems()) {
             for (PurApAccountingLine accountingLine : item.getSourceAccountingLines()) {
                 
-                objectCodeAllowed = isObjectCodeAllowedForAwardRouting(accountingLine, parameterService);
+                requiresAwardReview = isObjectCodeAllowedForAwardRouting(accountingLine, parameterService);
                 // We should return true as soon as we have at least one objectCodeAllowed=true so that the PO will stop at Award
                 // level.
-                if (objectCodeAllowed) {
-                    return objectCodeAllowed;
+                if (requiresAwardReview) {
+                    return requiresAwardReview;
                 }
 
             }
         }
-        return objectCodeAllowed;        
+        return requiresAwardReview;        
     }
 
     protected boolean isObjectCodeAllowedForAwardRouting(PurApAccountingLine accountingLine, ParameterService parameterService) {
