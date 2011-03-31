@@ -33,8 +33,7 @@
 				<join name="JoinNewUnorderedItems" />
 			</split>
 			<requests name="SubAccount" nextNode="Account" />	
-			<requests name="Account" nextNode="AccountingOrganizationHierarchy" />	
-			<requests name="AccountingOrganizationHierarchy" nextNode="RequiresAwardReview" />	
+			<requests name="Account" nextNode="RequiresAwardReview" />	
 			<split name="RequiresAwardReview" nextNode="Commodity">
 				<branch name="True">
 					<requests name="Award" nextNode="JoinRequiresAwardReview" />
@@ -45,7 +44,7 @@
 				<join name="JoinRequiresAwardReview" />
 			</split>
 			<requests name="Commodity" nextNode="AmountRequiresSeparationOfDutiesReview" />	
-			<split name="AmountRequiresSeparationOfDutiesReview" nextNode="RequiresBudgetReview">
+			<split name="AmountRequiresSeparationOfDutiesReview" nextNode="RequiresContractManagementReview">
 				<branch name="True">
 					<requests name="SeparationOfDuties" nextNode="JoinSOD" />
 				</branch>
@@ -54,6 +53,15 @@
 				</branch>
 				<join name="JoinSOD" />
 			</split>	
+	        <split name="RequiresContractManagementReview" nextNode="RequiresBudgetReview">
+	           <branch name="True">
+	             <requests name="ContractManagement" nextNode="JoinRequiresContractManagementReview"/>
+	           </branch>
+	           <branch name="False">
+	             <requests name="NoOpRequiresContractManagementReview" nextNode="JoinRequiresContractManagementReview"/>
+	           </branch>
+	           <join name="JoinRequiresContractManagementReview"/>
+	        </split>
 	        <split name="RequiresBudgetReview" nextNode="VendorIsEmployeeOrNonResidentAlien">
 	          <branch name="True">
 	            <requests name="Budget" nextNode="JoinRequiresBudgetReview"/>
@@ -63,7 +71,7 @@
 	          </branch>
 	          <join name="JoinRequiresBudgetReview"/>
 	        </split>
-	        <split name="VendorIsEmployeeOrNonResidentAlien" nextNode="RequiresContractManagementReview">
+	        <split name="VendorIsEmployeeOrNonResidentAlien" nextNode="AccountingOrganizationHierarchy">
 	          <branch name="True">
 	            <requests name="Tax" nextNode="JoinVendorIsEmployeeOrNonResidentAlien"/>
 	          </branch>
@@ -72,15 +80,7 @@
 	 	      </branch>
    	          <join name="JoinVendorIsEmployeeOrNonResidentAlien"/>
 	        </split>
-	        <split name="RequiresContractManagementReview" nextNode="NoOpFinal">
-	           <branch name="True">
-	             <requests name="ContractManagement" nextNode="JoinRequiresContractManagementReview"/>
-	           </branch>
-	           <branch name="False">
-	             <requests name="NoOpRequiresContractManagementReview" nextNode="JoinRequiresContractManagementReview"/>
-	           </branch>
-	           <join name="JoinRequiresContractManagementReview"/>
-	        </split>
+			<requests name="AccountingOrganizationHierarchy" nextNode="NoOpFinal" />
 	        <simple name="NoOpFinal" />
         </routePath>
       </routePaths>
