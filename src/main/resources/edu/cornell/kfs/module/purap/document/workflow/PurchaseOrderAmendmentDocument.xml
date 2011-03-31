@@ -23,7 +23,7 @@
       <routePaths>
         <routePath>
 		<start name="AdHoc" nextNode="HasNewUnorderedItems" />
-			<split name="HasNewUnorderedItems" nextNode="HasAccountingLines">
+			<split name="HasNewUnorderedItems" nextNode="SubAccount">
 				<branch name="True">
 					<requests name="NewUnorderedItems" nextNode="JoinNewUnorderedItems" />
 				</branch>
@@ -32,15 +32,6 @@
 				</branch>
 				<join name="JoinNewUnorderedItems" />
 			</split>
-			<split name="HasAccountingLines" nextNode="SubAccount">
-				<branch name="True">
-					<simple name="NoOpHasAccountingLines" nextNode="JoinHasAccountingLines" />
-				</branch>
-				<branch name="False">
-					<requests name="Organization" nextNode="JoinHasAccountingLines" />
-				</branch>
-				<join name="JoinHasAccountingLines" />
-			</split>	
 			<requests name="SubAccount" nextNode="Account" />	
 			<requests name="Account" nextNode="AccountingOrganizationHierarchy" />	
 			<requests name="AccountingOrganizationHierarchy" nextNode="RequiresAwardReview" />	
@@ -54,7 +45,7 @@
 				<join name="JoinRequiresAwardReview" />
 			</split>
 			<requests name="Commodity" nextNode="AmountRequiresSeparationOfDutiesReview" />	
-			<split name="AmountRequiresSeparationOfDutiesReview" nextNode="RequiresContractManagementReview">
+			<split name="AmountRequiresSeparationOfDutiesReview" nextNode="RequiresBudgetReview">
 				<branch name="True">
 					<requests name="SeparationOfDuties" nextNode="JoinSOD" />
 				</branch>
@@ -63,15 +54,6 @@
 				</branch>
 				<join name="JoinSOD" />
 			</split>	
-			<split name="RequiresContractManagementReview" nextNode="RequiresBudgetReview">
-	           <branch name="True">
-	             <requests name="ContractManagement" nextNode="JoinRequiresContractManagementReview"/>
-	           </branch>
-	           <branch name="False">
-	             <requests name="NoOpRequiresContractManagementReview" nextNode="JoinRequiresContractManagementReview"/>
-	           </branch>
-	           <join name="JoinRequiresContractManagementReview"/>
-	        </split>
 	        <split name="RequiresBudgetReview" nextNode="VendorIsEmployeeOrNonResidentAlien">
 	          <branch name="True">
 	            <requests name="Budget" nextNode="JoinRequiresBudgetReview"/>
@@ -81,7 +63,7 @@
 	          </branch>
 	          <join name="JoinRequiresBudgetReview"/>
 	        </split>
-	        <split name="VendorIsEmployeeOrNonResidentAlien" nextNode="NoOpFinal">
+	        <split name="VendorIsEmployeeOrNonResidentAlien" nextNode="RequiresContractManagementReview">
 	          <branch name="True">
 	            <requests name="Tax" nextNode="JoinVendorIsEmployeeOrNonResidentAlien"/>
 	          </branch>
@@ -90,15 +72,20 @@
 	 	      </branch>
    	          <join name="JoinVendorIsEmployeeOrNonResidentAlien"/>
 	        </split>
+	        <split name="RequiresContractManagementReview" nextNode="NoOpFinal">
+	           <branch name="True">
+	             <requests name="ContractManagement" nextNode="JoinRequiresContractManagementReview"/>
+	           </branch>
+	           <branch name="False">
+	             <requests name="NoOpRequiresContractManagementReview" nextNode="JoinRequiresContractManagementReview"/>
+	           </branch>
+	           <join name="JoinRequiresContractManagementReview"/>
+	        </split>
 	        <simple name="NoOpFinal" />
         </routePath>
       </routePaths>
       <routeNodes>
         <start name="AdHoc"/>
-        <role name="Organization">
-          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
         <role name="SubAccount">
           <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
@@ -127,9 +114,6 @@
           <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
-        <split name="HasAccountingLines">
-          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-        </split>
         <split name="RequiresAwardReview">
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
@@ -140,11 +124,7 @@
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
 		<join name="JoinRequiresAwardReview"/>          
-        <join name="JoinHasAccountingLines"/>
         <join name="JoinSOD"/>
-        <simple name="NoOpHasAccountingLines">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
-        </simple>
         <simple name="NoOpRequiresAwardReview">
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
         </simple>

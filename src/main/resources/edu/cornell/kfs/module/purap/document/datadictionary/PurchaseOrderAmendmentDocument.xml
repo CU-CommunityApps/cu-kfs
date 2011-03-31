@@ -190,7 +190,6 @@
     		<map>
     		    <!-- no qualifiers for HasNewUnorderedItems -->
     			<entry key="Account" value-ref="RoutingType-PurchasingAccountsPayableDocument-Account"/>
-    		    <entry key="Organization" value-ref="RoutingType-RequisitionDocument-Organization"/>
     		    <entry key="SubAccount" value-ref="RoutingType-PurchasingAccountsPayableDocument-SubAccount"/>
     			<entry key="AccountingOrganizationHierarchy" value-ref="RoutingType-PurchasingAccountsPayableDocument-AccountingOrganizationHierarchy"/>
                 <entry key="Commodity" value-ref="RoutingType-PurchasingDocument-Commodity"/>
