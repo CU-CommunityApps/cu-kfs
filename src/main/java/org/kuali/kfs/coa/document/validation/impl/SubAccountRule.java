@@ -305,10 +305,10 @@ public class SubAccountRule extends MaintenanceDocumentRuleBase {
 //        }
 
         // The ICR fields must be empty if the sub-account type code is for cost sharing
-        if (checkCgIcrIsEmpty() == false) {
-            putFieldError("a21SubAccount.indirectCostRecoveryTypeCode", KFSKeyConstants.ERROR_DOCUMENT_SUBACCTMAINT_ICR_SECTION_INVALID, a21.getSubAccountTypeCode());
-            success &= false;
-        }
+//        if (checkCgIcrIsEmpty() == false) {
+//            putFieldError("a21SubAccount.indirectCostRecoveryTypeCode", KFSKeyConstants.ERROR_DOCUMENT_SUBACCTMAINT_ICR_SECTION_INVALID, a21.getSubAccountTypeCode());
+//            success &= false;
+//        }
 
         return success;
     }
