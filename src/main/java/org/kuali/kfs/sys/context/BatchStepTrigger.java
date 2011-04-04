@@ -73,7 +73,7 @@ public class BatchStepTrigger {
 				System.exit(8);
 			}
             
-			for (int i = stepIndex; i < stepNames.length; i++) {
+			for (int i = (stepIndex-1); i < stepNames.length; i++) {
 				String stepName = stepNames[i];
 		//	}
 			
