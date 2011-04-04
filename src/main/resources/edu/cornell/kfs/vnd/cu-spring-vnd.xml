@@ -26,6 +26,9 @@
 				<value>edu/cornell/kfs/vnd/cu-ojb-vnd.xml</value>
 			</list>
 		</property>
+		<property name="scriptConfigurationFilePaths">
+			<list/>
+		</property>
 	</bean>
 
 	<bean id="cu-vndModuleService" parent="vndModuleService-parentBean">

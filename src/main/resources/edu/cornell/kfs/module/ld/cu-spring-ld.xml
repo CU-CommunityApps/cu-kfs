@@ -9,7 +9,9 @@
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
 	<bean id="cu-ld" parent="ldModuleConfiguration-parentBean">
-		
+		<property name="scriptConfigurationFilePaths">
+			<list/>
+		</property>
 		<property name="databaseRepositoryFilePaths">
 			<list merge="true">
 				<value>org/kuali/kfs/module/ld/cu-ojb-ld.xml</value>

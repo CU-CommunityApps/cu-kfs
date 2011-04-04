@@ -31,7 +31,7 @@
 		</property>
 		<property name="scriptConfigurationFilePaths">
 			<list/>
-			</property>
+		</property>
 	</bean>
 
 	<bean id="cu-coaModuleService" parent="coaModuleService-parentBean">

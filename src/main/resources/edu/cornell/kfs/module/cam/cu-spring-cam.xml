@@ -29,6 +29,9 @@
 		<property name="fiscalYearMakers">
 			<list/>
 		</property>
+		<property name="scriptConfigurationFilePaths">
+			<list/>
+		</property>
 	</bean>
 
 	<bean id="cu-camModuleService" parent="camModuleService-parentBean">

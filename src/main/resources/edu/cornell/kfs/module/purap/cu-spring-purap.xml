@@ -25,6 +25,9 @@
 				<value>edu/cornell/kfs/module/purap/cu-ojb-purap.xml</value>
 			</list>
 		</property>
+		<property name="scriptConfigurationFilePaths">
+			<list/>
+		</property>
 	</bean>
 	
 	<bean id="cu-purapModuleService" parent="purapModuleService-parentBean">

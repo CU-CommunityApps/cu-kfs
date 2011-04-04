@@ -24,7 +24,9 @@
 		<property name="fiscalYearMakers">
 			<list/>
 		</property>
-		
+		<property name="scriptConfigurationFilePaths">
+			<list/>
+		</property>
 	</bean>
 	<bean id="cu-fpModuleService" parent="fpModuleService-parentBean">
 	 	<property name="moduleConfiguration" ref="cu-fp"/>
