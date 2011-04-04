@@ -73,11 +73,15 @@ public class BatchStepTrigger {
 				System.exit(8);
 			}
             
-            for (String stepName : stepNames) {
+			for (int i = stepIndex; i < stepNames.length; i++) {
+				String stepName = stepNames[i];
+		//	}
+			
+    //        for (String stepName : stepNames) {
             	BatchStepFileDescriptor batchStepFile = new BatchStepFileDescriptor(jobName, stepName, BatchStepFileDescriptor.getFileExtensionRun());
             	
             	//write step start file
-            	batchContainerDirectory.writeBatchStepRunFile(batchStepFile, stepIndex);
+            	batchContainerDirectory.writeBatchStepRunFile(batchStepFile, i);
 
             	//wait for a result file from BatchContainer
             	BatchStepFileDescriptor resultFile = listenForResultFile(batchContainerDirectory, batchStepFile, sleepInterval);
