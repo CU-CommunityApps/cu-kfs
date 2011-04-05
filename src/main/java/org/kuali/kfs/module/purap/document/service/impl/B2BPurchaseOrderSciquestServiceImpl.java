@@ -67,6 +67,12 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
     private String b2bShoppingPassword;
     private String b2bPurchaseOrderURL;
     private String b2bPurchaseOrderPassword;
+    
+    // distribution methods
+    private static final int FAX = 1;
+    private static final int EMAIL = 2;
+    private static final int MANUAL = 3;
+    private static final int CONVERSION = 4;
 
     /**
      * @see org.kuali.kfs.module.purap.document.service.B2BPurchaseOrderService#sendPurchaseOrder(org.kuali.kfs.module.purap.document.PurchaseOrderDocument)
@@ -166,7 +172,25 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 
         KualiWorkflowDocument workFlowDocument = purchaseOrder.getDocumentHeader().getWorkflowDocument();
         String documentType = workFlowDocument.getDocumentType();
-    	
+
+        int disbMethod = 0;
+        String poTransmissionCode = purchaseOrder.getPurchaseOrderTransmissionMethodCode();
+
+        if(PurapConstants.POTransmissionMethods.FAX.equalsIgnoreCase(poTransmissionCode)) {
+            // fax
+        	disbMethod = FAX;
+        } else if (PurapConstants.POTransmissionMethods.EMAIL.equalsIgnoreCase(poTransmissionCode)) {
+        	// email
+        	disbMethod = EMAIL;
+        } else if(PurapConstants.POTransmissionMethods.MANUAL.equalsIgnoreCase(poTransmissionCode)) {
+            // manual
+        	disbMethod = MANUAL;
+        } else {
+            // conversion
+        	disbMethod = CONVERSION;
+        }
+
+        
         StringBuffer cxml = new StringBuffer();
 
         cxml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -287,8 +311,6 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
             VendorAddress vendorAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(purchaseOrder.getVendorDetail().getVendorAddresses(), VendorConstants.AddressTypes.PURCHASE_ORDER, purchaseOrder.getDeliveryCampusCode());
             cxml.append("      <OrderDistribution>\n");
 
-            String poTransmissionCode = purchaseOrder.getPurchaseOrderTransmissionMethodCode();
-            
             // first take fax from PO, if empty then get fax number for PO default vendor address
             String vendorFaxNumber = purchaseOrder.getVendorFaxNumber();
             if (StringUtils.isBlank(vendorFaxNumber) && vendorAddress != null) {
@@ -300,8 +322,11 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                 emailAddress = vendorAddress.getVendorAddressEmailAddress();
             }
 
-            // fax
-            if(PurapConstants.POTransmissionMethods.FAX.equalsIgnoreCase(poTransmissionCode)) {
+            // Distribution Method
+            switch(disbMethod) {
+            case FAX:
+//            if(PurapConstants.POTransmissionMethods.FAX.equalsIgnoreCase(poTransmissionCode)) {
+                // fax
                 cxml.append("        <DistributionMethod type=\"fax\">\n");
                 cxml.append("          <Fax>\n");
                 cxml.append("            <TelephoneNumber>\n");
@@ -310,15 +335,21 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                 cxml.append("              <Number>").append(vendorFaxNumber.substring(3)).append("</Number>\n");
                 cxml.append("            </TelephoneNumber>\n");
                 cxml.append("          </Fax>\n");
-            } else if (PurapConstants.POTransmissionMethods.EMAIL.equalsIgnoreCase(poTransmissionCode)) {
+                break;
+            case EMAIL:
+//            } else if (PurapConstants.POTransmissionMethods.EMAIL.equalsIgnoreCase(poTransmissionCode)) {
             	// email
                 cxml.append("        <DistributionMethod type=\"html_email_attachments\">\n");
                 cxml.append("          <Email><![CDATA[").append(emailAddress).append("]]></Email>\n");
-            } else if(PurapConstants.POTransmissionMethods.CONVERSION.equalsIgnoreCase(poTransmissionCode)) {
+                break;
+            case MANUAL:
+//            } else if(PurapConstants.POTransmissionMethods.CONVERSION.equalsIgnoreCase(poTransmissionCode)) {
                 // manual
                 cxml.append("        <DistributionMethod type=\"manual\">\n");
-            } else {
-                // manual
+                break;
+            default:
+//            } else {
+                // conversion
                 cxml.append("        <DistributionMethod type=\"conversion\">\n");
             }
             cxml.append("        </DistributionMethod>\n");
@@ -408,13 +439,13 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         
         cxml.append("      <PaymentInfo>\n");
         cxml.append("        <Terms>\n");
-        if(payTerm.getVendorDiscountDueNumber() > 0) {
-        	cxml.append("          <Discount>").append(payTerm.getVendorDiscountDueNumber()).append("</Discount>\n");
-        } else if(payTerm.getVendorPaymentTermsPercent().intValue() > 0) {
+        if(payTerm.getVendorPaymentTermsPercent().doubleValue() > 0.0) {
         	cxml.append("          <Discount>").append(payTerm.getVendorPaymentTermsPercent()).append("%</Discount>\n");
         }
-//        cxml.append("          <Days>").append().append("</Days>\n");
-        cxml.append("          <Net>").append(payTerm.getVendorNetDueNumber()).append("</Net>\n");
+        if(payTerm.getVendorNetDueNumber().doubleValue() > 0.0) {
+        	cxml.append("          <Days>").append(payTerm.getVendorNetDueNumber()).append("</Days>\n");
+        }
+        cxml.append("          <Net>").append(payTerm.getVendorDiscountDueNumber()).append(" ").append(payTerm.getVendorDiscountDueTypeDescription()).append("</Net>\n");
         cxml.append("        </Terms>\n");
         cxml.append("      </PaymentInfo>\n");
         
@@ -428,6 +459,17 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("         </CustomFieldValue>\n");
         cxml.append("      </CustomFieldValueSet>\n");
         
+        cxml.append("      <CustomFieldValueSet name=\"SupplierAddress1\">\n");
+        cxml.append("        <CustomFieldValue>\n");
+        cxml.append("          <Value><![CDATA[").append(purchaseOrder.getVendorLine1Address()).append("]]></Value>\n");
+        cxml.append("         </CustomFieldValue>\n");
+        cxml.append("      </CustomFieldValueSet>\n");
+        cxml.append("      <CustomFieldValueSet name=\"SupplierCityStateZip\">\n");
+        cxml.append("        <CustomFieldValue>\n");
+        cxml.append("          <Value><![CDATA[").append(purchaseOrder.getVendorCityName()).append(", ").append(purchaseOrder.getVendorStateCode()).append(" ").append(purchaseOrder.getVendorPostalCode()).append("]]></Value>\n");
+        cxml.append("         </CustomFieldValue>\n");
+        cxml.append("      </CustomFieldValueSet>\n");
+
         cxml.append("    </POHeader>\n");
 
         /** *** Items Section **** */
