@@ -149,7 +149,8 @@ public class PurapConstants extends JSTLConstants {
         public static final String NOPRINT = "NOPR";
         public static final String ELECTRONIC = "ELEC";
         public static final String EMAIL = "EMAL";
-        public static final String CONVERSION = "CONV";
+        public static final String MANUAL = "MANL";
+        public static final String CONVERSION = "CNVS";
     }
 
     public static final String REQ_B2B_ALLOW_COPY_DAYS = "5";
