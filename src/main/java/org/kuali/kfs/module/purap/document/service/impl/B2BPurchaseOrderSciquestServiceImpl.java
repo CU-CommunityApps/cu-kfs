@@ -237,7 +237,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 	            cxml.append("      <Priority>Normal</Priority>\n");
 	            break;
             default: 
-                cxml.append("      <Priority>High</Priority>\n");        	
+            	cxml.append("      <Priority>High</Priority>\n");
         }
         cxml.append("      <AccountingDate>").append(purchaseOrder.getPurchaseOrderCreateTimestamp()).append("</AccountingDate>\n");
 
@@ -332,29 +332,29 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 	
 	            // Distribution Method
 	            switch(disbMethod) {
-		            case FAX:
-		                // fax
-		                cxml.append("        <DistributionMethod type=\"fax\">\n");
-		                cxml.append("          <Fax>\n");
-		                cxml.append("            <TelephoneNumber>\n");
-		                cxml.append("              <CountryCode>1</CountryCode>\n");
-		                cxml.append("              <AreaCode>").append(vendorFaxNumber.substring(0, 3)).append("</AreaCode>\n");
-		                cxml.append("              <Number>").append(vendorFaxNumber.substring(3)).append("</Number>\n");
-		                cxml.append("            </TelephoneNumber>\n");
-		                cxml.append("          </Fax>\n");
-		                break;
-		            case EMAIL:
-		            	// email
-		                cxml.append("        <DistributionMethod type=\"html_email_attachments\">\n");
-		                cxml.append("          <Email><![CDATA[").append(emailAddress).append("]]></Email>\n");
-		                break;
-		            case MANUAL:
-		                // manual
-		                cxml.append("        <DistributionMethod type=\"manual\">\n");
-		                break;
-		            default:
-		                // conversion
-		                cxml.append("        <DistributionMethod type=\"conversion\">\n");
+	            case FAX:
+	                // fax
+	                cxml.append("        <DistributionMethod type=\"fax\">\n");
+	                cxml.append("          <Fax>\n");
+	                cxml.append("            <TelephoneNumber>\n");
+	                cxml.append("              <CountryCode>1</CountryCode>\n");
+	                cxml.append("              <AreaCode>").append(vendorFaxNumber.substring(0, 3)).append("</AreaCode>\n");
+	                cxml.append("              <Number>").append(vendorFaxNumber.substring(3)).append("</Number>\n");
+	                cxml.append("            </TelephoneNumber>\n");
+	                cxml.append("          </Fax>\n");
+	                break;
+	            case EMAIL:
+	            	// email
+	                cxml.append("        <DistributionMethod type=\"html_email_attachments\">\n");
+	                cxml.append("          <Email><![CDATA[").append(emailAddress).append("]]></Email>\n");
+	                break;
+	            case MANUAL:
+	                // manual
+	                cxml.append("        <DistributionMethod type=\"manual\">\n");
+	                break;
+	            default:
+	                // conversion
+	                cxml.append("        <DistributionMethod type=\"conversion\">\n");
 	            } 
 	            cxml.append("        </DistributionMethod>\n");
 	            cxml.append("      </OrderDistribution>\n");
@@ -449,10 +449,10 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         if(payTerm.getVendorPaymentTermsPercent().doubleValue() > 0.0) {
         	cxml.append("          <Discount>").append(payTerm.getVendorPaymentTermsPercent()).append("%</Discount>\n");
         }
-        if(payTerm.getVendorNetDueNumber().doubleValue() > 0.0) {
-        	cxml.append("          <Days>").append(payTerm.getVendorNetDueNumber()).append("</Days>\n");
+        if(payTerm.getVendorDiscountDueNumber().doubleValue() > 0.0) {
+        	cxml.append("          <Days>").append(payTerm.getVendorDiscountDueNumber()).append(" ").append(payTerm.getVendorDiscountDueTypeDescription()).append("</Days>\n");
         }
-        cxml.append("          <Net>").append(payTerm.getVendorDiscountDueNumber()).append(" ").append(payTerm.getVendorDiscountDueTypeDescription()).append("</Net>\n");
+        cxml.append("          <Net>").append(payTerm.getVendorNetDueNumber()).append(" ").append(payTerm.getVendorNetDueTypeDescription()).append("</Net>\n");
         cxml.append("        </Terms>\n");
         cxml.append("      </PaymentInfo>\n");
         
