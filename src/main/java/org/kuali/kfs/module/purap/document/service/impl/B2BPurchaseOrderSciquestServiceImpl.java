@@ -232,7 +232,13 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         }        
         cxml.append("        </UserProfile>\n");
         cxml.append("      </Requestor>\n");
-        cxml.append("      <Priority>High</Priority>\n");
+        switch(disbMethod) {
+	        case MANUAL: // To help with proper handling of order routing, if a check has a manual disbursement method, then set the priority to Normal
+	            cxml.append("      <Priority>Normal</Priority>\n");
+	            break;
+            default: 
+                cxml.append("      <Priority>High</Priority>\n");        	
+        }
         cxml.append("      <AccountingDate>").append(purchaseOrder.getPurchaseOrderCreateTimestamp()).append("</AccountingDate>\n");
 
         if (PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
@@ -326,29 +332,29 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 	
 	            // Distribution Method
 	            switch(disbMethod) {
-	            case FAX:
-	                // fax
-	                cxml.append("        <DistributionMethod type=\"fax\">\n");
-	                cxml.append("          <Fax>\n");
-	                cxml.append("            <TelephoneNumber>\n");
-	                cxml.append("              <CountryCode>1</CountryCode>\n");
-	                cxml.append("              <AreaCode>").append(vendorFaxNumber.substring(0, 3)).append("</AreaCode>\n");
-	                cxml.append("              <Number>").append(vendorFaxNumber.substring(3)).append("</Number>\n");
-	                cxml.append("            </TelephoneNumber>\n");
-	                cxml.append("          </Fax>\n");
-	                break;
-	            case EMAIL:
-	            	// email
-	                cxml.append("        <DistributionMethod type=\"html_email_attachments\">\n");
-	                cxml.append("          <Email><![CDATA[").append(emailAddress).append("]]></Email>\n");
-	                break;
-	            case MANUAL:
-	                // manual
-	                cxml.append("        <DistributionMethod type=\"manual\">\n");
-	                break;
-	            default:
-	                // conversion
-	                cxml.append("        <DistributionMethod type=\"conversion\">\n");
+		            case FAX:
+		                // fax
+		                cxml.append("        <DistributionMethod type=\"fax\">\n");
+		                cxml.append("          <Fax>\n");
+		                cxml.append("            <TelephoneNumber>\n");
+		                cxml.append("              <CountryCode>1</CountryCode>\n");
+		                cxml.append("              <AreaCode>").append(vendorFaxNumber.substring(0, 3)).append("</AreaCode>\n");
+		                cxml.append("              <Number>").append(vendorFaxNumber.substring(3)).append("</Number>\n");
+		                cxml.append("            </TelephoneNumber>\n");
+		                cxml.append("          </Fax>\n");
+		                break;
+		            case EMAIL:
+		            	// email
+		                cxml.append("        <DistributionMethod type=\"html_email_attachments\">\n");
+		                cxml.append("          <Email><![CDATA[").append(emailAddress).append("]]></Email>\n");
+		                break;
+		            case MANUAL:
+		                // manual
+		                cxml.append("        <DistributionMethod type=\"manual\">\n");
+		                break;
+		            default:
+		                // conversion
+		                cxml.append("        <DistributionMethod type=\"conversion\">\n");
 	            } 
 	            cxml.append("        </DistributionMethod>\n");
 	            cxml.append("      </OrderDistribution>\n");
@@ -460,12 +466,12 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("         </CustomFieldValue>\n");
         cxml.append("      </CustomFieldValueSet>\n");
         
-        cxml.append("      <CustomFieldValueSet name=\"SupplierAddress1\">\n");
+        cxml.append("      <CustomFieldValueSet label=\"Supplier Address\" name=\"SupplierAddress1\">\n");
         cxml.append("        <CustomFieldValue>\n");
         cxml.append("          <Value><![CDATA[").append(purchaseOrder.getVendorLine1Address()).append("]]></Value>\n");
         cxml.append("         </CustomFieldValue>\n");
         cxml.append("      </CustomFieldValueSet>\n");
-        cxml.append("      <CustomFieldValueSet name=\"SupplierCityStateZip\">\n");
+        cxml.append("      <CustomFieldValueSet label=\"Supplier City State Zip\" name=\"SupplierCityStateZip\">\n");
         cxml.append("        <CustomFieldValue>\n");
         cxml.append("          <Value><![CDATA[").append(purchaseOrder.getVendorCityName()).append(", ").append(purchaseOrder.getVendorStateCode()).append(" ").append(purchaseOrder.getVendorPostalCode()).append("]]></Value>\n");
         cxml.append("         </CustomFieldValue>\n");
