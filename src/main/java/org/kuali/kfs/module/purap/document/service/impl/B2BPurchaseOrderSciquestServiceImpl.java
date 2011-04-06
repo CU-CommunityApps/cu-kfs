@@ -67,7 +67,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
     private String b2bShoppingPassword;
     private String b2bPurchaseOrderURL;
     private String b2bPurchaseOrderPassword;
-    
+
     // distribution methods
     private static final int FAX = 1;
     private static final int EMAIL = 2;
@@ -172,7 +172,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 
         KualiWorkflowDocument workFlowDocument = purchaseOrder.getDocumentHeader().getWorkflowDocument();
         String documentType = workFlowDocument.getDocumentType();
-
+    	
         int disbMethod = 0;
         String poTransmissionCode = purchaseOrder.getPurchaseOrderTransmissionMethodCode();
 
@@ -307,54 +307,55 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
             cxml.append("        </ContactInfo>\n");
             cxml.append("      </Supplier>\n");
 
-            /** *** DISTRIBUTION SECTION *** */
-            VendorAddress vendorAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(purchaseOrder.getVendorDetail().getVendorAddresses(), VendorConstants.AddressTypes.PURCHASE_ORDER, purchaseOrder.getDeliveryCampusCode());
-            cxml.append("      <OrderDistribution>\n");
-
-            // first take fax from PO, if empty then get fax number for PO default vendor address
-            String vendorFaxNumber = purchaseOrder.getVendorFaxNumber();
-            if (StringUtils.isBlank(vendorFaxNumber) && vendorAddress != null) {
-                vendorFaxNumber = vendorAddress.getVendorFaxNumber();
+            // Only pass distribution method if vendor is non-B2B
+            if(purchaseOrder.getVendorContract().getVendorB2bIndicator()) {
+	            /** *** DISTRIBUTION SECTION *** */
+	            VendorAddress vendorAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(purchaseOrder.getVendorDetail().getVendorAddresses(), VendorConstants.AddressTypes.PURCHASE_ORDER, purchaseOrder.getDeliveryCampusCode());
+	            cxml.append("      <OrderDistribution>\n");
+	
+	            // first take fax from PO, if empty then get fax number for PO default vendor address
+	            String vendorFaxNumber = purchaseOrder.getVendorFaxNumber();
+	            if (StringUtils.isBlank(vendorFaxNumber) && vendorAddress != null) {
+	                vendorFaxNumber = vendorAddress.getVendorFaxNumber();
+	            }
+	
+	            String emailAddress = "";
+	            if (vendorAddress != null) {
+	                emailAddress = vendorAddress.getVendorAddressEmailAddress();
+	            }
+	
+	            // Distribution Method
+	            switch(disbMethod) {
+	            case FAX:
+	                // fax
+	                cxml.append("        <DistributionMethod type=\"fax\">\n");
+	                cxml.append("          <Fax>\n");
+	                cxml.append("            <TelephoneNumber>\n");
+	                cxml.append("              <CountryCode>1</CountryCode>\n");
+	                cxml.append("              <AreaCode>").append(vendorFaxNumber.substring(0, 3)).append("</AreaCode>\n");
+	                cxml.append("              <Number>").append(vendorFaxNumber.substring(3)).append("</Number>\n");
+	                cxml.append("            </TelephoneNumber>\n");
+	                cxml.append("          </Fax>\n");
+	                break;
+	            case EMAIL:
+	            	// email
+	                cxml.append("        <DistributionMethod type=\"html_email_attachments\">\n");
+	                cxml.append("          <Email><![CDATA[").append(emailAddress).append("]]></Email>\n");
+	                break;
+	            case MANUAL:
+	                // manual
+	                cxml.append("        <DistributionMethod type=\"manual\">\n");
+	                break;
+	            default:
+	                // conversion
+	                cxml.append("        <DistributionMethod type=\"conversion\">\n");
+	            } 
+	            cxml.append("        </DistributionMethod>\n");
+	            cxml.append("      </OrderDistribution>\n");
             }
-
-            String emailAddress = "";
-            if (vendorAddress != null) {
-                emailAddress = vendorAddress.getVendorAddressEmailAddress();
-            }
-
-            // Distribution Method
-            switch(disbMethod) {
-            case FAX:
-//            if(PurapConstants.POTransmissionMethods.FAX.equalsIgnoreCase(poTransmissionCode)) {
-                // fax
-                cxml.append("        <DistributionMethod type=\"fax\">\n");
-                cxml.append("          <Fax>\n");
-                cxml.append("            <TelephoneNumber>\n");
-                cxml.append("              <CountryCode>1</CountryCode>\n");
-                cxml.append("              <AreaCode>").append(vendorFaxNumber.substring(0, 3)).append("</AreaCode>\n");
-                cxml.append("              <Number>").append(vendorFaxNumber.substring(3)).append("</Number>\n");
-                cxml.append("            </TelephoneNumber>\n");
-                cxml.append("          </Fax>\n");
-                break;
-            case EMAIL:
-//            } else if (PurapConstants.POTransmissionMethods.EMAIL.equalsIgnoreCase(poTransmissionCode)) {
-            	// email
-                cxml.append("        <DistributionMethod type=\"html_email_attachments\">\n");
-                cxml.append("          <Email><![CDATA[").append(emailAddress).append("]]></Email>\n");
-                break;
-            case MANUAL:
-//            } else if(PurapConstants.POTransmissionMethods.CONVERSION.equalsIgnoreCase(poTransmissionCode)) {
-                // manual
-                cxml.append("        <DistributionMethod type=\"manual\">\n");
-                break;
-            default:
-//            } else {
-                // conversion
-                cxml.append("        <DistributionMethod type=\"conversion\">\n");
-            }
-            cxml.append("        </DistributionMethod>\n");
-            cxml.append("      </OrderDistribution>\n");
         }
+
+
 
         /** *** BILL TO SECTION **** */
         cxml.append("      <BillTo>\n");
@@ -496,7 +497,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                 }
                 // ProductType - Describes the type of the product or service. Valid values: Catalog, Form, Punchout. Mandatory.
                 if (PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
-                	cxml.append("        <ProductType>").append(poi.getExternalOrganizationB2bProductTypeName()).append("</ProductType>\n");
+                cxml.append("        <ProductType>").append(poi.getExternalOrganizationB2bProductTypeName()).append("</ProductType>\n");
                 } else {
                 	cxml.append("        <ProductType>").append("Form").append("</ProductType>\n");
                 }
@@ -674,7 +675,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
     	if(cm.getContractManagerCode().equals(PurapConstants.APO_CONTRACT_MANAGER)) {
     		return SpringContext.getBean(ParameterService.class).getParameterValue(PurchaseOrderDocument.class, CUPurapParameterConstants.APO_CONTRACT_MANAGER_EMAIL);
     	} 
-    	
+
         Person contractManager = getPersonService().getPerson(cm.getContractManagerUserIdentifier());
         if (ObjectUtils.isNotNull(contractManager)) {
             return contractManager.getEmailAddressUnmasked();
