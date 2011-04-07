@@ -39,16 +39,14 @@
 	<!-- 		<value>ezraUpdateBatchJobTrigger</value>  -->	
 			</list>
 		</property>
-		<!--
-		 Asset Depreciation batch - END 
+		
 		<property name="batchFileDirectories">
          	<list>
-            	<value>${reports.directory}/cam</value>
-            	<value>${staging.directory}/cm</value>
+            	<value>${reports.directory}/ezra</value>
           	</list>
         </property>
 										
-	--></bean>
+	</bean>
 
     <bean id="ezraModuleService" parent="ezraModuleService-parentBean"/>
 
