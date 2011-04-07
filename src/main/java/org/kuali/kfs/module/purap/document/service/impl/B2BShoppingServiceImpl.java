@@ -324,7 +324,7 @@ public class B2BShoppingServiceImpl implements B2BShoppingService {
         reqItem.setItemDescription(item.getDescription());
         reqItem.setItemUnitOfMeasureCode(item.getUnitOfMeasure());
         reqItem.setExternalOrganizationB2bProductTypeName(item.getExtrinsic("Product Source"));
-        reqItem.setExternalOrganizationB2bProductReferenceNumber(item.getExtrinsic("SystemProductID"));
+        reqItem.setExternalOrganizationB2bProductReferenceNumber(item.getExtrinsic("CartLineID"));
         reqItem.setPurchasingCommodityCode(item.getClassification("CommodityCode"));
         reqItem.setItemRestrictedIndicator(false);
 

@@ -494,13 +494,6 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                 cxml.append("        <Description><![CDATA[").append(poi.getItemDescription()).append("]]></Description>\n"); // Required.
                 cxml.append("        <ProductUnitOfMeasure type=\"supplier\"><Measurement><MeasurementValue><![CDATA[").append(poi.getItemUnitOfMeasureCode()).append("]]></MeasurementValue></Measurement></ProductUnitOfMeasure>\n");
                 cxml.append("        <ProductUnitOfMeasure type=\"system\"><Measurement><MeasurementValue><![CDATA[").append(poi.getItemUnitOfMeasureCode()).append("]]></MeasurementValue></Measurement></ProductUnitOfMeasure>\n");
-                // ProductReferenceNumber - Unique id for hosted products in SelectSite
-                if (poi.getExternalOrganizationB2bProductTypeName().equals("Punchout")) {
-                    cxml.append("        <ProductReferenceNumber>null</ProductReferenceNumber>\n");
-                }
-                else {
-                    cxml.append("        <ProductReferenceNumber>").append(poi.getExternalOrganizationB2bProductReferenceNumber()).append("</ProductReferenceNumber>\n");
-                }
                 // ProductType - Describes the type of the product or service. Valid values: Catalog, Form, Punchout. Mandatory.
                 if (PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
                 cxml.append("        <ProductType>").append(poi.getExternalOrganizationB2bProductTypeName()).append("</ProductType>\n");
@@ -516,6 +509,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                 cxml.append("          <Money currency=\"USD\">").append(poi.getItemUnitPrice()).append("</Money>\n");
                 cxml.append("        </UnitPrice>\n");
                 cxml.append("      </LineCharges>\n");
+                cxml.append("      <RequisitionLineRef>").append(poi.getExternalOrganizationB2bProductReferenceNumber()).append("</RequisitionLineRef>\n");
                 cxml.append("    </POLine>\n");
             }
         }
