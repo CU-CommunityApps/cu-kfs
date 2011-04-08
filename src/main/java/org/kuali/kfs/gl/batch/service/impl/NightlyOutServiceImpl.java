@@ -103,12 +103,15 @@ public class NightlyOutServiceImpl implements NightlyOutService {
         EntryListReport entryListReport = new EntryListReport();
         LedgerSummaryReport nightlyOutLedgerSummaryReport = new LedgerSummaryReport();
         
+        OriginEntryFull entry = null;
+        GeneralLedgerPendingEntry pendingEntry  = null;
+        
        // Collection<OriginEntryFull> group = new ArrayList();
         while (pendingEntries.hasNext()) {
             // get one pending entry
-            GeneralLedgerPendingEntry pendingEntry = (GeneralLedgerPendingEntry) pendingEntries.next();
+            pendingEntry = (GeneralLedgerPendingEntry) pendingEntries.next();
             
-            OriginEntryFull entry = new OriginEntryFull(pendingEntry);
+            entry = new OriginEntryFull(pendingEntry);
             
             // KFSMI-5288: Don't want any control characters in output files. They potentially disrupt further processing
             if (ObjectUtils.isNotNull(entry.getTransactionLedgerEntryDescription())) {
