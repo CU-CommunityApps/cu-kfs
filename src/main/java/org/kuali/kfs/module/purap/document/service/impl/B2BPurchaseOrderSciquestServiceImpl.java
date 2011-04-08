@@ -450,9 +450,9 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         	cxml.append("          <Discount>").append(payTerm.getVendorPaymentTermsPercent()).append("%</Discount>\n");
         }
         if(payTerm.getVendorDiscountDueNumber().doubleValue() > 0.0) {
-        	cxml.append("          <Days>").append(payTerm.getVendorDiscountDueNumber()).append(" ").append(payTerm.getVendorDiscountDueTypeDescription()).append("</Days>\n");
+        	cxml.append("          <Days>").append(payTerm.getVendorDiscountDueNumber()).append("</Days>\n");
         }
-        cxml.append("          <Net>").append(payTerm.getVendorNetDueNumber()).append(" ").append(payTerm.getVendorNetDueTypeDescription()).append("</Net>\n");
+        cxml.append("          <Net>").append(payTerm.getVendorNetDueNumber()).append("</Net>\n");
         cxml.append("        </Terms>\n");
         cxml.append("      </PaymentInfo>\n");
         
