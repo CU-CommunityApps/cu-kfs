@@ -18,9 +18,9 @@
 <div class="header2">
   <div class="header2-left-focus">
     <div class="breadcrumb-focus"><a href="asdf.html"> 
-    	<portal:portalLink displayTitle="false" title='Action List' url='${ConfigProperties.cynergy.dashboard.url}' target='_blank'>
+    	<portal:portalLink displayTitle="false" title='Action List' url='${ConfigProperties.workflow.url}/ActionList.do'>
    		<img src="images-portal/icon-port-actionlist.gif" alt="action list" width="91" height="19" border="0"></portal:portalLink>
-    	<portal:portalLink displayTitle="false" title='Document Search' url='${ConfigProperties.cynergy.dashboard.url}/search.jsp' target='_blank'>
+    	<portal:portalLink displayTitle="false" title='Document Search' url='${ConfigProperties.workflow.documentsearch.base.url}'>
     	<img src="images-portal/icon-port-docsearch.gif" alt="doc search" width="96" height="19" border="0"></portal:portalLink>
      </div>
   </div>
@@ -34,15 +34,12 @@
       <c:when test="${fn:trim(ConfigProperties.environment) == fn:trim(ConfigProperties.production.environment.code)}" >
       </c:when>
       <c:otherwise> 
-      <c:set var="backdoorDetailType" value="<%=org.kuali.rice.kns.util.KNSConstants.DetailTypes.BACKDOOR_DETAIL_TYPE%>"/>
-      <c:if test="${kfunc:getKNSParameterValue(KEWConstants.KEW_NAMESPACE, backdoorDetailType, KEWConstants.SHOW_BACK_DOOR_LOGIN_IND) == 'Y'}">
       <html:form action="/portal.do" method="post" style="margin:0;">
           <input name="backdoorId" type="text" class="searchbox" size="10" title="Enter your backdoor ID here.">
           <input name="channelUrl" type="hidden" value="${ConfigProperties.application.url}/backdoorlogin.do"> 
           <input name="channelTitle" type="hidden" value="Workflow Services">
           <input name="imageField" type="submit" value="login" class="go" title="Click to login.">
           </html:form> 
-          </c:if>
           </c:otherwise> 
           </c:choose> 
 </div>

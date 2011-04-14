@@ -41,7 +41,7 @@
 	<c:when test="${displayTitle}" >
 		<c:choose>
 			<c:when test="${!empty target}" >
-				<a class="portal_link" href="${prefix}portal.do?channelTitle=${title}${backdoorPortalUrlAddition}&channelUrl=${url}${backdoorMainUrlAddition}" target="${target}" title="${title}">${title}</a>
+				<a class="portal_link" href="${url}${backdoorMainUrlAddition}" target="${target}" title="${title}">${title}</a>
 			</c:when>	
 			<c:otherwise>
 				<a class="portal_link" href="${prefix}portal.do?channelTitle=${title}${backdoorPortalUrlAddition}&channelUrl=${url}${backdoorMainUrlAddition}" title="${title}">${title}</a>
@@ -51,7 +51,7 @@
 	<c:otherwise>
 		<c:choose>
 			<c:when test="${!empty target}" >
-				<a class="portal_link" href="${prefix}portal.do?channelTitle=${title}${backdoorPortalUrlAddition}&channelUrl=${url}${backdoorMainUrlAddition}" target="${target}" title="${title}"><jsp:doBody/></a>
+				<a class="portal_link" href="${url}${backdoorMainUrlAddition}" target="${target}" title="${title}"><jsp:doBody/></a>
 			</c:when>
 			<c:otherwise>
 				<a class="portal_link" href="${prefix}portal.do?channelTitle=${title}${backdoorPortalUrlAddition}&channelUrl=${url}${backdoorMainUrlAddition}" title="${title}"><jsp:doBody/></a>
