@@ -312,7 +312,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
             cxml.append("      </Supplier>\n");
 
             // Only pass distribution method if vendor is non-B2B
-            if(purchaseOrder.getVendorContract().getVendorB2bIndicator()) {
+            if(purchaseOrder.getVendorContract() == null || !purchaseOrder.getVendorContract().getVendorB2bIndicator()) {
 	            /** *** DISTRIBUTION SECTION *** */
 	            VendorAddress vendorAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(purchaseOrder.getVendorDetail().getVendorAddresses(), VendorConstants.AddressTypes.PURCHASE_ORDER, purchaseOrder.getDeliveryCampusCode());
 	            cxml.append("      <OrderDistribution>\n");
@@ -330,29 +330,29 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 	
 	            // Distribution Method
 	            switch(disbMethod) {
-	            case FAX:
-	                // fax
-	                cxml.append("        <DistributionMethod type=\"fax\">\n");
-	                cxml.append("          <Fax>\n");
-	                cxml.append("            <TelephoneNumber>\n");
-	                cxml.append("              <CountryCode>1</CountryCode>\n");
-	                cxml.append("              <AreaCode>").append(vendorFaxNumber.substring(0, 3)).append("</AreaCode>\n");
-	                cxml.append("              <Number>").append(vendorFaxNumber.substring(3)).append("</Number>\n");
-	                cxml.append("            </TelephoneNumber>\n");
-	                cxml.append("          </Fax>\n");
-	                break;
-	            case EMAIL:
-	            	// email
-	                cxml.append("        <DistributionMethod type=\"html_email_attachments\">\n");
-	                cxml.append("          <Email><![CDATA[").append(emailAddress).append("]]></Email>\n");
-	                break;
-	            case MANUAL:
-	                // manual
-	                cxml.append("        <DistributionMethod type=\"manual\">\n");
-	                break;
-	            default:
-	                // conversion
-	                cxml.append("        <DistributionMethod type=\"conversion\">\n");
+		            case FAX:
+		                // fax
+		                cxml.append("        <DistributionMethod type=\"fax\">\n");
+		                cxml.append("          <Fax>\n");
+		                cxml.append("            <TelephoneNumber>\n");
+		                cxml.append("              <CountryCode>1</CountryCode>\n");
+		                cxml.append("              <AreaCode>").append(vendorFaxNumber.substring(0, 3)).append("</AreaCode>\n");
+		                cxml.append("              <Number>").append(vendorFaxNumber.substring(3)).append("</Number>\n");
+		                cxml.append("            </TelephoneNumber>\n");
+		                cxml.append("          </Fax>\n");
+		                break;
+		            case EMAIL:
+		            	// email
+		                cxml.append("        <DistributionMethod type=\"html_email_attachments\">\n");
+		                cxml.append("          <Email><![CDATA[").append(emailAddress).append("]]></Email>\n");
+		                break;
+		            case MANUAL:
+		                // manual
+		                cxml.append("        <DistributionMethod type=\"manual\">\n");
+		                break;
+		            default:
+		                // conversion
+		                cxml.append("        <DistributionMethod type=\"conversion\">\n");
 	            } 
 	            cxml.append("        </DistributionMethod>\n");
 	            cxml.append("      </OrderDistribution>\n");
