@@ -73,11 +73,10 @@ public class BatchStepTrigger {
 				System.exit(8);
 			}
             
+			//Need to humanize 'i'; the index 
 			for (int i = (stepIndex-1); i < stepNames.length; i++) {
 				String stepName = stepNames[i];
-		//	}
-			
-    //        for (String stepName : stepNames) {
+	
             	BatchStepFileDescriptor batchStepFile = new BatchStepFileDescriptor(jobName, stepName, BatchStepFileDescriptor.getFileExtensionRun());
             	
             	//write step start file
