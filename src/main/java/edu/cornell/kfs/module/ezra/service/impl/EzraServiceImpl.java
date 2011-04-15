@@ -367,9 +367,10 @@ public class EzraServiceImpl implements EzraService {
 			ProposalProjectDirector ppd = (ProposalProjectDirector) businessObjectService.findByPrimaryKey(ProposalProjectDirector.class, primaryKeys);
 			if (ObjectUtils.isNull(ppd)) {
 				ppd = new ProposalProjectDirector();
-			} else {
-				ppd.setVersionNumber(ppd.getVersionNumber());
-			}
+			} 
+				//else {
+//				ppd.setVersionNumber(ppd.getVersionNumber());
+//			}
 			ppd.setPrincipalId(director.getPrincipalId());
 			ppd.setProposalNumber(new Long(project.getProjectId()));
 			ppd.setProposalPrimaryProjectDirectorIndicator(true);
@@ -393,17 +394,25 @@ public class EzraServiceImpl implements EzraService {
 				ProposalProjectDirector ppd = (ProposalProjectDirector) businessObjectService.findByPrimaryKey(ProposalProjectDirector.class, primaryKeys);
 				if (ObjectUtils.isNull(ppd)) {
 					ppd = new ProposalProjectDirector();
-				} else {
-					ppd.setVersionNumber(ppd.getVersionNumber());
 				}
+//				 else {
+//					ppd.setVersionNumber(ppd.getVersionNumber());
+//				}
 				ppd.setPrincipalId(director.getPrincipalId());
 				ppd.setProposalNumber(new Long(project.getProjectId()));
 				ppd.setProposalPrimaryProjectDirectorIndicator(false);
 				ppd.setActive(true);
 				KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new AttributeSet());
+				
+				//check to make sure that this project director is not already in the list.
+				for (ProposalProjectDirector projDir : projDirs) {
+					if (projDir.getPrincipalId().equals(ppd.getPrincipalId()))
+						continue;
+					
+				}
 				projDirs.add(ppd);
 			} else {
-				LOG.info("Null investigator: "+ project.getProjectDirectorId());
+				LOG.info("Null investigator: "+ pi.getInvestigatorId());
 			}
 		}
 		
