@@ -239,7 +239,8 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         }
         cxml.append("      <AccountingDate>").append(purchaseOrder.getPurchaseOrderCreateTimestamp()).append("</AccountingDate>\n");
 
-        if (PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
+        // Provide DUNS number and SupplierNumber if vendor is B2B
+        if(purchaseOrder.getVendorContract() != null && purchaseOrder.getVendorContract().getVendorB2bIndicator()) {
 	        /** *** SUPPLIER SECTION **** */
 	        cxml.append("      <Supplier>\n");
 	        cxml.append("        <DUNS>").append(vendorDuns).append("</DUNS>\n");
@@ -265,6 +266,8 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 	        cxml.append("          </Phone>\n");
 	        cxml.append("        </ContactInfo>\n");
 	        cxml.append("      </Supplier>\n");
+
+        // Only pass address and distribution method if vendor is non-B2B
         } else {
 
             /** *** SUPPLIER SECTION **** */
@@ -311,52 +314,49 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
             cxml.append("        </ContactInfo>\n");
             cxml.append("      </Supplier>\n");
 
-            // Only pass distribution method if vendor is non-B2B
-            if(purchaseOrder.getVendorContract() == null || !purchaseOrder.getVendorContract().getVendorB2bIndicator()) {
-	            /** *** DISTRIBUTION SECTION *** */
-	            VendorAddress vendorAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(purchaseOrder.getVendorDetail().getVendorAddresses(), VendorConstants.AddressTypes.PURCHASE_ORDER, purchaseOrder.getDeliveryCampusCode());
-	            cxml.append("      <OrderDistribution>\n");
-	
-	            // first take fax from PO, if empty then get fax number for PO default vendor address
-	            String vendorFaxNumber = purchaseOrder.getVendorFaxNumber();
-	            if (StringUtils.isBlank(vendorFaxNumber) && vendorAddress != null) {
-	                vendorFaxNumber = vendorAddress.getVendorFaxNumber();
-	            }
-	
-	            String emailAddress = "";
-	            if (vendorAddress != null) {
-	                emailAddress = vendorAddress.getVendorAddressEmailAddress();
-	            }
-	
-	            // Distribution Method
-	            switch(disbMethod) {
-		            case FAX:
-		                // fax
-		                cxml.append("        <DistributionMethod type=\"fax\">\n");
-		                cxml.append("          <Fax>\n");
-		                cxml.append("            <TelephoneNumber>\n");
-		                cxml.append("              <CountryCode>1</CountryCode>\n");
-		                cxml.append("              <AreaCode>").append(vendorFaxNumber.substring(0, 3)).append("</AreaCode>\n");
-		                cxml.append("              <Number>").append(vendorFaxNumber.substring(3)).append("</Number>\n");
-		                cxml.append("            </TelephoneNumber>\n");
-		                cxml.append("          </Fax>\n");
-		                break;
-		            case EMAIL:
-		            	// email
-		                cxml.append("        <DistributionMethod type=\"html_email_attachments\">\n");
-		                cxml.append("          <Email><![CDATA[").append(emailAddress).append("]]></Email>\n");
-		                break;
-		            case MANUAL:
-		                // manual
-		                cxml.append("        <DistributionMethod type=\"manual\">\n");
-		                break;
-		            default:
-		                // conversion
-		                cxml.append("        <DistributionMethod type=\"conversion\">\n");
-	            } 
-	            cxml.append("        </DistributionMethod>\n");
-	            cxml.append("      </OrderDistribution>\n");
+            /** *** DISTRIBUTION SECTION *** */
+            VendorAddress vendorAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(purchaseOrder.getVendorDetail().getVendorAddresses(), VendorConstants.AddressTypes.PURCHASE_ORDER, purchaseOrder.getDeliveryCampusCode());
+            cxml.append("      <OrderDistribution>\n");
+
+            // first take fax from PO, if empty then get fax number for PO default vendor address
+            String vendorFaxNumber = purchaseOrder.getVendorFaxNumber();
+            if (StringUtils.isBlank(vendorFaxNumber) && vendorAddress != null) {
+                vendorFaxNumber = vendorAddress.getVendorFaxNumber();
             }
+
+            String emailAddress = "";
+            if (vendorAddress != null) {
+                emailAddress = vendorAddress.getVendorAddressEmailAddress();
+            }
+
+            // Distribution Method
+            switch(disbMethod) {
+	            case FAX:
+	                // fax
+	                cxml.append("        <DistributionMethod type=\"fax\">\n");
+	                cxml.append("          <Fax>\n");
+	                cxml.append("            <TelephoneNumber>\n");
+	                cxml.append("              <CountryCode>1</CountryCode>\n");
+	                cxml.append("              <AreaCode>").append(vendorFaxNumber.substring(0, 3)).append("</AreaCode>\n");
+	                cxml.append("              <Number>").append(vendorFaxNumber.substring(3)).append("</Number>\n");
+	                cxml.append("            </TelephoneNumber>\n");
+	                cxml.append("          </Fax>\n");
+	                break;
+	            case EMAIL:
+	            	// email
+	                cxml.append("        <DistributionMethod type=\"html_email_attachments\">\n");
+	                cxml.append("          <Email><![CDATA[").append(emailAddress).append("]]></Email>\n");
+	                break;
+	            case MANUAL:
+	                // manual
+	                cxml.append("        <DistributionMethod type=\"manual\">\n");
+	                break;
+	            default:
+	                // conversion
+	                cxml.append("        <DistributionMethod type=\"conversion\">\n");
+            } 
+            cxml.append("        </DistributionMethod>\n");
+            cxml.append("      </OrderDistribution>\n");
         }
 
 
