@@ -1209,7 +1209,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
      * @param po The purchase order document whose status to be updated.
      */
     protected void setupDocumentForPendingFirstTransmission(PurchaseOrderDocument po) {
-        if (POTransmissionMethods.PRINT.equals(po.getPurchaseOrderTransmissionMethodCode()) || POTransmissionMethods.FAX.equals(po.getPurchaseOrderTransmissionMethodCode()) || POTransmissionMethods.ELECTRONIC.equals(po.getPurchaseOrderTransmissionMethodCode())) {
+    	String transmissionMethod = po.getPurchaseOrderTransmissionMethodCode();
+        if (POTransmissionMethods.PRINT.equals(transmissionMethod) || POTransmissionMethods.FAX.equals(transmissionMethod) || POTransmissionMethods.ELECTRONIC.equals(transmissionMethod) ||
+        	POTransmissionMethods.EMAIL.equals(transmissionMethod) || POTransmissionMethods.MANUAL.equals(transmissionMethod)) {
 //            String newStatusCode = PurchaseOrderStatuses.STATUSES_BY_TRANSMISSION_TYPE.get(po.getPurchaseOrderTransmissionMethodCode());
         	// Forcing all the POs to transmit via Electronic, so they all route to SciQuest for transmission, regardless of value provided.
         	String newStatusCode = PurchaseOrderStatuses.STATUSES_BY_TRANSMISSION_TYPE.get(PurapConstants.POTransmissionMethods.ELECTRONIC);
