@@ -240,7 +240,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("      <AccountingDate>").append(purchaseOrder.getPurchaseOrderCreateTimestamp()).append("</AccountingDate>\n");
 
         // Provide DUNS number and SupplierNumber if vendor is B2B
-        if(purchaseOrder.getVendorContract() != null && purchaseOrder.getVendorContract().getVendorB2bIndicator() && !disbMethod.equals(PurapConstants.POTransmissionMethods.CONVERSION)) {
+        if(purchaseOrder.getVendorContract() != null && purchaseOrder.getVendorContract().getVendorB2bIndicator() && disbMethod!=CONVERSION)) {
 	        /** *** SUPPLIER SECTION **** */
 	        cxml.append("      <Supplier>\n");
 	        cxml.append("        <DUNS>").append(vendorDuns).append("</DUNS>\n");
