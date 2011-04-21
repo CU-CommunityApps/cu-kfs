@@ -58,5 +58,111 @@
 			<ref bean="capitalAssetBuilderModuleService" />
 		</property>
 	</bean>
+	
+	<bean id="procurementCardDocumentJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="procurementCardLoadStep" />
+				<ref bean="procurementCardLoadFlatFileStep"/>
+				<ref bean="procurementCardCreateDocumentsStep" />
+				<ref bean="procurementCardRouteDocumentsStep" />
+				<ref bean="procurementCardAutoApproveDocumentsStep" />
+			</list>
+		</property>
+	</bean>
+	
+	
+	<bean id="procurementCardLoadTransactionsService" class="org.kuali.kfs.fp.batch.service.impl.ProcurementCardLoadTransactionsServiceImpl">
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+		<property name="batchInputFileService">
+			<ref bean="batchInputFileService" />
+		</property>
+		<property name="procurementCardInputFileType">
+			<ref bean="procurementCardInputFileType" />
+		</property>
+	</bean>
+
+	<bean id="procurementCardLoadFlatTransactionsService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardLoadFlatTransactionsServiceImpl">
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+		<property name="batchInputFileService">
+			<ref bean="batchInputFileService" />
+		</property>
+		<property name="procurementCardInputFileType">
+			<ref bean="procurementCardFlatInputFileType" />
+		</property>
+	</bean>
+	
+	<bean id="procurementCardLoadStep" class="org.kuali.kfs.fp.batch.ProcurementCardLoadStep" parent="step">
+		<property name="procurementCardLoadTransactionsService">
+			<ref bean="procurementCardLoadTransactionsService" />
+		</property>
+		<property name="batchInputFileService">
+		    <ref bean="batchInputFileService" />
+		</property>
+		<property name="procurementCardInputFileType">
+		    <ref bean="procurementCardInputFileType" />
+		</property>
+	</bean>	
+
+	<bean id="procurementCardLoadFlatFileStep" class="edu.cornell.kfs.fp.batch.ProcurementCardLoadFlatFileStep" parent="step">
+		<property name="procurementCardLoadTransactionsService">
+			<ref bean="procurementCardLoadFlatTransactionsService" />
+		</property>
+		<property name="batchInputFileService">
+		    <ref bean="batchInputFileService" />
+		</property>
+		<property name="procurementCardInputFileType">
+		    <ref bean="procurementCardFlatInputFileType" />
+		</property>
+	</bean>	
+
+    <bean id="procurementCardFlatInputFileType" class="edu.cornell.kfs.fp.batch.ProcurementCardFlatInputFileType"> 
+	    <property name="directoryPath">
+	       <value>${staging.directory}/fp/procurementCard</value>
+	    </property>
+	    <property name="fileExtension">
+	       <value>data</value>
+	    </property>
+		<property name="parameterService">
+			<ref bean="parameterService"/>
+		</property>
+		<property name="procurementCardErrorEmailService">
+			<ref bean="procurementCardErrorEmailService"/>
+		</property>
+	    <property name="dateTimeService">
+	       <ref bean="dateTimeService"/>
+	    </property>
+	</bean>
+    
+	<bean id="procurementCardInputFileType" class="org.kuali.kfs.fp.batch.ProcurementCardInputFileType"> 
+	    <property name="directoryPath">
+	       <value>${staging.directory}/fp/procurementCard</value>
+	    </property>
+	    <property name="fileExtension">
+	       <value>xml</value>
+	    </property>
+	    <property name="digestorRulesFileName">
+	       <value>org/kuali/kfs/fp/batch/pcdoDigesterRules.xml</value>
+	    </property>
+	    <property name="schemaLocation">
+	       <value>${externalizable.static.content.url}/xsd/fp/procurementCard.xsd</value>
+	    </property>
+	    <property name="dateTimeService">
+	       <ref bean="dateTimeService"/>
+	    </property>
+	</bean>
+
+	<bean id="procurementCardErrorEmailService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardErrorEmailServiceImpl">
+		<property name="parameterService">
+			<ref bean="parameterService"/>
+		</property>
+		<property name="mailService">
+			<ref bean="mailService"/>
+		</property>
+	</bean>
 
 </beans>

@@ -24,6 +24,7 @@
 	<strong>Financial Processing</strong><br/>
     <ul class="chan">
 		<li><portal:portalLink displayTitle="true" title="Procurement Card Upload" url="batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=procurementCardInputFileType" /></li>
+		<li><portal:portalLink displayTitle="true" title="Procurement Card Flat Upload" url="batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=procurementCardFlatInputFileType" /></li>
 	</ul>
 	<strong>General Ledger</strong><br/>
     <ul class="chan">
