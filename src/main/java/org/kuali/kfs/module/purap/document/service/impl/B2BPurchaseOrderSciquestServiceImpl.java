@@ -180,12 +180,12 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         } else if (PurapConstants.POTransmissionMethods.EMAIL.equalsIgnoreCase(poTransmissionCode)) {
         	// email
         	disbMethod = EMAIL;
-        } else if(PurapConstants.POTransmissionMethods.MANUAL.equalsIgnoreCase(poTransmissionCode)) {
-            // manual
-        	disbMethod = MANUAL;
-        } else {
+        } else if(PurapConstants.POTransmissionMethods.CONVERSION.equalsIgnoreCase(poTransmissionCode)) {
             // conversion
         	disbMethod = CONVERSION;
+        } else {
+            // manual
+        	disbMethod = MANUAL;
         }
 
         
@@ -240,7 +240,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("      <AccountingDate>").append(purchaseOrder.getPurchaseOrderCreateTimestamp()).append("</AccountingDate>\n");
 
         // Provide DUNS number and SupplierNumber if vendor is B2B
-        if(purchaseOrder.getVendorContract() != null && purchaseOrder.getVendorContract().getVendorB2bIndicator()) {
+        if(purchaseOrder.getVendorContract() != null && purchaseOrder.getVendorContract().getVendorB2bIndicator() && !disbMethod.equals(PurapConstants.POTransmissionMethods.CONVERSION)) {
 	        /** *** SUPPLIER SECTION **** */
 	        cxml.append("      <Supplier>\n");
 	        cxml.append("        <DUNS>").append(vendorDuns).append("</DUNS>\n");
@@ -348,12 +348,19 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 	                cxml.append("          <Email><![CDATA[").append(emailAddress).append("]]></Email>\n");
 	                break;
 	            case MANUAL:
+	                // conversion
+	            	/**
+	            	 * Temporary method of distribution for PO conversion effort.  Will be short-lived, so we 
+	            	 * didn't bother setting up constants and parameters to store the email, but rather hard-
+	            	 * coded the email address.
+	            	 */
+	                cxml.append("        <DistributionMethod type=\"html_email_attachments\">\n");
+	                cxml.append("          <Email><![CDATA[").append("db18@cornell.edu").append("]]></Email>\n");
+	                break;
+	            default:
 	                // manual
 	                cxml.append("        <DistributionMethod type=\"manual\">\n");
 	                break;
-	            default:
-	                // conversion
-	                cxml.append("        <DistributionMethod type=\"conversion\">\n");
             } 
             cxml.append("        </DistributionMethod>\n");
             cxml.append("      </OrderDistribution>\n");
