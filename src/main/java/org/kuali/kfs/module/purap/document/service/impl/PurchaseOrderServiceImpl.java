@@ -1211,11 +1211,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     protected void setupDocumentForPendingFirstTransmission(PurchaseOrderDocument po) {
     	String transmissionMethod = po.getPurchaseOrderTransmissionMethodCode();
     	// Leaving conditional code in place here to ensure that we can exclude some transmission methods from routing to SciQuest if we want.
-//        String newStatusCode = PurchaseOrderStatuses.STATUSES_BY_TRANSMISSION_TYPE.get(po.getPurchaseOrderTransmissionMethodCode());
-    	// Forcing all the POs to transmit via Electronic, so they all route to SciQuest for transmission, regardless of value provided.
-    	String newStatusCode = PurchaseOrderStatuses.STATUSES_BY_TRANSMISSION_TYPE.get(PurapConstants.POTransmissionMethods.ELECTRONIC);
-        LOG.debug("setupDocumentForPendingFirstTransmission() Purchase Order Transmission Type is '" + po.getPurchaseOrderTransmissionMethodCode() + "' setting status to '" + newStatusCode + "'");
-        purapService.updateStatus(po, newStatusCode);
+        if (POTransmissionMethods.PRINT.equals(transmissionMethod) || POTransmissionMethods.FAX.equals(transmissionMethod) || POTransmissionMethods.ELECTRONIC.equals(transmissionMethod) ||
+        	POTransmissionMethods.EMAIL.equals(transmissionMethod) || POTransmissionMethods.MANUAL.equals(transmissionMethod) || POTransmissionMethods.CONVERSION.equals(transmissionMethod)) {
+//            String newStatusCode = PurchaseOrderStatuses.STATUSES_BY_TRANSMISSION_TYPE.get(po.getPurchaseOrderTransmissionMethodCode());
+        	// Forcing all the POs to transmit via Electronic, so they all route to SciQuest for transmission, regardless of value provided.
+        	String newStatusCode = PurchaseOrderStatuses.STATUSES_BY_TRANSMISSION_TYPE.get(PurapConstants.POTransmissionMethods.ELECTRONIC);
+            LOG.debug("setupDocumentForPendingFirstTransmission() Purchase Order Transmission Type is '" + po.getPurchaseOrderTransmissionMethodCode() + "' setting status to '" + newStatusCode + "'");
+            purapService.updateStatus(po, newStatusCode);
+        }
     }
 
     /**
