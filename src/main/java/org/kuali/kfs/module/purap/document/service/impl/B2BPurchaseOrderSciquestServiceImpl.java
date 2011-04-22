@@ -506,7 +506,9 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                 	cxml.append("        <ProductType>").append("Form").append("</ProductType>\n");
                 }
                 cxml.append("      </Item>\n");
-                cxml.append("      <Quantity>").append(poi.getItemQuantity()).append("</Quantity>\n");
+                KualiDecimal itemQuantity = poi.getItemQuantity();
+                // Pass in value of zero for quantity if no quantity provided.  This helps handle non-quantity orders in SciQuest.
+                cxml.append("      <Quantity>").append(itemQuantity==null?"0":itemQuantity).append("</Quantity>\n");
                 // LineCharges - All the monetary charges for this line, including the price, tax, shipping, and handling.
                 // Required.
                 cxml.append("      <LineCharges>\n");
