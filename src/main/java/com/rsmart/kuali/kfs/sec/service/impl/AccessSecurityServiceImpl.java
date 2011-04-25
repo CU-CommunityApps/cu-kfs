@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsModuleService;
 import org.kuali.kfs.module.ld.LaborConstants;
 import org.kuali.kfs.sys.KFSConstants;
@@ -386,8 +388,16 @@ public class AccessSecurityServiceImpl implements AccessSecurityService {
         }
 
         // fiscal officer override
+        
+        Account account  = line.getAccount();
+        AccountService as = SpringContext.getBean(AccountService.class);
+        Account verified = as.getByPrimaryId(account.getChartOfAccountsCode(), account.getAccountNumber());
+        if (verified == null) {
+        	return false;
+        }
+        
         boolean alwaysAllowFOAccess = parameterService.getIndicatorParameter(SecConstants.ACCESS_SECURITY_NAMESPACE_CODE, SecConstants.ALL_PARAMETER_DETAIL_COMPONENT, SecConstants.SecurityParameterNames.ALWAYS_ALLOW_FISCAL_OFFICER_LINE_ACCESS_IND);
-        if (alwaysAllowFOAccess && ObjectUtils.isNotNull(line.getAccount().getAccountFiscalOfficerSystemIdentifier())) {
+        if (alwaysAllowFOAccess) {
             if (StringUtils.equals(line.getAccount().getAccountFiscalOfficerSystemIdentifier(), person.getPrincipalId())) {
                 return true;
             }
