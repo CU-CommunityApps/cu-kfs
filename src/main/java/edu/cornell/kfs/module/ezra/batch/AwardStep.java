@@ -12,6 +12,7 @@ import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.ParameterService;
 
 import edu.cornell.kfs.module.ezra.service.EzraService;
+import edu.cornell.kfs.module.ezra.service.impl.EzraServiceImpl;
 
 public class AwardStep extends AbstractStep {
 
@@ -23,8 +24,15 @@ public class AwardStep extends AbstractStep {
     private static final String PARAMETER_NAMESPACE_STEP = "AwardStep";
     private static final String PARAMETER_APPLICATION_NAMESPACE_CODE = "KFS";
 	
+    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AwardStep.class);
+
+    
 	public boolean execute(String arg0, java.util.Date arg1) throws InterruptedException {
+		
+
+		
 		String dateString = parameterService.getParameterValue(AwardStep.class, LAST_SUCCESSFUL_RUN);
+		LOG.info("AwardStep last successful run parm value= "+ dateString);
 		DateTimeService dtService = SpringContext.getBean(DateTimeService.class);
 		java.sql.Date lastRun = null;
 		if (dateString !=null) {
