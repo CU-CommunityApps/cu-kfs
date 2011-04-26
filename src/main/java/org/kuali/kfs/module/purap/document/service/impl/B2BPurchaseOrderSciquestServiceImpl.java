@@ -641,12 +641,13 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         for (Iterator iter = detailList.iterator(); iter.hasNext();) {
             PurchaseOrderItem poi = (PurchaseOrderItem) iter.next();
             if (ObjectUtils.isNotNull(poi.getItemType()) && poi.getItemType().isLineItemIndicator()) {
+            	boolean nonQuantityOrder = PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE.equals(poi.getItemTypeCode());
                 if (ObjectUtils.isNull(poi.getItemLineNumber())) {
                     LOG.error("verifyCxmlPOData()  The Item Line Number is required for the cXML PO but is missing.");
                     errors.append("Missing Data: Item Line Number\n");
                 }
                 // Only perform this validation check on B2B orders.  Catalog # is not required on non-B2B orders.
-                if (StringUtils.isEmpty(poi.getItemCatalogNumber()) && PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
+                if (!nonQuantityOrder && StringUtils.isEmpty(poi.getItemCatalogNumber()) && PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
                     LOG.error("verifyCxmlPOData()  The Catalog Number for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");
                     errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - Catalog Number\n");
                 }
@@ -654,7 +655,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                     LOG.error("verifyCxmlPOData()  The Description for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");
                     errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - Description\n");
                 }
-                if (StringUtils.isEmpty(poi.getItemUnitOfMeasureCode())) {
+                if (!nonQuantityOrder && StringUtils.isEmpty(poi.getItemUnitOfMeasureCode())) {
                     LOG.error("verifyCxmlPOData()  The Unit Of Measure Code for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");
                     errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - Unit Of Measure\n");
                 }
@@ -662,7 +663,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                     LOG.error("verifyCxmlPOData()  The External Org B2B Product Type Name for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");
                     errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - External Org B2B Product Type Name\n");
                 }
-                if (poi.getItemQuantity() == null) {
+                if (!nonQuantityOrder && poi.getItemQuantity() == null) {
                     LOG.error("verifyCxmlPOData()  The Order Quantity for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");
                     errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - Order Quantity\n");
                 }
