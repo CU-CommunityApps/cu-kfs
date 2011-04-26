@@ -117,10 +117,11 @@ public class EzraServiceImpl implements EzraService {
 	
 	protected Award createAward(Proposal proposal, Award oldAward) {
 		Award award = new Award(proposal);
+		award.setProposal(proposal);
 		award.setAwardStatusCode(proposal.getProposalStatusCode());
 		award.setAwardBeginningDate(proposal.getProposalBeginningDate());
 		award.setAwardEndingDate(proposal.getProposalEndingDate());
-		award.setAwardTotalAmount(proposal.getProposalTotalAmount());
+		award.setAwardDirectCostAmount(proposal.getProposalTotalAmount());
 		award.setAwardEntryDate(dateTimeService.getCurrentSqlDate());
 		if (ObjectUtils.isNull(oldAward)) {
 			List<AwardAccount> accounts = getAwardAccounts(proposal);
