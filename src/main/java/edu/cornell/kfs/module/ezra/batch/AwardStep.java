@@ -31,7 +31,7 @@ public class AwardStep extends AbstractStep {
 		
 
 		
-		String dateString = parameterService.getParameterValue(AwardStep.class, LAST_SUCCESSFUL_RUN);
+		String dateString = parameterService.getParameterValue(PARAMETER_NAMESPACE_CODE, PARAMETER_NAMESPACE_STEP, LAST_SUCCESSFUL_RUN);
 		LOG.info("AwardStep last successful run parm value= "+ dateString);
 		DateTimeService dtService = SpringContext.getBean(DateTimeService.class);
 		java.sql.Date lastRun = null;
