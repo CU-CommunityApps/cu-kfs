@@ -32,6 +32,8 @@ import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.ObjectUtils;
 
+import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
+import edu.cornell.kfs.module.ezra.businessobject.Deliverable;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProject;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward;
 import edu.cornell.kfs.module.ezra.businessobject.Investigator;
@@ -139,6 +141,16 @@ public class EzraServiceImpl implements EzraService {
 				apd.setVersionNumber(projDir.getVersionNumber());
 			} 
 		}
+		
+//		Map fieldValues = new HashMap();
+//		fieldValues.put("projId", award.getProposalNumber());
+//		fieldValues.put("deliverableType", 'F');
+//		fieldValues.put("finalIndicator", 'Y');
+//		Deliverable deliverable = (Deliverable)businessObjectService.findMatching(Deliverable.class, fieldValues);
+//		if (ObjectUtils.isNotNull(deliverable)) {
+//			AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
+//			aea.setFinalFiscalReportDate(deliverable.getDueDate());
+//		}
 		return award;
 	}
 	
