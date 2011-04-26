@@ -32,8 +32,6 @@ import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.ObjectUtils;
 
-import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
-import edu.cornell.kfs.module.ezra.businessobject.Deliverable;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProject;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward;
 import edu.cornell.kfs.module.ezra.businessobject.Investigator;
