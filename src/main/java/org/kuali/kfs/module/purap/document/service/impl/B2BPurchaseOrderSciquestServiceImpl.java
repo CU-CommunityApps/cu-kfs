@@ -646,7 +646,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                     errors.append("Missing Data: Item Line Number\n");
                 }
                 // Only perform this validation check on B2B orders.  Catalog # is not required on non-B2B orders.
-                if (StringUtils.isEmpty(poi.getItemCatalogNumber() && PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode()))) {
+                if (StringUtils.isEmpty(poi.getItemCatalogNumber()) && PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
                     LOG.error("verifyCxmlPOData()  The Catalog Number for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");
                     errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - Catalog Number\n");
                 }
