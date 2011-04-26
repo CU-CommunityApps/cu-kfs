@@ -316,7 +316,7 @@ public class EzraServiceImpl implements EzraService {
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		}
-		LOG.info("Created a new Award doc.");
+		LOG.info("Created a new Award doc. "+ award.getProposalNumber());
 		awardDoc.getDocumentHeader().setDocumentDescription("Auto creation of new award: "+ award.getProposalNumber());
 		if (ObjectUtils.isNotNull(oldAward)) {
 			awardDoc.getOldMaintainableObject().setBusinessObject(oldAward);
