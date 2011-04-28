@@ -150,6 +150,7 @@ public class EzraServiceImpl implements EzraService {
 //			AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
 //			aea.setFinalFiscalReportDate(deliverable.getDueDate());
 //		}
+		award.refreshReferenceObject("proposal");
 		return award;
 	}
 	
@@ -170,10 +171,7 @@ public class EzraServiceImpl implements EzraService {
 		List<ProposalProjectDirector> ppds = createProjectDirectors(proposal.getProposalNumber());
 		proposal.setProposalProjectDirectors(ppds);
 
-		Map deptFields = new HashMap();
-		deptFields.put("organizationCode", ezraProposal.getDepartmentId());
-		List<Organization> orgs = (List<Organization>)businessObjectService.findMatching(Organization.class, deptFields);
-		List<ProposalOrganization> propOrgs = createProposalOrganizations(orgs, proposal.getProposalNumber());
+		List<ProposalOrganization> propOrgs = createProposalOrganizations(proposal.getProposalNumber());
 		proposal.setProposalOrganizations(propOrgs);
 		
 		//check to see if this is a real cfda 
@@ -431,7 +429,16 @@ public class EzraServiceImpl implements EzraService {
 		return projDirs;
 	}
 
-	private List<ProposalOrganization> createProposalOrganizations(List<Organization> orgs, Long projectId) {
+	private List<ProposalOrganization> createProposalOrganizations( Long projectId) {
+		
+		EzraProject ep = (EzraProject)businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectId);
+		String orgCode = ep.getProjectDepartmentId();
+		
+		Map deptFields = new HashMap();
+		deptFields.put("organizationCode", orgCode);
+		List<Organization> orgs = (List<Organization>)businessObjectService.findMatching(Organization.class, deptFields);
+		
+		
 		LOG.info("Retrieved Orgs :"+ orgs.size() + " for Proposal "+ projectId);
 		List<ProposalOrganization> propOrgs = new ArrayList<ProposalOrganization>();
 		for (Organization org : orgs) {
@@ -447,7 +454,7 @@ public class EzraServiceImpl implements EzraService {
 			}
 			po.setChartOfAccountsCode("IT");
 			po.setOrganizationCode(org.getOrganizationCode());
-			EzraProject ep = (EzraProject)businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectId);
+			//EzraProject ep = (EzraProject)businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectId);
 			if (org.getOrganizationCode().equals(ep.getProjectDepartmentId())) {
 				po.setProposalPrimaryOrganizationIndicator(true);
 			}
