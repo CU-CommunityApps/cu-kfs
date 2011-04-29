@@ -151,6 +151,7 @@ public class EzraServiceImpl implements EzraService {
 //			aea.setFinalFiscalReportDate(deliverable.getDueDate());
 //		}
 		award.refreshReferenceObject("proposal");
+		award.refreshNonUpdateableReferences();
 		return award;
 	}
 	
@@ -322,9 +323,7 @@ public class EzraServiceImpl implements EzraService {
 //			awardDoc.getOldMaintainableObject().setBusinessObject(oldAward);
 //			award.setVersionNumber(oldAward.getVersionNumber());
 //		} 
-		Maintainable awardMaintainable = awardDoc.getNewMaintainableObject();
-		awardMaintainable.setBusinessObject(award);
-		awardDoc.setNewMaintainableObject(awardMaintainable);
+		awardDoc.getNewMaintainableObject().setBusinessObject(award);;
 		try {
 			documentService.saveDocument(awardDoc);
 			awardDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
