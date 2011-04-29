@@ -104,7 +104,7 @@ public class PurchaseOrderAmendmentDocument extends PurchaseOrderDocument {
             // set purap status 
 //            SpringContext.getBean(PurapService.class).updateStatus(this, PurapConstants.PurchaseOrderStatuses.OPEN);
             // updated to set status to PENDING_CXML so the document will route to SciQuest for handling
-            SpringContext.getBean(PurapService.class).updateStatus(this, PurchaseOrderStatuses.PurchaseOrderStatuses.PENDING_CXML);
+            SpringContext.getBean(PurapService.class).updateStatus(this, PurchaseOrderStatuses.PENDING_CXML);
 
             // update vendor commodity code by automatically spawning vendor maintenance document
 	        SpringContext.getBean(PurchaseOrderService.class).updateVendorCommodityCode(this);
