@@ -85,7 +85,7 @@ public class PurchaseOrderVoidDocument extends PurchaseOrderDocument {
 	        // set purap status 
 //            SpringContext.getBean(PurapService.class).updateStatus(this, PurapConstants.PurchaseOrderStatuses.VOID);
 	        // updated to set status to PENDING_CXML so the document will route to SciQuest for handling
-	        SpringContext.getBean(PurapService.class).updateStatus(this, PurchaseOrderStatuses.PurchaseOrderStatuses.PENDING_CXML);
+	        SpringContext.getBean(PurapService.class).updateStatus(this, PurchaseOrderStatuses.PENDING_CXML);
 	
 	        // update indicators
 	        SpringContext.getBean(PurchaseOrderService.class).completePurchaseOrderVoid(this);
