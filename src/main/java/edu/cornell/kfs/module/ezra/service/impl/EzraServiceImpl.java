@@ -329,6 +329,8 @@ public class EzraServiceImpl implements EzraService {
 			awardDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
 		} catch (WorkflowException we) {
 			we.printStackTrace();
+		} catch (RuntimeException rte) {
+			LOG.error(rte);
 		}
 		try {
 			Thread.sleep(5000);
