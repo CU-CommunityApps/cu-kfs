@@ -1,122 +1,93 @@
 <descriptor-repository version="1.0">
-	<class-descriptor class="edu.cornell.kfs.module.cg.businessobject.AgencyExtension" table="CG_AGENCY_TX">
-    	<field-descriptor name="agencyNumber" column="CG_AGENCY_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
-    	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
-    	<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
-    	<field-descriptor name="lastUpdated" column="UPDATED_DT" jdbc-type="DATE"/>
-    </class-descriptor>
-    
-    <class-descriptor class="org.kuali.kfs.module.cg.businessobject.Agency" table="CG_AGENCY_T">
-    	<field-descriptor name="agencyNumber" column="CG_AGENCY_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
-    	<field-descriptor name="reportingName" column="CG_AGENCY_RPT_NM" jdbc-type="VARCHAR" />
-    	<field-descriptor name="fullName" column="CG_AGENCY_FULL_NM" jdbc-type="VARCHAR" />
-    	<field-descriptor name="indirectAmount" column="CG_AGNCY_INDR_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
-    	<field-descriptor name="active" column="CG_AGENCY_HIST_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.sys.dataaccess.OjbCharBooleanFieldInverseConversion" />
-    	<field-descriptor name="inStateIndicator" column="CG_AGNCY_IN_ST_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
-    	<field-descriptor name="agencyTypeCode" column="CG_AGENCY_TYP_CD" jdbc-type="VARCHAR" index="true" />
-    	<field-descriptor name="reportsToAgencyNumber" column="CG_RPTTO_AGNCY_NBR" jdbc-type="VARCHAR" />
-    	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
-   		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
-    	<reference-descriptor name="agencyType" class-ref="org.kuali.kfs.module.cg.businessobject.AgencyType" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-        	<foreignkey field-ref="agencyTypeCode" />
-    	</reference-descriptor>
-    	<reference-descriptor name="reportsToAgency" class-ref="org.kuali.kfs.module.cg.businessobject.Agency" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-        	<foreignkey field-ref="reportsToAgencyNumber" />
-    	</reference-descriptor>
-    	<reference-descriptor name="extension" class-ref="edu.cornell.kfs.module.cg.businessobject.AgencyExtension" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
-            <foreignkey field-ref="agencyNumber" />
-		</reference-descriptor>
-	</class-descriptor>
-   	
-   	<class-descriptor class="edu.cornell.kfs.module.cg.businessobject.AwardExtension" table="CG_AWD_TX">
+	<!-- 
+   	<class-descriptor class="edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute" table="CG_AWD_TX">
     	<field-descriptor name="proposalNumber" column="CGPRPSL_NBR" jdbc-type="BIGINT" primarykey="true" index="true" />
     	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
     	<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
-    	<field-descriptor name="lastUpdated" column="UPDATED_DT" jdbc-type="DATE" />
     </class-descriptor>
     
     <class-descriptor class="org.kuali.kfs.module.cg.businessobject.Award" table="CG_AWD_T">
-    <field-descriptor name="proposalNumber" column="CGPRPSL_NBR" jdbc-type="BIGINT" primarykey="true" index="true" />
-    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
-    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
-    <field-descriptor name="awardBeginningDate" column="CGAWD_BEG_DT" jdbc-type="DATE" />
-    <field-descriptor name="awardEndingDate" column="CGAWD_END_DT" jdbc-type="DATE" />
-    <field-descriptor name="awardTotalAmount" column="CGAWD_TOT_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
-    <field-descriptor name="awardAddendumNumber" column="CGAWD_ADDENDUM_NBR" jdbc-type="VARCHAR" />
-    <field-descriptor name="awardAllocatedUniversityComputingServicesAmount" column="CGAWD_ALOC_UCS_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
-    <field-descriptor name="federalPassThroughFundedAmount" column="CG_FEDPT_FND_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
-    <field-descriptor name="awardEntryDate" column="CGAWD_ENTRY_DT" jdbc-type="DATE" />
-    <field-descriptor name="agencyFuture1Amount" column="CG_AGENCY_FUT1_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
-    <field-descriptor name="agencyFuture2Amount" column="CG_AGENCY_FUT2_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
-    <field-descriptor name="agencyFuture3Amount" column="CG_AGENCY_FUT3_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
-    <field-descriptor name="awardDocumentNumber" column="CGAWD_DOC_NBR" jdbc-type="VARCHAR" />
-    <field-descriptor name="awardLastUpdateDate" column="CGAWD_LST_UPDT_DT" jdbc-type="TIMESTAMP" />
-    <field-descriptor name="federalPassThroughIndicator" column="CG_FEDPT_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
-    <field-descriptor name="oldProposalNumber" column="CG_OLD_PRPSL_NBR" jdbc-type="VARCHAR" />
-    <field-descriptor name="awardDirectCostAmount" column="CGAWD_DRCT_CST_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
-    <field-descriptor name="awardIndirectCostAmount" column="CGAWD_INDR_CST_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
-    <field-descriptor name="federalFundedAmount" column="CG_FED_FNDED_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
-    <field-descriptor name="awardCreateTimestamp" column="CGAWD_CREATE_TS" jdbc-type="TIMESTAMP" />
-    <field-descriptor name="awardClosingDate" column="CGAWD_CLOSING_DT" jdbc-type="DATE" />
-    <field-descriptor name="proposalAwardTypeCode" column="CGPRPSL_AWD_TYP_CD" jdbc-type="VARCHAR" index="true" />
-    <field-descriptor name="awardStatusCode" column="CGAWD_STAT_CD" jdbc-type="VARCHAR" index="true" />
-    <field-descriptor name="letterOfCreditFundGroupCode" column="CG_LTRCR_FNDGRP_CD" jdbc-type="VARCHAR" index="true" />
-    <field-descriptor name="grantDescriptionCode" column="CG_GRANT_DESC_CD" jdbc-type="VARCHAR" index="true" />
-    <field-descriptor name="agencyNumber" column="CG_AGENCY_NBR" jdbc-type="VARCHAR" index="true" />
-    <field-descriptor name="federalPassThroughAgencyNumber" column="CG_FEDPT_AGNCY_NBR" jdbc-type="VARCHAR" index="true" />
-    <field-descriptor name="agencyAnalystName" column="CG_AGNCY_ANALST_NM" jdbc-type="VARCHAR" />
-    <field-descriptor name="analystTelephoneNumber" column="CG_ANALYST_PHN_NBR" jdbc-type="VARCHAR" />
-    <field-descriptor name="awardProjectTitle" column="CGAWD_PROJ_TTL" jdbc-type="VARCHAR" />
-    <field-descriptor name="awardCommentText" column="CGAWD_COMMENT_TXT" jdbc-type="VARCHAR" />
-    <field-descriptor name="awardPurposeCode" column="CGAWD_PURPOSE_CD" jdbc-type="VARCHAR" index="true" />
-    <field-descriptor name="active" column="ROW_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
-    <reference-descriptor name="proposal" class-ref="org.kuali.kfs.module.cg.businessobject.Proposal" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-        <foreignkey field-ref="proposalNumber" />
-    </reference-descriptor>
-    <reference-descriptor name="proposalAwardType" class-ref="org.kuali.kfs.module.cg.businessobject.ProposalAwardType" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-        <foreignkey field-ref="proposalAwardTypeCode" />
-    </reference-descriptor>
-    <reference-descriptor name="awardStatus" class-ref="org.kuali.kfs.module.cg.businessobject.AwardStatus" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-        <foreignkey field-ref="awardStatusCode" />
-    </reference-descriptor>
-    <reference-descriptor name="letterOfCreditFundGroup" class-ref="org.kuali.kfs.module.cg.businessobject.LetterOfCreditFundGroup" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-        <foreignkey field-ref="letterOfCreditFundGroupCode" />
-    </reference-descriptor>
-    <reference-descriptor name="grantDescription" class-ref="org.kuali.kfs.module.cg.businessobject.GrantDescription" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-        <foreignkey field-ref="grantDescriptionCode" />
-    </reference-descriptor>
-    <reference-descriptor name="agency" class-ref="org.kuali.kfs.module.cg.businessobject.Agency" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-        <foreignkey field-ref="agencyNumber" />
-    </reference-descriptor>
-    <reference-descriptor name="federalPassThroughAgency" class-ref="org.kuali.kfs.module.cg.businessobject.Agency" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-        <foreignkey field-ref="federalPassThroughAgencyNumber" />
-    </reference-descriptor>
-    <reference-descriptor name="awardPurpose" class-ref="org.kuali.kfs.module.cg.businessobject.ProposalPurpose" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-        <foreignkey field-ref="awardPurposeCode" />
-    </reference-descriptor>
-    <collection-descriptor name="awardProjectDirectors" element-class-ref="org.kuali.kfs.module.cg.businessobject.AwardProjectDirector" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
-        <orderby name="principalId" sort="ASC" />
-        <inverse-foreignkey field-ref="proposalNumber" />
-    </collection-descriptor>
-    <collection-descriptor name="awardAccounts" element-class-ref="org.kuali.kfs.module.cg.businessobject.AwardAccount" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
-        <orderby name="chartOfAccountsCode" sort="ASC" />
-        <orderby name="accountNumber" sort="ASC" />
-        <inverse-foreignkey field-ref="proposalNumber" />
-    </collection-descriptor>
-    <collection-descriptor name="awardSubcontractors" element-class-ref="org.kuali.kfs.module.cg.businessobject.AwardSubcontractor" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
-        <orderby name="awardSubcontractorAmendmentNumber" sort="ASC" />
-        <orderby name="awardSubcontractorNumber" sort="ASC" />
-        <orderby name="subcontractorNumber" sort="ASC" />
-        <inverse-foreignkey field-ref="proposalNumber" />
-    </collection-descriptor>
-    <collection-descriptor name="awardOrganizations" element-class-ref="org.kuali.kfs.module.cg.businessobject.AwardOrganization" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
-        <orderby name="chartOfAccountsCode" sort="ASC" />
-        <orderby name="organizationCode" sort="ASC" />
-        <inverse-foreignkey field-ref="proposalNumber" />
-    </collection-descriptor>
-    <reference-descriptor name="extension" class-ref="edu.cornell.kfs.module.cg.businessobject.AwardExtension" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+    	<field-descriptor name="proposalNumber" column="CGPRPSL_NBR" jdbc-type="BIGINT" primarykey="true" index="true" />
+    	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+	    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+   		<field-descriptor name="awardBeginningDate" column="CGAWD_BEG_DT" jdbc-type="DATE" />
+	    <field-descriptor name="awardEndingDate" column="CGAWD_END_DT" jdbc-type="DATE" />
+	    <field-descriptor name="awardTotalAmount" column="CGAWD_TOT_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
+	    <field-descriptor name="awardAddendumNumber" column="CGAWD_ADDENDUM_NBR" jdbc-type="VARCHAR" />
+	    <field-descriptor name="awardAllocatedUniversityComputingServicesAmount" column="CGAWD_ALOC_UCS_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
+	    <field-descriptor name="federalPassThroughFundedAmount" column="CG_FEDPT_FND_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
+	    <field-descriptor name="awardEntryDate" column="CGAWD_ENTRY_DT" jdbc-type="DATE" />
+	    <field-descriptor name="agencyFuture1Amount" column="CG_AGENCY_FUT1_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
+	    <field-descriptor name="agencyFuture2Amount" column="CG_AGENCY_FUT2_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
+	    <field-descriptor name="agencyFuture3Amount" column="CG_AGENCY_FUT3_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
+	    <field-descriptor name="awardDocumentNumber" column="CGAWD_DOC_NBR" jdbc-type="VARCHAR" />
+	    <field-descriptor name="awardLastUpdateDate" column="CGAWD_LST_UPDT_DT" jdbc-type="TIMESTAMP" />
+	    <field-descriptor name="federalPassThroughIndicator" column="CG_FEDPT_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+	    <field-descriptor name="oldProposalNumber" column="CG_OLD_PRPSL_NBR" jdbc-type="VARCHAR" />
+	    <field-descriptor name="awardDirectCostAmount" column="CGAWD_DRCT_CST_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
+	    <field-descriptor name="awardIndirectCostAmount" column="CGAWD_INDR_CST_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
+	    <field-descriptor name="federalFundedAmount" column="CG_FED_FNDED_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
+	    <field-descriptor name="awardCreateTimestamp" column="CGAWD_CREATE_TS" jdbc-type="TIMESTAMP" />
+	    <field-descriptor name="awardClosingDate" column="CGAWD_CLOSING_DT" jdbc-type="DATE" />
+	    <field-descriptor name="proposalAwardTypeCode" column="CGPRPSL_AWD_TYP_CD" jdbc-type="VARCHAR" index="true" />
+	    <field-descriptor name="awardStatusCode" column="CGAWD_STAT_CD" jdbc-type="VARCHAR" index="true" />
+	    <field-descriptor name="letterOfCreditFundGroupCode" column="CG_LTRCR_FNDGRP_CD" jdbc-type="VARCHAR" index="true" />
+	    <field-descriptor name="grantDescriptionCode" column="CG_GRANT_DESC_CD" jdbc-type="VARCHAR" index="true" />
+   	  	<field-descriptor name="agencyNumber" column="CG_AGENCY_NBR" jdbc-type="VARCHAR" index="true" />
+ 	  	<field-descriptor name="federalPassThroughAgencyNumber" column="CG_FEDPT_AGNCY_NBR" jdbc-type="VARCHAR" index="true" />
+	    <field-descriptor name="agencyAnalystName" column="CG_AGNCY_ANALST_NM" jdbc-type="VARCHAR" />
+	    <field-descriptor name="analystTelephoneNumber" column="CG_ANALYST_PHN_NBR" jdbc-type="VARCHAR" />
+ 	  	<field-descriptor name="awardProjectTitle" column="CGAWD_PROJ_TTL" jdbc-type="VARCHAR" />
+  	  	<field-descriptor name="awardCommentText" column="CGAWD_COMMENT_TXT" jdbc-type="VARCHAR" />
+	    <field-descriptor name="awardPurposeCode" column="CGAWD_PURPOSE_CD" jdbc-type="VARCHAR" index="true" />
+	    <field-descriptor name="active" column="ROW_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+	    <reference-descriptor name="proposal" class-ref="org.kuali.kfs.module.cg.businessobject.Proposal" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="proposalNumber" />
+   		</reference-descriptor>
+    	<reference-descriptor name="proposalAwardType" class-ref="org.kuali.kfs.module.cg.businessobject.ProposalAwardType" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="proposalAwardTypeCode" />
+    	</reference-descriptor>
+    	<reference-descriptor name="awardStatus" class-ref="org.kuali.kfs.module.cg.businessobject.AwardStatus" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="awardStatusCode" />
+    	</reference-descriptor>
+    	<reference-descriptor name="letterOfCreditFundGroup" class-ref="org.kuali.kfs.module.cg.businessobject.LetterOfCreditFundGroup" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="letterOfCreditFundGroupCode" />
+    	</reference-descriptor>
+   	 	<reference-descriptor name="grantDescription" class-ref="org.kuali.kfs.module.cg.businessobject.GrantDescription" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+       		<foreignkey field-ref="grantDescriptionCode" />
+    	</reference-descriptor>
+    	<reference-descriptor name="agency" class-ref="org.kuali.kfs.module.cg.businessobject.Agency" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="agencyNumber" />
+    	</reference-descriptor>
+    	<reference-descriptor name="federalPassThroughAgency" class-ref="org.kuali.kfs.module.cg.businessobject.Agency" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="federalPassThroughAgencyNumber" />
+    	</reference-descriptor>
+    	<reference-descriptor name="awardPurpose" class-ref="org.kuali.kfs.module.cg.businessobject.ProposalPurpose" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="awardPurposeCode" />
+    	</reference-descriptor>
+    	<collection-descriptor name="awardProjectDirectors" element-class-ref="org.kuali.kfs.module.cg.businessobject.AwardProjectDirector" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
+        	<orderby name="principalId" sort="ASC" />
+        	<inverse-foreignkey field-ref="proposalNumber" />
+    	</collection-descriptor>
+    	<collection-descriptor name="awardAccounts" element-class-ref="org.kuali.kfs.module.cg.businessobject.AwardAccount" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
+        	<orderby name="chartOfAccountsCode" sort="ASC" />
+        	<orderby name="accountNumber" sort="ASC" />
+        	<inverse-foreignkey field-ref="proposalNumber" />
+    	</collection-descriptor>
+    	<collection-descriptor name="awardSubcontractors" element-class-ref="org.kuali.kfs.module.cg.businessobject.AwardSubcontractor" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
+        	<orderby name="awardSubcontractorAmendmentNumber" sort="ASC" />
+        	<orderby name="awardSubcontractorNumber" sort="ASC" />
+        	<orderby name="subcontractorNumber" sort="ASC" />
+        	<inverse-foreignkey field-ref="proposalNumber" />
+    	</collection-descriptor>
+    	<collection-descriptor name="awardOrganizations" element-class-ref="org.kuali.kfs.module.cg.businessobject.AwardOrganization" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
+        	<orderby name="chartOfAccountsCode" sort="ASC" />
+        	<orderby name="organizationCode" sort="ASC" />
+        	<inverse-foreignkey field-ref="proposalNumber" />
+    	</collection-descriptor>
+    	<reference-descriptor name="extension" class-ref="edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
             <foreignkey field-ref="proposalNumber" />
-	</reference-descriptor>
+		</reference-descriptor>
 	</class-descriptor>
-	
+	 -->
 </descriptor-repository>

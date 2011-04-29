@@ -168,15 +168,17 @@ public class EzraServiceImpl implements EzraService {
 			}
 			proposal.setAgencyNumber(ezraProposal.getSponsorNumber().toString());
 		}
-		List<ProposalProjectDirector> ppds = createProjectDirectors(proposal.getProposalNumber());
+		EzraProject project = (EzraProject)businessObjectService.findBySinglePrimaryKey(EzraProject.class, proposal.getProposalNumber());
+		
+		List<ProposalProjectDirector> ppds = createProjectDirectors(proposal.getProposalNumber(), project);
 		proposal.setProposalProjectDirectors(ppds);
 
-		List<ProposalOrganization> propOrgs = createProposalOrganizations(proposal.getProposalNumber());
+		List<ProposalOrganization> propOrgs = createProposalOrganizations(proposal.getProposalNumber(), project);
 		proposal.setProposalOrganizations(propOrgs);
 		
 		//check to see if this is a real cfda 
 		proposal.setCfdaNumber(ezraProposal.getCfdaNumber());
-		proposal.setProposalProjectTitle(ezraProposal.getProjectTitle());
+		proposal.setProposalProjectTitle(project.getProjectTitle());
 		proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
 		proposal.setProposalStatusCode(EzraUtils.getProposalAwardStatusMap().get(ezraProposal.getStatus()));
 		proposal.setProposalPurposeCode(EzraUtils.getProposalPurposeMap().get(ezraProposal.getPurpose()));
@@ -364,9 +366,8 @@ public class EzraServiceImpl implements EzraService {
 	
 	
 
-	private List<ProposalProjectDirector> createProjectDirectors(Long projectId) {
+	private List<ProposalProjectDirector> createProjectDirectors(Long projectId, EzraProject project) {
 		List<ProposalProjectDirector> projDirs = new ArrayList<ProposalProjectDirector>();
-		EzraProject project = (EzraProject)businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectId.toString());
 		Investigator investigator = (Investigator)businessObjectService.findBySinglePrimaryKey(Investigator.class, project.getProjectDirectorId());
 		if (investigator != null) {
 			PersonService ps = SpringContext.getBean(PersonService.class);
@@ -429,10 +430,10 @@ public class EzraServiceImpl implements EzraService {
 		return projDirs;
 	}
 
-	private List<ProposalOrganization> createProposalOrganizations( Long projectId) {
+	private List<ProposalOrganization> createProposalOrganizations(Long projectId, EzraProject project) {
 		
-		EzraProject ep = (EzraProject)businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectId);
-		String orgCode = ep.getProjectDepartmentId();
+		//EzraProject ep = (EzraProject)businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectId);
+		String orgCode = project.getProjectDepartmentId();
 		
 		Map deptFields = new HashMap();
 		deptFields.put("organizationCode", orgCode);
@@ -455,7 +456,7 @@ public class EzraServiceImpl implements EzraService {
 			po.setChartOfAccountsCode("IT");
 			po.setOrganizationCode(org.getOrganizationCode());
 			//EzraProject ep = (EzraProject)businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectId);
-			if (org.getOrganizationCode().equals(ep.getProjectDepartmentId())) {
+			if (org.getOrganizationCode().equals(project.getProjectDepartmentId())) {
 				po.setProposalPrimaryOrganizationIndicator(true);
 			}
 			po.setActive(true);

@@ -22,12 +22,12 @@
 			</list>
 		</property>
 		
-		<!--<property name="databaseRepositoryFilePaths">
+		<property name="databaseRepositoryFilePaths">
 			<list>
 				<value>edu/cornell/kfs/module/cg/cu-ojb-cg.xml</value>
 			</list>
 		</property>
-		--><property name="scriptConfigurationFilePaths">
+		<property name="scriptConfigurationFilePaths">
 			<list/>
 		</property>
 	</bean>
