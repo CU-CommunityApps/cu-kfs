@@ -319,10 +319,10 @@ public class EzraServiceImpl implements EzraService {
 		}
 		LOG.info("Created a new Award doc. "+ award.getProposalNumber());
 		awardDoc.getDocumentHeader().setDocumentDescription("Auto creation of new award: "+ award.getProposalNumber());
-//		if (ObjectUtils.isNotNull(oldAward)) {
-//			awardDoc.getOldMaintainableObject().setBusinessObject(oldAward);
-//			award.setVersionNumber(oldAward.getVersionNumber());
-//		} 
+		if (ObjectUtils.isNotNull(oldAward)) {
+			awardDoc.getOldMaintainableObject().setBusinessObject(oldAward);
+			award.setVersionNumber(oldAward.getVersionNumber());
+		} 
 		awardDoc.getNewMaintainableObject().setBusinessObject(award);;
 		try {
 			documentService.saveDocument(awardDoc);
