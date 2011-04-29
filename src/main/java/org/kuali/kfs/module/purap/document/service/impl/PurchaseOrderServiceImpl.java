@@ -988,7 +988,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         String errors = b2bPurchaseOrderService.sendPurchaseOrder(po);
         if (StringUtils.isEmpty(errors)) {
             //PO sent successfully; change status to OPEN
-            SpringContext.getBean(PurapService.class).updateStatus(this, PurapConstants.PurchaseOrderStatuses.VOID);
+            SpringContext.getBean(PurapService.class).updateStatus(po, PurapConstants.PurchaseOrderStatuses.VOID);
             po.setPurchaseOrderLastTransmitTimestamp(dateTimeService.getCurrentTimestamp());
             return true;
         }
