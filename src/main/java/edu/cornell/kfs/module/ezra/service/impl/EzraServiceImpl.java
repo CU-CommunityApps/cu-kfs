@@ -67,7 +67,7 @@ public class EzraServiceImpl implements EzraService {
 			 
 				routeProposalDocument(proposal);
 				
-				Award award = createAward(proposal, null);
+				Award award = createAward(proposal, null, ezraProposal.getAwardDescriptionCode());
 				routeAwardDocument(award, null);
 			}
 		}
@@ -88,7 +88,7 @@ public class EzraServiceImpl implements EzraService {
 				LOG.error("Award: "+proposalId +" is null and probably should have already been created");
 			} else {
 				Proposal proposal = createProposal(ezraAward);
-				Award newAward = createAward(proposal, award);
+				Award newAward = createAward(proposal, award, ezraAward.getAwardDescriptionCode());
 				routeAwardDocument(newAward, award);
 				
 			}
@@ -115,13 +115,14 @@ public class EzraServiceImpl implements EzraService {
 
 	}
 	
-	protected Award createAward(Proposal proposal, Award oldAward) {
+	protected Award createAward(Proposal proposal, Award oldAward, String grantDescCode) {
 		Award award = new Award(proposal);
 		award.setProposal(proposal);
 		award.setAwardStatusCode(proposal.getProposalStatusCode());
 		award.setAwardBeginningDate(proposal.getProposalBeginningDate());
 		award.setAwardEndingDate(proposal.getProposalEndingDate());
-		award.setAwardDirectCostAmount(proposal.getProposalTotalAmount());
+		award.setAwardDirectCostAmount(proposal.getProposalDirectCostAmount());
+		award.setGrantDescriptionCode(EzraUtils.getGrantDescriptionMap().get(grantDescCode));
 		award.setAwardEntryDate(dateTimeService.getCurrentSqlDate());
 		if (ObjectUtils.isNull(oldAward)) {
 			List<AwardAccount> accounts = getAwardAccounts(proposal);
