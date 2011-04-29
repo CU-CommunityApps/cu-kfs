@@ -984,6 +984,52 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
     }
 
+    protected boolean completeB2BPurchaseOrderVoid(PurchaseOrderDocument po) {
+        String errors = b2bPurchaseOrderService.sendPurchaseOrder(po);
+        if (StringUtils.isEmpty(errors)) {
+            //PO sent successfully; change status to OPEN
+            SpringContext.getBean(PurapService.class).updateStatus(this, PurapConstants.PurchaseOrderStatuses.VOID);
+            po.setPurchaseOrderLastTransmitTimestamp(dateTimeService.getCurrentTimestamp());
+            return true;
+        }
+        else {
+            //PO transmission failed; record errors and change status to "cxml failed"
+            try {
+                Note note = documentService.createNoteFromDocument(po, "Unable to transmit the PO Void for the following reasons:\n" + errors);
+                documentService.addNoteToDocument(po, note);
+            }
+            catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            
+            purapService.updateStatus(po, PurchaseOrderStatuses.CXML_ERROR);
+            return false;
+        }
+    }
+
+    protected boolean completeB2BPurchaseOrderAmendment(PurchaseOrderDocument poa) {
+        String errors = b2bPurchaseOrderService.sendPurchaseOrder(poa);
+        if (StringUtils.isEmpty(errors)) {
+            //POA sent successfully; change status to OPEN
+            attemptSetupOfInitialOpenOfDocument(poa);
+            poa.setPurchaseOrderLastTransmitTimestamp(dateTimeService.getCurrentTimestamp());
+            return true;
+        }
+        else {
+            //POA transmission failed; record errors and change status to "cxml failed"
+            try {
+                Note note = documentService.createNoteFromDocument(poa, "Unable to transmit the PO for the following reasons:\n" + errors);
+                documentService.addNoteToDocument(poa, note);
+            }
+            catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            
+            purapService.updateStatus(poa, PurchaseOrderStatuses.CXML_ERROR);
+            return false;
+        }
+    }
+
     public void retransmitB2BPurchaseOrder(PurchaseOrderDocument po) {
         if (completeB2BPurchaseOrder(po)) {
             GlobalVariables.getMessageList().add(PurapKeyConstants.B2B_PO_RETRANSMIT_SUCCESS);            
@@ -1056,6 +1102,21 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         // if unordered items have been added to the PO then send an FYI to all fiscal officers
         if (hasNewUnorderedItem(poa)) {
             sendFyiForNewUnorderedItems(poa);
+        }
+        
+        if (PurchaseOrderStatuses.PENDING_CXML.equals(poa.getStatusCode())) {
+            completeB2BPurchaseOrderAmendment(poa);
+        }
+
+    }
+
+    public void completePurchaseOrderVoid(PurchaseOrderDocument po) {
+        LOG.debug("completePurchaseOrderVoid() started");
+        
+        setCurrentAndPendingIndicatorsForApprovedPODocuments(po);
+
+        if (PurchaseOrderStatuses.PENDING_CXML.equals(po.getStatusCode())) {
+            completeB2BPurchaseOrderVoid(po);
         }
 
     }

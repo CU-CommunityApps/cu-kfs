@@ -101,16 +101,16 @@ public class PurchaseOrderAmendmentDocument extends PurchaseOrderDocument {
             // generate GL entries
             SpringContext.getBean(PurapGeneralLedgerService.class).generateEntriesApproveAmendPurchaseOrder(this);
 
-            // update indicators
-            SpringContext.getBean(PurchaseOrderService.class).completePurchaseOrderAmendment(this);
-
-            // update vendor commodity code by automatically spawning vendor maintenance document
-            SpringContext.getBean(PurchaseOrderService.class).updateVendorCommodityCode(this);
-            
             // set purap status 
 //            SpringContext.getBean(PurapService.class).updateStatus(this, PurapConstants.PurchaseOrderStatuses.OPEN);
             // updated to set status to PENDING_CXML so the document will route to SciQuest for handling
-            SpringContext.getBean(PurapService.class).updateStatus(this, PurchaseOrderStatuses.STATUSES_BY_TRANSMISSION_TYPE.get(PurapConstants.POTransmissionMethods.ELECTRONIC));
+            SpringContext.getBean(PurapService.class).updateStatus(this, PurchaseOrderStatuses.PurchaseOrderStatuses.PENDING_CXML);
+
+            // update vendor commodity code by automatically spawning vendor maintenance document
+	        SpringContext.getBean(PurchaseOrderService.class).updateVendorCommodityCode(this);
+          
+            // update indicators
+            SpringContext.getBean(PurchaseOrderService.class).completePurchaseOrderAmendment(this);
 
         }
         // DOCUMENT DISAPPROVED
