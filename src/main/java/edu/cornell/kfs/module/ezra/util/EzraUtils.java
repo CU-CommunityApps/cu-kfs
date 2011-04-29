@@ -31,31 +31,31 @@ public class EzraUtils {
 		if (proposalAwardStatusMap == null) {
 			proposalAwardStatusMap = new HashMap<String, String>();
 			proposalAwardStatusMap.put("AMAF", "AF");
-			proposalAwardStatusMap.put("AMNAC", "AF");
+			proposalAwardStatusMap.put("AMNAC", "AN");
 			proposalAwardStatusMap.put("AMOH", "AH");
 			proposalAwardStatusMap.put("AMPC", "AC");
 			proposalAwardStatusMap.put("AMPFF", "AP");
-			proposalAwardStatusMap.put("AMRO", "AP");
+			proposalAwardStatusMap.put("AMRO", "AO");
 			proposalAwardStatusMap.put("AMSC", "AS");
 			proposalAwardStatusMap.put("AAF", "FD");
 			proposalAwardStatusMap.put("APFFF", "FT");
 			proposalAwardStatusMap.put("ARO", "OS");
 			proposalAwardStatusMap.put("AMURO", "AM");
-			proposalAwardStatusMap.put("AAC", "AW");
-			proposalAwardStatusMap.put("AC", "C");
-			proposalAwardStatusMap.put("ACPTR", "AR");
-			proposalAwardStatusMap.put("ACOSP", "AO");
-			proposalAwardStatusMap.put("AIN", "AI");
-			proposalAwardStatusMap.put("AIPS", "IP");
-			proposalAwardStatusMap.put("ANA", "AN");
-			proposalAwardStatusMap.put("ANF", "AF");
-			proposalAwardStatusMap.put("AOH", "AH");
-			proposalAwardStatusMap.put("APA", "AA");
-			proposalAwardStatusMap.put("APC", "AP");
-			proposalAwardStatusMap.put("ASAP", "A");
-			proposalAwardStatusMap.put("AS", "AC");
-			proposalAwardStatusMap.put("ATIP", "T");
-			proposalAwardStatusMap.put("AURO", "AU");
+			proposalAwardStatusMap.put("AAC", "WC");
+			proposalAwardStatusMap.put("AC", "CL");
+			proposalAwardStatusMap.put("ACPTR", "CR");
+			proposalAwardStatusMap.put("ACOSP", "CO");
+			proposalAwardStatusMap.put("AIN", "IN");
+			proposalAwardStatusMap.put("AIPS", "PS");
+			proposalAwardStatusMap.put("ANAC", "NA");
+			proposalAwardStatusMap.put("ANFS", "NF");
+			proposalAwardStatusMap.put("AOH", "OH");
+			proposalAwardStatusMap.put("APA", "PA");
+			proposalAwardStatusMap.put("APC", "PC");
+			proposalAwardStatusMap.put("ASAP", "SP");
+			proposalAwardStatusMap.put("ASC", "SC");
+			proposalAwardStatusMap.put("ATIP", "TO");
+			proposalAwardStatusMap.put("AURO", "RS");
 		}
 		return proposalAwardStatusMap;
 	}
