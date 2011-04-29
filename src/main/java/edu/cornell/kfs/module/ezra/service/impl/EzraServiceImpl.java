@@ -397,9 +397,9 @@ public class EzraServiceImpl implements EzraService {
 		List<ProjectInvestigator> pis = (List<ProjectInvestigator>)businessObjectService.findMatching(ProjectInvestigator.class, fieldValues);
 		for (ProjectInvestigator pi : pis) {
 			Investigator inv = (Investigator)businessObjectService.findBySinglePrimaryKey(Investigator.class, pi.getInvestigatorId());
-			if (investigator != null) {
+			if (inv != null) {
 				PersonService ps = SpringContext.getBean(PersonService.class);
-				Person director = ps.getPersonByPrincipalName(investigator.getNetId());
+				Person director = ps.getPersonByPrincipalName(inv.getNetId());
 				Map primaryKeys = new HashMap();
 				primaryKeys.put("principalId", director.getPrincipalId());
 				primaryKeys.put("proposalNumber", projectId);
