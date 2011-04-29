@@ -760,9 +760,9 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
             setLine1Address(addr.getVendorLine1Address());
             setLine2Address(addr.getVendorLine2Address());
             setCity(addr.getVendorCityName());
-            setState(addr.getVendorState().getPostalStateName());
+            setState(addr.getVendorState()!=null?addr.getVendorState().getPostalStateName():null);
             setZipCd(addr.getVendorZipCode());
-            setCountry(addr.getVendorCountry().getPostalCountryName());
+            setCountry(addr.getVendorCountry()!=null?addr.getVendorCountry().getPostalCountryName():null);
         } else {
         	throw new RuntimeException("Invalid Address [ "+string+" ] for payee [ "+payeeId + " ]");
             // Need to handle bad data.
