@@ -23,8 +23,8 @@
 	</class-descriptor>
  
 	<class-descriptor class="edu.cornell.kfs.module.ezra.businessobject.Deliverable" table="DELIVERABLE">
-		<field-descriptor name="projectId" column="PROJ_ID" jdbc-type="VARCHAR" index="true" />
-		<field-descriptor name="deliverableType" column="DELIVERABLE_TYPE" jdbc-type="BIGINT" />
+		<field-descriptor name="projectId" column="PROJ_ID" jdbc-type="VARCHAR" primarykey="true" index="true" />
+		<field-descriptor name="deliverableType" column="DELIVERABLE_TYPE" jdbc-type="VARCHAR" />
 	    <field-descriptor name="finalIndicator" column="FINAL_FLAG" jdbc-type="CHAR" />
 		<field-descriptor name="dueDate" column="DUE_DT" jdbc-type="DATE"/>
 	</class-descriptor>
