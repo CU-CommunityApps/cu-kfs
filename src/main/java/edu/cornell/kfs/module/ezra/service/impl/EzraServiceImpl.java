@@ -30,8 +30,11 @@ import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 
+import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
+import edu.cornell.kfs.module.ezra.businessobject.Deliverable;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProject;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward;
 import edu.cornell.kfs.module.ezra.businessobject.Investigator;
@@ -67,7 +70,7 @@ public class EzraServiceImpl implements EzraService {
 			 
 				routeProposalDocument(proposal);
 				
-				Award award = createAward(proposal, null, ezraProposal.getAwardDescriptionCode());
+				Award award = createAward(proposal, null, ezraProposal);
 				routeAwardDocument(award, null);
 			}
 		}
@@ -88,7 +91,7 @@ public class EzraServiceImpl implements EzraService {
 				LOG.error("Award: "+proposalId +" is null and probably should have already been created");
 			} else {
 				Proposal proposal = createProposal(ezraAward);
-				Award newAward = createAward(proposal, award, ezraAward.getAwardDescriptionCode());
+				Award newAward = createAward(proposal, award, ezraAward);
 				routeAwardDocument(newAward, award);
 				
 			}
@@ -115,14 +118,14 @@ public class EzraServiceImpl implements EzraService {
 
 	}
 	
-	protected Award createAward(Proposal proposal, Award oldAward, String grantDescCode) {
+	protected Award createAward(Proposal proposal, Award oldAward, EzraProposalAward ezraAward) {
 		Award award = new Award(proposal);
 		award.setProposal(proposal);
 		award.setAwardStatusCode(proposal.getProposalStatusCode());
 		award.setAwardBeginningDate(proposal.getProposalBeginningDate());
 		award.setAwardEndingDate(proposal.getProposalEndingDate());
 		award.setAwardDirectCostAmount(proposal.getProposalDirectCostAmount());
-		award.setGrantDescriptionCode(EzraUtils.getGrantDescriptionMap().get(grantDescCode));
+		award.setGrantDescriptionCode(EzraUtils.getGrantDescriptionMap().get(ezraAward.getAwardDescriptionCode()));
 		award.setAwardEntryDate(dateTimeService.getCurrentSqlDate());
 		if (ObjectUtils.isNull(oldAward)) {
 			List<AwardAccount> accounts = getAwardAccounts(proposal);
@@ -142,15 +145,23 @@ public class EzraServiceImpl implements EzraService {
 			} 
 		}
 		
-//		Map fieldValues = new HashMap();
-//		fieldValues.put("projId", award.getProposalNumber());
-//		fieldValues.put("deliverableType", 'F');
-//		fieldValues.put("finalIndicator", 'Y');
-//		Deliverable deliverable = (Deliverable)businessObjectService.findMatching(Deliverable.class, fieldValues);
-//		if (ObjectUtils.isNotNull(deliverable)) {
-//			AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
-//			aea.setFinalFiscalReportDate(deliverable.getDueDate());
-//		}
+		Map fieldValues = new HashMap();
+		fieldValues.put("projId", award.getProposalNumber());
+		fieldValues.put("deliverableType", 'F');
+		fieldValues.put("finalIndicator", 'Y');
+		Deliverable deliverable = (Deliverable)businessObjectService.findMatching(Deliverable.class, fieldValues);
+		
+		if (ObjectUtils.isNotNull(deliverable)) {
+			AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
+			aea.setFinalFiscalReportDate(deliverable.getDueDate());
+		}
+		
+		KualiDecimal costShareRequired = ezraAward.getCsVolClg().add(ezraAward.getCsVolCntr().add(ezraAward.getCsVolDept().add(ezraAward.getCsVolExt().add(ezraAward.getCsVolUniv()))));
+		if (costShareRequired.isNonZero()) {
+			AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
+			aea.setCostShareRequired(true);
+		}
+		
 		award.refreshReferenceObject("proposal");
 		award.refreshNonUpdateableReferences();
 		return award;

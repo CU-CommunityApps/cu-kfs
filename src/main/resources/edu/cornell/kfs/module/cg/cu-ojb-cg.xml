@@ -1,9 +1,12 @@
 <descriptor-repository version="1.0">
-	<!-- 
+	
    	<class-descriptor class="edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute" table="CG_AWD_TX">
     	<field-descriptor name="proposalNumber" column="CGPRPSL_NBR" jdbc-type="BIGINT" primarykey="true" index="true" />
     	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
     	<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+    	<field-descriptor name="costShareRequired" column="CS_REQ_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+    	<field-descriptor name="finalFiscalReportDate" column="FINAL_FISCAL_RPT_DT" jdbc-type="DATE" />
+    	<field-descriptor name="locAccountId" column="LOC_ACCT_ID" jdbc-type="VARCHAR" />
     </class-descriptor>
     
     <class-descriptor class="org.kuali.kfs.module.cg.businessobject.Award" table="CG_AWD_T">
@@ -41,7 +44,7 @@
   	  	<field-descriptor name="awardCommentText" column="CGAWD_COMMENT_TXT" jdbc-type="VARCHAR" />
 	    <field-descriptor name="awardPurposeCode" column="CGAWD_PURPOSE_CD" jdbc-type="VARCHAR" index="true" />
 	    <field-descriptor name="active" column="ROW_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
-	    <reference-descriptor name="proposal" class-ref="org.kuali.kfs.module.cg.businessobject.Proposal" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+	    <reference-descriptor name="proposal" class-ref="org.kuali.kfs.module.cg.businessobject.Proposal" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="false" >
         	<foreignkey field-ref="proposalNumber" />
    		</reference-descriptor>
     	<reference-descriptor name="proposalAwardType" class-ref="org.kuali.kfs.module.cg.businessobject.ProposalAwardType" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
@@ -89,5 +92,5 @@
             <foreignkey field-ref="proposalNumber" />
 		</reference-descriptor>
 	</class-descriptor>
-	 -->
+	 
 </descriptor-repository>

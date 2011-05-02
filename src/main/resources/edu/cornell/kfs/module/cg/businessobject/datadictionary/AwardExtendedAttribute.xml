@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd"> 
+ 
+  <bean id="AwardExtendedAttribute" parent="AwardExtendedAttribute-parentBean"/> 
+  <bean id="AwardExtendedAttribute-parentBean" abstract="true" parent="BusinessObjectEntry"> 
+    <property name="businessObjectClass" value="edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute"/> 
+    <property name="objectLabel" value="AwardExtendedAttribute"/> 
+ 
+ 	<property name="attributes"> 
+      <list> 
+            <ref bean="AwardExtendedAttribute-proposalNumber"/> 
+            <ref bean="AwardExtendedAttribute-costShareRequired"/>
+            <ref bean="AwardExtendedAttribute-finalFiscalReportDate"/>
+            <ref bean="AwardExtendedAttribute-locAccountId"/>
+      </list> 
+    </property> 
+    </bean> 
+  
+    <dd:boAttributeRef id="AwardExtendedAttribute-proposalNumber" parent="Award-proposalNumber"/> 
+     
+  	<bean id="AwardExtendedAttribute-costShareRequired" parent="AttributeDefinition">
+  		<property name="name" value="costShareRequired"/>
+   		<property name="forceUppercase" value="false"/>
+    	<property name="label" value="Cost Share Required"/>
+    	<property name="shortLabel" value="costShareRequired"/>
+    	<property name="maxLength" value="1"/>
+    	<property name="control" ref="CheckboxControl" />
+    	<property name="formatterClass" value="org.kuali.rice.kns.web.format.BooleanFormatter"/>
+  	</bean>
+  	
+  	 <bean id="AwardExtendedAttribute-finalFiscalReportDate" parent="GenericAttributes-genericTimestamp">
+  		<property name="name" value="finalFiscalReportDate"/>
+    	<property name="label" value="Cost Share Required"/>
+    	<property name="shortLabel" value="finalFiscalReportDate"/>
+    	<property name="required" value="false"/>
+    </bean>
+    
+    <bean id="AwardExtendedAttribute-locAccountId" parent="Account-accountNumber">
+    	<property name="name" value="locAccountId"/>
+    	<property name="label" value="LOC Account Number"/>
+    	<property name="shortLabel" value="LOC Account Number"/>
+    	<property name="required" value="false"/>
+  	</bean>
+</beans> 

@@ -28,6 +28,11 @@ public class EzraProposalAward extends PersistableBusinessObjectBase {
 	private Date stopDate; //AWD_PROP_END_DT
 	private KualiDecimal totalAmt; //AWD_PROP_TOTAL
 	private KualiDecimal budgetAmt; //BUDG_TOTAL
+	private KualiDecimal csVolCntr;
+	private KualiDecimal csVolDept;
+	private KualiDecimal csVolClg;
+	private KualiDecimal csVolUniv;
+	private KualiDecimal csVolExt;
 	private String federalPassThrough; //FED_FLOW_THROUGH
 	private Long federalPassThroughAgencyNumber; //FLOWTHROUGH_SPONSOR_ID
 	private String departmentId; //DEPT_ID
@@ -238,6 +243,56 @@ public class EzraProposalAward extends PersistableBusinessObjectBase {
 	 */
 	public void setBudgetAmt(KualiDecimal budgetAmt) {
 		this.budgetAmt = budgetAmt;
+	}
+
+	
+	public KualiDecimal getCsVolCntr() {
+		return csVolCntr;
+	}
+
+
+	public void setCsVolCntr(KualiDecimal csVolCntr) {
+		this.csVolCntr = csVolCntr;
+	}
+
+
+	public KualiDecimal getCsVolDept() {
+		return csVolDept;
+	}
+
+
+	public void setCsVolDept(KualiDecimal csVolDept) {
+		this.csVolDept = csVolDept;
+	}
+
+
+	public KualiDecimal getCsVolClg() {
+		return csVolClg;
+	}
+
+
+	public void setCsVolClg(KualiDecimal csVolClg) {
+		this.csVolClg = csVolClg;
+	}
+
+
+	public KualiDecimal getCsVolUniv() {
+		return csVolUniv;
+	}
+
+
+	public void setCsVolUniv(KualiDecimal csVolUniv) {
+		this.csVolUniv = csVolUniv;
+	}
+
+
+	public KualiDecimal getCsVolExt() {
+		return csVolExt;
+	}
+
+
+	public void setCsVolExt(KualiDecimal csVolExt) {
+		this.csVolExt = csVolExt;
 	}
 
 
