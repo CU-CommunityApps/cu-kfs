@@ -145,16 +145,16 @@ public class EzraServiceImpl implements EzraService {
 			} 
 		}
 		
-		Map fieldValues = new HashMap();
-		fieldValues.put("projectId", award.getProposalNumber());
-		fieldValues.put("deliverableType", 'F');
-		fieldValues.put("finalIndicator", 'Y');
-		Deliverable deliverable = (Deliverable)businessObjectService.findMatching(Deliverable.class, fieldValues);
-		
-		if (ObjectUtils.isNotNull(deliverable)) {
-			AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
-			aea.setFinalFiscalReportDate(deliverable.getDueDate());
-		}
+//		Map fieldValues = new HashMap();
+//		fieldValues.put("projectId", award.getProposalNumber());
+//		fieldValues.put("deliverableType", 'F');
+//		fieldValues.put("finalIndicator", 'Y');
+//		Deliverable deliverable = (Deliverable)businessObjectService.findMatching(Deliverable.class, fieldValues);
+//		
+//		if (ObjectUtils.isNotNull(deliverable)) {
+//			AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
+//			aea.setFinalFiscalReportDate(deliverable.getDueDate());
+//		}
 		
 		KualiDecimal costShareRequired = ezraAward.getCsVolClg().add(ezraAward.getCsVolCntr().add(ezraAward.getCsVolDept().add(ezraAward.getCsVolExt().add(ezraAward.getCsVolUniv()))));
 		if (costShareRequired.isNonZero()) {
