@@ -89,8 +89,10 @@
                     <!--
                       KFS's is newer
                     <exclude>WEB-INF/lib/commons-digester-*.jar</exclude>
-                    -->
+                   -->
+                    <exclude>WEB-INF/lib/commons-dbcp*.jar</exclude>
                     <exclude>WEB-INF/lib/commons-logging*.jar</exclude>
+                    <exclude>WEB-INF/lib/commons-lang*.jar</exclude>
                     <exclude>WEB-INF/lib/commons-pool*.jar</exclude>
                     <exclude>WEB-INF/lib/connector-*.jar</exclude>
                     <exclude>WEB-INF/lib/db-ojb-*.jar</exclude> <!-- kfs has db-ojb-1.0.4-kuali-mods-debug.jar ?? -->
@@ -347,6 +349,10 @@
       		<artifactId>xercesImpl</artifactId>
       		<groupId>xerces</groupId>
       	</exclusion>
+      	<exclusion>
+            <groupId>commons-digester</groupId>
+            <artifactId>commons-digester</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -355,12 +361,32 @@
       <artifactId>kfs-modded-war</artifactId>
       <version>4.0-fixes-SNAPSHOT</version>
       <type>war</type>
+      <exclusions>
+                <exclusion>
+                        <groupId>commons-dbcp</groupId>
+                        <artifactId>commons-dbcp</artifactId>
+                </exclusion>
+                <exclusion>
+                        <groupId>commons-pool</groupId>
+                        <artifactId>commons-pool</artifactId>
+                </exclusion>
+        </exclusions>
     </dependency>
        
     <dependency>
        <groupId>edu.cornell.kfs</groupId>
        <artifactId>kfs-stock-lib</artifactId>
        <version>3.0.1-tmp-SNAPSHOT</version>
+       <exclusions>
+                <exclusion>
+                        <groupId>commons-dbcp</groupId>
+                        <artifactId>commons-dbcp</artifactId>
+                </exclusion> 
+                <exclusion>
+                        <groupId>commons-pool</groupId>
+                        <artifactId>commons-pool</artifactId>
+                </exclusion>
+        </exclusions>
      </dependency>
     
     
@@ -424,6 +450,24 @@
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
       <version>3.2</version>
+    </dependency>
+    <!-- <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+      <version>1.2.1</version>
+      <scope>provided</scope>
+    </dependency> -->
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+      <version>1.4</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-pool</groupId>
+      <artifactId>commons-pool</artifactId>
+      <version>1.5.4</version>
+      <scope>compile</scope>
     </dependency>
     
     <!-- for javamelody -->
