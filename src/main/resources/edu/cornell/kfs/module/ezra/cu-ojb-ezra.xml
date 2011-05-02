@@ -53,7 +53,7 @@
 		<field-descriptor name="stopDate" column="AWD_PROP_END_DT" jdbc-type="DATE"/>
 		<field-descriptor name="totalAmt" column="AWD_PROP_TOTAL" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
 		<field-descriptor name="budgetAmt" column="BUDG_TOTAL" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
-		<field-descriptor name="csVolCntr" column="CS_VOL_CNTR" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+		<field-descriptor name="csVolCntr" column="CS_VOL_CTR" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
 		<field-descriptor name="csVolDept" column="CS_VOL_DEPT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
 		<field-descriptor name="csVolClg" column="CS_VOL_CLG" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
 		<field-descriptor name="csVolUniv" column="CS_VOL_UNIV" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
