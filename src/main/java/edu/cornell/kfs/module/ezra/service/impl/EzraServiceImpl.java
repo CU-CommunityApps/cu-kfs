@@ -146,7 +146,7 @@ public class EzraServiceImpl implements EzraService {
 		}
 		
 		Map fieldValues = new HashMap();
-		fieldValues.put("projId", award.getProposalNumber());
+		fieldValues.put("projectId", award.getProposalNumber());
 		fieldValues.put("deliverableType", 'F');
 		fieldValues.put("finalIndicator", 'Y');
 		Deliverable deliverable = (Deliverable)businessObjectService.findMatching(Deliverable.class, fieldValues);
