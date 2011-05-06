@@ -1049,7 +1049,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
      * @return the non-default address, or null if not found
      */
     protected KimEntityAddress getNonDefaultAddress(Person employee) {
-        final String addressType = parameterService.getParameterValue(DisbursementVoucherDocument.class, DisbursementVoucherDocument.DEFAULT_EMPLOYEE_ADDRESS_TYPE_PARAMETER_NAME);
+        final String addressType = getParameterService().getParameterValue(DisbursementVoucherDocument.class, DisbursementVoucherDocument.DEFAULT_EMPLOYEE_ADDRESS_TYPE_PARAMETER_NAME);
         final KimEntityInfo entityInfo = getIdentityManagementService().getEntityInfoByPrincipalId(employee.getPrincipalId());
         if (entityInfo != null) {
             final KimEntityEntityType entityEntityType = getPersonEntityEntityType(entityInfo);
@@ -1773,7 +1773,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         }
         
         boolean isOverDollarThreshold = false;
-		String dollarThreshold = parameterService.getParameterValue("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_TAX_REVIEW);
+		String dollarThreshold = getParameterService().getParameterValue("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_TAX_REVIEW);
 		KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
 		if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
 			isOverDollarThreshold = true;
@@ -1820,13 +1820,12 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
      * @return
      */
     public boolean isTravelReviewRequired() {
-		parameterService = SpringContext.getBean(ParameterService.class);
 				
 		List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;
 		
 		for (AccountingLine alb : theList )
 		{
-			ParameterEvaluator objectCodes = parameterService.getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_TRAVEL_REVIEW, alb.getFinancialObjectCode());
+			ParameterEvaluator objectCodes = getParameterService().getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_TRAVEL_REVIEW, alb.getFinancialObjectCode());
 			if (objectCodes.evaluationSucceeds())
 			{
 				LOG.info("Object Code " + alb.getFinancialObjectCode() + " requires this document to undergo Travel review.");				
@@ -1836,7 +1835,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 		
 		
 		boolean overDollarThreshold = false;
-		String dollarThreshold = parameterService.getParameterValue("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_TRAVEL_REVIEW);
+		String dollarThreshold = getParameterService().getParameterValue("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_TRAVEL_REVIEW);
 		KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
 		if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
 			overDollarThreshold = true;
@@ -1915,9 +1914,8 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
     }
  
 	protected boolean isCAndGReviewRequired() {
-		parameterService = SpringContext.getBean(ParameterService.class);
 		
-		String awardThreshold = parameterService.getParameterValue("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW);
+		String awardThreshold = getParameterService().getParameterValue("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW);
 		KualiDecimal dollarThresholdDecimal = new KualiDecimal(awardThreshold);
 		if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
 			return true;
@@ -1926,7 +1924,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 		List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;		
 		for (AccountingLine alb : theList )
 		{
-			ParameterEvaluator objectCodes = parameterService.getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_AWARD_REVIEW, alb.getFinancialObjectCode());
+			ParameterEvaluator objectCodes = getParameterService().getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_AWARD_REVIEW, alb.getFinancialObjectCode());
 			if (objectCodes.evaluationSucceeds()) {
 				LOG.info("Object Code " + alb.getFinancialObjectCode() + " requires this document to undergo Award review.");
 				return true;
@@ -1937,7 +1935,6 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 	}
 	
 	protected boolean isCampusReviewRequired() {
-		parameterService = SpringContext.getBean(ParameterService.class);
 
 	    List<ActionTakenValue> actions = RouteContext.getCurrentRouteContext().getDocument().getActionsTaken();
 	    List<String> people = new ArrayList<String>();
@@ -1955,7 +1952,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 		
 		for (AccountingLine alb : theList )
 		{
-			ParameterEvaluator objectCodes = parameterService.getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_CAMPUS_REVIEW, alb.getFinancialObjectCode());
+			ParameterEvaluator objectCodes = getParameterService().getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_CAMPUS_REVIEW, alb.getFinancialObjectCode());
 			if (objectCodes.evaluationSucceeds())
 			{
 				LOG.info("Object Code " + alb.getFinancialObjectCode() + " requires this document to undergo Campus review.");
@@ -1963,12 +1960,12 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 			}
 		}
 		
-		ParameterEvaluator paymentReasons = parameterService.getParameterEvaluator("KFS-FP", "DisbursementVoucher", PAYMENT_REASONS_REQUIRING_CAMPUS_REVIEW, this.dvPayeeDetail.getDisbVchrPaymentReasonCode());
+		ParameterEvaluator paymentReasons = getParameterService().getParameterEvaluator("KFS-FP", "DisbursementVoucher", PAYMENT_REASONS_REQUIRING_CAMPUS_REVIEW, this.dvPayeeDetail.getDisbVchrPaymentReasonCode());
 		if (paymentReasons.evaluationSucceeds()) {
 			return true;
 		}
 
-		String dollarThreshold = parameterService.getParameterValue("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_CAMPUS_REVIEW);
+		String dollarThreshold = getParameterService().getParameterValue("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_CAMPUS_REVIEW);
 		KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
 		if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
 			return true;
