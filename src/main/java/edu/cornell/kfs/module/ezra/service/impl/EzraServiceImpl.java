@@ -386,23 +386,25 @@ public class EzraServiceImpl implements EzraService {
 		Investigator investigator = (Investigator)businessObjectService.findBySinglePrimaryKey(Investigator.class, project.getProjectDirectorId());
 		if (investigator != null) {
 			PersonService ps = SpringContext.getBean(PersonService.class);
-			Person director = ps.getPersonByPrincipalName(investigator.getNetId());
-			Map primaryKeys = new HashMap();
-			primaryKeys.put("principalId", director.getPrincipalId());
-			primaryKeys.put("proposalNumber", projectId);
-			ProposalProjectDirector ppd = (ProposalProjectDirector) businessObjectService.findByPrimaryKey(ProposalProjectDirector.class, primaryKeys);
-			if (ObjectUtils.isNull(ppd)) {
-				ppd = new ProposalProjectDirector();
-			} 
+			if (investigator.getNetId() != null) {
+				Person director = ps.getPersonByPrincipalName(investigator.getNetId());
+				Map primaryKeys = new HashMap();
+				primaryKeys.put("principalId", director.getPrincipalId());
+				primaryKeys.put("proposalNumber", projectId);
+				ProposalProjectDirector ppd = (ProposalProjectDirector) businessObjectService.findByPrimaryKey(ProposalProjectDirector.class, primaryKeys);
+				if (ObjectUtils.isNull(ppd)) {
+					ppd = new ProposalProjectDirector();
+				} 
 				//else {
-//				ppd.setVersionNumber(ppd.getVersionNumber());
-//			}
-			ppd.setPrincipalId(director.getPrincipalId());
-			ppd.setProposalNumber(new Long(project.getProjectId()));
-			ppd.setProposalPrimaryProjectDirectorIndicator(true);
-			ppd.setActive(true);
-			KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new AttributeSet());
-			projDirs.add(ppd);
+				//				ppd.setVersionNumber(ppd.getVersionNumber());
+				//			}
+				ppd.setPrincipalId(director.getPrincipalId());
+				ppd.setProposalNumber(new Long(project.getProjectId()));
+				ppd.setProposalPrimaryProjectDirectorIndicator(true);
+				ppd.setActive(true);
+				KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new AttributeSet());
+				projDirs.add(ppd);
+			}
 		} else {
 			LOG.info("Null investigator: "+ project.getProjectDirectorId());
 		}
@@ -413,30 +415,32 @@ public class EzraServiceImpl implements EzraService {
 			Investigator inv = (Investigator)businessObjectService.findBySinglePrimaryKey(Investigator.class, pi.getInvestigatorId());
 			if (inv != null) {
 				PersonService ps = SpringContext.getBean(PersonService.class);
-				Person director = ps.getPersonByPrincipalName(inv.getNetId());
-				Map primaryKeys = new HashMap();
-				primaryKeys.put("principalId", director.getPrincipalId());
-				primaryKeys.put("proposalNumber", projectId);
-				ProposalProjectDirector ppd = (ProposalProjectDirector) businessObjectService.findByPrimaryKey(ProposalProjectDirector.class, primaryKeys);
-				if (ObjectUtils.isNull(ppd)) {
-					ppd = new ProposalProjectDirector();
+				if (inv.getNetId() !=  null) {
+					Person director = ps.getPersonByPrincipalName(inv.getNetId());
+					Map primaryKeys = new HashMap();
+					primaryKeys.put("principalId", director.getPrincipalId());
+					primaryKeys.put("proposalNumber", projectId);
+					ProposalProjectDirector ppd = (ProposalProjectDirector) businessObjectService.findByPrimaryKey(ProposalProjectDirector.class, primaryKeys);
+					if (ObjectUtils.isNull(ppd)) {
+						ppd = new ProposalProjectDirector();
+					}
+					//				 else {
+					//					ppd.setVersionNumber(ppd.getVersionNumber());
+					//				}
+					ppd.setPrincipalId(director.getPrincipalId());
+					ppd.setProposalNumber(new Long(project.getProjectId()));
+					ppd.setProposalPrimaryProjectDirectorIndicator(false);
+					ppd.setActive(true);
+					KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new AttributeSet());
+
+					//check to make sure that this project director is not already in the list.
+					for (ProposalProjectDirector projDir : projDirs) {
+						if (projDir.getPrincipalId().equals(ppd.getPrincipalId()))
+							continue;
+
+					}
+					projDirs.add(ppd);
 				}
-//				 else {
-//					ppd.setVersionNumber(ppd.getVersionNumber());
-//				}
-				ppd.setPrincipalId(director.getPrincipalId());
-				ppd.setProposalNumber(new Long(project.getProjectId()));
-				ppd.setProposalPrimaryProjectDirectorIndicator(false);
-				ppd.setActive(true);
-				KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new AttributeSet());
-				
-				//check to make sure that this project director is not already in the list.
-				for (ProposalProjectDirector projDir : projDirs) {
-					if (projDir.getPrincipalId().equals(ppd.getPrincipalId()))
-						continue;
-					
-				}
-				projDirs.add(ppd);
 			} else {
 				LOG.info("Null investigator: "+ pi.getInvestigatorId());
 			}
