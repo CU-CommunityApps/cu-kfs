@@ -16,7 +16,7 @@ import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
 public class Deliverable extends PersistableBusinessObjectBase {
 
 	private String projectId;
-	private Long deliverableType;
+	private String deliverableType;
 	private String finalIndicator;
 	private Date dueDate;
 	
@@ -28,11 +28,11 @@ public class Deliverable extends PersistableBusinessObjectBase {
 		this.projectId = projectId;
 	}
 
-	public Long getDeliverableType() {
+	public String getDeliverableType() {
 		return deliverableType;
 	}
 
-	public void setDeliverableType(Long deliverableType) {
+	public void setDeliverableType(String deliverableType) {
 		this.deliverableType = deliverableType;
 	}
 
