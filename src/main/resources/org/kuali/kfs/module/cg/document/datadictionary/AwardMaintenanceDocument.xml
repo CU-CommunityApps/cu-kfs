@@ -106,9 +106,12 @@
         <bean parent="MaintainableFieldDefinition" p:name="awardAllocatedUniversityComputingServicesAmount"/>
         <bean parent="MaintainableFieldDefinition" p:name="awardAddendumNumber"/>
         <bean parent="MaintainableFieldDefinition" p:name="letterOfCreditFundGroupCode"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.locAccountId"/>
         <bean parent="MaintainableFieldDefinition" p:name="awardDocumentNumber"/>
         <bean parent="MaintainableFieldDefinition" p:name="agencyAnalystName"/>
         <bean parent="MaintainableFieldDefinition" p:name="analystTelephoneNumber"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.costShareRequired"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.finalFiscalReportDate"/>
         <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
       </list>
     </property>
