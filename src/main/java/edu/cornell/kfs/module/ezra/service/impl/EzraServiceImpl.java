@@ -408,10 +408,15 @@ public class EzraServiceImpl implements EzraService {
 					ppd.setActive(true);
 					KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new AttributeSet());
 					projDirs.add(ppd);
+				} else {
+					LOG.error("PI: " +investigator.getNetId()+" is for award :"+ projectId+" is not in kfs");
 				}
+			} else {
+				LOG.error("PI netId for award :"+ projectId+" is null");
+
 			}
 		} else {
-			LOG.info("Null investigator: "+ project.getProjectDirectorId());
+			LOG.error("Null PI: "+ project.getProjectDirectorId());
 		}
 		Map fieldValues = new HashMap();
 		fieldValues.put("projectId", projectId.toString());
@@ -443,10 +448,15 @@ public class EzraServiceImpl implements EzraService {
 
 						}
 						projDirs.add(ppd);
+					} else {
+						LOG.error("Investigator: " +investigator.getNetId()+" is for award :"+ projectId+" is not in kfs");
 					}
+				} else {
+					LOG.error("Invesigator netId for award :"+ projectId+" is null");
+
 				}
 			} else {
-				LOG.info("Null investigator: "+ pi.getInvestigatorId());
+				LOG.error("Null investigator: "+ pi.getInvestigatorId());
 			}
 		}
 		
