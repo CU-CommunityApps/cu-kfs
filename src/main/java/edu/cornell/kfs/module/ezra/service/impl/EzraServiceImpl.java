@@ -300,9 +300,10 @@ public class EzraServiceImpl implements EzraService {
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		}
-		agencyDoc.getDocumentHeader().setDocumentDescription("Auto creation of new agency: "+ agency.getAgencyNumber());
+		agencyDoc.getDocumentHeader().setDocumentDescription("Edit agency: "+agency.getAgencyNumber()+" by auto edit");
 		if (ObjectUtils.isNotNull(oldAgency)) {
 			agencyDoc.getOldMaintainableObject().setBusinessObject(oldAgency);
+			agencyDoc.getDocumentHeader().setDocumentDescription("Auto creation of new agency: "+ agency.getAgencyNumber());
 		} 
 		Maintainable agencyMaintainable = agencyDoc.getNewMaintainableObject();
 		agencyMaintainable.setBusinessObject(agency);
@@ -332,10 +333,12 @@ public class EzraServiceImpl implements EzraService {
 			we.printStackTrace();
 		}
 		LOG.info("Created a new Award doc. "+ award.getProposalNumber());
-		awardDoc.getDocumentHeader().setDocumentDescription("Auto creation of new award: "+ award.getProposalNumber());
+		awardDoc.getDocumentHeader().setDocumentDescription("Auto creation of new award : " +award.getProposalNumber()); 
 		if (ObjectUtils.isNotNull(oldAward)) {
 			awardDoc.getOldMaintainableObject().setBusinessObject(oldAward);
 			award.setVersionNumber(oldAward.getVersionNumber());
+			awardDoc.getDocumentHeader().setDocumentDescription("Edit award: "+award.getProposalNumber()+" by auto edit");
+
 		} 
 		awardDoc.getNewMaintainableObject().setBusinessObject(award);;
 		try {
@@ -363,7 +366,7 @@ public class EzraServiceImpl implements EzraService {
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		}
-		proposalDoc.getDocumentHeader().setDocumentDescription("Auto creation of new proposal");
+		proposalDoc.getDocumentHeader().setDocumentDescription("Auto creation of new proposal: "+ proposal.getProposalNumber());
 		proposalDoc.getNewMaintainableObject().setBusinessObject(proposal);
 		try {
 			documentService.saveDocument(proposalDoc);
