@@ -79,6 +79,9 @@
         <ref bean="Award-proposalAwardTypeCode"/>
         <ref bean="Award-awardInquiryTitle"/>
         <ref bean="Award-active"/>
+        <ref bean="Award-extension-costShareRequired"/>
+        <ref bean="Award-extension-finalFiscalReportDate"/>
+        <ref bean="Award-extension-locAccountId"/>
       </list>
     </property>
     <property name="collections">
@@ -605,6 +608,26 @@
   <bean id="Award-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
     <property name="name" value="active"/>
   </bean>
+  
+  <bean id="Award-extension-costShareRequired" parent="Award-extension-costShareRequired-parentBean"/>
+  
+  <bean id="Award-extension-costShareRequired-parentBean" abstract="true" parent="AwardExtendedAttribute-costShareRequired">
+  	<property name="name" value="extension.costShareRequired"/>
+  </bean>
+  
+  <bean id="Award-extension-finalFiscalReportDate" parent="Award-extension-finalFiscalReportDate-parentBean"/>
+  
+  <bean id="Award-extension-finalFiscalReportDate-parentBean" abstract="true" parent="AwardExtendedAttribute-finalFiscalReportDate">
+  	<property name="name" value="extension.finalFiscalReportDate"/>
+  </bean>
+  
+  <bean id="Award-extension-locAccountId" parent="Award-extension-locAccountId-parentBean"/>
+  
+  <bean id="Award-extension-locAccountId-parentBean" abstract="true" parent="AwardExtendedAttribute-locAccountId">
+  	<property name="name" value="extension.locAccountId"/>
+  </bean>
+  
+  
 <!-- Business Object Inquiry Definition -->
 
 

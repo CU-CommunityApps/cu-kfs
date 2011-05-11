@@ -30,7 +30,7 @@
   	
   	 <bean id="AwardExtendedAttribute-finalFiscalReportDate" parent="GenericAttributes-genericTimestamp">
   		<property name="name" value="finalFiscalReportDate"/>
-    	<property name="label" value="Cost Share Required"/>
+    	<property name="label" value="Final Fiscal Report Date"/>
     	<property name="shortLabel" value="finalFiscalReportDate"/>
     	<property name="required" value="false"/>
     </bean>
