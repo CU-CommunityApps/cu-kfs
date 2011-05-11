@@ -472,20 +472,19 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         	}
                         	
                     		// Retrieve up to 3 non-mailing address note lines and only the first 72 characters as per the Mellon spec.
-                    		// Retrieve the first
                         	else {
-                        		FirstNoteAfterAddressInfo = (NoteLine.length() < 73) ? NoteLine : NoteLine.substring(0,72);
+                        		FirstNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
                         		if (ix.hasNext()) {
                         			//Retrieve the second
                             		note = (PaymentNoteText) ix.next();
                                 	NoteLine = note.getCustomerNoteText();
-                                	SecondNoteAfterAddressInfo = (NoteLine.length() < 73) ? NoteLine : NoteLine.substring(0,72);
+                                	SecondNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
 
                             		if (ix.hasNext()) {
                             			//Retrieve the second
                                 		note = (PaymentNoteText) ix.next();
                                     	NoteLine = note.getCustomerNoteText();
-                                    	ThirdNoteAfterAddressInfo = (NoteLine.length() < 73) ? NoteLine : NoteLine.substring(0,72);
+                                    	ThirdNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
                             		}
 	                        		else
 	                        			break;
@@ -541,10 +540,10 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             String sCountryName = "";
                             Country country = countryService.getByPrimaryId(pg.getCountry());
                             if (country != null) {
-                            	sCountryName = country.getPostalCountryName();
+                            	sCountryName = country.getPostalCountryName().substring(0,((country.getPostalCountryName().length() >= 30)? 30: country.getPostalCountryName().length() ));;
                             }
                             else {
-                            	sCountryName = pg.getCountry();
+                            	sCountryName = pg.getCountry().substring(0,((pg.getLine1Address().length() >= 30)? 30: pg.getCountry().length() ));;
                             }
                             
                             // Get sub unit code
@@ -616,15 +615,15 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 	                            		"PR" + cDelim +                               // Name qualifier - 3 bytes (PR = Payer)
 	                            		cDelim +                                      // ID code qualifier - 2 bytes
 	                            		cDelim +                                      // ID code - 80 bytes
-	                            		"Cornell University" + cDelim +               // Name - 60 bytes
+	                            		"Cornell University" + cDelim +               // Name - 35 bytes
 	                            		cDelim +                                      // Additional name 1 - 60 bytes
 	                            		cDelim +                                      // Additional name 2 - 60 bytes
-	                            		"Division of Financial Affairs" + cDelim +    // Address line 1 - 55 bytes
-	                            		"341 Pine Tree Road" + cDelim +               // Address line 2 - 55 bytes
-	                            		cDelim +                                      // Address line 3 - 55 bytes
-	                            		cDelim +                                      // Address line 4 - 55 bytes
-	                            		cDelim +                                      // Address line 5 - 55 bytes
-	                            		cDelim +                                      // Address line 6 - 55 bytes
+	                            		"Division of Financial Affairs" + cDelim +    // Address line 1 - 35 bytes
+	                            		"341 Pine Tree Road" + cDelim +               // Address line 2 - 35 bytes
+	                            		cDelim +                                      // Address line 3 - 35 bytes
+	                            		cDelim +                                      // Address line 4 - 35 bytes
+	                            		cDelim +                                      // Address line 5 - 35 bytes
+	                            		cDelim +                                      // Address line 6 - 35 bytes
 	                            		"Ithaca" + cDelim +                           // City - 30 bytes
 	                            		"NY" + cDelim +                               // State/Province - 2 bytes
 	                            		"148502820" + cDelim +                        // Postal code - 15 bytes
@@ -636,42 +635,57 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 	                            		cDelim +                                      // Ref qualifier 1 - 3 bytes
 	                            		cDelim +                                      // Ref ID 1 - 50 bytes
 	                            		cDelim +                                      // Ref description 1 - 80 bytes
-	                            		cDelim +                                      // Filler - 46 bytes
-	                            		"\n");
+	                            		cDelim +  "\n");
 	                            
 	                            // Write the Fast Track initial payee detail (PDT02010) record
-	                            os.write("PDT02010" + cDelim +             // Record Type - 8 bytes
-	                            		"PE" + cDelim +                    // Name qualifier - 3 bytes (PE = Payee) This record's data prints on the check
-	                            		cDelim +                           // ID code qualifier - 2 bytes
-	                            		cDelim +                           // ID code - 80 bytes
-	                            		pg.getPayeeName() + cDelim +       // Name - 60 bytes
-	                            		cDelim +                           // Additional name 1 - 60 bytes
-	                            		cDelim +                           // Additional name 2 - 60 bytes
-	                            		pg.getLine1Address() + cDelim +    // Address line 1 - 55 bytes
-	                            		pg.getLine2Address() + cDelim +    // Address line 2 - 55 bytes
-	                            		pg.getLine3Address() + cDelim +    // Address line 3 - 55 bytes
-	                            		pg.getLine4Address() + cDelim +    // Address line 4 - 55 bytes
-	                            		cDelim +                           // Address line 5 - 55 bytes
-	                            		cDelim +                           // Address line 6 - 55 bytes
-	                            		pg.getCity() + cDelim +            // City - 30 bytes
-	                            		pg.getState() + cDelim +           // State/Province - 2 bytes
-	                            		pg.getZipCd() + cDelim +           // Postal code - 15 bytes
-	                            		cDelim +                           // Country code - 3 bytes
-	                            		sCountryName + cDelim +            // Country name - 30 bytes
-	                               		cDelim +                           // Ref qualifier 1 - 3 bytes
-	                            		cDelim +                           // Ref ID 1 - 50 bytes
-	                            		cDelim +                           // Ref description 1 - 80 bytes
-	                            		cDelim +                           // Ref qualifier 1 - 3 bytes
-	                            		cDelim +                           // Ref ID 1 - 50 bytes
-	                            		cDelim +                           // Ref description 1 - 80 bytes
-	                            		cDelim +                           // Filler - 46 bytes
-	                             		"\n");
+	                            
+	                            // temp variables to observe length limitations
+	                            int AddrMaxLength = 35;
+	                            int CityMaxLength = 30;
+	                            int StateMaxLength = 2;
+	                            int ZipMaxLength = 15;
+	                            int PayeeNameMaxLength = 35;
+	                            
+	                            String PayeeName = pg.getPayeeName().substring(0,((pg.getPayeeName().length() >= PayeeNameMaxLength)? PayeeNameMaxLength: pg.getPayeeName().length() ));
+	                            String AddrLine1 = pg.getLine1Address().substring(0,((pg.getLine1Address().length() >= AddrMaxLength)? AddrMaxLength: pg.getLine1Address().length() ));
+	                            String AddrLine2 = pg.getLine2Address().substring(0,((pg.getLine2Address().length() >= AddrMaxLength)? AddrMaxLength: pg.getLine2Address().length() ));
+	                            String AddrLine3 = pg.getLine3Address().substring(0,((pg.getLine3Address().length() >= AddrMaxLength)? AddrMaxLength: pg.getLine3Address().length() ));
+	                            String AddrLine4 = pg.getLine4Address().substring(0,((pg.getLine4Address().length() >= AddrMaxLength)? AddrMaxLength: pg.getLine4Address().length() ));
+	                            String City = pg.getCity().substring(0,((pg.getCity().length() >= CityMaxLength)? CityMaxLength: pg.getCity().length() ));
+	                            String State = pg.getState().substring(0,((pg.getState().length() >= StateMaxLength)? StateMaxLength: pg.getState().length() ));
+	                            String Zip = pg.getZipCd().substring(0,((pg.getZipCd().length() >= ZipMaxLength)? ZipMaxLength: pg.getZipCd().length() ));
+
+	                            os.write("PDT02010" + cDelim +				// Record Type - 8 bytes
+	                            		"PE" + cDelim +						// Name qualifier - 3 bytes (PE = Payee) This record's data prints on the check
+	                            		cDelim +							// ID code qualifier - 2 bytes
+	                            		cDelim +							// ID code - 80 bytes
+	                            		PayeeName + cDelim +				// Name - 35 bytes
+	                            		cDelim +							// Additional name 1 - 60 bytes
+	                            		cDelim +							// Additional name 2 - 60 bytes
+	                            		AddrLine1 + cDelim +    			// Address line 1 - 35 bytes
+	                            		AddrLine2 + cDelim +    			// Address line 2 - 35 bytes
+	                            		AddrLine3 + cDelim +    			// Address line 3 - 35 bytes
+	                            		AddrLine4 + cDelim +    			// Address line 4 - 35 bytes
+	                            		cDelim +							// Address line 5 - 35 bytes
+	                            		cDelim +							// Address line 6 - 35 bytes
+	                            		City + cDelim +						// City - 30 bytes
+	                            		State + cDelim +					// State/Province - 2 bytes
+	                            		Zip + cDelim +						// Postal code - 15 bytes
+	                            		cDelim +							// Country code - 3 bytes
+	                            		sCountryName + cDelim +				// Country name - 30 bytes (do not use is Country Code is used)
+	                               		cDelim +							// Ref qualifier 1 - 3 bytes (not used)
+	                            		cDelim +							// Ref ID 1 - 50 bytes (not used)
+	                            		cDelim +							// Ref description 1 - 80 bytes (not used)
+	                            		cDelim +							// Ref qualifier 1 - 3 bytes (not used)
+	                            		cDelim +							// Ref ID 1 - 50 bytes (not used)
+	                            		cDelim +							// Ref description 1 - 80 bytes (not used)
+	                            		cDelim + "\n");
 	                            
 	                            // If no alternate address is provided, we must populate with the customer address
 	                            if (NumOfAltAddressLines == 0) {
-	                            	altAddrSendTo = pg.getPayeeName();
-	                            	altAddrAddr1 = pg.getLine1Address();
-	                            	altAddrAddr2 = pg.getLine2Address();
+	                            	altAddrSendTo = pg.getPayeeName().substring(0,((pg.getPayeeName().length() <= PayeeNameMaxLength)? PayeeNameMaxLength: pg.getPayeeName().length() ));
+	                            	altAddrAddr1 = pg.getLine1Address().substring(0,((pg.getLine1Address().length() <= AddrMaxLength)? AddrMaxLength: pg.getLine1Address().length() ));
+	                            	altAddrAddr2 = pg.getLine2Address().substring(0,((pg.getLine2Address().length() <= AddrMaxLength)? AddrMaxLength: pg.getLine2Address().length() ));
 	                            	altAddrCityStateZip = pg.getCity() + ", " + pg.getState() + " " + pg.getZipCd();
 	                            }
 	                            // Write the Fast Track second payee detail (PDT02010) record
@@ -679,15 +693,15 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 	                            		"FE" + cDelim +                    // Name qualifier - 3 bytes (FE = Remit) This record's data prints on the remittance
 	                            		cDelim +                           // ID code qualifier - 2 bytes
 	                            		cDelim +                           // ID code - 80 bytes
-	                            		altAddrSendTo + cDelim +           // Name - 60 bytes
+	                            		altAddrSendTo + cDelim +           // Name - 35 bytes
 	                            		cDelim +                           // Additional name 1 - 60 bytes
 	                            		cDelim +                           // Additional name 2 - 60 bytes
-	                            		altAddrAddr1 + cDelim +            // Address line 1 - 55 bytes
-	                            		altAddrAddr2 + cDelim +            // Address line 2 - 55 bytes
-	                            		cDelim +                           // Address line 3 - 55 bytes
-	                            		cDelim +                           // Address line 4 - 55 bytes
-	                            		cDelim +                           // Address line 5 - 55 bytes
-	                            		cDelim +                           // Address line 6 - 55 bytes
+	                            		altAddrAddr1 + cDelim +            // Address line 1 - 35 bytes
+	                            		altAddrAddr2 + cDelim +            // Address line 2 - 35 bytes
+	                            		cDelim +                           // Address line 3 - 35 bytes
+	                            		cDelim +                           // Address line 4 - 35 bytes
+	                            		cDelim +                           // Address line 5 - 35 bytes
+	                            		cDelim +                           // Address line 6 - 35 bytes
 	                            		altAddrCity + cDelim +             // City - 30 bytes
 	                            		altAddrState + cDelim +            // State/Province - 2 bytes
 	                            		altAddrZip + cDelim +              // Postal code - 15 bytes
@@ -699,8 +713,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 	                            		cDelim +                           // Ref qualifier 1 - 3 bytes
 	                            		cDelim +                           // Ref ID 1 - 50 bytes
 	                            		cDelim +                           // Ref description 1 - 80 bytes
-	                            		cDelim +                           // Filler - 46 bytes
-	                             		"\n");
+	                            		cDelim +  "\n");
 	                            
 	                            totalRecordCount = totalRecordCount + 4;  //One for the PAY01000 record and three for the PDT02010 records
                             }
@@ -718,10 +731,27 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         			pd.getInvoiceNbr();
                         
                         //Lines for the remittance form
-                        RefDesc1 = pd.getPurchaseOrderNbr() + ", " + pd.getCustPaymentDocNbr();
-                        RefDesc2 = FirstNoteAfterAddressInfo;
-                        RefDesc3 = SecondNoteAfterAddressInfo;
-                        RefDesc4 = PreparerInfoText;
+                        RefDesc1 = ( (pd.getPurchaseOrderNbr().isEmpty()) ? "" :"PO#: " + pd.getPurchaseOrderNbr())  + ", Doc #: " + pd.getCustPaymentDocNbr();		// This will always a have a value
+                        if (FirstNoteAfterAddressInfo.isEmpty())
+                        	if (SecondNoteAfterAddressInfo.isEmpty()) {
+                        		RefDesc2 = PreparerInfoText;			// Nothing in the first or second, so put the preparer Info in the second line
+                        		RefDesc3 = "";
+                        		RefDesc4 = "";
+                        	}
+                        	else {
+                        		RefDesc2 = SecondNoteAfterAddressInfo;	// This is an unlikely case but if the first line is empty and the second is not, push the second line 
+                                RefDesc3 = PreparerInfoText;			// onto the first and put the prepare info in the second line.\
+                        		RefDesc4 = "";
+                        	}
+                        else
+                        	if (SecondNoteAfterAddressInfo.isEmpty()) {
+                        		RefDesc3 = PreparerInfoText;
+                        		RefDesc4 = "";
+                        	}
+                        	else {
+                        		RefDesc3 = SecondNoteAfterAddressInfo;
+                        		RefDesc4 = PreparerInfoText;
+                        	}
                         
                         //Only perform the following if this is an immediate check
                         if (immediateCheckCode) {
@@ -758,8 +788,6 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             String CheckNumber = repeatThis("0", 10 - pg.getDisbursementNbr().toString().length()) + pg.getDisbursementNbr().toString();
                             String AmountOfCheck = totalNetAmount.toString().replace(".","");
                             AmountOfCheck = repeatThis("0",10 - AmountOfCheck.length()) + AmountOfCheck;
-                            String PayeeName = (arPayeeName.length() <= 60) ? arPayeeName + repeatThis(" ", 60 - arPayeeName.length()): arPayeeName.substring(60);
-                            String PayeeAddrLine1 = (pg.getLine1Address().length() <= 60) ? pg.getLine1Address() + repeatThis(" ", 60 - pg.getLine1Address().length()): pg.getLine1Address().substring(60);
                             
                             osI.write("6" +																		// Record Type  - 1 Byte
                             	"2" + 																			// Status Code->  2: Add Issue,  6: Void Issue   - 1 Byte
@@ -793,25 +821,25 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 	                        		cDelim +                                               					// Note 2 - 80 bytes
 	                        		cDelim +                                               					// Ref qualifier 1
 	                        		cDelim +                                               					// Ref ID 1
-	                        		RefDesc1 + cDelim +                                        				// Ref description 1
-	                        		cDelim +                                               					// Ref qualifier 2
-	                        		cDelim +                                               					// Ref ID 2
-	                        		RefDesc2 + cDelim +                                     				// Ref description 2
-	                        		cDelim +                                               					// Ref qualifier 3
-	                        		cDelim +                                               					// Ref ID 3
-	                        		RefDesc3 + cDelim +                                     				// Ref description 3
-	                        		cDelim +                                               					// Ref qualifier 4
-	                        		cDelim +                                               					// Ref ID 4
-	                        		RefDesc4 + cDelim + 													// Ref description 4
-	                        		cDelim +                                               					// Date qualifier 1
+	                        		RefDesc1 + cDelim +                                        				// Ref description 1 (up to 72 bytes)
+	                        		cDelim +                                               					// Ref qualifier 2 (not used)
+	                        		cDelim +                                               					// Ref ID 2 (not used)
+	                        		RefDesc2 + cDelim +                                     				// Ref description 2 (up to 72 bytes)
+	                        		cDelim +                                               					// Ref qualifier 3 (not used)
+	                        		cDelim +                                               					// Ref ID 3 (not used)
+	                        		RefDesc3 + cDelim +                                     				// Ref description 3 (up to 72 bytes)
+	                        		cDelim +                                               					// Ref qualifier 4 (not used)
+	                        		cDelim +                                               					// Ref ID 4 (not used)
+	                        		RefDesc4 + cDelim + 													// Ref description 4 (up to 72 bytes)
+	                        		cDelim +                                               					// Date qualifier 1 (not used)
 	                        		pd.getInvoiceDate().toString().replace("-", "") + cDelim +              // Date 1 
-	                        		cDelim +                                               					// Date qualifier 2
-	                        		cDelim +                                               					// Date 2
-	                        		cDelim +                                               					// Date qualifier 3
-	                        		cDelim +                                               					// Date 3
-	                        		cDelim +                                               					// Date qualifier 4
-	                        		cDelim +                                               					// Date 4
-	                                "\n");                                                 					// Filler
+	                        		cDelim +                                               					// Date qualifier 2 (not used)
+	                        		cDelim +                                               					// Date 2 (not used)
+	                        		cDelim +                                               					// Date qualifier 3 (not used)
+	                        		cDelim +                                               					// Date 3 (not used)
+	                        		cDelim +                                               					// Date qualifier 4 (not used)
+	                        		cDelim +                                               					// Date 4 (not used)
+	                                "\n");
 	                        
 	                        os.write("REM03020" + cDelim +                                 					// Record type - 8 bytes
 	                        		remittanceIdCode + cDelim +                            					// Remittance qualifier code - 3 bytes
@@ -823,24 +851,24 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 	                        		cDelim +                                               					// Note 2 - 80 bytes
 	                        		cDelim +                                               					// Ref qualifier 1
 	                        		cDelim +                                               					// Ref ID 1
-	                        		altAddrSendTo.toUpperCase() + cDelim +                         			// Ref description 1
-	                        		cDelim +                                               					// Ref qualifier 2
-	                        		cDelim +                                               					// Ref ID 2
-	                        		altAddrAddr1.toUpperCase() + cDelim +                                	// Ref description 2
-	                        		cDelim +                                               					// Ref qualifier 3
-	                        		cDelim +                                               					// Ref ID 3
-	                        		altAddrAddr2.toUpperCase() + cDelim +                                	// Ref description 3
-	                        		cDelim +                                               					// Ref qualifier 4
-	                        		cDelim +                                               					// Ref ID 4
-	                        		altAddrCityStateZip.toUpperCase() + cDelim +                         	// Ref description 4
-	                        		cDelim +                                               					// Date qualifier 1
+	                        		altAddrSendTo.toUpperCase() + cDelim +                         			// Ref description 1 (up to 72 bytes)
+	                        		cDelim +                                               					// Ref qualifier 2 (not used)
+	                        		cDelim +                                               					// Ref ID 2 (not used)
+	                        		altAddrAddr1.toUpperCase() + cDelim +                                	// Ref description 2 (up to 72 bytes)
+	                        		cDelim +                                               					// Ref qualifier 3 (not used)
+	                        		cDelim +                                               					// Ref ID 3 (not used)
+	                        		altAddrAddr2.toUpperCase() + cDelim +                                	// Ref description 3 (up to 72 bytes)
+	                        		cDelim +                                               					// Ref qualifier 4 (not used)
+	                        		cDelim +                                               					// Ref ID 4 (not used)
+	                        		altAddrCityStateZip.toUpperCase() + cDelim +                         	// Ref description 4 (up to 72 bytes)
+	                        		cDelim +                                               					// Date qualifier 1 (not used)
 	                        		pd.getInvoiceDate().toString().replace("-", "") + cDelim +				// Date 1 
-	                        		cDelim +                                               					// Date qualifier 2
-	                        		cDelim +                                               					// Date 2
-	                        		cDelim +                                               					// Date qualifier 3
-	                        		cDelim +                                               					// Date 3
-	                        		cDelim +                                               					// Date qualifier 4
-	                        		cDelim +                                               					// Date 4
+	                        		cDelim +                                               					// Date qualifier 2 (not used)
+	                        		cDelim +                                               					// Date 2 (not used)
+	                        		cDelim +                                               					// Date qualifier 3 (not used)
+	                        		cDelim +                                               					// Date 3 (not used)
+	                        		cDelim +                                               					// Date qualifier 4 (not used)
+	                        		cDelim +                                               					// Date 4 (not used)
 	                                "\n");                                                 					// Filler
 	                      
 	                        totalRecordCount = totalRecordCount + 2;	//Two for the two REM03020 records
@@ -875,8 +903,8 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
             {
             //Fast Track trailer record
             os.write("TRL09000" + cDelim +             // Record Type
-            		totalRecordCount + cDelim +        // Variable (V) or Fixed (F) flag
-            		totalPaymentAmounts + cDelim +     // Delimiter name - Must be either FFCARET or FFCOMMA.  Others are allowed but Mellon will have to be contacted first.
+            		totalRecordCount + cDelim +        // Total # of records in the file including header and trailer. 15 bytes numeric only
+            		totalPaymentAmounts + cDelim +     // Total amount of all net payments for the file.  25 bytes numeric only
             		"\n");                             // EOR
             }
         } //try
@@ -1045,11 +1073,11 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
     	try {
             Iterator iter = paymentGroupService.getByDisbursementTypeStatusCode(PdpConstants.DisbursementTypeCodes.ACH, PdpConstants.PaymentStatusCodes.PENDING_ACH);
             while (iter.hasNext()) {
-                PaymentGroup paymentGroup = (PaymentGroup) iter.next();
+                PaymentGroup pg = (PaymentGroup) iter.next();
                 
                 // Get our Bank Account Number and our bank routing number
-                ourBankAccountNumber = paymentGroup.getBank().getBankAccountNumber();
-                ourBankRoutingNumber = paymentGroup.getBank().getBankRoutingNumber();
+                ourBankAccountNumber = pg.getBank().getBankAccountNumber();
+                ourBankRoutingNumber = pg.getBank().getBankRoutingNumber();
                 
                 //We only need to write the Fast Track header records once in this file.
                 if (!wroteFastTrackHeaderRecords) {
@@ -1057,7 +1085,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                 	// open the file for writing
                 	os = new BufferedWriter(new FileWriter(filename));
                 	
-	            	//Write the Fast Track header record (FIL00010)
+	            	//Write the Fast Track header record (FIL00010) once for each file
 	                os.write("FIL00010" + cDelim +                // Record Type
 	                		hdrRecType + cDelim +                 // Variable (V) or Fixed (F) flag
 	                		cDname + cDelim +                     // Delimiter name - Must be either FFCARET or FFCOMMA.  Others are allowed but Mellon will have to be contacted first.
@@ -1070,7 +1098,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 	                		cDelim +                              // Reserved Field - 3 Bytes
 	                        "\n");
 	            	
-	                //Write the Fast Track email records (FIL00020)
+	                //Write the Fast Track email records (FIL00020) once for each file
 	            	os.write("FIL00020" + cDelim + 
 	            			"uco_operations-mailbox@cornell.edu" + cDelim +
 	            			cDelim +
@@ -1099,29 +1127,29 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                 KualiDecimal totalNetAmount = new KualiDecimal(0);
 
                 // We need to obtain the total amount for this specific payee, so loop through all the records here.
-                List pdListTot = paymentGroup.getPaymentDetails();
+                List pdListTot = pg.getPaymentDetails();
                 for (Iterator it2 = pdListTot.iterator(); it2.hasNext();) {
-                    PaymentDetail pd = (PaymentDetail) it2.next();
-                    totalNetAmount = totalNetAmount.add(pd.getNetPaymentAmount());
+                    PaymentDetail pd2 = (PaymentDetail) it2.next();
+                    totalNetAmount = totalNetAmount.add(pd2.getNetPaymentAmount());
                 }
                 
-                List pdList = paymentGroup.getPaymentDetails();
+                List pdList = pg.getPaymentDetails();
                 for (Iterator iterator = pdList.iterator(); iterator.hasNext();) {
-                    PaymentDetail paymentDetail = (PaymentDetail) iterator.next();
+                    PaymentDetail pd = (PaymentDetail) iterator.next();
                     if (first) {
                         // Get country name for code
                         String sCountryName = "";
-                        Country country = countryService.getByPrimaryId(paymentGroup.getCountry());
+                        Country country = countryService.getByPrimaryId(pg.getCountry());
                         if (country != null) {
-                        	sCountryName = country.getPostalCountryName();
+                        	sCountryName = country.getPostalCountryName().substring(0,((country.getPostalCountryName().length() >= 30)? 30: country.getPostalCountryName().length() ));;
                         }
                         else {
-                        	sCountryName = paymentGroup.getCountry();
+                        	sCountryName = pg.getCountry().substring(0,((pg.getLine1Address().length() >= 30)? 30: pg.getCountry().length() ));;
                         }
                         
                         int dvCodeInt=0;
                         // Get customer profile information
-                        CustomerProfile cp = paymentGroup.getBatch().getCustomerProfile();
+                        CustomerProfile cp = pg.getBatch().getCustomerProfile();
                         subUnitCode = cp.getSubUnitCode();
 
                         if (subUnitCode.equals("DV")) dvCodeInt = 1;
@@ -1141,8 +1169,8 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         // String payeeId = paymentGroup.getPayeeId();							// Returns the ID of the payee and is the vendor number if the next var indicates that
                         // String payeeIdTypeDesc = paymentGroup.getPayeeIdTypeDesc();			// Returns "Vendor Number" if the payeeID is a vendor number
                         
-                        boolean isVendor = (paymentGroup.getPayeeIdTypeCd().equals("V")) ? true : false;	// payeeIdTypeCode returns a "V" if it is a vendor
-                        String accountType = paymentGroup.getAchAccountType();								// Returns either a 22 for checking or a 32 for Savings account
+                        boolean isVendor = (pg.getPayeeIdTypeCd().equals("V")) ? true : false;	// payeeIdTypeCode returns a "V" if it is a vendor
+                        String accountType = pg.getAchAccountType();								// Returns either a 22 for checking or a 32 for Savings account
                         if (isVendor)
                         	if (accountType.equals("22"))
                         		achCode = "CTX";		// Implementation of rule #1 above
@@ -1151,7 +1179,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         else
                         	achCode = "PPD";			// Implementation of rule #3 above
                         
-                    	//Write only 1 PAY01000 record
+                    	//Write only 1 PAY01000 record for each payee
                     	os.write("PAY01000" + cDelim +                              					// Record Type - 8 bytes
                     			"1" + cDelim +                                      					// 7=Payment and Electronic Advice (Transaction handling code - 2 bytes)
                     			totalNetAmount.toString() + cDelim +                					// Total amount of check (Payment amount - 18 bytes)
@@ -1164,20 +1192,19 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                     			ourBankAccountNumber + cDelim +                     					// Originating account number - 35 bytes
                     			"2150532082" + cDelim+                              					// Originating company identifier - 10 bytes
                     			"01" + cDelim +                                            				// Receiving bank id qualifier - 2 bytes
-                    			paymentGroup.getAchBankRoutingNbr() + cDelim +                  		// Receiving bank id - 12 bytes
-                    			paymentGroup.getAchAccountType() + cDelim +                             // Receiving account number qualifier - 3 bytes
-                    			paymentGroup.getAchAccountNumber().getAchBankAccountNbr() + cDelim + 	// Receiving account number - 35 bytes
+                    			pg.getAchBankRoutingNbr() + cDelim +                  					// Receiving bank id - 12 bytes
+                    			pg.getAchAccountType() + cDelim +                             			// Receiving account number qualifier - 3 bytes
+                    			pg.getAchAccountNumber().getAchBankAccountNbr() + cDelim + 				// Receiving account number - 35 bytes
                     			sdf.format(processDate) + cDelim +                  					// Effective date - 8 bytes
                     			cDelim +                                            					// Business function code - 3 bytes 
-                    			paymentGroup.getDisbursementNbr().toString() + cDelim + 				// Trace number (check number) - 50 bytes
+                    			pg.getDisbursementNbr().toString() + cDelim + 							// Trace number (check number) - 50 bytes
                     			divisionCode + cDelim +                                            		// Division code - 50 bytes 
                     			cDelim +                                            					// Currency code - 3 bytes
                     			cDelim +                                            					// Note 1 - 80 bytes
                     			cDelim +                                            					// Note 2 - 80 bytes
                     			cDelim +                                            					// Note 3 - 80 bytes
                     			cDelim +                                            					// Note 4 - 80 bytes
-                    			cDelim +                                            					// 
-                    			"\n");
+                    			cDelim + "\n");
 
                      	totalPaymentAmounts = totalPaymentAmounts.add(totalNetAmount);
                     	
@@ -1206,34 +1233,50 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         		cDelim +                                      	// Ref qualifier 1 - 3 bytes
                         		cDelim +                                      	// Ref ID 1 - 50 bytes
                         		cDelim +                                      	// Ref description 1 - 80 bytes
-                        		cDelim +                                      	// 
-                        		"\n");
+                        		cDelim + "\n");
                         
                         // Write the payee detail (PDT02010) record for the payee (them) (only one per payee)
-                        os.write("PDT02010" + cDelim +             											// Record Type - 8 bytes
-                        		"PR" + cDelim +                    											// Name qualifier - 3 bytes
-                        		cDelim +                           											// ID code qualifier - 2 bytes
-                        		cDelim +                           											// ID code - 80 bytes
-                        		paymentGroup.getPayeeName() + cDelim +       								// Name - 60 bytes
-                        		cDelim +                           											// Additional name 1 - 60 bytes
-                        		cDelim +                           											// Additional name 2 - 60 bytes
-                        		String.format("%-55.55s", paymentGroup.getLine1Address()) + cDelim +    	// Address line 1 - 55 bytes
-                        		String.format("%-55.55s", paymentGroup.getLine2Address()) + cDelim +    	// Address line 2 - 55 bytes
-                        		String.format("%-55.55s", paymentGroup.getLine3Address()) + cDelim +    	// Address line 3 - 55 bytes
-                        		String.format("%-55.55s", paymentGroup.getLine4Address()) + cDelim +    	// Address line 4 - 55 bytes
-                        		cDelim +                          	 										// Address line 5 - 55 bytes
-                        		cDelim +                           											// Address line 6 - 55 bytes
-                        		String.format("%-30.30s", paymentGroup.getCity()) + cDelim +            	// City - 30 bytes
-                        		String.format("%-2.2s", paymentGroup.getState()) + cDelim +           		// State/Province - 2 bytes
-                        		String.format("%-15.15s", paymentGroup.getZipCd()) + cDelim +           	// Postal code - 15 bytes
-                        		cDelim +                           											// Country code - 3 bytes
-                        		sCountryName + cDelim +            											// Country name - 30 bytes
-                           		cDelim +                           											// Ref qualifier 1 - 3 bytes
-                        		cDelim +                           											// Ref ID 1 - 50 bytes
-                        		cDelim +                           											// Ref description 1 - 80 bytes
-                        		cDelim +                           											// Ref qualifier 1 - 3 bytes
-                        		cDelim +                           											// Ref ID 1 - 50 bytes
-                        		cDelim +                           											// Ref description 1 - 80 bytes
+                        
+                        // temp variables to observe length limitations
+                        int AddrMaxLength = 35;
+                        int CityMaxLength = 30;
+                        int StateMaxLength = 2;
+                        int ZipMaxLength = 15;
+                        int PayeeNameMaxLength = 35;
+                        
+                        String PayeeName = pg.getPayeeName().substring(0,((pg.getPayeeName().length() >= PayeeNameMaxLength)? PayeeNameMaxLength: pg.getPayeeName().length() ));
+                        String AddrLine1 = pg.getLine1Address().substring(0,((pg.getLine1Address().length() >= AddrMaxLength)? AddrMaxLength: pg.getLine1Address().length() ));
+                        String AddrLine2 = pg.getLine2Address().substring(0,((pg.getLine2Address().length() >= AddrMaxLength)? AddrMaxLength: pg.getLine2Address().length() ));
+                        String AddrLine3 = pg.getLine3Address().substring(0,((pg.getLine3Address().length() >= AddrMaxLength)? AddrMaxLength: pg.getLine3Address().length() ));
+                        String AddrLine4 = pg.getLine4Address().substring(0,((pg.getLine4Address().length() >= AddrMaxLength)? AddrMaxLength: pg.getLine4Address().length() ));
+                        String City = pg.getCity().substring(0,((pg.getCity().length() >= CityMaxLength)? CityMaxLength: pg.getCity().length() ));
+                        String State = pg.getState().substring(0,((pg.getState().length() >= StateMaxLength)? StateMaxLength: pg.getState().length() ));
+                        String Zip = pg.getZipCd().substring(0,((pg.getZipCd().length() >= ZipMaxLength)? ZipMaxLength: pg.getZipCd().length() ));
+                        
+                        os.write("PDT02010" + cDelim +      // Record Type - 8 bytes
+                        		"PR" + cDelim +             // Name qualifier - 3 bytes
+                        		cDelim +                    // ID code qualifier - 2 bytes
+                        		cDelim +                    // ID code - 80 bytes
+                        		PayeeName + cDelim +       	// Name - 30 bytes
+                        		cDelim +                    // Additional name 1 - 60 bytes
+                        		cDelim +                    // Additional name 2 - 60 bytes
+                        		AddrLine1 + cDelim +    	// Address line 1 - 35 bytes
+                        		AddrLine2 + cDelim +    	// Address line 2 - 35 bytes
+                        		AddrLine3 + cDelim +    	// Address line 3 - 35 bytes
+                        		AddrLine4 + cDelim +    	// Address line 4 - 35 bytes
+                        		cDelim +                    // Address line 5 - 35 bytes
+                        		cDelim +                    // Address line 6 - 35 bytes
+                        		City + cDelim +            	// City - 30 bytes
+                        		State + cDelim +           	// State/Province - 2 bytes
+                        		Zip + cDelim +           	// Postal code - 15 bytes
+                        		cDelim +                    // Country code - 3 bytes
+                        		sCountryName + cDelim +     // Country name - 30 bytes  (do not use is Country Code is used)
+                           		cDelim +                    // Ref qualifier 1 - 3 bytes
+                        		cDelim +                    // Ref ID 1 - 50 bytes
+                        		cDelim +                    // Ref description 1 - 80 bytes
+                        		cDelim +                    // Ref qualifier 1 - 3 bytes
+                        		cDelim +                    // Ref ID 1 - 50 bytes
+                        		cDelim +                    // Ref description 1 - 80 bytes
                         		cDelim + "\n");
                        
                         totalRecordCount = totalRecordCount + 3;	//One for the PAY01000 record and one for each PDT02010 record
@@ -1244,16 +1287,16 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                     // Setup Notes
                     String rec03020Note1= "";
                     String rec03020Note2= "";
-                    Iterator<PaymentNoteText> ix = paymentDetail.getNotes().iterator();
+                    Iterator<PaymentNoteText> ix = pd.getNotes().iterator();
                     //Get the first note
                     if  (ix.hasNext()) {
                     	PaymentNoteText note = (PaymentNoteText) ix.next();
-                    	rec03020Note1 = note.getCustomerNoteText();
+                    	rec03020Note1 = note.getCustomerNoteText().substring(0,((note.getCustomerNoteText().length() <= 72)? 72: note.getCustomerNoteText().length() ));
                     }
                     //Get the second note
                     if  (ix.hasNext()) {
                     	PaymentNoteText note = (PaymentNoteText) ix.next();
-                    	rec03020Note2 = note.getCustomerNoteText();
+                    	rec03020Note2 = note.getCustomerNoteText().substring(0,((note.getCustomerNoteText().length() <= 72)? 72: note.getCustomerNoteText().length() ));
                     }
                     
                     // Write the REM03020 record
@@ -1262,17 +1305,17 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                     		DisbursementVoucherConstants.DV_EXTRACT_MELLON_FAST_TRACK_INVOICE_NUMBER_CODE : 
                     			DisbursementVoucherConstants.DV_EXTRACT_MELLON_FAST_TRACK_CUSTOMER_PAYMENT_DOC_NBR_CODE;
                     String remittanceIdText = (subUnitCode == DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE) ? 
-                    		paymentDetail.getCustPaymentDocNbr() : 
-                    			paymentDetail.getInvoiceNbr();
+                    		pd.getCustPaymentDocNbr() : 
+                    			pd.getInvoiceNbr();
                     		
                     os.write("REM03020" + cDelim +                                 				// Record type - 8 bytes
                     		remittanceIdCode + cDelim +                            				// Remittance qualifier code - 3 bytes
                     		remittanceIdText + cDelim +                            				// Remittance ID - 50 bytes
-                    		paymentDetail.getNetPaymentAmount().toString() + cDelim +         	// Net invoice amount - 18 bytes
-                    		paymentDetail.getInvTotShipAmount().toString() + cDelim +         	// Total invoice amount - 18 bytes
-                    		paymentDetail.getInvTotDiscountAmount().toString() + cDelim +     	// Discount amount - 18 bytes
-                    		String.format("%-80.80s", rec03020Note1) + cDelim +                 // Note 1 - 80 bytes
-                    		String.format("%-80.80s", rec03020Note2) + cDelim +                 // Note 2 - 80 bytes
+                    		pd.getNetPaymentAmount().toString() + cDelim +         				// Net invoice amount - 18 bytes
+                    		pd.getInvTotShipAmount().toString() + cDelim +         				// Total invoice amount - 18 bytes
+                    		pd.getInvTotDiscountAmount().toString() + cDelim +     				// Discount amount - 18 bytes
+                    		rec03020Note1 + cDelim +                 							// Note 1 - 80 bytes
+                    		rec03020Note2 + cDelim +                 							// Note 2 - 80 bytes
                     		cDelim +                                               				// Ref qualifier 1
                     		cDelim +                                               				// Ref ID 1
                     		cDelim +                                               				// Ref description 1
@@ -1304,8 +1347,8 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 	            totalRecordCount = totalRecordCount + 1;   
 	            //Now write the trailer record
 	            os.write("TRL09000" + cDelim +             // Record Type
-	            		totalRecordCount + cDelim +        // Variable (V) or Fixed (F) flag
-	            		totalPaymentAmounts + cDelim +     // Delimiter name - Must be either FFCARET or FFCOMMA.  Others are allowed but Mellon will have to be contacted first.
+	            		totalRecordCount + cDelim +        // Total # of records in the file including header and trailer. 15 bytes numeric only
+	            		totalPaymentAmounts + cDelim +     // Total amount of all net payments for the file.  25 bytes numeric only
 	            		"\n");                             // EOR
             }
 
