@@ -373,7 +373,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                 
         // Change the filename so that it ends in .txt instead of .xml
         ftFilename = filename.replace(".xml", ".txt");
-        arFilename = ftFilename.replace("check", "check_immediate_only");
+        arFilename = ftFilename.replace("check", "check_immediate");
         
         int totalRecordCount = 0;
         KualiDecimal totalPaymentAmounts = KualiDecimal.ZERO; 
