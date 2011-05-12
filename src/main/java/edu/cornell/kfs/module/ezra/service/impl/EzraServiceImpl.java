@@ -488,7 +488,7 @@ public class EzraServiceImpl implements EzraService {
 			if (ObjectUtils.isNull(po)) {
 				po = new ProposalOrganization();
 			} else {
-				po.setVersionNumber(po.getVersionNumber());
+				po.setVersionNumber(po.getVersionNumber()+1);
 			}
 			po.setChartOfAccountsCode("IT");
 			po.setOrganizationCode(org.getOrganizationCode());
