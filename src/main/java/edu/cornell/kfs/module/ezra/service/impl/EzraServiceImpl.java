@@ -304,7 +304,7 @@ public class EzraServiceImpl implements EzraService {
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		}
-		agencyDoc.getDocumentHeader().setDocumentDescription("Edit agency: "+agency.getAgencyNumber()+" by auto edit");
+		agencyDoc.getDocumentHeader().setDocumentDescription(agency.getAgencyNumber()+" by auto edit");
 		if (ObjectUtils.isNotNull(oldAgency)) {
 			agencyDoc.getOldMaintainableObject().setBusinessObject(oldAgency);
 			agencyDoc.getDocumentHeader().setDocumentDescription("Auto creation of new agency: "+ agency.getAgencyNumber());
@@ -341,7 +341,7 @@ public class EzraServiceImpl implements EzraService {
 		if (ObjectUtils.isNotNull(oldAward)) {
 			awardDoc.getOldMaintainableObject().setBusinessObject(oldAward);
 			award.setVersionNumber(oldAward.getVersionNumber());
-			awardDoc.getDocumentHeader().setDocumentDescription("Edit award: "+award.getProposalNumber()+" by auto edit");
+			awardDoc.getDocumentHeader().setDocumentDescription(award.getProposalNumber()+" by auto edit");
 
 		} 
 		awardDoc.getNewMaintainableObject().setBusinessObject(award);;
