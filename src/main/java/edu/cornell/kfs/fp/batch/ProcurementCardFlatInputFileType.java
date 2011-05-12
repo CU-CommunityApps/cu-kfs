@@ -249,8 +249,8 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
 
         	parent = new ProcurementCardTransaction();
 
-            parent.setTransactionCreditCardNumber(extractNormalizedString(line, 2, 18));
-            parent.setChartOfAccountsCode(defaultChart);
+            parent.setTransactionCreditCardNumber(extractNormalizedString(line, 2, 18, true)); //req
+            parent.setChartOfAccountsCode(defaultChart); //req
             parent.setTransactionCycleEndDate(extractCycleDate(line, 294, 296));
 //            parent.setTransactionCycleStartDate(transactionCycleStartDate); //may not be able to have
             parent.setCardHolderName(extractNormalizedString(line, 43, 68));
@@ -289,14 +289,14 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             child.setCardLimit(parent.getCardLimit());
             child.setCardStatusCode(parent.getCardStatusCode());
             
-            child.setAccountNumber(extractNormalizedString(line, 317, 324));
+            child.setAccountNumber(extractNormalizedString(line, 317, 324, true)); //req
             child.setSubAccountNumber(extractNormalizedString(line, 324, 329));
-            child.setFinancialObjectCode(extractNormalizedString(line, 329,333));
+            child.setFinancialObjectCode(extractNormalizedString(line, 329, 333, true)); //req
             child.setFinancialSubObjectCode(extractNormalizedString(line,333,336));
             child.setProjectCode(extractNormalizedString(line, 336, 346));	        	
-            child.setFinancialDocumentTotalAmount(extractDecimal(line, 79, 91));
-            child.setTransactionDebitCreditCode(convertDebitCreditCode(line.substring(64,65)));
-            child.setTransactionDate(extractDate(line, 45, 53));	
+            child.setFinancialDocumentTotalAmount(extractDecimal(line, 79, 91));  //req
+            child.setTransactionDebitCreditCode(convertDebitCreditCode(line.substring(64,65))); //req
+            child.setTransactionDate(extractDate(line, 45, 53)); // req	
             child.setTransactionOriginalCurrencyCode(extractNormalizedString(line, 61, 64));
             child.setTransactionBillingCurrencyCode(extractNormalizedString(line, 76, 79));
             child.setVendorName(extractNormalizedString(line, 95, 120));
@@ -315,7 +315,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             
             child.setTransactionPurchaseIdentifierDescription(extractNormalizedString(line, 273, 298));
             child.setVendorCityName(extractNormalizedString(line, 120, 146));
-            child.setVendorStateCode(extractNormalizedString(line, 146, 149));
+            child.setVendorStateCode(extractNormalizedString(line, 146, 148));
             child.setVendorZipCode(extractNormalizedString(line, 152, 161));
             child.setVisaVendorIdentifier(extractNormalizedString(line, 176, 192));
             
@@ -401,18 +401,33 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
     	return theDecimal;
     }
     
-    private Date extractCycleDate(String line, int begin, int end) throws Exception{
+    private Date extractCycleDate(String line, int begin, int end) throws Exception {
     	String day = line.substring(begin, end);
     	Date theDate = new Date(System.currentTimeMillis());
     	theDate.setDate(Integer.parseInt(day));
     	return theDate;
     }
     
-    private String convertDebitCreditCode(String val) {
+    private String extractNormalizedString(String line, int begin, int end, boolean required) throws Exception {
+    	String theValue = extractNormalizedString(line, begin, end);
+    	if (required) {
+    		if (theValue==null) {
+    			throw new Exception("A required value was missing at " + begin + " " + end + " on line " + lineCount);
+    		}
+    	}
+    	return theValue;
+    }
+        
+    private String convertDebitCreditCode(String val) throws Exception {
     	if (val.equals("+")) {
     		return "D";
     	}
-    	return "C";
+    	else if (val.equals("-")) {
+    		return "C";
+    	}
+    	else {
+    		throw new Exception("Unable to determine whether transaction line is a debit or a credit");
+    	}
     }
     
     private String lineCountMessage() {
