@@ -192,8 +192,12 @@ public class EzraServiceImpl implements EzraService {
 		proposal.setProposalOrganizations(propOrgs);
 		
 		//check to see if this is a real cfda 
-		proposal.setCfdaNumber(ezraProposal.getCfdaNumber().trim());
-		proposal.setProposalProjectTitle(project.getProjectTitle().trim());
+		if (ezraProposal.getCfdaNumber() != null) {
+			proposal.setCfdaNumber(ezraProposal.getCfdaNumber().trim());
+		}
+		if (ezraProposal.getProjectTitle() != null) {
+			proposal.setProposalProjectTitle(project.getProjectTitle().trim());
+		}
 		proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
 		proposal.setProposalStatusCode(EzraUtils.getProposalAwardStatusMap().get(ezraProposal.getStatus()));
 		proposal.setProposalPurposeCode(EzraUtils.getProposalPurposeMap().get(ezraProposal.getPurpose()));
