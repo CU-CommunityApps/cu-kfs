@@ -81,6 +81,7 @@
         <ref bean="Award-active"/>
         <ref bean="Award-extension-costShareRequired"/>
         <ref bean="Award-extension-finalFiscalReportDate"/>
+        <ref bean="Award-extension-finalFinancialReportRequired"/>
         <ref bean="Award-extension-locAccountId"/>
       </list>
     </property>
@@ -615,6 +616,12 @@
   	<property name="name" value="extension.costShareRequired"/>
   </bean>
   
+  <bean id="Award-extension-finalFinancialReportRequired" parent="Award-extension-finalFinancialReportRequired-parentBean"/>
+  
+  <bean id="Award-extension-finalFinancialReportRequired-parentBean" abstract="true" parent="AwardExtendedAttribute-finalFinancialReportRequired">
+	<property name="name" value="extension.finalFinancialReportRequired"/>
+  </bean>
+  
   <bean id="Award-extension-finalFiscalReportDate" parent="Award-extension-finalFiscalReportDate-parentBean"/>
   
   <bean id="Award-extension-finalFiscalReportDate-parentBean" abstract="true" parent="AwardExtendedAttribute-finalFiscalReportDate">
@@ -675,6 +682,7 @@
               <bean parent="FieldDefinition" p:attributeName="extension.locAccountId"/>
               <bean parent="FieldDefinition" p:attributeName="extension.costShareRequired"/>
               <bean parent="FieldDefinition" p:attributeName="extension.finalFiscalReportDate"/>
+              <bean parent="FieldDefinition" p:attributeName="extension.finalFinancialReportRequired"/>
               <bean parent="FieldDefinition" p:attributeName="awardDocumentNumber"/>
               <bean parent="FieldDefinition" p:attributeName="awardCommentText"/>
               <bean parent="FieldDefinition" p:attributeName="active"/>

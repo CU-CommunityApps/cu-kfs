@@ -5,6 +5,7 @@
     	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
     	<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
     	<field-descriptor name="costShareRequired" column="CS_REQ_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+    	<field-descriptor name="finalFinancialReportRequired" column="FIN_FIS_REQ_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
     	<field-descriptor name="finalFiscalReportDate" column="FINAL_FISCAL_RPT_DT" jdbc-type="DATE" />
     	<field-descriptor name="locAccountId" column="LOC_ACCT_ID" jdbc-type="VARCHAR" />
     </class-descriptor>

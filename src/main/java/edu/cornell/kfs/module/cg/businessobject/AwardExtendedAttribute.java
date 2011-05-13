@@ -14,6 +14,7 @@ import org.kuali.rice.kns.bo.PersistableBusinessObjectExtensionBase;
 public class AwardExtendedAttribute extends PersistableBusinessObjectExtensionBase {
 
 	private boolean costShareRequired;
+	private boolean finalFinancialReportRequired;
 	private Date finalFiscalReportDate;
 	private String locAccountId;
 	private Long proposalNumber;
@@ -24,6 +25,14 @@ public class AwardExtendedAttribute extends PersistableBusinessObjectExtensionBa
 
 	public void setCostShareRequired(boolean costShareRequired) {
 		this.costShareRequired = costShareRequired;
+	}
+		
+	public boolean isFinalFinancialReportRequired() {
+		return finalFinancialReportRequired;
+	}
+
+	public void setFinalFinancialReportRequired(boolean finalFinancialReportRequired) {
+		this.finalFinancialReportRequired = finalFinancialReportRequired;
 	}
 
 	public Date getFinalFiscalReportDate() {

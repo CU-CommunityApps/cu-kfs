@@ -11,6 +11,7 @@
             <ref bean="AwardExtendedAttribute-proposalNumber"/> 
             <ref bean="AwardExtendedAttribute-costShareRequired"/>
             <ref bean="AwardExtendedAttribute-finalFiscalReportDate"/>
+            <ref bean="AwardExtendedAttribute-finalFinancialReportRequired"/>
             <ref bean="AwardExtendedAttribute-locAccountId"/>
       </list> 
     </property> 
@@ -28,17 +29,32 @@
     	<property name="formatterClass" value="org.kuali.rice.kns.web.format.BooleanFormatter"/>
   	</bean>
   	
+  	<bean id="AwardExtendedAttribute-finalFinancialReportRequired" parent="AttributeDefinition">
+  		<property name="name" value="finalFinancialReportRequired"/>
+  		<property name="forceUppercase" value="false"/>
+  		<property name="label" value="Final Financial Report Required"/>
+  		<property name="shortLabel" value="finalFinancialReportRequired"/>
+  		<property name="maxLength" value="1"/>
+  		<property name="control" ref="CheckboxControl" />
+  		<property name="formatterClass" value="org.kuali.rice.kns.web.format.BooleanFormatter"/>
+  	</bean>
+  	
   	 <bean id="AwardExtendedAttribute-finalFiscalReportDate" parent="GenericAttributes-genericTimestamp">
   		<property name="name" value="finalFiscalReportDate"/>
-    	<property name="label" value="Final Fiscal Report Date"/>
-    	<property name="shortLabel" value="finalFiscalReportDate"/>
+    	<property name="label" value="Final Financial Report Date"/>
+    	<property name="shortLabel" value="finalFinancialReportDate"/>
     	<property name="required" value="false"/>
     </bean>
     
-    <bean id="AwardExtendedAttribute-locAccountId" parent="Account-accountNumber">
+    <bean id="ThirtyCharacterTextControl" parent="TextControlDefinition" p:size="30" />
+    
+    <bean id="AwardExtendedAttribute-locAccountId" parent="AttributeDefinition">
     	<property name="name" value="locAccountId"/>
-    	<property name="label" value="LOC Account Number"/>
-    	<property name="shortLabel" value="LOC Account Number"/>
+    	<property name="label" value="Letter of Credit Account ID #"/>
+    	<property name="shortLabel" value="LoC Account ID #"/>
     	<property name="required" value="false"/>
+    	<property name="maxLength" value="30"/>
+    	<property name="validationPattern" ref="AnyCharacterValidation"/>
+    	<property name="control" ref="ThirtyCharacterTextControl"/>
   	</bean>
 </beans> 

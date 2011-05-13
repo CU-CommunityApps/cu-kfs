@@ -555,8 +555,8 @@ public class KFSKeyConstants {
     public static final String ERROR_INVALID_PROJECT_DIRECTOR_STATUS = "error.cg.invalidProjectDirectorStatus";
     public static final String ERROR_NOT_A_PROJECT_DIRECTOR = "error.cg.notAProjectDirector";
     public static final String ERROR_PROPOSAL_SUBCONTRACTOR_NUMBER_REQUIRED_FOR_ADD = "error.cg.proposal.subcontractorNumberRequiredForAdd";
-
-
+    public static final String ERROR_FINAL_FINANCIAL_REPORT_DATE_REQUIRED = "error.cg.requiredFinancialReportDateNotSupplied";    
+    
     public static final String WARNING_AWARD_ENTRY_BEFORE_START_DATE = "warning.cg.award.entryDateBeforeStartDate";
     public static final String WARNING_AWARD_SUBCONTRACTOR_TOTAL_GREATER_THAN_AWARD_TOTAL = "warning.cg.award.subcontractorAmountGreaterThanAwardAmount";
     
