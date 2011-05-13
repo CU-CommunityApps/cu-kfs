@@ -141,6 +141,22 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
     public void setDateTimeService(DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
     }
+    
+    private void initialize() {
+         parent = null;
+         duplicateTransactions = false;
+         transactionCount = 0;
+         headerTransactionCount = 0;
+         footerTransactionCount = 0;
+         lineCount = 1;
+         accumulatedDebits = new KualiDecimal(0);
+         accumulatedCredits = new KualiDecimal(0);
+         totalDebits = new KualiDecimal(0);
+         totalCredits = new KualiDecimal(0);
+         fileFooterCredits = new KualiDecimal(0);
+         fileFooterDebits = new KualiDecimal(0);
+    }
+    
 
     public Object parse(byte[] fileByteContent) throws ParseException {
         BufferedReader bufferedFileReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(fileByteContent)));
@@ -151,7 +167,8 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         ArrayList<ProcurementCardTransaction> transactions = new ArrayList<ProcurementCardTransaction>();
         LOG.info("Beginning parse of file");
         try {                       
-            
+            initialize();
+        	
             while ((fileLine=bufferedFileReader.readLine()) != null) {
             	ProcurementCardTransaction theTransaction = generateProcurementCardTransaction(fileLine);
             	if (theTransaction!=null){
