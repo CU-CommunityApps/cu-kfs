@@ -139,8 +139,10 @@ public class B2BShoppingServiceImpl implements B2BShoppingService {
             // create requisition
             RequisitionDocument req = (RequisitionDocument) documentService.getNewDocument(PurapConstants.REQUISITION_DOCUMENT_TYPE);
             String description = ((B2BShoppingCartItem)items.get(0)).getExtrinsic("CartName");
+            String businessPurpose = ((B2BShoppingCartItem)items.get(0)).getExtrinsic("Business Purpose");
 
             req.getDocumentHeader().setDocumentDescription(description);
+            req.getDocumentHeader().setExplanation(businessPurpose);
 
             // set b2b contract for vendor
             VendorContract contract = vendorService.getVendorB2BContract(vendor, user.getCampusCode());
