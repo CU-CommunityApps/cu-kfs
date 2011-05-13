@@ -1011,7 +1011,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         String errors = b2bPurchaseOrderService.sendPurchaseOrder(poa);
         if (StringUtils.isEmpty(errors)) {
             //POA sent successfully; change status to OPEN
-            attemptSetupOfInitialOpenOfDocument(poa);
+            LOG.info("Setting poa document id " + poa.getDocumentNumber() + " status from '" + poa.getStatusCode() + "' to '" + PurchaseOrderStatuses.OPEN + "'");
+            purapService.updateStatus(poa, PurchaseOrderStatuses.OPEN);
             poa.setPurchaseOrderLastTransmitTimestamp(dateTimeService.getCurrentTimestamp());
             return true;
         }
