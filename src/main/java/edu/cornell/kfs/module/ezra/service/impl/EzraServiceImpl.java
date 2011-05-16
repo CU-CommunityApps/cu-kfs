@@ -156,6 +156,7 @@ public class EzraServiceImpl implements EzraService {
 			if (ObjectUtils.isNotNull(deliverable)) {
 				AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
 				aea.setFinalFiscalReportDate(deliverable.getDueDate());
+				aea.setFinalFinancialReportRequired(true);
 			}
 		}
 		KualiDecimal costShareRequired = ezraAward.getCsVolClg().add(ezraAward.getCsVolCntr().add(ezraAward.getCsVolDept().add(ezraAward.getCsVolExt().add(ezraAward.getCsVolUniv()))));
