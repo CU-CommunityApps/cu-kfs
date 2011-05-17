@@ -107,6 +107,7 @@
                     <exclude>WEB-INF/lib/spring*.jar</exclude>
                     <exclude>WEB-INF/lib/xalan-*.jar</exclude>
                     <exclude>WEB-INF/lib/xapool.jar</exclude>
+                    <exclude>WEB-INF/lib/xapool-1.5.0-patch.jar</exclude>
                     <!--
                       KFS's is newer... 
                     <exclude>WEB-INF/lib/xercesImpl-2.9.1.jar</exclude>
@@ -353,6 +354,10 @@
             <groupId>commons-digester</groupId>
             <artifactId>commons-digester</artifactId>
         </exclusion>
+         <exclusion>
+                  <artifactId>xapool</artifactId>
+                  <groupId>xapool</groupId>
+          </exclusion>
       </exclusions>
     </dependency>
 
@@ -370,6 +375,10 @@
                         <groupId>commons-pool</groupId>
                         <artifactId>commons-pool</artifactId>
                 </exclusion>
+                 <exclusion>
+                  <artifactId>xapool</artifactId>
+                  <groupId>xapool</groupId>
+          </exclusion>
         </exclusions>
     </dependency>
        
@@ -386,6 +395,10 @@
                         <groupId>commons-pool</groupId>
                         <artifactId>commons-pool</artifactId>
                 </exclusion>
+                 <exclusion>
+                  <artifactId>xapool</artifactId>
+                  <groupId>xapool</groupId>
+          </exclusion>
         </exclusions>
      </dependency>
     
@@ -402,31 +415,60 @@
         <groupId>jotm</groupId>
         <artifactId>jotm</artifactId>
         <version>2.0.10</version>
+        <exclusions>
+         <exclusion>
+                  <artifactId>xapool</artifactId>
+                  <groupId>xapool</groupId>
+          </exclusion>
+        
+        </exclusions>
         <scope>runtime</scope>
+        
     </dependency> 
     <dependency>
         <groupId>jotm</groupId>
         <artifactId>jotm_jrmp_stubs</artifactId>
         <version>2.0.10</version>
         <scope>runtime</scope>
+         <exclusions>
+         <exclusion>
+                  <artifactId>xapool</artifactId>
+                  <groupId>xapool</groupId>
+          </exclusion>
+        
+        </exclusions>
     </dependency> 
     <dependency>
         <groupId>jotm</groupId>
         <artifactId>jotm_iiop_stubs</artifactId>
         <version>2.0.10</version>
         <scope>runtime</scope>
+         <exclusions>
+         <exclusion>
+                  <artifactId>xapool</artifactId>
+                  <groupId>xapool</groupId>
+          </exclusion>
+        
+        </exclusions>
     </dependency>
     <dependency>
         <groupId>javax.transaction</groupId>
         <artifactId>jta</artifactId>
         <version>1.0.1B</version>
         <scope>compile</scope>
+         <exclusions>
+         <exclusion>
+                  <artifactId>xapool</artifactId>
+                  <groupId>xapool</groupId>
+          </exclusion>
+        
+        </exclusions>
     </dependency> 
     <dependency>
         <groupId>xapool</groupId>
         <artifactId>xapool</artifactId>
-        <version>1.5.0-patch</version>
-        <scope>runtime</scope>
+        <version>1.5.0-patch3</version>
+        <scope>compile</scope>
     </dependency>
    
      <dependency>
