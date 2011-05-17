@@ -106,7 +106,7 @@
                     <exclude>WEB-INF/lib/oscache*.jar</exclude>
                     <exclude>WEB-INF/lib/spring*.jar</exclude>
                     <exclude>WEB-INF/lib/xalan-*.jar</exclude>
-                    <exclude>WEB-INF/lib/xapool*.jar</exclude>
+                    <exclude>WEB-INF/lib/xapool.jar</exclude>
                     <!--
                       KFS's is newer... 
                     <exclude>WEB-INF/lib/xercesImpl-2.9.1.jar</exclude>
