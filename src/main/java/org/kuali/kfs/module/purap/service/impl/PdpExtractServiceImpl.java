@@ -782,9 +782,11 @@ public class PdpExtractServiceImpl implements PdpExtractService {
         paymentGroup.setPayeeId(paymentRequestDocument.getVendorHeaderGeneratedIdentifier() + "-" + paymentRequestDocument.getVendorDetailAssignedIdentifier());
         paymentGroup.setPayeeIdTypeCd(PdpConstants.PayeeIdTypeCodes.VENDOR_ID);
 
-        if (paymentRequestDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCategoryCode() != null) {
-            paymentGroup.setPayeeOwnerCd(paymentRequestDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCategoryCode());
-        }
+        paymentGroup.setPayeeOwnerCd(paymentRequestDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCode());
+
+//        if (paymentRequestDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCategoryCode() != null) {
+//            paymentGroup.setPayeeOwnerCd(paymentRequestDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCategoryCode());
+//        }
 
         if (paymentRequestDocument.getVendorCustomerNumber() != null) {
             paymentGroup.setCustomerInstitutionNumber(paymentRequestDocument.getVendorCustomerNumber());
