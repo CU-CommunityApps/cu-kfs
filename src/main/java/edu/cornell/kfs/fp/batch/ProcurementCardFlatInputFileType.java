@@ -320,14 +320,14 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             child.setTransactionReferenceNumber(extractNormalizedString(line, 18, 41));
             child.setTransactionMerchantCategoryCode(extractNormalizedString(line, 91, 95));
             child.setTransactionPostingDate(extractDate(line, 53, 61));
-            child.setTransactionOriginalCurrencyAmount(extractDecimal(line, 64, 76));
+            child.setTransactionOriginalCurrencyAmount(extractDecimalWithCents(line, 64, 76));
             child.setTransactionCurrencyExchangeRate(extractDecimal(line, 304,317).bigDecimalValue());
             child.setTransactionSettlementAmount(extractDecimal(line, 79, 91));
 
-            String transactionTaxExemptInd = extractNormalizedString(line, 234, 235); // Y or N
+//            String transactionTaxExemptInd = extractNormalizedString(line, 234, 235); // Y or N
             String transactionPurchaseInd = extractNormalizedString(line, 272, 273); // 1,2,3,4
             
-            child.setTransactionTaxExemptIndicator(extractNormalizedString(line, 234, 235));
+//            child.setTransactionTaxExemptIndicator(extractNormalizedString(line, 234, 235));
             child.setTransactionPurchaseIdentifierIndicator(extractNormalizedString(line, 272, 273));
             
             child.setTransactionPurchaseIdentifierDescription(extractNormalizedString(line, 273, 298));
@@ -417,6 +417,25 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
     	}
     	return theDecimal;
     }
+    
+    private KualiDecimal extractDecimalWithCents(String line, int begin, int end) throws Exception {
+    	KualiDecimal theDecimal;
+    	KualiDecimal theCents;
+    	try {
+	    	String sanitized = line.substring(begin, end-2);
+	    	sanitized = StringUtils.remove(sanitized, '-');
+	    	sanitized = StringUtils.remove(sanitized, '+');
+	    	theDecimal = new KualiDecimal(sanitized);
+	    	theCents = new KualiDecimal(line.substring(end-2, end));
+	    	theCents = theCents.multiply(new KualiDecimal("0.01"));
+	    	theDecimal = theDecimal.add(theCents);
+    	}
+    	catch (Exception e) {
+    		throw new Exception("Unable to parse " +  line.substring(begin, end) + " into a decimal value on line " + lineCount);
+    	}
+    	return theDecimal;
+    }
+
     
     private Date extractCycleDate(String line, int begin, int end) throws Exception {
     	String day = line.substring(begin, end);
