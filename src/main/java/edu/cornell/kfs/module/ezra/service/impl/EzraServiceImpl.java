@@ -125,6 +125,7 @@ public class EzraServiceImpl implements EzraService {
 		award.setAwardBeginningDate(proposal.getProposalBeginningDate());
 		award.setAwardEndingDate(proposal.getProposalEndingDate());
 		award.setAwardDirectCostAmount(proposal.getProposalDirectCostAmount());
+		award.setAwardIndirectCostAmount(KualiDecimal.ZERO);
 		award.setGrantDescriptionCode(EzraUtils.getGrantDescriptionMap().get(ezraAward.getAwardDescriptionCode()));
 		award.setAwardEntryDate(dateTimeService.getCurrentSqlDate());
 		if (ObjectUtils.isNull(oldAward)) {
