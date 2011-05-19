@@ -111,6 +111,7 @@
         <bean parent="MaintainableFieldDefinition" p:name="agencyAnalystName"/>
         <bean parent="MaintainableFieldDefinition" p:name="analystTelephoneNumber"/>
         <bean parent="MaintainableFieldDefinition" p:name="extension.costShareRequired"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.finalFinancialReportRequired"/>
         <bean parent="MaintainableFieldDefinition" p:name="extension.finalFiscalReportDate"/>
         <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
       </list>
