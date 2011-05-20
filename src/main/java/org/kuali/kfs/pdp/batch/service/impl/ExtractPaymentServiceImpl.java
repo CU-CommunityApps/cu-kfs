@@ -1222,7 +1222,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         // Get country name for code
                         Country country = countryService.getByPrimaryId(pg.getCountry());
                         if (country != null)
-                        	sCountryName = country.getPostalCountryName().substring(0,((country.getPostalCountryName().length() >= 30)? 30: country.getPostalCountryName().length() ));;
+                        	sCountryName = country.getPostalCountryName().substring(0,((country.getPostalCountryName().length() >= 30)? 30: country.getPostalCountryName().length() ));
                         else
                         	if (ObjectUtils.isNotNull(pg.getCountry()))
                         		sCountryName = pg.getCountry().substring(0,((pg.getLine1Address().length() >= 30)? 30: pg.getCountry().length() ));
