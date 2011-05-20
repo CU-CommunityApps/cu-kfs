@@ -197,7 +197,7 @@ public class EzraServiceImpl implements EzraService {
 		if (ezraProposal.getCfdaNumber() != null) {
 			proposal.setCfdaNumber(ezraProposal.getCfdaNumber().trim());
 		}
-		if (ezraProposal.getProjectTitle() != null) {
+		if (project.getProjectTitle() != null) {
 			proposal.setProposalProjectTitle(project.getProjectTitle().trim());
 		}
 		proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
@@ -306,10 +306,10 @@ public class EzraServiceImpl implements EzraService {
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		}
-		agencyDoc.getDocumentHeader().setDocumentDescription(agency.getAgencyNumber()+" by auto edit");
+		agencyDoc.getDocumentHeader().setDocumentDescription("Auto creation of new agency: "+ agency.getAgencyNumber());
 		if (ObjectUtils.isNotNull(oldAgency)) {
 			agencyDoc.getOldMaintainableObject().setBusinessObject(oldAgency);
-			agencyDoc.getDocumentHeader().setDocumentDescription("Auto creation of new agency: "+ agency.getAgencyNumber());
+			agencyDoc.getDocumentHeader().setDocumentDescription(agency.getAgencyNumber()+" by auto edit");
 		} 
 		Maintainable agencyMaintainable = agencyDoc.getNewMaintainableObject();
 		agencyMaintainable.setBusinessObject(agency);
