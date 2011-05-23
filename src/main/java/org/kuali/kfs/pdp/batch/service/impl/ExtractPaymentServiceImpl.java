@@ -298,7 +298,13 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         writeOpenTag(os, 8, "notes");
                         for (Iterator ix = pd.getNotes().iterator(); ix.hasNext();) {
                             PaymentNoteText note = (PaymentNoteText) ix.next();
-                            writeTag(os, 10, "note", note.getCustomerNoteText());
+                            //  Had to add this code to check for and remove the colons that we added in 
+                            //   DisbursementVoucherExtractServiceImpl.java line 506 v4229.
+                            String tNote = note.getCustomerNoteText();
+                            if (tNote.length() >= 2)
+                            	if (tNote.substring(0,2).contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER))
+                            		tNote = tNote.substring(2);
+                            writeTag(os, 10, "note", tNote);
                         }
                         writeCloseTag(os, 8, "notes");
 
@@ -481,21 +487,26 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         		altAddrCity = altAddrCity.trim();  //Trim any leading or trailing blanks.
                         		NumOfAltAddressLines = NumOfAltAddressLines + 1;
                         	}
-                        	
-                    		// Retrieve up to 3 non-mailing address note lines and only the first 72 characters as per the BNY Mellon spec.
+                       	
+                    		// Retrieve up to 3 subsequent note lines and only the first 72 characters as per the BNY Mellon spec.
                         	else {
-                        		FirstNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
+                        		if (NoteLine.contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER))
+                        			FirstNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
+                        		
                         		if (ix.hasNext()) {
                         			//Retrieve the second
                             		note = (PaymentNoteText) ix.next();
                                 	NoteLine = note.getCustomerNoteText();
-                                	SecondNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
+                                	if (NoteLine.contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER))
+                                		SecondNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
 
                             		if (ix.hasNext()) {
                             			//Retrieve the second
                                 		note = (PaymentNoteText) ix.next();
                                     	NoteLine = note.getCustomerNoteText();
-                                    	ThirdNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
+                                    	if (NoteLine.contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER))
+                                    		ThirdNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
+                                    	break;  // Break here because we are only allowed to get the first three note lines
                             		}
 	                        		else
 	                        			break;
@@ -603,165 +614,164 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             	throw new Exception("writeExtractAchFileMellonBankFastTrack EXCEPTION: DIVSION CODE ISSUE=>  SUB UNIT IS " + subUnitCode + " BUT CAN ONLY BE 'DV', 'PRAP', 'LIBR', 'CSTR', 'STAT' OR 'CLIF'");
                             }
                             
-                            if (!immediateCheckCode) {
-	                        	//Write the Fast Track PAY01000 record (only one per payee)
-	                        	os.write("PAY01000" + cDelim +                              // Record Type - 8 bytes
-	                        			"7" + cDelim +                                      // 7=Payment and Electronic Advice (Transaction handling code - 2 bytes)
-	                        			totalNetAmount.toString() + cDelim +                // Total amount of check (Payment amount - 18 bytes)
-	                        			"C" + cDelim +                                      // C=Credit, D=Debit (Credit or debit Flag - 1 Byte)
-	                        			"CHK" + cDelim +                                    // CHK=Check (Payment method - 3 Bytes)
-	                        			"PBC" + cDelim +                                    // PBC is used for checks (Payment Format - 10 bytes)
-	                        			"01" + cDelim +                                     // Originators bank id qualifier - 2 bytes
-	                        			ourBankRoutingNumber + cDelim +                     // Originators bank id - 12 bytes
-	                        			"DA" + cDelim +                                     // Originating account number Qualifier - 3 bytes
-	                        			ourBankAccountNumber + cDelim +                     // Originating account number - 35 bytes
-	                        			"2150532082" + cDelim+                              // Originating company identifier - 10 bytes  This has to be different for this file than it is for ACH payments per BNY Mellon
-	                        			cDelim +                                            // Receiving bank id qualifier - 2 bytes
-	                        			cDelim +                                            // Receiving bank id - 12 bytes
-	                        			cDelim +                                            // Receiving account number qualifier - 3 bytes
-	                        			cDelim +                                            // Receiving account number - 35 bytes
-	                        			sdfPAY1000Rec.format(processDate) + cDelim +        // Effective date - 8 bytes - YYMMDD format
-	                        			cDelim +                                            // Business function code - 3 bytes 
-	                        			CheckNumber + cDelim +       						// Trace number (check number) - 50 bytes
-	                        			divisionCode + cDelim +                             // Division code - 50 bytes 
-	                        			cDelim +                                            // Currency code - 3 bytes
-	                        			cDelim +                                            // Note 1 - 80 bytes
-	                        			cDelim +                                            // Note 2 - 80 bytes
-	                        			cDelim +                                            // Note 3 - 80 bytes
-	                        			cDelim +                                            // Note 4 - 80 bytes
-	                        			cDelim +                                            // Filler
-	                        			"\n");
-	
-	                        	totalPaymentAmounts = totalPaymentAmounts.add(totalNetAmount);
-	                        	
-	                            // Write the Fast Track Payer Detail(PDT02010) record (only one per payee)
-	                            os.write("PDT02010" + cDelim +                        // Record Type - 8 bytes
-	                            		"PR" + cDelim +                               // Name qualifier - 3 bytes (PR = Payer)
-	                            		cDelim +                                      // ID code qualifier - 2 bytes
-	                            		cDelim +                                      // ID code - 80 bytes
-	                            		"Cornell University" + cDelim +               // Name - 35 bytes
-	                            		cDelim +                                      // Additional name 1 - 60 bytes
-	                            		cDelim +                                      // Additional name 2 - 60 bytes
-	                            		"Division of Financial Affairs" + cDelim +    // Address line 1 - 35 bytes
-	                            		"341 Pine Tree Road" + cDelim +               // Address line 2 - 35 bytes
-	                            		cDelim +                                      // Address line 3 - 35 bytes
-	                            		cDelim +                                      // Address line 4 - 35 bytes
-	                            		cDelim +                                      // Address line 5 - 35 bytes
-	                            		cDelim +                                      // Address line 6 - 35 bytes
-	                            		"Ithaca" + cDelim +                           // City - 30 bytes
-	                            		"NY" + cDelim +                               // State/Province - 2 bytes
-	                            		"148502820" + cDelim +                        // Postal code - 15 bytes
-	                            		cDelim +                                      // Country code - 3 bytes
-	                            		cDelim +                                      // Country name - 30 bytes
-	                            		cDelim +                                      // Ref qualifier 1 - 3 bytes
-	                            		cDelim +                                      // Ref ID 1 - 50 bytes
-	                            		cDelim +                                      // Ref description 1 - 80 bytes
-	                            		cDelim +                                      // Ref qualifier 1 - 3 bytes
-	                            		cDelim +                                      // Ref ID 1 - 50 bytes
-	                            		cDelim +                                      // Ref description 1 - 80 bytes
-	                            		cDelim +  "\n");
-	                            
-	                            // Write the Fast Track initial payee detail (PDT02010) record
-	                            // temp variables to observe length limitations
-	                            int AddrMaxLength = 35;
-	                            int CityMaxLength = 30;
-	                            int StateMaxLength = 2;
-	                            int ZipMaxLength = 15;
-	                            int PayeeNameMaxLength = 35;
-	                            String PayeeName = "";
-	                            String AddrLine1 = "";
-	                            String AddrLine2 = "";
-	                            String AddrLine3 = "";
-	                            String AddrLine4 = "";
-	                            String City = "";
-	                            String State = "";
-	                            String Zip = "";
-	                            
-	                            if (ObjectUtils.isNotNull(pg.getPayeeName()))
-	                            	PayeeName = pg.getPayeeName().substring(0,((pg.getPayeeName().length() >= PayeeNameMaxLength)? PayeeNameMaxLength: pg.getPayeeName().length() ));
-	                            if (ObjectUtils.isNotNull(pg.getLine1Address()))
-	                            	AddrLine1 = pg.getLine1Address().substring(0,((pg.getLine1Address().length() >= AddrMaxLength)? AddrMaxLength: pg.getLine1Address().length() ));
-	                            if (ObjectUtils.isNotNull(pg.getLine2Address()))
-	                            	AddrLine2 = pg.getLine2Address().substring(0,((pg.getLine2Address().length() >= AddrMaxLength)? AddrMaxLength: pg.getLine2Address().length() ));
-	                            if (ObjectUtils.isNotNull(pg.getLine3Address()))
-	                            	AddrLine3 = pg.getLine3Address().substring(0,((pg.getLine3Address().length() >= AddrMaxLength)? AddrMaxLength: pg.getLine3Address().length() ));
-	                            if (ObjectUtils.isNotNull(pg.getLine4Address()))
-	                            	AddrLine4 = pg.getLine4Address().substring(0,((pg.getLine4Address().length() >= AddrMaxLength)? AddrMaxLength: pg.getLine4Address().length() ));
-	                            if (ObjectUtils.isNotNull(pg.getCity()))
-	                            	City = pg.getCity().substring(0,((pg.getCity().length() >= CityMaxLength)? CityMaxLength: pg.getCity().length() ));
-	                            if (ObjectUtils.isNotNull(pg.getState()))
-	                            	State = pg.getState().substring(0,((pg.getState().length() >= StateMaxLength)? StateMaxLength: pg.getState().length() ));
-	                            if (ObjectUtils.isNotNull(pg.getZipCd()))
-	                            	Zip = pg.getZipCd().substring(0,((pg.getZipCd().length() >= ZipMaxLength)? ZipMaxLength: pg.getZipCd().length() ));
 
-	                            os.write("PDT02010" + cDelim +				// Record Type - 8 bytes
-	                            		"PE" + cDelim +						// Name qualifier - 3 bytes (PE = Payee) This record's data prints on the check
-	                            		cDelim +							// ID code qualifier - 2 bytes
-	                            		cDelim +							// ID code - 80 bytes
-	                            		PayeeName + cDelim +				// Name - 35 bytes
-	                            		cDelim +							// Additional name 1 - 60 bytes
-	                            		cDelim +							// Additional name 2 - 60 bytes
-	                            		AddrLine1 + cDelim +    			// Address line 1 - 35 bytes
-	                            		AddrLine2 + cDelim +    			// Address line 2 - 35 bytes
-	                            		AddrLine3 + cDelim +    			// Address line 3 - 35 bytes
-	                            		AddrLine4 + cDelim +    			// Address line 4 - 35 bytes
-	                            		cDelim +							// Address line 5 - 35 bytes
-	                            		cDelim +							// Address line 6 - 35 bytes
-	                            		City + cDelim +						// City - 30 bytes
-	                            		State + cDelim +					// State/Province - 2 bytes
-	                            		Zip + cDelim +						// Postal code - 15 bytes
-	                            		cDelim +							// Country code - 3 bytes
-	                            		sCountryName + cDelim +				// Country name - 30 bytes (do not use is Country Code is used)
-	                               		cDelim +							// Ref qualifier 1 - 3 bytes (not used)
-	                            		cDelim +							// Ref ID 1 - 50 bytes (not used)
-	                            		cDelim +							// Ref description 1 - 80 bytes (not used)
-	                            		cDelim +							// Ref qualifier 1 - 3 bytes (not used)
-	                            		cDelim +							// Ref ID 1 - 50 bytes (not used)
-	                            		cDelim +							// Ref description 1 - 80 bytes (not used)
-	                            		cDelim + "\n");
-	                            
-	                            // If no alternate address is provided, we must populate with the customer address
-	                            if (NumOfAltAddressLines == 0) {
-	                            	if (ObjectUtils.isNotNull(pg.getPayeeName())) 
-	                            		altAddrSendTo = pg.getPayeeName().substring(0,((pg.getPayeeName().length() <= PayeeNameMaxLength)? PayeeNameMaxLength: pg.getPayeeName().length() ));
-	                            	if (ObjectUtils.isNotNull(pg.getLine1Address())) 
-	                            		altAddrAddr1 = pg.getLine1Address().substring(0,((pg.getLine1Address().length() <= AddrMaxLength)? AddrMaxLength: pg.getLine1Address().length() ));
-	                            	if (ObjectUtils.isNotNull(pg.getLine2Address())) 
-	                            		altAddrAddr2 = pg.getLine2Address().substring(0,((pg.getLine2Address().length() <= AddrMaxLength)? AddrMaxLength: pg.getLine2Address().length() ));
-	                            	if (ObjectUtils.isNotNull(pg.getCity()) && ObjectUtils.isNotNull(pg.getState()) && ObjectUtils.isNotNull(pg.getZipCd())) 
-	                            		altAddrCityStateZip = pg.getCity() + ", " + pg.getState() + " " + pg.getZipCd();
-	                            }
-	                            // Write the Fast Track second payee detail (PDT02010) record
-	                            os.write("PDT02010" + cDelim +             // Record Type - 8 bytes
-	                            		"FE" + cDelim +                    // Name qualifier - 3 bytes (FE = Remit) This record's data prints on the remittance
-	                            		cDelim +                           // ID code qualifier - 2 bytes
-	                            		cDelim +                           // ID code - 80 bytes
-	                            		altAddrSendTo + cDelim +           // Name - 35 bytes
-	                            		cDelim +                           // Additional name 1 - 60 bytes
-	                            		cDelim +                           // Additional name 2 - 60 bytes
-	                            		altAddrAddr1 + cDelim +            // Address line 1 - 35 bytes
-	                            		altAddrAddr2 + cDelim +            // Address line 2 - 35 bytes
-	                            		cDelim +                           // Address line 3 - 35 bytes
-	                            		cDelim +                           // Address line 4 - 35 bytes
-	                            		cDelim +                           // Address line 5 - 35 bytes
-	                            		cDelim +                           // Address line 6 - 35 bytes
-	                            		altAddrCity + cDelim +             // City - 30 bytes
-	                            		altAddrState + cDelim +            // State/Province - 2 bytes
-	                            		altAddrZip + cDelim +              // Postal code - 15 bytes
-	                            		cDelim +                           // Country code - 3 bytes
-	                            		cDelim +                           // Country name - 30 bytes
-	                               		cDelim +                           // Ref qualifier 1 - 3 bytes
-	                            		cDelim +                           // Ref ID 1 - 50 bytes
-	                            		cDelim +                           // Ref description 1 - 80 bytes
-	                            		cDelim +                           // Ref qualifier 1 - 3 bytes
-	                            		cDelim +                           // Ref ID 1 - 50 bytes
-	                            		cDelim +                           // Ref description 1 - 80 bytes
-	                            		cDelim +  "\n");
-	                            
-	                            totalRecordCount = totalRecordCount + 4;  //One for the PAY01000 record and three for the PDT02010 records
+                        	//Write the Fast Track PAY01000 record (only one per payee)
+                        	os.write("PAY01000" + cDelim +                              // Record Type - 8 bytes
+                        			"7" + cDelim +                                      // 7=Payment and Electronic Advice (Transaction handling code - 2 bytes)
+                        			totalNetAmount.toString() + cDelim +                // Total amount of check (Payment amount - 18 bytes)
+                        			"C" + cDelim +                                      // C=Credit, D=Debit (Credit or debit Flag - 1 Byte)
+                        			"CHK" + cDelim +                                    // CHK=Check (Payment method - 3 Bytes)
+                        			"PBC" + cDelim +                                    // PBC is used for checks (Payment Format - 10 bytes)
+                        			"01" + cDelim +                                     // Originators bank id qualifier - 2 bytes
+                        			ourBankRoutingNumber + cDelim +                     // Originators bank id - 12 bytes
+                        			"DA" + cDelim +                                     // Originating account number Qualifier - 3 bytes
+                        			ourBankAccountNumber + cDelim +                     // Originating account number - 35 bytes
+                        			"2150532082" + cDelim+                              // Originating company identifier - 10 bytes  This has to be different for this file than it is for ACH payments per BNY Mellon
+                        			cDelim +                                            // Receiving bank id qualifier - 2 bytes
+                        			cDelim +                                            // Receiving bank id - 12 bytes
+                        			cDelim +                                            // Receiving account number qualifier - 3 bytes
+                        			cDelim +                                            // Receiving account number - 35 bytes
+                        			sdfPAY1000Rec.format(processDate) + cDelim +        // Effective date - 8 bytes - YYMMDD format
+                        			cDelim +                                            // Business function code - 3 bytes 
+                        			CheckNumber + cDelim +       						// Trace number (check number) - 50 bytes
+                        			divisionCode + cDelim +                             // Division code - 50 bytes 
+                        			cDelim +                                            // Currency code - 3 bytes
+                        			cDelim +                                            // Note 1 - 80 bytes
+                        			cDelim +                                            // Note 2 - 80 bytes
+                        			cDelim +                                            // Note 3 - 80 bytes
+                        			cDelim +                                            // Note 4 - 80 bytes
+                        			cDelim +                                            // Filler
+                        			"\n");
+
+                        	totalPaymentAmounts = totalPaymentAmounts.add(totalNetAmount);
+                        	
+                            // Write the Fast Track Payer Detail(PDT02010) record (only one per payee)
+                            os.write("PDT02010" + cDelim +                        // Record Type - 8 bytes
+                            		"PR" + cDelim +                               // Name qualifier - 3 bytes (PR = Payer)
+                            		cDelim +                                      // ID code qualifier - 2 bytes
+                            		cDelim +                                      // ID code - 80 bytes
+                            		"Cornell University" + cDelim +               // Name - 35 bytes
+                            		cDelim +                                      // Additional name 1 - 60 bytes
+                            		cDelim +                                      // Additional name 2 - 60 bytes
+                            		"Division of Financial Affairs" + cDelim +    // Address line 1 - 35 bytes
+                            		"341 Pine Tree Road" + cDelim +               // Address line 2 - 35 bytes
+                            		cDelim +                                      // Address line 3 - 35 bytes
+                            		cDelim +                                      // Address line 4 - 35 bytes
+                            		cDelim +                                      // Address line 5 - 35 bytes
+                            		cDelim +                                      // Address line 6 - 35 bytes
+                            		"Ithaca" + cDelim +                           // City - 30 bytes
+                            		"NY" + cDelim +                               // State/Province - 2 bytes
+                            		"148502820" + cDelim +                        // Postal code - 15 bytes
+                            		cDelim +                                      // Country code - 3 bytes
+                            		cDelim +                                      // Country name - 30 bytes
+                            		cDelim +                                      // Ref qualifier 1 - 3 bytes
+                            		cDelim +                                      // Ref ID 1 - 50 bytes
+                            		cDelim +                                      // Ref description 1 - 80 bytes
+                            		cDelim +                                      // Ref qualifier 1 - 3 bytes
+                            		cDelim +                                      // Ref ID 1 - 50 bytes
+                            		cDelim +                                      // Ref description 1 - 80 bytes
+                            		cDelim +  "\n");
+                            
+                            // Write the Fast Track initial payee detail (PDT02010) record
+                            // temp variables to observe length limitations
+                            int AddrMaxLength = 35;
+                            int CityMaxLength = 30;
+                            int StateMaxLength = 2;
+                            int ZipMaxLength = 15;
+                            int PayeeNameMaxLength = 35;
+                            String PayeeName = "";
+                            String AddrLine1 = "";
+                            String AddrLine2 = "";
+                            String AddrLine3 = "";
+                            String AddrLine4 = "";
+                            String City = "";
+                            String State = "";
+                            String Zip = "";
+                            
+                            if (ObjectUtils.isNotNull(pg.getPayeeName()))
+                            	PayeeName = pg.getPayeeName().substring(0,((pg.getPayeeName().length() >= PayeeNameMaxLength)? PayeeNameMaxLength: pg.getPayeeName().length() ));
+                            if (ObjectUtils.isNotNull(pg.getLine1Address()))
+                            	AddrLine1 = pg.getLine1Address().substring(0,((pg.getLine1Address().length() >= AddrMaxLength)? AddrMaxLength: pg.getLine1Address().length() ));
+                            if (ObjectUtils.isNotNull(pg.getLine2Address()))
+                            	AddrLine2 = pg.getLine2Address().substring(0,((pg.getLine2Address().length() >= AddrMaxLength)? AddrMaxLength: pg.getLine2Address().length() ));
+                            if (ObjectUtils.isNotNull(pg.getLine3Address()))
+                            	AddrLine3 = pg.getLine3Address().substring(0,((pg.getLine3Address().length() >= AddrMaxLength)? AddrMaxLength: pg.getLine3Address().length() ));
+                            if (ObjectUtils.isNotNull(pg.getLine4Address()))
+                            	AddrLine4 = pg.getLine4Address().substring(0,((pg.getLine4Address().length() >= AddrMaxLength)? AddrMaxLength: pg.getLine4Address().length() ));
+                            if (ObjectUtils.isNotNull(pg.getCity()))
+                            	City = pg.getCity().substring(0,((pg.getCity().length() >= CityMaxLength)? CityMaxLength: pg.getCity().length() ));
+                            if (ObjectUtils.isNotNull(pg.getState()))
+                            	State = pg.getState().substring(0,((pg.getState().length() >= StateMaxLength)? StateMaxLength: pg.getState().length() ));
+                            if (ObjectUtils.isNotNull(pg.getZipCd()))
+                            	Zip = pg.getZipCd().substring(0,((pg.getZipCd().length() >= ZipMaxLength)? ZipMaxLength: pg.getZipCd().length() ));
+
+                            os.write("PDT02010" + cDelim +				// Record Type - 8 bytes
+                            		"PE" + cDelim +						// Name qualifier - 3 bytes (PE = Payee) This record's data prints on the check
+                            		cDelim +							// ID code qualifier - 2 bytes
+                            		cDelim +							// ID code - 80 bytes
+                            		PayeeName + cDelim +				// Name - 35 bytes
+                            		cDelim +							// Additional name 1 - 60 bytes
+                            		cDelim +							// Additional name 2 - 60 bytes
+                            		AddrLine1 + cDelim +    			// Address line 1 - 35 bytes
+                            		AddrLine2 + cDelim +    			// Address line 2 - 35 bytes
+                            		AddrLine3 + cDelim +    			// Address line 3 - 35 bytes
+                            		AddrLine4 + cDelim +    			// Address line 4 - 35 bytes
+                            		cDelim +							// Address line 5 - 35 bytes
+                            		cDelim +							// Address line 6 - 35 bytes
+                            		City + cDelim +						// City - 30 bytes
+                            		State + cDelim +					// State/Province - 2 bytes
+                            		Zip + cDelim +						// Postal code - 15 bytes
+                            		cDelim +							// Country code - 3 bytes
+                            		sCountryName + cDelim +				// Country name - 30 bytes (do not use is Country Code is used)
+                               		cDelim +							// Ref qualifier 1 - 3 bytes (not used)
+                            		cDelim +							// Ref ID 1 - 50 bytes (not used)
+                            		cDelim +							// Ref description 1 - 80 bytes (not used)
+                            		cDelim +							// Ref qualifier 1 - 3 bytes (not used)
+                            		cDelim +							// Ref ID 1 - 50 bytes (not used)
+                            		cDelim +							// Ref description 1 - 80 bytes (not used)
+                            		cDelim + "\n");
+                            
+                            // If no alternate address is provided, we must populate with the customer address
+                            if (NumOfAltAddressLines == 0) {
+                            	if (ObjectUtils.isNotNull(pg.getPayeeName())) 
+                            		altAddrSendTo = pg.getPayeeName().substring(0,((pg.getPayeeName().length() <= PayeeNameMaxLength)? PayeeNameMaxLength: pg.getPayeeName().length() ));
+                            	if (ObjectUtils.isNotNull(pg.getLine1Address())) 
+                            		altAddrAddr1 = pg.getLine1Address().substring(0,((pg.getLine1Address().length() <= AddrMaxLength)? AddrMaxLength: pg.getLine1Address().length() ));
+                            	if (ObjectUtils.isNotNull(pg.getLine2Address())) 
+                            		altAddrAddr2 = pg.getLine2Address().substring(0,((pg.getLine2Address().length() <= AddrMaxLength)? AddrMaxLength: pg.getLine2Address().length() ));
+                            	if (ObjectUtils.isNotNull(pg.getCity()) && ObjectUtils.isNotNull(pg.getState()) && ObjectUtils.isNotNull(pg.getZipCd())) 
+                            		altAddrCityStateZip = pg.getCity() + ", " + pg.getState() + " " + pg.getZipCd();
                             }
+                            // Write the Fast Track second payee detail (PDT02010) record
+                            os.write("PDT02010" + cDelim +             // Record Type - 8 bytes
+                            		"FE" + cDelim +                    // Name qualifier - 3 bytes (FE = Remit) This record's data prints on the remittance
+                            		cDelim +                           // ID code qualifier - 2 bytes
+                            		cDelim +                           // ID code - 80 bytes
+                            		altAddrSendTo + cDelim +           // Name - 35 bytes
+                            		cDelim +                           // Additional name 1 - 60 bytes
+                            		cDelim +                           // Additional name 2 - 60 bytes
+                            		altAddrAddr1 + cDelim +            // Address line 1 - 35 bytes
+                            		altAddrAddr2 + cDelim +            // Address line 2 - 35 bytes
+                            		cDelim +                           // Address line 3 - 35 bytes
+                            		cDelim +                           // Address line 4 - 35 bytes
+                            		cDelim +                           // Address line 5 - 35 bytes
+                            		cDelim +                           // Address line 6 - 35 bytes
+                            		altAddrCity + cDelim +             // City - 30 bytes
+                            		altAddrState + cDelim +            // State/Province - 2 bytes
+                            		altAddrZip + cDelim +              // Postal code - 15 bytes
+                            		cDelim +                           // Country code - 3 bytes
+                            		cDelim +                           // Country name - 30 bytes
+                               		cDelim +                           // Ref qualifier 1 - 3 bytes
+                            		cDelim +                           // Ref ID 1 - 50 bytes
+                            		cDelim +                           // Ref description 1 - 80 bytes
+                            		cDelim +                           // Ref qualifier 1 - 3 bytes
+                            		cDelim +                           // Ref ID 1 - 50 bytes
+                            		cDelim +                           // Ref description 1 - 80 bytes
+                            		cDelim +  "\n");
+
+                            totalRecordCount = totalRecordCount + 4;  //One for the PAY01000 record and three for the PDT02010 records
                             first = false;		// Set this here so it is only executed once per payee
-                        }  //If (first)
+                        }  // if (first && !immediateCheckCode)
                         
                         // Write the Fast Track REM03020 records
                         // Set up data based on whether its a DV or a Payment Request
@@ -773,10 +783,19 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         		pd.getCustPaymentDocNbr() : 
                         			pd.getInvoiceNbr();
                         
-                        //Lines for the remittance form
-                        RefDesc1 = ( (pd.getPurchaseOrderNbr().isEmpty()) ? "" :"PO#: " + pd.getPurchaseOrderNbr())  + ", Doc #: " + pd.getCustPaymentDocNbr();		// This will always a have a value
-                        if (FirstNoteAfterAddressInfo.isEmpty())
-                        	if (SecondNoteAfterAddressInfo.isEmpty()) {
+                        if (ObjectUtils.isNull(pd.getPurchaseOrderNbr()))
+                        	if (ObjectUtils.isNull(pd.getCustPaymentDocNbr()))
+                        		RefDesc1 = "PO#: , Doc #: ";
+                        	else
+                        		RefDesc1 = "PO#: , Doc #: " + pd.getCustPaymentDocNbr();
+                        else
+                        	if (ObjectUtils.isNull(pd.getCustPaymentDocNbr()))
+                        		RefDesc1 = "PO#: " + pd.getPurchaseOrderNbr() + ", Doc #: ";
+                        	else
+                        		RefDesc1 = "PO#: " + pd.getPurchaseOrderNbr() + ", Doc #: " + pd.getCustPaymentDocNbr();
+                        
+                        if (ObjectUtils.isNull(FirstNoteAfterAddressInfo))
+                        	if (ObjectUtils.isNull(SecondNoteAfterAddressInfo)) {
                         		RefDesc2 = PreparerInfoText;			// Nothing in the first or second, so put the preparer Info in the second line
                         		RefDesc3 = "";
                         		RefDesc4 = "";
@@ -787,7 +806,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         		RefDesc4 = "";
                         	}
                         else
-                        	if (SecondNoteAfterAddressInfo.isEmpty()) {
+                        	if (ObjectUtils.isNull(SecondNoteAfterAddressInfo)) {
                         		RefDesc3 = PreparerInfoText;
                         		RefDesc4 = "";
                         	}
@@ -1086,7 +1105,13 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                     writeOpenTag(os, 6, "notes");
                     for (Iterator i = paymentDetail.getNotes().iterator(); i.hasNext();) {
                         PaymentNoteText note = (PaymentNoteText) i.next();
-                        writeTag(os, 8, "note", escapeString(note.getCustomerNoteText()));
+                        //  Had to add this code to check for and remove the colons that we added in 
+                        //   DisbursementVoucherExtractServiceImpl.java line 506 v4229.
+                        String tNote = escapeString(note.getCustomerNoteText());
+                        if (tNote.length() >= 2)
+                        	if (tNote.substring(0,2).contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER))
+                        		tNote = tNote.substring(2);
+                        writeTag(os, 8, "note", tNote);
                     }
                     writeCloseTag(os, 6, "notes");
 
