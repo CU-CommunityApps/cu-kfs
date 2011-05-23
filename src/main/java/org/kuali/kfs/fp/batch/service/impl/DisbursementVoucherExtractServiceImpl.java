@@ -503,7 +503,7 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
                             if (line < (maxNoteLines - 3) && !StringUtils.isEmpty(choppedWord)) {
                                 pnt = new PaymentNoteText();
                                 pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
-                                pnt.setCustomerNoteText(choppedWord.replaceAll("\\n", "").trim());
+                                pnt.setCustomerNoteText(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER + choppedWord.replaceAll("\\n", "").trim());
                             }
                             // We can't add any additional note lines, or we'll exceed the maximum, therefore
                             // just break out of the loop early - there's nothing left to do.
