@@ -19,6 +19,7 @@ public class ProjectInvestigator extends PersistableBusinessObjectBase {
 	private String projectId;
 	private String awardProposalId;
 	private String investigatorId;
+	private String investigatorRole;
 	private Date lastUpdated;
 	
 	private EzraProposalAward proposal;
@@ -94,6 +95,14 @@ public class ProjectInvestigator extends PersistableBusinessObjectBase {
 	 */
 	public void setProposal(EzraProposalAward proposal) {
 		this.proposal = proposal;
+	}
+
+	public String getInvestigatorRole() {
+		return investigatorRole;
+	}
+
+	public void setInvestigatorRole(String investigatorRole) {
+		this.investigatorRole = investigatorRole;
 	}
 
 	/**
