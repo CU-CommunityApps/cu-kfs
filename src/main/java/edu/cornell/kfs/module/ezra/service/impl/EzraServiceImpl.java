@@ -426,6 +426,7 @@ public class EzraServiceImpl implements EzraService {
 		}
 		Map fieldValues = new HashMap();
 		fieldValues.put("projectId", projectId.toString());
+		fieldValues.put("investigatorRole", "CO");
 		List<ProjectInvestigator> pis = (List<ProjectInvestigator>)businessObjectService.findMatching(ProjectInvestigator.class, fieldValues);
 		for (ProjectInvestigator pi : pis) {
 			Investigator inv = (Investigator)businessObjectService.findBySinglePrimaryKey(Investigator.class, pi.getInvestigatorId());
