@@ -734,13 +734,23 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             // If no alternate address is provided, we must populate with the customer address
                             if (NumOfAltAddressLines == 0) {
                             	if (ObjectUtils.isNotNull(pg.getPayeeName())) 
-                            		altAddrSendTo = pg.getPayeeName().substring(0,((pg.getPayeeName().length() <= PayeeNameMaxLength)? PayeeNameMaxLength: pg.getPayeeName().length() ));
+                            		altAddrSendTo = pg.getPayeeName().substring(0,((pg.getPayeeName().length() <= PayeeNameMaxLength)? pg.getPayeeName().length(): PayeeNameMaxLength ));
                             	if (ObjectUtils.isNotNull(pg.getLine1Address())) 
-                            		altAddrAddr1 = pg.getLine1Address().substring(0,((pg.getLine1Address().length() <= AddrMaxLength)? AddrMaxLength: pg.getLine1Address().length() ));
+                            		altAddrAddr1 = pg.getLine1Address().substring(0,((pg.getLine1Address().length() <= AddrMaxLength)? pg.getLine1Address().length(): AddrMaxLength ));
                             	if (ObjectUtils.isNotNull(pg.getLine2Address())) 
-                            		altAddrAddr2 = pg.getLine2Address().substring(0,((pg.getLine2Address().length() <= AddrMaxLength)? AddrMaxLength: pg.getLine2Address().length() ));
-                            	if (ObjectUtils.isNotNull(pg.getCity()) && ObjectUtils.isNotNull(pg.getState()) && ObjectUtils.isNotNull(pg.getZipCd())) 
-                            		altAddrCityStateZip = pg.getCity() + ", " + pg.getState() + " " + pg.getZipCd();
+                            		altAddrAddr2 = pg.getLine2Address().substring(0,((pg.getLine2Address().length() <= AddrMaxLength)? pg.getLine2Address().length(): AddrMaxLength ));
+                            	
+                            	String altCity = "";
+                            	String altState = "";
+                            	String altZip = "";
+                            	if (ObjectUtils.isNotNull(pg.getCity()))
+                            		altCity = (pg.getCity()).substring(0,((pg.getCity().length() <= CityMaxLength)? pg.getCity().length(): CityMaxLength ));
+                            	if (ObjectUtils.isNotNull(pg.getState()))
+                            		altState = (pg.getState()).substring(0,((pg.getState().length() <= StateMaxLength)? pg.getState().length(): StateMaxLength ));
+                            	if (ObjectUtils.isNotNull(pg.getZipCd()))
+                            		altZip = (pg.getZipCd()).substring(0,((pg.getZipCd().length() <= ZipMaxLength)? pg.getZipCd().length(): ZipMaxLength ));
+
+                            	altAddrCityStateZip = altCity + ", " + altState + " " + altZip;
                             }
                             // Write the Fast Track second payee detail (PDT02010) record
                             os.write("PDT02010" + cDelim +             // Record Type - 8 bytes
