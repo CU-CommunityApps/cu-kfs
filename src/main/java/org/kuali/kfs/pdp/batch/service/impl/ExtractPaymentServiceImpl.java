@@ -16,19 +16,18 @@
 package org.kuali.kfs.pdp.batch.service.impl;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
@@ -211,17 +210,18 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 
     protected void writeExtractCheckFile(PaymentStatus extractedStatus, PaymentProcess p, String filename, Integer processId) {
 
-    	// Write out the Mellon Fast Track formatted file for checks that are to be printed by Mellon and/or 
-        //   generate the issuance file for checks that will be printed locally.  We need to execute this first
-    	//   since the writeExtractCheckFile methods sets the extract status so that the writeExtractCheckFileMellonBankFastTrack
-    	//   method doesn't find anything to process!
-    	writeExtractCheckFileMellonBankFastTrack(extractedStatus, p, filename, processId);
-
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date processDate = dateTimeService.getCurrentDate();
         BufferedWriter os = null;
+        boolean ImmediatesProcessed = false;
 
         try {
+        	// Write out the Mellon Fast Track formatted file for checks that are to be printed by Mellon and/or 
+            //   generate the issuance file for checks that will be printed locally.  We need to execute this first
+        	//   since the writeExtractCheckFile methods sets the extract status so that the writeExtractCheckFileMellonBankFastTrack
+        	//   method doesn't find anything to process!
+        	writeExtractCheckFileMellonBankFastTrack(extractedStatus, p, filename, processId);
+        	
             os = new BufferedWriter(new FileWriter(filename));
             os.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
             writeOpenTagAttribute(os, 0, "checks", "processId", processId.toString(), "campusCode", p.getCampusCode());
@@ -248,11 +248,16 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                     while (paymentDetails.hasNext()) {
                         PaymentDetail pd = paymentDetails.next();
                         PaymentGroup pg = pd.getPaymentGroup();
-                        if (!testMode) {
+                        
+                        // If we turn this on at all, then we need to not rename the file with a "NOT_USED" extension otherwise we do since we don't use the XML check print file at this time
+                        ImmediatesProcessed = pg.getProcessImmediate();
+                        // The following code was moved from this method to the writeExtractCheckFileMellonBankFastTrack method since that is the resulting file that is
+                        //  currently being used.  However this file is still desired to be generated per requirements.
+/*                        if (!testMode) {
                             pg.setDisbursementDate(new java.sql.Date(processDate.getTime()));
                             pg.setPaymentStatus(extractedStatus);
                             this.businessObjectService.save(pg);
-                        }
+                        }*/
 
                         if (first) {
                             writeOpenTagAttribute(os, 2, "check", "disbursementNbr", pg.getDisbursementNbr().toString());
@@ -327,9 +332,14 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
             if (os != null) {
                 try {
                     os.close();
+                    if (ImmediatesProcessed)
+                    	renameFile(filename, filename + ".READY");  // An XML file containing these records are ONLY used for local check printing.
+                    else
+                    	renameFile(filename, filename + "NOT_USED");  // An XML file containing these records are NEVER sent to anyone at this time.
                 }
                 catch (IOException ie) {
                     // Not much we can do now
+                	LOG.error("IOException encountered in writeExtractCheckFile.  Message is: " + ie.getMessage());
                 }
             }
         }
@@ -435,6 +445,12 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                     while (paymentDetails.hasNext()) {
                         PaymentDetail pd = paymentDetails.next();
                         PaymentGroup pg = pd.getPaymentGroup();
+                        // Copied from the above XML generating method since this is the method that needs to record what was processed and what was not.
+                        if (!testMode) {
+                            pg.setDisbursementDate(new java.sql.Date(processDate.getTime()));
+                            pg.setPaymentStatus(extractedStatus);
+                            this.businessObjectService.save(pg);
+                        }
 
                         //Get immediate (a.k.a. local print, a.k.a. manual) check indicator
                         immediateCheckCode = pg.getProcessImmediate();
@@ -490,29 +506,36 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                        	
                     		// Retrieve up to 3 subsequent note lines and only the first 72 characters as per the BNY Mellon spec.
                         	else {
-                        		if (NoteLine.contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER))
-                        			FirstNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
-                        		
-                        		if (ix.hasNext()) {
-                        			//Retrieve the second
-                            		note = (PaymentNoteText) ix.next();
-                                	NoteLine = note.getCustomerNoteText();
-                                	if (NoteLine.contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER))
-                                		SecondNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
-
-                            		if (ix.hasNext()) {
-                            			//Retrieve the second
-                                		note = (PaymentNoteText) ix.next();
-                                    	NoteLine = note.getCustomerNoteText();
-                                    	if (NoteLine.contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER))
-                                    		ThirdNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
-                                    	break;  // Break here because we are only allowed to get the first three note lines
-                            		}
+                        		if (NoteLine.contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER)) {
+                        			// If true, this would indicate that more notes lines from the user could follow.  
+                        			//   So only proceed looking for the other three lines if we see the first one.
+                        			
+                        			// Gets the first user typed note line
+	                        		FirstNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
+	                        		
+	                        		// Gets the second user typed note line if it exists
+	                        		if (ix.hasNext()) {
+	                        			//Retrieve the second
+	                            		note = (PaymentNoteText) ix.next();
+	                                	NoteLine = note.getCustomerNoteText();
+	                                	if (NoteLine.contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER))
+	                                		SecondNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
+	
+	                                	// Gets the third user typed note line if it exists
+	                            		if (ix.hasNext()) {
+	                            			//Retrieve the second
+	                                		note = (PaymentNoteText) ix.next();
+	                                    	NoteLine = note.getCustomerNoteText();
+	                                    	if (NoteLine.contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER))
+	                                    		ThirdNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
+	                                    	break;  // Break here because we are only allowed to get the first three note lines
+	                            		}
+		                        		else
+		                        			break;
+	                        		}
 	                        		else
 	                        			break;
                         		}
-                        		else
-                        			break;
                         	}
                         }                        
                         
@@ -795,12 +818,12 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         
                         if (ObjectUtils.isNull(pd.getPurchaseOrderNbr()))
                         	if (ObjectUtils.isNull(pd.getCustPaymentDocNbr()))
-                        		RefDesc1 = "PO#: , Doc #: ";
+                        		RefDesc1 = "";
                         	else
-                        		RefDesc1 = "PO#: , Doc #: " + pd.getCustPaymentDocNbr();
+                        		RefDesc1 = "Doc #: " + pd.getCustPaymentDocNbr();
                         else
                         	if (ObjectUtils.isNull(pd.getCustPaymentDocNbr()))
-                        		RefDesc1 = "PO#: " + pd.getPurchaseOrderNbr() + ", Doc #: ";
+                        		RefDesc1 = "PO#: " + pd.getPurchaseOrderNbr();
                         	else
                         		RefDesc1 = "PO#: " + pd.getPurchaseOrderNbr() + ", Doc #: " + pd.getCustPaymentDocNbr();
                         
@@ -858,7 +881,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         	String arPayeeName = "";
                         	String arLine1Address = "";
                         	if (ObjectUtils.isNotNull(pg.getPayeeName()))
-                        		arPayeeName = pg.getPayeeName().length() <= 10 ? String.format("%10s", pg.getPayeeName()) : pg.getPayeeName().substring(10);
+                        		arPayeeName = pg.getPayeeName().length() <= 10 ? String.format("%10s", pg.getPayeeName()) : pg.getPayeeName().substring(0,10);
                             if (ObjectUtils.isNotNull(pg.getLine1Address()))
                             	arLine1Address = pg.getLine1Address();
                         		
@@ -1027,22 +1050,39 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
             if (os != null) {
                 try {
                     os.close();
+                    renameFile(ftFilename,ftFilename + ".READY");  //  Need to do this at the end to indicate that the file is ready after it is closed.
                 }
                 catch (IOException ie) {
                     // Not much we can do now
+                	LOG.error("IOException encountered in writeExtractCheckFileMellonBankFastTrack.  Message is: " + ie.getMessage());
                 }
             }  //osI.close();
             if (osI != null) {
                 try {
                 	osI.close();
+                    // Rename the resulting file to have a .READY at the end
+                	renameFile(arFilename,arFilename + ".READY");  //  Need to do this at the end to indicate that the file is ready after it is closed.
                 }
                 catch (IOException ie) {
                     // Not much we can do now
+                	LOG.error("IOException encountered in writeExtractCheckFileMellonBankFastTrack.  Message is: " + ie.getMessage());
                 }
-            } 
+            }
         }
     }
         
+	protected boolean renameFile(String fromFile, String toFile) {
+    	boolean bResult = false;
+		try {
+        	File f = new File(fromFile);
+        	f.renameTo(new File(toFile));
+        }
+    	catch (Exception ex){
+    		LOG.error("renameFile Exception: " + ex.getMessage());
+    		LOG.error("fromFile: " + fromFile + ", toFile: " + toFile);
+    	}
+    	return bResult;
+    }
     // This utility function produces a string of (s) characters (n) times.
     protected String repeatThis(String s, int n){
     	return  String.format(String.format("%%0%dd", n), 0).replace("0",s);
@@ -1050,12 +1090,12 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
         
     protected void writeExtractAchFile(PaymentStatus extractedStatus, String filename, Date processDate, SimpleDateFormat sdf) {
     	    	
-        // Writes out the BNY Mellon Fast Track formatted file for ACH payments.  We need to do this first since the status is set in this method which
-    	//   causes the writeExtractAchFileMellonBankFastTrack method to not find anything.
-    	writeExtractAchFileMellonBankFastTrack(extractedStatus, filename, processDate, sdf);
-
-        BufferedWriter os = null;
+    	BufferedWriter os = null;
         try {
+            // Writes out the BNY Mellon Fast Track formatted file for ACH payments.  We need to do this first since the status is set in this method which
+        	//   causes the writeExtractAchFileMellonBankFastTrack method to not find anything.
+        	writeExtractAchFileMellonBankFastTrack(extractedStatus, filename, processDate, sdf);
+
             os = new BufferedWriter(new FileWriter(filename));
             os.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
             writeOpenTag(os, 0, "achPayments");
@@ -1067,12 +1107,14 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
             Iterator iter = paymentGroupService.getByDisbursementTypeStatusCode(PdpConstants.DisbursementTypeCodes.ACH, PdpConstants.PaymentStatusCodes.PENDING_ACH);
             while (iter.hasNext()) {
                 PaymentGroup paymentGroup = (PaymentGroup) iter.next();
-                if (!testMode) {
+/*              // This is was moved to the writeExtractAchFileMellonBankFastTrack method below since that is the file that needs to be created.  
+   				// This XML file will still be created however as per requirements.
+   				if (!testMode) {
                     paymentGroup.setDisbursementDate(new java.sql.Date(processDate.getTime()));
                     paymentGroup.setPaymentStatus(extractedStatus);
                     businessObjectService.save(paymentGroup);
                 }
-
+*/
                 writeOpenTagAttribute(os, 2, "ach", "disbursementNbr", paymentGroup.getDisbursementNbr().toString());
                 PaymentProcess paymentProcess = paymentGroup.getProcess();
                 writeTag(os, 4, "processCampus", paymentProcess.getCampusCode());
@@ -1159,9 +1201,11 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
             if (os != null) {
                 try {
                     os.close();
+                    renameFile(filename, filename + ".NOT_USED");  //  Need to do this at the end to indicate that the file is NOT USED after it is closed.
                 }
                 catch (IOException ie) {
                     // Not much we can do now
+                	LOG.error("IOException encountered in writeExtractCheckFileMellonBankFastTrack.  Message is: " + ie.getMessage());
                 }
             }
         }
@@ -1180,7 +1224,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
         String divisionCode = "";
         String achCode = "";
         boolean wroteFastTrackHeaderRecords = false;
-        // Change the filename so that it ends in .txt instead of .xml
+        // Change the filename so that it ends in .txt instead of .xml.
         filename = filename.replace(".xml", ".txt");
         int totalRecordCount = 0;
         KualiDecimal totalPaymentAmounts = KualiDecimal.ZERO;
@@ -1191,6 +1235,13 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
             Iterator iter = paymentGroupService.getByDisbursementTypeStatusCode(PdpConstants.DisbursementTypeCodes.ACH, PdpConstants.PaymentStatusCodes.PENDING_ACH);
             while (iter.hasNext()) {
                 PaymentGroup pg = (PaymentGroup) iter.next();
+                
+                // Copied from the above XML generating method since this is the method that needs to record what was processed and what was not.
+                if (!testMode) {
+                    pg.setDisbursementDate(new java.sql.Date(processDate.getTime()));
+                    pg.setPaymentStatus(extractedStatus);
+                    businessObjectService.save(pg);
+                }
                 
                 // Get our Bank Account Number and our bank routing number
                 ourBankAccountNumber = pg.getBank().getBankAccountNumber().replace("-", "");
@@ -1206,7 +1257,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 	                os.write("FIL00010" + cDelim +                // Record Type
 	                		hdrRecType + cDelim +                 // Variable (V) or Fixed (F) flag
 	                		cDname + cDelim +                     // Delimiter name - Must be either FFCARET or FFCOMMA.  Others are allowed but BNY Mellon will have to be contacted first.
-	                		"CORNELLUNIV" + cDelim +              // Customer Id - a unique identifier for the customer.  This has to be different for ACH than it is for CHECKS per BNY Mellon.
+	                		"CORNELLUNIVKFS" + cDelim +           // Customer Id - a unique identifier for the customer.  This has to be different for ACH than it is for CHECKS per BNY Mellon.
 	                		testIndicator + cDelim +              // Test Indicator:  T = Test run, P = Production Run
 	                		"820" + cDelim +                      // EDI Document Id (3 Bytes)
 	                		ourBankAccountNumber + cDelim +       // Our bank account number (15 Bytes)
@@ -1557,14 +1608,16 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
             if (os != null) {
                 try {
                     os.close();
+                    renameFile(filename, filename + ".READY");   //  Need to do this at the end to indicate that the file is ready after it is closed.
                 }
                 catch (IOException ie) {
                     // Not much we can do now
-                	LOG.error("IO Exception in extractAchPayments():  " + filename, ie);
+                	LOG.error("IOException in extractAchPayments():  " + filename, ie);
                 }
             }
         }
     }
+    
     protected static String SPACES = "                                                       ";
 
     protected void writeTag(BufferedWriter os, int indent, String tag, String data) throws IOException {
