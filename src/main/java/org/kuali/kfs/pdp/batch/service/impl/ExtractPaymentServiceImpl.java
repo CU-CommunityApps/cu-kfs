@@ -1419,28 +1419,40 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         // String payeeId = paymentGroup.getPayeeId();							// Returns the ID of the payee and is the vendor number if the next var indicates that
                         // String payeeIdTypeDesc = paymentGroup.getPayeeIdTypeDesc();			// Returns "Vendor Number" if the payeeID is a vendor number
                         
-                        boolean isVendor = (pg.getPayeeIdTypeCd().equals("V")) ? true : false;	// payeeIdTypeCode returns a "V" if it is a vendor
-                        String accountType = pg.getAchAccountType();								// Returns either a 22 for checking or a 32 for Savings account
-                        if (isVendor)
-                        	if (accountType.equals("22"))
-                        		achCode = "CTX";		// Implementation of rule #1 above
-                        	else
-                        		achCode = "PPD";		// Implementation of rule #2 above
-                        else
-                        	achCode = "PPD";			// Implementation of rule #3 above
-                        
                         String AchBankRoutingNbr = "";
-                        String AchAccountType = "";
+                        String AchAccountType = "DA";
                         String AchBankAccountNumber = "";
                         String CheckNumber = "";
+                        
+                        boolean isVendor = (pg.getPayeeIdTypeCd().equals("V")) ? true : false;	// payeeIdTypeCode returns a "V" if it is a vendor
+                        String kfsAccountType = "";
+                        
+                        if (ObjectUtils.isNotNull(pg.getAchAccountType()))
+                        	kfsAccountType = pg.getAchAccountType();							// Returns either a 22 for checking or a 32 for Savings account
+                        																		// For Mellon this converts to either DA (checking) or SG (savings)
+                        if (isVendor)
+                        	if (kfsAccountType.equals("22")) {
+                        		achCode = "CTX";		// Implementation of rule #1 above
+                        		AchAccountType = "DA";
+                        	}
+                        	else {
+                        		achCode = "PPD";		// Implementation of rule #2 above
+                        		AchAccountType = "SG";
+                        	}
+                        else {
+                        	achCode = "PPD";			// Implementation of rule #3 above
+                        	AchAccountType = "SG";
+                        }
+                        
                         if (ObjectUtils.isNotNull(pg.getAchBankRoutingNbr()))
                         	AchBankRoutingNbr = pg.getAchBankRoutingNbr();
-                        if (ObjectUtils.isNotNull(pg.getAchBankRoutingNbr()))
-                        	AchAccountType = pg.getAchAccountType();
+                        
                         if (ObjectUtils.isNotNull(pg.getAchAccountNumber().getAchBankAccountNbr()))
                         	AchBankAccountNumber = pg.getAchAccountNumber().getAchBankAccountNbr().toString();
+                        
                         if (ObjectUtils.isNotNull(pg.getDisbursementNbr().toString()))
                         	CheckNumber = pg.getDisbursementNbr().toString();
+                        
                     	//Write only 1 PAY01000 record for each payee
                     	os.write("PAY01000" + cDelim +                              					// Record Type - 8 bytes
                     			"1" + cDelim +                                      					// 7=Payment and Electronic Advice (Transaction handling code - 2 bytes)
