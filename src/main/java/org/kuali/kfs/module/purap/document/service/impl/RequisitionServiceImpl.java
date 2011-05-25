@@ -247,13 +247,13 @@ public class RequisitionServiceImpl implements RequisitionService {
                 }
             }
             
-            if (!PurapConstants.RequisitionSources.B2B.equals(requisitionSource)) {
-                for (PurApAccountingLine accountingLine : item.getSourceAccountingLines()) {
-                    if (capitalAssetBuilderModuleService.doesAccountingLineFailAutomaticPurchaseOrderRules(accountingLine)) {
-                        return "Requisition contains accounting line with capital object level";
-                    }
-                }
-            }
+//            if (!PurapConstants.RequisitionSources.B2B.equals(requisitionSource)) {
+//                for (PurApAccountingLine accountingLine : item.getSourceAccountingLines()) {
+//                    if (capitalAssetBuilderModuleService.doesAccountingLineFailAutomaticPurchaseOrderRules(accountingLine)) {
+//                        return "Requisition contains accounting line with capital object level";
+//                    }
+//                }
+//            }
 
         }// endfor items
 
