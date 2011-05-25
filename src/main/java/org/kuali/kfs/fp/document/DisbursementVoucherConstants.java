@@ -42,6 +42,7 @@ public interface DisbursementVoucherConstants extends ParameterKeyConstants {
 	public static String DV_EXTRACT_MELLON_FAST_TRACK_INVOICE_NUMBER_CODE = "IV";
 	public static String DV_EXTRACT_MELLON_FAST_TRACK_CUSTOMER_PAYMENT_DOC_NBR_CODE = "8M";
 	public static String DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER = "::";
+	public static int DV_EXTRACT_MAX_NOTE_LINE_SIZE = 72;
 	
     // payment methods
     public static String PAYMENT_METHOD_CHECK = "P";

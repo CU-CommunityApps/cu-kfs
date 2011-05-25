@@ -487,7 +487,7 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
             // word by a newline character.  The 'wrap' method adds line feeds to the end causing
             // the character length to exceed the max length by 1, hence the need for the replace
             // method before splitting.
-            String   wrappedText = WordUtils.wrap(text, 90);
+            String   wrappedText = WordUtils.wrap(text, DisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE);
             String[] noteLines   = wrappedText.replaceAll("[\r]", "").split("\\n");
             
             // Loop through all the note lines.
@@ -496,13 +496,17 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
                     
                     // This should only happen if we encounter a word that is greater than the max length.
                     // The only concern I have for this occurring is with URLs/email addresses.
-                    if (noteLine.length() > 90) {
-                        for (String choppedWord : chopWord(noteLine, 90)) {
+                    if (noteLine.length() > DisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE) {
+                        for (String choppedWord : chopWord(noteLine, DisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE)) {
                             
                             // Make sure we're still under the maximum number of note lines.
                             if (line < (maxNoteLines - 3) && !StringUtils.isEmpty(choppedWord)) {
                                 pnt = new PaymentNoteText();
                                 pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
+                                //  We need to add the :: in front of each line that is generated in order to determine which notes being
+                                //   generated are those typed by the user in the eDoc as we can only move 3 lines to the remittance lines
+                                //   on the check.  These codes will help us identify the user's notes and as such ensure that they will
+                                //   make it to their expected destination on the remittance stub.
                                 pnt.setCustomerNoteText(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER + choppedWord.replaceAll("\\n", "").trim());
                             }
                             // We can't add any additional note lines, or we'll exceed the maximum, therefore

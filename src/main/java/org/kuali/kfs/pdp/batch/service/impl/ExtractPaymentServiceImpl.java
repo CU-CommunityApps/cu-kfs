@@ -213,30 +213,26 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date processDate = dateTimeService.getCurrentDate();
         BufferedWriter os = null;
-        boolean ImmediatesProcessed = false;
-
+        BufferedWriter osI = null;
+        boolean wroteImmediateHeaderRecords = false;
+        boolean wroteCheckHeaderRecords = false;
+        String immediateFilename = filename.replace("check", "check_immediate");
+        String checkFilename = filename;
+        boolean first = true;
+        boolean isImmediate = false;
+        
         try {
-        	// Write out the Mellon Fast Track formatted file for checks that are to be printed by Mellon and/or 
-            //   generate the issuance file for checks that will be printed locally.  We need to execute this first
-        	//   since the writeExtractCheckFile methods sets the extract status so that the writeExtractCheckFileMellonBankFastTrack
-        	//   method doesn't find anything to process!
         	writeExtractCheckFileMellonBankFastTrack(extractedStatus, p, filename, processId);
-        	
-            os = new BufferedWriter(new FileWriter(filename));
-            os.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-            writeOpenTagAttribute(os, 0, "checks", "processId", processId.toString(), "campusCode", p.getCampusCode());
-
             List<String> bankCodes = paymentGroupService.getDistinctBankCodesForProcessAndType(processId, PdpConstants.DisbursementTypeCodes.CHECK);
 
             for (String bankCode : bankCodes) {
                 List<Integer> disbNbrs = paymentGroupService.getDisbursementNumbersByDisbursementTypeAndBankCode(processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
                 for (Iterator<Integer> iter = disbNbrs.iterator(); iter.hasNext();) {
                     Integer disbursementNbr = iter.next();
-
-                    boolean first = true;
-
                     KualiDecimal totalNetAmount = new KualiDecimal(0);
-
+                    
+                    first = true;
+                    
                     // this seems wasteful, but since the total net amount is needed on the first payment detail...it's needed
                     Iterator<PaymentDetail> i2 = paymentDetailService.getByDisbursementNumber(disbursementNbr, processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
                     while (i2.hasNext()) {
@@ -249,26 +245,21 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         PaymentDetail pd = paymentDetails.next();
                         PaymentGroup pg = pd.getPaymentGroup();
                         
-                        // If we turn this on at all, then we need to not rename the file with a "NOT_USED" extension otherwise we do since we don't use the XML check print file at this time
-                        ImmediatesProcessed = pg.getProcessImmediate();
-                        // The following code was moved from this method to the writeExtractCheckFileMellonBankFastTrack method since that is the resulting file that is
-                        //  currently being used.  However this file is still desired to be generated per requirements.
-/*                        if (!testMode) {
-                            pg.setDisbursementDate(new java.sql.Date(processDate.getTime()));
-                            pg.setPaymentStatus(extractedStatus);
-                            this.businessObjectService.save(pg);
-                        }*/
-
-                        if (first) {
+                        isImmediate = pg.getProcessImmediate();
+                        // As each record passes through we decide whether we are generating an immediates XML file or a checks XML file or BOTH.
+                        if (first && !isImmediate) {
+                        	if (!wroteCheckHeaderRecords) { 
+                                os = new BufferedWriter(new FileWriter(checkFilename));
+                                os.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+                                writeOpenTagAttribute(os, 0, "checks", "processId", processId.toString(), "campusCode", p.getCampusCode());
+                                wroteCheckHeaderRecords = true;
+                            }
+                        	
                             writeOpenTagAttribute(os, 2, "check", "disbursementNbr", pg.getDisbursementNbr().toString());
-
                             // Write check level information
-
                             writeBank(os, 4, pg.getBank());
-
                             writeTag(os, 4, "disbursementDate", sdf.format(processDate));
                             writeTag(os, 4, "netAmount", totalNetAmount.toString());
-
                             writePayee(os, 4, pg);
                             writeTag(os, 4, "campusAddressIndicator", pg.getCampusAddress().booleanValue() ? "Y" : "N");
                             writeTag(os, 4, "attachmentIndicator", pg.getPymtAttachment().booleanValue() ? "Y" : "N");
@@ -280,67 +271,121 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             // Write customer profile information
                             CustomerProfile cp = pg.getBatch().getCustomerProfile();
                             writeCustomerProfile(os, 4, cp);
-
                             writeOpenTag(os, 4, "payments");
-
+                            first = false;
                         }
+                        
+                        if (first && isImmediate) {
+                            if (!wroteImmediateHeaderRecords) {
+    	                        osI = new BufferedWriter(new FileWriter(immediateFilename));
+    	                        osI.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+    	                        writeOpenTagAttribute(osI, 0, "checks", "processId", processId.toString(), "campusCode", p.getCampusCode());
+    	                        wroteImmediateHeaderRecords = true;
+                            }
+                            
+                            writeOpenTagAttribute(osI, 2, "check", "disbursementNbr", pg.getDisbursementNbr().toString());
+                            // Write check level information
+                            writeBank(osI, 4, pg.getBank());
+                            writeTag(osI, 4, "disbursementDate", sdf.format(processDate));
+                            writeTag(osI, 4, "netAmount", totalNetAmount.toString());
+                            writePayee(osI, 4, pg);
+                            writeTag(osI, 4, "campusAddressIndicator", pg.getCampusAddress().booleanValue() ? "Y" : "N");
+                            writeTag(osI, 4, "attachmentIndicator", pg.getPymtAttachment().booleanValue() ? "Y" : "N");
+                            writeTag(osI, 4, "specialHandlingIndicator", pg.getPymtSpecialHandling().booleanValue() ? "Y" : "N");
+                            writeTag(osI, 4, "immediatePaymentIndicator", pg.getProcessImmediate().booleanValue() ? "Y" : "N");
+                            writeTag(osI, 4, "customerUnivNbr", pg.getCustomerInstitutionNumber());
+                            writeTag(osI, 4, "paymentDate", sdf.format(pg.getPaymentDate()));
 
-                        writeOpenTag(os, 6, "payment");
-
-                        writeTag(os, 8, "purchaseOrderNbr", pd.getPurchaseOrderNbr());
-                        writeTag(os, 8, "invoiceNbr", pd.getInvoiceNbr());
-                        writeTag(os, 8, "requisitionNbr", pd.getRequisitionNbr());
-                        writeTag(os, 8, "custPaymentDocNbr", pd.getCustPaymentDocNbr());
-                        writeTag(os, 8, "invoiceDate", sdf.format(pd.getInvoiceDate()));
-
-                        writeTag(os, 8, "origInvoiceAmount", pd.getOrigInvoiceAmount().toString());
-                        writeTag(os, 8, "netPaymentAmount", pd.getNetPaymentAmount().toString());
-                        writeTag(os, 8, "invTotDiscountAmount", pd.getInvTotDiscountAmount().toString());
-                        writeTag(os, 8, "invTotShipAmount", pd.getInvTotShipAmount().toString());
-                        writeTag(os, 8, "invTotOtherDebitAmount", pd.getInvTotOtherDebitAmount().toString());
-                        writeTag(os, 8, "invTotOtherCreditAmount", pd.getInvTotOtherCreditAmount().toString());
-
-                        writeOpenTag(os, 8, "notes");
-                        for (Iterator ix = pd.getNotes().iterator(); ix.hasNext();) {
-                            PaymentNoteText note = (PaymentNoteText) ix.next();
-                            //  Had to add this code to check for and remove the colons that we added in 
-                            //   DisbursementVoucherExtractServiceImpl.java line 506 v4229.
-                            String tNote = note.getCustomerNoteText();
-                            if (tNote.length() >= 2)
-                            	if (tNote.substring(0,2).contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER))
-                            		tNote = tNote.substring(2);
-                            writeTag(os, 10, "note", tNote);
+                            // Write customer profile information
+                            CustomerProfile cp = pg.getBatch().getCustomerProfile();
+                            writeCustomerProfile(osI, 4, cp);
+                            writeOpenTag(osI, 4, "payments");
+                            first = false;
                         }
-                        writeCloseTag(os, 8, "notes");
-
-                        writeCloseTag(os, 6, "payment");
-
-                        first = false;
+                        
+                        if (!isImmediate && wroteCheckHeaderRecords) {
+	                        writeOpenTag(os, 6, "payment");
+	                        writeTag(os, 8, "purchaseOrderNbr", pd.getPurchaseOrderNbr());
+	                        writeTag(os, 8, "invoiceNbr", pd.getInvoiceNbr());
+	                        writeTag(os, 8, "requisitionNbr", pd.getRequisitionNbr());
+	                        writeTag(os, 8, "custPaymentDocNbr", pd.getCustPaymentDocNbr());
+	                        writeTag(os, 8, "invoiceDate", sdf.format(pd.getInvoiceDate()));
+	                        writeTag(os, 8, "origInvoiceAmount", pd.getOrigInvoiceAmount().toString());
+	                        writeTag(os, 8, "netPaymentAmount", pd.getNetPaymentAmount().toString());
+	                        writeTag(os, 8, "invTotDiscountAmount", pd.getInvTotDiscountAmount().toString());
+	                        writeTag(os, 8, "invTotShipAmount", pd.getInvTotShipAmount().toString());
+	                        writeTag(os, 8, "invTotOtherDebitAmount", pd.getInvTotOtherDebitAmount().toString());
+	                        writeTag(os, 8, "invTotOtherCreditAmount", pd.getInvTotOtherCreditAmount().toString());
+	                        writeOpenTag(os, 8, "notes");
+	                        for (Iterator ix = pd.getNotes().iterator(); ix.hasNext();) {
+	                            PaymentNoteText note = (PaymentNoteText) ix.next();
+	                            writeTag(os, 10, "note", updateNoteLine(note.getCustomerNoteText()));
+	                        }
+	                        writeCloseTag(os, 8, "notes");
+	                        writeCloseTag(os, 6, "payment");
+                        }
+                        
+                        if (isImmediate && wroteImmediateHeaderRecords) {
+                            writeOpenTag(osI, 6, "payment");
+                            writeTag(osI, 8, "purchaseOrderNbr", pd.getPurchaseOrderNbr());
+                            writeTag(osI, 8, "invoiceNbr", pd.getInvoiceNbr());
+                            writeTag(osI, 8, "requisitionNbr", pd.getRequisitionNbr());
+                            writeTag(osI, 8, "custPaymentDocNbr", pd.getCustPaymentDocNbr());
+                            writeTag(osI, 8, "invoiceDate", sdf.format(pd.getInvoiceDate()));
+                            writeTag(osI, 8, "origInvoiceAmount", pd.getOrigInvoiceAmount().toString());
+                            writeTag(osI, 8, "netPaymentAmount", pd.getNetPaymentAmount().toString());
+                            writeTag(osI, 8, "invTotDiscountAmount", pd.getInvTotDiscountAmount().toString());
+                            writeTag(osI, 8, "invTotShipAmount", pd.getInvTotShipAmount().toString());
+                            writeTag(osI, 8, "invTotOtherDebitAmount", pd.getInvTotOtherDebitAmount().toString());
+                            writeTag(osI, 8, "invTotOtherCreditAmount", pd.getInvTotOtherCreditAmount().toString());
+                            writeOpenTag(osI, 8, "notes");
+                            for (Iterator ix = pd.getNotes().iterator(); ix.hasNext();) {
+                                PaymentNoteText note = (PaymentNoteText) ix.next();
+                                writeTag(osI, 10, "note", updateNoteLine(note.getCustomerNoteText()));
+                            }
+                            writeCloseTag(osI, 8, "notes");
+                            writeCloseTag(osI, 6, "payment");
+                        }
                     }
-                    writeCloseTag(os, 4, "payments");
-                    writeCloseTag(os, 2, "check");
+                    if (wroteCheckHeaderRecords && !isImmediate) {
+	                    writeCloseTag(os, 4, "payments");
+	                    writeCloseTag(os, 2, "check");
+                    }
+                    
+                    if (wroteImmediateHeaderRecords && isImmediate) {
+                        writeCloseTag(osI, 4, "payments");
+                        writeCloseTag(osI, 2, "check");	
+                    }                    
                 }
             }
-            writeCloseTag(os, 0, "checks");
         }
         catch (IOException ie) {
-            LOG.error("extractChecks() Problem reading file:  " + filename, ie);
-            throw new IllegalArgumentException("Error writing to output file: " + ie.getMessage());
+            LOG.error("extractChecks() Problem reading file:  " + (wroteCheckHeaderRecords ? checkFilename : immediateFilename), ie);
+            throw new IllegalArgumentException("Error writing to output file: " + (wroteCheckHeaderRecords ? checkFilename : immediateFilename) + "  " + ie.getMessage());
         }
         finally {
             // Close file
             if (os != null) {
                 try {
+                	writeCloseTag(os, 0, "checks");
                     os.close();
-                    if (ImmediatesProcessed)
-                    	renameFile(filename, filename + ".READY");  // An XML file containing these records are ONLY used for local check printing.
-                    else
-                    	renameFile(filename, filename + "NOT_USED");  // An XML file containing these records are NEVER sent to anyone at this time.
+                   	renameFile(checkFilename, checkFilename + ".NOT_USED");  // An XML file containing these records are NEVER sent to anyone at this time.
                 }
                 catch (IOException ie) {
                     // Not much we can do now
                 	LOG.error("IOException encountered in writeExtractCheckFile.  Message is: " + ie.getMessage());
                 }
+            }
+             if (osI != null) {
+            	 try {
+            		writeCloseTag(osI, 0, "checks");
+            		osI.close();
+                   	renameFile(immediateFilename, immediateFilename + ".READY");  // An XML file containing these records are ONLY used for local check printing.
+            	 }
+                 catch (IOException ie) {
+                     // Not much we can do now
+                 	LOG.error("IOException encountered in writeExtractCheckFile.  Message is: " + ie.getMessage());
+                 }
             }
         }
     }
@@ -506,37 +551,48 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                        	
                     		// Retrieve up to 3 subsequent note lines and only the first 72 characters as per the BNY Mellon spec.
                         	else {
-                        		if (NoteLine.contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER)) {
-                        			// If true, this would indicate that more notes lines from the user could follow.  
-                        			//   So only proceed looking for the other three lines if we see the first one.
-                        			
-                        			// Gets the first user typed note line
-	                        		FirstNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
-	                        		
-	                        		// Gets the second user typed note line if it exists
-	                        		if (ix.hasNext()) {
-	                        			//Retrieve the second
-	                            		note = (PaymentNoteText) ix.next();
-	                                	NoteLine = note.getCustomerNoteText();
-	                                	if (NoteLine.contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER))
-	                                		SecondNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
-	
-	                                	// Gets the third user typed note line if it exists
-	                            		if (ix.hasNext()) {
-	                            			//Retrieve the second
-	                                		note = (PaymentNoteText) ix.next();
-	                                    	NoteLine = note.getCustomerNoteText();
-	                                    	if (NoteLine.contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER))
-	                                    		ThirdNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
-	                                    	break;  // Break here because we are only allowed to get the first three note lines
-	                            		}
-		                        		else
-		                        			break;
-	                        		}
-	                        		else
-	                        			break;
-                        		}
-                        	}
+                        		//  User typed notes will always be contiguous so once we find the first, we just need to keep grabbing 
+                        		//    the next line until we either run out of lines or reach the max number to take (which is 3).
+                        		if (NoteLine.length() >= 2) {
+                            		if (NoteLine.substring(0,2).contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER)) {
+                            			// Trim the first two characters from the note and assign it as the first user typed note line
+                            			NoteLine = NoteLine.substring(2);
+    	                        		FirstNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
+    	                        		
+		                        		// Try to get the second user typed note line
+		                        		if (ix.hasNext()) {
+		                            		note = (PaymentNoteText) ix.next();
+		                                	NoteLine = note.getCustomerNoteText();
+		                                	if (NoteLine.length() >=2) {
+		                                		if (NoteLine.substring(0,2).contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER)) {
+		                                			NoteLine = NoteLine.substring(2);
+		                                			SecondNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
+		                                	
+				                                	// Try to get the third user typed note line
+				                            		if (ix.hasNext()) {
+				                                		note = (PaymentNoteText) ix.next();
+				                                    	NoteLine = note.getCustomerNoteText();
+				                                    	if (NoteLine.length() >=2) {
+				                                    		if (NoteLine.substring(0,2).contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER)) {
+				                                    			ThirdNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
+				                                    			break;  // Break here because the Mellon spec only allows the first three user typed note lines
+				                                    		}
+				                                    		else break;
+				                                    	}
+				                                    	else break;
+				                            		}
+				                            		else break;
+		                                		}
+		                                		else break;
+		                                	}
+		                                	else break;
+		                        		}
+		                        		else break;
+                            		}
+                            		else break;
+                            	}
+                        		else break;
+                        	}  //else from line 502
                         }                        
                         
                         // Get customer profile information
@@ -563,7 +619,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 	                            		"CORNELLUNIVKFS" + cDelim +           // Customer Id - a unique identifier for the customer
 	                            		testIndicator + cDelim +              // Test Indicator:  T = Test run, P = Production Run
 	                            		"820" + cDelim +                      // EDI Document Id (3 Bytes)
-	                            		"043000261" + cDelim +                // Our bank account number (15 Bytes)
+	                            		"043000261" + cDelim +                // Our Mellon bank id (15 Bytes)
 	                            		cDelim +                              // Customer Division Id - 35 bytes - Optional
 	                            		sdf.format(processDate) + cDelim +    // File Date and Time - 14 Bytes
 	                            		cDelim +                              // Reserved Field - 3 Bytes
@@ -595,6 +651,8 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             Country country = countryService.getByPrimaryId(pg.getCountry());
                             if (country != null) {
                             	sCountryName = country.getPostalCountryName().substring(0,((country.getPostalCountryName().length() >= 30)? 30: country.getPostalCountryName().length() ));;
+                            	if (sCountryName.toUpperCase().contains("UNITED STATES"))
+                            		sCountryName = "";
                             }
                             else {
                             	sCountryName = "";
@@ -745,7 +803,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             		State + cDelim +					// State/Province - 2 bytes
                             		Zip + cDelim +						// Postal code - 15 bytes
                             		cDelim +							// Country code - 3 bytes
-                            		sCountryName + cDelim +				// Country name - 30 bytes (do not use is Country Code is used)
+                            		sCountryName + cDelim +				// Country name - 30 bytes (do not use if Country Code is used)
                                		cDelim +							// Ref qualifier 1 - 3 bytes (not used)
                             		cDelim +							// Ref ID 1 - 50 bytes (not used)
                             		cDelim +							// Ref description 1 - 80 bytes (not used)
@@ -808,24 +866,22 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         
                         // Write the Fast Track REM03020 records
                         // Set up data based on whether its a DV or a Payment Request
-                        String remittanceIdCode = (subUnitCode.equals(DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? 
-                        		DisbursementVoucherConstants.DV_EXTRACT_MELLON_FAST_TRACK_INVOICE_NUMBER_CODE : 
-                        			DisbursementVoucherConstants.DV_EXTRACT_MELLON_FAST_TRACK_CUSTOMER_PAYMENT_DOC_NBR_CODE;
+                        String remittanceIdCode = "IV";
                         
                         String remittanceIdText = (subUnitCode.equals(DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? 
-                        		pd.getCustPaymentDocNbr() : 
-                        			pd.getInvoiceNbr();
+                        		"Doc No:" + pd.getCustPaymentDocNbr() : 
+                        			"Inv:" + pd.getInvoiceNbr();
                         
                         if (ObjectUtils.isNull(pd.getPurchaseOrderNbr()))
                         	if (ObjectUtils.isNull(pd.getCustPaymentDocNbr()))
                         		RefDesc1 = "";
                         	else
-                        		RefDesc1 = "Doc #: " + pd.getCustPaymentDocNbr();
+                        		RefDesc1 = "Doc No:" + pd.getCustPaymentDocNbr();
                         else
                         	if (ObjectUtils.isNull(pd.getCustPaymentDocNbr()))
-                        		RefDesc1 = "PO#: " + pd.getPurchaseOrderNbr();
+                        		RefDesc1 = "PO:" + pd.getPurchaseOrderNbr();
                         	else
-                        		RefDesc1 = "PO#: " + pd.getPurchaseOrderNbr() + ", Doc #: " + pd.getCustPaymentDocNbr();
+                        		RefDesc1 = "PO:" + pd.getPurchaseOrderNbr() + ", Doc:" + pd.getCustPaymentDocNbr();
                         
                         if (ObjectUtils.isNull(FirstNoteAfterAddressInfo))
                         	if (ObjectUtils.isNull(SecondNoteAfterAddressInfo)) {
@@ -1157,13 +1213,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                     writeOpenTag(os, 6, "notes");
                     for (Iterator i = paymentDetail.getNotes().iterator(); i.hasNext();) {
                         PaymentNoteText note = (PaymentNoteText) i.next();
-                        //  Had to add this code to check for and remove the colons that we added in 
-                        //   DisbursementVoucherExtractServiceImpl.java line 506 v4229.
-                        String tNote = escapeString(note.getCustomerNoteText());
-                        if (tNote.length() >= 2)
-                        	if (tNote.substring(0,2).contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER))
-                        		tNote = tNote.substring(2);
-                        writeTag(os, 8, "note", tNote);
+                        writeTag(os, 8, "note", updateNoteLine(escapeString(note.getCustomerNoteText())));
                     }
                     writeCloseTag(os, 6, "notes");
 
@@ -1210,6 +1260,21 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
             }
         }
     }
+    
+    protected String updateNoteLine(String noteLine) {
+        //  Had to add this code to check for and remove the colons (::) that were added in 
+        //   DisbursementVoucherExtractServiceImpl.java line 506 v4229 if they exist.  If not
+    	//   then just return what was sent.  This was placed in a method as it is used in
+    	//   two locations in this class
+
+    	if (noteLine.length() >= 2)
+        	if (noteLine.substring(0,2).contains(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER))
+        		noteLine = noteLine.substring(2);
+        
+        return noteLine;
+    }
+    
+    
     protected void writeExtractAchFileMellonBankFastTrack(PaymentStatus extractedStatus, String filename, Date processDate, SimpleDateFormat sdf) {
         BufferedWriter os = null;
         sdf = new SimpleDateFormat("yyyyMMddHHmmss"); //Used in the Fast Track file HEADER record
@@ -1260,7 +1325,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 	                		"CORNELLUNIVKFS" + cDelim +           // Customer Id - a unique identifier for the customer.  This has to be different for ACH than it is for CHECKS per BNY Mellon.
 	                		testIndicator + cDelim +              // Test Indicator:  T = Test run, P = Production Run
 	                		"820" + cDelim +                      // EDI Document Id (3 Bytes)
-	                		"043000261" + cDelim +                // Our bank account number (15 Bytes)
+	                		"043000261" + cDelim +                // Our Mellon bank id (15 Bytes)
 	                		cDelim +                              // Customer Division Id - 35 bytes - Optional
 	                		sdf.format(processDate) + cDelim +    // File Date and Time - 14 Bytes  YYMMDD format
 	                		cDelim +                              // Reserved Field - 3 Bytes
@@ -1312,6 +1377,8 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         else
                         	if (ObjectUtils.isNotNull(pg.getCountry()))
                         		sCountryName = pg.getCountry().substring(0,((pg.getLine1Address().length() >= 30)? 30: pg.getCountry().length() ));
+		                    	if (sCountryName.toUpperCase().contains("UNITED STATES"))
+		                    		sCountryName = "";
                         	else
                         		sCountryName = "";
                         
