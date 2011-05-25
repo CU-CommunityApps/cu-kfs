@@ -563,7 +563,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 	                            		"CORNELLUNIVKFS" + cDelim +           // Customer Id - a unique identifier for the customer
 	                            		testIndicator + cDelim +              // Test Indicator:  T = Test run, P = Production Run
 	                            		"820" + cDelim +                      // EDI Document Id (3 Bytes)
-	                            		ourBankAccountNumber + cDelim +       // Our bank account number (15 Bytes)
+	                            		"043000261" + cDelim +                // Our bank account number (15 Bytes)
 	                            		cDelim +                              // Customer Division Id - 35 bytes - Optional
 	                            		sdf.format(processDate) + cDelim +    // File Date and Time - 14 Bytes
 	                            		cDelim +                              // Reserved Field - 3 Bytes
@@ -1260,7 +1260,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 	                		"CORNELLUNIVKFS" + cDelim +           // Customer Id - a unique identifier for the customer.  This has to be different for ACH than it is for CHECKS per BNY Mellon.
 	                		testIndicator + cDelim +              // Test Indicator:  T = Test run, P = Production Run
 	                		"820" + cDelim +                      // EDI Document Id (3 Bytes)
-	                		ourBankAccountNumber + cDelim +       // Our bank account number (15 Bytes)
+	                		"043000261" + cDelim +                // Our bank account number (15 Bytes)
 	                		cDelim +                              // Customer Division Id - 35 bytes - Optional
 	                		sdf.format(processDate) + cDelim +    // File Date and Time - 14 Bytes  YYMMDD format
 	                		cDelim +                              // Reserved Field - 3 Bytes
