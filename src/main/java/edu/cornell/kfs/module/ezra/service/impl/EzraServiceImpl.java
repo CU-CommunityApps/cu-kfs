@@ -57,7 +57,7 @@ public class EzraServiceImpl implements EzraService {
 	private ParameterService parameterService;
 
 	public boolean updateProposals() {
-		boolean result = false;
+		
 		List<EzraProposalAward> proposals = ezraAwardProposalDao.getProposals();
 		Map fields = new HashMap();
 		for (EzraProposalAward ezraProposal : proposals) {
@@ -74,7 +74,7 @@ public class EzraServiceImpl implements EzraService {
 				routeAwardDocument(award, null);
 			}
 		}
-		return result;
+		return true;
 	}
 	
 	public boolean updateAwardsSince(Date date) {
