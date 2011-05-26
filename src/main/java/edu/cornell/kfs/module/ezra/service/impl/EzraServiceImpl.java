@@ -111,8 +111,9 @@ public class EzraServiceImpl implements EzraService {
 			Agency oldAgency = agency;
 			if (!ObjectUtils.isNull(agency)) {
 				updateAgency(agency, sponsor);
+				routeAgencyDocument(agency, oldAgency);
 			}
-			routeAgencyDocument(agency, oldAgency);
+			
 		}
 		return result;
 
