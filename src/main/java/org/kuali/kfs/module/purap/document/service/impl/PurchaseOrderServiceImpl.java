@@ -34,16 +34,15 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.integration.purap.CapitalAssetSystem;
 import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapKeyConstants;
-import org.kuali.kfs.module.purap.PurapParameterConstants;
-import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.PurapConstants.CreditMemoStatuses;
 import org.kuali.kfs.module.purap.PurapConstants.PODocumentsStrings;
-import org.kuali.kfs.module.purap.PurapConstants.POTransmissionMethods;
 import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderDocTypes;
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionSources;
+import org.kuali.kfs.module.purap.PurapKeyConstants;
+import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants.PurchaseOrderDocument.NodeDetailEnum;
 import org.kuali.kfs.module.purap.batch.AutoCloseRecurringOrdersStep;
 import org.kuali.kfs.module.purap.businessobject.AutoClosePurchaseOrderView;
@@ -99,6 +98,7 @@ import org.kuali.rice.kns.bo.AdHocRouteRecipient;
 import org.kuali.rice.kns.bo.Attachment;
 import org.kuali.rice.kns.bo.Note;
 import org.kuali.rice.kns.bo.Parameter;
+import org.kuali.rice.kns.bo.PersistableBusinessObject;
 import org.kuali.rice.kns.document.DocumentBase;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.exception.ValidationException;
@@ -424,39 +424,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                     copyingNote.setAuthorUniversalIdentifier(note.getAuthorUniversalIdentifier());
                     copyingNote.setNoteTopicText(note.getNoteTopicText());
                     Attachment originalAttachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
-                    Attachment newAttachment = new Attachment();
-                    String uniqueFileNameGuid = new Guid().toString();
-                    newAttachment.setAttachmentIdentifier(uniqueFileNameGuid);
+                    Attachment newAttachment = SpringContext.getBean(AttachmentService.class).createAttachment((PersistableBusinessObject)copyingNote, originalAttachment.getAttachmentFileName(), originalAttachment.getAttachmentMimeTypeCode(), originalAttachment.getAttachmentFileSize().intValue(), originalAttachment.getAttachmentContents(), originalAttachment.getAttachmentTypeCode());//new Attachment();
 
-                    String originalDir = "/tmp";//SpringContext.getBean(AttachmentService.class).getDocumentDirectory(reqDoc.getObjectId());
-                    String copytoDir = "/tmp";//SpringContext.getBean(AttachmentService.class).getDocumentDirectory(copyingNote.getRemoteObjectIdentifier());
-
-                    if (ObjectUtils.isNotNull(originalAttachment)) {
-                        System.out.println("original attachment: "+ originalDir + File.separator + originalAttachment.getAttachmentIdentifier());
-                        File attachmentFile = new File(originalDir + File.separator + originalAttachment.getAttachmentIdentifier());
-                        boolean newDirExists = new File(copytoDir).exists();
-                        if (!newDirExists) {
-                            newDirExists = new File(copytoDir).mkdirs();
-                        }
-
-                        if (newDirExists) {
-                            System.out.println("new attachment: "+ copytoDir + File.separator + newAttachment.getAttachmentIdentifier());
-                            File copiedAttachmentFile = new File(copytoDir + File.separator + newAttachment.getAttachmentIdentifier());
-                            FileReader in = new FileReader(attachmentFile);
-                            FileWriter out = new FileWriter(copiedAttachmentFile);
-                            int c;
-                            while ((c = in.read()) != -1) out.write(c);
-                            in.close();
-                            out.close();
-                        }
-
-                        newAttachment.setAttachmentFileName(originalAttachment.getAttachmentFileName());
-                        newAttachment.setAttachmentFileSize(originalAttachment.getAttachmentFileSize());
-                        newAttachment.setAttachmentMimeTypeCode(originalAttachment.getAttachmentMimeTypeCode());
-                        newAttachment.setAttachmentTypeCode(originalAttachment.getAttachmentTypeCode());
-                        if (ObjectUtils.isNotNull(newAttachment)) {
-                            copyingNote.addAttachment(newAttachment);
-                        }
+                    if (ObjectUtils.isNotNull(originalAttachment) && ObjectUtils.isNotNull(newAttachment)) {
+                       copyingNote.addAttachment(newAttachment);
                     }
                     poDoc.addNote(copyingNote);
 
