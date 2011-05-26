@@ -45,6 +45,8 @@ import org.kuali.kfs.pdp.service.PaymentDetailService;
 import org.kuali.kfs.pdp.service.PaymentGroupService;
 import org.kuali.kfs.pdp.service.PdpEmailService;
 import org.kuali.kfs.sys.businessobject.Bank;
+import org.kuali.rice.core.config.ConfigContext;
+import org.kuali.rice.kew.util.KEWConstants;
 import org.kuali.rice.kns.bo.Country;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.CountryService;
@@ -402,7 +404,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
         String cDelim = "^";  //column delimiter: Per BNY Mellon FastTrack spec, your choices are: "^" or ",".  If you change this make sure you change the associated name on the next line!
         String cDname = "FFCARET";  // column delimiter name: Per BNY Mellon FastTrack spec, your choices are: FFCARET and FFCOMMA for variable record types
         String hdrRecType = "V";  // record type: Per BNY Mellon's FastTrack spec, can be either V for variable or F for fixed.
-        String testIndicator = "T";  // CHANGE THIS TO P FOR PRODUCTION!!
+        String testIndicator = "T";  // CHANGE THIS TO P FOR PRODUCTION!!  NOTE: There is a boolean method contained in this class called "isProduction()" that is configured and is not a runtime parameter to determined if we are in production mode or not.
         String ourBankAccountNumber = "";
         String ourBankRoutingNumber = "";
         String subUnitCode = "";
@@ -1283,14 +1285,12 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
             Iterator iter = paymentGroupService.getByDisbursementTypeStatusCode(PdpConstants.DisbursementTypeCodes.ACH, PdpConstants.PaymentStatusCodes.PENDING_ACH);
             while (iter.hasNext()) {
                 PaymentGroup paymentGroup = (PaymentGroup) iter.next();
-/*              // This is was moved to the writeExtractAchFileMellonBankFastTrack method below since that is the file that needs to be created.  
-   				// This XML file will still be created however as per requirements.
    				if (!testMode) {
                     paymentGroup.setDisbursementDate(new java.sql.Date(processDate.getTime()));
                     paymentGroup.setPaymentStatus(extractedStatus);
                     businessObjectService.save(paymentGroup);
                 }
-*/
+
                 writeOpenTagAttribute(os, 2, "ach", "disbursementNbr", paymentGroup.getDisbursementNbr().toString());
                 PaymentProcess paymentProcess = paymentGroup.getProcess();
                 writeTag(os, 4, "processCampus", paymentProcess.getCampusCode());
@@ -1394,15 +1394,14 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
         return noteLine;
     }
     
-    
     protected void writeExtractAchFileMellonBankFastTrack(PaymentStatus extractedStatus, String filename, Date processDate, SimpleDateFormat sdf) {
         BufferedWriter os = null;
         sdf = new SimpleDateFormat("yyyyMMddHHmmss"); //Used in the Fast Track file HEADER record
         SimpleDateFormat sdfPAY1000Rec = new SimpleDateFormat("yyyyMMdd"); //Used in the Fast Track file PAY01000 record
         String cDelim = "^";  //column delimiter: Per BNY Mellon FastTrack spec, your choices are: "^" or ",".  If you change this make sure you change the associated name on the next line!
         String cDname = "FFCARET";  // column delimiter name: Per BNY Mellon FastTrack spec, your choices are: FFCARET and FFCOMMA for variable record types
-        String hdrRecType = "V";  // record type: Per BNY Mellon's FastTrack spec, can be either V for variable or F for fixed.
-        String testIndicator = "T";  // CHANGE THIS TO P FOR PRODUCTION!!
+        String hdrRecType = "V";    // record type: Per BNY Mellon's FastTrack spec, can be either V for variable or F for fixed.
+        String testIndicator = "T";  // CHANGE THIS TO P FOR PRODUCTION!!  NOTE: There is a boolean method contained in this class called "isProduction()" that is configured and is not a runtime parameter to determined if we are in production mode or not.
         String ourBankAccountNumber = "";
         String ourBankRoutingNumber = "";
         String subUnitCode = "";
@@ -1421,18 +1420,10 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
             while (iter.hasNext()) {
                 PaymentGroup pg = (PaymentGroup) iter.next();
                 
-                // Copied from the above XML generating method since this is the method that needs to record what was processed and what was not.
-                if (!testMode) {
-                    pg.setDisbursementDate(new java.sql.Date(processDate.getTime()));
-                    pg.setPaymentStatus(extractedStatus);
-                    businessObjectService.save(pg);
-                }
-                
                 // Get our Bank Account Number and our bank routing number
                 ourBankAccountNumber = pg.getBank().getBankAccountNumber().replace("-", "");
                 ourBankRoutingNumber = pg.getBank().getBankRoutingNumber();
                 
-                //We only need to write the Fast Track header records once in this file.
                 if (!wroteFastTrackHeaderRecords) {
                 	
                 	// open the file for writing
@@ -2025,5 +2016,8 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
         this.countryService = countryService;
     }
 
-
+    protected boolean isProduction() {
+    	return ConfigContext.getCurrentContextConfig().getProperty(KEWConstants.PROD_DEPLOYMENT_CODE).equalsIgnoreCase(
+    			ConfigContext.getCurrentContextConfig().getEnvironment());
+        }
 }
