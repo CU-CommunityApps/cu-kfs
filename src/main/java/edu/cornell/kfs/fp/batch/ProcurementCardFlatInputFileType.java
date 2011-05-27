@@ -275,9 +275,9 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             parent.setCardHolderLine2Address(extractNormalizedString(line, 104,140));
             parent.setCardHolderCityName(extractNormalizedString(line, 140, 165));
             parent.setCardHolderStateCode(extractNormalizedString(line, 165, 167));
-            parent.setCardHolderZipCode(extractNormalizedString(line, 168, 176));
+            parent.setCardHolderZipCode(extractNormalizedString(line, 167, 176));
             parent.setCardHolderWorkPhoneNumber(extractNormalizedString(line, 206, 216));
-            parent.setCardLimit(extractDecimal(line, 352, 363));
+//            parent.setCardLimit(extractDecimal(line, 352, 363));
             parent.setCardStatusCode(extractNormalizedString(line, 267, 268));
             
             String companyCode = extractNormalizedString(line, 252, 257);
@@ -303,7 +303,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             child.setCardHolderStateCode(parent.getCardHolderStateCode());
             child.setCardHolderZipCode(parent.getCardHolderZipCode());
             child.setCardHolderWorkPhoneNumber(parent.getCardHolderWorkPhoneNumber());
-            child.setCardLimit(parent.getCardLimit());
+//            child.setCardLimit(parent.getCardLimit());
             child.setCardStatusCode(parent.getCardStatusCode());
             
             child.setAccountNumber(extractNormalizedString(line, 317, 324, true)); //req
@@ -333,7 +333,17 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             child.setTransactionPurchaseIdentifierDescription(extractNormalizedString(line, 273, 298));
             child.setVendorCityName(extractNormalizedString(line, 120, 146));
             child.setVendorStateCode(extractNormalizedString(line, 146, 148));
-            child.setVendorZipCode(extractNormalizedString(line, 152, 161));
+//            child.setVendorZipCode(extractNormalizedString(line, 152, 161));
+
+            //
+            //   Fix to handle zip codes provided by US Bank
+            //
+            String vendorZipCode = extractNormalizedString(line,152,161);
+            if (vendorZipCode.startsWith("0000")) {
+            	vendorZipCode = extractNormalizedString(line,156,161);
+            }
+            child.setVendorZipCode(vendorZipCode);
+
             child.setVisaVendorIdentifier(extractNormalizedString(line, 176, 192));
             
             if (child.getTransactionDebitCreditCode().equals("D")) {
@@ -453,7 +463,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
     	}
     	return theValue;
     }
-        
+           
     private String convertDebitCreditCode(String val) throws Exception {
     	if (val.equals("+")) {
     		return "D";
