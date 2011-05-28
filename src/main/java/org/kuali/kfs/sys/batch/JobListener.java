@@ -28,6 +28,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.batch.service.SchedulerService;
 import org.kuali.kfs.sys.context.NDCFilter;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kns.mail.InvalidAddressException;
 import org.kuali.rice.kns.mail.MailMessage;
 import org.kuali.rice.kns.service.DateTimeService;
@@ -45,7 +46,6 @@ public class JobListener implements org.quartz.JobListener {
     protected KualiConfigurationService configurationService;
     protected MailService mailService;
     protected DateTimeService dateTimeService;
-    protected ParameterService parameterService;
 
     /**
      * @see org.quartz.JobListener#jobWasExecuted(org.quartz.JobExecutionContext, org.quartz.JobExecutionException)
@@ -119,7 +119,7 @@ public class JobListener implements org.quartz.JobListener {
             if (SchedulerService.FAILED_JOB_STATUS_CODE.equals(jobStatus) || SchedulerService.CANCELLED_JOB_STATUS_CODE.equals(jobStatus)) {
                 mailMessage.addToAddress(mailService.getBatchMailingList());
             }
-            String url = parameterService.getParameterValue("KFS-SYS", "Batch", "BATCH_REPORTS_URL");
+            String url = SpringContext.getBean(ParameterService.class).getParameterValue("KFS-SYS", "Batch", "BATCH_REPORTS_URL");
             mailMessageSubject.append(": ").append(jobStatus);
             String messageText = MessageFormat.format(configurationService.getPropertyString(KFSKeyConstants.MESSAGE_BATCH_FILE_LOG_EMAIL_BODY), url);
             mailMessage.setMessage(messageText);
@@ -176,7 +176,4 @@ public class JobListener implements org.quartz.JobListener {
         this.dateTimeService = dateTimeService;
     }
 
-	public void setParameterService(ParameterService parameterService) {
-		this.parameterService = parameterService;
-	}
 }
