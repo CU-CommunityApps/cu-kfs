@@ -10,17 +10,17 @@
     </bean>
      
   
-    <!-- override encryption services 
+    <!-- override encryption services -->
  	<bean id="encryptionService" class="edu.cornell.cynergy.service.impl.AESEncryptionServiceImpl" lazy-init="true">
 	  <property name="key" value="${cynergy.encryption.key}"/>
 	  <property name="enabled" value="${cynergy.encryption.busEncryption}"/>
-	</bean>  -->
+	</bean>  
 	 
-	<!-- moved from cynergy-server-customizations/CynergyKSBSpringBeans.xml and  cynergy-server-customizations/CynergyKEWSpringBeans.xml 
+	<!-- moved from cynergy-server-customizations/CynergyKSBSpringBeans.xml and  cynergy-server-customizations/CynergyKEWSpringBeans.xml -->
 	<bean id="enEncryptionService" class="edu.cornell.cynergy.service.impl.AESEncryptionServiceImpl" lazy-init="true">
 		<property name="key" value="${cynergy.encryption.key}"/>
 	  <property name="enabled" value="${cynergy.encryption.busEncryption}"/>
-	</bean> -->
+	</bean> 
       
     <bean id="enNoteService" class="org.kuali.rice.kew.notes.service.impl.NoteServiceImpl">
 		<property name="noteDAO" ref="enNoteDAO" />
