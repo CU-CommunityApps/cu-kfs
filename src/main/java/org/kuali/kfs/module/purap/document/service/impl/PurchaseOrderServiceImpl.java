@@ -424,13 +424,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                     copyingNote.setAuthorUniversalIdentifier(note.getAuthorUniversalIdentifier());
                     copyingNote.setNoteTopicText(note.getNoteTopicText());
                     Attachment originalAttachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
-                    Attachment newAttachment = SpringContext.getBean(AttachmentService.class).createAttachment((PersistableBusinessObject)copyingNote, originalAttachment.getAttachmentFileName(), originalAttachment.getAttachmentMimeTypeCode(), originalAttachment.getAttachmentFileSize().intValue(), originalAttachment.getAttachmentContents(), originalAttachment.getAttachmentTypeCode());//new Attachment();
+                    if (originalAttachment != null) {
+                    	Attachment newAttachment = SpringContext.getBean(AttachmentService.class).createAttachment((PersistableBusinessObject)copyingNote, originalAttachment.getAttachmentFileName(), originalAttachment.getAttachmentMimeTypeCode(), originalAttachment.getAttachmentFileSize().intValue(), originalAttachment.getAttachmentContents(), originalAttachment.getAttachmentTypeCode());//new Attachment();
 
-                    if (ObjectUtils.isNotNull(originalAttachment) && ObjectUtils.isNotNull(newAttachment)) {
-                       copyingNote.addAttachment(newAttachment);
+                    	if (ObjectUtils.isNotNull(originalAttachment) && ObjectUtils.isNotNull(newAttachment)) {
+                    		copyingNote.addAttachment(newAttachment);
+                    	}
+                    	poDoc.addNote(copyingNote);
+
                     }
-                    poDoc.addNote(copyingNote);
-
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
