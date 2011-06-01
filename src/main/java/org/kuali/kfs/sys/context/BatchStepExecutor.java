@@ -4,7 +4,9 @@ package org.kuali.kfs.sys.context;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Appender;
@@ -19,6 +21,7 @@ import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.KualiModuleService;
 import org.kuali.rice.kns.service.ModuleService;
 import org.kuali.rice.kns.service.ParameterService;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 
 /**
@@ -83,8 +86,12 @@ public class BatchStepExecutor implements Runnable {
 		try {        	            
 			LOG.info("Running "+ batchStepFile);
 			
+			checkTM();
+			
 			boolean result = Job.runStep(parameterService, batchStepFile.getJobName(), stepIndex, step, stepRunDate);
 
+			checkTM();
+			
 			if (result) {
 				LOG.info("Step returned true");
 				batchContainerDirectory.writeBatchStepSuccessfulResultFile(batchStepFile);
@@ -213,5 +220,30 @@ public class BatchStepExecutor implements Runnable {
             shortLogFileName = logFile.getName();
         }	    
         return shortLogFileName;
+	}
+	
+	private void checkTM() {
+		if (!TransactionSynchronizationManager.getResourceMap().isEmpty()){
+    		//errorText = errorText + ("Before: The Resource map is not empty.   THIS IS SOOO BAD.   URL: " + httpReq.getRequestURL());
+    		LOG.fatal("Before: The Resource map is not empty.   THIS IS SOOO BAD.   Step: " +batchStepFile.getStepName());
+    		
+    		Map aMap = TransactionSynchronizationManager.getResourceMap();
+    		int mapsize = aMap.size();
+
+    		Iterator keyValuePairs1 = aMap.entrySet().iterator();
+    		for (int i = 0; i < mapsize; i++)
+    		{
+    		  Map.Entry entry = (Map.Entry) keyValuePairs1.next();
+    		 // errorText = errorText + (";  Resources:  key: " + entry.getKey().toString() + " ; Value " + entry.getValue().toString());
+    		  LOG.fatal("Resources:  key: " + entry.getKey().toString() + " ; Value " + entry.getValue().toString());
+    		}
+    		//error = true;
+    	} else {
+    		LOG.debug("Before: The Resource map is empty.  This is good.    Step: " + batchStepFile.getStepName());
+    	}
+		
+		
+		
+		
 	}
 }
