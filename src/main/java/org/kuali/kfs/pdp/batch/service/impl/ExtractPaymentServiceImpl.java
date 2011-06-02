@@ -521,6 +521,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         altAddrZip = "";
                         altCountryName = "";
                         altAddrCityStateZip = "";
+                        PreparerInfoText = "";
                         SendToPrefLength = 0;
                         
                         while  (ix.hasNext()) {
@@ -660,8 +661,9 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         	
                             // Get country name for code
                             Country country = countryService.getByPrimaryId(pg.getCountry());
+                            int CountryNameMaxLength = 15;
                             if (country != null) {
-                            	sCountryName = country.getPostalCountryName().substring(0,((country.getPostalCountryName().length() >= 30)? 30: country.getPostalCountryName().length() ));;
+                            	sCountryName = country.getPostalCountryName().substring(0,((country.getPostalCountryName().length() >= CountryNameMaxLength)? CountryNameMaxLength: country.getPostalCountryName().length() ));;
                             	if (sCountryName.toUpperCase().contains("UNITED STATES"))
                             		sCountryName = "";
                             }
@@ -770,7 +772,10 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             int StateMaxLength = 2;
                             int ZipMaxLength = 15;
                             int PayeeNameMaxLength = 35;
+                            int PayeeIdMaxLength = 18;
                             String PayeeName = "";
+                            String PayeeId = "";
+                            String PayeeIdQualifier = "";
                             String AddrLine1 = "";
                             String AddrLine2 = "";
                             String AddrLine3 = "";
@@ -781,6 +786,10 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             
                             if (ObjectUtils.isNotNull(pg.getPayeeName()))
                             	PayeeName = pg.getPayeeName().substring(0,((pg.getPayeeName().length() >= PayeeNameMaxLength)? PayeeNameMaxLength: pg.getPayeeName().length() ));
+                            if (ObjectUtils.isNotNull(pg.getPayeeId())) {
+                            	PayeeId = pg.getPayeeId().substring(0,((pg.getPayeeId().length() >= PayeeIdMaxLength)? PayeeIdMaxLength: pg.getPayeeId().length() ));
+                            	PayeeIdQualifier = "ZZ";                            	
+                            }
                             if (ObjectUtils.isNotNull(pg.getLine1Address()))
                             	AddrLine1 = pg.getLine1Address().substring(0,((pg.getLine1Address().length() >= AddrMaxLength)? AddrMaxLength: pg.getLine1Address().length() ));
                             if (ObjectUtils.isNotNull(pg.getLine2Address()))
@@ -798,8 +807,8 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 
                             os.write("PDT02010" + cDelim +				// Record Type - 8 bytes
                             		"PE" + cDelim +						// Name qualifier - 3 bytes (PE = Payee) This record's data prints on the check
-                            		cDelim +							// ID code qualifier - 2 bytes
-                            		cDelim +							// ID code - 80 bytes
+                            		PayeeIdQualifier + cDelim +			// ID code qualifier - 2 bytes
+                            		PayeeId + cDelim +					// ID code - 80 bytes
                             		PayeeName + cDelim +				// Name - 35 bytes
                             		cDelim +							// Additional name 1 - 60 bytes
                             		cDelim +							// Additional name 2 - 60 bytes
@@ -813,7 +822,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             		AddrState + cDelim +				// State/Province - 2 bytes
                             		AddrZip + cDelim +					// Postal code - 15 bytes
                             		cDelim +							// Country code - 3 bytes
-                            		sCountryName + cDelim +				// Country name - 30 bytes (do not use if Country Code is used)
+                            		sCountryName + cDelim +				// Country name - 15 bytes (do not use if Country Code is used)
                                		cDelim +							// Ref qualifier 1 - 3 bytes (not used)
                             		cDelim +							// Ref ID 1 - 50 bytes (not used)
                             		cDelim +							// Ref description 1 - 80 bytes (not used)
@@ -841,8 +850,8 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             // Write the Fast Track second payee detail (PDT02010) record
                             os.write("PDT02010" + cDelim +             // Record Type - 8 bytes
                             		"FE" + cDelim +                    // Name qualifier - 3 bytes (FE = Remit) This record's data prints on the remittance
-                            		cDelim +                           // ID code qualifier - 2 bytes
-                            		cDelim +                           // ID code - 80 bytes
+                            		PayeeIdQualifier + cDelim +		   // ID code qualifier - 2 bytes
+                            		PayeeId + cDelim +			       // ID code - 80 bytes
                             		altAddrSendTo + cDelim +           // Name - 35 bytes
                             		cDelim +                           // Additional name 1 - 60 bytes
                             		cDelim +                           // Additional name 2 - 60 bytes
@@ -856,7 +865,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             		altAddrState + cDelim +            // State/Province - 2 bytes
                             		altAddrZip + cDelim +              // Postal code - 15 bytes
                             		cDelim +                           // Country code - 3 bytes
-                            		sCountryName + cDelim +			   // Country name - 30 bytes (do not use if Country Code is used)
+                            		sCountryName + cDelim +			   // Country name - 30 15 bytes (do not use if Country Code is used)
                                		cDelim +                           // Ref qualifier 1 - 3 bytes
                             		cDelim +                           // Ref ID 1 - 50 bytes
                             		cDelim +                           // Ref description 1 - 80 bytes
@@ -873,8 +882,8 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         // Set up data based on whether its a DV or a some type of Payment Request (PRAP, LIBR, CSTR, STAT, CLIF)
                         String remittanceIdCode = "IV";
                         String remittanceIdText = (subUnitCode.equals(DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? 
-                        		"Doc No:" + pd.getCustPaymentDocNbr() : 
-                        			"Inv:" + pd.getInvoiceNbr();
+                        		"Doc No:" + pd.getCustPaymentDocNbr() :   // must be 22 chars or less => this should be 16 characters (doc nbr is 9)
+                        			"Inv:" + pd.getInvoiceNbr();		  //  this would be 18 chars  (invoice number is 14)
                         
                         // Assign RefDesc1
                         if (ObjectUtils.isNull(pd.getPurchaseOrderNbr()))
@@ -890,136 +899,270 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         		RefDesc1 = "PO:" + pd.getPurchaseOrderNbr() + ", Doc:" + pd.getCustPaymentDocNbr();
                         
                         // Assign the RefDesc fields.
-                        if (RefDesc1.isEmpty())
-	                        if (FirstNoteAfterAddressInfo.isEmpty()) {
-	                        	if (SecondNoteAfterAddressInfo.isEmpty()) {
-	                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
-	                        			// no notes
-		                        		RefDesc1 = PreparerInfoText;			
-		                        		RefDesc2 = "";
-		                        		RefDesc3 = "";
-		                        		RefDesc4 = "";
-	                        		}
-	                        		else {  
-	                        			// Note3
-		                        		RefDesc1 = PreparerInfoText;			
-		                        		RefDesc2 = ThirdNoteAfterAddressInfo;
-		                        		RefDesc3 = "";
-		                        		RefDesc4 = "";
-	                        		}
-	                        	}
-	                        	else {  
-	                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {
-	                        			// Note2
-		                        		RefDesc1 = PreparerInfoText;			
-		                        		RefDesc2 = SecondNoteAfterAddressInfo;
-		                        		RefDesc3 = "";
-		                        		RefDesc4 = "";
-	                        		}
-	                        		else {
-	                        			// Note2, Note3
-		                        		RefDesc1 = PreparerInfoText;			
-		                        		RefDesc2 = SecondNoteAfterAddressInfo;
-		                        		RefDesc3 = ThirdNoteAfterAddressInfo;
-		                        		RefDesc4 = "";
-	                        		}
-	                        	}
+                        if (!PreparerInfoText.isEmpty())
+	                        if (RefDesc1.isEmpty()) {
+		                        if (FirstNoteAfterAddressInfo.isEmpty()) {
+		                        	if (SecondNoteAfterAddressInfo.isEmpty()) {
+		                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
+		                        			// no notes
+			                        		RefDesc1 = PreparerInfoText;			
+			                        		RefDesc2 = "";
+			                        		RefDesc3 = "";
+			                        		RefDesc4 = "";
+		                        		}
+		                        		else {  
+		                        			// Note3
+			                        		RefDesc1 = PreparerInfoText;			
+			                        		RefDesc2 = ThirdNoteAfterAddressInfo;
+			                        		RefDesc3 = "";
+			                        		RefDesc4 = "";
+		                        		}
+		                        	}
+		                        	else {  
+		                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {
+		                        			// Note2
+			                        		RefDesc1 = PreparerInfoText;			
+			                        		RefDesc2 = SecondNoteAfterAddressInfo;
+			                        		RefDesc3 = "";
+			                        		RefDesc4 = "";
+		                        		}
+		                        		else {
+		                        			// Note2, Note3
+			                        		RefDesc1 = PreparerInfoText;			
+			                        		RefDesc2 = SecondNoteAfterAddressInfo;
+			                        		RefDesc3 = ThirdNoteAfterAddressInfo;
+			                        		RefDesc4 = "";
+		                        		}
+		                        	}
+		                        }
+		                        else {  // Note1
+		                        	if (SecondNoteAfterAddressInfo.isEmpty()) {
+		                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
+		                        			// Note1
+			                        		RefDesc1 = PreparerInfoText;			
+			                        		RefDesc2 = FirstNoteAfterAddressInfo;
+			                        		RefDesc3 = "";
+			                        		RefDesc4 = "";
+		                        		}
+		                        		else {  
+		                        			// Note1, Note3
+			                        		RefDesc1 = PreparerInfoText;			
+			                        		RefDesc2 = FirstNoteAfterAddressInfo;
+			                        		RefDesc3 = ThirdNoteAfterAddressInfo;
+			                        		RefDesc4 = "";
+		                        		}
+		                        	}
+		                        	else { //Note2
+		                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
+		                        			// Note1, Note2
+			                        		RefDesc1 = PreparerInfoText;			
+			                        		RefDesc2 = FirstNoteAfterAddressInfo;
+			                        		RefDesc3 = SecondNoteAfterAddressInfo;
+			                        		RefDesc4 = "";
+		                        		}
+		                        		else {  
+		                        			// Note1, Note2, Note3
+			                        		RefDesc1 = PreparerInfoText;			
+			                        		RefDesc2 = FirstNoteAfterAddressInfo;
+			                        		RefDesc3 = SecondNoteAfterAddressInfo;
+			                        		RefDesc4 = ThirdNoteAfterAddressInfo;
+		                        		}
+		                        	}
+		                        }
 	                        }
-	                        else {  // Note1
-	                        	if (SecondNoteAfterAddressInfo.isEmpty()) {
-	                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
-	                        			// Note1
-		                        		RefDesc1 = PreparerInfoText;			
-		                        		RefDesc2 = FirstNoteAfterAddressInfo;
-		                        		RefDesc3 = "";
-		                        		RefDesc4 = "";
-	                        		}
-	                        		else {  
-	                        			// Note1, Note3
-		                        		RefDesc1 = PreparerInfoText;			
-		                        		RefDesc2 = FirstNoteAfterAddressInfo;
-		                        		RefDesc3 = ThirdNoteAfterAddressInfo;
-		                        		RefDesc4 = "";
-	                        		}
-	                        	}
-	                        	else { //Note2
-	                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
-	                        			// Note1, Note2
-		                        		RefDesc1 = PreparerInfoText;			
-		                        		RefDesc2 = FirstNoteAfterAddressInfo;
-		                        		RefDesc3 = SecondNoteAfterAddressInfo;
-		                        		RefDesc4 = "";
-	                        		}
-	                        		else {  
-	                        			// Note1, Note2, Note3
-		                        		RefDesc1 = PreparerInfoText;			
-		                        		RefDesc2 = FirstNoteAfterAddressInfo;
-		                        		RefDesc3 = SecondNoteAfterAddressInfo;
-		                        		RefDesc4 = ThirdNoteAfterAddressInfo;
-	                        		}
-	                        	}
-	                        }	                        
-                        else  // RefDesc1 contains text
-	                        if (FirstNoteAfterAddressInfo.isEmpty()) {
-	                        	if (SecondNoteAfterAddressInfo.isEmpty()) {
-	                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
-	                        			// no notes
-		                        		RefDesc2 = PreparerInfoText;
-		                        		RefDesc3 = "";
-		                        		RefDesc4 = "";
-	                        		}
-	                        		else {  
-	                        			// Note3
-		                        		RefDesc2 = PreparerInfoText;			
-		                        		RefDesc3 = ThirdNoteAfterAddressInfo;
-		                        		RefDesc4 = "";
-	                        		}
-	                        	}
-	                        	else {  
-	                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {
-	                        			// Note2
-		                        		RefDesc2 = PreparerInfoText;			
-		                        		RefDesc3 = SecondNoteAfterAddressInfo;
-		                        		RefDesc4 = "";
-	                        		}
-	                        		else {
-	                        			// Note2, Note3
-		                        		RefDesc2 = PreparerInfoText;			
-		                        		RefDesc3 = SecondNoteAfterAddressInfo;
-		                        		RefDesc4 = ThirdNoteAfterAddressInfo;
-	                        		}
-	                        	}
+	                        else  { // RefDesc1 contains text
+		                        if (FirstNoteAfterAddressInfo.isEmpty()) {
+		                        	if (SecondNoteAfterAddressInfo.isEmpty()) {
+		                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
+		                        			// no notes
+			                        		RefDesc2 = PreparerInfoText;
+			                        		RefDesc3 = "";
+			                        		RefDesc4 = "";
+		                        		}
+		                        		else {  
+		                        			// Note3
+			                        		RefDesc2 = PreparerInfoText;			
+			                        		RefDesc3 = ThirdNoteAfterAddressInfo;
+			                        		RefDesc4 = "";
+		                        		}
+		                        	}
+		                        	else {  
+		                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {
+		                        			// Note2
+			                        		RefDesc2 = PreparerInfoText;			
+			                        		RefDesc3 = SecondNoteAfterAddressInfo;
+			                        		RefDesc4 = "";
+		                        		}
+		                        		else {
+		                        			// Note2, Note3
+			                        		RefDesc2 = PreparerInfoText;			
+			                        		RefDesc3 = SecondNoteAfterAddressInfo;
+			                        		RefDesc4 = ThirdNoteAfterAddressInfo;
+		                        		}
+		                        	}
+		                        }
+		                        else {  // Note1
+		                        	if (SecondNoteAfterAddressInfo.isEmpty()) {
+		                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
+		                        			// Note1
+			                        		RefDesc2 = PreparerInfoText;			
+			                        		RefDesc3 = FirstNoteAfterAddressInfo;
+			                        		RefDesc4 = "";
+		                        		}
+		                        		else {  
+		                        			// Note1, Note3
+			                        		RefDesc2 = PreparerInfoText;			
+			                        		RefDesc3 = FirstNoteAfterAddressInfo;
+			                        		RefDesc4 = ThirdNoteAfterAddressInfo;
+		                        		}
+		                        	}
+		                        	else { //Note2
+		                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
+		                        			// Note1, Note2
+			                        		RefDesc2 = PreparerInfoText;			
+			                        		RefDesc3 = FirstNoteAfterAddressInfo;
+			                        		RefDesc4 = SecondNoteAfterAddressInfo;
+		                        		}
+		                        		else {  
+		                        			// Note1, Note2, Note3
+			                        		RefDesc2 = PreparerInfoText;			
+			                        		RefDesc3 = FirstNoteAfterAddressInfo;
+			                        		RefDesc4 = SecondNoteAfterAddressInfo;
+		                        		}
+		                        	}
+		                        }
 	                        }
-	                        else {  // Note1
-	                        	if (SecondNoteAfterAddressInfo.isEmpty()) {
-	                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
-	                        			// Note1
-		                        		RefDesc2 = PreparerInfoText;			
-		                        		RefDesc3 = FirstNoteAfterAddressInfo;
-		                        		RefDesc4 = "";
-	                        		}
-	                        		else {  
-	                        			// Note1, Note3
-		                        		RefDesc2 = PreparerInfoText;			
-		                        		RefDesc3 = FirstNoteAfterAddressInfo;
-		                        		RefDesc4 = ThirdNoteAfterAddressInfo;
-	                        		}
-	                        	}
-	                        	else { //Note2
-	                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
-	                        			// Note1, Note2
-		                        		RefDesc2 = PreparerInfoText;			
-		                        		RefDesc3 = FirstNoteAfterAddressInfo;
-		                        		RefDesc4 = SecondNoteAfterAddressInfo;
-	                        		}
-	                        		else {  
-	                        			// Note1, Note2, Note3
-		                        		RefDesc2 = PreparerInfoText;			
-		                        		RefDesc3 = FirstNoteAfterAddressInfo;
-		                        		RefDesc4 = SecondNoteAfterAddressInfo;
-	                        		}
-	                        	}
-	                        }
+                        else  // PreparerInfoText is empty
+	                        if (RefDesc1.isEmpty())
+		                        if (FirstNoteAfterAddressInfo.isEmpty()) {
+		                        	if (SecondNoteAfterAddressInfo.isEmpty()) {
+		                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
+		                        			// no notes
+			                        		RefDesc1 = "";			
+			                        		RefDesc2 = "";
+			                        		RefDesc3 = "";
+			                        		RefDesc4 = "";
+		                        		}
+		                        		else {  
+		                        			// Note3
+			                        		RefDesc1 = ThirdNoteAfterAddressInfo;			
+			                        		RefDesc2 = "";
+			                        		RefDesc3 = "";
+			                        		RefDesc4 = "";
+		                        		}
+		                        	}
+		                        	else {  
+		                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {
+		                        			// Note2
+			                        		RefDesc1 = SecondNoteAfterAddressInfo;			
+			                        		RefDesc2 = "";
+			                        		RefDesc3 = "";
+			                        		RefDesc4 = "";
+		                        		}
+		                        		else {
+		                        			// Note2, Note3
+			                        		RefDesc1 = SecondNoteAfterAddressInfo;			
+			                        		RefDesc2 = ThirdNoteAfterAddressInfo;
+			                        		RefDesc3 = "";
+			                        		RefDesc4 = "";
+		                        		}
+		                        	}
+		                        }
+		                        else {  // Note1
+		                        	if (SecondNoteAfterAddressInfo.isEmpty()) {
+		                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
+		                        			// Note1
+			                        		RefDesc1 = FirstNoteAfterAddressInfo;			
+			                        		RefDesc2 = "";
+			                        		RefDesc3 = "";
+			                        		RefDesc4 = "";
+		                        		}
+		                        		else {  
+		                        			// Note1, Note3
+			                        		RefDesc1 = FirstNoteAfterAddressInfo;			
+			                        		RefDesc2 = ThirdNoteAfterAddressInfo;
+			                        		RefDesc3 = "";
+			                        		RefDesc4 = "";
+		                        		}
+		                        	}
+		                        	else { //Note2
+		                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
+		                        			// Note1, Note2
+			                        		RefDesc1 = FirstNoteAfterAddressInfo;			
+			                        		RefDesc2 = SecondNoteAfterAddressInfo;
+			                        		RefDesc3 = "";
+			                        		RefDesc4 = "";
+		                        		}
+		                        		else {  
+		                        			// Note1, Note2, Note3
+			                        		RefDesc1 = FirstNoteAfterAddressInfo;			
+			                        		RefDesc2 = SecondNoteAfterAddressInfo;
+			                        		RefDesc3 = ThirdNoteAfterAddressInfo;
+			                        		RefDesc4 = "";
+		                        		}
+		                        	}
+		                        }	                        
+	                        else  // RefDesc1 contains text
+		                        if (FirstNoteAfterAddressInfo.isEmpty()) {
+		                        	if (SecondNoteAfterAddressInfo.isEmpty()) {
+		                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
+		                        			// no notes
+			                        		RefDesc2 = "";
+			                        		RefDesc3 = "";
+			                        		RefDesc4 = "";
+		                        		}
+		                        		else {  
+		                        			// Note3
+			                        		RefDesc2 = ThirdNoteAfterAddressInfo;			
+			                        		RefDesc3 = "";
+			                        		RefDesc4 = "";
+		                        		}
+		                        	}
+		                        	else {  
+		                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {
+		                        			// Note2
+			                        		RefDesc2 = SecondNoteAfterAddressInfo;			
+			                        		RefDesc3 = "";
+			                        		RefDesc4 = "";
+		                        		}
+		                        		else {
+		                        			// Note2, Note3
+			                        		RefDesc2 = SecondNoteAfterAddressInfo;			
+			                        		RefDesc3 = ThirdNoteAfterAddressInfo;
+			                        		RefDesc4 = "";
+		                        		}
+		                        	}
+		                        }
+		                        else {  // Note1
+		                        	if (SecondNoteAfterAddressInfo.isEmpty()) {
+		                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
+		                        			// Note1
+			                        		RefDesc2 = FirstNoteAfterAddressInfo;			
+			                        		RefDesc3 = "";
+			                        		RefDesc4 = "";
+		                        		}
+		                        		else {  
+		                        			// Note1, Note3
+			                        		RefDesc2 = FirstNoteAfterAddressInfo;			
+			                        		RefDesc3 = ThirdNoteAfterAddressInfo;
+			                        		RefDesc4 = "";
+		                        		}
+		                        	}
+		                        	else { //Note2
+		                        		if (ThirdNoteAfterAddressInfo.isEmpty()) {  
+		                        			// Note1, Note2
+			                        		RefDesc2 = FirstNoteAfterAddressInfo;			
+			                        		RefDesc3 = SecondNoteAfterAddressInfo;
+			                        		RefDesc4 = "";
+		                        		}
+		                        		else {  
+		                        			// Note1, Note2, Note3
+			                        		RefDesc2 = FirstNoteAfterAddressInfo;			
+			                        		RefDesc3 = SecondNoteAfterAddressInfo;
+			                        		RefDesc4 = ThirdNoteAfterAddressInfo;
+		                        		}
+		                        	}
+		                        }
                         
                         //  If we have something in RefDesc1 then RefQualifier must be "ZZ" according to Mellon's spec.
                         if (!RefDesc1.isEmpty()) 
@@ -1118,10 +1261,10 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         		dateQualifier = "003";
                         	}
                         	
-                        	//Write the initial Fast Track REM03020 record
+                        	//Write the Fast Track REM03020 record
 	                        os.write("REM03020" + cDelim +                                 					// Record type - 8 bytes
 	                        		remittanceIdCode + cDelim +                            					// Remittance qualifier code - 3 bytes
-	                        		remittanceIdText + cDelim +                            					// Remittance ID - 50 bytes
+	                        		remittanceIdText + cDelim +                            					// Remittance ID - 22 bytes
 	                        		ftNetPayAmount + cDelim +         										// Net invoice amount - 18 bytes
 	                        		ftTotalAmount + cDelim +         										// Total invoice amount - 18 bytes
 	                        		ftDiscountAmt + cDelim +     											// Discount amount - 18 bytes
@@ -1149,37 +1292,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 	                        		cDelim +                                               					// Date 4 (not used)
 	                                "\n");
 
-	                        os.write("REM03020" + cDelim +                                 					// Record type - 8 bytes
-	                        		remittanceIdCode + cDelim +                            					// Remittance qualifier code - 3 bytes
-	                        		remittanceIdText.toUpperCase() + cDelim +                            	// Remittance ID - 50 bytes
-	                        		ftNetPayAmount + cDelim +         										// Net invoice amount - 18 bytes
-	                        		ftTotalAmount + cDelim +         										// Total invoice amount - 18 bytes
-	                        		ftDiscountAmt + cDelim +     											// Discount amount - 18 bytes
-	                        		cDelim +                                               					// Note 1 - 80 bytes
-	                        		cDelim +                                               					// Note 2 - 80 bytes
-	                        		altRefQualifer + cDelim +                                               // Ref qualifier 1
-	                        		cDelim +                                               					// Ref ID 1
-	                        		altAddrSendTo.toUpperCase() + cDelim +                         			// Ref description 1 (up to 72 bytes)
-	                        		cDelim +                                               					// Ref qualifier 2 (not used)
-	                        		cDelim +                                               					// Ref ID 2 (not used)
-	                        		altAddrAddr1.toUpperCase() + cDelim +                                	// Ref description 2 (up to 72 bytes)
-	                        		cDelim +                                               					// Ref qualifier 3 (not used)
-	                        		cDelim +                                               					// Ref ID 3 (not used)
-	                        		altAddrAddr2.toUpperCase() + cDelim +                                	// Ref description 3 (up to 72 bytes)
-	                        		cDelim +                                               					// Ref qualifier 4 (not used)
-	                        		cDelim +                                               					// Ref ID 4 (not used)
-	                        		altAddrCityStateZip.toUpperCase() + cDelim +                         	// Ref description 4 (up to 72 bytes)
-	                        		dateQualifier + cDelim +                                               	// Date qualifier 1 (if Invoice date exists, it needs to be 003)
-	                        		InvoiceDate + cDelim +													// Date 1 
-	                        		cDelim +                                               					// Date qualifier 2 (not used)
-	                        		cDelim +                                               					// Date 2 (not used)
-	                        		cDelim +                                               					// Date qualifier 3 (not used)
-	                        		cDelim +                                               					// Date 3 (not used)
-	                        		cDelim +                                               					// Date qualifier 4 (not used)
-	                        		cDelim +                                               					// Date 4 (not used)
-	                                "\n");                                                 					// Filler
-	                      
-	                        totalRecordCount = totalRecordCount + 2;	//Two for the two REM03020 records
+	                        totalRecordCount = totalRecordCount + 1;	//Two for the two REM03020 records
                         }
                     } //while (paymentDetails.hasNext())
                 }  //for (Iterator<Integer> iter = disbNbrs.iterator(); iter.hasNext();)
