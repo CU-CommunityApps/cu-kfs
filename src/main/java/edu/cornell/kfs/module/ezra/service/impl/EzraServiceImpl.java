@@ -161,12 +161,14 @@ public class EzraServiceImpl implements EzraService {
 				aea.setFinalFinancialReportRequired(true);
 			}
 		}
-		KualiDecimal costShareRequired = ezraAward.getCsVolClg().add(ezraAward.getCsVolCntr().add(ezraAward.getCsVolDept().add(ezraAward.getCsVolExt().add(ezraAward.getCsVolUniv()))));
-		if (costShareRequired.isNonZero()) {
-			AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
-			aea.setCostShareRequired(true);
-		}
+		if (ezraAward.getCsVolClg() != null && ezraAward.getCsVolCntr() != null && ezraAward.getCsVolDept() != null && ezraAward.getCsVolExt() != null && ezraAward.getCsVolUniv() != null) {
+			KualiDecimal costShareRequired = ezraAward.getCsVolClg().add(ezraAward.getCsVolCntr().add(ezraAward.getCsVolDept().add(ezraAward.getCsVolExt().add(ezraAward.getCsVolUniv()))));
 		
+			if (costShareRequired.isNonZero()) {
+				AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
+				aea.setCostShareRequired(true);
+			}
+		}
 		award.refreshReferenceObject("proposal");
 		award.refreshNonUpdateableReferences();
 		return award;
