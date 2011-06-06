@@ -717,8 +717,15 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             	throw new Exception("writeExtractAchFileMellonBankFastTrack EXCEPTION: DIVSION CODE ISSUE=>  SUB UNIT IS " + subUnitCode + " BUT CAN ONLY BE 'DV', 'PRAP', 'LIBR', 'CSTR', 'STAT' OR 'CLIF'");
                             }
                             
-
-                        	//Write the Fast Track PAY01000 record (only one per payee)
+                            Date DisbursementDate;
+                            if (ObjectUtils.isNotNull(pg.getDisbursementDate()))
+                            	DisbursementDate = pg.getDisbursementDate();
+                            else {
+                            	LOG.error("Disbursement Date is NULL for Disbursement Number: " + CheckNumber);
+                            	break;
+                            }
+                            
+                            //Write the Fast Track PAY01000 record (only one per payee)
                         	os.write("PAY01000" + cDelim +                              // Record Type - 8 bytes
                         			"7" + cDelim +                                      // 7=Payment and Electronic Advice (Transaction handling code - 2 bytes)
                         			totalNetAmount.toString() + cDelim +                // Total amount of check (Payment amount - 18 bytes)
@@ -734,7 +741,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         			cDelim +                                            // Receiving bank id - 12 bytes
                         			cDelim +                                            // Receiving account number qualifier - 3 bytes
                         			cDelim +                                            // Receiving account number - 35 bytes
-                        			sdfPAY1000Rec.format(processDate) + cDelim +        // Effective date - 8 bytes - YYMMDD format
+                        			sdfPAY1000Rec.format(DisbursementDate) + cDelim +   // Effective date - 8 bytes - YYMMDD format
                         			cDelim +                                            // Business function code - 3 bytes 
                         			CheckNumber + cDelim +       						// Trace number (check number) - 50 bytes
                         			divisionCode + cDelim +                             // Division code - 50 bytes 
@@ -1179,19 +1186,19 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         else
                         	Ref1Qualifier = "";
                         
-                        //  If we have something in RefDesc1 then RefQualifier must be "ZZ" according to Mellon's spec.
+                        //  If we have something in RefDesc2 then RefQualifier must be "ZZ" according to Mellon's spec.
                         if (!RefDesc2.isEmpty()) 
                         	Ref2Qualifier = "ZZ";
                         else
                         	Ref2Qualifier = "";
                         
-                        //  If we have something in RefDesc1 then RefQualifier must be "ZZ" according to Mellon's spec.
+                        //  If we have something in RefDesc3 then RefQualifier must be "ZZ" according to Mellon's spec.
                         if (!RefDesc3.isEmpty()) 
                         	Ref3Qualifier = "ZZ";
                         else
                         	Ref3Qualifier = "";
                         
-                        //  If we have something in RefDesc1 then RefQualifier must be "ZZ" according to Mellon's spec.
+                        //  If we have something in RefDesc4 then RefQualifier must be "ZZ" according to Mellon's spec.
                         if (!RefDesc4.isEmpty()) 
                         	Ref4Qualifier = "ZZ";
                         else
