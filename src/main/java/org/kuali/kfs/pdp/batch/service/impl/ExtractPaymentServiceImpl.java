@@ -622,10 +622,14 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             if (ObjectUtils.isNotNull(cp))
                             	if (ObjectUtils.isNotNull(cp.getSubUnitCode()))
                             		subUnitCode = cp.getSubUnitCode();
-                            	else
+                            	else {
                             		LOG.error("No Sub Unit Code provided for requisition number: " + pd.getRequisitionNbr());
-                            else
+                            		break;
+                            	}
+                            else {
                             	LOG.error("No customer profile exists for payee name: " + pg.getPayeeName());
+                            	break;
+                            }
                         }
 
                         if (first && !immediateCheckCode) {
@@ -714,7 +718,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             }
                             else {
                             	LOG.error("writeExtractAchFileMellonBankFastTrack EXCEPTION: DIVSION CODE ISSUE=>  SUB UNIT IS " + subUnitCode + " BUT CAN ONLY BE 'DV', 'PRAP', 'LIBR', 'CSTR', 'STAT' OR 'CLIF'");
-                            	throw new Exception("writeExtractAchFileMellonBankFastTrack EXCEPTION: DIVSION CODE ISSUE=>  SUB UNIT IS " + subUnitCode + " BUT CAN ONLY BE 'DV', 'PRAP', 'LIBR', 'CSTR', 'STAT' OR 'CLIF'");
+                            	break;  // Go to the next record, don't throw away all records.
                             }
                             
                             Date DisbursementDate;
@@ -819,7 +823,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             if (ObjectUtils.isNotNull(pg.getState()))
                             	AddrState = pg.getState().substring(0,((pg.getState().length() >= StateMaxLength)? StateMaxLength: pg.getState().length() ));
                             if (ObjectUtils.isNotNull(pg.getZipCd()))
-                            	AddrZip = pg.getZipCd().substring(0,((pg.getZipCd().length() >= ZipMaxLength)? ZipMaxLength: pg.getZipCd().length() ));
+                            	AddrZip = (pg.getZipCd().substring(0,((pg.getZipCd().length() >= ZipMaxLength)? ZipMaxLength: pg.getZipCd().length() ))).replace("-", "");
 
                             os.write("PDT02010" + cDelim +				// Record Type - 8 bytes
                             		"PE" + cDelim +						// Name qualifier - 3 bytes (PE = Payee) This record's data prints on the check
@@ -863,6 +867,9 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             	altCountryName = sCountryName;
                            		altRefQualifer = "ZZ";
                            }
+                            else {
+                            	altAddrZip = altAddrZip.replace("-", "");
+                            }
                             // Write the Fast Track second payee detail (PDT02010) record
                             os.write("PDT02010" + cDelim +             // Record Type - 8 bytes
                             		"FE" + cDelim +                    // Name qualifier - 3 bytes (FE = Remit) This record's data prints on the remittance
@@ -896,7 +903,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         
                         // Write the Fast Track REM03020 records
                         // Set up data based on whether its a DV or a some type of Payment Request (PRAP, LIBR, CSTR, STAT, CLIF)
-                        String remittanceIdCode = "IV";
+                        String remittanceIdCode = (subUnitCode.equals(DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? "TN" : "IV" ;
                         String remittanceIdText = (subUnitCode.equals(DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? 
                         		"Doc No:" + pd.getCustPaymentDocNbr() :   // must be 22 chars or less => this should be 16 characters (doc nbr is 9)
                         			"Inv:" + pd.getInvoiceNbr();		  //  this would be 18 chars  (invoice number is 14)
@@ -909,10 +916,12 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         	else
                         		RefDesc1 = "Doc No:" + pd.getCustPaymentDocNbr();
                         else
-                        	if (ObjectUtils.isNull(pd.getCustPaymentDocNbr()))
-                        		RefDesc1 = "PO:" + pd.getPurchaseOrderNbr();
-                        	else
-                        		RefDesc1 = "PO:" + pd.getPurchaseOrderNbr() + ", Doc:" + pd.getCustPaymentDocNbr();
+                        	if (subUnitCode.equals("PRAP"))
+                        		// Only show the PO number for PRAP PDP customers, not for any others
+	                        	if (ObjectUtils.isNull(pd.getCustPaymentDocNbr()))
+	                        		RefDesc1 = "PO:" + pd.getPurchaseOrderNbr();
+	                        	else
+	                        		RefDesc1 = "PO:" + pd.getPurchaseOrderNbr() + ", Doc:" + pd.getCustPaymentDocNbr();
                         
                         // Assign the RefDesc fields.
                         if (!PreparerInfoText.isEmpty())
@@ -1273,20 +1282,26 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         	String ftDiscountAmt = "";
                         	if (ObjectUtils.isNotNull(pd.getNetPaymentAmount())) {
                         		ftNetPayAmount = pd.getNetPaymentAmount().toString();
-                        		if (ftNetPayAmount.length() > 18)
-                        			throw new Exception("Net Payment Amount is more than 18 bytes");
+                        		if (ftNetPayAmount.length() > 18) {
+                        			LOG.error("Net Payment Amount is more than 18 bytes");
+                        			break;
+                        		}
                         	}
                         	
                         	if (ObjectUtils.isNotNull(pd.getInvTotShipAmount())) {
                         		ftTotalAmount = pd.getInvTotShipAmount().toString();
-                        		if (ftTotalAmount.length() > 18)
-                        			throw new Exception("Net Payment Amount is more than 18 bytes");
+                        		if (ftTotalAmount.length() > 18) {
+                        			LOG.error("Total Payment Amount is more than 18 bytes");
+                        			break;
+                        		}
                         	}
                         	
                         	if (ObjectUtils.isNotNull(pd.getInvTotDiscountAmount())) {
                         		ftDiscountAmt = pd.getInvTotDiscountAmount().toString();
-                        		if (ftDiscountAmt.length() > 18)
-                        			throw new Exception("Net Payment Amount is more than 18 bytes");
+                        		if (ftDiscountAmt.length() > 18) {
+                        			LOG.error("Discount Amount is more than 18 bytes");
+                        			break;
+                        		}
                         	}
                         	
                         	String InvoiceDate = "";
@@ -1419,20 +1434,26 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
     protected void writeExtractAchFile(PaymentStatus extractedStatus, String filename, Date processDate, SimpleDateFormat sdf) {
     	    	
     	BufferedWriter os = null;
+    	boolean WroteHeaderRecords = false;
         try {
             // Writes out the BNY Mellon Fast Track formatted file for ACH payments.  We need to do this first since the status is set in this method which
         	//   causes the writeExtractAchFileMellonBankFastTrack method to not find anything.
         	writeExtractAchFileMellonBankFastTrack(extractedStatus, filename, processDate, sdf);
-
-            os = new BufferedWriter(new FileWriter(filename));
-            os.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-            writeOpenTag(os, 0, "achPayments");
 
             // totals for summary
             Map<String, Integer> unitCounts = new HashMap<String, Integer>();
             Map<String, KualiDecimal> unitTotals = new HashMap<String, KualiDecimal>();
 
             Iterator iter = paymentGroupService.getByDisbursementTypeStatusCode(PdpConstants.DisbursementTypeCodes.ACH, PdpConstants.PaymentStatusCodes.PENDING_ACH);
+            if (iter.hasNext()) {
+                os = new BufferedWriter(new FileWriter(filename));
+                os.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+                writeOpenTag(os, 0, "achPayments");
+                WroteHeaderRecords = true;
+            }
+            else
+            	WroteHeaderRecords = false;
+            
             while (iter.hasNext()) {
                 PaymentGroup paymentGroup = (PaymentGroup) iter.next();
    				if (!testMode) {
@@ -1675,7 +1696,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         else
                         {
                         	LOG.error("writeExtractAchFileMellonBankFastTrack EXCEPTION: DIVSION CODE ISSUE=>  SUB UNIT IS " + subUnitCode + " BUT CAN ONLY BE 'DV', 'PRAP', 'LIBR', 'CSTR', 'STAT' OR 'CLIF'");
-                        	throw new Exception("writeExtractAchFileMellonBankFastTrack EXCEPTION: DIVSION CODE ISSUE=>  SUB UNIT IS " + subUnitCode + " BUT CAN ONLY BE 'DV', 'PRAP', 'LIBR', 'CSTR', 'STAT' OR 'CLIF'");
+                        	break;
                         }
                         
                         //Determine the ACH Code to send down.  Here are the rules:
@@ -1809,7 +1830,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         if (ObjectUtils.isNotNull(pg.getState()))
                         	State = pg.getState().substring(0,((pg.getState().length() >= StateMaxLength)? StateMaxLength: pg.getState().length() ));
                         if (ObjectUtils.isNotNull(pg.getZipCd()))
-                        	Zip = pg.getZipCd().substring(0,((pg.getZipCd().length() >= ZipMaxLength)? ZipMaxLength: pg.getZipCd().length() ));
+                        	Zip = (pg.getZipCd().substring(0,((pg.getZipCd().length() >= ZipMaxLength)? ZipMaxLength: pg.getZipCd().length() ))).replace("-", "");
                         
                         os.write("PDT02010" + cDelim +      // Record Type - 8 bytes
                         		"PR" + cDelim +             // Name qualifier - 3 bytes
@@ -1858,11 +1879,11 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                     }
                     
                     // Write the REM03020 record
-                    // Set up data based on whether its a DV or a Payment Request
-                    String remittanceIdCode = "IV";  //The code is always IV
+                    // Set up remittanceIdCode and remittanceIdText based on whether its a DV or something else.
+                    String remittanceIdCode = (subUnitCode.equals(DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? "TN" : "IV" ;
                     String remittanceIdText = (subUnitCode == DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE) ? 
-                    		pd.getCustPaymentDocNbr() : 
-                    			pd.getInvoiceNbr();
+                    		ObjectUtils.isNotNull(pd.getCustPaymentDocNbr()) ? pd.getCustPaymentDocNbr() : "" : 
+                    			ObjectUtils.isNotNull(pd.getInvoiceNbr()) ? pd.getInvoiceNbr() : "";
                     
                 	//All of these are limited to 18 bytes in Fast Track.
                 	String ftNetPayAmount = "";
@@ -1872,7 +1893,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                 		ftNetPayAmount = pd.getNetPaymentAmount().toString();
                 		if (ftNetPayAmount.length() > 18) {
                 			LOG.error("Net Payment Amount is more than 18 bytes");
-                			throw new Exception("Net Payment Amount is more than 18 bytes");
+                			break;
                 		}
                 	}
                 	
@@ -1880,7 +1901,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                 		ftTotalAmount = pd.getInvTotShipAmount().toString();
                 		if (ftTotalAmount.length() > 18) {
                 			LOG.error("Total Payment Amount is more than 18 bytes");
-                			throw new Exception("Total Payment Amount is more than 18 bytes");
+                			break;
                 		}
                 	}
                 	
@@ -1888,7 +1909,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                 		ftDiscountAmt = pd.getInvTotDiscountAmount().toString();
                 		if (ftDiscountAmt.length() > 18) {
                 			LOG.error("Discount Amount is more than 18 bytes");
-                			throw new Exception("Discount Amount is more than 18 bytes");
+                			break;
                 		}
                 	}
                 	
