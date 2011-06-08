@@ -871,8 +871,9 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                            }
                             else {
                             	altAddrZip = altAddrZip.replace("-", "");
+                            	sCountryName = "";	// If we have two addresses, an original and an alternate, make sure the alternate does not inherit the original's country name!
                             }
-                            // Write the Fast Track second payee detail (PDT02010) record
+                            // Write the Fast Track second payee detail (PDT02010) record (for alternate addressing (special handling addressing case)
                             os.write("PDT02010" + cDelim +             // Record Type - 8 bytes
                             		"FE" + cDelim +                    // Name qualifier - 3 bytes (FE = Remit) This record's data prints on the remittance
                             		PayeeIdQualifier + cDelim +		   // ID code qualifier - 2 bytes
@@ -890,7 +891,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             		altAddrState + cDelim +            // State/Province - 2 bytes
                             		altAddrZip + cDelim +              // Postal code - 15 bytes
                             		cDelim +                           // Country code - 3 bytes
-                            		sCountryName + cDelim +			   // Country name - 30 15 bytes (do not use if Country Code is used)
+                            		cDelim +			   			   // Country name - 30 15 bytes (do not use if Country Code is used)  Alternate addresses never are outside the USA.
                                		cDelim +                           // Ref qualifier 1 - 3 bytes
                             		cDelim +                           // Ref ID 1 - 50 bytes
                             		cDelim +                           // Ref description 1 - 80 bytes
@@ -1290,7 +1291,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         		}
                         	}
                         	
-                        	if (ObjectUtils.isNotNull(pd.getInvTotShipAmount())) {
+                        	if (ObjectUtils.isNotNull(pd.getOrigInvoiceAmount())) {
                         		ftTotalAmount = pd.getOrigInvoiceAmount().toString();
                         		if (ftTotalAmount.length() > 18) {
                         			LOG.error("Original Invoice Amount is more than 18 bytes for check number " + CheckNumber);
@@ -1868,22 +1869,6 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         first = false;								// Set this here so it is only executed once per payee
                     }  //If (first)
 
-                    // Write the remittance record (REM03020) - occurs once for each of the payee's invoices.
-                    // Setup Notes
-                    String rec03020Note1= "";
-                    String rec03020Note2= "";
-                    Iterator<PaymentNoteText> ix = pd.getNotes().iterator();
-                    //Get the first note
-                    if  (ix.hasNext()) {
-                    	PaymentNoteText note = (PaymentNoteText) ix.next();
-                    	rec03020Note1 = note.getCustomerNoteText().substring(0,((note.getCustomerNoteText().length() > 65)? 65: note.getCustomerNoteText().length() ));
-                    }
-                    //Get the second note
-                    if  (ix.hasNext()) {
-                    	PaymentNoteText note = (PaymentNoteText) ix.next();
-                    	rec03020Note2 = note.getCustomerNoteText().substring(0,((note.getCustomerNoteText().length() > 65)? 65: note.getCustomerNoteText().length() ));
-                    }
-                    
                     // Write the REM03020 record
                     // Set up remittanceIdCode and remittanceIdText based on whether its a DV or something else.
                     String remittanceIdCode = (subUnitCode.equals(DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? "TN" : "IV" ;
@@ -1903,7 +1888,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                 		}
                 	}
                 	
-                	if (ObjectUtils.isNotNull(pd.getInvTotShipAmount())) {
+                	if (ObjectUtils.isNotNull(pd.getOrigInvoiceAmount())) {
                 		ftTotalAmount = pd.getOrigInvoiceAmount().toString();
                 		if (ftTotalAmount.length() > 18) {
                 			LOG.error("Original Invoice Amount is more than 18 bytes");
@@ -1931,8 +1916,8 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                     		ftNetPayAmount + cDelim +         									// Net invoice amount - 18 bytes
                     		ftTotalAmount + cDelim +         									// Total invoice amount - 18 bytes
                     		ftDiscountAmt + cDelim +     										// Discount amount - 18 bytes
-                    		rec03020Note1 + cDelim +                 							// Note 1 - 80 bytes
-                    		rec03020Note2 + cDelim +                 							// Note 2 - 80 bytes
+                    		cDelim +                 											// Note 1 - 80 bytes - NOT USED PER SPEC
+                    		cDelim +                 											// Note 2 - 80 bytes - NOT USED PER SPEC
                     		cDelim +                                               				// Ref qualifier 1
                     		cDelim +                                               				// Ref ID 1
                     		cDelim +                                               				// Ref description 1
