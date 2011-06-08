@@ -147,6 +147,8 @@ public class EzraServiceImpl implements EzraService {
 			} 
 		}
 		
+		award.refreshReferenceObject("extension");
+		
 		Map fieldValues = new HashMap();
 		fieldValues.put("projectId", award.getProposalNumber());
 		fieldValues.put("deliverableType", 'F');
@@ -161,10 +163,20 @@ public class EzraServiceImpl implements EzraService {
 				aea.setFinalFinancialReportRequired(true);
 			}
 		}
-		if (ezraAward.getCsVolClg() != null && ezraAward.getCsVolCntr() != null && ezraAward.getCsVolDept() != null && ezraAward.getCsVolExt() != null && ezraAward.getCsVolUniv() != null) {
-			KualiDecimal costShareRequired = ezraAward.getCsVolClg().add(ezraAward.getCsVolCntr().add(ezraAward.getCsVolDept().add(ezraAward.getCsVolExt().add(ezraAward.getCsVolUniv()))));
+		if (ezraAward.getCsVolClg() != null && 
+				ezraAward.getCsVolCntr() != null && 
+				ezraAward.getCsVolDept() != null && 
+				ezraAward.getCsVolExt() != null && 
+				ezraAward.getCsVolUniv() != null &&
+				ezraAward.getCsMandClg() != null && 
+				ezraAward.getCsMandCntr() != null && 
+				ezraAward.getCsMandDept() != null && 
+				ezraAward.getCsMandExt() != null && 
+				ezraAward.getCsMandUniv() != null) {
+			KualiDecimal volCostShareRequired = ezraAward.getCsVolClg().add(ezraAward.getCsVolCntr().add(ezraAward.getCsVolDept().add(ezraAward.getCsVolExt().add(ezraAward.getCsVolUniv()))));
+			KualiDecimal mandCostShareRequired = ezraAward.getCsMandClg().add(ezraAward.getCsMandCntr().add(ezraAward.getCsMandDept().add(ezraAward.getCsMandExt().add(ezraAward.getCsMandUniv()))));
 		
-			if (costShareRequired.isNonZero()) {
+			if (volCostShareRequired.isNonZero() || mandCostShareRequired.isNonZero()) {
 				AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
 				aea.setCostShareRequired(true);
 			}

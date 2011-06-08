@@ -33,6 +33,11 @@ public class EzraProposalAward extends PersistableBusinessObjectBase {
 	private KualiDecimal csVolClg;
 	private KualiDecimal csVolUniv;
 	private KualiDecimal csVolExt;
+	private KualiDecimal csMandCntr;
+	private KualiDecimal csMandDept;
+	private KualiDecimal csMandClg;
+	private KualiDecimal csMandUniv;
+	private KualiDecimal csMandExt;
 	private String federalPassThrough; //FED_FLOW_THROUGH
 	private Long federalPassThroughAgencyNumber; //FLOWTHROUGH_SPONSOR_ID
 	private String departmentId; //DEPT_ID
@@ -366,6 +371,56 @@ public class EzraProposalAward extends PersistableBusinessObjectBase {
 	public void setLastUpdated(Date lastUpdated) {
 		this.lastUpdated = lastUpdated;
 	}
+
+	public KualiDecimal getCsMandCntr() {
+		return csMandCntr;
+	}
+
+
+	public void setCsMandCntr(KualiDecimal csMandCntr) {
+		this.csMandCntr = csMandCntr;
+	}
+
+
+	public KualiDecimal getCsMandDept() {
+		return csMandDept;
+	}
+
+
+	public void setCsMandDept(KualiDecimal csMandDept) {
+		this.csMandDept = csMandDept;
+	}
+
+
+	public KualiDecimal getCsMandClg() {
+		return csMandClg;
+	}
+
+
+	public void setCsMandClg(KualiDecimal csMandClg) {
+		this.csMandClg = csMandClg;
+	}
+
+
+	public KualiDecimal getCsMandUniv() {
+		return csMandUniv;
+	}
+
+
+	public void setCsMandUniv(KualiDecimal csMandUniv) {
+		this.csMandUniv = csMandUniv;
+	}
+
+
+	public KualiDecimal getCsMandExt() {
+		return csMandExt;
+	}
+
+
+	public void setCsMandExt(KualiDecimal csMandExt) {
+		this.csMandExt = csMandExt;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()

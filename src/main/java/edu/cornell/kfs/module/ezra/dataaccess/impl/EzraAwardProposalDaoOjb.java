@@ -24,6 +24,13 @@ public class EzraAwardProposalDaoOjb extends PlatformAwareDaoBaseOjb implements 
 		criteria.addGreaterThan("budgetAmt",KualiDecimal.ZERO);
 		criteria.addEqualTo("status", "ASAP");
 
+//		
+//		ReportQueryByCriteria query;
+//	    query = new ReportQueryByCriteria(EzraProposalAward.class, criteria);
+//	    query.setColumns(new String[] { "max(awardProposalId)" });
+//		
+//		
+		
         return (List<EzraProposalAward>)getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(EzraProposalAward.class, criteria));
 	}
 	
@@ -44,6 +51,11 @@ public class EzraAwardProposalDaoOjb extends PlatformAwareDaoBaseOjb implements 
 			criteria.addGreaterThan("lastUpdated", date);
 		}
 
+//		ReportQueryByCriteria query;
+//	    query = new ReportQueryByCriteria(EzraProposalAward.class, criteria);
+//	    query.setColumns(new String[] { "max(awardProposalId)" });
+//	
+		
         return (List<EzraProposalAward>)getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(EzraProposalAward.class, criteria));
 	}
 
