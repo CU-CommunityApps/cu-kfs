@@ -215,7 +215,12 @@ public class EzraServiceImpl implements EzraService {
 		if (project.getProjectTitle() != null) {
 			proposal.setProposalProjectTitle(project.getProjectTitle().trim());
 		}
-		proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
+		
+		if (ezraProposal.getSponsorProjectId().length() > 27) {
+			proposal.setGrantNumber(ezraProposal.getSponsorProjectId().substring(0,26));
+		} else {
+			proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
+		}
 		proposal.setProposalStatusCode(EzraUtils.getProposalAwardStatusMap().get(ezraProposal.getStatus()));
 		proposal.setProposalPurposeCode(EzraUtils.getProposalPurposeMap().get(ezraProposal.getPurpose()));
 		proposal.setProposalBeginningDate(ezraProposal.getStartDate());
@@ -363,8 +368,9 @@ public class EzraServiceImpl implements EzraService {
 		} 
 		awardDoc.getNewMaintainableObject().setBusinessObject(award);;
 		try {
-			documentService.saveDocument(awardDoc);
-			awardDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
+			//documentService.saveDocument(awardDoc);
+			documentService.routeDocument(awardDoc, "Automatically created and routed", null);
+			//awardDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		} catch (RuntimeException rte) {
