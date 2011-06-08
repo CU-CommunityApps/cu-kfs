@@ -447,6 +447,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
         boolean wroteMellonFastTrackHeaderRecords = false;
         CustomerProfile cp = null;
         String sCountryName = "";
+        String CheckNumber = "";
                 
         int totalRecordCount = 0;
         KualiDecimal totalPaymentAmounts = KualiDecimal.ZERO; 
@@ -516,6 +517,9 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 
                         //Get immediate (a.k.a. local print, a.k.a. manual) check indicator
                         immediateCheckCode = pg.getProcessImmediate();
+                        
+                        // If it exists, get the check (a.k.a. disbursement number)
+                        CheckNumber = (ObjectUtils.isNotNull(pg.getDisbursementNbr()) ? pg.getDisbursementNbr().toString() : "" );	
                         
                         // Parse Notes
                         Iterator<PaymentNoteText> ix = pd.getNotes().iterator();
@@ -708,16 +712,14 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             else if (subUnitCode.equals("CLIF")) dvCodePart1 = 5;
                             else dvCodePart1 = 0;
                             
-                            String CheckNumber = "";
                             // See above table for details
                             if (dvCodePart1 != 0) {
                                 int dvCodePart2 = ((specialHandlingCode ? 1 : 0) + (attachmentCode ? 2 : 0)) * 5;
                                 // String dvCodePart3 = Integer.toString(dvCodePart1 + dvCodePart2);
                                 divisionCode = String.format(String.format("%%0%dd", 3), (dvCodePart1 + dvCodePart2));
-                                CheckNumber = (ObjectUtils.isNotNull(pg.getDisbursementNbr()) ? pg.getDisbursementNbr().toString() : "" );	
                             }
                             else {
-                            	LOG.error("writeExtractAchFileMellonBankFastTrack EXCEPTION: DIVSION CODE ISSUE=>  SUB UNIT IS " + subUnitCode + " BUT CAN ONLY BE 'DV', 'PRAP', 'LIBR', 'CSTR', 'STAT' OR 'CLIF'");
+                            	LOG.error("writeExtractAchFileMellonBankFastTrack DIVSION CODE ERROR => SUB UNIT IS " + subUnitCode + " FOR CHECK # " + CheckNumber + " BUT CAN ONLY BE 'DV', 'PRAP', 'LIBR', 'CSTR', 'STAT' OR 'CLIF'");
                             	break;  // Go to the next record, don't throw away all records.
                             }
                             
@@ -1252,7 +1254,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         		
                         		//Write the BNY Mellon issuance detail (regular format) record
                             
-                            String CheckNumber = repeatThis("0", 10 - pg.getDisbursementNbr().toString().length()) + pg.getDisbursementNbr().toString();
+                            CheckNumber = repeatThis("0", 10 - pg.getDisbursementNbr().toString().length()) + pg.getDisbursementNbr().toString();
                             String AmountOfCheck = totalNetAmount.toString().replace(".","");
                             AmountOfCheck = repeatThis("0",10 - AmountOfCheck.length()) + AmountOfCheck;
                             
@@ -1283,15 +1285,15 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         	if (ObjectUtils.isNotNull(pd.getNetPaymentAmount())) {
                         		ftNetPayAmount = pd.getNetPaymentAmount().toString();
                         		if (ftNetPayAmount.length() > 18) {
-                        			LOG.error("Net Payment Amount is more than 18 bytes");
+                        			LOG.error("Net Payment Amount is more than 18 bytes for check number " + CheckNumber);
                         			break;
                         		}
                         	}
                         	
                         	if (ObjectUtils.isNotNull(pd.getInvTotShipAmount())) {
-                        		ftTotalAmount = pd.getInvTotShipAmount().toString();
+                        		ftTotalAmount = pd.getOrigInvoiceAmount().toString();
                         		if (ftTotalAmount.length() > 18) {
-                        			LOG.error("Total Payment Amount is more than 18 bytes");
+                        			LOG.error("Original Invoice Amount is more than 18 bytes for check number " + CheckNumber);
                         			break;
                         		}
                         	}
@@ -1299,7 +1301,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         	if (ObjectUtils.isNotNull(pd.getInvTotDiscountAmount())) {
                         		ftDiscountAmt = pd.getInvTotDiscountAmount().toString();
                         		if (ftDiscountAmt.length() > 18) {
-                        			LOG.error("Discount Amount is more than 18 bytes");
+                        			LOG.error("Discount Amount is more than 18 bytes for check number " + CheckNumber);
                         			break;
                         		}
                         	}
@@ -1309,6 +1311,10 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         		InvoiceDate = pd.getInvoiceDate().toString().replace("-", "");
                         		dateQualifier = "003";
                         	}
+                        	else {
+                        		LOG.error("Invoice date is blank for check number " + CheckNumber);
+                    			break;
+                        	}                        		
                         	
                         	//Write the Fast Track REM03020 record
 	                        os.write("REM03020" + cDelim +                                 					// Record type - 8 bytes
@@ -1898,9 +1904,9 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                 	}
                 	
                 	if (ObjectUtils.isNotNull(pd.getInvTotShipAmount())) {
-                		ftTotalAmount = pd.getInvTotShipAmount().toString();
+                		ftTotalAmount = pd.getOrigInvoiceAmount().toString();
                 		if (ftTotalAmount.length() > 18) {
-                			LOG.error("Total Payment Amount is more than 18 bytes");
+                			LOG.error("Original Invoice Amount is more than 18 bytes");
                 			break;
                 		}
                 	}
