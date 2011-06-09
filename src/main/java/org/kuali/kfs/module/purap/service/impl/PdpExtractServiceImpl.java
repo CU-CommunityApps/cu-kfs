@@ -60,7 +60,11 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.VendorConstants;
+import org.kuali.rice.kew.docsearch.service.SearchableAttributeProcessingService;
 import org.kuali.rice.kew.exception.WorkflowException;
+import org.kuali.rice.kew.messaging.MessageServiceNames;
+import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
+import org.kuali.rice.kew.service.KEWServiceLocator;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kim.service.PersonService;
 import org.kuali.rice.kns.service.BusinessObjectService;
@@ -399,6 +403,14 @@ public class PdpExtractServiceImpl implements PdpExtractService {
             PaymentRequestDocument doc = (PaymentRequestDocument) documentService.getByDocumentHeaderId(paymentRequestDocument.getDocumentNumber());
             doc.setExtractedTimestamp(new Timestamp(processRunDate.getTime()));
             SpringContext.getBean(PurapService.class).saveDocumentNoValidation(doc);
+            
+            DocumentRouteHeaderValue routeHeader = 
+            	KEWServiceLocator.getRouteHeaderService().getRouteHeader(Long.valueOf(doc.getDocumentNumber()));
+    		SearchableAttributeProcessingService searchableAttributeService = 
+    			MessageServiceNames.getSearchableAttributeService(routeHeader);
+    		searchableAttributeService.indexDocument(Long.valueOf(doc.getDocumentNumber()));
+            //SearchableAttributeProcessingService searchableAttService = (SearchableAttributeProcessingService) MessageServiceNames.getSearchableAttributeService(routeHeader);
+			//searchableAttService.indexDocument(new Long(doc.getDocumentNumber())); 
         }
         catch (WorkflowException e) {
             throw new IllegalArgumentException("Unable to retrieve payment request: " + paymentRequestDocument.getDocumentNumber());
