@@ -871,7 +871,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                            }
                             else {
                             	altAddrZip = altAddrZip.replace("-", "");
-                            	sCountryName = "";	// If we have two addresses, an original and an alternate, make sure the alternate does not inherit the original's country name!
+                            	altCountryName = "";	// If we have two addresses, an original and an alternate, make sure the alternate does not inherit the original's country name!
                             }
                             // Write the Fast Track second payee detail (PDT02010) record (for alternate addressing (special handling addressing case)
                             os.write("PDT02010" + cDelim +             // Record Type - 8 bytes
@@ -891,7 +891,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             		altAddrState + cDelim +            // State/Province - 2 bytes
                             		altAddrZip + cDelim +              // Postal code - 15 bytes
                             		cDelim +                           // Country code - 3 bytes
-                            		cDelim +			   			   // Country name - 30 15 bytes (do not use if Country Code is used)  Alternate addresses never are outside the USA.
+                            		altCountryName + cDelim +		   // Country name - 30 15 bytes (do not use if Country Code is used)  Alternate addresses are never outside the USA.
                                		cDelim +                           // Ref qualifier 1 - 3 bytes
                             		cDelim +                           // Ref ID 1 - 50 bytes
                             		cDelim +                           // Ref description 1 - 80 bytes
