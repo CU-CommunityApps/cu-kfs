@@ -455,7 +455,7 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
         else if (parameterService.getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.PREPAID_TRAVEL_PAYMENT_REASONS_PARM_NM, paymentReasonCode).evaluationSucceeds()) {
             pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
-            pnt.setCustomerNoteText("Payment is for the following indviuals/charges:");
+            pnt.setCustomerNoteText("Payment is for the following individuals/charges:");
             pd.addNote(pnt);
             if (LOG.isDebugEnabled()) {
                 LOG.info("Creating prepaid travel note note: "+pnt.getCustomerNoteText());
@@ -521,7 +521,11 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
                     else {
                         pnt = new PaymentNoteText();
                         pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
-                        pnt.setCustomerNoteText(noteLine.replaceAll("\\n", "").trim());
+                        //  We need to add the :: in front of each line that is generated in order to determine which notes being
+                        //   generated are those typed by the user in the eDoc as we can only move 3 lines to the remittance lines
+                        //   on the check.  These codes will help us identify the user's notes and as such ensure that they will
+                        //   make it to their expected destination on the remittance stub.
+                        pnt.setCustomerNoteText(DisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER + noteLine.replaceAll("\\n", "").trim());
                     }
                     
                     // Logging...
