@@ -1,5 +1,7 @@
 package edu.cornell.kfs.coa.service.impl;
 
+import javax.jws.WebService;
+
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.ProjectCode;
@@ -10,7 +12,6 @@ import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.coa.service.ProjectCodeService;
 import org.kuali.kfs.coa.service.SubAccountService;
 import org.kuali.kfs.coa.service.SubObjectCodeService;
-//import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.coa.service.AccountVerificationWebService;
 
@@ -24,6 +25,7 @@ import edu.cornell.kfs.coa.service.AccountVerificationWebService;
  * @author Sandy Eccleston
  * @version 1.0
  */
+@WebService(endpointInterface = "edu.cornell.kfs.coa.service.AccountVerificationWebService")
 public class AccountVerificationWebServiceImpl implements AccountVerificationWebService {
 	 
    private AccountService accountService;

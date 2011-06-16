@@ -1,5 +1,8 @@
 package edu.cornell.kfs.coa.service;
 
+import javax.jws.WebParam;
+import javax.jws.WebService;
+
 /**
  *
  * <p>Title: AccountVerificationWebService</p>
@@ -9,6 +12,8 @@ package edu.cornell.kfs.coa.service;
  * @author Sandy Eccleston
  * @version 1.0
  */
+
+@WebService 
 public interface AccountVerificationWebService {
 
   /**
@@ -17,7 +22,13 @@ public interface AccountVerificationWebService {
    * @param accountNumber String 
    * @return Boolean
    */
-  public boolean isValidAccountString(String chartOfAccountsCode, String accountNumber, String subAccountNumber, String objectCode, String subObjectCode, String projectCode) throws Exception;
+  public boolean isValidAccountString(
+		  @WebParam(name = "chartOfAccountsCode")String chartOfAccountsCode, 
+		  @WebParam(name = "accountNumber")String accountNumber, 
+		  @WebParam(name = "subAccountNumber")String subAccountNumber, 
+		  @WebParam(name = "objectCode")String objectCode,
+		  @WebParam(name = "subObjectCode") String subObjectCode,
+		  @WebParam(name = "projectCode") String projectCode) throws Exception;
 
   /**
    * A valid subAccount is one that is currently active and is valid for this Chart and this Account Number
@@ -26,7 +37,10 @@ public interface AccountVerificationWebService {
    * @param subAccountNumber String  
    * @return Boolean
    */
-  public boolean isValidSubAccount(String chartOfAccountsCode, String accountNumber, String subAccountNumber) throws Exception;
+  public boolean isValidSubAccount(
+		  @WebParam(name = "chartOfAccountsCode")String chartOfAccountsCode, 
+		  @WebParam(name = "accountNumber")String accountNumber, 
+		  @WebParam(name = "subAccountNumber")String subAccountNumber) throws Exception;
 
 
   /**
@@ -35,7 +49,9 @@ public interface AccountVerificationWebService {
    * @param objectCode String 
    * @return Boolean
    */
-  public boolean isValidObjectCode(String chartOfAccountsCode, String objectCode) throws Exception;
+  public boolean isValidObjectCode(
+		  @WebParam(name = "chartOfAccountsCode")String chartOfAccountsCode, 
+		  @WebParam(name = "objectCode")String objectCode) throws Exception;
 
 
   /**
@@ -46,14 +62,18 @@ public interface AccountVerificationWebService {
    * @param subObjectCode String 
    * @return Boolean
    */
-  public boolean isValidSubObjectCode(String chartOfAccountsCode, String accountNumber, String objectCode, String subObjectCode) throws Exception;
+  public boolean isValidSubObjectCode(
+		  @WebParam(name = "chartOfAccountsCode")String chartOfAccountsCode, 
+		  @WebParam(name = "accountNumber")String accountNumber, 
+		  @WebParam(name = "objectCode")String objectCode,
+		  @WebParam(name = "subObjectCode") String subObjectCode) throws Exception;
 
   /**
    * A valid Project Code is valid 
    * @param projectCode String 
    * @return Boolean
    */
-  public boolean isValidProjectCode(String projectCode) throws Exception;
+  public boolean isValidProjectCode(@WebParam(name = "projectCode") String projectCode) throws Exception;
 
 
 
