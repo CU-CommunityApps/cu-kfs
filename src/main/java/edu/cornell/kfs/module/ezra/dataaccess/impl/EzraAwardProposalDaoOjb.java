@@ -26,13 +26,13 @@ public class EzraAwardProposalDaoOjb extends PlatformAwareDaoBaseOjb implements 
 		criteria.addEqualTo("status", "ASAP");
 
 		
-		ReportQueryByCriteria query;
-	    query = new ReportQueryByCriteria(EzraProposalAward.class, criteria);
-	    query.setColumns(new String[] { "max(awardProposalId)" });
+//		ReportQueryByCriteria query;
+//	    query = new ReportQueryByCriteria(EzraProposalAward.class, criteria);
+//	    query.setColumns(new String[] { "max(awardProposalId)" });
+//		
 		
 		
-		
-        return (List<EzraProposalAward>)getPersistenceBrokerTemplate().getCollectionByQuery(query);
+        return (List<EzraProposalAward>)getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(EzraProposalAward.class, criteria));
 	}
 	
 	public List<EzraProposalAward> getAwardsUpdatedSince(Date date) {
@@ -55,12 +55,12 @@ public class EzraAwardProposalDaoOjb extends PlatformAwareDaoBaseOjb implements 
 		}
 		criteria.addOrCriteria(orCriteria);
 
-		ReportQueryByCriteria query;
-	    query = new ReportQueryByCriteria(EzraProposalAward.class, criteria);
-	    query.setColumns(new String[] { "max(awardProposalId)" });
+//		ReportQueryByCriteria query;
+//	    query = new ReportQueryByCriteria(EzraProposalAward.class, criteria);
+//	    query.setColumns(new String[] { "max(awardProposalId)" });
 	
 		
-        return (List<EzraProposalAward>)getPersistenceBrokerTemplate().getCollectionByQuery(query);
+        return (List<EzraProposalAward>)getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(EzraProposalAward.class, criteria));
 	}
 
 }
