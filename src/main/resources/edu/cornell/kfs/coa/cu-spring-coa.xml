@@ -45,19 +45,6 @@
 		<property name="subObjectCodeService" ref ="subObjectCodeService" />
 		<property name="projectCodeService" ref ="projectCodeService" />
 	</bean>
-
-	<bean class="org.kuali.rice.ksb.messaging.KSBExporter"> 
-    	<property name="serviceDefinition"> 
-            <bean class="org.kuali.rice.ksb.messaging.SOAPServiceDefinition"> 
-              <property name="service"> 
-                <ref bean="accountVerificationWebService" /> 
-              </property> 
-              <property name="serviceInterface" value="edu.cornell.kfs.coa.service.AccountVerificationWebService"/> 
-              <property name="localServiceName" value="accountVerificationWebServiceSOAP" /> 
-              <property name="busSecurity" value="false" /> 
-            </bean> 
-        </property> 
-    </bean> 
 	
 	<bean id="accountService" class="org.kuali.kfs.coa.service.impl.AccountServiceImpl">
 		<property name="accountDao">
