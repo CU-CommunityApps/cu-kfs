@@ -216,7 +216,7 @@ public class EzraServiceImpl implements EzraService {
 			proposal.setProposalProjectTitle(project.getProjectTitle().trim());
 		}
 		
-		if (ezraProposal.getSponsorProjectId().length() > 27) {
+		if (ObjectUtils.isNotNull(ezraProposal.getSponsorProjectId()) && ezraProposal.getSponsorProjectId().length() > 27) {
 			proposal.setGrantNumber(ezraProposal.getSponsorProjectId().substring(0,26));
 		} else {
 			proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
@@ -246,7 +246,7 @@ public class EzraServiceImpl implements EzraService {
 		Agency agency = new Agency();
 		agency.setAgencyNumber(sponsorId.toString());
 		agency.setReportingName(sponsor.getSponsorLabel());
-		if (sponsor.getSponsorName().length() > 50)
+		if (ObjectUtils.isNotNull(sponsor.getSponsorName()) && sponsor.getSponsorName().length() > 50)
 			agency.setFullName(sponsor.getSponsorName().substring(0,49));
 		else {
 			agency.setFullName(sponsor.getSponsorName());
@@ -436,7 +436,7 @@ public class EzraServiceImpl implements EzraService {
 					KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new AttributeSet());
 					projDirs.add(ppd);
 				} else {
-					LOG.error("PI: " +investigator.getNetId()+" is for award :"+ projectId+" is not in kfs");
+					LOG.error("PI: " +investigator.getNetId()+" for award :"+ projectId+" is not in kfs");
 				}
 			} else {
 				LOG.error("PI netId for award :"+ projectId+" is null");
