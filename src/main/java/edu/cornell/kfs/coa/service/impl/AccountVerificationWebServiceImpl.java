@@ -12,6 +12,7 @@ import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.coa.service.ProjectCodeService;
 import org.kuali.kfs.coa.service.SubAccountService;
 import org.kuali.kfs.coa.service.SubObjectCodeService;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.coa.service.AccountVerificationWebService;
 
@@ -28,31 +29,31 @@ import edu.cornell.kfs.coa.service.AccountVerificationWebService;
 @WebService(endpointInterface = "edu.cornell.kfs.coa.service.AccountVerificationWebService")
 public class AccountVerificationWebServiceImpl implements AccountVerificationWebService {
 	 
-   private AccountService accountService;
-   private ObjectCodeService objectCodeService;
-   private SubAccountService subAccountService;
-   private SubObjectCodeService subObjectCodeService;
-   private ProjectCodeService projectCodeService;
-   
-   public void setAccountService(AccountService accountService) {
-		this.accountService = accountService;
-	}
-   
-   public void setObjectCodeService (ObjectCodeService objectCodeService) {
-		  this.objectCodeService = objectCodeService;
-	  }
-
-	  public void setSubAccountService (SubAccountService subAccountService) {
-		  this.subAccountService = subAccountService;
-	  }
-
-	  public void setSubObjectCodeService (SubObjectCodeService subObjectCodeService) {
-		  this.subObjectCodeService = subObjectCodeService;
-	  }
-	  
-	  public void setProjectCodeService (ProjectCodeService projectCodeService) {
-		  this.projectCodeService = projectCodeService;
-	  }
+//   private AccountService accountService = SpringContext.getBean(AccountService.class);
+//   private ObjectCodeService objectCodeService = SpringContext.getBean(ObjectCodeService.class);
+//   private SubAccountService subAccountService = SpringContext.getBean(SubAccountService.class);
+//   private SubObjectCodeService subObjectCodeService = SpringContext.getBean(SubObjectCodeService.class);
+//   private ProjectCodeService projectCodeService = SpringContext.getBean(ProjectCodeService.class);
+//   
+//   public void setAccountService(AccountService accountService) {
+//		this.accountService = accountService;
+//	}
+//   
+//   public void setObjectCodeService (ObjectCodeService objectCodeService) {
+//		  this.objectCodeService = objectCodeService;
+//	  }
+//
+//	  public void setSubAccountService (SubAccountService subAccountService) {
+//		  this.subAccountService = subAccountService;
+//	  }
+//
+//	  public void setSubObjectCodeService (SubObjectCodeService subObjectCodeService) {
+//		  this.subObjectCodeService = subObjectCodeService;
+//	  }
+//	  
+//	  public void setProjectCodeService (ProjectCodeService projectCodeService) {
+//		  this.projectCodeService = projectCodeService;
+//	  }
 
   public boolean isValidAccountString(String chartOfAccountsCode, String accountNumber, String subAccountNumber, 
 		                              String objectCode, String subObjectCode, String projectCode ) 
@@ -69,7 +70,7 @@ public class AccountVerificationWebServiceImpl implements AccountVerificationWeb
 		  return false;
 	  }
 	 
-	  Account account = accountService.getByPrimaryId(chartOfAccountsCode, accountNumber); 
+	  Account account = SpringContext.getBean(AccountService.class).getByPrimaryId(chartOfAccountsCode, accountNumber); 
 	  
 	  if (account == null || account.toString().isEmpty()) {
 		  isValid = false;
@@ -100,7 +101,7 @@ public class AccountVerificationWebServiceImpl implements AccountVerificationWeb
   public boolean isValidSubAccount(String chartOfAccountsCode, String accountNumber, String subAccountNumber) throws Exception{
 	boolean isValidSubAccount = false; 
 	
-	SubAccount subAccount = subAccountService.getByPrimaryId(chartOfAccountsCode, accountNumber, subAccountNumber); 
+	SubAccount subAccount = SpringContext.getBean(SubAccountService.class).getByPrimaryId(chartOfAccountsCode, accountNumber, subAccountNumber); 
 	
 	if (subAccount == null || subAccount.toString().isEmpty())
 		isValidSubAccount = false;
@@ -113,7 +114,7 @@ public class AccountVerificationWebServiceImpl implements AccountVerificationWeb
   public boolean isValidObjectCode(String chartOfAccountsCode, String objectCodeParm) throws Exception {
 	 boolean isValidObjectCode = false;
 	 
- 	 ObjectCode objectCode = objectCodeService.getByPrimaryIdForCurrentYear(chartOfAccountsCode, objectCodeParm);
+ 	 ObjectCode objectCode = SpringContext.getBean(ObjectCodeService.class).getByPrimaryIdForCurrentYear(chartOfAccountsCode, objectCodeParm);
 	 if (objectCode == null || objectCode.toString().isEmpty()) 
 		 isValidObjectCode = false;
      else
@@ -125,7 +126,7 @@ public class AccountVerificationWebServiceImpl implements AccountVerificationWeb
   public boolean isValidSubObjectCode(String chartOfAccountsCode, String accountNumber, String objectCode, String subObjectCodeParm) throws Exception {
 	 boolean isValidSubObjectCode = false;
 	 
-	 SubObjectCode subObjectCode = subObjectCodeService.getByPrimaryIdForCurrentYear(chartOfAccountsCode, accountNumber, objectCode, subObjectCodeParm);
+	 SubObjectCode subObjectCode = SpringContext.getBean(SubObjectCodeService.class).getByPrimaryIdForCurrentYear(chartOfAccountsCode, accountNumber, objectCode, subObjectCodeParm);
 	 
 	 if (subObjectCode == null || subObjectCode.toString().isEmpty()) 
 		 isValidSubObjectCode = false;
@@ -138,7 +139,7 @@ public class AccountVerificationWebServiceImpl implements AccountVerificationWeb
   public boolean isValidProjectCode(String projectCodeParm) throws Exception {
 	 boolean isValidProjectCode = false;
 	 
-	 ProjectCode projectCode = projectCodeService.getByPrimaryId(projectCodeParm);
+	 ProjectCode projectCode = SpringContext.getBean(ProjectCodeService.class).getByPrimaryId(projectCodeParm);
 	 
 	 if (projectCode == null || projectCode.toString().isEmpty()) 
 		 isValidProjectCode = false;

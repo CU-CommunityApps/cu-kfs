@@ -38,13 +38,8 @@
 	 	<property name="moduleConfiguration" ref="cu-coa"/>
 	</bean>
 
-	<bean id="accountVerificationWebService" class="edu.cornell.kfs.coa.service.impl.AccountVerificationWebServiceImpl">
-		<property name="accountService" ref ="accountService" />
-		<property name="subAccountService" ref ="subAccountService" />
-		<property name="objectCodeService" ref ="objectCodeService" />
-		<property name="subObjectCodeService" ref ="subObjectCodeService" />
-		<property name="projectCodeService" ref ="projectCodeService" />
-	</bean>
+	<bean id="accountVerificationWebService" class="edu.cornell.kfs.coa.service.impl.AccountVerificationWebServiceImpl"/>
+	
 	
 	<bean id="accountService" class="org.kuali.kfs.coa.service.impl.AccountServiceImpl">
 		<property name="accountDao">
