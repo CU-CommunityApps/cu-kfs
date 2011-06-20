@@ -1913,9 +1913,9 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                     // Write the REM03020 record
                     // Set up remittanceIdCode and remittanceIdText based on whether its a DV or something else.
                     String remittanceIdCode = (subUnitCode.equals(DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? "TN" : "IV" ;
-                    String remittanceIdText = (subUnitCode == DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE) ? 
-                    		ObjectUtils.isNotNull(pd.getCustPaymentDocNbr()) ? pd.getCustPaymentDocNbr() : "" : 
-                    			ObjectUtils.isNotNull(pd.getInvoiceNbr()) ? pd.getInvoiceNbr() : "";
+                    String remittanceIdText = (subUnitCode.equals(DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? 
+                    		ObjectUtils.isNotNull(pd.getCustPaymentDocNbr()) ? "Doc No:" + pd.getCustPaymentDocNbr() : "" : 
+                    			ObjectUtils.isNotNull(pd.getInvoiceNbr()) ? "Inv:" + pd.getInvoiceNbr() : "";
                     
                 	//All of these are limited to 18 bytes in Fast Track.
                 	String ftNetPayAmount = "";
