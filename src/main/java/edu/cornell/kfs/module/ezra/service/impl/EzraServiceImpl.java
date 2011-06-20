@@ -226,6 +226,7 @@ public class EzraServiceImpl implements EzraService {
 		proposal.setProposalBeginningDate(ezraProposal.getStartDate());
 		proposal.setProposalEndingDate(ezraProposal.getStopDate());
 		proposal.setProposalDirectCostAmount(ezraProposal.getTotalAmt());
+		proposal.setProposalIndirectCostAmount(KualiDecimal.ZERO);
 //		if (ezraProposal.getFederalPassThroughAgencyNumber() != null) {
 //			Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getFederalPassThroughAgencyNumber().toString());
 //			if (ObjectUtils.isNull(agency)) {
@@ -318,6 +319,7 @@ public class EzraServiceImpl implements EzraService {
 	
 	
 	private void routeAgencyDocument(Agency agency, Agency oldAgency) {
+		GlobalVariables.clear();
 		GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
 		// DocumentService docService = SpringContext.getBean(DocumentService.class);
 		MaintenanceDocument agencyDoc  = null;
@@ -350,6 +352,7 @@ public class EzraServiceImpl implements EzraService {
 	}
 	
 	private void routeAwardDocument(Award award, Award oldAward) {
+		GlobalVariables.clear();
 		GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
 		// DocumentService docService = SpringContext.getBean(DocumentService.class);
 		MaintenanceDocument awardDoc  = null;
@@ -368,9 +371,9 @@ public class EzraServiceImpl implements EzraService {
 		} 
 		awardDoc.getNewMaintainableObject().setBusinessObject(award);;
 		try {
-			//documentService.saveDocument(awardDoc);
-			documentService.routeDocument(awardDoc, "Automatically created and routed", null);
-			//awardDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
+			documentService.saveDocument(awardDoc);
+			//documentService.routeDocument(awardDoc, "Automatically created and routed", null);
+			awardDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		} catch (RuntimeException rte) {
@@ -397,6 +400,7 @@ public class EzraServiceImpl implements EzraService {
 		proposalDoc.getNewMaintainableObject().setBusinessObject(proposal);
 		try {
 			documentService.saveDocument(proposalDoc);
+			GlobalVariables.getMessageMap().clearErrorMessages();
 			proposalDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
 		} catch (WorkflowException we) {
 			we.printStackTrace();
