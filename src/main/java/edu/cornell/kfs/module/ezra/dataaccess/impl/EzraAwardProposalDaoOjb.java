@@ -47,14 +47,9 @@ public class EzraAwardProposalDaoOjb extends PlatformAwareDaoBaseOjb implements 
 		Criteria criteria = new Criteria();
 		criteria.addIn("projectId", awardNumbers);
 		criteria.addLike("awardProposalId", "A%");
-		
-		Criteria orCriteria = new Criteria();
-		
 		if (date != null) {
-			orCriteria.addGreaterThan("lastUpdated", date);
+			criteria.addGreaterThan("lastUpdated", date);
 		}
-		criteria.addOrCriteria(orCriteria);
-
 //		ReportQueryByCriteria query;
 //	    query = new ReportQueryByCriteria(EzraProposalAward.class, criteria);
 //	    query.setColumns(new String[] { "max(awardProposalId)" });

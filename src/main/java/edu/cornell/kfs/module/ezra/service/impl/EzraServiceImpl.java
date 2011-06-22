@@ -181,6 +181,8 @@ public class EzraServiceImpl implements EzraService {
 				aea.setCostShareRequired(true);
 			}
 		}
+		AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
+		aea.setVersionNumber(aea.getVersionNumber()+1);
 		award.refreshReferenceObject("proposal");
 		award.refreshNonUpdateableReferences();
 		return award;
@@ -389,6 +391,7 @@ public class EzraServiceImpl implements EzraService {
 	}
 	
 	private void routeProposalDocument(Proposal proposal) {
+		GlobalVariables.clear();
 		GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
 		MaintenanceDocument proposalDoc  = null;
 		try {
@@ -400,7 +403,6 @@ public class EzraServiceImpl implements EzraService {
 		proposalDoc.getNewMaintainableObject().setBusinessObject(proposal);
 		try {
 			documentService.saveDocument(proposalDoc);
-			GlobalVariables.getMessageMap().clearErrorMessages();
 			proposalDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
 		} catch (WorkflowException we) {
 			we.printStackTrace();
