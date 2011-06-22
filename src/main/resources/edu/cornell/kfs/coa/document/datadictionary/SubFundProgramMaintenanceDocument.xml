@@ -31,6 +31,12 @@
     <property name="workflowAttributes">
     	<ref bean="SubFundProgramMaintenanceDocument-workflowAttributes"/>
     </property>
+     <property name="lockingKeys">
+      <list>
+        <value>programCode</value>
+        <value>subFundGroupCode</value>
+      </list>
+    </property>
   </bean>
 
 <!-- Maintenance Section Definitions -->
