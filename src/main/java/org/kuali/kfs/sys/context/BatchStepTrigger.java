@@ -54,7 +54,7 @@ public class BatchStepTrigger {
     public static void main(String[] args) {
         try {            
             Log4jConfigurer.configureLogging(false);
-            BatchLogger.addConsoleAppender(LOG);
+            //BatchLogger.addConsoleAppender(LOG);
             
         	batchStepTriggerParameters = new BatchStepTriggerParameters(args);
         	
