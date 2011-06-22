@@ -88,7 +88,8 @@ public class PurapConstants extends JSTLConstants {
     public static final String SPECIAL_HANDLING_NOTE_LINE_1_NAME = "Send Check To:";  //This is how we identify the name in DV's, so to be consistent we're using the same string here
     public static final String SPECIAL_HANDLING_NOTE_LINE_2_ADDRESS = "SH1:";  // This is how we identify the first address line in DV's but payment req's don't have a second address line
     public static final String SPECIAL_HANDLING_NOTE_LINE_3_CITY_STATE_ZIP = "SH3:"; //This is set to SH3 to be consistent with how we've captured the city, state and zip in disbursement vouchers
-
+    public static final String PURAP_NOTES_IDENTIFIER = "::";  // We do this for DV's and for PURAP notes we need to do the same so they get picked up in ExtractPaymentServiceImpl
+    
     public static final String QUESTION_INDEX = "questionIndex";
     public static final String REMOVE_ACCOUNTS_QUESTION = "RemoveAccounts";
     public static final String CLEAR_COMMODITY_CODES_QUESTION = "ClearCommodityCodes";

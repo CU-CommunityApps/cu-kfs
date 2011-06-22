@@ -743,21 +743,21 @@ public class PdpExtractServiceImpl implements PdpExtractService {
         if (accountsPayableDocument.getNoteLine1Text() != null) {
             PaymentNoteText pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(count++));
-            pnt.setCustomerNoteText(accountsPayableDocument.getNoteLine1Text());
+            pnt.setCustomerNoteText(PurapConstants.PURAP_NOTES_IDENTIFIER + accountsPayableDocument.getNoteLine1Text());
             paymentDetail.addNote(pnt);
         }
 
         if (accountsPayableDocument.getNoteLine2Text() != null) {
             PaymentNoteText pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(count++));
-            pnt.setCustomerNoteText(accountsPayableDocument.getNoteLine2Text());
+            pnt.setCustomerNoteText(PurapConstants.PURAP_NOTES_IDENTIFIER + accountsPayableDocument.getNoteLine2Text());
             paymentDetail.addNote(pnt);
         }
 
         if (accountsPayableDocument.getNoteLine3Text() != null) {
             PaymentNoteText pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(count++));
-            pnt.setCustomerNoteText(accountsPayableDocument.getNoteLine3Text());
+            pnt.setCustomerNoteText(PurapConstants.PURAP_NOTES_IDENTIFIER + accountsPayableDocument.getNoteLine3Text());
             paymentDetail.addNote(pnt);
         }
         

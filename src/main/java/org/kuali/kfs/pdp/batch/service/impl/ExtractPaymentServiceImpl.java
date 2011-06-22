@@ -507,8 +507,6 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 
                     Iterator<PaymentDetail> paymentDetails = paymentDetailService.getByDisbursementNumber(disbursementNbr, processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
                     while (paymentDetails.hasNext()) {
-                    	MissingCommaFromSpecialHandlingAddress = false;
-                    	
                         PaymentDetail pd = paymentDetails.next();
                         PaymentGroup pg = pd.getPaymentGroup();
                         
@@ -537,8 +535,12 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         altAddrCityStateZip = "";
                         PreparerInfoText = "";
                         SendToPrefLength = 0;
+                        FirstNoteAfterAddressInfo="";
+                        SecondNoteAfterAddressInfo="";
+                        ThirdNoteAfterAddressInfo="";
+                        MissingCommaFromSpecialHandlingAddress = false;
                         
-                        while  (ix.hasNext()) {
+                        while (ix.hasNext()) {
                         	PaymentNoteText note = (PaymentNoteText) ix.next();
                         	String NoteLine = note.getCustomerNoteText();
                         	if ( NoteLine.contains(DisbursementVoucherConstants.DV_EXTRACT_NOTE_PREFIX_PREPARER) ) {
@@ -598,9 +600,9 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         			//    log it as a warning and move on to the next NoteLine because we may have notes that we want to process.
                         			LOG.warn("WARNING: No comma was provided separating the city and state for check number: " + CheckNumber);
                         			MissingCommaFromSpecialHandlingAddress = true;
-                        			break;
+                        			continue;
                         		}
-                        	}
+                        	}  //if ( NoteLine.contains(DisbursementVoucherConstants.DV_EXTRACT_NOTE_PREFIX_SPECIAL_HANDLING_ADDRESS3) )
                        	
                     		// Retrieve up to 3 subsequent note lines and only the first 72 characters as per the BNY Mellon spec.
                         	else {
@@ -612,7 +614,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             			NoteLine = NoteLine.substring(2);
     	                        		FirstNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
     	                        		
-		                        		// Try to get the second user typed note line
+		                        		// See if we have a second user typed note line.  If so, then get it.
 		                        		if (ix.hasNext()) {
 		                            		note = (PaymentNoteText) ix.next();
 		                                	NoteLine = note.getCustomerNoteText();
@@ -631,23 +633,23 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 				                                    			ThirdNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
 				                                    			break;  // Break here because the Mellon spec only allows us to use the first three user typed note lines
 				                                    		}
-				                                    		else break;
+				                                    		else break;  // Since we're on our potentially last note if this isn't a user types note, then we're done with the while loop
 				                                    	}
-				                                    	else break;
+				                                    	else break;  // Since this is the last potential user note and it doesn't contain :: break out of the while loop
 				                            		}
-				                            		else break;
+				                            		else break;  // Out of all notes, so break out of the while loop
 		                                		}
-		                                		else break;
+		                                		else break; // Getting here means that we ran into a note line that doesn't have the :: in front.  Continuing will over write the first notes we did capture, so 
 		                                	}
-		                                	else break;
+		                                	else break;  // Interspersed system generated notes can't occur (yet) so break out since we've already processed 1 user entered note.
 		                        		}
-		                        		else break;
-                            		}
-                            		else break;
+		                        		else break;  // We've processed the first user entered note, but now we find a system generated note, so break out since this would mean that user notes are done as they are contiguous
+                            		} 
+                            		else continue;  // Getting here means this is not a user note and since we haven't found the first user note, keep looking
                             	}
-                        		else break;
-                        	}  //else from line 502
-                        }                        
+                        		else continue;  //  Getting here means this is not a user note, so since we still haven't found the first user note keep on looking.
+                        	}  //else  (user notes section of this code)
+                        } // while (ix.hasNext())                        
                         
                         if (MissingCommaFromSpecialHandlingAddress)
                         	break;
@@ -937,33 +939,39 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         }  // if (first && !immediateCheckCode)
                         
                         // Write the Fast Track REM03020 records
-                        // Set up data based on whether its a DV or a some type of Payment Request (PRAP, LIBR, CSTR, STAT, CLIF)
-                        String remittanceIdCode = (subUnitCode.equals(DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? "TN" : "IV" ;
-                        String remittanceIdText = (subUnitCode.equals(DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? 
-                        		"Doc No:" + pd.getCustPaymentDocNbr() :   // must be 22 chars or less => this should be 16 characters (doc nbr is 9)
-                        			"Inv:" + pd.getInvoiceNbr();		  //  this would be 18 chars  (invoice number is 14)
+                        String remittanceIdCode="";    // Up to 3 characters
+                        String remittanceIdText = "";  // Up to 22 characters
                         
-                        // Assign RefDesc1
-                        if (ObjectUtils.isNull(pd.getPurchaseOrderNbr()))
-                        	if (ObjectUtils.isNull(pd.getCustPaymentDocNbr()))
-                        		//This is never supposed to happen.  We will always have at least an eDoc number, but just in case......
-                        		RefDesc1 = "";
-                        	else
-                        		if (!remittanceIdText.contains("Doc No:"))
-                        			RefDesc1 = "Doc No:" + pd.getCustPaymentDocNbr();
-                        		else
-                        			RefDesc1 = "";  // Since remittanceID contains the eDoc number don't print it again 
-                        else
-                        	if (subUnitCode.equals("PRAP"))
-                        		// Only show the PO number for PRAP PDP customers, not for any others
-	                        	if (ObjectUtils.isNull(pd.getCustPaymentDocNbr()))
-	                        		RefDesc1 = "PO:" + pd.getPurchaseOrderNbr();
-	                        	else
-	                        		if (!remittanceIdText.contains("Doc No:"))
-	                        			RefDesc1 = "PO:" + pd.getPurchaseOrderNbr() + ", Doc No:" + pd.getCustPaymentDocNbr();
-	                        		else
-	                        			RefDesc1 = "PO:" + pd.getPurchaseOrderNbr();
+                        // Set up data if subUnitCode is DV
+                        //   Here we will NOT have an invoice number but we will have an eDoc number and NO PO number
+                        if (subUnitCode.equals(DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) {
+                        	remittanceIdCode = "TN";
+                        	remittanceIdText = "Doc No:" + pd.getCustPaymentDocNbr();   // Here, we are guaranteed to have a pd.getCustPaymentDocNbr
+                            // Assign RefDesc1
+                   			RefDesc1 = "";
+                        }
                         
+                        // Set up data if subUnitCode is PRAP
+                        //   Here we will have an invoice number and an eDoc number and a PO number
+                        else if (subUnitCode.equals("PRAP")) {
+                        	remittanceIdCode = "IV";
+                            remittanceIdText = "Inv:" + pd.getInvoiceNbr();		  // Here, we are guaranteed to have a pd.getInvoiceNbr
+                            // Assign RefDesc1
+                            if (ObjectUtils.isNotNull(pd.getPurchaseOrderNbr()))
+                            	RefDesc1 = "PO:" + pd.getPurchaseOrderNbr() + ", Doc No:" + pd.getCustPaymentDocNbr();
+                            else
+                            	RefDesc1 = "Doc No:" + pd.getCustPaymentDocNbr();
+                        }
+                        
+                        // Set up data if subUnitCode is another type of Payment Request
+                        //   Here we will have an invoice number and an eDoc number but we will NOT have PO number
+                        else if (!subUnitCode.equals(DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE) && !subUnitCode.equals("PRAP")) {
+                        	remittanceIdCode = "IV";
+                            remittanceIdText = "Inv:" + pd.getInvoiceNbr();		  // Here, we are guaranteed to have a pd.getInvoiceNbr
+                            // Assign RefDesc1
+                           	RefDesc1 = "Doc No:" + pd.getCustPaymentDocNbr();
+                        }
+
                         // Assign the RefDesc fields.
                         if (!PreparerInfoText.isEmpty())
 	                        if (RefDesc1.isEmpty()) {
