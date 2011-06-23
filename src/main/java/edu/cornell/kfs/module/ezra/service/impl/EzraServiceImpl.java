@@ -182,7 +182,6 @@ public class EzraServiceImpl implements EzraService {
 			}
 		}
 		AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
-		aea.setVersionNumber(aea.getVersionNumber()+1);
 		award.refreshReferenceObject("proposal");
 		award.refreshNonUpdateableReferences();
 		return award;
