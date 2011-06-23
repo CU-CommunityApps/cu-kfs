@@ -27,6 +27,11 @@ import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
 public class ProcurementCardDocumentPresentationController extends AccountingDocumentPresentationControllerBase {
 
+	/**
+	 * String constant to represent the route nodes for the PCard doc.
+	 */
+	private static final String ACCOUNT_FULL_EDIT="Account Full Edit";
+	
     /**
      * @see org.kuali.rice.kns.document.authorization.DocumentPresentationControllerBase#canCancel(org.kuali.rice.kns.document.Document)
      */
@@ -61,7 +66,7 @@ public class ProcurementCardDocumentPresentationController extends AccountingDoc
 
         // FULL_ENTRY only if: a) person has an approval request, b) we are at the correct level, c) it's not a correction document,
         // d) it is not an ADHOC request (important so that ADHOC don't get full entry).
-        if (workflowDocument.isApprovalRequested() && activeNodes.contains(KFSConstants.RouteLevelNames.ACCOUNT_REVIEW_FULL_EDIT) && (((FinancialSystemDocumentHeader) document.getDocumentHeader()).getFinancialDocumentInErrorNumber() == null) && !workflowDocument.isAdHocRequested()) {
+        if (workflowDocument.isApprovalRequested() && activeNodes.contains(ACCOUNT_FULL_EDIT) && (((FinancialSystemDocumentHeader) document.getDocumentHeader()).getFinancialDocumentInErrorNumber() == null) && !workflowDocument.isAdHocRequested()) {
             return true;
         }
 
@@ -78,7 +83,7 @@ public class ProcurementCardDocumentPresentationController extends AccountingDoc
 
         // FULL_ENTRY only if: a) the document is ENROUTE, b) we are at the correct level, c) it's not a correction document,
         // d) it is not an ADHOC request (important so that ADHOC don't get full entry).
-        if (workflowDocument.stateIsEnroute() && activeNodes.contains(KFSConstants.RouteLevelNames.ACCOUNT_REVIEW_FULL_EDIT) && (((FinancialSystemDocumentHeader) document.getDocumentHeader()).getFinancialDocumentInErrorNumber() == null) && !workflowDocument.isAdHocRequested()) {
+        if (workflowDocument.stateIsEnroute() && activeNodes.contains(ACCOUNT_FULL_EDIT) && (((FinancialSystemDocumentHeader) document.getDocumentHeader()).getFinancialDocumentInErrorNumber() == null) && !workflowDocument.isAdHocRequested()) {
             return true;
         }
 
