@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
  *  batchContainerDirectory: args[3]:  String- the path to the directory in which the semaphore files are created. 
  *                                             This value needs to match 'staging.directory.sys.batchContainer' in iu/build/configuration.properties
  *  sleepInterval:           args[4]:  String- the amount of time (in seconds) to wait before looking for the result file from BatchContainerStep  
+ *  log4jPath:				 args[5]:  String- the path to the log4j.properties file
  */
 public class BatchStepTriggerParameters {
 	
@@ -18,6 +19,7 @@ public class BatchStepTriggerParameters {
 	private String jobName;
 	private int stepIndex;
 	private long sleepInterval;
+	private String log4jPath;
 	
 	private BatchContainerDirectory batchContainerDirectory;
 	
@@ -29,6 +31,7 @@ public class BatchStepTriggerParameters {
 	 *  batchContainerDirectory: args[2]:  String- the path to the directory in which the semaphore files are created. 
 	 *                                             This value needs to match 'staging.directory.sys.batchContainer' in iu/build/configuration.properties
 	 *  sleepInterval:           args[3]:  String- the amount of time (in seconds) to wait before looking for the result file from BatchContainerStep 
+	 *  log4jPath:				 args[5]:  String- the path to the log4j.properties file
 	 */
 	protected BatchStepTriggerParameters(String[] args) {
         if (args.length < 1) {
@@ -46,6 +49,9 @@ public class BatchStepTriggerParameters {
         } else if (args.length < 5) {
             System.err.println("ERROR: You must pass the amount of time (in seconds) to sleep while waiting for the step to run on the command line.");
             System.exit(8);        	
+        } else if (args.length < 6) {
+            System.err.println("ERROR: You must pass the log4j.properties path for the step to run on the command line.");
+            System.exit(8);        	
         }
     	
         if (args[0].indexOf(",") > 0) {
@@ -60,6 +66,7 @@ public class BatchStepTriggerParameters {
         String directory = args[3];           
         sleepInterval = Long.parseLong(args[4]) * 1000;        
         batchContainerDirectory = new BatchContainerDirectory(directory);
+        log4jPath = args[5];
 	}
 	
 	/**
@@ -96,4 +103,13 @@ public class BatchStepTriggerParameters {
 	protected BatchContainerDirectory getBatchContainerDirectory() {
 		return batchContainerDirectory;
 	}
+	
+	/**
+	 * @return the path of the log4j.properties
+	 */
+	protected String getLog4jPath() {
+		return log4jPath;
+	}
+	
+	
 }

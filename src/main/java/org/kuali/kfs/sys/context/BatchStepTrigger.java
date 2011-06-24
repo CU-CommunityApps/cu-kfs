@@ -18,6 +18,9 @@ package org.kuali.kfs.sys.context;
 
 import java.util.Arrays;
 
+import org.apache.log4j.PropertyConfigurator;
+import org.kuali.kfs.sys.KFSConstants;
+
 
 /**
  * BatchStepTrigger writes .run files containing a job name and step name for BatchContainerStep to read. 
@@ -52,10 +55,16 @@ public class BatchStepTrigger {
      * @param args - refer to BatchStepTriggerParameters for details
      */
     public static void main(String[] args) {
-        try {            
-            Log4jConfigurer.configureLogging(false);
-            //BatchLogger.addConsoleAppender(LOG);
+        try {    
+        	
+        	System.out.println("I hate my life.");
+           // Log4jConfigurer.configureLogging(false);
+            System.out.print("Fuck you log 4j ");
+           // BatchLogger.addConsoleAppender(LOG);
+            System.out.println("go eat shit");
             
+           // PropertyConfigurator.configure(KFSConstants.LOG4J_SETTINGS_FILE_KEY);
+            System.out.println("Die in a fire.");
         	batchStepTriggerParameters = new BatchStepTriggerParameters(args);
         	
         	String[] stepNames = getStepNames();            
@@ -63,6 +72,7 @@ public class BatchStepTrigger {
             int stepIndex = getStepIndex();
             long sleepInterval = getSleepInterval();            
             BatchContainerDirectory batchContainerDirectory = getBatchContainerDirectory();
+            PropertyConfigurator.configure(getLog4jPath());
             
             LOG.info("Executing Job: " + jobName + ", STEP"+ stepIndex +", Step(s): " + Arrays.toString(stepNames));
             
@@ -217,5 +227,12 @@ public class BatchStepTrigger {
      */
     private static BatchContainerDirectory getBatchContainerDirectory() {
     	return batchStepTriggerParameters.getBatchContainerDirectory();
+    }
+    
+    /**
+     * @return the path for the log4J.properties
+     */
+    private static String getLog4jPath() {
+    	return batchStepTriggerParameters.getLog4jPath();
     }
 }
