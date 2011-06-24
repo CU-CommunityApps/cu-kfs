@@ -30,7 +30,7 @@ public class ProcurementCardDocumentPresentationController extends AccountingDoc
 	/**
 	 * String constant to represent the route nodes for the PCard doc.
 	 */
-	private static final String ACCOUNT_FULL_EDIT="Account Full Edit";
+	private static final String ACCOUNT_FULL_EDIT="AccountFullEdit";
 	
     /**
      * @see org.kuali.rice.kns.document.authorization.DocumentPresentationControllerBase#canCancel(org.kuali.rice.kns.document.Document)
