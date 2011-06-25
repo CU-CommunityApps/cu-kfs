@@ -57,11 +57,8 @@ public class BatchStepTrigger {
     public static void main(String[] args) {
         try {    
         	
-        	System.out.println("I hate my life.");
            // Log4jConfigurer.configureLogging(false);
-            System.out.print("Fuck you log 4j ");
            // BatchLogger.addConsoleAppender(LOG);
-            System.out.println("go eat shit");
             
            // PropertyConfigurator.configure(KFSConstants.LOG4J_SETTINGS_FILE_KEY);
             System.out.println("Die in a fire.");
