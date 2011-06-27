@@ -61,7 +61,6 @@ public class BatchStepTrigger {
            // BatchLogger.addConsoleAppender(LOG);
             
            // PropertyConfigurator.configure(KFSConstants.LOG4J_SETTINGS_FILE_KEY);
-            System.out.println("Die in a fire.");
         	batchStepTriggerParameters = new BatchStepTriggerParameters(args);
         	
         	String[] stepNames = getStepNames();            
