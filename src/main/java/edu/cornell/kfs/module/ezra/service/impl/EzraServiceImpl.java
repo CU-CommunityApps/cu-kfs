@@ -163,24 +163,33 @@ public class EzraServiceImpl implements EzraService {
 				aea.setFinalFinancialReportRequired(true);
 			}
 		}
-		if (ezraAward.getCsVolClg() != null && 
-				ezraAward.getCsVolCntr() != null && 
-				ezraAward.getCsVolDept() != null && 
-				ezraAward.getCsVolExt() != null && 
-				ezraAward.getCsVolUniv() != null &&
-				ezraAward.getCsMandClg() != null && 
-				ezraAward.getCsMandCntr() != null && 
-				ezraAward.getCsMandDept() != null && 
-				ezraAward.getCsMandExt() != null && 
-				ezraAward.getCsMandUniv() != null) {
-			KualiDecimal volCostShareRequired = ezraAward.getCsVolClg().add(ezraAward.getCsVolCntr().add(ezraAward.getCsVolDept().add(ezraAward.getCsVolExt().add(ezraAward.getCsVolUniv()))));
-			KualiDecimal mandCostShareRequired = ezraAward.getCsMandClg().add(ezraAward.getCsMandCntr().add(ezraAward.getCsMandDept().add(ezraAward.getCsMandExt().add(ezraAward.getCsMandUniv()))));
+		KualiDecimal costShareRequired = new KualiDecimal();
+		if (ezraAward.getCsVolClg() != null)
+			costShareRequired.add(ezraAward.getCsVolClg());
+		if (ezraAward.getCsVolCntr() != null)
+			costShareRequired.add(ezraAward.getCsVolCntr());
+		if (ezraAward.getCsVolDept() != null)  
+			costShareRequired.add(ezraAward.getCsVolDept());
+		if (ezraAward.getCsVolExt() != null)  
+			costShareRequired.add(ezraAward.getCsVolExt());
+		if (ezraAward.getCsVolUniv() != null) 
+			costShareRequired.add(ezraAward.getCsVolUniv());
+		if (ezraAward.getCsMandClg() != null)  
+			costShareRequired.add(ezraAward.getCsMandClg());
+		if (ezraAward.getCsMandCntr() != null)  
+			costShareRequired.add(ezraAward.getCsMandCntr());
+		if (ezraAward.getCsMandDept() != null)  
+			costShareRequired.add(ezraAward.getCsMandDept());
+		if (ezraAward.getCsMandExt() != null)  
+			costShareRequired.add(ezraAward.getCsMandExt());
+		if (ezraAward.getCsMandUniv() != null) 
+			costShareRequired.add(ezraAward.getCsMandUniv());
 		
-			if (volCostShareRequired.isNonZero() || mandCostShareRequired.isNonZero()) {
-				AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
-				aea.setCostShareRequired(true);
-			}
+		if (costShareRequired.isNonZero() ) {
+			AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
+			aea.setCostShareRequired(true);
 		}
+		
 		AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
 		award.refreshReferenceObject("proposal");
 		award.refreshNonUpdateableReferences();
