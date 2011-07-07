@@ -163,7 +163,7 @@ public class EzraServiceImpl implements EzraService {
 				aea.setFinalFinancialReportRequired(true);
 			}
 		}
-		KualiDecimal costShareRequired = new KualiDecimal();
+		KualiDecimal costShareRequired = KualiDecimal.ZERO;
 		if (ezraAward.getCsVolClg() != null)
 			costShareRequired.add(ezraAward.getCsVolClg());
 		if (ezraAward.getCsVolCntr() != null)
