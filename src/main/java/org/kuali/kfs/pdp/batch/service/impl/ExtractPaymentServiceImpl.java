@@ -1786,7 +1786,11 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         	}
                         else {
                         	achCode = "PPD";			// Implementation of rule #3 above
-                        	AchAccountType = "SG";
+                        	if (kfsAccountType.equals("22")) {
+                                 AchAccountType = "DA";
+                            } else {
+                                 AchAccountType = "SG";
+                            }
                         }
                         
                         if (ObjectUtils.isNotNull(pg.getAchBankRoutingNbr()))
