@@ -53,4 +53,14 @@
   <import resource="spring-datasources.xml" />
   <import resource="spring-rice-configurer.xml" />
 
+	<bean id="dataSource" parent="abstractDataSourceBase" class="org.kuali.rice.core.database.XAPoolDataSource">
+ 	      <property name="transactionManager" ref="jotm" />
+ 	      <property name="maxSize" value="${datasource.pool.size}" />
+ 	      <property name="minSize" value="5" />
+ 	      <property name="maxWait" value="${datasource.connection.timeout}" />
+ 	      <property name="preparedStmtCacheSize" value="${datasource.maximum.cached.preparedstatements}" />
+ 	      <property name="checkLevelObject" value="${datasource.xapool.connection.test.mode}" />
+ 	      <property name="lifeTime" value="${xapool.lifetime}"/>
+ 	  </bean>
+
 </beans>
