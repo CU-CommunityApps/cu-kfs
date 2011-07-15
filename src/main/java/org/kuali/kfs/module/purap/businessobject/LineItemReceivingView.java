@@ -17,6 +17,7 @@ package org.kuali.kfs.module.purap.businessobject;
 
 import java.util.List;
 
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.kns.bo.Note;
 
 /**
@@ -71,4 +72,12 @@ public class LineItemReceivingView extends AbstractRelatedView {
     public String getUrl() {
         return super.getUrl();
     }
+    
+    /**
+     * @see org.kuali.kfs.module.purap.businessobject.AbstractRelatedView#getDocumentTypeName()
+     */
+   @Override
+   public String getDocumentTypeName() {
+       return KFSConstants.FinancialDocumentTypeCodes.LINE_ITEM_RECEIVING;
+   }
 }
