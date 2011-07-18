@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kns.bo.Note;
@@ -183,4 +184,12 @@ public class PaymentRequestView extends AbstractRelatedView {
     public String getUrl() {
         return super.getUrl();
     }
+    
+    /**
+     * @see org.kuali.kfs.module.purap.businessobject.AbstractRelatedView#getDocumentTypeName()
+     */
+   @Override
+   public String getDocumentTypeName() {
+       return KFSConstants.FinancialDocumentTypeCodes.PAYMENT_REQUEST;
+   }
 }
