@@ -173,6 +173,7 @@ public class Award extends PersistableBusinessObjectBase implements Inactivateab
                 awardOrg.setOrganizationCode(pOrg.getOrganizationCode());
                 awardOrg.setAwardPrimaryOrganizationIndicator(pOrg.isProposalPrimaryOrganizationIndicator());
                 awardOrg.setActive(pOrg.isActive());
+                awardOrg.setVersionNumber(pOrg.getVersionNumber());
                 getAwardOrganizations().add(awardOrg);
             }
 
@@ -188,6 +189,7 @@ public class Award extends PersistableBusinessObjectBase implements Inactivateab
                 awardSubcontractor.setAwardSubcontractorDescription(pSubcontractor.getProposalSubcontractorDescription());
                 awardSubcontractor.setSubcontractorNumber(pSubcontractor.getSubcontractorNumber());
                 awardSubcontractor.setActive(pSubcontractor.isActive());
+                awardSubcontractor.setVersionNumber(pSubcontractor.getVersionNumber());
                 getAwardSubcontractors().add(awardSubcontractor);
             }
 
@@ -202,6 +204,7 @@ public class Award extends PersistableBusinessObjectBase implements Inactivateab
                 awardDirector.setAwardProjectDirectorProjectTitle(pDirector.getProposalProjectDirectorProjectTitle());
                 awardDirector.setPrincipalId(pDirector.getPrincipalId());
                 awardDirector.setActive(pDirector.isActive());
+                awardDirector.setVersionNumber(pDirector.getVersionNumber());
                 getAwardProjectDirectors().add(awardDirector);
             }
         }
