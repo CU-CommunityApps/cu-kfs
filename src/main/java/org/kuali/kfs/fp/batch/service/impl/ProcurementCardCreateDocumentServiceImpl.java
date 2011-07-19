@@ -163,9 +163,14 @@ public class ProcurementCardCreateDocumentServiceImpl implements ProcurementCard
                     LOG.info("Routing PCDO document # " + pcardDocumentId + ".");
                 }
                 documentService.prepareWorkflowDocument(pcardDocument);
-
+                if ( LOG.isInfoEnabled() ) {
+                    LOG.info(" PCDO document # " + pcardDocumentId + " prepared for workflow.");
+                }
                 // calling workflow service to bypass business rule checks
                 workflowDocumentService.route(pcardDocument.getDocumentHeader().getWorkflowDocument(), "", null);
+                if ( LOG.isInfoEnabled() ) {
+                    LOG.info(" PCDO document # " + pcardDocumentId + " routed.");
+                }
             }
             catch (WorkflowException e) {
                 LOG.error("Error routing document # " + pcardDocumentId + " " + e.getMessage());
