@@ -47,6 +47,7 @@ import org.kuali.kfs.fp.businessobject.ProcurementCardVendor;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.fp.document.validation.impl.ProcurementCardDocumentRuleConstants;
 import org.kuali.kfs.integration.cab.CapitalAssetBuilderModuleService;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.service.AccountingLineRuleHelperService;
@@ -58,6 +59,7 @@ import org.kuali.rice.kew.dto.DocumentSearchResultRowDTO;
 import org.kuali.rice.kew.dto.KeyValueDTO;
 import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kew.util.KEWConstants;
+import org.kuali.rice.kns.UserSession;
 import org.kuali.rice.kns.bo.DocumentHeader;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DataDictionaryService;
@@ -820,7 +822,8 @@ public class ProcurementCardCreateDocumentServiceImpl implements ProcurementCard
             if ( LOG.isInfoEnabled() ) {
 			    LOG.info("PCards to Route: "+documentIdList);
 			}
-			
+            GlobalVariables.clear();
+    		GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
             for (String pcardDocumentId: documentIdList) {
                 try {
                 	if ( LOG.isInfoEnabled() ) {
