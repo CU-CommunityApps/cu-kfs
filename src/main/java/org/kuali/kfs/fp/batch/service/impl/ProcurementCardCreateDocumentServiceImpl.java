@@ -139,6 +139,7 @@ public class ProcurementCardCreateDocumentServiceImpl implements ProcurementCard
      * 
      * @see org.kuali.kfs.fp.batch.service.ProcurementCardCreateDocumentService#routeProcurementCardDocuments(java.util.List)
      */
+
     public boolean routeProcurementCardDocuments() {
         List<String> documentIdList = null;
         try {
@@ -150,37 +151,27 @@ public class ProcurementCardCreateDocumentServiceImpl implements ProcurementCard
             LOG.error("Error retrieving pcdo documents for routing: " + re.getMessage(),re);
             throw new RuntimeException(re.getMessage(),re);
         }
+       
+        List<String> d1 = documentIdList.subList(0, documentIdList.size() / 2);
+        List<String> d2 = documentIdList.subList(documentIdList.size() / 2, documentIdList.size());
         
-        //Collections.reverse(documentIdList);
-        if ( LOG.isInfoEnabled() ) {
-            LOG.info("PCards to Route: "+documentIdList);
-        }
+        RouteProcThread rt1 = new RouteProcThread(d1);
+        RouteProcThread rt2 = new RouteProcThread(d2);
         
-        for (String pcardDocumentId: documentIdList) {
-            try {
-            	if ( LOG.isInfoEnabled() ) {
-                    LOG.info("Retrieving PCDO document # " + pcardDocumentId + ".");
-                }
-                ProcurementCardDocument pcardDocument = (ProcurementCardDocument)documentService.getByDocumentHeaderId(pcardDocumentId);
-                if ( LOG.isInfoEnabled() ) {
-                    LOG.info("Routing PCDO document # " + pcardDocumentId + ".");
-                }
-                documentService.prepareWorkflowDocument(pcardDocument);
-                if ( LOG.isInfoEnabled() ) {
-                    LOG.info("PCDO document # " + pcardDocumentId + " prepared for workflow.");
-                }
-                // calling workflow service to bypass business rule checks
-                workflowDocumentService.route(pcardDocument.getDocumentHeader().getWorkflowDocument(), "", null);
-                if ( LOG.isInfoEnabled() ) {
-                    LOG.info("PCDO document # " + pcardDocumentId + " routed.");
-                }
-            }
-            catch (WorkflowException e) {
-                LOG.error("Error routing document # " + pcardDocumentId + " " + e.getMessage());
-                throw new RuntimeException(e.getMessage(),e);
-            }
-        }
-
+        Thread t1 = new Thread(rt1);
+        Thread t2 = new Thread(rt2);
+        
+        t1.start();
+        t2.start();
+        
+        try {
+			t1.join();
+			t2.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return false;
+		}
+        
         return true;
     }
     
@@ -816,4 +807,46 @@ public class ProcurementCardCreateDocumentServiceImpl implements ProcurementCard
         this.capitalAssetBuilderModuleService = capitalAssetBuilderModuleService;
     }
 
+     class RouteProcThread implements Runnable {
+    	
+    	private List<String> documentIdList;
+    	
+    	RouteProcThread(List<String> documentIdList) {
+    		this.documentIdList = documentIdList;
+    	}
+
+        public void run() {
+
+            if ( LOG.isInfoEnabled() ) {
+			    LOG.info("PCards to Route: "+documentIdList);
+			}
+			
+            for (String pcardDocumentId: documentIdList) {
+                try {
+                	if ( LOG.isInfoEnabled() ) {
+                        LOG.info("Retrieving PCDO document # " + pcardDocumentId + ".");
+                    }
+                    ProcurementCardDocument pcardDocument = (ProcurementCardDocument)documentService.getByDocumentHeaderId(pcardDocumentId);
+                    if ( LOG.isInfoEnabled() ) {
+                        LOG.info("Routing PCDO document # " + pcardDocumentId + ".");
+                    }
+                    documentService.prepareWorkflowDocument(pcardDocument);
+                    if ( LOG.isInfoEnabled() ) {
+                        LOG.info("PCDO document # " + pcardDocumentId + " prepared for workflow.");
+                    }
+                    // calling workflow service to bypass business rule checks
+                    workflowDocumentService.route(pcardDocument.getDocumentHeader().getWorkflowDocument(), "", null);
+                    if ( LOG.isInfoEnabled() ) {
+                        LOG.info("PCDO document # " + pcardDocumentId + " routed.");
+                    }
+                }
+                catch (WorkflowException e) {
+                    LOG.error("Error routing document # " + pcardDocumentId + " " + e.getMessage());
+                    throw new RuntimeException(e.getMessage(),e);
+                }
+            }
+      }
+    }
 }
+
+
