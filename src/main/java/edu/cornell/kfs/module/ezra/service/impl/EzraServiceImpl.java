@@ -11,6 +11,7 @@ import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.AwardAccount;
+import org.kuali.kfs.module.cg.businessobject.AwardOrganization;
 import org.kuali.kfs.module.cg.businessobject.AwardProjectDirector;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.businessobject.ProposalOrganization;
@@ -134,6 +135,7 @@ public class EzraServiceImpl implements EzraService {
 			award.setAwardAccounts(accounts);
 		} else {
 			award.setAwardAccounts(oldAward.getAwardAccounts());
+			setAwardOrgVersionNumbers(proposal.getProposalOrganizations(), award.getAwardOrganizations());
 			award.setVersionNumber(oldAward.getVersionNumber());
 		}
 		
@@ -559,7 +561,20 @@ public class EzraServiceImpl implements EzraService {
 		return awardAccounts;
 	}
 	
-	
+	private void setAwardOrgVersionNumbers(List<ProposalOrganization> proposalOrgs, List<AwardOrganization> awardOrgs) {
+		for (ProposalOrganization propOrg : proposalOrgs) {
+			for (AwardOrganization awardOrg : awardOrgs) {
+				if (propOrg.getChartOfAccountsCode().equals(awardOrg.getChartOfAccountsCode()) && 
+						propOrg.getOrganizationCode().equals(awardOrg.getOrganizationCode())  &&
+						propOrg.getProposalNumber().equals(awardOrg.getProposalNumber())) {
+					awardOrg.setVersionNumber(propOrg.getVersionNumber());
+					
+					
+				}
+			}
+		}
+		
+	}
 	
 	
 	/**
