@@ -47,7 +47,6 @@ import org.kuali.kfs.fp.businessobject.ProcurementCardVendor;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.fp.document.validation.impl.ProcurementCardDocumentRuleConstants;
 import org.kuali.kfs.integration.cab.CapitalAssetBuilderModuleService;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.service.AccountingLineRuleHelperService;
@@ -59,7 +58,6 @@ import org.kuali.rice.kew.dto.DocumentSearchResultRowDTO;
 import org.kuali.rice.kew.dto.KeyValueDTO;
 import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kew.util.KEWConstants;
-import org.kuali.rice.kns.UserSession;
 import org.kuali.rice.kns.bo.DocumentHeader;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DataDictionaryService;
@@ -141,7 +139,6 @@ public class ProcurementCardCreateDocumentServiceImpl implements ProcurementCard
      * 
      * @see org.kuali.kfs.fp.batch.service.ProcurementCardCreateDocumentService#routeProcurementCardDocuments(java.util.List)
      */
-
     public boolean routeProcurementCardDocuments() {
         List<String> documentIdList = null;
         try {
@@ -153,27 +150,37 @@ public class ProcurementCardCreateDocumentServiceImpl implements ProcurementCard
             LOG.error("Error retrieving pcdo documents for routing: " + re.getMessage(),re);
             throw new RuntimeException(re.getMessage(),re);
         }
-       
-        List<String> d1 = documentIdList.subList(0, documentIdList.size() / 2);
-        List<String> d2 = documentIdList.subList(documentIdList.size() / 2, documentIdList.size());
         
-        RouteProcThread rt1 = new RouteProcThread(d1);
-        RouteProcThread rt2 = new RouteProcThread(d2);
+        //Collections.reverse(documentIdList);
+        if ( LOG.isInfoEnabled() ) {
+            LOG.info("PCards to Route: "+documentIdList);
+        }
         
-        Thread t1 = new Thread(rt1);
-        Thread t2 = new Thread(rt2);
-        
-        t1.start();
-        t2.start();
-        
-        try {
-			t1.join();
-			t2.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			return false;
-		}
-        
+        for (String pcardDocumentId: documentIdList) {
+            try {
+            	if ( LOG.isInfoEnabled() ) {
+                    LOG.info("Retrieving PCDO document # " + pcardDocumentId + ".");
+                }
+                ProcurementCardDocument pcardDocument = (ProcurementCardDocument)documentService.getByDocumentHeaderId(pcardDocumentId);
+                if ( LOG.isInfoEnabled() ) {
+                    LOG.info("Routing PCDO document # " + pcardDocumentId + ".");
+                }
+                documentService.prepareWorkflowDocument(pcardDocument);
+                if ( LOG.isInfoEnabled() ) {
+                    LOG.info("PCDO document # " + pcardDocumentId + " prepared for workflow.");
+                }
+                // calling workflow service to bypass business rule checks
+                workflowDocumentService.route(pcardDocument.getDocumentHeader().getWorkflowDocument(), "", null);
+                if ( LOG.isInfoEnabled() ) {
+                    LOG.info("PCDO document # " + pcardDocumentId + " routed.");
+                }
+            }
+            catch (WorkflowException e) {
+                LOG.error("Error routing document # " + pcardDocumentId + " " + e.getMessage());
+                throw new RuntimeException(e.getMessage(),e);
+            }
+        }
+
         return true;
     }
     
@@ -809,47 +816,4 @@ public class ProcurementCardCreateDocumentServiceImpl implements ProcurementCard
         this.capitalAssetBuilderModuleService = capitalAssetBuilderModuleService;
     }
 
-     class RouteProcThread implements Runnable {
-    	
-    	private List<String> documentIdList;
-    	
-    	RouteProcThread(List<String> documentIdList) {
-    		this.documentIdList = documentIdList;
-    	}
-
-        public void run() {
-
-            if ( LOG.isInfoEnabled() ) {
-			    LOG.info("PCards to Route: "+documentIdList);
-			}
-            GlobalVariables.clear();
-    		GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
-            for (String pcardDocumentId: documentIdList) {
-                try {
-                	if ( LOG.isInfoEnabled() ) {
-                        LOG.info("Retrieving PCDO document # " + pcardDocumentId + ".");
-                    }
-                    ProcurementCardDocument pcardDocument = (ProcurementCardDocument)documentService.getByDocumentHeaderId(pcardDocumentId);
-                    if ( LOG.isInfoEnabled() ) {
-                        LOG.info("Routing PCDO document # " + pcardDocumentId + ".");
-                    }
-                    documentService.prepareWorkflowDocument(pcardDocument);
-                    if ( LOG.isInfoEnabled() ) {
-                        LOG.info("PCDO document # " + pcardDocumentId + " prepared for workflow.");
-                    }
-                    // calling workflow service to bypass business rule checks
-                    workflowDocumentService.route(pcardDocument.getDocumentHeader().getWorkflowDocument(), "", null);
-                    if ( LOG.isInfoEnabled() ) {
-                        LOG.info("PCDO document # " + pcardDocumentId + " routed.");
-                    }
-                }
-                catch (WorkflowException e) {
-                    LOG.error("Error routing document # " + pcardDocumentId + " " + e.getMessage());
-                    throw new RuntimeException(e.getMessage(),e);
-                }
-            }
-      }
-    }
 }
-
-
