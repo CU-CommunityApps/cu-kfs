@@ -135,7 +135,7 @@ public class EzraServiceImpl implements EzraService {
 			award.setAwardAccounts(accounts);
 		} else {
 			award.setAwardAccounts(oldAward.getAwardAccounts());
-			setAwardOrgVersionNumbers(proposal.getProposalOrganizations(), award.getAwardOrganizations());
+			setAwardOrgVersionNumbers(oldAward.getAwardOrganizations(), award.getAwardOrganizations());
 			award.setVersionNumber(oldAward.getVersionNumber());
 		}
 		
@@ -561,13 +561,13 @@ public class EzraServiceImpl implements EzraService {
 		return awardAccounts;
 	}
 	
-	private void setAwardOrgVersionNumbers(List<ProposalOrganization> proposalOrgs, List<AwardOrganization> awardOrgs) {
-		for (ProposalOrganization propOrg : proposalOrgs) {
+	private void setAwardOrgVersionNumbers(List<AwardOrganization> oldAwardOrgs, List<AwardOrganization> awardOrgs) {
+		for (AwardOrganization oldAwardOrg : oldAwardOrgs) {
 			for (AwardOrganization awardOrg : awardOrgs) {
-				if (propOrg.getChartOfAccountsCode().equals(awardOrg.getChartOfAccountsCode()) && 
-						propOrg.getOrganizationCode().equals(awardOrg.getOrganizationCode())  &&
-						propOrg.getProposalNumber().equals(awardOrg.getProposalNumber())) {
-					awardOrg.setVersionNumber(propOrg.getVersionNumber());
+				if (oldAwardOrg.getChartOfAccountsCode().equals(awardOrg.getChartOfAccountsCode()) && 
+						oldAwardOrg.getOrganizationCode().equals(awardOrg.getOrganizationCode())  &&
+						oldAwardOrg.getProposalNumber().equals(awardOrg.getProposalNumber())) {
+					awardOrg.setVersionNumber(oldAwardOrg.getVersionNumber());
 					
 					
 				}
