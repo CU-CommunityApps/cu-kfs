@@ -54,37 +54,6 @@
 		<property name="timeout" value="60000" />
 	</bean>
     
-     <!--  UserOptionsServiceInner -->
-   <bean id="UserOptionsServiceInner" class="org.kuali.rice.kew.useroptions.UserOptionsServiceImpl" lazy-init="true">
-       <property name="userOptionsDAO">
-           <ref bean="enUserOptionsDAO" />
-       </property>
-       <property name="reloadActionListDAO">
-           <ref bean="reloadActionListDAO" />
-       </property>
-   </bean>
-
-   <bean id="kewNonTransactionalDataSource" class="org.kuali.rice.core.database.PrimaryDataSourceFactoryBean" lazy-init="true">
-       <property name="nullAllowed" value="true"/>
-       <property name="nonTransactionalDataSource" value="true"/>
-       <property name="preferredDataSourceParams">
-           <list>
-              <value>kew.nonTransactional.datasource</value>
-           </list>
-       </property>
-       <property name="preferredDataSourceJndiParams">
-           <list>
-               <value>kew.nonTransactional.datasource.jndi.location</value>
-           </list>
-       </property>
-       <property name="serverDataSource" value="false"/>
-   </bean>
-
-   <bean id="reloadActionListDAO" class="org.kuali.rice.kew.useroptions.dao.impl.ReloadActionListDaoJdbcImpl">
-        <constructor-arg>
-           <ref bean="kewNonTransactionalDataSource"/>
-        </constructor-arg>
-   </bean>
 
     <!-- We override the KFS impl so that we can read properties specified at runtime -->
 <!--
