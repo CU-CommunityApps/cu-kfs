@@ -79,7 +79,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  * @see org.kuali.kfs.fp.batch.service.ProcurementCardCreateDocumentService
  */
-@Transactional
+
 public class ProcurementCardCreateDocumentServiceImpl implements ProcurementCardCreateDocumentService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardCreateDocumentServiceImpl.class);
     
@@ -104,6 +104,8 @@ public class ProcurementCardCreateDocumentServiceImpl implements ProcurementCard
      * 
      * @see org.kuali.kfs.fp.batch.service.ProcurementCardCreateDocumentService#createProcurementCardDocuments()
      */
+    
+    @Transactional
     public boolean createProcurementCardDocuments() {
         List documents = new ArrayList();
         List cardTransactions = retrieveTransactions();
