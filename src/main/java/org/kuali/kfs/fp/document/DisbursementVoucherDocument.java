@@ -984,7 +984,12 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         }
 
         this.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE);
-        this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(employee.getEmployeeId());
+        
+        if (StringUtils.isNotBlank(employee.getEmployeeId())) {
+        	this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(employee.getEmployeeId());
+        } else {
+        	this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(employee.getEntityId());
+        }
         this.getDvPayeeDetail().setDisbVchrPayeePersonName(employee.getName());
 
         final ParameterService parameterService = this.getParameterService();
