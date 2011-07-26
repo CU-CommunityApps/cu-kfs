@@ -988,7 +988,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         if (StringUtils.isNotBlank(employee.getEmployeeId())) {
         	this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(employee.getEmployeeId());
         } else {
-        	this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(employee.getEntityId());
+        	this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(employee.getPrincipalId());
         }
         this.getDvPayeeDetail().setDisbVchrPayeePersonName(employee.getName());
 

@@ -157,7 +157,7 @@ public class DisbursementPayee extends TransientBusinessObjectBase implements In
         if (StringUtils.isNotBlank(person.getEmployeeId())) {
         	disbursementPayee.setPayeeIdNumber(person.getEmployeeId());
         } else {
-        	disbursementPayee.setPayeeIdNumber(person.getEntityId());
+        	disbursementPayee.setPayeeIdNumber(person.getPrincipalId());
         }
         disbursementPayee.setPrincipalId(person.getPrincipalId());
         
