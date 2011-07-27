@@ -34,12 +34,12 @@ public class ProcurementCardRouteDocumentsStep extends AbstractStep {
      */
     public boolean execute(String jobName, Date jobRunDate) {
         // TODO: put a temporary delay in here to workaround locking exception happening with Pcard approve and indexing
-//        try {
-//            Thread.sleep(300000);
-//        }
-//        catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            Thread.sleep(300000);
+        }
+        catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         return procurementCardDocumentService.routeProcurementCardDocuments();
     }
