@@ -52,14 +52,23 @@ public class DisbursementVoucherEmployeeInformationValidation extends GenericVal
             return true;
         }
         
+        MessageMap errors = GlobalVariables.getMessageMap();
+        errors.addToErrorPath(KFSPropertyConstants.DOCUMENT);
+        
         String employeeId = payeeDetail.getDisbVchrPayeeIdNumber();
         Person employee = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(employeeId);
         if (ObjectUtils.isNull(employee)) {
             employee = SpringContext.getBean(PersonService.class).getPerson(employeeId);
+        } else  {
+        	if (!KFSConstants.EMPLOYEE_ACTIVE_STATUS.equals(employee.getEmployeeStatusCode())) {
+        		// If employee is found, then check that employee is active
+        		String label = SpringContext.getBean(DataDictionaryService.class).getAttributeLabel(DisbursementVoucherPayeeDetail.class, KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER);
+        		errors.putError(DV_PAYEE_ID_NUMBER_PROPERTY_PATH, KFSKeyConstants.ERROR_INACTIVE, label);
+        		isValid = false;
+        	}
         }
         
-        MessageMap errors = GlobalVariables.getMessageMap();
-        errors.addToErrorPath(KFSPropertyConstants.DOCUMENT);
+      
 
         // check existence of employee
         if (employee == null) { // If employee is not found, report existence error
@@ -67,12 +76,7 @@ public class DisbursementVoucherEmployeeInformationValidation extends GenericVal
             errors.putError(DV_PAYEE_ID_NUMBER_PROPERTY_PATH, KFSKeyConstants.ERROR_EXISTENCE, label);
             isValid = false;
         } 
-        else if(!KFSConstants.EMPLOYEE_ACTIVE_STATUS.equals(employee.getEmployeeStatusCode())) {
-            // If employee is found, then check that employee is active
-            String label = SpringContext.getBean(DataDictionaryService.class).getAttributeLabel(DisbursementVoucherPayeeDetail.class, KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER);
-            errors.putError(DV_PAYEE_ID_NUMBER_PROPERTY_PATH, KFSKeyConstants.ERROR_INACTIVE, label);
-            isValid = false;
-        }
+        
         
         errors.removeFromErrorPath(KFSPropertyConstants.DOCUMENT); 
 
