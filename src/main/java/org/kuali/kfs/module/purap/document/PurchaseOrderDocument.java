@@ -25,24 +25,26 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.gl.service.SufficientFundsService;
 import org.kuali.kfs.integration.purap.CapitalAssetSystem;
 import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapKeyConstants;
-import org.kuali.kfs.module.purap.PurapParameterConstants;
-import org.kuali.kfs.module.purap.PurapPropertyConstants;
-import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.module.purap.PurapConstants.CreditMemoStatuses;
 import org.kuali.kfs.module.purap.PurapConstants.PurapDocTypeCodes;
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.PurapConstants.QuoteTypeDescriptions;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionSources;
+import org.kuali.kfs.module.purap.PurapKeyConstants;
+import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.PurapPropertyConstants;
+import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants.NodeDetails;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants.PurchaseOrderDocument.NodeDetailEnum;
 import org.kuali.kfs.module.purap.businessobject.CreditMemoView;
@@ -65,8 +67,6 @@ import org.kuali.kfs.module.purap.businessobject.RecurringPaymentFrequency;
 import org.kuali.kfs.module.purap.businessobject.RequisitionCapitalAssetItem;
 import org.kuali.kfs.module.purap.businessobject.RequisitionCapitalAssetSystem;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
-import org.kuali.kfs.module.purap.businessobject.SensitiveData;
-import org.kuali.kfs.module.purap.businessobject.SensitiveDataAssignment;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.document.service.PurchasingDocumentSpecificService;
@@ -627,15 +627,30 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
             Long poSequenceNumber = sas.getNextAvailableSequenceNumber("PO_ID", this.getClass());
             setPurapDocumentIdentifier(poSequenceNumber.intValue());
         }
-        
+        Set<String> currentSensitiveDataCodes = new HashSet<String>();
+        if (purchaseOrderSensitiveData != null) {
+        	for (PurchaseOrderSensitiveData sensitiveData : purchaseOrderSensitiveData) {
+        		currentSensitiveDataCodes.add(sensitiveData.getSensitiveDataCode());
+        	}
+        }
         if (requisitionDocument.isSensitive()) {
         	for ( PurchasingItemBase pib : (List<PurchasingItemBase>)requisitionDocument.getItems()) {
         		CommodityCode cc = pib.getCommodityCode(); 
-        		if (cc != null && cc.getSensitiveDataCode() != null) {
+        		if (cc != null && cc.getSensitiveDataCode() != null && currentSensitiveDataCodes.add(cc.getSensitiveDataCode())) { 
         			if (purchaseOrderSensitiveData == null) {
+        				boolean addNewData = true;
         				purchaseOrderSensitiveData = getPurchaseOrderSensitiveData();
+        				for (PurchaseOrderSensitiveData sensitiveData : purchaseOrderSensitiveData) {
+        					if (!currentSensitiveDataCodes.add(sensitiveData.getSensitiveDataCode())) {
+        						addNewData = false;
+        					}
+        				}
+        				if (addNewData) {
+        					purchaseOrderSensitiveData.add(new PurchaseOrderSensitiveData(getPurapDocumentIdentifier(),getRequisitionIdentifier(), cc.getSensitiveDataCode()));
+        				}
+        			} else {
+        				purchaseOrderSensitiveData.add(new PurchaseOrderSensitiveData(getPurapDocumentIdentifier(),getRequisitionIdentifier(), cc.getSensitiveDataCode()));
         			}
-        			purchaseOrderSensitiveData.add(new PurchaseOrderSensitiveData(getPurapDocumentIdentifier(),getRequisitionIdentifier(), cc.getSensitiveDataCode()));
         		}
         	}
         	
