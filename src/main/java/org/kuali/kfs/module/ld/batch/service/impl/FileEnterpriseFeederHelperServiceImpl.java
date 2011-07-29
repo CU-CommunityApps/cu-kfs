@@ -24,8 +24,10 @@ import java.io.Reader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.gl.batch.service.ReconciliationParserService;
@@ -316,9 +318,15 @@ public class FileEnterpriseFeederHelperServiceImpl implements FileEnterpriseFeed
         }
 		
 		// get benefit types for the entry object code and for each calculation generation an origin entry
-		Collection<PositionObjectBenefit> positionObjectBenefits = laborPositionObjectBenefitService
-				.getPositionObjectBenefits(wageEntry.getUniversityFiscalYear(), wageEntry.getChartOfAccountsCode(),
-						wageEntry.getFinancialObjectCode());
+        
+        Map fieldValues = new HashMap();
+        fieldValues.put("universityFiscalYear", wageEntry.getUniversityFiscalYear());
+        fieldValues.put("chartOfAccountsCode", wageEntry.getChartOfAccountsCode());
+        fieldValues.put("financialObjectCode", wageEntry.getFinancialObjectCode());
+        fieldValues.put("active", true);
+
+        Collection<PositionObjectBenefit> positionObjectBenefits = businessObjectService.findMatching(PositionObjectBenefit.class, fieldValues);
+		
 		if (positionObjectBenefits == null || positionObjectBenefits.isEmpty()) {
 			writeMissingBenefitsTypeError(wageEntry, errorStatisticsReport, feederReportData);
 		}
