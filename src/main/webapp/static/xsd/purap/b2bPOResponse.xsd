@@ -63,7 +63,7 @@
         		      	<xsd:element name="ObjectErrors" minOccurs="0">
         		      		<xsd:complexType>
 	        		      		<xsd:sequence>
-	        		      			<xsd:element name="PurchaseOrderRef" minOccurs="0">
+	        		      			<xsd:element name="PurchaseOrderRef" minOccurs="0" maxOccurs="unbounded">
 	        		      				<xsd:complexType>
 									  		<xsd:sequence>
 										  		<xsd:element name="Error" maxOccurs="unbounded">
@@ -78,7 +78,7 @@
                                             <xsd:attribute name="ponumber" type="xsd:unsignedInt" use="required" />
 		                              	</xsd:complexType>	
 	        		      			</xsd:element>
-                                    <xsd:element name="PurchaseOrderLineRef" minOccurs="0">
+                                    <xsd:element name="PurchaseOrderLineRef" minOccurs="0" maxOccurs="unbounded">
                                         <xsd:complexType>
                                             <xsd:sequence>
                                                 <xsd:element name="Error" maxOccurs="unbounded">
