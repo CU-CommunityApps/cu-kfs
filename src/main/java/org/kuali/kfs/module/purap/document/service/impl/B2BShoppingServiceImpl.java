@@ -17,6 +17,7 @@ package org.kuali.kfs.module.purap.document.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -327,10 +328,25 @@ public class B2BShoppingServiceImpl implements B2BShoppingService {
         reqItem.setItemUnitOfMeasureCode(item.getUnitOfMeasure());
         reqItem.setExternalOrganizationB2bProductTypeName(item.getExtrinsic("Product Source"));
         reqItem.setExternalOrganizationB2bProductReferenceNumber(item.getExtrinsic("CartLineId"));
-        reqItem.setPurchasingCommodityCode(item.getClassification("CommodityCode"));
+        
+        String commodityCode = verifyCommodityCode(item.getClassification("CommodityCode"));
+        reqItem.setPurchasingCommodityCode(commodityCode);
+      
         reqItem.setItemRestrictedIndicator(false);
 
         return reqItem;
+    }
+    
+    private String verifyCommodityCode(String commodityCode) {
+    	Map<String, String> fieldValues = new HashMap<String, String>();
+    	fieldValues.put("purchasingCommodityCode", commodityCode);
+    	CommodityCode commodity = (CommodityCode)businessObjectService.findByPrimaryKey(CommodityCode.class, fieldValues);
+    	if (ObjectUtils.isNotNull(commodity)) {
+    		return commodity.getPurchasingCommodityCode();
+    	} else {
+    		LOG.warn("Could not retrieve CommodityCode: "+commodityCode);
+    		return null;
+    	}
     }
 
     public void setDocumentService(DocumentService documentService) {
