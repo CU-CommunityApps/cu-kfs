@@ -38,7 +38,7 @@
           
           <split name="B2BAutoPurchaseOrder">
             <branch name="True">
-              <requests name="NoOpB2B" nextNode="JoinB2BAPO"/>
+              <requests name="CommodityAPO" nextNode="JoinB2BAPO"/>
             </branch>
             <branch name="False">
               <requests name="SubAccount" nextNode="Account"/>
@@ -103,6 +103,10 @@
           <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
+        <role name="CommodityAPO">
+          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
         <role name="SeparationOfDuties">
           <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
@@ -129,9 +133,9 @@
         <simple name="NoOpHasAccountingLines">
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
         </simple>
-        <simple name="NoOpB2B">
+       <!--   <simple name="NoOpB2B">
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
-        </simple>
+        </simple> -->
         <simple name="NoOpSOD">
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
         </simple>
