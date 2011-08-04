@@ -53,7 +53,7 @@
 
   <bean id="ProcurementCardDocument-accountNumberForSearching-parentBean" abstract="true" parent="AccountAttribute">
     <property name="name" value="accountNumberForSearching"/>
-    <property name="label" value="Target Account"/>
+    <property name="label" value="Transaction Account"/>
   </bean>
   
   <!-- Validations -->
