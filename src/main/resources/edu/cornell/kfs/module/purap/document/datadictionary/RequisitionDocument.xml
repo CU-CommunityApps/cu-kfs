@@ -1394,10 +1394,11 @@
     			<entry key="Account" value-ref="RoutingType-PurchasingAccountsPayableDocument-Account"/>
     			<entry key="AccountingOrganizationHierarchy" value-ref="RoutingType-PurchasingAccountsPayableDocument-AccountingOrganizationHierarchy"/>
                 <entry key="Commodity" value-ref="RoutingType-PurchasingDocument-Commodity"/>
+                <entry key="CommodityAPO" value-ref="RoutingType-PurchasingDocument-Commodity"/>
               	<entry key="Award" value-ref="RoutingType-PurchasingDocument-Award"/>
                 
                 <!-- no qualifiers for separation of duties -->
     		</map>
     	</property>
-	</bean>    	  	
+	</bean> 
 </beans>
