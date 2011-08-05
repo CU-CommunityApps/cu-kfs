@@ -34,6 +34,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coa.businessobject.Chart;
+import org.kuali.kfs.coa.businessobject.ObjectCode;
+import org.kuali.kfs.coa.businessobject.ProjectCode;
+import org.kuali.kfs.coa.businessobject.SubAccount;
+import org.kuali.kfs.coa.businessobject.SubObjectCode;
+import org.kuali.kfs.coa.service.AccountService;
+import org.kuali.kfs.coa.service.ChartService;
+import org.kuali.kfs.coa.service.ObjectCodeService;
+import org.kuali.kfs.coa.service.ProjectCodeService;
+import org.kuali.kfs.coa.service.SubAccountService;
+import org.kuali.kfs.coa.service.SubObjectCodeService;
 import org.kuali.kfs.fp.batch.ProcurementCardAutoApproveDocumentsStep;
 import org.kuali.kfs.fp.batch.ProcurementCardCreateDocumentsStep;
 import org.kuali.kfs.fp.batch.ProcurementCardLoadStep;
@@ -52,6 +64,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.service.AccountingLineRuleHelperService;
 import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
 import org.kuali.kfs.sys.document.validation.event.DocumentSystemSaveEvent;
+import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.kew.dto.DocumentSearchCriteriaDTO;
 import org.kuali.rice.kew.dto.DocumentSearchResultDTO;
 import org.kuali.rice.kew.dto.DocumentSearchResultRowDTO;
@@ -343,12 +356,15 @@ public class ProcurementCardCreateDocumentServiceImpl implements ProcurementCard
             }
 
             // set the card holder record on the document from the first transaction
-            createCardHolderRecord(pcardDocument, (ProcurementCardTransaction) transactions.get(0));
+            
+            ProcurementCardTransaction trans = (ProcurementCardTransaction) transactions.get(0);
+            String errors = validateTransaction(trans);
+            createCardHolderRecord(pcardDocument, trans);
 
             // for each transaction, create transaction detail object and then acct lines for the detail
             int transactionLineNumber = 1;
             KualiDecimal documentTotalAmount = KualiDecimal.ZERO;
-            String errorText = "";
+            String errorText = errors;
             for (Iterator iter = transactions.iterator(); iter.hasNext();) {
                 ProcurementCardTransaction transaction = (ProcurementCardTransaction) iter.next();
 
@@ -656,6 +672,115 @@ public class ProcurementCardCreateDocumentServiceImpl implements ProcurementCard
         return errorText;
     }
 
+    
+    /**
+     * Validates the chart of account attributes for existence and active indicator. Will substitute for defined 
+     * default parameters or set fields to empty that if they have errors.
+     * 
+     * @param targetLine The target accounting line to be validated.
+     * @return String with error messages discovered during validation.  An empty string indicates no validation errors were found.
+     */
+    protected String validateTransaction(ProcurementCardTransaction transaction) {
+        String errorText = "";
+
+        transaction.refresh();
+        ChartService cs = SpringContext.getBean(ChartService.class);
+        Chart chart = cs.getByPrimaryId(transaction.getChartOfAccountsCode());
+        if (ObjectUtils.isNull(chart)) {
+            String tempErrorText = "Chart " + transaction.getChartOfAccountsCode() + " is invalid; using error Chart Code.";
+            if ( LOG.isInfoEnabled() ) {
+                LOG.info(tempErrorText);
+            }
+            errorText += " " + tempErrorText;
+
+            transaction.setChartOfAccountsCode(getErrorChartCode());
+            transaction.refresh();
+        }   
+        AccountService accountService = SpringContext.getBean(AccountService.class);
+        Account account = accountService.getByPrimaryIdWithCaching(transaction.getChartOfAccountsCode(), transaction.getAccountNumber());
+        if (ObjectUtils.isNull(account) || account.isExpired()) {
+            String tempErrorText = "Chart " + transaction.getChartOfAccountsCode() + " Account " + transaction.getAccountNumber() + " is invalid; using error account.";
+            if ( LOG.isInfoEnabled() ) {
+                LOG.info(tempErrorText);
+            }
+            errorText += " " + tempErrorText;
+
+            transaction.setChartOfAccountsCode(getErrorChartCode());
+            transaction.setAccountNumber(getErrorAccountNumber());
+            transaction.refresh();
+        }
+        UniversityDateService uds = SpringContext.getBean(UniversityDateService.class);
+        ObjectCodeService ocs = SpringContext.getBean(ObjectCodeService.class);
+        ObjectCode objectCode = ocs.getByPrimaryIdWithCaching(uds.getCurrentFiscalYear(), transaction.getChartOfAccountsCode(), transaction.getFinancialObjectCode());
+        
+        if (ObjectUtils.isNull(objectCode)) {
+            String tempErrorText = "Chart " + transaction.getChartOfAccountsCode() + " Object Code " + transaction.getFinancialObjectCode() + " is invalid; using default Object Code.";
+            if ( LOG.isInfoEnabled() ) {
+                LOG.info(tempErrorText);
+            }
+            errorText += " " + tempErrorText;
+
+            transaction.setFinancialObjectCode(getDefaultObjectCode());
+            transaction.refresh();
+        }
+
+        
+        if (StringUtils.isNotBlank(transaction.getSubAccountNumber())) {
+        	SubAccountService sas = SpringContext.getBean(SubAccountService.class);
+        	SubAccount subAccount = sas.getByPrimaryIdWithCaching(transaction.getChartOfAccountsCode(), transaction.getAccountNumber(), transaction.getSubAccountNumber());
+        
+        
+        	if (ObjectUtils.isNull(subAccount)) {
+        		String tempErrorText = "Chart " + transaction.getChartOfAccountsCode() + " Account " + transaction.getAccountNumber() + " Sub Account " + transaction.getSubAccountNumber() + " is invalid; Setting Sub Account to blank.";
+        		if ( LOG.isInfoEnabled() ) {
+        			LOG.info(tempErrorText);
+        		}
+        		errorText += " " + tempErrorText;
+
+        		transaction.setSubAccountNumber("");
+        	}
+        }
+
+        
+        if (StringUtils.isNotBlank(transaction.getFinancialSubObjectCode())) {
+
+        	SubObjectCodeService socs = SpringContext.getBean(SubObjectCodeService.class);
+        	SubObjectCode soc = socs.getByPrimaryIdForCurrentYear(transaction.getChartOfAccountsCode(), transaction.getAccountNumber(), transaction.getFinancialObjectCode(), transaction.getFinancialSubObjectCode());
+        
+        	if (ObjectUtils.isNull(soc)) {
+        		String tempErrorText = "Chart " + transaction.getChartOfAccountsCode() + " Account " + transaction.getAccountNumber() + " Object Code " + transaction.getFinancialObjectCode() + " Sub Object Code " + transaction.getFinancialSubObjectCode() + " is invalid; setting Sub Object to blank.";
+        		if ( LOG.isInfoEnabled() ) {
+        			LOG.info(tempErrorText);
+        		}
+        		errorText += " " + tempErrorText;
+
+        		transaction.setFinancialSubObjectCode("");
+        	}
+        }
+        
+        
+        if (StringUtils.isNotBlank(transaction.getProjectCode())) {
+        
+        	ProjectCodeService pcs = SpringContext.getBean(ProjectCodeService.class);
+        	ProjectCode pc = pcs.getByPrimaryId(transaction.getProjectCode());
+        
+        	if (ObjectUtils.isNull(pc)) {
+        		if ( LOG.isInfoEnabled() ) {
+        			LOG.info("Project Code " + transaction.getProjectCode() + " is invalid; setting to blank.");
+        		}
+        		errorText += " Project Code " + transaction.getProjectCode() + " is invalid; setting to blank.";
+
+        		transaction.setProjectCode("");
+        	}
+        }
+
+        // clear out GlobalVariable message map, since we have taken care of the errors
+        GlobalVariables.setMessageMap(new MessageMap());
+
+        return errorText;
+    }
+    
+    
     /**
      * Retrieves the error chart code from the parameter table.
      * @return The error chart code defined in the parameter table.
