@@ -15,8 +15,12 @@
  */
 package edu.cornell.kfs.coa.businessobject;
 
+import java.util.HashMap;
+
 import org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kns.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.rice.kns.service.BusinessObjectService;
 
 import edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency;
 import edu.cornell.kfs.module.cg.businessobject.InvoiceType;
@@ -152,7 +156,12 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
 	 */
 	public void setProgramCode(String programCode) {
 		this.programCode = programCode;
-		subFundProgram.setProgramCode(programCode);
+		BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+		HashMap<String,String> keys = new HashMap<String,String>();
+		keys.put("programCode", programCode);
+		keys.put("subFundGroupCode", subFundGroupCode);
+		subFundProgram = (SubFundProgram) bos.findByPrimaryKey(SubFundProgram.class, keys );
+//		subFundProgram.setProgramCode(programCode);
 	}
 
 
@@ -169,7 +178,12 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
 	 */
 	public void setAppropriationAccountNumber(String appropriationAccountNumber) {
 		this.appropriationAccountNumber = appropriationAccountNumber;
-		appropriationAccount.setAppropriationAccountNumber(appropriationAccountNumber);
+		BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+		HashMap<String,String> keys = new HashMap<String,String>();
+		keys.put("appropriationAccountNumber", appropriationAccountNumber);
+		keys.put("subFundGroupCode", subFundGroupCode);
+		appropriationAccount = (AppropriationAccount) bos.findByPrimaryKey(AppropriationAccount.class, keys );
+//		appropriationAccount.setAppropriationAccountNumber(appropriationAccountNumber);
 	}
 	/**
 	 * @return the subFundGroupCode

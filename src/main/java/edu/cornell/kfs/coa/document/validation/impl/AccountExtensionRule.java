@@ -52,19 +52,20 @@ public class AccountExtensionRule extends AccountRule {
         boolean success = true;
 
         String subFundGroupCode = newAccount.getSubFundGroupCode();
-        String subFundProgramCode = ((AccountExtendedAttribute)newAccount.getExtension()).getSubFundProgram().getProgramCode();
+        String subFundProg = ((AccountExtendedAttribute) newAccount.getExtension()).getProgramCode();
+//        String subFundProgramCode = ((AccountExtendedAttribute)newAccount.getExtension()).getSubFundProgram().getProgramCode();
         BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
 
-        if (!StringUtils.isBlank(subFundProgramCode)) {
+        if (!StringUtils.isBlank(subFundProg )) {
             Map fieldValues = new HashMap();
             fieldValues.put("subFundGroupCode", subFundGroupCode);
-            fieldValues.put("programCode", subFundProgramCode);
+            fieldValues.put("programCode", subFundProg	);
             
             Collection<SubFundProgram> retVals = bos.findMatching(SubFundProgram.class, fieldValues);
             
             if (retVals.isEmpty()) {
                 success = false;
-                putFieldError("extension.subFundProgram.programCode", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_NOT_GROUP_CODE, new String[] {subFundProgramCode, subFundGroupCode});
+                putFieldError("extension.subFundProgram.programCode", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_NOT_GROUP_CODE, new String[] {subFundProg, subFundGroupCode});
             } else {
             	for (SubFundProgram sfp : retVals) {
             		if (!sfp.isActive()) {

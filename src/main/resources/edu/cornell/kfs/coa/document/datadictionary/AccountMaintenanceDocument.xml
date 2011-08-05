@@ -99,8 +99,8 @@
         <dd:maintField attributeName="closed"/>
         <dd:maintField attributeName="accountTypeCode" required="true" javascriptLeaveFieldFunction="update_laborBenefitRateCategoryCode"/>
         <dd:maintField attributeName="subFundGroupCode" required="true" javascriptLeaveFieldFunction="onblur_subFundGroup" javascriptLeaveFieldCallbackFunction="checkRestrictedStatusCode_Callback"/>
-       	<dd:maintField attributeName="extension.subFundProgram.programCode" />
-      	<dd:maintField attributeName="extension.appropriationAccount.appropriationAccountNumber" />
+       	<dd:maintField attributeName="extension.programCode" />
+      	<dd:maintField attributeName="extension.appropriationAccountNumber" />
         <dd:maintField attributeName="accountsFringesBnftIndicator" defaultValue="true"/>
         <dd:maintField attributeName="reportsToChartOfAccountsCode"/>
         <dd:maintField attributeName="reportsToAccountNumber"/>

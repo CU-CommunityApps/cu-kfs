@@ -98,8 +98,8 @@
         <ref bean="Account-accountDescription.campusCode"/>
         <ref bean="Account-accountDescription.buildingCode"/>
         <ref bean="Account-contractsAndGrantsAccountResponsibilityId"/>
-      	<ref bean="Account-extension-subFundProgram-programCode"/>
-      	<ref bean="Account-extension-appropriationAccount-appropriationAccountNumber"/>
+      	<ref bean="Account-extension-programCode"/>
+      	<ref bean="Account-extension-appropriationAccountNumber"/>
       	<ref bean="Account-extension-invoiceFrequency-invoiceFrequencyCode"/>
       	<ref bean="Account-extension-invoiceType-invoiceTypeCode"/>
       	<ref bean="Account-extension-everify"/>
@@ -152,19 +152,18 @@
             <dd:primitiveAttribute source="accountPhysicalCampusCode" target="campusCode"/>
         </dd:relationship>
         <dd:relationship objectAttribute="extension.subFundProgram">
-            <dd:primitiveAttribute source="extension.subFundProgram.programCode" target="programCode"/>
+            <dd:primitiveAttribute source="extension.programCode" target="programCode"/>
             <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode" />
         </dd:relationship>
         <dd:relationship objectAttribute="extension">
-            <dd:primitiveAttribute source="extension.programCode" target="programCode"/>
-            <dd:primitiveAttribute source="extension.appropriationAccountNumber" target="appropriationAccountNumber"/>
+            <dd:primitiveAttribute source="chartOfAccountsCode" target="chartOfAccountsCode"/>
+            <dd:primitiveAttribute source="extension.appropriationAccountNumber" target="appropriationAccount.appropriationAccountNumber"/>
             <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode"/>
-            <dd:supportAttribute source="extension.subFundProgram.programCode" target="subFundProgram.programCode"/>
-            <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode"/>
+            <dd:supportAttribute source="extension.programCode" target="subFundProgram.programCode"/>
             <dd:supportAttribute source="extension.appropriationAccount.appropriationAccountNumber" target="appropriationAccount.appropriationAccountNumber"/>
         </dd:relationship>
         <dd:relationship objectAttribute="extension.appropriationAccount">
-            <dd:primitiveAttribute source="extension.appropriationAccount.appropriationAccountNumber" target="appropriationAccountNumber"/>
+            <dd:primitiveAttribute source="extension.appropriationAccountNumber" target="appropriationAccountNumber"/>
             <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode" />
         </dd:relationship>
 <!--        <dd:relationship objectAttribute="extension">-->
@@ -803,14 +802,14 @@
     </property>
   </bean>
 
-  <bean id="Account-extension-subFundProgram-programCode" parent="Account-extension-subFundProgram-programCode-parentBean"/>
-  <bean id="Account-extension-subFundProgram-programCode-parentBean" abstract="true" parent="AccountExtendedAttribute-programCode" >
-  	<property name="name" value="extension.subFundProgram.programCode"/>
+  <bean id="Account-extension-programCode" parent="Account-extension-programCode-parentBean"/>
+  <bean id="Account-extension-programCode-parentBean" abstract="true" parent="AccountExtendedAttribute-programCode" >
+  	<property name="name" value="extension.programCode"/>
   </bean>
 
-  <bean id="Account-extension-appropriationAccount-appropriationAccountNumber" parent="Account-extension-appropriationAccount-appropriationAccountNumber-parentBean"/>
-  <bean id="Account-extension-appropriationAccount-appropriationAccountNumber-parentBean" abstract="true" parent="AccountExtendedAttribute-appropriationAccountNumber" >
-  	<property name="name" value="extension.appropriationAccount.appropriationAccountNumber"/>
+  <bean id="Account-extension-appropriationAccountNumber" parent="Account-extension-appropriationAccountNumber-parentBean"/>
+  <bean id="Account-extension-appropriationAccountNumber-parentBean" abstract="true" parent="AccountExtendedAttribute-appropriationAccountNumber" >
+  	<property name="name" value="extension.appropriationAccountNumber"/>
   </bean>
 
   <bean id="Account-extension-invoiceFrequency-invoiceFrequencyCode" parent="Account-extension-invoiceFrequency-invoiceFrequencyCode-parentBean"/>
@@ -866,8 +865,8 @@
               <dd:field attributeName="closed"/>
               <dd:field attributeName="accountTypeCode"/>
               <dd:field attributeName="subFundGroup.codeAndDescription"/>
-              <dd:field attributeName="extension.subFundProgram.programCode"/>
-              <dd:field attributeName="extension.appropriationAccount.appropriationAccountNumber"/>
+              <dd:field attributeName="extension.programCode"/>
+              <dd:field attributeName="extension.appropriationAccountNumber"/>
               <dd:field attributeName="accountsFringesBnftIndicator"/>
               <dd:field attributeName="reportsToChartOfAccountsCode"/>
               <dd:field attributeName="reportsToAccountNumber"/>
@@ -986,8 +985,8 @@
         <dd:field attributeName="organizationCode"/>
         <dd:field attributeName="accountTypeCode"/>
         <dd:field attributeName="subFundGroupCode"/>
-        <dd:field attributeName="extension.subFundProgram.programCode"/>
-        <dd:field attributeName="extension.appropriationAccount.appropriationAccountNumber"/>
+        <dd:field attributeName="extension.programCode"/>
+        <dd:field attributeName="extension.appropriationAccountNumber"/>
         <dd:field attributeName="accountFiscalOfficerUser.principalName"/>        
         <dd:field attributeName="closed" defaultValue="N"/>
       </list>
@@ -1000,8 +999,8 @@
         <dd:field attributeName="organizationCode"/>
         <dd:field attributeName="accountTypeCode"/>
         <dd:field attributeName="subFundGroupCode"/>
-        <dd:field attributeName="extension.subFundProgram.programCode"/>
-        <dd:field attributeName="extension.appropriationAccount.appropriationAccountNumber"/>
+        <dd:field attributeName="extension.programCode"/>
+        <dd:field attributeName="extension.appropriationAccountNumber"/>
         <dd:field attributeName="accountFiscalOfficerUser.name" inquiry="force"/>    
         <dd:field attributeName="closed"/>
         <dd:field attributeName="accountManagerUser.name" inquiry="force"/>
