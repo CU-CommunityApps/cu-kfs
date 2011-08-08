@@ -7,8 +7,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.identity.KfsKimAttributes;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.rice.kim.bo.types.dto.AttributeSet;
 import org.kuali.rice.kim.service.IdentityManagementService;
 import org.kuali.rice.kim.util.KimConstants;
 import org.kuali.rice.kns.UserSession;
@@ -32,12 +35,13 @@ public class VendorDetailInquiryPresentationController extends InquiryPresentati
 	public Set<String> getConditionallyHiddenPropertyNames(BusinessObject businessObject) {
 		Set<String> retVal = new HashSet<String>();
 		
-		
-		
 		IdentityManagementService idService = SpringContext.getBean(IdentityManagementService.class);
 		UserSession uSession = GlobalVariables.getUserSession();
 		
-		boolean canViewAttachments = idService.isAuthorizedByTemplateName(uSession.getPrincipalId(), KNSConstants.KNS_NAMESPACE, KimConstants.PermissionTemplateNames.VIEW_NOTE_ATTACHMENT, null, null);
+		AttributeSet permissionDetails = new AttributeSet();
+        permissionDetails.put(KfsKimAttributes.FINANCIAL_SYSTEM_DOCUMENT_TYPE_CODE, "PVEN");
+		
+		boolean canViewAttachments = idService.isAuthorizedByTemplateName(uSession.getPrincipalId(), KNSConstants.KNS_NAMESPACE, KimConstants.PermissionTemplateNames.VIEW_NOTE_ATTACHMENT, permissionDetails, null);
 		if (!canViewAttachments) {
 			
 			VendorDetail detail = (VendorDetail)businessObject;
