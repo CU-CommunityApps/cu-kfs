@@ -7,10 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.identity.KfsKimAttributes;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.rice.kew.util.KEWConstants;
 import org.kuali.rice.kim.bo.types.dto.AttributeSet;
 import org.kuali.rice.kim.service.IdentityManagementService;
 import org.kuali.rice.kim.util.KimConstants;
@@ -39,7 +38,7 @@ public class VendorDetailInquiryPresentationController extends InquiryPresentati
 		UserSession uSession = GlobalVariables.getUserSession();
 		
 		AttributeSet permissionDetails = new AttributeSet();
-        permissionDetails.put(KfsKimAttributes.FINANCIAL_SYSTEM_DOCUMENT_TYPE_CODE, "PVEN");
+        permissionDetails.put(KEWConstants.DOCUMENT_TYPE_NAME_DETAIL, "PVEN");
 		
 		boolean canViewAttachments = idService.isAuthorizedByTemplateName(uSession.getPrincipalId(), KNSConstants.KNS_NAMESPACE, KimConstants.PermissionTemplateNames.VIEW_NOTE_ATTACHMENT, permissionDetails, null);
 		if (!canViewAttachments) {
