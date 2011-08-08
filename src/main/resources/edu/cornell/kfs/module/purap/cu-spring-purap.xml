@@ -15,11 +15,11 @@
                 <value>edu.cornell.kfs.module.purap</value>
             </list>
         </property>
-		<property name="dataDictionaryPackages">
+		<!-- <property name="dataDictionaryPackages">
 			<list merge="true">
                 <value>edu/cornell/kfs/module/purap/document/datadictionary</value>
  			</list>
-		</property>
+		</property> -->
 		<property name="databaseRepositoryFilePaths">
 			<list merge ="true">
 				<value>edu/cornell/kfs/module/purap/cu-ojb-purap.xml</value>
