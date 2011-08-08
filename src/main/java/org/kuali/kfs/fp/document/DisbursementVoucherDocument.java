@@ -990,7 +990,8 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         } else {
         	this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(employee.getPrincipalId());
         }
-        this.getDvPayeeDetail().setDisbVchrPayeePersonName(employee.getName());
+        // Changed this from employee.getName to employee.getNameUnmasked() otherwise "Xxxxxx" appears on the DV!
+        this.getDvPayeeDetail().setDisbVchrPayeePersonName(employee.getNameUnmasked());
 
         final ParameterService parameterService = this.getParameterService();
         
