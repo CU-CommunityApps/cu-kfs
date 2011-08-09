@@ -254,18 +254,12 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#isDocumentStoppedInRouteNode(NodeDetails nodeDetails)
      */
     public boolean isDocumentStoppedInRouteNode(NodeDetails nodeDetails) {
-        List<String> currentRouteLevels = new ArrayList<String>();
-        try {
-            KualiWorkflowDocument workflowDoc = getDocumentHeader().getWorkflowDocument();
-            currentRouteLevels = Arrays.asList(getDocumentHeader().getWorkflowDocument().getNodeNames());
-            if (currentRouteLevels.contains(nodeDetails.getName()) && workflowDoc.isApprovalRequested()) {
-                return true;
-            }
-            return false;
-        }
-        catch (WorkflowException e) {
-            throw new RuntimeException(e);
-        }
+    	 KualiWorkflowDocument workflowDoc = getDocumentHeader().getWorkflowDocument();
+         String currentRouteLevels = getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames();
+         if (currentRouteLevels.contains(nodeDetails.getName()) && workflowDoc.isApprovalRequested()) {
+             return true;
+         }
+         return false;
     }
 
     /**
