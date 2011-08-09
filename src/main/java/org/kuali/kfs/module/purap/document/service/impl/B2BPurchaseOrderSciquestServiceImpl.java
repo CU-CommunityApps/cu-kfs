@@ -39,6 +39,7 @@ import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.ContractManager;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kim.service.PersonService;
@@ -447,7 +448,14 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("      </ShipTo>\n");
         
         // Get payment terms for the PO
-        PaymentTermType payTerm = SpringContext.getBean(BusinessObjectService.class).findBySinglePrimaryKey(PaymentTermType.class, purchaseOrder.getVendorPaymentTermsCode());
+        String payTermCode = purchaseOrder.getVendorPaymentTermsCode();
+        if(StringUtils.isBlank(payTermCode)) {
+        	// Retrieve the vendor and pull the payment terms from the vendor record if the PO terms are null
+        	VendorDetail poVendor = SpringContext.getBean(VendorService.class).getByVendorNumber(purchaseOrder.getVendorNumber());
+        	payTermCode = poVendor.getVendorPaymentTermsCode();
+        }
+        
+        PaymentTermType payTerm = SpringContext.getBean(BusinessObjectService.class).findBySinglePrimaryKey(PaymentTermType.class, payTermCode);
         
         cxml.append("      <PaymentInfo>\n");
         cxml.append("        <Terms>\n");
