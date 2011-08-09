@@ -249,6 +249,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     public boolean documentPerformsSufficientFundsCheck() {
         return false;
     }
+   
 
     /**
      * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#isDocumentStoppedInRouteNode(NodeDetails nodeDetails)
