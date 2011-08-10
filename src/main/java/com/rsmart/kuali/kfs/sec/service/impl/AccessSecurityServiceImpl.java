@@ -441,7 +441,8 @@ public class AccessSecurityServiceImpl implements AccessSecurityService {
         String templateName = templateInfo.getName();
 
         if (PersistableBusinessObject.class.isAssignableFrom(businessObject.getClass())) {
-            ((PersistableBusinessObject) businessObject).refreshNonUpdateableReferences();
+        	//Big Time waster for no real reason
+            //((PersistableBusinessObject) businessObject).refreshNonUpdateableReferences();
         }
         else {
             businessObject.refresh();
