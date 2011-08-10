@@ -1298,7 +1298,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         	String arPayeeName = "";
                         	String arLine1Address = "";
                         	if (ObjectUtils.isNotNull(pg.getPayeeName()))
-                        		arPayeeName = pg.getPayeeName().length() <= 10 ? String.format("%10s", pg.getPayeeName()) : pg.getPayeeName().substring(0,10);
+                        		arPayeeName = pg.getPayeeName();
                             if (ObjectUtils.isNotNull(pg.getLine1Address()))
                             	arLine1Address = pg.getLine1Address();
                         		
