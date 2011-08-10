@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.jboss.util.Strings;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.service.ObjectTypeService;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherDocumentationLocation;
@@ -1151,13 +1152,8 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
     protected boolean shouldClearSpecialHandling() {
         if (!isDisbVchrSpecialHandlingCode()) {
             // are we at the campus route node?
-            try {
-                List<String> currentNodes = Arrays.asList(getDocumentHeader().getWorkflowDocument().getNodeNames());
-                return (currentNodes.contains(DisbursementVoucherConstants.RouteLevelNames.CAMPUS));
-            }
-            catch (WorkflowException we) {
-                throw new RuntimeException("Workflow Exception while attempting to check route levels", we);
-            }
+            List<String> currentNodes = Arrays.asList(Strings.split(getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames(),","));
+            return (currentNodes.contains(DisbursementVoucherConstants.RouteLevelNames.CAMPUS));
         }
         return false;
     }

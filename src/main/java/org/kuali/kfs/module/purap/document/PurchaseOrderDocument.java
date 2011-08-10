@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.jboss.util.Strings;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.gl.service.SufficientFundsService;
 import org.kuali.kfs.integration.purap.CapitalAssetSystem;
@@ -242,44 +243,38 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
      * @return - Customized document title text dependent upon route level.
      */
     protected String getCustomDocumentTitle() {
-        try {
-            String poNumber = getPurapDocumentIdentifier().toString();
-            String cmCode = getContractManagerCode().toString();
-            String vendorName = StringUtils.trimToEmpty(getVendorName());
-            String totalAmount = getTotalDollarAmount().toString();
-            PurApAccountingLine accountingLine = getFirstAccount();
-            String chartAcctCode = accountingLine != null ? accountingLine.getChartOfAccountsCode() : "";
-            String accountNumber = accountingLine != null ? accountingLine.getAccountNumber() : "";
-            String chartCode = getChartOfAccountsCode();
-            String orgCode = getOrganizationCode();
-            String deliveryCampus = getDeliveryCampus() != null ? getDeliveryCampus().getCampus().getCampusShortName() : "";
-            String documentTitle = "";
-         
-            String[] nodeNames = getDocumentHeader().getWorkflowDocument().getNodeNames();
-            String routeLevel = "";
-            if (nodeNames.length == 1)
-                routeLevel = nodeNames[0];
-            
-            if (getStatusCode().equals(PurchaseOrderStatuses.OPEN)) {
-                documentTitle = super.getDocumentTitle();
-            }
-            else if (routeLevel.equals(NodeDetailEnum.BUDGET_OFFICE_REVIEW.getName()) || routeLevel.equals(NodeDetailEnum.CONTRACTS_AND_GRANTS_REVIEW.getName())) {
-                // Budget & C&G approval levels
-                documentTitle = "PO: " + poNumber + " Account Number: " + chartAcctCode + "-" + accountNumber + " Dept: " + chartCode + "-" + orgCode + " Delivery Campus: " + deliveryCampus;
-            }
-            else if (routeLevel.equals(NodeDetailEnum.VENDOR_TAX_REVIEW.getName())) {
-                // Tax approval level
-                documentTitle = "Vendor: " + vendorName + " PO: " + poNumber + " Account Number: " + chartCode + "-" + accountNumber + " Dept: " + chartCode + "-" + orgCode + " Delivery Campus: " + deliveryCampus;
-            }
-            else 
-                documentTitle += "PO: " + poNumber + " Contract Manager: " + cmCode + " Vendor: " + vendorName + " Amount: " + totalAmount;
-                        
-            return documentTitle;
-        }
-        catch (WorkflowException e) {
-            LOG.error("Error updating Purchase Order document: " + e.getMessage());
-            throw new RuntimeException("Error updating Purchase Order document: " + e.getMessage());
-        }
+    	String poNumber = getPurapDocumentIdentifier().toString();
+    	String cmCode = getContractManagerCode().toString();
+    	String vendorName = StringUtils.trimToEmpty(getVendorName());
+    	String totalAmount = getTotalDollarAmount().toString();
+    	PurApAccountingLine accountingLine = getFirstAccount();
+    	String chartAcctCode = accountingLine != null ? accountingLine.getChartOfAccountsCode() : "";
+    	String accountNumber = accountingLine != null ? accountingLine.getAccountNumber() : "";
+    	String chartCode = getChartOfAccountsCode();
+    	String orgCode = getOrganizationCode();
+    	String deliveryCampus = getDeliveryCampus() != null ? getDeliveryCampus().getCampus().getCampusShortName() : "";
+    	String documentTitle = "";
+
+    	String[] nodeNames = Strings.split(getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames(),",");
+    	String routeLevel = "";
+    	if (nodeNames.length == 1)
+    		routeLevel = nodeNames[0];
+
+    	if (getStatusCode().equals(PurchaseOrderStatuses.OPEN)) {
+    		documentTitle = super.getDocumentTitle();
+    	}
+    	else if (routeLevel.equals(NodeDetailEnum.BUDGET_OFFICE_REVIEW.getName()) || routeLevel.equals(NodeDetailEnum.CONTRACTS_AND_GRANTS_REVIEW.getName())) {
+    		// Budget & C&G approval levels
+    		documentTitle = "PO: " + poNumber + " Account Number: " + chartAcctCode + "-" + accountNumber + " Dept: " + chartCode + "-" + orgCode + " Delivery Campus: " + deliveryCampus;
+    	}
+    	else if (routeLevel.equals(NodeDetailEnum.VENDOR_TAX_REVIEW.getName())) {
+    		// Tax approval level
+    		documentTitle = "Vendor: " + vendorName + " PO: " + poNumber + " Account Number: " + chartCode + "-" + accountNumber + " Dept: " + chartCode + "-" + orgCode + " Delivery Campus: " + deliveryCampus;
+    	}
+    	else 
+    		documentTitle += "PO: " + poNumber + " Contract Manager: " + cmCode + " Vendor: " + vendorName + " Amount: " + totalAmount;
+
+    	return documentTitle;
     }
 
     /**
@@ -749,23 +744,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         }
     }
 
-    /**
-     * Returns the name of the current route node.
-     * 
-     * @param wd the current workflow document.
-     * @return the name of the current route node.
-     * @throws WorkflowException
-     */
-    protected String getCurrentRouteNodeName(KualiWorkflowDocument wd) throws WorkflowException {
-        String[] nodeNames = wd.getNodeNames();
-        if ((nodeNames == null) || (nodeNames.length == 0)) {
-            return null;
-        }
-        else {
-            return nodeNames[0];
-        }
-    }
-
+  
     /**
      * Sends FYI workflow request to the given user on this document.
      * 
@@ -779,7 +758,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         if (ObjectUtils.isNotNull(workflowDocument)) {
             String annotationNote = (ObjectUtils.isNull(annotation)) ? "" : annotation;
             String responsibilityNote = (ObjectUtils.isNull(responsibility)) ? "" : responsibility;
-            String currentNodeName = getCurrentRouteNodeName(workflowDocument);
+            String currentNodeName = workflowDocument.getCurrentRouteNodeNames();
             KimPrincipal principal = SpringContext.getBean(IdentityManagementService.class).getPrincipalByPrincipalName(userNetworkId);
             workflowDocument.adHocRouteDocumentToPrincipal(KEWConstants.ACTION_REQUEST_FYI_REQ, currentNodeName, annotationNote, principal.getPrincipalId(), responsibilityNote, true);
         }

@@ -869,23 +869,23 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
         return classesToExclude;
     }
-
-    /**
-     * Returns the current route node name.
-     * 
-     * @param wd The KualiWorkflowDocument object whose current route node we're trying to get.
-     * @return The current route node name.
-     * @throws WorkflowException
-     */
-    protected String getCurrentRouteNodeName(KualiWorkflowDocument wd) throws WorkflowException {
-        String[] nodeNames = wd.getNodeNames();
-        if ((nodeNames == null) || (nodeNames.length == 0)) {
-            return null;
-        }
-        else {
-            return nodeNames[0];
-        }
-    }
+//
+//    /**
+//     * Returns the current route node name.
+//     * 
+//     * @param wd The KualiWorkflowDocument object whose current route node we're trying to get.
+//     * @return The current route node name.
+//     * @throws WorkflowException
+//     */
+//    protected String getCurrentRouteNodeName(KualiWorkflowDocument wd) throws WorkflowException {
+//        String[] nodeNames = wd.getNodeNames();
+//        if ((nodeNames == null) || (nodeNames.length == 0)) {
+//            return null;
+//        }
+//        else {
+//            return nodeNames[0];
+//        }
+//    }
 
     /**
      * @see org.kuali.kfs.module.purap.document.service.PurchaseOrderService#completePurchaseOrder(org.kuali.kfs.module.purap.document.PurchaseOrderDocument)
