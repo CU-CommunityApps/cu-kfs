@@ -710,17 +710,20 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
 	                        	wroteMellonFastTrackHeaderRecords = true;
                         	}
                         	
-                            // Get country name for code
+                            // Get country name
+                        	int CountryNameMaxLength = 15;
                             Country country = countryService.getByPrimaryId(pg.getCountry());
-                            int CountryNameMaxLength = 15;
-                            if (country != null) {
-                            	sCountryName = country.getPostalCountryName().substring(0,((country.getPostalCountryName().length() >= CountryNameMaxLength)? CountryNameMaxLength: country.getPostalCountryName().length() ));;
-                            	if (sCountryName.toUpperCase().contains("UNITED STATES"))
-                            		sCountryName = "";
-                            }
-                            else {
-                            	sCountryName = "";
-                            }
+                            if (country != null)
+                            	sCountryName = country.getPostalCountryName().substring(0,((country.getPostalCountryName().length() >= CountryNameMaxLength)? CountryNameMaxLength: country.getPostalCountryName().length() ));
+                            else
+                            	if (ObjectUtils.isNotNull(pg.getCountry()))
+                            		sCountryName = pg.getCountry().substring(0,((pg.getCountry().length() >= CountryNameMaxLength)? CountryNameMaxLength: pg.getCountry().length() ));
+                            	else
+                            		sCountryName = "";  // Do this only if both the getPostalCountryName() AND getCountry() are empty
+                            
+                            // Do final country name processing per requirements from BNY Mellon.
+	                    	if (sCountryName.toUpperCase().contains("UNITED STATES"))
+	                    		sCountryName = "";
                             
                             //Get special handling indicator
                             specialHandlingCode = pg.getPymtSpecialHandling();
@@ -1716,12 +1719,16 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                     PaymentDetail pd = (PaymentDetail) iterator.next();
                     if (first) {
                         // Get country name for code
+                        int CountryNameMaxLength = 15;
                         Country country = countryService.getByPrimaryId(pg.getCountry());
-                        if (country != null)
-                        	sCountryName = country.getPostalCountryName().substring(0,((country.getPostalCountryName().length() >= 30)? 30: country.getPostalCountryName().length() ));
+                        if (country != null) {
+                        	sCountryName = country.getPostalCountryName().substring(0,((country.getPostalCountryName().length() >= CountryNameMaxLength)? CountryNameMaxLength: country.getPostalCountryName().length() ));
+	                    	if (sCountryName.toUpperCase().contains("UNITED STATES"))
+	                    		sCountryName = "";
+                        }
                         else
                         	if (ObjectUtils.isNotNull(pg.getCountry()))
-                        		sCountryName = pg.getCountry().substring(0,((pg.getLine1Address().length() >= 30)? 30: pg.getCountry().length() ));
+                        		sCountryName = pg.getCountry().substring(0,((pg.getCountry().length() >= CountryNameMaxLength)? CountryNameMaxLength: pg.getCountry().length() ));
 		                    	if (sCountryName.toUpperCase().contains("UNITED STATES"))
 		                    		sCountryName = "";
                         	else
