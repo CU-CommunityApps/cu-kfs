@@ -362,7 +362,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         	KualiDecimal recordDebits = new KualiDecimal(extractNormalizedString(line, 24, 36));
         	KualiDecimal recordCredits = new KualiDecimal(extractNormalizedString(line, 36, 48));
         	
-        	if (accumulatedCredits.compareTo(recordCredits.abs()) !=0 ) {
+        	if (accumulatedCredits.compareTo(recordCredits.abs()) !=0 && !duplicateTransactions) {
         		StringBuffer sb = new StringBuffer();
         		sb.append("Total credits given in cardholder footer do not sum to same value as transactions.");
         		sb.append(lineCountMessage());
@@ -372,7 +372,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         		sb.append(accumulatedCredits);
         		throw new Exception(sb.toString());
         	}
-        	if (accumulatedDebits.compareTo(recordDebits.abs()) != 0) {
+        	if (accumulatedDebits.compareTo(recordDebits.abs()) != 0 && !duplicateTransactions) {
         		StringBuffer sb = new StringBuffer();
         		sb.append("Total debits given in cardholder footer do not sum to same value as transactions."); 
         		sb.append(lineCountMessage());
