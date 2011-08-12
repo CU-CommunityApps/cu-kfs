@@ -75,8 +75,19 @@ public class BatchContainerStep extends AbstractStep implements ContainerStepLis
 		initContainerResults();
 		
 		try {			
-			//write batch container run lock file to indicate the batch container is running
-			directory.writeBatchContainerSemaphore(jobName, getName());
+			
+			try {
+				//write batch container run lock file to indicate the batch container is running
+				directory.writeBatchContainerSemaphore(jobName, getName());
+			} catch (RuntimeException e) {
+				//if we catch an error it could be that the file already exist
+				//in this case there could be a container running on another node
+				//and we want to exit without removing the run lock file
+				LOG.error(e.toString());
+				LOG.info("The BatchContainer has stopped running");
+				System.exit(1);
+			}
+			
 			directory.addShutdownHook();
 			LOG.info("The BatchContainer is running");
 			
