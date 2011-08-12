@@ -358,11 +358,19 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             return child;
 
         } 
+        // Still need to update totals so totals match during validation, but don't want transactions to be loaded
+        if (recordId.equals("05") && duplicateTransactions){	        		        	
+            if (convertDebitCreditCode(line.substring(64,65)).equals("D")) {
+            	accumulatedDebits = accumulatedDebits.add(extractDecimal(line, 79, 91));
+            } else {
+            	accumulatedCredits = accumulatedCredits.add(extractDecimal(line, 79, 91));	            	
+            }
+        }
         if (recordId.equals("95")) { //cardholder footer
         	KualiDecimal recordDebits = new KualiDecimal(extractNormalizedString(line, 24, 36));
         	KualiDecimal recordCredits = new KualiDecimal(extractNormalizedString(line, 36, 48));
         	
-        	if (accumulatedCredits.compareTo(recordCredits.abs()) !=0 && !duplicateTransactions) {
+        	if (accumulatedCredits.compareTo(recordCredits.abs()) !=0) {
         		StringBuffer sb = new StringBuffer();
         		sb.append("Total credits given in cardholder footer do not sum to same value as transactions.");
         		sb.append(lineCountMessage());
@@ -372,7 +380,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         		sb.append(accumulatedCredits);
         		throw new Exception(sb.toString());
         	}
-        	if (accumulatedDebits.compareTo(recordDebits.abs()) != 0 && !duplicateTransactions) {
+        	if (accumulatedDebits.compareTo(recordDebits.abs()) != 0) {
         		StringBuffer sb = new StringBuffer();
         		sb.append("Total debits given in cardholder footer do not sum to same value as transactions."); 
         		sb.append(lineCountMessage());
