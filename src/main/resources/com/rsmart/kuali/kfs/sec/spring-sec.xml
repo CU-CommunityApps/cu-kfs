@@ -151,16 +151,6 @@
 		</property>			
 	</bean>
 	
-	<bean id="glAccountBalanceLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-		<property name="lookupableHelperService">
-		    <bean parent="securityBalanceLookupableHelperService" scope="prototype" p:glInquiry="true">
-		        <property name="lookupableHelperService">
-		    	    <ref bean="glAccountBalanceLookupableHelperService" />
-		        </property>			    
-		    </bean>
-		</property>
-	</bean>	
-	
 	<bean id="securityAccountBalanceByConsolidationLookupableHelperService" class="com.rsmart.kuali.kfs.sec.businessobject.lookup.AccessSecurityAccountBalanceByConsolidationLookupableHelperServiceImpl" parent="glAccountBalanceByConsolidationLookupableHelperService" scope="prototype">
 		<property name="accessSecurityService">
 			<ref bean="accessSecurityService" />
@@ -179,75 +169,8 @@
 		</property>
 	</bean>	
 
-	<bean id="glAccountBalanceByLevelLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-		<property name="lookupableHelperService">
-		    <bean parent="securityBalanceLookupableHelperService" scope="prototype" p:glInquiry="true">
-		        <property name="lookupableHelperService">
-		    	    <ref bean="glAccountBalanceByLevelLookupableHelperService" />
-		        </property>			    
-		    </bean>
-		</property>
-	</bean>	
-		
-	<bean id="glAccountBalanceByObjectLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-		<property name="lookupableHelperService">
-		    <bean parent="securityBalanceLookupableHelperService" scope="prototype" p:glInquiry="true">
-		        <property name="lookupableHelperService">
-		    	    <ref bean="glAccountBalanceByObjectLookupableHelperService" />
-		        </property>			    
-		    </bean>
-		</property>
-	</bean>	
-			
-	<bean id="glCashBalanceLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-		<property name="lookupableHelperService">
-		    <bean parent="securityBalanceLookupableHelperService" scope="prototype" p:glInquiry="true">
-		        <property name="lookupableHelperService">
-		    	    <ref bean="glCashBalanceLookupableHelperService" />
-		        </property>			    
-		    </bean>
-		</property>
-	</bean>	
 	
-	<bean id="glBalanceLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-		<property name="lookupableHelperService">
-		    <bean parent="securityBalanceLookupableHelperService" scope="prototype" p:glInquiry="true">
-		        <property name="lookupableHelperService">
-		    	    <ref bean="glBalanceLookupableHelperService" />
-		        </property>			    
-		    </bean>
-		</property>
-	</bean>	
 	
-	<bean id="glPendingEntryLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-		<property name="lookupableHelperService">
-		    <bean parent="securityBalanceLookupableHelperService" scope="prototype" p:glInquiry="true">
-		        <property name="lookupableHelperService">
-		    	    <ref bean="glPendingEntryLookupableHelperServiceImpl" />
-		        </property>			    
-		    </bean>
-		</property>
-	</bean>		
-
-	<bean id="glEntryLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-		<property name="lookupableHelperService">
-		    <bean parent="securityBalanceLookupableHelperService" scope="prototype" p:glInquiry="true">
-		        <property name="lookupableHelperService">
-		    	    <ref bean="glEntryLookupableHelperService" />
-		        </property>			    
-		    </bean>
-		</property>
-	</bean>		
-
-	<bean id="glEncumbranceLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-		<property name="lookupableHelperService">
-		    <bean parent="securityBalanceLookupableHelperService" scope="prototype" p:glInquiry="true">
-		        <property name="lookupableHelperService">
-		    	    <ref bean="glEncumbranceLookupableHelperService" />
-		        </property>			    
-		    </bean>
-		</property>
-	</bean>	
 	
 	<bean id="BaseFundsLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
 		<property name="lookupableHelperService">
