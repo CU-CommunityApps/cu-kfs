@@ -23,10 +23,20 @@
 	  <script type="text/javascript">
         $('#tab-RouteLog-imageToggle').click(function() {
           if ($('#routelogload').is(":visible")) {
-          	$('#routeLogIFrame').attr('src', '${ConfigProperties.workflow.url}/RouteLog.do?routeHeaderId=${KualiForm.workflowDocument.routeHeaderId}');
-            $('#routelogload').hide();
-          } 
+            showRouteLog();
+          }
         });
+
+       	$(document).ready(function() {
+          if ($('input:hidden[name="tabStates(RouteLog)"]').val() == "OPEN") {
+           showRouteLog();
+          }
+       	});
+
+        function showRouteLog() {
+          $('#routeLogIFrame').attr('src', '${ConfigProperties.workflow.url}/RouteLog.do?routeHeaderId=${KualiForm.workflowDocument.routeHeaderId}');
+          $('#routelogload').hide();
+        }
       </script>
 	  <div id="routelogload">Loading....</div> 
       <iframe onload="setRouteLogIframeDimensions();" name="routeLogIFrame" id="routeLogIFrame" height="500" width="95%" hspace='0' vspace='0' frameborder='0' title='Workflow Route Log for document id: ${KualiForm.workflowDocument.routeHeaderId}'></iframe> 
