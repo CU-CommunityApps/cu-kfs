@@ -442,7 +442,7 @@ public class AccessSecurityServiceImpl implements AccessSecurityService {
 
         if (PersistableBusinessObject.class.isAssignableFrom(businessObject.getClass())) {
         	//Big Time waster for no real reason
-            //((PersistableBusinessObject) businessObject).refreshNonUpdateableReferences();
+            ((PersistableBusinessObject) businessObject).refreshNonUpdateableReferences();
         }
         else {
             businessObject.refresh();
