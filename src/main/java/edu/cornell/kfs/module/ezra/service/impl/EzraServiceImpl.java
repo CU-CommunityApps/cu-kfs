@@ -16,6 +16,7 @@ import org.kuali.kfs.module.cg.businessobject.AwardProjectDirector;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.businessobject.ProposalOrganization;
 import org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector;
+import org.kuali.kfs.module.cg.businessobject.CFDA;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.exception.WorkflowException;
@@ -56,6 +57,9 @@ public class EzraServiceImpl implements EzraService {
 	private EzraAwardProposalDao ezraAwardProposalDao;
 	private DateTimeService dateTimeService;
 	private ParameterService parameterService;
+	
+	public static String UNKNOWN_DEFAULT_CFDA_NUMBER = "XX.XXX";
+	
 
 	public boolean updateProposals() {
 		
@@ -220,10 +224,24 @@ public class EzraServiceImpl implements EzraService {
 		List<ProposalOrganization> propOrgs = createProposalOrganizations(proposal.getProposalNumber(), project);
 		proposal.setProposalOrganizations(propOrgs);
 		
-		//check to see if this is a real cfda 
-		if (ezraProposal.getCfdaNumber() != null) {
-			proposal.setCfdaNumber(ezraProposal.getCfdaNumber().trim());
+		//check to see if this is a real cfda
+		String myCfdaNumber = "";
+		if (ObjectUtils.isNotNull(ezraProposal.getCfdaNumber())) {
+			myCfdaNumber = ezraProposal.getCfdaNumber().trim();
+			CFDA cfda = businessObjectService.findBySinglePrimaryKey(CFDA.class, myCfdaNumber);
+			if (ObjectUtils.isNotNull(cfda)) {
+				proposal.setCfdaNumber(myCfdaNumber);
+			}
+			else
+			{
+				proposal.setCfdaNumber(UNKNOWN_DEFAULT_CFDA_NUMBER);
+				LOG.info("UNKNOWN CFDA NUMBER for Proposal Id: " + proposalId + 
+						".  CFDA Number from EZRA is: " + myCfdaNumber + ".  Using " + UNKNOWN_DEFAULT_CFDA_NUMBER + " instead.");
+			}
 		}
+		else
+			LOG.info("CFDA NUMBER for Proposal Id: " + proposalId + " was not provided from EZRA.");
+		
 		if (project.getProjectTitle() != null) {
 			proposal.setProposalProjectTitle(project.getProjectTitle().trim());
 		}
