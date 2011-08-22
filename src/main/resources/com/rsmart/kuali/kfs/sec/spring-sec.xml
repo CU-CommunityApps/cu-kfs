@@ -163,15 +163,6 @@
 		</property>		
 	</bean>
 	
-	<bean id="glAccountBalanceByConsolidationLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-		<property name="lookupableHelperService">
-		    <ref bean="securityAccountBalanceByConsolidationLookupableHelperService" />
-		</property>
-	</bean>	
-
-	
-	
-	
 	<bean id="BaseFundsLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
 		<property name="lookupableHelperService">
 		    <bean parent="securityBalanceLookupableHelperService" scope="prototype" p:laborInquiry="true">
