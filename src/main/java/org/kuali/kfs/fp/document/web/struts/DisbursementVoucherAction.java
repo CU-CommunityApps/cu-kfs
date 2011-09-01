@@ -492,7 +492,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
                 boolean hasMultipleAddresses = vendorAddresses != null && vendorAddresses.size() > 1;
                 dvForm.setHasMultipleAddresses(hasMultipleAddresses);
 
-                if (vendorAddresses != null) {
+                if (vendorAddresses != null && !vendorAddresses.isEmpty()) {
                     defaultVendorAddress = vendorAddresses.get(0);
                 }
             }
