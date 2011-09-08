@@ -175,7 +175,11 @@ public class LaborBenefitsCalculationServiceImpl implements LaborBenefitsCalcula
             //add the Labor Benefit Rate Category Code to the search criteria
             fieldValues.put("laborBenefitRateCategoryCode",laborBenefitRateCategoryCode);
             
-            String search = fieldValues.get(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR) + "," + fieldValues.get(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE) + "," + fieldValues.get(LaborPropertyConstants.POSITION_BENEFIT_TYPE_CODE) + "," + fieldValues.get("laborBenefitRateCategoryCode");
+            String search = fieldValues.get(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR) + "," + 
+            				fieldValues.get(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE) + "," + 
+            				fieldValues.get(LaborPropertyConstants.POSITION_BENEFIT_TYPE_CODE) + "," + 
+            				fieldValues.get("laborBenefitRateCategoryCode");
+            
             LOG.info("Searching for Benefits Calculation {" + search + "}");
             //perform the lookup based off the map 
             BenefitsCalculation bc = (BenefitsCalculation) businessObjectService.findByPrimaryKey(BenefitsCalculation.class, fieldValues);
@@ -214,7 +218,7 @@ public class LaborBenefitsCalculationServiceImpl implements LaborBenefitsCalcula
 	    this.setCostSharingSourceAccountNumber(null);
 	    this.setCostSharingSourceAccountChartOfAccountsCode(null);
 	    this.setCostSharingSourceSubAccountNumber(null);
-		//make sure the sub accout number is filled in
+		//make sure the sub account number is filled in
 		if (subAccountNumber != null) {
 			LOG.info("Sub Account Number was filled in. Checking to see if it is a Cost Sharing Sub Account.");
 
@@ -231,7 +235,8 @@ public class LaborBenefitsCalculationServiceImpl implements LaborBenefitsCalcula
 					subFieldValues.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode);
 					subFieldValues.put(KFSPropertyConstants.SUB_ACCOUNT_NUMBER, subAccountNumber);
 					subFieldValues.put(KFSPropertyConstants.SUB_ACCOUNT_TYPE_CODE, "CS");
-					LOG.info("Looking for a cost sharing sub account for sub account number " + subAccountNumber);
+					subFieldValues.put(KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber);
+					LOG.info("Looking for a cost sharing sub account for Account Number " + accountNumber + " and sub account " + subAccountNumber);
 					
 					if(ObjectUtils.isNull(businessObjectService)){
 					    this.businessObjectService = SpringContext.getBean(BusinessObjectService.class);
@@ -249,12 +254,12 @@ public class LaborBenefitsCalculationServiceImpl implements LaborBenefitsCalcula
 						this.setCostSharingSourceSubAccountNumber(subAccountList.get(0).getCostShareSourceSubAccountNumber());
 					}
 					else {
-						LOG.info(subAccountNumber + " is not a cost sharing account.  Using the Labor Benefit Rate Category from the account number.");
+						LOG.info("Account Number " + accountNumber + " and sub account " + subAccountNumber + 
+								" is not a cost sharing account therefore using the Labor Benefit Rate Category from account number " + accountNumber);
 					}
 				}
 				else {
 					LOG.info("Using the Grant Account to determine the labor benefit rate category code.");
-
 				}
 			}
 		}
@@ -262,6 +267,7 @@ public class LaborBenefitsCalculationServiceImpl implements LaborBenefitsCalcula
 		LOG.info("Looking up Account {" + chartOfAccountsCode + "," + accountNumber + "}");
 		//lookup the account from the db based off the account code and the account number
 		Account account = this.getAccountService().getByPrimaryId(chartOfAccountsCode, accountNumber);
+		// NOTE => The next line should check if the previous line returned null or not before attempting to assign one of its members to a String variable
 		String laborBenefitRateCategoryCode = ((AccountExtendedAttribute)account.getExtension()).getLaborBenefitRateCategoryCode();;
 		
 		//make sure the laborBenefitRateCategoryCode is not null or blank
