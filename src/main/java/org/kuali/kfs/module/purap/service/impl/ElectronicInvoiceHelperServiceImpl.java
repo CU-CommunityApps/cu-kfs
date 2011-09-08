@@ -893,7 +893,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
       return electronicInvoice;
       
     }
-    
+    @Transactional
     protected StringBuffer saveLoadSummary(ElectronicInvoiceLoad eInvoiceLoad) {
 
         Map savedLoadSummariesMap = new HashMap();
