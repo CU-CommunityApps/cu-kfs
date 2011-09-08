@@ -15,30 +15,34 @@
 --%>
 <%@ include file="/kr/WEB-INF/jsp/tldHeader.jsp"%>
 
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script> 
+<%--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>  --%>
  
 <kul:tab tabTitle="Route Log" defaultOpen="false">
 <div class="tab-container" align=center>
 	<c:if test="${ConfigProperties.test.mode ne 'true'}">
+	<div id="routelogload">Loading....</div> 
 	  <script type="text/javascript">
-        $('#tab-RouteLog-imageToggle').click(function() {
-          if ($('#routelogload').is(":visible")) {
+	  document.getElementById('tab-RouteLog-imageToggle').onclick = doTheUberClick();
+        function doTheUberClick() {
+          if (document.getElementById('routelogload').style.display =="block") {
             showRouteLog();
           }
-        });
+        };
 
-       	$(document).ready(function() {
-          if ($('input:hidden[name="tabStates(RouteLog)"]').val() == "OPEN") {
+       	window.onload = readyToDisplayRouteLog;
+       	function readyToDisplayRouteLog()  {
+       		
+       	 if (document.getElementsByName('tabStates(RouteLog)')[0].value == "OPEN") {
            showRouteLog();
           }
-       	});
+       	};
 
         function showRouteLog() {
-          $('#routeLogIFrame').attr('src', '${ConfigProperties.workflow.url}/RouteLog.do?routeHeaderId=${KualiForm.workflowDocument.routeHeaderId}');
-          $('#routelogload').hide();
+          document.getElementById('routeLogIFrame').src='${ConfigProperties.workflow.url}/RouteLog.do?routeHeaderId=${KualiForm.workflowDocument.routeHeaderId}';
+          document.getElementById('routelogload').style.display = 'none';
         }
       </script>
-	  <div id="routelogload">Loading....</div> 
+	  
       <iframe onload="setRouteLogIframeDimensions();" name="routeLogIFrame" id="routeLogIFrame" height="500" width="95%" hspace='0' vspace='0' frameborder='0' title='Workflow Route Log for document id: ${KualiForm.workflowDocument.routeHeaderId}'></iframe> 
 	</c:if>
 </div>
