@@ -89,6 +89,8 @@ import org.kuali.rice.kew.service.KEWServiceLocator;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kns.bo.DocumentHeader;
 import org.kuali.rice.kns.bo.Note;
+import org.kuali.rice.kns.bo.PersistableBusinessObject;
+import org.kuali.rice.kns.document.Document;
 import org.kuali.rice.kns.exception.InfrastructureException;
 import org.kuali.rice.kns.exception.ValidationException;
 import org.kuali.rice.kns.service.BusinessObjectService;
@@ -1134,10 +1136,8 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         preqDoc.setAccountsPayableRequestCancelIdentifier(GlobalVariables.getUserSession().getPerson().getPrincipalId());
         purapService.saveDocumentNoValidation(preqDoc);
         
-      //force reindexing
-        DocumentRouteHeaderValue routeHeader = KEWServiceLocator.getRouteHeaderService().getRouteHeader(Long.valueOf(preqDoc.getDocumentNumber()));
-		SearchableAttributeProcessingService searchableAttributeService = MessageServiceNames.getSearchableAttributeService(routeHeader);
-		searchableAttributeService.indexDocument(Long.valueOf(preqDoc.getDocumentNumber()));
+        //force reindexing
+        reIndexDocument(preqDoc);
 
         // must also save it on the incoming document
         document.setPaymentRequestedCancelIndicator(true);
@@ -1145,9 +1145,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         document.setAccountsPayableRequestCancelIdentifier(GlobalVariables.getUserSession().getPerson().getPrincipalId());
         
         //force reindexing
-        routeHeader = KEWServiceLocator.getRouteHeaderService().getRouteHeader(Long.valueOf(document.getDocumentNumber()));
-		searchableAttributeService = MessageServiceNames.getSearchableAttributeService(routeHeader);
-		searchableAttributeService.indexDocument(Long.valueOf(document.getDocumentNumber()));
+        reIndexDocument(document);
     }
 
     /**
@@ -1414,6 +1412,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 
         pr.setPaymentPaidTimestamp(new Timestamp(processDate.getTime()));
         purapService.saveDocumentNoValidation(pr);
+        reIndexDocument(pr);
     }
 
     /**
@@ -1724,6 +1723,20 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         }        
         
         return !zeroDollar;
+    }
+    
+    /**
+     * This method is being added to handle calls to perform re-indexing of documents following change events performed on the documents.  This is necessary to correct problems
+     * with searches not returning accuate results due to changes being made to documents, but those changes not be indexed.
+     * 
+     * @param document - The document to be re-indexed.
+     */
+    private void reIndexDocument(Document document) {
+        //force reindexing
+        DocumentRouteHeaderValue routeHeader = KEWServiceLocator.getRouteHeaderService().getRouteHeader(Long.valueOf(document.getDocumentNumber()));
+		SearchableAttributeProcessingService searchableAttributeService = MessageServiceNames.getSearchableAttributeService(routeHeader);
+		searchableAttributeService.indexDocument(Long.valueOf(document.getDocumentNumber()));
+
     }
     
 }
