@@ -1090,6 +1090,9 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         preqDoc.setLastActionPerformedByPersonId(GlobalVariables.getUserSession().getPerson().getPrincipalId());
         purapService.saveDocumentNoValidation(preqDoc);
 
+        //force reindexing
+        reIndexDocument(document);
+
         // must also save it on the incoming document
         document.setHoldIndicator(true);
         document.setLastActionPerformedByPersonId(GlobalVariables.getUserSession().getPerson().getPrincipalId());
@@ -1112,6 +1115,9 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         preqDoc.setLastActionPerformedByPersonId(null);
         purapService.saveDocumentNoValidation(preqDoc);
         
+        //force reindexing
+        reIndexDocument(document);
+
         // must also save it on the incoming document
         document.setHoldIndicator(false);
         document.setLastActionPerformedByPersonId(null);
@@ -1166,6 +1172,8 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         
         purapService.saveDocumentNoValidation(document);
 
+        //force reindexing
+        reIndexDocument(document);
     }
 
     /**
@@ -1238,6 +1246,8 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
             throw new RuntimeException(PurapConstants.REQ_UNABLE_TO_CREATE_NOTE + " " + e);
         }
         purapService.saveDocumentNoValidation(paymentRequest);
+        //force reindexing
+        reIndexDocument(paymentRequest);
         LOG.debug("resetExtractedPaymentRequest() PREQ " + paymentRequest.getPurapDocumentIdentifier() + " Reset from Extracted status");
     }
 
