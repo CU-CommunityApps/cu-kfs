@@ -378,9 +378,10 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         }
 
         // If Receiving required is set, it's not needed to check the negative payment request approval limit
-        if (document.isReceivingDocumentRequiredIndicator()){
-            return true;
-        }
+        // KFSPTS-150 : Commenting out the receiving required indicator check, as this logic will not apply for Cornell.
+//        if (document.isReceivingDocumentRequiredIndicator()){
+//            return true;
+//        }
         
         // If no limit was found or the default is less than the limit, the default limit is used.
         if (ObjectUtils.isNull(minimumAmount) || defaultMinimumLimit.compareTo(minimumAmount) < 0) {
