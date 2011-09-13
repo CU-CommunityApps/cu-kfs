@@ -272,7 +272,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 
         return eInvoiceLoad;
     }
-    
+    @Transactional
     public void sendLoadSummary(ElectronicInvoiceLoad eInvoiceLoad) {
         
          StringBuffer summaryText = saveLoadSummary(eInvoiceLoad);
