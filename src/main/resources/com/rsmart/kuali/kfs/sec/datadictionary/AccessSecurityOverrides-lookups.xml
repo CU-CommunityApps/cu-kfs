@@ -19,7 +19,7 @@
     xmlns:p="http://www.springframework.org/schema/p"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
-    
+    <!--
     <bean id="Account-lookupDefinition" parent="Account-lookupDefinition-rsmart-parentBean"/>
     <bean id="Account-lookupDefinition-rsmart-parentBean" abstract="true" parent="Account-lookupDefinition-parentBean">
         <property name="lookupableID" value="securityAccountLookupable"/>   
@@ -78,5 +78,5 @@
     <bean id="ObjectLevel-lookupDefinition" parent="ObjectLevel-lookupDefinition-rsmart-parentBean"/>
     <bean id="ObjectLevel-lookupDefinition-rsmart-parentBean" abstract="true" parent="ObjectLevel-lookupDefinition-parentBean">
         <property name="lookupableID" value="securityLookupable"/>   
-    </bean>    
+    </bean>    -->
 </beans>        
