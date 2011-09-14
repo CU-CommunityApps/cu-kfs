@@ -68,6 +68,22 @@
            <ref bean="kewNonTransactionalDataSource"/>
         </constructor-arg>
    </bean>
+   
+    <bean id="kewNonTransactionalDataSource" class="org.kuali.rice.core.database.PrimaryDataSourceFactoryBean" lazy-init="true">
+       <property name="nullAllowed" value="true"/>
+       <property name="nonTransactionalDataSource" value="true"/>
+       <property name="preferredDataSourceParams">
+           <list>
+               <value>kew.nonTransactional.datasource</value>
+           </list>
+       </property>
+       <property name="preferredDataSourceJndiParams">
+           <list>
+               <value>kew.nonTransactional.datasource.jndi.location</value>
+           </list>
+       </property>
+       <property name="serverDataSource" value="false"/>
+   </bean>
 
 
     <!-- We override the KFS impl so that we can read properties specified at runtime -->
