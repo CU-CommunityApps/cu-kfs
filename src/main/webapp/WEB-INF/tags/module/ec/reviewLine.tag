@@ -26,11 +26,14 @@
 		<tr>
 			<td colspan="${emptySpan}"></td>		
 			<td >	
+			<!--  Percentage Recalc Button is not shown. Spec Change.  -->
+			&nbsp;
+			<!--  
                             <html:image property="${percentageMethod2call}"
                                         src="${ConfigProperties.externalizable.images.url}tinybutton-recalculate.gif"
                                         title="reviewPercentages" alt="reviewPercentages" 
                                         onclick="excludeSubmitRestriction=true"/>
-				
+			-->	
 			</td>
 			<td>&nbsp;</td>
 			<td >	

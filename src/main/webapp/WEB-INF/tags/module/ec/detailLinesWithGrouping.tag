@@ -229,6 +229,8 @@
 			</c:otherwise>		
 		</c:choose>
 		
-  		<ec:reviewLine emptySpan="${emptyColumnSpan}" percentageMethod2call = "${percentageMethod2call}" totalMethod2call="${totalMethod2call}"/>
+		<c:if test="${hasActions==true}">
+  			<ec:reviewLine emptySpan="${emptyColumnSpan}"  percentageMethod2call = "${percentageMethod2call}" totalMethod2call="${totalMethod2call}"/>
+  		</c:if>
 	</c:if>
 </table>	      
