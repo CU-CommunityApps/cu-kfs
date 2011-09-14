@@ -236,7 +236,7 @@ public class CertificationReportAction extends EffortCertificationAction {
 
     public ActionForward reviewPercentagesDetail(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         
-      //  System.out.println("ReviewPercentagesDetail");
+   //     System.out.println("ReviewPercentagesDetail");
         
         EffortCertificationForm effortForm          = (EffortCertificationForm) form;
         EffortCertificationDocument effortDocument  = (EffortCertificationDocument) effortForm.getDocument();
@@ -252,6 +252,12 @@ public class CertificationReportAction extends EffortCertificationAction {
                 detailLine.recalculatePayrollAmount(totalPayrollAmount);
             }
         }
+        EffortCertificationDocumentService effortCertificationDocumentService = SpringContext.getBean(EffortCertificationDocumentService.class);        
+        effortCertificationDocumentService.addRouteLooping(effortDocument);
+        
+      //  super.approve(mapping, (KualiDocumentFormBase) form, request, response);
+
+        
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
@@ -259,7 +265,7 @@ public class CertificationReportAction extends EffortCertificationAction {
     
     public ActionForward reviewPercentagesSummary(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
        
-       // System.out.println("ReviewPercentagesSummary");
+      //  System.out.println("ReviewPercentagesSummary");
 
         CertificationReportForm certificationReportForm     = (CertificationReportForm) form;
         EffortCertificationDocument effortDocument          = (EffortCertificationDocument) certificationReportForm.getDocument();
@@ -292,6 +298,10 @@ public class CertificationReportAction extends EffortCertificationAction {
 
         }
 
+        EffortCertificationDocumentService effortCertificationDocumentService = SpringContext.getBean(EffortCertificationDocumentService.class);        
+        effortCertificationDocumentService.addRouteLooping(effortDocument);
+        
+        //super.approve(mapping, (KualiDocumentFormBase) form, request, response);
         
         
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
@@ -345,8 +355,10 @@ public class CertificationReportAction extends EffortCertificationAction {
         
 
         
+        EffortCertificationDocumentService effortCertificationDocumentService = SpringContext.getBean(EffortCertificationDocumentService.class);        
+        effortCertificationDocumentService.addRouteLooping(effortDocument);
         
-       // return this.reviewPercentagesSummary( mapping,  form,  request,  response);
+        //super.approve(mapping, (KualiDocumentFormBase) form, request, response);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
 
     }
@@ -356,7 +368,7 @@ public class CertificationReportAction extends EffortCertificationAction {
     
     public ActionForward reviewTotalsDetail(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         
-     //   System.out.println("ReviewTotalsDetail");
+      //  System.out.println("ReviewTotalsDetail");
 
         
         EffortCertificationForm effortForm          = (EffortCertificationForm) form;
@@ -378,6 +390,11 @@ public class CertificationReportAction extends EffortCertificationAction {
             String errorPathPrefix = KFSPropertyConstants.DOCUMENT + "." + EffortPropertyConstants.EFFORT_CERTIFICATION_DETAIL_LINES;
             this.invokeRules(new CheckDetailLineAmountEvent("", errorPathPrefix, effortDocument, detailLine));
         }
+        
+        EffortCertificationDocumentService effortCertificationDocumentService = SpringContext.getBean(EffortCertificationDocumentService.class);        
+        effortCertificationDocumentService.addRouteLooping(effortDocument);
+        
+       // super.approve(mapping, (KualiDocumentFormBase) form, request, response);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
 
     }
@@ -688,7 +705,7 @@ public class CertificationReportAction extends EffortCertificationAction {
     }
 
     /**
-     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#approve(org.apache.struts.action.ActionMapping,
+     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#`(org.apache.struts.action.ActionMapping,
      *      org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
