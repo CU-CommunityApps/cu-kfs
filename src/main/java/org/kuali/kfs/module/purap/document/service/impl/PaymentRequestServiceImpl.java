@@ -1092,12 +1092,15 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         purapService.saveDocumentNoValidation(preqDoc);
 
         //force reindexing
-        reIndexDocument(document);
+        reIndexDocument(preqDoc);
 
         // must also save it on the incoming document
         document.setHoldIndicator(true);
         document.setLastActionPerformedByPersonId(GlobalVariables.getUserSession().getPerson().getPrincipalId());
         
+        //force reindexing
+        reIndexDocument(document);
+
         return document;
     }
 
@@ -1117,12 +1120,15 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         purapService.saveDocumentNoValidation(preqDoc);
         
         //force reindexing
-        reIndexDocument(document);
+        reIndexDocument(preqDoc);
 
         // must also save it on the incoming document
         document.setHoldIndicator(false);
         document.setLastActionPerformedByPersonId(null);
                         
+        //force reindexing
+        reIndexDocument(document);
+
         return preqDoc;
     }
 
@@ -1224,6 +1230,9 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         SpringContext.getBean(AccountsPayableService.class).cancelAccountsPayableDocument(paymentRequest, ""); // Performs save, so no explicit save is necessary
         LOG.debug("cancelExtractedPaymentRequest() PREQ " + paymentRequest.getPurapDocumentIdentifier() + " Cancelled Without Workflow");
         LOG.debug("cancelExtractedPaymentRequest() ended");
+
+        //force reindexing
+        reIndexDocument(paymentRequest);
     }
 
     /**
@@ -1738,11 +1747,11 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
     
     /**
      * This method is being added to handle calls to perform re-indexing of documents following change events performed on the documents.  This is necessary to correct problems
-     * with searches not returning accuate results due to changes being made to documents, but those changes not be indexed.
+     * with searches not returning accurate results due to changes being made to documents, but those changes not be indexed.
      * 
      * @param document - The document to be re-indexed.
      */
-    private void reIndexDocument(Document document) {
+    private void reIndexDocument(AccountsPayableDocument document) {
         //force reindexing
         DocumentRouteHeaderValue routeHeader = KEWServiceLocator.getRouteHeaderService().getRouteHeader(Long.valueOf(document.getDocumentNumber()));
 		SearchableAttributeProcessingService searchableAttributeService = MessageServiceNames.getSearchableAttributeService(routeHeader);
