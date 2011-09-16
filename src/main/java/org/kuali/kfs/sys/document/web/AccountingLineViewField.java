@@ -413,9 +413,9 @@ public class AccountingLineViewField extends FieldTableJoiningWithHeader impleme
         while (!ObjectUtils.isNull(value) && dynamicLabelProperty.indexOf('.') > -1) {
             String currentProperty = StringUtils.substringBefore(dynamicLabelProperty, ".");
             dynamicLabelProperty = StringUtils.substringAfter(dynamicLabelProperty, ".");
-//            if (value instanceof PersistableBusinessObject) {
-//                ((PersistableBusinessObject) value).refreshReferenceObject(currentProperty);
-//            }
+            if (value instanceof PersistableBusinessObject) {
+                ((PersistableBusinessObject) value).refreshReferenceObject(currentProperty);
+            }
             value = ObjectUtils.getPropertyValue(value, currentProperty);
         }
         if (!ObjectUtils.isNull(value)) {
