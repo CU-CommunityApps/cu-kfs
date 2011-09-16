@@ -28,7 +28,7 @@ public class ObjectCodeDynamicNameLabelGeneratorImpl implements DynamicNameLabel
      */
     public String getDynamicNameLabelValue(AccountingLine line, String accountingLineProperty) {
         if (line.getPostingYear() != null && !StringUtils.isBlank(line.getChartOfAccountsCode()) && !StringUtils.isBlank(line.getFinancialObjectCode())) {
-            line.refreshReferenceObject("objectCode");
+            //line.refreshReferenceObject("objectCode");
             if (!ObjectUtils.isNull(line.getObjectCode())) return line.getObjectCode().getFinancialObjectCodeName();
         }
         return null;
