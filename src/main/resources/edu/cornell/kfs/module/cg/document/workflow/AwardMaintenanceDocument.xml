@@ -4,6 +4,12 @@
     <documentType>
       <name>AWRD</name>
       <parent>CGM</parent>
+      <policies>
+		<policy>
+			<name>INITIATOR_MUST_ROUTE</name>
+			<value>false</value>
+		</policy>
+	  </policies>
       <label>Award</label>
       <helpDefinitionURL>default.htm?turl=WordDocuments%2Faward.htm</helpDefinitionURL>
       <active>true</active>
