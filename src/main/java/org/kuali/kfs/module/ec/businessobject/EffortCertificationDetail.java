@@ -18,6 +18,7 @@ package org.kuali.kfs.module.ec.businessobject;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
@@ -28,6 +29,8 @@ import org.kuali.kfs.integration.cg.ContractsAndGrantsModuleService;
 import org.kuali.kfs.integration.ld.LaborModuleService;
 import org.kuali.kfs.module.ec.EffortPropertyConstants;
 import org.kuali.kfs.module.ec.document.EffortCertificationDocument;
+import org.kuali.kfs.module.ld.LaborPropertyConstants;
+import org.kuali.kfs.module.ld.businessobject.PositionData;
 import org.kuali.kfs.module.ec.util.EffortCertificationParameterFinder;
 import org.kuali.kfs.module.ec.util.PayrollAmountHolder;
 import org.kuali.kfs.sys.KFSConstants;
@@ -36,6 +39,7 @@ import org.kuali.kfs.sys.businessobject.AccountingLineOverride;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.util.KualiDecimal;
 
 /**
@@ -81,6 +85,8 @@ public class EffortCertificationDetail extends PersistableBusinessObjectBase {
     private SubAccount subAccount;
     private SystemOptions options;
 
+    protected PositionData positionData;
+    protected String effectiveDate; 
     /**
      * Default constructor.
      */
@@ -98,6 +104,7 @@ public class EffortCertificationDetail extends PersistableBusinessObjectBase {
         effortCertificationCalculatedOverallPercent = new Integer(0);
         effortCertificationUpdatedOverallPercent = new Integer(0);
         originalFringeBenefitAmount = KualiDecimal.ZERO;
+        effectiveDate = KFSConstants.EMPTY_STRING;
     }
 
     public EffortCertificationDetail(EffortCertificationDetail effortCertificationDetail) {
@@ -117,6 +124,7 @@ public class EffortCertificationDetail extends PersistableBusinessObjectBase {
             this.costShareSourceSubAccountNumber = effortCertificationDetail.getCostShareSourceSubAccountNumber();
             this.effortCertificationOriginalPayrollAmount = effortCertificationDetail.getEffortCertificationOriginalPayrollAmount();
             this.originalFringeBenefitAmount = effortCertificationDetail.getOriginalFringeBenefitAmount();
+            this.effectiveDate = effortCertificationDetail.getEffectiveDate();
         }
     }
 
@@ -210,6 +218,24 @@ public class EffortCertificationDetail extends PersistableBusinessObjectBase {
         this.positionNumber = positionNumber;
     }
 
+    /**
+     * Gets the effectiveDate attribute.
+     * 
+     * @return Returns the effectiveDate.
+     */
+    public String getEffectiveDate() {
+        return effectiveDate;
+    }
+
+    /**
+     * Sets the effectiveDate attribute value.
+     * 
+     * @param effectiveDate The effectiveDate to set.
+     */
+    public void setEffectiveDate(String effectiveDate) {
+        this.effectiveDate = effectiveDate;
+    }    
+    
     /**
      * Gets the financialObjectCode attribute.
      * 
@@ -512,6 +538,24 @@ public class EffortCertificationDetail extends PersistableBusinessObjectBase {
     }
 
     /**
+     * Gets the positionData attribute.
+     * 
+     * @return Returns the positionData.
+     */
+    public PositionData getPositionData() {
+        return positionData;
+    }
+
+    /**
+     * Sets the positionData attribute value.
+     * 
+     * @param positionData The positionData to set.
+     */
+    public void setPositionData(PositionData positionData) {
+        this.positionData = positionData;
+    }    
+    
+    /**
      * Gets the newLineIndicator attribute.
      * 
      * @return Returns the newLineIndicator.
@@ -538,7 +582,7 @@ public class EffortCertificationDetail extends PersistableBusinessObjectBase {
         if (this.getAccount() != null && !this.getAccount().isActive()) {
             return false;
         }
-
+        
         return true;
     }
 
@@ -673,6 +717,7 @@ public class EffortCertificationDetail extends PersistableBusinessObjectBase {
         map.put(EffortPropertyConstants.SOURCE_ACCOUNT_NUMBER, this.sourceAccountNumber);
         map.put(EffortPropertyConstants.EFFORT_CERTIFICATION_PAYROLL_AMOUNT, this.effortCertificationPayrollAmount);
         map.put(EffortPropertyConstants.EFFORT_CERTIFICATION_ORIGINAL_PAYROLL_AMOUNT, this.effortCertificationOriginalPayrollAmount);
+        map.put(LaborPropertyConstants.EFFECTIVE_DATE, this.effectiveDate);        
 
         return map;
     }
@@ -867,10 +912,15 @@ public class EffortCertificationDetail extends PersistableBusinessObjectBase {
         Integer fiscalYear = detailLine.getUniversityFiscalYear();
         String chartOfAccountsCode = detailLine.getChartOfAccountsCode();
         String objectCode = detailLine.getFinancialObjectCode();
-        String accountNumber = detailLine.getAccountNumber();
-        String subAccountNumber = detailLine.getSubAccountNumber();
-
-        return laborModuleService.calculateFringeBenefit(fiscalYear, chartOfAccountsCode, objectCode, payrollAmount, accountNumber, subAccountNumber);
+        //Replaced the following line
+        //return laborModuleService.calculateFringeBenefit(fiscalYear, chartOfAccountsCode, objectCode, payrollAmount);
+        
+        //added by vrk4
+        String accountNumber= detailLine.getAccountNumber();
+        String subAccountNumber= detailLine.getSubAccountNumber();
+        return laborModuleService.calculateFringeBenefit(fiscalYear, chartOfAccountsCode, objectCode, payrollAmount,accountNumber,subAccountNumber);
+        
+        
     }
 
     /**
