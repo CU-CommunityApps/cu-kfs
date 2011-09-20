@@ -1378,7 +1378,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         purapItem.setItemTaxAmount(new KualiDecimal(itemHolder.getTaxAmount()));
         
         if (itemHolder.getSubTotalAmount() != null && 
-            itemHolder.getSubTotalAmount().compareTo(KualiDecimal.ZERO) != 0){
+            itemHolder.getSubTotalAmount().compareTo(KualiDecimal.ZERO) != -1){
 
             purapItem.setExtendedPrice(itemHolder.getSubTotalAmount());
             
