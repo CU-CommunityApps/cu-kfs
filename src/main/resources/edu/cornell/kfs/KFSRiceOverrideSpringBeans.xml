@@ -53,7 +53,7 @@
 		<property name="port" value="3310" />
 		<property name="timeout" value="60000" />
 	</bean>
-    
+    <!--  Pulling these beans back out until cynergy 2.0.6 is released.
 	<bean id="UserOptionsServiceInner" class="org.kuali.rice.kew.useroptions.UserOptionsServiceImpl" lazy-init="true">
        <property name="userOptionsDAO">
            <ref bean="enUserOptionsDAO" />
@@ -84,7 +84,7 @@
        </property>
        <property name="serverDataSource" value="false"/>
    </bean>
-
+-->
 
     <!-- We override the KFS impl so that we can read properties specified at runtime -->
 <!--
