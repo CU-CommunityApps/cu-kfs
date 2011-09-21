@@ -26,6 +26,7 @@ import org.kuali.rice.kns.bo.BusinessObject;
 import org.kuali.rice.kns.util.BeanPropertyComparator;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSConstants;
+import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.web.format.BooleanFormatter;
 
 import edu.cornell.kfs.coa.dataaccess.AccountGlobalSearchDao;
@@ -45,6 +46,9 @@ public class AccountGlobalSearchLookupableHelperServiceImpl extends KualiAccount
         if (parameters.containsKey("useOrgHierarchy")) {
             String includeOrgHierarchyStr = parameters.get("useOrgHierarchy");
             Boolean includeOrgHierarchy = (Boolean) new BooleanFormatter().convertFromPresentationFormat(includeOrgHierarchyStr);
+            if (includeOrgHierarchy == null ) 
+            	//Both was selected
+            	includeOrgHierarchy = true;
             if (includeOrgHierarchy) {
                 String chartOfAccountsCode = null;
                 if (parameters.containsKey(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE)) {
@@ -99,6 +103,9 @@ public class AccountGlobalSearchLookupableHelperServiceImpl extends KualiAccount
         if (parameters.containsKey("useOrgHierarchy")) {
             String includeOrgHierarchyStr = (String) parameters.get("useOrgHierarchy");
             Boolean includeOrgHierarchy = (Boolean) new BooleanFormatter().convertFromPresentationFormat(includeOrgHierarchyStr);
+            if (includeOrgHierarchy == null ) 
+            	//Both was selected
+            	includeOrgHierarchy = true;
             if (includeOrgHierarchy) {
                 String chartOfAccountsCode = null;
                 if (parameters.containsKey(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE)) {
