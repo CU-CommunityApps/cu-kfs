@@ -50,4 +50,21 @@
 		</property>
 	</bean>
 
+	<bean id="accountGlobalLookupableHelperService"
+		class="edu.cornell.kfs.coa.businessobject.lookup.AccountGlobalSearchLookupableHelperServiceImpl"
+		scope="prototype" parent="lookupableHelperService"
+		p:accountGlobalSearchDao-ref="accountGlobalSearchDao" />
+
+	<bean id="accountGlobalLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl"
+		scope="prototype">
+		<property name="lookupableHelperService">
+			<ref bean="accountGlobalLookupableHelperService" />
+		</property>
+	</bean>
+
+ 	<bean id="accountGlobalSearchDao" parent="platformAwareDao"
+      class="edu.cornell.kfs.coa.dataaccess.impl.AccountGlobalSearchDaoOjb"
+      p:lookupDao-ref="lookupDao" p:businessObjectDao-ref="businessObjectDao"/>
+ 
+ 
 </beans>
