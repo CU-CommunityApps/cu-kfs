@@ -414,11 +414,11 @@ public class ElectronicInvoiceRejectItem extends PersistableBusinessObjectBase {
     public BigDecimal getInvoiceItemSubTotalAmount() {
         // this needs to be calculated when read
         BigDecimal returnValue;
-        if (((this.invoiceItemQuantity != null) && ((BigDecimal.ZERO.compareTo(this.invoiceItemQuantity)) != 0)) && ((this.invoiceItemUnitPrice != null) && ((BigDecimal.ZERO.compareTo(this.invoiceItemUnitPrice)) != -1))) {
+        if (((this.invoiceItemQuantity != null) && ((BigDecimal.ZERO.compareTo(this.invoiceItemQuantity)) != 0)) && ((this.invoiceItemUnitPrice != null))) {
             // unit price and quantity are valid... calculate subtotal
             returnValue = this.invoiceItemQuantity.multiply(this.invoiceItemUnitPrice);
         }
-        else if (((this.invoiceItemQuantity == null) || ("".equals(this.invoiceItemQuantity))) && ((this.invoiceItemUnitPrice != null) && ((BigDecimal.ZERO.compareTo(this.invoiceItemUnitPrice)) != -1))) {
+        else if (((this.invoiceItemQuantity == null) || ("".equals(this.invoiceItemQuantity))) && ((this.invoiceItemUnitPrice != null))) {
             // quantity is empty but unit cost exists... use it
             returnValue = this.invoiceItemUnitPrice;
         }
