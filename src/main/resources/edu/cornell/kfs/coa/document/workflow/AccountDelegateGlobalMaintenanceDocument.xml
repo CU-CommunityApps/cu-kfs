@@ -21,21 +21,11 @@
       <parent>COA</parent>
       <routePaths>
         <routePath>
-          <start name="AdHoc" nextNode="OrganizationHierarchy"/>
-          <requests name="OrganizationHierarchy" nextNode="Account"/>
-          <requests name="Account"/>
+          <start name="AdHoc" />
         </routePath>
       </routePaths>
       <routeNodes>
         <start name="AdHoc"/>
-        <role name="OrganizationHierarchy">
-          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <role name="Account">
-          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
       </routeNodes>
     </documentType>
   </documentTypes>
