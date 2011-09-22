@@ -366,5 +366,152 @@
     
 </class-descriptor>
 
+<class-descriptor class="edu.cornell.kfs.coa.businessobject.AccountGlobalSearch" table="CA_ACCOUNT_T">
+ 	    <field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
+ 	    <field-descriptor name="accountNumber" column="ACCOUNT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+ 	    <field-descriptor name="accountName" column="ACCOUNT_NM" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="accountFiscalOfficerSystemIdentifier" column="ACCT_FSC_OFC_UID" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="accountsSupervisorySystemsIdentifier" column="ACCT_SPVSR_UNVL_ID" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="accountManagerSystemIdentifier" column="ACCT_MGR_UNVL_ID" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="organizationCode" column="ORG_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="accountTypeCode" column="ACCT_TYP_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="accountPhysicalCampusCode" column="ACCT_PHYS_CMP_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="subFundGroupCode" column="SUB_FUND_GRP_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="accountsFringesBnftIndicator" column="ACCT_FRNG_BNFT_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+ 	    <field-descriptor name="financialHigherEdFunctionCd" column="FIN_HGH_ED_FUNC_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="accountRestrictedStatusCode" column="ACCT_RSTRC_STAT_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="accountRestrictedStatusDate" column="ACCT_RSTRC_STAT_DT" jdbc-type="DATE" />
+ 	    <field-descriptor name="accountCityName" column="ACCT_CITY_NM" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="accountStateCode" column="ACCT_STATE_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="accountStreetAddress" column="ACCT_STREET_ADDR" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="accountZipCode" column="ACCT_ZIP_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="reportsToChartOfAccountsCode" column="RPTS_TO_FIN_COA_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="reportsToAccountNumber" column="RPTS_TO_ACCT_NBR" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="accountCreateDate" column="ACCT_CREATE_DT" jdbc-type="DATE" />
+ 	    <field-descriptor name="accountEffectiveDate" column="ACCT_EFFECT_DT" jdbc-type="DATE" />
+ 	    <field-descriptor name="accountExpirationDate" column="ACCT_EXPIRATION_DT" jdbc-type="DATE" />
+ 	    <field-descriptor name="continuationFinChrtOfAcctCd" column="CONT_FIN_COA_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="continuationAccountNumber" column="CONT_ACCOUNT_NBR" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="endowmentIncomeAcctFinCoaCd" column="ENDOW_FIN_COA_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="endowmentIncomeAccountNumber" column="ENDOW_ACCOUNT_NBR" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="contractControlFinCoaCode" column="CONTR_CTRL_FCOA_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="contractControlAccountNumber" column="CONTR_CTRLACCT_NBR" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="incomeStreamFinancialCoaCode" column="INCOME_FIN_COA_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="incomeStreamAccountNumber" column="INCOME_ACCOUNT_NBR" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="acctIndirectCostRcvyTypeCd" column="ACCT_ICR_TYP_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="acctCustomIndCstRcvyExclCd" column="AC_CSTM_ICREXCL_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="financialIcrSeriesIdentifier" column="FIN_SERIES_ID" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="indirectCostRcvyFinCoaCode" column="ICR_FIN_COA_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="indirectCostRecoveryAcctNbr" column="ICR_ACCOUNT_NBR" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="accountInFinancialProcessingIndicator" column="ACCT_IN_FP_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+ 	    <field-descriptor name="budgetRecordingLevelCode" column="BDGT_REC_LVL_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="accountSufficientFundsCode" column="ACCT_SF_CD" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="pendingAcctSufficientFundsIndicator" column="ACCT_PND_SF_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+ 	    <field-descriptor name="extrnlFinEncumSufficntFndIndicator" column="FIN_EXT_ENC_SF_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+ 	    <field-descriptor name="intrnlFinEncumSufficntFndIndicator" column="FIN_INT_ENC_SF_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+ 	    <field-descriptor name="finPreencumSufficientFundIndicator" column="FIN_PRE_ENC_SF_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+ 	    <field-descriptor name="financialObjectivePrsctrlIndicator" column="FIN_OBJ_PRSCTRL_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+ 	    <field-descriptor name="accountCfdaNumber" column="CG_CFDA_NBR" jdbc-type="VARCHAR" />
+ 	    <field-descriptor name="accountOffCampusIndicator" column="ACCT_OFF_CMP_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+ 	    <field-descriptor name="contractsAndGrantsAccountResponsibilityId" column="CG_ACCT_RESP_ID" jdbc-type="INTEGER" />
+ 	    <field-descriptor name="active" column="ACCT_CLOSED_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.coa.util.OjbAccountActiveIndicatorConversion" />
+ 	    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+ 	    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+ 	
+ 	    <reference-descriptor name="chartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+ 	        <foreignkey field-ref="chartOfAccountsCode" />
+ 	    </reference-descriptor>
+ 	
+ 	    <reference-descriptor name="organization" class-ref="org.kuali.kfs.coa.businessobject.Organization" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+ 	        <foreignkey field-ref="chartOfAccountsCode" />
+ 	        <foreignkey field-ref="organizationCode" />
+ 	    </reference-descriptor>
+ 	
+ 	    <reference-descriptor name="accountType" class-ref="org.kuali.kfs.coa.businessobject.AccountType" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+ 	        <foreignkey field-ref="accountTypeCode" />
+ 	    </reference-descriptor>
+ 	
+ 	    <reference-descriptor name="subFundGroup" class-ref="org.kuali.kfs.coa.businessobject.SubFundGroup" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+ 	        <foreignkey field-ref="subFundGroupCode" />
+ 	    </reference-descriptor>
+ 	
+ 	    <reference-descriptor name="financialHigherEdFunction" class-ref="org.kuali.kfs.coa.businessobject.HigherEducationFunction" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+ 	        <foreignkey field-ref="financialHigherEdFunctionCd" />
+ 	    </reference-descriptor>
+ 	
+ 	    <reference-descriptor name="accountRestrictedStatus" class-ref="org.kuali.kfs.coa.businessobject.RestrictedStatus" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+ 	        <foreignkey field-ref="accountRestrictedStatusCode" />
+ 	    </reference-descriptor>
+ 	
+ 	    <reference-descriptor name="reportsToAccount" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+ 	        <foreignkey field-ref="reportsToChartOfAccountsCode" />
+ 	        <foreignkey field-ref="reportsToAccountNumber" />
+ 	    </reference-descriptor>
+ 	
+ 	    <reference-descriptor name="continuationAccount" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+ 	        <foreignkey field-ref="continuationFinChrtOfAcctCd" />
+ 	        <foreignkey field-ref="continuationAccountNumber" />
+ 	    </reference-descriptor>
+ 	
+ 	    <reference-descriptor name="endowmentIncomeAccount" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+ 	        <foreignkey field-ref="endowmentIncomeAcctFinCoaCd" />
+ 	        <foreignkey field-ref="endowmentIncomeAccountNumber" />
+ 	    </reference-descriptor>
+ 	
+ 	    <reference-descriptor name="endowmentIncomeChartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+ 	        <foreignkey field-ref="endowmentIncomeAcctFinCoaCd" />
+ 	    </reference-descriptor>
+ 	
+ 	    <reference-descriptor name="contractControlAccount" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+ 	        <foreignkey field-ref="contractControlFinCoaCode" />
+ 	        <foreignkey field-ref="contractControlAccountNumber" />
+ 	    </reference-descriptor>
+ 	
+ 	    <reference-descriptor name="incomeStreamAccount" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+ 	        <foreignkey field-ref="incomeStreamFinancialCoaCode" />
+ 	        <foreignkey field-ref="incomeStreamAccountNumber" />
+ 	    </reference-descriptor>
+ 	
+ 	
+ 	    <reference-descriptor name="acctIndirectCostRcvyType" class-ref="org.kuali.kfs.coa.businessobject.IndirectCostRecoveryType" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+ 	        <foreignkey field-ref="acctIndirectCostRcvyTypeCd" />
+ 	    </reference-descriptor>
+ 	
+ 	    <reference-descriptor name="indirectCostRecoveryAcct" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+ 	        <foreignkey field-ref="indirectCostRcvyFinCoaCode" />
+ 	        <foreignkey field-ref="indirectCostRecoveryAcctNbr" />
+ 	    </reference-descriptor>
+ 	
+ 	    <reference-descriptor name="budgetRecordingLevel" class-ref="org.kuali.kfs.coa.businessobject.BudgetRecordingLevel" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+ 	        <foreignkey field-ref="budgetRecordingLevelCode" />
+ 	    </reference-descriptor>
+ 	
+ 	    <reference-descriptor name="sufficientFundsCode" class-ref="org.kuali.kfs.coa.businessobject.SufficientFundsCode" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+ 	        <foreignkey field-ref="accountSufficientFundsCode" />
+ 	    </reference-descriptor>
+ 	
+ 	    <reference-descriptor name="accountGuideline" class-ref="org.kuali.kfs.coa.businessobject.AccountGuideline" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
+ 	        <foreignkey field-ref="chartOfAccountsCode" />
+ 	        <foreignkey field-ref="accountNumber" />
+ 	    </reference-descriptor>
+ 	
+ 	    <reference-descriptor name="accountDescription" class-ref="org.kuali.kfs.coa.businessobject.AccountDescription" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
+ 	        <foreignkey field-ref="chartOfAccountsCode" />
+ 	        <foreignkey field-ref="accountNumber" />
+ 	    </reference-descriptor>
+ 	
+ 	    <collection-descriptor name="subAccounts" element-class-ref="org.kuali.kfs.coa.businessobject.SubAccount" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
+ 	        <orderby name="subAccountNumber" sort="ASC" />
+ 	        <inverse-foreignkey field-ref="chartOfAccountsCode" />
+ 	        <inverse-foreignkey field-ref="accountNumber" />
+ 	    </collection-descriptor>
+ 	    
+ 	    <reference-descriptor name="extension" class-ref="edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+ 	        <foreignkey field-ref="chartOfAccountsCode" />
+ 	        <foreignkey field-ref="accountNumber" />
+ 	    </reference-descriptor>
+ 	    
+ 	        </class-descriptor>
+
 </descriptor-repository>
 
