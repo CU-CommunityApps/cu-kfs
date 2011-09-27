@@ -84,7 +84,7 @@ public class LaborPendingEntryGenerator {
      * 
      * @param document the given accounting document
      * @param accountingLine the given accounting line
-     * @param sequenceHelper the given squence helper
+     * @param sequenceHelper the given sequence helper
      * @return a set of benefit pending entries
      */
     public static List<LaborLedgerPendingEntry> generateBenefitPendingEntries(LaborLedgerPostingDocument document, ExpenseTransferAccountingLine accountingLine, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
@@ -106,6 +106,8 @@ public class LaborPendingEntryGenerator {
         List<LaborLedgerPendingEntry> benefitPendingEntries = new ArrayList<LaborLedgerPendingEntry>();
         for (PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
         	String tmpLaborBenefitRateCategoryCode = ((AccountExtendedAttribute)accountingLine.getAccount().getExtension()).getLaborBenefitRateCategoryCode();
+        	BenefitsCalculation benefitsCalculation = positionObjectBenefit.getBenefitsCalculation(tmpLaborBenefitRateCategoryCode);
+        	positionObjectBenefit.setBenefitsCalculation(benefitsCalculation);
             positionObjectBenefit.setLaborBenefitRateCategoryCode(tmpLaborBenefitRateCategoryCode);
             String fringeBenefitObjectCode = positionObjectBenefit.getBenefitsCalculation().getPositionFringeBenefitObjectCode();
 
@@ -188,10 +190,10 @@ public class LaborPendingEntryGenerator {
 
     /**
      * generate the benefit clearing pending entries with the given benefit amount and fringe benefit object code based on the given
-     * document and accouting line
+     * document and accounting line
      * 
      * @param document the given accounting document
-     * @param sequenceHelper the given squence helper
+     * @param sequenceHelper the given sequence helper
      * @param accountNumber the given clearing account number
      * @param chartOfAccountsCode the given clearing chart of accounts code
      * @return a set of benefit clearing pending entries
