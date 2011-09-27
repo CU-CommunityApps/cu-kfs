@@ -27,6 +27,9 @@ public class ElectronicInvoiceRouteStep extends AbstractStep {
     private ElectronicInvoiceHelperService electronicInvoiceHelperService;
 
     public boolean execute(String jobName, Date jobRunDate) {
+    	try {
+    		Thread.sleep(60000);
+    	} catch (Exception e) {}
         return electronicInvoiceHelperService.routeDocuments();
        
     }

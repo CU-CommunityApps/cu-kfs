@@ -309,16 +309,16 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         try {
             documentIdList = retrieveDocumentsToRoute(KEWConstants.ROUTE_HEADER_SAVED_CD, ElectronicInvoiceRejectDocument.class);
         } catch (WorkflowException e1) {
-            LOG.error("Error retrieving pcdo documents for routing: " + e1.getMessage(),e1);
+            LOG.error("Error retrieving eirt documents for routing: " + e1.getMessage(),e1);
             throw new RuntimeException(e1.getMessage(),e1);
         } catch (RemoteException re) {
-            LOG.error("Error retrieving pcdo documents for routing: " + re.getMessage(),re);
+            LOG.error("Error retrieving eirt documents for routing: " + re.getMessage(),re);
             throw new RuntimeException(re.getMessage(),re);
         }
         
         //Collections.reverse(documentIdList);
         if ( LOG.isInfoEnabled() ) {
-            LOG.info("PCards to Route: "+documentIdList);
+            LOG.info("EIRTs to Route: "+documentIdList);
         }
         
         DocumentService documentService = SpringContext.getBean(DocumentService.class);
@@ -359,16 +359,16 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         try {
             documentIdList = retrieveDocumentsToRoute(KEWConstants.ROUTE_HEADER_SAVED_CD, PaymentRequestDocument.class);
         } catch (WorkflowException e1) {
-            LOG.error("Error retrieving pcdo documents for routing: " + e1.getMessage(),e1);
+            LOG.error("Error retrieving preq documents for routing: " + e1.getMessage(),e1);
             throw new RuntimeException(e1.getMessage(),e1);
         } catch (RemoteException re) {
-            LOG.error("Error retrieving pcdo documents for routing: " + re.getMessage(),re);
+            LOG.error("Error retrieving preq documents for routing: " + re.getMessage(),re);
             throw new RuntimeException(re.getMessage(),re);
         }
         
         //Collections.reverse(documentIdList);
         if ( LOG.isInfoEnabled() ) {
-            LOG.info("PCards to Route: "+documentIdList);
+            LOG.info("PREQs to Route: "+documentIdList);
         }
         
         DocumentService documentService = SpringContext.getBean(DocumentService.class);
