@@ -34,4 +34,6 @@ public interface ElectronicInvoiceHelperService {
     
     public boolean createPaymentRequest(ElectronicInvoiceRejectDocument rejectDocument);
     
+    public boolean routeDocuments();
+    
 }

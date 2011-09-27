@@ -73,4 +73,17 @@
        <property name="businessObjectService" ref="businessObjectService" />
     </bean> 
 
+	<bean id="electronicInvoiceExtractJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="electronicInvoiceExtractStep" />
+				<ref bean="electronicInvoiceRouteStep" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="electronicInvoiceRouteStep" class="org.kuali.kfs.module.purap.batch.ElectronicInvoiceRouteStep" parent="step">
+		<property name="electronicInvoiceHelperService" ref="electronicInvoiceHelperService" />
+	</bean>
+
 </beans>
