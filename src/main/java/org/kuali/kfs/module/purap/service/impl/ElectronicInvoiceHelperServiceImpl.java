@@ -327,20 +327,20 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         for (String eirtDocumentId: documentIdList) {
             try {
             	if ( LOG.isInfoEnabled() ) {
-                    LOG.info("Retrieving PCDO document # " + eirtDocumentId + ".");
+                    LOG.info("Retrieving EIRT document # " + eirtDocumentId + ".");
                 }
                 ElectronicInvoiceRejectDocument eirtDocument = (ElectronicInvoiceRejectDocument)documentService.getByDocumentHeaderId(eirtDocumentId);
                 if ( LOG.isInfoEnabled() ) {
-                    LOG.info("Routing PCDO document # " + eirtDocumentId + ".");
+                    LOG.info("Routing EIRT document # " + eirtDocumentId + ".");
                 }
                 documentService.prepareWorkflowDocument(eirtDocument);
                 if ( LOG.isInfoEnabled() ) {
-                    LOG.info("PCDO document # " + eirtDocumentId + " prepared for workflow.");
+                    LOG.info("EIRT document # " + eirtDocumentId + " prepared for workflow.");
                 }
                 // calling workflow service to bypass business rule checks
                 workflowDocumentService.route(eirtDocument.getDocumentHeader().getWorkflowDocument(), "Routed by electronic invoice batch job", null);
                 if ( LOG.isInfoEnabled() ) {
-                    LOG.info("PCDO document # " + eirtDocumentId + " routed.");
+                    LOG.info("EIRT document # " + eirtDocumentId + " routed.");
                 }
             }
             catch (WorkflowException e) {
@@ -417,7 +417,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         DocumentSearchCriteriaDTO criteria = new DocumentSearchCriteriaDTO();
         criteria.setDocTypeFullName(SpringContext.getBean(DataDictionaryService.class).getDocumentTypeNameByClass(document));
         criteria.setDocRouteStatus(statusCode);
-        DocumentSearchResultDTO results = SpringContext.getBean(KualiWorkflowInfo.class).performDocumentSearch(KFSConstants.SYSTEM_USER, criteria);
+        DocumentSearchResultDTO results = SpringContext.getBean(KualiWorkflowInfo.class).performDocumentSearch(GlobalVariables.getUserSession().getPerson().getPrincipalId(), criteria);
         
         for (DocumentSearchResultRowDTO resultRow: results.getSearchResults()) {
             for (KeyValueDTO field : resultRow.getFieldValues()) {
