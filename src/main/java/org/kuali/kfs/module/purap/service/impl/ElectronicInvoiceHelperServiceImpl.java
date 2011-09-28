@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -42,10 +43,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
+import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
-import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.batch.ElectronicInvoiceInputFileType;
 import org.kuali.kfs.module.purap.batch.ElectronicInvoiceStep;
 import org.kuali.kfs.module.purap.businessobject.ElectronicInvoice;
@@ -79,11 +81,17 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.validation.event.DocumentSystemSaveEvent;
 import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
+import org.kuali.rice.kew.dto.DocumentSearchCriteriaDTO;
+import org.kuali.rice.kew.dto.DocumentSearchResultDTO;
+import org.kuali.rice.kew.dto.DocumentSearchResultRowDTO;
+import org.kuali.rice.kew.dto.KeyValueDTO;
 import org.kuali.rice.kew.exception.WorkflowException;
+import org.kuali.rice.kew.util.KEWConstants;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kns.bo.Attachment;
 import org.kuali.rice.kns.bo.DocumentHeader;
@@ -100,13 +108,14 @@ import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.KualiRuleService;
 import org.kuali.rice.kns.service.MailService;
+import org.kuali.rice.kns.service.NoteService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSPropertyConstants;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.service.NoteService;
-import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.kns.workflow.service.KualiWorkflowInfo;
+import org.kuali.rice.kns.workflow.service.WorkflowDocumentService;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -122,7 +131,8 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 
     protected final String UNKNOWN_DUNS_IDENTIFIER = "Unknown";
     protected final String INVOICE_FILE_MIME_TYPE = "text/xml";  
-    
+    public static final String WORKFLOW_SEARCH_RESULT_KEY = "routeHeaderId";
+
     private StringBuffer emailTextErrorList;
     
     private ElectronicInvoiceInputFileType electronicInvoiceInputFileType;
@@ -286,6 +296,151 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 
          LOG.info("Processing completed");
     }
+    
+    public boolean routeDocuments() {
+    	routeEIRTDocuments();
+    	routePREQDocuments();
+    	
+    	return true;
+    }
+    
+    protected boolean routeEIRTDocuments() {
+    	List<String> documentIdList = null;
+        try {
+            documentIdList = retrieveDocumentsToRoute(KEWConstants.ROUTE_HEADER_SAVED_CD, ElectronicInvoiceRejectDocument.class);
+        } catch (WorkflowException e1) {
+            LOG.error("Error retrieving eirt documents for routing: " + e1.getMessage(),e1);
+            throw new RuntimeException(e1.getMessage(),e1);
+        } catch (RemoteException re) {
+            LOG.error("Error retrieving eirt documents for routing: " + re.getMessage(),re);
+            throw new RuntimeException(re.getMessage(),re);
+        }
+        
+        //Collections.reverse(documentIdList);
+        if ( LOG.isInfoEnabled() ) {
+            LOG.info("EIRTs to Route: "+documentIdList);
+        }
+        
+        DocumentService documentService = SpringContext.getBean(DocumentService.class);
+        WorkflowDocumentService workflowDocumentService = SpringContext.getBean(WorkflowDocumentService.class);
+        
+        for (String eirtDocumentId: documentIdList) {
+            try {
+            	if ( LOG.isInfoEnabled() ) {
+                    LOG.info("Retrieving EIRT document # " + eirtDocumentId + ".");
+                }
+                ElectronicInvoiceRejectDocument eirtDocument = (ElectronicInvoiceRejectDocument)documentService.getByDocumentHeaderId(eirtDocumentId);
+                if ( LOG.isInfoEnabled() ) {
+                    LOG.info("Routing EIRT document # " + eirtDocumentId + ".");
+                }
+                documentService.prepareWorkflowDocument(eirtDocument);
+                if ( LOG.isInfoEnabled() ) {
+                    LOG.info("EIRT document # " + eirtDocumentId + " prepared for workflow.");
+                }
+                // calling workflow service to bypass business rule checks
+                workflowDocumentService.route(eirtDocument.getDocumentHeader().getWorkflowDocument(), "Routed by electronic invoice batch job", null);
+                if ( LOG.isInfoEnabled() ) {
+                    LOG.info("EIRT document # " + eirtDocumentId + " routed.");
+                }
+            }
+            catch (WorkflowException e) {
+                LOG.error("Error routing document # " + eirtDocumentId + " " + e.getMessage());
+                throw new RuntimeException(e.getMessage(),e);
+            }
+        }
+
+  
+    	
+    	return true;
+    }
+    
+    protected boolean routePREQDocuments() {
+    	List<String> documentIdList = null;
+        try {
+            documentIdList = retrieveDocumentsToRoute(KEWConstants.ROUTE_HEADER_SAVED_CD, PaymentRequestDocument.class);
+        } catch (WorkflowException e1) {
+            LOG.error("Error retrieving preq documents for routing: " + e1.getMessage(),e1);
+            throw new RuntimeException(e1.getMessage(),e1);
+        } catch (RemoteException re) {
+            LOG.error("Error retrieving preq documents for routing: " + re.getMessage(),re);
+            throw new RuntimeException(re.getMessage(),re);
+        }
+        
+        //Collections.reverse(documentIdList);
+        if ( LOG.isInfoEnabled() ) {
+            LOG.info("PREQs to Route: "+documentIdList);
+        }
+        
+        DocumentService documentService = SpringContext.getBean(DocumentService.class);
+        WorkflowDocumentService workflowDocumentService = SpringContext.getBean(WorkflowDocumentService.class);
+        
+        for (String preqDocumentId: documentIdList) {
+            try {
+            	if ( LOG.isInfoEnabled() ) {
+                    LOG.info("Retrieving PREQ document # " + preqDocumentId + ".");
+                }
+            	PaymentRequestDocument preqDocument = (PaymentRequestDocument)documentService.getByDocumentHeaderId(preqDocumentId);
+                if ( LOG.isInfoEnabled() ) {
+                    LOG.info("Routing PREQ document # " + preqDocumentId + ".");
+                }
+                
+                if (preqDocument.getPaymentRequestElectronicInvoiceIndicator()) {
+                	documentService.prepareWorkflowDocument(preqDocument);
+                	if ( LOG.isInfoEnabled() ) {
+                		LOG.info("PREQ document # " + preqDocumentId + " prepared for workflow.");
+                	}
+                	// calling workflow service to bypass business rule checks
+                	workflowDocumentService.route(preqDocument.getDocumentHeader().getWorkflowDocument(), "Routed by electronic invoice batch job", null);
+                	if ( LOG.isInfoEnabled() ) {
+                		LOG.info("PREQ document # " + preqDocumentId + " routed.");
+                	}
+                }
+            }
+            catch (WorkflowException e) {
+                LOG.error("Error routing document # " + preqDocumentId + " " + e.getMessage());
+                throw new RuntimeException(e.getMessage(),e);
+            }
+        }
+
+  
+    	
+    	return true;
+    }
+    
+    /**
+     * Returns a list of all initiated but not yet routed procurement card documents, using the KualiWorkflowInfo service.
+     * @return a list of procurement card documents to route
+     */
+    protected List<String> retrieveDocumentsToRoute(String statusCode, Class document) throws WorkflowException, RemoteException {
+        List<String> documentIds = new ArrayList<String>();
+        
+        DocumentSearchCriteriaDTO criteria = new DocumentSearchCriteriaDTO();
+        criteria.setDocTypeFullName(SpringContext.getBean(DataDictionaryService.class).getDocumentTypeNameByClass(document));
+        criteria.setDocRouteStatus(statusCode);
+        DocumentSearchResultDTO results = SpringContext.getBean(KualiWorkflowInfo.class).performDocumentSearch(GlobalVariables.getUserSession().getPerson().getPrincipalId(), criteria);
+        
+        for (DocumentSearchResultRowDTO resultRow: results.getSearchResults()) {
+            for (KeyValueDTO field : resultRow.getFieldValues()) {
+                if (field.getKey().equals(WORKFLOW_SEARCH_RESULT_KEY)) {
+                    documentIds.add(parseDocumentIdFromRouteDocHeader(field.getValue()));
+                }
+            }
+        }
+        
+        return documentIds;
+    }
+    
+    /**
+     * Retrieves the document id out of the route document header
+     * @param routeDocHeader the String representing an HTML link to the document
+     * @return the document id
+     */
+    protected String parseDocumentIdFromRouteDocHeader(String routeDocHeader) {
+        int rightBound = routeDocHeader.indexOf('>') + 1;
+        int leftBound = routeDocHeader.indexOf('<', rightBound);
+        return routeDocHeader.substring(rightBound, leftBound);
+    }
+
     
     protected byte[] addNamespaceDefinition(ElectronicInvoiceLoad eInvoiceLoad, 
                                           File invoiceFile) {
@@ -926,7 +1081,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         
         for (Iterator rejectIter = eInvoiceLoad.getRejectDocuments().iterator(); rejectIter.hasNext();) {
             ElectronicInvoiceRejectDocument rejectDoc = (ElectronicInvoiceRejectDocument) rejectIter.next();
-            routeRejectDocument(rejectDoc,savedLoadSummariesMap);
+            saveRejectDocument(rejectDoc,savedLoadSummariesMap);
         }
         
         /**
@@ -938,7 +1093,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         return summaryMessage;
     }
     
-    protected void routeRejectDocument(ElectronicInvoiceRejectDocument rejectDoc,
+    protected void saveRejectDocument(ElectronicInvoiceRejectDocument rejectDoc,
                                      Map savedLoadSummariesMap){
         
         LOG.info("Saving Invoice Reject for DUNS '" + rejectDoc.getVendorDunsNumber() + "'");
@@ -951,7 +1106,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         }
         
         try{
-            SpringContext.getBean(DocumentService.class).routeDocument(rejectDoc, "Routed by electronic invoice batch job", null);
+            SpringContext.getBean(DocumentService.class).saveDocument(rejectDoc, DocumentSystemSaveEvent.class);
         }
         catch (WorkflowException e) {
             e.printStackTrace();
@@ -1183,13 +1338,13 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         
         addShipToNotes(preqDoc,orderHolder);
         
-        String routingAnnotation = null;
-        if (!orderHolder.isRejectDocumentHolder()){
-            routingAnnotation = "Routed by electronic invoice batch job";
-        }
+//        String routingAnnotation = null;
+//        if (!orderHolder.isRejectDocumentHolder()){
+//            routingAnnotation = "Routed by electronic invoice batch job";
+//        }
         
         try {
-            SpringContext.getBean(DocumentService.class).routeDocument(preqDoc,routingAnnotation, null);
+            SpringContext.getBean(DocumentService.class).saveDocument(preqDoc,DocumentSystemSaveEvent.class);
         }
         catch (WorkflowException e) {
             e.printStackTrace();
@@ -1630,6 +1785,8 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
     public void setDateTimeService(DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
     }
+    
+    
     
 }
 
