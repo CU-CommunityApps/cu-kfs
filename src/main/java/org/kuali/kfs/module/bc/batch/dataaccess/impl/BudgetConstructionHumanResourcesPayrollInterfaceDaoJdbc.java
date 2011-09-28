@@ -146,7 +146,7 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
      */
     public void buildBudgetConstructionPositionBaseYear(Integer baseFiscalYear) {
         StringBuilder sqlBuilder = new StringBuilder(2000);
-        String defaultRCCd = new String("--");
+        String defaultRCCd = new String("NA");
         /**
          *  we have to do this because imbedding a constant string in SQL assumes a string delimiter--that can vary with the DBMS 
          */
@@ -179,11 +179,10 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
         sqlBuilder.append("        ?, px.EFFDT, px.POS_EFF_STATUS,\n");
         sqlBuilder.append("        px.POSN_STATUS, px.BUDGETED_POSN, 'N',\n");
         sqlBuilder.append("        px.STD_HRS_DEFAULT, px.POS_REG_TEMP, px.POS_FTE, px.DESCR, px.BUSINESS_UNIT,\n");
-        sqlBuilder.append("        px.DEPTID, COALESCE(org.RC_CD,?),\n");
+        sqlBuilder.append("        px.DEPTID, ?,\n");
         sqlBuilder.append("        px.POS_SAL_PLAN_DFLT, px.POS_GRADE_DFLT, px.BUSINESS_UNIT, px.JOBCODE,\n");
-        sqlBuilder.append("        px.BUSINESS_UNIT, ?\n");
-        sqlBuilder.append(" FROM PS_POSITION_DATA px LEFT OUTER JOIN LD_BCN_ORG_RPTS_T org\n"); 
-        sqlBuilder.append("      ON (CONCAT(CONCAT(org.FIN_COA_CD,?),org.ORG_CD) = px.DEPTID)\n");
+        sqlBuilder.append("        px.BUSINESS_UNIT, ? \n");
+        sqlBuilder.append(" FROM PS_POSITION_DATA px \n"); 
         sqlBuilder.append(" WHERE (px.EFFDT < ?)\n");
         sqlBuilder.append("   AND (NOT EXISTS (SELECT 1\n");
         sqlBuilder.append("                    FROM LD_BCN_POS_T\n");
@@ -200,7 +199,7 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
         sqlBuilder.append("                  AND (csf.POS_CSF_DELETE_CD = ?)\n");
         sqlBuilder.append("                  AND (csf.POSITION_NBR = px.POSITION_NBR))))\n");
         sqlString = sqlBuilder.toString();
-        getSimpleJdbcTemplate().update(sqlString,baseFiscalYear,defaultRCCd,BCConstants.DEFAULT_BUDGET_HEADER_LOCK_IDS,orgSeparator,julyFirst,baseFiscalYear,julyFirst,baseFiscalYear,BCConstants.ACTIVE_CSF_DELETE_CODE);
+        getSimpleJdbcTemplate().update(sqlString,baseFiscalYear,defaultRCCd,BCConstants.DEFAULT_BUDGET_HEADER_LOCK_IDS,julyFirst,baseFiscalYear,julyFirst,baseFiscalYear,BCConstants.ACTIVE_CSF_DELETE_CODE);
         // set the things that we'll need for testing but which we don't have enough information to set from the Kuali DB
         // this code is obviously somewhat arbitrary--it should be replaced with institution-specific algorithms
         setAcademicDefaultObjectClass(baseFiscalYear);
@@ -216,7 +215,7 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
     public void buildBudgetConstructionPositonRequestYear(Integer requestFiscalYear) {
         StringBuilder sqlBuilder = new StringBuilder(2500);
         // we build constants for DB independence.  we let the library decide how they should be represented in what is passed to the DB server
-        String defaultRCCd = new String("--");
+        String defaultRCCd = new String("NA");
         String orgSeparator = new String("-");
         Integer baseFiscalYear = requestFiscalYear-1;
         GregorianCalendar calendarJuly1 = new GregorianCalendar(baseFiscalYear, Calendar.JULY, 1);
@@ -235,11 +234,10 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
         sqlBuilder.append("        ?, px.EFFDT, px.POS_EFF_STATUS,\n");
         sqlBuilder.append("        px.POSN_STATUS, px.BUDGETED_POSN, 'N',\n");
         sqlBuilder.append("        px.STD_HRS_DEFAULT, px.POS_REG_TEMP, px.POS_FTE, px.DESCR, px.BUSINESS_UNIT,\n");
-        sqlBuilder.append("        px.DEPTID, COALESCE(org.RC_CD,?),\n");
+        sqlBuilder.append("        px.DEPTID, ?,\n");
         sqlBuilder.append("        px.POS_SAL_PLAN_DFLT, px.POS_GRADE_DFLT, px.BUSINESS_UNIT, px.JOBCODE,\n");
-        sqlBuilder.append("        px.BUSINESS_UNIT, ?\n");
-        sqlBuilder.append(" FROM PS_POSITION_DATA px LEFT OUTER JOIN LD_BCN_ORG_RPTS_T org\n"); 
-        sqlBuilder.append("      ON (CONCAT(CONCAT(org.FIN_COA_CD,?),org.ORG_CD) = px.DEPTID)\n");
+        sqlBuilder.append("        px.BUSINESS_UNIT, ? \n");
+        sqlBuilder.append(" FROM PS_POSITION_DATA px \n"); 
         sqlBuilder.append(" WHERE ((px.EFFDT <= ?) OR ((px.EFFDT = ?) AND (px.POS_SAL_PLAN_DFLT = ?)))\n");
         sqlBuilder.append("   AND (NOT EXISTS (SELECT 1\n");
         sqlBuilder.append("                    FROM LD_BCN_POS_T\n");
@@ -256,7 +254,7 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
         sqlBuilder.append("                  AND (csf.POS_CSF_DELETE_CD = ?)\n");
         sqlBuilder.append("                  AND (csf.POSITION_NBR = px.POSITION_NBR))))\n");
         String sqlString = sqlBuilder.toString();
-        getSimpleJdbcTemplate().update(sqlString,requestFiscalYear,defaultRCCd,BCConstants.DEFAULT_BUDGET_HEADER_LOCK_IDS,orgSeparator,julyFirst,augustFirst,academicTenureTrackSalaryPlan,requestFiscalYear,julyFirst,augustFirst,academicTenureTrackSalaryPlan,baseFiscalYear,BCConstants.ACTIVE_CSF_DELETE_CODE);
+        getSimpleJdbcTemplate().update(sqlString,requestFiscalYear,defaultRCCd,BCConstants.DEFAULT_BUDGET_HEADER_LOCK_IDS,julyFirst,augustFirst,academicTenureTrackSalaryPlan,requestFiscalYear,julyFirst,augustFirst,academicTenureTrackSalaryPlan,baseFiscalYear,BCConstants.ACTIVE_CSF_DELETE_CODE);
         // set the things that we'll need for testing but which we don't have enough information to set from the Kuali DB
         // this code is obviously somewhat arbitrary--it should be replaced with institution-specific algorithms
         setAcademicDefaultObjectClass(requestFiscalYear);
