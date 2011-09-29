@@ -35,32 +35,4 @@
 	 	<property name="moduleConfiguration" ref="cu-vnd"/>
 	</bean>
 
-    <bean id="vendorLookupableHelperService" class="org.kuali.kfs.vnd.businessobject.lookup.VendorLookupableHelperServiceImpl" scope="prototype">
-        <property name="persistenceStructureService">
-            <ref bean="persistenceStructureService" />
-        </property>
-        <property name="lookupService">
-            <ref bean="lookupService" />
-        </property>
-        <property name="businessObjectMetaDataService">
-            <ref bean="businessObjectMetaDataService" />
-        </property>
-        <property name="businessObjectDictionaryService">
-            <ref bean="businessObjectDictionaryService" />
-        </property>
-        <property name="dataDictionaryService">
-            <ref bean="dataDictionaryService" />
-        </property>
-        <property name="vendorService">
-            <ref bean="vendorService" />
-        </property>
-        <property name="parameterService">
-            <ref bean="parameterService" />
-        </property>
-        <property name="vendorDao">
-        	<ref bean="vendorDao" />
-        </property>
-    </bean>
-
-
 </beans>
