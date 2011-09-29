@@ -1103,7 +1103,15 @@
 	<bean class="org.kuali.rice.ksb.messaging.KSBExporter">
 		<property name="serviceDefinition">
 			<bean parent="kfsService" p:service-ref="budgetConstructionDocumentDerivedRoleTypeService"
-				p:localServiceName="budgetConstructionDocumentDerivedRoleTypeService" />
+				p:localServiceName="budgetConstructionDocumentDerivedRoleTypeService" >
+				<property name="serviceInterfaces">
+					<list>
+						<value>org.kuali.rice.kim.service.support.KimRoleTypeService</value>
+						<value>org.kuali.rice.kim.service.support.KimTypeService</value>
+					</list>
+				</property>
+				</bean>
+				
 		</property>
 	</bean>
 </beans>
