@@ -147,27 +147,35 @@ public class VendorLookupableHelperServiceImpl extends AbstractLookupableHelperS
         String vendorName = fieldValues.get(VendorPropertyConstants.VENDOR_NAME);
 
         List<BusinessObject> searchResults = new ArrayList<BusinessObject>();
+
         searchResults = vendorDao.getSearchResults(fieldValues);
-		
+
+        for (BusinessObject bo : searchResults) {
+        	VendorDetail vd = (VendorDetail) bo;
+        	updateDefaultVendorAddress(vd);
+        }
+        for (BusinessObject businessObject :searchResults) {
+            VendorDetail vendor = (VendorDetail) businessObject;
+            if (!vendor.isVendorParentIndicator()) {
+                // find the parent object in the details collection and add that§
+                for (BusinessObject tmpObject : searchResults) {
+                    VendorDetail tmpVendor = (VendorDetail) tmpObject;
+                    if (tmpVendor.getVendorHeaderGeneratedIdentifier().equals(vendor.getVendorHeaderGeneratedIdentifier()) && tmpVendor.isVendorParentIndicator()) {
+                        vendor.setVendorName(tmpVendor.getVendorName() + " > " + vendor.getVendorName());
+                        break;
+                    }
+                }
+            }
+        }
+
+
         // sort list if default sort column given
         List<String> defaultSortColumns = getDefaultSortColumns();
         if (defaultSortColumns.size() > 0) {
             Collections.sort(searchResults, new BeanPropertyComparator(getDefaultSortColumns(), true));
         }
-        
 
         return searchResults;
-    }
-
-    private String aliasP(VendorDetail vd) {
-    	StringBuffer sb = new StringBuffer();
-    	Iterator it = vd.getVendorAliases().iterator();
-    	while (it.hasNext()) {
-    		VendorAlias va = (VendorAlias) it.next();
-    		sb.append(va.getVendorAliasName());
-    		sb.append("/");
-    	}
-    	return sb.toString();
     }
 
     /**
