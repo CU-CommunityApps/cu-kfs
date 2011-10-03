@@ -35,7 +35,7 @@
 	 	<property name="moduleConfiguration" ref="cu-vnd"/>
 	</bean>
 
-    <bean id="vendorLookupableHelperService" class="org.kuali.kfs.vnd.businessobject.lookup.VendorLookupableHelperServiceImpl" scope="prototype">
+   <!--  <bean id="vendorLookupableHelperService" class="org.kuali.kfs.vnd.businessobject.lookup.VendorLookupableHelperServiceImpl" scope="prototype">
         <property name="persistenceStructureService">
             <ref bean="persistenceStructureService" />
         </property>
@@ -60,7 +60,7 @@
         <property name="vendorDao">
         	<ref bean="vendorDao" />
         </property>
-    </bean>
+    </bean> -->
 
 
 </beans>
