@@ -278,6 +278,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             // KITI-2203 : Removing last four characters from zip+4 so validation performs properly.
             parent.setCardHolderZipCode(extractNormalizedString(line, 167, 172));
 //            parent.setCardHolderZipCode(extractNormalizedString(line, 167, 176)); 
+            parent.setCardHolderAlternateName(extractNormalizedString(line, 191, 206));
             parent.setCardHolderWorkPhoneNumber(extractNormalizedString(line, 206, 216));
 //            parent.setCardLimit(extractDecimal(line, 352, 363));
             parent.setCardStatusCode(extractNormalizedString(line, 267, 268));
