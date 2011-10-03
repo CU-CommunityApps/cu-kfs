@@ -26,17 +26,18 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
+import org.apache.ojb.broker.query.QueryFactory;
 import org.apache.ojb.broker.util.collections.RemovalAwareCollection;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
+import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.dataaccess.VendorDao;
 import org.kuali.rice.kns.bo.BusinessObject;
 import org.kuali.rice.kns.dao.impl.PlatformAwareDaoBaseOjb;
 import org.kuali.rice.kns.lookup.CollectionIncomplete;
+import org.kuali.rice.kns.lookup.LookupUtils;
 import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.ParameterService;
 
 /**
  * OJB implementation of VendorDao.
@@ -102,7 +103,7 @@ public class VendorDaoOjb extends PlatformAwareDaoBaseOjb implements VendorDao {
         String typeVal = fieldValues.get(VendorPropertyConstants.VENDOR_TYPE_CODE);
         String stateVal = fieldValues.get(VendorPropertyConstants.VENDOR_ADDRESS + "." + VendorPropertyConstants.VENDOR_ADDRESS_STATE);
         String supplierDiversityVal = fieldValues.get(VendorPropertyConstants.VENDOR_HEADER_PREFIX + VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITY_CODE);
-        String commodityCodeVal = fieldValues.get(VendorPropertyConstants.VENDOR_COMMODITIES_CODE_PURCHASING_COMMODITY_CODE + VendorPropertyConstants.VENDOR_COMMODITIES_CODE);
+        String commodityCodeVal = fieldValues.get(VendorPropertyConstants.VENDOR_COMMODITIES_CODE_PURCHASING_COMMODITY_CODE);
         
         if (StringUtils.isNotBlank(headerVal)) {
         	header.addEqualTo("vendorHeaderGeneratedIdentifier", headerVal);  //
@@ -125,15 +126,19 @@ public class VendorDaoOjb extends PlatformAwareDaoBaseOjb implements VendorDao {
         	name.addLike(upperVendorName, upperNameVal);
         	alias.addLike(getDbPlatform().getUpperCaseFunction() + "( " + VendorPropertyConstants.VENDOR_ALIAS_NAME_FULL_PATH + " )", upperNameVal);
         	alias.addEqualTo(VendorPropertyConstants.VENDOR_ALIAS_ACTIVE, "Y");
-        	header.addOrCriteria(name);
-        	header.addOrCriteria(alias);
+        	Criteria t = new Criteria();
+        	t.addOrCriteria(name);
+        	t.addOrCriteria(alias);
+        	header.addAndCriteria(t);
         }
         if (StringUtils.isNotBlank(nameVal) && !nameVal.contains("*")) {
         	name.addEqualTo("vendorName", nameVal);
         	alias.addEqualTo(VendorPropertyConstants.VENDOR_ALIAS_NAME_FULL_PATH, nameVal);
         	alias.addEqualTo(VendorPropertyConstants.VENDOR_ALIAS_ACTIVE, "Y");
-        	header.addOrCriteria(name);
-        	header.addOrCriteria(alias);
+        	Criteria t = new Criteria();
+        	t.addOrCriteria(name);
+        	t.addOrCriteria(alias);
+        	header.addAndCriteria(t);
         }
         if (StringUtils.isNotBlank(typeVal)) {
         	type.addEqualTo("vendorHeader.vendorTypeCode", typeVal); //VNDR_HDR
@@ -152,15 +157,13 @@ public class VendorDaoOjb extends PlatformAwareDaoBaseOjb implements VendorDao {
             header.addAndCriteria(supplierDiversity);        
         }        
         
-        ParameterService ps = SpringContext.getBean(ParameterService.class);
-        String rowLimit = ps.getParameterValue("KR-NS", "Lookup", "RESULTS_LIMIT");
-        String rowLimitPlusOne = String.valueOf(Integer.parseInt(rowLimit) + 1);
-        Criteria resultLimitingCriteria = new Criteria();
-        resultLimitingCriteria.addLessThan("rownum", rowLimitPlusOne);
-        header.addAndCriteria(resultLimitingCriteria);
-
+        Long val = new Long( getPersistenceBrokerTemplate().getCount(QueryFactory.newQuery(VendorDetail.class, header)));
+		Integer searchResultsLimit = LookupUtils.getSearchResultsLimit(VendorDetail.class);
+		if (val.intValue() > searchResultsLimit.intValue()) {
+			LookupUtils.applySearchResultsLimit(VendorDetail.class, header, getDbPlatform());
+		}
         QueryByCriteria qbc = new QueryByCriteria(VendorDetail.class, header);
-        rac = (RemovalAwareCollection) getPersistenceBrokerTemplate().getCollectionByQuery( qbc );
+		rac = (RemovalAwareCollection) getPersistenceBrokerTemplate().getCollectionByQuery( qbc );
         
         Criteria children = new Criteria();
         
@@ -169,21 +172,19 @@ public class VendorDaoOjb extends PlatformAwareDaoBaseOjb implements VendorDao {
         	VendorDetail vd = (VendorDetail) it.next();
         	String key = vd.getVendorNumber();
         	if (! nonDupResults.containsKey(key)) {
-           		if( StringUtils.isNotBlank(nameVal) ) {
-        			Criteria c = new Criteria();
-        			c.addEqualTo("vendorHeaderGeneratedIdentifier", vd.getVendorHeaderGeneratedIdentifier());
-        			children.addOrCriteria(c);
-        		}
+       			Criteria c = new Criteria();
+       			c.addEqualTo("vendorHeaderGeneratedIdentifier", vd.getVendorHeaderGeneratedIdentifier());
+       			children.addOrCriteria(c);
         		nonDupResults.put(key, vd);
         		results.add(vd);
         	}
         }
-
-        children.addAndCriteria(resultLimitingCriteria);
+//		LookupUtils.applySearchResultsLimit(VendorDetail.class, children, getDbPlatform());
+//        children.addAndCriteria(resultLimitingCriteria);
         
         //ONLY NEED TO DO THE BELOW IF THE USER HAS ENTERED A VALUE INTO THE NAME FIELD, IN WHICH CASE
         //THE CHILDREN OF ANY MATCHING VENDOR DETAIL OBJECT MUST BE FOUND AND ADDED TO THE RESULTS LIST
-        if (StringUtils.isNotBlank(nameVal) && nonDupResults.size()>0) {
+        if (nonDupResults.size()>0) {
 	        qbc = new QueryByCriteria(VendorDetail.class, children);
 	        rac = (RemovalAwareCollection) getPersistenceBrokerTemplate().getCollectionByQuery( qbc );
 	        it = rac.iterator();
@@ -197,8 +198,8 @@ public class VendorDaoOjb extends PlatformAwareDaoBaseOjb implements VendorDao {
 	        }
         }
         CollectionIncomplete resultsTruncated = new CollectionIncomplete((Collection) results, new Long(results.size()));
-        if (results.size() >= Integer.parseInt(rowLimit) ) {
-        	resultsTruncated.setActualSizeIfTruncated( new Long(-1));
+		if (val.intValue() > searchResultsLimit.intValue()) {
+        	resultsTruncated.setActualSizeIfTruncated(val);
         }
         return resultsTruncated;
     }
