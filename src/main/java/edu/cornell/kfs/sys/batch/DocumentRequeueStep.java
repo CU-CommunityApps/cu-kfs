@@ -19,7 +19,7 @@ public class DocumentRequeueStep extends AbstractStep {
 	
 	public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
 		Set respIds = new HashSet();
-		respIds.add("29");
+		respIds.add(new Long(29));
 		ActionRequestService ars = SpringContext.getBean(ActionRequestService.class);
 		ars.updateActionRequestsForResponsibilityChange(respIds);
 		
