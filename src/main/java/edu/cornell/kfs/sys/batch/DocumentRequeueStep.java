@@ -42,7 +42,7 @@ public class DocumentRequeueStep extends AbstractStep {
 		Set respIds = new HashSet();
 	//	List<String> respList = parameterService.getParameterValues("KFS-SYS", "BATCH", RESPONSIBILITY_IDS);
 		//for (String resp : respList) {
-			respIds.add(new Long(29));
+			respIds.add(new Long(4));
 		//}
 		
 	//	Date before = getParameterDate(BEFORE_DATE);
