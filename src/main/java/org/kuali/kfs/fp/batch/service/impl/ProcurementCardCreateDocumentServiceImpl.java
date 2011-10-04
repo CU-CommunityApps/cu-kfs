@@ -21,6 +21,7 @@ import static org.kuali.kfs.fp.document.validation.impl.ProcurementCardDocumentR
 import static org.kuali.kfs.fp.document.validation.impl.ProcurementCardDocumentRuleConstants.DEFAULT_TRANS_CHART_CODE_PARM_NM;
 import static org.kuali.kfs.fp.document.validation.impl.ProcurementCardDocumentRuleConstants.DEFAULT_TRANS_OBJECT_CODE_PARM_NM;
 import static org.kuali.kfs.fp.document.validation.impl.ProcurementCardDocumentRuleConstants.ERROR_TRANS_ACCOUNT_PARM_NM;
+import static org.kuali.kfs.fp.document.validation.impl.ProcurementCardDocumentRuleConstants.ERROR_TRANS_OBJECT_CODE_PARM_NM;
 import static org.kuali.kfs.fp.document.validation.impl.ProcurementCardDocumentRuleConstants.SINGLE_TRANSACTION_IND_PARM_NM;
 import static org.kuali.kfs.sys.KFSConstants.GL_CREDIT_CODE;
 import static org.kuali.kfs.sys.KFSConstants.FinancialDocumentTypeCodes.PROCUREMENT_CARD;
@@ -633,7 +634,7 @@ public class ProcurementCardCreateDocumentServiceImpl implements ProcurementCard
             }
             errorText += " " + tempErrorText;
 
-            targetLine.setFinancialObjectCode(getDefaultObjectCode());
+            targetLine.setFinancialObjectCode(getErrorObjectCode());
             targetLine.refresh();
         }
 
@@ -795,6 +796,14 @@ public class ProcurementCardCreateDocumentServiceImpl implements ProcurementCard
      */
     protected String getErrorAccountNumber() {
         return parameterService.getParameterValue(ProcurementCardCreateDocumentsStep.class, ERROR_TRANS_ACCOUNT_PARM_NM);
+    }
+
+    /**
+     * Retrieves the error object code from the parameter table.
+     * @return The error object code defined in the parameter table.
+     */
+    protected String getErrorObjectCode() {
+        return parameterService.getParameterValue(ProcurementCardCreateDocumentsStep.class, ERROR_TRANS_OBJECT_CODE_PARM_NM);
     }
 
     /**
