@@ -26,7 +26,7 @@ import org.kuali.rice.kns.service.ParameterService;
  */
 public class DocumentRequeueStep extends AbstractStep {
 
-	ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+	//ParameterService parameterService = SpringContext.getBean(ParameterService.class);
 	//static String BEFORE_DATE = "REQUEUE_BEFORE_DATE";
 	//static String AFTER_DATE = "REQUEUE_AFTER_DATE";
 	//static String RESPONSIBILITY_IDS = "RESPONSIBILITY_IDS";
@@ -64,18 +64,18 @@ public class DocumentRequeueStep extends AbstractStep {
 	}
 	
 	
-	private Date getParameterDate(String paramName) {
-		String dateString = parameterService.getParameterValue("KFS-SYS", "Batch", paramName);
-		DateTimeService dtService = SpringContext.getBean(DateTimeService.class);
-		java.sql.Date date = null;
-		if (dateString !=null) {
-			try {
-				date = dtService.convertToSqlDate(dateString);
-			} catch (ParseException e1) {
-				e1.printStackTrace();
-			}
-		}
-		return date;
-	}
+//	private Date getParameterDate(String paramName) {
+//		String dateString = parameterService.getParameterValue("KFS-SYS", "Batch", paramName);
+//		DateTimeService dtService = SpringContext.getBean(DateTimeService.class);
+//		java.sql.Date date = null;
+//		if (dateString !=null) {
+//			try {
+//				date = dtService.convertToSqlDate(dateString);
+//			} catch (ParseException e1) {
+//				e1.printStackTrace();
+//			}
+//		}
+//		return date;
+//	}
 
 }
