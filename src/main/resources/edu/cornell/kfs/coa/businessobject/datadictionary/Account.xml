@@ -100,8 +100,8 @@
         <ref bean="Account-contractsAndGrantsAccountResponsibilityId"/>
       	<ref bean="Account-extension-programCode"/>
       	<ref bean="Account-extension-appropriationAccountNumber"/>
-      	<ref bean="Account-extension-invoiceFrequency-invoiceFrequencyCode"/>
-      	<ref bean="Account-extension-invoiceType-invoiceTypeCode"/>
+      	<ref bean="Account-extension-invoiceFrequencyCode"/>
+      	<ref bean="Account-extension-invoiceTypeCode"/>
       	<ref bean="Account-extension-everify"/>
       	<ref bean="Account-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode"/>
 
@@ -161,6 +161,14 @@
             <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode"/>
             <dd:supportAttribute source="extension.programCode" target="subFundProgram.programCode"/>
             <dd:supportAttribute source="extension.appropriationAccount.appropriationAccountNumber" target="appropriationAccount.appropriationAccountNumber"/>
+            <dd:supportAttribute source="extension.invoiceFrequencyCode" target="invoiceFrequency.invoiceFrequencyCode"/>
+            <dd:supportAttribute source="extension.invoiceTypeCode" target="invoiceType.invoiceTypeCode"/>
+        </dd:relationship>
+        <dd:relationship objectAttribute="extension.invoiceFrequency">
+            <dd:primitiveAttribute source="extension.invoiceFrequencyCode" target="invoiceFrequencyCode"/>
+        </dd:relationship>
+        <dd:relationship objectAttribute="extension.invoiceType">
+            <dd:primitiveAttribute source="extension.invoiceTypeCode" target="invoiceTypeCode"/>
         </dd:relationship>
         <dd:relationship objectAttribute="extension.appropriationAccount">
             <dd:primitiveAttribute source="extension.appropriationAccountNumber" target="appropriationAccountNumber"/>
@@ -812,17 +820,17 @@
   	<property name="name" value="extension.appropriationAccountNumber"/>
   </bean>
 
-  <bean id="Account-extension-invoiceFrequency-invoiceFrequencyCode" parent="Account-extension-invoiceFrequency-invoiceFrequencyCode-parentBean"/>
-  <bean id="Account-extension-invoiceFrequency-invoiceFrequencyCode-parentBean" abstract="true" parent="AccountExtendedAttribute-invoiceFrequencyCode" >
-  	<property name="name" value="extension.invoiceFrequency.invoiceFrequencyCode"/>
+  <bean id="Account-extension-invoiceFrequencyCode" parent="Account-extension-invoiceFrequencyCode-parentBean"/>
+  <bean id="Account-extension-invoiceFrequencyCode-parentBean" abstract="true" parent="AccountExtendedAttribute-invoiceFrequencyCode" >
+  	<property name="name" value="extension.invoiceFrequencyCode"/>
   	<property name="control">
       <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.module.cg.businessobject.options.InvoiceFrequencyValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
 
-  <bean id="Account-extension-invoiceType-invoiceTypeCode" parent="Account-extension-invoiceType-invoiceTypeCode-parentBean"/>
-  <bean id="Account-extension-invoiceType-invoiceTypeCode-parentBean" abstract="true" parent="AccountExtendedAttribute-invoiceTypeCode" >
-  	<property name="name" value="extension.invoiceType.invoiceTypeCode"/>
+  <bean id="Account-extension-invoiceTypeCode" parent="Account-extension-invoiceTypeCode-parentBean"/>
+  <bean id="Account-extension-invoiceTypeCode-parentBean" abstract="true" parent="AccountExtendedAttribute-invoiceTypeCode" >
+  	<property name="name" value="extension.invoiceTypeCode"/>
   	<property name="control">
       <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.module.cg.businessobject.options.InvoiceTypeValuesFinder" p:includeKeyInLabel="false"/>
     </property>
@@ -911,8 +919,8 @@
               <dd:field attributeName="indirectCostRecoveryAcctNbr"/>
               <dd:field attributeName="accountCfdaNumber"/>
               <dd:field attributeName="contractsAndGrantsAccountResponsibilityId"/>
-              <dd:field attributeName="extension.invoiceFrequency.invoiceFrequencyCode"/>
-        	  <dd:field attributeName="extension.invoiceType.invoiceTypeCode"/>
+              <dd:field attributeName="extension.invoiceFrequencyCode"/>
+        	  <dd:field attributeName="extension.invoiceTypeCode"/>
         	  <dd:field attributeName="extension.everify"/>
             </list>
           </property>

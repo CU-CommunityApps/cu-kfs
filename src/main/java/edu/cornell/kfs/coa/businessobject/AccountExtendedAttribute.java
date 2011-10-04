@@ -212,7 +212,11 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
 	 */
 	public void setInvoiceFrequencyCode(String invoiceFrequencyCode) {
 		this.invoiceFrequencyCode = invoiceFrequencyCode;
-		invoiceFrequency.setInvoiceFrequencyCode(invoiceFrequencyCode);
+		BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+		HashMap<String,String> keys = new HashMap<String,String> ();
+		keys.put("invoiceFrequencyCode", invoiceFrequencyCode);
+		invoiceFrequency = (InvoiceFrequency) bos.findByPrimaryKey(InvoiceFrequency.class, keys);
+//		invoiceFrequency.setInvoiceFrequencyCode(invoiceFrequencyCode);
 	}
 
 	/**
@@ -227,7 +231,11 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
 	 */
 	public void setInvoiceTypeCode(String invoiceTypeCode) {
 		this.invoiceTypeCode = invoiceTypeCode;
-		invoiceType.setInvoiceTypeCode(invoiceTypeCode);
+		BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+		HashMap<String,String> keys = new HashMap<String,String> ();
+		keys.put("invoiceTypeCode", invoiceTypeCode);
+		invoiceType = (InvoiceType) bos.findByPrimaryKey(InvoiceType.class, keys);
+//		invoiceType.setInvoiceTypeCode(invoiceTypeCode);
 	}
 
 	/**

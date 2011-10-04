@@ -153,8 +153,8 @@
         <dd:maintField attributeName="indirectCostRecoveryAcctNbr"/>
         <dd:maintField attributeName="accountCfdaNumber"/>
         <dd:maintField attributeName="contractsAndGrantsAccountResponsibilityId"/>
-        <dd:maintField attributeName="extension.invoiceFrequency.invoiceFrequencyCode"/>
-        <dd:maintField attributeName="extension.invoiceType.invoiceTypeCode"/>
+        <dd:maintField attributeName="extension.invoiceFrequencyCode"/>
+        <dd:maintField attributeName="extension.invoiceTypeCode"/>
         <dd:maintField attributeName="extension.everify"/>
         
       </list>
