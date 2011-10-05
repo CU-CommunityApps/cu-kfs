@@ -56,6 +56,12 @@ public class DocumentRequeueStep extends AbstractStep {
 		}
 		return true;
 	}
+
+
+
+	public void setStagingDirectory(String stagingDirectory) {
+		this.stagingDirectory = stagingDirectory;
+	}
 	
 	
 
