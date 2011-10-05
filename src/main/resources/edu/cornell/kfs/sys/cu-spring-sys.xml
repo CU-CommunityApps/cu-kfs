@@ -25,6 +25,11 @@
 		<property name="scriptConfigurationFilePaths">
 			<list/>
 		</property>
+		<property name="jobNames">
+			<list merge="true">
+				<value>documentRequeuerJob</value>
+			</list>
+		</property>
 	</bean>
 	
 	<bean id="cu-financialSystemModuleService" parent="financialSystemModuleService-parentBean">
@@ -49,5 +54,16 @@
  	    <property name="namespaceRequiredOnStoredAttributeSet" value="false" />
  	</bean>
  	
+ 	<bean id="documentRequeuerJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="documentRequeuerStep"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="documentRequeuerStep" class="edu.cornell.kfs.sys.batch.DocumentRequeueStep" parent="step">
+		<property name="stagingDirectory" value="${staging.directory}/sys"/>
+	</bean>
 	
 </beans>
