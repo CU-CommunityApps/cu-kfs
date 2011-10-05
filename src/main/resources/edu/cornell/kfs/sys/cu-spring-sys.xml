@@ -63,7 +63,9 @@
 		</property>
 	</bean>
 	
-	<bean id="documentRequeuerStep" class="edu.cornell.kfs.sys.batch.DocumentRequeueStep" parent="step"/>
+	<bean id="documentRequeuerStep" class="edu.cornell.kfs.sys.batch.DocumentRequeueStep" parent="step">
+			<property name="stagingDirectory" value="${staging.directory}/sys"/>
+	</bean>
 	
 	
 </beans>
