@@ -199,7 +199,7 @@ public class VendorDaoOjb extends PlatformAwareDaoBaseOjb implements VendorDao {
         }
         CollectionIncomplete resultsTruncated = new CollectionIncomplete((Collection) results, new Long(results.size()));
 		if (val.intValue() > searchResultsLimit.intValue()) {
-        	resultsTruncated.setActualSizeIfTruncated(val);
+        	resultsTruncated.setActualSizeIfTruncated(new Long(-1));
         }
         return resultsTruncated;
     }
