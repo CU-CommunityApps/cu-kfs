@@ -22,25 +22,29 @@
 	<c:if test="${ConfigProperties.test.mode ne 'true'}">
 	<div id="routelogload">Loading....</div> 
 	  <script type="text/javascript">
-	  document.getElementById('tab-RouteLog-imageToggle').onclick = doTheUberClick();
-        function doTheUberClick() {
+      function showRouteLog() {
+        document.getElementById('routeLogIFrame').src='${ConfigProperties.workflow.url}/RouteLog.do?routeHeaderId=${KualiForm.workflowDocument.routeHeaderId}'; 
+        document.getElementById('routelogload').style.display = 'none';
+      };
+
+      function doTheUberClick() {
           if (document.getElementById('routelogload').style.display =="block") {
             showRouteLog();
           }
         };
 
-       	window.onload = readyToDisplayRouteLog;
-       	function readyToDisplayRouteLog()  {
-       		
-       	 if (document.getElementsByName('tabStates(RouteLog)')[0].value == "OPEN") {
-           showRouteLog();
-          }
-       	};
+     	function readyToDisplayRouteLog()  {
+      		
+          	 if (document.getElementsByName('tabStates(RouteLog)')[0].value == "OPEN") {
+              showRouteLog();
+             }
+        };
+           
+      var theElement = document.getElementById('tab-RouteLog-imageToggle');
+	  theElement.setAttribute('onclick','doTheUberClick()');
+      window.onload = readyToDisplayRouteLog;
 
-        function showRouteLog() {
-          document.getElementById('routeLogIFrame').src='${ConfigProperties.workflow.url}/RouteLog.do?routeHeaderId=${KualiForm.workflowDocument.routeHeaderId}';
-          document.getElementById('routelogload').style.display = 'none';
-        }
+        
       </script>
 	  
       <iframe onload="setRouteLogIframeDimensions();" name="routeLogIFrame" id="routeLogIFrame" height="500" width="95%" hspace='0' vspace='0' frameborder='0' title='Workflow Route Log for document id: ${KualiForm.workflowDocument.routeHeaderId}'></iframe> 
