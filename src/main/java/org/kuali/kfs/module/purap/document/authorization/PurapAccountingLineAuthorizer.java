@@ -15,19 +15,19 @@
  */
 package org.kuali.kfs.module.purap.document.authorization;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.module.purap.PurapAuthorizationConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
+import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -42,7 +42,6 @@ import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.rice.kns.document.authorization.DocumentPresentationController;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.GlobalVariables;
 
 /**
  * Authorizer which deals with financial processing document issues, specifically sales tax lines on documents
@@ -122,22 +121,13 @@ public class PurapAccountingLineAuthorizer extends AccountingLineAuthorizerBase 
         return unviewableBlocks;
     }
     private boolean showAmountOnly(AccountingDocument accountingDocument) {
-        final FinancialSystemTransactionalDocumentPresentationController presentationController = getPresentationController(accountingDocument);
-        final FinancialSystemTransactionalDocumentAuthorizerBase authorizer = getDocumentAuthorizer(accountingDocument);
-        if (presentationController == null || authorizer == null) {
-            throw new RuntimeException("Null presentation controller or document authorizer for document "+accountingDocument.getClass().getName());
-        }
-        Set<String> editModes = presentationController.getEditModes(accountingDocument);
-        if (editModes.contains(PurapAuthorizationConstants.PaymentRequestEditMode.FULL_DOCUMENT_ENTRY_COMPLETED)) {
-            editModes = new HashSet<String>();
-            editModes.add(PurapAuthorizationConstants.PaymentRequestEditMode.FULL_DOCUMENT_ENTRY_COMPLETED);
- 
-            editModes = authorizer.getEditModes(accountingDocument, GlobalVariables.getUserSession().getPerson(), editModes);
-            return editModes.contains(PurapAuthorizationConstants.PaymentRequestEditMode.FULL_DOCUMENT_ENTRY_COMPLETED);
-        }
-        else {
-            return false;
-        }
+    	PurapService purapService = SpringContext.getBean(PurapService.class);
+    	if (accountingDocument instanceof PurchasingAccountsPayableDocument)
+    	if (purapService.isFullDocumentEntryCompleted((PurchasingAccountsPayableDocument)accountingDocument)) {
+    		return true;
+    	}
+    	return false;
+
     }
     
     
