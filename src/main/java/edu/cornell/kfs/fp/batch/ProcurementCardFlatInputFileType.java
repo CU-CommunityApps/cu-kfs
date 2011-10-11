@@ -312,7 +312,8 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             
             child.setAccountNumber(extractNormalizedString(line, 317, 324, true)); //req
             child.setSubAccountNumber(extractNormalizedString(line, 324, 329));
-            child.setFinancialObjectCode(extractNormalizedString(line, 329, 333, true)); //req
+            // KITI-2583 : Object code is not a required field and will be replaced by an error code if it is not present.
+            child.setFinancialObjectCode(extractNormalizedString(line, 329, 333, false)); //req
             child.setFinancialSubObjectCode(extractNormalizedString(line,333,336));
             child.setProjectCode(extractNormalizedString(line, 336, 346));	        	
             child.setFinancialDocumentTotalAmount(extractDecimal(line, 79, 91));  //req
