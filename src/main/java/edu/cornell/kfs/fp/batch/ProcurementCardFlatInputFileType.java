@@ -306,6 +306,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             child.setCardHolderStateCode(parent.getCardHolderStateCode());
             child.setCardHolderZipCode(parent.getCardHolderZipCode());
             child.setCardHolderWorkPhoneNumber(parent.getCardHolderWorkPhoneNumber());
+            child.setCardHolderAlternateName(parent.getCardHolderAlternateName());
 //            child.setCardLimit(parent.getCardLimit());
             child.setCardStatusCode(parent.getCardStatusCode());
             
