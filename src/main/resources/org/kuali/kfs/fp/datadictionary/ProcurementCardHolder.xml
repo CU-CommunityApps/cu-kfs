@@ -52,12 +52,17 @@
 
   <bean id="ProcurementCardHolder-accountNumber" parent="ProcurementCardHolder-accountNumber-parentBean"/>
 
-  <bean id="ProcurementCardHolder-accountNumber-parentBean" abstract="true" parent="Account-accountNumber">
+  <bean id="ProcurementCardHolder-accountNumber-parentBean" abstract="true" parent="AttributeDefinition">
+	<property name="name" value="accountNumber"/>
+	<property name="forceUppercase" value="true"/>
     <property name="label" value="Default Account"/>
     <property name="shortLabel" value="Dflt Acct"/>
     <property name="maxLength" value="7"/>
     <property name="validationPattern">
       <ref bean="AlphaNumericValidation" />
+    </property>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="10"/>
     </property>
   </bean>
   <bean id="ProcurementCardHolder-cardCycleAmountLimit" parent="ProcurementCardHolder-cardCycleAmountLimit-parentBean"/>
