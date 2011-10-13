@@ -31,6 +31,7 @@ import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
 import edu.cornell.kfs.coa.businessobject.AppropriationAccount;
 import edu.cornell.kfs.coa.businessobject.SubFundProgram;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
+import org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory;
 
 /**
  * This class...
@@ -44,10 +45,38 @@ public class AccountExtensionRule extends AccountRule {
 
         success &= checkSubFundProgram(document);
         success &= checkAppropriationAccount(document);
+        success &= checkLaborBenefitCategoryCode(document);
         
         return success;
     }
 
+    protected boolean checkLaborBenefitCategoryCode(MaintenanceDocument document) {
+        boolean success = true;
+
+        String laborBenefitCategoryCode  = ((AccountExtendedAttribute) newAccount.getExtension()).getLaborBenefitRateCategoryCode();
+        BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+
+        // Benefit Category Code is not a required field. if no value is entered 
+        // no validation is performed.
+        if (!StringUtils.isBlank(laborBenefitCategoryCode)) {
+            Map fieldValues = new HashMap();
+            fieldValues.put("laborBenefitRateCategoryCode", laborBenefitCategoryCode	);
+            
+            Collection<SubFundProgram> retVals = bos.findMatching(LaborBenefitRateCategory.class, fieldValues);
+            
+            if (retVals.isEmpty()) {
+                success = false;
+                putFieldError("extension.laborBenefitRateCategoryCode", KFSKeyConstants.ERROR_EXISTENCE, " Labor Benefit Rate Category Code "+laborBenefitCategoryCode);
+            }
+        	
+        }
+        return success;
+
+        
+        
+    }
+    
+    
     protected boolean checkSubFundProgram(MaintenanceDocument document) {
         boolean success = true;
 
