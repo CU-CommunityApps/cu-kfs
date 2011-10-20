@@ -313,6 +313,10 @@
                   <artifactId>xapool</artifactId>
                   <groupId>xapool</groupId>
           </exclusion>
+          <exclusion>
+          	<groupId>com.oracle</groupId>
+			<artifactId>ojdbc14</artifactId>
+          </exclusion>
       </exclusions>
     </dependency>
 
@@ -334,6 +338,10 @@
                   <artifactId>xapool</artifactId>
                   <groupId>xapool</groupId>
           </exclusion>
+          <exclusion>
+          	<groupId>com.oracle</groupId>
+			<artifactId>ojdbc14</artifactId>
+          </exclusion>
         </exclusions>
     </dependency>
        
@@ -353,6 +361,10 @@
                  <exclusion>
                   <artifactId>xapool</artifactId>
                   <groupId>xapool</groupId>
+          </exclusion>
+          <exclusion>
+          	<groupId>com.oracle</groupId>
+			<artifactId>ojdbc14</artifactId>
           </exclusion>
         </exclusions>
      </dependency>
