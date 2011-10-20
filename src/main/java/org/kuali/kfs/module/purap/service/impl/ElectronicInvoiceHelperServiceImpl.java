@@ -43,7 +43,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
-import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
@@ -111,6 +110,7 @@ import org.kuali.rice.kns.service.MailService;
 import org.kuali.rice.kns.service.NoteService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.util.KNSPropertyConstants;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
@@ -133,6 +133,8 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
     protected final String INVOICE_FILE_MIME_TYPE = "text/xml";  
     public static final String WORKFLOW_SEARCH_RESULT_KEY = "routeHeaderId";
 
+	private static final int NOTE_TEXT_DEFAULT_MAX_LENGTH = 800;
+    
     private StringBuffer emailTextErrorList;
     
     private ElectronicInvoiceInputFileType electronicInvoiceInputFileType;
@@ -942,22 +944,47 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         
         emailTextErrorList.append("An Invoice from file '" + eInvoice.getFileName() + "' has been rejected due to the following error(s):\n");
         
+        // get note text max length from DD
+        int noteTextMaxLength = NOTE_TEXT_DEFAULT_MAX_LENGTH;
+
+        Integer noteTextLength = SpringContext.getBean(DataDictionaryService.class).getAttributeMaxLength(Note.class, KNSConstants.NOTE_TEXT_PROPERTY_NAME);
+        if (noteTextLength != null) {
+        	noteTextMaxLength = noteTextLength.intValue();
+        }        
+        
+        // KITI-2643 - Modified to fix bug reported in KFSPTS-292 
+        // Ensure that we don't overflow the maximum size of the note by creating 
+        // separate notes if necessary.
+        ArrayList<StringBuffer> rejectReasonNotes = new ArrayList<StringBuffer>();
         StringBuffer rejectReasonNote = new StringBuffer();
+        String rejectReason = "";
+        
         rejectReasonNote.append("This reject document has been created because of the following reason(s):\n");
         int index = 1;
         for (Iterator iter = eInvoiceRejectDocument.getInvoiceRejectReasons().iterator(); iter.hasNext();index++) {
           ElectronicInvoiceRejectReason reason = (ElectronicInvoiceRejectReason) iter.next();
           emailTextErrorList.append("    - " + reason.getInvoiceRejectReasonDescription() + "\n");
-          rejectReasonNote.append(" " + index + ". " + reason.getInvoiceRejectReasonDescription() + "\n");
+          
+          rejectReason = " " + index + ". " + reason.getInvoiceRejectReasonDescription() + "\n";
+          if (rejectReasonNote.length() + rejectReason.length() > noteTextMaxLength) {
+        	  rejectReasonNotes.add(rejectReasonNote);
+        	  rejectReasonNote = new StringBuffer();
+        	  rejectReasonNote.append("Reject document creation reasons continued:\n");
+          }
+          rejectReasonNote.append(rejectReason);
         }
+        rejectReasonNotes.add(rejectReasonNote);
         
         emailTextErrorList.append("\n\n");
         
-        addRejectReasonsToNote(rejectReasonNote.toString(), eInvoiceRejectDocument);
+        for (StringBuffer noteText : rejectReasonNotes) {
+        	addRejectReasonsToNote(noteText.toString(), eInvoiceRejectDocument);
+        }
+        
         return eInvoiceRejectDocument;
     }
     
-    protected void addRejectReasonsToNote(String rejectReasons, ElectronicInvoiceRejectDocument eInvoiceRejectDocument){
+	protected void addRejectReasonsToNote(String rejectReasons, ElectronicInvoiceRejectDocument eInvoiceRejectDocument){
 
         try {
             Note note = SpringContext.getBean(DocumentService.class).createNoteFromDocument(eInvoiceRejectDocument, rejectReasons);
