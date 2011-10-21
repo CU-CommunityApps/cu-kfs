@@ -95,6 +95,7 @@
                     <exclude>WEB-INF/lib/commons-lang*.jar</exclude>
                     <exclude>WEB-INF/lib/commons-pool*.jar</exclude>
                     <exclude>WEB-INF/lib/connector-*.jar</exclude>
+                    <exclude>WEB-INF/lib/cynergy-customizations-2.0-SNAPSHOT.jar</exclude>
                     <exclude>WEB-INF/lib/db-ojb-*.jar</exclude> <!-- kfs has db-ojb-1.0.4-kuali-mods-debug.jar ?? -->
                     <exclude>WEB-INF/lib/jaxb-xjc-*.jar</exclude>
                     <!--
@@ -341,6 +342,10 @@
           <exclusion>
           	<groupId>com.oracle</groupId>
 			<artifactId>ojdbc14</artifactId>
+          </exclusion>
+          <exclusion>
+          	<groupId>edu.cornell.cynergy</groupId>
+			<artifactId>cynergy-customizations</artifactId>
           </exclusion>
         </exclusions>
     </dependency>
