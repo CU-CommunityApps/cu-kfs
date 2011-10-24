@@ -62,7 +62,18 @@
            <ref bean="reloadActionListDAO" />
        </property>
     </bean>
-        
+
+	<bean id="abstractDataSourceBase" abstract="true">
+
+
+	<property name="driverClassName" value="${rice.server.datasource.driver.class}"/>
+	<property name="validationQuery" value="${rice.server.datasource.validating.query}"/>
+	<property name="url" value="${rice.server.datasource.url}"/>
+	<property name="username" value="${rice.server.datasource.username}" />
+	<property name="password" value="${rice.server.datasource.password}" />
+
+	</bean>        
+
     <bean id="reloadActionListDAO" class="org.kuali.rice.kew.useroptions.dao.impl.ReloadActionListDaoJdbcImpl">
         <constructor-arg>
            <ref bean="kewNonTransactionalDataSource"/>
