@@ -62,39 +62,27 @@
            <ref bean="reloadActionListDAO" />
        </property>
     </bean>
-
-	<bean id="abstractDataSourceBase" abstract="true">
-
-
-	<property name="driverClassName" value="${rice.server.datasource.driver.class}"/>
-	<property name="validationQuery" value="${rice.server.datasource.validating.query}"/>
-	<property name="url" value="${rice.server.datasource.url}"/>
-	<property name="username" value="${rice.server.datasource.username}" />
-	<property name="password" value="${rice.server.datasource.password}" />
-
-	</bean>        
-
+        
     <bean id="reloadActionListDAO" class="org.kuali.rice.kew.useroptions.dao.impl.ReloadActionListDaoJdbcImpl">
         <constructor-arg>
            <ref bean="kewNonTransactionalDataSource"/>
         </constructor-arg>
    </bean>
    
-    <bean id="kewNonTransactionalDataSource" class="org.kuali.rice.core.database.PrimaryDataSourceFactoryBean" lazy-init="true">
-       <property name="nullAllowed" value="true"/>
-       <property name="nonTransactionalDataSource" value="true"/>
-       <property name="preferredDataSourceParams">
-           <list>
-               <value>kew.nonTransactional.datasource</value>
-           </list>
-       </property>
-       <property name="preferredDataSourceJndiParams">
-           <list>
-               <value>kew.nonTransactional.datasource.jndi.location</value>
-           </list>
-       </property>
-       <property name="serverDataSource" value="false"/>
-   </bean>
+   <bean id="abstractDataSourceBase" abstract="true"> 
+        <property name="driverClassName" value="${rice.server.datasource.driver.class}"/> 
+        <property name="validationQuery" value="${rice.server.datasource.validating.query}"/> 
+        <property name="url" value="${rice.server.datasource.url}"/> 
+        <property name="username" value="${rice.server.datasource.username}" /> 
+        <property name="password" value="${rice.server.datasource.password}" /> 
+</bean> 
+
+    <bean id="kewNonTransactionalDataSource" parent="abstractDataSourceBase" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"> 
+        <property name="maxActive" value="${rice.server.datasource.pool.size}"/> 
+        <property name="minIdle" value="5" /> 
+        <property name="initialSize" value="5"/> 
+        <property name="accessToUnderlyingConnectionAllowed" value="true"/> 
+    </bean> 
 
     <!-- We override the KFS impl so that we can read properties specified at runtime -->
 <!--
