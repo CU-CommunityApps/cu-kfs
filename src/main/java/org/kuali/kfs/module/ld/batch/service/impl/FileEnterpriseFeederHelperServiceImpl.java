@@ -318,16 +318,10 @@ public class FileEnterpriseFeederHelperServiceImpl implements FileEnterpriseFeed
         }
 		
 		// get benefit types for the entry object code and for each calculation generation an origin entry
-        
-        Map fieldValues = new HashMap();
-        fieldValues.put("universityFiscalYear", wageEntry.getUniversityFiscalYear());
-        fieldValues.put("chartOfAccountsCode", wageEntry.getChartOfAccountsCode());
-        fieldValues.put("financialObjectCode", wageEntry.getFinancialObjectCode());
-        fieldValues.put("active", true);
+        Collection<PositionObjectBenefit> positionObjectBenefits = laborPositionObjectBenefitService.getPositionObjectBenefits(wageEntry.getUniversityFiscalYear(), wageEntry.getChartOfAccountsCode(), 
+        		wageEntry.getFinancialObjectCode());
 
-        Collection<PositionObjectBenefit> positionObjectBenefits = businessObjectService.findMatching(PositionObjectBenefit.class, fieldValues);
-		
-		if (positionObjectBenefits == null || positionObjectBenefits.isEmpty()) {
+        if (positionObjectBenefits == null || positionObjectBenefits.isEmpty()) {
 			writeMissingBenefitsTypeError(wageEntry, errorStatisticsReport, feederReportData);
 		}
 
