@@ -360,38 +360,20 @@ public class PurchaseOrderForm extends PurchasingFormBase {
         boolean valid = true;
         // The PO must have at least one PREQ against it.
         Integer poDocId = document.getPurapDocumentIdentifier();
-        List<PaymentRequestDocument> pReqs = SpringContext.getBean(PaymentRequestService.class).getPaymentRequestsByPurchaseOrderId(poDocId);
-        if (ObjectUtils.isNotNull(pReqs)) {
-            if (pReqs.size() == 0) {
-                valid = false;
-            }
-            else {
-                boolean checkInProcess = true;
-                boolean hasInProcess = false;
-
-                for (PaymentRequestDocument pReq : pReqs) {
-                    // skip exception docs
-                    if (pReq.getDocumentHeader().getWorkflowDocument().stateIsException()) {
-                        continue;
-                    }
-                    // TODO NOTE for below, this could/should be changed to look at the first route level after full entry instead of
-                    // being tied to AwaitingFiscal (in case full entry is moved)
-                    // look for a doc that is currently routing, that will probably be the one that called this close if called from
-                    // preq (with close po box)
-                    if (StringUtils.equalsIgnoreCase(pReq.getStatusCode(), PaymentRequestStatuses.AWAITING_FISCAL_REVIEW) && !StringUtils.equalsIgnoreCase(pReq.getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames(), PurapWorkflowConstants.PaymentRequestDocument.NodeDetailEnum.ACCOUNT_REVIEW.getName())) {
-                        // terminate the search since this close doc is probably being called by this doc, a doc should never be In
-                        // Process and enroute in any other case
-                        checkInProcess = false;
-                        break;
-                    }
-                    if (StringUtils.equalsIgnoreCase(pReq.getStatusCode(), PaymentRequestStatuses.IN_PROCESS)) {
-                        hasInProcess = true;
-                    }
-                }
-                if (checkInProcess && hasInProcess) {
-                    valid = false;
-                }
-            }
+        boolean checkInProcess = true;
+        boolean hasInProcess = false;
+        
+        List<String> docs =  SpringContext.getBean(PaymentRequestService.class).getPaymentRequestsByStatusAndPurchaseOrderId(PaymentRequestStatuses.IN_PROCESS, true, poDocId);
+        if (!docs.isEmpty()) {
+        	hasInProcess = true;
+        }
+        docs = SpringContext.getBean(PaymentRequestService.class).getPaymentRequestsByStatusAndPurchaseOrderId(PaymentRequestStatuses.IN_PROCESS, false, poDocId);
+        if (docs.isEmpty()) {
+        	checkInProcess = false;
+        }
+        
+        if (checkInProcess && hasInProcess) {
+            valid = false;
         }
 
         return valid;
