@@ -357,10 +357,10 @@ public class PurchaseOrderForm extends PurchasingFormBase {
      * @return True if the document passes all the validations.
      */
     protected boolean processPaymentRequestRulesForCanClose(PurchaseOrderDocument document) {
-        boolean valid = true;
+        boolean valid = false;
         // The PO must have at least one PREQ against it.
         Integer poDocId = document.getPurapDocumentIdentifier();
-        boolean checkInProcess = true;
+        boolean checkInProcess = false;
         boolean hasInProcess = false;
         
         List<String> docs =  SpringContext.getBean(PaymentRequestService.class).getPaymentRequestsByStatusAndPurchaseOrderId(PaymentRequestStatuses.IN_PROCESS, true, poDocId);
@@ -368,12 +368,12 @@ public class PurchaseOrderForm extends PurchasingFormBase {
         	hasInProcess = true;
         }
         docs = SpringContext.getBean(PaymentRequestService.class).getPaymentRequestsByStatusAndPurchaseOrderId(PaymentRequestStatuses.IN_PROCESS, false, poDocId);
-        if (docs.isEmpty()) {
-        	checkInProcess = false;
+        if (!docs.isEmpty()) {
+        	checkInProcess = true;
         }
         
-        if (checkInProcess && hasInProcess) {
-            valid = false;
+        if (checkInProcess && !hasInProcess) {
+            valid = true;
         }
 
         return valid;
