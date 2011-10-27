@@ -569,6 +569,13 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         return preqs;
     }
 
+    public List<String> getPaymentRequestsByStatusAndPurchaseOrderId(String status, boolean include, Integer poDocId) {
+	        List<String> docNumbers = paymentRequestDao.getDocumentNumbersByStatusAndPurchaseOrderId(status, include, poDocId);
+	        
+	        return docNumbers;
+	    }
+	    
+    
     /**
      * @see org.kuali.kfs.module.purap.document.service.PaymentRequestService#getPaymentRequestsByPOIdInvoiceAmountInvoiceDate(java.lang.Integer, org.kuali.rice.kns.util.KualiDecimal, java.sql.Date)
      */
