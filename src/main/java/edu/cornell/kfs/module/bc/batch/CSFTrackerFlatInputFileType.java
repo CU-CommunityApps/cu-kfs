@@ -34,18 +34,6 @@ public class CSFTrackerFlatInputFileType extends FlatFileParserBase {
     }
 
     /**
-     * Generate a CalculatedSalaryFoundationTracker from the given line in the input file.
-     * 
-     * @param fileLine
-     * @return a CalculatedSalaryFoundationTracker
-     */
-    private CalculatedSalaryFoundationTracker generateCalculatedSalaryFoundationTracker(String fileLine) {
-        CalculatedSalaryFoundationTracker entry = null;
-        return entry;
-
-    }
-
-    /**
      * @see org.kuali.kfs.sys.batch.FlatFileParserBase#validate(java.lang.Object)
      */
     public boolean validate(Object parsedFileContents) {

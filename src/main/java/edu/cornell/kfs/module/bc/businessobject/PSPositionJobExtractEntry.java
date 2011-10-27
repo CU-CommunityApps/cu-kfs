@@ -1,17 +1,25 @@
 package edu.cornell.kfs.module.bc.businessobject;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.kuali.rice.kns.bo.BusinessObjectBase;
 import org.kuali.rice.kns.util.KualiDecimal;
 
 /**
  * A class that holds the fields from the PS position/job extraat file to be loaded in
  * KFS.
  */
-public class PSPositionJobExtractEntry {
+public class PSPositionJobExtractEntry extends  BusinessObjectBase{
 
     private String positionNumber;
     private String emplid;
     private String csfAmount;
     private KualiDecimal csfFullTimeEmploymentQuantity;
+    private String name;
 
     private String csfTimePercent1;
     private String chartOfAccountsCode1;
@@ -1225,6 +1233,657 @@ public class PSPositionJobExtractEntry {
     public void setCsfFullTimeEmploymentQuantity(
             KualiDecimal csfFullTimeEmploymentQuantity) {
         this.csfFullTimeEmploymentQuantity = csfFullTimeEmploymentQuantity;
+    }
+
+    /**
+     * Gets the name.
+     * 
+     * @return name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the name.
+     * 
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Build a collection with the non-blank accounts.
+     * 
+     * @return a collection of accounting information
+     */
+    public Collection<PSPositionJobExtractAccountingInfo> getAccountingInfoCollection() {
+        List<PSPositionJobExtractAccountingInfo> accountingInfoCollection = new ArrayList<PSPositionJobExtractAccountingInfo>();
+        
+
+        if (StringUtils.isNotBlank(csfTimePercent1)) {
+            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent1,
+                    chartOfAccountsCode1, accountNumber1, subAccountNumber1, financialObjectCode1,
+                    financialSubObjectCode1);
+            
+            accountingInfoCollection.add(accountingInfo);
+        }
+        if (StringUtils.isNotBlank(csfTimePercent2)) {
+            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent2,
+                    chartOfAccountsCode2, accountNumber2, subAccountNumber2, financialObjectCode2,
+                    financialSubObjectCode2);
+            accountingInfoCollection.add(accountingInfo);
+        }
+        if (StringUtils.isNotBlank(csfTimePercent3)) {
+            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent3,
+                    chartOfAccountsCode3, accountNumber3, subAccountNumber3, financialObjectCode3,
+                    financialSubObjectCode3);
+            accountingInfoCollection.add(accountingInfo);
+        }
+        if (StringUtils.isNotBlank(csfTimePercent4)) {
+            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent4,
+                    chartOfAccountsCode4, accountNumber4, subAccountNumber4, financialObjectCode4,
+                    financialSubObjectCode4);
+            accountingInfoCollection.add(accountingInfo);
+        }
+        if (StringUtils.isNotBlank(csfTimePercent5)) {
+            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent5,
+                    chartOfAccountsCode5, accountNumber5, subAccountNumber5, financialObjectCode5,
+                    financialSubObjectCode5);
+            accountingInfoCollection.add(accountingInfo);
+        }
+        if (StringUtils.isNotBlank(csfTimePercent6)) {
+            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent6,
+                    chartOfAccountsCode6, accountNumber6, subAccountNumber6, financialObjectCode6,
+                    financialSubObjectCode6);
+            accountingInfoCollection.add(accountingInfo);
+        }
+        if (StringUtils.isNotBlank(csfTimePercent7)) {
+            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent7,
+                    chartOfAccountsCode7, accountNumber7, subAccountNumber7, financialObjectCode7,
+                    financialSubObjectCode7);
+            accountingInfoCollection.add(accountingInfo);
+        }
+        if (StringUtils.isNotBlank(csfTimePercent8)) {
+            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent8,
+                    chartOfAccountsCode8, accountNumber8, subAccountNumber8, financialObjectCode8,
+                    financialSubObjectCode8);
+            accountingInfoCollection.add(accountingInfo);
+        }
+        if (StringUtils.isNotBlank(csfTimePercent9)) {
+            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent9,
+                    chartOfAccountsCode9, accountNumber9, subAccountNumber9, financialObjectCode9,
+                    financialSubObjectCode9);
+            accountingInfoCollection.add(accountingInfo);
+        }
+        if (StringUtils.isNotBlank(csfTimePercent10)) {
+            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(
+                    csfTimePercent10, chartOfAccountsCode10, accountNumber10, subAccountNumber10,
+                    financialObjectCode10, financialSubObjectCode10);
+            accountingInfoCollection.add(accountingInfo);
+        }
+        
+        
+        return accountingInfoCollection;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((accountNumber1 == null) ? 0 : accountNumber1.hashCode());
+        result = prime * result + ((accountNumber10 == null) ? 0 : accountNumber10.hashCode());
+        result = prime * result + ((accountNumber2 == null) ? 0 : accountNumber2.hashCode());
+        result = prime * result + ((accountNumber3 == null) ? 0 : accountNumber3.hashCode());
+        result = prime * result + ((accountNumber4 == null) ? 0 : accountNumber4.hashCode());
+        result = prime * result + ((accountNumber5 == null) ? 0 : accountNumber5.hashCode());
+        result = prime * result + ((accountNumber6 == null) ? 0 : accountNumber6.hashCode());
+        result = prime * result + ((accountNumber7 == null) ? 0 : accountNumber7.hashCode());
+        result = prime * result + ((accountNumber8 == null) ? 0 : accountNumber8.hashCode());
+        result = prime * result + ((accountNumber9 == null) ? 0 : accountNumber9.hashCode());
+        result = prime * result + ((chartOfAccountsCode1 == null) ? 0 : chartOfAccountsCode1.hashCode());
+        result = prime * result + ((chartOfAccountsCode10 == null) ? 0 : chartOfAccountsCode10.hashCode());
+        result = prime * result + ((chartOfAccountsCode2 == null) ? 0 : chartOfAccountsCode2.hashCode());
+        result = prime * result + ((chartOfAccountsCode3 == null) ? 0 : chartOfAccountsCode3.hashCode());
+        result = prime * result + ((chartOfAccountsCode4 == null) ? 0 : chartOfAccountsCode4.hashCode());
+        result = prime * result + ((chartOfAccountsCode5 == null) ? 0 : chartOfAccountsCode5.hashCode());
+        result = prime * result + ((chartOfAccountsCode6 == null) ? 0 : chartOfAccountsCode6.hashCode());
+        result = prime * result + ((chartOfAccountsCode7 == null) ? 0 : chartOfAccountsCode7.hashCode());
+        result = prime * result + ((chartOfAccountsCode8 == null) ? 0 : chartOfAccountsCode8.hashCode());
+        result = prime * result + ((chartOfAccountsCode9 == null) ? 0 : chartOfAccountsCode9.hashCode());
+        result = prime * result + ((csfAmount == null) ? 0 : csfAmount.hashCode());
+        result = prime * result
+                + ((csfFullTimeEmploymentQuantity == null) ? 0 : csfFullTimeEmploymentQuantity.hashCode());
+        result = prime * result + ((csfTimePercent1 == null) ? 0 : csfTimePercent1.hashCode());
+        result = prime * result + ((csfTimePercent10 == null) ? 0 : csfTimePercent10.hashCode());
+        result = prime * result + ((csfTimePercent2 == null) ? 0 : csfTimePercent2.hashCode());
+        result = prime * result + ((csfTimePercent3 == null) ? 0 : csfTimePercent3.hashCode());
+        result = prime * result + ((csfTimePercent4 == null) ? 0 : csfTimePercent4.hashCode());
+        result = prime * result + ((csfTimePercent5 == null) ? 0 : csfTimePercent5.hashCode());
+        result = prime * result + ((csfTimePercent6 == null) ? 0 : csfTimePercent6.hashCode());
+        result = prime * result + ((csfTimePercent7 == null) ? 0 : csfTimePercent7.hashCode());
+        result = prime * result + ((csfTimePercent8 == null) ? 0 : csfTimePercent8.hashCode());
+        result = prime * result + ((csfTimePercent9 == null) ? 0 : csfTimePercent9.hashCode());
+        result = prime * result + ((emplid == null) ? 0 : emplid.hashCode());
+        result = prime * result + ((financialObjectCode1 == null) ? 0 : financialObjectCode1.hashCode());
+        result = prime * result + ((financialObjectCode10 == null) ? 0 : financialObjectCode10.hashCode());
+        result = prime * result + ((financialObjectCode2 == null) ? 0 : financialObjectCode2.hashCode());
+        result = prime * result + ((financialObjectCode3 == null) ? 0 : financialObjectCode3.hashCode());
+        result = prime * result + ((financialObjectCode4 == null) ? 0 : financialObjectCode4.hashCode());
+        result = prime * result + ((financialObjectCode5 == null) ? 0 : financialObjectCode5.hashCode());
+        result = prime * result + ((financialObjectCode6 == null) ? 0 : financialObjectCode6.hashCode());
+        result = prime * result + ((financialObjectCode7 == null) ? 0 : financialObjectCode7.hashCode());
+        result = prime * result + ((financialObjectCode8 == null) ? 0 : financialObjectCode8.hashCode());
+        result = prime * result + ((financialObjectCode9 == null) ? 0 : financialObjectCode9.hashCode());
+        result = prime * result + ((financialSubObjectCode1 == null) ? 0 : financialSubObjectCode1.hashCode());
+        result = prime * result + ((financialSubObjectCode10 == null) ? 0 : financialSubObjectCode10.hashCode());
+        result = prime * result + ((financialSubObjectCode2 == null) ? 0 : financialSubObjectCode2.hashCode());
+        result = prime * result + ((financialSubObjectCode3 == null) ? 0 : financialSubObjectCode3.hashCode());
+        result = prime * result + ((financialSubObjectCode4 == null) ? 0 : financialSubObjectCode4.hashCode());
+        result = prime * result + ((financialSubObjectCode5 == null) ? 0 : financialSubObjectCode5.hashCode());
+        result = prime * result + ((financialSubObjectCode6 == null) ? 0 : financialSubObjectCode6.hashCode());
+        result = prime * result + ((financialSubObjectCode7 == null) ? 0 : financialSubObjectCode7.hashCode());
+        result = prime * result + ((financialSubObjectCode8 == null) ? 0 : financialSubObjectCode8.hashCode());
+        result = prime * result + ((financialSubObjectCode9 == null) ? 0 : financialSubObjectCode9.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((positionNumber == null) ? 0 : positionNumber.hashCode());
+        result = prime * result + ((subAccountNumber1 == null) ? 0 : subAccountNumber1.hashCode());
+        result = prime * result + ((subAccountNumber10 == null) ? 0 : subAccountNumber10.hashCode());
+        result = prime * result + ((subAccountNumber2 == null) ? 0 : subAccountNumber2.hashCode());
+        result = prime * result + ((subAccountNumber3 == null) ? 0 : subAccountNumber3.hashCode());
+        result = prime * result + ((subAccountNumber4 == null) ? 0 : subAccountNumber4.hashCode());
+        result = prime * result + ((subAccountNumber5 == null) ? 0 : subAccountNumber5.hashCode());
+        result = prime * result + ((subAccountNumber6 == null) ? 0 : subAccountNumber6.hashCode());
+        result = prime * result + ((subAccountNumber7 == null) ? 0 : subAccountNumber7.hashCode());
+        result = prime * result + ((subAccountNumber8 == null) ? 0 : subAccountNumber8.hashCode());
+        result = prime * result + ((subAccountNumber9 == null) ? 0 : subAccountNumber9.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PSPositionJobExtractEntry other = (PSPositionJobExtractEntry) obj;
+        if (accountNumber1 == null) {
+            if (other.accountNumber1 != null)
+                return false;
+        } else if (!accountNumber1.equals(other.accountNumber1))
+            return false;
+        if (accountNumber10 == null) {
+            if (other.accountNumber10 != null)
+                return false;
+        } else if (!accountNumber10.equals(other.accountNumber10))
+            return false;
+        if (accountNumber2 == null) {
+            if (other.accountNumber2 != null)
+                return false;
+        } else if (!accountNumber2.equals(other.accountNumber2))
+            return false;
+        if (accountNumber3 == null) {
+            if (other.accountNumber3 != null)
+                return false;
+        } else if (!accountNumber3.equals(other.accountNumber3))
+            return false;
+        if (accountNumber4 == null) {
+            if (other.accountNumber4 != null)
+                return false;
+        } else if (!accountNumber4.equals(other.accountNumber4))
+            return false;
+        if (accountNumber5 == null) {
+            if (other.accountNumber5 != null)
+                return false;
+        } else if (!accountNumber5.equals(other.accountNumber5))
+            return false;
+        if (accountNumber6 == null) {
+            if (other.accountNumber6 != null)
+                return false;
+        } else if (!accountNumber6.equals(other.accountNumber6))
+            return false;
+        if (accountNumber7 == null) {
+            if (other.accountNumber7 != null)
+                return false;
+        } else if (!accountNumber7.equals(other.accountNumber7))
+            return false;
+        if (accountNumber8 == null) {
+            if (other.accountNumber8 != null)
+                return false;
+        } else if (!accountNumber8.equals(other.accountNumber8))
+            return false;
+        if (accountNumber9 == null) {
+            if (other.accountNumber9 != null)
+                return false;
+        } else if (!accountNumber9.equals(other.accountNumber9))
+            return false;
+        if (chartOfAccountsCode1 == null) {
+            if (other.chartOfAccountsCode1 != null)
+                return false;
+        } else if (!chartOfAccountsCode1.equals(other.chartOfAccountsCode1))
+            return false;
+        if (chartOfAccountsCode10 == null) {
+            if (other.chartOfAccountsCode10 != null)
+                return false;
+        } else if (!chartOfAccountsCode10.equals(other.chartOfAccountsCode10))
+            return false;
+        if (chartOfAccountsCode2 == null) {
+            if (other.chartOfAccountsCode2 != null)
+                return false;
+        } else if (!chartOfAccountsCode2.equals(other.chartOfAccountsCode2))
+            return false;
+        if (chartOfAccountsCode3 == null) {
+            if (other.chartOfAccountsCode3 != null)
+                return false;
+        } else if (!chartOfAccountsCode3.equals(other.chartOfAccountsCode3))
+            return false;
+        if (chartOfAccountsCode4 == null) {
+            if (other.chartOfAccountsCode4 != null)
+                return false;
+        } else if (!chartOfAccountsCode4.equals(other.chartOfAccountsCode4))
+            return false;
+        if (chartOfAccountsCode5 == null) {
+            if (other.chartOfAccountsCode5 != null)
+                return false;
+        } else if (!chartOfAccountsCode5.equals(other.chartOfAccountsCode5))
+            return false;
+        if (chartOfAccountsCode6 == null) {
+            if (other.chartOfAccountsCode6 != null)
+                return false;
+        } else if (!chartOfAccountsCode6.equals(other.chartOfAccountsCode6))
+            return false;
+        if (chartOfAccountsCode7 == null) {
+            if (other.chartOfAccountsCode7 != null)
+                return false;
+        } else if (!chartOfAccountsCode7.equals(other.chartOfAccountsCode7))
+            return false;
+        if (chartOfAccountsCode8 == null) {
+            if (other.chartOfAccountsCode8 != null)
+                return false;
+        } else if (!chartOfAccountsCode8.equals(other.chartOfAccountsCode8))
+            return false;
+        if (chartOfAccountsCode9 == null) {
+            if (other.chartOfAccountsCode9 != null)
+                return false;
+        } else if (!chartOfAccountsCode9.equals(other.chartOfAccountsCode9))
+            return false;
+        if (csfAmount == null) {
+            if (other.csfAmount != null)
+                return false;
+        } else if (!csfAmount.equals(other.csfAmount))
+            return false;
+        if (csfFullTimeEmploymentQuantity == null) {
+            if (other.csfFullTimeEmploymentQuantity != null)
+                return false;
+        } else if (!csfFullTimeEmploymentQuantity.equals(other.csfFullTimeEmploymentQuantity))
+            return false;
+        if (csfTimePercent1 == null) {
+            if (other.csfTimePercent1 != null)
+                return false;
+        } else if (!csfTimePercent1.equals(other.csfTimePercent1))
+            return false;
+        if (csfTimePercent10 == null) {
+            if (other.csfTimePercent10 != null)
+                return false;
+        } else if (!csfTimePercent10.equals(other.csfTimePercent10))
+            return false;
+        if (csfTimePercent2 == null) {
+            if (other.csfTimePercent2 != null)
+                return false;
+        } else if (!csfTimePercent2.equals(other.csfTimePercent2))
+            return false;
+        if (csfTimePercent3 == null) {
+            if (other.csfTimePercent3 != null)
+                return false;
+        } else if (!csfTimePercent3.equals(other.csfTimePercent3))
+            return false;
+        if (csfTimePercent4 == null) {
+            if (other.csfTimePercent4 != null)
+                return false;
+        } else if (!csfTimePercent4.equals(other.csfTimePercent4))
+            return false;
+        if (csfTimePercent5 == null) {
+            if (other.csfTimePercent5 != null)
+                return false;
+        } else if (!csfTimePercent5.equals(other.csfTimePercent5))
+            return false;
+        if (csfTimePercent6 == null) {
+            if (other.csfTimePercent6 != null)
+                return false;
+        } else if (!csfTimePercent6.equals(other.csfTimePercent6))
+            return false;
+        if (csfTimePercent7 == null) {
+            if (other.csfTimePercent7 != null)
+                return false;
+        } else if (!csfTimePercent7.equals(other.csfTimePercent7))
+            return false;
+        if (csfTimePercent8 == null) {
+            if (other.csfTimePercent8 != null)
+                return false;
+        } else if (!csfTimePercent8.equals(other.csfTimePercent8))
+            return false;
+        if (csfTimePercent9 == null) {
+            if (other.csfTimePercent9 != null)
+                return false;
+        } else if (!csfTimePercent9.equals(other.csfTimePercent9))
+            return false;
+        if (emplid == null) {
+            if (other.emplid != null)
+                return false;
+        } else if (!emplid.equals(other.emplid))
+            return false;
+        if (financialObjectCode1 == null) {
+            if (other.financialObjectCode1 != null)
+                return false;
+        } else if (!financialObjectCode1.equals(other.financialObjectCode1))
+            return false;
+        if (financialObjectCode10 == null) {
+            if (other.financialObjectCode10 != null)
+                return false;
+        } else if (!financialObjectCode10.equals(other.financialObjectCode10))
+            return false;
+        if (financialObjectCode2 == null) {
+            if (other.financialObjectCode2 != null)
+                return false;
+        } else if (!financialObjectCode2.equals(other.financialObjectCode2))
+            return false;
+        if (financialObjectCode3 == null) {
+            if (other.financialObjectCode3 != null)
+                return false;
+        } else if (!financialObjectCode3.equals(other.financialObjectCode3))
+            return false;
+        if (financialObjectCode4 == null) {
+            if (other.financialObjectCode4 != null)
+                return false;
+        } else if (!financialObjectCode4.equals(other.financialObjectCode4))
+            return false;
+        if (financialObjectCode5 == null) {
+            if (other.financialObjectCode5 != null)
+                return false;
+        } else if (!financialObjectCode5.equals(other.financialObjectCode5))
+            return false;
+        if (financialObjectCode6 == null) {
+            if (other.financialObjectCode6 != null)
+                return false;
+        } else if (!financialObjectCode6.equals(other.financialObjectCode6))
+            return false;
+        if (financialObjectCode7 == null) {
+            if (other.financialObjectCode7 != null)
+                return false;
+        } else if (!financialObjectCode7.equals(other.financialObjectCode7))
+            return false;
+        if (financialObjectCode8 == null) {
+            if (other.financialObjectCode8 != null)
+                return false;
+        } else if (!financialObjectCode8.equals(other.financialObjectCode8))
+            return false;
+        if (financialObjectCode9 == null) {
+            if (other.financialObjectCode9 != null)
+                return false;
+        } else if (!financialObjectCode9.equals(other.financialObjectCode9))
+            return false;
+        if (financialSubObjectCode1 == null) {
+            if (other.financialSubObjectCode1 != null)
+                return false;
+        } else if (!financialSubObjectCode1.equals(other.financialSubObjectCode1))
+            return false;
+        if (financialSubObjectCode10 == null) {
+            if (other.financialSubObjectCode10 != null)
+                return false;
+        } else if (!financialSubObjectCode10.equals(other.financialSubObjectCode10))
+            return false;
+        if (financialSubObjectCode2 == null) {
+            if (other.financialSubObjectCode2 != null)
+                return false;
+        } else if (!financialSubObjectCode2.equals(other.financialSubObjectCode2))
+            return false;
+        if (financialSubObjectCode3 == null) {
+            if (other.financialSubObjectCode3 != null)
+                return false;
+        } else if (!financialSubObjectCode3.equals(other.financialSubObjectCode3))
+            return false;
+        if (financialSubObjectCode4 == null) {
+            if (other.financialSubObjectCode4 != null)
+                return false;
+        } else if (!financialSubObjectCode4.equals(other.financialSubObjectCode4))
+            return false;
+        if (financialSubObjectCode5 == null) {
+            if (other.financialSubObjectCode5 != null)
+                return false;
+        } else if (!financialSubObjectCode5.equals(other.financialSubObjectCode5))
+            return false;
+        if (financialSubObjectCode6 == null) {
+            if (other.financialSubObjectCode6 != null)
+                return false;
+        } else if (!financialSubObjectCode6.equals(other.financialSubObjectCode6))
+            return false;
+        if (financialSubObjectCode7 == null) {
+            if (other.financialSubObjectCode7 != null)
+                return false;
+        } else if (!financialSubObjectCode7.equals(other.financialSubObjectCode7))
+            return false;
+        if (financialSubObjectCode8 == null) {
+            if (other.financialSubObjectCode8 != null)
+                return false;
+        } else if (!financialSubObjectCode8.equals(other.financialSubObjectCode8))
+            return false;
+        if (financialSubObjectCode9 == null) {
+            if (other.financialSubObjectCode9 != null)
+                return false;
+        } else if (!financialSubObjectCode9.equals(other.financialSubObjectCode9))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (positionNumber == null) {
+            if (other.positionNumber != null)
+                return false;
+        } else if (!positionNumber.equals(other.positionNumber))
+            return false;
+        if (subAccountNumber1 == null) {
+            if (other.subAccountNumber1 != null)
+                return false;
+        } else if (!subAccountNumber1.equals(other.subAccountNumber1))
+            return false;
+        if (subAccountNumber10 == null) {
+            if (other.subAccountNumber10 != null)
+                return false;
+        } else if (!subAccountNumber10.equals(other.subAccountNumber10))
+            return false;
+        if (subAccountNumber2 == null) {
+            if (other.subAccountNumber2 != null)
+                return false;
+        } else if (!subAccountNumber2.equals(other.subAccountNumber2))
+            return false;
+        if (subAccountNumber3 == null) {
+            if (other.subAccountNumber3 != null)
+                return false;
+        } else if (!subAccountNumber3.equals(other.subAccountNumber3))
+            return false;
+        if (subAccountNumber4 == null) {
+            if (other.subAccountNumber4 != null)
+                return false;
+        } else if (!subAccountNumber4.equals(other.subAccountNumber4))
+            return false;
+        if (subAccountNumber5 == null) {
+            if (other.subAccountNumber5 != null)
+                return false;
+        } else if (!subAccountNumber5.equals(other.subAccountNumber5))
+            return false;
+        if (subAccountNumber6 == null) {
+            if (other.subAccountNumber6 != null)
+                return false;
+        } else if (!subAccountNumber6.equals(other.subAccountNumber6))
+            return false;
+        if (subAccountNumber7 == null) {
+            if (other.subAccountNumber7 != null)
+                return false;
+        } else if (!subAccountNumber7.equals(other.subAccountNumber7))
+            return false;
+        if (subAccountNumber8 == null) {
+            if (other.subAccountNumber8 != null)
+                return false;
+        } else if (!subAccountNumber8.equals(other.subAccountNumber8))
+            return false;
+        if (subAccountNumber9 == null) {
+            if (other.subAccountNumber9 != null)
+                return false;
+        } else if (!subAccountNumber9.equals(other.subAccountNumber9))
+            return false;
+        return true;
+    }
+
+    public void refresh() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    protected LinkedHashMap toStringMapper() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("PSPositionJobExtractEntry [positionNumber=");
+        builder.append(positionNumber);
+        builder.append(", emplid=");
+        builder.append(emplid);
+        builder.append(", csfAmount=");
+        builder.append(csfAmount);
+        builder.append(", csfFullTimeEmploymentQuantity=");
+        builder.append(csfFullTimeEmploymentQuantity);
+        builder.append(", name=");
+        builder.append(name);
+        builder.append(", csfTimePercent1=");
+        builder.append(csfTimePercent1);
+        builder.append(", chartOfAccountsCode1=");
+        builder.append(chartOfAccountsCode1);
+        builder.append(", accountNumber1=");
+        builder.append(accountNumber1);
+        builder.append(", subAccountNumber1=");
+        builder.append(subAccountNumber1);
+        builder.append(", financialObjectCode1=");
+        builder.append(financialObjectCode1);
+        builder.append(", financialSubObjectCode1=");
+        builder.append(financialSubObjectCode1);
+        builder.append(", csfTimePercent2=");
+        builder.append(csfTimePercent2);
+        builder.append(", chartOfAccountsCode2=");
+        builder.append(chartOfAccountsCode2);
+        builder.append(", accountNumber2=");
+        builder.append(accountNumber2);
+        builder.append(", subAccountNumber2=");
+        builder.append(subAccountNumber2);
+        builder.append(", financialObjectCode2=");
+        builder.append(financialObjectCode2);
+        builder.append(", financialSubObjectCode2=");
+        builder.append(financialSubObjectCode2);
+        builder.append(", csfTimePercent3=");
+        builder.append(csfTimePercent3);
+        builder.append(", chartOfAccountsCode3=");
+        builder.append(chartOfAccountsCode3);
+        builder.append(", accountNumber3=");
+        builder.append(accountNumber3);
+        builder.append(", subAccountNumber3=");
+        builder.append(subAccountNumber3);
+        builder.append(", financialObjectCode3=");
+        builder.append(financialObjectCode3);
+        builder.append(", financialSubObjectCode3=");
+        builder.append(financialSubObjectCode3);
+        builder.append(", csfTimePercent4=");
+        builder.append(csfTimePercent4);
+        builder.append(", chartOfAccountsCode4=");
+        builder.append(chartOfAccountsCode4);
+        builder.append(", accountNumber4=");
+        builder.append(accountNumber4);
+        builder.append(", subAccountNumber4=");
+        builder.append(subAccountNumber4);
+        builder.append(", financialObjectCode4=");
+        builder.append(financialObjectCode4);
+        builder.append(", financialSubObjectCode4=");
+        builder.append(financialSubObjectCode4);
+        builder.append(", csfTimePercent5=");
+        builder.append(csfTimePercent5);
+        builder.append(", chartOfAccountsCode5=");
+        builder.append(chartOfAccountsCode5);
+        builder.append(", accountNumber5=");
+        builder.append(accountNumber5);
+        builder.append(", subAccountNumber5=");
+        builder.append(subAccountNumber5);
+        builder.append(", financialObjectCode5=");
+        builder.append(financialObjectCode5);
+        builder.append(", financialSubObjectCode5=");
+        builder.append(financialSubObjectCode5);
+        builder.append(", csfTimePercent6=");
+        builder.append(csfTimePercent6);
+        builder.append(", chartOfAccountsCode6=");
+        builder.append(chartOfAccountsCode6);
+        builder.append(", accountNumber6=");
+        builder.append(accountNumber6);
+        builder.append(", subAccountNumber6=");
+        builder.append(subAccountNumber6);
+        builder.append(", financialObjectCode6=");
+        builder.append(financialObjectCode6);
+        builder.append(", financialSubObjectCode6=");
+        builder.append(financialSubObjectCode6);
+        builder.append(", csfTimePercent7=");
+        builder.append(csfTimePercent7);
+        builder.append(", chartOfAccountsCode7=");
+        builder.append(chartOfAccountsCode7);
+        builder.append(", accountNumber7=");
+        builder.append(accountNumber7);
+        builder.append(", subAccountNumber7=");
+        builder.append(subAccountNumber7);
+        builder.append(", financialObjectCode7=");
+        builder.append(financialObjectCode7);
+        builder.append(", financialSubObjectCode7=");
+        builder.append(financialSubObjectCode7);
+        builder.append(", csfTimePercent8=");
+        builder.append(csfTimePercent8);
+        builder.append(", chartOfAccountsCode8=");
+        builder.append(chartOfAccountsCode8);
+        builder.append(", accountNumber8=");
+        builder.append(accountNumber8);
+        builder.append(", subAccountNumber8=");
+        builder.append(subAccountNumber8);
+        builder.append(", financialObjectCode8=");
+        builder.append(financialObjectCode8);
+        builder.append(", financialSubObjectCode8=");
+        builder.append(financialSubObjectCode8);
+        builder.append(", csfTimePercent9=");
+        builder.append(csfTimePercent9);
+        builder.append(", chartOfAccountsCode9=");
+        builder.append(chartOfAccountsCode9);
+        builder.append(", accountNumber9=");
+        builder.append(accountNumber9);
+        builder.append(", subAccountNumber9=");
+        builder.append(subAccountNumber9);
+        builder.append(", financialObjectCode9=");
+        builder.append(financialObjectCode9);
+        builder.append(", financialSubObjectCode9=");
+        builder.append(financialSubObjectCode9);
+        builder.append(", csfTimePercent10=");
+        builder.append(csfTimePercent10);
+        builder.append(", chartOfAccountsCode10=");
+        builder.append(chartOfAccountsCode10);
+        builder.append(", accountNumber10=");
+        builder.append(accountNumber10);
+        builder.append(", subAccountNumber10=");
+        builder.append(subAccountNumber10);
+        builder.append(", financialObjectCode10=");
+        builder.append(financialObjectCode10);
+        builder.append(", financialSubObjectCode10=");
+        builder.append(financialSubObjectCode10);
+        builder.append("]");
+        return builder.toString();
     }
 
 }
