@@ -166,33 +166,90 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
         for (PSPositionJobExtractEntry extractEntry : csfTackerEntries) {
             boolean valid = true;
             valid &= validatePosition(extractEntry.getPositionNumber());
+
+            if (!valid) {
+                LOG.warn("Invalid position number for " + extractEntry.toString());
+                continue;
+            }
             valid &= validateCSFAmount(extractEntry.getCsfAmount());
+            if (!valid) {
+                LOG.warn("Invalid csf Amount for " + extractEntry.toString());
+                continue;
+            }
 
-            for (PSPositionJobExtractAccountingInfo accountingInfo : extractEntry.getAccountingInfoCollection()) {
-                valid &= validateTimePercent(accountingInfo.getCsfTimePercent());
-                valid &= validateAccount(accountingInfo.getChartOfAccountsCode(), accountingInfo.getAccountNumber());
-                valid &= validateSubAccount(accountingInfo.getChartOfAccountsCode(), accountingInfo.getAccountNumber(),
-                        accountingInfo.getSubAccountNumber());
+            if (valid) {
+                for (PSPositionJobExtractAccountingInfo accountingInfo : extractEntry.getAccountingInfoCollection()) {
 
-                valid &= validateLaborObject(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
-                        accountingInfo.getFinancialObjectCode());
-                valid &= validateObjectCode(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
-                        accountingInfo.getAccountNumber(), accountingInfo.getFinancialObjectCode());
-                valid &= validateSubObject(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
-                        accountingInfo.getAccountNumber(), accountingInfo.getFinancialObjectCode(),
-                        accountingInfo.getFinancialSubObjectCode());
+                    if (StringUtils.isNotBlank(accountingInfo.getCsfTimePercent())) {
+                        valid &= validateTimePercent(accountingInfo.getCsfTimePercent());
+                        if (!valid) {
+                            LOG.warn("Invalid time percent " + accountingInfo.getCsfTimePercent() + " for extract "
+                                    + extractEntry.toString());
+                            break;
+                        }
+                        valid &= validateAccount(accountingInfo.getChartOfAccountsCode(),
+                                accountingInfo.getAccountNumber());
+                        if (!valid) {
+                            LOG.warn("Invalid Account: " + accountingInfo.getChartOfAccountsCode() + ","
+                                    + accountingInfo.getAccountNumber() + " for extract " + extractEntry.toString());
+                            break;
+                        }
+                        if (StringUtils.isNotBlank(accountingInfo.getSubAccountNumber())) {
+                            valid &= validateSubAccount(accountingInfo.getChartOfAccountsCode(),
+                                    accountingInfo.getAccountNumber(),
+                                    accountingInfo.getSubAccountNumber());
+                            if (!valid) {
+                                LOG.warn("Invalid Sub Account: " + accountingInfo.getChartOfAccountsCode() + ","
+                                        + accountingInfo.getAccountNumber() + ","
+                                        + accountingInfo.getSubAccountNumber()
+                                        + " for extract " + extractEntry.toString());
+                                break;
+                            }
+                        }
 
+                        valid &= validateLaborObject(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
+                                accountingInfo.getFinancialObjectCode());
+                        if (!valid) {
+                            LOG.warn("Invalid Labor Object: " + universityFiscalYear + ","
+                                    + accountingInfo.getChartOfAccountsCode() + ","
+                                    + accountingInfo.getFinancialObjectCode() + " for extract "
+                                    + extractEntry.toString());
+                            break;
+                        }
+                        valid &= validateObjectCode(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
+                                accountingInfo.getFinancialObjectCode());
+                        if (!valid) {
+                            LOG.warn("Invalid Object Code: " + universityFiscalYear + ","
+                                    + accountingInfo.getChartOfAccountsCode() + ","
+                                    + accountingInfo.getFinancialObjectCode() + " for extract "
+                                    + extractEntry.toString());
+                            break;
+                        }
+
+                        if (StringUtils.isNotBlank(accountingInfo.getFinancialSubObjectCode())) {
+                            valid &= validateSubObject(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
+                                    accountingInfo.getAccountNumber(), accountingInfo.getFinancialObjectCode(),
+                                    accountingInfo.getFinancialSubObjectCode());
+                            if (!valid) {
+                                LOG.warn("Invalid Sub Object Code: " + universityFiscalYear + ","
+                                        + accountingInfo.getChartOfAccountsCode() + ","
+                                        + accountingInfo.getFinancialObjectCode() + " for extract "
+                                        + extractEntry.toString());
+                                break;
+                            }
+                        }
+                    }
+
+                }
             }
 
             if (valid) {
                 validEntries.add(extractEntry);
-            } else {
-                LOG.warn("Invalid extract " + extractEntry.toString());
             }
 
         }
 
-        return csfTackerEntries;
+        return validEntries;
 
     }
 
@@ -206,7 +263,7 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
         //validate position
         Map<String, Object> positionCriteria = new HashMap<String, Object>();
         positionCriteria.put(KFSPropertyConstants.POSITION_NUMBER, positionNumber);
-        positionCriteria.put("budgetedPosition", true);
+        positionCriteria.put("budgetedPosition", "Y");
         int count = businessObjectService.countMatching(PositionData.class, positionCriteria);
 
         if (count > 0) {
@@ -281,7 +338,8 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
                 objectCodeCriteria);
 
         if (ObjectUtils.isNotNull(object)) {
-            if (LaborConstants.LABOR_OBJECT_SALARY_CODE.equalsIgnoreCase(object.getFinancialObjectFringeOrSalaryCode())) {
+            if (!LaborConstants.LABOR_OBJECT_SALARY_CODE
+                    .equalsIgnoreCase(object.getFinancialObjectFringeOrSalaryCode())) {
                 return false;
             }
             return true;
@@ -305,10 +363,10 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
         subObjectCodeCriteria.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, universityFiscalYear);
         subObjectCodeCriteria.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chart);
         subObjectCodeCriteria.put(KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber);
-        subObjectCodeCriteria.put(KFSPropertyConstants.OBJECT_CODE, objectCode);
-        subObjectCodeCriteria.put(KFSPropertyConstants.SUB_OBJECT_CODE, subObjectCode);
+        subObjectCodeCriteria.put(KFSPropertyConstants.FINANCIAL_OBJECT_CODE, objectCode);
+        subObjectCodeCriteria.put(KFSPropertyConstants.FINANCIAL_SUB_OBJECT_CODE, subObjectCode);
 
-        SubObjectCode subObject = (SubObjectCode) businessObjectService.findByPrimaryKey(LaborObject.class,
+        SubObjectCode subObject = (SubObjectCode) businessObjectService.findByPrimaryKey(SubObjectCode.class,
                 subObjectCodeCriteria);
 
         if (ObjectUtils.isNotNull(subObject)) {
@@ -322,15 +380,14 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
      * 
      * @param universityFiscalYear
      * @param chart
-     * @param accountNumber
      * @param objectCode
      * @return true if valid, false otherwise
      */
-    protected boolean validateObjectCode(Integer universityFiscalYear, String chart, String accountNumber,
+    protected boolean validateObjectCode(Integer universityFiscalYear, String chart,
             String objectCode) {
         Map<String, Object> objectCodeCriteria = new HashMap<String, Object>();
         objectCodeCriteria.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, universityFiscalYear);
-        objectCodeCriteria.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, accountNumber);
+        objectCodeCriteria.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chart);
         objectCodeCriteria.put(KFSPropertyConstants.FINANCIAL_OBJECT_CODE, objectCode);
 
         ObjectCode object = (ObjectCode) businessObjectService.findByPrimaryKey(ObjectCode.class,
@@ -388,9 +445,15 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
 
         String positionNumber = psPositionJobExtractEntry.getPositionNumber();
         Integer universityFiscalYear = BudgetParameterFinder.getBaseFiscalYear();
+
         String emplid = psPositionJobExtractEntry.getEmplid();
+        if (StringUtils.isBlank(emplid)) {
+            emplid = BCConstants.VACANT_EMPLID;
+        }
+
         String name = psPositionJobExtractEntry.getName();
         Timestamp csfCreateTimestamp = dateTimeService.getCurrentTimestamp();
+
         BigDecimal csfFullTimeEmploymentQuantity = psPositionJobExtractEntry.getCsfFullTimeEmploymentQuantity()
                 .bigDecimalValue();
         KualiDecimal csfAmount = generateCSFAmount(psPositionJobExtractEntry.getCsfAmount());
@@ -400,7 +463,7 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
         // accounting data
         for (PSPositionJobExtractAccountingInfo accountingInfo : psPositionJobExtractEntry
                 .getAccountingInfoCollection()) {
-            BigDecimal csfTimePercent = generateCsfTimePercent(accountingInfo.getCsfTimePercent());
+            BigDecimal csfTimePercent = generateCsfTimePercent(accountingInfo.getCsfTimePercent()).bigDecimalValue();
             String chartOfAccountsCode = accountingInfo.getChartOfAccountsCode();
             String accountNumber = accountingInfo.getAccountNumber();
 
@@ -414,10 +477,6 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
             String financialSubObjectCode = accountingInfo.getFinancialSubObjectCode();
             if (StringUtils.isBlank(financialSubObjectCode)) {
                 financialSubObjectCode = CUBCConstants.DEFAULT_FINANCIAL_SUB_OBJECT_CODE;
-            }
-
-            if (emplid.equalsIgnoreCase(CUBCConstants.EXTRACT_VACANT_EMPLID)) {
-                emplid = BCConstants.VACANT_EMPLID;
             }
 
             String csfDeleteCode = generateDeleteCode(psPositionJobExtractEntry);
@@ -510,12 +569,13 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
      * @param csfTimePrecent
      * @return a KualiDecimal value for the input csfTimePrecent
      */
-    protected BigDecimal generateCsfTimePercent(String csfTimePrecent) {
+    protected KualiDecimal generateCsfTimePercent(String csfTimePrecent) {
         //prepare time percent
         String timePercent = csfTimePrecent;
         timePercent = timePercent.substring(0, timePercent.length() - 2) + "."
                 + timePercent.substring(timePercent.length() - 2, timePercent.length());
-        return new BigDecimal(timePercent);
+
+        return new KualiDecimal(timePercent);
     }
 
     /**

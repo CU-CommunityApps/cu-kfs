@@ -9,11 +9,13 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.kns.bo.BusinessObjectBase;
 import org.kuali.rice.kns.util.KualiDecimal;
 
+import edu.cornell.kfs.module.bc.CUBCConstants;
+
 /**
  * A class that holds the fields from the PS position/job extraat file to be loaded in
  * KFS.
  */
-public class PSPositionJobExtractEntry extends  BusinessObjectBase{
+public class PSPositionJobExtractEntry extends BusinessObjectBase {
 
     private String positionNumber;
     private String emplid;
@@ -88,7 +90,7 @@ public class PSPositionJobExtractEntry extends  BusinessObjectBase{
      * @return positionNumber
      */
     public String getPositionNumber() {
-        return positionNumber;
+        return CUBCConstants.POSITION_NUMBER_PREFIX + positionNumber;
     }
 
     /**
@@ -1260,13 +1262,12 @@ public class PSPositionJobExtractEntry extends  BusinessObjectBase{
      */
     public Collection<PSPositionJobExtractAccountingInfo> getAccountingInfoCollection() {
         List<PSPositionJobExtractAccountingInfo> accountingInfoCollection = new ArrayList<PSPositionJobExtractAccountingInfo>();
-        
 
         if (StringUtils.isNotBlank(csfTimePercent1)) {
             PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent1,
                     chartOfAccountsCode1, accountNumber1, subAccountNumber1, financialObjectCode1,
                     financialSubObjectCode1);
-            
+
             accountingInfoCollection.add(accountingInfo);
         }
         if (StringUtils.isNotBlank(csfTimePercent2)) {
@@ -1323,8 +1324,7 @@ public class PSPositionJobExtractEntry extends  BusinessObjectBase{
                     financialObjectCode10, financialSubObjectCode10);
             accountingInfoCollection.add(accountingInfo);
         }
-        
-        
+
         return accountingInfoCollection;
     }
 
@@ -1740,7 +1740,7 @@ public class PSPositionJobExtractEntry extends  BusinessObjectBase{
 
     public void refresh() {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
