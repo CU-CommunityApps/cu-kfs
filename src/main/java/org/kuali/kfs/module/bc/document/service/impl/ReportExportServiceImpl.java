@@ -24,8 +24,13 @@ import org.kuali.kfs.module.bc.BCConstants;
 import org.kuali.kfs.module.bc.BCPropertyConstants;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionAccountDump;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionAccountReports;
+import org.kuali.kfs.module.bc.businessobject.BudgetConstructionAdministrativePost;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionAppointmentFundingReason;
+import org.kuali.kfs.module.bc.businessobject.BudgetConstructionCalculatedSalaryFoundationTracker;
+import org.kuali.kfs.module.bc.businessobject.BudgetConstructionIntendedIncumbent;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionMonthly;
+import org.kuali.kfs.module.bc.businessobject.BudgetConstructionOrganizationReports;
+import org.kuali.kfs.module.bc.businessobject.BudgetConstructionPosition;
 import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionAppointmentFunding;
 import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionGeneralLedger;
 import org.kuali.kfs.module.bc.document.dataaccess.ReportDumpDao;
@@ -33,9 +38,12 @@ import org.kuali.kfs.module.bc.document.service.ReportExportService;
 import org.kuali.kfs.sys.DynamicCollectionComparator;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.kns.service.BusinessObjectService;
+import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
+
+import edu.cornell.kfs.module.bc.CUBCPropertyConstants;
 
 /**
  * @see org.kuali.kfs.module.bc.document.service.ReportExportService
@@ -44,6 +52,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReportExportServiceImpl implements ReportExportService {
     ReportDumpDao reportDumpDao;
     BusinessObjectService businessObjectService;
+    protected DataDictionaryService dataDictionaryService;
 
     /**
      * @see org.kuali.kfs.module.bc.document.service.ReportExportService#updateAccountDump(java.lang.String)
@@ -106,6 +115,8 @@ public class ReportExportServiceImpl implements ReportExportService {
         updateAccountDump(principalId);
 
         StringBuilder results = new StringBuilder();
+        //build and add report header row
+        results.append(constructAccountDumpHeaderLine(fieldSeperator));
 
         List<BudgetConstructionAccountDump> accountDumpRecords = getBudgetConstructionAccountDump(principalId);
         for (BudgetConstructionAccountDump accountRecord : accountDumpRecords) {
@@ -165,6 +176,9 @@ public class ReportExportServiceImpl implements ReportExportService {
         updateAccountDump(principalId);
 
         StringBuilder results = new StringBuilder();
+        
+        // construct and append the header line
+        results.append(constructFundingDumpHeaderLine(fieldSeperator));
 
         List<BudgetConstructionAccountDump> accountDumpRecords = getBudgetConstructionAccountDump(principalId);
         for (BudgetConstructionAccountDump accountRecord : accountDumpRecords) {
@@ -214,6 +228,8 @@ public class ReportExportServiceImpl implements ReportExportService {
         updateAccountDump(principalId);
 
         StringBuilder results = new StringBuilder();
+        
+        results.append(constructMonthlyDumpHeaderLine(fieldSeperator));
 
         List<BudgetConstructionAccountDump> accountDumpRecords = getBudgetConstructionAccountDump(principalId);
         for (BudgetConstructionAccountDump accountRecord : accountDumpRecords) {
@@ -542,6 +558,131 @@ public class ReportExportServiceImpl implements ReportExportService {
         line = line + "\r\n";
 
         return line;
+    }
+    
+    /**
+     * Constructs header line for the Account Dump Report
+     * 
+     * @param fieldSeperator
+     * @return
+     */
+    protected String constructAccountDumpHeaderLine(String fieldSeperator) {
+      
+        String line = "";
+        line = dataDictionaryService.getAttributeLabel(PendingBudgetConstructionGeneralLedger.class, CUBCPropertyConstants.PendingBudgetConstructionGeneralLedgerProperties.DOC_NBR) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionGeneralLedger.class, CUBCPropertyConstants.PendingBudgetConstructionGeneralLedgerProperties.UNIVERSITY_FISCAL_YEAR) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionGeneralLedger.class, CUBCPropertyConstants.PendingBudgetConstructionGeneralLedgerProperties.CHART_CD) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionGeneralLedger.class, CUBCPropertyConstants.PendingBudgetConstructionGeneralLedgerProperties.ACCOUNT_NBR) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionAccountReports.class, CUBCPropertyConstants.BudgetConstructionAccountReportsProperties.REPORTS_TO_ORG_CD) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionGeneralLedger.class, CUBCPropertyConstants.PendingBudgetConstructionGeneralLedgerProperties.SUB_ACCOUNT_NBR) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionGeneralLedger.class, CUBCPropertyConstants.PendingBudgetConstructionGeneralLedgerProperties.FINANCIAL_OBJECT_CODE) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionGeneralLedger.class, CUBCPropertyConstants.PendingBudgetConstructionGeneralLedgerProperties.FINANCIAL_SUB_OBJECT_CODE) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionGeneralLedger.class, CUBCPropertyConstants.PendingBudgetConstructionGeneralLedgerProperties.FINANCIAL_BALANCE_TYP_CD) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionGeneralLedger.class, CUBCPropertyConstants.PendingBudgetConstructionGeneralLedgerProperties.FINANCIAL_OBJ_TYP_CD) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionGeneralLedger.class, CUBCPropertyConstants.PendingBudgetConstructionGeneralLedgerProperties.FIN_BEG_BAL_LINE_AMT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionGeneralLedger.class, CUBCPropertyConstants.PendingBudgetConstructionGeneralLedgerProperties.ACC_LINE_ANN_BAL_AMT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionOrganizationReports.class, CUBCPropertyConstants.BudgetConstructionOrganizationReportsProperties.RESP_CENTER_CD);
+        line = line + "\r\n";
+
+        return line;
+    }
+    
+    /**
+     * Constructs a header line for the Funding Dump File
+     * 
+     * @param fieldSeperator
+     * 
+     * @return
+     */
+    protected String constructFundingDumpHeaderLine(String fieldSeperator) {
+
+        String line = "";
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.UNIVERSITY_FISCAL_YEAR) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.CHART_CD) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.ACCOUNT_NBR) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionAccountReports.class, CUBCPropertyConstants.BudgetConstructionAccountReportsProperties.REPORTS_TO_ORG_CD)  + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.SUB_ACCOUNT_NBR)+ fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.FINANCIAL_OBJECT_CODE) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.FINANCIAL_SUB_OBJECT_CODE) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.POSITION_NBR) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionPosition.class, CUBCPropertyConstants.BudgetConstructionPositionProperties.POSITION_DESC) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionPosition.class, CUBCPropertyConstants.BudgetConstructionPositionProperties.SETID_SALARY) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionPosition.class, CUBCPropertyConstants.BudgetConstructionPositionProperties.POSITION_SALARY_PLAN_DEFAULT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionPosition.class, CUBCPropertyConstants.BudgetConstructionPositionProperties.POSITION_GRADE_DEFAULT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionPosition.class, CUBCPropertyConstants.BudgetConstructionPositionProperties.NORMAL_WORK_MONTHS) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionPosition.class, CUBCPropertyConstants.BudgetConstructionPositionProperties.PAY_MONTHS)+ fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.EMPLID) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionIntendedIncumbent.class, CUBCPropertyConstants.BudgetConstructionIntendedIncumbentProperties.NAME) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionIntendedIncumbent.class, CUBCPropertyConstants.BudgetConstructionIntendedIncumbentProperties.CLASSIFICATION_LEVEL) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionAdministrativePost.class, CUBCPropertyConstants.BudgetConstructionAdministrativePostProperties.ADMINISTRATIVE_POST) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionCalculatedSalaryFoundationTracker.class, CUBCPropertyConstants.BudgetConstructionCalculatedSalaryFoundationTrackerProperties.CSF_AMT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionCalculatedSalaryFoundationTracker.class, CUBCPropertyConstants.BudgetConstructionCalculatedSalaryFoundationTrackerProperties.CSF_FULL_TIME_EMPL_QUANTITY) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionCalculatedSalaryFoundationTracker.class, CUBCPropertyConstants.BudgetConstructionCalculatedSalaryFoundationTrackerProperties.CSF_TIME_PERCENT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_FUND_DURATION_CD) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_REQ_CSF_AMT)+ fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_REQ_CSF_FTE_QUANTITY) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_REQ_TIME_PERCENT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_TOTAL_INTENDED_AMT)  + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_TOTAL_INTENDED_FTE_QUANTITY) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_REQ_AMT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_REQ_TIME_PERCENT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_REQ_FTE_QUANTITY) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_REQ_FTE_QUANTITY) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_FUNDING_DELETE_IND) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_FUNDING_MONTH) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionAppointmentFundingReason.class, CUBCPropertyConstants.BudgetConstructionAppointmentFundingReasonProperties.APPT_FUNDING_REASON_CD) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionOrganizationReports.class, CUBCPropertyConstants.BudgetConstructionOrganizationReportsProperties.RESP_CENTER_CD);
+        line = line + "\r\n";
+
+        return line;
+    }
+    
+
+    /**
+     * Constructs a monthly dump header line
+     * 
+     * @param fieldSeperator
+     * @return
+     */
+    protected String constructMonthlyDumpHeaderLine( String fieldSeperator) {
+        String line = "";
+
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.DOC_NBR) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.UNIVERSITY_FISCAL_YEAR)  + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.CHART_CD) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.ACCOUNT_NBR) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionAccountReports.class, CUBCPropertyConstants.BudgetConstructionAccountReportsProperties.REPORTS_TO_ORG_CD) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.SUB_ACCOUNT_NBR) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.FINANCIAL_OBJ_CD) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.FINANCIAL_SUB_OBJ_CD) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.FINANCIAL_BAL_TYP_CD) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.FINANCIAL_OBJ_TYP_CD) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.FINANCIAL_DOC_MONTH_1_LINE_AMT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.FINANCIAL_DOC_MONTH_2_LINE_AMT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.FINANCIAL_DOC_MONTH_3_LINE_AMT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.FINANCIAL_DOC_MONTH_4_LINE_AMT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.FINANCIAL_DOC_MONTH_5_LINE_AMT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.FINANCIAL_DOC_MONTH_6_LINE_AMT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.FINANCIAL_DOC_MONTH_7_LINE_AMT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.FINANCIAL_DOC_MONTH_8_LINE_AMT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.FINANCIAL_DOC_MONTH_9_LINE_AMT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.FINANCIAL_DOC_MONTH_10_LINE_AMT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.FINANCIAL_DOC_MONTH_11_LINE_AMT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionMonthly.class, CUBCPropertyConstants.BudgetConstructionMonthlyProperties.FINANCIAL_DOC_MONTH_12_LINE_AMT) + fieldSeperator;
+        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionOrganizationReports.class, CUBCPropertyConstants.BudgetConstructionOrganizationReportsProperties.RESP_CENTER_CD);
+
+        line = line + "\r\n";
+
+        return line;
+    }
+
+    /**
+     * Gets the dataDictionaryService.
+     * 
+     * @param dataDictionaryService
+     */
+    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
+        this.dataDictionaryService = dataDictionaryService;
     }
 
 }

@@ -176,4 +176,16 @@
 	</bean>
 
 
+    <bean id="reportDumpService" class="org.kuali.kfs.module.bc.document.service.impl.ReportExportServiceImpl" >
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>	
+		<property name="reportDumpDao">
+			<ref bean="reportDumpDao" />
+		</property>		
+	    <property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>				
+	</bean>
+
 </beans>
