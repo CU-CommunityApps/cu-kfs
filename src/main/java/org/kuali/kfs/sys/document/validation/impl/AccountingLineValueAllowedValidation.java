@@ -71,7 +71,7 @@ public class AccountingLineValueAllowedValidation extends GenericValidation {
     		parameterCache.set(cache);
     	}
     	// class component of cache
-    	Map<String,ReusableParameterEvaluator> classParameters = cache.get(cache);
+    	Map<String,ReusableParameterEvaluator> classParameters = cache.get(componentClass);
     	if ( classParameters == null ) {
     		classParameters = new HashMap<String, ReusableParameterEvaluator>();
     		cache.put(componentClass, classParameters);
