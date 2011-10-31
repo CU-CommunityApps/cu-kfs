@@ -291,12 +291,13 @@
     <reference-descriptor name="referenceOrigin" class-ref="org.kuali.kfs.sys.businessobject.OriginationCode" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
         <foreignkey field-ref="referenceOriginCode" />
     </reference-descriptor>
-    
+    <!--  
     <reference-descriptor name="salesTax" class-ref="org.kuali.kfs.fp.businessobject.SalesTax" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
     	<foreignkey field-ref="documentNumber"/>
     	<foreignkey field-ref="financialDocumentLineTypeCode"/>
     	<foreignkey field-ref="sequenceNumber"/>
     </reference-descriptor>
+    -->
 </class-descriptor>
 
 <class-descriptor class="org.kuali.kfs.sys.businessobject.TargetAccountingLine" table="FP_ACCT_LINES_T">
@@ -363,12 +364,13 @@
     <reference-descriptor name="referenceOrigin" class-ref="org.kuali.kfs.sys.businessobject.OriginationCode" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
         <foreignkey field-ref="referenceOriginCode" />
     </reference-descriptor>
-    
+   <!--  
     <reference-descriptor name="salesTax" class-ref="org.kuali.kfs.fp.businessobject.SalesTax" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
     	<foreignkey field-ref="documentNumber"/>
     	<foreignkey field-ref="financialDocumentLineTypeCode"/>
     	<foreignkey field-ref="sequenceNumber"/>
     </reference-descriptor>
+     --> 
 </class-descriptor>
 
 <class-descriptor class="org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry" table="GL_PENDING_ENTRY_T" proxy="dynamic">
