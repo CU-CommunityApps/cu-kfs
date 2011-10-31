@@ -53,7 +53,7 @@
 		<property name="port" value="3310" />
 		<property name="timeout" value="60000" />
 	</bean>
-
+<!--  
 	<bean id="UserOptionsServiceInner" class="org.kuali.rice.kew.useroptions.UserOptionsServiceImpl" lazy-init="true">
        <property name="userOptionsDAO">
            <ref bean="enUserOptionsDAO" />
@@ -82,7 +82,7 @@
         <property name="minIdle" value="5" /> 
         <property name="initialSize" value="5"/> 
         <property name="accessToUnderlyingConnectionAllowed" value="true"/> 
-    </bean> 
+    </bean>  -->
 
     <!-- We override the KFS impl so that we can read properties specified at runtime -->
 <!--
