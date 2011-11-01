@@ -454,8 +454,6 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
         String name = psPositionJobExtractEntry.getName();
         Timestamp csfCreateTimestamp = dateTimeService.getCurrentTimestamp();
 
-        BigDecimal csfFullTimeEmploymentQuantity = psPositionJobExtractEntry.getCsfFullTimeEmploymentQuantity()
-                .bigDecimalValue();
         KualiDecimal csfAmount = generateCSFAmount(psPositionJobExtractEntry.getCsfAmount());
 
         Map<String, CalculatedSalaryFoundationTracker> mapOfEntries = new HashMap<String, CalculatedSalaryFoundationTracker>();
@@ -464,6 +462,9 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
         for (PSPositionJobExtractAccountingInfo accountingInfo : psPositionJobExtractEntry
                 .getAccountingInfoCollection()) {
             BigDecimal csfTimePercent = generateCsfTimePercent(accountingInfo.getCsfTimePercent()).bigDecimalValue();
+            BigDecimal csfFullTimeEmploymentQuantity = generateCsfTimePercent(accountingInfo.getCsfTimePercent())
+                    .bigDecimalValue()
+                    .divide(new BigDecimal(100));
             String chartOfAccountsCode = accountingInfo.getChartOfAccountsCode();
             String accountNumber = accountingInfo.getAccountNumber();
 

@@ -50,7 +50,6 @@
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="positionNumber" p:start="0" p:end="6" p:rightTrim="true" />
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="emplid" p:start="614" p:end="621" p:rightTrim="true" />
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfAmount" p:start="663" p:end="675" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfFullTimeEmploymentQuantity" p:start="120" p:end="123" p:formatterClass="org.kuali.kfs.sys.businessobject.format.ExplicitKualiDecimalFormatter"/>
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="name" p:start="684" p:end="734" />
      							
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent1" p:start="734" p:end="739" />
