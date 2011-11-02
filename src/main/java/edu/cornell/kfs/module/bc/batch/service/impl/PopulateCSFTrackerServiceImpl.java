@@ -482,11 +482,13 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
 
             String csfDeleteCode = generateDeleteCode(psPositionJobExtractEntry);
             String csfFundingStatusCode = generateFundingStatusCode(psPositionJobExtractEntry);
-            
-            KualiDecimal percentOfCSFAmount = new KualiDecimal(csfAmount.bigDecimalValue().multiply(csfTimePercent));
+
+            KualiDecimal percentOfCSFAmount = new KualiDecimal(csfAmount.bigDecimalValue().multiply(
+                    csfFullTimeEmploymentQuantity));
 
             CalculatedSalaryFoundationTracker entry = generateCalculatedSalaryFoundationTracker(positionNumber,
-                    universityFiscalYear, emplid, name, csfCreateTimestamp, csfFullTimeEmploymentQuantity, percentOfCSFAmount,
+                    universityFiscalYear, emplid, name, csfCreateTimestamp, csfFullTimeEmploymentQuantity,
+                    percentOfCSFAmount,
                     csfTimePercent, chartOfAccountsCode, accountNumber, subAccountNumber, financialObjectCode,
                     financialSubObjectCode, csfDeleteCode, csfFundingStatusCode);
 
