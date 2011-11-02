@@ -21,6 +21,32 @@
 	<listener>
 	  <listener-class>net.bull.javamelody.SessionListener</listener-class>
 	</listener>
+
+	
+      <filter> 
+          <filter-name>CUTransactionFilter</filter-name> 
+            <filter-class>edu.cornell.cynergy.web.CUTransactionFilter</filter-class> 
+      </filter> 
+      
+      <filter-mapping> 
+        <filter-name>CUTransactionFilter</filter-name> 
+        <url-pattern>*.do</url-pattern> 
+      </filter-mapping> 
+    
+      <filter-mapping> 
+        <filter-name>CUTransactionFilter</filter-name> 
+        <url-pattern>/remoting/*</url-pattern> 
+      </filter-mapping> 
+    
+      <filter-mapping> 
+        <filter-name>CUTransactionFilter</filter-name> 
+        <url-pattern>/EDocLite</url-pattern> 
+      </filter-mapping> 
+      
+      <filter-mapping> 
+        <filter-name>CUTransactionFilter</filter-name> 
+        <url-pattern>/dwr/*</url-pattern> 
+      </filter-mapping> 
 	
     <filter>
         <filter-name>CU Login Filter</filter-name>
