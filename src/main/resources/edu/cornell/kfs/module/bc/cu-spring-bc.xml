@@ -186,5 +186,17 @@
 			<ref bean="dataDictionaryService" />
 		</property>				
 	</bean>
+	
+	<bean id="budgetConstructionHumanResourcesPayrollInterfaceService" class="org.kuali.kfs.module.bc.batch.service.impl.BudgetConstructionHumanResourcesPayrollInterfaceServiceImpl">
+        <property name="budgetConstructionHumanResourcesPayrollInterfaceDao">
+            <ref bean="budgetConstructionHumanResourcesPayrollInterfaceDao" />
+        </property>
+        <property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>	
+		<property name="personService">
+			<ref bean="personService" />
+		</property>	
+    </bean>
 
 </beans>
