@@ -59,7 +59,7 @@
     <property name="shortLabel" value="Dflt Acct"/>
     <property name="maxLength" value="7"/>
     <property name="validationPattern">
-      <ref bean="AlphaNumericValidation" />
+      <ref bean="AnyCharacterValidation" />
     </property>
     <property name="control">
       <bean parent="TextControlDefinition" p:size="10"/>
