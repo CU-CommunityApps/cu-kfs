@@ -15,16 +15,21 @@
  */
 package org.kuali.kfs.module.ec.document.authorization;
 
+import java.util.List;
 import java.util.Set;
 
+import org.kuali.kfs.module.ec.document.EffortCertificationDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentAuthorizerBase;
 import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kew.web.session.UserSession;
 import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.kns.bo.AdHocRoutePerson;
+import org.kuali.rice.kns.bo.DocumentHeader;
 import org.kuali.rice.kns.document.Document;
 import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
+import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
 /**
  * Document Authorizer for the Effort Certification document.
@@ -40,8 +45,18 @@ public class EffortCertificationDocumentAuthorizer extends FinancialSystemTransa
     @Override
     public Set<String> getDocumentActions(Document document, Person user, Set<String> documentActionsFromPresentationController) {
         Set<String> documentActionsToReturn = super.getDocumentActions(document, user, documentActionsFromPresentationController);
-        
         String principalId = UserSession.getAuthenticatedUser().getPrincipalId();
+
+        // When the document route looped, an user is added to adhoc route
+        boolean adhocRequested = document.getDocumentHeader().getWorkflowDocument().isAdHocRequested();
+        if(adhocRequested){
+            documentActionsToReturn.add(KNSConstants.KUALI_ACTION_CAN_EDIT);
+            documentActionsToReturn.add(KNSConstants.KUALI_ACTION_CAN_SAVE);
+        }
+        
+/*
+  Can't have all prior approvers edit the document.
+        
         try {
             if (document.getDocumentHeader().getWorkflowDocument().stateIsEnroute()) {
                 Set<Person> priorApprovers = document.getDocumentHeader().getWorkflowDocument().getAllPriorApprovers();
@@ -52,11 +67,13 @@ public class EffortCertificationDocumentAuthorizer extends FinancialSystemTransa
                     }
                  }
             }
+            
+            
         }
         catch (WorkflowException wfe) {
             throw new RuntimeException("Unable to retrieve prior Approvers list");
         }
-        
+*/
         return documentActionsToReturn;
     }
 
