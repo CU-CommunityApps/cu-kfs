@@ -23,7 +23,7 @@
 	</listener>
 
 	
-      <filter> 
+    <!--   <filter> 
           <filter-name>CUTransactionFilter</filter-name> 
             <filter-class>edu.cornell.cynergy.web.CUTransactionFilter</filter-class> 
       </filter> 
@@ -47,7 +47,7 @@
         <filter-name>CUTransactionFilter</filter-name> 
         <url-pattern>/dwr/*</url-pattern> 
       </filter-mapping> 
-	
+	 -->
     <filter>
         <filter-name>CU Login Filter</filter-name>
         <filter-class>edu.cornell.cynergy.app.web.DevelopmentLoginFilter</filter-class>
