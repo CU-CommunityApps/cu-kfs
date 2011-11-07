@@ -32,15 +32,15 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapKeyConstants;
-import org.kuali.kfs.module.purap.PurapParameterConstants;
-import org.kuali.kfs.module.purap.PurapPropertyConstants;
-import org.kuali.kfs.module.purap.PurapRuleConstants;
-import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.PurapConstants.PREQDocumentsStrings;
 import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
+import org.kuali.kfs.module.purap.PurapKeyConstants;
+import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants.NRATaxParameters;
+import org.kuali.kfs.module.purap.PurapPropertyConstants;
+import org.kuali.kfs.module.purap.PurapRuleConstants;
+import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants.NodeDetails;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants.PaymentRequestDocument.NodeDetailEnum;
 import org.kuali.kfs.module.purap.businessobject.AutoApproveExclude;
@@ -75,6 +75,7 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.BankService;
+import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
@@ -89,8 +90,6 @@ import org.kuali.rice.kew.service.KEWServiceLocator;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kns.bo.DocumentHeader;
 import org.kuali.rice.kns.bo.Note;
-import org.kuali.rice.kns.bo.PersistableBusinessObject;
-import org.kuali.rice.kns.document.Document;
 import org.kuali.rice.kns.exception.InfrastructureException;
 import org.kuali.rice.kns.exception.ValidationException;
 import org.kuali.rice.kns.service.BusinessObjectService;
@@ -255,6 +254,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
     /**
      * @see org.kuali.kfs.module.purap.document.service.PaymentRequestService.autoApprovePaymentRequests()
      */
+    @NonTransactional
     public boolean autoApprovePaymentRequests() {
         boolean hadErrorAtLeastOneError = true;
         // should objects from existing user session be copied over
@@ -275,6 +275,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
      * 
      * @see org.kuali.kfs.module.purap.document.service.PaymentRequestService#autoApprovePaymentRequest(java.lang.String, org.kuali.rice.kns.util.KualiDecimal)
      */
+    @NonTransactional
     public boolean autoApprovePaymentRequest(String docNumber, KualiDecimal defaultMinimumLimit) {
         PaymentRequestDocument paymentRequestDocument = null;
         try {
@@ -313,6 +314,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
      * 
      * @see org.kuali.kfs.module.purap.document.service.PaymentRequestService#autoApprovePaymentRequest(org.kuali.kfs.module.purap.document.PaymentRequestDocument, org.kuali.rice.kns.util.KualiDecimal)
      */
+    @NonTransactional
     public boolean autoApprovePaymentRequest(PaymentRequestDocument doc, KualiDecimal defaultMinimumLimit) {
         if (isEligibleForAutoApproval(doc, defaultMinimumLimit)) {
             try {
