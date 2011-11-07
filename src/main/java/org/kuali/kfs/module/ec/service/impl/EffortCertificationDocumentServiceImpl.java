@@ -183,7 +183,9 @@ public class EffortCertificationDocumentServiceImpl implements EffortCertificati
         KualiWorkflowDocument workflowDocument = effortCertificationDocument.getDocumentHeader().getWorkflowDocument();
         String routeLevelName = workflowDocument.getCurrentRouteNodeNames();
         Set<Person> priorApprovers = getPriorApprovers(workflowDocument);
-
+        String authenticatedUser = org.kuali.rice.kew.web.session.UserSession.getAuthenticatedUser().getPrincipalName();
+        
+        
         for (EffortCertificationDetail detailLine : detailLines) {
             boolean hasBeenChanged = EffortCertificationDocumentRuleUtil.isPayrollAmountChangedFromPersisted(detailLine);
             if (!hasBeenChanged) {
@@ -210,7 +212,12 @@ public class EffortCertificationDocumentServiceImpl implements EffortCertificati
                 //KULEFR-206
                 //String actionRequestOfDirector = this.getActionRequest(routeLevelName, KFSConstants.RouteLevelNames.PROJECT_MANAGEMENT);                
                 AdHocRoutePerson adHocRoutePerson = this.buildAdHocRouteRecipient(accountProjectDirectorPersonUserId, KEWConstants.ACTION_REQUEST_APPROVE_REQ);
-                if(newLine){
+    
+                //Ad-hoc route to PD only if 
+                //1. The accounting line is new and 
+                //2. if another PD approved or current user is a PD
+                //
+                if(newLine && hasPDApproved(authenticatedUser,detailLines,priorApprovers)){
                     addAdHocRoutePersonforNewLine(adHocRoutePersonList,   adHocRoutePerson);
                 }else{
                     this.addAdHocRoutePerson(adHocRoutePersonList, priorApprovers, adHocRoutePerson);
@@ -219,6 +226,38 @@ public class EffortCertificationDocumentServiceImpl implements EffortCertificati
         }
     }
 
+    
+    
+    //
+    public boolean hasPDApproved(String currentUser,  List<EffortCertificationDetail> detailLines,Set<Person> priorApprovers ){
+        boolean returnValue = false;
+        
+        for (EffortCertificationDetail detailLine : detailLines) {
+            Account account = detailLine.getAccount();
+            Person projectDirector = contractsAndGrantsModuleService.getProjectDirectorForAccount(account);
+            if (projectDirector != null) {
+                String accountProjectDirectorPersonUserId = projectDirector.getPrincipalName();
+                if(currentUser.equalsIgnoreCase(accountProjectDirectorPersonUserId)) {
+                    returnValue = true;
+                    break;
+                }
+                for (Person approver : priorApprovers) {
+                    String priorApprover = approver.getPrincipalName();
+                    if(priorApprover.equalsIgnoreCase(accountProjectDirectorPersonUserId)){
+                        returnValue = true;
+                        break;
+                    }
+                    
+                }
+                if(returnValue) break;
+                
+            }
+            else
+                continue;
+        }        
+        
+        return returnValue;
+    }
    
     // add the given ad hoc route person if the person is not in the list
     // Ignore if the person is a prior approvar or not.  When a new row added, the person
