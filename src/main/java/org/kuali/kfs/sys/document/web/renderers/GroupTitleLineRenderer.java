@@ -66,7 +66,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
         noscriptFileTag.setStyle("font:10px;height:16px;");
         uploadButtonTag.setSrc(KNSServiceLocator.getKualiConfigurationService().getPropertyString("externalizable.images.url") + "tinybutton-add1.gif");
         uploadButtonTag.setStyleClass("tinybutton");
-        uploadButtonTag.setOnclick("this.form.enctype=\\'multipart/form-data\\'; return true;");
+        uploadButtonTag.setOnclick("this.form.encoding=\\'multipart/form-data\\'; return true;");
         cancelButtonTag.setProperty("methodToCall.cancel");
         cancelButtonTag.setSrc(KNSServiceLocator.getKualiConfigurationService().getPropertyString("externalizable.images.url") + "tinybutton-cancelimport.gif");
         cancelButtonTag.setStyleClass("tinybutton");

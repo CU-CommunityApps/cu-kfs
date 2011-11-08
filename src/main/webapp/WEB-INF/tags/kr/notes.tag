@@ -96,7 +96,7 @@
                       <td class="infoline"><kul:htmlControlAttribute attributeEntry="${notesAttributes.noteText}" property="newNote.noteText" forceRequired="${notesAttributes.noteText.required}" /></td>
                       <c:set var="noteAddButtonOnClick" value="" />
                       <c:if test="${allowsNoteAttachments eq true}">
-                        <c:set var="noteAddButtonOnClick" value="this.form.enctype='multipart/form-data'; return true;" />
+                        <c:set var="noteAddButtonOnClick" value="this.form.encoding='multipart/form-data'; return true;" />
                         <td class="infoline">
                           <div align="center"><br />
                           <html:file property="attachmentFile" size="30" styleId="attachmentFile" value="" /><br /><br />
