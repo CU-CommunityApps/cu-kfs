@@ -32,6 +32,7 @@ import org.kuali.kfs.module.ec.document.EffortCertificationDocument;
 import org.kuali.kfs.module.ec.document.validation.AddDetailLineRule;
 import org.kuali.kfs.module.ec.document.validation.CheckDetailLineAmountRule;
 import org.kuali.kfs.module.ec.document.validation.LoadDetailLineRule;
+import org.kuali.kfs.module.ec.document.validation.SaveEffortCertificationDocumentRule;
 import org.kuali.kfs.module.ec.document.validation.UpdateDetailLineRule;
 import org.kuali.kfs.module.ec.service.EffortCertificationDocumentService;
 import org.kuali.kfs.module.ec.service.EffortCertificationReportDefinitionService;
@@ -52,7 +53,11 @@ import org.kuali.rice.kns.util.KualiDecimal;
 /**
  * To define the rules that may be applied to the effort certification document, a transactional document
  */
-public class EffortCertificationDocumentRules extends TransactionalDocumentRuleBase implements AddDetailLineRule<EffortCertificationDocument, EffortCertificationDetail>, UpdateDetailLineRule<EffortCertificationDocument, EffortCertificationDetail>, CheckDetailLineAmountRule<EffortCertificationDocument, EffortCertificationDetail>, LoadDetailLineRule<EffortCertificationDocument> {
+public class EffortCertificationDocumentRules extends TransactionalDocumentRuleBase implements 
+SaveEffortCertificationDocumentRule<EffortCertificationDocument, EffortCertificationDetail>, 
+AddDetailLineRule<EffortCertificationDocument, EffortCertificationDetail>, 
+UpdateDetailLineRule<EffortCertificationDocument, EffortCertificationDetail>, 
+CheckDetailLineAmountRule<EffortCertificationDocument, EffortCertificationDetail>, LoadDetailLineRule<EffortCertificationDocument> {
     protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(EffortCertificationDocumentRules.class);
 
     protected EffortCertificationDocumentService effortCertificationDocumentService = SpringContext.getBean(EffortCertificationDocumentService.class);
@@ -63,6 +68,29 @@ public class EffortCertificationDocumentRules extends TransactionalDocumentRuleB
     protected LaborModuleService laborModuleService = SpringContext.getBean(LaborModuleService.class);
     protected AccountingLineRuleHelperService accountingLineRuleHelperService = SpringContext.getBean(AccountingLineRuleHelperService.class);
 
+    public boolean processEffortCertificationDocumentSaveRule( EffortCertificationDocument effortCertificationDocument){
+        
+
+        if (EffortCertificationDocumentRuleUtil.isPayrollAmountChangedFromPersisted(effortCertificationDocument)) {
+            List<Note> notes = effortCertificationDocument.getDocumentHeader().getBoNotes();
+            
+            boolean noteHasBeenAdded = false;
+            for(Note note : notes) {
+                if(note.isNewCollectionRecord()) {
+                    noteHasBeenAdded = true;
+                    break;
+                }
+            }
+            
+            if (!noteHasBeenAdded) {
+                reportError(EffortConstants.EFFORT_CERTIFICATION_TAB_ERRORS, EffortKeyConstants.ERROR_NOTE_REQUIRED_WHEN_EFFORT_CHANGED);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    
     /**
      * @see org.kuali.kfs.module.ec.document.validation.AddDetailLineRule#processAddDetailLineRules(org.kuali.kfs.module.ec.document.EffortCertificationDocument,
      *      org.kuali.kfs.module.ec.businessobject.EffortCertificationDetail)

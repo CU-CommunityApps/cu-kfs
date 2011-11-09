@@ -36,6 +36,7 @@ import org.kuali.kfs.module.ec.businessobject.EffortCertificationDetailLineOverr
 import org.kuali.kfs.module.ec.document.EffortCertificationDocument;
 import org.kuali.kfs.module.ec.document.validation.event.AddDetailLineEvent;
 import org.kuali.kfs.module.ec.document.validation.event.CheckDetailLineAmountEvent;
+import org.kuali.kfs.module.ec.document.validation.event.SaveEffortCertificationDocumentEvent;
 import org.kuali.kfs.module.ec.document.validation.impl.EffortCertificationDocumentRuleUtil;
 import org.kuali.kfs.module.ec.service.EffortCertificationDocumentService;
 import org.kuali.kfs.module.ec.util.DetailLineGroup;
@@ -732,5 +733,40 @@ public class CertificationReportAction extends EffortCertificationAction {
         return super.insertBONote(mapping, form, request, response);
     }
     
+    
+    
+    @Override
+    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        EffortCertificationDocument effortDocument  = (EffortCertificationDocument) kualiDocumentFormBase.getDocument();
+        
+        ActionForward actionForward = null;
+        boolean isValid = this.invokeRules(new SaveEffortCertificationDocumentEvent(effortDocument));
+        
+        if(isValid)
+          actionForward =   super.save(mapping, kualiDocumentFormBase, request, response);
+        else
+          actionForward = mapping.findForward(KFSConstants.MAPPING_BASIC);
+        
+        return actionForward;
+        
+    }    
+    
+
+    public ActionForward close(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        EffortCertificationDocument effortDocument  = (EffortCertificationDocument) kualiDocumentFormBase.getDocument();
+        
+        ActionForward actionForward = null;
+        boolean isValid = this.invokeRules(new SaveEffortCertificationDocumentEvent(effortDocument));
+        
+        if(isValid)
+            actionForward  = super.close(mapping, form, request, response);
+        else
+            actionForward = mapping.findForward(KFSConstants.MAPPING_BASIC);
+                   
+        return actionForward;
+    }
+
     
 }
