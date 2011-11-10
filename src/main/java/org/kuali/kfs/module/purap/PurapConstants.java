@@ -885,6 +885,9 @@ public class PurapConstants extends JSTLConstants {
         
         public final static String DEFAULT_SHIPPING_DESCRIPTION = "Shipping";
         
+        // ELECTRONIC INVOICE DISCOUNT DESCRIPTION
+        public static String DISCOUNT_DESCRIPTION = "Full Order Discount";
+        
         public static String CXML_ADDRESS_SHIP_TO_ROLE_ID = "shipTo";
         public static String CXML_ADDRESS_BILL_TO_ROLE_ID = "billTo";
         public static String CXML_ADDRESS_REMIT_TO_ROLE_ID = "remitTo";
