@@ -770,6 +770,12 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
             //set document
             discountItem.setPurapDocument(paymentRequestDocument);
         }
+        else { // no discount
+            if (discountItem != null) {
+                paymentRequestDocument.getItems().remove(discountItem);
+            }
+        }
+
     }
     
     /**
