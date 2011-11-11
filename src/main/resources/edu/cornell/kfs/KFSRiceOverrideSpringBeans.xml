@@ -8,7 +8,6 @@
     <bean id="kimAuthenticationService" class="edu.cornell.cynergy.service.impl.CUWebAuthAuthenticationService">
         <property name="useHttpHeaders"><value>${cynergy.cuwal.useHttpHeaders}</value></property>
     </bean>
-    
   
     <!-- override encryption services  -->
  	<bean id="encryptionService" class="edu.cornell.cynergy.service.impl.AESEncryptionServiceImpl" lazy-init="true">
@@ -54,6 +53,8 @@
 		<property name="timeout" value="60000" />
 	</bean>
 
+<!--  
+
 	<bean id="UserOptionsServiceInner" class="org.kuali.rice.kew.useroptions.UserOptionsServiceImpl" lazy-init="true">
        <property name="userOptionsDAO">
            <ref bean="enUserOptionsDAO" />
@@ -82,7 +83,7 @@
         <property name="minIdle" value="5" /> 
         <property name="initialSize" value="5"/> 
         <property name="accessToUnderlyingConnectionAllowed" value="true"/> 
-    </bean> 
+    </bean> -->
 
     <!-- We override the KFS impl so that we can read properties specified at runtime -->
 <!--
