@@ -29,16 +29,12 @@ public class PurchaseOrderAmendmentRequiresAccountValidationBranchingValidation 
     
     @Override
     protected String determineBranch(AttributedDocumentEvent event) {
-        PurchaseOrderDocument document = (PurchaseOrderDocument)event.getDocument();
-        // If a new unordered item has been added to the purchase order, this is due to Receiving Line document,
-        // and items should not have account validation performed initially, until new unordered items review.        
-        
+        PurchaseOrderDocument document = (PurchaseOrderDocument)event.getDocument();        
         if( SpringContext.getBean(PurchaseOrderService.class).hasNewUnorderedItem(document) &&
-            !SpringContext.getBean(PurapService.class).isDocumentStoppedInRouteNode(document, "NewUnorderedItems") ){
-
+        		SpringContext.getBean(PurapService.class).isDocumentStoppedInRouteNode(document, "AdHoc") ){
         	return KFSConstants.EMPTY_STRING;
         }else{
-            return super.determineBranch(event);
+        	return super.determineBranch(event);
         }
     }
 

@@ -73,6 +73,7 @@ public class PurapWorkflowConstants {
             COMMODITY_CODE_REVIEW("Commodity", PurapConstants.RequisitionStatuses.AWAIT_COMMODITY_CODE_REVIEW, PurapConstants.RequisitionStatuses.DAPRVD_COMMODITY_CODE), 
             COMMODITY_CODE_APO_REVIEW("CommodityAPO", PurapConstants.RequisitionStatuses.AWAIT_COMMODITY_CODE_REVIEW, PurapConstants.RequisitionStatuses.DAPRVD_COMMODITY_CODE), 
             SEPARATION_OF_DUTIES_REVIEW("SeparationOfDuties", PurapConstants.RequisitionStatuses.AWAIT_SEP_OF_DUTY_REVIEW, PurapConstants.RequisitionStatuses.DAPRVD_SEP_OF_DUTY), ;
+
             private final String name;
             private final String awaitingStatusCode;
             private final String disapprovedStatusCode;
@@ -131,8 +132,20 @@ public class PurapWorkflowConstants {
 
     public static class PurchaseOrderDocument {
         public enum NodeDetailEnum implements NodeDetails {
-            ADHOC_REVIEW(DOC_ADHOC_NODE_NAME, null, PurapConstants.PurchaseOrderStatuses.CANCELLED), AWAIT_NEW_UNORDERED_ITEM_REVIEW("NewUnorderedItems", PurapConstants.PurchaseOrderStatuses.AWAIT_NEW_UNORDERED_ITEM_REVIEW, PurapConstants.PurchaseOrderStatuses.VOID), INTERNAL_PURCHASING_REVIEW("ContractManagement", PurapConstants.PurchaseOrderStatuses.AWAIT_PURCHASING_REVIEW, PurapConstants.PurchaseOrderStatuses.DAPRVD_PURCHASING), COMMODITY_CODE_REVIEW("Commodity", PurapConstants.PurchaseOrderStatuses.AWAIT_COMMODITY_CODE_REVIEW, PurapConstants.PurchaseOrderStatuses.DAPRVD_COMMODITY_CODE), CONTRACTS_AND_GRANTS_REVIEW("Award", PurapConstants.PurchaseOrderStatuses.AWAIT_CONTRACTS_GRANTS_REVIEW, PurapConstants.PurchaseOrderStatuses.DAPRVD_CONTRACTS_GRANTS), BUDGET_OFFICE_REVIEW("Budget", PurapConstants.PurchaseOrderStatuses.AWAIT_BUDGET_REVIEW, PurapConstants.PurchaseOrderStatuses.DAPRVD_BUDGET), VENDOR_TAX_REVIEW("Tax", PurapConstants.PurchaseOrderStatuses.AWAIT_TAX_REVIEW, PurapConstants.PurchaseOrderStatuses.DAPRVD_TAX), DOCUMENT_TRANSMISSION("JoinVendorIsEmployeeOrNonResidentAlien", null, PurapConstants.PurchaseOrderStatuses.VOID), ;
-
+            ADHOC_REVIEW(DOC_ADHOC_NODE_NAME, null, PurapConstants.PurchaseOrderStatuses.CANCELLED), 
+            AWAIT_NEW_UNORDERED_ITEM_REVIEW("NewUnorderedItems", PurapConstants.PurchaseOrderStatuses.AWAIT_NEW_UNORDERED_ITEM_REVIEW, PurapConstants.PurchaseOrderStatuses.VOID), 
+            INTERNAL_PURCHASING_REVIEW("ContractManagement", PurapConstants.PurchaseOrderStatuses.AWAIT_PURCHASING_REVIEW, PurapConstants.PurchaseOrderStatuses.DAPRVD_PURCHASING), 
+            COMMODITY_CODE_REVIEW("Commodity", PurapConstants.PurchaseOrderStatuses.AWAIT_COMMODITY_CODE_REVIEW, PurapConstants.PurchaseOrderStatuses.DAPRVD_COMMODITY_CODE), 
+            CONTRACTS_AND_GRANTS_REVIEW("Award", PurapConstants.PurchaseOrderStatuses.AWAIT_CONTRACTS_GRANTS_REVIEW, PurapConstants.PurchaseOrderStatuses.DAPRVD_CONTRACTS_GRANTS), 
+            BUDGET_OFFICE_REVIEW("Budget", PurapConstants.PurchaseOrderStatuses.AWAIT_BUDGET_REVIEW, PurapConstants.PurchaseOrderStatuses.DAPRVD_BUDGET), 
+            VENDOR_TAX_REVIEW("Tax", PurapConstants.PurchaseOrderStatuses.AWAIT_TAX_REVIEW, PurapConstants.PurchaseOrderStatuses.DAPRVD_TAX), 
+            DOCUMENT_TRANSMISSION("JoinVendorIsEmployeeOrNonResidentAlien", null, PurapConstants.PurchaseOrderStatuses.VOID), 
+            ACCOUNT_REVIEW("Account", PurapConstants.PurchaseOrderStatuses.AWAIT_FISCAL_REVIEW, PurapConstants.PurchaseOrderStatuses.DAPRVD_FISCAL), 
+            ORG_REVIEW("AccountingOrganizationHierarchy", PurapConstants.RequisitionStatuses.AWAIT_CHART_REVIEW, PurapConstants.RequisitionStatuses.DAPRVD_CHART), 
+            SUB_ACCOUNT_REVIEW("SubAccount", PurapConstants.RequisitionStatuses.AWAIT_SUB_ACCT_REVIEW, PurapConstants.RequisitionStatuses.DAPRVD_SUB_ACCT), 
+            SEPARATION_OF_DUTIES_REVIEW("SeparationOfDuties", PurapConstants.RequisitionStatuses.AWAIT_SEP_OF_DUTY_REVIEW, PurapConstants.RequisitionStatuses.DAPRVD_SEP_OF_DUTY), ;
+            
+            
             private final String name;
             private final String awaitingStatusCode;
             private final String disapprovedStatusCode;

@@ -220,11 +220,13 @@ public class PurapConstants extends JSTLConstants {
         public static final String AWAIT_PURCHASING_REVIEW = "WPUR";
         public static final String AWAIT_COMMODITY_CODE_REVIEW = "WCOM";
         public static final String AWAIT_NEW_UNORDERED_ITEM_REVIEW = "WNUI";
+        public static final String AWAIT_FISCAL_REVIEW = "AFIS";
         public static final String DAPRVD_TAX = "DTAX";
         public static final String DAPRVD_BUDGET = "DBUD";
         public static final String DAPRVD_CONTRACTS_GRANTS = "DCG";
         public static final String DAPRVD_PURCHASING = "DPUR";
         public static final String DAPRVD_COMMODITY_CODE = "DCOM";
+        public static final String DAPRVD_FISCAL = "DFIS";
         public static final String CXML_ERROR = "CXER";
         public static final String PENDING_CXML = "CXPE";
         public static final String PENDING_FAX = "FXPE";
