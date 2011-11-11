@@ -532,6 +532,7 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
                 .getCSFAccountingInfoCollection().size() > 0) {
             for (PSPositionJobExtractAccountingInfo accountingInfo : psPositionJobExtractEntry
                     .getCSFAccountingInfoCollection()) {
+
                 BigDecimal csfTimePercent = generateKualiDecimal(accountingInfo.getCsfTimePercent()).bigDecimalValue();
                 BigDecimal csfFullTimeEmploymentQuantity = generateKualiDecimal(accountingInfo.getCsfTimePercent())
                         .bigDecimalValue()
@@ -566,12 +567,17 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
                 // if in the map add percentages and add only one account
                 CalculatedSalaryFoundationTracker csfEntryFromMap = mapOfEntries.get(accountingInfo.getKey());
                 if (csfEntryFromMap != null) {
-                    BigDecimal tmpTimePercent = entry.getCsfTimePercent().add(csfTimePercent);
+                    BigDecimal tmpTimePercent = csfEntryFromMap.getCsfTimePercent().add(csfTimePercent);
                     entry.setCsfTimePercent(tmpTimePercent);
-                    BigDecimal csfFTE = entry.getCsfTimePercent()
-                            .divide(new BigDecimal(100));
+
+                    BigDecimal csfFTE = csfEntryFromMap.getCsfFullTimeEmploymentQuantity().add(
+                            csfFullTimeEmploymentQuantity);
                     entry.setCsfFullTimeEmploymentQuantity(csfFTE);
+
+                    KualiDecimal amount = csfEntryFromMap.getCsfAmount().add(percentOfCSFAmount);
+                    entry.setCsfAmount(amount);
                 }
+
                 mapOfEntries.put(accountingInfo.getKey(), entry);
 
             }
@@ -618,13 +624,16 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
                     // if in the map add percentages and add only one account
                     CalculatedSalaryFoundationTracker csfEntryFromMap = mapOfEntries.get(accountingInfo.getKey());
                     if (csfEntryFromMap != null) {
-                        BigDecimal tmpTimePercent = entry.getCsfTimePercent().add(csfTimePercent);
+                        BigDecimal tmpTimePercent = csfEntryFromMap.getCsfTimePercent().add(csfTimePercent);
                         entry.setCsfTimePercent(tmpTimePercent);
-                        BigDecimal csfFTE = entry.getCsfTimePercent()
-                                .divide(new BigDecimal(100));
+
+                        BigDecimal csfFTE = csfEntryFromMap.getCsfFullTimeEmploymentQuantity().add(
+                                csfFullTimeEmploymentQuantity);
                         entry.setCsfFullTimeEmploymentQuantity(csfFTE);
+
+                        KualiDecimal amount = csfEntryFromMap.getCsfAmount().add(percentOfCSFAmount);
+                        entry.setCsfAmount(amount);
                     }
-                    mapOfEntries.put(accountingInfo.getKey(), entry);
 
                 }
             }
@@ -684,11 +693,11 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
         entry.setFinancialObjectCode(financialObjectCode);
         entry.setFinancialSubObjectCode(financialSubObjectCode);
 
-//        CalculatedSalaryFoundationTracker retrievedCSFEntry = (CalculatedSalaryFoundationTracker) businessObjectService
-//                .retrieve(entry);
-//        if (ObjectUtils.isNotNull(retrievedCSFEntry)) {
-//            entry = retrievedCSFEntry;
-//        }
+        //        CalculatedSalaryFoundationTracker retrievedCSFEntry = (CalculatedSalaryFoundationTracker) businessObjectService
+        //                .retrieve(entry);
+        //        if (ObjectUtils.isNotNull(retrievedCSFEntry)) {
+        //            entry = retrievedCSFEntry;
+        //        }
 
         entry.setName(name);
         entry.setCsfAmount(csfAmount);
@@ -743,12 +752,12 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
         psJobData.setPositionNumber(psPositionJobExtractEntry.getPositionNumber());
         psJobData.setEmplid(psPositionJobExtractEntry.getEmplid());
 
-//        PSJobData retrievedPSJobData = (PSJobData) businessObjectService
-//                .retrieve(psJobData);
-//        
-//        if (ObjectUtils.isNotNull(retrievedPSJobData)) {
-//            psJobData = retrievedPSJobData;
-//        }
+        //        PSJobData retrievedPSJobData = (PSJobData) businessObjectService
+        //                .retrieve(psJobData);
+        //        
+        //        if (ObjectUtils.isNotNull(retrievedPSJobData)) {
+        //            psJobData = retrievedPSJobData;
+        //        }
 
         psJobData.setEmployeeRecord(psPositionJobExtractEntry.getEmployeeRecord());
         psJobData.setEmployeeStatus(psPositionJobExtractEntry.getEmployeeStatus());
