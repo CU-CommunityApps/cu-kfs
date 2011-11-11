@@ -12,6 +12,6 @@ public interface PopulateCSFTrackerService {
      * table
      * @return true if successful, false otherwise
      */
-    public boolean populateCSFTracker(String fileName);
+    public boolean populateCSFTracker(String fileName, String currentFileName);
 
 }

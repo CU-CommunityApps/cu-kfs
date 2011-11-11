@@ -30,11 +30,17 @@ import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseCons
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.DictionaryValidationService;
+import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.module.bc.CUBCConstants;
+import edu.cornell.kfs.module.bc.CUBCParameterKeyConstants;
+import edu.cornell.kfs.module.bc.batch.PopulateCSFTrackerStep;
 import edu.cornell.kfs.module.bc.batch.service.PopulateCSFTrackerService;
+import edu.cornell.kfs.module.bc.businessobject.PSJobCode;
+import edu.cornell.kfs.module.bc.businessobject.PSJobData;
+import edu.cornell.kfs.module.bc.businessobject.PSPositionInfo;
 import edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractAccountingInfo;
 import edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry;
 
@@ -51,11 +57,12 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
     protected DateTimeService dateTimeService;
     protected BusinessObjectService businessObjectService;
     protected DictionaryValidationService dictionaryValidationService;
+    protected ParameterService parameterService;
 
     /**
      * @see edu.cornell.kfs.module.bc.batch.service.PopulateCSFTrackerService#populateCSFTracker(java.lang.String)
      */
-    public boolean populateCSFTracker(String fileName) {
+    public boolean populateCSFTracker(String fileName, String currentFileName) {
 
         FileInputStream fileContents = null;
 
@@ -69,11 +76,11 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
                             + " " + e.getMessage(), e);
         }
 
-        Collection csfTackerEntries = null;
+        Collection<PSPositionJobExtractEntry> psPositionJobExtractEntries = null;
         // read csf tracker entries
         try {
             byte[] fileByteContent = IOUtils.toByteArray(fileContents);
-            csfTackerEntries = (Collection) batchInputFileService.parse(
+            psPositionJobExtractEntries = (Collection<PSPositionJobExtractEntry>) batchInputFileService.parse(
                     csfTrackerFlatInputFileType, fileByteContent);
         } catch (IOException e) {
             LOG.error("error while getting file bytes:  " + e.getMessage(), e);
@@ -83,29 +90,62 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
         }
 
         // if no entries read log
-        if (csfTackerEntries == null || csfTackerEntries.isEmpty()) {
+        if (psPositionJobExtractEntries == null || psPositionJobExtractEntries.isEmpty()) {
             LOG.warn("No entries in the PS Job extract input file " + fileName);
         }
 
         // filter only updated entries from last run
         //for better performance look for the last successful file so that we can compare with that
-        Collection<PSPositionJobExtractEntry> filteredCsfTackerEntries = filterEntriesToUpdate(fileName,
-                csfTackerEntries);
+        Collection<PSPositionJobExtractEntry> filteredPsPositionJobExtractEntries = filterEntriesToUpdate(
+                currentFileName, psPositionJobExtractEntries);
 
-        // load entries in CSF tracker
-        Collection<PSPositionJobExtractEntry> validCsfTackerEntries = validateEntriesForCSFTracker(csfTackerEntries);
+        // validate entries to load
+        Collection<PSPositionJobExtractEntry> validCsfTackerEntries = validateEntriesForCSFTracker(filteredPsPositionJobExtractEntries);
 
         List<CalculatedSalaryFoundationTracker> entriesToLoad = new ArrayList<CalculatedSalaryFoundationTracker>();
+        Map<String, PSPositionInfo> positionInfoMap = new HashMap<String, PSPositionInfo>();
+        Map<String, PSJobData> jobInfoMap = new HashMap<String, PSJobData>();
+        Map<String, PSJobCode> jobCodeMap = new HashMap<String, PSJobCode>();
 
-        //generate CalculatedSalaryFoundationTracker entries
+        //generate CalculatedSalaryFoundationTracker entries from the valid PSPositionJobExtractEntry list
         for (PSPositionJobExtractEntry psPositionJobExtractEntry : validCsfTackerEntries) {
             entriesToLoad.addAll(generateCalculatedSalaryFoundationTrackerCollection(psPositionJobExtractEntry));
+
+            // build map for position Info
+
+            if (positionInfoMap.get(psPositionJobExtractEntry.getPositionNumber()) == null) {
+                positionInfoMap
+                        .put(psPositionJobExtractEntry.getPositionNumber(),
+                                generatePSPositionInfo(psPositionJobExtractEntry));
+            }
+
+            // build map for job info
+            if (StringUtils.isNotBlank(psPositionJobExtractEntry.getEmplid())
+                    && (jobInfoMap.get(psPositionJobExtractEntry.getKey()) == null)) {
+                jobInfoMap.put(psPositionJobExtractEntry.getKey(), generatePSJobData(psPositionJobExtractEntry));
+            }
+
+            if (StringUtils.isNotBlank(psPositionJobExtractEntry.getJobCode())
+                    && (jobCodeMap.get(psPositionJobExtractEntry.getJobCode()) == null)) {
+                // build map for job code
+                jobCodeMap.put(psPositionJobExtractEntry.getJobCode(), generatePSJobCode(psPositionJobExtractEntry));
+            }
         }
 
+        // load entries in the CSF tracker table
         loadEntriesInCSFTrackerTable(entriesToLoad);
 
+        // load entries in PS_POSITION_EXTRA table
+        loadEntriesInPSPositionInfoTable(positionInfoMap.values());
+
+        // load entries in PS_JOB_CODE
+        loadEntriesInPSJobCodeTable(jobCodeMap.values());
+
+        // load entries in PS_JOB_DATA
+        loadEntriesInPSJobDataTable(jobInfoMap.values());
+
         // log the number of entries loaded
-        LOG.info("Total entries loaded: " + Integer.toString(csfTackerEntries.size()));
+        LOG.info("Total entries loaded: " + Integer.toString(entriesToLoad.size()));
         return true;
 
     }
@@ -113,38 +153,56 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
     /**
      * Returns only the entries that were updated in the new PS extract.
      * 
-     * @param fileName
      * @param csfTackerEntries
-     * @return
+     * @return only entries that need to be updated
      */
-    Collection<PSPositionJobExtractEntry> filterEntriesToUpdate(String fileName,
-            Collection<PSPositionJobExtractEntry> csfTackerEntries) {
-        Collection<PSPositionJobExtractEntry> filteredCsfTackerEntries = csfTackerEntries;
-        //        Collection<PSPositionJobExtractEntry> currentCsfTackerEntries = null;
-        //        
-        //        FileInputStream fileContents = null;
-        //        
-        //        // get the current file name
-        //        String currentFileName = fileName.substring(0,fileName.lastIndexOf(csfTrackerFlatInputFileType.getFileExtension())) + ".current";
+    Collection<PSPositionJobExtractEntry> filterEntriesToUpdate(String currentFileName,
+            Collection<PSPositionJobExtractEntry> psPositionJobExtractEntries) {
+
+        Collection<PSPositionJobExtractEntry> filteredCsfTackerEntries = psPositionJobExtractEntries;
+        //        if (!getRunPopulateCSFTRackerForNewYear()) {
+        //            Collection<PSPositionJobExtractEntry> currentPSPositionJobExtractEntries = null;
         //
-        //        //read file contents
-        //        try {
-        //            fileContents = new FileInputStream(currentFileName);
-        //            byte[] fileByteContent = IOUtils.toByteArray(fileContents);
-        //            currentCsfTackerEntries = (Collection) batchInputFileService.parse(
-        //                    csfTrackerFlatInputFileType, fileByteContent);
-        //            
-        //            if(currentCsfTackerEntries!=null){
-        //                //build hash maps
-        //                for(int i=0; i< currentCsfTackerEntries.size(); i++){
-        //                    
+        //            FileInputStream fileContents = null;
+        //
+        //            //read file contents
+        //            if (StringUtils.isNotBlank(currentFileName)) {
+        //                try {
+        //                    fileContents = new FileInputStream(currentFileName);
+        //                    byte[] fileByteContent = IOUtils.toByteArray(fileContents);
+        //                    currentPSPositionJobExtractEntries = (Collection<PSPositionJobExtractEntry>) batchInputFileService
+        //                                    .parse(csfTrackerFlatInputFileType, fileByteContent);
+        //
+        //                    if (currentPSPositionJobExtractEntries != null) {
+        //                        //build hash maps for current entries
+        //                        Map<String, PSPositionJobExtractEntry> currentEntriesMap = new HashMap<String, PSPositionJobExtractEntry>();
+        //                        for (PSPositionJobExtractEntry extractEntry : currentPSPositionJobExtractEntries) {
+        //                            currentEntriesMap.put(extractEntry.getKey(), extractEntry);
+        //                        }
+        //
+        //                        //build hash map for new entries
+        //                        Map<String, PSPositionJobExtractEntry> newEntriesMap = new HashMap<String, PSPositionJobExtractEntry>();
+        //                        for (PSPositionJobExtractEntry extractEntry : psPositionJobExtractEntries) {
+        //                            newEntriesMap.put(extractEntry.getKey(), extractEntry);
+        //                        }
+        //                        // filter entries
+        //                        for (String key : newEntriesMap.keySet()) {
+        //                            PSPositionJobExtractEntry currentEntry = currentEntriesMap.get(key);
+        //                            PSPositionJobExtractEntry newEntry = newEntriesMap.get(key);
+        //
+        //                            // basic filter, if anything changed on the line we take the new entry
+        //                            if (currentEntry != null && currentEntry.equals(newEntry)) {
+        //                                filteredCsfTackerEntries.remove(newEntry);
+        //                            }
+        //                        }
+        //                    }
+        //
+        //                } catch (FileNotFoundException e) {
+        //                    LOG.error("Current file to parse not found " + currentFileName, e);
+        //                } catch (IOException e) {
+        //                    LOG.error("error while getting current file bytes:  " + e.getMessage(), e);
         //                }
         //            }
-        //        } catch (FileNotFoundException e) {
-        //            LOG.error("Current file to parse not found " + fileName, e);       
-        //        }
-        //        catch (IOException e) {
-        //            LOG.error("error while getting current file bytes:  " + e.getMessage(), e);
         //        }
 
         return filteredCsfTackerEntries;
@@ -171,75 +229,24 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
                 LOG.warn("Invalid position number for " + extractEntry.toString());
                 continue;
             }
-            valid &= validateCSFAmount(extractEntry.getCsfAmount());
+            valid &= validateCSFAmount(extractEntry.getAnnualRate());
             if (!valid) {
                 LOG.warn("Invalid csf Amount for " + extractEntry.toString());
                 continue;
             }
 
             if (valid) {
-                for (PSPositionJobExtractAccountingInfo accountingInfo : extractEntry.getAccountingInfoCollection()) {
-
-                    if (StringUtils.isNotBlank(accountingInfo.getCsfTimePercent())) {
-                        valid &= validateTimePercent(accountingInfo.getCsfTimePercent());
-                        if (!valid) {
-                            LOG.warn("Invalid time percent " + accountingInfo.getCsfTimePercent() + " for extract "
-                                    + extractEntry.toString());
-                            break;
-                        }
-                        valid &= validateAccount(accountingInfo.getChartOfAccountsCode(),
-                                accountingInfo.getAccountNumber());
-                        if (!valid) {
-                            LOG.warn("Invalid Account: " + accountingInfo.getChartOfAccountsCode() + ","
-                                    + accountingInfo.getAccountNumber() + " for extract " + extractEntry.toString());
-                            break;
-                        }
-                        if (StringUtils.isNotBlank(accountingInfo.getSubAccountNumber())) {
-                            valid &= validateSubAccount(accountingInfo.getChartOfAccountsCode(),
-                                    accountingInfo.getAccountNumber(),
-                                    accountingInfo.getSubAccountNumber());
-                            if (!valid) {
-                                LOG.warn("Invalid Sub Account: " + accountingInfo.getChartOfAccountsCode() + ","
-                                        + accountingInfo.getAccountNumber() + ","
-                                        + accountingInfo.getSubAccountNumber()
-                                        + " for extract " + extractEntry.toString());
-                                break;
-                            }
-                        }
-
-                        valid &= validateLaborObject(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
-                                accountingInfo.getFinancialObjectCode());
-                        if (!valid) {
-                            LOG.warn("Invalid Labor Object: " + universityFiscalYear + ","
-                                    + accountingInfo.getChartOfAccountsCode() + ","
-                                    + accountingInfo.getFinancialObjectCode() + " for extract "
-                                    + extractEntry.toString());
-                            break;
-                        }
-                        valid &= validateObjectCode(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
-                                accountingInfo.getFinancialObjectCode());
-                        if (!valid) {
-                            LOG.warn("Invalid Object Code: " + universityFiscalYear + ","
-                                    + accountingInfo.getChartOfAccountsCode() + ","
-                                    + accountingInfo.getFinancialObjectCode() + " for extract "
-                                    + extractEntry.toString());
-                            break;
-                        }
-
-                        if (StringUtils.isNotBlank(accountingInfo.getFinancialSubObjectCode())) {
-                            valid &= validateSubObject(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
-                                    accountingInfo.getAccountNumber(), accountingInfo.getFinancialObjectCode(),
-                                    accountingInfo.getFinancialSubObjectCode());
-                            if (!valid) {
-                                LOG.warn("Invalid Sub Object Code: " + universityFiscalYear + ","
-                                        + accountingInfo.getChartOfAccountsCode() + ","
-                                        + accountingInfo.getFinancialObjectCode() + " for extract "
-                                        + extractEntry.toString());
-                                break;
-                            }
-                        }
+                if (extractEntry.getCSFAccountingInfoCollection() != null
+                        && extractEntry.getCSFAccountingInfoCollection().size() > 0) {
+                    for (PSPositionJobExtractAccountingInfo accountingInfo : extractEntry
+                            .getCSFAccountingInfoCollection()) {
+                        valid &= validateAccountingInfo(universityFiscalYear, extractEntry, accountingInfo);
                     }
-
+                } else {
+                    for (PSPositionJobExtractAccountingInfo accountingInfo : extractEntry
+                            .getPOSAccountingInfoCollection()) {
+                        valid &= validateAccountingInfo(universityFiscalYear, extractEntry, accountingInfo);
+                    }
                 }
             }
 
@@ -251,6 +258,67 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
 
         return validEntries;
 
+    }
+
+    protected boolean validateAccountingInfo(int universityFiscalYear, PSPositionJobExtractEntry extractEntry,
+            PSPositionJobExtractAccountingInfo accountingInfo) {
+
+        boolean valid = true;
+        if (StringUtils.isNotBlank(accountingInfo.getCsfTimePercent())) {
+            valid &= validateTimePercent(accountingInfo.getCsfTimePercent());
+            if (!valid) {
+                LOG.warn("Invalid time percent " + accountingInfo.getCsfTimePercent() + " for extract "
+                        + extractEntry.toString());
+            }
+            valid &= validateAccount(accountingInfo.getChartOfAccountsCode(),
+                    accountingInfo.getAccountNumber());
+            if (!valid) {
+                LOG.warn("Invalid Account: " + accountingInfo.getChartOfAccountsCode() + ","
+                        + accountingInfo.getAccountNumber() + " for extract " + extractEntry.toString());
+            }
+            if (StringUtils.isNotBlank(accountingInfo.getSubAccountNumber())) {
+                valid &= validateSubAccount(accountingInfo.getChartOfAccountsCode(),
+                        accountingInfo.getAccountNumber(),
+                        accountingInfo.getSubAccountNumber());
+                if (!valid) {
+                    LOG.warn("Invalid Sub Account: " + accountingInfo.getChartOfAccountsCode() + ","
+                            + accountingInfo.getAccountNumber() + ","
+                            + accountingInfo.getSubAccountNumber()
+                            + " for extract " + extractEntry.toString());
+                }
+            }
+
+            valid &= validateLaborObject(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
+                    accountingInfo.getFinancialObjectCode());
+            if (!valid) {
+                LOG.warn("Invalid Labor Object: " + universityFiscalYear + ","
+                        + accountingInfo.getChartOfAccountsCode() + ","
+                        + accountingInfo.getFinancialObjectCode() + " for extract "
+                        + extractEntry.toString());
+            }
+            valid &= validateObjectCode(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
+                    accountingInfo.getFinancialObjectCode());
+            if (!valid) {
+                LOG.warn("Invalid Object Code: " + universityFiscalYear + ","
+                        + accountingInfo.getChartOfAccountsCode() + ","
+                        + accountingInfo.getFinancialObjectCode() + " for extract "
+                        + extractEntry.toString());
+            }
+
+            if (StringUtils.isNotBlank(accountingInfo.getFinancialSubObjectCode())) {
+                valid &= validateSubObject(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
+                        accountingInfo.getAccountNumber(), accountingInfo.getFinancialObjectCode(),
+                        accountingInfo.getFinancialSubObjectCode());
+                if (!valid) {
+                    LOG.warn("Invalid Sub Object Code: " + universityFiscalYear + ","
+                            + accountingInfo.getChartOfAccountsCode() + ","
+                            + accountingInfo.getFinancialObjectCode() + " for extract "
+                            + extractEntry.toString());
+                }
+            }
+        }
+
+        return valid;
     }
 
     /**
@@ -409,7 +477,7 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
     protected boolean validateCSFAmount(String csfAmount) {
         boolean valid = true;
         try {
-            generateCSFAmount(csfAmount);
+            generateKualiDecimal(csfAmount);
         } catch (NumberFormatException exception) {
             valid = false;
         }
@@ -425,7 +493,7 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
     protected boolean validateTimePercent(String timePercent) {
         boolean valid = true;
         try {
-            generateCsfTimePercent(timePercent);
+            generateKualiDecimal(timePercent);
         } catch (NumberFormatException exception) {
             valid = false;
         }
@@ -452,53 +520,114 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
         }
 
         String name = psPositionJobExtractEntry.getName();
-        Timestamp csfCreateTimestamp = dateTimeService.getCurrentTimestamp();
+        Timestamp csfCreateTimestamp = new Timestamp(0);
 
-        KualiDecimal csfAmount = generateCSFAmount(psPositionJobExtractEntry.getCsfAmount());
+        KualiDecimal csfAmount = generateKualiDecimal(psPositionJobExtractEntry.getAnnualRate());
 
         Map<String, CalculatedSalaryFoundationTracker> mapOfEntries = new HashMap<String, CalculatedSalaryFoundationTracker>();
 
         // accounting data
-        for (PSPositionJobExtractAccountingInfo accountingInfo : psPositionJobExtractEntry
-                .getAccountingInfoCollection()) {
-            BigDecimal csfTimePercent = generateCsfTimePercent(accountingInfo.getCsfTimePercent()).bigDecimalValue();
-            BigDecimal csfFullTimeEmploymentQuantity = generateCsfTimePercent(accountingInfo.getCsfTimePercent())
-                    .bigDecimalValue()
-                    .divide(new BigDecimal(100));
-            String chartOfAccountsCode = accountingInfo.getChartOfAccountsCode();
-            String accountNumber = accountingInfo.getAccountNumber();
+        if (psPositionJobExtractEntry
+                .getCSFAccountingInfoCollection() != null && psPositionJobExtractEntry
+                .getCSFAccountingInfoCollection().size() > 0) {
+            for (PSPositionJobExtractAccountingInfo accountingInfo : psPositionJobExtractEntry
+                    .getCSFAccountingInfoCollection()) {
+                BigDecimal csfTimePercent = generateKualiDecimal(accountingInfo.getCsfTimePercent()).bigDecimalValue();
+                BigDecimal csfFullTimeEmploymentQuantity = generateKualiDecimal(accountingInfo.getCsfTimePercent())
+                        .bigDecimalValue()
+                        .divide(new BigDecimal(100));
+                String chartOfAccountsCode = accountingInfo.getChartOfAccountsCode();
+                String accountNumber = accountingInfo.getAccountNumber();
 
-            String subAccountNumber = accountingInfo.getSubAccountNumber();
-            if (StringUtils.isBlank(subAccountNumber)) {
-                subAccountNumber = CUBCConstants.DEFAULT_SUB_ACCOUNT_NUMBER;
+                String subAccountNumber = accountingInfo.getSubAccountNumber();
+                if (StringUtils.isBlank(subAccountNumber)) {
+                    subAccountNumber = CUBCConstants.DEFAULT_SUB_ACCOUNT_NUMBER;
+                }
+
+                String financialObjectCode = accountingInfo.getFinancialObjectCode();
+
+                String financialSubObjectCode = accountingInfo.getFinancialSubObjectCode();
+                if (StringUtils.isBlank(financialSubObjectCode)) {
+                    financialSubObjectCode = CUBCConstants.DEFAULT_FINANCIAL_SUB_OBJECT_CODE;
+                }
+
+                String csfDeleteCode = generateDeleteCode(psPositionJobExtractEntry);
+                String csfFundingStatusCode = generateFundingStatusCode(psPositionJobExtractEntry);
+
+                KualiDecimal percentOfCSFAmount = new KualiDecimal(csfAmount.bigDecimalValue().multiply(
+                        csfFullTimeEmploymentQuantity));
+
+                CalculatedSalaryFoundationTracker entry = generateCalculatedSalaryFoundationTracker(positionNumber,
+                        universityFiscalYear, emplid, name, csfCreateTimestamp, csfFullTimeEmploymentQuantity,
+                        percentOfCSFAmount,
+                        csfTimePercent, chartOfAccountsCode, accountNumber, subAccountNumber, financialObjectCode,
+                        financialSubObjectCode, csfDeleteCode, csfFundingStatusCode);
+
+                // if in the map add percentages and add only one account
+                CalculatedSalaryFoundationTracker csfEntryFromMap = mapOfEntries.get(accountingInfo.getKey());
+                if (csfEntryFromMap != null) {
+                    BigDecimal tmpTimePercent = entry.getCsfTimePercent().add(csfTimePercent);
+                    entry.setCsfTimePercent(tmpTimePercent);
+                    BigDecimal csfFTE = entry.getCsfTimePercent()
+                            .divide(new BigDecimal(100));
+                    entry.setCsfFullTimeEmploymentQuantity(csfFTE);
+                }
+                mapOfEntries.put(accountingInfo.getKey(), entry);
+
             }
+        }
+        // if there are no accounting strings at the job level get the info from the position level
+        else {
+            if (psPositionJobExtractEntry
+                    .getPOSAccountingInfoCollection() != null && psPositionJobExtractEntry
+                    .getPOSAccountingInfoCollection().size() > 0) {
+                for (PSPositionJobExtractAccountingInfo accountingInfo : psPositionJobExtractEntry
+                        .getPOSAccountingInfoCollection()) {
+                    BigDecimal csfTimePercent = generateKualiDecimal(accountingInfo.getCsfTimePercent())
+                            .bigDecimalValue();
+                    BigDecimal csfFullTimeEmploymentQuantity = generateKualiDecimal(accountingInfo.getCsfTimePercent())
+                            .bigDecimalValue()
+                            .divide(new BigDecimal(100));
+                    String chartOfAccountsCode = accountingInfo.getChartOfAccountsCode();
+                    String accountNumber = accountingInfo.getAccountNumber();
 
-            String financialObjectCode = accountingInfo.getFinancialObjectCode();
+                    String subAccountNumber = accountingInfo.getSubAccountNumber();
+                    if (StringUtils.isBlank(subAccountNumber)) {
+                        subAccountNumber = CUBCConstants.DEFAULT_SUB_ACCOUNT_NUMBER;
+                    }
 
-            String financialSubObjectCode = accountingInfo.getFinancialSubObjectCode();
-            if (StringUtils.isBlank(financialSubObjectCode)) {
-                financialSubObjectCode = CUBCConstants.DEFAULT_FINANCIAL_SUB_OBJECT_CODE;
+                    String financialObjectCode = accountingInfo.getFinancialObjectCode();
+
+                    String financialSubObjectCode = accountingInfo.getFinancialSubObjectCode();
+                    if (StringUtils.isBlank(financialSubObjectCode)) {
+                        financialSubObjectCode = CUBCConstants.DEFAULT_FINANCIAL_SUB_OBJECT_CODE;
+                    }
+
+                    String csfDeleteCode = generateDeleteCode(psPositionJobExtractEntry);
+                    String csfFundingStatusCode = generateFundingStatusCode(psPositionJobExtractEntry);
+
+                    KualiDecimal percentOfCSFAmount = new KualiDecimal(csfAmount.bigDecimalValue().multiply(
+                            csfFullTimeEmploymentQuantity));
+
+                    CalculatedSalaryFoundationTracker entry = generateCalculatedSalaryFoundationTracker(positionNumber,
+                            universityFiscalYear, emplid, name, csfCreateTimestamp, csfFullTimeEmploymentQuantity,
+                            percentOfCSFAmount,
+                            csfTimePercent, chartOfAccountsCode, accountNumber, subAccountNumber, financialObjectCode,
+                            financialSubObjectCode, csfDeleteCode, csfFundingStatusCode);
+
+                    // if in the map add percentages and add only one account
+                    CalculatedSalaryFoundationTracker csfEntryFromMap = mapOfEntries.get(accountingInfo.getKey());
+                    if (csfEntryFromMap != null) {
+                        BigDecimal tmpTimePercent = entry.getCsfTimePercent().add(csfTimePercent);
+                        entry.setCsfTimePercent(tmpTimePercent);
+                        BigDecimal csfFTE = entry.getCsfTimePercent()
+                                .divide(new BigDecimal(100));
+                        entry.setCsfFullTimeEmploymentQuantity(csfFTE);
+                    }
+                    mapOfEntries.put(accountingInfo.getKey(), entry);
+
+                }
             }
-
-            String csfDeleteCode = generateDeleteCode(psPositionJobExtractEntry);
-            String csfFundingStatusCode = generateFundingStatusCode(psPositionJobExtractEntry);
-
-            KualiDecimal percentOfCSFAmount = new KualiDecimal(csfAmount.bigDecimalValue().multiply(
-                    csfFullTimeEmploymentQuantity));
-
-            CalculatedSalaryFoundationTracker entry = generateCalculatedSalaryFoundationTracker(positionNumber,
-                    universityFiscalYear, emplid, name, csfCreateTimestamp, csfFullTimeEmploymentQuantity,
-                    percentOfCSFAmount,
-                    csfTimePercent, chartOfAccountsCode, accountNumber, subAccountNumber, financialObjectCode,
-                    financialSubObjectCode, csfDeleteCode, csfFundingStatusCode);
-
-            // if in the map add percentages and add only one account
-            CalculatedSalaryFoundationTracker csfEntryFromMap = mapOfEntries.get(accountingInfo.getKey());
-            if (csfEntryFromMap != null) {
-                entry.setCsfTimePercent(csfTimePercent.add(csfEntryFromMap.getCsfTimePercent()));
-            }
-            mapOfEntries.put(accountingInfo.getKey(), entry);
-
         }
 
         return mapOfEntries.values();
@@ -547,18 +676,24 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
 
         entry.setPositionNumber(positionNumber);
         entry.setEmplid(emplid);
-        entry.setName(name);
-
-        entry.setCsfAmount(csfAmount);
         entry.setCsfCreateTimestamp(csfCreateTimestamp);
-        entry.setCsfDeleteCode(csfDeleteCode);
-        entry.setCsfTimePercent(csfTimePercent);
         entry.setUniversityFiscalYear(universityFiscalYear);
         entry.setChartOfAccountsCode(chartOfAccountsCode);
         entry.setAccountNumber(accountNumber);
         entry.setSubAccountNumber(subAccountNumber);
         entry.setFinancialObjectCode(financialObjectCode);
         entry.setFinancialSubObjectCode(financialSubObjectCode);
+
+//        CalculatedSalaryFoundationTracker retrievedCSFEntry = (CalculatedSalaryFoundationTracker) businessObjectService
+//                .retrieve(entry);
+//        if (ObjectUtils.isNotNull(retrievedCSFEntry)) {
+//            entry = retrievedCSFEntry;
+//        }
+
+        entry.setName(name);
+        entry.setCsfAmount(csfAmount);
+        entry.setCsfDeleteCode(csfDeleteCode);
+        entry.setCsfTimePercent(csfTimePercent);
         entry.setCsfFullTimeEmploymentQuantity(csfFullTimeEmploymentQuantity);
         entry.setCsfFundingStatusCode(csfFundingStatusCode);
 
@@ -567,35 +702,107 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
     }
 
     /**
-     * Generates the csf time percent from the value in the input file. The value comes
-     * like this: Acct Distribution % (the first 5 digits in all 20 “account” fields)
-     * 00000 and we will add the decimal point and create a KualiDecimal value 000.00.
+     * Creates a new PSPositionInfo object
      * 
-     * @param csfTimePrecent
-     * @return a KualiDecimal value for the input csfTimePrecent
+     * @param positionNumber
+     * @param positionType
+     * @param defaultObjectCode
+     * @param positionUnionCode
+     * @param workMonths
+     * @return a new PSPositionInfo object
      */
-    protected KualiDecimal generateCsfTimePercent(String csfTimePrecent) {
-        //prepare time percent
-        String timePercent = csfTimePrecent;
-        timePercent = timePercent.substring(0, timePercent.length() - 2) + "."
-                + timePercent.substring(timePercent.length() - 2, timePercent.length());
+    protected PSPositionInfo generatePSPositionInfo(PSPositionJobExtractEntry psPositionJobExtractEntry) {
 
-        return new KualiDecimal(timePercent);
+        PSPositionInfo psPositionInfo = new PSPositionInfo();
+
+        psPositionInfo.setPositionNumber(psPositionJobExtractEntry.getPositionNumber());
+
+        //        PSPositionInfo retrievedPSPositionInfo = (PSPositionInfo) businessObjectService
+        //                .retrieve(psPositionInfo);
+        //        if (ObjectUtils.isNotNull(retrievedPSPositionInfo)) {
+        //            psPositionInfo = retrievedPSPositionInfo;
+        //        }
+
+        psPositionInfo.setPositionType(psPositionJobExtractEntry.getEmployeeType());
+        psPositionInfo.setPositionUnionCode(psPositionJobExtractEntry.getPositionUnionCode());
+        psPositionInfo.setWorkMonths(generateWorkMonths(psPositionJobExtractEntry.getWorkMonths()));
+        psPositionInfo.setJobCode(psPositionJobExtractEntry.getJobCode());
+        psPositionInfo.setClassInd(psPositionJobExtractEntry.getClassInd());
+        psPositionInfo.setCuStateCert(psPositionJobExtractEntry.getCuStateCert());
+        psPositionInfo.setFullPartTime(psPositionJobExtractEntry.getFullPartTime());
+        psPositionInfo.setAddsToActualFte(psPositionJobExtractEntry.getAddsToActualFte());
+
+        return psPositionInfo;
+
+    }
+
+    protected PSJobData generatePSJobData(PSPositionJobExtractEntry psPositionJobExtractEntry) {
+
+        PSJobData psJobData = new PSJobData();
+
+        psJobData.setPositionNumber(psPositionJobExtractEntry.getPositionNumber());
+        psJobData.setEmplid(psPositionJobExtractEntry.getEmplid());
+
+//        PSJobData retrievedPSJobData = (PSJobData) businessObjectService
+//                .retrieve(psJobData);
+//        
+//        if (ObjectUtils.isNotNull(retrievedPSJobData)) {
+//            psJobData = retrievedPSJobData;
+//        }
+
+        psJobData.setEmployeeRecord(psPositionJobExtractEntry.getEmployeeRecord());
+        psJobData.setEmployeeStatus(psPositionJobExtractEntry.getEmployeeStatus());
+        psJobData.setJobStandardHours(generateKualiDecimal(psPositionJobExtractEntry.getJobStandardHours()));
+        psJobData.setEmployeeClass(psPositionJobExtractEntry.getEmployeeClass());
+        psJobData.setEarningDistributionType(psPositionJobExtractEntry.getEarningDistributionType());
+        psJobData.setCompRate(generateKualiDecimal(psPositionJobExtractEntry.getCompRate()));
+        psJobData.setAnnualBenefitBaseRate(generateKualiDecimal(psPositionJobExtractEntry.getAnnualBenefitBaseRate()));
+        psJobData.setCuAbbrFlag(psPositionJobExtractEntry.getCuAbbrFlag());
+        psJobData.setAnnualRate(generateKualiDecimal(psPositionJobExtractEntry.getAnnualRate()));
+        psJobData.setEmployeeName(psPositionJobExtractEntry.getName());
+
+        return psJobData;
+    }
+
+    protected PSJobCode generatePSJobCode(PSPositionJobExtractEntry psPositionJobExtractEntry) {
+
+        PSJobCode psJobCode = new PSJobCode();
+
+        psJobCode.setJobCode(psPositionJobExtractEntry.getJobCode());
+
+        //        PSJobCode retrievedPSJobCode = (PSJobCode) businessObjectService
+        //                .retrieve(psJobCode);
+        //        if (ObjectUtils.isNotNull(retrievedPSJobCode)) {
+        //            psJobCode = retrievedPSJobCode;
+        //        }
+
+        psJobCode.setCuObjectCode(psPositionJobExtractEntry.getDefaultObjectCode());
+        psJobCode.setJobCodeDesc(psPositionJobExtractEntry.getJobCodeDesc());
+        psJobCode.setJobCodeDescShort(psPositionJobExtractEntry.getJobCodeDescShrt());
+        psJobCode.setJobFamily(psPositionJobExtractEntry.getJobFamily());
+        psJobCode.setJobStandardHours(generateKualiDecimal(psPositionJobExtractEntry.getJobCodeStandardHours()));
+
+        return psJobCode;
     }
 
     /**
+     * Generates the csf time percent from the value in the input file. The value comes
+     * like this: Acct Distribution % (the first 5 digits in all 20 “account” fields)
+     * 00000 and we will add the decimal point and create a KualiDecimal value 000.00.
      * Generate the CSFAmount from the value in the input file. The comes in like this
      * Annual Rt (pos 664) 000000000000 and we will add the decimal point 0000000000.00
      * and create a KualiDecimal value.
      * 
-     * @param csfAmount
-     * @return a KualiDecimal value for the input csfAmount
+     * @param csfTimePrecent
+     * @return a KualiDecimal value for the input csfTimePrecent
      */
-    protected KualiDecimal generateCSFAmount(String csfAmount) {
-        //prepare annual rate to create a KualiDecimal
-        csfAmount = csfAmount.substring(0, csfAmount.length() - 2) + "."
-                + csfAmount.substring(csfAmount.length() - 2, csfAmount.length());
-        return new KualiDecimal(csfAmount);
+    protected KualiDecimal generateKualiDecimal(String input) {
+        //prepare time percent
+        String result = input;
+        result = result.substring(0, result.length() - 2) + "."
+                + result.substring(result.length() - 2, result.length());
+
+        return new KualiDecimal(result);
     }
 
     /**
@@ -627,18 +834,100 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
     }
 
     /**
+     * Generate the workMonths from the value in the input file. The workMonths comes in
+     * like this Work Months (pos 1174) 000 and we will will only use 00 and create an
+     * Integer value.
+     * 
+     * @param workMonths
+     * @return a Integer value for the input workMonths
+     */
+    protected Integer generateWorkMonths(String workMonths) {
+        //prepare workMonths to create a KualiDecimal
+        if (StringUtils.isNotBlank(workMonths)) {
+            workMonths = workMonths.substring(0, workMonths.length() - 1);
+            return Integer.parseInt(workMonths);
+        } else
+            return null;
+    }
+
+    /**
      * Loads the entries in the LS_CSF_TRACKER_T table.
      * 
      * @param csfTackerEntries
      */
-    protected void loadEntriesInCSFTrackerTable(List<CalculatedSalaryFoundationTracker> csfTackerEntries) {
-        LOG.info("Start timestamp:" + System.currentTimeMillis());
-        // wipe out everything first
-        businessObjectService.deleteMatching(CalculatedSalaryFoundationTracker.class, new HashMap<String, String>());
+    protected void loadEntriesInCSFTrackerTable(List<CalculatedSalaryFoundationTracker> csfTrackerEntries) {
+
+        //if (getRunPopulateCSFTRackerForNewYear())
+        {
+            // wipe out everything first
+            businessObjectService
+                    .deleteMatching(CalculatedSalaryFoundationTracker.class, new HashMap<String, String>());
+        }
 
         //load in the new entries
-        businessObjectService.save(csfTackerEntries);
-        LOG.info("End timestamp:" + System.currentTimeMillis());
+        for (CalculatedSalaryFoundationTracker entry : csfTrackerEntries) {
+
+            businessObjectService.save(entry);
+        }
+    }
+
+    /**
+     * Load entries in the PS_POSITION_EXTRA table.
+     * 
+     * @param psPositionInfoEntries
+     */
+    protected void loadEntriesInPSPositionInfoTable(Collection<PSPositionInfo> psPositionInfoEntries) {
+
+        businessObjectService
+                    .deleteMatching(PSPositionInfo.class, new HashMap<String, String>());
+
+        //load in the new entries
+        for (PSPositionInfo entry : psPositionInfoEntries) {
+            businessObjectService.save(entry);
+        }
+    }
+
+    /**
+     * Load entries in the PS_JOB_DATA table.
+     * 
+     * @param jobDataEntries
+     */
+    protected void loadEntriesInPSJobDataTable(Collection<PSJobData> jobDataEntries) {
+
+        businessObjectService
+                    .deleteMatching(PSJobData.class, new HashMap<String, String>());
+
+        //load in the new entries
+        for (PSJobData entry : jobDataEntries) {
+            businessObjectService.save(entry);
+        }
+    }
+
+    /**
+     * Load entries in the PS_JOB_CODE table.
+     * 
+     * @param psPositionInfoEntries
+     */
+    protected void loadEntriesInPSJobCodeTable(Collection<PSJobCode> psJobCodeEntries) {
+
+        businessObjectService
+                    .deleteMatching(PSJobCode.class, new HashMap<String, String>());
+
+        //load in the new entries
+        for (PSJobCode entry : psJobCodeEntries) {
+            businessObjectService.save(entry);
+        }
+    }
+
+    /**
+     * Gets the value of the RUN_POPULATE_CSF_TRACKER_FOR_NEW_YEAR parameter.
+     * 
+     * @return
+     */
+    private boolean getRunPopulateCSFTRackerForNewYear() {
+        boolean runPopulateCSFTRackerForNewYear = parameterService.getIndicatorParameter(PopulateCSFTrackerStep.class,
+                CUBCParameterKeyConstants.RUN_POPULATE_CSF_TRACKER_FOR_NEW_YEAR);
+        return runPopulateCSFTRackerForNewYear;
     }
 
     /**
@@ -702,6 +991,15 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
      */
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
+    }
+
+    /**
+     * Sets the parameterService.
+     * 
+     * @param parameterService
+     */
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
     }
 
 }

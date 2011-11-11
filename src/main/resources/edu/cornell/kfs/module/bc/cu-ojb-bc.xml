@@ -1,0 +1,51 @@
+<descriptor-repository version="1.0">
+
+	<class-descriptor class="edu.cornell.kfs.module.bc.businessobject.PSPositionInfo" table="PS_POSITION_EXTRA">
+		<field-descriptor name="positionNumber" column="POS_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+		<field-descriptor name="positionType" column="POS_TYP" jdbc-type="VARCHAR" />
+		<field-descriptor name="positionUnionCode" column="POS_UNION_CD" jdbc-type="VARCHAR" />
+		<field-descriptor name="workMonths" column="WRK_MNTHS" jdbc-type="INTEGER" />
+		<field-descriptor name="jobCode" column="JOB_CD" jdbc-type="VARCHAR" />
+	    <field-descriptor name="fullPartTime" column="FULL_PART_TIME" jdbc-type="VARCHAR" />
+	    <field-descriptor name="classInd" column="CLASS_IND" jdbc-type="VARCHAR" />
+	    <field-descriptor name="addsToActualFte" column="ADDS_TO_ACT_FTE" jdbc-type="VARCHAR" />
+	    <field-descriptor name="cuStateCert" column="CU_STATE_CERT" jdbc-type="VARCHAR" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+				
+		<reference-descriptor name="psJobCode" class-ref="edu.cornell.kfs.module.bc.businessobject.PSJobCode" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+			<foreignkey field-ref="jobCode" />
+	    </reference-descriptor>
+	</class-descriptor>
+	
+	<class-descriptor class="edu.cornell.kfs.module.bc.businessobject.PSJobData" table="PS_JOB_DATA">
+		<field-descriptor name="positionNumber" column="POS_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+		<field-descriptor name="emplid" column="EMPLID" jdbc-type="VARCHAR" primarykey="true" index="true" />
+		<field-descriptor name="employeeRecord" column="EMPL_RCD" jdbc-type="VARCHAR" />
+		<field-descriptor name="employeeStatus" column="EMPL_STATUS" jdbc-type="VARCHAR" />
+		<field-descriptor name="jobStandardHours" column="JOB_STD_HRS" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
+	    <field-descriptor name="employeeClass" column="EMPL_CLASS" jdbc-type="VARCHAR" />
+	    <field-descriptor name="earningDistributionType" column="EARN_DIST_TYP" jdbc-type="VARCHAR" />
+	    <field-descriptor name="compRate" column="COMP_RT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+	    <field-descriptor name="annualBenefitBaseRate" column="ANNL_BENEFIT_BASE_RT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+	    <field-descriptor name="cuAbbrFlag" column="CU_ABBR_FLAG" jdbc-type="VARCHAR" />
+	    <field-descriptor name="annualRate" column="ANNL_RT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+	    <field-descriptor name="employeeName" column="NAME" jdbc-type="VARCHAR" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+		
+	</class-descriptor>
+
+	<class-descriptor class="edu.cornell.kfs.module.bc.businessobject.PSJobCode" table="PS_JOB_CD">
+		<field-descriptor name="jobCode" column="JOB_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
+		<field-descriptor name="jobCodeDesc" column="JOB_CD_DESC" jdbc-type="VARCHAR" />
+		<field-descriptor name="jobCodeDescShort" column="JOB_CD_DESC_SHRT" jdbc-type="VARCHAR" />
+		<field-descriptor name="cuObjectCode" column="CU_OBJ_CD" jdbc-type="VARCHAR" />
+		<field-descriptor name="jobStandardHours" column="STD_HRS" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
+	    <field-descriptor name="jobFamily" column="JOB_FAMILY" jdbc-type="VARCHAR" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+		
+	</class-descriptor>
+	
+</descriptor-repository>

@@ -20,10 +20,9 @@ import java.sql.Types;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import org.kuali.kfs.module.bc.BCConstants;
 import org.kuali.kfs.module.bc.batch.dataaccess.BudgetConstructionHumanResourcesPayrollInterfaceDao;
 import org.kuali.kfs.module.bc.document.dataaccess.impl.BudgetConstructionDaoJdbcBase;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.module.bc.BCConstants;
 
 
 
@@ -200,12 +199,8 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
         sqlBuilder.append("                  AND (csf.POSITION_NBR = px.POSITION_NBR))))\n");
         sqlString = sqlBuilder.toString();
         getSimpleJdbcTemplate().update(sqlString,baseFiscalYear,defaultRCCd,BCConstants.DEFAULT_BUDGET_HEADER_LOCK_IDS,julyFirst,baseFiscalYear,julyFirst,baseFiscalYear,BCConstants.ACTIVE_CSF_DELETE_CODE);
-        // set the things that we'll need for testing but which we don't have enough information to set from the Kuali DB
-        // this code is obviously somewhat arbitrary--it should be replaced with institution-specific algorithms
-        setAcademicDefaultObjectClass(baseFiscalYear);
-        setMonthlyStaffOvertimeEligibleDefaultObjectClass(baseFiscalYear);
-        setMonthlyStaffOvertimeExemptDefaultObjectClass(baseFiscalYear);
-        setBiweeklyStaffDefaultObjectClass(baseFiscalYear);
+
+        updatePositionInfo(baseFiscalYear);
     }
 
     /**
@@ -255,102 +250,29 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
         sqlBuilder.append("                  AND (csf.POSITION_NBR = px.POSITION_NBR))))\n");
         String sqlString = sqlBuilder.toString();
         getSimpleJdbcTemplate().update(sqlString,requestFiscalYear,defaultRCCd,BCConstants.DEFAULT_BUDGET_HEADER_LOCK_IDS,julyFirst,augustFirst,academicTenureTrackSalaryPlan,requestFiscalYear,julyFirst,augustFirst,academicTenureTrackSalaryPlan,baseFiscalYear,BCConstants.ACTIVE_CSF_DELETE_CODE);
-        // set the things that we'll need for testing but which we don't have enough information to set from the Kuali DB
-        // this code is obviously somewhat arbitrary--it should be replaced with institution-specific algorithms
-        setAcademicDefaultObjectClass(requestFiscalYear);
-        setMonthlyStaffOvertimeEligibleDefaultObjectClass(requestFiscalYear);
-        setMonthlyStaffOvertimeExemptDefaultObjectClass(requestFiscalYear);
-        setBiweeklyStaffDefaultObjectClass(requestFiscalYear);
+
+        updatePositionInfo(requestFiscalYear);
     }
     
     /**
-     *   At IU, there is a concept of normal work months and pay months.  For example, one can theoretically be in a 12-month position
-     *   but only work during a 10-month academic year for some reason.  This situation would make the "full time equivalent" for that
-     *   person (assuming she works a 40-hour week during the 10 months) 10/12 or .893333....
-     *   Each position is supposed to have an object class.  No one should be able to budget a given position in a different object
-     *   class, because that would break the "object level" reporting in accounting that gives totals for "academic salaries", etc.
-     *   In this placeholder code, we set these based on the salary plan and the position type.  At IU, there is a table containing salary plan and 
-     *   grade that is shared by payroll and the budget to mandate the object class used for salary funding.
+     * Set LD_BCN_POS_T: IU_NORM_WORK_MONTHS, IU_PAY_MONTHS, IU_POSITION_TYPE, POS_UNION_CD, IU_DFLT_OBJ_CD with data from
+     * PS_POSITION_INFO_T table.
+     * 
+     * @param fiscalYear
      */
-    protected void setAcademicDefaultObjectClass(Integer fiscalYear)
-    {
-        // build constants for DB independence
-        Integer monthConstant = new Integer(10);
-        String positionType  = new String("AC");
-        String defaultObject = new String("2000");
-        String salaryPlan    = new String("AC1");
-        StringBuilder sqlBuilder = new StringBuilder(500);
-        sqlBuilder.append("UPDATE LD_BCN_POS_T\n");
-        sqlBuilder.append("SET IU_NORM_WORK_MONTHS = ?,\n");
-        sqlBuilder.append("    IU_PAY_MONTHS = ?,\n");
-        sqlBuilder.append("    IU_POSITION_TYPE = ?,\n");
-        sqlBuilder.append("    IU_DFLT_OBJ_CD = ?\n");
-        sqlBuilder.append("WHERE (UNIV_FISCAL_YR = ?)\n");
-        sqlBuilder.append("  AND (POS_SAL_PLAN_DFLT = ?)");
-        String sqlString = sqlBuilder.toString();
-        getSimpleJdbcTemplate().update(sqlString,monthConstant,monthConstant,positionType,defaultObject,fiscalYear,salaryPlan);
-    }
-    protected void setMonthlyStaffOvertimeEligibleDefaultObjectClass(Integer fiscalYear)
-    {
-        // build constants for DB independence
-        Integer monthConstant = new Integer(12);
-        String positionType  = new String("SM");
-        String defaultObject = new String("2480");
-        String[] salaryPlan = {new String("PAO"), new String("PAU")};
-        StringBuilder sqlBuilder = new StringBuilder(500);
-        sqlBuilder.append("UPDATE LD_BCN_POS_T\n");
-        sqlBuilder.append("SET IU_NORM_WORK_MONTHS = ?,\n");
-        sqlBuilder.append("    IU_PAY_MONTHS = ?,\n");
-        sqlBuilder.append("    IU_POSITION_TYPE = ?,\n");
-        sqlBuilder.append("    IU_DFLT_OBJ_CD = ?\n");
-        sqlBuilder.append("WHERE (UNIV_FISCAL_YR = ?)\n");
-        sqlBuilder.append("  AND (POS_SAL_PLAN_DFLT IN (?,?))\n");
-        String sqlString = sqlBuilder.toString();
-        getSimpleJdbcTemplate().update(sqlString,monthConstant,monthConstant,positionType,defaultObject,fiscalYear,salaryPlan[0],salaryPlan[1]);
-    }
+    protected void updatePositionInfo(Integer fiscalYear) {
 
-    protected void setMonthlyStaffOvertimeExemptDefaultObjectClass(Integer fiscalYear)
-    {
-        // build constants for DB independence
-        // (note that this uses a pattern, and therefore assumes that any specific position types beginning with 'P' that go to
-        //  a different default object class have already been assigned)
-        Integer monthConstant = new Integer(12);
-        String  positionType  = new String("SM");
-        String  defaultObject = new String("2400");
-        String  salaryPlan    = new String("P%");
         StringBuilder sqlBuilder = new StringBuilder(500);
-        sqlBuilder.append("UPDATE LD_BCN_POS_T\n");
-        sqlBuilder.append("SET IU_NORM_WORK_MONTHS = ?,\n");
-        sqlBuilder.append("    IU_PAY_MONTHS = ?,\n");
-        sqlBuilder.append("    IU_POSITION_TYPE = ?,\n");
-        sqlBuilder.append("    IU_DFLT_OBJ_CD = ?\n");
-        sqlBuilder.append("WHERE (UNIV_FISCAL_YR = ?)\n");
-        sqlBuilder.append("  AND (POS_SAL_PLAN_DFLT LIKE ?)\n");
-        sqlBuilder.append("  AND (IU_DFLT_OBJ_CD IS NULL)\n");
+        sqlBuilder.append("UPDATE LD_BCN_POS_T bcpos\n");
+        sqlBuilder.append("SET (IU_NORM_WORK_MONTHS,\n");
+        sqlBuilder.append("    IU_PAY_MONTHS,\n");
+        sqlBuilder.append("    IU_POSITION_TYPE,\n");
+        sqlBuilder.append("    POS_UNION_CD,\n");
+        sqlBuilder.append("    IU_DFLT_OBJ_CD) = \n");
+        sqlBuilder.append("(SELECT WRK_MNTHS, WRK_MNTHS, POS_TYP, POS_UNION_CD, CU_OBJ_CD FROM PS_POSITION_EXTRA posinfo, PS_JOB_CD jobcd WHERE posinfo.POS_NBR = bcpos.POSITION_NBR AND posinfo.JOB_CD = jobcd.JOB_CD ) ");
+        sqlBuilder.append("WHERE (bcpos.UNIV_FISCAL_YR = ?)\n");
         String sqlString = sqlBuilder.toString();
-        getSimpleJdbcTemplate().update(sqlString,monthConstant,monthConstant,positionType,defaultObject,fiscalYear,salaryPlan);
-    }
-    
-    protected void setBiweeklyStaffDefaultObjectClass(Integer fiscalYear)
-    {
-        // build constants for DB independence
-        // (note that we are only assigning default object codes to positions not yet assigned a default.  so, this method must
-        //  be called last.  In particular, there is no check on salary plan.)
-        Integer monthConstant    = new Integer(12);
-        String  positionType     = new String("SB");
-        String  defaultObject    = new String("2500");
-        String  defaultUnionCode = new String("B1");
-        StringBuilder sqlBuilder = new StringBuilder(500);
-        sqlBuilder.append("UPDATE LD_BCN_POS_T\n");
-        sqlBuilder.append("SET IU_NORM_WORK_MONTHS = ?,\n");
-        sqlBuilder.append("    IU_PAY_MONTHS = ?,\n");
-        sqlBuilder.append("    IU_POSITION_TYPE = ?,\n");
-        sqlBuilder.append("    POS_UNION_CD = ?,\n");
-        sqlBuilder.append("    IU_DFLT_OBJ_CD = ?\n");
-        sqlBuilder.append("WHERE (UNIV_FISCAL_YR = ?)\n");
-        sqlBuilder.append("  AND (IU_DFLT_OBJ_CD IS NULL)\n");
-        String sqlString = sqlBuilder.toString();
-        getSimpleJdbcTemplate().update(sqlString,monthConstant,monthConstant,positionType,defaultUnionCode,defaultObject,fiscalYear);
+        getSimpleJdbcTemplate().update(sqlString, fiscalYear);
     }
     
     /**

@@ -3,7 +3,6 @@ package edu.cornell.kfs.module.bc.batch;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.kuali.kfs.module.bc.businessobject.CalculatedSalaryFoundationTracker;
 import org.kuali.kfs.sys.batch.FlatFileParserBase;
 import org.kuali.kfs.sys.exception.ParseException;
 
@@ -27,9 +26,9 @@ public class CSFTrackerFlatInputFileType extends FlatFileParserBase {
      * @see org.kuali.kfs.sys.batch.FlatFileParserBase#parse(byte[])
      */
     public Object parse(byte[] fileByteContent) throws ParseException {
-        ArrayList<PSPositionJobExtractEntry> csfTrackertEntries = new ArrayList<PSPositionJobExtractEntry>();
-        csfTrackertEntries = (ArrayList<PSPositionJobExtractEntry>) super.parse(fileByteContent);
-        return csfTrackertEntries;
+        ArrayList<PSPositionJobExtractEntry> psPositionJobExtractEntries = new ArrayList<PSPositionJobExtractEntry>();
+        psPositionJobExtractEntries = (ArrayList<PSPositionJobExtractEntry>) super.parse(fileByteContent);
+        return psPositionJobExtractEntries;
 
     }
 
