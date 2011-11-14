@@ -634,6 +634,8 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
                         KualiDecimal amount = csfEntryFromMap.getCsfAmount().add(percentOfCSFAmount);
                         entry.setCsfAmount(amount);
                     }
+                    
+                    mapOfEntries.put(accountingInfo.getKey(), entry);
 
                 }
             }
