@@ -301,9 +301,6 @@
         <property name="businessObjectService">
 			<ref bean="businessObjectService" />
 		</property>	
-		<property name="personService">
-			<ref bean="personService" />
-		</property>	
     </bean>
 
 </beans>

@@ -15,17 +15,10 @@
  */
 package org.kuali.kfs.module.bc.batch.service.impl;
 
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.module.bc.batch.dataaccess.BudgetConstructionHumanResourcesPayrollInterfaceDao;
 import org.kuali.kfs.module.bc.batch.service.BudgetConstructionHumanResourcesPayrollInterfaceService;
-import org.kuali.kfs.module.bc.businessobject.BudgetConstructionIntendedIncumbent;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.service.PersonService;
 import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -37,7 +30,6 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceServiceImpl impleme
 
     private BudgetConstructionHumanResourcesPayrollInterfaceDao budgetConstructionHumanResourcesPayrollInterfaceDao;
     protected BusinessObjectService businessObjectService;
-    protected PersonService personService;
 
     /**
      * 
@@ -89,49 +81,12 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceServiceImpl impleme
                 budgetConstructionHumanResourcesPayrollInterfaceDao
                         .buildBudgetConstructionIntendedIncumbent(requestYear);
             }
-            updateIncumbentNames();
         } else {
             // the name is always updated if the budget is in update mode, even if intended incumbent was not rebuilt because position synchronization was off.
             if (BCUpdatesAllowed) {
-                updateIncumbentNames();
                 budgetConstructionHumanResourcesPayrollInterfaceDao.updateNamesInBudgetConstructionIntendedIncumbent();
             }
         }
-    }
-
-    /**
-     * Updates incumbent names in the LD_BCN_INTINCBNT_T table by calling the
-     * PersonService to get the name by the employee ID
-     * 
-     */
-    protected void updateIncumbentNames() {
-        long startTime = System.currentTimeMillis();
-
-        // get all entries in LD_BCN_INTINCBNT_T
-        List<BudgetConstructionIntendedIncumbent> incumbents = (List<BudgetConstructionIntendedIncumbent>) businessObjectService
-                .findAll(BudgetConstructionIntendedIncumbent.class);
-
-        //if there are entries
-        if (incumbents != null) {
-            for (BudgetConstructionIntendedIncumbent incumbent : incumbents) {
-                //if the entry has an employee ID
-                if (StringUtils.isNotBlank(incumbent.getEmplid())) {
-                    // get the person for that employee id
-                    Person person = personService.getPersonByEmployeeId(incumbent.getEmplid());
-                    if (ObjectUtils.isNotNull(person)) {
-                        //if the person is found get the name
-                        String name = person.getName();
-                        // set the name on the incumbent
-                        incumbent.setName(name);
-                    }
-                }
-            }
-
-            //save incumbents with the updated names
-            businessObjectService.save(incumbents);
-        }
-        long endTime = System.currentTimeMillis();
-        LOG.info("Update incumbents names time: " + (endTime - startTime)/1000 + "s");
     }
 
     /**
@@ -151,15 +106,6 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceServiceImpl impleme
      */
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
-    }
-
-    /**
-     * Sets the personService.
-     * 
-     * @param personService
-     */
-    public void setPersonService(PersonService personService) {
-        this.personService = personService;
     }
 
 }
