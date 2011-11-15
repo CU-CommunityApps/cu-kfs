@@ -151,21 +151,21 @@
 		
 		    <gl:generalLedgerPendingEntries />
 		
-		    <%--<kul:notes --%>
-		    	<%--notesBo="${KualiForm.document.documentBusinessObject.boNotes}" --%>
-		    	<%--noteType="${Constants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE}"  		    	--%>
-		    	<%--attachmentTypesValuesFinderClass="${DataDictionary.PurchaseOrderDocument.attachmentTypesValuesFinderClass}">--%>
-		          <%--<html:messages id="warnings" property="noteWarning" message="true">--%>
-		            <%--&nbsp;&nbsp;&nbsp;<bean:write name="warnings"/><br><br>--%>
-		          <%--</html:messages>--%>
-		    <%--</kul:notes> --%>
+		    <kul:notes
+		    	notesBo="${KualiForm.document.documentBusinessObject.boNotes}"
+		    	noteType="${Constants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE}"  		    	
+		    	attachmentTypesValuesFinderClass="${DataDictionary.PurchaseOrderDocument.attachmentTypesValuesFinderClass}">
+		          <html:messages id="warnings" property="noteWarning" message="true">
+		            &nbsp;&nbsp;&nbsp;<bean:write name="warnings"/><br><br>
+		          </html:messages>
+		    </kul:notes> 
 
-                <purap:notes-sciquest notesBo="${KualiForm.document.documentBusinessObject.boNotes}"
+               <%--  <purap:notes-sciquest notesBo="${KualiForm.document.documentBusinessObject.boNotes}"
                           noteType="${Constants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE}"
                           allowsNoteFYI="true"
                           defaultOpen="true"
                           attachmentTypesValuesFinderClass="${DataDictionary.RequisitionDocument.attachmentTypesValuesFinderClass}"/>
-
+ --%>
 		    <kul:adHocRecipients />
 		
 		    <kul:routeLog />
