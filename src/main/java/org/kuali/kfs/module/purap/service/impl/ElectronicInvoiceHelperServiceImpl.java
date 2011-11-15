@@ -1486,7 +1486,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
                 orderHolder.addInvoiceOrderRejectReason(rejectReason);
                 return;
             }
-            else {
+            else if (discountValueToUse.isNonZero()) {
                 PaymentRequestItem newItem = new PaymentRequestItem();
                 newItem.setItemUnitPrice(discountValueToUse.bigDecimalValue());
                 newItem.setItemTypeCode(PurapConstants.ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE);
