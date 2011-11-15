@@ -266,7 +266,7 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
     protected void updatePositionInfo(Integer fiscalYear) {
 
         StringBuilder sqlBuilder = new StringBuilder(500);
-        String defaultWorkMonths = "12";
+        Integer defaultWorkMonths = 12;
         sqlBuilder.append("UPDATE LD_BCN_POS_T bcpos\n");
         sqlBuilder.append("SET (IU_NORM_WORK_MONTHS,\n");
         sqlBuilder.append("    IU_PAY_MONTHS,\n");
