@@ -266,16 +266,17 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
     protected void updatePositionInfo(Integer fiscalYear) {
 
         StringBuilder sqlBuilder = new StringBuilder(500);
+        String defaultWorkMonths = "12";
         sqlBuilder.append("UPDATE LD_BCN_POS_T bcpos\n");
         sqlBuilder.append("SET (IU_NORM_WORK_MONTHS,\n");
         sqlBuilder.append("    IU_PAY_MONTHS,\n");
         sqlBuilder.append("    IU_POSITION_TYPE,\n");
         sqlBuilder.append("    POS_UNION_CD,\n");
         sqlBuilder.append("    IU_DFLT_OBJ_CD) = \n");
-        sqlBuilder.append("(SELECT WRK_MNTHS, WRK_MNTHS, POS_TYP, POS_UNION_CD, CU_OBJ_CD FROM PS_POSITION_EXTRA posinfo, PS_JOB_CD jobcd WHERE posinfo.POS_NBR = bcpos.POSITION_NBR AND posinfo.JOB_CD = jobcd.JOB_CD ) ");
+        sqlBuilder.append("(SELECT COALESCE(WRK_MNTHS,?), COALESCE(WRK_MNTHS,?), POS_TYP, POS_UNION_CD, CU_OBJ_CD FROM PS_POSITION_EXTRA posinfo, PS_JOB_CD jobcd WHERE posinfo.POS_NBR = bcpos.POSITION_NBR AND posinfo.JOB_CD = jobcd.JOB_CD ) ");
         sqlBuilder.append("WHERE (bcpos.UNIV_FISCAL_YR = ?)\n");
         String sqlString = sqlBuilder.toString();
-        getSimpleJdbcTemplate().update(sqlString, fiscalYear);
+        getSimpleJdbcTemplate().update(sqlString, fiscalYear, defaultWorkMonths, defaultWorkMonths);
     }
     
     /**
