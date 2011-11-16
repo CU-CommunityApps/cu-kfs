@@ -276,7 +276,7 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
         sqlBuilder.append("(SELECT COALESCE(WRK_MNTHS,?), COALESCE(WRK_MNTHS,?), POS_TYP, POS_UNION_CD, CU_OBJ_CD FROM PS_POSITION_EXTRA posinfo, PS_JOB_CD jobcd WHERE posinfo.POS_NBR = bcpos.POSITION_NBR AND posinfo.JOB_CD = jobcd.JOB_CD ) ");
         sqlBuilder.append("WHERE (bcpos.UNIV_FISCAL_YR = ?)\n");
         String sqlString = sqlBuilder.toString();
-        getSimpleJdbcTemplate().update(sqlString, fiscalYear, defaultWorkMonths, defaultWorkMonths);
+        getSimpleJdbcTemplate().update(sqlString, defaultWorkMonths, defaultWorkMonths, fiscalYear);
     }
     
     /**
