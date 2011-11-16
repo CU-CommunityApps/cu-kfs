@@ -634,7 +634,7 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
                         KualiDecimal amount = csfEntryFromMap.getCsfAmount().add(percentOfCSFAmount);
                         entry.setCsfAmount(amount);
                     }
-                    
+
                     mapOfEntries.put(accountingInfo.getKey(), entry);
 
                 }
@@ -771,6 +771,7 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
         psJobData.setCuAbbrFlag(psPositionJobExtractEntry.getCuAbbrFlag());
         psJobData.setAnnualRate(generateKualiDecimal(psPositionJobExtractEntry.getAnnualRate()));
         psJobData.setEmployeeName(psPositionJobExtractEntry.getName());
+        psJobData.setCuPlannedFTE(generateKualiDecimal(psPositionJobExtractEntry.getCuPlannedFTE()));
 
         return psJobData;
     }
@@ -792,6 +793,9 @@ public class PopulateCSFTrackerServiceImpl implements PopulateCSFTrackerService 
         psJobCode.setJobCodeDescShort(psPositionJobExtractEntry.getJobCodeDescShrt());
         psJobCode.setJobFamily(psPositionJobExtractEntry.getJobFamily());
         psJobCode.setJobStandardHours(generateKualiDecimal(psPositionJobExtractEntry.getJobCodeStandardHours()));
+        psJobCode.setCompFreq(psPositionJobExtractEntry.getCompFreq());
+        psJobCode.setJobFunction(psPositionJobExtractEntry.getJobFunction());
+        psJobCode.setJobFunctionDesc(psPositionJobExtractEntry.getJobFunctionDesc());
 
         return psJobCode;
     }

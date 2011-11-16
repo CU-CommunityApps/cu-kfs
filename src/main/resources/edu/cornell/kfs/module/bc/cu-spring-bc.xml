@@ -80,6 +80,10 @@
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="name" p:start="684" p:end="734" />
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="workMonths" p:start="1174" p:end="1177" />
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFamily" p:start="1177" p:end="0" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="compFreq" p:start="613" p:end="614" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuPlannedFTE" p:start="575" p:end="580" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFunction" p:start="592" p:end="595" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFunctionDesc" p:start="595" p:end="605" />
      							
      							<!-- POS accounting strings -->
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posTimePercent1" p:start="135" p:end="140" />

@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
 import org.kuali.rice.kns.util.KualiDecimal;
 
+import edu.cornell.kfs.module.bc.CUBCConstants;
+
 public class PSJobCode extends PersistableBusinessObjectBase {
     protected String jobCode;
     protected String jobCodeDesc;
@@ -12,6 +14,10 @@ public class PSJobCode extends PersistableBusinessObjectBase {
     protected String cuObjectCode;
     protected KualiDecimal jobStandardHours;
     protected String jobFamily;
+    protected String compFreq;
+    protected String jobFunction;
+    protected String jobFunctionDesc;
+    protected CUBCConstants.PSEntryStatus status;
 
     @Override
     protected LinkedHashMap toStringMapper() {
@@ -65,6 +71,38 @@ public class PSJobCode extends PersistableBusinessObjectBase {
 
     public void setJobFamily(String jobFamily) {
         this.jobFamily = jobFamily;
+    }
+
+    public CUBCConstants.PSEntryStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(CUBCConstants.PSEntryStatus status) {
+        this.status = status;
+    }
+
+    public String getJobFunction() {
+        return jobFunction;
+    }
+
+    public void setJobFunction(String jobFunction) {
+        this.jobFunction = jobFunction;
+    }
+
+    public String getJobFunctionDesc() {
+        return jobFunctionDesc;
+    }
+
+    public void setJobFunctionDesc(String jobFunctionDesc) {
+        this.jobFunctionDesc = jobFunctionDesc;
+    }
+
+    public String getCompFreq() {
+        return compFreq;
+    }
+
+    public void setCompFreq(String compFreq) {
+        this.compFreq = compFreq;
     }
 
 }

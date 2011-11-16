@@ -16,6 +16,8 @@ import edu.cornell.kfs.module.bc.CUBCConstants;
  */
 public class PSPositionJobExtractEntry extends BusinessObjectBase {
 
+    public CUBCConstants.PSEntryStatus status;
+
     private String positionNumber;
     private String emplid;
     private String name;
@@ -42,6 +44,10 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
     protected String cuAbbrFlag;
     protected String annualRate;
     protected String jobFamily;
+    protected String compFreq;
+    protected String jobFunction;
+    protected String jobFunctionDesc;
+    protected String cuPlannedFTE;
 
     // POS accounting Strings
     private String posTimePercent1;
@@ -3143,6 +3149,46 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
         } else if (!workMonths.equals(other.workMonths))
             return false;
         return true;
+    }
+
+    public CUBCConstants.PSEntryStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(CUBCConstants.PSEntryStatus status) {
+        this.status = status;
+    }
+
+    public String getJobFunction() {
+        return jobFunction;
+    }
+
+    public void setJobFunction(String jobFunction) {
+        this.jobFunction = jobFunction;
+    }
+
+    public String getJobFunctionDesc() {
+        return jobFunctionDesc;
+    }
+
+    public void setJobFunctionDesc(String jobFunctionDesc) {
+        this.jobFunctionDesc = jobFunctionDesc;
+    }
+
+    public String getCompFreq() {
+        return compFreq;
+    }
+
+    public void setCompFreq(String compFreq) {
+        this.compFreq = compFreq;
+    }
+
+    public String getCuPlannedFTE() {
+        return cuPlannedFTE;
+    }
+
+    public void setCuPlannedFTE(String cuPlannedFTE) {
+        this.cuPlannedFTE = cuPlannedFTE;
     }
 
 }

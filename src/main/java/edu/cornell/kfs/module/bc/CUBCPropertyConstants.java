@@ -102,4 +102,31 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
         public static final String FINANCIAL_DOC_MONTH_12_LINE_AMT = "financialDocumentMonth12LineAmount";
     }
 
+    public static final class CalculateSalaryFoundationTrackerProperties {
+        public static final String UNIVERSITY_FISCAL_YEAR = "universityFiscalYear";
+        public static final String CHART_OF_ACCOUNTS = "chartOfAccountsCode";
+        public static final String ACCOUNT_NBR = "accountNumber";
+        public static final String SUB_ACCOUNT_NBR = "subAccountNumber";
+        public static final String FIN_OBJ_CD = "financialObjectCode";
+        public static final String FIN_SUB_OBJ_CD = "financialSubObjectCode";
+        public static final String POSITION_NBR = "positionNumber";
+        public static final String EMPLID = "emplid";
+        public static final String CREATE_TIMESTAMP = "csfCreateTimestamp";
+    }
+
+    public static final class PSPositionInfoProperties {
+        public static final String POSITION_NBR = "positionNumber";
+    }
+
+    public static final class PSJobDataProperties {
+        public static final String POSITION_NBR = "positionNumber";
+        public static final String EMPLID = "emplid";
+    }
+    
+    public static final class PSJobCodeProperties {
+        public static final String JOB_CD = "jobCode";
+    }
+    
+    
+
 }

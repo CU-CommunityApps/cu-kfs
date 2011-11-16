@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 
 import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
 
+import edu.cornell.kfs.module.bc.CUBCConstants;
+
 /**
  * BO for PS_POSITION_T table.
  */
@@ -17,6 +19,7 @@ public class PSPositionInfo extends PersistableBusinessObjectBase {
     protected String classInd;
     protected String addsToActualFte;
     protected String cuStateCert;
+    protected CUBCConstants.PSEntryStatus status;
     
     protected PSJobCode psJobCode;
 
@@ -104,6 +107,14 @@ public class PSPositionInfo extends PersistableBusinessObjectBase {
 
     public void setPsJobCode(PSJobCode psJobCode) {
         this.psJobCode = psJobCode;
+    }
+
+    public CUBCConstants.PSEntryStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(CUBCConstants.PSEntryStatus status) {
+        this.status = status;
     }
 
 }

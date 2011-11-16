@@ -31,6 +31,7 @@
 	    <field-descriptor name="cuAbbrFlag" column="CU_ABBR_FLAG" jdbc-type="VARCHAR" />
 	    <field-descriptor name="annualRate" column="ANNL_RT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
 	    <field-descriptor name="employeeName" column="NAME" jdbc-type="VARCHAR" />
+	    <field-descriptor name="cuPlannedFTE" column="CU_PLANNED_FTE" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
 		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
 		
@@ -43,6 +44,9 @@
 		<field-descriptor name="cuObjectCode" column="CU_OBJ_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="jobStandardHours" column="STD_HRS" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
 	    <field-descriptor name="jobFamily" column="JOB_FAMILY" jdbc-type="VARCHAR" />
+	    <field-descriptor name="compFreq" column="COMP_FREQ" jdbc-type="VARCHAR" />
+	    <field-descriptor name="jobFunction" column="JOB_FUNC" jdbc-type="VARCHAR" />
+	    <field-descriptor name="jobFunctionDesc" column="JOB_FUNC_DESC" jdbc-type="VARCHAR" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
 		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
 		

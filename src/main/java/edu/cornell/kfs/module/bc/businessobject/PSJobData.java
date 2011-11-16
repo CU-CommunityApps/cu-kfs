@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
 import org.kuali.rice.kns.util.KualiDecimal;
 
+import edu.cornell.kfs.module.bc.CUBCConstants;
+
 public class PSJobData extends PersistableBusinessObjectBase {
     protected String positionNumber;
     protected String emplid;
@@ -18,6 +20,8 @@ public class PSJobData extends PersistableBusinessObjectBase {
     protected String cuAbbrFlag;
     protected KualiDecimal annualRate;
     protected String employeeName;
+    protected KualiDecimal cuPlannedFTE;
+    protected CUBCConstants.PSEntryStatus status;
 
     protected PSPositionInfo positionInfo;
 
@@ -129,6 +133,22 @@ public class PSJobData extends PersistableBusinessObjectBase {
 
     public void setEmployeeName(String employeeName) {
         this.employeeName = employeeName;
+    }
+
+    public CUBCConstants.PSEntryStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(CUBCConstants.PSEntryStatus status) {
+        this.status = status;
+    }
+
+    public KualiDecimal getCuPlannedFTE() {
+        return cuPlannedFTE;
+    }
+
+    public void setCuPlannedFTE(KualiDecimal cuPlannedFTE) {
+        this.cuPlannedFTE = cuPlannedFTE;
     }
 
 }

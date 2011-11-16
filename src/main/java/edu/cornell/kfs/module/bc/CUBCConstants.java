@@ -7,4 +7,24 @@ public class CUBCConstants extends BCConstants {
     public static final String DEFAULT_SUB_ACCOUNT_NUMBER = "-----";
     public static final String POSITION_NUMBER_PREFIX = "00";
 
+    public enum PSEntryStatus {
+        ADD, DELETE, UPDATE
+    }
+    
+    public enum StatusFlag {
+        NEW("N"), CHANGED("C"), DELETED("D");
+
+        private StatusFlag(String flagValue) {
+            this.flagValue = flagValue;
+        }
+
+        public String getFlagValue() {
+            return flagValue;
+        }
+
+        private String flagValue;
+    }
+    
+    
+
 }
