@@ -1039,6 +1039,9 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     }
 
     public PaymentTermType getVendorPaymentTerms() {
+        if (ObjectUtils.isNull(vendorPaymentTerms) || ObjectUtils.isNull(vendorPaymentTerms.getVendorPaymentTermsCode())) {
+            this.refreshReferenceObject("vendorPaymentTerms");
+        }
         return vendorPaymentTerms;
     }
 
