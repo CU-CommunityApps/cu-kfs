@@ -28,32 +28,7 @@ import edu.cornell.kfs.coa.service.AccountVerificationWebService;
  */
 @WebService(endpointInterface = "edu.cornell.kfs.coa.service.AccountVerificationWebService")
 public class AccountVerificationWebServiceImpl implements AccountVerificationWebService {
-	 
-//   private AccountService accountService = SpringContext.getBean(AccountService.class);
-//   private ObjectCodeService objectCodeService = SpringContext.getBean(ObjectCodeService.class);
-//   private SubAccountService subAccountService = SpringContext.getBean(SubAccountService.class);
-//   private SubObjectCodeService subObjectCodeService = SpringContext.getBean(SubObjectCodeService.class);
-//   private ProjectCodeService projectCodeService = SpringContext.getBean(ProjectCodeService.class);
-//   
-//   public void setAccountService(AccountService accountService) {
-//		this.accountService = accountService;
-//	}
-//   
-//   public void setObjectCodeService (ObjectCodeService objectCodeService) {
-//		  this.objectCodeService = objectCodeService;
-//	  }
-//
-//	  public void setSubAccountService (SubAccountService subAccountService) {
-//		  this.subAccountService = subAccountService;
-//	  }
-//
-//	  public void setSubObjectCodeService (SubObjectCodeService subObjectCodeService) {
-//		  this.subObjectCodeService = subObjectCodeService;
-//	  }
-//	  
-//	  public void setProjectCodeService (ProjectCodeService projectCodeService) {
-//		  this.projectCodeService = projectCodeService;
-//	  }
+
 
   public boolean isValidAccountString(String chartOfAccountsCode, String accountNumber, String subAccountNumber, 
 		                              String objectCode, String subObjectCode, String projectCode ) 
@@ -73,6 +48,12 @@ public class AccountVerificationWebServiceImpl implements AccountVerificationWeb
 	  Account account = SpringContext.getBean(AccountService.class).getByPrimaryId(chartOfAccountsCode, accountNumber); 
 	  
 	  if (account == null || account.toString().isEmpty()) {
+		  isValid = false;
+	  } else {
+		  isValid = true;
+	  }
+	  
+	  if (!account.isActive() || account.isClosed() || account.isExpired()) {
 		  isValid = false;
 	  } else {
 		  isValid = true;
@@ -103,11 +84,11 @@ public class AccountVerificationWebServiceImpl implements AccountVerificationWeb
 	
 	SubAccount subAccount = SpringContext.getBean(SubAccountService.class).getByPrimaryId(chartOfAccountsCode, accountNumber, subAccountNumber); 
 	
-	if (subAccount == null || subAccount.toString().isEmpty())
+	if (subAccount == null || subAccount.toString().isEmpty() || (!subAccount.isActive()))
 		isValidSubAccount = false;
 	else
 		isValidSubAccount = true;
-
+	
 	return isValidSubAccount;
   }
   
@@ -115,7 +96,7 @@ public class AccountVerificationWebServiceImpl implements AccountVerificationWeb
 	 boolean isValidObjectCode = false;
 	 
  	 ObjectCode objectCode = SpringContext.getBean(ObjectCodeService.class).getByPrimaryIdForCurrentYear(chartOfAccountsCode, objectCodeParm);
-	 if (objectCode == null || objectCode.toString().isEmpty()) 
+	 if (objectCode == null || objectCode.toString().isEmpty() || (!objectCode.isActive())) 
 		 isValidObjectCode = false;
      else
     	 isValidObjectCode = true;
@@ -128,7 +109,7 @@ public class AccountVerificationWebServiceImpl implements AccountVerificationWeb
 	 
 	 SubObjectCode subObjectCode = SpringContext.getBean(SubObjectCodeService.class).getByPrimaryIdForCurrentYear(chartOfAccountsCode, accountNumber, objectCode, subObjectCodeParm);
 	 
-	 if (subObjectCode == null || subObjectCode.toString().isEmpty()) 
+	 if (subObjectCode == null || subObjectCode.toString().isEmpty() || (!subObjectCode.isActive())) 
 		 isValidSubObjectCode = false;
 	 else
 		 isValidSubObjectCode = true;
@@ -141,7 +122,7 @@ public class AccountVerificationWebServiceImpl implements AccountVerificationWeb
 	 
 	 ProjectCode projectCode = SpringContext.getBean(ProjectCodeService.class).getByPrimaryId(projectCodeParm);
 	 
-	 if (projectCode == null || projectCode.toString().isEmpty()) 
+	 if (projectCode == null || projectCode.toString().isEmpty() || (!projectCode.isActive())) 
 		 isValidProjectCode = false;
 	 else
 		 isValidProjectCode = true;
