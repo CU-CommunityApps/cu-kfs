@@ -217,11 +217,22 @@ CheckDetailLineAmountRule<EffortCertificationDocument, EffortCertificationDetail
             reportError(EffortConstants.EFFORT_CERTIFICATION_TAB_ERRORS, EffortKeyConstants.ERROR_TOTAL_PAYROLL_AMOUNT_OVERCHANGED, (Double.valueOf(EffortConstants.AMOUNT_LIMIT_OF_TOTAL_SALARY_CHANGE)).toString());
             return false;
         }
+        
+        if (!EffortCertificationDocumentRuleUtil.isTotalEffortPercentageAs100(effortCertificationDocument)) {
+            if (!EffortCertificationDocumentRuleUtil.isTotalPayrollAmountOverChanged(effortCertificationDocument, EffortConstants.AMOUNT_LIMIT_OF_TOTAL_SALARY_CHANGE)) {
+                if(EffortCertificationDocumentRuleUtil.isTotalEffortPercentageInRange(effortCertificationDocument))
+                    return true;
+            }
+            reportError(EffortConstants.EFFORT_CERTIFICATION_TAB_ERRORS, EffortKeyConstants.ERROR_TOTAL_EFFORT_PERCENTAGE_NOT_100);
+            return false;
+        }
 
+/*
         if (!EffortCertificationDocumentRuleUtil.isTotalEffortPercentageAs100(effortCertificationDocument)) {
             reportError(EffortConstants.EFFORT_CERTIFICATION_TAB_ERRORS, EffortKeyConstants.ERROR_TOTAL_EFFORT_PERCENTAGE_NOT_100);
             return false;
         }
+        */
 
         String emplid = effortCertificationDocument.getEmplid();
         effortCertificationDocument.refreshReferenceObject(EffortPropertyConstants.EFFORT_CERTIFICATION_REPORT_DEFINITION);
