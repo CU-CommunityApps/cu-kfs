@@ -1503,8 +1503,8 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         
         for (PaymentRequestItem item : (List<PaymentRequestItem>) document.getItems()) {
 
-            //if no extended price and its an order discount or trade in, remove
-            if (ObjectUtils.isNull(item.getExtendedPrice()) &&
+            //if no extended price or purchase order item unit price, and its an order discount or trade in, remove
+            if ((ObjectUtils.isNull(item.getPurchaseOrderItemUnitPrice()) && ObjectUtils.isNull(item.getExtendedPrice())) &&
                 (ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE.equals(item.getItemTypeCode()) || ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE.equals(item.getItemTypeCode())) ){            
                 itemsToRemove.add(item);
                 continue;
