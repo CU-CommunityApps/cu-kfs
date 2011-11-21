@@ -30,7 +30,7 @@
 		-->
 		<property name="jobNames">
 			<list merge="true">
-				<value>populateCSFTrackerJob</value>
+				<value>psBudgetFeedJob</value>
 			</list>
 		</property>
 		
@@ -40,9 +40,9 @@
 	 	<property name="moduleConfiguration" ref="cu-bc"/>
 	</bean>
 	
-	<bean id="CSFTrackerFlatInputFileHandler" parent="CSFTrackerFlatInputFileHandler-parentBean"/>
+	<bean id="PSBudgetFeedFlatInputFileHandler" parent="PSBudgetFeedFlatInputFileHandler-parentBean"/>
 
-    <bean id="CSFTrackerFlatInputFileHandler-parentBean" class="edu.cornell.kfs.module.bc.batch.CSFTrackerFlatInputFileHandler" abstract="true">
+    <bean id="PSBudgetFeedFlatInputFileHandler-parentBean" class="edu.cornell.kfs.module.bc.batch.PSBudgetFeedFlatInputFileHandler" abstract="true">
 
 	</bean>
 
@@ -234,9 +234,9 @@
      		</property>
      	</bean>
 	
-	<bean id="csfTrackerFlatInputFileType" class="edu.cornell.kfs.module.bc.batch.CSFTrackerFlatInputFileType"> 
+	<bean id="psBudgetFeedFlatInputFileType" class="edu.cornell.kfs.module.bc.batch.PSBudgetFeedFlatInputFileType"> 
 	    <property name="directoryPath">
-	       <value>${staging.directory}/bc/csfTracker</value>
+	       <value>${staging.directory}/bc/psBudgetFeed</value>
 	    </property>
 	    <property name="fileExtension">
 	       <value>data</value>
@@ -248,37 +248,37 @@
 	    	<ref bean="flatFileSpecification"/>
        </property>
 
-       <property name="processor" ref="CSFTrackerFlatInputFileHandler" />
+       <property name="processor" ref="PSBudgetFeedFlatInputFileHandler" />
      </bean>
 
 	
-	<bean id="populateCSFTrackerService" parent="populateCSFTrackerService-parentBean"/>
+	<bean id="psBudgetFeedService" parent="psBudgetFeedService-parentBean"/>
 
-    <bean id="populateCSFTrackerService-parentBean" class="edu.cornell.kfs.module.bc.batch.service.impl.PopulateCSFTrackerServiceImpl" abstract="true">
+    <bean id="psBudgetFeedService-parentBean" class="edu.cornell.kfs.module.bc.batch.service.impl.PSBudgetFeedServiceImpl" abstract="true">
 		<property name="batchInputFileService">
 			<ref bean="batchInputFileService" />
 		</property>
-		<property name="csfTrackerFlatInputFileType">
-			<ref bean="csfTrackerFlatInputFileType" />
+		<property name="psBudgetFeedFlatInputFileType">
+			<ref bean="psBudgetFeedFlatInputFileType" />
 		</property>
 		<property name="businessObjectService" ref="businessObjectService" />
 		<property name="dateTimeService" ref="dateTimeService" />
 		<property name="parameterService" ref="parameterService" />
 	</bean>
 	
-	<bean id="populateCSFTrackerJob" parent="scheduledJobDescriptor">
+	<bean id="psBudgetFeedJob" parent="scheduledJobDescriptor">
 		<property name="steps">
 			<list>
-				<ref bean="populateCSFTrackerStep" />
+				<ref bean="psBudgetFeedStep" />
 			</list>
 		</property>
 	</bean>
 	
-	<bean id="populateCSFTrackerStep" class="edu.cornell.kfs.module.bc.batch.PopulateCSFTrackerStep" parent="step">
-		 <property name="populateCSFTrackerService" ref="populateCSFTrackerService" />  
+	<bean id="psBudgetFeedStep" class="edu.cornell.kfs.module.bc.batch.PSBudgetFeedStep" parent="step">
+		 <property name="psBudgetFeedService" ref="psBudgetFeedService" />  
 		 <property name="batchInputFileService" ref="batchInputFileService" />
 		 <property name="dateTimeService" ref="dateTimeService" />
-		 <property name="csfTrackerFlatInputFileType" ref="csfTrackerFlatInputFileType" />
+		 <property name="psBudgetFeedFlatInputFileType" ref="psBudgetFeedFlatInputFileType" />
 		 <property name="parameterService" ref="parameterService" />
 		 <property name="businessObjectService">
 			<ref bean="businessObjectService" />

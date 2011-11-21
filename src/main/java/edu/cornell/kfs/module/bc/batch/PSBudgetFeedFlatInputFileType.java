@@ -8,9 +8,9 @@ import org.kuali.kfs.sys.exception.ParseException;
 
 import edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry;
 
-public class CSFTrackerFlatInputFileType extends FlatFileParserBase {
+public class PSBudgetFeedFlatInputFileType extends FlatFileParserBase {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CSFTrackerFlatInputFileType.class);
+    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PSBudgetFeedFlatInputFileType.class);
     protected ArrayList<String> errorMessages;
     protected int lineCount = 1;
 
@@ -19,7 +19,7 @@ public class CSFTrackerFlatInputFileType extends FlatFileParserBase {
      */
     public String getFileTypeIdentifer() {
 
-        return "csfTrackerFlatInputFileType";
+        return "psBudgetFeedFlatInputFileType";
     }
 
     /**

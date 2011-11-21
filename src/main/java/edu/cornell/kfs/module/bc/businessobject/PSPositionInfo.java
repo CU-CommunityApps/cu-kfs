@@ -3,6 +3,7 @@ package edu.cornell.kfs.module.bc.businessobject;
 import java.util.LinkedHashMap;
 
 import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.kns.util.KualiDecimal;
 
 import edu.cornell.kfs.module.bc.CUBCConstants;
 
@@ -13,14 +14,14 @@ public class PSPositionInfo extends PersistableBusinessObjectBase {
     protected String positionNumber;
     protected String positionType;
     protected String positionUnionCode;
-    protected Integer workMonths;
+    protected KualiDecimal workMonths;
     protected String jobCode;
     protected String fullPartTime;
     protected String classInd;
     protected String addsToActualFte;
     protected String cuStateCert;
     protected CUBCConstants.PSEntryStatus status;
-    
+
     protected PSJobCode psJobCode;
 
     @Override
@@ -53,11 +54,11 @@ public class PSPositionInfo extends PersistableBusinessObjectBase {
         this.positionUnionCode = positionUnionCode;
     }
 
-    public Integer getWorkMonths() {
+    public KualiDecimal getWorkMonths() {
         return workMonths;
     }
 
-    public void setWorkMonths(Integer workMonths) {
+    public void setWorkMonths(KualiDecimal workMonths) {
         this.workMonths = workMonths;
     }
 

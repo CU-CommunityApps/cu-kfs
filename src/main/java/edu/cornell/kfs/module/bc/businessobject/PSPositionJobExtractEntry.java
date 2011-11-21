@@ -1,7 +1,6 @@
 package edu.cornell.kfs.module.bc.businessobject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -9,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.kns.bo.BusinessObjectBase;
 
 import edu.cornell.kfs.module.bc.CUBCConstants;
+import edu.cornell.kfs.module.bc.CUBCConstants.StatusFlag;
 
 /**
  * A class that holds the fields from the PS position/job extraat file to be loaded in
@@ -16,7 +16,8 @@ import edu.cornell.kfs.module.bc.CUBCConstants;
  */
 public class PSPositionJobExtractEntry extends BusinessObjectBase {
 
-    public CUBCConstants.PSEntryStatus status;
+    public CUBCConstants.PSEntryStatus deleteStatus;
+    public StatusFlag changeStatus;
 
     private String positionNumber;
     private String emplid;
@@ -56,60 +57,80 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
     private String posSubAccountNumber1;
     private String posFinancialObjectCode1;
     private String posFinancialSubObjectCode1;
+    //not from the feed, used for flagging purposes
+    private StatusFlag posStatus1;
     private String posTimePercent2;
     private String posChartOfAccountsCode2;
     private String posAccountNumber2;
     private String posSubAccountNumber2;
     private String posFinancialObjectCode2;
     private String posFinancialSubObjectCode2;
+    //not from the feed, used for flagging purposes
+    private StatusFlag posStatus2;
     private String posTimePercent3;
     private String posChartOfAccountsCode3;
     private String posAccountNumber3;
     private String posSubAccountNumber3;
     private String posFinancialObjectCode3;
     private String posFinancialSubObjectCode3;
+    //not from the feed, used for flagging purposes
+    private StatusFlag posStatus3;
     private String posTimePercent4;
     private String posChartOfAccountsCode4;
     private String posAccountNumber4;
     private String posSubAccountNumber4;
     private String posFinancialObjectCode4;
     private String posFinancialSubObjectCode4;
+    //not from the feed, used for flagging purposes
+    private StatusFlag posStatus4;
     private String posTimePercent5;
     private String posChartOfAccountsCode5;
     private String posAccountNumber5;
     private String posSubAccountNumber5;
     private String posFinancialObjectCode5;
     private String posFinancialSubObjectCode5;
+    //not from the feed, used for flagging purposes
+    private StatusFlag posStatus5;
     private String posTimePercent6;
     private String posChartOfAccountsCode6;
     private String posAccountNumber6;
     private String posSubAccountNumber6;
     private String posFinancialObjectCode6;
     private String posFinancialSubObjectCode6;
+    //not from the feed, used for flagging purposes
+    private StatusFlag posStatus6;
     private String posTimePercent7;
     private String posChartOfAccountsCode7;
     private String posAccountNumber7;
     private String posSubAccountNumber7;
     private String posFinancialObjectCode7;
     private String posFinancialSubObjectCode7;
+    //not from the feed, used for flagging purposes
+    private StatusFlag posStatus7;
     private String posTimePercent8;
     private String posChartOfAccountsCode8;
     private String posAccountNumber8;
     private String posSubAccountNumber8;
     private String posFinancialObjectCode8;
     private String posFinancialSubObjectCode8;
+    //not from the feed, used for flagging purposes
+    private StatusFlag posStatus8;
     private String posTimePercent9;
     private String posChartOfAccountsCode9;
     private String posAccountNumber9;
     private String posSubAccountNumber9;
     private String posFinancialObjectCode9;
     private String posFinancialSubObjectCode9;
+    //not from the feed, used for flagging purposes
+    private StatusFlag posStatus9;
     private String posTimePercent10;
     private String posChartOfAccountsCode10;
     private String posAccountNumber10;
     private String posSubAccountNumber10;
     private String posFinancialObjectCode10;
     private String posFinancialSubObjectCode10;
+    //not from the feed, used for flagging purposes
+    private StatusFlag posStatus10;
 
     // CSF accountung Strings
     private String csfTimePercent1;
@@ -118,60 +139,83 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
     private String subAccountNumber1;
     private String financialObjectCode1;
     private String financialSubObjectCode1;
+    //not from the feed, used for flagging purposes
+    private StatusFlag csfStatus1;
     private String csfTimePercent2;
     private String chartOfAccountsCode2;
     private String accountNumber2;
     private String subAccountNumber2;
     private String financialObjectCode2;
     private String financialSubObjectCode2;
+    //not from the feed, used for flagging purposes
+    private StatusFlag csfStatus2;
     private String csfTimePercent3;
     private String chartOfAccountsCode3;
     private String accountNumber3;
     private String subAccountNumber3;
     private String financialObjectCode3;
     private String financialSubObjectCode3;
+    //not from the feed, used for flagging purposes
+    private StatusFlag csfStatus3;
     private String csfTimePercent4;
     private String chartOfAccountsCode4;
     private String accountNumber4;
     private String subAccountNumber4;
     private String financialObjectCode4;
     private String financialSubObjectCode4;
+    //not from the feed, used for flagging purposes
+    private StatusFlag csfStatus4;
     private String csfTimePercent5;
     private String chartOfAccountsCode5;
     private String accountNumber5;
     private String subAccountNumber5;
     private String financialObjectCode5;
     private String financialSubObjectCode5;
+    //not from the feed, used for flagging purposes
+    private StatusFlag csfStatus5;
     private String csfTimePercent6;
     private String chartOfAccountsCode6;
     private String accountNumber6;
     private String subAccountNumber6;
     private String financialObjectCode6;
     private String financialSubObjectCode6;
+    //not from the feed, used for flagging purposes
+    private StatusFlag csfStatus6;
     private String csfTimePercent7;
     private String chartOfAccountsCode7;
     private String accountNumber7;
     private String subAccountNumber7;
     private String financialObjectCode7;
     private String financialSubObjectCode7;
+    //not from the feed, used for flagging purposes
+    private StatusFlag csfStatus7;
     private String csfTimePercent8;
     private String chartOfAccountsCode8;
     private String accountNumber8;
     private String subAccountNumber8;
     private String financialObjectCode8;
     private String financialSubObjectCode8;
+    //not from the feed, used for flagging purposes
+    private StatusFlag csfStatus8;
     private String csfTimePercent9;
     private String chartOfAccountsCode9;
     private String accountNumber9;
     private String subAccountNumber9;
     private String financialObjectCode9;
     private String financialSubObjectCode9;
+    //not from the feed, used for flagging purposes
+    private StatusFlag csfStatus9;
     private String csfTimePercent10;
     private String chartOfAccountsCode10;
     private String accountNumber10;
     private String subAccountNumber10;
     private String financialObjectCode10;
     private String financialSubObjectCode10;
+    //not from the feed, used for flagging purposes
+    private StatusFlag csfStatus10;
+
+    private List<PSPositionJobExtractAccountingInfo> csfAccountingInfoList;
+    private List<PSPositionJobExtractAccountingInfo> posAccountingInfoList;
 
     /**
      * Gets the positionNumber.
@@ -1308,73 +1352,73 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
     }
 
     /**
-     * Build a collection with the non-blank accounts.
+     * Build a list with the non-blank accounts.
      * 
-     * @return a collection of accounting information
+     * @return a list of accounting information
      */
-    public Collection<PSPositionJobExtractAccountingInfo> getPOSAccountingInfoCollection() {
+    private List<PSPositionJobExtractAccountingInfo> getPOSAccountingInfoCollection() {
         List<PSPositionJobExtractAccountingInfo> accountingInfoCollection = new ArrayList<PSPositionJobExtractAccountingInfo>();
 
         if (StringUtils.isNotBlank(posTimePercent1)) {
             PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(posTimePercent1,
                     posChartOfAccountsCode1, posAccountNumber1, posSubAccountNumber1, posFinancialObjectCode1,
-                    posFinancialSubObjectCode1);
+                    posFinancialSubObjectCode1, posStatus1);
 
             accountingInfoCollection.add(accountingInfo);
         }
         if (StringUtils.isNotBlank(posTimePercent2)) {
             PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(posTimePercent2,
                     posChartOfAccountsCode1, posAccountNumber1, posSubAccountNumber1, posFinancialObjectCode2,
-                    posFinancialSubObjectCode1);
+                    posFinancialSubObjectCode1, posStatus2);
 
             accountingInfoCollection.add(accountingInfo);
         }
-        if (StringUtils.isNotBlank(csfTimePercent3)) {
-            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent3,
-                    chartOfAccountsCode3, accountNumber3, subAccountNumber3, financialObjectCode3,
-                    financialSubObjectCode3);
+        if (StringUtils.isNotBlank(posTimePercent3)) {
+            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(posTimePercent3,
+                    posChartOfAccountsCode3, posAccountNumber3, posSubAccountNumber3, posFinancialObjectCode3,
+                    posFinancialSubObjectCode3, posStatus3);
             accountingInfoCollection.add(accountingInfo);
         }
-        if (StringUtils.isNotBlank(csfTimePercent4)) {
-            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent4,
-                    chartOfAccountsCode4, accountNumber4, subAccountNumber4, financialObjectCode4,
-                    financialSubObjectCode4);
+        if (StringUtils.isNotBlank(posTimePercent4)) {
+            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(posTimePercent4,
+                    posChartOfAccountsCode4, posAccountNumber4, posSubAccountNumber4, posFinancialObjectCode4,
+                    posFinancialSubObjectCode4, posStatus4);
             accountingInfoCollection.add(accountingInfo);
         }
-        if (StringUtils.isNotBlank(csfTimePercent5)) {
-            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent5,
-                    chartOfAccountsCode5, accountNumber5, subAccountNumber5, financialObjectCode5,
-                    financialSubObjectCode5);
+        if (StringUtils.isNotBlank(posTimePercent5)) {
+            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(posTimePercent5,
+                    posChartOfAccountsCode5, posAccountNumber5, posSubAccountNumber5, posFinancialObjectCode5,
+                    posFinancialSubObjectCode5, posStatus5);
             accountingInfoCollection.add(accountingInfo);
         }
-        if (StringUtils.isNotBlank(csfTimePercent6)) {
-            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent6,
-                    chartOfAccountsCode6, accountNumber6, subAccountNumber6, financialObjectCode6,
-                    financialSubObjectCode6);
+        if (StringUtils.isNotBlank(posTimePercent6)) {
+            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(posTimePercent6,
+                    posChartOfAccountsCode6, posAccountNumber6, posSubAccountNumber6, posFinancialObjectCode6,
+                    posFinancialSubObjectCode6, posStatus6);
             accountingInfoCollection.add(accountingInfo);
         }
-        if (StringUtils.isNotBlank(csfTimePercent7)) {
-            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent7,
-                    chartOfAccountsCode7, accountNumber7, subAccountNumber7, financialObjectCode7,
-                    financialSubObjectCode7);
+        if (StringUtils.isNotBlank(posTimePercent7)) {
+            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(posTimePercent7,
+                    posChartOfAccountsCode7, posAccountNumber7, posSubAccountNumber7, posFinancialObjectCode7,
+                    posFinancialSubObjectCode7, posStatus7);
             accountingInfoCollection.add(accountingInfo);
         }
-        if (StringUtils.isNotBlank(csfTimePercent8)) {
-            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent8,
-                    chartOfAccountsCode8, accountNumber8, subAccountNumber8, financialObjectCode8,
-                    financialSubObjectCode8);
+        if (StringUtils.isNotBlank(posTimePercent8)) {
+            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(posTimePercent8,
+                    posChartOfAccountsCode8, posAccountNumber8, posSubAccountNumber8, posFinancialObjectCode8,
+                    posFinancialSubObjectCode8, posStatus8);
             accountingInfoCollection.add(accountingInfo);
         }
-        if (StringUtils.isNotBlank(csfTimePercent9)) {
-            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent9,
-                    chartOfAccountsCode9, accountNumber9, subAccountNumber9, financialObjectCode9,
-                    financialSubObjectCode9);
+        if (StringUtils.isNotBlank(posTimePercent9)) {
+            PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(posTimePercent9,
+                    posChartOfAccountsCode9, posAccountNumber9, posSubAccountNumber9, posFinancialObjectCode9,
+                    posFinancialSubObjectCode9, posStatus9);
             accountingInfoCollection.add(accountingInfo);
         }
-        if (StringUtils.isNotBlank(csfTimePercent10)) {
+        if (StringUtils.isNotBlank(posTimePercent10)) {
             PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(
-                    csfTimePercent10, chartOfAccountsCode10, accountNumber10, subAccountNumber10,
-                    financialObjectCode10, financialSubObjectCode10);
+                    posTimePercent10, posChartOfAccountsCode10, posAccountNumber10, posSubAccountNumber10,
+                    posFinancialObjectCode10, posFinancialSubObjectCode10, posStatus10);
             accountingInfoCollection.add(accountingInfo);
         }
 
@@ -1382,72 +1426,72 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
     }
 
     /**
-     * Build a collection with the non-blank accounts.
+     * Build a list with the non-blank accounts.
      * 
-     * @return a collection of accounting information
+     * @return a list of accounting information
      */
-    public Collection<PSPositionJobExtractAccountingInfo> getCSFAccountingInfoCollection() {
+    private List<PSPositionJobExtractAccountingInfo> getCSFAccountingInfoCollection() {
         List<PSPositionJobExtractAccountingInfo> accountingInfoCollection = new ArrayList<PSPositionJobExtractAccountingInfo>();
 
         if (StringUtils.isNotBlank(csfTimePercent1)) {
             PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent1,
                     chartOfAccountsCode1, accountNumber1, subAccountNumber1, financialObjectCode1,
-                    financialSubObjectCode1);
+                    financialSubObjectCode1, csfStatus1);
 
             accountingInfoCollection.add(accountingInfo);
         }
         if (StringUtils.isNotBlank(csfTimePercent2)) {
             PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent2,
                     chartOfAccountsCode2, accountNumber2, subAccountNumber2, financialObjectCode2,
-                    financialSubObjectCode2);
+                    financialSubObjectCode2, csfStatus2);
             accountingInfoCollection.add(accountingInfo);
         }
         if (StringUtils.isNotBlank(csfTimePercent3)) {
             PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent3,
                     chartOfAccountsCode3, accountNumber3, subAccountNumber3, financialObjectCode3,
-                    financialSubObjectCode3);
+                    financialSubObjectCode3, csfStatus3);
             accountingInfoCollection.add(accountingInfo);
         }
         if (StringUtils.isNotBlank(csfTimePercent4)) {
             PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent4,
                     chartOfAccountsCode4, accountNumber4, subAccountNumber4, financialObjectCode4,
-                    financialSubObjectCode4);
+                    financialSubObjectCode4, csfStatus4);
             accountingInfoCollection.add(accountingInfo);
         }
         if (StringUtils.isNotBlank(csfTimePercent5)) {
             PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent5,
                     chartOfAccountsCode5, accountNumber5, subAccountNumber5, financialObjectCode5,
-                    financialSubObjectCode5);
+                    financialSubObjectCode5, csfStatus5);
             accountingInfoCollection.add(accountingInfo);
         }
         if (StringUtils.isNotBlank(csfTimePercent6)) {
             PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent6,
                     chartOfAccountsCode6, accountNumber6, subAccountNumber6, financialObjectCode6,
-                    financialSubObjectCode6);
+                    financialSubObjectCode6, csfStatus6);
             accountingInfoCollection.add(accountingInfo);
         }
         if (StringUtils.isNotBlank(csfTimePercent7)) {
             PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent7,
                     chartOfAccountsCode7, accountNumber7, subAccountNumber7, financialObjectCode7,
-                    financialSubObjectCode7);
+                    financialSubObjectCode7, csfStatus7);
             accountingInfoCollection.add(accountingInfo);
         }
         if (StringUtils.isNotBlank(csfTimePercent8)) {
             PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent8,
                     chartOfAccountsCode8, accountNumber8, subAccountNumber8, financialObjectCode8,
-                    financialSubObjectCode8);
+                    financialSubObjectCode8, csfStatus8);
             accountingInfoCollection.add(accountingInfo);
         }
         if (StringUtils.isNotBlank(csfTimePercent9)) {
             PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(csfTimePercent9,
                     chartOfAccountsCode9, accountNumber9, subAccountNumber9, financialObjectCode9,
-                    financialSubObjectCode9);
+                    financialSubObjectCode9, csfStatus9);
             accountingInfoCollection.add(accountingInfo);
         }
         if (StringUtils.isNotBlank(csfTimePercent10)) {
             PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(
                     csfTimePercent10, chartOfAccountsCode10, accountNumber10, subAccountNumber10,
-                    financialObjectCode10, financialSubObjectCode10);
+                    financialObjectCode10, financialSubObjectCode10, csfStatus10);
             accountingInfoCollection.add(accountingInfo);
         }
 
@@ -2178,82 +2222,240 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
         this.posTimePercent10 = posTimePercent10;
     }
 
-    @Override
-    public String toString() {
-        return "PSPositionJobExtractEntry [positionNumber=" + positionNumber + ", emplid=" + emplid + ", name=" + name
-                + ", employeeType=" + employeeType + ", defaultObjectCode=" + defaultObjectCode
-                + ", positionUnionCode=" + positionUnionCode + ", workMonths=" + workMonths + ", jobCode=" + jobCode
-                + ", jobCodeDesc=" + jobCodeDesc + ", jobCodeDescShrt=" + jobCodeDescShrt + ", company=" + company
-                + ", fullPartTime=" + fullPartTime + ", classInd=" + classInd + ", addsToActualFte=" + addsToActualFte
-                + ", cuStateCert=" + cuStateCert + ", employeeRecord=" + employeeRecord + ", employeeStatus="
-                + employeeStatus + ", jobStandardHours=" + jobStandardHours + ", jobCodeStandardHours="
-                + jobCodeStandardHours + ", employeeClass=" + employeeClass + ", earningDistributionType="
-                + earningDistributionType + ", compRate=" + compRate + ", annualBenefitBaseRate="
-                + annualBenefitBaseRate + ", cuAbbrFlag=" + cuAbbrFlag + ", annualRate=" + annualRate + ", jobFamily="
-                + jobFamily + ", posTimePercent1=" + posTimePercent1 + ", posChartOfAccountsCode1="
-                + posChartOfAccountsCode1 + ", posAccountNumber1=" + posAccountNumber1 + ", posSubAccountNumber1="
-                + posSubAccountNumber1 + ", posFinancialObjectCode1=" + posFinancialObjectCode1
-                + ", posFinancialSubObjectCode1=" + posFinancialSubObjectCode1 + ", posTimePercent2=" + posTimePercent2
-                + ", posChartOfAccountsCode2=" + posChartOfAccountsCode2 + ", posAccountNumber2=" + posAccountNumber2
-                + ", posSubAccountNumber2=" + posSubAccountNumber2 + ", posFinancialObjectCode2="
-                + posFinancialObjectCode2 + ", posFinancialSubObjectCode2=" + posFinancialSubObjectCode2
-                + ", posTimePercent3=" + posTimePercent3 + ", posChartOfAccountsCode3=" + posChartOfAccountsCode3
-                + ", posAccountNumber3=" + posAccountNumber3 + ", posSubAccountNumber3=" + posSubAccountNumber3
-                + ", posFinancialObjectCode3=" + posFinancialObjectCode3 + ", posFinancialSubObjectCode3="
-                + posFinancialSubObjectCode3 + ", posTimePercent4=" + posTimePercent4 + ", posChartOfAccountsCode4="
-                + posChartOfAccountsCode4 + ", posAccountNumber4=" + posAccountNumber4 + ", posSubAccountNumber4="
-                + posSubAccountNumber4 + ", posFinancialObjectCode4=" + posFinancialObjectCode4
-                + ", posFinancialSubObjectCode4=" + posFinancialSubObjectCode4 + ", posTimePercent5=" + posTimePercent5
-                + ", posChartOfAccountsCode5=" + posChartOfAccountsCode5 + ", posAccountNumber5=" + posAccountNumber5
-                + ", posSubAccountNumber5=" + posSubAccountNumber5 + ", posFinancialObjectCode5="
-                + posFinancialObjectCode5 + ", posFinancialSubObjectCode5=" + posFinancialSubObjectCode5
-                + ", posTimePercent6=" + posTimePercent6 + ", posChartOfAccountsCode6=" + posChartOfAccountsCode6
-                + ", posAccountNumber6=" + posAccountNumber6 + ", posSubAccountNumber6=" + posSubAccountNumber6
-                + ", posFinancialObjectCode6=" + posFinancialObjectCode6 + ", posFinancialSubObjectCode6="
-                + posFinancialSubObjectCode6 + ", posTimePercent7=" + posTimePercent7 + ", posChartOfAccountsCode7="
-                + posChartOfAccountsCode7 + ", posAccountNumber7=" + posAccountNumber7 + ", posSubAccountNumber7="
-                + posSubAccountNumber7 + ", posFinancialObjectCode7=" + posFinancialObjectCode7
-                + ", posFinancialSubObjectCode7=" + posFinancialSubObjectCode7 + ", posTimePercent8=" + posTimePercent8
-                + ", posChartOfAccountsCode8=" + posChartOfAccountsCode8 + ", posAccountNumber8=" + posAccountNumber8
-                + ", posSubAccountNumber8=" + posSubAccountNumber8 + ", posFinancialObjectCode8="
-                + posFinancialObjectCode8 + ", posFinancialSubObjectCode8=" + posFinancialSubObjectCode8
-                + ", posTimePercent9=" + posTimePercent9 + ", posChartOfAccountsCode9=" + posChartOfAccountsCode9
-                + ", posAccountNumber9=" + posAccountNumber9 + ", posSubAccountNumber9=" + posSubAccountNumber9
-                + ", posFinancialObjectCode9=" + posFinancialObjectCode9 + ", posFinancialSubObjectCode9="
-                + posFinancialSubObjectCode9 + ", posTimePercent10=" + posTimePercent10 + ", posChartOfAccountsCode10="
-                + posChartOfAccountsCode10 + ", posAccountNumber10=" + posAccountNumber10 + ", posSubAccountNumber10="
-                + posSubAccountNumber10 + ", posFinancialObjectCode10=" + posFinancialObjectCode10
-                + ", posFinancialSubObjectCode10=" + posFinancialSubObjectCode10 + ", csfTimePercent1="
-                + csfTimePercent1 + ", chartOfAccountsCode1=" + chartOfAccountsCode1 + ", accountNumber1="
-                + accountNumber1 + ", subAccountNumber1=" + subAccountNumber1 + ", financialObjectCode1="
-                + financialObjectCode1 + ", financialSubObjectCode1=" + financialSubObjectCode1 + ", csfTimePercent2="
-                + csfTimePercent2 + ", chartOfAccountsCode2=" + chartOfAccountsCode2 + ", accountNumber2="
-                + accountNumber2 + ", subAccountNumber2=" + subAccountNumber2 + ", financialObjectCode2="
-                + financialObjectCode2 + ", financialSubObjectCode2=" + financialSubObjectCode2 + ", csfTimePercent3="
-                + csfTimePercent3 + ", chartOfAccountsCode3=" + chartOfAccountsCode3 + ", accountNumber3="
-                + accountNumber3 + ", subAccountNumber3=" + subAccountNumber3 + ", financialObjectCode3="
-                + financialObjectCode3 + ", financialSubObjectCode3=" + financialSubObjectCode3 + ", csfTimePercent4="
-                + csfTimePercent4 + ", chartOfAccountsCode4=" + chartOfAccountsCode4 + ", accountNumber4="
-                + accountNumber4 + ", subAccountNumber4=" + subAccountNumber4 + ", financialObjectCode4="
-                + financialObjectCode4 + ", financialSubObjectCode4=" + financialSubObjectCode4 + ", csfTimePercent5="
-                + csfTimePercent5 + ", chartOfAccountsCode5=" + chartOfAccountsCode5 + ", accountNumber5="
-                + accountNumber5 + ", subAccountNumber5=" + subAccountNumber5 + ", financialObjectCode5="
-                + financialObjectCode5 + ", financialSubObjectCode5=" + financialSubObjectCode5 + ", csfTimePercent6="
-                + csfTimePercent6 + ", chartOfAccountsCode6=" + chartOfAccountsCode6 + ", accountNumber6="
-                + accountNumber6 + ", subAccountNumber6=" + subAccountNumber6 + ", financialObjectCode6="
-                + financialObjectCode6 + ", financialSubObjectCode6=" + financialSubObjectCode6 + ", csfTimePercent7="
-                + csfTimePercent7 + ", chartOfAccountsCode7=" + chartOfAccountsCode7 + ", accountNumber7="
-                + accountNumber7 + ", subAccountNumber7=" + subAccountNumber7 + ", financialObjectCode7="
-                + financialObjectCode7 + ", financialSubObjectCode7=" + financialSubObjectCode7 + ", csfTimePercent8="
-                + csfTimePercent8 + ", chartOfAccountsCode8=" + chartOfAccountsCode8 + ", accountNumber8="
-                + accountNumber8 + ", subAccountNumber8=" + subAccountNumber8 + ", financialObjectCode8="
-                + financialObjectCode8 + ", financialSubObjectCode8=" + financialSubObjectCode8 + ", csfTimePercent9="
-                + csfTimePercent9 + ", chartOfAccountsCode9=" + chartOfAccountsCode9 + ", accountNumber9="
-                + accountNumber9 + ", subAccountNumber9=" + subAccountNumber9 + ", financialObjectCode9="
-                + financialObjectCode9 + ", financialSubObjectCode9=" + financialSubObjectCode9 + ", csfTimePercent10="
-                + csfTimePercent10 + ", chartOfAccountsCode10=" + chartOfAccountsCode10 + ", accountNumber10="
-                + accountNumber10 + ", subAccountNumber10=" + subAccountNumber10 + ", financialObjectCode10="
-                + financialObjectCode10 + ", financialSubObjectCode10=" + financialSubObjectCode10 + "]";
+    public CUBCConstants.PSEntryStatus getStatus() {
+        return deleteStatus;
+    }
+
+    public void setStatus(CUBCConstants.PSEntryStatus status) {
+        this.deleteStatus = status;
+    }
+
+    public String getJobFunction() {
+        return jobFunction;
+    }
+
+    public void setJobFunction(String jobFunction) {
+        this.jobFunction = jobFunction;
+    }
+
+    public String getJobFunctionDesc() {
+        return jobFunctionDesc;
+    }
+
+    public void setJobFunctionDesc(String jobFunctionDesc) {
+        this.jobFunctionDesc = jobFunctionDesc;
+    }
+
+    public String getCompFreq() {
+        return compFreq;
+    }
+
+    public void setCompFreq(String compFreq) {
+        this.compFreq = compFreq;
+    }
+
+    public String getCuPlannedFTE() {
+        return cuPlannedFTE;
+    }
+
+    public void setCuPlannedFTE(String cuPlannedFTE) {
+        this.cuPlannedFTE = cuPlannedFTE;
+    }
+
+    public CUBCConstants.PSEntryStatus getDeleteStatus() {
+        return deleteStatus;
+    }
+
+    public void setDeleteStatus(CUBCConstants.PSEntryStatus deleteStatus) {
+        this.deleteStatus = deleteStatus;
+    }
+
+    public StatusFlag getChangeStatus() {
+        return changeStatus;
+    }
+
+    public void setChangeStatus(StatusFlag changeStatus) {
+        this.changeStatus = changeStatus;
+    }
+
+    public StatusFlag getPosStatus1() {
+        return posStatus1;
+    }
+
+    public void setPosStatus1(StatusFlag posStatus1) {
+        this.posStatus1 = posStatus1;
+    }
+
+    public StatusFlag getPosStatus2() {
+        return posStatus2;
+    }
+
+    public void setPosStatus2(StatusFlag posStatus2) {
+        this.posStatus2 = posStatus2;
+    }
+
+    public StatusFlag getPosStatus3() {
+        return posStatus3;
+    }
+
+    public void setPosStatus3(StatusFlag posStatus3) {
+        this.posStatus3 = posStatus3;
+    }
+
+    public StatusFlag getPosStatus4() {
+        return posStatus4;
+    }
+
+    public void setPosStatus4(StatusFlag posStatus4) {
+        this.posStatus4 = posStatus4;
+    }
+
+    public StatusFlag getPosStatus5() {
+        return posStatus5;
+    }
+
+    public void setPosStatus5(StatusFlag posStatus5) {
+        this.posStatus5 = posStatus5;
+    }
+
+    public StatusFlag getPosStatus6() {
+        return posStatus6;
+    }
+
+    public void setPosStatus6(StatusFlag posStatus6) {
+        this.posStatus6 = posStatus6;
+    }
+
+    public StatusFlag getPosStatus7() {
+        return posStatus7;
+    }
+
+    public void setPosStatus7(StatusFlag posStatus7) {
+        this.posStatus7 = posStatus7;
+    }
+
+    public StatusFlag getPosStatus8() {
+        return posStatus8;
+    }
+
+    public void setPosStatus8(StatusFlag posStatus8) {
+        this.posStatus8 = posStatus8;
+    }
+
+    public StatusFlag getPosStatus9() {
+        return posStatus9;
+    }
+
+    public void setPosStatus9(StatusFlag posStatus9) {
+        this.posStatus9 = posStatus9;
+    }
+
+    public StatusFlag getPosStatus10() {
+        return posStatus10;
+    }
+
+    public void setPosStatus10(StatusFlag posStatus10) {
+        this.posStatus10 = posStatus10;
+    }
+
+    public StatusFlag getCsfStatus1() {
+        return csfStatus1;
+    }
+
+    public void setCsfStatus1(StatusFlag csfStatus1) {
+        this.csfStatus1 = csfStatus1;
+    }
+
+    public StatusFlag getCsfStatus2() {
+        return csfStatus2;
+    }
+
+    public void setCsfStatus2(StatusFlag csfStatus2) {
+        this.csfStatus2 = csfStatus2;
+    }
+
+    public StatusFlag getCsfStatus3() {
+        return csfStatus3;
+    }
+
+    public void setCsfStatus3(StatusFlag csfStatus3) {
+        this.csfStatus3 = csfStatus3;
+    }
+
+    public StatusFlag getCsfStatus4() {
+        return csfStatus4;
+    }
+
+    public void setCsfStatus4(StatusFlag csfStatus4) {
+        this.csfStatus4 = csfStatus4;
+    }
+
+    public StatusFlag getCsfStatus5() {
+        return csfStatus5;
+    }
+
+    public void setCsfStatus5(StatusFlag csfStatus5) {
+        this.csfStatus5 = csfStatus5;
+    }
+
+    public StatusFlag getCsfStatus6() {
+        return csfStatus6;
+    }
+
+    public void setCsfStatus6(StatusFlag csfStatus6) {
+        this.csfStatus6 = csfStatus6;
+    }
+
+    public StatusFlag getCsfStatus7() {
+        return csfStatus7;
+    }
+
+    public void setCsfStatus7(StatusFlag csfStatus7) {
+        this.csfStatus7 = csfStatus7;
+    }
+
+    public StatusFlag getCsfStatus8() {
+        return csfStatus8;
+    }
+
+    public void setCsfStatus8(StatusFlag csfStatus8) {
+        this.csfStatus8 = csfStatus8;
+    }
+
+    /**
+     * Gets the csfStatus9.
+     * 
+     * @return csfStatus9
+     */
+    public StatusFlag getCsfStatus9() {
+        return csfStatus9;
+    }
+
+    /**
+     * Sets the csfStatus9.
+     * 
+     * @param csfStatus9
+     */
+    public void setCsfStatus9(StatusFlag csfStatus9) {
+        this.csfStatus9 = csfStatus9;
+    }
+
+    /**
+     * Gets the csfStatus10.
+     * 
+     * @return csfStatus10
+     */
+    public StatusFlag getCsfStatus10() {
+        return csfStatus10;
+    }
+
+    /**
+     * Set the csfStatus10.
+     * 
+     * @param csfStatus10
+     */
+    public void setCsfStatus10(StatusFlag csfStatus10) {
+        this.csfStatus10 = csfStatus10;
     }
 
     @Override
@@ -2284,6 +2486,7 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
         result = prime * result + ((chartOfAccountsCode8 == null) ? 0 : chartOfAccountsCode8.hashCode());
         result = prime * result + ((chartOfAccountsCode9 == null) ? 0 : chartOfAccountsCode9.hashCode());
         result = prime * result + ((classInd == null) ? 0 : classInd.hashCode());
+        result = prime * result + ((compFreq == null) ? 0 : compFreq.hashCode());
         result = prime * result + ((compRate == null) ? 0 : compRate.hashCode());
         result = prime * result + ((company == null) ? 0 : company.hashCode());
         result = prime * result + ((csfTimePercent1 == null) ? 0 : csfTimePercent1.hashCode());
@@ -2297,6 +2500,7 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
         result = prime * result + ((csfTimePercent8 == null) ? 0 : csfTimePercent8.hashCode());
         result = prime * result + ((csfTimePercent9 == null) ? 0 : csfTimePercent9.hashCode());
         result = prime * result + ((cuAbbrFlag == null) ? 0 : cuAbbrFlag.hashCode());
+        result = prime * result + ((cuPlannedFTE == null) ? 0 : cuPlannedFTE.hashCode());
         result = prime * result + ((cuStateCert == null) ? 0 : cuStateCert.hashCode());
         result = prime * result + ((defaultObjectCode == null) ? 0 : defaultObjectCode.hashCode());
         result = prime * result + ((earningDistributionType == null) ? 0 : earningDistributionType.hashCode());
@@ -2331,6 +2535,8 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
         result = prime * result + ((jobCodeDescShrt == null) ? 0 : jobCodeDescShrt.hashCode());
         result = prime * result + ((jobCodeStandardHours == null) ? 0 : jobCodeStandardHours.hashCode());
         result = prime * result + ((jobFamily == null) ? 0 : jobFamily.hashCode());
+        result = prime * result + ((jobFunction == null) ? 0 : jobFunction.hashCode());
+        result = prime * result + ((jobFunctionDesc == null) ? 0 : jobFunctionDesc.hashCode());
         result = prime * result + ((jobStandardHours == null) ? 0 : jobStandardHours.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((posAccountNumber1 == null) ? 0 : posAccountNumber1.hashCode());
@@ -2409,6 +2615,11 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
         return result;
     }
 
+    /**
+     * Checks all fields except the flags.
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -2538,6 +2749,11 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
                 return false;
         } else if (!classInd.equals(other.classInd))
             return false;
+        if (compFreq == null) {
+            if (other.compFreq != null)
+                return false;
+        } else if (!compFreq.equals(other.compFreq))
+            return false;
         if (compRate == null) {
             if (other.compRate != null)
                 return false;
@@ -2602,6 +2818,11 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
             if (other.cuAbbrFlag != null)
                 return false;
         } else if (!cuAbbrFlag.equals(other.cuAbbrFlag))
+            return false;
+        if (cuPlannedFTE == null) {
+            if (other.cuPlannedFTE != null)
+                return false;
+        } else if (!cuPlannedFTE.equals(other.cuPlannedFTE))
             return false;
         if (cuStateCert == null) {
             if (other.cuStateCert != null)
@@ -2772,6 +2993,16 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
             if (other.jobFamily != null)
                 return false;
         } else if (!jobFamily.equals(other.jobFamily))
+            return false;
+        if (jobFunction == null) {
+            if (other.jobFunction != null)
+                return false;
+        } else if (!jobFunction.equals(other.jobFunction))
+            return false;
+        if (jobFunctionDesc == null) {
+            if (other.jobFunctionDesc != null)
+                return false;
+        } else if (!jobFunctionDesc.equals(other.jobFunctionDesc))
             return false;
         if (jobStandardHours == null) {
             if (other.jobStandardHours != null)
@@ -3151,44 +3382,344 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
         return true;
     }
 
-    public CUBCConstants.PSEntryStatus getStatus() {
-        return status;
+    /**
+     * @return the csfAccountingInfoList
+     */
+    public List<PSPositionJobExtractAccountingInfo> getCsfAccountingInfoList() {
+        return csfAccountingInfoList;
     }
 
-    public void setStatus(CUBCConstants.PSEntryStatus status) {
-        this.status = status;
+    /**
+     * @param csfAccountingInfoList the csfAccountingInfoList to set
+     */
+    public void setCsfAccountingInfoList() {
+        this.csfAccountingInfoList = getCSFAccountingInfoCollection();
     }
 
-    public String getJobFunction() {
-        return jobFunction;
+    /**
+     * @return the posAccountingInfoList
+     */
+    public List<PSPositionJobExtractAccountingInfo> getPosAccountingInfoList() {
+        return posAccountingInfoList;
     }
 
-    public void setJobFunction(String jobFunction) {
-        this.jobFunction = jobFunction;
+    /**
+     * @param posAccountingInfoList the posAccountingInfoList to set
+     */
+    public void setPosAccountingInfoList() {
+        this.posAccountingInfoList = getPOSAccountingInfoCollection();
     }
 
-    public String getJobFunctionDesc() {
-        return jobFunctionDesc;
-    }
-
-    public void setJobFunctionDesc(String jobFunctionDesc) {
-        this.jobFunctionDesc = jobFunctionDesc;
-    }
-
-    public String getCompFreq() {
-        return compFreq;
-    }
-
-    public void setCompFreq(String compFreq) {
-        this.compFreq = compFreq;
-    }
-
-    public String getCuPlannedFTE() {
-        return cuPlannedFTE;
-    }
-
-    public void setCuPlannedFTE(String cuPlannedFTE) {
-        this.cuPlannedFTE = cuPlannedFTE;
+    /**
+     * Generates a Sting representation of the PS entry.
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("PSPositionJobExtractEntry [");
+        builder.append(positionNumber);
+        builder.append(", ");
+        builder.append(emplid);
+        builder.append(", ");
+        builder.append(name);
+        builder.append(", ");
+        builder.append(employeeType);
+        builder.append(", ");
+        builder.append(defaultObjectCode);
+        builder.append(", ");
+        builder.append(positionUnionCode);
+        builder.append(", ");
+        builder.append(workMonths);
+        builder.append(", ");
+        builder.append(jobCode);
+        builder.append(", ");
+        builder.append(jobCodeDesc);
+        builder.append(", ");
+        builder.append(jobCodeDescShrt);
+        builder.append(", ");
+        builder.append(company);
+        builder.append(", ");
+        builder.append(fullPartTime);
+        builder.append(", ");
+        builder.append(classInd);
+        builder.append(", ");
+        builder.append(addsToActualFte);
+        builder.append(", ");
+        builder.append(cuStateCert);
+        builder.append(", ");
+        builder.append(employeeRecord);
+        builder.append(", ");
+        builder.append(employeeStatus);
+        builder.append(", ");
+        builder.append(jobStandardHours);
+        builder.append(", ");
+        builder.append(jobCodeStandardHours);
+        builder.append(", ");
+        builder.append(employeeClass);
+        builder.append(", ");
+        builder.append(earningDistributionType);
+        builder.append(", ");
+        builder.append(compRate);
+        builder.append(", ");
+        builder.append(annualBenefitBaseRate);
+        builder.append(", ");
+        builder.append(cuAbbrFlag);
+        builder.append(", ");
+        builder.append(annualRate);
+        builder.append(", ");
+        builder.append(jobFamily);
+        builder.append(", ");
+        builder.append(compFreq);
+        builder.append(", ");
+        builder.append(jobFunction);
+        builder.append(", ");
+        builder.append(jobFunctionDesc);
+        builder.append(", ");
+        builder.append(cuPlannedFTE);
+        builder.append(", ");
+        builder.append(posTimePercent1);
+        builder.append(", ");
+        builder.append(posChartOfAccountsCode1);
+        builder.append(", ");
+        builder.append(posAccountNumber1);
+        builder.append(", ");
+        builder.append(posSubAccountNumber1);
+        builder.append(", ");
+        builder.append(posFinancialObjectCode1);
+        builder.append(", ");
+        builder.append(posFinancialSubObjectCode1);
+        builder.append(", ");
+        builder.append(posTimePercent2);
+        builder.append(", ");
+        builder.append(posChartOfAccountsCode2);
+        builder.append(", ");
+        builder.append(posAccountNumber2);
+        builder.append(", ");
+        builder.append(posSubAccountNumber2);
+        builder.append(", ");
+        builder.append(posFinancialObjectCode2);
+        builder.append(", ");
+        builder.append(posFinancialSubObjectCode2);
+        builder.append(", ");
+        builder.append(posTimePercent3);
+        builder.append(", ");
+        builder.append(posChartOfAccountsCode3);
+        builder.append(", ");
+        builder.append(posAccountNumber3);
+        builder.append(", ");
+        builder.append(posSubAccountNumber3);
+        builder.append(", ");
+        builder.append(posFinancialObjectCode3);
+        builder.append(", ");
+        builder.append(posFinancialSubObjectCode3);
+        builder.append(", ");
+        builder.append(posTimePercent4);
+        builder.append(", ");
+        builder.append(posChartOfAccountsCode4);
+        builder.append(", ");
+        builder.append(posAccountNumber4);
+        builder.append(", ");
+        builder.append(posSubAccountNumber4);
+        builder.append(", ");
+        builder.append(posFinancialObjectCode4);
+        builder.append(", ");
+        builder.append(posFinancialSubObjectCode4);
+        builder.append(", ");
+        builder.append(posTimePercent5);
+        builder.append(", ");
+        builder.append(posChartOfAccountsCode5);
+        builder.append(", ");
+        builder.append(posAccountNumber5);
+        builder.append(", ");
+        builder.append(posSubAccountNumber5);
+        builder.append(", ");
+        builder.append(posFinancialObjectCode5);
+        builder.append(", ");
+        builder.append(posFinancialSubObjectCode5);
+        builder.append(", ");
+        builder.append(posTimePercent6);
+        builder.append(", ");
+        builder.append(posChartOfAccountsCode6);
+        builder.append(", ");
+        builder.append(posAccountNumber6);
+        builder.append(", ");
+        builder.append(posSubAccountNumber6);
+        builder.append(", ");
+        builder.append(posFinancialObjectCode6);
+        builder.append(", ");
+        builder.append(posFinancialSubObjectCode6);
+        builder.append(", ");
+        builder.append(posTimePercent7);
+        builder.append(", ");
+        builder.append(posChartOfAccountsCode7);
+        builder.append(", ");
+        builder.append(posAccountNumber7);
+        builder.append(", ");
+        builder.append(posSubAccountNumber7);
+        builder.append(", ");
+        builder.append(posFinancialObjectCode7);
+        builder.append(", ");
+        builder.append(posFinancialSubObjectCode7);
+        builder.append(", ");
+        builder.append(posTimePercent8);
+        builder.append(", ");
+        builder.append(posChartOfAccountsCode8);
+        builder.append(", ");
+        builder.append(posAccountNumber8);
+        builder.append(", ");
+        builder.append(posSubAccountNumber8);
+        builder.append(", ");
+        builder.append(posFinancialObjectCode8);
+        builder.append(", ");
+        builder.append(posFinancialSubObjectCode8);
+        builder.append(", ");
+        builder.append(posTimePercent9);
+        builder.append(", ");
+        builder.append(posChartOfAccountsCode9);
+        builder.append(", ");
+        builder.append(posAccountNumber9);
+        builder.append(", ");
+        builder.append(posSubAccountNumber9);
+        builder.append(", ");
+        builder.append(posFinancialObjectCode9);
+        builder.append(", ");
+        builder.append(posFinancialSubObjectCode9);
+        builder.append(", ");
+        builder.append(posTimePercent10);
+        builder.append(", ");
+        builder.append(posChartOfAccountsCode10);
+        builder.append(", ");
+        builder.append(posAccountNumber10);
+        builder.append(", ");
+        builder.append(posSubAccountNumber10);
+        builder.append(", ");
+        builder.append(posFinancialObjectCode10);
+        builder.append(", ");
+        builder.append(posFinancialSubObjectCode10);
+        builder.append(", ");
+        builder.append(csfTimePercent1);
+        builder.append(", ");
+        builder.append(chartOfAccountsCode1);
+        builder.append(", ");
+        builder.append(accountNumber1);
+        builder.append(", ");
+        builder.append(subAccountNumber1);
+        builder.append(", ");
+        builder.append(financialObjectCode1);
+        builder.append(", ");
+        builder.append(financialSubObjectCode1);
+        builder.append(", ");
+        builder.append(csfTimePercent2);
+        builder.append(", ");
+        builder.append(chartOfAccountsCode2);
+        builder.append(", ");
+        builder.append(accountNumber2);
+        builder.append(", ");
+        builder.append(subAccountNumber2);
+        builder.append(", ");
+        builder.append(financialObjectCode2);
+        builder.append(", ");
+        builder.append(financialSubObjectCode2);
+        builder.append(", ");
+        builder.append(csfTimePercent3);
+        builder.append(", ");
+        builder.append(chartOfAccountsCode3);
+        builder.append(", ");
+        builder.append(accountNumber3);
+        builder.append(", ");
+        builder.append(subAccountNumber3);
+        builder.append(", ");
+        builder.append(financialObjectCode3);
+        builder.append(", ");
+        builder.append(financialSubObjectCode3);
+        builder.append(", ");
+        builder.append(csfTimePercent4);
+        builder.append(", ");
+        builder.append(chartOfAccountsCode4);
+        builder.append(", ");
+        builder.append(accountNumber4);
+        builder.append(", ");
+        builder.append(subAccountNumber4);
+        builder.append(", ");
+        builder.append(financialObjectCode4);
+        builder.append(", ");
+        builder.append(financialSubObjectCode4);
+        builder.append(", ");
+        builder.append(csfTimePercent5);
+        builder.append(", ");
+        builder.append(chartOfAccountsCode5);
+        builder.append(", ");
+        builder.append(accountNumber5);
+        builder.append(", ");
+        builder.append(subAccountNumber5);
+        builder.append(", ");
+        builder.append(financialObjectCode5);
+        builder.append(", ");
+        builder.append(financialSubObjectCode5);
+        builder.append(", ");
+        builder.append(csfTimePercent6);
+        builder.append(", ");
+        builder.append(chartOfAccountsCode6);
+        builder.append(", ");
+        builder.append(accountNumber6);
+        builder.append(", ");
+        builder.append(subAccountNumber6);
+        builder.append(", ");
+        builder.append(financialObjectCode6);
+        builder.append(", ");
+        builder.append(financialSubObjectCode6);
+        builder.append(", ");
+        builder.append(csfTimePercent7);
+        builder.append(", ");
+        builder.append(chartOfAccountsCode7);
+        builder.append(", ");
+        builder.append(accountNumber7);
+        builder.append(", ");
+        builder.append(subAccountNumber7);
+        builder.append(", ");
+        builder.append(financialObjectCode7);
+        builder.append(", ");
+        builder.append(financialSubObjectCode7);
+        builder.append(", ");
+        builder.append(csfTimePercent8);
+        builder.append(", ");
+        builder.append(chartOfAccountsCode8);
+        builder.append(", ");
+        builder.append(accountNumber8);
+        builder.append(", ");
+        builder.append(subAccountNumber8);
+        builder.append(", ");
+        builder.append(financialObjectCode8);
+        builder.append(", ");
+        builder.append(financialSubObjectCode8);
+        builder.append(", ");
+        builder.append(csfTimePercent9);
+        builder.append(", ");
+        builder.append(chartOfAccountsCode9);
+        builder.append(", ");
+        builder.append(accountNumber9);
+        builder.append(", ");
+        builder.append(subAccountNumber9);
+        builder.append(", ");
+        builder.append(financialObjectCode9);
+        builder.append(", ");
+        builder.append(financialSubObjectCode9);
+        builder.append(", ");
+        builder.append(csfTimePercent10);
+        builder.append(", ");
+        builder.append(chartOfAccountsCode10);
+        builder.append(", ");
+        builder.append(accountNumber10);
+        builder.append(", ");
+        builder.append(subAccountNumber10);
+        builder.append(", ");
+        builder.append(financialObjectCode10);
+        builder.append(", ");
+        builder.append(financialSubObjectCode10);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

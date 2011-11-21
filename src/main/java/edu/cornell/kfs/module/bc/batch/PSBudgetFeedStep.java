@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
@@ -20,30 +19,22 @@ import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.ParameterService;
 
+import edu.cornell.kfs.module.bc.CUBCConstants;
 import edu.cornell.kfs.module.bc.CUBCParameterKeyConstants;
-import edu.cornell.kfs.module.bc.batch.service.PopulateCSFTrackerService;
+import edu.cornell.kfs.module.bc.batch.service.PSBudgetFeedService;
 
 /**
  * 
  */
-public class PopulateCSFTrackerStep extends AbstractStep {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PopulateCSFTrackerStep.class);
-
-    // parameter constants
-    private static final String RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE = "KFS-BC";
-    private static final String RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP = "PopulateCSFTrackerStep";
-    private static final String RUN_FOR_NEW_YEAR_PARAMETER_VALUE = "N";
-    private static final String RUN_FOR_NEW_YEAR_PARAMETER_ALLOWED = "A";
-    private static final String RUN_FOR_NEW_YEAR_PARAMETER_DESCRIPTION = "Tells the populateCSFTracker job if it should wipe out the entries in the CSF Tracker table";
-    private static final String RUN_FOR_NEW_YEAR_PARAMETER_TYPE = "CONFG";
-    private static final String RUN_FOR_NEW_YEAR_PARAMETER_APPLICATION_NAMESPACE_CODE = "KFS";
+public class PSBudgetFeedStep extends AbstractStep {
+    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PSBudgetFeedStep.class);
 
     protected BatchInputFileService batchInputFileService;
-    protected BatchInputFileType csfTrackerFlatInputFileType;
+    protected BatchInputFileType psBudgetFeedFlatInputFileType;
     protected BusinessObjectService businessObjectService;
     protected DateTimeService dateTimeService;
     protected ParameterService parameterService;
-    protected PopulateCSFTrackerService populateCSFTrackerService;
+    protected PSBudgetFeedService psBudgetFeedService;
 
     /**
      * @see org.kuali.kfs.sys.batch.Step#execute(java.lang.String, java.util.Date)
@@ -52,11 +43,12 @@ public class PopulateCSFTrackerStep extends AbstractStep {
 
         //get all done files
         List<String> fileNamesToLoad = batchInputFileService
-                .listInputFileNamesWithDoneFile(csfTrackerFlatInputFileType);
+                .listInputFileNamesWithDoneFile(psBudgetFeedFlatInputFileType);
 
         boolean processSuccess = false;
         List<String> doneFiles = new ArrayList<String>();
 
+        // if multiple .done files present only process the most current one
         String fileToProcess = getMostCurrentFileName(fileNamesToLoad);
 
         // add all the .done files in the list of files to be removed in
@@ -65,20 +57,21 @@ public class PopulateCSFTrackerStep extends AbstractStep {
 
         // get the current file name
         String currentFileName = null;
-        List<String> currentFiles = listInputFileNamesWithCurrentFile(csfTrackerFlatInputFileType);
+        List<String> currentFiles = listInputFileNamesWithCurrentFile(psBudgetFeedFlatInputFileType);
 
         if (currentFiles != null && currentFiles.size() > 0) {
             // there should only be one current file otherwise it's a mistake and we should just ignore them
             currentFileName = currentFiles.get(0);
         }
 
+        boolean startFresh = getRunPopulateCSFTRackerForNewYear();
+
         // process the latest file
         if (fileToProcess != null) {
-            processSuccess = populateCSFTrackerService
-                    .populateCSFTracker(fileToProcess, currentFileName);
+            processSuccess = psBudgetFeedService.loadBCDataFromPS(fileToProcess, currentFileName, startFresh);
         }
 
-        // if successfully processed remove all the .done files, remove .current files and create new current file, set RUN_CSF_TRACKER
+        // if successfully processed remove all the .done files, remove .current files and create new current file
         if (processSuccess) {
             removeDoneFiles(doneFiles);
             removeCurrentFiles(currentFiles);
@@ -252,54 +245,75 @@ public class PopulateCSFTrackerStep extends AbstractStep {
      * does not need to run again.
      */
     private void setRunPopulateCSFTrackerForNewYearParameter() {
-        boolean runPopulateCSFTRackerForNewYear = parameterService.getIndicatorParameter(PopulateCSFTrackerStep.class,
-                CUBCParameterKeyConstants.RUN_POPULATE_CSF_TRACKER_FOR_NEW_YEAR);
 
         Map<String, Object> keyMap = new HashMap<String, Object>();
-        keyMap.put("parameterNamespaceCode", RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE);
-        keyMap.put("parameterDetailTypeCode", RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP);
+        keyMap.put("parameterNamespaceCode", CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE);
+        keyMap.put("parameterDetailTypeCode", CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP);
         keyMap.put("parameterName", CUBCParameterKeyConstants.RUN_POPULATE_CSF_TRACKER_FOR_NEW_YEAR);
-        keyMap.put("parameterApplicationNamespaceCode", RUN_FOR_NEW_YEAR_PARAMETER_APPLICATION_NAMESPACE_CODE);
+        keyMap.put("parameterApplicationNamespaceCode",
+                CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_APPLICATION_NAMESPACE_CODE);
 
-        if (runPopulateCSFTRackerForNewYear) {
-
-            // first see if we can find an existing Parameter object with this key
-            Parameter runIndicatorParameter = (Parameter) businessObjectService.findByPrimaryKey(Parameter.class,
+        // first see if we can find an existing Parameter object with this key
+        Parameter runIndicatorParameter = (Parameter) businessObjectService.findByPrimaryKey(Parameter.class,
                     keyMap);
-            if (runIndicatorParameter == null) {
-                runIndicatorParameter = new Parameter();
-                runIndicatorParameter.setVersionNumber(new Long(1));
-                runIndicatorParameter.setParameterNamespaceCode(RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE);
-                runIndicatorParameter.setParameterDetailTypeCode(RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP);
-                runIndicatorParameter.setParameterName(CUBCParameterKeyConstants.RUN_POPULATE_CSF_TRACKER_FOR_NEW_YEAR);
-                runIndicatorParameter.setParameterDescription(RUN_FOR_NEW_YEAR_PARAMETER_DESCRIPTION);
-                runIndicatorParameter.setParameterConstraintCode(RUN_FOR_NEW_YEAR_PARAMETER_ALLOWED);
-                runIndicatorParameter.setParameterTypeCode(RUN_FOR_NEW_YEAR_PARAMETER_TYPE);
-                runIndicatorParameter
-                        .setParameterApplicationNamespaceCode(RUN_FOR_NEW_YEAR_PARAMETER_APPLICATION_NAMESPACE_CODE);
-            }
-            runIndicatorParameter.setParameterValue(RUN_FOR_NEW_YEAR_PARAMETER_VALUE);
+        if (runIndicatorParameter == null) {
+            runIndicatorParameter = new Parameter();
+            runIndicatorParameter.setVersionNumber(new Long(1));
+            runIndicatorParameter
+                        .setParameterNamespaceCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE);
+            runIndicatorParameter
+                        .setParameterDetailTypeCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP);
+            runIndicatorParameter.setParameterName(CUBCParameterKeyConstants.RUN_POPULATE_CSF_TRACKER_FOR_NEW_YEAR);
+            runIndicatorParameter.setParameterDescription(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_DESCRIPTION);
+            runIndicatorParameter.setParameterConstraintCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_ALLOWED);
+            runIndicatorParameter.setParameterTypeCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_TYPE);
+            runIndicatorParameter
+                        .setParameterApplicationNamespaceCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_APPLICATION_NAMESPACE_CODE);
+        }
+
+        runIndicatorParameter.setParameterValue(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_VALUE);
+        businessObjectService.save(runIndicatorParameter);
+    }
+
+    /**
+     * Gets the value of the RUN_POPULATE_CSF_TRACKER_FOR_NEW_YEAR parameter.
+     * 
+     * @return a boolean value for this parameter, true if Y, false if N
+     */
+    private boolean getRunPopulateCSFTRackerForNewYear() {
+
+        Map<String, Object> keyMap = new HashMap<String, Object>();
+        keyMap.put("parameterNamespaceCode", CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE);
+        keyMap.put("parameterDetailTypeCode", CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP);
+        keyMap.put("parameterName", CUBCParameterKeyConstants.RUN_POPULATE_CSF_TRACKER_FOR_NEW_YEAR);
+        keyMap.put("parameterApplicationNamespaceCode",
+                CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_APPLICATION_NAMESPACE_CODE);
+
+        // first see if we can find an existing Parameter object with this key
+        Parameter runIndicatorParameter = (Parameter) businessObjectService.findByPrimaryKey(Parameter.class,
+                    keyMap);
+        if (runIndicatorParameter == null) {
+            runIndicatorParameter = new Parameter();
+            runIndicatorParameter.setVersionNumber(new Long(1));
+            runIndicatorParameter
+                        .setParameterNamespaceCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE);
+            runIndicatorParameter
+                        .setParameterDetailTypeCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP);
+            runIndicatorParameter.setParameterName(CUBCParameterKeyConstants.RUN_POPULATE_CSF_TRACKER_FOR_NEW_YEAR);
+            runIndicatorParameter.setParameterDescription(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_DESCRIPTION);
+            runIndicatorParameter.setParameterConstraintCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_ALLOWED);
+            runIndicatorParameter.setParameterTypeCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_TYPE);
+            runIndicatorParameter
+                        .setParameterApplicationNamespaceCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_APPLICATION_NAMESPACE_CODE);
+            runIndicatorParameter.setParameterValue(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_VALUE);
             businessObjectService.save(runIndicatorParameter);
         }
 
-    }
+        boolean runPopulateCSFTRackerForNewYear = parameterService.getIndicatorParameter(PSBudgetFeedStep.class,
+                    CUBCParameterKeyConstants.RUN_POPULATE_CSF_TRACKER_FOR_NEW_YEAR);
 
-    /**
-     * Gets the populateCSFTrackerService.
-     * 
-     * @return populateCSFTrackerService
-     */
-    public PopulateCSFTrackerService getPopulateCSFTrackerService() {
-        return populateCSFTrackerService;
-    }
+        return runPopulateCSFTRackerForNewYear;
 
-    /**
-     * Sets the populateCSFTrackerService.
-     * 
-     * @param populateCSFTrackerService
-     */
-    public void setPopulateCSFTrackerService(PopulateCSFTrackerService populateCSFTrackerService) {
-        this.populateCSFTrackerService = populateCSFTrackerService;
     }
 
     /**
@@ -321,29 +335,57 @@ public class PopulateCSFTrackerStep extends AbstractStep {
     }
 
     /**
-     * Gets the csfTrackerFlatInputFileType.
+     * This overridden method ...
      * 
-     * @return csfTrackerFlatInputFileType
+     * @see org.kuali.kfs.sys.batch.AbstractStep#setParameterService(org.kuali.rice.kns.service.ParameterService)
      */
-    public BatchInputFileType getCsfTrackerFlatInputFileType() {
-        return csfTrackerFlatInputFileType;
-    }
-
-    /**
-     * Sets the csfTrackerFlatInputFileType.
-     * 
-     * @param csfTrackerFlatInputFileType
-     */
-    public void setCsfTrackerFlatInputFileType(BatchInputFileType csfTrackerFlatInputFileType) {
-        this.csfTrackerFlatInputFileType = csfTrackerFlatInputFileType;
-    }
-
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
     }
 
+    /**
+     * Sets the businessObjectService.
+     * 
+     * @param businessObjectService
+     */
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
+    }
+
+    /**
+     * Sets the psBudgetFeedService.
+     * 
+     * @param psBudgetFeedService
+     */
+    public void setPsBudgetFeedService(PSBudgetFeedService psBudgetFeedService) {
+        this.psBudgetFeedService = psBudgetFeedService;
+    }
+
+    /**
+     * Gets the psBudgetFeedService.
+     * 
+     * @return psBudgetFeedService
+     */
+    public PSBudgetFeedService getPsBudgetFeedService() {
+        return psBudgetFeedService;
+    }
+
+    /**
+     * Sets the psBudgetFeedFlatInputFileType.
+     * 
+     * @param psBudgetFeedFlatInputFileType
+     */
+    public void setPsBudgetFeedFlatInputFileType(BatchInputFileType psBudgetFeedFlatInputFileType) {
+        this.psBudgetFeedFlatInputFileType = psBudgetFeedFlatInputFileType;
+    }
+
+    /**
+     * Gets the psBudgetFeedFlatInputFileType.
+     * 
+     * @return psBudgetFeedFlatInputFileType
+     */
+    public BatchInputFileType getPsBudgetFeedFlatInputFileType() {
+        return psBudgetFeedFlatInputFileType;
     }
 
 }

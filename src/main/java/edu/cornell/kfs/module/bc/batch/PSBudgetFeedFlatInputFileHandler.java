@@ -4,7 +4,7 @@ import org.kuali.kfs.sys.batch.FlatFileDataHandler;
 
 /**
  */
-public class CSFTrackerFlatInputFileHandler implements FlatFileDataHandler {
+public class PSBudgetFeedFlatInputFileHandler implements FlatFileDataHandler {
 
     /**
      * @see org.kuali.kfs.sys.batch.FlatFileDataHandler#validate(java.lang.Object)
