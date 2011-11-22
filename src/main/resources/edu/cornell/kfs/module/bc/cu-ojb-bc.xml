@@ -1,6 +1,6 @@
 <descriptor-repository version="1.0">
 
-	<class-descriptor class="edu.cornell.kfs.module.bc.businessobject.PSPositionInfo" table="PS_POSITION_EXTRA">
+	<class-descriptor class="edu.cornell.kfs.module.bc.businessobject.PSPositionInfo" table="CU_PS_POSITION_EXTRA">
 		<field-descriptor name="positionNumber" column="POS_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
 		<field-descriptor name="positionType" column="POS_TYP" jdbc-type="VARCHAR" />
 		<field-descriptor name="positionUnionCode" column="POS_UNION_CD" jdbc-type="VARCHAR" />
@@ -18,7 +18,7 @@
 	    </reference-descriptor>
 	</class-descriptor>
 	
-	<class-descriptor class="edu.cornell.kfs.module.bc.businessobject.PSJobData" table="PS_JOB_DATA">
+	<class-descriptor class="edu.cornell.kfs.module.bc.businessobject.PSJobData" table="CU_PS_JOB_DATA">
 		<field-descriptor name="positionNumber" column="POS_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
 		<field-descriptor name="emplid" column="EMPLID" jdbc-type="VARCHAR" primarykey="true" index="true" />
 		<field-descriptor name="employeeRecord" column="EMPL_RCD" jdbc-type="VARCHAR" />
@@ -37,7 +37,7 @@
 		
 	</class-descriptor>
 
-	<class-descriptor class="edu.cornell.kfs.module.bc.businessobject.PSJobCode" table="PS_JOB_CD">
+	<class-descriptor class="edu.cornell.kfs.module.bc.businessobject.PSJobCode" table="CU_PS_JOB_CD">
 		<field-descriptor name="jobCode" column="JOB_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
 		<field-descriptor name="jobCodeDesc" column="JOB_CD_DESC" jdbc-type="VARCHAR" />
 		<field-descriptor name="jobCodeDescShort" column="JOB_CD_DESC_SHRT" jdbc-type="VARCHAR" />
