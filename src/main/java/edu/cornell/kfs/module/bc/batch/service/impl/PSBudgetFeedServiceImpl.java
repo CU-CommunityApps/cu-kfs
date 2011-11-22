@@ -46,7 +46,7 @@ import edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry;
 
 /**
  * An implementation of a service that contains methods to populate the CSF Tracker table
- * (LD_CSF_TRACKER_T) and PS_POSITION_EXTRA, PS_JOB_DATA, PS_JOB_CD tables with PS/HR
+ * (LD_CSF_TRACKER_T) and CU_PS_POSITION_EXTRA, CU_PS_JOB_DATA, CU_PS_JOB_CD tables with PS/HR
  * data.
  */
 public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
@@ -138,23 +138,23 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             // load entries in the CSF tracker table
             loadEntriesInCSFTrackerTable(entriesToLoad, startFresh);
 
-            // load entries in PS_POSITION_EXTRA table
+            // load entries in CU_PS_POSITION_EXTRA table
             loadEntriesInPSPositionInfoTable(new ArrayList<PSPositionInfo>(positionInfoMap.values()), startFresh);
 
-            // load entries in PS_JOB_CODE
+            // load entries in CU_PS_JOB_CODE
             loadEntriesInPSJobCodeTable(new ArrayList<PSJobCode>(jobCodeMap.values()), startFresh);
 
-            // load entries in PS_JOB_DATA
+            // load entries in CU_PS_JOB_DATA
             loadEntriesInPSJobDataTable(new ArrayList<PSJobData>(jobInfoMap.values()), startFresh);
 
             // log the number of entries loaded
             LOG.info("Total number of entries loaded/updated in the CSF Tracker table: "
                     + Integer.toString(entriesToLoad.size()));
-            LOG.info("Total number of entries loaded/updated in the  PS_POSITION_EXTRA table: "
+            LOG.info("Total number of entries loaded/updated in the  CU_PS_POSITION_EXTRA table: "
                     + Integer.toString(positionInfoMap.values().size()));
-            LOG.info("Total number of entries loaded/updated in the  PS_JOB_DATA table: "
+            LOG.info("Total number of entries loaded/updated in the  CU_PS_JOB_DATA table: "
                     + Integer.toString(jobInfoMap.values().size()));
-            LOG.info("Total number of entries loaded/updated in the  PS_JOB_CD table: "
+            LOG.info("Total number of entries loaded/updated in the  CU_PS_JOB_CD table: "
                     + Integer.toString(jobCodeMap.values().size()));
 
             return true;
@@ -1038,7 +1038,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
     }
 
     /**
-     * Load entries in the PS_POSITION_EXTRA table.
+     * Load entries in the CU_PS_POSITION_EXTRA table.
      * 
      * @param psPositionInfoEntries
      */
@@ -1069,7 +1069,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
     }
 
     /**
-     * Load entries in the PS_JOB_DATA table.
+     * Load entries in the CU_PS_JOB_DATA table.
      * 
      * @param jobDataEntries
      */
@@ -1101,7 +1101,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
     }
 
     /**
-     * Load entries in the PS_JOB_CODE table.
+     * Load entries in the CU_PS_JOB_CODE table.
      * 
      * @param psPositionInfoEntries
      */
