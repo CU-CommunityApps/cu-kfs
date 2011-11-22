@@ -193,7 +193,7 @@
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialObjectCode5" p:start="929" p:end="933" p:rightTrim="true" />
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialSubObjectCode5" p:start="933" p:end="936" p:rightTrim="true" />	
      					
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent6" p:start="954" p:end="958" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent6" p:start="954" p:end="959" />
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="chartOfAccountsCode6" p:start="959" p:end="961" p:rightTrim="true" />
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountNumber6" p:start="961" p:end="968" p:rightTrim="true" />
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="subAccountNumber6" p:start="968" p:end="973" p:rightTrim="true" />
