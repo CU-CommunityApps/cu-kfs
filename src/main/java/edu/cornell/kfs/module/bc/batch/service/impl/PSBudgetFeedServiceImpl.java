@@ -46,8 +46,8 @@ import edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry;
 
 /**
  * An implementation of a service that contains methods to populate the CSF Tracker table
- * (LD_CSF_TRACKER_T) and CU_PS_POSITION_EXTRA, CU_PS_JOB_DATA, CU_PS_JOB_CD tables with PS/HR
- * data.
+ * (LD_CSF_TRACKER_T) and CU_PS_POSITION_EXTRA, CU_PS_JOB_DATA, CU_PS_JOB_CD tables with
+ * PS/HR data.
  */
 public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
 
@@ -65,9 +65,53 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
      */
     public boolean loadBCDataFromPS(String fileName, String currentFileName, boolean startFresh) {
 
-        FileInputStream fileContents = null;
+        // if no current file treat as if we are starting fresh
+        if (currentFileName == null) {
+            startFresh = true;
+        }
+
+        // read the data from the PS extract
+        List<PSPositionJobExtractEntry> psPositionJobExtractEntries = readPSExtractFileContents(fileName);
+
+        if (psPositionJobExtractEntries == null) {
+            LOG.info("No entries in the input file");
+            return true;
+        }
+
+        // filter only updated entries from last run
+        //for better performance look for the last successful file so that we can compare with that
+        Collection<PSPositionJobExtractEntry> filteredPsPositionJobExtractEntries = filterEntriesToUpdate(
+                currentFileName, psPositionJobExtractEntries, startFresh);
+
+        // validate entries to load
+        Collection<PSPositionJobExtractEntry> validCsfTackerEntries = validateEntriesForCSFTracker(filteredPsPositionJobExtractEntries);
+
+        //generate CalculatedSalaryFoundationTracker, PSPositionInfo, PSJobData and PSJobCode entries from the valid PSPositionJobExtractEntry list
+        List<CalculatedSalaryFoundationTracker> entriesToLoad = new ArrayList<CalculatedSalaryFoundationTracker>();
+        Map<String, PSPositionInfo> positionInfoMap = new HashMap<String, PSPositionInfo>();
+        Map<String, PSJobData> jobInfoMap = new HashMap<String, PSJobData>();
+        Map<String, PSJobCode> jobCodeMap = new HashMap<String, PSJobCode>();
+
+        generateNewEntriesToLoadInTheDB(validCsfTackerEntries, entriesToLoad, positionInfoMap, jobInfoMap, jobCodeMap);
+
+        // load data in the DB
+        loadDataInDB(startFresh, entriesToLoad, positionInfoMap, jobInfoMap, jobCodeMap);
+
+        return true;
+
+    }
+
+    /**
+     * Reads the new file from PS and builds a list of PSPositionJobExtractEntry objects.
+     * 
+     * @param fileName the name of the last PS extract
+     * @return a list of PSPositionJobExtractEntry objects
+     */
+    protected List<PSPositionJobExtractEntry> readPSExtractFileContents(String fileName) {
 
         try {
+
+            FileInputStream fileContents = null;
             //read file contents
             fileContents = new FileInputStream(fileName);
             // read csf tracker entries
@@ -78,86 +122,12 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             // if no entries, log
             if (psPositionJobExtractEntries == null || psPositionJobExtractEntries.isEmpty()) {
                 LOG.warn("No entries in the PS Job extract input file " + fileName);
-                return true;
+                return null;
             } else {
                 setAccountingInfoLists(psPositionJobExtractEntries);
             }
 
-            Collection<PSPositionJobExtractEntry> filteredPsPositionJobExtractEntries = null;
-            // are we starting fresh? then we delete all old records
-
-            if (startFresh || currentFileName == null) {
-                filteredPsPositionJobExtractEntries = psPositionJobExtractEntries;
-            } else {
-                // filter only updated entries from last run
-                //for better performance look for the last successful file so that we can compare with that
-                filteredPsPositionJobExtractEntries = filterEntriesToUpdate(
-                        currentFileName, psPositionJobExtractEntries, startFresh);
-            }
-
-            // if no current file treat as if we are starting fresh
-            if (currentFileName == null) {
-                startFresh = true;
-            }
-
-            // validate entries to load
-            Collection<PSPositionJobExtractEntry> validCsfTackerEntries = validateEntriesForCSFTracker(filteredPsPositionJobExtractEntries);
-
-            List<CalculatedSalaryFoundationTracker> entriesToLoad = new ArrayList<CalculatedSalaryFoundationTracker>();
-            Map<String, PSPositionInfo> positionInfoMap = new HashMap<String, PSPositionInfo>();
-            Map<String, PSJobData> jobInfoMap = new HashMap<String, PSJobData>();
-            Map<String, PSJobCode> jobCodeMap = new HashMap<String, PSJobCode>();
-
-            //generate CalculatedSalaryFoundationTracker, PSPositionInfo, PSJobData and PSJobCode entries from the valid PSPositionJobExtractEntry list
-            for (PSPositionJobExtractEntry psPositionJobExtractEntry : validCsfTackerEntries) {
-
-                // entries for the CalculatedSalaryFoundationTracker
-                entriesToLoad.addAll(generateCalculatedSalaryFoundationTrackerCollection(psPositionJobExtractEntry));
-
-                // build map for position Info
-                if (positionInfoMap.get(psPositionJobExtractEntry.getPositionNumber()) == null) {
-                    positionInfoMap
-                            .put(psPositionJobExtractEntry.getPositionNumber(),
-                                    generatePSPositionInfo(psPositionJobExtractEntry));
-                }
-
-                // build map for job info
-                if (StringUtils.isNotBlank(psPositionJobExtractEntry.getEmplid())
-                        && (jobInfoMap.get(psPositionJobExtractEntry.getKey()) == null)) {
-                    jobInfoMap.put(psPositionJobExtractEntry.getKey(), generatePSJobData(psPositionJobExtractEntry));
-                }
-
-                if (StringUtils.isNotBlank(psPositionJobExtractEntry.getJobCode())
-                        && (jobCodeMap.get(psPositionJobExtractEntry.getJobCode()) == null)) {
-                    // build map for job code
-                    jobCodeMap
-                            .put(psPositionJobExtractEntry.getJobCode(), generatePSJobCode(psPositionJobExtractEntry));
-                }
-            }
-
-            // load entries in the CSF tracker table
-            loadEntriesInCSFTrackerTable(entriesToLoad, startFresh);
-
-            // load entries in CU_PS_POSITION_EXTRA table
-            loadEntriesInPSPositionInfoTable(new ArrayList<PSPositionInfo>(positionInfoMap.values()), startFresh);
-
-            // load entries in CU_PS_JOB_CODE
-            loadEntriesInPSJobCodeTable(new ArrayList<PSJobCode>(jobCodeMap.values()), startFresh);
-
-            // load entries in CU_PS_JOB_DATA
-            loadEntriesInPSJobDataTable(new ArrayList<PSJobData>(jobInfoMap.values()), startFresh);
-
-            // log the number of entries loaded
-            LOG.info("Total number of entries loaded/updated in the CSF Tracker table: "
-                    + Integer.toString(entriesToLoad.size()));
-            LOG.info("Total number of entries loaded/updated in the  CU_PS_POSITION_EXTRA table: "
-                    + Integer.toString(positionInfoMap.values().size()));
-            LOG.info("Total number of entries loaded/updated in the  CU_PS_JOB_DATA table: "
-                    + Integer.toString(jobInfoMap.values().size()));
-            LOG.info("Total number of entries loaded/updated in the  CU_PS_JOB_CD table: "
-                    + Integer.toString(jobCodeMap.values().size()));
-
-            return true;
+            return psPositionJobExtractEntries;
 
         } catch (FileNotFoundException e) {
             LOG.error("file to parse not found " + fileName, e);
@@ -170,7 +140,6 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                     "Error encountered while attempting to get file bytes: "
                             + e.getMessage(), e);
         }
-
     }
 
     /**
@@ -186,8 +155,12 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             Collection<PSPositionJobExtractEntry> inputPSPositionJobExtractEntries, boolean startFresh) {
 
         Collection<PSPositionJobExtractEntry> filteredEntries = new ArrayList<PSPositionJobExtractEntry>();
+        // are we starting fresh? then we delete all old records
 
-        if (!startFresh) {
+        if (startFresh) {
+            filteredEntries = inputPSPositionJobExtractEntries;
+        } else {
+
             Collection<PSPositionJobExtractEntry> currentPSPositionJobExtractEntries = null;
 
             FileInputStream fileContents = null;
@@ -234,17 +207,41 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                                 if (currentEntry.equals(newEntry)) {
                                     //do nothing; these entries will have a status flag code of active = "-"
                                     // when we are done with this current entry remove it from the map; whatever is left will need to be deleted
-                                    currentEntriesMap.remove(key);
+
                                 } else {
 
                                     newEntry.deleteStatus = CUBCConstants.PSEntryStatus.UPDATE;
                                     // set change status
                                     newEntry.changeStatus = StatusFlag.CHANGED;
-                                    updateAccountingInfoStatusFlag(newEntry, currentEntry);
+
+                                    if (newEntry.getAnnualRate() != null
+                                            && !newEntry.getAnnualRate().equalsIgnoreCase(currentEntry.getAnnualRate())) {
+                                        // set all changed
+                                        if (newEntry.getCsfAccountingInfoList() != null
+                                                && newEntry.getCsfAccountingInfoList().size() > 0) {
+                                            for (PSPositionJobExtractAccountingInfo accInfo : newEntry
+                                                    .getCsfAccountingInfoList()) {
+                                                accInfo.setStatusFlag(StatusFlag.CHANGED);
+                                            }
+                                        } else {
+                                            if (newEntry.getPosAccountingInfoList() != null
+                                                    && newEntry.getPosAccountingInfoList().size() > 0) {
+                                                for (PSPositionJobExtractAccountingInfo accInfo : newEntry
+                                                        .getPosAccountingInfoList()) {
+                                                    accInfo.setStatusFlag(StatusFlag.CHANGED);
+                                                }
+                                            }
+                                        }
+                                    } else {
+
+                                        updateAccountingInfoStatusFlag(newEntry, currentEntry);
+                                    }
 
                                     //add to update list
                                     filteredEntries.add(newEntry);
+
                                 }
+                                currentEntriesMap.remove(key);
                             } else {
                                 //add to the toAdd list: this is a new entry that did not exist in the old file
                                 newEntry.deleteStatus = CUBCConstants.PSEntryStatus.ADD;
@@ -286,24 +283,33 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
     private void updateAccountingInfoStatusFlag(PSPositionJobExtractEntry newEntry,
             PSPositionJobExtractEntry currentEntry) {
 
-        Map<String, PSPositionJobExtractAccountingInfo> currentEntryCsfAccountingMap = new HashMap<String, PSPositionJobExtractAccountingInfo>();
-        for (PSPositionJobExtractAccountingInfo accountingInfo : currentEntry.getCsfAccountingInfoList()) {
-            currentEntryCsfAccountingMap.put(accountingInfo.getKey(), accountingInfo);
+        Map<String, PSPositionJobExtractAccountingInfo> newEntryCsfAccountingMap = null;
+        Map<String, PSPositionJobExtractAccountingInfo> newEntryPosAccountingMap = null;
+        Map<String, PSPositionJobExtractAccountingInfo> currentEntryCsfAccountingMap = null;
+        Map<String, PSPositionJobExtractAccountingInfo> currentEntryPosAccountingMap = null;
+
+        if (newEntry != null) {
+            newEntryCsfAccountingMap = new HashMap<String, PSPositionJobExtractAccountingInfo>();
+            for (PSPositionJobExtractAccountingInfo accountingInfo : newEntry.getCsfAccountingInfoList()) {
+                newEntryCsfAccountingMap.put(accountingInfo.getKey(), accountingInfo);
+            }
+
+            newEntryPosAccountingMap = new HashMap<String, PSPositionJobExtractAccountingInfo>();
+            for (PSPositionJobExtractAccountingInfo accountingInfo : newEntry.getPosAccountingInfoList()) {
+                newEntryPosAccountingMap.put(accountingInfo.getKey(), accountingInfo);
+            }
         }
 
-        Map<String, PSPositionJobExtractAccountingInfo> newEntryCsfAccountingMap = new HashMap<String, PSPositionJobExtractAccountingInfo>();
-        for (PSPositionJobExtractAccountingInfo accountingInfo : newEntry.getCsfAccountingInfoList()) {
-            newEntryCsfAccountingMap.put(accountingInfo.getKey(), accountingInfo);
-        }
+        if (currentEntry != null) {
+            currentEntryCsfAccountingMap = new HashMap<String, PSPositionJobExtractAccountingInfo>();
+            for (PSPositionJobExtractAccountingInfo accountingInfo : currentEntry.getCsfAccountingInfoList()) {
+                currentEntryCsfAccountingMap.put(accountingInfo.getKey(), accountingInfo);
+            }
 
-        Map<String, PSPositionJobExtractAccountingInfo> currentEntryPosAccountingMap = new HashMap<String, PSPositionJobExtractAccountingInfo>();
-        for (PSPositionJobExtractAccountingInfo accountingInfo : currentEntry.getPosAccountingInfoList()) {
-            currentEntryPosAccountingMap.put(accountingInfo.getKey(), accountingInfo);
-        }
-
-        Map<String, PSPositionJobExtractAccountingInfo> newEntryPosAccountingMap = new HashMap<String, PSPositionJobExtractAccountingInfo>();
-        for (PSPositionJobExtractAccountingInfo accountingInfo : newEntry.getPosAccountingInfoList()) {
-            newEntryPosAccountingMap.put(accountingInfo.getKey(), accountingInfo);
+            currentEntryPosAccountingMap = new HashMap<String, PSPositionJobExtractAccountingInfo>();
+            for (PSPositionJobExtractAccountingInfo accountingInfo : currentEntry.getPosAccountingInfoList()) {
+                currentEntryPosAccountingMap.put(accountingInfo.getKey(), accountingInfo);
+            }
         }
 
         if (newEntryCsfAccountingMap != null && newEntryCsfAccountingMap.size() > 0) {
@@ -328,7 +334,13 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             for (String key : newInfoMap.keySet()) {
                 if (currentInfoMap != null) {
                     if (currentInfoMap.containsKey(key)) {
-                        newInfoMap.get(key).setStatusFlag(StatusFlag.ACTIVE);
+                        PSPositionJobExtractAccountingInfo newInfo = newInfoMap.get(key);
+                        PSPositionJobExtractAccountingInfo currentInfo = currentInfoMap.get(key);
+                        if (newInfo.equals(currentInfo)) {
+                            newInfoMap.get(key).setStatusFlag(StatusFlag.ACTIVE);
+                        } else {
+                            newInfoMap.get(key).setStatusFlag(StatusFlag.CHANGED);
+                        }
                     } else {
                         newInfoMap.get(key).setStatusFlag(StatusFlag.CHANGED);
                     }
@@ -645,6 +657,46 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
     }
 
     /**
+     * Builds maps with objects to be loaded in the database
+     * 
+     * @param validCsfTackerEntries
+     * @param entriesToLoad
+     * @param positionInfoMap
+     * @param jobInfoMap
+     * @param jobCodeMap
+     */
+    private void generateNewEntriesToLoadInTheDB(Collection<PSPositionJobExtractEntry> validCsfTackerEntries,
+            List<CalculatedSalaryFoundationTracker> entriesToLoad, Map<String, PSPositionInfo> positionInfoMap,
+            Map<String, PSJobData> jobInfoMap, Map<String, PSJobCode> jobCodeMap) {
+
+        for (PSPositionJobExtractEntry psPositionJobExtractEntry : validCsfTackerEntries) {
+
+            // entries for the CalculatedSalaryFoundationTracker
+            entriesToLoad.addAll(generateCalculatedSalaryFoundationTrackerCollection(psPositionJobExtractEntry));
+
+            // build map for position Info
+            if (positionInfoMap.get(psPositionJobExtractEntry.getPositionNumber()) == null) {
+                positionInfoMap
+                            .put(psPositionJobExtractEntry.getPositionNumber(),
+                                    generatePSPositionInfo(psPositionJobExtractEntry));
+            }
+
+            // build map for job info
+            if (StringUtils.isNotBlank(psPositionJobExtractEntry.getEmplid())
+                        && (jobInfoMap.get(psPositionJobExtractEntry.getKey()) == null)) {
+                jobInfoMap.put(psPositionJobExtractEntry.getKey(), generatePSJobData(psPositionJobExtractEntry));
+            }
+
+            if (StringUtils.isNotBlank(psPositionJobExtractEntry.getJobCode())
+                        && (jobCodeMap.get(psPositionJobExtractEntry.getJobCode()) == null)) {
+                // build map for job code
+                jobCodeMap
+                            .put(psPositionJobExtractEntry.getJobCode(), generatePSJobCode(psPositionJobExtractEntry));
+            }
+        }
+    }
+
+    /**
      * Generate a collection of CalculatedSalaryFoundationTracker from the given
      * PSPositionJobExtractEntry entry.
      * 
@@ -731,10 +783,13 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             PSPositionJobExtractEntry psPositionJobExtractEntry, PSPositionJobExtractAccountingInfo accountingInfo,
             KualiDecimal csfAmount, String positionNumber, Integer universityFiscalYear, String emplid, String name,
             Timestamp csfCreateTimestamp) {
+
         BigDecimal csfTimePercent = generateKualiDecimal(accountingInfo.getCsfTimePercent()).bigDecimalValue();
-        BigDecimal csfFullTimeEmploymentQuantity = generateKualiDecimal(accountingInfo.getCsfTimePercent())
-                .bigDecimalValue()
-                .divide(new BigDecimal(100));
+        BigDecimal csfFullTimeEmploymentQuantity = BigDecimal.ZERO;
+        if (csfTimePercent.compareTo(BigDecimal.ZERO) != 0) {
+            csfFullTimeEmploymentQuantity = csfTimePercent.divide(new BigDecimal(100));
+        }
+
         String chartOfAccountsCode = accountingInfo.getChartOfAccountsCode();
         String accountNumber = accountingInfo.getAccountNumber();
 
@@ -752,13 +807,13 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
 
         String csfDeleteCode = generateDeleteCode(psPositionJobExtractEntry);
         String csfFundingStatusCode = StatusFlag.ACTIVE.getFlagValue();
+
         if (StatusFlag.NEW.equals(psPositionJobExtractEntry.getChangeStatus())) {
             csfFundingStatusCode = StatusFlag.NEW.getFlagValue();
         } else {
             csfFundingStatusCode = accountingInfo.getStatusFlag() != null ? accountingInfo.getStatusFlag()
                     .getFlagValue() : StatusFlag.ACTIVE.getFlagValue();
         }
-
         KualiDecimal percentOfCSFAmount = new KualiDecimal(csfAmount.bigDecimalValue().multiply(
                 csfFullTimeEmploymentQuantity));
 
@@ -768,7 +823,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                 csfTimePercent, chartOfAccountsCode, accountNumber, subAccountNumber, financialObjectCode,
                 financialSubObjectCode, csfDeleteCode, csfFundingStatusCode);
 
-        // if in the map add percentages and add only one account
+        // if the PS entry has several accounting Strings with the same account, sub account, object, sub object then we add only one entry in the CSF tracker and we add up the percentages and the amounts
 
         if (csfEntryFromMap != null) {
             BigDecimal tmpTimePercent = csfEntryFromMap.getCsfTimePercent().add(csfTimePercent);
@@ -987,6 +1042,41 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
     }
 
     /**
+     * Loads the new data in the database.
+     * 
+     * @param startFresh
+     * @param entriesToLoad
+     * @param positionInfoMap
+     * @param jobInfoMap
+     * @param jobCodeMap
+     */
+    private void loadDataInDB(boolean startFresh, List<CalculatedSalaryFoundationTracker> entriesToLoad,
+            Map<String, PSPositionInfo> positionInfoMap,
+            Map<String, PSJobData> jobInfoMap, Map<String, PSJobCode> jobCodeMap) {
+        // load entries in the CSF tracker table
+        loadEntriesInCSFTrackerTable(entriesToLoad, startFresh);
+
+        // load entries in CU_PS_POSITION_EXTRA table
+        loadEntriesInPSPositionInfoTable(new ArrayList<PSPositionInfo>(positionInfoMap.values()), startFresh);
+
+        // load entries in CU_PS_JOB_CODE
+        loadEntriesInPSJobCodeTable(new ArrayList<PSJobCode>(jobCodeMap.values()), startFresh);
+
+        // load entries in CU_PS_JOB_DATA
+        loadEntriesInPSJobDataTable(new ArrayList<PSJobData>(jobInfoMap.values()), startFresh);
+
+        // log the number of entries loaded
+        LOG.info("Total number of entries loaded/updated in the CSF Tracker table: "
+                + Integer.toString(entriesToLoad.size()));
+        LOG.info("Total number of entries loaded/updated in the  CU_PS_POSITION_EXTRA table: "
+                + Integer.toString(positionInfoMap.values().size()));
+        LOG.info("Total number of entries loaded/updated in the  CU_PS_JOB_DATA table: "
+                + Integer.toString(jobInfoMap.values().size()));
+        LOG.info("Total number of entries loaded/updated in the  CU_PS_JOB_CD table: "
+                + Integer.toString(jobCodeMap.values().size()));
+    }
+
+    /**
      * Loads the entries in the LS_CSF_TRACKER_T table.
      * 
      * @param csfTackerEntries
@@ -1024,11 +1114,16 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                 keyFields.put(CUBCPropertyConstants.CalculateSalaryFoundationTrackerProperties.POSITION_NBR,
                         entry.getPositionNumber());
 
-                businessObjectService
-                            .deleteMatching(CalculatedSalaryFoundationTracker.class, keyFields);
+                if (CUBCConstants.StatusFlag.DELETED.getFlagValue().equals(entry.getCsfDeleteCode())) {
 
-                if (CUBCConstants.StatusFlag.ACTIVE.getFlagValue().equals(entry.getCsfDeleteCode())) {
+                    businessObjectService.deleteMatching(CalculatedSalaryFoundationTracker.class, keyFields);
 
+                } else {
+                    CalculatedSalaryFoundationTracker retrievedEntry = (CalculatedSalaryFoundationTracker) businessObjectService
+                            .retrieve(entry);//(CalculatedSalaryFoundationTracker.class, keyFields);
+                    if (ObjectUtils.isNotNull(retrievedEntry)) {
+                        entry.setVersionNumber(retrievedEntry.getVersionNumber());
+                    }
                     businessObjectService.save(entry);
 
                 }
@@ -1056,11 +1151,15 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                 keyFields.put(CUBCPropertyConstants.PSPositionInfoProperties.POSITION_NBR,
                               entry.getPositionNumber());
 
-                businessObjectService
+                if (CUBCConstants.PSEntryStatus.DELETE.equals(entry.getStatus())) {
+                    businessObjectService
                               .deleteMatching(PSPositionInfo.class, keyFields);
+                } else {
+                    PSPositionInfo retrievedEntry = (PSPositionInfo) businessObjectService.retrieve(entry);
 
-                if (CUBCConstants.PSEntryStatus.UPDATE.equals(entry.getStatus())
-                        || CUBCConstants.PSEntryStatus.ADD.equals(entry.getStatus())) {
+                    if (ObjectUtils.isNotNull(retrievedEntry)) {
+                        entry.setVersionNumber(retrievedEntry.getVersionNumber());
+                    }
                     businessObjectService.save(entry);
                 }
 
@@ -1088,12 +1187,15 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                              entry.getPositionNumber());
                 keyFields.put(CUBCPropertyConstants.PSJobDataProperties.EMPLID, entry.getEmplid());
 
-                businessObjectService
-                             .deleteMatching(PSJobData.class, keyFields);
+                if (CUBCConstants.PSEntryStatus.DELETE.equals(entry.getStatus())) {
+                    businessObjectService
+                              .deleteMatching(PSJobData.class, keyFields);
+                } else {
+                    PSJobData retrievedEntry = (PSJobData) businessObjectService.retrieve(entry);
 
-                if (CUBCConstants.PSEntryStatus.UPDATE.equals(entry.getStatus())
-                        || CUBCConstants.PSEntryStatus.ADD.equals(entry.getStatus())) {
-
+                    if (ObjectUtils.isNotNull(retrievedEntry)) {
+                        entry.setVersionNumber(retrievedEntry.getVersionNumber());
+                    }
                     businessObjectService.save(entry);
                 }
             }
@@ -1119,11 +1221,15 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                 keyFields.put(CUBCPropertyConstants.PSJobCodeProperties.JOB_CD,
                              entry.getJobCode());
 
-                businessObjectService
-                             .deleteMatching(PSJobCode.class, keyFields);
+                if (CUBCConstants.PSEntryStatus.DELETE.equals(entry.getStatus())) {
+                    businessObjectService
+                              .deleteMatching(PSJobCode.class, keyFields);
+                } else {
+                    PSJobCode retrievedEntry = (PSJobCode) businessObjectService.retrieve(entry);
 
-                if (CUBCConstants.PSEntryStatus.UPDATE.equals(entry.getStatus())
-                        || CUBCConstants.PSEntryStatus.ADD.equals(entry.getStatus())) {
+                    if (ObjectUtils.isNotNull(retrievedEntry)) {
+                        entry.setVersionNumber(retrievedEntry.getVersionNumber());
+                    }
                     businessObjectService.save(entry);
                 }
 

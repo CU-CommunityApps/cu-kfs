@@ -4,7 +4,7 @@
 		<field-descriptor name="positionNumber" column="POS_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
 		<field-descriptor name="positionType" column="POS_TYP" jdbc-type="VARCHAR" />
 		<field-descriptor name="positionUnionCode" column="POS_UNION_CD" jdbc-type="VARCHAR" />
-		<field-descriptor name="workMonths" column="WRK_MNTHS" jdbc-type="INTEGER" />
+		<field-descriptor name="workMonths" column="WRK_MNTHS" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" />
 		<field-descriptor name="jobCode" column="JOB_CD" jdbc-type="VARCHAR" />
 	    <field-descriptor name="fullPartTime" column="FULL_PART_TIME" jdbc-type="VARCHAR" />
 	    <field-descriptor name="classInd" column="CLASS_IND" jdbc-type="VARCHAR" />
