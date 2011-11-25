@@ -1368,8 +1368,8 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
         }
         if (StringUtils.isNotBlank(posTimePercent2)) {
             PSPositionJobExtractAccountingInfo accountingInfo = new PSPositionJobExtractAccountingInfo(posTimePercent2,
-                    posChartOfAccountsCode1, posAccountNumber1, posSubAccountNumber1, posFinancialObjectCode2,
-                    posFinancialSubObjectCode1, posStatus2);
+                    posChartOfAccountsCode2, posAccountNumber2, posSubAccountNumber2, posFinancialObjectCode2,
+                    posFinancialSubObjectCode2, posStatus2);
 
             accountingInfoCollection.add(accountingInfo);
         }
