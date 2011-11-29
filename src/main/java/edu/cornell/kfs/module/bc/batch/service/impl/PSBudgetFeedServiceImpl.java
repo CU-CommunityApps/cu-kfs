@@ -123,9 +123,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             if (psPositionJobExtractEntries == null || psPositionJobExtractEntries.isEmpty()) {
                 LOG.warn("No entries in the PS Job extract input file " + fileName);
                 return null;
-            } else {
-                setAccountingInfoLists(psPositionJobExtractEntries);
-            }
+            } 
 
             return psPositionJobExtractEntries;
 
@@ -175,13 +173,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                     // if no entries read log
                     if (currentPSPositionJobExtractEntries == null || currentPSPositionJobExtractEntries.isEmpty()) {
                         LOG.warn("No entries in the current file " + currentFileName);
-                    } else {
-                        //set the lists of accounting info
-                        for (PSPositionJobExtractEntry entry : currentPSPositionJobExtractEntries) {
-                            entry.setCsfAccountingInfoList();
-                            entry.setPosAccountingInfoList();
-                        }
-                    }
+                    } 
 
                     if (currentPSPositionJobExtractEntries != null) {
                         //build hash maps for current entries
@@ -1237,21 +1229,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
         }
     }
 
-    /**
-     * Sets the accounting info lists in the PS entries. Each entry has 10 accounting
-     * strings at position level and 10 at job level. This methods creates two lists on
-     * each entries for the accounting Strings. This allows for easy manipulation of the
-     * accounting strings during the process.
-     * 
-     * @param psPositionJobExtractEntries
-     */
-    protected void setAccountingInfoLists(List<PSPositionJobExtractEntry> psPositionJobExtractEntries) {
-        //set the lists of accounting info
-        for (PSPositionJobExtractEntry entry : psPositionJobExtractEntries) {
-            entry.setCsfAccountingInfoList();
-            entry.setPosAccountingInfoList();
-        }
-    }
+
 
     /**
      * Gets the batchInputFileService.

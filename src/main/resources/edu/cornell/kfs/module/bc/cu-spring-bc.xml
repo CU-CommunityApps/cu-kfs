@@ -65,171 +65,60 @@
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="classInd" p:start="119" p:end="120" />
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="addsToActualFte" p:start="123" p:end="124" />
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuStateCert" p:start="124" p:end="125" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="defaultObjectCode" p:start="605" p:end="609" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="emplid" p:start="614" p:end="621" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeRecord" p:start="621" p:end="624" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeStatus" p:start="624" p:end="625" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobStandardHours" p:start="625" p:end="629" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCodeStandardHours" p:start="629" p:end="633" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeClass" p:start="633" p:end="634" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="earningDistributionType" p:start="637" p:end="638" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="compRate" p:start="638" p:end="650" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="annualBenefitBaseRate" p:start="650" p:end="662" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuAbbrFlag" p:start="662" p:end="663" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="annualRate" p:start="663" p:end="675" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="name" p:start="684" p:end="734" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="workMonths" p:start="1174" p:end="1177" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFamily" p:start="1177" p:end="0" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="compFreq" p:start="613" p:end="614" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuPlannedFTE" p:start="575" p:end="580" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFunction" p:start="592" p:end="595" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFunctionDesc" p:start="595" p:end="605" />
-     							
-     							<!-- POS accounting strings -->
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posTimePercent1" p:start="135" p:end="140" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posChartOfAccountsCode1" p:start="140" p:end="142" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posAccountNumber1" p:start="142" p:end="149" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posSubAccountNumber1" p:start="149" p:end="154" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialObjectCode1" p:start="154" p:end="158" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialSubObjectCode1" p:start="158" p:end="161" p:rightTrim="true" />	
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posTimePercent2" p:start="179" p:end="184" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posChartOfAccountsCode2" p:start="184" p:end="186" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posAccountNumber2" p:start="186" p:end="193" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posSubAccountNumber2" p:start="193" p:end="198" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialObjectCode2" p:start="198" p:end="202" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialSubObjectCode2" p:start="202" p:end="205" p:rightTrim="true" />	
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posTimePercent3" p:start="223" p:end="228" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posChartOfAccountsCode3" p:start="228" p:end="230" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posAccountNumber3" p:start="230" p:end="237" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posSubAccountNumber3" p:start="237" p:end="242" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialObjectCode3" p:start="242" p:end="246" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialSubObjectCode3" p:start="246" p:end="249" p:rightTrim="true" />	
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posTimePercent4" p:start="267" p:end="272" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posChartOfAccountsCode4" p:start="272" p:end="274" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posAccountNumber4" p:start="274" p:end="281" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posSubAccountNumber4" p:start="281" p:end="286" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialObjectCode4" p:start="286" p:end="290" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialSubObjectCode4" p:start="290" p:end="293" p:rightTrim="true" />	
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posTimePercent5" p:start="311" p:end="316" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posChartOfAccountsCode5" p:start="316" p:end="318" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posAccountNumber5" p:start="318" p:end="325" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posSubAccountNumber5" p:start="325" p:end="330" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialObjectCode5" p:start="330" p:end="334" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialSubObjectCode5" p:start="334" p:end="337" p:rightTrim="true" />		
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posTimePercent6" p:start="355" p:end="360" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posChartOfAccountsCode6" p:start="360" p:end="362" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posAccountNumber6" p:start="362" p:end="369" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posSubAccountNumber6" p:start="369" p:end="374" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialObjectCode6" p:start="374" p:end="378" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialSubObjectCode6" p:start="378" p:end="381" p:rightTrim="true" />
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posTimePercent7" p:start="399" p:end="404" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posChartOfAccountsCode7" p:start="404" p:end="406" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posAccountNumber7" p:start="406" p:end="413" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posSubAccountNumber7" p:start="413" p:end="418" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialObjectCode7" p:start="418" p:end="422" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialSubObjectCode7" p:start="422" p:end="425" p:rightTrim="true" />
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posTimePercent8" p:start="443" p:end="448" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posChartOfAccountsCode8" p:start="448" p:end="450" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posAccountNumber8" p:start="450" p:end="457" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posSubAccountNumber8" p:start="457" p:end="462" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialObjectCode8" p:start="462" p:end="466" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialSubObjectCode8" p:start="466" p:end="469" p:rightTrim="true" />
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posTimePercent9" p:start="487" p:end="492" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posChartOfAccountsCode9" p:start="492" p:end="494" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posAccountNumber9" p:start="494" p:end="501" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posSubAccountNumber9" p:start="501" p:end="506" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialObjectCode9" p:start="506" p:end="510" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialSubObjectCode9" p:start="510" p:end="513" p:rightTrim="true" />
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posTimePercent10" p:start="531" p:end="536" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posChartOfAccountsCode10" p:start="536" p:end="538" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posAccountNumber10" p:start="538" p:end="545" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posSubAccountNumber10" p:start="545" p:end="550" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialObjectCode10" p:start="550" p:end="554" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="posFinancialSubObjectCode10" p:start="554" p:end="557" p:rightTrim="true" />
-     							
-     							<!-- CSF accounting Strings -->
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent1" p:start="734" p:end="739" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="chartOfAccountsCode1" p:start="739" p:end="741" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountNumber1" p:start="741" p:end="748" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="subAccountNumber1" p:start="748" p:end="753" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialObjectCode1" p:start="753" p:end="757" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialSubObjectCode1" p:start="757" p:end="760" p:rightTrim="true" />	
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent2" p:start="778" p:end="783" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="chartOfAccountsCode2" p:start="783" p:end="785" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountNumber2" p:start="785" p:end="792" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="subAccountNumber2" p:start="792" p:end="797" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialObjectCode2" p:start="797" p:end="801" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialSubObjectCode2" p:start="801" p:end="804" p:rightTrim="true" />	
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent3" p:start="822" p:end="827" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="chartOfAccountsCode3" p:start="827" p:end="829" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountNumber3" p:start="829" p:end="836" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="subAccountNumber3" p:start="836" p:end="841" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialObjectCode3" p:start="841" p:end="845" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialSubObjectCode3" p:start="845" p:end="848" p:rightTrim="true" />	
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent4" p:start="866" p:end="871" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="chartOfAccountsCode4" p:start="871" p:end="873" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountNumber4" p:start="873" p:end="880" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="subAccountNumber4" p:start="880" p:end="885" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialObjectCode4" p:start="885" p:end="889" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialSubObjectCode4" p:start="889" p:end="892" p:rightTrim="true" />		
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent5" p:start="910" p:end="915" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="chartOfAccountsCode5" p:start="915" p:end="917" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountNumber5" p:start="917" p:end="924" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="subAccountNumber5" p:start="924" p:end="929" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialObjectCode5" p:start="929" p:end="933" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialSubObjectCode5" p:start="933" p:end="936" p:rightTrim="true" />	
-     					
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent6" p:start="954" p:end="959" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="chartOfAccountsCode6" p:start="959" p:end="961" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountNumber6" p:start="961" p:end="968" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="subAccountNumber6" p:start="968" p:end="973" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialObjectCode6" p:start="973" p:end="977" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialSubObjectCode6" p:start="977" p:end="980" p:rightTrim="true" />		
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent7" p:start="998" p:end="1003" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="chartOfAccountsCode7" p:start="1003" p:end="1005" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountNumber7" p:start="1005" p:end="1012" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="subAccountNumber7" p:start="1012" p:end="1017" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialObjectCode7" p:start="1017" p:end="1021" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialSubObjectCode7" p:start="1021" p:end="1024" p:rightTrim="true" />
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent8" p:start="1042" p:end="1047" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="chartOfAccountsCode8" p:start="1047" p:end="1049" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountNumber8" p:start="1049" p:end="1056" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="subAccountNumber8" p:start="1056" p:end="1061" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialObjectCode8" p:start="1061" p:end="1065" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialSubObjectCode8" p:start="1065" p:end="1068" p:rightTrim="true" />
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent9" p:start="1086" p:end="1091" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="chartOfAccountsCode9" p:start="1091" p:end="1093" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountNumber9" p:start="1093" p:end="1100" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="subAccountNumber9" p:start="1100" p:end="1105" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialObjectCode9" p:start="1105" p:end="1109" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialSubObjectCode9" p:start="1109" p:end="1112" p:rightTrim="true" />
-     							
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent10" p:start="1130" p:end="1135" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="chartOfAccountsCode10" p:start="1135" p:end="1137" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountNumber10" p:start="1137" p:end="1144" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="subAccountNumber10" p:start="1144" p:end="1149" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialObjectCode10" p:start="1149" p:end="1153" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialSubObjectCode10" p:start="1153" p:end="1156" p:rightTrim="true" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="defaultObjectCode" p:start="165" p:end="169" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="emplid" p:start="174" p:end="181" p:rightTrim="true" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeRecord" p:start="181" p:end="184" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeStatus" p:start="184" p:end="185" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobStandardHours" p:start="185" p:end="189" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCodeStandardHours" p:start="189" p:end="193" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeClass" p:start="193" p:end="194" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="earningDistributionType" p:start="197" p:end="198" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="compRate" p:start="198" p:end="210" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="annualBenefitBaseRate" p:start="210" p:end="222" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuAbbrFlag" p:start="222" p:end="223" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="annualRate" p:start="223" p:end="235" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="name" p:start="244" p:end="294" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="workMonths" p:start="294" p:end="297" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFamily" p:start="297" p:end="0" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="compFreq" p:start="173" p:end="174" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuPlannedFTE" p:start="135" p:end="140" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFunction" p:start="152" p:end="155" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFunctionDesc" p:start="155" p:end="165" />
      						</list>
      					</property>
      				</bean>
+                    <bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractPOSAccountingInfo" p:linePrefix="POS" p:parentBusinessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry" p:parentTargetProperty="posAccountingInfoList">
+						<property name="parseProperties">
+     				
+     						<list>
+     							
+     							<!-- POS accounting strings -->
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent" p:start="3" p:end="8" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="chartOfAccountsCode" p:start="8" p:end="10" p:rightTrim="true" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountNumber" p:start="10" p:end="17" p:rightTrim="true" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="subAccountNumber" p:start="17" p:end="22" p:rightTrim="true" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialObjectCode" p:start="22" p:end="26" p:rightTrim="true" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialSubObjectCode" p:start="26" p:end="29" p:rightTrim="true" />	
+     						</list>
+     					</property>
+     				</bean>
+     				<bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractJOBAccountingInfo" p:linePrefix="JOB" p:parentBusinessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry" p:parentTargetProperty="csfAccountingInfoList">
+						<property name="parseProperties">
+     				
+     						<list>
+     							
+     							<!-- CSF accounting strings -->
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent" p:start="3" p:end="8" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="chartOfAccountsCode" p:start="8" p:end="10" p:rightTrim="true" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountNumber" p:start="10" p:end="17" p:rightTrim="true" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="subAccountNumber" p:start="17" p:end="22" p:rightTrim="true" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialObjectCode" p:start="22" p:end="26" p:rightTrim="true" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialSubObjectCode" p:start="26" p:end="29" p:rightTrim="true" />	
+     						</list>
+     					</property>
+     				</bean>
+     							
+     							
      			</list>
      		</property>
      	</bean>
