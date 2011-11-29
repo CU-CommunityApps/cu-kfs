@@ -259,7 +259,7 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
     
     /**
      * Set LD_BCN_POS_T: IU_NORM_WORK_MONTHS, IU_PAY_MONTHS, IU_POSITION_TYPE, POS_UNION_CD, IU_DFLT_OBJ_CD with data from
-     * PS_POSITION_INFO_T table.
+     * CU_PS_POSITION_EXTRA and CU_PS_JOB_CD table.
      * 
      * @param fiscalYear
      */
@@ -273,7 +273,7 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
         sqlBuilder.append("    IU_POSITION_TYPE,\n");
         sqlBuilder.append("    POS_UNION_CD,\n");
         sqlBuilder.append("    IU_DFLT_OBJ_CD) = \n");
-        sqlBuilder.append("(SELECT COALESCE(WRK_MNTHS,?), COALESCE(WRK_MNTHS,?), POS_TYP, POS_UNION_CD, CU_OBJ_CD FROM PS_POSITION_EXTRA posinfo, PS_JOB_CD jobcd WHERE posinfo.POS_NBR = bcpos.POSITION_NBR AND posinfo.JOB_CD = jobcd.JOB_CD ) ");
+        sqlBuilder.append("(SELECT COALESCE(WRK_MNTHS,?), COALESCE(WRK_MNTHS,?), POS_TYP, POS_UNION_CD, CU_OBJ_CD FROM CU_PS_POSITION_EXTRA posinfo, CU_PS_JOB_CD jobcd WHERE posinfo.POS_NBR = bcpos.POSITION_NBR AND posinfo.JOB_CD = jobcd.JOB_CD ) ");
         sqlBuilder.append("WHERE (bcpos.UNIV_FISCAL_YR = ?)\n");
         String sqlString = sqlBuilder.toString();
         getSimpleJdbcTemplate().update(sqlString, defaultWorkMonths, defaultWorkMonths, fiscalYear);
