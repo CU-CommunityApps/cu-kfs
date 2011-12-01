@@ -249,7 +249,7 @@ public class PSBudgetFeedStep extends AbstractStep {
         Map<String, Object> keyMap = new HashMap<String, Object>();
         keyMap.put("parameterNamespaceCode", CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE);
         keyMap.put("parameterDetailTypeCode", CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP);
-        keyMap.put("parameterName", CUBCParameterKeyConstants.RUN_POPULATE_CSF_TRACKER_FOR_NEW_YEAR);
+        keyMap.put("parameterName", CUBCParameterKeyConstants.RUN_PS_BUDGET_FEED_FOR_NEW_YEAR);
         keyMap.put("parameterApplicationNamespaceCode",
                 CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_APPLICATION_NAMESPACE_CODE);
 
@@ -263,7 +263,7 @@ public class PSBudgetFeedStep extends AbstractStep {
                         .setParameterNamespaceCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE);
             runIndicatorParameter
                         .setParameterDetailTypeCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP);
-            runIndicatorParameter.setParameterName(CUBCParameterKeyConstants.RUN_POPULATE_CSF_TRACKER_FOR_NEW_YEAR);
+            runIndicatorParameter.setParameterName(CUBCParameterKeyConstants.RUN_PS_BUDGET_FEED_FOR_NEW_YEAR);
             runIndicatorParameter.setParameterDescription(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_DESCRIPTION);
             runIndicatorParameter.setParameterConstraintCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_ALLOWED);
             runIndicatorParameter.setParameterTypeCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_TYPE);
@@ -285,7 +285,7 @@ public class PSBudgetFeedStep extends AbstractStep {
         Map<String, Object> keyMap = new HashMap<String, Object>();
         keyMap.put("parameterNamespaceCode", CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE);
         keyMap.put("parameterDetailTypeCode", CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP);
-        keyMap.put("parameterName", CUBCParameterKeyConstants.RUN_POPULATE_CSF_TRACKER_FOR_NEW_YEAR);
+        keyMap.put("parameterName", CUBCParameterKeyConstants.RUN_PS_BUDGET_FEED_FOR_NEW_YEAR);
         keyMap.put("parameterApplicationNamespaceCode",
                 CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_APPLICATION_NAMESPACE_CODE);
 
@@ -299,7 +299,7 @@ public class PSBudgetFeedStep extends AbstractStep {
                         .setParameterNamespaceCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE);
             runIndicatorParameter
                         .setParameterDetailTypeCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP);
-            runIndicatorParameter.setParameterName(CUBCParameterKeyConstants.RUN_POPULATE_CSF_TRACKER_FOR_NEW_YEAR);
+            runIndicatorParameter.setParameterName(CUBCParameterKeyConstants.RUN_PS_BUDGET_FEED_FOR_NEW_YEAR);
             runIndicatorParameter.setParameterDescription(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_DESCRIPTION);
             runIndicatorParameter.setParameterConstraintCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_ALLOWED);
             runIndicatorParameter.setParameterTypeCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_TYPE);
@@ -310,7 +310,7 @@ public class PSBudgetFeedStep extends AbstractStep {
         }
 
         boolean runPopulateCSFTRackerForNewYear = parameterService.getIndicatorParameter(PSBudgetFeedStep.class,
-                    CUBCParameterKeyConstants.RUN_POPULATE_CSF_TRACKER_FOR_NEW_YEAR);
+                    CUBCParameterKeyConstants.RUN_PS_BUDGET_FEED_FOR_NEW_YEAR);
 
         return runPopulateCSFTRackerForNewYear;
 
