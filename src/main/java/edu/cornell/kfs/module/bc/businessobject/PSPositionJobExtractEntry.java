@@ -675,10 +675,6 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("PSPositionJobExtractEntry [");
-        builder.append(deleteStatus);
-        builder.append(", ");
-        builder.append(changeStatus);
-        builder.append(", ");
         builder.append(positionNumber);
         builder.append(", ");
         builder.append(emplid);

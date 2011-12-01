@@ -33,6 +33,7 @@ import org.kuali.rice.kns.service.DictionaryValidationService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.module.bc.CUBCConstants;
 import edu.cornell.kfs.module.bc.CUBCConstants.StatusFlag;
@@ -49,6 +50,7 @@ import edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry;
  * (LD_CSF_TRACKER_T) and CU_PS_POSITION_EXTRA, CU_PS_JOB_DATA, CU_PS_JOB_CD tables with
  * PS/HR data.
  */
+@Transactional
 public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
 
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PSBudgetFeedServiceImpl.class);
@@ -123,17 +125,17 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             if (psPositionJobExtractEntries == null || psPositionJobExtractEntries.isEmpty()) {
                 LOG.warn("No entries in the PS Job extract input file " + fileName);
                 return null;
-            } 
+            }
 
             return psPositionJobExtractEntries;
 
         } catch (FileNotFoundException e) {
-            LOG.error("file to parse not found " + fileName, e);
+            LOG.error("File to parse not found " + fileName, e);
             throw new RuntimeException(
                     "Cannot find the file requested to be parsed " + fileName
                             + " " + e.getMessage(), e);
         } catch (IOException e) {
-            LOG.error("error while getting file bytes:  " + e.getMessage(), e);
+            LOG.error("Error while getting file bytes:  " + e.getMessage(), e);
             throw new RuntimeException(
                     "Error encountered while attempting to get file bytes: "
                             + e.getMessage(), e);
@@ -173,7 +175,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                     // if no entries read log
                     if (currentPSPositionJobExtractEntries == null || currentPSPositionJobExtractEntries.isEmpty()) {
                         LOG.warn("No entries in the current file " + currentFileName);
-                    } 
+                    }
 
                     if (currentPSPositionJobExtractEntries != null) {
                         //build hash maps for current entries
@@ -376,12 +378,22 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                         && extractEntry.getCsfAccountingInfoList().size() > 0) {
                     for (PSPositionJobExtractAccountingInfo accountingInfo : extractEntry
                             .getCsfAccountingInfoList()) {
-                        valid &= validateAccountingInfo(universityFiscalYear, extractEntry, accountingInfo);
+                        StringBuffer accInfoWarningMessage = validateAccountingInfo(universityFiscalYear, extractEntry,
+                                accountingInfo);
+                        if (accInfoWarningMessage != null && accInfoWarningMessage.length() > 0) {
+                            valid = false;
+                            warningMessage.append(accInfoWarningMessage);
+                        }
                     }
                 } else {
                     for (PSPositionJobExtractAccountingInfo accountingInfo : extractEntry
                             .getPosAccountingInfoList()) {
-                        valid &= validateAccountingInfo(universityFiscalYear, extractEntry, accountingInfo);
+                        StringBuffer accInfoWarningMessage = validateAccountingInfo(universityFiscalYear, extractEntry,
+                                accountingInfo);
+                        if (accInfoWarningMessage != null && accInfoWarningMessage.length() > 0) {
+                            valid = false;
+                            warningMessage.append(accInfoWarningMessage);
+                        }
                     }
                 }
             }
@@ -404,9 +416,9 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
      * @param universityFiscalYear
      * @param extractEntry
      * @param accountingInfo
-     * @return true if valid, false otherwise
+     * @return a warning message if invalid, an empty warning message if valid
      */
-    protected boolean validateAccountingInfo(int universityFiscalYear, PSPositionJobExtractEntry extractEntry,
+    protected StringBuffer validateAccountingInfo(int universityFiscalYear, PSPositionJobExtractEntry extractEntry,
             PSPositionJobExtractAccountingInfo accountingInfo) {
 
         boolean valid = true;
@@ -461,12 +473,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             }
         }
 
-        if (warningMessage.length() > 0) {
-            LOG.warn(warningMessage.toString() + " for entry " + extractEntry.getPositionNumber() + " "
-                    + extractEntry.getEmplid() + " accounting string:" + accountingInfo.toString());
-        }
-
-        return valid;
+        return warningMessage;
     }
 
     /**
@@ -1228,8 +1235,6 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             }
         }
     }
-
-
 
     /**
      * Gets the batchInputFileService.
