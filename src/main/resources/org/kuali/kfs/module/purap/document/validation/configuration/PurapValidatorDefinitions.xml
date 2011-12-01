@@ -530,6 +530,8 @@
 	    <property name="purapService" ref="purapService" />
 	</bean>
 
+    <bean id="PurchaseOrderAmendment-hasUnitCostAndValidPercentage" class="org.kuali.kfs.module.purap.document.validation.impl.PurchaseOrderAmendmentHasUnitCostAndValidPercentage" abstract="true" />
+
     <bean id="PurchaseOrderAmendment-containsAtLeastOneActiveItemValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchaseOrderAmendmentContainsAtLeastOneActiveItemValidation" abstract="true" />
 
     <bean id="PurchaseOrderAmendment-processAccountValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchaseOrderAmendmentProcessAccountValidation" abstract="true"/>
