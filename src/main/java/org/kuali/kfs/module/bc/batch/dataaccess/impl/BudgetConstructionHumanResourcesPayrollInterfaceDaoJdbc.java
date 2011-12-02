@@ -105,7 +105,7 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
          sqlBuilder.append("        pos.POS_SAL_PLAN_DFLT,\n");
          sqlBuilder.append("        pos.POS_GRADE_DFLT\n");
          sqlBuilder.append(" FROM LD_CSF_TRACKER_T csf,\n");
-         sqlBuilder.append(" CU_PS_POSITION_DATA pos,\n");
+         sqlBuilder.append(" PS_POSITION_DATA pos,\n");
          sqlBuilder.append(" CU_PS_JOB_DATA job\n");
          sqlBuilder.append(" WHERE (csf.UNIV_FISCAL_YR = ?)\n");
          sqlBuilder.append("   AND (csf.POS_CSF_DELETE_CD = ?)\n");
@@ -114,7 +114,7 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
          sqlBuilder.append("   AND (csf.EMPLID = job.EMPLID)\n");
          sqlBuilder.append("   AND  ((pos.EFFDT <= ?) OR (pos.EFFDT = ?))\n");
          sqlBuilder.append("   AND (NOT EXISTS (SELECT 1\n");
-         sqlBuilder.append("                    FROM CU_PS_POSITION_DATA pox\n");
+         sqlBuilder.append("                    FROM PS_POSITION_DATA pox\n");
          sqlBuilder.append("                    WHERE (pos.POSITION_NBR = pox.POSITION_NBR)\n");
          sqlBuilder.append("                      AND (pos.EFFDT < pox.EFFDT)\n");
          sqlBuilder.append("                      AND ((pox.EFFDT <= ?) OR (pox.EFFDT = ?))))\n");
