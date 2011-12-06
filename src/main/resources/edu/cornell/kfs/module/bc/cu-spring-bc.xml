@@ -34,6 +34,10 @@
 			</list>
 		</property>
 		
+		<property name="scriptConfigurationFilePaths">
+			<list/>
+		</property>
+		
 	</bean>
 
 	<bean id="cu-bcModuleService" parent="bcModuleService-parentBean">
@@ -195,5 +199,44 @@
 			<ref bean="businessObjectService" />
 		</property>	
     </bean>
+    
+    <bean class="org.kuali.rice.ksb.messaging.KSBExporter">
+		<property name="serviceDefinition">
+			<bean parent="kfsService" p:service-ref="budgetConstructionDocumentDerivedRoleTypeService"
+				p:localServiceName="budgetConstructionDocumentDerivedRoleTypeService" >
+				<property name="serviceInterfaces">
+					<list>
+						<value>org.kuali.rice.kim.service.support.KimRoleTypeService</value>
+						<value>org.kuali.rice.kim.service.support.KimTypeService</value>
+					</list>
+				</property>
+				</bean>
+				
+		</property>
+	</bean>
+
+	<bean id="requestBenefitsLookupableHelperService" class="org.kuali.kfs.module.bc.businessobject.lookup.RequestBenefitsLookupableHelperServiceImpl" scope="prototype">
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="lookupService">
+			<ref bean="lookupService" />
+		</property>
+		<property name="businessObjectDictionaryService">
+			<ref bean="businessObjectDictionaryService" />
+		</property>
+		<property name="businessObjectMetaDataService">
+			<ref bean="businessObjectMetaDataService" />
+		</property>
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>		
+		<property name="laborModuleService">
+			<ref bean="laborModuleService" />
+		</property>
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+	</bean>
 
 </beans>
