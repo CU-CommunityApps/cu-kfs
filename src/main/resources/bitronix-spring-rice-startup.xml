@@ -61,7 +61,7 @@
     <property name="driverProperties">
       <props>
       	<prop key="driverClassName">${datasource.driver.class}</prop>
-      	<prop key="URL">${datasource.url}</prop>
+      	<prop key="url">${datasource.url}</prop>
         <prop key="user">${datasource.username}</prop>
         <prop key="password">${datasource.password}</prop>
       </props>
@@ -75,7 +75,7 @@
     <property name="driverProperties">
       <props>
         <prop key="driverClassName">${rice.server.datasource.driver.class}</prop>
-        <prop key="URL">${rice.server.datasource.url}</prop>
+        <prop key="url">${rice.server.datasource.url}</prop>
         <prop key="user">${rice.server.datasource.username}</prop>
         <prop key="password">${rice.server.datasource.password}</prop>
       </props>
