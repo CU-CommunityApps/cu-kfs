@@ -61,7 +61,7 @@
     <property name="driverProperties">
       <props>
       	<prop key="driverClassName">${datasource.driver.class}</prop>
-        <prop key="URL">${datasource.url}</prop>
+      	<prop key="URL">${datasource.url}</prop>
         <prop key="user">${datasource.username}</prop>
         <prop key="password">${datasource.password}</prop>
       </props>
