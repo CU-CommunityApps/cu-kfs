@@ -40,7 +40,7 @@
        http://ourcraft.wordpress.com/2008/08/18/xa-jndi-and-bitronix-part-2-jdbc/
     -->
   <bean id="dataSource" class="bitronix.tm.resource.jdbc.PoolingDataSource" init-method="init" destroy-method="close">
-    <property name="className" value="${xadatasource.class}" />
+    <property name="className" value="${xadatasource.class}" /> 
     <!-- <property name="uniqueName" value="${bitronix.uniqueName}" /> -->
     <!-- <property name="uniqueName" value="bitronix-test-oracle" /> -->
     <property name="uniqueName" value="kfsDataSource" />
@@ -51,6 +51,7 @@
     <property name="allowLocalTransactions" value="true" />
     <property name="shareTransactionConnections" value="true" />
     <property name="enableJdbc4ConnectionTest" value="true" />
+    <property name="setIgnoteRecoveryFailures" value="true" />
     <!-- without disabling automatic enlisting, Oracle throws ora-02089
          I assume it's because Spring declarative transactions is performing its own enlistment 
          http://www.oracleerrorcodes.com/oracle-database-error-code-ora-02089-commit-is-not-allowed-in-a-subordinate-session/
