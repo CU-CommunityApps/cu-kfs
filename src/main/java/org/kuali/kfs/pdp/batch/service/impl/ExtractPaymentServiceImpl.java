@@ -958,7 +958,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         //   Here we will have an invoice number and an eDoc number and a PO number
                         else if (subUnitCode.equals("PRAP")) {
                         	remittanceIdCode = "IV";
-                            remittanceIdText = "Inv:" + pd.getInvoiceNbr();		  // Here, we are guaranteed to have a pd.getInvoiceNbr
+                            remittanceIdText = pd.getInvoiceNbr();		  // Here, we are guaranteed to have a pd.getInvoiceNbr
                             // Assign RefDesc1
                             if (ObjectUtils.isNotNull(pd.getPurchaseOrderNbr()))
                             	RefDesc1 = "PO:" + pd.getPurchaseOrderNbr() + ", Doc No:" + pd.getCustPaymentDocNbr();
@@ -970,7 +970,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         //   Here we will have an invoice number and an eDoc number but we will NOT have PO number
                         else if (!subUnitCode.equals(DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE) && !subUnitCode.equals("PRAP")) {
                         	remittanceIdCode = "IV";
-                            remittanceIdText = "Inv:" + pd.getInvoiceNbr();		  // Here, we are guaranteed to have a pd.getInvoiceNbr
+                            remittanceIdText = pd.getInvoiceNbr();		  // Here, we are guaranteed to have a pd.getInvoiceNbr
                             // Assign RefDesc1
                            	RefDesc1 = "Doc No:" + pd.getCustPaymentDocNbr();
                         }
@@ -1935,7 +1935,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                     String remittanceIdCode = (subUnitCode.equals(DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? "TN" : "IV" ;
                     String remittanceIdText = (subUnitCode.equals(DisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? 
                     		ObjectUtils.isNotNull(pd.getCustPaymentDocNbr()) ? "Doc No:" + pd.getCustPaymentDocNbr() : "" : 
-                    			ObjectUtils.isNotNull(pd.getInvoiceNbr()) ? "Inv:" + pd.getInvoiceNbr() : "";
+                    			ObjectUtils.isNotNull(pd.getInvoiceNbr()) ? pd.getInvoiceNbr() : "";
                     
                 	//All of these are limited to 18 bytes in Fast Track.
                 	String ftNetPayAmount = "";
