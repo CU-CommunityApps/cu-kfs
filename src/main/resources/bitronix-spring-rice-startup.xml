@@ -60,6 +60,7 @@
    <!--  <property name="maxIdleTime" value="${bitronix.maxIdleTime}"/>  -->
     <property name="driverProperties">
       <props>
+        <prop key="driverClassName">${datasource.driver.class}</prop>
         <prop key="URL">${datasource.url}</prop>
         <prop key="user">${datasource.username}</prop>
         <prop key="password">${datasource.password}</prop>
@@ -73,6 +74,7 @@
     <property name="testQuery" value="${rice.server.datasource.validating.query}" />
     <property name="driverProperties">
       <props>
+        <prop key="driverClassName">${rice.server.datasource.driver.class}</prop>
         <prop key="URL">${rice.server.datasource.url}</prop>
         <prop key="user">${rice.server.datasource.username}</prop>
         <prop key="password">${rice.server.datasource.password}</prop>
