@@ -51,7 +51,6 @@
     <property name="allowLocalTransactions" value="true" />
     <property name="shareTransactionConnections" value="true" />
     <property name="enableJdbc4ConnectionTest" value="true" />
-    <property name="setIgnoreRecoveryFailures" value="true" />
     <!-- without disabling automatic enlisting, Oracle throws ora-02089
          I assume it's because Spring declarative transactions is performing its own enlistment 
          http://www.oracleerrorcodes.com/oracle-database-error-code-ora-02089-commit-is-not-allowed-in-a-subordinate-session/
