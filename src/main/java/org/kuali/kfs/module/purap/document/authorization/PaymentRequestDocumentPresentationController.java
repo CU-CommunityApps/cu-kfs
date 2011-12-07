@@ -256,6 +256,7 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
             PaymentRequestStatuses.IN_PROCESS.equals(docStatus) || 
             PaymentRequestStatuses.AWAITING_ACCOUNTS_PAYABLE_REVIEW.equals(docStatus);
         boolean enroute = 
+        	PaymentRequestStatuses.AWAITING_RECEIVING_REVIEW.equals(docStatus) ||
             PaymentRequestStatuses.AWAITING_SUB_ACCT_MGR_REVIEW.equals(docStatus) ||
             PaymentRequestStatuses.AWAITING_FISCAL_REVIEW.equals(docStatus) || 
             PaymentRequestStatuses.AWAITING_ORG_REVIEW.equals(docStatus) || 
@@ -293,7 +294,8 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
             PaymentRequestStatuses.IN_PROCESS.equals(docStatus) || 
             PaymentRequestStatuses.AWAITING_ACCOUNTS_PAYABLE_REVIEW.equals(docStatus);
         boolean enroute = 
-            PaymentRequestStatuses.AWAITING_SUB_ACCT_MGR_REVIEW.equals(docStatus) ||
+        	PaymentRequestStatuses.AWAITING_RECEIVING_REVIEW.equals(docStatus) ||
+        	PaymentRequestStatuses.AWAITING_SUB_ACCT_MGR_REVIEW.equals(docStatus) ||
             PaymentRequestStatuses.AWAITING_FISCAL_REVIEW.equals(docStatus) || 
             PaymentRequestStatuses.AWAITING_ORG_REVIEW.equals(docStatus) || 
             PaymentRequestStatuses.AWAITING_TAX_REVIEW.equals(docStatus);
