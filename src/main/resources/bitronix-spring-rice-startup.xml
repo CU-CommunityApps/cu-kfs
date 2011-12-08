@@ -46,7 +46,7 @@
     <property name="uniqueName" value="kfsDataSource" />
     <property name="maxPoolSize" value="${datasource.pool.maxSize}" />
     <property name="minPoolSize" value="${datasource.pool.minSize}" />
-    <property name="useTmJoin" value="true" />
+    <property name="useTmJoin" value="false" />
     <property name="testQuery" value="${datasource.validating.query}" />
     <property name="allowLocalTransactions" value="true" />
     <property name="shareTransactionConnections" value="true" />
