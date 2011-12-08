@@ -432,7 +432,8 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             valid &= validateAccount(accountingInfo.getChartOfAccountsCode(),
                     accountingInfo.getAccountNumber());
             if (!valid) {
-                warningMessage.append("Invalid Account: " + accountingInfo.getChartOfAccountsCode() + "; ");
+                warningMessage.append("Invalid Account: " + accountingInfo.getChartOfAccountsCode() + ","
+                        + accountingInfo.getAccountNumber() + "; ");
             }
             if (StringUtils.isNotBlank(accountingInfo.getSubAccountNumber())) {
                 valid &= validateSubAccount(accountingInfo.getChartOfAccountsCode(),
@@ -648,7 +649,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
     protected boolean validateTimePercent(String timePercent) {
         boolean valid = true;
         try {
-            generateKualiDecimal(timePercent);
+            generateThreeDecimalsBigDecimal(timePercent);
         } catch (NumberFormatException exception) {
             valid = false;
         }
@@ -783,7 +784,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             KualiDecimal csfAmount, String positionNumber, Integer universityFiscalYear, String emplid, String name,
             Timestamp csfCreateTimestamp) {
 
-        BigDecimal csfTimePercent = generateKualiDecimal(accountingInfo.getCsfTimePercent()).bigDecimalValue();
+        BigDecimal csfTimePercent = generateThreeDecimalsBigDecimal(accountingInfo.getCsfTimePercent());
         BigDecimal csfFullTimeEmploymentQuantity = BigDecimal.ZERO;
         if (csfTimePercent.compareTo(BigDecimal.ZERO) != 0) {
             csfFullTimeEmploymentQuantity = csfTimePercent.divide(new BigDecimal(100));
@@ -974,23 +975,34 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
     }
 
     /**
-     * Generates the csf time percent from the value in the input file. The value comes
-     * like this: Acct Distribution % (the first 5 digits in all 20 “account” fields)
-     * 00000 and we will add the decimal point and create a KualiDecimal value 000.00.
-     * Generate the CSFAmount from the value in the input file. The comes in like this
-     * Annual Rt (pos 664) 000000000000 and we will add the decimal point 0000000000.00
-     * and create a KualiDecimal value.
+     * Generates a KualiDecimal from an input String by inserting first the decimal point
+     * before the last two digits.
      * 
-     * @param csfTimePrecent
-     * @return a KualiDecimal value for the input csfTimePrecent
+     * @param input
+     * @return a KualiDecimal value for the input
      */
     protected KualiDecimal generateKualiDecimal(String input) {
-        //prepare time percent
         String result = input;
         result = result.substring(0, result.length() - 2) + "."
                 + result.substring(result.length() - 2, result.length());
 
         return new KualiDecimal(result);
+    }
+
+    /**
+     * Generates a BigDecimal from a String by first inserting the decimal point before
+     * the last 3 digits.
+     * 
+     * @param input
+     * @return
+     */
+    protected BigDecimal generateThreeDecimalsBigDecimal(String input) {
+
+        String result = input;
+        result = result.substring(0, result.length() - 3) + "."
+                + result.substring(result.length() - 3, result.length());
+
+        return new BigDecimal(result);
     }
 
     /**
