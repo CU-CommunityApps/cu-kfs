@@ -67,6 +67,15 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
         public static final String CSF_AMT = "csfAmount";
         public static final String CSF_FULL_TIME_EMPL_QUANTITY = "csfFullTimeEmploymentQuantity";
         public static final String CSF_TIME_PERCENT = "csfTimePercent";
+        public static final String UNIVERSITY_FISCAL_YEAR = "universityFiscalYear";
+        public static final String CHART_OF_ACCOUNTS = "chartOfAccountsCode";
+        public static final String ACCOUNT_NBR = "accountNumber";
+        public static final String SUB_ACCOUNT_NBR = "subAccountNumber";
+        public static final String FIN_OBJ_CD = "financialObjectCode";
+        public static final String FIN_SUB_OBJ_CD = "financialSubObjectCode";
+        public static final String POSITION_NBR = "positionNumber";
+        public static final String EMPLID = "emplid";
+        public static final String CSF_FUNDING_STATUS_CD = "csfFundingStatusCode";
     }
 
     public static final class BudgetConstructionAppointmentFundingReasonProperties {
@@ -122,11 +131,9 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
         public static final String POSITION_NBR = "positionNumber";
         public static final String EMPLID = "emplid";
     }
-    
+
     public static final class PSJobCodeProperties {
         public static final String JOB_CD = "jobCode";
     }
-    
-    
 
 }

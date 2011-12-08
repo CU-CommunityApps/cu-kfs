@@ -34,6 +34,6 @@ public class CUBCConstants extends BCConstants {
         private String flagValue;
     }
     
-    
+    public static final String SOME_CSF_CHANGE_FLAG = "*";
 
 }

@@ -27,7 +27,7 @@
 						
 <table cellpadding="0" cellspacing="0" class="datatable" summary="Expenditure Salary Line Detail">	
 	<tr>
-		<td colspan="${16 - numOfColumsRemoved}" class="subhead">	
+		<td colspan="${17 - numOfColumsRemoved}" class="subhead">	
 			<span class="subhead-left">Salary Line Detail</span>
     		<span class="subhead-right">   			   			
 		   		<c:if test="${not readOnly}">	    
@@ -44,6 +44,7 @@
 
 	<tr>
 		<kul:htmlAttributeHeaderCell attributeEntry="${pbcafAttributes.appointmentFundingDeleteIndicator}"/>
+		<kul:htmlAttributeHeaderCell attributeEntry="${bccsftAttributes.csfFundingStatusCode}"/>
 				
 		<kul:htmlAttributeHeaderCell attributeEntry="${pbcafAttributes.positionNumber}" />
 		<kul:htmlAttributeHeaderCell attributeEntry="${pbcafAttributes.emplid}" />
@@ -85,8 +86,11 @@
 			accountingLine="${fundingLineName}"	attributes="${pbcafAttributes}" 
 			field="appointmentFundingDeleteIndicator" rowSpan="${rowspan}" readOnly="false"
 			fieldAlign="left" disabled="${true}">
-			
+
 		</bc:pbglLineDataCell>
+		
+		<%-- Flag --%>
+        <td class="datacell" rowSpan="${rowspan}">${fundingLine.effectiveCSFTracker.csfFundingStatusCode}</td>
 	
 		<%-- Position Number --%>	
 		<bc:pbglLineDataCell dataCellCssClass="datacell" 
@@ -257,7 +261,7 @@
 	</c:forEach>
 		
 	<tr>
-		<kul:htmlAttributeHeaderCell scope="row" colspan="8" literalLabel="Total:" horizontal="true" />
+		<kul:htmlAttributeHeaderCell scope="row" colspan="9" literalLabel="Total:" horizontal="true" />
 	
 	    <bc:columnTotalCell dataCellCssClass="datacell" textStyle="${textStyle}" fieldAlign="right" colSpan="1"
 	    	cellProperty="csfAmountTotal" disableHiddenField="true"/>
@@ -282,7 +286,7 @@
 	</tr>
 	
 	<tr>
-		<kul:htmlAttributeHeaderCell scope="row" colspan="8" literalLabel="Expenditure Line Base:" horizontal="true" />
+		<kul:htmlAttributeHeaderCell scope="row" colspan="9" literalLabel="Expenditure Line Base:" horizontal="true" />
 	
 	    <bc:columnTotalCell dataCellCssClass="datacell" textStyle="${textStyle}" fieldAlign="right" colSpan="1"
 	    	cellProperty="salarySettingExpansion.financialBeginningBalanceLineAmount" />
@@ -300,13 +304,13 @@
 	
 	<c:if test="${not readOnly}">
 		<tr>
-			<td colspan="${16 - numOfColumsRemoved}" class="subhead">
+			<td colspan="${17 - numOfColumsRemoved}" class="subhead">
 				<span class="subhead-left">Global Actions</span>
 			</td>
 		</tr>
 		
 		<tr>
-			<kul:htmlAttributeHeaderCell scope="row" colspan="8" literalLabel="" horizontal="true" />
+			<kul:htmlAttributeHeaderCell scope="row" colspan="9" literalLabel="" horizontal="true" />
 		
 		    <td colspan ="${5 - numOfColumsRemoved}"><center>
 				<bc:salaryAdjustment attributes="${pbcafAttributes}" 
