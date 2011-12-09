@@ -165,7 +165,7 @@
                       the maximum number of detail segments in this file and the setting MAX_NOTE_LINES
                       in the application settings file.
                       -->
-                <xsd:element maxOccurs="27" minOccurs="1" ref="detail"/>
+                <xsd:element maxOccurs="400" minOccurs="1" ref="detail"/>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
