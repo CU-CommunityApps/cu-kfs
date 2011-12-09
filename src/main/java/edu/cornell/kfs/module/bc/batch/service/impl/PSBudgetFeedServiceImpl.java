@@ -22,7 +22,6 @@ import org.kuali.kfs.module.bc.businessobject.CalculatedSalaryFoundationTracker;
 import org.kuali.kfs.module.bc.util.BudgetParameterFinder;
 import org.kuali.kfs.module.ld.LaborConstants;
 import org.kuali.kfs.module.ld.businessobject.LaborObject;
-import org.kuali.kfs.module.ld.businessobject.PositionData;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
@@ -38,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import edu.cornell.kfs.module.bc.CUBCConstants;
 import edu.cornell.kfs.module.bc.CUBCConstants.StatusFlag;
 import edu.cornell.kfs.module.bc.CUBCPropertyConstants;
+import edu.cornell.kfs.module.bc.batch.dataaccess.PSPositionDataDao;
 import edu.cornell.kfs.module.bc.batch.service.PSBudgetFeedService;
 import edu.cornell.kfs.module.bc.businessobject.PSJobCode;
 import edu.cornell.kfs.module.bc.businessobject.PSJobData;
@@ -61,6 +61,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
     protected BusinessObjectService businessObjectService;
     protected DictionaryValidationService dictionaryValidationService;
     protected ParameterService parameterService;
+    protected PSPositionDataDao positionDataDao;
 
     /**
      * @see edu.cornell.kfs.module.bc.batch.service.PSBudgetFeedService#populateCSFTracker(java.lang.String)
@@ -478,22 +479,14 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
     }
 
     /**
-     * Validates that Position is in HR / P has a "Budgeted Position" = "Y"
+     * Validates that Position is in HR / P has a "Budgeted Position" = "Y".
      * 
      * @param positionNumber
-     * @return
+     * 
+     * @return true if valid, false otherwise
      */
     protected boolean validatePosition(String positionNumber) {
-        //validate position
-        Map<String, Object> positionCriteria = new HashMap<String, Object>();
-        positionCriteria.put(KFSPropertyConstants.POSITION_NUMBER, positionNumber);
-        positionCriteria.put("budgetedPosition", "Y");
-        int count = businessObjectService.countMatching(PositionData.class, positionCriteria);
-
-        if (count > 0) {
-            return true;
-        } else
-            return false;
+        return positionDataDao.isPositionBudgeted(positionNumber);
     }
 
     /**
@@ -1318,6 +1311,14 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
      */
     public void setPsBudgetFeedFlatInputFileType(BatchInputFileType psBudgetFeedFlatInputFileType) {
         this.psBudgetFeedFlatInputFileType = psBudgetFeedFlatInputFileType;
+    }
+
+    public PSPositionDataDao getPositionDataDao() {
+        return positionDataDao;
+    }
+
+    public void setPositionDataDao(PSPositionDataDao positionDataDao) {
+        this.positionDataDao = positionDataDao;
     }
 
 }

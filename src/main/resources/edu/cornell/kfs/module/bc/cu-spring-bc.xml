@@ -142,7 +142,12 @@
 
        <property name="processor" ref="PSBudgetFeedFlatInputFileHandler" />
      </bean>
-
+     
+    <bean id="positionDataDao" parent="platformAwareDao" class="edu.cornell.kfs.module.bc.batch.dataaccess.impl.PSPositionDataDaoOjb">
+    	<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+    </bean>
 	
 	<bean id="psBudgetFeedService" parent="psBudgetFeedService-parentBean"/>
 
@@ -156,6 +161,9 @@
 		<property name="businessObjectService" ref="businessObjectService" />
 		<property name="dateTimeService" ref="dateTimeService" />
 		<property name="parameterService" ref="parameterService" />
+		<property name="positionDataDao">
+			<ref bean="positionDataDao" />
+		</property>
 	</bean>
 	
 	<bean id="psBudgetFeedJob" parent="scheduledJobDescriptor">
