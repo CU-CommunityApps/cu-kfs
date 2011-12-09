@@ -137,10 +137,12 @@ public class EzraServiceImpl implements EzraService {
 		if (ObjectUtils.isNull(oldAward)) {
 			List<AwardAccount> accounts = getAwardAccounts(proposal);
 			award.setAwardAccounts(accounts);
+			award.setActive(true);
 		} else {
 			award.setAwardAccounts(oldAward.getAwardAccounts());
 			setAwardOrgVersionNumbers(oldAward.getAwardOrganizations(), award.getAwardOrganizations());
 			award.setVersionNumber(oldAward.getVersionNumber());
+			award.setActive(oldAward.isActive());
 		}
 		
 		for (AwardProjectDirector apd : award.getAwardProjectDirectors()) {
