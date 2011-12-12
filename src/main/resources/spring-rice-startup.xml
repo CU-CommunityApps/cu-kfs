@@ -52,9 +52,9 @@
   <import resource="spring-jta.xml" />
   <import resource="spring-datasources.xml" />
   <import resource="spring-rice-configurer.xml" />
-  <import resource="bitronix-spring-rice-startup.xml"/>
-  
-<!-- 
+<!--   <import resource="bitronix-spring-rice-startup.xml"/>
+ -->  
+ 
 	<bean id="dataSource" parent="abstractDataSourceBase" class="org.kuali.rice.core.database.XAPoolDataSource">
  	      <property name="transactionManager" ref="jotm" />
  	      <property name="maxSize" value="${datasource.pool.size}" />
@@ -64,5 +64,5 @@
  	      <property name="checkLevelObject" value="${datasource.xapool.connection.test.mode}" />
  	      <property name="lifeTime" value="${xapool.lifetime}"/>
  	  </bean>
- -->
+ 
 </beans>
