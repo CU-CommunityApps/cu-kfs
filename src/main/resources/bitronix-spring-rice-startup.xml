@@ -49,7 +49,7 @@
     <property name="useTmJoin" value="false" />
     <property name="testQuery" value="${datasource.validating.query}" />
     <property name="allowLocalTransactions" value="true" />
-    <property name="shareTransactionConnections" value="true" />
+    <property name="shareTransactionConnections" value="false" />
     <property name="enableJdbc4ConnectionTest" value="true" />
     <!-- without disabling automatic enlisting, Oracle throws ora-02089
          I assume it's because Spring declarative transactions is performing its own enlistment 
