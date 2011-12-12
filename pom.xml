@@ -301,7 +301,7 @@
       	<exclusion>
       		<artifactId>xml-apis</artifactId>
       		<groupId>xml-apis</groupId>
-      	</exclusion>
+      	</exclusion >
       	<exclusion>
       		<artifactId>xercesImpl</artifactId>
       		<groupId>xerces</groupId>
@@ -514,7 +514,7 @@
    <dependency>
       <groupId>org.codehaus.btm</groupId>
       <artifactId>btm</artifactId>
-      <version>2.1.2</version>
+      <version>2.2.0</version>
       </dependency>
    	<dependency> 
     	<groupId>org.slf4j</groupId> 
