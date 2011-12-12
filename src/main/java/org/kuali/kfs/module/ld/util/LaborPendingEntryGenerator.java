@@ -58,7 +58,7 @@ public class LaborPendingEntryGenerator {
      * 
      * @param document the given accounting document
      * @param accountingLine the given accounting line
-     * @param sequenceHelper the given squence helper
+     * @param sequenceHelper the given sequence helper
      * @return a set of expense pending entries
      */
     public static List<LaborLedgerPendingEntry> generateExpensePendingEntries(LaborLedgerPostingDocument document, ExpenseTransferAccountingLine accountingLine, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
@@ -66,15 +66,12 @@ public class LaborPendingEntryGenerator {
         LaborLedgerPendingEntry expensePendingEntry = LaborPendingEntryConverter.getExpensePendingEntry(document, accountingLine, sequenceHelper);
         expensePendingEntries.add(expensePendingEntry);
 
-        // if the AL's pay FY and period do not match the University fiscal year and period need to create a reversal entry for
-        // current period
-        if (!isAccountingLinePayFYPeriodMatchesUniversityPayFYPeriod(document, accountingLine)) {
-            LaborLedgerPendingEntry expenseA21PendingEntry = LaborPendingEntryConverter.getExpenseA21PendingEntry(document, accountingLine, sequenceHelper);
-            expensePendingEntries.add(expenseA21PendingEntry);
+        // KFSMI-6863: always create A2 entries regardless of fiscal period
+        LaborLedgerPendingEntry expenseA21PendingEntry = LaborPendingEntryConverter.getExpenseA21PendingEntry(document, accountingLine, sequenceHelper);
+        expensePendingEntries.add(expenseA21PendingEntry);
 
-            LaborLedgerPendingEntry expenseA21ReversalPendingEntry = LaborPendingEntryConverter.getExpenseA21ReversalPendingEntry(document, accountingLine, sequenceHelper);
-            expensePendingEntries.add(expenseA21ReversalPendingEntry);
-        }
+        LaborLedgerPendingEntry expenseA21ReversalPendingEntry = LaborPendingEntryConverter.getExpenseA21ReversalPendingEntry(document, accountingLine, sequenceHelper);
+        expensePendingEntries.add(expenseA21ReversalPendingEntry);
 
         return expensePendingEntries;
     }
@@ -166,7 +163,7 @@ public class LaborPendingEntryGenerator {
      * 
      * @param document the given accounting document
      * @param accountingLine the given accounting line
-     * @param sequenceHelper the given squence helper
+     * @param sequenceHelper the given sequence helper
      * @param benefitAmount the given benefit amount
      * @param fringeBenefitObjectCode the given finge benefit object code
      * @return a set of benefit pending entries with the given benefit amount and finge benefit object code
@@ -176,14 +173,12 @@ public class LaborPendingEntryGenerator {
         LaborLedgerPendingEntry benefitPendingEntry = LaborPendingEntryConverter.getBenefitPendingEntry(document, accountingLine, sequenceHelper, benefitAmount, fringeBenefitObjectCode);
         benefitPendingEntries.add(benefitPendingEntry);
 
-        // if the AL's pay FY and period do not match the University fiscal year and period
-        if (!isAccountingLinePayFYPeriodMatchesUniversityPayFYPeriod(document, accountingLine)) {
-            LaborLedgerPendingEntry benefitA21PendingEntry = LaborPendingEntryConverter.getBenefitA21PendingEntry(document, accountingLine, sequenceHelper, benefitAmount, fringeBenefitObjectCode);
-            benefitPendingEntries.add(benefitA21PendingEntry);
+        // KFSMI-6863: always create A2 entries regardless of fiscal period
+        LaborLedgerPendingEntry benefitA21PendingEntry = LaborPendingEntryConverter.getBenefitA21PendingEntry(document, accountingLine, sequenceHelper, benefitAmount, fringeBenefitObjectCode);
+        benefitPendingEntries.add(benefitA21PendingEntry);
 
-            LaborLedgerPendingEntry benefitA21ReversalPendingEntry = LaborPendingEntryConverter.getBenefitA21ReversalPendingEntry(document, accountingLine, sequenceHelper, benefitAmount, fringeBenefitObjectCode);
-            benefitPendingEntries.add(benefitA21ReversalPendingEntry);
-        }
+        LaborLedgerPendingEntry benefitA21ReversalPendingEntry = LaborPendingEntryConverter.getBenefitA21ReversalPendingEntry(document, accountingLine, sequenceHelper, benefitAmount, fringeBenefitObjectCode);
+        benefitPendingEntries.add(benefitA21ReversalPendingEntry);
 
         return benefitPendingEntries;
     }
