@@ -206,6 +206,7 @@ public class PurapWorkflowConstants {
             ADHOC_REVIEW(DOC_ADHOC_NODE_NAME, null, PaymentRequestStatuses.CANCELLED_IN_PROCESS, false), 
             ACCOUNTS_PAYABLE_REVIEW("ImageAttachment", PaymentRequestStatuses.AWAITING_ACCOUNTS_PAYABLE_REVIEW, PaymentRequestStatuses.CANCELLED_IN_PROCESS, false), 
             AWAITING_RECEIVING_REVIEW("PurchaseWasReceived", PaymentRequestStatuses.AWAITING_RECEIVING_REVIEW, PaymentRequestStatuses.CANCELLED_POST_AP_APPROVE, false), 
+            RECEIVING("Receiving", PaymentRequestStatuses.AWAITING_RECEIVING_REVIEW, PaymentRequestStatuses.CANCELLED_POST_AP_APPROVE, false),
             SUB_ACCOUNT_REVIEW("SubAccount", PaymentRequestStatuses.AWAITING_SUB_ACCT_MGR_REVIEW, PaymentRequestStatuses.CANCELLED_POST_AP_APPROVE, false), 
             ACCOUNT_REVIEW("Account", PaymentRequestStatuses.AWAITING_FISCAL_REVIEW, PaymentRequestStatuses.CANCELLED_POST_AP_APPROVE, true), 
             ORG_REVIEW("AccountingOrganizationHierarchy", PaymentRequestStatuses.AWAITING_ORG_REVIEW, PaymentRequestStatuses.CANCELLED_POST_AP_APPROVE, false), 
