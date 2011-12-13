@@ -63,7 +63,7 @@
 		
 		<c:set var="canRecalculate" value="${editable && !hasBeenDeleted && fundingLine.positionChangeIndicator}" />
 		
-		<c:set var="canUnflag" value="${editable && not isNewLine && not ((fundingLine.effectiveCSFTracker.csfFundingStatusCode eq BCConstants.ACTIVE_CSF_DELETE_CODE) or or (fundingLine.effectiveCSFTracker.csfFundingStatusCode eq KFSConstants.EMPTY_STRING))}" />
+		<c:set var="canUnflag" value="${editable && not isNewLine && not ((fundingLine.effectiveCSFTracker.csfFundingStatusCode eq BCConstants.ACTIVE_CSF_DELETE_CODE) || (fundingLine.effectiveCSFTracker.csfFundingStatusCode eq KFSConstants.EMPTY_STRING))}" />
 			    
 	    <kul:subtab lookedUpCollectionName="fundingLine" width="${tableWidth}" subTabTitle="${fundingLine.appointmentFundingString}" >
 	    	<bc:appointmentFundingLineForPosition fundingLine="${fundingLine}" fundingLineName="${fundingLineName}"	
