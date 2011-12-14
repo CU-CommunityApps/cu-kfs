@@ -123,6 +123,9 @@
 	</tr>
 
 	<%-- Row for Add Position and Add Incumbent Buttons --%>
+	
+	<%-- Cornell does not need these two buttons per BC-9 customization
+	
 	<c:if test="${not readOnly}">
 	<tr>
 		<td class="infoline" colspan="${colSpan}"><center>			
@@ -139,5 +142,6 @@
 		</td>
 	</tr>	
 	</c:if>
+	--%>
 </tbody>
 </table>
