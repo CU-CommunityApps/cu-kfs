@@ -67,7 +67,7 @@
 	    		<c:if test="${canUnflag}">
 	    		<!--Unflag button -->
 	    		<html:image property="methodToCall.unflagSalarySettingLine.line${status.index}.anchorsalaryexistingLineLineAnchor${status.index}" 
-						src="${ConfigProperties.externalizable.images.url}tinybutton-updateview.gif" 
+						src="${ConfigProperties.externalizable.images.url}tinybutton-unflag.gif" 
 						title="Unflag Salary Setting Line ${status.index}"
 						alt="Unflag Salary Setting Line ${status.index}" styleClass="tinybutton" />  
 			    </c:if>		
