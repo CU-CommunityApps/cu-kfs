@@ -229,7 +229,13 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                                         }
                                     } else {
 
-                                        updateAccountingInfoStatusFlag(newEntry, currentEntry);
+                                        boolean result = updateAccountingInfoStatusFlag(newEntry, currentEntry);
+                                        
+                                        if(result){
+                                            // delete old entry
+                                            currentEntry.deleteStatus = CUBCConstants.PSEntryStatus.DELETE;
+                                            filteredEntries.add(currentEntry);
+                                        }
                                     }
 
                                     //add to update list
@@ -275,7 +281,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
      * @param newEntry
      * @param currentEntry
      */
-    private void updateAccountingInfoStatusFlag(PSPositionJobExtractEntry newEntry,
+    private boolean updateAccountingInfoStatusFlag(PSPositionJobExtractEntry newEntry,
             PSPositionJobExtractEntry currentEntry) {
 
         Map<String, PSPositionJobExtractAccountingInfo> newEntryCsfAccountingMap = null;
@@ -307,12 +313,14 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             }
         }
 
+        boolean result = true;
         if (newEntryCsfAccountingMap != null && newEntryCsfAccountingMap.size() > 0) {
-            updateStatusFlag(currentEntryCsfAccountingMap, newEntryCsfAccountingMap);
+            result= updateStatusFlag(currentEntryCsfAccountingMap, newEntryCsfAccountingMap);
         } else {
             if (newEntryPosAccountingMap != null && newEntryPosAccountingMap.size() > 0)
-                updateStatusFlag(currentEntryPosAccountingMap, newEntryPosAccountingMap);
+                result =    updateStatusFlag(currentEntryPosAccountingMap, newEntryPosAccountingMap);
         }
+        return result;
 
     }
 
@@ -322,9 +330,10 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
      * @param currentInfoMap
      * @param newInfoMap
      */
-    private void updateStatusFlag(Map<String, PSPositionJobExtractAccountingInfo> currentInfoMap,
+    private boolean updateStatusFlag(Map<String, PSPositionJobExtractAccountingInfo> currentInfoMap,
             Map<String, PSPositionJobExtractAccountingInfo> newInfoMap) {
 
+        boolean result = true;
         if (newInfoMap != null) {
             for (String key : newInfoMap.keySet()) {
                 if (currentInfoMap != null) {
@@ -334,6 +343,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                         if (newInfo.equals(currentInfo)) {
                             newInfoMap.get(key).setStatusFlag(StatusFlag.ACTIVE);
                         } else {
+                            result = false;
                             newInfoMap.get(key).setStatusFlag(StatusFlag.CHANGED);
                         }
                     } else {
@@ -344,6 +354,8 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                 }
             }
         }
+        
+        return result;
 
     }
 
