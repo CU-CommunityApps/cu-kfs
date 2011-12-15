@@ -161,11 +161,11 @@ public class DisbursementPayee extends TransientBusinessObjectBase implements In
         }
         disbursementPayee.setPrincipalId(person.getPrincipalId());
         
-        disbursementPayee.setPayeeName(person.getName());
+        disbursementPayee.setPayeeName(person.getNameUnmasked());
         disbursementPayee.setTaxNumber(person.getExternalId(VendorConstants.TAX_TYPE_TAX));
         disbursementPayee.setPayeeTypeCode(DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE);
 
-        String personAddress = MessageFormat.format(addressPattern, person.getAddressLine1(), person.getAddressCityName(), person.getAddressStateCode(), person.getAddressCountryCode());
+        String personAddress = MessageFormat.format(addressPattern, person.getAddressLine1Unmasked(), person.getAddressCityNameUnmasked(), person.getAddressStateCodeUnmasked(), person.getAddressCountryCodeUnmasked());
         disbursementPayee.setAddress(personAddress);
 
         return disbursementPayee;
