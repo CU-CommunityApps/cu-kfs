@@ -142,6 +142,9 @@ public class EzraServiceImpl implements EzraService {
 			award.setAwardAccounts(oldAward.getAwardAccounts());
 			setAwardOrgVersionNumbers(oldAward.getAwardOrganizations(), award.getAwardOrganizations());
 			award.setVersionNumber(oldAward.getVersionNumber());
+			award.setLetterOfCreditFundGroupCode(oldAward.getLetterOfCreditFundGroupCode());
+			AwardExtendedAttribute awardEA = (AwardExtendedAttribute)award.getExtension();
+			awardEA.setLocAccountId(((AwardExtendedAttribute)oldAward.getExtension()).getLocAccountId());
 			award.setActive(oldAward.isActive());
 		}
 		
