@@ -181,10 +181,10 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
         sqlBuilder.append("        ?, px.EFFDT, px.POS_EFF_STATUS,\n");
         sqlBuilder.append("        px.POSN_STATUS, px.BUDGETED_POSN, 'N',\n");
         sqlBuilder.append("        px.STD_HRS_DEFAULT, px.POS_REG_TEMP, px.POS_FTE, px.DESCR, px.BUSINESS_UNIT,\n");
-        sqlBuilder.append("        px.DEPTID, ?,\n");
+        sqlBuilder.append("        ptx.ORG_CD, ?,\n");
         sqlBuilder.append("        px.POS_SAL_PLAN_DFLT, px.POS_GRADE_DFLT, px.BUSINESS_UNIT, px.JOBCODE,\n");
         sqlBuilder.append("        px.BUSINESS_UNIT, ? \n");
-        sqlBuilder.append(" FROM PS_POSITION_DATA px \n"); 
+        sqlBuilder.append(" FROM PS_POSITION_DATA px, PS_POSITION_DATA_TX ptx \n"); 
         sqlBuilder.append(" WHERE (px.EFFDT < ?)\n");
         sqlBuilder.append("   AND (NOT EXISTS (SELECT 1\n");
         sqlBuilder.append("                    FROM LD_BCN_POS_T\n");
@@ -199,7 +199,9 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
         sqlBuilder.append("                FROM LD_CSF_TRACKER_T csf\n");
         sqlBuilder.append("                WHERE (csf.UNIV_FISCAL_YR = ?)\n");
         sqlBuilder.append("                  AND (csf.POS_CSF_DELETE_CD = ?)\n");
-        sqlBuilder.append("                  AND (csf.POSITION_NBR = px.POSITION_NBR))))\n");
+        sqlBuilder.append("                  AND (csf.POSITION_NBR = px.POSITION_NBR)))\n");
+        sqlBuilder.append("   AND (ptx.POSITION_NBR = px.POSITION_NBR AND ptx.EFFDT = px.EFFDT))\n");
+        
         sqlString = sqlBuilder.toString();
         getSimpleJdbcTemplate().update(sqlString,baseFiscalYear,defaultRCCd,BCConstants.DEFAULT_BUDGET_HEADER_LOCK_IDS,julyFirst,baseFiscalYear,julyFirst,baseFiscalYear,BCConstants.ACTIVE_CSF_DELETE_CODE);
 
@@ -232,10 +234,10 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
         sqlBuilder.append("        ?, px.EFFDT, px.POS_EFF_STATUS,\n");
         sqlBuilder.append("        px.POSN_STATUS, px.BUDGETED_POSN, 'N',\n");
         sqlBuilder.append("        px.STD_HRS_DEFAULT, px.POS_REG_TEMP, px.POS_FTE, px.DESCR, px.BUSINESS_UNIT,\n");
-        sqlBuilder.append("        px.DEPTID, ?,\n");
+        sqlBuilder.append("        ptx.ORG_CD, ?,\n");
         sqlBuilder.append("        px.POS_SAL_PLAN_DFLT, px.POS_GRADE_DFLT, px.BUSINESS_UNIT, px.JOBCODE,\n");
         sqlBuilder.append("        px.BUSINESS_UNIT, ? \n");
-        sqlBuilder.append(" FROM PS_POSITION_DATA px \n"); 
+        sqlBuilder.append(" FROM PS_POSITION_DATA px, PS_POSITION_DATA_TX ptx \n"); 
         sqlBuilder.append(" WHERE ((px.EFFDT <= ?) OR ((px.EFFDT = ?) AND (px.POS_SAL_PLAN_DFLT = ?)))\n");
         sqlBuilder.append("   AND (NOT EXISTS (SELECT 1\n");
         sqlBuilder.append("                    FROM LD_BCN_POS_T\n");
@@ -250,7 +252,9 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
         sqlBuilder.append("                FROM LD_CSF_TRACKER_T csf\n");
         sqlBuilder.append("                WHERE (csf.UNIV_FISCAL_YR = ?)\n");
         sqlBuilder.append("                  AND (csf.POS_CSF_DELETE_CD = ?)\n");
-        sqlBuilder.append("                  AND (csf.POSITION_NBR = px.POSITION_NBR))))\n");
+        sqlBuilder.append("                  AND (csf.POSITION_NBR = px.POSITION_NBR)))\n");
+        sqlBuilder.append("   AND (ptx.POSITION_NBR = px.POSITION_NBR AND ptx.EFFDT = px.EFFDT))\n");
+        
         String sqlString = sqlBuilder.toString();
         getSimpleJdbcTemplate().update(sqlString,requestFiscalYear,defaultRCCd,BCConstants.DEFAULT_BUDGET_HEADER_LOCK_IDS,julyFirst,augustFirst,academicTenureTrackSalaryPlan,requestFiscalYear,julyFirst,augustFirst,academicTenureTrackSalaryPlan,baseFiscalYear,BCConstants.ACTIVE_CSF_DELETE_CODE);
 
