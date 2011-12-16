@@ -59,7 +59,7 @@
 		<c:set var="canVacate" value="${false}"/>
 		<c:set var="canRevert" value="${editable && markedAsDelete && not isVacant && not isNewLine && not fundingLine.vacatable}" />
 		
-		<c:set var="canUnflag" value="${editable && not isNewLine && not ((fundingLine.effectiveCSFTracker.csfFundingStatusCode eq BCConstants.ACTIVE_CSF_DELETE_CODE) or (fundingLine.effectiveCSFTracker.csfFundingStatusCode eq KFSConstants.EMPTY_STRING))}" />
+		<c:set var="canUnflag" value="${editable && not isNewLine && (fundingLine.effectiveCSFTracker != null) && not (fundingLine.effectiveCSFTracker.csfFundingStatusCode eq BCConstants.ACTIVE_CSF_DELETE_CODE) && not (fundingLine.effectiveCSFTracker.csfFundingStatusCode eq '') }" />
 	          	
 	    <kul:subtab lookedUpCollectionName="fundingLine" width="${tableWidth}" subTabTitle="${fundingLine.appointmentFundingString}" >
 	    	<bc:appointmentFundingLineForIncumbent fundingLine="${fundingLine}" fundingLineName="${fundingLineName}" countOfMajorColumns="13" 
