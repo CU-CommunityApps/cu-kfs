@@ -107,5 +107,10 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceServiceImpl impleme
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
+    
+    public String getStateFundedCode(String positionNumber){
+    	return budgetConstructionHumanResourcesPayrollInterfaceDao.getStateFundedCode(positionNumber);
+    }
+
 
 }

@@ -279,6 +279,24 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
         getSimpleJdbcTemplate().update(sqlString, defaultWorkMonths, defaultWorkMonths, fiscalYear);
     }
     
+    public String getStateFundedCode(String positionNumber) {
+        StringBuilder sql = new StringBuilder(500);
+        sql.append("SELECT count(*) FROM CU_PS_POSITION_EXTRA WHERE POS_NBR = ?");
+        String sqlStr = sql.toString();
+
+        
+        int row = getSimpleJdbcTemplate().queryForInt(sqlStr, positionNumber);
+        if(row==0) return "N";
+        
+        
+        StringBuilder sqlBuilder = new StringBuilder(500);
+        sqlBuilder.append("SELECT CU_STATE_CERT FROM CU_PS_POSITION_EXTRA WHERE POS_NBR = ?");
+        String sqlString = sqlBuilder.toString();
+        
+        String stateCertified = getSimpleJdbcTemplate().queryForObject(sqlString,String.class, positionNumber);
+        return stateCertified;
+    }
+
     /**
      * 
      * @see org.kuali.kfs.module.bc.batch.dataaccess.BudgetConstructionHumanResourcesPayrollInterfaceDao#updateNamesInBudgetConstructionIntendedIncumbent()
