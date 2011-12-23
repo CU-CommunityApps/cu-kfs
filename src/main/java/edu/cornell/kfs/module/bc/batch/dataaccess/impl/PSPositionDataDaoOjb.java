@@ -31,6 +31,10 @@ public class PSPositionDataDaoOjb extends PlatformAwareDaoBaseOjb implements PSP
         Criteria criteria = new Criteria();
 
         criteria.addEqualTo(KFSPropertyConstants.POSITION_NUMBER, positionNumber);
+        // The following was required since the max function will return more than one row in cases where the budgeted 
+        //  position column contains different values (as it will return the most recent dates for each budgeted
+        //  position value).
+        criteria.addEqualTo("budgetedPosition", "Y");
 
         ReportQueryByCriteria reportByCriteria = QueryFactory.newReportQuery(
                         PositionData.class,
