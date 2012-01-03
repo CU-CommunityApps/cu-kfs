@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<html><head><title>Request Import Tool</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" /><link href="../Theme/nav.css" type="text/css" rel="stylesheet" /><link href="../Theme/popupmenu.css" type="text/css" rel="stylesheet" /><link href="../Theme/lf.css" type="text/css" rel="stylesheet" /><link href="../LinksExt/C1H_HTML.css" type="text/css" rel="stylesheet" /><link href="../LinksExt/Main Menu1.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript">
+//<![CDATA[
+
+
+
+var _needIndentation = false;
+
+
+
+
+//]]></script>
+
+<script language="JavaScript" src="../linker.js" type="text/JavaScript"></script>
+
+<script language="JavaScript" src="../special.js" type="text/JavaScript"></script>
+
+<script language="JavaScript" src="../common.js" type="text/JavaScript"></script>
+
+<meta name="Generator" content="ComponentOne Doc-To-Help v.2009.3.0.500" />
+<meta name="D2HTheme" content="(Default) v.138" />
+</head>
+<body style="PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 7px; OVERFLOW: hidden; PADDING-TOP: 0px; BACKGROUND-COLOR: #535353" onload="d2hOnLoadToolbar(event);" relpart="../">
+<script language="javascript" type="text/javascript">
+//<![CDATA[
+
+
+
+d2hTopicPreOpen();
+
+
+
+d2hTrySyncTOC();
+
+
+
+
+
+
+
+var prev = true;
+
+
+
+
+
+var next = true;
+
+
+
+if (typeof d2hInitMainThemeHandlers != "undefined")
+
+    d2hInitMainThemeHandlers(prev, next);
+
+d2hAdjustTopicBorders(document);    
+
+
+
+if (typeof d2hLoadWindows != "undefined")
+
+    d2hLoadWindows();
+
+if (typeof d2hLoadNavUrls != "undefined")
+
+    d2hLoadNavUrls();
+
+
+
+
+//]]></script>
+
+<div class="d2h_outer_topic" id="D2HTopicOuterBody" style="PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; OVERFLOW: auto; WIDTH: 100%; PADDING-TOP: 0px; HEIGHT: 100%; BACKGROUND-COLOR: white">
+<div class="d2hNavigatorTopic" id="nsbanner">
+<div class="d2h_main_titlerow" id="TitleRow" style="PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px">
+<div style="DISPLAY: none"><a id="D2HPreviousAnchor" href="orgreportdump.htm"></a><a id="D2HNextAnchor" href="lockmonitor.htm"></a></div></div>
+<script language="javascript" type="text/javascript">
+//<![CDATA[
+
+if (typeof d2hProcessTopicNavForCSH != "undefined")
+
+    d2hProcessTopicNavForCSH();
+
+
+//]]></script>
+</div>
+<div class="d2h_main_nstext" id="nstext" style="PADDING-RIGHT: 10px; PADDING-LEFT: 22px; PADDING-BOTTOM: 10px; PADDING-TOP: 5px" valign="bottom">
+<div class="d2h_breadcrumbs" id="d2h_breadcrumbs"><a class="d2h_breadcrumbsNormal" href="mainmenu.htm">Main Menu</a><span class="d2h_breadcrumbsLinkSeparator"> &gt; 
+</span><a class="d2h_breadcrumbsNormal" href="transactions.htm">Transactions</a><span class="d2h_breadcrumbsLinkSeparator"> &gt; </span><a class="d2h_breadcrumbsNormal" href="budgetconstruction.htm">Budget Construction</a><span class="d2h_breadcrumbsLinkSeparator"> &gt; </span><a class="d2h_breadcrumbsNormal" href="budgetconstructionselection.htm">Budget Construction Selection</a><span class="d2h_breadcrumbsLinkSeparator"> &gt; </span><a class="d2h_breadcrumbsNormal" href="bcorganizationsalarysettingreportcontrolsection.htm">BC Organization 
+Salary Setting/Report/Control Section</a></div>
+<h6>Request Import Tool</h6>
+<p class="MsoBodyText">This tool allows you to import budget request data for 
+non-compensation object-code-related accounting lines in one or more BC 
+documents from a local data file. The tool operates under the security rules of 
+the BC security model. Following are basic rules associated with the request 
+import tool:</p>
+<p class="MsoBodyText" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18.75pt; tab-stops: 36.0pt"><span style="FONT-FAMILY: Symbol"><span style="FONT-FAMILY: Verdana">•</span>      </span>The 
+import file must be a .<a id="popup_478553" onclick="return d2hpopup(event, this.href)" href="gloss_csv.htm">csv</a> or 
+tab-delimited file.</p>
+<p class="MsoBodyText" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18.75pt; tab-stops: 36.0pt"><span style="FONT-FAMILY: Symbol"><span style="FONT-FAMILY: Verdana">•</span>      </span>The 
+import file must contain either annual request or monthly request amounts. </p>
+<p class="MsoBodyText" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18.75pt; tab-stops: 36.0pt"><span style="FONT-FAMILY: Symbol"><span style="FONT-FAMILY: Verdana">•</span>      </span>The 
+import tool inserts new, or overwrites existing, matching lines. Any monthly 
+budgets for existing lines are deleted when importing annual budget amounts.</p>
+<p class="MsoBodyText" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18.75pt; tab-stops: 36.0pt"><span style="FONT-FAMILY: Symbol"><span style="FONT-FAMILY: Verdana">•</span>      </span>Each 
+line must be unique.</p>
+<p class="MsoBodyText" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18.75pt; tab-stops: 36.0pt"><span style="FONT-FAMILY: Symbol"><span style="FONT-FAMILY: Verdana">•</span>      </span>A 
+budget construction <a id="popup_478550" onclick="return d2hpopup(event, this.href)" href="gloss_document.htm">document</a> must exist for the <a id="popup_478551" onclick="return d2hpopup(event, this.href)" href="gloss_account1.htm">account</a> or <a id="popup_478549" onclick="return d2hpopup(event, this.href)" href="gloss_subaccount1.htm">sub-account</a>.</p>
+<p class="MsoBodyText" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18.75pt; tab-stops: 36.0pt"><span style="FONT-FAMILY: Symbol"><span style="FONT-FAMILY: Verdana">•</span>      </span>The 
+account or sub-account may not be expired.</p>
+<p class="MsoBodyText" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18.75pt; tab-stops: 36.0pt"><span style="FONT-FAMILY: Symbol"><span style="FONT-FAMILY: Verdana">•</span>      </span>The 
+account or sub-account and <a id="popup_478547" onclick="return d2hpopup(event, this.href)" href="gloss_objectcode1.htm">object 
+code</a> or sub-object codes must exist and be active in the <a id="popup_478552" onclick="return d2hpopup(event, this.href)" href="gloss_chart1.htm">chart</a> 
+for the budget <a id="popup_478548" onclick="return d2hpopup(event, this.href)" href="gloss_fiscalyear.htm">fiscal year</a>.</p>
+<p class="Center"><img src="../ImagesExt/image20_110.png" alt="" /></p>
+<p class="MsoCaption">Figure 58 – BC Request Import Tool screen</p>
+<p class="MsoBodyText">The default system provides two import templates you may 
+want to use or modify—<a href="../LinkedDocuments/BC_Annual_Request_Imports.xls">BC_Annual_Request_Imports.xls</a> 
+and <a href="../LinkedDocuments/BC_Monthly_Request_Imports.xls">BC_Monthly_Request_Imports.xls</a>.</p>
+<p class="MsoBodyText">The following images are import file format samples.</p>
+<p class="MsoBodyText" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18.75pt; tab-stops: 36.0pt"><span style="FONT-FAMILY: Symbol"><span style="FONT-FAMILY: Verdana">•</span>      
+</span>Annual budget, no text field delimiter:</p>
+<table class="MsoNormalTable" style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; MARGIN-LEFT: 41.4pt; BORDER-LEFT: medium none; WIDTH: 387pt; BORDER-BOTTOM: medium none; BORDER-COLLAPSE: collapse" cellspacing="0" cellpadding="0" width="516" border="1">
+  <tbody>
+  <tr>
+    <td style="BORDER-RIGHT: black 1pt solid; PADDING-RIGHT: 5.4pt; BORDER-TOP: black 1pt solid; PADDING-LEFT: 5.4pt; PADDING-BOTTOM: 0pt; BORDER-LEFT: black 1pt solid; WIDTH: 387pt; PADDING-TOP: 0pt; BORDER-BOTTOM: black 1pt solid" valign="top" width="516">
+      <p class="MsoBodyText" style="MARGIN-TOP: 0pt"><span style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'">IT,1912201,,5000,,2000 
+      <br />IT,1912201,,5001,,1212 <br />IT,1912201,,5002,,30 
+      <br />IT,1912201,,5002,FOO,200 <br />IT,1912201,,5003,,333 
+      <br />IT,1912201,,5004,,444 
+  <br />IT,1912201,,5005,,555</span></p></td></tr></tbody></table>
+<p class="MsoBodyText" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18.75pt; tab-stops: 36.0pt"><span style="FONT-FAMILY: Symbol"><span style="FONT-FAMILY: Verdana">•</span>      
+</span>Monthly budget, no text field delimiter:</p>
+<table class="MsoNormalTable" style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; MARGIN-LEFT: 41.4pt; BORDER-LEFT: medium none; WIDTH: 387pt; BORDER-BOTTOM: medium none; BORDER-COLLAPSE: collapse" cellspacing="0" cellpadding="0" width="516" border="1">
+  <tbody>
+  <tr>
+    <td style="BORDER-RIGHT: black 1pt solid; PADDING-RIGHT: 5.4pt; BORDER-TOP: black 1pt solid; PADDING-LEFT: 5.4pt; PADDING-BOTTOM: 0pt; BORDER-LEFT: black 1pt solid; WIDTH: 387pt; PADDING-TOP: 0pt; BORDER-BOTTOM: black 1pt solid" valign="top" width="516">
+      <p class="MsoNormal"><span style="FONT-SIZE: 8pt; FONT-FAMILY: 'Courier New'">IT,1912201,,5000,,2012,2013,2012,2013,2012,2013,2012,2013,2012,2013,2012,2013 
+      </span></p>
+      <p class="MsoNormal"><span style="FONT-SIZE: 8pt; FONT-FAMILY: 'Courier New'">IT,1912201,,5001,,50,50,50,50,50,50,50,50,50,50,50,50 
+      </span></p>
+      <p class="MsoNormal"><span style="FONT-SIZE: 8pt; FONT-FAMILY: 'Courier New'">IT,1912201,,5002,,30,30,30,30,30,30,30,30,30,30,30,30 
+      </span></p>
+      <p class="MsoNormal"><span style="FONT-SIZE: 8pt; FONT-FAMILY: 'Courier New'">IT,1912201,,5002,FOO,205,200,205,200,205,205,200,205,200,205,200,205</span><span style="FONT-FAMILY: CHBDFP+TimesNewRoman"> </span></p></td></tr></tbody></table>
+<p class="MsoBodyText" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18.75pt; tab-stops: 36.0pt"><span style="FONT-FAMILY: Symbol"><span style="FONT-FAMILY: Verdana">•</span>      
+</span>Annual budget with text field delimiter:</p>
+<table class="MsoNormalTable" style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; MARGIN-LEFT: 41.4pt; BORDER-LEFT: medium none; WIDTH: 387pt; BORDER-BOTTOM: medium none; BORDER-COLLAPSE: collapse" cellspacing="0" cellpadding="0" width="516" border="1">
+  <tbody>
+  <tr>
+    <td style="BORDER-RIGHT: black 1pt solid; PADDING-RIGHT: 5.4pt; BORDER-TOP: black 1pt solid; PADDING-LEFT: 5.4pt; PADDING-BOTTOM: 0pt; BORDER-LEFT: black 1pt solid; WIDTH: 387pt; PADDING-TOP: 0pt; BORDER-BOTTOM: black 1pt solid" valign="top" width="516">
+      <p class="MsoNormal"><span style="FONT-SIZE: 8pt; FONT-FAMILY: CHBDFP+TimesNewRoman">“</span><span style="FONT-SIZE: 8pt; FONT-FAMILY: 'Courier New'">IT , ”1912201” , 
+      ”TTTTT” , ”5006” , ”” , 666 </span></p>
+      <p class="MsoNormal"><span style="FONT-SIZE: 8pt; FONT-FAMILY: 'Courier New'">“IT” , ”1912201” , ”” , 
+      ”5007” , ”” ,777 </span></p>
+      <p class="MsoNormal"><span style="FONT-SIZE: 8pt; FONT-FAMILY: 'Courier New'">“IT” , ”1912201” , 
+      ”NUTS” , ”5000” , ”” , 500 </span></p>
+      <p class="MsoNormal"><span style="FONT-SIZE: 8pt; FONT-FAMILY: 'Courier New'">“IT , ”1912202” , ”” , 
+      ”5000” , ”” , 500 </span></p>
+      <p class="MsoNormal"><span style="FONT-SIZE: 8pt; FONT-FAMILY: 'Courier New'">“IT” , ”1912202” , ”” , 
+      “5001” , ”” , 400 </span></p>
+      <p class="MsoNormal"><span style="FONT-SIZE: 8pt; FONT-FAMILY: 'Courier New'">“IT” , ”1912202” , ”” , 
+      5002” , ”” , 303 </span></p>
+      <p class="MsoNormal"><span style="FONT-SIZE: 8pt; FONT-FAMILY: 'Courier New'">“IT” , ”1912202” , ”” , 
+      5003” , ”” , 222 </span></p></td></tr></tbody></table>
+<p class="RelatedHead">More:</p>
+<p class="MsoNormal"><a style="TEXT-DECORATION: none" href="addingannualbudget.htm"><img alt="" src="../button.gif" align="absMiddle" border="0" />Adding Annual Budget</a></p></div></div></body></html>
