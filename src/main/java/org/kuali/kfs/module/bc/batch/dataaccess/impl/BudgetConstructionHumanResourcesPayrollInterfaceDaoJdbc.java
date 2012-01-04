@@ -181,7 +181,7 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
         sqlBuilder.append("        ?, px.EFFDT, px.POS_EFF_STATUS,\n");
         sqlBuilder.append("        px.POSN_STATUS, px.BUDGETED_POSN, 'N',\n");
         sqlBuilder.append("        px.STD_HRS_DEFAULT, px.POS_REG_TEMP, px.POS_FTE, px.DESCR, px.BUSINESS_UNIT,\n");
-        sqlBuilder.append("        ptx.ORG_CD, ?,\n");
+        sqlBuilder.append("        CONCAT('IT-',ptx.ORG_CD), ?,\n");
         sqlBuilder.append("        px.POS_SAL_PLAN_DFLT, px.POS_GRADE_DFLT, px.BUSINESS_UNIT, px.JOBCODE,\n");
         sqlBuilder.append("        px.BUSINESS_UNIT, ? \n");
         sqlBuilder.append(" FROM PS_POSITION_DATA px, PS_POSITION_DATA_TX ptx \n"); 
@@ -234,7 +234,7 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
         sqlBuilder.append("        ?, px.EFFDT, px.POS_EFF_STATUS,\n");
         sqlBuilder.append("        px.POSN_STATUS, px.BUDGETED_POSN, 'N',\n");
         sqlBuilder.append("        px.STD_HRS_DEFAULT, px.POS_REG_TEMP, px.POS_FTE, px.DESCR, px.BUSINESS_UNIT,\n");
-        sqlBuilder.append("        ptx.ORG_CD, ?,\n");
+        sqlBuilder.append("        CONCAT('IT-',ptx.ORG_CD), ?,\n");
         sqlBuilder.append("        px.POS_SAL_PLAN_DFLT, px.POS_GRADE_DFLT, px.BUSINESS_UNIT, px.JOBCODE,\n");
         sqlBuilder.append("        px.BUSINESS_UNIT, ? \n");
         sqlBuilder.append(" FROM PS_POSITION_DATA px, PS_POSITION_DATA_TX ptx \n"); 
