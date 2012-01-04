@@ -523,7 +523,7 @@ public class SqlBuilder {
 		count++;
 		
 		if (count > 100) {
-			LOG.error("Recursion Count exceeded 1000 for "+ valueEntered );
+			LOG.error("Recursion Count exceeded 100 for "+ valueEntered );
 			
 			
 		}
