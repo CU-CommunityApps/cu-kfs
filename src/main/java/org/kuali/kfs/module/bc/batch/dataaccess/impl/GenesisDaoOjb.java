@@ -844,21 +844,27 @@ public class GenesisDaoOjb extends BudgetConstructionBatchHelperDaoOjb implement
     }
 
     public void storeANewBCDocument(BudgetConstructionDocument newBCHdr) throws WorkflowException {
-        newBCHdr.setOrganizationLevelChartOfAccountsCode(BCConstants.INITIAL_ORGANIZATION_LEVEL_CHART_OF_ACCOUNTS_CODE);
-        newBCHdr.setOrganizationLevelOrganizationCode(BCConstants.INITIAL_ORGANIZATION_LEVEL_ORGANIZATION_CODE);
-        newBCHdr.setOrganizationLevelCode(BCConstants.INITIAL_ORGANIZATION_LEVEL_CODE);
-        newBCHdr.setBudgetTransactionLockUserIdentifier(BCConstants.DEFAULT_BUDGET_HEADER_LOCK_IDS);
-        newBCHdr.setBudgetLockUserIdentifier(BCConstants.DEFAULT_BUDGET_HEADER_LOCK_IDS);
-        newBCHdr.setVersionNumber(DEFAULT_VERSION_NUMBER);
-        FinancialSystemDocumentHeader kualiDocumentHeader = newBCHdr.getDocumentHeader();
-        newBCHdr.setDocumentNumber(newBCHdr.getDocumentHeader().getDocumentNumber());
-        kualiDocumentHeader.setOrganizationDocumentNumber(newBCHdr.getUniversityFiscalYear().toString());
-        kualiDocumentHeader.setFinancialDocumentStatusCode(KFSConstants.INITIAL_KUALI_DOCUMENT_STATUS_CD);
-        kualiDocumentHeader.setFinancialDocumentTotalAmount(KualiDecimal.ZERO);
-        kualiDocumentHeader.setDocumentDescription(String.format("%s %d %s %s", BCConstants.BUDGET_CONSTRUCTION_DOCUMENT_DESCRIPTION, newBCHdr.getUniversityFiscalYear(), newBCHdr.getChartOfAccountsCode(), newBCHdr.getAccountNumber()));
-        kualiDocumentHeader.setExplanation(BCConstants.BUDGET_CONSTRUCTION_DOCUMENT_DESCRIPTION);
-       // getPersistenceBrokerTemplate().store(newBCHdr);
-        documentService.saveDocument(newBCHdr);
+    	newBCHdr.setOrganizationLevelChartOfAccountsCode(BCConstants.INITIAL_ORGANIZATION_LEVEL_CHART_OF_ACCOUNTS_CODE);
+    	newBCHdr.setOrganizationLevelOrganizationCode(BCConstants.INITIAL_ORGANIZATION_LEVEL_ORGANIZATION_CODE);
+    	newBCHdr.setOrganizationLevelCode(BCConstants.INITIAL_ORGANIZATION_LEVEL_CODE);
+    	newBCHdr.setBudgetTransactionLockUserIdentifier(BCConstants.DEFAULT_BUDGET_HEADER_LOCK_IDS);
+    	newBCHdr.setBudgetLockUserIdentifier(BCConstants.DEFAULT_BUDGET_HEADER_LOCK_IDS);
+    	newBCHdr.setVersionNumber(DEFAULT_VERSION_NUMBER);
+    	FinancialSystemDocumentHeader kualiDocumentHeader = newBCHdr.getDocumentHeader();
+    	newBCHdr.setDocumentNumber(newBCHdr.getDocumentHeader().getDocumentNumber());
+    	kualiDocumentHeader.setOrganizationDocumentNumber(newBCHdr.getUniversityFiscalYear().toString());
+    	kualiDocumentHeader.setFinancialDocumentStatusCode(KFSConstants.INITIAL_KUALI_DOCUMENT_STATUS_CD);
+    	kualiDocumentHeader.setFinancialDocumentTotalAmount(KualiDecimal.ZERO);
+    	kualiDocumentHeader.setDocumentDescription(String.format("%s %d %s %s", BCConstants.BUDGET_CONSTRUCTION_DOCUMENT_DESCRIPTION, newBCHdr.getUniversityFiscalYear(), newBCHdr.getChartOfAccountsCode(), newBCHdr.getAccountNumber()));
+    	kualiDocumentHeader.setExplanation(BCConstants.BUDGET_CONSTRUCTION_DOCUMENT_DESCRIPTION);
+    	getPersistenceBrokerTemplate().store(newBCHdr);
+    	try {
+    		Thread.sleep(50);
+        } catch (Exception e) {
+        	throw new RuntimeException(e);
+        }	
+        documentService.prepareWorkflowDocument(newBCHdr);
+        // documentService.saveDocument(newBCHdr);
         // September 2, 2009: since this document is not routed, calling this method should set it to final
         workflowDocumentService.route(newBCHdr.getDocumentHeader().getWorkflowDocument(), "created by Genesis", new ArrayList());
     }
