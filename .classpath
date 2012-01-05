@@ -6,5 +6,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/kfs-3.0.1"/>
+	<classpathentry kind="lib" path="/Users/kwk43/Downloads/btm-dist-2.1.2/btm-2.1.2.jar"/>
 	<classpathentry kind="output" path="target/kfs-war-3.0.1-SNAPSHOT"/>
 </classpath>

@@ -858,15 +858,9 @@ public class GenesisDaoOjb extends BudgetConstructionBatchHelperDaoOjb implement
         kualiDocumentHeader.setDocumentDescription(String.format("%s %d %s %s", BCConstants.BUDGET_CONSTRUCTION_DOCUMENT_DESCRIPTION, newBCHdr.getUniversityFiscalYear(), newBCHdr.getChartOfAccountsCode(), newBCHdr.getAccountNumber()));
         kualiDocumentHeader.setExplanation(BCConstants.BUDGET_CONSTRUCTION_DOCUMENT_DESCRIPTION);
         getPersistenceBrokerTemplate().store(newBCHdr);
-//        try {
-//        	Thread.sleep(50);
-//        } catch (Exception e) {
-//        	throw new RuntimeException(e);
-//        }
-       // documentService.prepareWorkflowDocument(newBCHdr);
-       // documentService.saveDocument(newBCHdr);
+        documentService.prepareWorkflowDocument(newBCHdr);
         // September 2, 2009: since this document is not routed, calling this method should set it to final
-        workflowDocumentService.route(newBCHdr.getDocumentHeader().getWorkflowDocument(), "created by Genesis", new ArrayList());
+        documentService.routeDocument(newBCHdr, "created by Genesis", new ArrayList());
     }
 
 
