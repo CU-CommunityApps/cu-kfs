@@ -863,7 +863,8 @@ public class GenesisDaoOjb extends BudgetConstructionBatchHelperDaoOjb implement
 //        } catch (Exception e) {
 //        	throw new RuntimeException(e);
 //        }	
-        documentService.prepareWorkflowDocument(newBCHdr);
+       // documentService.prepareWorkflowDocument(newBCHdr);
+        //documentService.routeDocument(newBCHdr,"created by Genesis", new ArrayList());
         // documentService.saveDocument(newBCHdr);
         // September 2, 2009: since this document is not routed, calling this method should set it to final
         workflowDocumentService.route(newBCHdr.getDocumentHeader().getWorkflowDocument(), "created by Genesis", new ArrayList());
