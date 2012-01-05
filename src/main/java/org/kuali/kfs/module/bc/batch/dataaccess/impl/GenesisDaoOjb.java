@@ -859,7 +859,7 @@ public class GenesisDaoOjb extends BudgetConstructionBatchHelperDaoOjb implement
     	kualiDocumentHeader.setExplanation(BCConstants.BUDGET_CONSTRUCTION_DOCUMENT_DESCRIPTION);
     	getPersistenceBrokerTemplate().store(newBCHdr);
     	try {
-    		Thread.sleep(50);
+    		Thread.sleep(250);
         } catch (Exception e) {
         	throw new RuntimeException(e);
         }	
