@@ -321,13 +321,6 @@
       </exclusions>
     </dependency>
 
-<dependency>
-      <groupId>edu.cornell.cynergy</groupId>
-      <artifactId>cynergy-standalone-war</artifactId>
-      <version>2.0.6</version>
-      <type>war</type>
-    </dependency>
-
     <dependency>
       <groupId>edu.cornell.kfs</groupId>
       <artifactId>kfs-modded-war</artifactId>
