@@ -1,12 +1,10 @@
 package edu.cornell.kfs.module.bc.batch.dataaccess.impl;
 
-import java.sql.Date;
-import java.text.ParseException;
 import java.util.Iterator;
 
 import org.apache.ojb.broker.query.Criteria;
+import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
-import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import org.kuali.kfs.module.ld.businessobject.PositionData;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.kns.dao.impl.PlatformAwareDaoBaseOjb;
@@ -27,28 +25,19 @@ public class PSPositionDataDaoOjb extends PlatformAwareDaoBaseOjb implements PSP
      */
     public boolean isPositionBudgeted(String positionNumber) {
         boolean budgeted = false;
-       
+
         Criteria criteria = new Criteria();
 
         criteria.addEqualTo(KFSPropertyConstants.POSITION_NUMBER, positionNumber);
-        // The following was required since the max function will return more than one row in cases where the budgeted 
-        //  position column contains different values (as it will return the most recent dates for each budgeted
-        //  position value).
-        criteria.addEqualTo("budgetedPosition", "Y");
+        criteria.addOrderByDescending("effectiveDate");
 
-        ReportQueryByCriteria reportByCriteria = QueryFactory.newReportQuery(
-                        PositionData.class,
-                        criteria);
+        QueryByCriteria query = QueryFactory.newQuery(PositionData.class, criteria);
 
-        String[] attributes = new String[]{"positionNumber", "max(effectiveDate)", "budgetedPosition"};
-        String[] groupBy = new String[]{"positionNumber", "budgetedPosition"};
-        reportByCriteria.setAttributes(attributes);
-        reportByCriteria.addGroupBy(groupBy);
+        Iterator iterator = getPersistenceBrokerTemplate().getIteratorByQuery(query);
 
-        Iterator<Object[]> iterator = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(reportByCriteria);
         if (iterator.hasNext()) {
-            Object[] results = iterator.next();
-            if (results != null && results.length > 1 && "Y".equalsIgnoreCase(results[2].toString())) {
+            PositionData positionData = (PositionData) iterator.next();
+            if (positionData != null & "Y".equalsIgnoreCase(positionData.getBudgetedPosition())) {
                 budgeted = true;
                 TransactionalServiceUtils.exhaustIterator(iterator);
             }
