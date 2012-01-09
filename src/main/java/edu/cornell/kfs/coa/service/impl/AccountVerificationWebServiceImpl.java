@@ -50,31 +50,29 @@ public class AccountVerificationWebServiceImpl implements AccountVerificationWeb
 	  if (account == null || account.toString().isEmpty()) {
 		  isValid = false;
 	  } else {
-		  isValid = true;
+	//	  isValid = true;
+		  if (!account.isActive() || account.isClosed() || account.isExpired()) {
+			  isValid = false;
+		  } else {
+			  isValid = true;
+		  }
+		  if (objectCode != null && !objectCode.isEmpty()) {
+				 isValid = isValid && isValidObjectCode(chartOfAccountsCode, objectCode);
+			  }
+			  
+		 if (subAccountNumber != null && !subAccountNumber.isEmpty()) {
+				  isValid = isValid && isValidSubAccount(chartOfAccountsCode, accountNumber, subAccountNumber);
+			  }
+			 
+		 if (subObjectCode != null && !subObjectCode.isEmpty()) {
+				  isValid = isValid && isValidSubObjectCode(chartOfAccountsCode, accountNumber, objectCode, subObjectCode);
+			  }
+			  
+		 if (projectCode != null && !projectCode.isEmpty()) {
+				  isValid = isValid && isValidProjectCode(projectCode);
+			  }
 	  }
-	  
-	  if (!account.isActive() || account.isClosed() || account.isExpired()) {
-		  isValid = false;
-	  } else {
-		  isValid = true;
-	  }
-	  
-	  if (objectCode != null && !objectCode.isEmpty()) {
-		 isValid = isValid && isValidObjectCode(chartOfAccountsCode, objectCode);
-	  }
-	  
-	  if (subAccountNumber != null && !subAccountNumber.isEmpty()) {
-		  isValid = isValid && isValidSubAccount(chartOfAccountsCode, accountNumber, subAccountNumber);
-	  }
-	 
-	  if (subObjectCode != null && !subObjectCode.isEmpty()) {
-		  isValid = isValid && isValidSubObjectCode(chartOfAccountsCode, accountNumber, objectCode, subObjectCode);
-	  }
-	  
-	  if (projectCode != null && !projectCode.isEmpty()) {
-		  isValid = isValid && isValidProjectCode(projectCode);
-	  }
-	  
+	  	  
 	  return isValid;
     }
   
