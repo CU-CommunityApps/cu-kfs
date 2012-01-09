@@ -22,6 +22,7 @@
 <%@ attribute name="headerTitle" required="false" %>
 <%@ attribute name="htmlFormAction" required="false" %>
 <%@ attribute name="renderMultipart" required="false" %>
+<%@ attribute name="multipartHack" required="false" %>
 <%@ attribute name="showTabButtons" required="false" %>
 <%@ attribute name="extraTopButtons" required="false" type="java.util.List" %>
 <%@ attribute name="headerDispatch" required="false" %>
@@ -157,11 +158,14 @@
 </c:choose>
 
 <c:set var="encoding" value="application/x-www-form-urlencoded"/>
-<%--
-<c:if test="${not empty renderMultipart and renderMultipart eq true}">
+  
+<c:if test="${not empty multipartHack and multipartHack eq true}">
 	<c:set var="encoding" value="multipart/form-data"/>
 </c:if>
- --%>
+
+<%  
+System.out.println("The column is " + multipartHack);  
+%> 
  
 <html:form styleId="kualiForm" action="/${htmlFormAction}.do"
 	method="post" enctype="${encoding}"
