@@ -41,6 +41,7 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
     private String invoiceTypeCode;
     private boolean everify;
     private String laborBenefitRateCategoryCode;
+    private String majorReportingCategoryCode;
 
     
 	private SubFundProgram subFundProgram;
@@ -48,6 +49,7 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
     private InvoiceFrequency invoiceFrequency;
     private InvoiceType invoiceType;
     private LaborBenefitRateCategory laborBenefitRateCategory;
+    private MajorReportingCategory majorReportingCategory;
 
     
     public AccountExtendedAttribute() {
@@ -283,5 +285,40 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
     public void setLaborBenefitRateCategory(LaborBenefitRateCategory laborBenefitRateCategory) {
         this.laborBenefitRateCategory = laborBenefitRateCategory;
     }
+    
+	/**
+	 * @return the majorReportingCategory
+	 */
+	public MajorReportingCategory getMajorReportingCategory() {
+		return majorReportingCategory;
+	}
+
+
+	/**
+	 * @param majorReportingCategory the majorReportingCategory to set
+	 */
+	public void setMajorReportingCategory(MajorReportingCategory majorReportingCategory) {
+		this.majorReportingCategory = majorReportingCategory;
+	}
+    
+    
+	/**
+	 * @return the majorReportingCategoryCode
+	 */
+	public String getMajorReportingCategoryCode() {
+		return majorReportingCategoryCode;
+	}
+
+
+	/**
+	 * @param majorReportingCategoryCode the majorReportingCategoryCode to set
+	 */
+	public void setMajorReportingCategoryCode(String majorReportingCategoryCode) {
+		this.majorReportingCategoryCode = majorReportingCategoryCode;
+		BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+		HashMap<String,String> keys = new HashMap<String,String>();
+		keys.put("majorReportingCategoryCode", majorReportingCategoryCode);
+		majorReportingCategory = (MajorReportingCategory) bos.findByPrimaryKey(MajorReportingCategory.class, keys);
+	}
 
 }

@@ -13,6 +13,7 @@
             <ref bean="AccountExtendedAttribute-subFundGroupCode"/>  
             <ref bean="AccountExtendedAttribute-programCode"/> 
             <ref bean="AccountExtendedAttribute-appropriationAccountNumber"/> 
+            <ref bean="AccountExtendedAttribute-majorReportingCategoryCode"/>
             <ref bean="AccountExtendedAttribute-invoiceFrequencyCode"/> 
             <ref bean="AccountExtendedAttribute-invoiceTypeCode"/>
             <ref bean="AccountExtendedAttribute-everify"/>
@@ -30,6 +31,8 @@
     <dd:boAttributeRef id="AccountExtendedAttribute-programCode" parent="SubFundProgram-programCode"/>
      
     <dd:boAttributeRef id="AccountExtendedAttribute-appropriationAccountNumber" parent="AppropriationAccount-appropriationAccountNumber"/>
+    
+    <dd:boAttributeRef id="AccountExtendedAttribute-majorReportingCategoryCode" parent="MajorReportingCategory-majorReportingCategoryCode"/>
     
     <dd:boAttributeRef id="AccountExtendedAttribute-invoiceFrequencyCode" parent="InvoiceFrequency-invoiceFrequencyCode"/>
     

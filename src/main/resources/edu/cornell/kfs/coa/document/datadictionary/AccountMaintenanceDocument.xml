@@ -101,6 +101,7 @@
         <dd:maintField attributeName="subFundGroupCode" required="true" javascriptLeaveFieldFunction="onblur_subFundGroup" javascriptLeaveFieldCallbackFunction="checkRestrictedStatusCode_Callback"/>
        	<dd:maintField attributeName="extension.programCode" />
       	<dd:maintField attributeName="extension.appropriationAccountNumber" />
+      	<dd:maintField attributeName="extension.majorReportingCategoryCode" />
         <dd:maintField attributeName="accountsFringesBnftIndicator" defaultValue="true"/>
         <dd:maintField attributeName="reportsToChartOfAccountsCode"/>
         <dd:maintField attributeName="reportsToAccountNumber"/>

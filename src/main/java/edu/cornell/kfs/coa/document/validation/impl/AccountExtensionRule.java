@@ -29,6 +29,7 @@ import org.kuali.rice.kns.service.BusinessObjectService;
 
 import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
 import edu.cornell.kfs.coa.businessobject.AppropriationAccount;
+import edu.cornell.kfs.coa.businessobject.MajorReportingCategory;
 import edu.cornell.kfs.coa.businessobject.SubFundProgram;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory;
@@ -45,6 +46,7 @@ public class AccountExtensionRule extends AccountRule {
 
         success &= checkSubFundProgram(document);
         success &= checkAppropriationAccount(document);
+        success &= checkMajorReportingCategoryCode(document);
         success &= checkLaborBenefitCategoryCode(document);
         
         return success;
@@ -145,5 +147,34 @@ public class AccountExtensionRule extends AccountRule {
         }
     	return success;
     }
+    
+        
+	protected boolean checkMajorReportingCategoryCode(MaintenanceDocument document) {
+		boolean success = true;
 
+		String majorReportingCategoryCode = ((AccountExtendedAttribute)newAccount.getExtension()).getMajorReportingCategoryCode();
+		BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+		
+		//MajorReportingCategory code is not a required field, if no value is entered no validation is performed
+		if (!StringUtils.isBlank(majorReportingCategoryCode)) {
+			Map fieldValues = new HashMap();
+			fieldValues.put("majorReportingCategoryCode", majorReportingCategoryCode);
+        
+			Collection<MajorReportingCategory> retVals = bos.findMatching(MajorReportingCategory.class, fieldValues);
+        
+			if (retVals.isEmpty()) {			
+				putFieldError("extension.majorReportingCategoryCode", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_MJR_RPT_CAT_CODE_NOT_EXIST, new String[] {majorReportingCategoryCode});
+				success = false;
+			} else {
+				for (MajorReportingCategory sfp : retVals) {
+					if (!sfp.isActive()) {	
+						putFieldError("extension.majorReportingCategoryCode", KFSKeyConstants.ERROR_INACTIVE, getFieldLabel(Account.class, "extension.majorReportingCategoryCode"));
+                        success = false;
+					}
+				}
+			}
+		}
+		return success;
+	}
+	
 }
