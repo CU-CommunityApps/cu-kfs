@@ -162,10 +162,6 @@
 <c:if test="${not empty multipartHack and multipartHack eq true}">
 	<c:set var="encoding" value="multipart/form-data"/>
 </c:if>
-
-<%  
-System.out.println("The column is " + multipartHack);  
-%> 
  
 <html:form styleId="kualiForm" action="/${htmlFormAction}.do"
 	method="post" enctype="${encoding}"
