@@ -94,11 +94,11 @@ public class AccountExtensionRule extends AccountRule {
             
             if (retVals.isEmpty()) {
                 success = false;
-                putFieldError("extension.subFundProgram.programCode", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_NOT_GROUP_CODE, new String[] {subFundProg, subFundGroupCode});
+                putFieldError("extension.programCode", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_NOT_GROUP_CODE, new String[] {subFundProg, subFundGroupCode});
             } else {
             	for (SubFundProgram sfp : retVals) {
             		if (!sfp.isActive()) {
-                        putFieldError("extension.subFundProgram.programCode", KFSKeyConstants.ERROR_INACTIVE, getFieldLabel(Account.class, "extension.subFundProgram.programCode"));
+                        putFieldError("extension.programCode", KFSKeyConstants.ERROR_INACTIVE, getFieldLabel(Account.class, "extension.programCode"));
                         success = false;
             		}
             	}
@@ -111,7 +111,7 @@ public class AccountExtensionRule extends AccountRule {
              Collection<SubFundProgram> retVals = bos.findMatching(SubFundProgram.class, fieldValues);
              if (!retVals.isEmpty()) {
                  success = false;
-                 putFieldError("extension.subFundProgram.programCode", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE, new String[] { subFundGroupCode});
+                 putFieldError("extension.programCode", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE, new String[] { subFundGroupCode});
              }
         }
         return success; 
@@ -133,11 +133,11 @@ public class AccountExtensionRule extends AccountRule {
             
             if (retVals.isEmpty()) {
                 success = false;
-                putFieldError("extension.appropriationAccount.appropriationAccountNumber", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_APPROP_ACCT_NOT_GROUP_CODE, new String[] {appropriationAccountNumber, subFundGroupCode});
+                putFieldError("extension.appropriationAccountNumber", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_APPROP_ACCT_NOT_GROUP_CODE, new String[] {appropriationAccountNumber, subFundGroupCode});
             } else {
             	for (AppropriationAccount sfp : retVals) {
             		if (!sfp.isActive()) {
-                        putFieldError("extension.appropriationAccount.appropriationAccountNumber", KFSKeyConstants.ERROR_INACTIVE, getFieldLabel(Account.class, "extension.appropriationAccount.appropriationAccountNumber"));
+                        putFieldError("extension.appropriationAccountNumber", KFSKeyConstants.ERROR_INACTIVE, getFieldLabel(Account.class, "extension.appropriationAccountNumber"));
                         success = false;
             		}
             	}
