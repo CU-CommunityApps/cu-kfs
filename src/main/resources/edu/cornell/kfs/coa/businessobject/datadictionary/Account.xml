@@ -207,6 +207,7 @@
         <bean parent="InactivationBlockingDefinition" p:blockedReferencePropertyName="subFundGroup"/>
         <bean parent="InactivationBlockingDefinition" p:blockedReferencePropertyName="sufficientFundsCode"/>
         <bean parent="InactivationBlockingDefinition" p:blockedReferencePropertyName="accountState"/>
+        <bean parent="InactivationBlockingDefinition" p:blockedReferencePropertyName="extension.majorReportingCategory"/>
       </list>
     </property>
   </bean>
