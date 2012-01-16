@@ -415,7 +415,6 @@
         <bean parent="FieldDefinition" p:attributeName="positionFullTimeEquivalency"/>
         <bean parent="FieldDefinition" p:attributeName="jobCode"/>
         <bean parent="FieldDefinition" p:attributeName="positionStatus"/>
-        <bean parent="FieldDefinition" p:attributeName="dummyBusinessObject.linkButtonOption"/>
       </list>
     </property>
   </bean>
