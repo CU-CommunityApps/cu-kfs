@@ -414,6 +414,7 @@
         <bean parent="FieldDefinition" p:attributeName="positionGradeDefault"/>
         <bean parent="FieldDefinition" p:attributeName="positionFullTimeEquivalency"/>
         <bean parent="FieldDefinition" p:attributeName="jobCode"/>
+        <bean parent="FieldDefinition" p:attributeName="positionStatus"/>
       </list>
     </property>
   </bean>
