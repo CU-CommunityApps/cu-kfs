@@ -258,6 +258,7 @@
     <field-descriptor name="pendingAcctSufficientFundsIndicator" column="ACCT_PND_SF_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
     <field-descriptor name="accountSearchCriteriaTxt" column="ACCT_SRCH_CRTA_TXT" jdbc-type="VARCHAR" />
     <field-descriptor name="laborBenefitRateCategoryCode" column="LBR_BEN_RT_CAT_CD" jdbc-type="VARCHAR"/>
+    <field-descriptor name="majorReportingCategoryCode" column="MJR_RPT_CTG_CD" jdbc-type="VARCHAR"/>
     <reference-descriptor name="financialDocument" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         <foreignkey field-ref="documentNumber" />
     </reference-descriptor>
@@ -301,6 +302,9 @@
     <reference-descriptor name="laborBenefitRateCategory" class-ref="org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
 		<foreignkey field-ref="laborBenefitRateCategoryCode" />
 	</reference-descriptor>
+	<reference-descriptor name="majorReportingCategory" class-ref="edu.cornell.kfs.coa.businessobject.MajorReportingCategory" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        <foreignkey field-ref="majorReportingCategoryCode" />
+    </reference-descriptor>
     <collection-descriptor name="accountGlobalDetails" element-class-ref="org.kuali.kfs.coa.businessobject.AccountGlobalDetail" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
         <orderby name="chartOfAccountsCode" sort="ASC" />
         <orderby name="accountNumber" sort="ASC" />

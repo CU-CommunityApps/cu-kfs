@@ -40,6 +40,7 @@ import org.kuali.rice.kns.service.StateService;
 import org.kuali.rice.kns.util.TypedArrayList;
 
 import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
+import edu.cornell.kfs.coa.businessobject.MajorReportingCategory;
 
 /**
  * 
@@ -89,6 +90,10 @@ public class AccountGlobal extends PersistableBusinessObjectBase implements Glob
     private String laborBenefitRateCategoryCode;
     private LaborBenefitRateCategory laborBenefitRateCategory;
 
+    //added for major reporting category code extended attribute
+    private String majorReportingCategoryCode;
+    private MajorReportingCategory majorReportingCategory;
+    
     /**
      * Default constructor.
      */
@@ -219,6 +224,11 @@ public class AccountGlobal extends PersistableBusinessObjectBase implements Glob
                // String laborBenefitRateCategoryCode = getLaborBenefitRateCategoryCode();
                 if (StringUtils.isNotBlank(laborBenefitRateCategoryCode)){
                     ((AccountExtendedAttribute)account.getExtension()).setLaborBenefitRateCategoryCode(laborBenefitRateCategoryCode);
+                }
+                
+                // MAJOR REPORTING CATEGORY CODE 
+                if (StringUtils.isNotBlank(majorReportingCategoryCode)){
+                    ((AccountExtendedAttribute)account.getExtension()).setMajorReportingCategoryCode(majorReportingCategoryCode);
                 }
 
                 persistables.add(account);
@@ -975,4 +985,37 @@ public class AccountGlobal extends PersistableBusinessObjectBase implements Glob
     public void setLaborBenefitRateCategory(LaborBenefitRateCategory laborBenefitRateCategory) {
         this.laborBenefitRateCategory = laborBenefitRateCategory;
     }
+    
+	/**
+	 * Gets the majorReportingCategoryCode attribute. 
+	 * @return Returns the majorReportingCategoryCode.
+	 */
+	public String getMajorReportingCategoryCode() {
+	    return majorReportingCategoryCode;
+	}
+	
+	/**
+	 * Sets the majorReportingCategoryCode attribute value.
+	 * @param majorReportingCategoryCode The majorReportingCategoryCode to set.
+	 */
+	public void setMajorReportingCategoryCode(String majorReportingCategoryCode) {
+	    this.majorReportingCategoryCode = majorReportingCategoryCode;
+	}
+	
+	/**
+	 * Gets the majorReportingCategory attribute. 
+	 * @return Returns the majorReportingCategory.
+	 */
+	public MajorReportingCategory getMajorReportingCategory() {
+	    return majorReportingCategory;
+	}
+	
+	/**
+	 * Sets the majorReportingCategory attribute value.
+	 * @param majorReportingCategory The majorReportingCategory to set.
+	 */
+	public void setMajorReportingCategory(MajorReportingCategory majorReportingCategory) {
+	    this.majorReportingCategory = majorReportingCategory;
+	}
+	    
 }

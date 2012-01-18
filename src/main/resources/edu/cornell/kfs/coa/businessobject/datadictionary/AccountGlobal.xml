@@ -48,6 +48,7 @@
         <ref bean="AccountGlobal-accountManagerUser.principalName"/>
         <ref bean="AccountGlobal-accountManagerUser.name"/>
         <ref bean="AccountGlobal-laborBenefitRateCategoryCode"/>
+        <ref bean="AccountGlobal-majorReportingCategoryCode"/>
       </list>
     </property>
     <property name="relationships">
@@ -244,6 +245,11 @@
   
   <bean id="AccountGlobal-laborBenefitRateCategoryCode" parent="AccountGlobal-laborBenefitRateCategoryCode-parentBean"/>
   <bean id="AccountGlobal-laborBenefitRateCategoryCode-parentBean" abstract="true" parent="LaborBenefitRateCategory-code">
+    <property name="required" value="false"/>
+  </bean>
+  
+  <bean id="AccountGlobal-majorReportingCategoryCode" parent="AccountGlobal-majorReportingCategoryCode-parentBean"/>
+  <bean id="AccountGlobal-majorReportingCategoryCode-parentBean" abstract="true" parent="MajorReportingCategory-majorReportingCategoryCode">
     <property name="required" value="false"/>
   </bean>
 </beans>

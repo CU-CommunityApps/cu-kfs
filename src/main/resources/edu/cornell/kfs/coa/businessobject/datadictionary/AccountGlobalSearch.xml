@@ -104,6 +104,7 @@
       	<ref bean="Account-extension-invoiceType-invoiceTypeCode"/>
       	<ref bean="Account-extension-everify"/>
       	<ref bean="Account-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode"/>
+      	<ref bean="Account-extension-MajorReportingCategory-majorReportingCategoryCode"/>
       	<ref bean="AccountGlobalSearch-orgHierarchy"/>
 
       	
@@ -166,7 +167,7 @@
         <dd:relationship objectAttribute="extension.appropriationAccount">
             <dd:primitiveAttribute source="extension.appropriationAccountNumber" target="appropriationAccountNumber"/>
             <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode" />
-        </dd:relationship>
+        </dd:relationship>        
 <!--        <dd:relationship objectAttribute="extension">-->
 <!--        </dd:relationship>-->
         <!--  
@@ -812,7 +813,7 @@
   <bean id="Account-extension-appropriationAccountNumber-parentBean" abstract="true" parent="AccountExtendedAttribute-appropriationAccountNumber" >
   	<property name="name" value="extension.appropriationAccountNumber"/>
   </bean>
-
+  
   <bean id="Account-extension-invoiceFrequency-invoiceFrequencyCode" parent="Account-extension-invoiceFrequency-invoiceFrequencyCode-parentBean"/>
   <bean id="Account-extension-invoiceFrequency-invoiceFrequencyCode-parentBean" abstract="true" parent="AccountExtendedAttribute-invoiceFrequencyCode" >
   	<property name="name" value="extension.invoiceFrequency.invoiceFrequencyCode"/>
@@ -837,6 +838,11 @@
   <bean id="Account-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode" parent="Account-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode-parentBean"/>
   <bean id="Account-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode-parentBean" abstract="true" parent="AccountExtendedAttribute-laborBenefitRateCategoryCode" >
   	<property name="name" value="extension.laborBenefitRateCategoryCode"/>
+  </bean>
+  
+  <bean id="Account-extension-MajorReportingCategory-majorReportingCategoryCode" parent="Account-extension-MajorReportingCategory-majorReportingCategoryCode-parentBean"/>
+  <bean id="Account-extension-MajorReportingCategory-majorReportingCategoryCode-parentBean" abstract="true" parent="AccountExtendedAttribute-majorReportingCategoryCode" >
+    <property name="name" value="extension.majorReportingCategoryCode"/>
   </bean>
   
   <bean id="AccountGlobalSearch-orgHierarchy" parent="AccountGlobalSearch-orgHierarchy-parentBean"/>
@@ -876,7 +882,7 @@
               <dd:field attributeName="closed"/>
               <dd:field attributeName="accountTypeCode"/>
               <dd:field attributeName="subFundGroup.codeAndDescription"/>
-              <dd:field attributeName="extension.programCode"/>
+              <dd:field attributeName="extension.programCode"/>              
               <dd:field attributeName="extension.appropriationAccountNumber"/>
               <dd:field attributeName="accountsFringesBnftIndicator"/>
               <dd:field attributeName="reportsToChartOfAccountsCode"/>
@@ -997,6 +1003,7 @@
         <dd:field attributeName="useOrgHierarchy" defaultValue="N"/>
         <dd:field attributeName="accountTypeCode"/>
         <dd:field attributeName="subFundGroupCode"/>
+        <dd:field attributeName="extension.majorReportingCategoryCode"/>
         <dd:field attributeName="extension.programCode"/>
         <dd:field attributeName="extension.appropriationAccountNumber"/>
         <dd:field attributeName="accountFiscalOfficerUser.principalName"/>        
@@ -1011,6 +1018,7 @@
         <dd:field attributeName="organizationCode"/>
         <dd:field attributeName="accountTypeCode"/>
         <dd:field attributeName="subFundGroupCode"/>
+        <dd:field attributeName="extension.majorReportingCategoryCode"/>
         <dd:field attributeName="extension.programCode"/>
         <dd:field attributeName="extension.appropriationAccountNumber"/>
         <dd:field attributeName="accountFiscalOfficerUser.name" inquiry="force"/>    
