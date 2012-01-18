@@ -33,12 +33,14 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.coa.businessobject.SubObjectCode;
+import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.module.bc.BCConstants;
 import org.kuali.kfs.module.bc.BCKeyConstants;
 import org.kuali.kfs.module.bc.BCPropertyConstants;
 import org.kuali.kfs.module.bc.BCConstants.AccountSalarySettingOnlyCause;
 import org.kuali.kfs.module.bc.BCConstants.MonthSpreadDeleteType;
+import org.kuali.kfs.module.bc.CUBCKeyConstants;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionMonthly;
 import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionGeneralLedger;
 import org.kuali.kfs.module.bc.document.BudgetConstructionDocument;
@@ -52,6 +54,7 @@ import org.kuali.kfs.module.bc.document.validation.DeleteMonthlySpreadRule;
 import org.kuali.kfs.module.bc.document.validation.DeletePendingBudgetGeneralLedgerLineRule;
 import org.kuali.kfs.module.bc.document.validation.SaveMonthlyBudgetRule;
 import org.kuali.kfs.module.bc.util.BudgetParameterFinder;
+import org.kuali.kfs.module.ld.businessobject.LaborObject;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -72,6 +75,8 @@ import org.kuali.rice.kns.util.MessageMap;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.util.TypeUtils;
 
+import edu.cornell.kfs.module.ld.service.CULaborObjectService;
+
 public class BudgetConstructionDocumentRules extends TransactionalDocumentRuleBase implements AddBudgetConstructionDocumentRule<BudgetConstructionDocument>, AddPendingBudgetGeneralLedgerLineRule<BudgetConstructionDocument, PendingBudgetConstructionGeneralLedger>, DeletePendingBudgetGeneralLedgerLineRule<BudgetConstructionDocument, PendingBudgetConstructionGeneralLedger>, DeleteMonthlySpreadRule<BudgetConstructionDocument>, SaveMonthlyBudgetRule<BudgetConstructionDocument, BudgetConstructionMonthly> {
     protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(BudgetConstructionDocumentRules.class);
 
@@ -83,7 +88,9 @@ public class BudgetConstructionDocumentRules extends TransactionalDocumentRuleBa
     protected static SalarySettingService salarySettingService = SpringContext.getBean(SalarySettingService.class);
     protected static BusinessObjectService businessObjectService = SpringContext.getBean(BusinessObjectService.class);
     protected static FiscalYearFunctionControlService fiscalYearFunctionControlService = SpringContext.getBean(FiscalYearFunctionControlService.class);
-
+    protected static ObjectCodeService objectCodeService  = SpringContext.getBean(ObjectCodeService.class);
+    protected static CULaborObjectService cuLaborObjectService = SpringContext.getBean(CULaborObjectService.class);
+    
     protected List<String> revenueObjectTypesParamValues = BudgetParameterFinder.getRevenueObjectTypes();
     protected List<String> expenditureObjectTypesParamValues = BudgetParameterFinder.getExpenditureObjectTypes();
     protected List<String> budgetAggregationCodesParamValues = BudgetParameterFinder.getBudgetAggregationCodes();
@@ -245,6 +252,7 @@ public class BudgetConstructionDocumentRules extends TransactionalDocumentRuleBa
      * @param pendingBudgetConstructionGeneralLedger
      * @param isRevenue
      * @return
+     * ADD Button Clicked
      */
     public boolean processAddPendingBudgetGeneralLedgerLineRules(BudgetConstructionDocument budgetConstructionDocument, PendingBudgetConstructionGeneralLedger pendingBudgetConstructionGeneralLedger, boolean isRevenue) {
         LOG.debug("processAddPendingBudgetGeneralLedgerLineRules() start");
@@ -255,6 +263,22 @@ public class BudgetConstructionDocumentRules extends TransactionalDocumentRuleBa
 
         int originalErrorCount = errors.getErrorCount();
 
+        // Validate Object code is not Salary
+        
+        String chartCode 				= budgetConstructionDocument.getChartOfAccountsCode();
+        Integer universityFiscalYear 	= budgetConstructionDocument.getUniversityFiscalYear();
+        String financialObjectCode		= pendingBudgetConstructionGeneralLedger.getFinancialObjectCode();
+        
+        LaborObject  loborObjectCode = cuLaborObjectService.getByPrimaryKey(universityFiscalYear, chartCode, financialObjectCode);
+        
+        // The object code is a labor object Code. The object code subtype must be 'BU'
+        if(loborObjectCode != null){
+        	ObjectCode objectCode = objectCodeService.getByPrimaryId(universityFiscalYear, chartCode, financialObjectCode);	
+        	if(!objectCode.getFinancialObjectSubType().getFinancialObjectSubTypeCode().equalsIgnoreCase("BU")){
+        	   GlobalVariables.getMessageMap().putError(KFSPropertyConstants.FINANCIAL_OBJECT, CUBCKeyConstants.LABOR_OBJECT_CODE_NOT_ALLOWED,financialObjectCode );
+        	}
+        }
+        
         // validate primitives for required field and formatting checks
         getDictionaryValidationService().validateBusinessObject(pendingBudgetConstructionGeneralLedger);
 
