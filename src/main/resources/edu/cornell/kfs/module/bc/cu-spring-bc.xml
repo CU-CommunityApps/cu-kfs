@@ -82,11 +82,12 @@
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="annualRate" p:start="223" p:end="235" />
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="name" p:start="244" p:end="294" />
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="workMonths" p:start="294" p:end="297" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFamily" p:start="297" p:end="0" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFamily" p:start="297" p:end="303" />
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="compFreq" p:start="173" p:end="174" />
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuPlannedFTE" p:start="135" p:end="140" />
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFunction" p:start="152" p:end="155" />
      							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFunctionDesc" p:start="155" p:end="165" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="reHireDate" p:start="303" p:end="313" />
      						</list>
      					</property>
      				</bean>

@@ -48,6 +48,7 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
     protected String jobFunction;
     protected String jobFunctionDesc;
     protected String cuPlannedFTE;
+    protected String reHireDate;
 
     private List<PSPositionJobExtractAccountingInfo> csfAccountingInfoList;
     private List<PSPositionJobExtractAccountingInfo> posAccountingInfoList;
@@ -459,6 +460,7 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
         result = prime * result + ((csfAccountingInfoList == null) ? 0 : csfAccountingInfoList.hashCode());
         result = prime * result + ((cuAbbrFlag == null) ? 0 : cuAbbrFlag.hashCode());
         result = prime * result + ((cuPlannedFTE == null) ? 0 : cuPlannedFTE.hashCode());
+        result = prime * result + ((reHireDate == null) ? 0 : reHireDate.hashCode());
         result = prime * result + ((cuStateCert == null) ? 0 : cuStateCert.hashCode());
         result = prime * result + ((defaultObjectCode == null) ? 0 : defaultObjectCode.hashCode());
         result = prime * result + ((deleteStatus == null) ? 0 : deleteStatus.hashCode());
@@ -550,6 +552,11 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
             if (other.cuPlannedFTE != null)
                 return false;
         } else if (!cuPlannedFTE.equals(other.cuPlannedFTE))
+            return false;
+        if (reHireDate == null) {
+            if (other.reHireDate != null)
+                return false;
+        } else if (!reHireDate.equals(other.reHireDate))
             return false;
         if (cuStateCert == null) {
             if (other.cuStateCert != null)
@@ -735,6 +742,8 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
         builder.append(", ");
         builder.append(cuPlannedFTE);
         builder.append(", ");
+        builder.append(reHireDate);
+        builder.append(", ");
         builder.append(csfAccountingInfoList);
         builder.append(", ");
         builder.append(posAccountingInfoList);
@@ -772,6 +781,24 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
         }
 
         return result;
+    }
+
+    /**
+     * Gets the re-hire date
+     * 
+     * @return the re-hire date
+     */
+    public String getReHireDate() {
+        return reHireDate;
+    }
+
+    /**
+     * Sets the re-hire date.
+     * 
+     * @param reHireDate
+     */
+    public void setReHireDate(String reHireDate) {
+        this.reHireDate = reHireDate;
     }
 
 }

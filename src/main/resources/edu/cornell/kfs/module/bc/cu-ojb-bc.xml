@@ -32,6 +32,9 @@
 	    <field-descriptor name="annualRate" column="ANNL_RT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
 	    <field-descriptor name="employeeName" column="NAME" jdbc-type="VARCHAR" />
 	    <field-descriptor name="cuPlannedFTE" column="CU_PLANNED_FTE" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+	    <field-descriptor name="reHireDate" column="RE_HIRE_DT" jdbc-type="DATE" />
+	    <field-descriptor name="sipEligibility" column="SIP_ELIG_FLAG" jdbc-type="VARCHAR" />
+	    <field-descriptor name="employeeType" column="EMPL_TYP" jdbc-type="VARCHAR" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
 		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
 		

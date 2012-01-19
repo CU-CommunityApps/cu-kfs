@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.bc.businessobject;
 
+import java.sql.Date;
 import java.util.LinkedHashMap;
 
 import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
@@ -21,6 +22,9 @@ public class PSJobData extends PersistableBusinessObjectBase {
     protected KualiDecimal annualRate;
     protected String employeeName;
     protected KualiDecimal cuPlannedFTE;
+    protected Date reHireDate;
+    protected String sipEligibility;
+    protected String employeeType;
     protected CUBCConstants.PSEntryStatus status;
 
     protected PSPositionInfo positionInfo;
@@ -149,6 +153,30 @@ public class PSJobData extends PersistableBusinessObjectBase {
 
     public void setCuPlannedFTE(KualiDecimal cuPlannedFTE) {
         this.cuPlannedFTE = cuPlannedFTE;
+    }
+
+    public String getSipEligibility() {
+        return sipEligibility;
+    }
+
+    public void setSipEligibility(String sipEligibility) {
+        this.sipEligibility = sipEligibility;
+    }
+
+    public String getEmployeeType() {
+        return employeeType;
+    }
+
+    public void setEmployeeType(String employeeType) {
+        this.employeeType = employeeType;
+    }
+
+    public Date getReHireDate() {
+        return reHireDate;
+    }
+
+    public void setReHireDate(Date reHireDate) {
+        this.reHireDate = reHireDate;
     }
 
 }
