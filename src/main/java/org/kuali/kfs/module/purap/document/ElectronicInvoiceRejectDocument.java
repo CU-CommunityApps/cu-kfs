@@ -1976,11 +1976,11 @@ public class ElectronicInvoiceRejectDocument extends FinancialSystemTransactiona
     			String type = rejectReason.getInvoiceRejectReasonTypeCode();
     			String fileName = rejectReason.getInvoiceFileName();    			
     			while (reason.length() > maxLength) {
-    				ElectronicInvoiceRejectReason split = new ElectronicInvoiceRejectReason(type, fileName, reason.substring(0,maxLength), null);
+    				ElectronicInvoiceRejectReason split = new ElectronicInvoiceRejectReason(type, fileName, reason.substring(0,maxLength));
     				reason = reason.substring(400);
     				sanitized.add(split);
     			}
-				ElectronicInvoiceRejectReason split = new ElectronicInvoiceRejectReason(type, fileName, reason, null);
+				ElectronicInvoiceRejectReason split = new ElectronicInvoiceRejectReason(type, fileName, reason);
 				sanitized.add(split);
     		}
     		else {
