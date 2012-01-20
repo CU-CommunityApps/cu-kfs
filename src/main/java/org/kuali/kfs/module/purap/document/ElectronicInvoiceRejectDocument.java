@@ -1977,7 +1977,7 @@ public class ElectronicInvoiceRejectDocument extends FinancialSystemTransactiona
     			String fileName = rejectReason.getInvoiceFileName();    			
     			while (reason.length() > maxLength) {
     				ElectronicInvoiceRejectReason split = new ElectronicInvoiceRejectReason(type, fileName, reason.substring(0,maxLength));
-    				reason = reason.substring(400);
+    				reason = reason.substring(maxLength);
     				sanitized.add(split);
     			}
 				ElectronicInvoiceRejectReason split = new ElectronicInvoiceRejectReason(type, fileName, reason);
