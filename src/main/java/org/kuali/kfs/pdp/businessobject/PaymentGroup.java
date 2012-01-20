@@ -745,10 +745,10 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
     /**
      * @param string
      */
-    public void setCustomerInstitutionNumberAndAddress(String string) {
+    public void validateVendorIdAndCustomerInstitutionIdentifier() {
         BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
         Map<String, String> fieldValues = new HashMap();
-        fieldValues.put("vendorAddressGeneratedIdentifier", string);
+        fieldValues.put("vendorAddressGeneratedIdentifier", customerInstitutionNumber);
         String[] headerDetails = payeeId.split("-");
         fieldValues.put("vendorHeaderGeneratedIdentifier", headerDetails[0]/*payeeId*/);
         fieldValues.put("vendorDetailAssignedIdentifier", headerDetails[1]);
@@ -756,19 +756,27 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
         List addrs = (List)bos.findMatching(VendorAddress.class, fieldValues);
         if (addrs.size() == 1) {
         	VendorAddress addr = (VendorAddress) addrs.get(0);
-        	setCustomerInstitutionNumber(string);
-            setLine1Address(addr.getVendorLine1Address());
-            setLine2Address(addr.getVendorLine2Address());
-            setCity(addr.getVendorCityName());
-            setState(addr.getVendorState()!=null?addr.getVendorState().getPostalStateCode():"");
-            setZipCd(addr.getVendorZipCode());
-            setCountry(addr.getVendorCountry()!=null?addr.getVendorCountry().getPostalCountryName():"");
+        	setVendorAddress(addr);
         } else {
-        	throw new RuntimeException("Invalid Address [ "+string+" ] for payee [ "+payeeId + " ]");
+        	throw new RuntimeException("Invalid Address [ "+customerInstitutionNumber+" ] for payee [ "+payeeId + " ]");
             // Need to handle bad data.
         }
     }
 
+    /**
+     * Setter that takes in a VendorAddress and parses up the values to assign to the individual attributes in the PaymentGroup.
+     * 
+     * @param addr
+     */
+    public void setVendorAddress(VendorAddress addr) {
+        setLine1Address(addr.getVendorLine1Address());
+        setLine2Address(addr.getVendorLine2Address());
+        setCity(addr.getVendorCityName());
+        setState(addr.getVendorState()!=null?addr.getVendorState().getPostalStateCode():"");
+        setZipCd(addr.getVendorZipCode());
+        setCountry(addr.getVendorCountry()!=null?addr.getVendorCountry().getPostalCountryName():"");
+    }
+    
     /**
      * @param timestamp
      */
