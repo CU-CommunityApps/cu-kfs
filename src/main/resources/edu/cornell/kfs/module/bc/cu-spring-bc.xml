@@ -8,6 +8,9 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
+	<bean id="budgetConstructionSipDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.bc.document.dataaccess.impl.BudgetConstructionSipDaoJdbc">
+    </bean>
+    
 	<bean id="cu-bc" parent="bcModuleConfiguration-parentBean">
 		
 		<property name="packagePrefixes">
