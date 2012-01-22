@@ -275,7 +275,7 @@ public class BudgetConstructionDocumentRules extends TransactionalDocumentRuleBa
         if(loborObjectCode != null){
         	ObjectCode objectCode = objectCodeService.getByPrimaryId(universityFiscalYear, chartCode, financialObjectCode);	
         	if(!objectCode.getFinancialObjectSubType().getFinancialObjectSubTypeCode().equalsIgnoreCase("BU")){
-        	   GlobalVariables.getMessageMap().putError(KFSPropertyConstants.FINANCIAL_OBJECT, CUBCKeyConstants.LABOR_OBJECT_CODE_NOT_ALLOWED,financialObjectCode );
+        	   GlobalVariables.getMessageMap().putError(KFSPropertyConstants.FINANCIAL_OBJECT_CODE, CUBCKeyConstants.LABOR_OBJECT_CODE_NOT_ALLOWED,financialObjectCode );
         	}
         }
         

@@ -8,9 +8,9 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
+ 
 	<bean id="budgetConstructionSipDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.bc.document.dataaccess.impl.BudgetConstructionSipDaoJdbc">
     </bean>
-    
 	<bean id="cu-bc" parent="bcModuleConfiguration-parentBean">
 		
 		<property name="packagePrefixes">
@@ -27,6 +27,7 @@
 	 	<property name="dataDictionaryPackages">
 			<list merge="true">
                 <value>edu/cornell/kfs/module/bc/businessobject/datadictionary</value>
+                 <value>edu/cornell/kfs/module/bc/document/datadictionary</value>
 			</list>
 		</property>
 		
@@ -260,6 +261,19 @@
 		<property name="businessObjectService">
 			<ref bean="businessObjectService" />
 		</property>
+	</bean>
+
+
+
+	
+	<bean id="deptOrgCrosswalkDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.bc.dataaccess.impl.DeptOrgCrosswalkDaoJdbc">
+	</bean>
+
+	<bean id="deptOrgCrosswalkService"  class="edu.cornell.kfs.module.bc.service.impl.DeptOrgCrosswalkServiceImpl">
+		<property name="deptOrgCrosswalkDao">
+			<ref bean="deptOrgCrosswalkDao" />
+		</property>
+	
 	</bean>
 
 </beans>

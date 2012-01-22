@@ -55,4 +55,17 @@
 		
 	</class-descriptor>
 	
+	
+	<class-descriptor class="edu.cornell.kfs.module.bc.businessobject.DeptOrgCrosswalk" table="CU_LD_BCN_DEPT_ORG_T">
+		<field-descriptor name="hrDepartment" column="HR_DEPT" jdbc-type="VARCHAR" primarykey="true" index="true" />
+		<field-descriptor name="hrDepartmentName" column="HR_DEPT_NM" jdbc-type="VARCHAR" />
+		<field-descriptor name="orgCode" column="KFS_ORG_CD" jdbc-type="VARCHAR" />
+		<field-descriptor name="orgName" column="KFS_ORG_NM" jdbc-type="VARCHAR" />
+	    <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+		
+	</class-descriptor>
+	
+	
 </descriptor-repository>
