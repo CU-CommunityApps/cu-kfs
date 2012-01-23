@@ -200,6 +200,9 @@
 		</property>		
 	    <property name="dataDictionaryService">
 			<ref bean="dataDictionaryService" />
+		</property>	
+	    <property name="budgetConstructionSipDao">
+			<ref bean="budgetConstructionSipDao" />
 		</property>				
 	</bean>
 	
