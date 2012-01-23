@@ -15,7 +15,10 @@
  */
 package org.kuali.kfs.module.bc.document.service.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,13 +48,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.module.bc.CUBCPropertyConstants;
 
+import org.kuali.kfs.module.bc.document.dataaccess.BudgetConstructionOrganizationReportsDao;
+import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
+
+import edu.cornell.kfs.module.bc.document.dataaccess.BudgetConstructionSipDao;
+import edu.cornell.kfs.module.bc.document.dataaccess.impl.BudgetConstructionSipDaoJdbc.SIPExportData;
+
 /**
  * @see org.kuali.kfs.module.bc.document.service.ReportExportService
  */
 @Transactional
 public class ReportExportServiceImpl implements ReportExportService {
     ReportDumpDao reportDumpDao;
-    BusinessObjectService businessObjectService;
+    BudgetConstructionSipDao budgetConstructionSipDao;
+	BusinessObjectService businessObjectService;
     protected DataDictionaryService dataDictionaryService;
 
     /**
@@ -192,8 +203,72 @@ public class ReportExportServiceImpl implements ReportExportService {
 
         return results;
     }
+    
+    
+    public StringBuilder buildSIPExportDumpFile(String principalId, String fieldSeperator, String textDelimiter) {
+        // update account dump table
+        // updateAccountDump(principalId);
 
-    /**
+        StringBuilder results = new StringBuilder();
+        
+        // construct and append the header line
+        results.append(constructSIPExportHeaderLine(fieldSeperator));
+
+        Collection<SIPExportData> sipExportRecords = budgetConstructionSipDao.getSIPExtractByPersonUnivId(principalId);
+        
+        if (ObjectUtils.isNotNull(sipExportRecords))
+	        for (SIPExportData sipRecord : sipExportRecords) {
+	           results.append(this.constructSipDumpLine(sipRecord, fieldSeperator, textDelimiter));
+	        }
+        else
+        	results.append("An exception occurred in the Export.  Please review the log file.");
+        
+        //Returns results of the extract to the user via the browser.  If there was an error iin the Jdbc, then only the header record will be returned
+        return results;
+    }
+
+    private Object constructSipDumpLine(SIPExportData sipRecord,
+			String fieldSeperator, String textDelimiter) {
+		// Generate each line as a single String and return it
+        String line = "";
+        line = textDelimiter + sipRecord.getC_Level_Name() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getPOS_DEPTID() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getD_Level_Name() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getPOSITION_NBR() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getPOS_DESCR() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getEMPLID() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getPERSON_NM() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getSIP_Eligibility() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getSIP_Employee_Type() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getEMPL_RCD() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getJOBCODE() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getJOB_CD_DESC_SHRT() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getJOB_FAMILY() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getPOS_FTE() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getPOS_GRADE_DFLT() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getCU_STATE_CERT() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getANNL_RT() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getCOMP_RT() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getPOS_STD_HRS_DFLT() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getCOMP_FREQ() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getWRK_MNTHS() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getJOB_FUNC() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getJOB_FUNC_DESC() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getIncrease_To_Minimum() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getEquity() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getMerit() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getNote() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getDeferred() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getCU_ABBR_FLAG() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getLeave_Code() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getLeave_Description() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getLeave_Amount() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getIU_POSITION_TYPE() + textDelimiter + fieldSeperator;
+        line = line + "\r\n";
+    	return line;
+	}
+
+	/**
      * @see org.kuali.kfs.module.bc.document.service.ReportExportService#buildMonthlyDumpFile(java.lang.String, java.lang.String,
      *      java.lang.String) // read u_where %\ // (univ_fiscal_yr.ld_bcnstr_month_t = univ_fiscal_yr.ld_bcn_acct_dump_t & %\ //
      *      fin_coa_cd.ld_bcnstr_month_t = fin_coa_cd.ld_bcn_acct_dump_t & %\ // account_nbr.ld_bcnstr_month_t =
@@ -392,6 +467,7 @@ public class ReportExportServiceImpl implements ReportExportService {
         searchParameters.put(KFSPropertyConstants.KUALI_USER_PERSON_UNIVERSAL_IDENTIFIER, principalId);
 
         return new ArrayList<BudgetConstructionAccountDump>(this.businessObjectService.findMatching(BudgetConstructionAccountDump.class, searchParameters));
+
     }
 
     /**
@@ -675,6 +751,54 @@ public class ReportExportServiceImpl implements ReportExportService {
 
         return line;
     }
+    
+    /**
+     * Constructs a header line for the Funding Dump File
+     * 
+     * @param fieldSeperator
+     * 
+     * @return
+     */
+    protected String constructSIPExportHeaderLine(String fieldSeperator) {
+
+        String line = "";
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.UNITID + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.DEPTID + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.DEPT_NAME + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.POSITION_NBR + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.POSITION_DESC + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.EMPLID + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.PERSON_NAME + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.SIP_ELIGIBILITY + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.EMPLOYEE_TYPE + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.EMPL_RCD + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.JOBCODE + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.JOBCODE_SHORT_DESC + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.JOB_FAMILY + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.POS_FTE + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.POS_GRADE_DFLT + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.CU_STATE_CERT + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.ANNL_RT + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.COMP_RT + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.COMP_FREQ + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.POS_STD_HRS_DFLT + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.WORK_MONTHS + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.JOB_FUNC + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.JOB_FUNC_DESC + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.INCREASE_TO_MINIMUM + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.EQUITY + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.MERIT + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.NOTE + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.DEFERRED + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.CU_ABBR_FLAG + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.LEAVE_CODE + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.LEAVE_DESC + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.LEAVE_AMT + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.BGP_FLSA + fieldSeperator;
+        line = line + "\r\n";
+
+        return line;
+    }
 
     /**
      * Gets the dataDictionaryService.
@@ -685,5 +809,13 @@ public class ReportExportServiceImpl implements ReportExportService {
         this.dataDictionaryService = dataDictionaryService;
     }
 
+    public BudgetConstructionSipDao getBudgetConstructionSipDao() {
+		return budgetConstructionSipDao;
+	}
+
+	public void setBudgetConstructionSipDao(
+			BudgetConstructionSipDao budgetConstructionSipDao) {
+		this.budgetConstructionSipDao = budgetConstructionSipDao;
+	}
 }
 
