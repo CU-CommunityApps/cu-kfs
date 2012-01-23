@@ -1023,6 +1023,7 @@ public class KFSConstants extends JSTLConstants implements ParameterKeyConstants
         public final static String ACCOUNT_EXPORT_FILE_NAME = "account_export.txt";
         public final static String MONTHLY_EXPORT_FILE_NAME = "monthly_export.txt";
         public final static String FUNDING_EXPORT_FILE_NAME = "funding_export.txt";
+        public final static String SIP_EXPORT_FILE_NAME = "sip_export.txt";
     }
     
     public final static KualiInteger ONE_HUNDRED = new KualiInteger(100);
