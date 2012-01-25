@@ -154,6 +154,8 @@
 		</property>
     </bean>
 	
+	<bean id="psJobDataDao" parent="platformAwareDao" class="edu.cornell.kfs.module.bc.batch.dataaccess.impl.PSJobDataDaoOjb"/>
+    
 	<bean id="psBudgetFeedService" parent="psBudgetFeedService-parentBean"/>
 
     <bean id="psBudgetFeedService-parentBean" class="edu.cornell.kfs.module.bc.batch.service.impl.PSBudgetFeedServiceImpl" abstract="true">
@@ -168,6 +170,9 @@
 		<property name="parameterService" ref="parameterService" />
 		<property name="positionDataDao">
 			<ref bean="positionDataDao" />
+		</property>
+		<property name="psJobDataDao">
+			<ref bean="psJobDataDao" />
 		</property>
 	</bean>
 	
@@ -200,7 +205,7 @@
 		</property>		
 	    <property name="dataDictionaryService">
 			<ref bean="dataDictionaryService" />
-		</property>	
+		</property>				
 	    <property name="budgetConstructionSipDao">
 			<ref bean="budgetConstructionSipDao" />
 		</property>				

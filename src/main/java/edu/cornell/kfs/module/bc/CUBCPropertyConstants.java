@@ -130,6 +130,7 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
     public static final class PSJobDataProperties {
         public static final String POSITION_NBR = "positionNumber";
         public static final String EMPLID = "emplid";
+        public static final String EMPL_TYP = "employeeType";
     }
 
     public static final class PSJobCodeProperties {
