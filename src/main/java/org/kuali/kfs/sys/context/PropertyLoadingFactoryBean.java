@@ -99,7 +99,7 @@ public class PropertyLoadingFactoryBean implements FactoryBean {
         	props.put(KSB_REMOTING_URL_PROPERTY_NAME, props.getProperty(PropertyLoadingFactoryBean.APPLICATION_URL_KEY) + REMOTING_URL_SUFFIX);
         }
         else {
-        	props.put(KSB_REMOTING_URL_PROPERTY_NAME, new StringBuffer("http://").append(System.getProperty(HTTP_URL_PROPERTY_NAME)).append(props.getProperty(PropertyLoadingFactoryBean.ENVIRONMENT_KEY)).append(REMOTING_URL_SUFFIX).toString());
+        	props.put(KSB_REMOTING_URL_PROPERTY_NAME, new StringBuffer("http://").append(System.getProperty(HTTP_URL_PROPERTY_NAME)).append("/").append(props.getProperty(PropertyLoadingFactoryBean.ENVIRONMENT_KEY)).append(REMOTING_URL_SUFFIX).toString());
         }
         
         //printProperties(props);
