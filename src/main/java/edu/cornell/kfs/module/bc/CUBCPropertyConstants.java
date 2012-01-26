@@ -139,7 +139,7 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
     
     public static final class BudgetConstructionSIPExportProperties {
         public static final String UNITID = "UnitID";
-        public static final String HRDEPT = "HR Dept Id";
+        // public static final String HRDEPT = "HR Dept Id";
         public static final String DEPTID = "DeptID";
         public static final String DEPT_NAME = "Department Name";
         public static final String POSITION_NBR = "Position Nbr";
@@ -168,8 +168,8 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
         public static final String NOTE = "Note";
         public static final String DEFERRED = "Deferred";
         public static final String CU_ABBR_FLAG = "CU ABBR Flag";
-        public static final String APPT_TOT_INTND_AMT = "Job Planned Commit";
-        public static final String APPT_RQST_FTE_QTY = "Job Planned FTE";
+        // public static final String APPT_TOT_INTND_AMT = "Job Planned Commit";
+        // public static final String APPT_RQST_FTE_QTY = "Job Planned FTE";
         public static final String LEAVE_CODE = "Leave Code";
         public static final String LEAVE_DESC = "Leave Description";
         public static final String LEAVE_AMT = "Leave Amount";
