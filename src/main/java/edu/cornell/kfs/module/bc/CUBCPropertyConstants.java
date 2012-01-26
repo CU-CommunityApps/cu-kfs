@@ -139,6 +139,7 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
     
     public static final class BudgetConstructionSIPExportProperties {
         public static final String UNITID = "UnitID";
+        public static final String HRDEPT = "HR Dept Id";
         public static final String DEPTID = "DeptID";
         public static final String DEPT_NAME = "Department Name";
         public static final String POSITION_NBR = "Position Nbr";
@@ -146,18 +147,18 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
         public static final String EMPLID = "EmplID";
         public static final String PERSON_NAME = "Person Name";
         public static final String SIP_ELIGIBILITY = "SIP Eligible?";
-        public static final String EMPLOYEE_TYPE = "Employee Type";
+        public static final String EMPLOYEE_TYPE = "SIP Employee Type";
         public static final String EMPL_RCD = "Employee RCD";
         public static final String JOBCODE = "Job Code";
         public static final String JOBCODE_SHORT_DESC = "Job Code Short Desc";
         public static final String JOB_FAMILY = "Job Family";
-        public static final String POS_FTE = "Percent Time";
+        public static final String CU_PLANNED_FTE = "CU Planned FTE";
         public static final String POS_GRADE_DFLT = "Grade";
         public static final String CU_STATE_CERT = "CU State Cert?";
         public static final String ANNL_RT = "Annual Rate";
         public static final String COMP_RT = "Comp Rate";
         public static final String COMP_FREQ = "Comp Frequency";
-        public static final String POS_STD_HRS_DFLT = "Job Standard Hours";
+        public static final String JOB_STD_HRS = "Job Standard Hours";
         public static final String WORK_MONTHS = "Work Months";
         public static final String JOB_FUNC = "Job Function";
         public static final String JOB_FUNC_DESC = "Job Function Description";
@@ -167,6 +168,8 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
         public static final String NOTE = "Note";
         public static final String DEFERRED = "Deferred";
         public static final String CU_ABBR_FLAG = "CU ABBR Flag";
+        public static final String APPT_TOT_INTND_AMT = "Job Planned Commit";
+        public static final String APPT_RQST_FTE_QTY = "Job Planned FTE";
         public static final String LEAVE_CODE = "Leave Code";
         public static final String LEAVE_DESC = "Leave Description";
         public static final String LEAVE_AMT = "Leave Amount";

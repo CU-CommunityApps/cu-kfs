@@ -24,6 +24,7 @@ import static org.kuali.kfs.module.bc.BCConstants.Report.ReportSelectMode.OBJECT
 import static org.kuali.kfs.module.bc.BCConstants.Report.ReportSelectMode.REASON;
 import static org.kuali.kfs.module.bc.BCConstants.Report.ReportSelectMode.SUBFUND;
 import static org.kuali.kfs.module.bc.BCConstants.Report.ReportSelectMode.SIPEXPORT;
+import static org.kuali.kfs.module.bc.BCConstants.Report.ReportSelectMode.SIPEXPORTEXECUTIVES;
 
 import java.util.EnumSet;
 
@@ -51,7 +52,8 @@ public enum BudgetConstructionReportMode {
     ACCOUNT_EXPORT("AccountExport", PBGL, SUBFUND, true),
     MONTHLY_EXPORT("MonthlyExport", MONTH, SUBFUND, true),
     FUNDING_EXPORT("FundingExport", BCAF, SUBFUND, true),
-    SIP_EXPORT("SIPExport", SIP, SIPEXPORT, true);
+    SIP_EXPORT("SIPExport", SIP, SIPEXPORT, true),
+    SIP_EXPORT_EXECUTIVES("SIPExportExecutives", SIP, SIPEXPORTEXECUTIVES, true);
 
 
     public final String reportModeName;

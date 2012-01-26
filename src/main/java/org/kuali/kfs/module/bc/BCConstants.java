@@ -297,7 +297,7 @@ public class BCConstants extends JSTLConstants {
 
         // Represents the various reports criteria selections
         public enum ReportSelectMode {
-            ACCOUNT(), OBJECT_CODE(), SUBFUND(), REASON(), SIPEXPORT();
+            ACCOUNT(), OBJECT_CODE(), SUBFUND(), REASON(), SIPEXPORT(), SIPEXPORTEXECUTIVES();
         }
     }
 

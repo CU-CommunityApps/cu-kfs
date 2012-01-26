@@ -128,13 +128,24 @@ public class ReportExportAction extends BudgetConstructionImportExportAction {
                 
                 //  This gets called right after the user clicks on submit from the "tab-comma" selection screen right before the file is created and sent back to the browser.
             case SIP_EXPORT:
-                if (reportExportForm.isOrgReport()) {
-                    fileString = SpringContext.getBean(ReportExportService.class).buildSIPExportDumpFile(principalId, getFieldSeparator(reportExportForm), getTextFieldDelimiter(reportExportForm));
+            	if (reportExportForm.isOrgReport()) {
+                    fileString = SpringContext.getBean(ReportExportService.class).buildSIPExportDumpFile(principalId, getFieldSeparator(reportExportForm), getTextFieldDelimiter(reportExportForm), false);
                 } else {
-                    fileString = SpringContext.getBean(ReportExportService.class).buildSIPExportDumpFile(principalId, getFieldSeparator(reportExportForm), getTextFieldDelimiter(reportExportForm));
+                    fileString = SpringContext.getBean(ReportExportService.class).buildSIPExportDumpFile(principalId, getFieldSeparator(reportExportForm), getTextFieldDelimiter(reportExportForm), false);
                 }
                 
                 fileName = ReportGeneration.SIP_EXPORT_FILE_NAME;
+            	break;
+            	
+                //  This gets called right after the user clicks on submit from the "tab-comma" selection screen right before the file is created and sent back to the browser.
+            case SIP_EXPORT_EXECUTIVES:
+            	if (reportExportForm.isOrgReport()) {
+                    fileString = SpringContext.getBean(ReportExportService.class).buildSIPExportDumpFile(principalId, getFieldSeparator(reportExportForm), getTextFieldDelimiter(reportExportForm), true);
+                } else {
+                    fileString = SpringContext.getBean(ReportExportService.class).buildSIPExportDumpFile(principalId, getFieldSeparator(reportExportForm), getTextFieldDelimiter(reportExportForm), true);
+                }
+                
+                fileName = ReportGeneration.SIP_EXPORT_FILE_NAME_EXECUTIVES;
             	break;
         }
 
@@ -146,7 +157,7 @@ public class ReportExportAction extends BudgetConstructionImportExportAction {
         }
         else {
             // stream text file back
-            baos.write(fileString.toString().getBytes());
+            baos.write(fileString.toString().replaceAll("\"null\"","").getBytes());
             WebUtils.saveMimeOutputStreamAsFile(response, ReportGeneration.TEXT_MIME_TYPE, baos, fileName);
         }
 
