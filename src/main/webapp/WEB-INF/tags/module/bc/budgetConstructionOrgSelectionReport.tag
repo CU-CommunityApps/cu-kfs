@@ -168,6 +168,7 @@
                 </td>
                 <td>Monthly Budget Export</td>
               </tr>
+              <c:if test="${KualiForm.hideSipExportButton}">
               <tr>
                 <td>
                   <div align="center">
@@ -176,6 +177,17 @@
                 </td>
                 <td>SIP Export</td>
               </tr>
+              </c:if>
+              <c:if test="${KualiForm.hideSipExportExecutivesButton}">
+              <tr>
+                <td>
+                  <div align="center">
+                    <html:image property="methodToCall.performReport.(((SIPExportExecutives)))" src="${ConfigProperties.externalizable.images.url}tinybutton-view.gif" title="SIP Export" alt="SIP Export" styleClass="tinybutton" />
+                  </div>
+                </td>
+                <td>SIP Export For Executives</td>
+              </tr>
+              </c:if>
             </div>
        </table>
     </div>

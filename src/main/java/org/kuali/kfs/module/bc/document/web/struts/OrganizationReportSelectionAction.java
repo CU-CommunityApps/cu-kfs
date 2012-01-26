@@ -108,6 +108,12 @@ public class OrganizationReportSelectionAction extends BudgetExpansionAction {
             String exportUrl = this.buildReportExportForwardURL(organizationReportSelectionForm, mapping);
             return new ActionForward(exportUrl, true);
         }
+        
+        // SIP Export For Executives Only - takes the user to the eDoc to decide on comma or tab separated file and whether text should be quoted.
+        if (ReportSelectMode.SIPEXPORTEXECUTIVES.equals(reportMode.reportSelectMode)) {
+            String exportUrl = this.buildReportExportForwardURL(organizationReportSelectionForm, mapping);
+            return new ActionForward(exportUrl, true);
+        }
 
         // a few reports go just against the account control table, therefore we are ready to run the report
         if (ReportSelectMode.ACCOUNT.equals(reportMode.reportSelectMode)) {

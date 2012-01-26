@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 import edu.cornell.kfs.module.bc.CUBCConstants;
 import edu.cornell.kfs.module.bc.CUBCConstants.StatusFlag;
 import edu.cornell.kfs.module.bc.CUBCPropertyConstants;
+import edu.cornell.kfs.module.bc.batch.dataaccess.PSJobDataDao;
 import edu.cornell.kfs.module.bc.batch.dataaccess.PSPositionDataDao;
 import edu.cornell.kfs.module.bc.batch.service.PSBudgetFeedService;
 import edu.cornell.kfs.module.bc.businessobject.PSJobCode;
@@ -65,30 +67,35 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
     protected DictionaryValidationService dictionaryValidationService;
     protected ParameterService parameterService;
     protected PSPositionDataDao positionDataDao;
+    protected PSJobDataDao psJobDataDao;
 
     /**
      * @see edu.cornell.kfs.module.bc.batch.service.PSBudgetFeedService#populateCSFTracker(java.lang.String)
      */
     public boolean loadBCDataFromPS(String fileName, String currentFileName, boolean startFresh) {
 
+        LOG.info("\n Processing .done file: " + fileName + " and .current file: " + currentFileName + "\n");
+
         // if no current file treat as if we are starting fresh
         if (currentFileName == null) {
             startFresh = true;
         }
 
+        LOG.info("\n Reading PS extract entries. \n");
         // read the data from the PS extract
         List<PSPositionJobExtractEntry> psPositionJobExtractEntries = readPSExtractFileContents(fileName);
 
         if (psPositionJobExtractEntries == null) {
-            LOG.info("No entries in the input file");
+            LOG.info("No entries in the input file \n");
             return true;
         }
 
-        // filter only updated entries from last run
+        LOG.info("\n Filtering only entries that have changed since last run. \n");
         //for better performance look for the last successful file so that we can compare with that
         Collection<PSPositionJobExtractEntry> filteredPsPositionJobExtractEntries = filterEntriesToUpdate(
                 currentFileName, psPositionJobExtractEntries, startFresh);
 
+        LOG.info("\n Validating entries. \n");
         // validate entries to load
         Collection<PSPositionJobExtractEntry> validCsfTackerEntries = validateEntriesForCSFTracker(filteredPsPositionJobExtractEntries);
 
@@ -98,10 +105,16 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
         Map<String, PSJobData> jobInfoMap = new HashMap<String, PSJobData>();
         Map<String, PSJobCode> jobCodeMap = new HashMap<String, PSJobCode>();
 
+        LOG.info("\n Generating CalculatedSalaryFoundationTracker, PSPositionInfo, PSJobData and PSJobCode entries from the valid PSPositionJobExtractEntry list. \n");
         generateNewEntriesToLoadInTheDB(validCsfTackerEntries, entriesToLoad, positionInfoMap, jobInfoMap, jobCodeMap);
 
+        LOG.info("\n Loading data in the database. \n");
         // load data in the DB
         loadDataInDB(startFresh, entriesToLoad, positionInfoMap, jobInfoMap, jobCodeMap);
+
+        LOG.info("\n Updating the executives based on the SIP_EXECUTIVES param. \n");
+        //update the executives based on the SIP_EXECUTIVES param
+        updateTheSipEligibility(psPositionJobExtractEntries);
 
         return true;
 
@@ -194,6 +207,10 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                             newEntriesMap.put(extractEntry.getKey(), extractEntry);
                         }
 
+                        // log entries that changed 
+                        StringBuffer newChangedlogInfo = new StringBuffer();
+                        newChangedlogInfo.append("\n Changed/New entries in the new file:\n");
+
                         // filter entries
                         for (String key : newEntriesMap.keySet()) {
 
@@ -244,6 +261,8 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                                     //add to update list
                                     filteredEntries.add(newEntry);
 
+                                    newChangedlogInfo.append(newEntry.toString() + "\n");
+
                                 }
                                 currentEntriesMap.remove(key);
                             } else {
@@ -253,14 +272,26 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                                 newEntry.changeStatus = StatusFlag.NEW;
 
                                 filteredEntries.add(newEntry);
+
+                                newChangedlogInfo.append(newEntry.toString() + "\n");
                             }
 
                         }
 
+                        LOG.info(newChangedlogInfo.toString());
+
+                        StringBuffer deletedLogInfo = new StringBuffer();
+
+                        deletedLogInfo
+                                .append("\n Entries that existed in the old file but don't exist in the new file:\n");
+
                         // add whatever is left in the currententryMap to the toDelete list
                         for (PSPositionJobExtractEntry entry : currentEntriesMap.values()) {
                             entry.deleteStatus = CUBCConstants.PSEntryStatus.DELETE;
+                            deletedLogInfo.append(entry.toString() + "\n");
                         }
+                        LOG.info(deletedLogInfo.toString());
+
                         filteredEntries.addAll(currentEntriesMap.values());
                     }
 
@@ -380,12 +411,12 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             valid &= validatePosition(extractEntry.getPositionNumber());
 
             if (!valid) {
-                warningMessage.append("Invalid position number: " + extractEntry.getPositionNumber() + "; ");
+                warningMessage.append("Invalid position number: " + extractEntry.getPositionNumber() + "\n");
                 continue;
             }
             valid &= validateCSFAmount(extractEntry.getAnnualRate());
             if (!valid) {
-                warningMessage.append("Invalid csf Amount: " + extractEntry.getAnnualRate() + "; ");
+                warningMessage.append("Invalid csf Amount: " + extractEntry.getAnnualRate() + "\n");
                 continue;
             }
 
@@ -417,7 +448,10 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             if (valid) {
                 validEntries.add(extractEntry);
             } else {
-                LOG.warn(warningMessage.toString() + " for " + extractEntry.toString());
+                LOG.warn("\n Invalid entry for position number: " + extractEntry.getPositionNumber()
+                        + " and employee ID: " + extractEntry.getEmplid() + "\n" +
+                        "Errors found: " + warningMessage.toString() + "\n");
+
             }
 
         }
@@ -441,51 +475,51 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
         StringBuffer warningMessage = new StringBuffer();
 
         if (StringUtils.isNotBlank(accountingInfo.getCsfTimePercent())) {
-            valid &= validateTimePercent(accountingInfo.getCsfTimePercent());
+            valid = validateTimePercent(accountingInfo.getCsfTimePercent());
             if (!valid) {
-                warningMessage.append("Invalid time percent " + accountingInfo.getCsfTimePercent() + "; ");
+                warningMessage.append("Invalid time percent " + accountingInfo.getCsfTimePercent() + "\n");
             }
-            valid &= validateAccount(accountingInfo.getChartOfAccountsCode(),
+            valid = validateAccount(accountingInfo.getChartOfAccountsCode(),
                     accountingInfo.getAccountNumber());
             if (!valid) {
                 warningMessage.append("Invalid Account: " + accountingInfo.getChartOfAccountsCode() + ","
-                        + accountingInfo.getAccountNumber() + "; ");
+                        + accountingInfo.getAccountNumber() + "\n");
             }
             if (StringUtils.isNotBlank(accountingInfo.getSubAccountNumber())) {
-                valid &= validateSubAccount(accountingInfo.getChartOfAccountsCode(),
+                valid = validateSubAccount(accountingInfo.getChartOfAccountsCode(),
                         accountingInfo.getAccountNumber(),
                         accountingInfo.getSubAccountNumber());
                 if (!valid) {
                     warningMessage.append("Invalid Sub Account: " + accountingInfo.getChartOfAccountsCode() + ","
                             + accountingInfo.getAccountNumber() + ","
                             + accountingInfo.getSubAccountNumber()
-                            + "; ");
+                            + "\n");
                 }
             }
 
-            valid &= validateLaborObject(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
+            valid = validateLaborObject(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
                     accountingInfo.getFinancialObjectCode());
             if (!valid) {
                 warningMessage.append("Invalid Labor Object: " + universityFiscalYear + ","
                         + accountingInfo.getChartOfAccountsCode() + ","
-                        + accountingInfo.getFinancialObjectCode() + "; ");
+                        + accountingInfo.getFinancialObjectCode() + "\n");
             }
-            valid &= validateObjectCode(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
+            valid = validateObjectCode(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
                     accountingInfo.getFinancialObjectCode());
             if (!valid) {
                 warningMessage.append("Invalid Object Code: " + universityFiscalYear + ","
                         + accountingInfo.getChartOfAccountsCode() + ","
-                        + accountingInfo.getFinancialObjectCode() + "; ");
+                        + accountingInfo.getFinancialObjectCode() + "\n");
             }
 
             if (StringUtils.isNotBlank(accountingInfo.getFinancialSubObjectCode())) {
-                valid &= validateSubObject(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
+                valid = validateSubObject(universityFiscalYear, accountingInfo.getChartOfAccountsCode(),
                         accountingInfo.getAccountNumber(), accountingInfo.getFinancialObjectCode(),
                         accountingInfo.getFinancialSubObjectCode());
                 if (!valid) {
                     warningMessage.append("Invalid Sub Object Code: " + universityFiscalYear + ","
                             + accountingInfo.getChartOfAccountsCode() + ","
-                            + accountingInfo.getFinancialObjectCode() + "; ");
+                            + accountingInfo.getFinancialObjectCode() + "\n");
                 }
             }
         }
@@ -748,6 +782,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
 
             }
         }
+
         // if there are no accounting strings at the job level get the info from the position level
         else {
             if (psPositionJobExtractEntry
@@ -975,7 +1010,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                     reHireDate = dateTimeService.convertToSqlDate(positionRehireDate);
                 } else {
                     LOG.error("Invalid re-hire date for position:" + psPositionJobExtractEntry.getPositionNumber()
-                            + " and emplid:" + psPositionJobExtractEntry.getEmplid());
+                            + " and emplid:" + psPositionJobExtractEntry.getEmplid() + "\n");
                 }
             }
         } catch (ParseException e) {
@@ -1009,7 +1044,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                 sipEligibility = CUBCConstants.SIPEligibility.YES;
             }
         } catch (ParseException e) {
-            LOG.warn("Unable to create March 1st date!");
+            LOG.warn("Unable to create March 1st date!\n");
         }
 
         return sipEligibility;
@@ -1274,6 +1309,8 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                     keyFields.put(CUBCPropertyConstants.CalculateSalaryFoundationTrackerProperties.POSITION_NBR,
                             entry.getPositionNumber());
 
+                    LOG.info("\n Deleting entry: " + toStringCSFTracker(entry));
+
                     businessObjectService.deleteMatching(CalculatedSalaryFoundationTracker.class, keyFields);
 
                 } else {
@@ -1290,9 +1327,24 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                 if (ObjectUtils.isNotNull(retrievedEntry)) {
                     entry.setVersionNumber(retrievedEntry.getVersionNumber());
                 }
+                LOG.info("\n Adding entry: " + toStringCSFTracker(entry));
                 businessObjectService.save(entry);
             }
         }
+    }
+
+    private String toStringCSFTracker(CalculatedSalaryFoundationTracker entry) {
+        StringBuffer stringRepresentation = new StringBuffer();
+        stringRepresentation.append("\n CSF Tracker entry:");
+        stringRepresentation.append("\n Position number: " + entry.getPositionNumber());
+        stringRepresentation.append("\n Emplid: " + entry.getEmplid());
+        stringRepresentation.append("\n University fiscal year: " + entry.getUniversityFiscalYear());
+        stringRepresentation.append("\n Chart: " + entry.getChartOfAccountsCode());
+        stringRepresentation.append("\n Acoount Number: " + entry.getAccountNumber());
+        stringRepresentation.append("\n Sub Account Number: " + entry.getSubAccountNumber());
+        stringRepresentation.append("\n Object Code: " + entry.getFinancialObjectCode());
+        stringRepresentation.append("\n Financial Sub Object Code: " + entry.getFinancialSubObjectCode());
+        return stringRepresentation.toString();
     }
 
     /**
@@ -1411,9 +1463,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                               .deleteMatching(PSJobCode.class, keyFields);
                 } else {
                     psJobCodeEntriesForAddOrUpdate.add(entry);
-
                 }
-
             }
 
             // do the add/update now
@@ -1426,6 +1476,64 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                 businessObjectService.save(entry);
             }
         }
+    }
+
+    /**
+     * Set the executives based on the SIP_EXECUTIVES parameter
+     * 
+     */
+    protected void updateTheSipEligibility(List<PSPositionJobExtractEntry> psPositionJobExtractEntries) {
+
+        // if position number is SIP_EXECUTIVES param values then empl type is Z = Executives
+        List<String> sipExecutives = CUBudgetParameterFinder.getSIPExecutives();
+        List<PSJobData> dataToUpdate = new ArrayList<PSJobData>();
+
+        //build hash map for new entries
+        Map<String, PSPositionJobExtractEntry> newEntriesMap = new HashMap<String, PSPositionJobExtractEntry>();
+        for (PSPositionJobExtractEntry extractEntry : psPositionJobExtractEntries) {
+            newEntriesMap.put(extractEntry.getKey(), extractEntry);
+        }
+
+        // get all jobs that are set as executives and generate employee type; in case someone was an executive and is not anymore it should set it the correct empl type
+
+        List<PSJobData> existingExecutives = (List<PSJobData>) psJobDataDao.getExistingExecutives();
+        List<String> existingExecutivesPositionNbrs = new ArrayList<String>();
+
+        for (PSJobData jobData : existingExecutives) {
+            existingExecutivesPositionNbrs.add(jobData.getPositionNumber());
+        }
+
+        for (PSJobData executive : existingExecutives) {
+            //if not an executive anymore generate the empl type
+            if (!sipExecutives.contains(executive.getPositionNumber())) {
+                PSPositionJobExtractEntry psPositionJobExtractEntry = newEntriesMap.get(executive.getPositionNumber()
+                        + executive.getEmplid());
+                String employeeType = generateEmployeeType(psPositionJobExtractEntry);
+                executive.setEmployeeType(employeeType);
+                dataToUpdate.add(executive);
+            }
+        }
+
+        if (dataToUpdate != null && dataToUpdate.size() > 0) {
+            businessObjectService.save(dataToUpdate);
+
+            dataToUpdate.clear();
+        }
+
+        // set as executives only those in the SIP_EXECUTIVES param
+
+        List<PSJobData> psJobDataEntries = (List<PSJobData>) psJobDataDao
+                .getPSJobDataEntriesByPositionNumbers(sipExecutives);
+
+        for (PSJobData jobDataEntry : psJobDataEntries) {
+            if (Collections.binarySearch(existingExecutivesPositionNbrs, jobDataEntry.getPositionNumber()) < 0) {
+                jobDataEntry.setEmployeeType(CUBCConstants.EmployeeType.EXECUTIVES);
+                dataToUpdate.add(jobDataEntry);
+            }
+        }
+
+        businessObjectService.save(dataToUpdate);
+
     }
 
     /**
@@ -1500,12 +1608,40 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
         this.psBudgetFeedFlatInputFileType = psBudgetFeedFlatInputFileType;
     }
 
+    /**
+     * Gets the positionDataDao.
+     * 
+     * @return positionDataDao
+     */
     public PSPositionDataDao getPositionDataDao() {
         return positionDataDao;
     }
 
+    /**
+     * Sets the positionDataDao.
+     * 
+     * @param positionDataDao
+     */
     public void setPositionDataDao(PSPositionDataDao positionDataDao) {
         this.positionDataDao = positionDataDao;
+    }
+
+    /**
+     * Gets the psJobDataDao.
+     * 
+     * @return psJobDataDao
+     */
+    public PSJobDataDao getPsJobDataDao() {
+        return psJobDataDao;
+    }
+
+    /**
+     * Sets the psJobDataDao.
+     * 
+     * @param psJobDataDao
+     */
+    public void setPsJobDataDao(PSJobDataDao psJobDataDao) {
+        this.psJobDataDao = psJobDataDao;
     }
 
 }

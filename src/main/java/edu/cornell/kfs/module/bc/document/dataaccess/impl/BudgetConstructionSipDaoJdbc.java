@@ -17,7 +17,7 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
 		
 	}
 
-    public Collection<SIPExportData> getSIPExtractByPersonUnivId(String univId) {
+    public Collection<SIPExportData> getSIPExtractByPersonUnivId(String univId, boolean bExecutivesOnly) {
        
         try {
         	// Build the SQL
@@ -27,43 +27,45 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
 	        sqlBuilder.append("from ca_org_t where org_typ_cd='C' and ROWNUM=1 ");
 	        sqlBuilder.append("start with org_cd=substr(t2.pos_deptid,4) ");
 	        sqlBuilder.append("connect by prior rpts_to_org_cd = org_cd and rpts_to_org_cd not in ('UNIV')) \"C_Level_Name\", ");
+	        // sqlBuilder.append("t13.DEPTID,");
 	        sqlBuilder.append("t2.pos_deptid,");
-	        sqlBuilder.append("( select org_nm ");
-	        sqlBuilder.append("from ca_org_t where org_typ_cd='D' and ROWNUM=1 ");
+	        sqlBuilder.append("( select org_nm from ca_org_t where org_typ_cd='D' and ROWNUM=1 ");
 	        sqlBuilder.append("start with org_cd=substr(t2.pos_deptid,4) ");
 	        sqlBuilder.append("connect by prior rpts_to_org_cd = org_cd and rpts_to_org_cd not in ('UNIV')) \"D_Level_Name\", ");
-	        sqlBuilder.append("t2.POSITION_NBR,");
-	        sqlBuilder.append("t2.POS_DESCR,");
-	        sqlBuilder.append("t1.EMPLID,");
-	        sqlBuilder.append("t5.PERSON_NM,");
-	        sqlBuilder.append("t6.SIP_ELIG_FLAG \"SIP_Eligibility\",");
-	        sqlBuilder.append("t6.empl_typ \"SIP_Employee_Type\",");
-	        sqlBuilder.append("t6.EMPL_RCD,");
-	        sqlBuilder.append("t2.JOBCODE,");
-	        sqlBuilder.append("t8.JOB_CD_DESC_SHRT,");
-	        sqlBuilder.append("t8.JOB_FAMILY,");
-	        sqlBuilder.append("t2.POS_FTE,");
-	        sqlBuilder.append("t2.POS_GRADE_DFLT,");
-	        sqlBuilder.append("t7.CU_STATE_CERT,");
+	        sqlBuilder.append("t2.POSITION_NBR, ");
+	        sqlBuilder.append("t2.POS_DESCR, ");
+	        sqlBuilder.append("t1.EMPLID, ");
+	        sqlBuilder.append("t5.PERSON_NM, ");
+	        sqlBuilder.append("t6.SIP_ELIG_FLAG \"SIP_Eligibility\", ");
+	        sqlBuilder.append("t6.empl_typ \"SIP_Employee_Type\", ");
+	        sqlBuilder.append("t6.EMPL_RCD, ");
+	        sqlBuilder.append("t2.JOBCODE, ");
+	        sqlBuilder.append("t8.JOB_CD_DESC_SHRT, ");
+	        sqlBuilder.append("t8.JOB_FAMILY, ");
+	        sqlBuilder.append("t6.CU_PLANNED_FTE, ");
+	        sqlBuilder.append("t2.POS_GRADE_DFLT, ");
+	        sqlBuilder.append("t7.CU_STATE_CERT, ");
 	        sqlBuilder.append("t6.ANNL_RT,");
 	        sqlBuilder.append("t6.COMP_RT,");
 	        sqlBuilder.append("t8.COMP_FREQ,");
-	        sqlBuilder.append("t2.POS_STD_HRS_DFLT,");
+	        sqlBuilder.append("t6.JOB_STD_HRS,");
 	        sqlBuilder.append("T7.WRK_MNTHS,");
 	        sqlBuilder.append("t8.JOB_FUNC,");
 	        sqlBuilder.append("t8.JOB_FUNC_DESC,");
-	        sqlBuilder.append("'' \"Increase_To_Minimum\",");
-	        sqlBuilder.append("'' \"Equity\",");
-	        sqlBuilder.append("'' \"Merit\",");
+	        sqlBuilder.append("'0' \"Increase_To_Minimum\",");
+	        sqlBuilder.append("'0' \"Equity\",");
+	        sqlBuilder.append("'0' \"Merit\",");
 	        sqlBuilder.append("'' \"Note\",");
-	        sqlBuilder.append("'' \"Deferred\",");
+	        sqlBuilder.append("'0' \"Deferred\",");
 	        sqlBuilder.append("t6.CU_ABBR_FLAG,");
+	        // sqlBuilder.append("t1.APPT_TOT_INTND_AMT,");
+	        // sqlBuilder.append("t1.APPT_RQST_FTE_QTY,");
 	        sqlBuilder.append("t1.APPT_FND_DUR_CD \"Leave_Code\",");
 	        sqlBuilder.append("t10.APPT_DUR_DESC \"Leave_Description\",");
 	        sqlBuilder.append("t1.APPT_RQST_CSF_AMT \"Leave_Amount\",");
 	        sqlBuilder.append("t2.IU_POSITION_TYPE ");
 	        sqlBuilder.append("from ");
-	        sqlBuilder.append("( select org_cd  ");
+	        sqlBuilder.append("( select distinct org_cd  ");
 	        sqlBuilder.append("from ca_org_t  ");
 	        // Next line contains the parameter for the universal id
 	        sqlBuilder.append("start with org_cd in (select distinct(SEL_ORG_CD) from ld_bcn_ctrl_list_t where person_unvl_id = ?)  ");
@@ -74,18 +76,26 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
 	        sqlBuilder.append("  LD_PNDBC_APPTFND_T.position_nbr,   ");
 	        sqlBuilder.append("  LD_PNDBC_APPTFND_T.emplid,   ");
 	        sqlBuilder.append("  LD_PNDBC_APPTFND_T.APPT_FND_DUR_CD,  ");
-	        sqlBuilder.append("  LD_PNDBC_APPTFND_T.APPT_RQST_CSF_AMT from LD_PNDBC_APPTFND_T) t1 on t1.position_nbr=t2.position_nbr  ");
+	        sqlBuilder.append("  LD_PNDBC_APPTFND_T.APPT_RQST_CSF_AMT  ");
+	        // sqlBuilder.append("  LD_PNDBC_APPTFND_T.APPT_TOT_INTND_AMT, LD_PNDBC_APPTFND_T.APPT_RQST_FTE_QTY");
+	        sqlBuilder.append("from LD_PNDBC_APPTFND_T) t1 on t1.position_nbr=t2.position_nbr  ");
 	        sqlBuilder.append("left join CU_PS_JOB_DATA t11 on t1.POSITION_NBR=t11.POS_NBR and t1.EMPLID=t11.EMPLID  ");
 	        sqlBuilder.append("left join LD_BCN_DURATION_T t10 on t1.APPT_FND_DUR_CD = t10.APPT_DUR_CD  ");
 	        sqlBuilder.append("left join LD_BCN_AF_REASON_T t3 on t3.POSITION_NBR=t1.POSITION_NBR and T3.EMPLID=T1.EMPLID  ");
 	        sqlBuilder.append("left join LD_BCN_AF_RSN_CD_T t4 on t4.APPT_FND_REASON_CD=T3.APPT_FND_REASON_CD  ");
 	        sqlBuilder.append("left join LD_BCN_INTINCBNT_T t5 on T5.EMPLID=t1.emplid  ");
 	        sqlBuilder.append("left join CU_PS_JOB_DATA t6 on t6.pos_nbr=t1.position_nbr and t6.emplid=t1.emplid  ");
+	        // sqlBuilder.append("left join PS_POSITION_DATA t13 on t13.POSITION_NBR=t1.position_nbr  ");
 	        sqlBuilder.append("left join CU_PS_POSITION_EXTRA t7 on t7.pos_nbr=t1.position_nbr  ");
 	        sqlBuilder.append("left join CU_PS_JOB_CD t8 on t8.job_cd=t7.job_cd  ");
 	        sqlBuilder.append("where  ");
-	        sqlBuilder.append("t1.univ_fiscal_yr=t2.univ_fiscal_yr and   ");
-	        sqlBuilder.append("t1.emplid<>'VACANT' and (t6.SIP_ELIG_FLAG is null or T6.SIP_ELIG_FLAG='Y') and (t6.empl_typ is null or t6.empl_typ not in ('Z'))  ");
+	        sqlBuilder.append("t1.univ_fiscal_yr=t2.univ_fiscal_yr and t1.emplid<>'VACANT' and t6.SIP_ELIG_FLAG='Y' and ");
+	        // If the user selected executives only
+	        if (bExecutivesOnly)
+	        	sqlBuilder.append("t6.empl_typ in ('Z')  ");
+	        else
+	        	sqlBuilder.append("t6.empl_typ not in ('Z')  ");
+	        
 	        sqlBuilder.append("order by  ");
 	        sqlBuilder.append("\"C_Level_Name\",  ");
 	        sqlBuilder.append("t2.pos_deptid,  ");
@@ -97,7 +107,8 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
 	        ParameterizedRowMapper<SIPExportData> mapper = new ParameterizedRowMapper<SIPExportData>() {
 	            public SIPExportData mapRow(ResultSet rs, int rowNum) throws SQLException {
 	            	SIPExportData sipExportData = new SIPExportData();
-	            	sipExportData.setC_Level_Name(rs.getString("C_Level_Name"));
+	            	sipExportData.setC_Level_Name(rs.getString("C_Level_Name"));  //
+	            	// sipExportData.setPOS_DEPTID(rs.getString("DEPTID"));
 	            	sipExportData.setPOS_DEPTID(rs.getString("POS_DEPTID"));
 	            	sipExportData.setD_Level_Name(rs.getString("D_Level_Name"));
 	            	sipExportData.setPOSITION_NBR(rs.getString("POSITION_NBR"));
@@ -110,12 +121,12 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
 	            	sipExportData.setJOBCODE(rs.getString("JOBCODE"));
 	            	sipExportData.setJOB_CD_DESC_SHRT(rs.getString("JOB_CD_DESC_SHRT"));
 	            	sipExportData.setJOB_FAMILY(rs.getString("JOB_FAMILY"));
-	            	sipExportData.setPOS_FTE(rs.getString("POS_FTE"));
+	            	sipExportData.setCU_PLANNED_FTE(rs.getString("CU_PLANNED_FTE"));
 	            	sipExportData.setPOS_GRADE_DFLT(rs.getString("POS_GRADE_DFLT"));
 	            	sipExportData.setCU_STATE_CERT(rs.getString("CU_STATE_CERT"));
 	            	sipExportData.setANNL_RT(rs.getString("ANNL_RT"));
 	            	sipExportData.setCOMP_RT(rs.getString("COMP_RT"));
-	            	sipExportData.setPOS_STD_HRS_DFLT(rs.getString("POS_STD_HRS_DFLT"));
+	            	sipExportData.setJOB_STD_HRS(rs.getString("JOB_STD_HRS"));
 	            	sipExportData.setCOMP_FREQ(rs.getString("COMP_FREQ"));
 	            	sipExportData.setWRK_MNTHS(rs.getString("WRK_MNTHS"));
 	            	sipExportData.setJOB_FUNC(rs.getString("JOB_FUNC"));
@@ -126,6 +137,8 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
 	            	sipExportData.setNote(rs.getString("Note"));
 	            	sipExportData.setDeferred(rs.getString("Deferred"));
 	            	sipExportData.setCU_ABBR_FLAG(rs.getString("CU_ABBR_FLAG"));
+	            	// sipExportData.setCU_ABBR_FLAG(rs.getString("APPT_TOT_INTND_AMT"));
+	            	// sipExportData.setCU_ABBR_FLAG(rs.getString("APPT_RQST_FTE_QTY"));
 	            	sipExportData.setLeave_Code(rs.getString("Leave_Code"));
 	            	sipExportData.setLeave_Description(rs.getString("Leave_Description"));
 	            	sipExportData.setLeave_Amount(rs.getString("Leave_Amount"));
@@ -147,6 +160,7 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
     public class SIPExportData
     {
         private String C_Level_Name;
+        // private String DEPTID;
         private String POS_DEPTID;
         private String D_Level_Name;
         private String POSITION_NBR;
@@ -159,12 +173,12 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
         private String JOBCODE;
         private String JOB_CD_DESC_SHRT;
         private String JOB_FAMILY;
-        private String POS_FTE;
+        private String CU_PLANNED_FTE;
         private String POS_GRADE_DFLT;
         private String CU_STATE_CERT;
         private String ANNL_RT;
         private String COMP_RT;
-        private String POS_STD_HRS_DFLT;
+        private String JOB_STD_HRS;
         private String COMP_FREQ;
         private String WRK_MNTHS;
         private String JOB_FUNC;
@@ -175,6 +189,8 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
         private String Note;
         private String Deferred;
         private String CU_ABBR_FLAG;
+        // private String APPT_TOT_INTND_AMT;
+        // private String APPT_RQST_FTE_QTY;
         private String Leave_Code;
         private String Leave_Description;
         private String Leave_Amount;
@@ -195,6 +211,15 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
         public String getC_Level_Name() {
             return C_Level_Name;
         }
+        
+        /**
+         * Gets the DEPTID
+         * 
+         * @return Returns the positionNumber
+         */
+//		public String getDEPTID() {
+//			return DEPTID;
+//		}
 
         /**
          * Gets the POS_DEPTID
@@ -305,12 +330,12 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
         }
 
         /**
-         * Gets the POS_FTE
+         * Gets the CU_PLANNED_FTE
          * 
          * @return Returns the positionNumber
          */
-        public String getPOS_FTE() {
-            return POS_FTE;
+        public String getCU_PLANNED_FTE() {
+            return CU_PLANNED_FTE;
         }
 
         /**
@@ -350,12 +375,12 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
         }
 
         /**
-         * Gets the POS_STD_HRS_DFLT
+         * Gets the JOB_STD_HRS
          * 
          * @return Returns the positionNumber
          */
-        public String getPOS_STD_HRS_DFLT() {
-            return POS_STD_HRS_DFLT;
+        public String getJOB_STD_HRS() {
+            return JOB_STD_HRS;
         }
 
         /**
@@ -447,6 +472,24 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
         public String getCU_ABBR_FLAG() {
             return CU_ABBR_FLAG;
         }
+        
+        /**
+         * Gets the APPT_TOT_INTND_AMT
+         * 
+         * @return Returns the APPT_TOT_INTND_AMT
+         */
+//		public String getAPPT_TOT_INTND_AMT() {
+//			return APPT_TOT_INTND_AMT;
+//		}
+
+        /**
+         * Gets the APPT_RQST_FTE_QTY
+         * 
+         * @return Returns the APPT_RQST_FTE_QTY
+         */
+//		public String getAPPT_RQST_FTE_QTY() {
+//			return APPT_RQST_FTE_QTY;
+//		}
 
         /**
          * Gets the Leave_Code
@@ -493,7 +536,16 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
         public void setC_Level_Name(String C_Level_Name) {
         	this.C_Level_Name = C_Level_Name;
         }
-
+        
+        /**
+         * sets the dEPTID
+         * 
+         * @return Returns the dEPTID
+         */
+//		public void setDEPTID(String dEPTID) {
+//			DEPTID = dEPTID;
+//		}
+		
         /**
          * sets the POS_DEPTID
          * 
@@ -607,8 +659,8 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
          * 
          * @this.Returns the positionNumber
          */
-        public void setPOS_FTE(String POS_FTE) {
-            this.POS_FTE = POS_FTE;
+        public void setCU_PLANNED_FTE(String CU_PLANNED_FTE) {
+            this.CU_PLANNED_FTE = CU_PLANNED_FTE;
         }
 
         /**
@@ -652,8 +704,8 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
          * 
          * @this.Returns the positionNumber
          */
-        public void setPOS_STD_HRS_DFLT(String POS_STD_HRS_DFLT) {
-            this.POS_STD_HRS_DFLT = POS_STD_HRS_DFLT;
+        public void setJOB_STD_HRS(String JOB_STD_HRS) {
+            this.JOB_STD_HRS = JOB_STD_HRS;
         }
 
         /**
@@ -746,6 +798,25 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
             this.CU_ABBR_FLAG = CU_ABBR_FLAG;
         }
 
+        /**
+         * sets the APPT_TOT_INTND_AMT
+         * 
+         * @this.Returns the APPT_TOT_INTND_AMT
+         */
+
+//		public void setAPPT_TOT_INTND_AMT(String aPPT_TOT_INTND_AMT) {
+//			APPT_TOT_INTND_AMT = aPPT_TOT_INTND_AMT;
+//		}
+	
+        /**
+         * sets the APPT_RQST_FTE_QTY
+         * 
+         * @this.Returns the APPT_RQST_FTE_QTY
+         */
+//		public void setAPPT_RQST_FTE_QTY(String aPPT_RQST_FTE_QTY) {
+//			APPT_RQST_FTE_QTY = aPPT_RQST_FTE_QTY;
+//		}
+        
         /**
          * sets the Leave_Code
          * 

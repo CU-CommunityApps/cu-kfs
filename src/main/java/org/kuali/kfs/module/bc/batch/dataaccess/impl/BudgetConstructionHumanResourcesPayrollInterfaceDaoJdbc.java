@@ -23,6 +23,7 @@ import java.util.GregorianCalendar;
 import org.kuali.kfs.module.bc.BCConstants;
 import org.kuali.kfs.module.bc.batch.dataaccess.BudgetConstructionHumanResourcesPayrollInterfaceDao;
 import org.kuali.kfs.module.bc.document.dataaccess.impl.BudgetConstructionDaoJdbcBase;
+import org.kuali.kfs.module.bc.util.BudgetParameterFinder;
 
 
 
@@ -223,8 +224,79 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
         Date julyFirst = new Date(calendarJuly1.getTimeInMillis());
         Date augustFirst = new Date(calendarAugust1.getTimeInMillis());
         String academicPositionType = new String("AC");
-        String academicTenureTrackSalaryPlan = new String("AC1");   
+        String academicTenureTrackSalaryPlan = new String("AC1"); 
+        String sqlString = null;
         
+        boolean externalPositionFeed = BudgetParameterFinder.getPayrollPositionFeedIndicator();
+
+        if (externalPositionFeed) {
+
+            /**
+             * first, update info on existing positions; we update the positions by
+             * reading from the 2012 entries since those have the most position info
+             */
+            sqlBuilder.append("UPDATE ld_bcn_pos_t posreq \n");
+            sqlBuilder.append("SET \n");
+            sqlBuilder.append("  ( \n");
+            sqlBuilder.append("    POS_EFFDT, \n");
+            sqlBuilder.append("    POS_EFF_STATUS, \n");
+            sqlBuilder.append("    POSN_STATUS, \n");
+            sqlBuilder.append("    BUDGETED_POSN, \n");
+            sqlBuilder.append("    CONFIDENTIAL_POSN, \n");
+            sqlBuilder.append("    POS_STD_HRS_DFLT, \n");
+            sqlBuilder.append("    POS_REG_TEMP, \n");
+            sqlBuilder.append("    POS_FTE, \n");
+            sqlBuilder.append("    POS_DESCR, \n");
+            sqlBuilder.append("    SETID_DEPT, \n");
+            sqlBuilder.append("    POS_DEPTID, \n");
+            sqlBuilder.append("    RC_CD, \n");
+            sqlBuilder.append("    POS_SAL_PLAN_DFLT, \n");
+            sqlBuilder.append("    POS_GRADE_DFLT, \n");
+            sqlBuilder.append("    SETID_JOBCODE, \n");
+            sqlBuilder.append("    JOBCODE, \n");
+            sqlBuilder.append("    SETID_SALARY \n");
+            sqlBuilder.append("  ) \n");
+            sqlBuilder.append("  = \n");
+            sqlBuilder.append("  (SELECT POS_EFFDT, \n");
+            sqlBuilder.append("    POS_EFF_STATUS, \n");
+            sqlBuilder.append("    POSN_STATUS, \n");
+            sqlBuilder.append("    BUDGETED_POSN, \n");
+            sqlBuilder.append("    CONFIDENTIAL_POSN, \n");
+            sqlBuilder.append("    POS_STD_HRS_DFLT, \n");
+            sqlBuilder.append("    POS_REG_TEMP, \n");
+            sqlBuilder.append("    POS_FTE, \n");
+            sqlBuilder.append("    POS_DESCR, \n");
+            sqlBuilder.append("    SETID_DEPT, \n");
+            sqlBuilder.append("    POS_DEPTID, \n");
+            sqlBuilder.append("    RC_CD, \n");
+            sqlBuilder.append("    POS_SAL_PLAN_DFLT, \n");
+            sqlBuilder.append("    POS_GRADE_DFLT, \n");
+            sqlBuilder.append("    SETID_JOBCODE, \n");
+            sqlBuilder.append("    JOBCODE, \n");
+            sqlBuilder.append("    SETID_SALARY \n");
+            sqlBuilder.append("  FROM LD_BCN_POS_T posbase \n");
+            sqlBuilder.append("  WHERE UNIV_FISCAL_YR     = ? \n");
+            sqlBuilder.append("  AND posbase.position_nbr = posreq.POSITION_NBR \n");
+            sqlBuilder.append("  AND ( EXISTS \n");
+            sqlBuilder.append("    (SELECT 1 \n");
+            sqlBuilder.append("    FROM LD_BCN_POS_T pos1, \n");
+            sqlBuilder.append("      LD_BCN_POS_T pos2 \n");
+            sqlBuilder.append("    WHERE (pos1.UNIV_FISCAL_YR = ?) \n");
+            sqlBuilder.append("    AND (pos2.UNIV_FISCAL_YR   = ?) \n");
+            sqlBuilder.append("    AND (pos1.POSITION_NBR     = pos2.POSITION_NBR) \n");
+            sqlBuilder.append("    )) \n");
+            sqlBuilder.append("  ) \n");
+            sqlBuilder.append("WHERE posreq.univ_fiscal_yr = ?"); 
+                   
+            sqlString = sqlBuilder.toString(); 
+            getSimpleJdbcTemplate().update(sqlString,baseFiscalYear, baseFiscalYear, requestFiscalYear, requestFiscalYear);
+            sqlBuilder.delete(0, sqlBuilder.length());
+
+        }        
+        
+        /**
+         * insert new positions for the request year position data
+         */
         sqlBuilder.append("INSERT INTO LD_BCN_POS_T\n");
         sqlBuilder.append("(POSITION_NBR, UNIV_FISCAL_YR, POS_EFFDT, POS_EFF_STATUS, POSN_STATUS,\n");
         sqlBuilder.append(" BUDGETED_POSN, CONFIDENTIAL_POSN, POS_STD_HRS_DFLT, POS_REG_TEMP, POS_FTE, POS_DESCR, SETID_DEPT, POS_DEPTID,\n"); 
@@ -255,7 +327,7 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
         sqlBuilder.append("                  AND (csf.POSITION_NBR = px.POSITION_NBR)))\n");
         sqlBuilder.append("   AND (ptx.POSITION_NBR = px.POSITION_NBR AND ptx.EFFDT = px.EFFDT))\n");
         
-        String sqlString = sqlBuilder.toString();
+        sqlString = sqlBuilder.toString();
         getSimpleJdbcTemplate().update(sqlString,requestFiscalYear,defaultRCCd,BCConstants.DEFAULT_BUDGET_HEADER_LOCK_IDS,julyFirst,augustFirst,academicTenureTrackSalaryPlan,requestFiscalYear,julyFirst,augustFirst,academicTenureTrackSalaryPlan,baseFiscalYear,BCConstants.ACTIVE_CSF_DELETE_CODE);
 
         updatePositionInfo(requestFiscalYear);

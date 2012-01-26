@@ -106,7 +106,7 @@ public interface ReportExportService {
      * @param textDelimiter
      * @return
      */
-    public StringBuilder buildSIPExportDumpFile(String principalId, String fieldSeperator, String textDelimiter);
+    public StringBuilder buildSIPExportDumpFile(String principalId, String fieldSeperator, String textDelimiter, boolean executivesOnly);
 
 }
 

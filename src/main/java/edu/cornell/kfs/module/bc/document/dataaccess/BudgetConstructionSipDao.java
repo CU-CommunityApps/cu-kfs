@@ -12,5 +12,5 @@ public interface BudgetConstructionSipDao {
      * use this method to retrieve SIP data
      * @param univId
      */
-    public Collection<SIPExportData>  getSIPExtractByPersonUnivId(String univId);
+    public Collection<SIPExportData>  getSIPExtractByPersonUnivId(String univId, boolean bExecutivesOnly);
 }
