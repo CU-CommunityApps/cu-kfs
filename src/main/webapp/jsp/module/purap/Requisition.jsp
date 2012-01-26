@@ -17,7 +17,7 @@
 
 <kul:documentPage showDocumentInfo="true"
 	documentTypeName="RequisitionDocument"
-	htmlFormAction="purapRequisition" renderMultipart="true"
+	htmlFormAction="purapRequisition" renderMultipart="true" multipartHack="true"
 	showTabButtons="true">
 
     <c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFiscalEntry'])}" />
