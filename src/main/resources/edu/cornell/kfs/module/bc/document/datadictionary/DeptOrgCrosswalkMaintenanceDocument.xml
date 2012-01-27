@@ -53,9 +53,10 @@
     <property name="maintainableItems">
       <list>
         <bean parent="MaintainableFieldDefinition" p:name="hrDepartment" p:required="true"/>
-        <bean parent="MaintainableFieldDefinition" p:name="hrDepartmentName"  p:required="true"/>
+ <!--         <bean parent="MaintainableFieldDefinition" p:name="hrDepartmentName"  p:required="false"/> -->
         <bean parent="MaintainableFieldDefinition" p:name="orgCode" p:required="true"/>
-        <bean parent="MaintainableFieldDefinition" p:name="orgName" p:required="true"/>
+
+<!--          <bean parent="MaintainableFieldDefinition" p:name="orgName" p:required="false"/>-->
         <bean parent="MaintainableFieldDefinition" p:defaultValue="true" p:name="active"/>
       </list>
     </property>
