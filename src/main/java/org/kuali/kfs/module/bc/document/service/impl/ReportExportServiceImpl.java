@@ -228,8 +228,8 @@ public class ReportExportServiceImpl implements ReportExportService {
 		// Generate each line as a single String and return it
         String line = "";
         line = textDelimiter + sipRecord.getC_Level_Name() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getHR_DEPTID() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getPOS_DEPTID() + textDelimiter + fieldSeperator;
-        //line = line + textDelimiter + sipRecord.getDEPTID() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getD_Level_Name() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getPOSITION_NBR() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getPOS_DESCR() + textDelimiter + fieldSeperator;
@@ -244,10 +244,10 @@ public class ReportExportServiceImpl implements ReportExportService {
         line = line + textDelimiter + sipRecord.getCU_PLANNED_FTE() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getPOS_GRADE_DFLT() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getCU_STATE_CERT() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getCOMP_FREQ() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getANNL_RT() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getCOMP_RT() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getJOB_STD_HRS() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + sipRecord.getCOMP_FREQ() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getWRK_MNTHS() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getJOB_FUNC() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getJOB_FUNC_DESC() + textDelimiter + fieldSeperator;
@@ -257,11 +257,11 @@ public class ReportExportServiceImpl implements ReportExportService {
         line = line + textDelimiter + sipRecord.getNote() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getDeferred() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getCU_ABBR_FLAG() + textDelimiter + fieldSeperator;
-        //line = line + textDelimiter + sipRecord.getAPPT_TOT_INTND_AMT() + textDelimiter + fieldSeperator;
-        //line = line + textDelimiter + sipRecord.getAPPT_RQST_FTE_QTY() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + sipRecord.getLeave_Code() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + sipRecord.getLeave_Description() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + sipRecord.getLeave_Amount() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getAPPT_TOT_INTND_AMT() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getAPPT_RQST_FTE_QTY() + textDelimiter + fieldSeperator;
+//        line = line + textDelimiter + sipRecord.getLeave_Code() + textDelimiter + fieldSeperator;
+//        line = line + textDelimiter + sipRecord.getLeave_Description() + textDelimiter + fieldSeperator;
+//        line = line + textDelimiter + sipRecord.getLeave_Amount() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getIU_POSITION_TYPE() + textDelimiter + fieldSeperator;
         line = line + "\r\n";
     	return line;
@@ -762,7 +762,7 @@ public class ReportExportServiceImpl implements ReportExportService {
 
         String line = "";
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.UNITID + fieldSeparator;
-        // line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.HRDEPT + fieldSeparator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.HRDEPT + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.DEPTID + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.DEPT_NAME + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.POSITION_NBR + fieldSeparator;
@@ -778,9 +778,9 @@ public class ReportExportServiceImpl implements ReportExportService {
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.CU_PLANNED_FTE + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.POS_GRADE_DFLT + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.CU_STATE_CERT + fieldSeparator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.COMP_FREQ + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.ANNL_RT + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.COMP_RT + fieldSeparator;
-        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.COMP_FREQ + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.JOB_STD_HRS + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.WORK_MONTHS + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.JOB_FUNC + fieldSeparator;
@@ -791,11 +791,11 @@ public class ReportExportServiceImpl implements ReportExportService {
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.NOTE + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.DEFERRED + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.CU_ABBR_FLAG + fieldSeparator;
-        // line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.APPT_TOT_INTND_AMT + fieldSeparator;
-        // line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.APPT_RQST_FTE_QTY + fieldSeparator;
-        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.LEAVE_CODE + fieldSeparator;
-        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.LEAVE_DESC + fieldSeparator;
-        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.LEAVE_AMT + fieldSeparator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.APPT_TOT_INTND_AMT + fieldSeparator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.APPT_RQST_FTE_QTY + fieldSeparator;
+//        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.LEAVE_CODE + fieldSeparator;
+//        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.LEAVE_DESC + fieldSeparator;
+//        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.LEAVE_AMT + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.BGP_FLSA + fieldSeparator;
         line = line + "\r\n";
 
