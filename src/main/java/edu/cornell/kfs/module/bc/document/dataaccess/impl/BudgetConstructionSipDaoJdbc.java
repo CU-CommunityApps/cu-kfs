@@ -95,8 +95,8 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
 	            	sipExportData.setNote(rs.getString("Note"));
 	            	sipExportData.setDeferred(rs.getString("Deferred"));
 	            	sipExportData.setCU_ABBR_FLAG(rs.getString("CU_ABBR_FLAG"));
-	            	sipExportData.setCU_ABBR_FLAG(rs.getString("APPT_TOT_INTND_AMT"));
-	            	sipExportData.setCU_ABBR_FLAG(rs.getString("APPT_RQST_FTE_QTY"));
+	            	sipExportData.setAPPT_TOT_INTND_AMT(rs.getString("APPT_TOT_INTND_AMT"));
+	            	sipExportData.setAPPT_RQST_FTE_QTY(rs.getString("APPT_RQST_FTE_QTY"));
 	            	sipExportData.setIU_POSITION_TYPE(rs.getString("IU_POSITION_TYPE"));
 
 	                return sipExportData;
