@@ -49,6 +49,7 @@ import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.CommodityCode;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
+import org.kuali.kfs.vnd.businessobject.VendorCommodityCode;
 import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
@@ -164,7 +165,7 @@ public class B2BShoppingServiceImpl implements B2BShoppingService {
             }
 
             // get items for this vendor
-            List itemsForVendor = getAllVendorItems(items, vendor.getVendorNumber());
+            List itemsForVendor = getAllVendorItems(items, vendor);
 
             // default data from user
             req.setDeliveryCampusCode(user.getCampusCode());
@@ -282,6 +283,7 @@ public class B2BShoppingServiceImpl implements B2BShoppingService {
         return vendors;
     }
 
+
     /**
      * Get all the items for a specific vendor
      * 
@@ -289,24 +291,34 @@ public class B2BShoppingServiceImpl implements B2BShoppingService {
      * @param vendorId  String containing "vendorHeaderId-vendorDetailId"
      * @return list of RequisitionItems for a specific vendor id
      */
-    protected List getAllVendorItems(List items, String vendorId) {
+    protected List getAllVendorItems(List items, VendorDetail vendorDetail) {
         LOG.debug("getAllVendorItems() started");
 
         // First get all the ShoppingCartItems for this vendor in a list
         List scItems = new ArrayList();
         for (Iterator iter = items.iterator(); iter.hasNext();) {
             B2BShoppingCartItem item = (B2BShoppingCartItem) iter.next();
-            if (vendorId.equals(item.getExtrinsic("ExternalSupplierId"))) {
+            if (vendorDetail.getVendorNumber().equals(item.getExtrinsic("ExternalSupplierId"))) {
                 scItems.add(item);
             }
         }
 
+        List<VendorCommodityCode> vcc = vendorDetail.getVendorCommodities();
+        String defaultCommodityCode = "";
+        Iterator<VendorCommodityCode> it = vcc.iterator();
+        while (it.hasNext()) {
+        	VendorCommodityCode commodity = it.next();
+        	if (commodity.isCommodityDefaultIndicator()) {
+        		defaultCommodityCode = commodity.getPurchasingCommodityCode();
+        	}
+        }
+        
         // Now convert them to Requisition items
         int itemLine = 1;
         List vendorItems = new ArrayList();
         for (Iterator iter = scItems.iterator(); iter.hasNext();) {
             B2BShoppingCartItem item = (B2BShoppingCartItem) iter.next();
-            RequisitionItem reqItem = createRequisitionItem(item, new Integer(itemLine));
+            RequisitionItem reqItem = createRequisitionItem(item, new Integer(itemLine), defaultCommodityCode);
             itemLine = itemLine + 1;
             vendorItems.add(reqItem);
         }
@@ -316,7 +328,7 @@ public class B2BShoppingServiceImpl implements B2BShoppingService {
 
 
     // These are helper classes for extracting information from the cxml message
-    protected RequisitionItem createRequisitionItem(B2BShoppingCartItem item, Integer itemLine) {
+    protected RequisitionItem createRequisitionItem(B2BShoppingCartItem item, Integer itemLine, String defaultCommodityCode) {
         RequisitionItem reqItem = new RequisitionItem();
         reqItem.setItemTypeCode(PurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE);
         reqItem.setItemLineNumber(itemLine);
@@ -329,7 +341,7 @@ public class B2BShoppingServiceImpl implements B2BShoppingService {
         reqItem.setExternalOrganizationB2bProductTypeName(item.getExtrinsic("Product Source"));
         reqItem.setExternalOrganizationB2bProductReferenceNumber(item.getExtrinsic("CartLineId"));
         
-        String commodityCode = verifyCommodityCode(item.getClassification("CommodityCode"));
+        String commodityCode = verifyCommodityCode(item.getClassification("CommodityCode"), defaultCommodityCode);
         reqItem.setPurchasingCommodityCode(commodityCode);
       
         reqItem.setItemRestrictedIndicator(false);
@@ -337,15 +349,15 @@ public class B2BShoppingServiceImpl implements B2BShoppingService {
         return reqItem;
     }
     
-    private String verifyCommodityCode(String commodityCode) {
+    private String verifyCommodityCode(String commodityCode, String defaultCommodityCode) {
     	Map<String, String> fieldValues = new HashMap<String, String>();
     	fieldValues.put("purchasingCommodityCode", commodityCode);
     	CommodityCode commodity = (CommodityCode)businessObjectService.findByPrimaryKey(CommodityCode.class, fieldValues);
     	if (ObjectUtils.isNotNull(commodity)) {
     		return commodity.getPurchasingCommodityCode();
     	} else {
-    		LOG.warn("Could not retrieve CommodityCode: "+commodityCode);
-    		return null;
+    		LOG.warn("Could not retrieve CommodityCode: "+commodityCode+"! Instead using default commodity code for vendor of: "+defaultCommodityCode);
+    		return defaultCommodityCode;
     	}
     }
 

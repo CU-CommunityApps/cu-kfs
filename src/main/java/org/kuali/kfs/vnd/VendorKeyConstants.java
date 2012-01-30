@@ -75,6 +75,10 @@ public class VendorKeyConstants {
     // Vendor Maintenance Commodity Code
     public static final String ERROR_VENDOR_COMMODITY_CODE_REQUIRE_ONE_DEFAULT_IND = "error.vendorCommodityCode.require.one.defaultIndicator";
     public static final String ERROR_VENDOR_COMMODITY_CODE_IS_REQUIRED_FOR_THIS_VENDOR_TYPE = "error.vendorCommodityCode.is.required.for.vendorType";
+    public static final String ERROR_VENDOR_COMMODITY_CODE_DEFAULT_IS_REQUIRED_FOR_B2B = "error.vendorCommodityCode.default.required.for.b2b";
+    public static final String ERROR_VENDOR_COMMODITY_CODE_DOES_NOT_EXIST = "error.vendorCommodityCode.nonExistance";
+    public static final String ERROR_DEFAULT_VENDOR_COMMODITY_CODE_ALREADY_EXISTS = "error.vendorCommodityCode.defaultAlreadySelected";
+    public static final String ERROR_VENDOR_COMMODITY_CODE_ALREADY_ASSIGNED_TO_VENDOR = "error.vendorCommodityCode.duplicateCommodityCode";
  
     //Vendor Maintenance W9 Received Date
     public static final String ERROR_DOCUMENT_VNDMAINT_W9RECEIVED_NOT_POPULATED = "error.document.vendor.w9ReceivedNotPopulatedButIndicatorIsTrue";
@@ -103,4 +107,6 @@ public class VendorKeyConstants {
     public static final String ERROR_DOCUMENT_VNDMAINT_CREDIT_MERCHANT_NAME_BLANK = "error.document.vendor.creditMerchantNameBlank";
     public static final String ERROR_DOCUMENT_VNDMAINT_DATE_IN_PAST = "error.document.vendor.dateInPast";
     public static final String ERROR_DOCUMENT_VNDMAINT_DATE_IN_FUTURE = "error.document.vendor.dateInFuture";
+    
+    
 }

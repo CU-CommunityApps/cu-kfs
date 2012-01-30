@@ -38,6 +38,7 @@ import org.kuali.kfs.vnd.VendorKeyConstants;
 import org.kuali.kfs.vnd.VendorParameterConstants;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.AddressType;
+import org.kuali.kfs.vnd.businessobject.CommodityCode;
 import org.kuali.kfs.vnd.businessobject.OwnershipType;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorCommodityCode;
@@ -52,6 +53,7 @@ import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.businessobject.VendorType;
 import org.kuali.kfs.vnd.document.service.VendorService;
+import org.kuali.kfs.vnd.service.CommodityCodeService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.kfs.vnd.service.TaxNumberService;
 import org.kuali.rice.kns.bo.PersistableBusinessObject;
@@ -74,6 +76,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
     private VendorDetail oldVendor;
     private VendorDetail newVendor;
 
+    private CommodityCodeService commodityCodeService = (CommodityCodeService) SpringContext.getService("commodityCodeService");
 
     /**
      * Overrides the setupBaseConvenienceObjects from the superclass because we cannot use the setupBaseConvenienceObjects from the
@@ -234,6 +237,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             valid &= processAddressValidation(document);
             valid &= processContractValidation(document);
             valid &= processCommodityCodeValidation(document);
+            valid &= validateB2BDefaultCommodityCode(document);
         }
 
         return valid;
@@ -1326,7 +1330,47 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
     			return success;
     		}
         }
-        
+        if (collectionName.equals("vendorCommodities")) {
+			boolean success = true;
+        	VendorCommodityCode codeToBeValidated = (VendorCommodityCode) bo;
+			CommodityCode persistedCommodity = commodityCodeService.getByPrimaryId(codeToBeValidated.getPurchasingCommodityCode());			
+			if (persistedCommodity == null) {
+				// a commodity code entered by a user does not exist
+				putFieldError("add.vendorCommodities.purchasingCommodityCode", VendorKeyConstants.ERROR_VENDOR_COMMODITY_CODE_DOES_NOT_EXIST, codeToBeValidated.getPurchasingCommodityCode());
+				success = false;
+			}
+			if (codeToBeValidated.isCommodityDefaultIndicator()) {
+				VendorDetail vendorDetail = (VendorDetail) document.getDocumentBusinessObject();
+				List<VendorCommodityCode> vendorCommodities = vendorDetail.getVendorCommodities();
+				Iterator<VendorCommodityCode> commodities = vendorCommodities.iterator();
+				int indice = 0;
+				while (commodities.hasNext()) {
+					VendorCommodityCode commodity = (VendorCommodityCode) commodities.next();
+					if (commodity.isCommodityDefaultIndicator()){
+						// more than one "default" commodity code has been specified
+						putFieldError("add.vendorCommodities.commodityDefaultIndicator", VendorKeyConstants.ERROR_DEFAULT_VENDOR_COMMODITY_CODE_ALREADY_EXISTS, Integer.toString(indice));
+						success = false;
+					}
+					indice++;
+				}
+			}
+            VendorDetail vendorDetail = (VendorDetail)document.getDocumentBusinessObject();
+            boolean commodityAlreadyAssignedToThisVendor = false;
+            Iterator<VendorCommodityCode> codes = vendorDetail.getVendorCommodities().iterator();
+            while (codes.hasNext()){
+            	VendorCommodityCode vcc = codes.next();
+            	if (vcc.getPurchasingCommodityCode().equals(codeToBeValidated.getPurchasingCommodityCode())){
+            		commodityAlreadyAssignedToThisVendor = true;
+            		break;
+            	}
+            }
+            if ( commodityAlreadyAssignedToThisVendor ) {
+            	putFieldError("add.vendorCommodities.purchasingCommodityCode", VendorKeyConstants.ERROR_VENDOR_COMMODITY_CODE_ALREADY_ASSIGNED_TO_VENDOR);
+            	success = false;
+            }
+			return success;
+		}
+		        
         return super.processAddCollectionLineBusinessRules(document, collectionName, bo);
     }
     
@@ -1579,5 +1623,56 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         }
 
 	    return success;
+	}
+	
+	protected boolean validateB2BDefaultCommodityCode(MaintenanceDocument document) {
+		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		boolean success = true;
+		List<VendorContract> vendorContracts = vendorDetail.getVendorContracts();
+		List<VendorCommodityCode> vendorCommodities = vendorDetail.getVendorCommodities();
+		Iterator<VendorContract> it = vendorContracts.iterator();
+		boolean isB2b = false;
+		while (it.hasNext()) {
+			VendorContract contract = (VendorContract) it.next();
+			if (contract.getVendorB2bIndicator()) {
+				isB2b = true;
+				break;
+			}
+		}
+		if (isB2b) {
+			if (vendorCommodities.size()==0) {
+				success = false;
+				// no vendor commodities exist
+				putFieldError("vendorCommodities", VendorKeyConstants.ERROR_VENDOR_COMMODITY_CODE_DEFAULT_IS_REQUIRED_FOR_B2B);
+				return success;
+			}
+			boolean defaultCommodityCodeSpecified = false;
+			Iterator<VendorCommodityCode> commodities = vendorCommodities.iterator();
+			int indice = 0;
+			while (commodities.hasNext()) {
+				VendorCommodityCode commodity = (VendorCommodityCode) commodities.next();
+				if (commodity.isCommodityDefaultIndicator() && !defaultCommodityCodeSpecified) {
+					defaultCommodityCodeSpecified = true;
+				} else if (commodity.isCommodityDefaultIndicator()){
+					// more than one "default" commodity code has been specified
+					putFieldError("vendorCommodities[" + indice + "].commodityDefaultIndicator", VendorKeyConstants.ERROR_DEFAULT_VENDOR_COMMODITY_CODE_ALREADY_EXISTS);
+					success = false;
+				}
+				CommodityCode persistedCommodity = commodityCodeService.getByPrimaryId(commodity.getPurchasingCommodityCode());
+				if (persistedCommodity == null) {
+					// a commodity code entered by a user does not exist
+					putFieldError("vendorCommodities[" + indice + "].purchasingCommodityCode", VendorKeyConstants.ERROR_VENDOR_COMMODITY_CODE_DOES_NOT_EXIST, commodity.getPurchasingCommodityCode());
+					success = false;
+				}
+				indice++;
+			}
+			if (!defaultCommodityCodeSpecified) {
+				// no default commodity code has been specified and the vendor has a b2b contract
+				putFieldError("vendorCommodities", VendorKeyConstants.ERROR_VENDOR_COMMODITY_CODE_DEFAULT_IS_REQUIRED_FOR_B2B);
+				success = false;
+			}
+		}
+		
+		return success;
 	}
 }
