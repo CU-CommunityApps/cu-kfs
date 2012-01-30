@@ -280,5 +280,5 @@
                 <url-pattern>/ws/*</url-pattern>
         </servlet-mapping>
     
-    
+   <distributable/> 
 </web-app>
