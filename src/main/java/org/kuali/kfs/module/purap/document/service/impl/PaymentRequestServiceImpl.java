@@ -31,6 +31,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.module.purap.CUPurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.PurapConstants.PREQDocumentsStrings;
@@ -625,13 +626,27 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
             return returnLaterDate(invoicedDateCalendar, processedDateCalendar);
         }
 
+        // Retrieve pay date variation parameter (currently defined as 2).  See parameter description for explanation of it's use.
+        String payDateVariance = parameterService.getParameterValue(PaymentRequestDocument.class, CUPurapParameterConstants.PURAP_PREQ_PAY_DATE_VARIANCE);
+        Integer payDateVarianceInt = Integer.valueOf(payDateVariance);
+        
         Integer discountDueNumber = terms.getVendorDiscountDueNumber();
         Integer netDueNumber = terms.getVendorNetDueNumber();
         if (ObjectUtils.isNotNull(discountDueNumber)) {
+        	// Decrease discount due number by the pay date variance
+        	discountDueNumber -= payDateVarianceInt;
+        	if(discountDueNumber < 0) {
+        		discountDueNumber = 0;
+        	}
             String discountDueTypeDescription = terms.getVendorDiscountDueTypeDescription();
             paymentTermsDateCalculation(discountDueTypeDescription, invoicedDateCalendar, discountDueNumber);
         }
         else if (ObjectUtils.isNotNull(netDueNumber)) {
+        	// Decrease net due number by the pay date variance
+        	netDueNumber -= payDateVarianceInt;
+        	if(netDueNumber < 0) {
+        		netDueNumber = 0;
+        	}
             String netDueTypeDescription = terms.getVendorNetDueTypeDescription();
             paymentTermsDateCalculation(netDueTypeDescription, invoicedDateCalendar, netDueNumber);
         }
