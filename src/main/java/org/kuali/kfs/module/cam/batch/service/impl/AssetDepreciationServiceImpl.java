@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +73,7 @@ import org.springframework.transaction.annotation.Transactional;
  * When an error occurs running this process, a pdf file will be created with the error message. However, this doesn't mean that
  * this process automatically leaves all the records as they were right before running the program. If the process fails, is
  * suggested to do the following before trying to run the process again: a.)Delete gl pending entry depreciation entries: DELETE
- * FROM GL_PENDING_ENTRY_T WHERE FDOC_TYP_CD = 'DEPR' b.)Substract from the accumulated depreciation amount the depreciation
+ * FROM GL_PENDING_ENTRY_T WHERE FDOC_TYP_CD = 'DEPR' b.)Subtract from the accumulated depreciation amount the depreciation
  * calculated for the fiscal month that was ran, and then reset the depreciation amount field for the fiscal month that was ran. ex:
  * Assuming that the fiscal month = 8 then: UPDATE CM_AST_PAYMENT_T SET AST_ACUM_DEPR1_AMT = AST_ACUM_DEPR1_AMT -
  * AST_PRD8_DEPR1_AMT, AST_PRD8_DEPR1_AMT=0
@@ -103,10 +104,10 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
         List<String[]> reportLog = new ArrayList<String[]>();
         boolean hasErrors = false;
         Calendar depreciationDate = Calendar.getInstance();
-        Calendar currentDate = Calendar.getInstance();
+        Date currentDate = new Date();
         String depreciationDateParameter = null;
         DateFormat dateFormat = new SimpleDateFormat(CamsConstants.DateFormats.YEAR_MONTH_DAY);
-
+        
         try {
             LOG.info("*******" + CamsConstants.Depreciation.DEPRECIATION_BATCH + " HAS BEGUN *******");
 
@@ -115,12 +116,13 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
              * is going to be depreciated If blank then the system will take the system date to determine the fiscal period
              */
             if (parameterService.parameterExists(KfsParameterConstants.CAPITAL_ASSETS_BATCH.class, CamsConstants.Parameters.DEPRECIATION_RUN_DATE_PARAMETER)) {
-                depreciationDateParameter = ((List<String>) parameterService.getParameterValues(KfsParameterConstants.CAPITAL_ASSETS_BATCH.class, CamsConstants.Parameters.DEPRECIATION_RUN_DATE_PARAMETER)).get(0).trim();
+                // depreciationDateParameter = ((List<String>) parameterService.getParameterValues(KfsParameterConstants.CAPITAL_ASSETS_BATCH.class, CamsConstants.Parameters.DEPRECIATION_RUN_DATE_PARAMETER)).get(0).trim();
+                depreciationDateParameter = parameterService.getParameterValue(KfsParameterConstants.CAPITAL_ASSETS_BATCH.class, CamsConstants.Parameters.DEPRECIATION_RUN_DATE_PARAMETER);
             }
             else {
                 throw new IllegalStateException(kualiConfigurationService.getPropertyString(CamsKeyConstants.Depreciation.DEPRECIATION_DATE_PARAMETER_NOT_FOUND));
             }
-            // This validates the system parameter depreciation_date has a valid format of YYYY-MM-DD.
+            // This validates that the system parameter depreciation_date has a valid format of YYYY-MM-DD.
             if (depreciationDateParameter != null && !depreciationDateParameter.trim().equals("")) {
                 try {
                     depreciationDate.setTime(dateFormat.parse(depreciationDateParameter));
@@ -129,8 +131,15 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
                     throw new IllegalArgumentException(kualiConfigurationService.getPropertyString(CamsKeyConstants.Depreciation.INVALID_DEPRECIATION_DATE_FORMAT));
                 }
             }
-            LOG.info(CamsConstants.Depreciation.DEPRECIATION_BATCH + "Depreciation run date: " + depreciationDateParameter);
+            else
+            {
+            	// We get to here if the DEPRECIATION_RUN_DATE parameter was found and is either null or all blanks.  
+            	//   In this case we set the DEPRECIATION_RUN_DATE parameter to the current date.
+            	depreciationDateParameter = dateFormat.format(currentDate);
+            	depreciationDate.setTime(dateFormat.parse(depreciationDateParameter));
+            }
 
+            LOG.info(CamsConstants.Depreciation.DEPRECIATION_BATCH + "Depreciation run date: " + depreciationDateParameter);
 
             UniversityDate universityDate = universityDateDao.getByPrimaryKey(depreciationDate.getTime());
             if (universityDate == null) {
