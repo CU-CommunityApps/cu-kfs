@@ -46,6 +46,7 @@ import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
 import edu.cornell.kfs.module.bc.CUBCPropertyConstants;
 
 import org.kuali.kfs.module.bc.document.dataaccess.BudgetConstructionOrganizationReportsDao;
@@ -565,9 +566,10 @@ public class ReportExportServiceImpl implements ReportExportService {
 
         }
         line = line + textDelimiter + fundingRecord.getAppointmentFundingDurationCode() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + fundingRecord.getBudgetConstructionDuration().getAppointmentDurationDescription() + textDelimiter + fieldSeperator;   //Apoint.Funding Dur Description
         line = line + new KualiDecimal(fundingRecord.getAppointmentRequestedCsfAmount().intValue()) + fieldSeperator;
         line = line + new KualiDecimal(fundingRecord.getAppointmentRequestedCsfFteQuantity()) + fieldSeperator;
-        line = line + new KualiDecimal(fundingRecord.getAppointmentRequestedTimePercent()) + fieldSeperator;
+        line = line + new KualiDecimal(fundingRecord.getAppointmentRequestedCsfTimePercent()) + fieldSeperator;
         line = line + new KualiDecimal(fundingRecord.getAppointmentTotalIntendedAmount().intValue()) + fieldSeperator;
         line = line + new KualiDecimal(fundingRecord.getAppointmentTotalIntendedFteQuantity()) + fieldSeperator;
         line = line + new KualiDecimal(fundingRecord.getAppointmentRequestedAmount().intValue()) + fieldSeperator;
@@ -584,7 +586,13 @@ public class ReportExportServiceImpl implements ReportExportService {
         else {
             line = line + textDelimiter + "" + textDelimiter + fieldSeperator;
         }
-        line = line + textDelimiter + accountReport.getBudgetConstructionOrganizationReports().getResponsibilityCenterCode() + textDelimiter;
+        line = line + textDelimiter + accountReport.getBudgetConstructionOrganizationReports().getResponsibilityCenterCode() + textDelimiter  + fieldSeperator;
+        
+        // Added lines to also provide the fund group code and the sub fund group code as per KITI-2989
+        line = line + textDelimiter + fundingRecord.getAccount().getSubFundGroupCode() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + ((AccountExtendedAttribute)fundingRecord.getAccount().getExtension()).getProgramCode() +  textDelimiter + fieldSeperator;
+        
+        // Adds a carriage return and line feed character
         line = line + "\r\n";
 
         return line;
@@ -672,41 +680,45 @@ public class ReportExportServiceImpl implements ReportExportService {
     protected String constructFundingDumpHeaderLine(String fieldSeperator) {
 
         String line = "";
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.UNIVERSITY_FISCAL_YEAR) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.CHART_CD) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.ACCOUNT_NBR) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionAccountReports.class, CUBCPropertyConstants.BudgetConstructionAccountReportsProperties.REPORTS_TO_ORG_CD)  + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.SUB_ACCOUNT_NBR)+ fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.FINANCIAL_OBJECT_CODE) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.FINANCIAL_SUB_OBJECT_CODE) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.POSITION_NBR) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionPosition.class, CUBCPropertyConstants.BudgetConstructionPositionProperties.POSITION_DESC) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionPosition.class, CUBCPropertyConstants.BudgetConstructionPositionProperties.SETID_SALARY) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionPosition.class, CUBCPropertyConstants.BudgetConstructionPositionProperties.POSITION_SALARY_PLAN_DEFAULT) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionPosition.class, CUBCPropertyConstants.BudgetConstructionPositionProperties.POSITION_GRADE_DEFAULT) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionPosition.class, CUBCPropertyConstants.BudgetConstructionPositionProperties.NORMAL_WORK_MONTHS) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionPosition.class, CUBCPropertyConstants.BudgetConstructionPositionProperties.PAY_MONTHS)+ fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.EMPLID) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionIntendedIncumbent.class, CUBCPropertyConstants.BudgetConstructionIntendedIncumbentProperties.NAME) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionIntendedIncumbent.class, CUBCPropertyConstants.BudgetConstructionIntendedIncumbentProperties.CLASSIFICATION_LEVEL) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionAdministrativePost.class, CUBCPropertyConstants.BudgetConstructionAdministrativePostProperties.ADMINISTRATIVE_POST) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionCalculatedSalaryFoundationTracker.class, CUBCPropertyConstants.BudgetConstructionCalculatedSalaryFoundationTrackerProperties.CSF_AMT) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionCalculatedSalaryFoundationTracker.class, CUBCPropertyConstants.BudgetConstructionCalculatedSalaryFoundationTrackerProperties.CSF_FULL_TIME_EMPL_QUANTITY) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionCalculatedSalaryFoundationTracker.class, CUBCPropertyConstants.BudgetConstructionCalculatedSalaryFoundationTrackerProperties.CSF_TIME_PERCENT) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_FUND_DURATION_CD) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_REQ_CSF_AMT)+ fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_REQ_CSF_FTE_QUANTITY) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_REQ_TIME_PERCENT) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_TOTAL_INTENDED_AMT)  + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_TOTAL_INTENDED_FTE_QUANTITY) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_REQ_AMT) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_REQ_TIME_PERCENT) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_REQ_FTE_QUANTITY) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_REQ_FTE_QUANTITY) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_FUNDING_DELETE_IND) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(PendingBudgetConstructionAppointmentFunding.class, CUBCPropertyConstants.PendingBudgetConstructionAppointmentFundingProperties.APPT_FUNDING_MONTH) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionAppointmentFundingReason.class, CUBCPropertyConstants.BudgetConstructionAppointmentFundingReasonProperties.APPT_FUNDING_REASON_CD) + fieldSeperator;
-        line = line + dataDictionaryService.getAttributeLabel(BudgetConstructionOrganizationReports.class, CUBCPropertyConstants.BudgetConstructionOrganizationReportsProperties.RESP_CENTER_CD);
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.UNIVERSITY_FISCAL_YEAR + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.CHART_CD + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.ACCOUNT_NBR + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.REPORTS_TO_ORG_CD  + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.SUB_ACCOUNT_NBR + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.FINANCIAL_OBJECT_CODE + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.FINANCIAL_SUB_OBJECT_CODE + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.POSITION_NBR + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.POSITION_DESC + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.SETID_SALARY + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.POSITION_SALARY_PLAN_DEFAULT + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.POSITION_GRADE_DEFAULT + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.NORMAL_WORK_MONTHS + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.PAY_MONTHS + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.EMPLID + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.NAME + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.CLASSIFICATION_LEVEL + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.ADMINISTRATIVE_POST + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.CSF_AMT + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.CSF_FULL_TIME_EMPL_QUANTITY + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.CSF_TIME_PERCENT + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_FUND_DURATION_CD + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_FUND_DURATION_DESC + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_REQ_CSF_AMT+ fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_REQ_CSF_FTE_QUANTITY + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_REQ_TIME_PERCENT + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_TOTAL_INTENDED_AMT  + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_TOTAL_INTENDED_FTE_QUANTITY + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_REQ_AMT + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_REQ_TIME_PERCENT + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_REQ_FTE_QUANTITY + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_REQ_PAY_RATE + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_FUNDING_DELETE_IND + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_FUNDING_MONTH + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_FUNDING_REASON_CD + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.RESP_CENTER_CD + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.SUB_FUND_GRP_CD + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.PROGRAM_CD + fieldSeperator;
+
         line = line + "\r\n";
 
         return line;

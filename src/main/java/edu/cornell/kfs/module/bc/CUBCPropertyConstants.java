@@ -1,6 +1,14 @@
 package edu.cornell.kfs.module.bc;
 
 import org.kuali.kfs.module.bc.BCPropertyConstants;
+import org.kuali.kfs.module.bc.businessobject.BudgetConstructionAccountReports;
+import org.kuali.kfs.module.bc.businessobject.BudgetConstructionAdministrativePost;
+import org.kuali.kfs.module.bc.businessobject.BudgetConstructionAppointmentFundingReason;
+import org.kuali.kfs.module.bc.businessobject.BudgetConstructionCalculatedSalaryFoundationTracker;
+import org.kuali.kfs.module.bc.businessobject.BudgetConstructionIntendedIncumbent;
+import org.kuali.kfs.module.bc.businessobject.BudgetConstructionOrganizationReports;
+import org.kuali.kfs.module.bc.businessobject.BudgetConstructionPosition;
+import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionAppointmentFunding;
 
 public class CUBCPropertyConstants extends BCPropertyConstants {
 
@@ -49,7 +57,7 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
         public static final String NORMAL_WORK_MONTHS = "iuNormalWorkMonths";
         public static final String PAY_MONTHS = "iuPayMonths";
     }
-
+    
     public static final class BudgetConstructionAccountReportsProperties {
         public static final String REPORTS_TO_ORG_CD = "reportsToOrganizationCode";
     }
@@ -135,6 +143,48 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
 
     public static final class PSJobCodeProperties {
         public static final String JOB_CD = "jobCode";
+    }
+    
+    // Required since column headers for just this export need to have underscores and no spaces.
+    public static final class BudgetConstructionFundingExportProperties {
+        public static final String UNIVERSITY_FISCAL_YEAR = "University_Fiscal_Year";
+        public static final String CHART_CD = "Chart";
+        public static final String ACCOUNT_NBR = "Account_Number";
+        public static final String REPORTS_TO_ORG_CD = "Reports_To_Organization";
+        public static final String SUB_ACCOUNT_NBR = "Sub_Account_Number";
+        public static final String FINANCIAL_OBJECT_CODE = "Financial_Object_Code";
+        public static final String FINANCIAL_SUB_OBJECT_CODE = "Financial_Sub_Object_Code";
+        public static final String POSITION_NBR = "Position_Number";
+        public static final String POSITION_DESC = "Position_Description";
+        public static final String SETID_SALARY = "Salary_Set_Id";
+        public static final String POSITION_SALARY_PLAN_DEFAULT = "Position_Salary_Plan_Default";
+        public static final String POSITION_GRADE_DEFAULT = "Position_Salary_Grade_Default";
+        public static final String NORMAL_WORK_MONTHS = "Normal_Work_Months";
+        public static final String PAY_MONTHS = "Pay_Months";
+        public static final String EMPLID = "Emplid";
+        public static final String NAME = "Person_Name";
+        public static final String CLASSIFICATION_LEVEL = "Classification_Level";
+        public static final String ADMINISTRATIVE_POST = "Administrative_Post";
+        public static final String CSF_AMT = "CSF_Amount";
+        public static final String CSF_FULL_TIME_EMPL_QUANTITY = "Csf_Full_Time_Employment_Quantity";
+        public static final String CSF_TIME_PERCENT = "Csf_Time_Percent";
+        public static final String APPT_FUND_DURATION_CD = "Leave_Code";
+        public static final String APPT_FUND_DURATION_DESC = "Leave_Description";
+        public static final String APPT_REQ_CSF_AMT = "Leave_Amount";
+        public static final String APPT_REQ_CSF_FTE_QUANTITY = "Appointment_Requested_Csf_Fte_Quantity";
+        public static final String APPT_REQ_CSF_TIME_PERCENT = "Appointment_Csf_Requested_Time_Percent";
+        public static final String APPT_TOTAL_INTENDED_AMT = "Appointment_Total_Intended_Amount";
+        public static final String APPT_TOTAL_INTENDED_FTE_QUANTITY = "Appointment_Total_Intended_Fte_Quantity";
+        public static final String APPT_REQ_AMT = "Appointment Requested_Amount";
+        public static final String APPT_REQ_TIME_PERCENT = "Appointment_Requested_Time_Percent";
+        public static final String APPT_REQ_FTE_QUANTITY = "Appointment_Requested_Fte_Quantity";
+        public static final String APPT_REQ_PAY_RATE = "Appointment_Requested_Pay_Rate";
+        public static final String APPT_FUNDING_DELETE_IND = "Delete_Indicator";
+        public static final String APPT_FUNDING_MONTH = "Appointment_Funding_Month";
+        public static final String APPT_FUNDING_REASON_CD = "Appointment_Funding_Reason_Code";
+        public static final String RESP_CENTER_CD = "Responsibility_Center_Code";
+        public static final String SUB_FUND_GRP_CD = "Sub_Fund_Group_Code";
+        public static final String PROGRAM_CD = "Sub_Fund_Program_Group_Code";
     }
     
     public static final class BudgetConstructionSIPExportProperties {
