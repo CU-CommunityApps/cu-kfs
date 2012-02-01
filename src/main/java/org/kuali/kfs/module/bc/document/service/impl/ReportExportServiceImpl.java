@@ -705,7 +705,7 @@ public class ReportExportServiceImpl implements ReportExportService {
         line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_FUND_DURATION_DESC + fieldSeperator;
         line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_REQ_CSF_AMT+ fieldSeperator;
         line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_REQ_CSF_FTE_QUANTITY + fieldSeperator;
-        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_REQ_TIME_PERCENT + fieldSeperator;
+        line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_REQ_CSF_TIME_PERCENT + fieldSeperator;
         line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_TOTAL_INTENDED_AMT  + fieldSeperator;
         line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_TOTAL_INTENDED_FTE_QUANTITY + fieldSeperator;
         line = line + CUBCPropertyConstants.BudgetConstructionFundingExportProperties.APPT_REQ_AMT + fieldSeperator;
