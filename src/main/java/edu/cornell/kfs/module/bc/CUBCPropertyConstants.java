@@ -175,7 +175,7 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
         public static final String APPT_REQ_CSF_TIME_PERCENT = "Appointment_Csf_Requested_Time_Percent";
         public static final String APPT_TOTAL_INTENDED_AMT = "Appointment_Total_Intended_Amount";
         public static final String APPT_TOTAL_INTENDED_FTE_QUANTITY = "Appointment_Total_Intended_Fte_Quantity";
-        public static final String APPT_REQ_AMT = "Appointment Requested_Amount";
+        public static final String APPT_REQ_AMT = "Appointment_Requested_Amount";
         public static final String APPT_REQ_TIME_PERCENT = "Appointment_Requested_Time_Percent";
         public static final String APPT_REQ_FTE_QUANTITY = "Appointment_Requested_Fte_Quantity";
         public static final String APPT_REQ_PAY_RATE = "Appointment_Requested_Pay_Rate";
@@ -223,7 +223,7 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
 //        public static final String LEAVE_CODE = "Leave Code";
 //        public static final String LEAVE_DESC = "Leave Description";
 //        public static final String LEAVE_AMT = "Leave Amount";
-        public static final String BGP_FLSA = "BGP FLSA";
+        public static final String BGP_FLSA = "BGP_FLSA";
     }
 
 }
