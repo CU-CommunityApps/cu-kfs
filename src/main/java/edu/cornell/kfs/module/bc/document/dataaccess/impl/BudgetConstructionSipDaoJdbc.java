@@ -11,7 +11,7 @@ import edu.cornell.kfs.module.bc.document.dataaccess.BudgetConstructionSipDao;
 
 public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase implements BudgetConstructionSipDao {
 	
-	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ExtractPaymentServiceImpl.class);
+	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(BudgetConstructionSipDaoJdbc.class);
 	
 	public BudgetConstructionSipDaoJdbc() {
 		
@@ -26,12 +26,12 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
 	        sqlBuilder.append("( select org_nm ");
 	        sqlBuilder.append("from ca_org_t where org_typ_cd='C' and ROWNUM=1 ");
 	        sqlBuilder.append("start with org_cd=substr(t2.pos_deptid,4) ");
-	        sqlBuilder.append("connect by prior rpts_to_org_cd = org_cd and rpts_to_org_cd not in ('UNIV')) \"C_Level_Name\", ");
+	        sqlBuilder.append("connect by prior rpts_to_org_cd = org_cd and rpts_to_org_cd not in ('UNIV') and fin_coa_cd=substr(t2.pos_deptid,1,2)) \"C_Level_Name\", ");
 	        sqlBuilder.append("t8.DEPTID as HR_DEPTID,");
 	        sqlBuilder.append("t2.pos_deptid,");
 	        sqlBuilder.append("( select org_nm from ca_org_t where org_typ_cd='D' and ROWNUM=1 ");
 	        sqlBuilder.append("start with org_cd=substr(t2.pos_deptid,4) ");
-	        sqlBuilder.append("connect by prior rpts_to_org_cd = org_cd and rpts_to_org_cd not in ('UNIV')) \"D_Level_Name\", ");
+	        sqlBuilder.append("connect by prior rpts_to_org_cd = org_cd and rpts_to_org_cd not in ('UNIV') and fin_coa_cd=substr(t2.pos_deptid,1,2)) \"D_Level_Name\", ");
 	        sqlBuilder.append("t2.POSITION_NBR, t2.POS_DESCR, t3.EMPLID, t4.PERSON_NM, t5.SIP_ELIG_FLAG \"SIP_Eligibility\", t5.empl_typ \"SIP_Employee_Type\", ");
 	        sqlBuilder.append("t5.EMPL_RCD, t2.JOBCODE, t7.JOB_CD_DESC_SHRT, t7.JOB_FAMILY, t5.CU_PLANNED_FTE, t2.POS_GRADE_DFLT, t6.CU_STATE_CERT, ");
 	        sqlBuilder.append("t7.COMP_FREQ, t5.ANNL_RT, t5.COMP_RT, t5.JOB_STD_HRS, t6.WRK_MNTHS, t7.JOB_FUNC, t7.JOB_FUNC_DESC, ");
