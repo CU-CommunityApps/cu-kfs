@@ -79,6 +79,7 @@ import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.KualiInteger;
 import org.kuali.rice.kns.util.UrlFactory;
+import org.kuali.rice.kns.util.WebUtils;
 import org.kuali.rice.kns.web.struts.action.KualiTransactionalDocumentActionBase;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.rice.kns.web.struts.form.KualiForm;
@@ -161,6 +162,22 @@ public class BudgetConstructionAction extends KualiTransactionalDocumentActionBa
 
             budgetConstructionForm.setSecurityNoAccess(true);
             setBudgetDocumentNoAccessMessage(budgetConstructionForm);
+            
+            //--------fix for KITI-2932: methodToCall error on close---------
+            //set the form into userSession if the document is a session document 
+            UserSession userSession = (UserSession) request.getSession().getAttribute(KNSConstants.USER_SESSION_KEY);
+
+            if (WebUtils.isDocumentSession(doc, budgetConstructionForm)) {
+                String formKey = budgetConstructionForm.getFormKey();
+                if (StringUtils.isBlank(budgetConstructionForm.getFormKey())
+                        || userSession.retrieveObject(budgetConstructionForm.getFormKey()) == null) {
+                    // generate doc form key here if it does not exist 
+                    formKey = GlobalVariables.getUserSession().addObject(form);
+                    budgetConstructionForm.setFormKey(formKey);
+                }
+            }
+            //--------end of KITI-2932fix-------------------------------------
+
             budgetConstructionForm.getDocumentActions().put(KNSConstants.KUALI_ACTION_CAN_CLOSE, Boolean.TRUE);
 
         }
