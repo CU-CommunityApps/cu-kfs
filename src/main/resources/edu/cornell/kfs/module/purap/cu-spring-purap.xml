@@ -63,6 +63,15 @@
         </property>
     </bean>
  -->
+ 	<bean id="b2bPOResponseFileType" class="org.kuali.kfs.module.purap.util.cxml.B2BPOResponseFileType">
+            <property name="digestorRulesFileName">
+               <value>edu/cornell/kfs/module/purap/util/cxml/b2bPOResponseDigesterRules.xml</value>
+            </property>
+            <property name="schemaLocation">
+               <value>${externalizable.static.content.url}/xsd/purap/b2bPOResponse.xsd</value>
+            </property>
+     </bean>
+ 
   <bean id="sciQuestDataAccess" parent="platformAwareDao"  
           class="org.kuali.kfs.module.purap.dataaccess.impl.SciQuestDataAccessImpl" />
     
