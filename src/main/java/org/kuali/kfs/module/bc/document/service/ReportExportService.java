@@ -33,7 +33,7 @@ public interface ReportExportService {
      * Retrieves records for organization account dump and outputs file based on user preferences
      * 
      * @param principalId - current user who is running the dump
-     * @param fieldSeperator - string to seperate fields 
+     * @param fieldSeperator - string to separate fields 
      * @param textDelimiter - string for text delimiter
      */
     public StringBuilder buildOrganizationAccountDumpFile(String principalId, String fieldSeperator, String textDelimiter);
@@ -42,7 +42,7 @@ public interface ReportExportService {
      * Retrieves records for organization monthly dump and outputs file based on user preferences
      * 
      * @param principalId - current user who is running the dump
-     * @param fieldSeperator - string to seperate fields 
+     * @param fieldSeperator - string to separate fields 
      * @param textDelimiter - string for text delimiter
      */
     public StringBuilder buildOrganizationMonthlyDumpFile(String principalId, String fieldSeperator, String textDelimiter);
@@ -51,7 +51,7 @@ public interface ReportExportService {
      * Retrieves records for organization funding dump and outputs file based on user preferences
      * 
      * @param principalId - current user who is running the dump
-     * @param fieldSeperator - string to seperate fields 
+     * @param fieldSeperator - string to separate fields 
      * @param textDelimiter - string for text delimiter
      */
     public StringBuilder buildOrganizationFundingDumpFile(String principalId, String fieldSeperator, String textDelimiter);
@@ -59,9 +59,9 @@ public interface ReportExportService {
     /**
      * Retrieves records for account dump and outputs file based on user preferences
      * 
-     * @param principalId
-     * @param fieldSeperator
-     * @param textDelimiter
+     * @param principalId - current user who is running the export
+     * @param fieldSeperator - string to separate fields 
+     * @param textDelimiter - string for text delimiter
      * @param universityFiscalYear
      * @param chartOfAccountsCode
      * @param accountNumber
@@ -73,9 +73,9 @@ public interface ReportExportService {
     /**
      * Retrieves records for account monthly dump and outputs file based on user preferences
      * 
-     * @param principalId
-     * @param fieldSeperator
-     * @param textDelimiter
+     * @param principalId - current user who is running the export
+     * @param fieldSeperator - string to separate fields 
+     * @param textDelimiter - string for text delimiter
      * @param universityFiscalYear
      * @param chartOfAccountsCode
      * @param accountNumber
@@ -87,9 +87,9 @@ public interface ReportExportService {
     /**
      * Retrieves records for organization funding dump and outputs file based on user preferences
      * 
-     * @param principalId
-     * @param fieldSeperator
-     * @param textDelimiter
+     * @param principalId - current user who is running the export
+     * @param fieldSeperator - string to separate fields 
+     * @param textDelimiter - string for text delimiter
      * @param universityFiscalYear
      * @param chartOfAccountsCode
      * @param accountNumber
@@ -99,14 +99,16 @@ public interface ReportExportService {
     public StringBuilder buildAccountFundingDumpFile(String principalId, String fieldSeperator, String textDelimiter, Integer universityFiscalYear, String chartOfAccountsCode, String accountNumber, String subAccountNumber);
 
     /**
-     * Retrieves records for organization funding dump and outputs file based on user preferences
+     * Retrieves records for the SIP export and outputs file based on user preferences
      * 
-     * @param principalId
-     * @param fieldSeperator
-     * @param textDelimiter
+     * @param principalId -current user who is running the dump
+     * @param fieldSeperator - string to separate fields
+     * @param textDelimiter - string for text delimiter
+     * @param executivesOnly - indicates that the report is to be run only for positions listed in the SIP_EXECUTIVES parameter
      * @return
      */
     public StringBuilder buildSIPExportDumpFile(String principalId, String fieldSeperator, String textDelimiter, boolean executivesOnly);
+
 
 }
 

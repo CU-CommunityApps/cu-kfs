@@ -10,7 +10,9 @@
 
  
     <bean id="budgetConstructionSipDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.bc.document.dataaccess.impl.BudgetConstructionSipDaoJdbc">
-    </bean> 
+    </bean>
+    <bean id="budgetConstructionBudgetedSalaryLineExportDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.bc.document.dataaccess.impl.BudgetConstructionBudgetedSalaryLineExportDaoJdbc">
+    </bean>
 	<bean id="cu-bc" parent="bcModuleConfiguration-parentBean">
 		
 		<property name="packagePrefixes">
@@ -208,7 +210,10 @@
 		</property>				
 	    <property name="budgetConstructionSipDao">
 			<ref bean="budgetConstructionSipDao" />
-		</property>				
+		</property>			
+		<property name="budgetConstructionBudgetedSalaryLineExportDao">
+			<ref bean="budgetConstructionBudgetedSalaryLineExportDao" />
+		</property>	
 	</bean>
 	
 	<bean id="budgetConstructionHumanResourcesPayrollInterfaceService" class="org.kuali.kfs.module.bc.batch.service.impl.BudgetConstructionHumanResourcesPayrollInterfaceServiceImpl">
