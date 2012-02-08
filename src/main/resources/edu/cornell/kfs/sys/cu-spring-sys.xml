@@ -80,5 +80,13 @@
 			<property name="stagingDirectory" value="${staging.directory}/sys"/>
 	</bean>
 	
+	<bean id="securityRequestOrganizationRoleTypeService" class="org.kuali.kfs.sys.identity.SecurityRequestOrganizationRoleTypeServiceImpl"/>
+    <bean class="org.kuali.rice.ksb.messaging.KSBExporter">
+     <property name="serviceDefinition">
+       <bean parent="kfsService"
+         p:service-ref="securityRequestOrganizationRoleTypeService"
+         p:localServiceName="securityRequestOrganizationRoleTypeService" />
+     </property>
+    </bean>   
 	
 </beans>
