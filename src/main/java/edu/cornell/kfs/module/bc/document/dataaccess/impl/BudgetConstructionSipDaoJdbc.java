@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.Collection;
 
 import org.kuali.kfs.module.bc.document.dataaccess.impl.BudgetConstructionDaoJdbcBase;
-import org.kuali.kfs.pdp.batch.service.impl.ExtractPaymentServiceImpl;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import edu.cornell.kfs.module.bc.document.dataaccess.BudgetConstructionSipDao;
 
