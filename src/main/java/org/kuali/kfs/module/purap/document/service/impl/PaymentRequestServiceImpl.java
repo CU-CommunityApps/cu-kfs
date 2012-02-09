@@ -626,13 +626,14 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
             return returnLaterDate(invoicedDateCalendar, processedDateCalendar);
         }
 
-        // Retrieve pay date variation parameter (currently defined as 2).  See parameter description for explanation of it's use.
+        // Retrieve pay date variation parameter.  See parameter description for explanation of it's use.
         String payDateVariance = parameterService.getParameterValue(PaymentRequestDocument.class, CUPurapParameterConstants.PURAP_PREQ_PAY_DATE_VARIANCE);
         Integer payDateVarianceInt = Integer.valueOf(payDateVariance);
         
         Integer discountDueNumber = terms.getVendorDiscountDueNumber();
         Integer netDueNumber = terms.getVendorNetDueNumber();
-        if (ObjectUtils.isNotNull(discountDueNumber)) {
+        // Ignore discount due number if it is null or zero
+        if (ObjectUtils.isNotNull(discountDueNumber) && !discountDueNumber.equals(new Integer(0))) {
         	// Decrease discount due number by the pay date variance
         	discountDueNumber -= payDateVarianceInt;
         	if(discountDueNumber < 0) {
