@@ -1062,6 +1062,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
 
         String jobFunction = psPositionJobExtractEntry.getJobFunction();
         String positionType = psPositionJobExtractEntry.getEmployeeType();
+        String jobCode = psPositionJobExtractEntry.getJobCode();
         String positionNumber = psPositionJobExtractEntry.getPositionNumber();
         String unionCode = psPositionJobExtractEntry.getPositionUnionCode();
 
@@ -1075,15 +1076,15 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                 || CUBCConstants.JobFunction.ACL.equalsIgnoreCase(jobFunction)
                 || CUBCConstants.JobFunction.ACR.equalsIgnoreCase(jobFunction)
                 || CUBCConstants.JobFunction.ACS.equalsIgnoreCase(jobFunction) ||
-                CUBCConstants.JobCode._10841.equalsIgnoreCase(positionType)
-                || CUBCConstants.JobCode._10835.equalsIgnoreCase(positionType);
+                CUBCConstants.JobCode._10841.equalsIgnoreCase(jobCode)
+                || CUBCConstants.JobCode._10835.equalsIgnoreCase(jobCode);
 
         if (isNonFacultyAcademic) {
             employeeType = CUBCConstants.EmployeeType.NON_FACULTY_ACADEMICS;
         }
 
-        // Exempt staff E if job function is (ACF, ACO, ACL, ACR or ACS) and position type X
-        boolean isExemptStaff = (CUBCConstants.JobFunction.ACF.equalsIgnoreCase(jobFunction)
+        // Exempt staff E if job function is (ACF, ACO, ACL, ACR or ACS) and position type S
+        boolean isExemptStaff = !(CUBCConstants.JobFunction.ACF.equalsIgnoreCase(jobFunction)
                 || CUBCConstants.JobFunction.ACO.equalsIgnoreCase(jobFunction)
                 || CUBCConstants.JobFunction.ACL.equalsIgnoreCase(jobFunction)
                 || CUBCConstants.JobFunction.ACR.equalsIgnoreCase(jobFunction) || CUBCConstants.JobFunction.ACS
@@ -1093,12 +1094,14 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             employeeType = CUBCConstants.EmployeeType.EXEMPT_STAFF;
         }
 
-        //Non-exempt N if job function is ACF, ACO, ACL, ACR, ACS and position type N
-        boolean isNonExemptStaff = (CUBCConstants.JobFunction.ACF.equalsIgnoreCase(jobFunction)
+        //Non-exempt N if job function is ACF, ACO, ACL, ACR, ACS and position type E or H
+        boolean isNonExemptStaff = !(CUBCConstants.JobFunction.ACF.equalsIgnoreCase(jobFunction)
                 || CUBCConstants.JobFunction.ACO.equalsIgnoreCase(jobFunction)
                 || CUBCConstants.JobFunction.ACL.equalsIgnoreCase(jobFunction)
                 || CUBCConstants.JobFunction.ACR.equalsIgnoreCase(jobFunction) || CUBCConstants.JobFunction.ACS
-                .equalsIgnoreCase(jobFunction)) && CUBCConstants.PositionType.NON_EXEMPT.equalsIgnoreCase(positionType);
+                .equalsIgnoreCase(jobFunction))
+                && (CUBCConstants.PositionType.NON_EXEMPT_E.equalsIgnoreCase(positionType) || CUBCConstants.PositionType.NON_EXEMPT_H
+                        .equalsIgnoreCase(positionType));
 
         if (isNonExemptStaff) {
             employeeType = CUBCConstants.EmployeeType.NON_EXEMPT_STAFF;
@@ -1288,6 +1291,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                 // do deletes first and save the rest for add/update
 
                 if (CUBCConstants.StatusFlag.DELETED.getFlagValue().equals(entry.getCsfDeleteCode())) {
+
                     Map<String, Object> keyFields = new HashMap<String, Object>();
                     keyFields.put(
                             CUBCPropertyConstants.CalculateSalaryFoundationTrackerProperties.UNIVERSITY_FISCAL_YEAR,
@@ -1353,7 +1357,6 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
      * @param psPositionInfoEntries
      */
     protected void loadEntriesInPSPositionInfoTable(List<PSPositionInfo> psPositionInfoEntries, boolean startFresh) {
-
         if (startFresh) {
             businessObjectService
                     .deleteMatching(PSPositionInfo.class, new HashMap<String, String>());

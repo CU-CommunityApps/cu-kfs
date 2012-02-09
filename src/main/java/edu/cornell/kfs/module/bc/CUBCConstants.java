@@ -69,8 +69,9 @@ public class CUBCConstants extends BCConstants {
     }
 
     public static final class PositionType {
-        public static final String EXEMPT = "E";
-        public static final String NON_EXEMPT = "N";
+        public static final String EXEMPT = "S";
+        public static final String NON_EXEMPT_E = "E";
+        public static final String NON_EXEMPT_H = "H";
     }
 
     public static final String[] UNION_CODES_SIP = new String[]{"BTC", "CPU", "CWA", "IOE", "LOC", "PRO", "SPA", "UAW"};
