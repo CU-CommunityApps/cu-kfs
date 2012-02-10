@@ -32,7 +32,9 @@
             </branch>
             <join name="JoinRetiredAssetTransferredExternally"/>
           </split>
-          <requests name="OrganizationHierarchy" />
+<!--          <requests name="OrganizationHierarchy" />-->
+          <requests name="OrganizationHierarchy" nextNode ="AssetManager" />
+          <requests name="AssetManager" />
 <!-- 
           <requests name="OrganizationHierarchy" nextNode="JoinRetiredAssetTransferredExternally"/>
 
@@ -61,6 +63,10 @@
           <activationType>P</activationType>
         </role>
         <role name="ExternalTransfer">
+          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+		<role name="AssetManager">
           <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
