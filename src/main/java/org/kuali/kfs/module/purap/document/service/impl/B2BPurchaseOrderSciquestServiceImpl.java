@@ -468,6 +468,14 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("          <Net>").append(payTerm.getVendorNetDueNumber()).append("</Net>\n");
         cxml.append("        </Terms>\n");
         cxml.append("      </PaymentInfo>\n");
+
+        /** *** EXTERNAL INFO SECTION **** */
+        String vendorNoteText = purchaseOrder.getVendorNoteText();
+        if (ObjectUtils.isNotNull(vendorNoteText)) {
+	        cxml.append("      <ExternalInfo>\n");
+	        cxml.append("        <Note>").append(vendorNoteText).append("</Note>\n");
+	        cxml.append("      </ExternalInfo>\n");
+        }
         
         cxml.append("      <CustomFieldValueSet label=\"Contact Name\" name=\"InitiatorName\">\n");
         cxml.append("        <CustomFieldValue>\n");
@@ -490,6 +498,16 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("         </CustomFieldValue>\n");
         cxml.append("      </CustomFieldValueSet>\n");
 
+        String deliveryInstructionText = purchaseOrder.getDeliveryInstructionText();
+        
+        if (ObjectUtils.isNotNull(deliveryInstructionText)) {
+	        cxml.append("      <CustomFieldValueSet label=\"Delivery Instructions\" name=\"Delivery Instructions\">\n");
+	        cxml.append("        <CustomFieldValue>\n");
+	        cxml.append("          <Value><![CDATA[").append(deliveryInstructionText).append("]]></Value>\n");
+	        cxml.append("         </CustomFieldValue>\n");
+	        cxml.append("      </CustomFieldValueSet>\n");
+        }
+        
         cxml.append("    </POHeader>\n");
 
         /** *** Items Section **** */
