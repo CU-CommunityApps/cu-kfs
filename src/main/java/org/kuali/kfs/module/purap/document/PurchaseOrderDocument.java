@@ -405,6 +405,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     @Override
     public List buildListOfDeletionAwareLists() {
         List managedLists = super.buildListOfDeletionAwareLists();
+        managedLists.add(this.getGeneralLedgerPendingEntries());
         if (allowDeleteAwareCollection) {
             managedLists.add(this.getPurchaseOrderVendorQuotes());
         }
@@ -480,15 +481,18 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
      */
     @Override
     public void prepareForSave(KualiDocumentEvent event) {
-        String documentType = getDocumentHeader().getWorkflowDocument().getDocumentType();
+        KualiWorkflowDocument workFlowDocument = getDocumentHeader().getWorkflowDocument();
+        String documentType = workFlowDocument.getDocumentType();
+
+        
         if ((documentType.equals(PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_DOCUMENT)) ||
             (documentType.equals(PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_SPLIT_DOCUMENT))) {
-            if (!getDocumentHeader().getWorkflowDocument().stateIsFinal()) {
-                super.prepareForSave(event);
-            }
-            else {
-                // if doc is FINAL, saving should not be creating GL entries
+            if (workFlowDocument.stateIsCanceled()) {
+             // if doc is FINAL or canceled, saving should not be creating GL entries
                 setGeneralLedgerPendingEntries(new ArrayList());
+            } else if (workFlowDocument.stateIsFinal()) {
+            } else {   
+                super.prepareForSave(event);
             }
         }
     }

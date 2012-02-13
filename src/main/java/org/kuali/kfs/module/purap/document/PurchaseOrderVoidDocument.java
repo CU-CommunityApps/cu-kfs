@@ -35,6 +35,7 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO;
 import org.kuali.rice.kns.rule.event.KualiDocumentEvent;
+import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
 /**
  * Purchase Order Void Document
@@ -57,9 +58,11 @@ public class PurchaseOrderVoidDocument extends PurchaseOrderDocument {
      */
     @Override
     public void prepareForSave(KualiDocumentEvent event) {
-        LOG.info("prepareForSave(KualiDocumentEvent) do not create gl entries");
-        setSourceAccountingLines(new ArrayList());
-        setGeneralLedgerPendingEntries(new ArrayList());
+        KualiWorkflowDocument workFlowDocument = getDocumentHeader().getWorkflowDocument();
+        if (workFlowDocument.stateIsCanceled()) {
+            setSourceAccountingLines(new ArrayList());
+            setGeneralLedgerPendingEntries(new ArrayList());        
+        }
     }
 
     @Override
