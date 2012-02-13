@@ -30,17 +30,6 @@
 						</list>
 					</property>
 				</bean>
-<!--
- 				<bean parent="DisbursementVoucher-accountingLineAmountPositiveValidation" scope="prototype">
-					<property name="parameterProperties">
-						<list>
-							<bean parent="accountingDocumentFieldConversion" />
-							<bean parent="accountingLineFieldConversion" />
-						</list>
-					</property>
-					<property name="quitOnFail" value="true" />
-				</bean>
--->
 				<bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
 					<property name="parameterProperties">
 						<bean parent="accountingLineToBusinessObjectFieldConversion" />
@@ -65,17 +54,6 @@
 						</list>
 					</property>
 				</bean>
-<!-- 
-				<bean parent="DisbursementVoucher-accountingLineAmountPositiveValidation" scope="prototype">
-					<property name="parameterProperties">
-						<list>
-							<bean parent="accountingDocumentFieldConversion" />
-							<bean parent="updatedAccountingLineFieldConversion" />
-						</list>
-					</property>
-					<property name="quitOnFail" value="true" />
-				</bean>
--->
 				<bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
 					<property name="parameterProperties">
 						<bean parent="updatedAccountingLineToBusinessObjectFieldConversion" />
