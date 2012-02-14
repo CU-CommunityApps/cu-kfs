@@ -75,6 +75,9 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
     private static final int MANUAL = 3;
     private static final int CONVERSION = 4;
 
+    // Non-quantity Unit of Measure - this UOM should be used as the default UOM for all Non-Quantity orders to ensure they are properly handled by SciQuest (KFSPTS-792)
+    private static final String NON_QUANTITY_UOM = "LOT";
+    
     /**
      * @see org.kuali.kfs.module.purap.document.service.B2BPurchaseOrderService#sendPurchaseOrder(org.kuali.kfs.module.purap.document.PurchaseOrderDocument)
      */
@@ -468,7 +471,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("          <Net>").append(payTerm.getVendorNetDueNumber()).append("</Net>\n");
         cxml.append("        </Terms>\n");
         cxml.append("      </PaymentInfo>\n");
-
+        
         /** *** EXTERNAL INFO SECTION **** */
         String vendorNoteText = purchaseOrder.getVendorNoteText();
         if (ObjectUtils.isNotNull(vendorNoteText)) {
@@ -515,6 +518,14 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         for (Iterator iter = detailList.iterator(); iter.hasNext();) {
             PurchaseOrderItem poi = (PurchaseOrderItem) iter.next();
             if ((ObjectUtils.isNotNull(poi.getItemType())) && poi.getItemType().isLineItemIndicator()) {
+                String uom = poi.getItemUnitOfMeasureCode();
+                KualiDecimal quantity = poi.getItemQuantity();
+                // Pass in value of 1 for quantity if no quantity provided.  This helps handle non-quantity orders in SciQuest. KFSPTS-792
+                if (quantity == null || quantity.isZero()) {
+                    quantity = new KualiDecimal(1);
+                    uom = NON_QUANTITY_UOM;
+                }
+            	
                 cxml.append("    <POLine linenumber=\"").append(poi.getItemLineNumber()).append("\">\n");
                 cxml.append("      <Item>\n");
                 // CatalogNumber - This is a string that the supplier uses to identify the item (i.e., SKU). Optional.
@@ -523,18 +534,17 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                     cxml.append("        <AuxiliaryCatalogNumber><![CDATA[").append(poi.getItemAuxiliaryPartIdentifier()).append("]]></AuxiliaryCatalogNumber>\n");
                 }
                 cxml.append("        <Description><![CDATA[").append(poi.getItemDescription()).append("]]></Description>\n"); // Required.
-                cxml.append("        <ProductUnitOfMeasure type=\"supplier\"><Measurement><MeasurementValue><![CDATA[").append(poi.getItemUnitOfMeasureCode()).append("]]></MeasurementValue></Measurement></ProductUnitOfMeasure>\n");
-                cxml.append("        <ProductUnitOfMeasure type=\"system\"><Measurement><MeasurementValue><![CDATA[").append(poi.getItemUnitOfMeasureCode()).append("]]></MeasurementValue></Measurement></ProductUnitOfMeasure>\n");
+                cxml.append("        <ProductUnitOfMeasure type=\"supplier\"><Measurement><MeasurementValue><![CDATA[").append(uom).append("]]></MeasurementValue></Measurement></ProductUnitOfMeasure>\n");
+                cxml.append("        <ProductUnitOfMeasure type=\"system\"><Measurement><MeasurementValue><![CDATA[").append(uom).append("]]></MeasurementValue></Measurement></ProductUnitOfMeasure>\n");
                 // ProductType - Describes the type of the product or service. Valid values: Catalog, Form, Punchout. Mandatory.
                 if (PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
-                cxml.append("        <ProductType>").append(poi.getExternalOrganizationB2bProductTypeName()).append("</ProductType>\n");
+                	cxml.append("        <ProductType>").append(poi.getExternalOrganizationB2bProductTypeName()).append("</ProductType>\n");
                 } else {
                 	cxml.append("        <ProductType>").append("Form").append("</ProductType>\n");
                 }
                 cxml.append("      </Item>\n");
                 KualiDecimal itemQuantity = poi.getItemQuantity();
-                // Pass in value of zero for quantity if no quantity provided.  This helps handle non-quantity orders in SciQuest.
-                cxml.append("      <Quantity>").append(itemQuantity==null?"0":itemQuantity).append("</Quantity>\n");
+                cxml.append("      <Quantity>").append(quantity).append("</Quantity>\n");
                 // LineCharges - All the monetary charges for this line, including the price, tax, shipping, and handling.
                 // Required.
                 cxml.append("      <LineCharges>\n");
