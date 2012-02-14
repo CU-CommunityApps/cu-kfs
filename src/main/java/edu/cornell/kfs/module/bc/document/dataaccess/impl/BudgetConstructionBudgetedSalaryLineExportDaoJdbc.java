@@ -112,20 +112,20 @@ public class BudgetConstructionBudgetedSalaryLineExportDaoJdbc
 	        sqlBuilder.append("AND LD_BCN_AF_REASON_T.POSITION_NBR   = LD_PNDBC_APPTFND_T.POSITION_NBR  ");
 	        sqlBuilder.append("AND LD_BCN_AF_REASON_T.EMPLID         = LD_PNDBC_APPTFND_T.EMPLID  ");
 	        sqlBuilder.append("LEFT JOIN CA_ACCOUNT_T  ");
-	        sqlBuilder.append("ON CA_ACCOUNT_T.FIN_COA_CD  =USERSELECTED.FIN_COA_CD  ");
+	        sqlBuilder.append("ON CA_ACCOUNT_T.FIN_COA_CD=USERSELECTED.FIN_COA_CD  ");
 	        sqlBuilder.append("AND CA_ACCOUNT_T.ACCOUNT_NBR=USERSELECTED.ACCOUNT_NBR  ");
 	        sqlBuilder.append("LEFT JOIN CA_ACCOUNT_TX  ");
-	        sqlBuilder.append("ON CA_ACCOUNT_TX.FIN_COA_CD  =CA_ACCOUNT_T.FIN_COA_CD  ");
-	        sqlBuilder.append("AND CA_ACCOUNT_TX.ACCOUNT_NBR=CA_ACCOUNT_T.ACCOUNT_NBR  ");
+	        sqlBuilder.append("ON CA_ACCOUNT_TX.FIN_COA_CD = CA_ACCOUNT_T.FIN_COA_CD  ");
+	        sqlBuilder.append("AND CA_ACCOUNT_TX.ACCOUNT_NBR = CA_ACCOUNT_T.ACCOUNT_NBR  ");
 	        sqlBuilder.append("LEFT JOIN LD_BCN_ORG_RPTS_T  ");
-	        sqlBuilder.append("ON LD_BCN_ORG_RPTS_T.FIN_COA_CD=CA_ACCOUNT_T.FIN_COA_CD  ");
-	        sqlBuilder.append("AND LD_BCN_ORG_RPTS_T.ORG_CD   =CA_ACCOUNT_T.ORG_CD  ");
-	        sqlBuilder.append("WHERE LD_BCN_POS_T.POS_EFFDT   =  ");
+	        sqlBuilder.append("ON LD_BCN_ORG_RPTS_T.FIN_COA_CD = LD_BCN_ACCT_RPTS_T.RPTS_TO_FIN_COA_CD  ");
+	        sqlBuilder.append("AND LD_BCN_ORG_RPTS_T.ORG_CD = LD_BCN_ACCT_RPTS_T.RPTS_TO_ORG_CD  ");
+	        sqlBuilder.append("WHERE LD_BCN_POS_T.POS_EFFDT = ");
 	        sqlBuilder.append("  (SELECT MAX(LD_BCN_POS_T_2.POS_EFFDT)  ");
 	        sqlBuilder.append("  FROM LD_BCN_POS_T LD_BCN_POS_T_2  ");
 	        sqlBuilder.append("  WHERE LD_BCN_POS_T_2.position_nbr=LD_BCN_POS_T.position_nbr  ");
 	        sqlBuilder.append("  )  ");
-	        sqlBuilder.append("ORDER BY LD_PNDBC_APPTFND_T.position_nbr");
+	        sqlBuilder.append("ORDER BY FIN_OBJECT_CD, FIN_SUB_OBJ_CD, POSITION_NBR, EMPLID");
 
 	        String sqlString = sqlBuilder.toString();
 
