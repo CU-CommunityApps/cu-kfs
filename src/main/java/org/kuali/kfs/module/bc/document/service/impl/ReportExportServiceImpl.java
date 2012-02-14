@@ -48,6 +48,8 @@ import edu.cornell.kfs.module.bc.document.dataaccess.BudgetConstructionMonthlyBu
 import edu.cornell.kfs.module.bc.document.dataaccess.BudgetConstructionSipDao;
 import edu.cornell.kfs.module.bc.document.dataaccess.impl.BudgetConstructionBudgetedSalaryLineExportDaoJdbc.BSLExportData;
 import edu.cornell.kfs.module.bc.document.dataaccess.impl.BudgetConstructionSipDaoJdbc.SIPExportData;
+import edu.cornell.kfs.module.bc.document.dataaccess.BudgetConstructionBudgetRevExpExportDao;
+import edu.cornell.kfs.module.bc.document.dataaccess.impl.BudgetConstructionBudgetRevExpExportDaoJdbc.BREExportData;
 
 /**
  * @see org.kuali.kfs.module.bc.document.service.ReportExportService
@@ -58,6 +60,7 @@ public class ReportExportServiceImpl implements ReportExportService {
     BudgetConstructionSipDao budgetConstructionSipDao;
     BudgetConstructionBudgetedSalaryLineExportDao budgetConstructionBudgetedSalaryLineExportDao;
     protected BudgetConstructionMonthlyBudgetReportDao budgetConstructionMonthlyBudgetReportDao; 
+    BudgetConstructionBudgetRevExpExportDao budgetConstructionBudgetRevExpExportDao;
 	BusinessObjectService businessObjectService;
     protected DataDictionaryService dataDictionaryService;
 
@@ -119,16 +122,21 @@ public class ReportExportServiceImpl implements ReportExportService {
          */
 
         // update account dump table
-        updateAccountDump(principalId);
+        // updateAccountDump(principalId);
 
         StringBuilder results = new StringBuilder();
         //build and add report header row
         results.append(constructAccountDumpHeaderLine(fieldSeperator));
+        Collection<BREExportData> breExportRecords = budgetConstructionBudgetRevExpExportDao.getBREExtractByPersonUnivId(principalId);
 
+        if (ObjectUtils.isNotNull(breExportRecords))
+	        for (BREExportData breRecord : breExportRecords) {
+	           results.append(this.constructBREDumpLine(breRecord, fieldSeperator, textDelimiter));
+	        }
+        
         List<BudgetConstructionAccountDump> accountDumpRecords = getBudgetConstructionAccountDump(principalId);
         for (BudgetConstructionAccountDump accountRecord : accountDumpRecords) {
             List<PendingBudgetConstructionGeneralLedger> pendingEntryList = getPendingBudgetConstructionGeneralLedgerRecords(accountRecord);
-
             for (PendingBudgetConstructionGeneralLedger pendingEntry : pendingEntryList) {
                 results.append(constructAccountDumpLine(pendingEntry, textDelimiter, fieldSeperator));
             }
@@ -137,6 +145,26 @@ public class ReportExportServiceImpl implements ReportExportService {
 
         return results;
     }
+
+    private Object constructBREDumpLine(BREExportData breRecord, String fieldSeperator, String textDelimiter) {
+		// Generate each line as a single String and return it
+        String line = "";
+        line = textDelimiter + breRecord.getFdocNbr() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + breRecord.getUnivFiscalYear() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + breRecord.getFinCoaCd() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + breRecord.getAccountNbr() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + breRecord.getRptsToOrgCd() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + breRecord.getSubAcctNbr() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + breRecord.getFinObjectCd() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + breRecord.getFinSubObjCd() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + breRecord.getFinBalanceTypCd() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + breRecord.getFinObjTypCd() + textDelimiter + fieldSeperator;
+        line = line + breRecord.getFinBegBalLnAmt() + fieldSeperator;
+        line = line + breRecord.getAclnAnnlBalAmt() + fieldSeperator;
+        line = line + textDelimiter + breRecord.getRcCd() + textDelimiter + fieldSeperator;
+        line = line + "\r\n";
+    	return line;
+	}
 
     /**
      * @see org.kuali.kfs.module.bc.document.service.ReportExportService#buildFundingDumpFile(java.lang.String, java.lang.String,
@@ -250,8 +278,6 @@ public class ReportExportServiceImpl implements ReportExportService {
         
         line = line + "\r\n";
     	return line;
-    	
-    	
 	}
     
     public StringBuilder buildSIPExportDumpFile(String principalId, String fieldSeperator, String textDelimiter, boolean executivesOnly) {
@@ -931,6 +957,15 @@ public class ReportExportServiceImpl implements ReportExportService {
 	public void setBudgetConstructionMonthlyBudgetReportDao(
 			BudgetConstructionMonthlyBudgetReportDao budgetConstructionMonthlyBudgetReportDao) {
 		this.budgetConstructionMonthlyBudgetReportDao = budgetConstructionMonthlyBudgetReportDao;
+	}
+	
+	public BudgetConstructionBudgetRevExpExportDao getBudgetConstructionBudgetRevExpExportDao() {
+		return budgetConstructionBudgetRevExpExportDao;
+	}
+
+	public void setBudgetConstructionBudgetRevExpExportDao(
+			BudgetConstructionBudgetRevExpExportDao budgetConstructionBudgetRevExpExportDao) {
+		this.budgetConstructionBudgetRevExpExportDao = budgetConstructionBudgetRevExpExportDao;	
 	}
 }
 

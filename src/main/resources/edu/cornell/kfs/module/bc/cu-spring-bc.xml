@@ -13,8 +13,11 @@
     </bean>
     <bean id="budgetConstructionBudgetedSalaryLineExportDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.bc.document.dataaccess.impl.BudgetConstructionBudgetedSalaryLineExportDaoJdbc">
     </bean>
-    <bean id="budgetConstructionMonthlyBudgetReportDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.bc.document.dataaccess.impl.BudgetConstructionMonthlyBudgetReportDaoJdbc"/>
-    
+    <bean id="budgetConstructionMonthlyBudgetReportDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.bc.document.dataaccess.impl.BudgetConstructionMonthlyBudgetReportDaoJdbc">
+    </bean>    
+    <bean id="budgetConstructionBudgetRevExpExportDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.bc.document.dataaccess.impl.BudgetConstructionBudgetRevExpExportDaoJdbc">
+    </bean>
+   
 	<bean id="cu-bc" parent="bcModuleConfiguration-parentBean">
 		
 		<property name="packagePrefixes">
@@ -219,6 +222,9 @@
 		<property name="budgetConstructionMonthlyBudgetReportDao">
 			<ref bean="budgetConstructionMonthlyBudgetReportDao" />
 		</property>	
+		<property name="budgetConstructionBudgetRevExpExportDao">
+			<ref bean="budgetConstructionBudgetRevExpExportDao" />
+		</property>
 	</bean>
 	
 	<bean id="budgetConstructionHumanResourcesPayrollInterfaceService" class="org.kuali.kfs.module.bc.batch.service.impl.BudgetConstructionHumanResourcesPayrollInterfaceServiceImpl">
