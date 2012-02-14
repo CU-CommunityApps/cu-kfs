@@ -79,7 +79,7 @@ public class BudgetConstructionMonthlyBudgetReportDaoJdbc extends BudgetConstruc
                 monthlyBudgetReportLine.setDocNumber(rs.getString("fdoc_nbr"));
                 monthlyBudgetReportLine.setUniversityFiscalYear(rs.getInt("univ_fiscal_yr"));
                 monthlyBudgetReportLine.setChartCode(rs.getString("fin_coa_cd"));
-                monthlyBudgetReportLine.setReportsToOrgCode("rpts_to_org_cd");
+                monthlyBudgetReportLine.setReportsToOrgCode(rs.getString("rpts_to_org_cd"));
                 monthlyBudgetReportLine.setSubAccountNumber(rs.getString("sub_acct_nbr"));
                 monthlyBudgetReportLine.setFinancialObjectCode(rs.getString("fin_object_cd"));
                 monthlyBudgetReportLine.setFinancialSubObjectCode(rs.getString("fin_sub_obj_cd"));
