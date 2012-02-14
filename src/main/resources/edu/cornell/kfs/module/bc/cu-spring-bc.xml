@@ -13,6 +13,8 @@
     </bean>
     <bean id="budgetConstructionBudgetedSalaryLineExportDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.bc.document.dataaccess.impl.BudgetConstructionBudgetedSalaryLineExportDaoJdbc">
     </bean>
+    <bean id="budgetConstructionMonthlyBudgetReportDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.bc.document.dataaccess.impl.BudgetConstructionMonthlyBudgetReportDaoJdbc"/>
+    
 	<bean id="cu-bc" parent="bcModuleConfiguration-parentBean">
 		
 		<property name="packagePrefixes">
@@ -213,6 +215,9 @@
 		</property>			
 		<property name="budgetConstructionBudgetedSalaryLineExportDao">
 			<ref bean="budgetConstructionBudgetedSalaryLineExportDao" />
+		</property>	
+		<property name="budgetConstructionMonthlyBudgetReportDao">
+			<ref bean="budgetConstructionMonthlyBudgetReportDao" />
 		</property>	
 	</bean>
 	

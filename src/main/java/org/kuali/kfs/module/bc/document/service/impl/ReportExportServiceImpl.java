@@ -15,8 +15,6 @@
  */
 package org.kuali.kfs.module.bc.document.service.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,13 +25,9 @@ import org.kuali.kfs.module.bc.BCConstants;
 import org.kuali.kfs.module.bc.BCPropertyConstants;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionAccountDump;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionAccountReports;
-import org.kuali.kfs.module.bc.businessobject.BudgetConstructionAdministrativePost;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionAppointmentFundingReason;
-import org.kuali.kfs.module.bc.businessobject.BudgetConstructionCalculatedSalaryFoundationTracker;
-import org.kuali.kfs.module.bc.businessobject.BudgetConstructionIntendedIncumbent;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionMonthly;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionOrganizationReports;
-import org.kuali.kfs.module.bc.businessobject.BudgetConstructionPosition;
 import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionAppointmentFunding;
 import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionGeneralLedger;
 import org.kuali.kfs.module.bc.document.dataaccess.ReportDumpDao;
@@ -48,16 +42,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
 import edu.cornell.kfs.module.bc.CUBCPropertyConstants;
-
-import org.kuali.kfs.module.bc.document.dataaccess.BudgetConstructionOrganizationReportsDao;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
-
-import edu.cornell.kfs.module.bc.document.dataaccess.BudgetConstructionSipDao;
-import edu.cornell.kfs.module.bc.document.dataaccess.impl.BudgetConstructionSipDaoJdbc.SIPExportData;
-
+import edu.cornell.kfs.module.bc.businessobject.MonthlyBudgetReportLine;
 import edu.cornell.kfs.module.bc.document.dataaccess.BudgetConstructionBudgetedSalaryLineExportDao;
+import edu.cornell.kfs.module.bc.document.dataaccess.BudgetConstructionMonthlyBudgetReportDao;
+import edu.cornell.kfs.module.bc.document.dataaccess.BudgetConstructionSipDao;
 import edu.cornell.kfs.module.bc.document.dataaccess.impl.BudgetConstructionBudgetedSalaryLineExportDaoJdbc.BSLExportData;
+import edu.cornell.kfs.module.bc.document.dataaccess.impl.BudgetConstructionSipDaoJdbc.SIPExportData;
 
 /**
  * @see org.kuali.kfs.module.bc.document.service.ReportExportService
@@ -67,6 +57,7 @@ public class ReportExportServiceImpl implements ReportExportService {
     ReportDumpDao reportDumpDao;
     BudgetConstructionSipDao budgetConstructionSipDao;
     BudgetConstructionBudgetedSalaryLineExportDao budgetConstructionBudgetedSalaryLineExportDao;
+    protected BudgetConstructionMonthlyBudgetReportDao budgetConstructionMonthlyBudgetReportDao; 
 	BusinessObjectService businessObjectService;
     protected DataDictionaryService dataDictionaryService;
 
@@ -355,22 +346,19 @@ public class ReportExportServiceImpl implements ReportExportService {
      *      fdoc_ln_mo12_amt.ld_bcnstr_month_t // $line$ = "%%$line$%%$gennum$%%$sep$" // ; rc_cd added 12/20/2004 - gwp // $line$ =
      *      "%%$line$%%$dlm$%%$rc_cd$%%$dlm$" // // $line$ = "%%$line$%%^"
      */
-    public StringBuilder buildOrganizationMonthlyDumpFile(String principalId, String fieldSeperator, String textDelimiter) {
-        // update account dump table
-        updateAccountDump(principalId);
+    public StringBuilder buildOrganizationMonthlyDumpFile(String principalId, String fieldSeperator,
+            String textDelimiter) {
 
         StringBuilder results = new StringBuilder();
-        
+
         results.append(constructMonthlyDumpHeaderLine(fieldSeperator));
 
-        List<BudgetConstructionAccountDump> accountDumpRecords = getBudgetConstructionAccountDump(principalId);
-        for (BudgetConstructionAccountDump accountRecord : accountDumpRecords) {
-            List<BudgetConstructionMonthly> budgetConstructionMonthlyList = getBudgetConstructionMonthlyRecords(accountRecord);
-            for (BudgetConstructionMonthly monthlyRecord : budgetConstructionMonthlyList) {
-                results.append(this.constructMonthlyDumpLine(monthlyRecord, fieldSeperator, textDelimiter));
-            }
+        Collection<MonthlyBudgetReportLine> monthlyBudgetReportLines = budgetConstructionMonthlyBudgetReportDao
+                .getMonthlyBudgetReportLines(principalId);
+
+        for (MonthlyBudgetReportLine monthlyRecord : monthlyBudgetReportLines) {
+            results.append(this.constructOrganizationMonthlyDumpLine(monthlyRecord, fieldSeperator, textDelimiter));
         }
-        reportDumpDao.cleanAccountDump(principalId);
 
         return results;
     }
@@ -655,6 +643,47 @@ public class ReportExportServiceImpl implements ReportExportService {
 
         return line;
     }
+    
+    /**
+     * Constructs an organization monthly dump file line.
+     * 
+     * @param monthlyRecord
+     * @param fieldSeperator
+     * @param textDelimiter
+     * @return an organization monthly dump file line
+     */
+    protected String constructOrganizationMonthlyDumpLine(MonthlyBudgetReportLine monthlyRecord, String fieldSeperator,
+            String textDelimiter) {
+        String line = "";
+
+        line = line + textDelimiter + monthlyRecord.getDocNumber() + textDelimiter + fieldSeperator;
+        line = line + monthlyRecord.getUniversityFiscalYear() + fieldSeperator;
+        line = line + textDelimiter + monthlyRecord.getChartCode() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + monthlyRecord.getAccountNumber() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + monthlyRecord.getReportsToOrgCode() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + monthlyRecord.getSubAccountNumber() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + monthlyRecord.getFinancialObjectCode() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + monthlyRecord.getFinancialSubObjectCode() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + monthlyRecord.getFinancialBalanceType() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + monthlyRecord.getFinancialObjectTypeCode() + textDelimiter + fieldSeperator;
+        line = line + new KualiDecimal(monthlyRecord.getFinancialDocMonth1LineAmt()) + fieldSeperator;
+        line = line + new KualiDecimal(monthlyRecord.getFinancialDocMonth2LineAmt()) + fieldSeperator;
+        line = line + new KualiDecimal(monthlyRecord.getFinancialDocMonth3LineAmt()) + fieldSeperator;
+        line = line + new KualiDecimal(monthlyRecord.getFinancialDocMonth4LineAmt()) + fieldSeperator;
+        line = line + new KualiDecimal(monthlyRecord.getFinancialDocMonth5LineAmt()) + fieldSeperator;
+        line = line + new KualiDecimal(monthlyRecord.getFinancialDocMonth6LineAmt()) + fieldSeperator;
+        line = line + new KualiDecimal(monthlyRecord.getFinancialDocMonth7LineAmt()) + fieldSeperator;
+        line = line + new KualiDecimal(monthlyRecord.getFinancialDocMonth8LineAmt()) + fieldSeperator;
+        line = line + new KualiDecimal(monthlyRecord.getFinancialDocMonth9LineAmt()) + fieldSeperator;
+        line = line + new KualiDecimal(monthlyRecord.getFinancialDocMonth10LineAmt()) + fieldSeperator;
+        line = line + new KualiDecimal(monthlyRecord.getFinancialDocMonth11LineAmt()) + fieldSeperator;
+        line = line + new KualiDecimal(monthlyRecord.getFinancialDocMonth12LineAmt()) + fieldSeperator;
+        line = line + textDelimiter + monthlyRecord.getReponsibilityCenterCode() + textDelimiter;
+
+        line = line + "\r\n";
+
+        return line;
+    }
 
     /**
      * Constructs a monthly dump file line
@@ -897,6 +926,11 @@ public class ReportExportServiceImpl implements ReportExportService {
 	public void setBudgetConstructionBudgetedSalaryLineExportDao(
 			BudgetConstructionBudgetedSalaryLineExportDao budgetConstructionBudgetedSalaryLineExportDao) {
 		this.budgetConstructionBudgetedSalaryLineExportDao = budgetConstructionBudgetedSalaryLineExportDao;
+	}
+
+	public void setBudgetConstructionMonthlyBudgetReportDao(
+			BudgetConstructionMonthlyBudgetReportDao budgetConstructionMonthlyBudgetReportDao) {
+		this.budgetConstructionMonthlyBudgetReportDao = budgetConstructionMonthlyBudgetReportDao;
 	}
 }
 
