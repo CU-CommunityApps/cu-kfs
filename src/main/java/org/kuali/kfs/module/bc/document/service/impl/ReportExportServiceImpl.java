@@ -134,14 +134,14 @@ public class ReportExportServiceImpl implements ReportExportService {
 	           results.append(this.constructBREDumpLine(breRecord, fieldSeperator, textDelimiter));
 	        }
         
-        List<BudgetConstructionAccountDump> accountDumpRecords = getBudgetConstructionAccountDump(principalId);
-        for (BudgetConstructionAccountDump accountRecord : accountDumpRecords) {
-            List<PendingBudgetConstructionGeneralLedger> pendingEntryList = getPendingBudgetConstructionGeneralLedgerRecords(accountRecord);
-            for (PendingBudgetConstructionGeneralLedger pendingEntry : pendingEntryList) {
-                results.append(constructAccountDumpLine(pendingEntry, textDelimiter, fieldSeperator));
-            }
-        }
-        reportDumpDao.cleanAccountDump(principalId);
+//        List<BudgetConstructionAccountDump> accountDumpRecords = getBudgetConstructionAccountDump(principalId);
+//        for (BudgetConstructionAccountDump accountRecord : accountDumpRecords) {
+//            List<PendingBudgetConstructionGeneralLedger> pendingEntryList = getPendingBudgetConstructionGeneralLedgerRecords(accountRecord);
+//            for (PendingBudgetConstructionGeneralLedger pendingEntry : pendingEntryList) {
+//                results.append(constructAccountDumpLine(pendingEntry, textDelimiter, fieldSeperator));
+//            }
+//        }
+//        reportDumpDao.cleanAccountDump(principalId);
 
         return results;
     }
