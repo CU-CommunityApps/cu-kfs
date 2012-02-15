@@ -70,7 +70,7 @@ public class BudgetConstructionMonthlyBudgetReportDaoJdbc extends BudgetConstruc
         sqlText.append("AND bcmonth.account_nbr         = acctrpts.account_nbr \n");
         sqlText.append("AND acctrpts.rpts_to_fin_coa_cd = orgrpts.fin_coa_cd \n");
         sqlText.append("AND acctrpts.rpts_to_org_cd     = orgrpts.org_cd \n");
-        sqlText.append("ORDER BY bcmonth.fin_object_cd, \n");
+        sqlText.append("ORDER BY bcmonth.account_nbr, bcmonth.fin_object_cd, \n");
         sqlText.append("  bcmonth.fin_sub_obj_cd");
 
         String sqlString = sqlText.toString();
