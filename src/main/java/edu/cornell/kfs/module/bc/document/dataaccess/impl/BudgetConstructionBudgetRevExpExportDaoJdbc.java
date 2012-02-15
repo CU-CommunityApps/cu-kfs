@@ -62,7 +62,7 @@ public class BudgetConstructionBudgetRevExpExportDaoJdbc
 	        sqlBuilder.append("LEFT JOIN LD_BCN_ORG_RPTS_T  ");
 	        sqlBuilder.append("ON LD_BCN_ORG_RPTS_T.FIN_COA_CD = LD_BCN_ACCT_RPTS_T.RPTS_TO_FIN_COA_CD  ");
 	        sqlBuilder.append("AND LD_BCN_ORG_RPTS_T.ORG_CD = LD_BCN_ACCT_RPTS_T.RPTS_TO_ORG_CD  ");
-	        sqlBuilder.append("ORDER BY FIN_OBJECT_CD, FIN_SUB_OBJ_CD");
+	        sqlBuilder.append("ORDER BY ACCOUNT_NBR, FDOC_NBR, FIN_OBJECT_CD, FIN_SUB_OBJ_CD");
 	        
 	        String sqlString = sqlBuilder.toString();
 
