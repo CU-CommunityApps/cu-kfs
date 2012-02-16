@@ -247,7 +247,7 @@ public class WebUtils {
         response.setHeader("Content-disposition", "attachment; filename=" + fileName);
         response.setHeader("Expires", "0");
         response.setHeader("Cache-Control", "no-cache");
-        response.setHeader("Pragma", "no-chache");
+        response.setHeader("Pragma", "no-cache");
         response.setContentLength(byteArrayOutputStream.size());
 
         // write to output
