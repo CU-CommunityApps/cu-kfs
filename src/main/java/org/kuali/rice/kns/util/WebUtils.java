@@ -246,8 +246,8 @@ public class WebUtils {
         response.setContentType(contentType);
         response.setHeader("Content-disposition", "attachment; filename=" + fileName);
         response.setHeader("Expires", "0");
-        response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
-        response.setHeader("Pragma", "public");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setHeader("Pragma", "no-chache");
         response.setContentLength(byteArrayOutputStream.size());
 
         // write to output
