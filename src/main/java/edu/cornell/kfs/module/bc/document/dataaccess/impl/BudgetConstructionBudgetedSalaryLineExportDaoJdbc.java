@@ -7,12 +7,14 @@ import java.util.Collection;
 import org.kuali.kfs.module.bc.document.dataaccess.impl.BudgetConstructionDaoJdbcBase;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import edu.cornell.kfs.module.bc.document.dataaccess.BudgetConstructionBudgetedSalaryLineExportDao;
+import edu.cornell.kfs.module.bc.util.ExportUtil;
 
 public class BudgetConstructionBudgetedSalaryLineExportDaoJdbc 
 			extends BudgetConstructionDaoJdbcBase 
 			implements BudgetConstructionBudgetedSalaryLineExportDao {
 	
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(BudgetConstructionBudgetedSalaryLineExportDaoJdbc.class);
+	private ExportUtil exportUtil = new ExportUtil();
 	
 	public BudgetConstructionBudgetedSalaryLineExportDaoJdbc() {
 		
@@ -21,7 +23,7 @@ public class BudgetConstructionBudgetedSalaryLineExportDaoJdbc
     public Collection<BSLExportData> getBSLExtractByPersonUnivId(String univId) {
        
         try {
-        	// Build the SQL
+         	// Build the SQL
 	        StringBuilder sqlBuilder = new StringBuilder(3500);
 
 	        sqlBuilder.append("SELECT LD_PNDBC_APPTFND_T.UNIV_FISCAL_YR,  ");
@@ -134,44 +136,44 @@ public class BudgetConstructionBudgetedSalaryLineExportDaoJdbc
 	        ParameterizedRowMapper<BSLExportData> mapper = new ParameterizedRowMapper<BSLExportData>() {
 	            public BSLExportData mapRow(ResultSet rs, int rowNum) throws SQLException {
 	            	BSLExportData bslExportData = new BSLExportData();
-	                bslExportData.setUnivFiscalYear(rs.getString("UNIV_FISCAL_YR"));
-	                bslExportData.setFinCoaCd(rs.getString("FIN_COA_CD"));
-	                bslExportData.setAccountNbr(rs.getString("ACCOUNT_NBR"));
-	                bslExportData.setRptsToOrgCd(rs.getString("RPTS_TO_ORG_CD"));
-	                bslExportData.setSubAcctNbr(rs.getString("SUB_ACCT_NBR"));
-	                bslExportData.setFinObjectCd(rs.getString("FIN_OBJECT_CD"));
-	                bslExportData.setFinSubObjCd(rs.getString("FIN_SUB_OBJ_CD"));
-	                bslExportData.setPositionNbr(rs.getString("POSITION_NBR"));
-	                bslExportData.setPosDescr(rs.getString("POS_DESCR"));
-	                bslExportData.setSetidSalary(rs.getString("SETID_SALARY"));
-	                bslExportData.setPosSalPlanDflt(rs.getString("POS_SAL_PLAN_DFLT"));
-	                bslExportData.setPosGradeDflt(rs.getString("POS_GRADE_DFLT"));
-	                bslExportData.setIuNormWorkMonths(rs.getString("IU_NORM_WORK_MONTHS"));
-	                bslExportData.setIuPayMonths(rs.getString("IU_PAY_MONTHS"));
-	                bslExportData.setEmplId(rs.getString("EMPLID"));
-	                bslExportData.setPersonNm(rs.getString("PERSON_NM"));
-	                bslExportData.setIuClassifLevel(rs.getString("IU_CLASSIF_LEVEL"));
-	                bslExportData.setAdminPost(rs.getString("ADMIN_POST"));
-	                bslExportData.setPosCsfAmt(rs.getString("POS_CSF_AMT"));
-	                bslExportData.setPosCsfFteQty(rs.getString("POS_CSF_FTE_QTY"));
-	                bslExportData.setPosCsfTmPct(rs.getString("POS_CSF_TM_PCT"));
-	                bslExportData.setApptFndDurCd(rs.getString("APPT_FND_DUR_CD"));
-	                bslExportData.setApptDurDesc(rs.getString("APPT_DUR_DESC"));
-	                bslExportData.setApptRqstCsfAmt(rs.getString("APPT_RQST_CSF_AMT"));
-	                bslExportData.setApptRqcsfFteQty(rs.getString("APPT_RQCSF_FTE_QTY"));
-	                bslExportData.setApptRqcsfTmPct(rs.getString("APPT_RQCSF_TM_PCT"));
-	                bslExportData.setApptTotIntndAmt(rs.getString("APPT_TOT_INTND_AMT"));
-	                bslExportData.setApptTotintfteQty(rs.getString("APPT_TOTINTFTE_QTY"));
-	                bslExportData.setApptRqstAmt(rs.getString("APPT_RQST_AMT"));
-	                bslExportData.setApptRqstTmPct(rs.getString("APPT_RQST_TM_PCT"));
-	                bslExportData.setApptRqstFteQty(rs.getString("APPT_RQST_FTE_QTY"));
-	                bslExportData.setApptRqstPayRt(rs.getString("APPT_RQST_PAY_RT"));
-	                bslExportData.setApptFndDltCd(rs.getString("APPT_FND_DLT_CD"));
-	                bslExportData.setApptFndMo(rs.getString("APPT_FND_MO"));
-	                bslExportData.setApptFndReasonCd(rs.getString("APPT_FND_REASON_CD"));
-	                bslExportData.setSubFundGrpCd(rs.getString("SUB_FUND_GRP_CD"));
-	                bslExportData.setRcCd(rs.getString("RC_CD"));
-	                bslExportData.setProgramCd(rs.getString("PROGRAM_CD"));
+	                bslExportData.setUnivFiscalYear(exportUtil.removeNulls(rs.getString("UNIV_FISCAL_YR"),false));
+	                bslExportData.setFinCoaCd(exportUtil.removeNulls(rs.getString("FIN_COA_CD"),false));
+	                bslExportData.setAccountNbr(exportUtil.removeNulls(rs.getString("ACCOUNT_NBR"),false));
+	                bslExportData.setRptsToOrgCd(exportUtil.removeNulls(rs.getString("RPTS_TO_ORG_CD"),false));
+	                bslExportData.setSubAcctNbr(exportUtil.removeNulls(rs.getString("SUB_ACCT_NBR"),false));
+	                bslExportData.setFinObjectCd(exportUtil.removeNulls(rs.getString("FIN_OBJECT_CD"),false));
+	                bslExportData.setFinSubObjCd(exportUtil.removeNulls(rs.getString("FIN_SUB_OBJ_CD"),false));
+	                bslExportData.setPositionNbr(exportUtil.removeNulls(rs.getString("POSITION_NBR"),false));
+	                bslExportData.setPosDescr(exportUtil.removeNulls(rs.getString("POS_DESCR"),false));
+	                bslExportData.setSetidSalary(exportUtil.removeNulls(rs.getString("SETID_SALARY"),false));
+	                bslExportData.setPosSalPlanDflt(exportUtil.removeNulls(rs.getString("POS_SAL_PLAN_DFLT"),false));
+	                bslExportData.setPosGradeDflt(exportUtil.removeNulls(rs.getString("POS_GRADE_DFLT"),false));
+	                bslExportData.setIuNormWorkMonths(exportUtil.removeNulls(rs.getString("IU_NORM_WORK_MONTHS"),true));
+	                bslExportData.setIuPayMonths(exportUtil.removeNulls(rs.getString("IU_PAY_MONTHS"),true));
+	                bslExportData.setEmplId(exportUtil.removeNulls(rs.getString("EMPLID"),false));
+	                bslExportData.setPersonNm(exportUtil.removeNulls(rs.getString("PERSON_NM"),false));
+	                bslExportData.setIuClassifLevel(exportUtil.removeNulls(rs.getString("IU_CLASSIF_LEVEL"),false));
+	                bslExportData.setAdminPost(exportUtil.removeNulls(rs.getString("ADMIN_POST"),false));
+	                bslExportData.setPosCsfAmt(exportUtil.removeNulls(rs.getString("POS_CSF_AMT"),true));
+	                bslExportData.setPosCsfFteQty(exportUtil.removeNulls(rs.getString("POS_CSF_FTE_QTY"),true));
+	                bslExportData.setPosCsfTmPct(exportUtil.removeNulls(rs.getString("POS_CSF_TM_PCT"),true));
+	                bslExportData.setApptFndDurCd(exportUtil.removeNulls(rs.getString("APPT_FND_DUR_CD"),false));
+	                bslExportData.setApptDurDesc(exportUtil.removeNulls(rs.getString("APPT_DUR_DESC"),false));
+	                bslExportData.setApptRqstCsfAmt(exportUtil.removeNulls(rs.getString("APPT_RQST_CSF_AMT"),true));
+	                bslExportData.setApptRqcsfFteQty(exportUtil.removeNulls(rs.getString("APPT_RQCSF_FTE_QTY"),true));
+	                bslExportData.setApptRqcsfTmPct(exportUtil.removeNulls(rs.getString("APPT_RQCSF_TM_PCT"),true));
+	                bslExportData.setApptTotIntndAmt(exportUtil.removeNulls(rs.getString("APPT_TOT_INTND_AMT"),true));
+	                bslExportData.setApptTotintfteQty(exportUtil.removeNulls(rs.getString("APPT_TOTINTFTE_QTY"),true));
+	                bslExportData.setApptRqstAmt(exportUtil.removeNulls(rs.getString("APPT_RQST_AMT"),true));
+	                bslExportData.setApptRqstTmPct(exportUtil.removeNulls(rs.getString("APPT_RQST_TM_PCT"),true));
+	                bslExportData.setApptRqstFteQty(exportUtil.removeNulls(rs.getString("APPT_RQST_FTE_QTY"),true));
+	                bslExportData.setApptRqstPayRt(exportUtil.removeNulls(rs.getString("APPT_RQST_PAY_RT"),true));
+	                bslExportData.setApptFndDltCd(exportUtil.removeNulls(rs.getString("APPT_FND_DLT_CD"),false));
+	                bslExportData.setApptFndMo(exportUtil.removeNulls(rs.getString("APPT_FND_MO"),false));
+	                bslExportData.setApptFndReasonCd(exportUtil.removeNulls(rs.getString("APPT_FND_REASON_CD"),false));
+	                bslExportData.setSubFundGrpCd(exportUtil.removeNulls(rs.getString("SUB_FUND_GRP_CD"),false));
+	                bslExportData.setRcCd(exportUtil.removeNulls(rs.getString("RC_CD"),false));
+	                bslExportData.setProgramCd(exportUtil.removeNulls(rs.getString("PROGRAM_CD"),false));
 
 	                return bslExportData;
 	            }

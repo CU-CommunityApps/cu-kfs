@@ -11,9 +11,13 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import edu.cornell.kfs.module.bc.businessobject.MonthlyBudgetReportLine;
 import edu.cornell.kfs.module.bc.document.dataaccess.BudgetConstructionMonthlyBudgetReportDao;
 
+import edu.cornell.kfs.module.bc.util.ExportUtil;
+
 public class BudgetConstructionMonthlyBudgetReportDaoJdbc extends BudgetConstructionDaoJdbcBase implements
         BudgetConstructionMonthlyBudgetReportDao {
 
+	private ExportUtil exportUtil = new ExportUtil();
+	
     /**
      * @see edu.cornell.kfs.module.bc.document.dataaccess.BudgetConstructionMonthlyBudgetReportDao#getMonthlyBudgetReportLines(java.lang.String)
      */
@@ -78,29 +82,29 @@ public class BudgetConstructionMonthlyBudgetReportDaoJdbc extends BudgetConstruc
         ParameterizedRowMapper<MonthlyBudgetReportLine> mapper = new ParameterizedRowMapper<MonthlyBudgetReportLine>() {
             public MonthlyBudgetReportLine mapRow(ResultSet rs, int rowNum) throws SQLException {
                 MonthlyBudgetReportLine monthlyBudgetReportLine = new MonthlyBudgetReportLine();
-                monthlyBudgetReportLine.setDocNumber(rs.getString("fdoc_nbr"));
+                monthlyBudgetReportLine.setDocNumber(exportUtil.removeNulls(rs.getString("fdoc_nbr"), false));
                 monthlyBudgetReportLine.setUniversityFiscalYear(rs.getInt("univ_fiscal_yr"));
-                monthlyBudgetReportLine.setChartCode(rs.getString("fin_coa_cd"));
-                monthlyBudgetReportLine.setAccountNumber(rs.getString("account_nbr"));
-                monthlyBudgetReportLine.setReportsToOrgCode(rs.getString("rpts_to_org_cd"));
-                monthlyBudgetReportLine.setSubAccountNumber(rs.getString("sub_acct_nbr"));
-                monthlyBudgetReportLine.setFinancialObjectCode(rs.getString("fin_object_cd"));
-                monthlyBudgetReportLine.setFinancialSubObjectCode(rs.getString("fin_sub_obj_cd"));
-                monthlyBudgetReportLine.setFinancialBalanceType(rs.getString("fin_balance_typ_cd"));
-                monthlyBudgetReportLine.setFinancialObjectTypeCode(rs.getString("fin_obj_typ_cd"));
-                monthlyBudgetReportLine.setFinancialDocMonth1LineAmt(rs.getString("fdoc_ln_mo1_amt"));
-                monthlyBudgetReportLine.setFinancialDocMonth2LineAmt(rs.getString("fdoc_ln_mo2_amt"));
-                monthlyBudgetReportLine.setFinancialDocMonth3LineAmt(rs.getString("fdoc_ln_mo3_amt"));
-                monthlyBudgetReportLine.setFinancialDocMonth4LineAmt(rs.getString("fdoc_ln_mo4_amt"));
-                monthlyBudgetReportLine.setFinancialDocMonth5LineAmt(rs.getString("fdoc_ln_mo5_amt"));
-                monthlyBudgetReportLine.setFinancialDocMonth6LineAmt(rs.getString("fdoc_ln_mo6_amt"));
-                monthlyBudgetReportLine.setFinancialDocMonth7LineAmt(rs.getString("fdoc_ln_mo7_amt"));
-                monthlyBudgetReportLine.setFinancialDocMonth8LineAmt(rs.getString("fdoc_ln_mo8_amt"));
-                monthlyBudgetReportLine.setFinancialDocMonth9LineAmt(rs.getString("fdoc_ln_mo9_amt"));
-                monthlyBudgetReportLine.setFinancialDocMonth10LineAmt(rs.getString("fdoc_ln_mo10_amt"));
-                monthlyBudgetReportLine.setFinancialDocMonth11LineAmt(rs.getString("fdoc_ln_mo11_amt"));
-                monthlyBudgetReportLine.setFinancialDocMonth12LineAmt(rs.getString("fdoc_ln_mo12_amt"));
-                monthlyBudgetReportLine.setReponsibilityCenterCode(rs.getString("rc_cd"));
+                monthlyBudgetReportLine.setChartCode(exportUtil.removeNulls(rs.getString("fin_coa_cd"), false));
+                monthlyBudgetReportLine.setAccountNumber(exportUtil.removeNulls(rs.getString("account_nbr"), false));
+                monthlyBudgetReportLine.setReportsToOrgCode(exportUtil.removeNulls(rs.getString("rpts_to_org_cd"), false));
+                monthlyBudgetReportLine.setSubAccountNumber(exportUtil.removeNulls(rs.getString("sub_acct_nbr"), false));
+                monthlyBudgetReportLine.setFinancialObjectCode(exportUtil.removeNulls(rs.getString("fin_object_cd"), false));
+                monthlyBudgetReportLine.setFinancialSubObjectCode(exportUtil.removeNulls(rs.getString("fin_sub_obj_cd"), false));
+                monthlyBudgetReportLine.setFinancialBalanceType(exportUtil.removeNulls(rs.getString("fin_balance_typ_cd"), false));
+                monthlyBudgetReportLine.setFinancialObjectTypeCode(exportUtil.removeNulls(rs.getString("fin_obj_typ_cd"), false));
+                monthlyBudgetReportLine.setFinancialDocMonth1LineAmt(exportUtil.removeNulls(rs.getString("fdoc_ln_mo1_amt"), true));
+                monthlyBudgetReportLine.setFinancialDocMonth2LineAmt(exportUtil.removeNulls(rs.getString("fdoc_ln_mo2_amt"), true));
+                monthlyBudgetReportLine.setFinancialDocMonth3LineAmt(exportUtil.removeNulls(rs.getString("fdoc_ln_mo3_amt"), true));
+                monthlyBudgetReportLine.setFinancialDocMonth4LineAmt(exportUtil.removeNulls(rs.getString("fdoc_ln_mo4_amt"), true));
+                monthlyBudgetReportLine.setFinancialDocMonth5LineAmt(exportUtil.removeNulls(rs.getString("fdoc_ln_mo5_amt"), true));
+                monthlyBudgetReportLine.setFinancialDocMonth6LineAmt(exportUtil.removeNulls(rs.getString("fdoc_ln_mo6_amt"), true));
+                monthlyBudgetReportLine.setFinancialDocMonth7LineAmt(exportUtil.removeNulls(rs.getString("fdoc_ln_mo7_amt"), true));
+                monthlyBudgetReportLine.setFinancialDocMonth8LineAmt(exportUtil.removeNulls(rs.getString("fdoc_ln_mo8_amt"), true));
+                monthlyBudgetReportLine.setFinancialDocMonth9LineAmt(exportUtil.removeNulls(rs.getString("fdoc_ln_mo9_amt"), true));
+                monthlyBudgetReportLine.setFinancialDocMonth10LineAmt(exportUtil.removeNulls(rs.getString("fdoc_ln_mo10_amt"), true));
+                monthlyBudgetReportLine.setFinancialDocMonth11LineAmt(exportUtil.removeNulls(rs.getString("fdoc_ln_mo11_amt"), true));
+                monthlyBudgetReportLine.setFinancialDocMonth12LineAmt(exportUtil.removeNulls(rs.getString("fdoc_ln_mo12_amt"), true));
+                monthlyBudgetReportLine.setReponsibilityCenterCode(exportUtil.removeNulls(rs.getString("rc_cd"), false));
 
                 return monthlyBudgetReportLine;
             }

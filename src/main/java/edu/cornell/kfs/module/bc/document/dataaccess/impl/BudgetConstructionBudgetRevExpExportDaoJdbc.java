@@ -7,12 +7,14 @@ import java.util.Collection;
 import org.kuali.kfs.module.bc.document.dataaccess.impl.BudgetConstructionDaoJdbcBase;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import edu.cornell.kfs.module.bc.document.dataaccess.BudgetConstructionBudgetRevExpExportDao;
+import edu.cornell.kfs.module.bc.util.ExportUtil;
 
 public class BudgetConstructionBudgetRevExpExportDaoJdbc 
 			extends BudgetConstructionDaoJdbcBase 
 			implements BudgetConstructionBudgetRevExpExportDao {
 	
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(BudgetConstructionBudgetRevExpExportDaoJdbc.class);
+	private ExportUtil exportUtil = new ExportUtil();
 	
 	public BudgetConstructionBudgetRevExpExportDaoJdbc() {
 		
@@ -71,19 +73,19 @@ public class BudgetConstructionBudgetRevExpExportDaoJdbc
 	        ParameterizedRowMapper<BREExportData> mapper = new ParameterizedRowMapper<BREExportData>() {
 	            public BREExportData mapRow(ResultSet rs, int rowNum) throws SQLException {
 	            	BREExportData breExportData = new BREExportData();
-					breExportData.setFdocNbr(rs.getString("FDOC_NBR"));
-					breExportData.setUnivFiscalYear(rs.getString("UNIV_FISCAL_YR"));
-					breExportData.setFinCoaCd(rs.getString("FIN_COA_CD"));
-					breExportData.setAccountNbr(rs.getString("ACCOUNT_NBR"));
-					breExportData.setRptsToOrgCd(rs.getString("RPTS_TO_ORG_CD"));
-					breExportData.setSubAcctNbr(rs.getString("SUB_ACCT_NBR"));
-					breExportData.setFinObjectCd(rs.getString("FIN_OBJECT_CD"));
-					breExportData.setFinSubObjCd(rs.getString("FIN_SUB_OBJ_CD"));
-					breExportData.setFinBalanceTypCd(rs.getString("FIN_BALANCE_TYP_CD"));
-					breExportData.setFinObjTypCd(rs.getString("FIN_OBJ_TYP_CD"));
-					breExportData.setAclnAnnlBalAmt(rs.getString("ACLN_ANNL_BAL_AMT"));
-					breExportData.setFinBegBalLnAmt(rs.getString("FIN_BEG_BAL_LN_AMT"));
-					breExportData.setRcCd(rs.getString("RC_CD"));
+					breExportData.setFdocNbr(exportUtil.removeNulls(rs.getString("FDOC_NBR"),false));
+					breExportData.setUnivFiscalYear(exportUtil.removeNulls(rs.getString("UNIV_FISCAL_YR"),false));
+					breExportData.setFinCoaCd(exportUtil.removeNulls(rs.getString("FIN_COA_CD"),false));
+					breExportData.setAccountNbr(exportUtil.removeNulls(rs.getString("ACCOUNT_NBR"),false));
+					breExportData.setRptsToOrgCd(exportUtil.removeNulls(rs.getString("RPTS_TO_ORG_CD"),false));
+					breExportData.setSubAcctNbr(exportUtil.removeNulls(rs.getString("SUB_ACCT_NBR"),false));
+					breExportData.setFinObjectCd(exportUtil.removeNulls(rs.getString("FIN_OBJECT_CD"),false));
+					breExportData.setFinSubObjCd(exportUtil.removeNulls(rs.getString("FIN_SUB_OBJ_CD"),false));
+					breExportData.setFinBalanceTypCd(exportUtil.removeNulls(rs.getString("FIN_BALANCE_TYP_CD"),false));
+					breExportData.setFinObjTypCd(exportUtil.removeNulls(rs.getString("FIN_OBJ_TYP_CD"),false));
+					breExportData.setAclnAnnlBalAmt(exportUtil.removeNulls(rs.getString("ACLN_ANNL_BAL_AMT"),true));
+					breExportData.setFinBegBalLnAmt(exportUtil.removeNulls(rs.getString("FIN_BEG_BAL_LN_AMT"),true));
+					breExportData.setRcCd(exportUtil.removeNulls(rs.getString("RC_CD"),false));
 
 	                return breExportData;
 	            }
