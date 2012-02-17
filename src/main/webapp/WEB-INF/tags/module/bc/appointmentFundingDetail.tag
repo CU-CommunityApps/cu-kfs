@@ -45,7 +45,7 @@
 		<th style="width: 5%;">Hourly Rate</th>
 		<th style="width: 5%;">Months</th>
 		<th style="width: 10%;">Percent Time</th>
-		<th style="width: 10%;">FTE</th>
+		<th style="width: 10%;">% Distribution</th>
 		<th style="width: 10%;">Reason Select</th>
 		<th style="width: 10%;">Reason Amount</th>
 	</tr>
