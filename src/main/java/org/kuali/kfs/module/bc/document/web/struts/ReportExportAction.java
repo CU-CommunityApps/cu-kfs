@@ -147,9 +147,7 @@ public class ReportExportAction extends BudgetConstructionImportExportAction {
         }
         else {
             // stream text file back
-        	String textFieldDelimiter = getTextFieldDelimiter(reportExportForm);
-        	String fieldSeparator = getFieldSeparator(reportExportForm);
-            baos.write(fileString.toString().replaceAll(textFieldDelimiter + "null" + textFieldDelimiter,"").getBytes());
+            baos.write(fileString.toString().getBytes());
             WebUtils.saveMimeOutputStreamAsFile(response, ReportGeneration.TEXT_MIME_TYPE, baos, fileName);
         }
 

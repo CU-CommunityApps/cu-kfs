@@ -7,10 +7,12 @@ import java.util.Collection;
 import org.kuali.kfs.module.bc.document.dataaccess.impl.BudgetConstructionDaoJdbcBase;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import edu.cornell.kfs.module.bc.document.dataaccess.BudgetConstructionSipDao;
+import edu.cornell.kfs.module.bc.util.ExportUtil;
 
 public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase implements BudgetConstructionSipDao {
 	
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(BudgetConstructionSipDaoJdbc.class);
+	private ExportUtil exportUtil = new ExportUtil();
 	
 	public BudgetConstructionSipDaoJdbc() {
 		
@@ -64,39 +66,39 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
 	        ParameterizedRowMapper<SIPExportData> mapper = new ParameterizedRowMapper<SIPExportData>() {
 	            public SIPExportData mapRow(ResultSet rs, int rowNum) throws SQLException {
 	            	SIPExportData sipExportData = new SIPExportData();
-	            	sipExportData.setC_Level_Name(rs.getString("C_Level_Name"));
-	            	sipExportData.setHR_DEPTID(rs.getString("HR_DEPTID"));
-	            	sipExportData.setPOS_DEPTID(rs.getString("POS_DEPTID"));
-	            	sipExportData.setD_Level_Name(rs.getString("D_Level_Name"));
-	            	sipExportData.setPOSITION_NBR(rs.getString("POSITION_NBR"));
-	            	sipExportData.setPOS_DESCR(rs.getString("POS_DESCR"));
-	            	sipExportData.setEMPLID(rs.getString("EMPLID"));
-	            	sipExportData.setPERSON_NM(rs.getString("PERSON_NM"));
-	            	sipExportData.setSIP_Eligibility(rs.getString("SIP_Eligibility"));
-	            	sipExportData.setSIP_Employee_Type(rs.getString("SIP_Employee_Type"));
-	            	sipExportData.setEMPL_RCD(rs.getString("EMPL_RCD"));
-	            	sipExportData.setJOBCODE(rs.getString("JOBCODE"));
-	            	sipExportData.setJOB_CD_DESC_SHRT(rs.getString("JOB_CD_DESC_SHRT"));
-	            	sipExportData.setJOB_FAMILY(rs.getString("JOB_FAMILY"));
-	            	sipExportData.setCU_PLANNED_FTE(rs.getString("CU_PLANNED_FTE"));
-	            	sipExportData.setPOS_GRADE_DFLT(rs.getString("POS_GRADE_DFLT"));
-	            	sipExportData.setCU_STATE_CERT(rs.getString("CU_STATE_CERT"));
-	            	sipExportData.setCOMP_FREQ(rs.getString("COMP_FREQ"));
-	            	sipExportData.setANNL_RT(rs.getString("ANNL_RT"));
-	            	sipExportData.setCOMP_RT(rs.getString("COMP_RT"));
-	            	sipExportData.setJOB_STD_HRS(rs.getString("JOB_STD_HRS"));
-	            	sipExportData.setWRK_MNTHS(rs.getString("WRK_MNTHS"));
-	            	sipExportData.setJOB_FUNC(rs.getString("JOB_FUNC"));
-	            	sipExportData.setJOB_FUNC_DESC(rs.getString("JOB_FUNC_DESC"));
-	            	sipExportData.setIncrease_To_Minimum(rs.getString("Increase_To_Minimum"));
-	            	sipExportData.setEquity(rs.getString("Equity"));
-	            	sipExportData.setMerit(rs.getString("Merit"));
-	            	sipExportData.setNote(rs.getString("Note"));
-	            	sipExportData.setDeferred(rs.getString("Deferred"));
-	            	sipExportData.setCU_ABBR_FLAG(rs.getString("CU_ABBR_FLAG"));
-	            	sipExportData.setAPPT_TOT_INTND_AMT(rs.getString("APPT_TOT_INTND_AMT"));
-	            	sipExportData.setAPPT_RQST_FTE_QTY(rs.getString("APPT_RQST_FTE_QTY"));
-	            	sipExportData.setIU_POSITION_TYPE(rs.getString("IU_POSITION_TYPE"));
+	            	sipExportData.setC_Level_Name(exportUtil.removeNulls(rs.getString("C_Level_Name"), false));
+	            	sipExportData.setHR_DEPTID(exportUtil.removeNulls(rs.getString("HR_DEPTID"), false));
+	            	sipExportData.setPOS_DEPTID(exportUtil.removeNulls(rs.getString("POS_DEPTID"), false));
+	            	sipExportData.setD_Level_Name(exportUtil.removeNulls(rs.getString("D_Level_Name"), false));
+	            	sipExportData.setPOSITION_NBR(exportUtil.removeNulls(rs.getString("POSITION_NBR"), false));
+	            	sipExportData.setPOS_DESCR(exportUtil.removeNulls(rs.getString("POS_DESCR"), false));
+	            	sipExportData.setEMPLID(exportUtil.removeNulls(rs.getString("EMPLID"), false));
+	            	sipExportData.setPERSON_NM(exportUtil.removeNulls(rs.getString("PERSON_NM"), false));
+	            	sipExportData.setSIP_Eligibility(exportUtil.removeNulls(rs.getString("SIP_Eligibility"), false));
+	            	sipExportData.setSIP_Employee_Type(exportUtil.removeNulls(rs.getString("SIP_Employee_Type"), false));
+	            	sipExportData.setEMPL_RCD(exportUtil.removeNulls(rs.getString("EMPL_RCD"), false));
+	            	sipExportData.setJOBCODE(exportUtil.removeNulls(rs.getString("JOBCODE"), false));
+	            	sipExportData.setJOB_CD_DESC_SHRT(exportUtil.removeNulls(rs.getString("JOB_CD_DESC_SHRT"), false));
+	            	sipExportData.setJOB_FAMILY(exportUtil.removeNulls(rs.getString("JOB_FAMILY"), false));
+	            	sipExportData.setCU_PLANNED_FTE(exportUtil.removeNulls(rs.getString("CU_PLANNED_FTE"), false));
+	            	sipExportData.setPOS_GRADE_DFLT(exportUtil.removeNulls(rs.getString("POS_GRADE_DFLT"), false));
+	            	sipExportData.setCU_STATE_CERT(exportUtil.removeNulls(rs.getString("CU_STATE_CERT"), false));
+	            	sipExportData.setCOMP_FREQ(exportUtil.removeNulls(rs.getString("COMP_FREQ"), false));
+	            	sipExportData.setANNL_RT(exportUtil.removeNulls(rs.getString("ANNL_RT"), false));
+	            	sipExportData.setCOMP_RT(exportUtil.removeNulls(rs.getString("COMP_RT"), false));
+	            	sipExportData.setJOB_STD_HRS(exportUtil.removeNulls(rs.getString("JOB_STD_HRS"), false));
+	            	sipExportData.setWRK_MNTHS(exportUtil.removeNulls(rs.getString("WRK_MNTHS"), false));
+	            	sipExportData.setJOB_FUNC(exportUtil.removeNulls(rs.getString("JOB_FUNC"), false));
+	            	sipExportData.setJOB_FUNC_DESC(exportUtil.removeNulls(rs.getString("JOB_FUNC_DESC"), false));
+	            	sipExportData.setIncrease_To_Minimum(exportUtil.removeNulls(rs.getString("Increase_To_Minimum"), false));
+	            	sipExportData.setEquity(exportUtil.removeNulls(rs.getString("Equity"), false));
+	            	sipExportData.setMerit(exportUtil.removeNulls(rs.getString("Merit"), false));
+	            	sipExportData.setNote(exportUtil.removeNulls(rs.getString("Note"), false));
+	            	sipExportData.setDeferred(exportUtil.removeNulls(rs.getString("Deferred"), false));
+	            	sipExportData.setCU_ABBR_FLAG(exportUtil.removeNulls(rs.getString("CU_ABBR_FLAG"), false));
+	            	sipExportData.setAPPT_TOT_INTND_AMT(exportUtil.removeNulls(rs.getString("APPT_TOT_INTND_AMT"), true));
+	            	sipExportData.setAPPT_RQST_FTE_QTY(exportUtil.removeNulls(rs.getString("APPT_RQST_FTE_QTY"), true));
+	            	sipExportData.setIU_POSITION_TYPE(exportUtil.removeNulls(rs.getString("IU_POSITION_TYPE"), false));
 
 	                return sipExportData;
 	            }

@@ -161,7 +161,7 @@ public class ReportExportServiceImpl implements ReportExportService {
         line = line + textDelimiter + breRecord.getFinObjTypCd() + textDelimiter + fieldSeperator;
         line = line + breRecord.getFinBegBalLnAmt() + fieldSeperator;
         line = line + breRecord.getAclnAnnlBalAmt() + fieldSeperator;
-        line = line + textDelimiter + breRecord.getRcCd() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + breRecord.getRcCd() + textDelimiter;
         line = line + "\r\n";
     	return line;
 	}
@@ -249,32 +249,32 @@ public class ReportExportServiceImpl implements ReportExportService {
         line = line + textDelimiter + bslRecord.getSetidSalary() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + bslRecord.getPosSalPlanDflt() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + bslRecord.getPosGradeDflt() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + bslRecord.getIuNormWorkMonths() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + bslRecord.getIuPayMonths() + textDelimiter + fieldSeperator;
+        line = line + bslRecord.getIuNormWorkMonths() + fieldSeperator;
+        line = line + bslRecord.getIuPayMonths() + fieldSeperator;
         line = line + textDelimiter + bslRecord.getEmplId() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + bslRecord.getPersonNm() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + bslRecord.getIuClassifLevel() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + bslRecord.getAdminPost() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + bslRecord.getPosCsfAmt() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + bslRecord.getPosCsfFteQty() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + bslRecord.getPosCsfTmPct() + textDelimiter + fieldSeperator;
+        line = line + bslRecord.getPosCsfAmt() + fieldSeperator;
+        line = line + bslRecord.getPosCsfFteQty() + fieldSeperator;
+        line = line + bslRecord.getPosCsfTmPct() + fieldSeperator;
         line = line + textDelimiter + bslRecord.getApptFndDurCd() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + bslRecord.getApptDurDesc() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + bslRecord.getApptRqstCsfAmt() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + bslRecord.getApptRqcsfFteQty() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + bslRecord.getApptRqcsfTmPct() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + bslRecord.getApptTotIntndAmt() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + bslRecord.getApptTotintfteQty() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + bslRecord.getApptRqstAmt() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + bslRecord.getApptRqstTmPct() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + bslRecord.getApptRqstFteQty() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + bslRecord.getApptRqstPayRt() + textDelimiter + fieldSeperator;
+        line = line + bslRecord.getApptRqstCsfAmt() + fieldSeperator;
+        line = line + bslRecord.getApptRqcsfFteQty() + fieldSeperator;
+        line = line + bslRecord.getApptRqcsfTmPct() + fieldSeperator;
+        line = line + bslRecord.getApptTotIntndAmt() + fieldSeperator;
+        line = line + bslRecord.getApptTotintfteQty() + fieldSeperator;
+        line = line + bslRecord.getApptRqstAmt() + fieldSeperator;
+        line = line + bslRecord.getApptRqstTmPct() + fieldSeperator;
+        line = line + bslRecord.getApptRqstFteQty() + fieldSeperator;
+        line = line + bslRecord.getApptRqstPayRt() + fieldSeperator;
         line = line + textDelimiter + bslRecord.getApptFndDltCd() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + bslRecord.getApptFndMo() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + bslRecord.getApptFndReasonCd() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + bslRecord.getSubFundGrpCd() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + bslRecord.getRcCd() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + bslRecord.getProgramCd() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + bslRecord.getProgramCd() + textDelimiter;
         
         line = line + "\r\n";
     	return line;
@@ -337,7 +337,7 @@ public class ReportExportServiceImpl implements ReportExportService {
 //        line = line + textDelimiter + sipRecord.getLeave_Code() + textDelimiter + fieldSeperator;
 //        line = line + textDelimiter + sipRecord.getLeave_Description() + textDelimiter + fieldSeperator;
 //        line = line + textDelimiter + sipRecord.getLeave_Amount() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + sipRecord.getIU_POSITION_TYPE() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getIU_POSITION_TYPE() + textDelimiter;
         line = line + "\r\n";
     	return line;
 	}
