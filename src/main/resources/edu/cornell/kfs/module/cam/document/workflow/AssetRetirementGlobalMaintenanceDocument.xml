@@ -22,7 +22,8 @@
       <routePaths>
         <routePath>
           <start name="AdHoc" nextNode="Account"/>
-          <requests name="Account" nextNode="RetiredAssetTransferredExternally"/>
+          <requests name="Account" nextNode="AssetManager"/>
+          <requests name="AssetManager" nextNode ="RetiredAssetTransferredExternally" />
           <split name="RetiredAssetTransferredExternally" nextNode="OrganizationHierarchy">
             <branch name="True">
               <requests name="ExternalTransfer" nextNode="JoinRetiredAssetTransferredExternally"/>
@@ -32,9 +33,9 @@
             </branch>
             <join name="JoinRetiredAssetTransferredExternally"/>
           </split>
-<!--          <requests name="OrganizationHierarchy" />-->
-          <requests name="OrganizationHierarchy" nextNode ="AssetManager" />
-          <requests name="AssetManager" />
+          <requests name="OrganizationHierarchy" />
+          
+<!--          <requests name="AssetManager" />-->
 <!-- 
           <requests name="OrganizationHierarchy" nextNode="JoinRetiredAssetTransferredExternally"/>
 
