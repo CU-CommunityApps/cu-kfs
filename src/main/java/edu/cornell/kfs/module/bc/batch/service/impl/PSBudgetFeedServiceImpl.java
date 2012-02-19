@@ -1324,7 +1324,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
 
             }
 
-            // do the add/update now
+            // do the add/update now we don't delete entries to mimic the bcUpdate behavior with positions that is never delete positions for request year
             for (CalculatedSalaryFoundationTracker entry : csfTrackerEntriesForAddOrUpdate) {
                 CalculatedSalaryFoundationTracker retrievedEntry = (CalculatedSalaryFoundationTracker) businessObjectService
                         .retrieve(entry);//(CalculatedSalaryFoundationTracker.class, keyFields);
@@ -1363,34 +1363,16 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             businessObjectService.save(psPositionInfoEntries);
         } else {
 
-            List<PSPositionInfo> psPositionInfoEntriesForAddOrUpdate = new ArrayList<PSPositionInfo>();
-
-            //load in the new entries
-            // do deletes first and save the rest for later add/update
+            // do the add/update now; we don't delete entries to mimic the bcUpdate behavior with positions that is never delete positions for request year
             for (PSPositionInfo entry : psPositionInfoEntries) {
+                if (!CUBCConstants.PSEntryStatus.DELETE.equals(entry.getStatus())) {
+                    PSPositionInfo retrievedEntry = (PSPositionInfo) businessObjectService.retrieve(entry);
 
-                if (CUBCConstants.PSEntryStatus.DELETE.equals(entry.getStatus())) {
-                    Map<String, Object> keyFields = new HashMap<String, Object>();
-                    keyFields.put(CUBCPropertyConstants.PSPositionInfoProperties.POSITION_NBR,
-                                  entry.getPositionNumber());
-
-                    businessObjectService
-                              .deleteMatching(PSPositionInfo.class, keyFields);
-                } else {
-                    psPositionInfoEntriesForAddOrUpdate.add(entry);
-
+                    if (ObjectUtils.isNotNull(retrievedEntry)) {
+                        entry.setVersionNumber(retrievedEntry.getVersionNumber());
+                    }
+                    businessObjectService.save(entry);
                 }
-
-            }
-
-            // do the add/update now
-            for (PSPositionInfo entry : psPositionInfoEntriesForAddOrUpdate) {
-                PSPositionInfo retrievedEntry = (PSPositionInfo) businessObjectService.retrieve(entry);
-
-                if (ObjectUtils.isNotNull(retrievedEntry)) {
-                    entry.setVersionNumber(retrievedEntry.getVersionNumber());
-                }
-                businessObjectService.save(entry);
             }
         }
     }
@@ -1452,31 +1434,16 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             businessObjectService.save(psJobCodeEntries);
         } else {
 
-            List<PSJobCode> psJobCodeEntriesForAddOrUpdate = new ArrayList<PSJobCode>();
-
-            //load in the new entries
-            // do deletes first and save the rest for later add/update
-            for (PSJobCode entry : psJobCodeEntries) {
-                Map<String, Object> keyFields = new HashMap<String, Object>();
-                keyFields.put(CUBCPropertyConstants.PSJobCodeProperties.JOB_CD,
-                             entry.getJobCode());
-
-                if (CUBCConstants.PSEntryStatus.DELETE.equals(entry.getStatus())) {
-                    businessObjectService
-                              .deleteMatching(PSJobCode.class, keyFields);
-                } else {
-                    psJobCodeEntriesForAddOrUpdate.add(entry);
-                }
-            }
-
             // do the add/update now
-            for (PSJobCode entry : psJobCodeEntriesForAddOrUpdate) {
-                PSJobCode retrievedEntry = (PSJobCode) businessObjectService.retrieve(entry);
+            for (PSJobCode entry : psJobCodeEntries) {
+                if (!CUBCConstants.PSEntryStatus.DELETE.equals(entry.getStatus())) {
+                    PSJobCode retrievedEntry = (PSJobCode) businessObjectService.retrieve(entry);
 
-                if (ObjectUtils.isNotNull(retrievedEntry)) {
-                    entry.setVersionNumber(retrievedEntry.getVersionNumber());
+                    if (ObjectUtils.isNotNull(retrievedEntry)) {
+                        entry.setVersionNumber(retrievedEntry.getVersionNumber());
+                    }
+                    businessObjectService.save(entry);
                 }
-                businessObjectService.save(entry);
             }
         }
     }
