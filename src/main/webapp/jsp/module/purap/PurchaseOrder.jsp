@@ -103,7 +103,7 @@
                 documentAttributes="${DataDictionary.PurchaseOrderDocument.attributes}" 
                 showDefaultBuildingOption="false" />
         
-		    <purap:vendor
+		    <purap:vendorPurchaseOrder
 		        documentAttributes="${DataDictionary.PurchaseOrderDocument.attributes}" 
 		        displayPurchaseOrderFields="true"
 		        purchaseOrderAwarded="${KualiForm.document.purchaseOrderAwarded}" />
