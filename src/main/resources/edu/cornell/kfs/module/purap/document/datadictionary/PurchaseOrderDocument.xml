@@ -679,7 +679,7 @@
     <property name="forceUppercase" value="false"/>
     <property name="label" value="Delivery Instructions"/>
     <property name="shortLabel" value="Instructions"/>
-    <property name="maxLength" value="125"/>
+    <property name="maxLength" value="100"/>
     <property name="validationPattern">
       <ref bean="AnyCharacterWithWhitespaceValidation" />
     </property>
