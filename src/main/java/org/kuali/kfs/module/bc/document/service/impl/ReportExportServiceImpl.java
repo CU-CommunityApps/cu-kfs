@@ -272,8 +272,8 @@ public class ReportExportServiceImpl implements ReportExportService {
         line = line + textDelimiter + bslRecord.getApptFndDltCd() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + bslRecord.getApptFndMo() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + bslRecord.getApptFndReasonCd() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + bslRecord.getSubFundGrpCd() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + bslRecord.getRcCd() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + bslRecord.getSubFundGrpCd() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + bslRecord.getProgramCd() + textDelimiter;
         
         line = line + "\r\n";
