@@ -226,9 +226,10 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                                 } else {
 
                                     newEntry.deleteStatus = CUBCConstants.PSEntryStatus.UPDATE;
-                                    // set change status
-                                    newEntry.changeStatus = StatusFlag.CHANGED;
+                                    // delete old entry
+                                    currentEntry.deleteStatus = CUBCConstants.PSEntryStatus.DELETE;
 
+                                    // if the rate has changed then all accounting info has to be marked as changed
                                     if (newEntry.getAnnualRate() != null
                                             && !newEntry.getAnnualRate().equalsIgnoreCase(currentEntry.getAnnualRate())) {
                                         // set all changed
@@ -247,18 +248,13 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                                                 }
                                             }
                                         }
-                                    } //else {
+                                    } else {
 
-                                    boolean result = updateAccountingInfoStatusFlag(newEntry, currentEntry);
-
-                                    if (result) {
-                                        // delete old entry
-                                        currentEntry.deleteStatus = CUBCConstants.PSEntryStatus.DELETE;
-                                        filteredEntries.add(currentEntry);
+                                        updateAccountingInfoStatusFlag(newEntry, currentEntry);
                                     }
-                                    // }
 
-                                    //add to update list
+                                    filteredEntries.add(currentEntry);
+
                                     filteredEntries.add(newEntry);
 
                                     newChangedlogInfo.append(newEntry.toString() + "\n");
@@ -381,10 +377,20 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                             newInfoMap.get(key).setStatusFlag(StatusFlag.CHANGED);
                         }
                     } else {
+                        result = false;
                         newInfoMap.get(key).setStatusFlag(StatusFlag.CHANGED);
                     }
                 } else {
+                    result = false;
                     newInfoMap.get(key).setStatusFlag(StatusFlag.CHANGED);
+                }
+            }
+        }
+
+        if (currentInfoMap != null) {
+            for (String key : currentInfoMap.keySet()) {
+                if (newInfoMap != null && !newInfoMap.containsKey(key)) {
+                    result = false;
                 }
             }
         }
@@ -407,51 +413,59 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
 
         for (PSPositionJobExtractEntry extractEntry : csfTackerEntries) {
             boolean valid = true;
-            StringBuffer warningMessage = new StringBuffer();
-            valid &= validatePosition(extractEntry.getPositionNumber());
 
-            if (!valid) {
-                warningMessage.append("Invalid position number: " + extractEntry.getPositionNumber() + "\n");
-                continue;
-            }
-            valid &= validateCSFAmount(extractEntry.getAnnualRate());
-            if (!valid) {
-                warningMessage.append("Invalid csf Amount: " + extractEntry.getAnnualRate() + "\n");
-                continue;
-            }
+            if (CUBCConstants.PSEntryStatus.DELETE.equals(extractEntry.deleteStatus)) {
+                // the ones marked for deletion skip validation
+                validEntries.add(extractEntry);
+            } else if (!CUBCConstants.PSEntryStatus.DELETE.equals(extractEntry.deleteStatus)) {
+                StringBuffer warningMessage = new StringBuffer();
+                valid &= validatePosition(extractEntry.getPositionNumber());
 
-            if (valid) {
-                if (extractEntry.getCsfAccountingInfoList() != null
-                        && extractEntry.getCsfAccountingInfoList().size() > 0) {
-                    for (PSPositionJobExtractAccountingInfo accountingInfo : extractEntry
-                            .getCsfAccountingInfoList()) {
-                        StringBuffer accInfoWarningMessage = validateAccountingInfo(universityFiscalYear, extractEntry,
-                                accountingInfo);
-                        if (accInfoWarningMessage != null && accInfoWarningMessage.length() > 0) {
-                            valid = false;
-                            warningMessage.append(accInfoWarningMessage);
+                if (!valid) {
+                    warningMessage.append("Invalid position number: " + extractEntry.getPositionNumber() + "\n");
+                    continue;
+                }
+                valid &= validateCSFAmount(extractEntry.getAnnualRate());
+                if (!valid) {
+                    warningMessage.append("Invalid csf Amount: " + extractEntry.getAnnualRate() + "\n");
+                    continue;
+                }
+
+                if (valid) {
+                    if (extractEntry.getCsfAccountingInfoList() != null
+                            && extractEntry.getCsfAccountingInfoList().size() > 0) {
+                        for (PSPositionJobExtractAccountingInfo accountingInfo : extractEntry
+                                .getCsfAccountingInfoList()) {
+                            StringBuffer accInfoWarningMessage = validateAccountingInfo(universityFiscalYear,
+                                    extractEntry,
+                                    accountingInfo);
+                            if (accInfoWarningMessage != null && accInfoWarningMessage.length() > 0) {
+                                valid = false;
+                                warningMessage.append(accInfoWarningMessage);
+                            }
                         }
-                    }
-                } else {
-                    for (PSPositionJobExtractAccountingInfo accountingInfo : extractEntry
-                            .getPosAccountingInfoList()) {
-                        StringBuffer accInfoWarningMessage = validateAccountingInfo(universityFiscalYear, extractEntry,
-                                accountingInfo);
-                        if (accInfoWarningMessage != null && accInfoWarningMessage.length() > 0) {
-                            valid = false;
-                            warningMessage.append(accInfoWarningMessage);
+                    } else {
+                        for (PSPositionJobExtractAccountingInfo accountingInfo : extractEntry
+                                .getPosAccountingInfoList()) {
+                            StringBuffer accInfoWarningMessage = validateAccountingInfo(universityFiscalYear,
+                                    extractEntry,
+                                    accountingInfo);
+                            if (accInfoWarningMessage != null && accInfoWarningMessage.length() > 0) {
+                                valid = false;
+                                warningMessage.append(accInfoWarningMessage);
+                            }
                         }
                     }
                 }
-            }
 
-            if (valid) {
-                validEntries.add(extractEntry);
-            } else {
-                LOG.warn("\n Invalid entry for position number: " + extractEntry.getPositionNumber()
-                        + " and employee ID: " + extractEntry.getEmplid() + "\n" +
-                        "Errors found: " + warningMessage.toString() + "\n");
+                if (valid) {
+                    validEntries.add(extractEntry);
+                } else {
+                    LOG.warn("\n Invalid entry for position number: " + extractEntry.getPositionNumber()
+                            + " and employee ID: " + extractEntry.getEmplid() + "\n" +
+                            "Errors found: " + warningMessage.toString() + "\n");
 
+                }
             }
 
         }
