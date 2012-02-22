@@ -21,9 +21,9 @@
       <parent>CAMM</parent>
       <routePaths>
         <routePath>
-          <start name="AdHoc" nextNode="Account"/>
-          <requests name="Account" nextNode="AssetManager"/>
-          <requests name="AssetManager" nextNode ="RetiredAssetTransferredExternally" />
+          <start name="AdHoc" nextNode="AssetManager"/>
+          <requests name="AssetManager" nextNode="Account"/>
+          <requests name="Account" nextNode ="RetiredAssetTransferredExternally" />
           <split name="RetiredAssetTransferredExternally" nextNode="OrganizationHierarchy">
             <branch name="True">
               <requests name="ExternalTransfer" nextNode="JoinRetiredAssetTransferredExternally"/>
@@ -35,7 +35,7 @@
           </split>
           <requests name="OrganizationHierarchy" />
           
-<!--          <requests name="AssetManager" />-->
+<!--      <requests name="AssetManager" />-->
 <!-- 
           <requests name="OrganizationHierarchy" nextNode="JoinRetiredAssetTransferredExternally"/>
 
