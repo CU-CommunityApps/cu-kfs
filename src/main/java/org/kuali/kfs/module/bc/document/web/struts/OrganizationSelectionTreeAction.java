@@ -187,7 +187,7 @@ public class OrganizationSelectionTreeAction extends BudgetExpansionAction {
     }
 
     /**
-     * Called by the close button. It removes the user's BudgetConstructionPullup table rows and returns the user to the seleection
+     * Called by the close button. It removes the user's BudgetConstructionPullup table rows and returns the user to the selection
      * screen action.
      * 
      * @see org.kuali.rice.kns.web.struts.action.KualiAction#execute(org.apache.struts.action.ActionMapping,
@@ -738,6 +738,9 @@ public class OrganizationSelectionTreeAction extends BudgetExpansionAction {
             forwardURL = buildReportSelectForwardURL(organizationSelectionTreeForm, mapping);
         }
 
+        // For specific information on the following line, please see the ActionForward start method in the 
+        //  OrganizationReportSelectionAction.java class, in the SIP export "if" block.
+        GlobalVariables.getUserSession().addObject("InitialSipUrl", (Object)forwardURL);
         return new ActionForward(forwardURL, true);
     }
 

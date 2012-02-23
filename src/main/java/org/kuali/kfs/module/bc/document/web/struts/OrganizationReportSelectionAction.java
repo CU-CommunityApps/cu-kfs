@@ -103,15 +103,38 @@ public class OrganizationReportSelectionAction extends BudgetExpansionAction {
         // do list builds (this puts the orgs that the user selected (among other things) in the LD_BCNSTR_CTRL_LIST_T table)
         buildControlLists(principalName, organizationReportSelectionForm.getUniversityFiscalYear(), buildHelper, reportMode.reportSelectMode);
 
-        // SIP Export - takes the user to the eDoc to decide on comma or tab separated file and whether text should be quoted.
+        // SIP Export - takes the user directly to the export page (BudgetContructionImportExport.jsp)
         if (ReportSelectMode.SIPEXPORT.equals(reportMode.reportSelectMode)) {
             String exportUrl = this.buildReportExportForwardURL(organizationReportSelectionForm, mapping);
+
+            // Re-write the export URL so that the back location will take the user back to the org selection tree page.  If we don't do this, the user
+            //  will link back to an empty page with only the KFS header tabs showing.  The reason a blank page is displayed is because all exports are 
+            //  configured to display the sub fund list page before the export page is displayed.  For SIP though, the sub fund list is not applicable and
+            //  so we bypass it and go directly to the export page (in the code in this "if").  However, in doing so, the back location parameter is updated to
+            //  link back to the sub fund list page which doesn't exist.  As such an empty page is displayed instead when the user clicks the close button.
+            //  To resolve this issue, we capture the back location from the URL that would have taken the user to the sub fund list page (as it will link 
+            //  them back to the org selection tree page.  Then we replace the back location parameter from the URL that takes the user to the export page
+            //  (exportURL assignment above this comment) with the one we captured earlier.  The code below does this process.  For additional info, please
+            //  see the next to the last line in the performReport method in OrganizatonSelectionTreeAction.java class to see where the initial back location
+            //  is captured.  
+
+            String initialSipUrl = (String)GlobalVariables.getUserSession().retrieveObject("InitialSipUrl");
+            String exportWithoutBackLocation = exportUrl.substring(0, exportUrl.indexOf("?backLocation"));
+            String newBackLocation = initialSipUrl.substring(initialSipUrl.indexOf("?"));
+            exportUrl = exportWithoutBackLocation + newBackLocation;
+            
             return new ActionForward(exportUrl, true);
         }
         
-        // SIP Export For Executives Only - takes the user to the eDoc to decide on comma or tab separated file and whether text should be quoted.
+        // SIP Export For Executives Only - takes the user directly to the export page (BudgetContructionImportExport.jsp)
         if (ReportSelectMode.SIPEXPORTEXECUTIVES.equals(reportMode.reportSelectMode)) {
             String exportUrl = this.buildReportExportForwardURL(organizationReportSelectionForm, mapping);
+            
+            String initialSipUrl = (String)GlobalVariables.getUserSession().retrieveObject("InitialSipUrl");
+            String exportWithoutBackLocation = exportUrl.substring(0, exportUrl.indexOf("?backLocation"));
+            String newBackLocation = initialSipUrl.substring(initialSipUrl.indexOf("?"));
+            exportUrl = exportWithoutBackLocation + newBackLocation;
+            
             return new ActionForward(exportUrl, true);
         }
 
