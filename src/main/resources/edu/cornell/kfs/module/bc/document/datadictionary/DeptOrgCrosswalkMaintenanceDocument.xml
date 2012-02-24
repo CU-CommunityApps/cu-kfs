@@ -35,7 +35,7 @@
     
     
     
-    <property name="documentTypeName" value="BCPS"/>
+    <property name="documentTypeName" value="DOXT"/>
     <property name="businessRulesClass" value="edu.cornell.kfs.module.bc.document.validation.impl.DeptOrgCrosswalkRule"/>
     <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
     <property name="workflowAttributes">
