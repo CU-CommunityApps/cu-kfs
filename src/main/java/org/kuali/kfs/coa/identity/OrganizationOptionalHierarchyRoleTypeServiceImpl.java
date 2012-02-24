@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.kuali.kfs.sys.identity.KfsKimAttributes;
 import org.kuali.rice.kim.bo.types.dto.AttributeSet;
+import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.web.format.BooleanFormatter;
 
 public class OrganizationOptionalHierarchyRoleTypeServiceImpl extends OrganizationHierarchyAwareRoleTypeServiceBase {
@@ -48,6 +49,13 @@ public class OrganizationOptionalHierarchyRoleTypeServiceImpl extends Organizati
         else {
             descendHierarchy = roleQualifier.get(KfsKimAttributes.DESCEND_HIERARCHY);
         }
+        
+        // The following line is needed because the "if (qualificationDeterminesDescendHierarchy)" block above can set descendHierarchy
+        //   to null. This (null) will cause users to not being able to edit org assets that they have been given specific privileges for.
+        //   However setting it to "false" will provide the ability to edit those specific assets.
+        if (ObjectUtils.isNull(descendHierarchy))
+        	descendHierarchy = "false";
+        
         return isParentOrg(qualification.get(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE), 
                 qualification.get(KfsKimAttributes.ORGANIZATION_CODE), 
                 roleQualifier.get(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE),
