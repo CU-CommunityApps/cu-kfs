@@ -819,6 +819,9 @@ public class PurapConstants extends JSTLConstants {
     public static final Integer PRORATION_SCALE = new Integer(6);
     public static final Integer CREDITMEMO_PRORATION_SCALE = new Integer(20);
 
+    public static final class PurapFundingSources {
+        public static final String FEDERAL_FUNDING_SOURCE = "FEDR";
+    }
     
     private static HashMap<String, String> getPurapParameterDetailTypeCodes() {
         HashMap<String, String> map;

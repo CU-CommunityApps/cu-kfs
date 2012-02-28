@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.CUPurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapConstants.PurapFundingSources;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.dataaccess.B2BDao;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
@@ -77,6 +78,9 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 
     // Non-quantity Unit of Measure - this UOM should be used as the default UOM for all Non-Quantity orders to ensure they are properly handled by SciQuest (KFSPTS-792)
     private static final String NON_QUANTITY_UOM = "LOT";
+    
+    // Text to pass to SciQuest in the case where a federally funded account is used on the PO
+    private static final String FEDERAL_FUNDING_TEXT = "Federal funding has been designated for this purchase order.";
     
     /**
      * @see org.kuali.kfs.module.purap.document.service.B2BPurchaseOrderService#sendPurchaseOrder(org.kuali.kfs.module.purap.document.PurchaseOrderDocument)
@@ -510,7 +514,15 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 	        cxml.append("         </CustomFieldValue>\n");
 	        cxml.append("      </CustomFieldValueSet>\n");
         }
-        
+
+        if (purchaseOrder.getDocumentFundingSourceCode().equalsIgnoreCase(PurapFundingSources.FEDERAL_FUNDING_SOURCE)) {
+	        cxml.append("      <CustomFieldValueSet label=\"Funding\" name=\"Funding\">\n");
+	        cxml.append("        <CustomFieldValue>\n");
+	        cxml.append("          <Value><![CDATA[" + FEDERAL_FUNDING_TEXT + "]]></Value>\n");
+	        cxml.append("         </CustomFieldValue>\n");
+	        cxml.append("      </CustomFieldValueSet>\n");
+        }
+
         cxml.append("    </POHeader>\n");
 
         /** *** Items Section **** */

@@ -30,7 +30,7 @@
     	<purap:purapDocumentDetail
 	    	documentAttributes="${DataDictionary.RequisitionDocument.attributes}"
 	    	detailSectionLabel="Requisition Detail"
-	    	editableFundingSource="true" />
+	    	editableFundingSource="false" />
     </sys:documentOverview>
 
     <purap:delivery
