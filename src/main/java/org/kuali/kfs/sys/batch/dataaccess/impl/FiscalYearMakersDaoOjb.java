@@ -17,19 +17,16 @@ package org.kuali.kfs.sys.batch.dataaccess.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.query.QueryByCriteria;
-import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import org.apache.ojb.broker.util.ObjectModification;
-import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.sys.batch.dataaccess.FiscalYearMaker;
 import org.kuali.kfs.sys.batch.dataaccess.FiscalYearMakersDao;
 import org.kuali.rice.kns.bo.PersistableBusinessObject;
@@ -81,8 +78,11 @@ public class FiscalYearMakersDaoOjb extends PlatformAwareDaoBaseOjb implements F
 
         // retrieve base year records to copy
         QueryByCriteria queryId = new QueryByCriteria(objectFiscalYearMaker.getBusinessObjectClass(), objectFiscalYearMaker.createSelectionCriteria(baseYear));
-        Collection<PersistableBusinessObject> recordsToCopy = getPersistenceBrokerTemplate().getCollectionByQuery(queryId);
-        for (PersistableBusinessObject objectToCopy : recordsToCopy) {
+        Iterator<PersistableBusinessObject> recordsToCopy = getPersistenceBrokerTemplate().getIteratorByQuery(queryId);
+        
+        while (recordsToCopy.hasNext()) {
+        	PersistableBusinessObject objectToCopy = recordsToCopy.next();
+        	
             rowsRead = rowsRead + 1;
 
             // remove reference/collection fields so they will not cause an issue with the insert
