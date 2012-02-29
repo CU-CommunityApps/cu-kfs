@@ -51,6 +51,7 @@ import org.kuali.rice.kns.util.ErrorMessage;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KualiInteger;
 import org.kuali.rice.kns.util.MessageMap;
+import org.kuali.rice.kns.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -91,7 +92,7 @@ public class PaymentFileServiceImpl implements PaymentFileService {
 
                 // process payment file
                 PaymentFileLoad paymentFile = processPaymentFile(paymentInputFileType, incomingFileName, status.getErrorMap());
-                if (paymentFile != null && paymentFile.isPassedValidation()) {
+                if (ObjectUtils.isNull(paymentFile) && paymentFile.isPassedValidation()) {
                     // load payment data
                     loadPayments(paymentFile, status, incomingFileName);
                 }
@@ -261,7 +262,7 @@ public class PaymentFileServiceImpl implements PaymentFileService {
             }
 
             p.println("  <description>" + message + "</description>");
-            if(status.getWarnings() != null) { // Warnings list may be null if file failed to load.
+            if(ObjectUtils.isNull(status.getWarnings())) { // Warnings list may be null if file failed to load.
 	            p.println("  <messages>");
 	            for (String warning : status.getWarnings()) {
 	                p.println("    <message>" + warning + "</message>");
