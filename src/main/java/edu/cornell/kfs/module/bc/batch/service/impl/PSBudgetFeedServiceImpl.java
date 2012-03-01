@@ -423,11 +423,19 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
 
                 if (!valid) {
                     warningMessage.append("Invalid position number: " + extractEntry.getPositionNumber() + "\n");
+                    
+                    LOG.warn("\n Invalid entry for position number: " + extractEntry.getPositionNumber()
+                            + " and employee ID: " + extractEntry.getEmplid() + "\n" +
+                            "Errors found: " + warningMessage.toString() + "\n");
                     continue;
                 }
                 valid &= validateCSFAmount(extractEntry.getAnnualRate());
                 if (!valid) {
                     warningMessage.append("Invalid csf Amount: " + extractEntry.getAnnualRate() + "\n");
+                    
+                    LOG.warn("\n Invalid entry for position number: " + extractEntry.getPositionNumber()
+                            + " and employee ID: " + extractEntry.getEmplid() + "\n" +
+                            "Errors found: " + warningMessage.toString() + "\n");
                     continue;
                 }
 
