@@ -33,6 +33,7 @@ import org.kuali.rice.kns.bo.PersistableBusinessObject;
 import org.kuali.rice.kns.dao.impl.PlatformAwareDaoBaseOjb;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.PersistenceStructureService;
+import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.util.ObjectUtils;
 
 /**
@@ -82,7 +83,7 @@ public class FiscalYearMakersDaoOjb extends PlatformAwareDaoBaseOjb implements F
         
         while (recordsToCopy.hasNext()) {
         	PersistableBusinessObject objectToCopy = recordsToCopy.next();
-        	
+       
             rowsRead = rowsRead + 1;
 
             // remove reference/collection fields so they will not cause an issue with the insert
@@ -104,13 +105,7 @@ public class FiscalYearMakersDaoOjb extends PlatformAwareDaoBaseOjb implements F
                 rowsFailingRI = rowsFailingRI + 1;
                 continue;
             }
-           // List keys = persistenceStructureService.getPrimaryKeys(objectToCopy.getExtension().getClass());
-            if (objectToCopy.getExtension() != null) {
-            	PersistableBusinessObject extension = businessObjectService.retrieve(objectToCopy.getExtension());
-            	if (extension == null) {
-            		objectToCopy.setExtension(null);
-            	}
-            }
+
             // store new record
             getPersistenceBroker(true).store(objectToCopy, ObjectModification.INSERT);
             rowsWritten = rowsWritten + 1;
@@ -138,7 +133,8 @@ public class FiscalYearMakersDaoOjb extends PlatformAwareDaoBaseOjb implements F
         try {
             Map<String, Class> referenceFields = persistenceStructureService.listReferenceObjectFields(businessObject);
             for (String fieldName : referenceFields.keySet()) {
-                ObjectUtils.setObjectProperty(businessObject, fieldName, null);
+            	if (!fieldName.equals("extension"))
+            		ObjectUtils.setObjectProperty(businessObject, fieldName, null);
             }
 
             Map<String, Class> collectionFields = persistenceStructureService.listCollectionObjectTypes(businessObject);

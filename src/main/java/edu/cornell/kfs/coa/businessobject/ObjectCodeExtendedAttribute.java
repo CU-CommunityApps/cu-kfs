@@ -4,15 +4,20 @@
 package edu.cornell.kfs.coa.businessobject;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectExtensionBase;
 import org.kuali.rice.kns.service.BusinessObjectService;
+
+import edu.cornell.kfs.sys.businessobject.YearEndPersistableBusinessObjectExtensionBase;
 
 /**
  * @author kwk43
  *
  */
-public class ObjectCodeExtendedAttribute extends PersistableBusinessObjectExtensionBase {
+public class ObjectCodeExtendedAttribute extends YearEndPersistableBusinessObjectExtensionBase {
+
 
 	/**
 	 * 
@@ -33,18 +38,6 @@ public class ObjectCodeExtendedAttribute extends PersistableBusinessObjectExtens
     	
     }
        
-	/**
-	 * @return the universityFiscalYear
-	 */
-	public Integer getUniversityFiscalYear() {
-		return universityFiscalYear;
-	}
-	/**
-	 * @param universityFiscalYear the universityFiscalYear to set
-	 */
-	public void setUniversityFiscalYear(Integer universityFiscalYear) {
-		this.universityFiscalYear = universityFiscalYear;
-	}
 	/**
 	 * @return the chartOfAccountsCode
 	 */
@@ -110,6 +103,16 @@ public class ObjectCodeExtendedAttribute extends PersistableBusinessObjectExtens
 		//lookup table has class attribute defined as "code"
 	    keys.put("code", this.cgReportingCode);
 		contractGrantReportingCode = (ContractGrantReportingCode) bos.findByPrimaryKey(ContractGrantReportingCode.class, keys );
+	}
+	
+	@Override
+	protected LinkedHashMap toStringMapper() {
+		LinkedHashMap m = new LinkedHashMap();
+		m.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, getUniversityFiscalYear());
+		m.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, this.chartOfAccountsCode);
+		m.put(KFSPropertyConstants.FINANCIAL_OBJECT_CODE, this.financialObjectCode);
+		
+        return m;
 	}
 	
 }
