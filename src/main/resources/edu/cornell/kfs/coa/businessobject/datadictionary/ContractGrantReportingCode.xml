@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+
+<bean id="ContractGrantReportingCode" parent="ContractGrantReportingCode-parentBean"/>
+
+    <bean id="ContractGrantReportingCode-parentBean" abstract="true" parent="BusinessObjectEntry">
+        <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.ContractGrantReportingCode"/>
+        <property name="objectLabel" value="ContractGrantReportingCode"/>
+
+       <property name="titleAttribute" value="ContractGrantReportingCode"/>
+
+       <property name="inquiryDefinition">
+            <ref bean="ContractGrantReportingCode-inquiryDefinition"/>
+        </property>
+        <property name="lookupDefinition">
+            <ref bean="ContractGrantReportingCode-lookupDefinition"/>
+        </property>
+
+       <property name="attributes">
+            <list>
+                  <ref bean="ContractGrantReportingCode-chartOfAccountsCode"/>
+                  <ref bean="ContractGrantReportingCode-code"/>
+                  <ref bean="ContractGrantReportingCode-name"/>
+                  <ref bean="ContractGrantReportingCode-active"/>
+           </list>
+       </property>
+	   <property name="inactivationBlockingDefinitions">
+		      <list>
+		        <bean parent="InactivationBlockingDefinition" p:blockedReferencePropertyName="chartOfAccounts"/>
+		      </list>
+	</property>
+    </bean>
+    
+    
+    <bean id="ContractGrantReportingCode-chartOfAccountsCode" parent="ContractGrantReportingCode-chartOfAccountsCode-parentBean"/>
+    <bean id="ContractGrantReportingCode-chartOfAccountsCode-parentBean" abstract="true" parent="ChartAttribute-TextControl" >
+        <property name="maxLength" value="2" />
+        <property name="forceUppercase" value="true"/> 
+    </bean>
+   
+   
+    <bean id="ContractGrantReportingCode-code" parent="ContractGrantReportingCode-code-parentBean"/>    
+    <bean id="ContractGrantReportingCode-code-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="code"/>
+        <property name="label" value="CG Reporting Code"/>
+        <property name="shortLabel" value="CG Rptg Code"/>
+        <property name="maxLength" value="4"/>
+        <property name="forceUppercase" value="true"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="4"/>
+        </property>
+        <property name="validationPattern">
+            <bean parent="AlphaNumericValidationPattern">
+                <property name="maxLength" value="4"/>
+            </bean>
+        </property>     
+    </bean>
+    
+    
+    <bean id="ContractGrantReportingCode-name" parent="ContractGrantReportingCode-name-parentBean"/>    
+    <bean id="ContractGrantReportingCode-name-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="name"/>
+        <property name="label" value="CG Reporting Code Name"/>
+        <property name="shortLabel" value="CG Rptg Code Name"/>
+        <property name="maxLength" value="40"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="45"/>
+        </property>
+        <property name="validationPattern">
+            <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true"/>
+        </property>     
+    </bean>
+     
+ 
+  <bean id="ContractGrantReportingCode-active" parent="ContractGrantReportingCode-active-parentBean"/>
+  <bean id="ContractGrantReportingCode-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
+    <property name="name" value="active"/>
+  </bean>  
+
+    
+    <!-- Business Object Inquiry Definition -->
+
+
+  <bean id="ContractGrantReportingCode-inquiryDefinition" parent="ContractGrantReportingCode-inquiryDefinition-parentBean"/>
+
+  <bean id="ContractGrantReportingCode-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+    <property name="title" value="CG Reporting Code Inquiry"/>
+    <property name="inquirySections">
+      <list>
+        <bean parent="InquirySectionDefinition">
+          <property name="title" value=""/>
+          <property name="numberOfColumns" value="1"/>
+          <property name="inquiryFields">
+            <list>
+              <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
+              <bean parent="FieldDefinition" p:attributeName="code"/>
+              <bean parent="FieldDefinition" p:attributeName="name"/>
+              <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+<!-- Business Object Lookup Definition -->
+
+
+  <bean id="ContractGrantReportingCode-lookupDefinition" parent="ContractGrantReportingCode-lookupDefinition-parentBean"/>
+
+  <bean id="ContractGrantReportingCode-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+    <property name="title" value="CG Reporting Code Lookup"/>
+    
+    <property name="defaultSort">
+      <bean parent="SortDefinition">
+        <property name="attributeNames">
+          <list>
+            <value>chartOfAccountsCode</value>
+            <value>code</value>
+          </list>
+        </property>
+        <property name="sortAscending" value="false"/>
+      </bean>
+    </property>
+    <property name="lookupFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
+        <bean parent="FieldDefinition" p:attributeName="code"/>
+        <bean parent="FieldDefinition" p:attributeName="name"/>
+        <bean parent="FieldDefinition" p:defaultValue="Y" p:attributeName="active"/>
+      </list>
+    </property>
+    <property name="resultFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
+        <bean parent="FieldDefinition" p:attributeName="code"/>
+        <bean parent="FieldDefinition" p:attributeName="name"/>
+        <bean parent="FieldDefinition" p:attributeName="active"/>
+      </list>
+    </property>
+  </bean>
+</beans>
+

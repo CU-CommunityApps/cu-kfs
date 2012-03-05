@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd         http://rice.kuali.org/dd/dd.xsd">
+
+
+  <bean id="ContractGrantReportingCodeMaintenanceDocument" parent="ContractGrantReportingCodeMaintenanceDocument-parentBean"/>
+
+  <bean id="ContractGrantReportingCodeMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.ContractGrantReportingCode"/>
+    <property name="maintainableClass" value="org.kuali.kfs.sys.document.FinancialSystemMaintainable"/>
+    <property name="maintainableSections">
+      <list>
+        <ref bean="ContractGrantReportingCodeMaintenanceDocument-EditCGReportingCode"/>
+      </list>
+    </property>
+    
+    
+    <property name="documentTypeName" value="OCGR"/>
+    <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
+   
+   
+    <property name="workflowAttributes">
+        <ref bean="ContractGrantReportingCodeMaintenanceDocument-workflowAttributes"/>
+    </property>
+  </bean>
+
+<!-- Maintenance Section Definitions -->
+
+  <bean id="ContractGrantReportingCodeMaintenanceDocument-EditCGReportingCode" parent="ContractGrantReportingCodeMaintenanceDocument-EditCGReportingCode-parentBean"/>
+
+  <bean id="ContractGrantReportingCodeMaintenanceDocument-EditCGReportingCode-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Edit CG Reporting Code"/>
+    <property name="title" value="Edit CG Reporting Code"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="code" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="name" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
+      </list>
+    </property>
+  </bean>
+  
+  <!-- workflow attributes -->
+  <bean id="ContractGrantReportingCodeMaintenanceDocument-workflowAttributes" parent="ContractGrantReportingCodeMaintenanceDocument-workflowAttributes-parentBean"/>
+  
+  <bean id="ContractGrantReportingCodeMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.kns.datadictionary.WorkflowAttributes" abstract="true"/>
+</beans>
+

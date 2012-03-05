@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
 <!--
  Copyright 2005-2009 The Kuali Foundation
  
@@ -44,10 +44,21 @@
         <ref bean="ObjectCode-financialBudgetAggregationCd"/>
         <ref bean="ObjectCode-finObjMandatoryTrnfrelimCd"/>
         <ref bean="ObjectCode-financialFederalFundedCode"/>
-        <ref bean="ObjectCode-nextYearFinancialObjectCode"/>
+        <ref bean="ObjectCode-nextYearFinancialObjectCode"/>      
         <ref bean="ObjectCode-extension-sunyObjectCode"/>
+        <ref bean="ObjectCode-extension-contractGrantReportingCode-cgReportingCode"/>
       </list>
     </property>
+      
+    <property name="relationships">
+      <list>
+        <dd:relationship objectAttribute="extension.contractGrantReportingCode" targetClass="edu.cornell.kfs.coa.businessobject.ContractGrantReportingCode">
+            <dd:primitiveAttribute source="chartOfAccountsCode" target="chartOfAccountsCode"/>
+            <dd:primitiveAttribute source="extension.cgReportingCode" target="code"/>
+        </dd:relationship>        
+      </list> 
+    </property>
+  
     <property name="inactivationBlockingDefinitions">
       <list>
         <bean parent="InactivationBlockingDefinition" p:blockedReferencePropertyName="financialFederalFunded"/>
@@ -57,12 +68,12 @@
         <bean parent="InactivationBlockingDefinition" p:blockedReferencePropertyName="finObjMandatoryTrnfrelim"/>
         <bean parent="InactivationBlockingDefinition" p:blockedReferencePropertyName="financialObjectSubType"/>
         <bean parent="InactivationBlockingDefinition" p:blockedReferencePropertyName="financialObjectType"/>
+        <bean parent="InactivationBlockingDefinition" p:blockedReferencePropertyName="extension.contractGrantReportingCode"/>
       </list>
     </property>
   </bean>
 
 <!-- Attribute Definitions -->
-
 
   <bean id="ObjectCode-universityFiscalYear" parent="ObjectCode-universityFiscalYear-parentBean"/>
   <bean id="ObjectCode-universityFiscalYear-parentBean" abstract="true" parent="GenericAttributes-genericFiscalYear">
@@ -181,22 +192,17 @@
     <property name="shortLabel" value="NextYearObjCode"/>
     <property name="required" value="false"/>
   </bean>
-   
+ 
   <bean id="ObjectCode-extension-sunyObjectCode" parent="ObjectCode-extension-sunyObjectCode-parentBean"/>
-  <bean id="ObjectCode-extension-sunyObjectCode-parentBean" abstract="true" parent="ObjectCode-financialObjectCode">
+  <bean id="ObjectCode-extension-sunyObjectCode-parentBean" abstract="true" parent="ObjectCodeExtendedAttribute-sunyObjectCode">
     <property name="name" value="extension.sunyObjectCode"/>
-    <property name="label" value="SUNY Object Code"/>
-    <property name="shortLabel" value="SUNYObjCode"/>
-    <property name="required" value="false"/>
-    <property name="maxLength" value="10"/>
-    <property name="validationPattern">
-      <bean parent="NumericValidationPattern" />
-    </property>
-    <property name="control">
-      <bean parent="TextControlDefinition" p:size="10"/>
-    </property>
   </bean>
 
+  <bean id="ObjectCode-extension-contractGrantReportingCode-cgReportingCode" parent="ObjectCode-extension-contractGrantReportingCode-cgReportingCode-parentBean"/>
+  <bean id="ObjectCode-extension-contractGrantReportingCode-cgReportingCode-parentBean" abstract="true" parent="ObjectCodeExtendedAttribute-cgReportingCode" >
+    <property name="name" value="extension.cgReportingCode"/>    
+  </bean>   
+  
 <!-- Business Object Inquiry Definition -->
 
 
@@ -220,6 +226,7 @@
               <bean parent="FieldDefinition" p:attributeName="reportsToFinancialObjectCode"/>
               <bean parent="FieldDefinition" p:attributeName="financialObjectTypeCode"/>
               <bean parent="FieldDefinition" p:attributeName="financialObjectLevelCode"/>
+              <bean parent="FieldDefinition" p:attributeName="extension.cgReportingCode"/>
               <bean parent="FieldDefinition" p:attributeName="financialObjectSubTypeCode"/>
               <bean parent="FieldDefinition" p:attributeName="extension.sunyObjectCode"/>
               <bean parent="FieldDefinition" p:attributeName="historicalFinancialObjectCode"/>
@@ -260,6 +267,7 @@
         <bean parent="FieldDefinition" p:attributeName="financialObjectCodeName"/>
         <bean parent="FieldDefinition" p:attributeName="financialObjectCodeShortName"/>
         <bean parent="FieldDefinition" p:attributeName="financialObjectLevelCode"/>
+        <bean parent="FieldDefinition" p:attributeName="extension.cgReportingCode"/>
         <bean parent="FieldDefinition" p:attributeName="financialObjectTypeCode"/>
         <bean parent="FieldDefinition" p:attributeName="financialObjectSubTypeCode"/>
         <bean parent="FieldDefinition" p:attributeName="extension.sunyObjectCode"/>
@@ -275,6 +283,7 @@
         <bean parent="FieldDefinition" p:attributeName="financialObjectCode"/>
         <bean parent="FieldDefinition" p:attributeName="financialObjectCodeName"/>
         <bean parent="FieldDefinition" p:attributeName="financialObjectLevelCode"/>
+        <bean parent="FieldDefinition" p:attributeName="extension.cgReportingCode"/>
         <bean parent="FieldDefinition" p:attributeName="financialObjectTypeCode"/>
         <bean parent="FieldDefinition" p:attributeName="extension.sunyObjectCode"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
@@ -284,4 +293,4 @@
   </bean>
    
 </beans>
- 
+    
