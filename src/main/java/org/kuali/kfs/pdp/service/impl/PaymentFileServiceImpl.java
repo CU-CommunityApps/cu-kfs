@@ -92,7 +92,7 @@ public class PaymentFileServiceImpl implements PaymentFileService {
 
                 // process payment file
                 PaymentFileLoad paymentFile = processPaymentFile(paymentInputFileType, incomingFileName, status.getErrorMap());
-                if (ObjectUtils.isNull(paymentFile) && paymentFile.isPassedValidation()) {
+                if (ObjectUtils.isNotNull(paymentFile) && paymentFile.isPassedValidation()) {
                     // load payment data
                     loadPayments(paymentFile, status, incomingFileName);
                 }
@@ -262,7 +262,7 @@ public class PaymentFileServiceImpl implements PaymentFileService {
             }
 
             p.println("  <description>" + message + "</description>");
-            if(ObjectUtils.isNull(status.getWarnings())) { // Warnings list may be null if file failed to load.
+            if(ObjectUtils.isNotNull(status.getWarnings())) { // Warnings list may be null if file failed to load.
 	            p.println("  <messages>");
 	            for (String warning : status.getWarnings()) {
 	                p.println("    <message>" + warning + "</message>");
