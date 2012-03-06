@@ -26,6 +26,7 @@ import org.kuali.rice.kew.docsearch.SearchableAttribute;
 import org.kuali.rice.kew.docsearch.SearchableAttributeValue;
 import org.kuali.rice.kew.docsearch.service.SearchableAttributeProcessingService;
 import org.kuali.rice.kew.doctype.bo.DocumentType;
+import org.kuali.rice.kew.doctype.service.DocumentTypeService;
 import org.kuali.rice.kew.exception.WorkflowRuntimeException;
 import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValueContent;
 import org.kuali.rice.kew.service.KEWServiceLocator;
@@ -73,7 +74,10 @@ public class SearchableAttributeProcessor implements SearchableAttributeProcessi
 			if (LOG.isInfoEnabled()) {
 				LOG.info("docType: [" + docType +"]; documentId: [" + documentId + "]");
 			}
-			docType = KEWServiceLocator.getDocumentTypeService().findByName(docType.getName());
+			
+			DocumentTypeService docTypeService = KEWServiceLocator.getDocumentTypeService();
+			String docTypeName = docType.getName();
+			docType = docTypeService.findByName(docTypeName);
 		}
 		List<SearchableAttributeValue> searchableAttributeValues = new ArrayList<SearchableAttributeValue>();
 
