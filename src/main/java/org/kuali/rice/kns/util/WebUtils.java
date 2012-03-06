@@ -240,14 +240,48 @@ public class WebUtils {
      * @param outStream
      * @param fileName
      */
+    public static void saveMimeOutputStreamAsFile(HttpServletResponse response, String contentType, ByteArrayOutputStream byteArrayOutputStream, String fileName, boolean cached) throws IOException {
+
+    	if (cached) {
+    		saveMimeOutputStreamAsFile(response, contentType, byteArrayOutputStream, fileName);
+    		return;
+    	} else {
+    	
+    		// set response
+    		response.setContentType(contentType);
+    		response.setHeader("Content-disposition", "attachment; filename=" + fileName);
+    		response.setHeader("Expires", "0");
+    		response.setHeader("Cache-Control", "no-cache");
+    		response.setHeader("Pragma", "no-cache");
+    		response.setContentLength(byteArrayOutputStream.size());
+
+    		// write to output
+    		OutputStream outputStream = response.getOutputStream();
+    		byteArrayOutputStream.writeTo(response.getOutputStream());
+    		outputStream.flush();
+    		outputStream.close();
+        
+    	}
+    }
+
+    
+    
+    /**
+     * A file that is not of type text/plain or text/html can be output through the response using this method.
+     * 
+     * @param response
+     * @param contentType
+     * @param outStream
+     * @param fileName
+     */
     public static void saveMimeOutputStreamAsFile(HttpServletResponse response, String contentType, ByteArrayOutputStream byteArrayOutputStream, String fileName) throws IOException {
 
         // set response
         response.setContentType(contentType);
         response.setHeader("Content-disposition", "attachment; filename=" + fileName);
         response.setHeader("Expires", "0");
-        response.setHeader("Cache-Control", "no-cache");
-        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+        response.setHeader("Pragma", "public");
         response.setContentLength(byteArrayOutputStream.size());
 
         // write to output

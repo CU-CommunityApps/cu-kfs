@@ -143,12 +143,12 @@ public class ReportExportAction extends BudgetConstructionImportExportAction {
         if (fileString.length() == 0){
             String noDataMessage = BCConstants.Report.MSG_REPORT_NO_DATA;
             baos.write(noDataMessage.getBytes());
-            WebUtils.saveMimeOutputStreamAsFile(response, ReportGeneration.TEXT_MIME_TYPE, baos, fileName);
+            WebUtils.saveMimeOutputStreamAsFile(response, ReportGeneration.TEXT_MIME_TYPE, baos, fileName, false);
         }
         else {
             // stream text file back
             baos.write(fileString.toString().getBytes());
-            WebUtils.saveMimeOutputStreamAsFile(response, ReportGeneration.TEXT_MIME_TYPE, baos, fileName);
+            WebUtils.saveMimeOutputStreamAsFile(response, ReportGeneration.TEXT_MIME_TYPE, baos, fileName, false);
         }
 
         return null;
