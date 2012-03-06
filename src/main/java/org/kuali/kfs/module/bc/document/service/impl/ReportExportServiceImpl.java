@@ -316,7 +316,7 @@ public class ReportExportServiceImpl implements ReportExportService {
         line = line + textDelimiter + sipRecord.getJOBCODE() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getJOB_CD_DESC_SHRT() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getJOB_FAMILY() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + sipRecord.getCU_PLANNED_FTE() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getPOS_FTE() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getPOS_GRADE_DFLT() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getCU_STATE_CERT() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getCOMP_FREQ() + textDelimiter + fieldSeperator;
@@ -334,9 +334,6 @@ public class ReportExportServiceImpl implements ReportExportService {
         line = line + textDelimiter + sipRecord.getCU_ABBR_FLAG() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getAPPT_TOT_INTND_AMT() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getAPPT_RQST_FTE_QTY() + textDelimiter + fieldSeperator;
-//        line = line + textDelimiter + sipRecord.getLeave_Code() + textDelimiter + fieldSeperator;
-//        line = line + textDelimiter + sipRecord.getLeave_Description() + textDelimiter + fieldSeperator;
-//        line = line + textDelimiter + sipRecord.getLeave_Amount() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getIU_POSITION_TYPE() + textDelimiter;
         line = line + "\r\n";
     	return line;
@@ -900,7 +897,7 @@ public class ReportExportServiceImpl implements ReportExportService {
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.JOBCODE + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.JOBCODE_SHORT_DESC + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.JOB_FAMILY + fieldSeparator;
-        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.CU_PLANNED_FTE + fieldSeparator;
+        line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.POS_FTE + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.POS_GRADE_DFLT + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.CU_STATE_CERT + fieldSeparator;
         line = line + CUBCPropertyConstants.BudgetConstructionSIPExportProperties.COMP_FREQ + fieldSeparator;
