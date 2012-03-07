@@ -22,7 +22,6 @@ public class ObjectCodeExtendedAttribute extends YearEndPersistableBusinessObjec
 	/**
 	 * 
 	 */
-	private Integer universityFiscalYear;
     private String chartOfAccountsCode;
     private String financialObjectCode;
     private String sunyObjectCode;
