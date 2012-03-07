@@ -202,7 +202,7 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
         public static final String JOBCODE = "Job_Code";
         public static final String JOBCODE_SHORT_DESC = "Job_Code_Short_Desc";
         public static final String JOB_FAMILY = "Job_Family";
-        public static final String POS_FTE = "FTE";
+        public static final String POS_FTE = "Position_FTE";
         public static final String POS_GRADE_DFLT = "Grade";
         public static final String CU_STATE_CERT = "CU_State_Cert";
         public static final String COMP_FREQ = "Comp_Frequency";
