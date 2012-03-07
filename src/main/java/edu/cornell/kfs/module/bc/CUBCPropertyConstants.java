@@ -202,7 +202,7 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
         public static final String JOBCODE = "Job_Code";
         public static final String JOBCODE_SHORT_DESC = "Job_Code_Short_Desc";
         public static final String JOB_FAMILY = "Job_Family";
-        public static final String CU_PLANNED_FTE = "CU_Planned_FTE";
+        public static final String POS_FTE = "Position_FTE";
         public static final String POS_GRADE_DFLT = "Grade";
         public static final String CU_STATE_CERT = "CU_State_Cert";
         public static final String COMP_FREQ = "Comp_Frequency";
@@ -219,7 +219,7 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
         public static final String DEFERRED = "Deferred";
         public static final String CU_ABBR_FLAG = "CU_ABBR_Flag";
         public static final String APPT_TOT_INTND_AMT = "TOTAL_Job_Planned_Commit";
-        public static final String APPT_RQST_FTE_QTY = "TOTAL_Job_Planned_FTE";
+        public static final String APPT_RQST_FTE_QTY = "Total_Distributions";
 //        public static final String LEAVE_CODE = "Leave Code";
 //        public static final String LEAVE_DESC = "Leave Description";
 //        public static final String LEAVE_AMT = "Leave Amount";
