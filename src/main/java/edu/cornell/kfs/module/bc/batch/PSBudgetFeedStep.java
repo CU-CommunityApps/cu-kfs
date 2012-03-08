@@ -68,7 +68,13 @@ public class PSBudgetFeedStep extends AbstractStep {
 
         // process the latest file
         if (fileToProcess != null) {
-            processSuccess = psBudgetFeedService.loadBCDataFromPS(fileToProcess, currentFileName, startFresh);
+            // create a new _error file for the new .done file to be processed today
+            File newErrorFile = createErrorFile(fileToProcess);
+            // get the existing _error file for the last psBudgetFeed job run
+            File existingErrorFile = getErrorFile(currentFileName);
+
+            processSuccess = psBudgetFeedService.loadBCDataFromPS(fileToProcess, currentFileName, existingErrorFile,
+                    newErrorFile, startFresh);
         }
 
         // if successfully processed remove all the .done files, remove .current files and create new current file
@@ -313,6 +319,53 @@ public class PSBudgetFeedStep extends AbstractStep {
                     CUBCParameterKeyConstants.RUN_PS_BUDGET_FEED_FOR_NEW_YEAR);
 
         return runPopulateCSFTRackerForNewYear;
+
+    }
+
+    /**
+     * Gets the associated _error file for the given input file name if the file exists or
+     * creates a new _error file if that does not exist.
+     * 
+     * @param fileToProcess
+     * @return a _error file
+     */
+    protected File getErrorFile(String fileToProcess) {
+
+        File errorFile = new File(StringUtils.substringBeforeLast(
+                    fileToProcess, ".") + "_error.data");
+
+        if (!errorFile.exists()) {
+            LOG.info("Error file _error.data does not exist");
+            return null;
+        }
+
+        return errorFile;
+
+    }
+
+    /**
+     * Creates the associated _error file for the given input file name.
+     * 
+     * @param fileToProcess
+     * @return a _error file
+     */
+    protected File createErrorFile(String fileToProcess) {
+
+        File errorFile = new File(StringUtils.substringBeforeLast(
+                    fileToProcess, ".") + "_error.data");
+        try {
+            if (!errorFile.exists()) {
+                if (!errorFile.createNewFile()) {
+                    LOG.info("Error creating the _error.data file");
+                }
+            } else {
+                LOG.info("The _error.data file already exists for input: " + fileToProcess);
+            }
+        } catch (IOException e) {
+            LOG.error("Exception while creating the _error.data file " + e.getMessage());
+        }
+
+        return errorFile;
 
     }
 

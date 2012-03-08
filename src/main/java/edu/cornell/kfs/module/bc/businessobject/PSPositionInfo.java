@@ -8,7 +8,7 @@ import org.kuali.rice.kns.util.KualiDecimal;
 import edu.cornell.kfs.module.bc.CUBCConstants;
 
 /**
- * BO for PS_POSITION_T table.
+ * BO for CU_PS_POSITION_EXTRA table.
  */
 public class PSPositionInfo extends PersistableBusinessObjectBase {
     protected String positionNumber;

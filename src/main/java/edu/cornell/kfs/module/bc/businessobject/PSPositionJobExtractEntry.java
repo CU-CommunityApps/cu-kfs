@@ -3,6 +3,7 @@ package edu.cornell.kfs.module.bc.businessobject;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.kns.bo.BusinessObjectBase;
 import org.kuali.rice.kns.util.TypedArrayList;
 
@@ -77,11 +78,13 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
     }
 
     /**
-     * Gets the emplid.
+     * Gets the emplid. If the emplid is blank then returns VACANT.
      * 
      * @return emplid
      */
     public String getEmplid() {
+        if (StringUtils.isBlank(emplid))
+            return CUBCConstants.VACANT_EMPLID;
         return emplid;
     }
 

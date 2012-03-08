@@ -1,8 +1,10 @@
 package edu.cornell.kfs.module.bc.batch.service.impl;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -48,6 +50,7 @@ import edu.cornell.kfs.module.bc.businessobject.PSJobData;
 import edu.cornell.kfs.module.bc.businessobject.PSPositionInfo;
 import edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractAccountingInfo;
 import edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry;
+import edu.cornell.kfs.module.bc.businessobject.PSPositionJobInvalidEntry;
 import edu.cornell.kfs.module.bc.util.CUBudgetParameterFinder;
 
 /**
@@ -62,6 +65,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
 
     protected BatchInputFileService batchInputFileService;
     protected BatchInputFileType psBudgetFeedFlatInputFileType;
+    protected BatchInputFileType psBudgetFeedFlatErrorFileType;
     protected DateTimeService dateTimeService;
     protected BusinessObjectService businessObjectService;
     protected DictionaryValidationService dictionaryValidationService;
@@ -70,9 +74,11 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
     protected PSJobDataDao psJobDataDao;
 
     /**
-     * @see edu.cornell.kfs.module.bc.batch.service.PSBudgetFeedService#populateCSFTracker(java.lang.String)
+     * @see edu.cornell.kfs.module.bc.batch.service.PSBudgetFeedService#loadBCDataFromPS(java.lang.String,
+     * java.lang.String, java.io.File, java.io.File, boolean)
      */
-    public boolean loadBCDataFromPS(String fileName, String currentFileName, boolean startFresh) {
+    public boolean loadBCDataFromPS(String fileName, String currentFileName, File existingErrorFile, File newErrorFile,
+            boolean startFresh) {
 
         LOG.info("\n Processing .done file: " + fileName + " and .current file: " + currentFileName + "\n");
 
@@ -93,11 +99,12 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
         LOG.info("\n Filtering only entries that have changed since last run. \n");
         //for better performance look for the last successful file so that we can compare with that
         Collection<PSPositionJobExtractEntry> filteredPsPositionJobExtractEntries = filterEntriesToUpdate(
-                currentFileName, psPositionJobExtractEntries, startFresh);
+                currentFileName, existingErrorFile, psPositionJobExtractEntries, startFresh);
 
         LOG.info("\n Validating entries. \n");
         // validate entries to load
-        Collection<PSPositionJobExtractEntry> validCsfTackerEntries = validateEntriesForCSFTracker(filteredPsPositionJobExtractEntries);
+        Collection<PSPositionJobExtractEntry> validCsfTackerEntries = validateEntriesForCSFTracker(
+                filteredPsPositionJobExtractEntries, newErrorFile);
 
         //generate CalculatedSalaryFoundationTracker, PSPositionInfo, PSJobData and PSJobCode entries from the valid PSPositionJobExtractEntry list
         List<CalculatedSalaryFoundationTracker> entriesToLoad = new ArrayList<CalculatedSalaryFoundationTracker>();
@@ -160,6 +167,53 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
     }
 
     /**
+     * Reads the entries in the _error file.
+     * 
+     * @param fileName the name of the _error file
+     * 
+     * @return a map of all the entries in the _error file. the key is position number +
+     * emplid
+     */
+    protected Map<String, PSPositionJobInvalidEntry> readExistingErrorFileContents(String fileName) {
+
+        try {
+
+            FileInputStream fileContents = null;
+            //read file contents
+            fileContents = new FileInputStream(fileName);
+            // read invalid entries
+
+            List<PSPositionJobInvalidEntry> psPositionJobInvalidEntries = null;
+            byte[] fileByteContent = IOUtils.toByteArray(fileContents);
+            psPositionJobInvalidEntries = (List<PSPositionJobInvalidEntry>) batchInputFileService.parse(
+                    psBudgetFeedFlatErrorFileType, fileByteContent);
+            // if no entries, log
+            if (psPositionJobInvalidEntries == null || psPositionJobInvalidEntries.isEmpty()) {
+                LOG.warn("No entries in the _error file of invalid entries" + fileName);
+                return null;
+            }
+
+            Map<String, PSPositionJobInvalidEntry> mapOfInvalidEntries = new HashMap<String, PSPositionJobInvalidEntry>();
+
+            for (PSPositionJobInvalidEntry invalidEntry : psPositionJobInvalidEntries) {
+                mapOfInvalidEntries.put(invalidEntry.getPositionNumber() + invalidEntry.getEmplid(), invalidEntry);
+            }
+            return mapOfInvalidEntries;
+
+        } catch (FileNotFoundException e) {
+            LOG.error("File to parse not found " + fileName, e);
+            throw new RuntimeException(
+                    "Cannot find the file requested to be parsed " + fileName
+                            + " " + e.getMessage(), e);
+        } catch (IOException e) {
+            LOG.error("Error while getting file bytes:  " + e.getMessage(), e);
+            throw new RuntimeException(
+                    "Error encountered while attempting to get file bytes: "
+                            + e.getMessage(), e);
+        }
+    }
+
+    /**
      * Returns only the entries that were updated in the new PS extract.
      * 
      * @param currentFileName
@@ -169,6 +223,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
      * @return only entries that need to be updated
      */
     protected Collection<PSPositionJobExtractEntry> filterEntriesToUpdate(String currentFileName,
+            File existingErrorFile,
             Collection<PSPositionJobExtractEntry> inputPSPositionJobExtractEntries, boolean startFresh) {
 
         Collection<PSPositionJobExtractEntry> filteredEntries = new ArrayList<PSPositionJobExtractEntry>();
@@ -178,130 +233,191 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
             filteredEntries = inputPSPositionJobExtractEntries;
         } else {
 
-            Collection<PSPositionJobExtractEntry> currentPSPositionJobExtractEntries = null;
+            Collection<PSPositionJobExtractEntry> currentPSPositionJobExtractEntries = readCurrentFileEntries(currentFileName);
 
-            FileInputStream fileContents = null;
+            if (currentPSPositionJobExtractEntries == null) {
+                filteredEntries = inputPSPositionJobExtractEntries;
+            } else {
+                // read the entries that were invalid as of last run; in case these entries did not change we will still force the job to try an load them
+                //because for example the account might have been invalid due to a N budget record level but that may have changed; since this change it's 
+                //not reflected in the PS extract we need to force the job to try and reload the invalids even if nothing changed on that record in the PS extract
+                Map<String, PSPositionJobInvalidEntry> invalidEntries = null;
+                if (existingErrorFile != null) {
+                    invalidEntries = readExistingErrorFileContents(existingErrorFile
+                            .getPath());
+                }
+                //build hash maps for current entries
+                Map<String, PSPositionJobExtractEntry> currentEntriesMap = new HashMap<String, PSPositionJobExtractEntry>();
+                for (PSPositionJobExtractEntry extractEntry : currentPSPositionJobExtractEntries) {
+                    currentEntriesMap.put(extractEntry.getKey(), extractEntry);
+                }
 
-            //read file contents
-            if (StringUtils.isNotBlank(currentFileName)) {
-                try {
-                    fileContents = new FileInputStream(currentFileName);
-                    byte[] fileByteContent = IOUtils.toByteArray(fileContents);
-                    currentPSPositionJobExtractEntries = (Collection<PSPositionJobExtractEntry>) batchInputFileService
-                                            .parse(psBudgetFeedFlatInputFileType, fileByteContent);
-                    // if no entries read log
-                    if (currentPSPositionJobExtractEntries == null || currentPSPositionJobExtractEntries.isEmpty()) {
-                        LOG.warn("No entries in the current file " + currentFileName);
-                    }
+                //build hash map for new entries
+                Map<String, PSPositionJobExtractEntry> newEntriesMap = new HashMap<String, PSPositionJobExtractEntry>();
+                for (PSPositionJobExtractEntry extractEntry : inputPSPositionJobExtractEntries) {
+                    newEntriesMap.put(extractEntry.getKey(), extractEntry);
+                }
 
-                    if (currentPSPositionJobExtractEntries != null) {
-                        //build hash maps for current entries
-                        Map<String, PSPositionJobExtractEntry> currentEntriesMap = new HashMap<String, PSPositionJobExtractEntry>();
-                        for (PSPositionJobExtractEntry extractEntry : currentPSPositionJobExtractEntries) {
-                            currentEntriesMap.put(extractEntry.getKey(), extractEntry);
-                        }
+                // log entries that changed 
+                StringBuffer newChangedlogInfo = new StringBuffer();
+                newChangedlogInfo.append("\n Changed/New entries in the new file:\n");
 
-                        //build hash map for new entries
-                        Map<String, PSPositionJobExtractEntry> newEntriesMap = new HashMap<String, PSPositionJobExtractEntry>();
-                        for (PSPositionJobExtractEntry extractEntry : inputPSPositionJobExtractEntries) {
-                            newEntriesMap.put(extractEntry.getKey(), extractEntry);
-                        }
+                // filter entries
+                for (String key : newEntriesMap.keySet()) {
 
-                        // log entries that changed 
-                        StringBuffer newChangedlogInfo = new StringBuffer();
-                        newChangedlogInfo.append("\n Changed/New entries in the new file:\n");
+                    PSPositionJobExtractEntry currentEntry = currentEntriesMap.get(key);
+                    PSPositionJobExtractEntry newEntry = newEntriesMap.get(key);
 
-                        // filter entries
-                        for (String key : newEntriesMap.keySet()) {
+                    // basic filter, if anything changed on the line we take the new entry
+                    if (currentEntry != null) {
+                        if (currentEntry.equals(newEntry)) {
+                            //do nothing; these entries will have a status flag code of active = "-"
+                            // when we are done with this current entry remove it from the map; whatever is left will need to be deleted
 
-                            PSPositionJobExtractEntry currentEntry = currentEntriesMap.get(key);
-                            PSPositionJobExtractEntry newEntry = newEntriesMap.get(key);
-
-                            // basic filter, if anything changed on the line we take the new entry
-                            if (currentEntry != null) {
-                                if (currentEntry.equals(newEntry)) {
-                                    //do nothing; these entries will have a status flag code of active = "-"
-                                    // when we are done with this current entry remove it from the map; whatever is left will need to be deleted
-
-                                } else {
-
-                                    newEntry.deleteStatus = CUBCConstants.PSEntryStatus.UPDATE;
-                                    // delete old entry
-                                    currentEntry.deleteStatus = CUBCConstants.PSEntryStatus.DELETE;
-
-                                    // if the rate has changed then all accounting info has to be marked as changed
-                                    if (newEntry.getAnnualRate() != null
-                                            && !newEntry.getAnnualRate().equalsIgnoreCase(currentEntry.getAnnualRate())) {
-                                        // set all changed
-                                        if (newEntry.getCsfAccountingInfoList() != null
-                                                && newEntry.getCsfAccountingInfoList().size() > 0) {
-                                            for (PSPositionJobExtractAccountingInfo accInfo : newEntry
-                                                    .getCsfAccountingInfoList()) {
-                                                accInfo.setStatusFlag(StatusFlag.CHANGED);
-                                            }
-                                        } else {
-                                            if (newEntry.getPosAccountingInfoList() != null
-                                                    && newEntry.getPosAccountingInfoList().size() > 0) {
-                                                for (PSPositionJobExtractAccountingInfo accInfo : newEntry
-                                                        .getPosAccountingInfoList()) {
-                                                    accInfo.setStatusFlag(StatusFlag.CHANGED);
-                                                }
-                                            }
-                                        }
-                                    } else {
-
-                                        updateAccountingInfoStatusFlag(newEntry, currentEntry);
-                                    }
-
-                                    filteredEntries.add(currentEntry);
-
-                                    filteredEntries.add(newEntry);
-
-                                    newChangedlogInfo.append(newEntry.toString() + "\n");
-
-                                }
-                                currentEntriesMap.remove(key);
-                            } else {
+                            // check if invalid and then add it to try and load it again
+                            if (invalidEntries != null && invalidEntries.containsKey(newEntry.getKey())) {
                                 //add to the toAdd list: this is a new entry that did not exist in the old file
                                 newEntry.deleteStatus = CUBCConstants.PSEntryStatus.ADD;
                                 //change status
                                 newEntry.changeStatus = StatusFlag.NEW;
-
                                 filteredEntries.add(newEntry);
 
-                                newChangedlogInfo.append(newEntry.toString() + "\n");
+                                newChangedlogInfo.append("Force Invalid:" + newEntry.toString() + "\n");
                             }
 
+                            //if there is no error file check if the entry is in the database, if not, load it
+                            if (existingErrorFile == null) {
+
+                                Map<String, String> matchingValues = new HashMap<String, String>();
+                                matchingValues.put(
+                                        CUBCPropertyConstants.CalculateSalaryFoundationTrackerProperties.POSITION_NBR,
+                                        newEntry.getPositionNumber());
+                                matchingValues.put(
+                                        CUBCPropertyConstants.CalculateSalaryFoundationTrackerProperties.EMPLID,
+                                        newEntry.getEmplid());
+
+                                int numberOfExistingEntries = businessObjectService.countMatching(
+                                        CalculatedSalaryFoundationTracker.class,
+                                        matchingValues);
+
+                                //if no entry in the DB then try to load it in KFS
+                                if (numberOfExistingEntries == 0) {
+                                    //add to the toAdd list: this is a new entry that did not exist in the old file
+                                    newEntry.deleteStatus = CUBCConstants.PSEntryStatus.ADD;
+                                    //change status
+                                    newEntry.changeStatus = StatusFlag.NEW;
+                                    filteredEntries.add(newEntry);
+
+                                    newChangedlogInfo
+                                            .append("Force entry that existed in the previous file but is not in the database:"
+                                                    + newEntry.toString() + "\n");
+                                }
+                            }
+
+                        } else {
+
+                            newEntry.deleteStatus = CUBCConstants.PSEntryStatus.UPDATE;
+                            // delete old entry
+                            currentEntry.deleteStatus = CUBCConstants.PSEntryStatus.DELETE;
+
+                            // if the rate has changed then all accounting info has to be marked as changed
+                            if (newEntry.getAnnualRate() != null
+                                            && !newEntry.getAnnualRate().equalsIgnoreCase(currentEntry.getAnnualRate())) {
+                                // set all changed
+                                if (newEntry.getCsfAccountingInfoList() != null
+                                                && newEntry.getCsfAccountingInfoList().size() > 0) {
+                                    for (PSPositionJobExtractAccountingInfo accInfo : newEntry
+                                                    .getCsfAccountingInfoList()) {
+                                        accInfo.setStatusFlag(StatusFlag.CHANGED);
+                                    }
+                                } else {
+                                    if (newEntry.getPosAccountingInfoList() != null
+                                                    && newEntry.getPosAccountingInfoList().size() > 0) {
+                                        for (PSPositionJobExtractAccountingInfo accInfo : newEntry
+                                                        .getPosAccountingInfoList()) {
+                                            accInfo.setStatusFlag(StatusFlag.CHANGED);
+                                        }
+                                    }
+                                }
+                            } else {
+
+                                updateAccountingInfoStatusFlag(newEntry, currentEntry);
+                            }
+
+                            filteredEntries.add(currentEntry);
+
+                            filteredEntries.add(newEntry);
+
+                            newChangedlogInfo.append(newEntry.toString() + "\n");
+
                         }
+                        currentEntriesMap.remove(key);
+                    } else {
+                        //add to the toAdd list: this is a new entry that did not exist in the old file
+                        newEntry.deleteStatus = CUBCConstants.PSEntryStatus.ADD;
+                        //change status
+                        newEntry.changeStatus = StatusFlag.NEW;
 
-                        LOG.info(newChangedlogInfo.toString());
+                        filteredEntries.add(newEntry);
 
-                        StringBuffer deletedLogInfo = new StringBuffer();
-
-                        deletedLogInfo
-                                .append("\n Entries that existed in the old file but don't exist in the new file:\n");
-
-                        // add whatever is left in the currententryMap to the toDelete list
-                        for (PSPositionJobExtractEntry entry : currentEntriesMap.values()) {
-                            entry.deleteStatus = CUBCConstants.PSEntryStatus.DELETE;
-                            deletedLogInfo.append(entry.toString() + "\n");
-                        }
-                        LOG.info(deletedLogInfo.toString());
-
-                        filteredEntries.addAll(currentEntriesMap.values());
+                        newChangedlogInfo.append(newEntry.toString() + "\n");
                     }
 
-                } catch (FileNotFoundException e) {
-                    LOG.error("Current file to parse not found " + currentFileName, e);
-                    filteredEntries = inputPSPositionJobExtractEntries;
-                } catch (IOException e) {
-                    LOG.error("error while getting current file bytes:  " + e.getMessage(), e);
-                    filteredEntries = inputPSPositionJobExtractEntries;
                 }
+
+                LOG.info(newChangedlogInfo.toString());
+
+                StringBuffer deletedLogInfo = new StringBuffer();
+
+                deletedLogInfo
+                                .append("\n Entries that existed in the old file but don't exist in the new file:\n");
+
+                // add whatever is left in the currententryMap to the toDelete list
+                for (PSPositionJobExtractEntry entry : currentEntriesMap.values()) {
+                    entry.deleteStatus = CUBCConstants.PSEntryStatus.DELETE;
+                    deletedLogInfo.append(entry.toString() + "\n");
+                }
+                LOG.info(deletedLogInfo.toString());
+
+                filteredEntries.addAll(currentEntriesMap.values());
             }
+
         }
 
         return filteredEntries;
+
+    }
+
+    /**
+     * Reads the entries from the file that is currently loaded in the database and is
+     * marked as the .current file.
+     * 
+     * @param currentFileName
+     * @return the entries from the file that is currently loaded in the database
+     */
+    private Collection<PSPositionJobExtractEntry> readCurrentFileEntries(String currentFileName) {
+        Collection<PSPositionJobExtractEntry> currentPSPositionJobExtractEntries = null;
+        FileInputStream fileContents = null;
+
+        //read file contents
+        if (StringUtils.isNotBlank(currentFileName)) {
+            try {
+                fileContents = new FileInputStream(currentFileName);
+                byte[] fileByteContent = IOUtils.toByteArray(fileContents);
+                currentPSPositionJobExtractEntries = (Collection<PSPositionJobExtractEntry>) batchInputFileService
+                                        .parse(psBudgetFeedFlatInputFileType, fileByteContent);
+                // if no entries read log
+                if (currentPSPositionJobExtractEntries == null || currentPSPositionJobExtractEntries.isEmpty()) {
+                    LOG.warn("No entries in the current file " + currentFileName);
+                }
+            } catch (FileNotFoundException e) {
+                LOG.error("Current file to parse not found " + currentFileName, e);
+
+            } catch (IOException e) {
+                LOG.error("error while getting current file bytes:  " + e.getMessage(), e);
+            }
+        }
+        return currentPSPositionJobExtractEntries;
 
     }
 
@@ -405,7 +521,15 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
      * @param csfTackerEntries the entries to be loaded into the CSF Tracker table.
      */
     protected Collection<PSPositionJobExtractEntry> validateEntriesForCSFTracker(
-            Collection<PSPositionJobExtractEntry> csfTackerEntries) {
+            Collection<PSPositionJobExtractEntry> csfTackerEntries, File newErrorFile) {
+
+        PrintStream invalidEntriesPrintStream;
+        try {
+            invalidEntriesPrintStream = new PrintStream(newErrorFile);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Error creating PrintStream to write invalid entries");
+        }
+
         Collection<PSPositionJobExtractEntry> validEntries = new ArrayList<PSPositionJobExtractEntry>();
 
         Integer universityFiscalYear = BudgetParameterFinder.getBaseFiscalYear();
@@ -423,19 +547,25 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
 
                 if (!valid) {
                     warningMessage.append("Invalid position number: " + extractEntry.getPositionNumber() + "\n");
-                    
+
                     LOG.warn("\n Invalid entry for position number: " + extractEntry.getPositionNumber()
                             + " and employee ID: " + extractEntry.getEmplid() + "\n" +
                             "Errors found: " + warningMessage.toString() + "\n");
+
+                    invalidEntriesPrintStream.println(extractEntry.getPositionNumber() + extractEntry.getEmplid());
+
                     continue;
                 }
                 valid &= validateCSFAmount(extractEntry.getAnnualRate());
                 if (!valid) {
                     warningMessage.append("Invalid csf Amount: " + extractEntry.getAnnualRate() + "\n");
-                    
+
                     LOG.warn("\n Invalid entry for position number: " + extractEntry.getPositionNumber()
                             + " and employee ID: " + extractEntry.getEmplid() + "\n" +
                             "Errors found: " + warningMessage.toString() + "\n");
+
+                    invalidEntriesPrintStream.println(extractEntry.getPositionNumber() + extractEntry.getEmplid());
+
                     continue;
                 }
 
@@ -473,10 +603,14 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
                             + " and employee ID: " + extractEntry.getEmplid() + "\n" +
                             "Errors found: " + warningMessage.toString() + "\n");
 
+                    invalidEntriesPrintStream.println(extractEntry.getPositionNumber() + extractEntry.getEmplid());
+
                 }
             }
 
         }
+
+        invalidEntriesPrintStream.close();
 
         return validEntries;
 
@@ -748,6 +882,7 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
 
             // build map for job info
             if (StringUtils.isNotBlank(psPositionJobExtractEntry.getEmplid())
+                    && !CUBCConstants.VACANT_EMPLID.equalsIgnoreCase(psPositionJobExtractEntry.getEmplid())
                         && (jobInfoMap.get(psPositionJobExtractEntry.getKey()) == null)) {
                 jobInfoMap.put(psPositionJobExtractEntry.getKey() + psPositionJobExtractEntry.getDeleteStatus(),
                         generatePSJobData(psPositionJobExtractEntry));
@@ -778,9 +913,6 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
         Integer universityFiscalYear = BudgetParameterFinder.getBaseFiscalYear();
 
         String emplid = psPositionJobExtractEntry.getEmplid();
-        if (StringUtils.isBlank(emplid)) {
-            emplid = BCConstants.VACANT_EMPLID;
-        }
 
         String name = psPositionJobExtractEntry.getName();
         Timestamp csfCreateTimestamp = new Timestamp(0);
@@ -1634,6 +1766,14 @@ public class PSBudgetFeedServiceImpl implements PSBudgetFeedService {
      */
     public void setPsJobDataDao(PSJobDataDao psJobDataDao) {
         this.psJobDataDao = psJobDataDao;
+    }
+
+    public BatchInputFileType getPsBudgetFeedFlatErrorFileType() {
+        return psBudgetFeedFlatErrorFileType;
+    }
+
+    public void setPsBudgetFeedFlatErrorFileType(BatchInputFileType psBudgetFeedFlatErrorFileType) {
+        this.psBudgetFeedFlatErrorFileType = psBudgetFeedFlatErrorFileType;
     }
 
 }

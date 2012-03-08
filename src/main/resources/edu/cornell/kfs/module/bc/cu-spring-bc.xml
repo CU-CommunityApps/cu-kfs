@@ -59,6 +59,12 @@
     <bean id="PSBudgetFeedFlatInputFileHandler-parentBean" class="edu.cornell.kfs.module.bc.batch.PSBudgetFeedFlatInputFileHandler" abstract="true">
 
 	</bean>
+	
+	<bean id="PSBudgetFeedFlatErrorFileHandler" parent="PSBudgetFeedFlatErrorFileHandler-parentBean"/>
+
+    <bean id="PSBudgetFeedFlatErrorFileHandler-parentBean" class="edu.cornell.kfs.module.bc.batch.PSBudgetFlatErrorFileHandler" abstract="true">
+
+	</bean>
 
 
      	<bean id="flatFileSpecification" parent="FixedWidthFlatFileSpecification" p:defaultBusinessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry">
@@ -137,6 +143,21 @@
      			</list>
      		</property>
      	</bean>
+     	
+     	<bean id="errorFlatFileSpecification" parent="FixedWidthFlatFileSpecification" p:defaultBusinessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobInvalidEntry">
+     		<property name="objectSpecifications">
+     			<list>
+     				<bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobInvalidEntry">
+     					<property name="parseProperties">
+     						<list>
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="positionNumber" p:start="0" p:end="6" p:rightTrim="true" />
+     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="emplid" p:start="6" p:end="0" p:rightTrim="true" />
+     						</list>
+     					</property>
+     				</bean>				
+     			</list>
+     		</property>
+     	</bean>
 	
 	<bean id="psBudgetFeedFlatInputFileType" class="edu.cornell.kfs.module.bc.batch.PSBudgetFeedFlatInputFileType"> 
 	    <property name="directoryPath">
@@ -155,6 +176,23 @@
        <property name="processor" ref="PSBudgetFeedFlatInputFileHandler" />
      </bean>
      
+     <bean id="psBudgetFeedFlatErrorFileType" class="edu.cornell.kfs.module.bc.batch.PSBudgetFeedFlatErrorFileType"> 
+	    <property name="directoryPath">
+	       <value>${staging.directory}/bc/psBudgetFeed</value>
+	    </property>
+	    <property name="fileExtension">
+	       <value>data</value>
+	    </property>
+	    <property name="dateTimeService">
+	       <ref bean="dateTimeService"/>
+	    </property>
+	    <property name="flatFileSpecification">
+	    	<ref bean="errorFlatFileSpecification"/>
+       </property>
+
+       <property name="processor" ref="PSBudgetFeedFlatErrorFileHandler" />
+     </bean>
+     
     <bean id="positionDataDao" parent="platformAwareDao" class="edu.cornell.kfs.module.bc.batch.dataaccess.impl.PSPositionDataDaoOjb">
     	<property name="dateTimeService">
 			<ref bean="dateTimeService" />
@@ -171,6 +209,9 @@
 		</property>
 		<property name="psBudgetFeedFlatInputFileType">
 			<ref bean="psBudgetFeedFlatInputFileType" />
+		</property>
+		<property name="psBudgetFeedFlatErrorFileType">
+			<ref bean="psBudgetFeedFlatErrorFileType" />
 		</property>
 		<property name="businessObjectService" ref="businessObjectService" />
 		<property name="dateTimeService" ref="dateTimeService" />
