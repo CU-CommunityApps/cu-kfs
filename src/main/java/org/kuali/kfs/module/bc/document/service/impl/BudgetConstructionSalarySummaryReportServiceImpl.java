@@ -462,11 +462,11 @@ public class BudgetConstructionSalarySummaryReportServiceImpl implements BudgetC
 
             if (!appointmentFunding.isAppointmentFundingDeleteIndicator()) {
                 if (totalsHolder.curToInt <= -1) {
-                    totalsHolder.curToInt = appointmentFunding.getAppointmentTotalIntendedAmount().intValue();
+                    totalsHolder.curToInt = appointmentFunding.getAppointmentTotalIntendedAmount() == null? 0: appointmentFunding.getAppointmentTotalIntendedAmount().intValue();
                 }
 
                 if (totalsHolder.curFteInt <= -1.00) {
-                    totalsHolder.curFteInt = appointmentFunding.getAppointmentTotalIntendedFteQuantity().doubleValue();
+                    totalsHolder.curFteInt = appointmentFunding.getAppointmentTotalIntendedFteQuantity() == null?  0.00 :appointmentFunding.getAppointmentTotalIntendedFteQuantity().doubleValue();
                 }
             }
         }
