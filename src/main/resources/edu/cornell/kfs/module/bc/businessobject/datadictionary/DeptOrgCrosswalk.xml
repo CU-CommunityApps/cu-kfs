@@ -30,9 +30,9 @@
     <property name="attributes">
       <list>
         <ref bean="DeptOrgCrosswalk-hrDepartment"/>
-        <ref bean="DeptOrgCrosswalk-hrDepartmentName"/>
+        <!--  <ref bean="DeptOrgCrosswalk-hrDepartmentName"/> -->
         <ref bean="DeptOrgCrosswalk-orgCode"/>
-        <ref bean="DeptOrgCrosswalk-orgName"/>
+        <!--   <ref bean="DeptOrgCrosswalk-orgName"/> -->
         <ref bean="DeptOrgCrosswalk-active"/>
       </list>
     </property>
@@ -55,7 +55,7 @@
       <bean parent="TextControlDefinition" p:size="10"/>
     </property>
   </bean>
-  
+  <!--  
   <bean id="DeptOrgCrosswalk-hrDepartmentName" parent="DeptOrgCrosswalk-hrDepartmentName-parentBean"/>
   <bean id="DeptOrgCrosswalk-hrDepartmentName-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="hrDepartmentName"/>
@@ -70,7 +70,7 @@
       <bean parent="TextControlDefinition" p:size="80"/>
     </property>
   </bean>
-  
+  -->
   <bean id="DeptOrgCrosswalk-orgCode" parent="DeptOrgCrosswalk-orgCode-parentBean"/>
   <bean id="DeptOrgCrosswalk-orgCode-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="orgCode"/>
@@ -85,7 +85,7 @@
       <bean parent="TextControlDefinition" p:size="10"/>
     </property>
   </bean>
-
+<!--  
   <bean id="DeptOrgCrosswalk-orgName" parent="DeptOrgCrosswalk-orgName-parentBean"/>
   <bean id="DeptOrgCrosswalk-orgName-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="orgName"/>
@@ -100,7 +100,7 @@
       <bean parent="TextControlDefinition" p:size="80"/>
     </property>
   </bean>
-  
+  -->
   
   
   <bean id="DeptOrgCrosswalk-active" parent="DeptOrgCrosswalk-active-parentBean"/>
@@ -150,18 +150,18 @@
     <property name="lookupFields">
       <list>
               <bean parent="FieldDefinition" p:attributeName="hrDepartment"/>
-              <bean parent="FieldDefinition" p:attributeName="hrDepartmentName"/>
+<!--                <bean parent="FieldDefinition" p:attributeName="hrDepartmentName"/>-->
               <bean parent="FieldDefinition" p:attributeName="orgCode"/>
-              <bean parent="FieldDefinition" p:attributeName="orgName"/>
+<!--                <bean parent="FieldDefinition" p:attributeName="orgName"/> -->
               <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
     </property>
     <property name="resultFields">
       <list>
               <bean parent="FieldDefinition" p:attributeName="hrDepartment"/>
-              <bean parent="FieldDefinition" p:attributeName="hrDepartmentName"/>
+<!--                <bean parent="FieldDefinition" p:attributeName="hrDepartmentName"/> -->
               <bean parent="FieldDefinition" p:attributeName="orgCode"/>
-              <bean parent="FieldDefinition" p:attributeName="orgName"/>
+          <!--      <bean parent="FieldDefinition" p:attributeName="orgName"/>-->
               <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
     </property>
