@@ -946,21 +946,22 @@ public class BudgetConstructionDocumentRules extends TransactionalDocumentRuleBa
                 isAllowed &= this.isValidSubAccount(subAccount, budgetConstructionDocument.getSubAccountNumber(), dd, TARGET_ERROR_PROPERTY_NAME);
             }
 
-            // is subacct type cost share?
-            // this hack is here since kuldev is missing one to one instances
-            // and the RI ojb mapping produces an error when attempting to test if the
-            // A21SubAccount attached to the document's SubAccount is null
-            Map<String, Object> searchCriteria = new HashMap<String, Object>();
-            searchCriteria.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, budgetConstructionDocument.getChartOfAccountsCode());
-            searchCriteria.put(KFSPropertyConstants.ACCOUNT_NUMBER, budgetConstructionDocument.getAccountNumber());
-            searchCriteria.put(KFSPropertyConstants.SUB_ACCOUNT_NUMBER, budgetConstructionDocument.getSubAccountNumber());
-            A21SubAccount a21SubAccount = (A21SubAccount) businessObjectService.findByPrimaryKey(A21SubAccount.class, searchCriteria);
-            if (ObjectUtils.isNotNull(a21SubAccount)) {
-                if (a21SubAccount.getSubAccountTypeCode().equalsIgnoreCase(KFSConstants.SubAccountType.COST_SHARE)) {
-                    isAllowed = false;
-                    this.putError(errors, propertyName, BCKeyConstants.ERROR_SUB_ACCOUNT_TYPE_NOT_ALLOWED, isAdd, budgetConstructionDocument.getAccountNumber(), KFSConstants.SubAccountType.COST_SHARE);
-                }
-            }
+            //KFSPTS-941 as a Cornell customization this rule is not needed
+//            // is subacct type cost share?
+//            // this hack is here since kuldev is missing one to one instances
+//            // and the RI ojb mapping produces an error when attempting to test if the
+//            // A21SubAccount attached to the document's SubAccount is null
+//            Map<String, Object> searchCriteria = new HashMap<String, Object>();
+//            searchCriteria.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, budgetConstructionDocument.getChartOfAccountsCode());
+//            searchCriteria.put(KFSPropertyConstants.ACCOUNT_NUMBER, budgetConstructionDocument.getAccountNumber());
+//            searchCriteria.put(KFSPropertyConstants.SUB_ACCOUNT_NUMBER, budgetConstructionDocument.getSubAccountNumber());
+//            A21SubAccount a21SubAccount = (A21SubAccount) businessObjectService.findByPrimaryKey(A21SubAccount.class, searchCriteria);
+//            if (ObjectUtils.isNotNull(a21SubAccount)) {
+//                if (a21SubAccount.getSubAccountTypeCode().equalsIgnoreCase(KFSConstants.SubAccountType.COST_SHARE)) {
+//                    isAllowed = false;
+//                    this.putError(errors, propertyName, BCKeyConstants.ERROR_SUB_ACCOUNT_TYPE_NOT_ALLOWED, isAdd, budgetConstructionDocument.getAccountNumber(), KFSConstants.SubAccountType.COST_SHARE);
+//                }
+//            }
         }
 
         return isAllowed;
