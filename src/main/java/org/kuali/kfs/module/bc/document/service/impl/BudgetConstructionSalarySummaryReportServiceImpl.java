@@ -347,7 +347,7 @@ public class BudgetConstructionSalarySummaryReportServiceImpl implements BudgetC
     // adjust the total amount that just is held by the given holder
     protected void adjustPersonTotal(PersonTotalHolder totalsHolder) {
         Integer restatementCsfAmount = 0;
-        if (totalsHolder.salaryPayMonth == 0 || totalsHolder.csfPayMonths == 0 || BigDecimal.ZERO.compareTo(totalsHolder.csfPercent) == 0 || totalsHolder.csfNormalMonths == 0) {
+        if (totalsHolder.salaryPayMonth == null || totalsHolder.salaryPayMonth == 0 || totalsHolder.csfPayMonths == 0 || BigDecimal.ZERO.compareTo(totalsHolder.csfPercent) == 0 || totalsHolder.csfNormalMonths == 0) {
             restatementCsfAmount = 0;
         }
         else {
