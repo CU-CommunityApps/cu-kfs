@@ -43,6 +43,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
+import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
@@ -1301,9 +1302,22 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         
         RequisitionDocument reqDoc = SpringContext.getBean(RequisitionService.class).getRequisitionById(poDoc.getRequisitionIdentifier());
         String reqDocInitiator = reqDoc.getDocumentHeader().getWorkflowDocument().getInitiatorNetworkId();
+        if (LOG.isInfoEnabled()) {
+        	LOG.info("createPaymentRequest() - Requisition Document Initiator: "+reqDocInitiator);
+        }
         try {
             Person user = SpringContext.getBean(org.kuali.rice.kim.service.PersonService.class).getPersonByPrincipalName(reqDocInitiator);
-            preqDoc.setProcessingCampusCode(user.getCampusCode());
+            String processingCampusCode = user.getCampusCode();
+            if(StringUtils.isEmpty(processingCampusCode)) {
+                if (LOG.isInfoEnabled()){
+	            	LOG.info("createPaymentRequest() - Processing Campus Code not populated.  Value of campus code: "+processingCampusCode);
+	            	LOG.info("createPaymentRequest() - Requisition Initiator User: Name="+user.getNameUnmasked()+"; Campus Code="+user.getCampusCode());
+                }
+            	// Set the processing campus code to the default value.
+            	processingCampusCode = CUPurapConstants.PaymentRequestDefaults.DEFAULT_PROCESSING_CAMPUS_CODE;
+
+            }
+            preqDoc.setProcessingCampusCode(processingCampusCode);
         }catch(Exception e){
             String extraDescription = "Error setting processing campus code - " + e.getMessage();
             ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(PurapConstants.ElectronicInvoice.PREQ_ROUTING_VALIDATION_ERROR, extraDescription, orderHolder.getFileName());
