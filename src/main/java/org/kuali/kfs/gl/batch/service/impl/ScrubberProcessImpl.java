@@ -76,6 +76,7 @@ import org.kuali.kfs.sys.exception.InvalidFlexibleOffsetException;
 import org.kuali.kfs.sys.service.DocumentNumberAwareReportWriterService;
 import org.kuali.kfs.sys.service.FlexibleOffsetAccountService;
 import org.kuali.kfs.sys.service.ReportWriterService;
+import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.ParameterEvaluator;
@@ -158,6 +159,7 @@ public class ScrubberProcessImpl implements ScrubberProcess {
     private String costShareDescription;
 
     private ParameterService parameterService;
+    private BusinessObjectService businessObjectService;
 
     /**
      * Whether this instance is being used to support the scrubbing of a collector batch
@@ -173,7 +175,11 @@ public class ScrubberProcessImpl implements ScrubberProcess {
     private String validFile;
     private String errorFile;
     private String expiredFile;
-
+    
+    private static final String CAPITALIZATION_FUND_BAL_OBJECT_CD = "CAPITALIZATION_FUND_BAL_OBJECT_CD";
+    private static final String UNIVERSITYFISCALYEAR = "universityFiscalYear";
+    private static final String CHARTOFACCOUNTSCODE  = "chartOfAccountsCode";
+    private static final String FINANCIALOBJECTCODE  = "financialObjectCode";
     /**
      * Scrub this single group read only. This will only output the scrubber report. It won't output any other groups.
      * 
@@ -1192,13 +1198,26 @@ public class ScrubberProcessImpl implements ScrubberProcess {
                 capitalizationEntry.setVersionNumber(null);
                 capitalizationEntry.setEntryId(null);
 
-                capitalizationEntry.setFinancialObjectCode(scrubbedEntryChart.getFundBalanceObjectCode());
-                //TODO: check to see if COBOL does this - seems weird - is this saying if the object code doesn't exist use the value from options?  Shouldn't it always come from one or the other?
-                if (ObjectUtils.isNotNull(scrubbedEntryChart.getFundBalanceObject())) {
-                    capitalizationEntry.setFinancialObjectTypeCode(scrubbedEntryChart.getFundBalanceObject().getFinancialObjectTypeCode());
+                // Check sys parm for FB Obj Cd, otherwise use the Chart FB Obj Cd
+                // Use the Bus Obj Service to find the Object Type Code for the Object Code
+                Map<String, Object> criteriaMap = new HashMap<String, Object>();
+                String capitalizationFundBalObjectCode = parameterService.getParameterValue(ScrubberStep.class, CAPITALIZATION_FUND_BAL_OBJECT_CD);
+                if (capitalizationFundBalObjectCode != null) {
+                    capitalizationEntry.setFinancialObjectCode(capitalizationFundBalObjectCode);
+                    criteriaMap.put(UNIVERSITYFISCALYEAR, capitalizationEntry.getUniversityFiscalYear());
+                    criteriaMap.put(CHARTOFACCOUNTSCODE, capitalizationEntry.getChartOfAccountsCode()); 
+                    criteriaMap.put(FINANCIALOBJECTCODE, capitalizationFundBalObjectCode);                     
+                    capitalizationEntry.setFinancialObjectTypeCode( ((ObjectCode) businessObjectService.findByPrimaryKey(ObjectCode.class, criteriaMap)).getFinancialObjectTypeCode());                
                 }
                 else {
-                    capitalizationEntry.setFinancialObjectTypeCode(scrubbedEntryOption.getFinObjectTypeFundBalanceCd());
+                    capitalizationEntry.setFinancialObjectCode(scrubbedEntryChart.getFundBalanceObjectCode());                	
+                    //TODO: check to see if COBOL does this - seems weird - is this saying if the object code doesn't exist use the value from options?  Shouldn't it always come from one or the other?
+                    if (ObjectUtils.isNotNull(scrubbedEntryChart.getFundBalanceObject())) {
+                        capitalizationEntry.setFinancialObjectTypeCode(scrubbedEntryChart.getFundBalanceObject().getFinancialObjectTypeCode());
+                    }
+                    else {
+                        capitalizationEntry.setFinancialObjectTypeCode(scrubbedEntryOption.getFinObjectTypeFundBalanceCd());
+                    }
                 }
 
                 if (scrubbedEntry.isDebit()) {
@@ -2371,5 +2390,11 @@ public class ScrubberProcessImpl implements ScrubberProcess {
         this.preScrubberReportWriterService = preScrubberReportWriterService;
     }
     
+    public BusinessObjectService getBusinessObjectService() {
+    	return businessObjectService;
+    }
     
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+    	this.businessObjectService = businessObjectService;
+    }
 }
