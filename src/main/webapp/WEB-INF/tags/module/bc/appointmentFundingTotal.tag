@@ -27,7 +27,7 @@
 		<th style="width: 5%;">&nbsp;</th>
 		<th style="width: 5%;">&nbsp;</th>
 		<th style="width: 10%;">&nbsp;</th>
-		<th style="width: 10%;">FTE</th>
+		<th style="width: 10%;">Total Distributions</th>
 		<th style="width: 10%;">&nbsp;</th>
 		<th style="width: 10%;">&nbsp;</th>
 	</tr>
