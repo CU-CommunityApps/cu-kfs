@@ -170,7 +170,7 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
         public static final String CSF_TIME_PERCENT = "Csf_Time_Percent";
         public static final String APPT_FUND_DURATION_CD = "Appointment_Funding_Duration_Code";
         public static final String APPT_FUND_DURATION_DESC = "Appointment_Funding_Duration_Description";
-        public static final String APPT_REQ_CSF_AMT = "Appointment_Requested_Csf_Amount";
+        public static final String APPT_REQ_CSF_AMT = "Requested_Leave_Amount";
         public static final String APPT_REQ_CSF_FTE_QUANTITY = "Requested_Percent_Distribution";
         public static final String APPT_REQ_CSF_TIME_PERCENT = "Requested_Percent_Time";
         public static final String APPT_TOTAL_INTENDED_AMT = "Total_Intended_Amount";
