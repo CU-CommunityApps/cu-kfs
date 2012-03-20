@@ -30,6 +30,7 @@ import org.kuali.rice.kew.doctype.service.DocumentTypeService;
 import org.kuali.rice.kew.exception.WorkflowRuntimeException;
 import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValueContent;
 import org.kuali.rice.kew.service.KEWServiceLocator;
+import org.kuali.rice.kns.util.ObjectUtils;
 
 
 /**
@@ -51,7 +52,18 @@ public class SearchableAttributeProcessor implements SearchableAttributeProcessi
 			LOG.info("Indexing document " + documentId + " for document search...");
 		}
 		try {
+			int count = 0;
 			DocumentType documentType = KEWServiceLocator.getDocumentTypeService().findByDocumentId(documentId);
+			while(ObjectUtils.isNull(documentType)) {
+				Thread.sleep(1000);
+				documentType = KEWServiceLocator.getDocumentTypeService().findByDocumentId(documentId);
+				count++;
+				if (count > 3) {
+					LOG.error("Failed to retrieve Document: "+ documentId +". Indexing Failed");
+					return;
+				}
+
+			}
 			if (LOG.isInfoEnabled()) {
 				LOG.info("docType: [" + documentType +"]");
 			}
