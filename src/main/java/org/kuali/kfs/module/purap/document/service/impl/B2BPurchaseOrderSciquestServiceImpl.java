@@ -475,12 +475,12 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("          <Net>").append(payTerm.getVendorNetDueNumber()).append("</Net>\n");
         cxml.append("        </Terms>\n");
         cxml.append("      </PaymentInfo>\n");
-        
+
         /** *** EXTERNAL INFO SECTION **** */
         String vendorNoteText = purchaseOrder.getVendorNoteText();
         if (ObjectUtils.isNotNull(vendorNoteText)) {
 	        cxml.append("      <ExternalInfo>\n");
-	        cxml.append("        <Note>").append(vendorNoteText).append("</Note>\n");
+	        cxml.append("        <Note><![CDATA[").append(vendorNoteText).append("]]></Note>\n");
 	        cxml.append("      </ExternalInfo>\n");
         }
         
@@ -514,7 +514,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 	        cxml.append("         </CustomFieldValue>\n");
 	        cxml.append("      </CustomFieldValueSet>\n");
         }
-
+        
         if (purchaseOrder.getDocumentFundingSourceCode().equalsIgnoreCase(PurapFundingSources.FEDERAL_FUNDING_SOURCE)) {
 	        cxml.append("      <CustomFieldValueSet label=\"Funding\" name=\"Funding\">\n");
 	        cxml.append("        <CustomFieldValue>\n");
