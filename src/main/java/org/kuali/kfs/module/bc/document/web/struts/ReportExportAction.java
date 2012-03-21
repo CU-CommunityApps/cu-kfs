@@ -129,13 +129,27 @@ public class ReportExportAction extends BudgetConstructionImportExportAction {
                 //  This gets called right after the user clicks on submit from the "tab-comma" selection screen right before the file is created and sent back to the browser.
             case SIP_EXPORT:
                 fileString = SpringContext.getBean(ReportExportService.class).buildSIPExportDumpFile(principalId, getFieldSeparator(reportExportForm), getTextFieldDelimiter(reportExportForm), false);
-                fileName = ReportGeneration.SIP_EXPORT_FILE_NAME;
+                //  Check for what field delimiter they chose and change the extension accordingly.  Default file name is sip_export.txt.
+                if (getFieldSeparator(reportExportForm).contains(BCConstants.RequestImportFieldSeparator.COMMA.getSeparator()))
+                	fileName = ReportGeneration.SIP_EXPORT_FILE_NAME.replace("txt","csv");
+                else if (getFieldSeparator(reportExportForm).contains(BCConstants.RequestImportFieldSeparator.TAB.getSeparator()))
+                	fileName = ReportGeneration.SIP_EXPORT_FILE_NAME.replace("txt","xls");
+                else 
+                	fileName = ReportGeneration.SIP_EXPORT_FILE_NAME;
+                
             	break;
             	
                 //  This gets called right after the user clicks on submit from the "tab-comma" selection screen right before the file is created and sent back to the browser.
             case SIP_EXPORT_EXECUTIVES:
                 fileString = SpringContext.getBean(ReportExportService.class).buildSIPExportDumpFile(principalId, getFieldSeparator(reportExportForm), getTextFieldDelimiter(reportExportForm), true);
-                fileName = ReportGeneration.SIP_EXPORT_FILE_NAME_EXECUTIVES;
+                //  Check for what field delimiter they chose and change the extension accordingly.  Default file name is sip_export.txt.
+                if (getFieldSeparator(reportExportForm).contains(BCConstants.RequestImportFieldSeparator.COMMA.getSeparator()))
+                	fileName = ReportGeneration.SIP_EXPORT_FILE_NAME_EXECUTIVES.replace("txt","csv");
+                else if (getFieldSeparator(reportExportForm).contains(BCConstants.RequestImportFieldSeparator.TAB.getSeparator()))
+                	fileName = ReportGeneration.SIP_EXPORT_FILE_NAME_EXECUTIVES.replace("txt","xls");
+                else 
+                	fileName = ReportGeneration.SIP_EXPORT_FILE_NAME_EXECUTIVES;
+
             	break;
         }
 

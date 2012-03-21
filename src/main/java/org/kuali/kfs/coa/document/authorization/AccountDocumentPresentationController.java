@@ -26,11 +26,9 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentPresentationControllerBase;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.kns.bo.BusinessObject;
-import org.kuali.rice.kns.document.Document;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
 public class AccountDocumentPresentationController extends FinancialSystemMaintenanceDocumentPresentationControllerBase {
 
@@ -43,8 +41,7 @@ public class AccountDocumentPresentationController extends FinancialSystemMainte
         return readOnlyPropertyNames;
     }
 
-    
-    
+
 //    /**
 //     * @see org.kuali.rice.kns.document.authorization.MaintenanceDocumentPresentationControllerBase#getConditionallyHiddenPropertyNames(org.kuali.rice.kns.bo.BusinessObject)
 //     */
@@ -55,19 +52,11 @@ public class AccountDocumentPresentationController extends FinancialSystemMainte
 //        return hiddenPropertyNames;
 //    }
 
-	/* (non-Javadoc)
-	 * @see org.kuali.rice.kns.document.authorization.MaintenanceDocumentPresentationControllerBase#canBlanketApprove(org.kuali.rice.kns.document.Document)
-	 */
-	@Override
-	protected boolean canBlanketApprove(Document document) {
-		KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-		return (workflowDocument.stateIsEnroute() && super.canBlanketApprove(document));
-	}
 	
     /**
      * 
      * Sets the Labor Benefit Rate Category Code, otherwise leave
-     * it read/wrtie.
+     * it read/write.
      * 
      * @param readOnlyPropetyNames
      */
