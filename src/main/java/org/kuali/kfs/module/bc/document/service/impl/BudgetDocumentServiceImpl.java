@@ -34,9 +34,9 @@ import org.kuali.kfs.coa.service.OrganizationService;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.integration.ld.LaborLedgerBenefitsCalculation;
 import org.kuali.kfs.module.bc.BCConstants;
+import org.kuali.kfs.module.bc.BCConstants.MonthSpreadDeleteType;
 import org.kuali.kfs.module.bc.BCKeyConstants;
 import org.kuali.kfs.module.bc.BCPropertyConstants;
-import org.kuali.kfs.module.bc.BCConstants.MonthSpreadDeleteType;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionAccountOrganizationHierarchy;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionAccountReports;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionHeader;
@@ -58,11 +58,11 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseConstants.ACCOUNT_NUMBER;
 import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kns.dao.DocumentDao;
 import org.kuali.rice.kns.document.Document;
@@ -84,6 +84,9 @@ import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
+import edu.cornell.kfs.module.bc.CUBCConstants;
+import edu.cornell.kfs.module.bc.CUBCPropertyConstants;
+import edu.cornell.kfs.module.bc.util.CUBudgetParameterFinder;
 
 /**
  * Implements the BudgetDocumentService interface. Methods here operate on objects associated with the Budget Construction document
@@ -1031,6 +1034,7 @@ public class BudgetDocumentServiceImpl implements BudgetDocumentService {
 
         List<BudgetConstructionAccountOrganizationHierarchy> accountOrgHier = new ArrayList<BudgetConstructionAccountOrganizationHierarchy>();
         BudgetConstructionAccountReports accountReports = (BudgetConstructionAccountReports) budgetConstructionDao.getAccountReports(chartOfAccountsCode, accountNumber);
+        
         if (accountReports != null) {
             accountOrgHier = budgetConstructionDao.getAccountOrgHierForAccount(chartOfAccountsCode, accountNumber, universityFiscalYear);
             if (accountOrgHier == null || accountOrgHier.isEmpty()) {
@@ -1050,6 +1054,8 @@ public class BudgetDocumentServiceImpl implements BudgetDocumentService {
         }
         return accountOrgHier;
     }
+    
+    
 
     /**
      * @see org.kuali.kfs.module.bc.document.service.BudgetDocumentService#instantiateNewBudgetConstructionDocument(org.kuali.kfs.module.bc.document.BudgetConstructionDocument)
@@ -1270,6 +1276,66 @@ public class BudgetDocumentServiceImpl implements BudgetDocumentService {
      */
     public void setDefaultLaborBenefitRateCategoryCode(String defaultLaborBenefitRateCategoryCode) {
         this.defaultLaborBenefitRateCategoryCode = defaultLaborBenefitRateCategoryCode;
+    }
+
+    /**
+     * @see org.kuali.kfs.module.bc.document.service.BudgetDocumentService#buildBudgetConstructionAccountReportsIfNeeded(java.lang.String,
+     * java.lang.String)
+     */
+    public boolean buildBudgetConstructionAccountReportsIfNeeded(
+            String accountNumber, String chartOfAccountsCode) {
+
+        BudgetConstructionAccountReports accountReports = null;
+
+        Map<String, String> accountReportsPrimaryKeys = new HashMap<String, String>();
+        accountReportsPrimaryKeys.put(CUBCPropertyConstants.BudgetConstructionAccountReportsProperties.ACCOUNT_NUMBER,
+                accountNumber);
+        accountReportsPrimaryKeys.put(
+                CUBCPropertyConstants.BudgetConstructionAccountReportsProperties.CHART_OF_ACCOUNTS,
+                chartOfAccountsCode);
+
+        //check if account reports entry exists
+        int count = businessObjectService.countMatching(
+                BudgetConstructionAccountReports.class, accountReportsPrimaryKeys);
+
+        // if not found attempt to create it
+        if (count == 0) {
+
+            Map<String, String> accountPrimaryKeys = new HashMap<String, String>();
+            accountPrimaryKeys.put(KFSConstants.ACCOUNT_NUMBER_PROPERTY_NAME,
+                    accountNumber);
+            accountPrimaryKeys.put(
+                    KFSConstants.CHART_OF_ACCOUNTS_CODE_PROPERTY_NAME,
+                    chartOfAccountsCode);
+            Account account = (Account) businessObjectService.findByPrimaryKey(
+                    Account.class, accountPrimaryKeys);
+
+            if (account != null && !ACCOUNT_NUMBER.BUDGET_LEVEL_NO_BUDGET.equalsIgnoreCase(account
+                    .getBudgetRecordingLevelCode())) {
+                // customize so that is also adds and entry in the Account Reports
+                // table with the default reports to org set to the org on the
+                // account in case there is no entry in the Account reports table
+                // for this account
+                new BudgetConstructionAccountReports();
+                accountReports = new BudgetConstructionAccountReports();
+                accountReports.setAccountNumber(accountNumber);
+                accountReports.setChartOfAccountsCode(chartOfAccountsCode);
+                accountReports.setReportsToChartOfAccountsCode(chartOfAccountsCode);
+
+                accountReports.setReportsToOrganizationCode(account
+                        .getOrganizationCode());
+
+                // save it
+                businessObjectService.save(accountReports);
+
+                return true;
+
+            } else
+                return false;
+        } else {
+            return true;
+        }
+
     }
 
 }

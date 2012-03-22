@@ -340,5 +340,18 @@
 		</property>
 	
 	</bean>
+	
+	
+	<bean id="genesisService" class="org.kuali.kfs.module.bc.batch.service.impl.GenesisServiceImpl">
+        <property name="genesisDao">
+            <ref bean="genesisDao" />
+        </property>
+        <property name="budgetConstructionHumanResourcesPayrollInterfaceService">
+            <ref bean="budgetConstructionHumanResourcesPayrollInterfaceService" />
+        </property>   
+        <property name="budgetDocumentService">
+            <ref bean="budgetDocumentService" />
+        </property> 
+    </bean>
 
 </beans>

@@ -60,6 +60,9 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
     
     public static final class BudgetConstructionAccountReportsProperties {
         public static final String REPORTS_TO_ORG_CD = "reportsToOrganizationCode";
+        public static final String ACCOUNT_NUMBER = "accountNumber";
+        public static final String CHART_OF_ACCOUNTS = "chartOfAccountsCode";
+        public static final String ACCOUNT = "account";
     }
 
     public static class BudgetConstructionIntendedIncumbentProperties {
