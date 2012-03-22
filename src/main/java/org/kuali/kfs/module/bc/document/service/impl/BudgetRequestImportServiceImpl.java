@@ -239,6 +239,8 @@ public class BudgetRequestImportServiceImpl implements BudgetRequestImportServic
             LaborLedgerObject laborObject = this.laborModuleService.retrieveLaborLedgerObject(budgetYear, record.getChartOfAccountsCode(), record.getFinancialObjectCode());
             ObjectCode objectCode = getObjectCode(record, budgetYear);
             
+            boolean budgetOnlyObjectCode = objectCode!= null && laborObject!=null && objectCode.getFinancialObjectSubType() !=null && objectCode.getFinancialObjectSubType().getFinancialObjectSubTypeCode().equalsIgnoreCase("BU");
+            
             if (budgetConstructionHeader == null) {
                 record.setRequestUpdateErrorCode(BCConstants.RequestImportErrorCode.DATA_VALIDATION_NO_BUDGETED_ACCOUNT_SUB_ACCOUNT_ERROR_CODE.getErrorCode());
                 errorMessages.add(record.getErrorLinePrefixForLogFile() + " " + BCConstants.RequestImportErrorCode.DATA_VALIDATION_NO_BUDGETED_ACCOUNT_SUB_ACCOUNT_ERROR_CODE.getMessage());
@@ -272,13 +274,13 @@ public class BudgetRequestImportServiceImpl implements BudgetRequestImportServic
             }
 
             // compensation object codes COMP
-            else if (laborObject != null && (laborObject.isDetailPositionRequiredIndicator() || laborObject.getFinancialObjectFringeOrSalaryCode().equals(BCConstants.LABOR_OBJECT_FRINGE_CODE))) {
+            else if (!budgetOnlyObjectCode &&laborObject != null && (laborObject.isDetailPositionRequiredIndicator() || laborObject.getFinancialObjectFringeOrSalaryCode().equals(BCConstants.LABOR_OBJECT_FRINGE_CODE))) {
                 record.setRequestUpdateErrorCode(BCConstants.RequestImportErrorCode.DATA_VALIDATION_COMPENSATION_OBJECT_CODE_ERROR_CODE.getErrorCode());
                 errorMessages.add(record.getErrorLinePrefixForLogFile() + " " + BCConstants.RequestImportErrorCode.DATA_VALIDATION_COMPENSATION_OBJECT_CODE_ERROR_CODE.getMessage());
             }
 
             // no wage accounts CMPA
-            else if (!record.getAccount().getSubFundGroup().isSubFundGroupWagesIndicator() && laborObject != null) {
+            else if (!budgetOnlyObjectCode && !record.getAccount().getSubFundGroup().isSubFundGroupWagesIndicator() && laborObject != null) {
                 record.setRequestUpdateErrorCode(BCConstants.RequestImportErrorCode.DATA_VALIDATION_NO_WAGE_ACCOUNT_ERROR_CODE.getErrorCode());
                 errorMessages.add(record.getErrorLinePrefixForLogFile() + " " + BCConstants.RequestImportErrorCode.DATA_VALIDATION_NO_WAGE_ACCOUNT_ERROR_CODE.getMessage());
             }
