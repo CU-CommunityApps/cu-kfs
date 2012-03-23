@@ -156,4 +156,13 @@ public class PdpConstants {
         public static final String START = "start";
         
     }
+    
+    public static class CustomerProfilePrimaryKeyTags {
+    	public static final String CHART_OPEN = "<chart>";
+    	public static final String CHART_CLOSE = "</chart>";
+    	public static final String UNIT_OPEN = "<unit>";
+    	public static final String UNIT_CLOSE = "</unit>";
+    	public static final String SUBUNIT_OPEN = "<sub_unit>";
+    	public static final String SUBUNIT_CLOSE = "</sub_unit>";
+    }
 }

@@ -15,19 +15,25 @@
  */
 package org.kuali.kfs.pdp.service.impl;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.businessobject.Batch;
 import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.LoadPaymentStatus;
@@ -41,6 +47,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
@@ -53,6 +60,7 @@ import org.kuali.rice.kns.util.KualiInteger;
 import org.kuali.rice.kns.util.MessageMap;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * @see org.kuali.kfs.pdp.service.PaymentFileService
@@ -213,12 +221,88 @@ public class PaymentFileServiceImpl implements PaymentFileService {
 
             errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING_XML, new String[] { e1.getMessage() });
 
+            // Get customer object from unparsable file so error email can be sent.
+            paymentFile = getCustomerProfileFromUnparsableFile(incomingFileName, paymentFile);
+            
             // Send error email
             paymentFileEmailService.sendErrorEmail(paymentFile, errorMap);
+        } finally {
+        	try {
+        		// Make sure all input streams are closed when we're done.
+        		fileContents.close();
+        	} catch(IOException ioex) {
+        		
+        	}
         }
 
         return paymentFile;
     }
+
+	/**
+	 * @param incomingFileName
+	 * @param paymentFile
+	 * @return
+	 */
+	private PaymentFileLoad getCustomerProfileFromUnparsableFile(String incomingFileName, PaymentFileLoad paymentFile) {
+		FileInputStream exFileContents;
+
+		try {
+			exFileContents = new FileInputStream(incomingFileName); 
+		} catch (FileNotFoundException e1) {
+            LOG.error("file to load not found " + incomingFileName, e1);
+            throw new RuntimeException("Cannot find the file requested to be loaded " + incomingFileName, e1);
+        }
+
+		try {	
+			InputStreamReader inputReader = new InputStreamReader(exFileContents);
+			BufferedReader bufferedReader = new BufferedReader(inputReader);
+			String line = "";
+			boolean found = false;
+			String chartVal = "";
+			String unitVal = "";
+			String subUnitVal = "";
+
+			while(!found && (line=bufferedReader.readLine())!=null) {
+				// Use multiple ifs instead of else/ifs because all values could occur on the same line.
+				if(StringUtils.contains(line, PdpConstants.CustomerProfilePrimaryKeyTags.CHART_OPEN)) {
+					chartVal = StringUtils.substringBetween(line, PdpConstants.CustomerProfilePrimaryKeyTags.CHART_OPEN, PdpConstants.CustomerProfilePrimaryKeyTags.CHART_CLOSE);
+				}
+		   		if(StringUtils.contains(line, PdpConstants.CustomerProfilePrimaryKeyTags.UNIT_OPEN)) {
+					unitVal = StringUtils.substringBetween(line, PdpConstants.CustomerProfilePrimaryKeyTags.UNIT_OPEN, PdpConstants.CustomerProfilePrimaryKeyTags.UNIT_CLOSE);
+		   		}
+		   		if(StringUtils.contains(line, PdpConstants.CustomerProfilePrimaryKeyTags.SUBUNIT_OPEN)) {
+					subUnitVal = StringUtils.substringBetween(line, PdpConstants.CustomerProfilePrimaryKeyTags.SUBUNIT_OPEN, PdpConstants.CustomerProfilePrimaryKeyTags.SUBUNIT_CLOSE);
+					found = true;
+		   		}
+			}
+
+			if(found) {
+				// Note: the pdpEmailServiceImpl doesn't actually use the customer object from the paymentFile, but rather retrieves an instance using
+				// the values provided for chart, unit and sub_unit.  However, it doesn't make sense to even populate the paymentFile object if 
+				// the values retrieved don't map to a valid customer object, so we will retrieve the object here to validate the values.
+				CustomerProfile customer = customerProfileService.get(chartVal, unitVal, subUnitVal);
+				if(ObjectUtils.isNotNull(customer)) {
+					if(ObjectUtils.isNull(paymentFile)) {
+						paymentFile = new PaymentFileLoad();
+					}
+					paymentFile.setChart(chartVal);
+					paymentFile.setUnit(unitVal);
+					paymentFile.setSubUnit(subUnitVal);
+					paymentFile.setCustomer(customer);
+				}
+			}
+			
+		} catch(Exception ex) {
+	        LOG.error("Attempts to retrieve the customer profile from the unparsable XML file failed with the following error.", ex);
+		} finally {
+			try {
+				exFileContents.close();
+			} catch(IOException io) {
+		        LOG.error("File stream object could not be closed.", io);            		
+			}
+		}
+		return paymentFile;
+	}
 
     /**
      * @see org.kuali.kfs.pdp.service.PaymentFileService#createOutputFile(org.kuali.kfs.pdp.businessobject.LoadPaymentStatus,
