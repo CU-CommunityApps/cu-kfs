@@ -62,7 +62,7 @@
  	      <property name="maxWait" value="${datasource.connection.timeout}" />
  	      <property name="preparedStmtCacheSize" value="${datasource.maximum.cached.preparedstatements}" />
  	      <property name="checkLevelObject" value="${datasource.xapool.connection.test.mode}" />
- 	      <property name="lifeTime" value="${xapool.lifetime}"/>
+ 	      
  	  </bean>
  
 </beans>
