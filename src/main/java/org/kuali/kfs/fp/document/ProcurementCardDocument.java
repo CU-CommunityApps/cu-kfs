@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.jboss.util.Strings;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.fp.businessobject.ProcurementCardHolder;
 import org.kuali.kfs.fp.businessobject.ProcurementCardSourceAccountingLine;
@@ -41,8 +42,11 @@ import org.kuali.rice.kew.util.KEWConstants;
 import org.kuali.rice.kns.rule.event.KualiDocumentEvent;
 import org.kuali.rice.kns.rule.event.SaveDocumentEvent;
 import org.kuali.rice.kns.service.DataDictionaryService;
+import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.util.TypedArrayList;
+
+import edu.cornell.kfs.fp.batch.ProcurementCardParameterConstants;
 
 /**
  * This is the Procurement Card Document Class. The procurement cards distributes expenses from clearing accounts. It is a two-sided
@@ -320,5 +324,31 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
 	}
 
 	
+    /**
+     * @see org.kuali.rice.kns.document.DocumentBase#getDocumentTitle()
+     */
+    @Override
+    public String getDocumentTitle() {
+       if (SpringContext.getBean(ParameterService.class).getIndicatorParameter(ProcurementCardDocument.class, ProcurementCardParameterConstants.OVERRIDE_PCDO_DOC_TITLE)) {
+            return getCustomDocumentTitle();
+        }
+        return super.getDocumentTitle();
+    }
+
+    /**
+     * Returns a custom document title based on the workflow document title. Depending on what route level the document is currently
+     * in, the PCDO amount may be added to the documents title.
+     * 
+     * @return - Customized document title text dependent upon route level.
+     */
+    protected String getCustomDocumentTitle() {
+       
+        // set the workflow document title
+        String pcdoAmount = this.getTotalDollarAmount().toString();
+
+        return (new StringBuffer(super.getDocumentTitle()).append(" - Amount: ").append(pcdoAmount).toString());
+
+    }
+
 
 }
