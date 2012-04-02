@@ -5,10 +5,11 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
     <!-- Our CUWebAuthAuthenticationService is a RemoteUserAuthenticationService subclass that can 
          also look at the HTTP headers that CUWebAuth exposes -->
+<!--  
     <bean id="kimAuthenticationService" class="edu.cornell.cynergy.service.impl.CUWebAuthAuthenticationService">
         <property name="useHttpHeaders"><value>${cynergy.cuwal.useHttpHeaders}</value></property>
     </bean>
-    
+-->    
   
     <!-- override encryption services  -->
  	<bean id="encryptionService" class="edu.cornell.cynergy.service.impl.AESEncryptionServiceImpl" lazy-init="true">
@@ -47,13 +48,18 @@
 	</bean>
 	
 	<bean id="dummyAntiVirusService" class="edu.cornell.cynergy.antivirus.service.DummyAntiVirusServiceImpl" />
-	
+
+	<bean id="antiVirusService" class="edu.cornell.cynergy.antivirus.service.DummyAntiVirusServiceImpl">
+	</bean>
+
+
+<!-- 
 	<bean id="antiVirusService" class="edu.cornell.cynergy.clamav.ClamAVService">
 		<property name="host" value="127.0.0.1" />
 		<property name="port" value="3310" />
 		<property name="timeout" value="60000" />
 	</bean>
-
+-->
 	<bean id="UserOptionsServiceInner" class="org.kuali.rice.kew.useroptions.UserOptionsServiceImpl" lazy-init="true">
        <property name="userOptionsDAO">
            <ref bean="enUserOptionsDAO" />
