@@ -56,6 +56,13 @@
     	<property name="validations">
     		<list>
     			<bean parent="AccountingDocument-SaveDocument-DefaultValidation" scope="prototype" />
+    			<bean parent="PreEncumbrance-autoDisEncumberValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
     		</list>
     	</property>
     </bean>
@@ -64,7 +71,16 @@
   
   	<bean id="PreEncumbrance-approveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
   		<property name="validations">
-  			<list><bean parent="AccountingDocument-ApproveDocument-DefaultValidation" scope="prototype" /></list>
+  			<list>
+  				<bean parent="AccountingDocument-ApproveDocument-DefaultValidation" scope="prototype" />
+  				<bean parent="PreEncumbrance-autoDisEncumberValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
+  			</list>
   		</property>
   	</bean>
   
@@ -72,7 +88,9 @@
   
   	<bean id="PreEncumbrance-blanketApproveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
   		<property name="validations">
-  			<list><bean parent="AccountingDocument-BlanketApproveDocument-DefaultValidation" scope="prototype" /></list>
+  			<list>
+  				<bean parent="AccountingDocument-BlanketApproveDocument-DefaultValidation" scope="prototype" />
+  			</list>
   		</property>
 	</bean>
   

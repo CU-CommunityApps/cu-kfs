@@ -53,9 +53,12 @@ public class PreEncumbranceAutoDisEncumberValidation extends GenericValidation {
 		Iterator<PreEncumbranceSourceAccountingLine> it = ped.getSourceAccountingLines().iterator();
 		while (it.hasNext()) {
 			PreEncumbranceSourceAccountingLine pesal = it.next();
-			success &=checkMinimumRequirements(pesal);
-			success &=checkDates(pesal);
-			success &=checkGenerationValidity(pesal);
+			if (checkMinimumRequirements(pesal)) {
+				success &=checkDates(pesal);
+				success &=checkGenerationValidity(pesal);				
+			} else {
+				success &= false;
+			}
 		}
 		return success;
 	}
@@ -72,8 +75,21 @@ public class PreEncumbranceAutoDisEncumberValidation extends GenericValidation {
 				success = false;
 			}
 			if (ObjectUtils.isNull(sourceAccountingLine.getPartialAmount())) {
-				GlobalVariables.getMessageMap().putError(DOCUMENT_ERROR_PREFIX + "sourceAccountingLine[" + sourceAccountingLine.getSequenceNumber() + "].startDate", CUKFSKeyConstants.ERROR_DOCUMENT_PREENCUMBER_NEEDS_AMOUNT_SPECIFIED);
+				GlobalVariables.getMessageMap().putError(DOCUMENT_ERROR_PREFIX + "sourceAccountingLine[" + sourceAccountingLine.getSequenceNumber() + "].partialAmount", CUKFSKeyConstants.ERROR_DOCUMENT_PREENCUMBER_NEEDS_AMOUNT_SPECIFIED);
 				success = false;
+			}
+			if (ObjectUtils.isNull(sourceAccountingLine.getPartialTransactionCount())) {
+				GlobalVariables.getMessageMap().putError(DOCUMENT_ERROR_PREFIX + "sourceAccountingLine[" + sourceAccountingLine.getSequenceNumber() + "].partialTransactionCount", CUKFSKeyConstants.ERROR_DOCUMENT_PREENCUMBER_NEEDS_COUNT_SPECIFIED);				
+				success = false;
+			}
+		}
+		if (ObjectUtils.isNull(sourceAccountingLine.getAutoDisEncumberType())) {
+			success &= ObjectUtils.isNull(sourceAccountingLine.getPartialAmount()) &&
+					ObjectUtils.isNull(sourceAccountingLine.getPartialTransactionCount()) &&
+					ObjectUtils.isNull(sourceAccountingLine.getStartDate()) &&
+					ObjectUtils.isNull(sourceAccountingLine.getEndDate());
+			if (!success) {
+				GlobalVariables.getMessageMap().putError(DOCUMENT_ERROR_PREFIX + "sourceAccountingLine[" + sourceAccountingLine.getSequenceNumber() + "]", CUKFSKeyConstants.ERROR_DOCUMENT_PREENCUMBER_NO_AUTODISENCUMBER_TYPE);				
 			}
 		}
 		return success;
