@@ -525,7 +525,7 @@ public class SqlBuilder {
 		if (count > 100) {
 			LOG.error("Recursion Count exceeded 100 for "+ valueEntered );
 			
-			
+			return;
 		}
 		
 		valueEntered = valueEntered.trim();
