@@ -33,6 +33,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.integration.purap.CapitalAssetSystem;
+import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.CreditMemoStatuses;
 import org.kuali.kfs.module.purap.PurapConstants.PODocumentsStrings;
@@ -73,6 +74,7 @@ import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.document.service.RequisitionService;
 import org.kuali.kfs.module.purap.util.PurApObjectUtils;
+import org.kuali.kfs.module.purap.util.PurApRelatedViews;
 import org.kuali.kfs.module.purap.util.ThresholdHelper;
 import org.kuali.kfs.module.purap.util.ThresholdHelper.ThresholdSummary;
 import org.kuali.kfs.sys.KFSConstants;
@@ -1796,14 +1798,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         for (AutoClosePurchaseOrderView poAutoClose : purchaseOrderAutoCloseList) {
             if ((poAutoClose.getTotalAmount() != null) && ((KualiDecimal.ZERO.compareTo(poAutoClose.getTotalAmount())) != 0)) {
-                LOG.info("autoCloseFullyDisencumberedOrders() PO ID " + poAutoClose.getPurapDocumentIdentifier() + " with total " + poAutoClose.getTotalAmount().doubleValue() + " will be closed");
-                String newStatus = PurapConstants.PurchaseOrderStatuses.PENDING_CLOSE;
-                String annotation = "This PO was automatically closed in batch.";
-                String documentType = PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_CLOSE_DOCUMENT;
-                PurchaseOrderDocument document = getPurchaseOrderByDocumentNumber(poAutoClose.getDocumentNumber());
-                createNoteForAutoCloseOrders(document, annotation);
-                createAndRoutePotentialChangeDocument(poAutoClose.getDocumentNumber(), documentType, annotation, null, newStatus);
-
+                if (paymentRequestsStatusCanAutoClose(poAutoClose)) {
+                    LOG.info("autoCloseFullyDisencumberedOrders() PO ID " + poAutoClose.getPurapDocumentIdentifier() + " with total " + poAutoClose.getTotalAmount().doubleValue() + " will be closed");
+                    String newStatus = PurapConstants.PurchaseOrderStatuses.PENDING_CLOSE;
+                    String annotation = "This PO was automatically closed in batch.";
+                    String documentType = PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_CLOSE_DOCUMENT;
+                    PurchaseOrderDocument document = getPurchaseOrderByDocumentNumber(poAutoClose.getDocumentNumber());
+                    createNoteForAutoCloseOrders(document, annotation);
+                    createAndRoutePotentialChangeDocument(poAutoClose.getDocumentNumber(), documentType, annotation, null, newStatus);
+                }
             }
         }
         LOG.info("autoCloseFullyDisencumberedOrders() ended");
@@ -1812,6 +1815,25 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     /**
+     * Check to make sure all PaymentRequestViews related to the passed in AutoClosePurchaseOrderView 
+     * are in statuses that allow auto close. If so, return true. If not return false.
+     * 
+     * @param poAutoClose The AutoClosePurchaseOrderView used to get related PaymentRequestView(s) to check
+     * @return whether the PaymentRequestView(s) are in a status that will should allow auto closing the related PO.
+     */
+    private boolean paymentRequestsStatusCanAutoClose(AutoClosePurchaseOrderView poAutoClose) {
+        PurApRelatedViews relatedViews = new PurApRelatedViews(poAutoClose.getPurapDocumentIdentifier().toString(), poAutoClose.getAccountsPayablePurchasingDocumentLinkIdentifier());
+        if (relatedViews.getRelatedPaymentRequestViews() != null) {
+            for (PaymentRequestView paymentRequestView : relatedViews.getRelatedPaymentRequestViews()) {
+                if (!CUPurapConstants.CUPaymentRequestStatuses.STATUSES_ALLOWING_AUTO_CLOSE.contains(paymentRequestView.getStatusCode())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+	}
+
+	/**
      * @see org.kuali.kfs.module.purap.document.service.PurchaseOrderService#autoCloseRecurringOrders()
      */
     public boolean autoCloseRecurringOrders() {
