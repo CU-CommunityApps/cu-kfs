@@ -62,7 +62,7 @@
 	           </branch>
 	           <join name="JoinRequiresContractManagementReview"/>
 	        </split>
-	        <split name="RequiresBudgetReview" nextNode="VendorIsEmployeeOrNonResidentAlien">
+	        <split name="RequiresBudgetReview" nextNode="AccountingOrganizationHierarchy">
 	          <branch name="True">
 	            <requests name="Budget" nextNode="JoinRequiresBudgetReview"/>
 	          </branch>
@@ -70,15 +70,6 @@
 	            <simple name="NoOpBudget" nextNode="JoinRequiresBudgetReview"/>
 	          </branch>
 	          <join name="JoinRequiresBudgetReview"/>
-	        </split>
-	        <split name="VendorIsEmployeeOrNonResidentAlien" nextNode="AccountingOrganizationHierarchy">
-	          <branch name="True">
-	            <requests name="Tax" nextNode="JoinVendorIsEmployeeOrNonResidentAlien"/>
-	          </branch>
-	          <branch name="False">
-	            <simple name="NoOpVendorIsEmployeeOrNonResidentAlien" nextNode="JoinVendorIsEmployeeOrNonResidentAlien"/>
-	 	      </branch>
-   	          <join name="JoinVendorIsEmployeeOrNonResidentAlien"/>
 	        </split>
 			<requests name="AccountingOrganizationHierarchy" nextNode="NoOpFinal" />
 	        <simple name="NoOpFinal" />
@@ -139,23 +130,13 @@
           <qualifierResolverClass> org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver </qualifierResolverClass>
           <activationType>P</activationType>
         </role>
-        <role name="Tax">
-          <qualifierResolverClass> org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver </qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
         <split name="RequiresContractManagementReview">
           <type> org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode </type>
         </split>
         <split name="RequiresBudgetReview">
           <type> org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode </type>
         </split>
-        <split name="VendorIsEmployeeOrNonResidentAlien">
-          <type> org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode </type>
-        </split>
         <simple name="NoOpRequiresContractManagementReview">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
-        </simple>
-        <simple name="NoOpVendorIsEmployeeOrNonResidentAlien">
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
         </simple>
         <simple name="NoOpBudget">
@@ -168,7 +149,6 @@
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
         </simple>        
         <join name="JoinRequiresBudgetReview"/>
-        <join name="JoinVendorIsEmployeeOrNonResidentAlien"/>
         <join name="JoinRequiresContractManagementReview"/>        
         <join name="JoinNewUnorderedItems"/>
       </routeNodes>
