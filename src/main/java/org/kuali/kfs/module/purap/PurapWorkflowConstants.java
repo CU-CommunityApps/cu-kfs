@@ -138,6 +138,8 @@ public class PurapWorkflowConstants {
             COMMODITY_CODE_REVIEW("Commodity", PurapConstants.PurchaseOrderStatuses.AWAIT_COMMODITY_CODE_REVIEW, PurapConstants.PurchaseOrderStatuses.DAPRVD_COMMODITY_CODE), 
             CONTRACTS_AND_GRANTS_REVIEW("Award", PurapConstants.PurchaseOrderStatuses.AWAIT_CONTRACTS_GRANTS_REVIEW, PurapConstants.PurchaseOrderStatuses.DAPRVD_CONTRACTS_GRANTS), 
             BUDGET_OFFICE_REVIEW("Budget", PurapConstants.PurchaseOrderStatuses.AWAIT_BUDGET_REVIEW, PurapConstants.PurchaseOrderStatuses.DAPRVD_BUDGET), 
+            VENDOR_TAX_REVIEW("Tax", PurapConstants.PurchaseOrderStatuses.AWAIT_TAX_REVIEW, PurapConstants.PurchaseOrderStatuses.DAPRVD_TAX), 
+            DOCUMENT_TRANSMISSION("JoinVendorIsEmployeeOrNonResidentAlien", null, PurapConstants.PurchaseOrderStatuses.VOID), 
             ACCOUNT_REVIEW("Account", PurapConstants.PurchaseOrderStatuses.AWAIT_FISCAL_REVIEW, PurapConstants.PurchaseOrderStatuses.DAPRVD_FISCAL), 
             ORG_REVIEW("AccountingOrganizationHierarchy", PurapConstants.RequisitionStatuses.AWAIT_CHART_REVIEW, PurapConstants.RequisitionStatuses.DAPRVD_CHART), 
             SUB_ACCOUNT_REVIEW("SubAccount", PurapConstants.RequisitionStatuses.AWAIT_SUB_ACCT_REVIEW, PurapConstants.RequisitionStatuses.DAPRVD_SUB_ACCT), 
