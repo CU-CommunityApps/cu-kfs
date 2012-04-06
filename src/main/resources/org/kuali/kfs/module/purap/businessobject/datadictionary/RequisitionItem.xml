@@ -173,7 +173,7 @@
       <ref bean="AnyCharacterWithWhitespaceValidation" />
     </property>
     <property name="control">
-      <bean parent="TextareaControlDefinition" p:rows="2" p:cols="20"/>
+      <bean parent="TextareaControlDefinition" p:rows="4" p:cols="40"/>
     </property>
   </bean>
 
