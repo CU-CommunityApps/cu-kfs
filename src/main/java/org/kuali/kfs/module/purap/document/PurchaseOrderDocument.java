@@ -267,10 +267,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     		// Budget & C&G approval levels
     		documentTitle = "PO: " + poNumber + " Account Number: " + chartAcctCode + "-" + accountNumber + " Dept: " + chartCode + "-" + orgCode + " Delivery Campus: " + deliveryCampus;
     	}
-    	else if (routeLevel.equals(NodeDetailEnum.VENDOR_TAX_REVIEW.getName())) {
-    		// Tax approval level
-    		documentTitle = "Vendor: " + vendorName + " PO: " + poNumber + " Account Number: " + chartCode + "-" + accountNumber + " Dept: " + chartCode + "-" + orgCode + " Delivery Campus: " + deliveryCampus;
-    	}
     	else 
     		documentTitle += "PO: " + poNumber + " Contract Manager: " + cmCode + " Vendor: " + vendorName + " Amount: " + totalAmount;
 
