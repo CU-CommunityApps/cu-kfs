@@ -35,6 +35,8 @@ import org.kuali.rice.kim.service.IdentityManagementService;
 import org.kuali.rice.kns.service.PersistenceService;
 import org.kuali.rice.kns.util.GlobalVariables;
 
+import edu.cornell.kfs.module.bc.util.CUBudgetParameterFinder;
+
 
 /**
  * This class...
@@ -146,6 +148,23 @@ public class BudgetConstructionSelectionForm extends BudgetExpansionForm {
         qualification.put(KfsKimAttributes.ORGANIZATION_CODE, rootOrg[1]);
         
         return SpringContext.getBean(IdentityManagementService.class).isAuthorized(GlobalVariables.getUserSession().getPerson().getPrincipalId(), BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCConstants.KimConstants.IMPORT_EXPORT_PAYRATE_PERMISSION_NAME, null, qualification);
+    }
+
+    /**
+     * Checks whether the user has permission to do sip import
+     */
+    public boolean getCanPerformSipImport() {
+    	
+        // This determines whether the logged on person can see the SIP Import Button based on
+        // the values in the SIP IMPORT AVAILABLE Budget Construction parameter
+        String loggedOnUsersNetId = GlobalVariables.getUserSession().getPerson().getPrincipalName();
+        if (CUBudgetParameterFinder.getSipImportAvailable().size() == 0)
+        	return false;  //No one can see if no one is listed in the parameter
+        else
+        	if (CUBudgetParameterFinder.getSipImportAvailable().contains(loggedOnUsersNetId))
+        		return true;
+        	else
+        		return false;
     }
 
     /**

@@ -67,5 +67,43 @@
 		
 	</class-descriptor>
 	
+	<class-descriptor class="edu.cornell.kfs.module.bc.businessobject.SipImportData" table="CU_LD_BCN_SIP_T">
+		<field-descriptor name="unitId" column="HR_DEPT" jdbc-type="VARCHAR" primarykey="true" index="true" />
+		<field-descriptor name="hrDeptId" column="HR_DEPT_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="kfsDeptId" column="KFS_DEPT_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="deptName" column="DEPT_NAME" jdbc-type="VARCHAR" />
+		<field-descriptor name="positionNbr" column="POSITION_NBR" jdbc-type="VARCHAR" />
+		<field-descriptor name="posDescr" column="POS_DESCR" jdbc-type="VARCHAR" />
+		<field-descriptor name="emplId" column="EMPLID" jdbc-type="VARCHAR" />
+		<field-descriptor name="personNm" column="PERSON_NM" jdbc-type="VARCHAR" />
+		<field-descriptor name="sipEligFlag" column="SIP_ELIG_FLAG" jdbc-type="VARCHAR" />
+		<field-descriptor name="emplType" column="EMPL_TYP" jdbc-type="VARCHAR" />
+		<field-descriptor name="emplRcd" column="EMPL_RCD" jdbc-type="VARCHAR" />
+		<field-descriptor name="jobCode" column="JOBCODE" jdbc-type="VARCHAR" />
+		<field-descriptor name="jobCdDescShrt" column="JOB_CD_DESC_SHRT" jdbc-type="VARCHAR" />
+		<field-descriptor name="jobFamily" column="JOB_FAMILY" jdbc-type="VARCHAR" />
+		<field-descriptor name="posFte" column="POS_FTE" jdbc-type="DECIMAL" precision="22" scale="6"/>
+		<field-descriptor name="posGradeDflt" column="POS_GRADE_DFLT" jdbc-type="VARCHAR" />
+		<field-descriptor name="cuStateCert" column="CU_STATE_CERT" jdbc-type="VARCHAR" />
+		<field-descriptor name="compFreq" column="COMP_FREQ" jdbc-type="VARCHAR" />
+		<field-descriptor name="annlRt" column="ANNL_RT" jdbc-type="DECIMAL" precision="12" scale="2"/>
+		<field-descriptor name="compRt" column="COMP_RT" jdbc-type="DECIMAL" precision="12" scale="2"/>
+		<field-descriptor name="jobStdHrs" column="JOB_STD_HRS" jdbc-type="DECIMAL" precision="4" scale="2"/>
+		<field-descriptor name="wrkMnths" column="WRK_MNTHS" jdbc-type="DECIMAL" precision="3" scale="1"/>
+		<field-descriptor name="jobFunc" column="JOB_FUNC" jdbc-type="VARCHAR" />
+		<field-descriptor name="jobFuncDesc" column="JOB_FUNC_DESC" jdbc-type="VARCHAR" />
+		<field-descriptor name="incToMin" column="INC_TO_MIN" jdbc-type="DECIMAL" precision="19" scale="2"/>
+		<field-descriptor name="equity" column="EQUITY" jdbc-type="DECIMAL" precision="19" scale="2"/>
+		<field-descriptor name="merit" column="MERIT" jdbc-type="DECIMAL" precision="19" scale="2"/>
+		<field-descriptor name="note" column="NOTE" jdbc-type="VARCHAR" />
+		<field-descriptor name="deferred" column="DEFERRED" jdbc-type="DECIMAL" precision="19" scale="2"/>
+		<field-descriptor name="cuAbbrFlag" column="CU_ABBR_FLAG" jdbc-type="VARCHAR" />
+		<field-descriptor name="apptTotIntndAmt" column="APPT_TOT_INTND_AMT" jdbc-type="DECIMAL" precision="19" scale="2"/>
+		<field-descriptor name="apptRqstFteQty" column="APPT_RQST_FTE_QTY" jdbc-type="DECIMAL" precision="22" scale="6"/>
+		<field-descriptor name="positionType" column="IU_POSITION_TYPE" jdbc-type="VARCHAR" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+		
+	</class-descriptor>
 	
 </descriptor-repository>

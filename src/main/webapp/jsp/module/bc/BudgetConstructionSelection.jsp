@@ -385,19 +385,22 @@
 		</tr>
     	<tr>
             <td class="grid" colspan="4">
-            <div align="center">
-              <c:if test="${!KualiForm.salarySettingDisabled}">
-              <html:image property="methodToCall.performOrgSalarySetting.anchororgControlsAnchor" src="${ConfigProperties.externalizable.images.url}tinybutton-orgsalsettings.gif" title="Organization Salary Setting" alt="Organization Salary Setting" styleClass="tinybutton"/>&nbsp;&nbsp;&nbsp;
-              </c:if>
-              <html:image property="methodToCall.performReportDump.anchororgControlsAnchor" src="${ConfigProperties.externalizable.images.url}tinybutton-orgrepdump.gif" title="Organization Report Export" alt="Organization Report/Dump" styleClass="tinybutton"/>&nbsp;&nbsp;&nbsp;
-              <html:image property="methodToCall.performRequestImport.anchororgControlsAnchor" src="${ConfigProperties.externalizable.images.url}tinybutton-requestimport.gif" title="Organization Request Import" alt="Organization Request Import" styleClass="tinybutton" />&nbsp;&nbsp;&nbsp;
-              <html:image property="methodToCall.performLockMonitor.anchororgControlsAnchor" src="${ConfigProperties.externalizable.images.url}tinybutton-lockmonitor.gif" title="Lock Monitor" alt="Lock Monitor" styleClass="tinybutton" />&nbsp;&nbsp;&nbsp;
-              <c:if test="${KualiForm.canPerformPayrateImportExport}">
-                <c:if test="${!KualiForm.salarySettingDisabled}">
-                  <html:image property="methodToCall.performPayrateImportExport.anchororgControlsAnchor" src="${ConfigProperties.externalizable.images.url}tinybutton-payrateimpexp.gif" title="Payrate Import/Export" alt="Payrate Import/Export" styleClass="tinybutton" />
-                </c:if>
-              </c:if>
-            </div>
+	            <div align="center">
+	              <c:if test="${!KualiForm.salarySettingDisabled}">
+	              <html:image property="methodToCall.performOrgSalarySetting.anchororgControlsAnchor" src="${ConfigProperties.externalizable.images.url}tinybutton-orgsalsettings.gif" title="Organization Salary Setting" alt="Organization Salary Setting" styleClass="tinybutton"/>&nbsp;&nbsp;&nbsp;
+	              </c:if>
+	              <html:image property="methodToCall.performReportDump.anchororgControlsAnchor" src="${ConfigProperties.externalizable.images.url}tinybutton-orgrepdump.gif" title="Organization Report Export" alt="Organization Report/Dump" styleClass="tinybutton"/>&nbsp;&nbsp;&nbsp;
+	              <html:image property="methodToCall.performRequestImport.anchororgControlsAnchor" src="${ConfigProperties.externalizable.images.url}tinybutton-requestimport.gif" title="Organization Request Import" alt="Organization Request Import" styleClass="tinybutton" />&nbsp;&nbsp;&nbsp;
+	              <html:image property="methodToCall.performLockMonitor.anchororgControlsAnchor" src="${ConfigProperties.externalizable.images.url}tinybutton-lockmonitor.gif" title="Lock Monitor" alt="Lock Monitor" styleClass="tinybutton" />&nbsp;&nbsp;&nbsp;
+	              <c:if test="${KualiForm.canPerformPayrateImportExport}">
+	                <c:if test="${!KualiForm.salarySettingDisabled}">
+	                  <html:image property="methodToCall.performPayrateImportExport.anchororgControlsAnchor" src="${ConfigProperties.externalizable.images.url}tinybutton-payrateimpexp.gif" title="Payrate Import/Export" alt="Payrate Import/Export" styleClass="tinybutton" />&nbsp;&nbsp;&nbsp;
+	                </c:if>
+	              </c:if>
+	              <c:if test="${KualiForm.canPerformSipImport}">
+	                  <html:image property="methodToCall.performSipImport.anchororgControlsAnchor" src="${ConfigProperties.externalizable.images.url}tinybutton-sipimport.gif" title="Sip Import" alt="Sip Import" styleClass="tinybutton" />
+	              </c:if>
+	            </div>
 		    </td>
             <td class="grid" colspan="3">
             <div align="center">

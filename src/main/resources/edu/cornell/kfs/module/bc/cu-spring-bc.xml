@@ -354,4 +354,25 @@
         </property> 
     </bean>
 
+	<bean id="budgetSipImportService" class="edu.cornell.kfs.module.bc.document.service.impl.SipImportServiceImpl" >
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>	
+		<property name="lockService">
+			<ref bean="lockService" />
+		</property>
+		<property name="optionsService">
+			<ref bean="optionsService" />
+		</property>
+		<property name="sipImportDao">
+			<ref bean="sipImportDao" />
+		</property>
+		<property name="budgetDocumentService">
+			<ref bean="budgetDocumentService" />
+		</property>
+	</bean>
+	
+	<bean id="sipImportDao" parent="platformAwareDao" class="edu.cornell.kfs.module.bc.document.dataaccess.impl.SipImportDaoOjb">
+    </bean>
+
 </beans>

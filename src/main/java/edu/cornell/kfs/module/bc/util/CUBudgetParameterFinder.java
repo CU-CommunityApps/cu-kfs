@@ -39,4 +39,25 @@ public class CUBudgetParameterFinder extends BudgetParameterFinder {
     public static List<String> getSipExportAvailable() {
         return parameterService.getParameterValues("KFS-BC", "BudgetConstruction", CUBCParameterKeyConstants.SIP_EXPORT_AVAILABLE);
     }
+    
+    /**
+     * get the netid's from the SIP_IMPORT_AVAILABLE parameter to determined who is allowed to view the SIP Import View button.
+     * If no netId's are provided, then nobody will be able to see this button.
+     * 
+     * @return the netid's from the SIP_IMPORT_AVAILABLE parameter 
+     */
+    public static List<String> getSipImportAvailable() {
+        return parameterService.getParameterValues("KFS-BC", "BudgetConstruction", CUBCParameterKeyConstants.SIP_IMPORT_AVAILABLE);
+    }
+
+    /**
+     * get the mode from the SIP_IMPORT_MODE parameter to determined whether it will run in UPDATE or REPORT mode
+     * 
+     * @return a string value specifying either UPDATE or REPORT 
+     */
+    public static List<String> getSipImportMode() {
+        return parameterService.getParameterValues("KFS-BC", "BudgetConstruction", CUBCParameterKeyConstants.SIP_IMPORT_MODE);
+    }
+
+
 }

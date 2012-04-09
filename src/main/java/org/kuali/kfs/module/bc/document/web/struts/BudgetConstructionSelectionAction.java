@@ -403,6 +403,25 @@ public class BudgetConstructionSelectionAction extends BudgetExpansionAction {
     }
 
     /**
+     * Passes control to the Sip import subsystem
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    public ActionForward performSipImport(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        BudgetConstructionSelectionForm budgetConstructionSelectionForm = (BudgetConstructionSelectionForm) form;
+        this.flagBCInProgress();
+
+        String lookupUrl = BudgetUrlUtil.buildBudgetUrl(mapping, budgetConstructionSelectionForm, BCConstants.SIP_IMPORT_ACTION, null);
+
+        return new ActionForward(lookupUrl, true);
+    }
+
+    /**
      * Builds forward URL to lock monitor page, following expansion screen pattern. Also checks if the user has permission for the
      * unlock action and sets the show action column property accordingly.
      * 

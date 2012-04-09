@@ -154,6 +154,8 @@
 			type="org.kuali.kfs.module.bc.document.web.struts.PayrateImportExportForm" />
 		<form-bean name="BudgetExpansionForm"
 			type="org.kuali.kfs.module.bc.document.web.struts.BudgetExpansionForm" />
+		<form-bean name="SipImportForm"
+			type="edu.cornell.kfs.module.bc.document.web.struts.SipImportForm" />
 
 		<!-- General Ledger Bean Definitions -->
 		<form-bean name="CorrectionForm"
@@ -537,6 +539,16 @@
 			attribute="KualiForm">
 			<set-property property="cancellable" value="true" />
 			<forward name="basic" path="/jsp/module/bc/OrganizationSelectionTree.jsp" />
+			<forward name="lostSessionReturning" path="/jsp/module/bc/LostSessionReturning.jsp" />
+		</action>
+		
+		<action path="/budgetSipImport" name="SipImportForm"
+			input="/jsp/module/bc/SipImport.jsp"
+			type="edu.cornell.kfs.module.bc.document.web.struts.SipImportAction"
+			scope="session" parameter="methodToCall" validate="true"
+			attribute="KualiForm">
+			<set-property property="cancellable" value="true" />
+			<forward name="basic" path="/jsp/module/bc/SipImport.jsp" />
 			<forward name="lostSessionReturning" path="/jsp/module/bc/LostSessionReturning.jsp" />
 		</action>
 
