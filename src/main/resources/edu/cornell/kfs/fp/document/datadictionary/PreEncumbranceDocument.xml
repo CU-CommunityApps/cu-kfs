@@ -30,12 +30,9 @@
     <property name="attributes">
       <list>
         <ref bean="PreEncumbranceDocument-reversalDate"/>
-        <ref bean="PreEncumbranceDocument-nextPositionSourceLineNumber" />
-        <ref bean="PreEncumbranceDocument-nextPositionTargetLineNumber" />
       </list>
     </property>
-
-   <property name="validationMap" ref="PreEncumbranceDocument-validations"/>
+     <property name="validationMap" ref="PreEncumbranceDocument-validations"/>
     <property name="accountingLineGroups">
     	<map>
     		<entry>
@@ -65,44 +62,6 @@
     <property name="required" value="false"/>
     
   </bean>
-  
-  <bean id="PreEncumbranceDocument-nextPositionSourceLineNumber" parent="PreEncumbranceDocument-nextPositionSourceLineNumber-parentBean"/>
-
-  <bean id="PreEncumbranceDocument-nextPositionSourceLineNumber-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="nextPositionSourceLineNumber"/>
-    <property name="forceUppercase" value="false"/>
-    <property name="label" value="Next PS Source Line Number"/>
-    <property name="shortLabel" value="Next PS Source"/>
-    <property name="maxLength" value="7"/>
-    <property name="validationPattern">
-      <ref bean="NumericValidation" />
-    </property>
-    <property name="required" value="false"/>
-    <property name="control">
-      <ref bean="TenCharacterTextControl" />
-    </property>
-    
-    
-  </bean>
-  <bean id="PreEncumbranceDocument-nextPositionTargetLineNumber" parent="PreEncumbranceDocument-nextPositionTargetLineNumber-parentBean"/>
-
-  <bean id="PreEncumbranceDocument-nextPositionTargetLineNumber-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="nextPositionTargetLineNumber"/>
-    <property name="forceUppercase" value="false"/>
-    <property name="label" value="Next PS Target Line Number"/>
-    <property name="shortLabel" value="Next PS Target"/>
-    <property name="maxLength" value="7"/>
-    <property name="validationPattern">
-      <ref bean="NumericValidation" />
-    </property>
-    <property name="required" value="false"/>
-    <property name="control">
-      <ref bean="TenCharacterTextControl" />
-    </property>
-    
-    
-  </bean>
-  
   
      <!-- Validations -->
   
@@ -139,13 +98,11 @@
     </property>
   </bean>
   
-  <bean id="PreEncumbranceAccountingLineView-line" abstract="true" class="edu.cornell.kfs.fp.document.datadictionary.PreEncumbranceAccountingLineViewLineDefinition" />
-
   <!-- accounting line groups -->
   <bean id="PreEncumbranceDocument-sourceAccountingLineGroup" parent="PreEncumbranceDocument-sourceAccountingLineGroup-parentBean"/>  
   <bean id="PreEncumbranceDocument-sourceAccountingLineGroup-parentBean" parent="AccountingLineGroup" abstract="true">
-	  <property name="accountingLineView" ref="PreEncumbranceDocument-accountingLineView"/>
-	  <property name="accountingLineClass" value="edu.cornell.kfs.fp.businessobject.PreEncumbranceSourceAccountingLine"/>
+	  <property name="accountingLineView" ref="CU-FinancialProcessing-SalesTax-Description-accountingLineView"/>
+	  <property name="accountingLineClass" value="org.kuali.kfs.sys.businessobject.SourceAccountingLine"/>
 	  <property name="groupLabel" value="Encumbrance"/>
 	  <property name="accountingLineAuthorizerClass" value="org.kuali.kfs.fp.document.authorization.FinancialProcessingAccountingLineAuthorizer"/>
 	  <property name="importedLinePropertyPrefix" value="source"/>
@@ -162,8 +119,8 @@
 	  <property name="importedLinePropertyPrefix" value="target"/>
 	  <property name="totals" ref="AccountingDocument-targetGroupTotals"/>
 	  <property name="errorKey" value="document.targetAccounting*,targetAccountingLines,newTargetLine*"/>
-  </bean>    
-    
+  </bean>  
+  
   <bean id="PreEncumbranceDocument-accountingLineView" parent="PreEncumbranceDocument-accountingLineView-parent"/>
   <bean id="PreEncumbranceDocument-accountingLineView-parent" parent="AccountingLineView" abstract="true">
 	<property name="elements">
@@ -172,30 +129,14 @@
 			<bean parent="AccountingLineView-lines">
 				<property name="lines">
 					<list>
-						<ref bean="accountingInformation" />
-						<ref bean="salesTaxInformation" />
+						<ref bean="accountingInformation"/>
 						<bean parent="AccountingLineView-line">
 							<property name="elementName" value="lineDescription"/>
 							<property name="fields">
 								<list>
-									<bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
+									<bean parent="AccountingLineView-field" p:name="referenceNumber" p:required="true"/>
 								</list>
 							</property>
-						</bean>
-						<bean parent="AccountingLineView-showHideLines" p:label="Automatic Partial Dis-Encumbrances" p:name="monthlyLinesHideShow">
-								<property name="lines">
-									<bean parent="AccountingLineView-columns" p:columnCount="2" p:name="peAutoMinimum">
-										<property name="fields">
-											<list>
-												<bean parent="AccountingLineView-field" p:name="autoDisEncumberType" p:webUILeaveFieldFunction="managePreEncumbranceAutomaticDisEncumbranceFields" />
-												<bean parent="AccountingLineView-field" p:name="partialTransactionCount"/>
-												<bean parent="AccountingLineView-field" p:name="startDate" />
-												<bean parent="AccountingLineView-field" p:name="partialAmount" />
-												<bean parent="AccountingLineView-field" p:name="endDate" />
-											</list>
-										</property>
-									</bean>
-								</property>
 						</bean>
 					</list>
 				</property>
@@ -205,7 +146,6 @@
 		</list>
 	</property>
   </bean>
-    
   
   <!-- workflow attributes for routing -->
 	<bean id="PreEncumbranceDocument-workflowAttributes" parent="PreEncumbranceDocument-workflowAttributes-parentBean"/>
