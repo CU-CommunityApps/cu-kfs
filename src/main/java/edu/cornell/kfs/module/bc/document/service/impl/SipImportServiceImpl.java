@@ -158,8 +158,7 @@ public class SipImportServiceImpl implements SipImportService {
 		errorReportDetail.add(new ExternalizedMessageWrapper("\nUnitID\tHR_Dept_ID\tKFS_Dept_ID\tDepartment_Name\tPosition_Nbr\tPosition_Description\tEmplID\tPerson_Name\tSIP_Eligible\tSIP_Employee_Type\tEmployee_RCD\tJob_Code\tJob_Code_Short_Desc\tJob_Family\tPosition_FTE\tGrade\tCU_State_Cert\tComp_Frequency\tAnnual_Rate\tComp_Rate\tJob_Standard_Hours\tWork_Months\tJob_Function\tJob_Function_Description\tIncrease_to_Minimum\tEquity\tMerit\tNote\tDeferred\tCU_ABBR_Flag\tTOTAL_Job_Planned_Commit\tTotal_Distributions\tBGP_FLSA"));
 
         try {
-        	errorReport.add(new ExternalizedMessageWrapper("\n\n"));
-        	errorReport.add(new ExternalizedMessageWrapper("===========   SIP IMPORT ERROR SUMMARY ACROSS ALL C-LEVEL ORGS   ====================\n\n"));
+        	errorReport.add(new ExternalizedMessageWrapper("\n\n===========   SIP IMPORT ERROR SUMMARY ACROSS ALL C-LEVEL ORGS   ====================\n\n"));
             
         	boolean firstLineInErrorReportDetail = false;
 
@@ -671,8 +670,7 @@ public class SipImportServiceImpl implements SipImportService {
 				}
 			}
 			
-		    errorReport.add(new ExternalizedMessageWrapper("\n\n"));   // Add some blank lines 
-		    errorReport.add(new ExternalizedMessageWrapper("===============   SIP ERROR SUMMARY - ERRORS BY C-LEVEL ORG   =======================\n"));
+		    errorReport.add(new ExternalizedMessageWrapper("\n\n===============   SIP ERROR SUMMARY - ERRORS BY C-LEVEL ORG   =======================\n"));
 				
 			// Generate summary of the counts for each UnitId (C Level org) for each error type, prefaced with a count.
 		    Iterator it = errorCountByUnitId.entrySet().iterator(); 
@@ -680,13 +678,18 @@ public class SipImportServiceImpl implements SipImportService {
 		        Map.Entry pairs = (Map.Entry)it.next(); 
 		        String UnitId = (String) pairs.getKey();
 		        errorReport.add(new ExternalizedMessageWrapper("\n" + UnitId + " Error Summary:\n"));
+		        // Display Errors
 		        for (Map.Entry<Integer, Integer> myErrCount : errorCountByUnitId.get(UnitId).entrySet()) {
 		        	errorReport.add(new ExternalizedMessageWrapper("\t" + myErrCount.getValue() + " - " + ErrorMessages[myErrCount.getKey()] + "\n"));
 		        }
+		        
+		        // Display Warnings
+		        for (Map.Entry<Integer, Integer> myWarningCount : errorCountByUnitId.get(UnitId).entrySet()) {
+		        	errorReport.add(new ExternalizedMessageWrapper("\t" + myWarningCount.getValue() + " - " + ErrorMessages[myWarningCount.getKey()] + "\n"));
+		        }		        
 		    } 
 		    
-		    errorReport.add(new ExternalizedMessageWrapper("\n\n"));   // Add some blank lines 
-		    errorReport.add(new ExternalizedMessageWrapper("==============================   SIP ERROR DETAIL   =================================\n") );
+		    errorReport.add(new ExternalizedMessageWrapper("\n\n==============================   SIP ERROR DETAIL   =================================\n") );
 
 		    return TotalErrorCount;
 

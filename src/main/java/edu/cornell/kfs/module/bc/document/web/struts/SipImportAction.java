@@ -64,7 +64,7 @@ public class SipImportAction extends BudgetExpansionAction {
         	{
         		String returnCodeParts[] = StringUtils.splitPreserveAllTokens(returnStringCode, "|");
         		MessageMap errorMap = GlobalVariables.getMessageMap();
-        		errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUBCKeyConstants.ERROR_SIP_IMPORT_FILE_CONTAINS_NON_TAB_DELIMITED_LINE );
+        		errorMap.putError(KFSConstants.GLOBAL_ERRORS, new ExternalizedMessageWrapper(CUBCKeyConstants.ERROR_SIP_IMPORT_FILE_CONTAINS_NON_TAB_DELIMITED_LINE, returnCodeParts[1]).toString()  );
         		return mapping.findForward(KFSConstants.MAPPING_BASIC);
         	}
         	
