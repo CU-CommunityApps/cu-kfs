@@ -112,13 +112,14 @@ public class SipImportServiceImpl implements SipImportService {
     private SipImportDao sipImportDao;
     private BudgetDocumentService budgetDocumentService;
 	protected PSPositionDataDao positionDataDao;
+	public List<SipImportData> entireSipImport;
 	
 	// This stores the number of errors for each error message regardless of UnitId (C Level org)
-	protected int errorCount[] = new int[8];
-	protected int warningCount[] = new int[1];
+	protected int errorCount[];
+	protected int warningCount[];
 
 	// This stores the number of errors for each org (UnitId) for each error message as they are found
-	Map<String, HashMap<Integer, Integer>> errorCountByUnitId = new HashMap<String, HashMap<Integer, Integer>>();
+	Map<String, HashMap<Integer, Integer>> errorCountByUnitId;
 
 	protected String[] ErrorMessages = {
 			"\tPosition number was not found in the original SIP exported data.\n",
@@ -128,7 +129,8 @@ public class SipImportServiceImpl implements SipImportService {
 			"\tThe SIP award (Increase To minimum + Merit + Equity) is greater than zero AND the Deferred amount is also greater than 0.\n",
 			"\tThe SIP award (Increase To minimum + Merit + Equity) is greater than zero AND a note was also provided.\n",
 			"\tDeferred is greater than 0 AND a note was not provided.\n",
-			"\tThe SIP award (Increase To minimum + Merit + Equity) is zero AND a note was not provided.\n"
+			"\tThe SIP award (Increase To minimum + Merit + Equity) is zero AND a note was not provided.\n",
+			"\tThe ABBR flag is set to Y.\n"
 	};
 	
 	protected String[] WarningMessages = {
@@ -142,20 +144,25 @@ public class SipImportServiceImpl implements SipImportService {
      * @see edu.cornell.kfs.module.bc.document.service.SipImportService#importFile(java.io.InputStream)
      */
     @Transactional
-    public boolean importFile(InputStream fileImportStream, List<ExternalizedMessageWrapper> errorReport , String principalId) {
+    public String importFile(InputStream fileImportStream, List<ExternalizedMessageWrapper> errorReport , String principalId) {
         int TotalErrorCount = 0;
+        errorCountByUnitId = new HashMap<String, HashMap<Integer, Integer>>();
         SipImportData sipImportData;
-        List<SipImportData> entireSipImport = new ArrayList<SipImportData>();
+        entireSipImport = new ArrayList<SipImportData>();
         this.importCount = 0;
         List<ExternalizedMessageWrapper> errorReportDetail = new ArrayList<ExternalizedMessageWrapper>();
-        
+        errorCount = new int[9];
+    	warningCount = new int[1];
+    	        
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(fileImportStream));
-        
+		errorReportDetail.add(new ExternalizedMessageWrapper("\nUnitID\tHR_Dept_ID\tKFS_Dept_ID\tDepartment_Name\tPosition_Nbr\tPosition_Description\tEmplID\tPerson_Name\tSIP_Eligible\tSIP_Employee_Type\tEmployee_RCD\tJob_Code\tJob_Code_Short_Desc\tJob_Family\tPosition_FTE\tGrade\tCU_State_Cert\tComp_Frequency\tAnnual_Rate\tComp_Rate\tJob_Standard_Hours\tWork_Months\tJob_Function\tJob_Function_Description\tIncrease_to_Minimum\tEquity\tMerit\tNote\tDeferred\tCU_ABBR_Flag\tTOTAL_Job_Planned_Commit\tTotal_Distributions\tBGP_FLSA"));
+
         try {
         	errorReport.add(new ExternalizedMessageWrapper("\n\n"));
-        	errorReport.add(new ExternalizedMessageWrapper("==========================   SIP IMPORT ERROR SUMMARY   ============================="));
-        	errorReport.add(new ExternalizedMessageWrapper("\n\n"));
+        	errorReport.add(new ExternalizedMessageWrapper("===========   SIP IMPORT ERROR SUMMARY ACROSS ALL C-LEVEL ORGS   ====================\n\n"));
             
+        	boolean firstLineInErrorReportDetail = false;
+
         	// Loops through each line in the SIP import file, validating each one.   Records errors encountered for each line both across all UnitIds (C level orgs) and 
         	//   for each UnitId.  The variable "errorCount" contains a count of each type of error (not warning) message across all UnitIDs and the variable
         	//   "errorCountByUnitId" keeps track of the error counts by message for each UnitId.        	
@@ -170,47 +177,52 @@ public class SipImportServiceImpl implements SipImportService {
             	// Parse the imported line into separate fields
             	sipImportLine = sipImportLine.replace("\"","");
 				String[] tokens = StringUtils.splitPreserveAllTokens(sipImportLine, "\t");
+				
+				//Check to make sure that the file is tabbed delimited.  If not then abort then entire run and return immediately.
+				if (tokens.length != DefaultImportFileFormat.fieldNames.length)	return "NOT TAB DELIMITED|" + this.importCount;
+				
+				//  All is OK with this line, so process it accordingly.
 				ObjectUtil.buildObject(sipImportData, tokens, Arrays.asList(DefaultImportFileFormat.fieldNames));
 				
 				// Performs validation and collects error and warning counts across all orgs and for each org.
 				String SipRulesErrorList = validateSipRules(sipImportData.getPositionNbr(), sipImportData.getEmplId(), sipImportData.getCompRt(),
-															  sipImportData.getUnitId());
+															  sipImportData.getUnitId(), sipImportData.getCuAbbrFlag());
 				String SipValueErrorList = validateSipValues(sipImportData.getIncToMin(), sipImportData.getMerit(), sipImportData.getEquity(), 
 																sipImportData.getDeferred(), sipImportData.getNote(), sipImportData.getCompRt(),
 																sipImportData.getUnitId());
 				
-				// For each line read in, there will be errors / warnings generated if needed.  Add these details to errorReportDetail
+				// For each line read in, validate it and generate messages as needed.  Add these details to errorReportDetail.
 				if (!SipRulesErrorList.isEmpty())
-					if (!SipValueErrorList.isEmpty())
-						errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + SipRulesErrorList + SipValueErrorList));
-					else
-						errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + SipRulesErrorList));
+					if (!SipValueErrorList.isEmpty()) {
+						if (!firstLineInErrorReportDetail) errorReportDetail.add(new ExternalizedMessageWrapper("\n"));
+						errorReportDetail.add(new ExternalizedMessageWrapper(sipImportLine + "\n" + SipRulesErrorList + SipValueErrorList));
+					}
+					else {
+						if (!firstLineInErrorReportDetail) errorReportDetail.add(new ExternalizedMessageWrapper("\n"));
+						errorReportDetail.add(new ExternalizedMessageWrapper(sipImportLine + "\n" + SipRulesErrorList));
+					}
 
 				else
-					if (!SipValueErrorList.isEmpty())
-						errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + SipValueErrorList));
+					if (!SipValueErrorList.isEmpty()) {
+						if (!firstLineInErrorReportDetail) errorReportDetail.add(new ExternalizedMessageWrapper("\n"));
+						errorReportDetail.add(new ExternalizedMessageWrapper(sipImportLine + "\n" + SipValueErrorList));
+					}
+					else
+						// Add to sip Import Data list
+						entireSipImport.add(sipImportData);
             }
-        	//  Add some blank lines after the last detail line
-        	errorReportDetail.add(new ExternalizedMessageWrapper("\n\n"));
+        	//  Add some blank lines after the last detail line followed by the header row.
+			errorReportDetail.add(new ExternalizedMessageWrapper("\n\n"));
+
         	
             // Count the errors across all UnitIds (C Level orgs) regardless of the error message
             for ( int i=0; i<=(ErrorMessages.length-1); i++ ) { TotalErrorCount += errorCount[i]; }
             
             // If there were no errors at all, then do the following tasks:
-            if (TotalErrorCount == 0)
-            {
-            	// Add the ArrayList of SipImportData objects to the CU_LD_BCN_SIP_T table.
-				businessObjectService.save(entireSipImport);
-							
-				// Return a message to the user on the page that there were no errors in the file
-				// NOTE: do not put "\n" characters in front of the ExternalizedMessageWrapper parameter otherwise it will cause the 
-				//    line SpringContext.getBean(KualiConfigurationService.class).getPropertyString(messageWrapper.getMessageKey())
-				//    to return a null.
-				errorReport.add(new ExternalizedMessageWrapper(CUBCKeyConstants.MSG_SIP_IMPORT_COUNT, String.valueOf(importCount)));
-            }
-            else
+            if (TotalErrorCount != 0)
             {
     			// Generate SIP Import log/error report
+            	// ======================================
     			// Attach summary information
             	SipImportErrorSummary(errorReport);
             	
@@ -225,12 +237,12 @@ public class SipImportServiceImpl implements SipImportService {
             else
             	errorReport.add(new ExternalizedMessageWrapper(CUBCKeyConstants.MSG_SIP_IMPORT_COUNT, String.valueOf(importCount)));
             
-            return true;
+            return "OK";
             
         }
         catch (Exception e) {
         	errorReport.add(new ExternalizedMessageWrapper(CUBCKeyConstants.ERROR_SIP_IMPORT_ABORTED, e.getMessage()));
-            return false;
+            return "";
         }
     }
  
@@ -286,26 +298,7 @@ public class SipImportServiceImpl implements SipImportService {
         this.businessObjectService = businessObjectService;
     }
     
-    /**
-     * sets lock service
-     * 
-     * @param lockService
-     */
-    @NonTransactional
-    public void setLockService(LockService lockService) {
-        this.lockService = lockService;
-    }
-    
-    /**
-     * sets option service
-     * 
-     * @param optionsService
-     */
-    @NonTransactional
-    public void setOptionsService(OptionsService optionsService) {
-        this.optionsService = optionsService;
-    }
-    
+   
     /**
      * Sets the SIP import DAO
      * 
@@ -316,61 +309,6 @@ public class SipImportServiceImpl implements SipImportService {
         this.sipImportDao = sipImportDao;
     }
 
-    /**
-     * Sets the budgetDocumentService attribute value.
-     * @param budgetDocumentService The budgetDocumentService to set.
-     */
-    @NonTransactional
-    public void setBudgetDocumentService(BudgetDocumentService budgetDocumentService) {
-        this.budgetDocumentService = budgetDocumentService;
-    }
-        
-    /**
-     * Creates the locking key to use in retrieving account locks
-     * 
-     * @param record
-     * @return
-     */
-    protected String getLockingKeyString(PendingBudgetConstructionAppointmentFunding record) {
-        return record.getUniversityFiscalYear() + "-" + record.getChartOfAccountsCode() + "-" + record.getAccountNumber() + "-" + record.getSubAccountNumber();
-    }
-    
-    /**
-     * Retrieves Account locks for sip import records
-     * 
-     * @param lockMap
-     * @param messageList
-     * @param budgetYear
-     * @param user
-     * @param records
-     * @return
-     */
-    @Transactional
-    protected boolean getSipLock(List<PendingBudgetConstructionAppointmentFunding> lockedRecords, List<ExternalizedMessageWrapper> messageList, Integer budgetYear, Person user, List<BudgetConstructionPayRateHolding> records) {
-        List<String> biweeklyPayObjectCodes = BudgetParameterFinder.getBiweeklyPayObjectCodes();
-        
-        for (BudgetConstructionPayRateHolding record: records) {
-            List<PendingBudgetConstructionAppointmentFunding> fundingRecords = this.sipImportDao.getFundingRecords(record, budgetYear, biweeklyPayObjectCodes);
-            try {
-                lockedRecords.addAll(this.lockService.lockPendingBudgetConstructionAppointmentFundingRecords(fundingRecords, user));
-            } catch(BudgetConstructionLockUnavailableException e) {
-                BudgetConstructionLockStatus lockStatus = e.getLockStatus();
-                if ( lockStatus.getLockStatus().equals(BCConstants.LockStatus.BY_OTHER) ) {
-                    messageList.add(new ExternalizedMessageWrapper(BCKeyConstants.ERROR_PAYRATE_ACCOUNT_LOCK_EXISTS));
-                    
-                    return false;
-                } else if ( lockStatus.getLockStatus().equals(BCConstants.LockStatus.FLOCK_FOUND) ) {
-                    messageList.add(new ExternalizedMessageWrapper(BCKeyConstants.ERROR_PAYRATE_FUNDING_LOCK_EXISTS));
-                    
-                    return false;
-                } else if ( !lockStatus.getLockStatus().equals(BCConstants.LockStatus.SUCCESS) ) {
-                    messageList.add(new ExternalizedMessageWrapper(BCKeyConstants.ERROR_PAYRATE_BATCH_ACCOUNT_LOCK_FAILED));
-                    return false;
-                }
-          }
-        }
-        return true;
-    }
     
     /**
      * Sip import file field names and lengths used by 
@@ -384,18 +322,6 @@ public class SipImportServiceImpl implements SipImportService {
         	 "compRt", "jobStdHrs", "wrkMnths", "jobFunc", "jobFuncDesc", "incToMin", "equity", "merit", "note", "deferred",
         	 "cuAbbrFlag", "apptTotIntndAmt", "apptRqstFteQty", "positionType"
         };
-    }
-    
-    /**
-     * If retrieving budget locks fails, this method rolls back previous changes
-     * 
-     */
-    protected void doRollback() {
-        PlatformTransactionManager transactionManager = SpringContext.getBean(PlatformTransactionManager.class);
-        DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
-        TransactionStatus transactionStatus = transactionManager.getTransaction(defaultTransactionDefinition);
-        transactionManager.rollback( transactionStatus );
-
     }
     
 	/**
@@ -432,7 +358,7 @@ public class SipImportServiceImpl implements SipImportService {
 				return false;
 		}
 		catch (Exception e) {
-			LOG.error("validPosition Exceptiom: " + e.getMessage());
+			LOG.error("validPosition Exception: " + e.getMessage());
 			return false;
 		}
 	}
@@ -457,11 +383,41 @@ public class SipImportServiceImpl implements SipImportService {
 				return false;
 		}
 		catch (Exception e) {
-			LOG.error("validEmplid Exceptiom: " + e.getMessage());
+			LOG.error("validEmplid Exception: " + e.getMessage());
 			return false;
 		}
 	}
 
+	/**
+	 * Returns whether or not the ABBR Flag is valid.  The ABBR Flag
+	 * is valid if it's value is NOT Y otherwise it is invalid if its
+	 * value is "Y".
+	 * 
+	 * @param ABBR Flag as a string
+	 * @param emplid as a string
+	 * @return true if valid (as defined in the description), false if not valid
+	 */
+	protected boolean isAbbrFlagValid(String AbbrFlag) {
+		try
+		{
+			if (ObjectUtils.isNotNull(AbbrFlag) )
+			{
+				String myABBRFlag = AbbrFlag.toUpperCase();
+				if (myABBRFlag.equals("Y"))
+					return false;
+				else
+					return true;
+			}
+			else
+				return false;
+		}
+		catch (Exception e) {
+			LOG.error("isSipEligible Exception: " + e.getMessage());
+			return false;
+		}
+	}
+
+	
 	/**
 	 * Returns whether or not the provided position number, employee identifier return a 
 	 * SIP Eligible value of "Y" as found in the CU_PS_JOB_DATA table.
@@ -501,7 +457,7 @@ public class SipImportServiceImpl implements SipImportService {
 				return false;
 		}
 		catch (Exception e) {
-			LOG.error("isSipEligible Exceptiom: " + e.getMessage());
+			LOG.error("isSipEligible Exception: " + e.getMessage());
 			return false;
 		}
 	}
@@ -546,14 +502,14 @@ public class SipImportServiceImpl implements SipImportService {
 			return false;
 		}
 		catch (Exception e) {
-			LOG.error("validCompRate Exceptiom: " + e.getMessage());
+			LOG.error("validCompRate Exception: " + e.getMessage());
 			return false;
 		}
 	}
 	
 	//  Coordinates checking all of the SIP rules and returning error messages as needed.  Also tracks counts
 	//    of error messages within orgs (UnitId's).
-	protected String validateSipRules(String positionNumber, String emplId, KualiDecimal CompRate, String UnitId)
+	protected String validateSipRules(String positionNumber, String emplId, KualiDecimal CompRate, String UnitId, String AbbrFlag)
 	{
 		try {
 				String RulesErrorList = "";
@@ -581,12 +537,18 @@ public class SipImportServiceImpl implements SipImportService {
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
+				
+				if (!isAbbrFlagValid(AbbrFlag)) {
+					int ErrorMessageNumber = 8;
+					RulesErrorList += ErrorMessages[ErrorMessageNumber];
+					UpdateErrorCounts(ErrorMessageNumber, UnitId);
+				}
 			
 				return RulesErrorList;
 		}
 		catch (Exception e) {
-			LOG.error("validateSipRules Exceptiom: " + e.getMessage());
-			return "validateSipRules Exceptiom: " + e.getMessage();
+			LOG.error("validateSipRules Exception: " + e.getMessage());
+			return "validateSipRules Exception: " + e.getMessage();
 		}
 	}
 	
@@ -611,11 +573,12 @@ public class SipImportServiceImpl implements SipImportService {
 					ValuesErrorList = ErrorMessages[4];
 					UpdateErrorCounts(4, UnitId);
 				}
-				if (ObjectUtils.isNotNull(Note))
-				{
-					ValuesErrorList += ErrorMessages[5];
-					UpdateErrorCounts(5, UnitId);
-				}
+// The following was deemed not required (see JIRA KITI-3086 comment on 4-10-2012)
+//				if (ObjectUtils.isNotNull(Note))
+//				{
+//					ValuesErrorList += ErrorMessages[5];
+//					UpdateErrorCounts(5, UnitId);
+//				}
 			}
 	
 	//		2. If there is a Deferred amount
@@ -699,44 +662,38 @@ public class SipImportServiceImpl implements SipImportService {
 	protected int SipImportErrorSummary(List<ExternalizedMessageWrapper> errorReport) {
 		int TotalErrorCount = 0;
 		try {
-			errorReport.add(new ExternalizedMessageWrapper("\n\n\n"));
 			int i;
 			// Generate summary of each error type prefaced with a count.
 			for ( i=0; i<=(ErrorMessages.length-1); i++ ){
 				if (errorCount[i]!=0) {  // Only display the error if there is an error count > 0
-					errorReport.add(new ExternalizedMessageWrapper((errorCount[i]==1 ? "There was " : "There were " ) + 
-										errorCount[i] + (errorCount[i]==1 ? " occurrance of the error message:  " : " occurrances of the error message:  " ) + 
-										ErrorMessages[i] + "\n"));
+					errorReport.add(new ExternalizedMessageWrapper(errorCount[i] + " - " + ErrorMessages[i] + "\n"));
 					TotalErrorCount += errorCount[i];
 				}
 			}
 			
 		    errorReport.add(new ExternalizedMessageWrapper("\n\n"));   // Add some blank lines 
-		    errorReport.add(new ExternalizedMessageWrapper("===============   SIP ERROR SUMMARY - ERRORS BY C-LEVEL ORG   ======================="));
-		    errorReport.add(new ExternalizedMessageWrapper("\n\n"));   // Add some blank lines
+		    errorReport.add(new ExternalizedMessageWrapper("===============   SIP ERROR SUMMARY - ERRORS BY C-LEVEL ORG   =======================\n"));
 				
 			// Generate summary of the counts for each UnitId (C Level org) for each error type, prefaced with a count.
 		    Iterator it = errorCountByUnitId.entrySet().iterator(); 
 		    while (it.hasNext()) { 
 		        Map.Entry pairs = (Map.Entry)it.next(); 
 		        String UnitId = (String) pairs.getKey();
-		        errorReport.add(new ExternalizedMessageWrapper("" + UnitId + " Error Summary:\n"));
-		        for (Map.Entry<Integer, Integer> myErrCount : errorCountByUnitId.get(UnitId).entrySet())
-		        {
-		        	errorReport.add(new ExternalizedMessageWrapper("\t" + myErrCount.getValue() + " - " + ErrorMessages[myErrCount.getKey()]));
+		        errorReport.add(new ExternalizedMessageWrapper("\n" + UnitId + " Error Summary:\n"));
+		        for (Map.Entry<Integer, Integer> myErrCount : errorCountByUnitId.get(UnitId).entrySet()) {
+		        	errorReport.add(new ExternalizedMessageWrapper("\t" + myErrCount.getValue() + " - " + ErrorMessages[myErrCount.getKey()] + "\n"));
 		        }
 		    } 
 		    
 		    errorReport.add(new ExternalizedMessageWrapper("\n\n"));   // Add some blank lines 
-		    errorReport.add(new ExternalizedMessageWrapper("==============================   SIP ERROR DETAIL   ================================="));
-		    errorReport.add(new ExternalizedMessageWrapper("\n\n"));   // Add some blank lines
+		    errorReport.add(new ExternalizedMessageWrapper("==============================   SIP ERROR DETAIL   =================================\n") );
 
 		    return TotalErrorCount;
 
 		}
 		catch (Exception e) {
 			LOG.error("SipImportErrorSummary Exceptiom: " + e.getMessage());
-			errorReport.add(new ExternalizedMessageWrapper("SipImportErrorSummary Exceptiom: " + e.getMessage()));
+			errorReport.add(new ExternalizedMessageWrapper("SipImportErrorSummary Exception: " + e.getMessage() + "\n"));
 			return TotalErrorCount;
 		}
 	}

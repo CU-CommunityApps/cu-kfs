@@ -13,5 +13,8 @@ public class CUBCKeyConstants extends BCKeyConstants{
     public static final String MSG_SIP_IMPORT_UPDATE_COMPLETE = "message.budget.sip.updateComplete";
     public static final String MSG_SIP_IMPORT_LOG_FILE_FOOTER = "message.budget.sip.footerLine";
     public static final String ERROR_SIP_IMPORT_ABORTED = "error.budget.sip.importAborted";
+    public static final String ERROR_SIP_IMPORT_INCORRECT_FILE_TYPE = "error.budget.sip.incorrect.file.type";
+    public static final String MSG_SIP_IMPORT_NOT_ALLOWED = "message.budget.sip.importNotAllowed";
+    public static final String ERROR_SIP_IMPORT_FILE_CONTAINS_NON_TAB_DELIMITED_LINE = "error.budget.sip.nonTabDelimitedLineFound";
 
 }

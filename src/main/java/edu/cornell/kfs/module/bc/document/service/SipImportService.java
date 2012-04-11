@@ -32,7 +32,7 @@ public interface SipImportService {
      * @param fileImportStream
      * @return
      */
-	public boolean importFile(InputStream fileImportStream, List<ExternalizedMessageWrapper> errorReport, String principalId);
+	public String importFile(InputStream fileImportStream, List<ExternalizedMessageWrapper> errorReport, String principalId);
     
    
     /**
