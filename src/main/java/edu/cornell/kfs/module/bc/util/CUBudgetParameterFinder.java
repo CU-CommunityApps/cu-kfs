@@ -55,8 +55,18 @@ public class CUBudgetParameterFinder extends BudgetParameterFinder {
      * 
      * @return a string value specifying either UPDATE or REPORT 
      */
-    public static List<String> getSipImportMode() {
-        return parameterService.getParameterValues("KFS-BC", "BudgetConstruction", CUBCParameterKeyConstants.SIP_IMPORT_MODE);
+    public static String getSipImportMode() {
+        return parameterService.getParameterValue("KFS-BC", "BudgetConstruction", CUBCParameterKeyConstants.SIP_IMPORT_MODE);
+    }
+
+    /**
+     * get the mode from the SIP_IMPORT_AWARD_CHECK parameter.  Provides the maximum percent that a SIP award can be based on the 
+     * annual rate as provided by PeopleSoft and located in CU_PS_JOB_DATA in the ANNL_RT column.
+     * 
+     * @return a string value specifying either UPDATE or REPORT 
+     */
+    public static String getSipImportAwardCheck() {
+        return parameterService.getParameterValue("KFS-BC", "BudgetConstruction", CUBCParameterKeyConstants.SIP_IMPORT_AWARD_CHECK);
     }
 
 

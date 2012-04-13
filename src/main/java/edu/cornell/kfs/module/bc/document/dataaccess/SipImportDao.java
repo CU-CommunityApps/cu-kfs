@@ -19,16 +19,9 @@ import java.util.List;
 
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionPayRateHolding;
 import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionAppointmentFunding;
+import org.kuali.rice.kns.util.KualiDecimal;
 
 public interface SipImportDao {
     
-    /**
-     * Returns the list of PendingBudgetConstructionAppointmentFunding for this BudgetConstructionPayRateHolding
-     * 
-     * @param holdingRecord
-     * @param budgetYear
-     * @return
-     */
-    List<PendingBudgetConstructionAppointmentFunding> getFundingRecords(BudgetConstructionPayRateHolding holdingRecord, Integer budgetYear, List objectCodeValues);
-    
+	public double getTotalPerCentDistribution(String positionNumber, String emplId);
 }

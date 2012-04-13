@@ -363,7 +363,7 @@
 		</property>
 	</bean>
 	
-	<bean id="sipImportDao" parent="platformAwareDao" class="edu.cornell.kfs.module.bc.document.dataaccess.impl.SipImportDaoOjb">
+	<bean id="sipImportDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.bc.document.dataaccess.impl.SipImportDaoJdbc">
     </bean>
 
 </beans>

@@ -10,5 +10,6 @@ public class CUBCParameterKeyConstants extends BCParameterKeyConstants {
     public static final String SIP_EXPORT_EXECUTIVES = "SIP_EXPORT_EXECUTIVES";
     public static final String SIP_IMPORT_AVAILABLE = "SIP_IMPORT_AVAILABLE";
     public static final String SIP_IMPORT_MODE = "SIP_IMPORT_MODE";
+    public static final String SIP_IMPORT_AWARD_CHECK = "SIP_IMPORT_AWARD_CHECK";
 
 }
