@@ -186,8 +186,6 @@ public class SipImportServiceImpl implements SipImportService {
 		errorReportDetail.add(new ExternalizedMessageWrapper("\nUnitID\tHR_Dept_ID\tKFS_Dept_ID\tDepartment_Name\tPosition_Nbr\tPosition_Description\tEmplID\tPerson_Name\tSIP_Eligible\tSIP_Employee_Type\tEmployee_RCD\tJob_Code\tJob_Code_Short_Desc\tJob_Family\tPosition_FTE\tGrade\tCU_State_Cert\tComp_Frequency\tAnnual_Rate\tComp_Rate\tJob_Standard_Hours\tWork_Months\tJob_Function\tJob_Function_Description\tIncrease_to_Minimum\tEquity\tMerit\tNote\tDeferred\tCU_ABBR_Flag\tTOTAL_Job_Planned_Commit\tTotal_Distributions\tBGP_FLSA"));
 
         try {
-        	errorReport.add(new ExternalizedMessageWrapper("\n\n===========   SIP IMPORT ERROR SUMMARY ACROSS ALL C-LEVEL ORGS   ====================\n\n"));
-            
         	// Loops through each line in the SIP import file, validating each one.   Records errors encountered for each line both across all UnitIds (C level orgs) and 
         	//   for each UnitId.  The variable "errorCount" contains a count of each type of error (not warning) message across all UnitIDs and the variable
         	//   "errorCountByUnitId" keeps track of the error counts by message for each UnitId.        	
