@@ -120,7 +120,8 @@ public class AssetRetirementGlobalMaintainableImpl extends LedgerPostingMaintain
         for (AssetRetirementGlobalDetail assetRetirementGlobalDetail : assetRetirementGlobalDetails) {
             // Set non-persistent values. So the screen can show them after submit.
             getAssetService().setAssetSummaryFields(assetRetirementGlobalDetail.getAsset());
-            assetRetirementGlobalDetail.getAsset().refreshReferenceObject("extension");
+            assetRetirementGlobalDetail.refreshReferenceObject("asset");
+            System.out.println();
         }
     }
 

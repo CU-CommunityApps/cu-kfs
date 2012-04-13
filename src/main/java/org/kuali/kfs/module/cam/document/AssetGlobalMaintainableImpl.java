@@ -522,7 +522,7 @@ public class AssetGlobalMaintainableImpl extends LedgerPostingMaintainable {
             }
             currLocationDetail.getAssetGlobalUniqueDetails().add(copyValue);
             currLocationDetail.setLocationQuantity(currLocationDetail.getAssetGlobalUniqueDetails().size());
-            detail.getAsset().refreshReferenceObject("extension");
+            detail.refreshReferenceObject("asset");
         }
         assetGlobal.getAssetSharedDetails().clear();
         assetGlobal.getAssetSharedDetails().addAll(locationMap.values());
