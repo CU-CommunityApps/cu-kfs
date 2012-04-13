@@ -27,6 +27,7 @@ import org.kuali.rice.kim.service.RoleService;
 import org.kuali.rice.kim.util.KimConstants;
 import org.kuali.rice.kns.document.Document;
 import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
 
 public class PurchasingAccountsPayableDocumentPresentationController extends FinancialSystemTransactionalDocumentPresentationControllerBase {
@@ -41,9 +42,17 @@ public class PurchasingAccountsPayableDocumentPresentationController extends Fin
      */
     @Override
     protected boolean canEdit(Document document) {
+        Person currentUser = GlobalVariables.getUserSession().getPerson();
+    	KualiWorkflowDocument kwf  = document.getDocumentHeader().getWorkflowDocument();
+        //Adding this check so that the initiator will always be able to edit the document (before initial submission)
+    	if (kwf.getInitiatorPrincipalId().equals(currentUser.getPrincipalId()) && (kwf.stateIsInitiated() || kwf.stateIsSaved()) ) {
+        	return true;
+        }
+
         if (document.getDocumentHeader().getWorkflowDocument().isAdHocRequested() && !hasNonAdhocRequests(document)) {
             return false;
         }
+
         return super.canEdit(document);
     }
 
@@ -56,7 +65,7 @@ public class PurchasingAccountsPayableDocumentPresentationController extends Fin
      */
     private boolean hasNonAdhocRequests(Document document) {
         Person currentUser = GlobalVariables.getUserSession().getPerson();
-
+        
         List<String> roleIds = new ArrayList<String>();
         roleIds.add(getRoleService().getRoleIdByName(KimConstants.KIM_GROUP_WORKFLOW_NAMESPACE_CODE, NON_AD_HOC_APPROVE_REQUEST_RECIPIENT_ROLE_NAME));
 
