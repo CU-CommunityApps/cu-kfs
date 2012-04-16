@@ -233,12 +233,9 @@ public class SipImportServiceImpl implements SipImportService {
 					}
 
 				else
-					if (!ValuesErrorList.isEmpty()) {
+					if (!ValuesWarningList.isEmpty()) {
 						errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + ValuesWarningList));
 					}
-					else
-						// Add to sip Import Data list
-						entireSipImport.add(sipImportData);
 				
 				// Generate ERROR Messages.
 				if (!RulesErrorList.isEmpty())
@@ -731,7 +728,11 @@ public class SipImportServiceImpl implements SipImportService {
 			{
 				// Check and make sure that for this UnitId for this warning we already have it initialized to 1, if not, then just set its value to 1.
 				if (ObjectUtils.isNull(warningCountByUnitId.get(UnitId).get(WarningMessageNumber))) {
-					myWarningCount.put(WarningMessageNumber, 1);  		// Generate the warning message and initialize its counter to 1.
+					//Get all the current warnings and their counts so we don't lose them!
+					myWarningCount = warningCountByUnitId.get(UnitId);
+					//Add the new warningMessageNumber and initialize it to 1
+					myWarningCount.put(WarningMessageNumber, 1);
+					// Update the warning counts for this specific UnitId
 					warningCountByUnitId.put(UnitId,myWarningCount);
 				}
 				else
