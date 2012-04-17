@@ -69,6 +69,9 @@ public class SearchableAttributeProcessor implements SearchableAttributeProcessi
 			}
 			DocumentRouteHeaderValueContent docContent = KEWServiceLocator.getRouteHeaderService().getContent(documentId);
 			List<SearchableAttributeValue> attributes = buildSearchableAttributeValues(documentType, documentId, docContent.getDocumentContent(), useMostRecentDocType);
+			if (LOG.isInfoEnabled()) {
+				LOG.info("Built searchable attributes for: "+documentId);
+			}
 			KEWServiceLocator.getRouteHeaderService().updateRouteHeaderSearchValues(documentId, attributes);
 		} catch (Exception e) {
 			String errorMsg = "Encountered an error when attempting to index searchable attributes, requeuing.";
