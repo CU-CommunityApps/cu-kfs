@@ -58,12 +58,16 @@ import org.kuali.rice.kns.service.KualiRuleService;
 import org.kuali.rice.kns.service.PersistenceService;
 import org.kuali.rice.kns.util.GlobalVariables;
 
+import edu.cornell.kfs.module.bc.util.CUBudgetParameterFinder;
+
 
 /**
  * This class...
  */
 public class BudgetConstructionSelectionAction extends BudgetExpansionAction {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(BudgetConstructionSelectionAction.class);
+    private KualiConfigurationService kualiConfiguration = SpringContext.getBean(KualiConfigurationService.class);
+
 
     /**
      * @see org.kuali.rice.kns.web.struts.action.KualiAction#execute(org.apache.struts.action.ActionMapping,
@@ -414,11 +418,34 @@ public class BudgetConstructionSelectionAction extends BudgetExpansionAction {
      */
     public ActionForward performSipImport(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         BudgetConstructionSelectionForm budgetConstructionSelectionForm = (BudgetConstructionSelectionForm) form;
-        this.flagBCInProgress();
-
-        String lookupUrl = BudgetUrlUtil.buildBudgetUrl(mapping, budgetConstructionSelectionForm, BCConstants.SIP_IMPORT_ACTION, null);
-
-        return new ActionForward(lookupUrl, true);
+        String SIP_IMPORT_MODE = CUBudgetParameterFinder.getSipImportMode().toLowerCase();
+        
+        // Are we in update mode?  If so then ask the user if they want to proceed.
+        if (SIP_IMPORT_MODE.equals("update")) {
+	        //  Tell the user that we are in update mode and ask them if they want to proceed before showing the SIP Import screen.
+        	//     If this question has already been asked and answered then just process the answer they gave accordingly.
+	        String question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
+	        if (StringUtils.isBlank(question)) {
+	            // String questionText = kualiConfiguration.getPropertyString(KFSKeyConstants.QUESTION_SAVE_BEFORE_CLOSE);
+	            String questionText = "Budget Construction SIP Import is running in update mode.  Do you want to continue?";
+	            return this.performQuestionWithoutInput(mapping, budgetConstructionSelectionForm, request, response, KFSConstants.DOCUMENT_SAVE_BEFORE_CLOSE_QUESTION, questionText, KFSConstants.CONFIRMATION_QUESTION, KFSConstants.MAPPING_CLOSE, "");
+	        }
+	
+	        // Proceed to SIP Import if the user answers to the question with "Yes"
+	        String buttonClicked = request.getParameter(KFSConstants.QUESTION_CLICKED_BUTTON);
+	        if (StringUtils.equals(KFSConstants.DOCUMENT_SAVE_BEFORE_CLOSE_QUESTION, question) && StringUtils.equals(ConfirmationQuestion.YES, buttonClicked)) {
+	            this.flagBCInProgress();
+	            String lookupUrl = BudgetUrlUtil.buildBudgetUrl(mapping, budgetConstructionSelectionForm, BCConstants.SIP_IMPORT_ACTION, null);
+	            return new ActionForward(lookupUrl, true);        	
+	        }
+	        else 
+	        	return loadExpansionScreen(mapping, form, request, response);
+        }
+        else {
+            this.flagBCInProgress();
+            String lookupUrl = BudgetUrlUtil.buildBudgetUrl(mapping, budgetConstructionSelectionForm, BCConstants.SIP_IMPORT_ACTION, null);
+            return new ActionForward(lookupUrl, true);
+        }
     }
 
     /**

@@ -147,19 +147,21 @@ public class SipImportServiceImpl implements SipImportService {
 			"\tThe SIP award (Increase To minimum + Merit + Equity) is zero AND a note was not provided.\n",
 			"\tThe ABBR flag is set to Y.\n",
 			"\tExecutive position found.\n",
-			"\tSIP is not allowed when Job Function is UNB.\n"
+			"\tSIP is not allowed when Job Function is UNB.\n",
+			"\tThis line is a duplicate.\n"
 	};
 	
 	protected String WarningMessages[];
 	
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SipImportService.class);
+    public Map<String, String> importedLines;
 
     /**
      * 
      * @see edu.cornell.kfs.module.bc.document.service.SipImportService#importFile(java.io.InputStream)
      */
     @Transactional
-    public String importFile(InputStream fileImportStream, List<ExternalizedMessageWrapper> errorReport , String principalId) {
+    public String importFile(InputStream fileImportStream, List<ExternalizedMessageWrapper> errorReport , String principalId, boolean allowExecutivesToBeImported) {
 		// Get values for parameters
 		SIP_IMPORT_MODE = CUBudgetParameterFinder.getSipImportMode();
 		SIP_EXECUTIVES = CUBudgetParameterFinder.getSIPExecutives();
@@ -174,7 +176,7 @@ public class SipImportServiceImpl implements SipImportService {
         List<ExternalizedMessageWrapper> errorReportDetail = new ArrayList<ExternalizedMessageWrapper>();
         
         // Error message setup
-        errorCount = new int[11];
+        errorCount = new int[12];
 
         //Warning message setup
     	warningCount = new int[2];
@@ -183,8 +185,14 @@ public class SipImportServiceImpl implements SipImportService {
     	WarningMessages[1] = new String("\tPercent Distribution is not equal to 1.\n");
  
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(fileImportStream));
-		errorReportDetail.add(new ExternalizedMessageWrapper("\nUnitID\tHR_Dept_ID\tKFS_Dept_ID\tDepartment_Name\tPosition_Nbr\tPosition_Description\tEmplID\tPerson_Name\tSIP_Eligible\tSIP_Employee_Type\tEmployee_RCD\tJob_Code\tJob_Code_Short_Desc\tJob_Family\tPosition_FTE\tGrade\tCU_State_Cert\tComp_Frequency\tAnnual_Rate\tComp_Rate\tJob_Standard_Hours\tWork_Months\tJob_Function\tJob_Function_Description\tIncrease_to_Minimum\tEquity\tMerit\tNote\tDeferred\tCU_ABBR_Flag\tTOTAL_Job_Planned_Commit\tTotal_Distributions\tBGP_FLSA"));
 
+        // Header line for the detail records
+        errorReportDetail.add(new ExternalizedMessageWrapper("\nUnitID\tHR_Dept_ID\tKFS_Dept_ID\tDepartment_Name\tPosition_Nbr\tPosition_Description\tEmplID\tPerson_Name\tSIP_Eligible\tSIP_Employee_Type\tEmployee_RCD\tJob_Code\tJob_Code_Short_Desc\tJob_Family\tPosition_FTE\tGrade\tCU_State_Cert\tComp_Frequency\tAnnual_Rate\tComp_Rate\tJob_Standard_Hours\tWork_Months\tJob_Function\tJob_Function_Description\tIncrease_to_Minimum\tEquity\tMerit\tNote\tDeferred\tCU_ABBR_Flag\tTOTAL_Job_Planned_Commit\tTotal_Distributions\tBGP_FLSA"));
+		
+        // Stores imported lines so that we can determine if we have run into any duplicates.  A "duplicate" is defined as a line with the same position number/emplid combination
+        //  The key string will contain position number concatenated with the emplid and the value string will contain the imported line itself.
+		importedLines = new HashMap<String, String>();
+		
         try {
         	// Loops through each line in the SIP import file, validating each one.   Records errors encountered for each line both across all UnitIds (C level orgs) and 
         	//   for each UnitId.  The variable "errorCount" contains a count of each type of error (not warning) message across all UnitIDs and the variable
@@ -192,7 +200,7 @@ public class SipImportServiceImpl implements SipImportService {
         	while(fileReader.ready()) {
             	// Read one line from the import file
             	String sipImportLine = fileReader.readLine();
-            	
+
             	// Add 1 to the counter and create a new sipImportData object
             	this.importCount++;
             	
@@ -218,7 +226,8 @@ public class SipImportServiceImpl implements SipImportService {
 		    	
 				// VALIDATE the line
 				validateSipRules(sipImportData.getPositionNbr(), sipImportData.getEmplId(), sipImportData.getCompRt(),
-								  sipImportData.getUnitId(), sipImportData.getCuAbbrFlag(), sipImportData.getJobFunc());
+								  sipImportData.getUnitId(), sipImportData.getCuAbbrFlag(), sipImportData.getJobFunc(),
+								  allowExecutivesToBeImported, sipImportLine);
 				validateSipValues(sipImportData.getIncToMin(), sipImportData.getMerit(), sipImportData.getEquity(), 
 									sipImportData.getDeferred(), sipImportData.getNote(), sipImportData.getCompRt(),
 									sipImportData.getUnitId());
@@ -565,15 +574,19 @@ public class SipImportServiceImpl implements SipImportService {
 	 * 
 	 */
 	protected boolean isSipExecutive(String positionNumber) {
-		if (positionNumber.length()==6)
-			positionNumber = "00" + positionNumber;
-		
-		// Verify that the position number is 8 otherwise it is invalid
-		if (positionNumber.length()==8)
-			if (SIP_EXECUTIVES.contains(positionNumber))
-				return true;
+		if(ObjectUtils.isNotNull(positionNumber)) {
+			if (positionNumber.length()==6)
+				positionNumber = "00" + positionNumber;
+			
+			// Verify that the position number is 8 otherwise it is invalid
+			if (positionNumber.length()==8)
+				if (SIP_EXECUTIVES.contains(positionNumber))
+					return true;
+				else
+					return false;
 			else
 				return false;
+		}
 		else
 			return false;
 	}
@@ -583,6 +596,28 @@ public class SipImportServiceImpl implements SipImportService {
 	}
 	
   
+	protected boolean isDuplicateLine(String positionNumber, String emplId, String sipImportLine) {
+		if( ObjectUtils.isNotNull(positionNumber)) {
+			if (positionNumber.length()==6)
+				positionNumber = "00" + positionNumber;
+			
+			// Verify that the position number is 8 otherwise it is invalid
+			if (positionNumber.length()==8) {
+				String myKey = positionNumber + emplId;
+				if (importedLines.get(myKey) == null) {
+					importedLines.put(myKey, sipImportLine);
+					return false;
+				}
+				else
+					// Duplicate line found!
+					return true;
+			}
+			else
+				return false;
+		}
+		else
+			return false;
+	}
 	/**
 	 * Coordinates checking all of the SIP rules and returns error and warning messages as needed.
 	 * Also tracks counts of error and warning messages within orgs (UnitId's).
@@ -595,7 +630,8 @@ public class SipImportServiceImpl implements SipImportService {
 	 * @return boolean - If the method completes, it will return true, otherwise it will return false
 	 */
 	protected boolean validateSipRules(String positionNumber, String emplId, KualiDecimal CompRate, String UnitId, 
-										String AbbrFlag, String jobFunction)
+										String AbbrFlag, String jobFunction, boolean allowExecutivesToBeImported,
+										String sipImportLine)
 	{
 		try {
 				// Is this position found?
@@ -633,12 +669,13 @@ public class SipImportServiceImpl implements SipImportService {
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
 				
-				// If this position is in the SIP_EXPORT_EXECUTIVES list then issue an error message.
-				if (isSipExecutive(positionNumber)) {
-					int ErrorMessageNumber = 9;
-					RulesErrorList += ErrorMessages[ErrorMessageNumber];
-					UpdateErrorCounts(ErrorMessageNumber, UnitId);	 
-				}
+				// If this position is in the SIP_EXPORT_EXECUTIVES list then issue an error message if they have not checked the checkbox in the form.
+				if (!allowExecutivesToBeImported)
+					if (isSipExecutive(positionNumber)) {
+						int ErrorMessageNumber = 9;
+						RulesErrorList += ErrorMessages[ErrorMessageNumber];
+						UpdateErrorCounts(ErrorMessageNumber, UnitId);	 
+					}
 				 
 				// If the sum of the APPT_RQST_FTE_QTY column in the LD_PNDBC_APPTFND_T table totals other than 1, issue a warning
 				if (requestedPerCentDistributionSum(positionNumber, emplId) != 1.00) {
@@ -653,6 +690,12 @@ public class SipImportServiceImpl implements SipImportService {
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
 			
+				if (isDuplicateLine(positionNumber, emplId, sipImportLine)){
+					int ErrorMessageNumber = 11;
+					RulesErrorList += ErrorMessages[ErrorMessageNumber];
+					UpdateErrorCounts(ErrorMessageNumber, UnitId);
+				}
+					
 				return true;
 		}
 		catch (Exception e) {

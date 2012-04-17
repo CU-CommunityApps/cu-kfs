@@ -8,6 +8,7 @@ public class SipImportForm extends BudgetExpansionForm {
     private String fileName;
     private int importCount;
     private FormFile file;
+    private boolean allowExecutivesToBeImported;
     
     public FormFile getFile() {
         return file;
@@ -32,4 +33,18 @@ public class SipImportForm extends BudgetExpansionForm {
     public void setImportCount(int importCount) {
         this.importCount = importCount;
     }
+
+	/**
+	 * @return the allowExecutivesToBeImported
+	 */
+	public boolean isAllowExecutivesToBeImported() {
+		return allowExecutivesToBeImported;
+	}
+
+	/**
+	 * @param allowExecutivesToBeImported the allowExecutivesToBeImported to set
+	 */
+	public void setAllowExecutivesToBeImported(boolean allowExecutivesToBeImported) {
+		this.allowExecutivesToBeImported = allowExecutivesToBeImported;
+	}
 }
