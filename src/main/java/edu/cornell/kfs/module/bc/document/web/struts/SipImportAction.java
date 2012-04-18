@@ -66,7 +66,8 @@ public class SipImportAction extends BudgetExpansionAction {
         	{
         		String returnCodeParts[] = StringUtils.splitPreserveAllTokens(returnStringCode, "|");
         		MessageMap errorMap = GlobalVariables.getMessageMap();
-        		errorMap.putError(KFSConstants.GLOBAL_ERRORS, new ExternalizedMessageWrapper(CUBCKeyConstants.ERROR_SIP_IMPORT_FILE_CONTAINS_NON_TAB_DELIMITED_LINE, returnCodeParts[1]).toString()  );
+//        		errorMap.putError(KFSConstants.GLOBAL_ERRORS, new ExternalizedMessageWrapper(CUBCKeyConstants.ERROR_SIP_IMPORT_FILE_CONTAINS_NON_TAB_DELIMITED_LINE, returnCodeParts[1]).toString()  );
+        		errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUBCKeyConstants.ERROR_SIP_IMPORT_FILE_CONTAINS_NON_TAB_DELIMITED_LINE);
         		return mapping.findForward(KFSConstants.MAPPING_BASIC);
         	}
         	
@@ -124,7 +125,6 @@ public class SipImportAction extends BudgetExpansionAction {
             isValid = false;
         }
         if ( !budgetUpdatesAllowed ) {
-            //errorMap.putError(KFSConstants.GLOBAL_ERRORS, BCKeyConstants.ERROR_PAYRATE_IMPORT_UPDATE_NOT_ALLOWED);
         	errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUBCKeyConstants.MSG_SIP_IMPORT_NOT_ALLOWED);
             isValid = false;
         }       
