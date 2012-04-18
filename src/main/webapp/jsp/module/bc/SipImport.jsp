@@ -40,7 +40,8 @@
 		<div class="tab-container" align=center>
 			<table bgcolor="#C0C0C0" cellpadding="30" >
 				<tr>
-					<td width="90%"><h3>SIP Import</h3></td>
+					<td width="60%"><h3>SIP Import</h3></td>
+					<td width="30%"><h3></h3></td>
 					<td width="10%"><h3>Action</h3></td>
 				</tr>
 				
@@ -48,10 +49,13 @@
 					<td class="infoline" > 
 						<b><kul:htmlAttributeLabel attributeEntry="${sipImportAttributes.fileName}" /></b>
 						<html:file property="file" />
-					</td> 
-					<td class="infoline" colspan="2">
+					</td>
+					<td class="infoline">
+						Allow Executives to be imported? &nbsp;<html:checkbox property="allowExecutivesToBeImported" title="Allows executives to be imported in the file you specified on the left."> </html:checkbox>
+					</td>
+					<td class="infoline">
 						<div align="center">
-							<html:image property="methodToCall.performImport" onclick="this.form.encoding='multipart/form-data'; return true;" src="kr/static/images/buttonsmall_submit.gif"  title="Import" alt="Import" styleClass="tinybutton" /> &nbsp;&nbsp;&nbsp;
+							<html:image property="methodToCall.performImport" onclick="this.form.encoding='multipart/form-data'; return true;" src="kr/static/images/buttonsmall_submit.gif"  title="Import" alt="Import" styleClass="tinybutton" />
 						</div>
 					</td>
 				</tr>
@@ -59,7 +63,7 @@
 			<table bgcolor="#C0C0C0" cellpadding="0" cellspacing="0" >
 				<tr align="center" >
 					<td class="infoline" width="50%"></td>
-					<td class="infoline"> 
+					<td class="infoline" colspan="2"> 
 						<html:image property="methodToCall.close" src="kr/static/images/buttonsmall_close.gif"  title="Close Window" alt="Close Window" styleClass="tinybutton" />
 					</td>
 				</tr>

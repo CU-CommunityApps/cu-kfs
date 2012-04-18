@@ -26,8 +26,10 @@ import org.kuali.kfs.module.bc.service.HumanResourcesPayrollService;
 import org.kuali.kfs.module.bc.util.ExternalizedMessageWrapper;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSConstants.ReportGeneration;
+import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.util.ErrorMap;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.MessageMap;
@@ -45,7 +47,7 @@ public class SipImportAction extends BudgetExpansionAction {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         String principalId = GlobalVariables.getUserSession().getPerson().getPrincipalId();
         boolean isTabbedDelimited = true;  // Assume true and turn off if found not to be true
-        
+
         SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MMM-yyyy ' ' HH:mm:ss", Locale.US);
         
         boolean isValid = validateImportFormData(sipImportForm);
@@ -58,13 +60,14 @@ public class SipImportAction extends BudgetExpansionAction {
         messageList.add(new ExternalizedMessageWrapper(CUBCKeyConstants.MSG_SIP_IMPORT_LOG_FILE_HEADER_LINE, dateFormatter.format(startTime)));
 
         //parse file
-        String returnStringCode = sipImportService.importFile(sipImportForm.getFile().getInputStream(), messageList, principalId);
+        String returnStringCode = sipImportService.importFile(sipImportForm.getFile().getInputStream(), messageList, principalId, sipImportForm.isAllowExecutivesToBeImported());
         if (!returnStringCode.contains("OK" )) {
         	if (returnStringCode.contains("NOT TAB DELIMITED"))
         	{
         		String returnCodeParts[] = StringUtils.splitPreserveAllTokens(returnStringCode, "|");
         		MessageMap errorMap = GlobalVariables.getMessageMap();
-        		errorMap.putError(KFSConstants.GLOBAL_ERRORS, new ExternalizedMessageWrapper(CUBCKeyConstants.ERROR_SIP_IMPORT_FILE_CONTAINS_NON_TAB_DELIMITED_LINE, returnCodeParts[1]).toString()  );
+//        		errorMap.putError(KFSConstants.GLOBAL_ERRORS, new ExternalizedMessageWrapper(CUBCKeyConstants.ERROR_SIP_IMPORT_FILE_CONTAINS_NON_TAB_DELIMITED_LINE, returnCodeParts[1]).toString()  );
+        		errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUBCKeyConstants.ERROR_SIP_IMPORT_FILE_CONTAINS_NON_TAB_DELIMITED_LINE);
         		return mapping.findForward(KFSConstants.MAPPING_BASIC);
         	}
         	
@@ -122,7 +125,6 @@ public class SipImportAction extends BudgetExpansionAction {
             isValid = false;
         }
         if ( !budgetUpdatesAllowed ) {
-            //errorMap.putError(KFSConstants.GLOBAL_ERRORS, BCKeyConstants.ERROR_PAYRATE_IMPORT_UPDATE_NOT_ALLOWED);
         	errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUBCKeyConstants.MSG_SIP_IMPORT_NOT_ALLOWED);
             isValid = false;
         }       

@@ -127,7 +127,7 @@ public class SipImportServiceImpl implements SipImportService {
 
 	// Variables for parameters
 	String SIP_IMPORT_MODE;
-	List<String> SIP_EXPORT_EXECUTIVES;
+	List<String> SIP_EXECUTIVES;
 	String SIP_IMPORT_AWARD_CHECK;
 	
 	// This stores the number of errors for each org (UnitId) for each error message as they are found
@@ -146,22 +146,25 @@ public class SipImportServiceImpl implements SipImportService {
 			"\tDeferred is greater than 0 AND a note was not provided.\n",
 			"\tThe SIP award (Increase To minimum + Merit + Equity) is zero AND a note was not provided.\n",
 			"\tThe ABBR flag is set to Y.\n",
-			"\tExecutive position found."
+			"\tExecutive position found.\n",
+			"\tSIP is not allowed when Job Function is UNB.\n",
+			"\tThis line is a duplicate.\n"
 	};
 	
 	protected String WarningMessages[];
 	
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SipImportService.class);
+    public Map<String, String> importedLines;
 
     /**
      * 
      * @see edu.cornell.kfs.module.bc.document.service.SipImportService#importFile(java.io.InputStream)
      */
     @Transactional
-    public String importFile(InputStream fileImportStream, List<ExternalizedMessageWrapper> errorReport , String principalId) {
+    public String importFile(InputStream fileImportStream, List<ExternalizedMessageWrapper> errorReport , String principalId, boolean allowExecutivesToBeImported) {
 		// Get values for parameters
 		SIP_IMPORT_MODE = CUBudgetParameterFinder.getSipImportMode();
-		SIP_EXPORT_EXECUTIVES = CUBudgetParameterFinder.getSIPExecutives();
+		SIP_EXECUTIVES = CUBudgetParameterFinder.getSIPExecutives();
 		SIP_IMPORT_AWARD_CHECK = CUBudgetParameterFinder.getSipImportAwardCheck();
 		
 		int TotalErrorCount = 0;
@@ -173,9 +176,8 @@ public class SipImportServiceImpl implements SipImportService {
         List<ExternalizedMessageWrapper> errorReportDetail = new ArrayList<ExternalizedMessageWrapper>();
         
         // Error message setup
-        errorCount = new int[10];
+        errorCount = new int[12];
 
-    	
         //Warning message setup
     	warningCount = new int[2];
     	WarningMessages = new String[2];
@@ -183,8 +185,14 @@ public class SipImportServiceImpl implements SipImportService {
     	WarningMessages[1] = new String("\tPercent Distribution is not equal to 1.\n");
  
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(fileImportStream));
-		errorReportDetail.add(new ExternalizedMessageWrapper("\nUnitID\tHR_Dept_ID\tKFS_Dept_ID\tDepartment_Name\tPosition_Nbr\tPosition_Description\tEmplID\tPerson_Name\tSIP_Eligible\tSIP_Employee_Type\tEmployee_RCD\tJob_Code\tJob_Code_Short_Desc\tJob_Family\tPosition_FTE\tGrade\tCU_State_Cert\tComp_Frequency\tAnnual_Rate\tComp_Rate\tJob_Standard_Hours\tWork_Months\tJob_Function\tJob_Function_Description\tIncrease_to_Minimum\tEquity\tMerit\tNote\tDeferred\tCU_ABBR_Flag\tTOTAL_Job_Planned_Commit\tTotal_Distributions\tBGP_FLSA"));
 
+        // Header line for the detail records
+        errorReportDetail.add(new ExternalizedMessageWrapper("\nUnitID\tHR_Dept_ID\tKFS_Dept_ID\tDepartment_Name\tPosition_Nbr\tPosition_Description\tEmplID\tPerson_Name\tSIP_Eligible\tSIP_Employee_Type\tEmployee_RCD\tJob_Code\tJob_Code_Short_Desc\tJob_Family\tPosition_FTE\tGrade\tCU_State_Cert\tComp_Frequency\tAnnual_Rate\tComp_Rate\tJob_Standard_Hours\tWork_Months\tJob_Function\tJob_Function_Description\tIncrease_to_Minimum\tEquity\tMerit\tNote\tDeferred\tCU_ABBR_Flag\tTOTAL_Job_Planned_Commit\tTotal_Distributions\tBGP_FLSA"));
+		
+        // Stores imported lines so that we can determine if we have run into any duplicates.  A "duplicate" is defined as a line with the same position number/emplid combination
+        //  The key string will contain position number concatenated with the emplid and the value string will contain the imported line itself.
+		importedLines = new HashMap<String, String>();
+		
         try {
         	// Loops through each line in the SIP import file, validating each one.   Records errors encountered for each line both across all UnitIds (C level orgs) and 
         	//   for each UnitId.  The variable "errorCount" contains a count of each type of error (not warning) message across all UnitIDs and the variable
@@ -192,7 +200,7 @@ public class SipImportServiceImpl implements SipImportService {
         	while(fileReader.ready()) {
             	// Read one line from the import file
             	String sipImportLine = fileReader.readLine();
-            	
+
             	// Add 1 to the counter and create a new sipImportData object
             	this.importCount++;
             	
@@ -218,7 +226,8 @@ public class SipImportServiceImpl implements SipImportService {
 		    	
 				// VALIDATE the line
 				validateSipRules(sipImportData.getPositionNbr(), sipImportData.getEmplId(), sipImportData.getCompRt(),
-								  sipImportData.getUnitId(), sipImportData.getCuAbbrFlag());
+								  sipImportData.getUnitId(), sipImportData.getCuAbbrFlag(), sipImportData.getJobFunc(),
+								  allowExecutivesToBeImported, sipImportLine);
 				validateSipValues(sipImportData.getIncToMin(), sipImportData.getMerit(), sipImportData.getEquity(), 
 									sipImportData.getDeferred(), sipImportData.getNote(), sipImportData.getCompRt(),
 									sipImportData.getUnitId());
@@ -273,8 +282,9 @@ public class SipImportServiceImpl implements SipImportService {
             	//  Next, append the errorReportDetail.
             	errorReport.addAll(errorReportDetail);
             }
-            else
+            else 
             	errorReport.add(new ExternalizedMessageWrapper("\n\tNo SIP IMPORT ERRORS FOUND\n"));
+
             
             // Additional messages and information.  NOTE:  you cannot put new line characters in front of anything with a parameter value as it will cause 
             //   "temp = SpringContext.getBean(KualiConfigurationService.class).getPropertyString(messageWrapper.getMessageKey());" to be null!
@@ -283,7 +293,10 @@ public class SipImportServiceImpl implements SipImportService {
             else
             	errorReport.add(new ExternalizedMessageWrapper(CUBCKeyConstants.MSG_SIP_IMPORT_COUNT, String.valueOf(importCount)));
             
-            return "OK";
+            if (TotalErrorCount == 0)
+            	return "OK NO ERRORS";
+            else 
+            	return "OK WITH ERRORS";
             
         }
         catch (Exception e) {
@@ -561,8 +574,19 @@ public class SipImportServiceImpl implements SipImportService {
 	 * 
 	 */
 	protected boolean isSipExecutive(String positionNumber) {
-		if (SIP_EXPORT_EXECUTIVES.contains(positionNumber))
-			return true;
+		if(ObjectUtils.isNotNull(positionNumber)) {
+			if (positionNumber.length()==6)
+				positionNumber = "00" + positionNumber;
+			
+			// Verify that the position number is 8 otherwise it is invalid
+			if (positionNumber.length()==8)
+				if (SIP_EXECUTIVES.contains(positionNumber))
+					return true;
+				else
+					return false;
+			else
+				return false;
+		}
 		else
 			return false;
 	}
@@ -572,6 +596,28 @@ public class SipImportServiceImpl implements SipImportService {
 	}
 	
   
+	protected boolean isDuplicateLine(String positionNumber, String emplId, String sipImportLine) {
+		if( ObjectUtils.isNotNull(positionNumber)) {
+			if (positionNumber.length()==6)
+				positionNumber = "00" + positionNumber;
+			
+			// Verify that the position number is 8 otherwise it is invalid
+			if (positionNumber.length()==8) {
+				String myKey = positionNumber + emplId;
+				if (importedLines.get(myKey) == null) {
+					importedLines.put(myKey, sipImportLine);
+					return false;
+				}
+				else
+					// Duplicate line found!
+					return true;
+			}
+			else
+				return false;
+		}
+		else
+			return false;
+	}
 	/**
 	 * Coordinates checking all of the SIP rules and returns error and warning messages as needed.
 	 * Also tracks counts of error and warning messages within orgs (UnitId's).
@@ -583,7 +629,9 @@ public class SipImportServiceImpl implements SipImportService {
 	 * @param AbbrFlag The AbbrFlag from the SIP Import line
 	 * @return boolean - If the method completes, it will return true, otherwise it will return false
 	 */
-	protected boolean validateSipRules(String positionNumber, String emplId, KualiDecimal CompRate, String UnitId, String AbbrFlag)
+	protected boolean validateSipRules(String positionNumber, String emplId, KualiDecimal CompRate, String UnitId, 
+										String AbbrFlag, String jobFunction, boolean allowExecutivesToBeImported,
+										String sipImportLine)
 	{
 		try {
 				// Is this position found?
@@ -621,12 +669,13 @@ public class SipImportServiceImpl implements SipImportService {
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
 				
-				// If this position is in the SIP_EXPORT_EXECUTIVES list then issue an error message.
-				if (isSipExecutive(positionNumber)) {
-					int ErrorMessageNumber = 9;
-					RulesErrorList += ErrorMessages[ErrorMessageNumber];
-					UpdateErrorCounts(ErrorMessageNumber, UnitId);	 
-				}
+				// If this position is in the SIP_EXPORT_EXECUTIVES list then issue an error message if they have not checked the checkbox in the form.
+				if (!allowExecutivesToBeImported)
+					if (isSipExecutive(positionNumber)) {
+						int ErrorMessageNumber = 9;
+						RulesErrorList += ErrorMessages[ErrorMessageNumber];
+						UpdateErrorCounts(ErrorMessageNumber, UnitId);	 
+					}
 				 
 				// If the sum of the APPT_RQST_FTE_QTY column in the LD_PNDBC_APPTFND_T table totals other than 1, issue a warning
 				if (requestedPerCentDistributionSum(positionNumber, emplId) != 1.00) {
@@ -634,7 +683,19 @@ public class SipImportServiceImpl implements SipImportService {
 					RulesWarningList += WarningMessages[WarningMessageNumber];
 					UpdateWarningCounts(WarningMessageNumber, UnitId);		
 				}
+				
+				if (jobFunction.equals("UNB")) {
+					int ErrorMessageNumber = 10;
+					RulesErrorList += ErrorMessages[ErrorMessageNumber];
+					UpdateErrorCounts(ErrorMessageNumber, UnitId);
+				}
 			
+				if (isDuplicateLine(positionNumber, emplId, sipImportLine)){
+					int ErrorMessageNumber = 11;
+					RulesErrorList += ErrorMessages[ErrorMessageNumber];
+					UpdateErrorCounts(ErrorMessageNumber, UnitId);
+				}
+					
 				return true;
 		}
 		catch (Exception e) {
@@ -692,7 +753,7 @@ public class SipImportServiceImpl implements SipImportService {
 				}
 				
 	//		4. SIP Awards are 'reasonable' (metric needed) : is sum of SIP awards between 0 and SIP_IMPORT_AWARD_CHECK parameter of the Compensation Rate?
-			if ( totalSIP.isGreaterThan(CompRate.multiply(new KualiDecimal(SIP_IMPORT_AWARD_CHECK)))) {
+			if ( totalSIP.isGreaterThan(CompRate.multiply(new KualiDecimal(SIP_IMPORT_AWARD_CHECK).divide(new KualiDecimal(100))))) {
 				ValuesWarningList += WarningMessages[0];
 				UpdateWarningCounts(0, UnitId);
 			}
@@ -803,7 +864,7 @@ public class SipImportServiceImpl implements SipImportService {
 			// Generate summary of each error type prefaced with a count.
 			for ( i=0; i<=(ErrorMessages.length-1); i++ ){
 				if (errorCount[i]!=0) {  // Only display the error if there is an error count > 0
-					errorReport.add(new ExternalizedMessageWrapper(errorCount[i] + " - " + ErrorMessages[i] + "\n"));
+					errorReport.add(new ExternalizedMessageWrapper(errorCount[i] + " - " + ErrorMessages[i]));
 					TotalErrorCount += errorCount[i];
 				}
 			}
@@ -818,7 +879,7 @@ public class SipImportServiceImpl implements SipImportService {
 		        errorReport.add(new ExternalizedMessageWrapper("\n" + UnitId + "\n"));
 		        // Display Errors
 		        for (Map.Entry<Integer, Integer> myErrCount : errorCountByUnitId.get(UnitId).entrySet()) {
-		        	errorReport.add(new ExternalizedMessageWrapper("\t" + myErrCount.getValue() + " - " + ErrorMessages[myErrCount.getKey()] + "\n"));
+		        	errorReport.add(new ExternalizedMessageWrapper("\t" + myErrCount.getValue() + " - " + ErrorMessages[myErrCount.getKey()]));
 		        }
 		    } 
 		    
@@ -851,7 +912,7 @@ public class SipImportServiceImpl implements SipImportService {
 			// Generate summary of each warning type prefaced with a count.
 			for ( i=0; i<=(WarningMessages.length-1); i++ ){
 				if (warningCount[i]!=0) {  // Only display the warning if there is an warning count > 0
-					warningReport.add(new ExternalizedMessageWrapper(warningCount[i] + " - " + WarningMessages[i] + "\n"));
+					warningReport.add(new ExternalizedMessageWrapper(warningCount[i] + " - " + WarningMessages[i]));
 					TotalWarningCount += warningCount[i];
 				}
 			}
@@ -866,7 +927,7 @@ public class SipImportServiceImpl implements SipImportService {
 		        warningReport.add(new ExternalizedMessageWrapper("\n" + UnitId + "\n"));
 		        // Display Warnings
 		        for (Map.Entry<Integer, Integer> myWarningCount : warningCountByUnitId.get(UnitId).entrySet()) {
-		        	warningReport.add(new ExternalizedMessageWrapper("\t" + myWarningCount.getValue() + " - " + WarningMessages[myWarningCount.getKey()] + "\n"));
+		        	warningReport.add(new ExternalizedMessageWrapper("\t" + myWarningCount.getValue() + " - " + WarningMessages[myWarningCount.getKey()]));
 		        }		        
 		    } 
 		    
