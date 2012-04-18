@@ -55,7 +55,7 @@
 					</td>
 					<td class="infoline">
 						<div align="center">
-							<html:image property="methodToCall.performImport" onclick="this.form.encoding='multipart/form-data'; return true;" src="kr/static/images/buttonsmall_submit.gif"  title="Import" alt="Import" styleClass="tinybutton" />
+							<html:image property="methodToCall.performImport" onclick="allowExecutivesToBeImported.checked=false; this.form.encoding='multipart/form-data'; return true;" src="kr/static/images/buttonsmall_submit.gif"  title="Import" alt="Import" styleClass="tinybutton" />
 						</div>
 					</td>
 				</tr>
