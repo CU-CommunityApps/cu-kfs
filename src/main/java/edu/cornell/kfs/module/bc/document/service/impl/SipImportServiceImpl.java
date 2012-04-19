@@ -752,7 +752,7 @@ public class SipImportServiceImpl implements SipImportService {
 					UpdateErrorCounts(7, UnitId);
 				}
 				
-	//		4. SIP Awards are 'reasonable' (metric needed) : is sum of SIP awards between 0 and SIP_IMPORT_AWARD_CHECK parameter of the Compensation Rate?
+	//		4. SIP Awards are 'reasonable' : is the sum of the SIP awards between 0 and SIP_IMPORT_AWARD_CHECK parameter % of the Compensation Rate?
 			if ( totalSIP.isGreaterThan(CompRate.multiply(new KualiDecimal(SIP_IMPORT_AWARD_CHECK).divide(new KualiDecimal(100))))) {
 				ValuesWarningList += WarningMessages[0];
 				UpdateWarningCounts(0, UnitId);

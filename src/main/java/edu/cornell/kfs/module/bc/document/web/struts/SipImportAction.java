@@ -66,14 +66,13 @@ public class SipImportAction extends BudgetExpansionAction {
         	{
         		String returnCodeParts[] = StringUtils.splitPreserveAllTokens(returnStringCode, "|");
         		MessageMap errorMap = GlobalVariables.getMessageMap();
-//        		errorMap.putError(KFSConstants.GLOBAL_ERRORS, new ExternalizedMessageWrapper(CUBCKeyConstants.ERROR_SIP_IMPORT_FILE_CONTAINS_NON_TAB_DELIMITED_LINE, returnCodeParts[1]).toString()  );
-        		errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUBCKeyConstants.ERROR_SIP_IMPORT_FILE_CONTAINS_NON_TAB_DELIMITED_LINE);
-        		return mapping.findForward(KFSConstants.MAPPING_BASIC);
+        		errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUBCKeyConstants.ERROR_SIP_IMPORT_FILE_CONTAINS_NON_TAB_DELIMITED_LINE, returnCodeParts[1]);
+        		return mapping.findForward(KFSConstants.MAPPING_BASIC);  // This will refresh the page
         	}
         	
             sipImportService.generateValidationReportInTextFormat(messageList, baos);
             WebUtils.saveMimeOutputStreamAsFile(response, ReportGeneration.TEXT_MIME_TYPE, baos, BCConstants.SIP_IMPORT_LOG_FILE);
-            return returnToCaller(mapping, form, request, response);
+            return returnToCaller(mapping, form, request, response);  // This allows us to stay on the same page and the page is not refreshed
         }
 
         
@@ -86,7 +85,7 @@ public class SipImportAction extends BudgetExpansionAction {
         sipImportService.generateValidationReportInTextFormat(messageList, baos);
         WebUtils.saveMimeOutputStreamAsFile(response, ReportGeneration.TEXT_MIME_TYPE, baos, BCConstants.SIP_IMPORT_LOG_FILE);
         
-        return returnToCaller(mapping, form, request, response);
+        return returnToCaller(mapping, form, request, response);  // This allows us to stay on the same page and the page is not refreshed
     }
     
     
