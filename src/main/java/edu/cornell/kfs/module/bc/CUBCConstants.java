@@ -78,4 +78,9 @@ public class CUBCConstants extends BCConstants {
     
     public static final String BUDGET_ONLY_OBJECT_CODE_SUB_TYPE = "BU";
 
+
+    public static final String MESSAGE_BUDGET_CONST_REPORT_HEADER = "message.batch.bc.runStatsReportHeader";
+    
+
+    public static final String BALANCE_TYPE_TRUSTEES_BUDGET = "TB";
 }

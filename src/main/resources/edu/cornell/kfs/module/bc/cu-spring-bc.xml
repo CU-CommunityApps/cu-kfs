@@ -41,6 +41,8 @@
 		<property name="jobNames">
 			<list merge="true">
 				<value>psBudgetFeedJob</value>
+				<value>budgetConstructionGeneralLedgerLoadBatchJob</value>
+				<value>trusteeBudgetConstructionGeneralLedgerLoadBatchJob</value>
 			</list>
 		</property>
 		
@@ -340,6 +342,57 @@
 		</property>
 	
 	</bean>
+	<bean id="generalLedgerBudgetLoadDao" parent="budgetConstructionBatchHelperDao" class="org.kuali.kfs.module.bc.batch.dataaccess.impl.GeneralLedgerBudgetLoadDaoOjb">
+        <property name="parameterService">
+            <ref bean="parameterService"/>
+        </property>
+        <property name="dateTimeService">
+            <ref bean="dateTimeService"/>
+        </property>
+    </bean>
+    <bean id="budgetConstructionGeneralLedgerLoadBatchJob" parent="scheduledJobDescriptor">
+      <property name="steps">
+        <list>
+          <ref bean="budgetConstructionGeneralLedgerLoadBatchStep" />
+        </list>
+      </property>
+    </bean>
+    <bean id="trusteeBudgetConstructionGeneralLedgerLoadBatchJob" parent="scheduledJobDescriptor">
+      <property name="steps">
+        <list>
+          <ref bean="trusteeBudgetConstructionGeneralLedgerLoadBatchStep" />
+        </list>
+      </property>
+    </bean>
+	<bean id="budgetConstructionGeneralLedgerLoadBatchStep" class="org.kuali.kfs.module.bc.batch.BudgetConstructionGeneralLedgerLoadBatchStep" parent="step">
+     <property name="GLBudgetLoadService">
+       <ref bean="glBudgetLoadService"/>
+      </property>  
+    </bean>
+        
+    <bean id="trusteeBudgetConstructionGeneralLedgerLoadBatchStep" class="org.kuali.kfs.module.bc.batch.TrusteeBudgetConstructionGeneralLedgerLoadBatchStep" parent="step">
+     <property name="GLBudgetLoadService">
+       <ref bean="glBudgetLoadService"/>
+      </property>  
+    </bean>
+
+    <bean id="genesisDao" parent="budgetConstructionBatchHelperDao" class="org.kuali.kfs.module.bc.batch.dataaccess.impl.GenesisDaoOjb">
+        <property name="dateTimeService">
+            <ref bean="dateTimeService"/>
+        </property>
+        <property name="documentService">
+            <ref bean="documentService" />
+        </property>
+        <property name="kualiModuleService">
+            <ref bean="kualiModuleService" />
+        </property>
+        <property name="workflowDocumentService">
+            <ref bean="workflowDocumentService" />
+        </property>
+        <property name="budgetConstructionHumanResourcesPayrollInterfaceDao">
+            <ref bean="budgetConstructionHumanResourcesPayrollInterfaceDao" />
+        </property>
+    </bean>
 	
 	
 	<bean id="genesisService" class="org.kuali.kfs.module.bc.batch.service.impl.GenesisServiceImpl">
