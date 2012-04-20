@@ -363,4 +363,9 @@ public class BudgetConstructionHumanResourcesPayrollInterfaceDaoJdbc extends Bud
     {
         // do nothing in the default: the names are added in the build routines
     }
+
+	public String getStateFundedCode(String positionNumber) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
