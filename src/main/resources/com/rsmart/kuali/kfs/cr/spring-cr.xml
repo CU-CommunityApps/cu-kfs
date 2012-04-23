@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright 2005-2007 The Kuali Foundation.
+ 
+ Licensed under the Educational Community License, Version 1.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl1.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+    <bean id="crModule" parent="crModule-parentBean" />
+
+    <bean id="crModule-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration" abstract="true">
+		<property name="namespaceCode" value="KUALI-CR"/>
+		<property name="initializeDataDictionary" value="true" />
+        <property name="packagePrefixes">
+            <list>
+                <value>com.rsmart.kuali.kfs.cr</value>
+            </list>
+        </property>
+		<property name="dataDictionaryPackages">
+			<list>
+                <value>com/rsmart/kuali/kfs/cr/businessobject/datadictionary</value>
+                <value>com/rsmart/kuali/kfs/cr/document/datadictionary</value>
+			</list>
+		</property>
+		<property name="databaseRepositoryFilePaths">
+			<list>
+				<value>com/rsmart/kuali/kfs/cr/ojb-cr.xml</value>
+			</list>
+		</property>
+		<property name="scriptConfigurationFilePaths">
+			<list>
+				<value>com/rsmart/kuali/kfs/cr/dwr-cr.xml</value>
+			</list>
+		</property>
+		<property name="jobNames">
+			<list>
+				<value>checkReconciliationJob</value>
+				<value>crGlTransactionJob</value>
+			</list>
+		</property>
+		<property name="triggerNames">
+			<list>
+				<value>checkReconciliationJobTrigger</value>
+				<value>crGlTransJobTrigger</value>
+			</list>
+		</property>
+        <property name="batchFileDirectories">
+          <list>
+            <value>${reports.directory}/cr</value>
+            <value>${staging.directory}/cr</value>
+          </list>
+        </property>
+	</bean>
+
+    <bean id="crModuleService" parent="crModuleService-parentBean"/>
+
+    <bean id="crModuleService-parentBean" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl" abstract="true">
+    	<property name="moduleConfiguration" ref="crModule"/>
+    </bean>
+
+	<bean id="crCheckReconciliationDao" parent="platformAwareDao"  class="com.rsmart.kuali.kfs.cr.dataaccess.impl.CheckReconciliationDaoOjb" />
+	
+	<bean id="crCheckReconciliationReportService" class="com.rsmart.kuali.kfs.cr.document.service.impl.CheckReconciliationReportServiceImpl">
+		<property name="checkReconciliationDao" ref="crCheckReconciliationDao"/>
+	</bean>
+	
+	<bean id="crGlTransactionService" class="com.rsmart.kuali.kfs.cr.document.service.impl.GlTransactionServiceImpl">
+		<property name="businessObjectService"     ref="businessObjectService"/>
+		<property name="accountingPeriodService"   ref="accountingPeriodService" />
+		<property name="pendingTransactionService" ref="pdpGlPendingTransactionService" />
+		<property name="parameterService"          ref="parameterService" />
+		<property name="dateTimeService"    	   ref="dateTimeService"/>
+		<property name="checkReconciliationDao"    ref="crCheckReconciliationDao"/>
+	</bean>
+	
+	<bean id="checkReconciliationJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="checkReconciliationImportStep" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="checkReconciliationImportStep" class="com.rsmart.kuali.kfs.cr.batch.CheckReconciliationImportStep" parent="step">
+		<property name="businessObjectService"      ref="businessObjectService" />
+		<property name="kualiConfigurationService"  ref="kualiConfigurationService" />
+		<property name="glTransactionService"       ref="crGlTransactionService" />
+	</bean>
+		
+	<bean id="checkReconciliationJobTrigger" parent="cronTrigger">
+		<property name="jobName" value="checkReconciliationJob" />
+		<property name="cronExpression" value="0 0 15 ? * *" />
+	</bean>
+	
+	<bean id="crGlTransactionJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="crGlTransactionStep" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="crGlTransactionStep" class="com.rsmart.kuali.kfs.cr.batch.GlTransactionStep" parent="step">
+		<property name="businessObjectService"      ref="businessObjectService" />
+		<property name="glTransactionService"       ref="crGlTransactionService" />
+	</bean>
+		
+	<bean id="crGlTransJobTrigger" parent="cronTrigger">
+		<property name="jobName" value="crGlTransactionJob" />
+		<property name="cronExpression" value="0 0 23 * * ?" />
+	</bean>
+</beans>
