@@ -38,7 +38,7 @@ public class BCParameterKeyConstants implements ParameterKeyConstants {
     public static final String SOURCE_FISCAL_YEAR = "SOURCE_FISCAL_YEAR";
     
     //new codes for KITI-2999
-    public static final String BC_TRUSEE_ONLY_BUDGET = "BC_TRUSEE_ONLY_BUDGET";
+    public static final String BC_TRUSTEE_ONLY_BUDGET = "BC_TRUSTEE_ONLY_BUDGET";
     public static final String BC_GL_SUB_FUNDS = "BC_GL_SUB_FUNDS";
     public static final String BC_GL_SUB_FUNDS_PROGRAM = "BC_GL_SUB_FUNDS_PROGRAM";
     public static final String BC_GL_AC_OBJECTS = "BC_GL_AC_OBJECTS";
