@@ -86,7 +86,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         //changes for KITI-2999
         //First we need to determine if we are running this for Trustee Budget(TB) or regular Budget Construction (BC)
        
-        if(this.getParameterService().getIndicatorParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSEE_ONLY_BUDGET)) {
+        if(this.getParameterService().getIndicatorParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSTEE_ONLY_BUDGET)) {
             tbRunFlag = true;
         }
         
@@ -123,7 +123,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         // write out the counts for verification
         diagnosticCounters.writeDiagnosticCounters();
         if(tbRunFlag) {
-            Parameter param = this.getParameterService().retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSEE_ONLY_BUDGET);
+            Parameter param = this.getParameterService().retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSTEE_ONLY_BUDGET);
             param.setParameterValue("N");
             this.getBusinessObjectService().save(param);
         }

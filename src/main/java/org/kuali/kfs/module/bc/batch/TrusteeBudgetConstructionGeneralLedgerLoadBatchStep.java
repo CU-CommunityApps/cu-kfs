@@ -28,7 +28,7 @@ public class TrusteeBudgetConstructionGeneralLedgerLoadBatchStep extends Abstrac
     private GLBudgetLoadService glBudgetLoadService;
 
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        if(this.getParameterService().getIndicatorParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSEE_ONLY_BUDGET)) {
+        if(this.getParameterService().getIndicatorParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSTEE_ONLY_BUDGET)) {
             glBudgetLoadService.loadPendingBudgetConstructionGeneralLedger();
             return true;
         } else {

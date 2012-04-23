@@ -13,7 +13,7 @@ public class CUBCParameterKeyConstants extends BCParameterKeyConstants {
     public static final String SIP_IMPORT_AWARD_CHECK = "SIP_IMPORT_AWARD_CHECK";
 
     //new codes for KITI-2999
-    public static final String BC_TRUSEE_ONLY_BUDGET = "BC_TRUSEE_ONLY_BUDGET";
+    public static final String BC_TRUSTEE_ONLY_BUDGET = "BC_TRUSTEE_ONLY_BUDGET";
     public static final String BC_GL_SUB_FUNDS = "BC_GL_SUB_FUNDS";
     public static final String BC_GL_SUB_FUNDS_PROGRAM = "BC_GL_SUB_FUNDS_PROGRAM";
     public static final String BC_GL_AC_OBJECTS = "BC_GL_AC_OBJECTS";
