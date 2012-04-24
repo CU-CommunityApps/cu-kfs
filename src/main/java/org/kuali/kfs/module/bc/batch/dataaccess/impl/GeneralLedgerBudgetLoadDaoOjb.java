@@ -459,7 +459,6 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         while (additionalBannedSubFundPrograms.hasNext()) {
             bannedSubFunds.add(additionalBannedSubFundPrograms.next());
         }
-        bannedSubFunds.addAll(bannedSubFundPrograms);
         
         /**
          * query for the subfund property for each account in the DB
