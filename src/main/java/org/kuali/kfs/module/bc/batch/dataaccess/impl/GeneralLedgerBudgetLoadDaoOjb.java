@@ -491,10 +491,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
      */
     protected HashSet<String> getSubFundsNotToBeLoaded() {
         List<String> subFunds = this.parameterService.getParameterValues(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS);
-        HashSet<String> bannedSubFunds = new HashSet<String>(subFunds.size() + 1);
-        if(BCConstants.NO_BC_GL_LOAD_FUND_GROUPS.size() != 0) {
-            subFunds.addAll(BCConstants.NO_BC_GL_LOAD_FUND_GROUPS);
-        }
+        HashSet<String> bannedSubFunds;
         if(!tbRunFlag) {
             if (subFunds.size() !=0) {
                 /**
@@ -517,17 +514,19 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
                 }
             }
             else {
-                bannedSubFunds = new HashSet<String>(subFunds.size() + 1);
-            }    
+            	bannedSubFunds = new HashSet<String>(BCConstants.NO_BC_GL_LOAD_SUBFUND_GROUPS.size() + 1);
+            }   
+            /**
+             * now add the specific sub funds we don't want from the hard-coded array in BCConstants to the hash set
+             */
+            Iterator<String> additionalBannedSubFunds = subFunds.iterator();
+            while (additionalBannedSubFunds.hasNext()) {
+                bannedSubFunds.add(additionalBannedSubFunds.next());
+            }
+        } else {
+        	bannedSubFunds = new HashSet<String>();
         }
         
-        /**
-         * now add the specific sub funds we don't want from the hard-coded array in BCConstants to the hash set
-         */
-        Iterator<String> additionalBannedSubFunds = subFunds.iterator();
-        while (additionalBannedSubFunds.hasNext()) {
-            bannedSubFunds.add(additionalBannedSubFunds.next());
-        }
         return bannedSubFunds;
     }
     
