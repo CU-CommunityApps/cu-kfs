@@ -53,6 +53,7 @@ import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KualiInteger;
 
+import edu.cornell.kfs.coa.businessobject.SubFundProgram;
 import edu.cornell.kfs.module.bc.CUBCConstants;
 //import edu.cornell.kfs.coa.businessobject.SubFundProgram;
 
@@ -547,8 +548,8 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
              */
             Criteria criteriaID = new Criteria();
             criteriaID.addIn(KFSPropertyConstants.FUND_GROUP_CODE, subFundsProgram);
-            //ReportQueryByCriteria queryID = new ReportQueryByCriteria(SubFundProgram.class, criteriaID);
-            ReportQueryByCriteria queryID = new ReportQueryByCriteria(SubFundGroup.class, criteriaID);
+            ReportQueryByCriteria queryID = new ReportQueryByCriteria(SubFundProgram.class, criteriaID);
+            //ReportQueryByCriteria queryID = new ReportQueryByCriteria(SubFundGroup.class, criteriaID);
             queryID.setAttributes(new String[] { "programCode" });
             /**
              * set the size of the hashset based on the number of rows the query will return
