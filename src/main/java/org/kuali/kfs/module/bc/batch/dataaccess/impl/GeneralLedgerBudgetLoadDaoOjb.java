@@ -455,6 +455,10 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
          */
         HashSet<String> bannedSubFunds = getSubFundsNotToBeLoaded();
         HashSet<String> bannedSubFundPrograms = getSubFundsProgramsNotToBeLoaded();
+        Iterator<String> additionalBannedSubFundPrograms = bannedSubFundPrograms.iterator();
+        while (additionalBannedSubFundPrograms.hasNext()) {
+            bannedSubFunds.add(additionalBannedSubFundPrograms.next());
+        }
         bannedSubFunds.addAll(bannedSubFundPrograms);
         
         /**
@@ -547,10 +551,9 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
              * look for subfunds in the banned fund programs
              */
             Criteria criteriaID = new Criteria();
-            criteriaID.addIn(KFSPropertyConstants.FUND_GROUP_CODE, subFundsProgram);
+            criteriaID.addIn("programCode", subFundsProgram);
             ReportQueryByCriteria queryID = new ReportQueryByCriteria(SubFundProgram.class, criteriaID);
-            //ReportQueryByCriteria queryID = new ReportQueryByCriteria(SubFundGroup.class, criteriaID);
-            queryID.setAttributes(new String[] { "programCode" });
+            queryID.setAttributes(new String[] { KFSPropertyConstants.SUB_FUND_GROUP_CODE });
             /**
              * set the size of the hashset based on the number of rows the query will return
              */
