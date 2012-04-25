@@ -102,10 +102,8 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         
         PrintStream reportDataStream = this.getReportPrintStream();
 
+        removeOldBudgetGeneralLedgerEntries(fiscalYear, diagnosticCounters);
 
-        if(tbRunFlag) {
-        	removeOldBudgetGeneralLedgerEntries(fiscalYear, diagnosticCounters);
-        }
         
         /**
          * make sure all the accounting periods for the load year are open, so the entry lines we create can be posted
