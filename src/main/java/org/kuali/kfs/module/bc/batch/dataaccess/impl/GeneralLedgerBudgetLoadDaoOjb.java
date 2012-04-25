@@ -34,12 +34,15 @@ import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.SubFundGroup;
+import org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl;
+import org.kuali.kfs.gl.businessobject.Balance;
 import org.kuali.kfs.module.bc.BCConstants;
 import org.kuali.kfs.module.bc.BCParameterKeyConstants;
 import org.kuali.kfs.module.bc.batch.dataaccess.GeneralLedgerBudgetLoadDao;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionHeader;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionMonthly;
 import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionGeneralLedger;
+import org.kuali.kfs.module.cab.businessobject.GeneralLedgerEntry;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
@@ -224,46 +227,50 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
      ******************************************************************************************************************************/
 
     private void removeOldBudgetGeneralLedgerEntries(Integer year, DiagnosticCounters diagnosticCounters) {
+    	
 		if(!tbRunFlag) {
+			getPersistenceBrokerTemplate().clearCache();
+	        Criteria pendingEntryCriteria = new Criteria();
+	        pendingEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
+	        pendingEntryCriteria.addNotEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "TB");
+	        QueryByCriteria deletePendingQry = new QueryByCriteria(GeneralLedgerPendingEntry.class, pendingEntryCriteria);
+	        getPersistenceBrokerTemplate().deleteByQuery(deletePendingQry);
+	        
+	        Criteria glEntryCriteria = new Criteria();
+	        glEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
+	        glEntryCriteria.addNotEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "TB");
+	        QueryByCriteria deleteEntryQry = new QueryByCriteria(GeneralLedgerEntry.class, glEntryCriteria);
+	        getPersistenceBrokerTemplate().deleteByQuery(deleteEntryQry);
+	        
+	        Criteria glBalanceCriteria = new Criteria();
+	        glBalanceCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
+	        glBalanceCriteria.addNotEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "TB");
+	        QueryByCriteria deleteBalanceQry = new QueryByCriteria(Balance.class, glEntryCriteria);
+	        getPersistenceBrokerTemplate().deleteByQuery(deleteBalanceQry);
+	        
+	        getPersistenceBrokerTemplate().clearCache();
 			
-			
-				/*For non-TB execution:
-				  GL_PENDING_ENTRY_T
-				    Delete all entries with 
-				      UNIV_FISCAL_YR = (target year)
-				      FIN_BALANCE_TYP_CD != 'TB'  (note the !)
-				  GL_ENTRY_T
-				    Delete all entries with
-				      UNIV_FISCAL_YR = (target year)
-				      FIN_BALANCE_TYP_CD != 'TB'  (note the !)
-				  GL_BALANCE_T
-				    Delete all entries with
-				      UNIV_FISCAL_YR = (target year)
-				      FIN_BALANCE_TYP_CD != 'TB'  (note the !)
-
-				NOTE:  target year = current fiscal year + 1 = budget year
-				NOTE:  All the selection criteria are the same for the 3 tables.  So one procedure with a table name passed in should do the trick if you just process the tables one at a time sequentially.
-				NOTE:  Report the number of records deleted from EACH of these 3 tables in the output.  [It would be nice if you could give a count for each FIN_BALANCE_TYP_CD, but for now, we'll survive with just a total count of deleted records.  See below.]
-			*/
 		} else {
-			/*For TB execution:
-				  GL_PENDING_ENTRY_T
-				    Delete all entries with 
-				      UNIV_FISCAL_YR = (target year)
-				      FIN_BALANCE_TYP_CD = 'TB'
-				  GL_ENTRY_T
-				    Delete all entries with
-				      UNIV_FISCAL_YR = (target year)
-				      FIN_BALANCE_TYP_CD = 'TB'
-				  GL_BALANCE_T
-				    Delete all entries with
-				      UNIV_FISCAL_YR = (target year)
-				      FIN_BALANCE_TYP_CD = 'TB'
-
-				NOTE:  target year = current fiscal year + 1 = budget year
-				NOTE:  All the selection criteria are the same for the 3 tables.  So one procedure with a table name passed in should do the trick if you just process the tables one a time sequentially.
-				NOTE:  Report the number of records deleted from EACH of these 3 tables in the output.
-*/
+			getPersistenceBrokerTemplate().clearCache();
+	        Criteria pendingEntryCriteria = new Criteria();
+	        pendingEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
+	        pendingEntryCriteria.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "TB");
+	        QueryByCriteria deletePendingQry = new QueryByCriteria(GeneralLedgerPendingEntry.class, pendingEntryCriteria);
+	        getPersistenceBrokerTemplate().deleteByQuery(deletePendingQry);
+	        
+	        Criteria glEntryCriteria = new Criteria();
+	        glEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
+	        glEntryCriteria.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "TB");
+	        QueryByCriteria deleteEntryQry = new QueryByCriteria(GeneralLedgerEntry.class, glEntryCriteria);
+	        getPersistenceBrokerTemplate().deleteByQuery(deleteEntryQry);
+	        
+	        Criteria glBalanceCriteria = new Criteria();
+	        glBalanceCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
+	        glBalanceCriteria.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "TB");
+	        QueryByCriteria deleteBalanceQry = new QueryByCriteria(Balance.class, glEntryCriteria);
+	        getPersistenceBrokerTemplate().deleteByQuery(deleteBalanceQry);
+	        
+	        getPersistenceBrokerTemplate().clearCache();
 		}
 		
 	}
