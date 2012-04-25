@@ -81,8 +81,27 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
          * budget construction general ledger rows for the budget period to be loaded. it need not be an actual fiscal year.
          */
         //changes for KITI-2999
+
+        
+        PrintStream reportDataStream = this.getReportPrintStream();
         //First we need to determine if we are running this for Trustee Budget(TB) or regular Budget Construction (BC)
        
+    	//first we need to check all params and echo if they are setup properly
+    	Parameter tbRunFlagParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSTEE_ONLY_BUDGET);
+    	Parameter subFundsParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS);
+    	Parameter subFundProgramsParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS_PROGRAM);
+        Parameter glAcObjectsParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_AC_OBJECTS);
+        
+        boolean errorEncountered = printOutEnvironment(reportDataStream, tbRunFlagParameter, subFundsParameter, subFundProgramsParameter, glAcObjectsParameter, fiscalYear);
+        if(errorEncountered) {
+        	//we need to close the report and break out of the run
+        	if (reportDataStream != null) {
+                reportDataStream.flush();
+                reportDataStream.close();
+            }
+        	return;
+        }
+        
         if(this.getParameterService().getIndicatorParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSTEE_ONLY_BUDGET)) {
             tbRunFlag = true;
         }
@@ -99,8 +118,6 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
          * initiliaze the counter variables
          */
         DiagnosticCounters diagnosticCounters = new DiagnosticCounters();
-        
-        PrintStream reportDataStream = this.getReportPrintStream();
 
         removeOldBudgetGeneralLedgerEntries(fiscalYear, diagnosticCounters);
 
@@ -118,7 +135,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
          */
         loadBudgetConstructionMonthlyBudget(daoGlobalVariables, diagnosticCounters);
         // write out the counts for verification
-        diagnosticCounters.writeDiagnosticCounters();
+        //diagnosticCounters.writeDiagnosticCounters();
         if(tbRunFlag) {
             Parameter param = this.getParameterService().retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSTEE_ONLY_BUDGET);
             param.setParameterValue("N");
@@ -129,7 +146,80 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         
     }
 
-    /*******************************************************************************************************************************
+    private boolean printOutEnvironment(PrintStream reportDataStream, Parameter tbRunFlagParameter,
+			Parameter subFundsParameter, Parameter subFundProgramsParameter,
+			Parameter glAcObjectsParameter, Integer fiscalYear) {
+    	
+    	boolean errorEncountered = false;
+    	boolean warningEncountered = false;
+    	StringBuilder body = new StringBuilder();
+    	body.append(String.format("\n\nBudget Construction Environment Variables\n"));
+    	body.append(String.format("\n********************************************\n"));
+
+    	body.append(String.format("\nINFO: Report being run for Fiscal Year %d", fiscalYear));
+    	if(tbRunFlagParameter != null) {
+    		if(tbRunFlagParameter.getParameterValue() == null) {
+    			warningEncountered = true;
+    			body.append(String.format("\nWARNING: %s is NULL, suggest using 'N' as value\n", tbRunFlagParameter.getParameterName()));
+    		} else {
+    			body.append(String.format("\nINFO: %s \t %s \t %s \n", tbRunFlagParameter.getParameterName(), tbRunFlagParameter.getParameterNamespace(), tbRunFlagParameter.getParameterValue() ));
+    		}
+    	} else {
+    		errorEncountered = true;
+    		body.append("\nERROR: The BC_TRUSTEE_ONLY_BUDGET parameter was not found");
+    	}
+    	
+    	if(subFundsParameter != null) {
+    		if(subFundsParameter.getParameterValue() == null) {
+    			warningEncountered = true;
+    			body.append(String.format("\nWARNING: %s is NULL\n", subFundsParameter.getParameterName()));
+    		} else {
+    			body.append(String.format("\nINFO: %s \t %s \t %s \n", subFundsParameter.getParameterName(), subFundsParameter.getParameterNamespace(), subFundsParameter.getParameterValue() ));
+    		}
+    		
+    	} else {
+    		errorEncountered = true;
+    		body.append("\nERROR: The BC_GL_SUB_FUNDS parameter was not found");
+    	}
+    	
+    	if(subFundProgramsParameter != null) {
+    		if(subFundProgramsParameter.getParameterValue() == null) {
+    			warningEncountered = true;
+    			body.append(String.format("\nWARNING: %s is NULL\n", subFundProgramsParameter.getParameterName()));
+    		} else {
+    			body.append(String.format("\nINFO: %s \t %s \t %s \n", subFundProgramsParameter.getParameterName(), subFundProgramsParameter.getParameterNamespace(), subFundProgramsParameter.getParameterValue() ));
+    		}
+    		
+    	} else {
+    		errorEncountered = true;
+    		body.append("\nERROR: The BC_GL_SUB_FUNDS_PROGRAM parameter was not found");
+    	}
+    	
+    	if(glAcObjectsParameter != null) {
+    		if(glAcObjectsParameter.getParameterValue() == null) {
+    			warningEncountered = true;
+    			body.append(String.format("\nWARNING: %s is NULL\n", glAcObjectsParameter.getParameterName()));
+    		} else {
+    			body.append(String.format("\nINFO: %s \t %s \t %s \n", glAcObjectsParameter.getParameterName(), glAcObjectsParameter.getParameterNamespace(), glAcObjectsParameter.getParameterValue() ));
+    		}
+    	} else {
+    		errorEncountered = true;
+    		body.append("\nERROR: The BC_GL_AC_OBJECTS parameter was not found");
+    	}
+
+    	if(errorEncountered) {
+    		body.append("\n\nERROR conditions were encountered.  Processing terminated.  Please correct errors.");
+    	} else if(warningEncountered) {
+    		body.append("\n\nWARNINGs were found.  Please validate results and re-run if needed.");
+    	} else {
+    		body.append("\n\nNo ERROR conditions were encountered, so processing will begin.");
+    	} 
+    	body.append(String.format("\n********************************************\n"));
+    	reportDataStream.print(body);
+    	return errorEncountered;
+	}
+
+	/*******************************************************************************************************************************
      * methods to do the actual load *
      ******************************************************************************************************************************/
 
