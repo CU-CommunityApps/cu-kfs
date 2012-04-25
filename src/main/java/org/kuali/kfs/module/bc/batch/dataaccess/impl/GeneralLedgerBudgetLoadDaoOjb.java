@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
@@ -43,9 +42,7 @@ import org.kuali.kfs.module.bc.businessobject.BudgetConstructionMonthly;
 import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionGeneralLedger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.MessageBuilder;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
-import org.kuali.kfs.sys.report.BusinessObjectReportHelper;
 import org.kuali.kfs.sys.service.HomeOriginationService;
 import org.kuali.rice.kns.bo.Parameter;
 import org.kuali.rice.kns.service.BusinessObjectService;
@@ -55,7 +52,6 @@ import org.kuali.rice.kns.util.KualiInteger;
 
 import edu.cornell.kfs.coa.businessobject.SubFundProgram;
 import edu.cornell.kfs.module.bc.CUBCConstants;
-//import edu.cornell.kfs.coa.businessobject.SubFundProgram;
 
 public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelperDaoOjb implements GeneralLedgerBudgetLoadDao {
 
@@ -91,7 +87,6 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             tbRunFlag = true;
         }
         
-        
         //
         // set up the global variables
         // this is a single object that can be passed to all methods that need it, to make the code "thread safe"
@@ -107,7 +102,10 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         
         PrintStream reportDataStream = this.getReportPrintStream();
 
-        //this.writeReportHeader(reportDataStream, fileName);
+
+        if(tbRunFlag) {
+        	removeOldBudgetGeneralLedgerEntries(fiscalYear, diagnosticCounters);
+        }
         
         /**
          * make sure all the accounting periods for the load year are open, so the entry lines we create can be posted
@@ -137,7 +135,52 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
      * methods to do the actual load *
      ******************************************************************************************************************************/
 
-    /**
+    private void removeOldBudgetGeneralLedgerEntries(Integer year, DiagnosticCounters diagnosticCounters) {
+		if(!tbRunFlag) {
+			
+			
+				/*For non-TB execution:
+				  GL_PENDING_ENTRY_T
+				    Delete all entries with 
+				      UNIV_FISCAL_YR = (target year)
+				      FIN_BALANCE_TYP_CD != 'TB'  (note the !)
+				  GL_ENTRY_T
+				    Delete all entries with
+				      UNIV_FISCAL_YR = (target year)
+				      FIN_BALANCE_TYP_CD != 'TB'  (note the !)
+				  GL_BALANCE_T
+				    Delete all entries with
+				      UNIV_FISCAL_YR = (target year)
+				      FIN_BALANCE_TYP_CD != 'TB'  (note the !)
+
+				NOTE:  target year = current fiscal year + 1 = budget year
+				NOTE:  All the selection criteria are the same for the 3 tables.  So one procedure with a table name passed in should do the trick if you just process the tables one at a time sequentially.
+				NOTE:  Report the number of records deleted from EACH of these 3 tables in the output.  [It would be nice if you could give a count for each FIN_BALANCE_TYP_CD, but for now, we'll survive with just a total count of deleted records.  See below.]
+			*/
+		} else {
+			/*For TB execution:
+				  GL_PENDING_ENTRY_T
+				    Delete all entries with 
+				      UNIV_FISCAL_YR = (target year)
+				      FIN_BALANCE_TYP_CD = 'TB'
+				  GL_ENTRY_T
+				    Delete all entries with
+				      UNIV_FISCAL_YR = (target year)
+				      FIN_BALANCE_TYP_CD = 'TB'
+				  GL_BALANCE_T
+				    Delete all entries with
+				      UNIV_FISCAL_YR = (target year)
+				      FIN_BALANCE_TYP_CD = 'TB'
+
+				NOTE:  target year = current fiscal year + 1 = budget year
+				NOTE:  All the selection criteria are the same for the 3 tables.  So one procedure with a table name passed in should do the trick if you just process the tables one a time sequentially.
+				NOTE:  Report the number of records deleted from EACH of these 3 tables in the output.
+*/
+		}
+		
+	}
+
+	/**
      * build a hashmap containing the next entry sequence number to use for each document (document number) to be loaded from budget
      * construction to the general ledger
      * 
@@ -727,8 +770,6 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     
     protected void writeReport(PrintStream reportDataStream, DiagnosticCounters diagnosticCounters) {
     	StringBuilder body = new StringBuilder();
-    	//TODO: - need to modify counters to track AC and TB entries
-    	//TODO: only output the other report if we are not running TB
     	if(!tbRunFlag) {
     		body.append(String.format("\n\nPending Budget Construction General Ledger Load\n"));
             body.append(String.format("\n  pending budget construction GL rows read:        %,d", diagnosticCounters.budgetConstructionPendingGeneralLedgerRead));
@@ -740,7 +781,15 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             body.append(String.format("\n  pending budget construction monthly rows written: %,d", diagnosticCounters.budgetConstructionMonthlyBudgetWritten));
             
     	} else {
-    		//TB specific counter stuff
+    		body.append(String.format("\n\nPending Trustee Budget Construction General Ledger Load\n"));
+            body.append(String.format("\n  pending budget construction GL rows read:        %,d", diagnosticCounters.budgetConstructionPendingGeneralLedgerRead));
+            body.append(String.format("\n  pending budget construction GL rows skipped:     %,d", diagnosticCounters.budgetConstructionPendingGeneralLedgerSkipped));
+            body.append(String.format("\n\n  base budget rows written:                        %,d", diagnosticCounters.generalLedgerBaseBudgetWritten));
+            body.append(String.format("\n  current budget rows written:                     %,d", diagnosticCounters.generalLedgerCurrentBudgetWritten));
+            body.append(String.format("\n\n  pending budget construction monthly rows read:   %,d", diagnosticCounters.budgetConstructionMonthlyBudgetRead));
+            body.append(String.format("\n  pending budget construction monthly rows skipped: %,d", diagnosticCounters.budgetConstructionMonthlyBudgetSkipped));
+            body.append(String.format("\n  pending budget construction monthly rows written: %,d", diagnosticCounters.budgetConstructionMonthlyBudgetWritten));
+            
     	}
     	reportDataStream.print(body);
         if (reportDataStream != null) {

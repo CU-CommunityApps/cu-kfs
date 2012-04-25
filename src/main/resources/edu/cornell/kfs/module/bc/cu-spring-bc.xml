@@ -355,6 +355,8 @@
         <property name="businessObjectService">
             <ref bean="businessObjectService"/>
         </property>
+        <property name="budgetReportDirectory" value="${reports.directory}/bc" />
+        <property name="budgetReportFilePrefix" value="budgetConstructionStatsReport" />
     </bean>
     <bean id="budgetConstructionGeneralLedgerLoadBatchJob" parent="scheduledJobDescriptor">
       <property name="steps">
