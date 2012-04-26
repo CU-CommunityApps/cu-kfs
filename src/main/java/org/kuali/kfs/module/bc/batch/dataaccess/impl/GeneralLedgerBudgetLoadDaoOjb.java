@@ -336,7 +336,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 			//BB entries
 			balanceDeletion = new Criteria();
 			balanceDeletion.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-			balanceDeletion.addEqualTo(KFSPropertyConstants.BALANCE_TYPE_CODE, "");
+			balanceDeletion.addEqualTo(KFSPropertyConstants.BALANCE_TYPE_CODE, "BB");
 			balanceQuery = new QueryByCriteria(Balance.class, balanceDeletion);
 			deletedBbBalanceEntries = getPersistenceBrokerTemplate().getCount(balanceQuery);
 			diagnosticCounters.setGeneralLedgerBbBalanceEntriesDeleted(deletedBbBalanceEntries);
