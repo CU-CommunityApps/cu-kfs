@@ -179,7 +179,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     		} else if(tbRunFlagParameter.getParameterValue().equals("Y") || tbRunFlagParameter.getParameterValue().equals("N")) {
     			body.append(String.format("\nINFO: %s %s %s \n", tbRunFlagParameter.getParameterName(), BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, tbRunFlagParameter.getParameterValue() ));
     		} else {
-    			warningEncountered = true;
+    			errorEncountered = true;
     			body.append(String.format("\nWARNING: %s is %s, valid values are Y/N/Null\n", tbRunFlagParameter.getParameterName(), tbRunFlagParameter.getParameterValue()));
     		}
     	} else {
@@ -368,7 +368,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 	        Criteria glBalanceCriteria = new Criteria();
 	        glBalanceCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
 	        glBalanceCriteria.addIn(KFSPropertyConstants.BALANCE_TYPE_CODE, nonTbCollection);
-	        QueryByCriteria deleteBalanceQry = new QueryByCriteria(Balance.class, glEntryCriteria);
+	        QueryByCriteria deleteBalanceQry = new QueryByCriteria(Balance.class, glBalanceCriteria);
 	        deletedBalanceEntries = getPersistenceBrokerTemplate().getCount(deleteBalanceQry);
 	        diagnosticCounters.setGeneralLedgerBalanceEntriesDeleted(deletedBalanceEntries);
 	        getPersistenceBrokerTemplate().deleteByQuery(deleteBalanceQry);
@@ -398,7 +398,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 	        Criteria glBalanceCriteria = new Criteria();
 	        glBalanceCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
 	        glBalanceCriteria.addEqualTo(KFSPropertyConstants.BALANCE_TYPE_CODE, "TB");
-	        QueryByCriteria deleteBalanceQry = new QueryByCriteria(Balance.class, glEntryCriteria);
+	        QueryByCriteria deleteBalanceQry = new QueryByCriteria(Balance.class, glBalanceCriteria);
 	        deletedBalanceEntries = getPersistenceBrokerTemplate().getCount(deleteBalanceQry);
 	        diagnosticCounters.setGeneralLedgerTbBalanceEntriesDeleted(deletedBalanceEntries);
 	        diagnosticCounters.setGeneralLedgerBalanceEntriesDeleted(deletedBalanceEntries);
