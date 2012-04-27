@@ -1378,6 +1378,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         		body.append(item + " ");
         	}
         }
+        body.append("\n");
 
         body.append("\nOutputting " + diagnosticCounters.cbCreated.size() + " sample of Current Budget records (every 100th record saved)\n");
         for(String[] entry: diagnosticCounters.cbCreated) {
@@ -1386,6 +1387,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         		body.append(item + " ");
         	}
         }
+        body.append("\n");
         
         body.append("\nOutputting " + diagnosticCounters.acCreated.size() + " sample of Actual Budget records (every 100th record saved)\n");
         for(String[] entry: diagnosticCounters.acCreated) {
@@ -1394,6 +1396,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         		body.append(item + " ");
         	}
         }
+        body.append("\n");
 
         body.append("\nOutputting " + diagnosticCounters.tbCreated.size() + " sample of Trustee Budget records (every 100th record saved)\n");
         for(String[] entry: diagnosticCounters.tbCreated) {
@@ -1402,6 +1405,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         		body.append(item + " ");
         	}
         }
+        body.append("\n");
     	DateFormat format = new SimpleDateFormat("yyyy/MM/dd @ HH:mm:ss");
     	java.util.Date now = new java.util.Date();
     	String date = format.format(now);
