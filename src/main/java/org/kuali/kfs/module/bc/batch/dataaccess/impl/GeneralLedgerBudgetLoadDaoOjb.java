@@ -46,10 +46,10 @@ import org.kuali.kfs.module.bc.batch.dataaccess.GeneralLedgerBudgetLoadDao;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionHeader;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionMonthly;
 import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionGeneralLedger;
-import org.kuali.kfs.module.cab.businessobject.GeneralLedgerEntry;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
+import org.kuali.kfs.gl.businessobject.Entry;
 import org.kuali.kfs.sys.service.HomeOriginationService;
 import org.kuali.rice.kns.bo.Parameter;
 import org.kuali.rice.kns.service.BusinessObjectService;
@@ -312,7 +312,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 			Criteria entryDeletion = new Criteria();
 			entryDeletion.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
 			entryDeletion.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "CB");
-			QueryByCriteria entryQuery = new QueryByCriteria(GeneralLedgerEntry.class, entryDeletion);
+			QueryByCriteria entryQuery = new QueryByCriteria(Entry.class, entryDeletion);
 			deletedCbEntries = getPersistenceBrokerTemplate().getCount(entryQuery);
 			diagnosticCounters.setGeneralLedgerCbEntriesDeleted(deletedCbEntries);
 			
@@ -320,7 +320,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 			entryDeletion = new Criteria();
 			entryDeletion.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
 			entryDeletion.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "BB");
-			entryQuery = new QueryByCriteria(GeneralLedgerEntry.class, entryDeletion);
+			entryQuery = new QueryByCriteria(Entry.class, entryDeletion);
 			deletedBbEntries = getPersistenceBrokerTemplate().getCount(entryQuery);
 			diagnosticCounters.setGeneralLedgerBbEntriesDeleted(deletedBbEntries);
 			
@@ -328,7 +328,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 			entryDeletion = new Criteria();
 			entryDeletion.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
 			entryDeletion.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "AC");
-			entryQuery = new QueryByCriteria(GeneralLedgerEntry.class, entryDeletion);
+			entryQuery = new QueryByCriteria(Entry.class, entryDeletion);
 			deletedAcEntries = getPersistenceBrokerTemplate().getCount(entryQuery);
 			diagnosticCounters.setGeneralLedgerAcEntriesDeleted(deletedAcEntries);
 			
@@ -369,7 +369,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 	        Criteria glEntryCriteria = new Criteria();
 	        glEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
 	        glEntryCriteria.addIn(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, nonTbCollection);
-	        QueryByCriteria deleteEntryQry = new QueryByCriteria(GeneralLedgerEntry.class, glEntryCriteria);
+	        QueryByCriteria deleteEntryQry = new QueryByCriteria(Entry.class, glEntryCriteria);
 	        deletedEntries = getPersistenceBrokerTemplate().getCount(deleteEntryQry);
 	        diagnosticCounters.setGeneralLedgerEntriesDeleted(deletedEntries);
 	        getPersistenceBrokerTemplate().deleteByQuery(deleteEntryQry);
@@ -390,6 +390,8 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 	        pendingEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
 	        pendingEntryCriteria.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "TB");
 	        QueryByCriteria deletePendingQry = new QueryByCriteria(GeneralLedgerPendingEntry.class, pendingEntryCriteria);
+	        System.out.println("Pending TB deletion query: " + deletePendingQry.toString());
+	        
 	        deletedPendingEntries = getPersistenceBrokerTemplate().getCount(deletePendingQry);
 	        diagnosticCounters.setGeneralLedgerTbPendingEntriesDeleted(deletedPendingEntries);
 	        diagnosticCounters.setGeneralLedgerPendingEntriesDeleted(deletedPendingEntries);
@@ -398,7 +400,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 	        Criteria glEntryCriteria = new Criteria();
 	        glEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
 	        glEntryCriteria.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "TB");
-	        QueryByCriteria deleteEntryQry = new QueryByCriteria(GeneralLedgerEntry.class, glEntryCriteria);
+	        QueryByCriteria deleteEntryQry = new QueryByCriteria(Entry.class, glEntryCriteria);
 	        deletedEntries = getPersistenceBrokerTemplate().getCount(deleteEntryQry);
 	        diagnosticCounters.setGeneralLedgerTbEntriesDeleted(deletedEntries);
 	        diagnosticCounters.setGeneralLedgerEntriesDeleted(deletedEntries);
