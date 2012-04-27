@@ -101,6 +101,12 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         
         boolean errorEncountered = printOutEnvironment(reportDataStream, tbRunFlagParameter, subFundsParameter, subFundProgramsParameter, glAcObjectsParameter, fiscalYear);
         if(errorEncountered) {
+        	StringBuilder body = new StringBuilder();
+        	DateFormat format = new SimpleDateFormat("yyyy/MM/dd @ HH:mm:ss");
+        	java.util.Date now = new java.util.Date();
+        	String date = format.format(now);
+        	body.append("\nCornell BC > GL load job ending at " + date);
+        	reportDataStream.print(body);
         	//we need to close the report and break out of the run
         	if (reportDataStream != null) {
                 reportDataStream.flush();
@@ -143,7 +149,10 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         /**
          * process budget construction monthly budget rows
          */
-        loadBudgetConstructionMonthlyBudget(daoGlobalVariables, diagnosticCounters);
+        if(!tbRunFlag) {
+        	loadBudgetConstructionMonthlyBudget(daoGlobalVariables, diagnosticCounters);
+        }
+        
         // write out the counts for verification
         //diagnosticCounters.writeDiagnosticCounters();
         if(tbRunFlag) {
@@ -171,7 +180,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     	body.append(String.format("\n\nBudget Construction Environment Variables\n"));
     	body.append(String.format("\n********************************************\n"));
 
-    	body.append(String.format("\nINFO: Report being run for Fiscal Year %d", fiscalYear));
+    	body.append(String.format("\nINFO: Report being run for Fiscal Year %d\n", fiscalYear));
     	if(tbRunFlagParameter != null) {
     		if(tbRunFlagParameter.getParameterValue() == null) {
     			warningEncountered = true;
@@ -180,7 +189,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     			body.append(String.format("\nINFO: %s %s %s \n", tbRunFlagParameter.getParameterName(), BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, tbRunFlagParameter.getParameterValue() ));
     		} else {
     			errorEncountered = true;
-    			body.append(String.format("\nWARNING: %s is %s, valid values are Y/N/Null\n", tbRunFlagParameter.getParameterName(), tbRunFlagParameter.getParameterValue()));
+    			body.append(String.format("\nERROR: %s is %s, valid values are Y/N/Null\n", tbRunFlagParameter.getParameterName(), tbRunFlagParameter.getParameterValue()));
     		}
     	} else {
     		errorEncountered = true;
@@ -597,7 +606,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             if(diagnosticCounters.generalLedgerBaseBudgetWritten % 100 == 0) {
             	String[] bbEntry = {newRow.getUniversityFiscalYear().toString(), newRow.getAccountNumber(), 
                 		newRow.getFinancialObjectCode(), newRow.getFinancialBalanceTypeCode(), newRow.getUniversityFiscalPeriodCode(),
-                		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription()};
+                		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription(), newRow.getTransactionLedgerEntryAmount().toString()};
                 diagnosticCounters.addToBbCreated(bbEntry);
             }
             /**
@@ -614,7 +623,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             if(diagnosticCounters.generalLedgerCurrentBudgetWritten % 100 == 0) {
             	String[] cbEntry = {newRow.getUniversityFiscalYear().toString(), newRow.getAccountNumber(), 
                 		newRow.getFinancialObjectCode(), newRow.getFinancialBalanceTypeCode(), newRow.getUniversityFiscalPeriodCode(),
-                		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription()};
+                		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription(), newRow.getTransactionLedgerEntryAmount().toString()};
                 diagnosticCounters.addToCbCreated(cbEntry);
             }
             
@@ -632,7 +641,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             if(diagnosticCounters.generalLedgerActualBudgetWritten % 100 == 0) {
             	String[] acEntry = {newRow.getUniversityFiscalYear().toString(), newRow.getAccountNumber(), 
                 		newRow.getFinancialObjectCode(), newRow.getFinancialBalanceTypeCode(), newRow.getUniversityFiscalPeriodCode(),
-                		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription()};
+                		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription(), newRow.getTransactionLedgerEntryAmount().toString()};
                 diagnosticCounters.addToAcCreated(acEntry);
             }
             
@@ -665,7 +674,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             if(diagnosticCounters.generalLedgerTrusteesBudgetWritten % 100 == 0) {
             	String[] tbEntry = {newRow.getUniversityFiscalYear().toString(), newRow.getAccountNumber(), 
                 		newRow.getFinancialObjectCode(), newRow.getFinancialBalanceTypeCode(), newRow.getUniversityFiscalPeriodCode(),
-                		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription()};
+                		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription(), newRow.getTransactionLedgerEntryAmount().toString()};
                 diagnosticCounters.addToTbCreated(tbEntry);
             }
         }
@@ -728,7 +737,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
                 if(diagnosticCounters.budgetConstructionMonthlyBudgetWritten % 100 == 0) {
                 	String[] monthlyEntry = {newRow.getUniversityFiscalYear().toString(), newRow.getAccountNumber(), 
                     		newRow.getFinancialObjectCode(), newRow.getFinancialBalanceTypeCode(), newRow.getUniversityFiscalPeriodCode(),
-                    		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription()};
+                    		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription(), newRow.getTransactionLedgerEntryAmount().toString()};
                     diagnosticCounters.addToMonthlyCreated(monthlyEntry);
                 }
             }
@@ -1324,75 +1333,80 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     protected void writeReport(PrintStream reportDataStream, DiagnosticCounters diagnosticCounters) {
     	StringBuilder body = new StringBuilder();
     	if(!tbRunFlag) {
-    		body.append(String.format("\n\nPending Budget Construction General Ledger Load\n"));
+    		body.append(String.format("\n\nRegular (non-TB) Budget Construction General Ledger Load beginning\n"));
     	} else {
-    		body.append(String.format("\n\nPending Trustee Budget Construction General Ledger Load\n"));
+    		body.append(String.format("\n\nTB Budget Construction General Ledger Load beginning\n"));
     	}
 
     	//first output deleted rows
 
-    	body.append(String.format("\n  Total pending GL Entries deleted:        %,d", diagnosticCounters.getGeneralLedgerPendingEntriesDeleted()));
-    	body.append(String.format("\n  Total GL Entries deleted:        %,d", diagnosticCounters.getGeneralLedgerEntriesDeleted()));
-    	body.append(String.format("\n  Total balance GL Entries deleted:        %,d", diagnosticCounters.getGeneralLedgerBalanceEntriesDeleted()));
+    	body.append(String.format("\n  Total pending GL Entries deleted:                %,d", diagnosticCounters.getGeneralLedgerPendingEntriesDeleted()));
+    	body.append(String.format("\n  Total GL Entries deleted:                        %,d", diagnosticCounters.getGeneralLedgerEntriesDeleted()));
+    	body.append(String.format("\n  Total balance GL Entries deleted:                %,d", diagnosticCounters.getGeneralLedgerBalanceEntriesDeleted()));
     	
-    	body.append(String.format("\n  AC pending GL Entries deleted:        %,d", diagnosticCounters.getGeneralLedgerAcPendingEntriesDeleted()));
-    	body.append(String.format("\n  AC GL Entries deleted:        %,d", diagnosticCounters.getGeneralLedgerAcEntriesDeleted()));
-    	body.append(String.format("\n  AC balance GL Entries deleted:        %,d", diagnosticCounters.getGeneralLedgerAcBalanceEntriesDeleted()));
+    	body.append(String.format("\n  AC pending GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerAcPendingEntriesDeleted()));
+    	body.append(String.format("\n  AC GL Entries deleted:                           %,d", diagnosticCounters.getGeneralLedgerAcEntriesDeleted()));
+    	body.append(String.format("\n  AC balance GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerAcBalanceEntriesDeleted()));
     	
-    	body.append(String.format("\n  CB pending GL Entries deleted:        %,d", diagnosticCounters.getGeneralLedgerCbPendingEntriesDeleted()));
-    	body.append(String.format("\n  CB GL Entries deleted:        %,d", diagnosticCounters.getGeneralLedgerCbEntriesDeleted()));
-    	body.append(String.format("\n  CB balance GL Entries deleted:        %,d", diagnosticCounters.getGeneralLedgerCbBalanceEntriesDeleted()));
+    	body.append(String.format("\n  CB pending GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerCbPendingEntriesDeleted()));
+    	body.append(String.format("\n  CB GL Entries deleted:                           %,d", diagnosticCounters.getGeneralLedgerCbEntriesDeleted()));
+    	body.append(String.format("\n  CB balance GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerCbBalanceEntriesDeleted()));
 
-    	body.append(String.format("\n  BB pending GL Entries deleted:        %,d", diagnosticCounters.getGeneralLedgerBbPendingEntriesDeleted()));
-    	body.append(String.format("\n  BB GL Entries deleted:        %,d", diagnosticCounters.getGeneralLedgerBbEntriesDeleted()));
-    	body.append(String.format("\n  BB balance GL Entries deleted:        %,d", diagnosticCounters.getGeneralLedgerBbBalanceEntriesDeleted()));
+    	body.append(String.format("\n  BB pending GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerBbPendingEntriesDeleted()));
+    	body.append(String.format("\n  BB GL Entries deleted:                           %,d", diagnosticCounters.getGeneralLedgerBbEntriesDeleted()));
+    	body.append(String.format("\n  BB balance GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerBbBalanceEntriesDeleted()));
 
-    	body.append(String.format("\n  TB pending GL Entries deleted:        %,d", diagnosticCounters.getGeneralLedgerTbPendingEntriesDeleted()));
-    	body.append(String.format("\n  TB GL Entries deleted:        %,d", diagnosticCounters.getGeneralLedgerTbEntriesDeleted()));
-    	body.append(String.format("\n  TB balance GL Entries deleted:        %,d", diagnosticCounters.getGeneralLedgerTbBalanceEntriesDeleted()));
+    	body.append(String.format("\n  TB pending GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerTbPendingEntriesDeleted()));
+    	body.append(String.format("\n  TB GL Entries deleted:                           %,d", diagnosticCounters.getGeneralLedgerTbEntriesDeleted()));
+    	body.append(String.format("\n  TB balance GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerTbBalanceEntriesDeleted()));
     	
-        body.append(String.format("\n  pending budget construction GL rows read:        %,d", diagnosticCounters.budgetConstructionPendingGeneralLedgerRead));
+        body.append(String.format("\n\n  pending budget construction GL rows read:        %,d", diagnosticCounters.budgetConstructionPendingGeneralLedgerRead));
         body.append(String.format("\n  pending budget construction GL rows skipped:     %,d", diagnosticCounters.budgetConstructionPendingGeneralLedgerSkipped));
         body.append(String.format("\n\n  base budget rows written:                        %,d", diagnosticCounters.generalLedgerBaseBudgetWritten));
         body.append(String.format("\n  current budget rows written:                     %,d", diagnosticCounters.generalLedgerCurrentBudgetWritten));
-        body.append(String.format("\n  actual budget rows written:                     %,d", diagnosticCounters.generalLedgerActualBudgetWritten));
+        body.append(String.format("\n  actual budget rows written:                      %,d", diagnosticCounters.generalLedgerActualBudgetWritten));
         body.append(String.format("\n  trustee budget rows written:                     %,d", diagnosticCounters.generalLedgerTrusteesBudgetWritten));
         
         body.append(String.format("\n\n  pending budget construction monthly rows read:   %,d", diagnosticCounters.budgetConstructionMonthlyBudgetRead));
         body.append(String.format("\n  pending budget construction monthly rows skipped: %,d", diagnosticCounters.budgetConstructionMonthlyBudgetSkipped));
         body.append(String.format("\n  pending budget construction monthly rows written: %,d", diagnosticCounters.budgetConstructionMonthlyBudgetWritten));
         
-        body.append("Outputting " + diagnosticCounters.bbCreated.size() + " Base Budget records (every 100th record saved)");
+        body.append("\nOutputting " + diagnosticCounters.bbCreated.size() + " sample of Base Budget records (every 100th record saved)\n");
         for(String[] entry: diagnosticCounters.bbCreated) {
-        	body.append("\n Base Budget Entry: ");
+        	body.append("\n BB Entry: ");
         	for(String item: entry) {
         		body.append(item + " ");
         	}
         }
 
-        body.append("Outputting " + diagnosticCounters.cbCreated.size() + " Current Budget records (every 100th record saved)");
+        body.append("\nOutputting " + diagnosticCounters.cbCreated.size() + " sample of Current Budget records (every 100th record saved)\n");
         for(String[] entry: diagnosticCounters.cbCreated) {
-        	body.append("\n Current Budget Entry: ");
+        	body.append("\n CB Entry: ");
         	for(String item: entry) {
         		body.append(item + " ");
         	}
         }
         
-        body.append("Outputting " + diagnosticCounters.acCreated.size() + " Actual Budget records (every 100th record saved)");
+        body.append("\nOutputting " + diagnosticCounters.acCreated.size() + " sample of Actual Budget records (every 100th record saved)\n");
         for(String[] entry: diagnosticCounters.acCreated) {
-        	body.append("\n Actual Budget Entry: ");
+        	body.append("\n AC Entry: ");
         	for(String item: entry) {
         		body.append(item + " ");
         	}
         }
 
-        body.append("Outputting " + diagnosticCounters.tbCreated.size() + " Trustee Budget records (every 100th record saved)");
+        body.append("\nOutputting " + diagnosticCounters.tbCreated.size() + " sample of Trustee Budget records (every 100th record saved)\n");
         for(String[] entry: diagnosticCounters.tbCreated) {
-        	body.append("\n Trustee Budget Entry: ");
+        	body.append("\n TB Entry: ");
         	for(String item: entry) {
         		body.append(item + " ");
         	}
         }
+    	DateFormat format = new SimpleDateFormat("yyyy/MM/dd @ HH:mm:ss");
+    	java.util.Date now = new java.util.Date();
+    	String date = format.format(now);
+    	body.append("\nCornell BC > GL load job ending at " + date);
+    	
     	reportDataStream.print(body);
         if (reportDataStream != null) {
             reportDataStream.flush();
