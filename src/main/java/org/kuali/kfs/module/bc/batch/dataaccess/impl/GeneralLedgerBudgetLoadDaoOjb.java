@@ -464,7 +464,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         GeneralLedgerPendingEntry newRow = new GeneralLedgerPendingEntry();
         newRow.setUniversityFiscalYear(daoGlobalVariables.getRequestYear());
         newRow.setTransactionLedgerEntryDescription(BCConstants.BC_TRN_LDGR_ENTR_DESC);
-        newRow.setFinancialDocumentTypeCode(BCConstants.BUDGET_CONSTRUCTION_DOCUMENT_TYPE);
+        newRow.setFinancialDocumentTypeCode(CUBCConstants.BUDGET_CONSTRUCTION_DOCUMENT_TYPE);
         newRow.setFinancialDocumentApprovedCode(KFSConstants.PENDING_ENTRY_APPROVED_STATUS_CODE.APPROVED);
         newRow.setTransactionDate(daoGlobalVariables.getTransactionDate());
         newRow.setTransactionEntryOffsetIndicator(false);
@@ -608,7 +608,8 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             if(diagnosticCounters.generalLedgerBaseBudgetWritten % 100 == 0) {
             	String[] bbEntry = {newRow.getUniversityFiscalYear().toString(), newRow.getAccountNumber(), 
                 		newRow.getFinancialObjectCode(), newRow.getFinancialBalanceTypeCode(), newRow.getUniversityFiscalPeriodCode(),
-                		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription(), newRow.getTransactionLedgerEntryAmount().toString()};
+                		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription(), 
+                		newRow.getTransactionLedgerEntryAmount().toString(), newRow.getTransactionDebitCreditCode()};
                 diagnosticCounters.addToBbCreated(bbEntry);
             }
             /**
@@ -625,7 +626,8 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             if(diagnosticCounters.generalLedgerCurrentBudgetWritten % 100 == 0) {
             	String[] cbEntry = {newRow.getUniversityFiscalYear().toString(), newRow.getAccountNumber(), 
                 		newRow.getFinancialObjectCode(), newRow.getFinancialBalanceTypeCode(), newRow.getUniversityFiscalPeriodCode(),
-                		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription(), newRow.getTransactionLedgerEntryAmount().toString()};
+                		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription(), 
+                		newRow.getTransactionLedgerEntryAmount().toString(), newRow.getTransactionDebitCreditCode()};
                 diagnosticCounters.addToCbCreated(cbEntry);
             }
             
@@ -643,7 +645,8 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             if(diagnosticCounters.generalLedgerActualBudgetWritten % 100 == 0) {
             	String[] acEntry = {newRow.getUniversityFiscalYear().toString(), newRow.getAccountNumber(), 
                 		newRow.getFinancialObjectCode(), newRow.getFinancialBalanceTypeCode(), newRow.getUniversityFiscalPeriodCode(),
-                		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription(), newRow.getTransactionLedgerEntryAmount().toString()};
+                		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription(), 
+                		newRow.getTransactionLedgerEntryAmount().toString(), newRow.getTransactionDebitCreditCode()};
                 diagnosticCounters.addToAcCreated(acEntry);
             }
             
@@ -676,7 +679,8 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             if(diagnosticCounters.generalLedgerTrusteesBudgetWritten % 100 == 0) {
             	String[] tbEntry = {newRow.getUniversityFiscalYear().toString(), newRow.getAccountNumber(), 
                 		newRow.getFinancialObjectCode(), newRow.getFinancialBalanceTypeCode(), newRow.getUniversityFiscalPeriodCode(),
-                		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription(), newRow.getTransactionLedgerEntryAmount().toString()};
+                		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription(), 
+                		newRow.getTransactionLedgerEntryAmount().toString(), newRow.getTransactionDebitCreditCode()};
                 diagnosticCounters.addToTbCreated(tbEntry);
             }
         }
@@ -739,7 +743,8 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
                 if(diagnosticCounters.budgetConstructionMonthlyBudgetWritten % 100 == 0) {
                 	String[] monthlyEntry = {newRow.getUniversityFiscalYear().toString(), newRow.getAccountNumber(), 
                     		newRow.getFinancialObjectCode(), newRow.getFinancialBalanceTypeCode(), newRow.getUniversityFiscalPeriodCode(),
-                    		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription(), newRow.getTransactionLedgerEntryAmount().toString()};
+                    		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription(), 
+                    		newRow.getTransactionLedgerEntryAmount().toString(), newRow.getTransactionDebitCreditCode()};
                     diagnosticCounters.addToMonthlyCreated(monthlyEntry);
                 }
             }

@@ -9,6 +9,7 @@ public class CUBCConstants extends BCConstants {
 
     // parameter constants
     public static final String RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE = "KFS-BC";
+    public static final String BUDGET_CONSTRUCTION_DOCUMENT_TYPE = "BCLO";
     public static final String RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP = "PSBudgetFeedStep";
     public static final String RUN_FOR_NEW_YEAR_PARAMETER_VALUE = "N";
     public static final String RUN_FOR_NEW_YEAR_PARAMETER_ALLOWED = "A";
