@@ -226,6 +226,11 @@
 			type="org.kuali.kfs.module.cab.document.web.struts.PurApLineForm" />
 		<form-bean name="GlLineForm"
 			type="org.kuali.kfs.module.cab.document.web.struts.GlLineForm" />
+			
+					<!-- Check Recon Form -->
+        <form-bean name="CheckReconciliationReportForm"
+            type="com.rsmart.kuali.kfs.cr.document.web.struts.CheckReconciliationReportForm" /> 
+			
 	</form-beans>
 
 	<global-exceptions>
@@ -250,6 +255,17 @@
 	</global-forwards>
 
 	<action-mappings>
+
+	<!--  Check Recon -->
+	<action path="/cr*" name="{1}Form"
+            input="/jsp/modules/cr/{1}.jsp"
+            type="com.rsmart.kuali.kfs.cr.document.web.struts.{1}Action"
+            scope="request" parameter="methodToCall" validate="true"
+            attribute="KualiForm">
+            <set-property property="cancellable" value="true" />
+            <forward name="basic" path="/jsp/module/cr/{1}.jsp" />
+        </action> 
+
 		<!--  Core Action Mappings -->
 		<action path="/portal" name="KualiForm"
 			type="org.kuali.rice.kns.web.struts.action.KualiSimpleAction">
