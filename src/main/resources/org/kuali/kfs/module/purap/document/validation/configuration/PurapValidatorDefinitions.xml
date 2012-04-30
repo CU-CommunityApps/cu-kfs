@@ -95,6 +95,10 @@
 	
     <bean id="PurchasingAccountsPayable-fixErrorPathValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingAccountsPayableFixErrorPathValidation" abstract="true" />
 
+    <bean id="PurchasingAccountsPayable-submitItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchasingAccountsPayableProcessItemValidation" abstract="true" />
+
+    <bean id="PurchasingAccountsPayable-approveItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchasingAccountsPayableProcessItemValidation" abstract="true" />
+
 <!-- Purchasing Definitions -->
 	<bean id="Purchasing-accountingLineDataDictionaryValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurapAccountingLineDataDictionaryValidation" abstract="true">
 		<property name="accountingLineRuleHelperService"><ref bean="purchasingAccountingLineRuleHelperService" /></property>
@@ -208,6 +212,10 @@
 		<property name="targetValidationProperty" value="itemForValidation" />
 	</bean>
 	
+    <bean id="Purchasing-submitItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchasingProcessItemValidation" abstract="true" />
+
+    <bean id="Purchasing-approveItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchasingProcessItemValidation" abstract="true" />
+
 	<bean id="Purchasing-newProcessItem-itemsCollection-itemConsideredEnteredBranchingValidation" abstract="true" parent="PurchasingAccountsPayable-itemConsideredEnteredBranchingValidation" scope="prototype">
     	<property name="branchMap">
         	<map>

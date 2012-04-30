@@ -17,8 +17,7 @@
         </property>
 		<property name="dataDictionaryPackages">
 			<list merge ="true">
-           <!--      <value>org/kuali/kfs/vnd/document/datadictionary</value>
-                <value>org/kuali/kfs/vnd/businessobject/datadictionary</value>  -->               
+                <value>edu/cornell/kfs/vnd/businessobject/datadictionary</value>          
 			</list>
 		</property>
 		<property name="databaseRepositoryFilePaths">

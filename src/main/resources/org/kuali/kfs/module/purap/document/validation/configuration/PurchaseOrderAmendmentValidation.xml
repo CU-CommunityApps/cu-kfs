@@ -58,6 +58,10 @@
 					<property name="quitOnFail" value="false" />
 				</bean>  
 				
+				<bean parent="Purchasing-submitItemValidation" scope="prototype">								
+					<property name="quitOnFail" value="false" />
+				</bean>  										
+				
 				<bean parent="PurchaseOrderAmendment-containsAtLeastOneActiveItemValidation" scope="prototype">								
 					<property name="quitOnFail" value="false" />
 				</bean>  														
@@ -102,6 +106,10 @@
 				<bean parent="Purchasing-deliveryValidation" scope="prototype">								
 					<property name="quitOnFail" value="false" />
 				</bean>  
+				
+				<bean parent="Purchasing-approveItemValidation" scope="prototype">								
+					<property name="quitOnFail" value="false" />
+				</bean>  										
 				
 				<bean parent="PurchaseOrderAmendment-containsAtLeastOneActiveItemValidation" scope="prototype">								
 					<property name="quitOnFail" value="false" />
