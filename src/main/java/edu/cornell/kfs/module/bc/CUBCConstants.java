@@ -84,4 +84,7 @@ public class CUBCConstants extends BCConstants {
     
 
     public static final String BALANCE_TYPE_TRUSTEES_BUDGET = "TB";
+    
+    // the transaction ledger description for the general ledger budget load
+    public final static String TB_TRN_LDGR_ENTR_DESC = "Trustee Budget Load";
 }

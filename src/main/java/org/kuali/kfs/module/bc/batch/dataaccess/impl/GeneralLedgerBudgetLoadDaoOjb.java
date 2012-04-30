@@ -654,6 +654,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             /**
              * write a trustee budget row
              */
+        	newRow.setTransactionLedgerEntryDescription(CUBCConstants.TB_TRN_LDGR_ENTR_DESC);
             newRow.setFinancialBalanceTypeCode(CUBCConstants.BALANCE_TYPE_TRUSTEES_BUDGET);
             newRow.setUniversityFiscalPeriodCode(KFSConstants.PERIOD_CODE_BEGINNING_BALANCE);
             /**
@@ -1378,7 +1379,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         body.append(String.format("\n  pending budget construction monthly rows skipped: %,d", diagnosticCounters.budgetConstructionMonthlyBudgetSkipped));
         body.append(String.format("\n  pending budget construction monthly rows written: %,d", diagnosticCounters.budgetConstructionMonthlyBudgetWritten));
         
-        body.append("\nOutputting " + diagnosticCounters.bbCreated.size() + " sample of Base Budget records (every 100th record saved)\n");
+        body.append("\n\nOutputting " + diagnosticCounters.bbCreated.size() + " sample of Base Budget records (every 100th record saved)\n");
         for(String[] entry: diagnosticCounters.bbCreated) {
         	body.append("\n BB Entry: ");
         	for(String item: entry) {
