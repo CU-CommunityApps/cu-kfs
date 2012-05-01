@@ -100,8 +100,6 @@ import edu.cornell.kfs.module.bc.util.CUBudgetParameterFinder;
  * 			1.  Return the error log file to the user as a download
  * 	6.	If no errors were found:
  * 			1.	Return the error log file to the user as a download but instead with a message that no errors were found.
- * 			2.  Store all imported lines to the CU_LD_BCN_SIP_T table.
- * 
  */
 
 
@@ -148,7 +146,8 @@ public class SipImportServiceImpl implements SipImportService {
 			"\tThe ABBR flag is set to Y.\n",
 			"\tExecutive position found.\n",
 			"\tSIP is not allowed when Job Function is UNB.\n",
-			"\tThis line is a duplicate.\n"
+			"\tThis line is a duplicate.\n",
+			"\tThe requested amount is greater than 0 and the requested percent distribution is not equal to 1.\n"
 	};
 	
 	protected String WarningMessages[];
@@ -176,14 +175,15 @@ public class SipImportServiceImpl implements SipImportService {
         List<ExternalizedMessageWrapper> errorReportDetail = new ArrayList<ExternalizedMessageWrapper>();
         
         // Error message setup
-        errorCount = new int[12];
+        errorCount = new int[13];
 
         //Warning message setup
-    	warningCount = new int[2];
-    	WarningMessages = new String[2];
-    	WarningMessages[0]= new String("\tSIP Total exceeds " + SIP_IMPORT_AWARD_CHECK + "% of prior year annual rate as defined in PeopleSoft.\n");
+    	warningCount = new int[3];
+    	WarningMessages = new String[3];
+    	WarningMessages[0] = new String("\tSIP Total exceeds " + SIP_IMPORT_AWARD_CHECK + "% of prior year annual rate as defined in PeopleSoft.\n");
     	WarningMessages[1] = new String("\tPercent Distribution is not equal to 1.\n");
- 
+    	WarningMessages[2] = new String("\tThe requested amount is equal to zero and the requested percent distribution is greater than zero.\n");
+    	
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(fileImportStream));
 
         // Header line for the detail records
@@ -449,8 +449,7 @@ public class SipImportServiceImpl implements SipImportService {
 
 	/**
 	 * Returns whether or not the ABBR Flag is valid.  The ABBR Flag
-	 * is valid if it's value is NOT Y otherwise it is invalid if its
-	 * value is "Y".
+	 * is valid if its value is "N".  All other values return false.
 	 * 
 	 * @param ABBR Flag as a string
 	 * @param emplid as a string
@@ -462,10 +461,10 @@ public class SipImportServiceImpl implements SipImportService {
 			if (ObjectUtils.isNotNull(AbbrFlag) )
 			{
 				String myABBRFlag = AbbrFlag.toUpperCase();
-				if (myABBRFlag.equals("Y"))
-					return false;
-				else
+				if (myABBRFlag.equals("N"))
 					return true;
+				else
+					return false;
 			}
 			else
 				return false;
@@ -592,16 +591,50 @@ public class SipImportServiceImpl implements SipImportService {
 	}
 	
 	protected double requestedPerCentDistributionSum(String positionNumber, String emplId) {
-		return sipImportDao.getTotalPerCentDistribution(positionNumber, emplId);
+		if( (ObjectUtils.isNotNull(positionNumber)) && (ObjectUtils.isNotNull(emplId)) ) {
+				if (positionNumber.length()==6)
+					positionNumber = "00" + positionNumber;
+				
+				// Verify that the position number length is 8 otherwise it is invalid
+				if (positionNumber.length()==8)
+					return sipImportDao.getTotalPerCentDistribution(positionNumber, emplId);
+				else
+					return 0;
+		}
+			else
+				return 0;	
 	}
 	
-  
-	protected boolean isDuplicateLine(String positionNumber, String emplId, String sipImportLine) {
-		if( ObjectUtils.isNotNull(positionNumber)) {
+	protected double requestedAmountSum(String positionNumber, String emplId) {
+		if( (ObjectUtils.isNotNull(positionNumber)) && (ObjectUtils.isNotNull(emplId)) ) {
 			if (positionNumber.length()==6)
 				positionNumber = "00" + positionNumber;
 			
-			// Verify that the position number is 8 otherwise it is invalid
+			// Verify that the position number length is 8 otherwise it is invalid
+			if (positionNumber.length()==8)
+				return sipImportDao.getTotalRequestedAmount(positionNumber, emplId);
+			else
+				return 0;
+		}
+		else
+			return 0;
+	}
+	
+  
+	/**
+	 * Determines if the line form the SIP Import file that was just read in contains the same position number
+	 * and emplid as a previous line that was read in.  If so then this line is considered to be a duplicate.
+	 * @param positionNumber as String - the position number from the line read in
+	 * @param emplId as String - the emplid from the line read in
+	 * @param sipImportLine as String - the line read in (from the SIP Import)
+	 * @return
+	 */
+	protected boolean isDuplicateLine(String positionNumber, String emplId, String sipImportLine) {
+		if( (ObjectUtils.isNotNull(positionNumber)) && (ObjectUtils.isNotNull(emplId))) {
+			if (positionNumber.length()==6)
+				positionNumber = "00" + positionNumber;
+			
+			// Verify that the position number length is 8 otherwise it is invalid
 			if (positionNumber.length()==8) {
 				String myKey = positionNumber + emplId;
 				if (importedLines.get(myKey) == null) {
@@ -669,7 +702,8 @@ public class SipImportServiceImpl implements SipImportService {
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
 				
-				// If this position is in the SIP_EXPORT_EXECUTIVES list then issue an error message if they have not checked the checkbox in the form.
+				// If this position is in the SIP_EXPORT_EXECUTIVES list then issue an error message if they have not checked the
+				//   checkbox in the form.
 				if (!allowExecutivesToBeImported)
 					if (isSipExecutive(positionNumber)) {
 						int ErrorMessageNumber = 9;
@@ -684,18 +718,34 @@ public class SipImportServiceImpl implements SipImportService {
 					UpdateWarningCounts(WarningMessageNumber, UnitId);		
 				}
 				
+				// if the job function indicates a union position, then generate an error
 				if (jobFunction.equals("UNB")) {
 					int ErrorMessageNumber = 10;
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
 			
+				// if the position number and the emplid have been seen before, then call this line a duplicate and generate an error
 				if (isDuplicateLine(positionNumber, emplId, sipImportLine)){
 					int ErrorMessageNumber = 11;
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
 					
+				//  If the requested amount is > 0 and the requested percent distribution is <> 1 then generate an error
+				if ( (requestedAmountSum(positionNumber, emplId) > 0) && (requestedPerCentDistributionSum(positionNumber, emplId) != 1) ) {
+					int ErrorMessageNumber = 12;
+					RulesErrorList += ErrorMessages[ErrorMessageNumber];
+					UpdateErrorCounts(ErrorMessageNumber, UnitId);
+				}
+				
+				//  If the requested amount is = 0 and the requested percent distribution is  > 0 then generate a warning
+				if ( (requestedAmountSum(positionNumber, emplId) == 0) && (requestedPerCentDistributionSum(positionNumber, emplId) > 0) )  {
+					int WarningMessageNumber = 2;
+					RulesWarningList += WarningMessages[WarningMessageNumber];
+					UpdateWarningCounts(WarningMessageNumber, UnitId);		
+				}
+				
 				return true;
 		}
 		catch (Exception e) {
@@ -757,7 +807,7 @@ public class SipImportServiceImpl implements SipImportService {
 				ValuesWarningList += WarningMessages[0];
 				UpdateWarningCounts(0, UnitId);
 			}
-			
+
 			return true;
 		}
 		catch (Exception e) {

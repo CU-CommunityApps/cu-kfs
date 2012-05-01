@@ -28,7 +28,7 @@ public class SipImportDaoJdbc extends BudgetConstructionDaoJdbcBase implements S
 	        sqlBuilder.append("select sum(APPT_RQST_FTE_QTY) as TotalPerCentDistribution from LD_PNDBC_APPTFND_T where position_nbr=? and emplid=?");
 	        String sqlString = sqlBuilder.toString();
 	        
-	        BigDecimal bdResult =  this.getSimpleJdbcTemplate().queryForObject(sqlString, BigDecimal.class, "00" + positionNumber, emplId);
+	        BigDecimal bdResult =  this.getSimpleJdbcTemplate().queryForObject(sqlString, BigDecimal.class, positionNumber, emplId);
 	        if (ObjectUtils.isNotNull(bdResult))
 	        	return bdResult.doubleValue();
 	        else
@@ -40,4 +40,25 @@ public class SipImportDaoJdbc extends BudgetConstructionDaoJdbcBase implements S
         	return -2.00;
         }
     }
+
+    public double getTotalRequestedAmount(String positionNumber, String emplId) {
+        
+        try {
+	        StringBuilder sqlBuilder = new StringBuilder(200);
+	        sqlBuilder.append("select sum(APPT_RQST_AMT) as TotalRequestedAmount from LD_PNDBC_APPTFND_T where position_nbr=? and emplid=?");
+	        String sqlString = sqlBuilder.toString();
+	        
+	        BigDecimal bdResult =  this.getSimpleJdbcTemplate().queryForObject(sqlString, BigDecimal.class, positionNumber, emplId);
+	        if (ObjectUtils.isNotNull(bdResult))
+	        	return bdResult.doubleValue();
+	        else
+	        	return -1.00;
+        }
+        
+        catch (Exception ex) {
+        	LOG.info("SipImportDaoJdbc Exception: " + ex.getMessage());
+        	return -2.00;
+        }
+    }
+
 }

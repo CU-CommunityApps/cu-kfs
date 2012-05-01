@@ -24,4 +24,5 @@ import org.kuali.rice.kns.util.KualiDecimal;
 public interface SipImportDao {
     
 	public double getTotalPerCentDistribution(String positionNumber, String emplId);
+	public double getTotalRequestedAmount(String positionNumber, String emplId);
 }
