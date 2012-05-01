@@ -24,7 +24,7 @@
     <property name="businessRulesClass" value="org.kuali.kfs.sys.document.validation.impl.AccountingRuleEngineRuleBase"/>
     <property name="documentPresentationControllerClass" value="org.kuali.kfs.fp.document.authorization.BudgetAdjustmentDocumentPresentationController"/>    
     <property name="promptBeforeValidationClass" value="org.kuali.kfs.fp.document.validation.impl.BudgetAdjustmentDocumentPreRules"/>
-    <property name="importedLineParserClass" value="edu.cornell.kfs.sys.businessobject.CUBudgetAdjustmentAccountingLineParser" />
+    <property name="importedLineParserClass" value="org.kuali.kfs.fp.businessobject.BudgetAdjustmentAccountingLineParser" />
     <property name="sessionDocument" value="true"/>
     <property name="allowsCopy" value="true"/>
 
@@ -149,7 +149,7 @@
   <bean id="BudgetAdjustment-sourceAccountingLineGroup" parent="BudgetAdjustment-sourceAccountingLineGroup-parentBean"/>
   
   <bean id="BudgetAdjustment-sourceAccountingLineGroup-parentBean" parent="AccountingLineGroup" abstract="true">
-	  <property name="accountingLineView" ref="CU-BudgetAdjustment-Description-accountingLineView"/>
+	  <property name="accountingLineView" ref="BudgetAdjustment-accountingLineView"/>
 	  <property name="accountingLineClass" value="org.kuali.kfs.fp.businessobject.BudgetAdjustmentSourceAccountingLine"/>
 	  <property name="groupLabel" value="From/Decrease"/>
 	  <property name="accountingLineAuthorizerClass" value="org.kuali.kfs.fp.document.authorization.BudgetAdjustmentAccountingLineAuthorizer"/>
@@ -160,7 +160,7 @@
 	<bean id="BudgetAdjustment-targetAccountingLineGroup" parent="BudgetAdjustment-targetAccountingLineGroup-parentBean"/>
 	
 	<bean id="BudgetAdjustment-targetAccountingLineGroup-parentBean" parent="AccountingLineGroup" abstract="true">
-	  <property name="accountingLineView" ref="CU-BudgetAdjustment-Description-accountingLineView"/>
+	  <property name="accountingLineView" ref="BudgetAdjustment-accountingLineView"/>
 	  <property name="accountingLineClass" value="org.kuali.kfs.fp.businessobject.BudgetAdjustmentTargetAccountingLine"/>
 	  <property name="groupLabel" value="To/Increase"/>
 	  <property name="accountingLineAuthorizerClass" value="org.kuali.kfs.fp.document.authorization.BudgetAdjustmentAccountingLineAuthorizer"/>
@@ -204,6 +204,14 @@
 	                </list>
 	              </property>
 	            </bean>
+                <bean parent="AccountingLineView-line">
+                    <property name="elementName" value="lineDescription"/>
+                    <property name="fields">
+                        <list>
+                            <bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
+                        </list>
+                    </property>
+                </bean>	            
 	            <bean parent="AccountingLineView-showHideLines" p:label="Monthly Lines" p:name="monthlyLinesHideShow">
 	            	<property name="lines">
 	            		<list>

@@ -23,7 +23,7 @@
     <property name="documentClass" value="org.kuali.kfs.fp.document.IndirectCostAdjustmentDocument"/>
     <property name="businessRulesClass" value="org.kuali.kfs.sys.document.validation.impl.AccountingRuleEngineRuleBase"/>
     <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.AccountingDocumentAuthorizerBase"/>
-    <property name="importedLineParserClass" value="edu.cornell.kfs.sys.businessobject.CUIndirectCostAdjustmentDocumentAccountingLineParser" />
+    <property name="importedLineParserClass" value="org.kuali.kfs.fp.businessobject.IndirectCostAdjustmentDocumentAccountingLineParser" />
     <property name="sessionDocument" value="true"/>
     <property name="allowsCopy" value="true"/>
 
@@ -91,7 +91,7 @@
   <!-- accounting line groups -->
   <bean id="IndirectCostAdjustmentDocument-sourceAccountingLineGroup" parent="IndirectCostAdjustmentDocument-sourceAccountingLineGroup-parentBean"/> 
   <bean id="IndirectCostAdjustmentDocument-sourceAccountingLineGroup-parentBean" parent="AccountingLineGroup" abstract="true">
-	  <property name="accountingLineView" ref="CU-IndirectCostAdjustmentDocument-description-accountingLineView"/>
+	  <property name="accountingLineView" ref="IndirectCostAdjustmentDocument-accountingLineView"/>
 	  <property name="accountingLineClass" value="org.kuali.kfs.sys.businessobject.SourceAccountingLine"/>
 	  <property name="groupLabel" value="Grant"/>
 	  <property name="accountingLineAuthorizerClass" value="org.kuali.kfs.fp.document.authorization.FinancialProcessingAccountingLineAuthorizer"/>
@@ -102,7 +102,7 @@
 	
 	<bean id="IndirectCostAdjustmentDocument-targetAccountingLineGroup" parent="IndirectCostAdjustmentDocument-targetAccountingLineGroup-parentBean"/>	
 	<bean id="IndirectCostAdjustmentDocument-targetAccountingLineGroup-parentBean" parent="AccountingLineGroup" abstract="true">
-	  <property name="accountingLineView" ref="CU-IndirectCostAdjustmentDocument-description-accountingLineView"/>
+	  <property name="accountingLineView" ref="IndirectCostAdjustmentDocument-accountingLineView"/>
 	  <property name="accountingLineClass" value="org.kuali.kfs.sys.businessobject.TargetAccountingLine"/>
 	  <property name="groupLabel" value="Receipt"/>
 	  <property name="accountingLineAuthorizerClass" value="org.kuali.kfs.fp.document.authorization.FinancialProcessingAccountingLineAuthorizer"/>
@@ -120,6 +120,14 @@
 					<property name="lines">
 						<list>
 							<ref bean="IndirectCostAdjustmentDocument-accountingInformation"/>
+							<bean parent="AccountingLineView-line">
+                                <property name="elementName" value="lineDescription"/>
+                                <property name="fields">
+                                    <list>
+                                        <bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
+                                    </list>
+                                </property>
+                            </bean>
 						</list>
 					</property>
 				</bean>

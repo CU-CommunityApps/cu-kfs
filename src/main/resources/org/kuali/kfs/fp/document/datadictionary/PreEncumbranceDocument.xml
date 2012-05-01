@@ -23,7 +23,7 @@
     <property name="documentClass" value="org.kuali.kfs.fp.document.PreEncumbranceDocument"/>
     <property name="businessRulesClass" value="org.kuali.kfs.sys.document.validation.impl.AccountingRuleEngineRuleBase"/>
     <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.AccountingDocumentAuthorizerBase"/>
-    <property name="importedLineParserClass" value="edu.cornell.kfs.sys.businessobject.CUPreEncumbranceDocumentAccountingLineParser" />
+    <property name="importedLineParserClass" value="org.kuali.kfs.fp.businessobject.PreEncumbranceDocumentAccountingLineParser" />
     <property name="sessionDocument" value="true"/>
     <property name="allowsCopy" value="true"/>
 
@@ -101,7 +101,7 @@
   <!-- accounting line groups -->
   <bean id="PreEncumbranceDocument-sourceAccountingLineGroup" parent="PreEncumbranceDocument-sourceAccountingLineGroup-parentBean"/>  
   <bean id="PreEncumbranceDocument-sourceAccountingLineGroup-parentBean" parent="AccountingLineGroup" abstract="true">
-	  <property name="accountingLineView" ref="CU-FinancialProcessing-SalesTax-Description-accountingLineView"/>
+	  <property name="accountingLineView" ref="FinancialProcessing-SalesTax-accountingLineView"/>
 	  <property name="accountingLineClass" value="org.kuali.kfs.sys.businessobject.SourceAccountingLine"/>
 	  <property name="groupLabel" value="Encumbrance"/>
 	  <property name="accountingLineAuthorizerClass" value="org.kuali.kfs.fp.document.authorization.FinancialProcessingAccountingLineAuthorizer"/>
@@ -112,7 +112,7 @@
 	
   <bean id="PreEncumbranceDocument-targetAccountingLineGroup" parent="PreEncumbranceDocument-targetAccountingLineGroup-parentBean"/>	
   <bean id="PreEncumbranceDocument-targetAccountingLineGroup-parentBean" parent="AccountingLineGroup" abstract="true">
-	  <property name="accountingLineView" ref="CU-PreEncumbranceDocument-Description-accountingLineView"/>
+	  <property name="accountingLineView" ref="PreEncumbranceDocument-accountingLineView"/>
 	  <property name="accountingLineClass" value="org.kuali.kfs.sys.businessobject.TargetAccountingLine"/>
 	  <property name="groupLabel" value="Disencumbrance"/>
 	  <property name="accountingLineAuthorizerClass" value="org.kuali.kfs.fp.document.authorization.FinancialProcessingAccountingLineAuthorizer"/>
@@ -135,6 +135,7 @@
 							<property name="fields">
 								<list>
 									<bean parent="AccountingLineView-field" p:name="referenceNumber" p:required="true"/>
+                                    <bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>									
 								</list>
 							</property>
 						</bean>
