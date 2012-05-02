@@ -375,7 +375,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                     oldRequestedAmount);
 
             // check if PBGL line already in the map
-            String key = buildAppointmentFundingKey(newDistribution);
+            String key = buildPBGLKeyFromAppointmentFunding(newDistribution);
             PendingBudgetConstructionGeneralLedger pendingRecord = null;
             // add
             if (newPBGLLinesMap.containsKey(key)) {
@@ -461,6 +461,13 @@ public class SipDistributionServiceImpl implements SipDistributionService {
     private String buildAppointmentFundingKey(PendingBudgetConstructionAppointmentFunding appointmentFunding) {
         String key = appointmentFunding.getUniversityFiscalYear() + appointmentFunding.getEmplid()
                 + appointmentFunding.getPositionNumber() + appointmentFunding.getChartOfAccountsCode()
+                + appointmentFunding.getAccountNumber() + appointmentFunding.getSubAccountNumber()
+                + appointmentFunding.getFinancialObjectCode() + appointmentFunding.getFinancialSubObjectCode();
+        return key;
+    }
+    
+    private String buildPBGLKeyFromAppointmentFunding(PendingBudgetConstructionAppointmentFunding appointmentFunding) {
+        String key = appointmentFunding.getUniversityFiscalYear() + appointmentFunding.getChartOfAccountsCode()
                 + appointmentFunding.getAccountNumber() + appointmentFunding.getSubAccountNumber()
                 + appointmentFunding.getFinancialObjectCode() + appointmentFunding.getFinancialSubObjectCode();
         return key;
