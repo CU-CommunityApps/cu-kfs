@@ -483,7 +483,10 @@
 			</list>
 		</property>
 	</bean>
-    
+<!--    
+    KFSPTS-917 : Removing the branching logic from the validation process so accounting validation is always required on Requisitions.
+-->
+<!--
     <bean id="Requisition-itemConsideredEnteredComposite-requiresAccountValidationBranchingValidation" abstract="true" parent="Requisition-requiresAccountValidationBranchingValidation" scope="prototype">
 		<property name="branchMap">
 			<map>
@@ -499,7 +502,7 @@
 			</list>
 		</property>
 	</bean>		
-
+-->
     <bean id="Requisition-itemConsideredEnteredCompositeValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true"> 								
         <property name="quitOnFail" value="false" />
         <property name="validations">
@@ -513,10 +516,7 @@
                     </property>
                 </bean>
 				
-				<!-- Need to do the requisitionRequiresAccountValidationBranchingValidation to determine
-				     whether we need to call the processAccountValidation -->
-                <bean parent="Requisition-itemConsideredEnteredComposite-requiresAccountValidationBranchingValidation" scope="prototype" />
-				<!-- End of requisitionRequiresAccountValidationBranchingValidation -->				            				                        
+                <bean parent="Requisition-itemConsideredEnteredComposite-requiresAccountValidation-needsAccountBranchCompositeValidation" scope="prototype" />
             </list>
         </property>
     </bean>    
