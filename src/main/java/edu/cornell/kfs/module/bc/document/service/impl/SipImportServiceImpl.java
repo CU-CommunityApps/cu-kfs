@@ -112,7 +112,6 @@ public class SipImportServiceImpl implements SipImportService {
     private SipImportDao sipImportDao;
     private BudgetDocumentService budgetDocumentService;
 	protected PSPositionDataDao positionDataDao;
-	public List<SipImportData> entireSipImport;
 	
 	// This stores the number of errors for each error message regardless of UnitId (C Level org)
 	protected int errorCount[];
@@ -160,7 +159,7 @@ public class SipImportServiceImpl implements SipImportService {
      * @see edu.cornell.kfs.module.bc.document.service.SipImportService#importFile(java.io.InputStream)
      */
     @Transactional
-    public String importFile(InputStream fileImportStream, List<ExternalizedMessageWrapper> errorReport , String principalId, boolean allowExecutivesToBeImported) {
+    public String importFile(InputStream fileImportStream, List<ExternalizedMessageWrapper> errorReport , String principalId, boolean allowExecutivesToBeImported, List<SipImportData> sipImportCollection) {
 		// Get values for parameters
 		SIP_IMPORT_MODE = CUBudgetParameterFinder.getSipImportMode();
 		SIP_EXECUTIVES = CUBudgetParameterFinder.getSIPExecutives();
@@ -170,7 +169,7 @@ public class SipImportServiceImpl implements SipImportService {
         errorCountByUnitId = new HashMap<String, HashMap<Integer, Integer>>();
         warningCountByUnitId = new HashMap<String, HashMap<Integer, Integer>>();
         SipImportData sipImportData;
-        entireSipImport = new ArrayList<SipImportData>();
+
         this.importCount = 0;
         List<ExternalizedMessageWrapper> errorReportDetail = new ArrayList<ExternalizedMessageWrapper>();
         
@@ -261,7 +260,7 @@ public class SipImportServiceImpl implements SipImportService {
 					}
 					else
 						// Add to sip Import Data list
-						entireSipImport.add(sipImportData);
+						sipImportCollection.add(sipImportData);
             }
         	//  Add some blank lines after the last detail line followed by the header row.
 			errorReportDetail.add(new ExternalizedMessageWrapper("\n\n"));

@@ -426,5 +426,21 @@
 	
 	<bean id="sipImportDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.bc.document.dataaccess.impl.SipImportDaoJdbc">
     </bean>
+    
+    <bean id="sipDistributionDao" parent="platformAwareDao" class="edu.cornell.kfs.module.bc.document.dataaccess.impl.SipDistributionDaoOjb">
+    </bean>
+    
+    <bean id="budgetSipDistributionService" class="edu.cornell.kfs.module.bc.document.service.impl.SipDistributionServiceImpl" >
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>	
+		<property name="optionsService">
+			<ref bean="optionsService" />
+		</property>
+		<property name="sipDistributionDao">
+			<ref bean="sipDistributionDao" />
+		</property>
+		
+	</bean>
 
 </beans>

@@ -76,7 +76,7 @@ public class CUBCConstants extends BCConstants {
     }
 
     public static final String[] UNION_CODES_SIP = new String[]{"BTC", "CPU", "CWA", "IOE", "LOC", "PRO", "SPA", "UAW"};
-    
+
     public static final String BUDGET_ONLY_OBJECT_CODE_SUB_TYPE = "BU";
 
 
@@ -84,7 +84,21 @@ public class CUBCConstants extends BCConstants {
     
 
     public static final String BALANCE_TYPE_TRUSTEES_BUDGET = "TB";
-    
+
     // the transaction ledger description for the general ledger budget load
     public final static String TB_TRN_LDGR_ENTR_DESC = "Trustee Budget Load";
+
+    public static final class CompFreq {
+        public static final String HOURLY = "H";
+        public static final String ANNUALLY = "A";
+    }
+
+    public static final class SipImportModeValues {
+        public static final String REPORT = "REPORT";
+        public static final String UPDATE = "UPDATE";
+    }
+    
+    public static final String SIP_PLUG_OBJECT_CODE = "6995";
+    
+    public static final String SIP_FINANCIAL_OBJECT_LEVEL_CODE = "SIP";
 }

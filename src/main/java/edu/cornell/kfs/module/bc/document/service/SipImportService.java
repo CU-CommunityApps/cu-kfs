@@ -24,6 +24,8 @@ import org.kuali.rice.kim.bo.Person;
 
 import com.lowagie.text.DocumentException;
 
+import edu.cornell.kfs.module.bc.businessobject.SipImportData;
+
 public interface SipImportService {
     
     /**
@@ -32,7 +34,7 @@ public interface SipImportService {
      * @param fileImportStream
      * @return
      */
-	public String importFile(InputStream fileImportStream, List<ExternalizedMessageWrapper> errorReport, String principalId, boolean allowExecutivesToBeImported);
+	public String importFile(InputStream fileImportStream, List<ExternalizedMessageWrapper> errorReport, String principalId, boolean allowExecutivesToBeImported, List<SipImportData> importData);
     
    
     /**

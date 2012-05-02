@@ -106,7 +106,7 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
         public static final String FINANCIAL_OBJ_CD = "financialObjectCode";
         public static final String FINANCIAL_SUB_OBJ_CD = "financialSubObjectCode";
         public static final String FINANCIAL_BAL_TYP_CD = "financialBalanceTypeCode";
-        public static final String FINANCIAL_OBJ_TYP_CD = "financialBalanceTypeCode";
+        public static final String FINANCIAL_OBJ_TYP_CD = "financialObjectTypeCode";
 
         public static final String FINANCIAL_DOC_MONTH_1_LINE_AMT = "financialDocumentMonth1LineAmount";
         public static final String FINANCIAL_DOC_MONTH_2_LINE_AMT = "financialDocumentMonth2LineAmount";
