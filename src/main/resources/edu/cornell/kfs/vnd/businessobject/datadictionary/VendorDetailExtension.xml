@@ -36,6 +36,11 @@
   	<property name="name" value="einvoiceVendorIndicator"/>
     <property name="label" value="eInvoice Indicator"/>
     <property name="shortLabel" value="eInvoice"/>
+    <property name="attributeSecurity">
+    	<bean parent="AttributeSecurity">
+    		<property name="readOnly" value="true" />
+    	</bean>
+    </property>
    </bean>
 
   <bean id="VendorDetailExtension-vendorHeaderGeneratedIdentifier" parent="VendorDetail-vendorHeaderGeneratedIdentifier-parentBean"/>
