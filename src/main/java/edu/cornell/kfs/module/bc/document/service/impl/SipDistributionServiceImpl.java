@@ -13,9 +13,7 @@ import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionAppointme
 import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionGeneralLedger;
 import org.kuali.kfs.module.bc.businessobject.RequestBenefits;
 import org.kuali.kfs.module.bc.util.BudgetParameterFinder;
-import org.kuali.kfs.module.ld.LaborPropertyConstants;
 import org.kuali.kfs.module.ld.businessobject.BenefitsCalculation;
-import org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.rice.kns.service.BusinessObjectService;
@@ -132,7 +130,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                 affectedEdocsFor2PLGCleanup);
 
         // generate benefits details entries
-        buildSipNewPBGLReportEntriesWitrhBenefitsDetails(reportEntries, newPBGLEntries, oldAmounts, requestBenefitsMap);
+        buildSipNewPBGLReportEntriesWithBenefitsDetails(reportEntries, newPBGLEntries, oldAmounts, requestBenefitsMap);
 
         // generate report entries for the calculated benefits
         buildSipNewAnnualBenefitsReportEntries(reportEntries, benefitsMap, oldAnnualBenefitsAmount);
@@ -465,7 +463,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                 + appointmentFunding.getFinancialObjectCode() + appointmentFunding.getFinancialSubObjectCode();
         return key;
     }
-    
+
     private String buildPBGLKeyFromAppointmentFunding(PendingBudgetConstructionAppointmentFunding appointmentFunding) {
         String key = appointmentFunding.getUniversityFiscalYear() + appointmentFunding.getChartOfAccountsCode()
                 + appointmentFunding.getAccountNumber() + appointmentFunding.getSubAccountNumber()
@@ -586,8 +584,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                                     .get(buildPendingBudgetConstructionGeneralLedgerKey(newPBGLEntry));
 
                             // create and add new request Benefit
-                            requestBenefits.add(createRequestBenefit(newPBGLEntry, benefit,
-                                    laborBenefitsRateCategoryCode,
+                            requestBenefits.add(createRequestBenefit(newPBGLEntry, benefit, benefitsCalculation,
                                     benefitsPercent));
 
                             // get the benefit line if exists, create a new one otherwise
@@ -610,7 +607,8 @@ public class SipDistributionServiceImpl implements SipDistributionService {
     }
 
     private RequestBenefits createRequestBenefit(PendingBudgetConstructionGeneralLedger newPBGLEntry,
-            LaborLedgerPositionObjectBenefit benefit, String laborBenefitsRateCategoryCode, KualiPercent benefitsPercent) {
+            LaborLedgerPositionObjectBenefit benefit, BenefitsCalculation benefitsCalculation,
+            KualiPercent benefitsPercent) {
         // create the request benefit
         RequestBenefits requestBenefit = new RequestBenefits();
         requestBenefit.setChartOfAccountsCode(newPBGLEntry.getChartOfAccountsCode());
@@ -618,26 +616,16 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         requestBenefit.setFinancialObjectBenefitsTypeCode(benefit.getFinancialObjectBenefitsTypeCode());
         requestBenefit.setFinancialObjectBenefitsTypeDescription(benefit.getLaborLedgerBenefitsCalculation()
                 .getLaborLedgerBenefitsType().getPositionBenefitTypeDescription());
-        requestBenefit.setPositionFringeBenefitObjectCode(benefit.getLaborLedgerBenefitsCalculation()
-                .getPositionFringeBenefitObjectCode());
-        requestBenefit.setPositionFringeBenefitObjectCodeName(benefit.getLaborLedgerBenefitsCalculation()
+        requestBenefit.setPositionFringeBenefitObjectCode(benefitsCalculation.getPositionFringeBenefitObjectCode());
+        requestBenefit.setPositionFringeBenefitObjectCodeName(benefitsCalculation
                 .getPositionFringeBenefitObject().getFinancialObjectCodeName());
 
         // set the benefit percent to be display in the results
         requestBenefit.setPositionFringeBenefitPercent(benefitsPercent);
-        // create a map to use for the lookup of the labor benefit rate category
-        Map<String, Object> lbrcMap = new HashMap<String, Object>();
-        lbrcMap.put(LaborPropertyConstants.LABOR_BENEFIT_RATE_CATEGORY_CODE, laborBenefitsRateCategoryCode);
 
-        // lookup the labor benefit rate category to get the description
-        LaborBenefitRateCategory lbrc = (LaborBenefitRateCategory) businessObjectService.findByPrimaryKey(
-                LaborBenefitRateCategory.class, lbrcMap);
-
-        // set the category code and description from the labor benefit rate category object to display in the
-        // results
-
-        requestBenefit.setLaborBenefitRateCategoryCode(lbrc.getLaborBenefitRateCategoryCode());
-        requestBenefit.setLaborBenefitRateCategoryCodeDesc(lbrc.getCodeDesc());
+        requestBenefit.setLaborBenefitRateCategoryCode(benefitsCalculation.getLaborBenefitRateCategoryCode());
+        requestBenefit.setLaborBenefitRateCategoryCodeDesc(benefitsCalculation.getLaborBenefitRateCategory()
+                .getCodeDesc());
 
         KualiDecimal decimalBenefitsPercent = benefitsPercent.isNonZero() ? benefitsPercent
                 .toKualiDecimal() : KualiDecimal.ZERO;
@@ -1091,7 +1079,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
      * @param reportEntries
      * @param newDistributions
      */
-    protected void buildSipNewPBGLReportEntriesWitrhBenefitsDetails(StringBuilder reportEntries,
+    protected void buildSipNewPBGLReportEntriesWithBenefitsDetails(StringBuilder reportEntries,
             Map<String, PendingBudgetConstructionGeneralLedger> newPBGLEntries, Map<String, KualiInteger> oldAmounts,
             Map<String, List<RequestBenefits>> requestBenefitsMap) {
 
