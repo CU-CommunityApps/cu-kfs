@@ -40,6 +40,7 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.SubFundGroup;
 import org.kuali.kfs.gl.businessobject.Balance;
+import org.kuali.kfs.gl.businessobject.Entry;
 import org.kuali.kfs.module.bc.BCConstants;
 import org.kuali.kfs.module.bc.BCParameterKeyConstants;
 import org.kuali.kfs.module.bc.batch.dataaccess.GeneralLedgerBudgetLoadDao;
@@ -49,11 +50,11 @@ import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionGeneralLe
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
-import org.kuali.kfs.gl.businessobject.Entry;
 import org.kuali.kfs.sys.service.HomeOriginationService;
 import org.kuali.rice.kns.bo.Parameter;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
+import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KualiInteger;
 
@@ -70,7 +71,9 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     private HomeOriginationService homeOriginationService;
     private ParameterService parameterService;
     private BusinessObjectService boService;
+    private KualiConfigurationService kualiConfigurationService;
     private boolean tbRunFlag = false;
+    private boolean productionFlag = false;
     
 
     private String budgetReportDirectory;
@@ -98,8 +101,28 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     	Parameter subFundsParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS);
     	Parameter subFundProgramsParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS_PROGRAM);
         Parameter glAcObjectsParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_AC_OBJECTS);
+        productionFlag = StringUtils.equals(kualiConfigurationService.getPropertyString(KFSConstants.PROD_ENVIRONMENT_CODE_KEY), kualiConfigurationService.getPropertyString(KFSConstants.ENVIRONMENT_KEY));
+        String productionSetting = kualiConfigurationService.getPropertyString(KFSConstants.PROD_ENVIRONMENT_CODE_KEY);    
+        boolean errorEncountered = printOutEnvironment(reportDataStream, tbRunFlagParameter, subFundsParameter, subFundProgramsParameter, glAcObjectsParameter, fiscalYear, productionSetting);
         
-        boolean errorEncountered = printOutEnvironment(reportDataStream, tbRunFlagParameter, subFundsParameter, subFundProgramsParameter, glAcObjectsParameter, fiscalYear);
+        
+        if(tbRunFlagParameter.getParameterValue() != null) {
+        	if(this.getParameterService().getIndicatorParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSTEE_ONLY_BUDGET)) {
+                tbRunFlag = true;
+            }	
+        }
+        /**
+         * initiliaze the counter variables
+         */
+        DiagnosticCounters diagnosticCounters = new DiagnosticCounters();
+
+        boolean notProductionError = removeOldBudgetGeneralLedgerEntries(fiscalYear, diagnosticCounters);
+        if(notProductionError) {
+        	StringBuilder body = new StringBuilder();
+        	body.append("\nERROR - Executing in production and prior budget data already exists.  Program terminating.");
+        	reportDataStream.print(body);
+        }
+        errorEncountered |= notProductionError;
         if(errorEncountered) {
         	StringBuilder body = new StringBuilder();
         	DateFormat format = new SimpleDateFormat("yyyy/MM/dd @ HH:mm:ss");
@@ -114,19 +137,6 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             }
         	return;
         }
-        
-        if(tbRunFlagParameter.getParameterValue() != null) {
-        	if(this.getParameterService().getIndicatorParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSTEE_ONLY_BUDGET)) {
-                tbRunFlag = true;
-            }	
-        }
-        /**
-         * initiliaze the counter variables
-         */
-        DiagnosticCounters diagnosticCounters = new DiagnosticCounters();
-
-        removeOldBudgetGeneralLedgerEntries(fiscalYear, diagnosticCounters);
-        
         //
         // set up the global variables
         // this is a single object that can be passed to all methods that need it, to make the code "thread safe"
@@ -167,7 +177,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 
     private boolean printOutEnvironment(PrintStream reportDataStream, Parameter tbRunFlagParameter,
 			Parameter subFundsParameter, Parameter subFundProgramsParameter,
-			Parameter glAcObjectsParameter, Integer fiscalYear) {
+			Parameter glAcObjectsParameter, Integer fiscalYear, String productionSetting) {
     	
     	boolean errorEncountered = false;
     	boolean warningEncountered = false;
@@ -181,6 +191,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     	body.append(String.format("\n********************************************\n"));
 
     	body.append(String.format("\nINFO: Report being run for Fiscal Year %d\n", fiscalYear));
+    	body.append(String.format("\nINFO: Report is being run on the %s system\n", productionSetting));
     	if(tbRunFlagParameter != null) {
     		if(tbRunFlagParameter.getParameterValue() == null) {
     			warningEncountered = true;
@@ -259,7 +270,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
      * methods to do the actual load *
      ******************************************************************************************************************************/
 
-    private void removeOldBudgetGeneralLedgerEntries(Integer year, DiagnosticCounters diagnosticCounters) {
+    private boolean removeOldBudgetGeneralLedgerEntries(Integer year, DiagnosticCounters diagnosticCounters) {
     	int deletedPendingEntries = 0;
     	int deletedEntries = 0;
     	int deletedBalanceEntries = 0;
@@ -289,7 +300,11 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 			pendingEntryDeletion.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "CB");
 			QueryByCriteria pendingEntryQuery = new QueryByCriteria(GeneralLedgerPendingEntry.class, pendingEntryDeletion);
 			deletedCbPendingEntries = getPersistenceBrokerTemplate().getCount(pendingEntryQuery);
-			diagnosticCounters.setGeneralLedgerCbPendingEntriesDeleted(deletedCbPendingEntries);
+			if(deletedCbPendingEntries > 0 && productionFlag) {
+				return true;
+			} else if(!productionFlag) {
+				diagnosticCounters.setGeneralLedgerCbPendingEntriesDeleted(deletedCbPendingEntries);
+			}
 			
 			//BB entries
 			pendingEntryDeletion = new Criteria();
@@ -297,7 +312,11 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 			pendingEntryDeletion.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "BB");
 			pendingEntryQuery = new QueryByCriteria(GeneralLedgerPendingEntry.class, pendingEntryDeletion);
 			deletedBbPendingEntries = getPersistenceBrokerTemplate().getCount(pendingEntryQuery);
-			diagnosticCounters.setGeneralLedgerBbPendingEntriesDeleted(deletedBbPendingEntries);
+			if(deletedBbPendingEntries > 0 && productionFlag) {
+				return true;
+			} else if(!productionFlag) {
+				diagnosticCounters.setGeneralLedgerBbPendingEntriesDeleted(deletedBbPendingEntries);
+			}
 			
 			//AC entries
 			pendingEntryDeletion = new Criteria();
@@ -305,8 +324,11 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 			pendingEntryDeletion.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "AC");
 			pendingEntryQuery = new QueryByCriteria(GeneralLedgerPendingEntry.class, pendingEntryDeletion);
 			deletedAcPendingEntries = getPersistenceBrokerTemplate().getCount(pendingEntryQuery);
-			diagnosticCounters.setGeneralLedgerAcPendingEntriesDeleted(deletedAcPendingEntries);
-			
+			if(deletedAcPendingEntries > 0 && productionFlag) {
+				return true;
+			} else if(!productionFlag) {
+				diagnosticCounters.setGeneralLedgerAcPendingEntriesDeleted(deletedAcPendingEntries);
+			}
 			//Now the same for entries
 			//CB Pending first
 			Criteria entryDeletion = new Criteria();
@@ -314,7 +336,11 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 			entryDeletion.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "CB");
 			QueryByCriteria entryQuery = new QueryByCriteria(Entry.class, entryDeletion);
 			deletedCbEntries = getPersistenceBrokerTemplate().getCount(entryQuery);
-			diagnosticCounters.setGeneralLedgerCbEntriesDeleted(deletedCbEntries);
+			if(deletedCbEntries > 0 && productionFlag) {
+				return true;
+			} else if(!productionFlag) {
+				diagnosticCounters.setGeneralLedgerCbEntriesDeleted(deletedCbEntries);
+			}
 			
 			//BB entries
 			entryDeletion = new Criteria();
@@ -322,67 +348,87 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 			entryDeletion.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "BB");
 			entryQuery = new QueryByCriteria(Entry.class, entryDeletion);
 			deletedBbEntries = getPersistenceBrokerTemplate().getCount(entryQuery);
-			diagnosticCounters.setGeneralLedgerBbEntriesDeleted(deletedBbEntries);
-			
+			if(deletedBbEntries > 0 && productionFlag) {
+				return true;
+			} else if(!productionFlag) {
+				diagnosticCounters.setGeneralLedgerBbEntriesDeleted(deletedBbEntries);
+			}
 			//AC entries
 			entryDeletion = new Criteria();
 			entryDeletion.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
 			entryDeletion.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "AC");
 			entryQuery = new QueryByCriteria(Entry.class, entryDeletion);
 			deletedAcEntries = getPersistenceBrokerTemplate().getCount(entryQuery);
-			diagnosticCounters.setGeneralLedgerAcEntriesDeleted(deletedAcEntries);
-			
+			if(deletedAcEntries > 0 && productionFlag) {
+				return true;
+			} else if(!productionFlag) {
+				diagnosticCounters.setGeneralLedgerAcEntriesDeleted(deletedAcEntries);
+			}
 	        
-	      //Now the same for balances
+			//Now the same for balances
 			//CB Pending first
 			Criteria balanceDeletion = new Criteria();
 			balanceDeletion.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
 			balanceDeletion.addEqualTo(KFSPropertyConstants.BALANCE_TYPE_CODE, "CB");
 			QueryByCriteria balanceQuery = new QueryByCriteria(Balance.class, balanceDeletion);
 			deletedCbBalanceEntries = getPersistenceBrokerTemplate().getCount(balanceQuery);
-			diagnosticCounters.setGeneralLedgerCbBalanceEntriesDeleted(deletedCbBalanceEntries);
-			
+			if(deletedCbBalanceEntries > 0 && productionFlag) {
+				return true;
+			} else if(!productionFlag) {
+				diagnosticCounters.setGeneralLedgerCbBalanceEntriesDeleted(deletedCbBalanceEntries);
+			}
 			//BB entries
 			balanceDeletion = new Criteria();
 			balanceDeletion.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
 			balanceDeletion.addEqualTo(KFSPropertyConstants.BALANCE_TYPE_CODE, "BB");
 			balanceQuery = new QueryByCriteria(Balance.class, balanceDeletion);
 			deletedBbBalanceEntries = getPersistenceBrokerTemplate().getCount(balanceQuery);
-			diagnosticCounters.setGeneralLedgerBbBalanceEntriesDeleted(deletedBbBalanceEntries);
-			
+			if(deletedBbBalanceEntries > 0 && productionFlag) {
+				return true;
+			} else if(!productionFlag) {
+				diagnosticCounters.setGeneralLedgerBbBalanceEntriesDeleted(deletedBbBalanceEntries);
+			}
 			//AC entries
 			balanceDeletion = new Criteria();
 			balanceDeletion.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
 			balanceDeletion.addEqualTo(KFSPropertyConstants.BALANCE_TYPE_CODE, "AC");
 			balanceQuery = new QueryByCriteria(Balance.class, balanceDeletion);
 			deletedAcBalanceEntries = getPersistenceBrokerTemplate().getCount(balanceQuery);
-			diagnosticCounters.setGeneralLedgerAcBalanceEntriesDeleted(deletedAcBalanceEntries);
+			if(deletedAcBalanceEntries > 0 && productionFlag) {
+				return true;
+			} else if(!productionFlag) {
+				diagnosticCounters.setGeneralLedgerAcBalanceEntriesDeleted(deletedAcBalanceEntries);
+			}
 			
-	        Criteria pendingEntryCriteria = new Criteria();
-	        pendingEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-	        pendingEntryCriteria.addIn(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, nonTbCollection);
-	        QueryByCriteria deletePendingQry = new QueryByCriteria(GeneralLedgerPendingEntry.class, pendingEntryCriteria);
-	        deletedPendingEntries = getPersistenceBrokerTemplate().getCount(deletePendingQry);
-	        diagnosticCounters.setGeneralLedgerPendingEntriesDeleted(deletedPendingEntries);
-	        getPersistenceBrokerTemplate().deleteByQuery(deletePendingQry);
+			if(!productionFlag) {
+				Criteria pendingEntryCriteria = new Criteria();
+		        pendingEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
+		        pendingEntryCriteria.addIn(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, nonTbCollection);
+		        QueryByCriteria deletePendingQry = new QueryByCriteria(GeneralLedgerPendingEntry.class, pendingEntryCriteria);
+		        deletedPendingEntries = getPersistenceBrokerTemplate().getCount(deletePendingQry);
+		        diagnosticCounters.setGeneralLedgerPendingEntriesDeleted(deletedPendingEntries);
+		        getPersistenceBrokerTemplate().deleteByQuery(deletePendingQry);
+		        
+		        Criteria glEntryCriteria = new Criteria();
+		        glEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
+		        glEntryCriteria.addIn(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, nonTbCollection);
+		        QueryByCriteria deleteEntryQry = new QueryByCriteria(Entry.class, glEntryCriteria);
+		        deletedEntries = getPersistenceBrokerTemplate().getCount(deleteEntryQry);
+		        diagnosticCounters.setGeneralLedgerEntriesDeleted(deletedEntries);
+		        getPersistenceBrokerTemplate().deleteByQuery(deleteEntryQry);
+		        
+		        Criteria glBalanceCriteria = new Criteria();
+		        glBalanceCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
+		        glBalanceCriteria.addIn(KFSPropertyConstants.BALANCE_TYPE_CODE, nonTbCollection);
+		        QueryByCriteria deleteBalanceQry = new QueryByCriteria(Balance.class, glBalanceCriteria);
+		        deletedBalanceEntries = getPersistenceBrokerTemplate().getCount(deleteBalanceQry);
+		        diagnosticCounters.setGeneralLedgerBalanceEntriesDeleted(deletedBalanceEntries);
+		        getPersistenceBrokerTemplate().deleteByQuery(deleteBalanceQry);	
+			}
 	        
-	        Criteria glEntryCriteria = new Criteria();
-	        glEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-	        glEntryCriteria.addIn(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, nonTbCollection);
-	        QueryByCriteria deleteEntryQry = new QueryByCriteria(Entry.class, glEntryCriteria);
-	        deletedEntries = getPersistenceBrokerTemplate().getCount(deleteEntryQry);
-	        diagnosticCounters.setGeneralLedgerEntriesDeleted(deletedEntries);
-	        getPersistenceBrokerTemplate().deleteByQuery(deleteEntryQry);
-	        
-	        Criteria glBalanceCriteria = new Criteria();
-	        glBalanceCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-	        glBalanceCriteria.addIn(KFSPropertyConstants.BALANCE_TYPE_CODE, nonTbCollection);
-	        QueryByCriteria deleteBalanceQry = new QueryByCriteria(Balance.class, glBalanceCriteria);
-	        deletedBalanceEntries = getPersistenceBrokerTemplate().getCount(deleteBalanceQry);
-	        diagnosticCounters.setGeneralLedgerBalanceEntriesDeleted(deletedBalanceEntries);
-	        getPersistenceBrokerTemplate().deleteByQuery(deleteBalanceQry);
 	        
 	        getPersistenceBrokerTemplate().clearCache();
+	        return false;
 			
 		} else {
 			getPersistenceBrokerTemplate().clearCache();
@@ -390,35 +436,45 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 	        pendingEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
 	        pendingEntryCriteria.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "TB");
 	        QueryByCriteria deletePendingQry = new QueryByCriteria(GeneralLedgerPendingEntry.class, pendingEntryCriteria);
-	        System.out.println("Pending TB deletion query: " + deletePendingQry.toString());
 	        
-	        deletedPendingEntries = getPersistenceBrokerTemplate().getCount(deletePendingQry);
-	        diagnosticCounters.setGeneralLedgerTbPendingEntriesDeleted(deletedPendingEntries);
-	        diagnosticCounters.setGeneralLedgerPendingEntriesDeleted(deletedPendingEntries);
-	        getPersistenceBrokerTemplate().deleteByQuery(deletePendingQry);
+	        if(deletedPendingEntries > 0 && productionFlag) {
+				return true;
+			} else if(!productionFlag) {
+		        deletedPendingEntries = getPersistenceBrokerTemplate().getCount(deletePendingQry);
+		        diagnosticCounters.setGeneralLedgerTbPendingEntriesDeleted(deletedPendingEntries);
+		        diagnosticCounters.setGeneralLedgerPendingEntriesDeleted(deletedPendingEntries);
+		        getPersistenceBrokerTemplate().deleteByQuery(deletePendingQry);
+			}
 	        
 	        Criteria glEntryCriteria = new Criteria();
 	        glEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
 	        glEntryCriteria.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "TB");
 	        QueryByCriteria deleteEntryQry = new QueryByCriteria(Entry.class, glEntryCriteria);
 	        deletedEntries = getPersistenceBrokerTemplate().getCount(deleteEntryQry);
-	        diagnosticCounters.setGeneralLedgerTbEntriesDeleted(deletedEntries);
-	        diagnosticCounters.setGeneralLedgerEntriesDeleted(deletedEntries);
-	        getPersistenceBrokerTemplate().deleteByQuery(deleteEntryQry);
+	        if(deletedEntries > 0 && productionFlag) {
+				return true;
+			} else if(!productionFlag) {
+		        diagnosticCounters.setGeneralLedgerTbEntriesDeleted(deletedEntries);
+		        diagnosticCounters.setGeneralLedgerEntriesDeleted(deletedEntries);
+		        getPersistenceBrokerTemplate().deleteByQuery(deleteEntryQry);
+			}
 	        
 	        Criteria glBalanceCriteria = new Criteria();
 	        glBalanceCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
 	        glBalanceCriteria.addEqualTo(KFSPropertyConstants.BALANCE_TYPE_CODE, "TB");
 	        QueryByCriteria deleteBalanceQry = new QueryByCriteria(Balance.class, glBalanceCriteria);
 	        deletedBalanceEntries = getPersistenceBrokerTemplate().getCount(deleteBalanceQry);
-	        diagnosticCounters.setGeneralLedgerTbBalanceEntriesDeleted(deletedBalanceEntries);
-	        diagnosticCounters.setGeneralLedgerBalanceEntriesDeleted(deletedBalanceEntries);
-	        getPersistenceBrokerTemplate().deleteByQuery(deleteBalanceQry);
+	        if(deletedBalanceEntries > 0 && productionFlag) {
+				return true;
+			} else if(!productionFlag) {
+		        diagnosticCounters.setGeneralLedgerTbBalanceEntriesDeleted(deletedBalanceEntries);
+		        diagnosticCounters.setGeneralLedgerBalanceEntriesDeleted(deletedBalanceEntries);
+		        getPersistenceBrokerTemplate().deleteByQuery(deleteBalanceQry);
+			}
 	        
 	        getPersistenceBrokerTemplate().clearCache();
+	        return false;
 		}
-
-
 		
 	}
 
@@ -1519,5 +1575,20 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     public void setBudgetReportFilePrefix(String budgetReportFilePrefix) {
         this.budgetReportFilePrefix = budgetReportFilePrefix;
     }
+
+	/**
+	 * @return the kualiConfigurationService
+	 */
+	public KualiConfigurationService getKualiConfigurationService() {
+		return kualiConfigurationService;
+	}
+
+	/**
+	 * @param kualiConfigurationService the kualiConfigurationService to set
+	 */
+	public void setKualiConfigurationService(
+			KualiConfigurationService kualiConfigurationService) {
+		this.kualiConfigurationService = kualiConfigurationService;
+	}
 
 }
