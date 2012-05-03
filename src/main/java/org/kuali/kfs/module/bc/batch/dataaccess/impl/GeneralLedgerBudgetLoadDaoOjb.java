@@ -157,7 +157,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         //diagnosticCounters.writeDiagnosticCounters();
         if(tbRunFlag) {
             Parameter param = this.getParameterService().retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSTEE_ONLY_BUDGET);
-            param.setParameterValue("N");
+            param.setParameterValue("X");
             this.getBusinessObjectService().save(param);
         }
         writeReport(reportDataStream, diagnosticCounters);
