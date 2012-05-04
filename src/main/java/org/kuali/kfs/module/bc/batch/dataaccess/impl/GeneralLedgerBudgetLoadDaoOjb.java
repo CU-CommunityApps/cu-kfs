@@ -104,7 +104,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     	Parameter subFundProgramsParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS_PROGRAM);
         Parameter glAcObjectsParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_AC_OBJECTS);
         productionFlag = isProduction();
-        String productionSetting = kualiConfigurationService.getPropertyString(KFSConstants.PROD_ENVIRONMENT_CODE_KEY);    
+        String productionSetting = ConfigContext.getCurrentContextConfig().getProperty(KEWConstants.PROD_DEPLOYMENT_CODE);    
         boolean errorEncountered = printOutEnvironment(reportDataStream, tbRunFlagParameter, subFundsParameter, subFundProgramsParameter, glAcObjectsParameter, fiscalYear, productionSetting);
         
         
