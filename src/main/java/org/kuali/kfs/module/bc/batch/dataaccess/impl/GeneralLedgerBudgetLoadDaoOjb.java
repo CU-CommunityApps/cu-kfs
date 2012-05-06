@@ -104,7 +104,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     	Parameter subFundProgramsParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS_PROGRAM);
         Parameter glAcObjectsParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_AC_OBJECTS);
         productionFlag = isProduction();
-        String productionSetting = ConfigContext.getCurrentContextConfig().getProperty(KEWConstants.PROD_DEPLOYMENT_CODE);    
+        String productionSetting = ConfigContext.getCurrentContextConfig().getEnvironment();   
         boolean errorEncountered = printOutEnvironment(reportDataStream, tbRunFlagParameter, subFundsParameter, subFundProgramsParameter, glAcObjectsParameter, fiscalYear, productionSetting);
         
         
@@ -193,7 +193,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     	body.append(String.format("\n********************************************\n"));
 
     	body.append(String.format("\nINFO: Report being run for Fiscal Year %d\n", fiscalYear));
-    	body.append(String.format("\nINFO: Report is being run on the %s system\n", productionSetting));
+    	body.append(String.format("\nINFO: Report is being run on the %s system: is production %b\n", productionSetting, productionFlag));
     	if(tbRunFlagParameter != null) {
     		if(tbRunFlagParameter.getParameterValue() == null) {
     			warningEncountered = true;
