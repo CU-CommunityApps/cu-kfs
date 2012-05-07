@@ -490,12 +490,13 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 	/**
      * build a hashmap containing the next entry sequence number to use for each document (document number) to be loaded from budget
      * construction to the general ledger
+	 * @param financialSystemOriginationCode 
      * 
      * @param target fiscal year for the budget load
      * @return HashMapap keyed on document number containing the next entry sequence number to use for the key
      */
 
-    protected HashMap<String, Integer> entrySequenceNumber(Integer requestYear) {
+    protected HashMap<String, Integer> entrySequenceNumber(Integer requestYear, String financialSystemOriginationCode) {
         HashMap<String, Integer> nextEntrySequenceNumber;
         // set up the query: each distinct document number in the source load table
         Criteria criteriaID = new Criteria();
@@ -505,12 +506,24 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 
         nextEntrySequenceNumber = new HashMap<String, Integer>(hashCapacity(queryID));
 
+        
+       
         // OK. build the hash map
         // there are NO entries for these documents yet, so we initialize the entry sequence number to 0
         Iterator documentNumbersToLoad = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(queryID);
         while (documentNumbersToLoad.hasNext()) {
             Object[] resultRow = (Object[]) documentNumbersToLoad.next();
-            nextEntrySequenceNumber.put((String) resultRow[0], new Integer(0));
+            //first we need to see what the last sequence number used was for this document number
+            Criteria sequenceCriteriaID = new Criteria();
+            sequenceCriteriaID.addEqualTo("financialSystemOriginationCode", financialSystemOriginationCode);
+            sequenceCriteriaID.addEqualTo("documentNumber", resultRow[0]);
+            
+            ReportQueryByCriteria sequenceQueryID = new ReportQueryByCriteria(GeneralLedgerPendingEntry.class, sequenceCriteriaID);
+            sequenceQueryID.setAttributes(new String[] { "max(transactionLedgerEntrySequenceNumber)" });
+            Iterator maxSequenceIterator = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(sequenceQueryID);
+            Object[] maxRow = (Object[])maxSequenceIterator.next();
+            Integer maxSequence = new Integer((String)maxRow[0]);
+            nextEntrySequenceNumber.put((String) resultRow[0], new Integer(maxSequence + 1));
         }
 
         return nextEntrySequenceNumber;
@@ -1370,10 +1383,10 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 
         public DaoGlobalVariables(Integer requestYear) {
             this.requestYear = requestYear;
-            this.entrySequenceNumber = entrySequenceNumber(requestYear);
             // this.transactionDate = SpringContext.getBean(DateTimeService.class).getCurrentSqlDate();
             this.transactionDate = dateTimeService.getCurrentSqlDate();
             this.financialSystemOriginationCode = homeOriginationService.getHomeOrigination().getFinSystemHomeOriginationCode();
+            this.entrySequenceNumber = entrySequenceNumber(requestYear, financialSystemOriginationCode);
             this.accountsNotToBeLoaded = getAccountsNotToBeLoaded();
         }
 
@@ -1417,19 +1430,19 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     	body.append(String.format("\n  Total GL Entries deleted:                        %,d", diagnosticCounters.getGeneralLedgerEntriesDeleted()));
     	body.append(String.format("\n  Total balance GL Entries deleted:                %,d", diagnosticCounters.getGeneralLedgerBalanceEntriesDeleted()));
     	
-    	body.append(String.format("\n  AC pending GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerAcPendingEntriesDeleted()));
+    	body.append(String.format("\n\n  AC pending GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerAcPendingEntriesDeleted()));
     	body.append(String.format("\n  AC GL Entries deleted:                           %,d", diagnosticCounters.getGeneralLedgerAcEntriesDeleted()));
     	body.append(String.format("\n  AC balance GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerAcBalanceEntriesDeleted()));
     	
-    	body.append(String.format("\n  CB pending GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerCbPendingEntriesDeleted()));
+    	body.append(String.format("\n\n  CB pending GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerCbPendingEntriesDeleted()));
     	body.append(String.format("\n  CB GL Entries deleted:                           %,d", diagnosticCounters.getGeneralLedgerCbEntriesDeleted()));
     	body.append(String.format("\n  CB balance GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerCbBalanceEntriesDeleted()));
 
-    	body.append(String.format("\n  BB pending GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerBbPendingEntriesDeleted()));
+    	body.append(String.format("\n\n  BB pending GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerBbPendingEntriesDeleted()));
     	body.append(String.format("\n  BB GL Entries deleted:                           %,d", diagnosticCounters.getGeneralLedgerBbEntriesDeleted()));
     	body.append(String.format("\n  BB balance GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerBbBalanceEntriesDeleted()));
 
-    	body.append(String.format("\n  TB pending GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerTbPendingEntriesDeleted()));
+    	body.append(String.format("\n\n  TB pending GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerTbPendingEntriesDeleted()));
     	body.append(String.format("\n  TB GL Entries deleted:                           %,d", diagnosticCounters.getGeneralLedgerTbEntriesDeleted()));
     	body.append(String.format("\n  TB balance GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerTbBalanceEntriesDeleted()));
     	
