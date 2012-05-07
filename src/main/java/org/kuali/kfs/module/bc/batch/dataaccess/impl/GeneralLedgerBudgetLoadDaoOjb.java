@@ -109,9 +109,11 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         
         
         if(tbRunFlagParameter.getParameterValue() != null) {
-        	if(this.getParameterService().getIndicatorParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSTEE_ONLY_BUDGET)) {
-                tbRunFlag = true;
-            }	
+        	if(tbRunFlagParameter.getParameterValue().equals("Y")) {
+        		tbRunFlag = true;
+        	} else if(tbRunFlagParameter.getParameterValue().equals("N")) {
+        		tbRunFlag = false;
+        	}	
         }
         /**
          * initiliaze the counter variables
@@ -167,9 +169,13 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         
         // write out the counts for verification
         //diagnosticCounters.writeDiagnosticCounters();
+        Parameter param = this.getParameterService().retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSTEE_ONLY_BUDGET);
+        
         if(tbRunFlag) {
-            Parameter param = this.getParameterService().retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSTEE_ONLY_BUDGET);
-            param.setParameterValue("X");
+            param.setParameterValue("N");
+            this.getBusinessObjectService().save(param);
+        } else if(!tbRunFlag) {
+        	param.setParameterValue("X");
             this.getBusinessObjectService().save(param);
         }
         writeReport(reportDataStream, diagnosticCounters);
@@ -193,7 +199,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     	body.append(String.format("\n********************************************\n"));
 
     	body.append(String.format("\nINFO: Report being run for Fiscal Year %d\n", fiscalYear));
-    	body.append(String.format("\nINFO: Report is being run on the %s system: is production %b\n", productionSetting, productionFlag));
+    	body.append(String.format("\nINFO: Report is being run on the %s system. Is running on production system: %b\n", productionSetting, productionFlag));
     	if(tbRunFlagParameter != null) {
     		if(tbRunFlagParameter.getParameterValue() == null) {
     			warningEncountered = true;
@@ -432,17 +438,17 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 	        getPersistenceBrokerTemplate().clearCache();
 	        return false;
 			
-		} else {
+		} else if(tbRunFlag) {
 			getPersistenceBrokerTemplate().clearCache();
 	        Criteria pendingEntryCriteria = new Criteria();
 	        pendingEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
 	        pendingEntryCriteria.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "TB");
 	        QueryByCriteria deletePendingQry = new QueryByCriteria(GeneralLedgerPendingEntry.class, pendingEntryCriteria);
-	        
+
+	        deletedPendingEntries = getPersistenceBrokerTemplate().getCount(deletePendingQry);
 	        if(deletedPendingEntries > 0 && productionFlag) {
 				return true;
 			} else if(!productionFlag) {
-		        deletedPendingEntries = getPersistenceBrokerTemplate().getCount(deletePendingQry);
 		        diagnosticCounters.setGeneralLedgerTbPendingEntriesDeleted(deletedPendingEntries);
 		        diagnosticCounters.setGeneralLedgerPendingEntriesDeleted(deletedPendingEntries);
 		        getPersistenceBrokerTemplate().deleteByQuery(deletePendingQry);
@@ -477,6 +483,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 	        getPersistenceBrokerTemplate().clearCache();
 	        return false;
 		}
+		return false;
 		
 	}
 
