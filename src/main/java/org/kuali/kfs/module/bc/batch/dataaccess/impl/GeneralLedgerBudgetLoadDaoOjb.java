@@ -525,7 +525,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             Iterator maxSequenceIterator = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(sequenceQueryID);
             Object[] maxRow = (Object[])maxSequenceIterator.next();
             Integer maxSequence = 0;
-            if(ObjectUtils.isNotNull(maxRow)) {
+            if(ObjectUtils.isNotNull(maxRow[0])) {
             	maxSequence = ((BigDecimal)maxRow[0]).intValue();
             }
             nextEntrySequenceNumber.put((String) resultRow[0], new Integer(maxSequence + 1));
