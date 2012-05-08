@@ -66,6 +66,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         List<PendingBudgetConstructionAppointmentFunding> newDistributions = new ArrayList<PendingBudgetConstructionAppointmentFunding>();
 
         Map<String, KualiInteger> oldDistributionAmounts = new HashMap<String, KualiInteger>();
+        Map<String, KualiInteger> oldLeaveDistributionAmounts = new HashMap<String, KualiInteger>();
 
         StringBuilder header = new StringBuilder();
         header.append("\nSip Distribution \n\n");
@@ -75,14 +76,14 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         for (SipImportData sipImportData : sipImportDataCollection) {
 
             List<PendingBudgetConstructionAppointmentFunding> calculatedDistributions = calculateSipDistributions(
-                    sipImportData, oldDistributionAmounts);
+                    sipImportData, oldDistributionAmounts, oldLeaveDistributionAmounts);
 
             newDistributions.addAll(calculatedDistributions);
 
             // generate report entries for sip distribution
 
             buildSipDistributionsReportEntries(reportEntries, sipImportData, calculatedDistributions,
-                    oldDistributionAmounts);
+                    oldDistributionAmounts, oldLeaveDistributionAmounts);
         }
 
         // generate report entries for sip distribution
@@ -102,7 +103,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
         // update BC pending entries
         Map<String, PendingBudgetConstructionGeneralLedger> newPBGLEntries = calculateNewPBGL(newDistributions,
-                affectedEdocsFor2PLGCleanup, oldAmounts, oldDistributionAmounts);
+                affectedEdocsFor2PLGCleanup, oldAmounts, oldDistributionAmounts, oldLeaveDistributionAmounts);
 
         // generate report entries for the updated BC pending entries
 
@@ -284,7 +285,9 @@ public class SipDistributionServiceImpl implements SipDistributionService {
      * @return a map holding the new distributions per position and emplid
      */
     public List<PendingBudgetConstructionAppointmentFunding> calculateSipDistributions(
-            SipImportData sipImportData, Map<String, KualiInteger> oldDistributionAmounts) {
+            SipImportData sipImportData, Map<String, KualiInteger> oldDistributionAmounts,
+            Map<String, KualiInteger> oldLeaveDistributionAmounts) {
+
         List<PendingBudgetConstructionAppointmentFunding> newDistributions = new ArrayList<PendingBudgetConstructionAppointmentFunding>();
 
         // check if there was SIP
@@ -303,6 +306,10 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
             for (PendingBudgetConstructionAppointmentFunding appointmentFunding : appointmentFundings) {
 
+                PendingBudgetConstructionAppointmentFunding newDistribution = new PendingBudgetConstructionAppointmentFunding();
+                newDistribution = appointmentFunding;
+                boolean isChanged = false;
+
                 if (!appointmentFunding.isAppointmentFundingDeleteIndicator()
                         && appointmentFunding.getAppointmentRequestedAmount() != null
                         && appointmentFunding.getAppointmentRequestedAmount().isNonZero()
@@ -312,15 +319,37 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                     oldDistributionAmounts.put(buildAppointmentFundingKey(appointmentFunding), new KualiInteger(
                             appointmentFunding.getAppointmentRequestedAmount().bigIntegerValue()));
 
-                    PendingBudgetConstructionAppointmentFunding newDistribution = new PendingBudgetConstructionAppointmentFunding();
-                    newDistribution = appointmentFunding;
-
                     KualiDecimal newDistributionAmount = KualiDecimal.ZERO;
                     newDistributionAmount = sipImportData.getNewAnnualRate()
                             .multiply(new KualiDecimal(newDistribution.getAppointmentRequestedTimePercent()))
                             .divide(new KualiDecimal(100));
                     newDistribution.setAppointmentRequestedAmount(new KualiInteger(newDistributionAmount.intValue()));
 
+                    isChanged = true;
+
+                }
+
+                if (!appointmentFunding.isAppointmentFundingDeleteIndicator()
+                        && appointmentFunding.getAppointmentRequestedCsfAmount() != null
+                        && appointmentFunding.getAppointmentRequestedCsfAmount().isNonZero()
+                        && appointmentFunding.getAppointmentRequestedCsfTimePercent() != null
+                        && (appointmentFunding.getAppointmentRequestedCsfTimePercent().compareTo(BigDecimal.ZERO) != 0)) {
+
+                    oldLeaveDistributionAmounts.put(buildAppointmentFundingKey(appointmentFunding), new KualiInteger(
+                            appointmentFunding.getAppointmentRequestedCsfAmount().bigIntegerValue()));
+
+                    KualiDecimal newLeaveDistributionAmount = KualiDecimal.ZERO;
+                    newLeaveDistributionAmount = sipImportData.getNewAnnualRate()
+                            .multiply(new KualiDecimal(newDistribution.getAppointmentRequestedCsfTimePercent()))
+                            .divide(new KualiDecimal(100));
+                    newDistribution.setAppointmentRequestedCsfAmount(new KualiInteger(newLeaveDistributionAmount
+                            .intValue()));
+
+                    isChanged = true;
+
+                }
+
+                if (isChanged) {
                     newDistributions.add(newDistribution);
                 }
 
@@ -355,56 +384,94 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
     }
 
+    public void persistNewLeaveDistributions(List<PendingBudgetConstructionAppointmentFunding> newDistributions) {
+
+        for (PendingBudgetConstructionAppointmentFunding newDistribution : newDistributions) {
+
+            newDistribution.setVersionNumber(newDistribution.getVersionNumber() + 2);
+            businessObjectService.save(newDistribution);
+        }
+
+    }
+
     /**
      * @see edu.cornell.kfs.module.bc.document.service.SipDistributionService#calculateNewPBGL(java.util.List)
      */
     public Map<String, PendingBudgetConstructionGeneralLedger> calculateNewPBGL(
             List<PendingBudgetConstructionAppointmentFunding> newDistributions,
             Map<String, AffectedEdocInfo> affectedEdocs,
-            Map<String, KualiInteger> oldAmounts, Map<String, KualiInteger> oldDistributionAmounts) {
+            Map<String, KualiInteger> oldAmounts, Map<String, KualiInteger> oldDistributionAmounts,
+            Map<String, KualiInteger> oldLeaveDistributionAmounts) {
 
         Map<String, PendingBudgetConstructionGeneralLedger> newPBGLLinesMap = new HashMap<String, PendingBudgetConstructionGeneralLedger>();
 
         for (PendingBudgetConstructionAppointmentFunding newDistribution : newDistributions) {
 
-            KualiInteger oldRequestedAmount = oldDistributionAmounts.get(buildAppointmentFundingKey(newDistribution));
+            KualiInteger amountChange = KualiInteger.ZERO;
+            if (!newDistribution.isAppointmentFundingDeleteIndicator()
+                    && newDistribution.getAppointmentRequestedAmount() != null
+                    && newDistribution.getAppointmentRequestedAmount().isNonZero()
+                    && newDistribution.getAppointmentRequestedTimePercent() != null
+                    && (newDistribution.getAppointmentRequestedTimePercent().compareTo(BigDecimal.ZERO) != 0)) {
 
-            KualiInteger amountChange = newDistribution.getAppointmentRequestedAmount().subtract(
-                    oldRequestedAmount);
+                KualiInteger oldRequestedAmount = oldDistributionAmounts
+                        .get(buildAppointmentFundingKey(newDistribution));
 
-            // check if PBGL line already in the map
-            String key = buildPBGLKeyFromAppointmentFunding(newDistribution);
-            PendingBudgetConstructionGeneralLedger pendingRecord = null;
-            // add
-            if (newPBGLLinesMap.containsKey(key)) {
-                pendingRecord = newPBGLLinesMap.get(key);
-            } else {
-
-                pendingRecord = getPBGLEntry(newDistribution);
-
-                if (ObjectUtils.isNotNull(pendingRecord)) {
-                    oldAmounts.put(buildPendingBudgetConstructionGeneralLedgerKey(pendingRecord), new KualiInteger(
-                            pendingRecord.getAccountLineAnnualBalanceAmount().bigIntegerValue()));
-                }
+                amountChange = newDistribution.getAppointmentRequestedAmount().subtract(
+                        oldRequestedAmount);
             }
 
-            if (ObjectUtils.isNotNull(pendingRecord)) {
-                KualiInteger newAmount = pendingRecord.getAccountLineAnnualBalanceAmount().add(
-                        amountChange);
-                pendingRecord.setAccountLineAnnualBalanceAmount(newAmount);
-                newPBGLLinesMap.put(key, pendingRecord);
+            // check for leave and add leave diff to the amount change
+            if (!newDistribution.isAppointmentFundingDeleteIndicator()
+                    && newDistribution.getAppointmentRequestedCsfAmount() != null
+                    && newDistribution.getAppointmentRequestedCsfAmount().isNonZero()
+                    && newDistribution.getAppointmentRequestedCsfTimePercent() != null
+                    && (newDistribution.getAppointmentRequestedCsfTimePercent().compareTo(BigDecimal.ZERO) != 0)) {
 
-                String docNumber = pendingRecord.getDocumentNumber();
-                if (!affectedEdocs.containsKey(docNumber)) {
-                    AffectedEdocInfo affectedEdocInfo = new AffectedEdocInfo(docNumber,
-                            pendingRecord.getUniversityFiscalYear(), pendingRecord.getChartOfAccountsCode(),
-                            pendingRecord.getAccountNumber(), pendingRecord.getSubAccountNumber(), amountChange);
-                    affectedEdocs.put(docNumber, affectedEdocInfo);
+                KualiInteger oldLeaveRequestedAmount = oldLeaveDistributionAmounts
+                        .get(buildAppointmentFundingKey(newDistribution));
+
+                KualiInteger leaveAmountChange = newDistribution.getAppointmentRequestedCsfAmount().subtract(
+                        oldLeaveRequestedAmount);
+                amountChange = amountChange.add(leaveAmountChange);
+            }
+
+            // if there was a change in the requested amount then process
+            if (amountChange != null && amountChange.isNonZero()) {
+                // check if PBGL line already in the map
+                String key = buildPBGLKeyFromAppointmentFunding(newDistribution);
+                PendingBudgetConstructionGeneralLedger pendingRecord = null;
+                // add
+                if (newPBGLLinesMap.containsKey(key)) {
+                    pendingRecord = newPBGLLinesMap.get(key);
                 } else {
-                    AffectedEdocInfo currentInfo = affectedEdocs.get(docNumber);
-                    KualiInteger currentAmount = currentInfo.changeAmount;
-                    currentInfo.changeAmount = currentAmount.add(amountChange);
-                    affectedEdocs.put(docNumber, currentInfo);
+
+                    pendingRecord = getPBGLEntry(newDistribution);
+
+                    if (ObjectUtils.isNotNull(pendingRecord)) {
+                        oldAmounts.put(buildPendingBudgetConstructionGeneralLedgerKey(pendingRecord), new KualiInteger(
+                                pendingRecord.getAccountLineAnnualBalanceAmount().bigIntegerValue()));
+                    }
+                }
+
+                if (ObjectUtils.isNotNull(pendingRecord)) {
+                    KualiInteger newAmount = pendingRecord.getAccountLineAnnualBalanceAmount().add(
+                            amountChange);
+                    pendingRecord.setAccountLineAnnualBalanceAmount(newAmount);
+                    newPBGLLinesMap.put(key, pendingRecord);
+
+                    String docNumber = pendingRecord.getDocumentNumber();
+                    if (!affectedEdocs.containsKey(docNumber)) {
+                        AffectedEdocInfo affectedEdocInfo = new AffectedEdocInfo(docNumber,
+                                pendingRecord.getUniversityFiscalYear(), pendingRecord.getChartOfAccountsCode(),
+                                pendingRecord.getAccountNumber(), pendingRecord.getSubAccountNumber(), amountChange);
+                        affectedEdocs.put(docNumber, affectedEdocInfo);
+                    } else {
+                        AffectedEdocInfo currentInfo = affectedEdocs.get(docNumber);
+                        KualiInteger currentAmount = currentInfo.changeAmount;
+                        currentInfo.changeAmount = currentAmount.add(amountChange);
+                        affectedEdocs.put(docNumber, currentInfo);
+                    }
                 }
             }
         }
@@ -827,14 +894,16 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         KualiInteger amountToAdd = KualiInteger.ZERO;
 
         if (benefitPercent.isNonZero()) {
-            KualiInteger newBenefitAmount = KualiInteger.ZERO;
+            KualiDecimal newBenefitAmount = KualiDecimal.ZERO;
             // new benefit amount
-            newBenefitAmount = glEntry.getAccountLineAnnualBalanceAmount().multiply(benefitPercent);
+            newBenefitAmount = (new KualiDecimal(glEntry.getAccountLineAnnualBalanceAmount().bigDecimalValue()))
+                    .multiply(benefitPercent);
 
-            KualiInteger oldBenefitAmount = oldPBGLAmount.multiply(benefitPercent);
+            KualiDecimal oldBenefitAmount = (new KualiDecimal(oldPBGLAmount.bigDecimalValue()))
+                    .multiply(benefitPercent);
 
             amountToAdd =
-                    newBenefitAmount.subtract(oldBenefitAmount);
+                    new KualiInteger(newBenefitAmount.subtract(oldBenefitAmount).intValue());
         }
         return amountToAdd;
 
@@ -1033,7 +1102,8 @@ public class SipDistributionServiceImpl implements SipDistributionService {
      */
     protected void buildSipDistributionsReportEntries(StringBuilder reportEntries, SipImportData sipImportData,
             List<PendingBudgetConstructionAppointmentFunding> newDistributions,
-            Map<String, KualiInteger> oldDisttributionAmounts) {
+            Map<String, KualiInteger> oldDisttributionAmounts,
+            Map<String, KualiInteger> oldLeaveDisttributionAmounts) {
 
         //        StringBuilder header = new StringBuilder();
         //        header.append("\nSip Distribution \n\n");
@@ -1042,9 +1112,25 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
         if (newDistributions != null && newDistributions.size() > 0) {
             for (PendingBudgetConstructionAppointmentFunding appointmentFunding : newDistributions) {
-                reportEntries.append(buildReportEntryForNewDistribution(sipImportData, appointmentFunding,
-                        oldDisttributionAmounts.get(buildAppointmentFundingKey(appointmentFunding)))
-                        + "\n");
+
+                if (!appointmentFunding.isAppointmentFundingDeleteIndicator()
+                        && appointmentFunding.getAppointmentRequestedAmount() != null
+                        && appointmentFunding.getAppointmentRequestedAmount().isNonZero()
+                        && appointmentFunding.getAppointmentRequestedTimePercent() != null
+                        && (appointmentFunding.getAppointmentRequestedTimePercent().compareTo(BigDecimal.ZERO) != 0)) {
+                    reportEntries.append(buildReportEntryForNewDistribution(sipImportData, appointmentFunding,
+                            oldDisttributionAmounts.get(buildAppointmentFundingKey(appointmentFunding)))
+                            + "\n");
+                }
+
+                if (appointmentFunding.getAppointmentRequestedCsfAmount() != null
+                        && appointmentFunding.getAppointmentRequestedCsfAmount().isNonZero()
+                        && appointmentFunding.getAppointmentRequestedCsfTimePercent() != null
+                        && appointmentFunding.getAppointmentRequestedCsfTimePercent().compareTo(BigDecimal.ZERO) != 0) {
+                    reportEntries.append(buildReportEntryForNewLeaveDistribution(sipImportData, appointmentFunding,
+                            oldLeaveDisttributionAmounts.get(buildAppointmentFundingKey(appointmentFunding)))
+                            + "\n");
+                }
             }
         }
 
@@ -1351,6 +1437,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
     private String buildReportTitlesForNewDistribution() {
         StringBuilder reportEntry = new StringBuilder();
 
+        reportEntry.append("Appointment Funding Duration Code" + SEPARATOR);
         reportEntry.append("Unit" + SEPARATOR);
         reportEntry.append("HR Dept" + SEPARATOR);
         reportEntry.append("KFS Dept" + SEPARATOR);
@@ -1384,6 +1471,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
             KualiInteger oldAmount) {
         StringBuilder reportEntry = new StringBuilder();
 
+        reportEntry.append(" " + SEPARATOR);
         reportEntry.append(sipImportData.getUnitId() + SEPARATOR);
         reportEntry.append(sipImportData.getHrDeptId() + SEPARATOR);
         reportEntry.append(sipImportData.getKfsDeptId() + SEPARATOR);
@@ -1407,6 +1495,40 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         reportEntry.append(appointmentFunding.getAppointmentRequestedTimePercent() + SEPARATOR);
         reportEntry.append(oldAmount + SEPARATOR);
         reportEntry.append(appointmentFunding.getAppointmentRequestedAmount());
+
+        return reportEntry.toString();
+
+    }
+
+    private String buildReportEntryForNewLeaveDistribution(SipImportData sipImportData,
+            PendingBudgetConstructionAppointmentFunding appointmentFunding,
+            KualiInteger oldAmount) {
+        StringBuilder reportEntry = new StringBuilder();
+
+        reportEntry.append(appointmentFunding.getAppointmentFundingDurationCode() + SEPARATOR);
+        reportEntry.append(sipImportData.getUnitId() + SEPARATOR);
+        reportEntry.append(sipImportData.getHrDeptId() + SEPARATOR);
+        reportEntry.append(sipImportData.getKfsDeptId() + SEPARATOR);
+        reportEntry.append(sipImportData.getDeptName() + SEPARATOR);
+        reportEntry.append(appointmentFunding.getPositionNumber() + SEPARATOR);
+        reportEntry.append(sipImportData.getPosDescr() + SEPARATOR);
+        reportEntry.append(appointmentFunding.getEmplid() + SEPARATOR);
+        reportEntry.append(sipImportData.getPersonNm() + SEPARATOR);
+        reportEntry.append(sipImportData.getCompRt() + SEPARATOR);
+        reportEntry.append(sipImportData.getAnnlRt() + SEPARATOR);
+        reportEntry.append(sipImportData.getIncToMin() + SEPARATOR);
+        reportEntry.append(sipImportData.getEquity() + SEPARATOR);
+        reportEntry.append(sipImportData.getMerit() + SEPARATOR);
+        reportEntry.append(sipImportData.getNewCompRate() + SEPARATOR);
+        reportEntry.append(sipImportData.getNewAnnualRate() + SEPARATOR);
+        reportEntry.append(appointmentFunding.getChartOfAccountsCode() + SEPARATOR);
+        reportEntry.append(appointmentFunding.getAccountNumber() + SEPARATOR);
+        reportEntry.append(appointmentFunding.getSubAccountNumber() + SEPARATOR);
+        reportEntry.append(appointmentFunding.getFinancialObjectCode() + SEPARATOR);
+        reportEntry.append(appointmentFunding.getFinancialSubObjectCode() + SEPARATOR);
+        reportEntry.append(appointmentFunding.getAppointmentRequestedCsfTimePercent() + SEPARATOR);
+        reportEntry.append(oldAmount + SEPARATOR);
+        reportEntry.append(appointmentFunding.getAppointmentRequestedCsfAmount());
 
         return reportEntry.toString();
 

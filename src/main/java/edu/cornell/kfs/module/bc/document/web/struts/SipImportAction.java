@@ -61,19 +61,21 @@ public class SipImportAction extends BudgetExpansionAction {
         List<SipImportData> sipImportEntries = new ArrayList<SipImportData>();
 
         //parse file
-        String returnStringCode = sipImportService.importFile(sipImportForm.getFile().getInputStream(), messageList, principalId, sipImportForm.isAllowExecutivesToBeImported(), sipImportEntries);
-        if (!returnStringCode.contains("OK" )) {
-            if (returnStringCode.contains("NOT TAB DELIMITED"))
-            {
+        String returnStringCode = sipImportService.importFile(sipImportForm.getFile().getInputStream(), messageList,
+                principalId, sipImportForm.isAllowExecutivesToBeImported(), sipImportEntries);
+        if (!returnStringCode.contains("OK")) {
+            if (returnStringCode.contains("NOT TAB DELIMITED")) {
                 String returnCodeParts[] = StringUtils.splitPreserveAllTokens(returnStringCode, "|");
                 MessageMap errorMap = GlobalVariables.getMessageMap();
-                errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUBCKeyConstants.ERROR_SIP_IMPORT_FILE_CONTAINS_NON_TAB_DELIMITED_LINE, returnCodeParts[1]);
-                return mapping.findForward(KFSConstants.MAPPING_BASIC);  // This will refresh the page
+                errorMap.putError(KFSConstants.GLOBAL_ERRORS,
+                        CUBCKeyConstants.ERROR_SIP_IMPORT_FILE_CONTAINS_NON_TAB_DELIMITED_LINE, returnCodeParts[1]);
+                return mapping.findForward(KFSConstants.MAPPING_BASIC); // This will refresh the page
             }
-            
+
             sipImportService.generateValidationReportInTextFormat(messageList, baos);
-            WebUtils.saveMimeOutputStreamAsFile(response, ReportGeneration.TEXT_MIME_TYPE, baos, BCConstants.SIP_IMPORT_LOG_FILE);
-            return returnToCaller(mapping, form, request, response);  // This allows us to stay on the same page and the page is not refreshed
+            WebUtils.saveMimeOutputStreamAsFile(response, ReportGeneration.TEXT_MIME_TYPE, baos,
+                    BCConstants.SIP_IMPORT_LOG_FILE);
+            return returnToCaller(mapping, form, request, response); // This allows us to stay on the same page and the page is not refreshed
         }
 
         //messageList.add(new ExternalizedMessageWrapper(CUBCKeyConstants.MSG_SIP_IMPORT_COMPLETE, dateFormatter.format(new Date())));
@@ -85,9 +87,11 @@ public class SipImportAction extends BudgetExpansionAction {
         //write messages to log file
         sipImportService.generateValidationReportInTextFormat(messageList, baos);
 
-        if ("OK NO ERRORS".equalsIgnoreCase(returnStringCode)) {
+        // if ("OK NO ERRORS".equalsIgnoreCase(returnStringCode)) {
+        if (sipImportEntries != null && sipImportEntries.size() > 0) {
 
             boolean updateMode = false;
+            boolean runDistribution = false;
 
             String sipImportModeString = CUBudgetParameterFinder.getSipImportMode();
 
@@ -95,13 +99,24 @@ public class SipImportAction extends BudgetExpansionAction {
                 updateMode = true;
             }
 
-            StringBuilder reportEntries = sipDistributionService.distributeSip(updateMode, sipImportEntries);
-            baos.write(reportEntries.toString().getBytes());
+            if (updateMode) {
+                if ("OK NO ERRORS".equalsIgnoreCase(returnStringCode)) {
+                    runDistribution = true;
+                }
+            }
+
+            else {
+                runDistribution = true;
+            }
+            if (runDistribution) {
+                StringBuilder reportEntries = sipDistributionService.distributeSip(updateMode, sipImportEntries);
+                baos.write(reportEntries.toString().getBytes());
+            }
         }
         WebUtils.saveMimeOutputStreamAsFile(response, ReportGeneration.TEXT_MIME_TYPE, baos,
                 BCConstants.SIP_IMPORT_LOG_FILE);
 
-        return returnToCaller(mapping, form, request, response);  // This allows us to stay on the same page and the page is not refreshed
+        return returnToCaller(mapping, form, request, response); // This allows us to stay on the same page and the page is not refreshed
     }
 
     public ActionForward start(ActionMapping mapping, ActionForm form, HttpServletRequest request,
