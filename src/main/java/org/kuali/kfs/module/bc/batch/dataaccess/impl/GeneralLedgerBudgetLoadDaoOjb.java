@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -522,7 +523,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             sequenceQueryID.setAttributes(new String[] { "max(transactionLedgerEntrySequenceNumber)" });
             Iterator maxSequenceIterator = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(sequenceQueryID);
             Object[] maxRow = (Object[])maxSequenceIterator.next();
-            Integer maxSequence = new Integer((String)maxRow[0]);
+            Integer maxSequence = ((BigDecimal)maxRow[0]).intValue();
             nextEntrySequenceNumber.put((String) resultRow[0], new Integer(maxSequence + 1));
         }
 
