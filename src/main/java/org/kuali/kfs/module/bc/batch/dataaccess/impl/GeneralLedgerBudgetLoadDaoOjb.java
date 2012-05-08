@@ -60,6 +60,7 @@ import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KualiInteger;
+import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.businessobject.SubFundProgram;
 import edu.cornell.kfs.module.bc.CUBCConstants;
@@ -523,7 +524,10 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             sequenceQueryID.setAttributes(new String[] { "max(transactionLedgerEntrySequenceNumber)" });
             Iterator maxSequenceIterator = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(sequenceQueryID);
             Object[] maxRow = (Object[])maxSequenceIterator.next();
-            Integer maxSequence = ((BigDecimal)maxRow[0]).intValue();
+            Integer maxSequence = 0;
+            if(ObjectUtils.isNotNull(maxRow)) {
+            	maxSequence = ((BigDecimal)maxRow[0]).intValue();
+            }
             nextEntrySequenceNumber.put((String) resultRow[0], new Integer(maxSequence + 1));
         }
 
