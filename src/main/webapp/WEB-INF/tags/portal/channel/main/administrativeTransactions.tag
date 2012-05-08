@@ -17,7 +17,7 @@
 
 <channel:portalChannelTop channelTitle="Administrative Transactions" />
 <div class="body">
-  <strong>Capital aAsset Builder</strong>
+  <strong>Capital Asset Builder</strong>
   <ul class="chan">
 	 <li><portal:portalLink displayTitle="true" title="Capital Asset Builder AP Transactions" url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.cab.businessobject.PurchasingAccountsPayableProcessingReport&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
   	 <li><portal:portalLink displayTitle="true" title="Capital Asset Builder GL Transactions" url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.cab.businessobject.GeneralLedgerEntry&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
