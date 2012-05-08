@@ -17,7 +17,7 @@
 
 <channel:portalChannelTop channelTitle="Administrative Transactions" />
 <div class="body">
-  <strong>Capital Asset Builder</strong>
+  <strong>Capital aAsset Builder</strong>
   <ul class="chan">
 	 <li><portal:portalLink displayTitle="true" title="Capital Asset Builder AP Transactions" url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.cab.businessobject.PurchasingAccountsPayableProcessingReport&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
   	 <li><portal:portalLink displayTitle="true" title="Capital Asset Builder GL Transactions" url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.cab.businessobject.GeneralLedgerEntry&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
@@ -36,8 +36,8 @@
   
   <strong>Check Reconciliation</strong><br />
     <ul class="chan">
-<li><portal:portalLink displayTitle="true" title="Check Reconciliation" url="kr/lookup.do?methodToCall=start&businessObjectClassName=com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
-<li><portal:portalLink displayTitle="true" title="Reconciliation Report" url="crCheckReconciliationReport.do" /></li>
+		<li><portal:portalLink displayTitle="true" title="Check Reconciliation" url="kr/lookup.do?methodToCall=start&businessObjectClassName=com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
+		<li><portal:portalLink displayTitle="true" title="Reconciliation Report" url="crCheckReconciliationReport.do" /></li>
     </ul>
     
 	<strong>Financial Processing</strong><br />
