@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
@@ -516,9 +518,14 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         while (documentNumbersToLoad.hasNext()) {
             Object[] resultRow = (Object[]) documentNumbersToLoad.next();
             //first we need to see what the last sequence number used was for this document number
-            Criteria sequenceCriteriaID = new Criteria();
+            
+            nextEntrySequenceNumber.put((String) resultRow[0], 0);
+        }
+        Set<String> keys = nextEntrySequenceNumber.keySet();
+        for(String docNumber: keys) {
+        	Criteria sequenceCriteriaID = new Criteria();
             sequenceCriteriaID.addEqualTo("financialSystemOriginationCode", financialSystemOriginationCode);
-            sequenceCriteriaID.addEqualTo("documentNumber", resultRow[0]);
+            sequenceCriteriaID.addEqualTo("documentNumber", docNumber);
             
             ReportQueryByCriteria sequenceQueryID = new ReportQueryByCriteria(GeneralLedgerPendingEntry.class, sequenceCriteriaID);
             sequenceQueryID.setAttributes(new String[] { "max(transactionLedgerEntrySequenceNumber)" });
@@ -527,10 +534,10 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             Integer maxSequence = 0;
             if(ObjectUtils.isNotNull(maxRow[0])) {
             	maxSequence = ((BigDecimal)maxRow[0]).intValue();
+            	nextEntrySequenceNumber.put(docNumber, maxSequence);
             }
-            nextEntrySequenceNumber.put((String) resultRow[0], new Integer(maxSequence + 1));
         }
-
+        
         return nextEntrySequenceNumber;
     }
 
