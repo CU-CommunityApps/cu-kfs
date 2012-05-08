@@ -314,15 +314,16 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                         && appointmentFunding.getAppointmentRequestedAmount() != null
                         && appointmentFunding.getAppointmentRequestedAmount().isNonZero()
                         && appointmentFunding.getAppointmentRequestedTimePercent() != null
-                        && (appointmentFunding.getAppointmentRequestedTimePercent().compareTo(BigDecimal.ZERO) != 0)) {
+                        && (appointmentFunding.getAppointmentRequestedTimePercent().compareTo(BigDecimal.ZERO) != 0)
+                        && appointmentFunding.getAppointmentRequestedFteQuantity() != null
+                        && (appointmentFunding.getAppointmentRequestedFteQuantity().compareTo(BigDecimal.ZERO) != 0)) {
 
                     oldDistributionAmounts.put(buildAppointmentFundingKey(appointmentFunding), new KualiInteger(
                             appointmentFunding.getAppointmentRequestedAmount().bigIntegerValue()));
 
                     KualiDecimal newDistributionAmount = KualiDecimal.ZERO;
                     newDistributionAmount = sipImportData.getNewAnnualRate()
-                            .multiply(new KualiDecimal(newDistribution.getAppointmentRequestedTimePercent()))
-                            .divide(new KualiDecimal(100));
+                            .multiply(new KualiDecimal(newDistribution.getAppointmentRequestedFteQuantity()));
                     newDistribution.setAppointmentRequestedAmount(new KualiInteger(newDistributionAmount.intValue()));
 
                     isChanged = true;
@@ -333,15 +334,17 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                         && appointmentFunding.getAppointmentRequestedCsfAmount() != null
                         && appointmentFunding.getAppointmentRequestedCsfAmount().isNonZero()
                         && appointmentFunding.getAppointmentRequestedCsfTimePercent() != null
-                        && (appointmentFunding.getAppointmentRequestedCsfTimePercent().compareTo(BigDecimal.ZERO) != 0)) {
+                        && (appointmentFunding.getAppointmentRequestedCsfTimePercent().compareTo(BigDecimal.ZERO) != 0)
+                        && appointmentFunding.getAppointmentRequestedCsfFteQuantity() != null
+                        && (appointmentFunding.getAppointmentRequestedCsfFteQuantity().compareTo(BigDecimal.ZERO) != 0)) {
 
                     oldLeaveDistributionAmounts.put(buildAppointmentFundingKey(appointmentFunding), new KualiInteger(
                             appointmentFunding.getAppointmentRequestedCsfAmount().bigIntegerValue()));
 
                     KualiDecimal newLeaveDistributionAmount = KualiDecimal.ZERO;
                     newLeaveDistributionAmount = sipImportData.getNewAnnualRate()
-                            .multiply(new KualiDecimal(newDistribution.getAppointmentRequestedCsfTimePercent()))
-                            .divide(new KualiDecimal(100));
+                            .multiply(new KualiDecimal(newDistribution.getAppointmentRequestedCsfFteQuantity()));
+
                     newDistribution.setAppointmentRequestedCsfAmount(new KualiInteger(newLeaveDistributionAmount
                             .intValue()));
 
@@ -642,10 +645,9 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
                         String benefitsObjectCode = benefitsCalculation.getPositionFringeBenefitObjectCode();
                         KualiPercent benefitsPercent = benefitsCalculation.getPositionFringeBenefitPercent();
-                        KualiDecimal decimalBenefitsPercent = benefitsPercent.isNonZero() ? benefitsPercent
-                                .toKualiDecimal() : KualiDecimal.ZERO;
+                       
 
-                        if (decimalBenefitsPercent.isNonZero()) {
+                        if (benefitsPercent.isNonZero()) {
 
                             KualiInteger oldPBGLAmount = oldPBGLAmounts
                                     .get(buildPendingBudgetConstructionGeneralLedgerKey(newPBGLEntry));
@@ -656,7 +658,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
                             // get the benefit line if exists, create a new one otherwise
                             createOrUpdateBenefitsLine(benefitsMap, monthlyBenefitsMap, newPBGLEntry, oldPBGLAmount,
-                                    benefitsObjectCode, finObjTypeExpenditureexpCd, decimalBenefitsPercent,
+                                    benefitsObjectCode, finObjTypeExpenditureexpCd, benefitsPercent,
                                     oldAnnualBenefitsAmount,
                                     oldMonthlyBenefitsAmount, affectedEdocs);
 
@@ -694,10 +696,8 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         requestBenefit.setLaborBenefitRateCategoryCodeDesc(benefitsCalculation.getLaborBenefitRateCategory()
                 .getCodeDesc());
 
-        KualiDecimal decimalBenefitsPercent = benefitsPercent.isNonZero() ? benefitsPercent
-                .toKualiDecimal() : KualiDecimal.ZERO;
-        KualiInteger fringeDetailAmount = newPBGLEntry.getAccountLineAnnualBalanceAmount().multiply(
-                decimalBenefitsPercent);
+        KualiInteger fringeDetailAmount = (newPBGLEntry.getAccountLineAnnualBalanceAmount().multiply(
+                benefitsPercent.bigDecimalValue().divide(new BigDecimal(100))));
         requestBenefit.setFringeDetailAmount(fringeDetailAmount);
 
         return requestBenefit;
@@ -717,7 +717,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
             Map<String, BudgetConstructionMonthly> monthlyBenefitsMap,
             PendingBudgetConstructionGeneralLedger glEntry,
             KualiInteger oldPBGLAmount,
-            String benefitsObjectCode, String finObjTypeExpenditureexpCd, KualiDecimal benefitPercent,
+            String benefitsObjectCode, String finObjTypeExpenditureexpCd, KualiPercent benefitPercent,
             Map<String, KualiInteger> oldAnnualBenefitsAmount,
             Map<String, KualiInteger> oldMonthlyBenefitsAmount,
             Map<String, AffectedEdocInfo> affectedEdocs) {
@@ -847,7 +847,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
      */
     private void updateBenefitsAmount(PendingBudgetConstructionGeneralLedger glEntry,
             PendingBudgetConstructionGeneralLedger benefitsPbglEntry, BudgetConstructionMonthly monthlyBenefitEntry,
-            KualiDecimal benefitPercent, Map<String, AffectedEdocInfo> affectedEdocs,
+            KualiPercent benefitPercent, Map<String, AffectedEdocInfo> affectedEdocs,
             KualiInteger oldPBGLAmount) {
         // compute benefits amount
 
@@ -888,7 +888,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
     }
 
     private KualiInteger getAmountToAdd(PendingBudgetConstructionGeneralLedger glEntry,
-            PendingBudgetConstructionGeneralLedger benefitsPbglEntry, KualiDecimal benefitPercent,
+            PendingBudgetConstructionGeneralLedger benefitsPbglEntry, KualiPercent benefitPercent,
             KualiInteger oldPBGLAmount) {
 
         KualiInteger amountToAdd = KualiInteger.ZERO;
@@ -896,11 +896,11 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         if (benefitPercent.isNonZero()) {
             KualiDecimal newBenefitAmount = KualiDecimal.ZERO;
             // new benefit amount
-            newBenefitAmount = (new KualiDecimal(glEntry.getAccountLineAnnualBalanceAmount().bigDecimalValue()))
-                    .multiply(benefitPercent);
+            newBenefitAmount = new KualiDecimal(glEntry.getAccountLineAnnualBalanceAmount().bigDecimalValue()
+                    .multiply(benefitPercent.bigDecimalValue().divide(new BigDecimal(100))));
 
-            KualiDecimal oldBenefitAmount = (new KualiDecimal(oldPBGLAmount.bigDecimalValue()))
-                    .multiply(benefitPercent);
+            KualiDecimal oldBenefitAmount = new KualiDecimal(oldPBGLAmount.bigDecimalValue()
+                    .multiply(benefitPercent.bigDecimalValue().divide(new BigDecimal(100))));
 
             amountToAdd =
                     new KualiInteger(newBenefitAmount.subtract(oldBenefitAmount).intValue());
@@ -1111,13 +1111,17 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         //        reportEntries.append(buildReportTitlesForNewDistribution());
 
         if (newDistributions != null && newDistributions.size() > 0) {
+
             for (PendingBudgetConstructionAppointmentFunding appointmentFunding : newDistributions) {
 
                 if (!appointmentFunding.isAppointmentFundingDeleteIndicator()
                         && appointmentFunding.getAppointmentRequestedAmount() != null
                         && appointmentFunding.getAppointmentRequestedAmount().isNonZero()
                         && appointmentFunding.getAppointmentRequestedTimePercent() != null
-                        && (appointmentFunding.getAppointmentRequestedTimePercent().compareTo(BigDecimal.ZERO) != 0)) {
+                        && (appointmentFunding.getAppointmentRequestedTimePercent().compareTo(BigDecimal.ZERO) != 0)
+                        && appointmentFunding.getAppointmentRequestedFteQuantity() != null
+                        && (appointmentFunding.getAppointmentRequestedFteQuantity().compareTo(BigDecimal.ZERO) != 0)) {
+
                     reportEntries.append(buildReportEntryForNewDistribution(sipImportData, appointmentFunding,
                             oldDisttributionAmounts.get(buildAppointmentFundingKey(appointmentFunding)))
                             + "\n");
@@ -1126,7 +1130,10 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                 if (appointmentFunding.getAppointmentRequestedCsfAmount() != null
                         && appointmentFunding.getAppointmentRequestedCsfAmount().isNonZero()
                         && appointmentFunding.getAppointmentRequestedCsfTimePercent() != null
-                        && appointmentFunding.getAppointmentRequestedCsfTimePercent().compareTo(BigDecimal.ZERO) != 0) {
+                        && appointmentFunding.getAppointmentRequestedCsfTimePercent().compareTo(BigDecimal.ZERO) != 0
+                        && appointmentFunding.getAppointmentRequestedCsfFteQuantity() != null
+                        && (appointmentFunding.getAppointmentRequestedCsfFteQuantity().compareTo(BigDecimal.ZERO) != 0)) {
+
                     reportEntries.append(buildReportEntryForNewLeaveDistribution(sipImportData, appointmentFunding,
                             oldLeaveDisttributionAmounts.get(buildAppointmentFundingKey(appointmentFunding)))
                             + "\n");
