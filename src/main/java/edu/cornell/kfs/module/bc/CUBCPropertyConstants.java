@@ -229,4 +229,15 @@ public class CUBCPropertyConstants extends BCPropertyConstants {
         public static final String BGP_FLSA = "BGP_FLSA";
     }
 
+    public static final class BudgetConstructionSipImportFileToHumanResourcesProperties {
+        public static final String POSITION_NBR = "PositionID";
+        public static final String EMPLID = "EmplID";
+        public static final String PRE_SIP_COMP_RT = "PreSIPCompRate";
+        public static final String POST_SIP_COMP_RT = "PostSIPCompRate";
+        public static final String ACTION_CODE = "ActionCode";
+        public static final String ACTION_REASON = "ActionReason";
+        public static final String SIP_EFFECTIVE_DATE = "SIPEffectiveDate";
+        public static final String COMP_FREQ = "CompensationFrequency";
+        public static final String UAW_POST_SIP_STEP = "UAWPostSIPStep";
+    }
 }

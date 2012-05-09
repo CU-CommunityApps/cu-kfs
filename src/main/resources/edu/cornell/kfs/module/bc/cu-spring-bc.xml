@@ -41,6 +41,7 @@
 		<property name="jobNames">
 			<list merge="true">
 				<value>psBudgetFeedJob</value>
+				<value>sipImportToHumanResourcesJob</value>
 				<value>budgetConstructionGeneralLedgerLoadBatchJob</value>
 				<value>trusteeBudgetConstructionGeneralLedgerLoadBatchJob</value>
 			</list>
@@ -56,110 +57,104 @@
 	 	<property name="moduleConfiguration" ref="cu-bc"/>
 	</bean>
 	
-	<bean id="PSBudgetFeedFlatInputFileHandler" parent="PSBudgetFeedFlatInputFileHandler-parentBean"/>
+	<bean id="PSBudgetFeedFlatInputFileHandler" parent="PSBudgetFeedFlatInputFileHandler-parentBean">
+	</bean>
 
     <bean id="PSBudgetFeedFlatInputFileHandler-parentBean" class="edu.cornell.kfs.module.bc.batch.PSBudgetFeedFlatInputFileHandler" abstract="true">
-
 	</bean>
 	
-	<bean id="PSBudgetFeedFlatErrorFileHandler" parent="PSBudgetFeedFlatErrorFileHandler-parentBean"/>
-
-    <bean id="PSBudgetFeedFlatErrorFileHandler-parentBean" class="edu.cornell.kfs.module.bc.batch.PSBudgetFlatErrorFileHandler" abstract="true">
-
+	<bean id="PSBudgetFeedFlatErrorFileHandler" parent="PSBudgetFeedFlatErrorFileHandler-parentBean">
 	</bean>
 
+    <bean id="PSBudgetFeedFlatErrorFileHandler-parentBean" class="edu.cornell.kfs.module.bc.batch.PSBudgetFlatErrorFileHandler" abstract="true">
+	</bean>
 
-     	<bean id="flatFileSpecification" parent="FixedWidthFlatFileSpecification" p:defaultBusinessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry">
-     		<property name="objectSpecifications">
-     			<list>
-     				<bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry">
-     					<property name="parseProperties">
-     						<list>
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="positionNumber" p:start="0" p:end="6" p:rightTrim="true" />
-     				
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeType" p:start="109" p:end="110" p:rightTrim="true" />	
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCode" p:start="56" p:end="62" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCodeDesc" p:start="62" p:end="92" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCodeDescShrt" p:start="92" p:end="102" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="company" p:start="106" p:end="109" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="positionUnionCode" p:start="114" p:end="117" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="fullPartTime" p:start="118" p:end="119" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="classInd" p:start="119" p:end="120" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="addsToActualFte" p:start="123" p:end="124" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuStateCert" p:start="124" p:end="125" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="defaultObjectCode" p:start="165" p:end="169" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="emplid" p:start="174" p:end="181" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeRecord" p:start="181" p:end="184" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeStatus" p:start="184" p:end="185" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobStandardHours" p:start="185" p:end="189" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCodeStandardHours" p:start="189" p:end="193" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeClass" p:start="193" p:end="194" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="earningDistributionType" p:start="197" p:end="198" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="compRate" p:start="198" p:end="210" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="annualBenefitBaseRate" p:start="210" p:end="222" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuAbbrFlag" p:start="222" p:end="223" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="annualRate" p:start="223" p:end="235" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="name" p:start="244" p:end="294" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="workMonths" p:start="294" p:end="297" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFamily" p:start="297" p:end="303" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="compFreq" p:start="173" p:end="174" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuPlannedFTE" p:start="135" p:end="140" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFunction" p:start="152" p:end="155" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFunctionDesc" p:start="155" p:end="165" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="reHireDate" p:start="303" p:end="313" />
-     						</list>
-     					</property>
-     				</bean>
-                    <bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractPOSAccountingInfo" p:linePrefix="POS" p:parentBusinessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry" p:parentTargetProperty="posAccountingInfoList">
-						<property name="parseProperties">
-     				
-     						<list>
-     							
-     							<!-- POS accounting strings -->
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent" p:start="3" p:end="9" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="chartOfAccountsCode" p:start="9" p:end="11" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountNumber" p:start="11" p:end="18" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="subAccountNumber" p:start="18" p:end="23" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialObjectCode" p:start="23" p:end="27" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialSubObjectCode" p:start="27" p:end="30" p:rightTrim="true" />	
-     						</list>
-     					</property>
-     				</bean>
-     				<bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractJOBAccountingInfo" p:linePrefix="JOB" p:parentBusinessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry" p:parentTargetProperty="csfAccountingInfoList">
-						<property name="parseProperties">
-     				
-     						<list>
-     							
-     							<!-- CSF accounting strings -->
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent" p:start="3" p:end="9" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="chartOfAccountsCode" p:start="9" p:end="11" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountNumber" p:start="11" p:end="18" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="subAccountNumber" p:start="18" p:end="23" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialObjectCode" p:start="23" p:end="27" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialSubObjectCode" p:start="27" p:end="30" p:rightTrim="true" />	
-     						</list>
-     					</property>
-     				</bean>
-     							
-     							
-     			</list>
-     		</property>
-     	</bean>
+   	<bean id="flatFileSpecification" parent="FixedWidthFlatFileSpecification" p:defaultBusinessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry">
+   		<property name="objectSpecifications">
+   			<list>
+   				<bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry">
+   					<property name="parseProperties">
+   						<list>
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="positionNumber" p:start="0" p:end="6" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeType" p:start="109" p:end="110" p:rightTrim="true" />	
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCode" p:start="56" p:end="62" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCodeDesc" p:start="62" p:end="92" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCodeDescShrt" p:start="92" p:end="102" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="company" p:start="106" p:end="109" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="positionUnionCode" p:start="114" p:end="117" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="fullPartTime" p:start="118" p:end="119" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="classInd" p:start="119" p:end="120" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="addsToActualFte" p:start="123" p:end="124" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuStateCert" p:start="124" p:end="125" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="defaultObjectCode" p:start="165" p:end="169" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="emplid" p:start="174" p:end="181" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeRecord" p:start="181" p:end="184" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeStatus" p:start="184" p:end="185" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobStandardHours" p:start="185" p:end="189" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCodeStandardHours" p:start="189" p:end="193" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeClass" p:start="193" p:end="194" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="earningDistributionType" p:start="197" p:end="198" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="compRate" p:start="198" p:end="210" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="annualBenefitBaseRate" p:start="210" p:end="222" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuAbbrFlag" p:start="222" p:end="223" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="annualRate" p:start="223" p:end="235" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="name" p:start="244" p:end="294" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="workMonths" p:start="294" p:end="297" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFamily" p:start="297" p:end="303" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="compFreq" p:start="173" p:end="174" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuPlannedFTE" p:start="135" p:end="140" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFunction" p:start="152" p:end="155" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFunctionDesc" p:start="155" p:end="165" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="reHireDate" p:start="303" p:end="313" />
+   						</list>
+   					</property>
+   				</bean>
+   				
+                <bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractPOSAccountingInfo" p:linePrefix="POS" p:parentBusinessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry" p:parentTargetProperty="posAccountingInfoList">
+				<property name="parseProperties">
+   						<list>
+   							<!-- POS accounting strings -->
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent" p:start="3" p:end="9" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="chartOfAccountsCode" p:start="9" p:end="11" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountNumber" p:start="11" p:end="18" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="subAccountNumber" p:start="18" p:end="23" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialObjectCode" p:start="23" p:end="27" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialSubObjectCode" p:start="27" p:end="30" p:rightTrim="true" />	
+   						</list>
+   					</property>
+   				</bean>
+   				
+   				<bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractJOBAccountingInfo" p:linePrefix="JOB" p:parentBusinessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry" p:parentTargetProperty="csfAccountingInfoList">
+				<property name="parseProperties">
+   						<list>
+   							<!-- CSF accounting strings -->
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="csfTimePercent" p:start="3" p:end="9" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="chartOfAccountsCode" p:start="9" p:end="11" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountNumber" p:start="11" p:end="18" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="subAccountNumber" p:start="18" p:end="23" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialObjectCode" p:start="23" p:end="27" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialSubObjectCode" p:start="27" p:end="30" p:rightTrim="true" />	
+   						</list>
+   					</property>
+   				</bean>
+   			</list>
+   		</property>
+   	</bean>
      	
-     	<bean id="errorFlatFileSpecification" parent="FixedWidthFlatFileSpecification" p:defaultBusinessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobInvalidEntry">
-     		<property name="objectSpecifications">
-     			<list>
-     				<bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobInvalidEntry">
-     					<property name="parseProperties">
-     						<list>
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="positionNumber" p:start="0" p:end="6" p:rightTrim="true" />
-     							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="emplid" p:start="6" p:end="0" p:rightTrim="true" />
-     						</list>
-     					</property>
-     				</bean>				
-     			</list>
-     		</property>
-     	</bean>
+   	<bean id="errorFlatFileSpecification" parent="FixedWidthFlatFileSpecification" p:defaultBusinessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobInvalidEntry">
+   		<property name="objectSpecifications">
+   			<list>
+   				<bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobInvalidEntry">
+   					<property name="parseProperties">
+   						<list>
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="positionNumber" p:start="0" p:end="6" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="emplid" p:start="6" p:end="0" p:rightTrim="true" />
+   						</list>
+   					</property>
+   				</bean>				
+   			</list>
+   		</property>
+   	</bean>
 	
 	<bean id="psBudgetFeedFlatInputFileType" class="edu.cornell.kfs.module.bc.batch.PSBudgetFeedFlatInputFileType"> 
 	    <property name="directoryPath">
@@ -245,6 +240,40 @@
 		</property>	
 	</bean>
 
+	<bean id="sipImportToHumanResourcesDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.bc.batch.dataaccess.impl.SipImportToHumanResourcesDaoJdbc"/>
+    
+	<bean id="sipImportToHumanResourcesService" parent="sipImportToHumanResourcesService-parentBean"/>
+
+    <bean id="sipImportToHumanResourcesService-parentBean" class="edu.cornell.kfs.module.bc.batch.service.impl.SipImportToHumanResourcesServiceImpl" abstract="true">
+		<property name="batchInputFileService">
+			<ref bean="batchInputFileService" />
+		</property>
+		<property name="businessObjectService" ref="businessObjectService" />
+		<property name="dateTimeService" ref="dateTimeService" />
+		<property name="parameterService" ref="parameterService" />
+		<property name="sipImportToHumanResourcesDao">
+			<ref bean="sipImportToHumanResourcesDao" />
+		</property>
+	</bean>
+	
+	<bean id="sipImportToHumanResourcesJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="sipImportToHumanResourcesStep" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="sipImportToHumanResourcesStep" class="edu.cornell.kfs.module.bc.batch.SipImportToHumanResourcesStep" parent="step">
+		 <property name="sipImportToHumanResourcesService" ref="sipImportToHumanResourcesService" />  
+		 <property name="batchInputFileService" ref="batchInputFileService" />
+		 <property name="dateTimeService" ref="dateTimeService" />
+		 <property name="parameterService" ref="parameterService" />
+		 <property name="kualiConfigurationService" ref="kualiConfigurationService"></property>
+		 <property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>	
+	</bean>
 
     <bean id="reportDumpService" class="org.kuali.kfs.module.bc.document.service.impl.ReportExportServiceImpl" >
 		<property name="businessObjectService">
