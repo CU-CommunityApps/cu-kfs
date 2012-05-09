@@ -49,9 +49,9 @@ public class SipImportToHumanResourcesStep extends AbstractStep {
     	}
     }
     
-    protected String getFileName(String fileprefix, Date runDate) {
-		String directoryName = kualiConfigurationService.getPropertyString(KFSConstants.STAGING_DIRECTORY_KEY) + "/bc/sipImportFileForHumanResources";
-        String filename = directoryName + "/" + fileprefix + "_";
+    protected String getFileName(String fileName, Date runDate) {
+		String directoryName = kualiConfigurationService.getPropertyString(KFSConstants.REPORTS_DIRECTORY_KEY) + "/bc/sipImportFileForHR";
+        String filename = directoryName + "/" + fileName + "_";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
         filename = filename + sdf.format(runDate);
         filename = filename + ".xls";
