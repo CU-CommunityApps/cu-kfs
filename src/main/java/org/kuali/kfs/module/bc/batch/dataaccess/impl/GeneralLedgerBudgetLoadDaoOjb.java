@@ -63,6 +63,7 @@ import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KualiInteger;
 import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.kns.util.TransactionalServiceUtils;
 
 import edu.cornell.kfs.coa.businessobject.SubFundProgram;
 import edu.cornell.kfs.module.bc.CUBCConstants;
@@ -517,12 +518,13 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         Iterator documentNumbersToLoad = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(queryID);
         while (documentNumbersToLoad.hasNext()) {
             Object[] resultRow = (Object[]) documentNumbersToLoad.next();
-            //first we need to see what the last sequence number used was for this document number
             
             nextEntrySequenceNumber.put((String) resultRow[0], 0);
         }
-        Set<String> keys = nextEntrySequenceNumber.keySet();
-        for(String docNumber: keys) {
+        TransactionalServiceUtils.exhaustIterator(documentNumbersToLoad);
+        Iterator it = nextEntrySequenceNumber.keySet().iterator();
+        while(it.hasNext()) {
+        	String docNumber = (String)it.next();
         	Criteria sequenceCriteriaID = new Criteria();
             sequenceCriteriaID.addEqualTo("financialSystemOriginationCode", financialSystemOriginationCode);
             sequenceCriteriaID.addEqualTo("documentNumber", docNumber);
@@ -535,6 +537,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             if(ObjectUtils.isNotNull(maxRow[0])) {
             	maxSequence = ((BigDecimal)maxRow[0]).intValue();
             	nextEntrySequenceNumber.put(docNumber, maxSequence);
+            	LOG.error("setting max sequence on " + docNumber + " with sequence " + maxSequence);
             }
         }
         
