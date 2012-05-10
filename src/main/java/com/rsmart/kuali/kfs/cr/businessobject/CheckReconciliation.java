@@ -52,6 +52,12 @@ public class CheckReconciliation extends PersistableBusinessObjectBase implement
     private String sourceCode; // SRC_CD
     
     private String bankCode; // BNK_CD
+    private Date issueDate; //ISSUE_DT
+    
+    private String payeeId;
+    private String payeeName;
+    private String payeeType;
+    
     
     private Bank bank;
     
@@ -163,8 +169,41 @@ public class CheckReconciliation extends PersistableBusinessObjectBase implement
         m.put("checkDate", getCheckNumber());
         m.put("amount", getAmount());
         m.put("sourceCd", getSourceCode());
+        m.put("issueDate",getIssueDate());
         
         return m;
     }
+
+	public Date getIssueDate() {
+		return issueDate;
+	}
+
+	public void setIssueDate(Date issueDate) {
+		this.issueDate = issueDate;
+	}
+
+	public String getPayeeId() {
+		return payeeId;
+	}
+
+	public void setPayeeId(String payeeId) {
+		this.payeeId = payeeId;
+	}
+
+	public String getPayeeName() {
+		return payeeName;
+	}
+
+	public void setPayeeName(String payeeName) {
+		this.payeeName = payeeName;
+	}
+
+	public String getPayeeType() {
+		return payeeType;
+	}
+
+	public void setPayeeType(String payeeType) {
+		this.payeeType = payeeType;
+	}
 
 }

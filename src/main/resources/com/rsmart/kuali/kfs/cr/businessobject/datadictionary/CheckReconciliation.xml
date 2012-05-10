@@ -19,6 +19,10 @@ http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
         <ref bean="CheckReconciliation-bankAccountNumber" />
         <ref bean="CheckReconciliation-checkNumber" />
         <ref bean="CheckReconciliation-checkDate" />
+        <ref bean="CheckReconciliation-issueDate" />
+        <ref bean="CheckReconciliation-payeeId" />
+        <ref bean="CheckReconciliation-payeeName" />
+        <ref bean="CheckReconciliation-payeeType" />
         <ref bean="CheckReconciliation-amount" />
         <ref bean="CheckReconciliation-status" />
         <ref bean="CheckReconciliation-sourceCode" />
@@ -122,15 +126,86 @@ http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
     <property name="maxLength" value="9" />
   </bean>
   
+  <bean id="CheckReconciliation-payeeId" parent="CheckReconciliation-payeeId-parentBean" />
+
+  <bean id="CheckReconciliation-payeeId-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="payeeId" />
+    <property name="forceUppercase" value="true" />
+    <property name="label" value="Payee ID" />
+    <property name="shortLabel" value="Payee ID" />
+    <property name="maxLength" value="25" />
+    <property name="validationPattern" >
+      <bean parent="AlphaNumericValidationPattern" />
+    </property>
+    <property name="required" value="true" />
+    <property name="control" >
+      <bean parent="HiddenControlDefinition" />
+    </property>
+    <property name="summary" value="Check Paid to ID" />
+    <property name="description" value="Check Paid to ID" />
+  </bean>
+  
+
+  <bean id="CheckReconciliation-payeeName" parent="CheckReconciliation-payeeName-parentBean" />
+
+  <bean id="CheckReconciliation-payeeName-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="payeeName" />
+    <property name="forceUppercase" value="true" />
+    <property name="label" value="Payee Name" />
+    <property name="shortLabel" value="Payee Name" />
+    <property name="maxLength" value="100" />
+    <property name="validationPattern" >
+      <bean parent="AlphaNumericValidationPattern" />
+    </property>
+    <property name="required" value="true" />
+    <property name="control" >
+      <bean parent="HiddenControlDefinition" />
+    </property>
+    <property name="summary" value="Check Paid to Name" />
+    <property name="description" value="Check Paid to Name" />
+  </bean>
+
+
+  <bean id="CheckReconciliation-payeeType" parent="CheckReconciliation-payeeType-parentBean" />
+
+  <bean id="CheckReconciliation-payeeType-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="payeeType" />
+    <property name="forceUppercase" value="true" />
+    <property name="label" value="PayeeType" />
+    <property name="shortLabel" value="PayeeType" />
+    <property name="maxLength" value="10" />
+    <property name="validationPattern" >
+      <bean parent="AlphaNumericValidationPattern" />
+    </property>
+    <property name="required" value="true" />
+    <property name="control" >
+      <bean parent="HiddenControlDefinition" />
+    </property>
+    <property name="summary" value="Check Paid to Type" />
+    <property name="description" value="Check Paid to Type" />
+  </bean>
+
+
   <bean id="CheckReconciliation-checkDate" parent="CheckReconciliation-checkDate-parentBean" />
 
   <bean id="CheckReconciliation-checkDate-parentBean" abstract="true" parent="GenericAttributes-genericDate">
     <property name="name" value="checkDate" />
-    <property name="label" value="Check Date" />
-    <property name="shortLabel" value="Date" />
+    <property name="label" value="Last Status Change Date" />
+    <property name="shortLabel" value="Status Date" />
     <property name="required" value="true" />
   </bean>
   
+  <bean id="CheckReconciliation-issueDate" parent="CheckReconciliation-issueDate-parentBean" />
+
+  <bean id="CheckReconciliation-issueDate-parentBean" abstract="true" parent="GenericAttributes-genericDate">
+    <property name="name" value="issueDate" />
+    <property name="label" value="Issue Date" />
+    <property name="shortLabel" value=" Issue Date" />
+    <property name="required" value="true" />
+  </bean>
+  
+
+
   <bean id="CheckReconciliation-amount" parent="CheckReconciliation-amount-parentBean" />
 
   <bean id="CheckReconciliation-amount-parentBean" abstract="true" parent="GenericAttributes-genericAmount">
@@ -196,6 +271,7 @@ http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
         <dd:field attributeName="bankCode"  />
         <dd:field attributeName="checkNumber"  />
         <dd:field attributeName="checkDate"  />
+        <dd:field attributeName="issueDate"  />
         <dd:field attributeName="status"  />
         <dd:field attributeName="sourceCode" />
       </list>
@@ -205,9 +281,13 @@ http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
         <bean parent="FieldDefinition"
               p:attributeName="checkNumber" />
         <bean parent="FieldDefinition"
-              p:attributeName="bankCode" />
+              p:attributeName="payeeId" />
         <bean parent="FieldDefinition"
-              p:attributeName="bank.bankName" />
+              p:attributeName="payeeType" />
+        <bean parent="FieldDefinition"
+              p:attributeName="payeeName" />
+        <bean parent="FieldDefinition"
+              p:attributeName="issueDate" />
         <bean parent="FieldDefinition"
               p:attributeName="checkDate" />
         <bean parent="FieldDefinition"
