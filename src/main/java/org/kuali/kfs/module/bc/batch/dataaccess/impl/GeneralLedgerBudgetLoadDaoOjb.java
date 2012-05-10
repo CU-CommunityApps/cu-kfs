@@ -672,6 +672,14 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         
         
         if(!tbRunFlag) {
+        	boolean writeAcRecord = false;
+        	String objectCd = pbgl.getFinancialObjectCode();
+        	List<String> objectCodes = this.parameterService.getParameterValues(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_AC_OBJECTS);
+            if(objectCodes.contains(objectCd)) {
+            	writeAcRecord = true;
+            } else {
+            	writeAcRecord = false;
+            }
             /**
              * write a base budget row
              */
@@ -723,24 +731,27 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
                 diagnosticCounters.addToCbCreated(cbEntry);
             }
             
-            /**
-             * the same row needs to be written as a actual budget item we change only the balance type and the sequence number
-             */
-            newRow.setFinancialBalanceTypeCode(KFSConstants.BALANCE_TYPE_ACTUAL);
-            newRow.setTransactionLedgerEntrySequenceNumber(daoGlobalVariables.getNextSequenceNumber(incomingDocumentNumber));
-            
-            /**
-             * store the current budget value
-             */
-            getPersistenceBrokerTemplate().store(newRow);
-            diagnosticCounters.increaseGeneralLedgerActualBudgetWritten();
-            if(diagnosticCounters.generalLedgerActualBudgetWritten % 100 == 0) {
-            	String[] acEntry = {newRow.getUniversityFiscalYear().toString(), newRow.getAccountNumber(), 
-                		newRow.getFinancialObjectCode(), newRow.getFinancialBalanceTypeCode(), newRow.getUniversityFiscalPeriodCode(),
-                		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription(), 
-                		newRow.getTransactionLedgerEntryAmount().toString(), newRow.getTransactionDebitCreditCode()};
-                diagnosticCounters.addToAcCreated(acEntry);
+            if(writeAcRecord) {
+            	/**
+                 * the same row needs to be written as a actual budget item we change only the balance type and the sequence number
+                 */
+                newRow.setFinancialBalanceTypeCode(KFSConstants.BALANCE_TYPE_ACTUAL);
+                newRow.setTransactionLedgerEntrySequenceNumber(daoGlobalVariables.getNextSequenceNumber(incomingDocumentNumber));
+                
+                /**
+                 * store the current budget value
+                 */
+                getPersistenceBrokerTemplate().store(newRow);
+                diagnosticCounters.increaseGeneralLedgerActualBudgetWritten();
+                if(diagnosticCounters.generalLedgerActualBudgetWritten % 100 == 0) {
+                	String[] acEntry = {newRow.getUniversityFiscalYear().toString(), newRow.getAccountNumber(), 
+                    		newRow.getFinancialObjectCode(), newRow.getFinancialBalanceTypeCode(), newRow.getUniversityFiscalPeriodCode(),
+                    		newRow.getTransactionDate().toString(), newRow.getTransactionLedgerEntryDescription(), 
+                    		newRow.getTransactionLedgerEntryAmount().toString(), newRow.getTransactionDebitCreditCode()};
+                    diagnosticCounters.addToAcCreated(acEntry);
+                }
             }
+            
             
         } else {
             /**
