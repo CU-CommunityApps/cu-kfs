@@ -104,6 +104,8 @@
 		<field-descriptor name="positionType" column="IU_POSITION_TYPE" jdbc-type="VARCHAR" />
 	    <field-descriptor name="newCompRate" column="NEW_COMP_RT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
 		<field-descriptor name="newAnnualRate" column="NEW_ANNL_RT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+		<field-descriptor name="passedValidation" column="PASSED_VALIDATION" jdbc-type="VARCHAR" />
+		<field-descriptor name="validationErrors" column="VALIDATION_ERRORS" jdbc-type="VARCHAR" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
 		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
 		

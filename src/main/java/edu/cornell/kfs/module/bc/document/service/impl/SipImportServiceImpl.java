@@ -134,21 +134,23 @@ public class SipImportServiceImpl implements SipImportService {
 	Map<String, HashMap<Integer, Integer>> warningCountByUnitId;
 
 	protected String[] ErrorMessages = {
-			"\tPosition number was not found in the original SIP exported data.\n",
+			"\tPosition number was not found in the original SIP exported data.\n",   // Ignore for SIP
 			"\tEmployee Id was not found in the original SIP exported data.\n",
 			"\tThis position number / employee id combination is not eligible for SIP.\n",
 			"\tThis position number / employee id combination compensation rate is different than that in KFS.\n",
-			"\tThe SIP award (Increase To minimum + Merit + Equity) is greater than zero AND the Deferred amount is also greater than 0.\n",
-			"\tThe SIP award (Increase To minimum + Merit + Equity) is greater than zero AND a note was also provided.\n",
-			"\tDeferred is greater than 0 AND a note was not provided.\n",
-			"\tThe SIP award (Increase To minimum + Merit + Equity) is zero AND a note was not provided.\n",
-			"\tThe ABBR flag is set to Y.\n",
+			"\tThe SIP award (Increase To minimum + Merit + Equity) is greater than zero AND the Deferred amount is also greater than 0.\n", // Ignore for SIP
+			"\tThe SIP award (Increase To minimum + Merit + Equity) is greater than zero AND a note was also provided.\n",  // CURRENTLY COMMENTED OUT BELOW
+			"\tDeferred is greater than 0 AND a note was not provided.\n",  //Ignore for SIP
+			"\tThe SIP award (Increase To minimum + Merit + Equity) is zero AND a note was not provided.\n",  // Ignore for SIP
+			"\tThe ABBR flag is not set to N.\n",
 			"\tExecutive position found.\n",
 			"\tSIP is not allowed when Job Function is UNB.\n",
 			"\tThis line is a duplicate.\n",
-			"\tThe requested amount is greater than 0 and the requested percent distribution is not equal to 1.\n"
+			"\tThe requested amount is greater than 0 and the requested percent distribution is not equal to 1.\n"   // Ignore for SIP
 	};
 	
+	protected String ErrorMessagesForThisSipRecord;
+	protected boolean AllowThisSipRecordForSIP;  // This will initially be true and set to false only if the rules above that are not ignored for SIP are encountered.
 	protected String WarningMessages[];
 	
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SipImportService.class);
@@ -199,7 +201,9 @@ public class SipImportServiceImpl implements SipImportService {
         	while(fileReader.ready()) {
             	// Read one line from the import file
             	String sipImportLine = fileReader.readLine();
-
+            	ErrorMessagesForThisSipRecord = "";
+            	AllowThisSipRecordForSIP = true;
+            	
             	// Add 1 to the counter and create a new sipImportData object
             	this.importCount++;
             	
@@ -249,18 +253,39 @@ public class SipImportServiceImpl implements SipImportService {
 				if (!RulesErrorList.isEmpty())
 					if (!ValuesErrorList.isEmpty()) {
 						errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + RulesErrorList + ValuesErrorList));
+						if (AllowThisSipRecordForSIP)
+						{
+							sipImportData.setPassedValidation("N");
+							sipImportData.setValidationErrors(RulesErrorList + ValuesErrorList);
+							sipImportCollection.add(sipImportData);
+						}
 					}
 					else {
 						errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + RulesErrorList));
+						if (AllowThisSipRecordForSIP)
+						{
+							sipImportData.setPassedValidation("N");
+							sipImportData.setValidationErrors(RulesErrorList);
+							sipImportCollection.add(sipImportData);
+						}
 					}
 
 				else
 					if (!ValuesErrorList.isEmpty()) {
 						errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + ValuesErrorList));
+						if (AllowThisSipRecordForSIP)
+						{
+							sipImportData.setPassedValidation("N");
+							sipImportData.setValidationErrors(ValuesErrorList);
+							sipImportCollection.add(sipImportData);
+						}
 					}
-					else
+					else {
 						// Add to sip Import Data list
+						sipImportData.setPassedValidation("Y");
 						sipImportCollection.add(sipImportData);
+						
+					}
             }
         	//  Add some blank lines after the last detail line followed by the header row.
 			errorReportDetail.add(new ExternalizedMessageWrapper("\n\n"));
@@ -669,6 +694,7 @@ public class SipImportServiceImpl implements SipImportService {
 				// Is this position found?
 				if (!validPosition(positionNumber)){ 
 					int ErrorMessageNumber = 0;
+					ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
@@ -676,6 +702,8 @@ public class SipImportServiceImpl implements SipImportService {
 				// Is this EmplId found?
 				if (!validEmplid(emplId)) {
 					int ErrorMessageNumber = 1;
+					AllowThisSipRecordForSIP = false;
+					ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
@@ -683,6 +711,8 @@ public class SipImportServiceImpl implements SipImportService {
 				// Is this position number / emplid combination found?
 				if (!isSipEligible(positionNumber, emplId)){
 					int ErrorMessageNumber = 2;
+					AllowThisSipRecordForSIP = false;
+					ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
@@ -690,6 +720,8 @@ public class SipImportServiceImpl implements SipImportService {
 				// if the compensation rate supplied by the import is different than that already stored in the database, issue an error message
 				if (!validCompRate(positionNumber, emplId, CompRate)) {
 					int ErrorMessageNumber = 3;
+					AllowThisSipRecordForSIP = false;
+					ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
@@ -697,6 +729,8 @@ public class SipImportServiceImpl implements SipImportService {
 				// if the AbbrFlag column is "Y" then issue an error message
 				if (!isAbbrFlagValid(AbbrFlag)) {
 					int ErrorMessageNumber = 8;
+					AllowThisSipRecordForSIP = false;
+					ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
@@ -706,6 +740,8 @@ public class SipImportServiceImpl implements SipImportService {
 				if (!allowExecutivesToBeImported)
 					if (isSipExecutive(positionNumber)) {
 						int ErrorMessageNumber = 9;
+						AllowThisSipRecordForSIP = false;
+						ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
 						RulesErrorList += ErrorMessages[ErrorMessageNumber];
 						UpdateErrorCounts(ErrorMessageNumber, UnitId);	 
 					}
@@ -720,6 +756,8 @@ public class SipImportServiceImpl implements SipImportService {
 				// if the job function indicates a union position, then generate an error
 				if (jobFunction.equals("UNB")) {
 					int ErrorMessageNumber = 10;
+					AllowThisSipRecordForSIP = false;
+					ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
@@ -727,6 +765,8 @@ public class SipImportServiceImpl implements SipImportService {
 				// if the position number and the emplid have been seen before, then call this line a duplicate and generate an error
 				if (isDuplicateLine(positionNumber, emplId, sipImportLine)){
 					int ErrorMessageNumber = 11;
+					AllowThisSipRecordForSIP = false;
+					ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
@@ -734,6 +774,7 @@ public class SipImportServiceImpl implements SipImportService {
 				//  If the requested amount is > 0 and the requested percent distribution is <> 1 then generate an error
 				if ( (requestedAmountSum(positionNumber, emplId) > 0) && (requestedPerCentDistributionSum(positionNumber, emplId) != 1) ) {
 					int ErrorMessageNumber = 12;
+					ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}

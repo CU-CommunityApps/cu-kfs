@@ -46,6 +46,12 @@ public class SipImportData extends PersistableBusinessObjectBase {
     protected String positionType;
     protected KualiDecimal newCompRate;
     protected KualiDecimal newAnnualRate;
+    
+    // The following are not part of the SIP import but instead are used to (the distribution process) determine
+    //   if the line passed validation and if not what rules were responsible for it not passing validation.
+    
+    protected String passedValidation;
+    protected String validationErrors;
 
     public SipImportData() {
         super();
@@ -567,7 +573,35 @@ public class SipImportData extends PersistableBusinessObjectBase {
                 + incToMin + ", equity=" + equity + ", merit=" + merit + ", note=" + note + ", deferred=" + deferred
                 + ", cuAbbrFlag=" + cuAbbrFlag + ", apptTotIntndAmt=" + apptTotIntndAmt + ", apptRqstFteQty="
                 + apptRqstFteQty + ", positionType=" + positionType + ", newCompRate=" + newCompRate
-                + ", newAnnualRate=" + newAnnualRate + "]";
+                + ", newAnnualRate=" + newAnnualRate + ", passedValidation=" + passedValidation
+                + ", validationErrors=" + validationErrors + "]";
     }
 
+	/**
+	 * @return the passedValidation
+	 */
+	public String getPassedValidation() {
+		return passedValidation;
+	}
+
+	/**
+	 * @param passedValidation the passedValidation to set
+	 */
+	public void setPassedValidation(String passedValidation) {
+		this.passedValidation = passedValidation;
+	}
+
+	/**
+	 * @return the validationErrors
+	 */
+	public String getValidationErrors() {
+		return validationErrors;
+	}
+
+	/**
+	 * @param validationErrors the validationErrors to set
+	 */
+	public void setValidationErrors(String validationErrors) {
+		this.validationErrors = validationErrors;
+	}
 }
