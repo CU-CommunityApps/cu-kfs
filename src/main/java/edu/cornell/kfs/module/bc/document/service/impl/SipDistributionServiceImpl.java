@@ -21,6 +21,7 @@ import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.KualiInteger;
 import org.kuali.rice.kns.util.KualiPercent;
 import org.kuali.rice.kns.util.ObjectUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
 import edu.cornell.kfs.module.bc.CUBCConstants;
@@ -28,6 +29,7 @@ import edu.cornell.kfs.module.bc.CUBCPropertyConstants;
 import edu.cornell.kfs.module.bc.businessobject.SipImportData;
 import edu.cornell.kfs.module.bc.document.dataaccess.SipDistributionDao;
 import edu.cornell.kfs.module.bc.document.service.SipDistributionService;
+
 
 public class SipDistributionServiceImpl implements SipDistributionService {
 
@@ -41,6 +43,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
      * @see edu.cornell.kfs.module.bc.document.service.SipDistributionService#distributeSip(boolean,
      * java.util.List)
      */
+    @Transactional
     public StringBuilder distributeSip(boolean updateMode, List<SipImportData> sipImportDataCollection) {
 
         StringBuilder reportEntries = new StringBuilder();
@@ -74,16 +77,18 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         reportEntries.append(buildReportTitlesForNewDistribution());
 
         for (SipImportData sipImportData : sipImportDataCollection) {
+            if ("Y".equalsIgnoreCase(sipImportData.getPassedValidation())) {
 
-            List<PendingBudgetConstructionAppointmentFunding> calculatedDistributions = calculateSipDistributions(
-                    sipImportData, oldDistributionAmounts, oldLeaveDistributionAmounts);
+                List<PendingBudgetConstructionAppointmentFunding> calculatedDistributions = calculateSipDistributions(
+                        sipImportData, oldDistributionAmounts, oldLeaveDistributionAmounts);
 
-            newDistributions.addAll(calculatedDistributions);
+                newDistributions.addAll(calculatedDistributions);
 
-            // generate report entries for sip distribution
+                // generate report entries for sip distribution
 
-            buildSipDistributionsReportEntries(reportEntries, sipImportData, calculatedDistributions,
-                    oldDistributionAmounts, oldLeaveDistributionAmounts);
+                buildSipDistributionsReportEntries(reportEntries, sipImportData, calculatedDistributions,
+                        oldDistributionAmounts, oldLeaveDistributionAmounts);
+            }
         }
 
         // generate report entries for sip distribution
@@ -645,7 +650,6 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
                         String benefitsObjectCode = benefitsCalculation.getPositionFringeBenefitObjectCode();
                         KualiPercent benefitsPercent = benefitsCalculation.getPositionFringeBenefitPercent();
-                       
 
                         if (benefitsPercent.isNonZero()) {
 
