@@ -149,8 +149,9 @@ public class SipImportServiceImpl implements SipImportService {
 			"\tThe requested amount is greater than 0 and the requested percent distribution is not equal to 1.\n"   // Ignore for SIP
 	};
 	
-	protected String ErrorMessagesForThisSipRecord;
-	protected boolean AllowThisSipRecordForSIP;  // This will initially be true and set to false only if the rules above that are not ignored for SIP are encountered.
+	protected String ErrorMessageNumbersForThisSipRecord;		// Contains only the sip load error message numbers
+	protected String sipLoadErrors;  				// Contains only the SIP errors so this is a subset of the combined RulesErrorList+ValidationErrorList
+	protected boolean AllowThisSipRecordForSIP;  	// This will initially be true and set to false only if the rules above that are not ignored for SIP are encountered.
 	protected String WarningMessages[];
 	
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SipImportService.class);
@@ -201,7 +202,8 @@ public class SipImportServiceImpl implements SipImportService {
         	while(fileReader.ready()) {
             	// Read one line from the import file
             	String sipImportLine = fileReader.readLine();
-            	ErrorMessagesForThisSipRecord = "";
+            	ErrorMessageNumbersForThisSipRecord = "";
+            	sipLoadErrors = "";
             	AllowThisSipRecordForSIP = true;
             	
             	// Add 1 to the counter and create a new sipImportData object
@@ -234,6 +236,12 @@ public class SipImportServiceImpl implements SipImportService {
 				validateSipValues(sipImportData.getIncToMin(), sipImportData.getMerit(), sipImportData.getEquity(), 
 									sipImportData.getDeferred(), sipImportData.getNote(), sipImportData.getCompRt(),
 									sipImportData.getUnitId());
+				//For Sip Load Errors - remove the \t in the front and the \n at the end of the lines
+				if (!sipLoadErrors.equals("")) {
+					sipLoadErrors = sipLoadErrors.replace("\t","");		// removes all tabs
+					sipLoadErrors = sipLoadErrors.replace("\n",", ");	// removes all new lines
+					sipLoadErrors = sipLoadErrors.substring(0, sipLoadErrors.length()-2);	// Removes the ", " at the end
+				}
 				
 				// Generate WARNING messages
 				if (!RulesWarningList.isEmpty())
@@ -260,6 +268,7 @@ public class SipImportServiceImpl implements SipImportService {
 							
 						// Do this for both cases
 						sipImportData.setValidationErrors(RulesErrorList + ValuesErrorList);
+						sipImportData.setSipLoadErrors(sipLoadErrors);
 						sipImportCollection.add(sipImportData);
 					}
 					else {
@@ -271,6 +280,7 @@ public class SipImportServiceImpl implements SipImportService {
 						
 						// Do this for both cases
 						sipImportData.setValidationErrors(RulesErrorList);
+						sipImportData.setSipLoadErrors(sipLoadErrors);
 						sipImportCollection.add(sipImportData);
 					}
 
@@ -284,13 +294,13 @@ public class SipImportServiceImpl implements SipImportService {
 						
 						// Do this for both cases
 						sipImportData.setValidationErrors(ValuesErrorList);
+						sipImportData.setSipLoadErrors(sipLoadErrors);
 						sipImportCollection.add(sipImportData);
 					}
 					else {
 						// Add to sip Import Data list
 						sipImportData.setPassedValidation("Y");
 						sipImportCollection.add(sipImportData);
-						
 					}
             }
         	//  Add some blank lines after the last detail line followed by the header row.
@@ -700,7 +710,7 @@ public class SipImportServiceImpl implements SipImportService {
 				// Is this position found?
 				if (!validPosition(positionNumber)){ 
 					int ErrorMessageNumber = 0;
-					ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
+					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
@@ -709,7 +719,8 @@ public class SipImportServiceImpl implements SipImportService {
 				if (!validEmplid(emplId)) {
 					int ErrorMessageNumber = 1;
 					AllowThisSipRecordForSIP = false;
-					ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
+					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
+					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
@@ -718,7 +729,8 @@ public class SipImportServiceImpl implements SipImportService {
 				if (!isSipEligible(positionNumber, emplId)){
 					int ErrorMessageNumber = 2;
 					AllowThisSipRecordForSIP = false;
-					ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
+					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
+					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
@@ -727,7 +739,8 @@ public class SipImportServiceImpl implements SipImportService {
 				if (!validCompRate(positionNumber, emplId, CompRate)) {
 					int ErrorMessageNumber = 3;
 					AllowThisSipRecordForSIP = false;
-					ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
+					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
+					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
@@ -736,7 +749,8 @@ public class SipImportServiceImpl implements SipImportService {
 				if (!isAbbrFlagValid(AbbrFlag)) {
 					int ErrorMessageNumber = 8;
 					AllowThisSipRecordForSIP = false;
-					ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
+					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
+					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
@@ -747,7 +761,8 @@ public class SipImportServiceImpl implements SipImportService {
 					if (isSipExecutive(positionNumber)) {
 						int ErrorMessageNumber = 9;
 						AllowThisSipRecordForSIP = false;
-						ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
+						sipLoadErrors += ErrorMessages[ErrorMessageNumber];
+						ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 						RulesErrorList += ErrorMessages[ErrorMessageNumber];
 						UpdateErrorCounts(ErrorMessageNumber, UnitId);	 
 					}
@@ -763,7 +778,8 @@ public class SipImportServiceImpl implements SipImportService {
 				if (jobFunction.equals("UNB")) {
 					int ErrorMessageNumber = 10;
 					AllowThisSipRecordForSIP = false;
-					ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
+					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
+					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
@@ -772,7 +788,8 @@ public class SipImportServiceImpl implements SipImportService {
 				if (isDuplicateLine(positionNumber, emplId, sipImportLine)){
 					int ErrorMessageNumber = 11;
 					AllowThisSipRecordForSIP = false;
-					ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
+					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
+					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
@@ -780,7 +797,7 @@ public class SipImportServiceImpl implements SipImportService {
 				//  If the requested amount is > 0 and the requested percent distribution is <> 1 then generate an error
 				if ( (requestedAmountSum(positionNumber, emplId) > 0) && (requestedPerCentDistributionSum(positionNumber, emplId) != 1) ) {
 					int ErrorMessageNumber = 12;
-					ErrorMessagesForThisSipRecord += ErrorMessageNumber + ",";
+					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}

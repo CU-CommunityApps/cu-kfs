@@ -562,22 +562,6 @@ public class SipImportData extends PersistableBusinessObjectBase {
         this.newAnnualRate = newAnnualRate;
     }
 
-    @Override
-    public String toString() {
-        return "SipImportData [unitId=" + unitId + ", hrDeptId=" + hrDeptId + ", kfsDeptId=" + kfsDeptId
-                + ", deptName=" + deptName + ", positionNbr=" + positionNbr + ", posDescr=" + posDescr + ", emplId="
-                + emplId + ", personNm=" + personNm + ", sipEligFlag=" + sipEligFlag + ", emplType=" + emplType
-                + ", emplRcd=" + emplRcd + ", jobCode=" + jobCode + ", jobCdDescShrt=" + jobCdDescShrt + ", jobFamily="
-                + jobFamily + ", posFte=" + posFte + ", posGradeDflt=" + posGradeDflt + ", cuStateCert=" + cuStateCert
-                + ", compFreq=" + compFreq + ", annlRt=" + annlRt + ", compRt=" + compRt + ", jobStdHrs=" + jobStdHrs
-                + ", wrkMnths=" + wrkMnths + ", jobFunc=" + jobFunc + ", jobFuncDesc=" + jobFuncDesc + ", incToMin="
-                + incToMin + ", equity=" + equity + ", merit=" + merit + ", note=" + note + ", deferred=" + deferred
-                + ", cuAbbrFlag=" + cuAbbrFlag + ", apptTotIntndAmt=" + apptTotIntndAmt + ", apptRqstFteQty="
-                + apptRqstFteQty + ", positionType=" + positionType + ", newCompRate=" + newCompRate
-                + ", newAnnualRate=" + newAnnualRate + ", passedValidation=" + passedValidation
-                + ", validationErrors=" + validationErrors + "]";
-    }
-
 	/**
 	 * @return the passedValidation
 	 */
@@ -613,4 +597,32 @@ public class SipImportData extends PersistableBusinessObjectBase {
     public void setSipLoadErrors(String sipLoadErrors) {
         this.sipLoadErrors = sipLoadErrors;
     }
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "SipImportData [unitId=" + unitId + ", hrDeptId=" + hrDeptId
+				+ ", kfsDeptId=" + kfsDeptId + ", deptName=" + deptName
+				+ ", positionNbr=" + positionNbr + ", posDescr=" + posDescr
+				+ ", emplId=" + emplId + ", personNm=" + personNm
+				+ ", sipEligFlag=" + sipEligFlag + ", emplType=" + emplType
+				+ ", emplRcd=" + emplRcd + ", jobCode=" + jobCode
+				+ ", jobCdDescShrt=" + jobCdDescShrt + ", jobFamily="
+				+ jobFamily + ", posFte=" + posFte + ", posGradeDflt="
+				+ posGradeDflt + ", cuStateCert=" + cuStateCert + ", compFreq="
+				+ compFreq + ", annlRt=" + annlRt + ", compRt=" + compRt
+				+ ", jobStdHrs=" + jobStdHrs + ", wrkMnths=" + wrkMnths
+				+ ", jobFunc=" + jobFunc + ", jobFuncDesc=" + jobFuncDesc
+				+ ", incToMin=" + incToMin + ", equity=" + equity + ", merit="
+				+ merit + ", note=" + note + ", deferred=" + deferred
+				+ ", cuAbbrFlag=" + cuAbbrFlag + ", apptTotIntndAmt="
+				+ apptTotIntndAmt + ", apptRqstFteQty=" + apptRqstFteQty
+				+ ", positionType=" + positionType + ", newCompRate="
+				+ newCompRate + ", newAnnualRate=" + newAnnualRate
+				+ ", passedValidation=" + passedValidation
+				+ ", validationErrors=" + validationErrors + ", sipLoadErrors="
+				+ sipLoadErrors + "]";
+	}
 }
