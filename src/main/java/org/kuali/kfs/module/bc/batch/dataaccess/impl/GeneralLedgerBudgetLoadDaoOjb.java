@@ -61,6 +61,7 @@ import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.KualiInteger;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.util.TransactionalServiceUtils;
@@ -199,7 +200,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     	java.util.Date now = new java.util.Date();
     	String date = format.format(now);
     	body.append("\nCornell BC > GL load job beginning at " + date);
-    	body.append("\nCurrent version modified 5/11/12 8:28 MST\n");
+    	body.append("\nCurrent version modified 5/11/12 9:04 MST\n");
     	body.append(String.format("\n********************************************"));
     	body.append(String.format("\n\nBudget Construction Environment Variables\n"));
     	body.append(String.format("\n********************************************\n"));
@@ -739,6 +740,12 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
                 newRow.setFinancialBalanceTypeCode(KFSConstants.BALANCE_TYPE_ACTUAL);
                 newRow.setTransactionLedgerEntrySequenceNumber(daoGlobalVariables.getNextSequenceNumber(incomingDocumentNumber));
                 
+                if(pbgl.getAccountLineAnnualBalanceAmount().kualiDecimalValue().isLessThan(KualiDecimal.ZERO) ) {
+                	newRow.setTransactionDebitCreditCode(KFSConstants.GL_DEBIT_CODE);
+                	newRow.setTransactionLedgerEntryAmount(pbgl.getAccountLineAnnualBalanceAmount().kualiDecimalValue().multiply(new KualiDecimal(-1)));
+                } else {
+                	newRow.setTransactionDebitCreditCode(KFSConstants.GL_CREDIT_CODE);
+                }
                 /**
                  * store the current budget value
                  */
