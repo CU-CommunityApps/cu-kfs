@@ -51,7 +51,7 @@ public class SipImportToHumanResourcesDaoJdbc extends BudgetConstructionDaoJdbcB
 	            	sipImportDataForHr.setPostSIPCompRate(exportUtil.removeNulls(rs.getString("NEW_COMP_RT"), true));
 	            	sipImportDataForHr.setActionCode("PAY");
 	            	sipImportDataForHr.setActionReason("SIP");
-	            	sipImportDataForHr.setSIPEffectiveDate(CUBudgetParameterFinder.getBaseFiscalYear() + 1 + "-07-01");
+	            	sipImportDataForHr.setSIPEffectiveDate(CUBudgetParameterFinder.getBaseFiscalYear() + "-07-01");
 	            	sipImportDataForHr.setCompensationFrequency(exportUtil.removeNulls(rs.getString("COMP_FREQ"), false));
 	            	sipImportDataForHr.setUAWPostSIPStep("1");
 
