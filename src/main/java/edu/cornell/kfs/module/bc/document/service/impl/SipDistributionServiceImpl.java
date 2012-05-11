@@ -55,12 +55,25 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
         calculateTotals(sipImportDataCollection);
 
+        List<SipImportData> invalidEntries = new ArrayList<SipImportData>();
+        List<SipImportData> sipToHrValidEntries = new ArrayList<SipImportData>();
+        List<SipImportData> bcValidEntries = new ArrayList<SipImportData>();
+
+        separateEntriesBasedOnValidationCode(sipImportDataCollection, invalidEntries, sipToHrValidEntries,
+                bcValidEntries);
+
+        // generate report for data with errors
+        buildReportEntriesForInvalidEntries(reportEntries, invalidEntries);
+        
+        // generate report for SIP to HR entries
+        buildSipTotalsForHRValidEntriesReportEntries(reportEntries, sipToHrValidEntries);
+        
         // generate report entries for the SIP totals
-        buildSipTotalsReportEntries(reportEntries, sipImportDataCollection);
+        buildSipTotalsReportEntries(reportEntries, bcValidEntries);
 
         // persist the import data in the database no matter if running in report or update mode
 
-        persistSipTotals(sipImportDataCollection);
+        persistSipTotals(sipToHrValidEntries);
 
         //2. Sip distribution
 
@@ -75,7 +88,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         reportEntries.append(header);
         reportEntries.append(buildReportTitlesForNewDistribution());
 
-        for (SipImportData sipImportData : sipImportDataCollection) {
+        for (SipImportData sipImportData : bcValidEntries) {
             if ("Y".equalsIgnoreCase(sipImportData.getPassedValidation())) {
 
                 List<PendingBudgetConstructionAppointmentFunding> calculatedDistributions = calculateSipDistributions(
@@ -212,70 +225,101 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
         for (SipImportData sipImportData : sipImportDataCollection) {
 
-            // calculate totals
-            /*
-             * Totals SIP
+            if ("Y".equalsIgnoreCase(sipImportData.getPassedValidation())
+                    || "S".equalsIgnoreCase(sipImportData.getPassedValidation())) {
 
-            1. New Comp Rate
-             1. If the Comp_Rate is an hourly amount (Comp_Frequency = H) then the new Comp Rate is stored as the hourly rate (This is for the file we'll give to Pam to load into HR. Dennis Werner is working on the HR interface. See KITI-3000)
-                   1. Comp_Rate + Increase_to_Minimum + Equity + Merit
-             2. If the Comp_Rate is an annual amount (Comp_Frequency = A) then the new Comp Rate is stored as an annual amount (and is the same as New Annual Rate)
-                   1. Annual_Rate + Increase_to_Minimum + Equity + Merit
-                   */
-            KualiDecimal newCompRate = KualiDecimal.ZERO;
-            KualiDecimal newAnnualRate = KualiDecimal.ZERO;
-            KualiDecimal oldCompRate = sipImportData.getCompRt() == null ? KualiDecimal.ZERO : sipImportData
+                // calculate totals
+                /*
+                 * Totals SIP
+
+                1. New Comp Rate
+                 1. If the Comp_Rate is an hourly amount (Comp_Frequency = H) then the new Comp Rate is stored as the hourly rate (This is for the file we'll give to Pam to load into HR. Dennis Werner is working on the HR interface. See KITI-3000)
+                       1. Comp_Rate + Increase_to_Minimum + Equity + Merit
+                 2. If the Comp_Rate is an annual amount (Comp_Frequency = A) then the new Comp Rate is stored as an annual amount (and is the same as New Annual Rate)
+                       1. Annual_Rate + Increase_to_Minimum + Equity + Merit
+                       */
+                KualiDecimal newCompRate = KualiDecimal.ZERO;
+                KualiDecimal newAnnualRate = KualiDecimal.ZERO;
+                KualiDecimal oldCompRate = sipImportData.getCompRt() == null ? KualiDecimal.ZERO : sipImportData
                         .getCompRt();
-            KualiDecimal increaseToMin = sipImportData.getIncToMin() == null ? KualiDecimal.ZERO : sipImportData
+                KualiDecimal increaseToMin = sipImportData.getIncToMin() == null ? KualiDecimal.ZERO : sipImportData
                         .getIncToMin();
-            KualiDecimal equity = sipImportData.getEquity() == null ? KualiDecimal.ZERO : sipImportData.getEquity();
-            KualiDecimal merit = sipImportData.getMerit() == null ? KualiDecimal.ZERO : sipImportData.getMerit();
-            KualiDecimal annualRate = sipImportData.getAnnlRt() == null ? KualiDecimal.ZERO : sipImportData
+                KualiDecimal equity = sipImportData.getEquity() == null ? KualiDecimal.ZERO : sipImportData.getEquity();
+                KualiDecimal merit = sipImportData.getMerit() == null ? KualiDecimal.ZERO : sipImportData.getMerit();
+                KualiDecimal annualRate = sipImportData.getAnnlRt() == null ? KualiDecimal.ZERO : sipImportData
                         .getAnnlRt();
 
-            // compute new comp rate, it is the same for both annual and hourly employees
-            newCompRate = newCompRate.add(oldCompRate);
-            newCompRate = newCompRate.add(increaseToMin);
-            newCompRate = newCompRate.add(equity);
-            newCompRate = newCompRate.add(merit);
+                // compute new comp rate, it is the same for both annual and hourly employees
+                newCompRate = newCompRate.add(oldCompRate);
+                newCompRate = newCompRate.add(increaseToMin);
+                newCompRate = newCompRate.add(equity);
+                newCompRate = newCompRate.add(merit);
 
-            /*
-            2. New Annual Rate
-            1. For all records, the New Annual Rate is the annual amount
-            1. Annual_Rate + Increase_to_Minimum + Equity + Merit
-            2. Note that in the SIP Export file the Comp_Rate Job_Standard_Hours 52 = Annual_Rate
-            3. Look out for weird data, like positions 139348 and 147052 (Comp_Frequency = H and Annual_Rate = Comp_Rate)
-            4. If the Annual_Rate has cents then the new, post-SIP annual rate probably does too
+                /*
+                2. New Annual Rate
+                1. For all records, the New Annual Rate is the annual amount
+                1. Annual_Rate + Increase_to_Minimum + Equity + Merit
+                2. Note that in the SIP Export file the Comp_Rate Job_Standard_Hours 52 = Annual_Rate
+                3. Look out for weird data, like positions 139348 and 147052 (Comp_Frequency = H and Annual_Rate = Comp_Rate)
+                4. If the Annual_Rate has cents then the new, post-SIP annual rate probably does too
 
-            */
-            if (CUBCConstants.CompFreq.HOURLY.equalsIgnoreCase(sipImportData.getCompFreq())) {
+                */
+                if (CUBCConstants.CompFreq.HOURLY.equalsIgnoreCase(sipImportData.getCompFreq())) {
 
-                // compute new annual rate
+                    // compute new annual rate
 
-                KualiDecimal sipAmount = KualiDecimal.ZERO;
-                sipAmount = sipAmount.add(increaseToMin);
-                sipAmount = sipAmount.add(equity);
-                sipAmount = sipAmount.add(merit);
-                sipAmount = sipAmount.multiply(sipImportData.getJobStdHrs());
-                sipAmount = sipAmount.multiply(new KualiDecimal(52));
+                    KualiDecimal sipAmount = KualiDecimal.ZERO;
+                    sipAmount = sipAmount.add(increaseToMin);
+                    sipAmount = sipAmount.add(equity);
+                    sipAmount = sipAmount.add(merit);
+                    sipAmount = sipAmount.multiply(sipImportData.getJobStdHrs());
+                    sipAmount = sipAmount.multiply(new KualiDecimal(52));
 
-                newAnnualRate = annualRate.add(sipAmount);
+                    newAnnualRate = annualRate.add(sipAmount);
 
-            } else if (CUBCConstants.CompFreq.ANNUALLY.equalsIgnoreCase(sipImportData.getCompFreq())) {
+                } else if (CUBCConstants.CompFreq.ANNUALLY.equalsIgnoreCase(sipImportData.getCompFreq())) {
 
-                // compute new annual rate
+                    // compute new annual rate
 
-                newAnnualRate = newAnnualRate.add(oldCompRate);
-                newAnnualRate = newAnnualRate.add(increaseToMin);
-                newAnnualRate = newAnnualRate.add(equity);
-                newAnnualRate = newAnnualRate.add(merit);
+                    newAnnualRate = newAnnualRate.add(oldCompRate);
+                    newAnnualRate = newAnnualRate.add(increaseToMin);
+                    newAnnualRate = newAnnualRate.add(equity);
+                    newAnnualRate = newAnnualRate.add(merit);
+                }
+
+                //set the annual and comp rate on the sip totals
+                sipImportData.setNewAnnualRate(newAnnualRate);
+                sipImportData.setNewCompRate(newCompRate);
             }
-
-            //set the annual and comp rate on the sip totals
-            sipImportData.setNewAnnualRate(newAnnualRate);
-            sipImportData.setNewCompRate(newCompRate);
         }
 
+    }
+
+    /**
+     * Separates the Sip import data based on the validation code: entries that are
+     * invalid and are not saved in SIP table and not processed for BC, entries that have
+     * errors and are not valid for BC but are saved in SIP table and entries that are
+     * only valid for BC
+     * 
+     * @param sipImportDataCollection
+     * @param invalidEntries
+     * @param sipToHrValidEntries
+     * @param bcValidEntries
+     */
+    private void separateEntriesBasedOnValidationCode(List<SipImportData> sipImportDataCollection,
+            List<SipImportData> invalidEntries, List<SipImportData> sipToHrValidEntries,
+            List<SipImportData> bcValidEntries) {
+
+        for (SipImportData sipImportData : sipImportDataCollection) {
+            if ("E".equalsIgnoreCase(sipImportData.getPassedValidation())) {
+                invalidEntries.add(sipImportData);
+            } else if ("Y".equalsIgnoreCase(sipImportData.getPassedValidation())) {
+                sipToHrValidEntries.add(sipImportData);
+                bcValidEntries.add(sipImportData);
+            } else if ("S".equalsIgnoreCase(sipImportData.getPassedValidation())) {
+                sipToHrValidEntries.add(sipImportData);
+            }
+        }
     }
 
     /**
@@ -1018,7 +1062,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
             String objectTypeCode = optionsService.getOptions(fiscalYear).getFinObjTypeExpenditureexpCd();
 
             newPlugEntry.setDocumentNumber(docNumber);
-            newPlugEntry.setUniversityFiscalYear(fiscalYear+1);
+            newPlugEntry.setUniversityFiscalYear(fiscalYear + 1);
             newPlugEntry.setChartOfAccountsCode(affectedEdocInfo.chart);
             newPlugEntry.setAccountNumber(affectedEdocInfo.accountNumber);
             newPlugEntry.setSubAccountNumber(affectedEdocInfo.subAccount);
@@ -1040,17 +1084,40 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         return newPlugEntries;
 
     }
-
-    /**
-     * This method ...
-     * 
-     * @param reportEntries
-     * @param sipImportDataCollection
-     */
-    protected void buildSipTotalsReportEntries(StringBuilder reportEntries, List<SipImportData> sipImportDataCollection) {
+    
+    protected void buildReportEntriesForInvalidEntries(StringBuilder reportEntries, List<SipImportData> sipImportDataCollection) {
 
         StringBuilder header = new StringBuilder();
-        header.append("\nTotals \n\n");
+        header.append("\nSIP entries that are not saved for SIP to HR batch job and are not distributed to BC \n\n");
+
+        header.append("Unit" + SEPARATOR);
+        header.append("HR Dept" + SEPARATOR);
+        header.append("KFS Dept" + SEPARATOR);
+        header.append("Department Name" + SEPARATOR);
+        header.append("Position" + SEPARATOR);
+        header.append("Position Description" + SEPARATOR);
+        header.append("Emplid" + SEPARATOR);
+        header.append("Person Name" + SEPARATOR);
+        header.append("Increase to Min" + SEPARATOR);
+        header.append("Equity" + SEPARATOR);
+        header.append("Merit" + SEPARATOR);
+        header.append("Comp Rate" + SEPARATOR);
+        header.append("Annual Rate" + SEPARATOR + "\n");
+
+        reportEntries.append(header);
+
+        if (sipImportDataCollection != null && sipImportDataCollection.size() > 0) {
+            for (SipImportData importData : sipImportDataCollection) {
+                reportEntries.append( buildReportEntryForSipImportDataWithErrors(importData) + "\n");
+            }
+        }
+
+    }
+    
+    protected void buildSipTotalsForHRValidEntriesReportEntries(StringBuilder reportEntries, List<SipImportData> sipImportDataCollection) {
+
+        StringBuilder header = new StringBuilder();
+        header.append("\nSIP Totals for entries that will be saved for SIP to HR batch job \n\n");
 
         header.append("Unit" + SEPARATOR);
         header.append("HR Dept" + SEPARATOR);
@@ -1075,6 +1142,65 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                 reportEntries.append(buildReportEntryForSipImportDataWithTotals(importData) + "\n");
             }
         }
+
+    }
+
+
+    /**
+     * This method ...
+     * 
+     * @param reportEntries
+     * @param sipImportDataCollection
+     */
+    protected void buildSipTotalsReportEntries(StringBuilder reportEntries, List<SipImportData> sipImportDataCollection) {
+
+        StringBuilder header = new StringBuilder();
+        header.append("\nSIP Totals for entries that will be distributed to Budget Construction \n\n");
+
+        header.append("Unit" + SEPARATOR);
+        header.append("HR Dept" + SEPARATOR);
+        header.append("KFS Dept" + SEPARATOR);
+        header.append("Department Name" + SEPARATOR);
+        header.append("Position" + SEPARATOR);
+        header.append("Position Description" + SEPARATOR);
+        header.append("Emplid" + SEPARATOR);
+        header.append("Person Name" + SEPARATOR);
+        header.append("Increase to Min" + SEPARATOR);
+        header.append("Equity" + SEPARATOR);
+        header.append("Merit" + SEPARATOR);
+        header.append("Comp Rate Before SIP" + SEPARATOR);
+        header.append("Comp Rate After SIP" + SEPARATOR);
+        header.append("Annual Rate Before SIP" + SEPARATOR);
+        header.append("Annual Rate After SIP" + "\n");
+
+        reportEntries.append(header);
+
+        if (sipImportDataCollection != null && sipImportDataCollection.size() > 0) {
+            for (SipImportData importData : sipImportDataCollection) {
+                reportEntries.append(buildReportEntryForSipImportDataWithTotals(importData) + "\n");
+            }
+        }
+
+    }
+    
+    private StringBuilder buildReportEntryForSipImportDataWithErrors(SipImportData importData) {
+
+        StringBuilder reportEntry = new StringBuilder();
+
+        reportEntry.append(importData.getUnitId() + SEPARATOR);
+        reportEntry.append(importData.getHrDeptId() + SEPARATOR);
+        reportEntry.append(importData.getKfsDeptId() + SEPARATOR);
+        reportEntry.append(importData.getDeptName() + SEPARATOR);
+        reportEntry.append(importData.getPositionNbr() + SEPARATOR);
+        reportEntry.append(importData.getPosDescr() + SEPARATOR);
+        reportEntry.append(importData.getEmplId() + SEPARATOR);
+        reportEntry.append(importData.getPersonNm() + SEPARATOR);
+        reportEntry.append(importData.getIncToMin() + SEPARATOR);
+        reportEntry.append(importData.getEquity() + SEPARATOR);
+        reportEntry.append(importData.getMerit() + SEPARATOR);
+        reportEntry.append(importData.getCompRt() + SEPARATOR);
+        reportEntry.append(importData.getAnnlRt() + SEPARATOR);
+        return reportEntry;
 
     }
 
