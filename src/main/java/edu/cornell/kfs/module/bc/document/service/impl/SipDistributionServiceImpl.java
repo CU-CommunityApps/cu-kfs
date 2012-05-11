@@ -1102,7 +1102,8 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         header.append("Equity" + SEPARATOR);
         header.append("Merit" + SEPARATOR);
         header.append("Comp Rate" + SEPARATOR);
-        header.append("Annual Rate" + SEPARATOR + "\n");
+        header.append("Annual Rate" + SEPARATOR);
+        header.append("Sip Load Errors" + SEPARATOR + "\n");
 
         reportEntries.append(header);
 
@@ -1200,6 +1201,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         reportEntry.append(importData.getMerit() + SEPARATOR);
         reportEntry.append(importData.getCompRt() + SEPARATOR);
         reportEntry.append(importData.getAnnlRt() + SEPARATOR);
+        reportEntry.append(importData.getSipLoadErrors());
         return reportEntry;
 
     }

@@ -52,6 +52,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
     
     protected String passedValidation;
     protected String validationErrors;
+    protected String sipLoadErrors;
 
     public SipImportData() {
         super();
@@ -604,4 +605,12 @@ public class SipImportData extends PersistableBusinessObjectBase {
 	public void setValidationErrors(String validationErrors) {
 		this.validationErrors = validationErrors;
 	}
+
+    public String getSipLoadErrors() {
+        return sipLoadErrors;
+    }
+
+    public void setSipLoadErrors(String sipLoadErrors) {
+        this.sipLoadErrors = sipLoadErrors;
+    }
 }
