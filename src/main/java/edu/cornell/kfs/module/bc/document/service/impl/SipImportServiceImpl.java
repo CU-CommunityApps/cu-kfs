@@ -254,31 +254,38 @@ public class SipImportServiceImpl implements SipImportService {
 					if (!ValuesErrorList.isEmpty()) {
 						errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + RulesErrorList + ValuesErrorList));
 						if (AllowThisSipRecordForSIP)
-						{
-							sipImportData.setPassedValidation("N");
-							sipImportData.setValidationErrors(RulesErrorList + ValuesErrorList);
-							sipImportCollection.add(sipImportData);
-						}
+							sipImportData.setPassedValidation("S");
+						else
+							sipImportData.setPassedValidation("E");
+							
+						// Do this for both cases
+						sipImportData.setValidationErrors(RulesErrorList + ValuesErrorList);
+						sipImportCollection.add(sipImportData);
 					}
 					else {
 						errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + RulesErrorList));
 						if (AllowThisSipRecordForSIP)
-						{
-							sipImportData.setPassedValidation("N");
-							sipImportData.setValidationErrors(RulesErrorList);
-							sipImportCollection.add(sipImportData);
-						}
+							if (AllowThisSipRecordForSIP)
+								sipImportData.setPassedValidation("S");
+							else
+								sipImportData.setPassedValidation("E");
+						
+						// Do this for both cases
+						sipImportData.setValidationErrors(RulesErrorList);
+						sipImportCollection.add(sipImportData);
 					}
 
 				else
 					if (!ValuesErrorList.isEmpty()) {
 						errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + ValuesErrorList));
 						if (AllowThisSipRecordForSIP)
-						{
-							sipImportData.setPassedValidation("N");
-							sipImportData.setValidationErrors(ValuesErrorList);
-							sipImportCollection.add(sipImportData);
-						}
+							sipImportData.setPassedValidation("S");
+						else
+							sipImportData.setPassedValidation("E");
+						
+						// Do this for both cases
+						sipImportData.setValidationErrors(ValuesErrorList);
+						sipImportCollection.add(sipImportData);
 					}
 					else {
 						// Add to sip Import Data list
