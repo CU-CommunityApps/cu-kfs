@@ -30,7 +30,6 @@ import edu.cornell.kfs.module.bc.businessobject.SipImportData;
 import edu.cornell.kfs.module.bc.document.dataaccess.SipDistributionDao;
 import edu.cornell.kfs.module.bc.document.service.SipDistributionService;
 
-
 public class SipDistributionServiceImpl implements SipDistributionService {
 
     private static final String SEPARATOR = "\t";
@@ -386,7 +385,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
         for (PendingBudgetConstructionAppointmentFunding newDistribution : newDistributions) {
 
-            newDistribution.setVersionNumber(newDistribution.getVersionNumber() + 1);
+            // newDistribution.setVersionNumber(newDistribution.getVersionNumber() + 1);
             businessObjectService.save(newDistribution);
         }
 
@@ -396,7 +395,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
         for (PendingBudgetConstructionAppointmentFunding newDistribution : newDistributions) {
 
-            newDistribution.setVersionNumber(newDistribution.getVersionNumber() + 2);
+            //            newDistribution.setVersionNumber(newDistribution.getVersionNumber() + 2);
             businessObjectService.save(newDistribution);
         }
 
@@ -569,7 +568,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
     private void persistEntriesToPBGL(Collection<PendingBudgetConstructionGeneralLedger> pbglEntries) {
         for (PendingBudgetConstructionGeneralLedger pbglEntry : pbglEntries) {
 
-            pbglEntry.setVersionNumber(pbglEntry.getVersionNumber() + 1);
+            // pbglEntry.setVersionNumber(pbglEntry.getVersionNumber() + 1);
             businessObjectService.save(pbglEntry);
         }
     }
@@ -583,7 +582,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
         for (BudgetConstructionMonthly benefit : newMonthlyBenefitsList.values()) {
 
-            benefit.setVersionNumber(benefit.getVersionNumber() + 1);
+            // benefit.setVersionNumber(benefit.getVersionNumber() + 1);
             businessObjectService.save(benefit);
         }
 
@@ -1019,6 +1018,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
             String objectTypeCode = optionsService.getOptions(fiscalYear).getFinObjTypeExpenditureexpCd();
 
             newPlugEntry.setDocumentNumber(docNumber);
+            newPlugEntry.setUniversityFiscalYear(fiscalYear+1);
             newPlugEntry.setChartOfAccountsCode(affectedEdocInfo.chart);
             newPlugEntry.setAccountNumber(affectedEdocInfo.accountNumber);
             newPlugEntry.setSubAccountNumber(affectedEdocInfo.subAccount);
@@ -1030,6 +1030,9 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
             newPlugEntry.setFinancialBeginningBalanceLineAmount(KualiInteger.ZERO);
             newPlugEntry.setAccountLineAnnualBalanceAmount(newPlugEntryAmount);
+            newPlugEntry.setPersistedAccountLineAnnualBalanceAmount(newPlugEntry.getAccountLineAnnualBalanceAmount());
+
+            newPlugEntry.setVersionNumber(new Long(1));
 
             newPlugEntries.add(newPlugEntry);
         }
