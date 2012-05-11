@@ -199,6 +199,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     	java.util.Date now = new java.util.Date();
     	String date = format.format(now);
     	body.append("\nCornell BC > GL load job beginning at " + date);
+    	body.append("\nCurrent version modified 5/11/12 8:28 MST\n");
     	body.append(String.format("\n********************************************"));
     	body.append(String.format("\n\nBudget Construction Environment Variables\n"));
     	body.append(String.format("\n********************************************\n"));
