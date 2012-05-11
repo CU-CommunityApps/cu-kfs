@@ -265,10 +265,9 @@ public class SipImportServiceImpl implements SipImportService {
 					else {
 						errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + RulesErrorList));
 						if (AllowThisSipRecordForSIP)
-							if (AllowThisSipRecordForSIP)
-								sipImportData.setPassedValidation("S");
-							else
-								sipImportData.setPassedValidation("E");
+							sipImportData.setPassedValidation("S");
+						else
+							sipImportData.setPassedValidation("E");
 						
 						// Do this for both cases
 						sipImportData.setValidationErrors(RulesErrorList);
