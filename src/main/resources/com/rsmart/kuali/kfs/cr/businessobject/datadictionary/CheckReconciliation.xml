@@ -19,7 +19,7 @@ http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
         <ref bean="CheckReconciliation-bankAccountNumber" />
         <ref bean="CheckReconciliation-checkNumber" />
         <ref bean="CheckReconciliation-checkDate" />
-        <ref bean="CheckReconciliation-issueDate" />
+        <ref bean="CheckReconciliation-statusChangeDate" />
         <ref bean="CheckReconciliation-payeeId" />
         <ref bean="CheckReconciliation-payeeName" />
         <ref bean="CheckReconciliation-payeeType" />
@@ -190,17 +190,17 @@ http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
 
   <bean id="CheckReconciliation-checkDate-parentBean" abstract="true" parent="GenericAttributes-genericDate">
     <property name="name" value="checkDate" />
-    <property name="label" value="Last Status Change Date" />
-    <property name="shortLabel" value="Status Date" />
+    <property name="label" value="Issue Date" />
+    <property name="shortLabel" value="Issue Date" />
     <property name="required" value="true" />
   </bean>
   
-  <bean id="CheckReconciliation-issueDate" parent="CheckReconciliation-issueDate-parentBean" />
+  <bean id="CheckReconciliation-statusChangeDate" parent="CheckReconciliation-statusChangeDate-parentBean" />
 
-  <bean id="CheckReconciliation-issueDate-parentBean" abstract="true" parent="GenericAttributes-genericDate">
-    <property name="name" value="issueDate" />
-    <property name="label" value="Issue Date" />
-    <property name="shortLabel" value=" Issue Date" />
+  <bean id="CheckReconciliation-statusChangeDate-parentBean" abstract="true" parent="GenericAttributes-genericDate">
+    <property name="name" value="statusChangeDate" />
+    <property name="label" value="Status Change Date" />
+    <property name="shortLabel" value="Status Change Date" />
     <property name="required" value="true" />
   </bean>
   
@@ -271,7 +271,7 @@ http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
         <dd:field attributeName="bankCode"  />
         <dd:field attributeName="checkNumber"  />
         <dd:field attributeName="checkDate"  />
-        <dd:field attributeName="issueDate"  />
+        <dd:field attributeName="statusChangeDate"  />
         <dd:field attributeName="status"  />
         <dd:field attributeName="sourceCode" />
       </list>
@@ -287,9 +287,9 @@ http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
         <bean parent="FieldDefinition"
               p:attributeName="payeeName" />
         <bean parent="FieldDefinition"
-              p:attributeName="issueDate" />
-        <bean parent="FieldDefinition"
               p:attributeName="checkDate" />
+        <bean parent="FieldDefinition"
+              p:attributeName="statusChangeDate" />
         <bean parent="FieldDefinition"
               p:attributeName="sourceCode" />
         <bean parent="FieldDefinition"
