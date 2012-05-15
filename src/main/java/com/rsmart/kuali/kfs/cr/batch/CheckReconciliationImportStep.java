@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -779,12 +780,18 @@ public class CheckReconciliationImportStep extends AbstractStep {
         Date issueDate = null;
         String payeeName = "";
         String payeeID	= "";
+        //Cornell Columns
         Integer payeeNameCol = Integer.parseInt("12");
         Integer issueDateCol = Integer.parseInt("7");
         Integer payeeIDCol	 = Integer.parseInt("6");
         
         checkNumber   = hash.get(checkNumCol);
-        checkDate     = dateformat.parse(hash.get(checkDateCol));  //Date Paid
+        String rawCheckDate = hash.get(checkDateCol);
+        if(rawCheckDate==null||rawCheckDate.equals(""))
+        	rawCheckDate = "991231";
+        
+        checkDate = getGregorianCalendar(rawCheckDate).getTime();
+       // checkDate     = dateformat.parse(rawCheckDate);  //Date Paid
         amount        = isAmountDecimalValue    ? new KualiDecimal(addDecimalPoint(hash.get(amountCol))) : new KualiDecimal(hash.get(amountCol));
         if(accountNumCol>0)
         	accountNumber = isAccountNumHeaderValue ? getHeaderValue(accountNumCol) : hash.get(accountNumCol);
@@ -800,8 +807,8 @@ public class CheckReconciliationImportStep extends AbstractStep {
         if(issueDateRawValue==null||issueDateRawValue.equals(""))
         	issueDateRawValue = "991231";
         
-        issueDate = dateformat.parse(issueDateRawValue);
-        
+        //issueDate = dateformat.parse(issueDateRawValue);
+        issueDate = getGregorianCalendar(issueDateRawValue).getTime();
         
         CheckReconciliation cr = new CheckReconciliation();
         cr.setAmount(amount);
@@ -816,6 +823,20 @@ public class CheckReconciliationImportStep extends AbstractStep {
         
         return cr;
     }
+    
+    
+   private GregorianCalendar getGregorianCalendar(String yyMMDD){
+	   String year  = "20"+yyMMDD.substring(0,2);
+	   String month = yyMMDD.substring(2,4);
+	   String day = yyMMDD.substring(4);
+	   
+	   month = ""+(Integer.parseInt(month) -1);
+	   
+	   GregorianCalendar gc = new GregorianCalendar(Integer.parseInt(year),Integer.parseInt(month),Integer.parseInt(day));
+	 
+	   return gc;
+	   
+   }
 
     /**
      * Parse File
@@ -882,11 +903,13 @@ public class CheckReconciliationImportStep extends AbstractStep {
                         String checkStatus = updateCheckStatus(cr,banks,records);
                         cr.setStatus(checkStatus);
                         existingRecord.setStatus(checkStatus);
+                        existingRecord.setStatusChangeDate(cr.getStatusChangeDate());
                     }
                     else {
                         String checkStatus = updateCheckStatus(cr);
                         cr.setStatus(checkStatus);
                         existingRecord.setStatus(checkStatus);
+                        existingRecord.setStatusChangeDate(cr.getStatusChangeDate());
                     }
                     
                     // Update update ts
