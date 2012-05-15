@@ -102,8 +102,9 @@ public class CheckReconciliationDaoOjb extends PlatformAwareDaoBaseOjb implement
         Collection<CheckReconciliation> data = new ArrayList<CheckReconciliation>();
         CheckReconciliation cr = null;
         
-        String sql = "SELECT p.disb_nbr, p.disb_ts, SUM(d.net_pmt_amt), b.bnk_cd FROM pdp_pmt_grp_t p, pdp_pmt_dtl_t d, fp_bank_t b WHERE p.bnk_cd = b.bnk_cd AND p.pmt_grp_id = d.pmt_grp_id AND p.disb_typ_cd = 'CHCK' AND NOT EXISTS ( SELECT 'x' from cu_cr_check_recon_t cr WHERE cr.check_nbr = p.disb_nbr AND cr.bank_account_nbr = b.bnk_acct_nbr) GROUP BY p.disb_nbr, p.disb_ts, b.bnk_cd";
-        
+     //   String sql = "SELECT p.disb_nbr, p.disb_ts, SUM(d.net_pmt_amt), b.bnk_cd,p.pmt_payee_nm, p.payee_id_typ_cd,p.payee_id FROM pdp_pmt_grp_t p, pdp_pmt_dtl_t d, fp_bank_t b WHERE p.bnk_cd = b.bnk_cd AND p.pmt_grp_id = d.pmt_grp_id AND p.disb_typ_cd = 'CHCK' AND NOT EXISTS ( SELECT 'x' from cu_cr_check_recon_t cr WHERE cr.check_nbr = p.disb_nbr AND cr.bank_account_nbr = b.bnk_acct_nbr) GROUP BY p.disb_nbr, p.disb_ts, b.bnk_cd";
+       
+        String sql ="SELECT p.disb_nbr, p.disb_ts, SUM(d.net_pmt_amt), b.bnk_cd,p.pmt_payee_nm, p.payee_id_typ_cd,p.payee_id  FROM pdp_pmt_grp_t p, pdp_pmt_dtl_t d, fp_bank_t b WHERE p.bnk_cd = b.bnk_cd AND p.pmt_grp_id = d.pmt_grp_id AND p.disb_typ_cd = 'CHCK' AND NOT EXISTS ( SELECT 'x' from cu_cr_check_recon_t cr WHERE cr.check_nbr = p.disb_nbr AND cr.bank_account_nbr = b.bnk_acct_nbr) group by p.disb_nbr, p.disb_ts, b.bnk_cd, p.pmt_payee_nm, p.payee_id_typ_cd, p.payee_id";
         try {
             Connection c = getPersistenceBroker(true).serviceConnectionManager().getConnection();
             Statement  s = c.createStatement();
@@ -114,10 +115,15 @@ public class CheckReconciliationDaoOjb extends PlatformAwareDaoBaseOjb implement
             while(rs.next()) {
                 cr = new CheckReconciliation();
                 cr.setCheckNumber(new KualiInteger(rs.getInt(1)));
-                cr.setCheckDate(new java.sql.Date(rs.getDate(2).getTime()));
+                cr.setCheckDate(new java.sql.Date(rs.getDate(2).getTime()));  //This is last status change date.
                 cr.setAmount(new KualiDecimal(rs.getDouble(3)));
-                
                 bnkCd = rs.getString(4);
+                cr.setPayeeName(rs.getString(5));
+                cr.setPayeeType(rs.getString(6));
+                cr.setPayeeId(rs.getString(7));
+                
+                
+                
                 
                 for( Bank bank : banks ) {
                     if( bank.getBankCode().equals(bnkCd) ) {

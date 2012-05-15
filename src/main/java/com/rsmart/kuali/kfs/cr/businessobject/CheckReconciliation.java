@@ -37,7 +37,7 @@ public class CheckReconciliation extends PersistableBusinessObjectBase implement
     
     private KualiInteger checkNumber; // CHECK_NBR
 
-    private Date checkDate; // CHECK_DT
+    private Date checkDate; // ISSUE DATE
 
     private KualiDecimal amount; // AMOUNT
 
@@ -52,7 +52,7 @@ public class CheckReconciliation extends PersistableBusinessObjectBase implement
     private String sourceCode; // SRC_CD
     
     private String bankCode; // BNK_CD
-    private Date issueDate; //ISSUE_DT
+    private Date statusChangeDate; //
     
     private String payeeId;
     private String payeeName;
@@ -169,18 +169,10 @@ public class CheckReconciliation extends PersistableBusinessObjectBase implement
         m.put("checkDate", getCheckNumber());
         m.put("amount", getAmount());
         m.put("sourceCd", getSourceCode());
-        m.put("issueDate",getIssueDate());
         
         return m;
     }
 
-	public Date getIssueDate() {
-		return issueDate;
-	}
-
-	public void setIssueDate(Date issueDate) {
-		this.issueDate = issueDate;
-	}
 
 	public String getPayeeId() {
 		return payeeId;
@@ -204,6 +196,14 @@ public class CheckReconciliation extends PersistableBusinessObjectBase implement
 
 	public void setPayeeType(String payeeType) {
 		this.payeeType = payeeType;
+	}
+
+	public Date getStatusChangeDate() {
+		return statusChangeDate;
+	}
+
+	public void setStatusChangeDate(Date statusChangeDate) {
+		this.statusChangeDate = statusChangeDate;
 	}
 
 }

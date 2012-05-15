@@ -20,7 +20,7 @@
     	<field-descriptor name="checkNumber" column="CHECK_NBR" jdbc-type="BIGINT" conversion="org.kuali.rice.kns.util.OjbKualiIntegerFieldConversion" />
     	<field-descriptor name="bankAccountNumber" column="BANK_ACCOUNT_NBR" conversion="org.kuali.rice.kns.util.OjbKualiEncryptDecryptFieldConversion" jdbc-type="VARCHAR" />
     	<field-descriptor name="checkDate" column="CHECK_DT" jdbc-type="DATE" />
-    	<field-descriptor name="issueDate" column="ISSUE_DT" jdbc-type="DATE" />
+    	<field-descriptor name="statusChangeDate" column="STATUS_CHANGE_DT" jdbc-type="DATE" />
     	<field-descriptor name="payeeId" column="PAYEE_ID" jdbc-type="VARCHAR" />
     	<field-descriptor name="payeeName" column="PAYEE_NAME" jdbc-type="VARCHAR" />
     	<field-descriptor name="payeeType" column="PAYEE_TYPE" jdbc-type="VARCHAR" />
