@@ -776,9 +776,15 @@ public class CheckReconciliationImportStep extends AbstractStep {
         KualiDecimal amount = null;
         String accountNumber = null;
         String status = null;
+        Date issueDate = null;
+        String payeeName = "";
+        String payeeID	= "";
+        Integer payeeNameCol = Integer.parseInt("12");
+        Integer issueDateCol = Integer.parseInt("7");
+        Integer payeeIDCol	 = Integer.parseInt("6");
         
         checkNumber   = hash.get(checkNumCol);
-        checkDate     = dateformat.parse(hash.get(checkDateCol));
+        checkDate     = dateformat.parse(hash.get(checkDateCol));  //Date Paid
         amount        = isAmountDecimalValue    ? new KualiDecimal(addDecimalPoint(hash.get(amountCol))) : new KualiDecimal(hash.get(amountCol));
         if(accountNumCol>0)
         	accountNumber = isAccountNumHeaderValue ? getHeaderValue(accountNumCol) : hash.get(accountNumCol);
@@ -787,13 +793,26 @@ public class CheckReconciliationImportStep extends AbstractStep {
         
         status        = hash.get(statusCol);
         
+        String issueDateRawValue 	= hash.get(issueDateCol);
+        payeeName 					= hash.get(payeeNameCol);
+        payeeID	  					= hash.get(payeeIDCol);
+        
+        if(issueDateRawValue==null||issueDateRawValue.equals(""))
+        	issueDateRawValue = "991231";
+        
+        issueDate = dateformat.parse(issueDateRawValue);
+        
+        
         CheckReconciliation cr = new CheckReconciliation();
         cr.setAmount(amount);
-        cr.setCheckDate(new java.sql.Date(checkDate.getTime()));
+        cr.setCheckDate(new java.sql.Date(issueDate.getTime()));
         cr.setCheckNumber(new KualiInteger(checkNumber));
         cr.setBankAccountNumber(accountNumber);
         cr.setStatus(status);
+        cr.setStatusChangeDate(new java.sql.Date(checkDate.getTime()));
         cr.setGlTransIndicator(false);
+        cr.setPayeeName(payeeName);
+        cr.setPayeeId(payeeID);
         
         return cr;
     }
