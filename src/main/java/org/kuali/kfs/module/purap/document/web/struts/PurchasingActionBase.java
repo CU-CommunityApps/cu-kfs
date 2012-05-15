@@ -71,6 +71,7 @@ import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContract;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.kew.exception.WorkflowException;
@@ -91,6 +92,7 @@ import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 
 /**
@@ -155,18 +157,22 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         }
         
         if (StringUtils.equals(refreshCaller, VendorConstants.VENDOR_LOOKUPABLE_IMPL) && document.getVendorDetailAssignedIdentifier() != null && document.getVendorHeaderGeneratedIdentifier() != null) {
-            // Check that there aren't any req items that already have non-qty values entered
-            List<PurApItem> reqItems = document.getItems();
-            if(!reqItems.isEmpty()) {
-                for(PurApItem item : reqItems) {
-                    if(PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE.equalsIgnoreCase(item.getItemTypeCode())) {
-                        // Throw error that the non-qty items are not allowed if the vendor is an einvoice vendor
-                        LOG.error("Requisition Item contains non-qty item code: Item #"+item.getItemLineNumber()+".");
-                        messageMap.addToErrorPath(PurapPropertyConstants.NEW_PURCHASING_ITEM_LINE);
-                        messageMap.putError(PurapPropertyConstants.ITEM_TYPE, CUPurapKeyConstants.PURAP_ITEM_NONQTY, item.getItemLineNumber().toString(), document.getVendorName()); // Add error message
-                        messageMap.removeFromErrorPath(PurapPropertyConstants.NEW_PURCHASING_ITEM_LINE);
-                    }
-                }
+            // Check that item isn't a non-qty item on an e-invoice vendor order
+        	VendorDetail vendor = document.getVendorDetail();
+            if(ObjectUtils.isNotNull(vendor) && ((VendorDetailExtension)vendor.getExtension()).isEinvoiceVendorIndicator()) {
+	            // Check that there aren't any req items that already have non-qty values entered
+	            List<PurApItem> reqItems = document.getItems();
+	            if(!reqItems.isEmpty()) {
+	                for(PurApItem item : reqItems) {
+	                    if(PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE.equalsIgnoreCase(item.getItemTypeCode())) {
+	                        // Throw error that the non-qty items are not allowed if the vendor is an einvoice vendor
+	                        LOG.error("Requisition Item contains non-qty item code: Item #"+item.getItemLineNumber()+".");
+	                        messageMap.addToErrorPath(PurapPropertyConstants.NEW_PURCHASING_ITEM_LINE);
+	                        messageMap.putError(PurapPropertyConstants.ITEM_TYPE, CUPurapKeyConstants.PURAP_ITEM_NONQTY, item.getItemLineNumber().toString(), document.getVendorName()); // Add error message
+	                        messageMap.removeFromErrorPath(PurapPropertyConstants.NEW_PURCHASING_ITEM_LINE);
+	                    }
+	                }
+	            }
             }
         }
         // Refreshing the fields after returning from a contract lookup in the vendor tab
