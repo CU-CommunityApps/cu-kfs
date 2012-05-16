@@ -54,7 +54,7 @@ public class SipImportToHumanResourcesStep extends AbstractStep {
         String filename = directoryName + "/" + fileName + "_";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
         filename = filename + sdf.format(runDate);
-        filename = filename + ".xls";
+        filename = filename + ".dat";
 
         return filename;
     }

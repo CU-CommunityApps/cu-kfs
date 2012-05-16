@@ -130,23 +130,24 @@ public class SipImportServiceImpl implements SipImportService {
 	// This stores the number of errors for each org (UnitId) for each error message as they are found
 	Map<String, HashMap<Integer, Integer>> errorCountByUnitId;
 	
-	// This stores the number of warning for each org (UnitId) for each error message as they are found
+	// This stores the number of warnings for each org (UnitId) for each warning message as they are found
 	Map<String, HashMap<Integer, Integer>> warningCountByUnitId;
 
 	protected String[] ErrorMessages = {
 			"\tPosition number was not found in the original SIP exported data.\n",   // Ignore for SIP
-			"\tEmployee Id was not found in the original SIP exported data.\n",
+			"\tEmployee Id was not found in the original SIP exported data.\n",		   // Ignore for SIP
 			"\tThis position number / employee id combination is not eligible for SIP.\n",
-			"\tThis position number / employee id combination compensation rate is different than that in KFS.\n",
+			"\tThis position number / employee id combination compensation rate is different than that in KFS.\n",	   // Ignore for SIP
 			"\tThe SIP award (Increase To minimum + Merit + Equity) is greater than zero AND the Deferred amount is also greater than 0.\n", // Ignore for SIP
-			"\tThe SIP award (Increase To minimum + Merit + Equity) is greater than zero AND a note was also provided.\n",  // CURRENTLY COMMENTED OUT BELOW
+			"\tThe SIP award (Increase To minimum + Merit + Equity) is greater than zero AND a note was also provided.\n",  // Ignored - COMMENTED OUT BELOW
 			"\tDeferred is greater than 0 AND a note was not provided.\n",  //Ignore for SIP
 			"\tThe SIP award (Increase To minimum + Merit + Equity) is zero AND a note was not provided.\n",  // Ignore for SIP
 			"\tThe ABBR flag is not set to N.\n",
 			"\tExecutive position found.\n",
 			"\tSIP is not allowed when Job Function is UNB.\n",
 			"\tThis line is a duplicate.\n",
-			"\tThe requested amount is greater than 0 and the requested percent distribution is not equal to 1.\n"   // Ignore for SIP
+			"\tThe requested amount is greater than 0 and the requested percent distribution is not equal to 1.\n",   // Ignore for SIP
+			"\tThis SIP record from the unit was not found in PS load to KFS therefore no other validation can be performed.\n"
 	};
 	
 	protected String ErrorMessageNumbersForThisSipRecord;		// Contains only the sip load error message numbers
@@ -177,7 +178,7 @@ public class SipImportServiceImpl implements SipImportService {
         List<ExternalizedMessageWrapper> errorReportDetail = new ArrayList<ExternalizedMessageWrapper>();
         
         // Error message setup
-        errorCount = new int[13];
+        errorCount = new int[14];
 
         //Warning message setup
     	warningCount = new int[3];
@@ -191,8 +192,9 @@ public class SipImportServiceImpl implements SipImportService {
         // Header line for the detail records
         errorReportDetail.add(new ExternalizedMessageWrapper("\nUnitID\tHR_Dept_ID\tKFS_Dept_ID\tDepartment_Name\tPosition_Nbr\tPosition_Description\tEmplID\tPerson_Name\tSIP_Eligible\tSIP_Employee_Type\tEmployee_RCD\tJob_Code\tJob_Code_Short_Desc\tJob_Family\tPosition_FTE\tGrade\tCU_State_Cert\tComp_Frequency\tAnnual_Rate\tComp_Rate\tJob_Standard_Hours\tWork_Months\tJob_Function\tJob_Function_Description\tIncrease_to_Minimum\tEquity\tMerit\tNote\tDeferred\tCU_ABBR_Flag\tTOTAL_Job_Planned_Commit\tTotal_Distributions\tBGP_FLSA"));
 		
-        // Stores imported lines so that we can determine if we have run into any duplicates.  A "duplicate" is defined as a line with the same position number/emplid combination
-        //  The key string will contain position number concatenated with the emplid and the value string will contain the imported line itself.
+        // Stores imported lines so that we can determine if we have run into any duplicates.
+        // A "duplicate" is defined as a line with the same position number/emplid combination
+        // The key string will contain position number concatenated with the emplid and the value string will contain the imported line "sipImportLine".
 		importedLines = new HashMap<String, String>();
 		
         try {
@@ -214,48 +216,67 @@ public class SipImportServiceImpl implements SipImportService {
             	
             	// Parse the imported line into separate fields, preserving empty fields as well
             	sipImportLine = sipImportLine.replace("\"","");
+            	sipImportLine = sipImportLine.replace("\"","");
 				String[] tokens = StringUtils.splitPreserveAllTokens(sipImportLine, "\t");
 				
 				//Check to make sure that the line is tabbed delimited.  If not then return immediately.
 				if (tokens.length != DefaultImportFileFormat.fieldNames.length)
 					return "NOT TAB DELIMITED|" + this.importCount;
 				
+				// Tokens[18] and [19] contain annual rate and comp rate.  If these contain commas the buildObject method
+				//  returns null for those values so we need to remove the commas here so it will map correctly to the 
+				//  sipImportData object.
+				tokens[18] = tokens[18].replace(",", "");
+				tokens[19] = tokens[19].replace(",", "");
+				
 				// Apply data from the line to the business object
 				ObjectUtil.buildObject(sipImportData, tokens, Arrays.asList(DefaultImportFileFormat.fieldNames));
-				
+
 				// Reset variables that will contain the errors and warnings for this line
 		    	RulesErrorList = "";
 		    	ValuesErrorList = "";
 		    	RulesWarningList = "";
 		    	ValuesWarningList = "";
 		    	
-				// VALIDATE the line
-				validateSipRules(sipImportData.getPositionNbr(), sipImportData.getEmplId(), sipImportData.getCompRt(),
-								  sipImportData.getUnitId(), sipImportData.getCuAbbrFlag(), sipImportData.getJobFunc(),
-								  allowExecutivesToBeImported, sipImportLine);
-				validateSipValues(sipImportData.getIncToMin(), sipImportData.getMerit(), sipImportData.getEquity(), 
-									sipImportData.getDeferred(), sipImportData.getNote(), sipImportData.getCompRt(),
-									sipImportData.getUnitId());
+		    	// VALIDATE that there is a record from the PS to KFS budget feed job in the table (CU_PS_JOB_DATA)
+		    	if (doesSipRecordExistInCuPsJobDataTable(sipImportData.getPositionNbr(), sipImportData.getEmplId())){
+					// VALIDATE the line
+					validateSipRules(sipImportData.getPositionNbr(), sipImportData.getEmplId(), sipImportData.getCompRt(),
+									  sipImportData.getUnitId(), sipImportData.getCuAbbrFlag(), sipImportData.getJobFunc(),
+									  allowExecutivesToBeImported, sipImportLine);
+					validateSipValues(sipImportData.getIncToMin(), sipImportData.getMerit(), sipImportData.getEquity(), 
+										sipImportData.getDeferred(), sipImportData.getNote(), sipImportData.getCompRt(),
+										sipImportData.getUnitId());
+					
+					// Generate WARNING messages
+					if (!RulesWarningList.isEmpty())
+						if (!ValuesWarningList.isEmpty()) {
+							errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + RulesWarningList + ValuesWarningList));
+						}
+						else {
+							errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + RulesWarningList));
+						}
+	
+					else
+						if (!ValuesWarningList.isEmpty()) {
+							errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + ValuesWarningList));
+						}
+		    	}
+		    	else {
+					int ErrorMessageNumber = 13;
+					AllowThisSipRecordForSIP = false;		// If this error is found, then don't allow this record to be used for SIP
+					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
+					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
+					RulesErrorList += ErrorMessages[ErrorMessageNumber];
+					UpdateErrorCounts(ErrorMessageNumber, sipImportData.getUnitId());
+		    	}
+
 				//For Sip Load Errors - remove the \t in the front and the \n at the end of the lines
 				if (!sipLoadErrors.equals("")) {
 					sipLoadErrors = sipLoadErrors.replace("\t","");		// removes all tabs
 					sipLoadErrors = sipLoadErrors.replace("\n",", ");	// removes all new lines
 					sipLoadErrors = sipLoadErrors.substring(0, sipLoadErrors.length()-2);	// Removes the ", " at the end
 				}
-				
-				// Generate WARNING messages
-				if (!RulesWarningList.isEmpty())
-					if (!ValuesWarningList.isEmpty()) {
-						errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + RulesWarningList + ValuesWarningList));
-					}
-					else {
-						errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + RulesWarningList));
-					}
-
-				else
-					if (!ValuesWarningList.isEmpty()) {
-						errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + ValuesWarningList));
-					}
 				
 				// Generate ERROR Messages.
 				if (!RulesErrorList.isEmpty())
@@ -422,6 +443,38 @@ public class SipImportServiceImpl implements SipImportService {
         	 "cuAbbrFlag", "apptTotIntndAmt", "apptRqstFteQty", "positionType"
         };
     }
+
+    /**
+     * 
+     */
+    protected boolean doesSipRecordExistInCuPsJobDataTable(String positionNumber, String emplId) {
+        try {
+			if( (ObjectUtils.isNotNull(positionNumber)) && ObjectUtils.isNotNull(emplId) ) {
+				//  See comment above in validPosition() for details
+				if (positionNumber.length()==6)
+					positionNumber = "00" + positionNumber;
+				
+				// Verify that the position number is 8 otherwise it is invalid
+				if (positionNumber.length()==8) {
+					if(sipImportDao.numberOfRecordsInCuPsJobDataTable(positionNumber, emplId) == 1) {
+						return true;
+					}
+					else
+						return false;
+				}
+				else
+					return false;
+			}
+			else
+				return false;
+        }
+        
+        catch (Exception ex) {
+        	LOG.info("SipImportDaoJdbc Exception: " + ex.getMessage());
+        	return false;
+        }
+    }
+    
     
 	/**
 	 * Validates that Position is in HR / P has a "Budgeted Position" = "Y".
@@ -677,7 +730,7 @@ public class SipImportServiceImpl implements SipImportService {
 			// Verify that the position number length is 8 otherwise it is invalid
 			if (positionNumber.length()==8) {
 				String myKey = positionNumber + emplId;
-				if (importedLines.get(myKey) == null) {
+				if (!importedLines.containsKey(myKey)) {
 					importedLines.put(myKey, sipImportLine);
 					return false;
 				}
@@ -718,8 +771,8 @@ public class SipImportServiceImpl implements SipImportService {
 				// Is this EmplId found?
 				if (!validEmplid(emplId)) {
 					int ErrorMessageNumber = 1;
-					AllowThisSipRecordForSIP = false;
-					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
+//					AllowThisSipRecordForSIP = false;
+//					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
 					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
@@ -728,7 +781,7 @@ public class SipImportServiceImpl implements SipImportService {
 				// Is this position number / emplid combination found?
 				if (!isSipEligible(positionNumber, emplId)){
 					int ErrorMessageNumber = 2;
-					AllowThisSipRecordForSIP = false;
+					AllowThisSipRecordForSIP = false;    // If this error is found, then don't allow this record to be used for SIP
 					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
 					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
@@ -738,8 +791,8 @@ public class SipImportServiceImpl implements SipImportService {
 				// if the compensation rate supplied by the import is different than that already stored in the database, issue an error message
 				if (!validCompRate(positionNumber, emplId, CompRate)) {
 					int ErrorMessageNumber = 3;
-					AllowThisSipRecordForSIP = false;
-					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
+//					AllowThisSipRecordForSIP = false;
+//					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
 					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
@@ -748,7 +801,7 @@ public class SipImportServiceImpl implements SipImportService {
 				// if the AbbrFlag column is "Y" then issue an error message
 				if (!isAbbrFlagValid(AbbrFlag)) {
 					int ErrorMessageNumber = 8;
-					AllowThisSipRecordForSIP = false;
+					AllowThisSipRecordForSIP = false;    // If this error is found, then don't allow this record to be used for SIP
 					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
 					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
@@ -760,7 +813,7 @@ public class SipImportServiceImpl implements SipImportService {
 				if (!allowExecutivesToBeImported)
 					if (isSipExecutive(positionNumber)) {
 						int ErrorMessageNumber = 9;
-						AllowThisSipRecordForSIP = false;
+						AllowThisSipRecordForSIP = false;    // If this error is found, then don't allow this record to be used for SIP
 						sipLoadErrors += ErrorMessages[ErrorMessageNumber];
 						ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 						RulesErrorList += ErrorMessages[ErrorMessageNumber];
@@ -777,7 +830,7 @@ public class SipImportServiceImpl implements SipImportService {
 				// if the job function indicates a union position, then generate an error
 				if (jobFunction.equals("UNB")) {
 					int ErrorMessageNumber = 10;
-					AllowThisSipRecordForSIP = false;
+					AllowThisSipRecordForSIP = false;    // If this error is found, then don't allow this record to be used for SIP
 					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
 					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
@@ -787,7 +840,7 @@ public class SipImportServiceImpl implements SipImportService {
 				// if the position number and the emplid have been seen before, then call this line a duplicate and generate an error
 				if (isDuplicateLine(positionNumber, emplId, sipImportLine)){
 					int ErrorMessageNumber = 11;
-					AllowThisSipRecordForSIP = false;
+					AllowThisSipRecordForSIP = false;    // If this error is found, then don't allow this record to be used for SIP
 					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
 					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
@@ -1054,4 +1107,3 @@ public class SipImportServiceImpl implements SipImportService {
 		}
 	}
 }
-

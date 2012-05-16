@@ -537,7 +537,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             Integer maxSequence = 0;
             if(ObjectUtils.isNotNull(maxRow[0])) {
             	maxSequence = ((BigDecimal)maxRow[0]).intValue();
-            	nextEntrySequenceNumber.put(docNumber, maxSequence);
+            	nextEntrySequenceNumber.put(docNumber, maxSequence+1);
             }
             TransactionalServiceUtils.exhaustIterator(maxSequenceIterator);
         }
