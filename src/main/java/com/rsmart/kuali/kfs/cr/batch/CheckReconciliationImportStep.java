@@ -787,7 +787,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
         
         checkNumber   = hash.get(checkNumCol);
         String rawCheckDate = hash.get(checkDateCol);
-        if(rawCheckDate==null||rawCheckDate.equals(""))
+        if(rawCheckDate==null||rawCheckDate.equals("") ||rawCheckDate.equals("000000"))
         	rawCheckDate = "991231";
         
         checkDate = getGregorianCalendar(rawCheckDate).getTime();
@@ -804,7 +804,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
         payeeName 					= hash.get(payeeNameCol);
         payeeID	  					= hash.get(payeeIDCol);
         
-        if(issueDateRawValue==null||issueDateRawValue.equals(""))
+        if(issueDateRawValue==null||issueDateRawValue.equals("")||issueDateRawValue.equals("000000"))
         	issueDateRawValue = "991231";
         
         //issueDate = dateformat.parse(issueDateRawValue);
