@@ -1097,13 +1097,33 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         header.append("Position" + SEPARATOR);
         header.append("Position Description" + SEPARATOR);
         header.append("Emplid" + SEPARATOR);
-        header.append("Person Name" + SEPARATOR);
+        header.append("Person Name" + SEPARATOR);        
+        header.append("SIP Eligible?" + SEPARATOR);
+    	header.append("Empl Type" + SEPARATOR);
+    	header.append("Empl Rcd" + SEPARATOR);
+    	header.append("Job Code" + SEPARATOR);
+    	header.append("Job Code Desc" + SEPARATOR);
+    	header.append("Job Family" + SEPARATOR);
+    	header.append("Position Fte" + SEPARATOR);
+    	header.append("Position Grade Default" + SEPARATOR);
+    	header.append("CU State Cert" + SEPARATOR);
+    	header.append("Comp Freq" + SEPARATOR);
+        header.append("Annual Rate" + SEPARATOR);
+        header.append("Comp Rate" + SEPARATOR);
+    	header.append("Job Std Hrs" + SEPARATOR);
+    	header.append("Wrk Months" + SEPARATOR);
+    	header.append("Job Func" + SEPARATOR);
+    	header.append("Job Func Desc" + SEPARATOR);
         header.append("Increase to Min" + SEPARATOR);
         header.append("Equity" + SEPARATOR);
         header.append("Merit" + SEPARATOR);
-        header.append("Comp Rate" + SEPARATOR);
-        header.append("Annual Rate" + SEPARATOR);
-        header.append("Sip Load Errors" + SEPARATOR + "\n");
+        header.append("Note" + SEPARATOR);
+        header.append("Deferred" + SEPARATOR);
+        header.append("CU ABBR Flag" + SEPARATOR);
+        header.append("Appt Tot Intended Amt" + SEPARATOR);
+        header.append("Appt Request Fte Qty" + SEPARATOR);
+        header.append("Position Type" + SEPARATOR);
+        header.append("SIP Load Errors" + SEPARATOR + "\n");
 
         reportEntries.append(header);
 
@@ -1143,7 +1163,6 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                 reportEntries.append(buildReportEntryForSipImportDataWithTotals(importData) + "\n");
             }
         }
-
     }
 
 
@@ -1181,7 +1200,6 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                 reportEntries.append(buildReportEntryForSipImportDataWithTotals(importData) + "\n");
             }
         }
-
     }
     
     private StringBuilder buildReportEntryForSipImportDataWithErrors(SipImportData importData) {
@@ -1196,11 +1214,31 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         reportEntry.append(importData.getPosDescr() + SEPARATOR);
         reportEntry.append(importData.getEmplId() + SEPARATOR);
         reportEntry.append(importData.getPersonNm() + SEPARATOR);
+        reportEntry.append(importData.getSipEligFlag() + SEPARATOR);
+        reportEntry.append(importData.getEmplType() + SEPARATOR);
+        reportEntry.append(importData.getEmplRcd() + SEPARATOR);
+        reportEntry.append(importData.getJobCode() + SEPARATOR);
+        reportEntry.append(importData.getJobCdDescShrt() + SEPARATOR);
+        reportEntry.append(importData.getJobFamily() + SEPARATOR);
+        reportEntry.append(importData.getPosFte() + SEPARATOR);
+        reportEntry.append(importData.getPosGradeDflt() + SEPARATOR);
+        reportEntry.append(importData.getCuStateCert() + SEPARATOR);
+        reportEntry.append(importData.getCompFreq() + SEPARATOR);
+        reportEntry.append(importData.getAnnlRt() + SEPARATOR);
+        reportEntry.append(importData.getCompRt() + SEPARATOR);
+        reportEntry.append(importData.getJobStdHrs() + SEPARATOR);
+        reportEntry.append(importData.getWrkMnths() + SEPARATOR);
+        reportEntry.append(importData.getJobFunc() + SEPARATOR);
+        reportEntry.append(importData.getJobFuncDesc() + SEPARATOR);
         reportEntry.append(importData.getIncToMin() + SEPARATOR);
         reportEntry.append(importData.getEquity() + SEPARATOR);
         reportEntry.append(importData.getMerit() + SEPARATOR);
-        reportEntry.append(importData.getCompRt() + SEPARATOR);
-        reportEntry.append(importData.getAnnlRt() + SEPARATOR);
+        reportEntry.append(importData.getNote() + SEPARATOR);
+        reportEntry.append(importData.getDeferred() + SEPARATOR);
+        reportEntry.append(importData.getCuAbbrFlag() + SEPARATOR);
+        reportEntry.append(importData.getApptTotIntndAmt() + SEPARATOR);
+        reportEntry.append(importData.getApptRqstFteQty() + SEPARATOR);
+        reportEntry.append(importData.getPositionType() + SEPARATOR);
         reportEntry.append(importData.getSipLoadErrors());
         return reportEntry;
 
@@ -1275,7 +1313,6 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                 }
             }
         }
-
     }
 
     /**
@@ -1298,7 +1335,6 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                 reportEntries.append(buildReportEntryForPBGL(pbgl, oldAmount) + "\n");
             }
         }
-
     }
 
     /**
@@ -1332,7 +1368,6 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
             }
         }
-
     }
 
     protected String buildSipReportEntryForRequestBenefits(RequestBenefits requestBenefits) {
@@ -1412,7 +1447,6 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                 }
             }
         }
-
     }
 
     /**
@@ -1434,7 +1468,6 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                 reportEntries.append(buildReportEntryForPlug(pbgl) + "\n");
             }
         }
-
     }
 
     /**
@@ -1456,7 +1489,6 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                 reportEntries.append(buildReportEntryForPlug(pbgl) + "\n");
             }
         }
-
     }
 
     private String buildReportTitleForBenefit() {

@@ -186,7 +186,7 @@ public class SipDistributionDaoOjb extends PlatformAwareDaoBaseOjb implements Si
     public List<PendingBudgetConstructionGeneralLedger> getSipPoolEntries(List<String> docNbrs,
             List<String> sipLevelObjectCodes, int fiscalYear) {
 
-        if (sipLevelObjectCodes != null && sipLevelObjectCodes.size() > 0) {
+        if (docNbrs != null && docNbrs.size() > 0 && sipLevelObjectCodes != null && sipLevelObjectCodes.size() > 0) {
             Criteria criteria = new Criteria();
 
             criteria.addIn(CUBCPropertyConstants.PendingBudgetConstructionGeneralLedgerProperties.DOC_NBR, docNbrs);

@@ -61,4 +61,29 @@ public class SipImportDaoJdbc extends BudgetConstructionDaoJdbcBase implements S
         }
     }
 
+	public int numberOfRecordsInCuPsJobDataTable(String positionNumber, String emplId) {
+		// The CU_PS_JOB_DATA table is used extensively to validate a number of properties of the SIP record submitted by the units
+		//  If this record does not exist for some reason then this method will return false and the appropriate error message will be
+		//  generated.  One scenario that can cause a record to not be in this table is as follows: If the job code changes in the 
+		//  PeopleSoft HR system, the job that generates the psBudgetFeed file (which is subsequently processed by the psBudgetFeedLoad
+		//  batch job) will not contain the record and therefore will invalidate a number of the checks being performed by the validation
+		//  methods in SipImportServiceImpl.java
+		//  
+        try {
+	        StringBuilder sqlBuilder = new StringBuilder(200);
+	        sqlBuilder.append("select count(*) from kfs.cu_ps_job_data where POS_NBR=? and emplid=?");
+	        String sqlString = sqlBuilder.toString();
+	        
+	        BigDecimal bdResult =  this.getSimpleJdbcTemplate().queryForObject(sqlString, BigDecimal.class, positionNumber, emplId);
+	        if (ObjectUtils.isNotNull(bdResult))
+	        	return bdResult.intValue();
+	        else
+	        	return -1;
+        }        
+        catch (Exception ex) {
+        	LOG.info("SipImportDaoJdbc Exception: " + ex.getMessage());
+        	return -2;
+        }
+	}
+
 }

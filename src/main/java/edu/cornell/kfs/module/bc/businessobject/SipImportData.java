@@ -75,7 +75,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param unitId the unitId to set
      */
     public void setUnitId(String unitId) {
-        this.unitId = unitId;
+        this.unitId = (ObjectUtils.isNull(unitId)) ? "" : unitId;
     }
 
     /**
@@ -89,7 +89,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param hrDeptId the hrDeptId to set
      */
     public void setHrDeptId(String hrDeptId) {
-        this.hrDeptId = hrDeptId;
+        this.hrDeptId = (ObjectUtils.isNull(hrDeptId)) ? "" : hrDeptId;
     }
 
     /**
@@ -103,7 +103,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param kfsDeptId the kfsDeptId to set
      */
     public void setKfsDeptId(String kfsDeptId) {
-        this.kfsDeptId = kfsDeptId;
+        this.kfsDeptId = (ObjectUtils.isNull(kfsDeptId)) ? "" : kfsDeptId;
     }
 
     /**
@@ -117,7 +117,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param deptName the deptName to set
      */
     public void setDeptName(String deptName) {
-        this.deptName = deptName;
+        this.deptName = (ObjectUtils.isNull(deptName)) ? "" : deptName;
     }
 
     /**
@@ -131,7 +131,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param positionNbr the positionNbr to set
      */
     public void setPositionNbr(String positionNbr) {
-        this.positionNbr = positionNbr;
+        this.positionNbr = (ObjectUtils.isNull(positionNbr)) ? "" : positionNbr;
     }
 
     /**
@@ -145,7 +145,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param posDescr the posDescr to set
      */
     public void setPosDescr(String posDescr) {
-        this.posDescr = posDescr;
+        this.posDescr = (ObjectUtils.isNull(posDescr)) ? "" : posDescr;
     }
 
     /**
@@ -159,7 +159,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param emplId the emplId to set
      */
     public void setEmplId(String emplId) {
-        this.emplId = emplId;
+        this.emplId = (ObjectUtils.isNull(emplId)) ? "" : emplId;
     }
 
     /**
@@ -173,7 +173,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param personNm the personNm to set
      */
     public void setPersonNm(String personNm) {
-        this.personNm = personNm;
+        this.personNm = (ObjectUtils.isNull(personNm)) ? "" : personNm;
     }
 
     /**
@@ -187,7 +187,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param sipEligFlag the sipEligFlag to set
      */
     public void setSipEligFlag(String sipEligFlag) {
-        this.sipEligFlag = sipEligFlag;
+        this.sipEligFlag = (ObjectUtils.isNull(sipEligFlag)) ? "" : sipEligFlag;
     }
 
     /**
@@ -201,7 +201,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param emplType the emplType to set
      */
     public void setEmplType(String emplType) {
-        this.emplType = emplType;
+        this.emplType = (ObjectUtils.isNull(emplType)) ? "" : emplType;
     }
 
     /**
@@ -215,7 +215,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param emplRcd the emplRcd to set
      */
     public void setEmplRcd(String emplRcd) {
-        this.emplRcd = emplRcd;
+        this.emplRcd = (ObjectUtils.isNull(emplRcd)) ? "" : emplRcd;
     }
 
     /**
@@ -229,7 +229,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param jobCode the jobCode to set
      */
     public void setJobCode(String jobCode) {
-        this.jobCode = jobCode;
+        this.jobCode = (ObjectUtils.isNull(jobCode)) ? "" : jobCode;
     }
 
     /**
@@ -243,7 +243,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param jobCdDescShrt the jobCdDescShrt to set
      */
     public void setJobCdDescShrt(String jobCdDescShrt) {
-        this.jobCdDescShrt = jobCdDescShrt;
+        this.jobCdDescShrt = (ObjectUtils.isNull(jobCdDescShrt)) ? "" : jobCdDescShrt;
     }
 
     /**
@@ -285,7 +285,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param posGradeDflt the posGradeDflt to set
      */
     public void setPosGradeDflt(String posGradeDflt) {
-        this.posGradeDflt = posGradeDflt;
+        this.posGradeDflt = (ObjectUtils.isNull(posGradeDflt)) ? "" : posGradeDflt;
     }
 
     /**
@@ -299,7 +299,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param cuStateCert the cuStateCert to set
      */
     public void setCuStateCert(String cuStateCert) {
-        this.cuStateCert = cuStateCert;
+        this.cuStateCert = (ObjectUtils.isNull(cuStateCert)) ? "" : cuStateCert;
     }
 
     /**
@@ -313,7 +313,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param compFreq the compFreq to set
      */
     public void setCompFreq(String compFreq) {
-        this.compFreq = compFreq;
+        this.compFreq = (ObjectUtils.isNull(compFreq)) ? "" : compFreq;
     }
 
     /**
@@ -383,7 +383,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param jobFunc the jobFunc to set
      */
     public void setJobFunc(String jobFunc) {
-        this.jobFunc = jobFunc;
+        this.jobFunc = (ObjectUtils.isNull(jobFunc)) ? "" : jobFunc;
     }
 
     /**
@@ -397,7 +397,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param jobFuncDesc the jobFuncDesc to set
      */
     public void setJobFuncDesc(String jobFuncDesc) {
-        this.jobFuncDesc = jobFuncDesc;
+        this.jobFuncDesc = (ObjectUtils.isNull(jobFuncDesc)) ? "" : jobFuncDesc;
     }
 
     /**
@@ -453,7 +453,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param note the note to set
      */
     public void setNote(String note) {
-        this.note = note;
+        this.note = (ObjectUtils.isNull(note)) ? "" : note;
     }
 
     /**
@@ -481,7 +481,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param cuAbbrFlag the cuAbbrFlag to set
      */
     public void setCuAbbrFlag(String cuAbbrFlag) {
-        this.cuAbbrFlag = cuAbbrFlag;
+        this.cuAbbrFlag = (ObjectUtils.isNull(cuAbbrFlag)) ? "" : cuAbbrFlag;
     }
 
     /**
@@ -523,7 +523,7 @@ public class SipImportData extends PersistableBusinessObjectBase {
      * @param positionType the positionType to set
      */
     public void setPositionType(String positionType) {
-        this.positionType = positionType;
+        this.positionType = (ObjectUtils.isNull(positionType)) ? "" : positionType;
     }
 
     /**
