@@ -136,7 +136,7 @@ public class SipImportServiceImpl implements SipImportService {
 	protected String[] ErrorMessages = {
 			"\tPosition number was not found in the original SIP exported data.\n",   // Ignore for SIP
 			"\tEmployee Id was not found in the original SIP exported data.\n",		   // Ignore for SIP
-			"\tThis position number / employee id combination is not eligible for SIP.\n",
+			"\tThis position number / employee id combination is not eligible for SIP.\n",  // Ignore for SIP
 			"\tThis position number / employee id combination compensation rate is different than that in KFS.\n",	   // Ignore for SIP
 			"\tThe SIP award (Increase To minimum + Merit + Equity) is greater than zero AND the Deferred amount is also greater than 0.\n", // Ignore for SIP
 			"\tThe SIP award (Increase To minimum + Merit + Equity) is greater than zero AND a note was also provided.\n",  // Ignored - COMMENTED OUT BELOW
@@ -147,7 +147,7 @@ public class SipImportServiceImpl implements SipImportService {
 			"\tSIP is not allowed when Job Function is UNB.\n",
 			"\tThis line is a duplicate.\n",
 			"\tThe requested amount is greater than 0 and the requested percent distribution is not equal to 1.\n",   // Ignore for SIP
-			"\tThis SIP record from the unit was not found in PS load to KFS therefore no other validation can be performed.\n"
+			"\tThis SIP record from the unit was not found in PS load to KFS therefore no other validation can be performed.\n"  //Ignore for SIP
 	};
 	
 	protected String ErrorMessageNumbersForThisSipRecord;		// Contains only the sip load error message numbers
@@ -229,6 +229,11 @@ public class SipImportServiceImpl implements SipImportService {
 				tokens[18] = tokens[18].replace(",", "");
 				tokens[19] = tokens[19].replace(",", "");
 				
+				// Perform trim method on all the remaining tokens
+				for ( int i=0; i<=(tokens.length-1); i++ ) {
+					tokens[i] = tokens[i].trim();
+				}
+				
 				// Apply data from the line to the business object
 				ObjectUtil.buildObject(sipImportData, tokens, Arrays.asList(DefaultImportFileFormat.fieldNames));
 
@@ -264,8 +269,8 @@ public class SipImportServiceImpl implements SipImportService {
 		    	}
 		    	else {
 					int ErrorMessageNumber = 13;
-					AllowThisSipRecordForSIP = false;		// If this error is found, then don't allow this record to be used for SIP
-					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
+					// AllowThisSipRecordForSIP = false;		// If this error is found, then don't allow this record to be used for SIP
+					// sipLoadErrors += ErrorMessages[ErrorMessageNumber];
 					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, sipImportData.getUnitId());
@@ -273,12 +278,14 @@ public class SipImportServiceImpl implements SipImportService {
 
 				//For Sip Load Errors - remove the \t in the front and the \n at the end of the lines
 				if (!sipLoadErrors.equals("")) {
-					sipLoadErrors = sipLoadErrors.replace("\t","");		// removes all tabs
-					sipLoadErrors = sipLoadErrors.replace("\n",", ");	// removes all new lines
+					sipLoadErrors = sipLoadErrors.replace("\t","");		// removes all tabs and replaces with nothing
+					sipLoadErrors = sipLoadErrors.replace("\n",", ");	// removes all new lines and replaces them with commas separating the errors
 					sipLoadErrors = sipLoadErrors.substring(0, sipLoadErrors.length()-2);	// Removes the ", " at the end
 				}
 				
-				// Generate ERROR Messages.
+				// Generate ERROR Messages and add populate the sipImportCollection object with the SIP data regardless of whether the
+				//  incoming SIP record passes or not.  This is because later, a list will be generated in the report indicating if the
+				//  record is in the CU_LD_BCN_SIP_T table or not.
 				if (!RulesErrorList.isEmpty())
 					if (!ValuesErrorList.isEmpty()) {
 						errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + RulesErrorList + ValuesErrorList));
@@ -781,8 +788,8 @@ public class SipImportServiceImpl implements SipImportService {
 				// Is this position number / emplid combination found?
 				if (!isSipEligible(positionNumber, emplId)){
 					int ErrorMessageNumber = 2;
-					AllowThisSipRecordForSIP = false;    // If this error is found, then don't allow this record to be used for SIP
-					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
+					// AllowThisSipRecordForSIP = false;    // If this error is found, then don't allow this record to be used for SIP
+					// sipLoadErrors += ErrorMessages[ErrorMessageNumber];
 					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
