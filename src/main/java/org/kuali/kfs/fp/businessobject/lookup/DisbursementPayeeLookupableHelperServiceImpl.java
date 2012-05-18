@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
-import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherPaymentReasonService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
@@ -269,15 +268,13 @@ public class DisbursementPayeeLookupableHelperServiceImpl extends KualiLookupabl
         List<? extends Person> persons = KIMServiceLocator.getPersonService().findPeople(fieldsForLookup);   
         
         for (Person personDetail : persons) {   
-        	if (personDetail.hasAffiliationOfType(DisbursementVoucherConstants.PayeeAffiliations.STUDENT) 
-        			|| personDetail.hasAffiliationOfType(DisbursementVoucherConstants.PayeeAffiliations.ALUMNI) ) {
+        	if (personDetail.hasAffiliationOfType("STDNT") || personDetail.hasAffiliationOfType("ALUMNI") ) {
         		//|| personDetail.hasAffiliationOfType("FCLTY") || personDetail.hasAffiliationOfType("STAFF")) {
         		//if (!ObjectUtils.isNotNull(personDetail.getEmployeeStatusCode()) && personDetail.getEmployeeStatusCode().equals("A")) {
         			DisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues);
         			payeeList.add(payee);
         		//}
-        	} else if (personDetail.hasAffiliationOfType(DisbursementVoucherConstants.PayeeAffiliations.FACULTY) 
-        			|| personDetail.hasAffiliationOfType(DisbursementVoucherConstants.PayeeAffiliations.STAFF)) {
+        	} else if (personDetail.hasAffiliationOfType("FACULTY") || personDetail.hasAffiliationOfType("STAFF")) {
         		if (ObjectUtils.isNotNull(personDetail.getEmployeeStatusCode()) && personDetail.getEmployeeStatusCode().equals("A")) {
         			DisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues);
         			payeeList.add(payee);
