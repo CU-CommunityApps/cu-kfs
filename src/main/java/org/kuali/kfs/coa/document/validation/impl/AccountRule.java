@@ -20,6 +20,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +34,7 @@ import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryRateDetail;
 import org.kuali.kfs.coa.businessobject.SubFundGroup;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.coa.service.SubFundGroupService;
+import org.kuali.kfs.gl.businessobject.Encumbrance;
 import org.kuali.kfs.gl.service.BalanceService;
 import org.kuali.kfs.gl.service.EncumbranceService;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsModuleService;
@@ -54,6 +56,7 @@ import org.kuali.rice.kns.service.DictionaryValidationService;
 import org.kuali.rice.kns.service.ParameterEvaluator;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.MessageMap;
 import org.kuali.rice.kns.util.ObjectUtils;
 
@@ -1128,16 +1131,22 @@ public class AccountRule extends KfsMaintenanceDocumentRuleBase {
     }
 
     protected boolean checkOpenEncumbrances() {
+    	//rather than checking to see if any open encumbrances exist, check
+    	//to make sure that the sum of all outstanding amounts sum to zero
     	boolean success = true;
     	if (!oldAccount.isClosed() && newAccount.isClosed()) {
     		Map<String, String> pkMap = new HashMap<String, String>();
     		pkMap.put(KFSPropertyConstants.ACCOUNT_NUMBER, oldAccount.getAccountNumber());
-    		int encumbranceCount = getEncumbranceService().getOpenEncumbranceRecordCount(pkMap);
-    		if ( encumbranceCount > 0 ) {
+    		Iterator it = getEncumbranceService().findOpenEncumbrance(pkMap);
+    		KualiDecimal runningTotal = KualiDecimal.ZERO;
+    		while (it.hasNext()) {
+    			Encumbrance encumbrance = (Encumbrance) it.next();
+    			runningTotal.add(encumbrance.getAccountLineEncumbranceOutstandingAmount());
+    		}
+    		if (!runningTotal.isZero()) {
     			success = false;
     			putFieldError("closed", KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCOUNT_CANNOT_CLOSE_OPEN_ENCUMBRANCE);
-    			//putGlobalError(KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCOUNT_CANNOT_CLOSE_OPEN_ENCUMBRANCE);
-    		}
+    		}  		
     	}
     	return success;
     }
