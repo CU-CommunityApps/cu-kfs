@@ -4,7 +4,7 @@
   <artifactId>kfs-war</artifactId>
   <packaging>war</packaging>
   <name>KFS war</name>
-  <version>3.0.1-RC1</version>
+  <version>3.0.1-2012-05-27-patch</version>
   <description>
     This project wraps the KFS war with a war overlay.
   </description>
@@ -483,7 +483,7 @@
     <dependency>
            <groupId>net.bull.javamelody</groupId>
            <artifactId>javamelody-core</artifactId>
-           <version>1.32.1</version>
+           <version>1.28.0</version>
    </dependency>
    <dependency>
            <groupId>org.jrobin</groupId>
