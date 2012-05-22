@@ -50,6 +50,8 @@ public interface DisbursementVoucherConstants extends ParameterKeyConstants {
     public static String PAYMENT_METHOD_DRAFT = "F";
 
     // payee types
+    public static final String DV_PAYEE_TYPE_STUDENT = "S";
+    public static final String DV_PAYEE_TYPE_ALUMNI = "A";
     public static final String DV_PAYEE_TYPE_EMPLOYEE = "E";
     public static final String DV_PAYEE_TYPE_VENDOR = "V";
     public static final String DV_PAYEE_TYPE_SUBJECT_PAYMENT_VENDOR = "VSP";
@@ -64,6 +66,13 @@ public interface DisbursementVoucherConstants extends ParameterKeyConstants {
     public static final String TAX_CONTROL_CODE_BEGIN_WITHHOLDING = "B";
     public static final String TAX_CONTROL_CODE_HOLD_PAYMENT = "H";
 
+    public static class PayeeAffiliations {
+    	public static final String STUDENT = "STDNT";
+    	public static final String ALUMNI = "ALUMNI";
+    	public static final String FACULTY = "FCLTY";
+    	public static final String STAFF = "STAFF";
+    }
+    
     public static class DocumentStatusCodes {
         public static final String APPROVED = "A";
         public static final String EXTRACTED = "E";

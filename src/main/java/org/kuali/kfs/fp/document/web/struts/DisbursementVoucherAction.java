@@ -481,33 +481,41 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         dvForm.setHasMultipleAddresses(false);
 
         // determine whether the selected vendor has multiple addresses. If so, redirect to the address selection screen
-        if (isPayeeLookupable && dvForm.isVendor()) {
-            VendorDetail refreshVendorDetail = new VendorDetail();
-            refreshVendorDetail.setVendorNumber(payeeIdNumber);
-            refreshVendorDetail = (VendorDetail) SpringContext.getBean(BusinessObjectService.class).retrieve(refreshVendorDetail);
-
-            VendorAddress defaultVendorAddress = null;
-            if (refreshVendorDetail != null) {
-                List<VendorAddress> vendorAddresses = refreshVendorDetail.getVendorAddresses();
-                boolean hasMultipleAddresses = vendorAddresses != null && vendorAddresses.size() > 1;
-                dvForm.setHasMultipleAddresses(hasMultipleAddresses);
-
-                if (vendorAddresses != null && !vendorAddresses.isEmpty()) {
-                    defaultVendorAddress = vendorAddresses.get(0);
-                }
-            }
-
-            if (dvForm.hasMultipleAddresses()) {
-                return renderVendorAddressSelection(mapping, request, dvForm);
-            }
-            else if (defaultVendorAddress != null) {
-                setupPayeeAsVendor(dvForm, payeeIdNumber, defaultVendorAddress.getVendorAddressGeneratedIdentifier().toString());
-            }
-
-            return null;
-        }
-        if (isPayeeLookupable && dvForm.isEmployee()) {
+        if (isPayeeLookupable) {
+        	if (dvForm.isVendor()) {
+	            VendorDetail refreshVendorDetail = new VendorDetail();
+	            refreshVendorDetail.setVendorNumber(payeeIdNumber);
+	            refreshVendorDetail = (VendorDetail) SpringContext.getBean(BusinessObjectService.class).retrieve(refreshVendorDetail);
+	
+	            VendorAddress defaultVendorAddress = null;
+	            if (refreshVendorDetail != null) {
+	                List<VendorAddress> vendorAddresses = refreshVendorDetail.getVendorAddresses();
+	                boolean hasMultipleAddresses = vendorAddresses != null && vendorAddresses.size() > 1;
+	                dvForm.setHasMultipleAddresses(hasMultipleAddresses);
+	
+	                if (vendorAddresses != null && !vendorAddresses.isEmpty()) {
+	                    defaultVendorAddress = vendorAddresses.get(0);
+	                }
+	            }
+	
+	            if (dvForm.hasMultipleAddresses()) {
+	                return renderVendorAddressSelection(mapping, request, dvForm);
+	            }
+	            else if (defaultVendorAddress != null) {
+	                setupPayeeAsVendor(dvForm, payeeIdNumber, defaultVendorAddress.getVendorAddressGeneratedIdentifier().toString());
+	            }
+	
+	            return null;
+        	}
+	        else if (dvForm.isEmployee()) {
 	            this.setupPayeeAsEmployee(dvForm, payeeIdNumber);
+	        }
+	        else if (dvForm.isStudent()) {
+	            this.setupPayeeAsStudent(dvForm, payeeIdNumber);
+	        }
+	        else if (dvForm.isAlumni()) {
+	            this.setupPayeeAsAlumni(dvForm, payeeIdNumber);
+	        }
         }
 
         String payeeAddressIdentifier = request.getParameter(KFSPropertyConstants.VENDOR_ADDRESS_GENERATED_ID);
@@ -582,6 +590,38 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
             ((DisbursementVoucherDocument) dvForm.getDocument()).templateEmployee(person);
             dvForm.setTempPayeeIdNumber(payeeIdNumber);
             dvForm.setOldPayeeType(DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE);
+
+        }
+        else {
+            LOG.error("Exception while attempting to retrieve universal user by universal user id " + payeeIdNumber);
+        }
+    }
+
+    /**
+     * setup the payee as an student with the given id number
+     */
+    protected void setupPayeeAsStudent(DisbursementVoucherForm dvForm, String payeeIdNumber) {
+        Person person = (Person) SpringContext.getBean(PersonService.class).getPerson(payeeIdNumber);
+        if (person != null) {
+            ((DisbursementVoucherDocument) dvForm.getDocument()).templateStudent(person);
+            dvForm.setTempPayeeIdNumber(payeeIdNumber);
+            dvForm.setOldPayeeType(DisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT);
+
+        }
+        else {
+            LOG.error("Exception while attempting to retrieve universal user by universal user id " + payeeIdNumber);
+        }
+    }
+
+    /**
+     * setup the payee as an alumni with the given id number
+     */
+    protected void setupPayeeAsAlumni(DisbursementVoucherForm dvForm, String payeeIdNumber) {
+        Person person = (Person) SpringContext.getBean(PersonService.class).getPerson(payeeIdNumber);
+        if (person != null) {
+            ((DisbursementVoucherDocument) dvForm.getDocument()).templateAlumni(person);
+            dvForm.setTempPayeeIdNumber(payeeIdNumber);
+            dvForm.setOldPayeeType(DisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI);
 
         }
         else {
