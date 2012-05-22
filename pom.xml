@@ -83,6 +83,25 @@
                      via Maven, or are simply a different file name than
                      the same version Maven artifact. -->
                 <excludes>
+                	<exclude>WEB-INF/classes/**/CarryForwardReversionProcessOrganizationInfo.class</exclude>
+                	<exclude>WEB-INF/classes/**/ClosedAccountOrganizationReversion.class</exclude>
+                	<exclude>WEB-INF/classes/**/OrganizationReversionCodeValuesFinder.class</exclude>
+                	<exclude>WEB-INF/classes/**/OrganizationReversionCategoryValuesFinder.class</exclude>
+                	<exclude>WEB-INF/classes/**/OrganizationReversionCategory.class</exclude>
+                	<exclude>WEB-INF/classes/**/OrganizationReversionCategoryInfo.class</exclude>
+                	<exclude>WEB-INF/classes/**/OrganizationReversionProcess.class</exclude>
+                	<exclude>WEB-INF/classes/**/CashOrganizationReversionCategoryLogic.class</exclude>
+                	<exclude>WEB-INF/classes/**/OrganizationReversionUnitOfWorkService.class</exclude>
+                	<exclude>WEB-INF/classes/**/OrganizationReversionCategoryLogic.class</exclude>
+                	<exclude>WEB-INF/classes/**/OrgReversionUnitOfWork.class</exclude>
+                	<exclude>WEB-INF/classes/**/OrgReversionUnitOfWorkCategoryAmount.class</exclude>
+                	<exclude>WEB-INF/classes/**/OrganizationReversionCategory.xml</exclude>
+                	<exclude>WEB-INF/classes/**/OrganizationReversionCategoryMaintenanceDocument.xml</exclude>
+                	
+                	
+                	
+                	
+                	
                     <exclude>WEB-INF/lib/log4j*.jar</exclude>
                     <exclude>WEB-INF/lib/activation-*.jar</exclude>
                     <exclude>WEB-INF/lib/commons-beanutils-*.jar</exclude>
@@ -530,7 +549,13 @@
       <groupId>net.sf.jasperreports</groupId>
       <artifactId>jasperreports</artifactId>
       <version>2.0.4</version>
-    </dependency>   
+    </dependency>
+    <dependency>
+	<groupId>net.sf.opencsv</groupId>
+	<artifactId>opencsv</artifactId>
+	<version>2.0</version>
+</dependency>
+       
   </dependencies>
   
   <distributionManagement>
