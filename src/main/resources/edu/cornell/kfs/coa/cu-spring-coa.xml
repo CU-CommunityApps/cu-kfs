@@ -32,6 +32,11 @@
 		<property name="scriptConfigurationFilePaths">
 			<list/>
 		</property>
+		<property name="jobNames">
+			<list>
+				<value>accountReversionImportJob</value>
+			</list>
+		</property>
 	</bean>
 
 	<bean id="cu-coaModuleService" parent="coaModuleService-parentBean">
@@ -72,5 +77,22 @@
         <property name="businessObjectService" ref="businessObjectService" />
 	</bean>
  
+ 	<bean id="accountReversionImportDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.coa.dataaccess.impl.AccountReversionImportDaoJdbc"/>
+	
+	<bean id="accountReversionImportJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="accountReversionImportStep" />
+			</list>
+		</property>
+	</bean>
+ 
+ 	<bean id="accountReversionImportStep" class="edu.cornell.kfs.coa.batch.AccountReversionImportStep" parent="step"/>
+ 	
+ 	<bean id="accountReversionImportService" class="edu.cornell.kfs.coa.service.impl.AccountReversionImportServiceImpl">
+        <property name="parameterService" ref="parameterService" />
+        <property name="arid" ref="accountReversionImportDao" />
+        <property name="boService" ref="businessObjectService" />
+	</bean>
  
 </beans>

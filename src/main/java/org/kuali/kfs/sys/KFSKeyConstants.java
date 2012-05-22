@@ -786,7 +786,7 @@ public class KFSKeyConstants {
         public static final String HEADER_BAD_TRANSMISSION_DATE_FORMAT = "error.collector.header.bad.transmission.date.format";
     }
 
-    public static final class OrganizationReversionProcess {
+    public static final class ReversionProcess {
         public static final String CASH_REVERTED_TO = "cash.reverted";
         public static final String FUND_BALANCE_REVERTED_TO = "fund.balance.reverted";
         public static final String CASH_REVERTED_FROM = "cash.reverted.from";
@@ -822,6 +822,11 @@ public class KFSKeyConstants {
     public static final String ORGANIZATION_REVERSION_DETAIL_TRICKLE_DOWN_INACTIVATION_ERROR_DURING_PERSISTENCE = "note.trickleDownInactivation.inactivatedOrganizationReversionDetail.errorDuringPersistence";
     public static final String ORGANIZATION_REVERSION_DETAIL_TRICKLE_DOWN_ACTIVATION = "note.trickleDownActivation.activatedOrganizationReversionDetail";
     public static final String ORGANIZATION_REVERSION_DETAIL_TRICKLE_DOWN_ACTIVATION_ERROR_DURING_PERSISTENCE = "note.trickleDownActivation.activatedOrganizationReversionDetail.errorDuringPersistence";
+    
+    public static final String ACCOUNT_REVERSION_DETAIL_TRICKLE_DOWN_INACTIVATION = "note.trickleDownInactivation.inactivatedACCOUNTReversionDetail";
+    public static final String ACCOUNT_REVERSION_DETAIL_TRICKLE_DOWN_INACTIVATION_ERROR_DURING_PERSISTENCE = "note.trickleDownInactivation.inactivatedACCOUNTReversionDetail.errorDuringPersistence";
+    public static final String ACCOUNT_REVERSION_DETAIL_TRICKLE_DOWN_ACTIVATION = "note.trickleDownActivation.activatedACCOUNTReversionDetail";
+    public static final String ACCOUNT_REVERSION_DETAIL_TRICKLE_DOWN_ACTIVATION_ERROR_DURING_PERSISTENCE = "note.trickleDownActivation.activatedACCOUNTReversionDetail.errorDuringPersistence";
 
     
     public static final class AccountingLineViewRendering {
@@ -922,6 +927,8 @@ public class KFSKeyConstants {
     public static final String MESSAGE_REPORT_YEAR_END_BALANCE_FORWARD_CLOSED_ACCOUNT_LEDGER_TITLE_LINE = "message.report.yearEnd.balanceForwarding.closedAccount.ledger.titleLine";
     public static final String MESSAGE_REPORT_YEAR_END_ENCUMBRANCE_FORWARDS_LEDGER_TITLE_LINE = "message.report.yearEnd.encumbranceForwards.ledger.titleLine";
     public static final String MESSAGE_REPORT_YEAR_END_ORGANIZATION_REVERSION_LEDGER_TITLE_LINE = "message.report.yearEnd.organizationReversion.ledger.titleLine";
+    public static final String MESSAGE_REPORT_YEAR_END_ACCOUNT_REVERSION_LEDGER_TITLE_LINE = "message.report.yearEnd.accountReversion.ledger.titleLine";
+
     
     public static final String MESSAGE_ACCOUNTING_LINES_ERROR_SECTION_TITLE = "message.accountingLines.errorSectionTitle";
     public static final String MESSAGE_ACCOUNTING_LINES_WARNING_SECTION_TITLE = "message.accountingLines.warningSectionTitle";

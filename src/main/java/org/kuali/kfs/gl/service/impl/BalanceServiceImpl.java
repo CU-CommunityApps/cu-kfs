@@ -582,8 +582,8 @@ public class BalanceServiceImpl implements BalanceService {
      * @return an iterator of balances to put through the strenuous organization reversion process
      * @see org.kuali.kfs.gl.service.BalanceService#findOrganizationReversionBalancesForFiscalYear(java.lang.Integer, boolean)
      */
-    public Iterator<Balance> findOrganizationReversionBalancesForFiscalYear(Integer year, boolean endOfYear) {
-        return balanceDao.findOrganizationReversionBalancesForFiscalYear(year, endOfYear);
+    public Iterator<Balance> findReversionBalancesForFiscalYear(Integer year, boolean endOfYear) {
+        return balanceDao.findReversionBalancesForFiscalYear(year, endOfYear);
     }
 
 }

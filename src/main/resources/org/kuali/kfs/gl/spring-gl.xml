@@ -1,0 +1,2841 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright 2005-2008 The Kuali Foundation
+
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+    <bean id="glModuleConfiguration" parent="glModuleConfiguration-parentBean" />
+    
+    <bean id="glModuleConfiguration-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration" abstract="true">
+    	<property name="namespaceCode" value="KFS-GL" />
+		<property name="initializeDataDictionary" value="true" />
+        <property name="packagePrefixes">
+            <list>
+                <value>org.kuali.kfs.gl</value>
+            </list>
+        </property>
+		<property name="dataDictionaryPackages">
+			<list>
+                <value>org/kuali/kfs/gl/businessobject/datadictionary</value>
+                <value>org/kuali/kfs/gl/document/datadictionary</value>
+			</list>
+		</property>
+		<property name="databaseRepositoryFilePaths">
+			<list>
+				<value>org/kuali/kfs/gl/ojb-gl.xml</value>
+			</list>
+		</property>
+		<property name="jobNames">
+			<list>
+				<value>enterpriseFeedJob</value>
+				<value>collectorJob</value>
+				<value>nightlyOutJob</value>
+				<value>scrubberJob</value>
+				<value>posterJob</value>
+				<value>posterBalancingJob</value>
+				<value>sufficientFundsAccountUpdateJob</value>
+				<value>clearPendingEntriesJob</value>
+				<value>encumbranceForwardJob</value>
+				<value>balanceForwardJob</value>
+				<value>nominalActivityClosingJob</value>
+				<value>organizationReversionPriorYearAccountJob</value>
+				<value>organizationReversionCurrentYearAccountJob</value>
+				<value>accountReversionPriorYearAccountJob</value>
+				<value>accountReversionCurrentYearAccountJob</value>
+				<value>manualPurgeJob</value>
+				<value>posterBalancingHistorySyncJob</value>
+			</list>
+		</property>
+		<property name="fiscalYearMakers">
+          <list>
+<!--             <ref bean="universityDateFiscalYearMaker" />
+ -->          </list>	
+        </property>
+        <property name="batchFileDirectories">
+          <list>
+            <value>${reports.directory}/gl</value>
+            <value>${staging.directory}/gl</value>
+          </list>
+        </property>
+	</bean>
+
+    <bean id="glModuleService" parent="glModuleService-parentBean"/>
+
+    <bean id="glModuleService-parentBean" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl" abstract="true">
+		<property name="moduleConfiguration" ref="glModuleConfiguration" />
+	</bean>
+
+	<bean id="glBalanceLookupableHelperService" class="org.kuali.kfs.gl.businessobject.lookup.BalanceLookupableHelperServiceImpl" scope="prototype">
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="lookupService">
+			<ref bean="lookupService" />
+		</property>
+		<property name="businessObjectDictionaryService">
+			<ref bean="businessObjectDictionaryService" />
+		</property>
+		<property name="businessObjectMetaDataService">
+			<ref bean="businessObjectMetaDataService" />
+		</property>
+		<!--property name="dictionaryValidationService">
+			<ref bean="dictionaryValidationService" />
+			</property-->
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>
+		<property name="balanceService">
+			<ref bean="glBalanceService" />
+		</property>
+		<property name="generalLedgerPendingEntryService">
+			<ref bean="generalLedgerPendingEntryService" />
+		</property>
+		<property name="postBalance">
+			<ref bean="glPostBalance" />
+		</property>
+	</bean>
+
+	<bean id="glBalanceLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+		<property name="lookupableHelperService">
+			<ref bean="glBalanceLookupableHelperService" />
+		</property>
+	</bean>
+
+	<bean id="glEncumbranceLookupableHelperService" class="org.kuali.kfs.gl.businessobject.lookup.EncumbranceLookupableHelperServiceImpl" scope="prototype">
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="lookupService">
+			<ref bean="lookupService" />
+		</property>
+		<property name="businessObjectDictionaryService">
+			<ref bean="businessObjectDictionaryService" />
+		</property>
+		<property name="businessObjectMetaDataService">
+			<ref bean="businessObjectMetaDataService" />
+		</property>
+		<!--property name="dictionaryValidationService">
+			<ref bean="dictionaryValidationService" />
+			</property-->
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>
+		<property name="generalLedgerPendingEntryService">
+			<ref bean="generalLedgerPendingEntryService" />
+		</property>
+		<property name="postEncumbrance">
+			<ref bean="glPostEncumbrance" />
+		</property>
+		<property name="encumbranceService">
+			<ref bean="glEncumbranceService" />
+		</property>
+	</bean>
+
+	<bean id="glEncumbranceLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+		<property name="lookupableHelperService">
+			<ref bean="glEncumbranceLookupableHelperService" />
+		</property>
+	</bean>
+
+	<bean id="glCashBalanceLookupableHelperService" class="org.kuali.kfs.gl.businessobject.lookup.CashBalanceLookupableHelperServiceImpl" scope="prototype">
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="lookupService">
+			<ref bean="lookupService" />
+		</property>
+		<property name="businessObjectDictionaryService">
+			<ref bean="businessObjectDictionaryService" />
+		</property>
+		<property name="businessObjectMetaDataService">
+			<ref bean="businessObjectMetaDataService" />
+		</property>
+		<!--property name="dictionaryValidationService">
+			<ref bean="dictionaryValidationService" />
+			</property-->
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>
+		<property name="balanceService">
+			<ref bean="glBalanceService" />
+		</property>
+		<property name="generalLedgerPendingEntryService">
+			<ref bean="generalLedgerPendingEntryService" />
+		</property>
+		<property name="postBalance">
+			<ref bean="glPostBalance" />
+		</property>
+	</bean>
+
+	<bean id="glCashBalanceLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+		<property name="lookupableHelperService">
+			<ref bean="glCashBalanceLookupableHelperService" />
+		</property>
+	</bean>
+
+	<bean id="glPendingEntryLookupableHelperServiceImpl" class="org.kuali.kfs.gl.businessobject.lookup.PendingEntryLookupableHelperServiceImpl" scope="prototype">
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="lookupService">
+			<ref bean="lookupService" />
+		</property>
+		<property name="businessObjectDictionaryService">
+			<ref bean="businessObjectDictionaryService" />
+		</property>
+		<property name="businessObjectMetaDataService">
+			<ref bean="businessObjectMetaDataService" />
+		</property>
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>
+		<property name="generalLedgerPendingEntryService">
+			<ref bean="generalLedgerPendingEntryService" />
+		</property>
+		<property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
+	</bean>
+
+	<bean id="glPendingEntryLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+		<property name="lookupableHelperService">
+			<ref bean="glPendingEntryLookupableHelperServiceImpl" />
+		</property>
+	</bean>
+
+	<bean id="glEntryLookupableHelperService" class="org.kuali.kfs.gl.businessobject.lookup.EntryLookupableHelperServiceImpl" scope="prototype">
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="lookupService">
+			<ref bean="lookupService" />
+		</property>
+		<property name="businessObjectDictionaryService">
+			<ref bean="businessObjectDictionaryService" />
+		</property>
+		<property name="businessObjectMetaDataService">
+			<ref bean="businessObjectMetaDataService" />
+		</property>
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>
+		<property name="generalLedgerPendingEntryService">
+			<ref bean="generalLedgerPendingEntryService" />
+		</property>
+		<property name="scrubberValidator">
+			<ref bean="scrubberValidator" />
+		</property>
+		<property name="entryService">
+			<ref bean="glEntryService" />
+		</property>
+	</bean>
+
+	<bean id="glEntryLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+		<property name="lookupableHelperService">
+			<ref bean="glEntryLookupableHelperService" />
+		</property>
+	</bean>
+
+	<bean id="glAccountBalanceLookupableHelperService" class="org.kuali.kfs.gl.businessobject.lookup.AccountBalanceLookupableHelperServiceImpl" scope="prototype">
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="lookupService">
+			<ref bean="lookupService" />
+		</property>
+		<property name="businessObjectDictionaryService">
+			<ref bean="businessObjectDictionaryService" />
+		</property>
+		<property name="businessObjectMetaDataService">
+			<ref bean="businessObjectMetaDataService" />
+		</property>
+		<!--property name="dictionaryValidationService">
+			<ref bean="dictionaryValidationService" />
+			</property-->
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>
+		<property name="accountBalanceService">
+			<ref bean="glAccountBalanceService" />
+		</property>
+		<property name="generalLedgerPendingEntryService">
+			<ref bean="generalLedgerPendingEntryService" />
+		</property>
+		<property name="postAccountBalance">
+			<ref bean="glPostGlAccountBalance" />
+		</property>
+		<property name="optionsService">
+			<ref bean="optionsService" />
+		</property>
+	</bean>
+
+	<bean id="glAccountBalanceLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+		<property name="lookupableHelperService">
+			<ref bean="glAccountBalanceLookupableHelperService" />
+		</property>
+	</bean>
+
+	<bean id="glAccountBalanceByConsolidationLookupableHelperService" class="org.kuali.kfs.gl.businessobject.lookup.AccountBalanceByConsolidationLookupableHelperServiceImpl" scope="prototype">
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="lookupService">
+			<ref bean="lookupService" />
+		</property>
+		<property name="businessObjectDictionaryService">
+			<ref bean="businessObjectDictionaryService" />
+		</property>
+		<property name="businessObjectMetaDataService">
+			<ref bean="businessObjectMetaDataService" />
+		</property>
+		<!--property name="dictionaryValidationService">
+			<ref bean="dictionaryValidationService" />
+			</property-->
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>
+		<property name="accountBalanceService">
+			<ref bean="glAccountBalanceService" />
+		</property>
+	</bean>
+
+	<bean id="glAccountBalanceByConsolidationLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+		<property name="lookupableHelperService">
+			<ref bean="glAccountBalanceByConsolidationLookupableHelperService" />
+		</property>
+	</bean>
+
+	<bean id="glAccountBalanceByLevelLookupableHelperService" class="org.kuali.kfs.gl.businessobject.lookup.AccountBalanceByLevelLookupableHelperServiceImpl" scope="prototype">
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="lookupService">
+			<ref bean="lookupService" />
+		</property>
+		<property name="businessObjectDictionaryService">
+			<ref bean="businessObjectDictionaryService" />
+		</property>
+		<property name="businessObjectMetaDataService">
+			<ref bean="businessObjectMetaDataService" />
+		</property>
+		<!--property name="dictionaryValidationService">
+			<ref bean="dictionaryValidationService" />
+			</property-->
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>
+		<property name="accountBalanceService">
+			<ref bean="glAccountBalanceService" />
+		</property>
+	</bean>
+
+	<bean id="glAccountBalanceByLevelLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+		<property name="lookupableHelperService">
+			<ref bean="glAccountBalanceByLevelLookupableHelperService" />
+		</property>
+	</bean>
+
+	<bean id="glAccountBalanceByObjectLookupableHelperService" class="org.kuali.kfs.gl.businessobject.lookup.AccountBalanceByObjectLookupableHelperServiceImpl" scope="prototype">
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="lookupService">
+			<ref bean="lookupService" />
+		</property>
+		<property name="businessObjectDictionaryService">
+			<ref bean="businessObjectDictionaryService" />
+		</property>
+		<property name="businessObjectMetaDataService">
+			<ref bean="businessObjectMetaDataService" />
+		</property>
+		<!--property name="dictionaryValidationService">
+			<ref bean="dictionaryValidationService" />
+			</property-->
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>
+		<property name="accountBalanceService">
+			<ref bean="glAccountBalanceService" />
+		</property>
+	</bean>
+
+	<bean id="glAccountBalanceByObjectLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+		<property name="lookupableHelperService">
+			<ref bean="glAccountBalanceByObjectLookupableHelperService" />
+		</property>
+	</bean>
+	
+	<bean id="glOrganizationReversionCurrentYearAccountProcess" class="org.kuali.kfs.gl.batch.service.impl.OrganizationReversionProcessImpl" scope="prototype">
+		<property name="organizationReversionService" ref="organizationReversionService" />
+		<property name="balanceService" ref="glBalanceService" />
+		<property name="originEntryService" ref="originEntryService" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="dateTimeService" ref="dateTimeService" />
+		<property name="priorYearAccountService" ref="priorYearAccountService" />
+		<property name="orgReversionUnitOfWorkService" ref="glOrgReversionUnitOfWorkService" />
+		<property name="flexibleOffsetAccountService" ref="flexibleOffsetAccountService" />
+		<property name="parameterService" ref="parameterService" />
+		<property name="configurationService" ref="kualiConfigurationService" />
+		<property name="cashReversionCategoryLogic">
+			<ref bean="glCashReversionCategoryLogic" />
+		</property>
+		<property name="usePriorYearInformation" value="false" />
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+	</bean>
+	
+	<bean id="glAccountReversionCurrentYearAccountProcess" class="org.kuali.kfs.gl.batch.service.impl.AccountReversionProcessImpl" scope="prototype">
+		<property name="accountReversionService" ref="accountReversionService" />
+		<property name="balanceService" ref="glBalanceService" />
+		<property name="originEntryService" ref="originEntryService" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="dateTimeService" ref="dateTimeService" />
+		<property name="priorYearAccountService" ref="priorYearAccountService" />
+		<property name="reversionUnitOfWorkService" ref="glAcctReversionUnitOfWorkService" />
+		<property name="flexibleOffsetAccountService" ref="flexibleOffsetAccountService" />
+		<property name="parameterService" ref="parameterService" />
+		<property name="configurationService" ref="kualiConfigurationService" />
+		<property name="cashReversionCategoryLogic">
+			<ref bean="glCashReversionCategoryLogic" />
+		</property>
+		<property name="usePriorYearInformation" value="false" />
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+	</bean>
+	
+	<bean id="glOrganizationReversionPriorYearAccountProcess" class="org.kuali.kfs.gl.batch.service.impl.OrganizationReversionProcessImpl" scope="prototype">
+		<property name="organizationReversionService" ref="organizationReversionService" />
+		<property name="balanceService" ref="glBalanceService" />
+		<property name="originEntryService" ref="originEntryService" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="dateTimeService" ref="dateTimeService" />
+		<property name="priorYearAccountService" ref="priorYearAccountService" />
+		<property name="orgReversionUnitOfWorkService" ref="glOrgReversionUnitOfWorkService" />
+		<property name="flexibleOffsetAccountService" ref="flexibleOffsetAccountService" />
+		<property name="parameterService" ref="parameterService" />
+		<property name="configurationService" ref="kualiConfigurationService" />
+		<property name="cashReversionCategoryLogic">
+			<ref bean="glCashReversionCategoryLogic" />
+		</property>
+		<property name="usePriorYearInformation" value="true" />
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+	</bean>
+	
+	<bean id="glAccountReversionPriorYearAccountProcess" class="org.kuali.kfs.gl.batch.service.impl.AccountReversionProcessImpl" scope="prototype">
+		<property name="accountReversionService" ref="accountReversionService" />
+		<property name="balanceService" ref="glBalanceService" />
+		<property name="originEntryService" ref="originEntryService" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="dateTimeService" ref="dateTimeService" />
+		<property name="priorYearAccountService" ref="priorYearAccountService" />
+		<property name="reversionUnitOfWorkService" ref="glOrgReversionUnitOfWorkService" />
+		<property name="flexibleOffsetAccountService" ref="flexibleOffsetAccountService" />
+		<property name="parameterService" ref="parameterService" />
+		<property name="configurationService" ref="kualiConfigurationService" />
+		<property name="cashReversionCategoryLogic">
+			<ref bean="glCashReversionCategoryLogic" />
+		</property>
+		<property name="usePriorYearInformation" value="true" />
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+	</bean>
+	
+	<bean id="glOrganizationReversionProcessService" class="org.kuali.kfs.gl.batch.service.impl.OrganizationReversionProcessServiceImpl">
+		<property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
+		<property name="configurationService" ref="kualiConfigurationService" />
+		<property name="organizationReversionReportWriterService" ref="organizationReversionReportWriterService" />
+	</bean>
+	
+	<bean id="glAccountReversionProcessService" class="org.kuali.kfs.gl.batch.service.impl.AccountReversionProcessServiceImpl">
+		<property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
+		<property name="configurationService" ref="kualiConfigurationService" />
+		<property name="accountReversionReportWriterService" ref="accountReversionReportWriterService" />
+	</bean>
+	
+	<bean id="glCollectorService" class="org.kuali.kfs.gl.batch.service.impl.CollectorServiceImpl">
+		<property name="collectorHelperService">
+			<ref bean="glCollectorHelperService" />
+		</property>
+		<property name="collectorInputFileTypes">
+			<list>
+				<ref bean="collectorXmlInputFileType" />
+				<ref bean="collectorFlatFileInputFileType" />
+			</list>
+		</property>
+		<property name="originEntryGroupService">
+			<ref bean="originEntryGroupService" />
+		</property>
+		<property name="batchInputFileService">
+		    <ref bean="batchInputFileService" />
+		</property>
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+		<property name="collectorScrubberService">
+			<ref bean="glCollectorScrubberService" />
+		</property>
+		<property name="runDateService">
+			<ref bean="glRunDateService" />
+		</property>
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+	</bean>
+	
+    <bean id="glCollectorHelperService-parentBean" class="org.kuali.kfs.gl.batch.service.impl.CollectorHelperServiceImpl" abstract="true">
+		<property name="collectorDetailService">
+			<ref bean="glCollectorDetailService" />
+		</property>
+		<property name="originEntryService">
+			<ref bean="originEntryService" />
+		</property>
+		<property name="originEntryGroupService">
+			<ref bean="originEntryGroupService" />
+		</property>
+		<property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
+		<property name="configurationService">
+			<ref bean="kualiConfigurationService" />
+		</property>
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+		<property name="collectorScrubberService">
+		    <ref bean="glCollectorScrubberService" />
+		</property>
+		<property name="batchInputFileService">
+		    <ref bean="batchInputFileService" />
+		</property>
+		<property name="accountService" ref="accountService"/>
+		<property name="preScrubberService" ref="preScrubberService"/>
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+	</bean>
+
+    <bean id="glCollectorHelperService" parent="glCollectorHelperService-parentBean" />
+
+	<bean id="glCollectorScrubberService" class="org.kuali.kfs.gl.batch.service.impl.CollectorScrubberServiceImpl">
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+		<property name="universityDateDao">
+			<ref bean="universityDateDao" />
+		</property>
+		<property name="kualiConfigurationService">
+			<ref bean="kualiConfigurationService" />
+		</property>
+		<property name="scrubberService">
+			<ref bean="glScrubberService" />
+		</property>
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+	</bean>
+	
+	<bean id="glCollectorReportService" class="org.kuali.kfs.gl.batch.service.impl.CollectorReportServiceImpl">
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+		<property name="configurationService">
+			<ref bean="kualiConfigurationService"/>
+		</property>
+		<property name="parameterService">
+			<ref bean="parameterService"/>
+		</property>
+		<property name="mailService">
+			<ref bean="mailService"/>
+		</property>
+		<property name="collectorReportWriterService">
+			<!-- this report writer should be initialized by the collectorStep bean -->
+			<ref bean="collectorReportWriterService"/>
+		</property>
+		<property name="preScrubberService" ref="preScrubberService"/>
+	</bean>
+
+	<bean id="glCashReversionCategoryLogic" class="org.kuali.kfs.gl.batch.service.impl.CashReversionCategoryLogic" />
+	
+	<bean id="genericReversionCategory" class="org.kuali.kfs.gl.batch.service.impl.GenericReversionCategory" scope="prototype"> 
+    	<property name="parameterService"> 
+        	<ref bean="parameterService" /> 
+		</property> 
+	</bean>
+
+	<bean id="glYearEndService" class="org.kuali.kfs.gl.batch.service.impl.YearEndServiceImpl">
+		<property name="originEntryService">
+			<ref bean="originEntryService" />
+		</property>
+		<property name="originEntryGroupService">
+			<ref bean="originEntryGroupService" />
+		</property>
+		<property name="encumbranceDao">
+			<ref bean="glEncumbranceDao" />
+		</property>
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+		<property name="balanceService">
+			<ref bean="glBalanceService" />
+		</property>
+		<property name="balanceTypeService">
+			<ref bean="balanceTypService" />
+		</property>
+		<property name="objectTypeService">
+			<ref bean="objectTypeService" />
+		</property>
+		<property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
+		<property name="configurationService">
+			<ref bean="kualiConfigurationService" />
+		</property>
+		<property name="priorYearAccountService">
+			<ref bean="priorYearAccountService" />
+		</property>
+		<property name="subFundGroupService">
+			<ref bean="subFundGroupService" />
+		</property>
+		<property name="persistenceService">
+			<ref bean="persistenceService" />
+		</property>
+		<property name="yearEndDao">
+			<bean class="org.kuali.kfs.gl.batch.dataaccess.impl.YearEndDaoJdbc" parent="platformAwareDaoJdbc" />
+		</property>
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+		<property name="encumbranceClosingOriginEntryGenerationService" ref="glEncumbranceClosingOriginEntryGenerationService" />
+		<property name="nominalActivityClosingReportWriterService" ref="nominalActivityClosingReportWriterService" />
+		<property name="balanceForwardReportWriterService" ref="balanceForwardReportWriterService" />
+		<property name="encumbranceClosingReportWriterService" ref="encumbranceClosingReportWriterService" />
+	</bean>
+	
+	<bean id="glEncumbranceClosingOriginEntryGenerationService" class="org.kuali.kfs.gl.batch.service.impl.EncumbranceClosingOriginEntryGenerationServiceImpl">
+		<property name="parameterService" ref="parameterService" />
+		<property name="offsetDefinitionService" ref="offsetDefinitionService" />
+		<property name="objectCodeService" ref="objectCodeService" />
+		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="flexibleOffsetAccountService" ref="flexibleOffsetAccountService" />
+		<property name="a21SubAccountService" ref="a21SubAccountService" />
+		<property name="subObjectCodeService" ref="subObjectCodeService" />
+		<property name="optionsService" ref="optionsService" />
+		<property name="subFundGroupService" ref="subFundGroupService" />
+		<property name="accountingCycleCachingService" ref="accountingCycleCachingService" />
+		<property name="businessObjectService" ref="businessObjectService" />
+	</bean>
+	
+	<bean id="scrubberProcess-parentBean" class="org.kuali.kfs.gl.batch.service.impl.ScrubberProcessImpl" abstract="true">
+	
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+		<property name="runDateService">
+			<ref bean="glRunDateService" />
+		</property>
+		<property name="accountingCycleCachingService">
+		  	<ref bean="accountingCycleCachingService" />
+		</property>
+		<property name="configurationService">
+			<ref bean="kualiConfigurationService" />
+		</property>
+		<property name="scrubberValidator">
+			<ref bean="scrubberValidator" />
+		</property>
+		<property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
+		<property name="persistenceService">
+			<ref bean="persistenceService" />
+		</property>
+		<property name="flexibleOffsetAccountService">
+			<ref bean="flexibleOffsetAccountService" />
+		</property>
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+		<property name="scrubberReportWriterService" ref="scrubberReportWriterService" />
+        <property name="scrubberLedgerReportWriterService" ref="scrubberLedgerReportWriterService" />
+	</bean>
+	
+	
+	<bean id="reportOnlyScrubberProcess" parent="scrubberProcess-parentBean" scope="prototype">
+		<property name="preScrubberService" ref="preScrubberService" />
+		<property name="scrubberReportWriterService" ref="glcpScrubberReportWriterService" />
+		<property name="scrubberLedgerReportWriterService" ref="glcpScrubberLedgerReportWriterService" />
+		<property name="scrubberListingReportWriterService" ref="glcpScrubberListingReportWriterService" />
+		<property name="preScrubberReportWriterService" ref="glcpPreScrubberReportWriterService" />
+	</bean>
+	
+	<bean id="scrubberProcess" parent="scrubberProcess-parentBean" scope="prototype">
+		
+        <property name="scrubberBadBalanceListingReportWriterService" ref="scrubberBadBalanceListingReportWriterService" />
+	
+	</bean>
+	
+	<bean id="demergerScrubberProcess" parent="scrubberProcess-parentBean" scope="prototype">
+		
+        <property name="scrubberBadBalanceListingReportWriterService" ref="scrubberBadBalanceListingReportWriterService" />
+		<property name="demergerReportWriterService" ref="demergerReportWriterService" />
+		<property name="demergerRemovedTransactionsListingReportWriterService" ref="demergerRemovedTransactionsListingReportWriterService" />
+	
+	</bean>
+	
+	<bean id="batchScrubberProcess" parent="scrubberProcess-parentBean" scope="prototype">
+	
+        <property name="scrubberBadBalanceListingReportWriterService" ref="scrubberBadBalanceListingReportWriterService" />
+        
+	</bean>
+
+	<bean id="glScrubberService" class="org.kuali.kfs.gl.service.impl.ScrubberServiceImpl">
+		<property name="scrubberProcess">
+			<ref bean="scrubberProcess"/>
+		</property>		
+		<property name="demergerScrubberProcess">
+			<ref bean="demergerScrubberProcess"/>
+		</property>
+		<property name="reportOnlyScrubberProcess">
+			<ref bean="reportOnlyScrubberProcess"/>
+		</property>	
+		
+	</bean>
+	
+	<bean id="scrubberValidator" class="org.kuali.kfs.gl.service.impl.ScrubberValidatorImpl">
+		<property name="persistenceService">
+			<ref bean="persistenceService" />
+		</property>
+		<property name="kualiConfigurationService">
+			<ref bean="kualiConfigurationService" />
+		</property>
+		<property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
+		<property name="universityDateDao">
+			<ref bean="universityDateDao" />
+		</property>
+		<property name="originationCodeService">
+			<ref bean="originationCodeService" />
+		</property>
+		<property name="accountService">
+			<ref bean="accountService" />
+		</property>
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService"/>
+		</property>
+		<property name="balanceTypService">
+			<ref bean="balanceTypService" />
+		</property>
+	</bean>
+
+	<bean id="glSufficientFundsFullRebuildService" class="org.kuali.kfs.gl.batch.service.impl.SufficientFundsFullRebuildServiceImpl">
+		<property name="sufficientFundRebuildDao">
+			<ref bean="glSufficientFundRebuildDao" />
+		</property>
+	</bean>
+	
+	<bean id="sufficientFundRebuildReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${reports.directory}/gl"/>
+		<property name="fileNamePrefix" value="sufficient_funds_"/>
+        <property name="title" value="SUFFICIENT FUNDS REBUILDER REPORT"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.SufficientFundRebuild" value="sufficientFundRebuildReportHelper"/>
+        	</map>
+        </property>
+    </bean>
+
+	<bean id="glSufficientFundsAccountUpdateService" class="org.kuali.kfs.gl.batch.service.impl.SufficientFundsAccountUpdateServiceImpl">
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+		<property name="kualiConfigurationService">
+			<ref bean="kualiConfigurationService" />
+		</property>
+		<property name="balanceDao">
+			<ref bean="glBalanceDao" />
+		</property>
+		<property name="sufficientFundBalancesDao">
+			<ref bean="glSufficientFundBalancesDao" />
+		</property>
+		<property name="sufficientFundRebuildDao">
+			<ref bean="glSufficientFundRebuildDao" />
+		</property>
+		<property name="optionsDao">
+			<ref bean="optionsDao" />
+		</property>
+		<property name="businessObjectService">
+			<ref bean="businessObjectService"/>
+		</property>
+		<property name="reportWriterService" ref="sufficientFundRebuildReportWriterService" />
+		<property name="accountService">
+			<ref bean="accountService" />
+		</property>
+		<property name="sufficientFundsService">
+			<ref bean="sufficientFundsService" />
+		</property>
+	</bean>
+
+	<bean id="glPosterService" abstract="true" class="org.kuali.kfs.gl.batch.service.impl.PosterServiceImpl">
+		<property name="transactionPosters">
+			<list>
+				<ref bean="glPostGlEntry" />
+				<ref bean="glPostGlAccountBalance" />
+				<ref bean="glPostSufficientFundBalances" />
+				<ref bean="glPostReversal" />
+				<ref bean="glPostEncumbrance" />
+				<ref bean="glPostExpenditureTransaction" />
+				<ref bean="glPostBalance" />
+			</list>
+		</property>
+		<property name="flexibleOffsetAccountService">
+			<ref bean="flexibleOffsetAccountService" />
+		</property>
+		<property name="verifyTransaction">
+			<ref bean="glVerifyTransaction" />
+		</property>
+		<property name="originEntryService">
+			<ref bean="originEntryService" />
+		</property>
+		<property name="originEntryGroupService">
+			<ref bean="originEntryGroupService" />
+		</property>
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+		<property name="reversalDao">
+			<ref bean="glReversalDao" />
+		</property>
+		<property name="universityDateDao">
+			<ref bean="universityDateDao" />
+		</property>
+		<property name="accountingPeriodService">
+			<ref bean="accountingPeriodService" />
+		</property>
+		<property name="expenditureTransactionDao">
+			<ref bean="glExpenditureTransactionDao" />
+		</property>
+		<property name="indirectCostRecoveryRateDetailDao">
+			<ref bean="indirectCostRecoveryRateDetailDao" />
+		</property>
+		<property name="objectCodeService">
+			<ref bean="objectCodeService" />
+		</property>
+		<property name="configurationService">
+			<ref bean="kualiConfigurationService" />
+		</property>
+		<property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
+		<property name="runDateService">
+			<ref bean="glRunDateService"/>
+		</property>
+		<property name="subAccountService">
+			<ref bean="subAccountService"/>
+		</property>
+		<property name="offsetDefinitionService">
+			<ref bean="offsetDefinitionService"/>
+		</property>
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService"/>
+		</property>
+		<property name="businessObjectService">
+			<ref bean="businessObjectService"/>
+		</property>
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+		<property name="accountingCycleCachingService">
+		  	<ref bean="accountingCycleCachingService" />
+		</property>
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+	</bean>
+
+	<bean id="glPosterEntriesService" parent="glPosterService">
+		<property name="reportWriterService">
+			<ref bean="posterReportWriterService" />
+		</property>
+		<property name="errorListingReportWriterService">
+			<ref bean="posterErrorListingReportWriterService" />
+		</property>
+		<property name="ledgerSummaryReportWriterService">
+			<ref bean="posterLedgerSummaryReportWriterService" />
+		</property>
+	</bean>
+
+	<bean id="glPosterIndirectCostRecoveryEntriesService" parent="glPosterService">
+		<property name="reportWriterService">
+			<ref bean="posterIndirectCostRecoveryEntriesReportWriterService" />
+		</property>
+		<property name="errorListingReportWriterService">
+			<ref bean="posterIndirectCostRecoveryEntriesErrorListingReportWriterService" />
+		</property>
+		<property name="ledgerSummaryReportWriterService">
+			<ref bean="posterIndirectCostRecoveryEntriesLedgerSummaryReportWriterService" />
+		</property>
+	</bean>
+	
+	<bean id="glPosterReversalService" parent="glPosterService">
+		<property name="reportWriterService">
+			<ref bean="posterReversalReportWriterService" />
+		</property>
+		<property name="errorListingReportWriterService">
+			<ref bean="posterReversalErrorListingReportWriterService" />
+		</property>
+		<property name="reversalReportWriterService">
+			<ref bean="posterReversalListingReportWriterService" />
+		</property>
+		<property name="ledgerSummaryReportWriterService">
+			<ref bean="posterReversalLedgerSummaryReportWriterService" />
+		</property>
+	</bean>
+	
+	<bean id="glPosterIndirectCostRecoveryGenerationService" parent="glPosterService">
+		<property name="reportWriterService">
+			<ref bean="posterIndirectCostRecoveryGenerationReportWriterService" />
+		</property>
+	</bean>
+	
+    <bean id="glBalancingService" class="org.kuali.kfs.gl.batch.service.impl.BalancingServiceImpl">
+		<property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
+        <property name="kualiConfigurationService">
+            <ref bean="kualiConfigurationService" />
+        </property>
+        <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property>
+        <property name="dateTimeService">
+            <ref bean="dateTimeService" />
+        </property>
+        <property name="universityDateService">
+            <ref bean="universityDateService" />
+        </property>
+        <property name="ledgerBalancingDao">
+            <ref bean="glLedgerBalancingDao" />
+        </property>
+        <property name="ledgerEntryBalancingDao">
+            <ref bean="glEntryDao" />
+        </property>
+        <property name="ledgerBalanceBalancingDao">
+            <ref bean="glBalanceDao" />
+        </property>
+        <property name="ledgerBalanceHistoryBalancingDao">
+            <ref bean="glBalanceHistoryDao" />
+        </property>
+        <property name="ledgerEntryHistoryBalancingDao">
+            <ref bean="glEntryHistoryDao" />
+        </property>
+        <property name="balancingDao">
+            <ref bean="glBalancingDao" />
+        </property>
+        <property name="accountBalanceDao">
+            <ref bean="glAccountBalanceDao" />
+        </property>
+        <property name="encumbranceDao">
+            <ref bean="glEncumbranceDao" />
+        </property>
+        <property name="reportWriterService">
+            <ref bean="balancingReportWriterService" />
+        </property>
+        <property name="ledgerEntryBalanceCachingDao">
+        	<ref bean="glLedgerEntryBalanceCachingDao" />
+        </property>
+        
+        <property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+    </bean>
+
+	<bean id="glEntryService" class="org.kuali.kfs.gl.service.impl.EntryServiceImpl">
+		<property name="entryDao">
+			<ref bean="glEntryDao" />
+		</property>
+	</bean>
+
+	<bean id="glBalanceService" class="org.kuali.kfs.gl.service.impl.BalanceServiceImpl">
+		<property name="balanceDao">
+			<ref bean="glBalanceDao" />
+		</property>
+		<property name="optionsService">
+			<ref bean="optionsService" />
+		</property>
+
+	</bean>
+
+	<bean id="glAccountBalanceService" class="org.kuali.kfs.gl.service.impl.AccountBalanceServiceImpl">
+		<property name="accountBalanceDao">
+			<ref bean="glAccountBalanceDao" />
+		</property>
+		<property name="kualiConfigurationService">
+			<ref bean="kualiConfigurationService" />
+		</property>
+	</bean>
+
+	<bean id="glEncumbranceService" class="org.kuali.kfs.gl.service.impl.EncumbranceServiceImpl">
+		<property name="encumbranceDao">
+			<ref bean="glEncumbranceDao" />
+		</property>
+	</bean>
+
+	<bean id="originEntryService" class="org.kuali.kfs.gl.service.impl.OriginEntryServiceImpl">
+		<property name="originEntryGroupService">
+			<ref bean="originEntryGroupService" />
+		</property>
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+	</bean>
+	
+	<bean id="reversalService" class="org.kuali.kfs.gl.service.impl.ReversalServiceImpl">
+		<property name="reversalDao">
+			<ref bean="glReversalDao" />
+		</property>
+		<property name="accountingPeriodService">
+			<ref bean="accountingPeriodService" />
+		</property>
+		<property name="universityDateService">
+			<ref bean="universityDateService" />
+		</property>
+	</bean>
+
+	<bean id="originEntryGroupService" class="org.kuali.kfs.gl.service.impl.OriginEntryGroupServiceImpl">
+<!-- 	
+		<property name="originEntryGroupDao">
+			<ref bean="glOriginEntryGroupDao" />
+		</property>
+		<property name="originEntryDao">
+			<ref bean="originEntryDao" />
+		</property>
+
+ -->
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+		<property name="kualiModuleService">
+            <ref bean="kualiModuleService" />
+        </property>
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+		<property name="batchLaborFileDirectoryName" value="${staging.directory}/ld/originEntry"/>
+	</bean>
+
+	<bean id="glNightlyOutService" class="org.kuali.kfs.gl.batch.service.impl.NightlyOutServiceImpl">
+		<property name="generalLedgerPendingEntryService">
+			<ref bean="generalLedgerPendingEntryService" />
+		</property>
+		<property name="originEntryService">
+			<ref bean="originEntryService" />
+		</property>
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+		<property name="originEntryGroupService">
+			<ref bean="originEntryGroupService" />
+		</property>
+		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="pendingEntryListReportWriterService" ref="generalLegerPendingEntryListReportWriterService" />
+		<property name="pendingEntrySummaryReportWriterService" ref="generalLegerPendingEntryLedgerReportWriterService" />
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+	</bean>
+
+	<bean id="glCollectorDetailService" class="org.kuali.kfs.gl.service.impl.CollectorDetailServiceImpl">
+		<property name="collectorDetailDao">
+			<ref bean="glCollectorDetailDao" />
+		</property>
+	</bean>
+
+	<bean id="glPostGlEntry" class="org.kuali.kfs.gl.batch.service.impl.PostEntry">
+		<property name="accountingCycleCachingService">
+		  	<ref bean="accountingCycleCachingService" />
+		</property>
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+	</bean>
+
+	<bean id="glPostBalance" class="org.kuali.kfs.gl.batch.service.impl.PostBalance">
+		<property name="accountingCycleCachingService">
+		  	<ref bean="accountingCycleCachingService" />
+		</property>
+	</bean>
+
+	<bean id="glPostGlAccountBalance" class="org.kuali.kfs.gl.batch.service.impl.PostAccountBalance">
+		<property name="accountingCycleCachingService">
+		  	<ref bean="accountingCycleCachingService" />
+		</property>
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+	</bean>
+
+	<bean id="glPostSufficientFundBalances" class="org.kuali.kfs.gl.batch.service.impl.PostSufficientFundBalances">
+		<property name="accountingCycleCachingService">
+		  	<ref bean="accountingCycleCachingService" />
+		</property>
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+	</bean>
+
+	<bean id="glPostReversal" class="org.kuali.kfs.gl.batch.service.impl.PostReversal">
+		<property name="accountingCycleCachingService">
+		  	<ref bean="accountingCycleCachingService" />
+		</property>
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+	</bean>
+
+	<bean id="glPostEncumbrance" class="org.kuali.kfs.gl.batch.service.impl.PostEncumbrance">
+		<property name="accountingCycleCachingService">
+		  	<ref bean="accountingCycleCachingService" />
+		</property>
+        <property name="dateTimeService">
+        	<ref bean="dateTimeService"/>
+        </property>
+        <property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="parameterService">
+			<ref bean="parameterService"/>
+		</property>
+	</bean>
+
+	<bean id="glPostExpenditureTransaction" class="org.kuali.kfs.gl.batch.service.impl.PostExpenditureTransaction">
+		<property name="indirectCostRecoveryExclusionAccountDao">
+			<ref bean="indirectCostRecoveryExclusionAccountDao" />
+		</property>
+		<property name="indirectCostRecoveryExclusionTypeDao">
+			<ref bean="indirectCostRecoveryExclusionTypeDao" />
+		</property>
+		<property name="accountingCycleCachingService">
+		  	<ref bean="accountingCycleCachingService" />
+		</property>
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="parameterService" ref="parameterService" />
+	</bean>
+
+	<bean id="glIcrTransaction" class="org.kuali.kfs.gl.batch.service.impl.PostExpenditureTransaction">
+		<property name="indirectCostRecoveryExclusionAccountDao">
+			<ref bean="indirectCostRecoveryExclusionAccountDao" />
+		</property>
+		<property name="indirectCostRecoveryExclusionTypeDao">
+			<ref bean="indirectCostRecoveryExclusionTypeDao" />
+		</property>
+	</bean>
+
+	<bean id="glVerifyTransaction" class="org.kuali.kfs.gl.batch.service.impl.VerifyTransactionImpl">
+		<property name="kualiConfigurationService">
+			<ref bean="kualiConfigurationService" />
+		</property>
+	</bean>
+
+	<bean id="glAccountBalanceDao" parent="platformAwareDao" class="org.kuali.kfs.gl.dataaccess.impl.AccountBalanceDaoOjb">
+		<property name="accountBalanceConsolidationDao" ref="glAccountBalanceConsolidationDao" />
+		<property name="accountBalanceLevelDao" ref="glAccountBalanceLevelDao" />
+		<property name="accountBalanceObjectDao" ref="glAccountBalanceObjectDao" />
+	</bean>
+
+	<bean id="glAccountBalanceDaoBase" parent="platformAwareDaoJdbc" class="org.kuali.kfs.gl.dataaccess.impl.AccountBalanceDaoJdbcBase">
+		<property name="optionsService">
+			<ref bean="optionsService" />
+		</property>
+		<property name="universityDateService">
+			<ref bean="universityDateService" />
+		</property>
+	</bean>
+
+	<bean id="glAccountBalanceConsolidationDao" parent="glAccountBalanceDaoBase" class="org.kuali.kfs.gl.dataaccess.impl.AccountBalanceConsolidationDaoJdbc">
+	</bean>
+
+	<bean id="glAccountBalanceLevelDao" parent="glAccountBalanceDaoBase" class="org.kuali.kfs.gl.dataaccess.impl.AccountBalanceLevelDaoJdbc">
+	</bean>
+	
+	<bean id="glAccountBalanceObjectDao" parent="glAccountBalanceDaoBase" class="org.kuali.kfs.gl.dataaccess.impl.AccountBalanceObjectDaoJdbc">
+	</bean>
+
+	<bean id="glSufficientFundBalancesDao" parent="platformAwareDao" class="org.kuali.kfs.gl.dataaccess.impl.SufficientFundBalancesDaoOjb" />
+
+	<bean id="glEntryDao" parent="platformAwareDao" class="org.kuali.kfs.gl.dataaccess.impl.EntryDaoOjb" />
+
+	<bean id="glEntryHistoryDao" parent="platformAwareDao" class="org.kuali.kfs.gl.dataaccess.impl.EntryHistoryDaoOjb" />
+
+	<bean id="glBalanceHistoryDao" parent="platformAwareDao" class="org.kuali.kfs.gl.dataaccess.impl.BalanceHistoryDaoOjb" />
+	
+	<bean id="glLedgerEntryBalanceCachingDao" parent="platformAwareDaoJdbc" class="org.kuali.kfs.gl.batch.dataaccess.impl.LedgerEntryBalanceCachingDaoJdbc">
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="universityDateService">
+			<ref bean="universityDateService" />
+		</property>
+	</bean>
+
+	<bean id="glLedgerBalancingDao" parent="platformAwareDaoJdbc" class="org.kuali.kfs.gl.dataaccess.impl.BalancingDaoJdbc" />
+
+	<bean id="glBalancingDao" parent="platformAwareDaoJdbc" class="org.kuali.kfs.gl.dataaccess.impl.BalancingDaoJdbc" />
+
+	<bean id="glEncumbranceDao" parent="platformAwareDao" class="org.kuali.kfs.gl.dataaccess.impl.EncumbranceDaoOjb" />
+
+	<bean id="glOptionsDao" parent="platformAwareDao" class="org.kuali.kfs.sys.dataaccess.impl.OptionsDaoOjb" />
+
+	<bean id="originEntryDao" parent="platformAwareDao" class="org.kuali.kfs.gl.dataaccess.impl.OriginEntryDaoOjb">
+		<property name="entryClass" value="org.kuali.kfs.gl.businessobject.OriginEntryFull"/>
+   			</bean>
+
+<!--	
+	<bean id="glOriginEntryGroupDao" parent="platformAwareDao" class="org.kuali.kfs.gl.dataaccess.impl.OriginEntryGroupDaoOjb" />
+-->
+	<bean id="glBalanceDao" parent="platformAwareDao" class="org.kuali.kfs.gl.dataaccess.impl.BalanceDaoOjb">
+		<property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
+		<property name="optionsService">
+			<ref bean="optionsService" />
+		</property>
+		<property name="balanceTypService">
+			<ref bean="balanceTypService" />
+		</property>
+	</bean>
+
+	<bean id="glExpenditureTransactionDao" parent="platformAwareDao" class="org.kuali.kfs.gl.dataaccess.impl.ExpenditureTransactionDaoOjb" />
+	
+	<bean id="glExpenditureTransactionService" class="org.kuali.kfs.gl.service.impl.ExpenditureTransactionServiceImpl">
+		<property name="expenditureTransactionDao">
+			<ref bean="glExpenditureTransactionDao" />
+		</property>
+	</bean>
+	
+	<bean id="glReversalDao" parent="platformAwareDao" class="org.kuali.kfs.gl.dataaccess.impl.ReversalDaoOjb" />
+
+	<bean id="glSufficientFundRebuildDao" parent="platformAwareDaoJdbc" class="org.kuali.kfs.gl.dataaccess.impl.SufficientFundRebuildDaoJdbc" />
+
+	<bean id="glCollectorDetailDao" parent="platformAwareDao" class="org.kuali.kfs.gl.dataaccess.impl.CollectorDetailDaoOjb" />
+
+	<bean id="glCorrectionDocumentDao" parent="platformAwareDao" class="org.kuali.kfs.gl.document.dataaccess.impl.CorrectionDocumentDaoOjb" />
+	
+	<!-- SUFFICIENT FUNDS SERVICE/DAO -->
+	<bean id="sufficientFundsService" class="org.kuali.kfs.gl.service.impl.SufficientFundsServiceImpl">
+		<property name="accountService">
+			<ref bean="accountService" />
+		</property>
+		<property name="objectLevelService">
+			<ref bean="objectLevelService" />
+		</property>
+		 <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property>
+		<property name="kualiConfigurationService">
+			<ref bean="kualiConfigurationService" />
+		</property>
+		<property name="sufficientFundsDao">
+			<ref bean="glSufficientFundsDao" />
+		</property>
+		<property name="sufficientFundBalancesDao">
+			<ref bean="glSufficientFundBalancesDao" />
+		</property>
+		<property name="optionsService">
+			<ref bean="optionsService" />
+		</property>
+		<property name="generalLedgerPendingEntryService">
+			<ref bean="generalLedgerPendingEntryService" />
+		</property>
+	</bean>
+
+	<bean id="glSufficientFundsDao" parent="platformAwareDao" class="org.kuali.kfs.gl.batch.dataaccess.impl.SufficientFundsDaoOjb" />
+
+	<bean id="correctionDocumentService" class="org.kuali.kfs.gl.document.service.impl.CorrectionDocumentServiceImpl">
+		<property name="correctionChangeGroupDao">
+			<ref bean="glCorrectionChangeGroupDao" />
+		</property>
+		<property name="correctionChangeDao">
+			<ref bean="glCorrectionChangeDao" />
+		</property>
+		<property name="correctionDocumentDao">
+			<ref bean="glCorrectionDocumentDao" />
+		</property>
+		<property name="correctionCriteriaDao">
+			<ref bean="glCorrectionCriteriaDao" />
+		</property>
+		<property name="documentDao">
+			<ref bean="documentDao" />
+		</property>
+		<property name="originEntryService">
+			<ref bean="originEntryService" />
+		</property>
+		<property name="originEntryGroupService">
+			<ref bean="originEntryGroupService" />
+		</property>
+		<property name="glCorrectionDocumentReportWriterService">
+			<ref bean="generalLedgerCorrectionReportWriterService" />
+		</property>		
+		<property name="glcpDirectoryName" value="${staging.directory}/gl/correctionProcess"/>
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+		<property name="temporaryReportsDirectory" value="${temp.directory}"/>
+		<property name="temporaryReportFilenameComponent" value="glcp-scrubberReports-"/>
+		<property name="temporaryReportFilenameSuffix" value=".txt"/>
+		<property name="reportsDirectory" value="${reports.directory}/gl"/>
+		<property name="reportFilenamePrefix" value="glcp_"/>
+		<property name="reportFilenameSuffix" value=".txt"/>
+		<property name="dateTimeService" ref="dateTimeService"/>
+		<property name="reportAggregatorService" ref="reportAggregatorService"/>
+	</bean>
+
+	<bean id="glCorrectionChangeDao" parent="platformAwareDao" class="org.kuali.kfs.gl.dataaccess.impl.CorrectionChangeDaoOjb" />
+
+	<bean id="glCorrectionChangeGroupDao" parent="platformAwareDao" class="org.kuali.kfs.gl.dataaccess.impl.CorrectionChangeGroupDaoOjb" />
+
+	<bean id="glCorrectionCriteriaDao" parent="platformAwareDao" class="org.kuali.kfs.gl.dataaccess.impl.CorrectionCriteriaDaoOjb" />
+
+	<bean id="testDateTimeService" class="org.kuali.rice.kns.service.impl.ConfigurableDateTimeServiceImpl" />
+
+	<bean id="collectorJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="collectorStep" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="nightlyOutJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="nightlyOutStep" />
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+				<entry key="processPdpCancelsAndPaidJob" value="hardDependency"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="scrubberJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="createBackupGroupStep" />
+				<ref bean="preScrubberStep" />
+				<ref bean="scrubberSortStep" />
+				<ref bean="scrubberStep" />
+				<ref bean="demergerSortStep" />
+				<ref bean="demergerStep" />
+				<ref bean="aggregateGlScrubberReportsStep"/>
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+				<entry key="enterpriseFeedJob" value="hardDependency"/>
+				<entry key="collectorJob" value="softDependency" />
+				<entry key="nightlyOutJob" value="hardDependency" />
+				<entry key="clearLaborPendingEntriesJob" value="hardDependency" />
+				<entry key="pdpExtractGlTransactionsStepJob" value="hardDependency" />
+			</map>
+		</property>
+	</bean>	
+
+	<bean id="posterJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="posterSortStep" />
+				<ref bean="posterEntriesStep" />
+				<ref bean="posterReversalStep" />
+				<ref bean="posterIndirectCostRecoveryGenerationStep" />
+				<ref bean="icrSortStep" />
+				<ref bean="posterIndirectCostRecoveryEntriesStep" />
+				<ref bean="fileRenameStep" />
+				<ref bean="posterSummaryReportStep" />
+				<ref bean="aggregateGlPosterReportsStep" />
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+				<entry key="scrubberJob" value="hardDependency" />
+				<entry key="sufficientFundsAccountUpdateJob" value="hardDependency" />
+			</map>
+		</property>
+	</bean>
+	
+    <bean id="balancingReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${reports.directory}/gl"/>
+		<property name="fileNamePrefix" value="balancing_"/>
+        <property name="title" value="General Ledger Balancing Report"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.AccountBalanceHistory" value="accountBalanceHistoryReportHelper"/>
+        		<entry key="org.kuali.kfs.gl.businessobject.EncumbranceHistory" value="encumbranceHistoryReportHelper"/>
+        		<entry key="org.kuali.kfs.gl.businessobject.OriginEntryFull" value="transactionReportHelper"/>
+        		<entry key="org.kuali.kfs.gl.businessobject.EntryHistory" value="ledgerEntryHistoryReportHelper"/>
+        		<entry key="org.kuali.kfs.gl.businessobject.BalanceHistory" value="ledgerBalanceHistoryReportHelper"/>
+        	</map>
+        </property>
+    </bean>
+	
+	<bean id="posterBalancingStep" class="org.kuali.kfs.gl.batch.PosterBalancingStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="balancingReportWriterService" />
+			</list>
+		</property>
+		<property name="balancingService">
+			<ref bean="glBalancingService" />
+		</property>
+	</bean>
+	
+	<bean id="posterBalancingJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="posterBalancingStep"/>
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+				<entry key="posterJob" value="hardDependency" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="posterBalancingHistorySyncStep" class="org.kuali.kfs.gl.batch.PosterBalancingHistorySyncStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="balancingReportWriterService" />
+			</list>
+		</property>
+		<property name="balancingService">
+			<ref bean="glBalancingService" />
+		</property>
+	</bean>
+	
+	<bean id="posterBalancingHistorySyncJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="posterBalancingHistorySyncStep"/>
+				<ref bean="posterBalancingStep"/>
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+				<entry key="posterJob" value="hardDependency" />
+			</map>
+		</property>
+	</bean>
+	
+	
+	<bean id="sufficientFundsAccountUpdateJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="sufficientFundsAccountUpdateStep" />
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+				<entry key="nightlyOutJob" value="hardDependency" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="clearPendingEntriesJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="clearPendingEntriesStep" />
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+				<entry key="posterJob" value="hardDependency" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="createBackupGroupStep" class="org.kuali.kfs.gl.batch.CreateBackupGroupStep" parent="step">
+		<property name="originEntryGroupService">
+			<ref bean="originEntryGroupService" />
+		</property>
+	</bean>
+	
+<!--	<bean id="clearOldOriginEntriesJob" parent="unscheduledJobDescriptor">-->
+<!--		<property name="steps">-->
+<!--			<list>-->
+<!--				<ref bean="clearOldOriginEntryStep" />-->
+<!--			</list>-->
+<!--		</property>		-->
+<!--	</bean>-->
+	
+	<bean id="manualPurgeJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="purgeEntryStep" />
+				<ref bean="purgeBalanceStep" />
+				<ref bean="purgeSufficientFundBalancesStep" />
+				<ref bean="purgeEncumbranceStep" />
+				<ref bean="purgeAccountBalancesStep" />
+				<ref bean="purgeCollectorDetailStep" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="encumbranceForwardJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="encumbranceForwardStep" />
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+				<entry key="posterJob" value="hardDependency" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="balanceForwardJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="balanceForwardStep" />
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+				<entry key="posterJob" value="hardDependency" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="nominalActivityClosingJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="nominalActivityClosingStep" />
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+				<entry key="posterJob" value="hardDependency" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="organizationReversionPriorYearAccountJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="organizationReversionPriorYearAccountStep" />
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+				<entry key="posterJob" value="hardDependency" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="accountReversionPriorYearAccountJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="accountReversionPriorYearAccountStep" />
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+				<entry key="posterJob" value="hardDependency" />
+			</map>
+		</property>
+	</bean>  
+		
+	<bean id="organizationReversionCurrentYearAccountJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="organizationReversionCurrentYearAccountStep" />
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+				<entry key="posterJob" value="hardDependency" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="accountReversionCurrentYearAccountJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="accountReversionCurrentYearAccountStep" />
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+				<entry key="posterJob" value="hardDependency" />
+			</map>
+		</property>
+	</bean>
+		
+	<bean id="purgeEntryStep" class="org.kuali.kfs.gl.batch.PurgeEntryStep" parent="step">
+		<property name="entryService">
+			<ref bean="glEntryService" />
+		</property>
+		<property name="chartService">
+			<ref bean="chartService" />
+		</property>
+	</bean>
+
+	<bean id="purgeBalanceStep" class="org.kuali.kfs.gl.batch.PurgeBalanceStep" parent="step">
+		<property name="balanceService">
+			<ref bean="glBalanceService" />
+		</property>
+		<property name="chartService">
+			<ref bean="chartService" />
+		</property>
+	</bean>
+
+	<bean id="purgeSufficientFundBalancesStep" class="org.kuali.kfs.gl.batch.PurgeSufficientFundBalancesStep" parent="step">
+		<property name="sufficientFundsService">
+			<ref bean="sufficientFundsService" />
+		</property>
+		<property name="chartService">
+			<ref bean="chartService" />
+		</property>
+	</bean>
+
+	<bean id="purgeEncumbranceStep" class="org.kuali.kfs.gl.batch.PurgeEncumbranceStep" parent="step">
+		<property name="encumbranceService">
+			<ref bean="glEncumbranceService" />
+		</property>
+		<property name="chartService">
+			<ref bean="chartService" />
+		</property>
+	</bean>
+
+	<bean id="purgeAccountBalancesStep" class="org.kuali.kfs.gl.batch.PurgeAccountBalancesStep" parent="step">
+		<property name="accountBalanceService">
+			<ref bean="glAccountBalanceService" />
+		</property>
+		<property name="chartService">
+			<ref bean="chartService" />
+		</property>
+	</bean>
+
+	<bean id="purgeCollectorDetailStep" class="org.kuali.kfs.gl.batch.PurgeCollectorDetailStep" parent="step">
+		<property name="collectorDetailService">
+			<ref bean="glCollectorDetailService" />
+		</property>
+		<property name="chartService">
+			<ref bean="chartService" />
+		</property>
+	</bean>
+
+	<bean id="sufficientFundsAccountUpdateStep" class="org.kuali.kfs.gl.batch.SufficientFundsAccountUpdateStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="sufficientFundRebuildReportWriterService" />
+			</list>
+		</property>
+		<property name="sufficientFundsAccountUpdateService">
+			<ref bean="glSufficientFundsAccountUpdateService" />
+		</property>
+	</bean>
+	
+	<bean id="demergerStep" class="org.kuali.kfs.gl.batch.DemergerStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="demergerReportWriterService" />
+				<ref bean="demergerRemovedTransactionsListingReportWriterService" />
+			</list>
+		</property>
+		<property name="scrubberService">
+			<ref bean="glScrubberService" />
+		</property>
+	</bean>
+	
+	<bean id="aggregateGlScrubberReportsStep" class="org.kuali.kfs.sys.batch.ReportAggregationStep">
+	    <property name="outputFilePath" value="${reports.directory}/gl"/>
+	    <property name="outputFilePrefix" value="scrubberJob_"/>
+	    <property name="outputFileSuffix" value=".txt"/>
+	    <property name="inputFilePath" value="${temp.directory}"/>
+	    <property name="inputFilePrefix" value="scrubberJobReport-"/>
+	    <property name="inputFileSuffix" value=".txt"/>
+	    <property name="reportAggregatorService" ref="reportAggregatorService"/>
+	</bean>
+	
+	<bean id="aggregateGlPosterReportsStep" class="org.kuali.kfs.sys.batch.ReportAggregationStep">
+	    <property name="outputFilePath" value="${reports.directory}/gl"/>
+	    <property name="outputFilePrefix" value="posterJob_"/>
+	    <property name="outputFileSuffix" value=".txt"/>
+	    <property name="inputFilePath" value="${temp.directory}"/>
+	    <property name="inputFilePrefix" value="posterJob_"/>
+	    <property name="inputFileSuffix" value=".txt"/>
+	    <property name="reportAggregatorService" ref="reportAggregatorService"/>
+	</bean>
+	
+	<bean id="scrubberSortStep" class="org.kuali.kfs.gl.batch.ScrubberSortStep" parent="step">
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+	</bean>
+	
+	<bean id="demergerSortStep" class="org.kuali.kfs.gl.batch.DemergerSortStep" parent="step">
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+	</bean>
+
+	<bean id="posterSortStep" class="org.kuali.kfs.gl.batch.PosterSortStep" parent="step">
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+	</bean>
+	
+	<bean id="icrSortStep" class="org.kuali.kfs.gl.batch.IcrSortStep" parent="step">
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+	</bean>
+	
+	<bean id="fileRenameStep" class="org.kuali.kfs.gl.batch.FileRenameStep" parent="step">
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+	</bean>
+	
+	<bean id="demergerReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="scrubberJobReport-02-demerger_report"/>
+        <property name="title" value="GL DEMERGER REPORT"/>
+        <property name="aggregationModeOn" value="true"/>
+        <!-- the report does not print out BO's, therefore classToBusinessObjectReportHelperBeanNames not needed-->
+    </bean>
+    
+    <bean id="scrubberReportWriterService" class="org.kuali.kfs.sys.service.impl.ScrubberListingReportWriterTextServiceImpl" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="scrubberJobReport-01-scrubber"/>
+        <property name="title" value="GL SCRUBBER REPORT"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.OriginEntryFull" value="transactionReportHelper"/>
+        	</map>
+        </property>
+        <property name="aggregationModeOn" value="true"/>
+    </bean>
+    
+    <bean id="glcpScrubberReportWriterService" parent="scrubberReportWriterService">
+		<property name="fileNamePrefix" value="glcp-scrubberReports-03-scrubber"/>
+    </bean>
+    
+    <bean id="scrubberLedgerReportWriterService" class="org.kuali.kfs.sys.service.impl.ScrubberListingReportWriterTextServiceImpl" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="scrubberJobReport-05-scrubber_ledger"/>
+        <property name="title" value="Ledger Report"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+        	</map>
+        </property>
+        <property name="aggregationModeOn" value="true"/>
+    </bean>
+
+    <bean id="glcpScrubberLedgerReportWriterService" parent="scrubberLedgerReportWriterService">
+		<property name="fileNamePrefix" value="glcp-scrubberReports-05-scrubber_ledger"/>
+	</bean>
+    
+    <bean id="scrubberReportOnlyWriterService" class="org.kuali.kfs.sys.service.impl.ScrubberListingReportWriterTextServiceImpl" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="glcp-scrubberReports-02-scrubber_reportOnly"/>
+        <property name="title" value="GL SCRUBBER REPORT"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.OriginEntryFull" value="transactionReportHelper"/>
+        	</map>
+        </property>
+        <property name="aggregationModeOn" value="true"/>
+    </bean>
+
+    <bean id="collectorReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${reports.directory}/gl"/>
+		<property name="fileNamePrefix" value="collector_"/>
+        <property name="title" value="Collector Reports"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.OriginEntryFull" value="transactionReportHelper"/>
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+        	</map>
+        </property>
+    </bean>
+	
+	<bean id="scrubberStep" class="org.kuali.kfs.gl.batch.ScrubberStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="accountingCycleCachingService" />
+				<ref bean="scrubberBadBalanceListingReportWriterService" />
+			</list>
+		</property>
+		<property name="scrubberService" ref="glScrubberService" />
+	</bean>
+
+	<bean id="posterReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="posterJob_01_poster_main"/>
+        <property name="title" value="GL POSTER REPORT (MAIN)"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.OriginEntryFull" value="transactionReportHelper"/>
+        		<entry key="org.kuali.kfs.gl.businessobject.Reversal" value="transactionReportHelper"/>
+        	</map>
+       	</property>
+       	<property name="aggregationModeOn" value="true"/>
+    </bean>
+
+	<bean id="posterErrorListingReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="posterJob_02_poster_main_error_list"/>
+        <property name="title" value="Main Poster Error Transaction Listing"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.OriginEntryFull" value="transactionListingReportHelper"/>
+        	</map>
+       	</property>
+       	<property name="aggregationModeOn" value="true"/>
+    </bean>
+    
+    <bean id="posterLedgerSummaryReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="posterJob_03_poster_main_ledger"/>
+        <property name="title" value="Main Poster Input Transactions"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+        	</map>
+       	</property>
+       	<property name="aggregationModeOn" value="true"/>
+    </bean>
+    
+	<bean id="posterEntriesStep" class="org.kuali.kfs.gl.batch.PosterEntriesStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="accountingCycleCachingService" />
+				<ref bean="posterReportWriterService" />
+				<ref bean="posterErrorListingReportWriterService" />
+				<ref bean="posterLedgerSummaryReportWriterService" />
+			</list>
+		</property>
+		<property name="posterService" ref="glPosterEntriesService" />
+	</bean>
+
+	<bean id="posterIndirectCostRecoveryEntriesReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="posterJob_09_poster_icr"/>
+        <property name="title" value="GL POSTER REPORT (ICR)"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.OriginEntryFull" value="transactionReportHelper"/>
+        		<entry key="org.kuali.kfs.gl.businessobject.Reversal" value="transactionReportHelper"/>
+        	</map>
+       	</property>
+       	<property name="aggregationModeOn" value="true"/>
+    </bean>
+
+	<bean id="posterIndirectCostRecoveryEntriesErrorListingReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="posterJob_10_poster_icr_error_list"/>
+        <property name="title" value="ICR Poster Error Transaction Listing"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.OriginEntryFull" value="transactionListingReportHelper"/>
+        	</map>
+       	</property>
+       	<property name="aggregationModeOn" value="true"/>
+    </bean>
+
+    <bean id="posterIndirectCostRecoveryEntriesLedgerSummaryReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="posterJob_11_poster_icr_ledger"/>
+        <property name="title" value="ICR Poster Input Transactions"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+        	</map>
+       	</property>
+       	<property name="aggregationModeOn" value="true"/>
+    </bean>
+
+	<bean id="posterIndirectCostRecoveryEntriesStep" class="org.kuali.kfs.gl.batch.PosterIndirectCostRecoveryEntriesStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="accountingCycleCachingService" />
+				<ref bean="posterIndirectCostRecoveryEntriesReportWriterService" />
+				<ref bean="posterIndirectCostRecoveryEntriesErrorListingReportWriterService" />
+				<ref bean="posterIndirectCostRecoveryEntriesLedgerSummaryReportWriterService" />
+			</list>
+		</property>
+		<property name="posterService" ref="glPosterIndirectCostRecoveryEntriesService" />
+	</bean>
+
+	<bean id="posterReversalReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="posterJob_04_poster_reversal"/>
+        <property name="title" value="GL POSTER REPORT (REVERSAL)"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.Reversal" value="transactionReportHelper"/>
+        	</map>
+       	</property>
+       	<property name="aggregationModeOn" value="true"/>
+    </bean>
+
+	<bean id="posterReversalErrorListingReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="posterJob_06_poster_reversal_error_list"/>
+        <property name="title" value="Reversal Poster Error Transaction Listing"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.Reversal" value="transactionListingReportHelper"/>
+        	</map>
+       	</property>
+       	<property name="aggregationModeOn" value="true"/>
+    </bean>
+    
+    <bean id="posterReversalListingReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="posterJob_05_poster_reversal_list"/>
+        <property name="title" value="Reversal Poster Transaction Listing"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.Reversal" value="transactionListingReportHelper"/>
+        	</map>
+       	</property>
+       	<property name="aggregationModeOn" value="true"/>
+    </bean>
+
+    <bean id="posterReversalLedgerSummaryReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="posterJob_07_poster_reversal_ledger"/>
+        <property name="title" value="Reversal Poster Input Transactions"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+        	</map>
+       	</property>
+       	<property name="aggregationModeOn" value="true"/>
+    </bean>
+
+	<bean id="posterReversalStep" class="org.kuali.kfs.gl.batch.PosterReversalStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="accountingCycleCachingService" />
+				<ref bean="posterReversalReportWriterService" />
+				<ref bean="posterReversalErrorListingReportWriterService" />
+				<ref bean="posterReversalListingReportWriterService" />
+				<ref bean="posterReversalLedgerSummaryReportWriterService" />
+			</list>
+		</property>
+		<property name="posterService" ref="glPosterReversalService" />
+	</bean>
+
+	<bean id="posterIndirectCostRecoveryGenerationReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="posterJob_08_icr_generation"/>
+        <property name="title" value="ICR GENERATION REPORT"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.OriginEntryFull" value="transactionReportHelper"/>
+        		<entry key="org.kuali.kfs.gl.businessobject.ExpenditureTransaction" value="expenditureTransactionReportHelper"/>
+        	</map>
+       	</property>
+       	<property name="aggregationModeOn" value="true"/>
+    </bean>
+
+	<bean id="posterIndirectCostRecoveryGenerationStep" class="org.kuali.kfs.gl.batch.PosterIcrGenerationStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="accountingCycleCachingService" />
+				<ref bean="posterIndirectCostRecoveryGenerationReportWriterService" />
+			</list>
+		</property>
+		<property name="posterService" ref="glPosterIndirectCostRecoveryGenerationService" />
+	</bean>
+	
+	<bean id="posterOutputSummaryReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="posterJob_15_poster_output_summary"/>
+        <property name="title" value="Poster Output Summary"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.PosterOutputSummaryEntry" value="posterOutputSummaryEntryReportHelper"/>
+        		<entry key="org.kuali.kfs.gl.businessobject.PosterOutputSummaryBalanceTypeFiscalYearAndPeriodTotal" value="posterOutputSummaryBalanceTypeFiscalYearAndPeriodTotalReportHelper"/>
+        		<entry key="org.kuali.kfs.gl.businessobject.PosterOutputSummaryBalanceTypeFiscalYearTotal" value="posterOutputSummaryBalanceTypeFiscalYearTotalReportHelper"/>
+        		<entry key="org.kuali.kfs.gl.businessobject.PosterOutputSummaryBalanceTypeTotal" value="posterOutputSummaryBalanceTypeTotal"/>
+        		<entry key="org.kuali.kfs.gl.businessobject.PosterOutputSummaryTotal" value="posterOutputSummaryTotal"/>
+        	</map>
+       	</property>
+       	<property name="aggregationModeOn" value="true"/>
+    </bean>
+    
+    <bean id="posterActualBalanceSummaryReportWriterService" parent="reportWriterService" class="org.kuali.kfs.sys.service.impl.BalanceSummaryReportWriterTextServiceImpl">
+        <property name="filePath" value="${temp.directory}"/>
+        <property name="fileNamePrefix" value="posterJob_13_gl_summary_act"/>
+        <property name="title" value="GL Actual Balance Summary"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.gl.businessobject.GlSummary" value="summaryReportHelper"/>
+            </map>
+        </property>
+        <property name="aggregationModeOn" value="true"/>
+    </bean>
+
+    <bean id="posterBudgetBalanceSummaryReportWriterService" parent="reportWriterService" class="org.kuali.kfs.sys.service.impl.BalanceSummaryReportWriterTextServiceImpl">
+        <property name="filePath" value="${temp.directory}"/>
+        <property name="fileNamePrefix" value="posterJob_12_gl_summary_bud"/>
+        <property name="title" value="GL Budget Balance Summary"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.gl.businessobject.GlSummary" value="summaryReportHelper"/>
+            </map>
+        </property>
+        <property name="aggregationModeOn" value="true"/>
+    </bean>
+    
+    <bean id="posterEncumbranceSummaryReportWriterService" parent="reportWriterService" class="org.kuali.kfs.sys.service.impl.BalanceSummaryReportWriterTextServiceImpl">
+        <property name="filePath" value="${temp.directory}"/>
+        <property name="fileNamePrefix" value="posterJob_14_gl_summary_enc"/>
+        <property name="title" value="GL Encumbrance Summary"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.gl.businessobject.GlSummary" value="yearToDaySummaryReportHelper"/>
+            </map>
+        </property>
+        <property name="aggregationModeOn" value="true"/>
+    </bean>
+    	
+	<bean id="generalLegerPendingEntryListReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${reports.directory}/gl"/>
+		<property name="fileNamePrefix" value="glpe_list_"/>
+        <property name="title" value="PENDING ENTRY LEDGER TABLE"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.PendingEntrySummary" value="pendingEntrySummaryReportHelper"/>
+        	</map>
+       	</property>
+    </bean>
+    
+    <bean id="generalLegerPendingEntryLedgerReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${reports.directory}/gl"/>
+		<property name="fileNamePrefix" value="glpe_ledger_"/>
+        <property name="title" value="GLPE Statistics Report"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+        	</map>
+        </property>
+    </bean>
+
+	<bean id="nightlyOutStep" class="org.kuali.kfs.gl.batch.NightlyOutStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="generalLegerPendingEntryListReportWriterService" />
+				<ref bean="generalLegerPendingEntryLedgerReportWriterService" />
+			</list>
+		</property>
+		<property name="nightlyOutService">
+			<ref bean="glNightlyOutService" />
+		</property>
+	</bean>
+
+	<bean id="clearPendingEntriesStep" class="org.kuali.kfs.gl.batch.ClearPendingStep" parent="step">
+		<property name="nightlyOutService">
+			<ref bean="glNightlyOutService" />
+		</property>
+	</bean>
+
+	<bean id="encumbranceForwardStep" class="org.kuali.kfs.gl.batch.EncumbranceForwardStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="accountingCycleCachingService"/>
+				<ref bean="encumbranceClosingReportWriterService"/>
+			</list>
+		</property>
+		<property name="yearEndService">
+			<ref bean="glYearEndService" />
+		</property>
+	</bean>
+
+	<bean id="balanceForwardStep" class="org.kuali.kfs.gl.batch.BalanceForwardStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="balanceForwardReportWriterService"/>
+			</list>
+		</property>
+		<property name="yearEndService">
+			<ref bean="glYearEndService" />
+		</property>
+	</bean>
+
+	<bean id="nominalActivityClosingStep" class="org.kuali.kfs.gl.batch.NominalActivityClosingStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="nominalActivityClosingReportWriterService"/>
+			</list>
+		</property>
+		<property name="yearEndService">
+			<ref bean="glYearEndService" />
+		</property>
+	</bean>
+	
+	<bean id="posterSummaryReportStep" class="org.kuali.kfs.gl.batch.PosterSummaryReportStep" parent="wrappedStep">
+	    <property name="wrappingBatchServices">
+			<list>
+				<ref bean="posterOutputSummaryReportWriterService"/>
+				<!-- BalanceSummary and EncumbranceSummary are initialized in code due to fiscal year in filename -->
+				<ref bean="accountingCycleCachingService"/>
+			</list>
+		</property>
+		<property name="optionsService">
+			<ref bean="optionsService" />
+		</property>
+		<property name="posterOutputSummaryReportWriterService" ref="posterOutputSummaryReportWriterService" />
+		<property name="posterActualBalanceSummaryReportWriterService" ref="posterActualBalanceSummaryReportWriterService" />
+		<property name="posterBudgetBalanceSummaryReportWriterService" ref="posterBudgetBalanceSummaryReportWriterService" />
+		<property name="posterEncumbranceSummaryReportWriterService" ref="posterEncumbranceSummaryReportWriterService" />
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+		<property name="reversalService" ref="reversalService" />
+		<property name="balanceService" ref="glBalanceService" />
+	</bean>
+
+	<bean id="organizationReversionPriorYearAccountStep" class="org.kuali.kfs.gl.batch.OrganizationReversionPriorYearAccountStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="organizationReversionReportWriterService"/>
+			</list>
+		</property>
+		<property name="organizationReversionProcessService">
+			<ref bean="glOrganizationReversionProcessService" />
+		</property>
+		<property name="yearEndService" ref="glYearEndService" />
+	</bean>
+	
+	<bean id="accountReversionPriorYearAccountStep" class="org.kuali.kfs.gl.batch.AccountReversionPriorYearAccountStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="accountReversionReportWriterService"/>
+			</list>
+		</property>
+		<property name="accountReversionProcessService">
+			<ref bean="glAccountReversionProcessService" />
+		</property>
+		<property name="yearEndService" ref="glYearEndService" />
+	</bean>
+
+	<bean id="organizationReversionCurrentYearAccountStep" class="org.kuali.kfs.gl.batch.OrganizationReversionCurrentYearAccountStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="organizationReversionReportWriterService"/>
+			</list>
+		</property>
+		<property name="organizationReversionProcessService">
+			<ref bean="glOrganizationReversionProcessService" />
+		</property>
+		<property name="yearEndService" ref="glYearEndService" />
+	</bean>
+	
+	<bean id="accountReversionCurrentYearAccountStep" class="org.kuali.kfs.gl.batch.AccountReversionCurrentYearAccountStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="accountReversionReportWriterService"/>
+			</list>
+		</property>
+		<property name="accountReversionProcessService">
+			<ref bean="glAccountReversionProcessService" />
+		</property>
+		<property name="yearEndService" ref="glYearEndService" />
+	</bean>
+	
+	<bean id="collectorStep" class="org.kuali.kfs.gl.batch.CollectorStep" parent="wrappedStep">
+		<property name="collectorService">
+			<ref bean="glCollectorService" />
+		</property>
+		<property name="collectorReportService">
+			<ref bean="glCollectorReportService" />
+		</property>
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="collectorReportWriterService" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="correctionProcessScrubberStep" class="org.kuali.kfs.gl.batch.CorrectionProcessScrubberStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="accountingCycleCachingService" />
+			</list>
+		</property>
+		<property name="correctionDocumentService" ref="correctionDocumentService" />
+		<property name="scrubberService" ref="glScrubberService" />
+	</bean>
+	
+	<bean id="collectorScrubberStep" class="org.kuali.kfs.gl.batch.CollectorScrubberStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="accountingCycleCachingService" />
+			</list>
+		</property>
+		<property name="scrubberService" ref="glScrubberService" />
+	</bean>
+	
+	
+	<bean id="correctionProcessOriginEntryService" class="org.kuali.kfs.gl.service.impl.GlCorrectionProcessOriginEntryServiceImpl">
+		<property name="businessObjectService">
+			<ref bean="businessObjectService"/>
+		</property>
+	</bean>
+	
+    <bean id="collectorXmlInputFileType" class="org.kuali.kfs.gl.batch.CollectorXmlInputFileType">
+    	<property name="directoryPath">
+	       <value>${staging.directory}/gl/collectorXml</value>
+	    </property>
+	    <property name="fileExtension">
+	       <value>xml</value>
+	    </property>
+	    <property name="digestorRulesFileName">
+	       <value>org/kuali/kfs/gl/batch/collectorDigesterRules.xml</value>
+	    </property>
+	    <property name="schemaLocation">
+	       <value>${externalizable.static.content.url}/xsd/gl/collector.xsd</value>
+	    </property>
+	    <property name="dateTimeService">
+	       <ref bean="dateTimeService"/>
+	    </property>
+	    <property name="collectorHelperService">
+	       <ref bean="glCollectorHelperService"/>
+	    </property>
+	</bean>
+
+	<bean id="collectorFlatFileInputFileType" parent="collectorFlatFileInputFileType-parentBean"/>
+	
+    <bean id="collectorFlatFileInputFileType-parentBean" class="org.kuali.kfs.gl.batch.CollectorFlatFileInputType">
+    	<property name="directoryPath">
+	       <value>${staging.directory}/gl/collectorFlatFile</value>
+	    </property>
+	    <property name="fileExtension">
+	       <value>data</value>
+	    </property>
+	    <property name="dateTimeService">
+	       <ref bean="dateTimeService"/>
+	    </property>
+	    <property name="collectorHelperService">
+	       <ref bean="glCollectorHelperService"/>
+	    </property>
+	</bean>
+		
+	<bean id="enterpriseFeederFileSetType" class="org.kuali.kfs.gl.batch.EnterpriseFeederFileSetType">
+		
+	</bean>	
+	<bean id="glReconciliationParserService" class="org.kuali.kfs.gl.batch.service.impl.ReconciliationParserServiceImpl">
+	</bean>
+	
+	<bean id="glReconciliationDao" parent="platformAwareDao" class="org.kuali.kfs.gl.batch.dataaccess.impl.ReconciliationDaoOjb">
+	</bean>
+	
+	<bean id="glReconciliationService" class="org.kuali.kfs.gl.batch.service.impl.ReconciliationServiceImpl">
+		<property name="reconciliationDao">
+			<ref bean="glReconciliationDao"/>
+		</property>
+		<property name="originEntryClass" value="org.kuali.kfs.gl.businessobject.OriginEntryFull"/>
+   			</bean>
+	
+	<bean id="glOriginEntryEnterpriseFeederService" class="org.kuali.kfs.gl.batch.service.impl.FileEnterpriseFeederServiceImpl">
+		<property name="dateTimeService">
+			<ref bean="dateTimeService"/>
+		</property>
+		<property name="originEntryGroupService">
+			<ref bean="originEntryGroupService"/>
+		</property>
+		<property name="fileEnterpriseFeederHelperService">
+			<ref bean="glOriginEntryEnterpriseFeederHelperService"/>
+		</property>
+		<property name="enterpriseFeederNotificationService">
+			<ref bean="glOriginEntryEnterpriseFeederNotificationService"/>
+		</property>
+		<property name="directoryName" value="${staging.directory}/gl/enterpriseFeed"/>
+		<property name="glOriginEntryDirectoryName" value="${staging.directory}/gl/originEntry"/>
+		<property name="reconciliationTableId" value="gl_entry_t"/>
+		<property name="reportWriterService" ref="enterpriseFeedReportWriterService"/>
+	</bean>
+
+	<bean id="glOriginEntryEnterpriseFeederHelperService" class="org.kuali.kfs.gl.batch.service.impl.FileEnterpriseFeederHelperServiceImpl">
+		<property name="originEntryService">
+			<ref bean="originEntryService"/>
+		</property>
+		<property name="reconciliationParserService">
+			<ref bean="glReconciliationParserService"/>
+		</property>
+		<property name="reconciliationService">
+			<ref bean="glReconciliationService"/>
+		</property>
+	</bean>
+	
+	<bean id="enterpriseFeedJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="enterpriseFeedStep" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="enterpriseFeedStep" class="org.kuali.kfs.gl.batch.EnterpriseFeedStep" parent="wrappedStep">
+	    <property name="wrappingBatchServices">
+			<list>
+				<ref bean="enterpriseFeedReportWriterService" />
+			</list>
+		</property>
+		<property name="enterpriseFeederService">
+			<ref bean="glOriginEntryEnterpriseFeederService" />
+		</property>
+	</bean>
+	
+	<bean id="glOriginEntryEnterpriseFeederNotificationService" class="org.kuali.kfs.gl.batch.service.impl.EnterpriseFeederNotificationServiceImpl">
+		<property name="configurationService">
+			<ref bean="kualiConfigurationService"/>
+		</property>
+		<property name="parameterService">
+			<ref bean="parameterService"/>
+		</property>
+		<property name="mailService">
+			<ref bean="mailService"/>
+		</property>
+	</bean>
+	
+	<bean id="glOrgReversionUnitOfWorkService" class="org.kuali.kfs.gl.batch.service.impl.OrganizationReversionUnitOfWorkServiceImpl">
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+		<property name="orgReversionUnitOfWorkDao">
+			<bean class="org.kuali.kfs.gl.batch.dataaccess.impl.ReversionUnitOfWorkDaoJdbc" parent="platformAwareDaoJdbc" />
+		</property>
+	</bean>
+	
+	<bean id="glAcctReversionUnitOfWorkService" class="org.kuali.kfs.gl.batch.service.impl.AccountReversionUnitOfWorkServiceImpl">
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+		<property name="acctReversionUnitOfWorkDao">
+			<bean class="org.kuali.kfs.gl.batch.dataaccess.impl.ReversionUnitOfWorkDaoJdbc" parent="platformAwareDaoJdbc" />
+		</property>
+	</bean>
+	
+	<bean id="glRunDateService" class="org.kuali.kfs.gl.batch.service.impl.RunDateServiceImpl">
+		<property name="parameterService">
+			<ref bean="parameterService"/>
+		</property>
+	</bean>
+	
+	<bean id="glBalanceTotalNotZeroIterator" class="org.kuali.kfs.gl.batch.service.impl.FilteringBalanceIteratorImpl" scope="prototype">
+		<property name="balancePredicate">
+			<bean class="org.kuali.kfs.gl.batch.service.impl.BalanceTotalNotZeroPredicate" />
+		</property>
+	</bean>
+	
+	<bean id="glBalanceAnnualAndCGTotalNotZeroIterator" class="org.kuali.kfs.gl.batch.service.impl.FilteringBalanceIteratorImpl" scope="prototype">
+		<property name="balancePredicate">
+			<bean class="org.kuali.kfs.gl.batch.service.impl.BalanceAnnualAndCGTotalNotZeroPredicate" />
+		</property>
+	</bean>
+	
+	<bean id="generalLedgerPreparedStatementCachingDao" parent="preparedStatementCachingDao" class="org.kuali.kfs.gl.batch.dataaccess.impl.LedgerPreparedStatementCachingDaoJdbc" />
+	
+	<bean id="posterOutputSummaryService" class="org.kuali.kfs.gl.service.impl.PosterOutputSummaryServiceImpl">
+		<property name="accountingCycleCachingService" ref="accountingCycleCachingService"/>
+	</bean> 
+	
+	<bean id="accountingCycleCachingService" class="org.kuali.kfs.gl.batch.service.impl.AccountingCycleCachingServiceImpl">
+		<property name="universityDateService" ref="universityDateService" />
+		<property name="financialSystemDocumentTypeService" ref="financialSystemDocumentTypeService" />
+		<property name="systemReferenceValueDao" ref="systemLedgerReferenceValuePreparedStatementCachingDao" />
+		<property name="chartReferenceValueDao" ref="chartLedgerReferenceValuePreparedStatementCachingDao" />
+		<property name="ledgerDao" ref="generalLedgerPreparedStatementCachingDao" />
+	</bean>
+
+	<bean id="transactionReportHelper" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.Entry" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+    			<entry key="universityFiscalYear" value="YEAR"/>
+    			<entry key="chartOfAccountsCode" value="COA"/>
+    			<entry key="accountNumber" value="ACCOUNT"/>
+    			<entry key="subAccountNumber" value="SACCT"/>
+    			<entry key="financialObjectCode" value="OBJ"/>
+    			<entry key="financialSubObjectCode" value="SOBJ"/>
+    			<entry key="financialBalanceTypeCode" value="BT"/>
+    			<entry key="financialObjectTypeCode" value="OT"/>
+    			<entry key="universityFiscalPeriodCode" value="PRD"/>
+    			<entry key="financialDocumentTypeCode" value="DTYP"/>
+    			<entry key="financialSystemOriginationCode" value="ORIG"/>
+    			<entry key="documentNumber" value="DOC #"/>
+    			<entry key="transactionLedgerEntrySequenceNumber" value="SEQ #"/>
+    		</map>
+	    </property>
+	</bean>
+
+	<bean id="transactionListingReportHelper" parent="businessObjectReportHelper" class="org.kuali.kfs.gl.report.TransactionListingReportBusinessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.Entry" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+    			<entry key="universityFiscalYear" value="YEAR"/>
+    			<entry key="chartOfAccountsCode" value="COA"/>
+    			<entry key="accountNumber" value="ACCOUNT"/>
+    			<entry key="financialObjectCode" value="OBJ"/>
+    			<entry key="financialObjectTypeCode" value="OT"/>
+    			<entry key="financialBalanceTypeCode" value="BT"/>
+    			<entry key="universityFiscalPeriodCode" value="PRD"/>
+    			<entry key="financialDocumentTypeCode" value="DTYP"/>
+    			<entry key="financialSystemOriginationCode" value="ORIG"/>
+    			<entry key="documentNumber" value="DOC #"/>
+    			<entry key="transactionLedgerEntryDescription" value="DESC"/>
+    			<entry key="debitOrBudgetAmount" value="Debit or Budget Amt"/>
+    			<entry key="creditAmount" value="Credit Amount"/>
+    		</map>
+	    </property>
+	    <property name="columnCount" value="13"/>
+	</bean>
+
+	<bean id="sufficientFundRebuildReportHelper" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.SufficientFundRebuild" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+    			<entry key="chartOfAccountsCode" value="COA"/>
+    			<entry key="accountFinancialObjectTypeCode" value="A/O"/>
+    			<entry key="accountNumberFinancialObjectCode" value="VALUE"/>
+    		</map>
+	    </property>
+	</bean>
+	
+	<bean id="expenditureTransactionReportHelper" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.ExpenditureTransaction" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+    			<entry key="universityFiscalYear" value="YEAR"/>
+    			<entry key="chartOfAccountsCode" value="COA"/>
+    			<entry key="accountNumber" value="ACCOUNT"/>
+    			<entry key="subAccountNumber" value="SACCT"/>
+    			<entry key="objectCode" value="OBJ"/>
+    			<entry key="subObjectCode" value="SOBJ"/>
+    			<entry key="balanceTypeCode" value="BT"/>
+    			<entry key="objectTypeCode" value="OT"/>
+    			<entry key="universityFiscalAccountingPeriod" value="PRD"/>
+    			<entry key="projectCode" value="PROJECT CD"/>
+    			<entry key="organizationReferenceId" value="ORG REF"/>
+    		</map>
+	    </property>
+	</bean>
+
+	<bean id="ledgerBalanceHistoryReportHelper" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.Balance" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+    			<entry key="universityFiscalYear" value="YEAR"/>
+    			<entry key="chartOfAccountsCode" value="COA"/>
+    			<entry key="accountNumber" value="ACCOUNT"/>
+    			<entry key="subAccountNumber" value="SACCT"/>
+    			<entry key="objectCode" value="OBJ"/>
+    			<entry key="subObjectCode" value="SOBJ"/>
+    			<entry key="balanceTypeCode" value="BT"/>
+    			<entry key="objectTypeCode" value="OT"/>
+    		</map>
+	    </property>
+	</bean>
+	
+	<bean id="ledgerEntryHistoryReportHelper" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.Entry" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+    			<entry key="universityFiscalYear" value="YEAR"/>
+    			<entry key="chartOfAccountsCode" value="COA"/>
+    			<entry key="financialObjectCode" value="OBJ"/>
+    			<entry key="financialBalanceTypeCode" value="BT"/>
+    			<entry key="universityFiscalPeriodCode" value="PRD"/>
+    			<entry key="transactionDebitCreditCode" value="DC"/>
+    		</map>
+	    </property>
+	</bean>
+
+	<bean id="accountBalanceHistoryReportHelper" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.AccountBalance" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+    			<entry key="universityFiscalYear" value="YEAR"/>
+    			<entry key="chartOfAccountsCode" value="COA"/>
+    			<entry key="accountNumber" value="ACCOUNT"/>
+    			<entry key="subAccountNumber" value="SACCT"/>
+    			<entry key="objectCode" value="OBJ"/>
+    			<entry key="subObjectCode" value="SOBJ"/>
+    		</map>
+	    </property>
+	</bean>
+	
+	<bean id="encumbranceHistoryReportHelper" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.Encumbrance" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+    			<entry key="universityFiscalYear" value="YEAR"/>
+    			<entry key="chartOfAccountsCode" value="COA"/>
+    			<entry key="accountNumber" value="ACCOUNT"/>
+    			<entry key="subAccountNumber" value="SACCT"/>
+    			<entry key="objectCode" value="OBJ"/>
+    			<entry key="subObjectCode" value="SOBJ"/>
+    			<entry key="balanceTypeCode" value="BT"/>
+    			<entry key="documentTypeCode" value="DTYP"/>
+    			<entry key="objectCode" value="ORIG"/>
+    			<entry key="documentNumber" value="DOC #"/>
+    		</map>
+	    </property>
+	</bean>
+	
+	<bean id="pendingEntrySummaryReportHelper" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.PendingEntrySummary" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+    			<entry key="documentTypeCode" value="DOC TYPE"/>
+    			<entry key="documentNumber" value="DOC NUMBER"/>
+    			<entry key="balanceTypeCode" value="BT"/>
+    			<entry key="chartOfAccountsCode" value="COA"/>
+    			<entry key="accountNumber" value="ACCOUNT NUMBER"/>
+    			<entry key="financialObjectCode" value="OBJ CD"/>
+    			<entry key="creditAmount" value="CREDIT" />
+    			<entry key="debitAmount" value="DEBIT" />
+    			<entry key="budgetAmount" value="BLANK" />
+    		</map>
+	    </property>
+	    <property name="columnCount" value="9" />
+	</bean>
+	
+	<bean id="ledgerSummaryTotalLineReportHelper" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+    			<entry key="summary" value=" " />
+    			<entry key="recordCount" value="REC CNT"/>
+    			<entry key="debitAmount" value="DEBIT AMT"/>
+    			<entry key="debitCount" value="DEBIT CNT" />
+    			<entry key="creditAmount" value="CREDIT AMT"/>
+    			<entry key="creditCount" value="CREDIT CNT" />
+    			<entry key="budgetAmount" value="NO D/C AMT"/>
+    			<entry key="budgetCount" value="NO D/C CNT" />
+    		</map>
+	    </property>
+	    <property name="columnCount" value="8" />
+	</bean>
+	
+	<bean id="ledgerBalanceTypeSummaryTotalLineReportHelper" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+                <entry key="summary" value=" " />
+    			<entry key="recordCount" value="REC CNT"/>
+    			<entry key="debitAmount" value="DEBIT AMT"/>
+    			<entry key="debitCount" value="DEBIT CNT" />
+    			<entry key="creditAmount" value="CREDIT AMT"/>
+    			<entry key="creditCount" value="CREDIT CNT" />
+    			<entry key="budgetAmount" value="NO D/C AMT"/>
+    			<entry key="budgetCount" value="NO D/C CNT" />
+    		</map>
+	    </property>
+	    <property name="columnCount" value="8" />
+	</bean>
+	
+	<bean id="ledgerSummaryDetailLineReportHelper" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+    			<entry key="financialBalanceTypeCode" value="BAL TYP"/>
+    			<entry key="financialSystemOriginationCode" value="ORIG"/>
+    			<entry key="universityFiscalYear" value="YEAR"/>
+    			<entry key="universityAccountPeriodCode" value="PRD"/>
+    			<entry key="recordCount" value="REC CNT"/>
+    			<entry key="debitAmount" value="DEBIT AMT"/>
+    			<entry key="debitCount" value="DEBIT CNT" />
+    			<entry key="creditAmount" value="CREDIT AMT"/>
+    			<entry key="creditCount" value="CREDIT CNT" />
+    			<entry key="budgetAmount" value="NO D/C AMT"/>
+    			<entry key="budgetCount" value="NO D/C CNT" />
+    		</map>
+	    </property>
+	    <property name="columnCount" value="11" />
+	</bean>
+	
+	<bean id="posterOutputSummaryEntryReportHelper" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.PosterOutputSummaryEntry" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+    			<entry key="universityFiscalYear" value="Fiscal Year" />
+    			<entry key="fiscalPeriodCode" value="Period Code" />
+    			<entry key="fundGroup" value="Fund Group"/>
+    			<entry key="debitAmount" value="Debit Amount"/>
+    			<entry key="creditAmount" value="Credit Amount"/>
+    			<entry key="budgetAmount" value="Budget Amount"/>
+    			<entry key="netAmount" value="Net Amount" />
+    		</map>
+	    </property>
+	    <property name="columnCount" value="7" />
+	</bean>
+	
+	<bean id="posterOutputSummaryBalanceTypeFiscalYearAndPeriodTotalReportHelper" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.PosterOutputSummaryBalanceTypeFiscalYearAndPeriodTotal" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+    			<entry key="summary" value=" " />
+    			<entry key="debitAmount" value="Debit Amount"/>
+    			<entry key="creditAmount" value="Credit Amount"/>
+    			<entry key="budgetAmount" value="Budget Amount"/>
+    			<entry key="netAmount" value="Net Amount" />
+    		</map>
+	    </property>
+	    <property name="columnCount" value="5" />
+	</bean>
+	
+	<bean id="posterOutputSummaryBalanceTypeFiscalYearTotalReportHelper" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.PosterOutputSummaryBalanceTypeFiscalYearTotal" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+    			<entry key="summary" value=" " />
+    			<entry key="debitAmount" value="Debit Amount"/>
+    			<entry key="creditAmount" value="Credit Amount"/>
+    			<entry key="budgetAmount" value="Budget Amount"/>
+    			<entry key="netAmount" value="Net Amount" />
+    		</map>
+	    </property>
+	    <property name="columnCount" value="5" />
+	</bean>
+	
+	<bean id="posterOutputSummaryBalanceTypeTotal" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.PosterOutputSummaryBalanceTypeTotal" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+    			<entry key="summary" value=" " />
+    			<entry key="debitAmount" value="Debit Amount"/>
+    			<entry key="creditAmount" value="Credit Amount"/>
+    			<entry key="budgetAmount" value="Budget Amount"/>
+    			<entry key="netAmount" value="Net Amount" />
+    		</map>
+	    </property>
+	    <property name="columnCount" value="5" />
+	</bean>
+	
+	<bean id="posterOutputSummaryTotal" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.PosterOutputSummaryTotal" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+    			<entry key="summary" value=" " />
+    			<entry key="debitAmount" value="Debit Amount"/>
+    			<entry key="creditAmount" value="Credit Amount"/>
+    			<entry key="budgetAmount" value="Budget Amount"/>
+    			<entry key="netAmount" value="Net Amount" />
+    		</map>
+	    </property>
+	    <property name="columnCount" value="5" />
+	</bean>
+
+	<bean id="batchFileService" class="org.kuali.kfs.gl.batch.service.impl.BatchFileServiceImpl" scope="prototype" />
+	
+	<bean id="scrubberListingReportWriterService" parent="reportWriterService" class="org.kuali.kfs.sys.service.impl.ScrubberListingReportWriterTextServiceImpl">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="glcp-scrubberReports-03-scrubber_listing"/>
+        <property name="title" value="Transaction Listing"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.OriginEntryFull" value="transactionListingReportHelper"/>
+        	</map>
+       	</property>
+       	<property name="aggregationModeOn" value="true"/>
+    </bean>
+    
+    <bean id="glcpScrubberListingReportWriterService" parent="scrubberListingReportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="glcp-scrubberReports-04-scrubber_listing"/>
+	</bean>
+	
+    <bean id="scrubberBadBalanceListingReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="scrubberJobReport-03-scrubber_badbal"/>
+        <property name="title" value="Scrubber Input Transactions with Blank Balance Types"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.OriginEntryFull" value="transactionListingReportHelper"/>
+        	</map>
+       	</property>
+       	<property name="aggregationModeOn" value="true"/>
+    </bean>
+    
+    <bean id="demergerRemovedTransactionsListingReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="scrubberJobReport-04-scrubber_errors"/>
+        <property name="title" value="Error Listing - Transactions Removed From the Scrubber"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.OriginEntryFull" value="transactionListingReportHelper"/>
+        	</map>
+       	</property>
+       	<property name="aggregationModeOn" value="true"/>
+    </bean>
+    
+   	<bean id="generalLedgerCorrectionReportWriterService" class="org.kuali.kfs.sys.service.impl.ScrubberListingReportWriterTextServiceImpl" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="glcp-scrubberReports-01-glcp"/>
+        <property name="title" value="General Ledger Correction Process Report" />
+        <property name="aggregationModeOn" value="true"/>
+    </bean>	
+    
+    <bean id="summaryReportHelper" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.Balance" />
+        <property name="columnCount" value="7" />
+        <property name="orderedPropertyNameToHeaderLabelMap">
+            <map>
+                <entry key="fundGroup" value="FUND GROUP"/>
+                <entry key="beginningBalanceLineAmount" value="BEGINNING BAL"/>
+                <entry key="accountLineAnnualBalanceAmount" value="ANNUAL BAL"/>
+                <entry key="month1Amount" value="ACCUM AMT FOR JUL"/>
+                <entry key="month2Amount" value="ACCUM AMT FOR AUG"/>                
+                <entry key="month3Amount" value="ACCUM AMT FOR SEP"/>
+                <entry key="month4Amount" value="ACCUM AMT FOR OCT"/>
+                
+                <entry key="EMPTY_CELL1" value=""/>
+                <entry key="month5Amount" value="ACCUM AMT FOR NOV"/>
+                <entry key="month6Amount" value="ACCUM AMT FOR DEC"/>
+                <entry key="month7Amount" value="ACCUM AMT FOR JAN"/>
+                <entry key="month8Amount" value="ACCUM AMT FOR FEB"/>
+                <entry key="month9Amount" value="ACCUM AMT FOR MAR"/>
+                <entry key="month10Amount" value="ACCUM AMT FOR APR"/>
+                
+                <entry key="EMPTY_CELL2" value=""/>
+                <entry key="month11Amount" value="ACCUM AMT FOR MAY"/>
+                <entry key="month12Amount" value="ACCUM AMT FOR JUN"/>
+                <entry key="month13Amount" value="ACCUM AMT FOR CLOSE"/>
+                <entry key="yearBalance" value="ACCTG PER ACCUM AMT"/>
+            </map>
+        </property>        
+    </bean>
+    
+    <bean id="yearToDaySummaryReportHelper" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.gl.businessobject.Balance" />
+        <property name="columnCount" value="5" />
+        <property name="orderedPropertyNameToHeaderLabelMap">
+            <map>
+                <entry key="fundGroup" value="FUND GROUP"/>
+                <entry key="beginningBalanceLineAmount" value="BEGINNING BAL"/>
+                <entry key="accountLineAnnualBalanceAmount" value="ANNUAL BAL"/>
+                <entry key="contractsGrantsBeginningBalanceAmount" value="CG BEGINNING BAL"/>
+                <entry key="yearToDayBalance" value="YTD Balance"/>
+            </map>
+        </property>        
+    </bean>
+    
+    <bean id="nominalActivityClosingReportWriterService" class="org.kuali.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
+		<property name="filePath" value="${reports.directory}/gl"/>
+		<property name="fileNamePrefix" value="year_end_nominal_activity_closing_"/>
+        <property name="title" value="Nominal Activity Closing Report" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+        	</map>
+        </property>
+    </bean>	
+    
+    <bean id="balanceForwardReportWriterService" class="org.kuali.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
+		<property name="filePath" value="${reports.directory}/gl"/>
+		<property name="fileNamePrefix" value="year_end_balance_forward_"/>
+        <property name="title" value="Balance Forward Report" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+        	</map>
+        </property>
+    </bean>	
+    
+    <bean id="encumbranceClosingReportWriterService" class="org.kuali.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
+		<property name="filePath" value="${reports.directory}/gl"/>
+		<property name="fileNamePrefix" value="year_end_encumbrance_closing_"/>
+        <property name="title" value="Encumbrance Closing Report" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+        	</map>
+        </property>
+    </bean>	
+    
+    <bean id="organizationReversionReportWriterService" class="org.kuali.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
+		<property name="filePath" value="${reports.directory}/gl"/>
+		<property name="fileNamePrefix" value="year_end_org_reversion_process_"/>
+        <property name="title" value="Organization Reversion Process Report" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+        	</map>
+        </property>
+    </bean>
+    
+    <bean id="accountReversionReportWriterService" class="org.kuali.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
+		<property name="filePath" value="${reports.directory}/gl"/>
+		<property name="fileNamePrefix" value="year_end_acct_reversion_process_"/>
+        <property name="title" value="Account Reversion Process Report" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+        	</map>
+        </property>
+    </bean>
+    
+    <bean id="enterpriseFeedReportWriterService" class="org.kuali.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
+		<property name="filePath" value="${reports.directory}/gl"/>
+		<property name="fileNamePrefix" value="enterprise_feed_"/>
+        <property name="title" value="Enterprise Feed Report"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+        	</map>
+        </property>
+    </bean>
+    
+    <bean id="preScrubberService" class="org.kuali.kfs.gl.service.impl.PreScrubberServiceImpl">
+    	<property name="parameterService" ref="parameterService"/>
+    </bean>
+    
+    <bean id="preScrubberStep" class="org.kuali.kfs.gl.batch.PreScrubberStep" parent="wrappedStep">
+    	<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+    	<property name="preScrubberService" ref="preScrubberService"/>
+    	<property name="preScrubberReportWriterService" ref="preScrubberReportWriterService"/>
+    	<property name="wrappingBatchServices">
+			<list>
+				<ref bean="preScrubberReportWriterService" />
+			</list>
+		</property>
+    </bean> 
+    
+    <bean id="preScrubberReportWriterService" class="org.kuali.kfs.gl.service.impl.PreScrubberReportWriterTextServiceImpl" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="scrubberJobReport-00-preScrubber"/>
+        <property name="title" value="Pre-Scrubber Report - Find Chart of Accounts Code For Records With Blank Chart of Accounts Code"/>
+       	<property name="aggregationModeOn" value="true"/>
+       	<property name="preScrubberService" ref="preScrubberService" />
+    </bean>
+    
+    <bean id="glcpPreScrubberReportWriterService" parent="preScrubberReportWriterService">
+		<property name="fileNamePrefix" value="glcp-scrubberReports-02-preScrubber"/>
+    </bean>
+</beans>

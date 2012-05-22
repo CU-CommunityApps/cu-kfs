@@ -32,6 +32,7 @@ import org.apache.ojb.broker.query.QueryFactory;
 import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.OrganizationReversion;
+import org.kuali.kfs.coa.businessobject.Reversion;
 import org.kuali.kfs.coa.service.BalanceTypeService;
 import org.kuali.kfs.coa.service.ObjectTypeService;
 import org.kuali.kfs.coa.service.SubFundGroupService;
@@ -962,8 +963,8 @@ public class BalanceDaoOjb extends PlatformAwareDaoBaseOjb implements BalanceDao
      * @return an Iterator of Balances to process
      * @see org.kuali.kfs.gl.dataaccess.BalanceDao#findOrganizationReversionBalancesForFiscalYear(java.lang.Integer, boolean)
      */
-    public Iterator<Balance> findOrganizationReversionBalancesForFiscalYear(Integer year, boolean endOfYear) {
-        LOG.debug("findOrganizationReversionBalancesForFiscalYear() started");
+    public Iterator<Balance> findReversionBalancesForFiscalYear(Integer year, boolean endOfYear) {
+        LOG.debug("findReversionBalancesForFiscalYear() started");
         Criteria c = new Criteria();
         c.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
         ParameterService parameterService = SpringContext.getBean(ParameterService.class);
@@ -972,7 +973,7 @@ public class BalanceDaoOjb extends PlatformAwareDaoBaseOjb implements BalanceDao
         boolean moreParams = true;
         while (moreParams) {
             if (parameterService.parameterExists(OrganizationReversion.class, PARAMETER_PREFIX + i)) {
-                ParameterEvaluator parameterEvaluator = parameterService.getParameterEvaluator(OrganizationReversion.class, PARAMETER_PREFIX + i);
+                ParameterEvaluator parameterEvaluator = parameterService.getParameterEvaluator(Reversion.class, PARAMETER_PREFIX + i);
                 String currentRule = parameterEvaluator.getValue();
                 if (endOfYear) {
                     currentRule = currentRule.replaceAll("account\\.", "priorYearAccount.");
@@ -997,13 +998,14 @@ public class BalanceDaoOjb extends PlatformAwareDaoBaseOjb implements BalanceDao
         }
         // we only ever calculate on CB, AC, and encumbrance types, so let's only select those
         SystemOptions options = SpringContext.getBean(OptionsService.class).getOptions(year);
-        List organizationReversionBalancesToSelect = new ArrayList();
-        organizationReversionBalancesToSelect.add(options.getActualFinancialBalanceTypeCd());
-        organizationReversionBalancesToSelect.add(options.getFinObjTypeExpenditureexpCd());
-        organizationReversionBalancesToSelect.add(options.getCostShareEncumbranceBalanceTypeCd());
-        organizationReversionBalancesToSelect.add(options.getIntrnlEncumFinBalanceTypCd());
-        organizationReversionBalancesToSelect.add(KFSConstants.BALANCE_TYPE_CURRENT_BUDGET);
-        c.addIn(KFSPropertyConstants.BALANCE_TYPE_CODE, organizationReversionBalancesToSelect);
+        List ReversionBalancesToSelect = new ArrayList();
+        ReversionBalancesToSelect.add(options.getActualFinancialBalanceTypeCd());
+        ReversionBalancesToSelect.add(options.getFinObjTypeExpenditureexpCd());
+        ReversionBalancesToSelect.add(options.getCostShareEncumbranceBalanceTypeCd());
+        ReversionBalancesToSelect.add(options.getIntrnlEncumFinBalanceTypCd());
+        ReversionBalancesToSelect.add(KFSConstants.BALANCE_TYPE_CURRENT_BUDGET);
+        c.addIn(KFSPropertyConstants.BALANCE_TYPE_CODE, ReversionBalancesToSelect);
+        //c.addLike("accountNumber", "L013%");
         QueryByCriteria query = QueryFactory.newQuery(Balance.class, c);
         query.addOrderByAscending(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE);
         query.addOrderByAscending(KFSPropertyConstants.ACCOUNT_NUMBER);

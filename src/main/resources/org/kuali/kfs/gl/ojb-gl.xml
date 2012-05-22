@@ -791,16 +791,16 @@
 	</reference-descriptor>
 </class-descriptor>
 
-<class-descriptor class="org.kuali.kfs.gl.businessobject.OrgReversionUnitOfWork" table="GL_ORG_RVRSN_UNIT_WRK_T">
+<class-descriptor class="org.kuali.kfs.gl.businessobject.ReversionUnitOfWork" table="GL_RVRSN_UNIT_WRK_T">
 	<field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true"/>
 	<field-descriptor name="accountNumber" column="ACCOUNT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
 	<field-descriptor name="subAccountNumber" column="SUB_ACCT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
 	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
 	<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
-	<field-descriptor name="totalReversion" column="ORG_TOT_RVRSN_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
-	<field-descriptor name="totalCarryForward" column="ORG_TOT_CF_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
-	<field-descriptor name="totalAvailable" column="ORG_TOT_AVAIL_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
-	<field-descriptor name="totalCash" column="ORG_TOT_CSH_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+	<field-descriptor name="totalReversion" column="TOT_RVRSN_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+	<field-descriptor name="totalCarryForward" column="TOT_CF_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+	<field-descriptor name="totalAvailable" column="TOT_AVAIL_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+	<field-descriptor name="totalCash" column="TOT_CSH_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
 	<reference-descriptor name="chartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
 		<foreignkey field-ref="chartOfAccountsCode" />
 	</reference-descriptor>
@@ -815,18 +815,18 @@
 	</reference-descriptor>
 </class-descriptor>
 
-<class-descriptor class="org.kuali.kfs.gl.businessobject.OrgReversionUnitOfWorkCategoryAmount" table="GL_ORG_RVRSN_CTGRY_AMT_T">
+<class-descriptor class="org.kuali.kfs.gl.businessobject.ReversionUnitOfWorkCategoryAmount" table="GL_RVRSN_CTGRY_AMT_T">
 	<field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true"/>
 	<field-descriptor name="accountNumber" column="ACCOUNT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
 	<field-descriptor name="subAccountNumber" column="SUB_ACCT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
-	<field-descriptor name="categoryCode" column="ORG_RVRSN_CTGRY_CD" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+	<field-descriptor name="categoryCode" column="RVRSN_CTGRY_CD" jdbc-type="VARCHAR" primarykey="true" index="true"/>
 	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
 	<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
-	<field-descriptor name="actual" column="ORG_TOT_ACTL_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
-	<field-descriptor name="budget" column="ORG_TOT_BDGT_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
-	<field-descriptor name="encumbrance" column="ORG_TOT_ENCUM_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
-	<field-descriptor name="carryForward" column="ORG_TOT_CF_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
-	<field-descriptor name="available" column="ORG_TOT_AVAIL_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+	<field-descriptor name="actual" column="TOT_ACTL_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+	<field-descriptor name="budget" column="TOT_BDGT_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+	<field-descriptor name="encumbrance" column="TOT_ENCUM_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+	<field-descriptor name="carryForward" column="TOT_CF_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+	<field-descriptor name="available" column="TOT_AVAIL_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
 	<reference-descriptor name="subAccount" class-ref="org.kuali.kfs.coa.businessobject.SubAccount" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
 		<foreignkey field-ref="chartOfAccountsCode" />
 		<foreignkey field-ref="accountNumber" />
@@ -839,10 +839,10 @@
 		<foreignkey field-ref="chartOfAccountsCode" />
 		<foreignkey field-ref="accountNumber" />
 	</reference-descriptor>
-    <reference-descriptor name="organizationReversionCategory" class-ref="org.kuali.kfs.coa.businessobject.OrganizationReversionCategory" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+    <reference-descriptor name="reversionCategory" class-ref="org.kuali.kfs.coa.businessobject.ReversionCategory" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         <foreignkey field-ref="categoryCode" />
     </reference-descriptor>
-	<reference-descriptor name="organizationReversionUnitOfWork" class-ref="org.kuali.kfs.gl.businessobject.OrgReversionUnitOfWork" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+	<reference-descriptor name="reversionUnitOfWork" class-ref="org.kuali.kfs.gl.businessobject.ReversionUnitOfWork" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
 		<foreignkey field-ref="chartOfAccountsCode" />
 		<foreignkey field-ref="accountNumber" />
 		<foreignkey field-ref="subAccountNumber" />

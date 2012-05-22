@@ -243,15 +243,17 @@ public class KFSConstants extends JSTLConstants implements ParameterKeyConstants
      */
     public static final String CHECKBOX_PRESENT_ON_FORM_ANNOTATION = "{CheckboxPresentOnFormAnnotation}";
 
-    public static class OrgReversion {
-        public static final String VALID_PREFIX = "EXTENDED_DEFINITIONS_INCLUDE_";
+    public static class Reversion {
+    	public static final String VALID_PREFIX = "EXTENDED_DEFINITIONS_INCLUDE_";
         public static final String INVALID_PREFIX = "EXTENDED_DEFINITIONS_EXCLUDE_";
-        public static final String OBJECT_CONSOL_PARAM_SUFFIX = "OBJECT_CONSOLIDATIONS_BY_ORGANIZATION_REVERSION_CATEGORY";
-        public static final String OBJECT_LEVEL_PARAM_SUFFIX = "OBJECT_LEVELS_BY_ORGANIZATION_REVERSION_CATEGORY";
-        public static final String OBJECT_TYPE_PARAM_SUFFIX = "OBJECT_TYPES_BY_ORGANIZATION_REVERSION_CATEGORY";
-        public static final String OBJECT_SUB_TYPE_PARAM_SUFFIX = "OBJECT_SUB_TYPES_BY_ORGANIZATION_REVERSION_CATEGORY";
         public static final String IS_EXPENSE_PARAM = "EXTENDED_DEFINITIONS_EXPENSE_CATEGORIES";
+        public static final String OBJECT_CONSOL_PARAM_SUFFIX = "OBJECT_CONSOLIDATIONS_BY_REVERSION_CATEGORY";
+        public static final String OBJECT_LEVEL_PARAM_SUFFIX = "OBJECT_LEVELS_BY_REVERSION_CATEGORY";
+        public static final String OBJECT_TYPE_PARAM_SUFFIX = "OBJECT_TYPES_BY_REVERSION_CATEGORY";
+        public static final String OBJECT_SUB_TYPE_PARAM_SUFFIX = "OBJECT_SUB_TYPES_BY_REVERSION_CATEGORY";
+        
     }
+
 
     // CR doc properties
     public static final String NEW_CHECK_PROPERTY_NAME = "newCheck";
@@ -864,11 +866,13 @@ public class KFSConstants extends JSTLConstants implements ParameterKeyConstants
     public static final String RULE_CODE_C1 = "C1";
     public static final String RULE_CODE_C2 = "C2";
     public static final String RULE_CODE_A = "A";
+    public static final String RULE_CODE_CA = "CA";
     public static final String TRANSACTION_DT = "TRANSACTION_DT";
     public static final String UNALLOC_OBJECT_CD = "UNALLOC_OBJECT_CD";
     public static final String BEG_BUD_CASH_OBJECT_CD = "BEG_BUD_CASH_OBJECT_CD";
     public static final String FUND_BAL_OBJECT_CD = "FUND_BAL_OBJECT_CD";
     public static final String UNIV_FISCAL_YR = "UNIV_FISCAL_YR";
+    public static final String CASH_REVERSION_OBJECT_CD = "CASH_REVERSION_OBJECT_CD";
 
     public static final String EMPLOYEE_LOOKUP_ERRORS = "document.employeeLookups,document.emplid,universityFiscalYear";
 

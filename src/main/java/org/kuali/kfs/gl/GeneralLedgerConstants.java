@@ -210,7 +210,7 @@ public class GeneralLedgerConstants {
         static final public String CURRENT_AND_LAST_YEAR = "CURRENT_AND_LAST_YEAR";
     }
 
-    public static class OrganizationReversionProcess {
+    public static class ReversionProcess {
         static final public String ORGANIZATION_REVERSION_COA = "ORGANIZATION_REVERSION_COA";
         static final public String CARRY_FORWARD_OBJECT_CODE = "CARRY_FORWARD_OBJECT_CODE";
         static final public String DEFAULT_FINANCIAL_SYSTEM_ORIGINATION_CODE = "MANUAL_FEED_ORIGINATION";
@@ -218,6 +218,7 @@ public class GeneralLedgerConstants {
         static final public String DEFAULT_FINANCIAL_BALANCE_TYPE_CODE_YEAR_END = "BUDGET_REVERSION_DEFAULT_BALANCE_TYPE";
         static final public String DEFAULT_DOCUMENT_NUMBER_PREFIX = "DEFAULT_DOCUMENT_NUMBER_PREFIX";
         static final public String UNALLOC_OBJECT_CODE_PARM = "UNALLOCATED_OBJECT_CODE";
+        static final public String CASH_REVERSION_OBJECT_CODE_PARM = "CASH_REVERSION_OBJECT_CODE";
     }
 
     public static class PosterService {
@@ -286,6 +287,8 @@ public class GeneralLedgerConstants {
 		//year end part
 		static final public String ORGANIZATION_REVERSION_PRE_CLOSING_FILE = "gl_org_reversion_pre_closing";
 		static final public String ORGANIZATION_REVERSION_CLOSING_FILE = "gl_org_reversion_closing";
+		static final public String ACCOUNT_REVERSION_PRE_CLOSING_FILE = "gl_acct_reversion_pre_closing";
+		static final public String ACCOUNT_REVERSION_CLOSING_FILE = "gl_acct_reversion_closing";
 		static final public String ENCUMBRANCE_FORWARD_FILE = "gl_encumbrance_forward";
 		static final public String CLOSE_NOMINAL_ACTIVITY_FILE = "gl_close_nominal_activity";
 		static final public String BALANCE_FORWARDS_FILE = "gl_balance_forwards";
