@@ -970,6 +970,16 @@ public class CheckReconciliationImportStep extends AbstractStep {
         
         return defaultStatus;
     }
+   
+    
+    private double getTotalNetAmount(Collection<PaymentGroup> paymentGroups ){
+        double d = 0.0;
+    	for (PaymentGroup paymentGroup : paymentGroups) {
+    		d+=paymentGroup.getNetPaymentAmount().doubleValue();
+        }
+        	
+    	return d;
+    }
     
     /**
      * Get Check Status
@@ -994,11 +1004,20 @@ public class CheckReconciliationImportStep extends AbstractStep {
         }
         
         Collection<PaymentGroup> paymentGroups = glTransactionService.getAllPaymentGroupForSearchCriteria(cr.getCheckNumber(), bankCodes);
+        double totalNetAmount =getTotalNetAmount(paymentGroups); 
         
         for (PaymentGroup paymentGroup : paymentGroups) {
+        	/*
+        	 * At Cornell Check amount may consist of one or more payment group amounts.  
+        	 * 
             if( !cr.getAmount().equals(paymentGroup.getNetPaymentAmount()) ) {
                 records.add(getCheckReconError(cr, "The check amount does not match payment net amount."));
             }
+            */
+        	if(!(totalNetAmount == cr.getAmount().doubleValue())){
+                records.add(getCheckReconError(cr, "The check amount does not match payment net amount from the payment groups."));
+        	}
+        	
             
             if( statusMap.get(cr.getStatus()) != null ) {
                 defaultStatus = statusMap.get(cr.getStatus());
