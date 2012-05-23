@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.jboss.util.Strings;
 import org.kuali.kfs.fp.batch.ProcurementCardLoadStep;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.fp.businessobject.ProcurementCardHolder;
@@ -50,7 +49,6 @@ import org.kuali.rice.kns.rule.event.SaveDocumentEvent;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.util.TypedArrayList;
 
 import edu.cornell.kfs.fp.batch.ProcurementCardParameterConstants;
 
@@ -64,13 +62,11 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
 
     protected ProcurementCardHolder procurementCardHolder;
 
-    protected List transactionEntries;
+    protected List<ProcurementCardTransactionDetail> transactionEntries;
 
     protected transient CapitalAssetInformation capitalAssetInformation;
     protected transient CapitalAssetManagementModuleService capitalAssetManagementModuleService;
 
-    private String accountNumberForSearching;
-    
     private static final String FINAL_ACCOUNTING_PERIOD = "13";
 
     /**
@@ -78,7 +74,7 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
      */
     public ProcurementCardDocument() {
         super();
-        transactionEntries = new TypedArrayList(ProcurementCardTransactionDetail.class);
+        transactionEntries = new ArrayList<ProcurementCardTransactionDetail>();
         // Save Capital Asset Information for PCard document when created.
         this.capitalAssetInformation = new CapitalAssetInformation();
     }
@@ -103,18 +99,17 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
             
             if( !getDocumentHeader().getDocumentDescription().contains("FY " + prevFiscYr) ) {
                 getDocumentHeader().setDocumentDescription("FY " + prevFiscYr + " " + getDocumentHeader().getDocumentDescription());
-                
-                List<SourceAccountingLine> srcLines = getSourceAccountingLines();
-                
-                for(SourceAccountingLine src : srcLines) {
-                    src.setPostingYear(prevFiscYr);
-                }
+            }
+            List<SourceAccountingLine> srcLines = getSourceAccountingLines();
+            
+            for(SourceAccountingLine src : srcLines) {
+                src.setPostingYear(prevFiscYr);
+            }
 
-                List<TargetAccountingLine> trgLines = getTargetAccountingLines();
-                
-                for(TargetAccountingLine trg : trgLines) {
-                    trg.setPostingYear(prevFiscYr);
-                }
+            List<TargetAccountingLine> trgLines = getTargetAccountingLines();
+            
+            for(TargetAccountingLine trg : trgLines) {
+                trg.setPostingYear(prevFiscYr);
             }
         }
     }
@@ -223,14 +218,14 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
     /**
      * @return Returns the transactionEntries.
      */
-    public List getTransactionEntries() {
+    public List<ProcurementCardTransactionDetail> getTransactionEntries() {
         return transactionEntries;
     }
 
     /**
      * @param transactionEntries The transactionEntries to set.
      */
-    public void setTransactionEntries(List transactionEntries) {
+    public void setTransactionEntries(List<ProcurementCardTransactionDetail> transactionEntries) {
         this.transactionEntries = transactionEntries;
     }
 
@@ -279,8 +274,7 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
 
         line.setSequenceNumber(this.getNextSourceLineNumber());
 
-        for (Iterator iter = transactionEntries.iterator(); iter.hasNext();) {
-            ProcurementCardTransactionDetail transactionEntry = (ProcurementCardTransactionDetail) iter.next();
+        for (ProcurementCardTransactionDetail transactionEntry : transactionEntries) {
             if (transactionEntry.getFinancialDocumentTransactionLineNumber().equals(line.getFinancialDocumentTransactionLineNumber())) {
                 transactionEntry.getSourceAccountingLines().add(line);
             }
@@ -300,8 +294,7 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
 
         line.setSequenceNumber(this.getNextTargetLineNumber());
 
-        for (Iterator iter = transactionEntries.iterator(); iter.hasNext();) {
-            ProcurementCardTransactionDetail transactionEntry = (ProcurementCardTransactionDetail) iter.next();
+        for (ProcurementCardTransactionDetail transactionEntry : transactionEntries) {
             if (transactionEntry.getFinancialDocumentTransactionLineNumber().equals(line.getFinancialDocumentTransactionLineNumber())) {
                 transactionEntry.getTargetAccountingLines().add(line);
             }
@@ -316,11 +309,10 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
      * @see org.kuali.kfs.sys.document.AccountingDocument#getSourceAccountingLines()
      */
     @Override
-    public List getSourceAccountingLines() {
-        List sourceAccountingLines = new ArrayList();
+    public List<SourceAccountingLine> getSourceAccountingLines() {
+        List<SourceAccountingLine> sourceAccountingLines = new ArrayList<SourceAccountingLine>();
 
-        for (Iterator iter = transactionEntries.iterator(); iter.hasNext();) {
-            ProcurementCardTransactionDetail transactionEntry = (ProcurementCardTransactionDetail) iter.next();
+        for (ProcurementCardTransactionDetail transactionEntry: transactionEntries) {
             for (Iterator iterator = transactionEntry.getSourceAccountingLines().iterator(); iterator.hasNext();) {
                 SourceAccountingLine sourceLine = (SourceAccountingLine) iterator.next();
                 sourceAccountingLines.add(sourceLine);
@@ -336,11 +328,10 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
      * @see org.kuali.kfs.sys.document.AccountingDocument#getTargetAccountingLines()
      */
     @Override
-    public List getTargetAccountingLines() {
-        List targetAccountingLines = new ArrayList();
+    public List<TargetAccountingLine> getTargetAccountingLines() {
+        List<TargetAccountingLine> targetAccountingLines = new ArrayList<TargetAccountingLine>();
 
-        for (Iterator iter = transactionEntries.iterator(); iter.hasNext();) {
-            ProcurementCardTransactionDetail transactionEntry = (ProcurementCardTransactionDetail) iter.next();
+        for (ProcurementCardTransactionDetail transactionEntry : transactionEntries) {
             for (Iterator iterator = transactionEntry.getTargetAccountingLines().iterator(); iterator.hasNext();) {
                 TargetAccountingLine targetLine = (TargetAccountingLine) iterator.next();
                 targetAccountingLines.add(targetLine);
@@ -354,7 +345,7 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
      * @see org.kuali.kfs.sys.document.AccountingDocumentBase#getSourceAccountingLineClass()
      */
     @Override
-    public Class getSourceAccountingLineClass() {
+    public Class<ProcurementCardSourceAccountingLine> getSourceAccountingLineClass() {
         return ProcurementCardSourceAccountingLine.class;
     }
 
@@ -362,7 +353,7 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
      * @see org.kuali.kfs.sys.document.AccountingDocumentBase#getTargetAccountingLineClass()
      */
     @Override
-    public Class getTargetAccountingLineClass() {
+    public Class<ProcurementCardTargetAccountingLine> getTargetAccountingLineClass() {
         return ProcurementCardTargetAccountingLine.class;
     }
 
