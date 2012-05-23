@@ -23,6 +23,9 @@ import edu.cornell.kfs.coa.service.AccountReversionImportService;
  */
 public class AccountReversionImportServiceImpl implements AccountReversionImportService {
 	
+    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionImportServiceImpl.class);
+
+	
 	ParameterService parameterService;
 	BusinessObjectService boService;
 	AccountReversionImportDao arid; 
@@ -40,6 +43,7 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
 		try {
 			CSVReader reader = new CSVReader(new FileReader(f));
 			List<String[]> lines = reader.readAll();
+			LOG.info("Read: "+ lines.toArray().length+" records");
             for (String[] line : lines) {
             	
                 String fromChart = line[0];
@@ -47,7 +51,7 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
 
                 String toChart = line[2];
                 String toAcct = line[3];
-                
+                LOG.info("Creating Reversion for: from account: "+ fromAcct +": to account "+ toAcct);
                 if (StringUtils.isNotBlank(fromChart) &&StringUtils.isNotBlank(fromAcct) && StringUtils.isNotBlank(toChart) &&StringUtils.isNotBlank(toAcct)) {
 
                 	AccountReversion accountReversion = new AccountReversion(); 
@@ -80,7 +84,7 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
             
             }
 		
-		} catch (Exception e){}
+		} catch (Exception e){ e.printStackTrace();}
 		finally {
 		}
 	}
