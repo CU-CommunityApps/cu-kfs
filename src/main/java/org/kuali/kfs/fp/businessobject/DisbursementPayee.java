@@ -158,7 +158,8 @@ public class DisbursementPayee extends TransientBusinessObjectBase implements In
 
         disbursementPayee.setActive(person.isActive());
 
-        if (StringUtils.isNotBlank(person.getEmployeeId())) {
+        // Assume employee if they have an employee ID and their employee status code is not Inactive
+        if (StringUtils.isNotBlank(person.getEmployeeId()) && !person.getEmployeeStatusCode().equalsIgnoreCase("I")) {
         	disbursementPayee.setPayeeIdNumber(person.getEmployeeId());
         } else {
         	disbursementPayee.setPayeeIdNumber(person.getPrincipalId());
