@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.ojb.broker.util.logging.Logger;
 import org.kuali.kfs.coa.businessobject.AccountReversion;
 import org.kuali.kfs.coa.businessobject.AccountReversionDetail;
 import org.kuali.rice.kns.service.BusinessObjectService;
@@ -15,6 +16,7 @@ import org.kuali.rice.kns.service.ParameterService;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.cornell.kfs.coa.dataaccess.AccountReversionImportDao;
+import edu.cornell.kfs.coa.dataaccess.impl.AccountReversionImportDaoJdbc;
 import edu.cornell.kfs.coa.service.AccountReversionImportService;
 
 /**
@@ -43,9 +45,12 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
 		try {
 			CSVReader reader = new CSVReader(new FileReader(f));
 			List<String[]> lines = reader.readAll();
+
+			Object[] array = lines.toArray();
 			LOG.info("Read: "+ lines.toArray().length+" records");
-            for (String[] line : lines) {
-            	
+			for (int i = 0; i < array.length; i++) {
+            //for (String[] line : array) {
+            	String[] line = (String[]) array[i];
                 String fromChart = line[0];
                 String fromAcct = line[1];
 
