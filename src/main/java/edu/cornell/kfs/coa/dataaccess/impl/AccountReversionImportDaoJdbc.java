@@ -16,7 +16,7 @@ public class AccountReversionImportDaoJdbc extends PlatformAwareDaoBaseJdbc impl
     public void destroyAccountReversionsAndDetails() {
         LOG.info("Attempting to wipe out account reversions and details");
         getSimpleJdbcTemplate().update("delete from CA_ACCT_REVERSION_T");
-        getSimpleJdbcTemplate().update("delete from GL_ACCT_RVRSN_DTL_T");
+        getSimpleJdbcTemplate().update("delete from CA_ACCT_RVRSN_DTL_T");
         LOG.info("All account reversions and details should be now removed");
     }
 
