@@ -39,7 +39,7 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
 		
 		
 		arid.destroyAccountReversionsAndDetails();
-		
+		int count = 0;
 		String objectCode = parameterService.getParameterValue("KFS-COA", "Reversion", "CASH_REVERSION_OBJECT_CODE");
 		
 		try {
@@ -85,12 +85,14 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
 
                 	accountReversion.addAccountReversionDetail(accountReversionDetail);
                 	boService.save(accountReversion);
+                	count++;
                 }
             
             }
 		
 		} catch (Exception e){ e.printStackTrace();}
 		finally {
+			LOG.info("Wrote: "+ count +" records");
 		}
 	}
 
