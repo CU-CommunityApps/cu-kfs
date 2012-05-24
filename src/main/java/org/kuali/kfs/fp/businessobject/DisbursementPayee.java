@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
+import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -37,6 +38,7 @@ import org.kuali.rice.kim.bo.impl.PersonImpl;
 import org.kuali.rice.kim.util.KIMPropertyConstants;
 import org.kuali.rice.kns.bo.Inactivateable;
 import org.kuali.rice.kns.bo.TransientBusinessObjectBase;
+import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KNSPropertyConstants;
 import org.kuali.rice.kns.util.ObjectUtils;
 
@@ -154,44 +156,20 @@ public class DisbursementPayee extends TransientBusinessObjectBase implements In
      * @return a payee object built from the given person object
      */
     public static DisbursementPayee getPayeeFromPerson(Person person) {
-    	DisbursementPayee disbursementPayee = new DisbursementPayee();
+        DisbursementPayee disbursementPayee = new DisbursementPayee();
 
         disbursementPayee.setActive(person.isActive());
 
-        // Assume employee if they have an employee ID and their employee status code is not Inactive
-        if (StringUtils.isNotBlank(person.getEmployeeId()) && !person.getEmployeeStatusCode().equalsIgnoreCase("I")) {
+        if (StringUtils.isNotBlank(person.getEmployeeId())) {
         	disbursementPayee.setPayeeIdNumber(person.getEmployeeId());
         } else {
         	disbursementPayee.setPayeeIdNumber(person.getPrincipalId());
         }
         disbursementPayee.setPrincipalId(person.getPrincipalId());
+        
         disbursementPayee.setPayeeName(person.getNameUnmasked());
         disbursementPayee.setTaxNumber(person.getExternalId(VendorConstants.TAX_TYPE_TAX));
-
-        for(KimEntityAffiliation entityAffiliation : ((PersonImpl)person).getAffiliations()) {
-        	if(entityAffiliation.isDefault()) {
-        		if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {
-                	disbursementPayee.setPayeeTypeCode((DisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT));
-        		}
-        		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.ALUMNI)) {
-                	disbursementPayee.setPayeeTypeCode(DisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI);
-        		}
-        		else {
-                	// Make employee the default
-                	disbursementPayee.setPayeeTypeCode(DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE);
-        		}
-        		break;
-        	}
-        }
-        
-//        if(person.hasAffiliationOfType(DisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {
-//        	disbursementPayee.setPayeeTypeCode((DisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT));
-//        } else if(person.hasAffiliationOfType(DisbursementVoucherConstants.PayeeAffiliations.ALUMNI)) {
-//        	disbursementPayee.setPayeeTypeCode(DisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI);
-//        } else {
-//        	// Make employee the default
-//        	disbursementPayee.setPayeeTypeCode(DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE);
-//        }
+        disbursementPayee.setPayeeTypeCode(DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE);
         String personAddress = MessageFormat.format(addressPattern, person.getAddressLine1Unmasked(), person.getAddressCityNameUnmasked(), person.getAddressStateCodeUnmasked(), person.getAddressCountryCodeUnmasked());
         disbursementPayee.setAddress(personAddress);
 

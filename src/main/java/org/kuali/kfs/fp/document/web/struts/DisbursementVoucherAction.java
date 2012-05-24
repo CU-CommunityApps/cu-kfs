@@ -481,8 +481,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         dvForm.setHasMultipleAddresses(false);
 
         // determine whether the selected vendor has multiple addresses. If so, redirect to the address selection screen
-        if (isPayeeLookupable) {
-        	if (dvForm.isVendor()) {
+        if (isPayeeLookupable && dvForm.isVendor()) {
 	            VendorDetail refreshVendorDetail = new VendorDetail();
 	            refreshVendorDetail.setVendorNumber(payeeIdNumber);
 	            refreshVendorDetail = (VendorDetail) SpringContext.getBean(BusinessObjectService.class).retrieve(refreshVendorDetail);
@@ -506,17 +505,10 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
 	            }
 	
 	            return null;
-        	}
-	        else if (dvForm.isEmployee()) {
-	            this.setupPayeeAsEmployee(dvForm, payeeIdNumber);
-	        }
-	        else if (dvForm.isStudent()) {
-	            this.setupPayeeAsStudent(dvForm, payeeIdNumber);
-	        }
-	        else if (dvForm.isAlumni()) {
-	            this.setupPayeeAsAlumni(dvForm, payeeIdNumber);
-	        }
         }
+	    else if (isPayeeLookupable && dvForm.isEmployee()) {
+	    	this.setupPayeeAsEmployee(dvForm, payeeIdNumber);
+	    }
 
         String payeeAddressIdentifier = request.getParameter(KFSPropertyConstants.VENDOR_ADDRESS_GENERATED_ID);
         if (isAddressLookupable && StringUtils.isNotBlank(payeeAddressIdentifier)) {
@@ -590,38 +582,6 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
             ((DisbursementVoucherDocument) dvForm.getDocument()).templateEmployee(person);
             dvForm.setTempPayeeIdNumber(payeeIdNumber);
             dvForm.setOldPayeeType(DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE);
-
-        }
-        else {
-            LOG.error("Exception while attempting to retrieve universal user by universal user id " + payeeIdNumber);
-        }
-    }
-
-    /**
-     * setup the payee as an student with the given id number
-     */
-    protected void setupPayeeAsStudent(DisbursementVoucherForm dvForm, String payeeIdNumber) {
-        Person person = (Person) SpringContext.getBean(PersonService.class).getPerson(payeeIdNumber);
-        if (person != null) {
-            ((DisbursementVoucherDocument) dvForm.getDocument()).templateStudent(person);
-            dvForm.setTempPayeeIdNumber(payeeIdNumber);
-            dvForm.setOldPayeeType(DisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT);
-
-        }
-        else {
-            LOG.error("Exception while attempting to retrieve universal user by universal user id " + payeeIdNumber);
-        }
-    }
-
-    /**
-     * setup the payee as an alumni with the given id number
-     */
-    protected void setupPayeeAsAlumni(DisbursementVoucherForm dvForm, String payeeIdNumber) {
-        Person person = (Person) SpringContext.getBean(PersonService.class).getPerson(payeeIdNumber);
-        if (person != null) {
-            ((DisbursementVoucherDocument) dvForm.getDocument()).templateAlumni(person);
-            dvForm.setTempPayeeIdNumber(payeeIdNumber);
-            dvForm.setOldPayeeType(DisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI);
 
         }
         else {
