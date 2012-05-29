@@ -1018,18 +1018,20 @@ public class CheckReconciliationImportStep extends AbstractStep {
                 records.add(getCheckReconError(cr, "The check amount does not match payment net amount from the payment groups."));
         	}
         	
-            
+        	
             if( statusMap.get(cr.getStatus()) != null ) {
                 defaultStatus = statusMap.get(cr.getStatus());
-                   
-                // Update status and save
+                // Update PDP status and save
                 KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, defaultStatus);
                 if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
                     paymentGroup.setPaymentStatus((PaymentStatus) code);
                 }
-                businessObjectService.save(paymentGroup);
-                   
-                LOG.info("Updated Payment Group : " + paymentGroup.getId());
+                
+                //Dont update payment status if the bank status is ISSUED
+                if(!defaultStatus.equals(CRConstants.ISSUED)){
+                	businessObjectService.save(paymentGroup);
+                	LOG.info("Updated Payment Group : " + paymentGroup.getId());
+                }
             }
             else {
                 LOG.warn("Update Payment Group Failed ( " + cr.getStatus() + ") ID : " + paymentGroup.getId());
