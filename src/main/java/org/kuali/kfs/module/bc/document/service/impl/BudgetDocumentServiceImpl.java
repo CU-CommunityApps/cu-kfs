@@ -914,9 +914,10 @@ public class BudgetDocumentServiceImpl implements BudgetDocumentService {
         }
 
         // no plug for the contract and grant account
-        if (account.isForContractsAndGrants()) {
-            return false;
-        }
+        //remove this rule per KFSPTS-1004
+        //        if (account.isForContractsAndGrants()) {
+        //            return false;
+        //        }
 
         return true;
     }
