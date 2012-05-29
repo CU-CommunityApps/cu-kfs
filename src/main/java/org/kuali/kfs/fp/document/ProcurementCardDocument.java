@@ -97,9 +97,10 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
             explicitEntry.setUniversityFiscalPeriodCode(FINAL_ACCOUNTING_PERIOD);
             explicitEntry.setUniversityFiscalYear(prevFiscYr);
             
-            if( !getDocumentHeader().getDocumentDescription().contains("FY " + prevFiscYr) ) {
-                getDocumentHeader().setDocumentDescription("FY " + prevFiscYr + " " + getDocumentHeader().getDocumentDescription());
-            }
+//            KFSPTS-1135 : Removing document description modification delivered by UA, as it is currently overflowing the description field - not a required mod
+//            if( !getDocumentHeader().getDocumentDescription().contains("FY " + prevFiscYr) ) {
+//                getDocumentHeader().setDocumentDescription("FY " + prevFiscYr + " " + getDocumentHeader().getDocumentDescription());
+//            }
             List<SourceAccountingLine> srcLines = getSourceAccountingLines();
             
             for(SourceAccountingLine src : srcLines) {
