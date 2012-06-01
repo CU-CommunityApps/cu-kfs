@@ -213,7 +213,7 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
         String rc = pd.getDisbVchrPaymentReasonCode();
 
         // If the payee is an employee, set these flags accordingly
-        if ((document.getDvPayeeDetail().isVendor() && SpringContext.getBean(VendorService.class).isVendorInstitutionEmployee(pd.getDisbVchrVendorHeaderIdNumberAsInteger())) || document.getDvPayeeDetail().isEmployee()) {
+        if ((pd.isVendor() && SpringContext.getBean(VendorService.class).isVendorInstitutionEmployee(pd.getDisbVchrVendorHeaderIdNumberAsInteger())) || pd.isEmployee()) {
             pg.setEmployeeIndicator(Boolean.TRUE);
             pg.setPayeeIdTypeCd(PdpConstants.PayeeIdTypeCodes.EMPLOYEE);
 
@@ -223,9 +223,17 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
                         && !DisbursementVoucherConstants.PaymentReasonCodes.RENTAL_PAYMENT.equals(rc)
                         && !DisbursementVoucherConstants.PaymentReasonCodes.ROYALTIES.equals(rc));
         }
-        // Payee is not an employee
-        else {
+        // If the payee is an alumni or student, set these flags accordingly
+        else if(pd.isStudent() || pd.isAlumni()) {
+            pg.setPayeeIdTypeCd(PdpConstants.PayeeIdTypeCodes.ENTITY);
 
+            // All payments are taxable except research participant, rental & royalties
+            pg.setTaxablePayment(
+                    !parameterService.getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, rc).evaluationSucceeds()
+                        && !DisbursementVoucherConstants.PaymentReasonCodes.RENTAL_PAYMENT.equals(rc)
+                        && !DisbursementVoucherConstants.PaymentReasonCodes.ROYALTIES.equals(rc));
+        }
+        else {
             // These are taxable
             VendorDetail vendDetail = SpringContext.getBean(VendorService.class).getVendorDetail(pd.getDisbVchrVendorHeaderIdNumberAsInteger(), pd.getDisbVchrVendorDetailAssignedIdNumberAsInteger());
             String vendorOwnerCode = vendDetail.getVendorHeader().getVendorOwnershipCode();
