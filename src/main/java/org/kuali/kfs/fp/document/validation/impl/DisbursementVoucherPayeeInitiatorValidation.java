@@ -71,6 +71,9 @@ public class DisbursementVoucherPayeeInitiatorValidation extends GenericValidati
             Person employee = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(payeeDetail.getDisbVchrEmployeeIdNumber());
             uuid = employee.getPrincipalId();
         }
+        else if(payeeDetail.isStudent() || payeeDetail.isAlumni()) {
+        	uuid = payeeDetail.getDisbVchrPayeeIdNumber();
+        }
 
         // If a uuid was found for payee, check it against the initiator uuid
         if (StringUtils.isNotBlank(uuid)) {
