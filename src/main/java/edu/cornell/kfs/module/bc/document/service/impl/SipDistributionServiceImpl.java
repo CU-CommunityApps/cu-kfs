@@ -64,10 +64,10 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
         // generate report for data with errors
         buildReportEntriesForInvalidEntries(reportEntries, invalidEntries);
-        
+
         // generate report for SIP to HR entries
         buildSipTotalsForHRValidEntriesReportEntries(reportEntries, sipToHrValidEntries);
-        
+
         // generate report entries for the SIP totals
         buildSipTotalsReportEntries(reportEntries, bcValidEntries);
 
@@ -370,8 +370,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                             appointmentFunding.getAppointmentRequestedAmount().bigIntegerValue()));
 
                     KualiDecimal newDistributionAmount = KualiDecimal.ZERO;
-                    newDistributionAmount = sipImportData.getNewAnnualRate()
-                            .multiply(new KualiDecimal(newDistribution.getAppointmentRequestedFteQuantity()));
+                    newDistributionAmount = new KualiDecimal(sipImportData.getNewAnnualRate().bigDecimalValue().multiply(newDistribution.getAppointmentRequestedFteQuantity()));
                     newDistribution.setAppointmentRequestedAmount(new KualiInteger(newDistributionAmount.intValue()));
 
                     isChanged = true;
@@ -390,8 +389,8 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                             appointmentFunding.getAppointmentRequestedCsfAmount().bigIntegerValue()));
 
                     KualiDecimal newLeaveDistributionAmount = KualiDecimal.ZERO;
-                    newLeaveDistributionAmount = sipImportData.getNewAnnualRate()
-                            .multiply(new KualiDecimal(newDistribution.getAppointmentRequestedCsfFteQuantity()));
+                    newLeaveDistributionAmount = new KualiDecimal(sipImportData.getNewAnnualRate().bigDecimalValue()
+                            .multiply(newDistribution.getAppointmentRequestedCsfFteQuantity()));
 
                     newDistribution.setAppointmentRequestedCsfAmount(new KualiInteger(newLeaveDistributionAmount
                             .intValue()));
@@ -446,7 +445,17 @@ public class SipDistributionServiceImpl implements SipDistributionService {
     }
 
     /**
-     * @see edu.cornell.kfs.module.bc.document.service.SipDistributionService#calculateNewPBGL(java.util.List)
+     * Calculates the new amounts for the PBGL entries affected by SIP: retrieves all PBGL
+     * entries for the given appointment funding lines and adds the difference between the
+     * old appointment funding amount and the new appointment funding amount after SIP has
+     * been added.
+     * 
+     * @param newDistributions
+     * @param affectedEdocs
+     * @param oldAmounts
+     * @param oldDistributionAmounts
+     * @param oldLeaveDistributionAmounts
+     * @return a map with the updated PBGL lines
      */
     public Map<String, PendingBudgetConstructionGeneralLedger> calculateNewPBGL(
             List<PendingBudgetConstructionAppointmentFunding> newDistributions,
@@ -458,7 +467,10 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
         for (PendingBudgetConstructionAppointmentFunding newDistribution : newDistributions) {
 
+            // for each appointment funding calculate the change in the appointment funding amount in order to add that to the corresponding PBGL line
             KualiInteger amountChange = KualiInteger.ZERO;
+
+            // if the appointment funding line is not deleted, it has a requested amount that is not empty or zero and it has a requested time percent that is not empty and is not zero the calculate the change in the appointment funding amount
             if (!newDistribution.isAppointmentFundingDeleteIndicator()
                     && newDistribution.getAppointmentRequestedAmount() != null
                     && newDistribution.getAppointmentRequestedAmount().isNonZero()
@@ -472,7 +484,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                         oldRequestedAmount);
             }
 
-            // check for leave and add leave diff to the amount change
+            // check for leave: if the appointment funding is not deleted and the requested leave amount is not empty and not zero and the leave time percent is not empty and the time percent is not zero then add the leave difference (new leave amount - old leave amount) to the amount change
             if (!newDistribution.isAppointmentFundingDeleteIndicator()
                     && newDistribution.getAppointmentRequestedCsfAmount() != null
                     && newDistribution.getAppointmentRequestedCsfAmount().isNonZero()
@@ -599,16 +611,22 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
     }
 
+    /**
+     * Persists the updated annual benefits
+     * 
+     * @param newAnnualBenefitsList
+     */
     public void persistNewAnnualBenefits(Map<String, PendingBudgetConstructionGeneralLedger> newAnnualBenefitsList) {
 
         persistEntriesToPBGL(newAnnualBenefitsList.values());
 
     }
 
-    public void persistNewPlugEntries() {
-
-    }
-
+    /**
+     * Persists updated entries to PBGL.
+     * 
+     * @param pbglEntries
+     */
     private void persistEntriesToPBGL(Collection<PendingBudgetConstructionGeneralLedger> pbglEntries) {
         for (PendingBudgetConstructionGeneralLedger pbglEntry : pbglEntries) {
 
@@ -617,11 +635,21 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         }
     }
 
+    /**
+     * Delete the 2PLG entries.
+     * 
+     * @param pbglEntries
+     */
     private void deletePBGLEntries(List<PendingBudgetConstructionGeneralLedger> pbglEntries) {
         businessObjectService.delete(pbglEntries);
 
     }
 
+    /**
+     * Persist the new monthly benefits.
+     * 
+     * @param newMonthlyBenefitsList
+     */
     public void persistNewMonthlyBenefits(Map<String, BudgetConstructionMonthly> newMonthlyBenefitsList) {
 
         for (BudgetConstructionMonthly benefit : newMonthlyBenefitsList.values()) {
@@ -722,6 +750,16 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
     }
 
+    /**
+     * Creates a request benefit object for reporting purposes from the given benefit
+     * entry.
+     * 
+     * @param newPBGLEntry
+     * @param benefit
+     * @param benefitsCalculation
+     * @param benefitsPercent
+     * @return returns a RequestBenefits object
+     */
     private RequestBenefits createRequestBenefit(PendingBudgetConstructionGeneralLedger newPBGLEntry,
             LaborLedgerPositionObjectBenefit benefit, BenefitsCalculation benefitsCalculation,
             KualiPercent benefitsPercent) {
@@ -934,6 +972,16 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         }
     }
 
+    /**
+     * Computes the amount to be added to a benefit line by subtracting the new benefit
+     * amount from the old amount.
+     * 
+     * @param glEntry
+     * @param benefitsPbglEntry
+     * @param benefitPercent
+     * @param oldPBGLAmount
+     * @return the amount to be added
+     */
     private KualiInteger getAmountToAdd(PendingBudgetConstructionGeneralLedger glEntry,
             PendingBudgetConstructionGeneralLedger benefitsPbglEntry, KualiPercent benefitPercent,
             KualiInteger oldPBGLAmount) {
@@ -957,17 +1005,12 @@ public class SipDistributionServiceImpl implements SipDistributionService {
     }
 
     /**
-     * This overridden method ...
+     * Retrieve the 2PLG entries for the given BC edocs that have been affected by SIP
      * 
-     * @see
-     * edu.cornell.kfs.module.bc.document.service.SipDistributionService#updateBenefits(
-     * List<PendingBudgetConstructionGeneralLedger> newPBGLEntries )
+     * @param affectedEdocs
+     * @return a list of 2PLG entries for the given BC edocs that have been affected by
+     * SIP
      */
-    public void updateBenefits(List<PendingBudgetConstructionGeneralLedger> newPBGLEntries) {
-        // TODO Auto-generated method stub
-
-    }
-
     private List<PendingBudgetConstructionGeneralLedger> get2PLGEntriesToDelete(
             Map<String, AffectedEdocInfo> affectedEdocs) {
 
@@ -1018,6 +1061,12 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
     }
 
+    /**
+     * Retrieves the SIP pool entries for the BC edocs.
+     * 
+     * @param affectedEdocs
+     * @return the SIP pool entries to be deleted
+     */
     private List<PendingBudgetConstructionGeneralLedger> getSIPPoolEntriesToDelete(
             Map<String, AffectedEdocInfo> affectedEdocs) {
 
@@ -1028,6 +1077,14 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
     }
 
+    /**
+     * Calculates the new plug entries: PBGL entries with object code 6995 that will hold
+     * the difference amount between the revenues and the expenditures (expenditure
+     * amounts after SIP has been added and 2PLG entries and SIP pools removed).
+     * 
+     * @param affectedEdocs
+     * @return a list of plug entries created as described above
+     */
     public List<PendingBudgetConstructionGeneralLedger> calculateNewPlugEntries(
             Map<String, AffectedEdocInfo> affectedEdocs) {
 
@@ -1084,8 +1141,15 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         return newPlugEntries;
 
     }
-    
-    protected void buildReportEntriesForInvalidEntries(StringBuilder reportEntries, List<SipImportData> sipImportDataCollection) {
+
+    /**
+     * Build report entries for invalid SIP import entries
+     * 
+     * @param reportEntries
+     * @param sipImportDataCollection
+     */
+    protected void buildReportEntriesForInvalidEntries(StringBuilder reportEntries,
+            List<SipImportData> sipImportDataCollection) {
 
         StringBuilder header = new StringBuilder();
         header.append("\nSIP entries that are not saved for SIP to HR batch job and are not distributed to BC \n\n");
@@ -1097,23 +1161,23 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         header.append("Position" + SEPARATOR);
         header.append("Position Description" + SEPARATOR);
         header.append("Emplid" + SEPARATOR);
-        header.append("Person Name" + SEPARATOR);        
+        header.append("Person Name" + SEPARATOR);
         header.append("SIP Eligible?" + SEPARATOR);
-    	header.append("Empl Type" + SEPARATOR);
-    	header.append("Empl Rcd" + SEPARATOR);
-    	header.append("Job Code" + SEPARATOR);
-    	header.append("Job Code Desc" + SEPARATOR);
-    	header.append("Job Family" + SEPARATOR);
-    	header.append("Position Fte" + SEPARATOR);
-    	header.append("Position Grade Default" + SEPARATOR);
-    	header.append("CU State Cert" + SEPARATOR);
-    	header.append("Comp Freq" + SEPARATOR);
+        header.append("Empl Type" + SEPARATOR);
+        header.append("Empl Rcd" + SEPARATOR);
+        header.append("Job Code" + SEPARATOR);
+        header.append("Job Code Desc" + SEPARATOR);
+        header.append("Job Family" + SEPARATOR);
+        header.append("Position Fte" + SEPARATOR);
+        header.append("Position Grade Default" + SEPARATOR);
+        header.append("CU State Cert" + SEPARATOR);
+        header.append("Comp Freq" + SEPARATOR);
         header.append("Annual Rate" + SEPARATOR);
         header.append("Comp Rate" + SEPARATOR);
-    	header.append("Job Std Hrs" + SEPARATOR);
-    	header.append("Wrk Months" + SEPARATOR);
-    	header.append("Job Func" + SEPARATOR);
-    	header.append("Job Func Desc" + SEPARATOR);
+        header.append("Job Std Hrs" + SEPARATOR);
+        header.append("Wrk Months" + SEPARATOR);
+        header.append("Job Func" + SEPARATOR);
+        header.append("Job Func Desc" + SEPARATOR);
         header.append("Increase to Min" + SEPARATOR);
         header.append("Equity" + SEPARATOR);
         header.append("Merit" + SEPARATOR);
@@ -1129,13 +1193,20 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
         if (sipImportDataCollection != null && sipImportDataCollection.size() > 0) {
             for (SipImportData importData : sipImportDataCollection) {
-                reportEntries.append( buildReportEntryForSipImportDataWithErrors(importData) + "\n");
+                reportEntries.append(buildReportEntryForSipImportDataWithErrors(importData) + "\n");
             }
         }
 
     }
-    
-    protected void buildSipTotalsForHRValidEntriesReportEntries(StringBuilder reportEntries, List<SipImportData> sipImportDataCollection) {
+
+    /**
+     * Builds report entries for HR valid SIP import entries.
+     * 
+     * @param reportEntries
+     * @param sipImportDataCollection
+     */
+    protected void buildSipTotalsForHRValidEntriesReportEntries(StringBuilder reportEntries,
+            List<SipImportData> sipImportDataCollection) {
 
         StringBuilder header = new StringBuilder();
         header.append("\nSIP Totals for entries that will be saved for SIP to HR batch job \n\n");
@@ -1165,9 +1236,8 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         }
     }
 
-
     /**
-     * This method ...
+     * Builds report entries for SIP import data valid for BC distribution.
      * 
      * @param reportEntries
      * @param sipImportDataCollection
@@ -1201,7 +1271,13 @@ public class SipDistributionServiceImpl implements SipDistributionService {
             }
         }
     }
-    
+
+    /**
+     * Builds a report entry for a SIP import line that has errors
+     * 
+     * @param importData
+     * @return
+     */
     private StringBuilder buildReportEntryForSipImportDataWithErrors(SipImportData importData) {
 
         StringBuilder reportEntry = new StringBuilder();
@@ -1244,6 +1320,12 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
     }
 
+    /**
+     * Builds a report entry for a SIP import line with new totals. This method is used for valid SIP entries.
+     * 
+     * @param importData
+     * @return
+     */
     private StringBuilder buildReportEntryForSipImportDataWithTotals(SipImportData importData) {
 
         StringBuilder reportEntry = new StringBuilder();
@@ -1268,7 +1350,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
     }
 
     /**
-     * This method ...
+     *Builds report entries for the updates appointment funding entries (the new distributions after SIP).
      * 
      * @param reportEntries
      * @param newDistributions
@@ -1278,10 +1360,6 @@ public class SipDistributionServiceImpl implements SipDistributionService {
             Map<String, KualiInteger> oldDisttributionAmounts,
             Map<String, KualiInteger> oldLeaveDisttributionAmounts) {
 
-        //        StringBuilder header = new StringBuilder();
-        //        header.append("\nSip Distribution \n\n");
-        //        reportEntries.append(header);
-        //        reportEntries.append(buildReportTitlesForNewDistribution());
 
         if (newDistributions != null && newDistributions.size() > 0) {
 
@@ -1316,7 +1394,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
     }
 
     /**
-     * This method ...
+     * Build report entries for the updated PBGL entries.
      * 
      * @param reportEntries
      * @param newDistributions
@@ -1338,7 +1416,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
     }
 
     /**
-     * This method ...
+     * Build report entries for the updated benefits together with details on benefit percent, object code and amount.
      * 
      * @param reportEntries
      * @param newDistributions
@@ -1370,6 +1448,12 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         }
     }
 
+    /**
+     * Build a report entry for
+     * 
+     * @param requestBenefits
+     * @return
+     */
     protected String buildSipReportEntryForRequestBenefits(RequestBenefits requestBenefits) {
         StringBuilder reportEntry = new StringBuilder();
 
