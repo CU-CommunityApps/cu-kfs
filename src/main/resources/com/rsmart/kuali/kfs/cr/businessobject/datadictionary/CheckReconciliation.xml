@@ -285,9 +285,9 @@ http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
         <bean parent="FieldDefinition"
               p:attributeName="payeeId" />
         <bean parent="FieldDefinition"
-              p:attributeName="payeeType" />
-        <bean parent="FieldDefinition"
               p:attributeName="payeeName" />
+        <bean parent="FieldDefinition"
+              p:attributeName="payeeType" />
         <bean parent="FieldDefinition"
               p:attributeName="checkDate" />
         <bean parent="FieldDefinition"
