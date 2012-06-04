@@ -25,7 +25,8 @@
           <requests name="Account" nextNode="OrganizationHierarchy"/>
           <requests name="OrganizationHierarchy" nextNode="Award"/>
           <requests name="Award" nextNode="SubFund"/>
-          <requests name="SubFund"/>
+          <requests name="SubFund" nextNode="AccountSupervisor"/>
+          <requests name="AccountSupervisor"/>
         </routePath>
       </routePaths>
       <routeNodes>
@@ -43,6 +44,10 @@
           <activationType>P</activationType>
         </role>
         <role name="Award">
+          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+        <role name="AccountSupervisor">
           <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
