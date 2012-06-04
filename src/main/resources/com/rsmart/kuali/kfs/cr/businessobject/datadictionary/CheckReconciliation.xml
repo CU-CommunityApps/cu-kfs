@@ -281,6 +281,8 @@ http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
         <bean parent="FieldDefinition"
               p:attributeName="checkNumber" />
         <bean parent="FieldDefinition"
+              p:attributeName="bankCode" />
+        <bean parent="FieldDefinition"
               p:attributeName="payeeId" />
         <bean parent="FieldDefinition"
               p:attributeName="payeeType" />
