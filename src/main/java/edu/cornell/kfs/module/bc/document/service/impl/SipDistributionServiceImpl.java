@@ -107,14 +107,6 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
         //        buildSipDistributionsReportEntries(reportEntries, newDistributions, oldDistributionAmounts);
 
-        // persist sip distribution
-
-        if (updateMode) {
-
-            persistNewDistributions(newDistributions);
-
-        }
-
         //3. update bcEdocs pending entries after the new distribution
         Map<String, KualiInteger> oldAmounts = new HashMap<String, KualiInteger>();
 
@@ -125,11 +117,6 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         // generate report entries for the updated BC pending entries
 
         buildSipNewPBGLReportEntries(reportEntries, newPBGLEntries, oldAmounts);
-
-        if (updateMode) {
-            // persist updated BC pending entries
-            persistNewPBGL(newPBGLEntries);
-        }
 
         //4. Calculate Benefits
 
@@ -154,16 +141,6 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         buildSipNewAnnualBenefitsReportEntries(reportEntries, benefitsMap, oldAnnualBenefitsAmount);
         buildSipNewMonthlyBenefitsReportEntries(reportEntries, monthlyBenefitsMap, oldMonthlyBenefitsAmount);
 
-        if (updateMode) {
-            // persist the calculated benefits
-
-            // persist new annual benefits
-            persistNewAnnualBenefits(benefitsMap);
-
-            // persist new monthly benefits
-            persistNewMonthlyBenefits(monthlyBenefitsMap);
-        }
-
         //5. Calculate 2PLG entries
 
         // calculate the 2PLG entries
@@ -171,11 +148,6 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
         // build new plug entries report
         buildSipNewPlugReportEntries(reportEntries, newPlugEntries);
-
-        if (updateMode) {
-            persistEntriesToPBGL(newPlugEntries);
-
-        }
 
         //remove 2PLG entries
 
@@ -185,11 +157,6 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
         buildSip2PlugReportEntries(reportEntries, _2PlugEntriesToDelete);
 
-        // delete 2PLG entries
-
-        if (updateMode) {
-            deletePBGLEntries(_2PlugEntriesToDelete);
-        }
         // Get SIP pools to delete
 
         List<PendingBudgetConstructionGeneralLedger> sipPoolEntriesToDelete = getSIPPoolEntriesToDelete(affectedEdocsFor2PLGCleanup);
@@ -197,10 +164,46 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         // build report for SIP pool entries
         buildSipPoolReportEntries(reportEntries, sipPoolEntriesToDelete);
 
-        //delete SIP pool entries
+        /////----persistence step----/////
 
         if (updateMode) {
-            deletePBGLEntries(sipPoolEntriesToDelete);
+
+            // persist sip distribution
+            if (ObjectUtils.isNotNull(newDistributions)) {
+                persistNewDistributions(newDistributions);
+            }
+
+            // persist updated BC pending entries
+            if (ObjectUtils.isNotNull(newPBGLEntries)) {
+                persistNewPBGL(newPBGLEntries);
+            }
+
+            // persist the calculated benefits
+
+            // persist new annual benefits
+            if (ObjectUtils.isNotNull(benefitsMap)) {
+                persistNewAnnualBenefits(benefitsMap);
+            }
+
+            // persist new monthly benefits
+            if (ObjectUtils.isNotNull(monthlyBenefitsMap)) {
+                persistNewMonthlyBenefits(monthlyBenefitsMap);
+            }
+
+            //persist new plug entries
+            if (ObjectUtils.isNotNull(newPlugEntries)) {
+                persistEntriesToPBGL(newPlugEntries);
+            }
+
+            // delete 2PLG entries
+            if (ObjectUtils.isNotNull(_2PlugEntriesToDelete)) {
+                deletePBGLEntries(_2PlugEntriesToDelete);
+            }
+
+            //delete SIP pool entries
+            if (ObjectUtils.isNotNull(sipPoolEntriesToDelete)) {
+                deletePBGLEntries(sipPoolEntriesToDelete);
+            }
         }
 
         return reportEntries;
@@ -369,9 +372,10 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                     oldDistributionAmounts.put(buildAppointmentFundingKey(appointmentFunding), new KualiInteger(
                             appointmentFunding.getAppointmentRequestedAmount().bigIntegerValue()));
 
-                    KualiDecimal newDistributionAmount = KualiDecimal.ZERO;
-                    newDistributionAmount = new KualiDecimal(sipImportData.getNewAnnualRate().bigDecimalValue().multiply(newDistribution.getAppointmentRequestedFteQuantity()));
-                    newDistribution.setAppointmentRequestedAmount(new KualiInteger(newDistributionAmount.intValue()));
+                    BigDecimal newDistributionAmount = BigDecimal.ZERO;
+                    newDistributionAmount = sipImportData.getNewAnnualRate().bigDecimalValue()
+                            .multiply(newDistribution.getAppointmentRequestedFteQuantity());
+                    newDistribution.setAppointmentRequestedAmount(new KualiInteger(newDistributionAmount));
 
                     isChanged = true;
 
@@ -392,8 +396,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                     newLeaveDistributionAmount = new KualiDecimal(sipImportData.getNewAnnualRate().bigDecimalValue()
                             .multiply(newDistribution.getAppointmentRequestedCsfFteQuantity()));
 
-                    newDistribution.setAppointmentRequestedCsfAmount(new KualiInteger(newLeaveDistributionAmount
-                            .intValue()));
+                    newDistribution.setAppointmentRequestedCsfAmount(new KualiInteger(newLeaveDistributionAmount.bigDecimalValue()));
 
                     isChanged = true;
 
@@ -998,7 +1001,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                     .multiply(benefitPercent.bigDecimalValue().divide(new BigDecimal(100))));
 
             amountToAdd =
-                    new KualiInteger(newBenefitAmount.subtract(oldBenefitAmount).intValue());
+                    new KualiInteger((newBenefitAmount.subtract(oldBenefitAmount)).bigDecimalValue());
         }
         return amountToAdd;
 
@@ -1110,7 +1113,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
             KualiInteger newPlugEntryAmount = revenuesTotal.subtract((expenditureTotal.add(changeAmount)
                     .subtract(totalAmountToSubtract)));
-
+            
             // create the new plug entry
             PendingBudgetConstructionGeneralLedger newPlugEntry = new PendingBudgetConstructionGeneralLedger();
 
@@ -1321,7 +1324,8 @@ public class SipDistributionServiceImpl implements SipDistributionService {
     }
 
     /**
-     * Builds a report entry for a SIP import line with new totals. This method is used for valid SIP entries.
+     * Builds a report entry for a SIP import line with new totals. This method is used
+     * for valid SIP entries.
      * 
      * @param importData
      * @return
@@ -1350,7 +1354,8 @@ public class SipDistributionServiceImpl implements SipDistributionService {
     }
 
     /**
-     *Builds report entries for the updates appointment funding entries (the new distributions after SIP).
+     * Builds report entries for the updates appointment funding entries (the new
+     * distributions after SIP).
      * 
      * @param reportEntries
      * @param newDistributions
@@ -1359,7 +1364,6 @@ public class SipDistributionServiceImpl implements SipDistributionService {
             List<PendingBudgetConstructionAppointmentFunding> newDistributions,
             Map<String, KualiInteger> oldDisttributionAmounts,
             Map<String, KualiInteger> oldLeaveDisttributionAmounts) {
-
 
         if (newDistributions != null && newDistributions.size() > 0) {
 
@@ -1416,7 +1420,8 @@ public class SipDistributionServiceImpl implements SipDistributionService {
     }
 
     /**
-     * Build report entries for the updated benefits together with details on benefit percent, object code and amount.
+     * Build report entries for the updated benefits together with details on benefit
+     * percent, object code and amount.
      * 
      * @param reportEntries
      * @param newDistributions
