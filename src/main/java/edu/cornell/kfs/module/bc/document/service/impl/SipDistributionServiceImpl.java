@@ -134,6 +134,13 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                 oldMonthlyBenefitsAmount,
                 affectedEdocsFor2PLGCleanup);
 
+        // Get SIP pools to delete
+
+        List<PendingBudgetConstructionGeneralLedger> sipPoolEntriesToDelete = getSIPPoolEntriesToDelete(affectedEdocsFor2PLGCleanup);
+
+        //update benefits by removing the SIP pools part
+        updateFringeBenefitsByRemovingSipPoolBenefits(sipPoolEntriesToDelete, benefitsMap);
+
         // generate benefits details entries
         buildSipNewPBGLReportEntriesWithBenefitsDetails(reportEntries, newPBGLEntries, oldAmounts, requestBenefitsMap);
 
@@ -156,10 +163,6 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         // generate report entries for the calculated 2PLG entries
 
         buildSip2PlugReportEntries(reportEntries, _2PlugEntriesToDelete);
-
-        // Get SIP pools to delete
-
-        List<PendingBudgetConstructionGeneralLedger> sipPoolEntriesToDelete = getSIPPoolEntriesToDelete(affectedEdocsFor2PLGCleanup);
 
         // build report for SIP pool entries
         buildSipPoolReportEntries(reportEntries, sipPoolEntriesToDelete);
@@ -208,6 +211,69 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
         return reportEntries;
 
+    }
+
+    /**
+     * Updates the fringe benefits amounts by subtracting the amount related to the sip
+     * pool entry used to build the total fringe amount
+     * 
+     * @param sipPoolEntriesToDelete
+     * @param benefitsMap
+     */
+    private void updateFringeBenefitsByRemovingSipPoolBenefits(
+            List<PendingBudgetConstructionGeneralLedger> sipPoolEntriesToDelete,
+            Map<String, PendingBudgetConstructionGeneralLedger> benefitsMap) {
+        if (ObjectUtils.isNotNull(sipPoolEntriesToDelete)) {
+
+            for (PendingBudgetConstructionGeneralLedger sipPoolEntry : sipPoolEntriesToDelete) {
+
+                Integer fiscalYear = sipPoolEntry.getUniversityFiscalYear();
+                String finObjTypeExpenditureexpCd = optionsService.getOptions(fiscalYear)
+                        .getFinObjTypeExpenditureexpCd();
+
+                String laborBenefitsRateCategoryCode = ((AccountExtendedAttribute) sipPoolEntry.getAccount()
+                        .getExtension())
+                        .getLaborBenefitRateCategoryCode();
+                List<LaborLedgerPositionObjectBenefit> positionObjectBenefits = sipPoolEntry.getPositionObjectBenefit();
+
+                for (LaborLedgerPositionObjectBenefit benefit : positionObjectBenefits) {
+
+                    Map<String, String> keyFields = new HashMap<String, String>();
+
+                    keyFields.put("universityFiscalYear", String.valueOf(fiscalYear));
+                    keyFields.put("chartOfAccountsCode", sipPoolEntry.getChartOfAccountsCode());
+                    keyFields.put("positionBenefitTypeCode", benefit.getFinancialObjectBenefitsTypeCode());
+                    keyFields.put("laborBenefitRateCategoryCode", laborBenefitsRateCategoryCode);
+
+                    BenefitsCalculation benefitsCalculation = (BenefitsCalculation) businessObjectService
+                            .findByPrimaryKey(BenefitsCalculation.class, keyFields);
+
+                    if (ObjectUtils.isNotNull(benefitsCalculation)
+                            && laborBenefitsRateCategoryCode.equalsIgnoreCase(benefitsCalculation
+                                    .getLaborBenefitRateCategoryCode())) {
+
+                        String benefitsObjectCode = benefitsCalculation.getPositionFringeBenefitObjectCode();
+                        KualiPercent benefitsPercent = benefitsCalculation.getPositionFringeBenefitPercent();
+
+                        if (benefitsPercent.isNonZero()) {
+                            // compute benefits amount
+                            RequestBenefits requestBenefit = createRequestBenefit(sipPoolEntry, benefit,
+                                    benefitsCalculation, benefitsPercent);
+
+                            //update the corresponding benefits entry by subtracting the sipPoolBenefitAmount
+                            String fringeBenefitKey = buildBenefitKey(sipPoolEntry, benefitsObjectCode,
+                                    finObjTypeExpenditureexpCd);
+                            PendingBudgetConstructionGeneralLedger fringeBenefit = benefitsMap.get(fringeBenefitKey);
+                            fringeBenefit.setAccountLineAnnualBalanceAmount(new KualiInteger((fringeBenefit
+                                    .getAccountLineAnnualBalanceAmount().subtract(
+                                            requestBenefit.getFringeDetailAmount())).bigIntegerValue()));
+
+                        }
+                    }
+                }
+
+            }
+        }
     }
 
     /**
@@ -396,7 +462,8 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                     newLeaveDistributionAmount = new KualiDecimal(sipImportData.getNewAnnualRate().bigDecimalValue()
                             .multiply(newDistribution.getAppointmentRequestedCsfFteQuantity()));
 
-                    newDistribution.setAppointmentRequestedCsfAmount(new KualiInteger(newLeaveDistributionAmount.bigDecimalValue()));
+                    newDistribution.setAppointmentRequestedCsfAmount(new KualiInteger(newLeaveDistributionAmount
+                            .bigDecimalValue()));
 
                     isChanged = true;
 
@@ -771,7 +838,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
         requestBenefit.setChartOfAccountsCode(newPBGLEntry.getChartOfAccountsCode());
         requestBenefit.setAccountNumber(newPBGLEntry.getAccountNumber());
         requestBenefit.setFinancialObjectBenefitsTypeCode(benefit.getFinancialObjectBenefitsTypeCode());
-        requestBenefit.setFinancialObjectBenefitsTypeDescription(benefit.getLaborLedgerBenefitsCalculation()
+        requestBenefit.setFinancialObjectBenefitsTypeDescription(benefitsCalculation
                 .getLaborLedgerBenefitsType().getPositionBenefitTypeDescription());
         requestBenefit.setPositionFringeBenefitObjectCode(benefitsCalculation.getPositionFringeBenefitObjectCode());
         requestBenefit.setPositionFringeBenefitObjectCodeName(benefitsCalculation
@@ -1113,7 +1180,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
             KualiInteger newPlugEntryAmount = revenuesTotal.subtract((expenditureTotal.add(changeAmount)
                     .subtract(totalAmountToSubtract)));
-            
+
             // create the new plug entry
             PendingBudgetConstructionGeneralLedger newPlugEntry = new PendingBudgetConstructionGeneralLedger();
 
