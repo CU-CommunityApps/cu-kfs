@@ -71,7 +71,7 @@ public class SipImportDaoJdbc extends BudgetConstructionDaoJdbcBase implements S
 		//  
         try {
 	        StringBuilder sqlBuilder = new StringBuilder(200);
-	        sqlBuilder.append("select count(*) from kfs.cu_ps_job_data where POS_NBR=? and emplid=?");
+	        sqlBuilder.append("select count(*) from cu_ps_job_data where POS_NBR=? and emplid=?");
 	        String sqlString = sqlBuilder.toString();
 	        
 	        BigDecimal bdResult =  this.getSimpleJdbcTemplate().queryForObject(sqlString, BigDecimal.class, positionNumber, emplId);
