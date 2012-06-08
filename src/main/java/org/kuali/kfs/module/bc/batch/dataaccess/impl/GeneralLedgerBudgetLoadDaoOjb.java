@@ -66,8 +66,10 @@ import org.kuali.rice.kns.util.KualiInteger;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.util.TransactionalServiceUtils;
 
+import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
 import edu.cornell.kfs.coa.businessobject.SubFundProgram;
 import edu.cornell.kfs.module.bc.CUBCConstants;
+import edu.cornell.kfs.module.bc.CUBCPropertyConstants;
 
 public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelperDaoOjb implements GeneralLedgerBudgetLoadDao {
 
@@ -81,7 +83,6 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     private BusinessObjectService boService;
     private KualiConfigurationService kualiConfigurationService;
     private boolean tbRunFlag = false;
-    private boolean productionFlag = false;
     
 
     private String budgetReportDirectory;
@@ -109,7 +110,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     	Parameter subFundsParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS);
     	Parameter subFundProgramsParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS_PROGRAM);
         Parameter glAcObjectsParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_AC_OBJECTS);
-        productionFlag = isProduction();
+        
         String productionSetting = ConfigContext.getCurrentContextConfig().getEnvironment();   
         boolean errorEncountered = printOutEnvironment(reportDataStream, tbRunFlagParameter, subFundsParameter, subFundProgramsParameter, glAcObjectsParameter, fiscalYear, productionSetting);
         
@@ -126,13 +127,6 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
          */
         DiagnosticCounters diagnosticCounters = new DiagnosticCounters();
 
-        boolean notProductionError = removeOldBudgetGeneralLedgerEntries(fiscalYear, diagnosticCounters);
-        if(notProductionError) {
-        	StringBuilder body = new StringBuilder();
-        	body.append("\nERROR - Executing in production and prior budget data already exists.  Program terminating.");
-        	reportDataStream.print(body);
-        }
-        errorEncountered |= notProductionError;
         if(errorEncountered) {
         	StringBuilder body = new StringBuilder();
         	DateFormat format = new SimpleDateFormat("yyyy/MM/dd @ HH:mm:ss");
@@ -200,13 +194,13 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     	java.util.Date now = new java.util.Date();
     	String date = format.format(now);
     	body.append("\nCornell BC > GL load job beginning at " + date);
-    	body.append("\nCurrent version modified 5/11/12 9:04 MST\n");
+    	body.append("\nCurrent version modified 6/1/12 2:40 EST\n");
     	body.append(String.format("\n********************************************"));
     	body.append(String.format("\n\nBudget Construction Environment Variables\n"));
     	body.append(String.format("\n********************************************\n"));
 
     	body.append(String.format("\nINFO: Report being run for Fiscal Year %d\n", fiscalYear));
-    	body.append(String.format("\nINFO: Report is being run on the %s system. Is running on production system: %b\n", productionSetting, productionFlag));
+    	body.append(String.format("\nINFO: Report is being run on the %s system.\n", productionSetting));
     	if(tbRunFlagParameter != null) {
     		if(tbRunFlagParameter.getParameterValue() == null) {
     			warningEncountered = true;
@@ -284,215 +278,6 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 	/*******************************************************************************************************************************
      * methods to do the actual load *
      ******************************************************************************************************************************/
-
-    private boolean removeOldBudgetGeneralLedgerEntries(Integer year, DiagnosticCounters diagnosticCounters) {
-    	int deletedPendingEntries = 0;
-    	int deletedEntries = 0;
-    	int deletedBalanceEntries = 0;
-    	
-    	int deletedAcPendingEntries = 0;
-    	int deletedAcEntries = 0;
-    	int deletedAcBalanceEntries = 0;
-    	
-    	int deletedBbPendingEntries = 0;
-    	int deletedBbEntries = 0;
-    	int deletedBbBalanceEntries = 0;
-    	
-    	int deletedCbPendingEntries = 0;
-    	int deletedCbEntries = 0;
-    	int deletedCbBalanceEntries = 0;
-    	
-    	int deletedTbPendingEntries = 0;
-    	int deletedTbEntries = 0;
-    	int deletedTbBalanceEntries = 0;
-		if(!tbRunFlag) {
-			List<String> nonTbCollection = Arrays.asList("CB", "AC", "BB");
-			
-			getPersistenceBrokerTemplate().clearCache();
-			//CB Pending first
-			Criteria pendingEntryDeletion = new Criteria();
-			pendingEntryDeletion.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-			pendingEntryDeletion.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "CB");
-			QueryByCriteria pendingEntryQuery = new QueryByCriteria(GeneralLedgerPendingEntry.class, pendingEntryDeletion);
-			deletedCbPendingEntries = getPersistenceBrokerTemplate().getCount(pendingEntryQuery);
-			if(deletedCbPendingEntries > 0 && productionFlag) {
-				return true;
-			} else if(!productionFlag) {
-				diagnosticCounters.setGeneralLedgerCbPendingEntriesDeleted(deletedCbPendingEntries);
-			}
-			
-			//BB entries
-			pendingEntryDeletion = new Criteria();
-			pendingEntryDeletion.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-			pendingEntryDeletion.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "BB");
-			pendingEntryQuery = new QueryByCriteria(GeneralLedgerPendingEntry.class, pendingEntryDeletion);
-			deletedBbPendingEntries = getPersistenceBrokerTemplate().getCount(pendingEntryQuery);
-			if(deletedBbPendingEntries > 0 && productionFlag) {
-				return true;
-			} else if(!productionFlag) {
-				diagnosticCounters.setGeneralLedgerBbPendingEntriesDeleted(deletedBbPendingEntries);
-			}
-			
-			//AC entries
-			pendingEntryDeletion = new Criteria();
-			pendingEntryDeletion.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-			pendingEntryDeletion.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "AC");
-			pendingEntryQuery = new QueryByCriteria(GeneralLedgerPendingEntry.class, pendingEntryDeletion);
-			deletedAcPendingEntries = getPersistenceBrokerTemplate().getCount(pendingEntryQuery);
-			if(deletedAcPendingEntries > 0 && productionFlag) {
-				return true;
-			} else if(!productionFlag) {
-				diagnosticCounters.setGeneralLedgerAcPendingEntriesDeleted(deletedAcPendingEntries);
-			}
-			//Now the same for entries
-			//CB Pending first
-			Criteria entryDeletion = new Criteria();
-			entryDeletion.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-			entryDeletion.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "CB");
-			QueryByCriteria entryQuery = new QueryByCriteria(Entry.class, entryDeletion);
-			deletedCbEntries = getPersistenceBrokerTemplate().getCount(entryQuery);
-			if(deletedCbEntries > 0 && productionFlag) {
-				return true;
-			} else if(!productionFlag) {
-				diagnosticCounters.setGeneralLedgerCbEntriesDeleted(deletedCbEntries);
-			}
-			
-			//BB entries
-			entryDeletion = new Criteria();
-			entryDeletion.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-			entryDeletion.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "BB");
-			entryQuery = new QueryByCriteria(Entry.class, entryDeletion);
-			deletedBbEntries = getPersistenceBrokerTemplate().getCount(entryQuery);
-			if(deletedBbEntries > 0 && productionFlag) {
-				return true;
-			} else if(!productionFlag) {
-				diagnosticCounters.setGeneralLedgerBbEntriesDeleted(deletedBbEntries);
-			}
-			//AC entries
-			entryDeletion = new Criteria();
-			entryDeletion.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-			entryDeletion.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "AC");
-			entryQuery = new QueryByCriteria(Entry.class, entryDeletion);
-			deletedAcEntries = getPersistenceBrokerTemplate().getCount(entryQuery);
-			if(deletedAcEntries > 0 && productionFlag) {
-				return true;
-			} else if(!productionFlag) {
-				diagnosticCounters.setGeneralLedgerAcEntriesDeleted(deletedAcEntries);
-			}
-	        
-			//Now the same for balances
-			//CB Pending first
-			Criteria balanceDeletion = new Criteria();
-			balanceDeletion.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-			balanceDeletion.addEqualTo(KFSPropertyConstants.BALANCE_TYPE_CODE, "CB");
-			QueryByCriteria balanceQuery = new QueryByCriteria(Balance.class, balanceDeletion);
-			deletedCbBalanceEntries = getPersistenceBrokerTemplate().getCount(balanceQuery);
-			if(deletedCbBalanceEntries > 0 && productionFlag) {
-				return true;
-			} else if(!productionFlag) {
-				diagnosticCounters.setGeneralLedgerCbBalanceEntriesDeleted(deletedCbBalanceEntries);
-			}
-			//BB entries
-			balanceDeletion = new Criteria();
-			balanceDeletion.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-			balanceDeletion.addEqualTo(KFSPropertyConstants.BALANCE_TYPE_CODE, "BB");
-			balanceQuery = new QueryByCriteria(Balance.class, balanceDeletion);
-			deletedBbBalanceEntries = getPersistenceBrokerTemplate().getCount(balanceQuery);
-			if(deletedBbBalanceEntries > 0 && productionFlag) {
-				return true;
-			} else if(!productionFlag) {
-				diagnosticCounters.setGeneralLedgerBbBalanceEntriesDeleted(deletedBbBalanceEntries);
-			}
-			//AC entries
-			balanceDeletion = new Criteria();
-			balanceDeletion.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-			balanceDeletion.addEqualTo(KFSPropertyConstants.BALANCE_TYPE_CODE, "AC");
-			balanceQuery = new QueryByCriteria(Balance.class, balanceDeletion);
-			deletedAcBalanceEntries = getPersistenceBrokerTemplate().getCount(balanceQuery);
-			if(deletedAcBalanceEntries > 0 && productionFlag) {
-				return true;
-			} else if(!productionFlag) {
-				diagnosticCounters.setGeneralLedgerAcBalanceEntriesDeleted(deletedAcBalanceEntries);
-			}
-			
-			if(!productionFlag) {
-				Criteria pendingEntryCriteria = new Criteria();
-		        pendingEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-		        pendingEntryCriteria.addIn(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, nonTbCollection);
-		        QueryByCriteria deletePendingQry = new QueryByCriteria(GeneralLedgerPendingEntry.class, pendingEntryCriteria);
-		        deletedPendingEntries = getPersistenceBrokerTemplate().getCount(deletePendingQry);
-		        diagnosticCounters.setGeneralLedgerPendingEntriesDeleted(deletedPendingEntries);
-		        getPersistenceBrokerTemplate().deleteByQuery(deletePendingQry);
-		        
-		        Criteria glEntryCriteria = new Criteria();
-		        glEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-		        glEntryCriteria.addIn(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, nonTbCollection);
-		        QueryByCriteria deleteEntryQry = new QueryByCriteria(Entry.class, glEntryCriteria);
-		        deletedEntries = getPersistenceBrokerTemplate().getCount(deleteEntryQry);
-		        diagnosticCounters.setGeneralLedgerEntriesDeleted(deletedEntries);
-		        getPersistenceBrokerTemplate().deleteByQuery(deleteEntryQry);
-		        
-		        Criteria glBalanceCriteria = new Criteria();
-		        glBalanceCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-		        glBalanceCriteria.addIn(KFSPropertyConstants.BALANCE_TYPE_CODE, nonTbCollection);
-		        QueryByCriteria deleteBalanceQry = new QueryByCriteria(Balance.class, glBalanceCriteria);
-		        deletedBalanceEntries = getPersistenceBrokerTemplate().getCount(deleteBalanceQry);
-		        diagnosticCounters.setGeneralLedgerBalanceEntriesDeleted(deletedBalanceEntries);
-		        getPersistenceBrokerTemplate().deleteByQuery(deleteBalanceQry);	
-			}
-	        
-	        
-	        getPersistenceBrokerTemplate().clearCache();
-	        return false;
-			
-		} else if(tbRunFlag) {
-			getPersistenceBrokerTemplate().clearCache();
-	        Criteria pendingEntryCriteria = new Criteria();
-	        pendingEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-	        pendingEntryCriteria.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "TB");
-	        QueryByCriteria deletePendingQry = new QueryByCriteria(GeneralLedgerPendingEntry.class, pendingEntryCriteria);
-
-	        deletedPendingEntries = getPersistenceBrokerTemplate().getCount(deletePendingQry);
-	        if(deletedPendingEntries > 0 && productionFlag) {
-				return true;
-			} else if(!productionFlag) {
-		        diagnosticCounters.setGeneralLedgerTbPendingEntriesDeleted(deletedPendingEntries);
-		        diagnosticCounters.setGeneralLedgerPendingEntriesDeleted(deletedPendingEntries);
-		        getPersistenceBrokerTemplate().deleteByQuery(deletePendingQry);
-			}
-	        
-	        Criteria glEntryCriteria = new Criteria();
-	        glEntryCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-	        glEntryCriteria.addEqualTo(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "TB");
-	        QueryByCriteria deleteEntryQry = new QueryByCriteria(Entry.class, glEntryCriteria);
-	        deletedEntries = getPersistenceBrokerTemplate().getCount(deleteEntryQry);
-	        if(deletedEntries > 0 && productionFlag) {
-				return true;
-			} else if(!productionFlag) {
-		        diagnosticCounters.setGeneralLedgerTbEntriesDeleted(deletedEntries);
-		        diagnosticCounters.setGeneralLedgerEntriesDeleted(deletedEntries);
-		        getPersistenceBrokerTemplate().deleteByQuery(deleteEntryQry);
-			}
-	        
-	        Criteria glBalanceCriteria = new Criteria();
-	        glBalanceCriteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
-	        glBalanceCriteria.addEqualTo(KFSPropertyConstants.BALANCE_TYPE_CODE, "TB");
-	        QueryByCriteria deleteBalanceQry = new QueryByCriteria(Balance.class, glBalanceCriteria);
-	        deletedBalanceEntries = getPersistenceBrokerTemplate().getCount(deleteBalanceQry);
-	        if(deletedBalanceEntries > 0 && productionFlag) {
-				return true;
-			} else if(!productionFlag) {
-		        diagnosticCounters.setGeneralLedgerTbBalanceEntriesDeleted(deletedBalanceEntries);
-		        diagnosticCounters.setGeneralLedgerBalanceEntriesDeleted(deletedBalanceEntries);
-		        getPersistenceBrokerTemplate().deleteByQuery(deleteBalanceQry);
-			}
-	        
-	        getPersistenceBrokerTemplate().clearCache();
-	        return false;
-		}
-		return false;
-		
-	}
 
 	/**
      * build a hashmap containing the next entry sequence number to use for each document (document number) to be loaded from budget
@@ -882,23 +667,20 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
      */
 
     protected HashSet<String> getAccountsNotToBeLoaded() {
-        HashSet<String> bannedAccounts;
-        /**
-         * list of subfunds which should not be loaded
-         */
-        HashSet<String> bannedSubFunds = getSubFundsNotToBeLoaded();
-        HashSet<String> bannedSubFundPrograms = getSubFundsProgramsNotToBeLoaded();
-        Iterator<String> additionalBannedSubFundPrograms = bannedSubFundPrograms.iterator();
-        while (additionalBannedSubFundPrograms.hasNext()) {
-            bannedSubFunds.add(additionalBannedSubFundPrograms.next());
-        }
+        HashSet<String> bannedAccounts = new HashSet<String>();
+
+        
+        List<String> subFunds = this.parameterService.getParameterValues(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS);
+        Criteria criteria = new Criteria();
+
+        criteria.addIn(KFSPropertyConstants.SUB_FUND_GROUP_CODE, subFunds);
         
         /**
          * query for the subfund property for each account in the DB
          */
-        ReportQueryByCriteria queryID = new ReportQueryByCriteria(Account.class, org.apache.ojb.broker.query.ReportQueryByCriteria.CRITERIA_SELECT_ALL);
+        ReportQueryByCriteria queryID = new ReportQueryByCriteria(Account.class, criteria);
         queryID.setAttributes(new String[] { KFSPropertyConstants.ACCOUNT_NUMBER, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, KFSPropertyConstants.SUB_FUND_GROUP_CODE });
-        bannedAccounts = new HashSet<String>(hashCapacity(queryID));
+        
         /**
          * use the results to build a hash set of accounts which should NOT be loaded (that is, their subfunds are in the list of
          * subfunds we do not want
@@ -906,104 +688,47 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         Iterator accountProperties = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(queryID);
         while (accountProperties.hasNext()) {
             Object[] selectListValues = (Object[]) accountProperties.next();
-            /**
-             * we will add an account/chart to the list if it has a no-load subfundgroup
-             */
-            if (bannedSubFunds.contains((String) selectListValues[2])) {
+
                 /**
                  * hash content is account number concatenated with chart (the key of the chart of accounts table)
                  */
                 bannedAccounts.add(((String) selectListValues[0]) + ((String) selectListValues[1]));
-            }
+           
         }
+        
+        List<String> subFundsProgram = this.parameterService.getParameterValues(
+                BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL,
+                BCParameterKeyConstants.BC_GL_SUB_FUNDS_PROGRAM);
+
+        Criteria acctExtCriteria = new Criteria();
+        acctExtCriteria.addIn("programCode", subFundsProgram);
+
+        /**
+         * query for the sub program property for each account in the DB
+         */
+        ReportQueryByCriteria queryAcctExt = new ReportQueryByCriteria(AccountExtendedAttribute.class, acctExtCriteria);
+        queryAcctExt.setAttributes(new String[]{KFSPropertyConstants.ACCOUNT_NUMBER,
+                KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, "programCode"});
+        
+        /**
+         * use the results to build a hash set of accounts which should NOT be loaded
+         * (that is, their subfunds are in the list of subfunds we do not want
+         */
+        Iterator accountExtProperties = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(queryAcctExt);
+        while (accountExtProperties.hasNext()) {
+            Object[] selectListValues = (Object[]) accountExtProperties.next();
+
+            /**
+             * hash content is account number concatenated with chart (the key of the
+             * chart of accounts table)
+             */
+            bannedAccounts.add(((String) selectListValues[0]) + ((String) selectListValues[1]));
+
+        }
+        
         return bannedAccounts;
     }
 
-    /**
-     * build a hash set of subfunds whose accounts should NOT be loaded this can be done by either a list of FUND groups and/or a
-     * list of subfund groups
-     * 
-     * @see org.kuali.kfs.module.bc.BCConstants to initialize the String[] array(s) as desired
-     * @return list of subfunds whose accounts will NOT be loaded
-     */
-    protected HashSet<String> getSubFundsNotToBeLoaded() {
-        List<String> subFunds = this.parameterService.getParameterValues(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS);
-        HashSet<String> bannedSubFunds;
-        if(!tbRunFlag) {
-            if (subFunds.size() !=0) {
-                /**
-                 * look for subfunds in the banned fund groups
-                 */
-                Criteria criteriaID = new Criteria();
-                criteriaID.addIn(KFSPropertyConstants.FUND_GROUP_CODE, subFunds);
-                ReportQueryByCriteria queryID = new ReportQueryByCriteria(SubFundGroup.class, criteriaID);
-                queryID.setAttributes(new String[] { KFSPropertyConstants.SUB_FUND_GROUP_CODE });
-                /**
-                 * set the size of the hashset based on the number of rows the query will return
-                 */
-                bannedSubFunds = new HashSet<String>(hashCapacity(queryID) + subFunds.size());
-                Iterator subfundsForBannedFunds = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(queryID);
-                /**
-                 * add the subfunds for the fund groups to be skipped to the hash set
-                 */
-                while (subfundsForBannedFunds.hasNext()) {
-                    bannedSubFunds.add((String) ((Object[]) subfundsForBannedFunds.next())[0]);
-                }
-            }
-            else {
-            	bannedSubFunds = new HashSet<String>(BCConstants.NO_BC_GL_LOAD_SUBFUND_GROUPS.size() + 1);
-            }   
-            /**
-             * now add the specific sub funds we don't want from the hard-coded array in BCConstants to the hash set
-             */
-            Iterator<String> additionalBannedSubFunds = subFunds.iterator();
-            while (additionalBannedSubFunds.hasNext()) {
-                bannedSubFunds.add(additionalBannedSubFunds.next());
-            }
-        } else {
-        	bannedSubFunds = new HashSet<String>();
-        }
-        
-        return bannedSubFunds;
-    }
-    
-    /**
-     * build a hash set of subfunds whose accounts should NOT be loaded this can be done by either a list of FUND groups and/or a
-     * list of subfund groups
-     * 
-     * @see org.kuali.kfs.module.bc.BCConstants to initialize the String[] array(s) as desired
-     * @return list of subfunds whose accounts will NOT be loaded
-     */
-    protected HashSet<String> getSubFundsProgramsNotToBeLoaded() {
-        HashSet<String> bannedSubFunds;
-        List<String> subFundsProgram = this.parameterService.getParameterValues(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS_PROGRAM);
-        if(!tbRunFlag) {
-            //KITI-2999 we also need to add to this list 
-            /**
-             * look for subfunds in the banned fund programs
-             */
-            Criteria criteriaID = new Criteria();
-            criteriaID.addIn("programCode", subFundsProgram);
-            ReportQueryByCriteria queryID = new ReportQueryByCriteria(SubFundProgram.class, criteriaID);
-            queryID.setAttributes(new String[] { KFSPropertyConstants.SUB_FUND_GROUP_CODE });
-            /**
-             * set the size of the hashset based on the number of rows the query will return
-             */
-            bannedSubFunds = new HashSet<String>(hashCapacity(queryID) + subFundsProgram.size());
-            Iterator subfundsForBannedFunds = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(queryID);
-            /**
-             * add the subfunds for the fund groups to be skipped to the hash set
-             */
-            while (subfundsForBannedFunds.hasNext()) {
-                bannedSubFunds.add((String) ((Object[]) subfundsForBannedFunds.next())[0]);
-            }
-        }
-        else {
-            bannedSubFunds = new HashSet<String>(subFundsProgram.size() + 1);
-        }
-        
-        return bannedSubFunds; 
-    }
 
     /*******************************************************************************************************************************
      * This section sets all the accounting periods for the coming year to open. * The monthly budget will load by accounting
@@ -1055,22 +780,6 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         long budgetConstructionMonthlyBudgetRead = 0;
         long budgetConstructionMonthlyBudgetSkipped = 0;
         long budgetConstructionMonthlyBudgetWritten = 0;
-        
-        long generalLedgerPendingEntriesDeleted = 0;
-        long generalLedgerAcPendingEntriesDeleted = 0;
-        long generalLedgerCbPendingEntriesDeleted = 0;
-        long generalLedgerTbPendingEntriesDeleted = 0;
-        long generalLedgerBbPendingEntriesDeleted = 0;
-        long generalLedgerEntriesDeleted = 0;
-        long generalLedgerAcEntriesDeleted = 0;
-        long generalLedgerCbEntriesDeleted = 0;
-        long generalLedgerTbEntriesDeleted = 0;
-        long generalLedgerBbEntriesDeleted = 0;
-        long generalLedgerBalanceEntriesDeleted = 0;
-        long generalLedgerAcBalanceEntriesDeleted = 0;
-        long generalLedgerCbBalanceEntriesDeleted = 0;
-        long generalLedgerTbBalanceEntriesDeleted = 0;
-        long generalLedgerBbBalanceEntriesDeleted = 0;
 
         List<String[]> tbCreated = new ArrayList<String[]>();
         List<String[]> acCreated = new ArrayList<String[]>();
@@ -1133,52 +842,6 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             budgetConstructionMonthlyBudgetWritten++;
         }
 
-        /**
-		 * @return the generalLedgerPendingEntriesDeleted
-		 */
-		public long getGeneralLedgerPendingEntriesDeleted() {
-			return generalLedgerPendingEntriesDeleted;
-		}
-
-		/**
-		 * @param generalLedgerPendingEntriesDeleted the generalLedgerPendingEntriesDeleted to set
-		 */
-		public void setGeneralLedgerPendingEntriesDeleted(
-				long generalLedgerPendingEntriesDeleted) {
-			this.generalLedgerPendingEntriesDeleted = generalLedgerPendingEntriesDeleted;
-		}
-
-		/**
-		 * @return the generalLedgerEntriesDeleted
-		 */
-		public long getGeneralLedgerEntriesDeleted() {
-			return generalLedgerEntriesDeleted;
-		}
-
-		/**
-		 * @param generalLedgerEntriesDeleted the generalLedgerEntriesDeleted to set
-		 */
-		public void setGeneralLedgerEntriesDeleted(long generalLedgerEntriesDeleted) {
-			this.generalLedgerEntriesDeleted = generalLedgerEntriesDeleted;
-		}
-
-		/**
-		 * @return the generalLedgerBalanceEntriesDeleted
-		 */
-		public long getGeneralLedgerBalanceEntriesDeleted() {
-			return generalLedgerBalanceEntriesDeleted;
-		}
-
-		/**
-		 * @param generalLedgerBalanceEntriesDeleted the generalLedgerBalanceEntriesDeleted to set
-		 */
-		public void setGeneralLedgerBalanceEntriesDeleted(
-				long generalLedgerBalanceEntriesDeleted) {
-			this.generalLedgerBalanceEntriesDeleted = generalLedgerBalanceEntriesDeleted;
-		}
-		
-		
-
 		/**
 		 * @return the generalLedgerBaseBudgetWritten
 		 */
@@ -1209,182 +872,6 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 			this.generalLedgerCurrentBudgetWritten = generalLedgerCurrentBudgetWritten;
 		}
 
-		/**
-		 * @return the generalLedgerAcPendingEntriesDeleted
-		 */
-		public long getGeneralLedgerAcPendingEntriesDeleted() {
-			return generalLedgerAcPendingEntriesDeleted;
-		}
-
-		/**
-		 * @param generalLedgerAcPendingEntriesDeleted the generalLedgerAcPendingEntriesDeleted to set
-		 */
-		public void setGeneralLedgerAcPendingEntriesDeleted(
-				long generalLedgerAcPendingEntriesDeleted) {
-			this.generalLedgerAcPendingEntriesDeleted = generalLedgerAcPendingEntriesDeleted;
-		}
-
-		/**
-		 * @return the generalLedgerCbPendingEntriesDeleted
-		 */
-		public long getGeneralLedgerCbPendingEntriesDeleted() {
-			return generalLedgerCbPendingEntriesDeleted;
-		}
-
-		/**
-		 * @param generalLedgerCbPendingEntriesDeleted the generalLedgerCbPendingEntriesDeleted to set
-		 */
-		public void setGeneralLedgerCbPendingEntriesDeleted(
-				long generalLedgerCbPendingEntriesDeleted) {
-			this.generalLedgerCbPendingEntriesDeleted = generalLedgerCbPendingEntriesDeleted;
-		}
-
-		/**
-		 * @return the generalLedgerTbPendingEntriesDeleted
-		 */
-		public long getGeneralLedgerTbPendingEntriesDeleted() {
-			return generalLedgerTbPendingEntriesDeleted;
-		}
-
-		/**
-		 * @param generalLedgerTbPendingEntriesDeleted the generalLedgerTbPendingEntriesDeleted to set
-		 */
-		public void setGeneralLedgerTbPendingEntriesDeleted(
-				long generalLedgerTbPendingEntriesDeleted) {
-			this.generalLedgerTbPendingEntriesDeleted = generalLedgerTbPendingEntriesDeleted;
-		}
-
-		/**
-		 * @return the generalLedgerBbPendingEntriesDeleted
-		 */
-		public long getGeneralLedgerBbPendingEntriesDeleted() {
-			return generalLedgerBbPendingEntriesDeleted;
-		}
-
-		/**
-		 * @param generalLedgerBbPendingEntriesDeleted the generalLedgerBbPendingEntriesDeleted to set
-		 */
-		public void setGeneralLedgerBbPendingEntriesDeleted(
-				long generalLedgerBbPendingEntriesDeleted) {
-			this.generalLedgerBbPendingEntriesDeleted = generalLedgerBbPendingEntriesDeleted;
-		}
-
-		/**
-		 * @return the generalLedgerAcEntriesDeleted
-		 */
-		public long getGeneralLedgerAcEntriesDeleted() {
-			return generalLedgerAcEntriesDeleted;
-		}
-
-		/**
-		 * @param generalLedgerAcEntriesDeleted the generalLedgerAcEntriesDeleted to set
-		 */
-		public void setGeneralLedgerAcEntriesDeleted(long generalLedgerAcEntriesDeleted) {
-			this.generalLedgerAcEntriesDeleted = generalLedgerAcEntriesDeleted;
-		}
-
-		/**
-		 * @return the generalLedgerCbEntriesDeleted
-		 */
-		public long getGeneralLedgerCbEntriesDeleted() {
-			return generalLedgerCbEntriesDeleted;
-		}
-
-		/**
-		 * @param generalLedgerCbEntriesDeleted the generalLedgerCbEntriesDeleted to set
-		 */
-		public void setGeneralLedgerCbEntriesDeleted(long generalLedgerCbEntriesDeleted) {
-			this.generalLedgerCbEntriesDeleted = generalLedgerCbEntriesDeleted;
-		}
-
-		/**
-		 * @return the generalLedgerTbEntriesDeleted
-		 */
-		public long getGeneralLedgerTbEntriesDeleted() {
-			return generalLedgerTbEntriesDeleted;
-		}
-
-		/**
-		 * @param generalLedgerTbEntriesDeleted the generalLedgerTbEntriesDeleted to set
-		 */
-		public void setGeneralLedgerTbEntriesDeleted(long generalLedgerTbEntriesDeleted) {
-			this.generalLedgerTbEntriesDeleted = generalLedgerTbEntriesDeleted;
-		}
-
-		/**
-		 * @return the generalLedgerBbEntriesDeleted
-		 */
-		public long getGeneralLedgerBbEntriesDeleted() {
-			return generalLedgerBbEntriesDeleted;
-		}
-
-		/**
-		 * @param generalLedgerBbEntriesDeleted the generalLedgerBbEntriesDeleted to set
-		 */
-		public void setGeneralLedgerBbEntriesDeleted(long generalLedgerBbEntriesDeleted) {
-			this.generalLedgerBbEntriesDeleted = generalLedgerBbEntriesDeleted;
-		}
-
-		/**
-		 * @return the generalLedgerAcBalanceEntriesDeleted
-		 */
-		public long getGeneralLedgerAcBalanceEntriesDeleted() {
-			return generalLedgerAcBalanceEntriesDeleted;
-		}
-
-		/**
-		 * @param generalLedgerAcBalanceEntriesDeleted the generalLedgerAcBalanceEntriesDeleted to set
-		 */
-		public void setGeneralLedgerAcBalanceEntriesDeleted(
-				long generalLedgerAcBalanceEntriesDeleted) {
-			this.generalLedgerAcBalanceEntriesDeleted = generalLedgerAcBalanceEntriesDeleted;
-		}
-
-		/**
-		 * @return the generalLedgerCbBalanceEntriesDeleted
-		 */
-		public long getGeneralLedgerCbBalanceEntriesDeleted() {
-			return generalLedgerCbBalanceEntriesDeleted;
-		}
-
-		/**
-		 * @param generalLedgerCbBalanceEntriesDeleted the generalLedgerCbBalanceEntriesDeleted to set
-		 */
-		public void setGeneralLedgerCbBalanceEntriesDeleted(
-				long generalLedgerCbBalanceEntriesDeleted) {
-			this.generalLedgerCbBalanceEntriesDeleted = generalLedgerCbBalanceEntriesDeleted;
-		}
-
-		/**
-		 * @return the generalLedgerTbBalanceEntriesDeleted
-		 */
-		public long getGeneralLedgerTbBalanceEntriesDeleted() {
-			return generalLedgerTbBalanceEntriesDeleted;
-		}
-
-		/**
-		 * @param generalLedgerTbBalanceEntriesDeleted the generalLedgerTbBalanceEntriesDeleted to set
-		 */
-		public void setGeneralLedgerTbBalanceEntriesDeleted(
-				long generalLedgerTbBalanceEntriesDeleted) {
-			this.generalLedgerTbBalanceEntriesDeleted = generalLedgerTbBalanceEntriesDeleted;
-		}
-
-		/**
-		 * @return the generalLedgerBbBalanceEntriesDeleted
-		 */
-		public long getGeneralLedgerBbBalanceEntriesDeleted() {
-			return generalLedgerBbBalanceEntriesDeleted;
-		}
-
-		/**
-		 * @param generalLedgerBbBalanceEntriesDeleted the generalLedgerBbBalanceEntriesDeleted to set
-		 */
-		public void setGeneralLedgerBbBalanceEntriesDeleted(
-				long generalLedgerBbBalanceEntriesDeleted) {
-			this.generalLedgerBbBalanceEntriesDeleted = generalLedgerBbBalanceEntriesDeleted;
-		}
-
 		public void writeDiagnosticCounters() {
             LOG.warn(String.format("\n\nPending Budget Construction General Ledger Load\n"));
             LOG.warn(String.format("\n  pending budget construction GL rows read:        %,d", budgetConstructionPendingGeneralLedgerRead));
@@ -1395,6 +882,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
             LOG.warn(String.format("\n  pending budget construction monthly rows skipped: %,d", budgetConstructionMonthlyBudgetSkipped));
             LOG.warn(String.format("\n  pending budget construction monthly rows written: %,d", budgetConstructionMonthlyBudgetWritten));
         }
+       
     }
 
     /**
@@ -1457,28 +945,6 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     		body.append(String.format("\n\nTB Budget Construction General Ledger Load beginning\n"));
     	}
 
-    	//first output deleted rows
-
-    	body.append(String.format("\n  Total pending GL Entries deleted:                %,d", diagnosticCounters.getGeneralLedgerPendingEntriesDeleted()));
-    	body.append(String.format("\n  Total GL Entries deleted:                        %,d", diagnosticCounters.getGeneralLedgerEntriesDeleted()));
-    	body.append(String.format("\n  Total balance GL Entries deleted:                %,d", diagnosticCounters.getGeneralLedgerBalanceEntriesDeleted()));
-    	
-    	body.append(String.format("\n\n  AC pending GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerAcPendingEntriesDeleted()));
-    	body.append(String.format("\n  AC GL Entries deleted:                           %,d", diagnosticCounters.getGeneralLedgerAcEntriesDeleted()));
-    	body.append(String.format("\n  AC balance GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerAcBalanceEntriesDeleted()));
-    	
-    	body.append(String.format("\n\n  CB pending GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerCbPendingEntriesDeleted()));
-    	body.append(String.format("\n  CB GL Entries deleted:                           %,d", diagnosticCounters.getGeneralLedgerCbEntriesDeleted()));
-    	body.append(String.format("\n  CB balance GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerCbBalanceEntriesDeleted()));
-
-    	body.append(String.format("\n\n  BB pending GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerBbPendingEntriesDeleted()));
-    	body.append(String.format("\n  BB GL Entries deleted:                           %,d", diagnosticCounters.getGeneralLedgerBbEntriesDeleted()));
-    	body.append(String.format("\n  BB balance GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerBbBalanceEntriesDeleted()));
-
-    	body.append(String.format("\n\n  TB pending GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerTbPendingEntriesDeleted()));
-    	body.append(String.format("\n  TB GL Entries deleted:                           %,d", diagnosticCounters.getGeneralLedgerTbEntriesDeleted()));
-    	body.append(String.format("\n  TB balance GL Entries deleted:                   %,d", diagnosticCounters.getGeneralLedgerTbBalanceEntriesDeleted()));
-    	
         body.append(String.format("\n\n  pending budget construction GL rows read:        %,d", diagnosticCounters.budgetConstructionPendingGeneralLedgerRead));
         body.append(String.format("\n  pending budget construction GL rows skipped:     %,d", diagnosticCounters.budgetConstructionPendingGeneralLedgerSkipped));
         body.append(String.format("\n\n  base budget rows written:                        %,d", diagnosticCounters.generalLedgerBaseBudgetWritten));

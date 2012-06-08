@@ -43,7 +43,6 @@
 				<value>psBudgetFeedJob</value>
 				<value>sipImportToHumanResourcesJob</value>
 				<value>budgetConstructionGeneralLedgerLoadBatchJob</value>
-				<value>trusteeBudgetConstructionGeneralLedgerLoadBatchJob</value>
 			</list>
 		</property>
 		
@@ -397,24 +396,13 @@
         </list>
       </property>
     </bean>
-    <bean id="trusteeBudgetConstructionGeneralLedgerLoadBatchJob" parent="scheduledJobDescriptor">
-      <property name="steps">
-        <list>
-          <ref bean="trusteeBudgetConstructionGeneralLedgerLoadBatchStep" />
-        </list>
-      </property>
-    </bean>
+   
 	<bean id="budgetConstructionGeneralLedgerLoadBatchStep" class="org.kuali.kfs.module.bc.batch.BudgetConstructionGeneralLedgerLoadBatchStep" parent="step">
      <property name="GLBudgetLoadService">
        <ref bean="glBudgetLoadService"/>
       </property>  
     </bean>
-        
-    <bean id="trusteeBudgetConstructionGeneralLedgerLoadBatchStep" class="org.kuali.kfs.module.bc.batch.TrusteeBudgetConstructionGeneralLedgerLoadBatchStep" parent="step">
-     <property name="GLBudgetLoadService">
-       <ref bean="glBudgetLoadService"/>
-      </property>  
-    </bean>
+
 
     <bean id="genesisDao" parent="budgetConstructionBatchHelperDao" class="org.kuali.kfs.module.bc.batch.dataaccess.impl.GenesisDaoOjb">
         <property name="dateTimeService">
