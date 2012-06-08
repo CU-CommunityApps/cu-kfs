@@ -130,11 +130,8 @@
   </bean>
   
   
-  <bean id="AccountReversionGlobalMaintenanceDocument-workflowAttributes" parent="AccountReversionGlobalMaintenanceDocument-workflowAttributes-parentBean"/>
-  	
-  	<bean id="AccountReversionGlobalMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.kns.datadictionary.WorkflowAttributes" abstract="true"/>
-
-  	<!-- workflow attributes 
+  
+  	<!-- workflow attributes -->
   	<bean id="AccountReversionGlobalMaintenanceDocument-workflowAttributes" parent="AccountReversionGlobalMaintenanceDocument-workflowAttributes-parentBean"/>
   	
   	<bean id="AccountReversionGlobalMaintenanceDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
@@ -157,7 +154,7 @@
 	<bean id="AccountReversionGlobalMaintenanceDocument-DocumentValuePathGroup-ChartOrganization" class="org.kuali.rice.kns.datadictionary.DocumentValuePathGroup">
     	<property name="documentCollectionPath">
     		<bean parent="AccountReversionGlobalMaintenanceDocument-DocumentCollectionPath-chartAndAccount">
-    			<property name="collectionPath" value="newMaintainableObject.businessObject.accountReversionGlobalOrganizations"/>
+    			<property name="collectionPath" value="newMaintainableObject.businessObject.accountReversionGlobalAccounts"/>
     		</bean>
     	</property>
    	</bean>
@@ -174,7 +171,7 @@
    	<bean id="AccountReversionGlobalMaintenanceDocument-DocumentValuePathGroup-Chart" class="org.kuali.rice.kns.datadictionary.DocumentValuePathGroup">
     	<property name="documentCollectionPath">
     		<bean parent="AccountReversionGlobalMaintenanceDocument-DocumentCollectionPath-chart">
-    			<property name="collectionPath" value="newMaintainableObject.businessObject.accountReversionGlobalOrganizations"/>
+    			<property name="collectionPath" value="newMaintainableObject.businessObject.accountReversionGlobalAccounts"/>
     		</bean>
     	</property>
    	</bean>
@@ -212,5 +209,5 @@
     			<ref bean="AccountReversionGlobalMaintenanceDocument-DocumentValuePathGroup-Chart"/>
     		</list>
     	</property>
-    </bean>-->
+    </bean>
 </beans>
