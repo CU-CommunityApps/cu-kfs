@@ -26,6 +26,12 @@
         <ref bean="AccountDelegateModelMaintenanceDocument-EditDelegatesforModel"/>
       </list>
     </property>
+   <property name="defaultExistenceChecks">
+        <list>
+	      	<bean parent="ReferenceDefinition" p:attributeName="organization" p:attributeToHighlightOnFail="organizationCode" /> 
+  	    </list>   
+    </property>
+
     <property name="lockingKeys">
       <list>
         <value>chartOfAccountsCode</value>
