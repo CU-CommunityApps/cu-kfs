@@ -1781,24 +1781,18 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         
                         if (ObjectUtils.isNotNull(pg.getAchAccountType()))
                         	kfsAccountType = pg.getAchAccountType();							// Returns either a 22 for checking or a 32 for Savings account
-                        																		// For Mellon this converts to either DA (checking) or SG (savings)
-                        if (isVendor)
-                        	if (kfsAccountType.equals("22")) {
-                        		achCode = "CTX";		// Implementation of rule #1 above
-                        		AchAccountType = "DA";
-                        	}
-                        	else {
-                        		achCode = "PPD";		// Implementation of rule #2 above
-                        		AchAccountType = "SG";
-                        	}
-                        else {
-                        	achCode = "PPD";			// Implementation of rule #3 above
-                        	if (kfsAccountType.equals("22")) {
-                        		AchAccountType = "DA";
-                        	}
-                        	else {
-                        		AchAccountType = "SG";
-                        	}
+                        																		// For Mellon this converts to either DA (checking) or SG (savings)                        
+                        if (kfsAccountType.startsWith("22")) {
+                            AchAccountType = "DA";
+                        }
+                        if (kfsAccountType.startsWith("32")) {
+                            AchAccountType = "SG";
+                        }
+                        if (kfsAccountType.contains("PPD")) {
+                            achCode = "PPD";
+                        }
+                        if (kfsAccountType.contains("CTX")) {
+                            achCode = "CTX";
                         }
                         
                         if (ObjectUtils.isNotNull(pg.getAchBankRoutingNbr()))
