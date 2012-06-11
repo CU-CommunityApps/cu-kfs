@@ -19,7 +19,7 @@
     <bean id="crModule" parent="crModule-parentBean" />
 
     <bean id="crModule-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration" abstract="true">
-		<property name="namespaceCode" value="KUALI-CR"/>
+		<property name="namespaceCode" value="KFS-CR"/>
 		<property name="initializeDataDictionary" value="true" />
         <property name="packagePrefixes">
             <list>
