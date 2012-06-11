@@ -39,7 +39,6 @@
         <bean parent="ReferenceDefinition" p:attributeName="agency" p:attributeToHighlightOnFail="agencyNumber"/>
         <bean parent="ReferenceDefinition" p:attributeName="federalPassThroughAgency" p:attributeToHighlightOnFail="federalPassThroughAgencyNumber"/>
         <bean parent="ReferenceDefinition" p:attributeName="awardPurpose" p:attributeToHighlightOnFail="awardPurposeCode"/>
-        <bean parent="ReferenceDefinition" p:attributeName="account" p:collection="awardAccounts" p:attributeToHighlightOnFail="accountNumber"/>
         <bean parent="ReferenceDefinition" p:attributeName="organization" p:collection="awardOrganizations" p:attributeToHighlightOnFail="organizationCode"/>
         <bean parent="ReferenceDefinition" p:attributeName="subcontractor" p:collection="awardSubcontractors" p:attributeToHighlightOnFail="subcontractorNumber"/>
       </list>
