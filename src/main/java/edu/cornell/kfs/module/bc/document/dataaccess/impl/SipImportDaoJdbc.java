@@ -21,7 +21,7 @@ public class SipImportDaoJdbc extends BudgetConstructionDaoJdbcBase implements S
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(BudgetConstructionSipDaoJdbc.class);
 	public void BudgetConstructionSipDaoJdbc() { }
 
-    public double getTotalPerCentDistribution(String positionNumber, String emplId) {
+    public double getTotalPerCentDistWithRequestAmtGreaterThanZero(String positionNumber, String emplId) {
        
         try {
 	        StringBuilder sqlBuilder = new StringBuilder(200);
@@ -41,6 +41,26 @@ public class SipImportDaoJdbc extends BudgetConstructionDaoJdbcBase implements S
         }
     }
 
+    public double getTotalPerCentDistribution(String positionNumber, String emplId) {
+        
+        try {
+	        StringBuilder sqlBuilder = new StringBuilder(200);
+	        sqlBuilder.append("select sum(APPT_RQST_FTE_QTY)+sum(APPT_RQCSF_FTE_QTY) as TotalPerCentDistribution from LD_PNDBC_APPTFND_T where position_nbr=? and emplid=?");
+	        String sqlString = sqlBuilder.toString();
+	        
+	        BigDecimal bdResult =  this.getSimpleJdbcTemplate().queryForObject(sqlString, BigDecimal.class, positionNumber, emplId);
+	        if (ObjectUtils.isNotNull(bdResult))
+	        	return bdResult.doubleValue();
+	        else
+	        	return -1.00;
+        }
+        
+        catch (Exception ex) {
+        	LOG.info("SipImportDaoJdbc Exception: " + ex.getMessage());
+        	return -2.00;
+        }
+    }
+    
     public double getTotalRequestedAmount(String positionNumber, String emplId) {
         
         try {
