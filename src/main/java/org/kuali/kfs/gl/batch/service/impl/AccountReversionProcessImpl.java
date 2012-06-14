@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
+import org.kuali.kfs.coa.businessobject.AccountReversion;
 import org.kuali.kfs.coa.businessobject.ClosedAccountReversion;
 import org.kuali.kfs.coa.businessobject.Reversion;
 import org.kuali.kfs.coa.service.AccountReversionService;
@@ -173,7 +174,12 @@ public class AccountReversionProcessImpl extends ReversionProcessBase implements
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Account Reversion Service: " + getAccountReversionService() + "; fiscal year: " + (Integer) jobParameters.get(KFSConstants.UNIV_FISCAL_YR) + "; account: " + account + "; account account number: " + account.getAccountNumber() + "; balance: " + bal + "; balance chart: " + bal.getChartOfAccountsCode());
             }
-            cfReversionProcessInfo = getAccountReversionService().getByPrimaryId((Integer) jobParameters.get(KFSConstants.UNIV_FISCAL_YR), bal.getChartOfAccountsCode(), account.getAccountNumber());
+            AccountReversion acctRev = getAccountReversionService().getByPrimaryId((Integer) jobParameters.get(KFSConstants.UNIV_FISCAL_YR), bal.getChartOfAccountsCode(), account.getAccountNumber());
+            
+            if (acctRev.isActive()) {
+            	cfReversionProcessInfo = acctRev;
+            }
+        
         }
 
         if (cfReversionProcessInfo == null) {
