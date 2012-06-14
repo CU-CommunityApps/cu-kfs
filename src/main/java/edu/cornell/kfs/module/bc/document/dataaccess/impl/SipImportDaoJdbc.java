@@ -32,6 +32,9 @@ public class SipImportDaoJdbc extends BudgetConstructionDaoJdbcBase implements S
 	        if (ObjectUtils.isNotNull(bdResult))
 	        	return bdResult.doubleValue();
 	        else
+	        	// This means that the APPT_RQST_AMT AND the APPT_RQST_CSF_AMT are both zero and as such the SQL returns a NULL.  Rather
+	        	//   than return 1 though to indicate that there is no error, we'll return -1 and handle it in the calling method.  This
+	        	//   is done so that in the future we can distinguish between getting a valid 1 back and getting NULL from the SQL.
 	        	return -1.00;
         }
         

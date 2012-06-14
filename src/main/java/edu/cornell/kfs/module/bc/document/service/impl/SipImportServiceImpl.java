@@ -872,7 +872,9 @@ public class SipImportServiceImpl implements SipImportService {
 				//    requested amount FOR EACH ENTRY is > 0.  The requested amount has to be evaluated in the SQL since the entry's distribution
 				//    amount is only added to the total if either the requested amount or leave requested amount is greater than 0 otherwise is is
 				//    not included in the total.
-				if (requestedPerCentDistributionSumWithRequestAmtGreaterThanZero(positionNumber, emplId) != 1) {
+				double returnValue = requestedPerCentDistributionSumWithRequestAmtGreaterThanZero(positionNumber, emplId);
+				if ( (returnValue != 1) && returnValue != -1) {
+					// A returnValue of -1 means that the requested amount and the CSF request amount are both zero.  See the method for more detail
 					int ErrorMessageNumber = 12;
 					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
