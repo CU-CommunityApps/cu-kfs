@@ -25,7 +25,7 @@ public class SipImportDaoJdbc extends BudgetConstructionDaoJdbcBase implements S
        
         try {
 	        StringBuilder sqlBuilder = new StringBuilder(200);
-	        sqlBuilder.append("select sum(APPT_RQST_FTE_QTY)+sum(APPT_RQCSF_FTE_QTY) as TotalPerCentDistribution from LD_PNDBC_APPTFND_T where position_nbr=? and emplid=? and ((APPT_RQST_AMT <> 0) OR (APPT_RQST_CSF_AMT <> 0))");
+	        sqlBuilder.append("select sum(APPT_RQST_FTE_QTY) as TotalPerCentDistribution from LD_PNDBC_APPTFND_T where position_nbr=? and emplid=? and (APPT_RQST_AMT <> 0)");
 	        String sqlString = sqlBuilder.toString();
 	        
 	        BigDecimal bdResult =  this.getSimpleJdbcTemplate().queryForObject(sqlString, BigDecimal.class, positionNumber, emplId);
