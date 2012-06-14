@@ -868,18 +868,26 @@ public class SipImportServiceImpl implements SipImportService {
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
 					
-				//  The following function returns the total requested distribution but only includes entries where the requested amount or leave
-				//    requested amount FOR EACH ENTRY is > 0.  The requested amount has to be evaluated in the SQL since the entry's distribution
-				//    amount is only added to the total if either the requested amount or leave requested amount is greater than 0 otherwise is is
-				//    not included in the total.
-				double returnValue = requestedPerCentDistributionSumWithRequestAmtGreaterThanZero(positionNumber, emplId);
-				if ( (returnValue != 1) && returnValue != -1) {
-					// A returnValue of -1 means that the requested amount and the CSF request amount are both zero.  See the method for more detail
-					int ErrorMessageNumber = 12;
-					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
-					RulesErrorList += ErrorMessages[ErrorMessageNumber];
-					UpdateErrorCounts(ErrorMessageNumber, UnitId);
-				}
+//				//  The following function returns the total requested distribution but only includes entries where the requested amount or leave
+//				//    requested amount FOR EACH ENTRY is > 0.  The requested amount has to be evaluated in the SQL since the entry's distribution
+//				//    amount is only added to the total if either the requested amount or leave requested amount is greater than 0 otherwise is is
+//				//    not included in the total.
+//				double returnValue = requestedPerCentDistributionSumWithRequestAmtGreaterThanZero(positionNumber, emplId);
+//				if ( (returnValue != 1) && returnValue != -1) {
+//					// A returnValue of -1 means that the requested amount and the CSF request amount are both zero.  See the method for more detail
+//					int ErrorMessageNumber = 12;
+//					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
+//					RulesErrorList += ErrorMessages[ErrorMessageNumber];
+//					UpdateErrorCounts(ErrorMessageNumber, UnitId);
+//				}
+				
+			   //  If the requested amount is > 0 and the requested percent distribution is <> 1 then generate an error
+                if ( (requestedAmountSum(positionNumber, emplId) > 0) && (requestedPerCentDistributionSum(positionNumber, emplId) != 1) ) {
+                    int ErrorMessageNumber = 12;
+                    ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
+                    RulesErrorList += ErrorMessages[ErrorMessageNumber];
+                    UpdateErrorCounts(ErrorMessageNumber, UnitId);
+                }
 				
 				//  If the TOTAL requested amount is = 0 (for all entries) and the TOTAL requested percent distribution (for all entries) is  > 0 then generate a warning
 				if ( (requestedAmountSum(positionNumber, emplId) == 0) && (requestedPerCentDistributionSum(positionNumber, emplId) > 0) )  {
