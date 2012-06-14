@@ -147,7 +147,8 @@ public class SipImportServiceImpl implements SipImportService {
 			"\tSIP is not allowed when the Job Function is UNB.\n",
 			"\tThis line is a duplicate.\n",
 			"\tThe requested amount is greater than 0 and the requested percent distribution is not equal to 1.\n",   // Ignore for SIP
-			"\tThis SIP record from the unit was not found in the PS load to KFS therefore no other validation can be performed.\n"  //Ignore for SIP
+			"\tThis SIP record from the unit was not found in the PS load to KFS therefore no other validation can be performed.\n",  //Ignore for SIP
+			"\tBefore SIP can be added, this record needs to have a Request Amount greater than $0 (because the Leave Amount is greater than $0).\n" //Ignore for SIP
 	};
 	
 	protected String ErrorMessageNumbersForThisSipRecord;		// Contains only the sip load error message numbers
@@ -178,7 +179,7 @@ public class SipImportServiceImpl implements SipImportService {
         List<ExternalizedMessageWrapper> errorReportDetail = new ArrayList<ExternalizedMessageWrapper>();
         
         // Error message setup
-        errorCount = new int[14];
+        errorCount = new int[15];
 
         //Warning message setup
     	warningCount = new int[4];
@@ -368,6 +369,7 @@ public class SipImportServiceImpl implements SipImportService {
         }
         catch (Exception e) {
         	errorReport.add(new ExternalizedMessageWrapper(CUBCKeyConstants.ERROR_SIP_IMPORT_ABORTED, e.getMessage()));
+        	e.printStackTrace();
             return e.getMessage();
         }
     }
@@ -782,7 +784,8 @@ public class SipImportServiceImpl implements SipImportService {
 	{
 		try {
 				// Is this position found?
-				if (!validPosition(positionNumber)){ 
+		        boolean validPositionNumber = validPosition(positionNumber);
+				if (!validPositionNumber){ 
 					int ErrorMessageNumber = 0;
 					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
@@ -790,7 +793,8 @@ public class SipImportServiceImpl implements SipImportService {
 				}
 				
 				// Is this EmplId found?
-				if (!validEmplid(emplId)) {
+				boolean validEmplid = validEmplid(emplId);
+				if (!validEmplid) {
 					int ErrorMessageNumber = 1;
 //					AllowThisSipRecordForSIP = false;
 //					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
@@ -868,22 +872,23 @@ public class SipImportServiceImpl implements SipImportService {
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
 					
-//				//  The following function returns the total requested distribution but only includes entries where the requested amount or leave
-//				//    requested amount FOR EACH ENTRY is > 0.  The requested amount has to be evaluated in the SQL since the entry's distribution
-//				//    amount is only added to the total if either the requested amount or leave requested amount is greater than 0 otherwise is is
-//				//    not included in the total.
-//				double returnValue = requestedPerCentDistributionSumWithRequestAmtGreaterThanZero(positionNumber, emplId);
-//				if ( (returnValue != 1) && returnValue != -1) {
-//					// A returnValue of -1 means that the requested amount and the CSF request amount are both zero.  See the method for more detail
-//					int ErrorMessageNumber = 12;
-//					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
-//					RulesErrorList += ErrorMessages[ErrorMessageNumber];
-//					UpdateErrorCounts(ErrorMessageNumber, UnitId);
-//				}
+				//  The following function returns the total requested distribution but only includes entries where the requested amount
+				//  FOR EACH ENTRY is > 0.  The requested amount has to be evaluated in the SQL since the entry's distribution
+				//    amount is only added to the total if either the requested amount or leave requested amount is greater than 0 otherwise it is
+				//    not included in the total.
+				double returnValue = requestedPerCentDistributionSumWithRequestAmtGreaterThanZero(positionNumber, emplId);
+				if ( (returnValue != 1) && returnValue != -1) {
+					// A returnValue of -1 means that the requested amount and the CSF request amount are both zero.  See the method for more detail
+					int ErrorMessageNumber = 12;
+					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
+					RulesErrorList += ErrorMessages[ErrorMessageNumber];
+					UpdateErrorCounts(ErrorMessageNumber, UnitId);
+				}
 				
-			   //  If the requested amount is > 0 and the requested percent distribution is <> 1 then generate an error
-                if ( (requestedAmountSum(positionNumber, emplId) > 0) && (requestedPerCentDistributionSum(positionNumber, emplId) != 1) ) {
-                    int ErrorMessageNumber = 12;
+				// check if there is an appt funding with leave amount not 0 and request amount zero
+                if ( validPositionNumber && validEmplid && sipImportDao.hasLeaveAmountWithoutRequestAmount(positionNumber, emplId)) {
+                    
+                    int ErrorMessageNumber = 14;
                     ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
                     RulesErrorList += ErrorMessages[ErrorMessageNumber];
                     UpdateErrorCounts(ErrorMessageNumber, UnitId);
