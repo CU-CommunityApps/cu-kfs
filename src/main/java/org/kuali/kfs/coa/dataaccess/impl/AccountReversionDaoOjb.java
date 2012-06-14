@@ -43,6 +43,7 @@ public class AccountReversionDaoOjb extends PlatformAwareDaoBaseOjb implements A
         criteria.addEqualTo("universityFiscalYear", universityFiscalYear);
         criteria.addEqualTo("chartOfAccountsCode", financialChartOfAccountsCode);
         criteria.addEqualTo("accountNumber", accountNumber);
+        criteria.addEqualTo("active", true);
 
         return (AccountReversion) getPersistenceBrokerTemplate().getObjectByQuery(QueryFactory.newQuery(AccountReversion.class, criteria));
     }
