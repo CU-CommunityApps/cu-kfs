@@ -35,6 +35,7 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
+import org.kuali.rice.kns.util.ObjectUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -176,7 +177,7 @@ public class AccountReversionProcessImpl extends ReversionProcessBase implements
             }
             AccountReversion acctRev = getAccountReversionService().getByPrimaryId((Integer) jobParameters.get(KFSConstants.UNIV_FISCAL_YR), bal.getChartOfAccountsCode(), account.getAccountNumber());
             
-            if (acctRev.isActive()) {
+            if (ObjectUtils.isNotNull(acctRev) && acctRev.isActive()) {
             	cfReversionProcessInfo = acctRev;
             }
         
