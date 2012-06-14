@@ -144,10 +144,11 @@ public class SipImportServiceImpl implements SipImportService {
 			"\tThe SIP award (Increase To minimum + Merit + Equity) is zero AND a note was not provided.\n",  // Ignore for SIP
 			"\tThe ABBR flag is not set to N.\n",
 			"\tExecutive position found.\n",
-			"\tSIP is not allowed when Job Function is UNB.\n",
+			"\tSIP is not allowed when the Job Function is UNB.\n",
 			"\tThis line is a duplicate.\n",
 			"\tThe requested amount is greater than 0 and the requested percent distribution is not equal to 1.\n",   // Ignore for SIP
-			"\tThis SIP record from the unit was not found in PS load to KFS therefore no other validation can be performed.\n"  //Ignore for SIP
+			"\tThis SIP record from the unit was not found in the PS load to KFS therefore no other validation can be performed.\n",  //Ignore for SIP
+			"\tBefore SIP can be added, this record needs to have a Request Amount greater than $0 (because the Leave Amount is greater than $0).\n" //Ignore for SIP
 	};
 	
 	protected String ErrorMessageNumbersForThisSipRecord;		// Contains only the sip load error message numbers
@@ -178,14 +179,16 @@ public class SipImportServiceImpl implements SipImportService {
         List<ExternalizedMessageWrapper> errorReportDetail = new ArrayList<ExternalizedMessageWrapper>();
         
         // Error message setup
-        errorCount = new int[14];
+        errorCount = new int[15];
 
         //Warning message setup
-    	warningCount = new int[3];
-    	WarningMessages = new String[3];
+    	warningCount = new int[4];
+    	WarningMessages = new String[4];
     	WarningMessages[0] = new String("\tSIP Total exceeds " + SIP_IMPORT_AWARD_CHECK + "% of prior year annual rate as defined in PeopleSoft.\n");
     	WarningMessages[1] = new String("\tPercent Distribution is not equal to 1.\n");
     	WarningMessages[2] = new String("\tThe requested amount is equal to zero and the requested percent distribution is greater than zero.\n");
+    	// The following ONLY affects SIP and will eliminate records from the SIP to HR file but will NOT affect distribution
+    	WarningMessages[3] = new String("\tTotal SIP award is $0 therefore this record will not be included in the SIP to HR file when it is run.\n");
     	
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(fileImportStream));
 
@@ -283,9 +286,13 @@ public class SipImportServiceImpl implements SipImportService {
 					sipLoadErrors = sipLoadErrors.substring(0, sipLoadErrors.length()-2);	// Removes the ", " at the end
 				}
 				
-				// Generate ERROR Messages and add populate the sipImportCollection object with the SIP data regardless of whether the
-				//  incoming SIP record passes or not.  This is because later, a list will be generated in the report indicating if the
-				//  record is in the CU_LD_BCN_SIP_T table or not.
+				// Always add sipLoadErrors to this object since a warning or an error may be responsible for a record not getting into the SIP table
+				sipImportData.setSipLoadErrors(sipLoadErrors);
+				
+				// Always add the line that came in to the sipImportData object
+				sipImportCollection.add(sipImportData);
+				
+				// Take the accumulated ERROR messages and populate the sipImportData object.
 				if (!RulesErrorList.isEmpty())
 					if (!ValuesErrorList.isEmpty()) {
 						errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + RulesErrorList + ValuesErrorList));
@@ -294,10 +301,8 @@ public class SipImportServiceImpl implements SipImportService {
 						else
 							sipImportData.setPassedValidation("E");
 							
-						// Do this for both cases
+						// Put the validation results in the sipImportData object
 						sipImportData.setValidationErrors(RulesErrorList + ValuesErrorList);
-						sipImportData.setSipLoadErrors(sipLoadErrors);
-						sipImportCollection.add(sipImportData);
 					}
 					else {
 						errorReportDetail.add(new ExternalizedMessageWrapper("\n" + sipImportLine + "\n" + RulesErrorList));
@@ -306,10 +311,8 @@ public class SipImportServiceImpl implements SipImportService {
 						else
 							sipImportData.setPassedValidation("E");
 						
-						// Do this for both cases
+						// Put the validation results in the sipImportData object
 						sipImportData.setValidationErrors(RulesErrorList);
-						sipImportData.setSipLoadErrors(sipLoadErrors);
-						sipImportCollection.add(sipImportData);
 					}
 
 				else
@@ -320,15 +323,12 @@ public class SipImportServiceImpl implements SipImportService {
 						else
 							sipImportData.setPassedValidation("E");
 						
-						// Do this for both cases
+						// Put the validation results in the sipImportData object
 						sipImportData.setValidationErrors(ValuesErrorList);
-						sipImportData.setSipLoadErrors(sipLoadErrors);
-						sipImportCollection.add(sipImportData);
 					}
 					else {
-						// Add to sip Import Data list
+						// Indicate that this record had no errors (still could have warnings though but they only show up in the validation report)
 						sipImportData.setPassedValidation("Y");
-						sipImportCollection.add(sipImportData);
 					}
             }
         	//  Add some blank lines after the last detail line followed by the header row.
@@ -369,6 +369,7 @@ public class SipImportServiceImpl implements SipImportService {
         }
         catch (Exception e) {
         	errorReport.add(new ExternalizedMessageWrapper(CUBCKeyConstants.ERROR_SIP_IMPORT_ABORTED, e.getMessage()));
+        	e.printStackTrace();
             return e.getMessage();
         }
     }
@@ -689,7 +690,22 @@ public class SipImportServiceImpl implements SipImportService {
 		else
 			return false;
 	}
-	
+
+	protected double requestedPerCentDistributionSumWithRequestAmtGreaterThanZero(String positionNumber, String emplId) {
+		if( (ObjectUtils.isNotNull(positionNumber)) && (ObjectUtils.isNotNull(emplId)) ) {
+				if (positionNumber.length()==6)
+					positionNumber = "00" + positionNumber;
+				
+				// Verify that the position number length is 8 otherwise it is invalid
+				if (positionNumber.length()==8)
+					return sipImportDao.getTotalPerCentDistWithRequestAmtGreaterThanZero(positionNumber, emplId);
+				else
+					return 0;
+		}
+			else
+				return 0;	
+	}	
+
 	protected double requestedPerCentDistributionSum(String positionNumber, String emplId) {
 		if( (ObjectUtils.isNotNull(positionNumber)) && (ObjectUtils.isNotNull(emplId)) ) {
 				if (positionNumber.length()==6)
@@ -768,7 +784,8 @@ public class SipImportServiceImpl implements SipImportService {
 	{
 		try {
 				// Is this position found?
-				if (!validPosition(positionNumber)){ 
+		        boolean validPositionNumber = validPosition(positionNumber);
+				if (!validPositionNumber){ 
 					int ErrorMessageNumber = 0;
 					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
@@ -776,7 +793,8 @@ public class SipImportServiceImpl implements SipImportService {
 				}
 				
 				// Is this EmplId found?
-				if (!validEmplid(emplId)) {
+				boolean validEmplid = validEmplid(emplId);
+				if (!validEmplid) {
 					int ErrorMessageNumber = 1;
 //					AllowThisSipRecordForSIP = false;
 //					sipLoadErrors += ErrorMessages[ErrorMessageNumber];
@@ -854,15 +872,29 @@ public class SipImportServiceImpl implements SipImportService {
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
 					
-				//  If the requested amount is > 0 and the requested percent distribution is <> 1 then generate an error
-				if ( (requestedAmountSum(positionNumber, emplId) > 0) && (requestedPerCentDistributionSum(positionNumber, emplId) != 1) ) {
+				//  The following function returns the total requested distribution but only includes entries where the requested amount
+				//  FOR EACH ENTRY is > 0.  The requested amount has to be evaluated in the SQL since the entry's distribution
+				//    amount is only added to the total if either the requested amount or leave requested amount is greater than 0 otherwise it is
+				//    not included in the total.
+				double returnValue = requestedPerCentDistributionSumWithRequestAmtGreaterThanZero(positionNumber, emplId);
+				if ( (returnValue != 1) && returnValue != -1) {
+					// A returnValue of -1 means that the requested amount and the CSF request amount are both zero.  See the method for more detail
 					int ErrorMessageNumber = 12;
 					ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
 					RulesErrorList += ErrorMessages[ErrorMessageNumber];
 					UpdateErrorCounts(ErrorMessageNumber, UnitId);
 				}
 				
-				//  If the requested amount is = 0 and the requested percent distribution is  > 0 then generate a warning
+				// check if there is an appt funding with leave amount not 0 and request amount zero
+                if ( validPositionNumber && validEmplid && sipImportDao.hasLeaveAmountWithoutRequestAmount(positionNumber, emplId)) {
+                    
+                    int ErrorMessageNumber = 14;
+                    ErrorMessageNumbersForThisSipRecord += ErrorMessageNumber + ",";
+                    RulesErrorList += ErrorMessages[ErrorMessageNumber];
+                    UpdateErrorCounts(ErrorMessageNumber, UnitId);
+                }
+				
+				//  If the TOTAL requested amount is = 0 (for all entries) and the TOTAL requested percent distribution (for all entries) is  > 0 then generate a warning
 				if ( (requestedAmountSum(positionNumber, emplId) == 0) && (requestedPerCentDistributionSum(positionNumber, emplId) > 0) )  {
 					int WarningMessageNumber = 2;
 					RulesWarningList += WarningMessages[WarningMessageNumber];
@@ -929,6 +961,14 @@ public class SipImportServiceImpl implements SipImportService {
 			if ( totalSIP.isGreaterThan(CompRate.multiply(new KualiDecimal(SIP_IMPORT_AWARD_CHECK).divide(new KualiDecimal(100))))) {
 				ValuesWarningList += WarningMessages[0];
 				UpdateWarningCounts(0, UnitId);
+			}
+			
+	//		5. If the person doesn't receive SIP warn that they will not be in the SIP to HR file when the batch job that generates it is run
+			if (totalSIP.isZero()) {
+				ValuesWarningList += WarningMessages[3];
+				UpdateWarningCounts(3, UnitId);
+				AllowThisSipRecordForSIP = false;    // If they have NO SIP award, then don't allow this record to be used for SIP
+				sipLoadErrors += WarningMessages[3];
 			}
 
 			return true;
