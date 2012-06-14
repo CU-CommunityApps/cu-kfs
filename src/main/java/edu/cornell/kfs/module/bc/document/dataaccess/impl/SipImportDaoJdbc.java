@@ -108,5 +108,29 @@ public class SipImportDaoJdbc extends BudgetConstructionDaoJdbcBase implements S
         	return -2;
         }
 	}
+	
+    /**
+     * @see edu.cornell.kfs.module.bc.document.dataaccess.SipImportDao#hasLeaveAmountWithoutRequestAmount(java.lang.String,
+     * java.lang.String)
+     */
+    public boolean hasLeaveAmountWithoutRequestAmount(String positionNumber, String emplid) {
+        boolean result = false;
+
+        try {
+            int count = getSimpleJdbcTemplate()
+                    .queryForInt(
+                            "select count(*) from LD_PNDBC_APPTFND_T where position_nbr=? and emplid=? and APPT_RQST_AMT = 0 and APPT_RQST_CSF_AMT <> 0",
+                            "00" + positionNumber, emplid);
+
+            if (count > 0) {
+                result = true;
+            }
+
+        } catch (Exception ex) {
+            LOG.info("SipImportDaoJdbc Exception: " + ex.getMessage());
+        }
+
+        return result;
+    }
 
 }
