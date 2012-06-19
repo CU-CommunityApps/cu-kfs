@@ -499,6 +499,8 @@ public class OrganizationSelectionTreeAction extends BudgetExpansionAction {
 
         // forward to temp list action for displaying results
         String url = BudgetUrlUtil.buildTempListLookupUrl(mapping, organizationSelectionTreeForm, BCConstants.TempListLookupMode.POSITION_SELECT, BudgetConstructionPositionSelect.class.getName(), null);
+        // The global variable "PositionListURL" is used in DetailSalarySettingAction.java, line 116 
+        GlobalVariables.getUserSession().addObject((String)"IncumbentOrPositionListURL", (Object)url);
 
         return new ActionForward(url, true);
     }
@@ -519,6 +521,8 @@ public class OrganizationSelectionTreeAction extends BudgetExpansionAction {
 
         // forward to temp list action for displaying results
         String url = BudgetUrlUtil.buildTempListLookupUrl(mapping, organizationSelectionTreeForm, BCConstants.TempListLookupMode.INTENDED_INCUMBENT_SELECT, BudgetConstructionIntendedIncumbentSelect.class.getName(), null);
+        // The global variable "IncumbentListURL" is used in DetailSalarySettingAction.java, line 116 
+        GlobalVariables.getUserSession().addObject((String)"IncumbentOrPositionListURL", (Object)url);
 
         return new ActionForward(url, true);
     }

@@ -57,6 +57,7 @@ import org.kuali.rice.kns.util.ErrorMap;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KualiInteger;
 import org.kuali.rice.kns.util.MessageMap;
+import org.kuali.rice.kns.util.ObjectUtils;
 
 /**
  * the base struts action for the detail salary setting
@@ -111,7 +112,30 @@ public abstract class DetailSalarySettingAction extends SalarySettingBaseAction 
             closeActionForward = this.returnAfterClose(salarySettingForm, mapping, request, response);
         }
         else {
-            closeActionForward = super.close(mapping, salarySettingForm, request, response);
+            if (StringUtils.equals(ConfirmationQuestion.NO, buttonClicked) ) {
+            	// The global variable "IncumbentOrPositionListURL" is created in OrganizationSelectionTreeAction.java, line 523
+            	String url = (String)GlobalVariables.getUserSession().retrieveObject("IncumbentOrPositionListURL");
+            	if (ObjectUtils.isNotNull(url)){
+                	// reset the session variable to null
+                	GlobalVariables.getUserSession().addObject((String)"IncumbentOrPositionListURL", (Object)null);
+               		return new ActionForward(url, true);
+            	}
+            	else
+            		closeActionForward = super.close(mapping, salarySettingForm, request, response);
+            }
+            else
+            {
+                closeActionForward = super.close(mapping, salarySettingForm, request, response);
+                if (StringUtils.equals(ConfirmationQuestion.YES, buttonClicked) ) {
+                	// The global variable "IncumbentOrPositionListURL" is created in OrganizationSelectionTreeAction.java, line 523
+                	String url = (String)GlobalVariables.getUserSession().retrieveObject("IncumbentOrPositionListURL");
+                	if (ObjectUtils.isNotNull(url)){
+	                	// reset the session variable to null
+	                	GlobalVariables.getUserSession().addObject((String)"IncumbentOrPositionListURL", (Object)null);
+	               		return new ActionForward(url, true);
+                	}
+                }
+            }
         }
 
         // release all locks before closing the current expansion screen
