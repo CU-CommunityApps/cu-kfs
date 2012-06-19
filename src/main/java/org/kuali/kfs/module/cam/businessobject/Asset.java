@@ -239,6 +239,10 @@ public class Asset extends PersistableBusinessObjectBase implements CapitalAsset
 
         this.setActive(true);
 
+        AssetExtension ae = (AssetExtension) this.getExtension();
+        ae.setCapitalAssetNumber(this.getCapitalAssetNumber());
+
+        
         if (separate) {
             this.setRepresentativeUniversalIdentifier(assetGlobalDetail.getRepresentativeUniversalIdentifier());
             this.setCapitalAssetTypeCode(assetGlobalDetail.getCapitalAssetTypeCode());
@@ -247,8 +251,6 @@ public class Asset extends PersistableBusinessObjectBase implements CapitalAsset
             this.setManufacturerModelNumber(assetGlobalDetail.getManufacturerModelNumber());
 
             this.assetOrganization.setOrganizationText(assetGlobalDetail.getOrganizationText());
-            AssetExtension ae = (AssetExtension) this.getExtension();
-            ae.setCapitalAssetNumber(this.getCapitalAssetNumber());
         }
         else {
             this.setRepresentativeUniversalIdentifier(assetGlobalDetail.getRepresentativeUniversalIdentifier());
