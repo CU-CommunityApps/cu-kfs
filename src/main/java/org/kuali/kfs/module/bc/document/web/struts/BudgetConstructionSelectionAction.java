@@ -188,7 +188,10 @@ public class BudgetConstructionSelectionAction extends BudgetExpansionAction {
      * @throws Exception
      */
     public ActionForward performBCDocumentOpen(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-
+    	// Clear the following global variables so that we don't use this URL to go back to for this option.
+    	//   This global variable is is created in OrganizationSelectionTreeAction.java, line 523
+    	GlobalVariables.getUserSession().addObject((String)"IncumbentOrPositionListURL", (Object)null);
+    	
         // do lookup of header and call open if found, otherwise create blank doc and account hierarchy, then open if no error
         BudgetConstructionSelectionForm budgetConstructionSelectionForm = (BudgetConstructionSelectionForm) form;
 

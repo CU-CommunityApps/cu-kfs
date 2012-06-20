@@ -113,11 +113,14 @@ public abstract class DetailSalarySettingAction extends SalarySettingBaseAction 
         }
         else {
             if (StringUtils.equals(ConfirmationQuestion.NO, buttonClicked) ) {
-            	// The global variable "IncumbentOrPositionListURL" is created in OrganizationSelectionTreeAction.java, line 523
+            	// The global variable "IncumbentOrPositionListURL" is created in OrganizationSelectionTreeAction.java, line 523 and
+            	//   is reset in the class BudgetConstructionSelectionAction.java on line 193
             	String url = (String)GlobalVariables.getUserSession().retrieveObject("IncumbentOrPositionListURL");
             	if (ObjectUtils.isNotNull(url)){
-                	// reset the session variable to null
-                	GlobalVariables.getUserSession().addObject((String)"IncumbentOrPositionListURL", (Object)null);
+                    salarySettingForm.releasePositionAndFundingLocks();
+                    if (form instanceof PositionSalarySettingForm)
+                        // handle case where there are no funding lines attached to position
+                        this.unlockPositionOnly((PositionSalarySettingForm) form);
                		return new ActionForward(url, true);
             	}
             	else
@@ -127,25 +130,29 @@ public abstract class DetailSalarySettingAction extends SalarySettingBaseAction 
             {
                 closeActionForward = super.close(mapping, salarySettingForm, request, response);
                 if (StringUtils.equals(ConfirmationQuestion.YES, buttonClicked) ) {
-                	// The global variable "IncumbentOrPositionListURL" is created in OrganizationSelectionTreeAction.java, line 523
+                	// The global variable "IncumbentOrPositionListURL" is created in OrganizationSelectionTreeAction.java, line 523 and
+                	//   is reset in the class BudgetConstructionSelectionAction.java on line 193
                 	String url = (String)GlobalVariables.getUserSession().retrieveObject("IncumbentOrPositionListURL");
                 	if (ObjectUtils.isNotNull(url)){
-	                	// reset the session variable to null
-	                	GlobalVariables.getUserSession().addObject((String)"IncumbentOrPositionListURL", (Object)null);
+                		// release all locks
+                        salarySettingForm.releasePositionAndFundingLocks();
+                        if (form instanceof PositionSalarySettingForm)
+                            // handle case where there are no funding lines attached to position
+                            this.unlockPositionOnly((PositionSalarySettingForm) form);
 	               		return new ActionForward(url, true);
                 	}
                 }
             }
         }
-
+        
         // release all locks before closing the current expansion screen
-        if (isClose && !salarySettingForm.isViewOnlyEntry() && salarySettingForm.isSalarySettingClosed()) {
-            salarySettingForm.releasePositionAndFundingLocks();
-            if (form instanceof PositionSalarySettingForm){
-                // handle case where there are no funding lines attached to position
-                this.unlockPositionOnly((PositionSalarySettingForm) form);
-            }
-        }
+	    if (isClose && !salarySettingForm.isViewOnlyEntry() && salarySettingForm.isSalarySettingClosed()) {
+	        salarySettingForm.releasePositionAndFundingLocks();
+	        if (form instanceof PositionSalarySettingForm){
+	            // handle case where there are no funding lines attached to position
+	            this.unlockPositionOnly((PositionSalarySettingForm) form);
+	        }
+	    }
 
         return closeActionForward;
     }
