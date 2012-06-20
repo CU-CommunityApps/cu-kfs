@@ -579,7 +579,7 @@
 	</bean>
 	
 	<bean id="electronicInvoiceHelperService" parent="electronicInvoiceHelperService-parentBean" />
-	<bean id="electronicInvoiceHelperService-parentBean abstract="true" class="org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceHelperServiceImpl">
+	<bean id="electronicInvoiceHelperService-parentBean" abstract="true" class="org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceHelperServiceImpl">
 		<property name="electronicInvoicingDao" ref="electronicInvoicingDao" />
         <property name="electronicInvoiceInputFileType" ref="electronicInvoiceInputFileType" />
 		<property name="electronicInvoiceMatchingService" ref="electronicInvoiceMatchingService"/>
