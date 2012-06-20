@@ -727,7 +727,15 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
                 NodeDetails currentNode = NodeDetailEnum.getNodeDetailEnumByName(currentNodeName);
                 if (ObjectUtils.isNotNull(currentNode)) {
                     String cancelledStatusCode = currentNode.getDisapprovedStatusCode();
+                    if ((StringUtils.isBlank(cancelledStatusCode)) && 
+                    		((StringUtils.isBlank(currentNode.getDisapprovedStatusCode())) && 
+                    		((PaymentRequestStatuses.INITIATE.equals(getStatusCode())) || (PaymentRequestStatuses.IN_PROCESS.equals(getStatusCode())))))
+                    {
+                    	cancelledStatusCode = PaymentRequestStatuses.CANCELLED_IN_PROCESS;
+                    }
+
                     if (StringUtils.isNotBlank(cancelledStatusCode)) {
+                    	SpringContext.getBean(AccountsPayableService.class).cancelAccountsPayableDocument(this, currentNodeName);
                         SpringContext.getBean(PurapService.class).updateStatus(this, cancelledStatusCode);
                         SpringContext.getBean(PurapService.class).saveDocumentNoValidation(this);
                         return;
