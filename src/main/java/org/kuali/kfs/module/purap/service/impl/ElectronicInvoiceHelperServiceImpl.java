@@ -138,16 +138,17 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
     
     private StringBuffer emailTextErrorList;
     
-    private ElectronicInvoiceInputFileType electronicInvoiceInputFileType;
-    private MailService mailService;
-    private ElectronicInvoiceMatchingService matchingService; 
-    private ElectronicInvoicingDao electronicInvoicingDao;
-    private BatchInputFileService batchInputFileService;
-    private VendorService vendorService;
-    private PurchaseOrderService purchaseOrderService;
-    private PaymentRequestService paymentRequestService;
-    private KualiConfigurationService kualiConfigurationService;
-    private DateTimeService dateTimeService;
+    protected ElectronicInvoiceInputFileType electronicInvoiceInputFileType;
+    protected MailService mailService;
+    protected ElectronicInvoiceMatchingService matchingService; 
+    protected ElectronicInvoicingDao electronicInvoicingDao;
+    protected BatchInputFileService batchInputFileService;
+    protected VendorService vendorService;
+    protected PurchaseOrderService purchaseOrderService;
+    protected PaymentRequestService paymentRequestService;
+    protected KualiConfigurationService kualiConfigurationService;
+    protected DateTimeService dateTimeService;
+    protected ParameterService parameterService;
     
     @Transactional
     public ElectronicInvoiceLoad loadElectronicInvoices() {
@@ -157,7 +158,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         String acceptDirName = getAcceptDirName();
         emailTextErrorList = new StringBuffer();
 
-        boolean moveFiles = BooleanUtils.toBoolean(SpringContext.getBean(ParameterService.class).getParameterValue(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.FILE_MOVE_AFTER_LOAD_IND));
+        boolean moveFiles = BooleanUtils.toBoolean(parameterService.getParameterValue(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.FILE_MOVE_AFTER_LOAD_IND));
 
         if (LOG.isInfoEnabled()){
             LOG.info("Invoice Base Directory - " + electronicInvoiceInputFileType.getDirectoryPath());
@@ -821,7 +822,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         try {
             eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) SpringContext.getBean(DocumentService.class).getNewDocument("EIRT");
             
-            eInvoiceRejectDocument.setInvoiceProcessTimestamp(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
+            eInvoiceRejectDocument.setInvoiceProcessTimestamp(dateTimeService.getCurrentTimestamp());
             eInvoiceRejectDocument.setVendorDunsNumber(fileDunsNumber);
             eInvoiceRejectDocument.setDocumentCreationInProgress(true);
             
@@ -922,7 +923,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 
             eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) SpringContext.getBean(DocumentService.class).getNewDocument("EIRT");
 
-            eInvoiceRejectDocument.setInvoiceProcessTimestamp(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
+            eInvoiceRejectDocument.setInvoiceProcessTimestamp(dateTimeService.getCurrentTimestamp());
             String rejectdocDesc = generateRejectDocumentDescription(eInvoice,electronicInvoiceOrder);
             eInvoiceRejectDocument.getDocumentHeader().setDocumentDescription(rejectdocDesc);
             eInvoiceRejectDocument.setDocumentCreationInProgress(true);
@@ -1144,8 +1145,8 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
     
     protected void sendSummary(StringBuffer message) {
 
-        String fromMailId = SpringContext.getBean(ParameterService.class).getParameterValue(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.DAILY_SUMMARY_REPORT_FROM_EMAIL_ADDRESS);
-        List<String> toMailIds = SpringContext.getBean(ParameterService.class).getParameterValues(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.DAILY_SUMMARY_REPORT_TO_EMAIL_ADDRESSES);
+        String fromMailId = parameterService.getParameterValue(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.DAILY_SUMMARY_REPORT_FROM_EMAIL_ADDRESS);
+        List<String> toMailIds = parameterService.getParameterValues(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.DAILY_SUMMARY_REPORT_TO_EMAIL_ADDRESSES);
         
         LOG.info("From email address parameter value:"+fromMailId);
         LOG.info("To email address parameter value:"+toMailIds);
@@ -1179,7 +1180,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
             }
         }
 
-        String mailTitle = "E-Invoice Load Results for " + ElectronicInvoiceUtils.getDateDisplayText(SpringContext.getBean(DateTimeService.class).getCurrentDate());
+        String mailTitle = "E-Invoice Load Results for " + ElectronicInvoiceUtils.getDateDisplayText(dateTimeService.getCurrentDate());
         
         if (kualiConfigurationService.isProductionEnvironment()) {
             message.setSubject(mailTitle);
@@ -1213,10 +1214,33 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
          * Once we're through with the matching process, it's needed to check whether it's possible
          * to create PREQ for the reject doc
          */
-        if (!rejectDocHolder.isInvoiceRejected()){
+        if (!rejectDocHolder.isInvoiceRejected()) {
             validateInvoiceOrderValidForPREQCreation(rejectDocHolder);
         }
         
+        //  determine which of the reject reasons we should suppress based on the parameter
+	 	List<String> ignoreRejectTypes = parameterService.getParameterValues(PurapConstants.PURAP_NAMESPACE, "ElectronicInvoiceReject", PurapParameterConstants.ElectronicInvoiceParameters.SUPPRESS_REJECT_REASON_CODES_ON_EIRT_APPROVAL);
+	 	List<ElectronicInvoiceRejectReason> rejectReasonsToDelete = new ArrayList<ElectronicInvoiceRejectReason>();
+	 	for (ElectronicInvoiceRejectReason rejectReason : rejectDocument.getInvoiceRejectReasons()) {
+	 		String rejectedReasonTypeCode = rejectReason.getInvoiceRejectReasonTypeCode();
+	 	 	if (StringUtils.isNotBlank(rejectedReasonTypeCode)) {
+	 	 		if (ignoreRejectTypes.contains(rejectedReasonTypeCode)) {
+	 	 			rejectReasonsToDelete.add(rejectReason);
+	 	 		}
+	 	 	}
+	 	}
+
+	 	//  remove the flagged reject reasons
+	 	if (!rejectReasonsToDelete.isEmpty()) {
+	 		rejectDocument.getInvoiceRejectReasons().removeAll(rejectReasonsToDelete);
+	 	 }
+	 	 	
+	 	//  if no reject reasons, then clear error messages
+	 	if (rejectDocument.getInvoiceRejectReasons().isEmpty()) {
+	 		GlobalVariables.getMessageMap().clearErrorMessages();
+	 	}
+	 	 	
+	 	//  this automatically returns false if there are no reject reasons
         return !rejectDocHolder.isInvoiceRejected();
     }
     
@@ -1828,7 +1852,8 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         this.dateTimeService = dateTimeService;
     }
     
-    
-    
+    public void setParameterService(ParameterService parameterService) {
+	 	 this.parameterService = parameterService;    
+    }
 }
 
