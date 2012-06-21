@@ -153,17 +153,17 @@
 	
 	<bean id="AccountReversionGlobalMaintenanceDocument-DocumentValuePathGroup-ChartOrganization" class="org.kuali.rice.kns.datadictionary.DocumentValuePathGroup">
     	<property name="documentCollectionPath">
-    		<bean parent="AccountReversionGlobalMaintenanceDocument-DocumentCollectionPath-chartAndAccount">
+    		<bean parent="AccountReversionGlobalMaintenanceDocument-DocumentCollectionPath-chartAndOrganization">
     			<property name="collectionPath" value="newMaintainableObject.businessObject.accountReversionGlobalAccounts"/>
     		</bean>
     	</property>
    	</bean>
    	
-   	 <bean id="AccountReversionGlobalMaintenanceDocument-DocumentCollectionPath-chartAndAccount" class="org.kuali.rice.kns.datadictionary.DocumentCollectionPath" abstract="true">
+   	 <bean id="AccountReversionGlobalMaintenanceDocument-DocumentCollectionPath-chartAndOrganziation" class="org.kuali.rice.kns.datadictionary.DocumentCollectionPath" abstract="true">
 		<property name="documentValues">
 	   		<list>
 	   			<value>chartOfAccountsCode</value>
-	   			<value>accountNumber</value>
+	   			<value>account.organizationCode</value>
 	   		</list>
    		</property>
    	</bean>

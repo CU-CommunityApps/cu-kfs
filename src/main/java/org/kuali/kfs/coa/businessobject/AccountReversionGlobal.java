@@ -358,7 +358,7 @@ public class AccountReversionGlobal extends PersistableBusinessObjectBase implem
             // 1. find that account reversion
             AccountReversion currAcctRev = SpringContext.getBean(AccountReversionService.class).getByPrimaryId(this.getUniversityFiscalYear(), acctRevAccount.getChartOfAccountsCode(), acctRevAccount.getAccountNumber());
 
-            if (currAcctRev != null) { // only proceed if there's a pre-existing org reversion; we don't want to insert any new
+            //if (currAcctRev != null) { // only proceed if there's a pre-existing org reversion; we don't want to insert any new
                                         // records
                 if (!StringUtils.isBlank(this.getBudgetReversionChartOfAccountsCode())) {
                 	currAcctRev.setBudgetReversionChartOfAccountsCode(this.getBudgetReversionChartOfAccountsCode());
@@ -392,7 +392,7 @@ public class AccountReversionGlobal extends PersistableBusinessObjectBase implem
 
                 currAcctRev.refreshNonUpdateableReferences();
                 persistingChanges.add(currAcctRev);
-            }
+         //   }
 
         }
         return persistingChanges;
