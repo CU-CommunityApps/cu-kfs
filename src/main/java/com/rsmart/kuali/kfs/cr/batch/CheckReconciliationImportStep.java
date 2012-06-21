@@ -900,24 +900,58 @@ public class CheckReconciliationImportStep extends AbstractStep {
                 }
                 else {
                     if( CRConstants.PDP_SRC.equals(existingRecord.getSourceCode()) ) {
-                        String checkStatus = updateCheckStatus(cr,banks,records);
-                        cr.setStatus(checkStatus);
-                        existingRecord.setStatus(checkStatus);
-                        existingRecord.setStatusChangeDate(cr.getStatusChangeDate());
+                    	//update pdp records if checkstatus id cleared
+                    	String checkStatus = updateCheckStatus(cr,banks,records);
+                    	//update CheckRecon record if checkstatus is cleared	
+                        if(checkStatus.equals(CRConstants.CLEARED)){
+                            cr.setStatus(checkStatus);
+                            existingRecord.setStatus(checkStatus);
+                            existingRecord.setStatusChangeDate(cr.getStatusChangeDate());
+                            existingRecord.setLastUpdate(ts);
+                            businessObjectService.save(existingRecord);
+                            LOG.info("Updated Check Recon Record : " + existingRecord.getId());
+                        }
+                        else if(checkStatus.equals(CRConstants.STOP)){
+                        	if(!existingRecord.getStatus().equalsIgnoreCase(CRConstants.STOP)){
+	                            records.add(getCheckReconError(cr, "Bank file status is STOP and Check Recon table status is not STOP"));
+	                            LOG.error("Bank file status is STOP and Check Recon table status is not STOP for check ");
+                        	}
+                        }
+                        else if(checkStatus.equals(CRConstants.VOIDED)){
+                        	if(!existingRecord.getStatus().equalsIgnoreCase(CRConstants.VOIDED)){
+	                            records.add(getCheckReconError(cr, "Bank file status is VOID and Check Recon table status is not VOID"));
+	                            LOG.error("Bank file status is STOP and Check Recon table status is not STOP for check ");
+                        	}
+                        }
+
                     }
                     else {
-                        String checkStatus = updateCheckStatus(cr);
-                        cr.setStatus(checkStatus);
-                        existingRecord.setStatus(checkStatus);
-                        existingRecord.setStatusChangeDate(cr.getStatusChangeDate());
+                        String checkStatus = getCheckStatus(cr);
+                        if(checkStatus.equals(CRConstants.CLEARED)){
+                            cr.setStatus(checkStatus);
+                            existingRecord.setStatus(checkStatus);
+                            existingRecord.setStatusChangeDate(cr.getStatusChangeDate());
+                            existingRecord.setLastUpdate(ts);
+                            businessObjectService.save(existingRecord);
+                            LOG.info("Updated Check Recon Record : " + existingRecord.getId());
+
+                        }
+                        else if(checkStatus.equals(CRConstants.STOP)){
+                        	if(!existingRecord.getStatus().equalsIgnoreCase(CRConstants.STOP)){
+	                            records.add(getCheckReconError(cr, "Bank file status is STOP and Check Recon table status is not STOP"));
+	                            LOG.error("Bank file status is STOP and Check Recon table status is not STOP for check ");
+                        	}
+                        }
+                        else if(checkStatus.equals(CRConstants.VOIDED)){
+                        	if(!existingRecord.getStatus().equalsIgnoreCase(CRConstants.VOIDED)){
+	                            records.add(getCheckReconError(cr, "Bank file status is VOID and Check Recon table status is not VOID"));
+	                            LOG.error("Bank file status is STOP and Check Recon table status is not STOP for check ");
+                        	}
+                        }
+
+
                     }
                     
-                    // Update update ts
-                    existingRecord.setLastUpdate(ts);
-                    
-                    businessObjectService.save(existingRecord);
-                    
-                    LOG.info("Updated Check Recon Record : " + existingRecord.getId());
                 }
                 
                 totalLinesProcessed++;
@@ -958,7 +992,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
      * @param cr Check Reconciliation Object
      * @return String
      */
-    private String updateCheckStatus(CheckReconciliation cr ) {
+    private String getCheckStatus(CheckReconciliation cr ) {
         String defaultStatus = CRConstants.EXCP;
 
         if( statusMap.get(cr.getStatus()) != null ) {
@@ -977,12 +1011,14 @@ public class CheckReconciliationImportStep extends AbstractStep {
     	for (PaymentGroup paymentGroup : paymentGroups) {
     		d+=paymentGroup.getNetPaymentAmount().doubleValue();
         }
-        	
-    	return d;
+    	
+    	long y=(long)(d*100); 
+    	
+    	return (double)y/100;
     }
     
     /**
-     * Get Check Status
+     * Get Check Status  and update pdp
      * 
      * @param cr Check Reconciliation Object
      * @return String
@@ -1027,11 +1063,14 @@ public class CheckReconciliationImportStep extends AbstractStep {
                     paymentGroup.setPaymentStatus((PaymentStatus) code);
                 }
                 
-                //Dont update payment status if the bank status is ISSUED
-                if(!defaultStatus.equals(CRConstants.ISSUED)){
+                // Update PDP if the check status is cleared from the bank file
+                
+                if(defaultStatus.equals(CRConstants.CLEARED)){
                 	businessObjectService.save(paymentGroup);
                 	LOG.info("Updated Payment Group : " + paymentGroup.getId());
                 }
+                
+                	
             }
             else {
                 LOG.warn("Update Payment Group Failed ( " + cr.getStatus() + ") ID : " + paymentGroup.getId());
