@@ -22,7 +22,7 @@
     <property name="maintainableClass" value="org.kuali.kfs.coa.document.AccountReversionGlobalMaintainableImpl"/>
     <property name="maintainableSections">
       <list>
-        <ref bean="AccountReversionGlobalMaintenanceDocument-EditGlobalAccountReversionOrganizations"/>
+        <ref bean="AccountReversionGlobalMaintenanceDocument-EditGlobalAccountReversionAccounts"/>
         <ref bean="AccountReversionGlobalMaintenanceDocument-EditGlobalAccountReversion"/>
         <ref bean="AccountReversionGlobalMaintenanceDocument-EditGlobalAccountReversionDetails"/>
       </list>
@@ -58,9 +58,9 @@
 
 <!-- Maintenance Section Definitions -->
 
-  <bean id="AccountReversionGlobalMaintenanceDocument-EditGlobalAccountReversionOrganizations" parent="AccountReversionGlobalMaintenanceDocument-EditGlobalAccountReversionOrganizations-parentBean"/>
+  <bean id="AccountReversionGlobalMaintenanceDocument-EditGlobalAccountReversionAccounts" parent="AccountReversionGlobalMaintenanceDocument-EditGlobalAccountReversionAccounts-parentBean"/>
 
-  <bean id="AccountReversionGlobalMaintenanceDocument-EditGlobalAccountReversionOrganizations-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+  <bean id="AccountReversionGlobalMaintenanceDocument-EditGlobalAccountReversionAccounts-parentBean" abstract="true" parent="MaintainableSectionDefinition">
     <property name="id" value="Edit Global Account Reversion Accounts"/>
     <property name="title" value="Edit Global Account Reversion Accounts"/>
     <property name="maintainableItems">

@@ -19,6 +19,7 @@
     <documentType>
       <name>ACCR</name>
       <parent>COSM</parent>
+      <label>Account Reversion</label>
     </documentType>
   </documentTypes>
 </data>

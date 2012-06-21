@@ -245,6 +245,19 @@ public class KFSKeyConstants {
     public static final String ERROR_DOCUMENT_GLOBAL_ORG_REVERSION_DUPLICATE_ORGS = "error.document.globalOrgReversion.duplicateOrgs";
     public static final String ERROR_DOCUMENT_GLOBAL_ORG_REVERSION_NO_REVERSION_CODE = "error.document.globalOrgReversion.noReversionCode";
     
+    // Account Reversion Errors
+    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_BUDGET_REVERSION_INCOMPLETE = "error.document.globalAcctReversion.incompleteBudgetReversion";
+    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_CASH_REVERSION_INCOMPLETE = "error.document.globalAcctReversion.incompleteCashReversion";
+    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_ACCT_REVERSION_CATEGORY = "error.document.globalAcctReversion.invalidAcctReversionCategory";
+    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_ACCT_REVERSION_CODE = "error.document.globalAcctReversion.invalidAcctReversionCode";
+    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_OBJECT_CODE_INVALID = "error.document.globalAcctReversion.objectCodeInvalid";
+    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_NO_ACCOUNTS = "error.document.globalAcctReversion.noAccounts";
+    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_CHART = "error.document.globalAcctReversion.invalidChart";
+    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_ACCOUNT = "error.document.globalAcctReversion.invalidAccount";
+    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_NO_ACCT_REVERSION = "error.document.globalAcctReversion.noAcctReversion";
+    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_DUPLICATE_ACCOUNTS = "error.document.globalAcctReversion.duplicateAccts";
+    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_NO_REVERSION_CODE = "error.document.globalAcctReversion.noReversionCode";
+    
     // AchBank errors
     public static final String ERROR_DOCUMENT_ACHBANKMAINT_INVALID_TYPE_CODE = "error.document.achBankMaintenance.invalidTypeCode";
     public static final String ERROR_DOCUMENT_ACHBANKMAINT_INVALID_OFFICE_CODE = "error.document.achBankMaintenance.invalidOfficeCode";

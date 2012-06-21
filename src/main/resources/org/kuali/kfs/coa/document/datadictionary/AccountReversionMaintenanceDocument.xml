@@ -109,5 +109,12 @@
   <!-- workflow attributes -->
   <bean id="AccountReversionMaintenanceDocument-workflowAttributes" parent="AccountReversionMaintenanceDocument-workflowAttributes-parentBean"/>
   
-  <bean id="AccountReversionMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.kns.datadictionary.WorkflowAttributes" abstract="true"/>
+  <bean id="AccountReversionMaintenanceDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
+  		<property name="routingTypeDefinitions">
+    		<map>
+    			<entry key="OrganizationHierarchy" value-ref="RoutingType-MaintenanceDocument-OrganizationHierarchy-OrgFromAccount"/>
+    		</map>
+    	</property>
+  </bean>
+  
 </beans>
