@@ -153,7 +153,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
                 success &= checkAllObjectCodesForValidity(globalAcctRev, acct);
                 success &= checkAccountChartValidity(acct);
                 success &= checkAccountValidity(acct);
-                success &= checkAccountReversionForAccountExists(globalAcctRev, acct);
+               // success &= checkAccountReversionForAccountExists(globalAcctRev, acct);
                 success &= checkAccountIsNotAmongAcctRevAccounts(globalAcctRev, acct);
             }
         }
@@ -194,7 +194,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
         boolean success = true;
         if ((!StringUtils.isBlank(globalAcctRev.getBudgetReversionChartOfAccountsCode()) && StringUtils.isBlank(globalAcctRev.getBudgetReversionAccountNumber())) || (StringUtils.isBlank(globalAcctRev.getBudgetReversionChartOfAccountsCode()) && !StringUtils.isBlank(globalAcctRev.getBudgetReversionAccountNumber()))) {
             success = false;
-            GlobalVariables.getMessageMap().putError(MAINTAINABLE_ERROR_PREFIX + "budgetReversionChartOfAccountsCode", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ORG_REVERSION_BUDGET_REVERSION_INCOMPLETE, new String[] {});
+            GlobalVariables.getMessageMap().putError(MAINTAINABLE_ERROR_PREFIX + "budgetReversionChartOfAccountsCode", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_BUDGET_REVERSION_INCOMPLETE, new String[] {});
         }
         return success;
     }
@@ -210,7 +210,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
         boolean success = true;
         if ((!StringUtils.isBlank(globalAcctRev.getCashReversionFinancialChartOfAccountsCode()) && StringUtils.isBlank(globalAcctRev.getCashReversionAccountNumber())) || (StringUtils.isBlank(globalAcctRev.getCashReversionFinancialChartOfAccountsCode()) && !StringUtils.isBlank(globalAcctRev.getCashReversionAccountNumber()))) {
             success = false;
-            GlobalVariables.getMessageMap().putError(MAINTAINABLE_ERROR_PREFIX + "cashReversionFinancialChartOfAccountsCode", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ORG_REVERSION_CASH_REVERSION_INCOMPLETE, new String[] {});
+            GlobalVariables.getMessageMap().putError(MAINTAINABLE_ERROR_PREFIX + "cashReversionFinancialChartOfAccountsCode", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_CASH_REVERSION_INCOMPLETE, new String[] {});
         }
         return success;
     }
@@ -256,7 +256,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
             detail.refreshReferenceObject("reversionCategory");
             if (detail.getReversionCategory() == null || !detail.getReversionCategory().isActive()) {
                 success = false;
-                GlobalVariables.getMessageMap().putError("organizationReversionCategoryCode", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ORG_REVERSION_INVALID_ORG_REVERSION_CATEGORY, new String[] { detail.getAccountReversionCategoryCode() });
+                GlobalVariables.getMessageMap().putError("organizationReversionCategoryCode", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_ACCT_REVERSION_CATEGORY, new String[] { detail.getAccountReversionCategoryCode() });
             }
         }
         return success;
@@ -273,7 +273,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
         for (AccountReversionGlobalAccount acct : globalAcctRev.getAccountReversionGlobalAccounts()) {
             if (!validObjectCode(globalAcctRev.getUniversityFiscalYear(), acct.getChartOfAccountsCode(), detail.getAccountReversionObjectCode())) {
                 success = false;
-                GlobalVariables.getMessageMap().putError("accountReversionObjectCode", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ORG_REVERSION_OBJECT_CODE_INVALID, new String[] { globalAcctRev.getUniversityFiscalYear().toString(), acct.getChartOfAccountsCode(), detail.getAccountReversionObjectCode(), acct.getChartOfAccountsCode(), acct.getAccountNumber() });
+                GlobalVariables.getMessageMap().putError("accountReversionObjectCode", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_OBJECT_CODE_INVALID, new String[] { globalAcctRev.getUniversityFiscalYear().toString(), acct.getChartOfAccountsCode(), detail.getAccountReversionObjectCode(), acct.getChartOfAccountsCode(), acct.getAccountNumber() });
             }
         }
         return success;
@@ -292,7 +292,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
         for (AccountReversionGlobalDetail detail : globalAcctRev.getAccountReversionGlobalDetails()) {
             if (!validObjectCode(globalAcctRev.getUniversityFiscalYear(), acct.getChartOfAccountsCode(), detail.getAccountReversionObjectCode())) {
                 success = false;
-                GlobalVariables.getMessageMap().putError("accountNumber", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ORG_REVERSION_OBJECT_CODE_INVALID, new String[] { globalAcctRev.getUniversityFiscalYear().toString(), acct.getChartOfAccountsCode(), detail.getAccountReversionObjectCode(), acct.getChartOfAccountsCode(), acct.getAccountNumber() });
+                GlobalVariables.getMessageMap().putError("accountNumber", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_OBJECT_CODE_INVALID, new String[] { globalAcctRev.getUniversityFiscalYear().toString(), acct.getChartOfAccountsCode(), detail.getAccountReversionObjectCode(), acct.getChartOfAccountsCode(), acct.getAccountNumber() });
             }
         }
         return success;
@@ -338,7 +338,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
             }
             if (!foundInList) {
                 success = false; // we've failed to find the code in the list...FAILED!
-                GlobalVariables.getMessageMap().putError("accountReversionCode", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ORG_REVERSION_INVALID_ORG_REVERSION_CODE, new String[] { detail.getAccountReversionCode() });
+                GlobalVariables.getMessageMap().putError("accountReversionCode", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_ACCT_REVERSION_CODE, new String[] { detail.getAccountReversionCode() });
             }
         }
         return success;
@@ -354,7 +354,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
     public boolean areAllAccountsValid(AccountReversionGlobal globalAcctRev) {
         boolean success = true;
         if (globalAcctRev.getAccountReversionGlobalAccounts().size() == 0) {
-            putFieldError(KFSConstants.MAINTENANCE_ADD_PREFIX + "accountReversionGlobalAccounts.organizationCode", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ORG_REVERSION_NO_ORGANIZATIONS);
+            putFieldError(KFSConstants.MAINTENANCE_ADD_PREFIX + "accountReversionGlobalAccounts.organizationCode", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_NO_ACCOUNTS);
         }
         else {
             for (int i = 0; i < globalAcctRev.getAccountReversionGlobalAccounts().size(); i++) {
@@ -364,7 +364,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
                 success &= checkAllObjectCodesForValidity(globalAcctRev, acct);
                 success &= checkAccountValidity(acct);
                 success &= checkAccountChartValidity(acct);
-                success &= checkAccountReversionForAccountExists(globalAcctRev, acct);
+                //success &= checkAccountReversionForAccountExists(globalAcctRev, acct);
                 GlobalVariables.getMessageMap().removeFromErrorPath(errorPath);
             }
         }
@@ -392,7 +392,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
             acct.refreshReferenceObject("chartOfAccounts");
             if (acct.getChartOfAccounts() == null) {
                 success = false;
-                GlobalVariables.getMessageMap().putError("chartOfAccountsCode", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ORG_REVERSION_INVALID_CHART, new String[] { acct.getChartOfAccountsCode() });
+                GlobalVariables.getMessageMap().putError("chartOfAccountsCode", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_CHART, new String[] { acct.getChartOfAccountsCode() });
             }
         }
         return success;
@@ -416,7 +416,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
             acct.refreshReferenceObject("account");
             if (acct.getAccount() == null) {
                 success = false;
-                GlobalVariables.getMessageMap().putError("accountNumber", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ORG_REVERSION_INVALID_ORGANIZATION, new String[] { acct.getChartOfAccountsCode(), acct.getAccountNumber() });
+                GlobalVariables.getMessageMap().putError("accountNumber", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_ACCOUNT, new String[] { acct.getChartOfAccountsCode(), acct.getAccountNumber() });
             }
         }
         return success;
@@ -435,19 +435,19 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
         if (globalAcctRev.getUniversityFiscalYear() != null) {
             if (accountReversionService.getByPrimaryId(globalAcctRev.getUniversityFiscalYear(), acct.getChartOfAccountsCode(), acct.getAccountNumber()) == null) {
                 success = false;
-                GlobalVariables.getMessageMap().putError("accountNumber", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ORG_REVERSION_NO_ORG_REVERSION, new String[] { globalAcctRev.getUniversityFiscalYear().toString(), acct.getChartOfAccountsCode(), acct.getAccountNumber() });
+                GlobalVariables.getMessageMap().putError("accountNumber", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_NO_ACCT_REVERSION, new String[] { globalAcctRev.getUniversityFiscalYear().toString(), acct.getChartOfAccountsCode(), acct.getAccountNumber() });
             }
         }
         return success;
     }
 
     /**
-     * This method checks if a newly added organization is already among the organizations already listed. WARNING: only use on add
+     * This method checks if a newly added account is already among the accounts already listed. WARNING: only use on add
      * line rules; there's no good way to use this method when testing the entire document.
      * 
-     * @param globalOrgRev the global Organization Reversion to check
-     * @param orgRevOrg the newly adding organization reversion change organization
-     * @return true if organization should be added as it is not currently in the collection, false if otherwise
+     * @param globalAcctRev the global Account Reversion to check
+     * @param acctRevOrg the newly adding account reversion change account
+     * @return true if account should be added as it is not currently in the collection, false if otherwise
      */
     public boolean checkAccountIsNotAmongAcctRevAccounts(AccountReversionGlobal globalAcctRev, AccountReversionGlobalAccount acctRevAcct) {
         boolean success = true;
@@ -456,7 +456,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
             AccountReversionGlobalAccount currAcct = iter.next();
             if (areContainingSameAccounts(currAcct, acctRevAcct)) {
                 success = false;
-                GlobalVariables.getMessageMap().putError("accountNumber", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ORG_REVERSION_DUPLICATE_ORGS, new String[] { acctRevAcct.getChartOfAccountsCode(), acctRevAcct.getAccountNumber() });
+                GlobalVariables.getMessageMap().putError("accountNumber", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_DUPLICATE_ACCOUNTS, new String[] { acctRevAcct.getChartOfAccountsCode(), acctRevAcct.getAccountNumber() });
             }
         }
         return success;
