@@ -159,7 +159,7 @@
     	</property>
    	</bean>
    	
-   	 <bean id="AccountReversionGlobalMaintenanceDocument-DocumentCollectionPath-chartAndOrganziation" class="org.kuali.rice.kns.datadictionary.DocumentCollectionPath" abstract="true">
+   	 <bean id="AccountReversionGlobalMaintenanceDocument-DocumentCollectionPath-chartAndOrganization" class="org.kuali.rice.kns.datadictionary.DocumentCollectionPath" abstract="true">
 		<property name="documentValues">
 	   		<list>
 	   			<value>chartOfAccountsCode</value>
