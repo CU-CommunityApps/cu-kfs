@@ -1012,9 +1012,21 @@ public class CheckReconciliationImportStep extends AbstractStep {
     		d+=paymentGroup.getNetPaymentAmount().doubleValue();
         }
     	
-    	long y=(long)(d*100); 
+    	String strD = ""+d;
+    	if(strD.length()>=strD.indexOf(".")+3)
+    		strD = strD.substring(0, strD.indexOf(".")+3);
+    	else if(strD.length()>=strD.indexOf(".")+2)
+    		strD = strD.substring(0, strD.indexOf(".")+2);
+    	else if(strD.length()>=strD.indexOf(".")+1)
+    		strD = strD.substring(0, strD.indexOf(".")+1);
     	
-    	return (double)y/100;
+    		
+    //	long y=(long)(d*100); 
+    	
+    //	return (double)y/100;
+    	
+    	return Double.parseDouble(strD);
+    	
     }
     
     /**
