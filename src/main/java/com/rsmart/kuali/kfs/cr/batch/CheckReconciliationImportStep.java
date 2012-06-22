@@ -913,13 +913,13 @@ public class CheckReconciliationImportStep extends AbstractStep {
                         }
                         else if(checkStatus.equals(CRConstants.STOP)){
                         	if(!existingRecord.getStatus().equalsIgnoreCase(CRConstants.STOP)){
-	                            records.add(getCheckReconError(cr, "Bank file status is STOP and Check Recon table status is not STOP"));
+	                            records.add(getCheckReconError(cr, "Bank file status shows STOP and Check Recon table status is not STOP"));
 	                            LOG.error("Bank file status is STOP and Check Recon table status is not STOP for check ");
                         	}
                         }
                         else if(checkStatus.equals(CRConstants.VOIDED)){
                         	if(!existingRecord.getStatus().equalsIgnoreCase(CRConstants.VOIDED)){
-	                            records.add(getCheckReconError(cr, "Bank file status is VOID and Check Recon table status is not VOID"));
+	                            records.add(getCheckReconError(cr, "Bank file status is VOIDED and Check Recon table status is not VOIDED"));
 	                            LOG.error("Bank file status is STOP and Check Recon table status is not STOP for check ");
                         	}
                         }
