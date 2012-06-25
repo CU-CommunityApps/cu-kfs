@@ -153,7 +153,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
                 success &= checkAllObjectCodesForValidity(globalAcctRev, acct);
                 success &= checkAccountChartValidity(acct);
                 success &= checkAccountValidity(acct);
-               // success &= checkAccountReversionForAccountExists(globalAcctRev, acct);
+                success &= checkAccountReversionForAccountExists(globalAcctRev, acct);
                 success &= checkAccountIsNotAmongAcctRevAccounts(globalAcctRev, acct);
             }
         }
@@ -364,7 +364,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
                 success &= checkAllObjectCodesForValidity(globalAcctRev, acct);
                 success &= checkAccountValidity(acct);
                 success &= checkAccountChartValidity(acct);
-                //success &= checkAccountReversionForAccountExists(globalAcctRev, acct);
+                success &= checkAccountReversionForAccountExists(globalAcctRev, acct);
                 GlobalVariables.getMessageMap().removeFromErrorPath(errorPath);
             }
         }
