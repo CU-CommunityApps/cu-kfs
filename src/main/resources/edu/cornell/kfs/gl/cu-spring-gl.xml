@@ -8,7 +8,21 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-	<bean id="scrubberProcess-parentBean" class="org.kuali.kfs.gl.batch.service.impl.ScrubberProcessImpl" abstract="true">
+	<!--  <bean id="scrubberProcess-parentBean" class="org.kuali.kfs.gl.batch.service.impl.ScrubberProcessImpl" abstract="true"> -->
+	
+	 <bean id="ldOffsetReportWriterService" class="org.kuali.kfs.sys.service.impl.ScrubberListingReportWriterTextServiceImpl" parent="reportWriterService">
+		<property name="filePath" value="${temp.directory}"/>
+		<property name="fileNamePrefix" value="scrubberJobReport-01-ldOffset"/>
+        <property name="title" value="LD OFFSET REPORT"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.OriginEntryFull" value="transactionReportHelper"/>
+        	</map>
+        </property>
+        <property name="aggregationModeOn" value="true"/>
+    </bean>
+	
+	 <bean id="scrubberProcess-parentBean" class="com.rsmart.kuali.kfs.gl.batch.service.impl.ScrubberProcessImpl" abstract="true"> 
 	
 		<property name="dateTimeService">
 			<ref bean="dateTimeService" />
@@ -37,9 +51,16 @@
 		<property name="flexibleOffsetAccountService">
 			<ref bean="flexibleOffsetAccountService" />
 		</property>
+		
+		
 		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
 		<property name="scrubberReportWriterService" ref="scrubberReportWriterService" />
         <property name="scrubberLedgerReportWriterService" ref="scrubberLedgerReportWriterService" />
+        
+        
+        <property name="thisBatchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+		<property name="ldOffsetReportWriterService" ref="ldOffsetReportWriterService" />
+        
 	</bean>
 
 </beans>
