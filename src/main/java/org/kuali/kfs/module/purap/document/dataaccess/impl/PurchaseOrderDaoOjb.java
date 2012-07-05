@@ -15,6 +15,7 @@
  */
 package org.kuali.kfs.module.purap.document.dataaccess.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -98,13 +99,54 @@ public class PurchaseOrderDaoOjb extends PlatformAwareDaoBaseOjb implements Purc
         rqbc.setAttributes(new String[] { KFSPropertyConstants.DOCUMENT_NUMBER });
         rqbc.addOrderByAscending(KFSPropertyConstants.DOCUMENT_NUMBER);
         Iterator<Object[]> iter = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(rqbc);
+        /*
         String oldestDocumentNumber = null;
         if (iter.hasNext()) {
             oldestDocumentNumber = (String) (iter.next())[0];
         }
         return oldestDocumentNumber;
+        */
+        return getOldestDocNumberForPO(iter);
+        
     }
 
+    private String getOldestDocNumberForPO(Iterator<Object[]> iter){
+    	ArrayList<String> al 	= new ArrayList();
+    	boolean allNumbers 		= true;
+    	String firstDocNumber 	= null;
+    	String oldestDocNumber 	= null;
+    	
+    	while(iter.hasNext()){
+    		String docNbr =(String)iter.next()[0]; 
+    		al.add(docNbr);
+    		if(firstDocNumber==null)
+    			firstDocNumber = docNbr;
+    		//System.out.println("docNbr = "+docNbr);
+    		try{
+    			Integer.parseInt(docNbr);
+    		}
+    		catch(NumberFormatException nfe){
+    			allNumbers = false;
+    			break;
+    		}
+    	}
+    	if(allNumbers){
+        	int oldestNumber = Integer.parseInt(firstDocNumber); 
+    		for(String dn : al){
+    			if(Integer.parseInt(dn) < oldestNumber)
+    				oldestNumber =Integer.parseInt(dn); 
+    		}
+    		oldestDocNumber = ""+oldestNumber;
+    	}
+    	else{
+    		oldestDocNumber = firstDocNumber;
+    	}
+		//System.out.println("returning = "+oldestDocNumber);
+
+    	return oldestDocNumber;
+    	
+    }
+    
     /**
      * Retrieves the document number of the purchase order returned by the passed in criteria.
      * 
