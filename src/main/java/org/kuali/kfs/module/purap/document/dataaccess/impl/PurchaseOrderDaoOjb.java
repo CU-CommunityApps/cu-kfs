@@ -121,7 +121,6 @@ public class PurchaseOrderDaoOjb extends PlatformAwareDaoBaseOjb implements Purc
     		al.add(docNbr);
     		if(firstDocNumber==null)
     			firstDocNumber = docNbr;
-    		//System.out.println("docNbr = "+docNbr);
     		try{
     			Integer.parseInt(docNbr);
     		}
@@ -141,7 +140,6 @@ public class PurchaseOrderDaoOjb extends PlatformAwareDaoBaseOjb implements Purc
     	else{
     		oldestDocNumber = firstDocNumber;
     	}
-		//System.out.println("returning = "+oldestDocNumber);
 
     	return oldestDocNumber;
     	
