@@ -15,23 +15,14 @@
  */
 package org.kuali.kfs.module.purap.document.validation.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.integration.cab.CapitalAssetBuilderModuleService;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
-import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
 import org.kuali.kfs.module.purap.document.PurchasingDocument;
-import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
-import org.kuali.kfs.vnd.businessobject.CommodityCode;
 import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.GlobalVariables;
 
 public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPayableNewIndividualItemValidation {
@@ -43,11 +34,19 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
     private PurchasingItemDescriptionValidation itemDescriptionValidation;
     private PurchasingItemQuantityValidation itemQuantityValidation;
     private PurchasingBelowTheLineItemNoUnitCostValidation belowTheLineItemNoUnitCostValidation;
+    private PurchasingCommodityCodeValidation commodityCodeValidation;
     
+    public static final String UNORDERED_ITEM_DEFAULT_COMMODITY_CODE = "UNORDERED_ITEM_DEFAULT_COMMODITY_CODE";
+
+    /**
+     * @see org.kuali.kfs.module.purap.document.validation.impl.PurchasingAccountsPayableNewIndividualItemValidation#validate(AttributedDocumentEvent)
+     */
+    @Override
     public boolean validate(AttributedDocumentEvent event) {
         boolean valid = true;
         valid &= super.validate(event);
-        String recurringPaymentTypeCode = ((PurchasingDocument)event.getDocument()).getRecurringPaymentTypeCode(); 
+        PurchasingDocument purDoc = (PurchasingDocument)event.getDocument();
+        String recurringPaymentTypeCode = purDoc.getRecurringPaymentTypeCode(); 
         //Capital asset validations are only done on line items (not additional charge items).
         if (!getItemForValidation().getItemType().isAdditionalChargeIndicator()) {
             valid &= capitalAssetBuilderModuleService.validateItemCapitalAssetWithErrors(recurringPaymentTypeCode, getItemForValidation(), false);
@@ -65,7 +64,8 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
             itemQuantityValidation.setItemForValidation(getItemForValidation());
             valid &= itemQuantityValidation.validate(event);
 
-            valid &= validateCommodityCodes(getItemForValidation(), commodityCodeIsRequired());      
+            commodityCodeValidation.setItemForValidation(getItemForValidation());
+            valid &= commodityCodeValidation.validate(event);
         }
         else {
             // No accounts can be entered on below-the-line items that have no unit cost.
@@ -73,10 +73,6 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
             valid &= belowTheLineItemNoUnitCostValidation.validate(event);                        
         }
         return valid;
-    }
-    
-    protected boolean commodityCodeIsRequired() {
-        return false;
     }
     
     /**
@@ -102,66 +98,9 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         return valid;
     }
         
-    public static final String UNORDERED_ITEM_DEFAULT_COMMODITY_CODE = "UNORDERED_ITEM_DEFAULT_COMMODITY_CODE";
-    
-    /**
-     * Validates whether the commodity code existed on the item, and if existed, whether the
-     * commodity code on the item existed in the database, and if so, whether the commodity 
-     * code is active. Display error if any of these 3 conditions are not met.
-     * 
-     * @param item  The PurApItem containing the commodity code to be validated.
-     * @return boolean false if the validation fails and true otherwise.
-     */
-    protected boolean validateCommodityCodes(PurApItem item, boolean commodityCodeRequired) {
-        boolean valid = true;
-        String identifierString = item.getItemIdentifierString();
-        PurchasingItemBase purItem = (PurchasingItemBase) item;
-        
-        // check to see if item is unordered and commodity code is required, if so, assign a default commodity code
-        if (commodityCodeRequired && purItem.getItemTypeCode().equals("UNOR") ) {
-    		ParameterService parameterService = SpringContext.getBean(ParameterService.class);
-    		String unorderedItemDefaultCommodityCode = parameterService.getParameterValue("KFS-PURAP","LineItemReceiving", UNORDERED_ITEM_DEFAULT_COMMODITY_CODE);
-    		purItem.setPurchasingCommodityCode(unorderedItemDefaultCommodityCode);
-    		valid = true;
-    	}
-        
-        
-        //This validation is only needed if the commodityCodeRequired system parameter is true
-        if (commodityCodeRequired && StringUtils.isBlank(purItem.getPurchasingCommodityCode()) ) {
-        	
-            //This is the case where the commodity code is required but the item does not currently contain the commodity code.
-            valid = false;
-            String attributeLabel = getDataDictionaryService().getDataDictionary().getBusinessObjectEntry(CommodityCode.class.getName()).
-                                    getAttributeDefinition(PurapPropertyConstants.ITEM_COMMODITY_CODE).getLabel();
-            GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_COMMODITY_CODE, KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + identifierString);
-        }
-        else if (StringUtils.isNotBlank(purItem.getPurchasingCommodityCode())) {
-            //Find out whether the commodity code has existed in the database
-            Map<String,String> fieldValues = new HashMap<String, String>();
-            fieldValues.put(PurapPropertyConstants.ITEM_COMMODITY_CODE, purItem.getPurchasingCommodityCode());
-            if (businessObjectService.countMatching(CommodityCode.class, fieldValues) != 1) {
-                //This is the case where the commodity code on the item does not exist in the database.
-                valid = false;
-                GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_COMMODITY_CODE, PurapKeyConstants.PUR_COMMODITY_CODE_INVALID,  " in " + identifierString);
-            }
-            else {
-                valid &= validateThatCommodityCodeIsActive(item);
-            }
-        }
-        
-        return valid;
-    }
-    
-    protected boolean validateThatCommodityCodeIsActive(PurApItem item) {
-        item.refreshReferenceObject(PurapPropertyConstants.COMMODITY_CODE);
-        if (!((PurchasingItemBase)item).getCommodityCode().isActive()) {
-            //This is the case where the commodity code on the item is not active.
-            GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_COMMODITY_CODE, PurapKeyConstants.PUR_COMMODITY_CODE_INACTIVE, " in " + item.getItemIdentifierString());
-            return false;
-        }
-        return true;
-    }
-
+	/**
+	 * 
+	 */
     public BusinessObjectService getBusinessObjectService() {
         return businessObjectService;
     }
@@ -216,6 +155,14 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
 
     public void setBelowTheLineItemNoUnitCostValidation(PurchasingBelowTheLineItemNoUnitCostValidation belowTheLineItemNoUnitCostValidation) {
         this.belowTheLineItemNoUnitCostValidation = belowTheLineItemNoUnitCostValidation;
+    }
+    
+    public PurchasingCommodityCodeValidation getCommodityCodeValidation() {
+        return commodityCodeValidation;
+    }
+
+    public void setCommodityCodeValidation(PurchasingCommodityCodeValidation commodityCodeValidation) {
+        this.commodityCodeValidation = commodityCodeValidation;
     }
     
 

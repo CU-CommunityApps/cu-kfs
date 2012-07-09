@@ -128,6 +128,13 @@
 		<property name="dataDictionaryService" ref="dataDictionaryService" />		
 	</bean>
 
+	<bean id="Purchasing-commodityCodeValidation" parent="Purchasing-commodityCodeValidation-parentBean" scope="prototype" />
+	<bean id="Purchasing-commodityCodeValidation-parentBean" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingCommodityCodeValidation" abstract="true">
+		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="businessObjectService" ref="businessObjectService" />	
+		<property name="parameterService" ref="parameterService" />	
+	</bean>
+
 	<bean id="Purchasing-commodityCodesForDistributionValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingCommodityCodesForDistributionValidation" abstract="true">	
 		<property name="businessObjectService" ref="businessObjectService" />
 	</bean>
@@ -151,6 +158,7 @@
 		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
 		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
 		<property name="itemQuantityValidation" ref="Purchasing-itemQuantityValidation" />
+		<property name="commodityCodeValidation" ref="Purchasing-commodityCodeValidation" />
 		<property name="belowTheLineItemNoUnitCostValidation" ref="Purchasing-belowTheLineItemNoUnitCostValidation" />
 		<property name="belowTheLineValuesValidation" ref="PurchasingAccountsPayable-belowTheLineValuesValidation" />
 	</bean>
@@ -186,21 +194,25 @@
 
     <bean id="Purchasing-processTradeInValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingProcessTradeInValidation" abstract="true"/>
 
-	<bean id="Purchasing-commodityCodeValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingCommodityCodeValidation" abstract="true">
-		<property name="dataDictionaryService" ref="dataDictionaryService" />
-		<property name="businessObjectService" ref="businessObjectService" />		
-	</bean>
-
 	<bean id="Purchasing-addItemValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingAddItemValidation" abstract="true">
 		<property name="dataDictionaryService" ref="dataDictionaryService" />
 		<property name="dictionaryValidationService" ref="dictionaryValidationService" />		
 		<property name="businessObjectService" ref="businessObjectService" />		
+		<property name="unitOfMeasureValidation" ref="Purchasing-unitOfMeasureValidation" />
+		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
+		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
+		<property name="itemQuantityValidation" ref="Purchasing-itemQuantityValidation" />
+		<property name="commodityCodeValidation" ref="Purchasing-commodityCodeValidation" />
 	</bean>		
 
 	<bean id="Purchasing-importItemValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingImportItemValidation" abstract="true">
 		<property name="dataDictionaryService" ref="dataDictionaryService" />
 		<property name="dictionaryValidationService" ref="dictionaryValidationService" />		
 		<property name="businessObjectService" ref="businessObjectService" />		
+		<property name="unitOfMeasureValidation" ref="Purchasing-unitOfMeasureValidation" />
+		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
+		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
+		<property name="commodityCodeValidation" ref="Purchasing-commodityCodeValidation" />
 	</bean>		
 
 	<bean id="Purchasing-updateAccountingLineValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingUpdateAccountingLineValidation" abstract="true"/>
@@ -332,6 +344,13 @@
 
 <!-- Requisition Definitions -->	
 
+	<bean id="Requisition-commodityCodeValidation" parent="Requisition-commodityCodeValidation-parentBean" scope="prototype" />
+	<bean id="Requisition-commodityCodeValidation-parentBean" class="org.kuali.kfs.module.purap.document.validation.impl.RequisitionCommodityCodeValidation" abstract="true">
+		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="businessObjectService" ref="businessObjectService" />	
+		<property name="parameterService" ref="parameterService" />	
+	</bean>
+
 	<bean id="Requisition-newIndividualItemValidation" class="org.kuali.kfs.module.purap.document.validation.impl.RequisitionNewIndividualItemValidation" abstract="true">
 		<property name="parameterService" ref="parameterService" />
 		<property name="dataDictionaryService" ref="dataDictionaryService" />
@@ -341,6 +360,7 @@
 		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
 		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
 		<property name="itemQuantityValidation" ref="Purchasing-itemQuantityValidation" />
+		<property name="commodityCodeValidation" ref="Requisition-commodityCodeValidation" />
 		<property name="belowTheLineItemNoUnitCostValidation" ref="Purchasing-belowTheLineItemNoUnitCostValidation" />
 		<property name="belowTheLineValuesValidation" ref="PurchasingAccountsPayable-belowTheLineValuesValidation" />				
 	</bean>
@@ -359,6 +379,13 @@
 	
 <!-- Purchase Order Definitions -->
 
+	<bean id="PurchaseOrder-commodityCodeValidation" parent="PurchaseOrder-commodityCodeValidation-parentBean" scope="prototype" />
+	<bean id="PurchaseOrder-commodityCodeValidation-parentBean" class="org.kuali.kfs.module.purap.document.validation.impl.PurchaseOrderCommodityCodeValidation" abstract="true">
+		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="businessObjectService" ref="businessObjectService" />	
+		<property name="parameterService" ref="parameterService" />	
+	</bean>
+
 	<bean id="PurchaseOrder-emptyItemWithAccountsValidation" parent="PurchaseOrder-emptyItemWithAccountsValidation-parentBean" scope="prototype"/>	
 	<bean id="PurchaseOrder-emptyItemWithAccountsValidation-parentBean" class="org.kuali.kfs.module.purap.document.validation.impl.PurchaseOrderEmptyItemWithAccountsValidation" abstract="true"/>
 
@@ -372,6 +399,7 @@
 		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
 		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
 		<property name="itemQuantityValidation" ref="Purchasing-itemQuantityValidation" />
+		<property name="commodityCodeValidation" ref="PurchaseOrder-commodityCodeValidation" />
 		<property name="belowTheLineItemNoUnitCostValidation" ref="Purchasing-belowTheLineItemNoUnitCostValidation" />
 		<property name="belowTheLineValuesValidation" ref="PurchasingAccountsPayable-belowTheLineValuesValidation" />		
 	</bean>
@@ -519,6 +547,13 @@
     </bean>    	
     
 <!-- Purchase Order Amendment Definitions -->
+	<bean id="PurchaseOrderAmendment-commodityCodeValidation" parent="PurchaseOrderAmendment-commodityCodeValidation-parentBean" scope="prototype" />
+	<bean id="PurchaseOrderAmendment-commodityCodeValidation-parentBean" class="org.kuali.kfs.module.purap.document.validation.impl.PurchaseOrderAmendmentCommodityCodeValidation" abstract="true">
+		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="businessObjectService" ref="businessObjectService" />	
+		<property name="parameterService" ref="parameterService" />	
+	</bean>
+
 	<bean id="PurchaseOrderAmendment-newIndividualItemValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchaseOrderAmendmentNewIndividualItemValidation" abstract="true">
 	    <property name="parameterService" ref="parameterService" />
 	    <property name="dataDictionaryService" ref="dataDictionaryService" />
@@ -529,6 +564,7 @@
 		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
 		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
 		<property name="itemQuantityValidation" ref="Purchasing-itemQuantityValidation" />
+		<property name="commodityCodeValidation" ref="PurchaseOrderAmendment-commodityCodeValidation" />
 		<property name="belowTheLineItemNoUnitCostValidation" ref="Purchasing-belowTheLineItemNoUnitCostValidation" />
 		<property name="belowTheLineValuesValidation" ref="PurchasingAccountsPayable-belowTheLineValuesValidation" />		
 	</bean>
