@@ -68,7 +68,11 @@
 				
 				<bean parent="Requisition-processAdditionalValidation" scope="prototype">								
 					<property name="quitOnFail" value="false" />
-				</bean>  															
+				</bean>  										
+				
+				<bean parent="Purchasing-commodityCodeValidation" scope="prototype">
+					<property name="quitOnFail" value="false" />
+				</bean>					
   			</list>
   		</property>
   	</bean>
