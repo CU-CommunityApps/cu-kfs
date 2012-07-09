@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
-import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.integration.ld.LaborLedgerPositionObjectBenefit;
 import org.kuali.kfs.integration.ld.LaborModuleService;
 import org.kuali.kfs.module.bc.businessobject.RequestBenefits;
@@ -77,15 +76,9 @@ public class RequestBenefitsLookupableHelperServiceImpl extends KualiLookupableH
             KualiPercent fringePct = new KualiPercent(0);
             RequestBenefits requestBenefit = new RequestBenefits();
             requestBenefit.setFinancialObjectBenefitsTypeCode(positionObjectBenefit.getFinancialObjectBenefitsTypeCode());
-            
-            //  KFSPTS-1146 - Need to specify the labor benefit rate category code in order to get the correct object code for the benefits being displayed
-            String benefitLineAccountNumber = fieldValues.get("accountNumber");
-            Account lookupAccount = SpringContext.getBean(AccountService.class).getByPrimaryId(chartOfAccountsCode,benefitLineAccountNumber);
-            String laborBenefitsRateCategoryCode = ((AccountExtendedAttribute)lookupAccount.getExtension()).getLaborBenefitRateCategoryCode();
-            
-            requestBenefit.setFinancialObjectBenefitsTypeDescription(positionObjectBenefit.getLaborLedgerBenefitsCalculation(laborBenefitsRateCategoryCode).getLaborLedgerBenefitsType().getPositionBenefitTypeDescription());
-            requestBenefit.setPositionFringeBenefitObjectCode(positionObjectBenefit.getLaborLedgerBenefitsCalculation(laborBenefitsRateCategoryCode).getPositionFringeBenefitObjectCode());
-            requestBenefit.setPositionFringeBenefitObjectCodeName(positionObjectBenefit.getLaborLedgerBenefitsCalculation(laborBenefitsRateCategoryCode).getPositionFringeBenefitObject().getFinancialObjectCodeName());
+            requestBenefit.setFinancialObjectBenefitsTypeDescription(positionObjectBenefit.getLaborLedgerBenefitsCalculation().getLaborLedgerBenefitsType().getPositionBenefitTypeDescription());
+            requestBenefit.setPositionFringeBenefitObjectCode(positionObjectBenefit.getLaborLedgerBenefitsCalculation().getPositionFringeBenefitObjectCode());
+            requestBenefit.setPositionFringeBenefitObjectCodeName(positionObjectBenefit.getLaborLedgerBenefitsCalculation().getPositionFringeBenefitObject().getFinancialObjectCodeName());
 
 
             // make sure the system parameter exists
