@@ -408,7 +408,7 @@
     <property name="maxLength" value="5"/>
     <property name="required" value="false"/>
     <property name="validationPattern">
-      <bean parent="AnyCharacterValidationPattern" p:exactLength="5"/>
+      <bean parent="AnyCharacterValidationPattern" />
     </property>
     <property name="control">
       <bean parent="TextControlDefinition" p:size="7"/>
