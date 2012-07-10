@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -1006,26 +1007,15 @@ public class CheckReconciliationImportStep extends AbstractStep {
     }
    
     
-    private double getTotalNetAmount(Collection<PaymentGroup> paymentGroups ){
-        double d = 0.0;
+    private KualiDecimal getTotalNetAmount(Collection<PaymentGroup> paymentGroups ){
+       KualiDecimal total = new KualiDecimal(0.0);
+        
     	for (PaymentGroup paymentGroup : paymentGroups) {
-    		d+=paymentGroup.getNetPaymentAmount().doubleValue();
+    		KualiDecimal kd = paymentGroup.getNetPaymentAmount();
+    		total = total.add(kd);
         }
     	
-    	String strD = ""+d;
-    	if(strD.length()>=strD.indexOf(".")+3)
-    		strD = strD.substring(0, strD.indexOf(".")+3);
-    	else if(strD.length()>=strD.indexOf(".")+2)
-    		strD = strD.substring(0, strD.indexOf(".")+2);
-    	else if(strD.length()>=strD.indexOf(".")+1)
-    		strD = strD.substring(0, strD.indexOf(".")+1);
-    	
-    		
-    //	long y=(long)(d*100); 
-    	
-    //	return (double)y/100;
-    	
-    	return Double.parseDouble(strD);
+    	return total;
     	
     }
     
@@ -1052,7 +1042,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
         }
         
         Collection<PaymentGroup> paymentGroups = glTransactionService.getAllPaymentGroupForSearchCriteria(cr.getCheckNumber(), bankCodes);
-        double totalNetAmount =getTotalNetAmount(paymentGroups); 
+        KualiDecimal totalNetAmount =getTotalNetAmount(paymentGroups); 
         
         for (PaymentGroup paymentGroup : paymentGroups) {
         	/*
@@ -1062,7 +1052,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
                 records.add(getCheckReconError(cr, "The check amount does not match payment net amount."));
             }
             */
-        	if(!(totalNetAmount == cr.getAmount().doubleValue())){
+        	if(!(totalNetAmount.doubleValue() ==  cr.getAmount().doubleValue())){
                 records.add(getCheckReconError(cr, "The check amount does not match payment net amount from the payment groups."));
         	}
         	
@@ -1079,7 +1069,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
                 
                 if(defaultStatus.equals(CRConstants.CLEARED)){
                 	businessObjectService.save(paymentGroup);
-                	LOG.info("Updated Payment Group : " + paymentGroup.getId());
+                	LOG.info("Check Status in the bank file is cleared. Updated Payment Group : " + paymentGroup.getId() + " Disbursement  " + paymentGroup.getDisbursementNbr());
                 }
                 
                 	
