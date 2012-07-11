@@ -51,10 +51,12 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
         GlobalVariables.getMessageMap().clearErrorPath();                
         GlobalVariables.getMessageMap().addToErrorPath(PurapConstants.ITEM_TAB_ERRORS);
         
-        itemForValidation.refreshReferenceObject(PurapPropertyConstants.COMMODITY_CODE);
-        valid &= validateCommodityCodes(itemForValidation, commodityCodeIsRequired(itemForValidation));
-        
-        GlobalVariables.getMessageMap().removeFromErrorPath(PurapConstants.ITEM_TAB_ERRORS);
+        if(ObjectUtils.isNotNull(itemForValidation)) {
+	        itemForValidation.refreshReferenceObject(PurapPropertyConstants.COMMODITY_CODE);
+	        valid &= validateCommodityCodes(itemForValidation, commodityCodeIsRequired(itemForValidation));
+	        
+	        GlobalVariables.getMessageMap().removeFromErrorPath(PurapConstants.ITEM_TAB_ERRORS);
+        }
         return valid;
 
     }
