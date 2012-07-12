@@ -117,26 +117,21 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
      * @return
      */
     protected boolean validateThatCommodityCodeIsActive(PurApItem item) {
-        if (item.getVersionNumber() != null) {
-            return true;
+        // Only check for active commodity codes if the doc is in initiated or saved status.  
+        PurchasingAccountsPayableDocument purapDoc = item.getPurapDocument();
+        if(ObjectUtils.isNotNull(purapDoc)) {
+	        KualiWorkflowDocument kwd = purapDoc.getDocumentHeader().getWorkflowDocument();
+	        if(!(kwd.stateIsInitiated() || kwd.stateIsSaved())) {
+	            return true;
+	        }
         }
-        else {
-            // Only check for active commodity codes if the doc is in initiated or saved status.  
-            PurchasingAccountsPayableDocument purapDoc = item.getPurapDocument();
-            if(ObjectUtils.isNotNull(purapDoc)) {
-		        KualiWorkflowDocument kwd = purapDoc.getDocumentHeader().getWorkflowDocument();
-		        if(!(kwd.stateIsInitiated() || kwd.stateIsSaved())) {
-		            return true;
-		        }
-            }
-            
-            if (!((PurchasingItemBase)item).getCommodityCode().isActive()) {
-                //This is the case where the commodity code on the item is not active.
-                GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_COMMODITY_CODE, PurapKeyConstants.PUR_COMMODITY_CODE_INACTIVE, " in " + item.getItemIdentifierString());
-                return false;
-            }
-            return true;
+        
+        if (!((PurchasingItemBase)item).getCommodityCode().isActive()) {
+            //This is the case where the commodity code on the item is not active.
+            GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_COMMODITY_CODE, PurapKeyConstants.PUR_COMMODITY_CODE_INACTIVE, " in " + item.getItemIdentifierString());
+            return false;
         }
+        return true;
     }
 
     /**
