@@ -146,6 +146,53 @@ public class GlTransactionStep extends AbstractStep {
                 }
             }
         }
+
+        // VOID payments
+        fieldValues = new HashMap<Object,Object>();
+        fieldValues.put("glTransIndicator", "N");
+        fieldValues.put("status", CRConstants.VOIDED);
+        fieldValues.put("sourceCode", CRConstants.PDP_SRC);
+        
+        records = businessObjectService.findMatching(CheckReconciliation.class, fieldValues);
+            
+        for(CheckReconciliation cr : records) {
+            bankCodes = new ArrayList<String>();
+            
+            // Generate list of valid bank codes
+            setBankCodes(banks, cr, bankCodes);
+    
+           if( bankCodes.size() > 0 ) {
+                paymentGroups = glTransactionService.getAllPaymentGroupForSearchCriteria(cr.getCheckNumber(), bankCodes);
+                
+                if( paymentGroups.isEmpty() ) {
+                    LOG.warn("No payment group found id : " + cr.getId() );
+                }
+                else {
+                    for (PaymentGroup paymentGroup : paymentGroups) {
+                        //Do not generate GL tarsactions for VIODED trasactions 
+
+//                        glTransactionService.generateGlPendingTransactionStop(paymentGroup);
+                    
+                        KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
+                        if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
+                            paymentGroup.setPaymentStatus((PaymentStatus) code);
+                        }
+                        paymentGroup.setLastUpdate(new Timestamp((new java.util.Date()).getTime()));
+                        businessObjectService.save(paymentGroup);
+                    
+                        // Update status
+                        cr.setGlTransIndicator(Boolean.TRUE);
+                        businessObjectService.save(cr);
+                    
+                        LOG.info("Generated VOID GL Pending Transacation");        
+                    }
+                }
+            }
+        }
+        
+
+        
+        
         
         // Stale payments
         fieldValues = new HashMap<Object,Object>();
