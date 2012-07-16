@@ -318,6 +318,9 @@ public class RequisitionServiceImpl implements RequisitionService {
             if (commodityCodeRequired)
                 return "There are missing commodity code(s).";
         }
+        else if (!purItem.getCommodityCode().isActive()) {
+        	return "Requisition contains inactive commodity codes.";
+        }
         else if (purItem.getCommodityCode().isRestrictedItemsIndicator()) {
             return "Requisition contains an item with a restricted commodity code.";
         }
