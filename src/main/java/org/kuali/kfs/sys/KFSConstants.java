@@ -149,6 +149,7 @@ public class KFSConstants extends JSTLConstants implements ParameterKeyConstants
     public static final String DOCUMENT_HEADER_PROPERTY_NAME = "documentHeader";
     public static final String DOCUMENT_SAVE_BEFORE_CLOSE_QUESTION = "DocSaveBeforeClose";
     public static final String EMPLOYEE_ACTIVE_STATUS = "A";
+    public static final String EMPLOYEE_RETIRED_STATUS = "R";
     public static final String EXISTING_SOURCE_ACCT_LINE_PROPERTY_NAME = "sourceAccountingLine";
     public static final String EXISTING_TARGET_ACCT_LINE_PROPERTY_NAME = "targetAccountingLine";
     public static final String SOURCE_ACCT_LINE_TYPE_CODE = "F"; // F = From, the label for this on most documents

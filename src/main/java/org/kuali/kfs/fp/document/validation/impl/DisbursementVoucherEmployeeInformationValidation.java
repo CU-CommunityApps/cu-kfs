@@ -60,8 +60,9 @@ public class DisbursementVoucherEmployeeInformationValidation extends GenericVal
         if (ObjectUtils.isNull(employee)) {
             employee = SpringContext.getBean(PersonService.class).getPerson(employeeId);
         } else  {
-        	if (!KFSConstants.EMPLOYEE_ACTIVE_STATUS.equals(employee.getEmployeeStatusCode())) {
-        		// If employee is found, then check that employee is active
+        	if (!KFSConstants.EMPLOYEE_ACTIVE_STATUS.equals(employee.getEmployeeStatusCode()) &&
+        			!KFSConstants.EMPLOYEE_RETIRED_STATUS.equals(employee.getEmployeeStatusCode())) {
+        		// If employee is found, then check that employee is active or retired
         		String label = SpringContext.getBean(DataDictionaryService.class).getAttributeLabel(DisbursementVoucherPayeeDetail.class, KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER);
         		errors.putError(DV_PAYEE_ID_NUMBER_PROPERTY_PATH, KFSKeyConstants.ERROR_INACTIVE, label);
         		isValid = false;

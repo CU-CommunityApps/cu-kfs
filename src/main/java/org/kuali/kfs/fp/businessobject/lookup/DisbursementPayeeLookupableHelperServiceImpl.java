@@ -57,6 +57,10 @@ public class DisbursementPayeeLookupableHelperServiceImpl extends KualiLookupabl
     private DisbursementVoucherPaymentReasonService disbursementVoucherPaymentReasonService;
     
     private static final int NAME_REQUIRED_FILLED_WITH_WILDCARD = 4;
+    
+    private static final String ACTIVE = "A";
+    private static final String RETIRED = "R";
+    
 
     /**
      * @see org.kuali.rice.kns.lookup.AbstractLookupableHelperServiceImpl#performLookup(org.kuali.rice.kns.web.struts.form.LookupForm,
@@ -271,14 +275,12 @@ public class DisbursementPayeeLookupableHelperServiceImpl extends KualiLookupabl
         for (Person personDetail : persons) {   
         	if (personDetail.hasAffiliationOfType(DisbursementVoucherConstants.PayeeAffiliations.STUDENT) 
         			|| personDetail.hasAffiliationOfType(DisbursementVoucherConstants.PayeeAffiliations.ALUMNI) ) {
-        		//|| personDetail.hasAffiliationOfType("FCLTY") || personDetail.hasAffiliationOfType("STAFF")) {
-        		//if (!ObjectUtils.isNotNull(personDetail.getEmployeeStatusCode()) && personDetail.getEmployeeStatusCode().equals("A")) {
         			DisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues);
         			payeeList.add(payee);
-        		//}
         	} else if (personDetail.hasAffiliationOfType(DisbursementVoucherConstants.PayeeAffiliations.FACULTY) 
         			|| personDetail.hasAffiliationOfType(DisbursementVoucherConstants.PayeeAffiliations.STAFF)) {
-        		if (ObjectUtils.isNotNull(personDetail.getEmployeeStatusCode()) && personDetail.getEmployeeStatusCode().equals("A")) {
+        		if (ObjectUtils.isNotNull(personDetail.getEmployeeStatusCode()) && 
+        				(personDetail.getEmployeeStatusCode().equals(ACTIVE)) || personDetail.getEmployeeStatusCode().equals(RETIRED)) {
         			DisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues);
         			payeeList.add(payee);
         		}
