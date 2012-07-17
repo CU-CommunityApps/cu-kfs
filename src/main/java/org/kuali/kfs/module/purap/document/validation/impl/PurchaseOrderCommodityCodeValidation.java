@@ -3,13 +3,20 @@
  */
 package org.kuali.kfs.module.purap.document.validation.impl;
 
+import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.PurapRuleConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
+import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
 /**
  * @author dwf5
@@ -41,4 +48,15 @@ public class PurchaseOrderCommodityCodeValidation extends PurchasingCommodityCod
         }
     }
 	
+    /**
+     * This method overrides the parent method because business rules do not require commodity codes to be active on Purchase Orders.
+     * KFSPTS-1154
+     * 
+     * @param item - PurApItem object that contains the commodity code to be checked.
+     * @return
+     */
+    protected boolean validateThatCommodityCodeIsActive(PurApItem item) {
+    	return true;
+    }
+
 }

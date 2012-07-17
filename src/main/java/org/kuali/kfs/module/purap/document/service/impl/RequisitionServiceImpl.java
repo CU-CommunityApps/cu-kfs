@@ -294,8 +294,6 @@ public class RequisitionServiceImpl implements RequisitionService {
      *       requisition is not eligible to become an APO.
      * 2. The commodity codes where the restricted indicator is Y should disallow
      *    the requisition from becoming an APO.
-     * 3. If the commodity code is Inactive when the requisition is finally approved 
-     *    do not allow the requisition to become an APO.
      *    
      * @param purItem
      * @param vendorCommodityCodes
@@ -317,9 +315,6 @@ public class RequisitionServiceImpl implements RequisitionService {
             // If there is not a default commodity code for the vendor then the requisition is not eligible to become an APO.
             if (commodityCodeRequired)
                 return "There are missing commodity code(s).";
-        }
-        else if (!purItem.getCommodityCode().isActive()) {
-        	return "Requisition contains inactive commodity codes.";
         }
         else if (purItem.getCommodityCode().isRestrictedItemsIndicator()) {
             return "Requisition contains an item with a restricted commodity code.";

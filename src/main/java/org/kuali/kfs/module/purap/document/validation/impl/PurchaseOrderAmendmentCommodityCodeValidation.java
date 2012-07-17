@@ -15,8 +15,12 @@ import org.kuali.rice.kns.service.ParameterService;
 /**
  * @author dwf5
  *
+ * NOTE : This class extends the parent class PurchasingCommodityCodeValidation because the logic that the commodity code validation is based on
+ * for POAs should not inherit from the PO commodity code validation.  POA validation is more closely in line with the Requisition's requirements 
+ * than the Purchase Order's.
+ *
  */
-public class PurchaseOrderAmendmentCommodityCodeValidation extends PurchaseOrderCommodityCodeValidation {
+public class PurchaseOrderAmendmentCommodityCodeValidation extends PurchasingCommodityCodeValidation {
 
 	
     /**
