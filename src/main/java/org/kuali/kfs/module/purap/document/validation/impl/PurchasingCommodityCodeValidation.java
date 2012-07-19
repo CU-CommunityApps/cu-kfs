@@ -26,16 +26,21 @@ import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.validation.GenericValidation;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.kfs.vnd.businessobject.CommodityCode;
+import org.kuali.rice.kew.exception.WorkflowException;
+import org.kuali.rice.kns.bo.DocumentHeader;
+import org.kuali.rice.kns.exception.InfrastructureException;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
+import org.kuali.rice.kns.workflow.service.WorkflowDocumentService;
 
 public class PurchasingCommodityCodeValidation extends GenericValidation {
     
@@ -117,22 +122,50 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
      * @return
      */
     protected boolean validateThatCommodityCodeIsActive(PurApItem item) {
-        // Only check for active commodity codes if the doc is in initiated or saved status.  
-        PurchasingAccountsPayableDocument purapDoc = item.getPurapDocument();
-        if(ObjectUtils.isNotNull(purapDoc)) {
-	        KualiWorkflowDocument kwd = purapDoc.getDocumentHeader().getWorkflowDocument();
-	        if(!(kwd.stateIsInitiated() || kwd.stateIsSaved())) {
-	            return true;
+        if(shouldCheckCommodityCodeIsActive(item)) {
+	        if (!((PurchasingItemBase)item).getCommodityCode().isActive()) {
+	            //This is the case where the commodity code on the item is not active.
+	            GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_COMMODITY_CODE, PurapKeyConstants.PUR_COMMODITY_CODE_INACTIVE, " in " + item.getItemIdentifierString());
+	            return false;
 	        }
-        }
-        
-        if (!((PurchasingItemBase)item).getCommodityCode().isActive()) {
-            //This is the case where the commodity code on the item is not active.
-            GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_COMMODITY_CODE, PurapKeyConstants.PUR_COMMODITY_CODE_INACTIVE, " in " + item.getItemIdentifierString());
-            return false;
         }
         return true;
     }
+
+	/**
+	 * This method analyzes the document status and determines if the commodity codes associated with this item should be verified as active.
+	 * The current implementation only checks that a commodity code is active if the document associated is in either INITIATED or SAVED status.
+	 * For all other statuses the document may be in, the commodity code will not be checked for active status and the method will simply return 
+	 * true unconditionally.
+	 * 
+	 * @param item
+	 * @return 
+	 */
+	private boolean shouldCheckCommodityCodeIsActive(PurApItem item) {
+		PurchasingAccountsPayableDocument purapDoc = item.getPurapDocument();
+        if(ObjectUtils.isNotNull(purapDoc)) {
+        	// Ran into issues with workflow doc not being populated in doc header for some PURAP docs, so needed to add check and retrieval.
+        	FinancialSystemDocumentHeader docHdr = purapDoc.getDocumentHeader();
+        	KualiWorkflowDocument kwd = null;
+        	if(!docHdr.hasWorkflowDocument()) {
+        		WorkflowDocumentService workflowDocumentService = SpringContext.getBean(WorkflowDocumentService.class);
+    			try {
+					kwd = workflowDocumentService.createWorkflowDocument(new Long(docHdr.getDocumentNumber()), GlobalVariables.getUserSession().getPerson());
+					docHdr.setWorkflowDocument(kwd);
+				} catch (WorkflowException e) {
+	                throw new InfrastructureException("unable to retrieve workflow document for documentHeaderId '" + docHdr.getDocumentNumber() + "'", e);
+				}
+        	}
+            // Only check for active commodity codes if the doc is in initiated or saved status.  
+        	if(ObjectUtils.isNull(kwd)) {
+        		kwd = docHdr.getWorkflowDocument();
+        	}
+	        if(!(kwd.stateIsInitiated() || kwd.stateIsSaved())) {
+	            return false;
+	        }
+        }
+        return true;
+	}
 
     /**
      * 
