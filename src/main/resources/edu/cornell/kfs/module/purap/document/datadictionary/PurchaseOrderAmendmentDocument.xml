@@ -124,10 +124,6 @@
 		  <value>PurchaseOrderAmendment-routeDocumentValidation</value>
 		</entry>
 	    <entry>
-		  <key><value>org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent</value></key>
-		  <value>PurchaseOrderAmendment-saveDocumentValidation</value>
-		</entry>
-		<entry>
 		  <key><value>org.kuali.kfs.sys.document.validation.event.AttributedApproveDocumentEvent</value></key>
 		  <value>PurchaseOrderAmendment-approveDocumentValidation</value>
 		</entry>	

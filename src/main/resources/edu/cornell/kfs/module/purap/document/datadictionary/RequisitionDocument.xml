@@ -1103,10 +1103,6 @@
 				<value>Requisition-approveDocumentValidation</value>
 			</entry>		
 			<entry>
-				<key><value>org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent</value></key>
-				<value>Requisition-saveDocumentValidation</value>				
-			</entry>																												
-			<entry>
 				<key><value>org.kuali.kfs.sys.document.validation.event.AddAccountingLineEvent</value></key>
 				<value>Requisition-addAccountingLineValidation</value>
 			</entry>
