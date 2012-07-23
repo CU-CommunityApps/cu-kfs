@@ -1169,11 +1169,11 @@ public class SipDistributionServiceImpl implements SipDistributionService {
             AffectedEdocInfo affectedEdocInfo = affectedEdocs.get(docNumber);
             KualiInteger changeAmount = affectedEdocInfo.changeAmount;
 
-            KualiInteger _2PLGAmount = sipDistributionDao.get2PLGAmount(docNumber, fiscalYear);
+            KualiInteger _2PLGAmount = sipDistributionDao.get2PLGAmount(docNumber, fiscalYear + 1);
 
-            List<String> sipLevelObjectCodes = sipDistributionDao.getSipLevelObjectCodes(fiscalYear);
+            List<String> sipLevelObjectCodes = sipDistributionDao.getSipLevelObjectCodes(fiscalYear + 1);
             KualiInteger sipPoolAmount = sipDistributionDao
-                    .getSipPoolAmount(docNumber, sipLevelObjectCodes, fiscalYear);
+                    .getSipPoolAmount(docNumber, sipLevelObjectCodes, fiscalYear + 1);
 
             // total amount to be subtracted
             KualiInteger totalAmountToSubtract = sipPoolAmount.add(_2PLGAmount);
@@ -1186,7 +1186,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
             String objectCode = CUBCConstants.SIP_PLUG_OBJECT_CODE;
             String subObjectCode = KFSConstants.getDashFinancialSubObjectCode();
-            String objectTypeCode = optionsService.getOptions(fiscalYear).getFinObjTypeExpenditureexpCd();
+            String objectTypeCode = optionsService.getOptions(fiscalYear + 1).getFinObjTypeExpenditureexpCd();
 
             newPlugEntry.setDocumentNumber(docNumber);
             newPlugEntry.setUniversityFiscalYear(fiscalYear + 1);
