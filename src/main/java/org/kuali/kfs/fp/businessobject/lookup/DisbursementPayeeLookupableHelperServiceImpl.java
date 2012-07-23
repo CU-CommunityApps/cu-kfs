@@ -33,6 +33,8 @@ import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.kim.bo.entity.KimEntityAffiliation;
+import org.kuali.rice.kim.bo.impl.PersonImpl;
 import org.kuali.rice.kim.service.KIMServiceLocator;
 import org.kuali.rice.kim.service.PersonService;
 import org.kuali.rice.kim.util.KIMPropertyConstants;
@@ -50,6 +52,8 @@ import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.web.struts.form.LookupForm;
 import org.kuali.rice.kns.web.ui.ResultRow;
 
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
+
 public class DisbursementPayeeLookupableHelperServiceImpl extends KualiLookupableHelperServiceImpl {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisbursementPayeeLookupableHelperServiceImpl.class);
 
@@ -57,11 +61,10 @@ public class DisbursementPayeeLookupableHelperServiceImpl extends KualiLookupabl
     private DisbursementVoucherPaymentReasonService disbursementVoucherPaymentReasonService;
     
     private static final int NAME_REQUIRED_FILLED_WITH_WILDCARD = 4;
-    
+
     private static final String ACTIVE = "A";
     private static final String RETIRED = "R";
     
-
     /**
      * @see org.kuali.rice.kns.lookup.AbstractLookupableHelperServiceImpl#performLookup(org.kuali.rice.kns.web.struts.form.LookupForm,
      *      java.util.Collection, boolean)
@@ -273,25 +276,38 @@ public class DisbursementPayeeLookupableHelperServiceImpl extends KualiLookupabl
         List<? extends Person> persons = KIMServiceLocator.getPersonService().findPeople(fieldsForLookup);   
         
         for (Person personDetail : persons) {   
-        	if (personDetail.hasAffiliationOfType(DisbursementVoucherConstants.PayeeAffiliations.STUDENT) 
-        			|| personDetail.hasAffiliationOfType(DisbursementVoucherConstants.PayeeAffiliations.ALUMNI) ) {
-        			DisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues);
-        			payeeList.add(payee);
-        	} else if (personDetail.hasAffiliationOfType(DisbursementVoucherConstants.PayeeAffiliations.FACULTY) 
-        			|| personDetail.hasAffiliationOfType(DisbursementVoucherConstants.PayeeAffiliations.STAFF)) {
-        		if (ObjectUtils.isNotNull(personDetail.getEmployeeStatusCode()) && 
-        				(personDetail.getEmployeeStatusCode().equals(ACTIVE)) || personDetail.getEmployeeStatusCode().equals(RETIRED)) {
-        			DisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues);
-        			payeeList.add(payee);
-        		}
-        	}
-        }
+	        for(KimEntityAffiliation entityAffiliation : ((PersonImpl)personDetail).getAffiliations()) {
+	        	if(entityAffiliation.isDefault()) {
+	        		if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {
+	            		DisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues, DisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT);
+	            		payeeList.add(payee);
+	        		}
+	        		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.ALUMNI)) {
+	        			DisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues, DisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI);
+	            		payeeList.add(payee);
+	        		}
+	        		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.FACULTY) ||
+	        				StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.STAFF)) {
+	        			if (ObjectUtils.isNotNull(personDetail.getEmployeeStatusCode()) && 
+	        	    			(personDetail.getEmployeeStatusCode().equals(ACTIVE)) || personDetail.getEmployeeStatusCode().equals(RETIRED)) {
+		        			DisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues, DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE);
+		            		payeeList.add(payee);
+	        			}
+	        			else {
+	        				// Add must be active warning message if search results exclude some because of inactive status.
+	        				GlobalVariables.getMessageList().add(CUKFSKeyConstants.WARNING_DV_PAYEE_MUST_BE_ACTIVE);
+	        			}
+	        		}
+	        		break;
+	        	}
+	        }
+	    }
         
         return payeeList;
     }
 
-    protected DisbursementPayee getPayeeFromPerson(Person personDetail, Map<String, String> fieldValues) {
-        DisbursementPayee payee = DisbursementPayee.getPayeeFromPerson(personDetail);
+    protected DisbursementPayee getPayeeFromPerson(Person personDetail, Map<String, String> fieldValues, String payeeTypeCode) {
+        DisbursementPayee payee = DisbursementPayee.getPayeeFromPerson(personDetail, payeeTypeCode);
         payee.setPaymentReasonCode(fieldValues.get(KFSPropertyConstants.PAYMENT_REASON_CODE));
         
         return payee;

@@ -155,11 +155,11 @@ public class DisbursementPayee extends TransientBusinessObjectBase implements In
      * @param person the given person object
      * @return a payee object built from the given person object
      */
-    public static DisbursementPayee getPayeeFromPerson(Person person) {
+    public static DisbursementPayee getPayeeFromPerson(Person person, String payeeTypeCode) {
     	DisbursementPayee disbursementPayee = new DisbursementPayee();
 
-        disbursementPayee.setActive(person.isActive());
-        
+    	disbursementPayee.setActive(person.isActive());
+		
         List<String> payableEmplStatusCodes = SpringContext.getBean(ParameterService.class).getParameterValues(DisbursementVoucherDocument.class, DisbursementVoucherConstants.ALLOWED_EMPLOYEE_STATUSES_FOR_PAYMENT);
 
         // Assume employee if they have an employee ID and their employee status code is not Inactive
@@ -172,21 +172,7 @@ public class DisbursementPayee extends TransientBusinessObjectBase implements In
         disbursementPayee.setPayeeName(person.getNameUnmasked());
         disbursementPayee.setTaxNumber(person.getExternalId(VendorConstants.TAX_TYPE_TAX));
 
-        for(KimEntityAffiliation entityAffiliation : ((PersonImpl)person).getAffiliations()) {
-        	if(entityAffiliation.isDefault()) {
-        		if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {
-                	disbursementPayee.setPayeeTypeCode((DisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT));
-        		}
-        		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.ALUMNI)) {
-                	disbursementPayee.setPayeeTypeCode(DisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI);
-        		}
-        		else {
-                	// Make employee the default
-                	disbursementPayee.setPayeeTypeCode(DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE);
-        		}
-        		break;
-        	}
-        }
+       	disbursementPayee.setPayeeTypeCode(payeeTypeCode);
         
         String personAddress = MessageFormat.format(addressPattern, person.getAddressLine1Unmasked(), person.getAddressCityNameUnmasked(), person.getAddressStateCodeUnmasked(), person.getAddressCountryCodeUnmasked());
         disbursementPayee.setAddress(personAddress);
