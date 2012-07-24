@@ -99,9 +99,6 @@
                 	<exclude>WEB-INF/classes/**/OrganizationReversionCategoryMaintenanceDocument.xml</exclude>
                 	
                 	
-                	
-                	
-                	
                     <exclude>WEB-INF/lib/log4j*.jar</exclude>
                     <exclude>WEB-INF/lib/activation-*.jar</exclude>
                     <exclude>WEB-INF/lib/commons-beanutils-*.jar</exclude>
@@ -173,9 +170,9 @@
 	               <name>job.name</name>
 	               <value>${job.name}</value>
 			    </systemProperty>
-			    <!-- This parameter is being propagated so that during functional testing
+			<!--   This parameter is being propagated so that during functional testing
 			         we can set the cynergy.development flag to false at runtime in order
-			         to test reading of the CUWA header, and to simulate CUWA login. -->
+			         to test reading of the CUWA header, and to simulate CUWA login. -->   
 			    <systemProperty>
 	               <name>cynergy.development</name>
 	               <value>${cynergy.development}</value>
@@ -196,9 +193,9 @@
             <artifactId>jsp-2.1</artifactId>
         </dependency>
         </dependencies>
-      </plugin>
+      </plugin> 
       
-      <plugin>
+     <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>tomcat-maven-plugin</artifactId>
         <version>1.1</version>
@@ -234,9 +231,9 @@
             <item>timestamp</item>
           </items>
         </configuration>
-      </plugin>
+      </plugin> 
     </plugins>
-    
+   
     <resources>
         <!-- the normal resource dir -->
         <resource>
@@ -337,6 +334,11 @@
           	<groupId>com.oracle</groupId>
 			<artifactId>ojdbc14</artifactId>
           </exclusion>
+           <exclusion>
+          	 <groupId>net.bull.javamelody</groupId>
+           <artifactId>javamelody-core</artifactId>
+          </exclusion>
+          
       </exclusions>
     </dependency>
 
@@ -502,7 +504,7 @@
     <dependency>
            <groupId>net.bull.javamelody</groupId>
            <artifactId>javamelody-core</artifactId>
-           <version>1.32.1</version>
+           <version>1.39.0</version>
    </dependency>
    <dependency>
            <groupId>org.jrobin</groupId>
