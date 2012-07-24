@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -36,17 +37,15 @@ import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kim.bo.entity.KimEntityAffiliation;
 import org.kuali.rice.kim.bo.impl.PersonImpl;
 import org.kuali.rice.kim.service.KIMServiceLocator;
-import org.kuali.rice.kim.service.PersonService;
 import org.kuali.rice.kim.util.KIMPropertyConstants;
-import org.kuali.rice.kim.util.KimConstants;
 import org.kuali.rice.kns.bo.BusinessObject;
 import org.kuali.rice.kns.exception.ValidationException;
 import org.kuali.rice.kns.lookup.CollectionIncomplete;
 import org.kuali.rice.kns.lookup.KualiLookupableHelperServiceImpl;
 import org.kuali.rice.kns.lookup.Lookupable;
 import org.kuali.rice.kns.util.BeanPropertyComparator;
+import org.kuali.rice.kns.util.ErrorMessage;
 import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KNSPropertyConstants;
 import org.kuali.rice.kns.util.MessageList;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.web.struts.form.LookupForm;
@@ -274,7 +273,9 @@ public class DisbursementPayeeLookupableHelperServiceImpl extends KualiLookupabl
         Map<String, String> fieldsForLookup = this.getPersonFieldValues(fieldValues); 
         
         List<? extends Person> persons = KIMServiceLocator.getPersonService().findPeople(fieldsForLookup);   
-        
+
+        MessageList messageList = GlobalVariables.getMessageList();
+        boolean warningExists = false;
         for (Person personDetail : persons) {   
 	        for(KimEntityAffiliation entityAffiliation : ((PersonImpl)personDetail).getAffiliations()) {
 	        	if(entityAffiliation.isDefault()) {
@@ -295,7 +296,17 @@ public class DisbursementPayeeLookupableHelperServiceImpl extends KualiLookupabl
 	        			}
 	        			else {
 	        				// Add must be active warning message if search results exclude some because of inactive status.
-	        				GlobalVariables.getMessageList().add(CUKFSKeyConstants.WARNING_DV_PAYEE_MUST_BE_ACTIVE);
+	        				Iterator<ErrorMessage> iter = messageList.iterator();
+	        		        while(iter.hasNext()) {
+	        		        	ErrorMessage error = iter.next();
+	        		            if (StringUtils.equals(error.getErrorKey(), CUKFSKeyConstants.WARNING_DV_PAYEE_MUST_BE_ACTIVE)) {
+	        		            	warningExists = true;
+	        		            	break;
+	        		            }
+	        		        }
+	        		        if(!warningExists) {
+	        					messageList.add(CUKFSKeyConstants.WARNING_DV_PAYEE_MUST_BE_ACTIVE);
+	        		        }
 	        			}
 	        		}
 	        		break;
