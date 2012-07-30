@@ -504,7 +504,7 @@
     <dependency>
            <groupId>net.bull.javamelody</groupId>
            <artifactId>javamelody-core</artifactId>
-           <version>1.39.0</version>
+           <version>1.32.1</version>
    </dependency>
    <dependency>
            <groupId>org.jrobin</groupId>
