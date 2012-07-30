@@ -412,9 +412,13 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
                     sequenceHelper.increment();
                     explicitEntry.setChartOfAccountsCode(t.getChartOfAccountsCode());
                     explicitEntry.setAccountNumber(t.getAccountNumber());
-                    explicitEntry.setSubAccountNumber(t.getSubAccountNumber());
+                    //explicitEntry.setSubAccountNumber(t.getSubAccountNumber()); vrk4  kfsmi-7252
+                    explicitEntry.setSubAccountNumber(null); //vrk4
+                    
                     explicitEntry.setFinancialObjectCode(t.getFinancialObjectCode());
-                    explicitEntry.setFinancialSubObjectCode(t.getFinancialSubObjectCode());
+                    //explicitEntry.setFinancialSubObjectCode(t.getFinancialSubObjectCode());  vrk4  kfsmi-7252
+                    explicitEntry.setFinancialSubObjectCode(null); //vrk4
+                    
                     explicitEntry.setFinancialBalanceTypeCode(BALANCE_TYPE_ACTUAL);
                     explicitEntry.setFinancialObjectTypeCode(t.getFinancialObjectTypeCode());
                     explicitEntry.setUniversityFiscalYear(this.fiscalYear);
