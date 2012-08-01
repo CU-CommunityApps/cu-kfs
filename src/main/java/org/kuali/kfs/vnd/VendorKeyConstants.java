@@ -90,14 +90,19 @@ public class VendorKeyConstants {
     
     //Vendor Maintenance Insurance Tracking
     public static final String ERROR_DOCUMENT_VNDMAINT_GENERAL_LIABILITY_EXPR_DATE_NEEDED = "error.document.vendor.generalLiabilityExpirationDateNeeded";
+    public static final String ERROR_DOCUMENT_VNDMAINT_GENERAL_LIABILITY_EXPR_DATE_IN_PAST = "error.document.vendor.generalLiabilityExpirationDateIsInPast";
     public static final String ERROR_DOCUMENT_VNDMAINT_GENERAL_LIABILITY_COVERAGE_NEEDED = "error.document.vendor.generalLiabilityCoverageNeeded";
     public static final String ERROR_DOCUMENT_VNDMAINT_AUTO_EXPR_NEEDED = "error.document.vendor.automobileExpirationNeeded";
+    public static final String ERROR_DOCUMENT_VNDMAINT_AUTO_EXPR_IN_PAST = "error.document.vendor.automobileExpirationIsInPast";
     public static final String ERROR_DOCUMENT_VNDMAINT_AUTO_COVERAGE_NEEDED = "error.document.vendor.automobileCoverageNeeded";
     public static final String ERROR_DOCUMENT_VNDMAINT_WC_EXPR_NEEDED = "error.document.vendor.workmansCompExpirationNeeded";
+    public static final String ERROR_DOCUMENT_VNDMAINT_WC_EXPR_IN_PAST = "error.document.vendor.workmansCompExpirationIsInPast";
     public static final String ERROR_DOCUMENT_VNDMAINT_WC_COVERAGE_NEEDED = "error.document.vendor.workmansCompCoverageNeeded";
     public static final String ERROR_DOCUMENT_VNDMAINT_UMB_EXPR_NEEDED = "error.document.vendor.umbrellaExpirationNeeded";
+    public static final String ERROR_DOCUMENT_VNDMAINT_UMB_EXPR_IN_PAST = "error.document.vendor.umbrellaExpirationIsInPast";
     public static final String ERROR_DOCUMENT_VNDMAINT_UMB_COVERAGE_NEEDED = "error.document.vendor.umbrellaCoverageNeeded";
     public static final String ERROR_DOCUMENT_VNDMAINT_HEALTH_LICENSE_EXPR_NEEDED = "error.document.vendor.healthLicenseExpirationNeeded";
+    public static final String ERROR_DOCUMENT_VNDMAINT_HEALTH_LICENSE_EXPR_IN_PAST = "error.document.vendor.healthLicenseExpirationIsInPast";
     public static final String ERROR_DOCUMENT_VNDMAINT_HEALTH_LICENSE_NEEDED = "error.document.vendor.healthLicenseNeeded";
     public static final String ERROR_DOCUMENT_VNDMAINT_INSURANCE_REQUIRED_USED_WO_DATA = "error.document.vendor.insuranceReqIndicatedWOData";
     

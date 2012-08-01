@@ -29,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSConstants.COAConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -67,6 +68,9 @@ import org.kuali.rice.kns.service.PersistenceService;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
+
+import edu.cornell.kfs.vnd.CUVendorConstants;
+import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
 
 /**
  * Business rules applicable to VendorDetail document.
@@ -174,8 +178,8 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param theClass The Class name of the object whose objects references list are extracted
      * @return List a List of attributes of the class
      */
-    private List getObjectReferencesListFromBOClass(Class theClass) {
-        List<String> results = new ArrayList();
+    private List<String> getObjectReferencesListFromBOClass(Class theClass) {
+        List<String> results = new ArrayList<String>();
         for (Field theField : theClass.getDeclaredFields()) {
             // only get persistable business object references
             if ( PersistableBusinessObject.class.isAssignableFrom( theField.getType() ) ) {
@@ -701,7 +705,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             GlobalVariables.getMessageMap().addToErrorPath(errorPath);
 
             this.getDictionaryValidationService().validateBusinessObject(address);
-            if (!GlobalVariables.getMessageMap().isEmpty()) {
+            if (!GlobalVariables.getMessageMap().hasNoErrors()) {
                 valid = false;
             }
             
@@ -738,10 +742,10 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         List<VendorAddress> vendorDivisionAddresses = new ArrayList(SpringContext.getBean(BusinessObjectService.class).findMatchingOrderBy(VendorAddress.class, fieldValues, VendorPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID, true));
 
         // This set stores the vendorDetailedAssignedIds for the vendor divisions which is
-        // bascically the division numbers 0, 1, 2, ...
-        HashSet<Integer> vendorDetailedIds = new HashSet();
+        // basically the division numbers 0, 1, 2, ...
+        HashSet<Integer> vendorDetailedIds = new HashSet<Integer>();
         // This set stores the vendor division numbers of the ones which have one address of the desired type
-        HashSet<Integer> vendorDivisionsIdsWithDesiredAddressType = new HashSet();
+        HashSet<Integer> vendorDivisionsIdsWithDesiredAddressType = new HashSet<Integer>();
 
         for (VendorAddress vendorDivisionAddress : vendorDivisionAddresses) {
             // We need to exclude the first one Since we already checked for this in valid AddressType above.
@@ -755,12 +759,9 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 
         // If the number of divisions with the desired address type is less than the number of divisions for his vendor
         if (vendorDivisionsIdsWithDesiredAddressType.size() < vendorDetailedIds.size()) {
-            Iterator itr = vendorDetailedIds.iterator();
-            Integer value;
             String vendorId;
 
-            while (itr.hasNext()) {
-                value = (Integer) itr.next();
+            for (Integer value : vendorDetailedIds) {
                 if (!vendorDivisionsIdsWithDesiredAddressType.contains(value)) {
                     vendorId = newVendor.getVendorHeaderGeneratedIdentifier().toString() + '-' + value.toString();
                     String[] parameters = new String[] { vendorId, vendorTypeCode, vendorAddressTypeRequiredCode };
@@ -991,27 +992,11 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             GlobalVariables.getMessageMap().addToErrorPath(errorPath);
 
             this.getDictionaryValidationService().validateBusinessObject(contact);
-            if (!GlobalVariables.getMessageMap().isEmpty()) {
+            if (!GlobalVariables.getMessageMap().hasNoErrors()) {
                 valid = false;
             }
             i++;
             GlobalVariables.getMessageMap().clearErrorPath();
-        }
-        return valid;
-    }
-
-    /**
-     * Validates vendor customer numbers
-     * 
-     * @param document MaintenanceDocument instance
-     * @return boolean false or true
-     */
-    private boolean processCustomerNumberValidation(MaintenanceDocument document) {
-        boolean valid = true;
-
-        List<VendorCustomerNumber> customerNumbers = newVendor.getVendorCustomerNumbers();
-        for (VendorCustomerNumber customerNumber : customerNumbers) {
-            valid &= validateVendorCustomerNumber(customerNumber);
         }
         return valid;
     }
@@ -1030,12 +1015,12 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         String orgCode = customerNumber.getVendorOrganizationCode();
         if (!StringUtils.isBlank(chartOfAccountsCode) && !StringUtils.isBlank(orgCode)) {
             Map chartOrgMap = new HashMap();
-            chartOrgMap.put("chartOfAccountsCode", chartOfAccountsCode);
+            chartOrgMap.put(KFSConstants.CHART_OF_ACCOUNTS_CODE_PROPERTY_NAME, chartOfAccountsCode);
             if (SpringContext.getBean(BusinessObjectService.class).countMatching(Chart.class, chartOrgMap) < 1) {
                 GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_CUSTOMER_NUMBER_CHART_OF_ACCOUNTS_CODE, KFSKeyConstants.ERROR_EXISTENCE, chartOfAccountsCode);
                 valid &= false;
             }
-            chartOrgMap.put("organizationCode", orgCode);
+            chartOrgMap.put(KFSConstants.ORGANIZATION_CODE_PROPERTY_NAME, orgCode);
             if (SpringContext.getBean(BusinessObjectService.class).countMatching(Organization.class, chartOrgMap) < 1) {
                 GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_CUSTOMER_NUMBER_ORGANIZATION_CODE, KFSKeyConstants.ERROR_EXISTENCE, orgCode);
                 valid &= false;
@@ -1089,7 +1074,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * Exclude Indicator for an organization is Y, the organization APO Amount is not allowed.
      * 
      * @param contract VendorContract
-     * @return boolean true if the proper combination of Exclude Indicator and APO Amount is present, otherwise flase.
+     * @return boolean true if the proper combination of Exclude Indicator and APO Amount is present, otherwise false.
      */
     boolean validateVendorContractPOLimitAndExcludeFlagCombination(VendorContract contract) {
         boolean valid = true;
@@ -1097,13 +1082,11 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 
         List<VendorContractOrganization> organizations = contract.getVendorContractOrganizations();
         if (ObjectUtils.isNotNull(organizations)) {
-            int organizationCounter = 0;
             for (VendorContractOrganization organization : organizations) {
                 if (ObjectUtils.isNotNull(organization.getVendorContractPurchaseOrderLimitAmount())) {
                     NoOrgHasApoLimit = false;
                 }
                 valid &= validateVendorContractOrganization(organization);
-                organizationCounter++;
             }
         }
         if (NoOrgHasApoLimit && ObjectUtils.isNull(contract.getOrganizationAutomaticPurchaseOrderLimit())) {
@@ -1178,12 +1161,12 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         String orgCode = organization.getOrganizationCode();
         if (!StringUtils.isBlank(chartOfAccountsCode) && !StringUtils.isBlank(orgCode)) {
             Map chartOrgMap = new HashMap();
-            chartOrgMap.put("chartOfAccountsCode", chartOfAccountsCode);
+            chartOrgMap.put(KFSConstants.CHART_OF_ACCOUNTS_CODE_PROPERTY_NAME, chartOfAccountsCode);
             if (SpringContext.getBean(BusinessObjectService.class).countMatching(Chart.class, chartOrgMap) < 1) {
                 GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_CONTRACT_CHART_OF_ACCOUNTS_CODE, KFSKeyConstants.ERROR_EXISTENCE, chartOfAccountsCode);
                 valid &= false;
             }
-            chartOrgMap.put("organizationCode", orgCode);
+            chartOrgMap.put(KFSConstants.ORGANIZATION_CODE_PROPERTY_NAME, orgCode);
             if (SpringContext.getBean(BusinessObjectService.class).countMatching(Organization.class, chartOrgMap) < 1) {
                 GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_CONTRACT_ORGANIZATION_CODE, KFSKeyConstants.ERROR_EXISTENCE, orgCode);
                 valid &= false;
@@ -1210,8 +1193,6 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         if (bo instanceof VendorAddress) {
             VendorAddress address = (VendorAddress) bo;
             success &= checkAddressCountryEmptyStateZip(address);
-            VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
-
         }
         if (bo instanceof VendorContract) {
             VendorContract contract = (VendorContract) bo;
@@ -1305,11 +1286,10 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
                 return false;
             }
         }
-        if (collectionName.equals("vendorHeader.vendorSupplierDiversities")) {
+        if (collectionName.equals(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES)) {
             VendorDetail vendorDetail = (VendorDetail)document.getDocumentBusinessObject();
     		VendorHeader vendorHeader = vendorDetail.getVendorHeader();
     		List<VendorSupplierDiversity> vendorSupplierDiversities = vendorHeader.getVendorSupplierDiversities();
-    		Date theDate = new Date();
     		boolean success = true;
     		if (vendorSupplierDiversities.size() > 0)
     		{
@@ -1317,11 +1297,11 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
     			for(VendorSupplierDiversity vendor : vendorSupplierDiversities) {
     				if (vendor.getVendorSupplierDiversityExpirationDate() == null ) {
     					success = false;
-    					putFieldError("vendorHeader.vendorSupplierDiversities[" + i + "].vendorSupplierDiversityExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);
+    					putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);
     				}
     				else if (vendor.getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
     					success = false;
-    					putFieldError("vendorHeader.vendorSupplierDiversities[" + i + "].vendorSupplierDiversityExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
+    					putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
     				}
     				i++;
     			}
@@ -1413,15 +1393,18 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 		
 		if (vendorDetail.getGeneralLiabilityCoverageAmount()!=null && vendorDetail.getGeneralLiabilityExpiration()==null) {
 			success = false;
-			putFieldError("generalLiabilityExpiration", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_GENERAL_LIABILITY_EXPR_DATE_NEEDED);
+			putFieldError(CUVendorPropertyConstants.GENERAL_LIABILITY_EXPIRATION, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_GENERAL_LIABILITY_EXPR_DATE_NEEDED);
 		}
 		if (vendorDetail.getGeneralLiabilityCoverageAmount()==null && vendorDetail.getGeneralLiabilityExpiration()!=null) {
 			success = false;
-			putFieldError("generalLiabilityCoverageAmount", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_GENERAL_LIABILITY_COVERAGE_NEEDED);
+			putFieldError(CUVendorPropertyConstants.GENERAL_LIABILITY_AMOUNT, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_GENERAL_LIABILITY_COVERAGE_NEEDED);
 		}
 		if (vendorDetail.getGeneralLiabilityExpiration()!= null && vendorDetail.getGeneralLiabilityExpiration().before(new Date())) {
-			success = false;
-			putFieldError("generalLiabilityExpiration", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_DATE_IN_PAST);
+			// Only check expiration date on new vendors
+			if(document.isNew()) {
+				success = false;
+				putFieldError(CUVendorPropertyConstants.GENERAL_LIABILITY_EXPIRATION, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_DATE_IN_PAST);
+			}
 		}
 		return success;
 	}
@@ -1433,15 +1416,18 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 		
 		if (vendorDetail.getAutomobileLiabilityCoverageAmount()!=null && vendorDetail.getAutomobileLiabilityExpiration()==null) {
 			success = false;
-			putFieldError("automobileLiabilityExpiration", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_AUTO_EXPR_NEEDED);
+			putFieldError(CUVendorPropertyConstants.AUTOMOBILE_LIABILITY_EXPIRATION, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_AUTO_EXPR_NEEDED);
 		}
 		if (vendorDetail.getAutomobileLiabilityCoverageAmount()==null && vendorDetail.getAutomobileLiabilityExpiration()!=null) {
 			success = false;
-			putFieldError("automobileLiabilityCoverageAmount", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_AUTO_COVERAGE_NEEDED);
+			putFieldError(CUVendorPropertyConstants.AUTOMOBILE_LIABILITY_AMOUNT, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_AUTO_COVERAGE_NEEDED);
 		}		
 		if (vendorDetail.getAutomobileLiabilityExpiration()!= null && vendorDetail.getAutomobileLiabilityExpiration().before(new Date())) {
-			success = false;
-			putFieldError("automobileLiabilityExpiration", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_DATE_IN_PAST);
+			// Only check expiration date on new vendors
+			if(document.isNew()) {
+				success = false;
+				putFieldError(CUVendorPropertyConstants.AUTOMOBILE_LIABILITY_EXPIRATION, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_DATE_IN_PAST);
+			}
 		}		
 		return success;
 	}
@@ -1453,15 +1439,18 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 
 		if (vendorDetail.getWorkmansCompCoverageAmount()!=null && vendorDetail.getWorkmansCompExpiration()==null) {
 			success = false;
-			putFieldError("workmansCompExpiration", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_WC_EXPR_NEEDED);
+			putFieldError(CUVendorPropertyConstants.WORKMANS_COMP_EXPIRATION, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_WC_EXPR_NEEDED);
 		}
 		if (vendorDetail.getWorkmansCompCoverageAmount()==null && vendorDetail.getWorkmansCompExpiration()!=null) {
 			success = false;
-			putFieldError("workmansCompCoverageAmount", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_WC_COVERAGE_NEEDED);
+			putFieldError(CUVendorPropertyConstants.WORKMANS_COMP_AMOUNT, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_WC_COVERAGE_NEEDED);
 		}		
 		if (vendorDetail.getWorkmansCompExpiration()!= null && vendorDetail.getWorkmansCompExpiration().before(new Date())) {
-			success = false;
-			putFieldError("workmansCompExpiration", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_DATE_IN_PAST);
+			// Only check expiration date on new vendors
+			if(document.isNew()) {
+				success = false;
+				putFieldError(CUVendorPropertyConstants.WORKMANS_COMP_EXPIRATION, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_DATE_IN_PAST);
+			}
 		}		
 		
 		return success;
@@ -1474,15 +1463,18 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 
 		if (vendorDetail.getExcessLiabilityUmbrellaAmount()!=null && vendorDetail.getExcessLiabilityUmbExpiration()==null) {
 			success = false;
-			putFieldError("excessLiabilityUmbrellaAmount", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_UMB_EXPR_NEEDED);
+			putFieldError(CUVendorPropertyConstants.EXCESS_LIABILITY_UMBRELLA_AMOUNT, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_UMB_EXPR_NEEDED);
 		}
 		if (vendorDetail.getExcessLiabilityUmbrellaAmount()==null && vendorDetail.getExcessLiabilityUmbExpiration()!=null) {
 			success = false;
-			putFieldError("excessLiabilityUmbExpiration", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_UMB_COVERAGE_NEEDED);
+			putFieldError(CUVendorPropertyConstants.EXCESS_LIABILITY_UMBRELLA_EXPIRATION, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_UMB_COVERAGE_NEEDED);
 		}		
 		if (vendorDetail.getExcessLiabilityUmbExpiration()!= null && vendorDetail.getExcessLiabilityUmbExpiration().before(new Date())) {
-			success = false;
-			putFieldError("excessLiabilityUmbExpiration", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_DATE_IN_PAST);
+			// Only check expiration date on new vendors
+			if(document.isNew()) {
+				success = false;
+				putFieldError(CUVendorPropertyConstants.EXCESS_LIABILITY_UMBRELLA_EXPIRATION, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_DATE_IN_PAST);
+			}
 		}
 		
 		return success;
@@ -1501,15 +1493,18 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 		
 		if ( offSiteCateringLicenseRequired && vendorDetail.getHealthOffSiteLicenseExpirationDate()==null) {
 			success = false;
-			putFieldError("healthOffSiteLicenseExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_HEALTH_LICENSE_EXPR_NEEDED);
+			putFieldError(CUVendorPropertyConstants.HEALTH_OFFSITE_LICENSE_EXPIRATION, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_HEALTH_LICENSE_EXPR_NEEDED);
 		}
 		if ( !offSiteCateringLicenseRequired && vendorDetail.getHealthOffSiteLicenseExpirationDate()!=null) {
 			success = false;
-			putFieldError("healthOffSiteCateringLicenseReq", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_HEALTH_LICENSE_NEEDED);
+			putFieldError(CUVendorPropertyConstants.HEALTH_OFFSITE_LICENSE_REQUIRED, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_HEALTH_LICENSE_NEEDED);
 		}				
 		if (vendorDetail.getHealthOffSiteLicenseExpirationDate()!= null && vendorDetail.getHealthOffSiteLicenseExpirationDate().before(new Date())) {
-			success = false;
-			putFieldError("healthOffSiteLicenseExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_DATE_IN_PAST);
+			// Only check expiration date on new vendors
+			if(document.isNew()) {
+				success = false;
+				putFieldError(CUVendorPropertyConstants.HEALTH_OFFSITE_LICENSE_EXPIRATION, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_DATE_IN_PAST);
+			}
 		}
 		
 		return success;
@@ -1521,7 +1516,6 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
 		VendorHeader vendorHeader = vendorDetail.getVendorHeader();
 		List<VendorSupplierDiversity> vendorSupplierDiversities = vendorHeader.getVendorSupplierDiversities();
-		Date theDate = new Date();
 				
 		if (vendorSupplierDiversities.size() > 0)
 		{
@@ -1529,11 +1523,14 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 			for(VendorSupplierDiversity vendor : vendorSupplierDiversities) {
 				if (vendor.getVendorSupplierDiversityExpirationDate() == null ) {
 					success = false;
-					putFieldError("vendorHeader.vendorSupplierDiversities[" + i + "].vendorSupplierDiversityExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);				
+					putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);				
 				}
 				else if (vendor.getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
-					success = false;
-					putFieldError("vendorHeader.vendorSupplierDiversities[" + i + "].vendorSupplierDiversityExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
+					// Only check expiration date on new vendors
+					if(document.isNew()) {
+						success = false;
+						putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
+					}
 				}
 				i++;
 			}
@@ -1564,7 +1561,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 			dataEntered |= (vendorDetail.getInsuranceNotes()==null?false:true);
 
 			if (!dataEntered) {
-				putFieldError("insuranceRequiredIndicator", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_INSURANCE_REQUIRED_USED_WO_DATA);
+				putFieldError(CUVendorPropertyConstants.INSURANCE_REQUIRED, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_INSURANCE_REQUIRED_USED_WO_DATA);
 				return false;
 			}
 		}		
@@ -1613,12 +1610,12 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 	    boolean success = true;
 	    if (vendorSupplierDiversity.getVendorSupplierDiversityExpirationDate() == null) {
 	    	success = false;
-            putFieldError("add.vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);
+            putFieldError("add."+VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);
             return success;
 	    }
         if (vendorSupplierDiversity.getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
             success = false;
-            putFieldError("add.vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate", VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
+            putFieldError("add."+VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, VendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
             return success;
         }
 
