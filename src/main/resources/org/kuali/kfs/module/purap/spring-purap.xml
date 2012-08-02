@@ -630,6 +630,7 @@
 	    <property name="schemaLocation">
 	       <value>${externalizable.static.content.url}/xsd/purap/electronicInvoice.xsd</value>
 	    </property>
+        <property name="dateTimeService" ref="dateTimeService" />
 	</bean>
 	
 	<bean id="purapObjectCodeDynamicNameLabelGenerator" class="org.kuali.kfs.module.purap.document.service.impl.PurapObjectCodeDynamicNameLabelGeneratorImpl" />
