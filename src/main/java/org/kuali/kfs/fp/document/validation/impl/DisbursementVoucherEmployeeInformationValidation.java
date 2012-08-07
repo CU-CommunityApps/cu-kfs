@@ -30,6 +30,7 @@ import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.MessageMap;
 import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
 public class DisbursementVoucherEmployeeInformationValidation extends GenericValidation {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisbursementVoucherEmployeeInformationValidation.class);
@@ -68,15 +69,24 @@ public class DisbursementVoucherEmployeeInformationValidation extends GenericVal
         		isValid = false;
         	}
         }
-        
-      
 
         // check existence of employee
-        if (employee == null) { // If employee is not found, report existence error
+        if (ObjectUtils.isNull(employee)) { // If employee is not found, report existence error
             String label = SpringContext.getBean(DataDictionaryService.class).getAttributeLabel(DisbursementVoucherPayeeDetail.class, KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER);
             errors.putError(DV_PAYEE_ID_NUMBER_PROPERTY_PATH, KFSKeyConstants.ERROR_EXISTENCE, label);
             isValid = false;
         } 
+
+        KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        boolean stateIsInitiated = workflowDocument.stateIsInitiated() || workflowDocument.stateIsSaved();
+
+        // The payee on the DV can be inactive after creation of a document. The validation occurs only at the time of
+        // initiation or completion
+        if(ObjectUtils.isNotNull(employee)){            
+            if(!stateIsInitiated){
+                return true;
+            }
+        }
         
         
         errors.removeFromErrorPath(KFSPropertyConstants.DOCUMENT); 
