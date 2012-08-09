@@ -58,15 +58,21 @@ public class DisbursementVoucherEmployeeInformationValidation extends GenericVal
         
         String employeeId = payeeDetail.getDisbVchrPayeeIdNumber();
         Person employee = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(employeeId);
+
+        KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        boolean stateIsInitiated = workflowDocument.stateIsInitiated() || workflowDocument.stateIsSaved();
+        
         if (ObjectUtils.isNull(employee)) {
             employee = SpringContext.getBean(PersonService.class).getPerson(employeeId);
         } else  {
         	if (!KFSConstants.EMPLOYEE_ACTIVE_STATUS.equals(employee.getEmployeeStatusCode()) &&
         			!KFSConstants.EMPLOYEE_RETIRED_STATUS.equals(employee.getEmployeeStatusCode())) {
-        		// If employee is found, then check that employee is active or retired
-        		String label = SpringContext.getBean(DataDictionaryService.class).getAttributeLabel(DisbursementVoucherPayeeDetail.class, KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER);
-        		errors.putError(DV_PAYEE_ID_NUMBER_PROPERTY_PATH, KFSKeyConstants.ERROR_INACTIVE, label);
-        		isValid = false;
+        		// If employee is found, then check that employee is active or retired if the doc has not already been routed.
+        		if(stateIsInitiated) {
+	        		String label = SpringContext.getBean(DataDictionaryService.class).getAttributeLabel(DisbursementVoucherPayeeDetail.class, KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER);
+	        		errors.putError(DV_PAYEE_ID_NUMBER_PROPERTY_PATH, KFSKeyConstants.ERROR_INACTIVE, label);
+	        		isValid = false;
+        		}
         	}
         }
 
@@ -76,9 +82,6 @@ public class DisbursementVoucherEmployeeInformationValidation extends GenericVal
             errors.putError(DV_PAYEE_ID_NUMBER_PROPERTY_PATH, KFSKeyConstants.ERROR_EXISTENCE, label);
             isValid = false;
         } 
-
-        KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        boolean stateIsInitiated = workflowDocument.stateIsInitiated() || workflowDocument.stateIsSaved();
 
         // The payee on the DV can be inactive after creation of a document. The validation occurs only at the time of
         // initiation or completion
