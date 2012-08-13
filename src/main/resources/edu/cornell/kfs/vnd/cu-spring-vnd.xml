@@ -28,6 +28,17 @@
 		<property name="scriptConfigurationFilePaths">
 			<list/>
 		</property>
+		<property name="jobNames">
+			<list>
+				<value>commodityCodeUpdateJob</value>
+			</list>
+		</property>
+        <property name="batchFileDirectories">
+          <list>
+            <value>${reports.directory}/vnd</value>
+            <value>${staging.directory}/vnd</value>
+          </list>
+        </property>
 	</bean>
 
 	<bean id="cu-vndModuleService" parent="vndModuleService-parentBean">
@@ -60,6 +71,89 @@
         	<ref bean="vendorDao" />
         </property>
     </bean>
+
+	<bean id="commodityCodeUpdateService" class="edu.cornell.kfs.vnd.batch.service.impl.CommodityCodeUpdateServiceImpl">
+		<property name="commodityCodeInputFileType">
+			<ref bean="commodityCodeInputFileType" />
+		</property>
+		<property name="batchInputFileService">
+		    <ref bean="batchInputFileService" />
+		</property>
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+		<property name="commodityCodeService">
+			<ref bean="commodityCodeService" />
+		</property>
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+		<property name="configurationService">
+			<ref bean="kualiConfigurationService" />
+		</property>
+		<property name="commodityCodeReportWriterService">
+			<ref bean="commodityCodeReportWriterService" />
+		</property>
+		<property name="batchFileDirectoryName" value="${staging.directory}/vnd/commodityCode"/>
+	</bean>
+	
+    <bean id="commodityCodeReportWriterService" parent="reportWriterService">
+		<property name="filePath" value="${reports.directory}/vnd"/>
+		<property name="fileNamePrefix" value="UNSPSC_"/>
+        <property name="title" value="UNSPSC Reports"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.vnd.businessobject.CommodityCode" value="commodityCodeReportHelper"/>
+        	</map>
+        </property>
+    </bean>
+
+	<bean id="commodityCodeReportHelper" parent="businessObjectReportHelper">
+        <property name="dataDictionaryBusinessObjectClass" value="org.kuali.kfs.vnd.businessobject.CommodityCode" />
+	    <property name="orderedPropertyNameToHeaderLabelMap">
+    		<map>
+    			<entry key="purchasingCommodityCode" value="CODE"/>
+    			<entry key="commodityDescription" value="DESC"/>
+    			<entry key="sensitiveDataCode" value="SENSTV"/>
+    		</map>
+	    </property>
+	    <property name="columnCount" value="3" />
+	</bean>
+	
+
+	<bean id="commodityCodeInputFileType" parent="commodityCodeInputFileType-parentBean"/>
+	
+    <bean id="commodityCodeInputFileType-parentBean" class="edu.cornell.kfs.vnd.batch.CommodityCodeInputFileType">
+    	<property name="directoryPath">
+	       <value>${staging.directory}/vnd/commodityCode</value>
+	    </property>
+	    <property name="fileExtension">
+	       <value>txt</value>
+	    </property>
+	    <property name="dateTimeService">
+	       <ref bean="dateTimeService"/>
+	    </property>
+	</bean>
+		
+	<bean id="commodityCodeUpdateJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="commodityCodeUpdateStep" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="commodityCodeUpdateStep" class="edu.cornell.kfs.vnd.batch.CommodityCodeUpdateStep" parent="step">
+		<property name="batchInputFileService">
+		    <ref bean="batchInputFileService" />
+		</property>
+		<property name="commodityCodeInputFileType">
+		    <ref bean="commodityCodeInputFileType" />
+		</property>
+		<property name="commodityCodeUpdateService">
+		    <ref bean="commodityCodeUpdateService" />
+		</property>
+	</bean>
 
 
 </beans>
