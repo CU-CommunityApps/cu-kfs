@@ -29,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
+import org.kuali.kfs.pdp.service.AchService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
@@ -43,6 +44,7 @@ import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.KualiInteger;
+import org.kuali.rice.kns.util.ObjectUtils;
 
 /**
  * This class represents the PaymentGroup
@@ -1171,5 +1173,53 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
             }
         }
         return KFSConstants.EMPTY_STRING;
+    }
+
+    /**
+     * The logic used in the payableByACH() method was taken from another part of KFS and is based on the presence or absence of an ACH account for the defined payee.  
+     * Because of this logic, it can be inferred that if a payment cannot be paid by ACH, then it must be payable by check.  
+     * 
+     * If additional payments methods are introduced, this logic will need to be re-written.
+     * 
+     * @return True if payable by check, false otherwise.
+     */
+    public boolean isPayableByCheck() {
+    	return !isPayableByACH();
+    }
+
+    /**
+     * A payment group is payable by ACH if it meets all of the following criteria:
+     * - there are no negative payment details within the group
+     * - the payee has a defined ACH account
+     * - the payment does not contain any attachments, special handling and is not an immediate payment
+     * 
+     * @return True if the payment group is payable by ACH, false otherwise.
+     */
+    public boolean isPayableByACH() {
+    	// If any one of the payment details in the group are negative, we always force a check
+        boolean noNegativeDetails = true;
+
+        // If any one of the payment details in the group are negative, we always force a check
+        List<PaymentDetail> paymentDetailsList = getPaymentDetails();
+        for (PaymentDetail paymentDetail : paymentDetailsList) {
+            if (paymentDetail.getNetPaymentAmount().doubleValue() < 0) {
+                noNegativeDetails = false;
+                break;
+            }
+        }
+
+        // determine whether payment should be ACH or Check
+        CustomerProfile customer = getBatch().getCustomerProfile();
+        
+        PayeeACHAccount payeeAchAccount = null;
+        boolean isACH = false;
+        if (PdpConstants.PayeeIdTypeCodes.VENDOR_ID.equals(getPayeeIdTypeCd()) || PdpConstants.PayeeIdTypeCodes.EMPLOYEE.equals(getPayeeIdTypeCd()) || PdpConstants.PayeeIdTypeCodes.ENTITY.equals(getPayeeIdTypeCd())) {
+            if (StringUtils.isNotBlank(getPayeeId()) && !getPymtAttachment() && !getProcessImmediate() && !getPymtSpecialHandling() && (customer.getAchTransactionType() != null) && noNegativeDetails) {
+                payeeAchAccount = SpringContext.getBean(AchService.class).getAchInformation(getPayeeIdTypeCd(), getPayeeId(), customer.getAchTransactionType());
+                isACH = ObjectUtils.isNotNull(payeeAchAccount);
+            }
+        }
+
+        return isACH;
     }
 }

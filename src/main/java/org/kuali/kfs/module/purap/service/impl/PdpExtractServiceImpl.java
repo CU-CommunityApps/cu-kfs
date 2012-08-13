@@ -826,6 +826,13 @@ public class PdpExtractServiceImpl implements PdpExtractService {
         paymentGroup.setNraPayment(VendorConstants.OwnerTypes.NR.equals(paymentRequestDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCode()));
         paymentGroup.setCombineGroups(Boolean.TRUE);
 
+        if(paymentGroup.isPayableByACH()) {
+        	paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
+        }
+        else {
+        	paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.CHECK);
+        }
+        
         return paymentGroup;
     }
 
@@ -886,6 +893,13 @@ public class PdpExtractServiceImpl implements PdpExtractService {
         paymentGroup.setNraPayment(VendorConstants.OwnerTypes.NR.equals(creditMemoDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCode()));
         paymentGroup.setCombineGroups(Boolean.TRUE);
 
+        if(paymentGroup.isPayableByACH()) {
+        	paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
+        }
+        else {
+        	paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.CHECK);
+        }
+        
         return paymentGroup;
     }
 

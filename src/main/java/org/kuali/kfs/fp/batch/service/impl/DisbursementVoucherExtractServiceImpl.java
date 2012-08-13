@@ -283,6 +283,13 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
         pg.setBankCode(document.getDisbVchrBankCode());
         pg.setPaymentStatusCode(KFSConstants.PdpConstants.PAYMENT_OPEN_STATUS_CODE);
 
+        if(pg.isPayableByACH()) {
+        	pg.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
+        }
+        else {
+        	pg.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.CHECK);
+        }
+        
         return pg;
     }
 

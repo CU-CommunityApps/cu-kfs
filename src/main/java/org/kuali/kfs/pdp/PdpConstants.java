@@ -124,6 +124,12 @@ public class PdpConstants {
         public static final String PROCESS_IMMEDIATE = "immediate";
     }
     
+    public static class PaymentDistributions {
+    	public static final String PROCESS_ACH_ONLY = "achOnly";
+    	public static final String PROCESS_CHECK_ONLY = "checkOnly";
+    	public static final String PROCESS_ALL = "all";
+    }
+    
     public static final String MAPPING_SELECTION = "selection";
     public static final String MAPPING_CONTINUE = "continue";
     public static final String MAPPING_FINISHED = "finished";
