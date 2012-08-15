@@ -19,12 +19,12 @@
 	channelTitle="Labor Distribution" />
 <div class="body">
 	<ul class="chan">
-		<li>
+	<li>
 			<portal:portalLink displayTitle="true"
 				title="Labor Benefits Calculation"
-				url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.BenefitsCalculation&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" />
+				url="kr/lookup.do?methodToCall=start&businessObjectClassName=com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" />
 		</li>
-		<li>
+				<li>
 			<portal:portalLink displayTitle="true"
 				title="Labor Benefits Rate Category"
 				url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" />
