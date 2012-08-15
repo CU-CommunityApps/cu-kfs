@@ -32,6 +32,8 @@
 			<list>
                 <value>org/kuali/kfs/module/ld/businessobject/datadictionary</value>
                 <value>org/kuali/kfs/module/ld/document/datadictionary</value>
+                <value>com/rsmart/kuali/kfs/module/ld/document/datadictionary</value>
+                <value>com/rsmart/kuali/kfs/module/ld/businessobject/datadictionary</value>
 			</list>
 		</property>
 		<property name="databaseRepositoryFilePaths">
@@ -71,7 +73,9 @@
             <map>
 				<entry key="org.kuali.kfs.integration.ld.LaborLedgerBalance" value="org.kuali.kfs.module.ld.businessobject.LedgerBalance" />
 				<entry key="org.kuali.kfs.integration.ld.LaborLedgerBalanceForEffortCertification" value="org.kuali.kfs.module.ld.businessobject.LedgerBalanceForEffortCertification" />
-				<entry key="org.kuali.kfs.integration.ld.LaborLedgerBenefitsCalculation" value="org.kuali.kfs.module.ld.businessobject.BenefitsCalculation" />
+				<!--  <entry key="org.kuali.kfs.integration.ld.LaborLedgerBenefitsCalculation" value="org.kuali.kfs.module.ld.businessobject.BenefitsCalculation" />-->
+				<entry key="org.kuali.kfs.integration.ld.LaborLedgerBenefitsCalculation" value="com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation" />
+				
 				<entry key="org.kuali.kfs.integration.ld.LaborLedgerBenefitsType" value="org.kuali.kfs.module.ld.businessobject.BenefitsType" />
 				<entry key="org.kuali.kfs.integration.ld.LaborLedgerEntry" value="org.kuali.kfs.module.ld.businessobject.LedgerEntry" />
 				<entry key="org.kuali.kfs.integration.ld.LaborLedgerObject" value="org.kuali.kfs.module.ld.businessobject.LaborObject" />
@@ -1710,6 +1714,40 @@
         <property name="aggregationModeOn" value="false"/>
     </bean>
 
+
+
+	
+	<bean id="laborOriginEntryEnterpriseFeederHelperService" class="com.rsmart.kuali.kfs.module.ld.batch.service.impl.FileEnterpriseFeederHelperServiceImpl">
+        <property name="originEntryService">
+            <ref bean="originEntryService" />
+        </property>
+        <property name="reconciliationParserService">
+            <ref bean="glReconciliationParserService" />
+        </property>
+        <property name="reconciliationService">
+            <ref bean="laborReconciliationService" />
+        </property>
+        <property name="laborPositionObjectBenefitService">
+            <ref bean="laborPositionObjectBenefitService" />
+        </property>
+        <property name="laborBenefitsCalculationService">
+            <ref bean="laborBenefitsCalculationService" />
+        </property>   
+        <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property>         
+        <property name="parameterService">
+            <ref bean="parameterService" />
+        </property>   
+        <property name="configurationService">
+            <ref bean="kualiConfigurationService" />
+        </property>   
+        <property name="dateTimeService">
+	       <ref bean="dateTimeService"/>
+	    </property>
+    </bean>
+
+<!--  
     <bean id="laborOriginEntryEnterpriseFeederHelperService" class="org.kuali.kfs.module.ld.batch.service.impl.FileEnterpriseFeederHelperServiceImpl">
         <property name="originEntryService">
             <ref bean="originEntryService" />
@@ -1736,7 +1774,39 @@
             <ref bean="kualiConfigurationService" />
         </property>                        
     </bean>
-
+-->
     <bean id="laborEnterpriseFeederFileSetType" class="org.kuali.kfs.module.ld.batch.LaborEnterpriseFeederFileSetType"></bean>
+    
+    
+    
+       <bean id="ldBenefitsCalculationLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" >
+		<property name="lookupableHelperService">
+			<ref bean="ldBenefitsCalculationLookupableHelperService" />
+		</property>
+	</bean>	
+	
+	<bean id="ldBenefitsCalculationLookupableHelperService" class="com.rsmart.kuali.kfs.module.ld.businessobject.lookup.BenefitsCalculationLookupableHelperServiceImpl" >
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="lookupService">
+			<ref bean="lookupService" />
+		</property>
+		<property name="businessObjectDictionaryService">
+			<ref bean="businessObjectDictionaryService" />
+		</property>
+		<property name="businessObjectMetaDataService">
+			<ref bean="businessObjectMetaDataService" />
+		</property>
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>
+		<property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
+	</bean>
+    
+    	<bean id="rsmartLaborLedgerBalanceLookupableHelperService" class="com.rsmart.kuali.kfs.module.ld.businessobject.lookup.LedgerBalanceLookupableHelperServiceImpl" parent="laborLedgerBalanceLookupableHelperService">
+	</bean>
     	            
 </beans>
