@@ -173,6 +173,9 @@ public class PaymentFileServiceImpl implements PaymentFileService {
 
         // store groups
         for (PaymentGroup paymentGroup : paymentFile.getPaymentGroups()) {
+        	// PDP groups are defined in XML and need to have disbursement type code added after the parsing.
+        	assignDisbursementTypeCode(paymentGroup);
+        	
             businessObjectService.save(paymentGroup);
         }
 
@@ -188,6 +191,24 @@ public class PaymentFileServiceImpl implements PaymentFileService {
         status.setLoadStatus(LoadPaymentStatus.LoadStatus.SUCCESS);
     }
 
+    /**
+     * This method exists here because PaymentGroups are defined in the PaymentFileLoad objects based on the XML that is read in from the PDP Customers.  
+     * The assignment of this attribute prior to submission of the PaymentGroup for Formatting is necessary to support the Format process allowing ACH only file generation.
+     * See KFSPTS-918 for complete details.
+     * 
+     * This method takes a given PaymentGroup and sets the disbursement type code on that group.
+     * 
+     * @param pg
+     */
+    private void assignDisbursementTypeCode(PaymentGroup pg) {
+        if(pg.isPayableByACH()) {
+        	pg.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
+        }
+        else {
+        	pg.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.CHECK);
+        }
+    }
+    
     /**
      * Calls <code>BatchInputFileService</code> to validate XML against schema and parse.
      * 
