@@ -449,6 +449,9 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
      * @hibernate.many-to-one column="PMT_BATCH_ID" class="edu.iu.uis.pdp.bo.Batch" not-null="true"
      */
     public Batch getBatch() {
+    	if(ObjectUtils.isNull(batch) && ObjectUtils.isNotNull(batchId)) {
+    		this.refreshReferenceObject("batch");
+    	}
         return batch;
     }
 
