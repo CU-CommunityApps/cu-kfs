@@ -47,6 +47,7 @@
         <ref bean="VendorAddress-vendorHeaderGeneratedIdentifier"/>
         <ref bean="VendorAddress-vendorDetailAssignedIdentifier"/>
         <ref bean="VendorAddress-active"/>
+        <ref bean="VendorAddress-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode"/>
       </list>
     </property>
     <property name="relationships">
@@ -57,7 +58,10 @@
         </dd:relationship>
         <dd:relationship objectAttribute="vendorCountry">
             <dd:primitiveAttribute source="vendorCountryCode" target="postalCountryCode"/>
-        </dd:relationship>        
+        </dd:relationship> 
+        <dd:relationship objectAttribute="purchaseOrderTransmissionMethod" targetClass="org.kuali.kfs.module.purap.businessobject.PurchaseOrderTransmissionMethod">        
+            <dd:primitiveAttribute source="purchaseOrderTransmissionMethodCode" target="purchaseOrderTransmissionMethodCode"/>            
+        </dd:relationship>       
       </list>
     </property>     
   </bean>
@@ -206,6 +210,15 @@
     <property name="name" value="active"/>
   </bean>
 
+  <bean id="VendorAddress-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode" parent="VendorAddress-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode-parentBean"/> 
+  <bean id="VendorAddress-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode-parentBean" abstract="true" parent="PurchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode">
+  <property name="label" value="Method of PO Transmission"/>
+  <property name="name" value="purchaseOrderTransmissionMethodCode"/>
+  <property name="required" value="false"/>
+  <property name="control">
+      <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.vnd.businessobject.options.PurchaseOrderTransmissionMethodValuesFinder" p:includeKeyInLabel="false"/>
+    </property>
+  </bean>
 <!-- Business Object Inquiry Definition -->
 
 

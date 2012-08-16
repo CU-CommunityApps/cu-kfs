@@ -166,6 +166,7 @@
 	<bean id="Purchasing-processVendorValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingProcessVendorValidation" abstract="true">
 		<property name="vendorService" ref="vendorService" />
 		<property name="parameterService" ref="parameterService" />
+		<property name="purchaseOrderTransmissionMethodDataRulesService" ref="purchaseOrderTransmissionMethodDataRulesService" />
 	</bean>
 
 	<bean id="Purchasing-capitalAssetValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingCapitalAssetValidation" abstract="true">

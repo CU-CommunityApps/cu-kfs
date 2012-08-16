@@ -16,6 +16,7 @@
 
 package org.kuali.kfs.vnd.businessobject;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -23,7 +24,9 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.log4j.Logger;
 import org.kuali.rice.kns.bo.Country;
 import org.kuali.rice.kns.bo.State;
+import org.kuali.kfs.module.purap.businessobject.PurchaseOrderTransmissionMethod;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.CountryService;
 import org.kuali.rice.kns.service.StateService;
 import org.kuali.kfs.vnd.document.service.VendorService;
@@ -55,6 +58,7 @@ public class VendorAddress extends PersistableBusinessObjectBase implements Vend
     private String vendorFaxNumber;
     private boolean vendorDefaultAddressIndicator;
     private boolean active;
+    private String purchaseOrderTransmissionMethodCode;
 
     private List<VendorDefaultAddress> vendorDefaultAddresses;
 
@@ -62,6 +66,7 @@ public class VendorAddress extends PersistableBusinessObjectBase implements Vend
     private AddressType vendorAddressType;
     private State vendorState;
     private Country vendorCountry;
+    private PurchaseOrderTransmissionMethod purchaseOrderTransmissionMethod;
 
     /**
      * Default constructor.
@@ -325,4 +330,37 @@ public class VendorAddress extends PersistableBusinessObjectBase implements Vend
         return m;
     }
 
+    
+	/**
+	 * @return the purchaseOrderTransmissionMethodCode
+	 */
+	public String getPurchaseOrderTransmissionMethodCode() {
+		return purchaseOrderTransmissionMethodCode;
+	}
+
+	/**
+	 * @param purchaseOrderTransmissionMethodCode the purchaseOrderTransmissionMethodCode to set
+	 */
+	public void setPurchaseOrderTransmissionMethodCode(String purchaseOrderTransmissionMethodCode) {
+		this.purchaseOrderTransmissionMethodCode = purchaseOrderTransmissionMethodCode;
+		BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+		HashMap<String,String> keys = new HashMap<String,String>();
+		keys.put("purchaseOrderTransmissionMethodCode", purchaseOrderTransmissionMethodCode);
+		purchaseOrderTransmissionMethod = (PurchaseOrderTransmissionMethod) bos.findByPrimaryKey(PurchaseOrderTransmissionMethod.class, keys);
+	}
+
+	/**
+	 * @return the purchaseOrderTransmissionMethod
+	 */
+	public PurchaseOrderTransmissionMethod getPurchaseOrderTransmissionMethod() {
+		return purchaseOrderTransmissionMethod;
+	}
+
+	/**
+	 * @param purchaseOrderTransmissionMethod the purchaseOrderTransmissionMethod to set
+	 */
+	public void setPurchaseOrderTransmissionMethod(PurchaseOrderTransmissionMethod purchaseOrderTransmissionMethod) {
+		this.purchaseOrderTransmissionMethod = purchaseOrderTransmissionMethod;
+	}
+    
 }

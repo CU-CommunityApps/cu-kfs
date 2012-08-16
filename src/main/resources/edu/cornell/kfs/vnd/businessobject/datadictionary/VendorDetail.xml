@@ -845,6 +845,7 @@
                     <bean parent="FieldDefinition" p:attributeName="vendorDefaultAddressIndicator"/>
                     <bean parent="FieldDefinition" p:attributeName="vendorAddressInternationalProvinceName"/>
                     <bean parent="FieldDefinition" p:attributeName="active"/>
+                    <bean parent="FieldDefinition" p:attributeName="purchaseOrderTransmissionMethodCode"/>         
                   </list>
                 </property>
                 <property name="inquiryCollections">

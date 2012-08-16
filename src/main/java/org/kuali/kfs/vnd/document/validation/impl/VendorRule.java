@@ -28,6 +28,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.Organization;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSConstants.COAConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
@@ -69,6 +70,7 @@ import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 
+import edu.cornell.kfs.module.purap.document.service.PurchaseOrderTransmissionMethodDataRulesService;
 import edu.cornell.kfs.vnd.CUVendorConstants;
 import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
 
@@ -698,6 +700,8 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         String vendorTypeCode = newVendor.getVendorHeader().getVendorTypeCode();
         String vendorAddressTypeRequiredCode = newVendor.getVendorHeader().getVendorType().getVendorAddressTypeRequiredCode();
 
+        verifyPOTransmissionTypeAllowedForVendorType(vendorTypeCode, addresses);
+        
         for (int i = 0; i < addresses.size(); i++) {
             VendorAddress address = addresses.get(i);
             String errorPath = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_ADDRESS + "[" + i + "]";
@@ -715,6 +719,9 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 
             valid &= checkFaxNumber(address);
             valid &= checkAddressCountryEmptyStateZip(address);
+            
+            String propertyName = VendorPropertyConstants.VENDOR_ADDRESS + "[" + i + "].";
+            valid &= checkAddressMethodOfPOTransmissionAndData(vendorTypeCode, vendorAddressTypeRequiredCode, address, propertyName);
 
             GlobalVariables.getMessageMap().clearErrorPath();
         }
@@ -1191,8 +1198,13 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         bo.refreshNonUpdateableReferences();
 
         if (bo instanceof VendorAddress) {
-            VendorAddress address = (VendorAddress) bo;
+            VendorAddress address = (VendorAddress) bo;           
             success &= checkAddressCountryEmptyStateZip(address);
+            VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+            VendorHeader vendorHeader = (VendorHeader)vendorDetail.getVendorHeader();
+//            String propertyConstant = KFSConstants.ADD_PREFIX + "." + VendorPropertyConstants.VENDOR_ADDRESS + ".";
+            String propertyConstant = "add.address.";
+            success &= this.checkAddressMethodOfPOTransmissionAndData(vendorHeader.getVendorTypeCode(), vendorHeader.getVendorType().getVendorAddressTypeRequiredCode(), address, propertyConstant);
         }
         if (bo instanceof VendorContract) {
             VendorContract contract = (VendorContract) bo;
@@ -1672,4 +1684,183 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 		
 		return success;
 	}
+	
+	
+	/**
+	 * Method verifies that only vendors of type purchase order have method of PO transmission set for their address type.
+	 */
+	private void verifyPOTransmissionTypeAllowedForVendorType(String vendorTypeCode, List <VendorAddress> addresses) {
+		
+        //Check that there is at least one PO Address Type specified when the Vendor Type is PO               
+        if ( (!StringUtils.isBlank(vendorTypeCode)) && StringUtils.equals(vendorTypeCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) {        
+        	boolean poAddressExistsForPOVendor = false;
+        	int i = 0;
+        	while ( (i < addresses.size()) && !poAddressExistsForPOVendor) {        		
+            	VendorAddress address = addresses.get(i);
+            	if ( (!StringUtils.isBlank(address.getVendorAddressTypeCode())) && (StringUtils.equals(address.getVendorAddressTypeCode(), KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) ){
+            		poAddressExistsForPOVendor = true;
+            	}
+            	i++;
+            }
+        	if (!poAddressExistsForPOVendor) {
+            	//display error message
+        		putFieldError(VendorPropertyConstants.VENDOR_TYPE_CODE, VendorKeyConstants.ERROR_PO_TRANSMISSION_REQUIRES_PO_ADDRESS);
+            }
+        }
+        
+        //Check that there are no PO Transmission Method values set when the Vendor Type is not PO               
+        if ( (!StringUtils.isBlank(vendorTypeCode)) && (!StringUtils.equals(vendorTypeCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER))) {        
+        	boolean poTransmissionMethodExistsForVendor = false;
+        	int i = 0;
+        	while ( (i < addresses.size()) && !poTransmissionMethodExistsForVendor) {        		
+            	VendorAddress address = addresses.get(i);           	
+            	if ( (!StringUtils.isBlank(address.getPurchaseOrderTransmissionMethodCode())) && (!StringUtils.equals(address.getPurchaseOrderTransmissionMethodCode(), KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) ){
+            		poTransmissionMethodExistsForVendor = true;
+            	}
+            	i++;
+            }
+        	if (poTransmissionMethodExistsForVendor) {
+            	//display error message
+        		putFieldError(VendorPropertyConstants.VENDOR_TYPE_CODE, VendorKeyConstants.ERROR_PO_TRANMSISSION_NOT_ALLOWED_FOR_VENDOR_TYPE);
+            }
+        }
+	}
+
+
+	/**
+	 * Method verifies that the vendor data is valid for the association between vendor type, required vendor address type, address type,
+	 * method of PO transmission assigned to an address, and all of the data required for the method of PO transmission selected.
+	 */
+	private boolean checkAddressMethodOfPOTransmissionAndData (String vendorTypeCode, String vendorAddressTypeRequiredCode, VendorAddress address, String propertyConstant) {
+		boolean success = true;
+		
+        String methodOfPOTransmission = address.getPurchaseOrderTransmissionMethodCode();
+		
+		success &= validateVendorTypeToAddressType(methodOfPOTransmission, vendorTypeCode, vendorAddressTypeRequiredCode, address.getVendorAddressTypeCode(), propertyConstant);
+		
+		//address type matches required address type for vendor type, now check data for method of PO transmission
+		if (success) {	        
+	        //Now verify the data for the address type specified
+	        success &= validateVendorAddressForMethodOfPOTransmission(address, propertyConstant);
+		}
+
+		return success;
+	}
+	
+	/**
+	 * This routine ensures that there is a Method of PO Transmission selected for a Vendor Address when an Address Type of PO is specified for a Vendor Type of PO.
+	 */
+	private boolean validateVendorTypeToAddressType(String methodOfPOTransmission, String vendorTypeCode, String vendorAddressTypeRequiredCode, String addressTypeCode, String propertyScope){
+		 boolean valid = true;		
+	     //(vendorTypeCode = PO) && (vendorAddressTypeRequiredCode = PO) && (addressTypeCode = PO) && (methodOfPOTransmission is blank ) == error
+		 if ( (StringUtils.equals(vendorTypeCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) && 
+		      (StringUtils.equals(vendorAddressTypeRequiredCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) && 
+		      (StringUtils.equals(addressTypeCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) && 
+		      ((methodOfPOTransmission == null) || (StringUtils.isBlank(methodOfPOTransmission))) ) {
+			 
+				 //User selected address type of PO but left method of PO transmission blank
+				 String propertyName = propertyScope + VendorPropertyConstants.VENDOR_ADDRESS_METHOD_OF_PO_TRANSMISSION;
+				 String[] parameters = new String[] { addressTypeCode };         
+		         putFieldError(propertyName, VendorKeyConstants.ERROR_PO_TRANSMISSION_REQUIRES_PO_ADDRESS, parameters);
+				 valid &= false;
+		 }
+		 else if ( (!StringUtils.equals(addressTypeCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) && 
+				   ((methodOfPOTransmission != null) || (!StringUtils.isBlank(methodOfPOTransmission))) ) {
+			     //User selected address type of not PO and a Method of PO transmission value is selected
+				 String propertyName = propertyScope + VendorPropertyConstants.VENDOR_ADDRESS_METHOD_OF_PO_TRANSMISSION;         
+		         putFieldError(propertyName, VendorKeyConstants.ERROR_NO_PO_TRANSMISSION_WITH_NON_PO_ADDRESS);
+				 valid &= false;
+		 }
+		 else {
+			 //noop
+		 } 
+		 return valid;
+	}
+ 
+	/**
+	 * This routine verifies that the data necessary for the Method of PO Transmission chosen exists and that data
+	 * is in the proper format on the VendorAddress section of the Vendor maintenance document.  
+	 * If the data does not exist or is not in the proper format, the field(s) in question on that maintenance
+	 * document is/are noted as being in error.
+	 * 
+	 * NOTE: This method call the same rule checks (PurchaseOrderTransmissionMethodDataRulesService)
+	 * for each data element on this maintenance document as the REQ, PO, and POA.  
+	 * 
+	 */
+	private boolean validateVendorAddressForMethodOfPOTransmission(VendorAddress address, String propertyScope){
+		boolean valid = true;
+		String propertyName;	
+		String [] parameters;
+		String transmissionMethod = address.getPurchaseOrderTransmissionMethodCode();
+		String addressTypeCode = address.getVendorAddressTypeCode();
+		PurchaseOrderTransmissionMethodDataRulesService purchaseOrderTransmissionMethodDataRulesService = SpringContext.getBean(PurchaseOrderTransmissionMethodDataRulesService.class);
+		
+		if  ( (transmissionMethod == null) || (StringUtils.isBlank(transmissionMethod)) ) {
+		//no-op, nothing to verify, default return value is valid
+		}
+		else if ( (StringUtils.isBlank(addressTypeCode)) || (transmissionMethod.equalsIgnoreCase(PurapConstants.POTransmissionMethods.CONVERSION)) ) {
+		//no-op, nothing to verify, default return value is valid
+	    }
+		else if (transmissionMethod.equalsIgnoreCase(PurapConstants.POTransmissionMethods.FAX)) {
+        	//requires fax number is entered in format (xxx-xxx-xxxx)  
+			if (!purchaseOrderTransmissionMethodDataRulesService.isFaxNumberValid(address.getVendorFaxNumber())) {
+            	propertyName = new String ( propertyScope + VendorPropertyConstants.VENDOR_FAX_NUMBER);
+                putFieldError(propertyName, VendorKeyConstants.ERROR_PO_TRANSMISSION_REQUIRES_FAX_NUMBER);
+                valid &= false;
+			}
+        }
+        else if (transmissionMethod.equalsIgnoreCase(PurapConstants.POTransmissionMethods.EMAIL)) {
+        	//requires an email address is entered
+        	if (!purchaseOrderTransmissionMethodDataRulesService.isEmailAddressValid(address.getVendorAddressEmailAddress())) {
+        		propertyName = new String ( propertyScope + VendorPropertyConstants.VENDOR_ADDRESS_EMAIL_ADDRESS);
+                putFieldError(propertyName, VendorKeyConstants.ERROR_PO_TRANSMISSION_REQUIRES_EMAIL);
+                valid &= false;        		        		
+        	}        	
+        }
+        else if (transmissionMethod.equalsIgnoreCase(PurapConstants.POTransmissionMethods.MANUAL)) {
+        	//requires a US postal address is entered (address1, city, state, postal code, and country)
+        	//has all the required data been entered?
+        	if ( !purchaseOrderTransmissionMethodDataRulesService.isCountryCodeValid(address.getVendorCountryCode()) ) {
+	    		propertyName = new String ( propertyScope + VendorPropertyConstants.VENDOR_ADDRESS_COUNTRY);
+	    		putFieldError(propertyName, VendorKeyConstants.ERROR_PO_TRANSMISSION_REQUIRES_US_POSTAL);
+	    		valid &= false;
+	    	}
+	        if ( !purchaseOrderTransmissionMethodDataRulesService.isStateCodeValid(address.getVendorStateCode()) ) {
+	    		propertyName = new String ( propertyScope + VendorPropertyConstants.VENDOR_ADDRESS_STATE_CODE);
+	    		putFieldError(propertyName, VendorKeyConstants.ERROR_PO_TRANSMISSION_REQUIRES_US_POSTAL);               
+	    		valid &= false;        		
+	    	}
+	    	if ( !purchaseOrderTransmissionMethodDataRulesService.isZipCodeValid(address.getVendorZipCode()) ) {
+	    		propertyName = new String ( propertyScope + VendorPropertyConstants.VENDOR_ADDRESS_ZIP);
+	    		putFieldError(propertyName, VendorKeyConstants.ERROR_PO_TRANSMISSION_REQUIRES_US_POSTAL);
+	    		valid &= false;         		
+	    	}
+	    	if ( !purchaseOrderTransmissionMethodDataRulesService.isAddress1Valid(address.getVendorLine1Address()) ) {
+	    		propertyName = new String ( propertyScope + VendorPropertyConstants.VENDOR_ADDRESS_LINE_1);
+	    		putFieldError(propertyName, VendorKeyConstants.ERROR_PO_TRANSMISSION_REQUIRES_US_POSTAL);
+	    		valid &= false;
+	    	}
+	    	if ( !purchaseOrderTransmissionMethodDataRulesService.isCityValid(address.getVendorCityName()) ) {
+	    		propertyName = new String ( propertyScope + VendorPropertyConstants.VENDOR_ADDRESS_CITY);
+	    		putFieldError(propertyName, VendorKeyConstants.ERROR_PO_TRANSMISSION_REQUIRES_US_POSTAL);
+	    		valid &= false;
+	    	}
+	    	
+	    	if (valid) {
+	    		//user entered all the data, now verify relationships in the data	    		
+	    		//verify US, state and zip are valid as they are related to each other, error message taken care of in called routine
+	    		valid &= SpringContext.getBean(PostalCodeValidationService.class).validateAddress(address.getVendorCountryCode(), address.getVendorStateCode(), address.getVendorZipCode(), VendorPropertyConstants.VENDOR_ADDRESS_STATE, VendorPropertyConstants.VENDOR_ADDRESS_ZIP);
+	    	}        	
+        	
+        }
+        else {
+        	//Method of PO Transmission maintenance table has a value that is not coded for processing
+        	parameters = new String[] { transmissionMethod }; 
+        	propertyName = new String ( propertyScope + VendorPropertyConstants.VENDOR_ADDRESS_METHOD_OF_PO_TRANSMISSION);
+        	putFieldError(propertyName, VendorKeyConstants.ERROR_PO_TRANSMISSION_METHOD_UNKNOWN, parameters);
+        	valid &= false;
+        }	        
+		return valid;
+	 }
+
 }

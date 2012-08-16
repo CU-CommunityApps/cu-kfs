@@ -157,6 +157,7 @@
               <bean parent="MaintainableFieldDefinition" p:name="vendorHeaderGeneratedIdentifier" p:unconditionallyReadOnly="true"/>
               <bean parent="MaintainableFieldDefinition" p:name="vendorDetailAssignedIdentifier" p:unconditionallyReadOnly="true"/>
               <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
+              <bean parent="MaintainableFieldDefinition" p:name="purchaseOrderTransmissionMethodCode"/>
             </list>
           </property>
           <property name="maintainableCollections">

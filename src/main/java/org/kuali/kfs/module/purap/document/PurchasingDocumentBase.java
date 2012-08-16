@@ -74,6 +74,8 @@ import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.util.TypedArrayList;
 
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+
 /**
  * Base class for Purchasing Documents.
  */
@@ -223,6 +225,14 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         if (vendorAddress != null) {
             this.setVendorFaxNumber(vendorAddress.getVendorFaxNumber());
             this.setVendorAttentionName(vendorAddress.getVendorAttentionName());
+                     
+            //need to save vendorAddressGeneratedIdentifier for Method of PO Transmission mod, value is null in business object when it is needed
+            this.setVendorAddressGeneratedIdentifier(vendorAddress.getVendorAddressGeneratedIdentifier());            
+            //Method of PO Transmission on Vendor Address should be the default when a vendor is selected.
+            //set purchasing document value for po transmission method
+            this.setPurchaseOrderTransmissionMethodCode(vendorAddress.getPurchaseOrderTransmissionMethodCode());
+            //Put info message at top of page showing vendor email data value as it is not shown in vendor area.
+    		GlobalVariables.getMessageList().add(CUPurapKeyConstants.INFO_VENDOR_ADDRESS_EMAIL_ADDRESS_VALUE, vendorAddress.getVendorAddressEmailAddress());
         }
     }
 
@@ -762,7 +772,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         this.purchaseOrderTotalLimit = purchaseOrderTotalLimit;
     }
 
-    public String getPurchaseOrderTransmissionMethodCode() {
+    public String getPurchaseOrderTransmissionMethodCode() {       
         return purchaseOrderTransmissionMethodCode;
     }
 
@@ -1317,5 +1327,5 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
             return SpringContext.getBean(VendorService.class).getVendorB2BContract(vendorDetail, campusCode) != null;
         }
         return false;
-    }
+    }   
 }

@@ -436,7 +436,8 @@
         <property name="sensitiveDataDao" ref="sensitiveDataDao" />
         <property name="purchaseOrderDao" ref="purchaseOrderDao" />
     </bean>
-	
+		    
+    <bean id="purchaseOrderTransmissionMethodDataRulesService" class="edu.cornell.kfs.module.purap.document.service.impl.PurchaseOrderTransmissionMethodDataRulesServiceImpl" />
 
 	<!-- Batch Jobs -->
     <bean id="autoApprovePaymentRequestsStep" class="org.kuali.kfs.module.purap.batch.AutoApprovePaymentRequestsStep" parent="step">

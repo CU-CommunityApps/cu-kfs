@@ -205,4 +205,41 @@
     </collection-descriptor>    
 </class-descriptor>
 
+<class-descriptor class="org.kuali.kfs.vnd.businessobject.VendorAddress" table="PUR_VNDR_ADDR_T">
+    <field-descriptor name="vendorAddressGeneratedIdentifier" column="VNDR_ADDR_GNRTD_ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="VNDR_ADDR_GNRTD_ID"/>
+    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+    <field-descriptor name="vendorHeaderGeneratedIdentifier" column="VNDR_HDR_GNRTD_ID" jdbc-type="INTEGER" index="true"/>
+    <field-descriptor name="vendorDetailAssignedIdentifier" column="VNDR_DTL_ASND_ID" jdbc-type="INTEGER" index="true"/>
+    <field-descriptor name="vendorAddressTypeCode" column="VNDR_ADDR_TYP_CD" jdbc-type="VARCHAR"/>
+    <field-descriptor name="vendorLine1Address" column="VNDR_LN1_ADDR" jdbc-type="VARCHAR"/>
+    <field-descriptor name="vendorLine2Address" column="VNDR_LN2_ADDR" jdbc-type="VARCHAR"/>
+    <field-descriptor name="vendorCityName" column="VNDR_CTY_NM" jdbc-type="VARCHAR"/>
+    <field-descriptor name="vendorStateCode" column="VNDR_ST_CD" jdbc-type="VARCHAR"/>
+    <field-descriptor name="vendorZipCode" column="VNDR_ZIP_CD" jdbc-type="VARCHAR"/>
+    <field-descriptor name="vendorCountryCode" column="VNDR_CNTRY_CD" jdbc-type="VARCHAR"/>
+    <field-descriptor name="vendorAttentionName" column="VNDR_ATTN_NM" jdbc-type="VARCHAR"/>
+    <field-descriptor name="vendorAddressInternationalProvinceName" column="VNDR_ADDR_INTL_PROV_NM" jdbc-type="VARCHAR"/>
+    <field-descriptor name="vendorAddressEmailAddress" column="VNDR_ADDR_EMAIL_ADDR" jdbc-type="VARCHAR"/>
+    <field-descriptor name="vendorBusinessToBusinessUrlAddress" column="VNDR_B2B_URL_ADDR" jdbc-type="VARCHAR"/>
+    <field-descriptor name="vendorFaxNumber" column="VNDR_FAX_NBR" jdbc-type="VARCHAR"/>
+    <field-descriptor name="vendorDefaultAddressIndicator" column="VNDR_DFLT_ADDR_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>
+    <field-descriptor name="active" column="DOBJ_MAINT_CD_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>
+    <field-descriptor name="purchaseOrderTransmissionMethodCode" column="PO_TRNS_MTHD_CD" jdbc-type="VARCHAR" nullable="true"/>
+    <reference-descriptor name="vendorDetail" class-ref="org.kuali.kfs.vnd.businessobject.VendorDetail" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        <foreignkey field-ref="vendorHeaderGeneratedIdentifier" />
+        <foreignkey field-ref="vendorDetailAssignedIdentifier" />
+    </reference-descriptor>
+    <reference-descriptor name="vendorAddressType" class-ref="org.kuali.kfs.vnd.businessobject.AddressType" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        <foreignkey field-ref="vendorAddressTypeCode" />
+    </reference-descriptor>
+    <collection-descriptor name="vendorDefaultAddresses" proxy="true" element-class-ref="org.kuali.kfs.vnd.businessobject.VendorDefaultAddress" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
+        <orderby name="vendorDefaultAddressGeneratedIdentifier" sort="ASC" />
+        <inverse-foreignkey field-ref="vendorAddressGeneratedIdentifier" />
+    </collection-descriptor>
+    <reference-descriptor name="purchaseOrderTransmissionMethod" class-ref="org.kuali.kfs.module.purap.businessobject.PurchaseOrderTransmissionMethod" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+        <foreignkey field-ref="purchaseOrderTransmissionMethodCode" />
+    </reference-descriptor>
+</class-descriptor>
+
 </descriptor-repository>

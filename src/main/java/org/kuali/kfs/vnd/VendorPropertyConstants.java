@@ -65,6 +65,10 @@ public class VendorPropertyConstants {
     public static final String VENDOR_DEBARRED_INDICATOR = "vendorHeader.vendorDebarredIndicator";
     public static final String VENDOR_FOREIGN_INDICATOR = "vendorHeader.vendorForeignIndicator";
     public static final String VENDOR_INACTIVE_REASON = "vendorInactiveReasonCode";
+    
+    public static final String VENDOR_ADDRESS_METHOD_OF_PO_TRANSMISSION = "extension.purchaseOrderTransmissionMethodCode";
+    public static final String VENDOR_ADDRESS_EMAIL_ADDRESS = "vendorAddressEmailAddress";
+    public static final String VENDOR_ADDRESS_GENERATED_IDENTIFIER = "vendorAddressGeneratedIdentifier";
 
     public static final String VENDOR_PAYMENT_TERMS = "vendorPaymentTerms";
     public static final String VENDOR_SHIPPING_TITLE = "vendorShippingTitle";

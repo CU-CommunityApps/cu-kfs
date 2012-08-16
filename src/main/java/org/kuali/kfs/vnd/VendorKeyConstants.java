@@ -61,6 +61,15 @@ public class VendorKeyConstants {
     public static final String ERROR_ADDRESS_DEFAULT_INDICATOR = "error.vendorMaint.vendorAddress.vendorDefaultAddressIndicator";
     public static final String ERROR_ADDRESS_DEFAULT_CAMPUS_NOT_ALLOWED = "error.vendorMaint.vendorDefaultCampus.notAllowed";
     public static final String ERROR_ADDRESS_DEFAULT_ADDRESS_NOT_ALLOWED = "error.vendorMaint.vendorDefaultAddress.notAllowed";
+    public static final String ERROR_PO_TRANSMISSION_REQUIRES_PO_ADDRESS = "error.vendorMaint.vendor.vendorAddress.poTransmissionMethodCode.missing";
+    public static final String ERROR_PO_TRANMSISSION_NOT_ALLOWED_FOR_VENDOR_TYPE = "error.vendorMaint.vendor.vendorAddress.poTransmissionMethodCode.notAllowed";
+    public static final String ERROR_NO_PO_TRANSMISSION_WITH_NON_PO_ADDRESS = "error.vendorMaint.vendor.vendorAddress.poTransmissionMethodCode.specified";
+    public static final String ERROR_VENDOR_TYPE_REQUIRES_PO_ADDRESS = "error.vendorMaint.vendorTypeRequiresPOAddress";   
+    public static final String ERROR_PO_TRANSMISSION_METHOD_UNKNOWN = "error.vendorMaint.poTransmissionMethodActionUnknown";
+    public static final String ERROR_PO_TRANSMISSION_REQUIRES_FAX_NUMBER = "error.vendorMaint.vendorAddress.faxNumberMissing";
+    public static final String ERROR_PO_TRANSMISSION_REQUIRES_EMAIL = "error.vendorMaint.vendorAddress.emailAddressMissing";
+    public static final String ERROR_PO_TRANSMISSION_REQUIRES_US_POSTAL = "error.vendorMaint.vendorAddress.USPostalAddressMissing";
+
 
 
     // Vendor Maintenance Contract
