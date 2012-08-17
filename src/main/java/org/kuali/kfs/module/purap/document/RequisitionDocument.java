@@ -59,6 +59,8 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.sys.service.UniversityDateService;
+import org.kuali.kfs.vnd.VendorConstants;
+import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
@@ -81,6 +83,8 @@ import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.workflow.service.KualiWorkflowInfo;
 import org.kuali.rice.kns.workflow.service.WorkflowDocumentService;
+
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 
 /**
  * Document class for the Requisition.
@@ -370,6 +374,14 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
         VendorDetail vendorDetail = SpringContext.getBean(VendorService.class).getVendorDetail(this.getVendorHeaderGeneratedIdentifier(), this.getVendorDetailAssignedIdentifier());
         if (!(vendorDetail != null && vendorDetail.isActiveIndicator())) {
             activeVendor = false;
+        }
+        
+        //KFSPTS-916 : need vendor address key for business rules and only way to get it is to retrieve the default PO address for the vendor.
+        if (vendorDetail != null) {        	
+        	VendorAddress vendorAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(this.getVendorHeaderGeneratedIdentifier(), this.getVendorDetailAssignedIdentifier(), VendorConstants.AddressTypes.PURCHASE_ORDER, "");
+        	if (vendorAddress != null) {
+        		super.templateVendorAddress(vendorAddress);   
+        	}
         }
 
         // B2B - only copy if contract and vendor are both active (throw separate errors to print to screen)
