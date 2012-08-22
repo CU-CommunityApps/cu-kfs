@@ -27,8 +27,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
+import org.hsqldb.lib.Set;
 import org.kuali.kfs.gl.batch.service.ReconciliationParserService;
 import org.kuali.kfs.gl.batch.service.impl.ExceptionCaughtStatus;
 import org.kuali.kfs.gl.batch.service.impl.FileReconBadLoadAbortedStatus;
@@ -180,7 +182,7 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                             //and the document type is in the LABOR_BENEFIT_OFFSET_DOCTYPE system parameter then
                             //group together the benefit entries for the salary benefit offset calculation
                             if(!offsetParmValue.equalsIgnoreCase("n") && offsetDocTypes != null && offsetDocTypes.toUpperCase().contains("," + tempEntry.getFinancialDocumentTypeCode().toUpperCase() + ",")) {
-                                String key = tempEntry.getUniversityFiscalYear() + "_" + tempEntry.getChartOfAccountsCode() + "_" + tempEntry.getAccountNumber() + "_" + tempEntry.getFinancialObjectCode() + "_" + tempEntry.getUniversityFiscalPeriodCode();
+                                String key = tempEntry.getTransactionLedgerEntryAmount()+"-"+tempEntry.getUniversityFiscalYear() + "_" + tempEntry.getChartOfAccountsCode() + "_" + tempEntry.getAccountNumber() + "_" + tempEntry.getFinancialObjectCode() + "_" + tempEntry.getUniversityFiscalPeriodCode();
                                 if(!salaryBenefitOffsets.containsKey(key)) {
                                     entries = new ArrayList<LaborOriginEntry>();
                                     salaryBenefitOffsets.put(key, entries);
@@ -207,21 +209,30 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                 //and the LABOR_BENEFIT_OFFSET_DOCTYPE system parameter is not empty
                 //then create the salary benefit offset entries
                 if(!offsetParmValue.equalsIgnoreCase("n") && offsetDocTypes != null) {
-                    for(List<LaborOriginEntry> entryList : salaryBenefitOffsets.values()) {
+//                    for(List<LaborOriginEntry> entryList : salaryBenefitOffsets.values()) {
+                	  Iterator iter = salaryBenefitOffsets.keySet().iterator();
+                	  while(iter.hasNext()){
+                		  String key = (String)iter.next();
+                		List<LaborOriginEntry> entryList = salaryBenefitOffsets.get(key);
                         if(entryList != null && entryList.size() > 0) {
                             LaborOriginEntry offsetEntry = new LaborOriginEntry();
                             KualiDecimal total = new KualiDecimal(0);
                             String offsetAccount = "";
                             String offsetObjectCode = "";
                             
+                            
+                            
                             //Loop through all the benefit entries to calculate the total for the salary benefit offset entry
+                            int i = 0;
                             for(LaborOriginEntry entry : entryList) {
+                            	i++;
                                 if(entry.getTransactionDebitCreditCode().equalsIgnoreCase("D")) {
                                     total = total.add(entry.getTransactionLedgerEntryAmount());
                                 } else {
                                     total = total.subtract(entry.getTransactionLedgerEntryAmount());
                                 }
                             }
+                           // System.out.println("Benefit Rows ="+ i);
                             
                             //No need to process for the salary benefit offset if the total is 0
                             if(!total.equals(new KualiDecimal(0))) {
@@ -261,9 +272,54 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                                         
                                         offsetEntry.setAccountNumber(extension.getAccountCodeOffset());
                                         offsetEntry.setFinancialObjectCode(extension.getObjectCodeOffset());
+                                        
+                                        //Set all the fields required to process through the scrubber and poster jobs
+                                        offsetEntry.setUniversityFiscalPeriodCode(entry.getUniversityFiscalPeriodCode());
+                                        offsetEntry.setChartOfAccountsCode(entry.getChartOfAccountsCode());
+                                        offsetEntry.setUniversityFiscalYear(entry.getUniversityFiscalYear());
+                                        offsetEntry.setTransactionLedgerEntryDescription("GENERATED BENEFIT OFFSET");
+                                        offsetEntry.setFinancialSystemOriginationCode("RN");
+                                        offsetEntry.setDocumentNumber(dateTimeService.toString(dateTimeService.getCurrentDate(), "yyyyMMddhhmmssSSS"));
+                                        
+                                        StringTokenizer ST = new StringTokenizer(key,"-");
+                                        String amount = ST.nextToken();
+                                        KualiDecimal  salaryAmount = new KualiDecimal(Double.parseDouble(amount));
+                                        double  benefitPercentage = benefitsCalculation.getPositionFringeBenefitPercent().doubleValue();
+                                        double offsetAmount  = (salaryAmount.doubleValue() * benefitPercentage) /100.0;
+                                        KualiDecimal kd  = new KualiDecimal(offsetAmount);
+                                        //Only + signed amounts
+                                        if(kd.equals(new KualiDecimal(0))) continue; 
+                                        	
+                                        offsetEntry.setTransactionLedgerEntryAmount(kd.abs());
+                                        
+//                                        offsetEntry.setTransactionLedgerEntryAmount(total.abs());
+                                        
+                                        //Credit if the total is positive and Debit of the total is negative
+                                        if(kd.isGreaterThan(new KualiDecimal(0))) {
+                                            offsetEntry.setTransactionDebitCreditCode("C");
+                                        } else if(kd.isLessThan(new KualiDecimal(0))) {
+                                            offsetEntry.setTransactionDebitCreditCode("D");
+                                        }
+                                        
+                                        //Set the doc type to the value in the LABOR_BENEFIT_OFFSET_DOCTYPE system parameter (the first value if there is a list)
+                                        String docTypeCode = offsetDocTypes;
+                                        if (offsetDocTypes.contains(",")) {
+                                            String[] splits = offsetDocTypes.split(",");
+                                            for(String split : splits) {
+                                                if(!StringUtils.isEmpty(split)) {
+                                                    docTypeCode = split;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        offsetEntry.setFinancialDocumentTypeCode(docTypeCode);
+                                        
+                                        //Write the offset entry to the file
+                                        enterpriseFeedPs.printf("%s\n", offsetEntry.getLine());
+
                                     }
                                 }
-                                
+/*                                
                                 //Set all the fields required to process through the scrubber and poster jobs
                                 offsetEntry.setUniversityFiscalPeriodCode(entry.getUniversityFiscalPeriodCode());
                                 offsetEntry.setChartOfAccountsCode(entry.getChartOfAccountsCode());
@@ -297,6 +353,7 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                                 
                                 //Write the offset entry to the file
                                 enterpriseFeedPs.printf("%s\n", offsetEntry.getLine());
+  */
                             }
                         }
                     }
@@ -385,3 +442,141 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
         this.dateTimeService = dateTimeService;
     }
 }
+
+
+/*
+
+if(!offsetParmValue.equalsIgnoreCase("n") && offsetDocTypes != null) {
+    for(List<LaborOriginEntry> entryList : salaryBenefitOffsets.values()) {
+        if(entryList != null && entryList.size() > 0) {
+            LaborOriginEntry offsetEntry = new LaborOriginEntry();
+            KualiDecimal total = new KualiDecimal(0);
+            String offsetAccount = "";
+            String offsetObjectCode = "";
+            
+            
+            
+            //Loop through all the benefit entries to calculate the total for the salary benefit offset entry
+            
+            for(LaborOriginEntry entry : entryList) {
+                if(entry.getTransactionDebitCreditCode().equalsIgnoreCase("D")) {
+                    total = total.add(entry.getTransactionLedgerEntryAmount());
+                } else {
+                    total = total.subtract(entry.getTransactionLedgerEntryAmount());
+                }
+            }
+            
+            //No need to process for the salary benefit offset if the total is 0
+            if(!total.equals(new KualiDecimal(0))) {
+                
+                //Lookup the position object benefit to get the object benefit type code
+                Collection<PositionObjectBenefit> positionObjectBenefits = getLaborPositionObjectBenefitService().getPositionObjectBenefits(entryList.get(0).getUniversityFiscalYear(), entryList.get(0).getChartOfAccountsCode(), entryList.get(0).getFinancialObjectCode());
+                LaborOriginEntry entry = entryList.get(0);
+                if (positionObjectBenefits == null || positionObjectBenefits.isEmpty()) {
+                    writeMissingBenefitsTypeError(entry, errorStatisticsReport, feederReportData);
+                } else {
+                    for (PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
+                        Map<String, Object> fieldValues = new HashMap<String, Object>();
+                        fieldValues.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, entry.getUniversityFiscalYear());
+                        fieldValues.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, entry.getChartOfAccountsCode());
+                        fieldValues.put(LaborPropertyConstants.POSITION_BENEFIT_TYPE_CODE, positionObjectBenefit.getFinancialObjectBenefitsTypeCode());
+                        entry.refreshReferenceObject("account");
+
+                        // Cornell Code replaces the original code below
+            
+                        Map<String, Object> fv = new HashMap<String, Object>();
+                        fv.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, entry.getChartOfAccountsCode());
+                        fv.put(KFSPropertyConstants.ACCOUNT_NUMBER, entry.getAccount().getAccountNumber());
+                        edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute accountExtAttribute = (edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute) getBusinessObjectService().findByPrimaryKey(edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute.class, fv);
+                        fieldValues.put(LaborPropertyConstants.LABOR_BENEFIT_RATE_CATEGORY_CODE, accountExtAttribute.getLaborBenefitRateCategoryCode());  
+
+                        
+                        edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute accountExtAttribute  = (edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute ) entry.getAccount().getExtension();
+                        fieldValues.put(LaborPropertyConstants.LABOR_BENEFIT_RATE_CATEGORY_CODE, accountExtAttribute.getLaborBenefitRateCategoryCode()); 
+
+                        //original code by rSmart
+                    //fieldValues.put(LaborPropertyConstants.LABOR_BENEFIT_RATE_CATEGORY_CODE, entry.getAccount().getLaborBenefitRateCategoryCode());  VRK4
+
+                        //Lookup the benefit calculation to get the offset account number and object code
+                        com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation benefitsCalculation = (com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation) getBusinessObjectService().findByPrimaryKey(com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation.class, fieldValues);
+                        
+                        BenefitsCalculationExtension extension = (BenefitsCalculationExtension) benefitsCalculation.getExtension();
+                        
+                        offsetEntry.setAccountNumber(extension.getAccountCodeOffset());
+                        offsetEntry.setFinancialObjectCode(extension.getObjectCodeOffset());
+                    }
+                }
+                
+                //Set all the fields required to process through the scrubber and poster jobs
+                offsetEntry.setUniversityFiscalPeriodCode(entry.getUniversityFiscalPeriodCode());
+                offsetEntry.setChartOfAccountsCode(entry.getChartOfAccountsCode());
+                offsetEntry.setUniversityFiscalYear(entry.getUniversityFiscalYear());
+                offsetEntry.setTransactionLedgerEntryDescription("GENERATED BENEFIT OFFSET");
+                offsetEntry.setFinancialSystemOriginationCode("RN");
+                offsetEntry.setDocumentNumber(dateTimeService.toString(dateTimeService.getCurrentDate(), "yyyyMMddhhmmssSSS"));
+                
+                //Only + signed amounts
+                offsetEntry.setTransactionLedgerEntryAmount(total.abs());
+                
+                //Credit if the total is positive and Debit of the total is negative
+                if(total.isGreaterThan(new KualiDecimal(0))) {
+                    offsetEntry.setTransactionDebitCreditCode("C");
+                } else if(total.isLessThan(new KualiDecimal(0))) {
+                    offsetEntry.setTransactionDebitCreditCode("D");
+                }
+                
+                //Set the doc type to the value in the LABOR_BENEFIT_OFFSET_DOCTYPE system parameter (the first value if there is a list)
+                String docTypeCode = offsetDocTypes;
+                if (offsetDocTypes.contains(",")) {
+                    String[] splits = offsetDocTypes.split(",");
+                    for(String split : splits) {
+                        if(!StringUtils.isEmpty(split)) {
+                            docTypeCode = split;
+                            break;
+                        }
+                    }
+                }
+                offsetEntry.setFinancialDocumentTypeCode(docTypeCode);
+                
+                //Write the offset entry to the file
+                enterpriseFeedPs.printf("%s\n", offsetEntry.getLine());
+            }
+        }
+    }
+}
+
+dataFileReader.close();
+dataFileReader = null;
+
+statusAndErrors.setStatus(new FileReconOkLoadOkStatus());
+}
+else {
+statusAndErrors.setStatus(new FileReconBadLoadAbortedStatus());
+}
+}
+catch (Exception e) {
+LOG.error("Caught exception when reconciling/loading done file: " + doneFile, e);
+statusAndErrors.setStatus(new ExceptionCaughtStatus());
+errorMessages.add(new Message("Caught exception attempting to reconcile/load done file: " + doneFile + ".  File contents are NOT loaded", Message.TYPE_FATAL));
+// re-throw the exception rather than returning a value so that Spring will auto-rollback
+if (e instanceof RuntimeException) {
+throw (RuntimeException) e;
+}
+else {
+// Spring only rolls back when throwing a runtime exception (by default), so we throw a new exception
+throw new RuntimeException(e);
+}
+}
+finally {
+if (dataFileReader != null) {
+try {
+    dataFileReader.close();
+}
+catch (IOException e) {
+    LOG.error("IO Exception occured trying to close connection to the data file", e);
+    errorMessages.add(new Message("IO Exception occured trying to close connection to the data file", Message.TYPE_FATAL));
+}
+}
+}
+}
+*/
