@@ -265,7 +265,7 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                             }
                             totalBenefitValue = totalBenefitValue.add(total);
                             
-                            System.out.println("Benefit value ="+total+":" +totalBenefitValue);
+                           // System.out.println("Benefit value ="+total+":" +totalBenefitValue);
                             
                             //No need to process for the salary benefit offset if the total is 0
                             if(!total.equals(new KualiDecimal(0))) {
