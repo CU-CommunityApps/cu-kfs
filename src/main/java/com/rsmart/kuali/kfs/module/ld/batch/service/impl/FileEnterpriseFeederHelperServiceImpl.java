@@ -181,8 +181,10 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                             //and the LABOR_BENEFIT_OFFSET_DOCTYPE system parameter is not empty
                             //and the document type is in the LABOR_BENEFIT_OFFSET_DOCTYPE system parameter then
                             //group together the benefit entries for the salary benefit offset calculation
+                            
                             if(!offsetParmValue.equalsIgnoreCase("n") && offsetDocTypes != null && offsetDocTypes.toUpperCase().contains("," + tempEntry.getFinancialDocumentTypeCode().toUpperCase() + ",")) {
-                                String key = tempEntry.getTransactionLedgerEntryAmount()+"-"+tempEntry.getUniversityFiscalYear() + "_" + tempEntry.getChartOfAccountsCode() + "_" + tempEntry.getAccountNumber() + "_" + tempEntry.getFinancialObjectCode() + "_" + tempEntry.getUniversityFiscalPeriodCode();
+                            	String debitCreditCode = benefitEntry.getTransactionDebitCreditCode();
+                                String key = tempEntry.getTransactionLedgerEntryAmount()+"-"+debitCreditCode+"-"+tempEntry.getUniversityFiscalYear() + "_" + tempEntry.getChartOfAccountsCode() + "_" + tempEntry.getAccountNumber() + "_" + tempEntry.getFinancialObjectCode() + "_" + tempEntry.getUniversityFiscalPeriodCode();
                                 if(!salaryBenefitOffsets.containsKey(key)) {
                                     entries = new ArrayList<LaborOriginEntry>();
                                     salaryBenefitOffsets.put(key, entries);
@@ -208,6 +210,8 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                 //If the LABOR_BENEFIT_CALCULATION_OFFSET system parameter is set to 'Y'
                 //and the LABOR_BENEFIT_OFFSET_DOCTYPE system parameter is not empty
                 //then create the salary benefit offset entries
+                KualiDecimal totalBenefitValue = new KualiDecimal(0);
+                
                 if(!offsetParmValue.equalsIgnoreCase("n") && offsetDocTypes != null) {
 //                    for(List<LaborOriginEntry> entryList : salaryBenefitOffsets.values()) {
                 	  Iterator iter = salaryBenefitOffsets.keySet().iterator();
@@ -217,6 +221,8 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                         if(entryList != null && entryList.size() > 0) {
                             LaborOriginEntry offsetEntry = new LaborOriginEntry();
                             KualiDecimal total = new KualiDecimal(0);
+                            KualiDecimal totalOffset = new KualiDecimal(0);
+
                             String offsetAccount = "";
                             String offsetObjectCode = "";
                             
@@ -232,7 +238,9 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                                     total = total.subtract(entry.getTransactionLedgerEntryAmount());
                                 }
                             }
-                           // System.out.println("Benefit Rows ="+ i);
+                            totalBenefitValue = totalBenefitValue.add(total);
+                            
+                            System.out.println("Benefit value ="+total+":" +totalBenefitValue);
                             
                             //No need to process for the salary benefit offset if the total is 0
                             if(!total.equals(new KualiDecimal(0))) {
@@ -283,6 +291,8 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                                         
                                         StringTokenizer ST = new StringTokenizer(key,"-");
                                         String amount = ST.nextToken();
+                                        String debitCreditCode = ST.nextToken();
+                                        
                                         KualiDecimal  salaryAmount = new KualiDecimal(Double.parseDouble(amount));
                                         double  benefitPercentage = benefitsCalculation.getPositionFringeBenefitPercent().doubleValue();
                                         double offsetAmount  = (salaryAmount.doubleValue() * benefitPercentage) /100.0;
@@ -291,15 +301,19 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                                         if(kd.equals(new KualiDecimal(0))) continue; 
                                         	
                                         offsetEntry.setTransactionLedgerEntryAmount(kd.abs());
-                                        
-//                                        offsetEntry.setTransactionLedgerEntryAmount(total.abs());
+                                        totalOffset.add(kd);
+//                                        offsetEntry.setTransactionLedgerEnkdtryAmount(total.abs());
                                         
                                         //Credit if the total is positive and Debit of the total is negative
+                                        /*
                                         if(kd.isGreaterThan(new KualiDecimal(0))) {
                                             offsetEntry.setTransactionDebitCreditCode("C");
                                         } else if(kd.isLessThan(new KualiDecimal(0))) {
                                             offsetEntry.setTransactionDebitCreditCode("D");
                                         }
+                                        */
+                                        offsetEntry.setTransactionDebitCreditCode(debitCreditCode);
+                                        
                                         
                                         //Set the doc type to the value in the LABOR_BENEFIT_OFFSET_DOCTYPE system parameter (the first value if there is a list)
                                         String docTypeCode = offsetDocTypes;
@@ -361,6 +375,7 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                 
                 dataFileReader.close();
                 dataFileReader = null;
+                LOG.info("TotalBenifits : " + totalBenefitValue);
 
                 statusAndErrors.setStatus(new FileReconOkLoadOkStatus());
             }
