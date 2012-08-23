@@ -159,9 +159,10 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                 if(StringUtils.isNotEmpty(getParameterService().getParameterValue(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_DOCTYPE))) {
                     offsetDocTypes = "," + getParameterService().getParameterValue(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_DOCTYPE).replace(";", ",").replace("|", ",") + ",";
                 }
-                
+                int recCount=0;
                 while ((line = dataFileReader.readLine()) != null) {
                     try {
+                    	recCount++;
                         LaborOriginEntry tempEntry = new LaborOriginEntry();
                         tempEntry.setFromTextFileForBatch(line, count);
                         
@@ -175,6 +176,7 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                         feederReportData.addToTotalAmountWritten(tempEntry.getTransactionLedgerEntryAmount());
                         
                         List<LaborOriginEntry> benefitEntries = generateBenefits(tempEntry, errorStatisticsReport, feederReportData);
+                        int processedRecod = -1;
                         for(LaborOriginEntry benefitEntry : benefitEntries) {
                             enterpriseFeedPs.printf("%s\n", benefitEntry.getLine());
                             
@@ -189,6 +191,8 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                             if(!offsetParmValue.equalsIgnoreCase("n") && offsetDocTypes != null && offsetDocTypes.toUpperCase().contains("," + tempEntry.getFinancialDocumentTypeCode().toUpperCase() + ",")) {
                             	String debitCreditCode = benefitEntry.getTransactionDebitCreditCode();
                                 String key = tempEntry.getUniversityFiscalYear() + "_" + tempEntry.getChartOfAccountsCode() + "_" + tempEntry.getAccountNumber() + "_" + tempEntry.getFinancialObjectCode() + "_" + tempEntry.getUniversityFiscalPeriodCode();
+                               
+                                
                                 if(!salaryBenefitOffsets.containsKey(key)) {
                                     entries = new ArrayList<LaborOriginEntry>();
                                 	Hashtable h = new Hashtable();
@@ -196,13 +200,18 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                                 	h.put("bene_amount",benefitEntry.getTransactionLedgerEntryAmount());
                                 	h.put("benefits", entries);
                                     salaryBenefitOffsets.put(key, h);
+                                    processedRecod=recCount;
                                 } else {
-                                    //entries = 
+                                	
                                     Hashtable h = salaryBenefitOffsets.get(key);
                                     KualiDecimal kd = (KualiDecimal)h.get("sal_amount");
                                     KualiDecimal bkd = (KualiDecimal)h.get("bene_amount");
-                                    
-                                    kd = kd.add(tempEntry.getTransactionLedgerEntryAmount());
+                                    if(processedRecod==recCount){
+                                    	//do nothing if we have already added salary to the hashtable
+                                    }
+                                    else{
+                                    	kd = kd.add(tempEntry.getTransactionLedgerEntryAmount());
+                                    }
                                     bkd= bkd.add(benefitEntry.getTransactionLedgerEntryAmount());
                                     entries = (ArrayList<LaborOriginEntry>)h.get("benefits");
                                 	h.put("bene_amount",bkd);
@@ -210,6 +219,7 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                                 	h.put("benefits", entries);
                                    
                                     salaryBenefitOffsets.put(key, h);
+                                    processedRecod=recCount;
                                 }
                                 benefitEntry.setFinancialObjectCode(tempEntry.getFinancialObjectCode());
                                 benefitEntry.setAccountNumber(tempEntry.getAccountNumber());
@@ -315,29 +325,17 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                                         offsetEntry.setFinancialSystemOriginationCode("RN");
                                         offsetEntry.setDocumentNumber(dateTimeService.toString(dateTimeService.getCurrentDate(), "yyyyMMddhhmmssSSS"));
                                         
-                                       // double  benefitPercentage = benefitsCalculation.getPositionFringeBenefitPercent().doubleValue();
-                                       // KualiDecimal  offsetAmount  = (salaryAmount.multiply(new KualiDecimal(benefitPercentage)).divide(new KualiDecimal(100)));
                                         KualiDecimal fringeBenefitPercent = benefitsCalculation.getPositionFringeBenefitPercent();
                                         
                                         KualiDecimal  offsetAmount  = fringeBenefitPercent.multiply(salaryAmount).divide(KFSConstants.ONE_HUNDRED.kualiDecimalValue());
                                       
-                                     // calculate the benefit amount (ledger amt * (benfit pct/100) )
-                                        /*
-                            			KualiDecimal fringeBenefitPercent = benefitsCalculation.getPositionFringeBenefitPercent();
-                            			KualiDecimal fringeBenefitAmount = fringeBenefitPercent.multiply(
-                            					wageEntry.getTransactionLedgerEntryAmount()).divide(KFSConstants.ONE_HUNDRED.kualiDecimalValue());
-                                        */
-                                        //double offsetAmount  = (salaryAmount.doubleValue() * benefitPercentage) /100.0;
                                         KualiDecimal kd  =offsetAmount;
-                                        //Only + signed amounts
                                         if(kd.equals(new KualiDecimal(0))) continue; 
                                         	
                                         offsetEntry.setTransactionLedgerEntryAmount(kd.abs());
                                         totalOffset = totalOffset.add(kd);
-          //                              System.out.println(totalOffset.subtract(beneAmount));
-            //                            System.out.println(beneAmount.subtract(totalOffset) );
                                         
-                                        
+                                        //compensate for the fractional rounding errors
                                         if(totalOffset.subtract(beneAmount).toString().equals("0.01")) {
                                         	offsetEntry.setTransactionLedgerEntryAmount(kd.add(new KualiDecimal("-0.01")).abs());
                                         	totalOffset = totalOffset.add(new KualiDecimal("-0.01"));
@@ -347,8 +345,6 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                                         	totalOffset = totalOffset.add(new KualiDecimal("0.01"));
                                         }
                                         	
-//                                        offsetEntry.setTransactionLedgerEnkdtryAmount(total.abs());
-                                        
                                         //Credit if the total is positive and Debit of the total is negative
                                         
                                         if(kd.isGreaterThan(new KualiDecimal(0))) {
@@ -357,10 +353,6 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                                             offsetEntry.setTransactionDebitCreditCode("D");
                                         }
                                         
-                                        //offsetEntry.setTransactionDebitCreditCode(debitCreditCode);
-                                        
-                                        
-                                        //Set the doc type to the value in the LABOR_BENEFIT_OFFSET_DOCTYPE system parameter (the first value if there is a list)
                                         String docTypeCode = offsetDocTypes;
                                         if (offsetDocTypes.contains(",")) {
                                             String[] splits = offsetDocTypes.split(",");
