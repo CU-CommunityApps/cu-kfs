@@ -49,13 +49,7 @@ public class DisbursementVoucherAccountingLineAuthorizer extends AccountingLineA
     @Override
     public boolean determineEditPermissionOnField(AccountingDocument accountingDocument, AccountingLine accountingLine, String accountingLineCollectionProperty, String fieldName, boolean editablePage) {
         boolean canModify = super.determineEditPermissionOnField(accountingDocument, accountingLine, accountingLineCollectionProperty, fieldName, editablePage);
-        final KualiWorkflowDocument workflowDocument = accountingDocument.getDocumentHeader().getWorkflowDocument();
-        String currentRouteLevels = workflowDocument.getCurrentRouteNodeNames();
-        if (currentRouteLevels.contains(DisbursementVoucherConstants.RouteLevelNames.ACCOUNT)) {
-            if (StringUtils.equals(fieldName, getAmountPropertyName())) {  //FO? 
-                canModify = false;
-            }
-        }        
+        
         return canModify;
     }
 
