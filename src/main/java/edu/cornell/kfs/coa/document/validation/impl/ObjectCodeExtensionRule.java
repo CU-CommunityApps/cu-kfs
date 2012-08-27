@@ -38,9 +38,10 @@ public class ObjectCodeExtensionRule extends ObjectCodeRule{
 	protected boolean checkContractGrantReportingCode(ObjectCode objectCode) {
 		boolean success = true;
 			
+		
 		ObjectCodeExtendedAttribute extendedAttributes = (ObjectCodeExtendedAttribute)objectCode.getExtension();
 		String cgReportingCode = extendedAttributes.getCgReportingCode();		
-		String chartOfAccountsCode = extendedAttributes.getChartOfAccountsCode();
+		String chartOfAccountsCode = objectCode.getChartOfAccountsCode();
 		
 		if ((!StringUtils.isBlank(cgReportingCode)) && (!StringUtils.isBlank(cgReportingCode))) {
             //have values for both table primary keys	
