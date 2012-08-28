@@ -2,6 +2,7 @@ package edu.cornell.kfs.sys.batch;
 
 import java.io.File;
 
+import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileTypeBase;
 import org.kuali.kfs.sys.exception.ParseException;
 
@@ -35,12 +36,12 @@ public class DocumentRequeuerFlatFileInputType extends BatchInputFileTypeBase {
 
 	public String getAuthorPrincipalName(File file) {
 		// TODO Auto-generated method stub
-		return null;
+        return "";
 	}
 
 	public String getTitleKey() {
 		// TODO Auto-generated method stub
-		return null;
+		return KFSKeyConstants.MESSAGE_BATCH_UPLOAD_TITLE_REQUEUER_FLAT_FILE;
 	}
 	
 	
