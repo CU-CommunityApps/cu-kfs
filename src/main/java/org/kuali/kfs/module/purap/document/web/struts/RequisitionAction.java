@@ -31,12 +31,14 @@ import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.util.RiceConstants;
 import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.PersistenceService;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
+import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
 /**
  * Struts Action for Requisition document.
@@ -171,4 +173,38 @@ public class RequisitionAction extends PurchasingActionBase {
         document.setBlanketApproveRequest(true);
         return super.blanketApprove(mapping, form, request, response);
     }
+ 
+    
+    /**
+     * Overridden to guarantee that form of copied document is set to whatever the entry mode of the document is
+     * @see org.kuali.rice.kns.web.struts.action.KualiTransactionalDocumentActionBase#copy(org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    @Override
+    public ActionForward copy(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	ActionForward forward = null;
+    	
+    	if(request.getParameter("docId") == null){
+    	    forward = super.copy(mapping, form, request, response);
+    	}
+    	else{
+			// this is copy document from Procurement Gateway:
+		    // use this url to call: http://localhost:8080/kfs-dev/purapRequisition.do?methodToCall=copy&docId=xxxx
+	       String docId = request.getParameter("docId");
+	       KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+    	       
+	       RequisitionDocument document = null;
+	       document = (RequisitionDocument)getDocumentService().getByDocumentHeaderId(docId);
+	       document.toCopyFromGateway();
+   	       
+	       kualiDocumentFormBase.setDocument(document);
+	       KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+	       kualiDocumentFormBase.setDocTypeName(workflowDocument.getDocumentType());
+	       GlobalVariables.getUserSession().setWorkflowDocument(workflowDocument);
+    	        
+	       forward = mapping.findForward(RiceConstants.MAPPING_BASIC);	
+    	    
+    	}
+        return forward;
+    }
+    
 }
