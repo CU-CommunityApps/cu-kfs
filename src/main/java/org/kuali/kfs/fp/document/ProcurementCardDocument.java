@@ -276,9 +276,9 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
         line.setSequenceNumber(this.getNextSourceLineNumber());
 
         for (ProcurementCardTransactionDetail transactionEntry : transactionEntries) {
-            if (transactionEntry.getFinancialDocumentTransactionLineNumber().equals(line.getFinancialDocumentTransactionLineNumber())) {
+    //        if (transactionEntry.getFinancialDocumentTransactionLineNumber().equals(line.getFinancialDocumentTransactionLineNumber())) {
                 transactionEntry.getSourceAccountingLines().add(line);
-            }
+      //      }
         }
 
         this.nextSourceLineNumber = new Integer(this.getNextSourceLineNumber().intValue() + 1);
@@ -293,12 +293,21 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
     public void addTargetAccountingLine(TargetAccountingLine targetLine) {
         ProcurementCardTargetAccountingLine line = (ProcurementCardTargetAccountingLine) targetLine;
 
-        line.setSequenceNumber(this.getNextTargetLineNumber());
+        // if the line number is null, this means that it is coming from an import, as requested, remove the default line.
+//        if (line.getFinancialDocumentTransactionLineNumber() == null) {
+//        	removeTargetAccountingLine(0);
+//        }
+        
+        Integer lineNumber = this.getNextTargetLineNumber();
+        
+        line.setSequenceNumber(lineNumber);
+        line.setFinancialDocumentTransactionLineNumber(lineNumber);
 
         for (ProcurementCardTransactionDetail transactionEntry : transactionEntries) {
-            if (transactionEntry.getFinancialDocumentTransactionLineNumber().equals(line.getFinancialDocumentTransactionLineNumber())) {
+        	// We do one transaction per document, so this check is not needed.
+            //if (transactionEntry.getFinancialDocumentTransactionLineNumber().equals(line.getFinancialDocumentTransactionLineNumber())) {
                 transactionEntry.getTargetAccountingLines().add(line);
-            }
+            //}
         }
 
         this.nextTargetLineNumber = new Integer(this.getNextTargetLineNumber().intValue() + 1);
