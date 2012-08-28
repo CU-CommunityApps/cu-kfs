@@ -429,6 +429,125 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
         this.refreshNonUpdateableReferences();
     }
     
+   
+    
+    /**
+     * toCopyFromGateway
+     */
+    
+    public void toCopyFromGateway() throws WorkflowException, ValidationException {
+       //no validation for the KFS copy requisition rules:
+       //  if (!this.getAllowsCopy()) {
+       //      throw new IllegalStateException(this.getClass().getName() + " does not support document-level copying");
+       // }
+       
+    	String sourceDocumentHeaderId = getDocumentNumber();
+        setNewDocumentHeader();
+        
+        getDocumentBusinessObject().getBoNotes();
+        
+        getDocumentHeader().setDocumentTemplateNumber(sourceDocumentHeaderId);
+
+        addCopyErrorDocumentNote("copied from document " + sourceDocumentHeaderId);   
+        
+       //--- LedgerPostingDocumentBase:
+        setAccountingPeriod(retrieveCurrentAccountingPeriod());
+        //--GeneralLedgerPostingDocumentBase:
+        getGeneralLedgerPendingEntries().clear();
+        //--AccountingDocumentBase:
+        copyAccountingLines(false);
+        updatePostingYearForAccountingLines(getSourceAccountingLines());
+        updatePostingYearForAccountingLines(getTargetAccountingLines());
+        
+        //--RequisitionDocument:
+        
+        // Clear related views
+        this.setAccountsPayablePurchasingDocumentLinkIdentifier(null);
+        this.setRelatedViews(null);
+        
+        Person currentUser = GlobalVariables.getUserSession().getPerson();
+        ChartOrgHolder purapChartOrg = SpringContext.getBean(FinancialSystemUserService.class).getPrimaryOrganization(currentUser, PurapConstants.PURAP_NAMESPACE);
+        this.setPurapDocumentIdentifier(null);
+
+        // Set req status to INPR.
+        this.setStatusCode(PurapConstants.RequisitionStatuses.IN_PROCESS);
+
+        // Set fields from the user.
+        if (ObjectUtils.isNotNull(purapChartOrg)) {
+        this.setChartOfAccountsCode(purapChartOrg.getChartOfAccountsCode());
+        this.setOrganizationCode(purapChartOrg.getOrganizationCode());
+        }
+        this.setPostingYear(SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear());
+
+        boolean activeVendor = true;
+        boolean activeContract = true;
+        Date today = SpringContext.getBean(DateTimeService.class).getCurrentDate();
+        VendorContract vendorContract = new VendorContract();
+        vendorContract.setVendorContractGeneratedIdentifier(this.getVendorContractGeneratedIdentifier());
+        Map keys = SpringContext.getBean(PersistenceService.class).getPrimaryKeyFieldValues(vendorContract);
+        vendorContract = (VendorContract) SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(VendorContract.class, keys);
+        if (!(vendorContract != null && today.after(vendorContract.getVendorContractBeginningDate()) && today.before(vendorContract.getVendorContractEndDate()))) {
+            activeContract = false;
+        }
+
+        VendorDetail vendorDetail = SpringContext.getBean(VendorService.class).getVendorDetail(this.getVendorHeaderGeneratedIdentifier(), this.getVendorDetailAssignedIdentifier());
+        if (!(vendorDetail != null && vendorDetail.isActiveIndicator())) {
+            activeVendor = false;
+        }
+
+        //KFSPTS-916 : need vendor address key for business rules and only way to get it is to retrieve the default PO address for the vendor.
+        if (vendorDetail != null) {        	
+        	VendorAddress vendorAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(this.getVendorHeaderGeneratedIdentifier(), this.getVendorDetailAssignedIdentifier(), VendorConstants.AddressTypes.PURCHASE_ORDER, "");
+        	if (vendorAddress != null) {
+        		super.templateVendorAddress(vendorAddress);   
+        	}
+        }
+
+        // B2B - only copy if contract and vendor are both active (throw separate errors to print to screen)
+        if (this.getRequisitionSourceCode().equals(PurapConstants.RequisitionSources.B2B)) {
+            if (!activeContract) {
+              //--  throw new ValidationException(PurapKeyConstants.ERROR_REQ_COPY_EXPIRED_CONTRACT);
+            }
+            if (!activeVendor) {
+               //-- throw new ValidationException(PurapKeyConstants.ERROR_REQ_COPY_INACTIVE_VENDOR);
+            }
+        }
+
+        if (!activeVendor) {
+            this.setVendorContractGeneratedIdentifier(null);
+        }
+        if (!activeContract) {
+            this.setVendorContractGeneratedIdentifier(null);
+        }
+
+        // These fields should not be set in this method; force to be null
+        this.setOrganizationAutomaticPurchaseOrderLimit(null);
+        this.setPurchaseOrderAutomaticIndicator(false);
+
+        // Fill the BO Notes with an empty List.
+        this.setBoNotes(new ArrayList());
+
+        for (Iterator iter = this.getItems().iterator(); iter.hasNext();) {
+            RequisitionItem item = (RequisitionItem) iter.next();
+            item.setPurapDocumentIdentifier(null);
+            item.setItemIdentifier(null);
+            for (Iterator acctIter = item.getSourceAccountingLines().iterator(); acctIter.hasNext();) {
+                RequisitionAccount account = (RequisitionAccount) acctIter.next();
+                account.setAccountIdentifier(null);
+                account.setItemIdentifier(null);
+            }
+        }
+
+        if (!PurapConstants.RequisitionSources.B2B.equals(this.getRequisitionSourceCode())) {
+            SpringContext.getBean(PurapService.class).addBelowLineItems(this);
+        }
+        this.setOrganizationAutomaticPurchaseOrderLimit(SpringContext.getBean(PurapService.class).getApoLimit(this.getVendorContractGeneratedIdentifier(), this.getChartOfAccountsCode(), this.getOrganizationCode()));
+        clearCapitalAssetFields();
+        SpringContext.getBean(PurapService.class).clearTax(this, this.isUseTaxIndicator());
+        
+        this.refreshNonUpdateableReferences();
+    }
+    
     /**
      * Updates status of this document and saves it.
      * 
@@ -484,7 +603,7 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
                         return;
                     }
                 }
-                logAndThrowRuntimeException("No status found to set for document being disapproved in node '" + nodeName + "'");
+              //--  logAndThrowRuntimeException("No status found to set for document being disapproved in node '" + nodeName + "'");
             }
             // DOCUMENT CANCELED
             else if (this.getDocumentHeader().getWorkflowDocument().stateIsCanceled()) {
@@ -492,7 +611,7 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
             }
         }
         catch (WorkflowException e) {
-            logAndThrowRuntimeException("Error saving routing data while saving document with id " + getDocumentNumber(), e);
+          //--  logAndThrowRuntimeException("Error saving routing data while saving document with id " + getDocumentNumber(), e);
         }
         LOG.debug("doRouteStatusChange() ending");
     }
