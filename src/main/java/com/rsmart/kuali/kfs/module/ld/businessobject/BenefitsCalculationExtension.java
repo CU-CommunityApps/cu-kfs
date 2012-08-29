@@ -26,6 +26,7 @@ public class BenefitsCalculationExtension extends PersistableBusinessObjectExten
     private String positionBenefitTypeCode;
     private String laborBenefitRateCategoryCode;
     
+    
     public BenefitsCalculationExtension() {
         
     }

@@ -26,6 +26,7 @@ public class BenefitsCalculation extends org.kuali.kfs.module.ld.businessobject.
     /**
      * Gets the laborAccountOffset attribute. 
      * @return Returns the laborAccountOffset.
+     * 
      */
     public Account getLaborAccountOffset() {
         return laborAccountOffset;
