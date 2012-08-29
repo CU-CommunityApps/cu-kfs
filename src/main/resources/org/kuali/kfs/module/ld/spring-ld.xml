@@ -1717,7 +1717,9 @@
 
 
 	
-	<bean id="laborOriginEntryEnterpriseFeederHelperService" class="com.rsmart.kuali.kfs.module.ld.batch.service.impl.FileEnterpriseFeederHelperServiceImpl">
+	<bean id="laborOriginEntryEnterpriseFeederHelperService" class="org.kuali.kfs.module.ld.batch.service.impl.FileEnterpriseFeederOffsetHelperServiceImpl">
+    
+    
         <property name="originEntryService">
             <ref bean="originEntryService" />
         </property>
