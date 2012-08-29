@@ -266,7 +266,7 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                     }
                     
                     count++;
-                    LOG.info("Processed Entry "+ count);
+                    LOG.info("Processed Entry # "+ count);
                 }
                 
                 
