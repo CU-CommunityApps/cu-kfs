@@ -70,7 +70,7 @@
 
 
   <bean id="BenefitsCalculation-inquiryDefinition" parent="BenefitsCalculation-inquiryDefinition-parentBean">
-    <property name="presentationControllerClass" value="com.rsmart.kuali.kfs.module.ld.document.authorization.BenefitsCalculationMaintenanceDocumentPresentationController" />
+    <property name="presentationControllerClass" value="org.kuali.kfs.module.ld.document.authorization.BenefitsCalculationMaintenanceDocumentPresentationController" />
     <property name="inquirySections">
       <list>
         <bean parent="InquirySectionDefinition">
