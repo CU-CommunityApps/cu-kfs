@@ -248,63 +248,14 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                             
                             if(benefitEntry.getTransactionLedgerEntryAmount().isZero()) continue;
                             benefitTotal = benefitTotal.add(benefitEntry.getTransactionLedgerEntryAmount());
-                           
-                            List<LaborOriginEntry> offsetEntries =  generateOffsets(tempEntry,offsetDocTypes);
-                            for(LaborOriginEntry offsetEntry : offsetEntries){
-                            	enterpriseFeedPs.printf("%s\n", offsetEntry.getLine());	
-                                offsetTotal = offsetTotal.add(offsetEntry.getTransactionLedgerEntryAmount());
-                            	
-                            }
-                            
-                            //If the LABOR_BENEFIT_CALCULATION_OFFSET system parameter is set to 'Y'
-                            //and the LABOR_BENEFIT_OFFSET_DOCTYPE system parameter is not empty
-                            //and the document type is in the LABOR_BENEFIT_OFFSET_DOCTYPE system parameter then
-                            //group together the benefit entries for the salary benefit offset calculation
-                            
-                            // Group the benefits for Offset Calc  Start
-                        /*    
-                            if(!offsetParmValue.equalsIgnoreCase("n") && offsetDocTypes != null && offsetDocTypes.toUpperCase().contains("," + tempEntry.getFinancialDocumentTypeCode().toUpperCase() + ",")) {
-                            	String debitCreditCode = benefitEntry.getTransactionDebitCreditCode();
-                                String key = tempEntry.getUniversityFiscalYear() + "_" + tempEntry.getChartOfAccountsCode() + "_" + tempEntry.getAccountNumber() + "_" + tempEntry.getFinancialObjectCode() + "_" + tempEntry.getUniversityFiscalPeriodCode();
-                               
-                                
-                                if(!salaryBenefitOffsets.containsKey(key)) {
-                                    entries = new ArrayList<LaborOriginEntry>();
-                                	Hashtable h = new Hashtable();
-                                	h.put("sal_amount", tempEntry.getTransactionLedgerEntryAmount());
-                                	h.put("bene_amount",benefitEntry.getTransactionLedgerEntryAmount());
-                                	h.put("benefits", entries);
-                                    salaryBenefitOffsets.put(key, h);
-                                    processedRecod=recCount;
-                                } else {
-                                	
-                                    Hashtable h = salaryBenefitOffsets.get(key);
-                                    KualiDecimal kd = (KualiDecimal)h.get("sal_amount");
-                                    KualiDecimal bkd = (KualiDecimal)h.get("bene_amount");
-                                    if(processedRecod==recCount){
-                                    	//do nothing if we have already added salary to the hashtable
-                                    }
-                                    else{
-                                    	kd = kd.add(tempEntry.getTransactionLedgerEntryAmount());
-                                    }
-                                    bkd= bkd.add(benefitEntry.getTransactionLedgerEntryAmount());
-                                    entries = (ArrayList<LaborOriginEntry>)h.get("benefits");
-                                	h.put("bene_amount",bkd);
-                                    h.put("sal_amount", kd);
-                                	h.put("benefits", entries);
-                                   
-                                    salaryBenefitOffsets.put(key, h);
-                                    processedRecod=recCount;
-                                }
-                                benefitEntry.setFinancialObjectCode(tempEntry.getFinancialObjectCode());
-                                benefitEntry.setAccountNumber(tempEntry.getAccountNumber());
-                                benefitEntry.setChartOfAccountsCode(tempEntry.getChartOfAccountsCode());
-                                benefitEntry.setUniversityFiscalYear(tempEntry.getUniversityFiscalYear());
-                                benefitEntry.setUniversityFiscalPeriodCode(tempEntry.getUniversityFiscalPeriodCode());
-                                entries.add(benefitEntry);
-                            }// End Group benefits
-                            */ 
-                        }                
+                        }
+                        
+                        List<LaborOriginEntry> offsetEntries =  generateOffsets(tempEntry,offsetDocTypes);
+                        for(LaborOriginEntry offsetEntry : offsetEntries){
+                        	enterpriseFeedPs.printf("%s\n", offsetEntry.getLine());	
+                            offsetTotal = offsetTotal.add(offsetEntry.getTransactionLedgerEntryAmount());                        	
+                        }
+
 
                         if(!benefitTotal.equals(offsetTotal)){
                         	LOG.info("** count:offsetTotal: benefitTotal="+count +":"+ offsetTotal+""+benefitTotal);
@@ -319,137 +270,6 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
                 }
                 
                 
-                //If the LABOR_BENEFIT_CALCULATION_OFFSET system parameter is set to 'Y'
-                //and the LABOR_BENEFIT_OFFSET_DOCTYPE system parameter is not empty
-                //then create the salary benefit offset entries
-//                KualiDecimal totalBenefitValue = new KualiDecimal(0);
-                /*
-                if(!offsetParmValue.equalsIgnoreCase("n") && offsetDocTypes != null) {  // START OFFSET
-//                    for(List<LaborOriginEntry> entryList : salaryBenefitOffsets.values()) {
-                	  Iterator iter = salaryBenefitOffsets.keySet().iterator();
-                	  while(iter.hasNext()){
-                		  String key = (String)iter.next();
-                		//List<LaborOriginEntry> entryList = salaryBenefitOffsets.get(key);
-                  		Hashtable h  = salaryBenefitOffsets.get(key);
-                  		KualiDecimal salaryAmount = (KualiDecimal)h.get("sal_amount");
-                  		KualiDecimal beneAmount =  (KualiDecimal)h.get("bene_amount");
-                  		List<LaborOriginEntry> entryList = (ArrayList<LaborOriginEntry>)h.get("benefits");
-                		  
-                        if(entryList != null && entryList.size() > 0) {
-                            LaborOriginEntry offsetEntry = new LaborOriginEntry();
-                            KualiDecimal total = new KualiDecimal(0);
-                            KualiDecimal totalOffset = new KualiDecimal(0);
-
-                            String offsetAccount = "";
-                            String offsetObjectCode = "";
-                            
-                            
-                            
-                            //Loop through all the benefit entries to calculate the total for the salary benefit offset entry
-                            int i = 0;
-                            for(LaborOriginEntry entry : entryList) {
-                            	i++;
-                                if(entry.getTransactionDebitCreditCode().equalsIgnoreCase("D")) {
-                                    total = total.add(entry.getTransactionLedgerEntryAmount());
-                                } else {
-                                    total = total.subtract(entry.getTransactionLedgerEntryAmount());
-                                }
-                            }
-                            totalBenefitValue = totalBenefitValue.add(total);
-                            
-                           // System.out.println("Benefit value ="+total+":" +totalBenefitValue);
-                            
-                            //No need to process for the salary benefit offset if the total is 0
-                            if(!total.equals(new KualiDecimal(0))) {
-                                
-                                //Lookup the position object benefit to get the object benefit type code
-                                Collection<PositionObjectBenefit> positionObjectBenefits = getLaborPositionObjectBenefitService().getPositionObjectBenefits(entryList.get(0).getUniversityFiscalYear(), entryList.get(0).getChartOfAccountsCode(), entryList.get(0).getFinancialObjectCode());
-                                LaborOriginEntry entry = entryList.get(0);
-                                if (positionObjectBenefits == null || positionObjectBenefits.isEmpty()) {
-                                    writeMissingBenefitsTypeError(entry, errorStatisticsReport, feederReportData);
-                                } else {
-                                	
-                                    for (PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
-                                        Map<String, Object> fieldValues = new HashMap<String, Object>();
-                                        fieldValues.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, entry.getUniversityFiscalYear());
-                                        fieldValues.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, entry.getChartOfAccountsCode());
-                                        fieldValues.put(LaborPropertyConstants.POSITION_BENEFIT_TYPE_CODE, positionObjectBenefit.getFinancialObjectBenefitsTypeCode());
-                                        entry.refreshReferenceObject("account");
-
-                                        // Cornell Code replaces the original code below
-                                        edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute accountExtAttribute  = (edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute ) entry.getAccount().getExtension();
-                                        fieldValues.put(LaborPropertyConstants.LABOR_BENEFIT_RATE_CATEGORY_CODE, accountExtAttribute.getLaborBenefitRateCategoryCode()); 
-
-                                        //original code by rSmart
-                                    //fieldValues.put(LaborPropertyConstants.LABOR_BENEFIT_RATE_CATEGORY_CODE, entry.getAccount().getLaborBenefitRateCategoryCode());  VRK4
-    
-                                        //Lookup the benefit calculation to get the offset account number and object code
-                                        com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation benefitsCalculation = (com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation) getBusinessObjectService().findByPrimaryKey(com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation.class, fieldValues);
-                                        
-                                        BenefitsCalculationExtension extension = (BenefitsCalculationExtension) benefitsCalculation.getExtension();
-                                        
-                                        offsetEntry.setAccountNumber(extension.getAccountCodeOffset());
-                                        offsetEntry.setFinancialObjectCode(extension.getObjectCodeOffset());
-                                        
-                                        //Set all the fields required to process through the scrubber and poster jobs
-                                        offsetEntry.setUniversityFiscalPeriodCode(entry.getUniversityFiscalPeriodCode());
-                                        offsetEntry.setChartOfAccountsCode(entry.getChartOfAccountsCode());
-                                        offsetEntry.setUniversityFiscalYear(entry.getUniversityFiscalYear());
-                                        offsetEntry.setTransactionLedgerEntryDescription("GENERATED BENEFIT OFFSET");
-                                        offsetEntry.setFinancialSystemOriginationCode("RN");
-                                        offsetEntry.setDocumentNumber(dateTimeService.toString(dateTimeService.getCurrentDate(), "yyyyMMddhhmmssSSS"));
-                                        
-                                        KualiDecimal fringeBenefitPercent = benefitsCalculation.getPositionFringeBenefitPercent();
-                                        
-                                        KualiDecimal  offsetAmount  = fringeBenefitPercent.multiply(salaryAmount).divide(KFSConstants.ONE_HUNDRED.kualiDecimalValue());
-                                      
-                                        KualiDecimal kd  =offsetAmount;
-                                        if(kd.equals(new KualiDecimal(0))) continue; 
-                                        	
-                                        offsetEntry.setTransactionLedgerEntryAmount(kd.abs());
-                                        totalOffset = totalOffset.add(kd);
-                                        
-                                        //compensate for the fractional rounding errors
-                                        if(totalOffset.subtract(beneAmount).toString().equals("0.01")) {
-                                        	offsetEntry.setTransactionLedgerEntryAmount(kd.add(new KualiDecimal("-0.01")).abs());
-                                        	totalOffset = totalOffset.add(new KualiDecimal("-0.01"));
-                                        }
-                                        else if(beneAmount.subtract(totalOffset).toString().equals("0.01")){
-                                        	offsetEntry.setTransactionLedgerEntryAmount(kd.add(new KualiDecimal("0.01")).abs());
-                                        	totalOffset = totalOffset.add(new KualiDecimal("0.01"));
-                                        }
-                                        	
-                                        //Credit if the total is positive and Debit of the total is negative
-                                        
-                                        if(kd.isGreaterThan(new KualiDecimal(0))) {
-                                            offsetEntry.setTransactionDebitCreditCode("C");
-                                        } else if(kd.isLessThan(new KualiDecimal(0))) {
-                                            offsetEntry.setTransactionDebitCreditCode("D");
-                                        }
-                                        
-                                        String docTypeCode = offsetDocTypes;
-                                        if (offsetDocTypes.contains(",")) {
-                                            String[] splits = offsetDocTypes.split(",");
-                                            for(String split : splits) {
-                                                if(!StringUtils.isEmpty(split)) {
-                                                    docTypeCode = split;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                        offsetEntry.setFinancialDocumentTypeCode(docTypeCode);
-                                        
-                                        //Write the offset entry to the file
-                                        enterpriseFeedPs.printf("%s\n", offsetEntry.getLine());
-
-                                    }
-                                    if(!total.equals(totalOffset)) LOG.info("Totals Didn't match  : " + total + ":" +totalOffset +":"+ key);
-                                }
-                            }
-                        }
-                    }
-                }// END OFFSET
-                */
                 dataFileReader.close();
                 dataFileReader = null;
              //   LOG.info("TotalBenifits : " + totalBenefitValue);
@@ -511,7 +331,8 @@ public class FileEnterpriseFeederHelperServiceImpl extends org.kuali.kfs.module.
             
             //entry.refreshReferenceObject("account");
 
-            com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation benefitsCalculation = (com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation) getBusinessObjectService().findByPrimaryKey(com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation.class, fieldValues);
+            //com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation benefitsCalculation = (com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation) getBusinessObjectService().findByPrimaryKey(com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation.class, fieldValues);
+            org.kuali.kfs.module.ld.businessobject.BenefitsCalculation benefitsCalculation = (org.kuali.kfs.module.ld.businessobject.BenefitsCalculation) getBusinessObjectService().findByPrimaryKey(com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation.class, fieldValues);
             
             BenefitsCalculationExtension extension = (BenefitsCalculationExtension) benefitsCalculation.getExtension();
 
