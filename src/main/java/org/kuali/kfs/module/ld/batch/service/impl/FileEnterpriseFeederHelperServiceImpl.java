@@ -72,8 +72,8 @@ public class FileEnterpriseFeederHelperServiceImpl implements FileEnterpriseFeed
     private ReconciliationService reconciliationService;
     private OriginEntryService originEntryService;
     private ParameterService parameterService;
-    private LaborPositionObjectBenefitService laborPositionObjectBenefitService;
-    private LaborBenefitsCalculationService laborBenefitsCalculationService;
+    protected LaborPositionObjectBenefitService laborPositionObjectBenefitService;
+    protected LaborBenefitsCalculationService laborBenefitsCalculationService;
     private BusinessObjectService businessObjectService;
     private KualiConfigurationService configurationService;
 
