@@ -350,7 +350,7 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
 			// calculate the offsetAmount amount (ledger amt * (benfit pct/100) )
 			KualiDecimal fringeBenefitPercent = benefitsCalculation.getPositionFringeBenefitPercent();
 			KualiDecimal offsetAmount = fringeBenefitPercent.multiply(
-					wageEntry.getTransactionLedgerEntryAmount()).divide(KFSConstants.ONE_HUNDRED.kualiDecimalValue());
+			wageEntry.getTransactionLedgerEntryAmount()).divide(KFSConstants.ONE_HUNDRED.kualiDecimalValue());
 			offsetEntry.setTransactionLedgerEntryAmount(offsetAmount.abs());
 			
 			
@@ -361,6 +361,8 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
             offsetEntry.setUniversityFiscalPeriodCode(wageEntry.getUniversityFiscalPeriodCode());
             offsetEntry.setChartOfAccountsCode(wageEntry.getChartOfAccountsCode());
             offsetEntry.setUniversityFiscalYear(wageEntry.getUniversityFiscalYear());
+            offsetEntry.setSubAccountNumber("-----");
+            offsetEntry.setFinancialSubObjectCode("---");
             offsetEntry.setTransactionLedgerEntryDescription("GENERATED BENEFIT OFFSET");
             offsetEntry.setFinancialSystemOriginationCode("RN");
             offsetEntry.setDocumentNumber(dateTimeService.toString(dateTimeService.getCurrentDate(), "yyyyMMddhhmmssSSS"));
