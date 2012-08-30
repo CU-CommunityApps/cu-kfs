@@ -246,7 +246,7 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
                             feederReportData.incrementNumberOfRecordsWritten();
                             feederReportData.addToTotalAmountWritten(benefitEntry.getTransactionLedgerEntryAmount());
                             
-                           if(benefitEntry.getTransactionLedgerEntryAmount().isZero()) continue;
+                           if(benefitEntry.getTransactionLedgerEntryAmount().isZero()) 		continue;
                            if(benefitEntry.getBalanceType().getFinancialBalanceTypeCode().equalsIgnoreCase("IE")) continue;
                             benefitTotal = benefitTotal.add(benefitEntry.getTransactionLedgerEntryAmount());
                         }
