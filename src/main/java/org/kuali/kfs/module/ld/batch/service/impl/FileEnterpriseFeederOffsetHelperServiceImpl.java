@@ -240,7 +240,6 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
                         KualiDecimal offsetTotal = new KualiDecimal (0);
                         
                         for(LaborOriginEntry benefitEntry : benefitEntries) {
-                        	benefitEntry.setTransactionLedgerEntryDescription("benefitRow");
                             enterpriseFeedPs.printf("%s\n", benefitEntry.getLine());
                             
                             feederReportData.incrementNumberOfRecordsWritten();
