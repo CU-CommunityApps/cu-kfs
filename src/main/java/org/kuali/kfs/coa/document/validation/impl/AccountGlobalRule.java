@@ -226,26 +226,17 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
             final String fiscalOfficerName = fiscalOfficer != null ? fiscalOfficer.getName() : newAccountGlobal.getAccountFiscalOfficerSystemIdentifier();
             super.putFieldError("accountFiscalOfficerUser.principalName", KFSKeyConstants.ERROR_USER_MISSING_PERMISSION, new String[] {fiscalOfficerName, KFSConstants.ParameterNamespaces.CHART, KFSConstants.PermissionNames.SERVE_AS_FISCAL_OFFICER});
 			success = false;
-        } else if (ObjectUtils.isNull(fiscalOfficer) || StringUtils.isBlank(fiscalOfficer.getPrincipalId())) {
-            super.putFieldError("accountFiscalOfficerUser.principalName", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_PRINCPAL_NAME_FISCAL_OFFICER_SUPER_INVALID);
-            success = false; 
-        }
+        } 
         if (!StringUtils.isBlank(newAccountGlobal.getAccountsSupervisorySystemsIdentifier()) && (ObjectUtils.isNull(accountSupervisor) || StringUtils.isBlank(accountSupervisor.getPrincipalId()) || !getDocumentHelperService().getDocumentAuthorizer(maintenanceDocument).isAuthorized(maintenanceDocument, KFSConstants.ParameterNamespaces.CHART, KFSConstants.PermissionNames.SERVE_AS_ACCOUNT_SUPERVISOR, accountSupervisor.getPrincipalId()))) {
             final String accountSupervisorName = accountSupervisor != null ? accountSupervisor.getName() : newAccountGlobal.getAccountsSupervisorySystemsIdentifier();
             super.putFieldError("accountSupervisoryUser.principalName", KFSKeyConstants.ERROR_USER_MISSING_PERMISSION, new String[] {accountSupervisorName, KFSConstants.ParameterNamespaces.CHART, KFSConstants.PermissionNames.SERVE_AS_ACCOUNT_SUPERVISOR});
 			success = false;
-        } else if (ObjectUtils.isNull(accountSupervisor) || StringUtils.isBlank(accountSupervisor.getPrincipalId())) {
-            super.putFieldError("accountSupervisoryUser.principalName", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_PRINCPAL_NAME_ACCOUNT_SUPER_INVALID);
-            success = false;
-        }
+        } 
         if (!StringUtils.isBlank(newAccountGlobal.getAccountManagerSystemIdentifier()) && (ObjectUtils.isNull(accountManager) || StringUtils.isBlank(accountManager.getPrincipalId()) || !getDocumentHelperService().getDocumentAuthorizer(maintenanceDocument).isAuthorized(maintenanceDocument, KFSConstants.ParameterNamespaces.CHART, KFSConstants.PermissionNames.SERVE_AS_ACCOUNT_MANAGER, accountManager.getPrincipalId()))) {
             final String accountManagerName = accountManager != null ? accountManager.getName() : newAccountGlobal.getAccountManagerSystemIdentifier();
             super.putFieldError("accountManagerUser.principalName", KFSKeyConstants.ERROR_USER_MISSING_PERMISSION, new String[] {accountManagerName, KFSConstants.ParameterNamespaces.CHART, KFSConstants.PermissionNames.SERVE_AS_ACCOUNT_MANAGER});
 			success = false;
-        } else if (ObjectUtils.isNull(accountManager) || StringUtils.isBlank(accountManager.getPrincipalId())) {
-            super.putFieldError("accountManagerUser.principalName", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_PRINCPAL_NAME_ACCOUNT_MANAGER_INVALID);
-            success = false;
-        }
+        } 
 
         // the supervisor cannot be the same as the fiscal officer or account manager.
         if (isSupervisorSameAsFiscalOfficer(newAccountGlobal)) {
@@ -275,14 +266,14 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
     }
     
     private boolean checkCfda(String accountCfdaNumber) {
-        boolean success = false;
+        boolean success = true;
         CFDA cfda = null;
         if (! StringUtils.isEmpty(accountCfdaNumber)) {
             CfdaService cfdaService = SpringContext.getBean(CfdaService.class);
             cfda = cfdaService.getByPrimaryId(accountCfdaNumber);
-
+            success = (ObjectUtils.isNull(cfda)) ? false : true;
         } 
-        success = (ObjectUtils.isNull(cfda)) ? false : true;
+       
         if (!success) putFieldError("accountCfdaNumber", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_CFDA_NUMBER_INVALID);
         return success;
     }
