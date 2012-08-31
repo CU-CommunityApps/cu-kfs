@@ -247,10 +247,10 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
                             feederReportData.addToTotalAmountWritten(benefitEntry.getTransactionLedgerEntryAmount());
                             
                            if(benefitEntry.getTransactionLedgerEntryAmount().isZero()) 		continue;
-                           if(benefitEntry.getBalanceType().getFinancialBalanceTypeCode().equalsIgnoreCase("IE")) continue;
                             benefitTotal = benefitTotal.add(benefitEntry.getTransactionLedgerEntryAmount());
                         }
                         
+                        if(tempEntry.getFinancialBalanceTypeCode() == null || tempEntry.getFinancialBalanceTypeCode().equalsIgnoreCase("IE")) continue;
                         List<LaborOriginEntry> offsetEntries =  generateOffsets(tempEntry,offsetDocTypes);
                         for(LaborOriginEntry offsetEntry : offsetEntries){
                         	enterpriseFeedPs.printf("%s\n", offsetEntry.getLine());	
