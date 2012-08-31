@@ -253,6 +253,7 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
                         if(tempEntry.getFinancialBalanceTypeCode() == null || tempEntry.getFinancialBalanceTypeCode().equalsIgnoreCase("IE")) continue;
                         List<LaborOriginEntry> offsetEntries =  generateOffsets(tempEntry,offsetDocTypes);
                         for(LaborOriginEntry offsetEntry : offsetEntries){
+                        	if(offsetEntry.getTransactionLedgerEntryAmount().isZero()) continue;
                         	enterpriseFeedPs.printf("%s\n", offsetEntry.getLine());	
                             offsetTotal = offsetTotal.add(offsetEntry.getTransactionLedgerEntryAmount());                        	
                         }
@@ -364,6 +365,9 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
             offsetEntry.setUniversityFiscalYear(wageEntry.getUniversityFiscalYear());
             offsetEntry.setSubAccountNumber("-----");
             offsetEntry.setFinancialSubObjectCode("---");
+            offsetEntry.setOrganizationReferenceId("");
+            offsetEntry.setProjectCode("");
+            
             offsetEntry.setTransactionLedgerEntryDescription("GENERATED BENEFIT OFFSET");
             offsetEntry.setFinancialSystemOriginationCode("RN");
             offsetEntry.setDocumentNumber(dateTimeService.toString(dateTimeService.getCurrentDate(), "yyyyMMddhhmmssSSS"));
