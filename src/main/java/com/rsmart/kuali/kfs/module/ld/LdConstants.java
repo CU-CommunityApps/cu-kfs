@@ -50,6 +50,8 @@ public class LdConstants {
     public static final String LABOR_BENEFIT_OFFSET_DOCTYPE = "LABOR_BENEFIT_OFFSET_DOCTYPE";
     public static final String ACCOUNT_CODE_OFFSET_PROPERTY_NAME = "extension.accountCodeOffset";
     public static final String OBJECT_CODE_OFFSET_PROPERTY_NAME = "extension.objectCodeOffset";
+    public static final String LABOR_BENEFIT_OFFSET_ORIGIN_CODE = "LABOR_BENEFIT_OFFSET_ORIGIN_CODE";
+    
     
     // Constants for the Labor Ledger Inquiry Restriction 
     public static final String LD_MODIFIED_INQUIRY_ACTION = "ldModifiedInquiry.do";
