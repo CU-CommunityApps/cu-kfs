@@ -240,7 +240,7 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
                         KualiDecimal offsetTotal = new KualiDecimal (0);
                         
                         for(LaborOriginEntry benefitEntry : benefitEntries) {
-                        	benefitEntry.setTransactionLedgerEntryDescription("benefitRow");
+                        	benefitEntry.setTransactionLedgerEntryDescription("FRINGE EXPENSE");
                             enterpriseFeedPs.printf("%s\n", benefitEntry.getLine());
                             
                             feederReportData.incrementNumberOfRecordsWritten();
@@ -369,7 +369,10 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
             offsetEntry.setProjectCode("");
             
             offsetEntry.setTransactionLedgerEntryDescription("GENERATED BENEFIT OFFSET");
-            offsetEntry.setFinancialSystemOriginationCode("RN");
+            
+            String originCode = getParameterService().getParameterValue(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_ORIGIN_CODE);
+            
+            offsetEntry.setFinancialSystemOriginationCode(originCode);
             offsetEntry.setDocumentNumber(dateTimeService.toString(dateTimeService.getCurrentDate(), "yyyyMMddhhmmssSSS"));
 
 
