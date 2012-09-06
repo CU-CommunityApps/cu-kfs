@@ -93,12 +93,22 @@
 	
     <bean id="documentRequeuerFlatFileInputFileType-parentBean" class="edu.cornell.kfs.sys.batch.DocumentRequeuerFlatFileInputType">
     	<property name="directoryPath">
-	       <value>${staging.directory}/sys/collectorFlatFile</value>
+	       <value>${staging.directory}/sys/</value>
 	    </property>
 	    <property name="fileExtension">
 	       <value>txt</value>
 	    </property>
 	</bean>
     
+    <bean id="documentReindexFlatFileInputFileType" parent="documentReindexFlatFileInputFileType-parentBean"/>
+	
+    <bean id="documentReindexFlatFileInputFileType-parentBean" class="edu.cornell.kfs.sys.batch.DocumentReindexFlatFileInputType">
+    	<property name="directoryPath">
+	       <value>${staging.directory}/sys/</value>
+	    </property>
+	    <property name="fileExtension">
+	       <value>txt</value>
+	    </property>
+	</bean>
 	
 </beans>

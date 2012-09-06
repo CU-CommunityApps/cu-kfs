@@ -7,14 +7,14 @@ import org.kuali.kfs.sys.exception.ParseException;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
-public class DocumentRequeuerFlatFileInputType extends BatchInputFileTypeBase {
+public class DocumentReindexFlatFileInputType extends BatchInputFileTypeBase {
 
-	 private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DocumentRequeuerFlatFileInputType.class);
+	 private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DocumentReindexFlatFileInputType.class);
 
-	    private static final String FILE_NAME_PREFIX = "documentRequeue";
+	    private static final String FILE_NAME_PREFIX = "documentReindex";
 	
 	public String getFileTypeIdentifer() {
-		return "documentRequeuerFlatFileInputType";
+		return "documentReindexFlatFileInputType";
 	}
 
 	public String getFileName(String principalName, Object parsedFileContents, String fileUserIdentifuer) {
@@ -42,7 +42,7 @@ public class DocumentRequeuerFlatFileInputType extends BatchInputFileTypeBase {
 
 	public String getTitleKey() {
 		// TODO Auto-generated method stub
-		return CUKFSKeyConstants.MESSAGE_BATCH_UPLOAD_TITLE_REQUEUER_FLAT_FILE;
+		return CUKFSKeyConstants.MESSAGE_BATCH_UPLOAD_TITLE_REINDEX_FLAT_FILE;
 	}
 	
 	
