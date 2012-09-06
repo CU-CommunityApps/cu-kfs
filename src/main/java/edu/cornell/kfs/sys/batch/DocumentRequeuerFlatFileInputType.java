@@ -21,7 +21,7 @@ public class DocumentRequeuerFlatFileInputType extends BatchInputFileTypeBase {
 	}
 
 	public Object parse(byte[] fileByteContent) throws ParseException {
-		return null;
+		return "";
 	}
 
 	public boolean validate(Object parsedFileContents) {
