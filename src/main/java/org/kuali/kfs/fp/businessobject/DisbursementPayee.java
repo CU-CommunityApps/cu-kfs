@@ -162,8 +162,7 @@ public class DisbursementPayee extends TransientBusinessObjectBase implements In
 		
         List<String> payableEmplStatusCodes = SpringContext.getBean(ParameterService.class).getParameterValues(DisbursementVoucherDocument.class, DisbursementVoucherConstants.ALLOWED_EMPLOYEE_STATUSES_FOR_PAYMENT);
 
-        // Assume employee if they have an employee ID and their employee status code is not Inactive
-        if (StringUtils.isNotBlank(person.getEmployeeId()) && payableEmplStatusCodes.contains(person.getEmployeeStatusCode())) {
+        if (StringUtils.equalsIgnoreCase(payeeTypeCode, DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE) && StringUtils.isNotBlank(person.getEmployeeId()) && payableEmplStatusCodes.contains(person.getEmployeeStatusCode())) {
         	disbursementPayee.setPayeeIdNumber(person.getEmployeeId());
         } else {
         	disbursementPayee.setPayeeIdNumber(person.getPrincipalId());
