@@ -62,7 +62,7 @@ public class VendorDaoOjb extends PlatformAwareDaoBaseOjb implements VendorDao {
         detail.addEqualTo("VNDR_DTL_ASND_ID", vendorDetail.getVendorDetailAssignedIdentifier());
         campusCode.addEqualTo("VNDR_CMP_CD", campus);
         beginDate.addLessOrEqualThan("VNDR_CONTR_BEG_DT", now);
-        endDate.addGreaterOrEqualThan("VNDR_CONTR_END_DT", now);
+       //endDate.addGreaterOrEqualThan("VNDR_CONTR_END_DT", now);
         b2b.addEqualTo("VNDR_B2B_IND", "Y");
 
         header.addAndCriteria(detail);
