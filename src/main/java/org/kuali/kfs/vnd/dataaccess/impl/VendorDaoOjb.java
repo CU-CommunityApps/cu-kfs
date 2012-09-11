@@ -55,7 +55,7 @@ public class VendorDaoOjb extends PlatformAwareDaoBaseOjb implements VendorDao {
         Criteria detail = new Criteria();
         Criteria campusCode = new Criteria();
         Criteria beginDate = new Criteria();
-        Criteria endDate = new Criteria();
+       // Criteria endDate = new Criteria();
         Criteria b2b = new Criteria();
 
         header.addEqualTo("VNDR_HDR_GNRTD_ID", vendorDetail.getVendorHeaderGeneratedIdentifier());
@@ -68,7 +68,7 @@ public class VendorDaoOjb extends PlatformAwareDaoBaseOjb implements VendorDao {
         header.addAndCriteria(detail);
         header.addAndCriteria(campusCode);
         header.addAndCriteria(beginDate);
-        header.addAndCriteria(endDate);
+        //header.addAndCriteria(endDate);
         header.addAndCriteria(b2b);
 
         VendorContract contract = (VendorContract) getPersistenceBrokerTemplate().getObjectByQuery(new QueryByCriteria(VendorContract.class, header));
