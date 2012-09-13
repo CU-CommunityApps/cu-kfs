@@ -231,8 +231,9 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
             //Method of PO Transmission on Vendor Address should be the default when a vendor is selected.
             //set purchasing document value for po transmission method
             this.setPurchaseOrderTransmissionMethodCode(vendorAddress.getPurchaseOrderTransmissionMethodCode());
-            //Put info message at top of page showing vendor email data value as it is not shown in vendor area.
-    		GlobalVariables.getMessageList().add(CUPurapKeyConstants.INFO_VENDOR_ADDRESS_EMAIL_ADDRESS_VALUE, vendorAddress.getVendorAddressEmailAddress());
+//KFSPTS-1419: Removing email address info message as the system uses the DEFAULT vendor address email address in ALL cases and message would be misleading.            
+//            //Put info message at top of page showing vendor email data value as it is not shown in vendor area.
+//    		GlobalVariables.getMessageList().add(CUPurapKeyConstants.INFO_VENDOR_ADDRESS_EMAIL_ADDRESS_VALUE, vendorAddress.getVendorAddressEmailAddress());
         }
     }
 

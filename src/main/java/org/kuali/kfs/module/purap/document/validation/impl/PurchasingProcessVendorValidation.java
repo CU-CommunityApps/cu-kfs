@@ -75,9 +75,10 @@ public class PurchasingProcessVendorValidation extends PurchasingAccountsPayable
                 }
             }
             
-            //If there is a vendor and the transmission method is EMAIL and the vendor address was looked up from the vendor record,
-            //and email address is blank on the vendor record (data value is not on the document), display error that the email address is required.
-            if (purDocument.getVendorHeaderGeneratedIdentifier() != null && purDocument.getPurchaseOrderTransmissionMethodCode().equals(PurapConstants.POTransmissionMethods.EMAIL) && (purDocument.getVendorAddressGeneratedIdentifier() != null)) {
+            
+            //KFSPTS-1419 : Changing validation check to use the DEFAULT Vendor PO address as certain users did not have ability to select vendor address for this business rule validation based on their security. 
+            //If there is a vendor and the transmission method is EMAIL, look up the DEFAULT vendor PO address and display error that email address is required when email address is null or blank.
+            if (purDocument.getVendorHeaderGeneratedIdentifier() != null && purDocument.getPurchaseOrderTransmissionMethodCode().equals(PurapConstants.POTransmissionMethods.EMAIL) ) {
             	PurchaseOrderTransmissionMethodDataRulesServiceImpl purchaseOrderTransmissionMethodDataRulesServiceImpl = SpringContext.getBean(PurchaseOrderTransmissionMethodDataRulesServiceImpl.class);
             	valid &= purchaseOrderTransmissionMethodDataRulesServiceImpl.validateDataForMethodOfPOTransmissionExistsOnVendorAddress(purDocument);
             	//called routine took care of presenting error message to user
