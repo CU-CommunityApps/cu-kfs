@@ -208,7 +208,8 @@ public class B2BShoppingServiceImpl implements B2BShoppingService {
             req.setDocumentFundingSourceCode(parameterService.getParameterValue(RequisitionDocument.class, PurapParameterConstants.DEFAULT_FUNDING_SOURCE));
             req.setRequisitionSourceCode(PurapConstants.RequisitionSources.B2B);
             req.setStatusCode(PurapConstants.RequisitionStatuses.IN_PROCESS);
-            req.setPurchaseOrderTransmissionMethodCode(PurapConstants.POTransmissionMethods.ELECTRONIC);
+            //KFSPTS-1446 : Needed to move the setting of method of PO transmission to after the templateVendorAddress call because that method will set the method of PO transmission to the value on the vendor address. 
+            //req.setPurchaseOrderTransmissionMethodCode(PurapConstants.POTransmissionMethods.ELECTRONIC);
             req.setOrganizationAutomaticPurchaseOrderLimit(purapService.getApoLimit(req.getVendorContractGeneratedIdentifier(), req.getChartOfAccountsCode(), req.getOrganizationCode()));
 
             // retrieve default PO address and set address
@@ -216,6 +217,9 @@ public class B2BShoppingServiceImpl implements B2BShoppingService {
             if (ObjectUtils.isNotNull(vendorAddress)) {
                 req.templateVendorAddress(vendorAddress);
             }
+            
+            //KFSPTS-1446: Moved the setting of this attribute here from its original location to maintain the value of ELECTRONIC and not lose it to the templateVendorAddress value
+            req.setPurchaseOrderTransmissionMethodCode(PurapConstants.POTransmissionMethods.ELECTRONIC);
 
             // retrieve billing address based on delivery campus and populate REQ with retrieved billing address
             BillingAddress billingAddress = new BillingAddress();
