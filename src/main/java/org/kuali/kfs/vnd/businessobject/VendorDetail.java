@@ -695,6 +695,8 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
                     this.getVendorDetailAssignedIdentifier(), detail.getVendorDetailAssignedIdentifier()).append(
                     this.isVendorParentIndicator(), detail.isVendorParentIndicator()).append(
                     this.getVendorName(), detail.getVendorName()).append(
+                    this.getVendorFirstName(), detail.getVendorFirstName()).append( // ==== KFSPTS-1422: Added vendorFirstName to the comparison. ====
+                    this.getVendorLastName(), detail.getVendorLastName()).append( // ==== KFSPTS-1422: Added vendorLastName to the comparison. ====
                     this.isActiveIndicator(), detail.isActiveIndicator()).append(
                     this.getVendorInactiveReasonCode(), detail.getVendorInactiveReasonCode()).append(
                     this.getVendorDunsNumber(), detail.getVendorDunsNumber()).append(
