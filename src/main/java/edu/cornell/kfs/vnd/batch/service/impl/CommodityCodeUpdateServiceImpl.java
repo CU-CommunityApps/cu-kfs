@@ -122,7 +122,7 @@ public class CommodityCodeUpdateServiceImpl implements CommodityCodeUpdateServic
     		CommodityCode ccRetrieved = codesFromDatabase.get(codesFromFile.getPurchasingCommodityCode());
     		if(ObjectUtils.isNotNull(ccRetrieved)) {
     			// Compare old and new to see if any changes are required
-    			if(!StringUtils.equalsIgnoreCase(codesFromFile.getCommodityDescription(), ccRetrieved.getCommodityDescription())) {
+    			if(!StringUtils.equalsIgnoreCase(codesFromFile.getCommodityDescription().trim(), ccRetrieved.getCommodityDescription().trim())) {
 	    			// Update the code with the new values because descriptions don't match
 	    			ccRetrieved.setCommodityDescription(codesFromFile.getCommodityDescription());
 	    			updatedCodes.add(ccRetrieved);
@@ -171,19 +171,19 @@ public class CommodityCodeUpdateServiceImpl implements CommodityCodeUpdateServic
 		LOG.info("NEW: Number of new commodity codes: "+newCodes.size());
 		loadCounts.put(NEW_COUNTS, new Integer(newCodes.size()));
 		loadCodes.put(NEW_CODES, newCodes);
-    	businessObjectService.save(newCodes);
+//    	businessObjectService.save(newCodes);
     	
     	// Save all commodity code changes
 		LOG.info("UPDATE: Number of commodity codes to update: "+updatedCodes.size());
 		loadCounts.put(UPDATE_COUNTS, new Integer(updatedCodes.size()));
 		loadCodes.put(UPDATE_CODES, updatedCodes);
-    	businessObjectService.save(updatedCodes);
+//    	businessObjectService.save(updatedCodes);
     	
     	// Save all inactivated commodity code 
 		LOG.info("INACTIVE: Number of commodity codes to inactivate: "+inactivatedCodes.size());
 		loadCounts.put(INACTIVE_COUNTS, new Integer(inactivatedCodes.size()));
 		loadCodes.put(INACTIVE_CODES, inactivatedCodes);
-    	businessObjectService.save(inactivatedCodes);
+//    	businessObjectService.save(inactivatedCodes);
     	
     	writeReports(getJobParameters(), loadCounts, loadCodes);
     	
