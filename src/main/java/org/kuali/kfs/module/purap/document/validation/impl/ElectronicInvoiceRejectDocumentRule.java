@@ -40,7 +40,12 @@ public class ElectronicInvoiceRejectDocumentRule extends DocumentRuleBase {
      */
     @Override
     protected boolean processCustomRouteDocumentBusinessRules(Document document) {
-        boolean isValid = true;
+        return processBusinessRules(document);
+ 	}
+ 	
+	protected boolean processBusinessRules(Document document){
+    	
+    	boolean isValid = true;
         
         ElectronicInvoiceRejectDocument eirDocument = (ElectronicInvoiceRejectDocument) document;
 

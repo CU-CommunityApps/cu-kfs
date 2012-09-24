@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.businessobject.ElectronicInvoice;
 import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceContact;
 import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceItem;
@@ -47,6 +48,7 @@ import org.kuali.kfs.module.purap.util.PurapSearchUtils;
 import org.kuali.kfs.sys.ObjectUtil;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.businessobject.CampusParameter;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO;
@@ -54,6 +56,7 @@ import org.kuali.rice.kns.bo.Note;
 import org.kuali.rice.kns.document.SessionDocument;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.DateTimeService;
+import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 
@@ -1265,21 +1268,30 @@ public class ElectronicInvoiceRejectDocument extends FinancialSystemTransactiona
      */
     public BigDecimal getInvoiceItemTaxAmount() {
         BigDecimal returnValue = zero;
+        boolean enableSalesTaxInd = SpringContext.getBean(ParameterService.class).getIndicatorParameter(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);
         try {
-            for (ElectronicInvoiceRejectItem eiri : this.invoiceRejectItems) {
-                BigDecimal toAddAmount = eiri.getInvoiceItemTaxAmount();
-                LOG.debug("getTotalAmount() setting returnValue with arithmatic => '" + returnValue.doubleValue() + "' + '" + toAddAmount.doubleValue() + "'");
-                returnValue = returnValue.add(toAddAmount);
-            }
+        	//if sales tax enabled, calculate total by totaling items
+        	if(enableSalesTaxInd) {
+	            for (ElectronicInvoiceRejectItem eiri : this.invoiceRejectItems) {
+	                BigDecimal toAddAmount = eiri.getInvoiceItemTaxAmount();
+	                LOG.debug("getTotalAmount() setting returnValue with arithmatic => '" + returnValue.doubleValue() + "' + '" + toAddAmount.doubleValue() + "'");
+	                returnValue = returnValue.add(toAddAmount);
+	            }
+        	} 
+        	else {
+        		returnValue = returnValue.add(this.invoiceItemTaxAmount);
+        	}
             LOG.debug("getTotalAmount() returning amount " + returnValue.doubleValue());
-            return returnValue;
         }
         catch (NumberFormatException n) {
             // do nothing this is already rejected
             LOG.error("getTotalAmount() Error attempting to calculate total amount for invoice with filename " + this.invoiceFileName);
             return zero;
         }
-        // return invoiceItemTaxAmount;
+        if(returnValue.equals(zero)) {
+        	return this.invoiceItemTaxAmount;
+        }
+        return returnValue;
     }
 
     /**
