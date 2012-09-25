@@ -45,6 +45,8 @@ public class DocumentRequeuerFlatFileInputType extends BatchInputFileTypeBase {
 		return CUKFSKeyConstants.MESSAGE_BATCH_UPLOAD_TITLE_REQUEUER_FLAT_FILE;
 	}
 	
-	
-
+    @Override
+    public boolean isDoneFileRequired() {
+    	return false;
+    }
 }

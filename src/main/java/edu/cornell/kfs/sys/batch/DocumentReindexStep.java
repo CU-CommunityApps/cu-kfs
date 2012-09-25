@@ -52,6 +52,9 @@ public class DocumentReindexStep extends AbstractStep {
 			Long id = new Long(it.next());
 			indexer.indexDocument(id);
 		}
+		
+		addTimeStampToFileName(f, fileName, stagingDirectory);
+		
 		return true;
 	}
 
