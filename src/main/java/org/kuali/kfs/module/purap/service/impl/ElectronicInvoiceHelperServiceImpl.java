@@ -1662,6 +1662,9 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
                 preqItem.setItemDescription(preqItem.getItemDescription() + " - " + orderHolder.getTaxDescription());
             }
         }
+        else {
+        	preqItem.setItemDescription("Approved Tax");
+        }
         
     }
     
