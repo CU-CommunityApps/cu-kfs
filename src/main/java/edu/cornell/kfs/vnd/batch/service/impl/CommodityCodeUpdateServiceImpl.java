@@ -122,7 +122,7 @@ public class CommodityCodeUpdateServiceImpl implements CommodityCodeUpdateServic
     		CommodityCode ccRetrieved = codesFromDatabase.get(codesFromFile.getPurchasingCommodityCode());
     		if(ObjectUtils.isNotNull(ccRetrieved)) {
     			// Compare old and new to see if any changes are required
-    			if(!StringUtils.equalsIgnoreCase(codesFromFile.getCommodityDescription(), ccRetrieved.getCommodityDescription())) {
+    			if(!StringUtils.equalsIgnoreCase(codesFromFile.getCommodityDescription().trim(), ccRetrieved.getCommodityDescription().trim())) {
 	    			// Update the code with the new values because descriptions don't match
 	    			ccRetrieved.setCommodityDescription(codesFromFile.getCommodityDescription());
 	    			updatedCodes.add(ccRetrieved);
