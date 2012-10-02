@@ -1663,7 +1663,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
             }
         }
         else {
-        	preqItem.setItemDescription("Approved Tax");
+        	preqItem.setItemDescription("Tax");
         }
         
     }
