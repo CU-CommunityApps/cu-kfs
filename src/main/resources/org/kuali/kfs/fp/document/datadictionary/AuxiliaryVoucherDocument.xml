@@ -21,10 +21,7 @@
     <property name="allowsErrorCorrection" value="true"/>
     <property name="documentTypeName" value="AV"/>
     <property name="documentClass" value="org.kuali.kfs.fp.document.AuxiliaryVoucherDocument"/>
-    <property name="baseDocumentClass" value="org.kuali.kfs.fp.document.AuxiliaryVoucherDocument"/>
     <property name="businessRulesClass" value="org.kuali.kfs.sys.document.validation.impl.AccountingRuleEngineRuleBase"/>
-    <property name="promptBeforeValidationClass" value="org.kuali.kfs.fp.document.validation.impl.AuxiliaryVoucherDocumentPreRules"/>
-    <property name="documentPresentationControllerClass" value="org.kuali.kfs.fp.document.authorization.AuxiliaryVoucherDocumentPresentationController"/>
     <property name="sessionDocument" value="true"/>
     <property name="allowsCopy" value="true"/>
     
@@ -103,9 +100,9 @@
   
   <bean id="AuxiliaryVoucherDocument-validations" parent="AuxiliaryVoucherDocument-validations-parentBean"/>
   
-  <bean id="AuxiliaryVoucherDocument-validations-parentBean" abstract="true" class="org.springframework.beans.factory.config.MapFactoryBean">
+  <bean id="AuxiliaryVoucherDocument-validations-parentBean" class="org.springframework.beans.factory.config.MapFactoryBean">
   	<property name="sourceMap">
-		<map key-type="java.lang.Class">
+		<map>
 			<entry>
 				<key><value>org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent</value></key>
 				<value>AuxiliaryVoucher-saveDocumentValidation</value>

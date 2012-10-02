@@ -26,13 +26,11 @@ import org.kuali.kfs.fp.businessobject.DisbursementVoucherWireTransfer;
 import org.kuali.kfs.fp.businessobject.options.PaymentReasonValuesFinder;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
-import org.kuali.kfs.fp.service.AccountingDocumentPreRuleService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.AccountingDocumentBase;
 import org.kuali.kfs.sys.service.BankService;
 import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kns.document.Document;
@@ -71,8 +69,6 @@ public class DisbursementVoucherDocumentPreRules extends PromptBeforeValidationB
 
         preRulesOK &= checkBankCodeActive(dvDocument);
 
-        preRulesOK &= SpringContext.getBean(AccountingDocumentPreRuleService.class).accessAccountOverrideQuestion((AccountingDocumentBase) document, this, this.event);
-        
         return preRulesOK;
     }
 

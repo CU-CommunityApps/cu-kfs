@@ -1314,10 +1314,5 @@ public class KFSConstants extends JSTLConstants implements ParameterKeyConstants
         public static final String KC_BUDGET_CATEGORY_SERVICE = "budgetCategorytServiceSOAP";
         public static final String KC_UNIT_SERVICE = "institutionalUnitSoapService";
     }
-    public static final String YEAR_END_ACCOUNTING_PERIOD_EDIT_PERMISSION = "Edit Accounting Period";
-    public static final String YEAR_END_ACCOUNTING_PERIOD_VIEW_PERMISSION = "View Accounting Period";
-    public static final String YEAR_END_ACCOUNTING_PERIOD_EDIT_DOCUMENT_ACTION = "AccountingPeriodEditAction";
-    public static final String YEAR_END_ACCOUNTING_PERIOD_VIEW_DOCUMENT_ACTION = "AccountingPeriodViewAction";
-    public static final String OVERRIDE_ACCOUNT_FOR_EXPIRED_QUESTION_ID = "OverrideAccountForExpiredQuestion";
 }
 
