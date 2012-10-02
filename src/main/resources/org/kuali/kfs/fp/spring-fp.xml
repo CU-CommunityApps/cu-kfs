@@ -468,7 +468,6 @@
 	      p:localServiceName="cashReceiptInitiatorDerivedRoleTypeService" />
 	  </property>
 	</bean>
-	<bean id="accountingDocumentPreRuleService" class="org.kuali.kfs.fp.service.impl.AccountingDocumentPreRuleServiceImpl" />
 	
 	<!-- validations -->
 	<import resource="document/validation/configuration/FinancialProcessingValidators.xml" />
