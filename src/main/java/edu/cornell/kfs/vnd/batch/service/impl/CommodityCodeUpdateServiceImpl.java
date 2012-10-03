@@ -124,10 +124,10 @@ public class CommodityCodeUpdateServiceImpl implements CommodityCodeUpdateServic
     			// Compare old and new to see if any changes are required
     			if(!StringUtils.equalsIgnoreCase(codesFromFile.getCommodityDescription().trim(), ccRetrieved.getCommodityDescription().trim())) {
 	    			// Update the code with the new values because descriptions don't match
-	    			ccRetrieved.setCommodityDescription(codesFromFile.getCommodityDescription());
-	    			updatedCodes.add(ccRetrieved);
 	    			LOG.info("Updating commodity code description from '"+ccRetrieved.getPurchasingCommodityCode()+": "+ccRetrieved.getCommodityDescription()+
 	    					 "' to '"+codesFromFile.getPurchasingCommodityCode()+": "+codesFromFile.getCommodityDescription()+"'");
+	    			ccRetrieved.setCommodityDescription(codesFromFile.getCommodityDescription());
+	    			updatedCodes.add(ccRetrieved);
     			}
     			else if(!ccRetrieved.isActive()) {
     				// Do something here if the code is in the file (thus active), but inactive in the DB
