@@ -35,6 +35,7 @@
 		<property name="jobNames">
 			<list>
 				<value>accountReversionImportJob</value>
+				<value>orgHierarchyMissingOrgsJob</value>
 			</list>
 		</property>
 	</bean>
@@ -86,13 +87,25 @@
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="orgHierarchyMissingOrgsJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="orgHierarchyMissingOrgsStep" />
+			</list>
+		</property>
+	</bean>
  
  	<bean id="accountReversionImportStep" class="edu.cornell.kfs.coa.batch.AccountReversionImportStep" parent="step"/>
- 	
+
+ 	<bean id="orgHierarchyMissingOrgsStep" class="edu.cornell.kfs.coa.batch.OrgHierarchyMissingOrgsStep" parent="step"/>
+
  	<bean id="accountReversionImportService" class="edu.cornell.kfs.coa.service.impl.AccountReversionImportServiceImpl">
         <property name="parameterService" ref="parameterService" />
         <property name="arid" ref="accountReversionImportDao" />
         <property name="boService" ref="businessObjectService" />
 	</bean>
+	
+	<bean id="orgHierarchyMissingOrgsReportService" class="edu.cornell.kfs.coa.service.impl.OrgHierarchyMissingOrgsReportServiceImpl"/>
  
 </beans>
