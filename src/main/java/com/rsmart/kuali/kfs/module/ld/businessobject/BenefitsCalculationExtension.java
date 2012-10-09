@@ -15,9 +15,9 @@
  */
 package com.rsmart.kuali.kfs.module.ld.businessobject;
 
-import org.kuali.rice.kns.bo.PersistableBusinessObjectExtensionBase;
+import edu.cornell.kfs.sys.businessobject.YearEndPersistableBusinessObjectExtensionBase;
 
-public class BenefitsCalculationExtension extends PersistableBusinessObjectExtensionBase {
+public class BenefitsCalculationExtension extends YearEndPersistableBusinessObjectExtensionBase {
 
     private String accountCodeOffset;
     private String objectCodeOffset;
