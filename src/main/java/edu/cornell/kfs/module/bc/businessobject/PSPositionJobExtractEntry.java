@@ -65,7 +65,7 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
      * @return positionNumber
      */
     public String getPositionNumber() {
-        return CUBCConstants.POSITION_NUMBER_PREFIX + positionNumber;
+        return positionNumber;
     }
 
     /**

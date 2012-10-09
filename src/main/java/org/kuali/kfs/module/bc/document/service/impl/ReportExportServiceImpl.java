@@ -314,7 +314,7 @@ public class ReportExportServiceImpl implements ReportExportService {
         line = line + textDelimiter + sipRecord.getSIP_Employee_Type() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getEMPL_RCD() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getJOBCODE() + textDelimiter + fieldSeperator;
-        line = line + textDelimiter + sipRecord.getJOB_CD_DESC_SHRT() + textDelimiter + fieldSeperator;
+        line = line + textDelimiter + sipRecord.getJOB_CD_DESC() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getJOB_FAMILY() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getPOS_FTE() + textDelimiter + fieldSeperator;
         line = line + textDelimiter + sipRecord.getPOS_GRADE_DFLT() + textDelimiter + fieldSeperator;

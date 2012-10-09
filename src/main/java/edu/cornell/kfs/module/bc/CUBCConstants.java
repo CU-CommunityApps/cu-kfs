@@ -75,7 +75,7 @@ public class CUBCConstants extends BCConstants {
         public static final String NON_EXEMPT_H = "H";
     }
 
-    public static final String[] UNION_CODES_SIP = new String[]{"BTC", "CPU", "CWA", "IOE", "LOC", "PRO", "SPA", "UAW"};
+    public static final String UNION_CODE = "UNB";
 
     public static final String BUDGET_ONLY_OBJECT_CODE_SUB_TYPE = "BU";
 

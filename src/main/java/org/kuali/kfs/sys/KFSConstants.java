@@ -705,7 +705,7 @@ public class KFSConstants extends JSTLConstants implements ParameterKeyConstants
         public static final String POSITION_REGULAR_TEMPORARY_REGULAR = "R";
         public static final String POSITION_REGULAR_TEMPORARY_TEMPORARY = "T";
         public static final String POSITION_EFFECTIVE_STATUS_ACTIVE = "A";
-        public static final String POSITION_EFFECTIVE_STATUS_INACTIVE = "I";
+        public static final String POSITION_EFFECTIVE_STATUS_INACTIVE = "C";
         public static final String POSITION_STATUS_APPROVED = "A";
         public static final String POSITION_STATUS_DELETED = "D";
         public static final String POSITION_STATUS_FROZEN = "F";

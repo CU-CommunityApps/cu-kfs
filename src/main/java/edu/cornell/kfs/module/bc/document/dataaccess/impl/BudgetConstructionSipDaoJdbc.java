@@ -34,7 +34,7 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
 	        sqlBuilder.append("start with org_cd=substr(t2.pos_deptid,4) and fin_coa_cd=substr(t2.pos_deptid,1,2) ");
 	        sqlBuilder.append("connect by prior rpts_to_org_cd = org_cd and rpts_to_org_cd not in ('UNIV') and fin_coa_cd=substr(t2.pos_deptid,1,2)) \"D_Level_Name\", ");
 	        sqlBuilder.append("t2.POSITION_NBR, t2.POS_DESCR, t3.EMPLID, t4.PERSON_NM, t5.SIP_ELIG_FLAG \"SIP_Eligibility\", t5.empl_typ \"SIP_Employee_Type\", ");
-	        sqlBuilder.append("t5.EMPL_RCD, t2.JOBCODE, t7.JOB_CD_DESC_SHRT, t7.JOB_FAMILY, t2.POS_FTE, t2.POS_GRADE_DFLT, t6.CU_STATE_CERT, ");
+	        sqlBuilder.append("t5.EMPL_RCD, t2.JOBCODE, t7.JOB_CD_DESC, t7.JOB_FAMILY, t2.POS_FTE, t2.POS_GRADE_DFLT, t6.CU_STATE_CERT, ");
 	        sqlBuilder.append("t7.COMP_FREQ, t5.ANNL_RT, t5.COMP_RT, t5.JOB_STD_HRS, t6.WRK_MNTHS, t7.JOB_FUNC, t7.JOB_FUNC_DESC, ");
 	        sqlBuilder.append("'0' \"Increase_To_Minimum\", '0' \"Equity\", '0' \"Merit\", '' \"Note\", '0' \"Deferred\", t5.CU_ABBR_FLAG, ");
 	        sqlBuilder.append("t3.APPT_TOT_INTND_AMT, t3.APPT_RQST_FTE_QTY, t2.IU_POSITION_TYPE ");
@@ -78,7 +78,7 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
 	            	sipExportData.setSIP_Employee_Type(exportUtil.removeNulls(rs.getString("SIP_Employee_Type"), false));
 	            	sipExportData.setEMPL_RCD(exportUtil.removeNulls(rs.getString("EMPL_RCD"), false));
 	            	sipExportData.setJOBCODE(exportUtil.removeNulls(rs.getString("JOBCODE"), false));
-	            	sipExportData.setJOB_CD_DESC_SHRT(exportUtil.removeNulls(rs.getString("JOB_CD_DESC_SHRT"), false));
+	            	sipExportData.setJOB_CD_DESC(exportUtil.removeNulls(rs.getString("JOB_CD_DESC"), false));
 	            	sipExportData.setJOB_FAMILY(exportUtil.removeNulls(rs.getString("JOB_FAMILY"), false));
 	            	sipExportData.setPOS_FTE(exportUtil.removeNulls(rs.getString("POS_FTE"), false));
 	            	sipExportData.setPOS_GRADE_DFLT(exportUtil.removeNulls(rs.getString("POS_GRADE_DFLT"), false));
@@ -127,7 +127,7 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
         private String SIP_Employee_Type;
         private String EMPL_RCD;
         private String JOBCODE;
-        private String JOB_CD_DESC_SHRT;
+        private String JOB_CD_DESC;
         private String JOB_FAMILY;
         private String POS_FTE;
         private String POS_GRADE_DFLT;
@@ -265,12 +265,12 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
         }
 
         /**
-         * Gets the JOB_CD_DESC_SHRT
+         * Gets the JOB_CD_DESC
          * 
-         * @return Returns the JOB_CD_DESC_SHRT
+         * @return Returns the JOB_CD_DESC
          */
-        public String getJOB_CD_DESC_SHRT() {
-            return JOB_CD_DESC_SHRT;
+        public String getJOB_CD_DESC() {
+            return JOB_CD_DESC;
         }
 
         /**
@@ -563,12 +563,12 @@ public class BudgetConstructionSipDaoJdbc extends BudgetConstructionDaoJdbcBase 
         }
 
         /**
-         * sets the JOB_CD_DESC_SHRT
+         * sets the JOB_CD_DESC
          * 
          * @return Returns void
          */
-        public void setJOB_CD_DESC_SHRT(String JOB_CD_DESC_SHRT) {
-            this.JOB_CD_DESC_SHRT = JOB_CD_DESC_SHRT;
+        public void setJOB_CD_DESC(String JOB_CD_DESC) {
+            this.JOB_CD_DESC = JOB_CD_DESC;
         }
 
         /**
