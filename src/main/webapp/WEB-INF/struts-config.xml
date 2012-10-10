@@ -36,6 +36,8 @@
 			type="org.kuali.kfs.sys.web.struts.KualiBatchInputFileSetForm" />
 		<form-bean name="ElectronicFundTransferForm"
 			type="org.kuali.kfs.sys.web.struts.ElectronicFundTransferForm" />
+		<form-bean name="DocumentRequeueFileBuilderForm"
+			type="edu.cornell.kfs.sys.web.struts.DocumentRequeueFileBuilderForm" />
 
 		<!--  Financial Module Bean Definitions -->
 		<form-bean name="DepositWizardForm"
@@ -227,7 +229,7 @@
 		<form-bean name="GlLineForm"
 			type="org.kuali.kfs.module.cab.document.web.struts.GlLineForm" />
 			
-					<!-- Check Recon Form -->
+		<!-- Check Recon Form -->
         <form-bean name="CheckReconciliationReportForm"
             type="com.rsmart.kuali.kfs.cr.document.web.struts.CheckReconciliationReportForm" /> 
 			
@@ -726,6 +728,14 @@
 			<forward name="continue" path="/jsp/pdp/format/formatContinue.jsp" />
 		</action>
 		
+		<action path="/documentRequeueFileBuilder"
+			name="DocumentRequeueFileBuilderForm"
+			input="/jsp/module/sys/DocumentRequeueFileBuilder.jsp"
+			type="edu.cornell.kfs.sys.web.struts.DocumentRequeueFileBuilderAction"
+			scope="request" attribute="KualiForm">
+			<forward name="basic" path="/jsp/sys/DocumentRequeueFileBuilder.jsp" />
+		</action>
+
 	</action-mappings>
 
 	<controller

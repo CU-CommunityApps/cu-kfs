@@ -30,6 +30,7 @@
             <list merge="true">
 				<value>documentRequeuerJob</value>
 				<value>documentReindexerJob</value>
+				<value>autoCancelBatchJob</value>
             </list>
         </property>
 	</bean>
@@ -88,7 +89,7 @@
          p:localServiceName="securityRequestOrganizationRoleTypeService" />
      </property>
     </bean>   
-    
+
     <bean id="documentRequeuerFlatFileInputFileType" parent="documentRequeuerFlatFileInputFileType-parentBean"/>
 	
     <bean id="documentRequeuerFlatFileInputFileType-parentBean" class="edu.cornell.kfs.sys.batch.DocumentRequeuerFlatFileInputType">
@@ -99,7 +100,7 @@
 	       <value>txt</value>
 	    </property>
 	</bean>
-    
+    	
     <bean id="documentReindexFlatFileInputFileType" parent="documentReindexFlatFileInputFileType-parentBean"/>
 	
     <bean id="documentReindexFlatFileInputFileType-parentBean" class="edu.cornell.kfs.sys.batch.DocumentReindexFlatFileInputType">
@@ -109,6 +110,39 @@
 	    <property name="fileExtension">
 	       <value>txt</value>
 	    </property>
+	</bean>
+
+    <bean id="documentRequeueFileBuilderService" parent="documentRequeueFileBuilderService-parentBean"/>
+	
+    <bean id="documentRequeueFileBuilderService-parentBean" class="edu.cornell.kfs.sys.service.impl.DocumentRequeueFileBuilderServiceImpl">
+		<property name="documentRequeueFileBuilderDao" ref="documentRequeueFileBuilderDao"/>
+    	<property name="directoryPath">
+	       <value>${staging.directory}/sys/</value>
+	    </property>
+	    <property name="fileExtension">
+	       <value>txt</value>
+	    </property>
+	    <property name="fileName">
+	       <value>documentRequeue</value>
+	    </property>
+	</bean>
+    	
+	<bean id="documentRequeueFileBuilderDao" parent="platformAwareDao" class="edu.cornell.kfs.sys.dataaccess.impl.DocumentRequeueFileBuilderDaoOjb" depends-on="kewOjbConfigurer">
+	    <property name="jcdAlias" value="enWorkflowDataSource" />
+	</bean>
+
+	<bean id="autoCancelBatchJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="autoCancelBatchStep" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="autoCancelBatchStep" class="edu.cornell.kfs.sys.batch.AutoCancelBatchStep" parent="step">
+    	<property name="documentService"><ref bean="documentService" /></property>
+    	<property name="businessObjectService"><ref bean="businessObjectService" /></property>
+    	<property name="parameterService"><ref bean="parameterService" /></property>
 	</bean>
 	
 </beans>
