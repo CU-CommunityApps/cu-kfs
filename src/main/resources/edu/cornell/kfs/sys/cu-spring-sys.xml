@@ -30,7 +30,6 @@
             <list merge="true">
 				<value>documentRequeuerJob</value>
 				<value>documentReindexerJob</value>
-				<value>autoCancelBatchJob</value>
             </list>
         </property>
 	</bean>
@@ -137,12 +136,6 @@
 				<ref bean="autoCancelBatchStep" />
 			</list>
 		</property>
-	</bean>
-	
-	<bean id="autoCancelBatchStep" class="edu.cornell.kfs.sys.batch.AutoCancelBatchStep" parent="step">
-    	<property name="documentService"><ref bean="documentService" /></property>
-    	<property name="businessObjectService"><ref bean="businessObjectService" /></property>
-    	<property name="parameterService"><ref bean="parameterService" /></property>
 	</bean>
 	
 </beans>
