@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TimeZone;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
@@ -20,6 +21,8 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.actionrequest.service.DocumentRequeuerService;
 import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
+
+import edu.cornell.kfs.sys.dataaccess.DocumentRequeueFileBuilderDao;
 
 /**
  * @author kwk43
@@ -40,19 +43,9 @@ public class DocumentRequeueStep extends AbstractStep {
 		DocumentRequeuerService requeuer = SpringContext.getBean(DocumentRequeuerService.class);
 
 		File f = new File(stagingDirectory+File.separator+fileName);
-	    ArrayList<String> docIds = new ArrayList<String>();
+	    List<String> docIds = new ArrayList<String>();
 
-	    try {
-	    	BufferedReader reader = new BufferedReader(new FileReader(f));
-
-	    	String line = null;
-	    	while ((line=reader.readLine()) != null) {
-	    		docIds.add(line);   	
-	    	}
-	    } catch (IOException ioe) {
-	    	ioe.printStackTrace();
-	    	return false;
-	    }
+	    docIds = SpringContext.getBean(DocumentRequeueFileBuilderDao.class).getDocumentRequeueFileValues();
 	    
 		for (Iterator<String> it = docIds.iterator(); it.hasNext(); ) {
 			Long id = new Long(it.next());

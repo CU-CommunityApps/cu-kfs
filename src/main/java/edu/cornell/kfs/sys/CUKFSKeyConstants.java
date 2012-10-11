@@ -26,7 +26,5 @@ public class CUKFSKeyConstants extends KFSKeyConstants{
     public static final String MESSAGE_BATCH_UPLOAD_TITLE_REQUEUER_FLAT_FILE = "message.batchUpload.title.requeuer";
     public static final String MESSAGE_BATCH_UPLOAD_TITLE_REINDEX_FLAT_FILE = "message.batchUpload.title.reindex";
 
-    public static final String MESSAGE_DOCUMENT_REQUEUER_RESULTS = "message.document.requeuer.results";
-
 	
 }

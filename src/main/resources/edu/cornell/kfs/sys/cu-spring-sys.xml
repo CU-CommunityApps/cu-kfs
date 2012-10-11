@@ -111,21 +111,6 @@
 	    </property>
 	</bean>
 
-    <bean id="documentRequeueFileBuilderService" parent="documentRequeueFileBuilderService-parentBean"/>
-	
-    <bean id="documentRequeueFileBuilderService-parentBean" class="edu.cornell.kfs.sys.service.impl.DocumentRequeueFileBuilderServiceImpl">
-		<property name="documentRequeueFileBuilderDao" ref="documentRequeueFileBuilderDao"/>
-    	<property name="directoryPath">
-	       <value>${staging.directory}/sys/</value>
-	    </property>
-	    <property name="fileExtension">
-	       <value>txt</value>
-	    </property>
-	    <property name="fileName">
-	       <value>documentRequeue</value>
-	    </property>
-	</bean>
-    	
 	<bean id="documentRequeueFileBuilderDao" parent="platformAwareDao" class="edu.cornell.kfs.sys.dataaccess.impl.DocumentRequeueFileBuilderDaoOjb" depends-on="kewOjbConfigurer">
 	    <property name="jcdAlias" value="enWorkflowDataSource" />
 	</bean>
