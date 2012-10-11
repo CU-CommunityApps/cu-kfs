@@ -88,15 +88,22 @@ public class DocumentRequeueFileBuilderDaoOjb extends PlatformAwareDaoBaseOjb im
 		sql.append("DOC_HDR_STAT_CD ='");
 		sql.append(KEWConstants.ROUTE_HEADER_ENROUTE_CD);
 		sql.append("' and doc_typ_id not in (");
+
 		sql.append("100906, 325237");
-		
-		List<String> parms = SpringContext.getBean(ParameterService.class).getParameterValues(String.class, "");
-		String parmValues = Arrays.toString(parms.toArray());
+//		List<String> parms = SpringContext.getBean(ParameterService.class).getParameterValues(String.class, "");
+//		String parmValues = Arrays.toString(parms.toArray());
 //		sql.append(parmValues);
 
 		sql.append(") and doc_hdr_id in ("+
 				"select distinct(DOC_HDR_ID) from KREW_ACTN_RQST_T where RSP_ID in ("+
-				"select RSP_ID from KRIM_ROLE_RSP_T where ROLE_ID='41')) order by doc_hdr_id ASC");
+				"select RSP_ID from KRIM_ROLE_RSP_T where ROLE_ID='");
+
+		sql.append("41");
+//		List<String> parms = SpringContext.getBean(ParameterService.class).getParameterValues(String.class, "");
+//		String parmValues = Arrays.toString(parms.toArray());
+//		sql.append(parmValues);
+
+		sql.append("')) order by doc_hdr_id ASC");
 		
 		return sql.toString();
 	}
