@@ -44,22 +44,32 @@ public class DocumentRequeueFileBuilderServiceImpl implements DocumentRequeueFil
         // construct the outgoing file name
         String filename = directoryPath + "/" + fileName + "." + fileExtension;
 
+        FileOutputStream out = null;
+        PrintStream p = null;
+        
         try {
-	        FileOutputStream out = new FileOutputStream(filename);
-	        PrintStream p = new PrintStream(out);
+	        out = new FileOutputStream(filename);
+	        p = new PrintStream(out);
 	        
 	        for(String id : docIds) {
 	        	p.println(id);
 	        }
 	        
-	        p.close();
-	        out.close();
         } catch(FileNotFoundException fnf) {
 	        LOG.info("Error while creating file: File Not Found ");
         	return false;
         } catch(IOException io) {
 	        LOG.info("Error while creating file: Could not close stream connection ");
         	return false;
+        } finally {
+	        p.close();
+        	if(out != null) {
+        		try {
+        			out.close();
+        		} catch (IOException iox) {
+        			LOG.error("Unable to write to file.");
+        		}
+        	}
         }
 		
 		return true;
