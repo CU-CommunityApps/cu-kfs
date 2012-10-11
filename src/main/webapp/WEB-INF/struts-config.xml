@@ -188,6 +188,8 @@
 			type="org.kuali.kfs.module.purap.document.web.struts.ElectronicInvoiceRejectForm" />
         <form-bean name="B2BForm"
             type="org.kuali.kfs.module.purap.web.struts.B2BForm" />
+         <form-bean name="IWantDocumentForm"
+			type="edu.cornell.kfs.module.purap.document.web.struts.IWantDocumentForm" />
 
         <form-bean name="ElectronicInvoiceTestForm"
             type="org.kuali.kfs.module.purap.document.web.struts.ElectronicInvoiceTestForm" />
@@ -229,7 +231,7 @@
 		<form-bean name="GlLineForm"
 			type="org.kuali.kfs.module.cab.document.web.struts.GlLineForm" />
 			
-		<!-- Check Recon Form -->
+					<!-- Check Recon Form -->
         <form-bean name="CheckReconciliationReportForm"
             type="com.rsmart.kuali.kfs.cr.document.web.struts.CheckReconciliationReportForm" /> 
 			
@@ -638,6 +640,17 @@
 			<forward name="printPOQuoteListPDF"
 				path="/jsp/module/purap/PrintPOQuoteListForward.jsp" redirect="false" />				
 		</action>
+		
+		<action path="/purapIWant" name="IWantDocumentForm"
+			input="/jsp/module/purap/IWant.jsp"
+			type="edu.cornell.kfs.module.purap.document.web.struts.IWantDocumentAction"
+			scope="request" parameter="methodToCall" validate="true"
+			attribute="KualiForm">
+			<set-property property="cancellable" value="true" />
+			<forward name="basic" path="/jsp/module/purap/IWant.jsp" />	
+			<forward name="finish" path="/jsp/module/purap/iWantDocumentFinish.jsp" />		
+		</action>
+		
 
 		<action path="/purapPrint"
 			type="org.kuali.kfs.module.purap.document.web.struts.PrintAction"

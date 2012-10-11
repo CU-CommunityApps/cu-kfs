@@ -1,0 +1,15 @@
+<dwr>
+	<init>
+		<creator id="spring" class="org.kuali.rice.kns.web.servlet.dwr.GlobalResourceDelegatingSpringCreator"/>
+	</init>
+	<allow>
+      
+      <convert converter="bean" match="edu.cornell.kfs.module.purap.businessobject.PersonData">
+      <param name="include" value="personName,emailAddress,phoneNumber,campusAddress" />
+      </convert>
+      <create creator="spring" javascript="IWantDocumentService">
+        <param name="beanName" value="iWantDocumentService" />
+        <include method="getPersonData" />
+      </create>
+	</allow>	
+</dwr>
