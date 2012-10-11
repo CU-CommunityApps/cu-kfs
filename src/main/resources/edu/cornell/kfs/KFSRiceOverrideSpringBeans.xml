@@ -61,13 +61,24 @@
        <property name="reloadActionListDAO">
            <ref bean="reloadActionListDAO" />
        </property>
+       <property name="lastLoginTimeDAO">
+            <ref bean="lastLoginTimeDAO" />
+        </property>
     </bean>
-        
+   
+   <!-- CYNERGY-2210: Added the "reloadActionListDAO" bean needed for the "RELOAD_ACTION_LIST" fix. -->
     <bean id="reloadActionListDAO" class="org.kuali.rice.kew.useroptions.dao.impl.ReloadActionListDaoJdbcImpl">
         <constructor-arg>
-           <ref bean="kewNonTransactionalDataSource"/>
+            <ref bean="kewNonTransactionalDataSource"/>
         </constructor-arg>
-   </bean>
+    </bean>
+    
+    <!-- CYNERGY-2365: Added a new "lastLoginTimeDAO" bean for tracking each user's most recent login. -->
+    <bean id="lastLoginTimeDAO" class="edu.cornell.cynergy.kew.useroptions.dao.impl.LastLoginTimeDaoJdbcImpl">
+        <constructor-arg>
+            <ref bean="kewNonTransactionalDataSource"/>
+        </constructor-arg>
+    </bean>
    
    <bean id="abstractDataSourceBase" abstract="true"> 
         <property name="driverClassName" value="${rice.server.datasource.driver.class}"/> 
