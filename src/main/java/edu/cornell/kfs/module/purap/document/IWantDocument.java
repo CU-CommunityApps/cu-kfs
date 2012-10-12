@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
+import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.kew.exception.WorkflowException;
@@ -16,7 +17,7 @@ import org.kuali.rice.kns.util.TypedArrayList;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 
-public class IWantDocument extends FinancialSystemTransactionalDocumentBase implements Copyable {
+public class IWantDocument extends FinancialSystemTransactionalDocumentBase implements Copyable, AmountTotaling {
     // Person Data section: initiator and deliver to
     //TODO: possible to use Person?
 
@@ -484,12 +485,22 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     }
 
+    /**
+     * Calculates the total dollar amount
+     * 
+     * @return
+     */
     public KualiDecimal getTotalDollarAmount() {
 
         KualiDecimal totalDollarAmount = KualiDecimal.ZERO;
+        KualiDecimal itemTotal = KualiDecimal.ZERO;
 
         for (IWantItem item : items) {
-            KualiDecimal itemTotal = item.getItemQuantity().multiply(new KualiDecimal(item.getItemUnitPrice()));
+            if (ObjectUtils.isNull(item.getItemQuantity())) {
+                itemTotal = new KualiDecimal(item.getItemUnitPrice());
+            } else {
+                itemTotal = item.getItemQuantity().multiply(new KualiDecimal(item.getItemUnitPrice()));
+            }
             totalDollarAmount = totalDollarAmount.add(itemTotal);
         }
 
