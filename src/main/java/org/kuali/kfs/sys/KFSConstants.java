@@ -1320,5 +1320,10 @@ public class KFSConstants extends JSTLConstants implements ParameterKeyConstants
  	public static final String YEAR_END_ACCOUNTING_PERIOD_EDIT_DOCUMENT_ACTION = "AccountingPeriodEditAction";
  	public static final String YEAR_END_ACCOUNTING_PERIOD_VIEW_DOCUMENT_ACTION = "AccountingPeriodViewAction";
  	public static final String OVERRIDE_ACCOUNT_FOR_EXPIRED_QUESTION_ID = "OverrideAccountForExpiredQuestion";
+ 	
+    // I Want document constants
+    public static final String I_WANT_DOC_ITEM_TAB_ERRORS = "document.item*,newIWantItemLine*";
+    public static final String I_WANT_DOC_ACCOUNT_TAB_ERRORS = "newSourceLine*,document.account*";
+    public static final String I_WANT_DOC_VENDOR_TAB_ERRORS = "document.vendor*";
 }
 
