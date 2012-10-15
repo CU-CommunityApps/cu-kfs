@@ -159,10 +159,10 @@
     	<field-descriptor name="chartOfAccountsCode" column="CHART_CD" jdbc-type="VARCHAR"/>
     	<field-descriptor name="accountNumber" column="ACCT_NBR" jdbc-type="VARCHAR"/>
     	<field-descriptor name="financialObjectCode" column="FIN_OBJ_CD" jdbc-type="VARCHAR"/>
-    	<field-descriptor name="subAccountNumber" column="SUB_ACCT_NBR" jdbc-type="DECIMAL"/>
+    	<field-descriptor name="subAccountNumber" column="SUB_ACCT_NBR" jdbc-type="VARCHAR"/>
     	<field-descriptor name="financialSubObjectCode" column="FIN_SUB_OBJ_CD" jdbc-type="VARCHAR"/>
     	<field-descriptor name="projectCode" column="PROJECT_CD" jdbc-type="VARCHAR"/>
-    	<field-descriptor name="organizationReferenceId" column="ORG_REF_ID" jdbc-type="DECIMAL"/>
+    	<field-descriptor name="organizationReferenceId" column="ORG_REF_ID" jdbc-type="VARCHAR"/>
     	<field-descriptor name="amountOrPercent" column="AMT_OR_PCT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
     	<field-descriptor name="useAmountOrPercent" column="USE_AMT_OR_PCT" jdbc-type="VARCHAR"/>
     	<field-descriptor name="postingYear" column="POSTING_YEAR" jdbc-type="INTEGER" />

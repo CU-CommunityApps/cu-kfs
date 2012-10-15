@@ -173,7 +173,7 @@
   </bean>
   <bean id="IWantDocument-vendorName" parent="IWantDocument-vendorName-parentBean"/>
 
-  <bean id="IWantDocument-vendorName-parentBean" abstract="true" parent="VendorDetail-vendorName">
+  <bean id="IWantDocument-vendorName-parentBean" abstract="true" parent="IWantDocVendorDetail-vendorName">
     <property name="label" value="Vendor Name"/>
   </bean>
   <bean id="IWantDocument-vendorLine1Address" parent="IWantDocument-vendorLine1Address-parentBean"/>
