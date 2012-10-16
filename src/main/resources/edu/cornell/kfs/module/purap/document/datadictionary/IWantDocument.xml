@@ -79,8 +79,9 @@
         <ref bean="IWantDocument-documentationAttached"/>
        <!-- <ref bean="IWantDocument-goods"/>--> 
         <ref bean="IWantDocument-servicePerformedOnCampus"/>
-       <!-- <ref bean="IWantDocument-sensitive"/>
-         --> 
+       <!-- <ref bean="IWantDocument-sensitive"/>--> 
+       <ref bean="IWantDocument-totalDollarAmount"/>
+         
       </list>
     </property>
     <property name="validationMap" ref="IWantDocument-validations"/>
@@ -485,6 +486,13 @@
     <property name="control">
       <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.module.purap.businessobject.options.AttachmentDescriptionValuesFinder" p:includeKeyInLabel="false"/>
     </property>
+  </bean>
+  <bean id="IWantDocument-totalDollarAmount" parent="IWantDocument-totalDollarAmount-parentBean"/>
+
+  <bean id="IWantDocument-totalDollarAmount-parentBean" abstract="true" parent="GenericAttributes-genericAmount">
+    <property name="name" value="totalDollarAmount"/>
+    <property name="label" value="Total"/>
+    <property name="shortLabel" value="Total"/>
   </bean>
 
   

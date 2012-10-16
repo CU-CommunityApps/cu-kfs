@@ -69,7 +69,7 @@
 			<th height=30 colspan="11" class="neutral" valign="middle">&nbsp;</th>
 		</tr>
 		
-		<c:if test="${fullEntryMode }">
+		<c:if test="${fullEntryMode}">
         <tr>
        			<th align=left valign=middle class="neutral">
                     <div align="left">&nbsp;</div>
@@ -113,36 +113,39 @@
                 <td align=left valign=top class="neutral">
                     <kul:htmlControlAttribute 
                         attributeEntry="${accountAttributes.chartOfAccountsCode}" 
-                        property="newSourceLine.chartOfAccountsCode" readOnly="false" tabindexOverride="${tabindexOverrideBase + 0}"/>&nbsp;
+                        property="newSourceLine.chartOfAccountsCode" readOnly="${not fullEntryMode}" tabindexOverride="${tabindexOverrideBase + 1}"/>&nbsp;
                 </td> 
                 <td align=left valign=top class="neutral">
 
                         
                 <kul:htmlControlAttribute attributeEntry="${accountAttributes.accountNumber}" property="newSourceLine.accountNumber"
-	                	onblur="loadAccountName('newSourceLine.accountNumber', 'newSourceLine.chartOfAccountsCode', 'document.newSourceLine.accountNumber.name.div');"/>&nbsp;
+	                	onblur="loadAccountName('newSourceLine.accountNumber', 'newSourceLine.chartOfAccountsCode', 'document.newSourceLine.accountNumber.name.div');" readOnly="${not fullEntryMode}" />&nbsp;
+	                	<c:if test="${ fullEntryMode}">
 	                	<kul:lookup boClassName="org.kuali.kfs.coa.businessobject.Account"
 					                fieldConversions="accountNumber:newSourceLine.accountNumber,chartOfAccountsCode:newSourceLine.chartOfAccountsCode"
 					                lookupParameters="newSourceLine.accountNumber:accountNumber,newSourceLine.chartOfAccountsCode:chartOfAccountsCode"/>
+					    
 				    <br/>
 					<div id="document.newSourceLine.accountNumber.name.div" class="fineprint">
             			<kul:htmlControlAttribute attributeEntry="${accountAttributes.accountNumber}" property="newSourceLine.account.accountName" readOnly="true" />
             		</div>
+            		</c:if>
          
                 </td> 
                 <td align=left valign=top class="neutral">
                     <kul:htmlControlAttribute 
                         attributeEntry="${accountAttributes.subAccountNumber}" 
-                        property="newSourceLine.subAccountNumber" readOnly="false" tabindexOverride="${tabindexOverrideBase + 0}"/>&nbsp;
+                        property="newSourceLine.subAccountNumber" readOnly="${not fullEntryMode}" tabindexOverride="${tabindexOverrideBase + 0}"/>&nbsp;
                 </td>
                 <td align=left valign=top class="neutral">
                     <kul:htmlControlAttribute 
                         attributeEntry="${accountAttributes.financialObjectCode}" 
-                        property="newSourceLine.financialObjectCode" readOnly="false" tabindexOverride="${tabindexOverrideBase + 0}"/>&nbsp;
+                        property="newSourceLine.financialObjectCode" readOnly="${not fullEntryMode}" tabindexOverride="${tabindexOverrideBase + 0}"/>&nbsp;
                 </td>
                 <td align=left valign=top class="neutral">
                     <kul:htmlControlAttribute 
                         attributeEntry="${accountAttributes.financialSubObjectCode}" 
-                        property="newSourceLine.financialSubObjectCode" readOnly="false" tabindexOverride="${tabindexOverrideBase + 0}"/>&nbsp;
+                        property="newSourceLine.financialSubObjectCode" readOnly="${not fullEntryMode}" tabindexOverride="${tabindexOverrideBase + 0}"/>&nbsp;
                 </td>
                 <td align=left valign=top class="neutral">
                     <kul:htmlControlAttribute 
@@ -152,18 +155,18 @@
                 <td align=left valign=top class="neutral">
                     <kul:htmlControlAttribute 
                         attributeEntry="${accountAttributes.organizationReferenceId}" 
-                        property="newSourceLine.organizationReferenceId" readOnly="false" tabindexOverride="${tabindexOverrideBase + 0}"/>&nbsp;
+                        property="newSourceLine.organizationReferenceId" readOnly="${not fullEntryMode}" tabindexOverride="${tabindexOverrideBase + 0}"/>&nbsp;
                 </td>
                 <td align=left valign=top class="neutral">
                     <kul:htmlControlAttribute 
                         attributeEntry="${accountAttributes.useAmountOrPercent}" 
-                        property="newSourceLine.useAmountOrPercent" readOnly="false" tabindexOverride="${tabindexOverrideBase + 0}"
+                        property="newSourceLine.useAmountOrPercent" readOnly="${not fullEntryMode}" tabindexOverride="${tabindexOverrideBase + 0}"
                        />&nbsp;
                 </td>   
                 <td align=left valign=top class="neutral">
                     <kul:htmlControlAttribute 
                         attributeEntry="${accountAttributes.amountOrPercent}" 
-                        property="newSourceLine.amountOrPercent" readOnly="false" tabindexOverride="${tabindexOverrideBase + 0}" 
+                        property="newSourceLine.amountOrPercent" readOnly="${not fullEntryMode}" tabindexOverride="${tabindexOverrideBase + 0}" 
                         />&nbsp;
                 </td> 
                 <td align=left valign=top class="neutral">
@@ -257,6 +260,16 @@
 						    readOnly="${not fullEntryMode}"
 						    tabindexOverride="${tabindexOverrideBase + 0}"/>
 						    </div>
+						    <c:if test="${ fullEntryMode}">
+	                	<kul:lookup boClassName="org.kuali.kfs.coa.businessobject.Account"
+					                fieldConversions="accountNumber:newSourceLine.accountNumber,chartOfAccountsCode:newSourceLine.chartOfAccountsCode"
+					                lookupParameters="newSourceLine.accountNumber:accountNumber,newSourceLine.chartOfAccountsCode:chartOfAccountsCode"/>
+					    
+				    <br/>
+					<div id="document.account[${ctr}].accountNumber.name.div" class="fineprint">
+            			<kul:htmlControlAttribute attributeEntry="${accountAttributes.accountNumber}" property="document.account[${ctr}].accountNumber" readOnly="true" />
+            		</div>
+            		</c:if>
 					</td>	
 					<td valign="top" class="neutral" align="left">
 					    <kul:htmlControlAttribute

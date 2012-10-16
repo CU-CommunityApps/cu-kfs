@@ -24,12 +24,14 @@
 <script language="JavaScript" type="text/javascript" src="scripts/vnd/objectInfo.js"></script>
 <script language="JavaScript" type="text/javascript" src="dwr/interface/ItemUnitOfMeasureService.js"></script>
 <script language="JavaScript" type="text/javascript" src="scripts/module/purap/objectInfo.js"></script>
+<script language="JavaScript" type="text/javascript" src="scripts/module/purap/iWantDoc.js"></script>  
 
 <c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}" />
 
 
 <c:set var="hasItems" value="${fn:length(KualiForm.document.items) > 0}" />
 <c:set var="hasLineItems" value="${fn:length(KualiForm.document.items) > 0}" />
+<c:set var="nbrOfItems" value="${fn:length(KualiForm.document.items)}" />
 
 <c:set var="tabindexOverrideBase" value="50" />
 
@@ -42,7 +44,7 @@
 
 
 
-	<div class="tab-container" align=center>
+	<div class="tab-container" align="center">
     
 	<table cellpadding="0" cellspacing="0" class="datatable" summary="Items Section">
 	
@@ -189,7 +191,8 @@
 						    attributeEntry="${itemAttributes.itemQuantity}"
 						    property="document.item[${ctr}].itemQuantity"
 						    readOnly="${not fullEntryMode}"
-						    tabindexOverride="${tabindexOverrideBase + 0}"/>
+						    tabindexOverride="${tabindexOverrideBase + 0}"
+						    onchange="updateTotal('document.totalDollarAmount', '${ nbrOfItems}')" />
 					</td>
                     <td valign="center" class="neutral" align="center">
                         <kul:htmlControlAttribute 
@@ -221,8 +224,9 @@
 					        <kul:htmlControlAttribute
 						        attributeEntry="${itemAttributes.itemUnitPrice}"
 						        property="document.item[${ctr}].itemUnitPrice"
-						         readOnly="${not fullEntryMode}"
-						        tabindexOverride="${tabindexOverrideBase + 0}"/>
+						        readOnly="${not fullEntryMode}"
+						        tabindexOverride="${tabindexOverrideBase + 0}"
+						        onchange="updateTotal('document.totalDollarAmount', '${ nbrOfItems}')"/>
 						</div>
 					</td>
 								
@@ -269,15 +273,14 @@
 		<tr>
 			<th align=right colspan="6" scope="row" class="neutral">
 			    <div align="right">
-			        <kul:htmlAttributeLabel attributeEntry="${DataDictionary.RequisitionDocument.attributes.totalDollarAmount}" />
+			        <kul:htmlAttributeLabel attributeEntry="${DataDictionary.IWantDocument.attributes.totalDollarAmount}" />
 			    </div>
 			</th>
 			<td valign=middle class="neutral" colspan="2" >
-			    <div align="right"><b>
-                    <kul:htmlControlAttribute
-                        attributeEntry="${DataDictionary.RequisitionDocument.totalDollarAmount}"
-                        property="document.totalDollarAmount"
-                        readOnly="true" />&nbsp; </b>
+			    <div align="right">
+			        <b>
+                        <html:text name="KualiForm" property="document.totalDollarAmount" readonly="true" style="border: none; font-weight: bold"/>
+                    </b>
                 </div>
 			</td>
 			

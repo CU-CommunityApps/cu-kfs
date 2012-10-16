@@ -161,5 +161,25 @@ function loadAccountName(accountNumberFieldName, chartFieldName, accountNameFiel
 	}
  }
 
+function updateTotal(totalDollarAmountFieldName, itemsNbr) {
+	var total = 0;
+
+	for (i = 0; i < itemsNbr; i++) {
+		var quantity = DWRUtil
+				.getValue('document.item[' + i + '].itemQuantity');
+		var price = DWRUtil.getValue('document.item[' + i + '].itemUnitPrice');
+
+		if (isNaN(quantity)) {
+			quantity = 1;
+		}
+		if (isNaN(price)) {
+			price = 0;
+		}
+		total += price * quantity;
+	}
+
+	setRecipientValue(totalDollarAmountFieldName, total);
+}
+
 
 
