@@ -208,35 +208,10 @@ function updateItemsTotal(totalDollarAmountFieldName, totalAccountsField, itemsN
 
 	setRecipientValue(totalDollarAmountFieldName, total);
 	
-	//update accounts with percent
-	updateAccountsAmount(totalDollarAmountFieldName, accountsNbr)
-	
 	// now update accounts total
 	updateAccountsTotal(totalDollarAmountFieldName, totalAccountsField, accountsNbr);
 }
 
-function updateAccountsAmount(totalDollarAmountFieldName,  lineNbr){
-	
-	var itemsTotal = DWRUtil.getValue(totalDollarAmountFieldName);
-	
-	for (i = 0; i < lineNbr; i++) {
-		var amount = 0;
-		var useAmountOrPercent = DWRUtil
-				.getValue('document.account[' + i + '].useAmountOrPercent');
-		var amountOrPercent = DWRUtil.getValue('document.account[' + i + '].amountOrPercent');
-
-		if (isNaN(amountOrPercent)) {
-			amountOrPercent = 0;
-			 
-		}
-		
-		if ('PERCENT' == useAmountOrPercent) {
-			amount = (amountOrPercent * itemsTotal)/100;
-			setRecipientValue('document.account[' + i + '].amountOrPercent', amount);
-		}
-
-	}
-}
 
 
 
