@@ -64,9 +64,7 @@
 		</property>
 	</bean>
 	
-	<bean id="documentRequeuerStep" class="edu.cornell.kfs.sys.batch.DocumentRequeueStep" parent="step">
-			<property name="stagingDirectory" value="${staging.directory}/sys"/>
-	</bean>
+	<bean id="documentRequeuerStep" class="edu.cornell.kfs.sys.batch.DocumentRequeueStep" parent="step"/>
 	
 	<bean id="documentReindexerJob" parent="unscheduledJobDescriptor">
 		<property name="steps">
@@ -89,17 +87,12 @@
      </property>
     </bean>   
 
-    <bean id="documentRequeuerFlatFileInputFileType" parent="documentRequeuerFlatFileInputFileType-parentBean"/>
-	
-    <bean id="documentRequeuerFlatFileInputFileType-parentBean" class="edu.cornell.kfs.sys.batch.DocumentRequeuerFlatFileInputType">
-    	<property name="directoryPath">
-	       <value>${staging.directory}/sys/</value>
-	    </property>
-	    <property name="fileExtension">
-	       <value>txt</value>
-	    </property>
-	</bean>
-    	
+	<bean id="documentMaintenanceService" parent="documentMaintenanceService-parentBean"/>
+
+    <bean id="documentMaintenanceService-parentBean" class="edu.cornell.kfs.sys.service.impl.DocumentMaintenanceServiceImpl">
+	    <property name="documentMaintenanceDao" ref="documentMaintenanceDao"/>
+    </bean>
+ 	 	 	
     <bean id="documentReindexFlatFileInputFileType" parent="documentReindexFlatFileInputFileType-parentBean"/>
 	
     <bean id="documentReindexFlatFileInputFileType-parentBean" class="edu.cornell.kfs.sys.batch.DocumentReindexFlatFileInputType">
@@ -113,6 +106,7 @@
 
 	<bean id="documentRequeueFileBuilderDao" parent="platformAwareDao" class="edu.cornell.kfs.sys.dataaccess.impl.DocumentRequeueFileBuilderDaoOjb" depends-on="kewOjbConfigurer">
 	    <property name="jcdAlias" value="enWorkflowDataSource" />
+		<property name="parameterService" ref="parameterService" />
 	</bean>
 
 </beans>

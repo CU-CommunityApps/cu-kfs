@@ -15,6 +15,8 @@ import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.docsearch.service.SearchableAttributeProcessingService;
 
+import edu.cornell.kfs.sys.service.DocumentMaintenanceService;
+
 /**
  * @author kwk43
  *
@@ -47,7 +49,6 @@ public class DocumentReindexStep extends AbstractStep {
 	    	ioe.printStackTrace();
 	    	return false;
 	    }
-	    
 		for (Iterator<String> it = docIds.iterator(); it.hasNext(); ) {
 			Long id = new Long(it.next());
 			indexer.indexDocument(id);
@@ -56,8 +57,8 @@ public class DocumentReindexStep extends AbstractStep {
 		addTimeStampToFileName(f, fileName, stagingDirectory);
 		
 		return true;
+//		return SpringContext.getBean(DocumentMaintenanceService.class).requeueDocuments();
 	}
-
 
 
 	public void setStagingDirectory(String stagingDirectory) {

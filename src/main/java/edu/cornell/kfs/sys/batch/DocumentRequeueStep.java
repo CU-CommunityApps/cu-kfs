@@ -21,46 +21,23 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.actionrequest.service.DocumentRequeuerService;
 import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
+import org.springframework.transaction.annotation.Transactional;
 
-import edu.cornell.kfs.sys.dataaccess.DocumentRequeueFileBuilderDao;
+import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
+import edu.cornell.kfs.sys.service.DocumentMaintenanceService;
 
 /**
  * @author kwk43
  *
  */
 public class DocumentRequeueStep extends AbstractStep {
-
-	private String stagingDirectory;
-	private String fileName = "documentRequeue.txt";
-	
-	
+	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DocumentRequeueStep.class);
 	
 	/* (non-Javadoc)
 	 * @see org.kuali.kfs.sys.batch.Step#execute(java.lang.String, java.util.Date)
 	 */
 	public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-		
-		DocumentRequeuerService requeuer = SpringContext.getBean(DocumentRequeuerService.class);
-
-		File f = new File(stagingDirectory+File.separator+fileName);
-	    List<String> docIds = new ArrayList<String>();
-
-	    docIds = SpringContext.getBean(DocumentRequeueFileBuilderDao.class).getDocumentRequeueFileValues();
-	    
-		for (Iterator<String> it = docIds.iterator(); it.hasNext(); ) {
-			Long id = new Long(it.next());
-			requeuer.requeueDocument(id);
-		}
-		
-		addTimeStampToFileName(f, fileName, stagingDirectory);
-		
-		return true;
+		return SpringContext.getBean(DocumentMaintenanceService.class).requeueDocuments();
 	}
-
-	public void setStagingDirectory(String stagingDirectory) {
-		this.stagingDirectory = stagingDirectory;
-	}
-	
-	
 
 }
