@@ -26,6 +26,7 @@
 <c:set var="hasAccounts" value="${fn:length(KualiForm.document.accounts) > 0}" />
 <c:set var="accountAttributes" value="${DataDictionary.IWantAccount.attributes}" />
 <c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}" />
+<c:set var="accountsNbr" value="${fn:length(KualiForm.document.accounts)}" />
 
     
      <div class="tab-container" align=center>
@@ -259,12 +260,12 @@
 						    property="document.account[${ctr}].accountNumber"
 						    readOnly="${not fullEntryMode}"
 						    tabindexOverride="${tabindexOverrideBase + 0}"/>
-						    </div>
+						    
 						    <c:if test="${ fullEntryMode}">
 	                	<kul:lookup boClassName="org.kuali.kfs.coa.businessobject.Account"
 					                fieldConversions="accountNumber:newSourceLine.accountNumber,chartOfAccountsCode:newSourceLine.chartOfAccountsCode"
 					                lookupParameters="newSourceLine.accountNumber:accountNumber,newSourceLine.chartOfAccountsCode:chartOfAccountsCode"/>
-					    
+					    </div>
 				    <br/>
 					<div id="document.account[${ctr}].accountNumber.name.div" class="fineprint">
             			<kul:htmlControlAttribute attributeEntry="${accountAttributes.accountNumber}" property="document.account[${ctr}].accountNumber" readOnly="true" />
@@ -322,6 +323,7 @@
 						        property="document.account[${ctr}].useAmountOrPercent"
 						        readOnly="${not fullEntryMode}"
 						        tabindexOverride="${tabindexOverrideBase + 0}"
+						        onchange="updateAccountsTotal('document.totalDollarAmount', 'document.accountingLinesTotal', '${accountsNbr}' )"
 						       />
 						</div>
 					</td>
@@ -334,6 +336,7 @@
 						        property="document.account[${ctr}].amountOrPercent"
 						        readOnly="${not fullEntryMode}"
 						        tabindexOverride="${tabindexOverrideBase + 0}" 
+						        onchange="updateAccountsTotal('document.totalDollarAmount', 'document.accountingLinesTotal', '${accountsNbr}' )"
 						        />
 						</div>
 					</td>
@@ -362,16 +365,36 @@
 
 		</logic:iterate>
 		
-		<!-- BEGIN TOTAL SECTION -->
+
+<!-- BEGIN TOTAL SECTION -->
 		<tr>
 			<th height=30 colspan="11" class="neutral">&nbsp;</th>
 		</tr>
 
+		<tr>
+			<td colspan="11" class="subhead">
+                <span class="subhead-left">Totals</span>
+                <span class="subhead-right">&nbsp;</span>
+            </td>
+		</tr>	
 
-		<%-- <sys-java:accountingLines>
-			<sys-java:accountingLineGroup newLinePropertyName="newSourceLine" collectionPropertyName="document.sourceAccountingLines" collectionItemPropertyName="document.sourceAccountingLine" attributeGroupName="source" />
-		</sys-java:accountingLines>
-		--%>
+		<tr>
+			<th align=right colspan="9" scope="row" class="neutral">
+			    <div align="right">
+			        <kul:htmlAttributeLabel attributeEntry="${DataDictionary.IWantDocument.attributes.totalDollarAmount}" />
+			    </div>
+			</th>
+			<td valign=middle class="neutral" colspan="2" >
+			    <div align="right">
+			        <b>
+                        <html:text name="KualiForm" property="document.accountingLinesTotal" readonly="true" style="border: none; font-weight: bold"/>
+                    </b>
+                </div>
+			</td>
+			
+		</tr>
+
+		<!-- END TOTAL SECTION -->
 		
 		
 		</table>

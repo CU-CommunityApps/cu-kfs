@@ -161,7 +161,35 @@ function loadAccountName(accountNumberFieldName, chartFieldName, accountNameFiel
 	}
  }
 
-function updateTotal(totalDollarAmountFieldName, itemsNbr) {
+function updateAccountsTotal(totalDollarAmountFieldName, totalAccountsField, lineNbr) {
+	var total = 0;
+	var itemsTotal = DWRUtil.getValue(totalDollarAmountFieldName);
+
+	for (i = 0; i < lineNbr; i++) {
+		var amountToAdd = 0;
+		var useAmountOrPercent = DWRUtil
+				.getValue('document.account[' + i + '].useAmountOrPercent');
+		var amountOrPercent = DWRUtil.getValue('document.account[' + i + '].amountOrPercent');
+
+		if (isNaN(amountOrPercent)) {
+			amountOrPercent = 0;
+			 
+		}
+		
+		if ('PERCENT' == useAmountOrPercent) {
+			amountToAdd = (amountOrPercent * itemsTotal)/100;
+		}
+		else {
+			amountToAdd = amountOrPercent *1;
+		}
+		
+		total += amountToAdd;
+	}
+
+	setRecipientValue(totalAccountsField, total);
+}
+
+function updateItemsTotal(totalDollarAmountFieldName, totalAccountsField, itemsNbr, accountsNbr) {
 	var total = 0;
 
 	for (i = 0; i < itemsNbr; i++) {
@@ -179,6 +207,35 @@ function updateTotal(totalDollarAmountFieldName, itemsNbr) {
 	}
 
 	setRecipientValue(totalDollarAmountFieldName, total);
+	
+	//update accounts with percent
+	updateAccountsAmount(totalDollarAmountFieldName, accountsNbr)
+	
+	// now update accounts total
+	updateAccountsTotal(totalDollarAmountFieldName, totalAccountsField, accountsNbr);
+}
+
+function updateAccountsAmount(totalDollarAmountFieldName,  lineNbr){
+	
+	var itemsTotal = DWRUtil.getValue(totalDollarAmountFieldName);
+	
+	for (i = 0; i < lineNbr; i++) {
+		var amount = 0;
+		var useAmountOrPercent = DWRUtil
+				.getValue('document.account[' + i + '].useAmountOrPercent');
+		var amountOrPercent = DWRUtil.getValue('document.account[' + i + '].amountOrPercent');
+
+		if (isNaN(amountOrPercent)) {
+			amountOrPercent = 0;
+			 
+		}
+		
+		if ('PERCENT' == useAmountOrPercent) {
+			amount = (amountOrPercent * itemsTotal)/100;
+			setRecipientValue('document.account[' + i + '].amountOrPercent', amount);
+		}
+
+	}
 }
 
 

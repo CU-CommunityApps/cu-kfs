@@ -32,6 +32,7 @@
 <c:set var="hasItems" value="${fn:length(KualiForm.document.items) > 0}" />
 <c:set var="hasLineItems" value="${fn:length(KualiForm.document.items) > 0}" />
 <c:set var="nbrOfItems" value="${fn:length(KualiForm.document.items)}" />
+<c:set var="accountsNbr" value="${fn:length(KualiForm.document.accounts)}" />
 
 <c:set var="tabindexOverrideBase" value="50" />
 
@@ -192,14 +193,14 @@
 						    property="document.item[${ctr}].itemQuantity"
 						    readOnly="${not fullEntryMode}"
 						    tabindexOverride="${tabindexOverrideBase + 0}"
-						    onchange="updateTotal('document.totalDollarAmount', '${ nbrOfItems}')" />
+						    onchange="updateItemsTotal('document.totalDollarAmount',  'document.accountingLinesTotal', '${ nbrOfItems}', '${accountsNbr }')" />
 					</td>
                     <td valign="center" class="neutral" align="center">
                         <kul:htmlControlAttribute 
                             attributeEntry="${itemAttributes.itemUnitOfMeasureCode}" 
                             property="document.item[${ctr}].itemUnitOfMeasureCode"
                             onblur="loadItemUnitOfMeasureInfo( 'document.item[${ctr}].itemUnitOfMeasureCode', 'document.item[${ctr}].itemUnitOfMeasure.itemUnitOfMeasureDescription' );${onblur}"
-                             readOnly="${not fullEntryMode}"
+                            readOnly="${not fullEntryMode}"
                             tabindexOverride="${tabindexOverrideBase + 0}"/>
                         <c:if test="false">   
                             <kul:lookup boClassName="org.kuali.kfs.sys.businessobject.UnitOfMeasure" 
@@ -226,7 +227,7 @@
 						        property="document.item[${ctr}].itemUnitPrice"
 						        readOnly="${not fullEntryMode}"
 						        tabindexOverride="${tabindexOverrideBase + 0}"
-						        onchange="updateTotal('document.totalDollarAmount', '${ nbrOfItems}')"/>
+						        onchange="updateItemsTotal('document.totalDollarAmount',  'document.accountingLinesTotal', '${ nbrOfItems}', '${accountsNbr }')" />
 						</div>
 					</td>
 								

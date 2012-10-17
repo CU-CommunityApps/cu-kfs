@@ -3,6 +3,7 @@ package edu.cornell.kfs.module.purap.document;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase;
@@ -90,6 +91,8 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     // Will service be performed on Campus: yes/no drop down box
     private boolean servicePerformedOnCampus;
+    
+    private KualiDecimal accountingLinesTotal;
 
     private String explanation;
 
@@ -101,6 +104,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         super();
         items = new TypedArrayList(IWantItem.class);
         accounts = new TypedArrayList(IWantAccount.class);
+        accountingLinesTotal = KualiDecimal.ZERO;
     }
 
     public String getVendorName() {
@@ -422,7 +426,9 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         items.add(itemLinePosition, item);
         renumberItems(itemLinePosition);
+        
     }
+    
 
     public void renumberItems(int start) {
         for (int i = start; i < items.size(); i++) {
@@ -614,6 +620,52 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         addCopyErrorDocumentNote("copied from document " + sourceDocumentHeaderId);
 
+    }
+
+    /**
+     * Computes the accounting lines total amount
+     * 
+     * @return
+     */
+    public KualiDecimal getAccountingLinesTotal() {
+        KualiDecimal totalDollarAmount = KualiDecimal.ZERO;
+        KualiDecimal accountTotal = KualiDecimal.ZERO;
+
+        for (IWantAccount accountLine : accounts) {
+            
+            // if amount
+            if(CUPurapConstants.AMOUNT.equalsIgnoreCase(accountLine.getUseAmountOrPercent())){
+                if (accountLine.getAmountOrPercent() !=null) {
+                    accountTotal = accountLine.getAmountOrPercent();
+                } else {
+                    accountTotal = KualiDecimal.ZERO;
+                }
+            }
+            
+            //if percent
+            if(CUPurapConstants.PERCENT.equalsIgnoreCase(accountLine.getUseAmountOrPercent())){
+                if (accountLine.getAmountOrPercent() !=null) {
+                    if(totalDollarAmount !=null){
+                        
+                    accountTotal = (accountLine.getAmountOrPercent().multiply(getTotalDollarAmount())).divide(new KualiDecimal(100));
+                    }
+                    else
+                    {
+                        accountTotal = KualiDecimal.ZERO;
+                    }
+                } else {
+                    accountTotal = KualiDecimal.ZERO;
+                }
+            }
+            
+            totalDollarAmount = totalDollarAmount.add(accountTotal);
+        }
+
+        return totalDollarAmount;
+    }
+
+    public void setAccountingLinesTotal(KualiDecimal accountingLinesTotal) {
+        this.accountingLinesTotal = accountingLinesTotal;
     }
 
 }

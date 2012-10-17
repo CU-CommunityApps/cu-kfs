@@ -39,6 +39,9 @@ public class CUPurapConstants extends PurapConstants {
     public static final String USER_OPTIONS_DEFAULT_COLLEGE = "DEFAULT_COLLEGE";
     public static final String USER_OPTIONS_DEFAULT_DEPARTMENT = "DEFAULT_DEPARTMENT";
     
+    public static final String AMOUNT = "AMOUNT";
+    public static final String PERCENT = "PERCENT";
+    
 
     
 }
