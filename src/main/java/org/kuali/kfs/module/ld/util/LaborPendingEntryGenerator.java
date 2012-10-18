@@ -54,7 +54,7 @@ public class LaborPendingEntryGenerator {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(LaborPendingEntryGenerator.class);
 
     /**
-     * generate the expense pending entries based on the given document and accouting line
+     * generate the expense pending entries based on the given document and accounting line
      * 
      * @param document the given accounting document
      * @param accountingLine the given accounting line
@@ -102,11 +102,7 @@ public class LaborPendingEntryGenerator {
 
         List<LaborLedgerPendingEntry> benefitPendingEntries = new ArrayList<LaborLedgerPendingEntry>();
         for (PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
-        	String tmpLaborBenefitRateCategoryCode = ((AccountExtendedAttribute)accountingLine.getAccount().getExtension()).getLaborBenefitRateCategoryCode();
-        	BenefitsCalculation benefitsCalculation = positionObjectBenefit.getBenefitsCalculation(tmpLaborBenefitRateCategoryCode);
-        	positionObjectBenefit.setBenefitsCalculation(benefitsCalculation);
-            positionObjectBenefit.setLaborBenefitRateCategoryCode(tmpLaborBenefitRateCategoryCode);
-            String fringeBenefitObjectCode = positionObjectBenefit.getBenefitsCalculation().getPositionFringeBenefitObjectCode();
+            String fringeBenefitObjectCode = retrieveFringeBenefitObjectCode(accountingLine, chartOfAccountsCode);
 
             KualiDecimal benefitAmount = SpringContext.getBean(LaborBenefitsCalculationService.class).calculateFringeBenefit(positionObjectBenefit, accountingLine.getAmount(), accountingLine.getAccountNumber(), accountingLine.getSubAccountNumber());
             if (benefitAmount.isNonZero()) {
@@ -158,15 +154,15 @@ public class LaborPendingEntryGenerator {
     }
 
     /**
-     * generate the benefit pending entries with the given benefit amount and finge benefit object code based on the given document
-     * and accouting line
+     * generate the benefit pending entries with the given benefit amount and fringe benefit object code based on the given document
+     * and accounting line
      * 
      * @param document the given accounting document
      * @param accountingLine the given accounting line
      * @param sequenceHelper the given sequence helper
      * @param benefitAmount the given benefit amount
-     * @param fringeBenefitObjectCode the given finge benefit object code
-     * @return a set of benefit pending entries with the given benefit amount and finge benefit object code
+     * @param fringeBenefitObjectCode the given fringe benefit object code
+     * @return a set of benefit pending entries with the given benefit amount and fringe benefit object code
      */
     public static List<LaborLedgerPendingEntry> generateBenefitPendingEntries(LaborLedgerPostingDocument document, ExpenseTransferAccountingLine accountingLine, GeneralLedgerPendingEntrySequenceHelper sequenceHelper, KualiDecimal benefitAmount, String fringeBenefitObjectCode) {
         List<LaborLedgerPendingEntry> benefitPendingEntries = new ArrayList<LaborLedgerPendingEntry>();
@@ -196,16 +192,21 @@ public class LaborPendingEntryGenerator {
     public static List<LaborLedgerPendingEntry> generateBenefitClearingPendingEntries(LaborLedgerPostingDocument document, GeneralLedgerPendingEntrySequenceHelper sequenceHelper, String accountNumber, String chartOfAccountsCode) {
         List<LaborLedgerPendingEntry> benefitClearingPendingEntries = new ArrayList<LaborLedgerPendingEntry>();
 
+        String fringeBenefitObjectCodeForSource = "";
+        String fringeBenefitObjectCodeForTarget = "";
         Map<String, KualiDecimal> sourceLineBenefitAmountSum = new HashMap<String, KualiDecimal>();
         List<ExpenseTransferSourceAccountingLine> sourceAccountingLines = document.getSourceAccountingLines();
         for (ExpenseTransferSourceAccountingLine accountingLine : sourceAccountingLines) {
             updateBenefitAmountSum(sourceLineBenefitAmountSum, accountingLine);
+            fringeBenefitObjectCodeForSource = retrieveFringeBenefitObjectCode(accountingLine, chartOfAccountsCode);
         }
 
+        
         Map<String, KualiDecimal> targetLineBenefitAmountSum = new HashMap<String, KualiDecimal>();
         List<ExpenseTransferTargetAccountingLine> targetAccountingLines = document.getTargetAccountingLines();
         for (ExpenseTransferTargetAccountingLine accountingLine : targetAccountingLines) {
             updateBenefitAmountSum(targetLineBenefitAmountSum, accountingLine);
+            fringeBenefitObjectCodeForTarget = retrieveFringeBenefitObjectCode(accountingLine, chartOfAccountsCode);
         }
 
         Set<String> benefitTypeCodes = new HashSet<String>();
@@ -230,7 +231,8 @@ public class LaborPendingEntryGenerator {
 
             KualiDecimal clearingAmount = sourceAmount.subtract(targetAmount);
             if (clearingAmount.isNonZero() && ObjectUtils.isNotNull(benefitTypeCode)) {
-                benefitClearingPendingEntries.add(LaborPendingEntryConverter.getBenefitClearingPendingEntry(document, sequenceHelper, accountNumber, chartOfAccountsCode, benefitTypeCode, clearingAmount));
+                benefitClearingPendingEntries.add(LaborPendingEntryConverter.getBenefitClearingPendingEntry(document, sequenceHelper, accountNumber, chartOfAccountsCode, fringeBenefitObjectCodeForSource, benefitTypeCode, sourceAmount));
+                benefitClearingPendingEntries.add(LaborPendingEntryConverter.getBenefitClearingPendingEntry(document, sequenceHelper, accountNumber, chartOfAccountsCode, fringeBenefitObjectCodeForTarget, benefitTypeCode, targetAmount.negated()));
             }
         }
 
@@ -295,5 +297,25 @@ public class LaborPendingEntryGenerator {
         }
 
         return true;
+    }
+    
+    /**
+     * 
+     * @param accountingLine
+     * @param chartOfAccountsCode
+     * @return
+     */
+    private static String retrieveFringeBenefitObjectCode(ExpenseTransferAccountingLine accountingLine, String chartOfAccountsCode) {
+        String fringeBenefitObjectCode = "";
+        Collection<PositionObjectBenefit> positionObjectBenefits = SpringContext.getBean(LaborPositionObjectBenefitService.class).getPositionObjectBenefits(accountingLine.getPayrollEndDateFiscalYear(), chartOfAccountsCode, accountingLine.getFinancialObjectCode());
+
+        for (PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
+        	String tmpLaborBenefitRateCategoryCode = ((AccountExtendedAttribute)accountingLine.getAccount().getExtension()).getLaborBenefitRateCategoryCode();
+        	BenefitsCalculation benefitsCalculation = positionObjectBenefit.getBenefitsCalculation(tmpLaborBenefitRateCategoryCode);
+        	positionObjectBenefit.setLaborLedgerBenefitsCalculation(benefitsCalculation);
+            positionObjectBenefit.setLaborBenefitRateCategoryCode(tmpLaborBenefitRateCategoryCode);
+            fringeBenefitObjectCode = positionObjectBenefit.getBenefitsCalculation().getPositionFringeBenefitObjectCode();
+        }
+        return fringeBenefitObjectCode;
     }
 }
