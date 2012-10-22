@@ -163,7 +163,7 @@
         </init-param>
         <init-param>
             <param-name>config</param-name>
-            <param-value>/WEB-INF/struts-config.xml</param-value>
+			<param-value>/WEB-INF/struts-config.xml,/WEB-INF/throwaway-struts-config.xml,/WEB-INF/cu-struts-config.xml</param-value>
         </init-param>
         <load-on-startup>2</load-on-startup>
     </servlet>
