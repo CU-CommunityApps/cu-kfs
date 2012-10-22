@@ -343,33 +343,61 @@
     </dependency>
 
     <dependency>
-      <groupId>edu.cornell.kfs</groupId>
-      <artifactId>kfs-modded-war</artifactId>
-      <version>4.0-fixes-SNAPSHOT</version>
-      <type>war</type>
-      <exclusions>
-                <exclusion>
-                        <groupId>commons-dbcp</groupId>
-                        <artifactId>commons-dbcp</artifactId>
-                </exclusion>
-                <exclusion>
-                        <groupId>commons-pool</groupId>
-                        <artifactId>commons-pool</artifactId>
-                </exclusion>
-                 <exclusion>
-                  <artifactId>xapool</artifactId>
-                  <groupId>xapool</groupId>
-          </exclusion>
-          <exclusion>
-          	<groupId>com.oracle</groupId>
+	<groupId>edu.cornell.kfs</groupId>
+	<artifactId>kfs-modded-war</artifactId>
+	<version>4.0-fixes-SNAPSHOT</version>
+	<type>war</type>
+	<exclusions>
+		<exclusion>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+		</exclusion>
+		<exclusion>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+		</exclusion>
+		<exclusion>
+			<artifactId>xapool</artifactId>
+			<groupId>xapool</groupId>
+		</exclusion>
+		<exclusion>
+			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc14</artifactId>
-          </exclusion>
-          <exclusion>
-          	<groupId>edu.cornell.cynergy</groupId>
+		</exclusion>
+		<exclusion>
+			<groupId>edu.cornell.cynergy</groupId>
 			<artifactId>cynergy-customizations</artifactId>
-          </exclusion>
-        </exclusions>
-    </dependency>
+		</exclusion>
+	</exclusions>
+</dependency>
+
+ <dependency>
+	<groupId>edu.cornell.kfs</groupId>
+	<artifactId>kfs-modded-lib</artifactId>
+	<version>4.0-fixes</version>
+	<exclusions>
+		<exclusion>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+		</exclusion>
+		<exclusion>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+		</exclusion>
+		<exclusion>
+			<artifactId>xapool</artifactId>
+			<groupId>xapool</groupId>
+		</exclusion>
+		<exclusion>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc14</artifactId>
+		</exclusion>
+		<exclusion>
+			<groupId>edu.cornell.cynergy</groupId>
+			<artifactId>cynergy-customizations</artifactId>
+		</exclusion>
+	</exclusions>
+</dependency>
        
     <dependency>
        <groupId>edu.cornell.kfs</groupId>
