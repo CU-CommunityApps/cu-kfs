@@ -15,6 +15,12 @@
                 <value>edu.cornell.kfs.fp</value>
             </list>
         </property>
+        <property name="dataDictionaryPackages">
+			<list merge="true">
+                <value>edu/cornell/kfs/fp/document/datadictionary</value>
+                <!-- <value>edu/cornell/kfs/fp/businessobject/datadictionary</value> -->
+			</list>
+		</property>
 		<property name="fiscalYearMakers">
 			<list/>
 		</property>

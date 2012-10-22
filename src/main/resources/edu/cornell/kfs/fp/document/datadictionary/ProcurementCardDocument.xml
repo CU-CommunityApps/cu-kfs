@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd         http://rice.kuali.org/dd/dd.xsd">
+<!--
+ Copyright 2007-2009 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+  <bean id="ProcurementCardDocument" parent="ProcurementCardDocument-parentBean">
+    <property name="attributes">
+      <list>
+        <ref bean="ProcurementCardDocument-accountNumberForSearching"/>
+      </list>
+   </property>
+  </bean>
+  
+   
+  
+  <bean id="ProcurementCardDocument-accountNumberForSearching" parent="ProcurementCardDocument-accountNumberForSearching-parentBean"/>
+
+  <bean id="ProcurementCardDocument-accountNumberForSearching-parentBean" abstract="true" parent="AccountAttribute">
+    <property name="name" value="accountNumberForSearching"/>
+    <property name="label" value="Transaction Account"/>
+  </bean>
+  
+  
+  
+  <bean id="ProcurementCard-accountingLineView" parent="ProcurementCard-accountingLineView-parent"/> 
+  <bean id="ProcurementCard-accountingLineView-parent" parent="AccountingLineView" abstract="true">
+		<property name="elements">
+			<list>
+				<bean parent="AccountingLineView-countedSequenceNumber"/>
+				<bean parent="AccountingLineView-lines">
+					<property name="lines">
+						<list>
+							<ref bean="accountingInformation"/>
+							<ref bean="salesTaxInformation"/>
+						</list>
+					</property>
+				</bean>
+				<bean parent="AccountingLineView-field" p:name="amount" p:required="true"/>
+				<bean parent="AccountingLineView-actions"/>
+			</list>
+		</property>
+  </bean>
+  
+  <bean id="ProcurementCard-targetGroupTotals" class="org.springframework.beans.factory.config.ListFactoryBean">
+    	<property name="sourceList">
+    		<list>
+    			<bean class="org.kuali.kfs.fp.document.web.ProcurementCardGroupTotalDefinition" p:totalProperty="targetTotal" p:representedProperty="amount"/>
+    		</list>
+    	</property>
+  </bean>
+    
+  <!-- workflow attributes for routing -->
+  <bean id="ProcurementCardDocument-workflowAttributes" parent="ProcurementCardDocument-workflowAttributes-parentBean">    
+  
+    	
+    	<property name="searchingTypeDefinitions">
+    		<list>
+    			<bean class="org.kuali.rice.kns.datadictionary.SearchingTypeDefinition">
+    				<property name="searchingAttribute">
+    					<bean class="org.kuali.rice.kns.datadictionary.SearchingAttribute">
+    						<property name="businessObjectClassName" value="org.kuali.kfs.fp.document.ProcurementCardDocument"/>
+    						<property name="attributeName" value="accountNumberForSearching"/>
+    						<property name="showAttributeInResultSet" value="true"/>
+    					</bean>
+    				</property>
+    				<property name="documentValues">
+    					<list>
+    						<value>accountNumberForSearching</value>
+    					</list>
+    				</property>
+    			</bean>
+    		</list>
+    	</property>
+  </bean>
+</beans>
