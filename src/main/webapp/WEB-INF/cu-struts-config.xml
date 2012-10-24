@@ -23,6 +23,9 @@
 							<!-- Check Recon Form -->
 	    <form-bean name="CheckReconciliationReportForm"
             type="com.rsmart.kuali.kfs.cr.document.web.struts.CheckReconciliationReportForm" /> 
+                            <!-- I Want document Form -->
+        <form-bean name="IWantDocumentForm"
+			type="edu.cornell.kfs.module.purap.document.web.struts.IWantDocumentForm" />
             
     </form-beans>
     
@@ -55,6 +58,16 @@
 			<set-property property="cancellable" value="true" />
 			<forward name="basic" path="/jsp/module/bc/SipImport.jsp" />
 			<forward name="lostSessionReturning" path="/jsp/module/bc/LostSessionReturning.jsp" />
+		</action>
+		    <!-- I Want document -->
+	    <action path="/purapIWant" name="IWantDocumentForm"
+			input="/jsp/module/purap/IWant.jsp"
+			type="edu.cornell.kfs.module.purap.document.web.struts.IWantDocumentAction"
+			scope="request" parameter="methodToCall" validate="true"
+			attribute="KualiForm">
+			<set-property property="cancellable" value="true" />
+			<forward name="basic" path="/jsp/module/purap/IWant.jsp" />	
+			<forward name="finish" path="/jsp/module/purap/iWantDocumentFinish.jsp" />		
 		</action>
 	</action-mappings>
 </struts-config>		

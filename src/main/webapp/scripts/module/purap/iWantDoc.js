@@ -186,6 +186,10 @@ function updateAccountsTotal(totalDollarAmountFieldName, totalAccountsField, lin
 		total += amountToAdd;
 	}
 
+	//format
+	total = total.toFixed(2);
+	total = addCommas(total);
+	
 	setRecipientValue(totalAccountsField, total);
 }
 
@@ -205,11 +209,27 @@ function updateItemsTotal(totalDollarAmountFieldName, totalAccountsField, itemsN
 		}
 		total += price * quantity;
 	}
-
+	//format
+	total = total.toFixed(2);
+	total = addCommas(total);
+	
 	setRecipientValue(totalDollarAmountFieldName, total);
 	
 	// now update accounts total
 	updateAccountsTotal(totalDollarAmountFieldName, totalAccountsField, accountsNbr);
+}
+
+function addCommas(nStr)
+{
+	nStr += '';
+	x = nStr.split('.');
+	x1 = x[0];
+	x2 = x.length > 1 ? '.' + x[1] : '';
+	var rgx = /(\d+)(\d{3})/;
+	while (rgx.test(x1)) {
+		x1 = x1.replace(rgx, '$1' + ',' + '$2');
+	}
+	return x1 + x2;
 }
 
 

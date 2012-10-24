@@ -23,7 +23,7 @@
 <%@ attribute name="transparentBackground" required="false" %>
 <%@ attribute name="defaultOpen" required="false" %>
 
-<c:set var="noteColSpan" value="6" />
+<c:set var="noteColSpan" value="7" />
 <c:set var="iWantDocumentAttributes" value="${DataDictionary.IWantDocument.attributes}" />
 
 <c:if test="${empty noteType}">
@@ -64,7 +64,7 @@
             <tbody>
             <%--Note --%>
             <tr>
-			<td height=30 colspan="6" class="neutral" style="color: blue; font-family:Verdana, Verdana, serif; font-size: 12px;font-style: italic">
+			<td height=30 colspan="${noteColSpan}" class="neutral" style="color: blue; font-family:Verdana, Verdana, serif; font-size: 12px;font-style: italic">
 				<b>If you have documents to send to the FTC/Vendor follow these instructions:</b>
 					<ol>
 						<li>Select an attachment description from the drop down box</li>
@@ -86,6 +86,7 @@
             <kul:htmlAttributeHeaderCell attributeEntry="${notesAttributes.noteTopicText}" forceRequired="true" labelFor="newNote.noteTopicText" scope="col" align="left" />
           </c:if>
                      <kul:htmlAttributeHeaderCell attributeEntry="${iWantDocumentAttributes.attachmentDescription}" labelFor="document.attachmentDescription" scope="col" align="left"/>
+                     <kul:htmlAttributeHeaderCell attributeEntry="${notesAttributes.noteText}" labelFor="document.noteText" scope="col" align="left"/>
                     <c:if test="${allowsNoteAttachments eq true}">
                       <kul:htmlAttributeHeaderCell attributeEntry="${notesAttributes.attachment}" labelFor="attachmentFile" scope="col" align="left"/>
                     </c:if>
@@ -107,6 +108,7 @@
                        <td class="infoline"><kul:htmlControlAttribute attributeEntry="${notesAttributes.noteTopicText}" property="newNote.noteTopicText" forceRequired="true" /></td>
                       </c:if>
                       <td class="infoline"><kul:htmlControlAttribute attributeEntry="${iWantDocumentAttributes.attachmentDescription}" property="document.attachmentDescription"  /></td>
+                      <td class="infoline"><kul:htmlControlAttribute attributeEntry="${notesAttributes.noteText}" property="newNote.noteText" forceRequired="${notesAttributes.noteText.required}" /></td>
                       <c:set var="noteAddButtonOnClick" value="" />
                       <c:if test="${allowsNoteAttachments eq true}">
                         <c:set var="noteAddButtonOnClick" value="this.form.encoding='multipart/form-data'; return true;" />
@@ -149,7 +151,7 @@
                           <td class="datacell center">
                           <bean:write name="KualiForm" property="${propPrefix}boNote[${status.index}].noteTopicText"/></td>
                         </c:if>
-
+                        <td class="datacell center">&nbsp;</td>
                         <td class="datacell center"><bean:write name="KualiForm" property="${propPrefix}boNote[${status.index}].noteText"/></td>
 
             <%-- use caution if you rename either of these two variables.  It seems that the properties are not read in sequentially

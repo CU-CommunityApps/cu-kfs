@@ -621,7 +621,11 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         IWantDocument iWantDocument = (IWantDocument) iWantForm.getDocument();
         Note newNote = iWantForm.getNewNote();
-        newNote.setNoteText(iWantDocument.getAttachmentDescription());
+        
+        if(StringUtils.isNotBlank(newNote.getNoteText())){
+            newNote.setNoteText(iWantDocument.getAttachmentDescription() + " " + newNote.getNoteText());
+        }
+        
 
         return super.insertBONote(mapping, form, request, response);
     }

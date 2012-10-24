@@ -142,6 +142,11 @@
                     <kul:htmlControlAttribute 
                         attributeEntry="${accountAttributes.financialObjectCode}" 
                         property="newSourceLine.financialObjectCode" readOnly="${not fullEntryMode}" tabindexOverride="${tabindexOverrideBase + 0}"/>&nbsp;
+                    <c:if test="${ fullEntryMode}">
+	                	<kul:lookup boClassName="org.kuali.kfs.coa.businessobject.ObjectCode"
+					                fieldConversions="chartOfAccountsCode:newSourceLine.chartOfAccountsCode,financialObjectCode:newSourceLine.financialObjectCode"
+					                lookupParameters="newSourceLine.chartOfAccountsCode:chartOfAccountsCode,newSourceLine.financialObjectCode:financialObjectCode"/>
+				    </c:if>
                 </td>
                 <td align=left valign=top class="neutral">
                     <kul:htmlControlAttribute 

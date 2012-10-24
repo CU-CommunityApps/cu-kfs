@@ -137,7 +137,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
      */
     public String getHeaderTitle() {
         if (CUPurapConstants.IWantDocumentSteps.CUSTOMER_DATA_STEP.equals(step)) {
-            return "Welcome to the I Want Doc!ÊSubmit your order request in just 4 easy steps. <br/>I Want Document Step #1";
+            return "Welcome to the I Want Doc! Submit your order request in just 4 easy steps. <br/>I Want Document Step #1";
         }
         if (CUPurapConstants.IWantDocumentSteps.ITEMS_AND_ACCT_DATA_STEP.equals(step)) {
             return "I Want Document Step #2";
