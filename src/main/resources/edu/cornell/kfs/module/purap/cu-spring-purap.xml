@@ -150,4 +150,6 @@
         </property>
     </bean>
 
+	<bean id="statusOverrideQuestion" class="edu.cornell.kfs.module.purap.question.PurchaseOrderStatusOverrideQuestion" scope="prototype" />
+
 </beans>

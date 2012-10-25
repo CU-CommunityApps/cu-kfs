@@ -60,6 +60,7 @@ import org.kuali.kfs.module.purap.util.PurApItemUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorContract;
+import org.kuali.rice.kim.service.KIMServiceLocator;
 import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.DateTimeService;
@@ -76,6 +77,8 @@ import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
  */
 public class PurchaseOrderForm extends PurchasingFormBase {
 
+	private static final String MOVE_CXML_ERROR_PO_PERM = "Move CXML Error PO"; // ==== CU Customization (KFSPTS-1457) ====
+	
     protected PurchaseOrderVendorStipulation newPurchaseOrderVendorStipulationLine;
     protected PurchaseOrderVendorQuote newPurchaseOrderVendorQuote;
     protected Long awardedVendorNumber;
@@ -670,6 +673,20 @@ public class PurchaseOrderForm extends PurchasingFormBase {
         return can;
     }
     
+    // ==== CU Customization (KFSPTS-1457) ====
+    
+    protected boolean canOpenPoInCxmlErrorStatus() {
+    	return PurchaseOrderStatuses.CXML_ERROR.equals(getPurchaseOrderDocument().getStatusCode()) && KIMServiceLocator.getPermissionService().hasPermission(
+    			GlobalVariables.getUserSession().getPrincipalId(), PurapConstants.PURAP_NAMESPACE, MOVE_CXML_ERROR_PO_PERM, null);
+    }
+    
+    protected boolean canVoidPoInCxmlErrorStatus() {
+    	return PurchaseOrderStatuses.CXML_ERROR.equals(getPurchaseOrderDocument().getStatusCode()) && KIMServiceLocator.getPermissionService().hasPermission(
+    			GlobalVariables.getUserSession().getPrincipalId(), PurapConstants.PURAP_NAMESPACE, MOVE_CXML_ERROR_PO_PERM, null);
+    }
+    
+    // ==== End CU Customization ====
+    
     /**
      * Creates a MAP for all the buttons to appear on the Purchase Order Form, and sets the attributes of these buttons.
      * 
@@ -786,6 +803,22 @@ public class PurchaseOrderForm extends PurchasingFormBase {
         cancelSensitiveDataButton.setExtraButtonSource("${" + KFSConstants.RICE_EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_cancel.gif");
         cancelSensitiveDataButton.setExtraButtonAltText("Cancel sensitive data assignment");
         
+        // ==== CU Customization (KFSPTS-1457) ====
+        
+        // Reopen PO button
+        ExtraButton openCxerButton = new ExtraButton();
+        openCxerButton.setExtraButtonProperty("methodToCall.openPoCxer");
+        openCxerButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_openorder.gif");
+        openCxerButton.setExtraButtonAltText("Open PO");
+
+        // Void PO button
+        ExtraButton voidCxerButton = new ExtraButton();
+        voidCxerButton.setExtraButtonProperty("methodToCall.voidPoCxer");
+        voidCxerButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_voidorder.gif");
+        voidCxerButton.setExtraButtonAltText("Void PO");
+        
+        // ==== End CU Customization ====
+        
         result.put(retransmitButton.getExtraButtonProperty(), retransmitButton);
         result.put(printingRetransmitButton.getExtraButtonProperty(), printingRetransmitButton);
         result.put(printingPreviewButton.getExtraButtonProperty(), printingPreviewButton);
@@ -804,6 +837,11 @@ public class PurchaseOrderForm extends PurchasingFormBase {
         result.put(submitSensitiveDataButton.getExtraButtonProperty(), submitSensitiveDataButton);
         result.put(cancelSensitiveDataButton.getExtraButtonProperty(), cancelSensitiveDataButton);
         result.put(resendPoCxmlButton.getExtraButtonProperty(), resendPoCxmlButton);
+        
+        // ==== CU Customization (KFSPTS-1457) ====
+        result.put(openCxerButton.getExtraButtonProperty(), openCxerButton);
+        result.put(voidCxerButton.getExtraButtonProperty(), voidCxerButton);
+        // ==== End CU Customization ====
         
         return result;
     }
@@ -883,6 +921,18 @@ public class PurchaseOrderForm extends PurchasingFormBase {
             extraButtons.add((ExtraButton) buttonsMap.get("methodToCall.splitPo"));
         }
 
+        // ==== CU Customization (KFSPTS-1457) ====
+        
+        if (canOpenPoInCxmlErrorStatus()) {
+        	extraButtons.add((ExtraButton) buttonsMap.get("methodToCall.openPoCxer"));
+        }
+        
+        if (canVoidPoInCxmlErrorStatus()) {
+        	extraButtons.add((ExtraButton) buttonsMap.get("methodToCall.voidPoCxer"));
+        }
+        
+        // ==== End CU Customization ====
+        
         if (canContinuePoSplit()) {
             extraButtons.clear();
             extraButtons.add((ExtraButton) buttonsMap.get("methodToCall.continuePurchaseOrderSplit"));

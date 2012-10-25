@@ -51,7 +51,6 @@ import org.kuali.kfs.module.purap.businessobject.PurchaseOrderVendorQuote;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderVendorStipulation;
 import org.kuali.kfs.module.purap.businessobject.SensitiveData;
 import org.kuali.kfs.module.purap.businessobject.SensitiveDataAssignment;
-import org.kuali.kfs.module.purap.document.AccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderRetransmitDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderSplitDocument;
@@ -74,8 +73,10 @@ import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kew.messaging.MessageServiceNames;
 import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.rice.kew.service.KEWServiceLocator;
+import org.kuali.rice.kim.service.KIMServiceLocator;
 import org.kuali.rice.kns.bo.Note;
 import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
+import org.kuali.rice.kns.exception.AuthorizationException;
 import org.kuali.rice.kns.exception.ValidationException;
 import org.kuali.rice.kns.question.ConfirmationQuestion;
 import org.kuali.rice.kns.service.BusinessObjectService;
@@ -99,6 +100,11 @@ import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 public class PurchaseOrderAction extends PurchasingActionBase {
     protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PurchaseOrderAction.class);
 
+    // ==== CU Customization (KFSPTS-1457): Added some new constants and variables. ====
+    private static final String MOVE_CXML_ERROR_PO_PERM = "Move CXML Error PO";
+	private static final String MOVE_CXML_ERROR_PO_SUCCESS = "moveCxmlErrorPoSuccess";
+	private static final String STATUS_OVERRIDE_QUESTION = "statusOverrideQuestion";
+    
     /**
      * @see org.kuali.rice.kns.web.struts.action.KualiAction#refresh(org.apache.struts.action.ActionMapping,
      *      org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -1900,6 +1906,70 @@ public class PurchaseOrderAction extends PurchasingActionBase {
         }
     }
 
+    // ==== CU Customization (KFSPTS-1457): Added the ability for certain users to move "CXER"-status POs into "OPEN" or "VOID" status. ====
+    
+    public ActionForward openPoCxer(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	return movePoCxer(mapping, form, request, response, PurchaseOrderStatuses.OPEN, "Open");
+    }
+    
+    public ActionForward voidPoCxer(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	return movePoCxer(mapping, form, request, response, PurchaseOrderStatuses.VOID, "Void");
+    }
+    
+    protected ActionForward movePoCxer(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response,
+    		String newStatus, String newStatusLabel) throws Exception {
+    	KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        PurchaseOrderDocument po = (PurchaseOrderDocument) kualiDocumentFormBase.getDocument();
+        Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
+        
+        // If the user has not received the question screen yet, then perform the PO status update.
+        if (ObjectUtils.isNull(question)) {
+        	
+        	// Check authorization.
+        	checkMovePoCxerAuthorization(po);
+        	
+        	// Use logic similar to the executeManualStatusChange() method to override the document's status.
+        	try {
+        		PurapService purapService = SpringContext.getBean(PurapService.class); 
+                purapService.updateStatus(po, newStatus);
+                purapService.saveDocumentNoValidation(po);
+            }
+            catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        	
+            // Add a message to the route log.
+            po.getDocumentHeader().getWorkflowDocument().logDocumentAction("Moved PO document from 'Error occurred sending cxml' status to '" + newStatusLabel + "' status.");
+            
+            // Present a success message to the user.
+        	String message = "PO document " + po.getDocumentNumber() + " was successfully moved to '" + newStatusLabel + "' status.";
+        	return this.performQuestionWithoutInput(mapping, form, request, response, MOVE_CXML_ERROR_PO_SUCCESS, message, STATUS_OVERRIDE_QUESTION, MOVE_CXML_ERROR_PO_SUCCESS, "");
+        }
+    	
+        // If the user already went to the success "question" (which only had a "close" button), then simply perform the "returnToSender" logic.
+        
+        return returnToSender(request, mapping, kualiDocumentFormBase);
+    }
+    
+    // A helper method for checking if the user has authorization to move CXML Error POs and if the document is indeed in CXML error status.
+    private void checkMovePoCxerAuthorization(PurchaseOrderDocument po) throws Exception {
+    	
+    	// Check if the user is authorized to open/void the PO.
+    	if (!KIMServiceLocator.getPermissionService().hasPermission(
+    			GlobalVariables.getUserSession().getPrincipalId(), PurapConstants.PURAP_NAMESPACE, MOVE_CXML_ERROR_PO_PERM, null)) {
+    		throw new AuthorizationException(GlobalVariables.getUserSession().getPerson().getPrincipalName(), "manuallyOverridePurchaseOrderStatus",
+    				po.getDocumentNumber(), "You are not authorized to manually move purchase order statuses on PO documents in 'Error occurred sending cxml' status.", null);
+    	}
+    	
+    	// Ensure that the document is currently in "CXER" status before trying to update it.
+    	if (!PurchaseOrderStatuses.CXML_ERROR.equals(po.getStatusCode())) {
+    		throw new AuthorizationException(GlobalVariables.getUserSession().getPerson().getPrincipalName(), "manuallyOverridePurchaseOrderStatus",
+    				po.getDocumentNumber(), "You are not authorized to perform this action on PO documents not in 'Error occurred sending cxml' status.", null);
+    	}
+    }
+    
+    // ==== End CU Customization ====
+    
     /**
      * @see org.kuali.kfs.module.purap.document.web.struts.PurchasingAccountsPayableActionBase#loadDocument(org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase)
      */
