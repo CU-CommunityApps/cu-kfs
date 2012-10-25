@@ -21,12 +21,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Writer;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.commons.io.comparator.NameFileComparator;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.businessobject.PaymentStatus;
 import org.kuali.kfs.pdp.service.PaymentDetailService;
@@ -458,7 +459,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
         List<String> fileList = new ArrayList<String>();
 
         String prop = kualiConfigurationService.getPropertyString(KFSConstants.STAGING_DIRECTORY_KEY) + "/cr/upload";
-        
+          
         File folder = new File(prop);
 
         if( !folder.exists() ) {
@@ -477,6 +478,8 @@ public class CheckReconciliationImportStep extends AbstractStep {
         
         else {
             File[] files = folder.listFiles();
+            
+    		Arrays.sort(files, NameFileComparator.NAME_INSENSITIVE_COMPARATOR);
 
             for (int i = 0; i < files.length; i++) {
                 if (files[i].isFile()) {
