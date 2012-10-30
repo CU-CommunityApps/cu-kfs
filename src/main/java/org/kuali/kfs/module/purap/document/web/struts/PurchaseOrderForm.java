@@ -417,6 +417,7 @@ public class PurchaseOrderForm extends PurchasingFormBase {
      * 
      * @return boolean true if the void button can be displayed.
      */
+    // ==== CU Customization (KFSPTS-1457): Do not display the old "void order" button when POs are in CXML Error status. ====
     protected boolean canVoid() {
         // check PO status etc
         boolean can = getPurchaseOrderDocument().isPurchaseOrderCurrentIndicator() && !getPurchaseOrderDocument().isPendingActionIndicator();
@@ -424,13 +425,13 @@ public class PurchaseOrderForm extends PurchasingFormBase {
         if (can) {
             boolean pendingPrint = PurchaseOrderStatuses.PENDING_PRINT.equals(getPurchaseOrderDocument().getStatusCode());
             boolean open = PurchaseOrderStatuses.OPEN.equals(getPurchaseOrderDocument().getStatusCode());
-            boolean errorCxml = PurchaseOrderStatuses.CXML_ERROR.equals(getPurchaseOrderDocument().getStatusCode());
+            //boolean errorCxml = PurchaseOrderStatuses.CXML_ERROR.equals(getPurchaseOrderDocument().getStatusCode());
             boolean errorFax = PurchaseOrderStatuses.FAX_ERROR.equals(getPurchaseOrderDocument().getStatusCode());
 
             List<PaymentRequestView> preqViews = getPurchaseOrderDocument().getRelatedViews().getRelatedPaymentRequestViews();
             boolean hasPaymentRequest = preqViews != null && preqViews.size() > 0;
 
-            can = pendingPrint || (open && !hasPaymentRequest) || errorCxml || errorFax;
+            can = pendingPrint || (open && !hasPaymentRequest) || errorFax;
         }
 
         // check user authorization
