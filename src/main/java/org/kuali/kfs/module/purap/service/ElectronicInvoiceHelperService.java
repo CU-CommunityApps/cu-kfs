@@ -26,9 +26,7 @@ import org.kuali.kfs.module.purap.document.ElectronicInvoiceRejectDocument;
 
 public interface ElectronicInvoiceHelperService {
 
-    public ElectronicInvoiceLoad loadElectronicInvoices();
-    
-    public void sendLoadSummary(ElectronicInvoiceLoad eInvoiceLoad);
+    public void loadElectronicInvoices();
     
     public boolean doMatchingProcess(ElectronicInvoiceRejectDocument rejectDocument);
     
