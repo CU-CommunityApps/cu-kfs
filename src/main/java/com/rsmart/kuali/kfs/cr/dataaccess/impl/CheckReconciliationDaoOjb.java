@@ -106,7 +106,7 @@ public class CheckReconciliationDaoOjb extends PlatformAwareDaoBaseOjb implement
         
      //   String sql = "SELECT p.disb_nbr, p.disb_ts, SUM(d.net_pmt_amt), b.bnk_cd,p.pmt_payee_nm, p.payee_id_typ_cd,p.payee_id FROM pdp_pmt_grp_t p, pdp_pmt_dtl_t d, fp_bank_t b WHERE p.bnk_cd = b.bnk_cd AND p.pmt_grp_id = d.pmt_grp_id AND p.disb_typ_cd = 'CHCK' AND NOT EXISTS ( SELECT 'x' from cu_cr_check_recon_t cr WHERE cr.check_nbr = p.disb_nbr AND cr.bank_account_nbr = b.bnk_acct_nbr) GROUP BY p.disb_nbr, p.disb_ts, b.bnk_cd";
        
-        String sql ="SELECT p.disb_nbr, p.disb_ts, SUM(d.net_pmt_amt), b.bnk_cd,p.pmt_payee_nm, p.payee_id_typ_cd,p.payee_id  FROM pdp_pmt_grp_t p, pdp_pmt_dtl_t d, fp_bank_t b WHERE p.bnk_cd = b.bnk_cd AND p.pmt_grp_id = d.pmt_grp_id AND p.disb_typ_cd = 'CHCK' AND NOT EXISTS ( SELECT 'x' from cu_cr_check_recon_t cr WHERE cr.check_nbr = p.disb_nbr AND cr.bank_account_nbr = b.bnk_acct_nbr) group by p.disb_nbr, p.disb_ts, b.bnk_cd, p.pmt_payee_nm, p.payee_id_typ_cd, p.payee_id";
+        String sql ="SELECT p.disb_nbr, p.disb_ts, SUM(d.net_pmt_amt), b.bnk_cd,p.pmt_payee_nm, p.payee_id_typ_cd,p.payee_id  FROM pdp_pmt_grp_t p, pdp_pmt_dtl_t d, fp_bank_t b WHERE p.bnk_cd = b.bnk_cd AND p.pmt_grp_id = d.pmt_grp_id AND p.disb_ts is not null AND p.disb_typ_cd = 'CHCK' AND NOT EXISTS ( SELECT 'x' from cu_cr_check_recon_t cr WHERE cr.check_nbr = p.disb_nbr AND cr.bank_account_nbr = b.bnk_acct_nbr) group by p.disb_nbr, p.disb_ts, b.bnk_cd, p.pmt_payee_nm, p.payee_id_typ_cd, p.payee_id";
         try {
             Connection c = getPersistenceBroker(true).serviceConnectionManager().getConnection();
             Statement  s = c.createStatement();
