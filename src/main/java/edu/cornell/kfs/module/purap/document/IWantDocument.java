@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.purap.document;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -506,6 +507,9 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         for (IWantItem item : items) {
             if (ObjectUtils.isNull(item.getItemQuantity())) {
+                if(ObjectUtils.isNull(item.getItemUnitPrice())){
+                    item.setItemUnitPrice(BigDecimal.ZERO);
+                }
                 itemTotal = new KualiDecimal(item.getItemUnitPrice());
             } else {
                 itemTotal = item.getItemQuantity().multiply(new KualiDecimal(item.getItemUnitPrice()));
