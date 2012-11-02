@@ -273,7 +273,7 @@
 					    </div>
 				    <br/>
 					<div id="document.account[${ctr}].accountNumber.name.div" class="fineprint">
-            			<kul:htmlControlAttribute attributeEntry="${accountAttributes.accountNumber}" property="document.account[${ctr}].accountNumber" readOnly="true" />
+            			<kul:htmlControlAttribute attributeEntry="${accountAttributes.accountName}" property="document.accounts[${ctr}].account.accountName" readOnly="true" />
             		</div>
             		</c:if>
 					</td>	

@@ -53,7 +53,7 @@
                     <c:if test="${fullEntryMode}" >
                         <kul:lookup  boClassName="edu.cornell.kfs.module.purap.businessobject.IWantDocVendorDetail" 
                         	lookupParameters="'Y':activeIndicator, 'PO':vendorHeader.vendorTypeCode"
-                        	fieldConversions="vendorName:document.vendorName,vendorHeaderGeneratedIdentifier:document.vendorHeaderGeneratedIdentifier,vendorDetailAssignedIdentifier:document.vendorDetailAssignedIdentifier"/>
+                        	fieldConversions="vendorName:document.vendorName,vendorHeaderGeneratedIdentifier:document.vendorHeaderGeneratedIdentifier,vendorDetailAssignedIdentifier:document.vendorDetailAssignedIdentifier,defaultAddressLine1:document.vendorLine1Address,defaultAddressLine2:document.vendorLine2Address,defaultAddressCity:document.vendorCityName,defaultAddressStateCode:document.vendorStateCode,defaultAddressPostalCode:document.vendorPostalCode,defaultAddressCountryCode:document.vendorCountryCode,defaultFaxNumber:document.vendorFaxNumber,vendorUrlAddress:document.vendorWebURL"/>
                         
                     </c:if> 
                 </td>

@@ -171,7 +171,7 @@ function updateAccountsTotal(totalDollarAmountFieldName, totalAccountsField, lin
 				.getValue('document.account[' + i + '].useAmountOrPercent');
 		var amountOrPercent = DWRUtil.getValue('document.account[' + i + '].amountOrPercent');
 
-		if (isNaN(amountOrPercent)) {
+		if (amountOrPercent == "" || isNaN(amountOrPercent)) {
 			amountOrPercent = 0;
 			 
 		}
@@ -201,10 +201,10 @@ function updateItemsTotal(totalDollarAmountFieldName, totalAccountsField, itemsN
 				.getValue('document.item[' + i + '].itemQuantity');
 		var price = DWRUtil.getValue('document.item[' + i + '].itemUnitPrice');
 
-		if (isNaN(quantity)) {
+		if (quantity == "" || isNaN(quantity)) {
 			quantity = 1;
 		}
-		if (isNaN(price)) {
+		if (price == "" || isNaN(price)) {
 			price = 0;
 		}
 		total += price * quantity;

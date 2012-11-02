@@ -34,7 +34,7 @@ public class LevelOrganizationDaoJdbc extends PlatformAwareDaoBaseJdbc implement
             // Build the SQL
             StringBuilder sqlBuilder = new StringBuilder(3500);
             sqlBuilder
-                    .append("select fin_coa_cd, org_cd, org_nm from ca_org_t where fin_coa_cd in('IT','EO') and org_typ_cd = 'C' order by fin_coa_cd desc, org_nm");
+                    .append("select fin_coa_cd, org_cd, org_nm from ca_org_t where fin_coa_cd in('IT') and org_typ_cd = 'C' order by fin_coa_cd desc, org_nm");
 
             String sqlString = sqlBuilder.toString();
 

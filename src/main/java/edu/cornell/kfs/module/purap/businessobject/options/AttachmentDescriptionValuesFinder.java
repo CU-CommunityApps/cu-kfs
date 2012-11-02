@@ -16,7 +16,7 @@ public class AttachmentDescriptionValuesFinder extends KeyValuesBase {
 
         List<KeyLabelPair> keyValues = new ArrayList();
 
-      //  keyValues.add(new KeyLabelPair("", ""));
+        keyValues.add(new KeyLabelPair("Note", "Note"));
         keyValues.add(new KeyLabelPair("Quote", "Quote"));
         keyValues.add(new KeyLabelPair("Invoice", "Invoice"));
         keyValues.add(new KeyLabelPair("Contract/Agreement", "Contract/Agreement"));

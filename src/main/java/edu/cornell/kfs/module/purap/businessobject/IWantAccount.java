@@ -40,6 +40,7 @@ public class IWantAccount extends PersistableBusinessObjectBase {
     public IWantAccount() {
         super();
         this.useAmountOrPercent = CUPurapConstants.PERCENT;
+        this.amountOrPercent = new KualiDecimal(100);
 
     }
 

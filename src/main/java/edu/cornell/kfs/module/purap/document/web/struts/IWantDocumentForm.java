@@ -3,10 +3,12 @@ package edu.cornell.kfs.module.purap.document.web.struts;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase;
 import org.kuali.rice.core.util.KeyLabelPair;
+import org.kuali.rice.kns.bo.Note;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.util.TypedArrayList;
 import org.kuali.rice.kns.web.ui.ExtraButton;
@@ -290,5 +292,15 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         clearButton.setExtraButtonAltText("Back");
         return clearButton;
     }
+    
+    @Override
+    public Note getNewNote() {
+        Note note = super.getNewNote();
+        if (StringUtils.isBlank(note.getNoteText())) {
+            note.setNoteText(getIWantDocument().getAttachmentDescription());
+        }
+        return note;
+    }
+    
 
 }

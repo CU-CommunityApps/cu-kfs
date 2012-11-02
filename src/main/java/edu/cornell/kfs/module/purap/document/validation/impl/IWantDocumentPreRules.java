@@ -7,7 +7,7 @@ public class IWantDocumentPreRules extends PromptBeforeValidationBase {
 
     @Override
     public boolean doPrompts(Document document) {
-        // TODO Auto-generated method stub
+        
         return true;
     }
 

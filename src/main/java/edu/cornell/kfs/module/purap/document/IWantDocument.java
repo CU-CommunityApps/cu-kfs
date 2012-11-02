@@ -53,7 +53,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private String vendorCountryCode;
     private String vendorAddress;
     private String vendorPhoneNumber;
-    private String verdorWebURL;
+    private String vendorWebURL;
     private String vendorFaxNumber;
     private String vendorEmail;
     private String vendorDescription;
@@ -64,6 +64,9 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private boolean useCollegeAndDepartmentAsDefault;
 
     private String attachmentDescription;
+    private String noteLabel;
+    
+    private boolean complete;
 
     // routing fields
     private String routingChart;
@@ -115,12 +118,12 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         this.vendorName = vendorName;
     }
 
-    public String getVerdorWebURL() {
-        return verdorWebURL;
+    public String getVendorWebURL() {
+        return vendorWebURL;
     }
 
-    public void setVerdorWebURL(String verdorWebURL) {
-        this.verdorWebURL = verdorWebURL;
+    public void setVendorWebURL(String vendorWebURL) {
+        this.vendorWebURL = vendorWebURL;
     }
 
     public String getAccountDescriptionTxt() {
@@ -667,5 +670,28 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     public void setAccountingLinesTotal(KualiDecimal accountingLinesTotal) {
         this.accountingLinesTotal = accountingLinesTotal;
     }
+
+    public String getNoteLabel() {
+        return noteLabel;
+    }
+
+    public void setNoteLAbel(String noteLabel) {
+        this.noteLabel = noteLabel;
+    }
+
+    public boolean isComplete() {
+        return complete;
+    }
+
+    public void setComplete(boolean complete) {
+        this.complete = complete;
+    }
+    
+//    @Override
+//    public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
+//        // TODO Auto-generated method stub
+//        //return super.answerSplitNodeQuestion(nodeName);
+//        return complete;
+//    }
 
 }

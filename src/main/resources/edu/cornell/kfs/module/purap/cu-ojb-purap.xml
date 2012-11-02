@@ -76,7 +76,7 @@
     	<field-descriptor name="itemQuantity" column="ITM_ORD_QTY" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
     	<field-descriptor name="itemCatalogNumber" column="ITM_CATLG_NBR" jdbc-type="VARCHAR"/>
     	<field-descriptor name="itemDescription" column="ITM_DESC" jdbc-type="VARCHAR"/>
-    	<field-descriptor name="itemUnitPrice" column="ITM_UNIT_PRC" jdbc-type="DECIMAL"/>
+    	<field-descriptor name="itemUnitPrice" column="ITM_UNIT_PRC" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
     	
     	<field-descriptor name="purchasingCommodityCode" column="PUR_COMM_CD" jdbc-type="VARCHAR"/>
     	
@@ -115,10 +115,12 @@
     	<field-descriptor name="vendorName" column="VNDR_NAME" jdbc-type="VARCHAR"/>
     	<field-descriptor name="vendorAttentionName" column="VNDR_ATTN_NM" jdbc-type="VARCHAR"/>
     	<field-descriptor name="vendorAddress" column="VNDR_ADDR" jdbc-type="VARCHAR"/>
-    	<field-descriptor name="verdorWebURL" column="VNDR_URL" jdbc-type="VARCHAR"/>
+    	<field-descriptor name="vendorWebURL" column="VNDR_URL" jdbc-type="VARCHAR"/>
     	<field-descriptor name="vendorEmail" column="VNDR_EMAIL" jdbc-type="VARCHAR"/>   
     	<field-descriptor name="vendorPhoneNumber" column="VNDR_PHN_NBR" jdbc-type="VARCHAR"/>
     	<field-descriptor name="vendorFaxNumber" column="VNDR_FAX_NBR" jdbc-type="VARCHAR"/>
+    	<field-descriptor name="vendorDescription" column="VNDR_DESC" jdbc-type="VARCHAR"/>
+    	
     
     	<field-descriptor name="accountDescriptionTxt" column="ACCT_DESC" jdbc-type="VARCHAR"/>
     	<field-descriptor name="documentationAttached" column="DOC_ATCHD" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/> 

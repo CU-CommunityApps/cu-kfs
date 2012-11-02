@@ -61,7 +61,7 @@
         <ref bean="IWantDocument-vendorCityName"/>
         <ref bean="IWantDocument-vendorCountryCode"/>
         <ref bean="IWantDocument-vendorPhoneNumber"/>
-        <ref bean="IWantDocument-verdorWebURL"/>
+        <ref bean="IWantDocument-vendorWebURL"/>
         <ref bean="IWantDocument-vendorFaxNumber"/>
         <ref bean="IWantDocument-vendorEmail"/>
         <ref bean="IWantDocument-commentsAndSpecialInstructions"/>
@@ -71,7 +71,11 @@
         <ref bean="IWantDocument-collegeLevelOrganization"/>
         <ref bean="IWantDocument-departmentLevelOrganization"/>
         <ref bean="IWantDocument-useCollegeAndDepartmentAsDefault"/>
+        
         <ref bean="IWantDocument-attachmentDescription"/>
+        <ref bean="IWantDocument-noteLabel"/>
+        
+        <ref bean="IWantDocument-complete"/>
 
         <ref bean="IWantDocument-accountDescriptionTxt"/>
         <ref bean="IWantDocument-vendorDescription"/>
@@ -205,10 +209,10 @@
     <property name="label" value="Fax Number"/>
     <property name="shortLabel" value="Number"/>
   </bean>
-  <bean id="IWantDocument-verdorWebURL" parent="IWantDocument-verdorWebURL-parentBean"/>
+  <bean id="IWantDocument-vendorWebURL" parent="IWantDocument-vendorWebURL-parentBean"/>
 
-  <bean id="IWantDocument-verdorWebURL-parentBean" abstract="true" parent="VendorGenericAttributes-genericUrlAddress">
-    <property name="name" value="verdorWebURL"/>
+  <bean id="IWantDocument-vendorWebURL-parentBean" abstract="true" parent="VendorGenericAttributes-genericUrlAddress">
+    <property name="name" value="vendorWebURL"/>
     <property name="label" value="Web URL"/>
     <property name="shortLabel" value="URL"/>
   </bean>
@@ -251,7 +255,7 @@
   </bean>
   <bean id="IWantDocument-initiatorPhoneNumber" parent="IWantDocument-initiatorPhoneNumber-parentBean"/>
 
-  <bean id="IWantDocument-initiatorPhoneNumber-parentBean" abstract="true" parent="VendorGenericAttributes-phoneNumberWithValidation">
+  <bean id="IWantDocument-initiatorPhoneNumber-parentBean" abstract="true" parent="VendorGenericAttributes-phoneNumberNoValidation">
     <property name="name" value="initiatorPhoneNumber"/>
     <property name="label" value="Requestor's Phone Number"/>
   </bean>
@@ -313,7 +317,7 @@
   </bean>
   <bean id="IWantDocument-deliverToPhoneNumber" parent="IWantDocument-deliverToPhoneNumber-parentBean"/>
 
-  <bean id="IWantDocument-deliverToPhoneNumber-parentBean" abstract="true" parent="VendorGenericAttributes-phoneNumberWithValidation">
+  <bean id="IWantDocument-deliverToPhoneNumber-parentBean" abstract="true" parent="VendorGenericAttributes-phoneNumberNoValidation">
     <property name="name" value="deliverToPhoneNumber"/>
      <property name="label" value="Deliver To Phone Number"/>
   </bean>
@@ -467,12 +471,12 @@
     <property name="forceUppercase" value="true"/>
     <property name="label" value="Vendor Contact Information"/>
     <property name="shortLabel" value="Text"/>
-    <property name="maxLength" value="255"/>
+    <property name="maxLength" value="500"/>
     <property name="validationPattern">
       <ref bean="AnyCharacterWithWhitespaceValidation" />
     </property>
     <property name="control">
-      <bean parent="TextareaControlDefinition" p:rows="3" p:cols="50"/>
+      <bean parent="TextareaControlDefinition" p:rows="6" p:cols="50"/>
     </property>
   </bean>
   <bean id="IWantDocument-attachmentDescription" parent="IWantDocument-attachmentDescription-parentBean"/>
@@ -493,6 +497,22 @@
     <property name="name" value="totalDollarAmount"/>
     <property name="label" value="Total"/>
     <property name="shortLabel" value="Total"/>
+  </bean>
+  
+  <bean id="IWantDocument-noteLabel" parent="IWantDocument-noteLabel-parentBean"/>
+
+  <bean id="IWantDocument-noteLabel-parentBean" abstract="true" parent="Note-noteText">
+    <property name="name" value="noteLabel"/>
+    <property name="required" value="false"/>
+    <property name="label" value="Note"/>
+  </bean>
+  
+  <bean id="IWantDocument-complete" parent="IWantDocument-complete-parentBean"/>
+
+  <bean id="IWantDocument-complete-parentBean" abstract="true" parent="GenericAttributes-genericBoolean">
+    <property name="name" value="complete"/>
+    <property name="label" value="Complete"/>
+    <property name="shortLabel" value="Complete"/>
   </bean>
 
   

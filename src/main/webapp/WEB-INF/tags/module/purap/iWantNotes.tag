@@ -86,7 +86,7 @@
             <kul:htmlAttributeHeaderCell attributeEntry="${notesAttributes.noteTopicText}" forceRequired="true" labelFor="newNote.noteTopicText" scope="col" align="left" />
           </c:if>
                      <kul:htmlAttributeHeaderCell attributeEntry="${iWantDocumentAttributes.attachmentDescription}" labelFor="document.attachmentDescription" scope="col" align="left"/>
-                     <kul:htmlAttributeHeaderCell attributeEntry="${notesAttributes.noteText}" labelFor="document.noteText" scope="col" align="left"/>
+                     <kul:htmlAttributeHeaderCell attributeEntry="${iWantDocumentAttributes.noteLabel}" labelFor="document.noteLabel" scope="col" align="left"/>
                     <c:if test="${allowsNoteAttachments eq true}">
                       <kul:htmlAttributeHeaderCell attributeEntry="${notesAttributes.attachment}" labelFor="attachmentFile" scope="col" align="left"/>
                     </c:if>
