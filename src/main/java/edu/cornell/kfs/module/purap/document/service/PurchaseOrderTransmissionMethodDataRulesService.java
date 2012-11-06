@@ -1,9 +1,5 @@
 package edu.cornell.kfs.module.purap.document.service;
 
-import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.service.PostalCodeValidationService;
-import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.kns.document.Document;
 
 

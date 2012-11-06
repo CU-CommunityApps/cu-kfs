@@ -125,6 +125,7 @@
         <ref bean="RequisitionDocument-requisitionSourceCode"/>
         <ref bean="RequisitionDocument-vendorContractGeneratedIdentifier"/>
         <ref bean="RequisitionDocument-vendorFaxNumber"/>
+        <ref bean="RequisitionDocument-vendorEmailAddress"/>                            <!-- KFSPTS-1458 -->
         <ref bean="RequisitionDocument-vendorNoteText"/>
         <ref bean="RequisitionDocument-vendorPhoneNumber"/>
         <ref bean="RequisitionDocument-vendorRestrictedIndicator"/>
@@ -804,6 +805,21 @@
     <property name="label" value="Fax Number"/>
     <property name="shortLabel" value="Number"/>
   </bean>
+  
+  
+  <!-- KFSPTS-1458 -->
+  <bean id="RequisitionDocument-vendorEmailAddress" parent="RequisitionDocument-vendorEmailAddress-parentBean"/>
+
+  <bean id="RequisitionDocument-vendorEmailAddress-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="vendorEmailAddress"/>
+    <property name="label" value="Email Address"/>
+    <property name="shortLabel" value="Email"/>
+    <property name="maxLength" value="90"/>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="90"/>
+    </property>
+  </bean>
+  
   <bean id="RequisitionDocument-vendorNoteText" parent="RequisitionDocument-vendorNoteText-parentBean"/>
 
   <bean id="RequisitionDocument-vendorNoteText-parentBean" abstract="true" parent="AttributeDefinition">

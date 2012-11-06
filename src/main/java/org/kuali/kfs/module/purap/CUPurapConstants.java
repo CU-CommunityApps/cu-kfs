@@ -42,6 +42,24 @@ public class CUPurapConstants extends PurapConstants {
     public static final String AMOUNT = "AMOUNT";
     public static final String PERCENT = "PERCENT";
     
-
+    //KFSPTS-1458:  
+    //This email address is ONLY used when the system cannot retrieve or find parameter
+    //MANUAL_DISTRIBUTION_EMAIL OR if the value of that parameter is null or a zero length string.
+    public static final String MANUAL_DISRIBUTION_FAILSAFE_EMAIL_ADDRESS = "procurement@cornell.edu";
+    
+    
+    //KFSPTS-1458
+    //Route nodes that should bypass data validation because users at these nodes do NOT 
+    //have the ability to edit the data on the form.
+    public static final class MethodOfPOTransmissionByPassValidationNodes {
+    	public static final String ACCOUNT_NODE = "Account";
+    	public static final String ACCOUNTING_ORGANIZATION_HIERARCHY_NODE = "AccountingOrganizationHierarchy";
+    	public static final String AD_HOC_NODE = "AdHoc";
+    	public static final String AWARD_NODE = "Award";
+    	public static final String COMMODITY_APO_NODE = "CommodityAPO";
+    	public static final String COMMODITY_NODE = "Commodity";
+    	public static final String SEPARATION_OF_DUTIES_NODE = "SeparationOfDuties";
+    	public static final String SUB_ACCOUNT_NODE = "SubAccount";
+    }
     
 }

@@ -249,8 +249,15 @@
                     </c:if>
                 </td>
 
-            	<th align=right valign=middle class="bord-l-b">&nbsp;</th>
-            	<td align=left valign=middle class="datacell">&nbsp;</td>
+               <%-- KFSPTS-1458 --%>
+               <th align=right valign=middle class="bord-l-b">
+                    <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.vendorEmailAddress}" /></div>
+                </th>                
+                <td align=left valign=middle class="datacell">
+                    <kul:htmlControlAttribute 
+                            attributeEntry="${documentAttributes.vendorEmailAddress}" property="document.vendorEmailAddress" 
+                            readOnly="${not (fullEntryMode or amendmentEntry) or lockB2BEntry or not (displayRequisitionFields or displayPurchaseOrderFields)}" tabindexOverride="${tabindexOverrideBase + 4}"/>                            
+                </td> 
             	
             </tr>
 

@@ -134,6 +134,7 @@
         <ref bean="PurchaseOrderDocument-requisitionSourceCode"/>
         <ref bean="PurchaseOrderDocument-vendorContractGeneratedIdentifier"/>
         <ref bean="PurchaseOrderDocument-vendorFaxNumber"/>
+        <ref bean="PurchaseOrderDocument-vendorEmailAddress"/>                     <!-- KFSPTS-1458 -->
         <ref bean="PurchaseOrderDocument-vendorNoteText"/>
         <ref bean="PurchaseOrderDocument-vendorPhoneNumber"/>
         <ref bean="PurchaseOrderDocument-vendorRestrictedIndicator"/>
@@ -926,6 +927,20 @@
     <property name="label" value="Fax Number"/>
     <property name="shortLabel" value="Number"/>
   </bean>
+  
+  <!-- KFSPTS-1458 -->
+  <bean id="PurchaseOrderDocument-vendorEmailAddress" parent="PurchaseOrderDocument-vendorEmailAddress-parentBean"/>
+
+  <bean id="PurchaseOrderDocument-vendorEmailAddress-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="vendorEmailAddress"/>
+    <property name="label" value="Email Address"/>
+    <property name="shortLabel" value="Email"/>
+    <property name="maxLength" value="90"/>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="90"/>
+    </property>
+  </bean>
+  
   <bean id="PurchaseOrderDocument-vendorNoteText" parent="PurchaseOrderDocument-vendorNoteText-parentBean"/>
 
   <bean id="PurchaseOrderDocument-vendorNoteText-parentBean" abstract="true" parent="AttributeDefinition">

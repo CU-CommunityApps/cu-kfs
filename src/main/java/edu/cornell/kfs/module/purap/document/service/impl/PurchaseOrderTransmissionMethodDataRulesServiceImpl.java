@@ -135,8 +135,7 @@ public class PurchaseOrderTransmissionMethodDataRulesServiceImpl implements Purc
 		}
 		return dataIsValid;		
 	}
-	
-	
+
 	
 	/**
 	 * This routine verifies that the address type selected by the user is PO as well as ensuring that the
@@ -153,118 +152,41 @@ public class PurchaseOrderTransmissionMethodDataRulesServiceImpl implements Purc
 	 * are different because the user could have changed it after the default was obtained via the lookup and 
 	 * used to populate the REQ, PO, or POA value as long as the data required for the method of PO transmission
 	 * selected in that document exists on the VendorAddress record chosen on the REQ, PO, or POA. 
+	 * 
+	 * 	For KFSPTS-1458: This method was changed extensively to address new business rules.
 	 */ 
 	public boolean validateDataForMethodOfPOTransmissionExistsOnVendorAddress(Document document){
 		boolean dataExists = true;		
 		MessageMap errorMap = GlobalVariables.getMessageMap();
 		errorMap.clearErrorPath(); 
 		errorMap.addToErrorPath(PurapConstants.VENDOR_ERRORS);
-
-//KFSPTS-1419 : Removing validation check that VendorAddress is a PO address as certain users did not have ability to select vendor address for this business rule validation based on their security.
-//		
-//		//for REQ verify that vendor address type chosen is a PO address type
-//		if (document instanceof RequisitionDocument) {
-//			PurchasingDocumentBase purapDocument = (PurchasingDocumentBase) document;
-//			dataExists &= this.isVendorAddressPOAddressType(purapDocument.getVendorAddressGeneratedIdentifier());
-//			if (!dataExists) {
-//				//address chosen is not a PO address type
-//				errorMap.putError(VendorPropertyConstants.VENDOR_ADDRESS_LINE_1, CUPurapKeyConstants.PURAP_VENDOR_ADDRES_TYPE_NOT_PO);	
-//			}
-//		}
 		
 		//for REQ, PO, and POA verify that data exists on form for method of PO transmission value selected
 		if ((document instanceof RequisitionDocument) || (document instanceof PurchaseOrderDocument) || (document instanceof PurchaseOrderAmendmentDocument)) {
 			PurchasingDocumentBase purapDocument = (PurchasingDocumentBase) document;
-			//KFSPTS-1419 : Removing validation check that VendorAddress is a PO address as certain users did not have ability to select vendor address for this business rule validation based on their security.		
-			//dataExists &= this.isVendorAddressPOAddressType(purapDocument.getVendorAddressGeneratedIdentifier());
 			String poTransMethodCode = purapDocument.getPurchaseOrderTransmissionMethodCode();
 			if (poTransMethodCode != null && !StringUtils.isBlank(poTransMethodCode) ) {
 				if (poTransMethodCode.equals(PurapConstants.POTransmissionMethods.FAX)) {
 					dataExists = isFaxNumberValid(purapDocument.getVendorFaxNumber());
 					if (!dataExists) {
-						errorMap.putError(VendorPropertyConstants.VENDOR_FAX_NUMBER, CUPurapKeyConstants.PURAP_VENDOR_ADDRESS_FAX_NUMBER_MISSING);						
+						errorMap.putError(VendorPropertyConstants.VENDOR_FAX_NUMBER, CUPurapKeyConstants.PURAP_MOPOT_REQUIRED_DATA_MISSING);						
 					}
 				}
-				//KFSPTS-1419 : Changed validation check to obtain the DEFAULT Vendor Address for email address existence check.  
-				else if (poTransMethodCode.equals(PurapConstants.POTransmissionMethods.EMAIL)) {
-					 if ( (purapDocument.getVendorHeaderGeneratedIdentifier() != null) && (purapDocument.getVendorDetailAssignedIdentifier() != null) ){
-						//lookup DEFAULT vendor address in database to get email address and then validate email address
-						dataExists = isEmailAddressValid(this.getDefaultVendorAddressEmailAddress(purapDocument.getVendorHeaderGeneratedIdentifier(), purapDocument.getVendorDetailAssignedIdentifier(), VendorConstants.AddressTypes.PURCHASE_ORDER, purapDocument.getDeliveryCampusCode()));					
-		                if (!dataExists) {
-		                	errorMap.putError(VendorPropertyConstants.VENDOR_ADDRESS_EMAIL_ADDRESS, CUPurapKeyConstants.PURAP_VENDOR_ADDRESS_EMAIL_ADDRESS_MISSING);					
-		                }	
-					 }
-					 else {
-						 //This must be a new vendor and user manually entered the data because vendor key values we need to get the default vendor address are not populated; request user lookup the vendor.
-						 errorMap.putError(VendorPropertyConstants.VENDOR_ADDRESS_EMAIL_ADDRESS, PurapKeyConstants.ERROR_NONEXIST_VENDOR);
-					 }								
+				else if (poTransMethodCode.equals(PurapConstants.POTransmissionMethods.EMAIL)) {					
+					dataExists = isEmailAddressValid(purapDocument.getVendorEmailAddress());
+					if (!dataExists) {
+						errorMap.putError("vendorEmailAddress", CUPurapKeyConstants.PURAP_MOPOT_REQUIRED_DATA_MISSING);						
+					}				
 				}
 				else if (poTransMethodCode.equals(PurapConstants.POTransmissionMethods.MANUAL)) {
 					dataExists = isPostalAddressValid(purapDocument.getVendorLine1Address(), purapDocument.getVendorCityName(), purapDocument.getVendorStateCode(), purapDocument.getVendorPostalCode(), purapDocument.getVendorCountryCode());
                     if (!dataExists) {
-						errorMap.putError(VendorPropertyConstants.VENDOR_ADDRESS_LINE_1, VendorKeyConstants.ERROR_PO_TRANSMISSION_REQUIRES_US_POSTAL);
+						errorMap.putError(VendorPropertyConstants.VENDOR_ADDRESS_LINE_1, CUPurapKeyConstants.PURAP_MOPOT_REQUIRED_DATA_MISSING);
                     }
 				}					
 			}
 		}			
-		errorMap.clearErrorPath();
 		return dataExists;
 	}
 	
-	
-	/**
-	 * Return the vendor address email address value for the DEFAULT vendor address.
-	 * Vendor address email address is not an attribute on the Vendor Address of the purchasing documents.
-     */
-	private String getDefaultVendorAddressEmailAddress(Integer vendorHeaderId, Integer vendorDetailId, String vendorAddressTypeCode, String campusCode) {
-		String emailAddress = null;
-		VendorAddress defaultAddress = null;
-		if ( (vendorHeaderId != null) && (vendorDetailId != null) && (vendorAddressTypeCode != null) && (campusCode != null)) {
-			defaultAddress =  SpringContext.getBean(VendorService.class).getVendorDefaultAddress(vendorHeaderId, vendorDetailId, vendorAddressTypeCode, campusCode);
-			if (defaultAddress != null ) {
-				emailAddress = defaultAddress.getVendorAddressEmailAddress();
-			}
-		}		
-		return emailAddress;
-    }
-	
-//KFSPTS-1419: Commenting out methods that should not be called until issue with VendorAddressGeneratedIdentifier being null on REG, PO, and POA is fixed. 	
-//	/**
-//	 * Return the vendor address email address value for the vendor address represented by the input parameter. 
-//	 * Vendor address email address is not an attribute on the Vendor Address of the purchasing documents.
-//	 */
-//	private String getVendorAddressEmailAddressForVendorAddressId(Integer vendorAddressGeneratedIdentifier){
-//		String emailAddress = null;
-//		if (vendorAddressGeneratedIdentifier != null) {
-//			VendorAddress vendorAddress = null;
-//			Map criteria = new HashMap();
-//			criteria.put(VendorPropertyConstants.VENDOR_ADDRESS_GENERATED_IDENTIFIER, vendorAddressGeneratedIdentifier);
-//			BusinessObjectService boSevice = SpringContext.getBean(BusinessObjectService.class);
-//			vendorAddress = (VendorAddress) boSevice.findByPrimaryKey(VendorAddress.class, criteria);
-//			if (vendorAddress != null){
-//				emailAddress = vendorAddress.getVendorAddressEmailAddress();
-//			}				
-//		}
-//		return emailAddress;
-//	}
-//	
-//	/**
-//	 * Return true when input parameter represents a PO vendor address type; 
-//	 * otherwise return false
-//	 */
-//	private boolean isVendorAddressPOAddressType(Integer vendorAddressGeneratedIdentifier){
-//		boolean idIsPOAddress = false;
-//		if (vendorAddressGeneratedIdentifier != null) {
-//			VendorAddress vendorAddress = null;
-//			Map criteria = new HashMap();
-//			criteria.put(VendorPropertyConstants.VENDOR_ADDRESS_GENERATED_IDENTIFIER, vendorAddressGeneratedIdentifier);
-//			BusinessObjectService boSevice = SpringContext.getBean(BusinessObjectService.class);
-//			vendorAddress = (VendorAddress) boSevice.findByPrimaryKey(VendorAddress.class, criteria);
-//			String addressTypeCode = vendorAddress.getVendorAddressType().getVendorAddressTypeCode();
-//			if ( (addressTypeCode != null) && (!addressTypeCode.isEmpty()) && (addressTypeCode.equals(KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) ){
-//				idIsPOAddress= true;
-//			}
-//		}		
-//		return idIsPOAddress;
-//	} 
 }

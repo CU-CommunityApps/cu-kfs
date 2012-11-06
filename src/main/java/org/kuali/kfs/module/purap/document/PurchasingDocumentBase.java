@@ -96,6 +96,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     protected Boolean vendorRestrictedIndicator;
     protected String vendorPhoneNumber;
     protected String vendorFaxNumber;
+    protected String vendorEmailAddress;					//KFSPTS-1458
     protected Integer vendorContractGeneratedIdentifier;
     protected String vendorNoteText;
     protected String requestorPersonName;
@@ -231,9 +232,9 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
             //Method of PO Transmission on Vendor Address should be the default when a vendor is selected.
             //set purchasing document value for po transmission method
             this.setPurchaseOrderTransmissionMethodCode(vendorAddress.getPurchaseOrderTransmissionMethodCode());
-//KFSPTS-1419: Removing email address info message as the system uses the DEFAULT vendor address email address in ALL cases and message would be misleading.            
-//            //Put info message at top of page showing vendor email data value as it is not shown in vendor area.
-//    		GlobalVariables.getMessageList().add(CUPurapKeyConstants.INFO_VENDOR_ADDRESS_EMAIL_ADDRESS_VALUE, vendorAddress.getVendorAddressEmailAddress());
+            
+            //KFSPTS-1458
+            this.setVendorEmailAddress(vendorAddress.getVendorAddressEmailAddress());
         }
     }
 
@@ -863,6 +864,16 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
 
     public void setVendorFaxNumber(String vendorFaxNumber) {
         this.vendorFaxNumber = vendorFaxNumber;
+    }
+    
+    //KFSPTS-1458
+    public String getVendorEmailAddress() {
+        return vendorEmailAddress;
+    }
+
+    //KFSPTS-1458
+    public void setVendorEmailAddress(String vendorEmailAddress) {
+        this.vendorEmailAddress = vendorEmailAddress;
     }
 
     public String getVendorNoteText() {

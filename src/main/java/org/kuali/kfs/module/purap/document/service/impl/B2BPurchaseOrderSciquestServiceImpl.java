@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.CUPurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.PurapFundingSources;
@@ -219,13 +220,31 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("    </Authentication>\n");
         cxml.append("  </Header>\n");
         cxml.append("  <PurchaseOrder>\n");
+        
+        //KFSPTS-1458  -- Added two if-checks for MOPOT in following if-elsif for POV and POA documents to set <DistributeRevision> tag to "true" based on MOPOT value. 
+        //KFSPTS-1458  -- These same checks/changes needed to be added to the <DistributionMethod> tag section further on in the file because of how the cxml needs to be created.
+        //KFSPTS-1458  -- Based true/false value for both <DistributeRevision> tag and <DistributionMethod> tag on MOPOT value being "US Mail" (MANUAL=MANL) or "Do Not Send" (CONVERSION=CNVS)       
         // void = VOPE      ammend = CGIN ?   ammend should =
         if (purchaseOrder.getStatusCode().equals("VOPE") || documentType.equalsIgnoreCase(PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_VOID_DOCUMENT)) {
-            cxml.append("    <POHeader type=\"cancel\">\n");
-            cxml.append("    <DistributeRevision>false</DistributeRevision>\n");
+            cxml.append("    <POHeader type=\"cancel\">\n");            
+            //KFSPTS-1458 -- When MOPOT is "Do Not Send" = code of conversion,  distribute revision tag needs to be false;
+            //KFSPTS-1458 -- otherwise distribute revision tag needs to be true (for "Fax", "Email", and "US Mail"=manual mopot).
+            if (disbMethod == CONVERSION) {
+            	cxml.append("    <DistributeRevision>false</DistributeRevision>\n");
+            }
+            else { //FAX, EMAIL, MANUAL=US Mail
+            	cxml.append("    <DistributeRevision>true</DistributeRevision>\n");
+            }
         } else if (documentType.equals(PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_AMENDMENT_DOCUMENT)) {
             cxml.append("    <POHeader type=\"update\">\n");
-            cxml.append("    <DistributeRevision>false</DistributeRevision>\n");
+            //KFSPTS-1458 -- When MOPOT is "Do Not Send" = code of conversion,  distribute revision tag needs to be false;
+            //KFSPTS-1458 -- otherwise distribute revision tag needs to be true (for "Fax", "Email", and "US Mail"=manual mopot).
+            if (disbMethod == CONVERSION) {
+            	cxml.append("    <DistributeRevision>false</DistributeRevision>\n");
+            }
+            else { //FAX, EMAIL, MANUAL=US Mail
+            	cxml.append("    <DistributeRevision>true</DistributeRevision>\n");
+            }
         } else  {
             cxml.append("    <POHeader>\n");
         }
@@ -332,9 +351,16 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                 vendorFaxNumber = vendorAddress.getVendorFaxNumber();
             }
 
-            String emailAddress = "";
-            if (vendorAddress != null) {
-                emailAddress = vendorAddress.getVendorAddressEmailAddress();
+            //KFSPTS-1458 -- code existing prior to this change is commented out below.
+            //KFSPTS-1458 -- new code should model how fax number is determined:
+            //KFSPTS-1458 -- first take vendor email address from PO, if empty then get vendor email address from PO default vendor address
+            //String emailAddress = "";
+            //if (vendorAddress != null) {
+            //    emailAddress = vendorAddress.getVendorAddressEmailAddress();
+            //}            
+            String emailAddress = purchaseOrder.getVendorEmailAddress();
+            if (StringUtils.isBlank(emailAddress) && vendorAddress != null) {
+            	emailAddress = vendorAddress.getVendorAddressEmailAddress();
             }
 
             // Distribution Method
@@ -357,17 +383,26 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 	                break;
 	            case CONVERSION:
 	                // conversion
-	            	/**
-	            	 * Temporary method of distribution for PO conversion effort.  Will be short-lived, so we 
-	            	 * didn't bother setting up constants and parameters to store the email, but rather hard-
-	            	 * coded the email address.
-	            	 */
-	                cxml.append("        <DistributionMethod type=\"html_email_attachments\">\n");
-	                cxml.append("          <Email><![CDATA[").append("db18@cornell.edu").append("]]></Email>\n");
+	            	//KFSPTS-1458 : removed logic that was temp mopot for conversion. 	            	
+	            	///**
+	            	// * Temporary method of distribution for PO conversion effort.  Will be short-lived, so we 
+	            	// * didn't bother setting up constants and parameters to store the email, but rather hard-
+	            	// * coded the email address.
+	            	// */
+	                //cxml.append("        <DistributionMethod type=\"html_email_attachments\">\n");
+	                //cxml.append("          <Email><![CDATA[").append("db18@cornell.edu").append("]]></Email>\n");
+	            	//
+	            	//KFSPTS-1458: replaced temp logic with distribution method type of manual
+	            	cxml.append("        <DistributionMethod type=\"manual\">\n");
 	                break;
 	            default:
 	                // manual
-	                cxml.append("        <DistributionMethod type=\"manual\">\n");
+	                //KFSPTS-1458 removed: cxml.append("        <DistributionMethod type=\"manual\">\n");
+	            	//
+	            	//KFSPTS-1458: US Mail = manual should be sent to EGA email address
+	            	//KFSPTS-1458: Replaced hard coded email address with parameterized email address. 
+	                cxml.append("        <DistributionMethod type=\"html_email_attachments\">\n");
+	                cxml.append("          <Email><![CDATA[").append(this.getMethodOfPOTransmissionConversionEmail()).append("]]></Email>\n");
 	                break;
             } 
             cxml.append("        </DistributionMethod>\n");
@@ -813,6 +848,29 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         if(personService==null)
             personService = SpringContext.getBean(PersonService.class);
         return personService;
+    }
+    
+    /**
+     * KFSPTS-1458
+     * Retrieve the email address to use for the method of PO transmission MANL = US Mail.
+     * A hard coded email address had been where this method is called in this class.
+     */
+    protected String getMethodOfPOTransmissionConversionEmail() {
+    	String emailAddressToUse = null;
+    	
+    	try
+    	{	emailAddressToUse = SpringContext.getBean(ParameterService.class).getParameterValue(PurchaseOrderDocument.class, CUPurapParameterConstants.MANUAL_DISTRIBUTION_EMAIL);
+    		if ( (emailAddressToUse == null) || emailAddressToUse.length() == 0) {
+    			//parameter value is not defined, return email address defined as a fail-safe constant when this condition occurs
+    			emailAddressToUse = CUPurapConstants.MANUAL_DISRIBUTION_FAILSAFE_EMAIL_ADDRESS;
+    		}            
+    	}
+    	catch (IllegalArgumentException e) {
+    		//parameter is not defined, return email address defined as a failsafe constant when this condition occurs
+    		emailAddressToUse = CUPurapConstants.MANUAL_DISRIBUTION_FAILSAFE_EMAIL_ADDRESS;
+    	}
+    	
+    	return emailAddressToUse;
     }
 
 }

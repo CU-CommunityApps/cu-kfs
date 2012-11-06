@@ -375,14 +375,15 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
         if (!(vendorDetail != null && vendorDetail.isActiveIndicator())) {
             activeVendor = false;
         }
-        
-        //KFSPTS-916 : need vendor address key for business rules and only way to get it is to retrieve the default PO address for the vendor.
-        if (vendorDetail != null) {        	
-        	VendorAddress vendorAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(this.getVendorHeaderGeneratedIdentifier(), this.getVendorDetailAssignedIdentifier(), VendorConstants.AddressTypes.PURCHASE_ORDER, "");
-        	if (vendorAddress != null) {
-        		super.templateVendorAddress(vendorAddress);   
-        	}
-        }
+
+//KFSPTS-1458: Removed this code because saved values were getting overwritten when they shouldn't have been.
+//        //KFSPTS-916 : need vendor address key for business rules and only way to get it is to retrieve the default PO address for the vendor.
+//        if (vendorDetail != null) {        	
+//        	VendorAddress vendorAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(this.getVendorHeaderGeneratedIdentifier(), this.getVendorDetailAssignedIdentifier(), VendorConstants.AddressTypes.PURCHASE_ORDER, "");
+//        	if (vendorAddress != null) {
+//        		super.templateVendorAddress(vendorAddress);   
+//        	}
+//        }
 
         // B2B - only copy if contract and vendor are both active (throw separate errors to print to screen)
         if (this.getRequisitionSourceCode().equals(PurapConstants.RequisitionSources.B2B)) {
