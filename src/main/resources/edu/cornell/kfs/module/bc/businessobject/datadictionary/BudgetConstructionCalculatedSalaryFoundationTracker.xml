@@ -33,4 +33,9 @@
     
   </bean>
   
+  <bean id="BudgetConstructionCalculatedSalaryFoundationTracker-csfFullTimeEmploymentQuantity" parent="BudgetConstructionCalculatedSalaryFoundationTracker-csfFullTimeEmploymentQuantity-parentBean">
+ 
+    <property name="shortLabel" value="CSF % Distribution"/>
+    </bean>
+  
   </beans>
