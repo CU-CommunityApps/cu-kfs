@@ -899,7 +899,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
                     cr.setBankCode(notFoundBankCd);
                     businessObjectService.save(cr);
                     
-                    records.add(getCheckReconError(cr, "The bank record does not exist in reconciliation table. "));
+                    records.add(getCheckReconError(cr, "The bank record does not exist in reconciliation table. " + cr.getCheckNumber()));
                     LOG.error("Check Record Not Found");
                 }
                 else {
@@ -918,13 +918,13 @@ public class CheckReconciliationImportStep extends AbstractStep {
                         else if(checkStatus.equals(CRConstants.STOP)){
                         	if(!existingRecord.getStatus().equalsIgnoreCase(CRConstants.STOP)){
 	                            records.add(getCheckReconError(cr, "Bank file status shows STOP and Check Recon table status is not STOP"));
-	                            LOG.error("Bank file status is STOP and Check Recon table status is not STOP for check ");
+	                            LOG.error("Bank file status is STOP and Check Recon table status is not STOP for check " + cr.getCheckNumber());
                         	}
                         }
                         else if(checkStatus.equals(CRConstants.VOIDED)){
                         	if(!existingRecord.getStatus().equalsIgnoreCase(CRConstants.VOIDED)){
 	                            records.add(getCheckReconError(cr, "Bank file status is VOIDED and Check Recon table status is not VOIDED"));
-	                            LOG.error("Bank file status is STOP and Check Recon table status is not STOP for check ");
+	                            LOG.error("Bank file status is VOIDED and Check Recon table status is not VOID for check "+ cr.getCheckNumber());
                         	}
                         }
 
@@ -943,13 +943,13 @@ public class CheckReconciliationImportStep extends AbstractStep {
                         else if(checkStatus.equals(CRConstants.STOP)){
                         	if(!existingRecord.getStatus().equalsIgnoreCase(CRConstants.STOP)){
 	                            records.add(getCheckReconError(cr, "Bank file status is STOP and Check Recon table status is not STOP"));
-	                            LOG.error("Bank file status is STOP and Check Recon table status is not STOP for check ");
+	                            LOG.error("Bank file status is STOP and Check Recon table status is not STOP for check " + cr.getCheckNumber());
                         	}
                         }
                         else if(checkStatus.equals(CRConstants.VOIDED)){
                         	if(!existingRecord.getStatus().equalsIgnoreCase(CRConstants.VOIDED)){
 	                            records.add(getCheckReconError(cr, "Bank file status is VOID and Check Recon table status is not VOID"));
-	                            LOG.error("Bank file status is STOP and Check Recon table status is not STOP for check ");
+	                            LOG.error("Bank file status is VOIDED and Check Recon table status is not VOID for check " + cr.getCheckNumber());
                         	}
                         }
 
