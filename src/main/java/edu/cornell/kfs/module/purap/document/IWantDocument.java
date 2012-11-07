@@ -507,6 +507,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         for (IWantItem item : items) {
             if (ObjectUtils.isNull(item.getItemQuantity())) {
+                item.setItemQuantity( new KualiDecimal(1));
                 if(ObjectUtils.isNull(item.getItemUnitPrice())){
                     item.setItemUnitPrice(BigDecimal.ZERO);
                 }
@@ -691,11 +692,11 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         this.complete = complete;
     }
     
-//    @Override
-//    public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
-//        // TODO Auto-generated method stub
-//        //return super.answerSplitNodeQuestion(nodeName);
-//        return complete;
-//    }
+    @Override
+    public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
+        // TODO Auto-generated method stub
+        //return super.answerSplitNodeQuestion(nodeName);
+        return complete;
+    }
 
 }

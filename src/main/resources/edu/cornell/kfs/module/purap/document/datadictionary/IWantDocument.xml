@@ -509,11 +509,16 @@
   
   <bean id="IWantDocument-complete" parent="IWantDocument-complete-parentBean"/>
 
-  <bean id="IWantDocument-complete-parentBean" abstract="true" parent="GenericAttributes-genericBoolean">
-    <property name="name" value="complete"/>
-    <property name="label" value="Complete"/>
-    <property name="shortLabel" value="Complete"/>
-  </bean>
+  <bean id="IWantDocument-complete-parentBean" abstract="true" parent="AttributeDefinition">
+  		<property name="name" value="complete"/>
+  		<property name="forceUppercase" value="false"/>
+  		<property name="label" value="Completed"/>
+  		<property name="shortLabel" value="Completed"/>
+  		<property name="maxLength" value="1"/>
+  		<property name="control">
+      		<bean parent="RadioControlDefinition" p:valuesFinderClass="edu.cornell.kfs.module.purap.businessobject.options.OrderCompletedValuesFinder" p:includeKeyInLabel="false"/>
+    	</property>
+  	</bean>
 
   
   <bean id="IWantDocument-validations" parent="IWantDocument-validations-parentBean"/>

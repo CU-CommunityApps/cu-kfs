@@ -23,16 +23,40 @@
       
       <routePaths>
         <routePath>
-          <start name="AdHoc" nextNode="OrganizationHierarchy"/>
+          <start name="AdHoc" nextNode="IsOrderCompleted" />
+          
+          
+          <split name="IsOrderCompleted" nextNode="OrganizationHierarchy">
+            <branch name="True">
+              <simple name="NoOpIsOrderCompleted" nextNode="JoinIsOrderCompleted"/>
+            </branch>
+            <branch name="False">
+            <requests name="OrganizationHierarchy" nextNode="JoinIsOrderCompleted"/>
+            </branch>
+            <join name="JoinIsOrderCompleted"/>
+          </split>
+          
           <requests name="OrganizationHierarchy" />
         </routePath>
       </routePaths>
+      
+      
       <routeNodes>
         <start name="AdHoc"/>
+        
+        <split name="IsOrderCompleted">
+          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+        </split>
+        
         <role name="OrganizationHierarchy">
           <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
+        
+        <simple name="NoOpIsOrderCompleted">
+          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+        </simple>
+        <join name="JoinIsOrderCompleted"/>
       </routeNodes>
       
     </documentType>

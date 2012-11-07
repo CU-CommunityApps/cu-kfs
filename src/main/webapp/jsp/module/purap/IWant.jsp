@@ -77,6 +77,23 @@
 	</kul:tab>
 
 	<kul:routeLog />
+	<kul:tab tabTitle="Order Completed" defaultOpen="true" tabErrorKey="${KFSConstants.I_WANT_DOC_VENDOR_TAB_ERRORS}"> 	
+		<div class="tab-container" align=center>
+    	<table cellpadding="0" cellspacing="0" class="datatable" summary="Complete Information">
+        <tr>
+                <td class="subhead">Order Completed Information</td>
+        </tr>
+		<tr align="center">
+        <td align="center" class="neutral" >
+				   <kul:htmlControlAttribute 
+                        attributeEntry="${DataDictionary.IWantDocument.attributes.complete}" 
+                        property="document.complete" readOnly="${not fullEntryMode}" />&nbsp;
+        </td>
+        </tr>
+        </table>
+        </div>
+              
+	</kul:tab>
 
 	<kul:panelFooter />
 	

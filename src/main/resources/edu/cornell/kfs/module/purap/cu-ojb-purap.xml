@@ -128,7 +128,9 @@
     	<field-descriptor name="collegeLevelOrganization" column="C_LEVEL_ORG" jdbc-type="VARCHAR"/>
     	<field-descriptor name="departmentLevelOrganization" column="D_LEVEL_ORG" jdbc-type="VARCHAR"/>
 
-    	<field-descriptor name="servicePerformedOnCampus" column="SRVC_PERF_ON_CAMPUS" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>     
+    	<field-descriptor name="servicePerformedOnCampus" column="SRVC_PERF_ON_CAMPUS" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>  
+    	
+    	<field-descriptor name="complete" column="COMPLETED" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>    
     
   
     	<!-- COMMON TO ALL DOCUMENTS -->
@@ -333,7 +335,7 @@
 	        <inverse-foreignkey field-ref="vendorDetailAssignedIdentifier" />        
 	    </collection-descriptor>    
 	</class-descriptor>
-
+    
 
     <!-- KFSPTS-1458 added field  vendorEmailAddress -->
     <class-descriptor class="org.kuali.kfs.module.purap.document.RequisitionDocument" table="PUR_REQS_T">
