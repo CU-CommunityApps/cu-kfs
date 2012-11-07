@@ -135,58 +135,5 @@ public class PurchaseOrderTransmissionMethodDataRulesServiceImpl implements Purc
 		}
 		return dataIsValid;		
 	}
-
-	
-	/**
-	 * This routine verifies that the address type selected by the user is PO as well as ensuring that the
-	 * data necessary for the Method of PO Transmission chosen on the REQ, PO, or POA document exists on the 
-	 * document's VendorAddress record for the chosen Vendor.    
-	 * If the required checks pass, true is returned.
-	 * If the required checks fail, false is returned.
-	 * 
-	 * NOTE: This routine could not be used for the VendorAddress validation checks on the Vendor maintenance 
-	 * document because the Method of PO Transmission value selectable on that document pertains to the specific
-	 * VendorAddress being maintained.  The method of PO transmission being used for this routine's validation
-	 * checks is the one that is present on the input parameter purchasing document (REQ, PO, or POA) and could 
-	 * be different from the value of the same name that is on the VendorAddress.  It is ok if these two values 
-	 * are different because the user could have changed it after the default was obtained via the lookup and 
-	 * used to populate the REQ, PO, or POA value as long as the data required for the method of PO transmission
-	 * selected in that document exists on the VendorAddress record chosen on the REQ, PO, or POA. 
-	 * 
-	 * 	For KFSPTS-1458: This method was changed extensively to address new business rules.
-	 */ 
-	public boolean validateDataForMethodOfPOTransmissionExistsOnVendorAddress(Document document){
-		boolean dataExists = true;		
-		MessageMap errorMap = GlobalVariables.getMessageMap();
-		errorMap.clearErrorPath(); 
-		errorMap.addToErrorPath(PurapConstants.VENDOR_ERRORS);
-		
-		//for REQ, PO, and POA verify that data exists on form for method of PO transmission value selected
-		if ((document instanceof RequisitionDocument) || (document instanceof PurchaseOrderDocument) || (document instanceof PurchaseOrderAmendmentDocument)) {
-			PurchasingDocumentBase purapDocument = (PurchasingDocumentBase) document;
-			String poTransMethodCode = purapDocument.getPurchaseOrderTransmissionMethodCode();
-			if (poTransMethodCode != null && !StringUtils.isBlank(poTransMethodCode) ) {
-				if (poTransMethodCode.equals(PurapConstants.POTransmissionMethods.FAX)) {
-					dataExists = isFaxNumberValid(purapDocument.getVendorFaxNumber());
-					if (!dataExists) {
-						errorMap.putError(VendorPropertyConstants.VENDOR_FAX_NUMBER, CUPurapKeyConstants.PURAP_MOPOT_REQUIRED_DATA_MISSING);						
-					}
-				}
-				else if (poTransMethodCode.equals(PurapConstants.POTransmissionMethods.EMAIL)) {					
-					dataExists = isEmailAddressValid(purapDocument.getVendorEmailAddress());
-					if (!dataExists) {
-						errorMap.putError("vendorEmailAddress", CUPurapKeyConstants.PURAP_MOPOT_REQUIRED_DATA_MISSING);						
-					}				
-				}
-				else if (poTransMethodCode.equals(PurapConstants.POTransmissionMethods.MANUAL)) {
-					dataExists = isPostalAddressValid(purapDocument.getVendorLine1Address(), purapDocument.getVendorCityName(), purapDocument.getVendorStateCode(), purapDocument.getVendorPostalCode(), purapDocument.getVendorCountryCode());
-                    if (!dataExists) {
-						errorMap.putError(VendorPropertyConstants.VENDOR_ADDRESS_LINE_1, CUPurapKeyConstants.PURAP_MOPOT_REQUIRED_DATA_MISSING);
-                    }
-				}					
-			}
-		}			
-		return dataExists;
-	}
 	
 }

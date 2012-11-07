@@ -100,14 +100,13 @@ public class PurchasingProcessVendorValidation extends PurchasingAccountsPayable
         	//
         	//if-check is:
         	//(vendor record exists) and (based on route node: role is one that allowed edoc editing) and (mopot is one needing data validation) 
-        	//******************************************************************
-        	PurchaseOrderTransmissionMethodDataRulesServiceImpl purchaseOrderTransmissionMethodDataRulesServiceImpl = SpringContext.getBean(PurchaseOrderTransmissionMethodDataRulesServiceImpl.class);
+        	//******************************************************************        	
             if ( (purDocument.getVendorHeaderGeneratedIdentifier() != null) &&  
             	 ( !(isDocumentInNodeWhereMopotDataValidationIsBypassed(purDocument))) &&             	             	 
                  (purDocument.getPurchaseOrderTransmissionMethodCode().equals(PurapConstants.POTransmissionMethods.EMAIL) ||
                   purDocument.getPurchaseOrderTransmissionMethodCode().equals(PurapConstants.POTransmissionMethods.FAX) || 
                   purDocument.getPurchaseOrderTransmissionMethodCode().equals(PurapConstants.POTransmissionMethods.MANUAL)) ) {            	
-            	valid &= purchaseOrderTransmissionMethodDataRulesServiceImpl.validateDataForMethodOfPOTransmissionExistsOnVendorAddress(purDocument);
+            	valid &= this.validateDataForMethodOfPOTransmissionExistsOnVendorAddress(purDocument);
             	//called routine took care of presenting error message to user
             }            
         }
@@ -177,6 +176,7 @@ public class PurchasingProcessVendorValidation extends PurchasingAccountsPayable
     	boolean return_value = false;
         KualiWorkflowDocument workflowDoc = purDocument.getDocumentHeader().getWorkflowDocument();
         List<String>  currentRouteLevels = Arrays.asList(Strings.split(purDocument.getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames(), ","));
+        
         if (currentRouteLevels.contains(CUPurapConstants.MethodOfPOTransmissionByPassValidationNodes.ACCOUNT_NODE) && workflowDoc.isApprovalRequested()) {
         	return_value = true;
         }
@@ -198,10 +198,65 @@ public class PurchasingProcessVendorValidation extends PurchasingAccountsPayable
         else if (currentRouteLevels.contains(CUPurapConstants.MethodOfPOTransmissionByPassValidationNodes.ACCOUNTING_ORGANIZATION_HIERARCHY_NODE) && workflowDoc.isApprovalRequested()) {
         	return_value = true;
         }
-        else if (currentRouteLevels.contains(CUPurapConstants.MethodOfPOTransmissionByPassValidationNodes.AD_HOC_NODE) && workflowDoc.isApprovalRequested() &&  !workflowDoc.isAdHocRequested()) {
+        else if (currentRouteLevels.contains(CUPurapConstants.MethodOfPOTransmissionByPassValidationNodes.AD_HOC_NODE) && workflowDoc.isAdHocRequested()) {
+        	//Doc could be editable OR NON-editable for a user when it is stopped on an AdHoc Route Node  
+        	//bypass validation check when document is in adhoc route node and adhoc was requested
+        	
         	return_value = true;
         }
         return (return_value);
     }  
         
+	/**
+	 * This routine verifies that the data necessary for the Method of PO Transmission chosen on the REQ, 
+	 * PO, or POA document exists on the document's VendorAddress record for the chosen Vendor.    
+	 * If the required checks pass, true is returned.
+	 * If the required checks fail, false is returned.
+	 * 
+	 * NOTE: This routine could not be used for the VendorAddress validation checks on the Vendor maintenance 
+	 * document because the Method of PO Transmission value selectable on that document pertains to the specific
+	 * VendorAddress being maintained.  The method of PO transmission being used for this routine's validation
+	 * checks is the one that is present on the input parameter purchasing document (REQ, PO, or POA) and could 
+	 * be different from the value of the same name that is on the VendorAddress.  It is ok if these two values 
+	 * are different because the user could have changed it after the default was obtained via the lookup and 
+	 * used to populate the REQ, PO, or POA value as long as the data required for the method of PO transmission
+	 * selected in that document exists on the VendorAddress record chosen on the REQ, PO, or POA. 
+	 * 
+	 * 	For KFSPTS-1458: This method was changed extensively to address new business rules.
+	 */ 
+	public boolean validateDataForMethodOfPOTransmissionExistsOnVendorAddress(Document document){
+		boolean dataExists = true;		
+		MessageMap errorMap = GlobalVariables.getMessageMap();
+		errorMap.clearErrorPath(); 
+		errorMap.addToErrorPath(PurapConstants.VENDOR_ERRORS);
+		
+		//for REQ, PO, and POA verify that data exists on form for method of PO transmission value selected
+		if ((document instanceof RequisitionDocument) || (document instanceof PurchaseOrderDocument) || (document instanceof PurchaseOrderAmendmentDocument)) {
+			PurchaseOrderTransmissionMethodDataRulesServiceImpl purchaseOrderTransmissionMethodDataRulesServiceImpl = SpringContext.getBean(PurchaseOrderTransmissionMethodDataRulesServiceImpl.class);
+			PurchasingDocumentBase purapDocument = (PurchasingDocumentBase) document;
+			String poTransMethodCode = purapDocument.getPurchaseOrderTransmissionMethodCode();
+			if (poTransMethodCode != null && !StringUtils.isBlank(poTransMethodCode) ) {
+				if (poTransMethodCode.equals(PurapConstants.POTransmissionMethods.FAX)) {
+					dataExists = purchaseOrderTransmissionMethodDataRulesServiceImpl.isFaxNumberValid(purapDocument.getVendorFaxNumber());
+					if (!dataExists) {
+						errorMap.putError(VendorPropertyConstants.VENDOR_FAX_NUMBER, CUPurapKeyConstants.PURAP_MOPOT_REQUIRED_DATA_MISSING);						
+					}
+				}
+				else if (poTransMethodCode.equals(PurapConstants.POTransmissionMethods.EMAIL)) {					
+					dataExists = purchaseOrderTransmissionMethodDataRulesServiceImpl.isEmailAddressValid(purapDocument.getVendorEmailAddress());
+					if (!dataExists) {
+						errorMap.putError("vendorEmailAddress", CUPurapKeyConstants.PURAP_MOPOT_REQUIRED_DATA_MISSING);						
+					}				
+				}
+				else if (poTransMethodCode.equals(PurapConstants.POTransmissionMethods.MANUAL)) {
+					dataExists = purchaseOrderTransmissionMethodDataRulesServiceImpl.isPostalAddressValid(purapDocument.getVendorLine1Address(), purapDocument.getVendorCityName(), purapDocument.getVendorStateCode(), purapDocument.getVendorPostalCode(), purapDocument.getVendorCountryCode());
+                    if (!dataExists) {
+						errorMap.putError(VendorPropertyConstants.VENDOR_ADDRESS_LINE_1, CUPurapKeyConstants.PURAP_MOPOT_REQUIRED_DATA_MISSING);
+                    }
+				}					
+			}
+		}			
+		return dataExists;
+	}
+	
 }

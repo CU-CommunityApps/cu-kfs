@@ -20,7 +20,5 @@ public interface PurchaseOrderTransmissionMethodDataRulesService {
 	public boolean isCityValid(String cityName);
 	
 	public boolean isPostalAddressValid(String address1, String cityName, String stateCode, String zipCode, String countryCode);
-	
-	public boolean validateDataForMethodOfPOTransmissionExistsOnVendorAddress(Document document);
 
 }
