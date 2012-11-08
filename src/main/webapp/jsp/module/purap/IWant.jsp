@@ -19,6 +19,8 @@
 
     <c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}" />
     <c:set var="step" value="${KualiForm.step}" />
+    <c:set var="isAdHocApprover" value="${KualiForm.editingMode['completeOrder']}"/>
+	
     
 <c:choose>
 <c:when test="${ step eq 'regular' }">
@@ -77,6 +79,7 @@
 	</kul:tab>
 
 	<kul:routeLog />
+	<c:if test="${isAdHocApprover}">
 	<kul:tab tabTitle="Order Completed" defaultOpen="true" tabErrorKey="${KFSConstants.I_WANT_DOC_VENDOR_TAB_ERRORS}"> 	
 		<div class="tab-container" align=center>
     	<table cellpadding="0" cellspacing="0" class="datatable" summary="Complete Information">
@@ -92,8 +95,11 @@
         </tr>
         </table>
         </div>
+       
               
 	</kul:tab>
+	
+	</c:if>
 
 	<kul:panelFooter />
 	

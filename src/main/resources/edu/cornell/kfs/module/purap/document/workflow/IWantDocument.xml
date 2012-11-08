@@ -24,9 +24,7 @@
       <routePaths>
         <routePath>
           <start name="AdHoc" nextNode="IsOrderCompleted" />
-          
-          
-          <split name="IsOrderCompleted" nextNode="OrganizationHierarchy">
+          <split name="IsOrderCompleted" nextNode="NoOpComplete">
             <branch name="True">
               <simple name="NoOpIsOrderCompleted" nextNode="JoinIsOrderCompleted"/>
             </branch>
@@ -35,8 +33,7 @@
             </branch>
             <join name="JoinIsOrderCompleted"/>
           </split>
-          
-          <requests name="OrganizationHierarchy" />
+          <requests name="NoOpComplete" />
         </routePath>
       </routePaths>
       
@@ -54,6 +51,9 @@
         </role>
         
         <simple name="NoOpIsOrderCompleted">
+          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+        </simple>
+        <simple name="NoOpComplete">
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
         </simple>
         <join name="JoinIsOrderCompleted"/>

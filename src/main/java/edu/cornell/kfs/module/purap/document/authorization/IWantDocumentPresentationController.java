@@ -60,6 +60,10 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
         Set<String> editModes = super.getEditModes(document);
         KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         IWantDocument iWantDocument = (IWantDocument) document;
+        
+        if(workflowDocument.isAdHocRequested()){
+            editModes.add("completeOrder");
+        }
 
         if (workflowDocument.stateIsInitiated() || workflowDocument.stateIsSaved()) {
             editModes.add("wizard");
