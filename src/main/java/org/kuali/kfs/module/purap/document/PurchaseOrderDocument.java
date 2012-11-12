@@ -592,6 +592,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         this.setVendorPostalCode(requisitionDocument.getVendorPostalCode());
         this.setVendorStateCode(requisitionDocument.getVendorStateCode());
         this.setVendorRestrictedIndicator(requisitionDocument.getVendorRestrictedIndicator());
+        this.setVendorEmailAddress(requisitionDocument.getVendorEmailAddress());   //KFSPTS-1458 -- Added, req has this new attribute's value and it needs to be carried over to the po.
         
         this.setExternalOrganizationB2bSupplierIdentifier(requisitionDocument.getExternalOrganizationB2bSupplierIdentifier());
         this.setRequisitionSourceCode(requisitionDocument.getRequisitionSourceCode());
