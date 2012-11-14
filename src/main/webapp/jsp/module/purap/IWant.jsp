@@ -76,7 +76,7 @@
 
 	<kul:routeLog />
 	<c:if test="${isAdHocApprover}">
-	<kul:tab tabTitle="Order Completed" defaultOpen="true" tabErrorKey="${KFSConstants.I_WANT_DOC_ORDER_COMPLETED_TAB_ERRORS}"> 	
+	<kul:tab tabTitle="Order Completed (Required)" defaultOpen="true" tabErrorKey="${KFSConstants.I_WANT_DOC_ORDER_COMPLETED_TAB_ERRORS}"> 	
 		<div align=center class="tab-container" >
     	<table cellpadding="0" cellspacing="0" class="datatable" summary="Complete Information">
         <tr>

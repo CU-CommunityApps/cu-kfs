@@ -14,9 +14,7 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
     @Override
     protected boolean canSave(Document document) {
         KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-//        if (workflowDocument.stateIsInitiated()) {
-//            return false;
-//        }
+
         return super.canSave(document);
     }
 
@@ -25,15 +23,18 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
         if (workflowDocument.stateIsInitiated()) {
             return false;
         }
+        
+        if(workflowDocument.isAdHocRequested()){
+            return false;
+        }
+        
         return super.canCopy(document);
     }
 
     @Override
     protected boolean canCancel(Document document) {
         KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-//        if (workflowDocument.stateIsInitiated()) {
-//            return false;
-//        }
+
         return super.canCancel(document);
     }
 
@@ -48,11 +49,19 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
 
     @Override
     protected boolean canClose(Document document) {
-        //        KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        //        if (workflowDocument.stateIsInitiated()) {
-        //            return false;
-        //        }
-        return super.canClose(document);
+
+        return false;
+    }
+    
+    @Override
+    protected boolean canReload(Document document) {
+        KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        
+        if(workflowDocument.isAdHocRequested()){
+            return false;
+        }
+        
+        return super.canReload(document);
     }
 
     @Override

@@ -65,6 +65,10 @@
             <%--Note --%>
             <tr>
 			<td height=30 colspan="${noteColSpan}" class="neutral" style="color: blue; font-family:Verdana, Verdana, serif; font-size: 12px;font-style: italic">
+			<table cellpadding="0" cellspacing="0" class="neutral"> 
+			<tr>
+			<td height=30 class="neutral" style="color: blue; font-family:Verdana, Verdana, serif; font-size: 12px;font-style: italic">
+			<div>
 				<b>If you have documents to send to the FTC/Vendor follow these instructions:</b>
 					<ol>
 						<li>Select an attachment description from the drop down box</li>
@@ -72,6 +76,22 @@
 						<li>Click add</li>
 						<li>Repeat to add additional attachments</li>
 					</ol>
+			</div>
+			</td>
+			<td height=30 class="neutral" style="color: blue; font-family:Verdana, Verdana, serif; font-size: 12px;font-style: italic">
+			<div>
+				<b>To include a Note:</b>
+					<ol>
+						<li>Select Note from the attachment description drop down box</li>
+						<li>Type the note in the note text field</li>
+						<li>Click add</li>
+						<li>Repeat to add additional notes</li>
+					</ol>
+			
+			</div>
+			</td>
+			</tr>
+			</table>
 			</td>
 		    </tr>
 

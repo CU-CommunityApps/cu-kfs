@@ -106,9 +106,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                 iWantForm.setDocument(iWantDocument);
 
                 if (iWantDocument != null) {
-                    iWantDocument.getDocumentHeader().setDocumentDescription(
-                            "I Want Document #" + iWantDocument.getDocumentHeader().getDocumentNumber());
-
+                    
                     String principalId = iWantDocument.getDocumentHeader().getWorkflowDocument()
                             .getInitiatorPrincipalId();
                     KimPrincipalInfo initiator = identityManagementService.getPrincipal(principalId);
@@ -150,22 +148,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                     if (ObjectUtils.isNotNull(userOptionsDepartment)) {
                         iWantDocument.setDepartmentLevelOrganization(userOptionsDepartment.getOptionValue());
                     }
-
-                    //                    UserOptionsService userOptionsService = SpringContext.getBean(UserOptionsService.class);
-                    //                    UserOptions collegeUserOption = userOptionsService.findByOptionId(principalId,
-                    //                            CUPurapConstants.USER_OPTIONS_DEFAULT_COLLEGE);
-                    //                    UserOptions departmentUserOption = userOptionsService.findByOptionId(principalId,
-                    //                            CUPurapConstants.USER_OPTIONS_DEFAULT_DEPARTMENT);
-                    //
-                    //                    if (ObjectUtils.isNotNull(collegeUserOption)) {
-                    //                        iWantDocument.setCollegeLevelOrganization(collegeUserOption.getOptionVal());
-                    //                    }
-                    //
-                    //                    if (ObjectUtils.isNotNull(departmentUserOption)) {
-                    //                        iWantDocument.setDepartmentLevelOrganization(departmentUserOption.getOptionVal());
-                    //                    }
-                    //
-                    //                    if (ObjectUtils.isNull(collegeUserOption) && ObjectUtils.isNull(departmentUserOption)) 
 
                     //if no default user options check primary department
                     if (ObjectUtils.isNull(userOptionsCollege) && ObjectUtils.isNull(userOptionsDepartment)) {
@@ -233,9 +215,26 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                     }
                 }
             }
+            
+            setIWantDocumentDescription(iWantDoc);
+            
         }
+        
+        
 
         return actionForward;
+    }
+    
+    private void setIWantDocumentDescription(IWantDocument iWantDocument){
+        // add selected chart and department to document description
+        String routingChart = iWantDocument.getRoutingChart() == null ? StringUtils.EMPTY : iWantDocument.getRoutingChart() + "-";
+        String routingOrg = iWantDocument.getRoutingOrganization() == null ? StringUtils.EMPTY : iWantDocument
+                .getRoutingOrganization();
+        String addChartOrgToDesc = routingChart + routingOrg;
+        String vendorName = iWantDocument.getVendorName() == null ? StringUtils.EMPTY : iWantDocument.getVendorName();
+        String description = addChartOrgToDesc + " " + vendorName;
+        
+        iWantDocument.getDocumentHeader().setDocumentDescription(description);
     }
 
     /**
@@ -594,20 +593,9 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                 getBusinessObjectService().save(userOptionsDepartment);
             }
 
-            //            UserOptionsService userOptionsService = SpringContext.getBean(UserOptionsService.class);
-            //            String principalId = iWantDocument.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
-            //            userOptionsService.save(principalId, CUPurapConstants.USER_OPTIONS_DEFAULT_COLLEGE, college);
-            //            userOptionsService.save(principalId, CUPurapConstants.USER_OPTIONS_DEFAULT_DEPARTMENT, department);
         }
-
-        // add selected chart and department to document description
-        String routingChart = iWantDocument.getRoutingChart() == null ? "" : iWantDocument.getRoutingChart() + "-";
-        String routingOrg = iWantDocument.getRoutingOrganization() == null ? "" : iWantDocument
-                .getRoutingOrganization();
-        String addChartOrgToDesc = routingChart + routingOrg;
-        String description = iWantDocument.getDocumentHeader().getDocumentDescription() + " "
-                + addChartOrgToDesc;
-        iWantDocument.getDocumentHeader().setDocumentDescription(description);
+        
+        setIWantDocumentDescription(iWantDocument);
         
         //insert adhoc route person first and the route
         if(StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())){
@@ -621,6 +609,21 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         } else {
             return actionForward;
         }
+    }
+    
+    @Override
+    public ActionForward sendAdHocRequests(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        
+        IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
+        IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+        
+        //insert adhoc route person first and the route
+        if(StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())){
+            insertAdHocRoutePerson(mapping, iWantDocForm, request, response);
+
+        }
+        return super.sendAdHocRequests(mapping, form, request, response);
     }
 
     /**
