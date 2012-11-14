@@ -67,11 +67,15 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private String attachmentDescription;
     private String noteLabel;
     
-    private boolean complete;
+    private String completeOption;
+    private boolean completed;
 
     // routing fields
     private String routingChart;
     private String routingOrganization;
+    
+    //adhoc routing
+    private String currentRouteToNetId;
 
     //Items
     private List<IWantItem> items;
@@ -684,19 +688,39 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         this.noteLabel = noteLabel;
     }
 
-    public boolean isComplete() {
-        return complete;
+    public boolean isCompleted() {
+        return completed;
     }
 
-    public void setComplete(boolean complete) {
-        this.complete = complete;
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
     
     @Override
     public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
-        // TODO Auto-generated method stub
-        //return super.answerSplitNodeQuestion(nodeName);
-        return complete;
+        if("Y".equalsIgnoreCase(completeOption)){
+            return true;
+        }
+        else{
+            return false;
+        }
+        //return completed;
+    }
+
+    public String getCurrentRouteToNetId() {
+        return currentRouteToNetId;
+    }
+
+    public void setCurrentRouteToNetId(String currentRouteToNetId) {
+        this.currentRouteToNetId = currentRouteToNetId;
+    }
+
+    public String getCompleteOption() {
+        return completeOption;
+    }
+
+    public void setCompleteOption(String completeOption) {
+        this.completeOption = completeOption;
     }
 
 }

@@ -1,0 +1,44 @@
+package edu.cornell.kfs.module.purap.document.validation.impl;
+
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.rice.kns.document.Document;
+import org.kuali.rice.kns.rules.DocumentRuleBase;
+import org.kuali.rice.kns.util.GlobalVariables;
+
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.module.purap.CUPurapPropertyConstants;
+import edu.cornell.kfs.module.purap.businessobject.IWantItem;
+import edu.cornell.kfs.module.purap.document.IWantDocument;
+import edu.cornell.kfs.module.purap.document.validation.AddIWantItemRule;
+
+public class IWantDocumentRule extends DocumentRuleBase implements AddIWantItemRule {
+
+    public boolean processAddIWantItemRules(IWantDocument document, IWantItem item, String errorPathPrefix) {
+        boolean valid = true;
+        if(StringUtils.isBlank(item.getItemDescription())){
+            valid = false;
+            String attributeLabel = getDataDictionaryService().
+            getDataDictionary().getBusinessObjectEntry(IWantItem.class.getName()).
+            getAttributeDefinition(CUPurapPropertyConstants.IWNT_ITEM_DESC).getLabel();
+            GlobalVariables.getMessageMap().putError("newIWantItemLine.itemDescription", KFSKeyConstants.ERROR_REQUIRED, attributeLabel);
+        }
+        return valid;
+    }
+
+    @Override
+    protected boolean processCustomRouteDocumentBusinessRules(Document document) {
+        boolean valid = super.processCustomRouteDocumentBusinessRules(document);
+        IWantDocument iWantDocument = (IWantDocument)document;
+        
+        if(document.getDocumentHeader().getWorkflowDocument().isAdHocRequested()){
+            //validate that Complete order option was selected
+            if(StringUtils.isBlank(iWantDocument.getCompleteOption())){
+                GlobalVariables.getMessageMap().putError("document.completeOption", CUPurapKeyConstants.ERROR_IWNT_CONMPLETE_ORDER_OPTION_REQUIRED);
+            }
+        }
+        
+        return valid;
+    }
+
+}

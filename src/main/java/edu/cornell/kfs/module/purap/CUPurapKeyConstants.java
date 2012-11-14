@@ -6,7 +6,6 @@ package edu.cornell.kfs.module.purap;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 
 /**
- * @author Admin-dwf5
  *
  */
 public class CUPurapKeyConstants extends PurapKeyConstants {
@@ -16,4 +15,7 @@ public class CUPurapKeyConstants extends PurapKeyConstants {
     public static final String PURAP_MOPOT_REQUIRED_DATA_MISSING = "error.purap.mopot.required.data.missing";  //KFSPTS-1458
     
     public static final String I_WANT_ITEMS_SOLE_SOURCE_NOTE = "note.iWant.document.itemSoleSource";
+    
+    //error messages
+    public static final String ERROR_IWNT_CONMPLETE_ORDER_OPTION_REQUIRED = "error.iWant.document.completeOption.required";
 }

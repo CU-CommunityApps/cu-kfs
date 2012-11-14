@@ -44,6 +44,7 @@ import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.businessobject.LevelOrganization;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
+import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
 
 public class IWantDocumentAction extends FinancialSystemTransactionalDocumentActionBase {
 
@@ -56,6 +57,10 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         super.loadDocument(kualiDocumentFormBase);
         IWantDocumentForm iWantForm = (IWantDocumentForm) kualiDocumentFormBase;
         IWantDocument iWantDocument = iWantForm.getIWantDocument();
+
+        if (StringUtils.isNotBlank(iWantDocument.getCurrentRouteToNetId())) {
+            iWantForm.getNewAdHocRoutePerson().setId(iWantDocument.getCurrentRouteToNetId());
+        }
 
         if (iWantDocument.getDocumentHeader().getWorkflowDocument().stateIsSaved()) {
             iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.CUSTOMER_DATA_STEP);
@@ -442,7 +447,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         boolean rulePassed = true;
 
         // call business rules
-        rulePassed &= ruleService.applyRules(new KualiAddLineEvent(iWantDocument, "items", item));
+        rulePassed &= ruleService.applyRules(new AddIWantItemEvent(StringUtils.EMPTY,iWantDocument, item));
 
         if (rulePassed) {
             item = iWantDocumentForm.getAndResetNewIWantItemLine();
@@ -603,7 +608,12 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         String description = iWantDocument.getDocumentHeader().getDocumentDescription() + " "
                 + addChartOrgToDesc;
         iWantDocument.getDocumentHeader().setDocumentDescription(description);
+        
+        //insert adhoc route person first and the route
+        if(StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())){
+            insertAdHocRoutePerson(mapping, iWantDocForm, request, response);
 
+        }
         ActionForward actionForward = super.route(mapping, form, request, response);
 
         if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)) {
@@ -621,15 +631,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     @Override
     public ActionForward insertBONote(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-//        IWantDocumentForm iWantForm = (IWantDocumentForm) form;
-//
-//        IWantDocument iWantDocument = (IWantDocument) iWantForm.getDocument();
-//        Note newNote = iWantForm.getNewNote();
-//        
-//        if(StringUtils.isNotBlank(newNote.getNoteText())){
-//            newNote.setNoteText(iWantDocument.getAttachmentDescription() + " " + newNote.getNoteText());
-//        }
-//        
 
         ActionForward actionForward = super.insertBONote(mapping, form, request, response);
         IWantDocumentForm iWantDocumentForm = (IWantDocumentForm) form;
@@ -700,10 +701,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             if ("iWantDocVendorLookupable".equalsIgnoreCase(refreshCaller)) {
                 Integer vendorHeaderId = iWantDocument.getVendorHeaderGeneratedIdentifier();
                 Integer vendorId = iWantDocument.getVendorDetailAssignedIdentifier();
-//                VendorPhoneNumber vendorPhoneNumber = new VendorPhoneNumber();
-//                vendorPhoneNumber.setVendorHeaderGeneratedIdentifier(vendorHeaderId);
-//                vendorPhoneNumber.setVendorDetailAssignedIdentifier(vendorId);
-//                vendorPhoneNumber.setVendorPhoneTypeCode("PH");
                 String phoneNumber = "Phone: ";
                 
                 Map fieldValues = new HashMap();
@@ -715,9 +712,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                     VendorPhoneNumber retrievedVendorPhoneNumber = (VendorPhoneNumber)vendorPhoneNumbers.toArray()[0];
                     phoneNumber+=retrievedVendorPhoneNumber.getVendorPhoneNumber();
                 }
-                   
-               
-                
 
                 // populate vendor info
                 String addressLine1 = iWantDocument.getVendorLine1Address() !=null ? iWantDocument.getVendorLine1Address() : StringUtils.EMPTY;
@@ -741,6 +735,21 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             }
 
         }
+        return actionForward;
+    }
+    
+    @Override
+    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        
+        ActionForward actionForward = super.save(mapping, form, request, response);
+        IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
+        IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+        
+        if(StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())){
+            iWantDocument.setCurrentRouteToNetId(iWantDocForm.getNewAdHocRoutePerson().getId());
+        }
+        
         return actionForward;
     }
 

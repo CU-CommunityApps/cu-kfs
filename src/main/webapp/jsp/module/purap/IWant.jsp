@@ -20,7 +20,7 @@
     <c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}" />
     <c:set var="step" value="${KualiForm.step}" />
     <c:set var="isAdHocApprover" value="${KualiForm.editingMode['completeOrder']}"/>
-	
+    <c:set var="canAdHocRouteForApprove" value="${KualiForm.adHocActionRequestCodes[KEWConstants.ACTION_REQUEST_APPROVE_REQ]}"/>	
     
 <c:choose>
 <c:when test="${ step eq 'regular' }">
@@ -38,13 +38,7 @@
 
 	<purap:iWantDocumentOverview editingMode="${KualiForm.editingMode}" readOnly="${not fullEntryMode}"> 
 	</purap:iWantDocumentOverview>
-	
-
-   <%--   <purap:delivery
-        documentAttributes="${DataDictionary.RequisitionDocument.attributes}" 
-        showDefaultBuildingOption="true"  /> --%>
-        
-       
+	       
     <purap:iWantCustomerData
         documentAttributes="${DataDictionary.IWantDocument.attributes}" />
 
@@ -72,25 +66,29 @@
 	            
     <purap:iWantNotes defaultOpen="true"/> 
 
+    <c:if test="${canAdHocRouteForApprove != null}">
     <kul:tab tabTitle="Routing and Submission" defaultOpen="true">  
     
 		<purap:iWantAdHocRecipients />
 		
 	</kul:tab>
+	</c:if>
 
 	<kul:routeLog />
 	<c:if test="${isAdHocApprover}">
-	<kul:tab tabTitle="Order Completed" defaultOpen="true" tabErrorKey="${KFSConstants.I_WANT_DOC_VENDOR_TAB_ERRORS}"> 	
-		<div class="tab-container" align=center>
+	<kul:tab tabTitle="Order Completed" defaultOpen="true" tabErrorKey="${KFSConstants.I_WANT_DOC_ORDER_COMPLETED_TAB_ERRORS}"> 	
+		<div align=center class="tab-container" >
     	<table cellpadding="0" cellspacing="0" class="datatable" summary="Complete Information">
         <tr>
                 <td class="subhead">Order Completed Information</td>
         </tr>
 		<tr align="center">
         <td align="center" class="neutral" >
+        <div align="center" >
 				   <kul:htmlControlAttribute 
-                        attributeEntry="${DataDictionary.IWantDocument.attributes.complete}" 
-                        property="document.complete" readOnly="${not fullEntryMode}" />&nbsp;
+                        attributeEntry="${DataDictionary.IWantDocument.attributes.completeOption}" 
+                        property="document.completeOption" readOnly="${not fullEntryMode}" />&nbsp;
+        </div>
         </td>
         </tr>
         </table>
@@ -155,10 +153,12 @@
 
    </c:if>
    
-    <c:if test="${(step eq 'routingStep')}">   
     
+    <c:if test="${(step eq 'routingStep')}">
     <kul:tabTop tabTitle="Routing and Submission" defaultOpen="true" tabErrorKey="${PurapConstants.VENDOR_ERRORS}">  
-	<purap:iWantAdHocRecipients />
+	 <c:if test="${canAdHocRouteForApprove != null}">
+	 	<purap:iWantAdHocRecipients />
+	 </c:if>
 	</kul:tabTop>
 	</c:if>
 
