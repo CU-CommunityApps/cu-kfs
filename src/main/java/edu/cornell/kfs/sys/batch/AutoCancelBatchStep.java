@@ -121,7 +121,7 @@ public class AutoCancelBatchStep extends AbstractStep {
 
         LOG.info("Completed AutoCancelBatchStep @ " + (new Date()).toString());
 
-        return results;
+        return true;
     }
 
 	/**

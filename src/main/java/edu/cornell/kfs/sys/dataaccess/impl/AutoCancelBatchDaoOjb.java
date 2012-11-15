@@ -91,7 +91,7 @@ public class AutoCancelBatchDaoOjb extends PlatformAwareDaoBaseOjb implements Oj
         ageDate.add(Calendar.DATE, - (maxDays-1)); 
 	    if (StringUtils.isNotBlank(stringDays)) {
 	        
-	        Map<String, String> cancelIds = findSavedDocumentIds(ageDate);
+	        Map<String, String> cancelIds = findSavedDocumentIds(stringDays);
 	        Set<String> cancelDocumentIds = cancelIds.keySet();
 	        
  	        // Loop thru and cancel docs from Cancel List
@@ -124,13 +124,13 @@ public class AutoCancelBatchDaoOjb extends PlatformAwareDaoBaseOjb implements Oj
      * @param compareDate
      * @return
      */
-    private Map<String, String> findSavedDocumentIds(Calendar compareDate) {
+    private Map<String, String> findSavedDocumentIds(String autoCancelDays) {
     	Map<String, String> ids = new HashMap<String, String>();
 
     	SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
     	
     	Criteria crit = new Criteria();
-    	String sqlStatement = "doc_hdr_stat_cd='"+SAVED_STATUS_CODE+"' and trunc(to_date(crte_dt, 'dd-mon-yyyy'))<='"+dateFormat.format(compareDate.getTime())+"'";
+    	String sqlStatement = "doc_hdr_stat_cd='"+SAVED_STATUS_CODE+"' and (trunc(crte_dt) +"+autoCancelDays+")<=trunc(sysdate)";
     	crit.addSql(sqlStatement);
     	ReportQueryByCriteria qbc = QueryFactory.newReportQuery(DocumentRouteHeaderValue.class, crit);
     	qbc.setAttributes(new String[] {"doc_hdr_id", "doc_typ_id"});
