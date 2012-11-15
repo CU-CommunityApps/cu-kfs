@@ -47,6 +47,8 @@ import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
 
 public class IWantDocumentAction extends FinancialSystemTransactionalDocumentActionBase {
+    
+    private final int DOCUMENT_DESCRIPTION_MAX_LENGTH = 40;
 
     /**
      * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#loadDocument(org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase)
@@ -233,6 +235,10 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         String addChartOrgToDesc = routingChart + routingOrg;
         String vendorName = iWantDocument.getVendorName() == null ? StringUtils.EMPTY : iWantDocument.getVendorName();
         String description = addChartOrgToDesc + " " + vendorName;
+        
+        if (StringUtils.isNotBlank(description) && description.length() > DOCUMENT_DESCRIPTION_MAX_LENGTH) {
+            description = description.substring(0, DOCUMENT_DESCRIPTION_MAX_LENGTH);
+        }
         
         iWantDocument.getDocumentHeader().setDocumentDescription(description);
     }
@@ -550,6 +556,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     @Override
     public ActionForward route(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
+        
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
         String step = iWantDocForm.getStep();
@@ -599,6 +606,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         
         //insert adhoc route person first and the route
         if(StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())){
+            iWantDocument.setCurrentRouteToNetId(iWantDocForm.getNewAdHocRoutePerson().getId());
             insertAdHocRoutePerson(mapping, iWantDocForm, request, response);
 
         }
