@@ -385,6 +385,8 @@
 
   <bean id="PaymentDetail-paymentGroup.lastUpdate-parentBean" abstract="true" parent="PaymentGroup-lastUpdate">
     <property name="name" value="paymentGroup.lastUpdate"/>
+    <property name="label" value="Status Last Updated"/>
+    <property name="formatterClass" value="org.kuali.rice.kns.web.format.DateFormatter"/>
   </bean> 
   <bean id="PaymentDetail-paymentGroup.alternatePayeeIdTypeCd" parent="PaymentDetail-paymentGroup.alternatePayeeIdTypeCd-parentBean"/>
 
