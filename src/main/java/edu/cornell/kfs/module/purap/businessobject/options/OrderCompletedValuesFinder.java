@@ -11,8 +11,8 @@ public class OrderCompletedValuesFinder extends KeyValuesBase {
     public List getKeyValues() {
         List keyValues = new ArrayList();
         
-        keyValues.add(new KeyLabelPair("Y", "I have placed the order through eShop or other means"));
-        keyValues.add(new KeyLabelPair("N", "I have not placed an order"));
+        keyValues.add(new KeyLabelPair("Y", "I have placed the order via pcard/eshop etc. (Click <b>approve</b> to finalize the order)"));
+        keyValues.add(new KeyLabelPair("N", "I have <b>NOT</b> placed the order. (Click <b>approve</b> to submit to the FTC/BSC for processing)"));
         
         return keyValues;
     }
