@@ -40,8 +40,8 @@ public class CheckReconciliationReportServiceImpl implements CheckReconciliation
      * 
      * @see com.rsmart.kuali.kfs.cr.document.service.CheckReconciliationReportService#buildReports(com.rsmart.kuali.kfs.cr.document.web.struts.CheckReconciliationForm)
      */
-    public Collection<CheckReconciliationReport> buildReports(Date startDate, Date endDate) {
-        Collection<CheckReconciliationReport> data = new ArrayList<CheckReconciliationReport>();
+    public List<CheckReconciliationReport> buildReports(Date startDate, Date endDate) {
+        List<CheckReconciliationReport> data = new ArrayList<CheckReconciliationReport>();
         
         List list = checkReconciliationDao.getAllCheckReconciliationForSearchCriteria(startDate,endDate);
         

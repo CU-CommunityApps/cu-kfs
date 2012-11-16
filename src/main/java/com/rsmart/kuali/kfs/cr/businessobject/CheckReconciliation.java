@@ -31,7 +31,7 @@ import org.kuali.rice.kns.util.KualiInteger;
  * @author Derek Helbert
  * @version $Revision$
  */
-public class CheckReconciliation extends PersistableBusinessObjectBase implements Serializable {
+public class CheckReconciliation extends PersistableBusinessObjectBase implements Serializable, Comparable<KualiInteger> {
 
     private Integer id; // CR_ID
     
@@ -204,6 +204,11 @@ public class CheckReconciliation extends PersistableBusinessObjectBase implement
 
 	public void setStatusChangeDate(Date statusChangeDate) {
 		this.statusChangeDate = statusChangeDate;
+	}
+
+	public int compareTo(KualiInteger checkNumber) {
+		// TODO Auto-generated method stub
+		return getCheckNumber().compareTo(checkNumber);
 	}
 
 }

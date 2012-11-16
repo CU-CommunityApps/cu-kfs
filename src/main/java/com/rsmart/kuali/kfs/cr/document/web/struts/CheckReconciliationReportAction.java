@@ -16,9 +16,9 @@
 package com.rsmart.kuali.kfs.cr.document.web.struts;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -33,8 +33,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.module.bc.BCConstants;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSConstants.ReportGeneration;
+import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.ReportGenerationService;
 import org.kuali.rice.kns.util.GlobalVariables;
@@ -44,6 +44,8 @@ import org.kuali.rice.kns.web.struts.action.KualiAction;
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliationReport;
 import com.rsmart.kuali.kfs.cr.document.service.CheckReconciliationReportService;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * Check Reconciliation Action
@@ -62,7 +64,7 @@ public class CheckReconciliationReportAction extends KualiAction {
         CheckReconciliationReportForm crForm = (CheckReconciliationReportForm)form;
         
         CheckReconciliationReportService serv = SpringContext.getBean(CheckReconciliationReportService.class);
-        Collection<CheckReconciliationReport> reportSet = serv.buildReports(crForm.getStartDate(),crForm.getEndDate());
+        List<CheckReconciliationReport> reportSet = serv.buildReports(crForm.getStartDate(),crForm.getEndDate());
         
         if( reportSet != null && reportSet.isEmpty() ) {
             GlobalVariables.getErrorMap().putError("startDate", KFSKeyConstants.ERROR_CUSTOM, "No Check Records Found");
@@ -84,6 +86,8 @@ public class CheckReconciliationReportAction extends KualiAction {
                 int     acctIssuedTotal = 0;
                 
                 CheckReconciliationReport temp = null;
+                	
+                Collections.sort(reportSet);
                 
                 Iterator<CheckReconciliationReport> iter = reportSet.iterator();
                 temp = iter.next();

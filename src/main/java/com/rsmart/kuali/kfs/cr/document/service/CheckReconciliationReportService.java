@@ -16,7 +16,7 @@
 package com.rsmart.kuali.kfs.cr.document.service;
 
 import java.sql.Date;
-import java.util.Collection;
+import java.util.List;
 
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliationReport;
 
@@ -34,7 +34,7 @@ public interface CheckReconciliationReportService {
      * @param startDate
      * @param endDate
      * 
-     * @return Collection
+     * @return List
      */
-    public Collection<CheckReconciliationReport> buildReports(Date startDate, Date endDate);
+    public List<CheckReconciliationReport> buildReports(Date startDate, Date endDate);
 }
