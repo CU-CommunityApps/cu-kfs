@@ -30,30 +30,27 @@ import com.rsmart.kuali.kfs.cr.CRConstants;
  */
 public class CheckReconciliationReport {
 
+	private String payeeId;
+    private String payeeName;
+    private String payeeType;
     private String checkNumber;
-    
     private String bankAccountNumber;
-    
     private String checkDate;
-    
     private String checkMonth;
-    
     private String status;
-    
     private String amount;
-
     private Double subTotal;
-    
     public static SimpleDateFormat MONYYF = new SimpleDateFormat("yyyy/MM");
-    
     public static SimpleDateFormat SDF = new SimpleDateFormat("MM/dd/yyyy");
-    
     public static DecimalFormat DF = new DecimalFormat("#0.00");
     
     public CheckReconciliationReport() {    
     }
     
     public CheckReconciliationReport(CheckReconciliation cr) {
+    	this.setPayeeId(cr.getPayeeId());
+    	this.setPayeeName(cr.getPayeeName());
+    	this.setPayeeType(cr.getPayeeType());
         this.setSubTotal(cr.getAmount().doubleValue());
         this.setBankAccountNumber(cr.getBankAccountNumber());
         this.setCheckDate(SDF.format(cr.getCheckDate()));
@@ -62,6 +59,30 @@ public class CheckReconciliationReport {
         this.setStatus(cr.getStatus());
         this.setSubTotal(cr.getAmount().doubleValue());
     }
+    
+    public String getPayeeId() {
+		return payeeId;
+	}
+
+	public void setPayeeId(String payeeId) {
+		this.payeeId = payeeId;
+	}
+
+	public String getPayeeName() {
+		return payeeName;
+	}
+
+	public void setPayeeName(String payeeName) {
+		this.payeeName = payeeName;
+	}
+
+	public String getPayeeType() {
+		return payeeType;
+	}
+
+	public void setPayeeType(String payeeType) {
+		this.payeeType = payeeType;
+	}
     
     public String getCheckNumber() {
         return checkNumber;
