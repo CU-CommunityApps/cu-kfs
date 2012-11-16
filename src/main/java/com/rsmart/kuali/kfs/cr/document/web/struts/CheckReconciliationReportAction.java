@@ -88,8 +88,8 @@ public class CheckReconciliationReportAction extends KualiAction {
                 Iterator<CheckReconciliationReport> iter = reportSet.iterator();
                 temp = iter.next();
                 
-                out.println("Check No,Status,Account No,Date,Amount");
-                out.println(temp.getCheckNumber() + COMMA + temp.getStatusDesc() + COMMA + temp.getBankAccountNumber() + COMMA + temp.getCheckDate() + COMMA + temp.getAmount());
+                out.println("Check No,Payee Id,Payee Name,Payee Type,Status,Account No,Date,Amount");
+                out.println(temp.getCheckNumber() + COMMA +temp.getPayeeId() + COMMA + temp.getPayeeName() +COMMA + temp.getPayeeType() +COMMA+ temp.getStatusDesc() + COMMA + temp.getBankAccountNumber() + COMMA + temp.getCheckDate() + COMMA + temp.getAmount());
                 
                 String  tempAcct   = temp.getBankAccountNumber();
                 String  tempMon    = temp.getCheckMonth();
@@ -120,10 +120,10 @@ public class CheckReconciliationReportAction extends KualiAction {
                     }
                     
                     if( newMonth ) {
-                        out.println("Check No,Status,Account No,Date,Amount");
+                        out.println("Check No,Payee Id,Payee Name,Payee Type,Status,Account No,Date,Amount");
                     }
                     
-                    out.println(temp.getCheckNumber() + COMMA + temp.getStatusDesc() + COMMA + temp.getBankAccountNumber() + COMMA + temp.getCheckDate() + COMMA + temp.getAmount());
+                    out.println(temp.getCheckNumber() +COMMA +temp.getPayeeId() + COMMA + temp.getPayeeName() +COMMA + temp.getPayeeType() + COMMA + temp.getStatusDesc() + COMMA + temp.getBankAccountNumber() + COMMA + temp.getCheckDate() + COMMA + temp.getAmount());
                     
                     monAmtTotal     += temp.getSubTotal();
                     acctAmtTotal    += temp.getSubTotal();
