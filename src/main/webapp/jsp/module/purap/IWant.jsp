@@ -82,15 +82,19 @@
         <tr>
                 <td class="subhead">Order Completed Information</td>
         </tr>
+        <tr><td height="10" class="neutral"></td></tr>
 		<tr align="center">
         <td align="center" class="neutral" >
+        <div align="center" >
         <div align="left" >
 				   <kul:htmlControlAttribute 
                         attributeEntry="${DataDictionary.IWantDocument.attributes.completeOption}" 
                         property="document.completeOption" readOnly="${not fullEntryMode}" />&nbsp;
         </div>
+        </div>
         </td>
         </tr>
+        <tr><td height="10" class="neutral"></td></tr>
         </table>
         </div>
        
