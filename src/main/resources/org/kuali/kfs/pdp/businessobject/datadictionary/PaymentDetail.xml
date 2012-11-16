@@ -94,6 +94,7 @@
 		<ref bean="PaymentDetail-nbrOfPaymentsInPaymentGroup"/>
 		<ref bean="PaymentDetail-nbrOfPaymentsInDisbursement"/>
 		<ref bean="PaymentDetail-paymentGroup.paymentStatusCodeWithHistory"/>
+		<ref bean="PaymentDetail-paymentGroupLastUpdateForLookup"/><!-- CU Customization (KFSPTS-1586) -->
       </list>
     </property>
     <property name="collections">
@@ -381,13 +382,26 @@
     <property name="name" value="invTotOtherCreditAmount"/>
     <property name="label" value="Invoice Total Other Credit Amount"/>
   </bean>
+  
+  <!-- CU Customization (KFSPTS-1586) -->
+  
   <bean id="PaymentDetail-paymentGroup.lastUpdate" parent="PaymentDetail-paymentGroup.lastUpdate-parentBean"/>
 
   <bean id="PaymentDetail-paymentGroup.lastUpdate-parentBean" abstract="true" parent="PaymentGroup-lastUpdate">
     <property name="name" value="paymentGroup.lastUpdate"/>
     <property name="label" value="Status Last Updated"/>
+  </bean>
+  
+  <bean id="PaymentDetail-paymentGroupLastUpdateForLookup" parent="PaymentDetail-paymentGroupLastUpdateForLookup-parentBean"/>
+
+  <bean id="PaymentDetail-paymentGroupLastUpdateForLookup-parentBean" abstract="true" parent="PaymentGroup-lastUpdate">
+    <property name="name" value="paymentGroupLastUpdateForLookup"/>
+    <property name="label" value="Status Last Updated"/>
     <property name="formatterClass" value="org.kuali.rice.kns.web.format.DateFormatter"/>
-  </bean> 
+  </bean>
+  
+  <!-- End CU Customization -->
+   
   <bean id="PaymentDetail-paymentGroup.alternatePayeeIdTypeCd" parent="PaymentDetail-paymentGroup.alternatePayeeIdTypeCd-parentBean"/>
 
   <bean id="PaymentDetail-paymentGroup.alternatePayeeIdTypeCd-parentBean" abstract="true" parent="PaymentGroup-alternatePayeeIdTypeCd">
@@ -802,7 +816,7 @@
               <bean parent="FieldDefinition" p:attributeName="paymentGroup.paymentDate"/>   
               <bean parent="FieldDefinition" p:attributeName="paymentGroup.disbursementDate"/>  
               <bean parent="FieldDefinition" p:attributeName="paymentGroup.paymentStatusCodeWithHistory"/>  
-              <bean parent="FieldDefinition" p:attributeName="paymentGroup.lastUpdate"/> <!-- CU Customization (KFSPTS-1586) -->
+              <bean parent="FieldDefinition" p:attributeName="paymentGroupLastUpdateForLookup"/> <!-- CU Customization (KFSPTS-1586) -->
               <bean parent="FieldDefinition" p:attributeName="paymentGroup.disbursementType.name"/>                                                       
               <bean parent="FieldDefinition" p:attributeName="paymentGroup.disbursementNbr"/>  
               <bean parent="FieldDefinition" p:attributeName="netPaymentAmount"/>                  
