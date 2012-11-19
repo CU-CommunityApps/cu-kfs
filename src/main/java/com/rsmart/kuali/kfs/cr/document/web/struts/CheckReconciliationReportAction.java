@@ -16,6 +16,7 @@
 package com.rsmart.kuali.kfs.cr.document.web.struts;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -44,8 +45,6 @@ import org.kuali.rice.kns.web.struts.action.KualiAction;
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliationReport;
 import com.rsmart.kuali.kfs.cr.document.service.CheckReconciliationReportService;
-
-import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * Check Reconciliation Action
@@ -86,7 +85,7 @@ public class CheckReconciliationReportAction extends KualiAction {
                 int     acctIssuedTotal = 0;
                 
                 CheckReconciliationReport temp = null;
-                	
+                
                 Collections.sort(reportSet);
                 
                 Iterator<CheckReconciliationReport> iter = reportSet.iterator();

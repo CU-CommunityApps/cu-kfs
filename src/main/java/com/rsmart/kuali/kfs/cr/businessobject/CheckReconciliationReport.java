@@ -18,8 +18,6 @@ package com.rsmart.kuali.kfs.cr.businessobject;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
-import org.kuali.rice.kns.util.KualiDecimal;
-
 import com.rsmart.kuali.kfs.cr.CRConstants;
 
 /**
@@ -28,7 +26,7 @@ import com.rsmart.kuali.kfs.cr.CRConstants;
  * @author Derek Helbert
  * @version $Revision$
  */
-public class CheckReconciliationReport {
+public class CheckReconciliationReport implements Comparable<CheckReconciliationReport> {
 
 	private String payeeId;
     private String payeeName;
@@ -164,4 +162,9 @@ public class CheckReconciliationReport {
     public Integer getStale() {
         return CRConstants.STALE.equals(status) ? new Integer(1) : new Integer(0);
     }
+    
+    public int compareTo(CheckReconciliationReport report) {
+		// TODO Auto-generated method stub
+		return getCheckNumber().compareTo(report.getCheckNumber());
+	}
 }
