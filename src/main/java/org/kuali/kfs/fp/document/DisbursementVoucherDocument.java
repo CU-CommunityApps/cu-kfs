@@ -1424,21 +1424,26 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         // clear waive wire
         getDvWireTransfer().setDisbursementVoucherWireTransferFeeWaiverIndicator(false);
 
-        // check vendor id number to see if still valid, if so retrieve their last information and set in the detail inform.
+        // ==== CU Customization (KFSPTS-1517): Added DV vendor fix from Kuali JIRA KFSCNTRB-832 ====
+        
+        // check vendor id number to see if still valid, if not, clear dvPayeeDetail; otherwise, use the current dvPayeeDetail as is
         if (!StringUtils.isBlank(getDvPayeeDetail().getDisbVchrPayeeIdNumber())) {
             VendorDetail vendorDetail = getVendorService().getVendorDetail(dvPayeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger(), dvPayeeDetail.getDisbVchrVendorDetailAssignedIdNumberAsInteger());
-            VendorAddress vendorAddress = new VendorAddress();
-            vendorAddress.setVendorAddressGeneratedIdentifier(dvPayeeDetail.getDisbVchrVendorAddressIdNumberAsInteger());
-            vendorAddress = (VendorAddress) getBusinessObjectService().retrieve(vendorAddress);
+            //VendorAddress vendorAddress = new VendorAddress();
+            //vendorAddress.setVendorAddressGeneratedIdentifier(dvPayeeDetail.getDisbVchrVendorAddressIdNumberAsInteger());
+            //vendorAddress = (VendorAddress) getBusinessObjectService().retrieve(vendorAddress);
 
             if (vendorDetail == null) {
+            	dvPayeeDetail = new DisbursementVoucherPayeeDetail();
                 getDvPayeeDetail().setDisbVchrPayeeIdNumber(StringUtils.EMPTY);
                 GlobalVariables.getMessageList().add(KFSKeyConstants.WARNING_DV_PAYEE_NONEXISTANT_CLEARED);
             }
-            else {
-                templateVendor(vendorDetail, vendorAddress);
-            }
+            //else {
+                //templateVendor(vendorDetail, vendorAddress);
+            //}
         }
+        
+        // ==== End CU Customization ====
         
         // this copied DV has not been extracted
         this.extractDate = null;
