@@ -913,14 +913,18 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 
         this.getDvPayeeDetail().setDisbVchrAlienPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
 
-        if (ObjectUtils.isNull(vendorAddress) || ObjectUtils.isNull(vendorAddress.getVendorAddressGeneratedIdentifier())) {
-            for (VendorAddress addr : vendor.getVendorAddresses()) {
-                if (addr.isVendorDefaultAddressIndicator()) {
-                    vendorAddress = addr;
-                    break;
-                }
-            }
-        }
+        // ==== CU Customization (KFSPTS-1517) ====
+        
+        //if (ObjectUtils.isNull(vendorAddress) || ObjectUtils.isNull(vendorAddress.getVendorAddressGeneratedIdentifier())) {
+        //    for (VendorAddress addr : vendor.getVendorAddresses()) {
+        //        if (addr.isVendorDefaultAddressIndicator()) {
+        //            vendorAddress = addr;
+        //            break;
+        //        }
+        //    }
+        //}
+        
+        // ==== End CU Customization ====
 
         if (ObjectUtils.isNotNull(vendorAddress) && ObjectUtils.isNotNull(vendorAddress.getVendorAddressGeneratedIdentifier())) {
             this.getDvPayeeDetail().setDisbVchrVendorAddressIdNumber(vendorAddress.getVendorAddressGeneratedIdentifier().toString());
@@ -932,13 +936,15 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
             this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(vendorAddress.getVendorCountryCode());
         }
         else {
-            this.getDvPayeeDetail().setDisbVchrVendorAddressIdNumber("");
-            this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr("");
-            this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr("");
-            this.getDvPayeeDetail().setDisbVchrPayeeCityName("");
-            this.getDvPayeeDetail().setDisbVchrPayeeStateCode("");
-            this.getDvPayeeDetail().setDisbVchrPayeeZipCode("");
-            this.getDvPayeeDetail().setDisbVchrPayeeCountryCode("");      
+        	// ==== CU Customization (KFSPTS-1517) ====
+            this.getDvPayeeDetail().setDisbVchrVendorAddressIdNumber(StringUtils.EMPTY);
+            this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(StringUtils.EMPTY);
+            this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(StringUtils.EMPTY);
+            this.getDvPayeeDetail().setDisbVchrPayeeCityName(StringUtils.EMPTY);
+            this.getDvPayeeDetail().setDisbVchrPayeeStateCode(StringUtils.EMPTY);
+            this.getDvPayeeDetail().setDisbVchrPayeeZipCode(StringUtils.EMPTY);
+            this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(StringUtils.EMPTY);      
+            // ==== End CU Customization ====
         }
 
         this.getDvPayeeDetail().setDisbVchrAlienPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
@@ -1406,15 +1412,18 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         // clear fields
         setDisbVchrContactPhoneNumber(StringUtils.EMPTY);
         setDisbVchrContactEmailId(StringUtils.EMPTY);
-        getDvPayeeDetail().setDisbVchrPayeePersonName(StringUtils.EMPTY);
+        // ==== CU Customization (KFSPTS-1517) ====
+        
+        //getDvPayeeDetail().setDisbVchrPayeePersonName(StringUtils.EMPTY);
 
-        getDvPayeeDetail().setDisbVchrPayeeLine1Addr(StringUtils.EMPTY);
-        getDvPayeeDetail().setDisbVchrPayeeLine2Addr(StringUtils.EMPTY);
-        getDvPayeeDetail().setDisbVchrPayeeCityName(StringUtils.EMPTY);
-        getDvPayeeDetail().setDisbVchrPayeeStateCode(StringUtils.EMPTY);
-        getDvPayeeDetail().setDisbVchrPayeeZipCode(StringUtils.EMPTY);
-        getDvPayeeDetail().setDisbVchrPayeeCountryCode(StringUtils.EMPTY);
+        //getDvPayeeDetail().setDisbVchrPayeeLine1Addr(StringUtils.EMPTY);
+        //getDvPayeeDetail().setDisbVchrPayeeLine2Addr(StringUtils.EMPTY);
+        //getDvPayeeDetail().setDisbVchrPayeeCityName(StringUtils.EMPTY);
+        //getDvPayeeDetail().setDisbVchrPayeeStateCode(StringUtils.EMPTY);
+        //getDvPayeeDetail().setDisbVchrPayeeZipCode(StringUtils.EMPTY);
+        //getDvPayeeDetail().setDisbVchrPayeeCountryCode(StringUtils.EMPTY);
 
+        // ==== End CU Customization ====
         setDisbVchrPayeeTaxControlCode(StringUtils.EMPTY);
 
         // clear nra
