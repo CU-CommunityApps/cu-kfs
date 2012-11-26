@@ -32,27 +32,15 @@ public class ElectronicInvoiceLoad {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ElectronicInvoiceLoad.class);
 
     private Map<String, ElectronicInvoiceLoadSummary> invoiceLoadSummaries;
-    private Map<File, String> rejectFilesToMove;
-    private Map<File, String> acceptFilesToMove;
     private List<ElectronicInvoiceRejectDocument> rejectDocumentList;
 
     public ElectronicInvoiceLoad() {
         invoiceLoadSummaries = new HashMap<String, ElectronicInvoiceLoadSummary>();
-        rejectFilesToMove = new HashMap<File, String>();
-        acceptFilesToMove = new HashMap<File, String>();
         rejectDocumentList = new ArrayList<ElectronicInvoiceRejectDocument>();
     }
 
     public void insertInvoiceLoadSummary(ElectronicInvoiceLoadSummary eils) {
         invoiceLoadSummaries.put(eils.getVendorDunsNumber(), eils);
-    }
-
-    public void addRejectFileToMove(File file, String directory) {
-        rejectFilesToMove.put(file, directory);
-    }
-
-    public void addAcceptFileToMove(File file, String directory) {
-        acceptFilesToMove.put(file, directory);
     }
 
     public void addInvoiceReject(ElectronicInvoiceRejectDocument eir) {
@@ -71,14 +59,6 @@ public class ElectronicInvoiceLoad {
         this.invoiceLoadSummaries = invoiceLoadSummaries;
     }
 
-    public Map<File, String> getRejectFilesToMove() {
-        return rejectFilesToMove;
-    }
-    
-    public Map<File, String> getAcceptFilesToMove() {
-        return acceptFilesToMove;
-    }
-    
     public boolean containsRejects(){
         return !rejectDocumentList.isEmpty();
     }

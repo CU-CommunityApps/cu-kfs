@@ -154,22 +154,18 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
      * 
      * @return 
      */
-    @Transactional
     public void loadElectronicInvoices() {
 
         String baseDirName = getBaseDirName();
         String rejectDirName = getRejectDirName();
         String acceptDirName = getAcceptDirName();
+        String extractFailureDirName = getExtractFailureDirName();
         emailTextErrorList = new StringBuffer();
-
-        // Checks parameter to see if files should be moved to the accept/reject folders after load
-        boolean moveFiles = BooleanUtils.toBoolean(parameterService.getParameterValue(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.FILE_MOVE_AFTER_LOAD_IND));
 
         if (LOG.isInfoEnabled()){
             LOG.info("Invoice Base Directory - " + electronicInvoiceInputFileType.getDirectoryPath());
             LOG.info("Invoice Accept Directory - " + acceptDirName);
             LOG.info("Invoice Reject Directory - " + rejectDirName);
-            LOG.info("Is moving files allowed - " + moveFiles);
         }
 
         if (StringUtils.isBlank(rejectDirName)) {
@@ -178,6 +174,10 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 
         if (StringUtils.isBlank(acceptDirName)) {
             throw new RuntimeException("Accept directory name should not be empty");
+        }
+
+        if (StringUtils.isBlank(extractFailureDirName)) {
+            throw new RuntimeException("ExtractFailure directory name should not be empty");
         }
 
         File baseDir = new File(baseDirName);
@@ -197,18 +197,10 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
                                                             }
                                                         });
 
-        ElectronicInvoiceLoad eInvoiceLoad = new ElectronicInvoiceLoad();
         
         // Send email indicating no files processed if no files available for loading.
         if (filesToBeProcessed == null || filesToBeProcessed.length == 0) {
-
-            StringBuffer mailText = new StringBuffer();
-            
-            mailText.append("\n\n");
-            mailText.append(PurapConstants.ElectronicInvoice.NO_FILES_PROCESSED_EMAIL_MESSAGE);
-            mailText.append("\n\n");
-            
-            sendSummary(mailText);
+            sendSummary(new StringBuffer().append("\n\n").append(PurapConstants.ElectronicInvoice.NO_FILES_PROCESSED_EMAIL_MESSAGE).append("\n\n"));
             return;
         }
 
@@ -216,6 +208,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         try {
             FileUtils.forceMkdir(new File(acceptDirName));
             FileUtils.forceMkdir(new File(rejectDirName));
+            FileUtils.forceMkdir(new File(extractFailureDirName));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -224,6 +217,8 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
             LOG.info(filesToBeProcessed.length + " file(s) available for processing");
         }
 
+        ElectronicInvoiceLoad eInvoiceLoad = new ElectronicInvoiceLoad();
+
         // Process einvoice files
         for (File xmlFile : filesToBeProcessed) {
 
@@ -231,51 +226,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 
             byte[] modifiedXML = addNamespaceDefinition(eInvoiceLoad, xmlFile);
             
-            boolean isRejected = false;
-            
-            if (modifiedXML == null){ // Not able to parse the xml
-                isRejected = true;
-            } else {
-                isRejected = processElectronicInvoice(eInvoiceLoad, xmlFile, modifiedXML);    
-            }
-            
-            /**
-             * If there is a single order that has rejects and the remaining are accepted in a invoice file, 
-             * then the entire file has been moved to the reject dir. 
-             */
-            if (isRejected) {
-                if (LOG.isInfoEnabled()){
-                    LOG.info(xmlFile.getName() + " has been rejected");
-                }
-                if (moveFiles) {
-                    if (LOG.isInfoEnabled()){
-                        LOG.info(xmlFile.getName() + " has been marked to move to " + rejectDirName);
-                    }
-                    eInvoiceLoad.addRejectFileToMove(xmlFile, rejectDirName);
-                }
-            } else {
-                if (LOG.isInfoEnabled()){
-                    LOG.info(xmlFile.getName() + " has been accepted");
-                }
-                if (moveFiles) {
-                    if (LOG.isInfoEnabled()){
-                        LOG.info(xmlFile.getName() + " has been marked to move to " + acceptDirName);
-                    }
-                    eInvoiceLoad.addAcceptFileToMove(xmlFile, acceptDirName);
-                }
-            }
-            
-            if (!moveFiles){
-                String fullPath = FilenameUtils.getFullPath(xmlFile.getAbsolutePath());
-                String fileName = FilenameUtils.getBaseName(xmlFile.getAbsolutePath());
-                File processedFile = new File(fullPath + File.separator + fileName + ".processed");
-                try {
-                    FileUtils.touch(processedFile);
-                }
-                catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            processElectronicInvoice(eInvoiceLoad, xmlFile, modifiedXML);    
             
         }
         
@@ -525,110 +476,178 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
      * @param eInvoiceLoad the load summary to be modified
      * @return boolean where true means there has been some type of reject
      */
-    
-    protected boolean processElectronicInvoice(ElectronicInvoiceLoad eInvoiceLoad, 
-                                             File invoiceFile,
-                                             byte[] xmlAsBytes) {
+    @Transactional
+    protected boolean processElectronicInvoice(ElectronicInvoiceLoad eInvoiceLoad, File invoiceFile, byte[] xmlAsBytes) {
+
+        // Checks parameter to see if files should be moved to the accept/reject folders after load
+        boolean moveFiles = BooleanUtils.toBoolean(parameterService.getParameterValue(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.FILE_MOVE_AFTER_LOAD_IND));
 
         ElectronicInvoice eInvoice = null;
-
+        boolean isExtractFailure = false;
+        boolean isCompleteFailure = false;
+        
         try {
             eInvoice = loadElectronicInvoice(xmlAsBytes);
-        }catch (CxmlParseException e) {
-            LOG.info("Error loading file - " + e.getMessage());
-            rejectElectronicInvoiceFile(eInvoiceLoad, UNKNOWN_DUNS_IDENTIFIER, invoiceFile, e.getMessage(),PurapConstants.ElectronicInvoice.FILE_FORMAT_INVALID);
-            return true;
+        } catch (CxmlParseException e) {
+            LOG.info("Error parsing file - " + e.getMessage());
+            rejectElectronicInvoiceFile(eInvoiceLoad, UNKNOWN_DUNS_IDENTIFIER, invoiceFile, e.getMessage(), PurapConstants.ElectronicInvoice.FILE_FORMAT_INVALID);
+            isExtractFailure = true;
+        } catch (IllegalArgumentException iae) {
+            LOG.info("Error loading file - " + iae.getMessage());
+            rejectElectronicInvoiceFile(eInvoiceLoad, UNKNOWN_DUNS_IDENTIFIER, invoiceFile, iae.getMessage(), PurapConstants.ElectronicInvoice.FILE_FORMAT_INVALID);
+            isExtractFailure = true;
         }
 
-        eInvoice.setFileName(invoiceFile.getName());
+        if(!isExtractFailure) {
+	        if(ObjectUtils.isNotNull(eInvoice)) {
+	        	eInvoice.setFileName(invoiceFile.getName());
+	        }
+	        
+	        isCompleteFailure = checkForCompleteFailure(eInvoiceLoad,eInvoice,invoiceFile); 
+	        
+	        if (!isCompleteFailure) {
+		        setVendorDUNSNumber(eInvoice);
+		        setVendorDetails(eInvoice);
+		        
+		        Map<String, ElectronicInvoiceItemMapping> itemTypeMappings = getItemTypeMappings(eInvoice.getVendorHeaderID(),eInvoice.getVendorDetailID());
+		        Map<String, ItemType> kualiItemTypes = getKualiItemTypes();
+		        
+		        if (LOG.isInfoEnabled()){
+		            if (itemTypeMappings != null && itemTypeMappings.size() > 0) {
+		                LOG.info("Item mappings found");
+		            }
+		        }
+		        
+		        boolean validateHeader = true;
+	
+		        try {
+			        for (ElectronicInvoiceOrder order : eInvoice.getInvoiceDetailOrders()) {
+			
+			            String poID = order.getOrderReferenceOrderID();
+			            PurchaseOrderDocument po = null;
+			            
+			            if (NumberUtils.isDigits(StringUtils.defaultString(poID))){
+			                po = purchaseOrderService.getCurrentPurchaseOrder(new Integer(poID));    
+			                if (po != null){
+			                    order.setInvoicePurchaseOrderID(poID);
+			                    order.setPurchaseOrderID(po.getPurapDocumentIdentifier());
+			                    order.setPurchaseOrderCampusCode(po.getDeliveryCampusCode());
+			                    
+			                    if (LOG.isInfoEnabled()){
+			                        LOG.info("PO matching Document found");
+			                    }
+			                }
+			            }
+			            
+			            ElectronicInvoiceOrderHolder orderHolder = new ElectronicInvoiceOrderHolder(eInvoice,order,po,itemTypeMappings,kualiItemTypes,validateHeader);
+			            matchingService.doMatchingProcess(orderHolder);
+			            
+			            if (orderHolder.isInvoiceRejected()){
+			                
+			                ElectronicInvoiceRejectDocument rejectDocument = createRejectDocument(eInvoice, order,eInvoiceLoad);
+			                
+			                if (orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier() != null){
+			                    rejectDocument.setAccountsPayablePurchasingDocumentLinkIdentifier(orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier());
+			                }
+			                
+			                String dunsNumber = StringUtils.isEmpty(eInvoice.getDunsNumber()) ?
+			                                    UNKNOWN_DUNS_IDENTIFIER :
+			                                    eInvoice.getDunsNumber();
+			                
+			                ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, dunsNumber);
+			                loadSummary.addFailedInvoiceOrder(rejectDocument.getTotalAmount(),eInvoice);
+			                eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
+			                
+			                LOG.info("Saving Load Summary for DUNS '" + dunsNumber + "'");
+			                SpringContext.getBean(BusinessObjectService.class).save(loadSummary);
+			            } else {
+			                
+			                PaymentRequestDocument preqDoc  = createPaymentRequest(orderHolder);
+			                
+			                if (orderHolder.isInvoiceRejected()){
+			                    /**
+			                     * This is required. If there is anything in the error map, then it's not possible to route the doc since the rice
+			                     * is throwing error if errormap is not empty before routing the doc. 
+			                     */
+			                    GlobalVariables.getMessageMap().clearErrorMessages();
+			                    
+			                    ElectronicInvoiceRejectDocument rejectDocument = createRejectDocument(eInvoice, order, eInvoiceLoad);
+			                    
+			                    if (orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier() != null){
+			                        rejectDocument.setAccountsPayablePurchasingDocumentLinkIdentifier(orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier());
+			                    }
+			                    
+			                    ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, eInvoice.getDunsNumber());
+			                    loadSummary.addFailedInvoiceOrder(rejectDocument.getTotalAmount(),eInvoice);
+			                    eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
+			                    
+				                LOG.info("Saving Load Summary for DUNS '" + eInvoice.getDunsNumber() + "'");
+				                SpringContext.getBean(BusinessObjectService.class).save(loadSummary);
+			                } else {
+			                    ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, eInvoice.getDunsNumber());
+			                    loadSummary.addSuccessfulInvoiceOrder(preqDoc.getTotalDollarAmount(),eInvoice);
+			                    eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
+
+			                    LOG.info("Saving Load Summary for DUNS '" + eInvoice.getDunsNumber() + "'");
+				                SpringContext.getBean(BusinessObjectService.class).save(loadSummary);
+			                }
+			                
+			            }
+			            
+			            validateHeader = false;
+			        }
+		        } catch(Exception ex) {
+	                LOG.info(invoiceFile.getName() + " has caused extract failure.");
+		        	isExtractFailure = true;
+		        }
+		    }
+        }
         
-        boolean isCompleteFailure = checkForCompleteFailure(eInvoiceLoad,eInvoice,invoiceFile); 
-        
-        if (isCompleteFailure){
-            return true;
+	    // Move files into accept/reject folder as appropriate
+        boolean success = true;
+        if(moveFiles) {
+	        if(isCompleteFailure || (ObjectUtils.isNotNull(eInvoice) && eInvoice.isFileRejected())) {
+                if (LOG.isInfoEnabled()){
+                    LOG.info(invoiceFile.getName() + " has been rejected.");
+                }
+	        	success = this.moveFile(invoiceFile, getRejectDirName());
+	            if (!success) {
+	                String errorMessage = "File with name '" + invoiceFile.getName() + "' could not be moved";
+	                throw new PurError(errorMessage);
+	            }
+	        } else if(isExtractFailure) {
+                if (LOG.isInfoEnabled()){
+                    LOG.info(invoiceFile.getName() + " has caused an batch extract failure.");
+                }
+	        	success = this.moveFile(invoiceFile, getExtractFailureDirName());
+	            if (!success) {
+	                String errorMessage = "File with name '" + invoiceFile.getName() + "' could not be moved";
+	                throw new PurError(errorMessage);
+	            }
+	        } else {
+                if (LOG.isInfoEnabled()){
+                    LOG.info(invoiceFile.getName() + " has been accepted");
+                }
+	        	success = this.moveFile(invoiceFile, getAcceptDirName());
+	            if (!success) {
+	                String errorMessage = "File with name '" + invoiceFile.getName() + "' could not be moved";
+	                throw new PurError(errorMessage);
+	            }
+	        }
+        } else { // Add .processed file to each successfully processed einvoice file if move files is not enabled.
+            String fullPath = FilenameUtils.getFullPath(invoiceFile.getAbsolutePath());
+            String fileName = FilenameUtils.getBaseName(invoiceFile.getAbsolutePath());
+            File processedFile = new File(fullPath + File.separator + fileName + ".processed");
+            try {
+                FileUtils.touch(processedFile);
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
-        setVendorDUNSNumber(eInvoice);
-        setVendorDetails(eInvoice);
-        
-        Map itemTypeMappings = getItemTypeMappings(eInvoice.getVendorHeaderID(),eInvoice.getVendorDetailID());
-        Map<String, ItemType> kualiItemTypes = getKualiItemTypes();
-        
-        if (LOG.isInfoEnabled()){
-            if (itemTypeMappings != null && itemTypeMappings.size() > 0){
-                LOG.info("Item mappings found");
-            }
-        }
-        
-        boolean validateHeader = true;
-        
-        for (ElectronicInvoiceOrder order : eInvoice.getInvoiceDetailOrders()) {
-
-            String poID = order.getOrderReferenceOrderID();
-            PurchaseOrderDocument po = null;
-            
-            if (NumberUtils.isDigits(StringUtils.defaultString(poID))){
-                po = purchaseOrderService.getCurrentPurchaseOrder(new Integer(poID));    
-                if (po != null){
-                    order.setInvoicePurchaseOrderID(poID);
-                    order.setPurchaseOrderID(po.getPurapDocumentIdentifier());
-                    order.setPurchaseOrderCampusCode(po.getDeliveryCampusCode());
-                    
-                    if (LOG.isInfoEnabled()){
-                        LOG.info("PO matching Document found");
-                    }
-                }
-            }
-            
-            ElectronicInvoiceOrderHolder orderHolder = new ElectronicInvoiceOrderHolder(eInvoice,order,po,itemTypeMappings,kualiItemTypes,validateHeader);
-            matchingService.doMatchingProcess(orderHolder);
-            
-            if (orderHolder.isInvoiceRejected()){
-                
-                ElectronicInvoiceRejectDocument rejectDocument = createRejectDocument(eInvoice, order,eInvoiceLoad);
-                
-                if (orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier() != null){
-                    rejectDocument.setAccountsPayablePurchasingDocumentLinkIdentifier(orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier());
-                }
-                
-                String dunsNumber = StringUtils.isEmpty(eInvoice.getDunsNumber()) ?
-                                    UNKNOWN_DUNS_IDENTIFIER :
-                                    eInvoice.getDunsNumber();
-                
-                ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, dunsNumber);
-                loadSummary.addFailedInvoiceOrder(rejectDocument.getTotalAmount(),eInvoice);
-                eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
-                
-            }else{
-                
-                PaymentRequestDocument preqDoc  = createPaymentRequest(orderHolder);
-                
-                if (orderHolder.isInvoiceRejected()){
-                    /**
-                     * This is required. If there is anything in the error map, then it's not possible to route the doc since the rice
-                     * is throwing error if errormap is not empty before routing the doc. 
-                     */
-                    GlobalVariables.getMessageMap().clearErrorMessages();
-                    
-                    ElectronicInvoiceRejectDocument rejectDocument = createRejectDocument(eInvoice, order,eInvoiceLoad);
-                    
-                    if (orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier() != null){
-                        rejectDocument.setAccountsPayablePurchasingDocumentLinkIdentifier(orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier());
-                    }
-                    
-                    ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, eInvoice.getDunsNumber());
-                    loadSummary.addFailedInvoiceOrder(rejectDocument.getTotalAmount(),eInvoice);
-                    eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
-                    
-                }else{
-                    ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, eInvoice.getDunsNumber());
-                    loadSummary.addSuccessfulInvoiceOrder(preqDoc.getTotalDollarAmount(),eInvoice);
-                    eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
-                }
-                
-            }
-            
-            validateHeader = false;
+        if(ObjectUtils.isNull(eInvoice)) {
+        	return true;
         }
         
         return eInvoice.isFileRejected();
@@ -1185,7 +1204,6 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
      * @param eInvoiceLoad
      * @return
      */
-    @Transactional
     protected StringBuffer saveLoadSummary(ElectronicInvoiceLoad eInvoiceLoad) {
 
         Map<String, ElectronicInvoiceLoadSummary> savedLoadSummariesMap = new HashMap<String, ElectronicInvoiceLoadSummary>();
@@ -1196,16 +1214,12 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
             ElectronicInvoiceLoadSummary eInvoiceLoadSummary = (ElectronicInvoiceLoadSummary) eInvoiceLoad.getInvoiceLoadSummaries().get(dunsNumber);
             
               if (!eInvoiceLoadSummary.isEmpty().booleanValue()){  
-                LOG.info("Saving Load Summary for DUNS '" + dunsNumber + "'");
-                
-                ElectronicInvoiceLoadSummary currentLoadSummary = saveElectronicInvoiceLoadSummary(eInvoiceLoadSummary);
-                
                 summaryMessage.append("DUNS Number - ").append(eInvoiceLoadSummary.getVendorDescriptor()).append(":\n");
                 summaryMessage.append("     ").append(eInvoiceLoadSummary.getInvoiceLoadSuccessCount()).append(" successfully processed invoices for a total of $ ").append(eInvoiceLoadSummary.getInvoiceLoadSuccessAmount().doubleValue()).append("\n");
                 summaryMessage.append("     ").append(eInvoiceLoadSummary.getInvoiceLoadFailCount()).append(" rejected invoices for an approximate total of $ ").append(eInvoiceLoadSummary.getInvoiceLoadFailAmount().doubleValue()).append("\n");
                 summaryMessage.append("\n\n");
                 
-                savedLoadSummariesMap.put(currentLoadSummary.getVendorDunsNumber(), eInvoiceLoadSummary);
+                savedLoadSummariesMap.put(eInvoiceLoadSummary.getVendorDunsNumber(), eInvoiceLoadSummary);
                 
             } else {
                 LOG.info("Not saving Load Summary for DUNS '" + dunsNumber + "' because empty indicator is '" + eInvoiceLoadSummary.isEmpty().booleanValue() + "'");
@@ -1217,9 +1231,6 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         for (ElectronicInvoiceRejectDocument rejectDoc : eInvoiceLoad.getRejectDocuments()) {
             saveRejectDocument(rejectDoc,savedLoadSummariesMap);
         }
-        
-        moveFileList(eInvoiceLoad.getRejectFilesToMove());
-        moveFileList(eInvoiceLoad.getAcceptFilesToMove());
         
         return summaryMessage;
     }
@@ -1318,7 +1329,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
          */
         validateVendorDetails(rejectDocument);
         
-        Map itemTypeMappings = getItemTypeMappings(rejectDocument.getVendorHeaderGeneratedIdentifier(),
+        Map<String, ElectronicInvoiceItemMapping> itemTypeMappings = getItemTypeMappings(rejectDocument.getVendorHeaderGeneratedIdentifier(),
                                                    rejectDocument.getVendorDetailAssignedIdentifier());
         
         Map<String, ItemType> kualiItemTypes = getKualiItemTypes();
@@ -1369,7 +1380,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
             throw new RuntimeException("Not possible to create payment request since the reject document contains " + rejectDocument.getInvoiceRejectReasons().size() + " rejects");
         }
         
-        Map itemTypeMappings = getItemTypeMappings(rejectDocument.getVendorHeaderGeneratedIdentifier(), rejectDocument.getVendorDetailAssignedIdentifier());
+        Map<String, ElectronicInvoiceItemMapping> itemTypeMappings = getItemTypeMappings(rejectDocument.getVendorHeaderGeneratedIdentifier(), rejectDocument.getVendorDetailAssignedIdentifier());
 
         Map<String, ItemType> kualiItemTypes = getKualiItemTypes();
 
@@ -1943,22 +1954,6 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
     
     /**
      * 
-     * @param filesToMove
-     */
-    protected void moveFileList(Map<File, String> filesToMove) {
-    	if(ObjectUtils.isNotNull(filesToMove)) {
-	        for (File fileToMove : filesToMove.keySet()) {
-	            boolean success = this.moveFile(fileToMove, (String) filesToMove.get(fileToMove));
-	            if (!success) {
-	                String errorMessage = "File with name '" + fileToMove.getName() + "' could not be moved";
-	                throw new PurError(errorMessage);
-	            }
-	        }
-    	}
-    }
-
-    /**
-     * 
      * @param fileForMove
      * @param location
      * @return
@@ -1994,20 +1989,19 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 
     /**
      * 
+     * @return
+     */
+    protected String getExtractFailureDirName(){
+        return getBaseDirName() + "extractFailure" + File.separator;
+    }
+
+    /**
+     * 
      * @param fileName
      * @return
      */
     protected File getInvoiceFile(String fileName){
         return new File(getBaseDirName() + fileName);
-    }
-
-    /**
-     * 
-     * @param eils
-     * @return
-     */
-    protected ElectronicInvoiceLoadSummary saveElectronicInvoiceLoadSummary(ElectronicInvoiceLoadSummary eils) {
-        return electronicInvoicingDao.saveElectronicInvoiceLoadSummary(eils);
     }
 
     /**
