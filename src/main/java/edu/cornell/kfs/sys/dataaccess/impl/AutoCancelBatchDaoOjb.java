@@ -84,11 +84,6 @@ public class AutoCancelBatchDaoOjb extends PlatformAwareDaoBaseOjb implements Oj
     public void cancelDocuments() throws Exception {
     	
 	    String stringDays = parameterService.getParameterEvaluator(AutoCancelBatchStep.class, CUKFSParameterKeyConstants.DAYS_TO_AUTO_CANCEL_PARAMETER).getValue();
-        // Get current date less parameter aging days. So if parm is 90 days, then compareDate
-	    // is current date minus 89
-	    Integer maxDays = Integer.parseInt(stringDays);
-        Calendar ageDate = Calendar.getInstance();
-        ageDate.add(Calendar.DATE, - (maxDays-1)); 
 	    if (StringUtils.isNotBlank(stringDays)) {
 	        
 	        Map<String, String> cancelIds = findSavedDocumentIds(stringDays);
@@ -127,10 +122,9 @@ public class AutoCancelBatchDaoOjb extends PlatformAwareDaoBaseOjb implements Oj
     private Map<String, String> findSavedDocumentIds(String autoCancelDays) {
     	Map<String, String> ids = new HashMap<String, String>();
 
-    	SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
-    	
     	Criteria crit = new Criteria();
     	String sqlStatement = "doc_hdr_stat_cd='"+SAVED_STATUS_CODE+"' and (trunc(crte_dt) +"+autoCancelDays+")<=trunc(sysdate)";
+		LOG.info("SQL Statement where clause : " + sqlStatement);
     	crit.addSql(sqlStatement);
     	ReportQueryByCriteria qbc = QueryFactory.newReportQuery(DocumentRouteHeaderValue.class, crit);
     	qbc.setAttributes(new String[] {"doc_hdr_id", "doc_typ_id"});
@@ -140,6 +134,7 @@ public class AutoCancelBatchDaoOjb extends PlatformAwareDaoBaseOjb implements Oj
     		Object[] retrievedIds = results.next();
     		String docId = retrievedIds[0].toString();
     		String docTypId = retrievedIds[1].toString();
+    		LOG.info("Doc ID : " + docId + " Doc Typ ID : " + docTypId);
     		ids.put(docId, docTypId);
     	}
     	
