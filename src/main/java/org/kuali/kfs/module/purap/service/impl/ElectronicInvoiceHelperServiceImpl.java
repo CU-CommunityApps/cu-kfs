@@ -24,11 +24,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -136,6 +138,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 	private static final int NOTE_TEXT_DEFAULT_MAX_LENGTH = 800;
     
     private StringBuffer emailTextErrorList;
+    private HashMap<String, Integer> loadCounts = new HashMap<String, Integer>();
     
     protected ElectronicInvoiceInputFileType electronicInvoiceInputFileType;
     protected MailService mailService;
@@ -148,6 +151,10 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
     protected KualiConfigurationService kualiConfigurationService;
     protected DateTimeService dateTimeService;
     protected ParameterService parameterService;
+    
+    private static final String EXTRACT_FAILURES = "Extract Failures";
+    private static final String REJECT = "Reject";
+    private static final String ACCEPT = "Accept";
     
     /**
      * 
@@ -230,15 +237,10 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
             
         }
         
-         StringBuffer summaryText = saveLoadSummary(eInvoiceLoad);
+        StringBuffer finalText = buildLoadSummary(eInvoiceLoad);
+        sendSummary(finalText);
 
-         StringBuffer finalText = new StringBuffer();
-         finalText.append(summaryText);
-         finalText.append("\n");
-         finalText.append(emailTextErrorList);
-         sendSummary(finalText);
-
-         LOG.info("Processing completed");
+        LOG.info("Processing completed");
     }
     
     /**
@@ -492,10 +494,12 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
             LOG.info("Error parsing file - " + e.getMessage());
             rejectElectronicInvoiceFile(eInvoiceLoad, UNKNOWN_DUNS_IDENTIFIER, invoiceFile, e.getMessage(), PurapConstants.ElectronicInvoice.FILE_FORMAT_INVALID);
             isExtractFailure = true;
+            updateSummaryCounts(EXTRACT_FAILURES);
         } catch (IllegalArgumentException iae) {
             LOG.info("Error loading file - " + iae.getMessage());
             rejectElectronicInvoiceFile(eInvoiceLoad, UNKNOWN_DUNS_IDENTIFIER, invoiceFile, iae.getMessage(), PurapConstants.ElectronicInvoice.FILE_FORMAT_INVALID);
             isExtractFailure = true;
+            updateSummaryCounts(EXTRACT_FAILURES);
         }
 
         if(!isExtractFailure) {
@@ -559,6 +563,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 			                eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
 			                
 			                LOG.info("Saving Load Summary for DUNS '" + dunsNumber + "'");
+			                updateSummaryCounts(REJECT);
 			                SpringContext.getBean(BusinessObjectService.class).save(loadSummary);
 			            } else {
 			                
@@ -582,6 +587,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 			                    eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
 			                    
 				                LOG.info("Saving Load Summary for DUNS '" + eInvoice.getDunsNumber() + "'");
+				                updateSummaryCounts(REJECT);
 				                SpringContext.getBean(BusinessObjectService.class).save(loadSummary);
 			                } else {
 			                    ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, eInvoice.getDunsNumber());
@@ -589,6 +595,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 			                    eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
 
 			                    LOG.info("Saving Load Summary for DUNS '" + eInvoice.getDunsNumber() + "'");
+				                updateSummaryCounts(ACCEPT);
 				                SpringContext.getBean(BusinessObjectService.class).save(loadSummary);
 			                }
 			                
@@ -597,7 +604,6 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 			            validateHeader = false;
 			        }
 		        } catch(Exception ex) {
-	                LOG.info(invoiceFile.getName() + " has caused extract failure.");
 		        	isExtractFailure = true;
 		        }
 		    }
@@ -617,7 +623,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 	            }
 	        } else if(isExtractFailure) {
                 if (LOG.isInfoEnabled()){
-                    LOG.info(invoiceFile.getName() + " has caused an batch extract failure.");
+                    LOG.info(invoiceFile.getName() + " has caused a batch extract failure.");
                 }
 	        	success = this.moveFile(invoiceFile, getExtractFailureDirName());
 	            if (!success) {
@@ -651,6 +657,18 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         }
         
         return eInvoice.isFileRejected();
+    }
+    
+	/**
+	 *     
+	 * @param key
+	 */
+    private void updateSummaryCounts(String key) {
+        int count = 0;
+        if(loadCounts.containsKey(key)) {
+        	count = loadCounts.get(key);
+        }
+        loadCounts.put(key, count++);
     }
     
     /**
@@ -1205,7 +1223,8 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
      * @return
      */
     protected StringBuffer saveLoadSummary(ElectronicInvoiceLoad eInvoiceLoad) {
-
+    	DecimalFormat twoDecForm = new DecimalFormat("#.##");
+    	
         Map<String, ElectronicInvoiceLoadSummary> savedLoadSummariesMap = new HashMap<String, ElectronicInvoiceLoadSummary>();
         StringBuffer summaryMessage = new StringBuffer();
         
@@ -1215,8 +1234,17 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
             
               if (!eInvoiceLoadSummary.isEmpty().booleanValue()){  
                 summaryMessage.append("DUNS Number - ").append(eInvoiceLoadSummary.getVendorDescriptor()).append(":\n");
-                summaryMessage.append("     ").append(eInvoiceLoadSummary.getInvoiceLoadSuccessCount()).append(" successfully processed invoices for a total of $ ").append(eInvoiceLoadSummary.getInvoiceLoadSuccessAmount().doubleValue()).append("\n");
-                summaryMessage.append("     ").append(eInvoiceLoadSummary.getInvoiceLoadFailCount()).append(" rejected invoices for an approximate total of $ ").append(eInvoiceLoadSummary.getInvoiceLoadFailAmount().doubleValue()).append("\n");
+
+                summaryMessage.append("     ").append(eInvoiceLoadSummary.getInvoiceLoadSuccessCount());
+                summaryMessage.append(" successfully processed invoices for a total of $ ");
+                summaryMessage.append(twoDecForm.format(eInvoiceLoadSummary.getInvoiceLoadSuccessAmount().doubleValue()));
+                summaryMessage.append("\n");
+                
+                summaryMessage.append("     ").append(eInvoiceLoadSummary.getInvoiceLoadFailCount());
+                summaryMessage.append(" rejected invoices for an approximate total of $ ");
+                summaryMessage.append(twoDecForm.format(eInvoiceLoadSummary.getInvoiceLoadFailAmount().doubleValue()));
+                summaryMessage.append("\n");
+                
                 summaryMessage.append("\n\n");
                 
                 savedLoadSummariesMap.put(eInvoiceLoadSummary.getVendorDunsNumber(), eInvoiceLoadSummary);
@@ -1258,6 +1286,36 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
             e.printStackTrace();
         }
         
+    }
+    
+    /**
+     * 
+     * @param eInvoiceLoad
+     * @return
+     */
+    protected StringBuffer buildLoadSummary(ElectronicInvoiceLoad eInvoiceLoad) {
+        StringBuffer summaryText = saveLoadSummary(eInvoiceLoad);
+
+        StringBuffer finalText = new StringBuffer();
+        finalText.append("======================================\n");
+        finalText.append("                TOTALS\n");
+        finalText.append("======================================\n");
+        Set<String> keys = loadCounts.keySet();
+        for(String key : keys) {
+        	finalText.append(key).append(" : ").append(loadCounts.get(key));
+        }
+        finalText.append("\n");
+        finalText.append("======================================\n");
+        finalText.append("             LOAD SUMMARY\n");
+        finalText.append("======================================\n");
+        finalText.append(summaryText);
+        finalText.append("\n");
+        finalText.append("======================================\n");
+        finalText.append("               FAILURES\n");
+        finalText.append("======================================\n");
+        finalText.append(emailTextErrorList);
+
+        return finalText;
     }
     
     /**
