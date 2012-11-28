@@ -605,6 +605,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 			        }
 		        } catch(Exception ex) {
 		        	isExtractFailure = true;
+		            updateSummaryCounts(EXTRACT_FAILURES);
 		        }
 		    }
         }
@@ -664,11 +665,13 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 	 * @param key
 	 */
     private void updateSummaryCounts(String key) {
-        int count = 0;
+        int count;
         if(loadCounts.containsKey(key)) {
         	count = loadCounts.get(key);
+        } else {
+        	count = 0;
         }
-        loadCounts.put(key, count++);
+        loadCounts.put(key, ++count);
     }
     
     /**
@@ -1298,12 +1301,13 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 
         StringBuffer finalText = new StringBuffer();
         finalText.append("======================================\n");
-        finalText.append("                TOTALS\n");
+        finalText.append("               TOTALS\n");
         finalText.append("======================================\n");
         Set<String> keys = loadCounts.keySet();
         for(String key : keys) {
-        	finalText.append(key).append(" : ").append(loadCounts.get(key));
+        	finalText.append(key).append(" : ").append(loadCounts.get(key)).append("\n");
         }
+        finalText.append("\n");
         finalText.append("\n");
         finalText.append("======================================\n");
         finalText.append("             LOAD SUMMARY\n");
@@ -1311,10 +1315,12 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         finalText.append(summaryText);
         finalText.append("\n");
         finalText.append("======================================\n");
-        finalText.append("               FAILURES\n");
+        finalText.append("              FAILURES\n");
         finalText.append("======================================\n");
         finalText.append(emailTextErrorList);
 
+        LOG.info(finalText);
+        
         return finalText;
     }
     
