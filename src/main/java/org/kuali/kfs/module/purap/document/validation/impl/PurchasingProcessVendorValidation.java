@@ -177,7 +177,8 @@ public class PurchasingProcessVendorValidation extends PurchasingAccountsPayable
         KualiWorkflowDocument workflowDoc = purDocument.getDocumentHeader().getWorkflowDocument();
         List<String>  currentRouteLevels = Arrays.asList(Strings.split(purDocument.getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames(), ","));
         
-        if (currentRouteLevels.contains(CUPurapConstants.MethodOfPOTransmissionByPassValidationNodes.ACCOUNT_NODE) && workflowDoc.isApprovalRequested()) {
+        if (currentRouteLevels.contains(CUPurapConstants.MethodOfPOTransmissionByPassValidationNodes.ACCOUNT_NODE) && workflowDoc.isApprovalRequested() && !workflowDoc.getDocumentType().equals(PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_AMENDMENT_DOCUMENT)) {
+        	//added document not being a POA to conditional check due to FO being able to change data during account node approval on the POA and needed validation being bypassed 
         	return_value = true;
         }
         else if (currentRouteLevels.contains(CUPurapConstants.MethodOfPOTransmissionByPassValidationNodes.SEPARATION_OF_DUTIES_NODE) && workflowDoc.isApprovalRequested()) {
