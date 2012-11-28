@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -1226,7 +1227,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
      * @return
      */
     protected StringBuffer saveLoadSummary(ElectronicInvoiceLoad eInvoiceLoad) {
-    	DecimalFormat twoDecForm = new DecimalFormat("#.##");
+    	NumberFormat twoDecForm = DecimalFormat.getCurrencyInstance();
     	
         Map<String, ElectronicInvoiceLoadSummary> savedLoadSummariesMap = new HashMap<String, ElectronicInvoiceLoadSummary>();
         StringBuffer summaryMessage = new StringBuffer();
@@ -1239,12 +1240,12 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
                 summaryMessage.append("DUNS Number - ").append(eInvoiceLoadSummary.getVendorDescriptor()).append(":\n");
 
                 summaryMessage.append("     ").append(eInvoiceLoadSummary.getInvoiceLoadSuccessCount());
-                summaryMessage.append(" successfully processed invoices for a total of $ ");
+                summaryMessage.append(" successfully processed invoices for a total of ");
                 summaryMessage.append(twoDecForm.format(eInvoiceLoadSummary.getInvoiceLoadSuccessAmount().doubleValue()));
                 summaryMessage.append("\n");
                 
                 summaryMessage.append("     ").append(eInvoiceLoadSummary.getInvoiceLoadFailCount());
-                summaryMessage.append(" rejected invoices for an approximate total of $ ");
+                summaryMessage.append(" rejected invoices for an approximate total of ");
                 summaryMessage.append(twoDecForm.format(eInvoiceLoadSummary.getInvoiceLoadFailAmount().doubleValue()));
                 summaryMessage.append("\n");
                 
@@ -1302,21 +1303,20 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         StringBuffer finalText = new StringBuffer();
         finalText.append("======================================\n");
         finalText.append("               TOTALS\n");
-        finalText.append("======================================\n");
-        Set<String> keys = loadCounts.keySet();
-        for(String key : keys) {
-        	finalText.append(key).append(" : ").append(loadCounts.get(key)).append("\n");
-        }
+        finalText.append("======================================\n\n");
+        finalText.append(ACCEPT).append("           : ").append(loadCounts.get(ACCEPT)!=null?loadCounts.get(ACCEPT):0).append("\n");
+        finalText.append(REJECT).append("           : ").append(loadCounts.get(REJECT)!=null?loadCounts.get(REJECT):0).append("\n");
+        finalText.append(EXTRACT_FAILURES).append(" : ").append(loadCounts.get(EXTRACT_FAILURES)!=null?loadCounts.get(EXTRACT_FAILURES):0).append("\n");
         finalText.append("\n");
         finalText.append("\n");
         finalText.append("======================================\n");
         finalText.append("             LOAD SUMMARY\n");
-        finalText.append("======================================\n");
+        finalText.append("======================================\n\n");
         finalText.append(summaryText);
         finalText.append("\n");
         finalText.append("======================================\n");
         finalText.append("              FAILURES\n");
-        finalText.append("======================================\n");
+        finalText.append("======================================\n\n");
         finalText.append(emailTextErrorList);
 
         LOG.info(finalText);
