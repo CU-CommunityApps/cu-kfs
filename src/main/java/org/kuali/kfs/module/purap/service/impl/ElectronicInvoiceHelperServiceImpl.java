@@ -643,15 +643,17 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 	            }
 	        }
         } else { // Add .processed file to each successfully processed einvoice file if move files is not enabled.
-            String fullPath = FilenameUtils.getFullPath(invoiceFile.getAbsolutePath());
-            String fileName = FilenameUtils.getBaseName(invoiceFile.getAbsolutePath());
-            File processedFile = new File(fullPath + File.separator + fileName + ".processed");
-            try {
-                FileUtils.touch(processedFile);
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        	if(!isExtractFailure) {
+	            String fullPath = FilenameUtils.getFullPath(invoiceFile.getAbsolutePath());
+	            String fileName = FilenameUtils.getBaseName(invoiceFile.getAbsolutePath());
+	            File processedFile = new File(fullPath + File.separator + fileName + ".processed");
+	            try {
+	                FileUtils.touch(processedFile);
+	            }
+	            catch (IOException e) {
+	                throw new RuntimeException(e);
+	            }
+        	}
         }
 
         if(ObjectUtils.isNull(eInvoice)) {
@@ -924,14 +926,15 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
             
             List<ElectronicInvoiceRejectReason> list = new ArrayList<ElectronicInvoiceRejectReason>(1);
             
-            String message = "Complete failure document has been created for the Invoice with Filename '" + invoiceFile.getName() + "' due to the following error:\n";
+            String message = "Complete failure document has been created for the e-invoice with filename '" + invoiceFile.getName() + "' due to the following error:\n";
             emailTextErrorList.append(message);
             
             ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(rejectReasonTypeCode,extraDescription, invoiceFile.getName());
             list.add(rejectReason);
             
-            emailTextErrorList.append("    - " + rejectReason.getInvoiceRejectReasonDescription());
-            emailTextErrorList.append("\n\n");
+            emailTextErrorList.append("    - " + rejectReason.getInvoiceRejectReasonDescription()).append("\n");
+            emailTextErrorList.append("    - EIRT " + eInvoiceRejectDocument.getDocumentNumber()).append("\n");
+            emailTextErrorList.append("\n");
             
             eInvoiceRejectDocument.setInvoiceRejectReasons(list);
             eInvoiceRejectDocument.getDocumentHeader().setDocumentDescription("Complete failure");
@@ -1047,7 +1050,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 
             eInvoiceLoad.addInvoiceReject(eInvoiceRejectDocument);
             
-        }catch (WorkflowException e) {
+        } catch (WorkflowException e) {
             throw new RuntimeException(e);
         }
         
@@ -1055,7 +1058,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
             LOG.info("Reject document has been created (DocNo=" + eInvoiceRejectDocument.getDocumentNumber() + ")");
         }
         
-        emailTextErrorList.append("An Invoice from file '" + eInvoice.getFileName() + "' has been rejected due to the following error(s):\n");
+        emailTextErrorList.append("An e-invoice from file '" + eInvoice.getFileName() + "' has been rejected due to the following error(s):\n");
         
         // get note text max length from DD
         int noteTextMaxLength = NOTE_TEXT_DEFAULT_MAX_LENGTH;
@@ -1075,7 +1078,9 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         rejectReasonNote.append("This reject document has been created because of the following reason(s):\n");
         int index = 1;
         for (ElectronicInvoiceRejectReason reason : eInvoiceRejectDocument.getInvoiceRejectReasons()) {
-          emailTextErrorList.append("    - " + reason.getInvoiceRejectReasonDescription() + "\n");
+            emailTextErrorList.append("    - " + reason.getInvoiceRejectReasonDescription() + "\n");
+            emailTextErrorList.append("    - PO  " + eInvoiceRejectDocument.getPurchaseOrderIdentifier() + "\n");
+            emailTextErrorList.append("    - EIRT  " + eInvoiceRejectDocument.getDocumentNumber() + "\n");
           
           rejectReason = " " + index + ". " + reason.getInvoiceRejectReasonDescription() + "\n";
           if (rejectReasonNote.length() + rejectReason.length() > noteTextMaxLength) {
@@ -1088,7 +1093,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         }
         rejectReasonNotes.add(rejectReasonNote);
         
-        emailTextErrorList.append("\n\n");
+        emailTextErrorList.append("\n");
         
         for (StringBuffer noteText : rejectReasonNotes) {
         	addRejectReasonsToNote(noteText.toString(), eInvoiceRejectDocument);
@@ -1108,7 +1113,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
             Note note = SpringContext.getBean(DocumentService.class).createNoteFromDocument(eInvoiceRejectDocument, rejectReasons);
             PersistableBusinessObject noteParent = getNoteParent(eInvoiceRejectDocument, note);
             noteParent.addNote(note);
-        }catch (Exception e) {
+        } catch (Exception e) {
             LOG.error("Error creating reject reason note - " + e.getMessage());
         }
     }
