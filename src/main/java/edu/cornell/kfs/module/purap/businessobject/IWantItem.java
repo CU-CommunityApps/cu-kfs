@@ -22,7 +22,6 @@ public class IWantItem  extends PersistableBusinessObjectBase{
     private BigDecimal itemUnitPrice;
     private String purchasingCommodityCode;
     private KualiDecimal itemQuantity;
-    private KualiDecimal totalAmount;
     
     private CommodityCode commodityCode;
     private UnitOfMeasure itemUnitOfMeasure;
@@ -118,13 +117,13 @@ public class IWantItem  extends PersistableBusinessObjectBase{
     }
 
     public KualiDecimal getTotalAmount() {
-        return totalAmount;
+        
+        if (this.getItemQuantity() != null && this.getItemUnitPrice() != null) {
+            return new KualiDecimal(this.getItemQuantity().bigDecimalValue().multiply(this.getItemUnitPrice()));
+            
+        } else
+            return KualiDecimal.ZERO;
     }
-
-    public void setTotalAmount(KualiDecimal totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
 
     public String getDocumentNumber() {
         return documentNumber;

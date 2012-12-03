@@ -193,8 +193,11 @@ function updateAccountsTotal(totalDollarAmountFieldName, totalAccountsField, lin
 	setRecipientValue(totalAccountsField, total);
 }
 
-function updateItemsTotal(totalDollarAmountFieldName, totalAccountsField, itemsNbr, accountsNbr) {
+function updateItemsTotal(totalDollarAmountFieldName, totalAccountsField, itemsNbr, accountsNbr, totalItemAmountFieldName, itemNbr) {
+	
 	var total = 0;
+	
+	updateItemTotal(totalItemAmountFieldName, itemNbr);
 
 	for (i = 0; i < itemsNbr; i++) {
 		var quantity = DWRUtil
@@ -217,6 +220,50 @@ function updateItemsTotal(totalDollarAmountFieldName, totalAccountsField, itemsN
 	
 	// now update accounts total
 	updateAccountsTotal(totalDollarAmountFieldName, totalAccountsField, accountsNbr);
+}
+
+function updateItemTotal(totalDollarAmountFieldName, itemNbr) {
+	var total = 0;
+
+		var quantity = DWRUtil
+				.getValue('document.item[' + itemNbr + '].itemQuantity');
+		var price = DWRUtil.getValue('document.item[' + itemNbr + '].itemUnitPrice');
+
+		if (quantity == "" || isNaN(quantity)) {
+			quantity = 1;
+		}
+		if (price == "" || isNaN(price)) {
+			price = 0;
+		}
+		total += price * quantity;
+	
+	//format
+	total = total.toFixed(2);
+	total = addCommas(total);
+	
+	setRecipientValue(totalDollarAmountFieldName, total);
+}
+
+function updateNewItemTotal() {
+	var total = 0;
+
+		var quantity = DWRUtil
+				.getValue('newIWantItemLine.itemQuantity');
+		var price = DWRUtil.getValue('newIWantItemLine.itemUnitPrice');
+
+		if (quantity == "" || isNaN(quantity)) {
+			quantity = 1;
+		}
+		if (price == "" || isNaN(price)) {
+			price = 0;
+		}
+		total += price * quantity;
+	
+	//format
+	total = total.toFixed(2);
+	total = addCommas(total);
+	
+	setRecipientValue('newIWantItemLine.totalAmount', total);
 }
 
 function addCommas(nStr)

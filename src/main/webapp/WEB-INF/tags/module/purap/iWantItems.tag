@@ -36,7 +36,7 @@
 
 <c:set var="tabindexOverrideBase" value="50" />
 
-<c:set var="mainColumnCount" value="8"/>
+<c:set var="mainColumnCount" value="9"/>
 <c:set var="colSpanAction" value="2"/>
 
 
@@ -52,7 +52,7 @@
     	<!--  if (fullEntryMode or amendmentEntry) and not lockB2BEntry, then display the addLine -->	
 		<c:if test="${fullEntryMode}">
 			<tr>
-				<td colspan="6" class="subhead">
+				<td colspan="7" class="subhead">
 					<span class="subhead-left">Add Item <a href="${KualiForm.lineItemImportInstructionsUrl}" target="helpWindow"><img src="${ConfigProperties.kr.externalizable.images.url}my_cp_inf.gif" title="Line Item Import Help" alt="Line Item Import Help" hspace="5" border="0" align="middle" /></a>
 				</td>
 				<td colspan="2" class="subhead" align="right" nowrap="nowrap" style="border-left: none;">
@@ -68,7 +68,8 @@
 				<th  class="neutral" ><kul:htmlAttributeLabel attributeEntry="${itemAttributes.itemQuantity}"/></th>
 				<th  class="neutral" ><kul:htmlAttributeLabel attributeEntry="${itemAttributes.itemUnitOfMeasureCode}" useShortLabel="true"/></th>
 				<th  class="neutral" ><kul:htmlAttributeLabel attributeEntry="${itemAttributes.itemCatalogNumber}" /></th>
-                <th  class="neutral" ><kul:htmlAttributeLabel attributeEntry="${itemAttributes.itemUnitPrice}"/>	</th>			
+                <th  class="neutral" ><kul:htmlAttributeLabel attributeEntry="${itemAttributes.itemUnitPrice}"/>	</th>	
+                <th  class="neutral" ><kul:htmlAttributeLabel attributeEntry="${itemAttributes.totalAmount}"/>	</th>		
 				
 				<th align=left class="neutral" >Action</th>
 			</tr>
@@ -87,7 +88,7 @@
 				</td>
 				
 				<td valign="center" class="neutral" align="center">
-				    <kul:htmlControlAttribute attributeEntry="${itemAttributes.itemQuantity}" property="newIWantItemLine.itemQuantity" tabindexOverride="${tabindexOverrideBase + 0}" readOnly="${not fullEntryMode}"/>
+				    <kul:htmlControlAttribute attributeEntry="${itemAttributes.itemQuantity}" property="newIWantItemLine.itemQuantity" tabindexOverride="${tabindexOverrideBase + 0}" readOnly="${not fullEntryMode}" onchange="updateNewItemTotal()"/>
 			    </td>
                 <td valign="center" class="neutral" >
                 <div align="center">
@@ -115,7 +116,13 @@
 
 				<td valign="center" class="neutral">
 				    <div align="center">
-				        <kul:htmlControlAttribute attributeEntry="${itemAttributes.itemUnitPrice}" property="newIWantItemLine.itemUnitPrice" tabindexOverride="${tabindexOverrideBase + 0}"  readOnly="${not fullEntryMode}"/>
+				        <kul:htmlControlAttribute attributeEntry="${itemAttributes.itemUnitPrice}" property="newIWantItemLine.itemUnitPrice" tabindexOverride="${tabindexOverrideBase + 0}"  readOnly="${not fullEntryMode}" onchange="updateNewItemTotal()"/>
+					</div>
+				</td>
+				
+				<td valign="center" class="neutral">
+				    <div align="center">
+				        <html:text name="KualiForm" property="newIWantItemLine.totalAmount" readonly="true" style="border: none; text-align: center"/>
 					</div>
 				</td>
 					
@@ -145,6 +152,8 @@
 				<kul:htmlAttributeHeaderCell attributeEntry="${itemAttributes.itemCatalogNumber}" colspan="${colSpanCatlogNumber}" />
 				
 				<kul:htmlAttributeHeaderCell attributeEntry="${itemAttributes.itemUnitPrice}" />
+				
+				<kul:htmlAttributeHeaderCell attributeEntry="${itemAttributes.totalAmount}" />
 
 				   
                 <kul:htmlAttributeHeaderCell literalLabel="Actions" />
@@ -193,7 +202,7 @@
 						    property="document.item[${ctr}].itemQuantity"
 						    readOnly="${not fullEntryMode}"
 						    tabindexOverride="${tabindexOverrideBase + 0}"
-						    onchange="updateItemsTotal('document.totalDollarAmount',  'document.accountingLinesTotal', '${ nbrOfItems}', '${accountsNbr }')" />
+						    onchange="updateItemsTotal('document.totalDollarAmount',  'document.accountingLinesTotal', '${ nbrOfItems}', '${accountsNbr }', 'document.item[${ctr}].totalAmount', '${ctr}')" />
 					</td>
                     <td valign="center" class="neutral" align="center">
                         <kul:htmlControlAttribute 
@@ -227,7 +236,15 @@
 						        property="document.item[${ctr}].itemUnitPrice"
 						        readOnly="${not fullEntryMode}"
 						        tabindexOverride="${tabindexOverrideBase + 0}"
-						        onchange="updateItemsTotal('document.totalDollarAmount',  'document.accountingLinesTotal', '${ nbrOfItems}', '${accountsNbr }')" />
+						        onchange="updateItemsTotal('document.totalDollarAmount',  'document.accountingLinesTotal', '${ nbrOfItems}', '${accountsNbr }', 'document.item[${ctr}].totalAmount', '${ctr}')" />
+						</div>
+					</td>
+					
+					<td valign="center" class="neutral">
+					    <div align="center">
+					    
+					    <html:text name="KualiForm" property="document.item[${ctr}].totalAmount" readonly="true" style="border: none; text-align: center"/>
+					   
 						</div>
 					</td>
 								
@@ -272,7 +289,7 @@
 
 
 		<tr>
-			<th align=right colspan="6" scope="row" class="neutral">
+			<th align=right colspan="7" scope="row" class="neutral">
 			    <div align="right">
 			        <kul:htmlAttributeLabel attributeEntry="${DataDictionary.IWantDocument.attributes.totalDollarAmount}" />
 			    </div>
