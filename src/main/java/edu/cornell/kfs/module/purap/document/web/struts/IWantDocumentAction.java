@@ -16,7 +16,6 @@ import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentActionBase;
-import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 import org.kuali.rice.core.util.KeyLabelPair;
 import org.kuali.rice.core.util.RiceConstants;
@@ -27,8 +26,6 @@ import org.kuali.rice.kim.bo.entity.KimEntityEmploymentInformation;
 import org.kuali.rice.kim.bo.entity.dto.KimEntityInfo;
 import org.kuali.rice.kim.bo.entity.dto.KimPrincipalInfo;
 import org.kuali.rice.kim.service.IdentityManagementService;
-import org.kuali.rice.kns.bo.Note;
-import org.kuali.rice.kns.bo.PostalCode;
 import org.kuali.rice.kns.rule.event.KualiAddLineEvent;
 import org.kuali.rice.kns.rule.event.RouteDocumentEvent;
 import org.kuali.rice.kns.service.KualiRuleService;
@@ -47,7 +44,7 @@ import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
 
 public class IWantDocumentAction extends FinancialSystemTransactionalDocumentActionBase {
-    
+
     private final int DOCUMENT_DESCRIPTION_MAX_LENGTH = 40;
 
     /**
@@ -108,7 +105,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                 iWantForm.setDocument(iWantDocument);
 
                 if (iWantDocument != null) {
-                    
+
                     String principalId = iWantDocument.getDocumentHeader().getWorkflowDocument()
                             .getInitiatorPrincipalId();
                     KimPrincipalInfo initiator = identityManagementService.getPrincipal(principalId);
@@ -217,29 +214,28 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                     }
                 }
             }
-            
+
             setIWantDocumentDescription(iWantDoc);
-            
+
         }
-        
-        
 
         return actionForward;
     }
-    
-    private void setIWantDocumentDescription(IWantDocument iWantDocument){
+
+    private void setIWantDocumentDescription(IWantDocument iWantDocument) {
         // add selected chart and department to document description
-        String routingChart = iWantDocument.getRoutingChart() == null ? StringUtils.EMPTY : iWantDocument.getRoutingChart() + "-";
+        String routingChart = iWantDocument.getRoutingChart() == null ? StringUtils.EMPTY : iWantDocument
+                .getRoutingChart() + "-";
         String routingOrg = iWantDocument.getRoutingOrganization() == null ? StringUtils.EMPTY : iWantDocument
                 .getRoutingOrganization();
         String addChartOrgToDesc = routingChart + routingOrg;
         String vendorName = iWantDocument.getVendorName() == null ? StringUtils.EMPTY : iWantDocument.getVendorName();
         String description = addChartOrgToDesc + " " + vendorName;
-        
+
         if (StringUtils.isNotBlank(description) && description.length() > DOCUMENT_DESCRIPTION_MAX_LENGTH) {
             description = description.substring(0, DOCUMENT_DESCRIPTION_MAX_LENGTH);
         }
-        
+
         iWantDocument.getDocumentHeader().setDocumentDescription(description);
     }
 
@@ -452,7 +448,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         boolean rulePassed = true;
 
         // call business rules
-        rulePassed &= ruleService.applyRules(new AddIWantItemEvent(StringUtils.EMPTY,iWantDocument, item));
+        rulePassed &= ruleService.applyRules(new AddIWantItemEvent(StringUtils.EMPTY, iWantDocument, item));
 
         if (rulePassed) {
             item = iWantDocumentForm.getAndResetNewIWantItemLine();
@@ -556,9 +552,12 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     @Override
     public ActionForward route(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        
+
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+
+        iWantDocument.setExplanation(iWantDocument.getDocumentHeader().getExplanation());
+
         String step = iWantDocForm.getStep();
 
         boolean setDefaultCollegeDept = iWantDocument.isUseCollegeAndDepartmentAsDefault();
@@ -601,11 +600,11 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             }
 
         }
-        
+
         setIWantDocumentDescription(iWantDocument);
-        
+
         //insert adhoc route person first and the route
-        if(StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())){
+        if (StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())) {
             iWantDocument.setCurrentRouteToNetId(iWantDocForm.getNewAdHocRoutePerson().getId());
             insertAdHocRoutePerson(mapping, iWantDocForm, request, response);
 
@@ -618,16 +617,16 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             return actionForward;
         }
     }
-    
+
     @Override
     public ActionForward sendAdHocRequests(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        
+
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
-        
+
         //insert adhoc route person first and the route
-        if(StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())){
+        if (StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())) {
             insertAdHocRoutePerson(mapping, iWantDocForm, request, response);
 
         }
@@ -637,7 +636,9 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     /**
      * Use the new attachment description field to set the note text.
      * 
-     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#insertBONote(org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#insertBONote(org.apache.struts.action.ActionMapping,
+     * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest,
+     * javax.servlet.http.HttpServletResponse)
      */
     @Override
     public ActionForward insertBONote(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -646,7 +647,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         ActionForward actionForward = super.insertBONote(mapping, form, request, response);
         IWantDocumentForm iWantDocumentForm = (IWantDocumentForm) form;
         iWantDocumentForm.getIWantDocument().setAttachmentDescription(StringUtils.EMPTY);
-        
+
         return actionForward;
     }
 
@@ -686,7 +687,9 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
     /**
      * 
-     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#refresh(org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#refresh(org.apache.struts.action.ActionMapping,
+     * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest,
+     * javax.servlet.http.HttpServletResponse)
      */
     @Override
     public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -708,59 +711,72 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                 iWantDocument.setDeliverToAddress(address);
 
             }
-            
+
             if ("iWantDocVendorLookupable".equalsIgnoreCase(refreshCaller)) {
                 Integer vendorHeaderId = iWantDocument.getVendorHeaderGeneratedIdentifier();
                 Integer vendorId = iWantDocument.getVendorDetailAssignedIdentifier();
                 String phoneNumber = "Phone: ";
-                
+
                 Map fieldValues = new HashMap();
                 fieldValues.put("vendorHeaderGeneratedIdentifier", vendorHeaderId);
                 fieldValues.put("vendorDetailAssignedIdentifier", vendorId);
                 fieldValues.put("vendorPhoneTypeCode", "PH");
-                Collection vendorPhoneNumbers = getBusinessObjectService().findMatching(VendorPhoneNumber.class, fieldValues);
-                if(ObjectUtils.isNotNull(vendorPhoneNumbers) && vendorPhoneNumbers.size() > 0){
-                    VendorPhoneNumber retrievedVendorPhoneNumber = (VendorPhoneNumber)vendorPhoneNumbers.toArray()[0];
-                    phoneNumber+=retrievedVendorPhoneNumber.getVendorPhoneNumber();
+                Collection vendorPhoneNumbers = getBusinessObjectService().findMatching(VendorPhoneNumber.class,
+                        fieldValues);
+                if (ObjectUtils.isNotNull(vendorPhoneNumbers) && vendorPhoneNumbers.size() > 0) {
+                    VendorPhoneNumber retrievedVendorPhoneNumber = (VendorPhoneNumber) vendorPhoneNumbers.toArray()[0];
+                    phoneNumber += retrievedVendorPhoneNumber.getVendorPhoneNumber();
                 }
 
                 // populate vendor info
-                String addressLine1 = iWantDocument.getVendorLine1Address() !=null ? iWantDocument.getVendorLine1Address() : StringUtils.EMPTY;
-                String addressLine2 = iWantDocument.getVendorLine2Address() !=null ? iWantDocument.getVendorLine2Address() : StringUtils.EMPTY;
-                String cityName = iWantDocument.getVendorCityName() !=null ? iWantDocument.getVendorCityName() : StringUtils.EMPTY;
-                String stateCode = iWantDocument.getVendorStateCode() !=null ? iWantDocument.getVendorStateCode() : StringUtils.EMPTY;
-                String countryCode =  iWantDocument.getVendorCountryCode()  !=null ?  iWantDocument.getVendorCountryCode() : StringUtils.EMPTY;
-                String postalCode = iWantDocument.getVendorPostalCode()  !=null ? iWantDocument.getVendorPostalCode()  : StringUtils.EMPTY;
-                String faxNumber = "Fax: " + (iWantDocument.getVendorFaxNumber() !=null ? iWantDocument.getVendorFaxNumber()  : StringUtils.EMPTY);
-                
-                String URL = "URL: " + (iWantDocument.getVendorWebURL() !=null ? iWantDocument.getVendorWebURL() : StringUtils.EMPTY);
-                
+                String addressLine1 = iWantDocument.getVendorLine1Address() != null ? iWantDocument
+                        .getVendorLine1Address() : StringUtils.EMPTY;
+                String addressLine2 = iWantDocument.getVendorLine2Address() != null ? iWantDocument
+                        .getVendorLine2Address() : StringUtils.EMPTY;
+                String cityName = iWantDocument.getVendorCityName() != null ? iWantDocument.getVendorCityName()
+                        : StringUtils.EMPTY;
+                String stateCode = iWantDocument.getVendorStateCode() != null ? iWantDocument.getVendorStateCode()
+                        : StringUtils.EMPTY;
+                String countryCode = iWantDocument.getVendorCountryCode() != null ? iWantDocument
+                        .getVendorCountryCode() : StringUtils.EMPTY;
+                String postalCode = iWantDocument.getVendorPostalCode() != null ? iWantDocument.getVendorPostalCode()
+                        : StringUtils.EMPTY;
+                String faxNumber = "Fax: "
+                        + (iWantDocument.getVendorFaxNumber() != null ? iWantDocument.getVendorFaxNumber()
+                                : StringUtils.EMPTY);
+
+                String URL = "URL: "
+                        + (iWantDocument.getVendorWebURL() != null ? iWantDocument.getVendorWebURL()
+                                : StringUtils.EMPTY);
+
                 String vendorInfo = addressLine1 + "\n"
                             + addressLine2 + "\n"
                             + cityName + ", " + postalCode + ", " + stateCode + ", " + countryCode + "\n"
-                            + faxNumber+ "\n"
+                            + faxNumber + "\n"
                             + phoneNumber + " \n"
                             + URL;
-                
+
                 iWantDocument.setVendorDescription(vendorInfo);
             }
 
         }
         return actionForward;
     }
-    
+
     @Override
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        
+
         ActionForward actionForward = super.save(mapping, form, request, response);
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
-        
-        if(StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())){
+
+        iWantDocument.setExplanation(iWantDocument.getDocumentHeader().getExplanation());
+
+        if (StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())) {
             iWantDocument.setCurrentRouteToNetId(iWantDocForm.getNewAdHocRoutePerson().getId());
         }
-        
+
         return actionForward;
     }
 
