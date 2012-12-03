@@ -33,8 +33,7 @@ public class LevelOrganizationDaoJdbc extends PlatformAwareDaoBaseJdbc implement
         try {
             // Build the SQL
             StringBuilder sqlBuilder = new StringBuilder(3500);
-            sqlBuilder
-                    .append("select fin_coa_cd, org_cd, org_nm from ca_org_t where fin_coa_cd in('IT') and org_typ_cd = 'C' order by fin_coa_cd desc, org_nm");
+            sqlBuilder.append("select fin_coa_cd, org_cd, org_nm from ca_org_t where fin_coa_cd in('IT') and ORG_ACTIVE_CD = 'Y' and org_cd <> 'XXXX' and org_typ_cd = 'C' order by fin_coa_cd desc, org_nm");
 
             String sqlString = sqlBuilder.toString();
 
@@ -92,7 +91,7 @@ public class LevelOrganizationDaoJdbc extends PlatformAwareDaoBaseJdbc implement
                 sqlBuilder
                         .append("                connect by prior rpts_to_org_cd = org_cd and rpts_to_org_cd not in ('UNIV') and fin_coa_cd=?) D_Level_Name ");
 
-                sqlBuilder.append("             from  ca_org_t t2 where t2.org_typ_cd = 'D'");
+                sqlBuilder.append("             from  ca_org_t t2 where t2.org_typ_cd = 'D' and ORG_ACTIVE_CD = 'Y' ");
                 sqlBuilder.append("             ) t where t.C_Level_Code = ? order by D_Level_Name");
 
                 String sqlString = sqlBuilder.toString();
