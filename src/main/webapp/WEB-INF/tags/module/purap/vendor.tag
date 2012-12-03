@@ -248,17 +248,18 @@
                         	fieldConversions="vendorCustomerNumber:document.vendorCustomerNumber"/>
                     </c:if>
                 </td>
-
-               <%-- KFSPTS-1458 --%>
-               <th align=right valign=middle class="bord-l-b">
-                    <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.vendorEmailAddress}" /></div>
-                </th>                
-                <td align=left valign=middle class="datacell">
-                    <kul:htmlControlAttribute 
-                            attributeEntry="${documentAttributes.vendorEmailAddress}" property="document.vendorEmailAddress" 
-                            readOnly="${not (fullEntryMode or amendmentEntry) or lockB2BEntry or not (displayRequisitionFields or displayPurchaseOrderFields)}" tabindexOverride="${tabindexOverrideBase + 4}"/>                            
-                </td> 
-            	
+                <%-- KFSPTS-1646 --%>
+                <c:if test="${displayRequisitionFields or displayPurchaseOrderFields}">
+	               <%-- KFSPTS-1458 --%>
+	               <th align=right valign=middle class="bord-l-b">
+	                    <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.vendorEmailAddress}" /></div>
+	                </th>                
+	                <td align=left valign=middle class="datacell">
+	                    <kul:htmlControlAttribute 
+	                            attributeEntry="${documentAttributes.vendorEmailAddress}" property="document.vendorEmailAddress" 
+	                            readOnly="${not (fullEntryMode or amendmentEntry) or lockB2BEntry or not (displayRequisitionFields or displayPurchaseOrderFields)}" tabindexOverride="${tabindexOverrideBase + 4}"/>                            
+	                </td> 
+                </c:if> 
             </tr>
 
             <tr>
