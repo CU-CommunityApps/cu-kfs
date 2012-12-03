@@ -74,37 +74,37 @@
    				<bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.module.bc.businessobject.PSPositionJobExtractEntry">
    					<property name="parseProperties">
    						<list>
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="positionNumber" p:start="0" p:end="8" p:rightTrim="true" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeType" p:start="111" p:end="112" p:rightTrim="true" />	
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCode" p:start="58" p:end="64" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCodeDesc" p:start="64" p:end="94" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCodeDescShrt" p:start="94" p:end="104" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="company" p:start="108" p:end="111" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="positionUnionCode" p:start="116" p:end="119" p:rightTrim="true" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="fullPartTime" p:start="120" p:end="121" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="classInd" p:start="121" p:end="122" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="addsToActualFte" p:start="125" p:end="126" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuStateCert" p:start="126" p:end="127" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="defaultObjectCode" p:start="187" p:end="191" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="emplid" p:start="196" p:end="203" p:rightTrim="true" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeRecord" p:start="203" p:end="206" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeStatus" p:start="206" p:end="207" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobStandardHours" p:start="207" p:end="211" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCodeStandardHours" p:start="211" p:end="215" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeClass" p:start="215" p:end="216" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="earningDistributionType" p:start="219" p:end="220" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="compRate" p:start="220" p:end="232" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="annualBenefitBaseRate" p:start="232" p:end="244" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuAbbrFlag" p:start="244" p:end="245" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="annualRate" p:start="245" p:end="257" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="name" p:start="266" p:end="316" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="workMonths" p:start="316" p:end="319" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFamily" p:start="319" p:end="325" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="compFreq" p:start="195" p:end="196" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuPlannedFTE" p:start="137" p:end="142" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFunction" p:start="154" p:end="157" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFunctionDesc" p:start="157" p:end="187" />
-   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="reHireDate" p:start="325" p:end="335" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="positionNumber" p:start="0" p:end="6" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeType" p:start="109" p:end="110" p:rightTrim="true" />	
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCode" p:start="56" p:end="62" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCodeDesc" p:start="62" p:end="92" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCodeDescShrt" p:start="92" p:end="102" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="company" p:start="106" p:end="109" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="positionUnionCode" p:start="114" p:end="117" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="fullPartTime" p:start="118" p:end="119" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="classInd" p:start="119" p:end="120" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="addsToActualFte" p:start="123" p:end="124" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuStateCert" p:start="124" p:end="125" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="defaultObjectCode" p:start="165" p:end="169" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="emplid" p:start="174" p:end="181" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeRecord" p:start="181" p:end="184" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeStatus" p:start="184" p:end="185" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobStandardHours" p:start="185" p:end="189" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobCodeStandardHours" p:start="189" p:end="193" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeClass" p:start="193" p:end="194" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="earningDistributionType" p:start="197" p:end="198" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="compRate" p:start="198" p:end="210" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="annualBenefitBaseRate" p:start="210" p:end="222" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuAbbrFlag" p:start="222" p:end="223" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="annualRate" p:start="223" p:end="235" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="name" p:start="244" p:end="294" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="workMonths" p:start="294" p:end="297" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFamily" p:start="297" p:end="303" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="compFreq" p:start="173" p:end="174" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cuPlannedFTE" p:start="135" p:end="140" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFunction" p:start="152" p:end="155" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="jobFunctionDesc" p:start="155" p:end="165" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="reHireDate" p:start="303" p:end="313" />
    						</list>
    					</property>
    				</bean>

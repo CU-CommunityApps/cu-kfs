@@ -408,7 +408,7 @@ public class BCConstants extends JSTLConstants {
         }
     }
 
-    public final static String POSITION_CODE_INACTIVE = "C";
+    public final static String POSITION_CODE_INACTIVE = "I";
     public final static String DOCUMENT_TYPE_CODE_ALL = "ALL";
 
     public static class LockTypes {
