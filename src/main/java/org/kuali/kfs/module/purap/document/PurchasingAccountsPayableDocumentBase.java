@@ -88,6 +88,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     protected Integer accountsPayablePurchasingDocumentLinkIdentifier;
     protected boolean useTaxIndicator;
     protected String vendorAttentionName;
+    protected String vendorEmailAddress;   //KFSPTS-1639
     
     // NOT PERSISTED IN DB
     protected String vendorNumber;
@@ -787,6 +788,9 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         this.setVendorStateCode(vendorAddress.getVendorStateCode());
         this.setVendorPostalCode(vendorAddress.getVendorZipCode());
         this.setVendorCountryCode(vendorAddress.getVendorCountryCode());
+        
+        //KFSPTS-1639
+        this.setVendorEmailAddress(vendorAddress.getVendorAddressEmailAddress());
     }
 
     /**
@@ -1185,5 +1189,15 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         }
         return false;
     }
+
     
+    //KFSPTS-1639
+    public String getVendorEmailAddress() {
+        return vendorEmailAddress;
+    }
+
+    //KFSPTS-1639
+    public void setVendorEmailAddress(String vendorEmailAddress) {
+        this.vendorEmailAddress = vendorEmailAddress;
+    }
 }
