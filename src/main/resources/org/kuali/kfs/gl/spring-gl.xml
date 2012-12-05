@@ -68,8 +68,8 @@
 		</property>
 		<property name="fiscalYearMakers">
           <list>
-<!--             <ref bean="universityDateFiscalYearMaker" />
- -->          </list>	
+             <ref bean="universityDateFiscalYearMaker" />
+          </list>	
         </property>
         <property name="batchFileDirectories">
           <list>
