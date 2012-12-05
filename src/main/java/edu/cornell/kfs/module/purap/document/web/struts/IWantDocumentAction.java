@@ -57,13 +57,13 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         IWantDocumentForm iWantForm = (IWantDocumentForm) kualiDocumentFormBase;
         IWantDocument iWantDocument = iWantForm.getIWantDocument();
 
-        if (StringUtils.isNotBlank(iWantDocument.getCurrentRouteToNetId())) {
-            iWantForm.getNewAdHocRoutePerson().setId(iWantDocument.getCurrentRouteToNetId());
-        }
-
         if (iWantDocument.getDocumentHeader().getWorkflowDocument().stateIsSaved()) {
             iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.CUSTOMER_DATA_STEP);
             iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.CUSTOMER_DATA_STEP);
+            
+            if (StringUtils.isNotBlank(iWantDocument.getCurrentRouteToNetId())) {
+                iWantForm.getNewAdHocRoutePerson().setId(iWantDocument.getCurrentRouteToNetId());
+            }
         }
 
         KualiWorkflowDocument workflowDoc = iWantDocument.getDocumentHeader().getWorkflowDocument();
