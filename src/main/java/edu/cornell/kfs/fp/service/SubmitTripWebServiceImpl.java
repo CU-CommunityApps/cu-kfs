@@ -1,4 +1,4 @@
-package edu.cornell.kfs.fp.service.impl;
+package edu.cornell.kfs.fp.service;
 
 import javax.jws.WebService;
 
@@ -30,7 +30,6 @@ import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 import org.kuali.rice.kns.workflow.service.WorkflowDocumentService;
 
 import edu.cornell.kfs.coa.service.AccountVerificationWebService;
-import edu.cornell.kfs.fp.service.SubmitTripWebService;
 
 
 /**
@@ -49,7 +48,7 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
 	/**
 	 * 
 	 */
-	public String submitTrip(String dvDescription, String dvExplanation, String travelerNetId, String initiatorNetId, double totalAmount, String checkStubText) throws Exception {
+	public String submitTrip(String dvDescription, String dvExplanation, String tripNumber, String travelerNetId, String initiatorNetId, double totalAmount, String checkStubText) throws Exception {
         UserSession actualUserSession = GlobalVariables.getUserSession();
         MessageMap globalErrorMap = GlobalVariables.getMessageMap();
 
@@ -74,6 +73,7 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
 	        if(dvDoc != null) {
 				dvDoc.getDocumentHeader().setDocumentDescription(dvDescription);
 				dvDoc.getDocumentHeader().setExplanation(dvExplanation);
+				dvDoc.getDocumentHeader().setOrganizationDocumentNumber(tripNumber);
 				
 				dvDoc.initiateDocument();
 

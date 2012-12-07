@@ -25,6 +25,7 @@ public interface SubmitTripWebService {
   public String submitTrip(
 		  @WebParam(name = "dvDescription")String dvDescription,
 		  @WebParam(name = "dvExplanation")String dvExplanation,
+		  @WebParam(name = "tripNumber")String tripNumber,
 		  @WebParam(name = "travelerNetId")String travelerNetId,
 		  @WebParam(name = "initiatorNetId")String initiatorNetId,
 		  @WebParam(name = "totalAmount")double totalAmount,
