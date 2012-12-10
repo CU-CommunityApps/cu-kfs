@@ -1,0 +1,59 @@
+<!--
+ Copyright 2005-2008 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<descriptor-repository version="1.0">
+
+<class-descriptor class="edu.cornell.kfs.fp.businessobject.DisbursementVoucherPayeeDetailExtension" table="FP_DV_PAYEE_DTL_TX">
+    <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+
+	<field-descriptor name="disbVchrPayeeIdType" column="DV_PAYEE_ID_TYP" jdbc-type="VARCHAR" />
+</class-descriptor>
+
+
+<class-descriptor class="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail" table="FP_DV_PAYEE_DTL_T">
+    <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+    <field-descriptor name="disbVchrPaymentReasonCode" column="DV_PMT_REAS_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="disbVchrAlienPaymentCode" column="DV_ALIEN_PMT_IND" jdbc-type="CHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+    <field-descriptor name="disbVchrPayeeIdNumber" column="DV_PAYEE_ID_NBR" jdbc-type="VARCHAR" index="true" />
+    <field-descriptor name="disbVchrPayeePersonName" column="DV_PAYEE_PRSN_NM" jdbc-type="VARCHAR" />
+    <field-descriptor name="disbVchrPayeeLine1Addr" column="DV_PAYEE_LN1_ADDR" jdbc-type="VARCHAR" />
+    <field-descriptor name="disbVchrPayeeLine2Addr" column="DV_PAYEE_LN2_ADDR" jdbc-type="VARCHAR" />
+    <field-descriptor name="disbVchrPayeeCityName" column="DV_PAYEE_CTY_NM" jdbc-type="VARCHAR" />
+    <field-descriptor name="disbVchrPayeeStateCode" column="DV_PAYEE_ST_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="disbVchrPayeeZipCode" column="DV_PAYEE_ZIP_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="disbVchrPayeeCountryCode" column="DV_PAYEE_CNTRY_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="disbVchrSpecialHandlingPersonName" column="DV_RMT_PRSN_NM" jdbc-type="VARCHAR" />
+    <field-descriptor name="disbVchrSpecialHandlingLine1Addr" column="DV_RMT_LN1_ADDR" jdbc-type="VARCHAR" />
+    <field-descriptor name="disbVchrSpecialHandlingLine2Addr" column="DV_RMT_LN2_ADDR" jdbc-type="VARCHAR" />
+    <field-descriptor name="disbVchrSpecialHandlingCityName" column="DV_RMT_CTY_NM" jdbc-type="VARCHAR" />
+    <field-descriptor name="disbVchrSpecialHandlingStateCode" column="DV_RMT_ST_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="disbVchrSpecialHandlingZipCode" column="DV_RMT_ZIP_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="disbVchrSpecialHandlingCountryCode" column="DV_RMT_CNTRY_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="disbursementVoucherPayeeTypeCode" column="DV_PAYEE_TYP_CD" jdbc-type="VARCHAR" />
+
+    <reference-descriptor name="disbVchrPaymentReason" class-ref="org.kuali.kfs.fp.businessobject.PaymentReasonCode" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+        <foreignkey field-ref="disbVchrPaymentReasonCode" />
+    </reference-descriptor>
+    <reference-descriptor name="extension" class-ref="edu.cornell.kfs.fp.businessobject.DisbursementVoucherPayeeDetailExtension" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+        <foreignkey field-ref="documentNumber" />
+    </reference-descriptor>
+
+</class-descriptor>
+
+</descriptor-repository>

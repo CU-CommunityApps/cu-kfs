@@ -94,6 +94,7 @@ import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 
+import edu.cornell.kfs.fp.businessobject.DisbursementVoucherPayeeDetailExtension;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
@@ -909,6 +910,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 
         this.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(DisbursementVoucherConstants.DV_PAYEE_TYPE_VENDOR);
         this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(vendor.getVendorNumber());
+        ((DisbursementVoucherPayeeDetailExtension)this.getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(DisbursementVoucherConstants.DV_PAYEE_ID_TYP_VENDOR);
         this.getDvPayeeDetail().setDisbVchrPayeePersonName(vendor.getVendorName());
 
         this.getDvPayeeDetail().setDisbVchrAlienPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
@@ -994,8 +996,10 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         
         if (StringUtils.isNotBlank(employee.getEmployeeId())) {
         	this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(employee.getEmployeeId());
+        	((DisbursementVoucherPayeeDetailExtension)this.getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(DisbursementVoucherConstants.DV_PAYEE_ID_TYP_EMPL);
         } else {
         	this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(employee.getPrincipalId());
+        	((DisbursementVoucherPayeeDetailExtension)this.getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(DisbursementVoucherConstants.DV_PAYEE_ID_TYP_ENTITY);
         }
         // Changed this from employee.getName to employee.getNameUnmasked() otherwise "Xxxxxx" appears on the DV!
         this.getDvPayeeDetail().setDisbVchrPayeePersonName(employee.getNameUnmasked());
@@ -1068,6 +1072,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         this.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(DisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT);
         
         this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(student.getPrincipalId());
+        ((DisbursementVoucherPayeeDetailExtension)this.getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(DisbursementVoucherConstants.DV_PAYEE_ID_TYP_ENTITY);
 
         this.getDvPayeeDetail().setDisbVchrPayeePersonName(student.getNameUnmasked());
 
@@ -1139,6 +1144,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         this.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(DisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI);
         
         this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(alumni.getPrincipalId());
+        ((DisbursementVoucherPayeeDetailExtension)this.getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(DisbursementVoucherConstants.DV_PAYEE_ID_TYP_ENTITY);
 
         // Changed this from employee.getName to employee.getNameUnmasked() otherwise "Xxxxxx" appears on the DV!
         this.getDvPayeeDetail().setDisbVchrPayeePersonName(alumni.getNameUnmasked());
@@ -1278,6 +1284,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         }
 
         dvPayeeDetail.setDocumentNumber(this.documentNumber);
+        ((DisbursementVoucherPayeeDetailExtension)dvPayeeDetail.getExtension()).setDocumentNumber(this.documentNumber);
 
         if (dvNonEmployeeTravel != null) {
             dvNonEmployeeTravel.setDocumentNumber(this.documentNumber);
@@ -1445,6 +1452,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
             if (vendorDetail == null) {
             	dvPayeeDetail = new DisbursementVoucherPayeeDetail();
                 getDvPayeeDetail().setDisbVchrPayeeIdNumber(StringUtils.EMPTY);
+                ((DisbursementVoucherPayeeDetailExtension)getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(StringUtils.EMPTY);
                 GlobalVariables.getMessageList().add(KFSKeyConstants.WARNING_DV_PAYEE_NONEXISTANT_CLEARED);
             }
             //else {
@@ -1596,12 +1604,12 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 				
 				//KFSPTS-764: only generate GLPE entries when wire charges are NOT zero dollars.
 				
-				// generate debits
-				GeneralLedgerPendingEntry chargeEntry = processWireChargeDebitEntries(sequenceHelper, wireCharge);
+            // generate debits
+            GeneralLedgerPendingEntry chargeEntry = processWireChargeDebitEntries(sequenceHelper, wireCharge);
 
-				// generate credits
-				processWireChargeCreditEntries(sequenceHelper, wireCharge, chargeEntry);
-			}
+            // generate credits
+            processWireChargeCreditEntries(sequenceHelper, wireCharge, chargeEntry);
+        }
         }
 
         // for wire or drafts generate bank offset entry (if enabled), for ACH and checks offset will be generated by PDP
@@ -1611,7 +1619,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 
         return true;
     }
-    
+
     /**
      * KFSPTS-764
      * Returns true when the wire charge amount is found to be zero dollars based on the bank country code
