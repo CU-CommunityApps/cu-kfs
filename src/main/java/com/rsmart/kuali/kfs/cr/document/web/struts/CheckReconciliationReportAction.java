@@ -66,9 +66,12 @@ public class CheckReconciliationReportAction extends KualiAction {
         List<CheckReconciliationReport> reportSet = serv.buildReports(crForm.getStartDate(),crForm.getEndDate());
         
         if( reportSet != null && reportSet.isEmpty() ) {
-            GlobalVariables.getErrorMap().putError("startDate", KFSKeyConstants.ERROR_CUSTOM, "No Check Records Found");
+            GlobalVariables.getMessageMap().putError("startDate", KFSKeyConstants.ERROR_CUSTOM, "No Check Records Found");
         }
         else if( reportSet != null ) {
+        	// Sort results by check number before building reports
+        	Collections.sort(reportSet);
+            
             if( "excel".equals(crForm.getFormat()) ) {
                 response.setContentType("application/unknown");
                 response.setHeader("Pragma", "No-cache");
@@ -85,8 +88,6 @@ public class CheckReconciliationReportAction extends KualiAction {
                 int     acctIssuedTotal = 0;
                 
                 CheckReconciliationReport temp = null;
-                
-                Collections.sort(reportSet);
                 
                 Iterator<CheckReconciliationReport> iter = reportSet.iterator();
                 temp = iter.next();

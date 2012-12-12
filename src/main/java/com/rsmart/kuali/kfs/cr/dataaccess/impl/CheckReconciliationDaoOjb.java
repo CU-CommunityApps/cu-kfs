@@ -124,9 +124,6 @@ public class CheckReconciliationDaoOjb extends PlatformAwareDaoBaseOjb implement
                 cr.setPayeeType(rs.getString(6));
                 cr.setPayeeId(rs.getString(7));
                 
-                
-                
-                
                 for( Bank bank : banks ) {
                     if( bank.getBankCode().equals(bnkCd) ) {
                         cr.setBankAccountNumber(bank.getBankAccountNumber());
@@ -134,7 +131,11 @@ public class CheckReconciliationDaoOjb extends PlatformAwareDaoBaseOjb implement
                 }
                 
                 cr.setGlTransIndicator(Boolean.FALSE);
-                cr.setStatus(CRConstants.ISSUED);
+                if(cr.getAmount().isZero()) {
+                	cr.setStatus(CRConstants.EXCP);
+                } else {
+                	cr.setStatus(CRConstants.ISSUED);
+                }
                 cr.setSourceCode(CRConstants.PDP_SRC);
                 cr.setBankCode(bnkCd);
                 
