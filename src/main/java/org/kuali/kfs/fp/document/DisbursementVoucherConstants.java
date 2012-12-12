@@ -57,9 +57,9 @@ public interface DisbursementVoucherConstants extends ParameterKeyConstants {
     public static final String DV_PAYEE_TYPE_SUBJECT_PAYMENT_VENDOR = "VSP";
     public static final String DV_PAYEE_TYPE_REVOLVING_FUND_VENDOR = "VRF";
     
-    public static final String DV_PAYEE_ID_TYP_VENDOR = "VENDOR ID";
-    public static final String DV_PAYEE_ID_TYP_ENTITY = "ENTITY ID";
-    public static final String DV_PAYEE_ID_TYP_EMPL = "EMPL ID";
+    public static final String DV_PAYEE_ID_TYP_VENDOR = "Vendor ID";
+    public static final String DV_PAYEE_ID_TYP_ENTITY = "Entity ID";
+    public static final String DV_PAYEE_ID_TYP_EMPL = "Employee ID";
     
     public static final List<String> VENDOR_PAYEE_TYPE_CODES = Arrays.asList(DV_PAYEE_TYPE_VENDOR, DV_PAYEE_TYPE_SUBJECT_PAYMENT_VENDOR, DV_PAYEE_TYPE_REVOLVING_FUND_VENDOR);
 
