@@ -164,7 +164,6 @@ public class CheckReconciliationReport implements Comparable<CheckReconciliation
     }
     
     public int compareTo(CheckReconciliationReport report) {
-		// TODO Auto-generated method stub
 		return getCheckNumber().compareTo(report.getCheckNumber());
 	}
 }
