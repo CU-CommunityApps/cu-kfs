@@ -13,14 +13,17 @@ import org.kuali.kfs.coa.service.ProjectCodeService;
 import org.kuali.kfs.coa.service.SubAccountService;
 import org.kuali.kfs.coa.service.SubObjectCodeService;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
+import org.kuali.kfs.fp.document.CashManagementDocument;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
+import org.kuali.kfs.fp.document.authorization.DisbursementVoucherDocumentAuthorizer;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kim.service.PersonService;
 import org.kuali.rice.kns.UserSession;
+import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.util.ErrorMap;
 import org.kuali.rice.kns.util.GlobalVariables;
@@ -102,4 +105,13 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
 		}
 	}
   
+
+	/**
+	 * 
+	 */
+	public boolean isValidDVInitiator(String initiatorNetId) throws Exception {
+		Person initiator = SpringContext.getBean(PersonService.class).getPerson(initiatorNetId);
+        String documentTypeName = SpringContext.getBean(DataDictionaryService.class).getDocumentTypeNameByClass(DisbursementVoucherDocument.class);
+		return SpringContext.getBean(DisbursementVoucherDocumentAuthorizer.class).canInitiate(documentTypeName, initiator);
+	}
 }

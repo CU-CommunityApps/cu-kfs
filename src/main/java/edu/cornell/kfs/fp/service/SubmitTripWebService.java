@@ -32,4 +32,7 @@ public interface SubmitTripWebService {
 		  @WebParam(name = "checkStubText")String checkStubText
 		  ) throws Exception;
   
+  public boolean isValidDVInitiator(
+		  @WebParam(name = "initiatorNetId")String initiatorNetId
+		  ) throws Exception;
 }
