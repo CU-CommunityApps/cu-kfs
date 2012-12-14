@@ -23,7 +23,9 @@ import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kim.service.PersonService;
 import org.kuali.rice.kns.UserSession;
+import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.rice.kns.service.DataDictionaryService;
+import org.kuali.rice.kns.service.DocumentHelperService;
 import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.util.ErrorMap;
 import org.kuali.rice.kns.util.GlobalVariables;
@@ -110,8 +112,10 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
 	 * 
 	 */
 	public boolean isValidDVInitiator(String initiatorNetId) throws Exception {
-		Person initiator = SpringContext.getBean(PersonService.class).getPerson(initiatorNetId);
+		Person initiator = SpringContext.getBean(PersonService.class).getPersonByPrincipalName(initiatorNetId);
         String documentTypeName = SpringContext.getBean(DataDictionaryService.class).getDocumentTypeNameByClass(DisbursementVoucherDocument.class);
-		return SpringContext.getBean(DisbursementVoucherDocumentAuthorizer.class).canInitiate(documentTypeName, initiator);
+        DocumentAuthorizer documentAuthorizer = SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(documentTypeName);
+
+		return documentAuthorizer.canInitiate(documentTypeName, initiator);
 	}
 }
