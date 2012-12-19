@@ -242,6 +242,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         sendSummary(finalText);
 
         LOG.info("Processing completed");
+        clearLoadCounts(); // Need to clear the counts after each run, so the totals don't show cumulative counts with each subsequent run.
     }
     
     /**
@@ -605,6 +606,9 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 			            validateHeader = false;
 			        }
 		        } catch(Exception ex) {
+		            LOG.info("Error parsing file - " + ex.getMessage());
+		            LOG.info("Exception: "+ ex.toString());
+		            rejectElectronicInvoiceFile(eInvoiceLoad, UNKNOWN_DUNS_IDENTIFIER, invoiceFile, ex.getMessage(), PurapConstants.ElectronicInvoice.FILE_FORMAT_INVALID);
 		        	isExtractFailure = true;
 		            updateSummaryCounts(EXTRACT_FAILURES);
 		        }
@@ -614,20 +618,20 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 	    // Move files into accept/reject folder as appropriate
         boolean success = true;
         if(moveFiles) {
-	        if(isCompleteFailure || (ObjectUtils.isNotNull(eInvoice) && eInvoice.isFileRejected())) {
-                if (LOG.isInfoEnabled()){
-                    LOG.info(invoiceFile.getName() + " has been rejected.");
-                }
-	        	success = this.moveFile(invoiceFile, getRejectDirName());
+        	if(isExtractFailure) {
+	            if (LOG.isInfoEnabled()){
+	                LOG.info(invoiceFile.getName() + " has caused a batch extract failure.");
+	            }
+	        	success = this.moveFile(invoiceFile, getExtractFailureDirName());
 	            if (!success) {
 	                String errorMessage = "File with name '" + invoiceFile.getName() + "' could not be moved";
 	                throw new PurError(errorMessage);
 	            }
-	        } else if(isExtractFailure) {
+        	} else if(isCompleteFailure || (ObjectUtils.isNotNull(eInvoice) && eInvoice.isFileRejected())) {
                 if (LOG.isInfoEnabled()){
-                    LOG.info(invoiceFile.getName() + " has caused a batch extract failure.");
+                    LOG.info(invoiceFile.getName() + " has been rejected.");
                 }
-	        	success = this.moveFile(invoiceFile, getExtractFailureDirName());
+	        	success = this.moveFile(invoiceFile, getRejectDirName());
 	            if (!success) {
 	                String errorMessage = "File with name '" + invoiceFile.getName() + "' could not be moved";
 	                throw new PurError(errorMessage);
@@ -1327,6 +1331,13 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         LOG.info(finalText);
         
         return finalText;
+    }
+    
+    /**
+     * 
+     */
+    protected void clearLoadCounts() {
+    	loadCounts.clear();
     }
     
     /**
