@@ -2,22 +2,7 @@ package edu.cornell.kfs.fp.service;
 
 import javax.jws.WebService;
 
-import org.kuali.kfs.coa.businessobject.Account;
-import org.kuali.kfs.coa.businessobject.ObjectCode;
-import org.kuali.kfs.coa.businessobject.ProjectCode;
-import org.kuali.kfs.coa.businessobject.SubAccount;
-import org.kuali.kfs.coa.businessobject.SubObjectCode;
-import org.kuali.kfs.coa.service.AccountService;
-import org.kuali.kfs.coa.service.ObjectCodeService;
-import org.kuali.kfs.coa.service.ProjectCodeService;
-import org.kuali.kfs.coa.service.SubAccountService;
-import org.kuali.kfs.coa.service.SubObjectCodeService;
-import org.kuali.kfs.fp.businessobject.DisbursementPayee;
-import org.kuali.kfs.fp.document.CashManagementDocument;
-import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
-import org.kuali.kfs.fp.document.authorization.DisbursementVoucherDocumentAuthorizer;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kim.bo.Person;
@@ -27,14 +12,9 @@ import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.DocumentHelperService;
 import org.kuali.rice.kns.service.DocumentService;
-import org.kuali.rice.kns.util.ErrorMap;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.MessageMap;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
-import org.kuali.rice.kns.workflow.service.WorkflowDocumentService;
-
-import edu.cornell.kfs.coa.service.AccountVerificationWebService;
 
 
 /**
@@ -58,7 +38,14 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
         MessageMap globalErrorMap = GlobalVariables.getMessageMap();
 
         try {
-	        // create and route doc as system user
+        	if(!isValidDVInitiator(initiatorNetId)) {
+        		throw new RuntimeException("Initiator identified does not have permission to create a DV.");
+        	}
+        } catch (Exception ex) {
+    		throw new RuntimeException("Initiator identified does not have permission to create a DV.", ex);
+        }
+        
+        try {
 	        // create and route doc as system user
 	        GlobalVariables.setUserSession(new UserSession(initiatorNetId));
 	
