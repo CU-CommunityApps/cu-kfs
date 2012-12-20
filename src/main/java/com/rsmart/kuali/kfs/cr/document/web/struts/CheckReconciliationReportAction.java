@@ -92,8 +92,8 @@ public class CheckReconciliationReportAction extends KualiAction {
                 Iterator<CheckReconciliationReport> iter = reportSet.iterator();
                 temp = iter.next();
                 
-                out.println("Check No,Payee Id,Payee Name,Payee Type,Status,Account No,Date,Amount");
-                out.println(temp.getCheckNumber() + COMMA +temp.getPayeeId() + COMMA + "\""+temp.getPayeeName()+"\"" +COMMA + temp.getPayeeType() +COMMA+ temp.getStatusDesc() + COMMA + temp.getBankAccountNumber() + COMMA + temp.getCheckDate() + COMMA + temp.getAmount());
+                out.println("Check No,Payee Id,Payee Type,Payee Name,Status,Account No,Date,Amount");
+                out.println(temp.getCheckNumber() + COMMA +temp.getPayeeId() + COMMA + temp.getPayeeType() +COMMA + "\""+temp.getPayeeName()+"\"" +COMMA+ temp.getStatusDesc() + COMMA + temp.getBankAccountNumber() + COMMA + temp.getCheckDate() + COMMA + temp.getAmount());
                 
                 String  tempAcct   = temp.getBankAccountNumber();
                 String  tempMon    = temp.getCheckMonth();
