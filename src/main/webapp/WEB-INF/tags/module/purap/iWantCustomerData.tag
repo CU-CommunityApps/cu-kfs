@@ -104,11 +104,27 @@
                     <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.sameAsInitiator}" /></div>
                 </th>
                 <td align=left valign=middle width="25%" class="neutral">
+                <table cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                <td align=left valign=middle width="25%" class="neutral">
                     <kul:htmlControlAttribute 
                         attributeEntry="${documentAttributes.sameAsInitiator}" 
                         property="document.sameAsInitiator" readOnly="${not fullEntryMode}" tabindexOverride="${tabindexOverrideBase + 0}" 
                         onclick="loadDeliverToInfoSameAsInitiator('document.sameAsInitiator','document.initiatorNetID', 'document.deliverToNetID', 'document.initiatorName', 'document.deliverToName', 'document.initiatorPhoneNumber', 'document.deliverToPhoneNumber', 'document.initiatorEmailAddress', 'document.deliverToEmailAddress', 'document.initiatorAddress', 'document.deliverToAddress')"/>&nbsp;
                 </td> 
+                
+                 <th align=right valign=middle width="25%" class="neutral" style="border-left-width: 1px;">
+                    <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.sameAsInitiator}" /></div>
+                </th>
+                <td align=left valign=middle width="25%" class="neutral">
+                    <kul:htmlControlAttribute 
+                        attributeEntry="${documentAttributes.setDeliverToInfoAsDefault}" 
+                        property="document.setDeliverToInfoAsDefault" readOnly="${not fullEntryMode}" tabindexOverride="${tabindexOverrideBase + 0}" 
+                        />&nbsp;
+                </td> 
+                </tr>
+                </table>
+                </td>
              </tr>
             
             <tr>

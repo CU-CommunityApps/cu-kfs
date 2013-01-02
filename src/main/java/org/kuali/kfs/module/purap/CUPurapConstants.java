@@ -38,6 +38,11 @@ public class CUPurapConstants extends PurapConstants {
     
     public static final String USER_OPTIONS_DEFAULT_COLLEGE = "DEFAULT_COLLEGE";
     public static final String USER_OPTIONS_DEFAULT_DEPARTMENT = "DEFAULT_DEPARTMENT";
+    public static final String USER_OPTIONS_DEFAULT_DELIVER_TO_NET_ID = "DEFAULT_DELIVER_TO_NET_ID";
+    public static final String USER_OPTIONS_DEFAULT_DELIVER_TO_NAME = "DEFAULT_DELIVER_TO_NAME";
+    public static final String USER_OPTIONS_DEFAULT_DELIVER_TO_EMAIL_ADDRESS = "DEFAULT_DELIVER_TO_EMAIL_ADDRESS";
+    public static final String USER_OPTIONS_DEFAULT_DELIVER_TO_PHONE_NUMBER = "DEFAULT_DELIVER_TO_PHONE_NUMBER";
+    public static final String USER_OPTIONS_DEFAULT_DELIVER_TO_ADDRESS = "DEFAULT_DELIVER_TO_ADDRESS";
     
     public static final String AMOUNT = "AMOUNT";
     public static final String PERCENT = "PERCENT";

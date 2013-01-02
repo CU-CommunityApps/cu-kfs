@@ -71,6 +71,7 @@
         <ref bean="IWantDocument-collegeLevelOrganization"/>
         <ref bean="IWantDocument-departmentLevelOrganization"/>
         <ref bean="IWantDocument-useCollegeAndDepartmentAsDefault"/>
+        <ref bean="IWantDocument-setDeliverToInfoAsDefault"/>
         
         <ref bean="IWantDocument-attachmentDescription"/>
         <ref bean="IWantDocument-noteLabel"/>
@@ -457,6 +458,19 @@
 
   <bean id="IWantDocument-useCollegeAndDepartmentAsDefault-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="useCollegeAndDepartmentAsDefault"/>
+    <property name="forceUppercase" value="false"/>
+    <property name="label" value="Set as Default"/>
+    <property name="shortLabel" value="Set as Default"/>
+    <property name="maxLength" value="1"/>
+    <property name="required" value="false"/>
+    <property name="control">
+      <bean parent="CheckboxControlDefinition"/>
+    </property>
+  </bean>
+  <bean id="IWantDocument-setDeliverToInfoAsDefault" parent="IWantDocument-setDeliverToInfoAsDefault-parentBean"/>
+
+  <bean id="IWantDocument-setDeliverToInfoAsDefault-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="setDeliverToInfoAsDefault"/>
     <property name="forceUppercase" value="false"/>
     <property name="label" value="Set as Default"/>
     <property name="shortLabel" value="Set as Default"/>

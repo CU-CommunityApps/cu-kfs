@@ -139,6 +139,38 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                     primaryKeysDepartmentOption.put("optionId", CUPurapConstants.USER_OPTIONS_DEFAULT_DEPARTMENT);
                     IWantDocUserOptions userOptionsDepartment = (IWantDocUserOptions) getBusinessObjectService()
                             .findByPrimaryKey(IWantDocUserOptions.class, primaryKeysDepartmentOption);
+                    
+                    //check default deliver to address info
+
+                    Map<String, String> primaryKeysdeliverToNetIDOption = new HashMap<String, String>();
+                    primaryKeysdeliverToNetIDOption.put("principalId", initiatorPrincipalID);
+                    primaryKeysdeliverToNetIDOption.put("optionId", CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_NET_ID);
+                    IWantDocUserOptions userOptionsDeliverToNetID = (IWantDocUserOptions) getBusinessObjectService()
+                            .findByPrimaryKey(IWantDocUserOptions.class, primaryKeysdeliverToNetIDOption);
+
+                    Map<String, String> primaryKeysDeliverToNameOption = new HashMap<String, String>();
+                    primaryKeysDeliverToNameOption.put("principalId", initiatorPrincipalID);
+                    primaryKeysDeliverToNameOption.put("optionId", CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_NAME);
+                    IWantDocUserOptions userOptionsDeliverToName = (IWantDocUserOptions) getBusinessObjectService()
+                            .findByPrimaryKey(IWantDocUserOptions.class, primaryKeysDeliverToNameOption);
+                    
+                    Map<String, String> primaryKeysDeliverToEmailOption = new HashMap<String, String>();
+                    primaryKeysDeliverToEmailOption.put("principalId", initiatorPrincipalID);
+                    primaryKeysDeliverToEmailOption.put("optionId", CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_EMAIL_ADDRESS);
+                    IWantDocUserOptions userOptionsDeliverToEmail = (IWantDocUserOptions) getBusinessObjectService()
+                            .findByPrimaryKey(IWantDocUserOptions.class, primaryKeysDeliverToEmailOption);
+                    
+                    Map<String, String> primaryKeysDeliverToPhnNbrOption = new HashMap<String, String>();
+                    primaryKeysDeliverToPhnNbrOption.put("principalId", initiatorPrincipalID);
+                    primaryKeysDeliverToPhnNbrOption.put("optionId", CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_PHONE_NUMBER);
+                    IWantDocUserOptions userOptionsDeliverToPhnNbr = (IWantDocUserOptions) getBusinessObjectService()
+                            .findByPrimaryKey(IWantDocUserOptions.class, primaryKeysDeliverToPhnNbrOption);
+                    
+                    Map<String, String> primaryKeysDeliverToAddressOption = new HashMap<String, String>();
+                    primaryKeysDeliverToAddressOption.put("principalId", initiatorPrincipalID);
+                    primaryKeysDeliverToAddressOption.put("optionId", CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_ADDRESS);
+                    IWantDocUserOptions userOptionsDeliverToAddress = (IWantDocUserOptions) getBusinessObjectService()
+                            .findByPrimaryKey(IWantDocUserOptions.class, primaryKeysDeliverToAddressOption);
 
                     if (ObjectUtils.isNotNull(userOptionsCollege)) {
                         iWantDocument.setCollegeLevelOrganization(userOptionsCollege.getOptionValue());
@@ -153,6 +185,26 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
                         /// set college and department based on primary id
                         setCollegeAndDepartmentBasedOnPrimaryDepartment(iWantForm);
+                    }
+                    
+                    if (ObjectUtils.isNotNull(userOptionsDeliverToNetID)) {
+                        iWantDocument.setDeliverToNetID(userOptionsDeliverToNetID.getOptionValue());
+                    }
+                    
+                    if (ObjectUtils.isNotNull(userOptionsDeliverToName)) {
+                        iWantDocument.setDeliverToName(userOptionsDeliverToName.getOptionValue());
+                    }
+                    
+                    if (ObjectUtils.isNotNull(userOptionsDeliverToEmail)) {
+                        iWantDocument.setDeliverToEmailAddress(userOptionsDeliverToEmail.getOptionValue());
+                    }
+                    
+                    if (ObjectUtils.isNotNull(userOptionsDeliverToPhnNbr)) {
+                        iWantDocument.setDeliverToPhoneNumber(userOptionsDeliverToPhnNbr.getOptionValue());
+                    }
+                    
+                    if (ObjectUtils.isNotNull(userOptionsDeliverToAddress)) {
+                        iWantDocument.setDeliverToAddress(userOptionsDeliverToAddress.getOptionValue());
                     }
                 }
 
@@ -559,6 +611,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         iWantDocument.setExplanation(iWantDocument.getDocumentHeader().getExplanation());
 
         String step = iWantDocForm.getStep();
+        String principalId = iWantDocument.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
 
         boolean setDefaultCollegeDept = iWantDocument.isUseCollegeAndDepartmentAsDefault();
 
@@ -566,39 +619,36 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             // set these values in user Options table
             String college = iWantDocument.getCollegeLevelOrganization();
             String department = iWantDocument.getDepartmentLevelOrganization();
-            String principalId = iWantDocument.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+            
+            
+            saveUserOption(principalId, CUPurapConstants.USER_OPTIONS_DEFAULT_COLLEGE, college);
 
-            IWantDocUserOptions userOptionsCollege = new IWantDocUserOptions();
-            userOptionsCollege.setPrincipalId(principalId);
-            userOptionsCollege.setOptionId(CUPurapConstants.USER_OPTIONS_DEFAULT_COLLEGE);
-            userOptionsCollege.setOptionValue(college);
+            saveUserOption(principalId, CUPurapConstants.USER_OPTIONS_DEFAULT_DEPARTMENT, department);
 
-            IWantDocUserOptions retrievedUserOptionsCollege = (IWantDocUserOptions) getBusinessObjectService()
-                    .retrieve(userOptionsCollege);
-
-            if (ObjectUtils.isNotNull(retrievedUserOptionsCollege)) {
-                retrievedUserOptionsCollege.setOptionValue(college);
-                getBusinessObjectService().save(retrievedUserOptionsCollege);
-            } else {
-
-                getBusinessObjectService().save(userOptionsCollege);
+        }
+        
+        if(iWantDocument.isSetDeliverToInfoAsDefault()){
+            
+            if(StringUtils.isNotBlank(iWantDocument.getDeliverToNetID())){
+                saveUserOption(principalId, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_NET_ID, iWantDocument.getDeliverToNetID());
             }
-
-            IWantDocUserOptions userOptionsDepartment = new IWantDocUserOptions();
-            userOptionsDepartment.setPrincipalId(principalId);
-            userOptionsDepartment.setOptionId(CUPurapConstants.USER_OPTIONS_DEFAULT_DEPARTMENT);
-            userOptionsDepartment.setOptionValue(department);
-
-            IWantDocUserOptions retrievedUserOptionsDepartment = (IWantDocUserOptions) getBusinessObjectService()
-                    .retrieve(userOptionsDepartment);
-
-            if (ObjectUtils.isNotNull(retrievedUserOptionsDepartment)) {
-                retrievedUserOptionsDepartment.setOptionValue(department);
-                getBusinessObjectService().save(retrievedUserOptionsDepartment);
-            } else {
-                getBusinessObjectService().save(userOptionsDepartment);
+            
+            if(StringUtils.isNotBlank(iWantDocument.getDeliverToName())){
+                saveUserOption(principalId, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_NAME, iWantDocument.getDeliverToName());
             }
-
+            
+            if(StringUtils.isNotBlank(iWantDocument.getDeliverToEmailAddress())){
+                saveUserOption(principalId, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_EMAIL_ADDRESS, iWantDocument.getDeliverToEmailAddress());
+            }
+            
+            if(StringUtils.isNotBlank(iWantDocument.getDeliverToPhoneNumber())){
+                saveUserOption(principalId, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_PHONE_NUMBER, iWantDocument.getDeliverToPhoneNumber());
+            }
+            
+            if(StringUtils.isNotBlank(iWantDocument.getDeliverToAddress())){
+                saveUserOption(principalId, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_ADDRESS, iWantDocument.getDeliverToAddress());
+            }
+            
         }
 
         setIWantDocumentDescription(iWantDocument);
@@ -615,6 +665,23 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             return mapping.findForward("finish");
         } else {
             return actionForward;
+        }
+    }
+    
+    private void saveUserOption(String principalId, String userOptionName, String userOptionValue){
+        IWantDocUserOptions userOption = new IWantDocUserOptions();
+        userOption.setPrincipalId(principalId);
+        userOption.setOptionId(userOptionName);
+        userOption.setOptionValue(userOptionValue);
+
+        IWantDocUserOptions retrievedUserOption = (IWantDocUserOptions) getBusinessObjectService()
+                .retrieve(userOption);
+
+        if (ObjectUtils.isNotNull(retrievedUserOption)) {
+            retrievedUserOption.setOptionValue(userOptionValue);
+            getBusinessObjectService().save(retrievedUserOption);
+        } else {
+            getBusinessObjectService().save(userOption);
         }
     }
 

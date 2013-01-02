@@ -63,6 +63,8 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private String departmentLevelOrganization;
 
     private boolean useCollegeAndDepartmentAsDefault;
+    
+    private boolean setDeliverToInfoAsDefault;
 
     private String attachmentDescription;
     private String noteLabel;
@@ -721,6 +723,14 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     public void setCompleteOption(String completeOption) {
         this.completeOption = completeOption;
+    }
+
+    public boolean isSetDeliverToInfoAsDefault() {
+        return setDeliverToInfoAsDefault;
+    }
+
+    public void setSetDeliverToInfoAsDefault(boolean setDeliverToInfoAsDefault) {
+        this.setDeliverToInfoAsDefault = setDeliverToInfoAsDefault;
     }
 
 }
