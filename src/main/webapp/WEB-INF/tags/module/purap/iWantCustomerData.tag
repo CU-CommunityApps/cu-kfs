@@ -114,7 +114,7 @@
                 </td> 
                 
                  <th align=right valign=middle width="25%" class="neutral" style="border-left-width: 1px;">
-                    <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.sameAsInitiator}" /></div>
+                    <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.setDeliverToInfoAsDefault}" /></div>
                 </th>
                 <td align=left valign=middle width="25%" class="neutral">
                     <kul:htmlControlAttribute 
