@@ -512,15 +512,16 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         KualiDecimal itemTotal = KualiDecimal.ZERO;
 
         for (IWantItem item : items) {
+
             if (ObjectUtils.isNull(item.getItemQuantity())) {
-                item.setItemQuantity( new KualiDecimal(1));
-                if(ObjectUtils.isNull(item.getItemUnitPrice())){
-                    item.setItemUnitPrice(BigDecimal.ZERO);
-                }
-                itemTotal = new KualiDecimal(item.getItemUnitPrice());
-            } else {
-                itemTotal = item.getItemQuantity().multiply(new KualiDecimal(item.getItemUnitPrice()));
+                item.setItemQuantity(new KualiDecimal(1));
             }
+            if (ObjectUtils.isNull(item.getItemUnitPrice())) {
+                item.setItemUnitPrice(BigDecimal.ZERO);
+            }
+
+            itemTotal = item.getItemQuantity().multiply(new KualiDecimal(item.getItemUnitPrice()));
+
             totalDollarAmount = totalDollarAmount.add(itemTotal);
         }
 
