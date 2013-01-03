@@ -86,7 +86,7 @@
 		<tr align="center">
         <td align="center" class="neutral" >
         <div align="center" >
-        <div align="left" >
+        <div align="center" >
 				   <kul:htmlControlAttribute 
                         attributeEntry="${DataDictionary.IWantDocument.attributes.completeOption}" 
                         property="document.completeOption" readOnly="${not fullEntryMode}" />&nbsp;
