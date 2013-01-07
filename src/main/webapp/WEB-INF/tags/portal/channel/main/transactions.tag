@@ -46,7 +46,6 @@
 		<li><portal:portalLink displayTitle="true" title="Internal Billing" url="financialInternalBilling.do?methodToCall=docHandler&command=initiate&docTypeName=IB" /></li>
 		<li><portal:portalLink displayTitle="true" title="Pre-Encumbrance" url="financialPreEncumbrance.do?methodToCall=docHandler&command=initiate&docTypeName=PE" /></li>
 		<li><portal:portalLink displayTitle="true" title="Transfer of Funds" url="financialTransferOfFunds.do?methodToCall=docHandler&command=initiate&docTypeName=TF" /></li>
-		<li><portal:portalLink displayTitle="true" title="I Want" url="purapIWant.do?methodToCall=docHandler&command=initiate&docTypeName=IWNT&step=customerDataStep" /></li>    
     </ul>
     
     <strong>Labor Distribution</strong><br />
