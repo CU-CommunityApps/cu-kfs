@@ -134,11 +134,11 @@ public class PostExpenditureTransaction implements IndirectCostRecoveryService, 
                 return false;
             }
             
-//            if ((a21SubAccount != null) && KFSConstants.SubAccountType.COST_SHARE.equals(a21SubAccount.getSubAccountTypeCode())) {
-//                // No need to post this
-//                LOG.debug("isIcrTransaction() A21 subaccounts with type of CS - not posted");
-//                return false;
-//            }
+            if ((a21SubAccount != null) && KFSConstants.SubAccountType.COST_SHARE.equals(a21SubAccount.getSubAccountTypeCode())) {
+                // No need to post this
+                LOG.debug("isIcrTransaction() A21 subaccounts with type of CS - not posted");
+                return false;
+            }
 
             // do we have an exclusion by type or by account?  then we don't have to post no expenditure transaction
             final boolean selfAndTopLevelOnly = getParameterService().getIndicatorParameter(PosterIndirectCostRecoveryEntriesStep.class, PostExpenditureTransaction.ICR_EXCLUSIONS_AT_TRANSACTION_AND_TOP_LEVEL_ONLY_PARAMETER_NAME);
