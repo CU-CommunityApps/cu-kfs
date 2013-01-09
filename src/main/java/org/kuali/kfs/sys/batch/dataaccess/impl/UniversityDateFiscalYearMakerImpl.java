@@ -23,9 +23,13 @@ import org.apache.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.batch.FiscalYearMakerStep;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.businessobject.UniversityDate;
 import org.kuali.rice.kns.service.BusinessObjectService;
+import org.kuali.rice.kns.service.ParameterService;
+
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 /**
  * Performs custom fiscal year process for University Date records
@@ -34,66 +38,73 @@ public class UniversityDateFiscalYearMakerImpl extends FiscalYearMakerImpl {
     private static Logger LOG = org.apache.log4j.Logger.getLogger(UniversityDateFiscalYearMakerImpl.class);
 
     private BusinessObjectService businessObjectService;
+    private ParameterService parameterService;
 
     /**
      * @see org.kuali.kfs.coa.batch.dataaccess.impl.FiscalYearMakerHelperImpl#performCustomProcessing(java.lang.Integer)
      */
     @Override
     public void performCustomProcessing(Integer baseFiscalYear, boolean firstCopyYear) {
-        int fiscalYearStartMonth = getFiscalYearStartMonth(baseFiscalYear);
+        
+        boolean deleteUniversityDataIndicator = parameterService.getIndicatorParameter(FiscalYearMakerStep.class, CUKFSConstants.FISCAL_YEAR_MAKER_DELETE_UNIVERSITY_DATE_IND);
+        
+        if(deleteUniversityDataIndicator){      
+            int fiscalYearStartMonth = getFiscalYearStartMonth(baseFiscalYear);
 
-        // determine start date year, if start month is not January the year will be one behind the fiscal year
-        int startDateYear = baseFiscalYear;
-        if (Calendar.JANUARY == fiscalYearStartMonth) {
-            startDateYear += 1;
-        }
-
-        // start with first day of fiscal year and create records for each year up to end date
-        GregorianCalendar univPeriodDate = new GregorianCalendar(startDateYear, fiscalYearStartMonth, 1);
-
-        // setup end date
-        GregorianCalendar enddate = new GregorianCalendar(univPeriodDate.get(Calendar.YEAR), univPeriodDate.get(Calendar.MONTH), univPeriodDate.get(Calendar.DAY_OF_MONTH));
-        enddate.add(Calendar.MONTH, 12);
-        enddate.add(Calendar.DAY_OF_MONTH, -1);
-
-        // the fiscal year is always the year of the ending date of the fiscal year
-        Integer nextFiscalYear = (Integer) enddate.get(Calendar.YEAR);
-
-        // get rid of any records already existing for next fiscal year
-      //  deleteNewYearRows(nextFiscalYear);
-
-        // initialize the period variables
-        int period = 1;
-        String periodString = String.format("%02d", period);
-        int compareMonth = univPeriodDate.get(Calendar.MONTH);
-        int currentMonth = univPeriodDate.get(Calendar.MONTH);
-
-        // loop through the dates until we are past end date
-        while (univPeriodDate.compareTo(enddate) <= 0) {
-            // if we hit period 13 something went wrong
-            if (period == 13) {
-                LOG.error("Hit period 13 while creating university date records");
-                throw new RuntimeException("Hit period 13 while creating university date records");
+            // determine start date year, if start month is not January the year will be one behind the fiscal year
+            int startDateYear = baseFiscalYear;
+            if (Calendar.JANUARY == fiscalYearStartMonth) {
+                startDateYear += 1;
             }
-            
-            // create the university date record
-            UniversityDate universityDate = new UniversityDate();
-            universityDate.setUniversityFiscalYear(nextFiscalYear);
-            universityDate.setUniversityDate(new Date(univPeriodDate.getTimeInMillis()));
-            universityDate.setUniversityFiscalAccountingPeriod(periodString);
 
-            getPersistenceBrokerTemplate().store(universityDate);
+            // start with first day of fiscal year and create records for each year up to end date
+            GregorianCalendar univPeriodDate = new GregorianCalendar(startDateYear, fiscalYearStartMonth, 1);
 
-            // add one to day for the next record
-            univPeriodDate.add(Calendar.DAY_OF_MONTH, 1);
+            // setup end date
+            GregorianCalendar enddate = new GregorianCalendar(univPeriodDate.get(Calendar.YEAR), univPeriodDate.get(Calendar.MONTH), univPeriodDate.get(Calendar.DAY_OF_MONTH));
+            enddate.add(Calendar.MONTH, 12);
+            enddate.add(Calendar.DAY_OF_MONTH, -1);
 
-            // does this kick us into a new month and therefore a new accounting period?
-            compareMonth = univPeriodDate.get(Calendar.MONTH);
-            if (currentMonth != compareMonth) {
-                period = period + 1;
-                periodString = String.format("%02d", period);
-                currentMonth = compareMonth;
+            // the fiscal year is always the year of the ending date of the fiscal year
+            Integer nextFiscalYear = (Integer) enddate.get(Calendar.YEAR);
+
+            // get rid of any records already existing for next fiscal year
+            //  deleteNewYearRows(nextFiscalYear);
+
+            // initialize the period variables
+            int period = 1;
+            String periodString = String.format("%02d", period);
+            int compareMonth = univPeriodDate.get(Calendar.MONTH);
+            int currentMonth = univPeriodDate.get(Calendar.MONTH);
+
+            // loop through the dates until we are past end date
+            while (univPeriodDate.compareTo(enddate) <= 0) {
+                // if we hit period 13 something went wrong
+                if (period == 13) {
+                    LOG.error("Hit period 13 while creating university date records");
+                    throw new RuntimeException("Hit period 13 while creating university date records");
+                }
+
+                // create the university date record
+                UniversityDate universityDate = new UniversityDate();
+                universityDate.setUniversityFiscalYear(nextFiscalYear);
+                universityDate.setUniversityDate(new Date(univPeriodDate.getTimeInMillis()));
+                universityDate.setUniversityFiscalAccountingPeriod(periodString);
+
+                getPersistenceBrokerTemplate().store(universityDate);
+
+                // add one to day for the next record
+                univPeriodDate.add(Calendar.DAY_OF_MONTH, 1);
+
+                // does this kick us into a new month and therefore a new accounting period?
+                compareMonth = univPeriodDate.get(Calendar.MONTH);
+                if (currentMonth != compareMonth) {
+                    period = period + 1;
+                    periodString = String.format("%02d", period);
+                    currentMonth = compareMonth;
+                }
             }
+        
         }
     }
 
@@ -158,6 +169,24 @@ public class UniversityDateFiscalYearMakerImpl extends FiscalYearMakerImpl {
      */
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
+    }
+
+    /**
+     * Gets the parameterService.
+     * 
+     * @return Returns the parameterService
+     */
+    public ParameterService getParameterService() {
+        return parameterService;
+    }
+
+    /**
+     * Sets the parameterService.
+     * 
+     * @param parameterService The parameterService to be set.
+     */
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
     }
 
 }
