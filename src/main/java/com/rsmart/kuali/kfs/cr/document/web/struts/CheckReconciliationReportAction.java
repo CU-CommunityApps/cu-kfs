@@ -16,6 +16,7 @@
 package com.rsmart.kuali.kfs.cr.document.web.struts;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -58,6 +59,13 @@ public class CheckReconciliationReportAction extends KualiAction {
     
     /**
      * Generates the CR Report and returns pdf.
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
      */
     public ActionForward performReport(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         CheckReconciliationReportForm crForm = (CheckReconciliationReportForm)form;
@@ -151,6 +159,7 @@ public class CheckReconciliationReportAction extends KualiAction {
                 ResourceBundle resourceBundle = ResourceBundle.getBundle(BCConstants.Report.REPORT_MESSAGES_CLASSPATH, Locale.getDefault());
                 Map<String, Object> reportData = new HashMap<String, Object>();
                 reportData.put(JRParameter.REPORT_RESOURCE_BUNDLE, resourceBundle);
+                reportData.put("REPORT_END_DATE", new SimpleDateFormat("MM/dd/yyyy").format(crForm.getEndDate()));
         
                 SpringContext.getBean(ReportGenerationService.class).generateReportToOutputStream(reportData, reportSet, CRConstants.REPORT_TEMPLATE_CLASSPATH + CRConstants.REPORT_FILE_NAME, baos);
                 WebUtils.saveMimeOutputStreamAsFile(response, ReportGeneration.PDF_MIME_TYPE, baos, CRConstants.REPORT_FILE_NAME + ReportGeneration.PDF_FILE_EXTENSION);
@@ -159,12 +168,21 @@ public class CheckReconciliationReportAction extends KualiAction {
             }
         }
         else {
-            GlobalVariables.getErrorMap().putError("startDate", KFSKeyConstants.ERROR_CUSTOM, "No Check Records Found");
+            GlobalVariables.getMessageMap().putError("startDate", KFSKeyConstants.ERROR_CUSTOM, "No Check Records Found");
         }
         
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     
+    /**
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
     public ActionForward returnToIndex(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         return mapping.findForward(KFSConstants.MAPPING_CLOSE);
     }

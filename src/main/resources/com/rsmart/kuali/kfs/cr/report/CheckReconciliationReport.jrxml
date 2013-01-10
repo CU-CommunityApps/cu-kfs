@@ -23,6 +23,7 @@
 	<import value="net.sf.jasperreports.engine.*" />
 	<import value="net.sf.jasperreports.engine.data.*" />
 
+	<parameter name="REPORT_END_DATE" isForPrompting="false" class="java.lang.String"/>
 
 	<field name="checkNumber" class="java.lang.String"/>
 	<field name="payeeId" class="java.lang.String"/>
@@ -293,9 +294,9 @@
 				</staticText>
 				<staticText>
 					<reportElement
-						x="707"
+						x="700"
 						y="5"
-						width="75"
+						width="85"
 						height="17"
 						forecolor="#000000"
 						key="staticText"/>
@@ -437,7 +438,7 @@
 					<textElement textAlignment="Center">
 						<font fontName="SansSerif" size="24"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["Outstanding Check List as of " + $V{today}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA["Outstanding Check List as of " + $P{REPORT_END_DATE}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -577,9 +578,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="707"
+						x="700"
 						y="2"
-						width="75"
+						width="85"
 						height="16"
 						forecolor="#000000"
 						key="textField"/>
@@ -667,7 +668,7 @@
 					<textElement textAlignment="Center">
 						<font size="10" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Outstanding Check List as of " + $V{today}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Outstanding Check List as of " + $P{REPORT_END_DATE}]]></textFieldExpression>
 				</textField>
 			</band>
 		</pageFooter>
