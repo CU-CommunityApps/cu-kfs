@@ -170,7 +170,7 @@ public class CheckReconciliationDaoOjb extends PlatformAwareDaoBaseOjb implement
         if (!(endDate == null)) {
             GregorianCalendar gc = new GregorianCalendar();
             gc.setTime(endDate);
-            gc.add(Calendar.DATE, 1);
+//            gc.add(Calendar.DATE, 1);
             
             criteria.addLessOrEqualThan("checkDate", new Timestamp(gc.getTimeInMillis()));
         }

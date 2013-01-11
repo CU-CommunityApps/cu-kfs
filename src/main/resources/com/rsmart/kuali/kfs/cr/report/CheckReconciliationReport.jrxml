@@ -70,55 +70,55 @@
 			</groupHeader>
 			<groupFooter>
 			<band height="26"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="62"
-						y="6"
-						width="108"
-						height="18"
-						key="textField"/>
-					<box></box>
-					<textElement>
-						<font isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{bankAccountNumber}]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						x="170"
-						y="6"
-						width="102"
-						height="18"
-						key="staticText-3"/>
-					<box></box>
-					<textElement textAlignment="Right">
-						<font isBold="true"/>
-					</textElement>
-				<text><![CDATA[Total Outstanding]]></text>
-				</staticText>
 				<staticText>
 					<reportElement
 						x="0"
 						y="6"
-						width="46"
+						width="80"
 						height="18"
 						key="staticText-6"/>
 					<box></box>
 					<textElement>
-						<font isBold="true"/>
+						<font size="12" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Bank]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="281"
+						x="81"
+						y="6"
+						width="75"
+						height="18"
+						key="textField"/>
+					<box></box>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{bankAccountNumber}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="246"
+						y="6"
+						width="115"
+						height="18"
+						key="staticText-3"/>
+					<box></box>
+					<textElement textAlignment="Left">
+						<font size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Total Outstanding]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="365"
 						y="6"
 						width="100"
 						height="18"
 						key="textField"/>
 					<box></box>
 					<textElement>
-						<font isBold="true"/>
+						<font size="12" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.Integer"><![CDATA[$V{issuedAccount}]]></textFieldExpression>
 				</textField>
@@ -131,7 +131,7 @@
 						key="textField"/>
 					<box></box>
 					<textElement textAlignment="Right">
-						<font isBold="true"/>
+						<font size="12" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.Double"><![CDATA[$V{subTotalAccount}]]></textFieldExpression>
 				</textField>
@@ -260,7 +260,7 @@
 					<reportElement
 						x="540"
 						y="8"
-						width="85"
+						width="80"
 						height="17"
 						forecolor="#000000"
 						key="staticText"/>
@@ -276,9 +276,9 @@
 				</staticText>
 				<staticText>
 					<reportElement
-						x="634"
+						x="620"
 						y="8"
-						width="65"
+						width="80"
 						height="17"
 						forecolor="#000000"
 						key="staticText"/>
@@ -294,9 +294,9 @@
 				</staticText>
 				<staticText>
 					<reportElement
-						x="700"
+						x="710"
 						y="5"
-						width="85"
+						width="75"
 						height="17"
 						forecolor="#000000"
 						key="staticText"/>
@@ -354,7 +354,7 @@
 					<reportElement
 						x="246"
 						y="12"
-						width="80"
+						width="115"
 						height="18"
 						key="staticText-5"/>
 					<box></box>
@@ -365,7 +365,7 @@
 				</staticText>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="330"
+						x="365"
 						y="12"
 						width="100"
 						height="18"
@@ -544,7 +544,7 @@
 					<reportElement
 						x="540"
 						y="2"
-						width="85"
+						width="80"
 						height="16"
 						forecolor="#000000"
 						key="textField"/>
@@ -560,9 +560,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="634"
+						x="620"
 						y="2"
-						width="65"
+						width="80"
 						height="16"
 						forecolor="#000000"
 						key="textField"/>
@@ -578,9 +578,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="700"
+						x="710"
 						y="2"
-						width="85"
+						width="75"
 						height="16"
 						forecolor="#000000"
 						key="textField"/>
