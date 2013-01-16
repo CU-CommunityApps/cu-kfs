@@ -177,7 +177,7 @@
                 </td> 
                 <td align=left valign=top class="neutral">
                     
-				        <html:image property="methodToCall.addAccountingLine" src="${ConfigProperties.externalizable.images.url}tinybutton-save.gif" alt="Add an Account" title="Add an Account" styleClass="tinybutton" tabindex="${tabindexOverrideBase + 0}"/>
+				        <html:image property="methodToCall.addAccountingLine" src="${ConfigProperties.externalizable.images.url}tinybutton-addacct.gif" alt="Add an Account" title="Add an Account" styleClass="tinybutton" tabindex="${tabindexOverrideBase + 0}"/>
 				   
                 </td>     
                 

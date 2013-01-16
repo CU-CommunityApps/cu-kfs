@@ -71,7 +71,7 @@
                 <th  class="neutral" ><kul:htmlAttributeLabel attributeEntry="${itemAttributes.itemUnitPrice}"/>	</th>	
                 <th  class="neutral" ><kul:htmlAttributeLabel attributeEntry="${itemAttributes.totalAmount}"/>	</th>		
 				
-				<th align=left class="neutral" >Action</th>
+				<th align=center class="neutral" >Action</th>
 			</tr>
 			
 			<tr>
@@ -128,7 +128,7 @@
 					
 				<td valign="center" class="neutral">
 				    <div align="center">
-				        <html:image property="methodToCall.addItem" src="${ConfigProperties.externalizable.images.url}tinybutton-save.gif" alt="Insert an Item" title="Add an Item" styleClass="tinybutton" tabindex="${tabindexOverrideBase + 0}"/>
+				        <html:image property="methodToCall.addItem" src="${ConfigProperties.externalizable.images.url}tinybutton-additem.gif" alt="Add an Item" title="Add an Item" styleClass="tinybutton" tabindex="${tabindexOverrideBase + 0}"/>
 				    </div>
 				</td>				
 			</tr>

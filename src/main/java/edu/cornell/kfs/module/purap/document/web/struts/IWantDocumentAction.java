@@ -431,6 +431,25 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         IWantDocumentForm iWantForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantForm.getIWantDocument();
+        
+        //add new item and new accounting line if not empty
+        IWantItem item = iWantForm.getNewIWantItemLine();
+        if(StringUtils.isNotBlank(item.getItemDescription()) || item.getItemUnitPrice() != null || item.getItemQuantity()!= null){
+            boolean added = addNewItem(iWantForm, iWantDocument, item);
+            
+            if(!added){
+                return mapping.findForward(RiceConstants.MAPPING_BASIC);
+            }
+        }
+        
+        IWantAccount account = iWantForm.getNewSourceLine();
+        if(StringUtils.isNotBlank(account.getAccountNumber()) || StringUtils.isNotBlank(account.getSubAccountNumber()) || StringUtils.isNotBlank(account.getFinancialObjectCode()) || StringUtils.isNotBlank(account.getFinancialSubObjectCode()) || StringUtils.isNotBlank(account.getProjectCode()) || StringUtils.isNotBlank(account.getOrganizationReferenceId())){
+            boolean added = addNewAccount(iWantForm, iWantDocument, account);
+            
+            if(!added){
+                return mapping.findForward(RiceConstants.MAPPING_BASIC);
+            }
+        }
 
         KualiRuleService ruleService = SpringContext.getBean(KualiRuleService.class);
         boolean rulePassed = true;
@@ -492,21 +511,13 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
      */
     public ActionForward addItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
+        
         IWantDocumentForm iWantDocumentForm = (IWantDocumentForm) form;
-        IWantItem item = iWantDocumentForm.getNewIWantItemLine();
         IWantDocument iWantDocument = (IWantDocument) iWantDocumentForm.getDocument();
-
-        KualiRuleService ruleService = SpringContext.getBean(KualiRuleService.class);
-        boolean rulePassed = true;
-
-        // call business rules
-        rulePassed &= ruleService.applyRules(new AddIWantItemEvent(StringUtils.EMPTY, iWantDocument, item));
-
-        if (rulePassed) {
-            item = iWantDocumentForm.getAndResetNewIWantItemLine();
-            iWantDocument.addItem(item);
-        }
-
+        IWantItem item = iWantDocumentForm.getNewIWantItemLine();
+        
+        addNewItem(iWantDocumentForm, iWantDocument, item);
+        
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
@@ -559,19 +570,11 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     public ActionForward addAccountingLine(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         IWantDocumentForm iWantDocumentForm = (IWantDocumentForm) form;
-        IWantAccount account = iWantDocumentForm.getNewSourceLine();
         IWantDocument iWantDoc = (IWantDocument) iWantDocumentForm.getDocument();
-
-        KualiRuleService ruleService = SpringContext.getBean(KualiRuleService.class);
-        boolean rulePassed = true;
-
-        rulePassed &= ruleService.applyRules(new KualiAddLineEvent(iWantDoc, "accounts", account));
-
-        if (rulePassed) {
-            account = iWantDocumentForm.getAndResetNewIWantAccountLine();
-            iWantDoc.addAccount(account);
-        }
-
+        IWantAccount account = iWantDocumentForm.getNewSourceLine();
+        
+        addNewAccount(iWantDocumentForm, iWantDoc, account);
+        
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
@@ -607,6 +610,25 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+        
+        //add new item and new accounting line if not empty
+        IWantItem item = iWantDocForm.getNewIWantItemLine();
+        if(StringUtils.isNotBlank(item.getItemDescription()) || item.getItemUnitPrice() != null || item.getItemQuantity()!= null){
+            boolean added = addNewItem(iWantDocForm, iWantDocument, item);
+            
+            if(!added){
+                return mapping.findForward(RiceConstants.MAPPING_BASIC);
+            }
+        }
+        
+        IWantAccount account = iWantDocForm.getNewSourceLine();
+        if(StringUtils.isNotBlank(account.getAccountNumber()) || StringUtils.isNotBlank(account.getSubAccountNumber()) || StringUtils.isNotBlank(account.getFinancialObjectCode()) || StringUtils.isNotBlank(account.getFinancialSubObjectCode()) || StringUtils.isNotBlank(account.getProjectCode()) || StringUtils.isNotBlank(account.getOrganizationReferenceId())){
+            boolean added = addNewAccount(iWantDocForm, iWantDocument, account);
+            
+            if(!added){
+                return mapping.findForward(RiceConstants.MAPPING_BASIC);
+            }
+        }  
 
         iWantDocument.setExplanation(iWantDocument.getDocumentHeader().getExplanation());
 
@@ -837,6 +859,25 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         ActionForward actionForward = super.save(mapping, form, request, response);
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+        
+        //add new item and new accounting line if not empty
+        IWantItem item = iWantDocForm.getNewIWantItemLine();
+        if(StringUtils.isNotBlank(item.getItemDescription()) || item.getItemUnitPrice() != null || item.getItemQuantity()!= null){
+            boolean added = addNewItem(iWantDocForm, iWantDocument, item);
+            
+            if(!added){
+                return mapping.findForward(RiceConstants.MAPPING_BASIC);
+            }
+        }
+        
+        IWantAccount account = iWantDocForm.getNewSourceLine();
+        if(StringUtils.isNotBlank(account.getAccountNumber()) || StringUtils.isNotBlank(account.getSubAccountNumber()) || StringUtils.isNotBlank(account.getFinancialObjectCode()) || StringUtils.isNotBlank(account.getFinancialSubObjectCode()) || StringUtils.isNotBlank(account.getProjectCode()) || StringUtils.isNotBlank(account.getOrganizationReferenceId())){
+            boolean added = addNewAccount(iWantDocForm, iWantDocument, account);
+            
+            if(!added){
+                return mapping.findForward(RiceConstants.MAPPING_BASIC);
+            }
+        }
 
         iWantDocument.setExplanation(iWantDocument.getDocumentHeader().getExplanation());
 
@@ -845,6 +886,38 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         }
 
         return actionForward;
+    }
+    
+    private boolean addNewAccount(IWantDocumentForm iWantDocumentForm, IWantDocument iWantDoc, IWantAccount account){
+
+        KualiRuleService ruleService = SpringContext.getBean(KualiRuleService.class);
+        boolean acctRulesPassed = true;
+
+        acctRulesPassed &= ruleService.applyRules(new KualiAddLineEvent(iWantDoc, "accounts", account));
+
+        if (acctRulesPassed) {
+            account = iWantDocumentForm.getAndResetNewIWantAccountLine();
+            iWantDoc.addAccount(account);
+        }  
+        
+        return acctRulesPassed;
+        
+    }
+    
+    private boolean addNewItem(IWantDocumentForm iWantDocumentForm, IWantDocument iWantDoc, IWantItem item){
+
+        KualiRuleService ruleService = SpringContext.getBean(KualiRuleService.class);
+        boolean rulePassed = true;
+
+        // call business rules
+        rulePassed &= ruleService.applyRules(new AddIWantItemEvent(StringUtils.EMPTY, iWantDoc, item));
+
+        if (rulePassed) {
+            item = iWantDocumentForm.getAndResetNewIWantItemLine();
+            iWantDoc.addItem(item);
+        }
+        
+        return rulePassed;
     }
 
 }
