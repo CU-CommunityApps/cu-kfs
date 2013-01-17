@@ -1009,6 +1009,8 @@
         <dd:field attributeName="extension.programCode"/>
         <dd:field attributeName="extension.appropriationAccountNumber"/>
         <dd:field attributeName="extension.majorReportingCategoryCode"/>
+        <dd:field attributeName="accountManagerUser.principalName"/>         <!-- KFSPTS-1716: search field added -->
+        <dd:field attributeName="accountSupervisoryUser.principalName"/>     <!-- KFSPTS-1716: search field added -->
         <dd:field attributeName="accountFiscalOfficerUser.principalName"/>        
         <dd:field attributeName="closed" defaultValue="N"/>
       </list>
