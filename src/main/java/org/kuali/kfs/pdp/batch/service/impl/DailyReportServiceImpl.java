@@ -107,7 +107,7 @@ public class DailyReportServiceImpl implements DailyReportService {
             for (Iterator iter = data.iterator(); iter.hasNext();) {
                 DailyReport dr = (DailyReport) iter.next();
 
-                if ( ! rows ) {
+                if ( ! rows ) { // Only happens first time through
                     rows = true;
                     sortTotal = new DailyReport(dr);
                     sortTotal.addRow(dr);
