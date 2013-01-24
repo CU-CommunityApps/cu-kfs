@@ -6,9 +6,11 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO;
 import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kns.document.Copyable;
 import org.kuali.rice.kns.exception.ValidationException;
@@ -18,10 +20,9 @@ import org.kuali.rice.kns.util.TypedArrayList;
 
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
+import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 
 public class IWantDocument extends FinancialSystemTransactionalDocumentBase implements Copyable, AmountTotaling {
-    // Person Data section: initiator and deliver to
-    //TODO: possible to use Person?
 
     private String step;
 
@@ -63,19 +64,19 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private String departmentLevelOrganization;
 
     private boolean useCollegeAndDepartmentAsDefault;
-    
+
     private boolean setDeliverToInfoAsDefault;
 
     private String attachmentDescription;
     private String noteLabel;
-    
+
     private String completeOption;
     private boolean completed;
 
     // routing fields
     private String routingChart;
     private String routingOrganization;
-    
+
     //adhoc routing
     private String currentRouteToNetId;
 
@@ -101,7 +102,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     // Will service be performed on Campus: yes/no drop down box
     private boolean servicePerformedOnCampus;
-    
+
     private KualiDecimal accountingLinesTotal;
 
     private String explanation;
@@ -436,9 +437,8 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         items.add(itemLinePosition, item);
         renumberItems(itemLinePosition);
-        
+
     }
-    
 
     public void renumberItems(int start) {
         for (int i = start; i < items.size(); i++) {
@@ -647,32 +647,31 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         KualiDecimal accountTotal = KualiDecimal.ZERO;
 
         for (IWantAccount accountLine : accounts) {
-            
+
             // if amount
-            if(CUPurapConstants.AMOUNT.equalsIgnoreCase(accountLine.getUseAmountOrPercent())){
-                if (accountLine.getAmountOrPercent() !=null) {
+            if (CUPurapConstants.AMOUNT.equalsIgnoreCase(accountLine.getUseAmountOrPercent())) {
+                if (accountLine.getAmountOrPercent() != null) {
                     accountTotal = accountLine.getAmountOrPercent();
                 } else {
                     accountTotal = KualiDecimal.ZERO;
                 }
             }
-            
+
             //if percent
-            if(CUPurapConstants.PERCENT.equalsIgnoreCase(accountLine.getUseAmountOrPercent())){
-                if (accountLine.getAmountOrPercent() !=null) {
-                    if(totalDollarAmount !=null){
-                        
-                    accountTotal = (accountLine.getAmountOrPercent().multiply(getTotalDollarAmount())).divide(new KualiDecimal(100));
-                    }
-                    else
-                    {
+            if (CUPurapConstants.PERCENT.equalsIgnoreCase(accountLine.getUseAmountOrPercent())) {
+                if (accountLine.getAmountOrPercent() != null) {
+                    if (totalDollarAmount != null) {
+
+                        accountTotal = (accountLine.getAmountOrPercent().multiply(getTotalDollarAmount()))
+                                .divide(new KualiDecimal(100));
+                    } else {
                         accountTotal = KualiDecimal.ZERO;
                     }
                 } else {
                     accountTotal = KualiDecimal.ZERO;
                 }
             }
-            
+
             totalDollarAmount = totalDollarAmount.add(accountTotal);
         }
 
@@ -698,13 +697,12 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     public void setCompleted(boolean completed) {
         this.completed = completed;
     }
-    
+
     @Override
     public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
-        if("Y".equalsIgnoreCase(completeOption)){
+        if ("Y".equalsIgnoreCase(completeOption)) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
         //return completed;
@@ -732,6 +730,24 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     public void setSetDeliverToInfoAsDefault(boolean setDeliverToInfoAsDefault) {
         this.setDeliverToInfoAsDefault = setDeliverToInfoAsDefault;
+    }
+
+    /**
+     * Override this method to send out an email to the initiator when the document reached the final status.
+     * 
+     * @see org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase#doRouteStatusChange(org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO)
+     */
+    @Override
+    public void doRouteStatusChange(DocumentRouteStatusChangeDTO statusChangeEvent) {
+        
+        super.doRouteStatusChange(statusChangeEvent);
+
+        if (getDocumentHeader().getWorkflowDocument().stateIsFinal()) {
+
+            IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
+            iWantDocumentService.sendDocumentFinalizedMessage(this);
+        }
+
     }
 
 }

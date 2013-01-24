@@ -107,6 +107,15 @@
     	<property name="collegeLevelOrganizationDao">
 			<ref bean="collegeLevelOrganizationDao" />
 		</property>
+		<property name="mailService">
+			<ref bean="mailService" />
+		</property>
+		<property name="personService">
+			<ref bean="personService" />
+		</property>
+		<property name="documentTypeService">
+			<ref bean="enDocumentTypeService" />
+		</property>
 	</bean>
 	
 	<!-- Lookupables -->
