@@ -63,6 +63,7 @@
         <li><portal:portalLink displayTitle="true" title="Requisition" url="purapRequisition.do?methodToCall=docHandler&command=initiate&docTypeName=REQS" /></li>
         <li><portal:portalLink displayTitle="true" title="e-SHOP" url="b2b.do?methodToCall=shopCatalogs" /></li>
         <li><portal:portalLink displayTitle="true" title="Vendor Credit Memo" url="purapVendorCreditMemo.do?methodToCall=docHandler&command=initiate&docTypeName=CM" /></li>
+    	<li><portal:portalLink displayTitle="true" title="I Want" url="purapIWant.do?methodToCall=docHandler&command=initiate&docTypeName=IWNT&step=customerDataStep" /></li>    
     </ul>
 </div>
 <channel:portalChannelBottom />
