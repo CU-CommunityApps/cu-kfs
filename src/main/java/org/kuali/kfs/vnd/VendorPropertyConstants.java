@@ -81,7 +81,9 @@ public class VendorPropertyConstants {
     public static final String VENDOR_ALIAS_NAME = "vendorAliasName";
     public static final String VENDOR_ALIAS_NAME_FULL_PATH = "vendorAliases.vendorAliasName";
     public static final String VENDOR_ALIAS_ACTIVE = "vendorAliases.active";
-
+    // kfsmi-8525 fix.  Since this file is in cu-kfs, so can't put this fix in cu-kfs-4.0-fixes
+    public static final String VENDOR_SEARCH_ALIASES = "vendorAliases";
+    
     public static final String CONTRACT_LANGUAGE_CREATE_DATE = "contractLanguageCreateDate";
 
     // Vendor contracts
