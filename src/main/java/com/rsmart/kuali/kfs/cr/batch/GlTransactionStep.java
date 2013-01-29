@@ -25,8 +25,10 @@ import java.util.Map;
 
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.businessobject.PaymentStatus;
+import org.kuali.kfs.pdp.service.PendingTransactionService;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.businessobject.Bank;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kns.bo.KualiCode;
 import org.kuali.rice.kns.service.BusinessObjectService;
 
@@ -88,7 +90,12 @@ public class GlTransactionStep extends AbstractStep {
                 else {
                     for (PaymentGroup paymentGroup : paymentGroups) {
                         glTransactionService.generateGlPendingTransactionStop(paymentGroup);
-                    
+                        
+                        //Create cancelation offsets for STOPed checks. KFSPTS-1741
+                        PendingTransactionService glPendingTransactionService = SpringContext.getBean(PendingTransactionService.class);
+                        glPendingTransactionService.generateCancellationGeneralLedgerPendingEntry(paymentGroup);
+                        //
+                        
                         KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
                         if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
                             paymentGroup.setPaymentStatus((PaymentStatus) code);
