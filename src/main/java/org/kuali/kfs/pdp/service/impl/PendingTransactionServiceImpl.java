@@ -64,6 +64,8 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
     protected static String FDOC_TYP_CD_CANCEL_REISSUE_CHECK = "CHKR";
     protected static String FDOC_TYP_CD_CANCEL_ACH = "ACHC";
     protected static String FDOC_TYP_CD_CANCEL_CHECK = "CHKC";
+    protected static String FDOC_TYP_CD_STOP_CHECK = "CHKS";
+
 
     private PendingTransactionDao glPendingTransactionDao;
     private AccountingPeriodService accountingPeriodService;
@@ -89,6 +91,13 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
      */
     public void generateCancellationGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
         this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, FDOC_TYP_CD_CANCEL_ACH, FDOC_TYP_CD_CANCEL_CHECK, true);
+    }
+    
+    /**
+     * @see org.kuali.kfs.pdp.service.PendingTransactionService#generateCancellationGeneralLedgerPendingEntry(org.kuali.kfs.pdp.businessobject.PaymentGroup)
+     */
+    public void generateStopGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
+        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, FDOC_TYP_CD_CANCEL_ACH, FDOC_TYP_CD_STOP_CHECK, true);
     }
 
     /**
