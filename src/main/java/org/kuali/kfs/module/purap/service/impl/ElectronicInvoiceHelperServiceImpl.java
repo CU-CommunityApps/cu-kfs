@@ -711,8 +711,23 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
     protected void setVendorDetails(ElectronicInvoice eInvoice){
         
         if (StringUtils.isNotEmpty(eInvoice.getDunsNumber())){
+        	// based on code found in this class
+        	// Marcia mentioned that each einvoice just for one po.
+        	String poID = eInvoice.getInvoiceDetailOrders().get(0).getOrderReferenceOrderID();
+            PurchaseOrderDocument po = null;
             
-            VendorDetail vendorDetail = vendorService.getVendorByDunsNumber(eInvoice.getDunsNumber());
+            VendorDetail vendorDetail = null;
+            if (NumberUtils.isDigits(StringUtils.defaultString(poID))){
+                po = purchaseOrderService.getCurrentPurchaseOrder(new Integer(poID));    
+            }
+            if (po != null) {
+                vendorDetail = vendorService.getVendorDetail(po.getVendorHeaderGeneratedIdentifier(), po.getVendorDetailAssignedIdentifier());
+                if (vendorDetail == null) {
+                    vendorDetail = vendorService.getVendorByDunsNumber(eInvoice.getDunsNumber());
+                }
+            } else {
+               vendorDetail = vendorService.getVendorByDunsNumber(eInvoice.getDunsNumber());
+            }
             
             if (vendorDetail != null) {
                 if (LOG.isInfoEnabled()){
@@ -739,7 +754,17 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         
         if (StringUtils.isNotEmpty(rejectDocument.getVendorDunsNumber())){
             
-            VendorDetail vendorDetail = vendorService.getVendorByDunsNumber(rejectDocument.getVendorDunsNumber());
+            PurchaseOrderDocument po = rejectDocument.getCurrentPurchaseOrderDocument();
+            
+            VendorDetail vendorDetail = null;
+            if (po != null){
+                vendorDetail = vendorService.getVendorDetail(po.getVendorHeaderGeneratedIdentifier(), po.getVendorDetailAssignedIdentifier());
+                if (vendorDetail == null) {
+                    vendorDetail = vendorService.getVendorByDunsNumber(rejectDocument.getVendorDunsNumber());
+                }
+            } else {
+               vendorDetail = vendorService.getVendorByDunsNumber(rejectDocument.getVendorDunsNumber());
+            }
             
             if (vendorDetail != null) {
                 if (LOG.isInfoEnabled()){
