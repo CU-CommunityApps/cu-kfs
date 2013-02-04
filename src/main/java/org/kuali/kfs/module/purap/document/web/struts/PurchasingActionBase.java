@@ -16,6 +16,7 @@
 package org.kuali.kfs.module.purap.document.web.struts;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -67,6 +68,7 @@ import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.validation.event.AddAccountingLineEvent;
+import org.kuali.kfs.sys.identity.KfsKimAttributes;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -75,6 +77,15 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.kew.exception.WorkflowException;
+import org.kuali.rice.kew.util.KEWConstants;
+import org.kuali.rice.kim.bo.entity.KimPrincipal;
+import org.kuali.rice.kim.bo.group.dto.GroupInfo;
+import org.kuali.rice.kim.bo.types.dto.AttributeSet;
+import org.kuali.rice.kim.service.GroupService;
+import org.kuali.rice.kim.service.IdentityManagementService;
+import org.kuali.rice.kim.service.RoleManagementService;
+import org.kuali.rice.kns.bo.AdHocRoutePerson;
+import org.kuali.rice.kns.bo.AdHocRouteWorkgroup;
 import org.kuali.rice.kns.bo.Note;
 import org.kuali.rice.kns.document.Document;
 import org.kuali.rice.kns.question.ConfirmationQuestion;
@@ -1330,13 +1341,132 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 
             return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
-        
+        if (purDoc instanceof PurchaseOrderAmendmentDocument) {
+        	// prevent initiator to adhoc person for member of the group for approval
+        	boolean isAdHocPerson = isAddHocToFO((PurchaseOrderAmendmentDocument)purDoc);
+        	boolean isAdHocgroup = isAddHocToFOInGroup((PurchaseOrderAmendmentDocument)purDoc);
+        	if (isAdHocPerson || isAdHocgroup) {
+                return mapping.findForward(KFSConstants.MAPPING_BASIC);
+        	}
+        }
         // call prorateDiscountTradeIn
         SpringContext.getBean(PurapService.class).prorateForTradeInAndFullOrderDiscount(purDoc);
 
         return super.route(mapping, form, request, response);
     }
 
+    /*
+     * check if adhocroute person is a fiscal officer
+     */
+	private boolean isAddHocToFO(PurchaseOrderAmendmentDocument purDoc) {
+
+        boolean isAdhocToFO = false;
+		if (StringUtils.equals(purDoc.getDocumentHeader().getWorkflowDocument()
+				.getInitiatorPrincipalId(), GlobalVariables.getUserSession().getPrincipalId())) {
+			List<String> adHocIds = new ArrayList<String>();
+			for (AdHocRoutePerson person : purDoc.getAdHocRoutePersons()) {
+				if (KEWConstants.ACTION_REQUEST_APPROVE_REQ.equals(person.getActionRequested())) {
+					KimPrincipal principal = SpringContext.getBean(IdentityManagementService.class)
+							.getPrincipalByPrincipalName(person.getId());
+					if (principal != null) {
+						adHocIds.add(principal.getPrincipalId());
+					}
+				} else {
+					adHocIds.add(null);
+				}
+			}
+			if (!adHocIds.isEmpty()) {
+				for (String principalId : getFiscalOfficers(purDoc)) {
+					int idx = getRowIdx(adHocIds, principalId);
+					if (idx >= 0) {
+			            GlobalVariables.getMessageMap().putError("adHocRoutePerson["+idx+"].id", CUPurapKeyConstants.ERROR_POA_INITIATOR_CANNOT_ADHOC_TO_FO);
+						isAdhocToFO = true;
+					}
+				}
+			}
+		}
+		return isAdhocToFO;
+	}
+
+	/* 
+	 * check if the members in the adhocroute group is an fiscal officer
+	 */
+	private boolean isAddHocToFOInGroup(PurchaseOrderAmendmentDocument purDoc) {
+
+		boolean isAdhocToFO = false;
+		if (StringUtils.equals(purDoc.getDocumentHeader().getWorkflowDocument()
+				.getInitiatorPrincipalId(), GlobalVariables.getUserSession().getPrincipalId())) {
+			List<String> adHocIds = new ArrayList<String>();
+			int i = 0;
+			List<String> fiscalOfficers = getFiscalOfficers(purDoc);
+			if (!fiscalOfficers.isEmpty()) {
+				for (AdHocRouteWorkgroup workGroup : purDoc.getAdHocRouteWorkgroups()) {
+					if (KEWConstants.ACTION_REQUEST_APPROVE_REQ.equals(workGroup.getActionRequested())) {
+						GroupInfo groupInfo = SpringContext.getBean(GroupService.class).getGroupInfoByName(
+								workGroup.getRecipientNamespaceCode(),workGroup.getRecipientName());
+						List<String> memberIds = SpringContext.getBean(GroupService.class).getMemberPrincipalIds(
+								groupInfo.getGroupId());
+						if (CollectionUtils.isNotEmpty(memberIds)) {
+							for (String principalId : fiscalOfficers) {
+								if (memberIds.contains(principalId)) {
+									GlobalVariables.getMessageMap().putError(
+													"adHocRouteWorkgroup[" + i + "].recipientName",
+													CUPurapKeyConstants.ERROR_POA_INITIATOR_CANNOT_ADHOC_TO_FO);
+									isAdhocToFO = true;
+									break;
+								}
+							}
+						}
+						i++;
+					}
+				}
+			}
+		}
+		return isAdhocToFO;
+	}
+
+	/*
+	 * helper method to get the index for error mapping
+	 */
+    private int getRowIdx(List<String> adHocIds, String principalId) {
+        int idx = 0;
+        
+        for (String id : adHocIds) {
+        	if (StringUtils.equals(id, principalId)) {
+        		return idx;
+        	}
+        	idx++;
+        }
+        return -1;
+    }
+    
+    /*
+     * get fiscal offers for all accounting lines in this POA
+     */
+	private List<String> getFiscalOfficers(
+			PurchaseOrderAmendmentDocument document) {
+
+		List<String> roleIds = new ArrayList<String>();
+		List<String> fiscalOfficers = new ArrayList<String>();
+		roleIds.add(SpringContext.getBean(RoleManagementService.class).getRoleIdByName(KFSConstants.ParameterNamespaces.KFS,
+						KFSConstants.SysKimConstants.FISCAL_OFFICER_KIM_ROLE_NAME));
+			for (SourceAccountingLine accountingLine : (List<SourceAccountingLine>)document.getSourceAccountingLines()) {
+
+				AttributeSet roleQualifier = new AttributeSet();
+				roleQualifier.put(KfsKimAttributes.DOCUMENT_NUMBER,document.getDocumentNumber());
+				roleQualifier.put(KfsKimAttributes.DOCUMENT_TYPE_NAME, document.getDocumentHeader().getWorkflowDocument().getDocumentType());
+				roleQualifier.put(KfsKimAttributes.FINANCIAL_DOCUMENT_TOTAL_AMOUNT,
+						document.getDocumentHeader().getFinancialDocumentTotalAmount().toString());
+				roleQualifier.put(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE,accountingLine.getChartOfAccountsCode());
+				roleQualifier.put(KfsKimAttributes.ACCOUNT_NUMBER,accountingLine.getAccountNumber());
+			    fiscalOfficers.addAll(SpringContext.getBean(RoleManagementService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
+						KFSConstants.SysKimConstants.FISCAL_OFFICER_KIM_ROLE_NAME, roleQualifier));
+
+			}
+
+		return fiscalOfficers;
+	}
+    
     /**
      * Overrides the superclass method so that it will also do proration for trade in and full order discount when the user clicks
      * on the approve button.
