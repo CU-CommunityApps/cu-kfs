@@ -1446,10 +1446,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 	private List<String> getFiscalOfficers(
 			PurchaseOrderAmendmentDocument document) {
 
-		List<String> roleIds = new ArrayList<String>();
 		List<String> fiscalOfficers = new ArrayList<String>();
-		roleIds.add(SpringContext.getBean(RoleManagementService.class).getRoleIdByName(KFSConstants.ParameterNamespaces.KFS,
-						KFSConstants.SysKimConstants.FISCAL_OFFICER_KIM_ROLE_NAME));
 			for (SourceAccountingLine accountingLine : (List<SourceAccountingLine>)document.getSourceAccountingLines()) {
 
 				AttributeSet roleQualifier = new AttributeSet();
@@ -1461,6 +1458,10 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 				roleQualifier.put(KfsKimAttributes.ACCOUNT_NUMBER,accountingLine.getAccountNumber());
 			    fiscalOfficers.addAll(SpringContext.getBean(RoleManagementService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
 						KFSConstants.SysKimConstants.FISCAL_OFFICER_KIM_ROLE_NAME, roleQualifier));
+			    fiscalOfficers.addAll(SpringContext.getBean(RoleManagementService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
+						KFSConstants.SysKimConstants.FISCAL_OFFICER_PRIMARY_DELEGATE_KIM_ROLE_NAME, roleQualifier));
+			    fiscalOfficers.addAll(SpringContext.getBean(RoleManagementService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
+						KFSConstants.SysKimConstants.FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME, roleQualifier));
 
 			}
 
