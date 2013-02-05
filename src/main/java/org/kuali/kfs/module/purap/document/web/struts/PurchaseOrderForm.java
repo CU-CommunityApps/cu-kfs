@@ -914,7 +914,7 @@ public class PurchaseOrderForm extends PurchasingFormBase {
             extraButtons.add((ExtraButton) buttonsMap.get("methodToCall.removeHoldPo"));
         }
 
-        if (canCreateReceiving()) {
+        if (canCreateReceiving() && !isNoQtyOrder()) {
             extraButtons.add((ExtraButton) buttonsMap.get("methodToCall.createReceivingLine"));
         }
 
@@ -942,6 +942,23 @@ public class PurchaseOrderForm extends PurchasingFormBase {
         
         return extraButtons;
     }
+    
+    /*
+     * Check if this po is for 'No Qty', then hide 'receiving' button if it is.s
+     */
+    private boolean isNoQtyOrder() {
+        boolean isNoQtyOrderOnly = true;
+        
+        for (PurApItem item : (List<PurApItem>)getPurchaseOrderDocument().getItems()) {
+        	 if(PurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE.equalsIgnoreCase(item.getItemTypeCode())) {
+        		 isNoQtyOrderOnly = false;
+        		 break;
+        	 }
+        	
+        }
+        return isNoQtyOrderOnly;
+    }
+    
 
 }
 
