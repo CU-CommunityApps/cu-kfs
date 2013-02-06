@@ -20,4 +20,6 @@ public class CUPurapKeyConstants extends PurapKeyConstants {
     public static final String ERROR_IWNT_CONMPLETE_ORDER_OPTION_REQUIRED = "error.iWant.document.completeOption.required";
     public static final String ERROR_POA_INITIATOR_CANNOT_ADHOC_TO_FO = "error.poa.initiator.cannot.adhoc.to.fo";
     public static final String ERROR_RECEIVING_NOT_ALLOWED_FOR_NON_QTY_PO = "error.receiving.not.allowed.for.noqty.pos";
+    public static final String ERROR_RECEIVING_LINE_QTYRECEIVED_GT_QTYORDERED = "errors.receivingLine.quantityReceivedGreaterThanQuantityordered";
+    public static final String ERROR_ADD_NEW_RECEIVING_LINE = "errors.add.new.receivingLine";
 }
