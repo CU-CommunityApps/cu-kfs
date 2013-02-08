@@ -523,6 +523,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
                  * the same row needs to be written as a actual budget item we change only the balance type and the sequence number
                  */
                 newRow.setFinancialBalanceTypeCode(KFSConstants.BALANCE_TYPE_ACTUAL);
+                newRow.setUniversityFiscalPeriodCode(KFSConstants.MONTH1);
                 newRow.setTransactionLedgerEntrySequenceNumber(daoGlobalVariables.getNextSequenceNumber(incomingDocumentNumber));
                 
                 if(pbgl.getAccountLineAnnualBalanceAmount().kualiDecimalValue().isLessThan(KualiDecimal.ZERO) ) {
