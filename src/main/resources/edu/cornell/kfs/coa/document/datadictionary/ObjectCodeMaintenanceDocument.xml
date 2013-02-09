@@ -84,6 +84,7 @@
         <bean parent="MaintainableFieldDefinition" p:name="financialObjectLevelCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="financialObjectSubTypeCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="extension.sunyObjectCode" />
+        <bean parent="MaintainableFieldDefinition" p:name="extension.financialObjectCodeDescr" />
         <bean parent="MaintainableFieldDefinition" p:name="extension.cgReportingCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="historicalFinancialObjectCode"/>
         <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>

@@ -75,6 +75,7 @@
         <bean parent="MaintainableFieldDefinition" p:name="cgReportingCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="financialObjectSubTypeCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="sunyObjectCode" />
+        <bean parent="MaintainableFieldDefinition" p:name="financialObjectCodeDescr" />
         <bean parent="MaintainableFieldDefinition" p:name="historicalFinancialObjectCode"/>
         <bean parent="MaintainableFieldDefinition" p:name="financialObjectActiveIndicator" p:defaultValue="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="financialBudgetAggregationCd" p:required="true"/>

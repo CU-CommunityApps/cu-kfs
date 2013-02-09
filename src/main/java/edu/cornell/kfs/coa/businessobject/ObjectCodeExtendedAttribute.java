@@ -26,6 +26,7 @@ public class ObjectCodeExtendedAttribute extends YearEndPersistableBusinessObjec
     private String financialObjectCode;
     private String sunyObjectCode;
     private String cgReportingCode;
+    private String financialObjectCodeDescr;
     
     private ContractGrantReportingCode contractGrantReportingCode;
     
@@ -72,6 +73,18 @@ public class ObjectCodeExtendedAttribute extends YearEndPersistableBusinessObjec
 	 */
 	public void setSunyObjectCode(String sunyObjectCode) {
 		this.sunyObjectCode = sunyObjectCode;
+	}
+	/**
+	 * @return the financialObjectCodeDescr
+	 */
+	public String getFinancialObjectCodeDescr() {
+		return financialObjectCodeDescr;
+	}
+	/**
+	 * @param financialObjectCodeDescr the financialObjectCodeDescr to set
+	 */
+	public void setFinancialObjectCodeDescr(String financialObjectCodeDescr) {
+		this.financialObjectCodeDescr = financialObjectCodeDescr;
 	}
 	/**
 	 * @return the contractGrantReportingCode

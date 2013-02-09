@@ -46,6 +46,7 @@
         <ref bean="ObjectCode-financialFederalFundedCode"/>
         <ref bean="ObjectCode-nextYearFinancialObjectCode"/>      
         <ref bean="ObjectCode-extension-sunyObjectCode"/>
+        <ref bean="ObjectCode-extension-financialObjectCodeDescr"/> 
         <ref bean="ObjectCode-extension-contractGrantReportingCode-cgReportingCode"/>
       </list>
     </property>
@@ -197,6 +198,12 @@
   <bean id="ObjectCode-extension-sunyObjectCode-parentBean" abstract="true" parent="ObjectCodeExtendedAttribute-sunyObjectCode">
     <property name="name" value="extension.sunyObjectCode"/>
   </bean>
+  
+<bean id="ObjectCode-extension-financialObjectCodeDescr" parent="ObjectCode-extension-financialObjectCodeDescr-parentBean"/>
+  <bean id="ObjectCode-extension-financialObjectCodeDescr-parentBean" abstract="true" parent="ObjectCodeExtendedAttribute-financialObjectCodeDescr">
+    <property name="name" value="extension.financialObjectCodeDescr"/>
+  </bean>
+  
 
   <bean id="ObjectCode-extension-contractGrantReportingCode-cgReportingCode" parent="ObjectCode-extension-contractGrantReportingCode-cgReportingCode-parentBean"/>
   <bean id="ObjectCode-extension-contractGrantReportingCode-cgReportingCode-parentBean" abstract="true" parent="ObjectCodeExtendedAttribute-cgReportingCode" >
@@ -229,6 +236,7 @@
               <bean parent="FieldDefinition" p:attributeName="extension.cgReportingCode"/>
               <bean parent="FieldDefinition" p:attributeName="financialObjectSubTypeCode"/>
               <bean parent="FieldDefinition" p:attributeName="extension.sunyObjectCode"/>
+              <bean parent="FieldDefinition" p:attributeName="extension.financialObjectCodeDescr"/> 
               <bean parent="FieldDefinition" p:attributeName="historicalFinancialObjectCode"/>
               <bean parent="FieldDefinition" p:attributeName="active"/>
               <bean parent="FieldDefinition" p:attributeName="financialBudgetAggregationCd"/>
@@ -271,6 +279,7 @@
         <bean parent="FieldDefinition" p:attributeName="financialObjectTypeCode"/>
         <bean parent="FieldDefinition" p:attributeName="financialObjectSubTypeCode"/>
         <bean parent="FieldDefinition" p:attributeName="extension.sunyObjectCode"/>
+        <bean parent="FieldDefinition" p:attributeName="extension.financialObjectCodeDescr"/> 
         <bean parent="FieldDefinition" p:attributeName="historicalFinancialObjectCode"/>
         <bean parent="FieldDefinition" p:attributeName="financialBudgetAggregationCd"/>
         <bean parent="FieldDefinition" p:defaultValue="Y" p:attributeName="active"/>
@@ -286,6 +295,7 @@
         <bean parent="FieldDefinition" p:attributeName="extension.cgReportingCode"/>
         <bean parent="FieldDefinition" p:attributeName="financialObjectTypeCode"/>
         <bean parent="FieldDefinition" p:attributeName="extension.sunyObjectCode"/>
+        <bean parent="FieldDefinition" p:attributeName="extension.financialObjectCodeDescr"/> 
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
     </property>

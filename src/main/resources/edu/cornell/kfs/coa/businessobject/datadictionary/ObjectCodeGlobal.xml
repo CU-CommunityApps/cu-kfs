@@ -38,6 +38,7 @@
         <ref bean="ObjectCodeGlobal-financialFederalFundedCode"/>
         <ref bean="ObjectCodeGlobal-nextYearFinancialObjectCode"/>
         <ref bean="ObjectCodeGlobal-sunyObjectCode"/>
+        <ref bean="ObjectCodeGlobal-financialObjectCodeDescr"/>
         <ref bean="ObjectCodeGlobal-code"/> 
         <ref bean="ObjectCodeGlobal-cgReportingCode"/>       
       </list>
@@ -110,6 +111,9 @@
   
   <bean id="ObjectCodeGlobal-sunyObjectCode" parent="ObjectCodeGlobal-sunyObjectCode-parentBean"/>
   <bean id="ObjectCodeGlobal-sunyObjectCode-parentBean" abstract="true" parent="ObjectCodeExtendedAttribute-sunyObjectCode" />
+  
+  <bean id="ObjectCodeGlobal-financialObjectCodeDescr" parent="ObjectCodeGlobal-financialObjectCodeDescr-parentBean"/>
+  <bean id="ObjectCodeGlobal-financialObjectCodeDescr-parentBean" abstract="true" parent="ObjectCodeExtendedAttribute-financialObjectCodeDescr" />
   
   <bean id="ObjectCodeGlobal-code" parent="ObjectCodeGlobal-code-parentBean"/>
   <bean id="ObjectCodeGlobal-code-parentBean" abstract="true" parent="ContractGrantReportingCode-code"/>

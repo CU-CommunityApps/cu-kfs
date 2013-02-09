@@ -14,6 +14,7 @@
         <ref bean="ObjectCodeExtendedAttribute-financialObjectCode"/>        
         <ref bean="ObjectCodeExtendedAttribute-sunyObjectCode"/>
         <ref bean="ObjectCodeExtendedAttribute-cgReportingCode"/>
+        <ref bean="ObjectCodeExtendedAttribute-financialObjectCodeDescr"/>
       </list>
     </property>        
   </bean>
@@ -44,6 +45,21 @@
     <property name="maxLength" value="10"/>
     <property name="validationPattern">
       <bean parent="NumericValidationPattern" />
+    </property>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="10"/>
+    </property>
+  </bean>
+  
+  <bean id="ObjectCodeExtendedAttribute-financialObjectCodeDescr" parent="ObjectCodeExtendedAttribute-financialObjectCodeDescr-parentBean"/>
+  <bean id="ObjectCodeExtendedAttribute-financialObjectCodeDescr-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="financialObjectCodeDescr"/>
+    <property name="label" value="Financial Object Code Description"/>
+    <property name="shortLabel" value="Description"/>
+    <property name="required" value="false"/>
+    <property name="maxLength" value="255"/>
+    <property name="validationPattern">
+      <bean parent="AnyCharacterWithWhitespaceValidation" />
     </property>
     <property name="control">
       <bean parent="TextControlDefinition" p:size="10"/>

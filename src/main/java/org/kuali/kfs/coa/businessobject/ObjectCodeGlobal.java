@@ -91,6 +91,9 @@ public class ObjectCodeGlobal extends PersistableBusinessObjectBase implements G
     // prompt table would not show on the ObjectCodeGlobalMaintenanceDocument and the 
     // database value for cgReportingCode would not be returned to the eDoc even though
     // it was saved to the database.
+    
+    private String financialObjectCodeDescr;
+    
     private String cgReportingCode;
     private String code;
     private ContractGrantReportingCode contractGrantReportingCode;
@@ -749,6 +752,7 @@ public class ObjectCodeGlobal extends PersistableBusinessObjectBase implements G
         cuObjectCodeExtendedData.setFinancialObjectCode(financialObjectCode);
         cuObjectCodeExtendedData.setCgReportingCode(update(cgReportingCode, cuObjectCodeExtendedData.getCgReportingCode()));
         cuObjectCodeExtendedData.setSunyObjectCode(update(sunyObjectCode, cuObjectCodeExtendedData.getSunyObjectCode()));
+        cuObjectCodeExtendedData.setFinancialObjectCodeDescr(update(financialObjectCodeDescr, cuObjectCodeExtendedData.getFinancialObjectCodeDescr()));
 
     }
 
@@ -804,6 +808,17 @@ public class ObjectCodeGlobal extends PersistableBusinessObjectBase implements G
 	 */
 	public void setSunyObjectCode(String sunyObjectCode) {
 		this.sunyObjectCode = sunyObjectCode;
+	}
+	
+	public String getFinancialObjectCodeDescr() {
+		return financialObjectCodeDescr;
+	}
+
+	/**
+	 * @param financialObjectCodeDescr the financialObjectCodeDescr to set
+	 */
+	public void setFinancialObjectCodeDescr(String financialObjectCodeDescr) {
+		this.financialObjectCodeDescr = financialObjectCodeDescr;
 	}
 
 	/**

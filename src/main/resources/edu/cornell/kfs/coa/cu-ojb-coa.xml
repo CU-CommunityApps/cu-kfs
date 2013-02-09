@@ -334,9 +334,12 @@
     <field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
     <field-descriptor name="financialObjectCode" column="FIN_OBJECT_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
     <field-descriptor name="sunyObjectCode" column="SUNY_OBJECT_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="financialObjectCodeDescr" column="FIN_OBJ_CD_DESCR" jdbc-type="VARCHAR" />
     <field-descriptor name="cgReportingCode" column="CG_RPT_CD" jdbc-type="VARCHAR" index="true" />
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+    <field-descriptor name="financialObjectCodeDescr" column="FIN_OBJ_CD_DESCR" jdbc-type="VARCHAR" />
+    
     
     <reference-descriptor name="contractGrantReportingCode" class-ref="edu.cornell.kfs.coa.businessobject.ContractGrantReportingCode" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         <foreignkey field-ref="chartOfAccountsCode" />
@@ -490,6 +493,7 @@
     <field-descriptor name="financialFederalFundedCode" column="FIN_FED_FUNDED_CD" jdbc-type="VARCHAR"/>
     <field-descriptor name="nextYearFinancialObjectCode" column="NXT_YR_FIN_OBJ_CD" jdbc-type="VARCHAR"/>
     <field-descriptor name="sunyObjectCode" column="SUNY_OBJECT_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="financialObjectCodeDescr" column="FIN_OBJ_CD_DESCR" jdbc-type="VARCHAR" />
     <field-descriptor name="cgReportingCode" column="CG_RPT_CD" jdbc-type="VARCHAR" />
     <reference-descriptor name="financialDocument" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         <foreignkey field-ref="documentNumber" />
