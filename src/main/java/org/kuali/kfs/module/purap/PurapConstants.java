@@ -142,6 +142,8 @@ public class PurapConstants extends JSTLConstants {
         public static final String DAPRVD_COMMODITY_CODE = "DCOM";
         public static final String DAPRVD_SEP_OF_DUTY = "DSOD";
         public static final String AWAIT_CONTRACT_MANAGER_ASSGN = "ACMR";
+        // KFSPTS-1768
+        public static final String NODE_ACCOUNT = "Account";
         
     }
 
