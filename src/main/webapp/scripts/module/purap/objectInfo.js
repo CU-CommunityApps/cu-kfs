@@ -19,3 +19,27 @@ function loadItemUnitOfMeasureInfo( itemUnitOfMeasureCode, itemUnitOfMeasureFiel
         ItemUnitOfMeasureService.getByPrimaryId( purchasingItemUnitOfMeasureCode, dwrReply );
     }
 }
+
+// KFSPTS-1768
+function loadCommodityCodeDescription( purCommodityCode, commodityCodeFieldName ) {
+    var purchasingCommodityCode = DWRUtil.getValue( purCommodityCode );
+    var containerDiv = document.getElementById(commodityCodeFieldName + divSuffix);
+
+    if (purchasingCommodityCode == "") {
+        dwr.util.setValue( containerDiv.id, " " );
+    } else {
+        var dwrReply = {
+            callback:function(data) {
+            if ( data != null && typeof data == 'object' ) {
+            	DWRUtil.setValue(containerDiv.id, data.commodityDescription, {escapeHtml:true} );
+            } else {
+            	setRecipientValue(containerDiv.id, wrapError("Commodity Code not found"), true);            	
+            } },
+            errorHandler:function( errorMessage ) { 
+            	setRecipientValue(containerDiv.id, wrapError("Commodity Code not found"), true);
+            }
+        };
+        CommodityCodeService.getByPrimaryId( purchasingCommodityCode, dwrReply );
+    }
+}
+
