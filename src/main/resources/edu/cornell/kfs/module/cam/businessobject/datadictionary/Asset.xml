@@ -412,7 +412,7 @@
     <property name="forceUppercase" value="true"/>
     <property name="label" value="Tag Number"/>
     <property name="shortLabel" value="Tag Number"/>
-    <property name="maxLength" value="8"/>
+    <property name="maxLength" value="10"/>
     <property name="validationPattern">
       <ref bean="AnyCharacterValidation" />
     </property>
@@ -684,7 +684,7 @@
     <property name="forceUppercase" value="true"/>
     <property name="label" value="Old Tag Number"/>
     <property name="shortLabel" value="Old Tag"/>
-    <property name="maxLength" value="8"/>
+    <property name="maxLength" value="10"/>
     <property name="validationPattern">
       <ref bean="AnyCharacterValidation" />
     </property>
