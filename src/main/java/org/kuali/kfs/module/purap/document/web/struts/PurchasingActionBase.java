@@ -1343,8 +1343,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         }
         if (purDoc instanceof PurchaseOrderAmendmentDocument) {
         	// prevent initiator to adhoc person for member of the group for approval
-        	boolean isAdHocPerson = isAddHocToFO((PurchaseOrderAmendmentDocument)purDoc);
-        	boolean isAdHocgroup = isAddHocToFOInGroup((PurchaseOrderAmendmentDocument)purDoc);
+        	boolean isAdHocPerson = CollectionUtils.isNotEmpty(((PurchaseOrderAmendmentDocument)purDoc).getAdHocRoutePersons()) && isAddHocToFO((PurchaseOrderAmendmentDocument)purDoc);
+        	boolean isAdHocgroup = CollectionUtils.isNotEmpty(((PurchaseOrderAmendmentDocument)purDoc).getAdHocRouteWorkgroups()) && isAddHocToFOInGroup((PurchaseOrderAmendmentDocument)purDoc);
         	if (isAdHocPerson || isAdHocgroup) {
                 return mapping.findForward(KFSConstants.MAPPING_BASIC);
         	}
