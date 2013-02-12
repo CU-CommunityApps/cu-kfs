@@ -26,7 +26,7 @@ function loadCommodityCodeDescription( purCommodityCode, commodityCodeFieldName 
     var containerDiv = document.getElementById(commodityCodeFieldName + divSuffix);
 
     if (purchasingCommodityCode == "") {
-        dwr.util.setValue( containerDiv.id, " " );
+    	DWRUtil.setValue( containerDiv.id, " " );
     } else {
         var dwrReply = {
             callback:function(data) {
