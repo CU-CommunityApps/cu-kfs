@@ -5,10 +5,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
     <!-- Our CUWebAuthAuthenticationService is a RemoteUserAuthenticationService subclass that can 
          also look at the HTTP headers that CUWebAuth exposes -->
-<!--    <bean id="kimAuthenticationService" class="edu.cornell.cynergy.service.impl.CUWebAuthAuthenticationService">-->
-<!--        <property name="useHttpHeaders"><value>${cynergy.cuwal.useHttpHeaders}</value></property>-->
-<!--    </bean>-->
-<!--    -->
+    <bean id="kimAuthenticationService" class="edu.cornell.cynergy.service.impl.CUWebAuthAuthenticationService">
+        <property name="useHttpHeaders"><value>${cynergy.cuwal.useHttpHeaders}</value></property>
+    </bean>
+    
   
     <!-- override encryption services  -->
  	<bean id="encryptionService" class="edu.cornell.cynergy.service.impl.AESEncryptionServiceImpl" lazy-init="true">
