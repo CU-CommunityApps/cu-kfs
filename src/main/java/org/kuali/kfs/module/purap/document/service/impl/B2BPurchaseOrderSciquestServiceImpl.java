@@ -36,6 +36,7 @@ import org.kuali.kfs.module.purap.exception.CxmlParseError;
 import org.kuali.kfs.module.purap.util.PurApDateFormatUtils;
 import org.kuali.kfs.module.purap.util.cxml.B2BParserHelper;
 import org.kuali.kfs.module.purap.util.cxml.PurchaseOrderResponse;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.ContractManager;
@@ -558,6 +559,17 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 	        cxml.append("      </CustomFieldValueSet>\n");
         }
 
+        // KFSPTS-427 : additional fields
+        // do we have to check if field is empty or null ?
+        cxml.append(addCustomFieldValueSet("DeliveryPhone", "Delivery Phone", purchaseOrder.getDeliveryToPhoneNumber()));
+        cxml.append(addCustomFieldValueSet("DeliveryEmail", "Delivery Email", purchaseOrder.getDeliveryToEmailAddress()));
+        cxml.append(addCustomFieldValueSet("ShipPayTerms", "Ship Pay Termse", getVendorShipPayTerms(purchaseOrder)));
+        cxml.append(addCustomFieldValueSet("SupplierAddress2", "Supplier Address 2", purchaseOrder.getVendorLine2Address()));
+        cxml.append(addCustomFieldValueSet("SupplierCountry", "Supplier Country", getVendorCountry(purchaseOrder)));
+
+
+        // end KFSPTS-427 fields
+        
         cxml.append("    </POHeader>\n");
 
         /** *** Items Section **** */
@@ -612,6 +624,51 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         return cxml.toString();
     }
 
+    /*
+     * helper method for repeated code
+     */
+    private String addCustomFieldValueSet(String name, String label, String value) {
+    	
+    	StringBuffer customField = new StringBuffer();
+
+    	customField.append("      <CustomFieldValueSet label=\"").append(label).append("\" name=\"").append(name).append("\">\n");
+    	customField.append("        <CustomFieldValue>\n");
+    	customField.append("          <Value><![CDATA[").append(value).append("]]></Value>\n");
+//    	customField.append("          <Description />\n");  // is this really needed
+    	customField.append("         </CustomFieldValue>\n");
+    	customField.append("      </CustomFieldValueSet>\n");
+    	return customField.toString();
+
+    }
+    
+    /*
+     * Do null check just incase.
+     */
+    private String getVendorShipPayTerms(PurchaseOrderDocument purchaseOrder) {
+    	if (purchaseOrder.getVendorShippingPaymentTerms() == null) {
+    		purchaseOrder.refreshReferenceObject("vendorShippingPaymentTerms");
+    	}
+    	if (purchaseOrder.getVendorShippingPaymentTerms() == null) {
+    		return KFSConstants.EMPTY_STRING;
+    	} else {
+    	    return purchaseOrder.getVendorShippingPaymentTerms().getVendorShippingPaymentTermsDescription();
+    	}
+    	
+    }
+    
+    private String getVendorCountry(PurchaseOrderDocument purchaseOrder) {
+    	// Don't need refresh vendorcountry because it is getting by service
+    	if (purchaseOrder.getVendorShippingPaymentTerms() == null) {
+    		purchaseOrder.refreshReferenceObject("vendorShippingPaymentTerms");
+    	}
+    	if (purchaseOrder.getVendorCountry() == null) {
+    		return KFSConstants.EMPTY_STRING;
+    	} else {
+    	    return purchaseOrder.getVendorCountry().getPostalCountryName();
+    	}
+    	
+    }
+    
     /**
      * @see org.kuali.kfs.module.purap.document.service.B2BPurchaseOrderService#verifyCxmlPOData(org.kuali.kfs.module.purap.document.PurchaseOrderDocument,
      *      org.kuali.rice.kim.bo.Person, java.lang.String, org.kuali.kfs.vnd.businessobject.ContractManager,
