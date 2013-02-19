@@ -166,6 +166,16 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             // retrieve vendor based on selection from vendor lookup
             document.refreshReferenceObject("vendorDetail");
             document.templateVendorDetail(document.getVendorDetail());
+            // KFSPTS-1612 : populate vendor contract name
+			if (CollectionUtils.isNotEmpty(document.getVendorDetail()
+					.getVendorContracts())) {
+				for (VendorContract vendorContract : document.getVendorDetail().getVendorContracts()) {
+					if (vendorContract.isActive()) {
+						document.setVendorContractGeneratedIdentifier(vendorContract.getVendorContractGeneratedIdentifier());
+						document.refreshReferenceObject("vendorContract");
+					}
+				}
+			}
 
             // populate default address based on selected vendor
             VendorAddress defaultAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(document.getVendorDetail().getVendorAddresses(), document.getVendorDetail().getVendorHeader().getVendorType().getAddressType().getVendorAddressTypeCode(), document.getDeliveryCampusCode());
