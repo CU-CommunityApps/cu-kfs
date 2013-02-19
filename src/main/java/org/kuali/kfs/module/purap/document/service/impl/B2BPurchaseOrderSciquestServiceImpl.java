@@ -54,6 +54,14 @@ import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.kuali.rice.kns.bo.Note;
+import org.kuali.rice.kns.bo.Attachment;
+import org.kuali.rice.kns.service.AttachmentService;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+
 @Transactional
 public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(B2BPurchaseOrderSciquestServiceImpl.class);
@@ -511,14 +519,50 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("          <Net>").append(payTerm.getVendorNetDueNumber()).append("</Net>\n");
         cxml.append("        </Terms>\n");
         cxml.append("      </PaymentInfo>\n");
-
+       
         /** *** EXTERNAL INFO SECTION **** */
-        String vendorNoteText = purchaseOrder.getVendorNoteText();
-        if (ObjectUtils.isNotNull(vendorNoteText)) {
-	        cxml.append("      <ExternalInfo>\n");
-	        cxml.append("        <Note><![CDATA[").append(vendorNoteText).append("]]></Note>\n");
-	        cxml.append("      </ExternalInfo>\n");
-        }
+//KFSPTS-794: Original code prior to change going in.         
+//        String vendorNoteText = purchaseOrder.getVendorNoteText();
+//        if (ObjectUtils.isNotNull(vendorNoteText)) {
+//	        cxml.append("      <ExternalInfo>\n");
+//	        cxml.append("        <Note><![CDATA[").append(vendorNoteText).append("]]></Note>\n");
+//	        cxml.append("      </ExternalInfo>\n");
+//        }
+/*KFSPTS-794: Start new code: Define the attachments
+ * This code change was taken from an enhancement provided to Cornell from CSU.  
+ * The specific implementation pieces required for this enhancement needed to be taken from the files
+ * provided and incorporated into our code base.
+ */
+        //Attachments must be defined in the xml part and must match info in MIME binary part
+        List<Note> notesToSendToVendor = getNotesToSendToVendor(purchaseOrder);
+        if (!notesToSendToVendor.isEmpty()) {
+            String allNotes = "";
+            String allNotesNoAttach = "";
+            cxml.append("      <ExternalInfo>\n");
+            cxml.append("        <Attachments xmlns:xop = \"http://www.w3.org/2004/08/xop/include/\" >\n");
+
+            for (int i = 0; i < notesToSendToVendor.size(); i++) {
+                Note note = notesToSendToVendor.get(i);
+                Attachment attachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
+                if (ObjectUtils.isNotNull(attachment)) {
+                    allNotes = allNotes + "\n(" + (i + 1) + ") " + note.getNoteText() + "  ";
+                    cxml.append("          <Attachment id=\"" + attachment.getAttachmentIdentifier() + "\" type=\"file\">\n");
+                    cxml.append("            <AttachmentName><![CDATA[" + attachment.getAttachmentFileName() + "]]></AttachmentName>\n");
+                    cxml.append("            <AttachmentURL>http://usertest.sciquest.com/apps/Router/ReqAttachmentDownload?AttachmentId=" + attachment.getAttachmentIdentifier() +
+                            "&amp;DocId=" + purchaseOrder.getPurapDocumentIdentifier() +
+                            "&amp;OrgName=SQSupportTest&amp;AuthMethod=Local</AttachmentURL>\n");
+                    cxml.append("            <AttachmentSize>" + attachment.getAttachmentFileSize() / 1024 + "</AttachmentSize>\n");
+                    cxml.append("            <xop:Include href=\"cid:" + attachment.getAttachmentIdentifier() + "@sciquest.com\" />\n");
+                    cxml.append("          </Attachment>\n");
+                } else {
+                    allNotesNoAttach = allNotesNoAttach + "          " + note.getNoteText() + "          ";
+                }
+            }
+            cxml.append("        </Attachments>\n");
+            cxml.append("          <Note><![CDATA[" + allNotesNoAttach + "          " + allNotes + "]]></Note>\n");
+            cxml.append("      </ExternalInfo>\n");
+        } 
+/*KFSPTS-794: End new code: Define the attachments */       
         
         cxml.append("      <CustomFieldValueSet label=\"Contact Name\" name=\"InitiatorName\">\n");
         cxml.append("        <CustomFieldValue>\n");
@@ -620,8 +664,60 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("</PurchaseOrderMessage>");
 
         LOG.debug("getCxml(): cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + ":\n" + cxml.toString());
+        
+/*KFSPTS-794: Start new code: Add each attachment as raw binary data. */
+        //*****************************************************************************************************************
+        //* This is where the attachment gets put into the xml as raw binary data                                         *
+        //*****************************************************************************************************************
+        if (!notesToSendToVendor.isEmpty()) {
+            for (int i = 0; i < notesToSendToVendor.size(); i++) {
+                Note note = notesToSendToVendor.get(i);
+                try {
+                    Attachment poAttachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
+                    if (ObjectUtils.isNotNull(poAttachment)) {
+                        cxml.append("--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "\n");
+                        cxml.append("Content-Type: application/octet-stream\n");
+                        cxml.append("Content-Transfer-Encoding: binary\n");
+                        cxml.append("Content-ID: <" + poAttachment.getAttachmentIdentifier() + "@sciquest.com>\n");
+                        cxml.append("Content-Disposition: attachment; filename=\"" + poAttachment.getAttachmentFileName() + "\"" + "\n\n");
+
+                        InputStream attInputStream = poAttachment.getAttachmentContents();
+                        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                        int c;
+                        while ((c = attInputStream.read()) != -1) buffer.write(c);
+                        String binaryStream = new String(buffer.toByteArray());
+
+                        cxml.append(binaryStream + "\n");
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            cxml.append("--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "--\n");  // signals this is the last MIME boundary
+        } else {
+            cxml.append("\n\n--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "--\n");
+        }        
+/*KFSPTS-794: Stop new code: Add each attachment as raw binary data. */        
 
         return cxml.toString();
+    }
+    
+    /**
+     * KFSPTS-794: This code change was taken from an enhancement provided to Cornell from CSU.
+     * 
+     * Returns list of Note(s) that should be sent to the vendor
+     */
+    private List<Note> getNotesToSendToVendor(PurchaseOrderDocument purchaseOrder) {
+        List<Note> notesToSend = new ArrayList<Note>();
+        for (int i = 0; i < purchaseOrder.getBoNotes().size(); i++) {
+            Note note = (Note) purchaseOrder.getBoNotes().get(i);
+            if (StringUtils.equalsIgnoreCase(note.getNoteTopicText(), CUPurapConstants.AttachemntToVendorIndicators.SEND_TO_VENDOR)) {
+                notesToSend.add(note);
+            }
+        }
+        return notesToSend;
     }
 
     /*

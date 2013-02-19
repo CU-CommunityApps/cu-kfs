@@ -414,6 +414,11 @@ public class PurapConstants extends JSTLConstants {
         
         public static final String POSTAL_CODE = "Postal Code";
         public static final String ALTERNATE_PAYEE_VENDOR = "Alternate Payee Vendor";
+        
+        // KFSPTS-794
+        public static final String CONFIRM_ATT_SEND_CHANGE_QUESTION = "POChangeAtt";
+        public static final String CONFIRM_ATT_SEND_CHANGE_RETURN = "changeAtt";
+
     }
 
     public static final String PO_OVERRIDE_NOT_TO_EXCEED_QUESTION = "OverrideNotToExceed";
@@ -1167,5 +1172,6 @@ public class PurapConstants extends JSTLConstants {
         public static final String ATTACHMENT_TYPE_TAX_DOCUMENTS = "Tax Documents";
     }
     
-    
+    public static final String MAX_SQ_NO_ATTACHMENTS = "MAX_SQ_NO_ATTACHMENTS";
+
 }

@@ -16,6 +16,7 @@
 package org.kuali.kfs.module.purap.document.web.struts;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -23,11 +24,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.integration.purap.CapitalAssetLocation;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestView;
@@ -42,7 +43,6 @@ import org.kuali.kfs.module.purap.businessobject.RequisitionCapitalAssetLocation
 import org.kuali.kfs.module.purap.businessobject.SensitiveData;
 import org.kuali.kfs.module.purap.businessobject.SensitiveDataAssignment;
 import org.kuali.kfs.module.purap.document.LineItemReceivingDocument;
-import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderCloseDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
@@ -55,12 +55,12 @@ import org.kuali.kfs.module.purap.document.PurchaseOrderVoidDocument;
 import org.kuali.kfs.module.purap.document.service.PaymentRequestService;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.document.service.ReceivingService;
-import org.kuali.kfs.module.purap.document.service.RequisitionService;
 import org.kuali.kfs.module.purap.util.PurApItemUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.rice.kim.service.KIMServiceLocator;
+import org.kuali.rice.kns.bo.Note;
 import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.DateTimeService;
@@ -100,6 +100,10 @@ public class PurchaseOrderForm extends PurchasingFormBase {
     protected SensitiveData newSensitiveDataLine = null; // new sensitive data entry to be added to the PO
     protected List<SensitiveData> sensitiveDatasAssigned = null;  // sensitive data entries currently assigned to the PO
 
+    // KFSPTS-794
+    // F
+    protected List<Note> copiedNotes;
+    
     /**
      * Constructs a PurchaseOrderForm instance and sets up the appropriately casted document.
      */
@@ -109,6 +113,7 @@ public class PurchaseOrderForm extends PurchasingFormBase {
         setNewPurchaseOrderVendorStipulationLine(new PurchaseOrderVendorStipulation());
         setNewPurchaseOrderVendorQuote(new PurchaseOrderVendorQuote());
         this.accountingLineEditingMode = new HashMap();
+        copiedNotes = new ArrayList<Note>();
     }
 
     @Override
@@ -343,7 +348,16 @@ public class PurchaseOrderForm extends PurchasingFormBase {
         
         super.populate(request);
         
+        /*
+         * KFSPTS-794 : for PO & POA.  The notes will be refreshed from DB.  hence, the 'sendtovendor' flag will
+         * be lost. This is to save the notes from from document, and the restore it before doing comparison later in action.
+         */
         if (ObjectUtils.isNotNull(po.getPurapDocumentIdentifier())) {
+            if (CollectionUtils.isNotEmpty(po.getDocumentBusinessObject().getBoNotes())) {
+				for (Note note : (List<Note>)po.getDocumentBusinessObject().getBoNotes()) {
+					copiedNotes.add((Note)ObjectUtils.deepCopy(note));
+				}
+            }
             po.refreshDocumentBusinessObject();
         }
 
@@ -958,6 +972,14 @@ public class PurchaseOrderForm extends PurchasingFormBase {
         }
         return isNoQtyOrderOnly;
     }
+
+	public List<Note> getCopiedNotes() {
+		return copiedNotes;
+	}
+
+	public void setCopiedNotes(List<Note> copiedNotes) {
+		this.copiedNotes = copiedNotes;
+	}
     
 
 }

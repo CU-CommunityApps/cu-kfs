@@ -151,14 +151,14 @@
 		
 		    <gl:generalLedgerPendingEntries />
 		 
-		    <kul:notes
+		    <purap:ponotesSciquest
 		    	notesBo="${KualiForm.document.documentBusinessObject.boNotes}"
 		    	noteType="${Constants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE}"  		    	
 		    	attachmentTypesValuesFinderClass="${DataDictionary.PurchaseOrderDocument.attachmentTypesValuesFinderClass}">
 		          <html:messages id="warnings" property="noteWarning" message="true">
 		            &nbsp;&nbsp;&nbsp;<bean:write name="warnings"/><br><br>
 		          </html:messages>
-		    </kul:notes> 
+		    </purap:ponotesSciquest> 
 
 		    <kul:adHocRecipients />
 		

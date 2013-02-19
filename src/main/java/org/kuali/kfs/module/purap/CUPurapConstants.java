@@ -67,4 +67,14 @@ public class CUPurapConstants extends PurapConstants {
     	public static final String SUB_ACCOUNT_NODE = "SubAccount";
     }
     
+    //KFSPTS-794
+    //Defined by CSU as part of their provided mod.
+    public static final String MIME_BOUNDARY_FOR_ATTACHMENTS = "-----------------------------MIME_BOUNDARY_FOR_ATTACHMENTS";
+    
+    //KFSPTS-794
+    public static final class AttachemntToVendorIndicators {
+    	public static final String DONT_SEND_TO_VENDOR = "dontSendToVendor";
+    	public static final String SEND_TO_VENDOR = "sendToVendor";
+    }
+    
 }
