@@ -32,7 +32,28 @@ public interface SubmitTripWebService {
 		  @WebParam(name = "checkStubText")String checkStubText
 		  ) throws Exception;
   
-  public boolean isValidDVInitiator(
-		  @WebParam(name = "initiatorNetId")String initiatorNetId
+  /**
+   * 
+   * @param initiatorNetId
+   * @param documentName
+   * @return
+   * @throws Exception
+   */
+  public boolean isValidDocumentInitiator(
+		  @WebParam(name = "initiatorNetId")String initiatorNetId,
+		  @WebParam(name = "documentName")String documentName
 		  ) throws Exception;
+
+  /**
+   * 
+   * @param viewerNetId
+   * @param docID
+   * @return
+   * @throws Exception
+   */
+  public boolean canViewKfsDocument(
+		  @WebParam(name = "viewerNetId")String viewerNetId,
+		  @WebParam(name = "docID")String docID
+		  ) throws Exception;
+
 }

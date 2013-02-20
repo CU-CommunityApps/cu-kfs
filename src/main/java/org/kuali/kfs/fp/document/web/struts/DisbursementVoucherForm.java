@@ -21,9 +21,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceRegistrant;
 import org.kuali.kfs.fp.businessobject.TravelPerDiem;
@@ -39,6 +37,8 @@ import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.web.format.SimpleBooleanFormatter;
 
+import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
+
 /**
  * This class is the action form for the Disbursement Voucher.
  */
@@ -48,7 +48,7 @@ public class DisbursementVoucherForm extends KualiAccountingDocumentFormBase {
     protected static final long serialVersionUID = 1L;
 
     protected String payeeIdNumber;
-    protected String vendorHeaderGeneratedIdentifier = StringUtils.EMPTY;
+	protected String vendorHeaderGeneratedIdentifier = StringUtils.EMPTY;
     protected String vendorDetailAssignedIdentifier = StringUtils.EMPTY;
     protected String vendorAddressGeneratedIdentifier;
     
@@ -147,6 +147,15 @@ public class DisbursementVoucherForm extends KualiAccountingDocumentFormBase {
     }
 
     /**
+     * determines if the DV document is a travel DV and therefore should display the associated Trip #
+     * 
+     * @return true if the DV document is a travel DV; otherwise, return false
+     */
+    public boolean getCanViewTrip() {
+    	return SpringContext.getBean(CULegacyTravelService.class).isLegacyTravelGeneratedKfsDocument(this.getDocId());
+    }
+
+    /**
      * @return a list of available travel expense type codes for rendering per diem link page.
      */
     public List<TravelPerDiem> getTravelPerDiemCategoryCodes() {
@@ -187,7 +196,7 @@ public class DisbursementVoucherForm extends KualiAccountingDocumentFormBase {
         this.payeeIdNumber = payeeIdNumber;
     }
     
-    /**
+	/**
      * Gets the payeeIdNumber attribute.
      * 
      * @return Returns the payeeIdNumber.
@@ -211,7 +220,6 @@ public class DisbursementVoucherForm extends KualiAccountingDocumentFormBase {
         this.tempPayeeIdNumber = payeeIdNumber;
     }
     
-
     /**
      * Gets the hasMultipleAddresses attribute.
      * 
@@ -433,4 +441,26 @@ public class DisbursementVoucherForm extends KualiAccountingDocumentFormBase {
     public void setCanExport(boolean canExport) {
         this.canExport = canExport;
     }
+    
+    /**
+     * 
+     * @param tripID
+     * @return
+     */
+    public String getTripUrl() {
+    	String tripID = SpringContext.getBean(CULegacyTravelService.class).getLegacyTripID(this.getDocId());
+    	LOG.info("getTripUrl() called");
+    	StringBuffer url = new StringBuffer();
+        url.append("https://servicesdev.dfa.cornell.edu/travel/navigation?form_action=0&tripid=").append(tripID).append("&link=true");
+    	return url.toString();
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public String getTripID() {
+    	return SpringContext.getBean(CULegacyTravelService.class).getLegacyTripID(this.getDocId());
+    }
+    
 }

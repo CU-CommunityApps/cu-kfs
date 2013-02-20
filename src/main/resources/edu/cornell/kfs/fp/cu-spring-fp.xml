@@ -179,6 +179,9 @@
         </property>
     </bean>
 
+    <bean id="cuLegacyTravelService" class="edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl">
+    </bean>
+
 	<import resource="document/validation/configuration/CU-DisbursementVoucherValidation.xml" />
 
 </beans>

@@ -16,6 +16,7 @@
 package org.kuali.kfs.fp.document.web.struts;
 
 import java.io.ByteArrayOutputStream;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Properties;
@@ -25,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -39,6 +42,8 @@ import org.kuali.kfs.fp.document.service.DisbursementVoucherCoverSheetService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTaxService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
+
+import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -47,11 +52,15 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.rice.core.util.ClassLoaderUtils;
+import org.kuali.rice.core.util.ContextClassLoaderBinder;
+import org.kuali.rice.core.util.RiceConstants;
 import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kim.service.PersonService;
 import org.kuali.rice.kns.document.authorization.TransactionalDocumentAuthorizer;
 import org.kuali.rice.kns.document.authorization.TransactionalDocumentPresentationController;
+import org.kuali.rice.kns.question.ConfirmationQuestion;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DictionaryValidationService;
 import org.kuali.rice.kns.service.DocumentService;
@@ -115,6 +124,46 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     }
 
     /**
+     * 
+     */
+    @Override
+    public ActionForward disapprove(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Object question = request.getParameter(KNSConstants.QUESTION_INST_ATTRIBUTE_NAME);
+        String reason = request.getParameter(KNSConstants.QUESTION_REASON_ATTRIBUTE_NAME);
+
+        if(ObjectUtils.isNotNull(question)) {
+	    	KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+	        
+	        // if travel DV, then reopen associated trip
+	        Boolean tripReOpened = true;
+	        boolean isTravelDV = false;
+	        try {
+	        	CULegacyTravelService cuLegacyTravelService = SpringContext.getBean(CULegacyTravelService.class);
+				String tripID = cuLegacyTravelService.getLegacyTripID(kualiDocumentFormBase.getDocId());
+				if(isTravelDV = StringUtils.isNotEmpty(tripID)) { // This means the DV is a Travel DV
+					tripReOpened &= cuLegacyTravelService.reopenLegacyTrip(kualiDocumentFormBase.getDocId(), reason);
+					System.out.println("Trip successfully reopened : "+tripReOpened);
+				} else {
+					LOG.info("DV is not a travel DV");
+				}
+	        } catch (Exception ex) {
+	        	LOG.info("Exception occurred while trying to disapprove a disbursement voucher.");
+	      	  	ex.printStackTrace();
+	      	  	tripReOpened=false;
+	        }
+	
+	        if(!isTravelDV || (isTravelDV && tripReOpened)) {
+	        	return super.disapprove(mapping, form, request, response);
+	        } else {
+	        	// TODO add message to DV indicating why doc was not canceled.
+	            return mapping.findForward(RiceConstants.MAPPING_BASIC);
+	        }
+        } else {
+        	return super.disapprove(mapping, form, request, response);
+        }
+    }
+    
+    /**
      * Do initialization for a new disbursement voucher
      * 
      * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#createDocument(org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase)
@@ -126,6 +175,60 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
 
         // set wire charge message in form
         ((DisbursementVoucherForm) kualiDocumentFormBase).setWireChargeMessage(retrieveWireChargeMessage());
+    }
+
+    /**
+     * Calls the document service to cancel the document
+     *
+     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#cancel()
+     */
+    @Override
+    public ActionForward cancel(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Object question = request.getParameter(KNSConstants.QUESTION_INST_ATTRIBUTE_NAME);
+        // this should probably be moved into a private instance variable
+        // logic for cancel question
+        if (question == null) {
+            // ask question if not already asked
+            return this.performQuestionWithoutInput(mapping, form, request, response, KNSConstants.DOCUMENT_CANCEL_QUESTION, getKualiConfigurationService().getPropertyString("document.question.cancel.text"), KNSConstants.CONFIRMATION_QUESTION, KNSConstants.MAPPING_CANCEL, "");
+        }
+        else {
+            Object buttonClicked = request.getParameter(KNSConstants.QUESTION_CLICKED_BUTTON);
+            if ((KNSConstants.DOCUMENT_CANCEL_QUESTION.equals(question)) && ConfirmationQuestion.NO.equals(buttonClicked)) {
+                // if no button clicked just reload the doc
+                return mapping.findForward(RiceConstants.MAPPING_BASIC);
+            }
+            // else go to cancel logic below
+        }
+
+        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        
+        // if travel DV, then reopen associated trip
+        Boolean tripReOpened = true;
+        boolean isTravelDV = false;
+        try {
+        	CULegacyTravelService cuLegacyTravelService = SpringContext.getBean(CULegacyTravelService.class);
+			String tripID = cuLegacyTravelService.getLegacyTripID(kualiDocumentFormBase.getDocId());
+			if(isTravelDV = StringUtils.isNotEmpty(tripID)) { // This means the DV is a Travel DV
+				tripReOpened &= cuLegacyTravelService.reopenLegacyTrip(kualiDocumentFormBase.getDocId());
+				System.out.println("Trip successfully reopened : "+tripReOpened);
+			} else {
+				LOG.info("DV is not a travel DV");
+			}
+        } catch (Exception ex) {
+        	LOG.info("Exception occurred while trying to cancel a trip.");
+      	  	ex.printStackTrace();
+      	  	tripReOpened=false;
+        }
+
+        if(!isTravelDV || (isTravelDV && tripReOpened)) {
+	        doProcessingAfterPost( kualiDocumentFormBase, request );
+	        getDocumentService().cancelDocument(kualiDocumentFormBase.getDocument(), kualiDocumentFormBase.getAnnotation());
+	
+	        return returnToSender(request, mapping, kualiDocumentFormBase);
+        } else {
+        	// TODO add message to DV indicating why doc was not canceled.
+            return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        }
     }
 
     /**
@@ -681,26 +784,26 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
             GlobalVariables.getMessageMap().putWarning(tab.getDocumentPropertyKey(), tab.messageKey);
         }
     }
-    
+
     /**
-	     * Determines if the current user has full edit permissions on the document, which would allow them to repopulate the payee
-	     * @param document the document to check for full edit permissions on
-	     * @return true if full edit is allowed on the document, false otherwise
-	     */
-	    protected boolean hasFullEdit(DisbursementVoucherDocument document) {
-	        final Person user = GlobalVariables.getUserSession().getPerson();
-	        final TransactionalDocumentPresentationController documentPresentationController = (TransactionalDocumentPresentationController)getDocumentHelperService().getDocumentPresentationController(document);
-	        final TransactionalDocumentAuthorizer documentAuthorizer = (TransactionalDocumentAuthorizer)getDocumentHelperService().getDocumentAuthorizer(document);
-	        Set<String> documentActions =  documentPresentationController.getDocumentActions(document);
-	        documentActions = documentAuthorizer.getDocumentActions(document, user, documentActions);
-	        if (getDataDictionaryService().getDataDictionary().getDocumentEntry(document.getClass().getName()).getUsePessimisticLocking()) {
-	            documentActions = getPessimisticLockService().getDocumentActions(document, user, documentActions);
-	        }
-	        
-	        Set<String> editModes = documentPresentationController.getEditModes(document);
-	        editModes = documentAuthorizer.getEditModes(document, user, editModes);
-	        
-	        return documentActions.contains(KNSConstants.KUALI_ACTION_CAN_EDIT) && editModes.contains("fullEntry");
-	    }
+     * Determines if the current user has full edit permissions on the document, which would allow them to repopulate the payee
+     * @param document the document to check for full edit permissions on
+     * @return true if full edit is allowed on the document, false otherwise
+     */
+    protected boolean hasFullEdit(DisbursementVoucherDocument document) {
+        final Person user = GlobalVariables.getUserSession().getPerson();
+        final TransactionalDocumentPresentationController documentPresentationController = (TransactionalDocumentPresentationController)getDocumentHelperService().getDocumentPresentationController(document);
+        final TransactionalDocumentAuthorizer documentAuthorizer = (TransactionalDocumentAuthorizer)getDocumentHelperService().getDocumentAuthorizer(document);
+        Set<String> documentActions =  documentPresentationController.getDocumentActions(document);
+        documentActions = documentAuthorizer.getDocumentActions(document, user, documentActions);
+        if (getDataDictionaryService().getDataDictionary().getDocumentEntry(document.getClass().getName()).getUsePessimisticLocking()) {
+            documentActions = getPessimisticLockService().getDocumentActions(document, user, documentActions);
+        }
+        
+        Set<String> editModes = documentPresentationController.getEditModes(document);
+        editModes = documentAuthorizer.getEditModes(document, user, editModes);
+        
+        return documentActions.contains(KNSConstants.KUALI_ACTION_CAN_EDIT) && editModes.contains("fullEntry");
+    }
 
 }
