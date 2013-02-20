@@ -677,7 +677,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                 try {
                     Attachment poAttachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
                     if (ObjectUtils.isNotNull(poAttachment)) {
-                        cxml.append("--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "\n");
+//                        cxml.append("--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "\n");
                         cxml.append("Content-Type: application/octet-stream\n");
                         cxml.append("Content-Transfer-Encoding: binary\n");
                         cxml.append("Content-ID: <" + poAttachment.getAttachmentIdentifier() + "@sciquest.com>\n");
@@ -697,9 +697,9 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                 }
 
             }
-            cxml.append("--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "--\n");  // signals this is the last MIME boundary
+//            cxml.append("--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "--\n");  // signals this is the last MIME boundary
         } else {
-            cxml.append("\n\n--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "--\n");
+//            cxml.append("\n\n--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "--\n");
         }        
 /*KFSPTS-794: Stop new code: Add each attachment as raw binary data. */        
 
