@@ -948,7 +948,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             //PO transmission failed; record errors and change status to "cxml failed"
             try {
                 Note note = documentService.createNoteFromDocument(po, "Unable to transmit the PO for the following reasons:\n" + errors);
-                documentService.addNoteToDocument(po, note);
+                documentService.addNoteToDocument(po, truncateNoteTextTo800(note));
             }
             catch (Exception e) {
                 throw new RuntimeException(e);
@@ -959,6 +959,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
     }
 
+    private Note truncateNoteTextTo800(Note note) {
+    	if (note.getNoteText().length() > 800) {
+    		note.setNoteText(note.getNoteText().substring(0, 799));
+    	}
+    	return note;
+    }
     protected boolean completeB2BPurchaseOrderVoid(PurchaseOrderDocument po) {
         String errors = b2bPurchaseOrderService.sendPurchaseOrder(po);
         if (StringUtils.isEmpty(errors)) {
@@ -971,7 +977,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             //PO transmission failed; record errors and change status to "cxml failed"
             try {
                 Note note = documentService.createNoteFromDocument(po, "Unable to transmit the PO Void for the following reasons:\n" + errors);
-                documentService.addNoteToDocument(po, note);
+                documentService.addNoteToDocument(po, truncateNoteTextTo800(note));
             }
             catch (Exception e) {
                 throw new RuntimeException(e);
@@ -995,7 +1001,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             //POA transmission failed; record errors and change status to "cxml failed"
             try {
                 Note note = documentService.createNoteFromDocument(poa, "Unable to transmit the PO for the following reasons:\n" + errors);
-                documentService.addNoteToDocument(poa, note);
+                documentService.addNoteToDocument(poa, truncateNoteTextTo800(note));
             }
             catch (Exception e) {
                 throw new RuntimeException(e);
