@@ -35,7 +35,7 @@ import org.kuali.rice.kns.util.spring.Cached;
 public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.service.CULegacyTravelService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CULegacyTravelServiceImpl.class);
 
-    public static final String UPDATE_TRIP_WSDL = "https://servicesdev.dfa.cornell.edu/services/UpdateTripWebService?wsdl";
+//    public static final String UPDATE_TRIP_WSDL = "https://servicesdev.dfa.cornell.edu/services/UpdateTripWebService?wsdl";
     
     public static final class DFA_TRAVEL_WS_METHODS {
     	public static final String GET_TRIP_ID = "getTripID";
@@ -46,13 +46,15 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
     public static final String KFS_DOC_APPROVED = "APPROVE";
     public static final String KFS_DOC_COMPLETED = "COMPLETE";
     
-    @Cached
+    private String updateTripWsdl;
+    
+	@Cached
 	public boolean isLegacyTravelGeneratedKfsDocument(String docID) {
         Client client = null;
         // Need to grab copy of current class loader because call to web services wrecks class loader, so we want to restore it following call.
         ClassLoader classLoader = ClassLoaderUtils.getDefaultClassLoader();
         try {
-			URL wsdlUrl = new URL(UPDATE_TRIP_WSDL);
+			URL wsdlUrl = new URL(updateTripWsdl);
 			
 			JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
 			client = dcf.createClient(wsdlUrl);
@@ -79,7 +81,7 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
         // Need to grab copy of current class loader because call to web services wrecks class loader, so we want to restore it following call.
         ClassLoader classLoader = ClassLoaderUtils.getDefaultClassLoader();
         try {
-			URL wsdlUrl = new URL(UPDATE_TRIP_WSDL);
+			URL wsdlUrl = new URL(updateTripWsdl);
 			
 			JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
 			client = dcf.createClient(wsdlUrl);
@@ -119,7 +121,7 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
         // Need to grab copy of current class loader because call to web services wrecks class loader, so we want to restore it following call.
         ClassLoader classLoader = ClassLoaderUtils.getDefaultClassLoader();
         try {
-			URL wsdlUrl = new URL(UPDATE_TRIP_WSDL);
+			URL wsdlUrl = new URL(updateTripWsdl);
 			
 			JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
 			client = dcf.createClient(wsdlUrl);
@@ -145,4 +147,18 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
 		return true;
 	}
 	
+    /**
+	 * @return the updateTripWsdl
+	 */
+	public String getUpdateTripWsdl() {
+		return updateTripWsdl;
+	}
+
+	/**
+	 * @param updateTripWsdl the updateTripWsdl to set
+	 */
+	public void setUpdateTripWsdl(String updateTripWsdl) {
+		this.updateTripWsdl = updateTripWsdl;
+	}
+
 }

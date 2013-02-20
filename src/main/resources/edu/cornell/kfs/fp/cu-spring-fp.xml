@@ -180,6 +180,9 @@
     </bean>
 
     <bean id="cuLegacyTravelService" class="edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl">
+        <property name="updateTripWsdl">
+            <value>${cu.legacy.travel.wsdl}</value>
+        </property>
     </bean>
 
 	<import resource="document/validation/configuration/CU-DisbursementVoucherValidation.xml" />
