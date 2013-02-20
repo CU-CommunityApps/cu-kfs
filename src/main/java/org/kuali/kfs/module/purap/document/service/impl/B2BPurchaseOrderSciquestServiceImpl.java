@@ -15,11 +15,15 @@
  */
 package org.kuali.kfs.module.purap.document.service.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.CUPurapParameterConstants;
@@ -30,6 +34,7 @@ import org.kuali.kfs.module.purap.dataaccess.B2BDao;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.B2BPurchaseOrderService;
+import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.document.service.RequisitionService;
 import org.kuali.kfs.module.purap.exception.B2BConnectionException;
 import org.kuali.kfs.module.purap.exception.CxmlParseError;
@@ -46,21 +51,17 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kim.service.PersonService;
+import org.kuali.rice.kns.bo.Attachment;
+import org.kuali.rice.kns.bo.Note;
+import org.kuali.rice.kns.service.AttachmentService;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
+import org.kuali.rice.kns.service.NoteService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.kuali.rice.kns.bo.Note;
-import org.kuali.rice.kns.bo.Attachment;
-import org.kuali.rice.kns.service.AttachmentService;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 
 @Transactional
 public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderService {
@@ -607,7 +608,8 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         // do we have to check if field is empty or null ?
         cxml.append(addCustomFieldValueSet("DeliveryPhone", "Delivery Phone", purchaseOrder.getDeliveryToPhoneNumber()));
         cxml.append(addCustomFieldValueSet("DeliveryEmail", "Delivery Email", purchaseOrder.getDeliveryToEmailAddress()));
-        cxml.append(addCustomFieldValueSet("ShipPayTerms", "Ship Pay Termse", getVendorShipPayTerms(purchaseOrder)));
+        cxml.append(addCustomFieldValueSet("ShipTitle", "Ship Title", getVendorShipTitle(purchaseOrder)));
+        cxml.append(addCustomFieldValueSet("ShipPayTerms", "Ship Pay Terms", getVendorShipPayTerms(purchaseOrder)));
         cxml.append(addCustomFieldValueSet("SupplierAddress2", "Supplier Address 2", purchaseOrder.getVendorLine2Address()));
         cxml.append(addCustomFieldValueSet("SupplierCountry", "Supplier Country", getVendorCountry(purchaseOrder)));
 
@@ -710,7 +712,11 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
      * Returns list of Note(s) that should be sent to the vendor
      */
     private List<Note> getNotesToSendToVendor(PurchaseOrderDocument purchaseOrder) {
-        List<Note> notesToSend = new ArrayList<Note>();
+        List<Note> notesToSend = purchaseOrder.getBoNotes(); // this may not work for POA because PO note is linked to oldest PO
+        if (CollectionUtils.isEmpty(notesToSend)) {
+        	notesToSend = SpringContext.getBean(PurchaseOrderService.class).getPurchaseOrderNotes(purchaseOrder.getPurapDocumentIdentifier());        	
+        }
+
         for (int i = 0; i < purchaseOrder.getBoNotes().size(); i++) {
             Note note = (Note) purchaseOrder.getBoNotes().get(i);
             if (StringUtils.equalsIgnoreCase(note.getNoteTopicText(), CUPurapConstants.AttachemntToVendorIndicators.SEND_TO_VENDOR)) {
@@ -740,6 +746,17 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
     /*
      * Do null check just incase.
      */
+    private String getVendorShipTitle(PurchaseOrderDocument purchaseOrder) {
+    	if (purchaseOrder.getVendorShippingTitle() == null) {
+    		purchaseOrder.refreshReferenceObject("vendorShippingTitle");
+    	}
+    	if (purchaseOrder.getVendorShippingTitle() == null) {
+    		return KFSConstants.EMPTY_STRING;
+    	} else {
+    	    return purchaseOrder.getVendorShippingTitle().getVendorShippingTitleDescription();
+    	}
+    	
+    }
     private String getVendorShipPayTerms(PurchaseOrderDocument purchaseOrder) {
     	if (purchaseOrder.getVendorShippingPaymentTerms() == null) {
     		purchaseOrder.refreshReferenceObject("vendorShippingPaymentTerms");
