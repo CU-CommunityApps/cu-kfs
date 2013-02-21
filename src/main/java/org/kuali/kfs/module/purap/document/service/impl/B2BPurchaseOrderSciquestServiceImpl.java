@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -56,7 +57,6 @@ import org.kuali.rice.kns.bo.Note;
 import org.kuali.rice.kns.service.AttachmentService;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.NoteService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
@@ -672,12 +672,13 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         //* This is where the attachment gets put into the xml as raw binary data                                         *
         //*****************************************************************************************************************
         if (!notesToSendToVendor.isEmpty()) {
+            cxml.append("\n");
             for (int i = 0; i < notesToSendToVendor.size(); i++) {
                 Note note = notesToSendToVendor.get(i);
                 try {
                     Attachment poAttachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
                     if (ObjectUtils.isNotNull(poAttachment)) {
-//                        cxml.append("--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "\n");
+                        cxml.append("--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "\n");
                         cxml.append("Content-Type: application/octet-stream\n");
                         cxml.append("Content-Transfer-Encoding: binary\n");
                         cxml.append("Content-ID: <" + poAttachment.getAttachmentIdentifier() + "@sciquest.com>\n");
@@ -697,7 +698,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                 }
 
             }
-//            cxml.append("--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "--\n");  // signals this is the last MIME boundary
+            cxml.append("--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "--\n");  // signals this is the last MIME boundary
         } else {
 //            cxml.append("\n\n--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "--\n");
         }        
@@ -712,13 +713,13 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
      * Returns list of Note(s) that should be sent to the vendor
      */
     private List<Note> getNotesToSendToVendor(PurchaseOrderDocument purchaseOrder) {
-        List<Note> notesToSend = purchaseOrder.getBoNotes(); // this may not work for POA because PO note is linked to oldest PO
-        if (CollectionUtils.isEmpty(notesToSend)) {
-        	notesToSend = SpringContext.getBean(PurchaseOrderService.class).getPurchaseOrderNotes(purchaseOrder.getPurapDocumentIdentifier());        	
+        List<Note> notesToSend = new ArrayList<Note>(); // this may not work for POA because PO note is linked to oldest PO
+        List<Note> boNotes = purchaseOrder.getBoNotes(); 
+        if (CollectionUtils.isEmpty(boNotes)) {
+        	boNotes = SpringContext.getBean(PurchaseOrderService.class).getPurchaseOrderNotes(purchaseOrder.getPurapDocumentIdentifier());        	
         }
 
-        for (int i = 0; i < purchaseOrder.getBoNotes().size(); i++) {
-            Note note = (Note) purchaseOrder.getBoNotes().get(i);
+        for (Note note : boNotes) {
             if (StringUtils.equalsIgnoreCase(note.getNoteTopicText(), CUPurapConstants.AttachemntToVendorIndicators.SEND_TO_VENDOR)) {
                 notesToSend.add(note);
             }
