@@ -37,7 +37,7 @@
 				<th class="grid" width="25%" align="right"><kul:htmlAttributeLabel attributeEntry="${assetTransferAttributes.oldOrganizationOwnerChartOfAccountsCode}" readOnly="true" /></th>
 				<td class="grid" width="25%"><kul:htmlControlAttribute property="document.oldOrganizationOwnerChartOfAccountsCode" attributeEntry="${assetTransferAttributes.organizationOwnerChartOfAccountsCode}" readOnly="true"/></td>
 				<th class="grid" width="25%" align="right"><kul:htmlAttributeLabel attributeEntry="${assetTransferAttributes.organizationOwnerChartOfAccountsCode}" /></th>
-				<td class="grid" width="25%"><kul:htmlControlAttribute property="document.organizationOwnerChartOfAccountsCode" attributeEntry="${assetTransferAttributes.organizationOwnerChartOfAccountsCode}" readOnly="${readOnly}"/>
+				<td class="grid" width="25%"><kul:htmlControlAttribute property="document.organizationOwnerChartOfAccountsCode" attributeEntry="${assetTransferAttributes.organizationOwnerChartOfAccountsCode}" readOnly="${readOnly}" />
 					<c:if test="${not readOnly}">
 						&nbsp;
 		                <kul:lookup boClassName="org.kuali.kfs.coa.businessobject.Chart" fieldConversions="chartOfAccountsCode:document.organizationOwnerChartOfAccountsCode" lookupParameters="document.organizationOwnerChartOfAccountsCode:chartOfAccountsCode" />
@@ -74,8 +74,9 @@
 				<th class="grid" width="25%" align="right"><kul:htmlAttributeLabel attributeEntry="${assetTransferAttributes.transferOfFundsFinancialDocumentNumber}" /></th>
 				<td class="grid" colspan="3"><kul:htmlControlAttribute property="document.transferOfFundsFinancialDocumentNumber" attributeEntry="${assetTransferAttributes.transferOfFundsFinancialDocumentNumber}" readOnly="${readOnly}"/>
 				<c:if test="${not readOnly}">
-						&nbsp;
-		                <kul:lookup boClassName="org.kuali.rice.kew.docsearch.DocSearchCriteriaDTO" fieldConversions="routeHeaderId:document.transferOfFundsFinancialDocumentNumber" lookupParameters="document.transferOfFundsFinancialDocumentNumber:docTypeFullName,document.transferOfFundsFinancialDocumentNumber:routeHeaderId" />
+						&nbsp;						
+						<input type="hidden" name="docType" value="TF"/>
+		                <kul:lookup boClassName="org.kuali.rice.kew.docsearch.DocSearchCriteriaDTO" fieldConversions="routeHeaderId:document.transferOfFundsFinancialDocumentNumber" lookupParameters="docType:docTypeFullName,document.transferOfFundsFinancialDocumentNumber:routeHeaderId" />
 	                </c:if>
 				</td>
 			</tr>
