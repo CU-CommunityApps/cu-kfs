@@ -32,6 +32,13 @@
 		<property name="scriptConfigurationFilePaths">
 			<list/>
 		</property>
+		
+		<property name="jobNames">
+			<list merge="true">
+				<value>procurementCardSummaryFeedJob</value>
+			</list>
+		</property>
+		
 	</bean>
 	<bean id="cu-fpModuleService" parent="fpModuleService-parentBean">
 	 	<property name="moduleConfiguration" ref="cu-fp"/>
@@ -75,7 +82,13 @@
 			</list>
 		</property>
 	</bean>
-	
+	<bean id="procurementCardSummaryFeedJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="procurementCardSummaryFeedStep" />
+			</list>
+		</property>
+	</bean>
 	
 	<bean id="procurementCardLoadTransactionsService" class="org.kuali.kfs.fp.batch.service.impl.ProcurementCardLoadTransactionsServiceImpl">
 		<property name="businessObjectService">
@@ -124,8 +137,77 @@
 		    <ref bean="procurementCardFlatInputFileType" />
 		</property>
 	</bean>	
+	
+	<bean id="procurementCardSummaryFeedStep" class="edu.cornell.kfs.fp.batch.ProcurementCardSummaryFeedStep" parent="step">
+		<property name="procurementCardSummaryFeedService" ref="procurementCardSummaryFeedService" />
+		<property name="batchInputFileService"  ref="batchInputFileService" />
+		<property name="dateTimeService"  ref="dateTimeService" />
+		<property name="procurementCardSummaryFlatInputFileType"  ref="procurementCardSummaryFlatInputFileType" />
+		<property name="businessObjectService" ref="businessObjectService" />
+	</bean>	
 
-    <bean id="procurementCardFlatInputFileType" class="edu.cornell.kfs.fp.batch.ProcurementCardFlatInputFileType"> 
+
+	<bean id="procurementCardSummaryFeedService" parent="procurementCardSummaryFeedService-parentBean"/>
+
+    <bean id="procurementCardSummaryFeedService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardSummaryFeedServiceImpl" abstract="true">
+		<property name="batchInputFileService">
+			<ref bean="batchInputFileService" />
+		</property>
+		<property name="procurementCardSummaryFlatInputFileType">
+			<ref bean="procurementCardSummaryFlatInputFileType" />
+		</property>
+		<property name="businessObjectService" ref="businessObjectService" />
+		<property name="dateTimeService" ref="dateTimeService" />
+	</bean>
+	
+	<bean id="procurementCardSummaryFlatInputFileType" class= "edu.cornell.kfs.fp.batch.ProcurementCardSummaryFlatInputFileType">
+	    <property name="directoryPath">
+	       <value>${staging.directory}/fp/pcardSummary</value>
+	    </property>
+	    <property name="fileExtension">
+	       <value>data</value>
+	    </property>
+	    <property name="dateTimeService">
+	       <ref bean="dateTimeService"/>
+	    </property>
+	    <property name="flatFileSpecification">
+	    	<ref bean="pCardSummaryFlatFileSpecification"/>
+       </property>
+
+       <property name="processor" ref="ProcurementCardSummaryFlatInputFileHandler" />
+	</bean>
+
+	<bean id="ProcurementCardSummaryFlatInputFileHandler" parent="ProcurementCardSummaryFlatInputFileHandler-parentBean">
+	</bean>
+
+    <bean id="ProcurementCardSummaryFlatInputFileHandler-parentBean" class="edu.cornell.kfs.fp.batch.ProcurementCardSummaryFlatInputFileHandler" abstract="true">
+	</bean>
+	
+   	<bean id="pCardSummaryFlatFileSpecification" parent="FixedWidthFlatFileSpecification" p:defaultBusinessObjectClass="edu.cornell.kfs.fp.businessobject.ProcurementCardSummary">
+   		<property name="objectSpecifications">
+   			<list>
+<!-- TODO:!!!! update file specification  -->   			
+   				<bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.fp.businessobject.ProcurementCardSummary">
+   					<property name="parseProperties">
+   						<list>
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderAccountNumber" p:start="0" p:end="4" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderName" p:start="16" p:end="41" p:rightTrim="true" />	
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="emplid" p:start="41" p:end="50" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="netid" p:start="50" p:end="65" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountStatus" p:start="65" p:end="75" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cycleStartDate" p:start="75" p:end="83" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="summaryAmount" p:start="83" p:end="100" p:rightTrim="true" />
+   							<bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="loadDate" p:start="100" p:end="108" />
+  						</list>
+   					</property>
+   				</bean>
+   				
+   			</list>
+   		</property>
+   	</bean>
+ 
+	
+	<bean id="procurementCardFlatInputFileType" class="edu.cornell.kfs.fp.batch.ProcurementCardFlatInputFileType"> 
 	    <property name="directoryPath">
 	       <value>${staging.directory}/fp/procurementCard</value>
 	    </property>
