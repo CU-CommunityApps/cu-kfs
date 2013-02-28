@@ -43,14 +43,11 @@ public class PurchaseOrderAmendmentHasUnitCostAndValidPercentage extends Generic
 	        			valid = false;
 	        		}
 	        	}
-	        	// TODO : comment out to check Generate Auto POA issue. KFSPTS-1769
-	        	// DOn't move to prod with these lines comment out
-	        	// commit to dev for verification onlys
 	        	//if total percent is not 100, error
-//	        	if (totalPercent.compareTo(new BigDecimal(100)) != 0) {
-//	                GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY, PurapKeyConstants.ERROR_ITEM_ACCOUNTING_TOTAL, item.getItemIdentifierString());
-//	                valid = false;
-//	        	}
+	        	if (totalPercent.compareTo(new BigDecimal(100)) != 0) {
+	                GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY, PurapKeyConstants.ERROR_ITEM_ACCOUNTING_TOTAL, item.getItemIdentifierString());
+	                valid = false;
+	        	}
         	}
         }
 		
