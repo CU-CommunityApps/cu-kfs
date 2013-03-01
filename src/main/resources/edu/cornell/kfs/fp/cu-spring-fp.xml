@@ -90,6 +90,7 @@
 		</property>
 	</bean>
 	
+	
 	<bean id="procurementCardLoadTransactionsService" class="org.kuali.kfs.fp.batch.service.impl.ProcurementCardLoadTransactionsServiceImpl">
 		<property name="businessObjectService">
 			<ref bean="businessObjectService" />
@@ -137,7 +138,7 @@
 		    <ref bean="procurementCardFlatInputFileType" />
 		</property>
 	</bean>	
-	
+
 	<bean id="procurementCardSummaryFeedStep" class="edu.cornell.kfs.fp.batch.ProcurementCardSummaryFeedStep" parent="step">
 		<property name="procurementCardSummaryFeedService" ref="procurementCardSummaryFeedService" />
 		<property name="batchInputFileService"  ref="batchInputFileService" />
@@ -207,7 +208,7 @@
    	</bean>
  
 	
-	<bean id="procurementCardFlatInputFileType" class="edu.cornell.kfs.fp.batch.ProcurementCardFlatInputFileType"> 
+    <bean id="procurementCardFlatInputFileType" class="edu.cornell.kfs.fp.batch.ProcurementCardFlatInputFileType"> 
 	    <property name="directoryPath">
 	       <value>${staging.directory}/fp/procurementCard</value>
 	    </property>
@@ -264,6 +265,15 @@
     <bean id="cuLegacyTravelService" class="edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl">
         <property name="updateTripWsdl">
             <value>${cu.legacy.travel.wsdl}</value>
+        </property>
+        <property name="updateTripEndpoint">
+            <value>${cu.legacy.travel.endpoint}</value>
+        </property>
+        <property name="updateTripUser">
+            <value>${cu.legacy.travel.username}</value>
+        </property>
+        <property name="updateTripPassword">
+            <value>${cu.legacy.travel.password}</value>
         </property>
     </bean>
 

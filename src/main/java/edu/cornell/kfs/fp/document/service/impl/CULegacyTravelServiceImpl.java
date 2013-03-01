@@ -18,8 +18,14 @@ package edu.cornell.kfs.fp.document.service.impl;
 import java.net.URL;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.common.util.Base64Utility;
+import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
+import org.apache.cxf.message.Message;
+import org.apache.cxf.transport.http.*;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.rice.core.util.ClassLoaderUtils;
 import org.kuali.rice.core.util.ContextClassLoaderBinder;
@@ -47,6 +53,9 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
     public static final String KFS_DOC_COMPLETED = "COMPLETE";
     
     private String updateTripWsdl;
+    private String updateTripEndpoint;
+    private String updateTripUser;
+    private String updateTripPassword;
     
 	@Cached
 	public boolean isLegacyTravelGeneratedKfsDocument(String docID) {
@@ -58,6 +67,8 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
 			
 			JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
 			client = dcf.createClient(wsdlUrl);
+			  
+			configureWebServiceClient(client);
 			  
 			Object[] results1 = client.invoke(DFA_TRAVEL_WS_METHODS.GET_TRIP_ID, docID);
 			String tripID = (String)results1[0];
@@ -85,6 +96,8 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
 			
 			JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
 			client = dcf.createClient(wsdlUrl);
+			
+			configureWebServiceClient(client);
 			  
 			Object[] results1 = client.invoke(DFA_TRAVEL_WS_METHODS.GET_TRIP_ID, docID);
 			String tripID = (String)results1[0];
@@ -126,6 +139,8 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
 			JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
 			client = dcf.createClient(wsdlUrl);
 			  
+			configureWebServiceClient(client);
+			  
 			// Method signature on Travel side:  updateTrip(String status, String updaterNetID, String dvID, String voidReason) 
 			Object[] results1 = client.invoke(DFA_TRAVEL_WS_METHODS.UPDATE_TRIP, KFS_DOC_VOIDED, GlobalVariables.getUserSession().getPrincipalName(), docID, disapproveReason);
 			Boolean tripReopened = (Boolean)results1[0];
@@ -161,4 +176,95 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
 		this.updateTripWsdl = updateTripWsdl;
 	}
 
+    /**
+	 * @return the updateTripUser
+	 */
+	public String getUpdateTripUser() {
+		return updateTripUser;
+	}
+
+	/**
+	 * @param updateTripUser the updateTripUser to set
+	 */
+	public void setUpdateTripUser(String updateTripUser) {
+		this.updateTripUser = updateTripUser;
+	}
+
+    /**
+	 * @return the updateTripPassword
+	 */
+	public String getUpdateTripPassword() {
+		return updateTripPassword;
+	}
+
+	/**
+	 * @param updateTripPassword the updateTripPassword to set
+	 */
+	public void setUpdateTripPassword(String updateTripPassword) {
+		this.updateTripPassword = updateTripPassword;
+	}
+
+    /**
+	 * @return the updateTripEndpoint
+	 */
+	public String getUpdateTripEndpoint() {
+		return updateTripEndpoint;
+	}
+
+	/**
+	 * @param updateTripEndpoint the updateTripEndpoint to set
+	 */
+	public void setUpdateTripEndpoint(String updateTripEndpoint) {
+		this.updateTripEndpoint = updateTripEndpoint;
+	}
+
+	
+	/**
+	 * @param client
+	 */
+	private void configureWebServiceClient(Client client) {
+		Endpoint endpoint = client.getConduitSelector().getEndpoint();
+	    endpoint.getEndpointInfo().setAddress(updateTripEndpoint);
+	    client.getConduitSelector().setEndpoint(endpoint);
+
+	    HTTPConduit httpConduit = (HTTPConduit) client.getConduit();
+	    HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
+	    httpClientPolicy.setConnectionTimeout(36000);
+	    httpClientPolicy.setAllowChunking(false);
+	    httpConduit.setClient(httpClientPolicy);
+
+	    httpConduit.setAuthSupplier(new KfsWebServiceAuthSupplier());
+	}
+
+	/**
+	 * Internal class that implements an authorization mechanism to support the required username and password being passed to the 
+	 * associated endpoint for the KFS Web Services.
+	 * 
+	 * @author Dennis Friends
+	 *
+	 */
+	public class KfsWebServiceAuthSupplier extends HttpAuthSupplier {
+		public KfsWebServiceAuthSupplier() {
+		    super();
+		}
+	
+		public boolean requiresRequestCaching() {
+		    return false;
+		}
+		    
+		private String createUserPass(String userName, String passwd) {
+		    String userAndPass = userName + ":" + passwd;
+		    return "Basic " + Base64Utility.encode(userAndPass.getBytes());
+		}
+
+		public String getPreemptiveAuthorization(HTTPConduit conduit, URL currentURL, Message message) {
+			return createUserPass(updateTripUser, updateTripPassword);
+		}
+		
+		public String getAuthorizationForRealm(HTTPConduit conduit, URL currentURL, Message message, String reqestedRealm, String fullHeader) {
+			return createUserPass(updateTripUser, updateTripPassword);
+		}
+	}
+
+	
 }
