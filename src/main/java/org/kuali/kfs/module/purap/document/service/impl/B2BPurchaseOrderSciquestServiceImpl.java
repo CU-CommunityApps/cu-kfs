@@ -779,14 +779,6 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
             LOG.error("verifyCxmlPOData()  The Delivery City Name is required for the cXML PO but is missing.");
             errors.append("Missing Data: Delivery City Name\n");
         }
-        if (StringUtils.isEmpty(purchaseOrder.getDeliveryStateCode())) {
-            LOG.error("verifyCxmlPOData()  The Delivery State is required for the cXML PO but is missing.");
-            errors.append("Missing Data: Delivery State\n");
-        }
-        if (StringUtils.isEmpty(purchaseOrder.getDeliveryPostalCode())) {
-            LOG.error("verifyCxmlPOData()  The Delivery Postal Code is required for the cXML PO but is missing.");
-            errors.append("Missing Data: Delivery Postal Code\n");
-        }
 
         // verify item data
         List detailList = purchaseOrder.getItems();
