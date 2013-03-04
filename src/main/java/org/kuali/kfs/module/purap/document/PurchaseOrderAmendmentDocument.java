@@ -57,7 +57,9 @@ public class PurchaseOrderAmendmentDocument extends PurchaseOrderDocument {
 
     boolean newUnorderedItem = false; //Used for routing
     String receivingDeliveryCampusCode; //Used for routing
-    
+    // KFSPTS-1769
+    boolean spawnPoa = false; //Auto Generating POA
+   
     /**
      * Default constructor.
      */
@@ -262,5 +264,13 @@ public class PurchaseOrderAmendmentDocument extends PurchaseOrderDocument {
     	}
     	return false;
     }
+
+	public boolean isSpawnPoa() {
+		return spawnPoa;
+	}
+
+	public void setSpawnPoa(boolean spawnPoa) {
+		this.spawnPoa = spawnPoa;
+	}
 
 }

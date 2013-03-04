@@ -8,6 +8,7 @@ import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
+import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.sys.document.validation.GenericValidation;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
@@ -45,8 +46,11 @@ public class PurchaseOrderAmendmentHasUnitCostAndValidPercentage extends Generic
 	        	}
 	        	//if total percent is not 100, error
 	        	if (totalPercent.compareTo(new BigDecimal(100)) != 0) {
-	                GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY, PurapKeyConstants.ERROR_ITEM_ACCOUNTING_TOTAL, item.getItemIdentifierString());
-	                valid = false;
+	        		// KFSPTS-1769.  if it is spawnpoa for unordered item, then don't check
+	        		if (!((purapDocument instanceof PurchaseOrderAmendmentDocument) && ((PurchaseOrderAmendmentDocument)purapDocument).isSpawnPoa())) {
+	                    GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY, PurapKeyConstants.ERROR_ITEM_ACCOUNTING_TOTAL, item.getItemIdentifierString());
+		                valid = false;
+	        		}
 	        	}
         	}
         }
