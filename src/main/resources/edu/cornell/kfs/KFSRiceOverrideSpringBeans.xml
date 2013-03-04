@@ -94,6 +94,39 @@
         <property name="initialSize" value="5"/> 
         <property name="accessToUnderlyingConnectionAllowed" value="true"/> 
     </bean> 
+    
+    <bean id="documentService" class="edu.cornell.kfs.sys.document.service.impl.CUFinancialSystemDocumentServiceImpl">
+		<property name="documentDao">
+			<ref bean="documentDao" />
+		</property>
+		<property name="documentHelperService">
+		<ref bean="documentHelperService" />
+		</property>
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+		<property name="workflowDocumentService">
+			<ref bean="workflowDocumentService" />
+		</property>
+		<property name="kualiRuleService">
+			<ref bean="kualiRuleService" />
+		</property>
+		<property name="documentHeaderService">
+			<ref bean="documentHeaderService" />
+		</property>
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+		<property name="maintenanceDocumentService">
+			<ref bean="maintenanceDocumentService" />
+		</property>
+		<property name="noteService">
+			<ref bean="noteService" />
+		</property>
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>
+	</bean>
 
     <!-- We override the KFS impl so that we can read properties specified at runtime -->
 <!--
