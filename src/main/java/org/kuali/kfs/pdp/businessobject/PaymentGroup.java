@@ -1192,24 +1192,32 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * A payment group is payable by ACH if it meets all of the following criteria:
-     * - there are no negative payment details within the group
+     * - the sum of payment details within a group total to a positive value (criteria added with KFSPTS-1460)
+     * - there are no negative payment details within the group (criteria removed with KFSPTS-1460)
      * - the payee has a defined ACH account
      * - the payment does not contain any attachments, special handling and is not an immediate payment
      * 
      * @return True if the payment group is payable by ACH, false otherwise.
      */
     public boolean isPayableByACH() {
+    	
+    	//KFSPTS-1460:
+    	// Replaced the logic: 
     	// If any one of the payment details in the group are negative, we always force a check
-        boolean noNegativeDetails = true;
-
-        // If any one of the payment details in the group are negative, we always force a check
-        List<PaymentDetail> paymentDetailsList = getPaymentDetails();
-        for (PaymentDetail paymentDetail : paymentDetailsList) {
-            if (paymentDetail.getNetPaymentAmount().doubleValue() < 0) {
-                noNegativeDetails = false;
-                break;
-            }
+    	//
+    	// With the new logic: 
+    	// If the total amount for all the payment details within a payment group is positive ALLOW ACH; 
+    	// otherwise force a check because the total is negative.    	
+    	boolean paymentGroupTotalIsNotNegative = true;
+    	KualiDecimal paymentGroupTotal = KualiDecimal.ZERO;
+    	List<PaymentDetail> paymentDetailsList = getPaymentDetails();
+	    for (PaymentDetail paymentDetail : paymentDetailsList) {
+	    	paymentGroupTotal = paymentGroupTotal.add(paymentDetail.getNetPaymentAmount());
+	    }
+        if (paymentGroupTotal.isNegative()) { 
+        	paymentGroupTotalIsNotNegative = false;
         }
+    	
 
         // determine whether payment should be ACH or Check
         CustomerProfile customer = getBatch().getCustomerProfile();
@@ -1217,7 +1225,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
         PayeeACHAccount payeeAchAccount = null;
         boolean isACH = false;
         if (PdpConstants.PayeeIdTypeCodes.VENDOR_ID.equals(getPayeeIdTypeCd()) || PdpConstants.PayeeIdTypeCodes.EMPLOYEE.equals(getPayeeIdTypeCd()) || PdpConstants.PayeeIdTypeCodes.ENTITY.equals(getPayeeIdTypeCd())) {
-            if (StringUtils.isNotBlank(getPayeeId()) && !getPymtAttachment() && !getProcessImmediate() && !getPymtSpecialHandling() && (customer.getAchTransactionType() != null) && noNegativeDetails) {
+            if (StringUtils.isNotBlank(getPayeeId()) && !getPymtAttachment() && !getProcessImmediate() && !getPymtSpecialHandling() && (customer.getAchTransactionType() != null) && paymentGroupTotalIsNotNegative) {
                 payeeAchAccount = SpringContext.getBean(AchService.class).getAchInformation(getPayeeIdTypeCd(), getPayeeId(), customer.getAchTransactionType());
                 isACH = ObjectUtils.isNotNull(payeeAchAccount);
             }

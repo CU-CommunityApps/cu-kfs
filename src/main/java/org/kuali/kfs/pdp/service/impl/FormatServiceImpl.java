@@ -201,6 +201,8 @@ public class FormatServiceImpl implements FormatService {
         return Integer.parseInt(maxLines);
     }
 
+	//KFSPTS-1460: 
+	// This implementation SHOULD BE overridden by the AchBundlerFormatServiceImpl.performFormat version.    
     /**
      * @see org.kuali.kfs.pdp.service.FormatService#performFormat(java.lang.Integer)
      */
@@ -755,5 +757,41 @@ public class FormatServiceImpl implements FormatService {
             this.noteLines = noteLines;
         }
     }
+ 
+    
+    /**
+     * KFSPTS-1460: Added accessor method for extended classes
+     */
+    protected PaymentDetailDao getPaymentDetailDao() {
+        return paymentDetailDao;
+    }
 
+    /**
+     * KFSPTS-1460: Added accessor method for extended classes
+     */
+    protected PendingTransactionService getGlPendingTransactionService() {
+        return glPendingTransactionService;
+    }
+
+    /**
+     * KFSPTS-1460: Added accessor method for extended classes
+     */
+    protected ParameterService getParameterService() {
+        return parameterService;
+    }
+
+    /**
+     * KFSPTS-1460: Added accessor method for extended classes
+     */
+    protected PaymentGroupService getPaymentGroupService() {
+        return paymentGroupService;
+    }
+    
+    /**
+     * KFSPTS-1460: Added accessor method for extended classes
+     */
+    protected BusinessObjectService getBusinessObjectService() {
+       return businessObjectService;
+    }
+    
 }
