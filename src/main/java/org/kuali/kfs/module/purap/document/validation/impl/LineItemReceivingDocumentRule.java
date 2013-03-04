@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.cornell.kfs.module.purap.document.validation.impl;
+package org.kuali.kfs.module.purap.document.validation.impl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -229,7 +229,7 @@ public class LineItemReceivingDocumentRule extends DocumentRuleBase implements C
     }
     
     /*
-     * KFSPTS-1767 : new rule to check orderqty >= received qty
+     * KFSPTS-1769 : new rule to check orderqty >= received qty
      */
     private boolean validateQuantitiesReceivedNotExceedOrdered(ReceivingDocument document) {
         GlobalVariables.getMessageMap().clearErrorPath();
