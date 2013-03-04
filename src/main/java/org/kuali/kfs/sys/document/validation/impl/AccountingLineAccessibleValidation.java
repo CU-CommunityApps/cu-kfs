@@ -15,16 +15,20 @@
  */
 package org.kuali.kfs.sys.document.validation.impl;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.Correctable;
 import org.kuali.kfs.sys.document.authorization.AccountingLineAuthorizer;
@@ -36,10 +40,16 @@ import org.kuali.kfs.sys.document.validation.event.AddAccountingLineEvent;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.kfs.sys.document.validation.event.DeleteAccountingLineEvent;
 import org.kuali.kfs.sys.document.validation.event.UpdateAccountingLineEvent;
+import org.kuali.kfs.sys.identity.KfsKimAttributes;
 import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.kim.bo.types.dto.AttributeSet;
+import org.kuali.rice.kim.service.RoleManagementService;
+import org.kuali.rice.kns.document.Document;
 import org.kuali.rice.kns.rule.event.KualiDocumentEvent;
 import org.kuali.rice.kns.service.DataDictionaryService;
+import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
 /**
  * A validation that checks whether the given accounting line is accessible to the given user or not
@@ -79,7 +89,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         final AccountingLineAuthorizer accountingLineAuthorizer = lookupAccountingLineAuthorizer();
         final boolean lineIsAccessible = accountingLineAuthorizer.hasEditPermissionOnAccountingLine(accountingDocumentForValidation, accountingLineForValidation, getAccountingLineCollectionProperty(), currentUser, true);
         final boolean isAccessible = accountingLineAuthorizer.hasEditPermissionOnField(accountingDocumentForValidation, accountingLineForValidation, getAccountingLineCollectionProperty(), KFSPropertyConstants.ACCOUNT_NUMBER, lineIsAccessible, true, currentUser);
-
+        boolean valid = true;
         // report errors
         if (!isAccessible) {
             final String principalName = currentUser.getPrincipalName();
@@ -89,9 +99,17 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
             
             final String[] accountErrorParams = new String[] { getDataDictionaryService().getAttributeLabel(accountingLineForValidation.getClass(), KFSPropertyConstants.ACCOUNT_NUMBER), accountingLineForValidation.getAccountNumber(), principalName };
             GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, convertEventToMessage(event), accountErrorParams);
+        } else 
+        if (event instanceof AddAccountingLineEvent && isAccountNode(event.getDocument()) && !isAccountingLineFo(event.getDocument())) {
+            final String principalName = currentUser.getPrincipalName();
+            final String[] chartErrorParams = new String[] { getDataDictionaryService().getAttributeLabel(accountingLineForValidation.getClass(), KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE), accountingLineForValidation.getChartOfAccountsCode(),  principalName};
+            GlobalVariables.getMessageMap().putError(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, convertEventToMessage(event), chartErrorParams);
+            final String[] accountErrorParams = new String[] { getDataDictionaryService().getAttributeLabel(accountingLineForValidation.getClass(), KFSPropertyConstants.ACCOUNT_NUMBER), accountingLineForValidation.getAccountNumber(), principalName };
+            GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, convertEventToMessage(event), accountErrorParams);
+        	valid=false;
         }
 
-        return isAccessible;
+        return isAccessible && valid;
     }
     
     /**
@@ -198,6 +216,43 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
     public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
         this.dataDictionaryService = dataDictionaryService;
     }
-    
+   
+    /*
+     * KFSPTS-1273
+     */
+    private boolean isAccountingLineFo(Document document) {
+        Person currentUser = GlobalVariables.getUserSession().getPerson();
+        List<String> roleIds = new ArrayList<String>();
+		roleIds.add(SpringContext.getBean(RoleManagementService.class).getRoleIdByName(KFSConstants.ParameterNamespaces.KFS,
+				KFSConstants.SysKimConstants.FISCAL_OFFICER_KIM_ROLE_NAME));
+		roleIds.add(SpringContext.getBean(RoleManagementService.class).getRoleIdByName(KFSConstants.ParameterNamespaces.KFS,
+				KFSConstants.SysKimConstants.FISCAL_OFFICER_PRIMARY_DELEGATE_KIM_ROLE_NAME));
+		roleIds.add(SpringContext.getBean(RoleManagementService.class).getRoleIdByName(KFSConstants.ParameterNamespaces.KFS,
+				KFSConstants.SysKimConstants.FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME));
+
+		AttributeSet roleQualifier = new AttributeSet();
+		roleQualifier.put(KfsKimAttributes.DOCUMENT_NUMBER,document.getDocumentNumber());
+		roleQualifier.put(KfsKimAttributes.DOCUMENT_TYPE_NAME, document.getDocumentHeader().getWorkflowDocument().getDocumentType());
+		roleQualifier.put(KfsKimAttributes.FINANCIAL_DOCUMENT_TOTAL_AMOUNT,
+				((FinancialSystemDocumentHeader)document.getDocumentHeader()).getFinancialDocumentTotalAmount().toString());
+		roleQualifier.put(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE,accountingLineForValidation.getChartOfAccountsCode());
+		roleQualifier.put(KfsKimAttributes.ACCOUNT_NUMBER,accountingLineForValidation.getAccountNumber());
+              
+        return SpringContext.getBean(RoleManagementService.class).principalHasRole(currentUser.getPrincipalId(), roleIds, roleQualifier);
+    }
+
+    private boolean isAccountNode(Document document) {
+		KualiWorkflowDocument workflowDocument = document.getDocumentHeader()
+				.getWorkflowDocument();
+		if (workflowDocument == null) {
+			try {
+				workflowDocument = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(document.getDocumentNumber())
+						.getDocumentHeader().getWorkflowDocument();
+			} catch (Exception e) {
+
+			}
+		}
+	    return workflowDocument != null && workflowDocument.getRouteHeader() != null && StringUtils.equals(RequisitionStatuses.NODE_ACCOUNT, workflowDocument.getRouteHeader().getCurrentRouteNodeNames());
+    }
 }
 
