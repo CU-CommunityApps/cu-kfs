@@ -158,7 +158,7 @@
 		          <html:messages id="warnings" property="noteWarning" message="true">
 		            &nbsp;&nbsp;&nbsp;<bean:write name="warnings"/><br><br>
 		          </html:messages>
-		    </kul:notes> 
+		    </purap:ponotesSciquest> 
 
 		    <kul:adHocRecipients />
 		
