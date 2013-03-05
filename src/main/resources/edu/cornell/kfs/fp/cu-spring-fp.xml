@@ -275,6 +275,9 @@
         <property name="updateTripPassword">
             <value>${cu.legacy.travel.password}</value>
         </property>
+        <property name="travelUrl">
+            <value>${cu.legacy.travel.url}</value>
+        </property>
     </bean>
 
 	<import resource="document/validation/configuration/CU-DisbursementVoucherValidation.xml" />

@@ -41,8 +41,6 @@ import org.kuali.rice.kns.util.spring.Cached;
 public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.service.CULegacyTravelService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CULegacyTravelServiceImpl.class);
 
-//    public static final String UPDATE_TRIP_WSDL = "https://servicesdev.dfa.cornell.edu/services/UpdateTripWebService?wsdl";
-    
     public static final class DFA_TRAVEL_WS_METHODS {
     	public static final String GET_TRIP_ID = "getTripID";
     	public static final String UPDATE_TRIP = "updateTrip";
@@ -52,6 +50,7 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
     public static final String KFS_DOC_APPROVED = "APPROVE";
     public static final String KFS_DOC_COMPLETED = "COMPLETE";
     
+    private String travelUrl;
     private String updateTripWsdl;
     private String updateTripEndpoint;
     private String updateTripUser;
@@ -216,6 +215,20 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
 	 */
 	public void setUpdateTripEndpoint(String updateTripEndpoint) {
 		this.updateTripEndpoint = updateTripEndpoint;
+	}
+
+    /**
+	 * @return the travelUrl
+	 */
+	public String getTravelUrl() {
+		return travelUrl;
+	}
+
+	/**
+	 * @param travelUrl the travelUrl to set
+	 */
+	public void setTravelUrl(String travelUrl) {
+		this.travelUrl = travelUrl;
 	}
 
 	

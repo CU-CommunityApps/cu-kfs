@@ -451,7 +451,8 @@ public class DisbursementVoucherForm extends KualiAccountingDocumentFormBase {
     	String tripID = SpringContext.getBean(CULegacyTravelService.class).getLegacyTripID(this.getDocId());
     	LOG.info("getTripUrl() called");
     	StringBuffer url = new StringBuffer();
-        url.append("https://servicesdev.dfa.cornell.edu/travel/navigation?form_action=0&tripid=").append(tripID).append("&link=true");
+    	url.append(SpringContext.getBean(CULegacyTravelService.class).getTravelUrl());
+        url.append("/navigation?form_action=0&tripid=").append(tripID).append("&link=true");
     	return url.toString();
     }
     

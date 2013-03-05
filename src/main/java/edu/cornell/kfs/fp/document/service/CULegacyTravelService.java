@@ -27,6 +27,8 @@ public interface CULegacyTravelService {
 	
 	public String getLegacyTripID(String docID);
 	
+	public String getTravelUrl();
+	
 	public boolean reopenLegacyTrip(String docID);
 
 	public boolean reopenLegacyTrip(String docID, String disapproveReason);
