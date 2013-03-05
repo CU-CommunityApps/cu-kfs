@@ -35,9 +35,16 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         pks.put("documentNumber", accountingDocument.getDocumentNumber());
 
         AccountingDocument savedDoc = (DisbursementVoucherDocument) businessObjectService.findByPrimaryKey(DisbursementVoucherDocument.class, pks);
+        if (savedDoc == null) {
+        	return;
+        }
       
         List<SourceAccountingLine> newSourceAccountingLines = accountingDocument.getSourceAccountingLines();
+        List<TargetAccountingLine> newTargetAccountingLines = accountingDocument.getTargetAccountingLines();
+
         List<SourceAccountingLine> savedSourceAccountingLines = savedDoc.getSourceAccountingLines();
+        List<TargetAccountingLine> savedTargetAccountingLines = savedDoc.getTargetAccountingLines();
+
 
         if (ObjectUtils.isNotNull(newSourceAccountingLines) && ObjectUtils.isNotNull(savedSourceAccountingLines)) {
             for (SourceAccountingLine oldSal : savedSourceAccountingLines) {
@@ -52,9 +59,7 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         } 
         
         
-        List<TargetAccountingLine> newTargetAccountingLines = accountingDocument.getTargetAccountingLines();
-        List<TargetAccountingLine> savedTargetAccountingLines = savedDoc.getTargetAccountingLines();
-
+       
 
         if (ObjectUtils.isNotNull(newTargetAccountingLines) && ObjectUtils.isNotNull(savedTargetAccountingLines)) {
             for (TargetAccountingLine oldTal : savedTargetAccountingLines) {
