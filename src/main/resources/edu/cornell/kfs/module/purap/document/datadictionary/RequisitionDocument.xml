@@ -650,7 +650,7 @@
 
   <bean id="RequisitionDocument-institutionContactEmailAddress-parentBean" abstract="true" parent="GenericAttributes-emailAddress">
     <property name="name" value="institutionContactEmailAddress"/>
-    <property name="label" value="Contact Email"/>
+    <property name="label" value="Cornell Contact Email"/>
     <property name="shortLabel" value="Address"/>
   </bean>
   <bean id="RequisitionDocument-institutionContactName" parent="RequisitionDocument-institutionContactName-parentBean"/>
@@ -658,7 +658,7 @@
   <bean id="RequisitionDocument-institutionContactName-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="institutionContactName"/>
     <property name="forceUppercase" value="false"/>
-    <property name="label" value="Contact Name"/>
+    <property name="label" value="Cornell Contact Name"/>
     <property name="shortLabel" value="Name"/>
     <property name="maxLength" value="45"/>
     <property name="validationPattern">
@@ -672,7 +672,7 @@
 
   <bean id="RequisitionDocument-institutionContactPhoneNumber-parentBean" abstract="true" parent="VendorGenericAttributes-phoneNumberWithValidation">
     <property name="name" value="institutionContactPhoneNumber"/>
-    <property name="label" value="Contact Phone"/>
+    <property name="label" value="Cornell Contact Phone"/>
     <property name="shortLabel" value="Number"/>
   </bean>
   <bean id="RequisitionDocument-nonInstitutionFundAccountNumber" parent="RequisitionDocument-nonInstitutionFundAccountNumber-parentBean"/>
