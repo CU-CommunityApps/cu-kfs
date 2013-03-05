@@ -40,21 +40,19 @@ public class PdpMailMessageServiceImpl implements PdpMailMessageService {
 	 private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PdpMailMessageServiceImpl.class);
 	 
 	 private String EMAIL_ADDRESS_DELIMITER = ";";
-	 private String DEFAULT_EMAIL_FROM_ADDRESS = "admin@localhost";
 	 
-	 private ParameterService parameterService;
 	 private KualiConfigurationService kualiConfigurationService;
 
 	 /**
 	 * This method will use the data in the input parameter to create a MimeMessage with
 	 * an attachment (when the data is included) and send it to the indicated recipients.
+	 * It is the caller's responsibility to ensure that the "from" address is not null;
+	 * otherwise, a runtime exception will be thrown when the send of the email is attempted.
 	 * 
 	 * @param message
 	 */
 	public void send(PdpMailMessage messageData) {
-		LOG.debug("PdpMailMessageServiceImpl.send() starting");
-		
-		String localhostName = Utilities.getHostName();
+		LOG.debug("PdpMailMessageServiceImpl.send() starting");		
 						
 		String host = kualiConfigurationService.getPropertyString("mail.smtp.host");		
 		Properties properties = System.getProperties();		 
@@ -63,16 +61,13 @@ public class PdpMailMessageServiceImpl implements PdpMailMessageService {
 		
 		try {
 			//create the object
-			MimeMessage message = new MimeMessage(session);
+			MimeMessage message = new MimeMessage(session);		
 			
-			String fromAddress = messageData.getFromAddress();					
-			if ((fromAddress == null) || (fromAddress.isEmpty())) {
-				message.setFrom(new InternetAddress(this.DEFAULT_EMAIL_FROM_ADDRESS));
+			//NOTE: if this value is empty or null, a run time exception will be generated when the "send" is attempted
+			message.setFrom(new InternetAddress(messageData.getFromAddress()));
+			if ((messageData.getFromAddress() == null) || (messageData.getFromAddress().isEmpty())) {
+				LOG.info("PdpMailMessageServiceImpl.send has detected a null or blank email fromAddress.");
 			}
-			else {
-				//set From Address in message header
-				message.setFrom(new InternetAddress(messageData.getFromAddress()));
-			}			
 			
 			//get all of the "TO" addresses into a single string and set To Address in message header
 			message.setRecipients(Message.RecipientType.TO, this.convertListToString(messageData.getToAddresses()));
@@ -95,7 +90,8 @@ public class PdpMailMessageServiceImpl implements PdpMailMessageService {
 				
 			if (messageData.getAttachmentContent() != null && !messageData.getAttachmentContent().isEmpty()) {
 				//Ensure there is data for the attachment. 
-				//Empty or null attachment attribute will cause a stack trace when email is sent.
+				//Empty or null attachment attribute will cause an exception when email send is attempted and
+				//attachment data is not required.
 				
 				//create the Attachment for the email in memory
 				DataSource attachmentSource = new ByteArrayDataSource(messageData.getAttachmentContent(), messageData.getAttachmentMimeType());			
@@ -145,16 +141,6 @@ public class PdpMailMessageServiceImpl implements PdpMailMessageService {
 		}		
 		return emailAddresses.toString();
 	}
-
-	
-    /**
-     * Sets the parameterService attribute value.
-     * 
-     * @param parameterService The parameterService to set.
-     */
-    public void setParameterService(ParameterService parameterService) {
-        this.parameterService = parameterService;
-    }
         
     /**
      * Sets the parameterService attribute value.

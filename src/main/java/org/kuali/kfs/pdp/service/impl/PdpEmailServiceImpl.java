@@ -608,18 +608,25 @@ public class PdpEmailServiceImpl implements PdpEmailService {
     private MailMessage createAdviceMessageAndPopulateHeader(PaymentGroup paymentGroup, CustomerProfile customer, String productionEnvironmentCode, String environmentCode) {
     	LOG.debug("createAdviceMessageAndPopulateHeader() starting");
     	MailMessage message = new MailMessage();
+        	
+    	String fromAddress = customer.getAdviceReturnEmailAddr();	
+		if ((fromAddress == null) || (fromAddress.isEmpty())) {
+			//get the default from address
+			fromAddress = new String(parameterService.getParameterValue(KFSParameterKeyConstants.KFS_PDP, KFSParameterKeyConstants.ALL_COMPONENTS, KFSParameterKeyConstants.PDP_CUSTOMER_MISSING_ADVICE_RETURN_EMAIL));
+		}	
+    	
         if (StringUtils.equals(productionEnvironmentCode, environmentCode)) {
             message.addToAddress(paymentGroup.getAdviceEmailAddress());
             message.addCcAddress(paymentGroup.getAdviceEmailAddress());
             message.addBccAddress(paymentGroup.getAdviceEmailAddress());
-            message.setFromAddress(customer.getAdviceReturnEmailAddr());
+            message.setFromAddress(fromAddress);
             message.setSubject(customer.getAdviceSubjectLine());
         }
         else {
             message.addToAddress(mailService.getBatchMailingList());
             message.addCcAddress(mailService.getBatchMailingList());
             message.addBccAddress(mailService.getBatchMailingList());
-            message.setFromAddress(customer.getAdviceReturnEmailAddr());
+            message.setFromAddress(fromAddress);
             message.setSubject(environmentCode + ": " + customer.getAdviceSubjectLine() + ":" + paymentGroup.getAdviceEmailAddress());
         }        
         

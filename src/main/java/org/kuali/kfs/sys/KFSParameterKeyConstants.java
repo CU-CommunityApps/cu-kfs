@@ -51,10 +51,10 @@ public class KFSParameterKeyConstants implements ParameterKeyConstants {
         public static final String DEMERGE_DOCUMENT_TYPES = "DEMERGE_DOCUMENT_TYPES";
     }
     
-    //KFSPTS-1460: Added next four constants.
+    //KFSPTS-1460: Added constants.
 	public static final String KFS_PDP = "KFS-PDP";
     public static final String ALL_COMPONENTS = "All";
     public static final String ACH_PAYMENT_COMBINING_IND = "ACH_PAYMENT_COMBINING_IND";
     public static final String BANK_PAYMENT_FILE_EMAIL_NOTIFICATION = "BANK_PAYMENT_FILE_EMAIL_NOTIFICATION";  
-
+    public static final String PDP_CUSTOMER_MISSING_ADVICE_RETURN_EMAIL = "PDP_CUSTOMER_MISSING_ADVICE_RETURN_EMAIL";
 }

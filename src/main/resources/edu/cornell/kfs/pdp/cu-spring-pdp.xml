@@ -427,7 +427,6 @@
     
     <!-- KFSPTS-1460: New bean definition-->
     <bean id="pdpMailMessageService" class="edu.cornell.kfs.pdp.mail.service.impl.PdpMailMessageServiceImpl">  
-        <property name="parameterService" ref="parameterService" /> 
         <property name="kualiConfigurationService" ref="kualiConfigurationService" />
     </bean>
     
