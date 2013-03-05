@@ -131,7 +131,7 @@
             <td class="infoline">
                 <div align="center">
                   <c:choose>
-                    <c:when test="${KualiForm.docFinal}">
+                    <c:when test="${KualiForm.docFinal  or KualiForm.docCanceledOrDisapproved}">
                            No
                     </c:when>
                     <c:otherwise>
@@ -153,10 +153,14 @@
 
 
         <td class="infoline">
+        <input type="hidden" id="finalFlag" value="${KualiForm.docFinal  or KualiForm.docCanceledOrDisapproved}">
+
             <div align="center"><html:image property="methodToCall.insertBONote"
                                             src="${ConfigProperties.kr.externalizable.images.url}tinybutton-add1.gif"
-                                            alt="Add a Note" title="Add a Note" styleClass="tinybutton"/></div>
-        </td>
+                                            alt="Add a Note" title="Add a Note" styleClass="tinybutton"
+                                            onclick="javascript:if (document.getElementById('finalFlag').value =='true') {
+                                            alert('Caution: The addition of a note or note with attachment will NOT cause this document to route. Attachments will NOT be sent to the vendor, nor will a Contract Manager view your note/attachment.');}"/>
+                                            </div>
     </tr>
 </c:if>
 
@@ -221,7 +225,7 @@
                     <td class="datacell center">
                         <div align="center">
                   <c:choose>
-                    <c:when test="${KualiForm.docFinal}">
+                    <c:when test="${KualiForm.docFinal or KualiForm.docCanceledOrDisapproved}">
                            <c:if test="${'sendToVendor' eq note.noteTopicText}">Yes</c:if>
                             <c:if test="${'dontSendToVendor' eq note.noteTopicText}">No</c:if>
                             <c:if test="${empty note.noteTopicText}">No</c:if> 

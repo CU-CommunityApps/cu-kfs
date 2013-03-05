@@ -460,4 +460,9 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
     	KualiWorkflowDocument workflowDocument = this.getDocument().getDocumentHeader().getWorkflowDocument();
     	return workflowDocument != null ? workflowDocument.stateIsEnroute()  : false;
     }
+    public boolean isDocCanceledOrDisapproved() {
+    	KualiWorkflowDocument workflowDocument = this.getDocument().getDocumentHeader().getWorkflowDocument();
+    	return workflowDocument != null ? workflowDocument.stateIsCanceled() ||  workflowDocument.stateIsDisapproved() : false;
+    }
+
 }
