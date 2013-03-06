@@ -82,8 +82,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
 
 import edu.cornell.kfs.pdp.CUPdpKeyConstants;
-import edu.cornell.kfs.pdp.mail.PdpMailMessage;
-import edu.cornell.kfs.pdp.mail.service.PdpMailMessageService;
+import edu.cornell.kfs.sys.mail.KFSMailMessage;
+import edu.cornell.kfs.sys.mail.service.KFSMailMessageService;
 
 /**
  * @see org.kuali.kfs.pdp.service.PdpEmailService
@@ -98,7 +98,7 @@ public class PdpEmailServiceImpl implements PdpEmailService {
     private DataDictionaryService dataDictionaryService;
     private AchBankService achBankService;
     private AchBundlerHelperService achBundlerHelperService;
-    private PdpMailMessageService pdpMailMessageService;               //KFSPTS-1460 - added
+    private KFSMailMessageService kfsMailMessageService;               //KFSPTS-1460 - added
 
     /**
      * @see org.kuali.kfs.pdp.service.PdpEmailService#sendErrorEmail(org.kuali.kfs.pdp.businessobject.PaymentFileLoad,
@@ -501,7 +501,7 @@ public class PdpEmailServiceImpl implements PdpEmailService {
         	//Send out one email to the payee listing all the payment details for the specified payment group
         	
         	MailMessage bundledMessage = createAdviceMessageAndPopulateHeader(paymentGroup, customer, productionEnvironmentCode, environmentCode);
-        	PdpMailMessage bundledPdpMessage = new PdpMailMessage(bundledMessage);
+        	KFSMailMessage bundledPdpMessage = new KFSMailMessage(bundledMessage);
         	
         	//create the formatted body
    			// this seems wasteful, but since the total net amount is needed in the message body before the payment details...it's needed
@@ -678,6 +678,9 @@ public class PdpEmailServiceImpl implements PdpEmailService {
         //verbiage stating bank, net amount, and disb num that was sent
         body.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_BANK_AMOUNT, bankName, moneyFormatter.formatForPresentation(netPaymentAmount), disbNbr)); 
         
+        //verbiage stating when the deposit should be expected
+        body.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_DEPOSIT_DAYS));
+        		
         //verbiage stating the number of payments the net deposit was for
         body.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_DEPOSIT_NUM_PAYMENTS, integerFormatter.formatForPresentation(numPayments.toString())));
     	
@@ -695,7 +698,7 @@ public class PdpEmailServiceImpl implements PdpEmailService {
         Formatter dateFormatter = new DateFormatter();
         Formatter integerFormatter = new IntegerFormatter();
         
-		String invoiceNbr = "";
+		String invoiceNbr =  "";
         if (StringUtils.isNotBlank(paymentDetail.getInvoiceNbr())) {
             invoiceNbr = paymentDetail.getInvoiceNbr();
         }
@@ -733,19 +736,19 @@ public class PdpEmailServiceImpl implements PdpEmailService {
 		String originalInvoiceAmount = "";
         if (paymentDetail.getOrigInvoiceAmount() != null) {
         	String amount = (String)moneyFormatter.formatForPresentation(paymentDetail.getOrigInvoiceAmount());
-        	originalInvoiceAmount = StringUtils.remove(amount, ',');
+        	originalInvoiceAmount = StringUtils.remove(amount, KFSConstants.COMMA);
         }
         
 		String invoiceTotalDiscount = "";
         if (paymentDetail.getInvTotDiscountAmount() != null) {
         	String amount = (String)moneyFormatter.formatForPresentation(paymentDetail.getInvTotDiscountAmount());
-        	invoiceTotalDiscount = StringUtils.remove(amount, ',');
+        	invoiceTotalDiscount = StringUtils.remove(amount, KFSConstants.COMMA);
         }
         
 		String netPayAmount = "";
         if (paymentDetail.getNetPaymentAmount() != null) {
         	 String amount = (String)moneyFormatter.formatForPresentation(paymentDetail.getNetPaymentAmount());
-        	 netPayAmount = StringUtils.remove(amount, ',');
+        	 netPayAmount = StringUtils.remove(amount, KFSConstants.COMMA);
         }          
         
         //there are three types of formats that need to be created: DV (same format for both bundled and non), PREQ-bundled, PREQ-non-bundled
@@ -758,9 +761,9 @@ public class PdpEmailServiceImpl implements PdpEmailService {
         	formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_ORIGINAL_INVOICE_AMOUNT, originalInvoiceAmount));
         	
             // print payment notes
-        	formattedPaymentDetail.append("\n");
+        	formattedPaymentDetail.append(KFSConstants.NEWLINE);
             for (PaymentNoteText paymentNoteText : paymentDetail.getNotes()) {
-            	formattedPaymentDetail.append(paymentNoteText.getCustomerNoteText() + "\n");
+            	formattedPaymentDetail.append(paymentNoteText.getCustomerNoteText() + KFSConstants.NEWLINE);
             }
 
             if (paymentDetail.getNotes().isEmpty()) {
@@ -784,9 +787,9 @@ public class PdpEmailServiceImpl implements PdpEmailService {
         	formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_TOTAL_DISCOUNT_AMOUNT, invoiceTotalDiscount));
         	
             // print payment notes
-        	formattedPaymentDetail.append("\n");
+        	formattedPaymentDetail.append(KFSConstants.NEWLINE);
             for (PaymentNoteText paymentNoteText : paymentDetail.getNotes()) {
-            	formattedPaymentDetail.append(paymentNoteText.getCustomerNoteText() + "\n");
+            	formattedPaymentDetail.append(paymentNoteText.getCustomerNoteText() + KFSConstants.NEWLINE);
             }
 
             if (paymentDetail.getNotes().isEmpty()) {
@@ -807,11 +810,10 @@ public class PdpEmailServiceImpl implements PdpEmailService {
     private void sendFormattedAchAdviceEmail(MailMessage message, CustomerProfile customer, PaymentGroup paymentGroup, String productionEnvironmentCode, String environmentCode) {
     	LOG.debug("sendFormattedAchAdviceEmail() starting");
     	
-    	if (message instanceof PdpMailMessage) {
+    	if (message instanceof KFSMailMessage) {
     		//send a PdpMailMessage which MailMessage with the addition of attachment data.
-    		PdpMailMessage mimeMessage = (PdpMailMessage)message;
-    		pdpMailMessageService.send(mimeMessage);
-    		
+    		KFSMailMessage mimeMessage = (KFSMailMessage)message;
+    		kfsMailMessageService.send(mimeMessage);    		
     	}
     	else {
     		//send the message using the KSB  		
@@ -1119,12 +1121,12 @@ public class PdpEmailServiceImpl implements PdpEmailService {
     
     //KFSPTS-1460 -- added
     /**
-     * Sets the pdpMailMessageService attribute value.
+     * Sets the kfsMailMessageService attribute value.
      * 
      * @param mailService The mailService to set.
      */
-    public void setPdpMailMessageService(PdpMailMessageService pdpMailMessageService) {
-        this.pdpMailMessageService = pdpMailMessageService;
+    public void setKfsMailMessageService(KFSMailMessageService kfsMailMessageService) {
+        this.kfsMailMessageService = kfsMailMessageService;
     }
         
 }

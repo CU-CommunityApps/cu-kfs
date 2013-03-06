@@ -5,6 +5,7 @@ public class CUPdpKeyConstants {
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_TO = "message.pdp.achAdvice.email.body.paymentTo";
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_FROM = "message.pdp.achAdvice.email.body.paymentFrom";
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_BANK_AMOUNT = "message.pdp.achAdvice.email.body.bankAmountDisbursementNumber";
+	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_DEPOSIT_DAYS = "message.pdp.achAdvice.email.body.depositBusinessDays";
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_DEPOSIT_NUM_PAYMENTS = "message.pdp.achAdvice.email.body.depositNumberOfPayments";
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_DETAIL_INFO_MSG = "message.pdp.achAdvice.email.body.detailInfoMessage";
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_DETAIL_UNDER_LIMIT_MSG="message.pdp.achAdvice.email.body.detailUnderLimitMsg";

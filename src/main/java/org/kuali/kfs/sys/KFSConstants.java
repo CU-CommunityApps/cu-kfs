@@ -1326,5 +1326,8 @@ public class KFSConstants extends JSTLConstants implements ParameterKeyConstants
     public static final String I_WANT_DOC_ACCOUNT_TAB_ERRORS = "newSourceLine*,document.account*";
     public static final String I_WANT_DOC_VENDOR_TAB_ERRORS = "document.vendor*";
     public static final String I_WANT_DOC_ORDER_COMPLETED_TAB_ERRORS = "document.completeOption";
+    
+    //KFSPTS-1460
+    public static final String SEMICOLON = ";";
 }
 

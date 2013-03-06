@@ -422,11 +422,11 @@
         <property name="kualiConfigurationService" ref="kualiConfigurationService" />
         <property name="achBankService" ref="pdpAchBankService" />
         <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />   <!-- KFSPTS-1460: Added -->
-        <property name="pdpMailMessageService" ref="pdpMailMessageService" />          <!-- KFSPTS-1460: Added -->
+        <property name="kfsMailMessageService" ref="kfsMailMessageService" />          <!-- KFSPTS-1460: Added -->
     </bean>
     
     <!-- KFSPTS-1460: New bean definition-->
-    <bean id="pdpMailMessageService" class="edu.cornell.kfs.pdp.mail.service.impl.PdpMailMessageServiceImpl">  
+    <bean id="kfsMailMessageService" class="edu.cornell.kfs.sys.mail.service.impl.KFSMailMessageServiceImpl">  
         <property name="kualiConfigurationService" ref="kualiConfigurationService" />
     </bean>
     
