@@ -209,7 +209,15 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 
         
         StringBuffer cxml = new StringBuffer();
-
+        List<Note> notesToSendToVendor = getNotesToSendToVendor(purchaseOrder);
+        if (CollectionUtils.isNotEmpty(notesToSendToVendor)) {
+            cxml.append("--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "\n");
+            cxml.append("Content-Type: application/xop+xml;\n");
+            cxml.append("        charset=\"UTF-8\";\n");
+            cxml.append("        type=\"text/xml\"\n");
+            cxml.append("Content-Transfer-Encoding: 8bit\n");
+            cxml.append("Content-ID: <1222711868656.6893160141700477326@sciquest.com>\n");
+        }
         cxml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         cxml.append("<!DOCTYPE PurchaseOrderMessage SYSTEM \"PO.dtd\">\n");
         cxml.append("<PurchaseOrderMessage version=\"2.0\">\n");
@@ -513,6 +521,8 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("        <Terms>\n");
         if(payTerm.getVendorPaymentTermsPercent().doubleValue() > 0.0) {
         	cxml.append("          <Discount>").append(payTerm.getVendorPaymentTermsPercent()).append("</Discount>\n");
+        } else {
+        	cxml.append("          <Discount unit=\"percent\"/>\n");        	
         }
         if(payTerm.getVendorDiscountDueNumber().doubleValue() > 0.0) {
         	cxml.append("          <Days>").append(payTerm.getVendorDiscountDueNumber()).append("</Days>\n");
@@ -535,18 +545,27 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
  * provided and incorporated into our code base.
  */
         //Attachments must be defined in the xml part and must match info in MIME binary part
-        List<Note> notesToSendToVendor = getNotesToSendToVendor(purchaseOrder);
+//        List<Note> notesToSendToVendor = getNotesToSendToVendor(purchaseOrder);
         if (!notesToSendToVendor.isEmpty()) {
             String allNotes = "";
             String allNotesNoAttach = "";
             cxml.append("      <ExternalInfo>\n");
+            for (int i = 0; i < notesToSendToVendor.size(); i++) {
+                Note note = notesToSendToVendor.get(i);
+                Attachment attachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
+                if (ObjectUtils.isNotNull(attachment)) {
+                    allNotes = allNotes + "\n(" + (i + 1) + ") " + note.getNoteText() + "  ";
+                } else {
+                    allNotesNoAttach = allNotesNoAttach + "          " + note.getNoteText() + "          ";
+                }
+            }
+            cxml.append("          <Note><![CDATA[" + allNotesNoAttach + "          " + allNotes + "]]></Note>\n");
             cxml.append("        <Attachments xmlns:xop = \"http://www.w3.org/2004/08/xop/include/\" >\n");
 
             for (int i = 0; i < notesToSendToVendor.size(); i++) {
                 Note note = notesToSendToVendor.get(i);
                 Attachment attachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
                 if (ObjectUtils.isNotNull(attachment)) {
-                    allNotes = allNotes + "\n(" + (i + 1) + ") " + note.getNoteText() + "  ";
                     cxml.append("          <Attachment id=\"" + attachment.getAttachmentIdentifier() + "\" type=\"file\">\n");
                     cxml.append("            <AttachmentName><![CDATA[" + attachment.getAttachmentFileName() + "]]></AttachmentName>\n");
                     cxml.append("            <AttachmentURL>http://usertest.sciquest.com/apps/Router/ReqAttachmentDownload?AttachmentId=" + attachment.getAttachmentIdentifier() +
@@ -555,12 +574,9 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                     cxml.append("            <AttachmentSize>" + attachment.getAttachmentFileSize() / 1024 + "</AttachmentSize>\n");
                     cxml.append("            <xop:Include href=\"cid:" + attachment.getAttachmentIdentifier() + "@sciquest.com\" />\n");
                     cxml.append("          </Attachment>\n");
-                } else {
-                    allNotesNoAttach = allNotesNoAttach + "          " + note.getNoteText() + "          ";
                 }
             }
             cxml.append("        </Attachments>\n");
-            cxml.append("          <Note><![CDATA[" + allNotesNoAttach + "          " + allNotes + "]]></Note>\n");
             cxml.append("      </ExternalInfo>\n");
         } 
 /*KFSPTS-794: End new code: Define the attachments */       
@@ -657,7 +673,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
                 cxml.append("          <Money currency=\"USD\">").append(poi.getItemUnitPrice()).append("</Money>\n");
                 cxml.append("        </UnitPrice>\n");
                 cxml.append("      </LineCharges>\n");
-                cxml.append("      <RequisitionLineRef>").append(poi.getExternalOrganizationB2bProductReferenceNumber()).append("</RequisitionLineRef>\n");
+                cxml.append("      <RequisitionLineRef id=\"\">").append(poi.getExternalOrganizationB2bProductReferenceNumber()).append("</RequisitionLineRef>\n");
                 cxml.append("    </POLine>\n");
             }
         }
