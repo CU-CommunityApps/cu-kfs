@@ -1648,7 +1648,13 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 //        }
         
         try {
-            SpringContext.getBean(DocumentService.class).saveDocument(preqDoc,DocumentSystemSaveEvent.class);
+        	// ==== CU Customization (KFSPTS-1797): Do save-only operations for just non-EIRT-generated PREQs. ====
+        	if (orderHolder.isRejectDocumentHolder()) {
+        		SpringContext.getBean(DocumentService.class).routeDocument(preqDoc,null, null);
+        	} else {
+        		SpringContext.getBean(DocumentService.class).saveDocument(preqDoc,DocumentSystemSaveEvent.class);
+        	}
+            // ==== End CU Customization ====
         }
         catch (WorkflowException e) {
             e.printStackTrace();
