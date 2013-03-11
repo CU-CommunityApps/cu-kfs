@@ -233,12 +233,17 @@ public class LineItemReceivingDocumentRule extends DocumentRuleBase implements C
      */
     private boolean validateQuantitiesReceivedNotExceedOrdered(ReceivingDocument document) {
         GlobalVariables.getMessageMap().clearErrorPath();
+        PurchaseOrderDocument pod = document.getPurchaseOrderDocument();
         boolean valid = true;
         for (int i = 0; i < document.getItems().size(); i++) {
             LineItemReceivingItem item = (LineItemReceivingItem) document.getItems().get(i);
             if (item.getItemOrderedQuantity() != null && item.getItemReceivedTotalQuantity() != null) {
                 if (item.getItemOrderedQuantity().isLessThan(item.getItemReceivedTotalQuantity())) {
-                    GlobalVariables.getMessageMap().putError("document.item[" + i +"].itemReceivedTotalQuantity", CUPurapKeyConstants.ERROR_RECEIVING_LINE_QTYRECEIVED_GT_QTYORDERED);
+                	if (pod.isReceivingDocumentRequiredIndicator()) {
+                        GlobalVariables.getMessageMap().putError("document.item[" + i +"].itemReceivedTotalQuantity", CUPurapKeyConstants.ERROR_RECEIVING_LINE_QTYRECEIVED_GT_QTYORDERED);
+                	} else {
+                        GlobalVariables.getMessageMap().putError("document.item[" + i +"].itemReceivedTotalQuantity", CUPurapKeyConstants.ERROR_ADD_NEW_RECEIVING_LINE);
+                                       	}
                     valid = false;
                 }
             }
