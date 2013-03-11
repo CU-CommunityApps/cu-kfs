@@ -3,11 +3,15 @@ package edu.cornell.kfs.fp.service;
 import javax.jws.WebService;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.fp.businessobject.DisbursementPayee;
+import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.kim.bo.entity.KimEntityAffiliation;
+import org.kuali.rice.kim.bo.impl.PersonImpl;
 import org.kuali.rice.kim.service.PersonService;
 import org.kuali.rice.kns.UserSession;
 import org.kuali.rice.kns.document.Document;
@@ -137,7 +141,21 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
 
 			// Set vendor to traveler using netID provided
 			Person traveler = SpringContext.getBean(PersonService.class).getPersonByPrincipalName(travelerNetId);
-			dvDoc.templateEmployee(traveler);
+
+	        for(KimEntityAffiliation entityAffiliation : ((PersonImpl)traveler).getAffiliations()) {
+	        	if(entityAffiliation.isDefault()) {
+		    		if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {
+		        		dvDoc.templateStudent(traveler);
+		    		}
+		    		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.ALUMNI)) {
+		        		dvDoc.templateAlumni(traveler);
+		    		}
+		    		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.FACULTY) ||
+		    				StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.STAFF)) {
+		        		dvDoc.templateEmployee(traveler);
+		    		}
+	        	}
+	        }
 			dvDoc.setPayeeAssigned(true);
 			
 	        dvDoc.getDvPayeeDetail().setDisbVchrPaymentReasonCode("J");
