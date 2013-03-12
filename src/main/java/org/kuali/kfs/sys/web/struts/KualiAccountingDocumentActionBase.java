@@ -744,6 +744,8 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         KualiAccountingDocumentFormBase tmpForm = (KualiAccountingDocumentFormBase) form;
         this.applyCapitalAssetInformation(tmpForm);
 
+        SpringContext.getBean(CUFinancialSystemDocumentService.class).checkAccountingLinesForChanges((AccountingDocument) tmpForm.getFinancialDocument());
+
         ActionForward forward = super.save(mapping, form, request, response);
 
         // need to check on sales tax for all the accounting lines

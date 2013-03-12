@@ -1,20 +1,24 @@
 package edu.cornell.kfs.sys.document.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
-import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.service.impl.FinancialSystemDocumentServiceImpl;
 import org.kuali.rice.kns.bo.Note;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.DocumentService;
-import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
 
@@ -39,39 +43,42 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         	return;
         }
       
-        List<SourceAccountingLine> newSourceAccountingLines = accountingDocument.getSourceAccountingLines();
-        List<TargetAccountingLine> newTargetAccountingLines = accountingDocument.getTargetAccountingLines();
+        Map<Integer, AccountingLine> newSourceLines = buildAccountingLineMap(accountingDocument.getSourceAccountingLines());
+        Map<Integer, AccountingLine> savedSourceLines = buildAccountingLineMap(savedDoc.getSourceAccountingLines());
 
-        List<SourceAccountingLine> savedSourceAccountingLines = savedDoc.getSourceAccountingLines();
-        List<TargetAccountingLine> savedTargetAccountingLines = savedDoc.getTargetAccountingLines();
-
-
-        if (ObjectUtils.isNotNull(newSourceAccountingLines) && ObjectUtils.isNotNull(savedSourceAccountingLines)) {
-            for (SourceAccountingLine oldSal : savedSourceAccountingLines) {
-                for (SourceAccountingLine newSal : newSourceAccountingLines) {
-                    if (oldSal.getSequenceNumber().equals(newSal.getSequenceNumber())) {
-                        if (!oldSal.equals(newSal)) {
-                            writeNote(accountingDocument, newSal, oldSal);
-                        }
-                    }
-                }
-            }
-        } 
+        int maxSourceKey = Math.max(Collections.max(newSourceLines.keySet()), Collections.max(savedSourceLines.keySet())); 
+        int minSourceKey = Math.min(Collections.min(newSourceLines.keySet()), Collections.min(savedSourceLines.keySet())); 
         
+        for (int i = minSourceKey; i < maxSourceKey+1; i++) {
+        	AccountingLine newLine = newSourceLines.get(i);
+        	AccountingLine oldLine = savedSourceLines.get(i);
+        	if ( ((newLine == null) || !compareTo(newLine, oldLine) ) && (oldLine != null)) {
+        		String diff = buildLineChangedNoteText(newLine, oldLine);
+        		if (StringUtils.isNotBlank(diff)) {
+        			writeNote(accountingDocument, diff);
+        		}
+        	}
+        }
         
-       
+        if (!accountingDocument.getTargetAccountingLines().isEmpty()) {
 
-        if (ObjectUtils.isNotNull(newTargetAccountingLines) && ObjectUtils.isNotNull(savedTargetAccountingLines)) {
-            for (TargetAccountingLine oldTal : savedTargetAccountingLines) {
-                for (TargetAccountingLine newTal : newTargetAccountingLines) {
-                    if (oldTal.getSequenceNumber().equals(newTal.getSequenceNumber())) {
-                        if (!oldTal.equals(newTal)) {
-                            writeNote(accountingDocument, newTal, oldTal);
-                        }
-                    }
-                }
-            }
-        } 
+        	Map<Integer, AccountingLine> newTargetLines = buildAccountingLineMap(accountingDocument.getTargetAccountingLines());
+        	Map<Integer, AccountingLine> savedTargetLines = buildAccountingLineMap(savedDoc.getTargetAccountingLines());
+
+        	int maxTargetKey = Math.max(Collections.max(newTargetLines.keySet()), Collections.max(savedTargetLines.keySet())); 
+        	int minTargetKey = Math.min(Collections.min(newTargetLines.keySet()), Collections.min(savedTargetLines.keySet())); 
+
+        	for (int i = minTargetKey; i < maxTargetKey+1; i++) {
+        		AccountingLine newLine = newTargetLines.get(i);
+        		AccountingLine oldLine = savedTargetLines.get(i);
+        		if ( (newLine == null) || !compareTo(newLine, oldLine)) {
+        			String diff = buildLineChangedNoteText(newLine, oldLine);
+        			if (StringUtils.isNotBlank(diff)) {
+        				writeNote(accountingDocument, diff);
+        			}
+        		}
+        	}
+        }
 
         
 
@@ -90,12 +97,12 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
 //                }
     }
 	
-	protected void writeNote(AccountingDocument accountingDocument, AccountingLine newAccountingLine, AccountingLine oldAccountingLine) {
+	protected void writeNote(AccountingDocument accountingDocument, String noteText) {
         
         DocumentService documentService = SpringContext.getBean(DocumentService.class);
         // Put a note on the document to record the change to the address
         try {
-            String noteText = buildLineChangedNoteText(newAccountingLine, oldAccountingLine);
+        //    String noteText = buildLineChangedNoteText(newAccountingLine, oldAccountingLine);
 
             int noteMaxSize = SpringContext.getBean(DataDictionaryService.class).getAttributeMaxLength("Note", "noteText");
 
@@ -119,12 +126,42 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
     }
 	
 	
-	
-
-    
-    
-    protected String buildLineChangedNoteText(AccountingLine newAccountingLine, AccountingLine oldAccountingLine) {
+    protected String buildLineChangedNoteText(AccountingLine newLine, AccountingLine oldLine) {
         
-        return "Accounting Line changed from: "+ oldAccountingLine.toString()+" TO " +newAccountingLine.toString();
+    	if (newLine == null && oldLine != null) {
+    		return "Accounting Line deleted: "+oldLine;
+    	} else if (oldLine == null && newLine != null) {
+    		return "Accounting Line added: "+newLine;
+    	} else {
+    		return "Accounting Line changed from: "+ oldLine.toString()+" TO " +newLine.toString();
+    	}
+    }    
+    
+    /**
+     * @param accountingLines
+     * @return Map containing accountingLines from the given List, indexed by their sequenceNumber
+     */
+    protected Map buildAccountingLineMap(List<AccountingLine> accountingLines) {
+        Map lineMap = new HashMap();
+
+        for (Iterator i = accountingLines.iterator(); i.hasNext();) {
+            AccountingLine accountingLine = (AccountingLine) i.next();
+            Integer sequenceNumber = accountingLine.getSequenceNumber();
+
+            lineMap.put(sequenceNumber, accountingLine);
+        }
+
+        return lineMap;
     }
+
+    public boolean compareTo(AccountingLine newLine, AccountingLine oldLine) {
+        
+    	if (oldLine == null) {
+    		return false;
+    	}
+    	
+        return new EqualsBuilder().append(newLine.getChartOfAccountsCode(), oldLine.getChartOfAccountsCode()).append(newLine.getAccountNumber(), oldLine.getAccountNumber()).append(newLine.getSubAccountNumber(), oldLine.getSubAccountNumber()).append(newLine.getFinancialObjectCode(), oldLine.getFinancialObjectCode()).append(newLine.getFinancialSubObjectCode(), oldLine.getFinancialSubObjectCode()).append(newLine.getProjectCode(), oldLine.getProjectCode()).append(newLine.getOrganizationReferenceId(), oldLine.getOrganizationReferenceId()).append(newLine.getAmount(), oldLine.getAmount()).isEquals();
+    }
+    
+    
 }
