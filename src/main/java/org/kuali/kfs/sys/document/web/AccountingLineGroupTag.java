@@ -17,7 +17,6 @@ package org.kuali.kfs.sys.document.web;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +29,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
+import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
 import org.kuali.kfs.module.purap.businessobject.RequisitionAccount;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
@@ -333,6 +333,16 @@ public class AccountingLineGroupTag extends TagSupport {
     			}
     		}
     	}
+    	if (accountingLine instanceof PurchaseOrderAccount && ((PurchaseOrderAccount)accountingLine).getAccountIdentifier() != null) {
+    		if (accountingDocument.getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames().equals(RequisitionStatuses.NODE_ACCOUNT)) {
+    			PurchaseOrderAccount dbAcctLine = getPurchaseOrderAccounFromDb((PurchaseOrderAccount)accountingLine);
+    			if (dbAcctLine != null && !StringUtils.equals(accountingLine.getAccountNumber(), dbAcctLine.getAccountNumber())) {
+    				updatedAccountNumber = accountingLine.getAccountNumber();
+    				accountingLine.setAccountNumber(dbAcctLine.getAccountNumber());
+    				isExistingReqAcctline = true;
+    			}
+    		}
+    	}
     	RenderableAccountingLineContainer container = new RenderableAccountingLineContainer(getForm(), accountingLine, accountingLinePropertyName, rows, count, groupDefinition.getGroupLabel(), getErrors(), groupDefinition.getAccountingLineAuthorizer(), groupDefinition.getAccountingLineAuthorizer().hasEditPermissionOnAccountingLine(getDocument(), accountingLine, collectionPropertyName, currentUser, pageIsEditable));
         if (isExistingReqAcctline) {
         	accountingLine.setAccountNumber(updatedAccountNumber);
@@ -344,6 +354,12 @@ public class AccountingLineGroupTag extends TagSupport {
     	Map<String, Object> primaryKeys = new HashMap<String, Object>();
     	primaryKeys.put("accountIdentifier", accountingLine.getAccountIdentifier());
 		return (RequisitionAccount)SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(RequisitionAccount.class, primaryKeys);
+    }
+
+    private PurchaseOrderAccount getPurchaseOrderAccounFromDb(PurchaseOrderAccount accountingLine) {
+    	Map<String, Object> primaryKeys = new HashMap<String, Object>();
+    	primaryKeys.put("accountIdentifier", accountingLine.getAccountIdentifier());
+		return (PurchaseOrderAccount)SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(PurchaseOrderAccount.class, primaryKeys);
     }
 
     /**
