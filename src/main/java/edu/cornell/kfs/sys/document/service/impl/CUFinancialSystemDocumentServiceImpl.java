@@ -28,7 +28,14 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
 	private org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(edu.cornell.kfs.sys.document.service.impl.CUFinancialSystemDocumentServiceImpl.class);
 
 	
-	/** 
+	/**
+	 *  new == null, old == null : no change; line deleted previously.
+	 *  new == blah, old == blah : no change
+	 *  new == blah, old == meh : changed
+	 *  new == null, old == blah : deleted
+	 *  new == blah, old == null : added
+	 *  
+	 *  
      * @see org.kuali.kfs.sys.document.service.FinancialSystemDocumentService#checkAccountingLinesForChanges(org.kuali.kfs.sys.document.AccountingDocument)
      */
     
@@ -155,17 +162,15 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
     }
 
     public boolean compareTo(AccountingLine newLine, AccountingLine oldLine) {
-        
+        //no change; line deleted previously
     	if ((oldLine == null && newLine == null) ) {
     		return true;
     	}
+    	//line added
     	if (oldLine == null && newLine != null) {
     		return false;
     	}
-//    	if (oldLine == null) {
-//    		return false;
-//    	} 
-//    	
+  	
         return new EqualsBuilder().append(newLine.getChartOfAccountsCode(), oldLine.getChartOfAccountsCode()).append(newLine.getAccountNumber(), oldLine.getAccountNumber()).append(newLine.getSubAccountNumber(), oldLine.getSubAccountNumber()).append(newLine.getFinancialObjectCode(), oldLine.getFinancialObjectCode()).append(newLine.getFinancialSubObjectCode(), oldLine.getFinancialSubObjectCode()).append(newLine.getProjectCode(), oldLine.getProjectCode()).append(newLine.getOrganizationReferenceId(), oldLine.getOrganizationReferenceId()).append(newLine.getAmount(), oldLine.getAmount()).isEquals();
     }
     
