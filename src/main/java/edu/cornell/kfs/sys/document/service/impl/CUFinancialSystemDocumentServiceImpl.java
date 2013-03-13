@@ -52,7 +52,7 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         for (int i = minSourceKey; i < maxSourceKey+1; i++) {
         	AccountingLine newLine = newSourceLines.get(i);
         	AccountingLine oldLine = savedSourceLines.get(i);
-        	if ( ((newLine == null) || !compareTo(newLine, oldLine) ) && (oldLine != null)) {
+        	if ( !compareTo(newLine, oldLine) )  {
         		String diff = buildLineChangedNoteText(newLine, oldLine);
         		if (StringUtils.isNotBlank(diff)) {
         			writeNote(accountingDocument, diff);
@@ -71,7 +71,7 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         	for (int i = minTargetKey; i < maxTargetKey+1; i++) {
         		AccountingLine newLine = newTargetLines.get(i);
         		AccountingLine oldLine = savedTargetLines.get(i);
-        		if ( (newLine == null) || !compareTo(newLine, oldLine)) {
+        		if ( !compareTo(newLine, oldLine)) {
         			String diff = buildLineChangedNoteText(newLine, oldLine);
         			if (StringUtils.isNotBlank(diff)) {
         				writeNote(accountingDocument, diff);
@@ -156,10 +156,16 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
 
     public boolean compareTo(AccountingLine newLine, AccountingLine oldLine) {
         
-    	if (oldLine == null) {
+    	if ((oldLine == null && newLine == null) ) {
+    		return true;
+    	}
+    	if (oldLine == null && newLine != null) {
     		return false;
     	}
-    	
+//    	if (oldLine == null) {
+//    		return false;
+//    	} 
+//    	
         return new EqualsBuilder().append(newLine.getChartOfAccountsCode(), oldLine.getChartOfAccountsCode()).append(newLine.getAccountNumber(), oldLine.getAccountNumber()).append(newLine.getSubAccountNumber(), oldLine.getSubAccountNumber()).append(newLine.getFinancialObjectCode(), oldLine.getFinancialObjectCode()).append(newLine.getFinancialSubObjectCode(), oldLine.getFinancialSubObjectCode()).append(newLine.getProjectCode(), oldLine.getProjectCode()).append(newLine.getOrganizationReferenceId(), oldLine.getOrganizationReferenceId()).append(newLine.getAmount(), oldLine.getAmount()).isEquals();
     }
     
