@@ -23,20 +23,21 @@ import java.util.Set;
 
 import org.jboss.util.Strings;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants;
-import org.kuali.kfs.module.purap.PurapAuthorizationConstants.RequisitionEditMode;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.PurapAuthorizationConstants.RequisitionEditMode;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionSources;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
-import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants.NodeDetails;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants.RequisitionDocument.NodeDetailEnum;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
-import org.kuali.kfs.module.purap.document.service.RequisitionService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
+import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kns.document.Document;
+import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
@@ -138,30 +139,6 @@ public class RequisitionDocumentPresentationController extends PurchasingAccount
 
         }
 
-        // KFS-1768/KFSCNTRB-1138
-        // This is ported from 5.0, and Workflowdocument is different, so needs more testing.
-		try {
-			KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-			if (workflowDocument.stateIsEnroute()) {
-				List<String> activeNodes = Arrays.asList(workflowDocument.getNodeNames());
-				;
-				for (String nodeNamesNode : activeNodes) {
-					if (RequisitionStatuses.NODE_ACCOUNT.equals(nodeNamesNode) && !SpringContext.getBean(RequisitionService.class).isFiscalOfficersForAllAcctLines((RequisitionDocument)document)) {
-						// disable the button for setup distribution
-						editModes.add(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION);
-						// disable the button for remove accounts from all items
-						editModes.add(RequisitionEditMode.DISABLE_REMOVE_ACCTS);
-						// disable the button for remove commodity codes from
-						// all
-						// items
-						if (editModes.contains(RequisitionEditMode.ENABLE_COMMODITY_CODE)) {
-							editModes.remove(RequisitionEditMode.ENABLE_COMMODITY_CODE);
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-		}
         return editModes;
     }
 

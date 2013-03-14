@@ -18,23 +18,21 @@ package org.kuali.kfs.module.purap.document;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.module.purap.CUPurapParameterConstants;
 import org.kuali.kfs.module.purap.CUPurapWorkflowConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
+import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants.NodeDetails;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants.RequisitionDocument.NodeDetailEnum;
 import org.kuali.kfs.module.purap.businessobject.BillingAddress;
@@ -47,23 +45,18 @@ import org.kuali.kfs.module.purap.businessobject.RequisitionAccount;
 import org.kuali.kfs.module.purap.businessobject.RequisitionCapitalAssetItem;
 import org.kuali.kfs.module.purap.businessobject.RequisitionCapitalAssetSystem;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
+import org.kuali.kfs.module.purap.document.PurchasingDocumentBase;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.document.service.PurchasingDocumentSpecificService;
 import org.kuali.kfs.module.purap.document.service.PurchasingService;
 import org.kuali.kfs.module.purap.document.service.RequisitionService;
-import org.kuali.kfs.module.purap.util.PurapAccountingLineComparator;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.validation.event.AddAccountingLineEvent;
-import org.kuali.kfs.sys.document.validation.event.DeleteAccountingLineEvent;
-import org.kuali.kfs.sys.document.validation.event.ReviewAccountingLineEvent;
-import org.kuali.kfs.sys.document.validation.event.UpdateAccountingLineEvent;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.vnd.VendorConstants;
@@ -79,7 +72,6 @@ import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kew.util.KEWConstants;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kns.document.Copyable;
-import org.kuali.rice.kns.document.TransactionalDocument;
 import org.kuali.rice.kns.exception.ValidationException;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
@@ -91,6 +83,8 @@ import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.workflow.service.KualiWorkflowInfo;
 import org.kuali.rice.kns.workflow.service.WorkflowDocumentService;
+
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 
 /**
  * Document class for the Requisition.
@@ -972,96 +966,6 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
             }
         }
         return accounts;
-    }
-
-    // KFSPTS-1273 fix an existing issue
-    // this change in accountingbase will have wider impact.  Not familiar with the whole impact, so implement for the requisition first.
-    // a complete solution for all document types and for all events need more work
-    protected List generateEvents(List persistedLines, List currentLines, String errorPathPrefix, TransactionalDocument document) {
-        List addEvents = new ArrayList();
-        List updateEvents = new ArrayList();
-        List reviewEvents = new ArrayList();
-        List deleteEvents = new ArrayList();
-        
-        errorPathPrefix = KFSConstants.DOCUMENT_PROPERTY_NAME + ".item["; 
-        //KFSConstants.EXISTING_SOURCE_ACCT_LINE_PROPERTY_NAME
-        //
-        // generate events
-        Map persistedLineMap = buildAccountingLineMap(persistedLines);
-
-        // (iterate through current lines to detect additions and updates, removing affected lines from persistedLineMap as we go
-        // so deletions can be detected by looking at whatever remains in persistedLineMap)
-        int index = 0;
-        for (Iterator i = currentLines.iterator(); i.hasNext(); index++) {
-            AccountingLine currentLine = (AccountingLine) i.next();
-            String indexedErrorPathPrefix = getIndexedErrorPathPrefix(errorPathPrefix, currentLine);
-            Integer key = currentLine.getSequenceNumber();
-
-            AccountingLine persistedLine = (AccountingLine) persistedLineMap.get(key);
-            // if line is both current and persisted...
-            if (persistedLine != null) {
-                // ...check for updates
-                if (!currentLine.isLike(persistedLine)) {
-                    UpdateAccountingLineEvent updateEvent = new UpdateAccountingLineEvent(indexedErrorPathPrefix, document, persistedLine, currentLine);
-                    updateEvents.add(updateEvent);
-                }
-                else {
-                    ReviewAccountingLineEvent reviewEvent = new ReviewAccountingLineEvent(indexedErrorPathPrefix, document, currentLine);
-                    reviewEvents.add(reviewEvent);
-                }
-
-                persistedLineMap.remove(key);
-            }
-            else {
-                // it must be a new addition
-                AddAccountingLineEvent addEvent = new AddAccountingLineEvent(indexedErrorPathPrefix, document, currentLine);
-                addEvents.add(addEvent);
-            }
-        }
-
-        // detect deletions
-        for (Iterator i = persistedLineMap.entrySet().iterator(); i.hasNext();) {
-            // the deleted line is not displayed on the page, so associate the error with the whole group
-            String groupErrorPathPrefix = errorPathPrefix + KFSConstants.ACCOUNTING_LINE_GROUP_SUFFIX;
-            Map.Entry e = (Map.Entry) i.next();
-            AccountingLine persistedLine = (AccountingLine) e.getValue();
-            DeleteAccountingLineEvent deleteEvent = new DeleteAccountingLineEvent(groupErrorPathPrefix, document, persistedLine, true);
-            deleteEvents.add(deleteEvent);
-        }
-
-
-        //
-        // merge the lists
-        List lineEvents = new ArrayList();
-        lineEvents.addAll(reviewEvents);
-        lineEvents.addAll(updateEvents);
-        lineEvents.addAll(addEvents);
-        lineEvents.addAll(deleteEvents);
-
-        return lineEvents;
-    }
-
-    private String getIndexedErrorPathPrefix(String errorPathPrefix, AccountingLine currentLine) {
-    	int idx = 0;
-    	int i = 0;
-        for (PurApItem item : (List<PurApItem>)this.getItems()) {
-        	int j = 0;
-        	// KFSPTS-1273 Note : The accountinglinegrouptag will sort this before the acctlines are rendered.  If we don't sort here, then
-        	// the error icon may be placed in wrong line.
-        	if (CollectionUtils.isNotEmpty(item.getSourceAccountingLines())) {
-                Collections.sort(item.getSourceAccountingLines(), new PurapAccountingLineComparator());
-        	}
-            for (PurApAccountingLine acctLine : item.getSourceAccountingLines()) {
-            	if (acctLine == currentLine) {
-            		return errorPathPrefix +  i + "]."+ KFSConstants.EXISTING_SOURCE_ACCT_LINE_PROPERTY_NAME + "["+j+"]";
-            	} else {
-            		j++;
-            	}
-            }
-            i++;
-        }
-		return errorPathPrefix +  0 + "]."+ KFSConstants.EXISTING_SOURCE_ACCT_LINE_PROPERTY_NAME + "["+0+"]";
-            
     }
 
 }
