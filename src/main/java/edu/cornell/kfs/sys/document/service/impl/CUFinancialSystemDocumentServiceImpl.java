@@ -1,22 +1,29 @@
 package edu.cornell.kfs.sys.document.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
+import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentAuthorizerBase;
 import org.kuali.kfs.sys.document.service.impl.FinancialSystemDocumentServiceImpl;
+import org.kuali.rice.kew.exception.WorkflowException;
+import org.kuali.rice.kew.util.KEWConstants;
+import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.kim.service.PersonService;
+import org.kuali.rice.kns.bo.AdHocRoutePerson;
 import org.kuali.rice.kns.bo.Note;
+import org.kuali.rice.kns.document.Document;
+import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.DocumentService;
 
@@ -136,11 +143,11 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
     protected String buildLineChangedNoteText(AccountingLine newLine, AccountingLine oldLine) {
         
     	if (newLine == null && oldLine != null) {
-    		return "Accounting Line deleted: "+oldLine;
+    		return "Accounting Line deleted: "+toString(oldLine);
     	} else if (oldLine == null && newLine != null) {
-    		return "Accounting Line added: "+newLine;
+    		return "Accounting Line added: "+ toString(newLine);
     	} else {
-    		return "Accounting Line changed from: "+ oldLine.toString()+" TO " +newLine.toString();
+    		return "Accounting Line changed from: "+ toString(oldLine)+" to " +toString(newLine);
     	}
     }    
     
@@ -161,7 +168,7 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         return lineMap;
     }
 
-    public boolean compareTo(AccountingLine newLine, AccountingLine oldLine) {
+    protected boolean compareTo(AccountingLine newLine, AccountingLine oldLine) {
         //no change; line deleted previously
     	if ((oldLine == null && newLine == null) ) {
     		return true;
@@ -174,5 +181,84 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         return new EqualsBuilder().append(newLine.getChartOfAccountsCode(), oldLine.getChartOfAccountsCode()).append(newLine.getAccountNumber(), oldLine.getAccountNumber()).append(newLine.getSubAccountNumber(), oldLine.getSubAccountNumber()).append(newLine.getFinancialObjectCode(), oldLine.getFinancialObjectCode()).append(newLine.getFinancialSubObjectCode(), oldLine.getFinancialSubObjectCode()).append(newLine.getProjectCode(), oldLine.getProjectCode()).append(newLine.getOrganizationReferenceId(), oldLine.getOrganizationReferenceId()).append(newLine.getAmount(), oldLine.getAmount()).isEquals();
     }
     
+    protected String toString(AccountingLine line) {
+    	StringBuilder builder = new StringBuilder();
+    	builder.append('(');
+    	builder.append(line.getDocumentNumber());
+    	builder.append(KFSConstants.COMMA);
+    	builder.append(line.getSequenceNumber());
+    	builder.append(KFSConstants.COMMA);
+    	builder.append(line.getFinancialDocumentLineTypeCode());
+    	builder.append(KFSConstants.COMMA);
+    	builder.append(line.getPostingYear());
+    	builder.append(KFSConstants.COMMA);
+    	builder.append(line.getAmount());
+    	builder.append(KFSConstants.COMMA);
+    	builder.append(line.getDebitCreditCode());
+    	builder.append(KFSConstants.COMMA);
+    	builder.append(line.getEncumbranceUpdateCode());
+    	builder.append(KFSConstants.COMMA);
+    	builder.append(line.getFinancialDocumentLineDescription());
+    	builder.append(KFSConstants.COMMA);
+    	builder.append(line.getChartOfAccountsCode());
+    	builder.append(KFSConstants.COMMA);
+    	builder.append(line.getAccountNumber());
+    	builder.append(KFSConstants.COMMA);
+    	builder.append(line.getFinancialObjectCode());
+    	builder.append(KFSConstants.COMMA);
+    	builder.append(line.getSubAccountNumber());
+    	builder.append(KFSConstants.COMMA);
+    	builder.append(line.getFinancialSubObjectCode());
+    	builder.append(KFSConstants.COMMA);
+    	builder.append(line.getProjectCode());
+    	builder.append(KFSConstants.COMMA);
+    	builder.append(line.getBalanceTypeCode());
+    	builder.append(KFSConstants.COMMA);
+    	builder.append(line.getOrganizationReferenceId());
+    	builder.append(')');
+    	return builder.toString();
+    }
+
+    protected void setupFYIs(Document doc, Set<Person> priorApprovers, String initiatorUserId) {
+        List<AdHocRoutePerson> adHocRoutePersons = doc.getAdHocRoutePersons();
+        final FinancialSystemTransactionalDocumentAuthorizerBase documentAuthorizer = getDocumentAuthorizer(doc);
+        
+        // Add FYI for each approver who has already approved the document
+        for (Person approver : priorApprovers) {
+            if (documentAuthorizer.canReceiveAdHoc(doc, approver, KEWConstants.ACTION_REQUEST_FYI_REQ)) {
+                String approverPersonUserId = approver.getPrincipalName();
+                adHocRoutePersons.add(buildFyiRecipient(approverPersonUserId));
+            }
+        }
+
+        // Add FYI for initiator
+        adHocRoutePersons.add(buildFyiRecipient(initiatorUserId));
+    }
+    
+    protected AdHocRoutePerson buildFyiRecipient(String userId) {
+        AdHocRoutePerson adHocRoutePerson = new AdHocRoutePerson();
+        adHocRoutePerson.setActionRequested(KEWConstants.ACTION_REQUEST_FYI_REQ);
+        adHocRoutePerson.setId(userId);
+        return adHocRoutePerson;
+    }
+    
+    protected FinancialSystemTransactionalDocumentAuthorizerBase getDocumentAuthorizer(Document doc) {
+    	DataDictionaryService dataDictionaryService = SpringContext.getBean(DataDictionaryService.class);
+        final String docTypeName = dataDictionaryService.getDocumentTypeNameByClass(doc.getClass());
+        Class<? extends DocumentAuthorizer> documentAuthorizerClass = dataDictionaryService.getDataDictionary().getDocumentEntry(docTypeName).getDocumentAuthorizerClass();
+        
+        FinancialSystemTransactionalDocumentAuthorizerBase documentAuthorizer = null;
+        try {
+            documentAuthorizer = (FinancialSystemTransactionalDocumentAuthorizerBase)documentAuthorizerClass.newInstance();
+        }
+        catch (InstantiationException ie) {
+            throw new RuntimeException("Could not construct document authorizer: "+documentAuthorizerClass.getName(), ie);
+        }
+        catch (IllegalAccessException iae) {
+            throw new RuntimeException("Could not construct document authorizer: "+documentAuthorizerClass.getName(), iae);
+        }
+        
+        return documentAuthorizer;
+    }
     
 }
