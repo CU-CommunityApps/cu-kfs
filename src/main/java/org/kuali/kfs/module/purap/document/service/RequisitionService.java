@@ -53,5 +53,13 @@ public interface RequisitionService extends PurchasingDocumentSpecificService {
      * @return int
      */
     public int getCountOfRequisitionsAwaitingContractManagerAssignment();
+    
+    /**
+     * check if the acctlines belong to this fo user
+     * @param document
+     * @return
+     */
+	public boolean isFiscalOfficersForAllAcctLines(RequisitionDocument document);
+
 
 }
