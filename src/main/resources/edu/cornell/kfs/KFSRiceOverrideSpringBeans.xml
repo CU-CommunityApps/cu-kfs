@@ -95,7 +95,9 @@
         <property name="accessToUnderlyingConnectionAllowed" value="true"/> 
     </bean> 
     
-    <bean id="documentService" class="edu.cornell.kfs.sys.document.service.impl.CUFinancialSystemDocumentServiceImpl">
+    
+    <!-- KFSPTS-1735 -->
+   <!--  <bean id="documentService" class="edu.cornell.kfs.sys.document.service.impl.CUFinancialSystemDocumentServiceImpl">
 		<property name="documentDao">
 			<ref bean="documentDao" />
 		</property>
@@ -126,7 +128,7 @@
 		<property name="dataDictionaryService">
 			<ref bean="dataDictionaryService" />
 		</property>
-	</bean>
+	</bean> -->
 
     <!-- We override the KFS impl so that we can read properties specified at runtime -->
 <!--
