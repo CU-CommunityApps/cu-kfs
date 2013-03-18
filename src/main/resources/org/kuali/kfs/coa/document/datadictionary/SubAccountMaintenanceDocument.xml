@@ -121,15 +121,44 @@
   </bean>
 
 <!-- workflow attributes -->
-  	<bean id="SubAccountMaintenanceDocument-workflowAttributes" parent="SubAccountMaintenanceDocument-workflowAttributes-parentBean"/>
+
+    <bean id="SubAccountMaintenanceDocument-workflowAttributes" parent="SubAccountMaintenanceDocument-workflowAttributes-parentBean"/>
   
-	<bean id="SubAccountMaintenanceDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
-		<property name="routingTypeDefinitions">
-    		<map>
-	    		<entry key="Account" value-ref="RoutingType-MaintenanceDocument-Account"/>
-    			<entry key="OrganizationHierarchy" value-ref="RoutingType-MaintenanceDocument-OrganizationHierarchy-OrgFromAccount"/>
-    		</map>
-		</property>
-	</bean>
- 
+    <bean id="SubAccountMaintenanceDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
+        <property name="routingTypeDefinitions">
+            <map>
+                <entry key="Account" value-ref="RoutingType-MaintenanceDocument-Account"/>
+                <entry key="Award" value-ref="SubAccountMaintenanceDocument-RoutingType-Award"/>    <!-- KFSPTS-1740 -->       
+                <entry key="OrganizationHierarchy" value-ref="RoutingType-MaintenanceDocument-OrganizationHierarchy-OrgFromAccount"/>
+            </map>
+        </property>
+    </bean>
+    
+    <!-- KFSPTS-1740 items start -->       
+    <bean id="SubAccountMaintenanceDocument-RoutingType-Award" class="org.kuali.rice.kns.datadictionary.RoutingTypeDefinition">
+        <property name="routingAttributes">
+            <list>
+                <ref bean="SubAccountMaintenanceDocument-RoutingAttribute-Award"/>
+            </list>
+        </property>
+        <property name="documentValuePathGroups">
+            <list>
+                <ref bean="SubAccountMaintenanceDocument-DocumentValuePathGroup-Award"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="SubAccountMaintenanceDocument-RoutingAttribute-Award" class="org.kuali.rice.kns.datadictionary.RoutingAttribute">
+        <property name="qualificationAttributeName" value="contractsAndGrantsAccountResponsibilityId"/>
+    </bean>
+
+    <bean id="SubAccountMaintenanceDocument-DocumentValuePathGroup-Award" class="org.kuali.rice.kns.datadictionary.DocumentValuePathGroup">
+        <property name="documentValues">
+            <list>
+                <value>newMaintainableObject.businessObject.account.contractsAndGrantsAccountResponsibilityId</value>
+            </list>
+        </property>
+    </bean>        
+    <!-- KFSPTS-1740 items stop -->
+         
 </beans>
