@@ -33,7 +33,7 @@ import org.kuali.kfs.module.purap.PurapWorkflowConstants.RequisitionDocument.Nod
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
-import org.kuali.kfs.module.purap.document.service.RequisitionService;
+import org.kuali.kfs.module.purap.service.PurapAccountingService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.kns.document.Document;
@@ -146,7 +146,7 @@ public class RequisitionDocumentPresentationController extends PurchasingAccount
 				List<String> activeNodes = Arrays.asList(workflowDocument.getNodeNames());
 				;
 				for (String nodeNamesNode : activeNodes) {
-					if (RequisitionStatuses.NODE_ACCOUNT.equals(nodeNamesNode) && !SpringContext.getBean(RequisitionService.class).isFiscalOfficersForAllAcctLines((RequisitionDocument)document)) {
+					if (RequisitionStatuses.NODE_ACCOUNT.equals(nodeNamesNode) && !SpringContext.getBean(PurapAccountingService.class).isFiscalOfficersForAllAcctLines(reqDocument)) {
 						// disable the button for setup distribution
 						editModes.add(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION);
 						// disable the button for remove accounts from all items

@@ -29,6 +29,8 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
+import org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount;
+import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
 import org.kuali.kfs.module.purap.businessobject.RequisitionAccount;
 import org.kuali.kfs.sys.KFSConstants;
@@ -325,7 +327,7 @@ public class AccountingLineGroupTag extends TagSupport {
     	String updatedAccountNumber = KFSConstants.EMPTY_STRING;
     	if (accountingLine instanceof RequisitionAccount && ((RequisitionAccount)accountingLine).getAccountIdentifier() != null) {
     		if (accountingDocument.getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames().equals(RequisitionStatuses.NODE_ACCOUNT)) {
-    			RequisitionAccount dbAcctLine = getRequisiotionAccountFromDb((RequisitionAccount)accountingLine);
+    			RequisitionAccount dbAcctLine = (RequisitionAccount)getAccountFromDb((RequisitionAccount)accountingLine, RequisitionAccount.class);
     			if (dbAcctLine != null && !StringUtils.equals(accountingLine.getAccountNumber(), dbAcctLine.getAccountNumber())) {
     				updatedAccountNumber = accountingLine.getAccountNumber();
     				accountingLine.setAccountNumber(dbAcctLine.getAccountNumber());
@@ -335,7 +337,17 @@ public class AccountingLineGroupTag extends TagSupport {
     	}
     	if (accountingLine instanceof PurchaseOrderAccount && ((PurchaseOrderAccount)accountingLine).getAccountIdentifier() != null) {
     		if (accountingDocument.getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames().equals(RequisitionStatuses.NODE_ACCOUNT)) {
-    			PurchaseOrderAccount dbAcctLine = getPurchaseOrderAccounFromDb((PurchaseOrderAccount)accountingLine);
+    			PurchaseOrderAccount dbAcctLine = (PurchaseOrderAccount)getAccountFromDb((PurchaseOrderAccount)accountingLine, PurchaseOrderAccount.class);
+    			if (dbAcctLine != null && !StringUtils.equals(accountingLine.getAccountNumber(), dbAcctLine.getAccountNumber())) {
+    				updatedAccountNumber = accountingLine.getAccountNumber();
+    				accountingLine.setAccountNumber(dbAcctLine.getAccountNumber());
+    				isExistingReqAcctline = true;
+    			}
+    		}
+    	}
+    	if (accountingLine instanceof PaymentRequestAccount && ((PaymentRequestAccount)accountingLine).getAccountIdentifier() != null) {
+    		if (accountingDocument.getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames().equals(RequisitionStatuses.NODE_ACCOUNT)) {
+    			PaymentRequestAccount dbAcctLine = (PaymentRequestAccount)getAccountFromDb((PaymentRequestAccount)accountingLine, PaymentRequestAccount.class);
     			if (dbAcctLine != null && !StringUtils.equals(accountingLine.getAccountNumber(), dbAcctLine.getAccountNumber())) {
     				updatedAccountNumber = accountingLine.getAccountNumber();
     				accountingLine.setAccountNumber(dbAcctLine.getAccountNumber());
@@ -349,18 +361,13 @@ public class AccountingLineGroupTag extends TagSupport {
         }
         return container;
     }
-
-    private RequisitionAccount getRequisiotionAccountFromDb(RequisitionAccount accountingLine) {
+    
+    private PurApAccountingLineBase getAccountFromDb(PurApAccountingLineBase accountingLine, Class clazz) {
     	Map<String, Object> primaryKeys = new HashMap<String, Object>();
     	primaryKeys.put("accountIdentifier", accountingLine.getAccountIdentifier());
-		return (RequisitionAccount)SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(RequisitionAccount.class, primaryKeys);
+		return (PurApAccountingLineBase)SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(clazz, primaryKeys);
     }
 
-    private PurchaseOrderAccount getPurchaseOrderAccounFromDb(PurchaseOrderAccount accountingLine) {
-    	Map<String, Object> primaryKeys = new HashMap<String, Object>();
-    	primaryKeys.put("accountIdentifier", accountingLine.getAccountIdentifier());
-		return (PurchaseOrderAccount)SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(PurchaseOrderAccount.class, primaryKeys);
-    }
 
     /**
      * Clean up state held by this tag

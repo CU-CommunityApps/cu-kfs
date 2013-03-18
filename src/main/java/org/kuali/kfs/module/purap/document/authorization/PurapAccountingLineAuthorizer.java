@@ -21,13 +21,16 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
+import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
+import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
+import org.kuali.kfs.module.purap.service.PurapAccountingService;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -268,6 +271,14 @@ public class PurapAccountingLineAuthorizer extends AccountingLineAuthorizerBase 
             return null;
         }
     }
+
+	@Override
+	public boolean renderNewLine(AccountingDocument accountingDocument,
+			String accountingGroupProperty) {
+		// KFSPTS-1273 : for PREQ.  REQ & POA have overriden this.
+		return super.renderNewLine(accountingDocument, accountingGroupProperty) || (accountingDocument instanceof PaymentRequestDocument && accountingDocument.getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames().equals(RequisitionStatuses.NODE_ACCOUNT) 
+				&& SpringContext.getBean(PurapAccountingService.class).isFiscalOfficersForAllAcctLines((PaymentRequestDocument)accountingDocument));
+	}
     
 }
 

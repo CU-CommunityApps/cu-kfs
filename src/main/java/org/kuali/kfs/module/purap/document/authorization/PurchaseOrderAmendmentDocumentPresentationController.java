@@ -28,6 +28,7 @@ import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
+import org.kuali.kfs.module.purap.service.PurapAccountingService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -87,7 +88,7 @@ public class PurchaseOrderAmendmentDocumentPresentationController extends Purcha
 				List<String> activeNodes = Arrays.asList(workflowDocument.getNodeNames());
 				;
 				for (String nodeNamesNode : activeNodes) {
-					if (RequisitionStatuses.NODE_ACCOUNT.equals(nodeNamesNode) && !isFiscalOfficersForAllAcctLines((PurchaseOrderAmendmentDocument)document)) {
+					if (RequisitionStatuses.NODE_ACCOUNT.equals(nodeNamesNode) && !SpringContext.getBean(PurapAccountingService.class).isFiscalOfficersForAllAcctLines((PurchaseOrderAmendmentDocument)document)) {
 						// disable the button for setup distribution
 						editModes.add(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION);
 						// disable the button for remove accounts from all items
@@ -106,38 +107,6 @@ public class PurchaseOrderAmendmentDocumentPresentationController extends Purcha
  
 		return editModes;
     }
-
-	private boolean isFiscalOfficersForAllAcctLines(PurchaseOrderAmendmentDocument document) {
-
-		boolean isFoForAcctLines = true;
-		String personId = GlobalVariables.getUserSession().getPrincipalId();
-		for (SourceAccountingLine accountingLine : (List<SourceAccountingLine>)document.getSourceAccountingLines()) {
-			List<String> fiscalOfficers = new ArrayList<String>();
-			AttributeSet roleQualifier = new AttributeSet();
-			roleQualifier.put(KfsKimAttributes.DOCUMENT_NUMBER,document.getDocumentNumber());
-			roleQualifier.put(KfsKimAttributes.DOCUMENT_TYPE_NAME, document.getDocumentHeader().getWorkflowDocument().getDocumentType());
-			roleQualifier.put(KfsKimAttributes.FINANCIAL_DOCUMENT_TOTAL_AMOUNT,document.getDocumentHeader().getFinancialDocumentTotalAmount().toString());
-			roleQualifier.put(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE,accountingLine.getChartOfAccountsCode());
-			roleQualifier.put(KfsKimAttributes.ACCOUNT_NUMBER,accountingLine.getAccountNumber());
-			fiscalOfficers.addAll(SpringContext.getBean(RoleManagementService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
-					KFSConstants.SysKimConstants.FISCAL_OFFICER_KIM_ROLE_NAME,roleQualifier));
-			if (!fiscalOfficers.contains(personId)) {
-				fiscalOfficers.addAll(SpringContext.getBean(RoleManagementService.class).getRoleMemberPrincipalIds(
-										KFSConstants.ParameterNamespaces.KFS,KFSConstants.SysKimConstants.FISCAL_OFFICER_PRIMARY_DELEGATE_KIM_ROLE_NAME,
-										roleQualifier));
-			}
-			if (!fiscalOfficers.contains(personId)) {
-				fiscalOfficers.addAll(SpringContext.getBean(RoleManagementService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
-										KFSConstants.SysKimConstants.FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME,roleQualifier));
-			}
-			if (!fiscalOfficers.contains(personId)) {
-				isFoForAcctLines = false;
-				break;
-			}
-		}
-
-		return isFoForAcctLines;
-	}
 
     @Override
     protected boolean canReload(Document document) {

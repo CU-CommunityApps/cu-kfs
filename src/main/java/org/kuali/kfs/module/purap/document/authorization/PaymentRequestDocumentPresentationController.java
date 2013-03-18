@@ -16,6 +16,7 @@
 package org.kuali.kfs.module.purap.document.authorization;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -24,11 +25,15 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants.PaymentRequestEditMode;
+import org.kuali.kfs.module.purap.PurapAuthorizationConstants.RequisitionEditMode;
 import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
+import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants.PaymentRequestDocument.NodeDetailEnum;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
+import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
+import org.kuali.kfs.module.purap.service.PurapAccountingService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KfsAuthorizationConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -236,6 +241,31 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
         if (paymentRequestDocument.isExtracted()) {
             editModes.remove(KFSConstants.BANK_ENTRY_EDITABLE_EDITING_MODE);
         }
+        // KFS-1768/KFSCNTRB-1138
+        // This is ported from 5.0, and Workflowdocument is different, so needs more testing.
+		try {
+//			KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+			if (workflowDocument.stateIsEnroute()) {
+				List<String> activeNodes = Arrays.asList(workflowDocument.getNodeNames());
+				;
+				for (String nodeNamesNode : activeNodes) {
+					if (RequisitionStatuses.NODE_ACCOUNT.equals(nodeNamesNode) && !SpringContext.getBean(PurapAccountingService.class).isFiscalOfficersForAllAcctLines((PurchaseOrderAmendmentDocument)document)) {
+						// disable the button for setup distribution
+						editModes.add(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION);
+						// disable the button for remove accounts from all items
+						editModes.add(RequisitionEditMode.DISABLE_REMOVE_ACCTS);
+						// disable the button for remove commodity codes from
+						// all
+						// items
+						if (editModes.contains(RequisitionEditMode.ENABLE_COMMODITY_CODE)) {
+							editModes.remove(RequisitionEditMode.ENABLE_COMMODITY_CODE);
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+		}
+ 
 
         return editModes;
     }

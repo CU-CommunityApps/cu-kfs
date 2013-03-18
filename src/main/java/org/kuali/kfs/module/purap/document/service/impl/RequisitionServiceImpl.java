@@ -412,36 +412,4 @@ public class RequisitionServiceImpl implements RequisitionService {
         return personService;
     }
 
-	public boolean isFiscalOfficersForAllAcctLines(RequisitionDocument document) {
-
-		boolean isFoForAcctLines = true;
-		String personId = GlobalVariables.getUserSession().getPrincipalId();
-		for (SourceAccountingLine accountingLine : (List<SourceAccountingLine>)document.getSourceAccountingLines()) {
-			List<String> fiscalOfficers = new ArrayList<String>();
-			AttributeSet roleQualifier = new AttributeSet();
-			roleQualifier.put(KfsKimAttributes.DOCUMENT_NUMBER,document.getDocumentNumber());
-			roleQualifier.put(KfsKimAttributes.DOCUMENT_TYPE_NAME, document.getDocumentHeader().getWorkflowDocument().getDocumentType());
-			roleQualifier.put(KfsKimAttributes.FINANCIAL_DOCUMENT_TOTAL_AMOUNT,document.getDocumentHeader().getFinancialDocumentTotalAmount().toString());
-			roleQualifier.put(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE,accountingLine.getChartOfAccountsCode());
-			roleQualifier.put(KfsKimAttributes.ACCOUNT_NUMBER,accountingLine.getAccountNumber());
-			fiscalOfficers.addAll(SpringContext.getBean(RoleManagementService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
-					KFSConstants.SysKimConstants.FISCAL_OFFICER_KIM_ROLE_NAME,roleQualifier));
-			if (!fiscalOfficers.contains(personId)) {
-				fiscalOfficers.addAll(SpringContext.getBean(RoleManagementService.class).getRoleMemberPrincipalIds(
-										KFSConstants.ParameterNamespaces.KFS,KFSConstants.SysKimConstants.FISCAL_OFFICER_PRIMARY_DELEGATE_KIM_ROLE_NAME,
-										roleQualifier));
-			}
-			if (!fiscalOfficers.contains(personId)) {
-				fiscalOfficers.addAll(SpringContext.getBean(RoleManagementService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
-										KFSConstants.SysKimConstants.FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME,roleQualifier));
-			}
-			if (!fiscalOfficers.contains(personId)) {
-				isFoForAcctLines = false;
-				break;
-			}
-		}
-
-		return isFoForAcctLines;
-	}
-
 }
