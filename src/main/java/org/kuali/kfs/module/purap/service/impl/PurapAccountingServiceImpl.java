@@ -29,13 +29,17 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapConstants.PurapDocTypeCodes;
+import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
 import org.kuali.kfs.module.purap.PurapParameterConstants.NRATaxParameters;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
+import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurApItemUseTax;
 import org.kuali.kfs.module.purap.businessobject.PurApSummaryItem;
+import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
+import org.kuali.kfs.module.purap.businessobject.RequisitionAccount;
 import org.kuali.kfs.module.purap.dataaccess.PurApAccountingDao;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
@@ -50,10 +54,12 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLineBase;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.web.RenderableAccountingLineContainer;
 import org.kuali.kfs.sys.identity.KfsKimAttributes;
 import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.rice.kim.bo.types.dto.AttributeSet;
 import org.kuali.rice.kim.service.RoleManagementService;
+import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KualiDecimal;
@@ -1067,6 +1073,35 @@ public class PurapAccountingServiceImpl implements PurapAccountingService {
 		for (SourceAccountingLine accountingLine : (List<SourceAccountingLine>)document.getSourceAccountingLines()) {
 			List<String> fiscalOfficers = new ArrayList<String>();
 			AttributeSet roleQualifier = new AttributeSet();
+	        // KFSPTS-1273 : this method is final, so can't be overriden by REQ Auth.  This is a fix for REQ existing issue.  a broader solution need more work.
+	        // the authorizer is called by validation rule and rendertag, so has to do it here.  otherwise the invalid account will be saved.
+	        boolean isExistingReqAcctline = false;
+	    	String updatedAccountNumber = KFSConstants.EMPTY_STRING;
+	    	if (accountingLine instanceof RequisitionAccount && ((RequisitionAccount)accountingLine).getAccountIdentifier() != null) {
+	    			RequisitionAccount dbAcctLine = (RequisitionAccount)getAccountFromDb((RequisitionAccount)accountingLine, RequisitionAccount.class);
+	    			if (dbAcctLine != null && !StringUtils.equals(accountingLine.getAccountNumber(), dbAcctLine.getAccountNumber())) {
+	    				updatedAccountNumber = accountingLine.getAccountNumber();
+	    				accountingLine.setAccountNumber(dbAcctLine.getAccountNumber());
+	    				isExistingReqAcctline = true;
+	    			}
+	    	}
+	    	if (accountingLine instanceof PurchaseOrderAccount && ((PurchaseOrderAccount)accountingLine).getAccountIdentifier() != null) {
+	    			PurchaseOrderAccount dbAcctLine = (PurchaseOrderAccount)getAccountFromDb((PurchaseOrderAccount)accountingLine, PurchaseOrderAccount.class);
+	    			if (dbAcctLine != null && !StringUtils.equals(accountingLine.getAccountNumber(), dbAcctLine.getAccountNumber())) {
+	    				updatedAccountNumber = accountingLine.getAccountNumber();
+	    				accountingLine.setAccountNumber(dbAcctLine.getAccountNumber());
+	    				isExistingReqAcctline = true;
+	    			}
+	    	}
+	    	if (accountingLine instanceof PaymentRequestAccount && ((PaymentRequestAccount)accountingLine).getAccountIdentifier() != null) {
+	    			PaymentRequestAccount dbAcctLine = (PaymentRequestAccount)getAccountFromDb((PaymentRequestAccount)accountingLine, PaymentRequestAccount.class);
+	    			if (dbAcctLine != null && !StringUtils.equals(accountingLine.getAccountNumber(), dbAcctLine.getAccountNumber())) {
+	    				updatedAccountNumber = accountingLine.getAccountNumber();
+	    				accountingLine.setAccountNumber(dbAcctLine.getAccountNumber());
+	    				isExistingReqAcctline = true;
+	    			}
+	    	}
+
 			roleQualifier.put(KfsKimAttributes.DOCUMENT_NUMBER,document.getDocumentNumber());
 			roleQualifier.put(KfsKimAttributes.DOCUMENT_TYPE_NAME, document.getDocumentHeader().getWorkflowDocument().getDocumentType());
 			roleQualifier.put(KfsKimAttributes.FINANCIAL_DOCUMENT_TOTAL_AMOUNT,document.getDocumentHeader().getFinancialDocumentTotalAmount().toString());
@@ -1083,6 +1118,9 @@ public class PurapAccountingServiceImpl implements PurapAccountingService {
 				fiscalOfficers.addAll(SpringContext.getBean(RoleManagementService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
 										KFSConstants.SysKimConstants.FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME,roleQualifier));
 			}
+	        if (isExistingReqAcctline) {
+	        	accountingLine.setAccountNumber(updatedAccountNumber);
+	        }
 			if (!fiscalOfficers.contains(personId)) {
 				isFoForAcctLines = false;
 				break;
@@ -1091,5 +1129,10 @@ public class PurapAccountingServiceImpl implements PurapAccountingService {
 
 		return isFoForAcctLines;
 	}
+    private PurApAccountingLineBase getAccountFromDb(PurApAccountingLineBase accountingLine, Class clazz) {
+    	Map<String, Object> primaryKeys = new HashMap<String, Object>();
+    	primaryKeys.put("accountIdentifier", accountingLine.getAccountIdentifier());
+		return (PurApAccountingLineBase)SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(clazz, primaryKeys);
+    }
 
 }
