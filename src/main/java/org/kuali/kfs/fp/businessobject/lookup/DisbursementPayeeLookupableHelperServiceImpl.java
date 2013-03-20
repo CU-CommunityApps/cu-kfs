@@ -93,7 +93,8 @@ public class DisbursementPayeeLookupableHelperServiceImpl extends KualiLookupabl
         if (StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.VENDOR_NUMBER)) || StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.VENDOR_NAME))) {
             searchResults.addAll(this.getVendorsAsPayees(fieldValues));
         }
-        else if (StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Person.EMPLOYEE_ID))) {
+        //KFSPTS-1737 original code:   else if (StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Person.EMPLOYEE_ID))) {
+        else if (StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Person.EMPLOYEE_ID)) || StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Person.PRINCIPAL_NAME))) {
             searchResults.addAll(this.getPersonAsPayees(fieldValues));
         }
         else {
@@ -124,25 +125,33 @@ public class DisbursementPayeeLookupableHelperServiceImpl extends KualiLookupabl
         final String employeeId = (String) fieldValues.get(KIMPropertyConstants.Person.EMPLOYEE_ID);
         final String firstName = (String)fieldValues.get(KIMPropertyConstants.Person.FIRST_NAME);
         final String lastName = (String)fieldValues.get(KIMPropertyConstants.Person.LAST_NAME);
+        final String principalName = (String)fieldValues.get(KIMPropertyConstants.Person.PRINCIPAL_NAME);  //KFSPTS-1737 -- added
 
-        if (StringUtils.isBlank(vendorNumber) && StringUtils.isBlank(employeeId) && StringUtils.isBlank(firstName) && StringUtils.isBlank(lastName) && StringUtils.isBlank(vendorName)) {
+        //KFSPTS-1737 - original code:  if (StringUtils.isBlank(vendorNumber) && StringUtils.isBlank(employeeId) && StringUtils.isBlank(firstName) && StringUtils.isBlank(lastName) && StringUtils.isBlank(vendorName)) {
+        if (StringUtils.isBlank(vendorNumber) && StringUtils.isBlank(employeeId) && StringUtils.isBlank(firstName) && StringUtils.isBlank(lastName) && StringUtils.isBlank(vendorName) && StringUtils.isBlank(principalName)) {
             final String vendorNumberLabel = this.getAttributeLabel(KFSPropertyConstants.VENDOR_NUMBER);
             final String employeeIdLabel = this.getAttributeLabel(KIMPropertyConstants.Person.EMPLOYEE_ID);
             final String vendorNameLabel = this.getAttributeLabel(KFSPropertyConstants.VENDOR_NAME);
             final String firstNameLabel = this.getAttributeLabel(KIMPropertyConstants.Person.FIRST_NAME);
             final String lastNameLabel = this.getAttributeLabel(KIMPropertyConstants.Person.LAST_NAME);
-            GlobalVariables.getMessageMap().putError(KFSPropertyConstants.VENDOR_NUMBER, KFSKeyConstants.ERROR_DV_LOOKUP_NEEDS_SOME_FIELD, new String[] {vendorNumberLabel, employeeIdLabel, vendorNameLabel, firstNameLabel, lastNameLabel});
+            final String principalNameLabel = this.getAttributeLabel(KIMPropertyConstants.Person.PRINCIPAL_NAME); //KFSPTS-1737 -- added
+            //KFSPTS-1737 - original code: GlobalVariables.getMessageMap().putError(KFSPropertyConstants.VENDOR_NUMBER, KFSKeyConstants.ERROR_DV_LOOKUP_NEEDS_SOME_FIELD, new String[] {vendorNumberLabel, employeeIdLabel, vendorNameLabel, firstNameLabel, lastNameLabel});
+            GlobalVariables.getMessageMap().putError(KFSPropertyConstants.VENDOR_NUMBER, KFSKeyConstants.ERROR_DV_LOOKUP_NEEDS_SOME_FIELD, new String[] {vendorNumberLabel, employeeIdLabel, vendorNameLabel, firstNameLabel, lastNameLabel, principalNameLabel});
         } else {
             final boolean isVendorInfoEntered = StringUtils.isNotBlank(vendorName) || StringUtils.isNotBlank(vendorNumber);
-            if (isVendorInfoEntered && StringUtils.isNotBlank(employeeId)) {
-                // only can use the vendor name and vendor number fields or the employee id field, but not both.
+            final boolean isEmployeeInfoEntered = StringUtils.isNotBlank(employeeId) || StringUtils.isNotBlank(principalName); //KFSPTS-1737 -- added
+            //KFSPTS-1737 - original code: if (isVendorInfoEntered && StringUtils.isNotBlank(employeeId)) {
+            if (isVendorInfoEntered && isEmployeeInfoEntered) {
+                // only can use the vendor name and vendor number fields or the employee id and principal name field, but not both.
                 String messageKey = KFSKeyConstants.ERROR_DV_VENDOR_EMPLOYEE_CONFUSION;
     
                 String vendorNameLabel = this.getAttributeLabel(KFSPropertyConstants.VENDOR_NAME);
                 String vendorNumberLabel = this.getAttributeLabel(KFSPropertyConstants.VENDOR_NUMBER);
                 String employeeIdLabel = this.getAttributeLabel(KIMPropertyConstants.Person.EMPLOYEE_ID);
+                String principalNameLabel = this.getAttributeLabel(KIMPropertyConstants.Person.PRINCIPAL_NAME); //KFSPTS-1737 -- added
     
-                GlobalVariables.getMessageMap().putError(KIMPropertyConstants.Person.EMPLOYEE_ID, messageKey, employeeIdLabel, vendorNameLabel, vendorNumberLabel);
+                //KFSPTS-1737 - original code: GlobalVariables.getMessageMap().putError(KIMPropertyConstants.Person.EMPLOYEE_ID, messageKey, employeeIdLabel, vendorNameLabel, vendorNumberLabel);
+                GlobalVariables.getMessageMap().putError(KIMPropertyConstants.Person.EMPLOYEE_ID, messageKey, employeeIdLabel, principalNameLabel, vendorNameLabel, vendorNumberLabel);
             }
             if (StringUtils.isBlank(vendorNumber) && !StringUtils.isBlank(vendorName) && !filledEnough(vendorName)) {
                 final String vendorNameLabel = this.getAttributeLabel(KFSPropertyConstants.VENDOR_NAME);
@@ -161,13 +170,15 @@ public class DisbursementPayeeLookupableHelperServiceImpl extends KualiLookupabl
                 GlobalVariables.getMessageMap().putError(KFSPropertyConstants.VENDOR_NAME, messageKey, vendorNameLabel, firstNameLabel, lastNameLabel);
             }
             if (StringUtils.isBlank(employeeId)) {
-                if (StringUtils.isBlank(firstName) && !StringUtils.isBlank(lastName) && !filledEnough(lastName)) {
-                    final String label = getAttributeLabel(KIMPropertyConstants.Person.LAST_NAME);
-                    GlobalVariables.getMessageMap().putError(KIMPropertyConstants.Person.LAST_NAME, KFSKeyConstants.ERROR_DV_NAME_NOT_FILLED_ENOUGH, new String[] { label, Integer.toString(getNameLengthWithWildcardRequirement() ) } );
-                } else if (StringUtils.isBlank(lastName) && !StringUtils.isBlank(firstName) && !filledEnough(firstName)) {
-                    final String label = getAttributeLabel(KIMPropertyConstants.Person.FIRST_NAME);
-                    GlobalVariables.getMessageMap().putError(KIMPropertyConstants.Person.FIRST_NAME, KFSKeyConstants.ERROR_DV_NAME_NOT_FILLED_ENOUGH, new String[] { label, Integer.toString(getNameLengthWithWildcardRequirement() ) } );
-                }
+            	if (StringUtils.isBlank(principalName)) {  //KFSPTS-1737 -- added conditional
+	                if (StringUtils.isBlank(firstName) && !StringUtils.isBlank(lastName) && !filledEnough(lastName)) {
+	                    final String label = getAttributeLabel(KIMPropertyConstants.Person.LAST_NAME);
+	                    GlobalVariables.getMessageMap().putError(KIMPropertyConstants.Person.LAST_NAME, KFSKeyConstants.ERROR_DV_NAME_NOT_FILLED_ENOUGH, new String[] { label, Integer.toString(getNameLengthWithWildcardRequirement() ) } );
+	                } else if (StringUtils.isBlank(lastName) && !StringUtils.isBlank(firstName) && !filledEnough(firstName)) {
+	                    final String label = getAttributeLabel(KIMPropertyConstants.Person.FIRST_NAME);
+	                    GlobalVariables.getMessageMap().putError(KIMPropertyConstants.Person.FIRST_NAME, KFSKeyConstants.ERROR_DV_NAME_NOT_FILLED_ENOUGH, new String[] { label, Integer.toString(getNameLengthWithWildcardRequirement() ) } );
+	                }
+            	}
             }
         }
         

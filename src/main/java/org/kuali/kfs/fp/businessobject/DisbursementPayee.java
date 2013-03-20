@@ -61,6 +61,7 @@ public class DisbursementPayee extends TransientBusinessObjectBase implements In
     private boolean active;
     
     private String principalId;
+    private String principalName;     //KFSPTS-1737 -- added
     
     public final static String addressPattern = "{0}, {1}, {2} {3}";
 
@@ -120,6 +121,8 @@ public class DisbursementPayee extends TransientBusinessObjectBase implements In
 
         fieldConversionMap.put(KFSPropertyConstants.EMPLOYEE_ID, KIMPropertyConstants.Person.EMPLOYEE_ID);
         fieldConversionMap.put(KNSPropertyConstants.ACTIVE, KNSPropertyConstants.ACTIVE);
+        
+        fieldConversionMap.put(KFSPropertyConstants.PERSON_USER_IDENTIFIER, KIMPropertyConstants.Person.PRINCIPAL_NAME);   //KFSPTS-1737 -- added
 
         return fieldConversionMap;
     }
@@ -168,6 +171,7 @@ public class DisbursementPayee extends TransientBusinessObjectBase implements In
         	disbursementPayee.setPayeeIdNumber(person.getPrincipalId());
         }
         disbursementPayee.setPrincipalId(person.getPrincipalId());
+        disbursementPayee.setPrincipalName(person.getPrincipalName());       //KFSPTS-1737 -- added
         disbursementPayee.setPayeeName(person.getNameUnmasked());
         disbursementPayee.setTaxNumber(person.getExternalId(VendorConstants.TAX_TYPE_TAX));
 
@@ -429,6 +433,24 @@ public class DisbursementPayee extends TransientBusinessObjectBase implements In
      */
     public void setPrincipalId(String principalId) {
         this.principalId = principalId;
+    }
+    
+    //KFSPTS-1737 -- added
+    /**
+     * Gets the principalName attribute. 
+     * @return Returns the principalName.
+     */
+    public String getPrincipalName() {
+        return principalName;
+    }
+
+    //KFSPTS-1737 -- added
+    /**
+     * Sets the principalName attribute value.
+     * @param principalName The principalId to set.
+     */
+    public void setPrincipalName(String principalName) {
+        this.principalName = principalName;
     }
 
     // do mapping between vendor type code and payee type code 
