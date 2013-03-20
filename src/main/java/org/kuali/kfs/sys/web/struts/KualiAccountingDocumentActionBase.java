@@ -77,6 +77,7 @@ import org.kuali.rice.kns.util.Timer;
 import org.kuali.rice.kns.util.UrlFactory;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 
+import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
 
 /**
  * This class handles UI actions for all shared methods of financial documents.
