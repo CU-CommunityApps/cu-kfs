@@ -74,6 +74,7 @@ import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.util.Timer;
+import org.kuali.rice.kns.util.TypedArrayList;
 import org.kuali.rice.kns.util.UrlFactory;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 
@@ -84,6 +85,7 @@ import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
  */
 public class KualiAccountingDocumentActionBase extends FinancialSystemTransactionalDocumentActionBase {
     protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(KualiAccountingDocumentActionBase.class);
+	private Object e;
 
     /**
      * Adds check for accountingLine updates, generates and dispatches any events caused by such updates
@@ -748,7 +750,9 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         SpringContext.getBean(CUFinancialSystemDocumentService.class).checkAccountingLinesForChanges((AccountingDocument) tmpForm.getFinancialDocument());
 
         ActionForward forward = super.save(mapping, form, request, response);
-
+        
+       
+        
         // need to check on sales tax for all the accounting lines
         checkSalesTaxRequiredAllLines(tmpForm, tmpForm.getFinancialDocument().getSourceAccountingLines());
         checkSalesTaxRequiredAllLines(tmpForm, tmpForm.getFinancialDocument().getTargetAccountingLines());
@@ -1177,6 +1181,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
             CapitalAssetInformationDetail detailLine = new CapitalAssetInformationDetail();
             detailLine.setItemLineNumber(getNextItemLineNumberAndIncremented(capitalAssetInformation));
             detailLines.add(detailLine);
+            
         }
     }
 
@@ -1263,7 +1268,17 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         CapitalAssetEditable capitalAssetEditable = (CapitalAssetEditable) document;
         CapitalAssetInformation capitalAssetInformation = capitalAssetEditable.getCapitalAssetInformation();
         if (capitalAssetInformation != null || !(kualiAccountingDocumentFormBase instanceof CapitalAssetEditable)) {
-            return;
+        	//if fdoc num is not set for CapitalAssetInformationDetail set fdoc num so CapitalAssetInformationDetail info can be added
+        	String docnum = capitalAssetEditable.getCapitalAssetInformation().getCapitalAssetInformationDetails().get(0).getDocumentNumber();
+        	if (docnum == null){        		
+        		List<CapitalAssetInformationDetail> detailLines = new ArrayList<CapitalAssetInformationDetail>();
+                CapitalAssetInformationDetail detailLine = new CapitalAssetInformationDetail();
+                detailLine.setDocumentNumber(document.getDocumentNumber());
+                detailLine.setItemLineNumber(1);
+                detailLines.add(detailLine);
+                SpringContext.getBean(BusinessObjectService.class).save(detailLines);      		
+        	}
+        	return;
         }
 
         CapitalAssetEditable capitalAssetEditableForm = (CapitalAssetEditable) kualiAccountingDocumentFormBase;
@@ -1271,7 +1286,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         // apply capitalAsset information if there is at least one movable object code associated with the source accounting
         // lines
         newCapitalAssetInformation.setDocumentNumber(document.getDocumentNumber());
-        capitalAssetEditable.setCapitalAssetInformation(newCapitalAssetInformation);
+        capitalAssetEditable.setCapitalAssetInformation(newCapitalAssetInformation);                    	
     }
 
     /**
