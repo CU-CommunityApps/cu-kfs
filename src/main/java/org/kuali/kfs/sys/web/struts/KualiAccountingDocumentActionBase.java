@@ -74,18 +74,16 @@ import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.util.Timer;
-import org.kuali.rice.kns.util.TypedArrayList;
 import org.kuali.rice.kns.util.UrlFactory;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 
-import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
 
 /**
  * This class handles UI actions for all shared methods of financial documents.
  */
 public class KualiAccountingDocumentActionBase extends FinancialSystemTransactionalDocumentActionBase {
     protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(KualiAccountingDocumentActionBase.class);
-	private Object e;
+
 
     /**
      * Adds check for accountingLine updates, generates and dispatches any events caused by such updates
