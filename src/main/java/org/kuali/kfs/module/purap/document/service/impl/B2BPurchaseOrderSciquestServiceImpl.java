@@ -141,6 +141,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
              //   cxml = 
             LOG.info("sendPurchaseOrder() Sending cxml\n" + cxml);
             String responseCxml = b2bDao.sendPunchOutRequest(cxml, b2bPurchaseOrderURL);
+            LOG.info("sendPurchaseOrder(): Response cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + ":" + responseCxml);
 
             // TODO : KFSPTS-1956 test do NOT commit for tagging
             if (purchaseOrder instanceof PurchaseOrderAmendmentDocument && !responseCxml.contains("Success")) {
@@ -148,8 +149,8 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
             			         cxml.substring(cxml.indexOf("</POHeader>"));
             	LOG.info("sendPurchaseOrder() re-Sending cxml\n" + cxml1);
             	responseCxml = b2bDao.sendPunchOutRequest(cxml1, b2bPurchaseOrderURL);
+                LOG.info("re-sendPurchaseOrder(): Response cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + ":" + responseCxml);
             }
-            LOG.info("sendPurchaseOrder(): Response cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + ":" + responseCxml);
 
             PurchaseOrderResponse poResponse = B2BParserHelper.getInstance().parsePurchaseOrderResponse(responseCxml);
             String statusText = poResponse.getStatusText();
@@ -586,6 +587,10 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append(addCustomFieldValueSet("ShipTitle", "Ship Title", getVendorShipTitle(purchaseOrder)));
         cxml.append(addCustomFieldValueSet("ShipPayTerms", "Ship Pay Terms", getVendorShipPayTerms(purchaseOrder)));
         cxml.append(addCustomFieldValueSet("SupplierAddress2", "Supplier Address 2", purchaseOrder.getVendorLine2Address()));
+        if ((purchaseOrder instanceof PurchaseOrderAmendmentDocument) && "Taipei".equals(purchaseOrder.getDeliveryCityName())) {
+        	// force to return error here in DEV
+        	cxml.append(addCustomFieldValueSet("SupplierAddress3", "Supplier Address 3", purchaseOrder.getVendorLine2Address()));
+        }
         cxml.append(addCustomFieldValueSet("SupplierCountry", "Supplier Country", getVendorCountry(purchaseOrder)));
         }
 
