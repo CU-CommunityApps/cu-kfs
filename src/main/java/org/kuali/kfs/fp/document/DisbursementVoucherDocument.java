@@ -70,6 +70,7 @@ import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
+import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.kew.actionrequest.ActionRequestValue;
 import org.kuali.rice.kew.actiontaken.ActionTakenValue;
 import org.kuali.rice.kew.engine.RouteContext;
@@ -1473,10 +1474,17 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
      * generic, shared logic used to initiate a dv document
      */
     public void initiateDocument() {
+    	PhoneNumberService phoneNumberService = SpringContext.getBean(PhoneNumberService.class);
         Person currentUser = GlobalVariables.getUserSession().getPerson();
         setDisbVchrContactPersonName(currentUser.getName());
         setDisbVchrContactEmailId(currentUser.getEmailAddressUnmasked());
-        setDisbVchrContactPhoneNumber(currentUser.getPhoneNumber());
+        String phoneNumber = currentUser.getPhoneNumber();
+        
+        if(StringUtils.isNotBlank(phoneNumber) && !"null".equalsIgnoreCase(phoneNumber)) {
+	        if(!phoneNumberService.isDefaultFormatPhoneNumber(currentUser.getPhoneNumber())) {
+	        	setDisbVchrContactPhoneNumber(phoneNumberService.formatNumberIfPossible(currentUser.getPhoneNumber()));
+	        }
+        }        
         ChartOrgHolder chartOrg = SpringContext.getBean(org.kuali.kfs.sys.service.FinancialSystemUserService.class).getPrimaryOrganization(currentUser, KFSConstants.ParameterNamespaces.FINANCIAL);
         if (chartOrg != null && chartOrg.getOrganization() != null) {
             setCampusCode(chartOrg.getOrganization().getOrganizationPhysicalCampusCode());
