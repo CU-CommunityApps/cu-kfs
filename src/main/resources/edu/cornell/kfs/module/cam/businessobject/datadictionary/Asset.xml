@@ -161,6 +161,7 @@
         <ref bean="Asset-assetPayments.paymentSequenceNumber"/>
         <ref bean="Asset-assetPayments.purchaseOrderNumber"/>
         <ref bean="Asset-assetPayments.documentNumber"/>
+        <ref bean="Asset-assetLocations.assetLocationTypeCode"/>
 
 		<ref bean="Asset-assetPayments-lookup"/>
 		<ref bean="Asset-relatedDocument-assetTransferDocumentLookup"/>
@@ -1471,6 +1472,12 @@
     <property name="label" value="Payment Document Number"/>
   </bean>
   
+  <bean id="Asset-assetLocations.assetLocationTypeCode" parent="Asset-assetLocations.assetLocationTypeCode-parentBean"/>
+
+  <bean id="Asset-assetLocations.assetLocationTypeCode-parentBean" abstract="true" parent="AssetLocationType-assetLocationTypeCode">
+    <property name="name" value="assetLocations.assetLocationTypeCode"/>
+  </bean>
+
   <bean id="Asset-extension-serviceRateIndicator" parent="Asset-extension-serviceRateIndicator-parentBean"/>
 
   <bean id="Asset-extension-serviceRateIndicator-parentBean" abstract="true" parent="AssetExtension-serviceRateIndicator" >
@@ -1932,6 +1939,7 @@
         <bean parent="FieldDefinition" p:attributeName="assetPayments.paymentSequenceNumber"/>
         <bean parent="FieldDefinition" p:attributeName="assetPayments.purchaseOrderNumber"/>
         <bean parent="FieldDefinition" p:attributeName="assetPayments.documentNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="assetLocations.assetLocationTypeCode"/>
       </list>
     </property>
     <property name="resultFields">
