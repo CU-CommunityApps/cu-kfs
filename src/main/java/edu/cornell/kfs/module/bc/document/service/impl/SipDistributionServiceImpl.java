@@ -264,9 +264,13 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                             String fringeBenefitKey = buildBenefitKey(sipPoolEntry, benefitsObjectCode,
                                     finObjTypeExpenditureexpCd);
                             PendingBudgetConstructionGeneralLedger fringeBenefit = benefitsMap.get(fringeBenefitKey);
-                            fringeBenefit.setAccountLineAnnualBalanceAmount(new KualiInteger((fringeBenefit
+                            
+                            if(ObjectUtils.isNotNull(fringeBenefit)){
+                            	
+                            	fringeBenefit.setAccountLineAnnualBalanceAmount(new KualiInteger((fringeBenefit
                                     .getAccountLineAnnualBalanceAmount().subtract(
                                             requestBenefit.getFringeDetailAmount())).bigIntegerValue()));
+                            }
 
                         }
                     }
