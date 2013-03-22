@@ -1480,9 +1480,13 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         setDisbVchrContactEmailId(currentUser.getEmailAddressUnmasked());
         String phoneNumber = currentUser.getPhoneNumber();
         
-        if(StringUtils.isNotBlank(phoneNumber) && !"null".equalsIgnoreCase(phoneNumber)) {
+        if(StringUtils.isNotBlank(phoneNumber) && !StringUtils.equalsIgnoreCase("null", phoneNumber)) {
 	        if(!phoneNumberService.isDefaultFormatPhoneNumber(currentUser.getPhoneNumber())) {
 	        	setDisbVchrContactPhoneNumber(phoneNumberService.formatNumberIfPossible(currentUser.getPhoneNumber()));
+	        } else if(StringUtils.equalsIgnoreCase(phoneNumber, "null")) {
+	        	// do nothing... we don't want phone number set to invalid value
+	        } else {
+	        	setDisbVchrContactPhoneNumber(phoneNumber);
 	        }
         }        
         ChartOrgHolder chartOrg = SpringContext.getBean(org.kuali.kfs.sys.service.FinancialSystemUserService.class).getPrimaryOrganization(currentUser, KFSConstants.ParameterNamespaces.FINANCIAL);
