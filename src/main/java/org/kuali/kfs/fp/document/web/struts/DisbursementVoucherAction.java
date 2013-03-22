@@ -130,8 +130,9 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     public ActionForward disapprove(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Object question = request.getParameter(KNSConstants.QUESTION_INST_ATTRIBUTE_NAME);
         String reason = request.getParameter(KNSConstants.QUESTION_REASON_ATTRIBUTE_NAME);
+        Object buttonClicked = request.getParameter(KNSConstants.QUESTION_CLICKED_BUTTON);
 
-        if(ObjectUtils.isNotNull(question)) {
+        if(ObjectUtils.isNotNull(question) && ConfirmationQuestion.YES.equals(buttonClicked)) {
 	    	KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
 	        
 	        // if travel DV, then reopen associated trip
