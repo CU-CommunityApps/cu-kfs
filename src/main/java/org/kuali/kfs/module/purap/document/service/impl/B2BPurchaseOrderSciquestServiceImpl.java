@@ -15,30 +15,21 @@
  */
 package org.kuali.kfs.module.purap.document.service.impl;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
-import org.kuali.kfs.module.cab.CabConstants;
 import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.CUPurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.PurapFundingSources;
-import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.dataaccess.B2BDao;
-import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.B2BPurchaseOrderService;
-import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.document.service.RequisitionService;
 import org.kuali.kfs.module.purap.exception.B2BConnectionException;
 import org.kuali.kfs.module.purap.exception.CxmlParseError;
@@ -141,10 +132,12 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
              //   cxml = 
             LOG.info("sendPurchaseOrder() Sending cxml\n" + cxml);
             String responseCxml = b2bDao.sendPunchOutRequest(cxml, b2bPurchaseOrderURL);
+
             LOG.info("sendPurchaseOrder(): Response cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + ":" + responseCxml);
 
             // TODO : KFSPTS-1956 test do NOT commit for tagging
-            if (purchaseOrder instanceof PurchaseOrderAmendmentDocument && !responseCxml.contains("Success")) {
+            // allow PO to use old fomr, then POA use new form for testing
+            if (!responseCxml.contains("Success") && !responseCxml.contains("success")) {
             	String cxml1 = cxml.substring(0, cxml.indexOf("<CustomFieldValueSet label=\"Delivery Phone")) +
             			         cxml.substring(cxml.indexOf("</POHeader>"));
             	LOG.info("sendPurchaseOrder() re-Sending cxml\n" + cxml1);
@@ -578,21 +571,13 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 
         // KFSPTS-427 : additional fields
         // do we have to check if field is empty or null ?
-        // KFSPTS-1956
-        // TODO : Taipei is only test to understand the issue.  Do NOT Commit to test
-        if ((!(purchaseOrder instanceof PurchaseOrderAmendmentDocument) && !"Taipei".equals(purchaseOrder.getDeliveryCityName())) || 
-        		((purchaseOrder instanceof PurchaseOrderAmendmentDocument) && addNewFieldsForPOA(purchaseOrder))) {
         cxml.append(addCustomFieldValueSet("DeliveryPhone", "Delivery Phone", purchaseOrder.getDeliveryToPhoneNumber()));
         cxml.append(addCustomFieldValueSet("DeliveryEmail", "Delivery Email", purchaseOrder.getDeliveryToEmailAddress()));
         cxml.append(addCustomFieldValueSet("ShipTitle", "Ship Title", getVendorShipTitle(purchaseOrder)));
         cxml.append(addCustomFieldValueSet("ShipPayTerms", "Ship Pay Terms", getVendorShipPayTerms(purchaseOrder)));
         cxml.append(addCustomFieldValueSet("SupplierAddress2", "Supplier Address 2", purchaseOrder.getVendorLine2Address()));
-        if ((purchaseOrder instanceof PurchaseOrderAmendmentDocument) && "Taipei".equals(purchaseOrder.getDeliveryCityName())) {
-        	// force to return error here in DEV
-        	cxml.append(addCustomFieldValueSet("SupplierAddress3", "Supplier Address 3", purchaseOrder.getVendorLine2Address()));
-        }
         cxml.append(addCustomFieldValueSet("SupplierCountry", "Supplier Country", getVendorCountry(purchaseOrder)));
-        }
+
 
         // end KFSPTS-427 fields
         
@@ -650,47 +635,6 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         return cxml.toString();
     }
     
-    private boolean addNewFieldsForPOA(PurchaseOrderDocument purchaseOrder) {
-    	boolean addNewFields = true;
-    	if (purchaseOrder instanceof PurchaseOrderAmendmentDocument) {
-    		// when poa is copied from po, the lastransmittimestamp is also copied over, so we should use it
-    		Timestamp lastTransmitTs = getOldestTransmitTs(purchaseOrder);
-			try {
-				Timestamp ts = new Timestamp(
-						DateUtils.parseDate("03/10/2013 00:00:00",new String[] { CabConstants.DateFormats.MONTH_DAY_YEAR+ " "
-				           + CabConstants.DateFormats.MILITARY_TIME }).getTime());
-
-				if (lastTransmitTs != null && lastTransmitTs.before(ts)) {
-					addNewFields = false;
-				}
-			} catch (Exception e) {
-				LOG.info("cretae timestamp error ");
-			}
-    	}
-    	
-    	return addNewFields;
-    }
-    
-    private Timestamp getOldestTransmitTs(PurchaseOrderDocument purchaseOrder) {
-		Timestamp lastTransmitTs = purchaseOrder.getPurchaseOrderLastTransmitTimestamp();
-		List<PurchaseOrderDocument> pos = getPurchaseOrders(purchaseOrder.getPurapDocumentIdentifier());
-		if (CollectionUtils.isNotEmpty(pos)) {
-			for (PurchaseOrderDocument po : pos) {
-				if (lastTransmitTs == null || (po.getPurchaseOrderLastTransmitTimestamp() != null && po.getPurchaseOrderLastTransmitTimestamp().before(lastTransmitTs))) {
-					lastTransmitTs = po.getPurchaseOrderLastTransmitTimestamp();
-				}
-			}
-		}
-		return lastTransmitTs;
-
-    }
-    
-    private List<PurchaseOrderDocument> getPurchaseOrders(Integer poId) {
-        Map<String,Object> fieldValues = new HashMap<String,Object>();
-        fieldValues.put(PurapPropertyConstants.PURAP_DOC_ID, poId);
-        return (List<PurchaseOrderDocument>)SpringContext.getBean(BusinessObjectService.class).findMatching(PurchaseOrderDocument.class, fieldValues);
-
-    }
     /*
      * helper method for repeated code
      */
