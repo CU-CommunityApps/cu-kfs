@@ -29,7 +29,6 @@ import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.document.authorization.MaintenanceDocumentRestrictions;
-import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.util.ObjectUtils;
@@ -78,8 +77,8 @@ public class SubAccountMaintainableImpl extends FinancialSystemMaintainable {
     /**
      * KFSPTS-1740 : New split node routing
      * 
-     * Enforce routing to Award split-node based on account.contractsAndGrantsAccountResponsibilityId
-     * value when subAccount type code is specified as Cost share (CS).
+     * Enforce routing to Award split-node based on account.contractsAndGrantsAccountResponsibilityId 
+     * for specific business rule conditions. 
      * 
      * @see org.kuali.kfs.sys.document.FinancialSystemMaintainable#answerSplitNodeQuestion(java.lang.String)
      */
@@ -94,16 +93,29 @@ public class SubAccountMaintainableImpl extends FinancialSystemMaintainable {
         
     }
     
-    //KFSPTS-1740
+    //KFSPTS-1740 added
+    /**
+     * Perform subAccount type code cost share check and CG ICR tab data change check 
+     * and enforce route to Award node when either one returns true.
+     * 
+     * @return true when doc should route to Award node
+     */
+    private boolean isCAndGReviewRequired (){
+    	if (isSubAccountTypeCodeCostShare() || hasCgIcrDataChanged()) {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    //KFSPTS-1740 added
     /**
      * Answers true for the following conditions:
      * a) New or Copy of SubAccount with a CS SubAccount type enforce route to Award split-node.
      * b) Any Edit of an existing SubAccount type code to change it from-or-to a cost share enforces split-node route to Award (i.e. old=EX to new=CS OR old=CS to new=EX OR old=CS to new=CS).
      * 
-     * @return
+     * @return true when code is CS for old or new value; otherwise return false
      */
-    private boolean isCAndGReviewRequired (){
-    	//route for C&G approval when subAcount type is CS on edit or create
+    private boolean isSubAccountTypeCodeCostShare (){    	
     	String maintAction = super.getMaintenanceAction();    	
     	if ( (maintAction.equalsIgnoreCase(KNSConstants.MAINTENANCE_NEW_ACTION)) || 
     		 (maintAction.equalsIgnoreCase(KNSConstants.MAINTENANCE_COPY_ACTION)) ) {
@@ -132,6 +144,92 @@ public class SubAccountMaintainableImpl extends FinancialSystemMaintainable {
     		}
     	}
     	return false; 
+    }
+    
+    //KFSPTS-1740 added
+    /**
+     * Answers true for the following conditions:
+     * a) New or Copy of SubAccount with data existing in any field on the Edit CG ICR tab of the Sub-Account maintenance document will enforce the route the Award split-node.
+     * b) Edit of the SubAccount where any data change is detected on the Edit CG ICR tab of the Sub-Account maintenance document will enforce the route the Award split-node. 
+     * 
+     * @return true when conditions are met; otherwise return false
+     */
+    private boolean hasCgIcrDataChanged() {
+    	String maintAction = super.getMaintenanceAction();    	
+    	if ( (maintAction.equalsIgnoreCase(KNSConstants.MAINTENANCE_NEW_ACTION)) || 
+    		 (maintAction.equalsIgnoreCase(KNSConstants.MAINTENANCE_COPY_ACTION)) ) {
+    		     		
+    		//need "new" bo for data comparisons
+    		SubAccount subAccount = (SubAccount)super.getBusinessObject();
+    		
+    		//get single boolean after interrogating all fields on CG ICR tab
+    		boolean icrFieldsHaveData = !StringUtils.isBlank(subAccount.getA21SubAccount().getFinancialIcrSeriesIdentifier()) ||
+    				                    !StringUtils.isBlank(subAccount.getA21SubAccount().getIndirectCostRecoveryChartOfAccountsCode()) ||
+    				                    !StringUtils.isBlank(subAccount.getA21SubAccount().getIndirectCostRecoveryAccountNumber()) ||
+    				                    !StringUtils.isBlank(subAccount.getA21SubAccount().getIndirectCostRecoveryTypeCode()) ||
+    				                    subAccount.getA21SubAccount().getOffCampusCode();
+    		
+    		    		
+    		if (icrFieldsHaveData) {    			
+    			//retrieve data we need for split-node route to work, contractsAndGrantsAccountResponsibilityId is not a sub-account attribute and we must populate the account attribute on sub-account
+    			subAccount.setAccount(getAccountService().getByPrimaryIdWithCaching(subAccount.getChartOfAccountsCode(), subAccount.getAccountNumber()));
+    			return true;
+    		}
+    	}  
+    	else if ((maintAction.equalsIgnoreCase(KNSConstants.MAINTENANCE_EDIT_ACTION)) ) {
+    		
+    		//need "new" bo for data comparisons
+    		SubAccount subAccount = (SubAccount)super.getBusinessObject();
+    		//"new" subAccount for data comparisons
+    		A21SubAccount newSubAccount = subAccount.getA21SubAccount();
+    		//"old" subAccount for data comparisons
+    		A21SubAccount oldSubAccount = this.getA21SubAccountService().getByPrimaryKey(subAccount.getChartOfAccountsCode(), subAccount.getAccountNumber(), subAccount.getSubAccountNumber());
+    		//compare each field in question
+    		boolean hasIcrIdChanged = isFieldValueChanged(newSubAccount.getFinancialIcrSeriesIdentifier(), oldSubAccount.getFinancialIcrSeriesIdentifier());
+    		boolean hasIcrCoaCodeChanged = isFieldValueChanged(newSubAccount.getIndirectCostRecoveryChartOfAccountsCode(), oldSubAccount.getIndirectCostRecoveryChartOfAccountsCode());
+    		boolean hasIcrAcctNbrChanged = isFieldValueChanged(newSubAccount.getIndirectCostRecoveryAccountNumber(), oldSubAccount.getIndirectCostRecoveryAccountNumber());
+    		boolean hasIcrTypeCodeChanged = isFieldValueChanged(newSubAccount.getIndirectCostRecoveryTypeCode(), oldSubAccount.getIndirectCostRecoveryTypeCode());
+    		//when both are true OR both are false, hasOffCampusIndChanged should be false = data did not change; otherwise when they are different hasOffCampusIndChanged should be true
+    		boolean hasOffCampusIndChanged = !(newSubAccount.getOffCampusCode() && oldSubAccount.getOffCampusCode()) | (!newSubAccount.getOffCampusCode() && !oldSubAccount.getOffCampusCode());
+    		
+    		if ( hasIcrIdChanged | hasIcrCoaCodeChanged | hasIcrAcctNbrChanged | hasIcrTypeCodeChanged | hasOffCampusIndChanged) {
+    			//retrieve data we need for split-node route to work, contractsAndGrantsAccountResponsibilityId is not a sub-account attribute and we must populate the account attribute on sub-account
+    			subAccount.setAccount(getAccountService().getByPrimaryIdWithCaching(subAccount.getChartOfAccountsCode(), subAccount.getAccountNumber()));
+    			return true;    			
+    		}
+    	}
+    	return false; 
+    	
+    	
+    }
+    
+    //KFSPTS-1740 added
+    /**
+     * This compares two string values to see if the newValue has changed from the oldValue
+     * 
+     * @param oldValue - original value
+     * @param newValue - new value
+     * @return true if the two fields are different from each other
+     */
+    private boolean isFieldValueChanged(String oldValue, String newValue) {
+
+        if (StringUtils.isBlank(oldValue) && StringUtils.isBlank(newValue)) {
+            return false;
+        }
+
+        if (StringUtils.isBlank(oldValue) && StringUtils.isNotBlank(newValue)) {
+            return true;
+        }
+
+        if (StringUtils.isNotBlank(oldValue) && StringUtils.isBlank(newValue)) {
+            return true;
+        }
+
+        if (!oldValue.trim().equalsIgnoreCase(newValue.trim())) {
+            return true;
+        }
+
+        return false;
     }
     
 
