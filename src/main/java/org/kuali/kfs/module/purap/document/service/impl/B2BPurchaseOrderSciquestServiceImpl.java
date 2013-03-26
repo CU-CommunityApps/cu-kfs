@@ -137,7 +137,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 
             // TODO : KFSPTS-1956 test do NOT commit for tagging
             // allow PO to use old fomr, then POA use new form for testing
-            if (!responseCxml.contains("Success") && !responseCxml.contains("success")) {
+            if (!responseCxml.contains("Success")) {
             	String cxml1 = cxml.substring(0, cxml.indexOf("<CustomFieldValueSet label=\"Delivery Phone")) +
             			         cxml.substring(cxml.indexOf("</POHeader>"));
             	LOG.info("sendPurchaseOrder() re-Sending cxml\n" + cxml1);
