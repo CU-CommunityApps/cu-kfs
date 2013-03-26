@@ -1250,6 +1250,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
             capitalAssetInformation.setVendorName(null);
 
             capitalAssetInformation.getCapitalAssetInformationDetails().clear();
+                     
         }
     }
 
@@ -1267,15 +1268,18 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         CapitalAssetEditable capitalAssetEditable = (CapitalAssetEditable) document;
         CapitalAssetInformation capitalAssetInformation = capitalAssetEditable.getCapitalAssetInformation();
         if (capitalAssetInformation != null || !(kualiAccountingDocumentFormBase instanceof CapitalAssetEditable)) {
-        	//if fdoc num is not set for CapitalAssetInformationDetail set fdoc num so CapitalAssetInformationDetail info can be added
-        	String docnum = capitalAssetEditable.getCapitalAssetInformation().getCapitalAssetInformationDetails().get(0).getDocumentNumber();
-        	if (docnum == null){        		
-        		List<CapitalAssetInformationDetail> detailLines = new ArrayList<CapitalAssetInformationDetail>();
-                CapitalAssetInformationDetail detailLine = new CapitalAssetInformationDetail();
-                detailLine.setDocumentNumber(document.getDocumentNumber());
-                detailLine.setItemLineNumber(1);
-                detailLines.add(detailLine);
-                SpringContext.getBean(BusinessObjectService.class).save(detailLines);      		
+        	if (!capitalAssetEditable.getCapitalAssetInformation().getCapitalAssetInformationDetails().isEmpty())
+        	{	
+        		//if fdoc num is not set for CapitalAssetInformationDetail set fdoc num so CapitalAssetInformationDetail info can be added
+        		String docnum = capitalAssetEditable.getCapitalAssetInformation().getCapitalAssetInformationDetails().get(0).getDocumentNumber();
+        		if (docnum == null){        		
+        			List<CapitalAssetInformationDetail> detailLines = new ArrayList<CapitalAssetInformationDetail>();
+        			CapitalAssetInformationDetail detailLine = new CapitalAssetInformationDetail();
+        			detailLine.setDocumentNumber(document.getDocumentNumber());
+        			detailLine.setItemLineNumber(1);
+        			detailLines.add(detailLine);
+        			SpringContext.getBean(BusinessObjectService.class).save(detailLines);      		
+        		}
         	}
         	return;
         }
