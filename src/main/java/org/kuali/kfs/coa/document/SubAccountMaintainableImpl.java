@@ -162,18 +162,32 @@ public class SubAccountMaintainableImpl extends FinancialSystemMaintainable {
     		//need "new" bo for data comparisons
     		SubAccount subAccount = (SubAccount)super.getBusinessObject();
     		
-    		//get single boolean after interrogating all fields on CG ICR tab
-    		boolean icrFieldsHaveData = !StringUtils.isBlank(subAccount.getA21SubAccount().getFinancialIcrSeriesIdentifier()) ||
-    				                    !StringUtils.isBlank(subAccount.getA21SubAccount().getIndirectCostRecoveryChartOfAccountsCode()) ||
-    				                    !StringUtils.isBlank(subAccount.getA21SubAccount().getIndirectCostRecoveryAccountNumber()) ||
-    				                    !StringUtils.isBlank(subAccount.getA21SubAccount().getIndirectCostRecoveryTypeCode()) ||
-    				                    subAccount.getA21SubAccount().getOffCampusCode();
-    		
-    		    		
-    		if (icrFieldsHaveData) {    			
-    			//retrieve data we need for split-node route to work, contractsAndGrantsAccountResponsibilityId is not a sub-account attribute and we must populate the account attribute on sub-account
-    			subAccount.setAccount(getAccountService().getByPrimaryIdWithCaching(subAccount.getChartOfAccountsCode(), subAccount.getAccountNumber()));
-    			return true;
+    		if (subAccount.getA21SubAccount().getSubAccountTypeCode().equals(KFSConstants.SubAccountType.EXPENSE)) { 
+    			//We need to route only when the ICR data the user is submitting does NOT match the ICR data on the account
+    			
+        		//"new" subAccount for data comparisons
+        		A21SubAccount newSubAccount = subAccount.getA21SubAccount();
+        		
+        		//"existing" data that would have pre-populated
+        		Account account = this.getAccountService().getByPrimaryIdWithCaching(subAccount.getChartOfAccountsCode(), subAccount.getAccountNumber());
+        		
+        		if (ObjectUtils.isNotNull(account) && ObjectUtils.isNotNull(newSubAccount)) {
+	        		       		        		
+	        		//compare each field in question
+	        		boolean hasIcrIdChanged = !newSubAccount.getFinancialIcrSeriesIdentifier().equalsIgnoreCase(account.getFinancialIcrSeriesIdentifier());
+	        		boolean hasIcrCoaCodeChanged = !newSubAccount.getIndirectCostRecoveryChartOfAccountsCode().equalsIgnoreCase(account.getIndirectCostRcvyFinCoaCode());
+	        		boolean hasIcrAcctNbrChanged = !newSubAccount.getIndirectCostRecoveryAccountNumber().equalsIgnoreCase(account.getIndirectCostRecoveryAcctNbr());
+	        		boolean hasIcrTypeCodeChanged = !newSubAccount.getIndirectCostRecoveryTypeCode().equalsIgnoreCase(account.getAcctIndirectCostRcvyTypeCd());
+        			
+	        		//when both are true OR both are false, hasOffCampusIndChanged should be false = data did not change; otherwise when they are different hasOffCampusIndChanged should be true
+	        		boolean hasOffCampusIndChanged = !((newSubAccount.getOffCampusCode() && account.isAccountOffCampusIndicator()) | (!newSubAccount.getOffCampusCode() && !account.isAccountOffCampusIndicator()));
+	        		
+	        		if ( hasIcrIdChanged | hasIcrCoaCodeChanged | hasIcrAcctNbrChanged | hasIcrTypeCodeChanged | hasOffCampusIndChanged) {
+	        			//retrieve data we need for split-node route to work, contractsAndGrantsAccountResponsibilityId is not a sub-account attribute and we must populate the account attribute on sub-account
+	        			subAccount.setAccount(getAccountService().getByPrimaryIdWithCaching(subAccount.getChartOfAccountsCode(), subAccount.getAccountNumber()));
+	        			return true;    			
+	        		}
+        		}
     		}
     	}  
     	else if ((maintAction.equalsIgnoreCase(KNSConstants.MAINTENANCE_EDIT_ACTION)) ) {
@@ -199,8 +213,6 @@ public class SubAccountMaintainableImpl extends FinancialSystemMaintainable {
     		}
     	}
     	return false; 
-    	
-    	
     }
     
     //KFSPTS-1740 added
