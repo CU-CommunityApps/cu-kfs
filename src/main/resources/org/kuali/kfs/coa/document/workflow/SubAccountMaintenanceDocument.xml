@@ -22,8 +22,9 @@
       <routePaths>     
         <routePath>
           <start name="AdHoc" nextNode="Account"/>
-          <requests name="Account" nextNode="RequiresCGResponsibilityApproval"/>          
-          <split name="RequiresCGResponsibilityApproval" nextNode="OrganizationHierarchy">
+          <requests name="Account" nextNode="OrganizationHierarchy"/> 
+          <requests name="OrganizationHierarchy" nextNode="RequiresCGResponsibilityApproval"/>     
+          <split name="RequiresCGResponsibilityApproval">
             <branch name="True">
                 <requests name="Award" nextNode="JoinRequiresCGResponsibilityApproval"/>
             </branch>
@@ -32,7 +33,6 @@
             </branch>
             <join name="JoinRequiresCGResponsibilityApproval"/>
           </split>
-          <requests name="OrganizationHierarchy"/>
         </routePath>
       </routePaths>
       <routeNodes>
