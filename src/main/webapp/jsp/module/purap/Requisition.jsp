@@ -71,13 +71,7 @@
     <purap:paymentHistory
             documentAttributes="${DataDictionary.RelatedDocuments.attributes}" />
 	            
-    <%--KFSPTS-974:   --%> 
-    
-    <purap:notes-sciquest notesBo="${KualiForm.document.documentBusinessObject.boNotes}"
-                          noteType="${Constants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE}"
-                          allowsNoteFYI="true"
-                          defaultOpen="true"
-                          attachmentTypesValuesFinderClass="${DataDictionary.RequisitionDocument.attachmentTypesValuesFinderClass}"/>
+    <kul:notes notesBo="${KualiForm.document.documentBusinessObject.boNotes}" noteType="${Constants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE}" /> 
 
 	<kul:adHocRecipients />
 
