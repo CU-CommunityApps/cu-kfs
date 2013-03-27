@@ -135,9 +135,9 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 
             LOG.info("sendPurchaseOrder(): Response cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + ":" + responseCxml);
 
-            // TODO : KFSPTS-1956 test do NOT commit for tagging
-            // allow PO to use old fomr, then POA use new form for testing
-            if (!responseCxml.contains("Success")) {
+            // KFSPTS-1956 
+            // allow PO to use old form, then POA use new form for testing
+            if (!responseCxml.contains("Success") && responseCxml.contains("No custom field found") && responseCxml.contains("document configuration (DeliveryEmail)")) {            	
             	String cxml1 = cxml.substring(0, cxml.indexOf("<CustomFieldValueSet label=\"Delivery Phone")) +
             			         cxml.substring(cxml.indexOf("</POHeader>"));
             	LOG.info("sendPurchaseOrder() re-Sending cxml\n" + cxml1);
