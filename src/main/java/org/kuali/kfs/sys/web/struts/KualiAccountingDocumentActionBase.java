@@ -746,8 +746,9 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         this.applyCapitalAssetInformation(tmpForm);
 
         //KFSPTS-1735
-        SpringContext.getBean(CUFinancialSystemDocumentService.class).checkAccountingLinesForChanges((AccountingDocument) tmpForm.getFinancialDocument());
-
+        if (tmpForm.getFinancialDocument().getDocumentHeader().getWorkflowDocument().stateIsEnroute()) {
+        	SpringContext.getBean(CUFinancialSystemDocumentService.class).checkAccountingLinesForChanges((AccountingDocument) tmpForm.getFinancialDocument());
+        }
         ActionForward forward = super.save(mapping, form, request, response);
         
        

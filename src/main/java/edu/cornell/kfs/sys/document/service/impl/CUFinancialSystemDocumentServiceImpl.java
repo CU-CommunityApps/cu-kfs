@@ -57,19 +57,21 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         	return;
         }
       
-        Map<Integer, AccountingLine> newSourceLines = buildAccountingLineMap(accountingDocument.getSourceAccountingLines());
-        Map<Integer, AccountingLine> savedSourceLines = buildAccountingLineMap(savedDoc.getSourceAccountingLines());
+        if (!accountingDocument.getSourceAccountingLines().isEmpty()) {
+        	Map<Integer, AccountingLine> newSourceLines = buildAccountingLineMap(accountingDocument.getSourceAccountingLines());
+        	Map<Integer, AccountingLine> savedSourceLines = buildAccountingLineMap(savedDoc.getSourceAccountingLines());
 
-        int maxSourceKey = Math.max(Collections.max(newSourceLines.keySet()), Collections.max(savedSourceLines.keySet())); 
-        int minSourceKey = Math.min(Collections.min(newSourceLines.keySet()), Collections.min(savedSourceLines.keySet())); 
-        
-        for (int i = minSourceKey; i < maxSourceKey+1; i++) {
-        	AccountingLine newLine = newSourceLines.get(i);
-        	AccountingLine oldLine = savedSourceLines.get(i);
-        	if ( !compareTo(newLine, oldLine) )  {
-        		String diff = buildLineChangedNoteText(newLine, oldLine);
-        		if (StringUtils.isNotBlank(diff)) {
-        			writeNote(accountingDocument, diff);
+        	int maxSourceKey = Math.max(Collections.max(newSourceLines.keySet()), Collections.max(savedSourceLines.keySet())); 
+        	int minSourceKey = Math.min(Collections.min(newSourceLines.keySet()), Collections.min(savedSourceLines.keySet())); 
+
+        	for (int i = minSourceKey; i < maxSourceKey+1; i++) {
+        		AccountingLine newLine = newSourceLines.get(i);
+        		AccountingLine oldLine = savedSourceLines.get(i);
+        		if ( !compareTo(newLine, oldLine) )  {
+        			String diff = buildLineChangedNoteText(newLine, oldLine);
+        			if (StringUtils.isNotBlank(diff)) {
+        				writeNote(accountingDocument, diff);
+        			}
         		}
         	}
         }
