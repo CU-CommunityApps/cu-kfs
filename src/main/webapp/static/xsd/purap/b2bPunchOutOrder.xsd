@@ -23,7 +23,7 @@
 		    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 		    
 <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="https://kfs-prod.adminapps.cornell.edu/kfs-prod/static/xsd/sys/xml.xsd"/>
-<xsd:import namespace="http://www.kuali.org/kfs/purap/types" schemaLocation="https://kfs-dev.adminapps.cornell.edu/kfs-dev/static/xsd/purap/purapTypes.xsd" />
+<xsd:import namespace="http://www.kuali.org/kfs/purap/types" schemaLocation="https://kfs-prod.adminapps.cornell.edu/kfs-dev/static/xsd/purap/purapTypes.xsd" />
 <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="https://kfs-prod.adminapps.cornell.edu/kfs-prod/static/xsd/sys/types.xsd" />
 
 <xsd:element name="Credential">
