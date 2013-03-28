@@ -4,7 +4,7 @@
     xmlns:rsmart="http://www.kuali.org/kfs/sys/rsmarttypes"
     xmlns="http://www.kuali.org/kfs/fp/disbursementVoucher" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
-    <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="https://kfs-prod.adminapps.cornell.edu/kfs-prod/static/xsd/sys/types.xsd" />
+    <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="http://127.0.0.1/static/xsd/sys/types.xsd" />
     <xsd:import namespace="http://www.kuali.org/kfs/sys/rsmarttypes" schemaLocation="@externalizable.static.content.url@/xsd/sys/rsmartTypes.xsd" />
     
     <xsd:simpleType name="versionType">
