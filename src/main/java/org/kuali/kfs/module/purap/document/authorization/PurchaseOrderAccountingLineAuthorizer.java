@@ -121,7 +121,7 @@ public class PurchaseOrderAccountingLineAuthorizer extends PurapAccountingLineAu
             if (PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_AMENDMENT_DOCUMENT.equals(workflowDocument.getDocumentType())) {
                 PurApAccountingLine purapAccount = (PurApAccountingLine)accountingLine;
                 PurchaseOrderItem item = (PurchaseOrderItem)purapAccount.getPurapItem();
-                return item.isNewItemForAmendment() || item.getSourceAccountingLines().size() == 0;
+                return item == null || item.isNewItemForAmendment() || item.getSourceAccountingLines().size() == 0;
             }
             else {
                 return currentUserIsDocumentInitiator;
