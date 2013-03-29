@@ -41,6 +41,7 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
 	 *  new == blah, old == meh : changed
 	 *  new == null, old == blah : deleted
 	 *  new == blah, old == null : added
+	 * @throws WorkflowException 
 	 *  
 	 *  
      * @see org.kuali.kfs.sys.document.service.FinancialSystemDocumentService#checkAccountingLinesForChanges(org.kuali.kfs.sys.document.AccountingDocument)
@@ -49,10 +50,16 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
     
     
     public void checkAccountingLinesForChanges(AccountingDocument accountingDocument) {
-        Map<String, String> pks = new HashMap<String, String>();
-        pks.put("documentNumber", accountingDocument.getDocumentNumber());
+        
+        DocumentService docService = SpringContext.getBean(DocumentService.class);
+        AccountingDocument savedDoc = null;
+        try {
+        	savedDoc = (AccountingDocument)docService.getByDocumentHeaderId(accountingDocument.getDocumentNumber());
+       
+        } catch (WorkflowException we) {
+        	LOG.error("Unable to retrieve document number "+ accountingDocument.getDocumentNumber()+ " to evaluate accounting line changes");
+        }
 
-        AccountingDocument savedDoc = (DisbursementVoucherDocument) businessObjectService.findByPrimaryKey(DisbursementVoucherDocument.class, pks);
         if (savedDoc == null) {
         	return;
         }
