@@ -54,7 +54,7 @@ public class PhoneNumberServiceImpl implements PhoneNumberService {
         Integer defaultPhoneNumberDigits = new Integer(parameterService.getParameterValue(VendorDetail.class, VendorParameterConstants.DEFAULT_PHONE_NUMBER_DIGITS));
         // Before moving to the parameter table:
         // if ( formattedNumber.length() != VendorConstants.GENERIC_DEFAULT_PHONE_NUM_DIGITS ) {
-        if (formattedNumber.length() != defaultPhoneNumberDigits) {
+        if (formattedNumber.length() < defaultPhoneNumberDigits) {
             return unformattedNumber;
         }
         else if(formattedNumber.length() > defaultPhoneNumberDigits) { // assume phone number includes an extension and format using only the first 10 characters
