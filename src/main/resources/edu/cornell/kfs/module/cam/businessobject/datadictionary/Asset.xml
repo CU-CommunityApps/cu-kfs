@@ -305,6 +305,45 @@
   </bean>
   
   
+    <!-- KFSPTS-1710 - Replaced TextControl with SelectControl in order to have both the code and description presented together on the eDoc. -->
+  <bean id="Asset-inventoryStatusCode-parentBean" abstract="true" parent="AssetStatus-inventoryStatusCode">
+    <property name="shortLabel" value="Asset Status Code"/>
+    <property name="control">
+      <bean parent="SelectControlDefinition" p:businessObjectClass="org.kuali.kfs.module.cam.businessobject.AssetStatus" p:valuesFinderClass="org.kuali.rice.kns.lookup.keyvalues.PersistableBusinessObjectValuesFinder" p:includeKeyInLabel="true" p:includeBlankRow="true" p:keyAttribute="inventoryStatusCode" p:labelAttribute="inventoryStatusName"/>
+    </property>
+  </bean>  
+  
+  
+  <!-- KFSPTS-1710 - Replaced TextControl with SelectControl in order to have both the code and description presented together on the eDoc. -->
+  <bean id="Asset-capitalAssetTypeCode-parentBean" abstract="true" parent="AssetType-capitalAssetTypeCode">
+    <property name="label" value="Asset Type Code"/>
+    <property name="control">
+      <bean parent="SelectControlDefinition" p:businessObjectClass="org.kuali.kfs.module.cam.businessobject.AssetType" p:valuesFinderClass="org.kuali.rice.kns.lookup.keyvalues.PersistableBusinessObjectValuesFinder" p:includeKeyInLabel="true" p:includeBlankRow="true" p:keyAttribute="capitalAssetTypeCode" p:labelAttribute="capitalAssetTypeDescription"/>
+    </property>
+  </bean>
+  
+  
+  <!-- KFSPTS-1710 - Replaced TextControl with SelectControl in order to have both the code and description presented together on the eDoc. -->
+  <bean id="Asset-buildingCode-parentBean" abstract="true" parent="Building-buildingCode">
+    <property name="required" value="false"/>
+    <property name="label" value="Building Code"/>
+    <property name="control">
+      <bean parent="SelectControlDefinition" p:businessObjectClass="org.kuali.kfs.sys.businessobject.Building" p:valuesFinderClass="org.kuali.rice.kns.lookup.keyvalues.PersistableBusinessObjectValuesFinder" p:includeKeyInLabel="true" p:includeBlankRow="true" p:keyAttribute="buildingCode" p:labelAttribute="buildingName"/>
+    </property>   
+  </bean>
+  
+  
+  <!-- KFSPTS-1710 - Replaced TextControl with SelectControl in order to have both the code and description presented together on the eDoc. -->
+  <bean id="Asset-buildingRoomNumber-parentBean" abstract="true" parent="Room-buildingRoomNumber">
+    <property name="required" value="false"/>
+    <property name="label" value="Building Room Number"/>
+    <property name="control">
+      <bean parent="SelectControlDefinition" p:businessObjectClass="org.kuali.kfs.sys.businessobject.Room" p:valuesFinderClass="org.kuali.rice.kns.lookup.keyvalues.PersistableBusinessObjectValuesFinder" p:includeKeyInLabel="true" p:includeBlankRow="true" p:keyAttribute="buildingRoomNumber" p:labelAttribute="buildingRoomDescription"/>
+    </property>   
+  </bean>
+  
+  
+  
 <!-- Business Object Inquiry Definition -->
 
   <bean id="Asset-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
