@@ -134,6 +134,10 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         //names in KIM are longer than what we store these names at; truncate them to match our data dictionary maxlengths
         if (StringUtils.equals(refreshCaller, "kimPersonLookupable")) {
             Integer deliveryToNameMaxLength = SpringContext.getBean(DataDictionaryService.class).getAttributeMaxLength(document.getClass(), PurapPropertyConstants.DELIVERY_TO_NAME);
+            // KFSPTS-518
+            if (deliveryToNameMaxLength == null && document instanceof PurchaseOrderAmendmentDocument) {
+            	deliveryToNameMaxLength = SpringContext.getBean(DataDictionaryService.class).getAttributeMaxLength(PurchaseOrderDocument.class, PurapPropertyConstants.DELIVERY_TO_NAME);
+            }
             if (StringUtils.isNotEmpty(document.getDeliveryToName()) && document.getDeliveryToName().length() > deliveryToNameMaxLength.intValue()) {
                 document.setDeliveryToName(document.getDeliveryToName().substring(0, deliveryToNameMaxLength));
                 messageMap.clearErrorPath();
@@ -143,6 +147,10 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             }
 
             Integer requestorNameMaxLength = SpringContext.getBean(DataDictionaryService.class).getAttributeMaxLength(document.getClass(), PurapPropertyConstants.REQUESTOR_PERSON_NAME);
+            // KFSPTS-518
+            if (requestorNameMaxLength == null && document instanceof PurchaseOrderAmendmentDocument) {
+            	requestorNameMaxLength = SpringContext.getBean(DataDictionaryService.class).getAttributeMaxLength(PurchaseOrderDocument.class, PurapPropertyConstants.REQUESTOR_PERSON_NAME);
+            }
             if (StringUtils.isNotEmpty(document.getRequestorPersonName()) && document.getRequestorPersonName().length() > requestorNameMaxLength.intValue()) {
                 document.setRequestorPersonName(document.getRequestorPersonName().substring(0, requestorNameMaxLength));
                 messageMap.clearErrorPath();
