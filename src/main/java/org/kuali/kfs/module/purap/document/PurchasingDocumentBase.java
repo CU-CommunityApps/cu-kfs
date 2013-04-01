@@ -17,8 +17,10 @@ package org.kuali.kfs.module.purap.document;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
@@ -28,14 +30,15 @@ import org.kuali.kfs.integration.purap.CapitalAssetLocation;
 import org.kuali.kfs.integration.purap.CapitalAssetSystem;
 import org.kuali.kfs.integration.purap.ItemCapitalAsset;
 import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapConstants.PurapFundingSources;
+import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.BillingAddress;
 import org.kuali.kfs.module.purap.businessobject.CapitalAssetSystemState;
 import org.kuali.kfs.module.purap.businessobject.CapitalAssetSystemType;
 import org.kuali.kfs.module.purap.businessobject.DeliveryRequiredDateReason;
 import org.kuali.kfs.module.purap.businessobject.FundingSource;
+import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderTransmissionMethod;
 import org.kuali.kfs.module.purap.businessobject.PurchasingCapitalAssetItem;
@@ -50,7 +53,6 @@ import org.kuali.kfs.module.purap.document.service.PurchasingService;
 import org.kuali.kfs.module.purap.document.service.ReceivingAddressService;
 import org.kuali.kfs.module.purap.util.ItemParser;
 import org.kuali.kfs.module.purap.util.ItemParserBase;
-import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
@@ -65,16 +67,15 @@ import org.kuali.rice.kns.bo.Country;
 import org.kuali.rice.kns.rule.event.ApproveDocumentEvent;
 import org.kuali.rice.kns.rule.event.KualiDocumentEvent;
 import org.kuali.rice.kns.rule.event.RouteDocumentEvent;
+import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.CountryService;
 import org.kuali.rice.kns.service.DateTimeService;
+import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.util.TypedArrayList;
-
-import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 
 /**
  * Base class for Purchasing Documents.
@@ -340,14 +341,139 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     @Override
     public void populateDocumentForRouting() {
         commodityCodesForRouting = new ArrayList<CommodityCode>();
-        for (PurchasingItemBase item : (List<PurchasingItemBase>)this.getItems()) {
-            if (item.getCommodityCode() != null && !commodityCodesForRouting.contains(item.getCommodityCode())) {
-                commodityCodesForRouting.add(item.getCommodityCode());
+    	List<PurchasingItemBase> previousPOItems = new ArrayList<PurchasingItemBase>();
+    	if (this instanceof PurchaseOrderAmendmentDocument) {
+    	    previousPOItems = getPreviousPoItems();
+    	}
+    	for (PurchasingItemBase item : (List<PurchasingItemBase>)this.getItems()) {
+        	// KFSPTS-1973
+           if (item.getCommodityCode() != null && !commodityCodesForRouting.contains(item.getCommodityCode())) {
+        	   if (this instanceof PurchaseOrderAmendmentDocument) {
+        		     if (includeItem(item, previousPOItems)) {
+                         commodityCodesForRouting.add(item.getCommodityCode());
+        		     }
+        	   } else {
+                   commodityCodesForRouting.add(item.getCommodityCode());
+        	   }
             }
         }
         super.populateDocumentForRouting();
     }
 
+    // KFSPTS-1973 :  check POA item and see if it need to be included to commodity route validation
+    
+    /*
+     * get all PO with this po#
+     */
+    private List<PurchaseOrderDocument> getPurchaseOrders() {
+    	Map<String, Object> fieldValues = new HashMap<String, Object>();
+    	fieldValues.put(PurapPropertyConstants.PURAP_DOC_ID, getPurapDocumentIdentifier());
+        return (List<PurchaseOrderDocument>)SpringContext.getBean(BusinessObjectService.class).findMatching(PurchaseOrderDocument.class, fieldValues);
+	
+    }
+    
+    /*
+     * loop thru the pos and find the one, which is 'final', precedes this one.
+     */
+    private List<PurchasingItemBase> getPreviousPoItems() {
+    	
+    	List<PurchaseOrderDocument> pos = getPurchaseOrders();
+    	int currDocNumber = Integer.parseInt(getDocumentNumber());
+    	int oldestNumber = 0;
+    	PurchaseOrderDocument selectedPo = (PurchaseOrderDocument)this;
+    	// try to find the po that is being amended by this po
+    	for (PurchaseOrderDocument po : pos) {
+    		if (Integer.parseInt(po.getDocumentNumber()) > oldestNumber && Integer.parseInt(po.getDocumentNumber()) < currDocNumber &&isDocumentFinal(po.getDocumentNumber())) {
+    			oldestNumber = Integer.parseInt(po.getDocumentNumber());
+    			selectedPo = po;
+    		}
+    	}
+    	return selectedPo.getItems();
+    }
+    
+    /*
+     * is document final
+     */
+    private boolean isDocumentFinal(String docNumber) {
+    	boolean isFinal = true;
+        try {
+        	PurchaseOrderDocument poa = (PurchaseOrderDocument)SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(docNumber);
+            if (poa != null && poa.getDocumentHeader().getWorkflowDocument() != null) {
+            	isFinal = poa.getDocumentHeader().getWorkflowDocument().stateIsFinal();
+            }
+        } catch (Exception e) {
+        	isFinal = false;
+        }
+
+        return isFinal;
+    }
+    
+    /*
+     * validate if item needs to be included in 'commodity' codes check
+     */
+    private boolean includeItem(PurchasingItemBase item, List<PurchasingItemBase> previousPOItems) {
+    	boolean isNotChanged = true;
+    	boolean isNew = true;
+    	for (PurchasingItemBase prevItem : previousPOItems) {
+    		if (item.getItemLineNumber().equals(prevItem.getItemLineNumber())) {
+                isNew = false;
+                isNotChanged &= isItemNotChanged(item, prevItem);
+    		}
+    	}
+    	return isNew || !isNotChanged;
+    }
+    
+    /*
+     * check if item detail has been changed or is it a new item
+     */
+    private boolean isItemNotChanged(PurchasingItemBase item, PurchasingItemBase prevItem) {
+    	boolean isNotChanged = true;
+    	isNotChanged &= StringUtils.equals(item.getItemUnitOfMeasureCode(), prevItem.getItemUnitOfMeasureCode());
+    	isNotChanged &= item.getItemQuantity().equals(prevItem.getItemQuantity());
+    	isNotChanged &= item.getItemUnitPrice().equals(prevItem.getItemUnitPrice());
+    	isNotChanged &= StringUtils.equals(item.getPurchasingCommodityCode(), prevItem.getPurchasingCommodityCode());
+        if (isNotChanged) {
+        	isNotChanged &= !isAccountingLineChanged(item,prevItem);
+        }
+        if (isNotChanged) {
+        	// need to do this because account might be deleted.
+        	isNotChanged &= !isAccountingLineChanged(prevItem,item);
+        }
+        return isNotChanged;
+    }
+    
+    /*
+     * check if the accounting line of the item has been changed
+     */
+    private boolean isAccountingLineChanged(PurchasingItemBase item, PurchasingItemBase prevItem) {
+    	boolean isChanged = false;
+    	for (PurApAccountingLine acctLine : item.getSourceAccountingLines()) {
+    		boolean acctLineFound = false;
+        	for (PurApAccountingLine prevAcctLine : prevItem.getSourceAccountingLines()) {
+        		boolean isMatched = true;
+        		isMatched &= StringUtils.equals(acctLine.getChartOfAccountsCode(), prevAcctLine.getChartOfAccountsCode());
+        		isMatched &= StringUtils.equals(acctLine.getAccountNumber(), prevAcctLine.getAccountNumber());
+        		isMatched &= StringUtils.equals(acctLine.getFinancialObjectCode(), prevAcctLine.getFinancialObjectCode());
+        		isMatched &= StringUtils.equals(acctLine.getFinancialSubObjectCode(), prevAcctLine.getFinancialSubObjectCode());
+        		isMatched &= StringUtils.equals(acctLine.getSubAccountNumber(), prevAcctLine.getSubAccountNumber());
+        		isMatched &= StringUtils.equals(acctLine.getOrganizationReferenceId(), prevAcctLine.getOrganizationReferenceId());
+        		isMatched &= StringUtils.equals(acctLine.getProjectCode(), prevAcctLine.getProjectCode());
+        		isMatched &= acctLine.getAccountLinePercent().equals(prevAcctLine.getAccountLinePercent());
+        		if (isMatched) {
+        			acctLineFound = true;
+        			break;
+        		}
+        	}
+        	if (!acctLineFound) {
+        		// no acct line matched, then it meant that something changed or this is a new line.  
+        		isChanged = true;
+        		break;
+        	}
+    	}
+        return isChanged;
+    }
+ 
+    // end KFSPTS-1973
     // GETTERS AND SETTERS
 
     /**
