@@ -305,7 +305,7 @@
   </bean>
   
   
-    <!-- KFSPTS-1710 - Replaced TextControl with SelectControl in order to have both the code and description presented together on the eDoc. -->
+    <!-- KFSPTS-1710 - Replaced TextControl with SelectControl in order to have both the code and description presented together on the eDoc. -->   
   <bean id="Asset-inventoryStatusCode-parentBean" abstract="true" parent="AssetStatus-inventoryStatusCode">
     <property name="shortLabel" value="Asset Status Code"/>
     <property name="control">
@@ -362,7 +362,7 @@
               <bean parent="FieldDefinition" p:attributeName="organizationOwnerAccount.organizationCode"/>
               <bean parent="FieldDefinition" p:attributeName="agencyNumber"/>
               <bean parent="FieldDefinition" p:attributeName="acquisitionTypeCode"/>
-              <bean parent="FieldDefinition" p:attributeName="inventoryStatus.inventoryStatusCode"/>
+              <bean parent="FieldDefinition" p:attributeName="inventoryStatusCode"/>  <!-- KFSPTS-1710: original attribute defined as:  inventoryStatus.inventoryStatusCode-->
               <bean parent="FieldDefinition" p:attributeName="conditionCode"/>
               <bean parent="FieldDefinition" p:attributeName="capitalAssetDescription"/>
               <bean parent="FieldDefinition" p:attributeName="capitalAssetTypeCode"/>
