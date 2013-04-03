@@ -122,7 +122,8 @@ public class BudgetConstructionBudgetedSalaryLineExportDaoJdbc
 	        sqlBuilder.append("LEFT JOIN LD_BCN_ORG_RPTS_T  ");
 	        sqlBuilder.append("ON LD_BCN_ORG_RPTS_T.FIN_COA_CD = LD_BCN_ACCT_RPTS_T.RPTS_TO_FIN_COA_CD  ");
 	        sqlBuilder.append("AND LD_BCN_ORG_RPTS_T.ORG_CD = LD_BCN_ACCT_RPTS_T.RPTS_TO_ORG_CD  ");
-	        sqlBuilder.append("WHERE LD_BCN_POS_T.POS_EFFDT = ");
+	        sqlBuilder.append("WHERE LD_BCN_POS_T_2.UNIV_FISCAL_YR = USERSELECTED.UNIV_FISCAL_YR ");
+	        sqlBuilder.append("  AND LD_BCN_POS_T.POS_EFFDT = ");
 	        sqlBuilder.append("  (SELECT MAX(LD_BCN_POS_T_2.POS_EFFDT)  ");
 	        sqlBuilder.append("  FROM LD_BCN_POS_T LD_BCN_POS_T_2  ");
 	        sqlBuilder.append("  WHERE LD_BCN_POS_T_2.position_nbr=LD_BCN_POS_T.position_nbr  ");
