@@ -63,6 +63,7 @@ import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumen
 import org.kuali.kfs.sys.exception.AccountingLineParserException;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.kew.exception.WorkflowException;
+import org.kuali.rice.kns.bo.PersistableBusinessObject;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.DictionaryValidationService;
@@ -1274,7 +1275,9 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         		//if fdoc num is not set for CapitalAssetInformationDetail set fdoc num so CapitalAssetInformationDetail info can be added
         		String detail_doc = capitalAssetEditable.getCapitalAssetInformation().getCapitalAssetInformationDetails().get(0).getDocumentNumber();
         		String info_doc = capitalAssetEditable.getCapitalAssetInformation().getDocumentNumber();
-        		if (info_doc != null) {
+        		PersistableBusinessObject capassetinfo = SpringContext.getBean(BusinessObjectService.class).findBySinglePrimaryKey(CapitalAssetInformation.class, info_doc);
+
+        		if (capassetinfo != null) {
         			if (detail_doc == null){        		
         				List<CapitalAssetInformationDetail> detailLines = new ArrayList<CapitalAssetInformationDetail>();
         				CapitalAssetInformationDetail detailLine = new CapitalAssetInformationDetail();
