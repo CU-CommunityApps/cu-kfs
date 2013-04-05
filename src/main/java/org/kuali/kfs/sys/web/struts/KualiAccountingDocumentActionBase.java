@@ -1272,15 +1272,18 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         	if (!capitalAssetEditable.getCapitalAssetInformation().getCapitalAssetInformationDetails().isEmpty())
         	{	
         		//if fdoc num is not set for CapitalAssetInformationDetail set fdoc num so CapitalAssetInformationDetail info can be added
-        		String docnum = capitalAssetEditable.getCapitalAssetInformation().getCapitalAssetInformationDetails().get(0).getDocumentNumber();
-        		if (docnum == null){        		
-        			List<CapitalAssetInformationDetail> detailLines = new ArrayList<CapitalAssetInformationDetail>();
-        			CapitalAssetInformationDetail detailLine = new CapitalAssetInformationDetail();
-        			detailLine.setDocumentNumber(document.getDocumentNumber());
-        			detailLine.setItemLineNumber(1);
-        			detailLines.add(detailLine);
-        			SpringContext.getBean(BusinessObjectService.class).save(detailLines);      		
-        		}
+        		String detail_doc = capitalAssetEditable.getCapitalAssetInformation().getCapitalAssetInformationDetails().get(0).getDocumentNumber();
+        		String info_doc = capitalAssetEditable.getCapitalAssetInformation().getDocumentNumber();
+        		if (info_doc != null) {
+        			if (detail_doc == null){        		
+        				List<CapitalAssetInformationDetail> detailLines = new ArrayList<CapitalAssetInformationDetail>();
+        				CapitalAssetInformationDetail detailLine = new CapitalAssetInformationDetail();
+        				detailLine.setDocumentNumber(document.getDocumentNumber());
+        				detailLine.setItemLineNumber(1);
+        				detailLines.add(detailLine);
+        				SpringContext.getBean(BusinessObjectService.class).save(detailLines);      		
+        			}
+        		}	
         	}
         	return;
         }
