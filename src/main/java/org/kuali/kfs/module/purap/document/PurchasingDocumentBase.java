@@ -429,8 +429,12 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     private boolean isItemNotChanged(PurchasingItemBase item, PurchasingItemBase prevItem) {
     	boolean isNotChanged = true;
     	isNotChanged &= StringUtils.equals(item.getItemUnitOfMeasureCode(), prevItem.getItemUnitOfMeasureCode());
-    	isNotChanged &= item.getItemQuantity().equals(prevItem.getItemQuantity());
-    	isNotChanged &= item.getItemUnitPrice().equals(prevItem.getItemUnitPrice());
+    	if (item.getItemQuantity() != null && prevItem.getItemQuantity()!= null) {
+    	   isNotChanged &= item.getItemQuantity().equals(prevItem.getItemQuantity());
+    	}
+    	if (item.getItemUnitPrice()!=null && prevItem.getItemUnitPrice() == null) {
+    	    isNotChanged &= item.getItemUnitPrice().equals(prevItem.getItemUnitPrice());
+    	}
     	isNotChanged &= StringUtils.equals(item.getPurchasingCommodityCode(), prevItem.getPurchasingCommodityCode());
         if (isNotChanged) {
         	isNotChanged &= !isAccountingLineChanged(item,prevItem);
