@@ -189,6 +189,10 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
     	if (oldLine == null && newLine != null) {
     		return false;
     	}
+    	
+    	if (oldLine != null && newLine == null) {
+    		return false;
+    	}
   	
         return new EqualsBuilder().append(newLine.getChartOfAccountsCode(), oldLine.getChartOfAccountsCode()).append(newLine.getAccountNumber(), oldLine.getAccountNumber()).append(newLine.getSubAccountNumber(), oldLine.getSubAccountNumber()).append(newLine.getFinancialObjectCode(), oldLine.getFinancialObjectCode()).append(newLine.getFinancialSubObjectCode(), oldLine.getFinancialSubObjectCode()).append(newLine.getProjectCode(), oldLine.getProjectCode()).append(newLine.getOrganizationReferenceId(), oldLine.getOrganizationReferenceId()).append(newLine.getAmount(), oldLine.getAmount()).isEquals();
     }
