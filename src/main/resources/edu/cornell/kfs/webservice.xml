@@ -19,4 +19,9 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 	  implementor="edu.cornell.kfs.fp.service.SubmitTripWebServiceImpl"
 	  address="/SubmitTripWebService" />
 
+	<jaxws:endpoint
+	  id="kfsVendor"
+	  implementor="edu.cornell.kfs.vnd.service.KFSVendorWebServiceImpl"
+	  address="/KFSVendorWebService" />
+
 </beans>
