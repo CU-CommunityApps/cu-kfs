@@ -30,6 +30,7 @@ import org.kuali.rice.kns.util.MessageMap;
 import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
+import edu.cornell.kfs.vnd.document.service.CUVendorService;
 
 
 /**
@@ -102,6 +103,8 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 			vendor = vendorService.getVendorByDunsNumber(vendorId);
 		} else if(StringUtils.equalsIgnoreCase(vendorIdType, "VENDORID")) {
 			vendor = vendorService.getByVendorNumber(vendorId);
+		} else if(StringUtils.equalsIgnoreCase(vendorIdType, "VENDORNAME")) {
+			vendor = SpringContext.getBean(CUVendorService.class).getVendorByVendorName(vendorId);
 		} else if(StringUtils.equalsIgnoreCase(vendorIdType, "SSN")) {
 			// not implemented yet
 		} else if(StringUtils.equalsIgnoreCase(vendorIdType, "FEIN")) {
