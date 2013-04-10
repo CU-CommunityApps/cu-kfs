@@ -116,6 +116,8 @@ import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 import org.kuali.rice.kew.service.KEWServiceLocator;
 import org.kuali.rice.kew.doctype.bo.DocumentType;
 
+import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute;
+
 public class CapitalAssetBuilderModuleServiceImpl implements CapitalAssetBuilderModuleService {
     private static Logger LOG = Logger.getLogger(CapitalAssetBuilderModuleService.class);
 
@@ -1422,24 +1424,45 @@ public class CapitalAssetBuilderModuleServiceImpl implements CapitalAssetBuilder
         List<CapitalAssetInformationDetail> capitalAssetInformationDetails = capitalAssetInformation.getCapitalAssetInformationDetails();
         for (CapitalAssetInformationDetail dtl : capitalAssetInformationDetails) {
             String errorPathPrefix = KFSPropertyConstants.DOCUMENT + "." + KFSPropertyConstants.CAPITAL_ASSET_INFORMATION + "." + KFSPropertyConstants.CAPITAL_ASSET_INFORMATION_DETAILS;
+            CapitalAssetInformationDetailExtendedAttribute cap_detail_ex = (CapitalAssetInformationDetailExtendedAttribute) dtl.getExtension();
 
+            String building_cd = dtl.getBuildingCode();
+        	String room_cd = dtl.getBuildingRoomNumber();
+        	String AssetLocationCityName = cap_detail_ex.getAssetLocationCityName(); 
+    		String AssetLocationCountryCode = cap_detail_ex.getAssetLocationCountryCode();
+    		String AssetLocationStateCode = cap_detail_ex.getAssetLocationStateCode();
+    		String AssetLocationStreetAddress = cap_detail_ex.getAssetLocationStreetAddress();
+    		String AssetLocationZipCode = cap_detail_ex.getAssetLocationZipCode();
+            
             if (StringUtils.isBlank(dtl.getCampusCode())) {
                 String label = this.getDataDictionaryService().getAttributeLabel(Campus.class, KFSPropertyConstants.CAMPUS_CODE);
                 GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.CAMPUS_CODE, KFSKeyConstants.ERROR_REQUIRED, label);
                 valid = false;
             }
 
-            if (StringUtils.isBlank(dtl.getBuildingCode())) {
-                String label = this.getDataDictionaryService().getAttributeLabel(Building.class, KFSPropertyConstants.BUILDING_CODE);
-                GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_CODE, KFSKeyConstants.ERROR_REQUIRED, label);
-                valid = false;
+            if (StringUtils.isBlank(AssetLocationCityName) && StringUtils.isBlank(AssetLocationStateCode) && StringUtils.isBlank(AssetLocationCountryCode) && StringUtils.isBlank(AssetLocationStreetAddress) && StringUtils.isBlank(AssetLocationZipCode)) {
+            	if (StringUtils.isBlank(building_cd)) {
+	                String label = this.getDataDictionaryService().getAttributeLabel(Building.class, KFSPropertyConstants.BUILDING_CODE);
+	                GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_CODE, KFSKeyConstants.ERROR_REQUIRED, label);
+	                valid = false;
+	            }
+            	if (StringUtils.isBlank(room_cd)) {
+                    String label = this.getDataDictionaryService().getAttributeLabel(Room.class, KFSPropertyConstants.BUILDING_ROOM_NUMBER);
+                    GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_ROOM_NUMBER, KFSKeyConstants.ERROR_REQUIRED, label);
+                    valid = false;
+                }
             }
-
-            if (StringUtils.isBlank(dtl.getBuildingRoomNumber())) {
-                String label = this.getDataDictionaryService().getAttributeLabel(Room.class, KFSPropertyConstants.BUILDING_ROOM_NUMBER);
-                GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_ROOM_NUMBER, KFSKeyConstants.ERROR_REQUIRED, label);
-                valid = false;
+            if (StringUtils.isNotBlank(AssetLocationCityName) || StringUtils.isBlank(AssetLocationStateCode) || StringUtils.isNotBlank(AssetLocationCountryCode) || StringUtils.isNotBlank(AssetLocationStreetAddress) || StringUtils.isNotBlank(AssetLocationZipCode)) {
+            	if (StringUtils.isNotBlank(building_cd)) {	       
+	                GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "BuildingCodeCodeNotAllowed", KFSKeyConstants.ERROR_CUSTOM, "Building Code not allowed with Offsite Asset Location Address");
+	                valid = false;
+	            }
+            	if (StringUtils.isNotBlank(room_cd)) {
+                    GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "RoomCodeNotAllowed", KFSKeyConstants.ERROR_CUSTOM, "Room Number not allowed with  Offsite Asset Location Address");
+                    valid = false;
+                }
             }
+            
             index++;
         }
 
