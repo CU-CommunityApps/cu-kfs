@@ -749,13 +749,13 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         this.applyCapitalAssetInformation(tmpForm);
         
         
+       
+        ActionForward forward = super.save(mapping, form, request, response);
+        
         //KFSPTS-1735
         if (tmpForm.getFinancialDocument().getDocumentHeader().getWorkflowDocument().stateIsEnroute()) {
         	SpringContext.getBean(CUFinancialSystemDocumentService.class).checkAccountingLinesForChanges((AccountingDocument) tmpForm.getFinancialDocument());
         }
-        ActionForward forward = super.save(mapping, form, request, response);
-        
-       
         
         // need to check on sales tax for all the accounting lines
         checkSalesTaxRequiredAllLines(tmpForm, tmpForm.getFinancialDocument().getSourceAccountingLines());
@@ -768,10 +768,12 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         KualiAccountingDocumentFormBase tmpForm = (KualiAccountingDocumentFormBase) form;
         this.applyCapitalAssetInformation(tmpForm);
 
-        //KFSPTS-1735
-        SpringContext.getBean(CUFinancialSystemDocumentService.class).checkAccountingLinesForChanges((AccountingDocument) tmpForm.getFinancialDocument());
+       
         
         ActionForward forward = super.approve(mapping, form, request, response);
+        
+        //KFSPTS-1735
+        SpringContext.getBean(CUFinancialSystemDocumentService.class).checkAccountingLinesForChanges((AccountingDocument) tmpForm.getFinancialDocument());
 
         // need to check on sales tax for all the accounting lines
         checkSalesTaxRequiredAllLines(tmpForm, tmpForm.getFinancialDocument().getSourceAccountingLines());
