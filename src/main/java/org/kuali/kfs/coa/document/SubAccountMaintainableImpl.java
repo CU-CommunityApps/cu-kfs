@@ -226,11 +226,22 @@ public class SubAccountMaintainableImpl extends FinancialSystemMaintainable {
      */
     private boolean areFieldValuesTheSame(String oldValue, String newValue) {
 
+    	//both strings are null or blank
     	if (StringUtils.isBlank(oldValue) && StringUtils.isBlank(newValue)) {
             return true;
         }
+    	
+    	//oldValue is blank or null and newValue has a value.
+    	if (StringUtils.isBlank(oldValue) && StringUtils.isNotBlank(newValue)) {
+    		return false;
+    	}
+    	
+    	//oldValue has a value and newValue is blank or null
+    	if (StringUtils.isNotBlank(oldValue) && StringUtils.isBlank(newValue)) {
+    		return false;
+    	}
 
-    	if (oldValue.equalsIgnoreCase(newValue)) {
+    	if (oldValue.trim().equalsIgnoreCase(newValue.trim())) {
             return true;
         }
 
