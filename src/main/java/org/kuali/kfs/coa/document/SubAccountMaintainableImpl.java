@@ -174,10 +174,11 @@ public class SubAccountMaintainableImpl extends FinancialSystemMaintainable {
         		if (ObjectUtils.isNotNull(account) && ObjectUtils.isNotNull(newSubAccount)) {
 	        		       		        		
 	        		//compare each field in question
-	        		boolean hasIcrIdChanged = !newSubAccount.getFinancialIcrSeriesIdentifier().equalsIgnoreCase(account.getFinancialIcrSeriesIdentifier());
-	        		boolean hasIcrCoaCodeChanged = !newSubAccount.getIndirectCostRecoveryChartOfAccountsCode().equalsIgnoreCase(account.getIndirectCostRcvyFinCoaCode());
-	        		boolean hasIcrAcctNbrChanged = !newSubAccount.getIndirectCostRecoveryAccountNumber().equalsIgnoreCase(account.getIndirectCostRecoveryAcctNbr());
-	        		boolean hasIcrTypeCodeChanged = !newSubAccount.getIndirectCostRecoveryTypeCode().equalsIgnoreCase(account.getAcctIndirectCostRcvyTypeCd());
+        			
+	        		boolean hasIcrIdChanged = !areFieldValuesTheSame(account.getFinancialIcrSeriesIdentifier(), newSubAccount.getFinancialIcrSeriesIdentifier());
+	        		boolean hasIcrCoaCodeChanged = !areFieldValuesTheSame(account.getIndirectCostRcvyFinCoaCode(), newSubAccount.getIndirectCostRecoveryChartOfAccountsCode());
+	        		boolean hasIcrAcctNbrChanged = !areFieldValuesTheSame(account.getIndirectCostRecoveryAcctNbr(), newSubAccount.getIndirectCostRecoveryAccountNumber());
+	        		boolean hasIcrTypeCodeChanged = !areFieldValuesTheSame(account.getAcctIndirectCostRcvyTypeCd(),newSubAccount.getIndirectCostRecoveryTypeCode());
         			
 	        		//when both are true OR both are false, hasOffCampusIndChanged should be false = data did not change; otherwise when they are different hasOffCampusIndChanged should be true
 	        		boolean hasOffCampusIndChanged = !((newSubAccount.getOffCampusCode() && account.isAccountOffCampusIndicator()) | (!newSubAccount.getOffCampusCode() && !account.isAccountOffCampusIndicator()));
@@ -214,6 +215,40 @@ public class SubAccountMaintainableImpl extends FinancialSystemMaintainable {
     	}
     	return false; 
     }
+    
+    //KFSPTS-1740 added
+    /**
+     * This compares two string values to see if the newValue is the same as the oldValue
+     * 
+     * @param oldValue - original value
+     * @param newValue - new value
+     * @return true if the two fields are the same
+     */
+    private boolean areFieldValuesTheSame(String oldValue, String newValue) {
+
+    	//both strings are null or blank
+    	if (StringUtils.isBlank(oldValue) && StringUtils.isBlank(newValue)) {
+            return true;
+        }
+    	
+    	//oldValue is blank or null and newValue has a value.
+    	if (StringUtils.isBlank(oldValue) && StringUtils.isNotBlank(newValue)) {
+    		return false;
+    	}
+    	
+    	//oldValue has a value and newValue is blank or null
+    	if (StringUtils.isNotBlank(oldValue) && StringUtils.isBlank(newValue)) {
+    		return false;
+    	}
+
+    	//both fields have the same string value
+    	if (oldValue.trim().equalsIgnoreCase(newValue.trim())) {
+            return true;
+        }
+
+    	//fields are different from each other
+        return false;
+    }   
     
     //KFSPTS-1740 added
     /**
