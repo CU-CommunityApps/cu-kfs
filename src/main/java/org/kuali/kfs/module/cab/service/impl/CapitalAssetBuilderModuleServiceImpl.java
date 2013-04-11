@@ -1452,13 +1452,13 @@ public class CapitalAssetBuilderModuleServiceImpl implements CapitalAssetBuilder
                     valid = false;
                 }
             }
-            if (StringUtils.isNotBlank(AssetLocationCityName) || StringUtils.isBlank(AssetLocationStateCode) || StringUtils.isNotBlank(AssetLocationCountryCode) || StringUtils.isNotBlank(AssetLocationStreetAddress) || StringUtils.isNotBlank(AssetLocationZipCode)) {
+            if(StringUtils.isNotBlank(AssetLocationCityName) || StringUtils.isNotBlank(AssetLocationStateCode) || StringUtils.isNotBlank(AssetLocationCountryCode) || StringUtils.isNotBlank(AssetLocationStreetAddress) || StringUtils.isNotBlank(AssetLocationZipCode)) {
             	if (StringUtils.isNotBlank(building_cd)) {	       
-	                GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "BuildingCodeCodeNotAllowed", KFSKeyConstants.ERROR_CUSTOM, "Building Code not allowed with Offsite Asset Location Address");
-	                valid = false;
+            		GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_CODE, KFSKeyConstants.ERROR_CUSTOM, "Building Code not allowed with off-campus Asset Location Address");
+            		valid = false;
 	            }
             	if (StringUtils.isNotBlank(room_cd)) {
-                    GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "RoomCodeNotAllowed", KFSKeyConstants.ERROR_CUSTOM, "Room Number not allowed with  Offsite Asset Location Address");
+            		GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_ROOM_NUMBER, KFSKeyConstants.ERROR_CUSTOM, "Room Number not allowed with off-campus Asset Location Address");
                     valid = false;
                 }
             }
