@@ -15,6 +15,7 @@
  */
 package org.kuali.kfs.module.purap.document.validation.impl;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
@@ -31,8 +32,13 @@ public class PurchasingAccountsPayableAccountPercentBetween0And100Validation ext
         double pct = accountingLine.getAccountLinePercent().doubleValue();
         
         if (pct <= 0 || pct > 100) {
-            GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ACCOUNT_LINE_PERCENT, PurapKeyConstants.ERROR_ITEM_PERCENT, "%", accountingLine.getAccountNumber());
-
+        	if (CollectionUtils.isEmpty(GlobalVariables.getMessageMap().getErrorPath())) {
+        		// ReviewAccountingEvent & UpdateAccountingLineEvent need this for work around now.
+        		// the messagamap's errorpath got cleared somehow
+                GlobalVariables.getMessageMap().putError(event.getErrorPathPrefix() + "." + PurapPropertyConstants.ACCOUNT_LINE_PERCENT, PurapKeyConstants.ERROR_ITEM_PERCENT, "%", accountingLine.getAccountNumber());
+        	} else {
+                GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ACCOUNT_LINE_PERCENT, PurapKeyConstants.ERROR_ITEM_PERCENT, "%", accountingLine.getAccountNumber());
+        	}
             valid = false;
         }
 
@@ -46,5 +52,6 @@ public class PurchasingAccountsPayableAccountPercentBetween0And100Validation ext
     public void setAccountingLine(PurApAccountingLine accountingLine) {
         this.accountingLine = accountingLine;
     }
+
 
 }

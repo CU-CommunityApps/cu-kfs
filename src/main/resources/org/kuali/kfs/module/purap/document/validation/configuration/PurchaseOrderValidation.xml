@@ -132,6 +132,15 @@
 						</bean>
 					</property>				
 				</bean>
+				<bean parent="PurchasingAccountsPayable-accountPercentBetween0And100Validation-parentBean" scope="prototype">
+					<property name="parameterProperties">
+						<bean parent="validationFieldConversion">
+							<property name="sourceEventProperty" value="accountingLine" />
+							<property name="targetValidationProperty" value="accountingLine" />
+						</bean>
+					</property>
+					<property name="quitOnFail" value="true" />					
+				</bean>
 
 			</list>
   		</property>
@@ -214,6 +223,15 @@
 						</list>
 					</property>
 				</bean>
+				<bean parent="PurchasingAccountsPayable-accountPercentBetween0And100Validation-parentBean" scope="prototype">
+					<property name="parameterProperties">
+						<bean parent="validationFieldConversion">
+							<property name="sourceEventProperty" value="accountingLine" />
+							<property name="targetValidationProperty" value="accountingLine" />
+						</bean>
+					</property>
+					<property name="quitOnFail" value="true" />					
+				</bean>
 			</list>
   		</property>
 	</bean>
@@ -238,6 +256,15 @@
                     </property>
                 </bean>
                 <bean parent="PurchasingAccountsPayable-accountingLineValuesAllowedValidation-parentBean" scope="prototype"/>               
+				<bean parent="PurchasingAccountsPayable-accountPercentBetween0And100Validation-parentBean" scope="prototype">
+					<property name="parameterProperties">
+						<bean parent="validationFieldConversion">
+							<property name="sourceEventProperty" value="accountingLine" />
+							<property name="targetValidationProperty" value="accountingLine" />
+						</bean>
+					</property>
+					<property name="quitOnFail" value="true" />					
+				</bean>
             </list>
         </property>
     </bean>

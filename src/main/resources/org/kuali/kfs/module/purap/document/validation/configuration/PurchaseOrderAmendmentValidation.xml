@@ -302,6 +302,41 @@
   		</property>
 	</bean>
 	
+    <!-- Review Accounting Line Event -->
+    <bean id="PurchaseOrderAmendment-reviewAccountingLineValidation" parent="PurchaseOrderAmendment-reviewAccountingLineValidation-parentBean" scope="prototype" />
+  
+    <bean id="PurchaseOrderAmendment-reviewAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+        <property name="validations">
+            <list>
+            <!--  comment out for now. add 0 pct check for reviewacctevent only
+                <bean parent="PurchasingAccountsPayable-accountingLine-newAccountingLineBranchingValidation" scope="prototype" />           
+                <bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <bean parent="accountingLineToBusinessObjectFieldConversion" />
+                    </property>
+                </bean>
+                <bean parent="Purchasing-accountingLineDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingLineFieldConversion" />
+                        </list>
+                    </property>
+                </bean>
+                 -->
+                <bean parent="PurchasingAccountsPayable-accountingLineValuesAllowedValidation-parentBean" scope="prototype"/>               
+				<bean parent="PurchasingAccountsPayable-accountPercentBetween0And100Validation-parentBean" scope="prototype">
+					<property name="parameterProperties">
+						<bean parent="validationFieldConversion">
+							<property name="sourceEventProperty" value="accountingLine" />
+							<property name="targetValidationProperty" value="accountingLine" />
+						</bean>
+					</property>
+					<property name="quitOnFail" value="true" />					
+				</bean>
+            </list>
+        </property>
+    </bean>
+
     <!-- Split Purchase Order Event -->
     <bean id="PurchaseOrderAmendment-performSplitValidation" parent="PurchaseOrderAmendment-performSplitValidation-parentBean" scope="prototype" />
   
