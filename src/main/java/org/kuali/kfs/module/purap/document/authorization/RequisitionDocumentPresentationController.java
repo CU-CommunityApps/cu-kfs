@@ -144,7 +144,7 @@ public class RequisitionDocumentPresentationController extends PurchasingAccount
 			KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
 			if (workflowDocument.stateIsEnroute()) {
 				List<String> activeNodes = Arrays.asList(workflowDocument.getNodeNames());
-				;
+				
 				for (String nodeNamesNode : activeNodes) {
 					if (RequisitionStatuses.NODE_ACCOUNT.equals(nodeNamesNode) && !SpringContext.getBean(PurapAccountingService.class).isFiscalOfficersForAllAcctLines(reqDocument)) {
 						// disable the button for setup distribution
@@ -157,6 +157,10 @@ public class RequisitionDocumentPresentationController extends PurchasingAccount
 						if (editModes.contains(RequisitionEditMode.ENABLE_COMMODITY_CODE)) {
 							editModes.remove(RequisitionEditMode.ENABLE_COMMODITY_CODE);
 						}
+					}
+					// KFSPTS-1792 : Should check whetehr object code is capital asset code ?
+					if (RequisitionStatuses.NODE_ACCOUNT.equals(nodeNamesNode)) {
+						editModes.add(RequisitionEditMode.ENABLE_CAPITAL_ASSET);
 					}
 				}
 			}

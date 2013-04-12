@@ -38,6 +38,8 @@ public class PurapAuthorizationConstants extends AuthorizationConstants {
         // KFSPTS-1768/KFSCNTRB-1138
         public static final String DISABLE_REMOVE_ACCTS = "disableRemoveAccounts";
  	 	public static final String DISABLE_SETUP_ACCT_DISTRIBUTION = "disableSetupAccountDistribution";
+ 	 	//KFSPTS-1792
+        public static final String ENABLE_CAPITAL_ASSET = "enableCapitalAsset";
  	}
 
     public static class PurchaseOrderEditMode extends EditMode {
