@@ -750,10 +750,10 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         this.applyCapitalAssetInformation(tmpForm);
         
       //KFSPTS-1735
-//        boolean passed = SpringContext.getBean(KualiRuleService.class).applyRules(new SaveDocumentEvent(tmpForm.getFinancialDocument()));
-//        if (tmpForm.getFinancialDocument().getDocumentHeader().getWorkflowDocument().stateIsEnroute() && passed) {
-//        	SpringContext.getBean(CUFinancialSystemDocumentService.class).checkAccountingLinesForChanges((AccountingDocument) tmpForm.getFinancialDocument());
-//        }
+        boolean passed = SpringContext.getBean(KualiRuleService.class).applyRules(new SaveDocumentEvent(tmpForm.getFinancialDocument()));
+        if (tmpForm.getFinancialDocument().getDocumentHeader().getWorkflowDocument().stateIsEnroute() && passed) {
+        	SpringContext.getBean(CUFinancialSystemDocumentService.class).checkAccountingLinesForChanges((AccountingDocument) tmpForm.getFinancialDocument());
+        }
       //KFSPTS-1735
        
         ActionForward forward = super.save(mapping, form, request, response);
@@ -772,10 +772,10 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         this.applyCapitalAssetInformation(tmpForm);
 
         //KFSPTS-1735
-//        boolean passed = SpringContext.getBean(KualiRuleService.class).applyRules(new ApproveDocumentEvent(tmpForm.getFinancialDocument()));
-//        if (passed) {
-//        	SpringContext.getBean(CUFinancialSystemDocumentService.class).checkAccountingLinesForChanges((AccountingDocument) tmpForm.getFinancialDocument());
-//        }
+        boolean passed = SpringContext.getBean(KualiRuleService.class).applyRules(new ApproveDocumentEvent(tmpForm.getFinancialDocument()));
+        if (passed) {
+        	SpringContext.getBean(CUFinancialSystemDocumentService.class).checkAccountingLinesForChanges((AccountingDocument) tmpForm.getFinancialDocument());
+        }
         //KFSPTS-1735
         
         ActionForward forward = super.approve(mapping, form, request, response);
