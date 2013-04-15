@@ -1810,6 +1810,9 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 
             if (isItemValidForUpdation(preqItem.getItemTypeCode(), ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_ITEM, orderHolder)) {
                 processAboveTheLineItem(preqItem, orderHolder);
+                //KFSPTS-1719 : check if this works for nonqty for unitprice and extended price
+            } else if (preqItem.isNoQtyItem()) {
+            	processAboveTheLineItemForNonQty(preqItem, orderHolder);
             }else if (isItemValidForUpdation(preqItem.getItemTypeCode(), ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_TAX, orderHolder)) {
                 processTaxItem(preqItem, orderHolder);
             } else if (isItemValidForUpdation(preqItem.getItemTypeCode(), ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_SHIPPING, orderHolder)) {
@@ -1874,6 +1877,32 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         
     }
     
+    // KFSPTS-1719
+    protected void processAboveTheLineItemForNonQty(PaymentRequestItem purapItem, ElectronicInvoiceOrderHolder orderHolder){
+
+        if (LOG.isInfoEnabled()){
+            LOG.info("Processing above the line item");
+        }
+        
+        ElectronicInvoiceItemHolder itemHolder = orderHolder.getItemByLineNumber(purapItem.getItemLineNumber().intValue());
+        if (itemHolder == null){
+            LOG.info("Electronic Invoice does not have item with Ref Item Line number " + purapItem.getItemLineNumber());
+            return;
+        }
+        
+//        purapItem.setItemUnitPrice(itemHolder.getInvoiceItemUnitPrice());
+        purapItem.setItemTaxAmount(new KualiDecimal(itemHolder.getTaxAmount()));
+        
+        if (itemHolder.getSubTotalAmount() != null){
+
+            purapItem.setExtendedPrice(itemHolder.getSubTotalAmount());
+            // TODO : this is probably ok if it is the first preq.  if it is the second, then need to fure out what has been already paid.
+//            purapItem.setItemUnitPrice((new KualiDecimal(purapItem.getPurchaseOrderItemUnitPrice()).subtract(itemHolder.getSubTotalAmount())).bigDecimalValue());
+            
+        } 
+        
+    }
+
     /**
      * 
      * @param purapItem
