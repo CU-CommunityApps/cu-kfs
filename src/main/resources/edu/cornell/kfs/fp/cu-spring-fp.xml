@@ -290,7 +290,7 @@
 	<import resource="document/validation/configuration/CU-DisbursementVoucherValidation.xml" />
 	
 	
-	<import resource="document/validation/configuration/PreEncumbranceValidation.xml" />
+
 	
 
 </beans>
