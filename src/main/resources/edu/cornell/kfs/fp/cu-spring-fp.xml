@@ -18,7 +18,7 @@
         <property name="dataDictionaryPackages">
 			<list merge="true">
                 <value>edu/cornell/kfs/fp/document/datadictionary</value>
-<!--            <value>edu/cornell/kfs/fp/businessobject/datadictionary</value> -->
+                <value>edu/cornell/kfs/fp/businessobject/datadictionary</value> 
 			</list>
 		</property>
 		<property name="databaseRepositoryFilePaths">
@@ -32,6 +32,7 @@
 		<property name="scriptConfigurationFilePaths">
 			<list/>
 		</property>
+		
 		
 		<property name="jobNames">
 			<list merge="true">
@@ -206,6 +207,8 @@
    			</list>
    		</property>
    	</bean>
+   	
+   	
  
 	
     <bean id="procurementCardFlatInputFileType" class="edu.cornell.kfs.fp.batch.ProcurementCardFlatInputFileType"> 
@@ -279,7 +282,15 @@
             <value>${cu.legacy.travel.url}</value>
         </property>
     </bean>
+    
+    <bean id="PreEncumbranceAutoDisEncumberValidation" class="edu.cornell.kfs.fp.document.validation.impl.PreEncumbranceAutoDisEncumberValidation">
+    
+    </bean>
 
 	<import resource="document/validation/configuration/CU-DisbursementVoucherValidation.xml" />
+	
+	
+	<import resource="document/validation/configuration/PreEncumbranceValidation.xml" />
+	
 
 </beans>

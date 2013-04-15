@@ -80,6 +80,7 @@ import org.kuali.rice.kns.util.Timer;
 import org.kuali.rice.kns.util.UrlFactory;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 
+import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute;
 import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
 
 /**
@@ -757,7 +758,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
        
         ActionForward forward = super.save(mapping, form, request, response);
         
-       
+        
         
         // need to check on sales tax for all the accounting lines
         checkSalesTaxRequiredAllLines(tmpForm, tmpForm.getFinancialDocument().getSourceAccountingLines());
@@ -1189,8 +1190,11 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         // If details collection has old lines, this loop will add new lines to make the total equal to the quantity.
         for (int index = 1; detailLines.size() < quantity; index++) {
             CapitalAssetInformationDetail detailLine = new CapitalAssetInformationDetail();
-            detailLine.setItemLineNumber(getNextItemLineNumberAndIncremented(capitalAssetInformation));
-            detailLines.add(detailLine);
+            Integer linenum = getNextItemLineNumberAndIncremented(capitalAssetInformation);
+            detailLine.setItemLineNumber(linenum);
+            CapitalAssetInformationDetailExtendedAttribute detailea = (CapitalAssetInformationDetailExtendedAttribute)(detailLine.getExtension());
+			detailea.setItemLineNumber(linenum);
+			detailLines.add(detailLine);
             
         }
     }
@@ -1285,23 +1289,61 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         		String detail_doc = capitalAssetEditable.getCapitalAssetInformation().getCapitalAssetInformationDetails().get(0).getDocumentNumber();
         		String info_doc = capitalAssetEditable.getCapitalAssetInformation().getDocumentNumber();
         		PersistableBusinessObject capassetinfo = SpringContext.getBean(BusinessObjectService.class).findBySinglePrimaryKey(CapitalAssetInformation.class, info_doc);
-
+        		
+        		
+        		
         		if (capassetinfo != null) {
-        			if (detail_doc == null){        		
+        			if (detail_doc == null){  
         				List<CapitalAssetInformationDetail> detailLines = new ArrayList<CapitalAssetInformationDetail>();
-        				CapitalAssetInformationDetail detailLine = new CapitalAssetInformationDetail();
+        			    CapitalAssetInformationDetail detailLine = new CapitalAssetInformationDetail();
         				detailLine.setDocumentNumber(document.getDocumentNumber());
+        				CapitalAssetInformationDetailExtendedAttribute detailea = (CapitalAssetInformationDetailExtendedAttribute)(detailLine.getExtension());
+        				detailea.setDocumentNumber(document.getDocumentNumber());
+        				detailea.setItemLineNumber(1);
         				detailLine.setItemLineNumber(1);
         				detailLines.add(detailLine);
-        				SpringContext.getBean(BusinessObjectService.class).save(detailLines);      		
+        				SpringContext.getBean(BusinessObjectService.class).save(detailLines);        				        				        				        				
         			}
-        		}	
+        			List<CapitalAssetInformationDetail> detailLines2 = capitalAssetEditable.getCapitalAssetInformation().getCapitalAssetInformationDetails();
+    				Integer quantity = capitalAssetInformation.getCapitalAssetQuantity();
+    				for (int index = 0; index < quantity; index++) {
+    					CapitalAssetInformationDetail detailLine2 = capitalAssetEditable.getCapitalAssetInformation().getCapitalAssetInformationDetails().get(index);
+    					CapitalAssetInformationDetailExtendedAttribute detailea2 = (CapitalAssetInformationDetailExtendedAttribute)(detailLine2.getExtension());
+    					detailea2.setDocumentNumber(document.getDocumentNumber());
+    					detailLines2.set(index, detailLine2);
+    				}
+    				capitalAssetEditable.getCapitalAssetInformation().setCapitalAssetInformationDetails(detailLines2);
+        			
+        		}
+        		
         	}
         	return;
         }
 
         CapitalAssetEditable capitalAssetEditableForm = (CapitalAssetEditable) kualiAccountingDocumentFormBase;
         CapitalAssetInformation newCapitalAssetInformation = capitalAssetEditableForm.getCapitalAssetInformation();
+        Integer cquantity = newCapitalAssetInformation.getCapitalAssetQuantity();
+        if  ( cquantity != null) {
+		    if (newCapitalAssetInformation.getCapitalAssetQuantity() > 0) {
+		        List<CapitalAssetInformationDetail> detailLines2 = capitalAssetEditableForm.getCapitalAssetInformation().getCapitalAssetInformationDetails();
+				Integer quantity = newCapitalAssetInformation.getCapitalAssetQuantity();
+				for (int index = 0; index < quantity; index++) {
+					CapitalAssetInformationDetail detailLine2 = capitalAssetEditableForm.getCapitalAssetInformation().getCapitalAssetInformationDetails().get(index);
+					CapitalAssetInformationDetailExtendedAttribute detailea2 = (CapitalAssetInformationDetailExtendedAttribute)(detailLine2.getExtension());
+					detailLine2.setDocumentNumber(document.getDocumentNumber());
+					detailea2.setDocumentNumber(document.getDocumentNumber());
+					if (index == 0) {
+						detailLine2.setItemLineNumber(1);
+						detailea2.setItemLineNumber(1);
+					}
+					
+					detailLines2.set(index, detailLine2);
+					
+				}
+				capitalAssetEditableForm.getCapitalAssetInformation().setCapitalAssetInformationDetails(detailLines2);
+		    	
+		    }
+        }
         // apply capitalAsset information if there is at least one movable object code associated with the source accounting
         // lines
         newCapitalAssetInformation.setDocumentNumber(document.getDocumentNumber());
