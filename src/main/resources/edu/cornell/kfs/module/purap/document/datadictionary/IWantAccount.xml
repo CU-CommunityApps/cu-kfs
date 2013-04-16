@@ -31,6 +31,7 @@
         <ref bean="IWantAccount-financialSubObjectCode"/>
         <ref bean="IWantAccount-amountOrPercent"/>
         <ref bean="IWantAccount-useAmountOrPercent"/>
+        <ref bean="IWantAccount-favoriteAccountLineIdentifier"/>
 
 
       </list>
@@ -130,6 +131,19 @@
     <property name="maxLength" value="10"/>
     <property name="control">
       <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.module.purap.businessobject.options.AmountOrPercentValuesFinder" p:includeKeyInLabel="false"/>
+    </property>
+  </bean>
+  
+   <bean id="IWantAccount-favoriteAccountLineIdentifier" parent="IWantAccount-favoriteAccountLineIdentifier-parentBean"/>
+
+   <bean id="IWantAccount-favoriteAccountLineIdentifier-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="favoriteAccountLineIdentifier"/>
+    <property name="label" value="Favorite Account"/>
+    <property name="shortLabel" value="Favorite Account"/>
+    <property name="required" value="false"/>
+    <property name="maxLength" value="10"/>
+    <property name="control">
+      <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFiner" p:includeKeyInLabel="false"/>
     </property>
   </bean>
  

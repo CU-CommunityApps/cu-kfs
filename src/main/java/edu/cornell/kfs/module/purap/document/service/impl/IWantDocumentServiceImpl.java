@@ -3,7 +3,7 @@ package edu.cornell.kfs.module.purap.document.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.ws.security.util.StringUtil;
+import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.doctype.service.DocumentTypeService;
 import org.kuali.rice.kew.util.KEWConstants;
@@ -17,13 +17,19 @@ import org.kuali.rice.kim.service.PersonService;
 import org.kuali.rice.kim.util.KimConstants;
 import org.kuali.rice.kns.mail.MailMessage;
 import org.kuali.rice.kns.service.MailService;
+import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kns.util.KualiDecimal;
+import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
+import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.LevelOrganization;
 import edu.cornell.kfs.module.purap.businessobject.PersonData;
 import edu.cornell.kfs.module.purap.dataaccess.LevelOrganizationDao;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
+import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
+import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 
 public class IWantDocumentServiceImpl implements IWantDocumentService {
 
@@ -32,6 +38,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
     private LevelOrganizationDao collegeLevelOrganizationDao;
     private MailService mailService;
     private PersonService personService;
+    private UserFavoriteAccountService userFavoriteAccountService;
     private DocumentTypeService documentTypeService;
 
     /**
@@ -312,4 +319,39 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
     public void setDocumentTypeService(DocumentTypeService documentTypeService) {
         this.documentTypeService = documentTypeService;
     }
+
+	public void setUserFavoriteAccountService(
+			UserFavoriteAccountService userFavoriteAccountService) {
+		this.userFavoriteAccountService = userFavoriteAccountService;
+	}
+	
+	/**
+	 * KFSPTS-985 : populate IWANT account from primary favorite account
+	 */
+	public IWantAccount getFavoriteIWantAccount() {
+		FavoriteAccount favoriteAccount = userFavoriteAccountService.getFavoriteAccount(GlobalVariables.getUserSession().getPrincipalId());
+		return getFavoriteIWantAccount(favoriteAccount);
+	}
+	
+	/**
+	 * KFSPTS-985 : populate IWANT account from selected favorite account
+	 */
+	public IWantAccount getFavoriteIWantAccount(FavoriteAccount favoriteAccount) {
+    	if (ObjectUtils.isNotNull(favoriteAccount)) {
+    		IWantAccount iWantAccount = new IWantAccount();
+    		iWantAccount.setAccountNumber(favoriteAccount.getAccountNumber());
+    		iWantAccount.setChartOfAccountsCode(favoriteAccount.getChartOfAccountsCode());
+    		iWantAccount.setSubAccountNumber(favoriteAccount.getSubAccountNumber());
+    		iWantAccount.setFinancialObjectCode(favoriteAccount.getFinancialObjectCode());
+    		iWantAccount.setFinancialSubObjectCode(favoriteAccount.getFinancialSubObjectCode());
+    		iWantAccount.setProjectCode(favoriteAccount.getProjectCode());
+    		iWantAccount.setOrganizationReferenceId(favoriteAccount.getOrganizationReferenceId());
+    		if (CUPurapConstants.PERCENT.equalsIgnoreCase(iWantAccount.getUseAmountOrPercent())) {
+    		    iWantAccount.setAmountOrPercent(new KualiDecimal(100));
+    		}
+    		return iWantAccount;
+    	}
+    	return null;
+	}
+
 }

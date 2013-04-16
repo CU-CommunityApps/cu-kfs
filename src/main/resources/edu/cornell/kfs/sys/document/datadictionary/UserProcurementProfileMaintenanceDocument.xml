@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+<!--
+ Copyright 2007-2009 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+  <bean id="UserProcurementProfileMaintenanceDocument" parent="UserProcurementProfileMaintenanceDocument-parentBean"/>
+
+  <bean id="UserProcurementProfileMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.UserProcurementProfile"/>
+    <property name="maintainableClass" value="edu.cornell.kfs.sys.document.UserProcurementProfileMaintainableImpl"/>
+    <property name="allowsNewOrCopy" value="true"/>
+    <property name="maintainableSections">
+      <list>
+         <ref bean="UserProcurementProfileMaintenanceDocument-UserProcurementProfile"/>
+        <ref bean="UserProcurementProfileMaintenanceDocument-FavoriteAccounts"/>
+          
+      </list>
+    </property>
+    <property name="lockingKeys">
+      <list>
+        <value>principalId</value>
+      </list>
+    </property>
+    <property name="documentTypeName" value="UPPM"/>
+    <property name="businessRulesClass" value="edu.cornell.kfs.sys.document.validation.impl.UserProcurementProfileRule"/>
+    <property name="documentAuthorizerClass" value="edu.cornell.kfs.sys.document.authorization.UserProcurementProfileAuthorizer"/>
+    <property name="documentPresentationControllerClass" value="edu.cornell.kfs.sys.document.authorization.UserProcurementProfilePresentationController"/>
+ <!--   <property name="workflowAttributes">
+      <ref bean="UserProcurementProfileMaintenanceDocument-workflowAttributes"/>
+    </property>  
+   <property name="additionalSectionsFile" value="/jsp/sys/UserFavoriteAccounts.jsp"/>  -->
+  </bean>
+
+<!-- Maintenance Section Definitions -->
+  <bean id="UserProcurementProfileMaintenanceDocument-UserProcurementProfile" parent="UserProcurementProfileMaintenanceDocument-UserProcurementProfile-parentBean"/>
+  <bean id="UserProcurementProfileMaintenanceDocument-UserProcurementProfile-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="defaultOpen" value="true"/>
+	<property name="id" value="User Procurement Profile"/>  
+    <property name="title" value="User Procurement Profile"/>
+    <property name="maintainableItems">
+      <list>
+     	<bean parent="MaintainableFieldDefinition" p:name="profileUser.principalName" p:required="true"/>	                        
+      </list>
+	</property>
+  </bean>
+
+
+
+   <bean id="UserProcurementProfileMaintenanceDocument-FavoriteAccounts" parent="UserProcurementProfileMaintenanceDocument-FavoriteAccounts-parentBean"/>
+
+  <bean id="UserProcurementProfileMaintenanceDocument-FavoriteAccounts-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Favorite Account"/>
+    <property name="title" value="Favorite Account"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableCollectionDefinition">
+          <property name="name" value="favoriteAccounts"/>
+     <!--    <property name="sourceClassName" value="edu.cornell.kfs.sys.businessobject.FavoriteAccount"/> -->  
+          <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.FavoriteAccount"/>
+    <!--     <property name="alwaysAllowCollectionDeletion" value="true"/>
+		  <property name="includeAddLine" value="true"/>
+		  <property name="includeMultipleLookupLine" value="false"/>  --> 
+          <property name="maintainableFields">
+            <list>
+        <bean parent="MaintainableFieldDefinition" p:name="description" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="subAccountNumber"/>
+        <bean parent="MaintainableFieldDefinition" p:name="financialObjectCode"/>
+        <bean parent="MaintainableFieldDefinition" p:name="financialSubObjectCode"/>
+        <bean parent="MaintainableFieldDefinition" p:name="projectCode"/>
+        <bean parent="MaintainableFieldDefinition" p:name="organizationReferenceId"/> 
+        <bean parent="MaintainableFieldDefinition" p:name="primaryInd"/> 
+            </list>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+  
+  
+  
+  <!-- 
+  <bean id="UserProcurementProfileMaintenanceDocument-workflowAttributes" parent="UserProcurementProfileMaintenanceDocument-workflowAttributes-parentBean"/>
+	
+  <bean id="UserProcurementProfileMaintenanceDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
+    	<property name="searchingTypeDefinitions">
+    		<list>
+    		</list>
+    	</property>
+    	<property name="routingTypeDefinitions">
+    		<map>
+    			<entry key="OrganizationHierarchy" value-ref="RoutingType-UserProcurementProfileMaintenanceDocument-OrganizationHierarchy"/>
+    		</map>
+    	</property>
+  </bean>
+   -->
+</beans>
