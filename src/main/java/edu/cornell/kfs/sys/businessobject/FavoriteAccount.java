@@ -47,6 +47,7 @@ public class FavoriteAccount extends PersistableBusinessObjectBase {
     public FavoriteAccount() {
         super();
         primaryInd = false;
+        chartOfAccountsCode = "IT";
     }
    
 

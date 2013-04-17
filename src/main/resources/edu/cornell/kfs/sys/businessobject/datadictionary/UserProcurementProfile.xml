@@ -230,8 +230,8 @@
     </property>
     <property name="lookupFields">
       <list>
-        <bean parent="FieldDefinition" p:attributeName="userProfileId"/>
-     <!--    <bean parent="FieldDefinition" p:attributeName="documentTypeCode"/> -->
+       <!--  <bean parent="FieldDefinition" p:attributeName="userProfileId"/>
+        <bean parent="FieldDefinition" p:attributeName="documentTypeCode"/> -->
         <bean parent="FieldDefinition" p:attributeName="profileUser.principalName"/>
       </list>
     </property>
