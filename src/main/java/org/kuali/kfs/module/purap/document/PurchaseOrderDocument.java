@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -743,6 +744,29 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                 logAndThrowRuntimeException("Error saving routing data while saving document with id " + getDocumentNumber(), e);
             }
         }
+        // KFSPTS-1705
+        if (shouldAdhocFyi()) {
+            SpringContext.getBean(PurchaseOrderService.class).sendAdhocFyi(this);
+        }
+    }
+
+    // KFSPTS-1705
+    protected boolean shouldAdhocFyi() {
+        Collection<String> excludeList = new ArrayList<String>();
+        if (SpringContext.getBean(ParameterService.class).parameterExists(PurchaseOrderDocument.class, PurapParameterConstants.PO_NOTIFY_EXCLUSIONS)) {
+            excludeList = SpringContext.getBean(ParameterService.class).getParameterValues(PurchaseOrderDocument.class, PurapParameterConstants.PO_NOTIFY_EXCLUSIONS);
+        }
+        if (!excludeList.contains(getRequisitionSourceCode()) && (getDocumentHeader().getWorkflowDocument().stateIsDisapproved() || getDocumentHeader().getWorkflowDocument().stateIsCanceled())) {
+            return true;
+        }
+
+        if (getDocumentHeader().getWorkflowDocument().stateIsFinal() && !excludeList.contains(getRequisitionSourceCode()) &&
+                !"PRPE".equals(this.getStatusCode())) {
+         //   !PurapConstants.APPDOC_PENDING_PRINT.equals(this.getStatusCode())) {
+        	// TODO : not sure if this is statuscode
+            return true;
+        }
+        return false;
     }
 
   

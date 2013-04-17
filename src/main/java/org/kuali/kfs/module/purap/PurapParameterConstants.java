@@ -83,7 +83,10 @@ public class PurapParameterConstants implements ParameterKeyConstants {
     
     public static final String OBJECT_SUB_TYPES_REQUIRING_QUANTITY = "OBJECT_SUB_TYPES_REQUIRING_QUANTITY";
     public static final String PURCHASING_OBJECT_SUB_TYPES = "PURCHASING_OBJECT_SUB_TYPES";
-    
+  
+    // KFSPTS-1705
+    public static final String PO_NOTIFY_EXCLUSIONS = "NOTIFY_REQUISITION_SOURCES";
+
     public static class CapitalAsset {
         // used in CAB module service
         public static final String PURCHASING_OBJECT_SUB_TYPES = "PURCHASING_OBJECT_SUB_TYPES";

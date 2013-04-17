@@ -441,5 +441,8 @@ public interface PurchaseOrderService extends PurchasingDocumentSpecificService 
      */
     public boolean canHoldPayment(PurchaseOrderDocument purchaseOrder);
     
-    
+
+    // KFSPTS-1705
+    public void sendAdhocFyi(PurchaseOrderDocument po);
+
 }

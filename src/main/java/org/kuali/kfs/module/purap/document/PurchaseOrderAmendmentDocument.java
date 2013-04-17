@@ -19,43 +19,33 @@ package org.kuali.kfs.module.purap.document;
 import static org.kuali.kfs.sys.KFSConstants.GL_DEBIT_CODE;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.gl.service.SufficientFundsService;
 import org.kuali.kfs.module.purap.PurapConstants.PurapDocTypeCodes;
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
-import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
-import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.document.service.ReceivingService;
 import org.kuali.kfs.module.purap.service.PurapGeneralLedgerService;
-import org.kuali.kfs.module.purap.util.PurapAccountingLineComparator;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.businessobject.SufficientFundsItem;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.validation.event.AddAccountingLineEvent;
-import org.kuali.kfs.sys.document.validation.event.DeleteAccountingLineEvent;
-import org.kuali.kfs.sys.document.validation.event.ReviewAccountingLineEvent;
-import org.kuali.kfs.sys.document.validation.event.UpdateAccountingLineEvent;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO;
 import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kns.document.TransactionalDocument;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
@@ -283,5 +273,29 @@ public class PurchaseOrderAmendmentDocument extends PurchaseOrderDocument {
 	public void setSpawnPoa(boolean spawnPoa) {
 		this.spawnPoa = spawnPoa;
 	}
+
+
+
+	// KFSPTS-1705
+    @Override
+    protected boolean shouldAdhocFyi() {
+        Collection<String> excludeList = new ArrayList<String>();
+        if (SpringContext.getBean(ParameterService.class).parameterExists(PurchaseOrderDocument.class, PurapParameterConstants.PO_NOTIFY_EXCLUSIONS)) {
+            excludeList = SpringContext.getBean(ParameterService.class).getParameterValues(PurchaseOrderDocument.class, PurapParameterConstants.PO_NOTIFY_EXCLUSIONS);
+        }
+
+//        if (getDocumentHeader().getWorkflowDocument().stateIsDisapproved()) {
+//            return true;
+//        }
+        // CU want to exclude B2B for all FYI
+        if ((getDocumentHeader().getWorkflowDocument().stateIsFinal() || getDocumentHeader().getWorkflowDocument().stateIsDisapproved()) && !excludeList.contains(getRequisitionSourceCode()) ) {
+            return true;
+        }
+        return false;
+    }
+
+
+
+
 
 }

@@ -37,12 +37,12 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapKeyConstants;
-import org.kuali.kfs.module.purap.PurapPropertyConstants;
-import org.kuali.kfs.module.purap.SingleConfirmationQuestion;
 import org.kuali.kfs.module.purap.PurapConstants.PODocumentsStrings;
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderDocTypes;
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
+import org.kuali.kfs.module.purap.PurapKeyConstants;
+import org.kuali.kfs.module.purap.PurapPropertyConstants;
+import org.kuali.kfs.module.purap.SingleConfirmationQuestion;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderQuoteList;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderQuoteListVendor;
@@ -73,6 +73,7 @@ import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kew.messaging.MessageServiceNames;
 import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.rice.kew.service.KEWServiceLocator;
+import org.kuali.rice.kew.util.KEWConstants;
 import org.kuali.rice.kim.service.KIMServiceLocator;
 import org.kuali.rice.kns.bo.Note;
 import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
@@ -88,7 +89,9 @@ import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.KualiRuleService;
 import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.kns.util.RiceKeyConstants;
 import org.kuali.rice.kns.util.UrlFactory;
 import org.kuali.rice.kns.web.struts.form.BlankFormFile;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
@@ -1744,7 +1747,11 @@ public class PurchaseOrderAction extends PurchasingActionBase {
     public ActionForward cancel(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
         // this should probably be moved into a protected instance variable
+        String operation =KEWConstants.ACTION_REQUEST_CANCEL_REQ_LABEL;
         KualiConfigurationService kualiConfiguration = SpringContext.getBean(KualiConfigurationService.class);
+        String questionText = kualiConfiguration.getPropertyString(PurapKeyConstants.PURCHASE_ORDER_QUESTION_DOCUMENT);
+        questionText = StringUtils.replace(questionText, "{0}", operation);
+        String reason = request.getParameter(KFSConstants.QUESTION_REASON_ATTRIBUTE_NAME);
 
         // logic for cancel question
         if (question == null) {
@@ -1758,6 +1765,20 @@ public class PurchaseOrderAction extends PurchasingActionBase {
 
                 // if no button clicked just reload the doc
                 return mapping.findForward(KFSConstants.MAPPING_BASIC);
+            }else{
+                reason =(reason ==null)? new String():reason;
+                int cancelNoteTextLength = reason.length();
+
+                // get note text max length from DD
+                int noteTextMaxLength = getDataDictionaryService().getAttributeMaxLength(Note.class, KFSConstants.NOTE_TEXT_PROPERTY_NAME).intValue();
+                if (StringUtils.isBlank(reason) || (cancelNoteTextLength > noteTextMaxLength)) {
+                    // figure out exact number of characters that the user can enter
+                    int reasonLimit = noteTextMaxLength - cancelNoteTextLength;
+
+                    return this.performQuestionWithInputAgainBecauseOfErrors(mapping, form, request, response, KNSConstants.DOCUMENT_CANCEL_QUESTION, questionText, KNSConstants.CONFIRMATION_QUESTION, KNSConstants.MAPPING_CANCEL, "", reason, RiceKeyConstants.ERROR_DOCUMENT_DISAPPROVE_REASON_REQUIRED, KNSConstants.QUESTION_REASON_ATTRIBUTE_NAME, new Integer(reasonLimit).toString());
+                }
+
+
             }
             // else go to cancel logic below
         }

@@ -1174,4 +1174,10 @@ public class PurapConstants extends JSTLConstants {
     
     public static final String MAX_SQ_NO_ATTACHMENTS = "MAX_SQ_NO_ATTACHMENTS";
 
+    // KFSPTS-1705
+    public static final String PO_FINAL_ANNOTATION_TEXT= "message.document.purap.final.annotation";
+    public static final String PO_DISAPPROVAL_ANNOTATION_TEXT= "message.document.purap.disapprove.annotation";
+    public static final String PO_CANCEL_ANNOTATION_TEXT= "message.document.purap.cancel.annotation";
+    public static final String APPDOC_PENDING_PRINT = "Pending Print";
+
 }

@@ -16,9 +16,6 @@
 package org.kuali.kfs.module.purap.document.service.impl;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -32,6 +29,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coa.businessobject.AccountDelegate;
+import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.integration.purap.CapitalAssetSystem;
 import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -119,7 +119,6 @@ import org.kuali.rice.kns.service.NoteService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.service.SequenceAccessorService;
 import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.Guid;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.MessageMap;
 import org.kuali.rice.kns.util.ObjectUtils;
@@ -573,9 +572,28 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         po.setOverrideWorkflowButtons(Boolean.TRUE);
         if (!po.getStatusCode().equals(PurapConstants.PurchaseOrderStatuses.OPEN)) {
             attemptSetupOfInitialOpenOfDocument(po);
+            // KFSPTS-1705
+            if (shouldAdhocFyi(po.getRequisitionSourceCode())) {
+                sendAdhocFyi(po);
+            }
+
         }
         purapService.saveDocumentNoValidation(po);
     }
+
+    /**
+     * This method retrieves the parameter which holds the list of Requisition source codes which does not need FYI Notifications .
+     * KFSPTS-1705
+     * @return
+     */
+    private boolean shouldAdhocFyi(String reqSourceCode) {
+        Collection<String> excludeList = new ArrayList<String>();
+        if (SpringContext.getBean(ParameterService.class).parameterExists(PurchaseOrderDocument.class, PurapParameterConstants.PO_NOTIFY_EXCLUSIONS)) {
+            excludeList = SpringContext.getBean(ParameterService.class).getParameterValues(PurchaseOrderDocument.class, PurapParameterConstants.PO_NOTIFY_EXCLUSIONS);
+        }
+        return !excludeList.contains(reqSourceCode);
+    }
+
 
     /**
      * @see org.kuali.kfs.module.purap.document.service.PurchaseOrderService#performPurchaseOrderPreviewPrinting(java.lang.String,
@@ -2130,6 +2148,81 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         if(personService==null)
             personService = SpringContext.getBean(PersonService.class);
         return personService;
+    }
+
+    public void sendAdhocFyi(PurchaseOrderDocument po) {
+
+        RequisitionDocument req = po.getPurApSourceDocumentIfPossible();
+
+       // String reqInitiator =req.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+        String reqInitiator =req.getDocumentHeader().getWorkflowDocument().getRoutedByUserNetworkId();
+        String currentDocumentTypeName = po.getDocumentHeader().getWorkflowDocument().getDocumentType();
+        Set<String> fiscalOfficerIds = new HashSet<String>();
+        Set<Account> accounts = new HashSet<Account>();
+        try {
+        	// TODO : note : appSpecificRouteDocumentToUser is using principalname, but 5.x is using principalid
+            po.appSpecificRouteDocumentToUser(po.getDocumentHeader().getWorkflowDocument(), reqInitiator, getAdhocFyiAnnotation(po) + KFSConstants.BLANK_SPACE + req.getPurapDocumentIdentifier() + KFSConstants.BLANK_SPACE + "(document Id " + req.getDocumentNumber() + ")", "Requisition Routed By User");
+
+
+            if(!PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_AMENDMENT_DOCUMENT.equalsIgnoreCase(currentDocumentTypeName)){
+                List<PurchaseOrderItem> items = po.getItemsActiveOnly();
+                for (PurchaseOrderItem item : items) {
+                    List<PurApAccountingLine> lines = item.getSourceAccountingLines();
+                    for (PurApAccountingLine line : lines) {
+                        accounts.add(line.getAccount());
+                    }
+                }
+                for (Account account : accounts) {
+                    String principalId = account.getAccountFiscalOfficerUser().getPrincipalId();
+
+                    if (!fiscalOfficerIds.contains(principalId)) {
+                        fiscalOfficerIds.add(principalId);
+                        AccountDelegate accountDelegate = getAccountPrimaryDelegate(account);
+                        if (ObjectUtils.isNotNull(accountDelegate)) {
+                                String delegateName =SpringContext.getBean(PersonService.class).getPerson(accountDelegate.getAccountDelegateSystemId()).getPrincipalName();
+                                String annotationText = "Delegation of: " + KFSConstants.ParameterNamespaces.KFS  + KFSConstants.BLANK_SPACE + KFSConstants.SysKimConstants.FISCAL_OFFICER_KIM_ROLE_NAME + KFSConstants.BLANK_SPACE + account.getChartOfAccountsCode() + KFSConstants.BLANK_SPACE + account.getAccountNumber() + KFSConstants.BLANK_SPACE + "to principal" + KFSConstants.BLANK_SPACE + delegateName;
+                                po.appSpecificRouteDocumentToUser(po.getDocumentHeader().getWorkflowDocument(), delegateName, annotationText, "Fiscal Officer Notification");
+                        }
+                        else {
+                            String annotationText = KFSConstants.ParameterNamespaces.KFS + KFSConstants.BLANK_SPACE + KFSConstants.SysKimConstants.FISCAL_OFFICER_KIM_ROLE_NAME +  KFSConstants.BLANK_SPACE + account.getChartOfAccountsCode() + KFSConstants.BLANK_SPACE + account.getAccountNumber();
+                            po.appSpecificRouteDocumentToUser(po.getDocumentHeader().getWorkflowDocument(), account.getAccountFiscalOfficerUser().getPrincipalName(), annotationText, "Fiscal Officer Notification");
+                        }
+
+
+                    }
+                }
+            }
+
+
+        }
+        catch (WorkflowException ex) {
+            throw new RuntimeException("Error routing fyi for document with id " + po.getDocumentNumber(), ex);
+        }
+
+    }
+
+    private AccountDelegate getAccountPrimaryDelegate(Account account) {
+        AccountDelegate delegateExample = new AccountDelegate();
+        delegateExample.setChartOfAccountsCode(account.getChartOfAccountsCode());
+        delegateExample.setAccountNumber( account.getAccountNumber());
+        delegateExample.setFinancialDocumentTypeCode(PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_DOCUMENT);
+        AccountDelegate accountDelegate= SpringContext.getBean(AccountService.class).getPrimaryDelegationByExample(delegateExample, null);
+        return accountDelegate;
+
+    }
+
+    protected String getAdhocFyiAnnotation(PurchaseOrderDocument po) {
+        String annotation = "";
+        if (po.getDocumentHeader().getWorkflowDocument().stateIsDisapproved()) {
+            annotation = SpringContext.getBean(KualiConfigurationService.class).getPropertyString(PurapConstants.PO_DISAPPROVAL_ANNOTATION_TEXT);
+        }
+        if (po.getDocumentHeader().getWorkflowDocument().stateIsFinal()) {
+            annotation = SpringContext.getBean(KualiConfigurationService.class).getPropertyString(PurapConstants.PO_FINAL_ANNOTATION_TEXT);
+        }
+        if (po.getDocumentHeader().getWorkflowDocument().stateIsCanceled()) {
+            annotation =SpringContext.getBean(KualiConfigurationService.class).getPropertyString(PurapConstants.PO_CANCEL_ANNOTATION_TEXT);
+        }
+        return annotation;
     }
 
 }
