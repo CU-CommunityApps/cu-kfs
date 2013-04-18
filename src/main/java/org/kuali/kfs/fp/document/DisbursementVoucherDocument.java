@@ -1012,7 +1012,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
             this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(employee.getAddressLine2Unmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeCityName(employee.getAddressCityNameUnmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeStateCode(employee.getAddressStateCodeUnmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeZipCode(employee.getAddressPostalCodeUnmasked());
+            this.getDvPayeeDetail().setDisbVchrPayeeZipCode(StringUtils.replace(employee.getAddressPostalCodeUnmasked(), " ", "_"));
             this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(employee.getAddressCountryCodeUnmasked());
         } else {
             final KimEntityAddress address = getNonDefaultAddress(employee);
@@ -1021,7 +1021,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
                 this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(address.getLine2Unmasked());
                 this.getDvPayeeDetail().setDisbVchrPayeeCityName(address.getCityNameUnmasked());
                 this.getDvPayeeDetail().setDisbVchrPayeeStateCode(address.getStateCodeUnmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeZipCode(address.getPostalCodeUnmasked());
+                this.getDvPayeeDetail().setDisbVchrPayeeZipCode(StringUtils.replace(employee.getAddressPostalCodeUnmasked(), " ", "_"));
                 this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(address.getCountryCodeUnmasked());
             }
             else {
@@ -1085,7 +1085,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
             this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(student.getAddressLine2Unmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeCityName(student.getAddressCityNameUnmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeStateCode(student.getAddressStateCodeUnmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeZipCode(student.getAddressPostalCodeUnmasked());
+            this.getDvPayeeDetail().setDisbVchrPayeeZipCode(StringUtils.replace(student.getAddressPostalCodeUnmasked(), " ", "_"));
             this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(student.getAddressCountryCodeUnmasked());
         } else {
             final KimEntityAddress address = getNonDefaultAddress(student);
@@ -1094,7 +1094,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
                 this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(address.getLine2Unmasked());
                 this.getDvPayeeDetail().setDisbVchrPayeeCityName(address.getCityNameUnmasked());
                 this.getDvPayeeDetail().setDisbVchrPayeeStateCode(address.getStateCodeUnmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeZipCode(address.getPostalCodeUnmasked());
+                this.getDvPayeeDetail().setDisbVchrPayeeZipCode(StringUtils.replace(student.getAddressPostalCodeUnmasked(), " ", "_"));
                 this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(address.getCountryCodeUnmasked());
             }
             else {
@@ -1158,7 +1158,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
             this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(alumni.getAddressLine2Unmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeCityName(alumni.getAddressCityNameUnmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeStateCode(alumni.getAddressStateCodeUnmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeZipCode(alumni.getAddressPostalCodeUnmasked());
+            this.getDvPayeeDetail().setDisbVchrPayeeZipCode(StringUtils.replace(alumni.getAddressPostalCodeUnmasked(), " ", "_"));
             this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(alumni.getAddressCountryCodeUnmasked());
         } else {
             final KimEntityAddress address = getNonDefaultAddress(alumni);
@@ -1167,7 +1167,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
                 this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(address.getLine2Unmasked());
                 this.getDvPayeeDetail().setDisbVchrPayeeCityName(address.getCityNameUnmasked());
                 this.getDvPayeeDetail().setDisbVchrPayeeStateCode(address.getStateCodeUnmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeZipCode(address.getPostalCodeUnmasked());
+                this.getDvPayeeDetail().setDisbVchrPayeeZipCode(StringUtils.replace(alumni.getAddressPostalCodeUnmasked(), " ", "_"));
                 this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(address.getCountryCodeUnmasked());
             }
             else {
