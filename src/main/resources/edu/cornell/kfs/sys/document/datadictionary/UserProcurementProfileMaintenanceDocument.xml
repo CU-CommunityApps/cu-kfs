@@ -37,6 +37,13 @@
     <property name="businessRulesClass" value="edu.cornell.kfs.sys.document.validation.impl.UserProcurementProfileRule"/>
     <property name="documentAuthorizerClass" value="edu.cornell.kfs.sys.document.authorization.UserProcurementProfileAuthorizer"/>
     <property name="documentPresentationControllerClass" value="edu.cornell.kfs.sys.document.authorization.UserProcurementProfilePresentationController"/>
+    <property name="webScriptFiles">
+      <list>
+        <value>../dwr/interface/AccountService.js</value>
+        <value>../scripts/coa/accountGlobal.js</value>
+        <value>../scripts/sys/objectInfo.js</value>
+      </list>
+    </property>
  <!--   <property name="workflowAttributes">
       <ref bean="UserProcurementProfileMaintenanceDocument-workflowAttributes"/>
     </property>  
@@ -76,7 +83,9 @@
             <list>
         <bean parent="MaintainableFieldDefinition" p:name="description" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true"/>
-        <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true"/>
+        <!-- <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true"/> -->
+        <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true" p:template="accountNumber" p:webUILeaveFieldFunction="loadAccountName"/>
+              <bean parent="MaintainableFieldDefinition" p:name="account.accountName" p:unconditionallyReadOnly="true" p:template="accountName"/>
         <bean parent="MaintainableFieldDefinition" p:name="subAccountNumber"/>
         <bean parent="MaintainableFieldDefinition" p:name="financialObjectCode"/>
         <bean parent="MaintainableFieldDefinition" p:name="financialSubObjectCode"/>

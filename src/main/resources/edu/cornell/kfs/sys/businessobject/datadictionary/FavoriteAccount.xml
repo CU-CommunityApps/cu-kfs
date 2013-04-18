@@ -31,6 +31,7 @@
         <ref bean="FavoriteAccount-financialSubObjectCode"/>
         <ref bean="FavoriteAccount-primaryInd"/>
         <ref bean="FavoriteAccount-description"/>
+        <ref bean="FavoriteAccount-account.accountName"/>
 
 
       </list>
@@ -140,6 +141,11 @@
       <bean parent="TextControlDefinition"
             p:size="20" />
     </property>
+  </bean>
+ 
+   <bean id="FavoriteAccount-account.accountName" parent="FavoriteAccount-account.accountName-parentBean"/>
+  <bean id="FavoriteAccount-account.accountName-parentBean" abstract="true" parent="Account-accountName">
+    <property name="name" value="account.accountName"/>
   </bean>
  
 </beans>
