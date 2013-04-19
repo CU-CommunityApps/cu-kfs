@@ -21,10 +21,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.util.Strings;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants.RequisitionEditMode;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionSources;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
@@ -166,9 +169,25 @@ public class RequisitionDocumentPresentationController extends PurchasingAccount
 			}
 		} catch (Exception e) {
 		}
+		// KFSPTS-985
+		if (document instanceof RequisitionDocument && !editModes.contains(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION) && !hasEMptyAcctline((RequisitionDocument)document) ) {
+			editModes.add(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION);
+		}
         return editModes;
     }
 
+    
+    private boolean hasEMptyAcctline(RequisitionDocument document) {
+        boolean hasEmptyAcct = false;
+    	for (RequisitionItem item : (List<RequisitionItem>)document.getItems()) {
+    		if ((StringUtils.equals(item.getItemTypeCode(),ItemTypeCodes.ITEM_TYPE_ITEM_CODE) || StringUtils.equals(item.getItemTypeCode(),ItemTypeCodes.ITEM_TYPE_SERVICE_CODE) ) && CollectionUtils.isEmpty(item.getSourceAccountingLines())) {
+    			hasEmptyAcct = true;
+    			break;
+    		}
+    	}
+    	return hasEmptyAcct;
+    }
+    
     @Override
     protected boolean canCopy(Document document) {
         //  disallow copying until the doc is saved
