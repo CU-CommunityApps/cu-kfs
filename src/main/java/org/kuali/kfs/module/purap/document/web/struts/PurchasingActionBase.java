@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -52,7 +51,6 @@ import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.PurchasingDocument;
 import org.kuali.kfs.module.purap.document.PurchasingDocumentBase;
-import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.document.service.PurchasingService;
@@ -791,12 +789,6 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                         }
 
                         performedAccountDistribution = true;
-                    } else if (document instanceof RequisitionDocument && item.getSourceAccountingLines().size() > 0 && unitCostNotZeroForBelowLineItems && !itemOnExcludeList && itemIsActive
-                    		&& hasPrimaryFavAcct((PurchasingDocument)purchasingForm.getDocument(), item)) {
-                    	// KFSPTS-985 : distribute to replace the primary code based on Mike's comment
-                        for (PurApAccountingLine purApAccountingLine : distributionsourceAccountingLines) {
-                            item.getSourceAccountingLines().add((PurApAccountingLine) ObjectUtils.deepCopy(purApAccountingLine));
-                        }                    	
                     }
                 }
             }
@@ -1531,32 +1523,4 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 
         return requiresCalculate;
     }
-    
-    // KFSPTS-985
-    
-    private boolean  hasPrimaryFavAcct(PurchasingDocument purDoc, PurApItem item) {
-        // it will be more complicated to decide whether to check initiator or FO's primary fav account.
-    	// for now just check the session user's primary account.
-    	// the instruction need to be more clear 
-    	 FavoriteAccount favAccount = SpringContext.getBean(UserFavoriteAccountService.class).getFavoriteAccount(GlobalVariables.getUserSession().getPrincipalId());
-		if (favAccount != null) {
-			PurApAccountingLine primaryFavAcct = null;
-			for (PurApAccountingLine acctLine : item.getSourceAccountingLines()) {
-				if (isEqualAcct(favAccount, acctLine)) {
-					primaryFavAcct = acctLine;
-					break;
-				}
-			}
-			if (primaryFavAcct != null) {
-				item.getSourceAccountingLines().remove(primaryFavAcct);
-				return true;
-			}
-		}
-    	 return false;
-    }
-    
-    private boolean isEqualAcct(FavoriteAccount accountingLine, PurApAccountingLine acctLine) {
-        return new EqualsBuilder().append(acctLine.getChartOfAccountsCode(), accountingLine.getChartOfAccountsCode()).append(acctLine.getAccountNumber(), accountingLine.getAccountNumber()).append(acctLine.getSubAccountNumber(), accountingLine.getSubAccountNumber()).append(acctLine.getFinancialObjectCode(), accountingLine.getFinancialObjectCode()).append(acctLine.getFinancialSubObjectCode(), accountingLine.getFinancialSubObjectCode()).append(acctLine.getProjectCode(), accountingLine.getProjectCode()).append(acctLine.getOrganizationReferenceId(), accountingLine.getOrganizationReferenceId()).isEquals();
-    }
-
 }

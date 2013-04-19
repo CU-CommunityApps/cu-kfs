@@ -174,7 +174,7 @@ public class UserProcurementProfileValidationServiceImpl implements UserProcurem
 	
     private boolean isValidAccount(Account account, String label, String errorPropertyName) {
         // make sure it exists
-        if (ObjectUtils.isNull(account)) {
+        if (ObjectUtils.isNull(account) || StringUtils.isBlank(account.getAccountNumber())) {
             GlobalVariables.getMessageMap().putError(errorPropertyName, KFSKeyConstants.ERROR_EXISTENCE, label);
             return false;
         }
@@ -184,13 +184,18 @@ public class UserProcurementProfileValidationServiceImpl implements UserProcurem
             GlobalVariables.getMessageMap().putError(errorPropertyName, KFSKeyConstants.ERROR_DOCUMENT_ACCOUNT_CLOSED, label);
             return false;
         }
+        // make sure it's active for usage
+        if (account.isExpired()) {
+            GlobalVariables.getMessageMap().putError(errorPropertyName, KFSKeyConstants.ERROR_DOCUMENT_ACCOUNT_EXPIRED, label);
+            return false;
+        }
 
         return true;
     }
 
     private boolean isValidObjectCode(ObjectCode objectCode, String label, String errorPropertyName) {
 
-    	if (ObjectUtils.isNull(objectCode)) {
+    	if (ObjectUtils.isNull(objectCode) || StringUtils.isBlank(objectCode.getFinancialObjectCode())) {
             GlobalVariables.getMessageMap().putError(errorPropertyName, KFSKeyConstants.ERROR_EXISTENCE, label);
             return false;
         }

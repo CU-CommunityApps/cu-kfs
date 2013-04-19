@@ -13,6 +13,7 @@ import org.kuali.rice.core.util.KeyLabelPair;
 import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
@@ -40,11 +41,17 @@ public class FavoriteAccountValuesFiner extends KeyValuesBase {
     private String getAccountingLineDescription(FavoriteAccount account) {
     	StringBuffer sb = new StringBuffer();
     	sb.append(account.getDescription()).append(KFSConstants.COMMA).append(account.getAccountNumber());
-    	if (account.getAccount().isActive()) {
-    		sb.append("-active");
-    	} else {
-    		sb.append("-inactive");
-    	}
+		if (ObjectUtils.isNotNull(account)
+				&& ObjectUtils.isNotNull(account.getAccount())) {
+			if (account.getAccount().isActive()) {
+				sb.append("-active");
+			} else {
+				sb.append("-inactive");
+			}
+		} else {
+			sb.append("-inactive");
+
+		}
     	
     	if (StringUtils.isNotBlank(account.getSubAccountNumber())) {
     		sb.append(KFSConstants.COMMA).append(account.getSubAccountNumber());
