@@ -13,6 +13,7 @@ import org.kuali.rice.kns.web.ui.Field;
 import org.kuali.rice.kns.web.ui.Row;
 import org.kuali.rice.kns.web.ui.Section;
 
+import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
 import edu.cornell.kfs.sys.service.UserProcurementProfileValidationService;
 
@@ -50,6 +51,16 @@ public class UserProcurementProfileMaintainableImpl extends FinancialSystemMaint
       }
     	return sections;
     }
+
+
+	@Override
+	public void prepareForSave() {
+		// clean account, otherwise it will be saved in maintdoc.  this will cause some issue.
+		for (FavoriteAccount account : ((UserProcurementProfile)getBusinessObject()).getFavoriteAccounts()) {
+			account.setAccount(null);
+		}
+		super.prepareForSave();
+	}
 
 
 }
