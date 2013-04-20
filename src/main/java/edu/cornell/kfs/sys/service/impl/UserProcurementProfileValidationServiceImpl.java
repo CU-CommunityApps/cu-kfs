@@ -180,13 +180,13 @@ public class UserProcurementProfileValidationServiceImpl implements UserProcurem
         }
 
         // make sure it's active for usage
-        if (!account.isActive()) {
-            GlobalVariables.getMessageMap().putError(errorPropertyName, KFSKeyConstants.ERROR_DOCUMENT_ACCOUNT_CLOSED, label);
+        if (account.isExpired()) {
+            GlobalVariables.getMessageMap().putError(errorPropertyName, CUKFSKeyConstants.ERROR_ACCOUNT_EXPIRED, label);
             return false;
         }
         // make sure it's active for usage
-        if (account.isExpired()) {
-            GlobalVariables.getMessageMap().putError(errorPropertyName, KFSKeyConstants.ERROR_DOCUMENT_ACCOUNT_EXPIRED, label);
+        if (!account.isActive()) {
+            GlobalVariables.getMessageMap().putError(errorPropertyName, KFSKeyConstants.ERROR_DOCUMENT_ACCOUNT_CLOSED, label);
             return false;
         }
 

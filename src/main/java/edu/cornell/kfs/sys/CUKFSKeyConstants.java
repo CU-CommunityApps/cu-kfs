@@ -34,5 +34,6 @@ public class CUKFSKeyConstants extends KFSKeyConstants{
     public static final String ERROR_FAVORITE_ACCOUNT_NOT_EXIST = "error.favorite.account.not.exist";
     public static final String ERROR_FAVORITE_ACCOUNT_EXIST = "error.favorite.account.exist";
     public static final String ERROR_USER_PROFILE_EXIST = "error.user.profile.exist";
+    public static final String ERROR_ACCOUNT_EXPIRED = "error.account.expired";
     
 }
