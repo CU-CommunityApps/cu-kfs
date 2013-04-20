@@ -179,12 +179,14 @@ public class RequisitionDocumentPresentationController extends PurchasingAccount
     
     private boolean hasEMptyAcctline(RequisitionDocument document) {
         boolean hasEmptyAcct = false;
-    	for (RequisitionItem item : (List<RequisitionItem>)document.getItems()) {
-    		if ((StringUtils.equals(item.getItemTypeCode(),ItemTypeCodes.ITEM_TYPE_ITEM_CODE) || StringUtils.equals(item.getItemTypeCode(),ItemTypeCodes.ITEM_TYPE_SERVICE_CODE) ) && CollectionUtils.isEmpty(item.getSourceAccountingLines())) {
-    			hasEmptyAcct = true;
-    			break;
-    		}
-    	}
+        if (CollectionUtils.isNotEmpty(document.getItems())) {
+    	    for (RequisitionItem item : (List<RequisitionItem>)document.getItems()) {
+    		    if ((StringUtils.equals(item.getItemTypeCode(),ItemTypeCodes.ITEM_TYPE_ITEM_CODE) || StringUtils.equals(item.getItemTypeCode(),ItemTypeCodes.ITEM_TYPE_SERVICE_CODE) ) && CollectionUtils.isEmpty(item.getSourceAccountingLines())) {
+    			    hasEmptyAcct = true;
+    			    break;
+    		    }
+    	    }
+        }
     	return hasEmptyAcct;
     }
     
