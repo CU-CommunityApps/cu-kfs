@@ -1,7 +1,11 @@
 package edu.cornell.kfs.sys.document;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
@@ -9,6 +13,7 @@ import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.maintenance.Maintainable;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSConstants;
+import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.web.ui.Field;
 import org.kuali.rice.kns.web.ui.Row;
 import org.kuali.rice.kns.web.ui.Section;
@@ -60,6 +65,41 @@ public class UserProcurementProfileMaintainableImpl extends FinancialSystemMaint
 			account.setAccount(null);
 		}
 		super.prepareForSave();
+	}
+
+
+	@Override
+	public void saveBusinessObject() {
+		// TODO Auto-generated method stub
+		if (StringUtils.equals(getMaintenanceAction(),
+				KNSConstants.MAINTENANCE_EDIT_ACTION)) {
+			Map<String, Object> pkMap = new HashMap<String, Object>();
+			pkMap.put("userProfileId", ((UserProcurementProfile) getBusinessObject()).getUserProfileId());
+			UserProcurementProfile userProfile = (UserProcurementProfile) getBusinessObjectService()
+					.findByPrimaryKey(UserProcurementProfile.class, pkMap);
+			List<FavoriteAccount> deletedAccounts = new ArrayList<FavoriteAccount>();
+			if (ObjectUtils.isNotNull(userProfile) && CollectionUtils.isNotEmpty(userProfile.getFavoriteAccounts())) {
+				for (FavoriteAccount account : userProfile.getFavoriteAccounts()) {
+					boolean accountFound = false;
+					if (CollectionUtils.isNotEmpty(((UserProcurementProfile) getBusinessObject()).getFavoriteAccounts())) {
+						for (FavoriteAccount account1 : ((UserProcurementProfile) getBusinessObject()).getFavoriteAccounts()) {
+							if (account1.getAccountLineIdentifier() != null&& account.getAccountLineIdentifier().equals(account1.getAccountLineIdentifier())) {
+								accountFound = true;
+								break;
+							}
+						}
+					}
+					if (!accountFound) {
+						deletedAccounts.add(account);
+					}
+				}
+				if (CollectionUtils.isNotEmpty(deletedAccounts)) {
+					getBusinessObjectService().delete(deletedAccounts);
+				}
+			}
+
+		}
+		super.saveBusinessObject();
 	}
 
 

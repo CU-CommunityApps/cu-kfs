@@ -76,8 +76,8 @@
           <property name="name" value="favoriteAccounts"/>
      <!--    <property name="sourceClassName" value="edu.cornell.kfs.sys.businessobject.FavoriteAccount"/> -->  
           <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.FavoriteAccount"/>
-    <!--     <property name="alwaysAllowCollectionDeletion" value="true"/>
-		  <property name="includeAddLine" value="true"/>
+        <property name="alwaysAllowCollectionDeletion" value="true"/>
+	<!-- 	  <property name="includeAddLine" value="true"/>
 		  <property name="includeMultipleLookupLine" value="false"/>  --> 
           <property name="maintainableFields">
             <list>
