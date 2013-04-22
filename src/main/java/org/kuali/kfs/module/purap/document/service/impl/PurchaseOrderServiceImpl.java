@@ -2154,50 +2154,51 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         RequisitionDocument req = po.getPurApSourceDocumentIfPossible();
 
-       // String reqInitiator =req.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
-        String reqInitiator =req.getDocumentHeader().getWorkflowDocument().getRoutedByUserNetworkId();
-        String currentDocumentTypeName = po.getDocumentHeader().getWorkflowDocument().getDocumentType();
-        Set<String> fiscalOfficerIds = new HashSet<String>();
-        Set<Account> accounts = new HashSet<Account>();
-        try {
-        	// TODO : note : appSpecificRouteDocumentToUser is using principalname, but 5.x is using principalid
-            po.appSpecificRouteDocumentToUser(po.getDocumentHeader().getWorkflowDocument(), reqInitiator, getAdhocFyiAnnotation(po) + KFSConstants.BLANK_SPACE + req.getPurapDocumentIdentifier() + KFSConstants.BLANK_SPACE + "(document Id " + req.getDocumentNumber() + ")", "Requisition Routed By User");
-
-
-            if(!PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_AMENDMENT_DOCUMENT.equalsIgnoreCase(currentDocumentTypeName)){
-                List<PurchaseOrderItem> items = po.getItemsActiveOnly();
-                for (PurchaseOrderItem item : items) {
-                    List<PurApAccountingLine> lines = item.getSourceAccountingLines();
-                    for (PurApAccountingLine line : lines) {
-                        accounts.add(line.getAccount());
-                    }
-                }
-                for (Account account : accounts) {
-                    String principalId = account.getAccountFiscalOfficerUser().getPrincipalId();
-
-                    if (!fiscalOfficerIds.contains(principalId)) {
-                        fiscalOfficerIds.add(principalId);
-                        AccountDelegate accountDelegate = getAccountPrimaryDelegate(account);
-                        if (ObjectUtils.isNotNull(accountDelegate)) {
-                                String delegateName =SpringContext.getBean(PersonService.class).getPerson(accountDelegate.getAccountDelegateSystemId()).getPrincipalName();
-                                String annotationText = "Delegation of: " + KFSConstants.ParameterNamespaces.KFS  + KFSConstants.BLANK_SPACE + KFSConstants.SysKimConstants.FISCAL_OFFICER_KIM_ROLE_NAME + KFSConstants.BLANK_SPACE + account.getChartOfAccountsCode() + KFSConstants.BLANK_SPACE + account.getAccountNumber() + KFSConstants.BLANK_SPACE + "to principal" + KFSConstants.BLANK_SPACE + delegateName;
-                                po.appSpecificRouteDocumentToUser(po.getDocumentHeader().getWorkflowDocument(), delegateName, annotationText, "Fiscal Officer Notification");
-                        }
-                        else {
-                            String annotationText = KFSConstants.ParameterNamespaces.KFS + KFSConstants.BLANK_SPACE + KFSConstants.SysKimConstants.FISCAL_OFFICER_KIM_ROLE_NAME +  KFSConstants.BLANK_SPACE + account.getChartOfAccountsCode() + KFSConstants.BLANK_SPACE + account.getAccountNumber();
-                            po.appSpecificRouteDocumentToUser(po.getDocumentHeader().getWorkflowDocument(), account.getAccountFiscalOfficerUser().getPrincipalName(), annotationText, "Fiscal Officer Notification");
-                        }
-
-
-                    }
-                }
-            }
-
-
-        }
-        catch (WorkflowException ex) {
-            throw new RuntimeException("Error routing fyi for document with id " + po.getDocumentNumber(), ex);
-        }
+        // TODO : disable this to verify if it caused OLE for autoclosepo batch job
+//       // String reqInitiator =req.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+//        String reqInitiator =req.getDocumentHeader().getWorkflowDocument().getRoutedByUserNetworkId();
+//        String currentDocumentTypeName = po.getDocumentHeader().getWorkflowDocument().getDocumentType();
+//        Set<String> fiscalOfficerIds = new HashSet<String>();
+//        Set<Account> accounts = new HashSet<Account>();
+//        try {
+//        	// TODO : note : appSpecificRouteDocumentToUser is using principalname, but 5.x is using principalid
+//            po.appSpecificRouteDocumentToUser(po.getDocumentHeader().getWorkflowDocument(), reqInitiator, getAdhocFyiAnnotation(po) + KFSConstants.BLANK_SPACE + req.getPurapDocumentIdentifier() + KFSConstants.BLANK_SPACE + "(document Id " + req.getDocumentNumber() + ")", "Requisition Routed By User");
+//
+//
+//            if(!PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_AMENDMENT_DOCUMENT.equalsIgnoreCase(currentDocumentTypeName)){
+//                List<PurchaseOrderItem> items = po.getItemsActiveOnly();
+//                for (PurchaseOrderItem item : items) {
+//                    List<PurApAccountingLine> lines = item.getSourceAccountingLines();
+//                    for (PurApAccountingLine line : lines) {
+//                        accounts.add(line.getAccount());
+//                    }
+//                }
+//                for (Account account : accounts) {
+//                    String principalId = account.getAccountFiscalOfficerUser().getPrincipalId();
+//
+//                    if (!fiscalOfficerIds.contains(principalId)) {
+//                        fiscalOfficerIds.add(principalId);
+//                        AccountDelegate accountDelegate = getAccountPrimaryDelegate(account);
+//                        if (ObjectUtils.isNotNull(accountDelegate)) {
+//                                String delegateName =SpringContext.getBean(PersonService.class).getPerson(accountDelegate.getAccountDelegateSystemId()).getPrincipalName();
+//                                String annotationText = "Delegation of: " + KFSConstants.ParameterNamespaces.KFS  + KFSConstants.BLANK_SPACE + KFSConstants.SysKimConstants.FISCAL_OFFICER_KIM_ROLE_NAME + KFSConstants.BLANK_SPACE + account.getChartOfAccountsCode() + KFSConstants.BLANK_SPACE + account.getAccountNumber() + KFSConstants.BLANK_SPACE + "to principal" + KFSConstants.BLANK_SPACE + delegateName;
+//                                po.appSpecificRouteDocumentToUser(po.getDocumentHeader().getWorkflowDocument(), delegateName, annotationText, "Fiscal Officer Notification");
+//                        }
+//                        else {
+//                            String annotationText = KFSConstants.ParameterNamespaces.KFS + KFSConstants.BLANK_SPACE + KFSConstants.SysKimConstants.FISCAL_OFFICER_KIM_ROLE_NAME +  KFSConstants.BLANK_SPACE + account.getChartOfAccountsCode() + KFSConstants.BLANK_SPACE + account.getAccountNumber();
+//                            po.appSpecificRouteDocumentToUser(po.getDocumentHeader().getWorkflowDocument(), account.getAccountFiscalOfficerUser().getPrincipalName(), annotationText, "Fiscal Officer Notification");
+//                        }
+//
+//
+//                    }
+//                }
+//            }
+//
+//
+//        }
+//        catch (WorkflowException ex) {
+//            throw new RuntimeException("Error routing fyi for document with id " + po.getDocumentNumber(), ex);
+//        }
 
     }
 
