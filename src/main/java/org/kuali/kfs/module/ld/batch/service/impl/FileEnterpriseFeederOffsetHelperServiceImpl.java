@@ -263,7 +263,17 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
                         }
                         
                     } catch (Exception e) {
-                        throw new IOException(e.toString());
+                    	LOG.error("Caught exception when reconciling/loading done file: " + doneFile, e);
+                        statusAndErrors.setStatus(new ExceptionCaughtStatus());
+                        errorMessages.add(new Message("Caught exception attempting to reconcile/load done file: " + doneFile + ".  File contents are NOT loaded", Message.TYPE_FATAL));
+                        // re-throw the exception rather than returning a value so that Spring will auto-rollback
+                        if (e instanceof RuntimeException) {
+                            throw (RuntimeException) e;
+                        }
+                        else {
+                            // Spring only rolls back when throwing a runtime exception (by default), so we throw a new exception
+                            throw new RuntimeException(e);
+                        }
                     }
                     
                     count++;
