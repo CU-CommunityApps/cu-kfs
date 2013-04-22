@@ -22,6 +22,7 @@
     <property name="documentTypeName" value="YEST"/>
     <property name="documentClass" value="org.kuali.kfs.module.ld.document.YearEndSalaryExpenseTransferDocument"/>
     <property name="businessRulesClass" value="org.kuali.kfs.sys.document.validation.impl.AccountingRuleEngineRuleBase"/>
+    <property name="promptBeforeValidationClass" value="org.kuali.kfs.module.ld.document.validation.impl.YearEndSalaryExpenseTransferDocumentPreRules"/>
     <property name="documentAuthorizerClass" value="org.kuali.kfs.module.ld.document.authorization.LaborExpenseDocumentAuthorizerBase"/>
     <property name="documentPresentationControllerClass" value="org.kuali.kfs.module.ld.document.authorization.LaborExpensesDocumentPresentationController"/>
     
