@@ -1,7 +1,5 @@
 package edu.cornell.kfs.vnd.service;
 
-import java.util.Map;
-
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
@@ -24,7 +22,20 @@ public interface KFSVendorWebService {
    * @throws Exception
    */
   public String addVendor(
-		  @WebParam(name = "vendorType")String vendorType
+		  @WebParam(name = "vendorName")String vendorName,
+		  @WebParam(name = "vendorTypeCode")String vendorTypeCode,
+		  @WebParam(name = "isForeign")boolean isForeign, 
+		  @WebParam(name = "taxNumber")String taxNumber, 
+		  @WebParam(name = "taxNumberType")String taxNumberType, 
+		  @WebParam(name = "ownershipTypeCode")String ownershipTypeCode,
+		  @WebParam(name = "isTaxable")boolean isTaxable,
+		  @WebParam(name = "isEInvoice")boolean isEInvoice,
+		  @WebParam(name = "vendorAddressTypeCode")String vendorAddressTypeCode, 
+		  @WebParam(name = "vendorLine1Address")String vendorLine1Address, 
+		  @WebParam(name = "vendorCityName")String vendorCityName, 
+		  @WebParam(name = "vendorStateCode")String vendorStateCode, 
+		  @WebParam(name = "vendorPostalCode")String vendorPostalCode, 
+		  @WebParam(name = "vendorCountryCode")String vendorCountryCode
 		  ) throws Exception;
   
   /**
@@ -35,7 +46,8 @@ public interface KFSVendorWebService {
    * @throws Exception
    */
   public boolean updateVendor(
-		  @WebParam(name = "documentName")String documentName
+		  @WebParam(name = "vendorId")String vendorId,
+		  @WebParam(name = "vendorIdType")String vendorIdType
 		  ) throws Exception;
 
   /**

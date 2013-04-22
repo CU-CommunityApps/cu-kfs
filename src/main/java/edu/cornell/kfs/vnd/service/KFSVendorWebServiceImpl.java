@@ -1,31 +1,20 @@
 package edu.cornell.kfs.vnd.service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 import javax.jws.WebService;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.fp.businessobject.DisbursementPayee;
-import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
-import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
-import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.kfs.vnd.businessobject.VendorHeader;
+import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.bo.entity.KimEntityAffiliation;
-import org.kuali.rice.kim.bo.impl.PersonImpl;
-import org.kuali.rice.kim.service.PersonService;
 import org.kuali.rice.kns.UserSession;
-import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.service.DocumentHelperService;
+import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.MessageMap;
 import org.kuali.rice.kns.util.ObjectUtils;
 
@@ -48,12 +37,66 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	/**
 	 * 
 	 */
-	public String addVendor(String vendorType) throws Exception {
+	public String addVendor(String vendorName, String vendorTypeCode, boolean isForeign, String taxNumber, String taxNumberType, String ownershipTypeCode, boolean isTaxable, boolean isEInvoice,
+			                String vendorAddressTypeCode, String vendorLine1Address, String vendorCityName, String vendorStateCode, String vendorPostalCode, String vendorCountryCode) throws Exception {
         UserSession actualUserSession = GlobalVariables.getUserSession();
         MessageMap globalErrorMap = GlobalVariables.getMessageMap();
         
+        // create and route doc as system user
+        GlobalVariables.setUserSession(new UserSession("kme44"));
+        
         try {
-        	return "";
+        	DocumentService docService = SpringContext.getBean(DocumentService.class);
+        	
+            MaintenanceDocument vendorDoc = (MaintenanceDocument)docService.getNewDocument("PVEN");
+            
+            vendorDoc.getDocumentHeader().setDocumentDescription("New vendor from Procurement tool");
+            
+        	VendorMaintainableImpl vImpl = (VendorMaintainableImpl)vendorDoc.getNewMaintainableObject();
+
+        	VendorDetail vDetail = (VendorDetail)vImpl.getBusinessObject();
+        	
+        	vDetail.setVendorName(vendorName);
+        	vDetail.setActiveIndicator(true);
+        	vDetail.setTaxableIndicator(isTaxable);
+
+        	((VendorDetailExtension)vDetail.getExtension()).setEinvoiceVendorIndicator(isEInvoice);
+
+        	VendorAddress vendorAddr = new VendorAddress();
+        	vendorAddr.setVendorAddressTypeCode(vendorAddressTypeCode);
+        	vendorAddr.setVendorLine1Address(vendorLine1Address);
+        	vendorAddr.setVendorCityName(vendorCityName);
+        	vendorAddr.setVendorStateCode(vendorStateCode);
+        	vendorAddr.setVendorZipCode(vendorPostalCode);
+        	vendorAddr.setVendorCountryCode(vendorCountryCode);
+        	vendorAddr.setVendorDefaultAddressIndicator(true);
+
+        	ArrayList<VendorAddress> vAddrs = new ArrayList<VendorAddress>();
+        	vAddrs.add(vendorAddr);
+        	
+        	vDetail.setVendorAddresses(vAddrs);
+
+        	vDetail.setDefaultAddressLine1(vendorLine1Address);
+        	vDetail.setDefaultAddressCity(vendorCityName);
+        	vDetail.setDefaultAddressStateCode(vendorStateCode);
+        	vDetail.setDefaultAddressPostalCode(vendorPostalCode);
+        	vDetail.setDefaultAddressCountryCode(vendorCountryCode);
+        	
+        	VendorHeader vHeader = vDetail.getVendorHeader();
+        	
+        	vHeader.setVendorTypeCode(vendorTypeCode);
+        	vHeader.setVendorTaxNumber(taxNumber);
+        	vHeader.setVendorTaxTypeCode(taxNumberType);
+        	vHeader.setVendorForeignIndicator(isForeign);
+        	vHeader.setVendorOwnershipCode(ownershipTypeCode);
+
+        	vDetail.setVendorHeader(vHeader);
+        	vImpl.setBusinessObject(vDetail);
+        	vendorDoc.setNewMaintainableObject(vImpl);
+
+        	docService.routeDocument(vendorDoc, "", null);
+        	
+            return vendorDoc.getDocumentNumber();
         } finally {
             GlobalVariables.setUserSession(actualUserSession);
             GlobalVariables.setMessageMap(globalErrorMap);
@@ -63,8 +106,11 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	/**
 	 * 
 	 */
-	public boolean updateVendor(String documentName) throws Exception {
-
+	public boolean updateVendor(String vendorId, String vendorIdType) throws Exception {
+		VendorDetail vendor = retrieveVendor(vendorId, vendorIdType);
+		
+		
+		
 		return true;
 	}
 
