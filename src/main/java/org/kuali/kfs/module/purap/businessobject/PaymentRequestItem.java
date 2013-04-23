@@ -106,9 +106,6 @@ public class PaymentRequestItem extends AccountsPayableItemBase {
         // clear amount and desc on below the line - we probably don't need that null
         // itemType check but it's there just in case remove if it causes problems
         // also do this if of type service
-        // KFSPTS-1719 : exclude non-qty item because it caused problem for einvoice
-        // TODO : need further check that this change will not affect non-einvoice process
-        //if ((ObjectUtils.isNotNull(this.getItemType()) && this.getItemType().isAmountBasedGeneralLedgerIndicator()) && !poi.isNoQtyItem()) {
         if ((ObjectUtils.isNotNull(this.getItemType()) && this.getItemType().isAmountBasedGeneralLedgerIndicator())) {
             // setting unit price to be null to be more consistent with other below the line
             this.setItemUnitPrice(null);
