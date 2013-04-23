@@ -174,6 +174,8 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
             Integer sequenceNumber = accountingLine.getSequenceNumber();
             if (sequenceNumber != null) {
             	lineMap.put(sequenceNumber, accountingLine);
+            } else if (accountingLine.getObjectId() != null){
+            	lineMap.put(accountingLine.getObjectId(), accountingLine);
             }
         }
 
