@@ -19,7 +19,7 @@
     <documentType>
         <name>UPPM</name>
 		<parent>FSSM</parent>
-		<label>User Procurement Profile</label>
+		<label>User Favorites Profile</label>
     </documentType>
   </documentTypes>
 </data>

@@ -54,8 +54,8 @@
   <bean id="UserProcurementProfileMaintenanceDocument-UserProcurementProfile" parent="UserProcurementProfileMaintenanceDocument-UserProcurementProfile-parentBean"/>
   <bean id="UserProcurementProfileMaintenanceDocument-UserProcurementProfile-parentBean" abstract="true" parent="MaintainableSectionDefinition">
     <property name="defaultOpen" value="true"/>
-	<property name="id" value="User Procurement Profile"/>  
-    <property name="title" value="User Procurement Profile"/>
+	<property name="id" value="User Favorites Profile"/>  
+    <property name="title" value="User Favorites Profile"/>
     <property name="maintainableItems">
       <list>
      	<bean parent="MaintainableFieldDefinition" p:name="profileUser.principalName" p:required="true"/>	                        

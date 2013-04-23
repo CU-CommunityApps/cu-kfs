@@ -25,7 +25,7 @@
     <property name="lookupDefinition">
       <ref bean="UserProcurementProfile-lookupDefinition"/>
     </property>
-    <property name="objectLabel" value="User procurement Profile Select"/>
+    <property name="objectLabel" value="User Favorites Profile Select"/>
     <property name="attributes">
       <list>
         <ref bean="UserProcurementProfile-userProfileId"/>
@@ -197,7 +197,7 @@
   <bean id="UserProcurementProfile-inquiryDefinition" parent="UserProcurementProfile-inquiryDefinition-parentBean"/>
 
   <bean id="UserProcurementProfile-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
-    <property name="title" value="User Procurement Profile Inquiry"/>
+    <property name="title" value="User Favorites Profile Inquiry"/>
     <property name="inquirySections">
       <list>
         <bean parent="InquirySectionDefinition">
@@ -221,7 +221,7 @@
   <bean id="UserProcurementProfile-lookupDefinition" parent="UserProcurementProfile-lookupDefinition-parentBean"/>
 
   <bean id="UserProcurementProfile-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
-    <property name="title" value="User Procurement Profile Lookup"/>
+    <property name="title" value="User Favorites Profile Lookup"/>
   <!--   <property name="lookupableID" value="intendedIncumbentSelectLookupable"/> -->
     
     <property name="defaultSort">

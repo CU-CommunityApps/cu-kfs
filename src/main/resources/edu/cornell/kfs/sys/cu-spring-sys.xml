@@ -132,7 +132,7 @@
 	    <property name="autoCancelBatchDao" ref="autoCancelBatchDao"/>
 	</bean>
 	
-<!-- KFSPTS-985 : User procurement profile -->
+<!-- KFSPTS-985 : User Favorites Profile -->
     <bean id="UserProcurementProfileValidationService" class="edu.cornell.kfs.sys.service.impl.UserProcurementProfileValidationServiceImpl">
 		<property name="dictionaryValidationService">
 			<ref bean="dictionaryValidationService" />

@@ -26,7 +26,7 @@ public class CUKFSKeyConstants extends KFSKeyConstants{
     public static final String MESSAGE_BATCH_UPLOAD_TITLE_REQUEUER_FLAT_FILE = "message.batchUpload.title.requeuer";
     public static final String MESSAGE_BATCH_UPLOAD_TITLE_REINDEX_FLAT_FILE = "message.batchUpload.title.reindex";
 
-    // KFSPTS-985 user procurement profile
+    // KFSPTS-985 User Favorites Profile
     public static final String ERROR_MULTIPLE_FAVORITE_ACCOUNTS = "error.multiple.primary.favorite.account";
     public static final String ERROR_DUPLICATE_FAVORITE_ACCOUNT_DESCRIPTION = "error.duplicate.favorite.account.description";
     public static final String ERROR_DUPLICATE_ACCOUNTINGLINE = "error.duplicate.accountline";
