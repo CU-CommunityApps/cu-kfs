@@ -141,7 +141,7 @@
                               readOnly="${not fullEntryMode}"
                               renderOtherFields="true"
                               fieldConversions="principalName:document.initiatorNetID,name:document.initiatorName,phoneNumber:document.initiatorPhoneNumber,emailAddress:document.initiatorEmailAddress"
-                              lookupParameters="document.initiatorNetID:principalName"
+                              lookupParameters="document.initiatorNetIDForLookup:principalName"
                               hasErrors="${hasErrors}"
                               onblur="loadRequestorInfo('document.sameAsInitiator', 'document.initiatorNetID', 'document.initiatorName', 'document.initiatorPhoneNumber', 'document.initiatorEmailAddress', 'document.initiatorAddress')" />
                  
@@ -160,7 +160,7 @@
                               readOnly="${not fullEntryMode}"
                               renderOtherFields="true"
                               fieldConversions="principalName:document.deliverToNetID,name:document.deliverToName,phoneNumber:document.deliverToPhoneNumber,emailAddress:document.deliverToEmailAddress"
-                              lookupParameters="document.deliverToNetID:principalName"
+                              lookupParameters="document.deliverToNetIDForLookup:principalName"
                               hasErrors="${hasErrors}"
                               onblur="loadDeliverToInfo('document.sameAsInitiator', 'document.deliverToNetID', 'document.deliverToName', 'document.deliverToPhoneNumber', 'document.deliverToEmailAddress', 'document.deliverToAddress')" />
                  

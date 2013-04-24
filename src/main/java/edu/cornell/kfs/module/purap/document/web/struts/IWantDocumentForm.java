@@ -131,6 +131,20 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     public void setStep(String step) {
         this.step = step;
     }
+    
+    /**
+     * Returns the new ad hoc route person's netId surrounded by wildcards,
+     * or a blank value if the ad hoc route person is null or has a blank netId.
+     */
+    public String getNewAdHocRoutePersonIdForLookup() {
+    	if (getNewAdHocRoutePerson() != null) {
+    		if (StringUtils.isNotBlank(getNewAdHocRoutePerson().getId())) {
+    			return "*" + getNewAdHocRoutePerson().getId() + "*";
+    		}
+    		return getNewAdHocRoutePerson().getId();
+    	}
+    	return "";
+    }
 
     /**
      * Returns the title at the top of the IWant Document.

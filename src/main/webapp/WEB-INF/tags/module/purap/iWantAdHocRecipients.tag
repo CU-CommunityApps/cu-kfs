@@ -53,7 +53,7 @@
                               readOnly="${displayReadOnly}"
                               renderOtherFields="true"
                               fieldConversions="principalName:newAdHocRoutePerson.id,name:newAdHocRoutePerson.name"
-                              lookupParameters="newAdHocRoutePerson.id:principalName"
+                              lookupParameters="newAdHocRoutePersonIdForLookup:principalName"
                               hasErrors="${hasErrors}" />
                     </td>
                 </tr>

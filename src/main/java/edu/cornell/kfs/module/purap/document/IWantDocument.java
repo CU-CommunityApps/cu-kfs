@@ -181,6 +181,17 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     public void setInitiatorNetID(String initiatorNetID) {
         this.initiatorNetID = initiatorNetID;
     }
+    
+    /**
+     * Returns the initiatorNetID with wildcards on either side, or
+     * the current initiatorNetID if it is blank.
+     */
+    public String getInitiatorNetIDForLookup() {
+    	if (StringUtils.isNotBlank(initiatorNetID)) {
+    		return "*" + initiatorNetID + "*";
+    	}
+    	return initiatorNetID;
+    }
 
     public String getInitiatorName() {
         return initiatorName;
@@ -212,6 +223,17 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     public void setDeliverToNetID(String deliverToNetID) {
         this.deliverToNetID = deliverToNetID;
+    }
+    
+    /**
+     * Returns the deliverToNetID with wildcards on either side, or
+     * the current deliverToNetID value if it is blank.
+     */
+    public String getDeliverToNetIDForLookup() {
+    	if (StringUtils.isNotBlank(deliverToNetID)) {
+    		return "*" + deliverToNetID + "*";
+    	}
+    	return deliverToNetID;
     }
 
     public String getDeliverToName() {
@@ -732,6 +754,22 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         this.setDeliverToInfoAsDefault = setDeliverToInfoAsDefault;
     }
 
+    /**
+     * KFSPTS-1961:
+     * We need to add the items and accounts lists to the deletion-aware-lists collection
+     * to ensure that element deletion functions correctly.
+     * 
+     * @see org.kuali.rice.kns.bo.PersistableBusinessObjectBase#buildListOfDeletionAwareLists()
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+	public List buildListOfDeletionAwareLists() {
+		List deletionAwareLists = super.buildListOfDeletionAwareLists();
+		deletionAwareLists.add(items);
+		deletionAwareLists.add(accounts);
+		return deletionAwareLists;
+	}
+    
     /**
      * Override this method to send out an email to the initiator when the document reached the final status.
      * 

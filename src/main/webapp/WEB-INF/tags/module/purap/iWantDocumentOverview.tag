@@ -28,6 +28,17 @@
 		  <h3>Document Overview</h3>
 		  <table cellpadding="0" cellspacing="0"  title="view/edit document overview information" summary="view/edit document overview information">
 		    <tr>
+				<td colspan="2" class="neutral" style="color: blue; font-family:Verdana, Verdana, serif; font-size: 12px;font-style: italic">
+					<div>
+						<b>NOTE:</b> Each statement should tie the purchase to the account being charged; what is being purchased, why it is being purchased, how it will be used.
+						<ul>
+							<li><b>Not</b> an adequate Business Purpose = "Lab Supplies"</li>
+							<li>Adequate Business Purpose = "Electronic components for sample analyzer used in Prof. Smith's XYZ project (or OSP 12345)."</li>
+						</ul>
+					</div>
+				</td>
+			</tr>
+		    <tr>
 		    <th align="right" valign="middle" class="neutral">
 		      <kul:htmlAttributeLabel 
 		         
