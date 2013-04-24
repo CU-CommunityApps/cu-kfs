@@ -91,7 +91,7 @@ public class OrgAssignedValidation extends GenericValidation {
 		boolean hasReviewer = false;
 		for(RoleMemberCompleteInfo member : roleMembers) {
 			String memberOrg = member.getQualifier().get(KFSConstants.ORGANIZATION_CODE_PROPERTY_NAME);
-			if(org.getOrganizationCode().equalsIgnoreCase(memberOrg)) {
+			if(org.getOrganizationCode().equalsIgnoreCase(memberOrg) && member.isActive()) {
 				hasReviewer = true;
 				break;
 			}
@@ -99,7 +99,10 @@ public class OrgAssignedValidation extends GenericValidation {
 
 		Organization rto = org.getReportsToOrganization();
 		if(!hasReviewer && rto != null) {
-			hasReviewer = hasOrgReviewer(account, org.getReportsToOrganization(), documentTypeRoleID, false);
+			Organization reportsTo = org.getReportsToOrganization();
+			if(!reportsTo.getOrganizationCode().equalsIgnoreCase("UNIV")) {
+				hasReviewer = hasOrgReviewer(account, reportsTo, documentTypeRoleID, false);
+			}
 		}
 		
 		if(!hasReviewer && firstCall) {
