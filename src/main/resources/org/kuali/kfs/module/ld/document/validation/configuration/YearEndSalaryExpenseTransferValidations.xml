@@ -36,8 +36,22 @@
 
 
 	<bean id="YearEndSalaryExpenseTransferDocument-routeDocumentValidation" parent="YearEndSalaryExpenseTransferDocument-routeDocumentValidation-parentBean" scope="prototype" />
-	<bean id="YearEndSalaryExpenseTransferDocument-routeDocumentValidation-parentBean" parent="SalaryExpenseTransferDocument-routeDocumentValidation" abstract="true"/>
-
+	<bean id="YearEndSalaryExpenseTransferDocument-routeDocumentValidation-parentBean" parent="SalaryExpenseTransferDocument-routeDocumentValidation" abstract="true">
+  		<property name="validations">
+  			<list>
+  				<bean parent="YearEndDocument-orgAssignedValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="yearEndDocumentForValidation" />
+							</bean>
+						</list>
+					</property>
+       			</bean>
+  			</list>
+  		</property>
+	</bean>
 
 	<bean id="YearEndSalaryExpenseTransferDocument-updateAccountingLineValidation" parent="YearEndSalaryExpenseTransferDocument-updateAccountingLineValidation-parentBean" scope="prototype" />
 	<bean id="YearEndSalaryExpenseTransferDocument-updateAccountingLineValidation-parentBean" parent="SalaryExpenseTransferDocument-updateAccountingLineValidation" abstract="true"/>
