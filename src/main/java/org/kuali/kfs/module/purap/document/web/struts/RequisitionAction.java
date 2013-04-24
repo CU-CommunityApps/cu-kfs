@@ -40,12 +40,6 @@ import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
-import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
-import edu.cornell.kfs.sys.CUKFSKeyConstants;
-import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
-import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
-import edu.cornell.kfs.sys.service.UserProcurementProfileValidationService;
-
 /**
  * Struts Action for Requisition document.
  */
@@ -213,52 +207,4 @@ public class RequisitionAction extends PurchasingActionBase {
         return forward;
     }
     
-    public ActionForward addFavoriteAccount(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        RequisitionForm rqForm = (RequisitionForm) form;
-        RequisitionDocument document = (RequisitionDocument) rqForm.getDocument();
-        int itemIdx = getSelectedLine(request);
-		if (itemIdx >= 0) {
-			RequisitionItem item = (RequisitionItem) document
-					.getItem(getSelectedLine(request));
-			if (item.getFavoriteAccountLineIdentifier() != null) {
-				FavoriteAccount account = SpringContext.getBean(UserFavoriteAccountService.class).getSelectedFavoriteAccount(item.getFavoriteAccountLineIdentifier());
-				if (ObjectUtils.isNotNull(account)) {
-					if (!SpringContext.getBean(UserProcurementProfileValidationService.class).isAccountExist(account, item.getSourceAccountingLines(), itemIdx)) {
-					  item.getSourceAccountingLines().add(SpringContext.getBean(UserFavoriteAccountService.class).getPopulatedNewAccount(account));
-					}
-				} else {
-					GlobalVariables.getMessageMap().putError("document.item["+itemIdx+"].favoriteAccountLineIdentifier", CUKFSKeyConstants.ERROR_FAVORITE_ACCOUNT_NOT_EXIST);
-				}
-
-			} else {
-				GlobalVariables.getMessageMap().putError("document.item["+itemIdx+"].favoriteAccountLineIdentifier", CUKFSKeyConstants.ERROR_FAVORITE_ACCOUNT_NOT_SELECTED);
-			}
-		} else if (itemIdx == -2) {
-			// TODO : also need error handling here
-			if (document.getFavoriteAccountLineIdentifier() != null) {
-				FavoriteAccount account = SpringContext.getBean(UserFavoriteAccountService.class).getSelectedFavoriteAccount(document.getFavoriteAccountLineIdentifier());
-				if (ObjectUtils.isNotNull(account)) {
-					if (ObjectUtils.isNotNull(account)) {
-						if (!SpringContext.getBean(UserProcurementProfileValidationService.class).isAccountExist(account,rqForm.getAccountDistributionsourceAccountingLines(),itemIdx)) {
-							rqForm.getAccountDistributionsourceAccountingLines().add(SpringContext.getBean(UserFavoriteAccountService.class).getPopulatedNewAccount(account));
-						}
-					}
-				} else {
-					GlobalVariables.getMessageMap().putError("document.favoriteAccountLineIdentifier",CUKFSKeyConstants.ERROR_FAVORITE_ACCOUNT_NOT_EXIST);
-				}
-
-			} else {
-				GlobalVariables.getMessageMap().putError("document.favoriteAccountLineIdentifier",CUKFSKeyConstants.ERROR_FAVORITE_ACCOUNT_NOT_SELECTED);
-			}
-			// errorPrefix =
-			// PurapPropertyConstants.ACCOUNT_DISTRIBUTION_NEW_SRC_LINE;
-			// rulePassed =
-			// SpringContext.getBean(KualiRuleService.class).applyRules(new
-			// AddAccountingLineEvent(errorPrefix, purapForm.getDocument(),
-			// (AccountingLine) line));
-		}
-
-        return mapping.findForward(KFSConstants.MAPPING_BASIC);
-    }
-
 }

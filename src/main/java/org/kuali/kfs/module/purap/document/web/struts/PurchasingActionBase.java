@@ -104,8 +104,6 @@ import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
-import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
-import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 /**
@@ -468,22 +466,11 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         if (rulePassed) {
             item = purchasingForm.getAndResetNewPurchasingItemLine();
             purDocument.addItem(item);
-            // KFSPTS-985
-            if (purchasingForm instanceof RequisitionForm) {
-                populatePrimaryFavoriteAccount(item.getSourceAccountingLines());
-            }
         }
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    private void populatePrimaryFavoriteAccount(List<PurApAccountingLine> sourceAccountinglines) {
-    	FavoriteAccount account =  SpringContext.getBean(UserFavoriteAccountService.class).getFavoriteAccount(GlobalVariables.getUserSession().getPrincipalId());
-    	if (ObjectUtils.isNotNull(account)) {
-    		sourceAccountinglines.add(SpringContext.getBean(UserFavoriteAccountService.class).getPopulatedNewAccount(account));
-    	}
-    }
-    
     /**
      * Import items to the document from a spreadsheet.
      * 
@@ -630,10 +617,6 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
 
         purchasingForm.setHideDistributeAccounts(false);
-        // KFSPTS-985
-        if (purchasingForm instanceof RequisitionForm) {
-            populatePrimaryFavoriteAccount(purchasingForm.getAccountDistributionsourceAccountingLines());
-        }
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }

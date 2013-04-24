@@ -4,11 +4,9 @@ import java.util.List;
 
 import org.kuali.rice.kns.mail.MailMessage;
 
-import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.LevelOrganization;
 import edu.cornell.kfs.module.purap.businessobject.PersonData;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
-import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 
 public interface IWantDocumentService {
     
@@ -65,16 +63,5 @@ public interface IWantDocumentService {
      * @param iWantDocument
      */
     public void sendDocumentFinalizedMessage(IWantDocument iWantDocument);
-    
-    /**
-     * KFSPTS-985 :
-     * Populate primary favorite account to IWantAccount if it is setup
-     * @return
-     */
-	public IWantAccount getFavoriteIWantAccount();
 
-	/**
-	 * populate selected favorite account to IWantAccount 
-	 */
-	public IWantAccount getFavoriteIWantAccount(FavoriteAccount favoriteAccount);
 }

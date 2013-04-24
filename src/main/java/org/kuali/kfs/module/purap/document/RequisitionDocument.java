@@ -110,9 +110,7 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
     
     // non-persistent property used for controlling validation for accounting lines when doc is request for blanket approve.
     protected boolean isBlanketApproveRequest = false;
-    // KFSPTS-985 : this is for setdistribution
-    private Integer favoriteAccountLineIdentifier;
-
+    
     /**
      * Default constructor.
      */
@@ -976,15 +974,6 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
         return accounts;
     }
 
-	public Integer getFavoriteAccountLineIdentifier() {
-		return favoriteAccountLineIdentifier;
-	}
-
-	public void setFavoriteAccountLineIdentifier(
-			Integer favoriteAccountLineIdentifier) {
-		this.favoriteAccountLineIdentifier = favoriteAccountLineIdentifier;
-	}    
-    
 
 }
 

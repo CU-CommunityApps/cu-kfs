@@ -42,9 +42,6 @@ import edu.cornell.kfs.module.purap.businessobject.LevelOrganization;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
-import edu.cornell.kfs.sys.CUKFSKeyConstants;
-import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
-import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 
 public class IWantDocumentAction extends FinancialSystemTransactionalDocumentActionBase {
 
@@ -209,9 +206,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                     if (ObjectUtils.isNotNull(userOptionsDeliverToAddress)) {
                         iWantDocument.setDeliverToAddress(userOptionsDeliverToAddress.getOptionValue());
                     }
-                    // KFSPTS-985 populate favorite account
-                    populateFavoriteAccount(iWantDocument);
-
                 }
 
                 // put workflow doc on session
@@ -224,16 +218,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         }
 
         return actionForward;
-    }
-
-    /*
-     * KFSPTS-985 : set up favorite accounts
-     */
-    private void populateFavoriteAccount(IWantDocument iWantDocument) {
-    	IWantAccount favoriteAccount = SpringContext.getBean(IWantDocumentService.class).getFavoriteIWantAccount();
-    	if (favoriteAccount != null) {
-    		iWantDocument.getAccounts().add(favoriteAccount);
-    	}
     }
 
     /**
@@ -934,40 +918,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         }
         
         return rulePassed;
-    }
-
-    /**
-     * KFSPTS-985
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
-     */
-    public ActionForward addFavoriteAccount(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
-        IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
-        iWantDocForm.getNewSourceLine().getFavoriteAccountLineIdentifier();
-        
-		if (iWantDocForm.getNewSourceLine().getFavoriteAccountLineIdentifier() != null) {
-			FavoriteAccount account = SpringContext.getBean(UserFavoriteAccountService.class).getSelectedFavoriteAccount(iWantDocForm.getNewSourceLine().getFavoriteAccountLineIdentifier());
-			if (ObjectUtils.isNotNull(account)) {
-//				if (!SpringContext.getBean(UserProcurementProfileValidationService.class).isAccountExist(account, item.getSourceAccountingLines(), itemIdx)) {
-		    	IWantAccount favoriteAccount = SpringContext.getBean(IWantDocumentService.class).getFavoriteIWantAccount(account);
-		    	if (favoriteAccount != null) {
-		    		iWantDocument.getAccounts().add(favoriteAccount);
-		    	}
-//				}
-			} else {
-				GlobalVariables.getMessageMap().putError("newSourceLine.favoriteAccountLineIdentifier", CUKFSKeyConstants.ERROR_FAVORITE_ACCOUNT_NOT_EXIST);
-			}
-
-		} else {
-			GlobalVariables.getMessageMap().putError("newSourceLine.favoriteAccountLineIdentifier", CUKFSKeyConstants.ERROR_FAVORITE_ACCOUNT_NOT_SELECTED);
-		}
-
-        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
 }

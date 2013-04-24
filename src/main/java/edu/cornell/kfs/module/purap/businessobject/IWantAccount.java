@@ -1,11 +1,7 @@
 package edu.cornell.kfs.module.purap.businessobject;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
@@ -15,15 +11,8 @@ import org.kuali.kfs.coa.businessobject.SubObjectCode;
 import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
-import org.kuali.rice.kim.config.KIMConfigurer;
-import org.kuali.rice.kim.util.KimConstants;
 import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KualiDecimal;
-
-import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
-import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
 
 public class IWantAccount extends PersistableBusinessObjectBase {
     private String documentNumber;
@@ -48,15 +37,10 @@ public class IWantAccount extends PersistableBusinessObjectBase {
     private SubObjectCode subObjectCode;
     private ProjectCode project;
 
-    // KFSPTS-985
-    private Integer favoriteAccountLineIdentifier;
-    private boolean favoriteAccountExist;
-
     public IWantAccount() {
         super();
         this.useAmountOrPercent = CUPurapConstants.PERCENT;
         this.amountOrPercent = new KualiDecimal(100);
-        this.favoriteAccountExist = isFavoriteAccountSet();
 
     }
 
@@ -221,34 +205,4 @@ public class IWantAccount extends PersistableBusinessObjectBase {
         this.useAmountOrPercent = useAmountOrPercent;
     }
 
-    // KFSPTS-985
-	public Integer getFavoriteAccountLineIdentifier() {
-		return favoriteAccountLineIdentifier;
-	}
-
-	public void setFavoriteAccountLineIdentifier(Integer favoriteAccountLineIdentifier) {
-		this.favoriteAccountLineIdentifier = favoriteAccountLineIdentifier;
-	}
-
-	public boolean isFavoriteAccountExist() {
-		return favoriteAccountExist;
-	}
-
-	public void setFavoriteAccountExist(boolean favoriteAccountExist) {
-		this.favoriteAccountExist = favoriteAccountExist;
-	}
-
-	private boolean isFavoriteAccountSet() {
-    	Map<String, Object> fieldValues = new HashMap<String, Object>();
-    	fieldValues.put(KimConstants.PrimaryKeyConstants.PRINCIPAL_ID, GlobalVariables.getUserSession().getPrincipalId());
-    	List<UserProcurementProfile> userProfiles = (List<UserProcurementProfile>)SpringContext.getBean(BusinessObjectService.class).findMatching(UserProcurementProfile.class, fieldValues);
-
-    	if (CollectionUtils.isNotEmpty(userProfiles)) {
-    		UserProcurementProfile userProfile = userProfiles.get(0);
-    		return CollectionUtils.isNotEmpty(userProfile.getFavoriteAccounts());
-    	}
-    	return false;
-
-	}
-	
 }

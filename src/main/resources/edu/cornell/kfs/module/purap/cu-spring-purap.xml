@@ -116,11 +116,6 @@
 		<property name="documentTypeService">
 			<ref bean="enDocumentTypeService" />
 		</property>
-		<!-- KFSPTS-985 -->
-		<property name="userFavoriteAccountService">
-			<ref bean="userFavoriteAccountService" />
-		</property>
-		
 	</bean>
 	
 	<!-- Lookupables -->

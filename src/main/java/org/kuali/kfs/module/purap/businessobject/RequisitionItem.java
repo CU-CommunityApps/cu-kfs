@@ -25,8 +25,6 @@ import org.kuali.rice.kns.util.KualiDecimal;
 public class RequisitionItem extends PurchasingItemBase {
 
     private boolean itemRestrictedIndicator;
-    // KFSPTS-985
-    private Integer favoriteAccountLineIdentifier;
         
     /**
      * Default constructor.
@@ -63,14 +61,6 @@ public class RequisitionItem extends PurchasingItemBase {
     @Override
     public Class getUseTaxClass() {
         return PurchaseRequisitionItemUseTax.class;
-    }
-
-    public Integer getFavoriteAccountLineIdentifier() {
-        return favoriteAccountLineIdentifier;
-    }
-
-    public void setFavoriteAccountLineIdentifier(Integer favoriteAccountLineIdentifier) {
-        this.favoriteAccountLineIdentifier = favoriteAccountLineIdentifier;
     }
     
 }

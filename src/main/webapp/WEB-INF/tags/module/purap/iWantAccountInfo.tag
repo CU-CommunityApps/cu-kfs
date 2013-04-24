@@ -66,24 +66,6 @@
         <tr>
 			<th height=30 colspan="11" class="neutral" valign="middle">or</th>
 		</tr>
-		<c:if test="${KualiForm.newSourceLine.favoriteAccountExist}">
-        <tr>
-			<th colspan="3" class="neutral" valign="middle">Favorite Account</th>
-			   <td align=left colspan="6" valign=middle class="neutral">
-                    <kul:htmlControlAttribute 
-                        attributeEntry="${accountAttributes.favoriteAccountLineIdentifier}" 
-                        property="newSourceLine.favoriteAccountLineIdentifier" readOnly="${not fullEntryMode}" tabindexOverride="${tabindexOverrideBase + 0}"
-                       />&nbsp;
-                </td>   
-			   <td align=left colspan="2" valign=middle class="neutral">
-				        <html:image property="methodToCall.addFavoriteAccount" src="${ConfigProperties.externalizable.images.url}tinybutton-add1.gif" alt="Add an Account" title="Add Favorite Account" styleClass="tinybutton" tabindex="${tabindexOverrideBase + 0}"/>
-                </td>   
-			
-		</tr>
-        <tr>
-			<th height=30 colspan="11" class="neutral" valign="middle">or</th>
-		</tr>
-      </c:if>
 		<tr>
 			<th height=30 colspan="11" class="neutral" valign="middle">&nbsp;</th>
 		</tr>

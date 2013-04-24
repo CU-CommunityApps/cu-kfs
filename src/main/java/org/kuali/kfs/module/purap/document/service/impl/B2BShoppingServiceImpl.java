@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
@@ -32,7 +31,6 @@ import org.kuali.kfs.module.purap.businessobject.B2BInformation;
 import org.kuali.kfs.module.purap.businessobject.B2BShoppingCartItem;
 import org.kuali.kfs.module.purap.businessobject.BillingAddress;
 import org.kuali.kfs.module.purap.businessobject.DefaultPrincipalAddress;
-import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
 import org.kuali.kfs.module.purap.dataaccess.B2BDao;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
@@ -63,13 +61,9 @@ import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.service.PersistenceService;
-import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
-
-import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
-import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 
 @Transactional
 public class B2BShoppingServiceImpl implements B2BShoppingService {
@@ -95,9 +89,6 @@ public class B2BShoppingServiceImpl implements B2BShoppingService {
     private String b2bPurchaseOrderURL;
     private String b2bPurchaseOrderPassword;
 
-    // KFSPTS-985
-    UserFavoriteAccountService userFavoriteAccountService;
-    
     protected B2BInformation getB2bShoppingConfigurationInformation() {
         B2BInformation b2b = new B2BInformation();
         b2b.setPunchoutURL(b2bPunchoutURL);
@@ -176,8 +167,6 @@ public class B2BShoppingServiceImpl implements B2BShoppingService {
             // get items for this vendor
             List itemsForVendor = getAllVendorItems(items, vendor);
 
-            // KFSPTS-985
-            checkToPopulateFavoriteAccount(itemsForVendor, user);
             // default data from user
             req.setDeliveryCampusCode(user.getCampusCode());
             req.setDeliveryToName(user.getName());
@@ -444,22 +433,5 @@ public class B2BShoppingServiceImpl implements B2BShoppingService {
         b2bPurchaseOrderPassword = purchaseOrderPassword;
     }
 
-    // KFSPTS-985
-    private void checkToPopulateFavoriteAccount(List itemsForVendor, Person user) {
-    	FavoriteAccount account = userFavoriteAccountService.getFavoriteAccount(user.getPrincipalId());
-    	if (account != null && CollectionUtils.isNotEmpty(itemsForVendor)) {
-    		for (RequisitionItem item : (List<RequisitionItem>)itemsForVendor) {  
-    			if (item.getSourceAccountingLines() == null) {
-    				item.setSourceAccountingLines(new ArrayList<PurApAccountingLine>());
-    			}
-    			item.getSourceAccountingLines().add(userFavoriteAccountService.getPopulatedNewAccount(account));
-    		}
-    	}
-    }
-
-	public void setUserFavoriteAccountService(
-			UserFavoriteAccountService userFavoriteAccountService) {
-		this.userFavoriteAccountService = userFavoriteAccountService;
-	}
 }
 

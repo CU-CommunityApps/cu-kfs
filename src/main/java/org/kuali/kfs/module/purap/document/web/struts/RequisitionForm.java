@@ -82,8 +82,8 @@ public class RequisitionForm extends PurchasingFormBase {
      */
     @Override
     public boolean shouldMethodToCallParameterBeUsed(String methodToCallParameterName, String methodToCallParameterValue, HttpServletRequest request) {
-        if ((KNSConstants.DISPATCH_REQUEST_PARAMETER.equals(methodToCallParameterName) && 
-           ("displayB2BRequisition".equals(methodToCallParameterValue))) || methodToCallParameterName.contains("addFavoriteAccount")) {
+        if (KNSConstants.DISPATCH_REQUEST_PARAMETER.equals(methodToCallParameterName) && 
+           ("displayB2BRequisition".equals(methodToCallParameterValue))) {
             return true;
         }
         return super.shouldMethodToCallParameterBeUsed(methodToCallParameterName, methodToCallParameterValue, request);
@@ -157,17 +157,5 @@ public class RequisitionForm extends PurchasingFormBase {
     public boolean canUserCalculate(){        
         return documentActions != null && documentActions.containsKey(KNSConstants.KUALI_ACTION_CAN_EDIT) &&
         !getRequisitionDocument().isDocumentStoppedInRouteNode(NodeDetailEnum.ORG_REVIEW);       
-    }
-
-	@Override
-	public boolean shouldPropertyBePopulatedInForm(String requestParameterName,
-			HttpServletRequest request) {
-		// KFSPTS-985 : force it to populate
-		if (requestParameterName.contains(".favoriteAccountLineIdentifier")) {
-			return true;
-		}
-		return super.shouldPropertyBePopulatedInForm(requestParameterName, request);
-	}
-
-    
+    }    
 }
