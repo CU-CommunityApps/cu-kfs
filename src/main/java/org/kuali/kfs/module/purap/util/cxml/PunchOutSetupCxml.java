@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.businessobject.B2BInformation;
+import org.kuali.kfs.module.purap.document.service.impl.B2BPurchaseOrderSciquestServiceImpl;
 import org.kuali.kfs.module.purap.util.PurApDateFormatUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -35,6 +36,7 @@ import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.util.GlobalVariables;
 
 public class PunchOutSetupCxml {
+    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PunchOutSetupCxml.class);
   private Person user;
   private B2BInformation b2bInformation;
 
@@ -113,18 +115,26 @@ public class PunchOutSetupCxml {
     cxml.append("  </Request>\n");
     cxml.append("</cXML>\n");
 
+    LOG.info("Punch out cxml "+ cxml.toString());
+    
     return cxml.toString();
   }
 
   // KFSPTS-1720
   private String getPreAuthValue(String principalId) {
+	  try {
 		List<String> roleIds = new ArrayList<String>();
 		roleIds.add(getRoleManagementService().getRoleIdByName(KFSConstants.ParameterNamespaces.PURCHASING,KFSConstants.SysKimConstants.ESHOP_USER_ROLE_NAME));
+		roleIds.add(getRoleManagementService().getRoleIdByName(KFSConstants.ParameterNamespaces.PURCHASING,KFSConstants.SysKimConstants.ESHOP_SUPER_USER_ROLE_NAME));
 		if (getRoleManagementService().principalHasRole(principalId,roleIds, null)) {
 			return "Preauthorized";
 		}
 		return "Non-Preauthorized";
-	
+	  } catch (Exception e) {
+		  // incase something goes wrong.  continue to process
+		  LOG.info("error from role check " + e.getMessage());
+		  return "Preauthorized";
+	  }
   }
   
   private RoleManagementService getRoleManagementService() {
