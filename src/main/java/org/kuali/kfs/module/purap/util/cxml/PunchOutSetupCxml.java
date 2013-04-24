@@ -20,14 +20,19 @@
 package org.kuali.kfs.module.purap.util.cxml;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.businessobject.B2BInformation;
 import org.kuali.kfs.module.purap.util.PurApDateFormatUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.kim.service.RoleManagementService;
 import org.kuali.rice.kns.service.DateTimeService;
+import org.kuali.rice.kns.util.GlobalVariables;
 
 public class PunchOutSetupCxml {
   private Person user;
@@ -91,6 +96,8 @@ public class PunchOutSetupCxml {
     cxml.append("      <Extrinsic name=\"PhoneNumber\">").append(user.getPhoneNumberUnmasked()).append("</Extrinsic>\n");
     cxml.append("      <Extrinsic name=\"Department\">").append(user.getCampusCode()).append(user.getPrimaryDepartmentCode()).append("</Extrinsic>\n");
     cxml.append("      <Extrinsic name=\"Campus\">").append(user.getCampusCode()).append("</Extrinsic>\n");
+    // KFSPTS-1720
+    cxml.append("      <Extrinsic name=\"Role\">").append(getPreAuthValue(user.getPrincipalId())).append("</Extrinsic>\n");
     cxml.append("      <BrowserFormPost>\n");
     cxml.append("        <URL>").append(b2bInformation.getPunchbackURL()).append("</URL>\n");
     cxml.append("      </BrowserFormPost>\n");
@@ -107,6 +114,21 @@ public class PunchOutSetupCxml {
     cxml.append("</cXML>\n");
 
     return cxml.toString();
+  }
+
+  // KFSPTS-1720
+  private String getPreAuthValue(String principalId) {
+		List<String> roleIds = new ArrayList<String>();
+		roleIds.add(getRoleManagementService().getRoleIdByName(KFSConstants.ParameterNamespaces.PURCHASING,KFSConstants.SysKimConstants.ESHOP_USER_ROLE_NAME));
+		if (getRoleManagementService().principalHasRole(principalId,roleIds, null)) {
+			return "Preauthorized";
+		}
+		return "Non-Preauthorized";
+	
+  }
+  
+  private RoleManagementService getRoleManagementService() {
+	  return SpringContext.getBean(RoleManagementService.class);
   }
 
 }
