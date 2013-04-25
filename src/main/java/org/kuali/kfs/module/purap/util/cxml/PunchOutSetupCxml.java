@@ -129,7 +129,7 @@ public class PunchOutSetupCxml {
 		if (getRoleManagementService().principalHasRole(principalId,roleIds, null)) {
 			return "Preauthorized";
 		}
-		return "Non-Preauthorized";
+		return "NonPreauthorized";
 	  } catch (Exception e) {
 		  // incase something goes wrong.  continue to process
 		  LOG.info("error from role check " + e.getMessage());
