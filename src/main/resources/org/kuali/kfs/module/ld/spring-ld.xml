@@ -1478,6 +1478,7 @@
 	<!-- validations -->
 	<import resource="document/validation/configuration/LaborValidations.xml" />
 	<import resource="document/validation/configuration/YearEndSalaryExpenseTransferValidations.xml" />
+	<import resource="document/validation/configuration/YearEndBenefitExpenseTransferValidations.xml" />
 	<import resource="document/validation/configuration/SalaryExpenseTransferValidations.xml" />
 	<import resource="document/validation/configuration/BenefitExpenseTransferValidations.xml" />
 	<import resource="document/validation/configuration/LaborJournalVoucherValidations.xml" />

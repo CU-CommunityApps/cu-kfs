@@ -47,6 +47,10 @@
 	
 	<bean id="YearEndBudgetAdjustment-approveDocumentValidation-parentBean" parent="BudgetAdjustment-approveDocumentValidation" abstract="true"/>
 	
+	<bean id="YearEndBudgetAdjustment-blanketApproveDocumentValidation" parent="YearEndBudgetAdjustment-blanketApproveDocumentValidation-parentBean" scope="prototype" />
+	
+	<bean id="YearEndBudgetAdjustment-blanketApproveDocumentValidation-parentBean" parent="BudgetAdjustment-blanketApproveDocumentValidation" abstract="true"/>
+	
 	<bean id="YearEndBudgetAdjustment-addAccountingLineValidation" parent="YearEndBudgetAdjustment-addAccountingLineValidation-parentBean" />
 	
 	<bean id="YearEndBudgetAdjustment-addAccountingLineValidation-parentBean" parent="BudgetAdjustment-addAccountingLineValidation" abstract="true"/>
