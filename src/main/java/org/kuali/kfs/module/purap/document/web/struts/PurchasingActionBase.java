@@ -51,6 +51,7 @@ import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.PurchasingDocument;
 import org.kuali.kfs.module.purap.document.PurchasingDocumentBase;
+import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.document.service.PurchasingService;
@@ -104,6 +105,10 @@ import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
+import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
+import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
+import edu.cornell.kfs.sys.service.UserProcurementProfileValidationService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 /**
@@ -466,11 +471,25 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         if (rulePassed) {
             item = purchasingForm.getAndResetNewPurchasingItemLine();
             purDocument.addItem(item);
+            // KFSPTS-985
+            if (isDocumentIntegratedFavoriteAccount(purDocument)) {
+                populatePrimaryFavoriteAccount(item.getSourceAccountingLines(), purDocument instanceof RequisitionDocument);
+            }
         }
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
+    private boolean isDocumentIntegratedFavoriteAccount(PurchasingDocument document) {
+        return 	document instanceof RequisitionDocument || document instanceof PurchaseOrderAmendmentDocument || document instanceof PurchaseOrderDocument;
+    }
+    private void populatePrimaryFavoriteAccount(List<PurApAccountingLine> sourceAccountinglines, boolean isRequisition) {
+    	FavoriteAccount account =  SpringContext.getBean(UserFavoriteAccountService.class).getFavoriteAccount(GlobalVariables.getUserSession().getPrincipalId());
+    	if (ObjectUtils.isNotNull(account)) {
+    		sourceAccountinglines.add(SpringContext.getBean(UserFavoriteAccountService.class).getPopulatedNewAccount(account, isRequisition));
+    	}
+    }
+    
     /**
      * Import items to the document from a spreadsheet.
      * 
@@ -617,6 +636,10 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
 
         purchasingForm.setHideDistributeAccounts(false);
+        // KFSPTS-985
+        if (isDocumentIntegratedFavoriteAccount((PurchasingDocument)purchasingForm.getDocument())) {
+            populatePrimaryFavoriteAccount(purchasingForm.getAccountDistributionsourceAccountingLines(), (PurchasingDocument)purchasingForm.getDocument() instanceof RequisitionDocument);
+        }
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
@@ -1527,4 +1550,52 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 
         return requiresCalculate;
     }
+    
+    
+    /*
+     * KFSPTS-985 : add favorite account.
+     * This is a copy from requisitionaction.  to be shared by both req & po
+     */
+    public ActionForward addFavoriteAccount(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	PurchasingFormBase poForm = (PurchasingFormBase) form;
+    	PurchasingDocumentBase document = (PurchasingDocumentBase) poForm.getDocument();
+        int itemIdx = getSelectedLine(request);
+		if (itemIdx >= 0) {
+			PurchasingItemBase item = (PurchasingItemBase) document.getItem(getSelectedLine(request));
+			if (item.getFavoriteAccountLineIdentifier() != null) {
+				FavoriteAccount account = SpringContext.getBean(UserFavoriteAccountService.class).getSelectedFavoriteAccount(item.getFavoriteAccountLineIdentifier());
+				if (ObjectUtils.isNotNull(account)) {
+					if (!SpringContext.getBean(UserProcurementProfileValidationService.class).isAccountExist(account, item.getSourceAccountingLines(), itemIdx)) {
+					  item.getSourceAccountingLines().add(SpringContext.getBean(UserFavoriteAccountService.class).getPopulatedNewAccount(account, document instanceof RequisitionDocument));
+					}
+				} else {
+					GlobalVariables.getMessageMap().putError("document.item["+itemIdx+"].favoriteAccountLineIdentifier", CUKFSKeyConstants.ERROR_FAVORITE_ACCOUNT_NOT_EXIST);
+				}
+
+			} else {
+				GlobalVariables.getMessageMap().putError("document.item["+itemIdx+"].favoriteAccountLineIdentifier", CUKFSKeyConstants.ERROR_FAVORITE_ACCOUNT_NOT_SELECTED);
+			}
+		} else if (itemIdx == -2) {
+			// TODO : also need error handling here
+			if (document.getFavoriteAccountLineIdentifier() != null) {
+				FavoriteAccount account = SpringContext.getBean(UserFavoriteAccountService.class).getSelectedFavoriteAccount(document.getFavoriteAccountLineIdentifier());
+				if (ObjectUtils.isNotNull(account)) {
+					if (ObjectUtils.isNotNull(account)) {
+						if (!SpringContext.getBean(UserProcurementProfileValidationService.class).isAccountExist(account,poForm.getAccountDistributionsourceAccountingLines(),itemIdx)) {
+							poForm.getAccountDistributionsourceAccountingLines().add(SpringContext.getBean(UserFavoriteAccountService.class).getPopulatedNewAccount(account, document instanceof RequisitionDocument));
+						}
+					}
+				} else {
+					GlobalVariables.getMessageMap().putError("document.favoriteAccountLineIdentifier",CUKFSKeyConstants.ERROR_FAVORITE_ACCOUNT_NOT_EXIST);
+				}
+
+			} else {
+				GlobalVariables.getMessageMap().putError("document.favoriteAccountLineIdentifier",CUKFSKeyConstants.ERROR_FAVORITE_ACCOUNT_NOT_SELECTED);
+			}
+		}
+
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+
+
 }

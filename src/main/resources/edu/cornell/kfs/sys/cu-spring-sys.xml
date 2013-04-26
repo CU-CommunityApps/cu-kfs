@@ -17,6 +17,7 @@
 		<property name="dataDictionaryPackages">
 			<list merge="true">
                 <value>edu/cornell/kfs/sys/businessobject/datadictionary</value>                
+                <value>edu/cornell/kfs/sys/document/datadictionary</value>                
 			</list>
 		</property>
 		<property name="fiscalYearMakers">
@@ -130,5 +131,24 @@
 	<bean id="autoCancelBatchStep" class="edu.cornell.kfs.sys.batch.AutoCancelBatchStep" parent="step">
 	    <property name="autoCancelBatchDao" ref="autoCancelBatchDao"/>
 	</bean>
+	
+<!-- KFSPTS-985 : User Favorites Profile -->
+    <bean id="UserProcurementProfileValidationService" class="edu.cornell.kfs.sys.service.impl.UserProcurementProfileValidationServiceImpl">
+		<property name="dictionaryValidationService">
+			<ref bean="dictionaryValidationService" />
+		</property>
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+		<property name="roleManagementService">
+			<ref bean="kimRoleManagementService" />
+		</property>		
+	</bean>
+    <bean id="userFavoriteAccountService" class="edu.cornell.kfs.sys.service.impl.UserFavoriteAccountServiceImpl">
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+	</bean>
+
 	
 </beans>

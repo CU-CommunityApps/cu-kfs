@@ -110,7 +110,7 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
     
     // non-persistent property used for controlling validation for accounting lines when doc is request for blanket approve.
     protected boolean isBlanketApproveRequest = false;
-    
+
     /**
      * Default constructor.
      */

@@ -179,7 +179,9 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     protected boolean paymentRequestPositiveApprovalIndicator;
 
     protected List<CommodityCode> commodityCodesForRouting;
-    
+    // KFSPTS-985 : this is for setdistribution
+    private Integer favoriteAccountLineIdentifier;
+   
     /**
      * Default Constructor.
      */
@@ -1471,5 +1473,19 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
             return SpringContext.getBean(VendorService.class).getVendorB2BContract(vendorDetail, campusCode) != null;
         }
         return false;
-    }   
+    }
+    
+   /*
+    * KFSPTS-985
+    */
+    public Integer getFavoriteAccountLineIdentifier() {
+		return favoriteAccountLineIdentifier;
+	}
+
+	public void setFavoriteAccountLineIdentifier(
+			Integer favoriteAccountLineIdentifier) {
+		this.favoriteAccountLineIdentifier = favoriteAccountLineIdentifier;
+	}    
+    
+
 }

@@ -327,6 +327,8 @@
         <property name="purchasingService" ref="purchasingService"/>
         <property name="purapService" ref="purapService"/>
         <property name="vendorService" ref="vendorService"/>
+        <!-- KFSPTS-985 -->
+        <property name="userFavoriteAccountService" ref="userFavoriteAccountService"/>
         <property name="b2bEnvironment">
         	<value>${b2b.environment}</value>
         </property>

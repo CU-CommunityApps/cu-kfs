@@ -18,26 +18,34 @@ package org.kuali.kfs.sys.document.web.renderers;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.Tag;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
+import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
+import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+import org.kuali.kfs.module.purap.document.PurchasingDocumentBase;
+import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.datadictionary.AccountingLineGroupDefinition;
 import org.kuali.kfs.sys.document.datadictionary.AccountingLineViewActionDefinition;
 import org.kuali.kfs.sys.document.web.AccountingLineViewAction;
-import org.kuali.rice.kns.authorization.AuthorizationConstants;
+import org.kuali.rice.core.util.KeyLabelPair;
 import org.kuali.rice.kns.service.KNSServiceLocator;
 import org.kuali.rice.kns.service.KualiConfigurationService;
+import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.web.taglib.html.KNSFileTag;
 import org.kuali.rice.kns.web.taglib.html.KNSImageTag;
+
+import edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFiner;
 
 /**
  * Renders the standard group header/import line
@@ -56,6 +64,8 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     private boolean canEdit = false;
 
     private boolean groupActionsRendered = false;
+    // KFSPTS-985
+    private String riceImageBase;
 
     /**
      * Constructs a ImportLineRenderer, setting defaults on the tags that will always exist
@@ -115,6 +125,13 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      */
     public void render(PageContext pageContext, Tag parentTag) throws JspException {
         try {
+        	//KFSPTS-985 : add favorite account selection
+        	// setdistribution does not have accountPrefix
+        	String accountPrefix = (String)pageContext.getAttribute("accountPrefix");
+        	FavoriteAccountValuesFiner accounts = new FavoriteAccountValuesFiner();
+            if (canEdit && isDocumentIntegratedFavoriteAccount() && CollectionUtils.isNotEmpty(accounts.getKeyValues()) && accounts.getKeyValues().size() > 1) {
+        	    pageContext.getOut().write(buildFavoriteAccounts(accountPrefix));
+            }
             pageContext.getOut().write(buildRowBeginning());
             
             pageContext.getOut().write(buildTitleCell());
@@ -126,6 +143,11 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
             throw new JspException("Difficulty in rendering import/group header line", ioe);
         }
     }
+    
+    private boolean isDocumentIntegratedFavoriteAccount() {
+        return 	getAccountingDocument() instanceof RequisitionDocument || getAccountingDocument() instanceof PurchaseOrderAmendmentDocument || getAccountingDocument() instanceof PurchaseOrderDocument;
+    }
+    
 
     /**
      * Builds a tag for the row beginning
@@ -228,6 +250,104 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
         return titleCell.toString();
     }
 
+    private String buildFavoriteAccounts(String accountPrefix) {
+    	int itemIdx = getItemIdx(accountPrefix);
+    	Integer accountLineId = null; 
+        if (isDocumentIntegratedFavoriteAccount()) {
+        	if (itemIdx >= 0) {
+        		accountLineId = ((PurchasingItemBase)((PurchasingDocumentBase)this.getAccountingDocument()).getItem(itemIdx)).getFavoriteAccountLineIdentifier();
+        	} else {
+        		accountLineId = ((PurchasingDocumentBase)this.getAccountingDocument()).getFavoriteAccountLineIdentifier();
+        	}
+        }
+    	StringBuffer favoriteAccountLine = new StringBuffer();
+    	favoriteAccountLine.append("<tr>");
+    	
+    	favoriteAccountLine.append("<th colspan=\"2\" align=\"right\" valign=\"middle\" class=\"bord-l-b\">");
+    	favoriteAccountLine.append("<div  align=\"right\">");
+    	favoriteAccountLine.append("Favorite Account");
+    	favoriteAccountLine.append("</div>");
+    	favoriteAccountLine.append("</th>");
+    	
+    	if (StringUtils.isBlank(accountPrefix)) {
+    		accountPrefix = "document.";
+    	}
+    	favoriteAccountLine.append("<td colspan=\"6\" class=\"infoline\">");
+    	favoriteAccountLine.append("<select name=\"").append(accountPrefix).append("favoriteAccountLineIdentifier\" id=\"").append(accountPrefix).append("favoriteAccountLineIdentifier\" title=\"* Favorite Account\">");
+    	FavoriteAccountValuesFiner accounts = new FavoriteAccountValuesFiner();
+    	for (KeyLabelPair keyValue : (List<KeyLabelPair>)accounts.getKeyValues()) {
+    		favoriteAccountLine.append("<option value=\"").append(keyValue.getKey());
+    		if (checkToAddError(accountPrefix + "favoriteAccountLineIdentifier")) {
+    			favoriteAccountLine.append(getSelected(accountLineId, keyValue.getKey()));
+    		} else {
+    			favoriteAccountLine.append("\" >");
+    		}
+    		favoriteAccountLine.append(keyValue.getLabel());
+    		favoriteAccountLine.append("</option>\n");
+    	}
+    	favoriteAccountLine.append("</select>");
+        if (checkToAddError(accountPrefix + "favoriteAccountLineIdentifier")) {
+            favoriteAccountLine.append(getErrorIconImageTag());
+        }
+    	favoriteAccountLine.append("</td>");
+    	
+    	favoriteAccountLine.append("<td valign=\"top\" class=\"infoline\">");
+        favoriteAccountLine.append("<div style=\"text-align: center;\">");
+        favoriteAccountLine.append("<input type=\"image\" name=\"methodToCall.addFavoriteAccount.line").append(itemIdx).append(".anchorFavoriteAnchor\" src=\"kr/static/images/tinybutton-add1.gif\" tabindex=\"0\" class=\"tinybutton\"");
+        favoriteAccountLine.append(" title=\"Add Favorite  Accounting Line\" alt=\"Add Favorite Accounting Line\">");
+        favoriteAccountLine.append("</input>");
+        favoriteAccountLine.append("<br></div></td>");
+    	
+    	favoriteAccountLine.append("</tr>");
+    	
+    	return favoriteAccountLine.toString();
+    }
+    
+    private String getSelected(Object propertyValue, Object keyValue) {
+		if (propertyValue != null) {
+			if (propertyValue.toString().equalsIgnoreCase(keyValue.toString())) {
+				return "\" selected=\"selected\" >";
+			}
+		}
+    	return "\" >";
+	
+    }
+    
+    private boolean checkToAddError(String errorKey) {
+        if (CollectionUtils.isNotEmpty(GlobalVariables.getMessageMap().getErrorMessagesForProperty(errorKey))) {
+            return true;
+        }
+        return false;
+    }
+    
+    protected String getErrorIconImageTag() {
+        return "<img src=\""+getErrorIconImageSrc()+"\" alt=\"error\" />";
+    }
+    
+    /**
+     * @return the source of the error icon
+     */
+    private String getErrorIconImageSrc() {
+        return getRiceImageBase()+"errormark.gif";
+    }
+
+    private String getRiceImageBase() {
+        if (riceImageBase == null) {
+            riceImageBase = SpringContext.getBean(KualiConfigurationService.class).getPropertyString(KNSConstants.EXTERNALIZABLE_IMAGES_URL_KEY);
+        }
+        return riceImageBase;
+    }
+
+    private int getItemIdx(String accountPrefix) {
+    	if (StringUtils.isNotBlank(accountPrefix)) {
+        int startIdx = 	accountPrefix.indexOf("[");
+        return Integer.parseInt(accountPrefix.substring(accountPrefix.indexOf("[")+1,accountPrefix.indexOf("]")));
+    	} else {
+    		// set distribution.
+    		return -2;
+    	}
+    }
+    
     /**
      * Builds the unique anchor for this group
      * 

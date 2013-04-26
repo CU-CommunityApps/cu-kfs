@@ -18,6 +18,11 @@ package org.kuali.kfs.module.purap.document.authorization;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
+import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
+import org.kuali.kfs.module.purap.document.PurchasingDocumentBase;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentPresentationControllerBase;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kim.bo.impl.KimAttributes;
@@ -87,5 +92,19 @@ public class PurchasingAccountsPayableDocumentPresentationController extends Fin
         // Change logic to allow editing document overview based on if user can edit the document
         return canEdit(document);
     }
-    
+  
+    // KFSPTS-985
+    protected boolean hasEmptyAcctline(PurchasingDocumentBase document) {
+        boolean hasEmptyAcct = false;
+        if (CollectionUtils.isNotEmpty(document.getItems())) {
+    	    for (PurchasingItemBase item : (List<PurchasingItemBase>)document.getItems()) {
+    		    if ((StringUtils.equals(item.getItemTypeCode(),ItemTypeCodes.ITEM_TYPE_ITEM_CODE) || StringUtils.equals(item.getItemTypeCode(),ItemTypeCodes.ITEM_TYPE_SERVICE_CODE) ) && CollectionUtils.isEmpty(item.getSourceAccountingLines())) {
+    			    hasEmptyAcct = true;
+    			    break;
+    		    }
+    	    }
+        }
+    	return hasEmptyAcct;
+    }
+
 }

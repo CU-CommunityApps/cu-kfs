@@ -40,6 +40,12 @@ import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
+import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
+import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
+import edu.cornell.kfs.sys.service.UserProcurementProfileValidationService;
+
 /**
  * Struts Action for Requisition document.
  */

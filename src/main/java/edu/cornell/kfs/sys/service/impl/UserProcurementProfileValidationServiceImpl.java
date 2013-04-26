@@ -283,7 +283,7 @@ public class UserProcurementProfileValidationServiceImpl implements UserProcurem
     		if (isEqualAcct(accountingLine, acctline)) {
     			String propertyName = "document.favoriteAccountLineIdentifier";
     			if (itemIdx >= 0) {
-    				propertyName = "document.item["+itemIdx+"]." + propertyName;
+    				propertyName = "document.item["+itemIdx+"].favoriteAccountLineIdentifier" ;
     			}
 				GlobalVariables.getMessageMap().putError(propertyName, CUKFSKeyConstants.ERROR_FAVORITE_ACCOUNT_EXIST);
     			isExist = true;
