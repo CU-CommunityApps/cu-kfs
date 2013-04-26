@@ -34,8 +34,6 @@ public abstract class PurchasingItemBase extends PurApItemBase implements Purcha
     private CommodityCode commodityCode;
     
     private UnitOfMeasure itemUnitOfMeasure;
-    // KFSPTS-985
-    private Integer favoriteAccountLineIdentifier;
     
     /**
      * @see org.kuali.kfs.module.purap.businessobject.PurApItem#isConsideredEntered()
@@ -123,13 +121,4 @@ public abstract class PurchasingItemBase extends PurApItemBase implements Purcha
     public boolean isNewItemForAmendment() {
         return false;
     }
-
-	public Integer getFavoriteAccountLineIdentifier() {
-		return favoriteAccountLineIdentifier;
-	}
-
-	public void setFavoriteAccountLineIdentifier(
-			Integer favoriteAccountLineIdentifier) {
-		this.favoriteAccountLineIdentifier = favoriteAccountLineIdentifier;
-	}
 }

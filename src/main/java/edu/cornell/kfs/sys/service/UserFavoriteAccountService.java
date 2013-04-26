@@ -18,7 +18,7 @@ public interface UserFavoriteAccountService {
 	 * @param account
 	 * @return
 	 */
-	PurApAccountingLine getPopulatedNewAccount(FavoriteAccount account, boolean isRequisition);
+	PurApAccountingLine getPopulatedNewAccount(FavoriteAccount account);
 	
 	/**
 	 * retrieve the favorite account based on PK

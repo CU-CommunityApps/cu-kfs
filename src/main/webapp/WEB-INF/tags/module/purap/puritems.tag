@@ -67,7 +67,7 @@
 </c:otherwise>
 </c:choose>
 
-<kul:tab tabTitle="Items" defaultOpen="true" tabErrorKey="${PurapConstants.ITEM_TAB_ERRORS},accountDistributionnewSourceLine*,accountDistributionsourceAccountingLine*,document.favoriteAccountLineIdentifier">
+<kul:tab tabTitle="Items" defaultOpen="true" tabErrorKey="${PurapConstants.ITEM_TAB_ERRORS},accountDistributionnewSourceLine*,accountDistributionsourceAccountingLine*">
 	<div class="tab-container" align=center>
 	<c:if test="${!KualiForm.document.inquiryRendered}">
 	    <div align="left">

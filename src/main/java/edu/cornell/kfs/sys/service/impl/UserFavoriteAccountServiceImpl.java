@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
-import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
 import org.kuali.kfs.module.purap.businessobject.RequisitionAccount;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.util.ObjectUtils;
@@ -44,14 +43,10 @@ public class UserFavoriteAccountServiceImpl implements UserFavoriteAccountServic
 	 * @param account
 	 * @return
 	 */
-    public PurApAccountingLine getPopulatedNewAccount(FavoriteAccount account, boolean isRequisition) {
+    public PurApAccountingLine getPopulatedNewAccount(FavoriteAccount account) {
     	if (ObjectUtils.isNotNull(account)) {
-    		PurApAccountingLine acctLine;
-			if (isRequisition) {
-				acctLine = new RequisitionAccount();
-			} else {
-				acctLine = new PurchaseOrderAccount();
-			}
+    		// TODO : need to change to upperclass for more generalized solution
+    		PurApAccountingLine acctLine = new RequisitionAccount();
     		acctLine.setAccountNumber(account.getAccountNumber());
     		acctLine.setChartOfAccountsCode(account.getChartOfAccountsCode());
     		acctLine.setSubAccountNumber(account.getSubAccountNumber());

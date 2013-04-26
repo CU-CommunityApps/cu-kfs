@@ -18,19 +18,14 @@ package org.kuali.kfs.module.purap.document.authorization;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants.PurchaseOrderEditMode;
-import org.kuali.kfs.module.purap.PurapAuthorizationConstants.RequisitionEditMode;
-import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionSources;
-import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
-import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -229,10 +224,6 @@ public class PurchaseOrderDocumentPresentationController extends PurchasingAccou
             editModes.add(PurchaseOrderEditMode.SPLITTING_ITEM_SELECTION);
         }
 
-		// KFSPTS-985
-		if (document instanceof PurchaseOrderDocument && !editModes.contains(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION) && !hasEmptyAcctline((PurchaseOrderDocument)document) ) {
-			editModes.add(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION);
-		}
         return editModes;
     }
 

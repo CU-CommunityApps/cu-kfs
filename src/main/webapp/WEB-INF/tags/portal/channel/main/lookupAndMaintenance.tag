@@ -56,11 +56,6 @@
 	<ul class="chan">
 	    <li><portal:portalLink displayTitle="true" title="Disbursement Voucher Travel Company" url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.fp.businessobject.TravelCompanyCode&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
 	</ul>
-			<!-- KFSPTS-985 -->
-    <strong>Global Favorites</strong><br />
-	<ul class="chan">
-		<li><portal:portalLink displayTitle="true" title="User Favorite Accounts" url="kr/lookup.do?methodToCall=start&businessObjectClassName=edu.cornell.kfs.sys.businessobject.UserProcurementProfile&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
-	</ul>
     <strong>Vendor</strong><br />
 		<ul class="chan">
         <li><portal:portalLink displayTitle="true" title="Vendor" url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.vnd.businessobject.VendorDetail&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
