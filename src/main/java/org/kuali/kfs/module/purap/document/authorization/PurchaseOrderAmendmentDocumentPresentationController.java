@@ -15,28 +15,26 @@
  */
 package org.kuali.kfs.module.purap.document.authorization;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants.PurchaseOrderEditMode;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants.RequisitionEditMode;
+import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
+import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
+import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.service.PurapAccountingService;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.identity.KfsKimAttributes;
-import org.kuali.rice.kim.bo.types.dto.AttributeSet;
-import org.kuali.rice.kim.service.RoleManagementService;
 import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
 
@@ -104,10 +102,14 @@ public class PurchaseOrderAmendmentDocumentPresentationController extends Purcha
 			}
 		} catch (Exception e) {
 		}
+		// KFSPTS-985
+		if (document instanceof PurchaseOrderAmendmentDocument && !editModes.contains(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION) && !hasEmptyAcctline((PurchaseOrderAmendmentDocument)document) ) {
+			editModes.add(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION);
+		}
  
 		return editModes;
     }
-
+    
     @Override
     protected boolean canReload(Document document) {
         //  show the reload button if the doc is anything but processed or final

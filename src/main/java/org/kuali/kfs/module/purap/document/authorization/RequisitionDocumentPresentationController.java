@@ -21,10 +21,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.util.Strings;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants.RequisitionEditMode;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionSources;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
@@ -166,9 +169,14 @@ public class RequisitionDocumentPresentationController extends PurchasingAccount
 			}
 		} catch (Exception e) {
 		}
+		// KFSPTS-985
+		if (document instanceof RequisitionDocument && !editModes.contains(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION) && !hasEmptyAcctline((RequisitionDocument)document) ) {
+			editModes.add(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION);
+		}
         return editModes;
     }
 
+    
     @Override
     protected boolean canCopy(Document document) {
         //  disallow copying until the doc is saved

@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts.upload.FormFile;
 import org.kuali.kfs.integration.purap.CapitalAssetLocation;
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -434,4 +436,25 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
     public String getLineItemImportInstructionsUrl() {
         return SpringContext.getBean(KualiConfigurationService.class).getPropertyString(KFSConstants.EXTERNALIZABLE_HELP_URL_KEY) + SpringContext.getBean(ParameterService.class).getParameterValue(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.LINE_ITEM_IMPORT);
     }
+    
+    @Override
+    public boolean shouldMethodToCallParameterBeUsed(String methodToCallParameterName, String methodToCallParameterValue, HttpServletRequest request) {
+    	// KFSPTS-985
+        if (methodToCallParameterName.contains("addFavoriteAccount")) {
+            return true;
+        }
+        return super.shouldMethodToCallParameterBeUsed(methodToCallParameterName, methodToCallParameterValue, request);
+    }
+
+	@Override
+	public boolean shouldPropertyBePopulatedInForm(String requestParameterName,
+			HttpServletRequest request) {
+		// KFSPTS-985 : force it to populate
+		if (requestParameterName.contains(".favoriteAccountLineIdentifier")) {
+			return true;
+		}
+		return super.shouldPropertyBePopulatedInForm(requestParameterName, request);
+	}
+
+  
 }
