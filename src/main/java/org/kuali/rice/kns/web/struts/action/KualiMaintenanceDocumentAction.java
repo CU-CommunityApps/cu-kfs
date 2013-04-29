@@ -37,6 +37,7 @@ import org.apache.ojb.broker.metadata.ClassNotPersistenceCapableException;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.core.jpa.metadata.EntityDescriptor;
 import org.kuali.rice.core.jpa.metadata.FieldDescriptor;
 import org.kuali.rice.core.jpa.metadata.MetadataManager;
@@ -62,7 +63,6 @@ import org.kuali.rice.kns.rule.event.KualiAddLineEvent;
 import org.kuali.rice.kns.service.KNSServiceLocator;
 import org.kuali.rice.kns.service.LookupService;
 import org.kuali.rice.kns.service.MaintenanceDocumentDictionaryService;
-import org.kuali.rice.kns.util.ExternalizableBusinessObjectUtils;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.util.KNSPropertyConstants;
@@ -983,6 +983,25 @@ public class KualiMaintenanceDocumentAction extends KualiDocumentActionBase {
     		lookupResultsService = KNSServiceLocator.getLookupResultsService();
     	}
 		return this.lookupResultsService;
+	}
+
+	@Override
+	public ActionForward insertBONote(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		// KFSPTS-855 : add note is add to documentbusinessobject.bonotes
+		// use this work around for vendor maintenance.
+		// after save, documentobject and newmaintobj.businessobject are not the same instance.
+		ActionForward forward =  super.insertBONote(mapping, form, request, response);
+    	KualiMaintenanceForm maintenanceForm = (KualiMaintenanceForm) form;
+    	MaintenanceDocument maintenanceDocument = (MaintenanceDocument) maintenanceForm.getDocument();
+    	if (maintenanceDocument.getDocumentBusinessObject() instanceof VendorDetail && maintenanceDocument.getDocumentBusinessObject() != maintenanceDocument.getNewMaintainableObject().getBusinessObject()) {
+    		VendorDetail vendorDetail = (VendorDetail)maintenanceDocument.getNewMaintainableObject().getBusinessObject();
+    		vendorDetail.getBoNotes().clear();
+    		vendorDetail.getBoNotes().addAll(maintenanceDocument.getDocumentBusinessObject().getBoNotes());
+    	}
+    	return forward;
+
 	}
 
 }
