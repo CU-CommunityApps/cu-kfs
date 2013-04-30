@@ -170,6 +170,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 
     protected boolean payeeAssigned = false;
     protected boolean editW9W8BENbox = false;
+	protected boolean immediatePaymentIndicator = false;
 
     protected DocumentHeader financialDocument;
     protected DisbursementVoucherDocumentationLocation disbVchrDocumentationLoc;
@@ -1865,6 +1866,21 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
     public void setDisbVchrPdpBankCode(String disbVchrPdpBankCode) {
         this.disbVchrPdpBankCode = disbVchrPdpBankCode;
     }   
+
+    /**
+	 * @return whether this document should be paid out immediately from PDP
+	 */
+	public boolean isImmediatePaymentIndicator() {
+		return immediatePaymentIndicator;
+	}
+
+	/**
+	 * Sets whether this document should be paid out as quickly as possible from PDP
+	 * @param immediatePaymentIndicator true if this should be immediately disbursed; false otherwise
+	 */
+	public void setImmediatePaymentIndicator(boolean immediatePaymentIndicator) {
+		this.immediatePaymentIndicator = immediatePaymentIndicator;
+	}
 
     /**
      * @see org.kuali.rice.kns.document.DocumentBase#getDocumentTitle()
