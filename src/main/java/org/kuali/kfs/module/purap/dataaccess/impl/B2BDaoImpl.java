@@ -46,7 +46,7 @@ public class B2BDaoImpl implements B2BDao {
             conn.setRequestMethod("POST");
             if (request.contains("MIME_BOUNDARY_FOR_ATTACHMENTS")) {
             	// KFSPTS-794 : for attachments
-                conn.setRequestProperty("Content-type", "Multipart/Related");
+                conn.setRequestProperty("Content-type", "Multipart/Related;boundary=-----------------------------MIME_BOUNDARY_FOR_ATTACHMENTS");
                 LOG.info("content-type is Multipart/Related");
             } else {
                 conn.setRequestProperty("Content-type", "text/xml");
