@@ -185,8 +185,8 @@
                  </c:if>
                  
                  <c:if test="${fullEntryMode}">
-                   <html:checkbox property="document.exceptionIndicator" onclick="exceptionMessage(this);"/><br/>
-                   Exception Attached
+                   <html:checkbox property="document.exceptionIndicator" onclick="exceptionMessage(this);"/>
+                   Exception Attached<br/>
                  </c:if>  
                  <c:if test="${!fullEntryMode}">
                    Exception Attached: <bean:write name="KualiForm" property="document.exceptionIndicator" /><br/>
