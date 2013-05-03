@@ -1,6 +1,8 @@
 package edu.cornell.kfs.sys.businessobject.options;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +15,6 @@ import org.kuali.rice.core.util.KeyLabelPair;
 import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
@@ -30,8 +31,28 @@ public class FavoriteAccountValuesFiner extends KeyValuesBase {
         keyValues.add(new KeyLabelPair("", ""));
 
 		if (CollectionUtils.isNotEmpty(favoriteAccounts)) {
+			Collections.sort(favoriteAccounts, new Comparator() {
+                public int compare(Object o1, Object o2) {                   
+                    FavoriteAccount accountFirst = (FavoriteAccount) o1;
+                    FavoriteAccount accountSecond = (FavoriteAccount) o2;
+                    if (accountFirst.getPrimaryInd() && !accountSecond.getPrimaryInd()) {
+                        return -1;
+                    } else if (!accountFirst.getPrimaryInd() && accountSecond.getPrimaryInd()) {
+                        return 1;
+                    }
+                    if (StringUtils.equals(accountFirst.getDescription(), accountSecond.getDescription())) {
+                        return accountFirst.getAccountNumber().compareTo(accountSecond.getAccountNumber());
+                    } else if (StringUtils.isBlank(accountFirst.getDescription())) {
+                    	// Be aware case comparison.
+                    	return -1;                    	
+                    } else if (StringUtils.isBlank(accountSecond.getDescription())) {
+                    	return 1;                    	
+                    } else {
+                    	return accountFirst.getDescription().compareTo(accountSecond.getDescription());
+                    }
+                }
+            });
 				for (FavoriteAccount account : favoriteAccounts) {
-					// TODO : need to sort primary ind first.
 					keyValues.add(new KeyLabelPair(account.getAccountLineIdentifier(), getAccountingLineDescription(account)));
 				}
 		}
@@ -40,39 +61,24 @@ public class FavoriteAccountValuesFiner extends KeyValuesBase {
 
     private String getAccountingLineDescription(FavoriteAccount account) {
     	StringBuffer sb = new StringBuffer();
-    	sb.append(account.getDescription()).append(KFSConstants.COMMA).append(account.getAccountNumber());
-		if (ObjectUtils.isNotNull(account)
-				&& ObjectUtils.isNotNull(account.getAccount())) {
-			if (account.getAccount().isActive()) {
-				sb.append("-active");
-			} else {
-				sb.append("-inactive");
-			}
-		} else {
-			sb.append("-inactive");
-
-		}
+    	if (StringUtils.isNotBlank(account.getDescription())) {
+    		sb.append(account.getDescription());
+    	}
     	
-    	if (StringUtils.isNotBlank(account.getSubAccountNumber())) {
-    		sb.append(KFSConstants.COMMA).append(account.getSubAccountNumber());
-    	}
-    	sb.append(KFSConstants.COMMA).append(account.getFinancialObjectCode());
-    	if (account.getObjectCode() != null) {
-    		if (account.getObjectCode().isActive()) {
-        		sb.append("-active");
-        	} else {
-        		sb.append("-inactive");
-        	}
-    	} else {
-    		sb.append("-inactive");
-    	}
-    	if (StringUtils.isNotBlank(account.getFinancialSubObjectCode())) {
-    		sb.append(KFSConstants.COMMA).append(account.getFinancialSubObjectCode());
-    	}
-    	if (StringUtils.isNotBlank(account.getProjectCode())) {
-    		sb.append(KFSConstants.COMMA).append(account.getProjectCode());
-    	}
+    	sb.append(StringUtils.isBlank(account.getDescription()) ? KFSConstants.EMPTY_STRING : KFSConstants.COMMA).append(account.getAccountNumber());
+    	
+    	checkToAppend(sb, account.getSubAccountNumber());
+    	checkToAppend(sb, account.getFinancialObjectCode());
+    	checkToAppend(sb, account.getFinancialSubObjectCode());
+    	checkToAppend(sb, account.getProjectCode());
     	return sb.toString();
+    }
+    
+    private void checkToAppend(StringBuffer sb, String fieldValue) {
+    	if (StringUtils.isNotBlank(fieldValue)) {
+    		sb.append(KFSConstants.COMMA).append(fieldValue);
+    	}
+
     }
     
     /*

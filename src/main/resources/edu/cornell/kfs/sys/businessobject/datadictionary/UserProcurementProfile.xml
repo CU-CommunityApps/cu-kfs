@@ -279,8 +279,8 @@
     </property>
     <property name="resultFields">
       <list>
-        <bean parent="FieldDefinition" p:attributeName="userProfileId"/>
-     <!--    <bean parent="FieldDefinition" p:attributeName="documentTypeCode"/> -->
+       <!--  <bean parent="FieldDefinition" p:attributeName="userProfileId"/>
+        <bean parent="FieldDefinition" p:attributeName="documentTypeCode"/> -->
         <bean parent="FieldDefinition" p:attributeName="profileUser.name"/>
       </list>
     </property>

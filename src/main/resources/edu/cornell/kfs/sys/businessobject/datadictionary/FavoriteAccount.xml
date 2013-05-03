@@ -130,9 +130,9 @@
 
    <bean id="FavoriteAccount-description-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="description"/>
-    <property name="label" value="Description"/>
-    <property name="shortLabel" value="Description"/>
-    <property name="required" value="true"/>
+    <property name="label" value="Account Nickname"/>
+    <property name="shortLabel" value="Account Nickname"/>
+    <property name="required" value="false"/>
     <property name="maxLength" value="80"/>
     <property name="validationPattern">
       <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true"/>

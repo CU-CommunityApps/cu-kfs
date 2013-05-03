@@ -81,7 +81,7 @@
 		  <property name="includeMultipleLookupLine" value="false"/>  --> 
           <property name="maintainableFields">
             <list>
-        <bean parent="MaintainableFieldDefinition" p:name="description" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="description"/>
         <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true"/>
         <!-- <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true"/> -->
         <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true" p:template="accountNumber" p:webUILeaveFieldFunction="loadAccountName"/>
