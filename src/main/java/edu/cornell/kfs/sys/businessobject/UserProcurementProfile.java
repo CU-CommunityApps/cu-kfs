@@ -20,9 +20,11 @@ public class UserProcurementProfile extends PersistableBusinessObjectBase {
 //	private String documentTypeCode;
     private List<FavoriteAccount> favoriteAccounts;
 	private String personName;
+	private String accountNumber;
 	private boolean personSelected;
 	private FavoriteAccount newSourceLine;
     private Person profileUser;
+    private FavoriteAccount resultAccount;
 
     public UserProcurementProfile() {
         super();
@@ -131,6 +133,34 @@ public class UserProcurementProfile extends PersistableBusinessObjectBase {
 
 	public void setProfileUser(Person profileUser) {
 		this.profileUser = profileUser;
+	}
+
+
+
+	public String getAccountNumber() {
+		return "testonly";
+	}
+
+
+
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+
+
+
+	public FavoriteAccount getResultAccount() {
+		if (resultAccount ==null) {
+			resultAccount = new FavoriteAccount();
+//			resultAccount.setAccountNumber("dispacct");
+		}
+		return resultAccount;
+	}
+
+
+
+	public void setResultAccount(FavoriteAccount resultAccount) {
+		this.resultAccount = resultAccount;
 	}
 
 

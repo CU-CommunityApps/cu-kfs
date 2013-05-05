@@ -43,6 +43,12 @@
          <ref bean="UserProcurementProfile-profileUser.principalName"/>
          <ref bean="UserProcurementProfile-profileUser.name"/>
         <ref bean="UserProcurementProfile-favoriteAccounts.account.accountName"/>
+        <ref bean="UserProcurementProfile-resultAccount.description"/>
+        <ref bean="UserProcurementProfile-resultAccount.accountNumber"/>
+        <ref bean="UserProcurementProfile-resultAccount.subAccountNumber"/>
+        <ref bean="UserProcurementProfile-resultAccount.financialObjectCode"/>
+        <ref bean="UserProcurementProfile-resultAccount.organizationReferenceId"/>
+        <ref bean="UserProcurementProfile-resultAccount.financialSubObjectCode"/>
       </list>
     </property>
    <property name="collections">
@@ -167,10 +173,22 @@
     <property name="name" value="favoriteAccounts.description"/>
   </bean>  
   
+  <bean id="UserProcurementProfile-resultAccount.description" parent="UserProcurementProfile-resultAccount.description-parentBean"/>
+
+  <bean id="UserProcurementProfile-resultAccount.description-parentBean" abstract="true" parent="FavoriteAccount-description">
+    <property name="name" value="resultAccount.description"/>
+  </bean>  
+  
   <bean id="UserProcurementProfile-favoriteAccounts.accountNumber" parent="UserProcurementProfile-favoriteAccounts.accountNumber-parentBean"/>
 
   <bean id="UserProcurementProfile-favoriteAccounts.accountNumber-parentBean" abstract="true" parent="FavoriteAccount-accountNumber">
     <property name="name" value="favoriteAccounts.accountNumber"/>
+  </bean>  
+  
+    <bean id="UserProcurementProfile-resultAccount.accountNumber" parent="UserProcurementProfile-resultAccount.accountNumber-parentBean"/>
+
+  <bean id="UserProcurementProfile-resultAccount.accountNumber-parentBean" abstract="true" parent="Account-accountNumber">
+    <property name="name" value="resultAccount.accountNumber"/>
   </bean>  
   
   <bean id="UserProcurementProfile-favoriteAccounts.subAccountNumber" parent="UserProcurementProfile-favoriteAccounts.subAccountNumber-parentBean"/>
@@ -179,10 +197,22 @@
     <property name="name" value="favoriteAccounts.subAccountNumber"/>
   </bean>  
   
+    <bean id="UserProcurementProfile-resultAccount.subAccountNumber" parent="UserProcurementProfile-resultAccount.subAccountNumber-parentBean"/>
+
+  <bean id="UserProcurementProfile-resultAccount.subAccountNumber-parentBean" abstract="true" parent="FavoriteAccount-subAccountNumber">
+    <property name="name" value="resultAccount.subAccountNumber"/>
+  </bean>  
+  
   <bean id="UserProcurementProfile-favoriteAccounts.financialObjectCode" parent="UserProcurementProfile-favoriteAccounts.financialObjectCode-parentBean"/>
 
   <bean id="UserProcurementProfile-favoriteAccounts.financialObjectCode-parentBean" abstract="true" parent="FavoriteAccount-financialObjectCode">
     <property name="name" value="favoriteAccounts.financialObjectCode"/>
+  </bean>  
+  
+    <bean id="UserProcurementProfile-resultAccount.financialObjectCode" parent="UserProcurementProfile-resultAccount.financialObjectCode-parentBean"/>
+
+  <bean id="UserProcurementProfile-resultAccount.financialObjectCode-parentBean" abstract="true" parent="FavoriteAccount-financialObjectCode">
+    <property name="name" value="resultAccount.financialObjectCode"/>
   </bean>  
   
   <bean id="UserProcurementProfile-favoriteAccounts.financialSubObjectCode" parent="UserProcurementProfile-favoriteAccounts.financialSubObjectCode-parentBean"/>
@@ -191,10 +221,22 @@
     <property name="name" value="favoriteAccounts.financialSubObjectCode"/>
   </bean>  
   
+    <bean id="UserProcurementProfile-resultAccount.financialSubObjectCode" parent="UserProcurementProfile-resultAccount.financialSubObjectCode-parentBean"/>
+
+  <bean id="UserProcurementProfile-resultAccount.financialSubObjectCode-parentBean" abstract="true" parent="FavoriteAccount-financialSubObjectCode">
+    <property name="name" value="resultAccount.financialSubObjectCode"/>
+  </bean>  
+  
   <bean id="UserProcurementProfile-favoriteAccounts.projectCode" parent="UserProcurementProfile-favoriteAccounts.projectCode-parentBean"/>
 
   <bean id="UserProcurementProfile-favoriteAccounts.projectCode-parentBean" abstract="true" parent="FavoriteAccount-projectCode">
     <property name="name" value="favoriteAccounts.projectCode"/>
+  </bean>  
+  
+    <bean id="UserProcurementProfile-resultAccount.organizationReferenceId" parent="UserProcurementProfile-resultAccount.organizationReferenceId-parentBean"/>
+
+  <bean id="UserProcurementProfile-resultAccount.organizationReferenceId-parentBean" abstract="true" parent="FavoriteAccount-organizationReferenceId">
+    <property name="name" value="resultAccount.organizationReferenceId"/>
   </bean>  
   
   <bean id="UserProcurementProfile-favoriteAccounts.primaryInd" parent="UserProcurementProfile-favoriteAccounts.primaryInd-parentBean"/>
@@ -248,7 +290,7 @@
 
   <bean id="UserProcurementProfile-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
     <property name="title" value="User Favorites Profile Lookup"/>
-  <!--   <property name="lookupableID" value="userProfileLookupable"/> -->
+    <property name="lookupableID" value="userProfileLookupable"/> 
     
     <property name="defaultSort" >
       <bean parent="SortDefinition">
@@ -282,7 +324,12 @@
        <!--  <bean parent="FieldDefinition" p:attributeName="userProfileId"/>
         <bean parent="FieldDefinition" p:attributeName="documentTypeCode"/> -->
         <bean parent="FieldDefinition" p:attributeName="profileUser.name"/>
-      </list>
+        <bean parent="FieldDefinition" p:attributeName="resultAccount.accountNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="resultAccount.subAccountNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="resultAccount.financialObjectCode"/>
+        <bean parent="FieldDefinition" p:attributeName="resultAccount.financialSubObjectCode"/>
+        <bean parent="FieldDefinition" p:attributeName="resultAccount.organizationReferenceId"/>
+       </list>
     </property>
   </bean>
 </beans>
