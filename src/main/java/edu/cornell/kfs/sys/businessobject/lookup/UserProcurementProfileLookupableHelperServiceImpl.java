@@ -12,18 +12,18 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.kns.bo.BusinessObject;
 import org.kuali.rice.kns.bo.PersistableBusinessObject;
 import org.kuali.rice.kns.lookup.AbstractLookupableHelperServiceImpl;
+import org.kuali.rice.kns.lookup.KualiLookupableHelperServiceImpl;
 import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
 
-public class UserProcurementProfileLookupableHelperServiceImpl extends AbstractLookupableHelperServiceImpl {
+public class UserProcurementProfileLookupableHelperServiceImpl extends KualiLookupableHelperServiceImpl {
 
 	@Override
 	public List<? extends BusinessObject> getSearchResults(
 			Map<String, String> fieldValues) {
-        List<PersistableBusinessObject> searchResults = (List) getLookupService().findCollectionBySearch(getBusinessObjectClass(), fieldValues);
-
+        List<PersistableBusinessObject> searchResults = (List<PersistableBusinessObject>)super.getSearchResults(fieldValues);
         Map<String, Object> newFieldValues = new HashMap<String, Object>();
         boolean hasAccountcriteria = false;
         for (String key : fieldValues.keySet()) {
