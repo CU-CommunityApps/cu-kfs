@@ -196,7 +196,7 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
     		return false;
     	}
   	
-        return new EqualsBuilder().append(newLine.getChartOfAccountsCode(), oldLine.getChartOfAccountsCode()).append(newLine.getAccountNumber(), oldLine.getAccountNumber()).append(newLine.getSubAccountNumber(), oldLine.getSubAccountNumber()).append(newLine.getFinancialObjectCode(), oldLine.getFinancialObjectCode()).append(newLine.getFinancialSubObjectCode(), oldLine.getFinancialSubObjectCode()).append(newLine.getProjectCode(), oldLine.getProjectCode()).append(newLine.getOrganizationReferenceId(), oldLine.getOrganizationReferenceId()).append(newLine.getAmount(), oldLine.getAmount()).append(newLine.getFinancialDocumentLineDescription(), oldLine.getFinancialDocumentLineDescription()).append(newLine.getOrganizationReferenceId(), oldLine.getOrganizationReferenceId()).append(newLine.getReferenceOriginCode(), oldLine.getReferenceOriginCode()).append(newLine.getReferenceNumber(),oldLine.getReferenceNumber()).isEquals();
+        return new EqualsBuilder().append(newLine.getChartOfAccountsCode(), oldLine.getChartOfAccountsCode()).append(newLine.getAccountNumber(), oldLine.getAccountNumber()).append(newLine.getSubAccountNumber(), oldLine.getSubAccountNumber()).append(newLine.getFinancialObjectCode(), oldLine.getFinancialObjectCode()).append(newLine.getFinancialSubObjectCode(), oldLine.getFinancialSubObjectCode()).append(newLine.getProjectCode(), oldLine.getProjectCode()).append(newLine.getOrganizationReferenceId(), oldLine.getOrganizationReferenceId()).append(newLine.getAmount(), oldLine.getAmount()).append(newLine.getFinancialDocumentLineDescription(), oldLine.getFinancialDocumentLineDescription()).append(newLine.getOrganizationReferenceId(), oldLine.getOrganizationReferenceId()).append(newLine.getReferenceNumber(),oldLine.getReferenceNumber()).isEquals();
     }
     
     protected String toString(AccountingLine line) {
@@ -233,6 +233,10 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
     	builder.append(line.getBalanceTypeCode());
     	builder.append(KFSConstants.COMMA);
     	builder.append(line.getOrganizationReferenceId());
+    	builder.append(KFSConstants.COMMA);
+    	builder.append(line.getOrganizationReferenceId());
+    	builder.append(KFSConstants.COMMA);
+    	builder.append(line.getReferenceNumber());
     	builder.append(')');
     	return builder.toString();
     }
