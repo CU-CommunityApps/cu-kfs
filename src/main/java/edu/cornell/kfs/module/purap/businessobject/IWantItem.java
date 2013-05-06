@@ -134,4 +134,32 @@ public class IWantItem  extends PersistableBusinessObjectBase{
         this.documentNumber = documentNumber;
     }
 
+    /**
+     * Helper method for copying an item.
+     * 
+     * @param oldItem
+     * @return a copy of the item.
+     */
+    public static IWantItem createCopy(IWantItem oldItem) {
+    	if (oldItem == null) {
+    		throw new IllegalArgumentException("source item cannot be null");
+    	}
+    	IWantItem copyItem = new IWantItem();
+    	
+    	// NOTE: We do not copy the itemIdentifier (the primary key).
+    	copyItem.documentNumber = oldItem.documentNumber;
+    	copyItem.itemLineNumber = oldItem.itemLineNumber;
+    	copyItem.itemUnitOfMeasureCode = oldItem.itemUnitOfMeasureCode;
+    	copyItem.itemCatalogNumber = oldItem.itemCatalogNumber;
+    	copyItem.itemDescription = oldItem.itemDescription;
+    	copyItem.itemUnitPrice = oldItem.itemUnitPrice;
+    	copyItem.purchasingCommodityCode = oldItem.purchasingCommodityCode;
+    	copyItem.itemQuantity = oldItem.itemQuantity;
+    	copyItem.commodityCode = oldItem.commodityCode;
+    	copyItem.itemUnitOfMeasure = oldItem.itemUnitOfMeasure;
+    	copyItem.iWantDocument = oldItem.iWantDocument;
+    	
+    	return copyItem;
+    }
+
 }

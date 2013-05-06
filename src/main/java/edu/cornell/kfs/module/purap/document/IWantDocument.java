@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.document;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -657,6 +658,37 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         addCopyErrorDocumentNote("copied from document " + sourceDocumentHeaderId);
 
+        copyItemsAndAccounts();
+    }
+
+    @Override
+	public void toCopy() throws WorkflowException, IllegalStateException {
+		super.toCopy();
+		
+		copyItemsAndAccounts();
+	}
+
+    /**
+     * Create copies of the items and accounts lists upon document copy.
+     */
+    private void copyItemsAndAccounts() {
+    	List<IWantItem> newItems = new ArrayList<IWantItem>();
+    	List<IWantAccount> newAccounts = new ArrayList<IWantAccount>();
+    	
+    	if (items != null && !items.isEmpty()) {
+    		for (IWantItem item : items) {
+    			newItems.add(IWantItem.createCopy(item));
+    		}
+    	}
+    	
+    	if (accounts != null && !accounts.isEmpty()) {
+    		for (IWantAccount account : accounts) {
+    			newAccounts.add(IWantAccount.createCopy(account));
+    		}
+    	}
+    	
+    	this.items = newItems;
+    	this.accounts = newAccounts;
     }
 
     /**

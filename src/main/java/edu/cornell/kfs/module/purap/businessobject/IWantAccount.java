@@ -205,4 +205,39 @@ public class IWantAccount extends PersistableBusinessObjectBase {
         this.useAmountOrPercent = useAmountOrPercent;
     }
 
+    /**
+     * Helper method for copying an account.
+     * 
+     * @param oldAccount
+     * @return A copy of the account.
+     */
+    public static IWantAccount createCopy(IWantAccount oldAccount) {
+    	if (oldAccount == null) {
+    		throw new IllegalArgumentException("source account cannot be null");
+    	}
+    	IWantAccount copyAccount = new IWantAccount();
+
+    	// NOTE: We do not copy the accountLineIdentifier (the primary key).
+    	copyAccount.documentNumber = oldAccount.documentNumber;
+    	copyAccount.lineNumber = oldAccount.lineNumber;
+    	copyAccount.chartOfAccountsCode = oldAccount.chartOfAccountsCode;
+    	copyAccount.accountNumber = oldAccount.accountNumber;
+    	copyAccount.financialObjectCode = oldAccount.financialObjectCode;
+    	copyAccount.subAccountNumber = oldAccount.subAccountNumber;
+    	copyAccount.financialSubObjectCode = oldAccount.financialSubObjectCode;
+    	copyAccount.projectCode = oldAccount.projectCode;
+    	copyAccount.organizationReferenceId = oldAccount.organizationReferenceId;
+    	copyAccount.postingYear = oldAccount.postingYear;
+    	copyAccount.amountOrPercent = oldAccount.amountOrPercent;
+    	copyAccount.useAmountOrPercent = oldAccount.useAmountOrPercent;
+    	copyAccount.chart = oldAccount.chart;
+    	copyAccount.account = oldAccount.account;
+    	copyAccount.objectCode = oldAccount.objectCode;
+    	copyAccount.subAccount = oldAccount.subAccount;
+    	copyAccount.subObjectCode = oldAccount.subObjectCode;
+    	copyAccount.project = oldAccount.project;
+    	
+    	return copyAccount;
+    }
+
 }
