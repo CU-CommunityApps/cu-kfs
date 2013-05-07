@@ -37,12 +37,10 @@ public class B2BDaoImpl implements B2BDao {
      */
     public String sendPunchOutRequest(String request, String punchoutUrl) {
         LOG.debug("sendPunchOutRequest() started");
-        URL url = null;
-        HttpURLConnection conn = null;
 
         try {
-            url = new URL(punchoutUrl);
-            conn = (HttpURLConnection) url.openConnection();
+            URL url = new URL(punchoutUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             conn.setDoInput(true);
             conn.setDoOutput(true);
@@ -50,7 +48,7 @@ public class B2BDaoImpl implements B2BDao {
             if (request.contains("MIME_BOUNDARY_FOR_ATTACHMENTS")) {
             	// KFSPTS-794 : for attachments
                 conn.setRequestProperty("Content-type", "multipart/related; boundary=" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS);
-                LOG.info("content-type is Multipart/Related;boundary=" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS);
+                LOG.info("content-type is multipart/related; boundary=" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS);
             } else {
                 conn.setRequestProperty("Content-type", "text/xml");
                 LOG.info("content-type is text/xml");
@@ -77,33 +75,18 @@ public class B2BDaoImpl implements B2BDao {
         }
         catch (MalformedURLException e) {
             LOG.error("postPunchOutSetupRequestMessage() Error posting setup", e);
-            LOG.info("b2b connection error " + conn.getErrorStream());
-            throw new B2BConnectionException("Unable to connect to remote site for punchout.", e );
+            throw new B2BConnectionException("Unable to connect to remote site for punchout.", e);
         }
         catch (ProtocolException e) {
             LOG.error("postPunchOutSetupRequestMessage() Error posting setup", e);
-            LOG.info("b2b connection error " + conn.getErrorStream());
             throw new B2BConnectionException("Unable to connect to remote site for punchout.", e);
         }
         catch (UnsupportedEncodingException e) {
             LOG.error("postPunchOutSetupRequestMessage() Error posting setup", e);
-            LOG.info("b2b connection error " + conn.getErrorStream());
             throw new B2BConnectionException("Unable to connect to remote site for punchout.", e);
         }
         catch (IOException e) {
             LOG.error("postPunchOutSetupRequestMessage() Error posting setup", e);
-            LOG.info("b2b connection error " + conn.getErrorStream());
-            try {
-            int respcode = conn.getResponseCode();
-            String respMsg = conn.getResponseMessage();
-            InputStream is = conn.getErrorStream();
-            if (is == null) {
-            	LOG.info("error is null ");
-            }
-            } catch (Exception e1) {
-            	
-            }
-            
             throw new B2BConnectionException("Unable to connect to remote site for punchout.", e);
         }
     }
