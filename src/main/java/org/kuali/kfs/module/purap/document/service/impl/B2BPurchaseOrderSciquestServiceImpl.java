@@ -135,11 +135,11 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 
         try {
             LOG.debug("sendPurchaseOrder() Generating cxml");
-            String cxml = getCxml(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns);
+            String cxml = getCxml(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns, true);
 
             
              //   cxml = 
-            LOG.info("sendPurchaseOrder() Sending cxml\n" + cxml);
+            LOG.debug("sendPurchaseOrder() Sending cxml\n" + cxml);
             String responseCxml = b2bDao.sendPunchOutRequest(cxml, b2bPurchaseOrderURL);
             LOG.info("b2bPurchaseOrderURL " + b2bPurchaseOrderURL);
 
@@ -148,10 +148,9 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
             // KFSPTS-1956 
             // allow PO to use old form, then POA use new form for testing
             if (!responseCxml.contains("Success") && responseCxml.contains("No custom field found") && responseCxml.contains("document configuration (DeliveryEmail)")) {            	
-            	String cxml1 = cxml.substring(0, cxml.indexOf("<CustomFieldValueSet label=\"Delivery Phone")) +
-            			         cxml.substring(cxml.indexOf("</POHeader>"));
-            	LOG.info("sendPurchaseOrder() re-Sending cxml\n" + cxml1);
-            	responseCxml = b2bDao.sendPunchOutRequest(cxml1, b2bPurchaseOrderURL);
+                cxml = getCxml(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns, false);
+            	LOG.debug("sendPurchaseOrder() re-Sending cxml\n" + cxml);
+            	responseCxml = b2bDao.sendPunchOutRequest(cxml, b2bPurchaseOrderURL);
                 LOG.info("re-sendPurchaseOrder(): Response cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + ":" + responseCxml);
             }
 
@@ -196,7 +195,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
      *      org.kuali.rice.kim.bo.Person, java.lang.String, org.kuali.kfs.vnd.businessobject.ContractManager,
      *      java.lang.String, java.lang.String)
      */
-    public String getCxml(PurchaseOrderDocument purchaseOrder, String requisitionInitiatorId, String password, ContractManager contractManager, String contractManagerEmail, String vendorDuns) {
+    public String getCxml(PurchaseOrderDocument purchaseOrder, String requisitionInitiatorId, String password, ContractManager contractManager, String contractManagerEmail, String vendorDuns, boolean includeNewFields) {
 
         KualiWorkflowDocument workFlowDocument = purchaseOrder.getDocumentHeader().getWorkflowDocument();
         String documentType = workFlowDocument.getDocumentType();
@@ -633,13 +632,14 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 
         // KFSPTS-427 : additional fields
         // do we have to check if field is empty or null ?
-        cxml.append(addCustomFieldValueSet("DeliveryPhone", "Delivery Phone", purchaseOrder.getDeliveryToPhoneNumber()));
-        cxml.append(addCustomFieldValueSet("DeliveryEmail", "Delivery Email", purchaseOrder.getDeliveryToEmailAddress()));
-        cxml.append(addCustomFieldValueSet("ShipTitle", "Ship Title", getVendorShipTitle(purchaseOrder)));
-        cxml.append(addCustomFieldValueSet("ShipPayTerms", "Ship Pay Terms", getVendorShipPayTerms(purchaseOrder)));
-        cxml.append(addCustomFieldValueSet("SupplierAddress2", "Supplier Address 2", purchaseOrder.getVendorLine2Address()));
-        cxml.append(addCustomFieldValueSet("SupplierCountry", "Supplier Country", getVendorCountry(purchaseOrder)));
-
+        if (includeNewFields) {
+            cxml.append(addCustomFieldValueSet("DeliveryPhone", "Delivery Phone", purchaseOrder.getDeliveryToPhoneNumber()));
+            cxml.append(addCustomFieldValueSet("DeliveryEmail", "Delivery Email", purchaseOrder.getDeliveryToEmailAddress()));
+            cxml.append(addCustomFieldValueSet("ShipTitle", "Ship Title", getVendorShipTitle(purchaseOrder)));
+            cxml.append(addCustomFieldValueSet("ShipPayTerms", "Ship Pay Terms", getVendorShipPayTerms(purchaseOrder)));
+            cxml.append(addCustomFieldValueSet("SupplierAddress2", "Supplier Address 2", purchaseOrder.getVendorLine2Address()));
+            cxml.append(addCustomFieldValueSet("SupplierCountry", "Supplier Country", getVendorCountry(purchaseOrder)));
+        } 
 
         // end KFSPTS-427 fields
         
