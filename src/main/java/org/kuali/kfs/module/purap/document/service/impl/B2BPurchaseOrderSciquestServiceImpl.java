@@ -228,7 +228,8 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
             cxml.append("        charset=\"UTF-8\";\r\n");
             cxml.append("        type=\"text/xml\"\r\n");
             cxml.append("Content-Transfer-Encoding: 8bit\r\n");
-            cxml.append("Content-ID: <1222711868656.6893160141700477326@sciquest.com>\r\n");
+            cxml.append("Content-ID: <1222711868656.6893160141700477326@sciquest.com>\r\n"); 
+            cxml.append("\r\n"); // blank line before part
         }
         cxml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
         cxml.append("<!DOCTYPE PurchaseOrderMessage SYSTEM \"PO.dtd\">\r\n");
