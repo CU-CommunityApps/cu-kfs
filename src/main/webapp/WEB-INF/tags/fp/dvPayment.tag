@@ -186,23 +186,11 @@
                  
                  <c:if test="${fullEntryMode}">
                    <html:checkbox property="document.exceptionIndicator" onclick="exceptionMessage(this);"/>
-                   Exception Attached<br/>
+                   Exception Attached
                  </c:if>  
                  <c:if test="${!fullEntryMode}">
-                   Exception Attached: <bean:write name="KualiForm" property="document.exceptionIndicator" /><br/>
-                 </c:if>
-				 
-				 <c:choose>
-					 <c:when test="${immediateDisbursementEntryMode}">        
-					   <kul:htmlControlAttribute attributeEntry="${dvAttributes.immediatePaymentIndicator}" property="document.immediatePaymentIndicator" readOnly="false"/>
-					   <kul:htmlAttributeLabel attributeEntry="${dvAttributes.immediatePaymentIndicator}" noColon="true" /><br>
-					 </c:when>
-					 <c:otherwise>
-					   <kul:htmlAttributeLabel attributeEntry="${dvAttributes.immediatePaymentIndicator}"/>
-					   <kul:htmlControlAttribute attributeEntry="${dvAttributes.immediatePaymentIndicator}" property="document.immediatePaymentIndicator" readOnly="true"/><br>          
-					 </c:otherwise>
-				</c:choose>
-				 
+                   Exception Attached: <bean:write name="KualiForm" property="document.exceptionIndicator" />
+                 </c:if>				 
                  </td>
             </tr>
             
