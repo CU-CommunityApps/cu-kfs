@@ -324,6 +324,7 @@
        <!--  <bean parent="FieldDefinition" p:attributeName="userProfileId"/>
         <bean parent="FieldDefinition" p:attributeName="documentTypeCode"/> -->
         <bean parent="FieldDefinition" p:attributeName="profileUser.name"/>
+        <bean parent="FieldDefinition" p:attributeName="resultAccount.description"/>
         <bean parent="FieldDefinition" p:attributeName="resultAccount.accountNumber"/>
         <bean parent="FieldDefinition" p:attributeName="resultAccount.subAccountNumber"/>
         <bean parent="FieldDefinition" p:attributeName="resultAccount.financialObjectCode"/>
