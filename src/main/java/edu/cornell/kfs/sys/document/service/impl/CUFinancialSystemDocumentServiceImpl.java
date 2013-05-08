@@ -234,8 +234,6 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
     	builder.append(KFSConstants.COMMA);
     	builder.append(line.getOrganizationReferenceId());
     	builder.append(KFSConstants.COMMA);
-    	builder.append(line.getOrganizationReferenceId());
-    	builder.append(KFSConstants.COMMA);
     	builder.append(line.getReferenceNumber());
     	builder.append(')');
     	return builder.toString();
