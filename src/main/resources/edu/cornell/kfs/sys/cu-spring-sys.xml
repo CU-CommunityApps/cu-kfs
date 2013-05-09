@@ -133,7 +133,7 @@
 	</bean>
 	
 <!-- KFSPTS-985 : User Favorites Profile -->
-    <bean id="UserProcurementProfileValidationService" class="edu.cornell.kfs.sys.service.impl.UserProcurementProfileValidationServiceImpl">
+    <bean id="userProcurementProfileValidationService" class="edu.cornell.kfs.sys.service.impl.UserProcurementProfileValidationServiceImpl">
 		<property name="dictionaryValidationService">
 			<ref bean="dictionaryValidationService" />
 		</property>
@@ -152,6 +152,9 @@
 
 <!-- KFSPTS-985 lookupablehelper -->
     <bean id="userProcurementProfileLookupableHelperService" class="edu.cornell.kfs.sys.businessobject.lookup.UserProcurementProfileLookupableHelperServiceImpl" scope="prototype">
+		<property name="userProcurementProfileValidationService">
+			<ref bean="userProcurementProfileValidationService" />
+		</property>
     </bean>
 	    <bean id="userProfileLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
         <property name="lookupableHelperService">

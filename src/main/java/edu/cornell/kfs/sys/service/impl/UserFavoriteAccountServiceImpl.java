@@ -54,8 +54,11 @@ public class UserFavoriteAccountServiceImpl implements UserFavoriteAccountServic
 			}
     		acctLine.setAccountNumber(account.getAccountNumber());
     		acctLine.setChartOfAccountsCode(account.getChartOfAccountsCode());
+    		acctLine.refreshReferenceObject("chart");
+    		acctLine.refreshReferenceObject("account");
     		acctLine.setSubAccountNumber(account.getSubAccountNumber());
     		acctLine.setFinancialObjectCode(account.getFinancialObjectCode());
+    		acctLine.refreshReferenceObject("objectCode");
     		acctLine.setFinancialSubObjectCode(account.getFinancialSubObjectCode());
     		acctLine.setProjectCode(account.getProjectCode());
     		acctLine.setOrganizationReferenceId(account.getOrganizationReferenceId());

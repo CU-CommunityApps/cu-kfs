@@ -41,7 +41,7 @@ public class UserProcurementProfileValidationServiceImpl implements UserProcurem
 	 * @return
 	 */
     public boolean validateAccounts(List<FavoriteAccount> favoriteAccounts) {
-		GlobalVariables.getMessageMap().clearErrorMessages();
+//		GlobalVariables.getMessageMap().clearErrorMessages();
 		if (CollectionUtils.isNotEmpty(favoriteAccounts)) {
 			String propertyPreFix = "document.newMaintainableObject.favoriteAccounts[";
 			int i = 0;
@@ -138,7 +138,7 @@ public class UserProcurementProfileValidationServiceImpl implements UserProcurem
      */
     public boolean canMaintainUserProcurementProfile() {
 		List<String> roleIds = new ArrayList<String>();
-		roleIds.add(roleManagementService.getRoleIdByName(KFSConstants.ParameterNamespaces.KFS,"Manager"));
+		roleIds.add(roleManagementService.getRoleIdByName(KFSConstants.ParameterNamespaces.KFS,"Favorite Account Manager"));
 		return roleManagementService.principalHasRole(GlobalVariables.getUserSession().getPrincipalId(),roleIds, null);
 	
     }

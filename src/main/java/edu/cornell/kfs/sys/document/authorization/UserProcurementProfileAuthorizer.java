@@ -26,8 +26,7 @@ public class UserProcurementProfileAuthorizer  extends FinancialSystemMaintenanc
 				&& !documentActions1.contains(KNSConstants.KUALI_ACTION_CAN_SAVE)) {
 			documentActions1.add(KNSConstants.KUALI_ACTION_CAN_SAVE);
 		}
-		if (documentActions1.contains(KNSConstants.KUALI_ACTION_CAN_BLANKET_APPROVE)
-				&& !documentActions1.contains(KNSConstants.KUALI_ACTION_CAN_ROUTE)) {
+		if (documentActions1.contains(KNSConstants.KUALI_ACTION_CAN_BLANKET_APPROVE)) {
 			documentActions1.remove(KNSConstants.KUALI_ACTION_CAN_BLANKET_APPROVE);
 		}
 

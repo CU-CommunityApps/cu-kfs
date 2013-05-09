@@ -11,15 +11,17 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.kns.bo.BusinessObject;
 import org.kuali.rice.kns.bo.PersistableBusinessObject;
-import org.kuali.rice.kns.lookup.AbstractLookupableHelperServiceImpl;
+import org.kuali.rice.kns.lookup.HtmlData;
 import org.kuali.rice.kns.lookup.KualiLookupableHelperServiceImpl;
+import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
+import edu.cornell.kfs.sys.service.UserProcurementProfileValidationService;
 
 public class UserProcurementProfileLookupableHelperServiceImpl extends KualiLookupableHelperServiceImpl {
-
+	private UserProcurementProfileValidationService userProcurementProfileValidationService;
 	@Override
 	public List<? extends BusinessObject> getSearchResults(
 			Map<String, String> fieldValues) {
@@ -107,5 +109,25 @@ public class UserProcurementProfileLookupableHelperServiceImpl extends KualiLook
 		profile.setResultAccount(account);
 		return profile;
 		
+	}
+
+	@Override
+	public List<HtmlData> getCustomActionUrls(BusinessObject businessObject,
+			List pkNames) {
+		// TODO Auto-generated method stub
+		List<HtmlData> actions = super.getCustomActionUrls(businessObject, pkNames);
+		if (!userProcurementProfileValidationService.canMaintainUserProcurementProfile()) {
+			if (((UserProcurementProfile)businessObject).getPrincipalId().equals(GlobalVariables.getUserSession().getPrincipalId())) {
+				actions.remove(1);
+			} else {
+				actions.clear();
+			}
+		}
+		return actions;
+	}
+
+	public void setUserProcurementProfileValidationService(
+			UserProcurementProfileValidationService userProcurementProfileValidationService) {
+		this.userProcurementProfileValidationService = userProcurementProfileValidationService;
 	}
 }
