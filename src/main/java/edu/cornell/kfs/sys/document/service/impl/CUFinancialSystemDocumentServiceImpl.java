@@ -174,14 +174,12 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
             Integer sequenceNumber = accountingLine.getSequenceNumber();
             if (sequenceNumber != null) {
             	lineMap.put(sequenceNumber, accountingLine);
-            } else if (accountingLine.getObjectId() != null){
-            	lineMap.put(accountingLine.getObjectId(), accountingLine);
-            }
+            } 
         }
 
         return lineMap;
     }
-
+    
     protected boolean compareTo(AccountingLine newLine, AccountingLine oldLine) {
         //no change; line deleted previously
     	if ((oldLine == null && newLine == null) ) {
@@ -192,11 +190,12 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
     		return false;
     	}
     	
+    	//line deleted
     	if (oldLine != null && newLine == null) {
     		return false;
     	}
   	
-        return new EqualsBuilder().append(newLine.getChartOfAccountsCode(), oldLine.getChartOfAccountsCode()).append(newLine.getAccountNumber(), oldLine.getAccountNumber()).append(newLine.getSubAccountNumber(), oldLine.getSubAccountNumber()).append(newLine.getFinancialObjectCode(), oldLine.getFinancialObjectCode()).append(newLine.getFinancialSubObjectCode(), oldLine.getFinancialSubObjectCode()).append(newLine.getProjectCode(), oldLine.getProjectCode()).append(newLine.getOrganizationReferenceId(), oldLine.getOrganizationReferenceId()).append(newLine.getAmount(), oldLine.getAmount()).append(newLine.getFinancialDocumentLineDescription(), oldLine.getFinancialDocumentLineDescription()).append(newLine.getOrganizationReferenceId(), oldLine.getOrganizationReferenceId()).append(newLine.getReferenceNumber(),oldLine.getReferenceNumber()).isEquals();
+        return new EqualsBuilder().append(newLine.getChartOfAccountsCode(), oldLine.getChartOfAccountsCode()).append(newLine.getAccountNumber(), oldLine.getAccountNumber()).append(newLine.getSubAccountNumber(), oldLine.getSubAccountNumber()).append(newLine.getFinancialObjectCode(), oldLine.getFinancialObjectCode()).append(newLine.getFinancialSubObjectCode(), oldLine.getFinancialSubObjectCode()).append(newLine.getProjectCode(), oldLine.getProjectCode()).append(newLine.getOrganizationReferenceId(), oldLine.getOrganizationReferenceId()).append(newLine.getAmount(), oldLine.getAmount()).append(newLine.getFinancialDocumentLineDescription(), oldLine.getFinancialDocumentLineDescription()).append(newLine.getReferenceNumber(),oldLine.getReferenceNumber()).isEquals();
     }
     
     protected String toString(AccountingLine line) {
