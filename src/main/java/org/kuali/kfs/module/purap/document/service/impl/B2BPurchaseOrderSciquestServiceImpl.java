@@ -15,11 +15,16 @@
  */
 package org.kuali.kfs.module.purap.document.service.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.CUPurapParameterConstants;
@@ -30,6 +35,7 @@ import org.kuali.kfs.module.purap.dataaccess.B2BDao;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.B2BPurchaseOrderService;
+import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.document.service.RequisitionService;
 import org.kuali.kfs.module.purap.exception.B2BConnectionException;
 import org.kuali.kfs.module.purap.exception.CxmlParseError;
@@ -46,6 +52,9 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kim.service.PersonService;
+import org.kuali.rice.kns.bo.Attachment;
+import org.kuali.rice.kns.bo.Note;
+import org.kuali.rice.kns.service.AttachmentService;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.ParameterService;
@@ -126,22 +135,22 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 
         try {
             LOG.debug("sendPurchaseOrder() Generating cxml");
-            String cxml = getCxml(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns);
+            String cxml = getCxml(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns, true);
 
             
              //   cxml = 
-            LOG.info("sendPurchaseOrder() Sending cxml\n" + cxml);
+            LOG.debug("sendPurchaseOrder() Sending cxml\n" + cxml);
             String responseCxml = b2bDao.sendPunchOutRequest(cxml, b2bPurchaseOrderURL);
+            LOG.info("b2bPurchaseOrderURL " + b2bPurchaseOrderURL);
 
             LOG.info("sendPurchaseOrder(): Response cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + ":" + responseCxml);
 
             // KFSPTS-1956 
             // allow PO to use old form, then POA use new form for testing
             if (!responseCxml.contains("Success") && responseCxml.contains("No custom field found") && responseCxml.contains("document configuration (DeliveryEmail)")) {            	
-            	String cxml1 = cxml.substring(0, cxml.indexOf("<CustomFieldValueSet label=\"Delivery Phone")) +
-            			         cxml.substring(cxml.indexOf("</POHeader>"));
-            	LOG.info("sendPurchaseOrder() re-Sending cxml\n" + cxml1);
-            	responseCxml = b2bDao.sendPunchOutRequest(cxml1, b2bPurchaseOrderURL);
+                cxml = getCxml(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns, false);
+            	LOG.debug("sendPurchaseOrder() re-Sending cxml\n" + cxml);
+            	responseCxml = b2bDao.sendPunchOutRequest(cxml, b2bPurchaseOrderURL);
                 LOG.info("re-sendPurchaseOrder(): Response cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + ":" + responseCxml);
             }
 
@@ -186,7 +195,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
      *      org.kuali.rice.kim.bo.Person, java.lang.String, org.kuali.kfs.vnd.businessobject.ContractManager,
      *      java.lang.String, java.lang.String)
      */
-    public String getCxml(PurchaseOrderDocument purchaseOrder, String requisitionInitiatorId, String password, ContractManager contractManager, String contractManagerEmail, String vendorDuns) {
+    public String getCxml(PurchaseOrderDocument purchaseOrder, String requisitionInitiatorId, String password, ContractManager contractManager, String contractManagerEmail, String vendorDuns, boolean includeNewFields) {
 
         KualiWorkflowDocument workFlowDocument = purchaseOrder.getDocumentHeader().getWorkflowDocument();
         String documentType = workFlowDocument.getDocumentType();
@@ -210,7 +219,17 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 
         
         StringBuffer cxml = new StringBuffer();
-
+        List<Note> notesToSendToVendor = getNotesToSendToVendor(purchaseOrder);
+        // comment out for investigation
+        if (CollectionUtils.isNotEmpty(notesToSendToVendor)) {
+            cxml.append("--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "\r\n");
+            cxml.append("Content-Type: application/xop+xml;\r\n");
+            cxml.append("        charset=\"UTF-8\";\r\n");
+            cxml.append("        type=\"text/xml\"\r\n");
+            cxml.append("Content-Transfer-Encoding: 8bit\r\n");
+            cxml.append("Content-ID: <1222711868656.6893160141700477326@sciquest.com>\r\n"); 
+            cxml.append("\r\n"); // blank line before part
+        }
         cxml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         cxml.append("<!DOCTYPE PurchaseOrderMessage SYSTEM \"PO.dtd\">\n");
         cxml.append("<PurchaseOrderMessage version=\"2.0\">\n");
@@ -523,12 +542,54 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         cxml.append("      </PaymentInfo>\n");
        
         /** *** EXTERNAL INFO SECTION **** */
-        String vendorNoteText = purchaseOrder.getVendorNoteText();
-        if (ObjectUtils.isNotNull(vendorNoteText)) {
+//KFSPTS-794: Original code prior to change going in.         
+//        String vendorNoteText = purchaseOrder.getVendorNoteText();
+//        if (ObjectUtils.isNotNull(vendorNoteText)) {
+//	        cxml.append("      <ExternalInfo>\n");
+//	        cxml.append("        <Note><![CDATA[").append(vendorNoteText).append("]]></Note>\n");
+//	        cxml.append("      </ExternalInfo>\n");
+//        }
+/*KFSPTS-794: Start new code: Define the attachments
+ * This code change was taken from an enhancement provided to Cornell from CSU.  
+ * The specific implementation pieces required for this enhancement needed to be taken from the files
+ * provided and incorporated into our code base.
+ */
+        //Attachments must be defined in the xml part and must match info in MIME binary part
+//        List<Note> notesToSendToVendor = getNotesToSendToVendor(purchaseOrder);
+        if (!notesToSendToVendor.isEmpty()) {
+            String allNotes = "";
+            String allNotesNoAttach = "";
             cxml.append("      <ExternalInfo>\n");
-	        cxml.append("        <Note><![CDATA[").append(vendorNoteText).append("]]></Note>\n");
+            for (int i = 0; i < notesToSendToVendor.size(); i++) {
+                Note note = notesToSendToVendor.get(i);
+                Attachment attachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
+                if (ObjectUtils.isNotNull(attachment)) {
+                    allNotes = allNotes + "\n(" + (i + 1) + ") " + note.getNoteText() + "  ";
+                } else {
+                    allNotesNoAttach = allNotesNoAttach + "          " + note.getNoteText() + "          ";
+                }
+            }
+            cxml.append("          <Note><![CDATA[" + allNotesNoAttach + "          " + allNotes + "]]></Note>\n");
+            cxml.append("        <Attachments xmlns:xop = \"http://www.w3.org/2004/08/xop/include/\" >\n");
+
+            for (int i = 0; i < notesToSendToVendor.size(); i++) {
+                Note note = notesToSendToVendor.get(i);
+                Attachment attachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
+                if (ObjectUtils.isNotNull(attachment)) {
+                    cxml.append("          <Attachment id=\"" + attachment.getAttachmentIdentifier() + "\" type=\"file\">\n");
+                    cxml.append("            <AttachmentName><![CDATA[" + attachment.getAttachmentFileName() + "]]></AttachmentName>\n");
+                    cxml.append("            <AttachmentURL>http://usertest.sciquest.com/apps/Router/ReqAttachmentDownload?AttachmentId=" + attachment.getAttachmentIdentifier() +
+                            "&amp;DocId=" + purchaseOrder.getPurapDocumentIdentifier() +
+                            "&amp;OrgName=SQSupportTest&amp;AuthMethod=Local</AttachmentURL>\n");
+                    cxml.append("            <AttachmentSize>" + attachment.getAttachmentFileSize() / 1024 + "</AttachmentSize>\n");
+                    cxml.append("            <xop:Include href=\"cid:" + attachment.getAttachmentIdentifier() + "@sciquest.com\" />\n");
+                    cxml.append("          </Attachment>\n");
+                }
+            }
+            cxml.append("        </Attachments>\n");
             cxml.append("      </ExternalInfo>\n");
         } 
+/*KFSPTS-794: End new code: Define the attachments */       
         
         cxml.append("      <CustomFieldValueSet label=\"Contact Name\" name=\"InitiatorName\">\n");
         cxml.append("        <CustomFieldValue>\n");
@@ -571,13 +632,14 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 
         // KFSPTS-427 : additional fields
         // do we have to check if field is empty or null ?
-        cxml.append(addCustomFieldValueSet("DeliveryPhone", "Delivery Phone", purchaseOrder.getDeliveryToPhoneNumber()));
-        cxml.append(addCustomFieldValueSet("DeliveryEmail", "Delivery Email", purchaseOrder.getDeliveryToEmailAddress()));
-        cxml.append(addCustomFieldValueSet("ShipTitle", "Ship Title", getVendorShipTitle(purchaseOrder)));
-        cxml.append(addCustomFieldValueSet("ShipPayTerms", "Ship Pay Terms", getVendorShipPayTerms(purchaseOrder)));
-        cxml.append(addCustomFieldValueSet("SupplierAddress2", "Supplier Address 2", purchaseOrder.getVendorLine2Address()));
-        cxml.append(addCustomFieldValueSet("SupplierCountry", "Supplier Country", getVendorCountry(purchaseOrder)));
-
+        if (includeNewFields) {
+            cxml.append(addCustomFieldValueSet("DeliveryPhone", "Delivery Phone", purchaseOrder.getDeliveryToPhoneNumber()));
+            cxml.append(addCustomFieldValueSet("DeliveryEmail", "Delivery Email", purchaseOrder.getDeliveryToEmailAddress()));
+            cxml.append(addCustomFieldValueSet("ShipTitle", "Ship Title", getVendorShipTitle(purchaseOrder)));
+            cxml.append(addCustomFieldValueSet("ShipPayTerms", "Ship Pay Terms", getVendorShipPayTerms(purchaseOrder)));
+            cxml.append(addCustomFieldValueSet("SupplierAddress2", "Supplier Address 2", purchaseOrder.getVendorLine2Address()));
+            cxml.append(addCustomFieldValueSet("SupplierCountry", "Supplier Country", getVendorCountry(purchaseOrder)));
+        } 
 
         // end KFSPTS-427 fields
         
@@ -632,9 +694,68 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 
         LOG.debug("getCxml(): cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + ":\n" + cxml.toString());
         
+/*KFSPTS-794: Start new code: Add each attachment as raw binary data. */
+        //*****************************************************************************************************************
+        //* This is where the attachment gets put into the xml as raw binary data                                         *
+        //*****************************************************************************************************************
+        if (!notesToSendToVendor.isEmpty()) {
+            cxml.append("\r\n");
+            for (int i = 0; i < notesToSendToVendor.size(); i++) {
+                Note note = notesToSendToVendor.get(i);
+                try {
+                    Attachment poAttachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
+                    if (ObjectUtils.isNotNull(poAttachment)) {
+                        cxml.append("\r\n"); // blank line
+                        cxml.append("--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "\r\n");
+                        cxml.append("Content-Type: application/octet-stream\r\n");
+                        cxml.append("Content-Transfer-Encoding: binary\r\n");
+                        cxml.append("Content-ID: <" + poAttachment.getAttachmentIdentifier() + "@sciquest.com>\r\n");
+                        cxml.append("Content-Disposition: attachment; filename=\"" + poAttachment.getAttachmentFileName() + "\"" + "\r\n\r\n");
+
+                        InputStream attInputStream = poAttachment.getAttachmentContents();
+                        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                        int c;
+                        // TODO : read one byte a time is not efficient
+                        while ((c = attInputStream.read()) != -1) buffer.write(c);
+                        String binaryStream = new String(buffer.toByteArray());
+
+                        cxml.append(binaryStream + "\r\n");
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            cxml.append("--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "--\r\n");  // signals this is the last MIME boundary
+        } else {
+//            cxml.append("\n\n--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "--\n");
+        }        
+/*KFSPTS-794: Stop new code: Add each attachment as raw binary data. */        
+
         return cxml.toString();
     }
     
+    /**
+     * KFSPTS-794: This code change was taken from an enhancement provided to Cornell from CSU.
+     * 
+     * Returns list of Note(s) that should be sent to the vendor
+     */
+    private List<Note> getNotesToSendToVendor(PurchaseOrderDocument purchaseOrder) {
+        List<Note> notesToSend = new ArrayList<Note>(); // this may not work for POA because PO note is linked to oldest PO
+        List<Note> boNotes = purchaseOrder.getBoNotes(); 
+        if (CollectionUtils.isEmpty(boNotes)) {
+        	boNotes = SpringContext.getBean(PurchaseOrderService.class).getPurchaseOrderNotes(purchaseOrder.getPurapDocumentIdentifier());        	
+        }
+
+        for (Note note : boNotes) {
+            if (StringUtils.equalsIgnoreCase(note.getNoteTopicText(), CUPurapConstants.AttachemntToVendorIndicators.SEND_TO_VENDOR)) {
+                notesToSend.add(note);
+            }
+        }
+        return notesToSend;
+    }
+
     /*
      * helper method for repeated code
      */

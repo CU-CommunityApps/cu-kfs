@@ -25,6 +25,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
+import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.dataaccess.B2BDao;
 import org.kuali.kfs.module.purap.exception.B2BConnectionException;
 
@@ -44,8 +45,14 @@ public class B2BDaoImpl implements B2BDao {
             conn.setDoInput(true);
             conn.setDoOutput(true);
             conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-type", "text/xml");
-            
+            if (request.contains("MIME_BOUNDARY_FOR_ATTACHMENTS")) {
+            	// KFSPTS-794 : for attachments
+                conn.setRequestProperty("Content-type", "multipart/related; boundary=" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS);
+                LOG.info("content-type is multipart/related; boundary=" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS);
+            } else {
+                conn.setRequestProperty("Content-type", "text/xml");
+                LOG.info("content-type is text/xml");
+            }
             OutputStream out = conn.getOutputStream();
             OutputStreamWriter outw = new OutputStreamWriter(out, "UTF-8");
             outw.write(request);
