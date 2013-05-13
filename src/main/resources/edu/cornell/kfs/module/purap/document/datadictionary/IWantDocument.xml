@@ -88,7 +88,12 @@
         <ref bean="IWantDocument-servicePerformedOnCampus"/>
        <!-- <ref bean="IWantDocument-sensitive"/>--> 
        <ref bean="IWantDocument-totalDollarAmount"/>
-         
+       <ref bean="IWantDocument-itemAndAccountDifference" />
+       
+       <ref bean="IWantDocument-collegeLevelChartForSearch" />
+       <ref bean="IWantDocument-collegeLevelOrgCodeForSearch" />
+       <ref bean="IWantDocument-departmentLevelOrgCodeForSearch" />
+       
       </list>
     </property>
     <property name="validationMap" ref="IWantDocument-validations"/>
@@ -99,6 +104,30 @@
               <property name="primitiveAttributes">
                 <list>
                   <bean parent="PrimitiveAttributeDefinition" p:sourceName="vendorNumber" p:targetName="vendorNumber"/>
+                </list>
+              </property>
+    		</bean>
+    		<bean parent="RelationshipDefinition">
+              <property name="objectAttributeName" value="collegeChartForSearch"/>
+              <property name="primitiveAttributes">
+                <list>
+                  <bean parent="PrimitiveAttributeDefinition" p:sourceName="collegeLevelChartForSearch" p:targetName="chartOfAccountsCode"/>
+                </list>
+              </property>
+    		</bean>
+    		<bean parent="RelationshipDefinition">
+              <property name="objectAttributeName" value="collegeOrgForSearch"/>
+              <property name="primitiveAttributes">
+                <list>
+                  <bean parent="PrimitiveAttributeDefinition" p:sourceName="collegeLevelOrgCodeForSearch" p:targetName="organizationCode"/>
+                </list>
+              </property>
+    		</bean>
+    		<bean parent="RelationshipDefinition">
+              <property name="objectAttributeName" value="departmentOrgForSearch"/>
+              <property name="primitiveAttributes">
+                <list>
+                  <bean parent="PrimitiveAttributeDefinition" p:sourceName="departmentLevelOrgCodeForSearch" p:targetName="organizationCode"/>
                 </list>
               </property>
     		</bean>
@@ -515,6 +544,14 @@
     <property name="shortLabel" value="Total"/>
   </bean>
   
+  <bean id="IWantDocument-itemAndAccountDifference" parent="IWantDocument-itemAndAccountDifference-parentBean"/>
+
+  <bean id="IWantDocument-itemAndAccountDifference-parentBean" abstract="true" parent="GenericAttributes-genericAmount">
+    <property name="name" value="itemAndAccountDifference"/>
+    <property name="label" value="Difference between Totals"/>
+    <property name="shortLabel" value="Diff of Totals"/>
+  </bean>
+  
   <bean id="IWantDocument-noteLabel" parent="IWantDocument-noteLabel-parentBean"/>
 
   <bean id="IWantDocument-noteLabel-parentBean" abstract="true" parent="Note-noteText">
@@ -563,6 +600,29 @@
    
   </bean>
 
+  <bean id="IWantDocument-collegeLevelChartForSearch" parent="IWantDocument-collegeLevelChartForSearch-parentBean"/>
+  
+  <bean id="IWantDocument-collegeLevelChartForSearch-parentBean" abstract="true" parent="Chart-chartOfAccountsCode">
+    <property name="name" value="collegeLevelChartForSearch"/>
+    <property name="label" value="College/Division Chart Code"/>
+    <property name="shortLabel" value="College/Division Chart Code"/>
+  </bean>
+  
+  <bean id="IWantDocument-collegeLevelOrgCodeForSearch" parent="IWantDocument-collegeLevelOrgCodeForSearch-parentBean"/>
+  
+  <bean id="IWantDocument-collegeLevelOrgCodeForSearch-parentBean" abstract="true" parent="PurApGenericAttributes-organizationCode">
+    <property name="name" value="collegeLevelOrgCodeForSearch"/>
+    <property name="label" value="College/Division Organization Code"/>
+    <property name="shortLabel" value="College/Division Org Code"/>
+  </bean>
+  
+  <bean id="IWantDocument-departmentLevelOrgCodeForSearch" parent="IWantDocument-departmentLevelOrgCodeForSearch-parentBean"/>
+  
+  <bean id="IWantDocument-departmentLevelOrgCodeForSearch-parentBean" abstract="true" parent="PurApGenericAttributes-organizationCode">
+    <property name="name" value="departmentLevelOrgCodeForSearch"/>
+    <property name="label" value="Department/Unit Organization Code"/>
+    <property name="shortLabel" value="Dept/Unit Org Code"/>
+  </bean>
   
   <bean id="IWantDocument-validations" parent="IWantDocument-validations-parentBean"/>
   
@@ -615,6 +675,45 @@
                         </list>
                     </property>
                 </bean>             
+                <bean class="org.kuali.rice.kns.datadictionary.SearchingTypeDefinition">
+                    <property name="searchingAttribute">
+                        <bean class="org.kuali.rice.kns.datadictionary.SearchingAttribute">
+                            <property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.IWantDocument"/>
+                            <property name="attributeName" value="collegeLevelChartForSearch"/>
+                        </bean>
+                    </property>
+                    <property name="documentValues">
+                        <list>
+                            <value>collegeLevelChartForSearch</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="org.kuali.rice.kns.datadictionary.SearchingTypeDefinition">
+                    <property name="searchingAttribute">
+                        <bean class="org.kuali.rice.kns.datadictionary.SearchingAttribute">
+                            <property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.IWantDocument"/>
+                            <property name="attributeName" value="collegeLevelOrgCodeForSearch"/>
+                        </bean>
+                    </property>
+                    <property name="documentValues">
+                        <list>
+                            <value>collegeLevelOrgCodeForSearch</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="org.kuali.rice.kns.datadictionary.SearchingTypeDefinition">
+                    <property name="searchingAttribute">
+                        <bean class="org.kuali.rice.kns.datadictionary.SearchingAttribute">
+                            <property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.IWantDocument"/>
+                            <property name="attributeName" value="departmentLevelOrgCodeForSearch"/>
+                        </bean>
+                    </property>
+                    <property name="documentValues">
+                        <list>
+                            <value>departmentLevelOrgCodeForSearch</value>
+                        </list>
+                    </property>
+                </bean>
     		</list>
     	</property>
     

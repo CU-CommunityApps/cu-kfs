@@ -1,9 +1,12 @@
 package edu.cornell.kfs.module.purap.document.web.struts;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +16,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.module.purap.CUPurapConstants;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentActionBase;
@@ -26,6 +30,7 @@ import org.kuali.rice.kim.bo.entity.KimEntityEmploymentInformation;
 import org.kuali.rice.kim.bo.entity.dto.KimEntityInfo;
 import org.kuali.rice.kim.bo.entity.dto.KimPrincipalInfo;
 import org.kuali.rice.kim.service.IdentityManagementService;
+import org.kuali.rice.kns.bo.Note;
 import org.kuali.rice.kns.rule.event.KualiAddLineEvent;
 import org.kuali.rice.kns.rule.event.RouteDocumentEvent;
 import org.kuali.rice.kns.service.KualiRuleService;
@@ -45,7 +50,9 @@ import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
 
 public class IWantDocumentAction extends FinancialSystemTransactionalDocumentActionBase {
 
-    private final int DOCUMENT_DESCRIPTION_MAX_LENGTH = 40;
+	private static final String IWANT_DEPT_ORGS_TO_EXCLUDE_PARM = "IWANT_DEPT_ORGS_TO_EXCLUDE";
+	
+	private final int DOCUMENT_DESCRIPTION_MAX_LENGTH = 40;
 
     /**
      * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#loadDocument(org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase)
@@ -255,13 +262,22 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                         IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
                         List<LevelOrganization> dLevelOrgs = iWantDocumentService.getDLevelOrganizations(cLevelOrg);
 
+                        // Get the list of chart+org combos to forcibly exclude from the drop-down, if any.
+                        String routingChart = ((IWantDocument) documentForm.getDocument()).getRoutingChart();
+                        List<String> dLevelExcludesList = getParameterService().getParameterValues(PurapConstants.PURAP_NAMESPACE,
+                        		KNSConstants.DetailTypes.DOCUMENT_DETAIL_TYPE, IWANT_DEPT_ORGS_TO_EXCLUDE_PARM);
+                        Set<String> dLevelExcludes =
+                        		new HashSet<String>((dLevelExcludesList != null) ? dLevelExcludesList : Collections.<String>emptyList());
+                        
                         for (LevelOrganization levelOrganization : dLevelOrgs) {
 
-                            documentForm.getDeptOrgKeyLabels()
-                                    .add(
-                                            new KeyLabelPair(levelOrganization.getCode(), levelOrganization
-                                                    .getCodeAndDescription()));
-
+                        	// Add each department-level org to the drop-down as long as it is not marked for exclusion.
+                        	if (!dLevelExcludes.contains(routingChart + "=" + levelOrganization.getCode())) {
+                        		documentForm.getDeptOrgKeyLabels()
+                                    	.add(
+                                    			new KeyLabelPair(levelOrganization.getCode(), levelOrganization
+                                    					.getCodeAndDescription()));
+                        	}
                         }
                     }
                 }
@@ -722,6 +738,22 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         return super.sendAdHocRequests(mapping, form, request, response);
     }
 
+    @Override
+	public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		
+    	IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
+        IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+
+        //insert adhoc route person first and then approve
+        if (StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())) {
+            insertAdHocRoutePerson(mapping, iWantDocForm, request, response);
+
+        }
+    	
+		return super.approve(mapping, form, request, response);
+	}
+    
     /**
      * Use the new attachment description field to set the note text.
      * 
@@ -733,8 +765,17 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     public ActionForward insertBONote(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
+    	// If the note text is blank, set the attachment description as the text. Otherwise, concatenate both to form the text.
+    	IWantDocumentForm iWantDocumentForm = (IWantDocumentForm) form;
+    	Note note = iWantDocumentForm.getNewNote();
+    	if (StringUtils.isBlank(note.getNoteText())) {
+            note.setNoteText(iWantDocumentForm.getIWantDocument().getAttachmentDescription());
+        } else {
+        	note.setNoteText(iWantDocumentForm.getIWantDocument().getAttachmentDescription() + ": " + note.getNoteText());
+        }
+    	
         ActionForward actionForward = super.insertBONote(mapping, form, request, response);
-        IWantDocumentForm iWantDocumentForm = (IWantDocumentForm) form;
+        
         iWantDocumentForm.getIWantDocument().setAttachmentDescription(StringUtils.EMPTY);
 
         return actionForward;

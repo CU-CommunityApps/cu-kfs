@@ -164,6 +164,8 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
             editModes.remove(CUPurapConstants.IWantDocumentSteps.VENDOR_STEP);
         }
 
+        editModes.add(CUPurapConstants.IWNT_DOC_USE_LOOKUPS);
+        
         return editModes;
     }
 

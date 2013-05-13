@@ -307,14 +307,11 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         return clearButton;
     }
     
-    @Override
+    /*@Override
     public Note getNewNote() {
         Note note = super.getNewNote();
-        if (StringUtils.isBlank(note.getNoteText())) {
-            note.setNoteText(getIWantDocument().getAttachmentDescription());
-        }
         return note;
-    }
+    }*/
     
 
 }

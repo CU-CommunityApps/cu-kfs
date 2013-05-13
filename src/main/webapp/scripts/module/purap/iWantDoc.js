@@ -161,7 +161,7 @@ function loadAccountName(accountNumberFieldName, chartFieldName, accountNameFiel
 	}
  }
 
-function updateAccountsTotal(totalDollarAmountFieldName, totalAccountsField, lineNbr) {
+function updateAccountsTotal(totalDollarAmountFieldName, totalAccountsField, itemsNbr, lineNbr) {
 	var total = 0;
 	var itemsTotal = DWRUtil.getValue(totalDollarAmountFieldName);
 
@@ -191,6 +191,9 @@ function updateAccountsTotal(totalDollarAmountFieldName, totalAccountsField, lin
 	total = addCommas(total);
 	
 	setRecipientValue(totalAccountsField, total);
+	
+	// Now update the difference between the item and account totals.
+	updateItemAndAccountDifference(totalDollarAmountFieldName, totalAccountsField, itemsNbr, lineNbr);
 }
 
 function updateItemsTotal(totalDollarAmountFieldName, totalAccountsField, itemsNbr, accountsNbr, totalItemAmountFieldName, itemNbr) {
@@ -219,7 +222,7 @@ function updateItemsTotal(totalDollarAmountFieldName, totalAccountsField, itemsN
 	setRecipientValue(totalDollarAmountFieldName, total);
 	
 	// now update accounts total
-	updateAccountsTotal(totalDollarAmountFieldName, totalAccountsField, accountsNbr);
+	updateAccountsTotal(totalDollarAmountFieldName, totalAccountsField, itemsNbr, accountsNbr);
 }
 
 function updateItemTotal(totalDollarAmountFieldName, itemNbr) {
@@ -264,6 +267,57 @@ function updateNewItemTotal() {
 	total = addCommas(total);
 	
 	setRecipientValue('newIWantItemLine.totalAmount', total);
+}
+
+function updateItemAndAccountDifference(totalDollarAmountFieldName, totalAccountsField, itemsNbr, accountsNbr) {
+	var total = 0;
+	
+	// TODO: Is it safe to grab the total fields' formatted values, or is re-computation preferred?
+	
+	// Add item amounts to total.
+	for (i = 0; i < itemsNbr; i++) {
+		var quantity = DWRUtil
+				.getValue('document.item[' + i + '].itemQuantity');
+		var price = DWRUtil.getValue('document.item[' + i + '].itemUnitPrice');
+
+		if (quantity == "" || isNaN(quantity)) {
+			quantity = 1;
+		}
+		if (price == "" || isNaN(price)) {
+			price = 0;
+		}
+		total += price * quantity;
+	}
+	
+	var itemsTotal = total;
+	
+	// Subtract account amounts from total.
+	for (j = 0; j < accountsNbr; j++) {
+		var amountToAdd = 0;
+		var useAmountOrPercent = DWRUtil
+				.getValue('document.account[' + j + '].useAmountOrPercent');
+		var amountOrPercent = DWRUtil.getValue('document.account[' + j + '].amountOrPercent');
+
+		if (amountOrPercent == "" || isNaN(amountOrPercent)) {
+			amountOrPercent = 0;
+			 
+		}
+		
+		if ('PERCENT' == useAmountOrPercent) {
+			amountToAdd = (amountOrPercent * itemsTotal)/100;
+		}
+		else {
+			amountToAdd = amountOrPercent *1;
+		}
+		
+		total -= amountToAdd;
+	}
+	
+	//format
+	total = total.toFixed(2);
+	total = addCommas(total);
+	
+	setRecipientValue('document.itemAndAccountDifference', total);
 }
 
 function addCommas(nStr)

@@ -36,6 +36,8 @@ public class CUPurapConstants extends PurapConstants {
         public static final String REGULAR = "regular";
     }
     
+    public static final String IWNT_DOC_USE_LOOKUPS = "iwntUseLookups";
+    
     public static final String USER_OPTIONS_DEFAULT_COLLEGE = "DEFAULT_COLLEGE";
     public static final String USER_OPTIONS_DEFAULT_DEPARTMENT = "DEFAULT_DEPARTMENT";
     public static final String USER_OPTIONS_DEFAULT_DELIVER_TO_NET_ID = "DEFAULT_DELIVER_TO_NET_ID";

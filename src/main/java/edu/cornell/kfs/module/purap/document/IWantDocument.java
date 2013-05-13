@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coa.businessobject.Chart;
+import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -112,6 +114,14 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     private VendorDetail vendorDetail;
 
+    // The three fields below are for lookup purposes only; they are not persisted.
+    private transient Chart collegeChartForSearch;
+    private transient Organization collegeOrgForSearch;
+    private transient Organization departmentOrgForSearch;
+    
+    // The difference between the item and account totals; not persisted.
+    private KualiDecimal itemAndAccountDifference;
+    
     public IWantDocument() {
         super();
         items = new TypedArrayList(IWantItem.class);
@@ -639,6 +649,22 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         this.routingOrganization = routingOrganization;
     }
 
+    public String getCollegeLevelChartForSearch() {
+    	return getRoutingChart();
+    }
+    
+    public String getCollegeLevelOrgCodeForSearch() {
+    	if (StringUtils.isNotEmpty(collegeLevelOrganization)) {
+            return collegeLevelOrganization.substring(collegeLevelOrganization.lastIndexOf("-") + 1,
+                    collegeLevelOrganization.length());
+        }
+        return collegeLevelOrganization;
+    }
+    
+    public String getDepartmentLevelOrgCodeForSearch() {
+    	return getDepartmentLevelOrganization();
+    }
+    
     /**
      * toCopyFromGateway
      */
@@ -787,6 +813,21 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     }
 
     /**
+	 * Gets the difference between the item total amounts and the account total amounts.
+	 * Re-computes and stores this difference upon invocation.
+	 */
+	public KualiDecimal getItemAndAccountDifference() {
+		KualiDecimal itemTotal = getTotalDollarAmount();
+		KualiDecimal accountTotal = getAccountingLinesTotal();
+		itemAndAccountDifference = itemTotal.subtract(accountTotal);
+		return itemAndAccountDifference;
+	}
+	
+	public void setItemAndAccountDifference(KualiDecimal itemAndAccountDifference) {
+		this.itemAndAccountDifference = itemAndAccountDifference;
+	}
+    
+    /**
      * KFSPTS-1961:
      * We need to add the items and accounts lists to the deletion-aware-lists collection
      * to ensure that element deletion functions correctly.
@@ -820,4 +861,30 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     }
 
+    // The properties below are for lookup purposes only, and are not persisted.
+    
+	public Chart getCollegeChartForSearch() {
+		return collegeChartForSearch;
+	}
+
+	public void setCollegeChartForSearch(Chart collegeChartForSearch) {
+		this.collegeChartForSearch = collegeChartForSearch;
+	}
+
+	public Organization getCollegeOrgForSearch() {
+		return collegeOrgForSearch;
+	}
+
+	public void setCollegeOrgForSearch(Organization collegeOrgForSearch) {
+		this.collegeOrgForSearch = collegeOrgForSearch;
+	}
+
+	public Organization getDepartmentOrgForSearch() {
+		return departmentOrgForSearch;
+	}
+
+	public void setDepartmentOrgForSearch(Organization departmentOrgForSearch) {
+		this.departmentOrgForSearch = departmentOrgForSearch;
+	}
+	
 }

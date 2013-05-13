@@ -50,7 +50,7 @@
                     <kul:htmlControlAttribute 
                     	attributeEntry="${documentAttributes.vendorName}" property="document.vendorName" 
                     	readOnly="${not fullEntryMode}" tabindexOverride="${tabindexOverrideBase + 0}"/>
-                    <c:if test="${fullEntryMode}" >
+                    <c:if test="${fullEntryMode && (not empty KualiForm.editingMode['iwntUseLookups'])}" >
                         <kul:lookup  boClassName="edu.cornell.kfs.module.purap.businessobject.IWantDocVendorDetail" 
                         	lookupParameters="'Y':activeIndicator, 'PO':vendorHeader.vendorTypeCode"
                         	fieldConversions="vendorName:document.vendorName,vendorHeaderGeneratedIdentifier:document.vendorHeaderGeneratedIdentifier,vendorDetailAssignedIdentifier:document.vendorDetailAssignedIdentifier,defaultAddressLine1:document.vendorLine1Address,defaultAddressLine2:document.vendorLine2Address,defaultAddressCity:document.vendorCityName,defaultAddressStateCode:document.vendorStateCode,defaultAddressPostalCode:document.vendorPostalCode,defaultAddressCountryCode:document.vendorCountryCode,defaultFaxNumber:document.vendorFaxNumber,vendorUrlAddress:document.vendorWebURL"/>

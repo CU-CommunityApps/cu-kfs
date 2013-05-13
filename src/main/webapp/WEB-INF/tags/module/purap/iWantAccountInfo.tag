@@ -27,6 +27,7 @@
 <c:set var="accountAttributes" value="${DataDictionary.IWantAccount.attributes}" />
 <c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}" />
 <c:set var="accountsNbr" value="${fn:length(KualiForm.document.accounts)}" />
+<c:set var="nbrOfItems" value="${fn:length(KualiForm.document.items)}" />
 
     
      <div class="tab-container" align=center>
@@ -121,7 +122,7 @@
                         
                 <kul:htmlControlAttribute attributeEntry="${accountAttributes.accountNumber}" property="newSourceLine.accountNumber"
 	                	onblur="loadAccountName('newSourceLine.accountNumber', 'newSourceLine.chartOfAccountsCode', 'document.newSourceLine.accountNumber.name.div');" readOnly="${not fullEntryMode}" />&nbsp;
-	                	<c:if test="${ fullEntryMode}">
+	                	<c:if test="${ fullEntryMode && (not empty KualiForm.editingMode['iwntUseLookups'])}">
 	                	<kul:lookup boClassName="org.kuali.kfs.coa.businessobject.Account"
 					                fieldConversions="accountNumber:newSourceLine.accountNumber,chartOfAccountsCode:newSourceLine.chartOfAccountsCode"
 					                lookupParameters="newSourceLine.accountNumber:accountNumber,newSourceLine.chartOfAccountsCode:chartOfAccountsCode"/>
@@ -142,7 +143,7 @@
                     <kul:htmlControlAttribute 
                         attributeEntry="${accountAttributes.financialObjectCode}" 
                         property="newSourceLine.financialObjectCode" readOnly="${not fullEntryMode}" tabindexOverride="${tabindexOverrideBase + 0}"/>&nbsp;
-                    <c:if test="${ fullEntryMode}">
+                    <c:if test="${ fullEntryMode && (not empty KualiForm.editingMode['iwntUseLookups'])}">
 	                	<kul:lookup boClassName="org.kuali.kfs.coa.businessobject.ObjectCode"
 					                fieldConversions="chartOfAccountsCode:newSourceLine.chartOfAccountsCode,financialObjectCode:newSourceLine.financialObjectCode"
 					                lookupParameters="newSourceLine.chartOfAccountsCode:chartOfAccountsCode,newSourceLine.financialObjectCode:financialObjectCode"/>
@@ -266,7 +267,7 @@
 						    readOnly="${not fullEntryMode}"
 						    tabindexOverride="${tabindexOverrideBase + 0}"/>
 						    
-						    <c:if test="${ fullEntryMode}">
+						    <c:if test="${ fullEntryMode && (not empty KualiForm.editingMode['iwntUseLookups'])}">
 	                	<kul:lookup boClassName="org.kuali.kfs.coa.businessobject.Account"
 					                fieldConversions="accountNumber:newSourceLine.accountNumber,chartOfAccountsCode:newSourceLine.chartOfAccountsCode"
 					                lookupParameters="newSourceLine.accountNumber:accountNumber,newSourceLine.chartOfAccountsCode:chartOfAccountsCode"/>
@@ -328,7 +329,7 @@
 						        property="document.account[${ctr}].useAmountOrPercent"
 						        readOnly="${not fullEntryMode}"
 						        tabindexOverride="${tabindexOverrideBase + 0}"
-						        onchange="updateAccountsTotal('document.totalDollarAmount', 'document.accountingLinesTotal', '${accountsNbr}' )"
+						        onchange="updateAccountsTotal('document.totalDollarAmount', 'document.accountingLinesTotal', '${nbrOfItems}', '${accountsNbr}' )"
 						       />
 						</div>
 					</td>
@@ -341,7 +342,7 @@
 						        property="document.account[${ctr}].amountOrPercent"
 						        readOnly="${not fullEntryMode}"
 						        tabindexOverride="${tabindexOverrideBase + 0}" 
-						        onchange="updateAccountsTotal('document.totalDollarAmount', 'document.accountingLinesTotal', '${accountsNbr}' )"
+						        onchange="updateAccountsTotal('document.totalDollarAmount', 'document.accountingLinesTotal', '${nbrOfItems}', '${accountsNbr}' )"
 						        />
 						</div>
 					</td>
@@ -393,6 +394,24 @@
 			    <div align="right">
 			        <b>
                         <html:text name="KualiForm" property="document.accountingLinesTotal" readonly="true" style="border: none; font-weight: bold"/>
+                    </b>
+                </div>
+			</td>
+			
+		</tr>
+
+		<!-- Item total and account total difference. -->
+		
+		<tr>
+			<th align=right colspan="9" scope="row" class="neutral">
+			    <div align="right">
+			        <kul:htmlAttributeLabel attributeEntry="${DataDictionary.IWantDocument.attributes.itemAndAccountDifference}" />
+			    </div>
+			</th>
+			<td valign=middle class="neutral" colspan="2" >
+			    <div align="right">
+			        <b>
+                        <html:text name="KualiForm" property="document.itemAndAccountDifference" readonly="true" style="border: none; font-weight: bold"/>
                     </b>
                 </div>
 			</td>
