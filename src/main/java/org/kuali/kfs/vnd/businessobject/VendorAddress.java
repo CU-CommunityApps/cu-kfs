@@ -312,7 +312,9 @@ public class VendorAddress extends PersistableBusinessObjectBase implements Vend
         else {
             VendorAddress va = (VendorAddress) toCompare;
             boolean eq = new EqualsBuilder().append(this.getVendorAddressGeneratedIdentifier(), va.getVendorAddressGeneratedIdentifier()).append(this.getVendorHeaderGeneratedIdentifier(), va.getVendorHeaderGeneratedIdentifier()).append(this.getVendorDetailAssignedIdentifier(), va.getVendorDetailAssignedIdentifier()).append(this.getVendorAddressTypeCode(), va.getVendorAddressTypeCode()).append(this.getVendorLine1Address(), va.getVendorLine1Address()).append(this.getVendorLine2Address(), va.getVendorLine2Address()).append(this.getVendorCityName(), va.getVendorCityName()).append(this.getVendorStateCode(), va.getVendorStateCode()).append(this.getVendorZipCode(), va.getVendorZipCode()).append(this.getVendorCountryCode(), va.getVendorCountryCode()).append(this.getVendorAttentionName(), va.getVendorAttentionName()).append(this.getVendorAddressInternationalProvinceName(), va.getVendorAddressInternationalProvinceName()).append(this.getVendorAddressEmailAddress(),
-                    va.getVendorAddressEmailAddress()).append(this.getPurchaseOrderTransmissionMethodCode(), va.getPurchaseOrderTransmissionMethodCode()).append(this.getVendorBusinessToBusinessUrlAddress(), va.getVendorBusinessToBusinessUrlAddress()).append(this.getVendorFaxNumber(), va.getVendorFaxNumber()).append(this.isVendorDefaultAddressIndicator(), va.isVendorDefaultAddressIndicator()).isEquals();
+                    va.getVendorAddressEmailAddress()).append(this.getPurchaseOrderTransmissionMethodCode(), va.getPurchaseOrderTransmissionMethodCode()).append(this.getVendorBusinessToBusinessUrlAddress(), va.getVendorBusinessToBusinessUrlAddress()).append(this.getVendorFaxNumber(), va.getVendorFaxNumber()).append(this.isVendorDefaultAddressIndicator(), va.isVendorDefaultAddressIndicator()).
+                    // KFSPTS-2055
+                    append(this.isActive(),va.isActive()).isEquals();
 //                    va.getVendorAddressEmailAddress()).append(this.getVendorBusinessToBusinessUrlAddress(), va.getVendorBusinessToBusinessUrlAddress()).append(this.getVendorFaxNumber(), va.getVendorFaxNumber()).append(this.isVendorDefaultAddressIndicator(), va.isVendorDefaultAddressIndicator()).isEquals();
             eq &= SpringContext.getBean(VendorService.class).equalMemberLists(this.getVendorDefaultAddresses(), va.getVendorDefaultAddresses());
             LOG.debug("Exiting isEqualForRouting.");
@@ -362,6 +364,5 @@ public class VendorAddress extends PersistableBusinessObjectBase implements Vend
 	 */
 	public void setPurchaseOrderTransmissionMethod(PurchaseOrderTransmissionMethod purchaseOrderTransmissionMethod) {
 		this.purchaseOrderTransmissionMethod = purchaseOrderTransmissionMethod;
-	}
-    
+	}    
 }

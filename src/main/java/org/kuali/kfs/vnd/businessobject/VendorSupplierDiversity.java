@@ -131,7 +131,9 @@ public class VendorSupplierDiversity extends PersistableBusinessObjectBase imple
         else {
             VendorSupplierDiversity vsd = (VendorSupplierDiversity) toCompare;
 
-            return new EqualsBuilder().append(this.getVendorHeaderGeneratedIdentifier(), vsd.getVendorHeaderGeneratedIdentifier()).append(this.getVendorSupplierDiversityCode(), vsd.getVendorSupplierDiversityCode()).isEquals();
+            // KFSPTS-2055 : supplier diversity active change
+            return new EqualsBuilder().append(this.getVendorHeaderGeneratedIdentifier(), vsd.getVendorHeaderGeneratedIdentifier()).append(this.getVendorSupplierDiversityCode(), vsd.getVendorSupplierDiversityCode()).
+            		append(this.isActive(), vsd.isActive()).isEquals();
         }
     }
 
