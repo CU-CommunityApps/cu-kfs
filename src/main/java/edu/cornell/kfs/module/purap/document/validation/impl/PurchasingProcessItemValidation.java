@@ -34,23 +34,8 @@ public class PurchasingProcessItemValidation extends PurchasingAccountsPayablePr
         errorMap.clearErrorPath();
         errorMap.addToErrorPath(PurapConstants.ITEM_TAB_ERRORS);
         
-        // Check that item isn't a non-qty item on an e-invoice vendor order
-    	VendorDetail vendor = purDocument.getVendorDetail();
-        if(ObjectUtils.isNotNull(vendor) && ((VendorDetailExtension)vendor.getExtension()).isEinvoiceVendorIndicator()) {
-	        // Check that there aren't any req items that already have non-qty values entered
-	        List<PurApItem> reqItems = purDocument.getItems();
-	        if(!reqItems.isEmpty()) {
-	            for(PurApItem item : reqItems) {
-	                if(PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE.equalsIgnoreCase(item.getItemTypeCode())) {
-	                    // Throw error that the non-qty items are not allowed if the vendor is an einvoice vendor
-	                    errorMap.addToErrorPath(PurapPropertyConstants.NEW_PURCHASING_ITEM_LINE);
-	                    errorMap.putError(PurapPropertyConstants.ITEM_TYPE, CUPurapKeyConstants.PURAP_ITEM_NONQTY, item.getItemLineNumber().toString(), purDocument.getVendorName()); 
-	                    errorMap.removeFromErrorPath(PurapPropertyConstants.NEW_PURCHASING_ITEM_LINE);
-	                    valid &= false;
-	                }
-	            }
-	        }
-        }
+        // KFSPTS-1719 :  remove this validation 
+//        // Check that item isn't a non-qty item on an e-invoice vendor order
         errorMap.clearErrorPath();
         return valid;
 

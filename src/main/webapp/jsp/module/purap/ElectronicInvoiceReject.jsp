@@ -126,7 +126,7 @@
 									<td class="datacell">
 									    <kul:htmlControlAttribute
 										    attributeEntry="${itemAttributes.invoiceReferenceItemLineNumber}"
-										    property="document.invoiceRejectItems[${ctr}].invoiceReferenceItemLineNumber"
+										    property="document.invoiceRejectItems[${ctr}].invoiceItemLineNumber"
 										    readOnly="${not fullEntryMode}" />
 									</td>
 									<td class="datacell">

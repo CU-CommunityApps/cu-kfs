@@ -22,6 +22,7 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
@@ -31,12 +32,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -62,6 +63,7 @@ import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceRejectReason;
 import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceRejectReasonType;
 import org.kuali.kfs.module.purap.businessobject.ItemType;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
+import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.dataaccess.ElectronicInvoicingDao;
 import org.kuali.kfs.module.purap.document.ElectronicInvoiceRejectDocument;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
@@ -1597,9 +1599,38 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
              LOG.info(expiredOrClosedAccountList.size() + " accounts has been found as Expired or Closed");
         }
         
+        // TODO : add a list of matchint line in poitem, so it can be added to preqitem ? instead of doing it here ?
         preqDoc.populatePaymentRequestFromPurchaseOrder(orderHolder.getPurchaseOrderDocument(),expiredOrClosedAccountList);
+        // need to populate here for ext price.  it become per item
+        // TODO : no qty po may have qty inv item
         
+        // KFSPTS-1719.  convert 1st matching inv item that is qty, but po is non-qty
+        checkQtyInvItemForNoQtyOrder(preqDoc, orderHolder);
         populateItemDetails(preqDoc,orderHolder);
+        // TODO : investigation Do NOT commit
+        if (CollectionUtils.isNotEmpty(orderHolder.getNonMatchItems())) {
+        	for (ElectronicInvoiceItemHolder invItem : orderHolder.getNonMatchItems()) {
+                PurchaseOrderItem item = (PurchaseOrderItem)ObjectUtils.deepCopy((Serializable) orderHolder.getPurchaseOrderDocument().getItems().get(invItem.getInvoiceItemLineNumber() - 1));
+                item.setItemLineNumber(invItem.getInvoiceItemLineNumber());
+                item.setItemDescription(invItem.getReferenceDescription());
+                item.setItemUnitPrice(invItem.getInvoiceItemUnitPrice()); // this will be populated to reqitem.poitemunitprice
+                PaymentRequestItem paymentRequestItem = new PaymentRequestItem(item, preqDoc, expiredOrClosedAccountList);
+                paymentRequestItem.setInvLineNumber(Integer.parseInt(invItem.getInvLineNumber()));
+                // need following in case inv item is qty item
+                paymentRequestItem.setItemQuantity(new KualiDecimal(invItem.getInvoiceItemQuantity()));
+                paymentRequestItem.setItemUnitOfMeasureCode(invItem.getInvoiceItemUnitOfMeasureCode());
+                paymentRequestItem.setPurchaseOrderItemUnitPrice(invItem.getInvoiceItemUnitPrice());
+                // if non qty don't need this unit price set, then this need to have a check
+               	if (invItem.getInvoiceItemQuantity() != null && (new KualiDecimal(invItem.getInvoiceItemQuantity())).isPositive()) {
+                paymentRequestItem.setItemUnitPrice(invItem.getInvoiceItemUnitPrice());
+               	}
+                preqDoc.getItems().add(paymentRequestItem);
+                orderHolder.setMisMatchItem(invItem);
+                populateItemDetails(preqDoc,orderHolder);
+                orderHolder.setMisMatchItem(null);
+       		
+        	}
+        }
         
         /**
          * Validate totals,paydate
@@ -1671,6 +1702,31 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         return preqDoc;
     }
     
+    // KFSPTS-1719 : this is for the first matched the polineitem#
+    private void checkQtyInvItemForNoQtyOrder(PaymentRequestDocument preqDocument, ElectronicInvoiceOrderHolder orderHolder) {
+        List<PaymentRequestItem> preqItems = preqDocument.getItems();
+
+        for (PaymentRequestItem preqItem : preqItems) {
+
+        	// TODO : This is to check the first item that matched to po line and convert to qty if inv is qty po is non-qty
+    		if (StringUtils.equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE, preqItem.getItemTypeCode())) {
+        	    if ((preqItem.getInvLineNumber() == null && orderHolder.getMisMatchItem() == null)) {
+        			ElectronicInvoiceItemHolder itemHolder = orderHolder.getItemByLineNumber(preqItem.getItemLineNumber());
+        			// even if inv is non qty still set up these values.
+        		//	if (itemHolder.getInvoiceItemQuantity() != null && (new KualiDecimal(itemHolder.getInvoiceItemQuantity())).isPositive()) {
+        				preqItem.setItemQuantity(new KualiDecimal(itemHolder.getInvoiceItemQuantity()));
+        				preqItem.setItemUnitOfMeasureCode(itemHolder.getInvoiceItemUnitOfMeasureCode());
+        				// don't set unit price for nonqty and see what happened
+               	if (itemHolder.getInvoiceItemQuantity() != null && (new KualiDecimal(itemHolder.getInvoiceItemQuantity())).isPositive()) {
+        				preqItem.setItemUnitPrice(itemHolder.getInvoiceItemUnitPrice());
+        			}
+    				preqItem.setPurchaseOrderItemUnitPrice(itemHolder.getInvoiceItemUnitPrice());
+        		}
+        	}
+
+        }
+    }
+
     /**
      * 
      * @param preqDoc
@@ -1808,8 +1864,33 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 
         for (PaymentRequestItem preqItem : preqItems) {
 
+        	// TODO : 'no qty' po line item may have 'qty inv item'
+        	// force it to match like qty item.
+        	if ((preqItem.getInvLineNumber() == null && orderHolder.getMisMatchItem() == null) || (preqItem.getInvLineNumber() != null && StringUtils.equals(preqItem.getInvLineNumber().toString(), orderHolder.getMisMatchItem().getInvLineNumber()))) {
+        		if (StringUtils.equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE, preqItem.getItemTypeCode())) {
+        			if (preqItem.getItemQuantity() != null && preqItem.getItemQuantity().isPositive() && StringUtils.isNotBlank(preqItem.getItemUnitOfMeasureCode())) {
+        				preqItem.setItemTypeCode(PurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE);
+        			}
+        		}
+        	}
             if (isItemValidForUpdation(preqItem.getItemTypeCode(), ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_ITEM, orderHolder)) {
+            	if ((preqItem.getInvLineNumber() == null && orderHolder.getMisMatchItem() == null) ||  (preqItem.getInvLineNumber() != null && StringUtils.equals(preqItem.getInvLineNumber().toString(), orderHolder.getMisMatchItem().getInvLineNumber()))) {
                 processAboveTheLineItem(preqItem, orderHolder);
+                if (preqItem.getInvLineNumber() == null) {
+                	preqItem.setInvLineNumber(Integer.parseInt(orderHolder.getItemByLineNumber(preqItem.getItemLineNumber()).getInvLineNumber()));
+                	preqItem.setItemDescription(orderHolder.getItemByLineNumber(preqItem.getItemLineNumber()).getReferenceDescription());
+                }
+            	}
+                //KFSPTS-1719 : check if this works for nonqty for unitprice and extended price
+            } else if (preqItem.isNoQtyItem()) {
+            	//TODO : need to try ti match the inv line to
+            	if ((preqItem.getInvLineNumber() == null && orderHolder.getMisMatchItem() == null) ||  (preqItem.getInvLineNumber() != null && StringUtils.equals(preqItem.getInvLineNumber().toString(), orderHolder.getMisMatchItem().getInvLineNumber()))) {
+            	    processAboveTheLineItemForNonQty(preqItem, orderHolder);
+                    if (preqItem.getInvLineNumber() == null) {
+                	    preqItem.setInvLineNumber(Integer.parseInt(orderHolder.getItemByLineNumber(preqItem.getItemLineNumber()).getInvLineNumber()));
+                    	preqItem.setItemDescription(orderHolder.getItemByLineNumber(preqItem.getItemLineNumber()).getReferenceDescription());
+                    }
+            	}
             }else if (isItemValidForUpdation(preqItem.getItemTypeCode(), ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_TAX, orderHolder)) {
                 processTaxItem(preqItem, orderHolder);
             } else if (isItemValidForUpdation(preqItem.getItemTypeCode(), ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_SHIPPING, orderHolder)) {
@@ -1842,6 +1923,10 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         }
         
         ElectronicInvoiceItemHolder itemHolder = orderHolder.getItemByLineNumber(purapItem.getItemLineNumber().intValue());
+        // KFSPTS-1719 : investigation
+        if (orderHolder.getMisMatchItem() != null) {
+        	itemHolder = orderHolder.getMisMatchItem();
+        }
         if (itemHolder == null){
             LOG.info("Electronic Invoice does not have item with Ref Item Line number " + purapItem.getItemLineNumber());
             return;
@@ -1874,6 +1959,36 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         
     }
     
+    // KFSPTS-1719
+    protected void processAboveTheLineItemForNonQty(PaymentRequestItem purapItem, ElectronicInvoiceOrderHolder orderHolder){
+
+        if (LOG.isInfoEnabled()){
+            LOG.info("Processing above the line item");
+        }
+        
+        // TODO : this will not work for mismatching items because they all point to the same poitemline, so need to change this process.
+        ElectronicInvoiceItemHolder itemHolder = orderHolder.getItemByLineNumber(purapItem.getItemLineNumber().intValue());
+        if (orderHolder.getMisMatchItem() != null) {
+        	itemHolder = orderHolder.getMisMatchItem();
+        }
+        if (itemHolder == null){
+            LOG.info("Electronic Invoice does not have item with Ref Item Line number " + purapItem.getItemLineNumber());
+            return;
+        }
+        
+//        purapItem.setItemUnitPrice(itemHolder.getInvoiceItemUnitPrice());
+        purapItem.setItemTaxAmount(new KualiDecimal(itemHolder.getTaxAmount()));
+        
+        if (itemHolder.getSubTotalAmount() != null){
+
+            purapItem.setExtendedPrice(itemHolder.getSubTotalAmount());
+            // TODO : this is probably ok if it is the first preq.  if it is the second, then need to fure out what has been already paid.
+//            purapItem.setItemUnitPrice((new KualiDecimal(purapItem.getPurchaseOrderItemUnitPrice()).subtract(itemHolder.getSubTotalAmount())).bigDecimalValue());
+            
+        } 
+        
+    }
+
     /**
      * 
      * @param purapItem

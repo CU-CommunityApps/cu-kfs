@@ -72,7 +72,6 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
         valid &= itemUnitPriceValidation.validate(event);                     
         
         if (getItemForValidation().getItemType().isLineItemIndicator()) {
-            valid &= validateItemTypeForEinvoiceVendors(getItemForValidation(), (PurchasingAccountsPayableDocument) event.getDocument());
 
             itemDescriptionValidation.setItemForValidation(getItemForValidation());
             valid &= itemDescriptionValidation.validate(event);
