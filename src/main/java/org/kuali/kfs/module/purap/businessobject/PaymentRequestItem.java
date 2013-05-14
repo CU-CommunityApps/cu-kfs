@@ -383,9 +383,9 @@ public class PaymentRequestItem extends AccountsPayableItemBase {
     }
 
 	public Integer getInvLineNumber() {
-		if (invLineNumber == null && getItemLineNumber() != null) {
-			return getItemLineNumber();
-		}
+//		if (invLineNumber == null && getItemLineNumber() != null) {
+//			return getItemLineNumber();
+//		}
 		return invLineNumber;
 	}
 
