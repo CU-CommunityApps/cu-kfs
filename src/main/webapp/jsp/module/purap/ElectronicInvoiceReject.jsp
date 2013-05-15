@@ -93,7 +93,7 @@
 	                </td>
 	            </tr>
 
-				<c:set var="colCount" value="9" />
+				<c:set var="colCount" value="10" />
 				<c:if test="${KualiForm.document.invoiceFileSpecialHandlingInLineIndicator || KualiForm.document.invoiceFileShippingInLineIndicator || KualiForm.document.invoiceFileDiscountInLineIndicator}">
 					<c:set var="colCount" value="${colCount + 1}" />
 				</c:if>
@@ -107,6 +107,7 @@
 				            </tr>
 							<tr>
 					            <kul:htmlAttributeHeaderCell attributeEntry="${itemAttributes.invoiceReferenceItemLineNumber}"/>
+					            <th>&nbsp;Inv Line #</th>
 					            <kul:htmlAttributeHeaderCell attributeEntry="${itemAttributes.invoiceItemQuantity}"/>
 					            <kul:htmlAttributeHeaderCell attributeEntry="${itemAttributes.invoiceItemUnitOfMeasureCode}"/>
 								<kul:htmlAttributeHeaderCell attributeEntry="${itemAttributes.invoiceItemCatalogNumber}" />
@@ -126,8 +127,14 @@
 									<td class="datacell">
 									    <kul:htmlControlAttribute
 										    attributeEntry="${itemAttributes.invoiceReferenceItemLineNumber}"
-										    property="document.invoiceRejectItems[${ctr}].invoiceItemLineNumber"
+										    property="document.invoiceRejectItems[${ctr}].invoiceReferenceItemLineNumber"
 										    readOnly="${not fullEntryMode}" />
+									</td>
+									<td class="datacell">
+									    <kul:htmlControlAttribute
+										    attributeEntry="${itemAttributes.invoiceReferenceItemLineNumber}"
+										    property="document.invoiceRejectItems[${ctr}].invoiceItemLineNumber"
+										    readOnly="true" />
 									</td>
 									<td class="datacell">
 									    <kul:htmlControlAttribute

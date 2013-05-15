@@ -1443,7 +1443,8 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
 
         ElectronicInvoiceOrderHolder rejectDocHolder = new ElectronicInvoiceOrderHolder(rejectDocument,itemTypeMappings,kualiItemTypes);
         matchingService.doMatchingProcess(rejectDocHolder);
-        
+        // KFSPTS-1719 : save the nomatchingitems found during match process.
+        rejectDocument.setNonMatchItems(rejectDocHolder.getNonMatchItems());
         /**
          * Once we're through with the matching process, it's needed to check whether it's possible
          * to create PREQ for the reject doc
@@ -1492,6 +1493,9 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         Map<String, ItemType> kualiItemTypes = getKualiItemTypes();
 
         ElectronicInvoiceOrderHolder rejectDocHolder = new ElectronicInvoiceOrderHolder(rejectDocument,itemTypeMappings,kualiItemTypes);
+        // KFSPTS-1719 : restore the nomatchingitems found during matching process.  so, preq items can be created
+        rejectDocHolder.setNonMatchItems(rejectDocument.getNonMatchItems());
+
         createPaymentRequest(rejectDocHolder);
         
         return !rejectDocHolder.isInvoiceRejected();

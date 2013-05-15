@@ -42,6 +42,7 @@ import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceRejectReason;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderView;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.service.ElectronicInvoiceMappingService;
+import org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceItemHolder;
 import org.kuali.kfs.module.purap.util.ElectronicInvoiceUtils;
 import org.kuali.kfs.module.purap.util.PurApRelatedViews;
 import org.kuali.kfs.module.purap.util.PurapSearchUtils;
@@ -170,7 +171,9 @@ public class ElectronicInvoiceRejectDocument extends FinancialSystemTransactiona
     protected String vendorNumber;
     
     protected CampusParameter purchaseOrderDeliveryCampus;
-    
+    // KFSPTS-1719
+    private List<ElectronicInvoiceItemHolder> nonMatchItems;
+
     /**
    * 
    */
@@ -2007,5 +2010,13 @@ public class ElectronicInvoiceRejectDocument extends FinancialSystemTransactiona
     	sanitizeRejectReasons();
     	super.prepareForSave();
     }
+
+	public List<ElectronicInvoiceItemHolder> getNonMatchItems() {
+		return nonMatchItems;
+	}
+
+	public void setNonMatchItems(List<ElectronicInvoiceItemHolder> nonMatchItems) {
+		this.nonMatchItems = nonMatchItems;
+	}
     
 }
