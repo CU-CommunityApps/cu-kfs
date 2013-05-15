@@ -101,6 +101,8 @@ public class FileEnterpriseFeederServiceImpl implements EnterpriseFeederService 
 
 			File[] doneFiles = directory.listFiles(doneFileFilter);
 			reorderDoneFiles(doneFiles);
+			
+			boolean fatal = false;
 
 			LedgerSummaryReport ledgerSummaryReport = new LedgerSummaryReport();
 
@@ -147,6 +149,7 @@ public class FileEnterpriseFeederServiceImpl implements EnterpriseFeederService 
 				catch (RuntimeException e) {
 					// we need to be extremely resistant to a file load failing so that it doesn't prevent other files from loading
 					LOG.error("Caught exception when feeding done file: " + doneFile.getAbsolutePath());
+					fatal = true;
 				} 
 				finally {
 					statusAndErrorsList.add(statusAndErrors);
@@ -166,7 +169,7 @@ public class FileEnterpriseFeederServiceImpl implements EnterpriseFeederService 
 
 			// if errors encountered is greater than max allowed the enterprise feed file should not be sent
 			boolean enterpriseFeedFileCreated = false;
-			if (feederReportData.getNumberOfErrorEncountered() > getMaximumNumberOfErrorsAllowed()) {
+			if (feederReportData.getNumberOfErrorEncountered() > getMaximumNumberOfErrorsAllowed() || fatal) {
 				enterpriseFeedFile.delete();
 			}
 			else {

@@ -245,7 +245,7 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
                             feederReportData.incrementNumberOfRecordsWritten();
                             feederReportData.addToTotalAmountWritten(benefitEntry.getTransactionLedgerEntryAmount());
                             
-                           if(benefitEntry.getTransactionLedgerEntryAmount().isZero()) 		continue;
+                            if(benefitEntry.getTransactionLedgerEntryAmount().isZero()) 		continue;
                             benefitTotal = benefitTotal.add(benefitEntry.getTransactionLedgerEntryAmount());
                         }
                         
@@ -262,6 +262,9 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
                         	LOG.info("** count:offsetTotal: benefitTotal="+count +":"+ offsetTotal+""+benefitTotal);
                         }
                         
+                    } catch (NullPointerException npe) {
+                    	LOG.error("NPE encountered");
+                    	throw new RuntimeException(npe.toString());
                     } catch (Exception e) {
                         throw new IOException(e.toString());
                     }
@@ -308,8 +311,6 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
     }
     
     
-   //
-    
 	protected List<LaborOriginEntry> generateOffsets(LaborOriginEntry wageEntry,String offsetDocTypes){
 		List<LaborOriginEntry> offsetEntries = new ArrayList<LaborOriginEntry>();
 		String benefitRateCategoryCode = laborBenefitsCalculationService.getBenefitRateCategoryCode(wageEntry.getChartOfAccountsCode(), wageEntry.getAccountNumber(), wageEntry.getSubAccountNumber());
@@ -320,9 +321,6 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
 		}
 
 		for (PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
-	//		BenefitsCalculation benefitsCalculation = null;
-//			benefitsCalculation = laborBenefitsCalculationService.getBenefitsCalculation(wageEntry.getUniversityFiscalYear(), wageEntry.getChartOfAccountsCode(),positionObjectBenefit.getFinancialObjectBenefitsTypeCode(), benefitRateCategoryCode);
-  //          BenefitsCalculationExtension extension = (BenefitsCalculationExtension) benefitsCalculation.getExtension();
 
             Map<String, Object> fieldValues = new HashMap<String, Object>();
             fieldValues.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, wageEntry.getUniversityFiscalYear());
@@ -330,9 +328,6 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
             fieldValues.put(LaborPropertyConstants.POSITION_BENEFIT_TYPE_CODE, positionObjectBenefit.getFinancialObjectBenefitsTypeCode());
             fieldValues.put(LaborPropertyConstants.LABOR_BENEFIT_RATE_CATEGORY_CODE, benefitRateCategoryCode);
             
-            //entry.refreshReferenceObject("account");
-
-            //com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation benefitsCalculation = (com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation) getBusinessObjectService().findByPrimaryKey(com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation.class, fieldValues);
             org.kuali.kfs.module.ld.businessobject.BenefitsCalculation benefitsCalculation = (org.kuali.kfs.module.ld.businessobject.BenefitsCalculation) getBusinessObjectService().findByPrimaryKey(com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation.class, fieldValues);
             
             BenefitsCalculationExtension extension = (BenefitsCalculationExtension) benefitsCalculation.getExtension();
@@ -379,9 +374,6 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
             	offsetAmount = offsetAmount;
             else 
             	offsetAmount = offsetAmount.multiply(new KualiDecimal(-1));
-        
-            
-            
             
             if(offsetAmount.isGreaterThan(new KualiDecimal(0))) {
                 offsetEntry.setTransactionDebitCreditCode("C");
@@ -409,7 +401,6 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
 		return offsetEntries;
 	}
 
-///
     /**
      * Gets the reconciliationParserService attribute. 
      * @return Returns the reconciliationParserService.
