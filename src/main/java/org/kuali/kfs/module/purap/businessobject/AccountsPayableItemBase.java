@@ -102,7 +102,11 @@ public abstract class AccountsPayableItemBase extends PurApItemBase implements A
             if (ObjectUtils.isNotNull(this.getItemUnitPrice())) {
             	// KFSPTS-1719 : if non qty is populated with item unit price, so it is behaved differently
             	if (!(this instanceof PaymentRequestItem) || ObjectUtils.isNull(extendedPrice) || extendedPrice.isZero()) {
+            		if (this instanceof PaymentRequestItem && !StringUtils.equals(this.getItemTypeCode(), "SRVC")) {
+                        extendedPrice = new KualiDecimal(0);;
+            		} else {
                     extendedPrice = new KualiDecimal(this.getItemUnitPrice().toString());
+            		}
             	}
             }else{
                 extendedPrice = null;
