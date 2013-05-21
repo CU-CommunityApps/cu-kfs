@@ -34,6 +34,7 @@ public class KFSParameterKeyConstants implements ParameterKeyConstants {
     
     public static class FpParameterConstants {
     	public static final String FP_ALLOWED_BUDGET_BALANCE_TYPES = "ALLOWED_BUDGET_BALANCE_TYPES";
+    	public static final String FP_ALLOW_MULTIPLE_SUBFUNDS = "ALLOW_MULTIPLE_SUB_FUNDS";
     }
     
     public static class PurapPdpParameterConstants {
