@@ -103,11 +103,11 @@ public class PunchOutSetupCxml {
     cxml.append("      <BrowserFormPost>\n");
     cxml.append("        <URL>").append(b2bInformation.getPunchbackURL()).append("</URL>\n");
     cxml.append("      </BrowserFormPost>\n");
-    cxml.append("      <Contact role=\"endUser\">\n");
-    cxml.append("        <Name xml:lang=\"en\">").append(user.getName()).append("</Name>\n");
-    cxml.append("        <Email>").append(user.getEmailAddressUnmasked()).append("</Email>\n"); 
-    cxml.append("        <PhoneNumber>").append(user.getPhoneNumberUnmasked()).append("</PhoneNumber>\n"); 
-    cxml.append("      </Contact>\n");
+//    cxml.append("      <Contact role=\"endUser\">\n");
+//    cxml.append("        <Name xml:lang=\"en\">").append(user.getName()).append("</Name>\n");
+//    cxml.append("        <Email>").append(user.getEmailAddressUnmasked()).append("</Email>\n"); 
+//    cxml.append("        <PhoneNumber>").append(user.getPhoneNumberUnmasked()).append("</PhoneNumber>\n"); 
+//    cxml.append("      </Contact>\n");
     cxml.append("      <SupplierSetup>\n");
     cxml.append("        <URL>").append(b2bInformation.getPunchoutURL()).append("</URL>\n");
     cxml.append("      </SupplierSetup>\n");
