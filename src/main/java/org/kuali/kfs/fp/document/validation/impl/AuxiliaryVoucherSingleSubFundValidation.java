@@ -44,9 +44,9 @@ public class AuxiliaryVoucherSingleSubFundValidation extends GenericValidation {
      * @see org.kuali.kfs.sys.document.validation.Validation#validate(org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent)
      */
     public boolean validate(AttributedDocumentEvent event) {
-        String val = SpringContext.getBean(ParameterService.class).getParameterValue(AuxiliaryVoucherDocument.class, KFSParameterKeyConstants.FpParameterConstants.FP_ALLOW_MULTIPLE_SUBFUNDS);
+        boolean allowMultiple = SpringContext.getBean(ParameterService.class).getIndicatorParameter(AuxiliaryVoucherDocument.class, KFSParameterKeyConstants.FpParameterConstants.FP_ALLOW_MULTIPLE_SUBFUNDS);
         
-        if(StringUtils.equals("N", val)) {
+        if(!allowMultiple) {
         
 	        String baseSubFundGroupCode = null;
 	        int index = 0;
