@@ -548,8 +548,8 @@
 
   <bean id="IWantDocument-itemAndAccountDifference-parentBean" abstract="true" parent="GenericAttributes-genericAmount">
     <property name="name" value="itemAndAccountDifference"/>
-    <property name="label" value="Difference between Totals"/>
-    <property name="shortLabel" value="Diff of Totals"/>
+    <property name="label" value="Remaining Amount Needing an Account"/>
+    <property name="shortLabel" value="Remaining Amt Needing Acct"/>
   </bean>
   
   <bean id="IWantDocument-noteLabel" parent="IWantDocument-noteLabel-parentBean"/>
