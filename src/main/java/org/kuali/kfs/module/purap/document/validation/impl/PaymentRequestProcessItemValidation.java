@@ -116,7 +116,7 @@ public class PaymentRequestProcessItemValidation extends GenericValidation {
                 GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY, PurapKeyConstants.ERROR_ITEM_AMOUNT_BELOW_ZERO, ItemFields.INVOICE_QUANTITY, identifierString);
             }
             if (!isReceivingDocumentRequiredIndicator){
-                if (!item.getPurchaseOrderItem().isNoQtyItem() && item.getPoOutstandingQuantity().isLessThan(item.getItemQuantity())) {
+                if (item.getPoOutstandingQuantity().isLessThan(item.getItemQuantity())) {
                     valid = false;
                     GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY, PurapKeyConstants.ERROR_ITEM_QUANTITY_TOO_MANY, ItemFields.INVOICE_QUANTITY, identifierString, ItemFields.OPEN_QUANTITY);
                 }
@@ -136,8 +136,7 @@ public class PaymentRequestProcessItemValidation extends GenericValidation {
         // check that non-quantity based items are not trying to pay on a zero encumbrance amount (check only prior to ap approval)
         if ((ObjectUtils.isNull(item.getPaymentRequest().getPurapDocumentIdentifier())) || (PurapConstants.PaymentRequestStatuses.IN_PROCESS.equals(item.getPaymentRequest().getStatusCode()))) {
             if ((item.getItemType().isAmountBasedGeneralLedgerIndicator()) && ((item.getExtendedPrice() != null) && item.getExtendedPrice().isNonZero())) {
-            	// KFSPTS-1719 : changed getpooutstandingamount.  so here to avoid validation issue.
-               if (item.getPoOutstandingAmount() == null || item.getPoOutstandingAmount().isZero()) {
+                if (item.getPoOutstandingAmount() == null || item.getPoOutstandingAmount().isZero()) {
                     valid = false;
                     GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY, PurapKeyConstants.ERROR_ITEM_AMOUNT_ALREADY_PAID, identifierString);
                 }

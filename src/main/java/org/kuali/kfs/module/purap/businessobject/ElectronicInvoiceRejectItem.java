@@ -418,8 +418,7 @@ public class ElectronicInvoiceRejectItem extends PersistableBusinessObjectBase {
             // unit price and quantity are valid... calculate subtotal
             returnValue = this.invoiceItemQuantity.multiply(this.invoiceItemUnitPrice);
         }
-        // KFSPTS-1719 - add "0"
-        else if (((this.invoiceItemQuantity == null) || ("".equals(this.invoiceItemQuantity) || ((BigDecimal.ZERO.compareTo(this.invoiceItemQuantity)) == 0))) && ((this.invoiceItemUnitPrice != null))) {
+        else if (((this.invoiceItemQuantity == null) || ("".equals(this.invoiceItemQuantity))) && ((this.invoiceItemUnitPrice != null))) {
             // quantity is empty but unit cost exists... use it
             returnValue = this.invoiceItemUnitPrice;
         }

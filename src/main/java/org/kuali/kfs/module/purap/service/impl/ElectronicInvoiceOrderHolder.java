@@ -69,9 +69,7 @@ public class ElectronicInvoiceOrderHolder {
     private boolean isRejected = false;
     private boolean isRejectDocumentHolder;
     private boolean validateHeader;
-    // KFSPTS-1719
-    private List<ElectronicInvoiceItemHolder> nonMatchItems;
-    private ElectronicInvoiceItemHolder misMatchItem;
+    
     private String[] summaryRejectCodes = new String[]{PurapConstants.ElectronicInvoice.TAX_SUMMARY_AMT_MISMATCH,
                                                        PurapConstants.ElectronicInvoice.SHIPPING_SUMMARY_AMT_MISMATCH,
                                                        PurapConstants.ElectronicInvoice.SPL_HANDLING_SUMMARY_AMT_MISMATCH,
@@ -786,24 +784,6 @@ public class ElectronicInvoiceOrderHolder {
         }
         
     }
-
-	public List<ElectronicInvoiceItemHolder> getNonMatchItems() {
-		if (nonMatchItems == null) {
-			nonMatchItems = new ArrayList<ElectronicInvoiceItemHolder>();
-		}
-		return nonMatchItems;
-	}
-
-	public void setNonMatchItems(List<ElectronicInvoiceItemHolder> nonMatchItems) {
-		this.nonMatchItems = nonMatchItems;
-	}
-
-	public ElectronicInvoiceItemHolder getMisMatchItem() {
-		return misMatchItem;
-	}
-
-	public void setMisMatchItem(ElectronicInvoiceItemHolder misMatchItem) {
-		this.misMatchItem = misMatchItem;
-	}
+    
     
 }
