@@ -32,14 +32,12 @@ import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PurchasingDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
-import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.web.ui.ExtraButton;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
 /**
  * Struts Action Form for Purchasing documents.
@@ -68,9 +66,6 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
     
     protected String locationBuildingFromLookup;
     protected String locationCampusFromLookup;
-
-    // KFSPTS-794 related
-    protected String reasonToChange;
 
     /**
      * Constructs a PurchasingFormBase instance and sets up the appropriately casted document.
@@ -441,7 +436,6 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
     public String getLineItemImportInstructionsUrl() {
         return SpringContext.getBean(KualiConfigurationService.class).getPropertyString(KFSConstants.EXTERNALIZABLE_HELP_URL_KEY) + SpringContext.getBean(ParameterService.class).getParameterValue(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.LINE_ITEM_IMPORT);
     }
-
     
     @Override
     public boolean shouldMethodToCallParameterBeUsed(String methodToCallParameterName, String methodToCallParameterValue, HttpServletRequest request) {
@@ -462,29 +456,5 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
 		return super.shouldPropertyBePopulatedInForm(requestParameterName, request);
 	}
 
-
-
-    public String getReasonToChange() {
-        return reasonToChange;
-    }
-
-
-
-    public void setReasonToChange(String reasonToChange) {
-        this.reasonToChange = reasonToChange;
-    }
-    
-    public boolean isDocFinal() {
-    	KualiWorkflowDocument workflowDocument = this.getDocument().getDocumentHeader().getWorkflowDocument();
-    	return workflowDocument != null ? workflowDocument.stateIsApproved()  : false;
-    }
-    public boolean isDocEnroute() {
-    	KualiWorkflowDocument workflowDocument = this.getDocument().getDocumentHeader().getWorkflowDocument();
-    	return workflowDocument != null ? workflowDocument.stateIsEnroute()  : false;
-    }
-    public boolean isDocCanceledOrDisapproved() {
-    	KualiWorkflowDocument workflowDocument = this.getDocument().getDocumentHeader().getWorkflowDocument();
-    	return workflowDocument != null ? workflowDocument.stateIsCanceled() ||  workflowDocument.stateIsDisapproved() : false;
-    }
-
+  
 }
