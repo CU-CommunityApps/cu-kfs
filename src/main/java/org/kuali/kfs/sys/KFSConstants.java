@@ -1220,7 +1220,7 @@ public class KFSConstants extends JSTLConstants implements ParameterKeyConstants
         public static final String ACCOUNTING_REVIEWER_ROLE_NAME = "Accounting Reviewer";
         public static final String ORGANIZATION_REVIEWER_ROLE_NAME = "Organization Reviewer";
         public static final String ESHOP_USER_ROLE_NAME = "eShop User (cu)";
-        public static final String ESHOP_SUPER_USER_ROLE_NAME = "eShop Plus User (cu)";
+        public static final String ESHOP_SUPER_USER_ROLE_NAME = "eShop Plus User(cu)";
     } 
 
     public enum PermissionAttributeValue {
