@@ -15,31 +15,20 @@
  */
 package org.kuali.kfs.module.purap.document.validation.impl;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
-import org.kuali.kfs.module.purap.PurapConstants.ItemFields;
-import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
-import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
-import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.businessobject.UnitOfMeasure;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
-import org.kuali.kfs.vnd.businessobject.CommodityCode;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.module.purap.CUPurapPropertyConstants;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddItemValidation {
@@ -82,8 +71,9 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
 
             commodityCodeValidation.setItemForValidation(getItemForValidation());
             valid &= commodityCodeValidation.validate(event);
+            // KFSPTS-2096
+            valid &= validateMixItemType(getItemForValidation(), (PurchasingAccountsPayableDocument)event.getDocument());
         }
-        
         GlobalVariables.getMessageMap().removeFromErrorPath(PurapPropertyConstants.NEW_PURCHASING_ITEM_LINE);
 
         return valid;
@@ -107,6 +97,25 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
                 valid = false;
 	        }        
         }    	
+    	return valid;
+    }
+
+    private boolean validateMixItemType(PurApItem newItem, PurchasingAccountsPayableDocument purapDocument) {
+    	boolean valid = true;
+        if(StringUtils.isNotBlank(newItem.getItemTypeCode())) {
+        	String itemTypeCode = newItem.getItemTypeCode();
+            for(PurApItem item : purapDocument.getItems()) {
+            	if (StringUtils.isNotBlank(item.getItemTypeCode()) && !itemTypeCode.equalsIgnoreCase(item.getItemTypeCode()) &&
+            			 (PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE.equalsIgnoreCase(item.getItemTypeCode()) ||
+     	            			PurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE.equalsIgnoreCase(item.getItemTypeCode()))) {
+                	GlobalVariables.getMessageMap().addToErrorPath(PurapPropertyConstants.NEW_PURCHASING_ITEM_LINE);
+                	GlobalVariables.getMessageMap().putError(CUPurapPropertyConstants.ITEM_TYPE_CODE, CUPurapKeyConstants.PURAP_MIX_ITEM_QTY_NONQTY); 
+                    valid &= false;
+                    GlobalVariables.getMessageMap().removeFromErrorPath(PurapPropertyConstants.NEW_PURCHASING_ITEM_LINE);
+                    break;
+                }
+            }
+        }
     	return valid;
     }
 

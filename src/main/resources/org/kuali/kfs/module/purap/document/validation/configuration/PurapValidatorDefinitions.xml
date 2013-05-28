@@ -224,7 +224,8 @@
 		<property name="sourceEventProperty" value="iterationSubject" />
 		<property name="targetValidationProperty" value="itemForValidation" />
 	</bean>
-	
+	<!-- KFSPTS-2096 -->
+    <bean id="Purchasing-saveItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchasingProcessItemValidation" abstract="true" />
     <bean id="Purchasing-submitItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchasingProcessItemValidation" abstract="true" />
 
     <bean id="Purchasing-approveItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchasingProcessItemValidation" abstract="true" />

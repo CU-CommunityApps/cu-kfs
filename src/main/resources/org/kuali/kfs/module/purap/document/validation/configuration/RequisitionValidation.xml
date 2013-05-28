@@ -27,6 +27,10 @@
   		<property name="validations">
   			<list>  				
 				<bean parent="Requisition-saveDocument-itemCollectionValidation-commodityCodeValidation" scope="prototype" />
+				<!-- KFSPTS-2096 -->
+				<bean parent="Purchasing-saveItemValidation" scope="prototype">								
+					<property name="quitOnFail" value="false" />
+				</bean>  										
   			</list>
   		</property>
   	</bean>

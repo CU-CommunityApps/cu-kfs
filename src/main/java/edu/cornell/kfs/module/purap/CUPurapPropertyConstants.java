@@ -6,5 +6,7 @@ public class CUPurapPropertyConstants extends PurapPropertyConstants {
     //I Want document properties
     public static final String IWNT_ITEMS = "items";
     public static final String IWNT_ITEM_DESC = "itemDescription";
+    // KFSPTS-2096
+    public static final String ITEM_TYPE_CODE = "itemTypeCode";
 
 }

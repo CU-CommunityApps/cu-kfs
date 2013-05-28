@@ -1447,6 +1447,10 @@
     <bean id="PurchaseOrderDocument-validations-parentBean" class="org.springframework.beans.factory.config.MapFactoryBean">
     	<property name="sourceMap">
 	    	<map>			
+		    	<entry> <!-- KFSPTS-2096 -->
+			    	<key><value>org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent</value></key>
+				    <value>PurchaseOrder-saveDocumentValidation</value>
+			    </entry>
 		    	<entry>
 			    	<key><value>org.kuali.kfs.sys.document.validation.event.AttributedRouteDocumentEvent</value></key>
 				    <value>PurchaseOrder-routeDocumentValidation</value>

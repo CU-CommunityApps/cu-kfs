@@ -20,6 +20,17 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
     
+	<bean id="PurchaseOrder-saveDocumentValidation" parent="PurchaseOrder-saveDocumentValidation-parentBean" scope="prototype" />
+  	<bean id="PurchaseOrder-saveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>  				
+ 				<!-- KFSPTS-2096 -->
+				<bean parent="Purchasing-saveItemValidation" scope="prototype">								
+					<property name="quitOnFail" value="false" />
+				</bean>  										
+  			</list>
+  		</property>
+  	</bean>
 
 	<!-- Route Document Event -->
 	<bean id="PurchaseOrder-routeDocumentValidation" parent="PurchaseOrder-routeDocumentValidation-parentBean" scope="prototype" />

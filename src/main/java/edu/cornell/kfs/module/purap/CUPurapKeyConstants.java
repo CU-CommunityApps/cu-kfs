@@ -28,5 +28,9 @@ public class CUPurapKeyConstants extends PurapKeyConstants {
     public static final String ERROR_ATT_FILE_SIZE_OVER_LIMIT = "errors.att.filesize.over.limit";
    
     public static final String ATTACHMENT_QUESTION_CONFIRM_CHANGE = "attachment.message.confirm.change";
+    
+    // KFSPTS-2096
+    public static final String PURAP_MIX_ITEM_QTY_NONQTY = "error.purap.mix.item.itemtype.nonqty";
+
 
 }
