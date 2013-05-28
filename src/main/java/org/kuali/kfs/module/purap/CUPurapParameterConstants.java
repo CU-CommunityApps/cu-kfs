@@ -10,4 +10,8 @@ public class CUPurapParameterConstants extends PurapParameterConstants {
 	public static final String AUTO_CLOSE_PO_RESULTS_LIMIT = "AUTO_CLOSE_PO_RESULTS_LIMIT";
 	
 	public static final String MANUAL_DISTRIBUTION_EMAIL = "MANUAL_DISTRIBUTION_EMAIL";
+	
+    // KFSPTS-1625
+	public static final String B2B_TOTAL_AMOUNT_FOR_SUPER_USER_AUTO_PO = "B2B_TOTAL_AMOUNT_FOR_SUPER_USER_AUTO_PO";
+
 }

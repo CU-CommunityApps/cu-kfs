@@ -78,11 +78,14 @@ import org.kuali.rice.kew.dto.ReportCriteriaDTO;
 import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kew.util.KEWConstants;
 import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.kim.service.RoleManagementService;
 import org.kuali.rice.kns.document.Copyable;
+import org.kuali.rice.kns.document.Document;
 import org.kuali.rice.kns.document.TransactionalDocument;
 import org.kuali.rice.kns.exception.ValidationException;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
+import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.service.PersistenceService;
@@ -169,6 +172,15 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
     	
     	ParameterService parameterService = SpringContext.getBean(ParameterService.class);
         KualiDecimal autoPOAmount = new KualiDecimal(parameterService.getParameterValue(RequisitionDocument.class, CUPurapParameterConstants.B2B_TOTAL_AMOUNT_FOR_AUTO_PO));
+		List<String> roleIds = new ArrayList<String>();
+		roleIds.add(getRoleManagementService().getRoleIdByName(KFSConstants.ParameterNamespaces.PURCHASING,KFSConstants.SysKimConstants.ESHOP_SUPER_USER_ROLE_NAME));
+        // KFSPTS-1625
+		if (getRoleManagementService().principalHasRole(getRoutedByPrincipalId(),roleIds, null)) {			
+			String paramVal = parameterService.getParameterValue(RequisitionDocument.class, CUPurapParameterConstants.B2B_TOTAL_AMOUNT_FOR_SUPER_USER_AUTO_PO);
+			if (StringUtils.isNotBlank(paramVal)) {
+			    autoPOAmount = new KualiDecimal(paramVal);
+			}
+		}
         KualiDecimal totalAmount = documentHeader.getFinancialDocumentTotalAmount();
         if (ObjectUtils.isNotNull(autoPOAmount) && ObjectUtils.isNotNull(totalAmount) && (autoPOAmount.compareTo(totalAmount) >= 0)) 
         	returnValue = true;
@@ -178,6 +190,23 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
         return returnValue;
     }
     
+    public String getRoutedByPrincipalId() {
+        DocumentService documentService = SpringContext.getBean(DocumentService.class);
+        RequisitionDocument document = null;
+        String principalId = null;
+        try {
+            document = (RequisitionDocument)documentService.getByDocumentHeaderId(this.getDocumentNumber());
+            principalId = document.getDocumentHeader().getWorkflowDocument().getRoutedByPrincipalId();
+        }
+        catch (WorkflowException we) {
+
+        }
+        return principalId;
+    }
+
+    private RoleManagementService getRoleManagementService() {
+  	  return SpringContext.getBean(RoleManagementService.class);
+    }
     
     protected boolean isMissingAccountingLines() {
         for (Iterator iterator = getItems().iterator(); iterator.hasNext();) {
