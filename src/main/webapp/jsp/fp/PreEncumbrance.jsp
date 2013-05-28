@@ -19,6 +19,11 @@
 	documentTypeName="PreEncumbranceDocument"
 	htmlFormAction="financialPreEncumbrance" renderMultipart="true"
 	showTabButtons="true">
+	
+	<c:set var="generalLedgerPendingEntriesList" value="${generalLedgerPendingEntries}" />
+	<c:if test="${empty generalLedgerPendingEntries}">
+		<c:set var="generalLedgerPendingEntriesList" value="${KualiForm.document.generalLedgerPendingEntries}" />
+	</c:if>
 
 	<sys:hiddenDocumentFields />
 
@@ -31,11 +36,52 @@
 		<sys-java:accountingLines>
 			<sys-java:accountingLineGroup newLinePropertyName="newSourceLine" collectionPropertyName="document.sourceAccountingLines" collectionItemPropertyName="document.sourceAccountingLine" attributeGroupName="source" />
 			<sys-java:accountingLineGroup newLinePropertyName="newTargetLine" collectionPropertyName="document.targetAccountingLines" collectionItemPropertyName="document.targetAccountingLine" attributeGroupName="target"/>
+			
+			
 		</sys-java:accountingLines>
+		  	<script type="text/javascript">		 		
+							var i = 0;
+							try {
+								var image = document.getElementById('tab-EncumbranceAutomaticPartialDisEncumbrances-newSourceLine-imageToggle');
+								if (document.forms['KualiForm'].elements['tabStates(EncumbranceAutomaticPartialDisEncumbrances-newSourceLine)'].value == "CLOSE") {
+								image.click();
+								}
+							}
+							catch (err) {
+								//do nothing
+							}
+							do
+							{
+								try {
+								 	image = document.getElementById('tab-EncumbranceAutomaticPartialDisEncumbrances-document-sourceAccountingLine('+i+')-imageToggle');
+	    							 if (document.forms['KualiForm'].elements['tabStates(EncumbranceAutomaticPartialDisEncumbrances-document-sourceAccountingLine('+i+'))'].value == "CLOSE") {					
+	   							 i = i + 1;
+	   							 image.click();							 
+	    								}	  							 																	
+									}
+								catch (err)
+								{
+									i = 4545;
+								} 
+							}
+							while (i != 4545)											
+					</script>
+		    
 
 	</kul:tab>
 		
 	<fp:preEncumbranceGeneralLedgerPendingEntries />
+	<c:if test="${!empty generalLedgerPendingEntriesList}"> 
+			<script type="text/javascript">		 				
+				try {	
+						var image = document.getElementById('tab-GeneralLedgerPendingEntries-imageToggle');
+						if (document.forms['KualiForm'].elements['tabStates(GeneralLedgerPendingEntries)'].value == "CLOSE") {
+							image.click();
+						}
+				   	}
+				catch (err){}
+			</script>
+	</c:if>
 	<kul:notes />
 	<kul:adHocRecipients />
 	<kul:routeLog />

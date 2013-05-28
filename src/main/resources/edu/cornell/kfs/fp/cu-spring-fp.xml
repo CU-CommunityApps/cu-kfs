@@ -283,12 +283,14 @@
         </property>
     </bean>
     
+    <bean id="PreEncumbranceAutoDisEncumberValidation" class="edu.cornell.kfs.fp.document.validation.impl.PreEncumbranceAutoDisEncumberValidation">
     
+    </bean>
 
 	<import resource="document/validation/configuration/CU-DisbursementVoucherValidation.xml" />
 	
 	
-
+	<import resource="document/validation/configuration/PreEncumbranceValidation.xml" />
 	
 
 </beans>
