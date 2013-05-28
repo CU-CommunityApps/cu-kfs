@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.integration.cab.CapitalAssetBuilderAssetTransactionType;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.util.PurApItemUtils;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -100,7 +101,14 @@ public abstract class AccountsPayableItemBase extends PurApItemBase implements A
     public KualiDecimal getExtendedPrice() {
         if (ObjectUtils.isNotNull(this.getItemUnitPrice()) && this.getItemType().isAmountBasedGeneralLedgerIndicator()) {
             if (ObjectUtils.isNotNull(this.getItemUnitPrice())) {
-                extendedPrice = new KualiDecimal(this.getItemUnitPrice().toString());
+            	// KFSPTS-1719 : if non qty is populated with item unit price, so it is behaved differently
+            	if (!(this instanceof PaymentRequestItem) || ObjectUtils.isNull(extendedPrice) || extendedPrice.isZero()) {
+            		if (this instanceof PaymentRequestItem && !StringUtils.equals(this.getItemTypeCode(), PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE)) {
+                        extendedPrice = new KualiDecimal(0);;
+            		} else {
+                    extendedPrice = new KualiDecimal(this.getItemUnitPrice().toString());
+            		}
+            	}
             }else{
                 extendedPrice = null;
             }

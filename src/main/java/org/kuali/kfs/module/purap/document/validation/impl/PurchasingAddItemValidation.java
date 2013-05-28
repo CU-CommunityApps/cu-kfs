@@ -61,7 +61,6 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
         valid &= itemUnitPriceValidation.validate(event);                     
         
         if (getItemForValidation().getItemType().isLineItemIndicator()) {
-            valid &= validateItemTypeForEinvoiceVendors(getItemForValidation(), (PurchasingAccountsPayableDocument) event.getDocument());
 
             itemDescriptionValidation.setItemForValidation(getItemForValidation());
             valid &= itemDescriptionValidation.validate(event);
@@ -74,6 +73,7 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
             // KFSPTS-2096
             valid &= validateMixItemType(getItemForValidation(), (PurchasingAccountsPayableDocument)event.getDocument());
         }
+        
         GlobalVariables.getMessageMap().removeFromErrorPath(PurapPropertyConstants.NEW_PURCHASING_ITEM_LINE);
 
         return valid;

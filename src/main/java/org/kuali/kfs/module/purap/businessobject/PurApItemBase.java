@@ -479,4 +479,8 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     			"Tax:"+(itemSalesTaxAmount==null?"(null)":itemSalesTaxAmount.toString())+" " + 
     			"*"+itemDescription+"*";
     }
+    
+    public boolean isNoQtyItem() {
+    	return StringUtils.equals(itemTypeCode, PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE);
+    }
 }

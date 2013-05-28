@@ -42,6 +42,7 @@ import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceRejectReason;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderView;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.service.ElectronicInvoiceMappingService;
+import org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceItemHolder;
 import org.kuali.kfs.module.purap.util.ElectronicInvoiceUtils;
 import org.kuali.kfs.module.purap.util.PurApRelatedViews;
 import org.kuali.kfs.module.purap.util.PurapSearchUtils;
@@ -170,7 +171,9 @@ public class ElectronicInvoiceRejectDocument extends FinancialSystemTransactiona
     protected String vendorNumber;
     
     protected CampusParameter purchaseOrderDeliveryCampus;
-    
+    // KFSPTS-1719
+    private List<ElectronicInvoiceItemHolder> nonMatchItems;
+
     /**
    * 
    */
@@ -401,9 +404,10 @@ public class ElectronicInvoiceRejectDocument extends FinancialSystemTransactiona
             if (this.getInvoiceItemShippingAmount() != null && zero.compareTo(this.getInvoiceItemShippingAmount()) != 0) {
                 returnValue = returnValue.add(new KualiDecimal(this.getInvoiceItemShippingAmount()));
             }
-            // if (this.getInvoiceItemTaxAmount() != null && zero.compareTo(this.getInvoiceItemTaxAmount()) != 0) {
-            // returnValue = returnValue.add(new KualiDecimal(this.getInvoiceItemTaxAmount()));
-            // }
+            // KFSPTS-1719 : uncomment it.  not sure why it is commented out
+            if (this.getInvoiceItemTaxAmount() != null && zero.compareTo(this.getInvoiceItemTaxAmount()) != 0) {
+                returnValue = returnValue.add(new KualiDecimal(this.getInvoiceItemTaxAmount()));
+            }
             if (this.getInvoiceItemDiscountAmount() != null && zero.compareTo(this.getInvoiceItemDiscountAmount()) != 0) {
                 returnValue = returnValue.subtract(new KualiDecimal(this.getInvoiceItemDiscountAmount()));
             }
@@ -2007,5 +2011,13 @@ public class ElectronicInvoiceRejectDocument extends FinancialSystemTransactiona
     	sanitizeRejectReasons();
     	super.prepareForSave();
     }
+
+	public List<ElectronicInvoiceItemHolder> getNonMatchItems() {
+		return nonMatchItems;
+	}
+
+	public void setNonMatchItems(List<ElectronicInvoiceItemHolder> nonMatchItems) {
+		this.nonMatchItems = nonMatchItems;
+	}
     
 }

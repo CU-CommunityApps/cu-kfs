@@ -328,12 +328,16 @@ public class ElectronicInvoiceTestAction extends KualiAction {
         String subTotal = StringUtils.EMPTY;
         if (item.getItemUnitPrice() != null && item.getItemQuantity() != null){
             subTotal = (item.getItemUnitPrice().multiply(item.getItemQuantity().bigDecimalValue())).toString();    
+        } else if (item.getItemUnitPrice() != null){
+        	// for non-qty
+            subTotal = item.getItemUnitPrice().toString();    
         }
         
         return 
         
         "              <InvoiceDetailItem invoiceLineNumber=\"" + item.getItemLineNumber() + "\"\n" +
-        "                  quantity=\"" + item.getItemQuantity() + "\">\n" +
+        // KFSPTS-1719 : non-qty set quantity to '0'
+        "                  quantity=\"" + getItemQuantity(item)  + "\">\n" +
         "                  <UnitOfMeasure>" + item.getItemUnitOfMeasureCode() + "</UnitOfMeasure>\n" +
         "                  <UnitPrice>\n" +
         "                      <Money currency=\"USD\">" + itemUnitPrice + "</Money>\n" +
@@ -349,6 +353,11 @@ public class ElectronicInvoiceTestAction extends KualiAction {
         "                  </SubtotalAmount>\n" +
         "              </InvoiceDetailItem>\n";
         
+    }
+    
+    // KFSPTS-1719 : non-qty set quantity to '0'
+    private KualiDecimal getItemQuantity(PurchaseOrderItem item) {
+    	return item.getItemQuantity() == null ? new KualiDecimal(0) :  item.getItemQuantity();
     }
     
     private String getDeliveryAddressXMLChunk(String addressType,

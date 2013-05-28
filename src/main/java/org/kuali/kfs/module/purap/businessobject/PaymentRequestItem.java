@@ -44,7 +44,9 @@ public class PaymentRequestItem extends AccountsPayableItemBase {
     private BigDecimal purchaseOrderItemUnitPrice;
     private KualiDecimal itemOutstandingInvoiceQuantity;
     private KualiDecimal itemOutstandingInvoiceAmount;
-
+    // KFSPTS-1719
+    private Integer invLineNumber;
+    private boolean invNonQtyItem;
     /**
      * Default constructor.
      */
@@ -106,6 +108,9 @@ public class PaymentRequestItem extends AccountsPayableItemBase {
         // clear amount and desc on below the line - we probably don't need that null
         // itemType check but it's there just in case remove if it causes problems
         // also do this if of type service
+        // KFSPTS-1719 : exclude non-qty item because it caused problem for einvoice
+        // TODO : need further check that this change will not affect non-einvoice process
+        //if ((ObjectUtils.isNotNull(this.getItemType()) && this.getItemType().isAmountBasedGeneralLedgerIndicator()) && !poi.isNoQtyItem()) {
         if ((ObjectUtils.isNotNull(this.getItemType()) && this.getItemType().isAmountBasedGeneralLedgerIndicator())) {
             // setting unit price to be null to be more consistent with other below the line
             this.setItemUnitPrice(null);
@@ -170,6 +175,21 @@ public class PaymentRequestItem extends AccountsPayableItemBase {
             return null;
         }else{
             return this.getPoOutstandingAmount(poi);
+        }
+    }
+    public KualiDecimal getPoOutstandingAmountForDisplay() {
+        PurchaseOrderItem poi = getPurchaseOrderItem();
+        if(ObjectUtils.isNull(this.getPurchaseOrderItemUnitPrice()) || KualiDecimal.ZERO.equals(this.getPurchaseOrderItemUnitPrice())){
+            return null;
+        }else{
+        	if (this.getPurchaseOrderItemUnitPrice().compareTo(poi.getItemUnitPrice()) == 0) {
+            return this.getPoOutstandingAmount(poi);
+        	} else {
+        		// KFSPTS-1719 : if no qty with several int no qty. be caureful to make change here
+        		// maybe shouyld create another method of preq
+        		// this may cause problem when doing preq validation because it may return 0.  this is suppose for preqitemtag
+        		return new KualiDecimal(this.getPurchaseOrderItemUnitPrice()).subtract(this.getExtendedPrice());
+        	}
         }
     }
 
@@ -361,6 +381,24 @@ public class PaymentRequestItem extends AccountsPayableItemBase {
     public Class getUseTaxClass() {
         return PaymentRequestItemUseTax.class;
     }
+
+	public Integer getInvLineNumber() {
+//		if (invLineNumber == null && getItemLineNumber() != null) {
+//			return getItemLineNumber();
+//		}
+		return invLineNumber;
+	}
+
+	public void setInvLineNumber(Integer invLineNumber) {
+		this.invLineNumber = invLineNumber;
+	}
+
+	public boolean isInvNonQtyItem() {
+        PurchaseOrderItem poi = getPurchaseOrderItem();
+        // TODO : KFSPTS-1719 : to force preq item to display ?? this is not sure yet
+        // if there is 1 to many (poline->preqline), and one of the preq line is no qty.  then the display of unitcost is not pooutstandingprice ??
+		return !poi.isNoQtyItem() || getItemQuantity() == null || getItemQuantity().isZero();
+	}
     
     
 }

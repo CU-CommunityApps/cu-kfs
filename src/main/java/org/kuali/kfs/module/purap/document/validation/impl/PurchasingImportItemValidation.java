@@ -51,7 +51,6 @@ public class PurchasingImportItemValidation extends PurchasingAccountsPayableImp
             commodityCodeValidation.setItemForValidation(getItemForValidation());
             valid &= commodityCodeValidation.validate(event);
         }
-        valid &= validateItemTypeForEinvoiceVendors(getItemForValidation(), (PurchasingAccountsPayableDocument)event.getDocument());
 
         itemUnitPriceValidation.setItemForValidation(getItemForValidation());
         valid &= itemUnitPriceValidation.validate(event);

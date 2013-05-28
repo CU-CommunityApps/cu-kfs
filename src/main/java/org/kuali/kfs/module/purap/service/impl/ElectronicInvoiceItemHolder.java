@@ -215,4 +215,19 @@ public class ElectronicInvoiceItemHolder {
     public ElectronicInvoiceOrderHolder getInvoiceOrderHolder(){
         return orderHolder;
     }
+    
+    // KFSPTS-1719
+    public String getReferenceDescription() {
+    	if (invoiceItem == null) {
+    		return rejectItem.getInvoiceReferenceItemDescription();
+    	}
+    	return invoiceItem.getReferenceDescription();
+    }
+    
+    public String getInvLineNumber() {
+    	if (invoiceItem == null) {
+    		return rejectItem.getInvoiceItemLineNumber().toString();
+    	}
+    	return invoiceItem.getInvoiceLineNumber();
+    }
 }

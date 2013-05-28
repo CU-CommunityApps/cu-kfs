@@ -18,7 +18,6 @@ package org.kuali.kfs.module.purap.document;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -32,11 +31,11 @@ import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants.NodeDetails;
 import org.kuali.kfs.module.purap.businessobject.ItemType;
+import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurApItemBase;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderView;
-import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
 import org.kuali.kfs.module.purap.businessobject.SensitiveData;
 import org.kuali.kfs.module.purap.businessobject.Status;
 import org.kuali.kfs.module.purap.document.service.PurapService;
@@ -62,7 +61,6 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kns.bo.Country;
 import org.kuali.rice.kns.document.TransactionalDocument;
 import org.kuali.rice.kns.rule.event.ApproveDocumentEvent;
@@ -474,7 +472,10 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
             PurApItem item = (PurApItem) items.get(i);
             // only set the item line number for above the line items
             if (item.getItemType().isLineItemIndicator()) {
-                item.setItemLineNumber(new Integer(i + 1));
+            	// KFSPTS-1719 :  skip this for non-qty order
+            	if (!(item instanceof PaymentRequestItem && ((PaymentRequestItem) item).getPurchaseOrderItem() != null && ((PaymentRequestItem) item).getPurchaseOrderItem().isNoQtyItem())) {
+                    item.setItemLineNumber(new Integer(i + 1));            		
+            	}
             }
         }
     }

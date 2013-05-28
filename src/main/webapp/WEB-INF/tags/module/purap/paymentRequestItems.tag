@@ -99,8 +99,8 @@
 		</c:choose>
 
 		<tr>
-			<td class="infoline" nowrap="nowrap" rowspan="2">
-				  &nbsp;<b><bean:write name="KualiForm" property="document.item[${ctr}].itemLineNumber"/></b> 
+			<td class="infoline" nowrap="nowrap" rowspan="2"> <!-- KFSPTS-1719 -->
+				  &nbsp;<b><bean:write name="KualiForm" property="document.item[${ctr}].invLineNumber"/></b> 
 			</td>
 			<td class="infoline">
 				<c:choose>
@@ -146,9 +146,10 @@
                             tabindexOverride="${tabindexOverrideBase + 0}" />
                     </c:if>
                     <c:if test="${KualiForm.document.items[ctr].itemType.amountBasedGeneralLedgerIndicator}">
+                    <!-- KFSPTS-1719 -->
                         <kul:htmlControlAttribute
                             attributeEntry="${itemAttributes.itemUnitPrice}"
-                            property="document.item[${ctr}].poOutstandingAmount"
+                            property="document.item[${ctr}].poOutstandingAmountForDisplay" 
                             readOnly="true" />
                     </c:if>
 				</div>
