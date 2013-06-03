@@ -296,7 +296,7 @@ public class VendorContact extends PersistableBusinessObjectBase implements Vend
 
 	public boolean isEqualForRouting(Object toCompare) {
 		// KFSPTS-2055
-        if ((ObjectUtils.isNull(toCompare)) || !(toCompare instanceof VendorDefaultAddress)) {
+        if ((ObjectUtils.isNull(toCompare)) || !(toCompare instanceof VendorContact)) {
 
             return false;
         }

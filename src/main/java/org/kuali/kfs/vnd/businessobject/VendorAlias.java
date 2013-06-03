@@ -122,7 +122,7 @@ public class VendorAlias extends PersistableBusinessObjectBase implements Vendor
 
 	public boolean isEqualForRouting(Object toCompare) {
 		// KFSPTS-2055
-        if ((ObjectUtils.isNull(toCompare)) || !(toCompare instanceof VendorDefaultAddress)) {
+        if ((ObjectUtils.isNull(toCompare)) || !(toCompare instanceof VendorAlias)) {
 
             return false;
         }

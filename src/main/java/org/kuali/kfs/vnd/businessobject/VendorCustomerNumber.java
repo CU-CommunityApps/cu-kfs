@@ -174,7 +174,7 @@ public class VendorCustomerNumber extends PersistableBusinessObjectBase implemen
 
 	public boolean isEqualForRouting(Object toCompare) {
 		// KFSPTS-2055
-        if ((ObjectUtils.isNull(toCompare)) || !(toCompare instanceof VendorDefaultAddress)) {
+        if ((ObjectUtils.isNull(toCompare)) || !(toCompare instanceof VendorCustomerNumber)) {
 
             return false;
         }
