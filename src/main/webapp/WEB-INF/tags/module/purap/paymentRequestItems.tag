@@ -100,7 +100,7 @@
 
 		<tr>
 			<td class="infoline" nowrap="nowrap" rowspan="2"> <!-- KFSPTS-1719 -->
-				  &nbsp;<b><bean:write name="KualiForm" property="document.item[${ctr}].invLineNumber"/></b> 
+				  &nbsp;<b><bean:write name="KualiForm" property="document.item[${ctr}].lineNumber"/></b> 
 			</td>
 			<td class="infoline">
 				<c:choose>

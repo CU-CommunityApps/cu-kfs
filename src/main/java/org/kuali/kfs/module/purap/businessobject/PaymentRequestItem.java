@@ -400,5 +400,12 @@ public class PaymentRequestItem extends AccountsPayableItemBase {
 		return !poi.isNoQtyItem() || getItemQuantity() == null || getItemQuantity().isZero();
 	}
     
+	public Integer getLineNumber() {
+		if (invLineNumber == null && getItemLineNumber() != null) {
+			invLineNumber = getItemLineNumber();
+			return getItemLineNumber();
+		}
+		return invLineNumber;
+	}
     
 }
