@@ -39,6 +39,8 @@ import org.kuali.rice.kns.util.ObjectUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.emory.mathcs.backport.java.util.concurrent.BrokenBarrierException;
+
 /**
  * This class actually runs the year end organization reversion process
  */
@@ -84,6 +86,7 @@ public class AccountReversionProcessImpl extends ReversionProcessBase implements
         unitOfWork = new ReversionUnitOfWork();
         unitOfWork.setCategories(categoryList);
         
+        int brokenCodeCount = 0;
         Balance bal;
         while (balances.hasNext()) {
             bal = balances.next();
@@ -92,6 +95,8 @@ public class AccountReversionProcessImpl extends ReversionProcessBase implements
             if (!bal.getBalanceTypeCode().equals(KFSConstants.BALANCE_TYPE_ACTUAL)){
             	continue;
             }
+            
+            String acctNumber = bal.getAccountNumber();
             
             if (LOG.isDebugEnabled()) {
                 LOG.debug("BALANCE SELECTED: " + bal.getUniversityFiscalYear() + bal.getChartOfAccountsCode() + bal.getAccountNumber() + bal.getSubAccountNumber() + bal.getObjectCode() + bal.getSubObjectCode() + bal.getBalanceTypeCode() + bal.getObjectTypeCode() + " " + bal.getAccountLineAnnualBalanceAmount().add(bal.getBeginningBalanceLineAmount()));
@@ -119,6 +124,7 @@ public class AccountReversionProcessImpl extends ReversionProcessBase implements
                     }
                     unitOfWork.setFields(bal.getChartOfAccountsCode(), bal.getAccountNumber(), bal.getSubAccountNumber());
                     retrieveCurrentReversionAndAccount(bal);
+                    brokenCodeCount++;
                     skipToNextUnitOfWork = false;
                 }
                 if (skipToNextUnitOfWork) {
@@ -133,6 +139,9 @@ public class AccountReversionProcessImpl extends ReversionProcessBase implements
                 skipToNextUnitOfWork = true;
             }
         }
+        
+        System.out.println("Total broken code balances processed: "+brokenCodeCount);
+        
         // save the final unit of work
         if (!skipToNextUnitOfWork && getBalancesSelected() > 0) {
             try {
@@ -179,6 +188,9 @@ public class AccountReversionProcessImpl extends ReversionProcessBase implements
             
             if (ObjectUtils.isNotNull(acctRev) && acctRev.isActive()) {
             	cfReversionProcessInfo = acctRev;
+            } 
+            else {
+            	cfReversionProcessInfo = null;
             }
         
         }
