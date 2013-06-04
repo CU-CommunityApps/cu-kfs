@@ -180,6 +180,9 @@ public class AccountReversionProcessImpl extends ReversionProcessBase implements
             if (ObjectUtils.isNotNull(acctRev) && acctRev.isActive()) {
             	cfReversionProcessInfo = acctRev;
             }
+            else {
+            	cfReversionProcessInfo = null;
+            }
         
         }
 
