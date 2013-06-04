@@ -379,6 +379,7 @@ public class AuxiliaryVoucherDocument extends AccountingDocumentBase implements 
             // set the posting period
             java.sql.Date today = SpringContext.getBean(DateTimeService.class).getCurrentSqlDateMidnight();
             offsetEntry.setUniversityFiscalPeriodCode(SpringContext.getBean(AccountingPeriodService.class).getByDate(today).getUniversityFiscalPeriodCode()); // use
+            offsetEntry.setUniversityFiscalYear(SpringContext.getBean(AccountingPeriodService.class).getByDate(today).getUniversityFiscalYear());
         }
 
         // now set the offset entry to the specific offset object code for the AV generated offset fund balance; only if it's an
