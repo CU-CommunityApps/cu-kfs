@@ -34,7 +34,9 @@
 							</bean>
 						</list>
 					</property>
+					<property name="quitOnFail" value="true" />
        			</bean>
+				<bean parent="TransferOfFunds-routeDocumentValidation" scope="prototype" />  
   			</list>
   		</property>
   	</bean>
