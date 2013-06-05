@@ -117,7 +117,7 @@
       <ref bean="AnyCharacterWithWhitespaceValidation" />
     </property>
     <property name="control">
-      <bean parent="TextControlDefinition" p:size="15"/>
+      <bean parent="TextControlDefinition" p:size="30"/>
     </property>
   </bean>
   <bean id="IWantItem-itemDescription" parent="IWantItem-itemDescription-parentBean"/>
