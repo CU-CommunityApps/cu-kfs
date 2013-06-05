@@ -390,13 +390,11 @@ public class AuxiliaryVoucherDocument extends AccountingDocumentBase implements 
 
             // set the posting period
             offsetEntry.setUniversityFiscalPeriodCode(getPostingPeriodCode()); // use chosen posting period code
+            offsetEntry.setUniversityFiscalYear(getPostingYear()); // use chosen posting year
         }
 
         // set the reversal date to null
         offsetEntry.setFinancialDocumentReversalDate(null);
-
-        // set the year to current
-        offsetEntry.setUniversityFiscalYear(getPostingYear()); // use chosen posting year
 
         // although they are offsets, we need to set the offset indicator to false
         offsetEntry.setTransactionEntryOffsetIndicator(false);
