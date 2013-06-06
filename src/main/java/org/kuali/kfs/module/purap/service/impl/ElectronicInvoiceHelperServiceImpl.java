@@ -1711,25 +1711,37 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
     private void checkQtyInvItemForNoQtyOrder(PaymentRequestDocument preqDocument, ElectronicInvoiceOrderHolder orderHolder) {
         List<PaymentRequestItem> preqItems = preqDocument.getItems();
 
+        List<PaymentRequestItem> nonInvItems = new ArrayList<PaymentRequestItem>(); // non qty not in invoice yet
         for (PaymentRequestItem preqItem : preqItems) {
 
         	// TODO : This is to check the first item that matched to po line and convert to qty if inv is qty po is non-qty
     		if (StringUtils.equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE, preqItem.getItemTypeCode())) {
-        	    if ((preqItem.getInvLineNumber() == null && orderHolder.getMisMatchItem() == null)) {
-        			ElectronicInvoiceItemHolder itemHolder = orderHolder.getItemByLineNumber(preqItem.getItemLineNumber());
-        			preqItem.setItemCatalogNumber(itemHolder.getCatalogNumberStripped());
-        			// even if inv is non qty still set up these values.
-        		//	if (itemHolder.getInvoiceItemQuantity() != null && (new KualiDecimal(itemHolder.getInvoiceItemQuantity())).isPositive()) {
-        				preqItem.setItemQuantity(new KualiDecimal(itemHolder.getInvoiceItemQuantity()));
-        				preqItem.setItemUnitOfMeasureCode(itemHolder.getInvoiceItemUnitOfMeasureCode());
-        				// don't set unit price for nonqty and see what happened
-               	if (itemHolder.getInvoiceItemQuantity() != null && (new KualiDecimal(itemHolder.getInvoiceItemQuantity())).isPositive()) {
-        				preqItem.setItemUnitPrice(itemHolder.getInvoiceItemUnitPrice());
-        			}
-    				preqItem.setPurchaseOrderItemUnitPrice(itemHolder.getInvoiceItemUnitPrice());
-        		}
+				if ((preqItem.getInvLineNumber() == null && orderHolder.getMisMatchItem() == null)) {
+					ElectronicInvoiceItemHolder itemHolder = orderHolder.getItemByLineNumber(preqItem.getItemLineNumber());
+					if (itemHolder != null) { // if the poitem is not in invoice, then skip this
+						preqItem.setItemCatalogNumber(itemHolder.getCatalogNumberStripped());
+						// even if inv is non qty still set up these values.
+						// if (itemHolder.getInvoiceItemQuantity() != null &&
+						// (new
+						// KualiDecimal(itemHolder.getInvoiceItemQuantity())).isPositive())
+						// {
+						preqItem.setItemQuantity(new KualiDecimal(itemHolder.getInvoiceItemQuantity()));
+						preqItem.setItemUnitOfMeasureCode(itemHolder.getInvoiceItemUnitOfMeasureCode());
+						// don't set unit price for nonqty and see what happened
+						if (itemHolder.getInvoiceItemQuantity() != null
+								&& (new KualiDecimal(itemHolder.getInvoiceItemQuantity())).isPositive()) {
+							preqItem.setItemUnitPrice(itemHolder.getInvoiceItemUnitPrice());
+						}
+						preqItem.setPurchaseOrderItemUnitPrice(itemHolder.getInvoiceItemUnitPrice());
+					} else {
+						nonInvItems.add(preqItem);
+					}
+				}
         	}
 
+        }
+        if (!nonInvItems.isEmpty()) {
+        	preqDocument.getItems().removeAll(nonInvItems);
         }
     }
 
@@ -1881,11 +1893,15 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         	}
             if (isItemValidForUpdation(preqItem.getItemTypeCode(), ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_ITEM, orderHolder)) {
             	if ((preqItem.getInvLineNumber() == null && orderHolder.getMisMatchItem() == null) ||  (preqItem.getInvLineNumber() != null && StringUtils.equals(preqItem.getInvLineNumber().toString(), orderHolder.getMisMatchItem().getInvLineNumber()))) {
-                processAboveTheLineItem(preqItem, orderHolder);
-                if (preqItem.getInvLineNumber() == null) {
-                	preqItem.setInvLineNumber(Integer.parseInt(orderHolder.getItemByLineNumber(preqItem.getItemLineNumber()).getInvLineNumber()));
-                	preqItem.setItemDescription(orderHolder.getItemByLineNumber(preqItem.getItemLineNumber()).getReferenceDescription());
-                }
+                    processAboveTheLineItem(preqItem, orderHolder);
+                    if (preqItem.getPurchaseOrderItem().isNoQtyItem()) {
+                        if (preqItem.getInvLineNumber() == null && orderHolder.getItemByLineNumber(preqItem.getItemLineNumber()) != null) { // if there po is not in inv, then don't do this
+                	        preqItem.setInvLineNumber(Integer.parseInt(orderHolder.getItemByLineNumber(preqItem.getItemLineNumber()).getInvLineNumber()));
+                	        preqItem.setItemDescription(orderHolder.getItemByLineNumber(preqItem.getItemLineNumber()).getReferenceDescription());
+                        }
+                    } else {
+                    	preqItem.setInvLineNumber(preqItem.getPurchaseOrderItem().getItemLineNumber());
+                    }
             	}
                 //KFSPTS-1719 : check if this works for nonqty for unitprice and extended price
             } else if (preqItem.isNoQtyItem()) {
