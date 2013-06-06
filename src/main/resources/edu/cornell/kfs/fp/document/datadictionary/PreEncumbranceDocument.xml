@@ -182,7 +182,7 @@
  	                                                        <property name="elementName" value="lineDescription"/>
  	                                                        <property name="fields">
  	                                                                <list>
- 	                                                                        <bean parent="AccountingLineView-field" p:name="referenceNumber" p:required="false"/>
+ 	                                                                        <bean parent="AccountingLineView-field" p:name="referenceNumber" p:required="false" p:unconditionallyReadOnly="true"/>
  	                                                                        <bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
                                                                 </list>
  	                                                        </property>
@@ -196,7 +196,7 @@
  	                                                                                                <bean parent="AccountingLineView-field" p:name="partialTransactionCount"/>
  	                                                                                                <bean parent="AccountingLineView-field" p:name="startDate" />
  	                                                                                                <bean parent="AccountingLineView-field" p:name="partialAmount" />
- 	                                                                                                <bean parent="AccountingLineView-field" p:name="endDate" />
+ 	                                                                                                <bean parent="AccountingLineView-field" p:name="endDate" p:unconditionallyReadOnly="true" />
  	                                                                                        </list>
  	                                                                                </property>
  	                                                                        </bean>

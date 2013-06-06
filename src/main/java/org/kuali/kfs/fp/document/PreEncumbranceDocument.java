@@ -234,10 +234,10 @@ public class PreEncumbranceDocument extends AccountingDocumentBase implements Co
                 	if (ObjectUtils.isNull(pesal.getStartDate()) || ObjectUtils.isNull(pesal.getPartialTransactionCount()) || ObjectUtils.isNull(pesal.getPartialAmount())) {
                 		throw new ValidationException("Insufficient information for GLPE generation");
                 	}
-                	if (ObjectUtils.isNull(pesal.getEndDate()))     {
-                                Date generatedEndDate = PreEncumbranceAccountingLineUtil.generateEndDate(pesal.getStartDate(), Integer.parseInt(pesal.getPartialTransactionCount()), pesal.getAutoDisEncumberType());
-                                pesal.setEndDate(generatedEndDate);
-                        }
+                	
+                       Date generatedEndDate = PreEncumbranceAccountingLineUtil.generateEndDate(pesal.getStartDate(), Integer.parseInt(pesal.getPartialTransactionCount()), pesal.getAutoDisEncumberType());
+                       pesal.setEndDate(generatedEndDate);
+                        
                         TreeMap<Date, KualiDecimal> datesAndAmounts = PreEncumbranceAccountingLineUtil.generateDatesAndAmounts(pesal.getAutoDisEncumberType(), 
                                         pesal.getStartDate(), pesal.getEndDate(), Integer.parseInt(pesal.getPartialTransactionCount()), 
                                         pesal.getAmount(), pesal.getPartialAmount(), rowId);

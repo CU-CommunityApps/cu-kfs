@@ -31,9 +31,9 @@ public class PreEncumbranceAccountingLineUtil {
         
         public static TreeMap<Date, KualiDecimal> generateDatesAndAmounts(String autoDisEncumberType, Date startDate, Date endDate, int count, KualiDecimal totalAmount, KualiDecimal partialAmount, Integer rowId) {
                 TreeMap<Date, KualiDecimal> datesAndAmounts = new TreeMap<Date,KualiDecimal>();
-                if (ObjectUtils.isNull(endDate)) {
+                
                         endDate = generateEndDate(startDate,count,autoDisEncumberType);
-                }
+                
                 if (totalAmount.isNegative()) {
                         // flip the total amount to generate the entries
                         totalAmount = totalAmount.abs();
