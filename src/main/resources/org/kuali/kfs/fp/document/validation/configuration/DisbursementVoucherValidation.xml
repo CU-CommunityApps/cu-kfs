@@ -129,14 +129,7 @@
 							<bean parent="accountingDocumentFieldConversion" />
 						</list>
 					</property>
-				</bean>		
-			    <bean parent="DisbursementVoucher-initiatorPrimaryDepartmentValidation" scope="prototype">
-					<property name="parameterProperties">
-						<list>
-							<bean parent="accountingDocumentFieldConversion" />
-						</list>
-					</property>
-				</bean>											
+				</bean>												
 			</list>
 		</property>
 	</bean>
