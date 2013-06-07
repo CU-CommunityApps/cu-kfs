@@ -389,7 +389,8 @@ public class KFSKeyConstants {
     public static final String ERROR_DV_REVOLVING_PAYMENT_REASON = "error.dv.revolvingPaymentReason";
     public static final String ERROR_DV_CHECK_TOTAL_CHANGE = "error.dv.checkTotalChange";    
     public static final String ERROR_DV_CAMPUS_TURNED_OFF_SPECIAL_HANDLING_WITHOUT_EXPLANATORY_NOTE = "error.dv.campusTurnedOffSpecialHandlingWithoutExplanatoryNote";
-
+    public static final String ERROR_DV_INITIATOR_INVALID_PRIMARY_DEPARTMENT = "error.dv.initiatorInvalidPrimaryDepartment";
+    
     public static final String ERROR_BA_AMOUNT_ZERO = "error.document.ba.amount.zero";
     public static final String ERROR_BA_AMOUNT_NEGATIVE = "error.document.ba.amount.negative";
     
