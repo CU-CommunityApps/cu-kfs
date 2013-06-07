@@ -353,8 +353,8 @@ public class ElectronicInvoiceMatchingServiceImpl implements ElectronicInvoiceMa
         }
         
         // KFSPTS-1719 : if the invoice line number is duplicate, then error out.
-        // TODO : need to rework on this error message to differentiate it from the 'duplicate' po line item error
-        if (invLineNumbers.contains(itemHolder.getInvLineNumber())){
+        // only noqty item.  the old behavior for qty item does not check the duplicate inv line#
+        if (invLineNumbers.contains(itemHolder.getInvLineNumber()) && poItem.isNoQtyItem()){
 			String extraDescription = "Invoice Item Line Number:" + itemHolder.getInvoiceItemLineNumber();
 			ElectronicInvoiceRejectReason rejectReason = createRejectReason(
 					PurapConstants.ElectronicInvoice.DUPLIATE_INVOICE_LINE_ITEM, extraDescription, orderHolder.getFileName());
