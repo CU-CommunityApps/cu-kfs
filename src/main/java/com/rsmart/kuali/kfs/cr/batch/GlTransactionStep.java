@@ -31,6 +31,7 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kns.bo.KualiCode;
 import org.kuali.rice.kns.service.BusinessObjectService;
+import org.kuali.rice.kns.util.ObjectUtils;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
@@ -101,7 +102,11 @@ public class GlTransactionStep extends AbstractStep {
                         if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
                             paymentGroup.setPaymentStatus((PaymentStatus) code);
                         }
-                        paymentGroup.setLastUpdate(new Timestamp(cr.getStatusChangeDate().getTime()));
+                        Date lastUpdate = cr.getStatusChangeDate();
+                        if(ObjectUtils.isNull(lastUpdate)) {
+                        	lastUpdate = new Date();
+                        }
+                        paymentGroup.setLastUpdate(new Timestamp(lastUpdate.getTime()));
                         businessObjectService.save(paymentGroup);
                     
                         // Update status
@@ -142,7 +147,11 @@ public class GlTransactionStep extends AbstractStep {
                         if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
                             paymentGroup.setPaymentStatus((PaymentStatus) code);
                         }
-                        paymentGroup.setLastUpdate(new Timestamp(cr.getStatusChangeDate().getTime()));
+                        Date lastUpdate = cr.getStatusChangeDate();
+                        if(ObjectUtils.isNull(lastUpdate)) {
+                        	lastUpdate = new Date();
+                        }
+                        paymentGroup.setLastUpdate(new Timestamp(lastUpdate.getTime()));
                         businessObjectService.save(paymentGroup);
                     
                         // Update status
@@ -185,7 +194,11 @@ public class GlTransactionStep extends AbstractStep {
                         if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
                             paymentGroup.setPaymentStatus((PaymentStatus) code);
                         }
-                        paymentGroup.setLastUpdate(new Timestamp(cr.getStatusChangeDate().getTime()));
+                        Date lastUpdate = cr.getStatusChangeDate();
+                        if(ObjectUtils.isNull(lastUpdate)) {
+                        	lastUpdate = new Date();
+                        }
+                        paymentGroup.setLastUpdate(new Timestamp(lastUpdate.getTime()));
                         businessObjectService.save(paymentGroup);
                     
                         // Update status
@@ -230,7 +243,11 @@ public class GlTransactionStep extends AbstractStep {
                          if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
                              paymentGroup.setPaymentStatus((PaymentStatus) code);
                          }
-                         paymentGroup.setLastUpdate(new Timestamp(cr.getStatusChangeDate().getTime()));
+                         Date lastUpdate = cr.getStatusChangeDate();
+                         if(ObjectUtils.isNull(lastUpdate)) {
+                         	lastUpdate = new Date();
+                         }
+                         paymentGroup.setLastUpdate(new Timestamp(lastUpdate.getTime()));
                          businessObjectService.save(paymentGroup);
                     
                          // Update status
