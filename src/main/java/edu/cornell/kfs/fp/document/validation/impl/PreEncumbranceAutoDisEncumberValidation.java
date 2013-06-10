@@ -157,10 +157,7 @@ public class PreEncumbranceAutoDisEncumberValidation extends GenericValidation {
                                 sourceLine.getAmount(), sourceLine.getPartialAmount(), rowId);
                 
                 Date finalReversalDate = datesAndValues.pollLastEntry().getKey();
-                if (finalReversalDate.after(annualClosingDate) && !isCGAccount) {
-                GlobalVariables.getMessageMap().putError(DOCUMENT_ERROR_PREFIX + "sourceAccountingLine[" + rowId + "].endDate", CUKFSKeyConstants.ERROR_DOCUMENT_PREENCUMBER_GENERATED_ENTRIES_SPAN_FY);
-                success = false;
-                }
+                
                 
                 return success;
         }
