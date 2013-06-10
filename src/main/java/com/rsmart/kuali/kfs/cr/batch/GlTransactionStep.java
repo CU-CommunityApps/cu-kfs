@@ -101,7 +101,7 @@ public class GlTransactionStep extends AbstractStep {
                         if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
                             paymentGroup.setPaymentStatus((PaymentStatus) code);
                         }
-                        paymentGroup.setLastUpdate(new Timestamp((new java.util.Date()).getTime()));
+                        paymentGroup.setLastUpdate(new Timestamp(cr.getStatusChangeDate().getTime()));
                         businessObjectService.save(paymentGroup);
                     
                         // Update status
@@ -142,7 +142,7 @@ public class GlTransactionStep extends AbstractStep {
                         if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
                             paymentGroup.setPaymentStatus((PaymentStatus) code);
                         }
-                        paymentGroup.setLastUpdate(new Timestamp((new java.util.Date()).getTime()));
+                        paymentGroup.setLastUpdate(new Timestamp(cr.getStatusChangeDate().getTime()));
                         businessObjectService.save(paymentGroup);
                     
                         // Update status
@@ -185,7 +185,7 @@ public class GlTransactionStep extends AbstractStep {
                         if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
                             paymentGroup.setPaymentStatus((PaymentStatus) code);
                         }
-                        paymentGroup.setLastUpdate(new Timestamp((new java.util.Date()).getTime()));
+                        paymentGroup.setLastUpdate(new Timestamp(cr.getStatusChangeDate().getTime()));
                         businessObjectService.save(paymentGroup);
                     
                         // Update status
@@ -230,7 +230,7 @@ public class GlTransactionStep extends AbstractStep {
                          if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
                              paymentGroup.setPaymentStatus((PaymentStatus) code);
                          }
-                         paymentGroup.setLastUpdate(new Timestamp((new java.util.Date()).getTime()));
+                         paymentGroup.setLastUpdate(new Timestamp(cr.getStatusChangeDate().getTime()));
                          businessObjectService.save(paymentGroup);
                     
                          // Update status

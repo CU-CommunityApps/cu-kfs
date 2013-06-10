@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.ojb.broker.PersistenceBroker;
+import org.apache.ojb.broker.PersistenceBrokerException;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
@@ -42,6 +44,7 @@ import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.KeyValuesService;
 import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.KualiInteger;
 import org.kuali.rice.kns.util.ObjectUtils;
@@ -1232,5 +1235,27 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
         }
 
         return isACH;
+    }
+    
+    /**
+     * 
+     */
+    public void beforeInsert(PersistenceBroker broker) throws PersistenceBrokerException {
+    	Timestamp lastUpdateTemp = this.getLastUpdate();
+        super.beforeInsert(broker);
+
+        this.setLastUpdate(lastUpdateTemp);
+        this.setLastUpdateUserId(GlobalVariables.getUserSession().getPerson().getPrincipalName());
+    }
+
+    /**
+     * 
+     */
+    public void beforeUpdate(PersistenceBroker broker) throws PersistenceBrokerException {
+    	Timestamp lastUpdateTemp = this.getLastUpdate();
+        super.beforeUpdate(broker);
+
+        this.setLastUpdate(lastUpdateTemp);
+        this.setLastUpdateUserId(GlobalVariables.getUserSession().getPerson().getPrincipalName());
     }
 }
