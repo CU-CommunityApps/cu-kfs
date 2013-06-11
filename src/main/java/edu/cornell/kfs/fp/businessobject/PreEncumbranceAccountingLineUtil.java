@@ -32,7 +32,7 @@ public class PreEncumbranceAccountingLineUtil {
         public static TreeMap<Date, KualiDecimal> generateDatesAndAmounts(String autoDisEncumberType, Date startDate, Date endDate, int count, KualiDecimal totalAmount, KualiDecimal partialAmount, Integer rowId) {
                 TreeMap<Date, KualiDecimal> datesAndAmounts = new TreeMap<Date,KualiDecimal>();
                 
-                        endDate = generateEndDate(startDate,count,autoDisEncumberType);
+                endDate = generateEndDate(startDate,count,autoDisEncumberType);
                 
                 if (totalAmount.isNegative()) {
                         // flip the total amount to generate the entries
@@ -124,19 +124,20 @@ public class PreEncumbranceAccountingLineUtil {
         return endDate;
     }
     private static Date nextSemiMonthlyDate(Date theDate) {
-        Calendar first = Calendar.getInstance();
+        Calendar last = Calendar.getInstance();
         Calendar fifteenth = Calendar.getInstance();
-        Calendar theDateCal = Calendar.getInstance();
+        Calendar theDateCal = Calendar.getInstance(); 
         theDateCal.setTime(theDate);
-        first.setTime(theDate);
+        int lastday = theDateCal.getActualMaximum(Calendar.DAY_OF_MONTH);
         fifteenth.setTime(theDate);
-        first.set(Calendar.DAY_OF_MONTH, 1);
+        last.setTime(theDate);
+        last.set(Calendar.DAY_OF_MONTH, lastday);
         fifteenth.set(Calendar.DAY_OF_MONTH, 15);
-        if ((theDateCal.after(first) && theDateCal.before(fifteenth)) || theDateCal.equals(first) ) {
-                theDateCal = fifteenth;
+        if (theDateCal.before(fifteenth) || theDateCal.equals(fifteenth) ) {
+                theDateCal = last;
         } else
-        if (theDateCal.after(fifteenth) || theDateCal.equals(fifteenth)) {
-                theDateCal = first;
+        if (theDateCal.after(fifteenth) || theDateCal.equals(last)) {
+                theDateCal = fifteenth;
                 theDateCal.roll(Calendar.MONTH, true);
         }
         return new Date(theDateCal.getTimeInMillis());

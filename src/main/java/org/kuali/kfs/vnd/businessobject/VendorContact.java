@@ -23,6 +23,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.kuali.rice.kns.bo.Country;
 import org.kuali.rice.kns.bo.State;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.kns.service.CountryService;
 import org.kuali.rice.kns.service.StateService;
 import org.kuali.rice.kns.bo.Inactivateable;
@@ -303,7 +304,7 @@ public class VendorContact extends PersistableBusinessObjectBase implements Vend
         else {
             VendorContact vndContact = (VendorContact) toCompare;
 
-            return new EqualsBuilder().append(
+            boolean eq = new EqualsBuilder().append(
             		this.getVendorContactTypeCode(), vndContact.getVendorContactTypeCode()).append(
                     this.getVendorContactGeneratedIdentifier(), vndContact.getVendorContactGeneratedIdentifier()).append(
                     this.getVendorAttentionName(), vndContact.getVendorAttentionName()).append(
@@ -312,13 +313,14 @@ public class VendorContact extends PersistableBusinessObjectBase implements Vend
                     this.getVendorContactCommentText(), vndContact.getVendorContactCommentText()).append(
                     this.getVendorContactEmailAddress(), vndContact.getVendorContactEmailAddress()).append(
                     this.getVendorContactName(), vndContact.getVendorContactName()).append(
-                    this.getVendorContactPhoneNumbers(), vndContact.getVendorContactPhoneNumbers()).append(
                     this.getVendorCountryCode(), vndContact.getVendorCountryCode()).append(
                     this.getVendorLine1Address(), vndContact.getVendorLine1Address()).append(
                     this.getVendorLine2Address(), vndContact.getVendorLine2Address()).append(
                     this.getVendorStateCode(), vndContact.getVendorStateCode()).append(
                     this.getVendorZipCode(), vndContact.getVendorZipCode()).append(
             		this.isActive(), vndContact.isActive()).isEquals();
+            eq &= SpringContext.getBean(VendorService.class).equalMemberLists(this.getVendorContactPhoneNumbers(), vndContact.getVendorContactPhoneNumbers());
+            return eq;
         }
 	}
 
