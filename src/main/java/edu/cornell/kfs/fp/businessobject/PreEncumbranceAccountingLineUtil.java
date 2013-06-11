@@ -132,6 +132,7 @@ public class PreEncumbranceAccountingLineUtil {
         theDateCal.setTime(theDate);
         last.setTime(theDate);
         fifteenth.setTime(theDate);
+        first.set(Calendar.DAY_OF_MONTH, 1);
         last.set(Calendar.DAY_OF_MONTH, lastday);
         fifteenth.set(Calendar.DAY_OF_MONTH, 15);
         if ((theDateCal.after(first) && theDateCal.before(fifteenth)) || theDateCal.equals(fifteenth) ) {
