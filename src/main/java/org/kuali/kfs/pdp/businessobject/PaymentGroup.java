@@ -1244,7 +1244,11 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
     	Timestamp lastUpdateTemp = this.getLastUpdate();
         super.beforeInsert(broker);
 
-        this.setLastUpdate(lastUpdateTemp);
+        if(ObjectUtils.isNull(lastUpdateTemp)) {
+        	this.setLastUpdate(new Timestamp(new java.util.Date().getTime()));
+        } else {
+        	this.setLastUpdate(lastUpdateTemp);
+        }
         this.setLastUpdateUserId(GlobalVariables.getUserSession().getPerson().getPrincipalName());
     }
 
@@ -1255,7 +1259,11 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
     	Timestamp lastUpdateTemp = this.getLastUpdate();
         super.beforeUpdate(broker);
 
-        this.setLastUpdate(lastUpdateTemp);
+        if(ObjectUtils.isNull(lastUpdateTemp)) {
+        	this.setLastUpdate(new Timestamp(new java.util.Date().getTime()));
+        } else {
+        	this.setLastUpdate(lastUpdateTemp);
+        }
         this.setLastUpdateUserId(GlobalVariables.getUserSession().getPerson().getPrincipalName());
     }
 }
