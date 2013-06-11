@@ -124,19 +124,21 @@ public class PreEncumbranceAccountingLineUtil {
         return endDate;
     }
     private static Date nextSemiMonthlyDate(Date theDate) {
-        Calendar first = Calendar.getInstance();
+    	Calendar last = Calendar.getInstance();
+    	Calendar first = Calendar.getInstance();
         Calendar fifteenth = Calendar.getInstance();
         Calendar theDateCal = Calendar.getInstance();
+        int lastday = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH);
         theDateCal.setTime(theDate);
-        first.setTime(theDate);
+        last.setTime(theDate);
         fifteenth.setTime(theDate);
-        first.set(Calendar.DAY_OF_MONTH, 1);
+        last.set(Calendar.DAY_OF_MONTH, lastday);
         fifteenth.set(Calendar.DAY_OF_MONTH, 15);
-        if ((theDateCal.after(first) && theDateCal.before(fifteenth)) || theDateCal.equals(first) ) {
-                theDateCal = fifteenth;
+        if ((theDateCal.after(first) && theDateCal.before(fifteenth)) || theDateCal.equals(fifteenth) ) {
+                theDateCal = last;
         } else
-        if (theDateCal.after(fifteenth) || theDateCal.equals(fifteenth)) {
-                theDateCal = first;
+        	 if (theDateCal.after(fifteenth) || theDateCal.equals(last)) {
+                theDateCal = fifteenth;
                 theDateCal.roll(Calendar.MONTH, true);
         }
         return new Date(theDateCal.getTimeInMillis());
