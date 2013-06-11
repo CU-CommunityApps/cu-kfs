@@ -168,10 +168,6 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 			vendor = vendorService.getByVendorNumber(vendorId);
 		} else if(StringUtils.equalsIgnoreCase(vendorIdType, "VENDORNAME")) {
 			vendor = vendorService.getVendorByVendorName(vendorId);
-		} else if(StringUtils.equalsIgnoreCase(vendorIdType, "SSN")) {
-			vendor = vendorService.getVendorByNamePlusLastFourOfTaxID(vendorId, vendorIdType);
-//		} else if(StringUtils.equalsIgnoreCase(vendorIdType, "FEIN")) {
-//			// not implemented yet
 		}
 		return vendor;
 	}
@@ -192,7 +188,9 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 			
 			vendorValues.append(vendor.getVendorNumber()).append(CARET);
 			vendorValues.append(vendor.getVendorName()).append(CARET);
-			vendorValues.append(vendor.getVendorHeader().getVendorTaxNumber()).append(CARET);
+			String taxID = vendor.getVendorHeader().getVendorTaxNumber();
+			String maskedTaxID = "*****"+taxID.substring(taxID.length()-4, taxID.length());
+			vendorValues.append(maskedTaxID).append(CARET);
 			vendorValues.append(vendor.getVendorHeader().getVendorTaxTypeCode()).append(CARET);
 			vendorValues.append(vendor.getDefaultAddressLine1()).append(CARET);
 			vendorValues.append(vendor.getDefaultAddressLine2()).append(CARET);
