@@ -137,7 +137,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	 */
 	public String retrieveKfsVendorByNamePlusLastFour(String vendorName, String lastFour) throws Exception {
 		VendorDetail vendor = SpringContext.getBean(CUVendorService.class).getVendorByNamePlusLastFourOfTaxID(vendorName, lastFour);
-		return buildVendorString(vendor);
+		return vendor.getVendorNumber();
 	}
 	
 	/**
