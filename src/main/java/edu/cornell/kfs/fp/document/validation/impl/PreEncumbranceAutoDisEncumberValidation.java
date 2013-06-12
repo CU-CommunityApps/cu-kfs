@@ -122,10 +122,7 @@ public class PreEncumbranceAutoDisEncumberValidation extends GenericValidation {
                         GlobalVariables.getMessageMap().putError(DOCUMENT_ERROR_PREFIX + "sourceAccountingLine[" + rowId + "].startDate", CUKFSKeyConstants.ERROR_DOCUMENT_PREENCUMBER_INVALID_START);
                                 success = false;                        
                 }
-                if (sourceLine.getStartDate().after(annualClosingDate) && !isCGAccount) {
-                        GlobalVariables.getMessageMap().putError(DOCUMENT_ERROR_PREFIX + "sourceAccountingLine[" + rowId + "].startDate", CUKFSKeyConstants.ERROR_DOCUMENT_PREENCUMBER_DATE_PAST_YEAR_END);
-                        success = false;
-                }
+                
                 if (ObjectUtils.isNotNull(accountingDocumentForValidation.getReversalDate())) {
                         GlobalVariables.getMessageMap().putError(DOCUMENT_ERROR_PREFIX + "sourceAccountingLine[" + rowId + "].startDate", CUKFSKeyConstants.ERROR_DOCUMENT_PREENCUMBER_BOTH_REV_DATES_USED);
                         success = false;
@@ -138,10 +135,7 @@ public class PreEncumbranceAutoDisEncumberValidation extends GenericValidation {
                         GlobalVariables.getMessageMap().putError(DOCUMENT_ERROR_PREFIX + "sourceAccountingLine[" + rowId + "].endDate", CUKFSKeyConstants.ERROR_DOCUMENT_PREENCUMBER_INVALID_END);
                                 success = false;
                 }
-                if (sourceLine.getEndDate().after(annualClosingDate) && !isCGAccount) {
-                        GlobalVariables.getMessageMap().putError(DOCUMENT_ERROR_PREFIX + "sourceAccountingLine[" + rowId + "].endDate", CUKFSKeyConstants.ERROR_DOCUMENT_PREENCUMBER_DATE_PAST_YEAR_END);
-                        success = false;
-                }
+                
         }        
                 return success;
         }
