@@ -37,10 +37,14 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
 	 */
 	public void importAccountReversions(File f) {
 		
-		
-		arid.destroyAccountReversionsAndDetails();
+		// KFSPTS-2174 : Repurposed this batch job to append the loaded values to the existing table, rather than delete all current values and reload the tables from scratch
+//		arid.destroyAccountReversionsAndDetails();
 		int count = 0;
 		String objectCode = parameterService.getParameterValue("KFS-COA", "Reversion", "CASH_REVERSION_OBJECT_CODE");
+		
+		// Currently, the fiscal year is hard-coded into the account reversion import process below.  This should be parameterized and the hard-coded values below replaced
+		// with the parameter value.
+//		String fiscalYear = parameterService.getParameterValue("KFS-COA", "Reversion", "ACCOUNT_REVERSION_FISCAL_YEAR");
 		
 		try {
 			CSVReader reader = new CSVReader(new FileReader(f));
@@ -60,7 +64,7 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
                 if (StringUtils.isNotBlank(fromChart) &&StringUtils.isNotBlank(fromAcct) && StringUtils.isNotBlank(toChart) &&StringUtils.isNotBlank(toAcct)) {
 
                 	AccountReversion accountReversion = new AccountReversion(); 
-                	accountReversion.setUniversityFiscalYear(2012);
+                	accountReversion.setUniversityFiscalYear(2013);
                 	accountReversion.setChartOfAccountsCode(fromChart);
                 	accountReversion.setAccountNumber(fromAcct);
 
@@ -73,7 +77,7 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
 
                 	//List details = new ArrayList();
                 	AccountReversionDetail accountReversionDetail = new AccountReversionDetail();
-                	accountReversionDetail.setUniversityFiscalYear(2012);
+                	accountReversionDetail.setUniversityFiscalYear(2013);
                 	accountReversionDetail.setChartOfAccountsCode(fromChart);
                 	accountReversionDetail.setAccountNumber(fromAcct);
                 	accountReversionDetail.setAccountReversionCategoryCode("A1");
