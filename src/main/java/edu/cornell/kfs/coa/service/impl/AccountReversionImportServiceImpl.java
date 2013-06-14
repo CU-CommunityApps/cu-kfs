@@ -11,8 +11,10 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.ojb.broker.util.logging.Logger;
+import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountReversion;
 import org.kuali.kfs.coa.businessobject.AccountReversionDetail;
+import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.ParameterService;
@@ -79,6 +81,21 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
                 		continue;
                 	}
                 	
+                	Account fromAcctExists = null;
+                	fromAcctExists = SpringContext.getBean(AccountService.class).getByPrimaryId(fromChart, fromAcct);
+                	if(ObjectUtils.isNull(fromAcctExists)) {
+                		LOG.info("From account ("+ fromAcct +") does not exist.");
+                		LOG.info("Account Reversion cannot be added for fiscal year ("+"2013"+"): from account: "+ fromAcct +": to account "+ toAcct);
+                		continue;
+                	}
+                	
+                	Account toAcctExists = null;
+                	toAcctExists = SpringContext.getBean(AccountService.class).getByPrimaryId(fromChart, fromAcct);
+                	if(ObjectUtils.isNull(toAcctExists)) {
+                		LOG.info("To account ("+ toAcct +") does not exist.");
+                		LOG.info("Account Reversion cannot be added for fiscal year ("+"2013"+"): from account: "+ fromAcct +": to account "+ toAcct);
+                		continue;
+                	}
                 	
                 	AccountReversion accountReversion = new AccountReversion(); 
                 	accountReversion.setUniversityFiscalYear(2013);
