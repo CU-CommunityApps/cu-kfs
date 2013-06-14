@@ -5,14 +5,18 @@ package edu.cornell.kfs.coa.service.impl;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.ojb.broker.util.logging.Logger;
 import org.kuali.kfs.coa.businessobject.AccountReversion;
 import org.kuali.kfs.coa.businessobject.AccountReversionDetail;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.kns.util.ObjectUtils;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.cornell.kfs.coa.dataaccess.AccountReversionImportDao;
@@ -63,6 +67,19 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
                 LOG.info("Creating Reversion for: from account: "+ fromAcct +": to account "+ toAcct);
                 if (StringUtils.isNotBlank(fromChart) &&StringUtils.isNotBlank(fromAcct) && StringUtils.isNotBlank(toChart) &&StringUtils.isNotBlank(toAcct)) {
 
+                	AccountReversion exists = null;
+                	Map<String, String> pks = new HashMap<String, String>();
+                	pks.put("UNIV_FISCAL_YR", "2013");
+                	pks.put("FIN_COA_CD", fromChart);
+                	pks.put("ACCT_NBR", fromAcct);
+                	exists = (AccountReversion)SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(AccountReversion.class, pks);
+                	
+                	if(ObjectUtils.isNotNull(exists)) {
+                		LOG.info("Account Reversion already exists for this fiscal year ("+"2013"+"): from account: "+ fromAcct +": to account "+ toAcct);
+                		continue;
+                	}
+                	
+                	
                 	AccountReversion accountReversion = new AccountReversion(); 
                 	accountReversion.setUniversityFiscalYear(2013);
                 	accountReversion.setChartOfAccountsCode(fromChart);
