@@ -27,6 +27,7 @@ import edu.cornell.kfs.coa.service.AccountReversionImportService;
 
 /**
  * @author kwk43
+ * @author dwf5
  *
  */
 public class AccountReversionImportServiceImpl implements AccountReversionImportService {
@@ -48,7 +49,7 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
 		int count = 0;
 		String objectCode = parameterService.getParameterValue("KFS-COA", "Reversion", "CASH_REVERSION_OBJECT_CODE");
 		
-		// Currently, the fiscal year is hard-coded into the account reversion import process below.  This should be parameterized and the hard-coded values below replaced
+		// TODO Currently, the fiscal year is hard-coded into the account reversion import process below.  This should be parameterized and the hard-coded values below replaced
 		// with the parameter value.
 //		String fiscalYear = parameterService.getParameterValue("KFS-COA", "Reversion", "ACCOUNT_REVERSION_FISCAL_YEAR");
 		
@@ -59,7 +60,6 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
 			Object[] array = lines.toArray();
 			LOG.info("Read: "+ lines.toArray().length+" records");
 			for (int i = 0; i < array.length; i++) {
-            //for (String[] line : array) {
             	String[] line = (String[]) array[i];
                 String fromChart = line[0];
                 String fromAcct = line[1];
@@ -72,33 +72,45 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
                 	AccountReversion exists = null;
                 	Map<String, String> pks = new HashMap<String, String>();
                 	pks.put("UNIV_FISCAL_YR", "2013");
+                	// TODO
+                	//pks.put("UNIV_FISCAL_YR", fiscalYear);
                 	pks.put("FIN_COA_CD", fromChart);
                 	pks.put("ACCT_NBR", fromAcct);
                 	exists = (AccountReversion)SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(AccountReversion.class, pks);
                 	
                 	if(ObjectUtils.isNotNull(exists)) {
                 		LOG.info("Account Reversion already exists for this fiscal year ("+"2013"+"): from account: "+ fromAcct +": to account "+ toAcct);
+                    	// TODO
+                		//LOG.info("Account Reversion already exists for this fiscal year ("+fiscalYear+"): from account: "+ fromAcct +": to account "+ toAcct);
                 		continue;
                 	}
-                	
+
+                	// Validate from account; cannot add account reversion if account does not exist
                 	Account fromAcctExists = null;
                 	fromAcctExists = SpringContext.getBean(AccountService.class).getByPrimaryId(fromChart, fromAcct);
                 	if(ObjectUtils.isNull(fromAcctExists)) {
                 		LOG.info("From account ("+ fromAcct +") does not exist.");
                 		LOG.info("Account Reversion cannot be added for fiscal year ("+"2013"+"): from account: "+ fromAcct +": to account "+ toAcct);
+                    	// TODO
+                		//LOG.info("Account Reversion already exists for this fiscal year ("+fiscalYear+"): from account: "+ fromAcct +": to account "+ toAcct);
                 		continue;
                 	}
                 	
+                	// Validate to account; cannot add account reversion if account does not exist
                 	Account toAcctExists = null;
                 	toAcctExists = SpringContext.getBean(AccountService.class).getByPrimaryId(fromChart, fromAcct);
                 	if(ObjectUtils.isNull(toAcctExists)) {
                 		LOG.info("To account ("+ toAcct +") does not exist.");
                 		LOG.info("Account Reversion cannot be added for fiscal year ("+"2013"+"): from account: "+ fromAcct +": to account "+ toAcct);
+                    	// TODO
+                		//LOG.info("Account Reversion already exists for this fiscal year ("+fiscalYear+"): from account: "+ fromAcct +": to account "+ toAcct);
                 		continue;
                 	}
                 	
                 	AccountReversion accountReversion = new AccountReversion(); 
                 	accountReversion.setUniversityFiscalYear(2013);
+                	// TODO
+                	//accountReversion.setUniversityFiscalYear(fiscalYear);
                 	accountReversion.setChartOfAccountsCode(fromChart);
                 	accountReversion.setAccountNumber(fromAcct);
 
@@ -109,17 +121,16 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
                 	accountReversion.setCarryForwardByObjectCodeIndicator(false);
                 	accountReversion.setActive(true);
 
-                	//List details = new ArrayList();
                 	AccountReversionDetail accountReversionDetail = new AccountReversionDetail();
                 	accountReversionDetail.setUniversityFiscalYear(2013);
+                	// TODO
+                	//accountReversionDetail.setUniversityFiscalYear(fiscalYear);
                 	accountReversionDetail.setChartOfAccountsCode(fromChart);
                 	accountReversionDetail.setAccountNumber(fromAcct);
                 	accountReversionDetail.setAccountReversionCategoryCode("A1");
                 	accountReversionDetail.setAccountReversionCode("CA");
                 	accountReversionDetail.setAccountReversionObjectCode(objectCode);
                 	accountReversionDetail.setActive(true);
-
-                	//details.add(accountReversionDetail);
 
                 	accountReversion.addAccountReversionDetail(accountReversionDetail);
                 	boService.save(accountReversion);
