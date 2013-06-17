@@ -96,7 +96,11 @@
 		</property>
 	</bean>
  
- 	<bean id="accountReversionImportStep" class="edu.cornell.kfs.coa.batch.AccountReversionImportStep" parent="step"/>
+ 	<bean id="accountReversionImportStep" class="edu.cornell.kfs.coa.batch.AccountReversionImportStep" parent="step">
+ 		<property name="batchFileDirectoryName">
+ 			<value>${staging.directory}/sys</value>
+ 		</property>
+ 	</bean>
 
  	<bean id="orgHierarchyMissingOrgsStep" class="edu.cornell.kfs.coa.batch.OrgHierarchyMissingOrgsStep" parent="step"/>
 

@@ -4,6 +4,11 @@ import java.io.File;
 
 public interface AccountReversionImportService {
 
-	public void importAccountReversions(File f);
-	
+    /**
+     * Imports accounts reversions from an input csv file.
+     * 
+     * @param f file containing accounts reversions to be imported
+     */
+    public void importAccountReversions(File f);
+
 }
