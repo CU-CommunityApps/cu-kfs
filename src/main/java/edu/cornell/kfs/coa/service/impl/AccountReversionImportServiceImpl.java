@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.ojb.broker.util.logging.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountReversion;
 import org.kuali.kfs.coa.businessobject.AccountReversionDetail;
@@ -22,12 +21,9 @@ import org.kuali.rice.kns.util.ObjectUtils;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.cornell.kfs.coa.dataaccess.AccountReversionImportDao;
-import edu.cornell.kfs.coa.dataaccess.impl.AccountReversionImportDaoJdbc;
 import edu.cornell.kfs.coa.service.AccountReversionImportService;
 
 /**
- * @author kwk43
- * @author dwf5
  *
  */
 public class AccountReversionImportServiceImpl implements AccountReversionImportService {
@@ -45,13 +41,11 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
 	public void importAccountReversions(File f) {
 		
 		// KFSPTS-2174 : Repurposed this batch job to append the loaded values to the existing table, rather than delete all current values and reload the tables from scratch
-//		arid.destroyAccountReversionsAndDetails();
+	    //		arid.destroyAccountReversionsAndDetails();
 		int count = 0;
 		String objectCode = parameterService.getParameterValue("KFS-COA", "Reversion", "CASH_REVERSION_OBJECT_CODE");
 		
-		// TODO Currently, the fiscal year is hard-coded into the account reversion import process below.  This should be parameterized and the hard-coded values below replaced
-		// with the parameter value.
-//		String fiscalYear = parameterService.getParameterValue("KFS-COA", "Reversion", "ACCOUNT_REVERSION_FISCAL_YEAR");
+		Integer fiscalYear = Integer.parseInt(parameterService.getParameterValue("KFS-COA", "Reversion", "ACCOUNT_REVERSION_FISCAL_YEAR"));
 		
 		try {
 			CSVReader reader = new CSVReader(new FileReader(f));
@@ -71,17 +65,15 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
 
                 	AccountReversion exists = null;
                 	Map<String, String> pks = new HashMap<String, String>();
-                	pks.put("UNIV_FISCAL_YR", "2013");
-                	// TODO
-                	//pks.put("UNIV_FISCAL_YR", fiscalYear);
+
+                	pks.put("UNIV_FISCAL_YR", String.valueOf(fiscalYear));
                 	pks.put("FIN_COA_CD", fromChart);
                 	pks.put("ACCT_NBR", fromAcct);
                 	exists = (AccountReversion)SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(AccountReversion.class, pks);
                 	
                 	if(ObjectUtils.isNotNull(exists)) {
-                		LOG.info("Account Reversion already exists for this fiscal year ("+"2013"+"): from account: "+ fromAcct +": to account "+ toAcct);
-                    	// TODO
-                		//LOG.info("Account Reversion already exists for this fiscal year ("+fiscalYear+"): from account: "+ fromAcct +": to account "+ toAcct);
+
+                		LOG.info("Account Reversion already exists for this fiscal year ("+fiscalYear+"): from account: "+ fromAcct +": to account "+ toAcct);
                 		continue;
                 	}
 
@@ -90,9 +82,7 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
                 	fromAcctExists = SpringContext.getBean(AccountService.class).getByPrimaryId(fromChart, fromAcct);
                 	if(ObjectUtils.isNull(fromAcctExists)) {
                 		LOG.info("From account ("+ fromAcct +") does not exist.");
-                		LOG.info("Account Reversion cannot be added for fiscal year ("+"2013"+"): from account: "+ fromAcct +": to account "+ toAcct);
-                    	// TODO
-                		//LOG.info("Account Reversion already exists for this fiscal year ("+fiscalYear+"): from account: "+ fromAcct +": to account "+ toAcct);
+                		LOG.info("Account Reversion already exists for this fiscal year ("+fiscalYear+"): from account: "+ fromAcct +": to account "+ toAcct);
                 		continue;
                 	}
                 	
@@ -101,16 +91,13 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
                 	toAcctExists = SpringContext.getBean(AccountService.class).getByPrimaryId(fromChart, fromAcct);
                 	if(ObjectUtils.isNull(toAcctExists)) {
                 		LOG.info("To account ("+ toAcct +") does not exist.");
-                		LOG.info("Account Reversion cannot be added for fiscal year ("+"2013"+"): from account: "+ fromAcct +": to account "+ toAcct);
-                    	// TODO
-                		//LOG.info("Account Reversion already exists for this fiscal year ("+fiscalYear+"): from account: "+ fromAcct +": to account "+ toAcct);
+                		LOG.info("Account Reversion already exists for this fiscal year ("+fiscalYear+"): from account: "+ fromAcct +": to account "+ toAcct);
                 		continue;
                 	}
                 	
                 	AccountReversion accountReversion = new AccountReversion(); 
-                	accountReversion.setUniversityFiscalYear(2013);
-                	// TODO
-                	//accountReversion.setUniversityFiscalYear(fiscalYear);
+
+                	accountReversion.setUniversityFiscalYear(fiscalYear);
                 	accountReversion.setChartOfAccountsCode(fromChart);
                 	accountReversion.setAccountNumber(fromAcct);
 
@@ -122,9 +109,7 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
                 	accountReversion.setActive(true);
 
                 	AccountReversionDetail accountReversionDetail = new AccountReversionDetail();
-                	accountReversionDetail.setUniversityFiscalYear(2013);
-                	// TODO
-                	//accountReversionDetail.setUniversityFiscalYear(fiscalYear);
+                	accountReversionDetail.setUniversityFiscalYear(fiscalYear);
                 	accountReversionDetail.setChartOfAccountsCode(fromChart);
                 	accountReversionDetail.setAccountNumber(fromAcct);
                 	accountReversionDetail.setAccountReversionCategoryCode("A1");
