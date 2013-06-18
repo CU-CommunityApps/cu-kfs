@@ -39,12 +39,17 @@ import org.kuali.kfs.pdp.service.PendingTransactionService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
+import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.AccountingDocumentBase;
 import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.FlexibleOffsetAccountService;
+import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
+import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
+import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.util.KualiInteger;
 import org.springframework.transaction.annotation.Transactional;
@@ -117,11 +122,43 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
      */
     protected void populatePaymentGeneralLedgerPendingEntry(PaymentGroup paymentGroup, String achFdocTypeCode, String checkFdocTypeCod, boolean reversal) {
         List<PaymentAccountDetail> accountListings = new ArrayList<PaymentAccountDetail>();
+        GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
+        
         for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
             accountListings.addAll(paymentDetail.getAccountDetail());
+            
+            // Need to reverse the payment document's GL entries if the check is stopped
+                        if(StringUtils.equals(FDOC_TYP_CD_STOP_CHECK, checkFdocTypeCod)) {
+                            try {
+                               AccountingDocumentBase doc = (AccountingDocumentBase)SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(paymentDetail.getCustPaymentDocNbr());
+                               // generate all the pending entries for the document
+                               SpringContext.getBean(GeneralLedgerPendingEntryService.class).generateGeneralLedgerPendingEntries(doc);
+                               // for each pending entry, opposite-ify it and reattach it to the document
+                               BusinessObjectService boService = SpringContext.getBean(BusinessObjectService.class);
+                               
+                               for (GeneralLedgerPendingEntry glpe : doc.getGeneralLedgerPendingEntries()) {
+                                  
+                                       if (glpe.getTransactionDebitCreditCode().equals(KFSConstants.GL_CREDIT_CODE)) {
+                                           glpe.setTransactionDebitCreditCode(KFSConstants.GL_DEBIT_CODE);
+                                       }
+                                       else if (glpe.getTransactionDebitCreditCode().equals(KFSConstants.GL_DEBIT_CODE)) {
+                                           glpe.setTransactionDebitCreditCode(KFSConstants.GL_CREDIT_CODE);
+                                       }
+                                       glpe.setTransactionLedgerEntrySequenceNumber(sequenceHelper.getSequenceCounter());
+                                       sequenceHelper.increment();
+                                       glpe.setFinancialDocumentApprovedCode(KFSConstants.PENDING_ENTRY_APPROVED_STATUS_CODE.APPROVED);
+                                       boService.save(glpe);
+                                   
+                               }
+                               
+                            } catch(WorkflowException we) {
+                               we.printStackTrace();
+                            }
+                        }
+
         }
 
-        GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
+        //GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
         for (PaymentAccountDetail paymentAccountDetail : accountListings) {
             GlPendingTransaction glPendingTransaction = new GlPendingTransaction();
             glPendingTransaction.setSequenceNbr(new KualiInteger(sequenceHelper.getSequenceCounter()));
