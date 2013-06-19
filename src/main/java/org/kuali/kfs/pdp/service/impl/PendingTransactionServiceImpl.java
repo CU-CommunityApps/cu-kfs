@@ -52,6 +52,7 @@ import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.util.KualiInteger;
+import org.kuali.rice.kns.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.pdp.service.PdpUtilService;
@@ -128,33 +129,50 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
             accountListings.addAll(paymentDetail.getAccountDetail());
             
             // Need to reverse the payment document's GL entries if the check is stopped
-                        if(StringUtils.equals(FDOC_TYP_CD_STOP_CHECK, checkFdocTypeCod)) {
-                            try {
-                               AccountingDocumentBase doc = (AccountingDocumentBase)SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(paymentDetail.getCustPaymentDocNbr());
-                               // generate all the pending entries for the document
-                               SpringContext.getBean(GeneralLedgerPendingEntryService.class).generateGeneralLedgerPendingEntries(doc);
-                               // for each pending entry, opposite-ify it and reattach it to the document
-                               BusinessObjectService boService = SpringContext.getBean(BusinessObjectService.class);
-                               
-                               for (GeneralLedgerPendingEntry glpe : doc.getGeneralLedgerPendingEntries()) {
-                                  
-                                       if (glpe.getTransactionDebitCreditCode().equals(KFSConstants.GL_CREDIT_CODE)) {
-                                           glpe.setTransactionDebitCreditCode(KFSConstants.GL_DEBIT_CODE);
-                                       }
-                                       else if (glpe.getTransactionDebitCreditCode().equals(KFSConstants.GL_DEBIT_CODE)) {
-                                           glpe.setTransactionDebitCreditCode(KFSConstants.GL_CREDIT_CODE);
-                                       }
-                                       glpe.setTransactionLedgerEntrySequenceNumber(sequenceHelper.getSequenceCounter());
-                                       sequenceHelper.increment();
-                                       glpe.setFinancialDocumentApprovedCode(KFSConstants.PENDING_ENTRY_APPROVED_STATUS_CODE.APPROVED);
-                                       boService.save(glpe);
-                                   
-                               }
-                               
-                            } catch(WorkflowException we) {
-                               we.printStackTrace();
+            if (StringUtils.equals(FDOC_TYP_CD_STOP_CHECK, checkFdocTypeCod)) {
+                try {
+                    String sourceDocumentNumber = paymentDetail.getCustPaymentDocNbr();
+                    try {
+                        Long.valueOf(sourceDocumentNumber);
+                    } catch (NumberFormatException nfe) {
+                        sourceDocumentNumber = null;
+                    }
+
+                    if (sourceDocumentNumber != null && StringUtils.isNotBlank(sourceDocumentNumber)) {
+                        AccountingDocumentBase doc = (AccountingDocumentBase) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(paymentDetail.getCustPaymentDocNbr());
+
+                        if (ObjectUtils.isNotNull(doc)) {
+                            // generate all the pending entries for the document
+                            SpringContext.getBean(GeneralLedgerPendingEntryService.class).generateGeneralLedgerPendingEntries(doc);
+                            // for each pending entry, opposite-ify it and reattach it to the document
+                            BusinessObjectService boService = SpringContext.getBean(BusinessObjectService.class);
+
+                            for (GeneralLedgerPendingEntry glpe : doc.getGeneralLedgerPendingEntries()) {
+
+                                if (glpe.getTransactionDebitCreditCode().equals(KFSConstants.GL_CREDIT_CODE)) {
+                                    glpe.setTransactionDebitCreditCode(KFSConstants.GL_DEBIT_CODE);
+                                } else if (glpe.getTransactionDebitCreditCode().equals(KFSConstants.GL_DEBIT_CODE)) {
+                                    glpe.setTransactionDebitCreditCode(KFSConstants.GL_CREDIT_CODE);
+                                }
+                                glpe.setTransactionLedgerEntrySequenceNumber(sequenceHelper.getSequenceCounter());
+                                sequenceHelper.increment();
+                                Date transactionTimestamp = new Date(dateTimeService.getCurrentDate().getTime());
+                                
+                                AccountingPeriod fiscalPeriod = accountingPeriodService.getByDate(new java.sql.Date(transactionTimestamp.getTime()));
+                                glpe.setFinancialDocumentApprovedCode(KFSConstants.PENDING_ENTRY_APPROVED_STATUS_CODE.APPROVED);
+                                glpe.setUniversityFiscalYear(fiscalPeriod.getUniversityFiscalYear());
+                                glpe.setUniversityFiscalPeriodCode(fiscalPeriod.getUniversityFiscalPeriodCode());
+                                boService.save(glpe);
+
                             }
                         }
+                    }
+
+                } catch (WorkflowException we) {
+                    System.out.println("Exception retrieving document " + paymentDetail.getCustPaymentDocNbr());
+
+                }
+            }
 
         }
 
