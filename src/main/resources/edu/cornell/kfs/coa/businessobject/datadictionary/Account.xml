@@ -105,6 +105,7 @@
       	<ref bean="Account-extension-invoiceTypeCode"/>
       	<ref bean="Account-extension-everify"/>
       	<ref bean="Account-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode"/>
+      	<ref bean="Account-extension-costShareForProjectNumber"/>
 
       	
       </list>
@@ -857,6 +858,22 @@
   <bean id="Account-extension-LaborBenefitRateCategory-laborBenefitRateCategoryCode-parentBean" abstract="true" parent="AccountExtendedAttribute-laborBenefitRateCategoryCode" >
   	<property name="name" value="extension.laborBenefitRateCategoryCode"/>
   </bean>
+  
+  <bean id="Account-extension-costShareForProjectNumber" parent="Account-extension-costShareForProjectNumber-parentBean"/>
+  <bean id="Account-extension-costShareForProjectNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="extension.costShareForProjectNumber"/>
+    <property name="forceUppercase" value="true"/>
+    <property name="label" value="Cost Share for Proposal Number"/>
+    <property name="shortLabel" value="Cost Share"/>
+    <property name="maxLength" value="12"/>
+    <property name="validationPattern">
+      <ref bean="NumericValidation" />
+    </property>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="14"/>
+    </property>
+  </bean>
+  <bean id="Award-awardAccounts.account.accountNumber" parent="Award-awardAccounts.account.accountNumber-parentBean"/>
 
 <!-- Business Object Inquiry Definition -->
 
@@ -935,6 +952,7 @@
               <dd:field attributeName="extension.invoiceFrequencyCode"/>
         	  <dd:field attributeName="extension.invoiceTypeCode"/>
         	  <dd:field attributeName="extension.everify"/>
+        	  <dd:field attributeName="extension.costShareForProjectNumber"/>
             </list>
           </property>
         </bean>

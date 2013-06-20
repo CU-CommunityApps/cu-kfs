@@ -42,9 +42,9 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
     private boolean everify;
     private String laborBenefitRateCategoryCode;
     private String majorReportingCategoryCode;
+    private Long costShareForProjectNumber;
 
-    
-	private SubFundProgram subFundProgram;
+    private SubFundProgram subFundProgram;
     private AppropriationAccount appropriationAccount;
     private InvoiceFrequency invoiceFrequency;
     private InvoiceType invoiceType;
@@ -309,6 +309,23 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
 		return majorReportingCategoryCode;
 	}
 
+    /**
+     * Gets the costShareForProjectNumber.
+     * 
+     * @return costShareForProjectNumber
+     */
+    public Long getCostShareForProjectNumber() {
+        return costShareForProjectNumber;
+    }
+
+    /**
+     * Sets the costShareForProjectNumber.
+     * 
+     * @param costShareForProjectNumber
+     */
+    public void setCostShareForProjectNumber(Long costShareForProjectNumber) {
+        this.costShareForProjectNumber = costShareForProjectNumber;
+    }
 
 	/**
 	 * @param majorReportingCategoryCode the majorReportingCategoryCode to set

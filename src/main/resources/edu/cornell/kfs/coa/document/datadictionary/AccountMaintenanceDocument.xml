@@ -157,6 +157,7 @@
         <dd:maintField attributeName="extension.invoiceFrequencyCode"/>
         <dd:maintField attributeName="extension.invoiceTypeCode"/>
         <dd:maintField attributeName="extension.everify"/>
+        <dd:maintField attributeName="extension.costShareForProjectNumber"/>
         
       </list>
     </property>
