@@ -52,6 +52,7 @@ public class KFSKeyConstants {
     public static final String ERROR_DOCUMENT_BA_RESTRICTION_LEVELS = "error.document.ba.restrictionLevelS";
     public static final String ERROR_DOCUMENT_BA_BASE_AMOUNTS_BALANCED = "error.document.ba.baseAmountsNotBalanced";
     public static final String ERROR_DOCUMENT_BA_CURRENT_AMOUNTS_BALANCED = "error.document.ba.currentAmountsNotBalanced";
+    public static final String ERROR_DOCUMENT_BA_ACCOUNT_AMOUNTS_BALANCED = "error.document.ba.accountAmountsNotBalanced";
     public static final String ERROR_DOCUMENT_BA_NO_INCOME_STREAM_ACCOUNT = "error.document.ba.noIncomeAccount";
     public static final String WARNING_DOCUMENT_BA_COPY_LABOR_BENEFITS = "warning.document.ba.copyLaborBenefits";
     public static final String ERROR_DOCUMENT_BALANCE = "error.document.balance";
