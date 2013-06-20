@@ -130,6 +130,7 @@
   	<property name="elementName" value="lineDescription" />
 	<property name="fields">
 		<list>
+		    <bean parent="AccountingLineView-field" p:name="encumbranceUpdateCode" />
 			<bean parent="AccountingLineView-field"	p:name="referenceOriginCode" />
 			<bean parent="AccountingLineView-field"	p:name="referenceTypeCode" />
 			<bean parent="AccountingLineView-field"	p:name="referenceNumber" />
