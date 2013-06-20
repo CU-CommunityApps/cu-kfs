@@ -55,6 +55,7 @@ public class JournalVoucherAccountingLineAmountValidation extends GenericValidat
     private AccountingLine accountingLineForValidation;
 
     /**
+     * 
      * Accounting lines for Journal Vouchers can be positive or negative, just not "$0.00".  
      * 
      * Additionally, accounting lines cannot have negative dollar amounts if the balance type of the 
