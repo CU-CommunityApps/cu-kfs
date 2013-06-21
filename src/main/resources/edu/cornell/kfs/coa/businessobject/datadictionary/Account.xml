@@ -863,7 +863,7 @@
   <bean id="Account-extension-costShareForProjectNumber-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="extension.costShareForProjectNumber"/>
     <property name="forceUppercase" value="true"/>
-    <property name="label" value="Cost Share for Proposal Number"/>
+    <property name="label" value="Cost Share for Project Number"/>
     <property name="shortLabel" value="Cost Share"/>
     <property name="maxLength" value="12"/>
     <property name="validationPattern">
