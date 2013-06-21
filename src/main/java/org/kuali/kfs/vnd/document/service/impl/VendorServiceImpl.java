@@ -286,7 +286,8 @@ public class VendorServiceImpl implements VendorService {
         		&& (equalMemberLists(oldVDtl.getVendorContacts(), newVDtl.getVendorContacts()))
 		        && (equalMemberLists(oldVDtl.getVendorAliases(), newVDtl.getVendorAliases()))
 		        && (equalMemberLists(oldVDtl.getVendorCustomerNumbers(), newVDtl.getVendorCustomerNumbers()))
-		        && (equalMemberLists(oldVDtl.getVendorPhoneNumbers(), newVDtl.getVendorPhoneNumbers())));
+		        && (equalMemberLists(oldVDtl.getVendorPhoneNumbers(), newVDtl.getVendorPhoneNumbers()))
+                && (equalMemberLists(oldVDtl.getVendorCreditCardMerchants(), newVDtl.getVendorCreditCardMerchants())));
 
         LOG.debug("Exiting noRouteSignificantChangeOccurred.");
         return unchanged;

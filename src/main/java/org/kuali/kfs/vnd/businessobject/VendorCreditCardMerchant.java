@@ -2,10 +2,12 @@ package org.kuali.kfs.vnd.businessobject;
 
 import java.util.LinkedHashMap;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.kuali.rice.kns.bo.Inactivateable;
 import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.kns.util.ObjectUtils;
 
-public class VendorCreditCardMerchant extends PersistableBusinessObjectBase implements Inactivateable {
+public class VendorCreditCardMerchant extends PersistableBusinessObjectBase implements VendorRoutingComparable, Inactivateable {
 	
 	private Integer vendorHeaderGeneratedIdentifier;
 	private Integer vendorDetailAssignedIdentifier;
@@ -93,5 +95,24 @@ public class VendorCreditCardMerchant extends PersistableBusinessObjectBase impl
         }
         return m;
 	}
-	
+
+	public boolean isEqualForRouting(Object toCompare) {
+		// KFSPTS-2055
+        if ((ObjectUtils.isNull(toCompare)) || !(toCompare instanceof VendorCreditCardMerchant)) {
+
+            return false;
+        }
+        else {
+        	VendorCreditCardMerchant vndCardMerchant = (VendorCreditCardMerchant) toCompare;
+
+            return new EqualsBuilder().append(
+            		this.getCreditMerchantName(), vndCardMerchant.getCreditMerchantName()).append(
+                    this.getMerchantCategoryCodeOne(), vndCardMerchant.getMerchantCategoryCodeOne()).append(
+                    this.getMerchantCategoryCodeTwo(), vndCardMerchant.getMerchantCategoryCodeOne()).append(
+                    this.getMerchantCategoryCodeThree(), vndCardMerchant.getMerchantCategoryCodeThree()).append(
+                    this.getMerchantCategoryCodeFour(), vndCardMerchant.getMerchantCategoryCodeFour()).append(
+            		this.isActive(), vndCardMerchant.isActive()).isEquals();
+        }
+	}
+
 }

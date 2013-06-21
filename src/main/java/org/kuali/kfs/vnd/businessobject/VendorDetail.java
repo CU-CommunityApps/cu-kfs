@@ -717,6 +717,22 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
                     this.getVendorSoldToAssignedIdentifier(), detail.getVendorSoldToAssignedIdentifier()).append(
                     this.getVendorSoldToName(), detail.getVendorSoldToName()).append(
                     this.isTaxableIndicator(), detail.isTaxableIndicator()).append( // KFSPTS-2055
+                            // KFSPTS-2055 also include CU insurance enhancement
+                    this.isInsuranceRequiredIndicator(),detail.isInsuranceRequiredIndicator()).append(
+                    this.getInsuranceRequirementsCompleteIndicator(),detail.getInsuranceRequirementsCompleteIndicator()).append(
+                    this.getCornellAdditionalInsuredIndicator(),detail.getCornellAdditionalInsuredIndicator()).append(
+                    this.getGeneralLiabilityCoverageAmount(),detail.getGeneralLiabilityCoverageAmount()).append(
+                    this.getGeneralLiabilityExpiration(),detail.getGeneralLiabilityExpiration()).append(
+                    this.getAutomobileLiabilityCoverageAmount(),detail.getAutomobileLiabilityCoverageAmount()).append(
+                    this.getAutomobileLiabilityExpiration(),detail.getAutomobileLiabilityExpiration()).append(
+                    this.getWorkmansCompCoverageAmount(),detail.getWorkmansCompCoverageAmount()).append(
+                    this.getWorkmansCompExpiration(),detail.getWorkmansCompExpiration()).append(
+                    this.getExcessLiabilityUmbExpiration(),detail.getExcessLiabilityUmbExpiration()).append(
+                    this.getExcessLiabilityUmbrellaAmount(),detail.getExcessLiabilityUmbrellaAmount()).append(
+                    this.getHealthOffSiteCateringLicenseReq(),detail.getHealthOffSiteCateringLicenseReq()).append(
+                    this.getHealthOffSiteLicenseExpirationDate(),detail.getHealthOffSiteLicenseExpirationDate()).append(
+                    this.getInsuranceNotes(),detail.getInsuranceNotes()).append(
+                    this.getMerchantNotes(),detail.getMerchantNotes()).append( // end CU insurance fields
                     this.isVendorFirstLastNameIndicator(), detail.isVendorFirstLastNameIndicator()).isEquals();
         }
     }
