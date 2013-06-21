@@ -1286,6 +1286,8 @@ public class PurapServiceImpl implements PurapService {
                 distributedAccounts = purapAccountingService.generateAccountDistributionForProration(summaryAccounts, totalAmount.add(totalTaxAmount), 2, fullOrderDiscount.getAccountingLineClass());
                 
                 for (PurApAccountingLine distributedAccount : distributedAccounts) {
+                	// KFSPTS-2200 : set item, so it can be verified as discount when validating
+                	distributedAccount.setPurapItem(fullOrderDiscount);
                     BigDecimal percent = distributedAccount.getAccountLinePercent();
                     BigDecimal roundedPercent = new BigDecimal(Math.round(percent.doubleValue()));
                     distributedAccount.setAccountLinePercent(roundedPercent);
@@ -1339,14 +1341,26 @@ public class PurapServiceImpl implements PurapService {
             else {
                 distributedAccounts = purapAccountingService.generateAccountDistributionForProration(summaryAccounts, totalAmount, 2, tradeIn.getAccountingLineClass());
                 for (PurApAccountingLine distributedAccount : distributedAccounts) {
+                	// KFSPTS-2200 : set item, so it can be verified as discount when validating
+                	distributedAccount.setPurapItem(tradeIn);
                     BigDecimal percent = distributedAccount.getAccountLinePercent();
                     BigDecimal roundedPercent = new BigDecimal(Math.round(percent.doubleValue()));
                     distributedAccount.setAccountLinePercent(roundedPercent);
+                    // set the accountAmount same as tradeIn amount not line item's amount
+                    resetAccountAmount(distributedAccount, tradeIn.getTotalAmount());
                 }
                 tradeIn.setSourceAccountingLines(distributedAccounts);
             }
         }
     }
+
+    // KFSPTS-2200 : upgrade from 5.0.x
+    private void resetAccountAmount(PurApAccountingLine distributedAccount, KualiDecimal tradeInTotalAmount) {
+        BigDecimal pct = distributedAccount.getAccountLinePercent();
+        BigDecimal amount = tradeInTotalAmount.bigDecimalValue().multiply(pct).divide(new BigDecimal(100));
+        distributedAccount.setAmount(new KualiDecimal(amount));
+    }
+
 
     public void clearAllTaxes(PurchasingAccountsPayableDocument purapDoc){
         if (!purapDoc.isUseTaxIndicator() && purapDoc.getItems() != null){

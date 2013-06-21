@@ -23,9 +23,10 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
-import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
-import org.kuali.kfs.module.purap.document.RequisitionDocument;
+import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
+import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -89,6 +90,16 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
                 return true;
         }
         
+        // KFSPTS-2200
+        PurApItem acctItem = null;
+        if (event instanceof AddAccountingLineEvent && accountingLineForValidation instanceof PurApAccountingLineBase) {
+        	// reset this puritem for trdi & disc to make sure the lineaccessible and isaccessible is processed properly
+            	acctItem =((PurApAccountingLineBase)accountingLineForValidation).getPurapItem();
+            	if (acctItem != null && (PurapConstants.ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE.equals(acctItem.getItemTypeCode()) || PurapConstants.ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE.equals(acctItem.getItemTypeCode()))) {
+            	((PurApAccountingLineBase)accountingLineForValidation).setPurapItem(null);
+            	}
+            	
+        }
         final AccountingLineAuthorizer accountingLineAuthorizer = lookupAccountingLineAuthorizer();
         final boolean lineIsAccessible = accountingLineAuthorizer.hasEditPermissionOnAccountingLine(accountingDocumentForValidation, accountingLineForValidation, getAccountingLineCollectionProperty(), currentUser, true);
         final boolean isAccessible = accountingLineAuthorizer.hasEditPermissionOnField(accountingDocumentForValidation, accountingLineForValidation, getAccountingLineCollectionProperty(), KFSPropertyConstants.ACCOUNT_NUMBER, lineIsAccessible, true, currentUser);
@@ -115,7 +126,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
 
            
         } else 
-        if (event instanceof AddAccountingLineEvent && isAccountNode(event.getDocument()) && !isAccountingLineFo(event.getDocument())) {
+        if (event instanceof AddAccountingLineEvent && isAccountNode(event.getDocument()) && !isAccountingLineFo(event.getDocument()) && !isDiscountTradeInAccount(acctItem)) {
             final String principalName = currentUser.getPrincipalName();
             final String[] chartErrorParams = new String[] { getDataDictionaryService().getAttributeLabel(accountingLineForValidation.getClass(), KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE), accountingLineForValidation.getChartOfAccountsCode(),  principalName};
             GlobalVariables.getMessageMap().putError(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, convertEventToMessage(event), chartErrorParams);
@@ -269,5 +280,25 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
 		}
 	    return workflowDocument != null && workflowDocument.getRouteHeader() != null && StringUtils.equals(RequisitionStatuses.NODE_ACCOUNT, workflowDocument.getRouteHeader().getCurrentRouteNodeNames());
     }
+    
+    // KFSPTS-2200 
+    /*
+     * Discount is prorated and account is recreated when saving or approving document.  This caused problem for FO to approve account that does not belong to him/her.
+     * The validation will treat it as new account added by fo, and cause error.  This is to ignore these system created account
+     */
+    private boolean isDiscountTradeInAccount(PurApItem acctItem) {
+    	boolean valid = false;
+    	if (accountingLineForValidation instanceof PurApAccountingLineBase) {
+    		valid = acctItem != null && 
+    				(PurapConstants.ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE.equals(acctItem.getItemTypeCode()) || PurapConstants.ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE.equals(acctItem.getItemTypeCode()));
+    		if (valid) {
+    			// restore it for another rule check.
+    			((PurApAccountingLineBase)accountingLineForValidation).setPurapItem(acctItem);
+    		}
+    	}
+    	return valid;
+    }
+    
+
 }
 
