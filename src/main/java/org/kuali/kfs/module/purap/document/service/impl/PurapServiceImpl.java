@@ -46,6 +46,7 @@ import org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestView;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
+import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurApItemUseTax;
 import org.kuali.kfs.module.purap.businessobject.PurapEnterableItem;
@@ -1287,7 +1288,9 @@ public class PurapServiceImpl implements PurapService {
                 
                 for (PurApAccountingLine distributedAccount : distributedAccounts) {
                 	// KFSPTS-2200 : set item, so it can be verified as discount when validating
-                	distributedAccount.setPurapItem(fullOrderDiscount);
+                	if (distributedAccount instanceof PurApAccountingLineBase) {
+                	    ((PurApAccountingLineBase)distributedAccount).setDiscountTradeIn(true);
+                	}
                     BigDecimal percent = distributedAccount.getAccountLinePercent();
                     BigDecimal roundedPercent = new BigDecimal(Math.round(percent.doubleValue()));
                     distributedAccount.setAccountLinePercent(roundedPercent);
@@ -1342,7 +1345,9 @@ public class PurapServiceImpl implements PurapService {
                 distributedAccounts = purapAccountingService.generateAccountDistributionForProration(summaryAccounts, totalAmount, 2, tradeIn.getAccountingLineClass());
                 for (PurApAccountingLine distributedAccount : distributedAccounts) {
                 	// KFSPTS-2200 : set item, so it can be verified as discount when validating
-                	distributedAccount.setPurapItem(tradeIn);
+                	if (distributedAccount instanceof PurApAccountingLineBase) {
+                	    ((PurApAccountingLineBase)distributedAccount).setDiscountTradeIn(true);
+                	}
                     BigDecimal percent = distributedAccount.getAccountLinePercent();
                     BigDecimal roundedPercent = new BigDecimal(Math.round(percent.doubleValue()));
                     distributedAccount.setAccountLinePercent(roundedPercent);
