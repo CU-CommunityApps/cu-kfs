@@ -30,7 +30,9 @@ import org.kuali.rice.kns.dao.impl.PlatformAwareDaoBaseOjb;
 import org.kuali.rice.kns.document.Document;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DocumentService;
+import org.kuali.rice.kns.service.KNSServiceLocator;
 import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.util.OjbCollectionAware;
 
@@ -99,7 +101,10 @@ public class AutoCancelBatchDaoOjb extends PlatformAwareDaoBaseOjb implements Oj
                 	try {
             			if (!ObjectUtils.isNull(document)) {
             				i++;
-                			documentService.superUserCancelDocument(document, "AutoCancelBatchStep: Older Than "+stringDays+" Days");
+            				 documentService.prepareWorkflowDocument(document);
+            			     KNSServiceLocator.getWorkflowDocumentService().superUserCancel(document.getDocumentHeader().getWorkflowDocument(), "AutoCancelBatchStep: Older Than "+stringDays+" Days");
+            			     GlobalVariables.getUserSession().setWorkflowDocument(document.getDocumentHeader().getWorkflowDocument());
+
             			}
                 	} catch (WorkflowException e) {
                 		LOG.error("AutoCancelBatchStep Encountered WorkflowException " + document.getDocumentNumber(),e);
