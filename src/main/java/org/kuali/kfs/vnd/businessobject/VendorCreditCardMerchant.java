@@ -108,7 +108,7 @@ public class VendorCreditCardMerchant extends PersistableBusinessObjectBase impl
             return new EqualsBuilder().append(
             		this.getCreditMerchantName(), vndCardMerchant.getCreditMerchantName()).append(
                     this.getMerchantCategoryCodeOne(), vndCardMerchant.getMerchantCategoryCodeOne()).append(
-                    this.getMerchantCategoryCodeTwo(), vndCardMerchant.getMerchantCategoryCodeOne()).append(
+                    this.getMerchantCategoryCodeTwo(), vndCardMerchant.getMerchantCategoryCodeTwo()).append(
                     this.getMerchantCategoryCodeThree(), vndCardMerchant.getMerchantCategoryCodeThree()).append(
                     this.getMerchantCategoryCodeFour(), vndCardMerchant.getMerchantCategoryCodeFour()).append(
             		this.isActive(), vndCardMerchant.isActive()).isEquals();
