@@ -101,7 +101,6 @@ public class AutoCancelBatchDaoOjb extends PlatformAwareDaoBaseOjb implements Oj
                 	try {
             			if (!ObjectUtils.isNull(document)) {
             				i++;
-            				 LOG.info("DEBUG Document ID: " + docTypeId + "Doc Number to cancel : " + docId);
             				 documentService.prepareWorkflowDocument(document);		 
             			     KNSServiceLocator.getWorkflowDocumentService().superUserCancel(document.getDocumentHeader().getWorkflowDocument(), "AutoCancelBatchStep: Older Than "+stringDays+" Days");
             			     GlobalVariables.getUserSession().setWorkflowDocument(document.getDocumentHeader().getWorkflowDocument());
