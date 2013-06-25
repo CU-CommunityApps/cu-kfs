@@ -1184,13 +1184,13 @@ public class SipDistributionServiceImpl implements SipDistributionService {
 
             KualiInteger newPlugEntryAmount = revenuesTotal.subtract((expenditureTotal.add(changeAmount)
                     .subtract(totalAmountToSubtract)));
-
-            // create the new plug entry
-            PendingBudgetConstructionGeneralLedger newPlugEntry = new PendingBudgetConstructionGeneralLedger();
-
+            
+            // create or update plug entry
             String objectCode = CUBCConstants.SIP_PLUG_OBJECT_CODE;
             String subObjectCode = KFSConstants.getDashFinancialSubObjectCode();
             String objectTypeCode = optionsService.getOptions(fiscalYear + 1).getFinObjTypeExpenditureexpCd();
+
+            PendingBudgetConstructionGeneralLedger newPlugEntry = new PendingBudgetConstructionGeneralLedger();
 
             newPlugEntry.setDocumentNumber(docNumber);
             newPlugEntry.setUniversityFiscalYear(fiscalYear + 1);
@@ -1203,11 +1203,25 @@ public class SipDistributionServiceImpl implements SipDistributionService {
             newPlugEntry.setFinancialObjectTypeCode(objectTypeCode);
             newPlugEntry.setFinancialSubObjectCode(subObjectCode);
 
-            newPlugEntry.setFinancialBeginningBalanceLineAmount(KualiInteger.ZERO);
-            newPlugEntry.setAccountLineAnnualBalanceAmount(newPlugEntryAmount);
-            newPlugEntry.setPersistedAccountLineAnnualBalanceAmount(newPlugEntry.getAccountLineAnnualBalanceAmount());
+            // check if plug entry exists and if it does only update that
 
-            newPlugEntry.setVersionNumber(new Long(1));
+            PendingBudgetConstructionGeneralLedger retrievedEntry = (PendingBudgetConstructionGeneralLedger) businessObjectService.retrieve(newPlugEntry);
+
+            if (ObjectUtils.isNotNull(retrievedEntry)) {
+                newPlugEntry.setFinancialBeginningBalanceLineAmount(retrievedEntry.getFinancialBeginningBalanceLineAmount());
+                newPlugEntry.setAccountLineAnnualBalanceAmount(newPlugEntryAmount);
+                newPlugEntry.setPersistedAccountLineAnnualBalanceAmount(newPlugEntry.getAccountLineAnnualBalanceAmount());
+
+                newPlugEntry.setVersionNumber(retrievedEntry.getVersionNumber());
+            } else {
+                // otherwise create the new plug entry
+
+                newPlugEntry.setFinancialBeginningBalanceLineAmount(KualiInteger.ZERO);
+                newPlugEntry.setAccountLineAnnualBalanceAmount(newPlugEntryAmount);
+                newPlugEntry.setPersistedAccountLineAnnualBalanceAmount(newPlugEntry.getAccountLineAnnualBalanceAmount());
+
+                newPlugEntry.setVersionNumber(new Long(1));
+            }
 
             newPlugEntries.add(newPlugEntry);
         }
