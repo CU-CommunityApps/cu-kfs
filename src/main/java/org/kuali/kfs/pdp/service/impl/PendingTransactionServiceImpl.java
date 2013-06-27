@@ -146,24 +146,27 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
                             SpringContext.getBean(GeneralLedgerPendingEntryService.class).generateGeneralLedgerPendingEntries(doc);
                             // for each pending entry, opposite-ify it and reattach it to the document
                             BusinessObjectService boService = SpringContext.getBean(BusinessObjectService.class);
+                            List<GeneralLedgerPendingEntry> glpes = doc.getGeneralLedgerPendingEntries();
 
-                            for (GeneralLedgerPendingEntry glpe : doc.getGeneralLedgerPendingEntries()) {
+                            if (glpes != null && glpes.size() > 0) {
+                                for (GeneralLedgerPendingEntry glpe : glpes) {
 
-                                if (glpe.getTransactionDebitCreditCode().equals(KFSConstants.GL_CREDIT_CODE)) {
-                                    glpe.setTransactionDebitCreditCode(KFSConstants.GL_DEBIT_CODE);
-                                } else if (glpe.getTransactionDebitCreditCode().equals(KFSConstants.GL_DEBIT_CODE)) {
-                                    glpe.setTransactionDebitCreditCode(KFSConstants.GL_CREDIT_CODE);
+                                    if (KFSConstants.GL_CREDIT_CODE.equalsIgnoreCase(glpe.getTransactionDebitCreditCode())) {
+                                        glpe.setTransactionDebitCreditCode(KFSConstants.GL_DEBIT_CODE);
+                                    } else if (KFSConstants.GL_DEBIT_CODE.equalsIgnoreCase(glpe.getTransactionDebitCreditCode())) {
+                                        glpe.setTransactionDebitCreditCode(KFSConstants.GL_CREDIT_CODE);
+                                    }
+                                    glpe.setTransactionLedgerEntrySequenceNumber(sequenceHelper.getSequenceCounter());
+                                    sequenceHelper.increment();
+                                    Date transactionTimestamp = new Date(dateTimeService.getCurrentDate().getTime());
+
+                                    AccountingPeriod fiscalPeriod = accountingPeriodService.getByDate(new java.sql.Date(transactionTimestamp.getTime()));
+                                    glpe.setFinancialDocumentApprovedCode(KFSConstants.PENDING_ENTRY_APPROVED_STATUS_CODE.APPROVED);
+                                    glpe.setUniversityFiscalYear(fiscalPeriod.getUniversityFiscalYear());
+                                    glpe.setUniversityFiscalPeriodCode(fiscalPeriod.getUniversityFiscalPeriodCode());
+                                    boService.save(glpe);
+
                                 }
-                                glpe.setTransactionLedgerEntrySequenceNumber(sequenceHelper.getSequenceCounter());
-                                sequenceHelper.increment();
-                                Date transactionTimestamp = new Date(dateTimeService.getCurrentDate().getTime());
-                                
-                                AccountingPeriod fiscalPeriod = accountingPeriodService.getByDate(new java.sql.Date(transactionTimestamp.getTime()));
-                                glpe.setFinancialDocumentApprovedCode(KFSConstants.PENDING_ENTRY_APPROVED_STATUS_CODE.APPROVED);
-                                glpe.setUniversityFiscalYear(fiscalPeriod.getUniversityFiscalYear());
-                                glpe.setUniversityFiscalPeriodCode(fiscalPeriod.getUniversityFiscalPeriodCode());
-                                boService.save(glpe);
-
                             }
                         }
                     }
