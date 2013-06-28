@@ -29,6 +29,10 @@ import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.coa.service.OffsetDefinitionService;
+import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
+import org.kuali.kfs.module.purap.document.AccountsPayableDocument;
+import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
+import org.kuali.kfs.module.purap.service.PurapGeneralLedgerService;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.businessobject.GlPendingTransaction;
 import org.kuali.kfs.pdp.businessobject.PaymentAccountDetail;
@@ -142,6 +146,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
                         AccountingDocumentBase doc = (AccountingDocumentBase) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(paymentDetail.getCustPaymentDocNbr());
 
                         if (ObjectUtils.isNotNull(doc)) {
+                            if(doc instanceof DisbursementVoucherDocument){
                             // generate all the pending entries for the document
                             SpringContext.getBean(GeneralLedgerPendingEntryService.class).generateGeneralLedgerPendingEntries(doc);
                             // for each pending entry, opposite-ify it and reattach it to the document
@@ -168,6 +173,10 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
 
                                 }
                             }
+                        }
+                        }
+                        else if(doc instanceof PaymentRequestDocument){
+                            SpringContext.getBean(PurapGeneralLedgerService.class).generateEntriesCancelAccountsPayableDocument((AccountsPayableDocument)doc);
                         }
                     }
 
