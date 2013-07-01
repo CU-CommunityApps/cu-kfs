@@ -126,10 +126,7 @@ public class PreEncumbranceAutoDisEncumberValidation extends GenericValidation {
                 
         }
         if (ObjectUtils.isNotNull(sourceLine.getEndDate())) {
-                if (sourceLine.getEndDate().before(today)) {
-                        GlobalVariables.getMessageMap().putError(DOCUMENT_ERROR_PREFIX + "sourceAccountingLine[" + rowId + "].endDate", CUKFSKeyConstants.ERROR_DOCUMENT_PREENCUMBER_INVALID_END);
-                                success = false;
-                }
+                
                 
         }        
                 return success;
