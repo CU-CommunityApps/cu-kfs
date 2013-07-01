@@ -94,7 +94,9 @@ public class PreEncumbranceAction extends KualiAccountingDocumentActionBase {
 	        int index = 0;
 	        for (Iterator i = formLines.iterator(); i.hasNext(); index++) {
 	            AccountingLine formLine = (AccountingLine) i.next();
-                formLine.setReferenceNumber(transDoc.getDocumentNumber());
+	            if (formLine.isSourceAccountingLine()) {
+	            	formLine.setReferenceNumber(transDoc.getDocumentNumber());
+	            }
 	            // update sales tax required attribute for view
 	            // handleSalesTaxRequired(transDoc, formLine, source, false, index);
 	            checkSalesTax(transDoc, formLine, source, false, index);
