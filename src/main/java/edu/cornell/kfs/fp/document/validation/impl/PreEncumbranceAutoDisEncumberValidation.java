@@ -110,12 +110,7 @@ public class PreEncumbranceAutoDisEncumberValidation extends GenericValidation {
                 boolean success = true;
                 boolean isCGAccount = sourceLine.getAccount().getSubFundGroup().getFundGroupCode().equals("CG");
                 Integer rowId = sourceLine.getSequenceNumber() - 1;
-                if (ObjectUtils.isNotNull(sourceLine.getStartDate()) && ObjectUtils.isNotNull(sourceLine.getEndDate())) {
-                        if (sourceLine.getStartDate().after(sourceLine.getEndDate())) {
-                                GlobalVariables.getMessageMap().putError(DOCUMENT_ERROR_PREFIX + "sourceAccountingLine[" + rowId + "].startDate", CUKFSKeyConstants.ERROR_DOCUMENT_PREENCUMBER_CONFLICTING_START_END);
-                                success = false;
-                        }
-                }
+                
         java.sql.Date today = SpringContext.getBean(DateTimeService.class).getCurrentSqlDateMidnight();
         if (ObjectUtils.isNotNull(sourceLine.getStartDate())) {
                 if (sourceLine.getStartDate().before(today)) {
@@ -130,7 +125,13 @@ public class PreEncumbranceAutoDisEncumberValidation extends GenericValidation {
                 
                 
         }
+        if (ObjectUtils.isNotNull(sourceLine.getEndDate())) {
+                if (sourceLine.getEndDate().before(today)) {
+                        GlobalVariables.getMessageMap().putError(DOCUMENT_ERROR_PREFIX + "sourceAccountingLine[" + rowId + "].endDate", CUKFSKeyConstants.ERROR_DOCUMENT_PREENCUMBER_INVALID_END);
+                                success = false;
+                }
                 
+        }        
                 return success;
         }
         
