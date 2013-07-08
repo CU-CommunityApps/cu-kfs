@@ -7,7 +7,6 @@ import javax.jws.WebService;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
-import org.kuali.kfs.vnd.businessobject.VendorContact;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
@@ -44,7 +43,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
         MessageMap globalErrorMap = GlobalVariables.getMessageMap();
         
         // create and route doc as system user
-        GlobalVariables.setUserSession(new UserSession("kfs"));
+        GlobalVariables.setUserSession(new UserSession("kme44"));
         
         try {
         	DocumentService docService = SpringContext.getBean(DocumentService.class);
@@ -52,12 +51,6 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
             MaintenanceDocument vendorDoc = (MaintenanceDocument)docService.getNewDocument("PVEN");
             
             vendorDoc.getDocumentHeader().setDocumentDescription("New vendor from Procurement tool");
-            
-            if(vendorExists(taxNumber, taxNumberType)) {
-            	VendorDetail vendor = retrieveVendor(taxNumber, taxNumberType);
-            	VendorMaintainableImpl oldVendorImpl = (VendorMaintainableImpl)vendorDoc.getOldMaintainableObject();
-            	oldVendorImpl.setBusinessObject(vendor);
-            }
             
         	VendorMaintainableImpl vImpl = (VendorMaintainableImpl)vendorDoc.getNewMaintainableObject();
 
@@ -83,20 +76,11 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
         	
         	vDetail.setVendorAddresses(vAddrs);
 
-        	VendorContact vContact = new VendorContact();
-        	vContact.setVendorContactTypeCode("VF");
-        	
-        	ArrayList<VendorContact> vendorContacts = new ArrayList<VendorContact>();
-        	vendorContacts.add(vContact);
-        	
-        	vDetail.setVendorContacts(vendorContacts);
-
         	vDetail.setDefaultAddressLine1(vendorLine1Address);
         	vDetail.setDefaultAddressCity(vendorCityName);
         	vDetail.setDefaultAddressStateCode(vendorStateCode);
         	vDetail.setDefaultAddressPostalCode(vendorPostalCode);
         	vDetail.setDefaultAddressCountryCode(vendorCountryCode);
-
         	
         	VendorHeader vHeader = vDetail.getVendorHeader();
         	
@@ -120,6 +104,17 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	}
   
 	/**
+	 * 
+	 */
+	public boolean updateVendor(String vendorId, String vendorIdType) throws Exception {
+		VendorDetail vendor = retrieveVendor(vendorId, vendorIdType);
+		
+		
+		
+		return true;
+	}
+
+	/**
 	 * Return caret (^) delineated string of Vendor values
 	 */
 	public String retrieveKfsVendor(String vendorId, String vendorIdType) throws Exception {
@@ -128,18 +123,6 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 		return buildVendorString(vendor);
 	}
 
-	/**
-	 * 
-	 * @param vendorName
-	 * @param lastFour
-	 * @return
-	 * @throws Exception
-	 */
-	public String retrieveKfsVendorByNamePlusLastFour(String vendorName, String lastFour) throws Exception {
-		VendorDetail vendor = SpringContext.getBean(CUVendorService.class).getVendorByNamePlusLastFourOfTaxID(vendorName, lastFour);
-		return vendor.getVendorNumber();
-	}
-	
 	/**
 	 * 
 	 * @param vendorId
@@ -161,18 +144,20 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	 */
 	private VendorDetail retrieveVendor(String vendorId, String vendorIdType) throws Exception {
 		VendorDetail vendor = null;
-		CUVendorService vendorService = SpringContext.getBean(CUVendorService.class);
+		VendorService vendorService = SpringContext.getBean(VendorService.class);
 		if(StringUtils.equalsIgnoreCase(vendorIdType, "DUNS")) {
 			vendor = vendorService.getVendorByDunsNumber(vendorId);
 		} else if(StringUtils.equalsIgnoreCase(vendorIdType, "VENDORID")) {
 			vendor = vendorService.getByVendorNumber(vendorId);
 		} else if(StringUtils.equalsIgnoreCase(vendorIdType, "VENDORNAME")) {
-			vendor = vendorService.getVendorByVendorName(vendorId);
+			vendor = SpringContext.getBean(CUVendorService.class).getVendorByVendorName(vendorId);
+		} else if(StringUtils.equalsIgnoreCase(vendorIdType, "SSN")) {
+			// not implemented yet
+		} else if(StringUtils.equalsIgnoreCase(vendorIdType, "FEIN")) {
+			// not implemented yet
 		}
 		return vendor;
 	}
-
-	
 	
 	/**
 	 * 
@@ -188,9 +173,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 			
 			vendorValues.append(vendor.getVendorNumber()).append(CARET);
 			vendorValues.append(vendor.getVendorName()).append(CARET);
-			String taxID = vendor.getVendorHeader().getVendorTaxNumber();
-			String maskedTaxID = "*****"+taxID.substring(taxID.length()-4, taxID.length());
-			vendorValues.append(maskedTaxID).append(CARET);
+			vendorValues.append(vendor.getVendorHeader().getVendorTaxNumber()).append(CARET);
 			vendorValues.append(vendor.getVendorHeader().getVendorTaxTypeCode()).append(CARET);
 			vendorValues.append(vendor.getDefaultAddressLine1()).append(CARET);
 			vendorValues.append(vendor.getDefaultAddressLine2()).append(CARET);
@@ -203,5 +186,6 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 		}		
 		return vendorValues.toString();
 	}
+	
 	
 }
