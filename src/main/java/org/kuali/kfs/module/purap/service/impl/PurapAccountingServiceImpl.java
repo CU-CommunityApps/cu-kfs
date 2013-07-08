@@ -829,6 +829,8 @@ public class PurapAccountingServiceImpl implements PurapAccountingService {
                         String param1 = identifier + "." + accountIdentifier;
                         String param2 = calcAmount.bigDecimalValue().subtract(accountAmount.bigDecimalValue()).toString();
                         GlobalVariables.getMessageMap().putError(item.getItemIdentifierString(), PurapKeyConstants.ERROR_ITEM_ACCOUNTING_ROUNDING, param1, param2);
+                        // TODO : this is the debug info to check dev pdpextract issue.
+                        LOG.info("pdpextract issue " + pr.getDocumentNumber() + "~" + accountAmount+ "~" + accountIdentifier+ "~" + numOfAccounts+ "~" + tmpPercent+ "~" + calcAmountBd+ "~" + calcAmount);
                         account.setAmount(calcAmount);
                     }
 
