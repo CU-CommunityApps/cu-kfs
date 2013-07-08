@@ -18,6 +18,7 @@ package edu.cornell.kfs.fp.document.service.impl;
 import java.net.URL;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.common.util.Base64Utility;
 import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.endpoint.Client;
@@ -58,33 +59,27 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
     
 	@Cached
 	public boolean isLegacyTravelGeneratedKfsDocument(String docID) {
-        Client client = null;
-        // Need to grab copy of current class loader because call to web services wrecks class loader, so we want to restore it following call.
-        ClassLoader classLoader = ClassLoaderUtils.getDefaultClassLoader();
         try {
-			URL wsdlUrl = new URL(updateTripWsdl);
-			
-			JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
-			client = dcf.createClient(wsdlUrl);
-			  
-			configureWebServiceClient(client);
-			  
-			Object[] results1 = client.invoke(DFA_TRAVEL_WS_METHODS.GET_TRIP_ID, docID);
-			String tripID = (String)results1[0];
+        	String tripID = getLegacyTripID(docID);
+        	
+        	if(tripID == null) {
+        		LOG.error("KFS could not determine if the the associated edoc: "+docID+" is related to a trip in the DFA Travel system.  The web service call failed to connect.");
+        	}
+        	
 			return StringUtils.isNotBlank(tripID);
         } catch (Exception ex) {
         	LOG.error("Exception occurred while trying to identify KFS doc as travel KFS doc.", ex);
       	  	ex.printStackTrace();
       	  	return false;
-        } finally {
-        	if(client != null) {
-        		client.destroy();
-        	}
-        	// Restore class loader that was grabbed before call to web service
-        	ContextClassLoaderBinder.bind(classLoader);
         }
 	}
 	
+	/**
+	 * @param docID the KFS e-doc id that will be used to try and find an associated trip in the DFA Travel application
+	 * @return If a corresponding trip can be found in the DFA travel application, the Trip ID will be returned, if no corresponding trip can be found, an empty string is returned.
+	 * 
+	 * NOTE : If the call fails to successfully retrieve a value or a blank string from the DFA Travel application, a null value is returned to indicate the call failed.
+	 */
     @Cached
 	public String getLegacyTripID(String docID) {
         Client client = null;
@@ -101,10 +96,14 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
 			Object[] results1 = client.invoke(DFA_TRAVEL_WS_METHODS.GET_TRIP_ID, docID);
 			String tripID = (String)results1[0];
 			return tripID;
+        } catch (SoapFault sf) {
+        	LOG.error(sf.getMessage());
+        	sf.printStackTrace();
+        	return null; // Returning null is used as an indicator that the call might have failed
         } catch (Exception ex) {
         	LOG.error("Exception occurred while trying to retrieve Trip ID.", ex);
       	  	ex.printStackTrace();
-      	  	return null;
+      	  	return null; // Returning null is used as an indicator that the call might have failed
         } finally {
         	if(client != null) {
         		client.destroy();
@@ -144,6 +143,10 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
 			Object[] results1 = client.invoke(DFA_TRAVEL_WS_METHODS.UPDATE_TRIP, KFS_DOC_VOIDED, GlobalVariables.getUserSession().getPrincipalName(), docID, disapproveReason);
 			Boolean tripReopened = (Boolean)results1[0];
 			return tripReopened;
+        } catch (SoapFault sf) {
+        	LOG.error(sf.getMessage());
+        	sf.printStackTrace();
+        	return false;
         } catch (Exception ex) {
         	LOG.info("Exception occurred while trying to cancel a trip.");
       	  	ex.printStackTrace();
