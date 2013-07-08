@@ -35,25 +35,16 @@ public interface KFSVendorWebService {
 		  @WebParam(name = "vendorCityName")String vendorCityName, 
 		  @WebParam(name = "vendorStateCode")String vendorStateCode, 
 		  @WebParam(name = "vendorPostalCode")String vendorPostalCode, 
-		  @WebParam(name = "vendorCountryCode")String vendorCountryCode
+		  @WebParam(name = "vendorCountryCode")String vendorCountryCode,
+		  @WebParam(name = "contactName")String contactName,
+		  @WebParam(name = "poTransmissionMethodCode")String poTransmissionMethodCode,
+		  @WebParam(name = "emailOrFaxNumber")String emailOrFaxNumber
 		  ) throws Exception;
   
   /**
    * 
-   * @param initiatorNetId
-   * @param documentName
-   * @return
-   * @throws Exception
-   */
-  public boolean updateVendor(
-		  @WebParam(name = "vendorId")String vendorId,
-		  @WebParam(name = "vendorIdType")String vendorIdType
-		  ) throws Exception;
-
-  /**
-   * 
-   * @param viewerNetId
-   * @param docID
+   * @param vendorId
+   * @param vendorIdType
    * @return
    * @throws Exception
    */
@@ -62,6 +53,17 @@ public interface KFSVendorWebService {
 		  @WebParam(name = "vendorIdType")String vendorIdType
 		  ) throws Exception;
 
+  /**
+   * 
+   * @param vendorName
+   * @param lastFour
+   * @return
+   * @throws Exception
+   */
+  public String retrieveKfsVendorByNamePlusLastFour(
+		  @WebParam(name = "vendorName")String vendorName, 
+		  @WebParam(name = "lastFour")String lastFour) throws Exception;
+  
   /**
    * 
    * @param vendorId
