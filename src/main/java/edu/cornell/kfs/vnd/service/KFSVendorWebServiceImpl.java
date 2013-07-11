@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.jws.WebService;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
@@ -35,10 +36,11 @@ import edu.cornell.kfs.vnd.document.service.CUVendorService;
 @WebService(endpointInterface = "edu.cornell.kfs.vnd.service.KFSVendorWebService")
 public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 
+	private static final String VENDOR_NOT_FOUND ="Vendor Not Found";
 	/**
 	 * 
 	 */
-	// TODO : need to add poTransmissionMethodCode in web service params. 'name' in contact is alos required
+	// TODO : need to add poTransmissionMethodCode in web service params. 'name' in contact is also required
 	public String addVendor(String vendorName, String vendorTypeCode, boolean isForeign, String taxNumber, String taxNumberType, String ownershipTypeCode, boolean isTaxable, boolean isEInvoice,
 			                String vendorAddressTypeCode, String vendorLine1Address, String vendorCityName, String vendorStateCode, String vendorPostalCode, String vendorCountryCode, String contactName, String poTransmissionMethodCode, String emailOrFaxNumber) throws Exception {
         UserSession actualUserSession = GlobalVariables.getUserSession();
@@ -53,13 +55,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
             MaintenanceDocument vendorDoc = (MaintenanceDocument)docService.getNewDocument("PVEN");
             
             vendorDoc.getDocumentHeader().setDocumentDescription("New vendor from Procurement tool");
-            
-            if(vendorExists(taxNumber, taxNumberType)) {
-            	VendorDetail vendor = retrieveVendor(taxNumber, taxNumberType);
-            	VendorMaintainableImpl oldVendorImpl = (VendorMaintainableImpl)vendorDoc.getOldMaintainableObject();
-            	oldVendorImpl.setBusinessObject(vendor);
-            }
-            
+                        
         	VendorMaintainableImpl vImpl = (VendorMaintainableImpl)vendorDoc.getNewMaintainableObject();
 
         	VendorDetail vDetail = (VendorDetail)vImpl.getBusinessObject();
@@ -70,6 +66,8 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 
         	((VendorDetailExtension)vDetail.getExtension()).setEinvoiceVendorIndicator(isEInvoice);
 
+        	// how should address be handled.  If no addres type code matched, then create, otherwise change ?
+        	// how do we know that this is just to change the address type code.  should there is another filed, say 'oldAddressTypeCode' ?
         	VendorAddress vendorAddr = new VendorAddress();
         	vendorAddr.setVendorAddressTypeCode(vendorAddressTypeCode);
         	vendorAddr.setVendorLine1Address(vendorLine1Address);
@@ -94,6 +92,8 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
         	
         	vDetail.setVendorAddresses(vAddrs);
 
+        	// also, question for contact, are we assume, the contact type is always "VI" ?
+        	// should we handle like address ?
         	VendorContact vContact = new VendorContact();
         	// Contact type does not have "VT" which is originally set up
         	vContact.setVendorContactTypeCode("VI");
@@ -131,6 +131,116 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 		}        
 	}
   
+	public String updateVendor(String vendorName, String vendorTypeCode, boolean isForeign, String vendorNumber, 
+			String ownershipTypeCode, boolean isTaxable, boolean isEInvoice,
+			String oldVendorAddressTypeCode, String vendorAddressTypeCode, String vendorLine1Address,
+			String vendorCityName, String vendorStateCode,
+			String vendorPostalCode, String vendorCountryCode,
+			String contactName, String poTransmissionMethodCode,
+			String emailOrFaxNumber) throws Exception {
+		UserSession actualUserSession = GlobalVariables.getUserSession();
+		MessageMap globalErrorMap = GlobalVariables.getMessageMap();
+
+		// create and route doc as system user
+		GlobalVariables.setUserSession(new UserSession("kfs"));
+
+		try {
+			DocumentService docService = SpringContext.getBean(DocumentService.class);
+
+			MaintenanceDocument vendorDoc = (MaintenanceDocument) docService.getNewDocument("PVEN");
+
+			vendorDoc.getDocumentHeader().setDocumentDescription("Update vendor from Procurement tool");
+
+				VendorDetail vendor = retrieveVendor(vendorNumber, "VENDORID");
+				if (vendor != null) {
+					// Vendor does not eist
+				VendorMaintainableImpl oldVendorImpl = (VendorMaintainableImpl) vendorDoc.getOldMaintainableObject();
+				oldVendorImpl.setBusinessObject(vendor);
+
+				} else {
+					// Vendor does not eist
+					return "Vendor " + vendorNumber + " Not Found.";
+				}
+				
+			VendorMaintainableImpl vImpl = (VendorMaintainableImpl) vendorDoc.getNewMaintainableObject();
+
+			vImpl.setMaintenanceAction(KFSConstants.MAINTENANCE_EDIT_ACTION);
+//			VendorDetail vendorCopy = (VendorDetail)ObjectUtils.deepCopy(vendor);
+			vImpl.setBusinessObject((VendorDetail)ObjectUtils.deepCopy(vendor));
+			VendorDetail vDetail = (VendorDetail) vImpl.getBusinessObject();
+
+			vDetail.setVendorName(vendorName);
+			vDetail.setActiveIndicator(true);
+			vDetail.setTaxableIndicator(isTaxable);
+
+			((VendorDetailExtension) vDetail.getExtension()).setEinvoiceVendorIndicator(isEInvoice);
+
+			VendorAddress vendorAddr = new VendorAddress();
+			if (StringUtils.isNotBlank(oldVendorAddressTypeCode)) {
+				vendorAddr = getVendorAddress(vDetail, oldVendorAddressTypeCode);
+			}
+			vendorAddr.setVendorAddressTypeCode(vendorAddressTypeCode);
+			vendorAddr.setVendorLine1Address(vendorLine1Address);
+			vendorAddr.setVendorCityName(vendorCityName);
+			vendorAddr.setVendorStateCode(vendorStateCode);
+			vendorAddr.setVendorZipCode(vendorPostalCode);
+			vendorAddr.setVendorCountryCode(vendorCountryCode);
+			vendorAddr.setVendorDefaultAddressIndicator(true);
+			// TODO : need to add poTransmissionMethodCode because it is
+			// required if PO type
+			vendorAddr.setPurchaseOrderTransmissionMethodCode(poTransmissionMethodCode);
+			if (StringUtils.equals("PO", vendorAddressTypeCode)) {
+				if (StringUtils.equals("EMAL", poTransmissionMethodCode)) {
+					vendorAddr.setVendorAddressEmailAddress(emailOrFaxNumber);
+				} else if (StringUtils.equals("FAX", poTransmissionMethodCode)) {
+					vendorAddr.setVendorFaxNumber(emailOrFaxNumber);
+				}
+
+			}
+
+			if (vendorAddr.getVendorHeaderGeneratedIdentifier() == null) {
+				vDetail.getVendorAddresses().add(vendorAddr);
+			}
+
+//			vDetail.setVendorAddresses(vAddrs);
+
+			VendorContact vContact = getVendorContact(vDetail);
+			// Contact type does not have "VT" which is originally set up
+			vContact.setVendorContactTypeCode("VI");
+			vContact.setVendorContactName(contactName);
+			ArrayList<VendorContact> vendorContacts = new ArrayList<VendorContact>();
+			vendorContacts.add(vContact);
+			if (vContact.getVendorHeaderGeneratedIdentifier() == null) {
+				vDetail.getVendorContacts().add(vContact);
+			}
+
+			vDetail.setVendorContacts(vendorContacts);
+
+			vDetail.setDefaultAddressLine1(vendorLine1Address);
+			vDetail.setDefaultAddressCity(vendorCityName);
+			vDetail.setDefaultAddressStateCode(vendorStateCode);
+			vDetail.setDefaultAddressPostalCode(vendorPostalCode);
+			vDetail.setDefaultAddressCountryCode(vendorCountryCode);
+
+			VendorHeader vHeader = vDetail.getVendorHeader();
+
+			vHeader.setVendorTypeCode(vendorTypeCode);
+			vHeader.setVendorForeignIndicator(isForeign);
+			vHeader.setVendorOwnershipCode(ownershipTypeCode);
+
+			vDetail.setVendorHeader(vHeader);
+			vImpl.setBusinessObject(vDetail);
+			vendorDoc.setNewMaintainableObject(vImpl);
+
+			docService.routeDocument(vendorDoc, "", null);
+
+			return vendorDoc.getDocumentNumber();
+		} finally {
+			GlobalVariables.setUserSession(actualUserSession);
+			GlobalVariables.setMessageMap(globalErrorMap);
+		}
+	}	
+	
 	/**
 	 * Return caret (^) delineated string of Vendor values
 	 */
@@ -139,9 +249,26 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 				
 		// TODO : this is not quite right because vendor may not be found
 		//return vendor.getVendorNumber();
-		return vendor != null ? vendor.getVendorNumber() : "Vendor Not Found";
+		return vendor != null ? vendor.getVendorNumber() : VENDOR_NOT_FOUND;
 	}
 
+	private VendorAddress getVendorAddress(VendorDetail vDetail, String oldVendorAddressTypeCode) {
+		for (VendorAddress vAddress : vDetail.getVendorAddresses()) {
+			if (StringUtils.equals(oldVendorAddressTypeCode, vAddress.getVendorAddressTypeCode())) {
+				return vAddress;
+			}
+		}
+		return new VendorAddress();
+	}
+
+	private VendorContact getVendorContact(VendorDetail vDetail) {
+		for (VendorContact vContact : vDetail.getVendorContacts()) {
+			if (StringUtils.equals("VI", vContact.getVendorContactTypeCode())) {
+				return vContact;
+			}
+		}
+		return new VendorContact();
+	}
 	/**
 	 * 
 	 * @param vendorName
@@ -153,7 +280,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 		VendorDetail vendor = SpringContext.getBean(CUVendorService.class).getVendorByNamePlusLastFourOfTaxID(vendorName, lastFour);
 		// TODO : this is not quite right because vendor may not be found
 		//return vendor.getVendorNumber();
-		return vendor != null ? vendor.getVendorNumber() : "Vendor Not Found";
+		return vendor != null ? vendor.getVendorNumber() : VENDOR_NOT_FOUND;
 	}
 	
 	/**
@@ -218,6 +345,14 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 			vendorValues.append(vdExtension.isEinvoiceVendorIndicator());
 		}		
 		return vendorValues.toString();
+	}
+
+	public String retrieveKfsVendorByEin(String vendorEin) throws Exception {
+		VendorHeader vendor = SpringContext.getBean(CUVendorService.class).getVendorByEin(vendorEin);
+		if (vendor != null) {
+			return vendor.getVendorHeaderGeneratedIdentifier() + "-0";
+		} 
+		return VENDOR_NOT_FOUND;
 	}
 	
 }

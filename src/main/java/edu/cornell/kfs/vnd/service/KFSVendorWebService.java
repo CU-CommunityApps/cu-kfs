@@ -43,6 +43,31 @@ public interface KFSVendorWebService {
   
   /**
    * 
+   * @return
+   * @throws Exception
+   */
+  public String updateVendor(
+		  @WebParam(name = "vendorName")String vendorName,
+		  @WebParam(name = "vendorTypeCode")String vendorTypeCode,
+		  @WebParam(name = "isForeign")boolean isForeign, 
+		  @WebParam(name = "vendorNumber")String vendorNumber, 
+		  @WebParam(name = "ownershipTypeCode")String ownershipTypeCode,
+		  @WebParam(name = "isTaxable")boolean isTaxable,
+		  @WebParam(name = "isEInvoice")boolean isEInvoice,
+		  @WebParam(name = "oldVendorAddressTypeCode")String oldVendorAddressTypeCode, 
+		  @WebParam(name = "vendorAddressTypeCode")String vendorAddressTypeCode, 
+		  @WebParam(name = "vendorLine1Address")String vendorLine1Address, 
+		  @WebParam(name = "vendorCityName")String vendorCityName, 
+		  @WebParam(name = "vendorStateCode")String vendorStateCode, 
+		  @WebParam(name = "vendorPostalCode")String vendorPostalCode, 
+		  @WebParam(name = "vendorCountryCode")String vendorCountryCode,
+		  @WebParam(name = "contactName")String contactName,
+		  @WebParam(name = "poTransmissionMethodCode")String poTransmissionMethodCode,
+		  @WebParam(name = "emailOrFaxNumber")String emailOrFaxNumber
+		  ) throws Exception;
+  
+  /**
+   * 
    * @param vendorId
    * @param vendorIdType
    * @return
@@ -76,4 +101,9 @@ public interface KFSVendorWebService {
 		  @WebParam(name = "vendorIdType")String vendorIdType
 		  ) throws Exception;
   
+
+public String retrieveKfsVendorByEin(
+		  @WebParam(name = "vendorEin")String vendorEin
+		  ) throws Exception;
+
 }

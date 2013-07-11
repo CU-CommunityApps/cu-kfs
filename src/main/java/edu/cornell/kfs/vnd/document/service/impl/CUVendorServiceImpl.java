@@ -123,5 +123,20 @@ public class CUVendorServiceImpl extends VendorServiceImpl implements CUVendorSe
         this.vendorLookupableHelperServiceImpl = vendorLookupableHelperServiceImpl;
     }
 
+    public VendorHeader getVendorByEin(String vendorEin) {
+        LOG.info("Entering getVendorByEin for getVendorByEin:" + vendorEin);
+        Map criteria = new HashMap();
+        criteria.put(VendorPropertyConstants.VENDOR_TAX_NUMBER_ONLY, vendorEin);
+        criteria.put("VNDR_TAX_TYP_CD", "FEIN");
+        List<VendorHeader> vds = (List) businessObjectService.findMatching(VendorHeader.class, criteria);
+        LOG.debug("Exiting getVendorByVendorName.");
+        if (vds.size() < 1) {
+            return null;
+        }
+        else {
+            return vds.get(0);
+        }
+    }
+
 }
 

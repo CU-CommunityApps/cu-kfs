@@ -201,5 +201,7 @@ public interface CUVendorService {
      * @return VendorContract B2B Contract for given vendor
      */
     public VendorContract getVendorB2BContract(VendorDetail vendorDetail, String campus);
+    
+    public VendorHeader getVendorByEin(String vendorEin);
 
 }
