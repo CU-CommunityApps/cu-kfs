@@ -968,8 +968,7 @@ public class PurapGeneralLedgerServiceImpl implements PurapGeneralLedgerService 
                         // KFSPTS-2240 : issue with itemunit price with 4-decimal
                         //copied from cu-kfs-4.0-fix, since this has a CU fix now.
                        // itemDisEncumber = encumbranceQuantity.multiply(new KualiDecimal(poItem.getItemUnitPrice()));
-                        BigDecimal calcPrice =poItem.getItemUnitPrice().multiply(encumbranceQuantity.bigDecimalValue());
-                        itemDisEncumber = new KualiDecimal(calcPrice.setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR));
+                        itemDisEncumber = new KualiDecimal(encumbranceQuantity.bigDecimalValue().multiply(poItem.getItemUnitPrice()));
 
                         //add tax for encumbrance
                         KualiDecimal itemTaxAmount = poItem.getItemTaxAmount() == null ? ZERO : poItem.getItemTaxAmount();
@@ -1140,8 +1139,8 @@ public class PurapGeneralLedgerServiceImpl implements PurapGeneralLedgerService 
                     // KFSPTS-2240 : issue with itemunit price with 4-decimal
                     //
                    // itemReEncumber = preqQuantity.multiply(new KualiDecimal(poItem.getItemUnitPrice()));
-                    BigDecimal calcPrice =poItem.getItemUnitPrice().multiply(preqQuantity.bigDecimalValue());
-                    itemReEncumber = new KualiDecimal(calcPrice.setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR));
+                    //do math as big decimal as doing it as a KualiDecimal will cause the item price to round to 2 digits
+                    itemReEncumber = new KualiDecimal(preqQuantity.bigDecimalValue().multiply(poItem.getItemUnitPrice()));
 
                     //add tax for encumbrance
                     KualiDecimal itemTaxAmount = poItem.getItemTaxAmount() == null ? ZERO : poItem.getItemTaxAmount();
