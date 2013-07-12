@@ -21,6 +21,10 @@
     <ul class="chan">
 		<li><portal:portalLink displayTitle="true" title="Customer Upload" url="batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=customerLoadInputFileType" /></li>				
 	</ul>
+	<strong>Chart of Accounts</strong><br/>
+    <ul class="chan">
+		<li><portal:portalLink displayTitle="true" title="Account Reversion File Upload" url="batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=accountReversionInputFileType" /></li>		
+	</ul>
 	<strong>Electronic Invoice</strong><br/>
     <ul class="chan">
 		<li><portal:portalLink displayTitle="true" title="eInvoice Files Upload" url="batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=electronicInvoiceInputFileType" /></li>				

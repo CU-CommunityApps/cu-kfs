@@ -43,6 +43,8 @@ public class AccountReversionImportStep extends AbstractStep {
         File f = new File(this.batchFileDirectoryName + System.getProperty("file.separator") + "AccountReversion.csv");
         AccountReversionImportService aris = SpringContext.getBean(AccountReversionImportService.class);
         aris.importAccountReversions(f);
+        
+        addTimeStampToFileName(f, "AccountReversion.csv", this.batchFileDirectoryName );
 
         stopWatch.stop();
         LOG.info("AccountReversionImportStep took " + (stopWatch.getTotalTimeSeconds() / 60.0) + " minutes to complete");
