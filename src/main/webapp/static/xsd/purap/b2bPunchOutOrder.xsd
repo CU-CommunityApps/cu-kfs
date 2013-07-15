@@ -183,7 +183,7 @@
 												 	</xsd:complexType>
 									  			</xsd:element> <!-- SupplierID -->
 									  		</xsd:sequence>
-									  		<xsd:attribute name="quantity" type="xsd:unsignedInt"/>
+									  		<xsd:attribute name="quantity" type="kfs:amountType"/>
 									  	</xsd:complexType>	
 									</xsd:element> <!-- ItemIn -->
 									</xsd:sequence>
