@@ -94,8 +94,11 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         final boolean lineIsAccessible = accountingLineAuthorizer.hasEditPermissionOnAccountingLine(accountingDocumentForValidation, accountingLineForValidation, getAccountingLineCollectionProperty(), currentUser, true);
         final boolean isAccessible = accountingLineAuthorizer.hasEditPermissionOnField(accountingDocumentForValidation, accountingLineForValidation, getAccountingLineCollectionProperty(), KFSPropertyConstants.ACCOUNT_NUMBER, lineIsAccessible, true, currentUser);
         boolean valid = true;
+        boolean isContractManagementNode = isContractManagerNode(event.getDocument());
         // report errors
         if (!isAccessible) {
+        	// KFSPTS-2253
+        	if (!isContractManagementNode) {
             final String principalName = currentUser.getPrincipalName();
             
             final String[] chartErrorParams = new String[] { getDataDictionaryService().getAttributeLabel(accountingLineForValidation.getClass(), KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE), accountingLineForValidation.getChartOfAccountsCode(),  principalName};
@@ -113,7 +116,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         	} else {
         		 GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, convertEventToMessage(event), accountErrorParams);
         	}
-
+        	}  // end KFSPTS-2253
            
         } else 
         if (event instanceof AddAccountingLineEvent && isAccountNode(event.getDocument()) && !isAccountingLineFo(event.getDocument()) && !isDiscountTradeInAccount()) {
@@ -125,7 +128,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         	valid=false;
         }
 
-        return isAccessible && valid;
+        return (isAccessible || isContractManagementNode) && valid;
     }
     
     /**
@@ -280,6 +283,22 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
     			return (accountingLineForValidation instanceof PurApAccountingLineBase) && ((PurApAccountingLineBase)accountingLineForValidation).isDiscountTradeIn();
     }
     
+
+    // KFSPTS-2253
+    
+    private boolean isContractManagerNode(Document document) {
+		KualiWorkflowDocument workflowDocument = document.getDocumentHeader()
+				.getWorkflowDocument();
+		if (workflowDocument == null) {
+			try {
+				workflowDocument = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(document.getDocumentNumber())
+						.getDocumentHeader().getWorkflowDocument();
+			} catch (Exception e) {
+
+			}
+		}
+	    return workflowDocument != null && workflowDocument.getRouteHeader() != null && StringUtils.equals("ContractManagement", workflowDocument.getRouteHeader().getCurrentRouteNodeNames());
+    }
 
 }
 
