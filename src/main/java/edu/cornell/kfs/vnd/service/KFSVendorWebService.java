@@ -1,7 +1,11 @@
 package edu.cornell.kfs.vnd.service;
 
+import java.util.List;
+
 import javax.jws.WebParam;
 import javax.jws.WebService;
+
+import edu.cornell.kfs.vnd.service.params.VendorAddressParam;
 
 /**
  *
@@ -30,15 +34,8 @@ public interface KFSVendorWebService {
 		  @WebParam(name = "ownershipTypeCode")String ownershipTypeCode,
 		  @WebParam(name = "isTaxable")boolean isTaxable,
 		  @WebParam(name = "isEInvoice")boolean isEInvoice,
-		  @WebParam(name = "vendorAddressTypeCode")String vendorAddressTypeCode, 
-		  @WebParam(name = "vendorLine1Address")String vendorLine1Address, 
-		  @WebParam(name = "vendorCityName")String vendorCityName, 
-		  @WebParam(name = "vendorStateCode")String vendorStateCode, 
-		  @WebParam(name = "vendorPostalCode")String vendorPostalCode, 
-		  @WebParam(name = "vendorCountryCode")String vendorCountryCode,
 		  @WebParam(name = "contactName")String contactName,
-		  @WebParam(name = "poTransmissionMethodCode")String poTransmissionMethodCode,
-		  @WebParam(name = "emailOrFaxNumber")String emailOrFaxNumber
+		  @WebParam(name = "addresses")List<VendorAddressParam> addresses
 		  ) throws Exception;
   
   /**

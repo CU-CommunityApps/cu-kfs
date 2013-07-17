@@ -1,6 +1,7 @@
 package edu.cornell.kfs.vnd.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.jws.WebService;
 
@@ -22,6 +23,7 @@ import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 import edu.cornell.kfs.vnd.document.service.CUVendorService;
+import edu.cornell.kfs.vnd.service.params.VendorAddressParam;
 
 
 /**
@@ -42,7 +44,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	 */
 	// TODO : need to add poTransmissionMethodCode in web service params. 'name' in contact is also required
 	public String addVendor(String vendorName, String vendorTypeCode, boolean isForeign, String taxNumber, String taxNumberType, String ownershipTypeCode, boolean isTaxable, boolean isEInvoice,
-			                String vendorAddressTypeCode, String vendorLine1Address, String vendorCityName, String vendorStateCode, String vendorPostalCode, String vendorCountryCode, String contactName, String poTransmissionMethodCode, String emailOrFaxNumber) throws Exception {
+			                String contactName,  List<VendorAddressParam> addresses) throws Exception {
         UserSession actualUserSession = GlobalVariables.getUserSession();
         MessageMap globalErrorMap = GlobalVariables.getMessageMap();
         
@@ -68,27 +70,33 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 
         	// how should address be handled.  If no addres type code matched, then create, otherwise change ?
         	// how do we know that this is just to change the address type code.  should there is another filed, say 'oldAddressTypeCode' ?
-        	VendorAddress vendorAddr = new VendorAddress();
-        	vendorAddr.setVendorAddressTypeCode(vendorAddressTypeCode);
-        	vendorAddr.setVendorLine1Address(vendorLine1Address);
-        	vendorAddr.setVendorCityName(vendorCityName);
-        	vendorAddr.setVendorStateCode(vendorStateCode);
-        	vendorAddr.setVendorZipCode(vendorPostalCode);
-        	vendorAddr.setVendorCountryCode(vendorCountryCode);
-        	vendorAddr.setVendorDefaultAddressIndicator(true);
-            // TODO : need to add poTransmissionMethodCode because it is required if PO type
-        	vendorAddr.setPurchaseOrderTransmissionMethodCode(poTransmissionMethodCode);
-        	if (StringUtils.equals("PO", vendorAddressTypeCode)) {
-            	if (StringUtils.equals("EMAL", poTransmissionMethodCode)) {
-            		vendorAddr.setVendorAddressEmailAddress(emailOrFaxNumber);
-            	} else if (StringUtils.equals("FAX", poTransmissionMethodCode)) {
-            		vendorAddr.setVendorFaxNumber(emailOrFaxNumber);
-            	}
-       		
-        	}
-        	
         	ArrayList<VendorAddress> vAddrs = new ArrayList<VendorAddress>();
-        	vAddrs.add(vendorAddr);
+			for (VendorAddressParam address : addresses) {
+				VendorAddress vendorAddr = new VendorAddress();
+				vendorAddr.setVendorAddressTypeCode(address.getVendorAddressTypeCode());
+				vendorAddr.setVendorLine1Address(address.getVendorLine1Address());
+				vendorAddr.setVendorCityName(address.getVendorCityName());
+				vendorAddr.setVendorStateCode(address.getVendorStateCode());
+				vendorAddr.setVendorZipCode(address.getVendorZipCode());
+				vendorAddr.setVendorCountryCode(address.getVendorCountryCode());
+				vendorAddr.setVendorDefaultAddressIndicator(true);
+				vendorAddr.setVendorDefaultAddressIndicator(address.isVendorDefaultAddressIndicator());
+				if (address.isVendorDefaultAddressIndicator()) {
+		        	vDetail.setDefaultAddressLine1(address.getVendorLine1Address());
+		        	vDetail.setDefaultAddressCity(address.getVendorCityName());
+		        	vDetail.setDefaultAddressStateCode(address.getVendorStateCode());
+		        	vDetail.setDefaultAddressPostalCode(address.getVendorZipCode());
+		        	vDetail.setDefaultAddressCountryCode(address.getVendorCountryCode());
+					
+				}
+				// TODO : need to add poTransmissionMethodCode because it is
+				// required if PO type
+				vendorAddr.setPurchaseOrderTransmissionMethodCode(address.getPurchaseOrderTransmissionMethodCode());
+				vendorAddr.setVendorAddressEmailAddress(address.getVendorAddressEmailAddress());						
+				vendorAddr.setVendorFaxNumber(address.getVendorFaxNumber());
+				
+				vAddrs.add(vendorAddr);
+			}        	
         	
         	vDetail.setVendorAddresses(vAddrs);
 
@@ -103,11 +111,6 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
         	
         	vDetail.setVendorContacts(vendorContacts);
 
-        	vDetail.setDefaultAddressLine1(vendorLine1Address);
-        	vDetail.setDefaultAddressCity(vendorCityName);
-        	vDetail.setDefaultAddressStateCode(vendorStateCode);
-        	vDetail.setDefaultAddressPostalCode(vendorPostalCode);
-        	vDetail.setDefaultAddressCountryCode(vendorCountryCode);
 
         	
         	VendorHeader vHeader = vDetail.getVendorHeader();
