@@ -51,7 +51,6 @@ import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
-import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.service.PurapAccountRevisionService;
 import org.kuali.kfs.module.purap.service.PurapAccountingService;
@@ -82,10 +81,14 @@ import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.service.KualiConfigurationService;
+import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.KualiInteger;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.rsmart.kuali.kfs.cr.CRConstants;
+import com.rsmart.kuali.kfs.cr.batch.CheckReconciliationImportStep;
 
 import edu.cornell.kfs.pdp.service.PdpUtilService;
 
@@ -103,6 +106,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
     protected static String FDOC_TYP_CD_CANCEL_ACH = "ACHC";
     protected static String FDOC_TYP_CD_CANCEL_CHECK = "CHKC";
     protected static String FDOC_TYP_CD_STOP_CHECK = "CHKS";
+    protected static String FDOC_TYP_CD_STALE_CHECK = "CHKL";
 
 
     private PendingTransactionDao glPendingTransactionDao;
@@ -144,6 +148,14 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
     public void generateReissueGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
         this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, FDOC_TYP_CD_CANCEL_REISSUE_ACH, FDOC_TYP_CD_CANCEL_REISSUE_CHECK, true);
     }
+    
+    /**
+     * @see org.kuali.kfs.pdp.service.PendingTransactionService#generateCancellationGeneralLedgerPendingEntry(org.kuali.kfs.pdp.businessobject.PaymentGroup)
+     */
+    public void generateStaleGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
+        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, FDOC_TYP_CD_STALE_CHECK, FDOC_TYP_CD_STALE_CHECK, true);
+    }
+
 
     /**
      * Populates and stores a new GLPE for each account detail in the payment group.
@@ -232,15 +244,37 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
 
             glPendingTransaction.setFsOriginCd(PdpConstants.PDP_FDOC_ORIGIN_CODE);
             glPendingTransaction.setFdocNbr(paymentGroup.getDisbursementNbr().toString());
+            
+            String accountNbr    =  paymentAccountDetail.getAccountNbr();
+            String finObjectCode =  paymentAccountDetail.getFinObjectCode();
+            String finCoaCd      =  paymentAccountDetail.getFinChartCode();
+            
+            // if stale
+            if (StringUtils.equals(FDOC_TYP_CD_STALE_CHECK, checkFdocTypeCod)) {
+                ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+
+                String clAcct = parameterService.getParameterValue(CheckReconciliationImportStep.class, CRConstants.CLEARING_ACCOUNT);
+                String obCode = parameterService.getParameterValue(CheckReconciliationImportStep.class, CRConstants.CLEARING_OBJECT_CODE);
+                String coaCode = parameterService.getParameterValue(CheckReconciliationImportStep.class, CRConstants.CLEARING_COA);
+
+                // Use clearing parameters if stale
+                accountNbr = clAcct;
+                finObjectCode = obCode;
+                finCoaCd = coaCode;
+            }
+            
+            glPendingTransaction.setAccountNumber(accountNbr);
+
+            glPendingTransaction.setChartOfAccountsCode(finCoaCd);
 
             Boolean relieveLiabilities = paymentGroup.getBatch().getCustomerProfile().getRelieveLiabilities();
             if ((relieveLiabilities != null) && (relieveLiabilities.booleanValue()) && paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode() != null) {
                 OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getByPrimaryId(glPendingTransaction.getUniversityFiscalYear(), glPendingTransaction.getChartOfAccountsCode(), paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode(), glPendingTransaction.getFinancialBalanceTypeCode());
-                glPendingTransaction.setFinancialObjectCode(offsetDefinition != null ? offsetDefinition.getFinancialObjectCode() : paymentAccountDetail.getFinObjectCode());
+                glPendingTransaction.setFinancialObjectCode(offsetDefinition != null ? offsetDefinition.getFinancialObjectCode() : finObjectCode);
                 glPendingTransaction.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
             }
             else {
-                glPendingTransaction.setFinancialObjectCode(paymentAccountDetail.getFinObjectCode());
+                glPendingTransaction.setFinancialObjectCode(finObjectCode);
                 glPendingTransaction.setFinancialSubObjectCode(paymentAccountDetail.getFinSubObjectCode());
             }
 
@@ -397,7 +431,6 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
      * @param sequenceHelper
      */
     protected void generateCreditMemoReversalEntries(VendorCreditMemoDocument cm) {
-
 
         cm.setGeneralLedgerPendingEntries(new ArrayList());
 

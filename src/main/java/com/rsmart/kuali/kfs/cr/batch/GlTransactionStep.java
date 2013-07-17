@@ -50,6 +50,9 @@ public class GlTransactionStep extends AbstractStep {
     
     private BusinessObjectService businessObjectService;
     
+    private PendingTransactionService glPendingTransactionService;
+    
+
     /**
      * Execute
      * 
@@ -92,7 +95,6 @@ public class GlTransactionStep extends AbstractStep {
                     for (PaymentGroup paymentGroup : paymentGroups) {
                     	
                     	//Create cancellation offsets for STOPed checks. KFSPTS-1741
-                        PendingTransactionService glPendingTransactionService = SpringContext.getBean(PendingTransactionService.class);
                         glPendingTransactionService.generateStopGeneralLedgerPendingEntry(paymentGroup);
                     	
                         
@@ -237,7 +239,10 @@ public class GlTransactionStep extends AbstractStep {
                 }
                 else {
                      for (PaymentGroup paymentGroup : paymentGroups) {
-                         glTransactionService.generateGlPendingTransactionStale(paymentGroup);
+                         
+                         //KFSPTS-2246
+                        // glTransactionService.generateGlPendingTransactionStale(paymentGroup);
+                         glPendingTransactionService.generateStaleGeneralLedgerPendingEntry(paymentGroup);
                     
                          KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
                          if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
@@ -314,6 +319,24 @@ public class GlTransactionStep extends AbstractStep {
      */
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
+    }
+    
+    /**
+     * Gets the glPendingTransactionService.
+     * 
+     * @return glPendingTransactionService
+     */
+    public PendingTransactionService getGlPendingTransactionService() {
+        return glPendingTransactionService;
+    }
+
+    /**
+     * Sets the glPendingTransactionService.
+     * 
+     * @param glPendingTransactionService
+     */
+    public void setGlPendingTransactionService(PendingTransactionService glPendingTransactionService) {
+        this.glPendingTransactionService = glPendingTransactionService;
     }
     
 }
