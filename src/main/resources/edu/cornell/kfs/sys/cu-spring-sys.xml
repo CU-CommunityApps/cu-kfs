@@ -110,7 +110,7 @@
 
     <bean id="accountReversionInputFileType-parentBean" class="edu.cornell.kfs.sys.batch.AccountReversionInputFileType">
     	<property name="directoryPath">
-	       <value>${staging.directory}/sys/</value>
+	       <value>${staging.directory}/gl/accountReversion/</value>
 	    </property>
 	    <property name="fileExtension">
 	       <value>csv</value>
