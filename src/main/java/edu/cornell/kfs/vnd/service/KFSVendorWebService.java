@@ -1,11 +1,7 @@
 package edu.cornell.kfs.vnd.service;
 
-import java.util.List;
-
 import javax.jws.WebParam;
 import javax.jws.WebService;
-
-import edu.cornell.kfs.vnd.service.params.VendorAddressParam;
 
 /**
  *
@@ -34,39 +30,30 @@ public interface KFSVendorWebService {
 		  @WebParam(name = "ownershipTypeCode")String ownershipTypeCode,
 		  @WebParam(name = "isTaxable")boolean isTaxable,
 		  @WebParam(name = "isEInvoice")boolean isEInvoice,
-		  @WebParam(name = "contactName")String contactName,
-		  @WebParam(name = "addresses")List<VendorAddressParam> addresses
-		  ) throws Exception;
-  
-  /**
-   * 
-   * @return
-   * @throws Exception
-   */
-  public String updateVendor(
-		  @WebParam(name = "vendorName")String vendorName,
-		  @WebParam(name = "vendorTypeCode")String vendorTypeCode,
-		  @WebParam(name = "isForeign")boolean isForeign, 
-		  @WebParam(name = "vendorNumber")String vendorNumber, 
-		  @WebParam(name = "ownershipTypeCode")String ownershipTypeCode,
-		  @WebParam(name = "isTaxable")boolean isTaxable,
-		  @WebParam(name = "isEInvoice")boolean isEInvoice,
-		  @WebParam(name = "oldVendorAddressTypeCode")String oldVendorAddressTypeCode, 
 		  @WebParam(name = "vendorAddressTypeCode")String vendorAddressTypeCode, 
 		  @WebParam(name = "vendorLine1Address")String vendorLine1Address, 
 		  @WebParam(name = "vendorCityName")String vendorCityName, 
 		  @WebParam(name = "vendorStateCode")String vendorStateCode, 
 		  @WebParam(name = "vendorPostalCode")String vendorPostalCode, 
-		  @WebParam(name = "vendorCountryCode")String vendorCountryCode,
-		  @WebParam(name = "contactName")String contactName,
-		  @WebParam(name = "poTransmissionMethodCode")String poTransmissionMethodCode,
-		  @WebParam(name = "emailOrFaxNumber")String emailOrFaxNumber
+		  @WebParam(name = "vendorCountryCode")String vendorCountryCode
 		  ) throws Exception;
   
   /**
    * 
-   * @param vendorId
-   * @param vendorIdType
+   * @param initiatorNetId
+   * @param documentName
+   * @return
+   * @throws Exception
+   */
+  public boolean updateVendor(
+		  @WebParam(name = "vendorId")String vendorId,
+		  @WebParam(name = "vendorIdType")String vendorIdType
+		  ) throws Exception;
+
+  /**
+   * 
+   * @param viewerNetId
+   * @param docID
    * @return
    * @throws Exception
    */
@@ -75,17 +62,6 @@ public interface KFSVendorWebService {
 		  @WebParam(name = "vendorIdType")String vendorIdType
 		  ) throws Exception;
 
-  /**
-   * 
-   * @param vendorName
-   * @param lastFour
-   * @return
-   * @throws Exception
-   */
-  public String retrieveKfsVendorByNamePlusLastFour(
-		  @WebParam(name = "vendorName")String vendorName, 
-		  @WebParam(name = "lastFour")String lastFour) throws Exception;
-  
   /**
    * 
    * @param vendorId
@@ -98,9 +74,4 @@ public interface KFSVendorWebService {
 		  @WebParam(name = "vendorIdType")String vendorIdType
 		  ) throws Exception;
   
-
-public String retrieveKfsVendorByEin(
-		  @WebParam(name = "vendorEin")String vendorEin
-		  ) throws Exception;
-
 }

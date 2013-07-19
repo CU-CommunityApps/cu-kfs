@@ -65,14 +65,6 @@ public interface CUVendorService {
     public VendorDetail getVendorByVendorName(String vendorName);
     
     /**
-     * Retrieves the VendorDetail using a combination of vendor name and last 4 digits of the tax ID.  
-     * @param vendorName
-     * @param lastFour
-     * @return
-     */
-    public VendorDetail getVendorByNamePlusLastFourOfTaxID(String vendorName, String lastFour);
-    
-    /**
      * Gets the apo limit for the given parameters using the following logic:<br>
      * <br>
      * First it checks to see if an existing {@link org.kuali.kfs.vnd.businessobject.VendorContractOrganization} object exists for the
@@ -201,7 +193,5 @@ public interface CUVendorService {
      * @return VendorContract B2B Contract for given vendor
      */
     public VendorContract getVendorB2BContract(VendorDetail vendorDetail, String campus);
-    
-    public VendorHeader getVendorByEin(String vendorEin);
 
 }
