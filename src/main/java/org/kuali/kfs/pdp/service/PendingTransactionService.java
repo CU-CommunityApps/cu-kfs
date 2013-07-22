@@ -61,13 +61,6 @@ public interface PendingTransactionService {
      */  
     
     public void generateStopGeneralLedgerPendingEntry(PaymentGroup paymentGroup);
-    
-    /**
-     * Generates GLPE entries for a stale payment.
-     * 
-     * @param paymentGroup
-     */
-    public void generateStaleGeneralLedgerPendingEntry(PaymentGroup paymentGroup);
 
     /**
      * Save a transaction
