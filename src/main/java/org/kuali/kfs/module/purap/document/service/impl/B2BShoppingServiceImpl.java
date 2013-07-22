@@ -75,6 +75,7 @@ import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 public class B2BShoppingServiceImpl implements B2BShoppingService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(B2BShoppingServiceImpl.class);
 
+    private static final String TRUE = "true";
     private B2BDao b2bDao;
     private BusinessObjectService businessObjectService;
     private KualiConfigurationService kualiConfigurationService;
@@ -361,6 +362,17 @@ public class B2BShoppingServiceImpl implements B2BShoppingService {
       
         reqItem.setItemRestrictedIndicator(false);
 
+        // KFSPTS-2257 : eshopflag
+        Map<String, String> classification = item.getClassification();
+        reqItem.setControlled(StringUtils.equals(TRUE,classification.get("Controlled")));
+        reqItem.setRadioactiveMinor(StringUtils.equals(TRUE,classification.get("RadioactiveMinor")));
+        reqItem.setGreen(StringUtils.equals(TRUE,classification.get("Green")));
+        reqItem.setHazardous(StringUtils.equals(TRUE,classification.get("Hazardous")));
+        reqItem.setSelectAgent(StringUtils.equals(TRUE,classification.get("SelectAgent")));
+        reqItem.setRadioactive(StringUtils.equals(TRUE,classification.get("Radioactive")));
+        reqItem.setToxin(StringUtils.equals(TRUE,classification.get("Toxin")));
+        reqItem.setRecycled(StringUtils.equals(TRUE,classification.get("GreenProduct")));
+        reqItem.setEnergyStar(StringUtils.equals(TRUE,classification.get("EnergyStar")));
         return reqItem;
     }
     

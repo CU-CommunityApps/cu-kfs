@@ -17,7 +17,6 @@
 package org.kuali.kfs.module.purap.businessobject;
 
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
-import org.kuali.rice.kns.util.KualiDecimal;
 
 /**
  * Requisition Item Business Object.
@@ -25,7 +24,6 @@ import org.kuali.rice.kns.util.KualiDecimal;
 public class RequisitionItem extends PurchasingItemBase {
 
     private boolean itemRestrictedIndicator;
-        
     /**
      * Default constructor.
      */
@@ -62,5 +60,42 @@ public class RequisitionItem extends PurchasingItemBase {
     public Class getUseTaxClass() {
         return PurchaseRequisitionItemUseTax.class;
     }
-    
+
+    // KFSPTS-2257
+	public String getEshopFlags() {
+		StringBuilder sb = new StringBuilder();
+		if (isControlled()) {
+			sb.append("Controlled,");
+		}
+		if (isEnergyStar()) {
+			sb.append("Energy Star,");
+		}
+		if (isSelectAgent()) {
+			sb.append("Select Agent,");
+		}
+		if (isRadioactive()) {
+			sb.append("Radioactive,");
+		}
+		if (isRadioactiveMinor()) {
+			sb.append("Radioactive Minor,");
+		}
+		if (isRecycled()) {
+			sb.append("Recycled,");
+		}
+		if (isGreen()) {
+			sb.append("Green,");
+		}
+		if (isToxin()) {
+			sb.append("Toxin,");
+		}
+		if (isHazardous()) {
+			sb.append("Hazardous,");
+		}
+        if (sb.length() == 0) {
+        	return "No e-Shop flag is set to true";
+        }
+		return sb.substring(0, sb.length()-1);
+	}
+	
+
 }

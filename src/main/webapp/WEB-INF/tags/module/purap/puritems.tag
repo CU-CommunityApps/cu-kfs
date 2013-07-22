@@ -52,11 +52,14 @@
 <c:choose>
 <c:when test="${displayRequisitionFields}">
 	<c:set var="colSpanAmountPaid" value="0"/>
+	<c:set var="itemRowSpan" value="3"/>
 </c:when>
 <c:otherwise>
 	<c:set var="colSpanAmountPaid" value="1"/>
+	<c:set var="itemRowSpan" value="2"/>
 </c:otherwise>
 </c:choose>
+
 
 <c:choose>
 <c:when test="${displayCommodityCodeFields}">
@@ -359,7 +362,7 @@
 				<!-- table class="datatable" style="width: 100%;" -->
 
 				<tr>
-					<td class="infoline" nowrap="nowrap" rowspan="2">	    
+					<td class="infoline" nowrap="nowrap" rowspan="${itemRowSpan}">	    
 					    &nbsp;<b><bean:write name="KualiForm" property="document.item[${ctr}].itemLineNumber"/></b>&nbsp; 
 					    <c:if test="${(fullEntryMode and !amendmentEntry) and !lockB2BEntry}">
 						    <html:image property="methodToCall.upItem.line${ctr}"
@@ -501,7 +504,7 @@
 						</td>
 					</c:if>
 					
-					<td class="infoline" rowspan="2" colspan="${colSpanAction}">
+					<td class="infoline" rowspan="${itemRowSpan}" colspan="${colSpanAction}">
 					    <div align="center">				
 					    	<c:choose>		    	
 					    	<c:when test="${fullEntryMode and !amendmentEntry or amendmentEntry and (itemLine.itemInvoicedTotalAmount == null or itemLine.newItemForAmendment)}">
@@ -539,6 +542,20 @@
 					    
 					</c:if>
 				</tr>
+				<!-- KFSPTS-2257 -->
+				<c:if test="${displayRequisitionFields}">
+				    <tr>
+				       <th align="right">
+				          e-Shop Flags
+				       </th>
+				       <td class="infoline" colspan="7">
+				          <kul:htmlControlAttribute
+						        attributeEntry="${itemAttributes.totalAmount}"
+						        property="document.item[${ctr}].eshopFlags" readOnly="true"/>
+				       </td>
+				    
+				    </tr>
+				</c:if> 					
 				
 				<c:set var="accountColumnCount" value="${mainColumnCount - colSpanAction - 1}"/>
 				<c:if test="${isATypeOfPODoc}">
