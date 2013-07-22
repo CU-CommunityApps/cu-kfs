@@ -52,6 +52,16 @@ public class KFSParameterKeyConstants implements ParameterKeyConstants {
         public static final String DEMERGE_DOCUMENT_TYPES = "DEMERGE_DOCUMENT_TYPES";
     }
     
+    public static class GeneralLedgerSysParmeterKeys {
+    	 public static final String EXPENSE_OBJECT_TYPE_CODE_PARAM = "EXPENSE_OBJECT_TYPE_CODE";
+    	 public static final String INCOME_OBJECT_TYPE_CODE_PARAM = "INCOME_OBJECT_TYPE_CODE";
+    	 public static final String CASH_BUDGET_RECORD_LEVEL_PARM = "CASH_BUDGET_RECORD_LEVEL";
+    	 public static final String FUND_BALANCE_OBJECT_CODE_PARAM = "FUND_BALANCE_OBJECT_CODE";
+    	 public static final String CURRENT_ASSET_OBJECT_CODE_PARAM = "CURRENT_ASSET_OBJECT_CODE";
+    	 public static final String CURRENT_LIABILITY_OBJECT_CODE_PARAM = "CURRENT_LIABILITY_OBJECT_CODE";
+    	 public static final String ENCUMBRANCE_BALANCE_TYPE_PARAM = "ENCUMBRANCE_BALANCE_TYPE";
+    	 }
+    
     //KFSPTS-1460: Added constants.
 	public static final String KFS_PDP = "KFS-PDP";
     public static final String ALL_COMPONENTS = "All";

@@ -20,6 +20,10 @@ package org.kuali.kfs.sys;
  * Holds error key constants.
  */
 public class KFSKeyConstants {
+	
+	//KFSPTS-1786
+	public static final String ERROR_CURRBALANCE_LOOKUP_CRITERIA_REQD = "error.currentbalance.lookup.criteria.required";
+	
     public static final String ERROR_EXISTENCE = "error.existence";
     public static final String ERROR_EXPIRED = "error.expired";
     public static final String ERROR_INACTIVE = "error.inactive";
