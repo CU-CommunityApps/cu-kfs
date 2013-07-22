@@ -42,7 +42,7 @@ public interface B2BPurchaseOrderService {
      * @param vendorDuns            String - vendor DUNS number for the PO
      * @return String which is the cxml of the PO to send to the vendor
      */
-    public String getCxml(PurchaseOrderDocument purchaseOrder, String requisitionInitiatorId, String password, ContractManager contractManager, String contractManagerEmail, String vendorDuns);
+    public String getCxml(PurchaseOrderDocument purchaseOrder, String requisitionInitiatorId, String password, ContractManager contractManager, String contractManagerEmail, String vendorDuns, boolean includeNewFields);
     // KFSPTS-794 : added includeNewFields argument
     /**
      * Verifies that each piece of data required for the PO cXML is present.
