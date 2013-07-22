@@ -2,10 +2,13 @@ package edu.cornell.kfs.vnd.service.params;
 
 import java.io.Serializable;
 
-public class VendorAddressParam implements Serializable {
+public class VendorContactParam implements Serializable {
 
-    private Integer vendorAddressGeneratedIdentifier;
-    private String vendorAddressTypeCode;
+    private Integer vendorContactGeneratedIdentifier;
+    private String vendorContactTypeCode;
+    private String vendorContactName;
+    private String vendorContactEmailAddress;
+    private String vendorContactCommentText;
     private String vendorLine1Address;
     private String vendorLine2Address;
     private String vendorCityName;
@@ -14,17 +17,30 @@ public class VendorAddressParam implements Serializable {
     private String vendorCountryCode;
     private String vendorAttentionName;
     private String vendorAddressInternationalProvinceName;
-    private String vendorAddressEmailAddress;
-    private String vendorBusinessToBusinessUrlAddress;
-    private String vendorFaxNumber;
-    private boolean vendorDefaultAddressIndicator;
-    private String purchaseOrderTransmissionMethodCode;
     private boolean active;
-	public String getVendorAddressTypeCode() {
-		return vendorAddressTypeCode;
+	public String getVendorContactTypeCode() {
+		return vendorContactTypeCode;
 	}
-	public void setVendorAddressTypeCode(String vendorAddressTypeCode) {
-		this.vendorAddressTypeCode = vendorAddressTypeCode;
+	public void setVendorContactTypeCode(String vendorContactTypeCode) {
+		this.vendorContactTypeCode = vendorContactTypeCode;
+	}
+	public String getVendorContactName() {
+		return vendorContactName;
+	}
+	public void setVendorContactName(String vendorContactName) {
+		this.vendorContactName = vendorContactName;
+	}
+	public String getVendorContactEmailAddress() {
+		return vendorContactEmailAddress;
+	}
+	public void setVendorContactEmailAddress(String vendorContactEmailAddress) {
+		this.vendorContactEmailAddress = vendorContactEmailAddress;
+	}
+	public String getVendorContactCommentText() {
+		return vendorContactCommentText;
+	}
+	public void setVendorContactCommentText(String vendorContactCommentText) {
+		this.vendorContactCommentText = vendorContactCommentText;
 	}
 	public String getVendorLine1Address() {
 		return vendorLine1Address;
@@ -75,51 +91,18 @@ public class VendorAddressParam implements Serializable {
 			String vendorAddressInternationalProvinceName) {
 		this.vendorAddressInternationalProvinceName = vendorAddressInternationalProvinceName;
 	}
-	public String getVendorAddressEmailAddress() {
-		return vendorAddressEmailAddress;
-	}
-	public void setVendorAddressEmailAddress(String vendorAddressEmailAddress) {
-		this.vendorAddressEmailAddress = vendorAddressEmailAddress;
-	}
-	public String getVendorBusinessToBusinessUrlAddress() {
-		return vendorBusinessToBusinessUrlAddress;
-	}
-	public void setVendorBusinessToBusinessUrlAddress(
-			String vendorBusinessToBusinessUrlAddress) {
-		this.vendorBusinessToBusinessUrlAddress = vendorBusinessToBusinessUrlAddress;
-	}
-	public String getVendorFaxNumber() {
-		return vendorFaxNumber;
-	}
-	public void setVendorFaxNumber(String vendorFaxNumber) {
-		this.vendorFaxNumber = vendorFaxNumber;
-	}
-	public boolean isVendorDefaultAddressIndicator() {
-		return vendorDefaultAddressIndicator;
-	}
-	public void setVendorDefaultAddressIndicator(
-			boolean vendorDefaultAddressIndicator) {
-		this.vendorDefaultAddressIndicator = vendorDefaultAddressIndicator;
-	}
-	public String getPurchaseOrderTransmissionMethodCode() {
-		return purchaseOrderTransmissionMethodCode;
-	}
-	public void setPurchaseOrderTransmissionMethodCode(
-			String purchaseOrderTransmissionMethodCode) {
-		this.purchaseOrderTransmissionMethodCode = purchaseOrderTransmissionMethodCode;
-	}
-	public Integer getVendorAddressGeneratedIdentifier() {
-		return vendorAddressGeneratedIdentifier;
-	}
-	public void setVendorAddressGeneratedIdentifier(
-			Integer vendorAddressGeneratedIdentifier) {
-		this.vendorAddressGeneratedIdentifier = vendorAddressGeneratedIdentifier;
-	}
 	public boolean isActive() {
 		return active;
 	}
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+	public Integer getVendorContactGeneratedIdentifier() {
+		return vendorContactGeneratedIdentifier;
+	}
+	public void setVendorContactGeneratedIdentifier(
+			Integer vendorContactGeneratedIdentifier) {
+		this.vendorContactGeneratedIdentifier = vendorContactGeneratedIdentifier;
 	}
 
 }
