@@ -159,6 +159,9 @@
 		<property name="businessObjectService">
 			<ref bean="businessObjectService" />
 		</property>
+		<property name="vendorLookupableHelperServiceImpl">
+			<ref bean="vendorLookupableHelperService" />
+		</property>
 	</bean>
 	
 </beans>
