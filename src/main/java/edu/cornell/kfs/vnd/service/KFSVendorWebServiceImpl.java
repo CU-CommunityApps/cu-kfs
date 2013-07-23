@@ -1,5 +1,6 @@
 package edu.cornell.kfs.vnd.service;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +21,12 @@ import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.kns.UserSession;
+import org.kuali.rice.kns.bo.Attachment;
+import org.kuali.rice.kns.bo.Note;
 import org.kuali.rice.kns.document.MaintenanceDocument;
+import org.kuali.rice.kns.service.AttachmentService;
 import org.kuali.rice.kns.service.DocumentService;
+import org.kuali.rice.kns.service.NoteService;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.MessageMap;
 import org.kuali.rice.kns.util.ObjectUtils;
@@ -444,11 +449,23 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	}
 
 	// TODO : this is temporary POC of attachment.  DO NOT Commit to prod
-	public String retrieveKfsVendorByEin_att(String vendorEin) throws Exception {
-		FileOutputStream bas64Out = new FileOutputStream("C:\\temp\\testBase64.pdf");
-		bas64Out.write(Base64Utility.decode(vendorEin));
-		bas64Out.close();
-		return VENDOR_NOT_FOUND;
+	public String uploadAttachment(String vendorId, String fileData, String fileName, String noteText) throws Exception {
+		try {
+        GlobalVariables.setUserSession(new UserSession("kfs"));
+		VendorDetail vendor = SpringContext.getBean(VendorService.class).getVendorDetail(vendorId);
+		byte[] fileDataBytes = Base64Utility.decode(fileData);
+        Attachment attachment = SpringContext.getBean(AttachmentService.class).createAttachment(vendor, fileName, "application/pdf", fileDataBytes.length, new ByteArrayInputStream(fileDataBytes), null);
+        Note newNote = new Note();
+        newNote.setNoteText(noteText);
+        newNote.setAttachment(attachment);
+        Note tmpNote = SpringContext.getBean(NoteService.class).createNote(newNote, vendor);
+        SpringContext.getBean(NoteService.class).save(tmpNote);
+//		FileOutputStream bas64Out = new FileOutputStream("C:\\temp\\testBase64.pdf");
+//		bas64Out.write(Base64Utility.decode(vendorEin));
+//		bas64Out.close();
+		return "upload Attachment ok";
+		} catch (Exception e) {
+			return "Failed request : "+ e.getMessage();		}
 	}
 	public String retrieveKfsVendorByEin(String vendorEin) throws Exception {
 		VendorHeader vendor = SpringContext.getBean(CUVendorService.class).getVendorByEin(vendorEin);

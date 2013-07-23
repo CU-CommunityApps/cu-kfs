@@ -99,4 +99,12 @@ public String retrieveKfsVendorByEin(
 		  @WebParam(name = "vendorEin")String vendorEin
 		  ) throws Exception;
 
+public String uploadAttachment(
+		  @WebParam(name = "vendorId")String vendorId,
+		  @WebParam(name = "fileData")String fileData,
+		  @WebParam(name = "fileName")String fileName,
+		  @WebParam(name = "noteText")String noteText
+		  ) throws Exception;
+
+
 }
