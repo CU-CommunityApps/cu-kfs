@@ -22,7 +22,6 @@ package org.kuali.kfs.pdp.service;
 import java.util.Iterator;
 
 import org.kuali.kfs.pdp.businessobject.GlPendingTransaction;
-import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 
 /**
@@ -44,6 +43,14 @@ public interface PendingTransactionService {
      * @param paymentGroup payment group record to create GLPE for
      */
     public void generateCancellationGeneralLedgerPendingEntry(PaymentGroup paymentGroup);
+    
+    /**
+     * Creates GLPE entries for a check cancel and stores to PDP pending entry table. Debit/Credit codes are reversed backing
+     * out the original GLPEs for the payment and reversing the entries for the source documents for DVCA, PREQ, CM.
+     * 
+     * @param paymentGroup payment group record to create GLPE for
+     */
+    public void generateCRCancellationGeneralLedgerPendingEntry(PaymentGroup paymentGroup);
 
     /**
      * Creates GLPE entries for a reissue and stores to PDP pending entry table. Debit/Credit codes are
@@ -61,6 +68,13 @@ public interface PendingTransactionService {
      */  
     
     public void generateStopGeneralLedgerPendingEntry(PaymentGroup paymentGroup);
+    
+    /**
+     * Generates GLPE entries for a stale payment.
+     * 
+     * @param paymentGroup
+     */
+    public void generateStaleGeneralLedgerPendingEntry(PaymentGroup paymentGroup);
 
     /**
      * Save a transaction
