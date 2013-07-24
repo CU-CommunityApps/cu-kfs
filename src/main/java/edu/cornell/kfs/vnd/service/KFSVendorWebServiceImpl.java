@@ -11,6 +11,7 @@ import javax.jws.WebService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.common.util.Base64Utility;
+import org.apache.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -33,6 +34,7 @@ import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 import edu.cornell.kfs.vnd.document.service.CUVendorService;
+import edu.cornell.kfs.vnd.document.service.impl.CUVendorServiceImpl;
 import edu.cornell.kfs.vnd.service.params.VendorAddressParam;
 import edu.cornell.kfs.vnd.service.params.VendorContactParam;
 import edu.cornell.kfs.vnd.service.params.VendorSupplierDiversityParam;
@@ -51,6 +53,7 @@ import edu.cornell.kfs.vnd.service.params.VendorSupplierDiversityParam;
 public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 
 	private static final String VENDOR_NOT_FOUND ="Vendor Not Found";
+    private static Logger LOG = Logger.getLogger(KFSVendorWebServiceImpl.class);
 	/**
 	 * 
 	 */
@@ -448,17 +451,25 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 		return vendorValues.toString();
 	}
 
-	// TODO : this is temporary POC of attachment.  DO NOT Commit to prod
 	public String uploadAttachment(String vendorId, String fileData, String fileName, String noteText) throws Exception {
 		try {
+			LOG.info("Starting uploadAttachment");
         GlobalVariables.setUserSession(new UserSession("kfs"));
 		VendorDetail vendor = SpringContext.getBean(VendorService.class).getVendorDetail(vendorId);
+		if (vendor == null) {
+			return VENDOR_NOT_FOUND;
+		}
 		byte[] fileDataBytes = Base64Utility.decode(fileData);
+		LOG.info("call service to create attachment");
         Attachment attachment = SpringContext.getBean(AttachmentService.class).createAttachment(vendor, fileName, "application/pdf", fileDataBytes.length, new ByteArrayInputStream(fileDataBytes), null);
         Note newNote = new Note();
         newNote.setNoteText(noteText);
         newNote.setAttachment(attachment);
+		LOG.info("create tempnote");
+
         Note tmpNote = SpringContext.getBean(NoteService.class).createNote(newNote, vendor);
+		LOG.info("save note");
+
         SpringContext.getBean(NoteService.class).save(tmpNote);
 //		FileOutputStream bas64Out = new FileOutputStream("C:\\temp\\testBase64.pdf");
 //		bas64Out.write(Base64Utility.decode(vendorEin));

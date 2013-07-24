@@ -124,12 +124,12 @@ public class CUVendorServiceImpl extends VendorServiceImpl implements CUVendorSe
     }
 
     public VendorHeader getVendorByEin(String vendorEin) {
-        LOG.info("Entering getVendorByEin for getVendorByEin:" + vendorEin);
+        LOG.info("Entering getVendorByEin f:" );
         Map criteria = new HashMap();
         criteria.put(VendorPropertyConstants.VENDOR_TAX_NUMBER_ONLY, vendorEin);
         criteria.put("VNDR_TAX_TYP_CD", "FEIN");
         List<VendorHeader> vds = (List) businessObjectService.findMatching(VendorHeader.class, criteria);
-        LOG.debug("Exiting getVendorByVendorName.");
+        LOG.debug("Exiting getVendorByEin.");
         if (vds.size() < 1) {
             return null;
         }
