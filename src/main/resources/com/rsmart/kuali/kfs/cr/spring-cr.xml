@@ -111,8 +111,9 @@
 	</bean>
 	
 	<bean id="crGlTransactionStep" class="com.rsmart.kuali.kfs.cr.batch.GlTransactionStep" parent="step">
-		<property name="businessObjectService"      ref="businessObjectService" />
-		<property name="glTransactionService"       ref="crGlTransactionService" />
+		<property name="businessObjectService"       ref="businessObjectService" />
+		<property name="glTransactionService"        ref="crGlTransactionService" />
+		<property name="glPendingTransactionService" ref="pdpGlPendingTransactionService" />
 	</bean>
 		
 	<bean id="crGlTransJobTrigger" parent="cronTrigger">
