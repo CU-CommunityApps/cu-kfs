@@ -2,6 +2,7 @@ package edu.cornell.kfs.vnd.service;
 
 import java.util.List;
 
+import javax.activation.DataHandler;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
@@ -102,6 +103,13 @@ public String retrieveKfsVendorByEin(
 public String uploadAttachment(
 		  @WebParam(name = "vendorId")String vendorId,
 		  @WebParam(name = "fileData")String fileData,
+		  @WebParam(name = "fileName")String fileName,
+		  @WebParam(name = "noteText")String noteText
+		  ) throws Exception;
+
+public String uploadAtt(
+		  @WebParam(name = "vendorId")String vendorId,
+		  @WebParam(name = "fileData")DataHandler fileData,
 		  @WebParam(name = "fileName")String fileName,
 		  @WebParam(name = "noteText")String noteText
 		  ) throws Exception;

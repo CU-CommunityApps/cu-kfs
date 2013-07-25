@@ -1,11 +1,12 @@
 package edu.cornell.kfs.vnd.service;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jws.WebParam;
+import javax.activation.DataHandler;
 import javax.jws.WebService;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -34,7 +35,6 @@ import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 import edu.cornell.kfs.vnd.document.service.CUVendorService;
-import edu.cornell.kfs.vnd.document.service.impl.CUVendorServiceImpl;
 import edu.cornell.kfs.vnd.service.params.VendorAddressParam;
 import edu.cornell.kfs.vnd.service.params.VendorContactParam;
 import edu.cornell.kfs.vnd.service.params.VendorSupplierDiversityParam;
@@ -478,6 +478,40 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 		} catch (Exception e) {
 			return "Failed request : "+ e.getMessage();		}
 	}
+	
+	public String uploadAtt(String vendorId, DataHandler fileData, String fileName, String noteText) throws Exception {
+		try {
+			LOG.info("Starting uploadAtt");
+        GlobalVariables.setUserSession(new UserSession("kfs"));
+		VendorDetail vendor = SpringContext.getBean(VendorService.class).getVendorDetail(vendorId);
+		if (vendor == null) {
+			return VENDOR_NOT_FOUND;
+		}
+        BufferedInputStream bin = new BufferedInputStream(fileData.getInputStream());
+	 
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int c;
+        while ((c = bin.read()) != -1) buffer.write(c);
+	                   
+        bin.close();
+        Attachment attachment = SpringContext.getBean(AttachmentService.class).createAttachment(vendor, fileName, "application/pdf", buffer.toByteArray().length, fileData.getInputStream(), null);
+        Note newNote = new Note();
+        newNote.setNoteText(noteText);
+        newNote.setAttachment(attachment);
+		LOG.info("create tempnote");
+
+        Note tmpNote = SpringContext.getBean(NoteService.class).createNote(newNote, vendor);
+		LOG.info("save note");
+
+        SpringContext.getBean(NoteService.class).save(tmpNote);
+//		FileOutputStream bas64Out = new FileOutputStream("C:\\temp\\testBase64.pdf");
+//		bas64Out.write(Base64Utility.decode(vendorEin));
+//		bas64Out.close();
+		return "upload Attachment ok";
+		} catch (Exception e) {
+			return "Failed request : "+ e.getMessage();		}
+	}
+
 	public String retrieveKfsVendorByEin(String vendorEin) throws Exception {
 		VendorHeader vendor = SpringContext.getBean(CUVendorService.class).getVendorByEin(vendorEin);
 		if (vendor != null) {
