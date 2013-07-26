@@ -35,6 +35,7 @@
     <bean id="SubFundProgram-programCode" parent="SubFundProgram-programCode-parentBean"/>
     
     <bean id="SubFundProgram-programCode-parentBean" abstract="true" parent="AttributeDefinition">
+    	<property name="forceUppercase" value="true"/>
     	<property name="name" value="programCode"/>
     	<property name="label" value="Sub-Fund Program Code"/>
     	<property name="shortLabel" value="Sub-Fund Program Code"/>
