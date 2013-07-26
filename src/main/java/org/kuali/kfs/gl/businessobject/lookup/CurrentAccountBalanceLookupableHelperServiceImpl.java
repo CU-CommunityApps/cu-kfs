@@ -207,9 +207,9 @@ public class CurrentAccountBalanceLookupableHelperServiceImpl extends AbstractGe
 		KFSParameterKeyConstants.GeneralLedgerSysParmeterKeys.EXPENSE_OBJECT_TYPE_CODE_PARAM);
 	List<String> fundBalanceObjCodes = this.getParameterService().getParameterValues(CurrentAccountBalance.class,
 		KFSParameterKeyConstants.GeneralLedgerSysParmeterKeys.FUND_BALANCE_OBJECT_CODE_PARAM);
-	List<String> currentAssetObjCodes = this.getParameterService().getParameterValues(CurrentAccountBalance.class,
+	List<String> currentAssetObjTypeCodes = this.getParameterService().getParameterValues(CurrentAccountBalance.class,
 		KFSParameterKeyConstants.GeneralLedgerSysParmeterKeys.CURRENT_ASSET_OBJECT_CODE_PARAM);
-	List<String> currentLiabilityObjCodes = this.getParameterService().getParameterValues(CurrentAccountBalance.class,
+	List<String> currentLiabilityObjTypeCodes = this.getParameterService().getParameterValues(CurrentAccountBalance.class,
 		KFSParameterKeyConstants.GeneralLedgerSysParmeterKeys.CURRENT_LIABILITY_OBJECT_CODE_PARAM);
 	List<String> incomeObjTypeCodes = this.getParameterService().getParameterValues(CurrentAccountBalance.class,
 		KFSParameterKeyConstants.GeneralLedgerSysParmeterKeys.INCOME_OBJECT_TYPE_CODE_PARAM);
@@ -248,23 +248,21 @@ public class CurrentAccountBalanceLookupableHelperServiceImpl extends AbstractGe
 
 	// Beginning Current Assets (C)
 	if (isCashBdgtRecording) {
-	    if (currentAssetObjCodes.contains(objectCode)) {
-		currentBalance.setBeginningCurrentAssets(add(currentBalance.getBeginningCurrentAssets(), accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_BEGINNING_BALANCE)));
+	    if (currentAssetObjTypeCodes.contains(objectTypeCode)) {
+		currentBalance.setBeginningCurrentAssets(add(currentBalance.getBeginningCurrentAssets(), accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_BEGINNING_BALANCE)));		
+	    }
+	} else {
+	    currentBalance.setBeginningCurrentAssets(KualiDecimal.ZERO);	    
+	}
+ 
+	 //Beginning Current Liabilities (D)
+	if (isCashBdgtRecording) {
+	    if (currentLiabilityObjTypeCodes.contains(objectTypeCode)) {
 		currentBalance.setBeginningCurrentLiabilities(add(currentBalance.getBeginningCurrentLiabilities(), accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_BEGINNING_BALANCE)));
 	    }
 	} else {
-	    currentBalance.setBeginningCurrentAssets(KualiDecimal.ZERO);
 	    currentBalance.setBeginningCurrentLiabilities(KualiDecimal.ZERO);
 	}
- 
-	// Beginning Current Liabilities (D)
-	//if (isCashBdgtRecording) {
-	//    if (currentLiabilityObjCodes.contains(objectCode)) {
-	//	currentBalance.setBeginningCurrentLiabilities(add(currentBalance.getBeginningCurrentLiabilities(), accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_BEGINNING_BALANCE)));
-	//    }
-	//} else {
-	//    currentBalance.setBeginningCurrentLiabilities(KualiDecimal.ZERO);
-	//}
 
 	// Total Income (E)
 	if (isCashBdgtRecording) {
