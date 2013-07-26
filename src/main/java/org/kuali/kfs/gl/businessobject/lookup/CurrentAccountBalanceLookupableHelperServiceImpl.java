@@ -250,19 +250,21 @@ public class CurrentAccountBalanceLookupableHelperServiceImpl extends AbstractGe
 	if (isCashBdgtRecording) {
 	    if (currentAssetObjCodes.contains(objectCode)) {
 		currentBalance.setBeginningCurrentAssets(add(currentBalance.getBeginningCurrentAssets(), accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_BEGINNING_BALANCE)));
-	    }
-	} else {
-	    currentBalance.setBeginningCurrentAssets(KualiDecimal.ZERO);
-	}
-
-	// Beginning Current Liabilities (D)
-	if (isCashBdgtRecording) {
-	    if (currentLiabilityObjCodes.contains(objectCode)) {
 		currentBalance.setBeginningCurrentLiabilities(add(currentBalance.getBeginningCurrentLiabilities(), accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_BEGINNING_BALANCE)));
 	    }
 	} else {
+	    currentBalance.setBeginningCurrentAssets(KualiDecimal.ZERO);
 	    currentBalance.setBeginningCurrentLiabilities(KualiDecimal.ZERO);
 	}
+ 
+	// Beginning Current Liabilities (D)
+	//if (isCashBdgtRecording) {
+	//    if (currentLiabilityObjCodes.contains(objectCode)) {
+	//	currentBalance.setBeginningCurrentLiabilities(add(currentBalance.getBeginningCurrentLiabilities(), accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_BEGINNING_BALANCE)));
+	//    }
+	//} else {
+	//    currentBalance.setBeginningCurrentLiabilities(KualiDecimal.ZERO);
+	//}
 
 	// Total Income (E)
 	if (isCashBdgtRecording) {
