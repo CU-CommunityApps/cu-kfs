@@ -3,6 +3,7 @@ package com.rsmart.kuali.kfs.cr.document;
 import java.sql.Date;
 
 import org.apache.ojb.broker.cache.RuntimeCacheException;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
 import org.kuali.rice.kew.exception.WorkflowException;
@@ -27,12 +28,14 @@ public class CheckReconciliationMaintainableImpl extends FinancialSystemMaintain
     public void doRouteStatusChange(DocumentHeader documentHeader) {
         KualiWorkflowDocument workflowDocument = documentHeader.getWorkflowDocument();
 
-        if (workflowDocument.stateIsProcessed()) {
+        if (workflowDocument.stateIsProcessed() && !KFSConstants.MAINTENANCE_NEW_ACTION.equalsIgnoreCase(getMaintenanceAction())) {
 
             DocumentService documentService = SpringContext.getBean(DocumentService.class);
             MaintenanceDocument document;
             try {
                 document = (MaintenanceDocument) documentService.getByDocumentHeaderId(documentHeader.getDocumentNumber());
+
+
                 CheckReconciliation oldCr = (CheckReconciliation) document.getOldMaintainableObject().getBusinessObject();
                 CheckReconciliation newCr = (CheckReconciliation) document.getNewMaintainableObject().getBusinessObject();
 
