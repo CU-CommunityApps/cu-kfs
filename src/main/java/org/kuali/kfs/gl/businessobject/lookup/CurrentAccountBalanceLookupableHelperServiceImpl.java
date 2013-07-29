@@ -222,23 +222,14 @@ public class CurrentAccountBalanceLookupableHelperServiceImpl extends AbstractGe
 	String objectTypeCode = balance.getObjectTypeCode();
 	String objectCode = balance.getObjectCode();
 	Account account = balance.getAccount();
-	
-	String accNum = account.getAccountNumber();
-	String coaCd = account.getChartOfAccountsCode();
-	Map pk = new HashMap();
-    pk.put("FIN_COA_CD", coaCd);
-    pk.put("ACCOUNT_NBR", accNum);
-    
-	 Account acct = (Account) SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(Account.class, pk);
+	String bdgtCd = account.getBudgetRecordingLevelCode();
 
-
-	
-	if (ObjectUtils.isNull(account)) {
+	if (ObjectUtils.isNull(account) || ObjectUtils.isNull(bdgtCd)) {
 		 account = SpringContext.getBean(AccountService.class).getByPrimaryId(balance.getChartOfAccountsCode(), balance.getAccountNumber());
 		 balance.setAccount(account);
 		 currentBalance.setAccount(account);
 		 }
-	boolean isCashBdgtRecording = cashBudgetRecordLevelCodes.contains(acct.getBudgetRecordingLevelCode());
+	boolean isCashBdgtRecording = cashBudgetRecordLevelCodes.contains(account.getBudgetRecordingLevelCode());
 
 	// Current Budget (A)
 	if (isCashBdgtRecording) {
