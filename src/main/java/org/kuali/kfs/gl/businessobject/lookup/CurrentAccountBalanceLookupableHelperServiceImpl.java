@@ -43,6 +43,7 @@ import org.kuali.rice.kim.service.PersonService;
 import org.kuali.rice.kns.bo.BusinessObject;
 import org.kuali.rice.kns.exception.ValidationException;
 import org.kuali.rice.kns.lookup.HtmlData;
+import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
@@ -221,12 +222,23 @@ public class CurrentAccountBalanceLookupableHelperServiceImpl extends AbstractGe
 	String objectTypeCode = balance.getObjectTypeCode();
 	String objectCode = balance.getObjectCode();
 	Account account = balance.getAccount();
+	
+	String accNum = account.getAccountNumber();
+	String coaCd = account.getChartOfAccountsCode();
+	Map pk = new HashMap();
+    pk.put("FIN_COA_CD", coaCd);
+    pk.put("ACCOUNT_NBR", accNum);
+    
+	 Account acct = (Account) SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(Account.class, pk);
+
+
+	
 	if (ObjectUtils.isNull(account)) {
 		 account = SpringContext.getBean(AccountService.class).getByPrimaryId(balance.getChartOfAccountsCode(), balance.getAccountNumber());
 		 balance.setAccount(account);
 		 currentBalance.setAccount(account);
 		 }
-	boolean isCashBdgtRecording = cashBudgetRecordLevelCodes.contains(account.getBudgetRecordingLevelCode());
+	boolean isCashBdgtRecording = cashBudgetRecordLevelCodes.contains(acct.getBudgetRecordingLevelCode());
 
 	// Current Budget (A)
 	if (isCashBdgtRecording) {
