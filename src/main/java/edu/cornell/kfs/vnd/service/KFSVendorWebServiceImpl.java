@@ -70,7 +70,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
         
         // create and route doc as system user
         GlobalVariables.setUserSession(new UserSession("kfs"));
-        
+        LOG.info("addVendor "+vendorName);       
         try {
         	DocumentService docService = SpringContext.getBean(DocumentService.class);
         	
@@ -92,6 +92,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
         	// how do we know that this is just to change the address type code.  should there is another filed, say 'oldAddressTypeCode' ?
         	ArrayList<VendorAddress> vAddrs = new ArrayList<VendorAddress>();
 			for (VendorAddressParam address : addresses) {
+		        LOG.info("addVendor address "+address);       
 				VendorAddress vendorAddr = new VendorAddress();
 				vendorAddr.setVendorAddressTypeCode(address.getVendorAddressTypeCode());
 				vendorAddr.setVendorLine1Address(address.getVendorLine1Address());
@@ -127,6 +128,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
         	// Contact type does not have "VT" which is originally set up
         	ArrayList<VendorContact> vendorContacts = new ArrayList<VendorContact>();
         	for (VendorContactParam contact : contacts) {
+		        LOG.info("addVendor contact "+contact);       
             	VendorContact vContact = new VendorContact();
             	vContact.setVendorContactTypeCode(contact.getVendorContactTypeCode());
             	vContact.setVendorContactName(contact.getVendorContactName());
@@ -147,6 +149,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 
         	ArrayList<VendorPhoneNumber> vendorPhoneNumbers = new ArrayList<VendorPhoneNumber>();
         	for (VendorPhoneNumberParam phoneNumber : phoneNumbers) {
+		        LOG.info("addVendor phoneNumber "+phoneNumber);       
         		VendorPhoneNumber vPhoneNumber = new VendorPhoneNumber();
             	vPhoneNumber.setVendorPhoneTypeCode(phoneNumber.getVendorPhoneTypeCode());
             	vPhoneNumber.setVendorPhoneNumber(phoneNumber.getVendorPhoneNumber());
@@ -169,6 +172,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 
         	ArrayList<VendorSupplierDiversity> vendorSupplierDiversitys = new ArrayList<VendorSupplierDiversity>();
         	for (VendorSupplierDiversityParam diversity : supplierDiversitys) {
+		        LOG.info("addVendor diversity "+diversity);       
         		VendorSupplierDiversity vDiversity = new VendorSupplierDiversity();
 
                 vDiversity.setVendorSupplierDiversityCode(diversity.getVendorSupplierDiversityCode());
@@ -210,6 +214,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 
 			vendorDoc.getDocumentHeader().setDocumentDescription("Update vendor from Procurement tool");
 
+			LOG.info("updateVendor " + vendorNumber);
 				VendorDetail vendor = retrieveVendor(vendorNumber, "VENDORID");
 				if (vendor != null) {
 					// Vendor does not eist
@@ -236,6 +241,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 
 			for (VendorAddressParam address : addresses) {
 				VendorAddress vendorAddr = new VendorAddress();
+				LOG.info("updateVendor ADDRESS " + address);
 				if (address.getVendorAddressGeneratedIdentifier() != null) {
 					vendorAddr = getVendorAddress(vDetail, address.getVendorAddressGeneratedIdentifier());
 				}
@@ -275,6 +281,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 //			vDetail.setVendorAddresses(vAddrs);
 
         	for (VendorContactParam contact : contacts) {
+				LOG.info("updateVendor contact " + contact);
             	VendorContact vContact = new VendorContact();
             	if (contact.getVendorContactGeneratedIdentifier() != null) {
             		vContact = getVendorContact(vDetail, contact.getVendorContactGeneratedIdentifier());
@@ -301,6 +308,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 
         	
         	for (VendorPhoneNumberParam phoneNumber : phoneNumbers) {
+				LOG.info("updateVendor phoneNumber " + phoneNumber);
         		VendorPhoneNumber vPhoneNumber = new VendorPhoneNumber();
             	if (phoneNumber.getVendorPhoneGeneratedIdentifier() != null) {
             		vPhoneNumber = getVendorPhoneNumber(vDetail, phoneNumber.getVendorPhoneGeneratedIdentifier());
@@ -321,6 +329,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 
         	ArrayList<VendorSupplierDiversity> vendorSupplierDiversitys = new ArrayList<VendorSupplierDiversity>();
         	for (VendorSupplierDiversityParam diversity : supplierDiversitys) {
+				LOG.info("updateVendor diversity " + diversity);
         		VendorSupplierDiversity vDiversity = getVendorSupplierDiversity(vDetail.getVendorHeader(), diversity.getVendorSupplierDiversityCode());
                 boolean isExist = StringUtils.isNotBlank(vDiversity.getVendorSupplierDiversityCode());
                 vDiversity.setVendorSupplierDiversityCode(diversity.getVendorSupplierDiversityCode());
