@@ -363,7 +363,8 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 
 			return vendorDoc.getDocumentNumber();
         } catch (Exception e) {
-        	return "Failed request : "+ e.getMessage();
+        	LOG.info("updateVendor STE " + e.getStackTrace());
+        	return "Failed request : "+ e.getMessage() ;
 		} finally {
 			GlobalVariables.setUserSession(actualUserSession);
 			GlobalVariables.setMessageMap(globalErrorMap);
