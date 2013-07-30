@@ -8,6 +8,8 @@ import java.util.List;
 
 import javax.activation.DataHandler;
 import javax.jws.WebService;
+import javax.xml.bind.annotation.XmlMimeType;
+import javax.xml.ws.soap.MTOM;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -19,6 +21,7 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
+import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 import org.kuali.kfs.vnd.document.service.VendorService;
@@ -37,6 +40,7 @@ import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 import edu.cornell.kfs.vnd.document.service.CUVendorService;
 import edu.cornell.kfs.vnd.service.params.VendorAddressParam;
 import edu.cornell.kfs.vnd.service.params.VendorContactParam;
+import edu.cornell.kfs.vnd.service.params.VendorPhoneNumberParam;
 import edu.cornell.kfs.vnd.service.params.VendorSupplierDiversityParam;
 
 
@@ -49,6 +53,7 @@ import edu.cornell.kfs.vnd.service.params.VendorSupplierDiversityParam;
  * @author Dennis Friends
  * @version 1.0
  */
+@MTOM
 @WebService(endpointInterface = "edu.cornell.kfs.vnd.service.KFSVendorWebService")
 public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 
@@ -59,7 +64,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	 */
 	// TODO : need to add poTransmissionMethodCode in web service params. 'name' in contact is also required
 	public String addVendor(String vendorName, String vendorTypeCode, boolean isForeign, String taxNumber, String taxNumberType, String ownershipTypeCode, boolean isTaxable, boolean isEInvoice,
-			                 List<VendorAddressParam> addresses,List<VendorContactParam> contacts, List<VendorSupplierDiversityParam> supplierDiversitys) throws Exception {
+			                 List<VendorAddressParam> addresses,List<VendorContactParam> contacts, List<VendorPhoneNumberParam> phoneNumbers, List<VendorSupplierDiversityParam> supplierDiversitys) throws Exception {
         UserSession actualUserSession = GlobalVariables.getUserSession();
         MessageMap globalErrorMap = GlobalVariables.getMessageMap();
         
@@ -140,6 +145,18 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
         	
         	vDetail.setVendorContacts(vendorContacts);
 
+        	ArrayList<VendorPhoneNumber> vendorPhoneNumbers = new ArrayList<VendorPhoneNumber>();
+        	for (VendorPhoneNumberParam phoneNumber : phoneNumbers) {
+        		VendorPhoneNumber vPhoneNumber = new VendorPhoneNumber();
+            	vPhoneNumber.setVendorPhoneTypeCode(phoneNumber.getVendorPhoneTypeCode());
+            	vPhoneNumber.setVendorPhoneNumber(phoneNumber.getVendorPhoneNumber());
+            	vPhoneNumber.setVendorPhoneExtensionNumber(phoneNumber.getVendorPhoneExtensionNumber());
+            	vPhoneNumber.setActive(phoneNumber.isActive());
+            	vendorPhoneNumbers.add(vPhoneNumber);
+       		
+        	}
+        	
+        	vDetail.setVendorPhoneNumbers(vendorPhoneNumbers);
 
         	
         	VendorHeader vHeader = vDetail.getVendorHeader();
@@ -179,7 +196,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
   
 	public String updateVendor(String vendorName, String vendorTypeCode, boolean isForeign, String vendorNumber, 
 			String ownershipTypeCode, boolean isTaxable, boolean isEInvoice,
-			List<VendorAddressParam> addresses,List<VendorContactParam> contacts, List<VendorSupplierDiversityParam> supplierDiversitys) throws Exception {
+			List<VendorAddressParam> addresses,List<VendorContactParam> contacts, List<VendorPhoneNumberParam> phoneNumbers,List<VendorSupplierDiversityParam> supplierDiversitys) throws Exception {
 		UserSession actualUserSession = GlobalVariables.getUserSession();
 		MessageMap globalErrorMap = GlobalVariables.getMessageMap();
 
@@ -282,6 +299,26 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
        		
         	}
 
+        	
+        	for (VendorPhoneNumberParam phoneNumber : phoneNumbers) {
+        		VendorPhoneNumber vPhoneNumber = new VendorPhoneNumber();
+            	if (phoneNumber.getVendorPhoneGeneratedIdentifier() != null) {
+            		vPhoneNumber = getVendorPhoneNumber(vDetail, phoneNumber.getVendorPhoneGeneratedIdentifier());
+            	}
+            	vPhoneNumber.setVendorPhoneTypeCode(phoneNumber.getVendorPhoneTypeCode());
+            	vPhoneNumber.setVendorPhoneNumber(phoneNumber.getVendorPhoneNumber());
+            	vPhoneNumber.setVendorPhoneExtensionNumber(phoneNumber.getVendorPhoneExtensionNumber());
+            	vPhoneNumber.setActive(phoneNumber.isActive());
+            	if (vPhoneNumber.getVendorPhoneGeneratedIdentifier() == null) {
+                	vDetail.getVendorPhoneNumbers().add(vPhoneNumber);
+				     vendor.getVendorPhoneNumbers().add(new VendorPhoneNumber()); // oldobj
+          		
+            	}
+            	// TODO : what to do with those existing contacts, but not passed from request
+       		
+        	}
+
+
         	ArrayList<VendorSupplierDiversity> vendorSupplierDiversitys = new ArrayList<VendorSupplierDiversity>();
         	for (VendorSupplierDiversityParam diversity : supplierDiversitys) {
         		VendorSupplierDiversity vDiversity = getVendorSupplierDiversity(vDetail.getVendorHeader(), diversity.getVendorSupplierDiversityCode());
@@ -339,7 +376,11 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 			for (VendorContact contact :vendor.getVendorContacts()) {
 				retVal = retVal + "~"+contact.getVendorContactGeneratedIdentifier();
 			}
-			
+			retVal = retVal + "p~";
+			for (VendorPhoneNumber phoneNumber :vendor.getVendorPhoneNumbers()) {
+				retVal = retVal + "~"+phoneNumber.getVendorPhoneGeneratedIdentifier();
+			}
+
 		    }
 			return retVal;
 		}
@@ -362,6 +403,15 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 			}
 		}
 		return new VendorContact();
+	}
+	
+	private VendorPhoneNumber getVendorPhoneNumber(VendorDetail vDetail, Integer vendorPhoneNumberGeneratedIdentifier) {
+		for (VendorPhoneNumber vPhoneNumber : vDetail.getVendorPhoneNumbers()) {
+			if (vendorPhoneNumberGeneratedIdentifier.equals(vPhoneNumber.getVendorPhoneGeneratedIdentifier())) {
+				return vPhoneNumber;
+			}
+		}
+		return new VendorPhoneNumber();
 	}
 	
 	private VendorSupplierDiversity getVendorSupplierDiversity(VendorHeader vHeader, String supplierDiversityCode) {
@@ -479,7 +529,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 			return "Failed request : "+ e.getMessage();		}
 	}
 	
-	public String uploadAtt(String vendorId, DataHandler fileData, String fileName, String noteText) throws Exception {
+	public String uploadAtt(String vendorId,  @XmlMimeType("application/octet-stream")DataHandler fileData, String fileName, String noteText) throws Exception {
 		try {
 			LOG.info("Starting uploadAtt");
         GlobalVariables.setUserSession(new UserSession("kfs"));

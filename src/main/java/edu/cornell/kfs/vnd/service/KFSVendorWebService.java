@@ -5,9 +5,11 @@ import java.util.List;
 import javax.activation.DataHandler;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.xml.bind.annotation.XmlMimeType;
 
 import edu.cornell.kfs.vnd.service.params.VendorAddressParam;
 import edu.cornell.kfs.vnd.service.params.VendorContactParam;
+import edu.cornell.kfs.vnd.service.params.VendorPhoneNumberParam;
 import edu.cornell.kfs.vnd.service.params.VendorSupplierDiversityParam;
 
 /**
@@ -39,6 +41,7 @@ public interface KFSVendorWebService {
 		  @WebParam(name = "isEInvoice")boolean isEInvoice,
 		  @WebParam(name = "addresses")List<VendorAddressParam> addresses,
 		  @WebParam(name = "contacts")List<VendorContactParam> contacts,
+		  @WebParam(name = "phoneNumbers")List<VendorPhoneNumberParam> phoneNumbers,
 		  @WebParam(name = "supplierDiversitys")List<VendorSupplierDiversityParam> supplierDiversitys
 		  ) throws Exception;
   
@@ -57,6 +60,7 @@ public interface KFSVendorWebService {
 		  @WebParam(name = "isEInvoice")boolean isEInvoice,
 		  @WebParam(name = "addresses")List<VendorAddressParam> addresses,
 		  @WebParam(name = "contacts")List<VendorContactParam> contacts,
+		  @WebParam(name = "phoneNumbers")List<VendorPhoneNumberParam> phoneNumbers,
 		  @WebParam(name = "supplierDiversitys")List<VendorSupplierDiversityParam> supplierDiversitys
 		  ) throws Exception;
   
@@ -109,7 +113,8 @@ public String uploadAttachment(
 
 public String uploadAtt(
 		  @WebParam(name = "vendorId")String vendorId,
-		  @WebParam(name = "fileData")DataHandler fileData,
+		  @WebParam(name = "fileData")
+		  @XmlMimeType("application/octet-stream")DataHandler fileData,
 		  @WebParam(name = "fileName")String fileName,
 		  @WebParam(name = "noteText")String noteText
 		  ) throws Exception;
