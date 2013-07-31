@@ -217,4 +217,42 @@ public abstract class PurchasingItemBase extends PurApItemBase implements Purcha
 	public void setEnergyStar(boolean energyStar) {
 		this.energyStar = energyStar;
 	}
+	
+    // KFSPTS-2257
+	public String getEshopFlags() {
+		StringBuilder sb = new StringBuilder();
+		if (isControlled()) {
+			sb.append("Controlled,");
+		}
+		if (isEnergyStar()) {
+			sb.append("Energy Star,");
+		}
+		if (isSelectAgent()) {
+			sb.append("Select Agent,");
+		}
+		if (isRadioactive()) {
+			sb.append("Radioactive,");
+		}
+		if (isRadioactiveMinor()) {
+			sb.append("Radioactive Minor,");
+		}
+		if (isRecycled()) {
+			sb.append("Recycled,");
+		}
+		if (isGreen()) {
+			sb.append("Green,");
+		}
+		if (isToxin()) {
+			sb.append("Toxin,");
+		}
+		if (isHazardous()) {
+			sb.append("Hazardous,");
+		}
+        if (sb.length() == 0) {
+        	return "No e-Shop flag is set to true";
+        }
+		return sb.substring(0, sb.length()-1);
+	}
+	
+
 }

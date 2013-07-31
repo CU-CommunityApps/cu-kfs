@@ -56,7 +56,7 @@
 </c:when>
 <c:otherwise>
 	<c:set var="colSpanAmountPaid" value="1"/>
-	<c:set var="itemRowSpan" value="2"/>
+	<c:set var="itemRowSpan" value="3"/>
 </c:otherwise>
 </c:choose>
 
@@ -532,7 +532,7 @@
 					</td>
 					
 					<c:if test="${isATypeOfPODoc}">
-					    <td class="infoline" rowspan="2">
+					    <td class="infoline" rowspan="3">
 					        <div align="right">
 					        <kul:htmlControlAttribute
 						        attributeEntry="${itemAttributes.itemInvoicedTotalAmount}"
@@ -543,19 +543,24 @@
 					</c:if>
 				</tr>
 				<!-- KFSPTS-2257 -->
-				<c:if test="${displayRequisitionFields}">
+			<%--	<c:if test="${displayRequisitionFields}"> --%>
+				<c:set var="eshopFlagColumnCount" value="${mainColumnCount - colSpanAction - 2}"/>
+				<c:if test="${isATypeOfPODoc}">
+					<c:set var="eshopFlagColumnCount" value="${eshopFlagColumnCount - 1}"/>
+				</c:if>
+			
 				    <tr>
 				       <th align="right">
 				          e-Shop Flags
 				       </th>
-				       <td class="infoline" colspan="7">
+				       <td class="infoline" colspan="${eshopFlagColumnCount}">
 				          <kul:htmlControlAttribute
 						        attributeEntry="${itemAttributes.totalAmount}"
 						        property="document.item[${ctr}].eshopFlags" readOnly="true"/>
 				       </td>
 				    
 				    </tr>
-				</c:if> 					
+			<%--	</c:if> 		 --%>			
 				
 				<c:set var="accountColumnCount" value="${mainColumnCount - colSpanAction - 1}"/>
 				<c:if test="${isATypeOfPODoc}">
