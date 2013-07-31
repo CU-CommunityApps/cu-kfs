@@ -91,6 +91,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
         	// how should address be handled.  If no addres type code matched, then create, otherwise change ?
         	// how do we know that this is just to change the address type code.  should there is another filed, say 'oldAddressTypeCode' ?
         	ArrayList<VendorAddress> vAddrs = new ArrayList<VendorAddress>();
+        	if (CollectionUtils.isNotEmpty(addresses)) {
 			for (VendorAddressParam address : addresses) {
 		        LOG.info("addVendor address "+address);       
 				VendorAddress vendorAddr = new VendorAddress();
@@ -120,13 +121,14 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 				
 				vAddrs.add(vendorAddr);
 			}        	
-        	
+        	}
         	vDetail.setVendorAddresses(vAddrs);
 
         	// also, question for contact, are we assume, the contact type is always "VI" ?
         	// should we handle like address ?
         	// Contact type does not have "VT" which is originally set up
         	ArrayList<VendorContact> vendorContacts = new ArrayList<VendorContact>();
+        	if (CollectionUtils.isNotEmpty(contacts)) {
         	for (VendorContactParam contact : contacts) {
 		        LOG.info("addVendor contact "+contact);       
             	VendorContact vContact = new VendorContact();
@@ -144,10 +146,11 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
             	vendorContacts.add(vContact);
        		
         	}
-        	
+        	}
         	vDetail.setVendorContacts(vendorContacts);
 
         	ArrayList<VendorPhoneNumber> vendorPhoneNumbers = new ArrayList<VendorPhoneNumber>();
+        	if (CollectionUtils.isNotEmpty(phoneNumbers)) {
         	for (VendorPhoneNumberParam phoneNumber : phoneNumbers) {
 		        LOG.info("addVendor phoneNumber "+phoneNumber);       
         		VendorPhoneNumber vPhoneNumber = new VendorPhoneNumber();
@@ -157,6 +160,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
             	vPhoneNumber.setActive(phoneNumber.isActive());
             	vendorPhoneNumbers.add(vPhoneNumber);
        		
+        	}
         	}
         	
         	vDetail.setVendorPhoneNumbers(vendorPhoneNumbers);
@@ -171,6 +175,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
         	vHeader.setVendorOwnershipCode(ownershipTypeCode);
 
         	ArrayList<VendorSupplierDiversity> vendorSupplierDiversitys = new ArrayList<VendorSupplierDiversity>();
+        	if (CollectionUtils.isNotEmpty(supplierDiversitys)) {
         	for (VendorSupplierDiversityParam diversity : supplierDiversitys) {
 		        LOG.info("addVendor diversity "+diversity);       
         		VendorSupplierDiversity vDiversity = new VendorSupplierDiversity();
@@ -181,7 +186,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
                 vendorSupplierDiversitys.add(vDiversity);
        		
         	}
-
+        	}
         	vHeader.setVendorSupplierDiversities(vendorSupplierDiversitys);
         	vDetail.setVendorHeader(vHeader);
         	vImpl.setBusinessObject(vDetail);
@@ -239,6 +244,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 
 			((VendorDetailExtension) vDetail.getExtension()).setEinvoiceVendorIndicator(isEInvoice);
 
+        	if (CollectionUtils.isNotEmpty(addresses)) {
 			for (VendorAddressParam address : addresses) {
 				VendorAddress vendorAddr = new VendorAddress();
 				LOG.info("updateVendor ADDRESS " + address);
@@ -275,11 +281,12 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 				}
 				// TODO : how abouyt those existing addr, but not passed from request, should they be 'inactivated' ?
 			}        	
-
+        	}
 			
 
 //			vDetail.setVendorAddresses(vAddrs);
 
+        	if (CollectionUtils.isNotEmpty(contacts)) {
         	for (VendorContactParam contact : contacts) {
 				LOG.info("updateVendor contact " + contact);
             	VendorContact vContact = new VendorContact();
@@ -305,8 +312,9 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
             	// TODO : what to do with those existing contacts, but not passed from request
        		
         	}
-
+        	}
         	
+        	if (CollectionUtils.isNotEmpty(phoneNumbers)) {
         	for (VendorPhoneNumberParam phoneNumber : phoneNumbers) {
 				LOG.info("updateVendor phoneNumber " + phoneNumber);
         		VendorPhoneNumber vPhoneNumber = new VendorPhoneNumber();
@@ -325,9 +333,10 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
             	// TODO : what to do with those existing contacts, but not passed from request
        		
         	}
-
+        	}
 
         	ArrayList<VendorSupplierDiversity> vendorSupplierDiversitys = new ArrayList<VendorSupplierDiversity>();
+        	if (CollectionUtils.isNotEmpty(supplierDiversitys)) {
         	for (VendorSupplierDiversityParam diversity : supplierDiversitys) {
 				LOG.info("updateVendor diversity " + diversity);
         		VendorSupplierDiversity vDiversity = getVendorSupplierDiversity(vDetail.getVendorHeader(), diversity.getVendorSupplierDiversityCode());
@@ -340,6 +349,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
                 	vendor.getVendorHeader().getVendorSupplierDiversities().add(new VendorSupplierDiversity());
                 }
        		
+        	}
         	}
 
         	// TODO : how this vdetail default address works ??
@@ -407,29 +417,34 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	}
 
 	private VendorContact getVendorContact(VendorDetail vDetail, Integer vendorContactGeneratedIdentifier) {
+    	if (CollectionUtils.isNotEmpty(vDetail.getVendorContacts())) {
 		for (VendorContact vContact : vDetail.getVendorContacts()) {
 			if (vendorContactGeneratedIdentifier.equals(vContact.getVendorContactGeneratedIdentifier())) {
 				return vContact;
 			}
-		}
+		}}
 		return new VendorContact();
 	}
 	
 	private VendorPhoneNumber getVendorPhoneNumber(VendorDetail vDetail, Integer vendorPhoneNumberGeneratedIdentifier) {
+    	if (CollectionUtils.isNotEmpty(vDetail.getVendorPhoneNumbers())) {
 		for (VendorPhoneNumber vPhoneNumber : vDetail.getVendorPhoneNumbers()) {
 			if (vendorPhoneNumberGeneratedIdentifier.equals(vPhoneNumber.getVendorPhoneGeneratedIdentifier())) {
 				return vPhoneNumber;
 			}
 		}
+    	}
 		return new VendorPhoneNumber();
 	}
 	
 	private VendorSupplierDiversity getVendorSupplierDiversity(VendorHeader vHeader, String supplierDiversityCode) {
+    	if (CollectionUtils.isNotEmpty(vHeader.getVendorSupplierDiversities())) {
 		for (VendorSupplierDiversity vSupplierDiversity : vHeader.getVendorSupplierDiversities()) {
 			if (StringUtils.equals(vSupplierDiversity.getVendorSupplierDiversityCode(), supplierDiversityCode)) {
 				return vSupplierDiversity;
 			}
 		}
+    	}
 		return new VendorSupplierDiversity();
 	}
 
