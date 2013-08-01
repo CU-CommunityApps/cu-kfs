@@ -366,12 +366,12 @@ public class B2BShoppingServiceImpl implements B2BShoppingService {
         Map<String, String> classification = item.getClassification();
         reqItem.setControlled(StringUtils.equals(TRUE,classification.get("Controlled")));
         reqItem.setRadioactiveMinor(StringUtils.equals(TRUE,classification.get("RadioactiveMinor")));
-        reqItem.setGreen(StringUtils.equals(TRUE,classification.get("Green")));
+        reqItem.setGreen(StringUtils.equals(TRUE,classification.get("GreenProduct")));
         reqItem.setHazardous(StringUtils.equals(TRUE,classification.get("Hazardous")));
         reqItem.setSelectAgent(StringUtils.equals(TRUE,classification.get("SelectAgent")));
         reqItem.setRadioactive(StringUtils.equals(TRUE,classification.get("Radioactive")));
         reqItem.setToxin(StringUtils.equals(TRUE,classification.get("Toxin")));
-        reqItem.setRecycled(StringUtils.equals(TRUE,classification.get("GreenProduct")));
+        reqItem.setRecycled(StringUtils.equals(TRUE,classification.get("Green")));
         reqItem.setEnergyStar(StringUtils.equals(TRUE,classification.get("EnergyStar")));
         return reqItem;
     }
