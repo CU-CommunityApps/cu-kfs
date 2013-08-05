@@ -25,8 +25,6 @@ import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase;
 import org.kuali.rice.kns.service.BusinessObjectService;
 
-import com.rsmart.kuali.kfs.cr.CRConstants;
-import com.rsmart.kuali.kfs.cr.CRKeyConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 
 
@@ -87,19 +85,15 @@ public class CheckReconciliationRule extends MaintenanceDocumentRuleBase {
         boolean valid = true;
         
         if( newCheckReconciliation.getAmount() == null ) {
-            putFieldError("amount", CRKeyConstants.ERROR_CR_INVALID_AMOUNT);
+            putFieldError("amount", KFSKeyConstants.ERROR_ZERO_AMOUNT);
             valid = false;            
         }
         else if( newCheckReconciliation.getAmount().isZero() ) {
-            if (oldCheckReconciliation != null && CRConstants.EXCP.equalsIgnoreCase(oldCheckReconciliation.getStatus()) && CRConstants.VOIDED.equalsIgnoreCase(newCheckReconciliation.getStatus())) {
-                valid = true;
-            } else {
-                putFieldError("amount", CRKeyConstants.ERROR_CR_INVALID_AMOUNT);
-                valid = false;
-            }
+            putFieldError("amount", KFSKeyConstants.ERROR_ZERO_AMOUNT);
+            valid = false;
         }
         else if( newCheckReconciliation.getAmount().isNegative() ) {
-            putFieldError("amount", CRKeyConstants.ERROR_CR_INVALID_AMOUNT);
+            putFieldError("amount", KFSKeyConstants.ERROR_NEGATIVE_AMOUNT);
             valid = false;
         }
         
