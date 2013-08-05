@@ -49,8 +49,6 @@ import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.KualiInteger;
 import org.kuali.rice.kns.util.ObjectUtils;
 
-import com.rsmart.kuali.kfs.cr.CRConstants;
-
 /**
  * This class represents the PaymentGroup
  */
@@ -172,12 +170,9 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
         }
         
         // check for stale payments, if one payment detail is stale then they all are
-
-        if (!CRConstants.CLEARED.equalsIgnoreCase(paymentStatus.getCode())) {
-            PaymentDetail paymentDetail = getPaymentDetails().get(0);
-            if (!paymentDetail.isDisbursementActionAllowed()) {
-                paymentStatusWithHistory += " (Stale)";
-            }
+        PaymentDetail paymentDetail = getPaymentDetails().get(0);
+        if (!paymentDetail.isDisbursementActionAllowed()) {
+            paymentStatusWithHistory += " (Stale)";
         }
 
         return paymentStatusWithHistory;
