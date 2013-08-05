@@ -49,6 +49,8 @@ import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.KualiInteger;
 import org.kuali.rice.kns.util.ObjectUtils;
 
+import com.rsmart.kuali.kfs.cr.CRConstants;
+
 /**
  * This class represents the PaymentGroup
  */
@@ -170,9 +172,12 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
         }
         
         // check for stale payments, if one payment detail is stale then they all are
-        PaymentDetail paymentDetail = getPaymentDetails().get(0);
-        if (!paymentDetail.isDisbursementActionAllowed()) {
-            paymentStatusWithHistory += " (Stale)";
+
+        if (!CRConstants.CLEARED.equalsIgnoreCase(paymentStatus.getCode())) {
+            PaymentDetail paymentDetail = getPaymentDetails().get(0);
+            if (!paymentDetail.isDisbursementActionAllowed()) {
+                paymentStatusWithHistory += " (Stale)";
+            }
         }
 
         return paymentStatusWithHistory;
@@ -452,9 +457,9 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
      * @hibernate.many-to-one column="PMT_BATCH_ID" class="edu.iu.uis.pdp.bo.Batch" not-null="true"
      */
     public Batch getBatch() {
-    	if(ObjectUtils.isNull(batch) && ObjectUtils.isNotNull(batchId)) {
-    		this.refreshReferenceObject("batch");
-    	}
+        if(ObjectUtils.isNull(batch) && ObjectUtils.isNotNull(batchId)) {
+            this.refreshReferenceObject("batch");
+        }
         return batch;
     }
 
@@ -747,7 +752,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
      * @param string
      */
     public void setCustomerInstitutionNumber(String string) {
-    	customerInstitutionNumber = string;
+        customerInstitutionNumber = string;
     }
     
     /**
@@ -763,10 +768,10 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
         
         List addrs = (List)bos.findMatching(VendorAddress.class, fieldValues);
         if (addrs.size() == 1) {
-        	VendorAddress addr = (VendorAddress) addrs.get(0);
-        	setVendorAddress(addr);
+            VendorAddress addr = (VendorAddress) addrs.get(0);
+            setVendorAddress(addr);
         } else {
-        	throw new RuntimeException("Invalid Address [ "+customerInstitutionNumber+" ] for payee [ "+payeeId + " ]");
+            throw new RuntimeException("Invalid Address [ "+customerInstitutionNumber+" ] for payee [ "+payeeId + " ]");
             // Need to handle bad data.
         }
     }
@@ -880,7 +885,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
      */
     public void setPayeeIdAndName(String string) {
         payeeId = string;
-    	
+        
         BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
         String[] headerDetails = payeeId.split("-");      
         Map<String, String> fieldValues = new HashMap();
@@ -889,9 +894,9 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
         
         List<VendorDetail> details = (List<VendorDetail>)bos.findMatching(VendorDetail.class, fieldValues);
         if (details.size() == 1) {
-        	payeeName=details.get(0).getVendorName();
+            payeeName=details.get(0).getVendorName();
         } else {
-        	throw new RuntimeException("Could not locate Vendor for payeeId [ "+ string+" ]");
+            throw new RuntimeException("Could not locate Vendor for payeeId [ "+ string+" ]");
         }
     }
 
@@ -914,7 +919,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
      * @param string
      */
     public void setPayeeOwnerCd(String string) {
-    	
+        
         payeeOwnerCd = string;
         
     }
@@ -923,7 +928,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
      * @param string
      */
     public void setPayeeOwnerCdFromVendor(String string) {
-    	
+        
        // payeeOwnerCd = string;
         
         
@@ -935,9 +940,9 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
         
         List<VendorDetail> details = (List<VendorDetail>)bos.findMatching(VendorDetail.class, fieldValues);
         if (details.size() == 1) {
-        	payeeOwnerCd=details.get(0).getVendorHeader().getVendorOwnershipCode();
+            payeeOwnerCd=details.get(0).getVendorHeader().getVendorOwnershipCode();
         } else {
-        	throw new RuntimeException("Could not locate Vendor Ownership Code for payeeId [ "+ string+" ]");
+            throw new RuntimeException("Could not locate Vendor Ownership Code for payeeId [ "+ string+" ]");
         }
     }
 
@@ -1190,7 +1195,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
      * @return True if payable by check, false otherwise.
      */
     public boolean isPayableByCheck() {
-    	return !isPayableByACH();
+        return !isPayableByACH();
     }
 
     /**
@@ -1203,24 +1208,24 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
      * @return True if the payment group is payable by ACH, false otherwise.
      */
     public boolean isPayableByACH() {
-    	
-    	//KFSPTS-1460:
-    	// Replaced the logic: 
-    	// If any one of the payment details in the group are negative, we always force a check
-    	//
-    	// With the new logic: 
-    	// If the total amount for all the payment details within a payment group is positive ALLOW ACH; 
-    	// otherwise force a check because the total is negative.    	
-    	boolean paymentGroupTotalIsNotNegative = true;
-    	KualiDecimal paymentGroupTotal = KualiDecimal.ZERO;
-    	List<PaymentDetail> paymentDetailsList = getPaymentDetails();
-	    for (PaymentDetail paymentDetail : paymentDetailsList) {
-	    	paymentGroupTotal = paymentGroupTotal.add(paymentDetail.getNetPaymentAmount());
-	    }
-        if (paymentGroupTotal.isNegative()) { 
-        	paymentGroupTotalIsNotNegative = false;
+        
+        //KFSPTS-1460:
+        // Replaced the logic: 
+        // If any one of the payment details in the group are negative, we always force a check
+        //
+        // With the new logic: 
+        // If the total amount for all the payment details within a payment group is positive ALLOW ACH; 
+        // otherwise force a check because the total is negative.       
+        boolean paymentGroupTotalIsNotNegative = true;
+        KualiDecimal paymentGroupTotal = KualiDecimal.ZERO;
+        List<PaymentDetail> paymentDetailsList = getPaymentDetails();
+        for (PaymentDetail paymentDetail : paymentDetailsList) {
+            paymentGroupTotal = paymentGroupTotal.add(paymentDetail.getNetPaymentAmount());
         }
-    	
+        if (paymentGroupTotal.isNegative()) { 
+            paymentGroupTotalIsNotNegative = false;
+        }
+        
 
         // determine whether payment should be ACH or Check
         CustomerProfile customer = getBatch().getCustomerProfile();
@@ -1241,13 +1246,13 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
      * 
      */
     public void beforeInsert(PersistenceBroker broker) throws PersistenceBrokerException {
-    	Timestamp lastUpdateTemp = this.getLastUpdate();
+        Timestamp lastUpdateTemp = this.getLastUpdate();
         super.beforeInsert(broker);
 
         if(ObjectUtils.isNull(lastUpdateTemp)) {
-        	this.setLastUpdate(new Timestamp(new java.util.Date().getTime()));
+            this.setLastUpdate(new Timestamp(new java.util.Date().getTime()));
         } else {
-        	this.setLastUpdate(lastUpdateTemp);
+            this.setLastUpdate(lastUpdateTemp);
         }
         this.setLastUpdateUserId(GlobalVariables.getUserSession().getPerson().getPrincipalName());
     }
@@ -1256,13 +1261,13 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
      * 
      */
     public void beforeUpdate(PersistenceBroker broker) throws PersistenceBrokerException {
-    	Timestamp lastUpdateTemp = this.getLastUpdate();
+        Timestamp lastUpdateTemp = this.getLastUpdate();
         super.beforeUpdate(broker);
 
         if(ObjectUtils.isNull(lastUpdateTemp)) {
-        	this.setLastUpdate(new Timestamp(new java.util.Date().getTime()));
+            this.setLastUpdate(new Timestamp(new java.util.Date().getTime()));
         } else {
-        	this.setLastUpdate(lastUpdateTemp);
+            this.setLastUpdate(lastUpdateTemp);
         }
         this.setLastUpdateUserId(GlobalVariables.getUserSession().getPerson().getPrincipalName());
     }
