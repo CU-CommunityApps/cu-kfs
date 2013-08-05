@@ -8,8 +8,7 @@
 
   <bean id="CheckReconciliationMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
     <property name="businessObjectClass" value="com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation" />
-    <property name="maintainableClass" value="com.rsmart.kuali.kfs.cr.document.CheckReconciliationMaintainableImpl"/>
-   
+    <property name="maintainableClass" value="org.kuali.rice.kns.maintenance.KualiMaintainableImpl" />
     <property name="maintainableSections" >
       <list>
         <ref bean="CheckReconciliationMaintenanceDocument-EditCheckReconciliation" />
