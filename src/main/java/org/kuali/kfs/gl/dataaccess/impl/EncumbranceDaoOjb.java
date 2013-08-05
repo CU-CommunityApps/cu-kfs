@@ -15,18 +15,11 @@
  */
 package org.kuali.kfs.gl.dataaccess.impl;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-/**
- * this is for KFSPTS-1786 
- */
-import java.util.Collection;
-
 
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.Query;
@@ -42,51 +35,11 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.kns.dao.impl.PlatformAwareDaoBaseOjb;
 
 /**
- * this is for KFSPTS-1786 
- */ 
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.TransactionalServiceUtils;
-
-
-
-/**
  * An OJB implementation of the EncumbranceDao
  */
 public class EncumbranceDaoOjb extends PlatformAwareDaoBaseOjb implements EncumbranceDao {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(EncumbranceDaoOjb.class);
 
-    
-    
-    /**
-     * this is for KFSPTS-1786 begin
-     */ 
-    
-    public KualiDecimal getEncumbrances(Map<String, String> input,Collection encumbranceCodes) {
-        Criteria criteria = new Criteria();
-        KualiDecimal encumbrances=KualiDecimal.ZERO;
-       for(String key:input.keySet()){
-           criteria.addEqualTo(key, input.get(key));
-       }
-       criteria.addIn(KFSPropertyConstants.BALANCE_TYPE_CODE, encumbranceCodes);
-       ReportQueryByCriteria queryByCriteria =QueryFactory.newReportQuery(Encumbrance.class, 
-               new String[]{"sum(accountLineEncumbranceAmount)"}, criteria, false);
-    
-       Iterator  iterator= getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(queryByCriteria);
-     
-      if (iterator.hasNext()) {
-          Object[] data = (Object[]) TransactionalServiceUtils.retrieveFirstAndExhaustIterator(iterator);
-          if (data[0] != null) {
-              encumbrances= (KualiDecimal) data[0];
-          }
-      }
-        return encumbrances;
-        
-    }
-    
-    /**
-     * this is for KFSPTS-1786 end
-     */ 
-    
     /**
      * Returns an encumbrance that would be affected by the given transaction
      * 

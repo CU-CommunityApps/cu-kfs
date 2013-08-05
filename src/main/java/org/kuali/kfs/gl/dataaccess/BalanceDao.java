@@ -28,17 +28,7 @@ import org.kuali.kfs.gl.businessobject.Transaction;
  * The DAO interface that declares methods needed to query the database about balances
  */
 public interface BalanceDao {
-	/**
-	 * this is for KFSPTS-1786 begin
-	 */ 
-	 public Collection<Balance> getAccountBalance(Map<String, String> input);
-	 public Collection<Balance> getAccountBalance(Map<String, String> input,Collection objectTypeCode);
-	
-	 /**
-		 * this is for KFSPTS-1786 end
-     */ 
-	
-	
+
     /**
      * Get the GL Summary data
      * 

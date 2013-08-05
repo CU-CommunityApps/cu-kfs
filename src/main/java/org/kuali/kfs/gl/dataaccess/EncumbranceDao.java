@@ -18,26 +18,15 @@ package org.kuali.kfs.gl.dataaccess;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Collection;
 
 import org.kuali.kfs.gl.businessobject.Encumbrance;
 import org.kuali.kfs.gl.businessobject.Transaction;
-import org.kuali.rice.kns.util.KualiDecimal;
-
 
 /**
  * A DAO interface that declares methods needed for Encumbrances to interact with the database
  */
 public interface EncumbranceDao {
-	/**
-	 * this is for KFSPTS-1786 begin
-	 */ 
-	public KualiDecimal getEncumbrances(Map<String, String> input,Collection encumbranceCodes);
-	/**
-	 * this is for KFSPTS-1786 end
-	 */ 
-	
-	/**
+    /**
      * Returns an encumbrance that would be affected by the given transaction
      * 
      * @param t the transaction to find the affected encumbrance for
