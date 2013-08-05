@@ -50,6 +50,9 @@ public class GlTransactionStep extends AbstractStep {
     
     private BusinessObjectService businessObjectService;
     
+    private PendingTransactionService glPendingTransactionService;
+    
+
     /**
      * Execute
      * 
@@ -90,11 +93,10 @@ public class GlTransactionStep extends AbstractStep {
                 }
                 else {
                     for (PaymentGroup paymentGroup : paymentGroups) {
-                    	
-                    	//Create cancellation offsets for STOPed checks. KFSPTS-1741
-                        PendingTransactionService glPendingTransactionService = SpringContext.getBean(PendingTransactionService.class);
+                        
+                        //Create cancellation offsets for STOPed checks. KFSPTS-1741
                         glPendingTransactionService.generateStopGeneralLedgerPendingEntry(paymentGroup);
-                    	
+                        
                         
                         //glTransactionService.generateGlPendingTransactionStop(paymentGroup);
                         
@@ -104,7 +106,7 @@ public class GlTransactionStep extends AbstractStep {
                         }
                         Date lastUpdate = cr.getStatusChangeDate();
                         if(ObjectUtils.isNull(lastUpdate)) {
-                        	lastUpdate = new Date();
+                            lastUpdate = new Date();
                         }
                         paymentGroup.setLastUpdate(new Timestamp(lastUpdate.getTime()));
                         businessObjectService.save(paymentGroup);
@@ -141,7 +143,9 @@ public class GlTransactionStep extends AbstractStep {
                 }
                 else {
                     for (PaymentGroup paymentGroup : paymentGroups) {
-                        glTransactionService.generateGlPendingTransactionCancel(paymentGroup);
+                        //KFSPTS-2260
+                        glPendingTransactionService.generateCRCancellationGeneralLedgerPendingEntry(paymentGroup);
+                        //glTransactionService.generateGlPendingTransactionCancel(paymentGroup);
                     
                         KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
                         if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
@@ -149,7 +153,7 @@ public class GlTransactionStep extends AbstractStep {
                         }
                         Date lastUpdate = cr.getStatusChangeDate();
                         if(ObjectUtils.isNull(lastUpdate)) {
-                        	lastUpdate = new Date();
+                            lastUpdate = new Date();
                         }
                         paymentGroup.setLastUpdate(new Timestamp(lastUpdate.getTime()));
                         businessObjectService.save(paymentGroup);
@@ -196,7 +200,7 @@ public class GlTransactionStep extends AbstractStep {
                         }
                         Date lastUpdate = cr.getStatusChangeDate();
                         if(ObjectUtils.isNull(lastUpdate)) {
-                        	lastUpdate = new Date();
+                            lastUpdate = new Date();
                         }
                         paymentGroup.setLastUpdate(new Timestamp(lastUpdate.getTime()));
                         businessObjectService.save(paymentGroup);
@@ -237,7 +241,10 @@ public class GlTransactionStep extends AbstractStep {
                 }
                 else {
                      for (PaymentGroup paymentGroup : paymentGroups) {
-                         glTransactionService.generateGlPendingTransactionStale(paymentGroup);
+                         
+                         //KFSPTS-2246
+                        // glTransactionService.generateGlPendingTransactionStale(paymentGroup);
+                         glPendingTransactionService.generateStaleGeneralLedgerPendingEntry(paymentGroup);
                     
                          KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
                          if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
@@ -245,7 +252,7 @@ public class GlTransactionStep extends AbstractStep {
                          }
                          Date lastUpdate = cr.getStatusChangeDate();
                          if(ObjectUtils.isNull(lastUpdate)) {
-                         	lastUpdate = new Date();
+                            lastUpdate = new Date();
                          }
                          paymentGroup.setLastUpdate(new Timestamp(lastUpdate.getTime()));
                          businessObjectService.save(paymentGroup);
@@ -314,6 +321,24 @@ public class GlTransactionStep extends AbstractStep {
      */
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
+    }
+    
+    /**
+     * Gets the glPendingTransactionService.
+     * 
+     * @return glPendingTransactionService
+     */
+    public PendingTransactionService getGlPendingTransactionService() {
+        return glPendingTransactionService;
+    }
+
+    /**
+     * Sets the glPendingTransactionService.
+     * 
+     * @param glPendingTransactionService
+     */
+    public void setGlPendingTransactionService(PendingTransactionService glPendingTransactionService) {
+        this.glPendingTransactionService = glPendingTransactionService;
     }
     
 }
