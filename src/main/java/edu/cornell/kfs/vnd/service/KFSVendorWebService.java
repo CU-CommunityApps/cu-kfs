@@ -1,7 +1,16 @@
 package edu.cornell.kfs.vnd.service;
 
+import java.util.List;
+
+import javax.activation.DataHandler;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.xml.bind.annotation.XmlMimeType;
+
+import edu.cornell.kfs.vnd.service.params.VendorAddressParam;
+import edu.cornell.kfs.vnd.service.params.VendorContactParam;
+import edu.cornell.kfs.vnd.service.params.VendorPhoneNumberParam;
+import edu.cornell.kfs.vnd.service.params.VendorSupplierDiversityParam;
 
 /**
  *
@@ -30,30 +39,35 @@ public interface KFSVendorWebService {
 		  @WebParam(name = "ownershipTypeCode")String ownershipTypeCode,
 		  @WebParam(name = "isTaxable")boolean isTaxable,
 		  @WebParam(name = "isEInvoice")boolean isEInvoice,
-		  @WebParam(name = "vendorAddressTypeCode")String vendorAddressTypeCode, 
-		  @WebParam(name = "vendorLine1Address")String vendorLine1Address, 
-		  @WebParam(name = "vendorCityName")String vendorCityName, 
-		  @WebParam(name = "vendorStateCode")String vendorStateCode, 
-		  @WebParam(name = "vendorPostalCode")String vendorPostalCode, 
-		  @WebParam(name = "vendorCountryCode")String vendorCountryCode
+		  @WebParam(name = "addresses")List<VendorAddressParam> addresses,
+		  @WebParam(name = "contacts")List<VendorContactParam> contacts,
+		  @WebParam(name = "phoneNumbers")List<VendorPhoneNumberParam> phoneNumbers,
+		  @WebParam(name = "supplierDiversitys")List<VendorSupplierDiversityParam> supplierDiversitys
 		  ) throws Exception;
   
   /**
    * 
-   * @param initiatorNetId
-   * @param documentName
    * @return
    * @throws Exception
    */
-  public boolean updateVendor(
-		  @WebParam(name = "vendorId")String vendorId,
-		  @WebParam(name = "vendorIdType")String vendorIdType
+  public String updateVendor(
+		  @WebParam(name = "vendorName")String vendorName,
+		  @WebParam(name = "vendorTypeCode")String vendorTypeCode,
+		  @WebParam(name = "isForeign")boolean isForeign, 
+		  @WebParam(name = "vendorNumber")String vendorNumber, 
+		  @WebParam(name = "ownershipTypeCode")String ownershipTypeCode,
+		  @WebParam(name = "isTaxable")boolean isTaxable,
+		  @WebParam(name = "isEInvoice")boolean isEInvoice,
+		  @WebParam(name = "addresses")List<VendorAddressParam> addresses,
+		  @WebParam(name = "contacts")List<VendorContactParam> contacts,
+		  @WebParam(name = "phoneNumbers")List<VendorPhoneNumberParam> phoneNumbers,
+		  @WebParam(name = "supplierDiversitys")List<VendorSupplierDiversityParam> supplierDiversitys
 		  ) throws Exception;
-
+  
   /**
    * 
-   * @param viewerNetId
-   * @param docID
+   * @param vendorId
+   * @param vendorIdType
    * @return
    * @throws Exception
    */
@@ -62,6 +76,17 @@ public interface KFSVendorWebService {
 		  @WebParam(name = "vendorIdType")String vendorIdType
 		  ) throws Exception;
 
+  /**
+   * 
+   * @param vendorName
+   * @param lastFour
+   * @return
+   * @throws Exception
+   */
+  public String retrieveKfsVendorByNamePlusLastFour(
+		  @WebParam(name = "vendorName")String vendorName, 
+		  @WebParam(name = "lastFour")String lastFour) throws Exception;
+  
   /**
    * 
    * @param vendorId
@@ -74,4 +99,25 @@ public interface KFSVendorWebService {
 		  @WebParam(name = "vendorIdType")String vendorIdType
 		  ) throws Exception;
   
+
+public String retrieveKfsVendorByEin(
+		  @WebParam(name = "vendorEin")String vendorEin
+		  ) throws Exception;
+
+public String uploadAttachment(
+		  @WebParam(name = "vendorId")String vendorId,
+		  @WebParam(name = "fileData")String fileData,
+		  @WebParam(name = "fileName")String fileName,
+		  @WebParam(name = "noteText")String noteText
+		  ) throws Exception;
+
+public String uploadAtt(
+		  @WebParam(name = "vendorId")String vendorId,
+		  @WebParam(name = "fileData")
+		  @XmlMimeType("application/octet-stream")DataHandler fileData,
+		  @WebParam(name = "fileName")String fileName,
+		  @WebParam(name = "noteText")String noteText
+		  ) throws Exception;
+
+
 }
