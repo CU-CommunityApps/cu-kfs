@@ -344,7 +344,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	private void updateVendorPhoneNumbers(List<VendorPhoneNumberParam> phoneNumbers, VendorDetail vendor, VendorDetail vDetail) {
     	if (CollectionUtils.isNotEmpty(phoneNumbers)) {
     	for (VendorPhoneNumberParam phoneNumber : phoneNumbers) {
-			LOG.info("updateVendor phoneNumber " + phoneNumber+ "~"+phoneNumber.getVendorPhoneGeneratedIdentifier()+ "~"+phoneNumber.getVendorPhoneTypeCode()());
+			LOG.info("updateVendor phoneNumber " + phoneNumber+ "~"+phoneNumber.getVendorPhoneGeneratedIdentifier()+ "~"+phoneNumber.getVendorPhoneTypeCode());
     		VendorPhoneNumber vPhoneNumber = new VendorPhoneNumber();
         	if (phoneNumber.getVendorPhoneGeneratedIdentifier() != null) {
         		vPhoneNumber = getVendorPhoneNumber(vDetail, phoneNumber.getVendorPhoneGeneratedIdentifier());
