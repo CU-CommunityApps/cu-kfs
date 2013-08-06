@@ -306,7 +306,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
     	if (CollectionUtils.isNotEmpty(addresses)) {
 		for (VendorAddressParam address : addresses) {
 			VendorAddress vendorAddr = new VendorAddress();
-			LOG.info("updateVendor ADDRESS " + address);
+			LOG.info("updateVendor ADDRESS " + address+ "~" +address.getVendorAddressTypeCode()+ "~" + address.getVendorAddressGeneratedIdentifier());
 			if (address.getVendorAddressGeneratedIdentifier() != null) {
 				vendorAddr = getVendorAddress(vDetail, address.getVendorAddressGeneratedIdentifier());
 			}
@@ -324,7 +324,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	private void updateVendorContacts(List<VendorContactParam> contacts, VendorDetail vendor, VendorDetail vDetail) {
     	if (CollectionUtils.isNotEmpty(contacts)) {
     	for (VendorContactParam contact : contacts) {
-			LOG.info("updateVendor contact " + contact);
+			LOG.info("updateVendor contact " + contact+ "~" +contact.getVendorContactGeneratedIdentifier()+ "~"+contact.getVendorContactName());
         	VendorContact vContact = new VendorContact();
         	if (contact.getVendorContactGeneratedIdentifier() != null) {
         		vContact = getVendorContact(vDetail, contact.getVendorContactGeneratedIdentifier());
@@ -344,7 +344,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	private void updateVendorPhoneNumbers(List<VendorPhoneNumberParam> phoneNumbers, VendorDetail vendor, VendorDetail vDetail) {
     	if (CollectionUtils.isNotEmpty(phoneNumbers)) {
     	for (VendorPhoneNumberParam phoneNumber : phoneNumbers) {
-			LOG.info("updateVendor phoneNumber " + phoneNumber);
+			LOG.info("updateVendor phoneNumber " + phoneNumber+ "~"+phoneNumber.getVendorPhoneGeneratedIdentifier()+ "~"+phoneNumber.getVendorPhoneTypeCode()());
     		VendorPhoneNumber vPhoneNumber = new VendorPhoneNumber();
         	if (phoneNumber.getVendorPhoneGeneratedIdentifier() != null) {
         		vPhoneNumber = getVendorPhoneNumber(vDetail, phoneNumber.getVendorPhoneGeneratedIdentifier());
