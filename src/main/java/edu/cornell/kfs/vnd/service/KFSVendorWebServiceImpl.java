@@ -157,6 +157,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
     	for (VendorPhoneNumberParam phoneNumber : phoneNumbers) {
 	        LOG.info("addVendor phoneNumber "+phoneNumber);       
     		VendorPhoneNumber vPhoneNumber = new VendorPhoneNumber();
+    		setVendorPhoneNumber(phoneNumber, vPhoneNumber);
         	vendorPhoneNumbers.add(vPhoneNumber);
    		
     	}
