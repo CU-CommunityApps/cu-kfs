@@ -105,4 +105,22 @@ public class VendorContactParam implements Serializable {
 		this.vendorContactGeneratedIdentifier = vendorContactGeneratedIdentifier;
 	}
 
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(getVendorAttentionName()).append("~")
+		  .append(getVendorCityName()).append("~")
+		  .append(getVendorContactCommentText()).append("~")
+		  .append(getVendorContactEmailAddress()).append("~")
+		  .append(getVendorContactName()).append("~")
+		  .append(getVendorContactTypeCode()).append("~")
+		  .append(getVendorCountryCode()).append("~")
+		  .append(getVendorLine1Address()).append("~")
+		  .append(getVendorLine2Address()).append("~")
+		  .append(getVendorStateCode()).append("~")
+		  .append(getVendorZipCode()).append("~")
+		  .append(isActive()).append("~")
+		  .append(getVendorContactGeneratedIdentifier());
+		return sb.toString();
+	}
+
 }

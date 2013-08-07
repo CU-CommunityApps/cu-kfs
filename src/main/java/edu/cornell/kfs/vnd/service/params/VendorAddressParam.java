@@ -122,4 +122,23 @@ public class VendorAddressParam implements Serializable {
 		this.active = active;
 	}
 
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(getVendorAddressEmailAddress()).append("~")
+		  .append(getVendorAddressInternationalProvinceName()).append("~")
+		  .append(getVendorAddressTypeCode()).append("~")
+		  .append(getVendorAttentionName()).append("~")
+		  .append(getVendorBusinessToBusinessUrlAddress()).append("~")
+		  .append(getVendorCityName()).append("~")
+		  .append(getVendorCountryCode()).append("~")
+		  .append(getVendorFaxNumber()).append("~")
+		  .append(getVendorLine1Address()).append("~")
+		  .append(getVendorLine2Address()).append("~")
+		  .append(getVendorStateCode()).append("~")
+		  .append(getVendorZipCode()).append("~")
+		  .append(isActive()).append("~")
+		  .append(getVendorAddressGeneratedIdentifier());
+		return sb.toString();
+	}
+
 }

@@ -30,4 +30,12 @@ public class VendorSupplierDiversityParam implements Serializable {
 		this.vendorSupplierDiversityExpirationDate = vendorSupplierDiversityExpirationDate;
 	}
 
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(getVendorSupplierDiversityCode()).append("~")
+		  .append(getVendorSupplierDiversityExpirationDate()).append("~")
+		  .append(isActive());
+		return sb.toString();
+	}
+
 }

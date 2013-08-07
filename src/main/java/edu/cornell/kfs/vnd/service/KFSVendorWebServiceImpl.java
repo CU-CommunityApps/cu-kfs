@@ -169,7 +169,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
     	List<VendorSupplierDiversity> vendorSupplierDiversitys = new ArrayList<VendorSupplierDiversity>();
     	if (CollectionUtils.isNotEmpty(supplierDiversitys)) {
     	for (VendorSupplierDiversityParam diversity : supplierDiversitys) {
-	        LOG.info("addVendor diversity "+diversity);       
+	        LOG.info("addVendor diversity "+diversity+"~"+diversity.getVendorSupplierDiversityCode()+"~"+diversity.getVendorSupplierDiversityExpirationDate());       
     		VendorSupplierDiversity vDiversity = new VendorSupplierDiversity();
 
             vDiversity.setVendorSupplierDiversityCode(diversity.getVendorSupplierDiversityCode());
@@ -365,7 +365,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
     	ArrayList<VendorSupplierDiversity> vendorSupplierDiversitys = new ArrayList<VendorSupplierDiversity>();
     	if (CollectionUtils.isNotEmpty(supplierDiversitys)) {
     	for (VendorSupplierDiversityParam diversity : supplierDiversitys) {
-			LOG.info("updateVendor diversity " + diversity);
+			LOG.info("updateVendor diversity " + diversity+"~"+diversity.getVendorSupplierDiversityCode()+"~"+diversity.getVendorSupplierDiversityExpirationDate());
     		VendorSupplierDiversity vDiversity = getVendorSupplierDiversity(vDetail.getVendorHeader(), diversity.getVendorSupplierDiversityCode());
             boolean isExist = StringUtils.isNotBlank(vDiversity.getVendorSupplierDiversityCode());
             vDiversity.setVendorSupplierDiversityCode(diversity.getVendorSupplierDiversityCode());

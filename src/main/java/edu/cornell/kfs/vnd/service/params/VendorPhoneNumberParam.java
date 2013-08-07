@@ -40,4 +40,13 @@ public class VendorPhoneNumberParam implements Serializable {
 		this.active = active;
 	}
 
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(getVendorPhoneTypeCode()).append("~")
+		  .append(getVendorPhoneNumber()).append("~")
+		  .append(getVendorPhoneExtensionNumber()).append("~")
+		  .append(isActive()).append("~")
+		  .append(getVendorPhoneGeneratedIdentifier());
+		return sb.toString();
+	}
 }
