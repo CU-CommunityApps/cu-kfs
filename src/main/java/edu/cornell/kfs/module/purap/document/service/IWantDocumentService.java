@@ -2,7 +2,8 @@ package edu.cornell.kfs.module.purap.document.service;
 
 import java.util.List;
 
-import org.kuali.rice.kns.mail.MailMessage;
+import org.kuali.kfs.module.purap.document.RequisitionDocument;
+import org.kuali.kfs.module.purap.document.web.struts.RequisitionForm;
 
 import edu.cornell.kfs.module.purap.businessobject.LevelOrganization;
 import edu.cornell.kfs.module.purap.businessobject.PersonData;
@@ -64,4 +65,11 @@ public interface IWantDocumentService {
      */
     public void sendDocumentFinalizedMessage(IWantDocument iWantDocument);
 
+    /**
+     * Creates a RequisitionDocument based on the information on the I Want Document.
+     * 
+     * @param iWantDocument
+     * @return a requisition document
+     */
+    public RequisitionDocument setUpRequisitionDetailsFromIWantDoc(IWantDocument iWantDocument, RequisitionDocument requisitionDocumentBase, RequisitionForm requisitionForm) throws Exception;
 }

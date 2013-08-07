@@ -101,6 +101,8 @@ import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
+import edu.cornell.kfs.module.purap.businessobject.IWantView;
+
 @NonTransactional
 public class PurapServiceImpl implements PurapService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PurapServiceImpl.class);
@@ -240,6 +242,14 @@ public class PurapServiceImpl implements PurapService {
                 Document doc = documentService.getByDocumentHeaderId(view.getDocumentNumber());
                 doc.getDocumentHeader().getWorkflowDocument().saveRoutingData();
             }
+            
+            // ==== CU Customization (KFSPTS-1656): Save IWantDocument routing data. ====
+            List<IWantView> iWantViews = getRelatedViews(IWantView.class, accountsPayablePurchasingDocumentLinkIdentifier);
+            for (Iterator<IWantView> iterator = iWantViews.iterator(); iterator.hasNext();) {
+                IWantView view = (IWantView) iterator.next();
+                Document doc = documentService.getByDocumentHeaderId(view.getDocumentNumber());
+                doc.getDocumentHeader().getWorkflowDocument().saveRoutingData();
+            }
         }
         catch (WorkflowException e) {
             throw new InfrastructureException("unable to save routing data for related docs", e);
@@ -300,6 +310,13 @@ public class PurapServiceImpl implements PurapService {
         List<BulkReceivingView> bulkViews = getRelatedViews(BulkReceivingView.class, accountsPayablePurchasingDocumentLinkIdentifier);
         for (Iterator<BulkReceivingView> iterator = bulkViews.iterator(); iterator.hasNext();) {
             BulkReceivingView view = (BulkReceivingView) iterator.next();
+            documentIdList.add(view.getDocumentNumber());
+        }
+        
+        // ==== CU Customization (KFSPTS-1656): Get IWantDocument views. ====
+        List<IWantView> iWantViews = getRelatedViews(IWantView.class, accountsPayablePurchasingDocumentLinkIdentifier);
+        for (Iterator<IWantView> iterator = iWantViews.iterator(); iterator.hasNext();) {
+            IWantView view = (IWantView) iterator.next();
             documentIdList.add(view.getDocumentNumber());
         }
         

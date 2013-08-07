@@ -115,6 +115,7 @@
                 <td align=left valign=top class="neutral">
                     <kul:htmlControlAttribute 
                         attributeEntry="${accountAttributes.chartOfAccountsCode}" 
+                        onchange="loadAccountName('newSourceLine.accountNumber', 'newSourceLine.chartOfAccountsCode', 'document.newSourceLine.accountNumber.name.div');"
                         property="newSourceLine.chartOfAccountsCode" readOnly="${not fullEntryMode}" tabindexOverride="${tabindexOverrideBase + 1}"/>&nbsp;
                 </td> 
                 <td align=left valign=top class="neutral">
@@ -255,6 +256,7 @@
 					    <kul:htmlControlAttribute
 						    attributeEntry="${accountAttributes.chartOfAccountsCode}"
 						    property="document.account[${ctr}].chartOfAccountsCode"
+						    onchange="loadAccountName('document.account[${ctr}].accountNumber', 'document.account[${ctr}].chartOfAccountsCode', 'document.account[${ctr}].accountNumber.name.div');"
 						    readOnly="${not fullEntryMode}"
 						    tabindexOverride="${tabindexOverrideBase + 0}"/>
 						    </div>
@@ -264,6 +266,7 @@
 						 <kul:htmlControlAttribute
 						    attributeEntry="${accountAttributes.accountNumber}"
 						    property="document.account[${ctr}].accountNumber"
+						    onblur="loadAccountName('document.account[${ctr}].accountNumber', 'document.account[${ctr}].chartOfAccountsCode', 'document.account[${ctr}].accountNumber.name.div');"
 						    readOnly="${not fullEntryMode}"
 						    tabindexOverride="${tabindexOverrideBase + 0}"/>
 						    

@@ -142,6 +142,11 @@ function loadAccountName(accountNumberFieldName, chartFieldName, accountNameFiel
 	var accountNumber = DWRUtil.getValue( accountNumberFieldName );
 	var chart = DWRUtil.getValue( chartFieldName );
 	
+	if (accountNumber != '') {
+		accountNumber = accountNumber.toUpperCase();
+		setRecipientValue(accountNumberFieldName, accountNumber);		
+	}
+	
 	if (accountNumber =='' || chart == '') {
 		setRecipientValue(accountNameFieldName, "");
 	} else {

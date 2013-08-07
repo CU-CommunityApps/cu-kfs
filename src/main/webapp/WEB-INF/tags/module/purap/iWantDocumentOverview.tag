@@ -21,7 +21,7 @@
 <c:set var="docHeaderAttributes" value="${DataDictionary.DocumentHeader.attributes}" />
 <c:set var="iWantDocAttributes" value="${DataDictionary.IWantDocument.attributes}" />
 
-<kul:tabTop tabTitle="Document Overview" defaultOpen="true" tabErrorKey="${Constants.DOCUMENT_ERRORS}" >
+<%--<kul:tabTop tabTitle="Document Overview" defaultOpen="true" tabErrorKey="${Constants.DOCUMENT_ERRORS}" >--%>
 	<div class="tab-container" align=center>
 		  <!-- DOC OVERVIEW TABLE -->
 		  <html:hidden property="document.documentHeader.documentNumber" />
@@ -36,7 +36,7 @@
 		          />
 		       </th>
 		      <td align="left" valign="middle" class="neutral">
-		      	<kul:htmlControlAttribute property="document.documentHeader.documentDescription" attributeEntry="${docHeaderAttributes.documentDescription}" readOnly="true"/>
+		      	<kul:htmlControlAttribute property="document.documentHeader.documentDescription" attributeEntry="${docHeaderAttributes.documentDescription}" readOnly="${!KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT__DOCUMENT_OVERVIEW]}"/>
 		      </td>
 		      </tr>
 		      <tr>
@@ -82,4 +82,4 @@
           </table>
           <jsp:doBody/>            
         </div>
-</kul:tabTop>
+<%--</kul:tabTop>--%>

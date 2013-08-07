@@ -17,9 +17,16 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.businessobject.BillingAddress;
+import org.kuali.kfs.module.purap.document.RequisitionDocument;
+import org.kuali.kfs.module.purap.document.service.PurapService;
+import org.kuali.kfs.module.purap.document.service.PurchasingService;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentActionBase;
+import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 import org.kuali.rice.core.util.KeyLabelPair;
 import org.kuali.rice.core.util.RiceConstants;
@@ -30,10 +37,14 @@ import org.kuali.rice.kim.bo.entity.KimEntityEmploymentInformation;
 import org.kuali.rice.kim.bo.entity.dto.KimEntityInfo;
 import org.kuali.rice.kim.bo.entity.dto.KimPrincipalInfo;
 import org.kuali.rice.kim.service.IdentityManagementService;
+import org.kuali.rice.kim.service.PersonService;
 import org.kuali.rice.kns.bo.Note;
 import org.kuali.rice.kns.rule.event.KualiAddLineEvent;
 import org.kuali.rice.kns.rule.event.RouteDocumentEvent;
+import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.KualiRuleService;
+import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.kns.service.PersistenceService;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.util.ObjectUtils;
@@ -221,6 +232,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                 // KualiDocumentFormBase.populate() needs this updated in the session
                 GlobalVariables.getUserSession().setWorkflowDocument(workflowDoc);
 
+                setIWantDocumentDescription(iWantDocument);
             }
         }
 
@@ -283,7 +295,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                 }
             }
 
-            setIWantDocumentDescription(iWantDoc);
+            //setIWantDocumentDescription(iWantDoc);
 
         }
 
@@ -304,6 +316,11 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             description = description.substring(0, DOCUMENT_DESCRIPTION_MAX_LENGTH);
         }
 
+        // If necessary, add a default description.
+        if (StringUtils.isBlank(description)) {
+        	description = "New IWantDocument";
+        }
+        
         iWantDocument.getDocumentHeader().setDocumentDescription(description);
     }
 
@@ -897,6 +914,12 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
+    	// Only recreate document description if in INITIATED or SAVED status.
+    	KualiWorkflowDocument workflowDocument = ((KualiDocumentFormBase)form).getDocument().getDocumentHeader().getWorkflowDocument();
+    	if (workflowDocument.stateIsInitiated() || workflowDocument.stateIsSaved()) {
+    		setIWantDocumentDescription( (IWantDocument) ((KualiDocumentFormBase)form).getDocument() );
+    	}
+
         ActionForward actionForward = super.save(mapping, form, request, response);
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
@@ -959,6 +982,83 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         }
         
         return rulePassed;
+    }
+
+    public ActionForward createRequisition(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        
+        IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
+        IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+        IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
+        
+       // RequisitionDocument requisitionDocument = iWantDocumentService.createRequisition(iWantDocument);
+        
+       // getDocumentService().saveDocument(requisitionDocument);
+        
+       // requisitionDocument.getUrl();
+        
+        String url = "/purapRequisition.do?methodToCall=docHandler&command=initiate&docTypeName=REQS";
+        
+//        KualiWorkflowDocument workflowDoc = requisitionDocument.getDocumentHeader().getWorkflowDocument();
+//        GlobalVariables.getUserSession().setWorkflowDocument(workflowDoc);
+//        
+        ActionForward actionForward = new ActionForward(url, true);
+   
+//        request.getParameterMap().put("methodToCall", "docHandler");
+//       
+//        request.getParameterMap().put("command", "initiate");
+//        request.getParameterMap().put("docType", "REQS");
+        
+        return actionForward;//mapping.findForward("requisition");
+    }
+    
+    private RequisitionDocument createNewRequisition(IWantDocument iWantDocument) throws WorkflowException{
+        
+        RequisitionDocument requisitionDocument = (RequisitionDocument)getDocumentService().getNewDocument(RequisitionDocument.class);
+        
+        requisitionDocument.getDocumentHeader().setDocumentDescription(iWantDocument.getDepartmentLevelOrganization() + ", "+ iWantDocument.getInitiatorName() + ", " +"I Want doc #" + iWantDocument.getDocumentNumber());
+        requisitionDocument.setRequisitionSourceCode(PurapConstants.RequisitionSources.IWNT);
+        requisitionDocument.setStatusCode(PurapConstants.RequisitionStatuses.IN_PROCESS);
+        
+        requisitionDocument.setPurchaseOrderCostSourceCode(PurapConstants.POCostSources.ESTIMATE);
+        requisitionDocument.setPurchaseOrderTransmissionMethodCode(SpringContext.getBean(ParameterService.class).getParameterValue(RequisitionDocument.class, PurapParameterConstants.PURAP_DEFAULT_PO_TRANSMISSION_CODE));
+        requisitionDocument.setDocumentFundingSourceCode(SpringContext.getBean(ParameterService.class).getParameterValue(RequisitionDocument.class, PurapParameterConstants.DEFAULT_FUNDING_SOURCE));
+        requisitionDocument.setUseTaxIndicator(SpringContext.getBean(PurchasingService.class).getDefaultUseTaxIndicatorValue(requisitionDocument));
+        
+        if(StringUtils.isNotBlank(iWantDocument.getDeliverToNetID())){
+        Person deliverTo = SpringContext.getBean(PersonService.class).getPersonByPrincipalName(iWantDocument.getDeliverToNetID());
+        
+        Person currentUser = GlobalVariables.getUserSession().getPerson();
+        ChartOrgHolder purapChartOrg = SpringContext.getBean(FinancialSystemUserService.class).getPrimaryOrganization(currentUser, PurapConstants.PURAP_NAMESPACE);
+        if (ObjectUtils.isNotNull(purapChartOrg)) {
+            requisitionDocument.setChartOfAccountsCode(purapChartOrg.getChartOfAccountsCode());
+            requisitionDocument.setOrganizationCode(purapChartOrg.getOrganizationCode());
+        }
+        requisitionDocument.setDeliveryCampusCode(deliverTo.getCampusCode());
+        requisitionDocument.setDeliveryToName(iWantDocument.getDeliverToName());
+        requisitionDocument.setDeliveryToEmailAddress(iWantDocument.getDeliverToEmailAddress());
+        requisitionDocument.setDeliveryToPhoneNumber(iWantDocument.getDeliverToPhoneNumber());
+        requisitionDocument.setRequestorPersonName(iWantDocument.getInitiatorName());
+        requisitionDocument.setRequestorPersonEmailAddress(iWantDocument.getInitiatorEmailAddress());
+        requisitionDocument.setRequestorPersonPhoneNumber(iWantDocument.getInitiatorPhoneNumber());
+        
+        
+        requisitionDocument.setOrganizationAutomaticPurchaseOrderLimit(SpringContext.getBean(PurapService.class).getApoLimit(requisitionDocument.getVendorContractGeneratedIdentifier(), requisitionDocument.getChartOfAccountsCode(), requisitionDocument.getOrganizationCode()));
+
+        // populate billing address
+        BillingAddress billingAddress = new BillingAddress();
+        billingAddress.setBillingCampusCode(requisitionDocument.getDeliveryCampusCode());
+        Map keys = SpringContext.getBean(PersistenceService.class).getPrimaryKeyFieldValues(billingAddress);
+        billingAddress = (BillingAddress) SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(BillingAddress.class, keys);
+        requisitionDocument.templateBillingAddress(billingAddress);
+        }
+        
+        KualiWorkflowDocument workflowDoc = requisitionDocument.getDocumentHeader().getWorkflowDocument();
+        GlobalVariables.getUserSession().setWorkflowDocument(workflowDoc);
+        
+       
+        return requisitionDocument;
     }
 
 }

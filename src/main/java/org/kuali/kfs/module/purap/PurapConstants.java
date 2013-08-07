@@ -168,6 +168,7 @@ public class PurapConstants extends JSTLConstants {
     public static class RequisitionSources {
         public static final String STANDARD_ORDER = "STAN";
         public static final String B2B = "B2B";
+        public static final String IWNT = "IWNT";
     }
 
     // PURCHASE ORDER VENDOR CHOICE CODES

@@ -133,6 +133,8 @@
     	<field-descriptor name="completeOption" column="COMPLETED" jdbc-type="VARCHAR"/> 
     	<field-descriptor name="currentRouteToNetId" column="CRNT_RT_TO_NET_ID" jdbc-type="VARCHAR" index="true"/>   
     
+    	<field-descriptor name="reqsDocId" column="REQS_FDOC_NBR" jdbc-type="VARCHAR" />
+    	<field-descriptor name="accountsPayablePurchasingDocumentLinkIdentifier" column="AP_PUR_DOC_LNK_ID" jdbc-type="INTEGER" autoincrement="true" sequence-name="AP_PUR_DOC_LNK_ID"/>
   
     	<!-- COMMON TO ALL DOCUMENTS -->
     	<reference-descriptor name="documentHeader" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true" >
@@ -153,6 +155,13 @@
         	<inverse-foreignkey field-ref="documentNumber" />
 				
     	</collection-descriptor>
+    </class-descriptor>
+    
+    <class-descriptor class="edu.cornell.kfs.module.purap.businessobject.IWantView" table="CU_PUR_IWNT_DOC_T">
+        <field-descriptor name="accountsPayablePurchasingDocumentLinkIdentifier" column="AP_PUR_DOC_LNK_ID" primarykey="true" jdbc-type="INTEGER"/>
+        <field-descriptor name="reqsDocId" column="REQS_FDOC_NBR" primarykey="true" jdbc-type="VARCHAR"/>
+        <field-descriptor name="documentNumber" column="FDOC_NBR" primarykey="true" jdbc-type="VARCHAR"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR"/>
     </class-descriptor>
     
     <class-descriptor class="edu.cornell.kfs.module.purap.businessobject.IWantAccount" table="CU_PUR_IWNT_ACCT_T">

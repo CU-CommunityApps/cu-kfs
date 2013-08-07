@@ -90,6 +90,7 @@
        <ref bean="IWantDocument-totalDollarAmount"/>
        <ref bean="IWantDocument-itemAndAccountDifference" />
        
+       <ref bean="IWantDocument-reqsDocId" />
        <ref bean="IWantDocument-collegeLevelChartForSearch" />
        <ref bean="IWantDocument-collegeLevelOrgCodeForSearch" />
        <ref bean="IWantDocument-departmentLevelOrgCodeForSearch" />
@@ -597,6 +598,20 @@
     <property name="summary" value="&amp;nbsp;"/>
     <property name="name" value="currentRouteToNetId"/>
     <property name="label" value="Approver's Net ID"/>
+   
+  </bean>
+
+  <bean id="IWantDocument-reqsDocId" parent="IWantDocument-reqsDocId-parentBean"/>
+  <bean id="IWantDocument-reqsDocId-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="shortLabel" value="Reqs Doc ID"/>
+    <property name="maxLength" value="14"/>
+    <property name="required" value="false"/>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+    <property name="summary" value="&amp;nbsp;"/>
+    <property name="name" value="reqsDocId"/>
+    <property name="label" value="Requisition Document ID"/>
    
   </bean>
 

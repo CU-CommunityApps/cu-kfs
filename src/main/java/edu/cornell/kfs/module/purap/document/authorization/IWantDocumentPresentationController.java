@@ -1,7 +1,11 @@
 package edu.cornell.kfs.module.purap.document.authorization;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentPresentationControllerBase;
 import org.kuali.rice.kew.dto.ActionRequestDTO;
@@ -68,6 +72,21 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
         }
         
         return super.canReload(document);
+    }
+
+    /*
+     * CU Customization (KFSPTS-2270): Added the ability to edit the document overview/description
+     * for enroute IWNT docs; we'll use KIM permissions to restrict this to select users.
+     * 
+     * We restrict the editing of the doc overview to IWNT docs in enroute status at the
+     * OrganizationHierarchy node, and further restrict it to non-ad-hoc users.
+     */
+    @Override
+    protected boolean canEditDocumentOverview(Document document) {
+    	KualiWorkflowDocument kualiWorkflowDocument = document.getDocumentHeader().getWorkflowDocument();
+    	String nodeNamesStr = kualiWorkflowDocument.getCurrentRouteNodeNames();
+    	List<String> nodeNames = (StringUtils.isNotBlank(nodeNamesStr)) ? Arrays.asList(nodeNamesStr.split(",\\s*")) : Collections.<String>emptyList();
+    	return kualiWorkflowDocument.stateIsEnroute() && !kualiWorkflowDocument.isAdHocRequested() && nodeNames.contains("OrganizationHierarchy");
     }
 
     /*
@@ -164,6 +183,9 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
             editModes.remove(CUPurapConstants.IWantDocumentSteps.VENDOR_STEP);
         }
 
+        if (StringUtils.isBlank(iWantDocument.getReqsDocId()) && !workflowDocument.stateIsInitiated() && !workflowDocument.stateIsSaved()) {
+        	editModes.add(CUPurapConstants.IWNT_DOC_CREATE_REQ);
+        }
         editModes.add(CUPurapConstants.IWNT_DOC_USE_LOOKUPS);
         
         return editModes;

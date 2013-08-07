@@ -36,11 +36,14 @@
   </SCRIPT>
 	
 
-	<purap:iWantDocumentOverview editingMode="${KualiForm.editingMode}" readOnly="${not fullEntryMode}"> 
-	</purap:iWantDocumentOverview>
-	       
-    <purap:iWantCustomerData
-        documentAttributes="${DataDictionary.IWantDocument.attributes}" />
+	<kul:tabTop tabTitle="Document Overview" defaultOpen="true" tabErrorKey="${Constants.DOCUMENT_ERRORS}">
+
+		<purap:iWantDocumentOverview editingMode="${KualiForm.editingMode}" readOnly="${not fullEntryMode}"> 
+		</purap:iWantDocumentOverview>
+
+		<purap:iWantCustomerData documentAttributes="${DataDictionary.IWantDocument.attributes}" />
+
+	</kul:tabTop>
 
     
     <kul:tab tabTitle="Items" defaultOpen="true" tabErrorKey="${KFSConstants.I_WANT_DOC_ITEM_TAB_ERRORS}">
@@ -63,7 +66,13 @@
         
     <purap:iWantMisc
         documentAttributes="${DataDictionary.IWantDocument.attributes}" />	
-	            
+	
+	<%-- Display related documents, if a req has been created from this doc. --%>
+    <c:if test="${!empty(KualiForm.document.reqsDocId)}">
+        <purap:relatedDocuments
+                documentAttributes="${DataDictionary.RelatedDocuments.attributes}" />
+    </c:if>	
+	
     <purap:iWantNotes defaultOpen="true"/> 
 
     <c:if test="${canAdHocRouteForApprove != null}">
@@ -107,7 +116,7 @@
 	
 	<c:set var="extraButtons" value="${KualiForm.extraButtons}"/>  	
 
-	<sys:documentControls transactionalDocument="true" extraButtons="${extraButtons}" />
+	<purap:iWantDocumentControls transactionalDocument="true" extraButtons="${extraButtons}" />
 
 </kul:documentPage>
 </c:when>
@@ -125,12 +134,16 @@
   </SCRIPT>
 
 	<c:if test="${(step eq 'customerDataStep')}">
-	
-	<purap:iWantDocumentOverview editingMode="${KualiForm.editingMode}" readOnly="false"> 
-	</purap:iWantDocumentOverview>
-       
-    <purap:iWantCustomerData
-        documentAttributes="${DataDictionary.IWantDocument.attributes}" />
+
+		<kul:tabTop tabTitle="Document Overview" defaultOpen="true" tabErrorKey="${Constants.DOCUMENT_ERRORS}">
+
+			<purap:iWantDocumentOverview editingMode="${KualiForm.editingMode}" readOnly="false"> 
+			</purap:iWantDocumentOverview>
+
+			<purap:iWantCustomerData documentAttributes="${DataDictionary.IWantDocument.attributes}" />
+
+		</kul:tabTop>
+
     </c:if>
 
     <c:if test="${(step eq 'itemAndAcctDataStep')}">

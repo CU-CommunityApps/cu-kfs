@@ -171,8 +171,6 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     }
 
     /**
-     * This overridden method ...
-     * 
      * @see org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase#getExtraButtons()
      */
     public List<ExtraButton> getExtraButtons() {
@@ -209,6 +207,12 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
             extraButtons.add(createSubmitButton());
             
         }
+        
+        if(getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_CREATE_REQ))
+        {
+            extraButtons.add(createCreateRequisitionButton());
+        }
+        
         return extraButtons;
     }
 
@@ -304,6 +308,16 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         clearButton.setExtraButtonSource("${" + KFSConstants.RICE_EXTERNALIZABLE_IMAGES_URL_KEY
                 + "}buttonsmall_submit.gif");
         clearButton.setExtraButtonAltText("Back");
+        return clearButton;
+    }
+    
+    protected ExtraButton createCreateRequisitionButton() {
+        ExtraButton clearButton = new ExtraButton();
+        clearButton.setExtraButtonProperty("methodToCall.createRequisition");
+        clearButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_create_req.gif");
+        clearButton.setExtraButtonAltText("Create Req");
+        clearButton.setExtraButtonOnclick("window.open();");
+        clearButton.setExtraButtonParams("_blank");
         return clearButton;
     }
     

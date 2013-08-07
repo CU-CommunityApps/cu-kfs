@@ -9,6 +9,8 @@ import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
+import org.kuali.kfs.module.purap.businessobject.PurchaseOrderView;
+import org.kuali.kfs.module.purap.util.PurApRelatedViews;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase;
@@ -113,6 +115,15 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private KualiDecimal internalPurchasingLimit;
 
     private VendorDetail vendorDetail;
+
+    // ID of associated reqs document, if any.
+    private String reqsDocId;
+    
+    // Copied this property from the base PURAP doc class.
+    protected Integer accountsPayablePurchasingDocumentLinkIdentifier;
+    
+    // Copied this property from the base PURAP doc class; not persisted.
+    protected transient PurApRelatedViews relatedViews;
 
     // The three fields below are for lookup purposes only; they are not persisted.
     private transient Chart collegeChartForSearch;
@@ -685,6 +696,12 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         addCopyErrorDocumentNote("copied from document " + sourceDocumentHeaderId);
 
         copyItemsAndAccounts();
+        
+        setAccountsPayablePurchasingDocumentLinkIdentifier(null);
+        setReqsDocId(null);
+        
+        this.completeOption = null;
+        this.completed = false;
     }
 
     @Override
@@ -692,6 +709,12 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 		super.toCopy();
 		
 		copyItemsAndAccounts();
+		
+		setAccountsPayablePurchasingDocumentLinkIdentifier(null);
+        setReqsDocId(null);
+		
+		this.completeOption = null;
+		this.completed = false;
 	}
 
     /**
@@ -812,6 +835,14 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         this.setDeliverToInfoAsDefault = setDeliverToInfoAsDefault;
     }
 
+    public String getReqsDocId() {
+		return reqsDocId;
+	}
+
+	public void setReqsDocId(String reqsDocId) {
+		this.reqsDocId = reqsDocId;
+	}
+
     /**
 	 * Gets the difference between the item total amounts and the account total amounts.
 	 * Re-computes and stores this difference upon invocation.
@@ -859,6 +890,66 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
             iWantDocumentService.sendDocumentFinalizedMessage(this);
         }
 
+    }
+
+    // The methods below (copied from the PurchasingAccountsPayableDocument interface) are needed to help with displaying related documents.
+    
+    public boolean getIsATypeOfPurAPRecDoc() {
+    	return false;
+    }
+    
+    public boolean getIsATypeOfPurDoc() {
+    	return false;
+    }
+    
+    public boolean getIsATypeOfPODoc() {
+    	return false;
+    }
+    
+    public boolean getIsPODoc() {
+    	return false;
+    }
+    
+    public boolean getIsReqsDoc() {
+    	return false;
+    }
+    
+    // Added this method since the relatedDocuments.tag file relies on it when getIsReqsDoc() and getIsATypeOfPODoc() return false.
+    
+    public Integer getPurchaseOrderIdentifier() {
+    	return null;
+    }
+    
+    // Copied the getters and setters below from the base PURAP document class.
+    
+    public Integer getAccountsPayablePurchasingDocumentLinkIdentifier() {
+        return accountsPayablePurchasingDocumentLinkIdentifier;
+    }
+
+    public void setAccountsPayablePurchasingDocumentLinkIdentifier(Integer accountsPayablePurchasingDocumentLinkIdentifier) {
+        this.accountsPayablePurchasingDocumentLinkIdentifier = accountsPayablePurchasingDocumentLinkIdentifier;
+    }
+    
+    public PurApRelatedViews getRelatedViews() {
+        if (relatedViews == null) {
+            relatedViews = new PurApRelatedViews(this.documentNumber, this.accountsPayablePurchasingDocumentLinkIdentifier);
+        }
+        return relatedViews;
+    }
+
+    public void setRelatedViews(PurApRelatedViews relatedViews) {
+        this.relatedViews = relatedViews;
+    }
+    
+    // Copied the method below from the PurchasingAccountsPayableDocumentBase class.
+    
+    public boolean getNeedWarningRelatedPOs() {
+        List<PurchaseOrderView> poViews = getRelatedViews().getRelatedPurchaseOrderViews();
+        for (PurchaseOrderView poView : poViews) {
+            if (poView.getNeedWarning())
+                return true;
+        }
+        return false;
     }
 
     // The properties below are for lookup purposes only, and are not persisted.

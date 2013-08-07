@@ -51,16 +51,10 @@
   </bean>
   <bean id="IWantAccount-accountNumber" parent="IWantAccount-accountNumber-parentBean"/>
 
-  <bean id="IWantAccount-accountNumber-parentBean" abstract="true" parent="AttributeDefinition">
+  <bean id="IWantAccount-accountNumber-parentBean" abstract="true" parent="AccountAttribute">
     <property name="name" value="accountNumber"/>
-    <property name="label" value="Account Number"/>
-    <property name="shortLabel" value="Account Number"/>
-    <property name="maxLength" value="7"/>
     <property name="required" value="false"/>
-    <property name="control">
-      <ref bean="TenCharacterTextControl" />
-   </property>
-   </bean>
+  </bean>
   <bean id="IWantAccount-organizationReferenceId" parent="IWantAccount-organizationReferenceId-parentBean"/>
 
   <bean id="IWantAccount-organizationReferenceId-parentBean" abstract="true" parent="AttributeDefinition">

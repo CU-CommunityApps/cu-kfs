@@ -104,17 +104,44 @@
     </bean>
     
     <bean id="iWantDocumentService" class="edu.cornell.kfs.module.purap.document.service.impl.IWantDocumentServiceImpl">
+    	<property name="attachmentService">
+			<ref bean="attachmentService" />
+		</property>
+    	<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
     	<property name="collegeLevelOrganizationDao">
 			<ref bean="collegeLevelOrganizationDao" />
+		</property>
+		<property name="documentTypeService">
+			<ref bean="enDocumentTypeService" />
+		</property>
+		<property name="documentService">
+			<ref bean="documentService" />
+		</property>
+		<property name="financialSystemUserService">
+			<ref bean="financialSystemUserService" />
 		</property>
 		<property name="mailService">
 			<ref bean="mailService" />
 		</property>
+		<property name="noteService">
+			<ref bean="noteService" />
+		</property>
+	    <property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
+		<property name="persistenceService">
+			<ref bean="persistenceService" />
+		</property>
 		<property name="personService">
 			<ref bean="personService" />
 		</property>
-		<property name="documentTypeService">
-			<ref bean="enDocumentTypeService" />
+		<property name="purchasingService">
+			<ref bean="purchasingService" />
+		</property>
+		<property name="purapService">
+			<ref bean="purapService" />
 		</property>
 	</bean>
 	

@@ -40,6 +40,9 @@ import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
+import edu.cornell.kfs.module.purap.document.IWantDocument;
+import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
+
 /**
  * Struts Action for Requisition document.
  */
@@ -207,4 +210,47 @@ public class RequisitionAction extends PurchasingActionBase {
         return forward;
     }
     
+    /**
+     * Creates a requisition document based on information on an I Want document.
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    public ActionForward createReqFromIWantDoc(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        String iWantDocumentNumber = request.getParameter("docId");
+        RequisitionForm requisitionForm = (RequisitionForm) form;
+
+        IWantDocument iWantDocument = (IWantDocument) getDocumentService().getByDocumentHeaderId(iWantDocumentNumber);
+        
+        // Do not allow the req to be created if the IWNT doc is already associated with another req.
+        if (iWantDocument != null && StringUtils.isNotBlank(iWantDocument.getReqsDocId())) {
+        	throw new WorkflowException("Cannot create requisition from IWantDocument '" + iWantDocumentNumber +
+        			"' because a requisition has already been created from that document");
+        }
+        
+        IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
+
+        createDocument(requisitionForm);
+        
+        RequisitionDocument requisitionDocument = requisitionForm.getRequisitionDocument();
+
+        iWantDocumentService.setUpRequisitionDetailsFromIWantDoc(iWantDocument, requisitionDocument, requisitionForm);
+        
+        // Set the requisition doc ID reference on the IWantDocument.
+        iWantDocument.setReqsDocId(requisitionDocument.getDocumentNumber());
+        SpringContext.getBean(PurapService.class).saveDocumentNoValidation(iWantDocument);
+        
+      //  doDistribution(mapping, requisitionForm, request, response);
+        
+        //save(mapping, requisitionForm, request, response);
+
+        return mapping.findForward(RiceConstants.MAPPING_BASIC);
+    }
+
 }
