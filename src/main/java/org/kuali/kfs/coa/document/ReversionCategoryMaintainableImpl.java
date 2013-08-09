@@ -22,9 +22,10 @@ import org.kuali.kfs.coa.businessobject.ReversionCategory;
 import org.kuali.kfs.coa.service.OrganizationReversionDetailTrickleDownInactivationService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
-import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * A Maintainable for the  Reversion Category maintenance document
@@ -37,7 +38,7 @@ public class ReversionCategoryMaintainableImpl extends FinancialSystemMaintainab
      */
     protected boolean isInactivatingReversionCategory() {
         // the account has to be closed on the new side when editing in order for it to be possible that we are closing the account
-        if (KNSConstants.MAINTENANCE_EDIT_ACTION.equals(getMaintenanceAction()) && !((ReversionCategory) getBusinessObject()).isActive()) {
+        if (KRADConstants.MAINTENANCE_EDIT_ACTION.equals(getMaintenanceAction()) && !((ReversionCategory) getBusinessObject()).isActive()) {
             ReversionCategory existingReversionCategoryFromDB = retrieveExistingReversionCategory();
             if (ObjectUtils.isNotNull(existingReversionCategoryFromDB)) {
                 // now see if the original account was not closed, in which case, we are closing the account
@@ -55,7 +56,7 @@ public class ReversionCategoryMaintainableImpl extends FinancialSystemMaintainab
      */
     protected boolean isActivatingReversionCategory() {
         // the account has to be closed on the new side when editing in order for it to be possible that we are closing the account
-        if (KNSConstants.MAINTENANCE_EDIT_ACTION.equals(getMaintenanceAction()) && ((ReversionCategory) getBusinessObject()).isActive()) {
+        if (KRADConstants.MAINTENANCE_EDIT_ACTION.equals(getMaintenanceAction()) && ((ReversionCategory) getBusinessObject()).isActive()) {
             ReversionCategory existingReversionCategoryFromDB = retrieveExistingReversionCategory();
             if (ObjectUtils.isNotNull(existingReversionCategoryFromDB)) {
                 // now see if the original account was not closed, in which case, we are closing the account

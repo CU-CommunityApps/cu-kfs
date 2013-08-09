@@ -19,4 +19,10 @@ public class ProcurementCardSummaryFlatInputFileHandler implements FlatFileDataH
 
     }
 
+    // TODO UPGRADE-911
+	public String getFileName(String principalName, Object parsedFileContents,
+			String fileUserIdentifier) {
+		return null;
+	}
+
 }

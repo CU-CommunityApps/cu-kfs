@@ -1,11 +1,11 @@
 package edu.cornell.kfs.module.bc.businessobject;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.rice.kns.bo.BusinessObjectBase;
-import org.kuali.rice.kns.util.TypedArrayList;
+import org.kuali.rice.krad.bo.BusinessObjectBase;
 
 import edu.cornell.kfs.module.bc.CUBCConstants;
 import edu.cornell.kfs.module.bc.CUBCConstants.StatusFlag;
@@ -14,6 +14,7 @@ import edu.cornell.kfs.module.bc.CUBCConstants.StatusFlag;
  * A class that holds the fields from the PS position/job extract file to be loaded in
  * KFS.
  */
+@SuppressWarnings("serial")
 public class PSPositionJobExtractEntry extends BusinessObjectBase {
 
     public CUBCConstants.PSEntryStatus deleteStatus;
@@ -55,8 +56,8 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
     private List<PSPositionJobExtractAccountingInfo> posAccountingInfoList;
 
     public PSPositionJobExtractEntry() {
-        csfAccountingInfoList = new TypedArrayList(PSPositionJobExtractAccountingInfo.class);
-        posAccountingInfoList = new TypedArrayList(PSPositionJobExtractAccountingInfo.class);
+        csfAccountingInfoList = new ArrayList<PSPositionJobExtractAccountingInfo>();
+        posAccountingInfoList = new ArrayList<PSPositionJobExtractAccountingInfo>();
     }
 
     /**
@@ -115,9 +116,8 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
         this.name = name;
     }
 
-    @Override
-    protected LinkedHashMap toStringMapper() {
-        // TODO Auto-generated method stub
+    @SuppressWarnings("rawtypes")
+	protected LinkedHashMap toStringMapper() {
         return null;
     }
 
@@ -203,7 +203,6 @@ public class PSPositionJobExtractEntry extends BusinessObjectBase {
     }
 
     public void refresh() {
-        // TODO Auto-generated method stub
 
     }
 

@@ -13,21 +13,22 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kns.document.Copyable;
-import org.kuali.rice.kns.exception.ValidationException;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.util.TypedArrayList;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
+import org.kuali.rice.krad.document.Copyable;
+import org.kuali.rice.krad.exception.ValidationException;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 
 public class IWantDocument extends FinancialSystemTransactionalDocumentBase implements Copyable, AmountTotaling {
+	
+	private static final long serialVersionUID = 1L;
 
-    private String step;
+	private String step;
 
     private String initiatorNetID;
     private String initiatorName;
@@ -106,7 +107,8 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     // Will service be performed on Campus: yes/no drop down box
     private boolean servicePerformedOnCampus;
 
-    private KualiDecimal accountingLinesTotal;
+    @SuppressWarnings("unused")
+	private KualiDecimal accountingLinesTotal;
 
     private String explanation;
 
@@ -124,8 +126,8 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     
     public IWantDocument() {
         super();
-        items = new TypedArrayList(IWantItem.class);
-        accounts = new TypedArrayList(IWantAccount.class);
+        items = new ArrayList<IWantItem>();
+        accounts = new ArrayList<IWantAccount>();
         accountingLinesTotal = KualiDecimal.ZERO;
     }
 
@@ -678,8 +680,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         String sourceDocumentHeaderId = getDocumentNumber();
         setNewDocumentHeader();
 
-        getDocumentBusinessObject().getBoNotes();
-
+        getNotes();
         getDocumentHeader().setDocumentTemplateNumber(sourceDocumentHeaderId);
 
         addCopyErrorDocumentNote("copied from document " + sourceDocumentHeaderId);
@@ -834,7 +835,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
      * 
      * @see org.kuali.rice.kns.bo.PersistableBusinessObjectBase#buildListOfDeletionAwareLists()
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
 	public List buildListOfDeletionAwareLists() {
 		List deletionAwareLists = super.buildListOfDeletionAwareLists();
@@ -849,11 +850,11 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
      * @see org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase#doRouteStatusChange(org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO)
      */
     @Override
-    public void doRouteStatusChange(DocumentRouteStatusChangeDTO statusChangeEvent) {
+    public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
         
         super.doRouteStatusChange(statusChangeEvent);
 
-        if (getDocumentHeader().getWorkflowDocument().stateIsFinal()) {
+        if (getDocumentHeader().getWorkflowDocument().isFinal()) {
 
             IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
             iWantDocumentService.sendDocumentFinalizedMessage(this);

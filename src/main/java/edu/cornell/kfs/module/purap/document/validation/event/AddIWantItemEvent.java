@@ -1,10 +1,10 @@
 package edu.cornell.kfs.module.purap.document.validation.event;
 
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.rule.BusinessRule;
-import org.kuali.rice.kns.rule.event.KualiDocumentEvent;
-import org.kuali.rice.kns.rule.event.KualiDocumentEventBase;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.rules.rule.BusinessRule;
+import org.kuali.rice.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.rice.krad.rules.rule.event.KualiDocumentEventBase;
 
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
@@ -16,7 +16,7 @@ public class AddIWantItemEvent extends KualiDocumentEventBase implements KualiDo
 
     public AddIWantItemEvent(String errorPathPrefix, Document document, IWantItem item) {
 
-        super("adding item to document " + getDocumentId(document), errorPathPrefix, document);
+        super("adding item to document " + document.getDocumentNumber(), errorPathPrefix, document);
         this.item = item;
     }
 

@@ -19,24 +19,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.rice.kim.bo.role.dto.KimPermissionInfo;
-import org.kuali.rice.kim.bo.types.dto.AttributeSet;
+
 
 /**
  * Type service for Access Security Permissions that restrict based on property name and namespace
  */
 public class SecurityAttributeNamespacePermissionTypeServiceImpl extends SecurityAttributePermissionTypeServiceImpl {
-    
-    {
+	//TODO UPGRADE-911
+    /*{
         requiredAttributes.add(SecKimAttributes.NAMESPACE_CODE);
         checkRequiredAttributes = false;
-    }
+    }*/
 
     /**
      * @see org.kuali.rice.kim.service.support.impl.KimPermissionTypeServiceBase#performPermissionMatches(org.kuali.rice.kim.bo.types.dto.AttributeSet,
      *      java.util.List)
      */
-    @Override
+	//TODO UPGRADE-911
+    /*@Override
     protected List<KimPermissionInfo> performPermissionMatches(AttributeSet requestedDetails, List<KimPermissionInfo> permissionsList) {
         List<KimPermissionInfo> matchingPermissions = new ArrayList<KimPermissionInfo>();
 
@@ -50,6 +50,6 @@ public class SecurityAttributeNamespacePermissionTypeServiceImpl extends Securit
         }
 
         return matchingPermissions;
-    }
+    }*/
 
 }

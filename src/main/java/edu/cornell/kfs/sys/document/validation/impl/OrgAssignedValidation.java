@@ -5,6 +5,7 @@ package edu.cornell.kfs.sys.document.validation.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import org.kuali.kfs.coa.businessobject.Account;
@@ -15,12 +16,11 @@ import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.validation.GenericValidation;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
-import org.kuali.rice.kim.bo.role.dto.KimRoleInfo;
-import org.kuali.rice.kim.bo.role.dto.RoleMemberCompleteInfo;
-import org.kuali.rice.kim.service.KIMServiceLocator;
-import org.kuali.rice.kim.service.RoleService;
-import org.kuali.rice.kim.util.KIMPropertyConstants;
-import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kim.api.role.Role;
+import org.kuali.rice.kim.api.role.RoleMembership;
+import org.kuali.rice.kim.api.role.RoleService;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
@@ -45,7 +45,7 @@ public class OrgAssignedValidation extends GenericValidation {
 		List<Account> badAccounts = new ArrayList<Account> ();
 		
 		// Determine if the document is an FPYE doc or an LDYE document
-		String docType = event.getDocument().getDocumentHeader().getWorkflowDocument().getDocumentType();
+		String docType = event.getDocument().getDocumentHeader().getWorkflowDocument().getDocumentTypeName();
 		String yeRoleID = "";
 		
 		if(docType.equals("YEST") || docType.equals("YEBT")) {
@@ -83,15 +83,16 @@ public class OrgAssignedValidation extends GenericValidation {
 	 */
 	private boolean hasOrgReviewer(Account account, Organization org, String documentTypeRoleID, boolean firstCall) {
 		// use orgCode, chartCode and ACCT doc type to find org reviewers
-		RoleService roleService = KIMServiceLocator.getRoleService();
-		KimRoleInfo role = roleService.getRole(documentTypeRoleID);
+		RoleService roleService = KimApiServiceLocator.getRoleService();
+		Role role = roleService.getRole(documentTypeRoleID);
+		
 		// or roleservice.getRoleByName(namespaceCode, roleName)
-		List<RoleMemberCompleteInfo> roleMembers = roleService.findRoleMembersCompleteInfo(Collections.singletonMap(KIMPropertyConstants.Role.ROLE_ID, role.getRoleId()));
+		List<RoleMembership> roleMembers = roleService.getRoleMembers(Collections.singletonList(role.getId()), new HashMap<String,String>());		
 		
 		boolean hasReviewer = false;
-		for(RoleMemberCompleteInfo member : roleMembers) {
+		for(RoleMembership member : roleMembers) {
 			String memberOrg = member.getQualifier().get(KFSConstants.ORGANIZATION_CODE_PROPERTY_NAME);
-			if(org.getOrganizationCode().equalsIgnoreCase(memberOrg) && member.isActive()) {
+			if(org.getOrganizationCode().equalsIgnoreCase(memberOrg)) {
 				hasReviewer = true;
 				break;
 			}

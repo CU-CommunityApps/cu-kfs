@@ -17,10 +17,10 @@ package com.rsmart.kuali.kfs.sec.businessobject;
 
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.kim.bo.reference.impl.EmploymentStatusImpl;
-import org.kuali.rice.kim.bo.reference.impl.EmploymentTypeImpl;
-import org.kuali.rice.kns.bo.Campus;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
+
+
+
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 import com.rsmart.kuali.kfs.sec.SecPropertyConstants;
 
@@ -400,7 +400,7 @@ public class ModelMember extends PersistableBusinessObjectBase {
     /**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
-    @Override
+
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();
 

@@ -28,15 +28,15 @@ import org.kuali.kfs.coa.service.AccountReversionDetailTrickleDownInactivationSe
 import org.kuali.kfs.coa.service.AccountReversionService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
-import org.kuali.rice.kns.bo.PersistableBusinessObject;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.maintenance.Maintainable;
 import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.util.TypedArrayList;
 import org.kuali.rice.kns.web.ui.Field;
 import org.kuali.rice.kns.web.ui.Row;
 import org.kuali.rice.kns.web.ui.Section;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * This class provides some specific functionality for the {@link AccountReversion} maintenance document inner class for doing
@@ -77,7 +77,7 @@ public class AccountReversionMaintainableImpl extends FinancialSystemMaintainabl
         List<AccountReversionDetail> details = accountReversion.getAccountReversionDetails();
 
         if (details == null) {
-            details = new TypedArrayList(AccountReversionDetail.class);
+            details = new ArrayList<AccountReversionDetail>();
             accountReversion.setAccountReversionDetails(details);
         }
 
@@ -123,7 +123,7 @@ public class AccountReversionMaintainableImpl extends FinancialSystemMaintainabl
      */
     protected boolean isInactivatingAccountReversion() {
         // the account has to be closed on the new side when editing in order for it to be possible that we are closing the account
-        if (KNSConstants.MAINTENANCE_EDIT_ACTION.equals(getMaintenanceAction()) && !((AccountReversion) getBusinessObject()).isActive()) {
+        if (KRADConstants.MAINTENANCE_EDIT_ACTION.equals(getMaintenanceAction()) && !((AccountReversion) getBusinessObject()).isActive()) {
             AccountReversion existingAccountReversionFromDB = retrieveExistingAccountReversion();
             if (ObjectUtils.isNotNull(existingAccountReversionFromDB)) {
                 // now see if the original account was not closed, in which case, we are closing the account
@@ -141,7 +141,7 @@ public class AccountReversionMaintainableImpl extends FinancialSystemMaintainabl
      */
     protected boolean isActivatingAccountReversion() {
         // the account has to be closed on the new side when editing in order for it to be possible that we are closing the account
-        if (KNSConstants.MAINTENANCE_EDIT_ACTION.equals(getMaintenanceAction()) && ((AccountReversion) getBusinessObject()).isActive()) {
+        if (KRADConstants.MAINTENANCE_EDIT_ACTION.equals(getMaintenanceAction()) && ((AccountReversion) getBusinessObject()).isActive()) {
             AccountReversion existingAccountReversionFromDB = retrieveExistingAccountReversion();
             if (ObjectUtils.isNotNull(existingAccountReversionFromDB)) {
                 // now see if the original account was not closed, in which case, we are closing the account

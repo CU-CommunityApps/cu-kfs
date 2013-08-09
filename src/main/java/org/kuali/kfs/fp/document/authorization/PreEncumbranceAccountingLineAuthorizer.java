@@ -15,47 +15,27 @@
  */
 package org.kuali.kfs.fp.document.authorization;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
-import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
-import org.kuali.kfs.module.ar.businessobject.CustomerInvoiceDetail;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
-import org.kuali.kfs.sys.document.authorization.AccountingLineAuthorizerBase;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
+import org.kuali.rice.kew.api.WorkflowDocument;
 
 
 public class PreEncumbranceAccountingLineAuthorizer extends FinancialProcessingAccountingLineAuthorizer {
-    private static Log LOG = LogFactory.getLog(DisbursementVoucherAccountingLineAuthorizer.class);
     
-    @Override
+  @Override
     public boolean determineEditPermissionOnField(AccountingDocument accountingDocument, AccountingLine accountingLine, String accountingLineCollectionProperty, String fieldName, boolean editablePage) {
     	final FinancialSystemDocumentHeader documentHeader = (FinancialSystemDocumentHeader) accountingDocument.getDocumentHeader();
-        final KualiWorkflowDocument workflowDocument = documentHeader.getWorkflowDocument();
-        if (workflowDocument.stateIsInitiated() ) {
+        final WorkflowDocument workflowDocument = documentHeader.getWorkflowDocument();
+        if (workflowDocument.isInitiated() ) {
         	return true;
         }
         else {
     	
         	if (!editablePage) return false; // no edits by default on non editable pages
-        
-      
 
         	// if a document is cancelled or in error, all of its fields cannot be editable
-        	if (workflowDocument.stateIsCanceled() ) {
+        	if (workflowDocument.isCanceled() ) {
         		return false;
         	}
         }

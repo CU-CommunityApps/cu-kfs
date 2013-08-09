@@ -24,13 +24,13 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.validation.GenericValidation;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.service.PersonService;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.MessageMap;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.krad.service.DataDictionaryService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.MessageMap;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 public class DisbursementVoucherEmployeeInformationValidation extends GenericValidation {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisbursementVoucherEmployeeInformationValidation.class);
@@ -59,8 +59,8 @@ public class DisbursementVoucherEmployeeInformationValidation extends GenericVal
         String employeeId = payeeDetail.getDisbVchrPayeeIdNumber();
         Person employee = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(employeeId);
 
-        KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        boolean stateIsInitiated = workflowDocument.stateIsInitiated() || workflowDocument.stateIsSaved();
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        boolean stateIsInitiated = workflowDocument.isInitiated() || workflowDocument.isSaved();
         
         if (ObjectUtils.isNull(employee)) {
             employee = SpringContext.getBean(PersonService.class).getPerson(employeeId);

@@ -13,7 +13,7 @@ import java.util.Set;
 import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.coa.service.OrganizationService;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.cornell.kfs.coa.service.OrgHierarchyMissingOrgsReportService;
@@ -24,8 +24,6 @@ import edu.cornell.kfs.coa.service.OrgHierarchyMissingOrgsReportService;
  */
 public class OrgHierarchyMissingOrgsReportServiceImpl implements OrgHierarchyMissingOrgsReportService {
 	
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(OrgHierarchyMissingOrgsReportServiceImpl.class);
-
     private OrganizationService orgService;
 	
 	public Set<Organization> findMissing(File baseOrgs, File orgHierarchies) {
@@ -73,7 +71,7 @@ public class OrgHierarchyMissingOrgsReportServiceImpl implements OrgHierarchyMis
 			
 			orgsWithNoReview = checkOrgHierarchy(orgsList, orgHierarchiesList);
 			System.out.println(orgsWithNoReview.size());
-		
+			reader.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

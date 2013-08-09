@@ -38,25 +38,26 @@ import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.kfs.sys.report.ReportInfo;
 import org.kuali.kfs.sys.service.ReportGenerationService;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.service.PersonService;
-import org.kuali.rice.kns.bo.Attachment;
-import org.kuali.rice.kns.bo.Inactivateable;
-import org.kuali.rice.kns.bo.Note;
-import org.kuali.rice.kns.bo.PersistableBusinessObject;
-import org.kuali.rice.kns.datadictionary.AttributeDefinition;
-import org.kuali.rice.kns.datadictionary.DataDictionary;
-import org.kuali.rice.kns.datadictionary.DataDictionaryEntry;
-import org.kuali.rice.kns.datadictionary.DataDictionaryEntryBase;
-import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.service.AttachmentService;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.util.ErrorMap;
-import org.kuali.rice.kns.util.ErrorMessage;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.krad.bo.Attachment;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.datadictionary.AttributeDefinition;
+import org.kuali.rice.krad.datadictionary.DataDictionary;
+import org.kuali.rice.krad.datadictionary.DataDictionaryEntry;
+import org.kuali.rice.krad.datadictionary.DataDictionaryEntryBase;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.service.AttachmentService;
+import org.kuali.rice.krad.service.DataDictionaryService;
+import org.kuali.rice.krad.util.ErrorMessage;
+import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.MessageMap;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import com.rsmart.kuali.kfs.sys.KFSKeyConstants;
 import com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService;
@@ -71,7 +72,7 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
     private BatchInputFileService batchInputFileService;
     private DataDictionaryService dataDictionaryService;
     private PersonService personService;
-    private KualiConfigurationService kualiConfigurationService;
+    private ConfigurationService kualiConfigurationService;
     private AttachmentService attachmentService;
     private ReportGenerationService reportGenerationService;
     private DateTimeService dateTimeService;
@@ -138,12 +139,12 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
      * @see com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService#getAuditMessage(java.lang.String, java.lang.String,
      *      org.kuali.rice.kns.util.ErrorMap)
      */
-    public String getAuditMessage(String successfulErrorKey, String documentNumber, ErrorMap errorMap) {
+    public String getAuditMessage(String successfulErrorKey, String documentNumber, MessageMap errorMap) {
         String auditMessage = "";
         if (errorMap.hasErrors()) {
             for (String errorProperty : errorMap.getAllPropertiesWithErrors()) {
                 for (Object errorMessage : errorMap.getMessages(errorProperty)) {
-                    String errorMsg = kualiConfigurationService.getPropertyString(((ErrorMessage) errorMessage).getErrorKey());
+                    String errorMsg = kualiConfigurationService.getPropertyValueAsString(((ErrorMessage) errorMessage).getErrorKey());
                     if (errorMsg == null) {
                         throw new RuntimeException("Cannot find message for error key: " + ((ErrorMessage) errorMessage).getErrorKey());
                     }
@@ -163,7 +164,7 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
             auditMessage = com.rsmart.kuali.kfs.sys.KFSConstants.AUDIT_REPORT_ERROR_PREFIX + auditMessage;
         }
         else {
-            String successMessage = kualiConfigurationService.getPropertyString(successfulErrorKey);
+            String successMessage = kualiConfigurationService.getPropertyValueAsString(successfulErrorKey);
             auditMessage = MessageFormat.format(successMessage, documentNumber);
         }
 
@@ -210,14 +211,14 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
      * @see com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService#loadDocumentAttachments(org.kuali.rice.kns.document.Document,
      *      java.util.List, java.lang.String, java.lang.String, org.kuali.rice.kns.util.ErrorMap)
      */
-    public void loadDocumentAttachments(Document document, List<Attachment> attachments, String attachmentsPath, String attachmentType, ErrorMap errorMap) {
+    public void loadDocumentAttachments(Document document, List<Attachment> attachments, String attachmentsPath, String attachmentType, MessageMap errorMap) {
         for (Attachment attachment : attachments) {
             Note note = new Note();
 
-            note.setNoteText(kualiConfigurationService.getPropertyString(KFSKeyConstants.IMAGE_ATTACHMENT_NOTE_TEXT));
+            note.setNoteText(kualiConfigurationService.getPropertyValueAsString(KFSKeyConstants.IMAGE_ATTACHMENT_NOTE_TEXT));
             note.setRemoteObjectIdentifier(document.getObjectId());
             note.setAuthorUniversalIdentifier(getSystemUser().getPrincipalId());
-            note.setNoteTypeCode(KNSConstants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE.getCode());
+            note.setNoteTypeCode(KFSConstants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE.getCode());
 
             // attempt to load file
             String fileName = attachmentsPath + "/" + attachment.getAttachmentFileName();
@@ -261,7 +262,7 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
      * @see com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService#performExistenceAndActiveValidation(org.kuali.rice.kns.bo.PersistableBusinessObject,
      *      java.lang.String, java.lang.String, org.kuali.rice.kns.util.ErrorMap)
      */
-    public void performExistenceAndActiveValidation(PersistableBusinessObject businessObject, String referenceName, String propertyName, ErrorMap errorMap) {
+    public void performExistenceAndActiveValidation(PersistableBusinessObject businessObject, String referenceName, String propertyName, MessageMap errorMap) {
         Object propertyValue = ObjectUtils.getPropertyValue(businessObject, propertyName);
 
         if (propertyValue != null) {
@@ -271,8 +272,8 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
             if (ObjectUtils.isNull(referenceValue)) {
                 addExistenceError(propertyName, propertyValue.toString(), errorMap);
             }
-            else if (Inactivateable.class.isAssignableFrom(referenceValue.getClass())) {
-                if (!((Inactivateable) referenceValue).isActive()) {
+            else if (MutableInactivatable.class.isAssignableFrom(referenceValue.getClass())) {
+                if (!((MutableInactivatable) referenceValue).isActive()) {
                     addInactiveError(propertyName, propertyValue.toString(), errorMap);
                 }
             }
@@ -283,7 +284,7 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
      * @see com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService#addRequiredError(org.kuali.rice.kns.bo.PersistableBusinessObject,
      *      java.lang.String, org.kuali.rice.kns.util.ErrorMap)
      */
-    public void addRequiredError(PersistableBusinessObject businessObject, String propertyName, ErrorMap errorMap) {
+    public void addRequiredError(PersistableBusinessObject businessObject, String propertyName, MessageMap errorMap) {
         String propertyLabel = dataDictionaryService.getAttributeLabel(businessObject.getClass(), propertyName);
         errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_PURCAHSE_ORDER_REQUIRED, new String[] { propertyLabel });
     }
@@ -292,7 +293,7 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
      * @see com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService#addExistenceError(java.lang.String, java.lang.String,
      *      org.kuali.rice.kns.util.ErrorMap)
      */
-    public void addExistenceError(String propertyName, String propertyValue, ErrorMap errorMap) {
+    public void addExistenceError(String propertyName, String propertyValue, MessageMap errorMap) {
         String propertyLabel = dataDictionaryService.getAttributeLabel(PurchaseOrderDocument.class, propertyName);
         errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_PURCAHSE_ORDER_EXISTENCE, new String[] { propertyLabel, propertyValue });
     }
@@ -301,7 +302,7 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
      * @see com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService#addInactiveError(java.lang.String, java.lang.String,
      *      org.kuali.rice.kns.util.ErrorMap)
      */
-    public void addInactiveError(String propertyName, String propertyValue, ErrorMap errorMap) {
+    public void addInactiveError(String propertyName, String propertyValue, MessageMap errorMap) {
         String propertyLabel = dataDictionaryService.getAttributeLabel(PurchaseOrderDocument.class, propertyName);
         errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_PURCAHSE_ORDER_INACTIVE, new String[] { propertyLabel, propertyValue });
     }
@@ -368,14 +369,14 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
     /**
      * @return Returns the kualiConfigurationService.
      */
-    protected KualiConfigurationService getKualiConfigurationService() {
+    protected ConfigurationService getKualiConfigurationService() {
         return kualiConfigurationService;
     }
 
     /**
      * @param kualiConfigurationService The kualiConfigurationService to set.
      */
-    public void setKualiConfigurationService(KualiConfigurationService kualiConfigurationService) {
+    public void setKualiConfigurationService(ConfigurationService kualiConfigurationService) {
         this.kualiConfigurationService = kualiConfigurationService;
     }
 

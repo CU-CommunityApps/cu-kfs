@@ -22,16 +22,17 @@ import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.ParameterKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kim.util.KimConstants;
-import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kim.api.KimConstants;
+
 
 /**
  * Holds constants for disbursement voucher and payee documents.
  */
 // TODO: after DisbursementVoucherDocumentRule is remove, it is good to change this interface into a class
-public interface DisbursementVoucherConstants extends ParameterKeyConstants {
+public interface DisbursementVoucherConstants  {
 	// Prefixes defined for the DV extract process to identify notes 
 	public static String DV_EXTRACT_NOTE_PREFIX_PREPARER = "Info: ";
 	public static String DV_EXTRACT_NOTE_PREFIX_SPECIAL_HANDLING_NAME = "Send Check To:";
@@ -128,7 +129,7 @@ public interface DisbursementVoucherConstants extends ParameterKeyConstants {
         
         public static TabByReasonCode getTabByReasonCode(String paymentReasonCode) {
             for(TabByReasonCode tab : TabByReasonCode.values()) {
-                if(getParameterService().getParameterEvaluator(DisbursementVoucherDocument.class, tab.paymentReasonParameterName, paymentReasonCode).evaluationSucceeds()){
+                if(SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(DisbursementVoucherDocument.class, tab.paymentReasonParameterName, paymentReasonCode).evaluationSucceeds()){
                     return tab;
                 }
             }            

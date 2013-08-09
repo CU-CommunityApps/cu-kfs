@@ -49,13 +49,13 @@ import org.kuali.kfs.sys.document.Correctable;
 import org.kuali.kfs.sys.document.service.DebitDeterminerService;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.UniversityDateService;
-import org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kns.document.Copyable;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.KualiDecimal;
+import org.kuali.rice.krad.document.Copyable;
 
 /**
  * This is the business object that represents the AuxiliaryVoucherDocument in Kuali. This is a transactional document that will
@@ -214,11 +214,11 @@ public class AuxiliaryVoucherDocument extends AccountingDocumentBase implements 
      * reversal date.
      */
     @Override
-    public void doRouteStatusChange(DocumentRouteStatusChangeDTO statusChangeEvent) {
+    public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
         LOG.debug("In doRouteStatusChange() for AV documents");
         super.doRouteStatusChange(statusChangeEvent);
 
-        if (this.getDocumentHeader().getWorkflowDocument().stateIsProcessed()) { // only do this stuff if the document has been
+        if (this.getDocumentHeader().getWorkflowDocument().isProcessed()) { // only do this stuff if the document has been
             // processed and approved
             // update the reversal data accoringdingly
             updateReversalDate();
@@ -385,7 +385,7 @@ public class AuxiliaryVoucherDocument extends AccountingDocumentBase implements 
         // now set the offset entry to the specific offset object code for the AV generated offset fund balance; only if it's an
         // accrual or adjustment
         if (isAccrualType() || isAdjustmentType()) {
-            String glpeOffsetObjectCode = SpringContext.getBean(ParameterService.class).getParameterValue(AuxiliaryVoucherDocument.class, getGeneralLedgerPendingEntryOffsetObjectCode());
+            String glpeOffsetObjectCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(AuxiliaryVoucherDocument.class, getGeneralLedgerPendingEntryOffsetObjectCode());
             offsetEntry.setFinancialObjectCode(glpeOffsetObjectCode);
 
             // set the posting period
@@ -621,7 +621,7 @@ public class AuxiliaryVoucherDocument extends AccountingDocumentBase implements 
         final int todayAsComparableDate = comparableDateForm(today);
         final int periodClose = new Integer(comparableDateForm(periodToCheck.getUniversityFiscalPeriodEndDate()));
         final int periodBegin = comparableDateForm(calculateFirstDayOfMonth(periodToCheck.getUniversityFiscalPeriodEndDate()));
-        final int gracePeriodClose = periodClose + new Integer(SpringContext.getBean(ParameterService.class).getParameterValue(AuxiliaryVoucherDocument.class, AUXILIARY_VOUCHER_ACCOUNTING_PERIOD_GRACE_PERIOD)).intValue();
+        final int gracePeriodClose = periodClose + new Integer(SpringContext.getBean(ParameterService.class).getParameterValueAsString(AuxiliaryVoucherDocument.class, AUXILIARY_VOUCHER_ACCOUNTING_PERIOD_GRACE_PERIOD)).intValue();
         return (todayAsComparableDate >= periodBegin && todayAsComparableDate <= gracePeriodClose);
     }
     

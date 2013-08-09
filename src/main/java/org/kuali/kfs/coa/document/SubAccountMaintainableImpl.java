@@ -26,12 +26,13 @@ import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
-import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.document.authorization.MaintenanceDocumentRestrictions;
-import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * This class...
@@ -117,8 +118,8 @@ public class SubAccountMaintainableImpl extends FinancialSystemMaintainable {
      */
     private boolean isSubAccountTypeCodeCostShare (){    	
     	String maintAction = super.getMaintenanceAction();    	
-    	if ( (maintAction.equalsIgnoreCase(KNSConstants.MAINTENANCE_NEW_ACTION)) || 
-    		 (maintAction.equalsIgnoreCase(KNSConstants.MAINTENANCE_COPY_ACTION)) ) {
+    	if ( (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_NEW_ACTION)) || 
+    		 (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_COPY_ACTION)) ) {
     		     		
     		//need "new" bo for data comparisons
     		SubAccount subAccount = (SubAccount)super.getBusinessObject();
@@ -129,7 +130,7 @@ public class SubAccountMaintainableImpl extends FinancialSystemMaintainable {
     			return true;
     		}
     	}  
-    	else if ((maintAction.equalsIgnoreCase(KNSConstants.MAINTENANCE_EDIT_ACTION)) ) {
+    	else if ((maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_EDIT_ACTION)) ) {
     		
     		//need "new" bo for data comparisons
     		SubAccount subAccount = (SubAccount)super.getBusinessObject();
@@ -156,8 +157,8 @@ public class SubAccountMaintainableImpl extends FinancialSystemMaintainable {
      */
     private boolean hasCgIcrDataChanged() {
     	String maintAction = super.getMaintenanceAction();    	
-    	if ( (maintAction.equalsIgnoreCase(KNSConstants.MAINTENANCE_NEW_ACTION)) || 
-    		 (maintAction.equalsIgnoreCase(KNSConstants.MAINTENANCE_COPY_ACTION)) ) {
+    	if ( (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_NEW_ACTION)) || 
+    		 (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_COPY_ACTION)) ) {
     		     		
     		//need "new" bo for data comparisons
     		SubAccount subAccount = (SubAccount)super.getBusinessObject();
@@ -175,9 +176,10 @@ public class SubAccountMaintainableImpl extends FinancialSystemMaintainable {
 	        		       		        		
 	        		//compare each field in question
         			
+        			//TODO UPGRADE-911
 	        		boolean hasIcrIdChanged = !areFieldValuesTheSame(account.getFinancialIcrSeriesIdentifier(), newSubAccount.getFinancialIcrSeriesIdentifier());
-	        		boolean hasIcrCoaCodeChanged = !areFieldValuesTheSame(account.getIndirectCostRcvyFinCoaCode(), newSubAccount.getIndirectCostRecoveryChartOfAccountsCode());
-	        		boolean hasIcrAcctNbrChanged = !areFieldValuesTheSame(account.getIndirectCostRecoveryAcctNbr(), newSubAccount.getIndirectCostRecoveryAccountNumber());
+	        		boolean hasIcrCoaCodeChanged = false; //!areFieldValuesTheSame(account.getIndirectCostRcvyFinCoaCode(), newSubAccount.getIndirectCostRecoveryChartOfAccountsCode());
+	        		boolean hasIcrAcctNbrChanged = false; //!areFieldValuesTheSame(account.getIndirectCostRecoveryAcctNbr(), newSubAccount.getIndirectCostRecoveryAccountNumber());
 	        		boolean hasIcrTypeCodeChanged = !areFieldValuesTheSame(account.getAcctIndirectCostRcvyTypeCd(),newSubAccount.getIndirectCostRecoveryTypeCode());
         			
 	        		//when both are true OR both are false, hasOffCampusIndChanged should be false = data did not change; otherwise when they are different hasOffCampusIndChanged should be true
@@ -191,7 +193,7 @@ public class SubAccountMaintainableImpl extends FinancialSystemMaintainable {
         		}
     		}
     	}  
-    	else if ((maintAction.equalsIgnoreCase(KNSConstants.MAINTENANCE_EDIT_ACTION)) ) {
+    	else if ((maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_EDIT_ACTION)) ) {
     		
     		//need "new" bo for data comparisons
     		SubAccount subAccount = (SubAccount)super.getBusinessObject();
@@ -200,9 +202,11 @@ public class SubAccountMaintainableImpl extends FinancialSystemMaintainable {
     		//"old" subAccount for data comparisons
     		A21SubAccount oldSubAccount = this.getA21SubAccountService().getByPrimaryKey(subAccount.getChartOfAccountsCode(), subAccount.getAccountNumber(), subAccount.getSubAccountNumber());
     		//compare each field in question
+    		
+    		//TODO UPGRADE-911
     		boolean hasIcrIdChanged = isFieldValueChanged(newSubAccount.getFinancialIcrSeriesIdentifier(), oldSubAccount.getFinancialIcrSeriesIdentifier());
-    		boolean hasIcrCoaCodeChanged = isFieldValueChanged(newSubAccount.getIndirectCostRecoveryChartOfAccountsCode(), oldSubAccount.getIndirectCostRecoveryChartOfAccountsCode());
-    		boolean hasIcrAcctNbrChanged = isFieldValueChanged(newSubAccount.getIndirectCostRecoveryAccountNumber(), oldSubAccount.getIndirectCostRecoveryAccountNumber());
+    		boolean hasIcrCoaCodeChanged = false;//isFieldValueChanged(newSubAccount. .getIndirectCostRecoveryChartOfAccountsCode(), oldSubAccount.getIndirectCostRecoveryChartOfAccountsCode());
+    		boolean hasIcrAcctNbrChanged = false; //isFieldValueChanged(newSubAccount.getIndirectCostRecoveryAccountNumber(), oldSubAccount.getIndirectCostRecoveryAccountNumber());
     		boolean hasIcrTypeCodeChanged = isFieldValueChanged(newSubAccount.getIndirectCostRecoveryTypeCode(), oldSubAccount.getIndirectCostRecoveryTypeCode());
     		//when both are true OR both are false, hasOffCampusIndChanged should be false = data did not change; otherwise when they are different hasOffCampusIndChanged should be true
     		boolean hasOffCampusIndChanged = !(newSubAccount.getOffCampusCode() && oldSubAccount.getOffCampusCode()) | (!newSubAccount.getOffCampusCode() && !oldSubAccount.getOffCampusCode());

@@ -1,41 +1,30 @@
 package edu.cornell.kfs.vnd.batch.service.impl;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.kuali.kfs.coa.businessobject.Reversion;
-import org.kuali.kfs.gl.GeneralLedgerConstants;
-import org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine;
-import org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine;
-import org.kuali.kfs.sys.DynamicCollectionComparator;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.batch.service.WrappingBatchService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.kfs.sys.service.ReportWriterService;
-import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.businessobject.CommodityCode;
 import org.kuali.kfs.vnd.service.CommodityCodeService;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.vnd.batch.CommodityCodeInputFileType;
@@ -48,7 +37,7 @@ public class CommodityCodeUpdateServiceImpl implements CommodityCodeUpdateServic
     private CommodityCodeInputFileType commodityCodeInputFileType;
     private CommodityCodeService commodityCodeService;
     private BusinessObjectService businessObjectService;
-    private KualiConfigurationService configurationService;
+    private ConfigurationService configurationService;
     private DateTimeService dateTimeService;
     private ParameterService parameterService;
     private String batchFileDirectoryName;
@@ -226,17 +215,17 @@ public class CommodityCodeUpdateServiceImpl implements CommodityCodeUpdateServic
 	        commodityCodeReportWriterService.pageBreak();
 	        
 	        // write report
-	        commodityCodeReportWriterService.writeSubTitle(getConfigurationService().getPropertyString(CUKFSKeyConstants.MESSAGE_REPORT_NEW_COMMODITY_CODE_TITLE_LINE));
+	        commodityCodeReportWriterService.writeSubTitle(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_REPORT_NEW_COMMODITY_CODE_TITLE_LINE));
 	        commodityCodeReportWriterService.writeNewLines(2);
 	        writeCommodityCodeReportData(loadedCodes.get(NEW_CODES));
 	        commodityCodeReportWriterService.pageBreak();
 	        
-	        commodityCodeReportWriterService.writeSubTitle(getConfigurationService().getPropertyString(CUKFSKeyConstants.MESSAGE_REPORT_UPDATE_COMMODITY_CODE_TITLE_LINE));
+	        commodityCodeReportWriterService.writeSubTitle(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_REPORT_UPDATE_COMMODITY_CODE_TITLE_LINE));
 	        commodityCodeReportWriterService.writeNewLines(2);
 	        writeCommodityCodeReportData(loadedCodes.get(UPDATE_CODES));
 	        commodityCodeReportWriterService.pageBreak();
 	        
-	        commodityCodeReportWriterService.writeSubTitle(getConfigurationService().getPropertyString(CUKFSKeyConstants.MESSAGE_REPORT_INACTIVE_COMMODITY_CODE_TITLE_LINE));
+	        commodityCodeReportWriterService.writeSubTitle(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_REPORT_INACTIVE_COMMODITY_CODE_TITLE_LINE));
 	        commodityCodeReportWriterService.writeNewLines(2);
 	        writeCommodityCodeReportData(loadedCodes.get(INACTIVE_CODES));
 	        commodityCodeReportWriterService.pageBreak();
@@ -375,7 +364,7 @@ public class CommodityCodeUpdateServiceImpl implements CommodityCodeUpdateServic
      * Sets the implementation of the KualiConfigurationService to use
      * @param configurationService an implementation of the KualiConfigurationService
      */
-    public void setConfigurationService(KualiConfigurationService configurationService) {
+    public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
     }
 
@@ -383,7 +372,7 @@ public class CommodityCodeUpdateServiceImpl implements CommodityCodeUpdateServic
      * Gets the configurationService attribute. 
      * @return Returns the configurationService.
      */
-    public KualiConfigurationService getConfigurationService() {
+    public ConfigurationService getConfigurationService() {
         return configurationService;
     }
 

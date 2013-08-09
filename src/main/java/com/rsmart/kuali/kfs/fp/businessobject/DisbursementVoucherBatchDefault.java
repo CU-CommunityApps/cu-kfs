@@ -15,18 +15,22 @@
  */
 package com.rsmart.kuali.kfs.fp.businessobject;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherDocumentationLocation;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.bo.Campus;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.service.KualiModuleService;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.service.KualiModuleService;
+import org.kuali.rice.krad.service.ModuleService;
+import org.kuali.rice.location.api.LocationConstants;
+import org.kuali.rice.location.framework.campus.CampusEbo;
 
 import com.rsmart.kuali.kfs.fp.FPPropertyConstants;
 
@@ -34,7 +38,9 @@ import com.rsmart.kuali.kfs.fp.FPPropertyConstants;
  * Contains default values to use when loading disbursement voucher documents in batch
  */
 public class DisbursementVoucherBatchDefault extends PersistableBusinessObjectBase {
-    private String unitCode;
+
+	private static final long serialVersionUID = 1L;
+	private String unitCode;
     private String unitName;
     private String disbVchrContactPersonName;
     private String disbVchrContactPhoneNumber;
@@ -48,7 +54,7 @@ public class DisbursementVoucherBatchDefault extends PersistableBusinessObjectBa
     private String financialObjectCode;
     private String financialDocumentLineDescription;
 
-    private Campus campus;
+    private CampusEbo campus;
     private DisbursementVoucherDocumentationLocation documentationLocation;
     private Bank bank;
     private Chart chart;
@@ -301,9 +307,21 @@ public class DisbursementVoucherBatchDefault extends PersistableBusinessObjectBa
      * 
      * @return Returns the campus.
      */
-    public Campus getCampus() {
-        campus = (Campus) SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(Campus.class).retrieveExternalizableBusinessObjectIfNecessary(this, campus, KFSPropertyConstants.CAMPUS);
-
+    public CampusEbo getCampus() {
+        if ( StringUtils.isBlank(campusCode) ) {
+            campus = null;
+        } else {
+            if ( campus == null || !StringUtils.equals( campus.getCode(),campusCode) ) {
+                ModuleService moduleService = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(CampusEbo.class);
+                if ( moduleService != null ) {
+                    Map<String,Object> keys = new HashMap<String, Object>(1);
+                    keys.put(LocationConstants.PrimaryKeyConstants.CODE, campusCode);
+                    campus = moduleService.getExternalizableBusinessObject(CampusEbo.class, keys);
+                } else {
+                    throw new RuntimeException( "CONFIGURATION ERROR: No responsible module found for EBO class.  Unable to proceed." );
+                }
+            }
+        }
         return campus;
     }
 
@@ -312,7 +330,7 @@ public class DisbursementVoucherBatchDefault extends PersistableBusinessObjectBa
      * 
      * @param campus The campus to set.
      */
-    public void setCampus(Campus campus) {
+    public void setCampus(CampusEbo campus) {
         this.campus = campus;
     }
 
@@ -406,8 +424,8 @@ public class DisbursementVoucherBatchDefault extends PersistableBusinessObjectBa
         this.objectCode = objectCode;
     }
 
-    @Override
-    protected LinkedHashMap toStringMapper() {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();
 
         m.put(FPPropertyConstants.UNIT_CODE, this.unitCode);

@@ -28,9 +28,9 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.dao.BusinessObjectDao;
-import org.kuali.rice.kns.dao.LookupDao;
-import org.kuali.rice.kns.dao.impl.PlatformAwareDaoBaseOjb;
+import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
+import org.kuali.rice.krad.dao.BusinessObjectDao;
+import org.kuali.rice.krad.dao.LookupDao;
 
 import edu.cornell.kfs.coa.dataaccess.AccountGlobalSearchDao;
 
@@ -42,6 +42,7 @@ public class AccountGlobalSearchDaoOjb extends PlatformAwareDaoBaseOjb implement
         Criteria criteria = new Criteria();
 
         Criteria orgCriteria = new Criteria();
+
         orgCriteria.addEqualTo(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode);
         orgCriteria.addEqualTo(KFSPropertyConstants.ORGANIZATION_CODE, organizationCode);
         criteria.addOrCriteria(orgCriteria);
@@ -56,8 +57,9 @@ public class AccountGlobalSearchDaoOjb extends PlatformAwareDaoBaseOjb implement
 
         parameters.remove(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE);
         parameters.remove(KFSPropertyConstants.ORGANIZATION_CODE);
-
-        return lookupDao.findCollectionBySearchHelper(Account.class, parameters, true, false, criteria);
+        
+        lookupDao.createCriteria(Account.class, "", "", criteria);
+        return lookupDao.findCollectionBySearchHelper(Account.class, parameters, true, false);
     }
 
     protected List<Organization> getReportingOrgs(String chartOfAccountsCode, String organizationCode, Set<Organization> seenOrgs) {

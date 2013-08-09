@@ -27,21 +27,14 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kim.bo.role.dto.KimRoleInfo;
-import org.kuali.rice.kim.bo.role.dto.RoleMembershipInfo;
-import org.kuali.rice.kim.bo.types.dto.AttributeSet;
-import org.kuali.rice.kim.service.GroupService;
-import org.kuali.rice.kim.service.IdentityManagementService;
-import org.kuali.rice.kim.service.RoleManagementService;
-import org.kuali.rice.kim.util.KIMPropertyConstants;
-import org.kuali.rice.kim.util.KimConstants;
-import org.kuali.rice.kns.bo.DocumentHeader;
-import org.kuali.rice.kns.bo.PersistableBusinessObject;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.services.IdentityManagementService;
 import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.util.KNSConstants;
+import org.kuali.rice.krad.bo.DocumentHeader;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import com.rsmart.kuali.kfs.sec.SecConstants;
 import com.rsmart.kuali.kfs.sec.businessobject.SecurityDefinition;
@@ -81,14 +74,14 @@ public class SecurityModelMaintainableImpl extends FinancialSystemMaintainable {
     public void doRouteStatusChange(DocumentHeader documentHeader) {
         super.doRouteStatusChange(documentHeader);
 
-        if (documentHeader.getWorkflowDocument().stateIsProcessed()) {
+        if (documentHeader.getWorkflowDocument().isProcessed()) {
             DocumentService documentService = SpringContext.getBean(DocumentService.class);
             try {
                 MaintenanceDocument document = (MaintenanceDocument) documentService.getByDocumentHeaderId(documentHeader.getDocumentNumber());
                 SecurityModel oldSecurityModel = (SecurityModel) document.getOldMaintainableObject().getBusinessObject();
                 SecurityModel newSecurityModel = (SecurityModel) document.getNewMaintainableObject().getBusinessObject();
 
-                boolean newMaintenanceAction = getMaintenanceAction().equalsIgnoreCase(KNSConstants.MAINTENANCE_NEW_ACTION) || getMaintenanceAction().equalsIgnoreCase(KNSConstants.MAINTENANCE_COPY_ACTION);
+                boolean newMaintenanceAction = getMaintenanceAction().equalsIgnoreCase(KRADConstants.MAINTENANCE_NEW_ACTION) || getMaintenanceAction().equalsIgnoreCase(KRADConstants.MAINTENANCE_COPY_ACTION);
 
                 createOrUpdateModelRole(oldSecurityModel, newSecurityModel);
                 assignOrUpdateModelMembershipToDefinitionRoles(oldSecurityModel, newSecurityModel, newMaintenanceAction);
@@ -97,8 +90,9 @@ public class SecurityModelMaintainableImpl extends FinancialSystemMaintainable {
                 if (!newSecurityModel.isActive()) {
                     inactivateModelRole(newSecurityModel);
                 }
-
-                SpringContext.getBean(IdentityManagementService.class).flushAllCaches();
+                
+                //TODO UPDGRADE-911
+                //SpringContext.getBean(IdentityManagementService.class).flushAllCaches();
             }
             catch (WorkflowException e) {
                 LOG.error("caught exception while handling handleRouteStatusChange -> documentService.getByDocumentHeaderId(" + documentHeader.getDocumentNumber() + "). ", e);
@@ -114,7 +108,8 @@ public class SecurityModelMaintainableImpl extends FinancialSystemMaintainable {
      * @param newSecurityModel SecurityModel after updates
      */
     protected void createOrUpdateModelRole(SecurityModel oldSecurityModel, SecurityModel newSecurityModel) {
-        RoleManagementService roleService = SpringContext.getBean(RoleManagementService.class);
+        //TODO UPGRADE-911
+    	/*RoleManagementService roleService = SpringContext.getBean(RoleManagementService.class);
 
         String roleName = newSecurityModel.getName();
 
@@ -128,7 +123,7 @@ public class SecurityModelMaintainableImpl extends FinancialSystemMaintainable {
         // always set the role as active so we can add members and definitions, after processing the indicator will be updated to
         // the appropriate value
         roleService.saveRole(roleId, roleName, newSecurityModel.getDescription(), true, SecConstants.SecurityTypes.DEFAULT_ROLE_TYPE, SecConstants.ACCESS_SECURITY_NAMESPACE_CODE);
-        roleService.flushRoleCaches();
+        roleService.flushRoleCaches();*/
     }
 
     /**
@@ -137,11 +132,13 @@ public class SecurityModelMaintainableImpl extends FinancialSystemMaintainable {
      * @param newSecurityModel SecurityModel to inactivate
      */
     protected void inactivateModelRole(SecurityModel newSecurityModel) {
-        RoleManagementService roleService = SpringContext.getBean(RoleManagementService.class);
+        //TODO UPGRADE-911
+    	/*RoleManagementService roleService = SpringContext.getBean(RoleManagementService.class);
 
         KimRoleInfo roleInfo = roleService.getRole(newSecurityModel.getRoleId());
 
         roleService.saveRole(roleInfo.getRoleId(), roleInfo.getRoleName(), newSecurityModel.getDescription(), false, SecConstants.SecurityTypes.DEFAULT_ROLE_TYPE, SecConstants.ACCESS_SECURITY_NAMESPACE_CODE);
+    	*/
     }
 
     /**
@@ -153,7 +150,8 @@ public class SecurityModelMaintainableImpl extends FinancialSystemMaintainable {
      * @param newMaintenanceAction boolean indicating whether this is a new record (old side will not contain data)
      */
     protected void assignOrUpdateModelMembershipToDefinitionRoles(SecurityModel oldSecurityModel, SecurityModel newSecurityModel, boolean newMaintenanceAction) {
-        RoleManagementService roleService = SpringContext.getBean(RoleManagementService.class);
+        //TODO UPGRADE-911
+    	/*RoleManagementService roleService = SpringContext.getBean(RoleManagementService.class);
 
         KimRoleInfo modelRoleInfo = roleService.getRole(newSecurityModel.getRoleId());
 
@@ -219,7 +217,7 @@ public class SecurityModelMaintainableImpl extends FinancialSystemMaintainable {
                     roleService.saveRoleMemberForRole(modelMembershipId, modelRoleInfo.getRoleId(), KimConstants.KimUIConstants.MEMBER_TYPE_ROLE_CODE, definitionRoleInfo.getRoleId(), membershipQualifications, null, null);
                 }
             }
-        }
+        }*/
     }
 
     /**
@@ -228,7 +226,8 @@ public class SecurityModelMaintainableImpl extends FinancialSystemMaintainable {
      * @param securityModel SecurityModel whose member list should be updated
      */
     protected void assignOrUpdateModelMembers(SecurityModel securityModel) {
-        RoleManagementService roleService = SpringContext.getBean(RoleManagementService.class);
+        //TODO UPGRADE-911
+    	/*RoleManagementService roleService = SpringContext.getBean(RoleManagementService.class);
 
         KimRoleInfo modelRoleInfo = roleService.getRole(securityModel.getRoleId());
 
@@ -259,7 +258,7 @@ public class SecurityModelMaintainableImpl extends FinancialSystemMaintainable {
     
                 createPrincipalSecurityRecords(modelMember.getMemberId(), modelMember.getMemberTypeCode());
             }
-        }
+        }*/
     }
 
     /**
@@ -270,7 +269,8 @@ public class SecurityModelMaintainableImpl extends FinancialSystemMaintainable {
      * @param memberTypeCode String member type code for member
      */
     protected void createPrincipalSecurityRecords(String memberId, String memberTypeCode) {
-        Collection<String> principalIds = new HashSet<String>();
+        //TODO UPGRADE-911
+    	/*Collection<String> principalIds = new HashSet<String>();
 
         if (KimConstants.KimUIConstants.MEMBER_TYPE_PRINCIPAL_CODE.equals(memberTypeCode)) {
             principalIds.add(memberId);
@@ -294,7 +294,7 @@ public class SecurityModelMaintainableImpl extends FinancialSystemMaintainable {
 
                 businessObjectService.save(newSecurityPrincipal);
             }
-        }
+        }*/
     }
 
     /**

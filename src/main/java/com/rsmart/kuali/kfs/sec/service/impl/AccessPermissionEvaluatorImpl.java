@@ -18,7 +18,7 @@ package com.rsmart.kuali.kfs.sec.service.impl;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.kim.api.identity.Person;
 
 import com.rsmart.kuali.kfs.sec.SecConstants;
 import com.rsmart.kuali.kfs.sec.service.AccessPermissionEvaluator;

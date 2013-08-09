@@ -19,11 +19,11 @@ import java.util.List;
 
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.report.ReportInfo;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kns.bo.Attachment;
-import org.kuali.rice.kns.bo.PersistableBusinessObject;
-import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.util.ErrorMap;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.krad.bo.Attachment;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.util.MessageMap;
 
 import com.rsmart.kuali.kfs.sys.businessobject.BatchFeedStatusBase;
 
@@ -58,7 +58,7 @@ public interface BatchFeedHelperService {
      * @param errorMap ErrorMap of errors to write out
      * @return String message
      */
-    public String getAuditMessage(String successfulErrorKey, String documentNumber, ErrorMap errorMap);
+    public String getAuditMessage(String successfulErrorKey, String documentNumber, MessageMap errorMap);
 
     /**
      * Gets the attributes defined in the DD for the bo class, checks if the fields is marked force uppercase, and if so uppercases
@@ -78,7 +78,7 @@ public interface BatchFeedHelperService {
      * @param attachmentType type of attachment to create
      * @param errorMap ErrorMap for adding encountered errors
      */
-    public void loadDocumentAttachments(Document document, List<Attachment> attachments, String attachmentsPath, String attachmentType, ErrorMap errorMap);
+    public void loadDocumentAttachments(Document document, List<Attachment> attachments, String attachmentsPath, String attachmentType, MessageMap errorMap);
 
     /**
      * Attempts to retrieve a reference on the purchase order document for existence and active indicator validation
@@ -88,7 +88,7 @@ public interface BatchFeedHelperService {
      * @param propertyName name of property to associate errors with
      * @param errorMap Map for adding errors
      */
-    public void performExistenceAndActiveValidation(PersistableBusinessObject businessObject, String referenceName, String propertyName, ErrorMap errorMap);
+    public void performExistenceAndActiveValidation(PersistableBusinessObject businessObject, String referenceName, String propertyName, MessageMap errorMap);
 
     /**
      * Adds an error to the given map for a required failure
@@ -97,7 +97,7 @@ public interface BatchFeedHelperService {
      * @param propertyName name of property that failed
      * @param errorMap Map that error will be added to
      */
-    public void addRequiredError(PersistableBusinessObject businessObject, String propertyName, ErrorMap errorMap);
+    public void addRequiredError(PersistableBusinessObject businessObject, String propertyName, MessageMap errorMap);
 
     /**
      * Adds an error to the given map for an existence failure
@@ -106,7 +106,7 @@ public interface BatchFeedHelperService {
      * @param propertyValue property value that is invalid
      * @param errorMap Map that error will be added to
      */
-    public void addExistenceError(String propertyName, String propertyValue, ErrorMap errorMap);
+    public void addExistenceError(String propertyName, String propertyValue, MessageMap errorMap);
 
     /**
      * Adds an error to the given map for an active failure
@@ -115,7 +115,7 @@ public interface BatchFeedHelperService {
      * @param propertyValue property value that is inactive
      * @param errorMap Map that error will be added to
      */
-    public void addInactiveError(String propertyName, String propertyValue, ErrorMap errorMap);
+    public void addInactiveError(String propertyName, String propertyValue, MessageMap errorMap);
 
     /**
      * Clears out the associated .done file for the processed data file

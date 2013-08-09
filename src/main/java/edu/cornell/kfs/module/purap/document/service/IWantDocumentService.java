@@ -2,8 +2,6 @@ package edu.cornell.kfs.module.purap.document.service;
 
 import java.util.List;
 
-import org.kuali.rice.kns.mail.MailMessage;
-
 import edu.cornell.kfs.module.purap.businessobject.LevelOrganization;
 import edu.cornell.kfs.module.purap.businessobject.PersonData;
 import edu.cornell.kfs.module.purap.document.IWantDocument;

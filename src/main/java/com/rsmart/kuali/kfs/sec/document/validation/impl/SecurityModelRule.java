@@ -21,20 +21,14 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kim.bo.entity.dto.KimPrincipalInfo;
-import org.kuali.rice.kim.bo.group.dto.GroupInfo;
-import org.kuali.rice.kim.bo.role.dto.KimRoleInfo;
-import org.kuali.rice.kim.service.GroupService;
-import org.kuali.rice.kim.service.IdentityManagementService;
-import org.kuali.rice.kim.service.RoleManagementService;
-import org.kuali.rice.kim.util.KimConstants;
-import org.kuali.rice.kns.bo.PersistableBusinessObject;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import com.rsmart.kuali.kfs.sec.SecConstants;
 import com.rsmart.kuali.kfs.sec.SecKeyConstants;
@@ -135,7 +129,7 @@ public class SecurityModelRule extends MaintenanceDocumentRuleBase {
         boolean isValid = true;
 
         if (!isMaintenanceEdit) {
-            boolean validModelName = verifyModelNameIsUnique(newSecurityModel, KNSConstants.MAINTENANCE_NEW_MAINTAINABLE);
+            boolean validModelName = verifyModelNameIsUnique(newSecurityModel, KRADConstants.MAINTENANCE_NEW_MAINTAINABLE);
             if (!validModelName) {
                 isValid = false;
             }
@@ -143,12 +137,12 @@ public class SecurityModelRule extends MaintenanceDocumentRuleBase {
 
         // check to make sure there is at least one model definition
         if (newSecurityModel.getModelDefinitions() == null || newSecurityModel.getModelDefinitions().size() == 0) {
-            GlobalVariables.getMessageMap().putError(KNSConstants.GLOBAL_ERRORS, SecKeyConstants.ERROR_MODEL_DEFINITION_MISSING);            
+            GlobalVariables.getMessageMap().putError(KRADConstants.GLOBAL_ERRORS, SecKeyConstants.ERROR_MODEL_DEFINITION_MISSING);            
         }
 
         int index = 0;
         for (SecurityModelDefinition modelDefinition : newSecurityModel.getModelDefinitions()) {
-            String errorKeyPrefix = KNSConstants.MAINTENANCE_NEW_MAINTAINABLE + SecPropertyConstants.MODEL_DEFINITIONS + "[" + index + "].";
+            String errorKeyPrefix = KRADConstants.MAINTENANCE_NEW_MAINTAINABLE + SecPropertyConstants.MODEL_DEFINITIONS + "[" + index + "].";
 
             boolean modelDefinitionValid = validateModelDefinition(modelDefinition, errorKeyPrefix);
             if (!modelDefinitionValid) {
@@ -160,7 +154,7 @@ public class SecurityModelRule extends MaintenanceDocumentRuleBase {
 
         index = 0;
         for (SecurityModelMember modelMember : newSecurityModel.getModelMembers()) {
-            String errorKeyPrefix = KNSConstants.MAINTENANCE_NEW_MAINTAINABLE + SecPropertyConstants.MODEL_MEMBERS + "[" + index + "].";
+            String errorKeyPrefix = KRADConstants.MAINTENANCE_NEW_MAINTAINABLE + SecPropertyConstants.MODEL_MEMBERS + "[" + index + "].";
 
             boolean modelMemberValid = validateModelMember(modelMember, errorKeyPrefix);
             if (!modelMemberValid) {
@@ -260,34 +254,35 @@ public class SecurityModelRule extends MaintenanceDocumentRuleBase {
     protected boolean validateModelMember(SecurityModelMember modelMember, String errorKeyPrefix) {
         boolean isValid = true;
 
-        String memberId = modelMember.getMemberId();
-        String memberTypeCode = modelMember.getMemberTypeCode();
-        
-        if (StringUtils.isBlank(memberId) || StringUtils.isBlank(memberTypeCode)) {
-            return false;
-        }
-
-        if (KimConstants.KimUIConstants.MEMBER_TYPE_PRINCIPAL_CODE.equals(memberTypeCode)) {
-            KimPrincipalInfo principalInfo = SpringContext.getBean(IdentityManagementService.class).getPrincipal(memberId);
-            if (principalInfo == null) {
-                GlobalVariables.getMessageMap().putError(errorKeyPrefix + SecPropertyConstants.MEMBER_ID, SecKeyConstants.ERROR_MODEL_MEMBER_ID_NOT_VALID, memberId, memberTypeCode);
-                isValid = false;
-            }
-        }
-        else if (KimConstants.KimUIConstants.MEMBER_TYPE_ROLE_CODE.equals(memberTypeCode)) {
-            KimRoleInfo roleInfo = SpringContext.getBean(RoleManagementService.class).getRole(memberId);
-            if (roleInfo == null) {
-                GlobalVariables.getMessageMap().putError(errorKeyPrefix + SecPropertyConstants.MEMBER_ID, SecKeyConstants.ERROR_MODEL_MEMBER_ID_NOT_VALID, memberId, memberTypeCode);
-                isValid = false;
-            }
-        }
-        else if (KimConstants.KimUIConstants.MEMBER_TYPE_GROUP_CODE.equals(memberTypeCode)) {
-            GroupInfo groupInfo = SpringContext.getBean(GroupService.class).getGroupInfo(memberId);
-            if (groupInfo == null) {
-                GlobalVariables.getMessageMap().putError(errorKeyPrefix + SecPropertyConstants.MEMBER_ID, SecKeyConstants.ERROR_MODEL_MEMBER_ID_NOT_VALID, memberId, memberTypeCode);
-                isValid = false;
-            }
-        }
+        //TODO UPGRADE-911
+//        String memberId = modelMember.getMemberId();
+//        String memberTypeCode = modelMember.getMemberTypeCode();
+//        
+//        if (StringUtils.isBlank(memberId) || StringUtils.isBlank(memberTypeCode)) {
+//            return false;
+//        }
+//
+//        if (KimConstants.KimUIConstants.MEMBER_TYPE_PRINCIPAL_CODE.equals(memberTypeCode)) {
+//            KimPrincipalInfo principalInfo = SpringContext.getBean(IdentityManagementService.class).getPrincipal(memberId);
+//            if (principalInfo == null) {
+//                GlobalVariables.getMessageMap().putError(errorKeyPrefix + SecPropertyConstants.MEMBER_ID, SecKeyConstants.ERROR_MODEL_MEMBER_ID_NOT_VALID, memberId, memberTypeCode);
+//                isValid = false;
+//            }
+//        }
+//        else if (KimConstants.KimUIConstants.MEMBER_TYPE_ROLE_CODE.equals(memberTypeCode)) {
+//            KimRoleInfo roleInfo = SpringContext.getBean(RoleManagementService.class).getRole(memberId);
+//            if (roleInfo == null) {
+//                GlobalVariables.getMessageMap().putError(errorKeyPrefix + SecPropertyConstants.MEMBER_ID, SecKeyConstants.ERROR_MODEL_MEMBER_ID_NOT_VALID, memberId, memberTypeCode);
+//                isValid = false;
+//            }
+//        }
+//        else if (KimConstants.KimUIConstants.MEMBER_TYPE_GROUP_CODE.equals(memberTypeCode)) {
+//            GroupInfo groupInfo = SpringContext.getBean(GroupService.class).getGroupInfo(memberId);
+//            if (groupInfo == null) {
+//                GlobalVariables.getMessageMap().putError(errorKeyPrefix + SecPropertyConstants.MEMBER_ID, SecKeyConstants.ERROR_MODEL_MEMBER_ID_NOT_VALID, memberId, memberTypeCode);
+//                isValid = false;
+//            }
+//        }
 
         return isValid;
     }

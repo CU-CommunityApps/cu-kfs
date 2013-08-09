@@ -11,12 +11,13 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.maintenance.Maintainable;
-import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.web.ui.Field;
 import org.kuali.rice.kns.web.ui.Row;
 import org.kuali.rice.kns.web.ui.Section;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
@@ -26,9 +27,8 @@ public class UserProcurementProfileMaintainableImpl extends FinancialSystemMaint
 
 	@Override
 	public void setGenerateDefaultValues(String docTypeName) {
-		// TODO Auto-generated method stub
         super.setGenerateDefaultValues(docTypeName);
-        if (getMaintenanceAction() == null || StringUtils.equals(KNSConstants.MAINTENANCE_NEW_ACTION,getMaintenanceAction())) {
+        if (getMaintenanceAction() == null || StringUtils.equals(KRADConstants.MAINTENANCE_NEW_ACTION,getMaintenanceAction())) {
         	((UserProcurementProfile)getBusinessObject()).setPrincipalId( GlobalVariables.getUserSession().getPrincipalId());
         }
     	
@@ -41,8 +41,8 @@ public class UserProcurementProfileMaintainableImpl extends FinancialSystemMaint
     
     	List<Section> sections = super.getCoreSections(document, oldMaintainable);
     	// if it is not 'super user', then default to user him/herself and disable person lookup
-      if ( StringUtils.equals(document.getNewMaintainableObject().getMaintenanceAction(),KNSConstants.MAINTENANCE_EDIT_ACTION)
-    		  || (!hasRole && StringUtils.equals(KNSConstants.MAINTENANCE_NEW_ACTION, document.getNewMaintainableObject().getMaintenanceAction()))) {
+      if ( StringUtils.equals(document.getNewMaintainableObject().getMaintenanceAction(),KRADConstants.MAINTENANCE_EDIT_ACTION)
+    		  || (!hasRole && StringUtils.equals(KRADConstants.MAINTENANCE_NEW_ACTION, document.getNewMaintainableObject().getMaintenanceAction()))) {
     	  for (Section section : sections) {
     		  for (Row row : section.getRows()) {
     			  for (Field field : row.getFields()) {
@@ -72,7 +72,7 @@ public class UserProcurementProfileMaintainableImpl extends FinancialSystemMaint
 	public void saveBusinessObject() {
 		// TODO Auto-generated method stub
 		if (StringUtils.equals(getMaintenanceAction(),
-				KNSConstants.MAINTENANCE_EDIT_ACTION)) {
+				KRADConstants.MAINTENANCE_EDIT_ACTION)) {
 			Map<String, Object> pkMap = new HashMap<String, Object>();
 			pkMap.put("userProfileId", ((UserProcurementProfile) getBusinessObject()).getUserProfileId());
 			UserProcurementProfile userProfile = (UserProcurementProfile) getBusinessObjectService()

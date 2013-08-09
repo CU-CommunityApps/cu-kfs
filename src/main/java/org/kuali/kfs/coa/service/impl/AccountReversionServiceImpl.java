@@ -29,7 +29,7 @@ import org.kuali.kfs.gl.batch.service.ReversionCategoryLogic;
 import org.kuali.kfs.gl.batch.service.impl.GenericReversionCategory;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.NonTransactional;
-import org.kuali.rice.kns.service.BusinessObjectService;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 /**
  * 

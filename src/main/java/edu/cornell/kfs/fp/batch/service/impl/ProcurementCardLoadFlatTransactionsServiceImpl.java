@@ -28,7 +28,9 @@ import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.ParseException;
-import org.kuali.rice.kns.service.BusinessObjectService;
+import org.kuali.kfs.sys.service.ReportWriterService;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 /**
  * This is the default implementation of the ProcurementCardLoadTransactionsService interface.
@@ -61,10 +63,10 @@ public class ProcurementCardLoadFlatTransactionsServiceImpl implements Procureme
             throw new RuntimeException("Cannot find the file requested to be parsed " + fileName + " " + e1.getMessage(), e1);
         }
 
-        Collection pcardTransactions = null;
+        Collection<?> pcardTransactions = null;
         try {
             byte[] fileByteContent = IOUtils.toByteArray(fileContents);
-            pcardTransactions = (Collection) batchInputFileService.parse(procurementCardInputFileType, fileByteContent);
+            pcardTransactions = (Collection<?>) batchInputFileService.parse(procurementCardInputFileType, fileByteContent);
         }
         catch (IOException e) {
             LOG.error("error while getting file bytes:  " + e.getMessage(), e);
@@ -79,7 +81,7 @@ public class ProcurementCardLoadFlatTransactionsServiceImpl implements Procureme
             LOG.warn("No PCard transactions in input file " + fileName);
         }
 
-        loadTransactions((List) pcardTransactions);
+        loadTransactions((List<? extends PersistableBusinessObject>) pcardTransactions);
 
         LOG.info("Total transactions loaded: " + Integer.toString(pcardTransactions.size()));
         return true;
@@ -89,7 +91,7 @@ public class ProcurementCardLoadFlatTransactionsServiceImpl implements Procureme
      * Calls businessObjectService to remove all the procurement card transaction rows from the transaction load table.
      */
     public void cleanTransactionsTable() {
-        businessObjectService.deleteMatching(ProcurementCardTransaction.class, new HashMap());
+        businessObjectService.deleteMatching(ProcurementCardTransaction.class, new HashMap<String, Object>());
     }
 
     /**
@@ -97,7 +99,7 @@ public class ProcurementCardLoadFlatTransactionsServiceImpl implements Procureme
      * 
      * @param transactions List of ProcurementCardTransactions to load.
      */
-    protected void loadTransactions(List transactions) {
+    protected void loadTransactions(List<? extends PersistableBusinessObject> transactions) {
         businessObjectService.save(transactions);
     }
 
@@ -124,5 +126,18 @@ public class ProcurementCardLoadFlatTransactionsServiceImpl implements Procureme
     public void setProcurementCardInputFileType(BatchInputFileType procurementCardInputFileType) {
         this.procurementCardInputFileType = procurementCardInputFileType;
     }
+
+    //TODO UPGRADE-911
+	public void prepareDirectories(List<String> directoryPaths) {		
+	}
+
+	public List<String> getRequiredDirectoryNames() {
+		return null;
+	}
+
+	public boolean loadProcurementCardFile(String fileName,
+			ReportWriterService reportWriterService) {
+		return false;
+	}
 
 }

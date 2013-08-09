@@ -29,9 +29,9 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileTypeBase;
 import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.KualiDecimal;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 
 import edu.cornell.kfs.fp.batch.service.ProcurementCardErrorEmailService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
@@ -161,7 +161,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
     public Object parse(byte[] fileByteContent) throws ParseException {
         BufferedReader bufferedFileReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(fileByteContent)));
         String fileLine;
-        defaultChart = parameterService.getParameterValue(KfsParameterConstants.FINANCIAL_SYSTEM_DOCUMENT.class, CUKFSParameterKeyConstants.DEFAULT_CHART_CODE);
+        defaultChart = parameterService.getParameterValueAsString(KfsParameterConstants.FINANCIAL_SYSTEM_DOCUMENT.class, CUKFSParameterKeyConstants.DEFAULT_CHART_CODE);
         errorMessages = new ArrayList<String>();
         
         ArrayList<ProcurementCardTransaction> transactions = new ArrayList<ProcurementCardTransaction>();
@@ -329,9 +329,6 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             child.setTransactionCurrencyExchangeRate(extractDecimal(line, 304,317).bigDecimalValue());
             child.setTransactionSettlementAmount(extractDecimal(line, 79, 91));
 
-//            String transactionTaxExemptInd = extractNormalizedString(line, 234, 235); // Y or N
-            String transactionPurchaseInd = extractNormalizedString(line, 272, 273); // 1,2,3,4
-            
 //            child.setTransactionTaxExemptIndicator(extractNormalizedString(line, 234, 235));
             child.setTransactionPurchaseIdentifierIndicator(extractNormalizedString(line, 272, 273));
             
@@ -461,7 +458,8 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
     }
 
     
-    private Date extractCycleDate(String line, int begin, int end) throws Exception {
+    @SuppressWarnings("deprecation")
+	private Date extractCycleDate(String line, int begin, int end) throws Exception {
     	String day = line.substring(begin, end);
     	Date theDate = new Date(System.currentTimeMillis());
     	theDate.setDate(Integer.parseInt(day));

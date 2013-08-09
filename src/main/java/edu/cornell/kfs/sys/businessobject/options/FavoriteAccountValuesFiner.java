@@ -11,10 +11,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.util.KeyLabelPair;
-import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.rice.krad.keyvalues.KeyValuesBase;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
@@ -24,11 +25,11 @@ public class FavoriteAccountValuesFiner extends KeyValuesBase {
 
     public List getKeyValues() {
 
-        List<KeyLabelPair> keyValues = new ArrayList<KeyLabelPair>();
+        List<KeyValue> keyValues = new ArrayList<KeyValue>();
 
         List<FavoriteAccount> favoriteAccounts = getUserFavoriteAccounts();
 
-        keyValues.add(new KeyLabelPair("", ""));
+        keyValues.add(new ConcreteKeyValue("", ""));
 
 		if (CollectionUtils.isNotEmpty(favoriteAccounts)) {
 			Collections.sort(favoriteAccounts, new Comparator() {
@@ -53,7 +54,7 @@ public class FavoriteAccountValuesFiner extends KeyValuesBase {
                 }
             });
 				for (FavoriteAccount account : favoriteAccounts) {
-					keyValues.add(new KeyLabelPair(account.getAccountLineIdentifier(), getAccountingLineDescription(account)));
+					keyValues.add(new ConcreteKeyValue(account.getAccountLineIdentifier().toString(), getAccountingLineDescription(account)));
 				}
 		}
         return keyValues;

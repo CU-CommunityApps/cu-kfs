@@ -16,16 +16,15 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentAuthorizerBase;
 import org.kuali.kfs.sys.document.service.impl.FinancialSystemDocumentServiceImpl;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kew.util.KEWConstants;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.service.PersonService;
-import org.kuali.rice.kns.bo.AdHocRoutePerson;
-import org.kuali.rice.kns.bo.Note;
-import org.kuali.rice.kns.document.Document;
+import org.kuali.rice.kew.api.KewApiConstants;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.service.DocumentService;
+import org.kuali.rice.krad.bo.AdHocRoutePerson;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.service.DocumentService;
 
 import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
 
@@ -249,7 +248,7 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         
         // Add FYI for each approver who has already approved the document
         for (Person approver : priorApprovers) {
-            if (documentAuthorizer.canReceiveAdHoc(doc, approver, KEWConstants.ACTION_REQUEST_FYI_REQ)) {
+            if (documentAuthorizer.canReceiveAdHoc(doc, approver, KewApiConstants.ACTION_REQUEST_FYI_REQ)) {
                 String approverPersonUserId = approver.getPrincipalName();
                 adHocRoutePersons.add(buildFyiRecipient(approverPersonUserId));
             }
@@ -261,7 +260,7 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
     
     protected AdHocRoutePerson buildFyiRecipient(String userId) {
         AdHocRoutePerson adHocRoutePerson = new AdHocRoutePerson();
-        adHocRoutePerson.setActionRequested(KEWConstants.ACTION_REQUEST_FYI_REQ);
+        adHocRoutePerson.setActionRequested(KewApiConstants.ACTION_REQUEST_FYI_REQ);
         adHocRoutePerson.setId(userId);
         return adHocRoutePerson;
     }
@@ -269,7 +268,7 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
     protected FinancialSystemTransactionalDocumentAuthorizerBase getDocumentAuthorizer(Document doc) {
     	DataDictionaryService dataDictionaryService = SpringContext.getBean(DataDictionaryService.class);
         final String docTypeName = dataDictionaryService.getDocumentTypeNameByClass(doc.getClass());
-        Class<? extends DocumentAuthorizer> documentAuthorizerClass = dataDictionaryService.getDataDictionary().getDocumentEntry(docTypeName).getDocumentAuthorizerClass();
+        Class<? extends DocumentAuthorizer> documentAuthorizerClass = (Class<? extends DocumentAuthorizer>) dataDictionaryService.getDataDictionary().getDocumentEntry(docTypeName).getDocumentAuthorizerClass();
         
         FinancialSystemTransactionalDocumentAuthorizerBase documentAuthorizer = null;
         try {

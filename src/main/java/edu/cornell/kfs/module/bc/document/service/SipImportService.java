@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.kuali.kfs.module.bc.util.ExternalizedMessageWrapper;
-import org.kuali.rice.kim.bo.Person;
 
 import com.lowagie.text.DocumentException;
 

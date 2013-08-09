@@ -24,7 +24,9 @@ import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -71,29 +73,39 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.parameter.ParameterEvaluator;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.actionrequest.ActionRequestValue;
 import org.kuali.rice.kew.actiontaken.ActionTakenValue;
+import org.kuali.rice.kew.api.KewApiConstants;
+import org.kuali.rice.kew.api.action.ActionTaken;
+import org.kuali.rice.kew.api.document.node.RouteNodeInstance;
+import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.engine.RouteContext;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.bo.entity.KimEntityAddress;
-import org.kuali.rice.kim.bo.entity.KimEntityEntityType;
-import org.kuali.rice.kim.bo.entity.dto.KimEntityEntityTypeInfo;
-import org.kuali.rice.kim.bo.entity.dto.KimEntityInfo;
-import org.kuali.rice.kim.service.IdentityManagementService;
-import org.kuali.rice.kim.service.PersonService;
-import org.kuali.rice.kim.util.KimConstants;
-import org.kuali.rice.kns.bo.DocumentHeader;
-import org.kuali.rice.kns.document.Copyable;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.service.ParameterEvaluator;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kim.api.KimConstants;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.kim.api.identity.address.EntityAddress;
+import org.kuali.rice.kim.api.identity.entity.Entity;
+import org.kuali.rice.kim.api.identity.type.EntityTypeContactInfo;
+import org.kuali.rice.kim.api.services.IdentityManagementService;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
+
+
+
+
+import org.kuali.rice.kns.util.KNSGlobalVariables;
+import org.kuali.rice.krad.bo.DocumentHeader;
+import org.kuali.rice.krad.document.Copyable;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.businessobject.DisbursementVoucherPayeeDetailExtension;
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -134,7 +146,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
     protected static final String TAX_CONTROL_BACKUP_HOLDING = "B";
     protected static final String TAX_CONTROL_HOLD_PAYMENTS = "H";
     
-    protected static transient PersonService<Person> personService;
+    protected static transient PersonService personService;
     protected static transient ParameterService parameterService;
     protected static transient VendorService vendorService;
     protected static transient BusinessObjectService businessObjectService;
@@ -205,7 +217,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
     public List<GeneralLedgerPendingEntry> getPendingLedgerEntriesForSufficientFundsChecking() {
         List<GeneralLedgerPendingEntry> ples = new ArrayList<GeneralLedgerPendingEntry>();
 
-        KualiConfigurationService kualiConfigurationService = SpringContext.getBean(KualiConfigurationService.class);
+        ConfigurationService kualiConfigurationService = SpringContext.getBean(ConfigurationService.class);
         FlexibleOffsetAccountService flexibleOffsetAccountService = SpringContext.getBean(FlexibleOffsetAccountService.class);
 
         ObjectTypeService objectTypeService = (ObjectTypeService) SpringContext.getBean(ObjectTypeService.class);
@@ -1007,20 +1019,20 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 
         final ParameterService parameterService = this.getParameterService();
         
-        if (parameterService.parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME) && parameterService.getIndicatorParameter(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME)) {
+        if (parameterService.parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME) && parameterService.getParameterValueAsBoolean(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME)) {
             this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(employee.getAddressLine1Unmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(employee.getAddressLine2Unmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeCityName(employee.getAddressCityNameUnmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeStateCode(employee.getAddressStateCodeUnmasked());
+            this.getDvPayeeDetail().setDisbVchrPayeeCityName(employee.getAddressCityUnmasked());
+            this.getDvPayeeDetail().setDisbVchrPayeeStateCode(employee.getAddressStateProvinceCodeUnmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeZipCode(employee.getAddressPostalCodeUnmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(employee.getAddressCountryCodeUnmasked());
         } else {
-            final KimEntityAddress address = getNonDefaultAddress(employee);
+            final EntityAddress address = getNonDefaultAddress(employee);
             if (address != null) {
                 this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(address.getLine1Unmasked());
                 this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(address.getLine2Unmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeCityName(address.getCityNameUnmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeStateCode(address.getStateCodeUnmasked());
+                this.getDvPayeeDetail().setDisbVchrPayeeCityName(address.getCityUnmasked());
+                this.getDvPayeeDetail().setDisbVchrPayeeStateCode(address.getStateProvinceCodeUnmasked());
                 this.getDvPayeeDetail().setDisbVchrPayeeZipCode(employee.getAddressPostalCodeUnmasked());
                 this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(address.getCountryCodeUnmasked());
             }
@@ -1042,10 +1054,10 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
             }
         }
         // Determine if employee is a research subject
-        ParameterEvaluator researchPaymentReasonCodeEvaluator = getParameterService().getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, this.getDvPayeeDetail().getDisbVchrPaymentReasonCode());
+        ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, this.getDvPayeeDetail().getDisbVchrPaymentReasonCode());
         if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()) {
             if (getParameterService().parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM)) {
-                String researchPayLimit = getParameterService().getParameterValue(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM);
+                String researchPayLimit = getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM);
                 if (StringUtils.isNotBlank(researchPayLimit)) {
                     KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
@@ -1080,20 +1092,20 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         final ParameterService parameterService = this.getParameterService();
         
         // Use the same parameter as for employees even though this is a student as basic intention is the same
-        if (parameterService.parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME) && parameterService.getIndicatorParameter(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME)) {
+        if (parameterService.parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME) && parameterService.getParameterValueAsBoolean(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME)) {
             this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(student.getAddressLine1Unmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(student.getAddressLine2Unmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeCityName(student.getAddressCityNameUnmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeStateCode(student.getAddressStateCodeUnmasked());
+            this.getDvPayeeDetail().setDisbVchrPayeeCityName(student.getAddressCityUnmasked());
+            this.getDvPayeeDetail().setDisbVchrPayeeStateCode(student.getAddressStateProvinceCodeUnmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeZipCode(student.getAddressPostalCodeUnmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(student.getAddressCountryCodeUnmasked());
         } else {
-            final KimEntityAddress address = getNonDefaultAddress(student);
+            final EntityAddress address = getNonDefaultAddress(student);
             if (address != null) {
                 this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(address.getLine1Unmasked());
                 this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(address.getLine2Unmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeCityName(address.getCityNameUnmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeStateCode(address.getStateCodeUnmasked());
+                this.getDvPayeeDetail().setDisbVchrPayeeCityName(address.getCityUnmasked());
+                this.getDvPayeeDetail().setDisbVchrPayeeStateCode(address.getStateProvinceCodeUnmasked());
                 this.getDvPayeeDetail().setDisbVchrPayeeZipCode(student.getAddressPostalCodeUnmasked());
                 this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(address.getCountryCodeUnmasked());
             }
@@ -1114,10 +1126,10 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
             }
         }
         // Determine if student is a research subject
-        ParameterEvaluator researchPaymentReasonCodeEvaluator = getParameterService().getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, this.getDvPayeeDetail().getDisbVchrPaymentReasonCode());
+        ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, this.getDvPayeeDetail().getDisbVchrPaymentReasonCode());
         if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()) {
             if (getParameterService().parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM)) {
-                String researchPayLimit = getParameterService().getParameterValue(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM);
+                String researchPayLimit = getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM);
                 if (StringUtils.isNotBlank(researchPayLimit)) {
                     KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
@@ -1153,20 +1165,20 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         final ParameterService parameterService = this.getParameterService();
         
         // Use the same parameter as for employees even though this is a alumni as basic intention is the same
-        if (parameterService.parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME) && parameterService.getIndicatorParameter(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME)) {
+        if (parameterService.parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME) && parameterService.getParameterValueAsBoolean(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME)) {
             this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(alumni.getAddressLine1Unmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(alumni.getAddressLine2Unmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeCityName(alumni.getAddressCityNameUnmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeStateCode(alumni.getAddressStateCodeUnmasked());
+            this.getDvPayeeDetail().setDisbVchrPayeeCityName(alumni.getAddressCityUnmasked());
+            this.getDvPayeeDetail().setDisbVchrPayeeStateCode(alumni.getAddressStateProvinceCodeUnmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeZipCode(alumni.getAddressPostalCodeUnmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(alumni.getAddressCountryCodeUnmasked());
         } else {
-            final KimEntityAddress address = getNonDefaultAddress(alumni);
+            final EntityAddress address = getNonDefaultAddress(alumni);
             if (address != null) {
                 this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(address.getLine1Unmasked());
                 this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(address.getLine2Unmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeCityName(address.getCityNameUnmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeStateCode(address.getStateCodeUnmasked());
+                this.getDvPayeeDetail().setDisbVchrPayeeCityName(address.getCityUnmasked());
+                this.getDvPayeeDetail().setDisbVchrPayeeStateCode(address.getStateProvinceCodeUnmasked());
                 this.getDvPayeeDetail().setDisbVchrPayeeZipCode(alumni.getAddressPostalCodeUnmasked());
                 this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(address.getCountryCodeUnmasked());
             }
@@ -1187,10 +1199,10 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
             }
         }
         // Determine if alumni is a research subject
-        ParameterEvaluator researchPaymentReasonCodeEvaluator = getParameterService().getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, this.getDvPayeeDetail().getDisbVchrPaymentReasonCode());
+        ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, this.getDvPayeeDetail().getDisbVchrPaymentReasonCode());
         if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()) {
             if (getParameterService().parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM)) {
-                String researchPayLimit = getParameterService().getParameterValue(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM);
+                String researchPayLimit = getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM);
                 if (StringUtils.isNotBlank(researchPayLimit)) {
                     KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
@@ -1211,14 +1223,14 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
      * @param employee the employee to find a non-default address for
      * @return the non-default address, or null if not found
      */
-    protected KimEntityAddress getNonDefaultAddress(Person employee) {
-        final String addressType = getParameterService().getParameterValue(DisbursementVoucherDocument.class, DisbursementVoucherDocument.DEFAULT_EMPLOYEE_ADDRESS_TYPE_PARAMETER_NAME);
-        final KimEntityInfo entityInfo = getIdentityManagementService().getEntityInfoByPrincipalId(employee.getPrincipalId());
-        if (entityInfo != null) {
-            final KimEntityEntityType entityEntityType = getPersonEntityEntityType(entityInfo);
+    protected EntityAddress getNonDefaultAddress(Person employee) {
+        final String addressType = getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class, DisbursementVoucherDocument.DEFAULT_EMPLOYEE_ADDRESS_TYPE_PARAMETER_NAME);
+        final Entity entity = getIdentityManagementService().getEntityByPrincipalId(employee.getPrincipalId());
+        if (entity != null) {
+            final EntityTypeContactInfo entityEntityType = getPersonEntityEntityType(entity);
             if (entityEntityType != null) {
-                final List<? extends KimEntityAddress> addresses = entityEntityType.getAddresses();
-        
+                final List<? extends EntityAddress> addresses = entityEntityType.getAddresses();
+
                 return findAddressByType(addresses, addressType);
             }
         }
@@ -1231,18 +1243,18 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
      * @param entityInfo the entity info to loop through entity entity types of
      * @return a found entity entity type or null if a PERSON entity entity type is not associated with the given KimEntityInfo record
      */
-    protected KimEntityEntityType getPersonEntityEntityType(KimEntityInfo entityInfo) {
-        final List<KimEntityEntityTypeInfo> entityEntityTypes = entityInfo.getEntityTypes();
+    protected EntityTypeContactInfo getPersonEntityEntityType(Entity entity) {
+        final List<EntityTypeContactInfo> entityEntityTypes = entity.getEntityTypeContactInfos();
         int count = 0;
-        KimEntityEntityType foundInfo = null;
-        
+        EntityTypeContactInfo foundInfo = null;
+
         while (count < entityEntityTypes.size() && foundInfo == null) {
             if (entityEntityTypes.get(count).getEntityTypeCode().equals(KimConstants.EntityTypes.PERSON)) {
                 foundInfo = entityEntityTypes.get(count);
             }
             count += 1;
         }
-        
+
         return foundInfo;
     }
     
@@ -1252,18 +1264,18 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
      * @param addressType the address type of the address to return
      * @return the found KimEntityAddress, or null if not found
      */
-    protected KimEntityAddress findAddressByType(List<? extends KimEntityAddress> addresses, String addressType) {
-        KimEntityAddress foundAddress = null;
+    protected EntityAddress findAddressByType(List<? extends EntityAddress> addresses, String addressType) {
+        EntityAddress foundAddress = null;
         int count = 0;
-        
+
         while (count < addresses.size() && foundAddress == null) {
-            final KimEntityAddress currentAddress = addresses.get(count);
-            if (currentAddress.getAddressTypeCode().equals(addressType)) {
+            final EntityAddress currentAddress = addresses.get(count);
+            if (currentAddress.isActive() && currentAddress.getAddressType().getCode().equals(addressType)) {
                 foundAddress = currentAddress;
             }
             count += 1;
         }
-        
+
         return foundAddress;
     }
 
@@ -1273,8 +1285,8 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
     @Override
     public void prepareForSave() {
         if (this instanceof AmountTotaling) {
-            getDocumentHeader().setFinancialDocumentTotalAmount(((AmountTotaling) this).getTotalDollarAmount());
-        }
+            getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(((AmountTotaling) this).getTotalDollarAmount());
+          }
 
         if (dvWireTransfer != null) {
             dvWireTransfer.setDocumentNumber(this.documentNumber);
@@ -1309,7 +1321,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
     protected boolean shouldClearSpecialHandling() {
         if (!isDisbVchrSpecialHandlingCode()) {
             // are we at the campus route node?
-            List<String> currentNodes = Arrays.asList(Strings.split(getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames(),","));
+        	List<RouteNodeInstance> currentNodes = getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeInstances();
             return (currentNodes.contains(DisbursementVoucherConstants.RouteLevelNames.CAMPUS));
         }
         return false;
@@ -1362,10 +1374,10 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         else if (payeeDetail.isEmployee() || payeeDetail.isStudent() || payeeDetail.isAlumni()) {
 
             // Determine if employee, student or alumni is a research subject
-            ParameterEvaluator researchPaymentReasonCodeEvaluator = getParameterService().getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, payeeDetail.getDisbVchrPaymentReasonCode());
+            ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, payeeDetail.getDisbVchrPaymentReasonCode());
             if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()) {
                 if (getParameterService().parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM)) {
-                    String researchPayLimit = getParameterService().getParameterValue(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM);
+                    String researchPayLimit = getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM);
                     if (StringUtils.isNotBlank(researchPayLimit)) {
                         KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
@@ -1454,7 +1466,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
             	dvPayeeDetail = new DisbursementVoucherPayeeDetail();
                 getDvPayeeDetail().setDisbVchrPayeeIdNumber(StringUtils.EMPTY);
                 ((DisbursementVoucherPayeeDetailExtension)getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(StringUtils.EMPTY);
-                GlobalVariables.getMessageList().add(KFSKeyConstants.WARNING_DV_PAYEE_NONEXISTANT_CLEARED);
+                KNSGlobalVariables.getMessageList().add(KFSKeyConstants.WARNING_DV_PAYEE_NONEXISTANT_CLEARED);
             }
             //else {
                 //templateVendor(vendorDetail, vendorAddress);
@@ -1467,7 +1479,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         this.extractDate = null;
         this.paidDate = null;
         this.cancelDate = null;
-        getDocumentHeader().setFinancialDocumentStatusCode(KFSConstants.DocumentStatusCodes.INITIATED);
+        getFinancialSystemDocumentHeader().setFinancialDocumentStatusCode(KFSConstants.DocumentStatusCodes.INITIATED);
     }
 
     /**
@@ -1501,7 +1513,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 
         // default doc location
         if (StringUtils.isBlank(getDisbursementVoucherDocumentationLocationCode())) {
-            setDisbursementVoucherDocumentationLocationCode(getParameterService().getParameterValue(DisbursementVoucherDocument.class, DisbursementVoucherConstants.DEFAULT_DOC_LOCATION_PARM_NM));
+            setDisbursementVoucherDocumentationLocationCode(getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.DEFAULT_DOC_LOCATION_PARM_NM));
         }
 
         // default bank code
@@ -1761,7 +1773,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 
         final KualiDecimal bankOffsetAmount = glpeService.getOffsetToCashAmount(this).negated();
         GeneralLedgerPendingEntry bankOffsetEntry = new GeneralLedgerPendingEntry();
-        success &= glpeService.populateBankOffsetGeneralLedgerPendingEntry(getBank(), bankOffsetAmount, this, getPostingYear(), sequenceHelper, bankOffsetEntry, KNSConstants.DOCUMENT_PROPERTY_NAME + "." + KFSPropertyConstants.DISB_VCHR_BANK_CODE);
+        success &= glpeService.populateBankOffsetGeneralLedgerPendingEntry(getBank(), bankOffsetAmount, this, getPostingYear(), sequenceHelper, bankOffsetEntry, KRADConstants.DOCUMENT_PROPERTY_NAME + "." + KFSPropertyConstants.DISB_VCHR_BANK_CODE);
 
         if (success) {
             AccountingDocumentRuleHelperService accountingDocumentRuleUtil = SpringContext.getBean(AccountingDocumentRuleHelperService.class);
@@ -1809,7 +1821,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         // If value is false, check state of document. We should assume payee is assigned if document has been saved.
         // Otherwise, value will be set during creation process.
         if (!payeeAssigned) {
-            payeeAssigned = !this.getDocumentHeader().getWorkflowDocument().stateIsInitiated();
+            payeeAssigned = !this.getDocumentHeader().getWorkflowDocument().isInitiated();
         }
         return payeeAssigned;
     }
@@ -1832,7 +1844,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
      * @return Returns the editW9W8BENbox.
      */
    public boolean isEditW9W8BENbox() {
-       String initiatorPrincipalID = this.getDocumentHeader().getWorkflowDocument().getRouteHeader().getInitiatorPrincipalId();
+       String initiatorPrincipalID = this.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
        if (GlobalVariables.getUserSession().getPrincipalId().equals(initiatorPrincipalID)) {
            editW9W8BENbox = true;            
        }
@@ -1977,14 +1989,14 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         }
         
         boolean isOverDollarThreshold = false;
-		String dollarThreshold = getParameterService().getParameterValue("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_TAX_REVIEW);
+		String dollarThreshold = getParameterService().getParameterValueAsString("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_TAX_REVIEW);
 		KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
 		if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
 			isOverDollarThreshold = true;
 		}
 
         
-        if (this.getParameterService().getParameterEvaluator(this.getClass(), DisbursementVoucherDocument.PAYMENT_REASONS_REQUIRING_TAX_REVIEW_PARAMETER_NAME, paymentReasonCode).evaluationSucceeds()) {
+        if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(this.getClass(), DisbursementVoucherDocument.PAYMENT_REASONS_REQUIRING_TAX_REVIEW_PARAMETER_NAME, paymentReasonCode).evaluationSucceeds()) {
             return isOverDollarThreshold &= true;
         }
         
@@ -2015,7 +2027,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
      * @return true if the campus is taxed for moving reimbursements, false otherwise
      */
     protected boolean taxedCampusForMovingReimbursements() {
-        return this.getParameterService().getParameterEvaluator(this.getClass(), DisbursementVoucherConstants.CAMPUSES_TAXED_FOR_MOVING_REIMBURSEMENTS_PARM_NM, this.getCampusCode()).evaluationSucceeds();
+        return SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(this.getClass(), DisbursementVoucherConstants.CAMPUSES_TAXED_FOR_MOVING_REIMBURSEMENTS_PARM_NM, this.getCampusCode()).evaluationSucceeds();
     }
     
     /**
@@ -2029,7 +2041,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 		
 		for (AccountingLine alb : theList )
 		{
-			ParameterEvaluator objectCodes = getParameterService().getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_TRAVEL_REVIEW, alb.getFinancialObjectCode());
+			ParameterEvaluator objectCodes = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_TRAVEL_REVIEW, alb.getFinancialObjectCode());
 			if (objectCodes.evaluationSucceeds())
 			{
 				LOG.info("Object Code " + alb.getFinancialObjectCode() + " requires this document to undergo Travel review.");				
@@ -2039,7 +2051,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 		
 		
 		boolean overDollarThreshold = false;
-		String dollarThreshold = getParameterService().getParameterValue("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_TRAVEL_REVIEW);
+		String dollarThreshold = getParameterService().getParameterValueAsString("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_TRAVEL_REVIEW);
 		KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
 		if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
 			overDollarThreshold = true;
@@ -2053,7 +2065,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         return paymentReasonCodeIsNorP && overDollarThreshold;
         }
 
-    protected PersonService<Person> getPersonService() {
+    protected PersonService getPersonService() {
         if ( personService == null ) {
             personService = SpringContext.getBean(PersonService.class);
         }
@@ -2119,7 +2131,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
  
 	protected boolean isCAndGReviewRequired() {
 		
-		String awardThreshold = getParameterService().getParameterValue("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW);
+		String awardThreshold = getParameterService().getParameterValueAsString("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW);
 		KualiDecimal dollarThresholdDecimal = new KualiDecimal(awardThreshold);
 		if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
 			return true;
@@ -2128,7 +2140,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 		List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;		
 		for (AccountingLine alb : theList )
 		{
-			ParameterEvaluator objectCodes = getParameterService().getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_AWARD_REVIEW, alb.getFinancialObjectCode());
+			ParameterEvaluator objectCodes = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_AWARD_REVIEW, alb.getFinancialObjectCode());
 			if (objectCodes.evaluationSucceeds()) {
 				LOG.info("Object Code " + alb.getFinancialObjectCode() + " requires this document to undergo Award review.");
 				return true;
@@ -2156,7 +2168,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 		
 		for (AccountingLine alb : theList )
 		{
-			ParameterEvaluator objectCodes = getParameterService().getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_CAMPUS_REVIEW, alb.getFinancialObjectCode());
+			ParameterEvaluator objectCodes = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_CAMPUS_REVIEW, alb.getFinancialObjectCode());
 			if (objectCodes.evaluationSucceeds())
 			{
 				LOG.info("Object Code " + alb.getFinancialObjectCode() + " requires this document to undergo Campus review.");
@@ -2164,12 +2176,12 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 			}
 		}
 		
-		ParameterEvaluator paymentReasons = getParameterService().getParameterEvaluator("KFS-FP", "DisbursementVoucher", PAYMENT_REASONS_REQUIRING_CAMPUS_REVIEW, this.dvPayeeDetail.getDisbVchrPaymentReasonCode());
+		ParameterEvaluator paymentReasons = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", PAYMENT_REASONS_REQUIRING_CAMPUS_REVIEW, this.dvPayeeDetail.getDisbVchrPaymentReasonCode());
 		if (paymentReasons.evaluationSucceeds()) {
 			return true;
 		}
 
-		String dollarThreshold = getParameterService().getParameterValue("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_CAMPUS_REVIEW);
+		String dollarThreshold = getParameterService().getParameterValueAsString("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_CAMPUS_REVIEW);
 		KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
 		if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
 			return true;
@@ -2177,6 +2189,24 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 		
 		return false;
 	}
+	
+  public Set<Person> getAllPriorApprovers() throws WorkflowException {
+    PersonService personService = KimApiServiceLocator.getPersonService();
+     List<ActionTaken> actionsTaken = getDocumentHeader().getWorkflowDocument().getActionsTaken();
+    Set<String> principalIds = new HashSet<String>();
+    Set<Person> persons = new HashSet<Person>();
+
+    for (ActionTaken actionTaken : actionsTaken) {
+        if (KewApiConstants.ACTION_TAKEN_APPROVED_CD.equals(actionTaken.getActionTaken())) {
+            String principalId = actionTaken.getPrincipalId();
+            if (!principalIds.contains(principalId)) {
+                principalIds.add(principalId);
+                persons.add(personService.getPerson(principalId));
+            }
+        }
+    }
+    return persons;
+}
 
     
 }

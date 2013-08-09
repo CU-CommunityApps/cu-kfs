@@ -39,15 +39,17 @@ import org.kuali.kfs.sys.businessobject.TimestampedBusinessObjectBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.KeyValuesService;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.KualiInteger;
-import org.kuali.rice.kns.util.ObjectUtils;
+
+
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.KeyValuesService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 
@@ -337,8 +339,8 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
      * @param sortGroupId
      */
     public void setSortValue(int sortGroupId) {
-        String defaultSortOrderParameterName = SpringContext.getBean(KualiConfigurationService.class).getPropertyString(PdpKeyConstants.DEFAULT_SORT_GROUP_ID_PARAMETER);
-        String defaultSortOrderParameterValue = SpringContext.getBean(ParameterService.class).getParameterValue(PaymentGroup.class, defaultSortOrderParameterName);
+        String defaultSortOrderParameterName = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(PdpKeyConstants.DEFAULT_SORT_GROUP_ID_PARAMETER);
+        String defaultSortOrderParameterValue = SpringContext.getBean(ParameterService.class).getParameterValueAsString(PaymentGroup.class, defaultSortOrderParameterName);
 
         StringBuffer sb = new StringBuffer();
 
@@ -766,7 +768,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
         fieldValues.put("vendorHeaderGeneratedIdentifier", headerDetails[0]/*payeeId*/);
         fieldValues.put("vendorDetailAssignedIdentifier", headerDetails[1]);
         
-        List addrs = (List)bos.findMatching(VendorAddress.class, fieldValues);
+        List<VendorAddress> addrs = (List<VendorAddress>) bos.findMatching(VendorAddress.class, fieldValues);
         if (addrs.size() == 1) {
             VendorAddress addr = (VendorAddress) addrs.get(0);
             setVendorAddress(addr);
@@ -892,7 +894,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
         fieldValues.put("vendorHeaderGeneratedIdentifier", headerDetails[0]/*payeeId*/);
         fieldValues.put("vendorDetailAssignedIdentifier", headerDetails[1]);
         
-        List<VendorDetail> details = (List<VendorDetail>)bos.findMatching(VendorDetail.class, fieldValues);
+        List<VendorDetail> details = (List<VendorDetail>) bos.findMatching(VendorDetail.class, fieldValues);
         if (details.size() == 1) {
             payeeName=details.get(0).getVendorName();
         } else {
@@ -1105,7 +1107,6 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
         this.batchId = batchId;
     }
 
-    @Override
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();
 

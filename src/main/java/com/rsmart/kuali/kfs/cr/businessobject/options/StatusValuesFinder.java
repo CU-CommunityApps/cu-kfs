@@ -18,8 +18,9 @@ package com.rsmart.kuali.kfs.cr.businessobject.options;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
-import org.kuali.rice.core.util.KeyLabelPair;
+import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.rice.krad.keyvalues.KeyValuesBase;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 
@@ -35,15 +36,15 @@ public class StatusValuesFinder extends KeyValuesBase {
      * 
      * @see org.kuali.core.lookup.keyvalues.KeyValuesFinder#getKeyValues()
      */
-    public List getKeyValues() {
-        List keyValuesList = new ArrayList();
-        keyValuesList.add( new KeyLabelPair(CRConstants.CANCELLED, "Cancelled") );
-        keyValuesList.add( new KeyLabelPair(CRConstants.CLEARED, "Cleared") );
-        keyValuesList.add( new KeyLabelPair(CRConstants.EXCP, "Exception") );
-        keyValuesList.add( new KeyLabelPair(CRConstants.ISSUED, "Issued") );
-        keyValuesList.add( new KeyLabelPair(CRConstants.STALE, "Stale") );
-        keyValuesList.add( new KeyLabelPair(CRConstants.STOP, "Stopped") );
-        keyValuesList.add( new KeyLabelPair(CRConstants.VOIDED, "Voided") );        
+    public List<KeyValue> getKeyValues() {
+    	List<KeyValue> keyValuesList = new ArrayList<KeyValue>();
+        keyValuesList.add( new ConcreteKeyValue(CRConstants.CANCELLED, "Cancelled") );
+        keyValuesList.add( new ConcreteKeyValue(CRConstants.CLEARED, "Cleared") );
+        keyValuesList.add( new ConcreteKeyValue(CRConstants.EXCP, "Exception") );
+        keyValuesList.add( new ConcreteKeyValue(CRConstants.ISSUED, "Issued") );
+        keyValuesList.add( new ConcreteKeyValue(CRConstants.STALE, "Stale") );
+        keyValuesList.add( new ConcreteKeyValue(CRConstants.STOP, "Stopped") );
+        keyValuesList.add( new ConcreteKeyValue(CRConstants.VOIDED, "Voided") );        
         return keyValuesList;
     }
 }

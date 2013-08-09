@@ -30,9 +30,8 @@ import org.kuali.kfs.coa.service.OrganizationReversionService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemGlobalMaintainable;
-import org.kuali.rice.kns.bo.PersistableBusinessObject;
-import org.kuali.rice.kns.document.MaintenanceLock;
-import org.kuali.rice.kns.util.TypedArrayList;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.maintenance.MaintenanceLock;
 
 /**
  * This class provides some specific functionality for the {@link OrganizationReversionGlobal} maintenance document inner class for
@@ -113,7 +112,7 @@ public class OrganizationReversionGlobalMaintainableImpl extends FinancialSystem
         LOG.debug("Details size before adding categories = " + details.size());
 
         if (details == null) {
-            details = new TypedArrayList(OrganizationReversionGlobalDetail.class);
+            details = new ArrayList<OrganizationReversionGlobalDetail>();
             globalOrgRev.setOrganizationReversionGlobalDetails(details);
         }
 

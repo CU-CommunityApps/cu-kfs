@@ -15,26 +15,27 @@
  */
 package com.rsmart.kuali.kfs.sec.identity;
 
-import org.kuali.rice.kim.bo.types.dto.AttributeSet;
-import org.kuali.rice.kim.service.support.impl.KimRoleTypeServiceBase;
+import org.kuali.rice.krms.impl.type.KrmsTypeServiceBase;
+
+
 
 /**
  * Type service for roles created for security definitions. Each definition has a corresponding role which is granted the definition permissions
  */
-public class SecurityAttributeRoleTypeServiceImpl extends KimRoleTypeServiceBase {
-
-    {
+public class SecurityAttributeRoleTypeServiceImpl extends KrmsTypeServiceBase {
+	//TODO UPGRADE-911
+    /*{
         checkRequiredAttributes = false;
-    }
+    }*/
 
     /**
      * Any qualifier is allowed so that later on the qualification can be evaluated in the context of all qualifications for the user across all roles
      * 
      * @see org.kuali.rice.kim.service.support.impl.KimTypeServiceBase#performMatch(org.kuali.rice.kim.bo.types.dto.AttributeSet, org.kuali.rice.kim.bo.types.dto.AttributeSet)
      */
-    @Override
+    /*@Override
     protected boolean performMatch(AttributeSet inputAttributeSet, AttributeSet storedAttributeSet) {
         return true;
-    }
-
+    }*/
+	//TODO UPGRADE-911
 }

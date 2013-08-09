@@ -3,26 +3,29 @@ package edu.cornell.kfs.module.purap.businessobject.options;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kuali.rice.core.util.KeyLabelPair;
-import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
+import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.rice.krad.keyvalues.KeyValuesBase;
 
 public class AttachmentDescriptionValuesFinder extends KeyValuesBase {
 
-    /**
+	private static final long serialVersionUID = 1L;
+
+	/**
      * 
      * @see org.kuali.rice.kns.lookup.keyvalues.KeyValuesFinder#getKeyValues()
      */
-    public List<KeyLabelPair> getKeyValues() {
+    public List<KeyValue> getKeyValues() {
 
-        List<KeyLabelPair> keyValues = new ArrayList();
+        List<KeyValue> keyValues = new ArrayList<KeyValue>();
 
-        keyValues.add(new KeyLabelPair("Note", "Note"));
-        keyValues.add(new KeyLabelPair("Quote", "Quote"));
-        keyValues.add(new KeyLabelPair("Invoice", "Invoice"));
-        keyValues.add(new KeyLabelPair("Contract/Agreement", "Contract/Agreement"));
-        keyValues.add(new KeyLabelPair("Sole Source", "Sole Source"));
-        keyValues.add(new KeyLabelPair("Specifications", "Specifications"));
-        keyValues.add(new KeyLabelPair("Other", "Other"));
+        keyValues.add(new ConcreteKeyValue("Note", "Note"));
+        keyValues.add(new ConcreteKeyValue("Quote", "Quote"));
+        keyValues.add(new ConcreteKeyValue("Invoice", "Invoice"));
+        keyValues.add(new ConcreteKeyValue("Contract/Agreement", "Contract/Agreement"));
+        keyValues.add(new ConcreteKeyValue("Sole Source", "Sole Source"));
+        keyValues.add(new ConcreteKeyValue("Specifications", "Specifications"));
+        keyValues.add(new ConcreteKeyValue("Other", "Other"));
 
         return keyValues;
     }

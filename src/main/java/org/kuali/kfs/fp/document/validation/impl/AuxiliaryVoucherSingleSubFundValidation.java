@@ -27,9 +27,8 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.validation.GenericValidation;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
-import org.kuali.rice.kns.service.ParameterEvaluator;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 /**
  * Validation for Auxiliary Voucher that checks that all the source accounting lines on the document use
@@ -44,7 +43,7 @@ public class AuxiliaryVoucherSingleSubFundValidation extends GenericValidation {
      * @see org.kuali.kfs.sys.document.validation.Validation#validate(org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent)
      */
     public boolean validate(AttributedDocumentEvent event) {
-        boolean allowMultiple = SpringContext.getBean(ParameterService.class).getIndicatorParameter(AuxiliaryVoucherDocument.class, KFSParameterKeyConstants.FpParameterConstants.FP_ALLOW_MULTIPLE_SUBFUNDS);
+        boolean allowMultiple = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(AuxiliaryVoucherDocument.class, KFSParameterKeyConstants.FpParameterConstants.FP_ALLOW_MULTIPLE_SUBFUNDS);
         
         if(!allowMultiple) {
         

@@ -15,12 +15,13 @@ import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.coa.service.SubObjectCodeService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 
 public class FavoriteAccount extends PersistableBusinessObjectBase {
 
+	private static final long serialVersionUID = 1L;
 	private String description;
     private String chartOfAccountsCode;
     private String accountNumber;
@@ -276,9 +277,8 @@ public class FavoriteAccount extends PersistableBusinessObjectBase {
 		this.project = project;
 	}
 	
-	@Override
+	@SuppressWarnings("rawtypes")
 	protected LinkedHashMap toStringMapper() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

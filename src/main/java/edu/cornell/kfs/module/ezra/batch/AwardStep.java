@@ -1,18 +1,14 @@
 package edu.cornell.kfs.module.ezra.batch;
 
 import java.text.ParseException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.bo.Parameter;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.coreservice.api.parameter.Parameter;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 
 import edu.cornell.kfs.module.ezra.service.EzraService;
-import edu.cornell.kfs.module.ezra.service.impl.EzraServiceImpl;
 
 public class AwardStep extends AbstractStep {
 
@@ -22,7 +18,6 @@ public class AwardStep extends AbstractStep {
 	
 	private static final String PARAMETER_NAMESPACE_CODE = "KFS-EZRA";
     private static final String PARAMETER_NAMESPACE_STEP = "AwardStep";
-    private static final String PARAMETER_APPLICATION_NAMESPACE_CODE = "KFS";
 	
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AwardStep.class);
 
@@ -31,7 +26,7 @@ public class AwardStep extends AbstractStep {
 		
 
 		
-		String dateString = parameterService.getParameterValue(PARAMETER_NAMESPACE_CODE, PARAMETER_NAMESPACE_STEP, LAST_SUCCESSFUL_RUN);
+		String dateString = parameterService.getParameterValueAsString(PARAMETER_NAMESPACE_CODE, PARAMETER_NAMESPACE_STEP, LAST_SUCCESSFUL_RUN);
 		LOG.info("AwardStep last successful run parm value= "+ dateString);
 		DateTimeService dtService = SpringContext.getBean(DateTimeService.class);
 		java.sql.Date lastRun = null;
@@ -39,22 +34,20 @@ public class AwardStep extends AbstractStep {
 			try {
 				lastRun = dtService.convertToSqlDate(dateString);
 			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		boolean result = ezraService.updateAwardsSince(lastRun);
 	        if (result) {
-	        	BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
-	        	Map<String,Object> fieldValues = new HashMap<String,Object>();
-	            fieldValues.put("parameterNamespaceCode",PARAMETER_NAMESPACE_CODE);
-	            fieldValues.put("parameterDetailTypeCode",PARAMETER_NAMESPACE_STEP);
-	            fieldValues.put("parameterName",LAST_SUCCESSFUL_RUN);
-	            fieldValues.put("parameterApplicationNamespaceCode", PARAMETER_APPLICATION_NAMESPACE_CODE);
-	        	
-	        	Parameter parm = (Parameter) bos.findByPrimaryKey(Parameter.class, fieldValues);
-	        	parm.setParameterValue(dtService.toDateTimeString(dtService.getCurrentSqlDate()));
-	        	bos.save(parm);
+
+	        	Parameter parm = getParameterService().getParameter( PARAMETER_NAMESPACE_CODE, 
+					     PARAMETER_NAMESPACE_STEP, 
+					     LAST_SUCCESSFUL_RUN);
+
+
+				Parameter.Builder newParm = Parameter.Builder.create(parm);
+				newParm.setValue(dtService.toDateTimeString(dtService.getCurrentSqlDate()));
+				getParameterService().updateParameter(newParm.build());
 	        //	//parameterService.
 	        }
 	        return result;

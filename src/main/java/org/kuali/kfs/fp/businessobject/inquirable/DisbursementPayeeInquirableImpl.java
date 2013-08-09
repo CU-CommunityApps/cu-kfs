@@ -26,12 +26,13 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kns.bo.BusinessObject;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kns.inquiry.KualiInquirableImpl;
 import org.kuali.rice.kns.lookup.HtmlData;
 import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.UrlFactory;
+import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.UrlFactory;
 
 public class DisbursementPayeeInquirableImpl extends KualiInquirableImpl {
 
@@ -75,7 +76,7 @@ public class DisbursementPayeeInquirableImpl extends KualiInquirableImpl {
         params.put(KFSConstants.BUSINESS_OBJECT_CLASS_ATTRIBUTE, Person.class.getName());
         params.put(KFSPropertyConstants.PRINCIPAL_ID, payee.getPrincipalId());
 
-        String url = UrlFactory.parameterizeUrl(KNSConstants.INQUIRY_ACTION, params);
+        String url = UrlFactory.parameterizeUrl(KRADConstants.INQUIRY_ACTION, params);
 
         Map<String, String> fieldList = new HashMap<String, String>();
         fieldList.put(KFSPropertyConstants.PRINCIPAL_ID, payee.getPrincipalId());
@@ -95,7 +96,7 @@ public class DisbursementPayeeInquirableImpl extends KualiInquirableImpl {
         params.put(KFSPropertyConstants.VENDOR_HEADER_GENERATED_ID, vendorHeaderGeneratedIdentifier);
         params.put(KFSPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID, vendorDetailAssignedIdentifier);
 
-        String url = UrlFactory.parameterizeUrl(KNSConstants.INQUIRY_ACTION, params);
+        String url = UrlFactory.parameterizeUrl(KRADConstants.INQUIRY_ACTION, params);
 
         Map<String, String> fieldList = new HashMap<String, String>();
         fieldList.put(KFSPropertyConstants.VENDOR_HEADER_GENERATED_ID, vendorHeaderGeneratedIdentifier);

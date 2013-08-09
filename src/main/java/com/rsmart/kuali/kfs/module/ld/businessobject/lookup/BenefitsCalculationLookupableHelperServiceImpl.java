@@ -29,17 +29,17 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.bo.BusinessObject;
-import org.kuali.rice.kns.exception.ValidationException;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kns.lookup.AbstractLookupableHelperServiceImpl;
 import org.kuali.rice.kns.lookup.LookupUtils;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.BeanPropertyComparator;
-import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.web.ui.Column;
 import org.kuali.rice.kns.web.ui.Field;
 import org.kuali.rice.kns.web.ui.Row;
+import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.rice.krad.exception.ValidationException;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.BeanPropertyComparator;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 import com.rsmart.kuali.kfs.gl.Constant;
 import com.rsmart.kuali.kfs.module.ld.LdConstants;
@@ -73,7 +73,7 @@ public class BenefitsCalculationLookupableHelperServiceImpl extends AbstractLook
     public List<Column> getColumns() {
         List<Column> columns =  super.getColumns();
         
-        String offsetParmValue = parameterService.getParameterValue(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_CALCULATION_OFFSET);
+        String offsetParmValue = parameterService.getParameterValueAsString(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_CALCULATION_OFFSET);
         
         if(offsetParmValue.equalsIgnoreCase("n")) {
             for(Iterator<Column> it = columns.iterator(); it.hasNext(); ) {
@@ -94,7 +94,7 @@ public class BenefitsCalculationLookupableHelperServiceImpl extends AbstractLook
     public List<Row> getRows() {
         List<Row> rows =  super.getRows();
         
-        String offsetParmValue = parameterService.getParameterValue(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_CALCULATION_OFFSET);
+        String offsetParmValue = parameterService.getParameterValueAsString(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_CALCULATION_OFFSET);
         
         if(offsetParmValue.equalsIgnoreCase("n")) {
             for(Iterator<Row> it = rows.iterator(); it.hasNext(); ) {

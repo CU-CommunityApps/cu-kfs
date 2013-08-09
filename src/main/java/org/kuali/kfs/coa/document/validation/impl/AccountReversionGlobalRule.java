@@ -29,11 +29,12 @@ import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.util.KeyLabelPair;
-import org.kuali.rice.kns.bo.PersistableBusinessObject;
+import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
+;
 
 /**
  * 
@@ -330,7 +331,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
             // is in the lookup class, so I've got to use a web-based class to actually
             // search through the values. Is that right good & healthy?
             for (Object kvPairObj : new ReversionCodeValuesFinder().getKeyValues()) {
-                KeyLabelPair kvPair = (KeyLabelPair) kvPairObj;
+                KeyValue kvPair = (KeyValue) kvPairObj;
                 if (kvPair.getKey().toString().equals(detail.getAccountReversionCode())) {
                     foundInList = true;
                     break;

@@ -42,11 +42,12 @@ import org.kuali.kfs.pdp.service.PaymentDetailService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.businessobject.Bank;
-import org.kuali.rice.kns.bo.KualiCode;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.KualiInteger;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.rice.krad.bo.KualiCode;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconError;
@@ -114,7 +115,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
     
     private List<Column> footerColumns = new ArrayList<Column>();
     
-    private KualiConfigurationService  kualiConfigurationService;
+    private ConfigurationService  kualiConfigurationService;
     
     private static char QUOTE = '\"';
 
@@ -139,28 +140,28 @@ public class CheckReconciliationImportStep extends AbstractStep {
         importPdpPayments();
         
         // Get column numbers
-        checkNumCol   = Integer.parseInt(getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.CHECK_NUM_COL));
-        checkDateCol  = Integer.parseInt(getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.CHECK_DATE_COL));
-        statusCol     = Integer.parseInt(getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.STATUS_COL));
-        amountCol     = Integer.parseInt(getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.AMOUNT_COL));
-        accountNumCol = Integer.parseInt(getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.ACCOUNT_NUM_COL));
+        checkNumCol   = Integer.parseInt(getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CHECK_NUM_COL));
+        checkDateCol  = Integer.parseInt(getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CHECK_DATE_COL));
+        statusCol     = Integer.parseInt(getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.STATUS_COL));
+        amountCol     = Integer.parseInt(getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.AMOUNT_COL));
+        accountNumCol = Integer.parseInt(getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.ACCOUNT_NUM_COL));
         
-        isAmountDecimalValue    = getParameterService().getIndicatorParameter(CheckReconciliationImportStep.class,CRConstants.AMOUNT_DECIMAL_IND);
-        isAccountNumHeaderValue = getParameterService().getIndicatorParameter(CheckReconciliationImportStep.class,CRConstants.ACCOUNT_NUM_HEADER_IND);
+        isAmountDecimalValue    = getParameterService().getParameterValueAsBoolean(CheckReconciliationImportStep.class,CRConstants.AMOUNT_DECIMAL_IND);
+        isAccountNumHeaderValue = getParameterService().getParameterValueAsBoolean(CheckReconciliationImportStep.class,CRConstants.ACCOUNT_NUM_HEADER_IND);
         
         // Get file info
-        fileType   = getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_TYPE);
-        header     = getParameterService().getIndicatorParameter(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_HEADER);
-        footer     = getParameterService().getIndicatorParameter(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_FOOTER);
-        dateformat = new SimpleDateFormat(getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.CHECK_DATE_FORMAT));
+        fileType   = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_TYPE);
+        header     = getParameterService().getParameterValueAsBoolean(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_HEADER);
+        footer     = getParameterService().getParameterValueAsBoolean(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_FOOTER);
+        dateformat = new SimpleDateFormat(getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CHECK_DATE_FORMAT));
         
         try {
             if( CRConstants.DELIMITED.equals(fileType) ) {
-                delimeter = getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_DELIMETER);
+                delimeter = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_DELIMETER);
                 setStatusMap();
             }
             else if( CRConstants.FIXED.equals(fileType) ) {
-                String checkFileCols = getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_COLUMNS);
+                String checkFileCols = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_COLUMNS);
             
                 StringTokenizer st = new StringTokenizer(checkFileCols, ";", false);
                 int min = 0;
@@ -173,7 +174,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
                 }
             
                 if(header) {
-                    checkFileCols = getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_HEADER_COLUMNS);
+                    checkFileCols = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_HEADER_COLUMNS);
                 
                     st = new StringTokenizer(checkFileCols, ";", false);
                     min = 0;
@@ -187,7 +188,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
                 }
             
                 if(footer) {
-                    checkFileCols = getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_FOOTER_COLUMNS);
+                    checkFileCols = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_FOOTER_COLUMNS);
                 
                     st = new StringTokenizer(checkFileCols, ";", false);
                     min = 0;
@@ -231,7 +232,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
      * @param records
      */
     private void writeLog(List<CheckReconError> records) {
-        String prop = kualiConfigurationService.getPropertyString(KFSConstants.REPORTS_DIRECTORY_KEY) + "/cr/";
+        String prop = kualiConfigurationService.getPropertyValueAsString(KFSConstants.REPORTS_DIRECTORY_KEY) + "/cr/";
 
         File folder = new File(prop);
 
@@ -370,7 +371,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
         String statusProps = null;
         
         // Setup status map
-        statusProps = getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.CLRD_STATUS);
+        statusProps = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CLRD_STATUS);
         
         if( statusProps == null ) {
             throw new Exception( CRConstants.CLRD_STATUS + " system parameter is null." );
@@ -383,7 +384,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
             }
         }
         
-        statusProps = getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.ISSD_STATUS);
+        statusProps = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.ISSD_STATUS);
         
         if( statusProps == null ) {
             LOG.warn( CRConstants.ISSD_STATUS + " system parameter is null." );
@@ -396,7 +397,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
             }
         }
         
-        statusProps = getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.VOID_STATUS);
+        statusProps = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.VOID_STATUS);
         
         if( statusProps == null ) {
             LOG.warn( CRConstants.VOID_STATUS + " system parameter is null." );
@@ -409,7 +410,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
             }
         }
         
-        statusProps = getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.CNCL_STATUS);
+        statusProps = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CNCL_STATUS);
         
         if( statusProps == null ) {
             LOG.warn( CRConstants.CNCL_STATUS + " system parameter is null." );
@@ -422,7 +423,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
             }
         }
         
-        statusProps = getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.STAL_STATUS);
+        statusProps = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.STAL_STATUS);
         
         if( statusProps == null ) {
             LOG.warn( CRConstants.STAL_STATUS + " system parameter is null." );
@@ -435,7 +436,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
             }
         }
         
-        statusProps = getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.STOP_STATUS);
+        statusProps = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.STOP_STATUS);
         
         if( statusProps == null ) {
             LOG.warn( CRConstants.STOP_STATUS + " system parameter is null." );
@@ -458,7 +459,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
     private List<String> getFileList() throws Exception {
         List<String> fileList = new ArrayList<String>();
 
-        String prop = kualiConfigurationService.getPropertyString(KFSConstants.STAGING_DIRECTORY_KEY) + "/cr/upload";
+        String prop = kualiConfigurationService.getPropertyValueAsString(KFSConstants.STAGING_DIRECTORY_KEY) + "/cr/upload";
           
         File folder = new File(prop);
 
@@ -500,7 +501,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
     private void archiveFile(String checkFile) throws Exception {
         LOG.info("Archiving File : " + checkFile);
 
-        String prop = kualiConfigurationService.getPropertyString(KFSConstants.STAGING_DIRECTORY_KEY) + "/cr/archive";
+        String prop = kualiConfigurationService.getPropertyValueAsString(KFSConstants.STAGING_DIRECTORY_KEY) + "/cr/archive";
         
         File file    = new File(checkFile); // Check File
         File archive = new File(prop);      // Archive Folder
@@ -554,7 +555,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
      * @return String
      */
     private String getProperty(String key) {
-        return kualiConfigurationService.getPropertyString(key);
+        return kualiConfigurationService.getPropertyValueAsString(key);
     }
     
     /**
@@ -565,7 +566,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
      * @return String
      */
     private Integer getIntProperty(String key) {
-        return new Integer(kualiConfigurationService.getPropertyString(key));
+        return new Integer(kualiConfigurationService.getPropertyValueAsString(key));
     }
     
     /**
@@ -800,7 +801,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
         if(accountNumCol>0)
         	accountNumber = isAccountNumHeaderValue ? getHeaderValue(accountNumCol) : hash.get(accountNumCol);
         else
-        	accountNumber =   getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.ACCOUNT_NUM);
+        	accountNumber =   getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.ACCOUNT_NUM);
         
         status        = hash.get(statusCol);
         
@@ -892,8 +893,8 @@ public class CheckReconciliationImportStep extends AbstractStep {
                     cr.setStatus(CRConstants.EXCP);
                     // Set GL Trans False
                     cr.setGlTransIndicator(Boolean.FALSE);
-                    String notFoundSrc   	= getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.SRC_NOT_FOUND);
-                    String notFoundBankCd   = getParameterService().getParameterValue(CheckReconciliationImportStep.class,CRConstants.BNK_CD_NOT_FOUND);
+                    String notFoundSrc   	= getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.SRC_NOT_FOUND);
+                    String notFoundBankCd   = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.BNK_CD_NOT_FOUND);
                     
                     cr.setSourceCode(notFoundSrc);  
                     cr.setBankCode(notFoundBankCd);
@@ -976,7 +977,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
      * @return CheckReconciliation
      */
     private CheckReconciliation getCheckReconciliation(KualiInteger checkNumber, String bankAccountNumber) {
-        Map<Object,Object> fieldValues = new HashMap<Object,Object>();
+        Map<String,Object> fieldValues = new HashMap<String,Object>();
         fieldValues.put("checkNumber", checkNumber);
         fieldValues.put("bankAccountNumber", bankAccountNumber);  
         
@@ -1148,7 +1149,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
      * 
      * @return KualiConfigurationService
      */
-    public KualiConfigurationService getKualiConfigurationService() {
+    public ConfigurationService getKualiConfigurationService() {
         return kualiConfigurationService;
     }
 
@@ -1157,7 +1158,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
      * 
      * @param kualiConfigurationService
      */
-    public void setKualiConfigurationService(KualiConfigurationService kualiConfigurationService) {
+    public void setKualiConfigurationService(ConfigurationService kualiConfigurationService) {
         this.kualiConfigurationService = kualiConfigurationService;
     }
 

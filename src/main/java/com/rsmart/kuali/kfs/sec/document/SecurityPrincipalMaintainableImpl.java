@@ -21,18 +21,14 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kim.bo.role.dto.KimRoleInfo;
-import org.kuali.rice.kim.bo.role.dto.RoleMembershipInfo;
-import org.kuali.rice.kim.bo.types.dto.AttributeSet;
-import org.kuali.rice.kim.service.IdentityManagementService;
-import org.kuali.rice.kim.service.RoleManagementService;
-import org.kuali.rice.kim.util.KimConstants;
-import org.kuali.rice.kns.bo.DocumentHeader;
-import org.kuali.rice.kns.bo.PersistableBusinessObject;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.services.IdentityManagementService;
 import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.util.KNSConstants;
+import org.kuali.rice.krad.bo.DocumentHeader;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import com.rsmart.kuali.kfs.sec.SecConstants;
 import com.rsmart.kuali.kfs.sec.businessobject.SecurityDefinition;
@@ -70,19 +66,20 @@ public class SecurityPrincipalMaintainableImpl extends FinancialSystemMaintainab
     public void doRouteStatusChange(DocumentHeader documentHeader) {
         super.doRouteStatusChange(documentHeader);
 
-        if (documentHeader.getWorkflowDocument().stateIsProcessed()) {
+        if (documentHeader.getWorkflowDocument().isProcessed()) {
             DocumentService documentService = SpringContext.getBean(DocumentService.class);
             try {
                 MaintenanceDocument document = (MaintenanceDocument) documentService.getByDocumentHeaderId(documentHeader.getDocumentNumber());
                 SecurityPrincipal oldSecurityPrincipal = (SecurityPrincipal) document.getOldMaintainableObject().getBusinessObject();
                 SecurityPrincipal newSecurityPrincipal = (SecurityPrincipal) document.getNewMaintainableObject().getBusinessObject();
 
-                boolean newMaintenanceAction = getMaintenanceAction().equalsIgnoreCase(KNSConstants.MAINTENANCE_NEW_ACTION) || getMaintenanceAction().equalsIgnoreCase(KNSConstants.MAINTENANCE_COPY_ACTION);
+                boolean newMaintenanceAction = getMaintenanceAction().equalsIgnoreCase(KRADConstants.MAINTENANCE_NEW_ACTION) || getMaintenanceAction().equalsIgnoreCase(KRADConstants.MAINTENANCE_COPY_ACTION);
 
                 assignOrUpdatePrincipalMembershipToDefinitionRoles(oldSecurityPrincipal, newSecurityPrincipal, newMaintenanceAction);
                 assignOrUpdatePrincipalModelRoles(newSecurityPrincipal);
                 
-                SpringContext.getBean(IdentityManagementService.class).flushAllCaches();
+                //TODO UPGRADE-911
+                //SpringContext.getBean(IdentityManagementService.class).flushAllCaches();
             }
             catch (WorkflowException e) {
                 LOG.error("caught exception while handling handleRouteStatusChange -> documentService.getByDocumentHeaderId(" + documentHeader.getDocumentNumber() + "). ", e);
@@ -99,7 +96,8 @@ public class SecurityPrincipalMaintainableImpl extends FinancialSystemMaintainab
      * @param newMaintenanceAction boolean indicating whether this is a new record (old side will not contain data)
      */
     protected void assignOrUpdatePrincipalMembershipToDefinitionRoles(SecurityPrincipal oldSecurityPrincipal, SecurityPrincipal newSecurityPrincipal, boolean newMaintenanceAction) {
-        RoleManagementService roleService = SpringContext.getBean(RoleManagementService.class);
+    	//TODO UPGRADE-911
+    	/*RoleManagementService roleService = SpringContext.getBean(RoleManagementService.class);
 
         String principalId = newSecurityPrincipal.getPrincipalId();
 
@@ -151,7 +149,7 @@ public class SecurityPrincipalMaintainableImpl extends FinancialSystemMaintainab
 
                 roleService.saveRoleMemberForRole(principalMembershipId, principalId, KimConstants.KimUIConstants.MEMBER_TYPE_PRINCIPAL_CODE, definitionRoleInfo.getRoleId(), membershipQualifications, null, null);
             }
-        }
+        }*/
     }
 
     /**
@@ -160,7 +158,8 @@ public class SecurityPrincipalMaintainableImpl extends FinancialSystemMaintainab
      * @param securityPrincipal SecurityPrincipal which contains the model list and principal
      */
     protected void assignOrUpdatePrincipalModelRoles(SecurityPrincipal securityPrincipal) {
-        RoleManagementService roleService = SpringContext.getBean(RoleManagementService.class);
+    	//TODO UPGRADE-911
+    	/*RoleManagementService roleService = SpringContext.getBean(RoleManagementService.class);
 
         String principalId = securityPrincipal.getPrincipalId();
 
@@ -183,7 +182,7 @@ public class SecurityPrincipalMaintainableImpl extends FinancialSystemMaintainab
                 toDate = new java.sql.Date( principalModel.getActiveToDate().getTime() ); 
             }
             roleService.saveRoleMemberForRole(membershipId, principalId, KimConstants.KimUIConstants.MEMBER_TYPE_PRINCIPAL_CODE, modelRoleInfo.getRoleId(), new AttributeSet(), fromDate, toDate);
-        }
+        }*/
     }
 
 }

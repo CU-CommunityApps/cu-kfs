@@ -3,26 +3,24 @@ package edu.cornell.kfs.fp.service;
 import javax.jws.WebService;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.fp.businessobject.DisbursementPayee;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.bo.entity.KimEntityAffiliation;
-import org.kuali.rice.kim.bo.impl.PersonImpl;
-import org.kuali.rice.kim.service.PersonService;
-import org.kuali.rice.kns.UserSession;
-import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
-import org.kuali.rice.kns.service.DataDictionaryService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.kim.api.identity.affiliation.EntityAffiliationContract;
+import org.kuali.rice.kim.impl.identity.PersonImpl;
 import org.kuali.rice.kns.service.DocumentHelperService;
-import org.kuali.rice.kns.service.DocumentService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.MessageMap;
-
+import org.kuali.rice.krad.UserSession;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.document.DocumentAuthorizer;
+import org.kuali.rice.krad.service.DataDictionaryService;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.MessageMap;
 
 /**
  *
@@ -142,16 +140,16 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
 			// Set vendor to traveler using netID provided
 			Person traveler = SpringContext.getBean(PersonService.class).getPersonByPrincipalName(travelerNetId);
 
-	        for(KimEntityAffiliation entityAffiliation : ((PersonImpl)traveler).getAffiliations()) {
-	        	if(entityAffiliation.isDefault()) {
-		    		if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {
+	        for(EntityAffiliationContract entityAffiliation : ((PersonImpl)traveler).getAffiliations()) {
+	        	if(entityAffiliation.isDefaultValue()) {
+		    		if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {
 		        		dvDoc.templateStudent(traveler);
 		    		}
-		    		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.ALUMNI)) {
+		    		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.ALUMNI)) {
 		        		dvDoc.templateAlumni(traveler);
 		    		}
-		    		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.FACULTY) ||
-		    				StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.STAFF)) {
+		    		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.FACULTY) ||
+		    				StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.STAFF)) {
 		        		dvDoc.templateEmployee(traveler);
 		    		}
 	        	}

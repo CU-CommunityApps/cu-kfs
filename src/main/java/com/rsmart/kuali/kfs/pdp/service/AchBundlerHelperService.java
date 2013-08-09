@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
-import org.kuali.rice.kns.util.KualiInteger;
+
 
 /**
  * A helper service for ACH bundler related mods.

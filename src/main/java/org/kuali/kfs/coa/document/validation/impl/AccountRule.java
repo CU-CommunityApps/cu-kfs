@@ -49,16 +49,20 @@ import org.kuali.kfs.sys.document.validation.impl.KfsMaintenanceDocumentRuleBase
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.core.api.parameter.ParameterEvaluator;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.DictionaryValidationService;
-import org.kuali.rice.kns.service.ParameterEvaluator;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.MessageMap;
-import org.kuali.rice.kns.util.ObjectUtils;
+
+
+
+import org.kuali.rice.krad.service.DataDictionaryService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.MessageMap;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
 
@@ -340,7 +344,7 @@ public class AccountRule extends KfsMaintenanceDocumentRuleBase {
         // Only bother trying if there is an account string to test
         if (!StringUtils.isBlank(newAccount.getAccountNumber())) {
             // test the number
-            success &= accountNumberStartsWithAllowedPrefix(newAccount.getAccountNumber(), getParameterService().getParameterValues(Account.class, ACCT_PREFIX_RESTRICTION));
+            success &= accountNumberStartsWithAllowedPrefix(newAccount.getAccountNumber(), (List<String>) getParameterService().getParameterValuesAsString(Account.class, ACCT_PREFIX_RESTRICTION));
         }
 
         // only a FIS supervisor can reopen a closed account. (This is the central super user, not an account supervisor).
@@ -385,7 +389,7 @@ public class AccountRule extends KfsMaintenanceDocumentRuleBase {
         //make sure the system parameter exists
         if (SpringContext.getBean(ParameterService.class).parameterExists(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY")) {
             //check the system param to see if the labor benefit rate category should be filled in
-            String sysParam = SpringContext.getBean(ParameterService.class).getParameterValue(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY");
+            String sysParam = SpringContext.getBean(ParameterService.class).getParameterValueAsString(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY");
             LOG.debug("sysParam: " + sysParam);
             //if sysParam == Y then Labor Benefit Rate Category Code must be filled in
             if (sysParam.equalsIgnoreCase("Y")) {
@@ -676,10 +680,10 @@ public class AccountRule extends KfsMaintenanceDocumentRuleBase {
         String subFundGroupCode = newAccount.getSubFundGroupCode().trim();
         String fundGroupCode = newAccount.getSubFundGroup().getFundGroupCode().trim();
         boolean valid = true;
-        if (getParameterService().getParameterEvaluator(Account.class, KFSConstants.ChartApcParms.INCOME_STREAM_ACCOUNT_REQUIRING_FUND_GROUPS, fundGroupCode).evaluationSucceeds()) {
-            if (getParameterService().getParameterEvaluator(Account.class, KFSConstants.ChartApcParms.INCOME_STREAM_ACCOUNT_REQUIRING_SUB_FUND_GROUPS, subFundGroupCode).evaluationSucceeds()) {
+        if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Account.class, KFSConstants.ChartApcParms.INCOME_STREAM_ACCOUNT_REQUIRING_FUND_GROUPS, fundGroupCode).evaluationSucceeds()) {
+            if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Account.class, KFSConstants.ChartApcParms.INCOME_STREAM_ACCOUNT_REQUIRING_SUB_FUND_GROUPS, subFundGroupCode).evaluationSucceeds()) {
                 if (StringUtils.isBlank(newAccount.getIncomeStreamFinancialCoaCode())) {
-                    putFieldError(KFSPropertyConstants.INCOME_STREAM_FINANCIAL_COA_CODE, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_INCOME_STREAM_ACCT_COA_CANNOT_BE_EMPTY, new String[] { getDdService().getAttributeLabel(FundGroup.class, KFSConstants.FUND_GROUP_CODE_PROPERTY_NAME), fundGroupCode, getDdService().getAttributeLabel(SubFundGroup.class, KFSConstants.SUB_FUND_GROUP_CODE_PROPERTY_NAME), subFundGroupCode });
+                    putFieldError(KFSPropertyConstants.INCOME_STREAM_CHART_OF_ACCOUNTS_CODE, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_INCOME_STREAM_ACCT_COA_CANNOT_BE_EMPTY, new String[] { getDdService().getAttributeLabel(FundGroup.class, KFSConstants.FUND_GROUP_CODE_PROPERTY_NAME), fundGroupCode, getDdService().getAttributeLabel(SubFundGroup.class, KFSConstants.SUB_FUND_GROUP_CODE_PROPERTY_NAME), subFundGroupCode });
                     valid = false;
                 } 
                 if (StringUtils.isBlank(newAccount.getIncomeStreamAccountNumber())) {
@@ -741,8 +745,9 @@ public class AccountRule extends KfsMaintenanceDocumentRuleBase {
                     }
                 }
 
-                result &= checkEmptyBOField("indirectCostRcvyFinCoaCode", newAccount.getIndirectCostRcvyFinCoaCode(), replaceTokens(KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ICR_CHART_CODE_CANNOT_BE_EMPTY));
-                result &= checkEmptyBOField("indirectCostRecoveryAcctNbr", newAccount.getIndirectCostRecoveryAcctNbr(), replaceTokens(KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ICR_ACCOUNT_CANNOT_BE_EMPTY));
+                //TODO UPGRADE-911
+                //result &= checkEmptyBOField("indirectCostRcvyFinCoaCode", newAccount.getIndirectCostRcvyFinCoaCode(), replaceTokens(KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ICR_CHART_CODE_CANNOT_BE_EMPTY));
+                //result &= checkEmptyBOField("indirectCostRecoveryAcctNbr", newAccount.getIndirectCostRecoveryAcctNbr(), replaceTokens(KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ICR_ACCOUNT_CANNOT_BE_EMPTY));
                 result &= checkContractControlAccountNumberRequired(newAccount);
             }
             else {
@@ -765,7 +770,7 @@ public class AccountRule extends KfsMaintenanceDocumentRuleBase {
     protected String replaceTokens(String errorConstant) {
         String cngLabel = getSubFundGroupService().getContractsAndGrantsDenotingAttributeLabel();
         String cngValue = getSubFundGroupService().getContractsAndGrantsDenotingValueForMessage();
-        String result = getKualiConfigurationService().getPropertyString(errorConstant);
+        String result = getKualiConfigurationService().getPropertyValueAsString(errorConstant);
         result = StringUtils.replace(result, "{0}", cngLabel);
         result = StringUtils.replace(result, "{1}", cngValue);
         return result;
@@ -999,7 +1004,7 @@ public class AccountRule extends KfsMaintenanceDocumentRuleBase {
                 // Attempt to get the right SubFundGroup code to check the following logic with. If the value isn't available, go
                 // ahead
                 // and die, as this indicates a mis-configured application, and important business rules wont be implemented without it.
-                ParameterEvaluator evaluator = getParameterService().getParameterEvaluator(Account.class, ACCT_CAPITAL_SUBFUNDGROUP, subFundGroupCode.trim());
+                ParameterEvaluator evaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Account.class, ACCT_CAPITAL_SUBFUNDGROUP, subFundGroupCode.trim());
 
                 if (evaluator.evaluationSucceeds()) {
 
@@ -1139,7 +1144,7 @@ public class AccountRule extends KfsMaintenanceDocumentRuleBase {
     		pkMap.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear().toString() ); 
     		pkMap.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, oldAccount.getChartOfAccountsCode());
     		pkMap.put(KFSPropertyConstants.ACCOUNT_NUMBER, oldAccount.getAccountNumber());
-    		Iterator it = getEncumbranceService().findOpenEncumbrance(pkMap);
+    		Iterator it = getEncumbranceService().findOpenEncumbrance(pkMap, false);
     		KualiDecimal runningTotal = KualiDecimal.ZERO;
     		while (it.hasNext()) {
     			Encumbrance encumbrance = (Encumbrance) it.next();

@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.bc.businessobject;
 
-import org.kuali.rice.kns.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
+
 
 
 public class DeptOrgCrosswalk extends PersistableBusinessObjectExtensionBase {

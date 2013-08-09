@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.kns.bo.BusinessObject;
+import org.kuali.rice.krad.bo.BusinessObject;
 
 /**
  * Vendor DAO Interface.

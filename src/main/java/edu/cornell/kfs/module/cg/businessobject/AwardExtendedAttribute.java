@@ -5,7 +5,8 @@ package edu.cornell.kfs.module.cg.businessobject;
 
 import java.sql.Date;
 
-import org.kuali.rice.kns.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
+
 
 /**
  * @author kwk43
@@ -13,6 +14,7 @@ import org.kuali.rice.kns.bo.PersistableBusinessObjectExtensionBase;
  */
 public class AwardExtendedAttribute extends PersistableBusinessObjectExtensionBase {
 
+	private static final long serialVersionUID = 1L;
 	private boolean costShareRequired;
 	private boolean finalFinancialReportRequired;
 	private Date finalFiscalReportDate;

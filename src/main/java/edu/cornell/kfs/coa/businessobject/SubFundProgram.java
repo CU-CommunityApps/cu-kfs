@@ -3,10 +3,10 @@ package edu.cornell.kfs.coa.businessobject;
 import java.util.LinkedHashMap;
 
 import org.kuali.kfs.coa.businessobject.SubFundGroup;
-import org.kuali.rice.kns.bo.Inactivateable;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
-public class SubFundProgram extends PersistableBusinessObjectBase implements Inactivateable {
+public class SubFundProgram extends PersistableBusinessObjectBase implements MutableInactivatable {
 
     private static final long serialVersionUID = 3304324942061886270L;
 

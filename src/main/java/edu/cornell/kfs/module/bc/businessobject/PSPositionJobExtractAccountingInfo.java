@@ -17,7 +17,6 @@ public class PSPositionJobExtractAccountingInfo {
     private StatusFlag statusFlag;
 
     public PSPositionJobExtractAccountingInfo() {
-        // TODO Auto-generated constructor stub
     }
 
     /**

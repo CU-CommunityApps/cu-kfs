@@ -19,9 +19,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,17 +61,18 @@ import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.service.PersonService;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.DocumentService;
-import org.kuali.rice.kns.service.ParameterEvaluator;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.KualiInteger;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.parameter.ParameterEvaluator;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -79,7 +82,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DisbursementVoucherExtractServiceImpl implements DisbursementVoucherExtractService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisbursementVoucherExtractServiceImpl.class);
 
-    private PersonService<Person> personService;
+    private PersonService personService;
     private ParameterService parameterService;
     private DisbursementVoucherDao disbursementVoucherDao;
     private DateTimeService dateTimeService;
@@ -106,7 +109,7 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
 
         Date processRunDate = dateTimeService.getCurrentDate();
 
-        String noteLines = parameterService.getParameterValue(KfsParameterConstants.PRE_DISBURSEMENT_ALL.class, PdpParameterConstants.MAX_NOTE_LINES);
+        String noteLines = parameterService.getParameterValueAsString(KfsParameterConstants.PRE_DISBURSEMENT_ALL.class, PdpParameterConstants.MAX_NOTE_LINES);
 
         try {
             maxNoteLines = Integer.parseInt(noteLines);
@@ -115,7 +118,7 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
             throw new IllegalArgumentException("Invalid Max Notes Lines parameter");
         }
 
-        Person uuser = getPersonService().getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
+        Person uuser = SpringContext.getBean(PersonService.class).getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
         if (uuser == null) {
             LOG.debug("extractPayments() Unable to find user " + KFSConstants.SYSTEM_USER);
             throw new IllegalArgumentException("Unable to find user " + KFSConstants.SYSTEM_USER);
@@ -180,7 +183,7 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
 
         if (!testMode) {
             try {
-                document.getDocumentHeader().setFinancialDocumentStatusCode(DisbursementVoucherConstants.DocumentStatusCodes.EXTRACTED);
+                document.getFinancialSystemDocumentHeader().setFinancialDocumentStatusCode(DisbursementVoucherConstants.DocumentStatusCodes.EXTRACTED);
                 document.setExtractDate(new java.sql.Date(processRunDate.getTime()));
                 SpringContext.getBean(DocumentService.class).saveDocument(document, AccountingDocumentSaveWithNoLedgerEntryGenerationEvent.class);
             }
@@ -219,7 +222,7 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
 
             // All payments are taxable except research participant, rental & royalties
             pg.setTaxablePayment(
-                    !parameterService.getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, rc).evaluationSucceeds()
+                    !SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, rc).evaluationSucceeds()
                         && !DisbursementVoucherConstants.PaymentReasonCodes.RENTAL_PAYMENT.equals(rc)
                         && !DisbursementVoucherConstants.PaymentReasonCodes.ROYALTIES.equals(rc));
         }
@@ -229,7 +232,7 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
 
             // All payments are taxable except research participant, rental & royalties
             pg.setTaxablePayment(
-                    !parameterService.getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, rc).evaluationSucceeds()
+                    !SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, rc).evaluationSucceeds()
                         && !DisbursementVoucherConstants.PaymentReasonCodes.RENTAL_PAYMENT.equals(rc)
                         && !DisbursementVoucherConstants.PaymentReasonCodes.ROYALTIES.equals(rc));
         }
@@ -246,18 +249,18 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
             pg.setTaxablePayment(Boolean.FALSE);
             pg.setPayeeOwnerCd(vendorOwnerCode);
 
-            ParameterEvaluator parameterEvaluator1 = this.parameterService.getParameterEvaluator(DvToPdpExtractStep.class, PdpParameterConstants.TAXABLE_PAYMENT_REASON_CODES_BY_OWNERSHIP_CODES_PARAMETER_NAME, PdpParameterConstants.NON_TAXABLE_PAYMENT_REASON_CODES_BY_OWNERSHIP_CODES_PARAMETER_NAME, vendorOwnerCode, payReasonCode);
-            ParameterEvaluator parameterEvaluator2 = this.parameterService.getParameterEvaluator(DvToPdpExtractStep.class, PdpParameterConstants.TAXABLE_PAYMENT_REASON_CODES_BY_CORPORATION_OWNERSHIP_TYPE_CATEGORY_PARAMETER_NAME, PdpParameterConstants.NON_TAXABLE_PAYMENT_REASON_CODES_BY_CORPORATION_OWNERSHIP_TYPE_CATEGORY_PARAMETER_NAME, vendorOwnerCategoryCode, payReasonCode);
+            ParameterEvaluator parameterEvaluator1 = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(DvToPdpExtractStep.class, PdpParameterConstants.TAXABLE_PAYMENT_REASON_CODES_BY_OWNERSHIP_CODES_PARAMETER_NAME, PdpParameterConstants.NON_TAXABLE_PAYMENT_REASON_CODES_BY_OWNERSHIP_CODES_PARAMETER_NAME, vendorOwnerCode, payReasonCode);
+            ParameterEvaluator parameterEvaluator2 = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(DvToPdpExtractStep.class, PdpParameterConstants.TAXABLE_PAYMENT_REASON_CODES_BY_CORPORATION_OWNERSHIP_TYPE_CATEGORY_PARAMETER_NAME, PdpParameterConstants.NON_TAXABLE_PAYMENT_REASON_CODES_BY_CORPORATION_OWNERSHIP_TYPE_CATEGORY_PARAMETER_NAME, vendorOwnerCategoryCode, payReasonCode);
             
             if ( parameterEvaluator1.evaluationSucceeds() ) {
                 pg.setTaxablePayment(Boolean.TRUE);
             }
-            else if (this.parameterService.getParameterValue(DvToPdpExtractStep.class, PdpParameterConstants.CORPORATION_OWNERSHIP_TYPE_PARAMETER_NAME).equals("CP") &&
+            else if (this.parameterService.getParameterValueAsString(DvToPdpExtractStep.class, PdpParameterConstants.CORPORATION_OWNERSHIP_TYPE_PARAMETER_NAME).equals("CP") &&
                       StringUtils.isEmpty(vendorOwnerCategoryCode) &&
-                      this.parameterService.getParameterEvaluator(DvToPdpExtractStep.class, PdpParameterConstants.TAXABLE_PAYMENT_REASON_CODES_FOR_BLANK_CORPORATION_OWNERSHIP_TYPE_CATEGORIES_PARAMETER_NAME, payReasonCode).evaluationSucceeds()) {
+                      SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(DvToPdpExtractStep.class, PdpParameterConstants.TAXABLE_PAYMENT_REASON_CODES_FOR_BLANK_CORPORATION_OWNERSHIP_TYPE_CATEGORIES_PARAMETER_NAME, payReasonCode).evaluationSucceeds()) {
                 pg.setTaxablePayment(Boolean.TRUE);
             }
-            else if (this.parameterService.getParameterValue(DvToPdpExtractStep.class, PdpParameterConstants.CORPORATION_OWNERSHIP_TYPE_PARAMETER_NAME).equals("CP")
+            else if (this.parameterService.getParameterValueAsString(DvToPdpExtractStep.class, PdpParameterConstants.CORPORATION_OWNERSHIP_TYPE_PARAMETER_NAME).equals("CP")
                         && !StringUtils.isEmpty(vendorOwnerCategoryCode)
                         && parameterEvaluator2.evaluationSucceeds() ) {
                 pg.setTaxablePayment(Boolean.TRUE);
@@ -424,7 +427,7 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
         }
 
         String paymentReasonCode = dvpd.getDisbVchrPaymentReasonCode();
-        if (parameterService.getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.NONEMPLOYEE_TRAVEL_PAY_REASONS_PARM_NM, paymentReasonCode).evaluationSucceeds() || DisbursementVoucherConstants.PaymentReasonCodes.TRAVEL_HONORARIUM.equals(paymentReasonCode)) {
+        if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.NONEMPLOYEE_TRAVEL_PAY_REASONS_PARM_NM, paymentReasonCode).evaluationSucceeds() || DisbursementVoucherConstants.PaymentReasonCodes.TRAVEL_HONORARIUM.equals(paymentReasonCode)) {
             DisbursementVoucherNonEmployeeTravel dvnet = document.getDvNonEmployeeTravel();
             
             pnt = new PaymentNoteText();
@@ -467,7 +470,7 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
                 }
             }
         }
-        else if (parameterService.getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.PREPAID_TRAVEL_PAYMENT_REASONS_PARM_NM, paymentReasonCode).evaluationSucceeds()) {
+        else if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.PREPAID_TRAVEL_PAYMENT_REASONS_PARM_NM, paymentReasonCode).evaluationSucceeds()) {
             pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
             pnt.setCustomerNoteText("Payment is for the following individuals/charges:");
@@ -611,8 +614,8 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
      * @return A fully populated batch instance.
      */
     protected Batch createBatch(String campusCode, Person user, Date processRunDate) {
-        String orgCode = parameterService.getParameterValue(DisbursementVoucherDocument.class, DisbursementVoucherConstants.DvPdpExtractGroup.DV_PDP_ORG_CODE);
-        String subUnitCode = parameterService.getParameterValue(DisbursementVoucherDocument.class, DisbursementVoucherConstants.DvPdpExtractGroup.DV_PDP_SBUNT_CODE);
+        String orgCode = parameterService.getParameterValueAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.DvPdpExtractGroup.DV_PDP_ORG_CODE);
+        String subUnitCode = parameterService.getParameterValueAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.DvPdpExtractGroup.DV_PDP_SBUNT_CODE);
         CustomerProfile customer = customerProfileService.get(campusCode, orgCode, subUnitCode);
         if (customer == null) {
             throw new IllegalArgumentException("Unable to find customer profile for " + campusCode + "/" + orgCode + "/" + subUnitCode);
@@ -644,16 +647,24 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
      */
     protected Set<String> getCampusListByDocumentStatusCode(String statusCode) {
         LOG.debug("getCampusListByDocumentStatusCode() started");
+        Map<String, List> documentsByCampus = new HashMap<String, List>();
 
-        Set<String> campusSet = new HashSet<String>();
-
-        Collection<DisbursementVoucherDocument> docs = disbursementVoucherDao.getDocumentsByHeaderStatus(statusCode);
+        Collection<DisbursementVoucherDocument> docs = disbursementVoucherDao.getDocumentsByHeaderStatus(statusCode, false);
         for (DisbursementVoucherDocument element : docs) {
             String dvdCampusCode = element.getCampusCode();
-            campusSet.add(dvdCampusCode);
+            if (StringUtils.isNotBlank(dvdCampusCode)) {
+                if (documentsByCampus.containsKey(dvdCampusCode)) {
+                    documentsByCampus.get(dvdCampusCode).add(element);
+                }
+                else {
+                    List documents = new ArrayList<DisbursementVoucherDocument>();
+                    documents.add(element);
+                    documentsByCampus.put(dvdCampusCode, documents);
+                }
+            }
         }
 
-        return campusSet;
+        return documentsByCampus.keySet();
     }
 
     /**
@@ -728,7 +739,7 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
                     dv.setGeneralLedgerPendingEntries(newGLPEs);
                 }
                 // set the financial document status to canceled
-                dv.getDocumentHeader().setFinancialDocumentStatusCode(KFSConstants.DocumentStatusCodes.CANCELLED);
+                dv.getFinancialSystemDocumentHeader().setFinancialDocumentStatusCode(KFSConstants.DocumentStatusCodes.CANCELLED);
                 // save the document
                 SpringContext.getBean(DocumentService.class).saveDocument(dv, AccountingDocumentSaveWithNoLedgerEntryGenerationEvent.class);
             }
@@ -891,10 +902,20 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
     /**
      * @return Returns the personService.
      */
-    protected PersonService<Person> getPersonService() {
+    protected PersonService getPersonService() {
         if(personService==null)
             personService = SpringContext.getBean(PersonService.class);
         return personService;
     }
+
+    //TODO UPGRADE-911
+	public void extractImmediatePayments() {
+		
+	}
+
+	public void extractImmediatePayment(
+			DisbursementVoucherDocument disbursementVoucher) {
+		
+	}
 
 }

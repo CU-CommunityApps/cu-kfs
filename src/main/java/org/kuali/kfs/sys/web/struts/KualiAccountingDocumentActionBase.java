@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -62,23 +63,23 @@ import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseCons
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentActionBase;
 import org.kuali.kfs.sys.exception.AccountingLineParserException;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kns.bo.PersistableBusinessObject;
-import org.kuali.rice.kns.rule.event.ApproveDocumentEvent;
-import org.kuali.rice.kns.rule.event.SaveDocumentEvent;
-import org.kuali.rice.kns.service.BusinessObjectService;
+import org.kuali.rice.core.api.parameter.ParameterEvaluator;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.DictionaryValidationService;
-import org.kuali.rice.kns.service.KualiRuleService;
-import org.kuali.rice.kns.service.ParameterEvaluator;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.service.PersistenceService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.util.Timer;
-import org.kuali.rice.kns.util.UrlFactory;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.rules.rule.event.ApproveDocumentEvent;
+import org.kuali.rice.krad.rules.rule.event.SaveDocumentEvent;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.KualiRuleService;
+import org.kuali.rice.krad.service.PersistenceService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.rice.krad.util.UrlFactory;
 
 import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute;
 import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
@@ -98,7 +99,6 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
      */
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Timer t0 = new Timer("KualiFinancialDocumentFormBase.execute");
         KualiAccountingDocumentFormBase transForm = (KualiAccountingDocumentFormBase) form;
 
         // handle changes to accountingLines
@@ -114,7 +114,6 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
 
         // proceed as usual
         ActionForward result = super.execute(mapping, form, request, response);
-        t0.log();
         return result;
     }
 
@@ -201,15 +200,21 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
      * @param accountingLines
      */
     protected void processAccountingLineOverrides(List accountingLines) {
-        if (!accountingLines.isEmpty()) {
-            SpringContext.getBean(PersistenceService.class).retrieveReferenceObjects(accountingLines, AccountingLineOverride.REFRESH_FIELDS);
-
-            for (Iterator i = accountingLines.iterator(); i.hasNext();) {
-                AccountingLine line = (AccountingLine) i.next();
-                AccountingLineOverride.processForOutput(line);
-            }
-        }
+      processAccountingLineOverrides(null,accountingLines);
     }
+    
+    protected void processAccountingLineOverrides(AccountingDocument financialDocument ,List accountingLines) {
+      if (!accountingLines.isEmpty()) {
+          
+
+          for (Iterator i = accountingLines.iterator(); i.hasNext();) {
+              AccountingLine line = (AccountingLine) i.next();
+             // line.refreshReferenceObject("account");
+              SpringContext.getBean(PersistenceService.class).retrieveReferenceObjects(line, AccountingLineOverride.REFRESH_FIELDS);
+              AccountingLineOverride.processForOutput(financialDocument,line);
+          }
+      }
+  }
 
     /**
      * @param transDoc
@@ -252,12 +257,13 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
      * @param formLine
      */
     protected void clearOverridesThatBecameUnneeded(AccountingLine formLine) {
-        AccountingLineOverride currentlyNeeded = AccountingLineOverride.determineNeededOverrides(formLine);
-        AccountingLineOverride currentOverride = AccountingLineOverride.valueOf(formLine.getOverrideCode());
-        if (!currentOverride.isValidMask(currentlyNeeded)) {
-            // todo: handle unsupported combinations of overrides (not a problem until we allow certain multiple overrides)
-        }
-        formLine.setOverrideCode(currentOverride.mask(currentlyNeeded).getCode());
+        //TODO UPGRDAE-911
+//      AccountingLineOverride currentlyNeeded = AccountingLineOverride.determineNeededOverrides(formLine);
+//        AccountingLineOverride currentOverride = AccountingLineOverride.valueOf(formLine.getOverrideCode());
+//        if (!currentOverride.isValidMask(currentlyNeeded)) {
+//            // todo: handle unsupported combinations of overrides (not a problem until we allow certain multiple overrides)
+//        }
+//        formLine.setOverrideCode(currentOverride.mask(currentlyNeeded).getCode());
     }
 
     /**
@@ -669,7 +675,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
 
         // build out the actual form key that will be used to retrieve the form on refresh
-        String callerDocFormKey = GlobalVariables.getUserSession().addObject(form);
+        String callerDocFormKey = GlobalVariables.getUserSession().addObjectWithGeneratedKey(form);
 
         // now add required parameters
         Properties parameters = new Properties();
@@ -726,8 +732,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         String lookupUrl = UrlFactory.parameterizeUrl(basePath + "/" + KFSConstants.BALANCE_INQUIRY_REPORT_MENU_ACTION, parameters);
 
         // register that we're going to come back w/ to this form w/ a refresh methodToCall
-        ((KualiAccountingDocumentFormBase) form).registerEditableProperty(KNSConstants.DISPATCH_REQUEST_PARAMETER);
-        ((KualiAccountingDocumentFormBase) form).registerNextMethodToCallIsRefresh(true);
+        ((KualiAccountingDocumentFormBase) form).registerEditableProperty(KRADConstants.DISPATCH_REQUEST_PARAMETER);
 
         return new ActionForward(lookupUrl, true);
     }
@@ -751,7 +756,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         
       //KFSPTS-1735
         boolean passed = SpringContext.getBean(KualiRuleService.class).applyRules(new SaveDocumentEvent(tmpForm.getFinancialDocument()));
-        if (tmpForm.getFinancialDocument().getDocumentHeader().getWorkflowDocument().stateIsEnroute() && passed) {
+        if (tmpForm.getFinancialDocument().getDocumentHeader().getWorkflowDocument().isEnroute() && passed) {
         	SpringContext.getBean(CUFinancialSystemDocumentService.class).checkAccountingLinesForChanges((AccountingDocument) tmpForm.getFinancialDocument());
         }
       //KFSPTS-1735
@@ -843,7 +848,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         // first we need to check just the doctype to see if it needs the sales tax check
         ParameterService parameterService = SpringContext.getBean(ParameterService.class);
         // apply the rule, see if it fails
-        ParameterEvaluator docTypeSalesTaxCheckEvaluator = SpringContext.getBean(ParameterService.class).getParameterEvaluator(KfsParameterConstants.FINANCIAL_PROCESSING_DOCUMENT.class, APPLICATION_PARAMETER.DOCTYPE_SALES_TAX_CHECK, docType);
+        ParameterEvaluator docTypeSalesTaxCheckEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(KfsParameterConstants.FINANCIAL_PROCESSING_DOCUMENT.class, APPLICATION_PARAMETER.DOCTYPE_SALES_TAX_CHECK, docType);
         if (docTypeSalesTaxCheckEvaluator.evaluationSucceeds()) {
             required = true;
         }
@@ -855,7 +860,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
             String account = accountingLine.getAccountNumber();
             if (!StringUtils.isEmpty(objCd) && !StringUtils.isEmpty(account)) {
                 String compare = account + ":" + objCd;
-                ParameterEvaluator salesTaxApplicableAcctAndObjectEvaluator = SpringContext.getBean(ParameterService.class).getParameterEvaluator(KfsParameterConstants.FINANCIAL_PROCESSING_DOCUMENT.class, APPLICATION_PARAMETER.SALES_TAX_APPLICABLE_ACCOUNTS_AND_OBJECT_CODES, compare);
+                ParameterEvaluator salesTaxApplicableAcctAndObjectEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(KfsParameterConstants.FINANCIAL_PROCESSING_DOCUMENT.class, APPLICATION_PARAMETER.SALES_TAX_APPLICABLE_ACCOUNTS_AND_OBJECT_CODES, compare);
                 if (!salesTaxApplicableAcctAndObjectEvaluator.evaluationSucceeds()) {
                     required = false;
                 }
@@ -1156,13 +1161,13 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         }
 
         CapitalAssetEditable capitalAssetEditable = (CapitalAssetEditable) financialDocument;
-        CapitalAssetInformation capitalAssetInformation = capitalAssetEditable.getCapitalAssetInformation();
+        CapitalAssetInformation capitalAssetInformation = capitalAssetEditable.getCapitalAssetInformation().get(0);
         if (ObjectUtils.isNotNull(capitalAssetInformation)) {
             return capitalAssetInformation;
         }
 
         CapitalAssetEditable capitalAssetEditableForm = (CapitalAssetEditable) kualiAccountingDocumentFormBase;
-        CapitalAssetInformation newCapitalAssetInformation = capitalAssetEditableForm.getCapitalAssetInformation();
+        CapitalAssetInformation newCapitalAssetInformation = capitalAssetEditableForm.getCapitalAssetInformation().get(0);
 
         return newCapitalAssetInformation;
     }
@@ -1206,13 +1211,15 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
      * @param capitalAssetInformation
      * @return
      */
+    //TODO UPGRADE-911
     protected Integer getNextItemLineNumberAndIncremented(CapitalAssetInformation capitalAssetInformation) {
-        Integer nextItemLineNumber = capitalAssetInformation.getNextItemLineNumber();
-        if (nextItemLineNumber == null) {
-            nextItemLineNumber = new Integer(getMaxItemLineNumber(capitalAssetInformation) + 1);
-        }
-        capitalAssetInformation.setNextItemLineNumber(new Integer(nextItemLineNumber.intValue() + 1));
-        return nextItemLineNumber;
+//        Integer nextItemLineNumber = capitalAssetInformation.getNextItemLineNumber();
+//        if (nextItemLineNumber == null) {
+//            nextItemLineNumber = new Integer(getMaxItemLineNumber(capitalAssetInformation) + 1);
+//        }
+//        capitalAssetInformation.setNextItemLineNumber(new Integer(nextItemLineNumber.intValue() + 1));
+//        return nextItemLineNumber;
+      return 0;
     }
 
     /**
@@ -1281,13 +1288,13 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
 
         // do nothing if there exists capital asset information associated with the current document
         CapitalAssetEditable capitalAssetEditable = (CapitalAssetEditable) document;
-        CapitalAssetInformation capitalAssetInformation = capitalAssetEditable.getCapitalAssetInformation();
+        CapitalAssetInformation capitalAssetInformation = capitalAssetEditable.getCapitalAssetInformation().get(0);
         if (capitalAssetInformation != null || !(kualiAccountingDocumentFormBase instanceof CapitalAssetEditable)) {
-        	if (!capitalAssetEditable.getCapitalAssetInformation().getCapitalAssetInformationDetails().isEmpty())
+        	if (!capitalAssetEditable.getCapitalAssetInformation().get(0).getCapitalAssetInformationDetails().isEmpty())
         	{	
         		//if fdoc num is not set for CapitalAssetInformationDetail set fdoc num so CapitalAssetInformationDetail info can be added
-        		String detail_doc = capitalAssetEditable.getCapitalAssetInformation().getCapitalAssetInformationDetails().get(0).getDocumentNumber();
-        		String info_doc = capitalAssetEditable.getCapitalAssetInformation().getDocumentNumber();
+        		String detail_doc = capitalAssetEditable.getCapitalAssetInformation().get(0).getCapitalAssetInformationDetails().get(0).getDocumentNumber();
+        		String info_doc = capitalAssetEditable.getCapitalAssetInformation().get(0).getDocumentNumber();
         		PersistableBusinessObject capassetinfo = SpringContext.getBean(BusinessObjectService.class).findBySinglePrimaryKey(CapitalAssetInformation.class, info_doc);
         		
         		
@@ -1304,15 +1311,15 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         				detailLines.add(detailLine);
         				SpringContext.getBean(BusinessObjectService.class).save(detailLines);        				        				        				        				
         			}
-        			List<CapitalAssetInformationDetail> detailLines2 = capitalAssetEditable.getCapitalAssetInformation().getCapitalAssetInformationDetails();
+        			List<CapitalAssetInformationDetail> detailLines2 = capitalAssetEditable.getCapitalAssetInformation().get(0).getCapitalAssetInformationDetails();
     				Integer quantity = capitalAssetInformation.getCapitalAssetQuantity();
     				for (int index = 0; index < quantity; index++) {
-    					CapitalAssetInformationDetail detailLine2 = capitalAssetEditable.getCapitalAssetInformation().getCapitalAssetInformationDetails().get(index);
+    					CapitalAssetInformationDetail detailLine2 = capitalAssetEditable.getCapitalAssetInformation().get(0).getCapitalAssetInformationDetails().get(index);
     					CapitalAssetInformationDetailExtendedAttribute detailea2 = (CapitalAssetInformationDetailExtendedAttribute)(detailLine2.getExtension());
     					detailea2.setDocumentNumber(document.getDocumentNumber());
     					detailLines2.set(index, detailLine2);
     				}
-    				capitalAssetEditable.getCapitalAssetInformation().setCapitalAssetInformationDetails(detailLines2);
+    				capitalAssetEditable.getCapitalAssetInformation().get(0).setCapitalAssetInformationDetails(detailLines2);
         			
         		}
         		
@@ -1321,14 +1328,14 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         }
 
         CapitalAssetEditable capitalAssetEditableForm = (CapitalAssetEditable) kualiAccountingDocumentFormBase;
-        CapitalAssetInformation newCapitalAssetInformation = capitalAssetEditableForm.getCapitalAssetInformation();
+        CapitalAssetInformation newCapitalAssetInformation = capitalAssetEditableForm.getCapitalAssetInformation().get(0);
         Integer cquantity = newCapitalAssetInformation.getCapitalAssetQuantity();
         if  ( cquantity != null) {
 		    if (newCapitalAssetInformation.getCapitalAssetQuantity() > 0) {
-		        List<CapitalAssetInformationDetail> detailLines2 = capitalAssetEditableForm.getCapitalAssetInformation().getCapitalAssetInformationDetails();
+		        List<CapitalAssetInformationDetail> detailLines2 = capitalAssetEditableForm.getCapitalAssetInformation().get(0).getCapitalAssetInformationDetails();
 				Integer quantity = newCapitalAssetInformation.getCapitalAssetQuantity();
 				for (int index = 0; index < quantity; index++) {
-					CapitalAssetInformationDetail detailLine2 = capitalAssetEditableForm.getCapitalAssetInformation().getCapitalAssetInformationDetails().get(index);
+					CapitalAssetInformationDetail detailLine2 = capitalAssetEditableForm.getCapitalAssetInformation().get(0).getCapitalAssetInformationDetails().get(index);
 					CapitalAssetInformationDetailExtendedAttribute detailea2 = (CapitalAssetInformationDetailExtendedAttribute)(detailLine2.getExtension());
 					detailLine2.setDocumentNumber(document.getDocumentNumber());
 					detailea2.setDocumentNumber(document.getDocumentNumber());
@@ -1340,14 +1347,14 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
 					detailLines2.set(index, detailLine2);
 					
 				}
-				capitalAssetEditableForm.getCapitalAssetInformation().setCapitalAssetInformationDetails(detailLines2);
+				capitalAssetEditableForm.getCapitalAssetInformation().get(0).setCapitalAssetInformationDetails(detailLines2);
 		    	
 		    }
         }
         // apply capitalAsset information if there is at least one movable object code associated with the source accounting
         // lines
         newCapitalAssetInformation.setDocumentNumber(document.getDocumentNumber());
-        capitalAssetEditable.setCapitalAssetInformation(newCapitalAssetInformation);                    	
+        capitalAssetEditable.setCapitalAssetInformation(Collections.singletonList(newCapitalAssetInformation));                    	
     }
 
     /**
@@ -1364,7 +1371,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         if (document instanceof CapitalAssetEditable) {
 
             CapitalAssetEditable capitalAssetEditable = (CapitalAssetEditable) document;
-            resetCapitalAssetInfo(capitalAssetEditable.getCapitalAssetInformation());
+            resetCapitalAssetInfo(capitalAssetEditable.getCapitalAssetInformation().get(0));
         }
 
         return forward;

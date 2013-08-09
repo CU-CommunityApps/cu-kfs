@@ -30,8 +30,8 @@ import org.kuali.kfs.pdp.businessobject.PaymentProcess;
 import org.kuali.kfs.pdp.service.impl.FormatServiceImpl;
 import org.kuali.kfs.pdp.service.impl.exception.FormatException;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KualiInteger;
+import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;

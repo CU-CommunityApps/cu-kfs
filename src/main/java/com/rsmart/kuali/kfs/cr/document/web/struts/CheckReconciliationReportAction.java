@@ -39,9 +39,9 @@ import org.kuali.kfs.sys.KFSConstants.ReportGeneration;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.ReportGenerationService;
-import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.WebUtils;
 import org.kuali.rice.kns.web.struts.action.KualiAction;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliationReport;
@@ -53,6 +53,7 @@ import com.rsmart.kuali.kfs.cr.document.service.CheckReconciliationReportService
  * @author Derek Helbert
  * @version $Revision$
  */
+@SuppressWarnings("deprecation")
 public class CheckReconciliationReportAction extends KualiAction {
 
     private static String COMMA = ",";

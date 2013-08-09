@@ -20,25 +20,23 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.identity.KfsKimAttributes;
-import org.kuali.rice.kim.bo.role.dto.KimPermissionInfo;
-import org.kuali.rice.kim.bo.types.dto.AttributeSet;
-import org.kuali.rice.kim.service.support.impl.KimPermissionTypeServiceBase;
+import org.kuali.rice.krms.impl.type.KrmsTypeServiceBase;
 
 /**
  * Type service for Access Security Permissions that restrict based on property name
  */
-public class SecurityAttributePermissionTypeServiceImpl extends KimPermissionTypeServiceBase {
-
-    {
+public class SecurityAttributePermissionTypeServiceImpl extends KrmsTypeServiceBase {
+	//TODO UPGRADE-911
+    /*{
         requiredAttributes.add(SecKimAttributes.PROPERTY_NAME);
         checkRequiredAttributes = false;
-    }
+    }*/
 
     /**
      * @see org.kuali.rice.kim.service.support.impl.KimPermissionTypeServiceBase#performPermissionMatches(org.kuali.rice.kim.bo.types.dto.AttributeSet,
      *      java.util.List)
      */
-    @Override
+    /*@Override
     protected List<KimPermissionInfo> performPermissionMatches(AttributeSet requestedDetails, List<KimPermissionInfo> permissionsList) {
         List<KimPermissionInfo> matchingPermissions = new ArrayList<KimPermissionInfo>();
 
@@ -49,7 +47,7 @@ public class SecurityAttributePermissionTypeServiceImpl extends KimPermissionTyp
         }
 
         return matchingPermissions;
-    }
+    }*/
 
     /**
      * Performs match on property name
@@ -58,7 +56,7 @@ public class SecurityAttributePermissionTypeServiceImpl extends KimPermissionTyp
      * @param permissionDetails AttributeSet containing details associated with permission
      * @return boolean true if details match, false otherwise
      */
-    protected boolean isDetailMatch(AttributeSet requestedDetails, AttributeSet permissionDetails) {
+    /*protected boolean isDetailMatch(AttributeSet requestedDetails, AttributeSet permissionDetails) {
         String propertyNameMatch = requestedDetails.get(SecKimAttributes.PROPERTY_NAME);
         String propertyName = permissionDetails.get(SecKimAttributes.PROPERTY_NAME);
 
@@ -67,6 +65,6 @@ public class SecurityAttributePermissionTypeServiceImpl extends KimPermissionTyp
         }
 
         return false;
-    }
+    }*/
 
 }

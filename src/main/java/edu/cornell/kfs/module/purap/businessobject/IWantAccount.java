@@ -11,11 +11,13 @@ import org.kuali.kfs.coa.businessobject.SubObjectCode;
 import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 public class IWantAccount extends PersistableBusinessObjectBase {
-    private String documentNumber;
+
+	private static final long serialVersionUID = 1L;
+	private String documentNumber;
     private Integer lineNumber;
     private String chartOfAccountsCode;
     private String accountNumber;
@@ -44,9 +46,8 @@ public class IWantAccount extends PersistableBusinessObjectBase {
 
     }
 
-    @Override
-    protected LinkedHashMap toStringMapper() {
-        // TODO Auto-generated method stub
+    @SuppressWarnings("rawtypes")
+	protected LinkedHashMap toStringMapper() {
         return null;
     }
 

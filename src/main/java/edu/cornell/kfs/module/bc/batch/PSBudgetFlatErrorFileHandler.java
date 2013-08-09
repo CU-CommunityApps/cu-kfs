@@ -14,4 +14,10 @@ public class PSBudgetFlatErrorFileHandler implements FlatFileDataHandler {
 
     }
 
+	public String getFileName(String principalName, Object parsedFileContents,
+			String fileUserIdentifier) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

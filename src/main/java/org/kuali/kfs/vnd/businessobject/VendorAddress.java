@@ -16,29 +16,29 @@
 
 package org.kuali.kfs.vnd.businessobject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.log4j.Logger;
-import org.kuali.rice.kns.bo.Country;
-import org.kuali.rice.kns.bo.State;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderTransmissionMethod;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.CountryService;
-import org.kuali.rice.kns.service.StateService;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.kns.bo.Inactivateable;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.util.TypedArrayList;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.rice.location.api.country.Country;
+import org.kuali.rice.location.api.state.State;
+import org.kuali.rice.location.api.state.StateService;
+import org.kuali.rice.location.api.country.CountryService;
 
 /**
  * Address to be associated with a particular Vendor.
  */
-public class VendorAddress extends PersistableBusinessObjectBase implements VendorRoutingComparable, Inactivateable {
+public class VendorAddress extends PersistableBusinessObjectBase implements VendorRoutingComparable, MutableInactivatable {
     private static Logger LOG = Logger.getLogger(VendorAddress.class);
 
     private Integer vendorAddressGeneratedIdentifier;
@@ -72,7 +72,7 @@ public class VendorAddress extends PersistableBusinessObjectBase implements Vend
      * Default constructor.
      */
     public VendorAddress() {
-        vendorDefaultAddresses = new TypedArrayList(VendorDefaultAddress.class);
+        vendorDefaultAddresses = new ArrayList <VendorDefaultAddress>();
     }
 
     public Integer getVendorAddressGeneratedIdentifier() {
@@ -217,7 +217,7 @@ public class VendorAddress extends PersistableBusinessObjectBase implements Vend
 
     public State getVendorState() {
     	if(vendorStateCode!=null) {
-    		vendorState = SpringContext.getBean(StateService.class).getByPrimaryIdIfNecessary(vendorCountryCode, vendorStateCode, vendorState);
+    		vendorState = SpringContext.getBean(StateService.class).getState(vendorCountryCode, vendorStateCode);
     	}
     	return vendorState;
         
@@ -234,7 +234,7 @@ public class VendorAddress extends PersistableBusinessObjectBase implements Vend
     }
 
     public Country getVendorCountry() {
-        vendorCountry = SpringContext.getBean(CountryService.class).getByPrimaryIdIfNecessary(vendorCountryCode, vendorCountry);
+        vendorCountry = SpringContext.getBean(CountryService.class).getCountry(vendorCountryCode);
         return vendorCountry;
     }
 

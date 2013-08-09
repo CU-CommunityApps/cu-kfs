@@ -3,16 +3,19 @@ package edu.cornell.kfs.module.purap.businessobject.options;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kuali.rice.core.util.KeyLabelPair;
-import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
+import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.rice.krad.keyvalues.KeyValuesBase;
 
 public class DepartmentLevelOrganizationValuesFinder extends KeyValuesBase {
 
-    public List getKeyValues() {
+	private static final long serialVersionUID = 1L;
 
-        List keyValues = new ArrayList();
+	public List<KeyValue> getKeyValues() {
 
-        keyValues.add(new KeyLabelPair("", ""));
+        List<KeyValue> keyValues = new ArrayList<KeyValue>();
+
+        keyValues.add(new ConcreteKeyValue("", ""));
 
         return keyValues;
     }

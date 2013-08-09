@@ -18,16 +18,18 @@ package com.rsmart.kuali.kfs.sec.businessobject;
 import java.util.LinkedHashMap;
 
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.rice.kns.bo.Inactivateable;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.KualiInteger;
+
+
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 import com.rsmart.kuali.kfs.sec.SecPropertyConstants;
 
 /**
  * Associates a security definition with a model with qualification. The qualifications become the qualifications on the KIM assignment of the model role to the definition role
  */
-public class SecurityModelDefinition extends PersistableBusinessObjectBase implements Inactivateable {
+public class SecurityModelDefinition extends PersistableBusinessObjectBase implements MutableInactivatable {
     private KualiInteger modelDefinitionId;
     private KualiInteger modelId;
     private KualiInteger definitionId;
@@ -230,7 +232,7 @@ public class SecurityModelDefinition extends PersistableBusinessObjectBase imple
     /**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
-    @Override
+    
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();
 

@@ -15,9 +15,9 @@ import org.kuali.kfs.coa.businessobject.AccountReversion;
 import org.kuali.kfs.coa.businessobject.AccountReversionDetail;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.cornell.kfs.coa.dataaccess.AccountReversionImportDao;
@@ -43,9 +43,9 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
 		// KFSPTS-2174 : Repurposed this batch job to append the loaded values to the existing table, rather than delete all current values and reload the tables from scratch
 	    //		arid.destroyAccountReversionsAndDetails();
 		int count = 0;
-		String objectCode = parameterService.getParameterValue("KFS-COA", "Reversion", "CASH_REVERSION_OBJECT_CODE");
+		String objectCode = parameterService.getParameterValueAsString("KFS-COA", "Reversion", "CASH_REVERSION_OBJECT_CODE");
 		
-		Integer fiscalYear = Integer.parseInt(parameterService.getParameterValue("KFS-COA", "Reversion", "ACCOUNT_REVERSION_FISCAL_YEAR"));
+		Integer fiscalYear = Integer.parseInt(parameterService.getParameterValueAsString("KFS-COA", "Reversion", "ACCOUNT_REVERSION_FISCAL_YEAR"));
 		
 		try {
 			CSVReader reader = new CSVReader(new FileReader(f));
@@ -123,10 +123,12 @@ public class AccountReversionImportServiceImpl implements AccountReversionImport
                 }
             
             }
+			reader.close();
 		
 		} catch (Exception e){ e.printStackTrace();}
 		finally {
 			LOG.info("Wrote: "+ count +" records");
+			
 		}
 	}
 

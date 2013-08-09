@@ -18,9 +18,9 @@ package com.rsmart.kuali.kfs.sec.service.impl;
 import java.util.List;
 
 import org.kuali.kfs.sys.service.impl.DocumentHelperServiceImpl;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.rice.kns.document.authorization.TransactionalDocumentAuthorizer;
-import org.kuali.rice.kns.service.ParameterService;
 
 import com.rsmart.kuali.kfs.sec.SecConstants;
 import com.rsmart.kuali.kfs.sec.document.authorization.SecTransactionalDocumentAuthorizer;

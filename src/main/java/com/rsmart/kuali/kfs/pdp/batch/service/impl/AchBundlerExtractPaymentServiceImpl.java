@@ -38,9 +38,7 @@ import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.businessobject.PaymentNoteText;
 import org.kuali.kfs.pdp.businessobject.PaymentProcess;
 import org.kuali.kfs.pdp.businessobject.PaymentStatus;
-import org.kuali.rice.kns.bo.Country;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
@@ -78,7 +76,7 @@ public class AchBundlerExtractPaymentServiceImpl extends ExtractPaymentServiceIm
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         PaymentStatus extractedStatus = (PaymentStatus) getBusinessObjectService().findBySinglePrimaryKey(PaymentStatus.class, PdpConstants.PaymentStatusCodes.EXTRACTED);
 
-        String achFilePrefix = getKualiConfigurationService().getPropertyString(PdpKeyConstants.ExtractPayment.ACH_FILENAME);
+        String achFilePrefix = getKualiConfigurationService().getPropertyValueAsString(PdpKeyConstants.ExtractPayment.ACH_FILENAME);
         achFilePrefix = MessageFormat.format(achFilePrefix, new Object[] { null });
 
         String filename = getOutputFile(achFilePrefix, processDate);

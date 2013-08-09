@@ -3,13 +3,14 @@ package edu.cornell.kfs.coa.document.validation.impl;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.document.validation.impl.ObjectCodeRule;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.kns.service.BusinessObjectService;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.coa.businessobject.ContractGrantReportingCode;
 import edu.cornell.kfs.coa.businessobject.ObjectCodeExtendedAttribute;

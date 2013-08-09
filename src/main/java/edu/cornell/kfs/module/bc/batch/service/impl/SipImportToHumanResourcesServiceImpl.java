@@ -1,26 +1,22 @@
 package edu.cornell.kfs.module.bc.batch.service.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DateTimeService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kns.service.DictionaryValidationService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.bc.CUBCPropertyConstants;
 import edu.cornell.kfs.module.bc.batch.dataaccess.impl.SipImportToHumanResourcesDaoJdbc.SipImportDataForHr;
 import edu.cornell.kfs.module.bc.batch.service.SipImportToHumanResourcesService;
 import edu.cornell.kfs.module.bc.document.dataaccess.SipImportToHumanResourcesDao;
-import edu.cornell.kfs.module.bc.batch.service.impl.SipImportToHumanResourcesServiceImpl;
 
+@SuppressWarnings("deprecation")
 public class SipImportToHumanResourcesServiceImpl implements SipImportToHumanResourcesService {
-
-	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SipImportToHumanResourcesServiceImpl.class);
 
 	protected BatchInputFileService batchInputFileService;
 	protected BatchInputFileType SipImportToHumanResourcesFileType;

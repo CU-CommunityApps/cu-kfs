@@ -21,23 +21,31 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+
+
+
+
+
+
+
+import javax.swing.text.AttributeSet;
+
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.bo.types.dto.AttributeSet;
-import org.kuali.rice.kim.service.PersonService;
-import org.kuali.rice.kns.bo.BusinessObject;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kns.datadictionary.BusinessObjectEntry;
 import org.kuali.rice.kns.lookup.KualiLookupableHelperServiceImpl;
 import org.kuali.rice.kns.service.KNSServiceLocator;
 import org.kuali.rice.kns.util.FieldUtils;
 import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.web.format.Formatter;
 import org.kuali.rice.kns.web.ui.Column;
 import org.kuali.rice.kns.web.ui.Row;
+import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.rice.krad.service.KRADServiceLocator;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import com.rsmart.kuali.kfs.sec.SecConstants;
 import com.rsmart.kuali.kfs.sec.SecPropertyConstants;
@@ -69,18 +77,21 @@ public class AccessSecuritySimulationLookupableHelperServiceImpl extends KualiLo
 
         String attributeName = fieldValues.get(SecPropertyConstants.ATRIBUTE_NAME);
         String templateId = fieldValues.get(SecPropertyConstants.TEMPLATE_ID);
+        //TODO UPGRADE-911
+        //AttributeSet additionalPermissionDetails = new AttributeSet();
+        //if (SecConstants.SecurityTemplateIds.INQUIRY_FIELD_VALUE.equals(templateId)) {
+       //     String namespaceCode = fieldValues.get(SecPropertyConstants.INQUIRY_NAMESPACE_CODE);
+       //     additionalPermissionDetails.put(SecKimAttributes.NAMESPACE_CODE, namespaceCode);
+       // }
+       // else if (!SecConstants.SecurityTemplateIds.LOOKUP_FIELD_VALUE.equals(templateId)) {
+       //     String documentTypeCode = fieldValues.get(SecPropertyConstants.FINANCIAL_SYSTEM_DOCUMENT_TYPE_CODE);
+       //     additionalPermissionDetails.put(SecKimAttributes.DOCUMENT_TYPE_NAME, documentTypeCode);
+       // }
 
-        AttributeSet additionalPermissionDetails = new AttributeSet();
-        if (SecConstants.SecurityTemplateIds.INQUIRY_FIELD_VALUE.equals(templateId)) {
-            String namespaceCode = fieldValues.get(SecPropertyConstants.INQUIRY_NAMESPACE_CODE);
-            additionalPermissionDetails.put(SecKimAttributes.NAMESPACE_CODE, namespaceCode);
-        }
-        else if (!SecConstants.SecurityTemplateIds.LOOKUP_FIELD_VALUE.equals(templateId)) {
-            String documentTypeCode = fieldValues.get(SecPropertyConstants.FINANCIAL_SYSTEM_DOCUMENT_TYPE_CODE);
-            additionalPermissionDetails.put(SecKimAttributes.DOCUMENT_TYPE_NAME, documentTypeCode);
-        }
-
-        return runSimulation(person, attributeName, templateId, additionalPermissionDetails);
+        
+		//return runSimulation(person, attributeName, templateId, additionalPermissionDetails);
+        return null;
+    
     }
 
     /**
@@ -161,9 +172,10 @@ public class AccessSecuritySimulationLookupableHelperServiceImpl extends KualiLo
         try {
             fields = FieldUtils.createAndPopulateFieldsForLookup(lookupFieldAttributeList, getReadOnlyFieldsList(), getBusinessObjectClass());
 
-            BusinessObjectEntry boe = KNSServiceLocator.getDataDictionaryService().getDataDictionary().getBusinessObjectEntry(this.getBusinessObjectClass().getName());
-            numCols = boe.getLookupDefinition().getNumOfColumns();
-
+            //UPGRADE-911
+            //BusinessObjectEntry boe = KRADServiceLocator.getDataDictionaryService().getDataDictionary().getBusinessObjectEntry(this.getBusinessObjectClass().getName());
+            //numCols = boe.getLookupDefinition().getNumOfColumns();
+            numCols = 0;
         }
         catch (InstantiationException e) {
             throw new RuntimeException("Unable to create instance of business object class" + e.getMessage());
@@ -173,7 +185,7 @@ public class AccessSecuritySimulationLookupableHelperServiceImpl extends KualiLo
         }
 
         if (numCols == 0)
-            numCols = KNSConstants.DEFAULT_NUM_OF_COLUMNS;
+            numCols = KRADConstants.DEFAULT_NUM_OF_COLUMNS;
 
         rows = FieldUtils.wrapFields(fields, numCols);
     }
@@ -214,7 +226,7 @@ public class AccessSecuritySimulationLookupableHelperServiceImpl extends KualiLo
             Integer fieldDefinedMaxLength = getBusinessObjectDictionaryService().getLookupResultFieldMaxLength(attributeClass, attributeName);
             if (fieldDefinedMaxLength == null) {
                 try {
-                    fieldDefinedMaxLength = Integer.valueOf(getParameterService().getParameterValue(KNSConstants.KNS_NAMESPACE, KNSConstants.DetailTypes.LOOKUP_PARM_DETAIL_TYPE, KNSConstants.RESULTS_DEFAULT_MAX_COLUMN_LENGTH));
+                    fieldDefinedMaxLength = Integer.valueOf(getParameterService().getParameterValueAsString(KRADConstants.KNS_NAMESPACE, KRADConstants.DetailTypes.LOOKUP_PARM_DETAIL_TYPE, KRADConstants.RESULTS_DEFAULT_MAX_COLUMN_LENGTH));
                 }
                 catch (NumberFormatException ex) {
                     LOG.error("Lookup field max length parameter not found and unable to parse default set in system parameters (RESULTS_DEFAULT_MAX_COLUMN_LENGTH).");
@@ -223,19 +235,20 @@ public class AccessSecuritySimulationLookupableHelperServiceImpl extends KualiLo
             column.setMaxLength(fieldDefinedMaxLength.intValue());
 
             Class formatterClass = getDataDictionaryService().getAttributeFormatter(attributeClass, attributeName);
-            if (formatterClass != null) {
-                try {
-                    column.setFormatter((Formatter) formatterClass.newInstance());
-                }
-                catch (InstantiationException e) {
-                    LOG.error("Unable to get new instance of formatter class: " + formatterClass.getName());
-                    throw new RuntimeException("Unable to get new instance of formatter class: " + formatterClass.getName());
-                }
-                catch (IllegalAccessException e) {
-                    LOG.error("Unable to get new instance of formatter class: " + formatterClass.getName());
-                    throw new RuntimeException("Unable to get new instance of formatter class: " + formatterClass.getName());
-                }
-            }
+//TODO UPGRADE-911
+//            if (formatterClass != null) {
+//                try {
+//                    column.setFormatter((Formatter) formatterClass.newInstance());
+//                }
+//                catch (InstantiationException e) {
+//                    LOG.error("Unable to get new instance of formatter class: " + formatterClass.getName());
+//                    throw new RuntimeException("Unable to get new instance of formatter class: " + formatterClass.getName());
+//                }
+//                catch (IllegalAccessException e) {
+//                    LOG.error("Unable to get new instance of formatter class: " + formatterClass.getName());
+//                    throw new RuntimeException("Unable to get new instance of formatter class: " + formatterClass.getName());
+//                }
+//            }
 
             columns.add(column);
         }

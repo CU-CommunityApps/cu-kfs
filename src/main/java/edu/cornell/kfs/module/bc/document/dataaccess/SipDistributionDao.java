@@ -3,7 +3,7 @@ package edu.cornell.kfs.module.bc.document.dataaccess;
 import java.util.List;
 
 import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionGeneralLedger;
-import org.kuali.rice.kns.util.KualiInteger;
+import org.kuali.rice.core.api.util.type.KualiInteger;
 
 public interface SipDistributionDao {
 

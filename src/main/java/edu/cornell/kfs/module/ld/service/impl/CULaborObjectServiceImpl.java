@@ -9,8 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class CULaborObjectServiceImpl extends LaborObjectServiceImpl implements CULaborObjectService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(LaborObjectServiceImpl.class);
-
     private CULaborObjectDao cuLaborObjectDao;
 
 

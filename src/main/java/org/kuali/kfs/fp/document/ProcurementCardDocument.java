@@ -42,15 +42,16 @@ import org.kuali.kfs.sys.document.AccountingDocumentBase;
 import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.kfs.sys.document.service.DebitDeterminerService;
 import org.kuali.kfs.sys.service.UniversityDateService;
-import org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO;
-import org.kuali.rice.kew.util.KEWConstants;
-import org.kuali.rice.kns.rule.event.KualiDocumentEvent;
-import org.kuali.rice.kns.rule.event.SaveDocumentEvent;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.KewApiConstants;
+import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
+import org.kuali.rice.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.rice.krad.rules.rule.event.SaveDocumentEvent;
+import org.kuali.rice.krad.service.DataDictionaryService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.batch.ProcurementCardParameterConstants;
+import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * This is the Procurement Card Document Class. The procurement cards distributes expenses from clearing accounts. It is a two-sided
@@ -58,7 +59,10 @@ import edu.cornell.kfs.fp.batch.ProcurementCardParameterConstants;
  * are associated with the document to help better distribute the expense.
  */
 public class ProcurementCardDocument extends AccountingDocumentBase implements AmountTotaling, CapitalAssetEditable {
-    protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardDocument.class);
+
+	private static final long serialVersionUID = 1L;
+
+	protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardDocument.class);
 
     protected ProcurementCardHolder procurementCardHolder;
 
@@ -166,7 +170,7 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
         ParameterService      parameterService      = SpringContext.getBean(ParameterService.class);
         UniversityDateService universityDateService = SpringContext.getBean(UniversityDateService.class);
        
-        int allowBackpost = (Integer.parseInt(parameterService.getParameterValue(ProcurementCardLoadStep.class, PurapRuleConstants.ALLOW_BACKPOST_DAYS)));
+        int allowBackpost = (Integer.parseInt(parameterService.getParameterValueAsString(ProcurementCardLoadStep.class, PurapRuleConstants.ALLOW_BACKPOST_DAYS)));
 
         Calendar today = Calendar.getInstance();
         Integer currentFY = universityDateService.getCurrentUniversityDate().getUniversityFiscalYear();
@@ -196,7 +200,7 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
     
     @Override
     public void prepareForSave() {
-        CapitalAssetInformation cai = (this).getCapitalAssetInformation();
+        CapitalAssetInformation cai = (this).getCapitalAssetInformation().get(0);
     
         if (cai != null) {
             cai.setDocumentNumber(this.getDocumentNumber());
@@ -370,21 +374,21 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
     /**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
-    @Override
-    protected LinkedHashMap toStringMapper() {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();
         m.put(KFSPropertyConstants.DOCUMENT_NUMBER, this.documentNumber);
         return m;
     }
 
     @Override
-    public void doRouteStatusChange(DocumentRouteStatusChangeDTO statusChangeEvent) {
+    public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
         super.doRouteStatusChange(statusChangeEvent);
 
         // Updating for rice-1.0.0 api changes. doRouteStatusChange() went away, so
         // that functionality needs to be a part of doRouteStatusChange now.
         // handleRouteStatusChange did not happen on a save
-        if (!KEWConstants.ACTION_TAKEN_SAVED_CD.equals(statusChangeEvent.getDocumentEventCode())) {
+        if (!KewApiConstants.ACTION_TAKEN_SAVED_CD.equals(statusChangeEvent.getDocumentEventCode())) {
             this.getCapitalAssetManagementModuleService().deleteDocumentAssetLocks(this);
         }
     }
@@ -414,8 +418,8 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
      * 
      * @return Returns the capitalAssetInformation.
      */
-    public CapitalAssetInformation getCapitalAssetInformation() {
-        return ObjectUtils.isNull(capitalAssetInformation) ? null : capitalAssetInformation;
+    public List<CapitalAssetInformation> getCapitalAssetInformation() {
+        return Collections.singletonList(ObjectUtils.isNull(capitalAssetInformation) ? null : capitalAssetInformation);
     }
 
     /**
@@ -463,7 +467,7 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
      */
     @Override
     public String getDocumentTitle() {
-       if (SpringContext.getBean(ParameterService.class).getIndicatorParameter(ProcurementCardDocument.class, ProcurementCardParameterConstants.OVERRIDE_PCDO_DOC_TITLE)) {
+       if (SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(ProcurementCardDocument.class, ProcurementCardParameterConstants.OVERRIDE_PCDO_DOC_TITLE)) {
             return getCustomDocumentTitle();
         }
         return super.getDocumentTitle();
@@ -483,6 +487,11 @@ public class ProcurementCardDocument extends AccountingDocumentBase implements A
         return (new StringBuffer(super.getDocumentTitle()).append(" - Amount: ").append(pcdoAmount).toString());
 
     }
+
+    //TODO UPGRADE-911
+	public void setCapitalAssetInformation(
+			List<CapitalAssetInformation> capitalAssetInformation) {		
+	}
 
 
 }

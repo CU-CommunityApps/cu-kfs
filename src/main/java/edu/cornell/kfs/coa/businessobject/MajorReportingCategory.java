@@ -2,10 +2,10 @@ package edu.cornell.kfs.coa.businessobject;
 
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.kns.bo.Inactivateable;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
-public class MajorReportingCategory extends PersistableBusinessObjectBase implements Inactivateable {
+public class MajorReportingCategory extends PersistableBusinessObjectBase implements MutableInactivatable {
 
 	private static final long serialVersionUID = -6542680440925293438L;
 	

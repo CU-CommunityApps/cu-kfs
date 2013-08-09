@@ -18,8 +18,12 @@ package com.rsmart.kuali.kfs.sec.businessobject.options;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kuali.rice.core.util.KeyLabelPair;
-import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
+
+
+
+
+import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.krad.keyvalues.KeyValuesBase;
 
 import com.rsmart.kuali.kfs.sec.SecConstants;
 
@@ -34,13 +38,13 @@ public class SecurityTemplateIdFinder extends KeyValuesBase {
     public List getKeyValues() {
         List activeLabels = new ArrayList();
 
-        activeLabels.add(new KeyLabelPair(SecConstants.SecurityTemplateIds.INQUIRY_FIELD_VALUE, "Balance Inquiry"));
-        activeLabels.add(new KeyLabelPair(SecConstants.SecurityTemplateIds.EDIT_ACCOUNTING_LINE_FIELD_VALUE, "Edit Accounting Line"));
-        activeLabels.add(new KeyLabelPair(SecConstants.SecurityTemplateIds.EDIT_DOCUMENT_FIELD_VALUE, "Edit Document"));
-        activeLabels.add(new KeyLabelPair(SecConstants.SecurityTemplateIds.LOOKUP_FIELD_VALUE, "Lookup Records"));
-        activeLabels.add(new KeyLabelPair(SecConstants.SecurityTemplateIds.VIEW_ACCOUNTING_LINE_FIELD_VALUE, "View Accounting Line"));
-        activeLabels.add(new KeyLabelPair(SecConstants.SecurityTemplateIds.VIEW_DOCUMENT_FIELD_VALUE, "View Document"));
-        activeLabels.add(new KeyLabelPair(SecConstants.SecurityTemplateIds.VIEW_NOTES_ATTACHMENTS_FIELD_VALUE, "View Notes/Attachments"));
+        activeLabels.add(new ConcreteKeyValue(SecConstants.SecurityTemplateIds.INQUIRY_FIELD_VALUE, "Balance Inquiry"));
+        activeLabels.add(new ConcreteKeyValue(SecConstants.SecurityTemplateIds.EDIT_ACCOUNTING_LINE_FIELD_VALUE, "Edit Accounting Line"));
+        activeLabels.add(new ConcreteKeyValue(SecConstants.SecurityTemplateIds.EDIT_DOCUMENT_FIELD_VALUE, "Edit Document"));
+        activeLabels.add(new ConcreteKeyValue(SecConstants.SecurityTemplateIds.LOOKUP_FIELD_VALUE, "Lookup Records"));
+        activeLabels.add(new ConcreteKeyValue(SecConstants.SecurityTemplateIds.VIEW_ACCOUNTING_LINE_FIELD_VALUE, "View Accounting Line"));
+        activeLabels.add(new ConcreteKeyValue(SecConstants.SecurityTemplateIds.VIEW_DOCUMENT_FIELD_VALUE, "View Document"));
+        activeLabels.add(new ConcreteKeyValue(SecConstants.SecurityTemplateIds.VIEW_NOTES_ATTACHMENTS_FIELD_VALUE, "View Notes/Attachments"));
 
         return activeLabels;
     }

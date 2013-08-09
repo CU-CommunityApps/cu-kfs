@@ -12,19 +12,16 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Table;
 
-import org.apache.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryFactory;
 import org.apache.ojb.broker.query.ReportQueryByCriteria;
+import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.actionrequest.ActionRequestValue;
+import org.kuali.rice.kew.api.KEWPropertyConstants;
+import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
-import org.kuali.rice.kew.util.KEWConstants;
-import org.kuali.rice.kew.util.KEWPropertyConstants;
-import org.kuali.rice.kim.bo.role.impl.RoleResponsibilityImpl;
-import org.kuali.rice.kim.util.KimConstants;
-import org.kuali.rice.kns.dao.impl.PlatformAwareDaoBaseOjb;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.OjbCollectionAware;
+import org.kuali.rice.krad.util.OjbCollectionAware;
 import org.springframework.util.StringUtils;
 
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
@@ -36,7 +33,7 @@ import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
  *
  */
 public class DocumentMaintenanceDaoOjb extends PlatformAwareDaoBaseOjb implements DocumentMaintenanceDao, OjbCollectionAware {
-    private static final Logger LOG = Logger.getLogger(DocumentMaintenanceDaoOjb.class);
+    public static final String WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY = "routeHeaderId";
 
     
     private ParameterService parameterService;
@@ -58,7 +55,7 @@ public class DocumentMaintenanceDaoOjb extends PlatformAwareDaoBaseOjb implement
 		
 		criteria.addSql(sql);
 		ReportQueryByCriteria query = QueryFactory.newReportQuery(DocumentRouteHeaderValue.class, criteria);
-		query.setAttributes(new String[] {KEWPropertyConstants.ROUTE_HEADER_ID});
+		query.setAttributes(new String[] {WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY});
 		Iterator<Object[]> results = this.getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(query);
 
         return parseReportQueryIteratorToList(results);
@@ -85,35 +82,35 @@ public class DocumentMaintenanceDaoOjb extends PlatformAwareDaoBaseOjb implement
 		
 		sql.append(retrieveColumnNameFromAnnotations(DocumentRouteHeaderValue.class, "docRouteStatus"));
 		sql.append("='");
-		sql.append(KEWConstants.ROUTE_HEADER_ENROUTE_CD);
+		sql.append(KewApiConstants.ROUTE_HEADER_ENROUTE_CD);
 		sql.append("' AND ");
 		sql.append(retrieveColumnNameFromAnnotations(DocumentRouteHeaderValue.class, KEWPropertyConstants.DOCUMENT_TYPE_ID));
 		sql.append(" NOT IN (");
 
-		List<String> docTypeIds = parameterService.getParameterValues(DocumentRequeueStep.class, CUKFSParameterKeyConstants.NON_REQUEUABLE_DOCUMENT_TYPES);
+		List<String> docTypeIds = (List<String>) parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.NON_REQUEUABLE_DOCUMENT_TYPES);
 		sql.append(StringUtils.collectionToCommaDelimitedString(docTypeIds));
 		
 		sql.append(") AND ");
-		sql.append(retrieveColumnNameFromAnnotations(DocumentRouteHeaderValue.class, KEWPropertyConstants.ROUTE_HEADER_ID));
+		sql.append(retrieveColumnNameFromAnnotations(DocumentRouteHeaderValue.class, WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY));
 		sql.append(" IN (select distinct(");
-		sql.append(retrieveColumnNameFromAnnotations(ActionRequestValue.class, KEWPropertyConstants.ROUTE_HEADER_ID));
+		sql.append(retrieveColumnNameFromAnnotations(ActionRequestValue.class, WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY));
 		sql.append(") from ");
 		sql.append(retrieveTableNameFromAnnotations(ActionRequestValue.class));
 		sql.append(" where ");
-		sql.append(retrieveColumnNameFromAnnotations(ActionRequestValue.class, KimConstants.PrimaryKeyConstants.RESPONSIBILITY_ID));
+		sql.append("RSP_ID");
 		sql.append(" in (select ");
-		sql.append(retrieveColumnNameFromAnnotations(RoleResponsibilityImpl.class, KimConstants.PrimaryKeyConstants.RESPONSIBILITY_ID));
+		sql.append("RSP_ID");
 		sql.append(" from ");
-		sql.append(retrieveTableNameFromAnnotations(RoleResponsibilityImpl.class));
+		sql.append("KRIM_ROLE_RSP_T");
 		sql.append(" where ");
-		sql.append(retrieveColumnNameFromAnnotations(RoleResponsibilityImpl.class, KimConstants.PrimaryKeyConstants.ROLE_ID));
+		sql.append("RSP_ID");
 		sql.append("='");
 
-		List<String> roleIds = parameterService.getParameterValues(DocumentRequeueStep.class, CUKFSParameterKeyConstants.REQUEUABLE_ROLES);
+		List<String> roleIds = (List<String>) parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.REQUEUABLE_ROLES);
 		sql.append(StringUtils.collectionToCommaDelimitedString(roleIds));
 
 		sql.append("')) order by ");
-		sql.append(retrieveColumnNameFromAnnotations(DocumentRouteHeaderValue.class, KEWPropertyConstants.ROUTE_HEADER_ID));
+		sql.append(retrieveColumnNameFromAnnotations(DocumentRouteHeaderValue.class, WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY));
 		sql.append(" ASC");
 
 		return sql.toString();
@@ -148,7 +145,7 @@ public class DocumentMaintenanceDaoOjb extends PlatformAwareDaoBaseOjb implement
 		
 		criteria.addSql(sql);
 		ReportQueryByCriteria query = QueryFactory.newReportQuery(DocumentRouteHeaderValue.class, criteria);
-		query.setAttributes(new String[] {KEWPropertyConstants.ROUTE_HEADER_ID});
+		query.setAttributes(new String[] {WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY});
 		Iterator<Object[]> results = this.getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(query);
 
 		

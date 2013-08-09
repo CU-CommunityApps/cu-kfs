@@ -4,10 +4,11 @@ import java.sql.Date;
 import java.util.LinkedHashMap;
 
 import org.kuali.kfs.module.cg.businessobject.Agency;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 public class Sponsor extends PersistableBusinessObjectBase {
 
+	private static final long serialVersionUID = 1L;
 	private Long sponsorId;
 	private String sponsorName;
 	private String sponsorLabel;
@@ -99,7 +100,8 @@ public class Sponsor extends PersistableBusinessObjectBase {
 		this.lastUpdated = lastUpdated;
 	}
 	
-	@Override
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected LinkedHashMap toStringMapper() {
 		  LinkedHashMap m = new LinkedHashMap();
 

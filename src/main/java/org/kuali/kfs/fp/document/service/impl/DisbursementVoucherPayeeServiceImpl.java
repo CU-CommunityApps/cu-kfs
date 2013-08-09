@@ -15,6 +15,7 @@
  */
 package org.kuali.kfs.fp.document.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,18 +34,19 @@ import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorType;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kew.util.KEWConstants;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.service.PersonService;
-import org.kuali.rice.kns.bo.AdHocRoutePerson;
-import org.kuali.rice.kns.bo.Note;
-import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.service.DocumentService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.KewApiConstants;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.krad.bo.AdHocRoutePerson;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.document.DocumentAuthorizer;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.DataDictionaryService;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.util.ObjectUtils;
+
 
 /**
  * implementing the service methods defined in DisbursementVoucherPayeeService
@@ -70,10 +72,10 @@ public class DisbursementVoucherPayeeServiceImpl implements DisbursementVoucherP
         		DisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI.equals(payeeTypeCode) ||
         		DisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT.equals(payeeTypeCode)) {
         	// Parameter was updated to include student and alumni in the label, so all three types should utilize the same label
-            payeeTypeDescription = parameterService.getParameterValue(DisbursementVoucherDocument.class, DisbursementVoucherConstants.NON_VENDOR_EMPLOYEE_PAYEE_TYPE_LABEL_PARM_NM);
+            payeeTypeDescription = parameterService.getParameterValueAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.NON_VENDOR_EMPLOYEE_PAYEE_TYPE_LABEL_PARM_NM);
         }
         else if (DisbursementVoucherConstants.DV_PAYEE_TYPE_VENDOR.equals(payeeTypeCode)) {
-            payeeTypeDescription = parameterService.getParameterValue(DisbursementVoucherDocument.class, DisbursementVoucherConstants.PO_AND_DV_PAYEE_TYPE_LABEL_PARM_NM);
+            payeeTypeDescription = parameterService.getParameterValueAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.PO_AND_DV_PAYEE_TYPE_LABEL_PARM_NM);
         }
         else if (DisbursementVoucherConstants.DV_PAYEE_TYPE_REVOLVING_FUND_VENDOR.equals(payeeTypeCode)) {
             payeeTypeDescription = this.getVendorTypeDescription(VendorConstants.VendorTypes.REVOLVING_FUND);
@@ -173,7 +175,7 @@ public class DisbursementVoucherPayeeServiceImpl implements DisbursementVoucherP
      */
     public boolean isTaxReviewRequired(String payeeTaxControlCode) {
         ParameterService paramService = SpringContext.getBean(ParameterService.class);
-        List<String> taxControlCodes = paramService.getParameterValues(DisbursementVoucherDocument.class, DisbursementVoucherConstants.TAX_CONTROL_CODES_REQUIRING_TAX_REVIEW_PARM_NM);
+        List<String> taxControlCodes = new ArrayList<String> (paramService.getParameterValuesAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.TAX_CONTROL_CODES_REQUIRING_TAX_REVIEW_PARM_NM));
         
         return taxControlCodes != null && taxControlCodes.contains(payeeTaxControlCode);
     }
@@ -225,12 +227,12 @@ public class DisbursementVoucherPayeeServiceImpl implements DisbursementVoucherP
 
                         String noteText1 = noteText.substring(0, fromIndex);
                         Note note1 = documentService.createNoteFromDocument(dvDoc, noteText1);
-                        documentService.addNoteToDocument(dvDoc, note1);
+                        dvDoc.addNote(note1);
                         noteText = noteText.substring(fromIndex);
                     }
 
                     Note note = documentService.createNoteFromDocument(dvDoc, noteText);
-                    documentService.addNoteToDocument(dvDoc, note);
+                    dvDoc.addNote(note);
                 }
                 catch (Exception e) {
                     LOG.error("Exception while attempting to create or add note: " + e);
@@ -238,10 +240,9 @@ public class DisbursementVoucherPayeeServiceImpl implements DisbursementVoucherP
 
                 // Send out FYIs to all previous approvers so they're aware of the changes to the address
                 try {
-                    Set<Person> priorApprovers = dvDoc.getDocumentHeader().getWorkflowDocument().getAllPriorApprovers();
-                    String initiatorUserId = dvDoc.getDocumentHeader().getWorkflowDocument().getRouteHeader().getInitiatorPrincipalId();
-                    Person finSysUser = SpringContext.getBean(PersonService.class).getPerson(initiatorUserId);
-                    setupFYIs(dvDoc, priorApprovers, finSysUser.getPrincipalName());
+                  Set<Person> priorApprovers = dvDoc.getAllPriorApprovers();
+                  String initiatorUserId = dvDoc.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+                  setupFYIs(dvDoc, priorApprovers, initiatorUserId);
                 }
                 catch (WorkflowException we) {
                     LOG.error("Exception while attempting to retrieve all prior approvers from workflow: " + we);
@@ -326,7 +327,7 @@ public class DisbursementVoucherPayeeServiceImpl implements DisbursementVoucherP
         
         // Add FYI for each approver who has already approved the document
         for (Person approver : priorApprovers) {
-            if (documentAuthorizer.canReceiveAdHoc(dvDoc, approver, KEWConstants.ACTION_REQUEST_FYI_REQ)) {
+            if (documentAuthorizer.canReceiveAdHoc(dvDoc, approver, KewApiConstants.ACTION_REQUEST_FYI_REQ)) {
                 String approverPersonUserId = approver.getPrincipalName();
                 adHocRoutePersons.add(buildFyiRecipient(approverPersonUserId));
             }
@@ -366,7 +367,7 @@ public class DisbursementVoucherPayeeServiceImpl implements DisbursementVoucherP
      */
     protected AdHocRoutePerson buildFyiRecipient(String userId) {
         AdHocRoutePerson adHocRoutePerson = new AdHocRoutePerson();
-        adHocRoutePerson.setActionRequested(KEWConstants.ACTION_REQUEST_FYI_REQ);
+        adHocRoutePerson.setActionRequested(KewApiConstants.ACTION_REQUEST_FYI_REQ);
         adHocRoutePerson.setId(userId);
         return adHocRoutePerson;
     }
@@ -382,7 +383,7 @@ public class DisbursementVoucherPayeeServiceImpl implements DisbursementVoucherP
 
     // determine whether the given payee id number is associated with an individual vendor
     protected boolean isPayeeIndividualVendor(String payeeIdNumber) {
-        List<String> individualOwnerShipTypeCodes = parameterService.getParameterValues(DisbursementVoucherDocument.class, DisbursementVoucherConstants.INDIVIDUAL_OWNERSHIP_TYPES_PARM_NM);
+        List<String> individualOwnerShipTypeCodes = new ArrayList<String> (parameterService.getParameterValuesAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.INDIVIDUAL_OWNERSHIP_TYPES_PARM_NM));
 
         VendorDetail vendor = vendorService.getByVendorNumber(payeeIdNumber);
         if (vendor != null && individualOwnerShipTypeCodes != null) {

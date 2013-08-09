@@ -2,8 +2,9 @@ package edu.cornell.kfs.module.bc.businessobject;
 
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.kns.bo.BusinessObjectBase;
+import org.kuali.rice.krad.bo.BusinessObjectBase;
 
+@SuppressWarnings("serial")
 public class SIPToHRData extends BusinessObjectBase{
     
     private String positionID;
@@ -17,13 +18,11 @@ public class SIPToHRData extends BusinessObjectBase{
     private String uawPostSIPStep;
 
     public void refresh() {
-        // TODO Auto-generated method stub
         
     }
 
-    @Override
-    protected LinkedHashMap toStringMapper() {
-        // TODO Auto-generated method stub
+    @SuppressWarnings("rawtypes")
+	protected LinkedHashMap toStringMapper() {
         return null;
     }
 

@@ -16,25 +16,26 @@
 
 package org.kuali.kfs.vnd.businessobject;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.kuali.rice.kns.bo.Country;
-import org.kuali.rice.kns.bo.State;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.kns.service.CountryService;
-import org.kuali.rice.kns.service.StateService;
-import org.kuali.rice.kns.bo.Inactivateable;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.util.TypedArrayList;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.rice.location.api.country.Country;
+import org.kuali.rice.location.api.country.CountryService;
+import org.kuali.rice.location.api.state.State;
+import org.kuali.rice.location.api.state.StateService;
+
 
 /**
  * Container for information about how to get in Contact with a person at a Vendor for a particular purpose.
  */
-public class VendorContact extends PersistableBusinessObjectBase implements VendorRoutingComparable, Inactivateable {
+public class VendorContact extends PersistableBusinessObjectBase implements VendorRoutingComparable, MutableInactivatable {
 
     private Integer vendorContactGeneratedIdentifier;
     private Integer vendorHeaderGeneratedIdentifier;
@@ -69,7 +70,7 @@ public class VendorContact extends PersistableBusinessObjectBase implements Vend
      * Default constructor.
      */
     public VendorContact() {
-        vendorContactPhoneNumbers = new TypedArrayList(VendorContactPhoneNumber.class);
+        vendorContactPhoneNumbers = new ArrayList<VendorContactPhoneNumber>();
     }
 
     public Integer getVendorContactGeneratedIdentifier() {
@@ -223,7 +224,7 @@ public class VendorContact extends PersistableBusinessObjectBase implements Vend
     }
 
     public Country getVendorCountry() {
-        vendorCountry = SpringContext.getBean(CountryService.class).getByPrimaryIdIfNecessary(vendorCountryCode, vendorCountry);
+        vendorCountry = SpringContext.getBean(CountryService.class).getCountry(vendorCountryCode);
         return vendorCountry;
     }
 
@@ -238,7 +239,7 @@ public class VendorContact extends PersistableBusinessObjectBase implements Vend
     }
 
     public State getVendorState() {
-        vendorState = SpringContext.getBean(StateService.class).getByPrimaryIdIfNecessary(vendorCountryCode, vendorStateCode, vendorState);
+        vendorState = SpringContext.getBean(StateService.class).getState(vendorCountryCode, vendorStateCode);
         return vendorState;
     }
 

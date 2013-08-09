@@ -33,8 +33,8 @@ import org.kuali.kfs.sys.document.datadictionary.AccountingLineGroupDefinition;
 import org.kuali.kfs.sys.document.web.DefaultAccountingLineGroupImpl;
 import org.kuali.kfs.sys.document.web.RenderableAccountingLineContainer;
 import org.kuali.kfs.sys.document.web.renderers.GroupErrorsRenderer;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 import com.rsmart.kuali.kfs.sec.SecConstants;
 import com.rsmart.kuali.kfs.sec.SecKeyConstants;
@@ -72,10 +72,11 @@ public class SecAccountingLineGroupImpl extends DefaultAccountingLineGroupImpl {
         List<RenderableAccountingLineContainer> unviewableContainers = new ArrayList<RenderableAccountingLineContainer>();
         for (RenderableAccountingLineContainer container : containers) {
             boolean lineHasError = false;
-            for (Object errorKeyAsObject : GlobalVariables.getMessageMap().keySet()) {
+ // TODO UPGRADE-911
+            /* for (Object errorKeyAsObject : GlobalVariables.getMessageMap()) {
                 if (((String) errorKeyAsObject).startsWith(collectionItemPropertyName))
                     lineHasError = true;
-            }
+            }*/
 
             if (lineHasError || container.isNewLine()) {
                 container.setEditableLine(true);

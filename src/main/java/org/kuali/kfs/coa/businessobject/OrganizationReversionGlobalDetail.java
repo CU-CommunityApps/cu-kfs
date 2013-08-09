@@ -26,7 +26,7 @@ import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.bo.GlobalBusinessObjectDetailBase;
+import org.kuali.rice.krad.bo.GlobalBusinessObjectDetailBase;
 
 /**
  * This is a representation of an Organization Reversion Detail, made specifically for Global Organization Reversions. However, as
@@ -48,7 +48,6 @@ public class OrganizationReversionGlobalDetail extends GlobalBusinessObjectDetai
     /**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
-    @Override
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap stringMapper = new LinkedHashMap();
         stringMapper.put(KFSPropertyConstants.DOCUMENT_NUMBER, this.documentNumber);

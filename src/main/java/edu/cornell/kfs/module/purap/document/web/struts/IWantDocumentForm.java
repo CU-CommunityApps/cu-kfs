@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.purap.document.web.struts;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -7,11 +8,9 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase;
-import org.kuali.rice.core.util.KeyLabelPair;
-import org.kuali.rice.kns.bo.Note;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.util.TypedArrayList;
+import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.rice.kns.web.ui.ExtraButton;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
@@ -26,14 +25,14 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     protected IWantItem newIWantItemLine;
     protected IWantAccount newSourceLine;
 
-    protected List<KeyLabelPair> deptOrgKeyLabels;
+    protected List<KeyValue> deptOrgKeyLabels;
     protected String previousSelectedOrg = KFSConstants.EMPTY_STRING;
 
     public IWantDocumentForm() {
         super();
         setNewIWantItemLine(new IWantItem());
         newSourceLine = new IWantAccount();
-        this.setDeptOrgKeyLabels(new TypedArrayList(KeyLabelPair.class));
+        this.setDeptOrgKeyLabels(new ArrayList<KeyValue>());
         editingMode = new HashMap();
 
     }
@@ -86,11 +85,11 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         return aIWantAccount;
     }
 
-    public List<KeyLabelPair> getDeptOrgKeyLabels() {
+    public List<KeyValue> getDeptOrgKeyLabels() {
         return deptOrgKeyLabels;
     }
 
-    public void setDeptOrgKeyLabels(List<KeyLabelPair> deptOrgKeyLabels) {
+    public void setDeptOrgKeyLabels(List<KeyValue> deptOrgKeyLabels) {
         this.deptOrgKeyLabels = deptOrgKeyLabels;
     }
 

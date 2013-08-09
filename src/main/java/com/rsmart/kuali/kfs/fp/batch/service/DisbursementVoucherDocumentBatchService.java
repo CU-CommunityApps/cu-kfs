@@ -18,7 +18,7 @@ package com.rsmart.kuali.kfs.fp.batch.service;
 import java.util.Collection;
 
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
-import org.kuali.rice.kns.util.ErrorMap;
+import org.kuali.rice.krad.util.MessageMap;
 
 import com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchFeed;
 import com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchStatus;
@@ -42,7 +42,7 @@ public interface DisbursementVoucherDocumentBatchService {
      * @param incomingFileName name of xml file which contents were parsed from
      * @param errorMap Map to add errors
      */
-    public void loadDisbursementVouchers(DisbursementVoucherBatchFeed batchFeed, DisbursementVoucherBatchStatus batchStatus, String incomingFileName, ErrorMap errorMap);
+    public void loadDisbursementVouchers(DisbursementVoucherBatchFeed batchFeed, DisbursementVoucherBatchStatus batchStatus, String incomingFileName, MessageMap errorMap);
 
     /**
      * Generates a report for the disbursement voucher batch to the file system

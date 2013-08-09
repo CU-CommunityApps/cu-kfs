@@ -29,7 +29,10 @@ import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.coa.businessobject.SubObjectCode;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.rice.kns.service.ParameterConstants;
+
+
+
+import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
 
 import com.rsmart.kuali.kfs.sec.businessobject.SecurityAttributeMetadata;
 

@@ -3,11 +3,13 @@ package edu.cornell.kfs.coa.businessobject;
 import java.util.LinkedHashMap;
 
 
-import org.kuali.kfs.coa.businessobject.Chart;
-import org.kuali.rice.kns.bo.Inactivateable;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
 
-public class ContractGrantReportingCode extends PersistableBusinessObjectBase implements Inactivateable {
+
+import org.kuali.kfs.coa.businessobject.Chart;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+
+public class ContractGrantReportingCode extends PersistableBusinessObjectBase implements MutableInactivatable {
 	
 
 	private static final long serialVersionUID = -8218088622597106234L;

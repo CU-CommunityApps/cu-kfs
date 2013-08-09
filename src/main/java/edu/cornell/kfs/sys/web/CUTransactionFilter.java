@@ -1,9 +1,7 @@
 package edu.cornell.kfs.sys.web;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -15,12 +13,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.kuali.rice.kew.mail.EmailBody;
-import org.kuali.rice.kew.mail.EmailFrom;
-import org.kuali.rice.kew.mail.EmailSubject;
-import org.kuali.rice.kew.mail.EmailTo;
-import org.kuali.rice.kew.service.KEWServiceLocator;
-import org.springframework.mail.SimpleMailMessage;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.mail.MailMessage;
+import org.kuali.rice.krad.service.MailService;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 public class CUTransactionFilter implements Filter {
@@ -78,21 +73,16 @@ public class CUTransactionFilter implements Filter {
 			if (error) {
 				try {
 					LOG.error("ERROR Found!  Sending an email...");
-				
-
-					SimpleMailMessage smm = new SimpleMailMessage();
-					smm.setTo("kwk43@cornell.edu");
-					smm.setSubject("There might be a closed connection problem.  Please check the logs. Seach for the following phrase: SOOO BAD");
-					smm.setText("Request URL which had the problem: " + httpReq.getRequestURL() + "    errorText = " + errorText);
-					smm.setFrom("kwk43@cornell.edu");
+					
         
-					KEWServiceLocator.getEmailService().sendEmail(
-							new EmailFrom(smm.getFrom()), 
-							new EmailTo("kwk43@cornell.edu"), 
-							new EmailSubject(smm.getSubject()), 
-							new EmailBody(smm.getText()),
-							false);
-			
+					MailMessage mm = new MailMessage();
+					mm.addToAddress("kwk43@cornell.edu");
+					mm.setFromAddress("kwk43@cornell.edu");
+					mm.setSubject("There might be a closed connection problem.  Please check the logs. Seach for the following phrase: SOOO BAD");
+					mm.setMessage("Request URL which had the problem: " + httpReq.getRequestURL() + "    errorText = " + errorText);
+
+					SpringContext.getBean(MailService.class).sendMessage(mm);
+					
 				} catch (Throwable t) {
 					LOG.error("Error sending email.", t);
 				}

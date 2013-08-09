@@ -17,9 +17,9 @@ package com.rsmart.kuali.kfs.sec.service.impl;
 
 import java.util.List;
 
-import org.kuali.rice.kns.document.TransactionalDocument;
-import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kns.service.impl.TransactionalDocumentDictionaryServiceImpl;
+import org.kuali.rice.krad.document.TransactionalDocument;
 
 import com.rsmart.kuali.kfs.sec.SecConstants;
 import com.rsmart.kuali.kfs.sec.document.validation.impl.AccessSecurityAccountingDocumentRuleBase;
@@ -36,17 +36,17 @@ public class SecTransactionalDocumentDictionaryServiceImpl extends Transactional
      * 
      * @see org.kuali.rice.kns.service.impl.TransactionalDocumentDictionaryServiceImpl#getBusinessRulesClass(org.kuali.rice.kns.document.TransactionalDocument)
      */
-    @Override
     public Class getBusinessRulesClass(TransactionalDocument document) {
-        String documentType = document.getDocumentHeader().getWorkflowDocument().getDocumentType();
+        String documentType = document.getDocumentHeader().getWorkflowDocument().getDocumentTypeName();
 
         // list of document types configured for access security
-        List<String> documentTypes = parameterService.getParameterValues(SecConstants.ACCESS_SECURITY_NAMESPACE_CODE, SecConstants.ALL_PARAMETER_DETAIL_COMPONENT, SecConstants.SecurityParameterNames.ACCESS_SECURITY_DOCUMENT_TYPES);
+        List<String> documentTypes = (List<String>) parameterService.getParameterValuesAsString(SecConstants.ACCESS_SECURITY_NAMESPACE_CODE, SecConstants.ALL_PARAMETER_DETAIL_COMPONENT, SecConstants.SecurityParameterNames.ACCESS_SECURITY_DOCUMENT_TYPES);
         if (documentTypes.contains(documentType)) {
             return AccessSecurityAccountingDocumentRuleBase.class;
         }
-
-        return super.getBusinessRulesClass(document);
+        //TODO UPGRADE-911
+        //return super.getBusinessRulesClass(document);
+        return null;
     }
 
     /**

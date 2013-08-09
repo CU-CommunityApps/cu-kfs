@@ -15,6 +15,8 @@
  */
 package org.kuali.kfs.fp.document.web.struts;
 
+import java.util.List;
+
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.fp.document.CapitalAssetEditable;
 import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
@@ -22,6 +24,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.web.struts.KualiAccountingDocumentFormBase;
 
 import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
+import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * This class is the action form for Distribution of Income and Expense.
@@ -60,8 +63,8 @@ public class DistributionOfIncomeAndExpenseForm extends KualiAccountingDocumentF
     /**
      * @see org.kuali.kfs.fp.document.CapitalAssetEditable#getCapitalAssetInformation()
      */
-    public CapitalAssetInformation getCapitalAssetInformation() {
-        return capitalAssetInformation;
+    public List<CapitalAssetInformation> getCapitalAssetInformation() {
+        return Collections.singletonList(capitalAssetInformation);
     }
 
     /**
@@ -100,6 +103,12 @@ public class DistributionOfIncomeAndExpenseForm extends KualiAccountingDocumentF
      */
     public String getTripID() {
     	return SpringContext.getBean(CULegacyTravelService.class).getLegacyTripID(this.getDocId());
+    }
+
+    //TODO UPGRADE-911
+    public void setCapitalAssetInformation(
+        List<CapitalAssetInformation> capitalAssetInformation) {
+      
     }
     
 

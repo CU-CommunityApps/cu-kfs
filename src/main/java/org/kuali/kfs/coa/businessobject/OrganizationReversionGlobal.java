@@ -16,6 +16,7 @@
 package org.kuali.kfs.coa.businessobject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,13 +27,12 @@ import org.kuali.kfs.coa.service.OrganizationReversionService;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.bo.GlobalBusinessObject;
-import org.kuali.rice.kns.bo.GlobalBusinessObjectDetail;
-import org.kuali.rice.kns.bo.PersistableBusinessObject;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.PersistenceStructureService;
-import org.kuali.rice.kns.util.TypedArrayList;
+import org.kuali.rice.krad.bo.GlobalBusinessObject;
+import org.kuali.rice.krad.bo.GlobalBusinessObjectDetail;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.PersistenceStructureService;
 
 /**
  * The representation of a Global Organization Reversion. A Global Organization Reversion is made up of three sections: 1. The
@@ -61,14 +61,13 @@ public class OrganizationReversionGlobal extends PersistableBusinessObjectBase i
 
     public OrganizationReversionGlobal() {
         super();
-        organizationReversionGlobalDetails = new TypedArrayList(OrganizationReversionGlobalDetail.class);
-        organizationReversionGlobalOrganizations = new TypedArrayList(OrganizationReversionGlobalOrganization.class);
+        organizationReversionGlobalDetails = new ArrayList<OrganizationReversionGlobalDetail>();
+        organizationReversionGlobalOrganizations = new ArrayList<OrganizationReversionGlobalOrganization>();
     }
 
     /**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
-    @Override
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap stringMapper = new LinkedHashMap();
         stringMapper.put(KFSPropertyConstants.DOCUMENT_NUMBER, this.documentNumber);
@@ -465,10 +464,13 @@ public class OrganizationReversionGlobal extends PersistableBusinessObjectBase i
      */
     @Override
     public List buildListOfDeletionAwareLists() {
-        List<List> managedLists = super.buildListOfDeletionAwareLists();
+    	ArrayList<Collection<PersistableBusinessObject>> managedLists = (ArrayList<Collection<PersistableBusinessObject>>) super.buildListOfDeletionAwareLists();
+    	
+    	for (Collection<PersistableBusinessObject> managedList: managedLists) {
+            managedList.add((PersistableBusinessObject) getOrganizationReversionGlobalDetails());
+            managedList.add((PersistableBusinessObject) getOrganizationReversionGlobalOrganizations());
 
-        managedLists.add(getOrganizationReversionGlobalDetails());
-        managedLists.add(getOrganizationReversionGlobalOrganizations());
+    	}
 
         return managedLists;
     }

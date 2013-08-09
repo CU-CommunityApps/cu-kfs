@@ -15,11 +15,9 @@
  */
 package com.rsmart.kuali.kfs.sec.businessobject.defaultvalue;
 
-import org.kuali.kfs.pdp.PdpConstants;
-import org.kuali.kfs.pdp.businessobject.CustomerProfile;
-import org.kuali.rice.kns.lookup.valueFinder.ValueFinder;
-import org.kuali.rice.kns.service.KNSServiceLocator;
-import org.kuali.rice.kns.service.SequenceAccessorService;
+import org.kuali.rice.krad.service.KRADServiceLocator;
+import org.kuali.rice.krad.service.SequenceAccessorService;
+import org.kuali.rice.krad.valuefinder.ValueFinder;
 
 import com.rsmart.kuali.kfs.sec.SecConstants;
 
@@ -41,7 +39,7 @@ public class NextSecurityModelIdFinder implements ValueFinder {
      * @return Long
      */
     public static Long getLongValue() {
-        SequenceAccessorService sas = KNSServiceLocator.getSequenceAccessorService();
+        SequenceAccessorService sas = KRADServiceLocator.getSequenceAccessorService();
         return sas.getNextAvailableSequenceNumber(SecConstants.SECURITY_MODEL_ID_SEQUENCE_NAME);
     }
 }

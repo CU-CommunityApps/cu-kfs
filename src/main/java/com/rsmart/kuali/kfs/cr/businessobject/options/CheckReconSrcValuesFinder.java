@@ -21,9 +21,10 @@ import java.util.List;
 
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
-import org.kuali.rice.kns.service.KeyValuesService;
-import org.kuali.rice.core.util.KeyLabelPair;
+import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.rice.krad.keyvalues.KeyValuesBase;
+import org.kuali.rice.krad.service.KeyValuesService;
 
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconSource;
 
@@ -36,12 +37,12 @@ public class CheckReconSrcValuesFinder extends KeyValuesBase {
      * 
      * @see org.kuali.core.lookup.keyvalues.KeyValuesFinder#getKeyValues()
      */
-    public List<KeyLabelPair> getKeyValues() {
+    public List<KeyValue> getKeyValues() {
         Collection<CheckReconSource> sources = SpringContext.getBean(KeyValuesService.class).findAll(CheckReconSource.class);
-        List<KeyLabelPair> srcKeyLabels = new ArrayList<KeyLabelPair>();
-        srcKeyLabels.add(new KeyLabelPair("", ""));
+        List<KeyValue> srcKeyLabels = new ArrayList<KeyValue>();
+        srcKeyLabels.add(new ConcreteKeyValue("", ""));
         for (CheckReconSource src : sources) {
-           srcKeyLabels.add( new KeyLabelPair(src.getSourceCode(), src.getSourceName()) );
+           srcKeyLabels.add( new ConcreteKeyValue(src.getSourceCode(), src.getSourceName()) );
         }
 
         return srcKeyLabels;

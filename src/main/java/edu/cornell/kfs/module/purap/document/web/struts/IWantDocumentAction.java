@@ -21,24 +21,23 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentActionBase;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
-import org.kuali.rice.core.util.KeyLabelPair;
-import org.kuali.rice.core.util.RiceConstants;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kew.util.KEWConstants;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.bo.entity.KimEntityEmploymentInformation;
-import org.kuali.rice.kim.bo.entity.dto.KimEntityInfo;
-import org.kuali.rice.kim.bo.entity.dto.KimPrincipalInfo;
-import org.kuali.rice.kim.service.IdentityManagementService;
-import org.kuali.rice.kns.bo.Note;
+import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.core.api.util.RiceConstants;
+import org.kuali.rice.kew.api.KewApiConstants;
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.principal.Principal;
+import org.kuali.rice.kim.api.services.IdentityManagementService;
 import org.kuali.rice.kns.rule.event.KualiAddLineEvent;
-import org.kuali.rice.kns.rule.event.RouteDocumentEvent;
-import org.kuali.rice.kns.service.KualiRuleService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.rules.rule.event.RouteDocumentEvent;
+import org.kuali.rice.krad.service.KualiRuleService;
+import org.kuali.rice.krad.service.SessionDocumentService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantDocUserOptions;
@@ -64,7 +63,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         IWantDocumentForm iWantForm = (IWantDocumentForm) kualiDocumentFormBase;
         IWantDocument iWantDocument = iWantForm.getIWantDocument();
 
-        if (iWantDocument.getDocumentHeader().getWorkflowDocument().stateIsSaved()) {
+        if (iWantDocument.getDocumentHeader().getWorkflowDocument().isSaved()) {
             iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.CUSTOMER_DATA_STEP);
             iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.CUSTOMER_DATA_STEP);
             
@@ -73,8 +72,8 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             }
         }
 
-        KualiWorkflowDocument workflowDoc = iWantDocument.getDocumentHeader().getWorkflowDocument();
-        GlobalVariables.getUserSession().setWorkflowDocument(workflowDoc);
+        WorkflowDocument workflowDoc = iWantDocument.getDocumentHeader().getWorkflowDocument();
+	    SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), workflowDoc);
 
     }
 
@@ -99,13 +98,13 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         }
 
         if (iWantDocument != null) {
-            if (iWantDocument.getDocumentHeader().getWorkflowDocument().stateIsSaved()) {
+            if (iWantDocument.getDocumentHeader().getWorkflowDocument().isSaved()) {
                 step = CUPurapConstants.IWantDocumentSteps.CUSTOMER_DATA_STEP;
             }
 
             iWantDocument.setStep(step);
 
-            if (KEWConstants.INITIATE_COMMAND.equalsIgnoreCase(command)) {
+            if (KewApiConstants.INITIATE_COMMAND.equalsIgnoreCase(command)) {
                 IdentityManagementService identityManagementService = SpringContext
                         .getBean(IdentityManagementService.class);
 
@@ -115,7 +114,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
                     String principalId = iWantDocument.getDocumentHeader().getWorkflowDocument()
                             .getInitiatorPrincipalId();
-                    KimPrincipalInfo initiator = identityManagementService.getPrincipal(principalId);
+                    Principal initiator = identityManagementService.getPrincipal(principalId);
                     String initiatorPrincipalID = initiator.getPrincipalId();
                     String initiatorNetID = initiator.getPrincipalName();
 
@@ -217,9 +216,9 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
                 // put workflow doc on session
 
-                KualiWorkflowDocument workflowDoc = iWantDocument.getDocumentHeader().getWorkflowDocument();
+                WorkflowDocument workflowDoc = iWantDocument.getDocumentHeader().getWorkflowDocument();
                 // KualiDocumentFormBase.populate() needs this updated in the session
-                GlobalVariables.getUserSession().setWorkflowDocument(workflowDoc);
+        	    SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), workflowDoc);
 
             }
         }
@@ -255,7 +254,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                     String cLevelOrg = ((IWantDocument) documentForm.getDocument()).getCollegeLevelOrganization();
 
                     documentForm.getDeptOrgKeyLabels().clear();
-                    documentForm.getDeptOrgKeyLabels().add(new KeyLabelPair("", "Please Select"));
+                    documentForm.getDeptOrgKeyLabels().add(new ConcreteKeyValue("", "Please Select"));
 
                     if (StringUtils.isNotEmpty(cLevelOrg)) {
 
@@ -264,8 +263,8 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
                         // Get the list of chart+org combos to forcibly exclude from the drop-down, if any.
                         String routingChart = ((IWantDocument) documentForm.getDocument()).getRoutingChart();
-                        List<String> dLevelExcludesList = getParameterService().getParameterValues(PurapConstants.PURAP_NAMESPACE,
-                        		KNSConstants.DetailTypes.DOCUMENT_DETAIL_TYPE, IWANT_DEPT_ORGS_TO_EXCLUDE_PARM);
+                        List<String> dLevelExcludesList = (List<String>) getParameterService().getParameterValuesAsString(PurapConstants.PURAP_NAMESPACE,
+                        		KRADConstants.DetailTypes.DOCUMENT_DETAIL_TYPE, IWANT_DEPT_ORGS_TO_EXCLUDE_PARM);
                         Set<String> dLevelExcludes =
                         		new HashSet<String>((dLevelExcludesList != null) ? dLevelExcludesList : Collections.<String>emptyList());
                         
@@ -275,7 +274,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                         	if (!dLevelExcludes.contains(routingChart + "=" + levelOrganization.getCode())) {
                         		documentForm.getDeptOrgKeyLabels()
                                     	.add(
-                                    			new KeyLabelPair(levelOrganization.getCode(), levelOrganization
+                                    			new ConcreteKeyValue(levelOrganization.getCode(), levelOrganization
                                     					.getCodeAndDescription()));
                         	}
                         }
@@ -323,13 +322,13 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             IdentityManagementService identityManagementService = SpringContext
                     .getBean(IdentityManagementService.class);
 
-            KimEntityInfo entityInfo = identityManagementService.getEntityInfoByPrincipalId(currentUser
+           EntityInfo entityInfo = identityManagementService.getEntityInfoByPrincipalId(currentUser
                     .getPrincipalId());
 
             if (ObjectUtils.isNotNull(entityInfo)) {
                 if (ObjectUtils.isNotNull(entityInfo.getEmploymentInformation())
                         && entityInfo.getEmploymentInformation().size() > 0) {
-                    KimEntityEmploymentInformation employmentInformation = entityInfo.getEmploymentInformation().get(0);
+                    EntityEmploymentInformation employmentInformation = entityInfo.getEmploymentInformation().get(0);
                     String primaryDepartment = employmentInformation.getPrimaryDepartmentCode();
                     primaryDeptOrg = primaryDepartment.substring(primaryDepartment.lastIndexOf("-") + 1,
                             primaryDepartment.length());
@@ -344,13 +343,13 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                 && StringUtils.isNotEmpty(((IWantDocument) documentForm.getDocument()).getCollegeLevelOrganization())) {
             String cLevelOrg = ((IWantDocument) documentForm.getDocument()).getCollegeLevelOrganization();
             documentForm.getDeptOrgKeyLabels().clear();
-            documentForm.getDeptOrgKeyLabels().add(new KeyLabelPair("", "Please Select"));
+            documentForm.getDeptOrgKeyLabels().add(new ConcreteKeyValue("", "Please Select"));
 
             List<LevelOrganization> dLevelOrgs = iWantDocumentService.getDLevelOrganizations(cLevelOrg);
 
             for (LevelOrganization levelOrganization : dLevelOrgs) {
                 documentForm.getDeptOrgKeyLabels().add(
-                        new KeyLabelPair(levelOrganization.getCode(), levelOrganization.getCodeAndDescription()));
+                        new ConcreteKeyValue(levelOrganization.getCode(), levelOrganization.getCodeAndDescription()));
 
             }
 
@@ -564,7 +563,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
      */
     protected int getSelectedLine(HttpServletRequest request) {
         int selectedLine = -1;
-        String parameterName = (String) request.getAttribute(KNSConstants.METHOD_TO_CALL_ATTRIBUTE);
+        String parameterName = (String) request.getAttribute(KRADConstants.METHOD_TO_CALL_ATTRIBUTE);
         if (StringUtils.isNotBlank(parameterName)) {
             String lineNumber = StringUtils.substringBetween(parameterName, ".line", ".");
             selectedLine = Integer.parseInt(lineNumber);
@@ -806,9 +805,9 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             document.toCopyFromGateway();
 
             kualiDocumentFormBase.setDocument(document);
-            KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-            kualiDocumentFormBase.setDocTypeName(workflowDocument.getDocumentType());
-            GlobalVariables.getUserSession().setWorkflowDocument(workflowDocument);
+            WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+            kualiDocumentFormBase.setDocTypeName(workflowDocument.getDocumentTypeName());
+    	    SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), workflowDocument);
 
             forward = mapping.findForward(RiceConstants.MAPPING_BASIC);
         }

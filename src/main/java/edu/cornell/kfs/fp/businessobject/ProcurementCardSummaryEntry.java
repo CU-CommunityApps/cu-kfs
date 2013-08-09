@@ -3,8 +3,8 @@ package edu.cornell.kfs.fp.businessobject;
 import java.sql.Date;
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 public class ProcurementCardSummaryEntry extends PersistableBusinessObjectBase {
     protected String cardHolderAccountNumber;
@@ -16,9 +16,7 @@ public class ProcurementCardSummaryEntry extends PersistableBusinessObjectBase {
     protected KualiDecimal summaryAmount;
     protected Date loadDate;
 
-	@Override
 	protected LinkedHashMap toStringMapper() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

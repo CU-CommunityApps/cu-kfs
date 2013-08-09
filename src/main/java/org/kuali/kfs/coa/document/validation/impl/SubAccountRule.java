@@ -32,7 +32,7 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase;
 import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * This class implements the business rules specific to the {@link SubAccount} Maintenance Document.
@@ -362,13 +362,14 @@ public class SubAccountRule extends MaintenanceDocumentRuleBase {
         }
 
         // existence check for ICR Account
-        if (StringUtils.isNotEmpty(a21.getIndirectCostRecoveryChartOfAccountsCode()) && StringUtils.isNotEmpty(a21.getIndirectCostRecoveryAccountNumber())) {
-            if (ObjectUtils.isNull(a21.getIndirectCostRecoveryAccount())) {
-                putFieldError("a21SubAccount.indirectCostRecoveryAccountNumber", KFSKeyConstants.ERROR_EXISTENCE, "ICR Account: " + a21.getIndirectCostRecoveryChartOfAccountsCode() + "-" + a21.getIndirectCostRecoveryAccountNumber());
-                
-                success = false;
-            }
-        }
+      //TODO UPGRADE-911
+//        if (StringUtils.isNotEmpty(a21.getIndirectCostRecoveryChartOfAccountsCode()) && StringUtils.isNotEmpty(a21.getIndirectCostRecoveryAccountNumber())) {
+//            if (ObjectUtils.isNull(a21.getIndirectCostRecoveryAccount())) {
+//                putFieldError("a21SubAccount.indirectCostRecoveryAccountNumber", KFSKeyConstants.ERROR_EXISTENCE, "ICR Account: " + a21.getIndirectCostRecoveryChartOfAccountsCode() + "-" + a21.getIndirectCostRecoveryAccountNumber());
+//                
+//                success = false;
+//            }
+//        }
 
         // The cost sharing fields must be empty if the sub-account type code is for ICR
         if (checkCgCostSharingIsEmpty() == false) {
@@ -406,11 +407,12 @@ public class SubAccountRule extends MaintenanceDocumentRuleBase {
     protected boolean checkCgIcrIsEmpty() {
         boolean success = true;
         
+        //TODO UPGRADE-911
         A21SubAccount newA21SubAccount = newSubAccount.getA21SubAccount();
         if (ObjectUtils.isNotNull(newA21SubAccount)) {
             success &= StringUtils.isEmpty(newA21SubAccount.getFinancialIcrSeriesIdentifier());
-            success &= StringUtils.isEmpty(newA21SubAccount.getIndirectCostRecoveryChartOfAccountsCode());
-            success &= StringUtils.isEmpty(newA21SubAccount.getIndirectCostRecoveryAccountNumber());
+            //success &= StringUtils.isEmpty(newA21SubAccount.getIndirectCostRecoveryChartOfAccountsCode());
+            //success &= StringUtils.isEmpty(newA21SubAccount.getIndirectCostRecoveryAccountNumber());
             success &= StringUtils.isEmpty(newA21SubAccount.getIndirectCostRecoveryTypeCode());
             // this is a boolean, so create any value if set to true, meaning a user checked the box, otherwise assume it's empty
             success &= StringUtils.isEmpty(newA21SubAccount.getOffCampusCode() ? "1" : "");

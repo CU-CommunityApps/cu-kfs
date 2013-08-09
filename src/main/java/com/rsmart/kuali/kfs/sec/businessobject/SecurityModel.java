@@ -15,19 +15,20 @@
  */
 package com.rsmart.kuali.kfs.sec.businessobject;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.rice.kns.bo.Inactivateable;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.KualiInteger;
-import org.kuali.rice.kns.util.TypedArrayList;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+
 
 /**
  * Represents the assignment of one or more definitions to one or more members (principal, group, or role). A model becomes a role in KIM
  */
-public class SecurityModel extends PersistableBusinessObjectBase implements Inactivateable {
+public class SecurityModel extends PersistableBusinessObjectBase implements MutableInactivatable {
     private KualiInteger id;
     private String name;
     private String description;
@@ -40,8 +41,8 @@ public class SecurityModel extends PersistableBusinessObjectBase implements Inac
     public SecurityModel() {
         super();
 
-        modelDefinitions = new TypedArrayList(SecurityModelDefinition.class);
-        modelMembers = new TypedArrayList(SecurityModelMember.class);
+        modelDefinitions = new ArrayList<SecurityModelDefinition>();
+        modelMembers = new ArrayList<SecurityModelMember>();
     }
 
 
@@ -187,7 +188,7 @@ public class SecurityModel extends PersistableBusinessObjectBase implements Inac
     /**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
-    @Override
+
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();
 

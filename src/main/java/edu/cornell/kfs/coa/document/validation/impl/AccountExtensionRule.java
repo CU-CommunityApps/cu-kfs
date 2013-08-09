@@ -25,13 +25,14 @@ import org.kuali.kfs.coa.document.validation.impl.AccountRule;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.kns.service.BusinessObjectService;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
 import edu.cornell.kfs.coa.businessobject.AppropriationAccount;
 import edu.cornell.kfs.coa.businessobject.MajorReportingCategory;
 import edu.cornell.kfs.coa.businessobject.SubFundProgram;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
+
 import org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory;
 
 /**
@@ -52,7 +53,8 @@ public class AccountExtensionRule extends AccountRule {
         return success;
     }
 
-    protected boolean checkLaborBenefitCategoryCode(MaintenanceDocument document) {
+    @SuppressWarnings("deprecation")
+	protected boolean checkLaborBenefitCategoryCode(MaintenanceDocument document) {
         boolean success = true;
 
         String laborBenefitCategoryCode  = ((AccountExtendedAttribute) newAccount.getExtension()).getLaborBenefitRateCategoryCode();
@@ -61,10 +63,10 @@ public class AccountExtensionRule extends AccountRule {
         // Benefit Category Code is not a required field. if no value is entered 
         // no validation is performed.
         if (!StringUtils.isBlank(laborBenefitCategoryCode)) {
-            Map fieldValues = new HashMap();
+            Map<String, Object> fieldValues = new HashMap<String, Object>();
             fieldValues.put("laborBenefitRateCategoryCode", laborBenefitCategoryCode	);
             
-            Collection<SubFundProgram> retVals = bos.findMatching(LaborBenefitRateCategory.class, fieldValues);
+            Collection<LaborBenefitRateCategory> retVals = bos.findMatching(LaborBenefitRateCategory.class, fieldValues);
             
             if (retVals.isEmpty()) {
                 success = false;

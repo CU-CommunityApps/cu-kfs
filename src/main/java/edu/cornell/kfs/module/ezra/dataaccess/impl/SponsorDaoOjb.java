@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryFactory;
-import org.kuali.rice.kns.dao.impl.PlatformAwareDaoBaseOjb;
+import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 
 import edu.cornell.kfs.module.ezra.businessobject.Sponsor;
 import edu.cornell.kfs.module.ezra.dataaccess.SponsorDao;

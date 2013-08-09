@@ -22,9 +22,9 @@ import java.util.List;
 
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.util.KeyLabelPair;
-import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
-import org.kuali.rice.kns.service.KeyValuesService;
+import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.krad.keyvalues.KeyValuesBase;
+import org.kuali.rice.krad.service.KeyValuesService;
 
 import com.rsmart.kuali.kfs.sec.SecConstants;
 import com.rsmart.kuali.kfs.sec.businessobject.SecurityAttribute;
@@ -43,7 +43,8 @@ public class SecurityAttributeFinder extends KeyValuesBase {
         Collection securityAttributes = SpringContext.getBean(KeyValuesService.class).findAllOrderBy(SecurityAttribute.class, KFSPropertyConstants.ID, true);
         for (Iterator iterator = securityAttributes.iterator(); iterator.hasNext();) {
             SecurityAttribute securityAttribute = (SecurityAttribute) iterator.next();
-            activeLabels.add(new KeyLabelPair(securityAttribute.getId(), securityAttribute.getName()));
+            //TODO UPGRADE-911
+            //activeLabels.add(new ConcreteKeyValue(securityAttribute.getId(), securityAttribute.getName()));
         }
 
         return activeLabels;

@@ -33,23 +33,23 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.bo.entity.KimEntityAffiliation;
-import org.kuali.rice.kim.bo.impl.PersonImpl;
-import org.kuali.rice.kim.service.KIMServiceLocator;
-import org.kuali.rice.kim.util.KIMPropertyConstants;
-import org.kuali.rice.kns.bo.BusinessObject;
-import org.kuali.rice.kns.exception.ValidationException;
-import org.kuali.rice.kns.lookup.CollectionIncomplete;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.affiliation.EntityAffiliation;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.rice.kim.impl.KIMPropertyConstants;
 import org.kuali.rice.kns.lookup.KualiLookupableHelperServiceImpl;
 import org.kuali.rice.kns.lookup.Lookupable;
-import org.kuali.rice.kns.util.BeanPropertyComparator;
-import org.kuali.rice.kns.util.ErrorMessage;
-import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kns.util.KNSGlobalVariables;
 import org.kuali.rice.kns.util.MessageList;
-import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.web.struts.form.LookupForm;
 import org.kuali.rice.kns.web.ui.ResultRow;
+import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.rice.krad.exception.ValidationException;
+import org.kuali.rice.krad.lookup.CollectionIncomplete;
+import org.kuali.rice.krad.util.BeanPropertyComparator;
+import org.kuali.rice.krad.util.ErrorMessage;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
@@ -77,7 +77,7 @@ public class DisbursementPayeeLookupableHelperServiceImpl extends KualiLookupabl
 
         this.filterReturnUrl((List<ResultRow>) resultTable, displayList, paymentReasonCode);
 
-        MessageList messageList = GlobalVariables.getMessageList();
+        MessageList messageList = KNSGlobalVariables.getMessageList();
         disbursementVoucherPaymentReasonService.postPaymentReasonCodeUsage(paymentReasonCode, messageList);
 
         return displayList;
@@ -226,7 +226,7 @@ public class DisbursementPayeeLookupableHelperServiceImpl extends KualiLookupabl
         vendorLookupable.setBusinessObjectClass(VendorDetail.class);
         vendorLookupable.validateSearchParameters(fieldsForLookup);
 
-        List<BusinessObject> vendorList = vendorLookupable.getSearchResults(fieldsForLookup);
+        List<BusinessObject> vendorList = (List<BusinessObject>) vendorLookupable.getSearchResults(fieldsForLookup);
         for (BusinessObject vendor : vendorList) {
             VendorDetail vendorDetail = (VendorDetail) vendor;
             DisbursementPayee payee = getPayeeFromVendor(vendorDetail, fieldValues);
@@ -283,23 +283,24 @@ public class DisbursementPayeeLookupableHelperServiceImpl extends KualiLookupabl
         
         Map<String, String> fieldsForLookup = this.getPersonFieldValues(fieldValues); 
         
-        List<? extends Person> persons = KIMServiceLocator.getPersonService().findPeople(fieldsForLookup);   
+        List<? extends Person> persons = KimApiServiceLocator.getPersonService().findPeople(fieldsForLookup);   
 
-        MessageList messageList = GlobalVariables.getMessageList();
+        MessageList messageList = KNSGlobalVariables.getMessageList();
         boolean warningExists = false;
+        
         for (Person personDetail : persons) {   
-	        for(KimEntityAffiliation entityAffiliation : ((PersonImpl)personDetail).getAffiliations()) {
-	        	if(entityAffiliation.isDefault()) {
-	        		if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {
+	        for(EntityAffiliation entityAffiliation : KimApiServiceLocator.getIdentityService().getEntity(personDetail.getEntityId()).getAffiliations()) {
+	        	if(entityAffiliation.isDefaultValue()) {
+	        		if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {
 	            		DisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues, DisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT);
 	            		payeeList.add(payee);
 	        		}
-	        		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.ALUMNI)) {
+	        		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.ALUMNI)) {
 	        			DisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues, DisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI);
 	            		payeeList.add(payee);
 	        		}
-	        		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.FACULTY) ||
-	        				StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationTypeCode(), DisbursementVoucherConstants.PayeeAffiliations.STAFF)) {
+	        		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.FACULTY) ||
+	        				StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.STAFF)) {
 	        			if (ObjectUtils.isNotNull(personDetail.getEmployeeStatusCode()) && 
 	        	    			(personDetail.getEmployeeStatusCode().equals(ACTIVE)) || personDetail.getEmployeeStatusCode().equals(RETIRED)) {
 		        			DisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues, DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE);
@@ -365,7 +366,7 @@ public class DisbursementPayeeLookupableHelperServiceImpl extends KualiLookupabl
 
     // remove its return URLs if a row is not qualified for returning
     protected void filterReturnUrl(List<ResultRow> resultRowList, List<DisbursementPayee> payeeList, String paymentReasonCode) {
-        List<String> payeeTypeCodes = disbursementVoucherPaymentReasonService.getPayeeTypesByPaymentReason(paymentReasonCode);
+        List<String> payeeTypeCodes = (List<String>) disbursementVoucherPaymentReasonService.getPayeeTypesByPaymentReason(paymentReasonCode);
         if (payeeTypeCodes == null || payeeTypeCodes.isEmpty()) {
             return;
         }

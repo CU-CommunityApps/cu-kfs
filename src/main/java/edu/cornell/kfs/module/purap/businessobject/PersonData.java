@@ -2,19 +2,20 @@ package edu.cornell.kfs.module.purap.businessobject;
 
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 public class PersonData extends PersistableBusinessObjectBase {
-    private String netID;
+
+	private static final long serialVersionUID = 1L;
+	private String netID;
     private String personName;
     private String emailAddress;
     private String phoneNumber;
     private String campusAddress;
     
 
-    @Override
-    protected LinkedHashMap toStringMapper() {
-        // TODO Auto-generated method stub
+    @SuppressWarnings("rawtypes")
+	protected LinkedHashMap toStringMapper() {
         return null;
     }
 

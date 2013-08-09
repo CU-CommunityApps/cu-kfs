@@ -9,24 +9,28 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.kuali.rice.kns.bo.BusinessObject;
-import org.kuali.rice.kns.bo.PersistableBusinessObject;
 import org.kuali.rice.kns.lookup.HtmlData;
 import org.kuali.rice.kns.lookup.KualiLookupableHelperServiceImpl;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
 import edu.cornell.kfs.sys.service.UserProcurementProfileValidationService;
 
+@SuppressWarnings("deprecation")
 public class UserProcurementProfileLookupableHelperServiceImpl extends KualiLookupableHelperServiceImpl {
+
+	private static final long serialVersionUID = 1L;
 	private UserProcurementProfileValidationService userProcurementProfileValidationService;
+
 	@Override
 	public List<? extends BusinessObject> getSearchResults(
 			Map<String, String> fieldValues) {
         List<PersistableBusinessObject> searchResults = (List<PersistableBusinessObject>)super.getSearchResults(fieldValues);
-        Map<String, Object> newFieldValues = new HashMap<String, Object>();
+        Map<String, String> newFieldValues = new HashMap<String, String>();
         boolean hasAccountcriteria = false;
         for (String key : fieldValues.keySet()) {
         	if (key.startsWith("favoriteAccounts.")) {
@@ -66,7 +70,7 @@ public class UserProcurementProfileLookupableHelperServiceImpl extends KualiLook
 		
 	}
 	
-	private List<PersistableBusinessObject> getSearchResultsWithAcctCriteria(List<PersistableBusinessObject> searchResults,Map<String, Object> newFieldValues) {
+	private List<PersistableBusinessObject> getSearchResultsWithAcctCriteria(List<PersistableBusinessObject> searchResults,Map<String, String> newFieldValues) {
     	List<PersistableBusinessObject> returnResults = new ArrayList<PersistableBusinessObject>();
    	    for (String profileId : getSelectedUsers(searchResults)) {
    	    	newFieldValues.put("userProfileId", profileId);
@@ -114,7 +118,6 @@ public class UserProcurementProfileLookupableHelperServiceImpl extends KualiLook
 	@Override
 	public List<HtmlData> getCustomActionUrls(BusinessObject businessObject,
 			List pkNames) {
-		// TODO Auto-generated method stub
 		List<HtmlData> actions = super.getCustomActionUrls(businessObject, pkNames);
 		if (!userProcurementProfileValidationService.canMaintainUserProcurementProfile()) {
 			if (((UserProcurementProfile)businessObject).getPrincipalId().equals(GlobalVariables.getUserSession().getPrincipalId())) {

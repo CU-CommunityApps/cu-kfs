@@ -20,7 +20,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.kns.service.KualiConfigurationService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.sys.mail.KFSMailMessage;
 import edu.cornell.kfs.sys.mail.service.KFSMailMessageService;
@@ -40,7 +40,7 @@ public class KFSMailMessageServiceImpl implements KFSMailMessageService {
 	 
 	 private String EMAIL_ADDRESS_DELIMITER = KFSConstants.SEMICOLON;
 	 
-	 private KualiConfigurationService kualiConfigurationService;
+	 private ConfigurationService kualiConfigurationService;
 
 	 /**
 	 * This method will use the data in the input parameter to create a MimeMessage with
@@ -53,7 +53,7 @@ public class KFSMailMessageServiceImpl implements KFSMailMessageService {
 	public void send(KFSMailMessage messageData) {
 		LOG.debug("KFSMailMessageServiceImpl.send() starting");		
 						
-		String host = kualiConfigurationService.getPropertyString("mail.smtp.host");		
+		String host = kualiConfigurationService.getPropertyValueAsString("mail.smtp.host");		
 		Properties properties = System.getProperties();		 
 		properties.setProperty("mail.smtp.host", host);		 
 		Session session = Session.getInstance(properties);
@@ -145,7 +145,7 @@ public class KFSMailMessageServiceImpl implements KFSMailMessageService {
      * 
      * @param parameterService The parameterService to set.
      */
-    public void setKualiConfigurationService(KualiConfigurationService kualiConfigurationService) {
+    public void setKualiConfigurationService(ConfigurationService kualiConfigurationService) {
         this.kualiConfigurationService = kualiConfigurationService;
     }
       

@@ -4,4 +4,6 @@ import org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocume
 
 public class UserProcurementProfilePresentationController extends FinancialSystemMaintenanceDocumentPresentationControllerBase {
 
+	private static final long serialVersionUID = 1L;
+
 }

@@ -59,14 +59,14 @@ import org.kuali.kfs.sys.batch.service.SchedulerService;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.service.PersonService;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KualiInteger;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -85,7 +85,7 @@ public class FormatServiceImpl implements FormatService {
     private PaymentGroupService paymentGroupService;
     private DateTimeService dateTimeService;
     private ExtractPaymentService extractPaymentService;
-    private PersonService<Person> personService;
+    private PersonService personService;
 
     /**
      * Constructs a FormatServiceImpl.java.
@@ -193,7 +193,7 @@ public class FormatServiceImpl implements FormatService {
      * @return the maximum number of lines in a note
      */
     protected int getMaxNoteLines() {
-        String maxLines = parameterService.getParameterValue(KfsParameterConstants.PRE_DISBURSEMENT_ALL.class, PdpParameterConstants.MAX_NOTE_LINES);
+        String maxLines = parameterService.getParameterValueAsString(KfsParameterConstants.PRE_DISBURSEMENT_ALL.class, PdpParameterConstants.MAX_NOTE_LINES);
         if (StringUtils.isBlank(maxLines)) {
             throw new RuntimeException("System parameter for max note lines is blank");
         }
@@ -738,7 +738,7 @@ public class FormatServiceImpl implements FormatService {
     /**
      * @return Returns the personService.
      */
-    protected PersonService<Person> getPersonService() {
+    protected PersonService getPersonService() {
         if(personService==null) {
             personService = SpringContext.getBean(PersonService.class);
         }
@@ -793,5 +793,7 @@ public class FormatServiceImpl implements FormatService {
     protected BusinessObjectService getBusinessObjectService() {
        return businessObjectService;
     }
+
+	
     
 }

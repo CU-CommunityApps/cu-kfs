@@ -1,7 +1,6 @@
 package edu.cornell.kfs.vnd.businessobject;
 
-
-import org.kuali.rice.kns.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
 
 public class VendorDetailExtension extends PersistableBusinessObjectExtensionBase {
 	private static final long serialVersionUID = 2L;

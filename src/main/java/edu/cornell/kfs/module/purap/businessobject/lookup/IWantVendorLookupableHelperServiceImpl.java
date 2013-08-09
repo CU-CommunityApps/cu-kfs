@@ -6,11 +6,13 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.lookup.VendorLookupableHelperServiceImpl;
-import org.kuali.rice.kns.bo.BusinessObject;
+import org.kuali.rice.krad.bo.BusinessObject;
 
 public class IWantVendorLookupableHelperServiceImpl extends VendorLookupableHelperServiceImpl {
     
-    /**
+	private static final long serialVersionUID = 1L;
+
+	/**
      * Customized search so that it adds * before and after the vendor name entered by the user
      * 
      * @see org.kuali.kfs.vnd.businessobject.lookup.VendorLookupableHelperServiceImpl#getSearchResults(java.util.Map)

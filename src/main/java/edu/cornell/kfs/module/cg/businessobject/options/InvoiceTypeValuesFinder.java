@@ -20,11 +20,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.util.KeyLabelPair;
-import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
-import org.kuali.rice.kns.service.KeyValuesService;
+import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.rice.krad.keyvalues.KeyValuesBase;
+import org.kuali.rice.krad.service.KeyValuesService;
 
 import edu.cornell.kfs.module.cg.businessobject.InvoiceType;
 
@@ -34,14 +34,16 @@ import edu.cornell.kfs.module.cg.businessobject.InvoiceType;
  */
 public class InvoiceTypeValuesFinder extends KeyValuesBase {
 
-  public List getKeyValues() {
+private static final long serialVersionUID = 1L;
+
+public List<KeyValue> getKeyValues() {
 	  KeyValuesService boService = SpringContext.getBean(KeyValuesService.class);
-      Collection invoiceTypeCodes = boService.findAll(InvoiceType.class);
-      List invoiceTypeKeyLabels = new ArrayList();
-      for (Iterator iter = invoiceTypeCodes.iterator(); iter.hasNext();) {
+      Collection<InvoiceType> invoiceTypeCodes = boService.findAll(InvoiceType.class);
+      List<KeyValue> invoiceTypeKeyLabels = new ArrayList<KeyValue>();
+      for (Iterator<InvoiceType> iter = invoiceTypeCodes.iterator(); iter.hasNext();) {
           InvoiceType element = (InvoiceType) iter.next();
           if (element.isActive()) { // only show active invoice types
-        	  invoiceTypeKeyLabels.add(new KeyLabelPair(element.getInvoiceTypeCode(), element.getInvoiceTypeCode()));
+        	  invoiceTypeKeyLabels.add(new ConcreteKeyValue(element.getInvoiceTypeCode(), element.getInvoiceTypeCode()));
           }
       }
 

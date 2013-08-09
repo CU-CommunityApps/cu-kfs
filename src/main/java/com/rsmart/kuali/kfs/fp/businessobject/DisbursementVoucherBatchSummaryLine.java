@@ -17,7 +17,7 @@ package com.rsmart.kuali.kfs.fp.businessobject;
 
 import java.sql.Date;
 
-import org.kuali.rice.kns.util.KualiDecimal;
+
 
 /**
  * Holds information to produce audit report summary line

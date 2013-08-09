@@ -4,10 +4,18 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.kuali.rice.kns.mail.InvalidAddressException;
-import org.kuali.rice.kns.mail.MailMessage;
-import org.kuali.rice.kns.service.MailService;
-import org.kuali.rice.kns.service.ParameterService;
+
+
+
+
+
+
+import javax.mail.MessagingException;
+
+import org.kuali.rice.core.api.mail.MailMessage;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.exception.InvalidAddressException;
+import org.kuali.rice.krad.service.MailService;
 
 import edu.cornell.kfs.fp.batch.service.ProcurementCardErrorEmailService;
 
@@ -31,12 +39,14 @@ public class ProcurementCardErrorEmailServiceImpl implements ProcurementCardErro
         }
         catch (InvalidAddressException e) {
             LOG.error("sendErrorEmail() Invalid email address.  Message not sent", e);
-        }
+        } catch (MessagingException e) {
+            LOG.error("sendErrorEmail() unable to send msessage.  Message not sent", e);
+		}
 	}
 	
 	private Set<String> getToAddresses() {
 		Set<String> addresses = new HashSet<String>();
-		addresses.add(parameterService.getParameterValue("KFS-FP", "ProcurementCard", "PCARD_UPLOAD_ERROR_EMAIL_ADDR"));
+		addresses.add(parameterService.getParameterValueAsString("KFS-FP", "ProcurementCard", "PCARD_UPLOAD_ERROR_EMAIL_ADDR"));
 		return addresses;
 	}
 

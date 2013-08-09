@@ -19,8 +19,8 @@ import java.util.HashMap;
 
 import org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectExtensionBase;
-import org.kuali.rice.kns.service.BusinessObjectService;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency;
 import edu.cornell.kfs.module.cg.businessobject.InvoiceType;

@@ -2,11 +2,12 @@ package edu.cornell.kfs.module.bc.businessobject;
 
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 import edu.cornell.kfs.module.bc.CUBCConstants;
 
+@SuppressWarnings("serial")
 public class PSJobCode extends PersistableBusinessObjectBase {
     protected String jobCode;
     protected String jobCodeDesc;
@@ -19,9 +20,8 @@ public class PSJobCode extends PersistableBusinessObjectBase {
     protected String jobFunctionDesc;
     protected CUBCConstants.PSEntryStatus status;
 
-    @Override
-    protected LinkedHashMap toStringMapper() {
-        // TODO Auto-generated method stub
+    @SuppressWarnings("rawtypes")
+	protected LinkedHashMap toStringMapper() {
         return null;
     }
 

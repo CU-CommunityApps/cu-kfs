@@ -21,9 +21,10 @@ import java.util.LinkedHashMap;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.Organization;
-import org.kuali.rice.kns.bo.Inactivateable;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.util.ObjectUtils;
+
 
 /**
  * Customer numbers that may have been assigned by the Vendor to various <code>Chart</code> and/or <code>Org</code>.
@@ -31,7 +32,7 @@ import org.kuali.rice.kns.util.ObjectUtils;
  * @see org.kuali.kfs.coa.businessobject.Chart
  * @see org.kuali.kfs.coa.businessobject.Org
  */
-public class VendorCustomerNumber extends PersistableBusinessObjectBase implements VendorRoutingComparable, Inactivateable {
+public class VendorCustomerNumber extends PersistableBusinessObjectBase implements VendorRoutingComparable, MutableInactivatable {
 
     private Integer vendorCustomerNumberGeneratedIdentifier;
     private Integer vendorHeaderGeneratedIdentifier;

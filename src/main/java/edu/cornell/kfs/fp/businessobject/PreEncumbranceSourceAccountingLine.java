@@ -1,9 +1,11 @@
 package edu.cornell.kfs.fp.businessobject;
 import java.sql.Date;
 import java.util.Map;
+
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.rice.kns.util.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+
 import edu.cornell.kfs.sys.CUKFSConstants.PreEncumbranceSourceAccountingLineConstants;
 public class PreEncumbranceSourceAccountingLine extends SourceAccountingLine implements PreEncumbranceAccountingLine {  
         

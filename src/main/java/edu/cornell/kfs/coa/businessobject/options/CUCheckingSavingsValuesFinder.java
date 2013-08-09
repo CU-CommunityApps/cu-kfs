@@ -18,12 +18,14 @@ package edu.cornell.kfs.coa.businessobject.options;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
-import org.kuali.rice.core.util.KeyLabelPair;
+import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.rice.krad.keyvalues.KeyValuesBase;
 
 /**
  * This class returns list containg 22 = Checking or 32 = Savings
  */
+@SuppressWarnings("serial")
 public class CUCheckingSavingsValuesFinder extends KeyValuesBase {
 
     /**
@@ -31,12 +33,12 @@ public class CUCheckingSavingsValuesFinder extends KeyValuesBase {
      * 
      * @see org.kuali.rice.kns.lookup.keyvalues.KeyValuesFinder#getKeyValues()
      */
-    public List getKeyValues() {
-        List keyValues = new ArrayList();
-        keyValues.add(new KeyLabelPair("22PPD", "Personal Checking (22PPD)"));
-        keyValues.add(new KeyLabelPair("32PPD", "Personal Savings (32PPD)"));
-        keyValues.add(new KeyLabelPair("22CTX", "Corporate Checking (22CTX)"));
-        keyValues.add(new KeyLabelPair("32CTX", "Corporate Savings (32CTX)"));
+    public List<KeyValue> getKeyValues() {
+        List<KeyValue> keyValues = new ArrayList<KeyValue>();
+        keyValues.add(new ConcreteKeyValue("22PPD", "Personal Checking (22PPD)"));
+        keyValues.add(new ConcreteKeyValue("32PPD", "Personal Savings (32PPD)"));
+        keyValues.add(new ConcreteKeyValue("22CTX", "Corporate Checking (22CTX)"));
+        keyValues.add(new ConcreteKeyValue("32CTX", "Corporate Savings (32CTX)"));
         return keyValues;
     }
 

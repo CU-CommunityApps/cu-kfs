@@ -138,6 +138,7 @@
 		<property name="procurementCardInputFileType">
 		    <ref bean="procurementCardFlatInputFileType" />
 		</property>
+		<property name="reportWriterService" ref="procurementCardLoadReportWriterService"/>
 	</bean>	
 
 	<bean id="procurementCardSummaryFeedStep" class="edu.cornell.kfs.fp.batch.ProcurementCardSummaryFeedStep" parent="step">

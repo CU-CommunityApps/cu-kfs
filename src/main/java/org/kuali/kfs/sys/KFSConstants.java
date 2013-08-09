@@ -21,16 +21,17 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.util.JSTLConstants;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.KualiInteger;
+import org.kuali.rice.krad.util.KRADConstants;
+
 
 /**
  * This class is used to define global constants.
  */
-public class KFSConstants extends JSTLConstants implements ParameterKeyConstants {
+public class KFSConstants {
     private static final long serialVersionUID = 2882277719647128949L;
 
     public static final String APPLICATION_NAMESPACE_CODE = "KFS";    
@@ -43,7 +44,7 @@ public class KFSConstants extends JSTLConstants implements ParameterKeyConstants
         public static final String VENDOR = "KFS-VND";
         public static final String PDP = "KFS-PDP";
         public static final String ENDOWMENT = "KFS-ENDOW";
-        public static final String KNS = KNSConstants.KNS_NAMESPACE;
+        public static final String KNS = KRADConstants.KNS_NAMESPACE;
         public static final String PURCHASING = "KFS-PURAP";
     }
     

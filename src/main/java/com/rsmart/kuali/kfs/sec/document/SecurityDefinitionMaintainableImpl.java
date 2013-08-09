@@ -24,18 +24,13 @@ import org.kuali.kfs.module.ld.LaborConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kim.bo.role.dto.KimPermissionInfo;
-import org.kuali.rice.kim.bo.role.dto.KimRoleInfo;
-import org.kuali.rice.kim.bo.types.dto.AttributeSet;
-import org.kuali.rice.kim.service.IdentityManagementService;
-import org.kuali.rice.kim.service.PermissionService;
-import org.kuali.rice.kim.service.PermissionUpdateService;
-import org.kuali.rice.kim.service.impl.RoleManagementServiceImpl;
-import org.kuali.rice.kns.bo.DocumentHeader;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.permission.PermissionService;
+import org.kuali.rice.kim.api.services.IdentityManagementService;
 import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.util.KNSConstants;
+import org.kuali.rice.krad.bo.DocumentHeader;
+import org.kuali.rice.krad.service.DocumentService;
 
 import com.rsmart.kuali.kfs.sec.SecConstants;
 import com.rsmart.kuali.kfs.sec.businessobject.SecurityDefinition;
@@ -65,7 +60,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
     public void doRouteStatusChange(DocumentHeader documentHeader) {
         super.doRouteStatusChange(documentHeader);
 
-        if (documentHeader.getWorkflowDocument().stateIsProcessed()) {
+      /*  if (documentHeader.getWorkflowDocument().stateIsProcessed()) {
             DocumentService documentService = SpringContext.getBean(DocumentService.class);
             try {
                 MaintenanceDocument document = (MaintenanceDocument) documentService.getByDocumentHeaderId(documentHeader.getDocumentNumber());
@@ -89,7 +84,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
                 LOG.error("caught exception while handling handleRouteStatusChange -> documentService.getByDocumentHeaderId(" + documentHeader.getDocumentNumber() + "). ", e);
                 throw new RuntimeException("caught exception while handling handleRouteStatusChange -> documentService.getByDocumentHeaderId(" + documentHeader.getDocumentNumber() + "). ", e);
             }
-        }
+        }*/
     }
 
     /**
@@ -100,7 +95,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
      * @param newSecurityDefinition SecurityDefinition after updates
      */
     protected void createOrUpdateDefinitionRole(SecurityDefinition oldSecurityDefinition, SecurityDefinition newSecurityDefinition) {
-        RoleManagementServiceImpl roleService = SpringContext.getBean(RoleManagementServiceImpl.class);
+      /*  RoleManagementServiceImpl roleService = SpringContext.getBean(RoleManagementServiceImpl.class);
         PermissionService permissionService = SpringContext.getBean(PermissionService.class);
         
         String roleId = oldSecurityDefinition.getRoleId();
@@ -125,7 +120,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
             if (!permissionRoleIds.contains(roleId)) {
                 roleService.assignPermissionToRole(kimPermissionInfo.getPermissionId(), roleId);
             }
-        }
+        }*/
     }
 
     /**
@@ -139,7 +134,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
         for (SecurityDefinitionDocumentType definitionDocumentType : newSecurityDefinition.getDefinitionDocumentTypes()) {
             String documentType = definitionDocumentType.getFinancialSystemDocumentTypeCode();
             boolean documentTypePermissionActive = newSecurityDefinition.isActive() && definitionDocumentType.isActive();
-            boolean isNewDocumentType = newMaintenanceAction || !isDocumentTypeInDefinition(documentType, oldSecurityDefinition);
+            boolean isNewDocumentType = newMaintenanceAction /*|| !isDocumentTypeInDefinition(documentType, oldSecurityDefinition)*/;
 
             if (isNewDocumentType) {
                 createNewDocumentTypePermissions(documentType, documentTypePermissionActive, newSecurityDefinition);
@@ -160,7 +155,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
      * @param newMaintenanceAction Indicates whether this is a new maintenance record (old side in empty)
      */
     protected void createOrUpdateLookupPermission(SecurityDefinition oldSecurityDefinition, SecurityDefinition newSecurityDefinition, boolean newMaintenanceAction) {
-        AttributeSet permissionDetails = populateLookupPermissionDetails(newSecurityDefinition);
+        /*AttributeSet permissionDetails = populateLookupPermissionDetails(newSecurityDefinition);
 
         String permissionId = "";
         if (!newMaintenanceAction) {
@@ -175,7 +170,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
         // need to save lookup permission if new side indicator is true or already has a permission in which case we need to update details and active indicator
         if (newSecurityDefinition.isRestrictLookup() || StringUtils.isNotBlank(permissionId)) {
             savePermission(newSecurityDefinition, permissionId, SecConstants.SecurityTemplateIds.LOOKUP_FIELD_VALUE, newSecurityDefinition.isActive() && newSecurityDefinition.isRestrictLookup(), permissionDetails);
-        }
+        }*/
     }
 
     /**
@@ -189,7 +184,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
      * @param newMaintenanceAction Indicates whether this is a new maintenance record (old side in empty)
      */
     protected void createOrUpdateInquiryPermissions(SecurityDefinition oldSecurityDefinition, SecurityDefinition newSecurityDefinition, boolean newMaintenanceAction) {
-        String glPermissionId = "";
+        /*String glPermissionId = "";
         String ldPermissionId = "";
         if (!newMaintenanceAction) {
             // find old inquiry permissions
@@ -217,7 +212,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
         if (newSecurityDefinition.isRestrictLaborInquiry() || StringUtils.isNotBlank(ldPermissionId)) {
             AttributeSet permissionDetails = populateInquiryPermissionDetails(LaborConstants.LABOR_MODULE_CODE, newSecurityDefinition);
             savePermission(newSecurityDefinition, ldPermissionId, SecConstants.SecurityTemplateIds.INQUIRY_FIELD_VALUE, newSecurityDefinition.isActive() && newSecurityDefinition.isRestrictLaborInquiry(), permissionDetails);
-        }
+        }*/
     }
 
     /**
@@ -228,7 +223,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
      * @param newSecurityDefinition SecurityDefintion which contains values for the permissions
      */
     protected void createNewDocumentTypePermissions(String documentType, boolean active, SecurityDefinition newSecurityDefinition) {
-        AttributeSet permissionDetails = populateDocumentTypePermissionDetails(documentType, newSecurityDefinition);
+       /* AttributeSet permissionDetails = populateDocumentTypePermissionDetails(documentType, newSecurityDefinition);
 
         if (newSecurityDefinition.isRestrictViewDocument()) {
             savePermission(newSecurityDefinition, "", SecConstants.SecurityTemplateIds.VIEW_DOCUMENT_FIELD_VALUE, active, permissionDetails);
@@ -248,7 +243,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
 
         if (newSecurityDefinition.isRestrictEditDocument()) {
             savePermission(newSecurityDefinition, "", SecConstants.SecurityTemplateIds.EDIT_DOCUMENT_FIELD_VALUE, active, permissionDetails);
-        }
+        }*/
     }
 
     /**
@@ -260,7 +255,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
      * @param newSecurityDefinition SecurityDefinition record with requested changes (new side of maintenance document)
      */
     protected void createOrUpdateDocumentTypePermissions(String documentType, boolean active, SecurityDefinition oldSecurityDefinition, SecurityDefinition newSecurityDefinition) {
-        // view document
+      /*  // view document
         createOrUpdateDocumentTypePermission(documentType, active && newSecurityDefinition.isRestrictViewDocument(), oldSecurityDefinition, newSecurityDefinition, SecConstants.SecurityTemplateIds.VIEW_DOCUMENT_FIELD_VALUE);
 
         // view accounting line
@@ -274,6 +269,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
 
         // edit document
         createOrUpdateDocumentTypePermission(documentType, active && newSecurityDefinition.isRestrictEditDocument(), oldSecurityDefinition, newSecurityDefinition, SecConstants.SecurityTemplateIds.EDIT_DOCUMENT_FIELD_VALUE);
+      */
     }
 
     /**
@@ -288,7 +284,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
      * @param templateId KIM template id for the permission record that is should be created or updated
      */
     protected void createOrUpdateDocumentTypePermission(String documentType, boolean active, SecurityDefinition oldSecurityDefinition, SecurityDefinition newSecurityDefinition, String templateId) {
-        AttributeSet permissionDetails = populateDocumentTypePermissionDetails(documentType, newSecurityDefinition);
+        /*AttributeSet permissionDetails = populateDocumentTypePermissionDetails(documentType, newSecurityDefinition);
 
         KimPermissionInfo oldPermission = findDocumentPermission(oldSecurityDefinition, templateId, documentType);
         String permissionId = "";
@@ -296,7 +292,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
             permissionId = oldPermission.getPermissionId();
         }
 
-        savePermission(newSecurityDefinition, permissionId, templateId, active, permissionDetails);
+        savePermission(newSecurityDefinition, permissionId, templateId, active, permissionDetails);*/
     }
 
     /**
@@ -306,13 +302,13 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
      * @param securityDefinition SecurityDefiniton record
      * @return AttributeSet populated with document type name, property name, operator, and property value details
      */
-    protected AttributeSet populateDocumentTypePermissionDetails(String documentType, SecurityDefinition securityDefinition) {
+    /*protected AttributeSet populateDocumentTypePermissionDetails(String documentType, SecurityDefinition securityDefinition) {
         AttributeSet permissionDetails = new AttributeSet();
         permissionDetails.put(SecKimAttributes.DOCUMENT_TYPE_NAME, documentType);
         permissionDetails.put(SecKimAttributes.PROPERTY_NAME, securityDefinition.getSecurityAttribute().getName());
 
         return permissionDetails;
-    }
+    }*/
 
     /**
      * Builds an AttributeSet populated from the given method parameters. Details are set based on the KIM 'Security Lookup Permission' type.
@@ -320,12 +316,12 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
      * @param securityDefinition SecurityDefiniton record
      * @return AttributeSet populated with property name, operator, and property value details
      */
-    protected AttributeSet populateLookupPermissionDetails(SecurityDefinition securityDefinition) {
+    /*protected AttributeSet populateLookupPermissionDetails(SecurityDefinition securityDefinition) {
         AttributeSet permissionDetails = new AttributeSet();
         permissionDetails.put(SecKimAttributes.PROPERTY_NAME, securityDefinition.getSecurityAttribute().getName());
 
         return permissionDetails;
-    }
+    }*/
 
     /**
      * Builds an AttributeSet populated from the given method parameters. Details are set based on the KIM 'Security Inquiry Permission' type.
@@ -334,13 +330,13 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
      * @param securityDefinition SecurityDefiniton record
      * @return AttributeSet populated with namespace, property name, operator, and property value details
      */
-    protected AttributeSet populateInquiryPermissionDetails(String namespaceCode, SecurityDefinition securityDefinition) {
+    /*protected AttributeSet populateInquiryPermissionDetails(String namespaceCode, SecurityDefinition securityDefinition) {
         AttributeSet permissionDetails = new AttributeSet();
         permissionDetails.put(SecKimAttributes.NAMESPACE_CODE, namespaceCode);
         permissionDetails.put(SecKimAttributes.PROPERTY_NAME, securityDefinition.getSecurityAttribute().getName());
 
         return permissionDetails;
-    }
+    }*/
 
     /**
      * Calls helper method to find all permissions for the given template ID and security defintion name (permission name). Iterates through the results to find the permission with
@@ -351,7 +347,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
      * @param documentType KEW document type name for permission detail
      * @return KimPermissionInfo provides information on the matching permission
      */
-    protected KimPermissionInfo findDocumentPermission(SecurityDefinition securityDefinition, String templateId, String documentType) {
+    /*protected KimPermissionInfo findDocumentPermission(SecurityDefinition securityDefinition, String templateId, String documentType) {
         // get all the permissions for the definition record and template
         List<KimPermissionInfo> permissions = findSecurityPermissionsByNameAndTemplate(securityDefinition.getName(), templateId);
 
@@ -366,7 +362,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
         }
 
         return foundPermission;
-    }
+    }*/
 
     /**
      * Calls permission service to find all permissions for the given name. Iterates through results and finds ones that match given template ID as well
@@ -376,7 +372,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
      * @return List<KimPermissionInfo> List of matching permissions
      * @see org.kuali.rice.kim.service.PermissionService#getPermissionsByName()
      */
-    protected List<KimPermissionInfo> findSecurityPermissionsByNameAndTemplate(String permissionName, String templateId) {
+    /*protected List<KimPermissionInfo> findSecurityPermissionsByNameAndTemplate(String permissionName, String templateId) {
         PermissionService permissionService = SpringContext.getBean(PermissionService.class);
 
         // get all the permissions for the given name
@@ -390,7 +386,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
         }
 
         return templatePermissions;
-    }
+    }*/
 
     /**
      * Determines whether a given document type name is included in the document type list for the given security definition
@@ -399,7 +395,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
      * @param oldSecurityDefinition SecurityDefinition record
      * @return boolean indicating whether the document type is associated with the given security definition
      */
-    protected boolean isDocumentTypeInDefinition(String documentType, SecurityDefinition oldSecurityDefinition) {
+    /*protected boolean isDocumentTypeInDefinition(String documentType, SecurityDefinition oldSecurityDefinition) {
         for (SecurityDefinitionDocumentType definitionDocumentType : oldSecurityDefinition.getDefinitionDocumentTypes()) {
             String oldDocumentType = definitionDocumentType.getFinancialSystemDocumentTypeCode();
             if (StringUtils.equalsIgnoreCase(documentType, oldDocumentType)) {
@@ -408,7 +404,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
         }
 
         return false;
-    }
+    }*/
 
     /**
      * Calls PermissionUpdateService to save a permission.
@@ -420,7 +416,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
      * @param permissionDetails AttributeSet representing the permission details
      * @see org.kuali.rice.kim.service.PermissionUpdateService#savePermission()
      */
-    protected void savePermission(SecurityDefinition securityDefinition, String permissionId, String permissionTemplateId, boolean active, AttributeSet permissionDetails) {
+    /*protected void savePermission(SecurityDefinition securityDefinition, String permissionId, String permissionTemplateId, boolean active, AttributeSet permissionDetails) {
         LOG.info(String.format("saving permission with id: %s, template ID: %s, name: %s, active: %s", permissionId, permissionTemplateId, securityDefinition.getName(), active));
 
         PermissionUpdateService permissionUpdateService = SpringContext.getBean(PermissionUpdateService.class);
@@ -430,7 +426,7 @@ public class SecurityDefinitionMaintainableImpl extends FinancialSystemMaintaina
         }
 
         permissionUpdateService.savePermission(permissionId, permissionTemplateId, SecConstants.ACCESS_SECURITY_NAMESPACE_CODE, securityDefinition.getName(), securityDefinition.getDescription(), active, permissionDetails);
-    }
+    }*/
     
     /**
      * Override to clear out KIM role id on copy

@@ -15,12 +15,10 @@
  */
 package org.kuali.kfs.module.bc;
 
-import org.kuali.kfs.sys.ParameterKeyConstants;
-
 /**
  * Holds constants for BC business parameters
  */
-public class BCParameterKeyConstants implements ParameterKeyConstants {
+public class BCParameterKeyConstants {
 
     public static final String ANNUAL_WORKING_HOURS = "ANNUAL_WORKING_HOURS";
     public static final String BIWEEKLY_PAY_OBJECT_CODES = "BIWEEKLY_PAY_OBJECT_CODES";

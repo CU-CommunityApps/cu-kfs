@@ -5,16 +5,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.service.UniversityDateService;
-import org.kuali.kfs.vnd.businessobject.CommodityContractManager;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.TypedArrayList;
-
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 
 public class UserProcurementProfile extends PersistableBusinessObjectBase {
 	
+	private static final long serialVersionUID = 1L;
 	private Integer userProfileId;
 	private String principalId;
 //	private String documentTypeCode;
@@ -28,7 +26,7 @@ public class UserProcurementProfile extends PersistableBusinessObjectBase {
 
     public UserProcurementProfile() {
         super();
-        this.favoriteAccounts = new TypedArrayList(FavoriteAccount.class);
+        this.favoriteAccounts = new ArrayList<FavoriteAccount>();
         newSourceLine = new FavoriteAccount();
 
     }
@@ -73,9 +71,9 @@ public class UserProcurementProfile extends PersistableBusinessObjectBase {
 		this.favoriteAccounts = favoriteAccounts;
 	}
 
-	@Override
+	
+	@SuppressWarnings("rawtypes")
 	protected LinkedHashMap toStringMapper() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -125,7 +123,7 @@ public class UserProcurementProfile extends PersistableBusinessObjectBase {
 
 
 	public Person getProfileUser() {
-		profileUser = SpringContext.getBean(org.kuali.rice.kim.service.PersonService.class).updatePersonIfNecessary(principalId, profileUser);
+		profileUser = SpringContext.getBean(PersonService.class).updatePersonIfNecessary(principalId, profileUser);
 		return profileUser;
 	}
 

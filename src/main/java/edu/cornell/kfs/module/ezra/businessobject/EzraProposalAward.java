@@ -6,15 +6,15 @@ package edu.cornell.kfs.module.ezra.businessobject;
 import java.sql.Date;
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.KualiDecimal;
-
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 /**
  * @author kwk43
  *
  */
 public class EzraProposalAward extends PersistableBusinessObjectBase {
 
+	private static final long serialVersionUID = 1L;
 	private String projectId; //PROJ_ID
 	private String awardProposalId; //AWARD_PROP_ID
 	private String projectTitle; //TITLE
@@ -425,7 +425,7 @@ public class EzraProposalAward extends PersistableBusinessObjectBase {
 	/* (non-Javadoc)
 	 * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
 	 */
-	@Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected LinkedHashMap toStringMapper() {
 		LinkedHashMap m = new LinkedHashMap();
 

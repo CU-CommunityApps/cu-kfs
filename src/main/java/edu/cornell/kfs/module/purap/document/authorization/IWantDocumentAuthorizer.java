@@ -4,4 +4,6 @@ import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocu
 
 public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumentAuthorizerBase {
 
+	private static final long serialVersionUID = 1L;
+
 }

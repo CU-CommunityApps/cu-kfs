@@ -1,11 +1,13 @@
 package edu.cornell.kfs.fp.document.validation.impl;
 import static org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseConstants.ERROR_PATH.DOCUMENT_ERROR_PREFIX;
+
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.TreeMap;
+
 import org.kuali.kfs.fp.document.PreEncumbranceDocument;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -13,11 +15,12 @@ import org.kuali.kfs.sys.document.service.AccountingDocumentRuleHelperService;
 import org.kuali.kfs.sys.document.validation.GenericValidation;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
+
 import edu.cornell.kfs.fp.businessobject.PreEncumbranceAccountingLineUtil;
 import edu.cornell.kfs.fp.businessobject.PreEncumbranceSourceAccountingLine;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
@@ -38,7 +41,7 @@ public class PreEncumbranceAutoDisEncumberValidation extends GenericValidation {
                 ParameterService ps = SpringContext.getBean(ParameterService.class);
         try {
             DateFormat transactionDateFormat = new SimpleDateFormat(TRANSACTION_DATE_FORMAT_STRING);
-            annualClosingDate = new Date(transactionDateFormat.parse(ps.getParameterValue(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_TRANSACTION_DATE_PARM)).getTime());
+            annualClosingDate = new Date(transactionDateFormat.parse(ps.getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_TRANSACTION_DATE_PARM)).getTime());
             // this needs to be changed
             annualClosingDate.setYear(annualClosingDate.getYear()+1);
             LOG.info("Annual closing Date of: " + annualClosingDate);

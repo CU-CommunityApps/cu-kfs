@@ -13,11 +13,14 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
+import org.kuali.kfs.sys.batch.Job;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
-import org.kuali.rice.kns.bo.Parameter;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.coreservice.api.parameter.EvaluationOperator;
+import org.kuali.rice.coreservice.api.parameter.Parameter;
+import org.kuali.rice.coreservice.api.parameter.ParameterType;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.module.bc.CUBCConstants;
 import edu.cornell.kfs.module.bc.CUBCParameterKeyConstants;
@@ -252,33 +255,26 @@ public class PSBudgetFeedStep extends AbstractStep {
      */
     private void setRunPopulateCSFTrackerForNewYearParameter() {
 
-        Map<String, Object> keyMap = new HashMap<String, Object>();
-        keyMap.put("parameterNamespaceCode", CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE);
-        keyMap.put("parameterDetailTypeCode", CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP);
-        keyMap.put("parameterName", CUBCParameterKeyConstants.RUN_PS_BUDGET_FEED_FOR_NEW_YEAR);
-        keyMap.put("parameterApplicationNamespaceCode",
-                CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_APPLICATION_NAMESPACE_CODE);
-
-        // first see if we can find an existing Parameter object with this key
-        Parameter runIndicatorParameter = (Parameter) businessObjectService.findByPrimaryKey(Parameter.class,
-                    keyMap);
+        Parameter runIndicatorParameter = getParameterService().getParameter( CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE, 
+        																	  CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP, 
+        																	  CUBCParameterKeyConstants.RUN_PS_BUDGET_FEED_FOR_NEW_YEAR);
         if (runIndicatorParameter == null) {
-            runIndicatorParameter = new Parameter();
-            runIndicatorParameter.setVersionNumber(new Long(1));
-            runIndicatorParameter
-                        .setParameterNamespaceCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE);
-            runIndicatorParameter
-                        .setParameterDetailTypeCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP);
-            runIndicatorParameter.setParameterName(CUBCParameterKeyConstants.RUN_PS_BUDGET_FEED_FOR_NEW_YEAR);
-            runIndicatorParameter.setParameterDescription(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_DESCRIPTION);
-            runIndicatorParameter.setParameterConstraintCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_ALLOWED);
-            runIndicatorParameter.setParameterTypeCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_TYPE);
-            runIndicatorParameter
-                        .setParameterApplicationNamespaceCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_APPLICATION_NAMESPACE_CODE);
-        }
+            Parameter.Builder newParm = Parameter.Builder.create(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_APPLICATION_NAMESPACE_CODE, 
+            																   CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE, 
+            																   CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP, 
+            																   CUBCParameterKeyConstants.RUN_PS_BUDGET_FEED_FOR_NEW_YEAR, 
+            																   ParameterType.Builder.create(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_TYPE));
+            newParm.setEvaluationOperator(EvaluationOperator.ALLOW);
+            newParm.setDescription(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_DESCRIPTION);
+            newParm.setValue(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_VALUE);
+            getParameterService().createParameter(newParm.build());
 
-        runIndicatorParameter.setParameterValue(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_VALUE);
-        businessObjectService.save(runIndicatorParameter);
+
+        } else {
+            Parameter.Builder newParm = Parameter.Builder.create(runIndicatorParameter);
+            newParm.setValue(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_VALUE);
+            getParameterService().updateParameter(newParm.build());
+        }
     }
 
     /**
@@ -288,34 +284,25 @@ public class PSBudgetFeedStep extends AbstractStep {
      */
     private boolean getRunPopulateCSFTRackerForNewYear() {
 
-        Map<String, Object> keyMap = new HashMap<String, Object>();
-        keyMap.put("parameterNamespaceCode", CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE);
-        keyMap.put("parameterDetailTypeCode", CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP);
-        keyMap.put("parameterName", CUBCParameterKeyConstants.RUN_PS_BUDGET_FEED_FOR_NEW_YEAR);
-        keyMap.put("parameterApplicationNamespaceCode",
-                CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_APPLICATION_NAMESPACE_CODE);
-
-        // first see if we can find an existing Parameter object with this key
-        Parameter runIndicatorParameter = (Parameter) businessObjectService.findByPrimaryKey(Parameter.class,
-                    keyMap);
+        Parameter runIndicatorParameter = getParameterService().getParameter( CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE, 
+				  CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP, 
+				  CUBCParameterKeyConstants.RUN_PS_BUDGET_FEED_FOR_NEW_YEAR);
+        
         if (runIndicatorParameter == null) {
-            runIndicatorParameter = new Parameter();
-            runIndicatorParameter.setVersionNumber(new Long(1));
-            runIndicatorParameter
-                        .setParameterNamespaceCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE);
-            runIndicatorParameter
-                        .setParameterDetailTypeCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP);
-            runIndicatorParameter.setParameterName(CUBCParameterKeyConstants.RUN_PS_BUDGET_FEED_FOR_NEW_YEAR);
-            runIndicatorParameter.setParameterDescription(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_DESCRIPTION);
-            runIndicatorParameter.setParameterConstraintCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_ALLOWED);
-            runIndicatorParameter.setParameterTypeCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_TYPE);
-            runIndicatorParameter
-                        .setParameterApplicationNamespaceCode(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_APPLICATION_NAMESPACE_CODE);
-            runIndicatorParameter.setParameterValue(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_VALUE);
-            businessObjectService.save(runIndicatorParameter);
+            Parameter.Builder newParm = Parameter.Builder.create(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_APPLICATION_NAMESPACE_CODE, 
+            																   CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE, 
+            																   CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_STEP, 
+            																   CUBCParameterKeyConstants.RUN_PS_BUDGET_FEED_FOR_NEW_YEAR, 
+            																   ParameterType.Builder.create(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_TYPE));
+            newParm.setEvaluationOperator(EvaluationOperator.ALLOW);
+            newParm.setDescription(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_DESCRIPTION);
+            newParm.setValue(CUBCConstants.RUN_FOR_NEW_YEAR_PARAMETER_VALUE);
+            getParameterService().createParameter(newParm.build());
+
+
         }
 
-        boolean runPopulateCSFTRackerForNewYear = parameterService.getIndicatorParameter(PSBudgetFeedStep.class,
+        boolean runPopulateCSFTRackerForNewYear = parameterService.getParameterValueAsBoolean(PSBudgetFeedStep.class,
                     CUBCParameterKeyConstants.RUN_PS_BUDGET_FEED_FOR_NEW_YEAR);
 
         return runPopulateCSFTRackerForNewYear;

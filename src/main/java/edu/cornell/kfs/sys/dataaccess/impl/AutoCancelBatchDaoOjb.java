@@ -5,7 +5,6 @@ package edu.cornell.kfs.sys.dataaccess.impl;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -20,21 +19,23 @@ import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
 import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.actionrequest.ActionRequestValue;
-import org.kuali.rice.kew.doctype.bo.DocumentType;
-import org.kuali.rice.kew.doctype.dao.DocumentTypeDAO;
-import org.kuali.rice.kew.exception.WorkflowException;
+import org.kuali.rice.kew.api.KewApiServiceLocator;
+import org.kuali.rice.kew.api.action.ActionRequestStatus;
+import org.kuali.rice.kew.api.doctype.DocumentType;
+import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
-import org.kuali.rice.kew.util.KEWConstants;
-import org.kuali.rice.kns.dao.impl.PlatformAwareDaoBaseOjb;
-import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DocumentService;
-import org.kuali.rice.kns.service.KNSServiceLocator;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.util.OjbCollectionAware;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.service.SessionDocumentService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.rice.krad.util.OjbCollectionAware;
+import org.kuali.rice.krad.workflow.service.WorkflowDocumentService;
 
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.batch.AutoCancelBatchStep;
@@ -85,7 +86,7 @@ public class AutoCancelBatchDaoOjb extends PlatformAwareDaoBaseOjb implements Oj
      */
     public void cancelDocuments() throws Exception {
     	
-	    String stringDays = parameterService.getParameterEvaluator(AutoCancelBatchStep.class, CUKFSParameterKeyConstants.DAYS_TO_AUTO_CANCEL_PARAMETER).getValue();
+	    String stringDays = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(AutoCancelBatchStep.class, CUKFSParameterKeyConstants.DAYS_TO_AUTO_CANCEL_PARAMETER).getValue();
 	    if (StringUtils.isNotBlank(stringDays)) {
 	        
 	        Map<String, String> cancelIds = findSavedDocumentIds(stringDays);
@@ -103,8 +104,8 @@ public class AutoCancelBatchDaoOjb extends PlatformAwareDaoBaseOjb implements Oj
             				LOG.info("Document Number to cancel : " + document.getDocumentNumber());
             				i++;
             				 documentService.prepareWorkflowDocument(document);		 
-            			     KNSServiceLocator.getWorkflowDocumentService().superUserCancel(document.getDocumentHeader().getWorkflowDocument(), "AutoCancelBatchStep: Older Than "+stringDays+" Days");
-            			     GlobalVariables.getUserSession().setWorkflowDocument(document.getDocumentHeader().getWorkflowDocument());
+            			     SpringContext.getBean(WorkflowDocumentService.class).superUserCancel(document.getDocumentHeader().getWorkflowDocument(), "AutoCancelBatchStep: Older Than "+stringDays+" Days"); 
+            			     SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), document.getDocumentHeader().getWorkflowDocument());
 
             			}
                 	} catch (WorkflowException e) {
@@ -154,7 +155,7 @@ public class AutoCancelBatchDaoOjb extends PlatformAwareDaoBaseOjb implements Oj
      */
     public List<ActionRequestValue> findPendingByActionRequested(String actionRequestedCd) {
 
-        int age = (Integer.parseInt(parameterService.getParameterValue(AutoCancelBatchStep.class, CUKFSParameterKeyConstants.DAYS_TO_AUTO_CANCEL_PARAMETER)));
+        int age = (Integer.parseInt(parameterService.getParameterValueAsString(AutoCancelBatchStep.class, CUKFSParameterKeyConstants.DAYS_TO_AUTO_CANCEL_PARAMETER)));
         
         Calendar agedDate = Calendar.getInstance();
         agedDate.add(Calendar.DATE, (age*-1));
@@ -186,9 +187,9 @@ public class AutoCancelBatchDaoOjb extends PlatformAwareDaoBaseOjb implements Oj
     private Criteria getPendingCriteria() {
         Criteria pendingCriteria = new Criteria();
         Criteria activatedCriteria = new Criteria();
-        activatedCriteria.addEqualTo("status", KEWConstants.ACTION_REQUEST_ACTIVATED);
+        activatedCriteria.addEqualTo("status", ActionRequestStatus.ACTIVATED);
         Criteria initializedCriteria = new Criteria();
-        initializedCriteria.addEqualTo("status", KEWConstants.ACTION_REQUEST_INITIALIZED);
+        initializedCriteria.addEqualTo("status", ActionRequestStatus.INITIALIZED);
         pendingCriteria.addOrCriteria(activatedCriteria);
         pendingCriteria.addOrCriteria(initializedCriteria);
         return pendingCriteria;
@@ -202,13 +203,15 @@ public class AutoCancelBatchDaoOjb extends PlatformAwareDaoBaseOjb implements Oj
     private boolean autoCancelAllowedForDocType(String docTypeId) {
     	Map<String, DocumentType> docTypes = new HashMap<String, DocumentType>();
     	DocumentType docType = docTypes.get(docTypeId);
+    	
+    	
     	if(ObjectUtils.isNull(docType)) {
-    		docType = SpringContext.getBean(DocumentTypeDAO.class).getMostRecentDocType(new Long(docTypeId));
+    		docType = KewApiServiceLocator.getDocumentTypeService().getDocumentTypeById(docTypeId);
     		docTypes.put(docTypeId, docType);
     	}
     	
     	if(cancelDocumentTypes.isEmpty()) {
-    		cancelDocumentTypes = parameterService.getParameterValues(AutoCancelBatchStep.class, CUKFSParameterKeyConstants.AUTO_CANCEL_DOC_TYPES_PARAMETER);
+    		cancelDocumentTypes = (List<String>) parameterService.getParameterValuesAsString(AutoCancelBatchStep.class, CUKFSParameterKeyConstants.AUTO_CANCEL_DOC_TYPES_PARAMETER);
     	}
     	return cancelDocumentTypes.contains(docType.getName());
     }

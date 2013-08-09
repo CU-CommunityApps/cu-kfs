@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,12 +31,18 @@ import org.kuali.kfs.coa.businessobject.AccountDelegate;
 import org.kuali.kfs.coa.dataaccess.AccountDao;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.NonTransactional;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.service.KEWServiceLocator;
-import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.util.KimCommonUtils;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.spring.Cached;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.springframework.cache.annotation.Cacheable;
+
 
 /**
  * This class is the service implementation for the Account structure. This is the default, Kuali provided implementation.
@@ -56,15 +63,19 @@ public class AccountServiceImpl implements AccountService {
      * @return Account
      * @see AccountService
      */
+    
+    @Cacheable(value=Account.CACHE_NAME, key="#p0+'-'+#p1")
     public Account getByPrimaryId(String chartOfAccountsCode, String accountNumber) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("retrieving account by primaryId (" + chartOfAccountsCode + "," + accountNumber + ")");
         }
-
-        Account account = accountDao.getByPrimaryId(chartOfAccountsCode, accountNumber);
+        Map<String, Object> keys = new HashMap<String, Object>(2);
+        keys.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode);
+        keys.put(KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber);
+        Account account = SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(Account.class, keys);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("retrieved account by primaryId (" + chartOfAccountsCode + "," + accountNumber + ")");
+            LOG.debug("retrieved account by primaryId (" + chartOfAccountsCode + "," + accountNumber + "): " + account );
         }
         return account;
     }
@@ -74,9 +85,14 @@ public class AccountServiceImpl implements AccountService {
      * 
      * @see org.kuali.kfs.coa.service.impl.AccountServiceImpl#getByPrimaryId(java.lang.String, java.lang.String)
      */
-    @Cached
+    @Cacheable(value=Account.CACHE_NAME, key="#p0+'-'+#p1")
     public Account getByPrimaryIdWithCaching(String chartOfAccountsCode, String accountNumber) {
-        return accountDao.getByPrimaryId(chartOfAccountsCode, accountNumber);
+        Account account = getByPrimaryId(chartOfAccountsCode, accountNumber);
+        if ( account != null ) {
+            // force loading of chart reference object
+            account.getChartOfAccounts().getChartOfAccountsCode();
+        }
+        return account;
     }
 
     /**
@@ -88,7 +104,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
         // gets the list of accounts that the user is the Fiscal Officer of
-        List accountList = accountDao.getAccountsThatUserIsResponsibleFor(person);
+        List accountList = accountDao.getAccountsThatUserIsResponsibleFor(person, SpringContext.getBean(DateTimeService.class).getCurrentDate());
         if (LOG.isDebugEnabled()) {
             LOG.debug("retrieved accountsResponsible list for user " + person.getName());
         }
@@ -100,7 +116,7 @@ public class AccountServiceImpl implements AccountService {
      *      org.kuali.kfs.coa.businessobject.Account)
      */
     public boolean hasResponsibilityOnAccount(Person kualiUser, Account account) {
-        return accountDao.determineUserResponsibilityOnAccount(kualiUser, account);
+        return accountDao.determineUserResponsibilityOnAccount(kualiUser, account, SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
     }
 
     /**
@@ -110,7 +126,7 @@ public class AccountServiceImpl implements AccountService {
 
     public AccountDelegate getPrimaryDelegationByExample(AccountDelegate delegateExample, String totalDollarAmount) {
         String documentTypeName = delegateExample.getFinancialDocumentTypeCode();
-        List primaryDelegations = filterAccountDelegates(delegateExample, accountDao.getPrimaryDelegationByExample(delegateExample, totalDollarAmount));
+        List primaryDelegations = filterAccountDelegates(delegateExample, accountDao.getPrimaryDelegationByExample(delegateExample, SpringContext.getBean(DateTimeService.class).getCurrentSqlDate(), totalDollarAmount));
         if (primaryDelegations.isEmpty()) {
             return null;
         }
@@ -129,7 +145,7 @@ public class AccountServiceImpl implements AccountService {
      *      java.lang.String)
      */
     public List getSecondaryDelegationsByExample(AccountDelegate delegateExample, String totalDollarAmount) {
-        List secondaryDelegations = accountDao.getSecondaryDelegationsByExample(delegateExample, totalDollarAmount);
+        List secondaryDelegations = accountDao.getSecondaryDelegationsByExample(delegateExample, SpringContext.getBean(DateTimeService.class).getCurrentSqlDate(), totalDollarAmount);
         return filterAccountDelegates(delegateExample, secondaryDelegations);
     }
 
@@ -150,7 +166,7 @@ public class AccountServiceImpl implements AccountService {
         if(filteredAccountDelegates.size()==0){
             Set<String> potentialParentDocumentTypeNames = getPotentialParentDocumentTypeNames(accountDelegatesToFilterFrom);
             String closestParentDocumentTypeName = KimCommonUtils.getClosestParentDocumentTypeName(
-                    KEWServiceLocator.getDocumentTypeService().findByName(documentTypeName), 
+                    KewApiServiceLocator.getDocumentTypeService().getDocumentTypeByName(documentTypeName), 
                     potentialParentDocumentTypeNames);
             filteredAccountDelegates = filterAccountDelegates(accountDelegatesToFilterFrom, closestParentDocumentTypeName);
         }
@@ -214,28 +230,28 @@ public class AccountServiceImpl implements AccountService {
      * @see org.kuali.kfs.coa.service.AccountService#getActiveAccountsForAccountSupervisor(java.lang.String)
      */
     public Iterator<Account> getActiveAccountsForAccountSupervisor(String principalId) {
-        return accountDao.getActiveAccountsForAccountSupervisor(principalId);
+        return accountDao.getActiveAccountsForAccountSupervisor(principalId, SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
     }
 
     /**
      * @see org.kuali.kfs.coa.service.AccountService#getActiveAccountsForFiscalOfficer(java.lang.String)
      */
     public Iterator<Account> getActiveAccountsForFiscalOfficer(String principalId) {
-        return accountDao.getActiveAccountsForFiscalOfficer(principalId);
+        return accountDao.getActiveAccountsForFiscalOfficer(principalId, SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
     }
 
     /**
      * @see org.kuali.kfs.coa.service.AccountService#getExpiredAccountsForAccountSupervisor(java.lang.String)
      */
     public Iterator<Account> getExpiredAccountsForAccountSupervisor(String principalId) {
-        return accountDao.getExpiredAccountsForAccountSupervisor(principalId);
+        return accountDao.getExpiredAccountsForAccountSupervisor(principalId, SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
     }
 
     /**
      * @see org.kuali.kfs.coa.service.AccountService#getExpiredAccountsForFiscalOfficer(java.lang.String)
      */
     public Iterator<Account> getExpiredAccountsForFiscalOfficer(String principalId) {
-        return accountDao.getExpiredAccountsForFiscalOfficer(principalId);
+        return accountDao.getExpiredAccountsForFiscalOfficer(principalId, SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
     }
 
     /**
@@ -280,7 +296,7 @@ public class AccountServiceImpl implements AccountService {
         // make sure the parameter exists
         if (parameterService.parameterExists(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE_BY_ACCOUNT_TYPE")) {
             // retrieve the value(s) for the parameter
-            String paramValues = parameterService.getParameterValue(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE_BY_ACCOUNT_TYPE");
+            String paramValues = parameterService.getParameterValueAsString(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE_BY_ACCOUNT_TYPE");
 
             // split the values of the parameter on the semi colon
             String[] paramValuesArray = paramValues.split(";");
@@ -300,7 +316,7 @@ public class AccountServiceImpl implements AccountService {
             else {
                 // make sure the system parameter exists
                 if (parameterService.parameterExists(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE")) {
-                    value = parameterService.getParameterValue(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE");
+                    value = parameterService.getParameterValueAsString(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE");
                 }
             }
         }

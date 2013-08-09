@@ -22,10 +22,11 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.exception.ParseException;
-import org.kuali.rice.kns.bo.Attachment;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.web.format.BooleanFormatter;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.web.format.BooleanFormatter;
+import org.kuali.rice.krad.bo.Attachment;
+
 
 /**
  * Provides String setter methods and additional properties for population from XML (batch)

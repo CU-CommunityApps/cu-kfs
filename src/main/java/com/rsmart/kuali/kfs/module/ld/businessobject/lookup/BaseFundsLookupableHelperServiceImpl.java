@@ -18,8 +18,8 @@ package com.rsmart.kuali.kfs.module.ld.businessobject.lookup;
 import java.util.List;
 import java.util.Map;
 
-import org.kuali.rice.kns.bo.BusinessObject;
 import org.kuali.rice.kns.lookup.HtmlData;
+import org.kuali.rice.krad.bo.BusinessObject;
 
 import com.rsmart.kuali.kfs.module.ld.businessobject.inquiry.BaseFundsInquirableImpl;
 

@@ -1,6 +1,6 @@
 package edu.cornell.kfs.sys.mail;
 
-import org.kuali.rice.kns.mail.MailMessage;
+import org.kuali.rice.core.api.mail.MailMessage;
 
 /**
  * KFSPTS-1460: 
@@ -11,7 +11,8 @@ import org.kuali.rice.kns.mail.MailMessage;
  */
 public class KFSMailMessage extends MailMessage {
 	
-    private String attachmentFilename = "";
+	private static final long serialVersionUID = 1L;
+	private String attachmentFilename = "";
     private String attachmentContent = "";
     private String attachmentMimeType = "";
 

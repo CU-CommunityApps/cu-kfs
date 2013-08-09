@@ -34,9 +34,8 @@ import org.kuali.kfs.coa.service.AccountReversionService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemGlobalMaintainable;
-import org.kuali.rice.kns.bo.PersistableBusinessObject;
-import org.kuali.rice.kns.document.MaintenanceLock;
-import org.kuali.rice.kns.util.TypedArrayList;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.maintenance.MaintenanceLock;
 
 /**
  * This class provides some specific functionality for the {@link AccountReversionGlobal} maintenance document inner class for
@@ -117,7 +116,7 @@ public class AccountReversionGlobalMaintainableImpl extends FinancialSystemGloba
         LOG.debug("Details size before adding categories = " + details.size());
 
         if (details == null) {
-            details = new TypedArrayList(AccountReversionGlobalDetail.class);
+            details = new ArrayList<AccountReversionGlobalDetail>();
             globalAcctRev.setAccountReversionGlobalDetails(details);
         }
 

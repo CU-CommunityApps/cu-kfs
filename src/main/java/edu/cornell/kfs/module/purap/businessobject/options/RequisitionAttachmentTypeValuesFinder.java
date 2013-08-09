@@ -1,18 +1,22 @@
 package edu.cornell.kfs.module.purap.businessobject.options;
 
-import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
-import org.kuali.rice.core.util.KeyLabelPair;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.kuali.kfs.module.purap.CUPurapConstants;
+import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.rice.krad.keyvalues.KeyValuesBase;
 
 public class RequisitionAttachmentTypeValuesFinder extends KeyValuesBase {
 
-    public List getKeyValues() {
-        List keyValues = new ArrayList();
+	private static final long serialVersionUID = 1L;
 
-        keyValues.add(new KeyLabelPair(CUPurapConstants.AttachemntToVendorIndicators.DONT_SEND_TO_VENDOR, "No"));
-        keyValues.add(new KeyLabelPair(CUPurapConstants.AttachemntToVendorIndicators.SEND_TO_VENDOR, "Yes"));       
+	public List<KeyValue> getKeyValues() {
+        List<KeyValue> keyValues = new ArrayList<KeyValue>();
+
+        keyValues.add(new ConcreteKeyValue(CUPurapConstants.AttachemntToVendorIndicators.DONT_SEND_TO_VENDOR, "No"));
+        keyValues.add(new ConcreteKeyValue(CUPurapConstants.AttachemntToVendorIndicators.SEND_TO_VENDOR, "Yes"));       
 
         return keyValues;
     }

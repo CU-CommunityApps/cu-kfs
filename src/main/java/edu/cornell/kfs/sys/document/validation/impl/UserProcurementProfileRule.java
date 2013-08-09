@@ -6,6 +6,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase;
 import org.kuali.rice.kns.util.KNSConstants;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
@@ -31,11 +32,11 @@ public class UserProcurementProfileRule extends MaintenanceDocumentRuleBase {
     	if (CollectionUtils.isNotEmpty(userProcurementProfile.getFavoriteAccounts())) {
 			valid &= getUserProcurementProfileValidationService().validateAccounts(userProcurementProfile.getFavoriteAccounts());
      	}
-    	if (StringUtils.equalsIgnoreCase(KNSConstants.MAINTENANCE_NEW_ACTION,document.getNewMaintainableObject().getMaintenanceAction()) ||
-    			StringUtils.equalsIgnoreCase(KNSConstants.MAINTENANCE_COPY_ACTION,document.getNewMaintainableObject().getMaintenanceAction())) {
+    	if (StringUtils.equalsIgnoreCase(KRADConstants.MAINTENANCE_NEW_ACTION,document.getNewMaintainableObject().getMaintenanceAction()) ||
+    			StringUtils.equalsIgnoreCase(KRADConstants.MAINTENANCE_COPY_ACTION,document.getNewMaintainableObject().getMaintenanceAction())) {
     		valid &= !getUserProcurementProfileValidationService().validateUserProfileExist(((UserProcurementProfile)document.getNewMaintainableObject().getBusinessObject()).getPrincipalId());
     	}
-    	if (valid && StringUtils.equalsIgnoreCase(KNSConstants.MAINTENANCE_COPY_ACTION,document.getNewMaintainableObject().getMaintenanceAction())) {
+    	if (valid && StringUtils.equalsIgnoreCase(KRADConstants.MAINTENANCE_COPY_ACTION,document.getNewMaintainableObject().getMaintenanceAction())) {
     		resetAccountId((UserProcurementProfile)document.getNewMaintainableObject().getBusinessObject());
     	}
     	return valid;

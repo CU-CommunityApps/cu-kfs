@@ -27,15 +27,14 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.bo.GlobalBusinessObject;
-import org.kuali.rice.kns.bo.GlobalBusinessObjectDetail;
-import org.kuali.rice.kns.bo.PersistableBusinessObject;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.exception.BusinessObjectNotFoundException;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.PersistenceStructureService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.TypedArrayList;
+import org.kuali.rice.krad.bo.GlobalBusinessObject;
+import org.kuali.rice.krad.bo.GlobalBusinessObjectDetail;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.service.BusinessObjectNotLookupableException;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.PersistenceStructureService;
+
 
 /**
  * This class simply acts as a container to hold the List of Delegate Changes and the list of Account entries, for the Global
@@ -43,7 +42,9 @@ import org.kuali.rice.kns.util.TypedArrayList;
  */
 public class AccountDelegateGlobal extends PersistableBusinessObjectBase implements GlobalBusinessObject {
 
-    private String documentNumber;
+	private static final long serialVersionUID = 1L;
+
+	private String documentNumber;
 
     private String modelName;
     private String modelChartOfAccountsCode;
@@ -59,8 +60,8 @@ public class AccountDelegateGlobal extends PersistableBusinessObjectBase impleme
      */
     public AccountDelegateGlobal() {
         super();
-        accountGlobalDetails = new TypedArrayList(AccountGlobalDetail.class);
-        delegateGlobals = new TypedArrayList(AccountDelegateGlobalDetail.class);
+        accountGlobalDetails = new ArrayList<AccountGlobalDetail>();
+        delegateGlobals = new ArrayList<AccountDelegateGlobalDetail>();
     }
 
     /**
@@ -167,7 +168,7 @@ public class AccountDelegateGlobal extends PersistableBusinessObjectBase impleme
                 // if the account doesnt exist, fail fast, as this should never happen,
                 // the busines rules for this document should have caught this.
                 if (account == null) {
-                    throw new BusinessObjectNotFoundException("Account [" + accountDetail.getChartOfAccountsCode() + "-" + accountDetail.getAccountNumber() + "] was not present in the database. " + "This should never happen under normal circumstances, as an invalid account should have " + "been caught by the Business Rules infrastructure.");
+                    throw new BusinessObjectNotLookupableException("Account [" + accountDetail.getChartOfAccountsCode() + "-" + accountDetail.getAccountNumber() + "] was not present in the database. " + "This should never happen under normal circumstances, as an invalid account should have " + "been caught by the Business Rules infrastructure.");
                 }
 
                 // attempt to load the existing Delegate from the DB, if it exists. we do this to avoid
@@ -233,8 +234,9 @@ public class AccountDelegateGlobal extends PersistableBusinessObjectBase impleme
     /**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
-    @Override
-    protected LinkedHashMap toStringMapper() {
+    
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	protected LinkedHashMap toStringMapper() {
 
         LinkedHashMap m = new LinkedHashMap();
 
@@ -374,11 +376,11 @@ public class AccountDelegateGlobal extends PersistableBusinessObjectBase impleme
      * @see org.kuali.rice.kns.bo.PersistableBusinessObjectBase#buildListOfDeletionAwareLists()
      */
     @Override
-    public List buildListOfDeletionAwareLists() {
-        List<List> managedLists = super.buildListOfDeletionAwareLists();
+    public List<Collection<PersistableBusinessObject>> buildListOfDeletionAwareLists() {
+        List<Collection<PersistableBusinessObject>> managedLists = super.buildListOfDeletionAwareLists();
 
-        managedLists.add(getAccountGlobalDetails());
-        managedLists.add(getDelegateGlobals());
+        managedLists.add( new ArrayList<PersistableBusinessObject>( getAccountGlobalDetails() ) );
+        managedLists.add( new ArrayList<PersistableBusinessObject>( getDelegateGlobals() ) );
 
         return managedLists;
     }

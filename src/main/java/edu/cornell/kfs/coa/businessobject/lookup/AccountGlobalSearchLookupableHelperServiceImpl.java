@@ -22,12 +22,12 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.lookup.KualiAccountLookupableHelperServiceImpl;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.rice.kns.bo.BusinessObject;
-import org.kuali.rice.kns.util.BeanPropertyComparator;
-import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.core.web.format.BooleanFormatter;
 import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.web.format.BooleanFormatter;
+import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.rice.krad.util.BeanPropertyComparator;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import edu.cornell.kfs.coa.dataaccess.AccountGlobalSearchDao;
 
@@ -39,9 +39,9 @@ public class AccountGlobalSearchLookupableHelperServiceImpl extends KualiAccount
      */
     @Override
     public List<? extends BusinessObject> getSearchResults(Map<String, String> parameters) {
-        setBackLocation(parameters.get(KNSConstants.BACK_LOCATION));
-        setDocFormKey(parameters.get(KNSConstants.DOC_FORM_KEY));
-        setReferencesToRefresh(parameters.get(KNSConstants.REFERENCES_TO_REFRESH));
+        setBackLocation(parameters.get(KRADConstants.BACK_LOCATION));
+        setDocFormKey(parameters.get(KRADConstants.DOC_FORM_KEY));
+        setReferencesToRefresh(parameters.get(KRADConstants.REFERENCES_TO_REFRESH));
 
         if (parameters.containsKey("useOrgHierarchy")) {
             String includeOrgHierarchyStr = parameters.get("useOrgHierarchy");

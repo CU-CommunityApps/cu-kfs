@@ -3,21 +3,16 @@ package edu.cornell.kfs.module.purap.document.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.ws.security.util.StringUtil;
-import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.mail.MailMessage;
+import org.kuali.rice.kew.api.KewApiConstants;
+import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kew.doctype.service.DocumentTypeService;
-import org.kuali.rice.kew.util.KEWConstants;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.bo.entity.KimEntityAddress;
-import org.kuali.rice.kim.bo.entity.KimEntityEntityType;
-import org.kuali.rice.kim.bo.entity.dto.KimEntityEntityTypeInfo;
-import org.kuali.rice.kim.bo.entity.dto.KimEntityInfo;
-import org.kuali.rice.kim.service.IdentityManagementService;
-import org.kuali.rice.kim.service.PersonService;
-import org.kuali.rice.kim.util.KimConstants;
-import org.kuali.rice.kns.mail.MailMessage;
-import org.kuali.rice.kns.service.MailService;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
+import org.kuali.rice.kim.api.KimConstants;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.kim.api.identity.address.EntityAddress;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.rice.krad.service.MailService;
 
 import edu.cornell.kfs.module.purap.businessobject.LevelOrganization;
 import edu.cornell.kfs.module.purap.businessobject.PersonData;
@@ -38,18 +33,13 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
      * @see edu.cornell.kfs.module.purap.document.service.IWantDocumentService#getPersonCampusAddress(java.lang.String)
      */
     public String getPersonCampusAddress(String principalName) {
-        IdentityManagementService identityManagementService = SpringContext.getBean(IdentityManagementService.class);
-
-        KimEntityInfo entityInfo = identityManagementService.getEntityInfoByPrincipalName(principalName);
-
-        KimEntityEntityType entityEntityType = getPersonEntityType(entityInfo);
-
-        KimEntityAddress foundAddress = getPersonEntityAddress(entityEntityType);
+    	
+        EntityAddress foundAddress = getPersonEntityAddress(principalName);
 
         String addressLine1 = foundAddress.getLine1Unmasked();
         String addressLine2 = foundAddress.getLine2Unmasked();
-        String city = foundAddress.getCityNameUnmasked();
-        String stateCode = foundAddress.getStateCodeUnmasked();
+        String city = foundAddress.getCityUnmasked();
+        String stateCode = foundAddress.getStateProvinceCodeUnmasked();
         String postalCode = foundAddress.getPostalCodeUnmasked();
         String countryCode = foundAddress.getCountryCodeUnmasked();
 
@@ -66,41 +56,20 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
      * @param entityEntityType
      * @return Person entity address
      */
-    protected KimEntityAddress getPersonEntityAddress(KimEntityEntityType entityEntityType) {
-        List<? extends KimEntityAddress> addresses = entityEntityType.getAddresses();
-        KimEntityAddress foundAddress = null;
+    protected EntityAddress getPersonEntityAddress(String principalName) {
+        List<? extends EntityAddress> addresses = KimApiServiceLocator.getIdentityService().getEntityByPrincipalName(principalName).getEntityTypeContactInfoByTypeCode(KimConstants.EntityTypes.PERSON).getAddresses();
+        EntityAddress foundAddress = null;
         int count = 0;
 
         while (count < addresses.size() && foundAddress == null) {
-            final KimEntityAddress currentAddress = addresses.get(count);
-            if (currentAddress.getAddressTypeCode().equals("CMP")) {
+            final EntityAddress currentAddress = addresses.get(count);
+            if (currentAddress.getAddressType().getCode().equals("CMP")) {
                 foundAddress = currentAddress;
             }
             count += 1;
         }
 
         return foundAddress;
-    }
-
-    /**
-     * Gets the person entity type.
-     * 
-     * @param entityInfo
-     * @return person entity type
-     */
-    protected KimEntityEntityType getPersonEntityType(KimEntityInfo entityInfo) {
-        final List<KimEntityEntityTypeInfo> entityEntityTypes = entityInfo.getEntityTypes();
-        int count = 0;
-        KimEntityEntityType foundInfo = null;
-
-        while (count < entityEntityTypes.size() && foundInfo == null) {
-            if (entityEntityTypes.get(count).getEntityTypeCode().equals(KimConstants.EntityTypes.PERSON)) {
-                foundInfo = entityEntityTypes.get(count);
-            }
-            count += 1;
-        }
-
-        return foundInfo;
     }
 
     /**
@@ -196,7 +165,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
      */
     private MailMessage buildDocumentFinalizedMessage(IWantDocument iWantDocument) {
 
-        KualiWorkflowDocument workflowDocument = iWantDocument.getDocumentHeader().getWorkflowDocument();
+        WorkflowDocument workflowDocument = iWantDocument.getDocumentHeader().getWorkflowDocument();
         String initiator = workflowDocument.getInitiatorPrincipalId();
         String documentNumber = iWantDocument.getDocumentNumber();
         Person initiatorPerson = personService.getPerson(initiator);
@@ -220,8 +189,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
                 + iWantDocument.getDocumentNumber() + " has been finalized" + ": \n\n");
         emailBody.append("From: " + initiatorPerson.getNameUnmasked() + "\n");
         emailBody.append("Title: " + iWantDocument.getDocumentTitle() + "\n");
-        emailBody.append("Type: "
-                + documentTypeService.getDocumentTypeVO(workflowDocument.getDocumentType()).getDocTypeLabel() + "\n");
+        emailBody.append("Type: " + workflowDocument.getDocumentTypeName()  + "\n");
         emailBody.append("Id: " + documentNumber + "\n");
         emailBody.append("Vendor Name: " + vendorName + "\n\n");
 
@@ -241,8 +209,8 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
      * @param workflowDocument
      * @return the document URL
      */
-    private String getDocumentURL(String documentNumber, KualiWorkflowDocument workflowDocument) {
-        String docUrl = workflowDocument.getRouteHeader().getDocumentUrl();
+    private String getDocumentURL(String documentNumber, WorkflowDocument workflowDocument) {
+        String docUrl = workflowDocument.getDocumentHandlerUrl();
 
         if (StringUtils.isNotBlank(docUrl)) {
             if (docUrl.indexOf("?") == -1) {
@@ -250,10 +218,10 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
             } else {
                 docUrl += "&";
             }
-            docUrl += KEWConstants.ROUTEHEADER_ID_PARAMETER + "="
+            docUrl += KewApiConstants.DOCUMENT_ID_PARAMETER + "="
                     + documentNumber;
-            docUrl += "&" + KEWConstants.COMMAND_PARAMETER + "="
-                    + KEWConstants.ACTIONLIST_COMMAND;
+            docUrl += "&" + KewApiConstants.COMMAND_PARAMETER + "="
+                    + KewApiConstants.ACTIONLIST_COMMAND;
         }
 
         return docUrl;

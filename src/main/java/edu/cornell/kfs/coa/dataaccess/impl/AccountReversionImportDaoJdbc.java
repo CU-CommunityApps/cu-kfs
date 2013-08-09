@@ -1,6 +1,7 @@
 package edu.cornell.kfs.coa.dataaccess.impl;
 
-import org.kuali.rice.kns.dao.jdbc.PlatformAwareDaoBaseJdbc;
+
+import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 
 import edu.cornell.kfs.coa.dataaccess.AccountReversionImportDao;
 

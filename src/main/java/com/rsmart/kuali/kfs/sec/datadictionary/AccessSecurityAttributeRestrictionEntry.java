@@ -19,7 +19,10 @@ package com.rsmart.kuali.kfs.sec.datadictionary;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.kuali.rice.kns.datadictionary.AttributeDefinition;
+
+
+
+import org.kuali.rice.krad.datadictionary.AttributeDefinition;
 
 import com.rsmart.kuali.kfs.sec.service.AccessPermissionEvaluator;
 

@@ -18,15 +18,18 @@ package org.kuali.kfs.coa.businessobject.options;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
-import org.kuali.rice.core.util.KeyLabelPair;
+import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.rice.krad.keyvalues.KeyValuesBase;
 
 /**
  * This class creates a new finder for our forms view (creates a drop-down of {@link OrganizationReversionCode}s)
  */
 public class ReversionCodeValuesFinder extends KeyValuesBase {
 
-    /**
+	private static final long serialVersionUID = 1L;
+
+	/**
      * This is a static list of {@link OrganizationReversionCode}s
      * <ul>
      * <li>"A", "A - CF +/- bal in same account"</li>
@@ -40,17 +43,17 @@ public class ReversionCodeValuesFinder extends KeyValuesBase {
      * 
      * @see org.kuali.rice.kns.lookup.keyvalues.KeyValuesFinder#getKeyValues()
      */
-    public List getKeyValues() {
-        List keyValues = new ArrayList();
-        keyValues.add(new KeyLabelPair("", ""));
-        keyValues.add(new KeyLabelPair("A", "A - CF +/- bal in same account"));
-        keyValues.add(new KeyLabelPair("CA", "CA - Revert cash balance"));
-        keyValues.add(new KeyLabelPair("C1", "C1 - CF budget then CF + and R -"));
-        keyValues.add(new KeyLabelPair("C2", "C2 - Don't CF budget then CF + and R -"));
-        keyValues.add(new KeyLabelPair("N1", "N1 - CF budget then R + and CF -"));
-        keyValues.add(new KeyLabelPair("N2", "N2 - Don't CF budget then R + and CF -"));
-        keyValues.add(new KeyLabelPair("R1", "R1 - CF budget then R Remaining"));
-        keyValues.add(new KeyLabelPair("R2", "R2 - Don't CF budget then R Remaining"));
+    public List<KeyValue> getKeyValues() {
+        List<KeyValue> keyValues = new ArrayList<KeyValue>();
+        keyValues.add(new ConcreteKeyValue("", ""));
+        keyValues.add(new ConcreteKeyValue("A", "A - CF +/- bal in same account"));
+        keyValues.add(new ConcreteKeyValue("CA", "CA - Revert cash balance"));
+        keyValues.add(new ConcreteKeyValue("C1", "C1 - CF budget then CF + and R -"));
+        keyValues.add(new ConcreteKeyValue("C2", "C2 - Don't CF budget then CF + and R -"));
+        keyValues.add(new ConcreteKeyValue("N1", "N1 - CF budget then R + and CF -"));
+        keyValues.add(new ConcreteKeyValue("N2", "N2 - Don't CF budget then R + and CF -"));
+        keyValues.add(new ConcreteKeyValue("R1", "R1 - CF budget then R Remaining"));
+        keyValues.add(new ConcreteKeyValue("R2", "R2 - Don't CF budget then R Remaining"));
         return keyValues;
     }
 

@@ -25,11 +25,11 @@ import org.kuali.kfs.module.ld.businessobject.inquiry.PositionDataDetailsInquira
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.service.PersonService;
-import org.kuali.rice.kns.bo.BusinessObject;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kns.lookup.HtmlData;
 import org.kuali.rice.kns.lookup.HtmlData.AnchorHtmlData;
+import org.kuali.rice.krad.bo.BusinessObject;
 
 import com.rsmart.kuali.kfs.module.ld.businessobject.inquiry.LaborCalculatedSalaryFoundationTrackerInquirableImpl;
 
@@ -48,7 +48,7 @@ public class LaborCalculatedSalaryFoundationTrackerLookupableHelperServiceImpl e
             //KUALI-1321  Gets the Person object via the employee ID and populates the name property.
             Person person = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(CSFTracker.getEmplid());
             if (person != null){
-                CSFTracker.setName(person.getLastName() + ", " + person.getFirstName());
+                //CSFTracker.setName(person.getLastName() + ", " + person.getFirstName());
             }
             
             Map<String, String> fieldValues = new HashMap<String, String>();

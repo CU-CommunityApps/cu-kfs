@@ -19,9 +19,10 @@ import java.sql.Timestamp;
 import java.util.LinkedHashMap;
 
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.KualiInteger;
+import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 import com.rsmart.kuali.kfs.fp.FPPropertyConstants;
 
@@ -106,7 +107,7 @@ public class DisbursementVoucherBatch extends PersistableBusinessObjectBase {
      * @return Returns the processUser.
      */
     public Person getProcessUser() {
-        processUser = SpringContext.getBean(org.kuali.rice.kim.service.PersonService.class).updatePersonIfNecessary(processPrincipalId, processUser);
+        processUser = SpringContext.getBean(PersonService.class).updatePersonIfNecessary(processPrincipalId, processUser);
 
         return processUser;
     }
@@ -126,11 +127,9 @@ public class DisbursementVoucherBatch extends PersistableBusinessObjectBase {
     }
 
 
-    @Override
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();
  
-        // TODO:
         m.put(FPPropertyConstants.BATCH_ID, this.batchId);
 
         return m;

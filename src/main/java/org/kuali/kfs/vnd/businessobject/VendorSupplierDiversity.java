@@ -21,16 +21,16 @@ import java.util.LinkedHashMap;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.log4j.Logger;
-import org.kuali.rice.kns.bo.Inactivateable;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * Relationship between a Vendor and a <code>SupplierDiversity</code>.
  * 
  * @see org.kuali.kfs.vnd.businessobject.SupplierDiversity
  */
-public class VendorSupplierDiversity extends PersistableBusinessObjectBase implements VendorRoutingComparable, Inactivateable {
+public class VendorSupplierDiversity extends PersistableBusinessObjectBase implements VendorRoutingComparable, MutableInactivatable {
     private static Logger LOG = Logger.getLogger(VendorSupplierDiversity.class);
 
     private Integer vendorHeaderGeneratedIdentifier;
@@ -143,16 +143,14 @@ public class VendorSupplierDiversity extends PersistableBusinessObjectBase imple
      * @param mapper A LinkedHashMap
      * @return A String rendition of this object.
      */
-    @Override
     public String toStringBuilder(LinkedHashMap mapper) {
         if (vendorSupplierDiversity != null) {
 
             return vendorSupplierDiversity.getVendorSupplierDiversityDescription();
         }
-        else {
-
-            return super.toStringBuilder(mapper);
-        }
+        
+        return null;
+        
     }
     
     /* BEGIN CORNELL SPECIFIC MODIFICATIONS */

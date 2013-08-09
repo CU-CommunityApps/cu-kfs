@@ -1,31 +1,11 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapKeyConstants;
-import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
-import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
-import org.kuali.kfs.module.purap.document.PurchasingDocumentBase;
-import org.kuali.kfs.module.purap.document.RequisitionDocument;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.service.PostalCodeValidationService; 
-import org.kuali.kfs.vnd.VendorConstants;
-import org.kuali.kfs.vnd.VendorKeyConstants;
-import org.kuali.kfs.vnd.VendorPropertyConstants;
-import org.kuali.kfs.vnd.businessobject.VendorAddress;
+import org.kuali.kfs.sys.service.PostalCodeValidationService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
-import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.MessageMap;
 
-import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.document.service.PurchaseOrderTransmissionMethodDataRulesService;
-import org.kuali.kfs.vnd.document.service.VendorService;
 
 
 /**

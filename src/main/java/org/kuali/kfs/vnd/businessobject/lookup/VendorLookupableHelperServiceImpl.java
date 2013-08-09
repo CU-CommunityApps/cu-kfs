@@ -17,7 +17,6 @@ package org.kuali.kfs.vnd.businessobject.lookup;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,23 +30,21 @@ import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.VendorKeyConstants;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
-import org.kuali.kfs.vnd.businessobject.VendorAlias;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.dataaccess.VendorDao;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.kns.bo.BusinessObject;
-import org.kuali.rice.kns.exception.ValidationException;
+import org.kuali.rice.core.web.format.Formatter;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kns.lookup.AbstractLookupableHelperServiceImpl;
-import org.kuali.rice.kns.lookup.CollectionIncomplete;
 import org.kuali.rice.kns.lookup.HtmlData;
 import org.kuali.rice.kns.lookup.HtmlData.AnchorHtmlData;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.BeanPropertyComparator;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.util.UrlFactory;
-import org.kuali.rice.kns.web.format.Formatter;
+import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.rice.krad.exception.ValidationException;
+import org.kuali.rice.krad.util.BeanPropertyComparator;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.rice.krad.util.UrlFactory;
 
 public class VendorLookupableHelperServiceImpl extends AbstractLookupableHelperServiceImpl {
     private VendorService vendorService;
@@ -66,7 +63,7 @@ public class VendorLookupableHelperServiceImpl extends AbstractLookupableHelperS
         VendorDetail vendor = (VendorDetail) businessObject;
         List<HtmlData> anchorHtmlDataList = new ArrayList<HtmlData>();
 
-        AnchorHtmlData anchorHtmlData = super.getUrlData(businessObject, KNSConstants.MAINTENANCE_EDIT_METHOD_TO_CALL, pkNames);
+        AnchorHtmlData anchorHtmlData = super.getUrlData(businessObject, KRADConstants.MAINTENANCE_EDIT_METHOD_TO_CALL, pkNames);
         anchorHtmlDataList.add(anchorHtmlData);
         if (vendor.isVendorParentIndicator() && vendor.isActiveIndicator()) {
             // only allow active parent vendors to create new divisions
@@ -187,7 +184,7 @@ public class VendorLookupableHelperServiceImpl extends AbstractLookupableHelperS
         VendorAddress defaultAddress = vendorService.getVendorDefaultAddress(vendor.getVendorAddresses(), vendor.getVendorHeader().getVendorType().getAddressType().getVendorAddressTypeCode(), "");
         if (defaultAddress != null ) {
             if (defaultAddress.getVendorState() != null) {
-                vendor.setVendorStateForLookup(defaultAddress.getVendorState().getPostalStateName());
+                vendor.setVendorStateForLookup(defaultAddress.getVendorState().getName());
             }
             vendor.setDefaultAddressLine1(defaultAddress.getVendorLine1Address());
             vendor.setDefaultAddressLine2(defaultAddress.getVendorLine2Address());
@@ -216,7 +213,7 @@ public class VendorLookupableHelperServiceImpl extends AbstractLookupableHelperS
         validateVendorNumber(fieldValues);
         validateTaxNumber(fieldValues);
 
-        if (!GlobalVariables.getMessageMap().isEmpty()) {
+        if (!GlobalVariables.getMessageMap().hasNoMessages()) {
             throw new ValidationException("Error(s) in search criteria");
         }
     }

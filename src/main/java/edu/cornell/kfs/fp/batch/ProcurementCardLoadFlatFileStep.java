@@ -25,6 +25,8 @@ import org.kuali.kfs.fp.batch.service.ProcurementCardLoadTransactionsService;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
+import org.kuali.kfs.sys.batch.service.WrappingBatchService;
+import org.kuali.kfs.sys.service.ReportWriterService;
 
 /**
  * This step will call a service method to load the kuali pcard xml file into the transaction table. Validates the data before the
@@ -34,12 +36,11 @@ import org.kuali.kfs.sys.batch.service.BatchInputFileService;
  * withing a single transaction. Step can be restarted as needed.
  */
 public class ProcurementCardLoadFlatFileStep extends AbstractStep {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardLoadFlatFileStep.class);
-
     private ProcurementCardLoadTransactionsService procurementCardLoadTransactionsService;
     private BatchInputFileService batchInputFileService;
     private BatchInputFileType procurementCardInputFileType;
-
+    private ReportWriterService reportWriterService;
+    
     /**
      * Controls the procurement card process.
      */
@@ -47,15 +48,18 @@ public class ProcurementCardLoadFlatFileStep extends AbstractStep {
         procurementCardLoadTransactionsService.cleanTransactionsTable();
 
         List<String> fileNamesToLoad = batchInputFileService.listInputFileNamesWithDoneFile(procurementCardInputFileType);
-
+        ((WrappingBatchService) reportWriterService).initialize();
+        
         boolean processSuccess = true;
-        List<String> processedFiles = new ArrayList();
+        List<String> processedFiles = new ArrayList<String>();
         for (String inputFileName : fileNamesToLoad) {
-            processSuccess = procurementCardLoadTransactionsService.loadProcurementCardFile(inputFileName);
+            processSuccess = procurementCardLoadTransactionsService.loadProcurementCardFile(inputFileName,reportWriterService);
             if (processSuccess) {
                 processedFiles.add(inputFileName);
             }
         }
+
+        ((WrappingBatchService) reportWriterService).destroy();
 
         removeDoneFiles(processedFiles);
 

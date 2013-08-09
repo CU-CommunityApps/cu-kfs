@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderTransmissionMethod;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
-import org.kuali.rice.kns.service.KeyValuesService;
-import org.kuali.rice.core.util.KeyLabelPair;
+import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.krad.keyvalues.KeyValuesBase;
+import org.kuali.rice.krad.service.KeyValuesService;
 
 /**
  * Values Finder for <code>PurchaseOrderTransmissionMethod</code>.
@@ -17,7 +17,9 @@ import org.kuali.rice.core.util.KeyLabelPair;
 
 public class PurchaseOrderTransmissionMethodValuesFinder extends KeyValuesBase {
 
-    /*
+	private static final long serialVersionUID = 1L;
+
+	/*
      * @see org.kuali.keyvalues.KeyValuesFinder#getKeyValues()
      */
     public List getKeyValues() {
@@ -25,10 +27,10 @@ public class PurchaseOrderTransmissionMethodValuesFinder extends KeyValuesBase {
         KeyValuesService boService = SpringContext.getBean(KeyValuesService.class);
         Collection codes = boService.findAll(PurchaseOrderTransmissionMethod.class);
         List labels = new ArrayList();
-        labels.add(new KeyLabelPair("", ""));
+        labels.add(new ConcreteKeyValue("", ""));
         for (Iterator iter = codes.iterator(); iter.hasNext();) {
         	PurchaseOrderTransmissionMethod poTransmissionMethod = (PurchaseOrderTransmissionMethod) iter.next();
-            labels.add(new KeyLabelPair(poTransmissionMethod.getPurchaseOrderTransmissionMethodCode(), poTransmissionMethod.getPurchaseOrderTransmissionMethodDescription()));
+            labels.add(new ConcreteKeyValue(poTransmissionMethod.getPurchaseOrderTransmissionMethodCode(), poTransmissionMethod.getPurchaseOrderTransmissionMethodDescription()));
         }        
         return labels;
     }

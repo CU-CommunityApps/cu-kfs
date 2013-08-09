@@ -29,19 +29,19 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.kuali.kfs.module.ar.businessobject.Customer;
-import org.kuali.rice.kns.bo.Inactivateable;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.KualiInteger;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 /**
  * BO for the Labor Benefit Rate Category Fringe Benefit
  * 
  * @author Allan Sonkin
  */
-public class LaborBenefitRateCategory extends PersistableBusinessObjectBase implements Inactivateable {
+public class LaborBenefitRateCategory extends PersistableBusinessObjectBase implements MutableInactivatable {
 
-    private String laborBenefitRateCategoryCode;//the BO code
+	private static final long serialVersionUID = 1L;
+
+	private String laborBenefitRateCategoryCode;//the BO code
     
     private Boolean activeIndicator = false;     //indicates active status of this BO
     
@@ -102,8 +102,8 @@ public class LaborBenefitRateCategory extends PersistableBusinessObjectBase impl
         this.codeDesc = codeDesc;
     }
 
-    @Override
-    protected LinkedHashMap toStringMapper() {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();
         
         m.put("laborBenefitRateCategoryCode", this.laborBenefitRateCategoryCode);

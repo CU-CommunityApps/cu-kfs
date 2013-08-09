@@ -5,7 +5,9 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
+import org.kuali.kfs.module.cg.businessobject.Award;
 
+@SuppressWarnings("deprecation")
 public class AwardExtensionRule extends AwardRule {
 
     @Override
@@ -18,11 +20,13 @@ public class AwardExtensionRule extends AwardRule {
     	return success;
     }
     
-    protected boolean checkFinalFinancialReportRequired() {
+    
+	protected boolean checkFinalFinancialReportRequired() {
     	boolean success = true;
     	
-    	AwardExtendedAttribute awardExtendedAttributeNew = (AwardExtendedAttribute) super.getNewBo().getExtension();
-    	AwardExtendedAttribute awardExtendedAttributeOld = (AwardExtendedAttribute) super.getOldBo().getExtension();
+
+    	AwardExtendedAttribute awardExtendedAttributeNew = (AwardExtendedAttribute) ( (Award) super.getNewBo()).getExtension();
+    	AwardExtendedAttribute awardExtendedAttributeOld = (AwardExtendedAttribute) ( (Award) super.getOldBo()).getExtension();
 
     	if (awardExtendedAttributeNew.isFinalFinancialReportRequired() && null==awardExtendedAttributeNew.getFinalFiscalReportDate()) {
     		success = false;

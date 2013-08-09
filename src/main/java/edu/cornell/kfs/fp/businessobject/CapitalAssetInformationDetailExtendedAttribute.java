@@ -7,13 +7,14 @@ import java.util.Map;
 
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
 
 
 /**
  * @author cab379
  *
  */
+@SuppressWarnings("serial")
 public class CapitalAssetInformationDetailExtendedAttribute extends PersistableBusinessObjectExtensionBase {
  
 	private String documentNumber;

@@ -26,7 +26,7 @@ import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.bo.GlobalBusinessObjectDetailBase;
+import org.kuali.rice.krad.bo.GlobalBusinessObjectDetailBase;
 
 /**
  * This is a representation of an Account Reversion Detail, made specifically for Global Account Reversions. However, as
@@ -34,7 +34,10 @@ import org.kuali.rice.kns.bo.GlobalBusinessObjectDetailBase;
  * Accounts, that class could not be re-used for Globals.
  */
 public class AccountReversionGlobalDetail extends GlobalBusinessObjectDetailBase {
-    protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionGlobalDetail.class);
+
+	private static final long serialVersionUID = 1L;
+
+	protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionGlobalDetail.class);
 
     private String documentNumber;
     private String accountReversionCategoryCode;
@@ -48,8 +51,8 @@ public class AccountReversionGlobalDetail extends GlobalBusinessObjectDetailBase
     /**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
-    @Override
-    protected LinkedHashMap toStringMapper() {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	protected LinkedHashMap toStringMapper() {
         LinkedHashMap stringMapper = new LinkedHashMap();
         stringMapper.put(KFSPropertyConstants.DOCUMENT_NUMBER, this.documentNumber);
         stringMapper.put("AccountReversionCategoryCode", this.accountReversionCategoryCode);

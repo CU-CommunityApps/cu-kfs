@@ -12,8 +12,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kew.actionrequest.service.DocumentRequeuerService;
-import org.kuali.rice.kew.docsearch.service.SearchableAttributeProcessingService;
+import org.kuali.rice.core.api.config.CoreConfigHelper;
+import org.kuali.rice.kew.api.KewApiServiceLocator;
+import org.kuali.rice.kew.api.document.DocumentRefreshQueue;
+import org.kuali.rice.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
@@ -35,13 +37,13 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
 		public boolean requeueDocuments() {
 		    boolean result = true;
 			List<String> docIds = new ArrayList<String>();
-
 		    docIds = documentMaintenanceDao.getDocumentRequeueValues();
 		    LOG.info("Total number of documents flagged for requeuing: "+docIds.size());
 		    
 			for (Iterator<String> it = docIds.iterator(); it.hasNext(); ) {
 				Long id = new Long(it.next());
-				SpringContext.getBean(DocumentRequeuerService.class).requeueDocument(id);
+                DocumentRefreshQueue documentRequeuer = KewApiServiceLocator.getDocumentRequeuerService(CoreConfigHelper.getApplicationId(), id.toString(), 0 /*no wait*/);
+                documentRequeuer.refreshDocument(id.toString());
 			}
 			
 			return result;
@@ -53,6 +55,8 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
 		@Transactional
 		public boolean reindexDocuments() {
 			boolean result = true;
+			final DocumentAttributeIndexingQueue queue = KewApiServiceLocator.getDocumentAttributeIndexingQueue();
+
 		    List<String> docIds = new ArrayList<String>();
 
 		    docIds = documentMaintenanceDao.getDocumentReindexValues();
@@ -60,7 +64,7 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
 		    
 			for (Iterator<String> it = docIds.iterator(); it.hasNext(); ) {
 				Long id = new Long(it.next());
-				SpringContext.getBean(SearchableAttributeProcessingService.class).indexDocument(id);
+				queue.indexDocument(id.toString());
 			}
 			
 			return result;

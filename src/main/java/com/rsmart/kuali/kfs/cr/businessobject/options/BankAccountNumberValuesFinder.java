@@ -21,9 +21,10 @@ import java.util.List;
 
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
-import org.kuali.rice.kns.service.KeyValuesService;
-import org.kuali.rice.core.util.KeyLabelPair;
+import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.rice.krad.keyvalues.KeyValuesBase;
+import org.kuali.rice.krad.service.KeyValuesService;
+import org.kuali.rice.core.api.util.ConcreteKeyValue;
 
 /**
  * Bank Account Number Values Finder
@@ -40,13 +41,13 @@ public class BankAccountNumberValuesFinder extends KeyValuesBase {
      * 
      * @see org.kuali.core.lookup.keyvalues.KeyValuesFinder#getKeyValues()
      */
-    public List<KeyLabelPair> getKeyValues() {
+    public List<KeyValue> getKeyValues() {
         Collection<Bank> banks = SpringContext.getBean(KeyValuesService.class).findAll(Bank.class);
-        List<KeyLabelPair> bankKeyLabels = new ArrayList<KeyLabelPair>();
-        bankKeyLabels.add(new KeyLabelPair("", ""));
+        List<KeyValue> bankKeyLabels = new ArrayList<KeyValue>();
+        bankKeyLabels.add(new ConcreteKeyValue("", ""));
         for (Bank bank : banks) {
             if(bank.isActive()) {
-                bankKeyLabels.add( new KeyLabelPair(bank.getBankAccountNumber(), bank.getBankName()) );
+                bankKeyLabels.add( new ConcreteKeyValue(bank.getBankAccountNumber(), bank.getBankName()) );
             }
         }
 

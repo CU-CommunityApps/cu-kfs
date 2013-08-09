@@ -29,9 +29,9 @@ import org.kuali.kfs.pdp.service.PendingTransactionService;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.bo.KualiCode;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.krad.bo.KualiCode;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
@@ -68,11 +68,11 @@ public class GlTransactionStep extends AbstractStep {
         
         List<String> bankCodes = null;
         Collection<PaymentGroup> paymentGroups = null;
-        Map<Object,Object> fieldValues = null;
+        Map<String,Object> fieldValues = null;
         Collection<CheckReconciliation> records = null;
         
         // Stop payments
-        fieldValues = new HashMap<Object,Object>();
+        fieldValues = new HashMap<String,Object>();
         fieldValues.put("glTransIndicator", "N");
         fieldValues.put("status", CRConstants.STOP);
         fieldValues.put("sourceCode", CRConstants.PDP_SRC);
@@ -122,7 +122,7 @@ public class GlTransactionStep extends AbstractStep {
         }
         
         // Canceled payments
-        fieldValues = new HashMap<Object,Object>();
+        fieldValues = new HashMap<String,Object>();
         fieldValues.put("glTransIndicator", "N");
         fieldValues.put("status", CRConstants.CANCELLED);
         fieldValues.put("sourceCode", CRConstants.PDP_SRC);
@@ -169,7 +169,7 @@ public class GlTransactionStep extends AbstractStep {
         }
 
         // VOID payments
-        fieldValues = new HashMap<Object,Object>();
+        fieldValues = new HashMap<String,Object>();
         fieldValues.put("glTransIndicator", "N");
         fieldValues.put("status", CRConstants.VOIDED);
         fieldValues.put("sourceCode", CRConstants.PDP_SRC);
@@ -220,7 +220,7 @@ public class GlTransactionStep extends AbstractStep {
         
         
         // Stale payments
-        fieldValues = new HashMap<Object,Object>();
+        fieldValues = new HashMap<String,Object>();
         fieldValues.put("glTransIndicator", "N");
         fieldValues.put("status", CRConstants.STALE);
         fieldValues.put("sourceCode", CRConstants.PDP_SRC);

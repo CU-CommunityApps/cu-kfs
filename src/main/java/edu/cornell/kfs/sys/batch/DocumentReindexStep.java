@@ -13,7 +13,8 @@ import java.util.Iterator;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kew.docsearch.service.SearchableAttributeProcessingService;
+import org.kuali.rice.kew.api.KewApiServiceLocator;
+import org.kuali.rice.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 
 import edu.cornell.kfs.sys.service.DocumentMaintenanceService;
 
@@ -32,9 +33,9 @@ public class DocumentReindexStep extends AbstractStep {
 	 * @see org.kuali.kfs.sys.batch.Step#execute(java.lang.String, java.util.Date)
 	 */
 	public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-		
-		SearchableAttributeProcessingService indexer = SpringContext.getBean(SearchableAttributeProcessingService.class);
-
+        
+        final DocumentAttributeIndexingQueue queue = KewApiServiceLocator.getDocumentAttributeIndexingQueue();
+        
 		File f = new File(stagingDirectory+File.separator+fileName);
 	    ArrayList<String> docIds = new ArrayList<String>();
 
@@ -51,7 +52,7 @@ public class DocumentReindexStep extends AbstractStep {
 	    }
 		for (Iterator<String> it = docIds.iterator(); it.hasNext(); ) {
 			Long id = new Long(it.next());
-			indexer.indexDocument(id);
+			queue.indexDocument(id.toString());
 		}
 		
 		addTimeStampToFileName(f, fileName, stagingDirectory);

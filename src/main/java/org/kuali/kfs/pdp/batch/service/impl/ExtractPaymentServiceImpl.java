@@ -47,18 +47,18 @@ import org.kuali.kfs.pdp.service.PaymentDetailService;
 import org.kuali.kfs.pdp.service.PaymentGroupService;
 import org.kuali.kfs.pdp.service.PdpEmailService;
 import org.kuali.kfs.sys.businessobject.Bank;
-import org.kuali.rice.core.config.ConfigContext;
-import org.kuali.rice.kew.util.KEWConstants;
-import org.kuali.rice.kns.bo.Country;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.CountryService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.kuali.kfs.sys.KFSParameterKeyConstants;
+import org.kuali.rice.core.api.config.property.ConfigContext;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.api.config.property.Config;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.rice.location.api.country.Country;
+import org.kuali.rice.location.api.country.CountryService;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
 
@@ -77,7 +77,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
     private ProcessDao processDao;
     private PdpEmailService paymentFileEmailService;
     private BusinessObjectService businessObjectService;
-    private KualiConfigurationService kualiConfigurationService;
+    private ConfigurationService kualiConfigurationService;
     private CountryService countryService;
     protected AchBundlerHelperService achBundlerHelperService;
 
@@ -103,7 +103,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
         Date processDate = dateTimeService.getCurrentDate();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-        String checkCancelledFilePrefix = this.kualiConfigurationService.getPropertyString(PdpKeyConstants.ExtractPayment.CHECK_CANCEL_FILENAME);
+        String checkCancelledFilePrefix = this.kualiConfigurationService.getPropertyValueAsString(PdpKeyConstants.ExtractPayment.CHECK_CANCEL_FILENAME);
         checkCancelledFilePrefix = MessageFormat.format(checkCancelledFilePrefix, new Object[] { null });
 
         String filename = getOutputFile(checkCancelledFilePrefix, processDate);
@@ -181,7 +181,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         PaymentStatus extractedStatus = (PaymentStatus) this.businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, PdpConstants.PaymentStatusCodes.EXTRACTED);
 
-        String achFilePrefix = this.kualiConfigurationService.getPropertyString(PdpKeyConstants.ExtractPayment.ACH_FILENAME);
+        String achFilePrefix = this.kualiConfigurationService.getPropertyValueAsString(PdpKeyConstants.ExtractPayment.ACH_FILENAME);
         achFilePrefix = MessageFormat.format(achFilePrefix, new Object[] { null });
 
         String filename = getOutputFile(achFilePrefix, processDate);
@@ -204,7 +204,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         PaymentStatus extractedStatus = (PaymentStatus) this.businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, PdpConstants.PaymentStatusCodes.EXTRACTED);
 
-        String checkFilePrefix = this.kualiConfigurationService.getPropertyString(PdpKeyConstants.ExtractPayment.CHECK_FILENAME);
+        String checkFilePrefix = this.kualiConfigurationService.getPropertyValueAsString(PdpKeyConstants.ExtractPayment.CHECK_FILENAME);
         checkFilePrefix = MessageFormat.format(checkFilePrefix, new Object[] { null });
 
         String filename = getOutputFile(checkFilePrefix, processDate);
@@ -213,7 +213,8 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
         List<PaymentProcess> extractsToRun = this.processDao.getAllExtractsToRun();
         for (PaymentProcess extractToRun : extractsToRun) {
             writeExtractCheckFile(extractedStatus, extractToRun, filename, extractToRun.getId().intValue());
-            this.processDao.setExtractProcessAsComplete(extractToRun);
+            // UPGRADE-911
+            //this.processDao.setExtractProcessAsComplete(extractToRun);
         }
     }
 
@@ -740,9 +741,9 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         	
                             // Get country name
                         	int CountryNameMaxLength = 15;
-                            Country country = countryService.getByPrimaryId(pg.getCountry());
+                            Country country = countryService.getCountry(pg.getCountry());
                             if (country != null)
-                            	sCountryName = country.getPostalCountryName().substring(0,((country.getPostalCountryName().length() >= CountryNameMaxLength)? CountryNameMaxLength: country.getPostalCountryName().length() ));
+                            	sCountryName = country.getName().substring(0,((country.getName().length() >= CountryNameMaxLength)? CountryNameMaxLength: country.getName().length() ));
                             else
                             	if (ObjectUtils.isNotNull(pg.getCountry()))
                             		sCountryName = pg.getCountry().substring(0,((pg.getCountry().length() >= CountryNameMaxLength)? CountryNameMaxLength: pg.getCountry().length() ));
@@ -1619,7 +1620,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
     	String emailAddressesStr = ""; 
     	
     	try {
-            emailAddressesStr = parameterService.getParameterValue(KFSParameterKeyConstants.KFS_PDP, KFSParameterKeyConstants.ALL_COMPONENTS, KFSParameterKeyConstants.BANK_PAYMENT_FILE_EMAIL_NOTIFICATION);
+            emailAddressesStr = parameterService.getParameterValueAsString(KFSParameterKeyConstants.KFS_PDP, KFSParameterKeyConstants.ALL_COMPONENTS, KFSParameterKeyConstants.BANK_PAYMENT_FILE_EMAIL_NOTIFICATION);
         } catch(Exception e) {
             LOG.error("ExtractPaymentServiceImpl.getBankPaymentFileNotificationEmailAddresses: The " + KFSParameterKeyConstants.KFS_PDP + ":" + KFSParameterKeyConstants.ALL_COMPONENTS + ":" + KFSParameterKeyConstants.BANK_PAYMENT_FILE_EMAIL_NOTIFICATION + "system parameter was not found registered in the system.");
         }
@@ -1753,9 +1754,9 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                         if (first) {
                             // Get country name for code
                             int CountryNameMaxLength = 15;
-                            Country country = this.getCountryService().getByPrimaryId(pg.getCountry());
+                            Country country = this.getCountryService().getCountry(pg.getCountry());
                             if (country != null) {
-                            	sCountryName = country.getPostalCountryName().substring(0,((country.getPostalCountryName().length() >= CountryNameMaxLength)? CountryNameMaxLength: country.getPostalCountryName().length() ));
+                            	sCountryName = country.getName().substring(0,((country.getName().length() >= CountryNameMaxLength)? CountryNameMaxLength: country.getName().length() ));
     	                    	if (sCountryName.toUpperCase().contains("UNITED STATES"))
     	                    		sCountryName = "";
                             }
@@ -2144,9 +2145,9 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
         writeTag(os, indent + 2, "zipCd", pg.getZipCd());
         
         // get country name for code
-        Country country = countryService.getByPrimaryId(pg.getCountry());
+        Country country = countryService.getCountry(pg.getCountry());
         if (country != null) {
-            writeTag(os, indent + 2, "country", country.getPostalCountryName());
+            writeTag(os, indent + 2, "country", country.getName());
         }
         else {
             writeTag(os, indent + 2, "country", pg.getCountry());
@@ -2251,7 +2252,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
         this.businessObjectService = businessObjectService;
     }
 
-    public void setKualiConfigurationService(KualiConfigurationService kualiConfigurationService) {
+    public void setKualiConfigurationService(ConfigurationService kualiConfigurationService) {
         this.kualiConfigurationService = kualiConfigurationService;
     }
 
@@ -2274,7 +2275,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
     }
 
     protected boolean isProduction() {
-    	return ConfigContext.getCurrentContextConfig().getProperty(KEWConstants.PROD_DEPLOYMENT_CODE).equalsIgnoreCase(
+    	return ConfigContext.getCurrentContextConfig().getProperty(Config.PROD_ENVIRONMENT_CODE).equalsIgnoreCase(
     			ConfigContext.getCurrentContextConfig().getEnvironment());
         }
     
@@ -2296,7 +2297,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
     /*
      * KFSPTS-1460: Added accessor method for extended classes
      */
-    protected KualiConfigurationService getKualiConfigurationService() {
+    protected ConfigurationService getKualiConfigurationService() {
         return kualiConfigurationService;
     }
     
@@ -2403,5 +2404,16 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
     public void setAchBundlerHelperService(AchBundlerHelperService achBundlerHelperService) {
         this.achBundlerHelperService = achBundlerHelperService;
     }
+    
+    //TODO UPGRADE-911
+	public void prepareDirectories(List<String> directoryPaths) {
+		
+		
+	}
+	//TODO UPGRADE-911
+	public List<String> getRequiredDirectoryNames() {
+		
+		return null;
+	}
        
 }

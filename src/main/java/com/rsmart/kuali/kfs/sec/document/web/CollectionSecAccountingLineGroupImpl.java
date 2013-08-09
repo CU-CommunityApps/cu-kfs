@@ -15,30 +15,14 @@
  */
 package com.rsmart.kuali.kfs.sec.document.web;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.Tag;
 
-import org.apache.struts.Globals;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.AccountingDocument;
-import org.kuali.kfs.sys.document.datadictionary.AccountingLineGroupDefinition;
-import org.kuali.kfs.sys.document.web.DefaultAccountingLineGroupImpl;
-import org.kuali.kfs.sys.document.web.RenderableAccountingLineContainer;
 import org.kuali.kfs.sys.document.web.renderers.GroupErrorsRenderer;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kns.util.GlobalVariables;
-
-import com.rsmart.kuali.kfs.sec.SecConstants;
-import com.rsmart.kuali.kfs.sec.SecKeyConstants;
-import com.rsmart.kuali.kfs.sec.service.AccessSecurityService;
 
 /**
  * Integrates with access security module to check security on accounting lines before rendering

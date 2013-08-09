@@ -18,15 +18,16 @@ package org.kuali.kfs.coa.businessobject;
 import java.util.LinkedHashMap;
 
 import org.kuali.kfs.sys.businessobject.SystemOptions;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * This class...
  */
 public abstract class Reversion extends PersistableBusinessObjectBase implements CarryForwardReversionProcessInfo {
 
-    private Integer universityFiscalYear;
+	private static final long serialVersionUID = 1L;
+	private Integer universityFiscalYear;
     private String chartOfAccountsCode;
     private String budgetReversionChartOfAccountsCode;
     private String budgetReversionAccountNumber;
@@ -296,7 +297,8 @@ public abstract class Reversion extends PersistableBusinessObjectBase implements
     /**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
-    protected LinkedHashMap toStringMapper() {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	protected LinkedHashMap toStringMapper() {
         
         LinkedHashMap m = new LinkedHashMap();
         if (getUniversityFiscalYear() != null) {

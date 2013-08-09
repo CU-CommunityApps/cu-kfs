@@ -25,16 +25,16 @@ import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.kns.UserSession;
-import org.kuali.rice.kns.bo.Attachment;
-import org.kuali.rice.kns.bo.Note;
-import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.kns.service.AttachmentService;
-import org.kuali.rice.kns.service.DocumentService;
-import org.kuali.rice.kns.service.NoteService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.MessageMap;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.krad.UserSession;
+import org.kuali.rice.krad.bo.Attachment;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.maintenance.MaintenanceDocument;
+import org.kuali.rice.krad.service.AttachmentService;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.service.NoteService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.MessageMap;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 import edu.cornell.kfs.vnd.document.service.CUVendorService;
@@ -541,7 +541,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
         newNote.setAttachment(attachment);
 		LOG.info("create tempnote");
 
-        Note tmpNote = SpringContext.getBean(NoteService.class).createNote(newNote, vendor);
+        Note tmpNote = SpringContext.getBean(NoteService.class).createNote(newNote, vendor, "1");
 		LOG.info("save note");
 
         SpringContext.getBean(NoteService.class).save(tmpNote);
@@ -573,8 +573,8 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
         newNote.setNoteText(noteText);
         newNote.setAttachment(attachment);
 		LOG.info("create tempnote");
-
-        Note tmpNote = SpringContext.getBean(NoteService.class).createNote(newNote, vendor);
+  
+        Note tmpNote = SpringContext.getBean(NoteService.class).createNote(newNote, vendor, "1");
 		LOG.info("save note");
 
         SpringContext.getBean(NoteService.class).save(tmpNote);

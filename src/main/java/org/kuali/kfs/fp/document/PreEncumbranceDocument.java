@@ -15,7 +15,6 @@
  */
 package org.kuali.kfs.fp.document;
 import static org.kuali.kfs.sys.KFSConstants.BALANCE_TYPE_PRE_ENCUMBRANCE;
-import static org.kuali.rice.kns.util.AssertionUtils.assertThat;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -37,12 +36,14 @@ import org.kuali.kfs.sys.document.Correctable;
 import org.kuali.kfs.sys.document.service.DebitDeterminerService;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import org.kuali.kfs.sys.service.HomeOriginationService;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kns.document.Copyable;
-import org.kuali.rice.kns.exception.ValidationException;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
+
+
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.krad.document.Copyable;
+import org.kuali.rice.krad.exception.ValidationException;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.businessobject.PreEncumbranceAccountingLineUtil;
 import edu.cornell.kfs.fp.businessobject.PreEncumbranceSourceAccountingLine;
@@ -154,7 +155,8 @@ public class PreEncumbranceDocument extends AccountingDocumentBase implements Co
             explicitEntry.setReferenceFinancialDocumentTypeCode(explicitEntry.getFinancialDocumentTypeCode()); // "PE"
         }
         else {
-            assertThat(accountingLine.isTargetAccountingLine(), accountingLine);
+            //TODO UPGRADE-911
+            //assertThat(accountingLine.isTargetAccountingLine(), accountingLine);
             explicitEntry.setTransactionEncumbranceUpdateCode(KFSConstants.ENCUMB_UPDT_REFERENCE_DOCUMENT_CD);
             explicitEntry.setReferenceFinancialSystemOriginationCode(SpringContext.getBean(HomeOriginationService.class).getHomeOrigination().getFinSystemHomeOriginationCode());
             explicitEntry.setReferenceFinancialDocumentNumber(accountingLine.getReferenceNumber());

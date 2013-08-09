@@ -1,6 +1,6 @@
 package edu.cornell.kfs.module.bc.util;
 
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * This class has utility methods to be used in the BC exports.

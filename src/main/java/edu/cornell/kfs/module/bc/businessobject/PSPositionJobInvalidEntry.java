@@ -2,13 +2,14 @@ package edu.cornell.kfs.module.bc.businessobject;
 
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.kns.bo.BusinessObjectBase;
+import org.kuali.rice.krad.bo.BusinessObjectBase;
 
 /**
  * This class represents an entry in the _error file for the psBudgetFeed job that
  * contains the position number and emplid for all the entries in the PS extract that were
  * invalid.
  */
+@SuppressWarnings("serial")
 public class PSPositionJobInvalidEntry extends BusinessObjectBase {
 
     private String positionNumber;

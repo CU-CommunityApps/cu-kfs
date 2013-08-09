@@ -21,13 +21,16 @@ import java.util.List;
 import org.kuali.kfs.coa.service.OrganizationReversionService;
 import org.kuali.kfs.sys.businessobject.inquiry.KfsInquirableImpl;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.bo.BusinessObject;
 import org.kuali.rice.kns.web.ui.Field;
 import org.kuali.rice.kns.web.ui.Row;
 import org.kuali.rice.kns.web.ui.Section;
+import org.kuali.rice.krad.bo.BusinessObject;
 
+@SuppressWarnings("deprecation")
 public class OrganizationReversionInquirable extends KfsInquirableImpl {
-    private OrganizationReversionService organizationReversionService;
+
+	private static final long serialVersionUID = 1L;
+	private OrganizationReversionService organizationReversionService;
 
     /**
      * Overridden to take out details with inactive categories

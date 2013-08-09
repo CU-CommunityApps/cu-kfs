@@ -21,4 +21,10 @@ public class PSBudgetFeedFlatInputFileHandler implements FlatFileDataHandler {
 
     }
 
+    //TODO UPGRADE-911
+	public String getFileName(String principalName, Object parsedFileContents,
+			String fileUserIdentifier) {
+		return null;
+	}
+
 }

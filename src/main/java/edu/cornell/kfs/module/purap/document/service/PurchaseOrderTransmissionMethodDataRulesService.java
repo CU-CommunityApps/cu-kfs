@@ -1,8 +1,5 @@
 package edu.cornell.kfs.module.purap.document.service;
 
-import org.kuali.rice.kns.document.Document;
-
-
 public interface PurchaseOrderTransmissionMethodDataRulesService { 
 
 	public boolean isFaxNumberValid(String faxNumber);

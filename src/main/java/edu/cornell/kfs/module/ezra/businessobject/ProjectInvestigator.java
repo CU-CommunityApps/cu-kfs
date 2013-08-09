@@ -6,8 +6,7 @@ package edu.cornell.kfs.module.ezra.businessobject;
 import java.sql.Date;
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 /**
  * @author kwk43
@@ -15,6 +14,7 @@ import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
  */
 public class ProjectInvestigator extends PersistableBusinessObjectBase {
 
+	private static final long serialVersionUID = 1L;
 	private Long projInvId;
 	private String projectId;
 	private String awardProposalId;
@@ -122,7 +122,7 @@ public class ProjectInvestigator extends PersistableBusinessObjectBase {
 	/* (non-Javadoc)
 	 * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
 	 */
-	@Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected LinkedHashMap toStringMapper() {
 		LinkedHashMap m = new LinkedHashMap();
 

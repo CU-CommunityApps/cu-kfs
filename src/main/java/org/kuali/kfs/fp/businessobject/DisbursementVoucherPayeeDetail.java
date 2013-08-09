@@ -23,14 +23,15 @@ import org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.kns.bo.Country;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.bo.PostalCode;
-import org.kuali.rice.kns.bo.State;
-import org.kuali.rice.kns.service.CountryService;
-import org.kuali.rice.kns.service.PostalCodeService;
-import org.kuali.rice.kns.service.StateService;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.rice.location.api.country.Country;
+import org.kuali.rice.location.api.country.CountryService;
+import org.kuali.rice.location.api.postalcode.PostalCode;
+import org.kuali.rice.location.api.postalcode.PostalCodeService;
+import org.kuali.rice.location.api.state.State;
+import org.kuali.rice.location.api.state.StateService;
+
 
 /**
  * This class is used to represent a disbursement voucher payee detail.
@@ -765,7 +766,7 @@ public class DisbursementVoucherPayeeDetail extends PersistableBusinessObjectBas
      * @return Returns the disbVchrPayeeState.
      */
     public State getDisbVchrPayeeState() {
-        disbVchrPayeeState = SpringContext.getBean(StateService.class).getByPrimaryIdIfNecessary( disbVchrPayeeCountryCode, disbVchrPayeeStateCode, disbVchrPayeeState);
+        disbVchrPayeeState = SpringContext.getBean(StateService.class).getState(disbVchrPayeeCountryCode, disbVchrPayeeStateCode);
         return disbVchrPayeeState;
     }
 
@@ -782,7 +783,7 @@ public class DisbursementVoucherPayeeDetail extends PersistableBusinessObjectBas
      * @return Returns the disbVchrPayeeCountry.
      */
     public Country getDisbVchrPayeeCountry() {
-        disbVchrPayeeCountry = SpringContext.getBean(CountryService.class).getByPrimaryIdIfNecessary(disbVchrPayeeCountryCode, disbVchrPayeeCountry);
+        disbVchrPayeeCountry = SpringContext.getBean(CountryService.class).getCountry(disbVchrPayeeCountryCode);
         return disbVchrPayeeCountry;
     }
 
@@ -799,7 +800,7 @@ public class DisbursementVoucherPayeeDetail extends PersistableBusinessObjectBas
      * @return Returns the disbVchrPayeePostalZipCode.
      */
     public PostalCode getDisbVchrPayeePostalZipCode() {
-        disbVchrPayeePostalZipCode = SpringContext.getBean(PostalCodeService.class).getByPrimaryIdIfNecessary(disbVchrPayeeCountryCode, disbVchrPayeeZipCode, disbVchrPayeePostalZipCode);
+        disbVchrPayeePostalZipCode = SpringContext.getBean(PostalCodeService.class).getPostalCode(disbVchrPayeeCountryCode, disbVchrPayeeZipCode);
         return disbVchrPayeePostalZipCode;
     }
 
@@ -848,7 +849,16 @@ public class DisbursementVoucherPayeeDetail extends PersistableBusinessObjectBas
         m.put(KFSPropertyConstants.DOCUMENT_NUMBER, this.documentNumber);
         return m;
     }
-
+    
+    
+    private boolean nullSafeEquals(Object obj1, Object obj2) {
+        if (obj1 != null && obj2 != null) {
+            return obj1.equals(obj2);
+        }
+        else {
+            return (obj1 == obj2);
+        }
+    }
     /**
      * This method...
      * 
@@ -858,12 +868,12 @@ public class DisbursementVoucherPayeeDetail extends PersistableBusinessObjectBas
     public boolean hasSameAddress(DisbursementVoucherPayeeDetail compareDetail) {
         boolean isEqual = true;
 
-        isEqual &= ObjectUtils.nullSafeEquals(this.getDisbVchrPayeeLine1Addr(), compareDetail.getDisbVchrPayeeLine1Addr());
-        isEqual &= ObjectUtils.nullSafeEquals(this.getDisbVchrPayeeLine2Addr(), compareDetail.getDisbVchrPayeeLine2Addr());
-        isEqual &= ObjectUtils.nullSafeEquals(this.getDisbVchrPayeeCityName(), compareDetail.getDisbVchrPayeeCityName());
-        isEqual &= ObjectUtils.nullSafeEquals(this.getDisbVchrPayeeStateCode(), compareDetail.getDisbVchrPayeeStateCode());
-        isEqual &= ObjectUtils.nullSafeEquals(this.getDisbVchrPayeeZipCode(), compareDetail.getDisbVchrPayeeZipCode());
-        isEqual &= ObjectUtils.nullSafeEquals(this.getDisbVchrPayeeCountryCode(), compareDetail.getDisbVchrPayeeCountryCode());
+        isEqual &= nullSafeEquals(this.getDisbVchrPayeeLine1Addr(), compareDetail.getDisbVchrPayeeLine1Addr());
+        isEqual &= nullSafeEquals(this.getDisbVchrPayeeLine2Addr(), compareDetail.getDisbVchrPayeeLine2Addr());
+        isEqual &= nullSafeEquals(this.getDisbVchrPayeeCityName(), compareDetail.getDisbVchrPayeeCityName());
+        isEqual &= nullSafeEquals(this.getDisbVchrPayeeStateCode(), compareDetail.getDisbVchrPayeeStateCode());
+        isEqual &= nullSafeEquals(this.getDisbVchrPayeeZipCode(), compareDetail.getDisbVchrPayeeZipCode());
+        isEqual &= nullSafeEquals(this.getDisbVchrPayeeCountryCode(), compareDetail.getDisbVchrPayeeCountryCode());
 
         return isEqual;
     }

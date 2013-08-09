@@ -11,7 +11,6 @@ import edu.cornell.kfs.fp.businessobject.ProcurementCardSummary;
 
 public class ProcurementCardSummaryFlatInputFileType extends FlatFileParserBase {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardSummaryFlatInputFileType.class);
     protected ArrayList<String> errorMessages;
     protected int lineCount = 1;
 

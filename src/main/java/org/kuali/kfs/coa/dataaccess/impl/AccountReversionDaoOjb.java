@@ -24,7 +24,7 @@ import org.kuali.kfs.coa.businessobject.AccountReversion;
 import org.kuali.kfs.coa.businessobject.ReversionCategory;
 import org.kuali.kfs.coa.dataaccess.AccountReversionDao;
 import org.kuali.kfs.coa.dataaccess.OrganizationReversionDao;
-import org.kuali.rice.kns.dao.impl.PlatformAwareDaoBaseOjb;
+import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 
 /**
  * This class implements the {@link OrganizationReversionDao} data access methods using Ojb

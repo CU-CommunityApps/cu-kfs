@@ -17,12 +17,13 @@ package org.kuali.kfs.coa.businessobject;
 
 
 import org.kuali.kfs.sys.businessobject.SystemOptions;
-import org.kuali.rice.kns.bo.Inactivateable;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+
 
 public abstract class ReversionDetail extends PersistableBusinessObjectBase {
 
-    private Integer universityFiscalYear;
+	private static final long serialVersionUID = 1L;
+	private Integer universityFiscalYear;
     private String chartOfAccountsCode;
     private boolean active = true;
     private ObjectCode reversionObject;

@@ -18,14 +18,15 @@ package org.kuali.kfs.coa.businessobject;
 
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.kns.bo.Inactivateable;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 
 /**
  * 
  */
-public class AccountReversionDetail extends ReversionDetail implements Inactivateable, ReversionCategoryInfo {
+public class AccountReversionDetail extends ReversionDetail implements MutableInactivatable, ReversionCategoryInfo {
 
-    private String accountNumber;
+	private static final long serialVersionUID = 1L;
+	private String accountNumber;
     private String accountReversionCategoryCode;
     private String accountReversionCode;
     private String accountReversionObjectCode;
@@ -127,7 +128,8 @@ public class AccountReversionDetail extends ReversionDetail implements Inactivat
 	/**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
-    protected LinkedHashMap toStringMapper() {
+    @SuppressWarnings("rawtypes")
+	protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();
         return m;
     }

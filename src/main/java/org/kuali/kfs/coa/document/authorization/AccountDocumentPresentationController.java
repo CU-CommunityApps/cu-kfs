@@ -30,20 +30,13 @@ import org.kuali.kfs.module.ld.LaborKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentPresentationControllerBase;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.actionitem.ActionItem;
-import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kew.service.KEWServiceLocator;
-import org.kuali.rice.kim.bo.entity.KimPrincipal;
-import org.kuali.rice.kim.service.KIMServiceLocator;
-import org.kuali.rice.kns.bo.BusinessObject;
-import org.kuali.rice.kns.document.Document;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.document.authorization.DocumentPresentationControllerBase;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
+
 
 
 public class AccountDocumentPresentationController extends FinancialSystemMaintenanceDocumentPresentationControllerBase {
@@ -67,29 +60,30 @@ public class AccountDocumentPresentationController extends FinancialSystemMainte
 	 * Therefore this method should be removed once KFS is upgraded to a version higher than 3.0.1 (see KFSPTS-800
 	 * for details on the issue requiring this fix).
 	 */
-	@Override
-    protected boolean canBlanketApprove(Document document) {
-	    {
-	    	try {
-		    	if ( getParameterService().getIndicatorParameter(KNSConstants.KNS_NAMESPACE, KNSConstants.DetailTypes.DOCUMENT_DETAIL_TYPE, KNSConstants.SystemGroupParameterNames.ALLOW_ENROUTE_BLANKET_APPROVE_WITHOUT_APPROVAL_REQUEST_IND) ) {
-		    		return canEdit(document);
-		    	}
-	    	} catch ( IllegalArgumentException ex ) {
-	    		// do nothing, the parameter does not exist and defaults to "N"
-	    	}
-	    	// otherwise, limit the display of the blanket approve button to only the initiator of the document (prior to routing)
-	    	KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-	    	if ( canRoute(document) && StringUtils.equals( workflowDocument.getInitiatorPrincipalId(), GlobalVariables.getUserSession().getPrincipalId() ) ) {
-	    		return true;
-	    	}
-	    	// or to a user with an approval action request
-	    	if ( workflowDocument.isApprovalRequested() ) {
-	    		return true;
-	    	}
-	    	
-	    	return false;
-	    }
-	}
+    //TODO UPGRADE-911
+//	@Override
+//    protected boolean canBlanketApprove(Document document) {
+//	    {
+//	    	try {
+//		    	if ( getParameterService().getIndicatorParameter(KNSConstants.KNS_NAMESPACE, KNSConstants.DetailTypes.DOCUMENT_DETAIL_TYPE, KNSConstants.SystemGroupParameterNames.ALLOW_ENROUTE_BLANKET_APPROVE_WITHOUT_APPROVAL_REQUEST_IND) ) {
+//		    		return canEdit(document);
+//		    	}
+//	    	} catch ( IllegalArgumentException ex ) {
+//	    		// do nothing, the parameter does not exist and defaults to "N"
+//	    	}
+//	    	// otherwise, limit the display of the blanket approve button to only the initiator of the document (prior to routing)
+//	    	KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+//	    	if ( canRoute(document) && StringUtils.equals( workflowDocument.getInitiatorPrincipalId(), GlobalVariables.getUserSession().getPrincipalId() ) ) {
+//	    		return true;
+//	    	}
+//	    	// or to a user with an approval action request
+//	    	if ( workflowDocument.isApprovalRequested() ) {
+//	    		return true;
+//	    	}
+//	    	
+//	    	return false;
+//	    }
+//	}
 // ^^^^^^^^^^^^^^^^^^  REMOVE THE CODE ABOVE BETWEEN THIS LINE AND THE NEXT WHEN UPGRADING TO KFS VERSION 4.0 OR HIGHER ^^^^^^^^^
 
 //    /**
@@ -116,7 +110,7 @@ public class AccountDocumentPresentationController extends FinancialSystemMainte
         //make sure the parameter exists
         if(service.parameterExists(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY")){
           //check the system param to see if the labor benefit rate category should be editable
-            String sysParam = SpringContext.getBean(ParameterService.class).getParameterValue(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY");
+            String sysParam = SpringContext.getBean(ParameterService.class).getParameterValueAsString(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY");
             LOG.debug("sysParam: " + sysParam);
             //if sysParam != Y then Labor Benefit Rate Category Code is not editable
             if (!sysParam.equalsIgnoreCase("Y")) {
@@ -141,7 +135,7 @@ public class AccountDocumentPresentationController extends FinancialSystemMainte
         //make sure the parameter exists
         if(service.parameterExists(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY")){
           //check the system param to see if the labor benefit rate category should be hidden
-            String sysParam = SpringContext.getBean(ParameterService.class).getParameterValue(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY");
+            String sysParam = SpringContext.getBean(ParameterService.class).getParameterValueAsString(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY");
             LOG.debug("sysParam: " + sysParam);
             //if sysParam != Y then Labor Benefit Rate Category Code is hidden
             if (!sysParam.equalsIgnoreCase("Y")) {

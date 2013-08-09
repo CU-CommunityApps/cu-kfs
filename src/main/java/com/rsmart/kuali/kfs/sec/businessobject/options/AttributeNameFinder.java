@@ -18,8 +18,8 @@ package com.rsmart.kuali.kfs.sec.businessobject.options;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kuali.rice.core.util.KeyLabelPair;
-import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
+import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.krad.keyvalues.KeyValuesBase;
 
 import com.rsmart.kuali.kfs.sec.SecConstants.NonSecurityAttributeNames;
 import com.rsmart.kuali.kfs.sec.SecConstants.SecurityAttributeNames;
@@ -35,15 +35,15 @@ public class AttributeNameFinder extends KeyValuesBase {
     public List getKeyValues() {
         List activeLabels = new ArrayList();
 
-        activeLabels.add(new KeyLabelPair(SecurityAttributeNames.ACCOUNT, SecurityAttributeNames.ACCOUNT));
-        activeLabels.add(new KeyLabelPair(SecurityAttributeNames.CHART, SecurityAttributeNames.CHART));
-        activeLabels.add(new KeyLabelPair(NonSecurityAttributeNames.OBJECT_CODE, NonSecurityAttributeNames.OBJECT_CODE));
-        activeLabels.add(new KeyLabelPair(SecurityAttributeNames.OBJECT_CONSOLIDATION, SecurityAttributeNames.OBJECT_CONSOLIDATION));
-        activeLabels.add(new KeyLabelPair(SecurityAttributeNames.OBJECT_LEVEL, SecurityAttributeNames.OBJECT_LEVEL));
-        activeLabels.add(new KeyLabelPair(SecurityAttributeNames.ORGANIZATION, SecurityAttributeNames.ORGANIZATION));
-        activeLabels.add(new KeyLabelPair(SecurityAttributeNames.PROJECT_CODE, SecurityAttributeNames.PROJECT_CODE));
-        activeLabels.add(new KeyLabelPair(SecurityAttributeNames.SUB_ACCOUNT, SecurityAttributeNames.SUB_ACCOUNT));
-        activeLabels.add(new KeyLabelPair(NonSecurityAttributeNames.SUB_OBJECT_CODE, NonSecurityAttributeNames.SUB_OBJECT_CODE));
+        activeLabels.add(new ConcreteKeyValue(SecurityAttributeNames.ACCOUNT, SecurityAttributeNames.ACCOUNT));
+        activeLabels.add(new ConcreteKeyValue(SecurityAttributeNames.CHART, SecurityAttributeNames.CHART));
+        activeLabels.add(new ConcreteKeyValue(NonSecurityAttributeNames.OBJECT_CODE, NonSecurityAttributeNames.OBJECT_CODE));
+        activeLabels.add(new ConcreteKeyValue(SecurityAttributeNames.OBJECT_CONSOLIDATION, SecurityAttributeNames.OBJECT_CONSOLIDATION));
+        activeLabels.add(new ConcreteKeyValue(SecurityAttributeNames.OBJECT_LEVEL, SecurityAttributeNames.OBJECT_LEVEL));
+        activeLabels.add(new ConcreteKeyValue(SecurityAttributeNames.ORGANIZATION, SecurityAttributeNames.ORGANIZATION));
+        activeLabels.add(new ConcreteKeyValue(SecurityAttributeNames.PROJECT_CODE, SecurityAttributeNames.PROJECT_CODE));
+        activeLabels.add(new ConcreteKeyValue(SecurityAttributeNames.SUB_ACCOUNT, SecurityAttributeNames.SUB_ACCOUNT));
+        activeLabels.add(new ConcreteKeyValue(NonSecurityAttributeNames.SUB_OBJECT_CODE, NonSecurityAttributeNames.SUB_OBJECT_CODE));
 
         return activeLabels;
     }

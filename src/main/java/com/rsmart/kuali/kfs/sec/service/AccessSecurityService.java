@@ -18,11 +18,20 @@ package com.rsmart.kuali.kfs.sec.service;
 import java.util.List;
 import java.util.Map;
 
+
+
+
+
+
+import javax.swing.text.AttributeSet;
+
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.bo.types.dto.AttributeSet;
-import org.kuali.rice.kns.bo.BusinessObject;
+
+
+
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.krad.bo.BusinessObject;
 
 import com.rsmart.kuali.kfs.sec.businessobject.AccessSecurityRestrictionInfo;
 

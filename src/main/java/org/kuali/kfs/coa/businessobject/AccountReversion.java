@@ -16,16 +16,17 @@
 
 package org.kuali.kfs.coa.businessobject;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.kuali.rice.kns.bo.Inactivateable;
-import org.kuali.rice.kns.util.TypedArrayList;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+
 
 /**
  * 
  */
-public class AccountReversion extends Reversion implements Inactivateable {
+public class AccountReversion extends Reversion implements MutableInactivatable {
 
     
     private String accountNumber;
@@ -38,8 +39,8 @@ public class AccountReversion extends Reversion implements Inactivateable {
      * Default constructor.
      */
     public AccountReversion() {
-        accounts = new TypedArrayList(Account.class);
-        accountReversionDetails = new TypedArrayList(AccountReversionDetail.class);
+        accounts = new ArrayList<Account>();
+        accountReversionDetails = new ArrayList<AccountReversionDetail>();
     }   
 
     public List<AccountReversionDetail> getAccountReversionDetails() {
@@ -114,7 +115,8 @@ public class AccountReversion extends Reversion implements Inactivateable {
     /**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
-    protected LinkedHashMap toStringMapper() {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	protected LinkedHashMap toStringMapper() {
         
         LinkedHashMap m = super.toStringMapper();
         

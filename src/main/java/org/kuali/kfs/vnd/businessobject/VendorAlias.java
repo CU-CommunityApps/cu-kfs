@@ -19,14 +19,14 @@ package org.kuali.kfs.vnd.businessobject;
 import java.util.LinkedHashMap;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.kuali.rice.kns.bo.Inactivateable;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * Alternate name for a Vendor.
  */
-public class VendorAlias extends PersistableBusinessObjectBase implements VendorRoutingComparable, Inactivateable {
+public class VendorAlias extends PersistableBusinessObjectBase implements VendorRoutingComparable, MutableInactivatable {
 
     private String vendorAliasName;
     private Integer vendorDetailAssignedIdentifier;
@@ -114,7 +114,7 @@ public class VendorAlias extends PersistableBusinessObjectBase implements Vendor
      * 
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringBuilder(java.util.LinkedHashMap)
      */
-    @Override
+    
     public String toStringBuilder(LinkedHashMap mapper) {
 
         return vendorAliasName;

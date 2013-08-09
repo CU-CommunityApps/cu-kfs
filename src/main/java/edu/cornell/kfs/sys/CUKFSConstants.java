@@ -1,9 +1,6 @@
 package edu.cornell.kfs.sys;
 
-import org.kuali.kfs.sys.ParameterKeyConstants;
-import org.kuali.rice.core.util.JSTLConstants;
-
-public class CUKFSConstants extends JSTLConstants implements ParameterKeyConstants {
+public class CUKFSConstants {
         
         public static final String COMMODITY_CODE_FILE_TYPE_INDENTIFIER = "commodityCodeInputFileType";
         

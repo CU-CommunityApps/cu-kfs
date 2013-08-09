@@ -3,7 +3,9 @@
  */
 package edu.cornell.kfs.sys.businessobject;
 
-import org.kuali.rice.kns.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
+
+
 
 /**
  * @author kwk43

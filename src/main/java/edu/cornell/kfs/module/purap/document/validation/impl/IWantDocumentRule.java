@@ -2,9 +2,11 @@ package edu.cornell.kfs.module.purap.document.validation.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.rice.kns.document.Document;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
 import org.kuali.rice.kns.rules.DocumentRuleBase;
-import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.CUPurapPropertyConstants;
@@ -12,6 +14,7 @@ import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.validation.AddIWantItemRule;
 
+@SuppressWarnings("deprecation")
 public class IWantDocumentRule extends DocumentRuleBase implements AddIWantItemRule {
 
     public boolean processAddIWantItemRules(IWantDocument document, IWantItem item, String errorPathPrefix) {
@@ -30,8 +33,7 @@ public class IWantDocumentRule extends DocumentRuleBase implements AddIWantItemR
     protected boolean processCustomRouteDocumentBusinessRules(Document document) {
         boolean valid = super.processCustomRouteDocumentBusinessRules(document);
         IWantDocument iWantDocument = (IWantDocument)document;
-        
-        if(document.getDocumentHeader().getWorkflowDocument().isAdHocRequested()){
+        if(SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(document.getDocumentHeader().getWorkflowDocument(), GlobalVariables.getUserSession().getPrincipalId())){
             //validate that Complete order option was selected
             if(StringUtils.isBlank(iWantDocument.getCompleteOption())){
                 GlobalVariables.getMessageMap().putError("document.completeOption", CUPurapKeyConstants.ERROR_IWNT_CONMPLETE_ORDER_OPTION_REQUIRED);

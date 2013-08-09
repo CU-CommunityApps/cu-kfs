@@ -7,13 +7,12 @@ import java.util.Date;
 
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.AbstractStep;
-import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.module.bc.batch.service.SipImportToHumanResourcesService;
 
@@ -26,7 +25,7 @@ public class SipImportToHumanResourcesStep extends AbstractStep {
     protected SipImportToHumanResourcesService sipImportToHumanResourcesService;
     
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SipImportToHumanResourcesStep.class);
-	private KualiConfigurationService  kualiConfigurationService;
+	private ConfigurationService  kualiConfigurationService;
 
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
     	StringBuilder fileString;
@@ -50,7 +49,7 @@ public class SipImportToHumanResourcesStep extends AbstractStep {
     }
     
     protected String getFileName(String fileName, Date runDate) {
-		String directoryName = kualiConfigurationService.getPropertyString(KFSConstants.REPORTS_DIRECTORY_KEY) + "/bc/sipImportFileForHR";
+		String directoryName = kualiConfigurationService.getPropertyValueAsString(KFSConstants.REPORTS_DIRECTORY_KEY) + "/bc/sipImportFileForHR";
         String filename = directoryName + "/" + fileName + "_";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
         filename = filename + sdf.format(runDate);
@@ -103,7 +102,7 @@ public class SipImportToHumanResourcesStep extends AbstractStep {
 	/**
 	 * @return the kualiConfigurationService
 	 */
-	public KualiConfigurationService getKualiConfigurationService() {
+	public ConfigurationService getKualiConfigurationService() {
 		return kualiConfigurationService;
 	}
 
@@ -111,7 +110,7 @@ public class SipImportToHumanResourcesStep extends AbstractStep {
 	 * @param kualiConfigurationService the kualiConfigurationService to set
 	 */
 	public void setKualiConfigurationService(
-			KualiConfigurationService kualiConfigurationService) {
+			ConfigurationService kualiConfigurationService) {
 		this.kualiConfigurationService = kualiConfigurationService;
 	}
 }

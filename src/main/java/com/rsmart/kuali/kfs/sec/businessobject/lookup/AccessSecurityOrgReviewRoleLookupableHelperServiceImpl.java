@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.kuali.kfs.coa.identity.OrgReviewRoleLookupableHelperServiceImpl;
-import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 import com.rsmart.kuali.kfs.sec.SecKeyConstants;
 import com.rsmart.kuali.kfs.sec.service.AccessSecurityService;

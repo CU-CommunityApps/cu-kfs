@@ -15,23 +15,28 @@
  */
 package org.kuali.kfs.fp.document.authorization;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.authorization.AccountingDocumentAuthorizerBase;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
+import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.KRADConstants;
+
 
 /**
  * Document Authorizer for the Procurement Card document.
  */
 public class ProcurementCardDocumentAuthorizer extends AccountingDocumentAuthorizerBase {  
 
+
+  private static final long serialVersionUID = 1L;
     /**
      * String constant to represent the route nodes for the PCard doc.
      */
@@ -40,15 +45,11 @@ public class ProcurementCardDocumentAuthorizer extends AccountingDocumentAuthori
     @Override 
     public Set<String> getDocumentActions(Document document, Person user, Set<String> documentActions) {
         Set<String> docActions = super.getDocumentActions(document, user, documentActions);
-        try {
-            KualiWorkflowDocument workflowDocument = (KualiWorkflowDocument) document.getDocumentHeader().getWorkflowDocument();
-            List<String> activeNodes = Arrays.asList(workflowDocument.getNodeNames());
-            
-            if (workflowDocument.stateIsEnroute() && activeNodes.contains(ACCOUNT_FULL_EDIT) && (((FinancialSystemDocumentHeader) document.getDocumentHeader()).getFinancialDocumentInErrorNumber() == null) && !workflowDocument.isAdHocRequested()) {
-                docActions.add(KNSConstants.KUALI_ACTION_CAN_EDIT__DOCUMENT_OVERVIEW); 
-            }
-        } catch(WorkflowException we) {
-            // If errors occur, then rely on values from parent.
+        WorkflowDocument workflowDocument = (WorkflowDocument) document.getDocumentHeader().getWorkflowDocument();
+        List<String> activeNodes = new ArrayList<String>(workflowDocument.getNodeNames());
+        
+        if (workflowDocument.isEnroute() && activeNodes.contains(ACCOUNT_FULL_EDIT) && (((FinancialSystemDocumentHeader) document.getDocumentHeader()).getFinancialDocumentInErrorNumber() == null) && !SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(workflowDocument, GlobalVariables.getUserSession().getPrincipalId())) {
+            docActions.add(KRADConstants.KUALI_ACTION_CAN_EDIT_DOCUMENT_OVERVIEW); 
         }
            
         return docActions; 

@@ -21,9 +21,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.util.KeyLabelPair;
-import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
-import org.kuali.rice.kns.service.KeyValuesService;
+import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.rice.krad.keyvalues.KeyValuesBase;
+import org.kuali.rice.krad.service.KeyValuesService;
 
 import edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency;
 
@@ -33,14 +34,16 @@ import edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency;
  */
 public class InvoiceFrequencyValuesFinder extends KeyValuesBase {
 
-	  public List getKeyValues() {
+	private static final long serialVersionUID = 1L;
+
+	public List<KeyValue> getKeyValues() {
 		  KeyValuesService boService = SpringContext.getBean(KeyValuesService.class);
-	      Collection invoiceFrequencyCodes = boService.findAll(InvoiceFrequency.class);
-	      List invoiceFrequencyKeyLabels = new ArrayList();
-	      for (Iterator iter = invoiceFrequencyCodes.iterator(); iter.hasNext();) {
+	      Collection<InvoiceFrequency> invoiceFrequencyCodes = boService.findAll(InvoiceFrequency.class);
+	      List<KeyValue> invoiceFrequencyKeyLabels = new ArrayList<KeyValue>();
+	      for (Iterator<InvoiceFrequency> iter = invoiceFrequencyCodes.iterator(); iter.hasNext();) {
 	          InvoiceFrequency element = (InvoiceFrequency) iter.next();
 	          if (element.isActive()) { // only show active invoice types
-	        	  invoiceFrequencyKeyLabels.add(new KeyLabelPair(element.getInvoiceFrequencyCode(), element.getInvoiceFrequencyCode()));
+	        	  invoiceFrequencyKeyLabels.add(new ConcreteKeyValue(element.getInvoiceFrequencyCode(), element.getInvoiceFrequencyCode()));
 	          }
 	      }
 

@@ -6,7 +6,7 @@ import org.kuali.kfs.module.bc.document.web.struts.BudgetConstructionImportExpor
 import org.kuali.kfs.module.bc.document.web.struts.OrganizationSelectionTreeAction;
 import org.kuali.kfs.module.bc.util.BudgetParameterFinder;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 
 import edu.cornell.kfs.module.bc.CUBCParameterKeyConstants;
 
@@ -19,7 +19,7 @@ public class CUBudgetParameterFinder extends BudgetParameterFinder {
      * @return the position numbers for the SIP executives
      */
     public static List<String> getSIPExecutives() {
-        return parameterService.getParameterValues("KFS-BC", "All", CUBCParameterKeyConstants.SIP_EXECUTIVES);
+        return (List<String>) parameterService.getParameterValuesAsString("KFS-BC", "All", CUBCParameterKeyConstants.SIP_EXECUTIVES);
     }
 
     /**
@@ -28,7 +28,7 @@ public class CUBudgetParameterFinder extends BudgetParameterFinder {
      * @return the netid's from the SIP_EXPORT_EXECUTIVES parameter 
      */
     public static List<String> getSipExportExecutives() {
-        return parameterService.getParameterValues("KFS-BC", "BudgetConstruction", CUBCParameterKeyConstants.SIP_EXPORT_EXECUTIVES);
+        return (List<String>) parameterService.getParameterValuesAsString("KFS-BC", "BudgetConstruction", CUBCParameterKeyConstants.SIP_EXPORT_EXECUTIVES);
     }
 
     /**
@@ -37,7 +37,7 @@ public class CUBudgetParameterFinder extends BudgetParameterFinder {
      * @return the netid's from the SIP_EXPORT_AVAILABLE parameter 
      */
     public static List<String> getSipExportAvailable() {
-        return parameterService.getParameterValues("KFS-BC", "BudgetConstruction", CUBCParameterKeyConstants.SIP_EXPORT_AVAILABLE);
+        return (List<String>) parameterService.getParameterValuesAsString("KFS-BC", "BudgetConstruction", CUBCParameterKeyConstants.SIP_EXPORT_AVAILABLE);
     }
     
     /**
@@ -47,7 +47,7 @@ public class CUBudgetParameterFinder extends BudgetParameterFinder {
      * @return the netid's from the SIP_IMPORT_AVAILABLE parameter 
      */
     public static List<String> getSipImportAvailable() {
-        return parameterService.getParameterValues("KFS-BC", "BudgetConstruction", CUBCParameterKeyConstants.SIP_IMPORT_AVAILABLE);
+        return (List<String>) parameterService.getParameterValuesAsString("KFS-BC", "BudgetConstruction", CUBCParameterKeyConstants.SIP_IMPORT_AVAILABLE);
     }
 
     /**
@@ -56,7 +56,7 @@ public class CUBudgetParameterFinder extends BudgetParameterFinder {
      * @return a string value specifying either UPDATE or REPORT 
      */
     public static String getSipImportMode() {
-        return parameterService.getParameterValue("KFS-BC", "BudgetConstruction", CUBCParameterKeyConstants.SIP_IMPORT_MODE);
+        return parameterService.getParameterValueAsString("KFS-BC", "BudgetConstruction", CUBCParameterKeyConstants.SIP_IMPORT_MODE);
     }
 
     /**
@@ -66,7 +66,7 @@ public class CUBudgetParameterFinder extends BudgetParameterFinder {
      * @return a string value specifying either UPDATE or REPORT 
      */
     public static String getSipImportAwardCheck() {
-        return parameterService.getParameterValue("KFS-BC", "BudgetConstruction", CUBCParameterKeyConstants.SIP_IMPORT_AWARD_CHECK);
+        return parameterService.getParameterValueAsString("KFS-BC", "BudgetConstruction", CUBCParameterKeyConstants.SIP_IMPORT_AWARD_CHECK);
     }
 
 

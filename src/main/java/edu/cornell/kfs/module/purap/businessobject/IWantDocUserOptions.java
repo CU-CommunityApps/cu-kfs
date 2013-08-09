@@ -2,19 +2,19 @@ package edu.cornell.kfs.module.purap.businessobject;
 
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 public class IWantDocUserOptions extends PersistableBusinessObjectBase {
     
-    private String principalId;
+	private static final long serialVersionUID = 1L;
+	private String principalId;
     private String optionId;
     private String optionValue;
     
     
 
-    @Override
-    protected LinkedHashMap toStringMapper() {
-        // TODO Auto-generated method stub
+    @SuppressWarnings("rawtypes")
+	protected LinkedHashMap toStringMapper() {
         return null;
     }
 

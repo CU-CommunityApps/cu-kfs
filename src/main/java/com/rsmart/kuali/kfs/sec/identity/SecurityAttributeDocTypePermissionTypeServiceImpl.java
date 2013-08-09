@@ -21,11 +21,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.rice.kew.dto.DocumentTypeDTO;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kew.service.WorkflowInfo;
-import org.kuali.rice.kim.bo.role.dto.KimPermissionInfo;
-import org.kuali.rice.kim.bo.types.dto.AttributeSet;
 import org.kuali.rice.kim.util.KimCommonUtils;
 
 import com.rsmart.kuali.kfs.sec.SecConstants;
@@ -36,18 +31,21 @@ import com.rsmart.kuali.kfs.sec.businessobject.options.SecurityDefinitionDocumen
  */
 public class SecurityAttributeDocTypePermissionTypeServiceImpl extends SecurityAttributePermissionTypeServiceImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SecurityAttributeDocTypePermissionTypeServiceImpl.class);
-
-    {
+    
+    //TODO UPGRADE-911
+    /*{
         requiredAttributes.add(SecKimAttributes.DOCUMENT_TYPE_NAME);
         checkRequiredAttributes = false;
-    }
+    }*/
 
     /**
      * @see org.kuali.rice.kim.service.support.impl.KimPermissionTypeServiceBase#performPermissionMatches(org.kuali.rice.kim.bo.types.dto.AttributeSet, java.util.List)
      */
-    @Override
+  //TODO UPGRADE-911
+    /*@Override
     protected List<KimPermissionInfo> performPermissionMatches(AttributeSet requestedDetails, List<KimPermissionInfo> permissionsList) {
-        List<KimPermissionInfo> matchingPermissions = new ArrayList<KimPermissionInfo>();
+    	
+    	List<KimPermissionInfo> matchingPermissions = new ArrayList<KimPermissionInfo>();
 
         for (KimPermissionInfo kpi : permissionsList) {
             String documentTypeNameMatch = requestedDetails.get(SecKimAttributes.DOCUMENT_TYPE_NAME);
@@ -70,7 +68,7 @@ public class SecurityAttributeDocTypePermissionTypeServiceImpl extends SecurityA
         }
 
         return matchingPermissions;
-    }
+    }*/
 
     /**
      * Determines if a document type is a parent of another
@@ -80,7 +78,8 @@ public class SecurityAttributeDocTypePermissionTypeServiceImpl extends SecurityA
      * @return boolean true if the first document type is a child of the second
      */
     protected boolean isParentDocType(String docTypeName, String potentialParentDocTypeName) {
-        WorkflowInfo workflowInfo = new WorkflowInfo();
+    	// TODO UPGRADE-911
+    	/*WorkflowInfo workflowInfo = new WorkflowInfo();
 
         DocumentTypeDTO documentType = null;
         try {
@@ -100,7 +99,8 @@ public class SecurityAttributeDocTypePermissionTypeServiceImpl extends SecurityA
         catch (WorkflowException e) {
             LOG.error("Invalid document type found " + docTypeName);
             throw new RuntimeException("Invalid document type found: " + docTypeName);
-        }
+        }*/
+    	return false;
     }
 
 }

@@ -16,16 +16,16 @@
 
 package org.kuali.kfs.coa.businessobject;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.kuali.rice.kns.bo.Inactivateable;
-import org.kuali.rice.kns.util.TypedArrayList;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 
 /**
  * 
  */
-public class OrganizationReversion extends Reversion implements Inactivateable {
+public class OrganizationReversion extends Reversion implements MutableInactivatable {
 
     
     private String organizationCode;
@@ -38,8 +38,8 @@ public class OrganizationReversion extends Reversion implements Inactivateable {
      * Default constructor.
      */
     public OrganizationReversion() {
-        organizations = new TypedArrayList(Organization.class);
-        organizationReversionDetails = new TypedArrayList(OrganizationReversionDetail.class);
+        organizations = new ArrayList<Organization>();
+        organizationReversionDetails = new ArrayList<OrganizationReversionDetail>();
     }   
 
     public List<OrganizationReversionDetail> getOrganizationReversionDetails() {

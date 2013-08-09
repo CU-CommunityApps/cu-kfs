@@ -19,21 +19,21 @@ import org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector;
 import org.kuali.kfs.module.cg.businessobject.CFDA;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.bo.types.dto.AttributeSet;
-import org.kuali.rice.kim.service.KIMServiceLocator;
-import org.kuali.rice.kim.service.PersonService;
-import org.kuali.rice.kns.UserSession;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.rice.kim.impl.services.KimImplServiceLocator;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.maintenance.Maintainable;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.DocumentService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.krad.UserSession;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.module.ezra.businessobject.Deliverable;
@@ -373,7 +373,7 @@ public class EzraServiceImpl implements EzraService {
 		agencyDoc.setNewMaintainableObject(agencyMaintainable);
 		try {
 			documentService.saveDocument(agencyDoc);
-			agencyDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
+			agencyDoc.getDocumentHeader().getWorkflowDocument().route("Automatically created and routed");
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		}
@@ -408,7 +408,7 @@ public class EzraServiceImpl implements EzraService {
 		try {
 			documentService.saveDocument(awardDoc);
 			//documentService.routeDocument(awardDoc, "Automatically created and routed", null);
-			awardDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
+			awardDoc.getDocumentHeader().getWorkflowDocument().route("Automatically created and routed");
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		} catch (RuntimeException rte) {
@@ -436,7 +436,7 @@ public class EzraServiceImpl implements EzraService {
 		proposalDoc.getNewMaintainableObject().setBusinessObject(proposal);
 		try {
 			documentService.saveDocument(proposalDoc);
-			proposalDoc.getDocumentHeader().getWorkflowDocument().routeDocument("Automatically created and routed");
+			proposalDoc.getDocumentHeader().getWorkflowDocument().route("Automatically created and routed");
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		}
@@ -472,7 +472,7 @@ public class EzraServiceImpl implements EzraService {
 					ppd.setProposalNumber(new Long(project.getProjectId()));
 					ppd.setProposalPrimaryProjectDirectorIndicator(true);
 					ppd.setActive(true);
-					KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new AttributeSet());
+					KimApiServiceLocator.getRoleService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new HashMap<String, String>());
 					projDirs.add(ppd);
 				} else {
 					LOG.error("PI: " +investigator.getNetId()+" for award :"+ projectId+" is not in kfs");
@@ -506,7 +506,7 @@ public class EzraServiceImpl implements EzraService {
 						ppd.setProposalNumber(new Long(project.getProjectId()));
 						ppd.setProposalPrimaryProjectDirectorIndicator(false);
 						ppd.setActive(true);
-						KIMServiceLocator.getRoleManagementService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new AttributeSet());
+						KimApiServiceLocator.getRoleService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new HashMap<String, String>());
 
 						//check to make sure that this project director is not already in the list.
 						for (ProposalProjectDirector projDir : projDirs) {
@@ -568,8 +568,8 @@ public class EzraServiceImpl implements EzraService {
 	private  List<AwardAccount> getAwardAccounts(Proposal proposal) {
 		List<AwardAccount> awardAccounts = new ArrayList<AwardAccount>();
 
-		String principalId = parameterService.getParameterValue("KFS-EZRA", "Award", "DEFAULT_PROJECT_DIRECTOR");
-		String[] chartAcct = parameterService.getParameterValue("KFS-EZRA", "Award", "DEFAULT_AWARD_ACCOUNT").split(":");
+		String principalId = parameterService.getParameterValueAsString("KFS-EZRA", "Award", "DEFAULT_PROJECT_DIRECTOR");
+		String[] chartAcct = parameterService.getParameterValueAsString("KFS-EZRA", "Award", "DEFAULT_AWARD_ACCOUNT").split(":");
 		String chart = chartAcct[0];
 		String acct = chartAcct[1];
 

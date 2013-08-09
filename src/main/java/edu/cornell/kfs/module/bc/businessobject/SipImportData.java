@@ -2,14 +2,11 @@ package edu.cornell.kfs.module.bc.businessobject;
 
 import java.util.LinkedHashMap;
 
-import org.apache.commons.lang.StringUtils;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.bo.TransientBusinessObjectBase;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.module.bc.CUBCConstants;
-
+@SuppressWarnings("serial")
 public class SipImportData extends PersistableBusinessObjectBase {
     protected String unitId;
     protected String hrDeptId;
@@ -58,9 +55,8 @@ public class SipImportData extends PersistableBusinessObjectBase {
         super();
     }
 
-    @Override
-    protected LinkedHashMap toStringMapper() {
-        // TODO Auto-generated method stub
+    @SuppressWarnings("rawtypes")
+	protected LinkedHashMap toStringMapper() {
         return null;
     }
 

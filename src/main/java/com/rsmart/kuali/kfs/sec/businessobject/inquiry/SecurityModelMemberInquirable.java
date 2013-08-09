@@ -23,16 +23,13 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.inquiry.KfsInquirableImpl;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.bo.impl.GroupImpl;
-import org.kuali.rice.kim.bo.impl.RoleImpl;
-import org.kuali.rice.kim.util.KimConstants;
-import org.kuali.rice.kns.bo.BusinessObject;
+
+
+import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kns.lookup.HtmlData;
 import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.KualiInteger;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.util.UrlFactory;
+import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import com.rsmart.kuali.kfs.sec.SecPropertyConstants;
 
@@ -46,7 +43,7 @@ public class SecurityModelMemberInquirable extends KfsInquirableImpl {
      */
     @Override
     public HtmlData getInquiryUrl(BusinessObject businessObject, String attributeName, boolean forceInquiry) {
-        if (SecPropertyConstants.MEMBER_ID.equals(attributeName)) {
+        /*if (SecPropertyConstants.MEMBER_ID.equals(attributeName)) {
             Properties parameters = new Properties();
             parameters.put(KNSConstants.DISPATCH_REQUEST_PARAMETER, KFSConstants.START_METHOD);
 
@@ -74,7 +71,7 @@ public class SecurityModelMemberInquirable extends KfsInquirableImpl {
 
                 return getHyperLink(PayeeACHAccount.class, fieldList, UrlFactory.parameterizeUrl(KNSConstants.INQUIRY_ACTION, parameters));
             }
-        }
+        }*/
 
         return super.getInquiryUrl(businessObject, attributeName, forceInquiry);
     }

@@ -18,8 +18,9 @@ package edu.cornell.kfs.module.bc.businessobject;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.kns.bo.TransientBusinessObjectBase;
+import org.kuali.rice.krad.bo.TransientBusinessObjectBase;
 
+@SuppressWarnings("serial")
 public class SipImport extends TransientBusinessObjectBase {
     private String fileName;
     private int importCount;
@@ -40,8 +41,8 @@ public class SipImport extends TransientBusinessObjectBase {
         this.importCount = importCount;
     }
 
-    @Override
-    protected LinkedHashMap toStringMapper() {
+    @SuppressWarnings("rawtypes")
+	protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();
         
         return m;

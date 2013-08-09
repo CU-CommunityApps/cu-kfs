@@ -4,19 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kuali.kfs.module.purap.CUPurapConstants;
-import org.kuali.rice.core.util.KeyLabelPair;
-import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
+import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.rice.krad.keyvalues.KeyValuesBase;
 
 public class AmountOrPercentValuesFinder extends KeyValuesBase {
 
-    /**
+	private static final long serialVersionUID = 1L;
+
+	/**
      * @see org.kuali.rice.kns.lookup.keyvalues.KeyValuesFinder#getKeyValues()
      */
-    public List getKeyValues() {
-        List keyValues = new ArrayList();
+    public List<KeyValue> getKeyValues() {
+        List<KeyValue> keyValues = new ArrayList<KeyValue>();
         
-        keyValues.add(new KeyLabelPair(CUPurapConstants.AMOUNT, "Amount"));
-        keyValues.add(new KeyLabelPair(CUPurapConstants.PERCENT, "Percent"));
+        keyValues.add(new ConcreteKeyValue(CUPurapConstants.AMOUNT, "Amount"));
+        keyValues.add(new ConcreteKeyValue(CUPurapConstants.PERCENT, "Percent"));
         
         return keyValues;
     }

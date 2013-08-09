@@ -28,10 +28,8 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.http.*;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.kuali.kfs.sys.service.NonTransactional;
-import org.kuali.rice.core.util.ClassLoaderUtils;
-import org.kuali.rice.core.util.ContextClassLoaderBinder;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.spring.Cached;
+import org.kuali.rice.core.api.util.ClassLoaderUtils;
+import org.kuali.rice.core.api.util.ContextClassLoaderBinder;
 
 /**
  * This is the default implementation of the CULegacyTravelService interface.
@@ -57,7 +55,7 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
     private String updateTripUser;
     private String updateTripPassword;
     
-	@Cached
+	//@Cached
 	public boolean isLegacyTravelGeneratedKfsDocument(String docID) {
         try {
         	String tripID = getLegacyTripID(docID);
@@ -80,7 +78,7 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
 	 * 
 	 * NOTE : If the call fails to successfully retrieve a value or a blank string from the DFA Travel application, a null value is returned to indicate the call failed.
 	 */
-    @Cached
+    //@Cached
 	public String getLegacyTripID(String docID) {
         Client client = null;
         // Need to grab copy of current class loader because call to web services wrecks class loader, so we want to restore it following call.
@@ -88,6 +86,7 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
         try {
 			URL wsdlUrl = new URL(updateTripWsdl);
 			
+			//TODO UPGRADE-911 -- Figure out correct CXF deps
 			JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
 			client = dcf.createClient(wsdlUrl);
 			

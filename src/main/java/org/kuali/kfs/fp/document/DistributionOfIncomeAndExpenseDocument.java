@@ -31,12 +31,12 @@ import org.kuali.kfs.sys.document.Correctable;
 import org.kuali.kfs.sys.document.ElectronicPaymentClaiming;
 import org.kuali.kfs.sys.document.service.DebitDeterminerService;
 import org.kuali.kfs.sys.service.ElectronicPaymentClaimingService;
-import org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO;
-import org.kuali.rice.kns.document.Copyable;
-import org.kuali.rice.kns.rule.event.KualiDocumentEvent;
-import org.kuali.rice.kns.rule.event.SaveDocumentEvent;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
+import org.kuali.rice.krad.document.Copyable;
+import org.kuali.rice.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.rice.krad.rules.rule.event.SaveDocumentEvent;
+import org.kuali.rice.krad.service.DataDictionaryService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * The Distribution of Income and Expense (DI) document is used to distribute income or expense, or assets and liabilities. Amounts
@@ -61,7 +61,7 @@ public class DistributionOfIncomeAndExpenseDocument extends AccountingDocumentBa
     /**
      * @see org.kuali.kfs.sys.document.AccountingDocumentBase#buildListOfDeletionAwareLists()
      */
-    @Override
+    /*@Override
     public List buildListOfDeletionAwareLists() {
         List<List> managedLists = super.buildListOfDeletionAwareLists();
         if (ObjectUtils.isNotNull(getCapitalAssetInformation()) &&
@@ -70,7 +70,7 @@ public class DistributionOfIncomeAndExpenseDocument extends AccountingDocumentBa
                 managedLists.add(getCapitalAssetInformation().getCapitalAssetInformationDetails());
             }
         return managedLists;
-    }
+    }*/
 
     /**
      * @see org.kuali.kfs.sys.document.AccountingDocument#getSourceAccountingLinesSectionTitle()
@@ -134,10 +134,10 @@ public class DistributionOfIncomeAndExpenseDocument extends AccountingDocumentBa
      * 
      * @return Returns the capitalAssetInformation.
      */
-    public CapitalAssetInformation getCapitalAssetInformation() {
-        return ObjectUtils.isNull(capitalAssetInformation) ? null : capitalAssetInformation;
+    public List<CapitalAssetInformation> getCapitalAssetInformation() {
+        return (List<CapitalAssetInformation>) capitalAssetInformation;//(ObjectUtils.isNull(capitalAssetInformation) ? null : capitalAssetInformation);
     }
-
+    
     /**
      * Sets the capitalAssetInformation attribute value.
      * 
@@ -153,7 +153,7 @@ public class DistributionOfIncomeAndExpenseDocument extends AccountingDocumentBa
      * @see org.kuali.kfs.sys.document.GeneralLedgerPostingDocumentBase#doRouteStatusChange()
      */
     @Override
-    public void doRouteStatusChange(DocumentRouteStatusChangeDTO statusChangeEvent) {
+    public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
         super.doRouteStatusChange(statusChangeEvent);
         this.getCapitalAssetManagementModuleService().deleteDocumentAssetLocks(this);
     }
@@ -181,4 +181,9 @@ public class DistributionOfIncomeAndExpenseDocument extends AccountingDocumentBa
         }
         return capitalAssetManagementModuleService;
     }
+
+
+	public void setCapitalAssetInformation(
+			List<CapitalAssetInformation> capitalAssetInformation) {			
+	}
 }

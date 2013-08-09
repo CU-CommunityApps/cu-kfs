@@ -35,7 +35,9 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.module.bc.BCConstants;
 import org.kuali.kfs.module.bc.BCKeyConstants;
 import org.kuali.kfs.module.bc.BCPropertyConstants;
+
 import edu.cornell.kfs.module.bc.CUBCPropertyConstants;
+
 import org.kuali.kfs.module.bc.CUBCKeyConstants;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionHeader;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionLockStatus;
@@ -55,14 +57,11 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseConstants.ACCOUNT_NUMBER;
 import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.sys.service.OptionsService;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kns.bo.BusinessObject;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.KualiInteger;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kns.util.WebUtils;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.ObjectUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -383,7 +382,7 @@ public class SipImportServiceImpl implements SipImportService {
                 if (messageWrapper.getParams().length == 0 ) 
                 	message = messageWrapper.getMessageKey();
                 else {
-                    temp = SpringContext.getBean(KualiConfigurationService.class).getPropertyString(messageWrapper.getMessageKey());
+                    temp = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(messageWrapper.getMessageKey());
                     message = MessageFormat.format(temp, messageWrapper.getParams());
                 }
                 if (ObjectUtils.isNotNull(message))
@@ -405,9 +404,9 @@ public class SipImportServiceImpl implements SipImportService {
         for (ExternalizedMessageWrapper messageWrapper : logMessages) {
             String message, temp;
             if (messageWrapper.getParams().length == 0 ) 
-            	message = SpringContext.getBean(KualiConfigurationService.class).getPropertyString(messageWrapper.getMessageKey());
+            	message = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(messageWrapper.getMessageKey());
             else {
-                temp = SpringContext.getBean(KualiConfigurationService.class).getPropertyString(messageWrapper.getMessageKey());
+                temp = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(messageWrapper.getMessageKey());
                 message = MessageFormat.format(temp, messageWrapper.getParams());
             }
             document.add(new Paragraph(message));

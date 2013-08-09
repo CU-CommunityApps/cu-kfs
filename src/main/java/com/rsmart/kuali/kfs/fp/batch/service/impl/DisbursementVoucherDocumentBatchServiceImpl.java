@@ -36,26 +36,25 @@ import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.service.PersonService;
-import org.kuali.rice.kns.UserSession;
-import org.kuali.rice.kns.bo.BusinessObject;
-import org.kuali.rice.kns.bo.Note;
-import org.kuali.rice.kns.exception.ValidationException;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.DocumentService;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.service.PersistenceService;
-import org.kuali.rice.kns.service.SequenceAccessorService;
-import org.kuali.rice.kns.util.ErrorMap;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.KualiInteger;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.web.format.CurrencyFormatter;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.rice.core.web.format.CurrencyFormatter;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.krad.UserSession;
+import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.exception.ValidationException;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.DataDictionaryService;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.service.PersistenceService;
+import org.kuali.rice.krad.service.SequenceAccessorService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.MessageMap;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import com.rsmart.kuali.kfs.fp.FPConstants;
 import com.rsmart.kuali.kfs.fp.FPKeyConstants;
@@ -85,8 +84,8 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
     private DataDictionaryService dataDictionaryService;
     private SequenceAccessorService sequenceAccessorService;
     private DateTimeService dateTimeService;
-    private PersonService<Person> personService;
-    private KualiConfigurationService kualiConfigurationService;
+    private PersonService personService;
+    private ConfigurationService kualiConfigurationService;
     private UniversityDateService universityDateService;
     private PersistenceService persistenceService;
     private ReportInfo disbursementVoucherBatchReportInfo;
@@ -108,7 +107,7 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
                 DisbursementVoucherBatchFeed batchFeed = (DisbursementVoucherBatchFeed) batchFeedHelperService.parseBatchFile(disbursementVoucherInputFileType, incomingFileName, batchStatus);
 
                 if (batchFeed != null && !batchFeed.getBatchDisbursementVoucherDocuments().isEmpty() && StringUtils.isBlank(batchStatus.getXmlParseExceptionMessage())) {
-                    loadDisbursementVouchers(batchFeed, batchStatus, incomingFileName, GlobalVariables.getErrorMap());
+                    loadDisbursementVouchers(batchFeed, batchStatus, incomingFileName, GlobalVariables.getMessageMap());
                 }
 
                 generateAuditReport(batchStatus);
@@ -123,9 +122,9 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
     /**
      * @see com.rsmart.kuali.kfs.fp.batch.service.DisbursementVoucherDocumentBatchService#loadDisbursementVouchers(com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchFeed,
      *      com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchStatus, java.lang.String,
-     *      org.kuali.rice.kns.util.ErrorMap)
+     *      org.kuali.rice.kns.util.MessageMap)
      */
-    public void loadDisbursementVouchers(DisbursementVoucherBatchFeed batchFeed, DisbursementVoucherBatchStatus batchStatus, String incomingFileName, ErrorMap errorMap) {
+    public void loadDisbursementVouchers(DisbursementVoucherBatchFeed batchFeed, DisbursementVoucherBatchStatus batchStatus, String incomingFileName, MessageMap MessageMap) {
         // get new batch record for the load
         DisbursementVoucherBatch disbursementVoucherBatch = getNewDisbursementVoucherBatch();
         businessObjectService.save(disbursementVoucherBatch);
@@ -143,26 +142,26 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
                 batchDefault = getDisbursementVoucherBatchDefault(batchFeed.getUnitCode());
             }
 
-            ErrorMap documentErrorMap = new ErrorMap();
+            MessageMap documentMessageMap = new MessageMap();
             batchFeedHelperService.performForceUppercase(DisbursementVoucherDocument.class.getName(), batchDisbursementVoucherDocument);
 
             // create and route doc as system user
             // create and route doc as system user
             UserSession actualUserSession = GlobalVariables.getUserSession();
             GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
-            ErrorMap globalErrorMap = GlobalVariables.getErrorMap();
-            GlobalVariables.setErrorMap(documentErrorMap);
+            MessageMap globalMessageMap = GlobalVariables.getMessageMap();
+            GlobalVariables.setMessageMap(documentMessageMap);
 
             DisbursementVoucherDocument disbursementVoucherDocument = null;
             try {
-                disbursementVoucherDocument = populateDisbursementVoucherDocument(disbursementVoucherBatch, batchDisbursementVoucherDocument, batchDefault, documentErrorMap);
+                disbursementVoucherDocument = populateDisbursementVoucherDocument(disbursementVoucherBatch, batchDisbursementVoucherDocument, batchDefault, documentMessageMap);
 
                 // if the document is valid create GLPEs, Save and Approve
-                if (documentErrorMap.hasNoErrors()) {
+                if (documentMessageMap.hasNoErrors()) {
                     businessObjectService.save(disbursementVoucherDocument.getExtension());
                     documentService.routeDocument(disbursementVoucherDocument, "", null);
 
-                    if (documentErrorMap.hasNoErrors()) {
+                    if (documentMessageMap.hasNoErrors()) {
                         batchStatus.updateStatistics(FPConstants.BatchReportStatisticKeys.NUM_DV_RECORDS_WRITTEN, 1);
                         batchStatus.updateStatistics(FPConstants.BatchReportStatisticKeys.NUM_ACCOUNTING_RECORDS_WRITTEN, disbursementVoucherDocument.getSourceAccountingLines().size());
                         batchStatus.updateStatistics(FPConstants.BatchReportStatisticKeys.NUM_GLPE_RECORDS_WRITTEN, disbursementVoucherDocument.getGeneralLedgerPendingEntries().size());
@@ -180,21 +179,21 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
             }
             finally {
                 GlobalVariables.setUserSession(actualUserSession);
-                GlobalVariables.setErrorMap(globalErrorMap);
+                GlobalVariables.setMessageMap(globalMessageMap);
             }
 
-            if (documentErrorMap.hasErrors()) {
+            if (documentMessageMap.hasErrors()) {
                 batchHasErrors = true;
             }
 
             // populate summary line and add to report
-            DisbursementVoucherBatchSummaryLine batchSummaryLine = populateBatchSummaryLine(disbursementVoucherDocument, documentErrorMap);
+            DisbursementVoucherBatchSummaryLine batchSummaryLine = populateBatchSummaryLine(disbursementVoucherDocument, documentMessageMap);
             batchStatus.getBatchSummaryLines().add(batchSummaryLine);
         }
 
         // indicate in global map there were errors (for batch upload screen)
         if (batchHasErrors) {
-            errorMap.putError(KFSConstants.GLOBAL_ERRORS, FPKeyConstants.ERROR_BATCH_DISBURSEMENT_VOUCHER_ERRORS_NOTIFICATION);
+            MessageMap.putError(KFSConstants.GLOBAL_ERRORS, FPKeyConstants.ERROR_BATCH_DISBURSEMENT_VOUCHER_ERRORS_NOTIFICATION);
         }
 
         batchFeedHelperService.removeDoneFile(incomingFileName);
@@ -211,13 +210,13 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
      * Creates and populates a batch summary line for the disbursement voucher document
      * 
      * @param disbursementVoucherDocument batch disbursement voucher document
-     * @param errorMap ErrorMap containing errors encountered while populating document
+     * @param MessageMap MessageMap containing errors encountered while populating document
      * @return PurchaseOrderBatchSummaryLine
      */
-    protected DisbursementVoucherBatchSummaryLine populateBatchSummaryLine(DisbursementVoucherDocument disbursementVoucherDocument, ErrorMap errorMap) {
+    protected DisbursementVoucherBatchSummaryLine populateBatchSummaryLine(DisbursementVoucherDocument disbursementVoucherDocument, MessageMap MessageMap) {
         DisbursementVoucherBatchSummaryLine batchSummaryLine = new DisbursementVoucherBatchSummaryLine();
         DisbursementVoucherPayeeDetail dvPayeeDetail = disbursementVoucherDocument.getDvPayeeDetail();
-        dvPayeeDetail.refresh();
+        //dvPayeeDetail.refresh();
 
         Date currentDate = dateTimeService.getCurrentDate();
         batchSummaryLine.setDisbVchrCreateDate(dateTimeService.toDateString(currentDate));
@@ -241,7 +240,7 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
             batchSummaryLine.setDisbVchrPaymentReason(dvPayeeDetail.getDisbVchrPaymentReasonCode() + "-" + paymentReasonDescription);
         }
 
-        batchSummaryLine.setAuditMessage(batchFeedHelperService.getAuditMessage(FPKeyConstants.MESSAGE_AUDIT_DV_SUCCESSFULLY_GENERATED, disbursementVoucherDocument.getDocumentNumber(), errorMap));
+        batchSummaryLine.setAuditMessage(batchFeedHelperService.getAuditMessage(FPKeyConstants.MESSAGE_AUDIT_DV_SUCCESSFULLY_GENERATED, disbursementVoucherDocument.getDocumentNumber(), MessageMap));
 
         return batchSummaryLine;
     }
@@ -285,10 +284,10 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
      * @param disbursementVoucherBatch
      * @param batchDisbursementVoucherDocument batch dv document to pull values from
      * @param batchDefault contains default values to use if value in feed is empty
-     * @param errorMap ErrorMap for adding encountered errors
+     * @param MessageMap MessageMap for adding encountered errors
      * @return DisbursementVoucherDocument created and populated DV document
      */
-    protected DisbursementVoucherDocument populateDisbursementVoucherDocument(DisbursementVoucherBatch disbursementVoucherBatch, BatchDisbursementVoucherDocument batchDisbursementVoucherDocument, DisbursementVoucherBatchDefault batchDefault, ErrorMap errorMap) {
+    protected DisbursementVoucherDocument populateDisbursementVoucherDocument(DisbursementVoucherBatch disbursementVoucherBatch, BatchDisbursementVoucherDocument batchDisbursementVoucherDocument, DisbursementVoucherBatchDefault batchDefault, MessageMap MessageMap) {
         DisbursementVoucherDocument disbursementVoucherDocument = null;
         try {
             disbursementVoucherDocument = (DisbursementVoucherDocument) documentService.getNewDocument(DisbursementVoucherDocument.class);
@@ -304,8 +303,8 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
         disbursementVoucherDocumentExtension.setBatchId(disbursementVoucherBatch.getBatchId());
         disbursementVoucherDocument.setExtension(disbursementVoucherDocumentExtension);
 
-        populateDisbursementVoucherFields(disbursementVoucherDocument, batchDisbursementVoucherDocument, batchDefault, errorMap);
-        batchFeedHelperService.loadDocumentAttachments(disbursementVoucherDocument, batchDisbursementVoucherDocument.getAttachments(), attachmentsPath, "", errorMap);
+        populateDisbursementVoucherFields(disbursementVoucherDocument, batchDisbursementVoucherDocument, batchDefault, MessageMap);
+        batchFeedHelperService.loadDocumentAttachments(disbursementVoucherDocument, batchDisbursementVoucherDocument.getAttachments(), attachmentsPath, "", MessageMap);
 
         return disbursementVoucherDocument;
     }
@@ -316,10 +315,10 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
      * @param disbursementVoucherDocument disbursement voucher document to populate
      * @param batchDisbursementVoucherDocument batch dv document to pull values from
      * @param batchDefault contains default values to use if value in feed is empty
-     * @param errorMap ErrorMap for adding encountered errors
+     * @param MessageMap MessageMap for adding encountered errors
      */
-    protected void populateDisbursementVoucherFields(DisbursementVoucherDocument disbursementVoucherDocument, BatchDisbursementVoucherDocument batchDisbursementVoucherDocument, DisbursementVoucherBatchDefault batchDefault, ErrorMap errorMap) {
-        disbursementVoucherDocument.getDocumentHeader().setDocumentDescription(kualiConfigurationService.getPropertyString(FPKeyConstants.MESSAGE_DV_BATCH_DOCUMENT_DESCRIPTION));
+    protected void populateDisbursementVoucherFields(DisbursementVoucherDocument disbursementVoucherDocument, BatchDisbursementVoucherDocument batchDisbursementVoucherDocument, DisbursementVoucherBatchDefault batchDefault, MessageMap MessageMap) {
+        disbursementVoucherDocument.getDocumentHeader().setDocumentDescription(kualiConfigurationService.getPropertyValueAsString(FPKeyConstants.MESSAGE_DV_BATCH_DOCUMENT_DESCRIPTION));
 
         // populate fields of document from batch instance
         disbursementVoucherDocument.setDisbVchrContactPersonName(batchDisbursementVoucherDocument.getDisbVchrContactPersonName());
@@ -353,11 +352,11 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
                     }
                 }
                 else {
-                    batchFeedHelperService.addExistenceError(KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER, payeeIdNumber, errorMap);
+                    batchFeedHelperService.addExistenceError(KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER, payeeIdNumber, MessageMap);
                 }
             }
             else {
-                batchFeedHelperService.addExistenceError(KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER, payeeIdNumber, errorMap);
+                batchFeedHelperService.addExistenceError(KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER, payeeIdNumber, MessageMap);
             }
         }
         else if (DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE.equals(payeeTypeCode)) {
@@ -366,7 +365,7 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
                 disbursementVoucherDocument.templateEmployee(person);
             }
             else {
-                batchFeedHelperService.addExistenceError(KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER, payeeIdNumber, errorMap);
+                batchFeedHelperService.addExistenceError(KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER, payeeIdNumber, MessageMap);
             }
         }
 
@@ -475,12 +474,13 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
         }
 
         // set notes
-        for (Iterator iterator = batchDisbursementVoucherDocument.getBoNotes().iterator(); iterator.hasNext();) {
+        for (Iterator iterator = batchDisbursementVoucherDocument.getNotes().iterator(); iterator.hasNext();) {
             Note note = (Note) iterator.next();
             note.setRemoteObjectIdentifier(disbursementVoucherDocument.getObjectId());
             note.setAuthorUniversalIdentifier(batchFeedHelperService.getSystemUser().getPrincipalId());
-            note.setNoteTypeCode(KNSConstants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE.getCode());
-            disbursementVoucherDocument.getDocumentHeader().addNote(note);
+            note.setNoteTypeCode(KFSConstants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE.getCode());
+            
+            disbursementVoucherDocument.addNote(note); 
         }
     }
 
@@ -599,28 +599,28 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
     /**
      * @return Returns the personService.
      */
-    protected PersonService<Person> getPersonService() {
+    protected PersonService getPersonService() {
         return personService;
     }
 
     /**
      * @param personService The personService to set.
      */
-    public void setPersonService(PersonService<Person> personService) {
+    public void setPersonService(PersonService personService) {
         this.personService = personService;
     }
 
     /**
      * @return Returns the kualiConfigurationService.
      */
-    protected KualiConfigurationService getKualiConfigurationService() {
+    protected ConfigurationService getKualiConfigurationService() {
         return kualiConfigurationService;
     }
 
     /**
      * @param kualiConfigurationService The kualiConfigurationService to set.
      */
-    public void setKualiConfigurationService(KualiConfigurationService kualiConfigurationService) {
+    public void setKualiConfigurationService(ConfigurationService kualiConfigurationService) {
         this.kualiConfigurationService = kualiConfigurationService;
     }
 

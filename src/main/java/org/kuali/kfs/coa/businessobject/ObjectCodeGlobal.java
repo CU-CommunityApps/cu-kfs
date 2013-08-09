@@ -17,6 +17,7 @@
 package org.kuali.kfs.coa.businessobject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,13 +27,12 @@ import org.kuali.kfs.coa.service.ChartService;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.bo.DocumentHeader;
-import org.kuali.rice.kns.bo.GlobalBusinessObject;
-import org.kuali.rice.kns.bo.GlobalBusinessObjectDetail;
-import org.kuali.rice.kns.bo.PersistableBusinessObject;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.util.TypedArrayList;
+import org.kuali.rice.krad.bo.DocumentHeader;
+import org.kuali.rice.krad.bo.GlobalBusinessObject;
+import org.kuali.rice.krad.bo.GlobalBusinessObjectDetail;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.coa.businessobject.ContractGrantReportingCode;
 import edu.cornell.kfs.coa.businessobject.ObjectCodeExtendedAttribute;
@@ -42,7 +42,9 @@ import edu.cornell.kfs.coa.businessobject.ObjectCodeExtendedAttribute;
  */
 public class ObjectCodeGlobal extends PersistableBusinessObjectBase implements GlobalBusinessObject {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ObjectCodeGlobal.class);
+	private static final long serialVersionUID = 1L;
+
+	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ObjectCodeGlobal.class);
 
     private String documentNumber;
     private Integer universityFiscalYear;
@@ -105,7 +107,7 @@ public class ObjectCodeGlobal extends PersistableBusinessObjectBase implements G
     public ObjectCodeGlobal() {
 
 
-        objectCodeGlobalDetails = new TypedArrayList(ObjectCodeGlobalDetail.class);
+        objectCodeGlobalDetails = new ArrayList<ObjectCodeGlobalDetail>();
 
     }
 
@@ -788,10 +790,10 @@ public class ObjectCodeGlobal extends PersistableBusinessObjectBase implements G
      * @see org.kuali.rice.kns.bo.PersistableBusinessObjectBase#buildListOfDeletionAwareLists()
      */
     @Override
-    public List buildListOfDeletionAwareLists() {
-        List<List> managedLists = super.buildListOfDeletionAwareLists();
+    public List<Collection<PersistableBusinessObject>> buildListOfDeletionAwareLists() {
+        List<Collection<PersistableBusinessObject>> managedLists = super.buildListOfDeletionAwareLists();
 
-        managedLists.add(getObjectCodeGlobalDetails());
+        managedLists.add( new ArrayList<PersistableBusinessObject>( getObjectCodeGlobalDetails() ) );
 
         return managedLists;
     }

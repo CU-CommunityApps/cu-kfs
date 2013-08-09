@@ -23,13 +23,14 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kns.bo.BusinessObject;
-import org.kuali.rice.kns.document.Document;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kns.document.authorization.TransactionalDocumentAuthorizer;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSConstants;
+import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import com.rsmart.kuali.kfs.sec.SecConstants;
 import com.rsmart.kuali.kfs.sec.SecKeyConstants;
@@ -118,7 +119,7 @@ public class SecTransactionalDocumentAuthorizer implements TransactionalDocument
 
         AccessSecurityService securityService = SpringContext.getBean(AccessSecurityService.class);
 
-        boolean alwaysAllowInitiatorAccess = SpringContext.getBean(ParameterService.class).getIndicatorParameter(SecConstants.ACCESS_SECURITY_NAMESPACE_CODE, SecConstants.ALL_PARAMETER_DETAIL_COMPONENT, SecConstants.SecurityParameterNames.ALWAYS_ALLOW_INITIATOR_LINE_ACCESS_IND);
+        boolean alwaysAllowInitiatorAccess = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(SecConstants.ACCESS_SECURITY_NAMESPACE_CODE, SecConstants.ALL_PARAMETER_DETAIL_COMPONENT, SecConstants.SecurityParameterNames.ALWAYS_ALLOW_INITIATOR_LINE_ACCESS_IND);
         if (alwaysAllowInitiatorAccess) {
             // determine if any lines are view restricted
             boolean hasViewRestrictions = false;
@@ -144,8 +145,8 @@ public class SecTransactionalDocumentAuthorizer implements TransactionalDocument
 
             // if we have restrictions then disable copy and error correction
             if (hasViewRestrictions) {
-                if (documentActionsToReturn.contains(KNSConstants.KUALI_ACTION_CAN_COPY)) {
-                    documentActionsToReturn.remove(KNSConstants.KUALI_ACTION_CAN_COPY);
+                if (documentActionsToReturn.contains(KRADConstants.KUALI_ACTION_CAN_COPY)) {
+                    documentActionsToReturn.remove(KRADConstants.KUALI_ACTION_CAN_COPY);
                     GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_ERRORS, SecKeyConstants.MESSAGE_DOCUMENT_COPY_RESTRICTED, (String) null);
                 }
 
@@ -191,5 +192,114 @@ public class SecTransactionalDocumentAuthorizer implements TransactionalDocument
     public void setDocumentAuthorizer(TransactionalDocumentAuthorizer documentAuthorizer) {
         this.documentAuthorizer = documentAuthorizer;
     }
+
+	public boolean isAuthorizedByTemplate(Object dataObject,
+			String namespaceCode, String permissionTemplateName,
+			String principalId,
+			Map<String, String> additionalPermissionDetails,
+			Map<String, String> additionalRoleQualifiers) {
+		return false;
+	}
+
+	public boolean canEdit(Document document, Person user) {
+		return false;
+	}
+
+	public boolean canAnnotate(Document document, Person user) {
+		return false;
+	}
+
+	public boolean canReload(Document document, Person user) {
+		return false;
+	}
+
+	public boolean canClose(Document document, Person user) {
+		return false;
+	}
+
+	public boolean canSave(Document document, Person user) {
+		return false;
+	}
+
+	public boolean canRoute(Document document, Person user) {
+		return false;
+	}
+
+	public boolean canCancel(Document document, Person user) {
+		return false;
+	}
+
+	public boolean canCopy(Document document, Person user) {
+		return false;
+	}
+
+	public boolean canPerformRouteReport(Document document, Person user) {
+		return false;
+	}
+
+	public boolean canBlanketApprove(Document document, Person user) {
+		return false;
+	}
+
+	public boolean canApprove(Document document, Person user) {
+		return false;
+	}
+
+	public boolean canDisapprove(Document document, Person user) {
+		return false;
+	}
+
+	public boolean canSendNoteFyi(Document document, Person user) {
+		return false;
+	}
+
+	public boolean canEditDocumentOverview(Document document, Person user) {
+		return false;
+	}
+
+	public boolean canFyi(Document document, Person user) {
+		return false;
+	}
+
+	public boolean canAcknowledge(Document document, Person user) {
+		return false;
+	}
+
+	public boolean canViewNoteAttachment(Document document,
+			String attachmentTypeCode, String authorUniversalIdentifier,
+			Person user) {
+		return false;
+	}
+
+	public boolean canSendAnyTypeAdHocRequests(Document document, Person user) {
+		return false;
+	}
+
+	public boolean canTakeRequestedAction(Document document,
+			String actionRequestCode, Person user) {
+		return false;
+	}
+
+	public boolean canRecall(Document document, Person user) {
+		return false;
+	}
+
+	public boolean isAuthorized(Object dataObject, String namespaceCode,
+			String permissionName, String principalId) {
+		return false;
+	}
+
+	public boolean isAuthorizedByTemplate(Object dataObject,
+			String namespaceCode, String permissionTemplateName,
+			String principalId) {
+		return false;
+	}
+
+	public boolean isAuthorized(Object dataObject, String namespaceCode,
+			String permissionName, String principalId,
+			Map<String, String> additionalPermissionDetails,
+			Map<String, String> additionalRoleQualifiers) {
+		return false;
+	}
 
 }

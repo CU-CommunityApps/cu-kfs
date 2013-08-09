@@ -3,34 +3,31 @@ package edu.cornell.kfs.module.purap.document.authorization;
 import java.util.Set;
 
 import org.kuali.kfs.module.purap.CUPurapConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentPresentationControllerBase;
-import org.kuali.rice.kew.dto.ActionRequestDTO;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kim.service.KIMServiceLocator;
-import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.service.KNSServiceLocator;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowInfo;
+import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 
 public class IWantDocumentPresentationController extends FinancialSystemTransactionalDocumentPresentationControllerBase {
 
-    @Override
-    protected boolean canSave(Document document) {
-        KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+	private static final long serialVersionUID = 1L;
 
+	@Override
+	public boolean canSave(Document document) {
         return super.canSave(document);
     }
 
-    protected boolean canCopy(Document document) {
-        KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        if (workflowDocument.stateIsInitiated()) {
+    public boolean canCopy(Document document) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        if (workflowDocument.isInitiated()) {
             return false;
         }
         
-        if(workflowDocument.isAdHocRequested()){
+        if(SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(workflowDocument, GlobalVariables.getUserSession().getPrincipalId())){
             return false;
         }
         
@@ -38,14 +35,12 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
     }
 
     @Override
-    protected boolean canCancel(Document document) {
-        KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-
+	public boolean canCancel(Document document) {
         return super.canCancel(document);
     }
 
     @Override
-    protected boolean canRoute(Document document) {
+	public boolean canRoute(Document document) {
         String step = ((IWantDocument) document).getStep();
         if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)) {
             return true;
@@ -54,16 +49,15 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
     }
 
     @Override
-    protected boolean canClose(Document document) {
-
+    public boolean canClose(Document document) {
         return false;
     }
     
     @Override
-    protected boolean canReload(Document document) {
-        KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+	public boolean canReload(Document document) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         
-        if(workflowDocument.isAdHocRequested()){
+        if(SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(workflowDocument, GlobalVariables.getUserSession().getPrincipalId())){
             return false;
         }
         
@@ -84,37 +78,15 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
      * TODO: Is there a better workaround or a fix for the workflow doc problem?
      */
     private boolean canCompleteOrderForAdHoc(Document document) {
-    	boolean isAdHocRequested = false;
-        Long routeHeaderId = null;
-        KualiWorkflowInfo workflowInfo = null;
-        try {
-            routeHeaderId = Long.valueOf(document.getDocumentNumber());
-            workflowInfo = KNSServiceLocator.getWorkflowInfoService();
-            String principalId = GlobalVariables.getUserSession().getPrincipalId();
-            ActionRequestDTO[] actionRequests = workflowInfo.getActionRequests(routeHeaderId);
-            for (int actionRequestIndex = 0; actionRequestIndex < actionRequests.length; actionRequestIndex++) {
-                if (actionRequests[actionRequestIndex].isActivated() && actionRequests[actionRequestIndex].isAdHocRequest()) {
-                    if (actionRequests[actionRequestIndex].isUserRequest() && principalId.equals(actionRequests[actionRequestIndex].getPrincipalId())) {
-                        isAdHocRequested = true;
-                    }
-                    else if (actionRequests[actionRequestIndex].isGroupRequest()) {
-                    	if (KIMServiceLocator.getIdentityManagementService().isMemberOfGroup(principalId, actionRequests[actionRequestIndex].getGroupId())) {
-                    		isAdHocRequested = true;
-                    	}
-                    }
-                }
-            }
-        }
-        catch (WorkflowException e) {
-            throw new RuntimeException(new StringBuffer(getClass().getName()).append(" encountered an exception while attempting to get the actoins requests for routeHeaderId: ").append(routeHeaderId).toString(), e);
-        }
-    	return isAdHocRequested;
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+
+    	return SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(workflowDocument, GlobalVariables.getUserSession().getPrincipalId());
     }
     
     @Override
     public Set<String> getEditModes(Document document) {
         Set<String> editModes = super.getEditModes(document);
-        KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         IWantDocument iWantDocument = (IWantDocument) document;
         
         // TODO: Is there a better way to resolve the problem mentioned in the canCompleteOrderForAdHoc() method above?
@@ -126,7 +98,7 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
         	editModes.add("completeOrder");
         }
 
-        if (workflowDocument.stateIsInitiated() || workflowDocument.stateIsSaved()) {
+        if (workflowDocument.isInitiated() || workflowDocument.isSaved()) {
             editModes.add("wizard");
         }
 

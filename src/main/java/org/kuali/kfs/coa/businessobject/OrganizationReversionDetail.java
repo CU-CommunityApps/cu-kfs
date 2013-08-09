@@ -18,12 +18,13 @@ package org.kuali.kfs.coa.businessobject;
 
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.kns.bo.Inactivateable;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+
 
 /**
  * 
  */
-public class OrganizationReversionDetail extends ReversionDetail implements Inactivateable, ReversionCategoryInfo {
+public class OrganizationReversionDetail extends ReversionDetail implements MutableInactivatable, ReversionCategoryInfo {
 
     private String organizationCode;
     private String organizationReversionCategoryCode;

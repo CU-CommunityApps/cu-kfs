@@ -3,11 +3,18 @@ package edu.cornell.kfs.module.bc.businessobject;
 import java.sql.Date;
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.KualiDecimal;
+
+
+
+
+
+
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 import edu.cornell.kfs.module.bc.CUBCConstants;
 
+@SuppressWarnings("serial")
 public class PSJobData extends PersistableBusinessObjectBase {
     protected String positionNumber;
     protected String emplid;
@@ -29,9 +36,8 @@ public class PSJobData extends PersistableBusinessObjectBase {
 
     protected PSPositionInfo positionInfo;
 
-    @Override
-    protected LinkedHashMap toStringMapper() {
-        // TODO Auto-generated method stub
+    @SuppressWarnings("rawtypes")
+	protected LinkedHashMap toStringMapper() {
         return null;
     }
 

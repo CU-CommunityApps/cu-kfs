@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.rice.kns.dao.jdbc.PlatformAwareDaoBaseJdbc;
+import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 import edu.cornell.kfs.module.purap.businessobject.LevelOrganization;

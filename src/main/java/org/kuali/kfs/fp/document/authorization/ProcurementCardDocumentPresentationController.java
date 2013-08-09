@@ -20,10 +20,13 @@ import java.util.List;
 
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.authorization.AccountingDocumentPresentationControllerBase;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
+import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.util.GlobalVariables;
+
 
 public class ProcurementCardDocumentPresentationController extends AccountingDocumentPresentationControllerBase {
 
@@ -36,7 +39,7 @@ public class ProcurementCardDocumentPresentationController extends AccountingDoc
      * @see org.kuali.rice.kns.document.authorization.DocumentPresentationControllerBase#canCancel(org.kuali.rice.kns.document.Document)
      */
     @Override
-    protected boolean canCancel(Document document) {
+    public boolean canCancel(Document document) {
         return false;
     }
 
@@ -44,7 +47,7 @@ public class ProcurementCardDocumentPresentationController extends AccountingDoc
      * @see org.kuali.rice.kns.document.authorization.DocumentPresentationControllerBase#canCopy(org.kuali.rice.kns.document.Document)
      */
     @Override
-    protected boolean canCopy(Document document) {
+    public boolean canCopy(Document document) {
         return false;
     }
 
@@ -52,7 +55,7 @@ public class ProcurementCardDocumentPresentationController extends AccountingDoc
      * @see org.kuali.rice.kns.document.authorization.DocumentPresentationControllerBase#canDisapprove(org.kuali.rice.kns.document.Document)
      */
     @Override
-    protected boolean canDisapprove(Document document) {
+    public boolean canDisapprove(Document document) {
         return false;
     }
 
@@ -60,13 +63,13 @@ public class ProcurementCardDocumentPresentationController extends AccountingDoc
      * @see org.kuali.rice.kns.document.authorization.DocumentPresentationControllerBase#canEdit(org.kuali.rice.kns.document.Document)
      */
     @Override
-    protected boolean canEdit(Document document) {
-        KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+    public boolean canEdit(Document document) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         List<String> activeNodes = getCurrentRouteLevels(workflowDocument);
 
         // FULL_ENTRY only if: a) person has an approval request, b) we are at the correct level, c) it's not a correction document,
         // d) it is not an ADHOC request (important so that ADHOC don't get full entry).
-        if (workflowDocument.isApprovalRequested() && activeNodes.contains(ACCOUNT_FULL_EDIT) && (((FinancialSystemDocumentHeader) document.getDocumentHeader()).getFinancialDocumentInErrorNumber() == null) && !workflowDocument.isAdHocRequested()) {
+        if (workflowDocument.isApprovalRequested() && activeNodes.contains(ACCOUNT_FULL_EDIT) && (((FinancialSystemDocumentHeader) document.getDocumentHeader()).getFinancialDocumentInErrorNumber() == null) && !SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(workflowDocument, GlobalVariables.getUserSession().getPrincipalId())) {
             return true;
         }
 
@@ -77,13 +80,13 @@ public class ProcurementCardDocumentPresentationController extends AccountingDoc
      * @see org.kuali.rice.kns.document.authorization.DocumentPresentationControllerBase#canEdit(org.kuali.rice.kns.document.Document)
      */
     @Override
-    protected boolean canEditDocumentOverview(Document document) {
-        KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+    public boolean canEditDocumentOverview(Document document) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         List<String> activeNodes = getCurrentRouteLevels(workflowDocument);
 
         // FULL_ENTRY only if: a) the document is ENROUTE, b) we are at the correct level, c) it's not a correction document,
         // d) it is not an ADHOC request (important so that ADHOC don't get full entry).
-        if (workflowDocument.stateIsEnroute() && activeNodes.contains(ACCOUNT_FULL_EDIT) && (((FinancialSystemDocumentHeader) document.getDocumentHeader()).getFinancialDocumentInErrorNumber() == null) && !workflowDocument.isAdHocRequested()) {
+        if (workflowDocument.isEnroute() && activeNodes.contains(ACCOUNT_FULL_EDIT) && (((FinancialSystemDocumentHeader) document.getDocumentHeader()).getFinancialDocumentInErrorNumber() == null) && !SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(workflowDocument, GlobalVariables.getUserSession().getPrincipalId())) {
             return true;
         }
 

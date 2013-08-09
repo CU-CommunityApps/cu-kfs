@@ -37,8 +37,8 @@ import org.kuali.kfs.sys.DynamicCollectionComparator;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSParameterKeyConstants;
 import org.kuali.kfs.sys.service.NonTransactional;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.service.BusinessObjectService;
 import org.springframework.dao.DataAccessException;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
@@ -164,7 +164,7 @@ public class AchBundlerHelperServiceImpl implements AchBundlerHelperService {
         boolean bundle = false;
         
         try {
-            bundle = getParameterService().getIndicatorParameter(KFSParameterKeyConstants.KFS_PDP, KFSParameterKeyConstants.ALL_COMPONENTS, KFSParameterKeyConstants.ACH_PAYMENT_COMBINING_IND);
+            bundle = getParameterService().getParameterValueAsBoolean(KFSParameterKeyConstants.KFS_PDP, KFSParameterKeyConstants.ALL_COMPONENTS, KFSParameterKeyConstants.ACH_PAYMENT_COMBINING_IND);
         } catch(Exception e) {
             LOG.error("AchBundlerHelperServiceImpl MOD: shouldBundleAchPayments() The " + KFSParameterKeyConstants.KFS_PDP + ":" + KFSParameterKeyConstants.ALL_COMPONENTS + ":" + KFSParameterKeyConstants.ACH_PAYMENT_COMBINING_IND + "system parameter was not found registered in the system.");
         }
