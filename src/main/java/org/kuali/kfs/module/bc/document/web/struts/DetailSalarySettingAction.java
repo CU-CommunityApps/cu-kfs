@@ -34,10 +34,10 @@ import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.module.bc.BCConstants;
+import org.kuali.kfs.module.bc.BCConstants.SynchronizationCheckType;
 import org.kuali.kfs.module.bc.BCKeyConstants;
 import org.kuali.kfs.module.bc.BCPropertyConstants;
 import org.kuali.kfs.module.bc.CUBCKeyConstants;
-import org.kuali.kfs.module.bc.batch.dataaccess.BudgetConstructionHumanResourcesPayrollInterfaceDao;
 import org.kuali.kfs.module.bc.batch.service.BudgetConstructionHumanResourcesPayrollInterfaceService;
 import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionAppointmentFunding;
 import org.kuali.kfs.module.bc.document.BudgetConstructionDocument;
@@ -50,14 +50,14 @@ import org.kuali.kfs.module.bc.document.validation.event.SaveSalarySettingEvent;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.ObjectUtil;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kns.question.ConfirmationQuestion;
 import org.kuali.rice.kns.service.BusinessObjectDictionaryService;
-import org.kuali.rice.kns.util.ErrorMap;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KualiInteger;
-import org.kuali.rice.kns.util.MessageMap;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.kns.util.KNSGlobalVariables;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.MessageMap;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * the base struts action for the detail salary setting
@@ -186,7 +186,7 @@ public abstract class DetailSalarySettingAction extends SalarySettingBaseAction 
         List<PendingBudgetConstructionAppointmentFunding> appointmentFundings = salarySettingForm.getAppointmentFundings();
 
         if (savableAppointmentFundings == null || savableAppointmentFundings.isEmpty()) {
-            GlobalVariables.getMessageList().add(BCKeyConstants.MESSAGE_SALARY_SETTING_SAVED);
+            KNSGlobalVariables.getMessageList().add(BCKeyConstants.MESSAGE_SALARY_SETTING_SAVED);
             return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
 
@@ -209,7 +209,7 @@ public abstract class DetailSalarySettingAction extends SalarySettingBaseAction 
             salarySettingService.recalculateDerivedInformation(savableFunding);
 
             // validate the savable appointment funding lines
-            boolean isValid = this.invokeRules(new SaveSalarySettingEvent(KFSConstants.EMPTY_STRING, errorKeyPrefix, document, savableFunding));
+            boolean isValid = this.invokeRules(new SaveSalarySettingEvent(KFSConstants.EMPTY_STRING, errorKeyPrefix, document, savableFunding, this.getSynchronizationCheckType()));
             if (!isValid) {
                 return mapping.findForward(KFSConstants.MAPPING_BASIC);
             }
@@ -235,7 +235,7 @@ public abstract class DetailSalarySettingAction extends SalarySettingBaseAction 
 
         this.clearPurgedAppointmentFundings(appointmentFundings);
 
-        GlobalVariables.getMessageList().add(BCKeyConstants.MESSAGE_SALARY_SETTING_SAVED);
+        KNSGlobalVariables.getMessageList().add(BCKeyConstants.MESSAGE_SALARY_SETTING_SAVED);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
@@ -430,4 +430,12 @@ public abstract class DetailSalarySettingAction extends SalarySettingBaseAction 
         SpringContext.getBean(LockService.class).unlockPosition(positionNumber, universityFiscalYear, principalId);
         
     }
+    
+    /**
+     * This should return the SynchronizationCheckType based on the context. SynchronizationCheckType.POSN is used in
+     * IncumbentSalarySetting and SynchronizationCheckType.EID is used in PositionSalarySetting
+     * 
+     * @return
+     */
+    public abstract SynchronizationCheckType getSynchronizationCheckType();
 }

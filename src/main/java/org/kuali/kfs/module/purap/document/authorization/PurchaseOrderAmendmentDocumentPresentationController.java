@@ -15,6 +15,7 @@
  */
 package org.kuali.kfs.module.purap.document.authorization;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -34,19 +35,18 @@ import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.service.PurapAccountingService;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
-
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.krad.document.Document;
 
 public class PurchaseOrderAmendmentDocumentPresentationController extends PurchaseOrderDocumentPresentationController {
     
     @Override
-    protected boolean canEdit(Document document) {
+    public boolean canEdit(Document document) {
         PurchaseOrderDocument poDocument = (PurchaseOrderDocument)document;
         // po amend docs in CGIP status are only editable when in Initiated or Saved status
         if (PurchaseOrderStatuses.CHANGE_IN_PROCESS.equals(poDocument.getStatusCode())) {
-            KualiWorkflowDocument workflowDoc = document.getDocumentHeader().getWorkflowDocument();
-            if (!workflowDoc.stateIsInitiated() && !workflowDoc.stateIsSaved()) {
+            WorkflowDocument workflowDoc = document.getDocumentHeader().getWorkflowDocument();
+            if (!workflowDoc.isInitiated() && !workflowDoc.isSaved()) {
                 return false;
             }
         }
@@ -62,9 +62,9 @@ public class PurchaseOrderAmendmentDocumentPresentationController extends Purcha
         PurchaseOrderDocument poDocument = (PurchaseOrderDocument)document;
 
         if (PurchaseOrderStatuses.CHANGE_IN_PROCESS.equals(poDocument.getStatusCode())) {
-            KualiWorkflowDocument workflowDoc = document.getDocumentHeader().getWorkflowDocument();
+            WorkflowDocument workflowDoc = document.getDocumentHeader().getWorkflowDocument();
             //  amendment doc needs to lock its field for initiator while enroute
-            if (workflowDoc.stateIsInitiated() || workflowDoc.stateIsSaved()) {
+            if (workflowDoc.isInitiated() || workflowDoc.isSaved()) {
                 editModes.add(PurchaseOrderEditMode.AMENDMENT_ENTRY);
             }
         }
@@ -81,9 +81,9 @@ public class PurchaseOrderAmendmentDocumentPresentationController extends Purcha
         // KFS-1768/KFSCNTRB-1138
         // This is ported from 5.0, and Workflowdocument is different, so needs more testing.
 		try {
-			KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-			if (workflowDocument.stateIsEnroute()) {
-				List<String> activeNodes = Arrays.asList(workflowDocument.getNodeNames());
+			WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+			if (workflowDocument.isEnroute()) {
+				List<String> activeNodes = new ArrayList<String>(workflowDocument.getNodeNames());
 				;
 				for (String nodeNamesNode : activeNodes) {
 					if (RequisitionStatuses.NODE_ACCOUNT.equals(nodeNamesNode) && !SpringContext.getBean(PurapAccountingService.class).isFiscalOfficersForAllAcctLines((PurchaseOrderAmendmentDocument)document)) {
@@ -111,10 +111,10 @@ public class PurchaseOrderAmendmentDocumentPresentationController extends Purcha
     }
     
     @Override
-    protected boolean canReload(Document document) {
+    public boolean canReload(Document document) {
         //  show the reload button if the doc is anything but processed or final
-        KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        return (workflowDocument.stateIsSaved() || workflowDocument.stateIsEnroute()) ;
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        return (workflowDocument.isSaved() || workflowDocument.isEnroute()) ;
     }
 
 }

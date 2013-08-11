@@ -20,9 +20,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.LinkedHashMap;
 
-import org.apache.ojb.broker.PersistenceBroker;
-import org.apache.ojb.broker.PersistenceBrokerException;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 /**
  * SciQuestPunchoutDataItem
@@ -175,22 +173,23 @@ public class SciQuestPunchoutDataItem
 		this.lastUpdate = lastUpdate;
 	}
 	
-	// handle automatic updating of the timestamp
-	
-    public void beforeInsert(PersistenceBroker persistenceBroker) throws PersistenceBrokerException {
-    	super.beforeInsert( persistenceBroker );
-        lastUpdate = new Timestamp(System.currentTimeMillis());
+  	// handle automatic updating of the timestamp
+    @Override
+    protected void prePersist() {
+      super.prePersist();
+      lastUpdate = new Timestamp(System.currentTimeMillis());
     }
-
-    public void beforeUpdate(PersistenceBroker persistenceBroker) throws PersistenceBrokerException {
-    	super.beforeUpdate( persistenceBroker );
-        lastUpdate = new Timestamp(System.currentTimeMillis());
+    
+    @Override
+    protected void preUpdate() {
+      super.preUpdate();
+      lastUpdate = new Timestamp(System.currentTimeMillis());
     }
     
     /**
      * @see org.kuali.core.bo.BusinessObjectBase#toStringMapper()
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();
 

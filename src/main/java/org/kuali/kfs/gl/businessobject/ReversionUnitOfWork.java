@@ -23,8 +23,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.ReversionCategory;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 
 public class ReversionUnitOfWork extends PersistableBusinessObjectBase {
@@ -196,7 +196,7 @@ public class ReversionUnitOfWork extends PersistableBusinessObjectBase {
     /**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
-    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public LinkedHashMap toStringMapper() {
         LinkedHashMap pkMap = new LinkedHashMap();
         pkMap.put("chartOfAccountsCode", this.chartOfAccountsCode);

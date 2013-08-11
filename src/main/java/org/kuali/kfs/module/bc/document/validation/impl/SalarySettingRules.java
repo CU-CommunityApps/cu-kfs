@@ -18,15 +18,16 @@ package org.kuali.kfs.module.bc.document.validation.impl;
 import java.util.List;
 
 import org.kuali.kfs.module.bc.BCPropertyConstants;
+import org.kuali.kfs.module.bc.BCConstants.SynchronizationCheckType;
 import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionAppointmentFunding;
 import org.kuali.kfs.module.bc.document.service.BudgetConstructionRuleHelperService;
 import org.kuali.kfs.module.bc.document.service.SalarySettingRuleHelperService;
 import org.kuali.kfs.module.bc.document.validation.SalarySettingRule;
+import org.kuali.kfs.module.bc.service.HumanResourcesPayrollService;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.util.ErrorMap;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.MessageMap;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.MessageMap;
 
 /**
  * the rule implementation for the actions of salary setting component
@@ -36,6 +37,7 @@ public class SalarySettingRules implements SalarySettingRule {
 
     private BudgetConstructionRuleHelperService budgetConstructionRuleHelperService = SpringContext.getBean(BudgetConstructionRuleHelperService.class);
     private SalarySettingRuleHelperService salarySettingRuleHelperService = SpringContext.getBean(SalarySettingRuleHelperService.class);
+    protected HumanResourcesPayrollService humanResourcesPayrollService = SpringContext.getBean(HumanResourcesPayrollService.class);
     private MessageMap errorMap = GlobalVariables.getMessageMap();
 
     /**
@@ -79,7 +81,10 @@ public class SalarySettingRules implements SalarySettingRule {
 //            return isObjectCodeMatching;
 //        }
 
-        boolean hasActiveJob = salarySettingRuleHelperService.hasActiveJob(appointmentFunding, errorMap);
+        Integer fiscalYear = appointmentFunding.getUniversityFiscalYear();
+        String emplid = appointmentFunding.getEmplid();
+        String positionNumber = appointmentFunding.getPositionNumber();
+        boolean hasActiveJob = humanResourcesPayrollService.isActiveJob(emplid, positionNumber, fiscalYear, SynchronizationCheckType.NONE);
         if (!hasActiveJob) {
             return hasActiveJob;
         }
@@ -124,8 +129,11 @@ public class SalarySettingRules implements SalarySettingRule {
 //        if (!isObjectCodeMatching) {
 //            return isObjectCodeMatching;
 //        }
+        Integer fiscalYear = appointmentFunding.getUniversityFiscalYear();
+        String emplid = appointmentFunding.getEmplid();
+        String positionNumber = appointmentFunding.getPositionNumber();
+        boolean hasActiveJob = humanResourcesPayrollService.isActiveJob(emplid, positionNumber, fiscalYear, SynchronizationCheckType.NONE);
 
-        boolean hasActiveJob = salarySettingRuleHelperService.hasActiveJob(appointmentFunding, errorMap);
         if (!hasActiveJob) {
             return hasActiveJob;
         }
@@ -202,5 +210,20 @@ public class SalarySettingRules implements SalarySettingRule {
         boolean hasValidAmounts = salarySettingRuleHelperService.hasValidRequestedAmountQuickSalarySetting(appointmentFunding, errorMap);
 
         return hasValidAmounts;
+    }
+
+    //TODO UPGRADE-911
+    public boolean processSaveAppointmentFunding(
+        PendingBudgetConstructionAppointmentFunding appointmentFunding,
+        SynchronizationCheckType synchronizationCheckType) {
+      return false;
+    }
+
+    //TODO UPGRADE-911
+    public boolean processAddAppointmentFunding(
+        List<PendingBudgetConstructionAppointmentFunding> existingAppointmentFundings,
+        PendingBudgetConstructionAppointmentFunding appointmentFunding,
+        SynchronizationCheckType synchronizationCheckType) {
+      return false;
     }
 }

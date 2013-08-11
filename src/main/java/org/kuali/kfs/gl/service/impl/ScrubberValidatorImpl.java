@@ -56,11 +56,11 @@ import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.sys.service.OriginationCodeService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.service.PersistenceService;
-import org.kuali.rice.kns.service.PersistenceStructureService;
-import org.kuali.rice.kns.util.KualiDecimal;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.service.PersistenceService;
+import org.kuali.rice.krad.service.PersistenceStructureService;
 import org.springframework.util.StringUtils;
 
 /**
@@ -71,7 +71,7 @@ import org.springframework.util.StringUtils;
 public class ScrubberValidatorImpl implements ScrubberValidator {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ScrubberValidatorImpl.class);
 
-    private KualiConfigurationService kualiConfigurationService;
+    private ConfigurationService kualiConfigurationService;
     private ParameterService parameterService;
     private PersistenceService persistenceService;
     private UniversityDateDao universityDateDao;
@@ -305,7 +305,7 @@ public class ScrubberValidatorImpl implements ScrubberValidator {
             return MessageBuilder.buildMessage(KFSKeyConstants.ERROR_ACCOUNT_NOT_FOUND, originEntry.getChartOfAccountsCode() + "-" + originEntry.getAccountNumber(), Message.TYPE_FATAL);
         }
 
-        if (parameterService.getParameterValue(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, KFSConstants.SystemGroupParameterNames.GL_ANNUAL_CLOSING_DOC_TYPE).equals(originEntry.getFinancialDocumentTypeCode())) {
+        if (parameterService.getParameterValueAsBoolean(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, KFSConstants.SystemGroupParameterNames.GL_ANNUAL_CLOSING_DOC_TYPE).equals(originEntry.getFinancialDocumentTypeCode())) {
             workingEntry.setAccountNumber(originEntry.getAccountNumber());
             return null;
         }
@@ -316,10 +316,10 @@ public class ScrubberValidatorImpl implements ScrubberValidator {
             return null;
         }
 
-        String[] continuationAccountBypassOriginationCodes = parameterService.getParameterValues(ScrubberStep.class, GeneralLedgerConstants.GlScrubberGroupRules.CONTINUATION_ACCOUNT_BYPASS_ORIGINATION_CODES).toArray(new String[] {});
+        String[] continuationAccountBypassOriginationCodes = parameterService.getParameterValuesAsString(ScrubberStep.class, GeneralLedgerConstants.GlScrubberGroupRules.CONTINUATION_ACCOUNT_BYPASS_ORIGINATION_CODES).toArray(new String[] {});
 
         String [] continuationAccountBypassBalanceTypeCodes = {"EX","IE","PE"};
-        String[] continuationAccountBypassDocumentTypeCodes = parameterService.getParameterValues(ScrubberStep.class, GeneralLedgerConstants.GlScrubberGroupRules.CONTINUATION_ACCOUNT_BYPASS_DOCUMENT_TYPE_CODES).toArray(new String[] {});
+        String[] continuationAccountBypassDocumentTypeCodes = parameterService.getParameterValuesAsString(ScrubberStep.class, GeneralLedgerConstants.GlScrubberGroupRules.CONTINUATION_ACCOUNT_BYPASS_DOCUMENT_TYPE_CODES).toArray(new String[] {});
 
         // Has an expiration date or is closed
         if ((ArrayUtils.contains(continuationAccountBypassOriginationCodes, originEntry.getFinancialSystemOriginationCode())) && !originEntryAccount.isActive()) {
@@ -438,7 +438,7 @@ public class ScrubberValidatorImpl implements ScrubberValidator {
 
         if (account.isForContractsAndGrants() && (account.isActive())) {
 
-            String daysOffset = parameterService.getParameterValue(ScrubberStep.class, KFSConstants.SystemGroupParameterNames.GL_SCRUBBER_VALIDATION_DAYS_OFFSET);
+            String daysOffset = parameterService.getParameterValueAsString(ScrubberStep.class, KFSConstants.SystemGroupParameterNames.GL_SCRUBBER_VALIDATION_DAYS_OFFSET);
             int daysOffsetInt = 3 * 30; // default to 90 days (approximately 3 months)
 
             if (daysOffset.trim().length() > 0) {
@@ -516,7 +516,7 @@ public class ScrubberValidatorImpl implements ScrubberValidator {
                     }
                     else {
                         // sub account IS NOT active
-                        if (parameterService.getParameterValue(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, KFSConstants.SystemGroupParameterNames.GL_ANNUAL_CLOSING_DOC_TYPE).equals(originEntry.getFinancialDocumentTypeCode())) {
+                        if (parameterService.getParameterValueAsBoolean(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, KFSConstants.SystemGroupParameterNames.GL_ANNUAL_CLOSING_DOC_TYPE).equals(originEntry.getFinancialDocumentTypeCode())) {
                             // document IS annual closing
                             workingEntry.setSubAccountNumber(originEntry.getSubAccountNumber());
                         }
@@ -674,7 +674,7 @@ public class ScrubberValidatorImpl implements ScrubberValidator {
             workingEntry.setFinancialSystemOriginationCode(originEntry.getFinancialSystemOriginationCode());
         }
         else {
-            return new Message(kualiConfigurationService.getPropertyString(KFSKeyConstants.ERROR_ORIGIN_CODE_NOT_FOUND) + " (" + originEntry.getFinancialSystemOriginationCode() + ")", Message.TYPE_FATAL);
+            return new Message(kualiConfigurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_ORIGIN_CODE_NOT_FOUND) + " (" + originEntry.getFinancialSystemOriginationCode() + ")", Message.TYPE_FATAL);
         }
         return null;
     }
@@ -1139,7 +1139,7 @@ public class ScrubberValidatorImpl implements ScrubberValidator {
         universityDateDao = udd;
     }
 
-    public void setKualiConfigurationService(KualiConfigurationService service) {
+    public void setKualiConfigurationService(ConfigurationService service) {
         kualiConfigurationService = service;
     }
 

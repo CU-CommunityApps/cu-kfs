@@ -18,6 +18,7 @@ package org.kuali.kfs.module.ld.batch.dataaccess.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,9 +27,10 @@ import org.kuali.kfs.module.ld.businessobject.LaborObject;
 import org.kuali.kfs.module.ld.businessobject.LedgerBalance;
 import org.kuali.kfs.module.ld.businessobject.LedgerEntry;
 import org.kuali.kfs.sys.batch.dataaccess.impl.AbstractPreparedStatementCachingDaoJdbc;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kns.util.Guid;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.web.format.BooleanFormatter;
 
 public class LedgerPreparedStatementCachingDaoJdbc extends AbstractPreparedStatementCachingDaoJdbc implements LedgerPreparedStatementCachingDao {
     static final Map<String,String> sql = new HashMap<String,String>();
@@ -182,7 +184,7 @@ public class LedgerPreparedStatementCachingDaoJdbc extends AbstractPreparedState
                 preparedStatement.setBigDecimal(26, ledgerBalance.getMonth11Amount().bigDecimalValue());
                 preparedStatement.setBigDecimal(27, ledgerBalance.getMonth12Amount().bigDecimalValue());
                 preparedStatement.setBigDecimal(28, ledgerBalance.getMonth13Amount().bigDecimalValue());
-                preparedStatement.setTimestamp(29, dateTimeService.getCurrentTimestamp());
+                preparedStatement.setTimestamp(29, SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
            }
         }.execute(LedgerBalance.class);
     }
@@ -207,7 +209,7 @@ public class LedgerPreparedStatementCachingDaoJdbc extends AbstractPreparedState
                 preparedStatement.setBigDecimal(14, ledgerBalance.getMonth11Amount().bigDecimalValue());
                 preparedStatement.setBigDecimal(15, ledgerBalance.getMonth12Amount().bigDecimalValue());
                 preparedStatement.setBigDecimal(16, ledgerBalance.getMonth13Amount().bigDecimalValue());
-                preparedStatement.setTimestamp(17, dateTimeService.getCurrentTimestamp());
+                preparedStatement.setTimestamp(17, SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
                 preparedStatement.setInt(18, ledgerBalance.getUniversityFiscalYear());
                 preparedStatement.setString(19, ledgerBalance.getChartOfAccountsCode());
                 preparedStatement.setString(20, ledgerBalance.getAccountNumber());
@@ -298,5 +300,16 @@ public class LedgerPreparedStatementCachingDaoJdbc extends AbstractPreparedState
                 preparedStatement.setTimestamp(48, ledgerEntry.getTransactionDateTimeStamp());
            }
         }.execute(LedgerEntry.class);
+    }
+
+    //TODO UPGRADE-911
+    public void insertLedgerBalance(LedgerBalance ledgerBalance,
+        Timestamp currentTimestamp) {
+      
+    }
+
+    public void updateLedgerBalance(LedgerBalance ledgerBalance,
+        Timestamp currentTimestamp) {
+      
     }
 }

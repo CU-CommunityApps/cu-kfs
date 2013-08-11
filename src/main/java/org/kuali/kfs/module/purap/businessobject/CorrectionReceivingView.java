@@ -18,12 +18,14 @@ package org.kuali.kfs.module.purap.businessobject;
 import java.util.List;
 
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.kns.bo.Note;
+import org.kuali.rice.krad.bo.Note;
 
 /**
  * Requisition View Business Object.
  */
 public class CorrectionReceivingView extends AbstractRelatedView {
+
+    private static final long serialVersionUID = 1L;
     private String lineItemReceivingDocumentNumber;
 
     public String getLineItemReceivingDocumentNumber() {

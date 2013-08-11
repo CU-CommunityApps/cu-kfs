@@ -38,14 +38,15 @@ import org.kuali.kfs.module.purap.service.PurapAccountingService;
 import org.kuali.kfs.module.purap.util.VendorGroupingHelper;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kns.dao.impl.PlatformAwareDaoBaseOjb;
-import org.kuali.rice.kns.exception.InfrastructureException;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.DocumentService;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.TransactionalServiceUtils;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.exception.InfrastructureException;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.util.TransactionalServiceUtils;
 
 /**
  * OJB Implementation of PaymentRequestDao.
@@ -56,7 +57,7 @@ public class PaymentRequestDaoOjb extends PlatformAwareDaoBaseOjb implements Pay
     private NegativePaymentRequestApprovalLimitDao negativePaymentRequestApprovalLimitDao;
     private DateTimeService dateTimeService;
     private PurapAccountingService purapAccountingService;
-    private KualiConfigurationService kualiConfigurationService;
+    private ConfigurationService kualiConfigurationService;
     private PurapRunDateService purapRunDateService;
 
     public void setNegativePaymentRequestApprovalLimitDao(NegativePaymentRequestApprovalLimitDao negativePaymentRequestApprovalLimitDao) {
@@ -71,7 +72,7 @@ public class PaymentRequestDaoOjb extends PlatformAwareDaoBaseOjb implements Pay
         this.purapAccountingService = purapAccountingService;
     }
 
-    public void setKualiConfigurationService(KualiConfigurationService kualiConfigurationService) {
+    public void setKualiConfigurationService(ConfigurationService kualiConfigurationService) {
         this.kualiConfigurationService = kualiConfigurationService;
     }
 
@@ -239,6 +240,7 @@ public class PaymentRequestDaoOjb extends PlatformAwareDaoBaseOjb implements Pay
         criteria.addNotEqualTo("holdIndicator", "Y");
         criteria.addNotEqualTo("paymentRequestedCancelIndicator", "Y");
         criteria.addIn("status", Arrays.asList(PurapConstants.PaymentRequestStatuses.PREQ_STATUSES_FOR_AUTO_APPROVE));
+        List<PaymentRequestDocument> payReqs= new ArrayList<PaymentRequestDocument>();
 
         Query query = new QueryByCriteria(PaymentRequestDocument.class, criteria);
         Iterator<PaymentRequestDocument> documents = (Iterator<PaymentRequestDocument>) getPersistenceBrokerTemplate().getIteratorByQuery(query);
@@ -250,7 +252,11 @@ public class PaymentRequestDaoOjb extends PlatformAwareDaoBaseOjb implements Pay
 
         if (documentHeaderIds.size() > 0) {
             try {
-                return SpringContext.getBean(DocumentService.class).getDocumentsByListOfDocumentHeaderIds(PaymentRequestDocument.class, documentHeaderIds);
+              List<Document> docs = SpringContext.getBean(DocumentService.class).getDocumentsByListOfDocumentHeaderIds(PaymentRequestDocument.class, documentHeaderIds);
+              for (Document doc : docs) {
+                payReqs.add((PaymentRequestDocument)doc);
+              }
+              return payReqs;
             }
             catch (WorkflowException e) {
                 throw new InfrastructureException("unable to retrieve paymentRequestDocuments", e);
@@ -414,7 +420,8 @@ public class PaymentRequestDaoOjb extends PlatformAwareDaoBaseOjb implements Pay
         criteria.addNotEqualTo("holdIndicator", "Y");
         criteria.addNotEqualTo("paymentRequestedCancelIndicator", "Y");
         criteria.addEqualTo("statusCode", PurapConstants.PaymentRequestStatuses.AWAITING_RECEIVING_REVIEW);
-
+        List<PaymentRequestDocument> payReqs= new ArrayList<PaymentRequestDocument>();
+        
         Query query = new QueryByCriteria(PaymentRequestDocument.class, criteria);
         Iterator<PaymentRequestDocument> documents = (Iterator<PaymentRequestDocument>) getPersistenceBrokerTemplate().getIteratorByQuery(query);
         ArrayList<String> documentHeaderIds = new ArrayList<String>();
@@ -425,7 +432,11 @@ public class PaymentRequestDaoOjb extends PlatformAwareDaoBaseOjb implements Pay
 
         if (documentHeaderIds.size() > 0) {
             try {
-                return SpringContext.getBean(DocumentService.class).getDocumentsByListOfDocumentHeaderIds(PaymentRequestDocument.class, documentHeaderIds);
+                List<Document> docs = SpringContext.getBean(DocumentService.class).getDocumentsByListOfDocumentHeaderIds(PaymentRequestDocument.class, documentHeaderIds);
+                for (Document doc : docs) {
+                  payReqs.add((PaymentRequestDocument)doc);
+                }
+                return payReqs;
             }
             catch (WorkflowException e) {
                 throw new InfrastructureException("unable to retrieve paymentRequestDocuments", e);

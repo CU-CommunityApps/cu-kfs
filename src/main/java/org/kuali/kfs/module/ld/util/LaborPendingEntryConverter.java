@@ -23,7 +23,6 @@ import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.fp.document.YearEndDocument;
-import org.kuali.kfs.fp.document.YearEndDocumentUtil;
 import org.kuali.kfs.module.ld.LaborConstants;
 import org.kuali.kfs.module.ld.businessobject.BenefitsCalculation;
 import org.kuali.kfs.module.ld.businessobject.ExpenseTransferAccountingLine;
@@ -36,18 +35,16 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.HomeOriginationService;
 import org.kuali.kfs.sys.service.OptionsService;
-import org.kuali.rice.kns.bo.DocumentHeader;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.util.KualiDecimal;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.krad.bo.DocumentHeader;
+import org.kuali.rice.krad.service.DataDictionaryService;
 
 /**
  * This class provides a set of facilities that can conver the accounting document and its accounting lines into labor pending
  * entries
  */
 public class LaborPendingEntryConverter {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(LaborPendingEntryConverter.class);
-
     /**
      * convert the given document and accounting line into the expense pending entries
      * 

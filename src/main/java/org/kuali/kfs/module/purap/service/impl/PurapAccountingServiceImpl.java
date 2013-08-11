@@ -27,10 +27,11 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapConstants.PurapDocTypeCodes;
-import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
+import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants.NRATaxParameters;
+import org.kuali.kfs.module.purap.PurapPropertyConstants;
+import org.kuali.kfs.module.purap.businessobject.AccountsPayableSummaryAccount;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
@@ -43,7 +44,6 @@ import org.kuali.kfs.module.purap.businessobject.RequisitionAccount;
 import org.kuali.kfs.module.purap.dataaccess.PurApAccountingDao;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
-import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.service.PurapAccountingService;
 import org.kuali.kfs.module.purap.util.PurApItemUtils;
@@ -54,16 +54,12 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLineBase;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.web.RenderableAccountingLineContainer;
-import org.kuali.kfs.sys.identity.KfsKimAttributes;
 import org.kuali.kfs.sys.service.NonTransactional;
-import org.kuali.rice.kim.bo.types.dto.AttributeSet;
-import org.kuali.rice.kim.service.RoleManagementService;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
 /**
  * 
  * Contains a number of helper methods to deal with accounts on Purchasing Accounts Payable Documents
@@ -859,13 +855,13 @@ public class PurapAccountingServiceImpl implements PurapAccountingService {
     }
     
     public List getAccountsPayableSummaryAccounts(Integer purapDocumentIdentifier, String docType) {
-        if (PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equals(docType)) {
-            return purApAccountingDao.getSummaryAccountsbyPaymentRequestIdentifier(purapDocumentIdentifier);
-        }
-        else if (PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT.equals(docType)) {
-            purApAccountingDao.getSummaryAccountsbyCreditMemoIdentifier(purapDocumentIdentifier);
-        }
-        return null;
+      if (PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equals(docType)) {
+        return getSummaryAccountsbyPaymentRequestIdentifier(purapDocumentIdentifier);
+      }
+      else if (PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT.equals(docType)) {
+          getSummaryAccountsbyCreditMemoIdentifier(purapDocumentIdentifier);
+      }
+      return null;
     }
 
     public List<PurApAccountingLine> getAccountsFromItem(PurApItem item) {
@@ -1007,13 +1003,13 @@ public class PurapAccountingServiceImpl implements PurapAccountingService {
             String incomeClassCode = ((PaymentRequestDocument)document).getTaxClassificationCode();
             if (StringUtils.isNotEmpty(incomeClassCode)) {
                 
-                String federalChartCode = parameterService.getParameterValue(PaymentRequestDocument.class, NRATaxParameters.FEDERAL_TAX_PARM_PREFIX + NRATaxParameters.TAX_PARM_CHART_SUFFIX);
-                String federalAccountNumber = parameterService.getParameterValue(PaymentRequestDocument.class, NRATaxParameters.FEDERAL_TAX_PARM_PREFIX + NRATaxParameters.TAX_PARM_ACCOUNT_SUFFIX);
-                String federalObjectCode = parameterService.getParameterValue(PaymentRequestDocument.class, NRATaxParameters.FEDERAL_TAX_PARM_PREFIX + NRATaxParameters.TAX_PARM_OBJECT_BY_INCOME_CLASS_SUFFIX, incomeClassCode);
+                String federalChartCode = parameterService.getParameterValueAsString(PaymentRequestDocument.class, NRATaxParameters.FEDERAL_TAX_PARM_PREFIX + NRATaxParameters.TAX_PARM_CHART_SUFFIX);
+                String federalAccountNumber = parameterService.getParameterValueAsString(PaymentRequestDocument.class, NRATaxParameters.FEDERAL_TAX_PARM_PREFIX + NRATaxParameters.TAX_PARM_ACCOUNT_SUFFIX);
+                String federalObjectCode = parameterService.getParameterValueAsString(PaymentRequestDocument.class, NRATaxParameters.FEDERAL_TAX_PARM_PREFIX + NRATaxParameters.TAX_PARM_OBJECT_BY_INCOME_CLASS_SUFFIX, incomeClassCode);
 
-                String stateChartCode = parameterService.getParameterValue(PaymentRequestDocument.class, NRATaxParameters.STATE_TAX_PARM_PREFIX + NRATaxParameters.TAX_PARM_CHART_SUFFIX);
-                String stateAccountNumber = parameterService.getParameterValue(PaymentRequestDocument.class, NRATaxParameters.STATE_TAX_PARM_PREFIX + NRATaxParameters.TAX_PARM_ACCOUNT_SUFFIX);
-                String stateObjectCode = parameterService.getParameterValue(PaymentRequestDocument.class, NRATaxParameters.STATE_TAX_PARM_PREFIX + NRATaxParameters.TAX_PARM_OBJECT_BY_INCOME_CLASS_SUFFIX, incomeClassCode);
+                String stateChartCode = parameterService.getParameterValueAsString(PaymentRequestDocument.class, NRATaxParameters.STATE_TAX_PARM_PREFIX + NRATaxParameters.TAX_PARM_CHART_SUFFIX);
+                String stateAccountNumber = parameterService.getParameterValueAsString(PaymentRequestDocument.class, NRATaxParameters.STATE_TAX_PARM_PREFIX + NRATaxParameters.TAX_PARM_ACCOUNT_SUFFIX);
+                String stateObjectCode = parameterService.getParameterValueAsString(PaymentRequestDocument.class, NRATaxParameters.STATE_TAX_PARM_PREFIX + NRATaxParameters.TAX_PARM_OBJECT_BY_INCOME_CLASS_SUFFIX, incomeClassCode);
 
                 String chartCode = account.getChartOfAccountsCode();
                 String accountNumber = account.getAccountNumber();
@@ -1074,7 +1070,7 @@ public class PurapAccountingServiceImpl implements PurapAccountingService {
 		String personId = GlobalVariables.getUserSession().getPrincipalId();
 		for (SourceAccountingLine accountingLine : (List<SourceAccountingLine>)document.getSourceAccountingLines()) {
 			List<String> fiscalOfficers = new ArrayList<String>();
-			AttributeSet roleQualifier = new AttributeSet();
+			Map<String, String> roleQualifier = new HashMap<String, String>();
 	        // KFSPTS-1273 : this method is final, so can't be overriden by REQ Auth.  This is a fix for REQ existing issue.  a broader solution need more work.
 	        // the authorizer is called by validation rule and rendertag, so has to do it here.  otherwise the invalid account will be saved.
 	        boolean isExistingReqAcctline = false;
@@ -1104,29 +1100,31 @@ public class PurapAccountingServiceImpl implements PurapAccountingService {
 	    			}
 	    	}
 
-			roleQualifier.put(KfsKimAttributes.DOCUMENT_NUMBER,document.getDocumentNumber());
-			roleQualifier.put(KfsKimAttributes.DOCUMENT_TYPE_NAME, document.getDocumentHeader().getWorkflowDocument().getDocumentType());
-			roleQualifier.put(KfsKimAttributes.FINANCIAL_DOCUMENT_TOTAL_AMOUNT,document.getDocumentHeader().getFinancialDocumentTotalAmount().toString());
-			roleQualifier.put(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE,accountingLine.getChartOfAccountsCode());
-			roleQualifier.put(KfsKimAttributes.ACCOUNT_NUMBER,accountingLine.getAccountNumber());
-			fiscalOfficers.addAll(SpringContext.getBean(RoleManagementService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
-					KFSConstants.SysKimConstants.FISCAL_OFFICER_KIM_ROLE_NAME,roleQualifier));
-			if (!fiscalOfficers.contains(personId)) {
-				fiscalOfficers.addAll(SpringContext.getBean(RoleManagementService.class).getRoleMemberPrincipalIds(
-										KFSConstants.ParameterNamespaces.KFS,KFSConstants.SysKimConstants.FISCAL_OFFICER_PRIMARY_DELEGATE_KIM_ROLE_NAME,
-										roleQualifier));
-			}
-			if (!fiscalOfficers.contains(personId)) {
-				fiscalOfficers.addAll(SpringContext.getBean(RoleManagementService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
-										KFSConstants.SysKimConstants.FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME,roleQualifier));
-			}
-	        if (isExistingReqAcctline) {
-	        	accountingLine.setAccountNumber(updatedAccountNumber);
-	        }
-			if (!fiscalOfficers.contains(personId)) {
-				isFoForAcctLines = false;
-				break;
-			}
+	    	//TODO UPGRADE-911
+//			roleQualifier.put(KewApiConstants.DOCUMENT_NUMBER, document.getDocumentNumber());
+//			roleQualifier.put(KfsKimAttributes.DOCUMENT_TYPE_NAME, document.getDocumentHeader().getWorkflowDocument().getDocumentTypeName());
+//			roleQualifier.put(KfsKimAttributes.FINANCIAL_DOCUMENT_TOTAL_AMOUNT,document.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount().toString());
+//			roleQualifier.put(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE,accountingLine.getChartOfAccountsCode());
+//			roleQualifier.put(KfsKimAttributes.ACCOUNT_NUMBER,accountingLine.getAccountNumber());
+//			
+//			fiscalOfficers.addAll(SpringContext.getBean(RoleManagementService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
+//					KFSConstants.SysKimConstants.FISCAL_OFFICER_KIM_ROLE_NAME,roleQualifier));
+//			if (!fiscalOfficers.contains(personId)) {
+//				fiscalOfficers.addAll(SpringContext.getBean(RoleManagementService.class).getRoleMemberPrincipalIds(
+//										KFSConstants.ParameterNamespaces.KFS,KFSConstants.SysKimConstants.FISCAL_OFFICER_PRIMARY_DELEGATE_KIM_ROLE_NAME,
+//										roleQualifier));
+//			}
+//			if (!fiscalOfficers.contains(personId)) {
+//				fiscalOfficers.addAll(SpringContext.getBean(RoleManagementService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
+//										KFSConstants.SysKimConstants.FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME,roleQualifier));
+//			}
+//	        if (isExistingReqAcctline) {
+//	        	accountingLine.setAccountNumber(updatedAccountNumber);
+//	        }
+//			if (!fiscalOfficers.contains(personId)) {
+//				isFoForAcctLines = false;
+//				break;
+//			}
 		}
 
 		return isFoForAcctLines;
@@ -1136,5 +1134,28 @@ public class PurapAccountingServiceImpl implements PurapAccountingService {
     	primaryKeys.put("accountIdentifier", accountingLine.getAccountIdentifier());
 		return (PurApAccountingLineBase)SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(clazz, primaryKeys);
     }
+    
+    /**
+     * @see org.kuali.kfs.module.purap.service.PurapAccountingService#getSummaryAccountsbyPaymentRequestIdentifier(java.lang.Integer)
+     */
+    public List getSummaryAccountsbyPaymentRequestIdentifier(Integer paymentRequestIdentifier) {
+        if (paymentRequestIdentifier != null) {
+            Map fieldValues = new HashMap();
+            fieldValues.put(PurapPropertyConstants.PAYMENT_REQUEST_ID, paymentRequestIdentifier);
+            return new ArrayList(SpringContext.getBean(BusinessObjectService.class).findMatching(AccountsPayableSummaryAccount.class, fieldValues));
+        }
+        return null;
+    }
 
+    /**
+     * @see org.kuali.kfs.module.purap.service.PurapAccountingService#getSummaryAccountsbyCreditMemoIdentifier(java.lang.Integer)
+     */
+    public List getSummaryAccountsbyCreditMemoIdentifier(Integer creditMemoIdentifier) {
+        if (creditMemoIdentifier != null) {
+            Map fieldValues = new HashMap();
+            fieldValues.put(PurapPropertyConstants.CREDIT_MEMO_ID, creditMemoIdentifier);
+            return new ArrayList(SpringContext.getBean(BusinessObjectService.class).findMatching(AccountsPayableSummaryAccount.class, fieldValues));
+        }
+        return null;
+    }
 }

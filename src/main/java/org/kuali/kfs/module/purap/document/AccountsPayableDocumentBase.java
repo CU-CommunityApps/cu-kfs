@@ -34,12 +34,13 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.CampusParameter;
-import org.kuali.rice.kew.dto.DocumentRouteLevelChangeDTO;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kns.rule.event.KualiDocumentEvent;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kew.framework.postprocessor.DocumentRouteLevelChange;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.rice.krad.service.DataDictionaryService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * Accounts Payable Document Base
@@ -176,7 +177,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
      * @see org.kuali.rice.kns.document.DocumentBase#handleRouteLevelChange(org.kuali.rice.kew.clientapp.vo.DocumentRouteLevelChangeDTO)
      */
     @Override
-    public void doRouteLevelChange(DocumentRouteLevelChangeDTO levelChangeEvent) {
+    public void doRouteLevelChange(DocumentRouteLevelChange levelChangeEvent) {
         LOG.debug("handleRouteLevelChange() started");
         super.doRouteLevelChange(levelChangeEvent);
         String newNodeName = levelChangeEvent.getNewNodeName();
@@ -401,7 +402,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
      * Retrieves the universal user object for the last person to perform an action on the document.
      */
     public Person getLastActionPerformedByUser() {
-    	return SpringContext.getBean(org.kuali.rice.kim.service.PersonService.class).getPerson(getLastActionPerformedByPersonId());
+    	return SpringContext.getBean(PersonService.class).getPerson(getLastActionPerformedByPersonId());
     }
 
     /**

@@ -23,7 +23,7 @@ import java.util.Map;
 import org.kuali.kfs.gl.batch.service.ReversionUnitOfWorkService;
 import org.kuali.kfs.gl.businessobject.ReversionUnitOfWork;
 import org.kuali.kfs.gl.businessobject.ReversionUnitOfWorkCategoryAmount;
-import org.kuali.rice.kns.service.BusinessObjectService;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 public abstract class ReversionUnitOfWorkServiceImpl implements ReversionUnitOfWorkService {
 

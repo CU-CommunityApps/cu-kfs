@@ -61,16 +61,16 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.kns.bo.Country;
-import org.kuali.rice.kns.document.TransactionalDocument;
-import org.kuali.rice.kns.rule.event.ApproveDocumentEvent;
-import org.kuali.rice.kns.rule.event.KualiDocumentEvent;
-import org.kuali.rice.kns.rule.event.RouteDocumentEvent;
-import org.kuali.rice.kns.service.CountryService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.util.TypedArrayList;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.krad.document.TransactionalDocument;
+import org.kuali.rice.krad.rules.rule.event.ApproveDocumentEvent;
+import org.kuali.rice.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.rice.krad.rules.rule.event.RouteDocumentEvent;
+import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.rice.location.api.country.Country;
+import org.kuali.rice.location.api.country.CountryService;
+
 
 /**
  * Base class for Purchasing-Accounts Payable Documents.
@@ -125,7 +125,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * Default constructor to be overridden.
      */
     public PurchasingAccountsPayableDocumentBase() {
-        items = new TypedArrayList(getItemClass());
+        items = new ArrayList<PurApItem>();
     }
 
     protected GeneralLedgerPendingEntry getFirstPendingGLEntry() {
@@ -264,8 +264,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#isDocumentStoppedInRouteNode(NodeDetails nodeDetails)
      */
     public boolean isDocumentStoppedInRouteNode(NodeDetails nodeDetails) {
-    	 KualiWorkflowDocument workflowDoc = getDocumentHeader().getWorkflowDocument();
-         String currentRouteLevels = getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames();
+    	 WorkflowDocument workflowDoc = getDocumentHeader().getWorkflowDocument();
+         String currentRouteLevels = getDocumentHeader().getWorkflowDocument().getCurrentNodeNames().toString();
          if (currentRouteLevels.contains(nodeDetails.getName()) && workflowDoc.isApprovalRequested()) {
              return true;
          }
@@ -424,7 +424,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     /**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
-    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();
         m.put("purapDocumentIdentifier", this.purapDocumentIdentifier);
@@ -991,7 +991,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     public Country getVendorCountry() {
-        vendorCountry = SpringContext.getBean(CountryService.class).getByPrimaryIdIfNecessary(vendorCountryCode, vendorCountry);
+        vendorCountry = SpringContext.getBean(CountryService.class).getCountry(vendorCountryCode);
         return vendorCountry;
     }
 

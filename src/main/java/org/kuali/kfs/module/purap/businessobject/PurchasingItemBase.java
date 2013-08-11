@@ -22,13 +22,15 @@ import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.document.PurchasingDocument;
 import org.kuali.kfs.sys.businessobject.UnitOfMeasure;
 import org.kuali.kfs.vnd.businessobject.CommodityCode;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * Purchasing Item Base Business Object.
  */
 public abstract class PurchasingItemBase extends PurApItemBase implements PurchasingItem {
     
+    private static final long serialVersionUID = 1L;
+
     private String purchasingCommodityCode;
     
     private CommodityCode commodityCode;

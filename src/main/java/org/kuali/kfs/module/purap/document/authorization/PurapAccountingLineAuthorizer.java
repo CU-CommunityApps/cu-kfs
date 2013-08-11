@@ -15,6 +15,7 @@
  */
 package org.kuali.kfs.module.purap.document.authorization;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -39,12 +40,12 @@ import org.kuali.kfs.sys.document.authorization.AccountingLineAuthorizerBase;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentAuthorizerBase;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentPresentationController;
 import org.kuali.kfs.sys.document.web.AccountingLineRenderingContext;
-import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kns.datadictionary.TransactionalDocumentEntry;
 import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.rice.kns.document.authorization.DocumentPresentationController;
 import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.service.ParameterService;
 
 /**
  * Authorizer which deals with financial processing document issues, specifically sales tax lines on documents
@@ -174,7 +175,7 @@ public class PurapAccountingLineAuthorizer extends AccountingLineAuthorizerBase 
      * @param accountingDocument
      * @return
      */
-    private FinancialSystemTransactionalDocumentAuthorizerBase getDocumentAuthorizer(AccountingDocument accountingDocument) {
+    protected FinancialSystemTransactionalDocumentAuthorizerBase getDocumentAuthorizer(AccountingDocument accountingDocument) {
         final Class<? extends DocumentAuthorizer> documentAuthorizerClass = ((TransactionalDocumentEntry)SpringContext.getBean(DataDictionaryService.class).getDataDictionary().getDictionaryObjectEntry(accountingDocument.getClass().getName())).getDocumentAuthorizerClass();
         FinancialSystemTransactionalDocumentAuthorizerBase documentAuthorizer = null;
         try {
@@ -251,7 +252,7 @@ public class PurapAccountingLineAuthorizer extends AccountingLineAuthorizerBase 
             return true;
         }
         
-        List<String> restrictedItemTypesList = SpringContext.getBean(ParameterService.class).getParameterValues(clazz, PurapParameterConstants.PURAP_ITEM_TYPES_RESTRICTING_ACCOUNT_EDIT);
+        List<String> restrictedItemTypesList = new ArrayList<String>(SpringContext.getBean(ParameterService.class).getParameterValuesAsString(clazz, PurapParameterConstants.PURAP_ITEM_TYPES_RESTRICTING_ACCOUNT_EDIT));
         
         if (restrictedItemTypesList != null && purapAccount.getPurapItem() != null){
             return !restrictedItemTypesList.contains(((PurApItem)purapAccount.getPurapItem()).getItemTypeCode());    
@@ -276,7 +277,7 @@ public class PurapAccountingLineAuthorizer extends AccountingLineAuthorizerBase 
 	public boolean renderNewLine(AccountingDocument accountingDocument,
 			String accountingGroupProperty) {
 		// KFSPTS-1273 : for PREQ.  REQ & POA have overriden this.
-		return super.renderNewLine(accountingDocument, accountingGroupProperty) || (accountingDocument instanceof PaymentRequestDocument && accountingDocument.getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames().equals(RequisitionStatuses.NODE_ACCOUNT) 
+		return super.renderNewLine(accountingDocument, accountingGroupProperty) || (accountingDocument instanceof PaymentRequestDocument && accountingDocument.getDocumentHeader().getWorkflowDocument().getCurrentNodeNames().equals(RequisitionStatuses.NODE_ACCOUNT) 
 				&& SpringContext.getBean(PurapAccountingService.class).isFiscalOfficersForAllAcctLines((PaymentRequestDocument)accountingDocument));
 	}
     

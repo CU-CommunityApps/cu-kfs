@@ -33,6 +33,7 @@ import org.kuali.kfs.coa.businessobject.SubFundGroup;
 import org.kuali.kfs.coa.service.OrganizationService;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.integration.ld.LaborLedgerBenefitsCalculation;
+import org.kuali.kfs.integration.ld.LaborLedgerObject;
 import org.kuali.kfs.module.bc.BCConstants;
 import org.kuali.kfs.module.bc.BCConstants.MonthSpreadDeleteType;
 import org.kuali.kfs.module.bc.BCKeyConstants;
@@ -62,24 +63,27 @@ import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseCons
 import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kns.dao.DocumentDao;
-import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.exception.ValidationException;
-import org.kuali.rice.kns.rule.event.KualiDocumentEvent;
-import org.kuali.rice.kns.rule.event.SaveDocumentEvent;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DocumentService;
-import org.kuali.rice.kns.service.KualiModuleService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.service.PersistenceService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.KualiInteger;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kns.util.KNSGlobalVariables;
 import org.kuali.rice.kns.util.MessageList;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.workflow.service.WorkflowDocumentService;
+import org.kuali.rice.krad.bo.AdHocRouteRecipient;
+import org.kuali.rice.krad.dao.DocumentDao;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.exception.ValidationException;
+import org.kuali.rice.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.rice.krad.rules.rule.event.SaveDocumentEvent;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.service.KualiModuleService;
+import org.kuali.rice.krad.service.PersistenceService;
+import org.kuali.rice.krad.service.SessionDocumentService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.rice.krad.workflow.service.WorkflowDocumentService;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -127,23 +131,23 @@ public class BudgetDocumentServiceImpl implements BudgetDocumentService {
     public Document saveDocument(BudgetConstructionDocument budgetConstructionDocument) throws WorkflowException, ValidationException {
 
         // user did explicit save here so mark as touched
-        budgetConstructionDocument.getDocumentHeader().setFinancialDocumentStatusCode(KFSConstants.DocumentStatusCodes.ENROUTE);
+        budgetConstructionDocument.getFinancialSystemDocumentHeader().setFinancialDocumentStatusCode(KFSConstants.DocumentStatusCodes.ENROUTE);
 
         this.saveDocumentNoWorkflow(budgetConstructionDocument);
 
-        GlobalVariables.getUserSession().setWorkflowDocument(budgetConstructionDocument.getDocumentHeader().getWorkflowDocument());
+        SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), budgetConstructionDocument.getDocumentHeader().getWorkflowDocument());
 
-        // save any messages up to this point and put them back in after logDocumentAction()
+        // save any messages up to this point and put them back in after logAnnotation()
         // this is a hack to get around the problem where messageLists gets cleared
         // that is PostProcessorServiceImpl.doActionTaken(ActionTakenEventDTO), establishGlobalVariables(), which does
         // GlobalVariables.clear()
         // not sure why this doesn't trash the GlobalVariables.getMessageMap()
-        MessageList messagesSoFar = GlobalVariables.getMessageList();
+        MessageList messagesSoFar = KNSGlobalVariables.getMessageList();
 
-        budgetConstructionDocument.getDocumentHeader().getWorkflowDocument().logDocumentAction("Document Updated");
+        budgetConstructionDocument.getDocumentHeader().getWorkflowDocument().logAnnotation("Document Updated");
 
         // putting messages back in
-        GlobalVariables.getMessageList().addAll(messagesSoFar);
+        KNSGlobalVariables.getMessageList().addAll(messagesSoFar);
 
         return budgetConstructionDocument;
     }
@@ -271,7 +275,7 @@ public class BudgetDocumentServiceImpl implements BudgetDocumentService {
         bcDoc.setBenefitsCalcNeeded(false);
         if (!bcDoc.isSalarySettingOnly()) {
             
-            String sysParam = SpringContext.getBean(ParameterService.class).getParameterValue(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY");
+            String sysParam = SpringContext.getBean(ParameterService.class).getParameterValueAsString(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY");
             LOG.debug("sysParam: " + sysParam);
             // if sysParam == Y then Labor Benefit Rate Category Code must be used
             if (sysParam.equalsIgnoreCase("Y")) {
@@ -283,7 +287,7 @@ public class BudgetDocumentServiceImpl implements BudgetDocumentService {
             }
             
             // write global message on calc success
-            GlobalVariables.getMessageList().add(BCKeyConstants.MESSAGE_BENEFITS_CALCULATED);
+            KNSGlobalVariables.getMessageList().add(BCKeyConstants.MESSAGE_BENEFITS_CALCULATED);
         }
     }
 
@@ -297,7 +301,7 @@ public class BudgetDocumentServiceImpl implements BudgetDocumentService {
         bcDoc.setMonthlyBenefitsCalcNeeded(false);
         if (!bcDoc.isSalarySettingOnly()) {
             
-            String sysParam = SpringContext.getBean(ParameterService.class).getParameterValue(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY");
+            String sysParam = SpringContext.getBean(ParameterService.class).getParameterValueAsString(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY");
             LOG.debug("sysParam: " + sysParam);
             // if sysParam == Y then Labor Benefit Rate Category Code must be used
             if (sysParam.equalsIgnoreCase("Y")) {
@@ -309,7 +313,7 @@ public class BudgetDocumentServiceImpl implements BudgetDocumentService {
             }
                 
             // write global message on calc success
-            GlobalVariables.getMessageList().add(BCKeyConstants.MESSAGE_BENEFITS_MONTHLY_CALCULATED);
+            KNSGlobalVariables.getMessageList().add(BCKeyConstants.MESSAGE_BENEFITS_MONTHLY_CALCULATED);
         }
     }
 
@@ -386,7 +390,7 @@ public class BudgetDocumentServiceImpl implements BudgetDocumentService {
     @Transactional
     public List<PendingBudgetConstructionGeneralLedger> getPBGLSalarySettingRows(BudgetConstructionDocument bcDocument) {
 
-        List<String> ssObjects = budgetConstructionDao.getDetailSalarySettingLaborObjects(bcDocument.getUniversityFiscalYear(), bcDocument.getChartOfAccountsCode());
+        List<String> ssObjects = getDetailSalarySettingLaborObjects(bcDocument.getUniversityFiscalYear(), bcDocument.getChartOfAccountsCode());
         ssObjects.add(KFSConstants.BudgetConstructionConstants.OBJECT_CODE_2PLG);
         List<PendingBudgetConstructionGeneralLedger> pbglSalarySettingRows = budgetConstructionDao.getPBGLSalarySettingRows(bcDocument.getDocumentNumber(), ssObjects);
 
@@ -397,6 +401,23 @@ public class BudgetDocumentServiceImpl implements BudgetDocumentService {
      * @see org.kuali.kfs.module.bc.document.service.BudgetDocumentService#addOrUpdatePBGLRow(org.kuali.kfs.module.bc.document.BudgetConstructionDocument,
      *      org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionGeneralLedger)
      */
+    
+    @NonTransactional
+    public List<String> getDetailSalarySettingLaborObjects(Integer universityFiscalYear, String chartOfAccountsCode) {
+        List<String> detailSalarySettingObjects = new ArrayList<String>();
+
+        Map<String, Object> laborObjectCodeMap = new HashMap<String, Object>();
+        laborObjectCodeMap.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, universityFiscalYear);
+        laborObjectCodeMap.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode);
+        laborObjectCodeMap.put(KFSPropertyConstants.DETAIL_POSITION_REQUIRED_INDICATOR, true);
+        List<LaborLedgerObject> laborLedgerObjects = kualiModuleService.getResponsibleModuleService(LaborLedgerObject.class).getExternalizableBusinessObjectsList(LaborLedgerObject.class, laborObjectCodeMap);
+
+        for (LaborLedgerObject laborObject : laborLedgerObjects) {
+            detailSalarySettingObjects.add(laborObject.getFinancialObjectCode());
+        }
+
+        return detailSalarySettingObjects;
+    }
     @NonTransactional
     public BudgetConstructionDocument addOrUpdatePBGLRow(BudgetConstructionDocument bcDoc, PendingBudgetConstructionGeneralLedger sourceRow) {
 
@@ -1070,16 +1091,16 @@ public class BudgetDocumentServiceImpl implements BudgetDocumentService {
         budgetConstructionDocument.setBudgetTransactionLockUserIdentifier(BCConstants.DEFAULT_BUDGET_HEADER_LOCK_IDS);
         budgetConstructionDocument.setBudgetLockUserIdentifier(BCConstants.DEFAULT_BUDGET_HEADER_LOCK_IDS);
 
-        FinancialSystemDocumentHeader kualiDocumentHeader = budgetConstructionDocument.getDocumentHeader();
+        FinancialSystemDocumentHeader kualiDocumentHeader = budgetConstructionDocument.getFinancialSystemDocumentHeader();
         budgetConstructionDocument.setDocumentNumber(budgetConstructionDocument.getDocumentHeader().getDocumentNumber());
         kualiDocumentHeader.setOrganizationDocumentNumber(budgetConstructionDocument.getUniversityFiscalYear().toString());
         kualiDocumentHeader.setFinancialDocumentStatusCode(KFSConstants.INITIAL_KUALI_DOCUMENT_STATUS_CD);
         kualiDocumentHeader.setFinancialDocumentTotalAmount(KualiDecimal.ZERO);
         kualiDocumentHeader.setDocumentDescription(String.format("%s %d %s %s", BCConstants.BUDGET_CONSTRUCTION_DOCUMENT_DESCRIPTION, budgetConstructionDocument.getUniversityFiscalYear(), budgetConstructionDocument.getChartOfAccountsCode(), budgetConstructionDocument.getAccountNumber()));
         kualiDocumentHeader.setExplanation(BCConstants.BUDGET_CONSTRUCTION_DOCUMENT_DESCRIPTION);
-
-        budgetConstructionDao.saveBudgetConstructionDocument(budgetConstructionDocument);
-        List<String> emptyAdHocList = new ArrayList<String>();
+        //TODO UPGRADE-911
+        //budgetConstructionDao.saveBudgetConstructionDocument(budgetConstructionDocument);
+        List<AdHocRouteRecipient> emptyAdHocList = new ArrayList<AdHocRouteRecipient>();
 
         // call route with document type configured for no route paths or post processor
         documentService.routeDocument(budgetConstructionDocument, "created by application UI", emptyAdHocList);
@@ -1262,7 +1283,7 @@ public class BudgetDocumentServiceImpl implements BudgetDocumentService {
         if(ObjectUtils.isNull(defaultLaborBenefitRateCategoryCode)){
          // make sure the parameter exists
             if (SpringContext.getBean(ParameterService.class).parameterExists(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE")) {
-                this.defaultLaborBenefitRateCategoryCode = SpringContext.getBean(ParameterService.class).getParameterValue(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE");
+                this.defaultLaborBenefitRateCategoryCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE");
             }
             else {
                 this.defaultLaborBenefitRateCategoryCode = "";

@@ -15,13 +15,6 @@
  */
 package org.kuali.kfs.module.cam;
 
-import org.kuali.kfs.coa.businessobject.ObjectSubType;
-import org.kuali.kfs.module.cam.businessobject.AssetAcquisitionType;
-import org.kuali.kfs.module.cam.businessobject.AssetCondition;
-import org.kuali.kfs.module.cam.businessobject.AssetDepreciationMethod;
-import org.kuali.kfs.module.cam.businessobject.AssetStatus;
-import org.kuali.kfs.module.cam.businessobject.AssetType;
-import org.kuali.rice.kns.util.GlobalVariables;
 
 
 /**

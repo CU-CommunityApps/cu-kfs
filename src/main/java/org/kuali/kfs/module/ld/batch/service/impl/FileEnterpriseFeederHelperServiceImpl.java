@@ -55,11 +55,11 @@ import org.kuali.kfs.sys.Message;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.ReportWriterService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * This class reads origin entries in a flat file format, reconciles them, and loads them into the origin entry table. 
@@ -75,7 +75,7 @@ public class FileEnterpriseFeederHelperServiceImpl implements FileEnterpriseFeed
     protected LaborPositionObjectBenefitService laborPositionObjectBenefitService;
     protected LaborBenefitsCalculationService laborBenefitsCalculationService;
     private BusinessObjectService businessObjectService;
-    private KualiConfigurationService configurationService;
+    private ConfigurationService configurationService;
 
 	/**
 	 * This method does the reading and the loading of reconciliation. Read
@@ -269,7 +269,7 @@ public class FileEnterpriseFeederHelperServiceImpl implements FileEnterpriseFeed
 			feederReportData.incrementNumberOfBalanceTypeActualsRead();
 
 			// check parameter that indicates whether benefits should be generated for actual  balance types
-			boolean generateActualBenefits = parameterService.getIndicatorParameter(LaborEnterpriseFeedStep.class,
+			boolean generateActualBenefits = parameterService.getParameterValueAsBoolean(LaborEnterpriseFeedStep.class,
 					LaborConstants.BenefitCalculation.GENERATE_FRINGE_BENEFIT_PARAMETER);
 			if (!generateActualBenefits) {
 				LOG.info("Skipping benefit generation due to parameter disabling benefit generation for actual balance type");
@@ -281,7 +281,7 @@ public class FileEnterpriseFeederHelperServiceImpl implements FileEnterpriseFeed
 			feederReportData.incrementNumberOfBalanceTypeEncumbranceRead();
 
 			// check parameter that indicates whether benefits should be generated for encumbrance  balance types
-			boolean generateEncumbranceBenefits = parameterService.getIndicatorParameter(LaborEnterpriseFeedStep.class,
+			boolean generateEncumbranceBenefits = parameterService.getParameterValueAsBoolean(LaborEnterpriseFeedStep.class,
 					LaborConstants.BenefitCalculation.GENERATE_FRINGE_BENEFIT_ENCUMBRANCE_PARAMETER);
 			if (!generateEncumbranceBenefits) {
 				LOG.info("Skipping benefit generation due to parameter disabling benefit generation for encumbrance balance type");
@@ -297,7 +297,7 @@ public class FileEnterpriseFeederHelperServiceImpl implements FileEnterpriseFeed
 
         // make sure the parameter exists
         if (SpringContext.getBean(ParameterService.class).parameterExists(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE")) {
-            defaultLaborBenefitsRateCategoryCode = SpringContext.getBean(ParameterService.class).getParameterValue(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE");
+            defaultLaborBenefitsRateCategoryCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE");
         }
         else {
             defaultLaborBenefitsRateCategoryCode = "";
@@ -309,7 +309,7 @@ public class FileEnterpriseFeederHelperServiceImpl implements FileEnterpriseFeed
 		//make sure the system parameter exists
         if (SpringContext.getBean(ParameterService.class).parameterExists(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY")) {
             //parameter exists, get the benefit rate based off of the university fiscal year, chart of account code, labor benefit type code and labor benefit rate category code 
-            String sysParam = SpringContext.getBean(ParameterService.class).getParameterValue(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY");
+            String sysParam = SpringContext.getBean(ParameterService.class).getParameterValueAsString(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY");
             LOG.debug("sysParam: " + sysParam);
             //if sysParam == Y then use the Labor Benefit Rate Category Code to help determine the fringe benefit rate
             if (sysParam.equalsIgnoreCase("Y")) {
@@ -370,7 +370,7 @@ public class FileEnterpriseFeederHelperServiceImpl implements FileEnterpriseFeed
 				+ wageEntry.getFinancialObjectCode();
 
 		String message = configurationService
-				.getPropertyString(LaborKeyConstants.EnterpriseFeed.ERROR_BENEFIT_TYPE_NOT_FOUND);
+				.getPropertyValueAsString(LaborKeyConstants.EnterpriseFeed.ERROR_BENEFIT_TYPE_NOT_FOUND);
 		message = MessageFormat.format(message, benefitKey);
 
 		feederReportData.incrementNumberOfErrorEncountered();
@@ -389,7 +389,7 @@ public class FileEnterpriseFeederHelperServiceImpl implements FileEnterpriseFeed
 		}
 
 		String message = configurationService
-				.getPropertyString(LaborKeyConstants.EnterpriseFeed.ERROR_BENEFIT_CALCULATION_NOT_FOUND);
+				.getPropertyValueAsString(LaborKeyConstants.EnterpriseFeed.ERROR_BENEFIT_CALCULATION_NOT_FOUND);
 		message = MessageFormat.format(message, benefitKey);
 
 		feederReportData.incrementNumberOfErrorEncountered();
@@ -501,7 +501,7 @@ public class FileEnterpriseFeederHelperServiceImpl implements FileEnterpriseFeed
         this.businessObjectService = businessObjectService;
     }
 
-	public void setConfigurationService(KualiConfigurationService configurationService) {
+	public void setConfigurationService(ConfigurationService configurationService) {
 		this.configurationService = configurationService;
 	}
     

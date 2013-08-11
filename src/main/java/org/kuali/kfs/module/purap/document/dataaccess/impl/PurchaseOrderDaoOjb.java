@@ -37,10 +37,10 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.kns.dao.impl.PlatformAwareDaoBaseOjb;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.TransactionalServiceUtils;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.util.TransactionalServiceUtils;
 
 /**
  * OJB implementation of PurchaseOrderDao.
@@ -233,7 +233,7 @@ public class PurchaseOrderDaoOjb extends PlatformAwareDaoBaseOjb implements Purc
         int startingIndex = 1;
 
         // get the result limit number from configuration
-        String limitConfig = SpringContext.getBean(ParameterService.class).getParameterValue(PurchaseOrderDocument.class, CUPurapParameterConstants.AUTO_CLOSE_PO_RESULTS_LIMIT);
+        String limitConfig = SpringContext.getBean(ParameterService.class).getParameterValueAsString(PurchaseOrderDocument.class, CUPurapParameterConstants.AUTO_CLOSE_PO_RESULTS_LIMIT);
         
         Integer limit = Integer.MAX_VALUE;
         if (limitConfig != null) {

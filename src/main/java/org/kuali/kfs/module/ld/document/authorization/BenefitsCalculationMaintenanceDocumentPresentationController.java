@@ -18,12 +18,11 @@ package org.kuali.kfs.module.ld.document.authorization;
 import java.util.Set;
 
 import org.kuali.kfs.module.ld.batch.LaborEnterpriseFeedStep;
-import org.kuali.rice.core.resourceloader.GlobalResourceLoader;
-import org.kuali.rice.kim.service.PermissionService;
-import org.kuali.rice.kns.bo.BusinessObject;
+import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kns.document.authorization.MaintenanceDocumentPresentationControllerBase;
 import org.kuali.rice.kns.inquiry.InquiryPresentationController;
-import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.krad.bo.BusinessObject;
 
 import com.rsmart.kuali.kfs.module.ld.LdConstants;
 
@@ -38,7 +37,7 @@ public class BenefitsCalculationMaintenanceDocumentPresentationController extend
     public Set<String> getConditionallyHiddenPropertyNames(BusinessObject businessObject) {
         Set<String> fields = super.getConditionallyHiddenPropertyNames(businessObject);
         
-        String offsetParmValue = getParameterService().getParameterValue(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_CALCULATION_OFFSET);
+        String offsetParmValue = getParameterService().getParameterValueAsString(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_CALCULATION_OFFSET);
         
         if(offsetParmValue.equalsIgnoreCase("n")) {
             fields.add(LdConstants.ACCOUNT_CODE_OFFSET_PROPERTY_NAME);

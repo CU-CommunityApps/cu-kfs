@@ -67,12 +67,12 @@ public class EncumbranceForwardStep extends AbstractWrappedBatchStep {
                 String FIELD_TRANSACTION_DATE = GeneralLedgerConstants.ColumnNames.TRANSACTION_DT;
 
                 // Get the current fiscal year.
-                varFiscalYear = new Integer(getParameterService().getParameterValue(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_FISCAL_YEAR_PARM));
+                varFiscalYear = new Integer(getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_FISCAL_YEAR_PARM));
 
                 // Get the current date (transaction date).
                 try {
                     DateFormat transactionDateFormat = new SimpleDateFormat(TRANSACTION_DATE_FORMAT_STRING);
-                    varTransactionDate = new Date(transactionDateFormat.parse(getParameterService().getParameterValue(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_TRANSACTION_DATE_PARM)).getTime());
+                    varTransactionDate = new Date(transactionDateFormat.parse(getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_TRANSACTION_DATE_PARM)).getTime());
                 }
                 catch (ParseException pe) {
                     LOG.error("Failed to parse TRANSACTION_DT from kualiConfigurationService");
@@ -83,7 +83,7 @@ public class EncumbranceForwardStep extends AbstractWrappedBatchStep {
                 //If no parameter value exists, act on all charts which is the default action in the delivered foundation code.
                 varCharts = new ArrayList<String>();
                 try {
-                	String[] varChartsArray = getParameterService().getParameterValues(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_CHARTS_PARAM).toArray(new String[] {});
+                	String[] varChartsArray = getParameterService().getParameterValuesAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_CHARTS_PARAM).toArray(new String[] {});
                 	
                     if ((varChartsArray != null) && (varChartsArray.length != 0)) {
                     	//transfer charts from parameter to List for database query        	

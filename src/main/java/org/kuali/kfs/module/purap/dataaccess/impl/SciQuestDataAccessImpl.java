@@ -19,7 +19,7 @@ import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.kuali.kfs.module.purap.businessobject.SciQuestPunchoutData;
 import org.kuali.kfs.module.purap.dataaccess.SciQuestDataAccess;
-import org.kuali.rice.kns.dao.impl.PlatformAwareDaoBaseOjb;
+import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 
 /**
  * SciQuestDataAccessImpl

@@ -17,6 +17,7 @@ package org.kuali.kfs.module.purap.document.authorization;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -24,16 +25,14 @@ import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
 import org.kuali.kfs.module.purap.document.PurchasingDocumentBase;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentPresentationControllerBase;
-import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.kim.api.KimConstants;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.role.RoleService;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kim.bo.impl.KimAttributes;
-import org.kuali.rice.kim.bo.types.dto.AttributeSet;
-import org.kuali.rice.kim.service.KIMServiceLocator;
-import org.kuali.rice.kim.service.RoleService;
-import org.kuali.rice.kim.util.KimConstants;
-import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
-
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 public class PurchasingAccountsPayableDocumentPresentationController extends FinancialSystemTransactionalDocumentPresentationControllerBase {
 
@@ -46,11 +45,11 @@ public class PurchasingAccountsPayableDocumentPresentationController extends Fin
      * @see org.kuali.rice.kns.document.authorization.DocumentPresentationControllerBase#canEdit(org.kuali.rice.kns.document.Document)
      */
     @Override
-    protected boolean canEdit(Document document) {
+    public boolean canEdit(Document document) {
         Person currentUser = GlobalVariables.getUserSession().getPerson();
-    	KualiWorkflowDocument kwf  = document.getDocumentHeader().getWorkflowDocument();
+    	WorkflowDocument kwf  = document.getDocumentHeader().getWorkflowDocument();
         //Adding this check so that the initiator will always be able to edit the document (before initial submission)
-    	if (kwf.getInitiatorPrincipalId().equals(currentUser.getPrincipalId()) && (kwf.stateIsInitiated() || kwf.stateIsSaved()) ) {
+    	if (kwf.getInitiatorPrincipalId().equals(currentUser.getPrincipalId()) && (kwf.isInitiated() || kwf.isSaved()) ) {
         	return true;
         }
 
@@ -74,7 +73,7 @@ public class PurchasingAccountsPayableDocumentPresentationController extends Fin
         List<String> roleIds = new ArrayList<String>();
         roleIds.add(getRoleService().getRoleIdByName(KimConstants.KIM_GROUP_WORKFLOW_NAMESPACE_CODE, NON_AD_HOC_APPROVE_REQUEST_RECIPIENT_ROLE_NAME));
 
-        AttributeSet qualifications = new AttributeSet();
+        Map<String,String> qualifications = new HashMap<String,String>();
         qualifications.put(KimAttributes.DOCUMENT_NUMBER, ""+document.getDocumentNumber());
               
         return getRoleService().principalHasRole(currentUser.getPrincipalId(), roleIds, qualifications);
@@ -82,13 +81,13 @@ public class PurchasingAccountsPayableDocumentPresentationController extends Fin
 
     protected RoleService getRoleService() {
         if ( roleService == null ) {
-        	roleService = KIMServiceLocator.getRoleService();
+        	roleService = KimApiServiceLocator.getRoleService();
         }
         return roleService;
     }
     
     @Override
-    protected boolean canEditDocumentOverview(Document document) {
+    public boolean canEditDocumentOverview(Document document) {
         // Change logic to allow editing document overview based on if user can edit the document
         return canEdit(document);
     }

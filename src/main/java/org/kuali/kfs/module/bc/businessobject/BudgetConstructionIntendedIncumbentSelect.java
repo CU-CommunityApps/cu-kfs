@@ -19,7 +19,7 @@ package org.kuali.kfs.module.bc.businessobject;
 import java.util.LinkedHashMap;
 
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 import edu.cornell.kfs.module.bc.document.service.BudgetConstructionFlagsService;
 
@@ -120,6 +120,7 @@ public class BudgetConstructionIntendedIncumbentSelect extends PersistableBusine
     /**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();
         m.put("principalId", this.principalId);

@@ -16,9 +16,9 @@
 
 package org.kuali.kfs.module.ec.businessobject;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
@@ -29,23 +29,24 @@ import org.kuali.kfs.integration.cg.ContractsAndGrantsModuleService;
 import org.kuali.kfs.integration.ld.LaborModuleService;
 import org.kuali.kfs.module.ec.EffortPropertyConstants;
 import org.kuali.kfs.module.ec.document.EffortCertificationDocument;
-import org.kuali.kfs.module.ld.LaborPropertyConstants;
-import org.kuali.kfs.module.ld.businessobject.PositionData;
 import org.kuali.kfs.module.ec.util.EffortCertificationParameterFinder;
 import org.kuali.kfs.module.ec.util.PayrollAmountHolder;
+import org.kuali.kfs.module.ld.LaborPropertyConstants;
+import org.kuali.kfs.module.ld.businessobject.PositionData;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLineOverride;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 /**
  * Business Object for the Effort Certification Detail Table.
  */
 public class EffortCertificationDetail extends PersistableBusinessObjectBase {
+
+    private static final long serialVersionUID = 1L;
     private String documentNumber;
     private String chartOfAccountsCode;
     private String accountNumber;
@@ -594,7 +595,7 @@ public class EffortCertificationDetail extends PersistableBusinessObjectBase {
      */
     public boolean isFederalOrFederalPassThroughIndicator() {
         if (this.getAccount() != null) {
-            List<String> federalAgencyTypeCodes = EffortCertificationParameterFinder.getFederalAgencyTypeCodes();
+            Collection<String> federalAgencyTypeCodes = EffortCertificationParameterFinder.getFederalAgencyTypeCodes();
             return SpringContext.getBean(ContractsAndGrantsModuleService.class).isAwardedByFederalAgency(getAccount().getChartOfAccountsCode(), getAccount().getAccountNumber(), federalAgencyTypeCodes);
         }
 
@@ -704,7 +705,7 @@ public class EffortCertificationDetail extends PersistableBusinessObjectBase {
     /**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap map = new LinkedHashMap();
         map.put(KFSPropertyConstants.DOCUMENT_NUMBER, this.documentNumber);

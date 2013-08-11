@@ -32,8 +32,9 @@ import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO;
-import org.kuali.rice.kns.rule.event.KualiDocumentEvent;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
+import org.kuali.rice.krad.rules.rule.event.KualiDocumentEvent;
 
 /**
  * Purchase Order Close Document
@@ -61,10 +62,11 @@ public class PurchaseOrderCloseDocument extends PurchaseOrderDocument {
         setGeneralLedgerPendingEntries(new ArrayList());
     }
 
-    @Override
-    public List<Long> getWorkflowEngineDocumentIdsToLock() {
-        return super.getWorkflowEngineDocumentIdsToLock();
-    }
+    //TODO UPGRADE-911
+//    @Override
+//    public List<Long> getWorkflowEngineDocumentIdsToLock() {
+//        return super.getWorkflowEngineDocumentIdsToLock();
+//    }
 
     /**
      * When Purchase Order Close document has been Processed through Workflow, the general ledger entries are created and the PO
@@ -73,11 +75,11 @@ public class PurchaseOrderCloseDocument extends PurchaseOrderDocument {
      * @see org.kuali.kfs.module.purap.document.PurchaseOrderDocument#doRouteStatusChange()
      */
     @Override
-    public void doRouteStatusChange(DocumentRouteStatusChangeDTO statusChangeEvent) {
+    public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
         super.doRouteStatusChange(statusChangeEvent);
 
         // DOCUMENT PROCESSED
-        if (getDocumentHeader().getWorkflowDocument().stateIsProcessed()) {
+        if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
             // generate GL entries
             SpringContext.getBean(PurapGeneralLedgerService.class).generateEntriesClosePurchaseOrder(this);
 
@@ -85,14 +87,18 @@ public class PurchaseOrderCloseDocument extends PurchaseOrderDocument {
             SpringContext.getBean(PurchaseOrderService.class).setCurrentAndPendingIndicatorsForApprovedPODocuments(this);
 
             // set purap status
-            SpringContext.getBean(PurapService.class).updateStatus(this, PurchaseOrderStatuses.CLOSED);
+            try {
+              getFinancialSystemDocumentHeader().updateAndSaveAppDocStatus(PurchaseOrderStatuses.CLOSED);
+            } catch (WorkflowException e) {
+              logAndThrowRuntimeException("Error saving routing data while saving App Doc Status " + getDocumentNumber(), e);
+            }
         }
         // DOCUMENT DISAPPROVED
-        else if (getDocumentHeader().getWorkflowDocument().stateIsDisapproved()) {
+        else if (getDocumentHeader().getWorkflowDocument().isDisapproved()) {
             SpringContext.getBean(PurchaseOrderService.class).setCurrentAndPendingIndicatorsForDisapprovedChangePODocuments(this);
         }
         // DOCUMENT CANCELLED
-        else if (getDocumentHeader().getWorkflowDocument().stateIsCanceled()) {
+        else if (getDocumentHeader().getWorkflowDocument().isCanceled()) {
             SpringContext.getBean(PurchaseOrderService.class).setCurrentAndPendingIndicatorsForCancelledChangePODocuments(this);
         }
 

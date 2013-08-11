@@ -54,17 +54,17 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.dataaccess.UniversityDateDao;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
-import org.kuali.rice.kns.workflow.service.WorkflowDocumentService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.DataDictionaryService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.rice.krad.workflow.service.WorkflowDocumentService;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -85,7 +85,7 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
     private ReportService reportService;
     private DateTimeService dateTimeService;
     private DepreciableAssetsDao depreciableAssetsDao;
-    private KualiConfigurationService kualiConfigurationService;
+    private ConfigurationService kualiConfigurationService;
     private GeneralLedgerPendingEntryService generalLedgerPendingEntryService;
     private BusinessObjectService businessObjectService;
     private UniversityDateDao universityDateDao;
@@ -96,6 +96,7 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
     private String errorMsg = "";
     private List<String> documentNos = new ArrayList<String>();
     private DepreciationBatchDao depreciationBatchDao;
+    Collection<AssetObjectCode> assetObjectCodes = new ArrayList<AssetObjectCode>();
 
     /**
      * @see org.kuali.kfs.module.cam.batch.service.AssetDepreciationService#runDepreciation()
@@ -107,7 +108,8 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
         Date currentDate = new Date();
         String depreciationDateParameter = null;
         DateFormat dateFormat = new SimpleDateFormat(CamsConstants.DateFormats.YEAR_MONTH_DAY);
-        
+        String errorMessage = kualiConfigurationService.getPropertyValueAsString(CamsKeyConstants.Depreciation.DEPRECIATION_ALREADY_RAN_MSG);
+
         try {
             LOG.info("*******" + CamsConstants.Depreciation.DEPRECIATION_BATCH + " HAS BEGUN *******");
 
@@ -117,10 +119,10 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
              */
             if (parameterService.parameterExists(KfsParameterConstants.CAPITAL_ASSETS_BATCH.class, CamsConstants.Parameters.DEPRECIATION_RUN_DATE_PARAMETER)) {
                 // depreciationDateParameter = ((List<String>) parameterService.getParameterValues(KfsParameterConstants.CAPITAL_ASSETS_BATCH.class, CamsConstants.Parameters.DEPRECIATION_RUN_DATE_PARAMETER)).get(0).trim();
-                depreciationDateParameter = parameterService.getParameterValue(KfsParameterConstants.CAPITAL_ASSETS_BATCH.class, CamsConstants.Parameters.DEPRECIATION_RUN_DATE_PARAMETER);
+                depreciationDateParameter = parameterService.getParameterValueAsString(KfsParameterConstants.CAPITAL_ASSETS_BATCH.class, CamsConstants.Parameters.DEPRECIATION_RUN_DATE_PARAMETER);
             }
             else {
-                throw new IllegalStateException(kualiConfigurationService.getPropertyString(CamsKeyConstants.Depreciation.DEPRECIATION_DATE_PARAMETER_NOT_FOUND));
+                throw new IllegalStateException(kualiConfigurationService.getPropertyValueAsString(CamsKeyConstants.Depreciation.DEPRECIATION_DATE_PARAMETER_NOT_FOUND));
             }
             // This validates that the system parameter depreciation_date has a valid format of YYYY-MM-DD.
             if (depreciationDateParameter != null && !depreciationDateParameter.trim().equals("")) {
@@ -128,7 +130,7 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
                     depreciationDate.setTime(dateFormat.parse(depreciationDateParameter));
                 }
                 catch (ParseException e) {
-                    throw new IllegalArgumentException(kualiConfigurationService.getPropertyString(CamsKeyConstants.Depreciation.INVALID_DEPRECIATION_DATE_FORMAT));
+                    throw new IllegalArgumentException(kualiConfigurationService.getPropertyValueAsString(CamsKeyConstants.Depreciation.INVALID_DEPRECIATION_DATE_FORMAT));
                 }
             }
             else
@@ -141,16 +143,18 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
 
             LOG.info(CamsConstants.Depreciation.DEPRECIATION_BATCH + "Depreciation run date: " + depreciationDateParameter);
 
-            UniversityDate universityDate = universityDateDao.getByPrimaryKey(depreciationDate.getTime());
+            UniversityDate universityDate = businessObjectService.findBySinglePrimaryKey(UniversityDate.class, new java.sql.Date(depreciationDate.getTimeInMillis()));
             if (universityDate == null) {
-                throw new IllegalStateException(kualiConfigurationService.getPropertyString(KFSKeyConstants.ERROR_UNIV_DATE_NOT_FOUND));
+                throw new IllegalStateException(kualiConfigurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_UNIV_DATE_NOT_FOUND));
             }
 
             this.fiscalYear = universityDate.getUniversityFiscalYear();
             this.fiscalMonth = new Integer(universityDate.getUniversityFiscalAccountingPeriod());
             // If the depreciation date is not = to the system date then, the depreciation process cannot run.
             LOG.info(CamsConstants.Depreciation.DEPRECIATION_BATCH + "Fiscal Year = " + this.fiscalYear + " & Fiscal Period=" + this.fiscalMonth);
-            reportLog.addAll(depreciableAssetsDao.generateStatistics(true, null, fiscalYear, fiscalMonth, depreciationDate));
+            assetObjectCodes = getAssetObjectCodes(fiscalYear);
+
+            reportLog.addAll(depreciableAssetsDao.generateStatistics(true, null, fiscalYear, fiscalMonth, depreciationDate,dateTimeService.toDateString(depreciationDate.getTime()), assetObjectCodes,fiscalMonth, errorMessage));
             // update if fiscal period is 12
             depreciationBatchDao.updateAssetsCreatedInLastFiscalPeriod(fiscalMonth, fiscalYear);
             // Retrieving eligible asset payment details
@@ -162,7 +166,7 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
                 processGeneralLedgerPendingEntry(depreciationTransactions);
             }
             else {
-                throw new IllegalStateException(kualiConfigurationService.getPropertyString(CamsKeyConstants.Depreciation.NO_ELIGIBLE_FOR_DEPRECIATION_ASSETS_FOUND));
+                throw new IllegalStateException(kualiConfigurationService.getPropertyValueAsString(CamsKeyConstants.Depreciation.NO_ELIGIBLE_FOR_DEPRECIATION_ASSETS_FOUND));
             }
         }
         catch (Exception e) {
@@ -175,7 +179,7 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
         }
         finally {
             if (!hasErrors) {
-                reportLog.addAll(depreciableAssetsDao.generateStatistics(false, this.documentNos, fiscalYear, fiscalMonth, depreciationDate));
+              reportLog.addAll(depreciableAssetsDao.generateStatistics(false, documentNos, fiscalYear, fiscalMonth, depreciationDate,dateTimeService.toDateString(depreciationDate.getTime()), assetObjectCodes, fiscalMonth, errorMessage));
             }
             // the report will be generated only when there is an error or when the log has something.
             if (!reportLog.isEmpty() || !errorMsg.trim().equals(""))
@@ -207,10 +211,10 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
             LOG.info(CamsConstants.Depreciation.DEPRECIATION_BATCH + "Getting the parameters for the plant fund object sub types.");
             // Getting system parameters needed.
             if (parameterService.parameterExists(KfsParameterConstants.CAPITAL_ASSETS_BATCH.class, CamsConstants.Parameters.DEPRECIATION_ORGANIZATON_PLANT_FUND_SUB_OBJECT_TYPES)) {
-                organizationPlantFundObjectSubType = parameterService.getParameterValues(KfsParameterConstants.CAPITAL_ASSETS_BATCH.class, CamsConstants.Parameters.DEPRECIATION_ORGANIZATON_PLANT_FUND_SUB_OBJECT_TYPES);
+                organizationPlantFundObjectSubType = new ArrayList<String>( parameterService.getParameterValuesAsString(KfsParameterConstants.CAPITAL_ASSETS_BATCH.class, CamsConstants.Parameters.DEPRECIATION_ORGANIZATON_PLANT_FUND_SUB_OBJECT_TYPES));
             }
             if (parameterService.parameterExists(KfsParameterConstants.CAPITAL_ASSETS_BATCH.class, CamsConstants.Parameters.DEPRECIATION_CAMPUS_PLANT_FUND_OBJECT_SUB_TYPES)) {
-                campusPlantFundObjectSubType = parameterService.getParameterValues(KfsParameterConstants.CAPITAL_ASSETS_BATCH.class, CamsConstants.Parameters.DEPRECIATION_CAMPUS_PLANT_FUND_OBJECT_SUB_TYPES);
+                campusPlantFundObjectSubType = new ArrayList<String>( parameterService.getParameterValuesAsString(KfsParameterConstants.CAPITAL_ASSETS_BATCH.class, CamsConstants.Parameters.DEPRECIATION_CAMPUS_PLANT_FUND_OBJECT_SUB_TYPES));
             }
             // Initializing the asset payment table.
             depreciationBatchDao.resetPeriodValuesWhenFirstFiscalPeriod(fiscalMonth);
@@ -325,13 +329,15 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
                     this.populateDepreciationTransaction(assetPaymentInfo, transactionType, plantCOA, plantAccount, accumulatedDepreciationFinancialObject, depreciationTransactionSummary);
                 }
             }
+            
             getDepreciationBatchDao().updateAssetPayments(saveList, fiscalMonth);
             saveList.clear();
             return depreciationTransactionSummary;
+            
         }
         catch (Exception e) {
             LOG.error("Error occurred", e);
-            throw new IllegalStateException(kualiConfigurationService.getPropertyString(CamsKeyConstants.Depreciation.ERROR_WHEN_CALCULATING_DEPRECIATION) + " :" + e.getMessage());
+            throw new IllegalStateException(kualiConfigurationService.getPropertyValueAsString(CamsKeyConstants.Depreciation.ERROR_WHEN_CALCULATING_DEPRECIATION) + " :" + e.getMessage());
         }
     }
 
@@ -452,14 +458,14 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
         }
         catch (Exception e) {
             LOG.error("Error occurred", e);
-            throw new IllegalStateException(kualiConfigurationService.getPropertyString(CamsKeyConstants.Depreciation.ERROR_WHEN_UPDATING_GL_PENDING_ENTRY_TABLE) + " :" + e.getMessage());
+            throw new IllegalStateException(kualiConfigurationService.getPropertyValueAsString(CamsKeyConstants.Depreciation.ERROR_WHEN_UPDATING_GL_PENDING_ENTRY_TABLE) + " :" + e.getMessage());
         }
         LOG.debug("populateExplicitGeneralLedgerPendingEntry(AccountingDocument, AccountingLine, GeneralLedgerPendingEntrySequenceHelper, GeneralLedgerPendingEntry) - end");
     }
 
 
     protected String createNewDepreciationDocument() throws WorkflowException {
-        KualiWorkflowDocument workflowDocument = workflowDocumentService.createWorkflowDocument(CamsConstants.DocumentTypeName.ASSET_DEPRECIATION, GlobalVariables.getUserSession().getPerson());
+        WorkflowDocument workflowDocument = workflowDocumentService.createWorkflowDocument(CamsConstants.DocumentTypeName.ASSET_DEPRECIATION, GlobalVariables.getUserSession().getPerson());
         // **************************************************************************************************
         // Create a new document header object
         // **************************************************************************************************
@@ -467,7 +473,7 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
 
         FinancialSystemDocumentHeader documentHeader = new FinancialSystemDocumentHeader();
         documentHeader.setWorkflowDocument(workflowDocument);
-        documentHeader.setDocumentNumber(workflowDocument.getRouteHeaderId().toString());
+        documentHeader.setDocumentNumber(workflowDocument.getDocument().getDocumentId());
         documentHeader.setFinancialDocumentStatusCode(KFSConstants.DocumentStatusCodes.APPROVED);
         documentHeader.setExplanation(CamsConstants.Depreciation.DOCUMENT_DESCRIPTION);
         documentHeader.setDocumentDescription(CamsConstants.Depreciation.DOCUMENT_DESCRIPTION);
@@ -512,7 +518,6 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
      */
     protected Map<String, AssetObjectCode> buildChartObjectToCapitalizationObjectMap() {
         Map<String, AssetObjectCode> assetObjectCodeMap = new HashMap<String, AssetObjectCode>();
-        Collection<AssetObjectCode> assetObjectCodes = depreciableAssetsDao.getAssetObjectCodes(fiscalYear);
 
         for (AssetObjectCode assetObjectCode : assetObjectCodes) {
             List<ObjectCode> objectCodes = assetObjectCode.getObjectCode();
@@ -538,7 +543,7 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
         this.reportService = reportService;
     }
 
-    public void setKualiConfigurationService(KualiConfigurationService kcs) {
+    public void setKualiConfigurationService(ConfigurationService kcs) {
         kualiConfigurationService = kcs;
     }
 
@@ -587,5 +592,15 @@ public class AssetDepreciationServiceImpl implements AssetDepreciationService {
      */
     public void setDepreciationBatchDao(DepreciationBatchDao depreciationBatchDao) {
         this.depreciationBatchDao = depreciationBatchDao;
+    }
+
+    //TODO UPGRADE-911
+    public void runYearEndDepreciation(Integer fiscalYearToDepreciate) {
+      
+    }
+
+  //TODO UPGRADE-911
+    public Collection<AssetObjectCode> getAssetObjectCodes(Integer fiscalYear) {
+      return null;
     }
 }

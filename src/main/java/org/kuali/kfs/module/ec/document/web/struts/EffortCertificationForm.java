@@ -43,17 +43,16 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kns.bo.BusinessObject;
-import org.kuali.rice.kns.bo.BusinessObjectRelationship;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kns.inquiry.Inquirable;
 import org.kuali.rice.kns.lookup.HtmlData;
 import org.kuali.rice.kns.lookup.LookupUtils;
 import org.kuali.rice.kns.lookup.HtmlData.AnchorHtmlData;
-import org.kuali.rice.kns.service.PersistenceStructureService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
-
+import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.rice.krad.bo.DataObjectRelationship;
+import org.kuali.rice.krad.service.PersistenceStructureService;
+import org.kuali.rice.krad.util.ObjectUtils;
 /**
  * Action form for Effort Certification Document.
  */
@@ -142,22 +141,22 @@ public class EffortCertificationForm extends FinancialSystemTransactionalDocumen
      * 
      * @return the relationship metadata for the detail line fields
      */
-    public Map<String, BusinessObjectRelationship> getRelationshipMetadata() {
-        LOG.info("getRelationshipMetadata() start");
+    public Map<String, DataObjectRelationship> getRelationshipMetadata() {
+      LOG.debug("getRelationshipMetadata() start");
 
-        PersistenceStructureService persistenceStructureService = SpringContext.getBean(PersistenceStructureService.class);
+      PersistenceStructureService persistenceStructureService = SpringContext.getBean(PersistenceStructureService.class);
 
-        Map<String, BusinessObjectRelationship> relationshipMetadata = new HashMap<String, BusinessObjectRelationship>();
-        for (String attributeName : this.getInquirableFieldNames()) {
-            Map<String, Class<? extends BusinessObject>> primitiveReference = LookupUtils.getPrimitiveReference(newDetailLine, attributeName);
+      Map<String, DataObjectRelationship> relationshipMetadata = new HashMap<String, DataObjectRelationship>();
+      for (String attributeName : this.getInquirableFieldNames()) {
+          Map<String, Class<? extends BusinessObject>> primitiveReference = LookupUtils.getPrimitiveReference(newDetailLine, attributeName);
 
-            if (primitiveReference != null && !primitiveReference.isEmpty()) {
-                BusinessObjectRelationship primitiveRelationship = this.getPrimitiveBusinessObjectRelationship(persistenceStructureService.getRelationshipMetadata(newDetailLine.getClass(), attributeName));
-                relationshipMetadata.put(attributeName, primitiveRelationship);
-            }
-        }
+          if (primitiveReference != null && !primitiveReference.isEmpty()) {
+              DataObjectRelationship primitiveRelationship = this.getPrimitiveDataObjectRelationship(persistenceStructureService.getRelationshipMetadata(newDetailLine.getClass(), attributeName));
+              relationshipMetadata.put(attributeName, primitiveRelationship);
+          }
+      }
 
-        return relationshipMetadata;
+      return relationshipMetadata;
     }
 
     /**
@@ -180,29 +179,6 @@ public class EffortCertificationForm extends FinancialSystemTransactionalDocumen
         LOG.info("getFieldInfo() start");
 
         return this.getFieldInfo(this.getDetailLines());
-    }
-
-    /**
-     * pick up the primitive relationship for an attribute from a set of relationships. Generally, the primitive relationship is
-     * that has the minimum number of primary keys.
-     * 
-     * @param relationshipMetadata the relationship metadata that contains the primitive relationship
-     * @return the primitive relationship for an attribute from a set of relationships.
-     */
-    protected BusinessObjectRelationship getPrimitiveBusinessObjectRelationship(Map<String, BusinessObjectRelationship> relationshipMetadata) {
-        int minCountOfKeys = Integer.MAX_VALUE;
-        BusinessObjectRelationship primitiveRelationship = null;
-
-        for (String attribute : relationshipMetadata.keySet()) {
-            BusinessObjectRelationship currentRelationship = relationshipMetadata.get(attribute);
-
-            Map<String, String> parentToChildReferences = currentRelationship.getParentToChildReferences();
-            if (parentToChildReferences.size() < minCountOfKeys) {
-                minCountOfKeys = parentToChildReferences.size();
-                primitiveRelationship = currentRelationship;
-            }
-        }
-        return primitiveRelationship;
     }
 
     /**
@@ -459,4 +435,20 @@ public class EffortCertificationForm extends FinancialSystemTransactionalDocumen
 
         return buildAccountInfo(account);
     }
+    
+    protected DataObjectRelationship getPrimitiveDataObjectRelationship(Map<String, DataObjectRelationship> relationshipMetadata) {
+      int minCountOfKeys = Integer.MAX_VALUE;
+      DataObjectRelationship primitiveRelationship = null;
+
+      for (String attribute : relationshipMetadata.keySet()) {
+          DataObjectRelationship currentRelationship = relationshipMetadata.get(attribute);
+
+          Map<String, String> parentToChildReferences = currentRelationship.getParentToChildReferences();
+          if (parentToChildReferences.size() < minCountOfKeys) {
+              minCountOfKeys = parentToChildReferences.size();
+              primitiveRelationship = currentRelationship;
+          }
+      }
+      return primitiveRelationship;
+  }
 }

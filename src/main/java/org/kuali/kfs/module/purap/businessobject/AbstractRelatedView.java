@@ -15,19 +15,18 @@
  */
 package org.kuali.kfs.module.purap.businessobject;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kns.bo.Note;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.service.DocumentService;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.service.NoteService;
-import org.kuali.rice.kns.util.TypedArrayList;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.service.DataDictionaryService;
+import org.kuali.rice.krad.service.NoteService;
 
 /**
  * Base class for Related View Business Objects.
@@ -66,7 +65,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
 
     public List<Note> getNotes() {
         if (notes == null) {
-            notes = new TypedArrayList(Note.class);
+            notes = new ArrayList<Note>();
             List<Note> tmpNotes = SpringContext.getBean(NoteService.class).getByRemoteObjectId(this.getObjectId());
             //FIXME if NoteService returns notes in descending order (newer ones first) then remove the following
             // reverse the order of notes retrieved so that newest note is in the front
@@ -80,7 +79,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
     }
 
     public String getUrl() {
-        return SpringContext.getBean(KualiConfigurationService.class).getPropertyString(KFSConstants.WORKFLOW_URL_KEY) + "/DocHandler.do?docId=" + getDocumentNumber() + "&command=displayDocSearchView";
+        return SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.WORKFLOW_URL_KEY) + "/DocHandler.do?docId=" + getDocumentNumber() + "&command=displayDocSearchView";
     }
 
     public String getDocumentIdentifierString() {

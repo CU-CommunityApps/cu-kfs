@@ -18,13 +18,11 @@ package org.kuali.kfs.module.bc.businessobject.lookup;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.integration.ld.LaborLedgerPositionObjectBenefit;
@@ -33,25 +31,26 @@ import org.kuali.kfs.module.bc.businessobject.RequestBenefits;
 import org.kuali.kfs.module.ld.LaborPropertyConstants;
 import org.kuali.kfs.module.ld.businessobject.BenefitsCalculation;
 import org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory;
-import org.kuali.kfs.module.ld.service.impl.LaborBenefitsCalculationServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.kns.bo.BusinessObject;
+import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.rice.core.api.util.type.KualiPercent;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kns.lookup.KualiLookupableHelperServiceImpl;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.KualiInteger;
-import org.kuali.rice.kns.util.KualiPercent;
+import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
 
 /**
  * Implements custom search for showing single request line benefits impact
  */
+@SuppressWarnings("deprecation")
 public class RequestBenefitsLookupableHelperServiceImpl extends KualiLookupableHelperServiceImpl {
+
+    private static final long serialVersionUID = 1L;
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(RequestBenefitsLookupableHelperServiceImpl.class);
     private LaborModuleService laborModuleService;
     private BusinessObjectService businessObjectService;
@@ -92,7 +91,7 @@ public class RequestBenefitsLookupableHelperServiceImpl extends KualiLookupableH
             if (SpringContext.getBean(ParameterService.class).parameterExists(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY")) {
                 String laborBenefitRateCategoryCode = "";
                 // check the system param to see if the labor benefit rate category should be filled in
-                String sysParam = SpringContext.getBean(ParameterService.class).getParameterValue(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY");
+                String sysParam = SpringContext.getBean(ParameterService.class).getParameterValueAsString(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "ENABLE_FRINGE_BENEFIT_CALC_BY_BENEFIT_RATE_CATEGORY");
                 LOG.debug("sysParam: " + sysParam);
                 // if sysParam == Y then Labor Benefit Rate Category Code must be filled in
                 if (sysParam.equalsIgnoreCase("Y")) {
@@ -115,7 +114,7 @@ public class RequestBenefitsLookupableHelperServiceImpl extends KualiLookupableH
                 }
                 else {
                     if (SpringContext.getBean(ParameterService.class).parameterExists(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE")) {
-                        laborBenefitRateCategoryCode = SpringContext.getBean(ParameterService.class).getParameterValue(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE");
+                        laborBenefitRateCategoryCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE");
                     }
                     else {
                         laborBenefitRateCategoryCode = "";

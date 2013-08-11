@@ -21,13 +21,15 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.ReversionCategory;
 import org.kuali.kfs.coa.businessobject.SubAccount;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 /**
  * This class represents a organization reversion unit of work category amount
  */
 public class ReversionUnitOfWorkCategoryAmount extends PersistableBusinessObjectBase {
+
+    private static final long serialVersionUID = 1L;
     private String chartOfAccountsCode;
     private String accountNumber;
     private String subAccountNumber;
@@ -263,7 +265,7 @@ public class ReversionUnitOfWorkCategoryAmount extends PersistableBusinessObject
     /**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
-    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap pkMap = new LinkedHashMap();
         pkMap.put("chartOfAccountsCode", this.chartOfAccountsCode);

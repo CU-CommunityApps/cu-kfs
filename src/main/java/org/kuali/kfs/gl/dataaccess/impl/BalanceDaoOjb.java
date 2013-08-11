@@ -51,10 +51,11 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.OptionsService;
-import org.kuali.rice.kns.dao.impl.PlatformAwareDaoBaseOjb;
-import org.kuali.rice.kns.service.ParameterEvaluator;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.KualiDecimal;
+import org.kuali.rice.core.api.parameter.ParameterEvaluator;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 
 /**
  * An OJB implementation of BalanceDao
@@ -759,7 +760,7 @@ public class BalanceDaoOjb extends PlatformAwareDaoBaseOjb implements BalanceDao
     public Iterator<Balance> findGeneralBalancesToForwardForFiscalYear(Integer year) {
         ObjectTypeService objectTypeService = SpringContext.getBean(ObjectTypeService.class);
 
-        String[] generalBalanceForwardBalanceTypesArray = parameterService.getParameterValues(BalanceForwardStep.class, GeneralLedgerConstants.BalanceForwardRule.BALANCE_TYPES_TO_ROLL_FORWARD_FOR_BALANCE_SHEET).toArray(new String[] {});
+        String[] generalBalanceForwardBalanceTypesArray = parameterService.getParameterValuesAsString(BalanceForwardStep.class, GeneralLedgerConstants.BalanceForwardRule.BALANCE_TYPES_TO_ROLL_FORWARD_FOR_BALANCE_SHEET).toArray(new String[] {});
         List<String> generalBalanceForwardBalanceTypes = new ArrayList<String>();
         for (String bt : generalBalanceForwardBalanceTypesArray) {
             generalBalanceForwardBalanceTypes.add(bt);
@@ -799,7 +800,7 @@ public class BalanceDaoOjb extends PlatformAwareDaoBaseOjb implements BalanceDao
     public Iterator<Balance> findGeneralBalancesToForwardForFiscalYear(Integer year, List<String> charts) {
         ObjectTypeService objectTypeService = SpringContext.getBean(ObjectTypeService.class);
 
-        String[] generalBalanceForwardBalanceTypesArray = parameterService.getParameterValues(BalanceForwardStep.class, GeneralLedgerConstants.BalanceForwardRule.BALANCE_TYPES_TO_ROLL_FORWARD_FOR_BALANCE_SHEET).toArray(new String[] {});
+        String[] generalBalanceForwardBalanceTypesArray = parameterService.getParameterValuesAsString(BalanceForwardStep.class, GeneralLedgerConstants.BalanceForwardRule.BALANCE_TYPES_TO_ROLL_FORWARD_FOR_BALANCE_SHEET).toArray(new String[] {});
         List<String> generalBalanceForwardBalanceTypes = new ArrayList<String>();
         for (String bt : generalBalanceForwardBalanceTypesArray) {
             generalBalanceForwardBalanceTypes.add(bt);
@@ -840,13 +841,13 @@ public class BalanceDaoOjb extends PlatformAwareDaoBaseOjb implements BalanceDao
         ObjectTypeService objectTypeService = SpringContext.getBean(ObjectTypeService.class);
         SubFundGroupService subFundGroupService = SpringContext.getBean(SubFundGroupService.class);
 
-        final String[] subFundGroupsForCumulativeBalanceForwardingArray = parameterService.getParameterValues(BalanceForwardStep.class, GeneralLedgerConstants.BalanceForwardRule.SUB_FUND_GROUPS_FOR_INCEPTION_TO_DATE_REPORTING).toArray(new String[] {});
+        final String[] subFundGroupsForCumulativeBalanceForwardingArray = parameterService.getParameterValuesAsString(BalanceForwardStep.class, GeneralLedgerConstants.BalanceForwardRule.SUB_FUND_GROUPS_FOR_INCEPTION_TO_DATE_REPORTING).toArray(new String[] {});
         List<String> subFundGroupsForCumulativeBalanceForwarding = new ArrayList<String>();
         for (String subFundGroup : subFundGroupsForCumulativeBalanceForwardingArray) {
             subFundGroupsForCumulativeBalanceForwarding.add(subFundGroup);
         }
 
-        String[] cumulativeBalanceForwardBalanceTypesArray = parameterService.getParameterValues(BalanceForwardStep.class, GeneralLedgerConstants.BalanceForwardRule.BALANCE_TYPES_TO_ROLL_FORWARD_FOR_INCOME_EXPENSE).toArray(new String[] {});
+        String[] cumulativeBalanceForwardBalanceTypesArray = parameterService.getParameterValuesAsString(BalanceForwardStep.class, GeneralLedgerConstants.BalanceForwardRule.BALANCE_TYPES_TO_ROLL_FORWARD_FOR_INCOME_EXPENSE).toArray(new String[] {});
         List<String> cumulativeBalanceForwardBalanceTypes = new ArrayList<String>();
         for (String bt : cumulativeBalanceForwardBalanceTypesArray) {
             cumulativeBalanceForwardBalanceTypes.add(bt);
@@ -858,7 +859,7 @@ public class BalanceDaoOjb extends PlatformAwareDaoBaseOjb implements BalanceDao
         c.addIn(KFSPropertyConstants.OBJECT_TYPE_CODE, objectTypeService.getCumulativeForwardBalanceObjectTypes(year));
 
         Criteria forCGCrit = new Criteria();
-        if (parameterService.getIndicatorParameter(Account.class, KFSConstants.ChartApcParms.ACCOUNT_FUND_GROUP_DENOTES_CG)) {
+        if (parameterService.getParameterValueAsBoolean(Account.class, KFSConstants.ChartApcParms.ACCOUNT_FUND_GROUP_DENOTES_CG)) {
            for (String value : subFundGroupService.getContractsAndGrantsDenotingValues()) {
                forCGCrit.addEqualTo("priorYearAccount.subFundGroup.fundGroupCode", value);
            }
@@ -902,13 +903,13 @@ public class BalanceDaoOjb extends PlatformAwareDaoBaseOjb implements BalanceDao
         ObjectTypeService objectTypeService = SpringContext.getBean(ObjectTypeService.class);
         SubFundGroupService subFundGroupService = SpringContext.getBean(SubFundGroupService.class);
 
-        final String[] subFundGroupsForCumulativeBalanceForwardingArray = parameterService.getParameterValues(BalanceForwardStep.class, GeneralLedgerConstants.BalanceForwardRule.SUB_FUND_GROUPS_FOR_INCEPTION_TO_DATE_REPORTING).toArray(new String[] {});
+        final String[] subFundGroupsForCumulativeBalanceForwardingArray = parameterService.getParameterValuesAsString(BalanceForwardStep.class, GeneralLedgerConstants.BalanceForwardRule.SUB_FUND_GROUPS_FOR_INCEPTION_TO_DATE_REPORTING).toArray(new String[] {});
         List<String> subFundGroupsForCumulativeBalanceForwarding = new ArrayList<String>();
         for (String subFundGroup : subFundGroupsForCumulativeBalanceForwardingArray) {
             subFundGroupsForCumulativeBalanceForwarding.add(subFundGroup);
         }
 
-        String[] cumulativeBalanceForwardBalanceTypesArray = parameterService.getParameterValues(BalanceForwardStep.class, GeneralLedgerConstants.BalanceForwardRule.BALANCE_TYPES_TO_ROLL_FORWARD_FOR_INCOME_EXPENSE).toArray(new String[] {});
+        String[] cumulativeBalanceForwardBalanceTypesArray = parameterService.getParameterValuesAsString(BalanceForwardStep.class, GeneralLedgerConstants.BalanceForwardRule.BALANCE_TYPES_TO_ROLL_FORWARD_FOR_INCOME_EXPENSE).toArray(new String[] {});
         List<String> cumulativeBalanceForwardBalanceTypes = new ArrayList<String>();
         for (String bt : cumulativeBalanceForwardBalanceTypesArray) {
             cumulativeBalanceForwardBalanceTypes.add(bt);
@@ -921,7 +922,7 @@ public class BalanceDaoOjb extends PlatformAwareDaoBaseOjb implements BalanceDao
         c.addIn(KFSPropertyConstants.OBJECT_TYPE_CODE, objectTypeService.getCumulativeForwardBalanceObjectTypes(year));
 
         Criteria forCGCrit = new Criteria();
-        if (parameterService.getIndicatorParameter(Account.class, KFSConstants.ChartApcParms.ACCOUNT_FUND_GROUP_DENOTES_CG)) {
+        if (parameterService.getParameterValueAsBoolean(Account.class, KFSConstants.ChartApcParms.ACCOUNT_FUND_GROUP_DENOTES_CG)) {
            for (String value : subFundGroupService.getContractsAndGrantsDenotingValues()) {
                forCGCrit.addEqualTo("priorYearAccount.subFundGroup.fundGroupCode", value);
            }
@@ -973,7 +974,7 @@ public class BalanceDaoOjb extends PlatformAwareDaoBaseOjb implements BalanceDao
         boolean moreParams = true;
         while (moreParams) {
             if (parameterService.parameterExists(OrganizationReversion.class, PARAMETER_PREFIX + i)) {
-                ParameterEvaluator parameterEvaluator = parameterService.getParameterEvaluator(Reversion.class, PARAMETER_PREFIX + i);
+                ParameterEvaluator parameterEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Reversion.class, PARAMETER_PREFIX + i);
                 String currentRule = parameterEvaluator.getValue();
                 if (endOfYear) {
                     currentRule = currentRule.replaceAll("account\\.", "priorYearAccount.");

@@ -26,6 +26,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.module.bc.BCConstants;
+import org.kuali.kfs.module.bc.BCConstants.SynchronizationCheckType;
 import org.kuali.kfs.module.bc.BCKeyConstants;
 import org.kuali.kfs.module.bc.BCPropertyConstants;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionIntendedIncumbent;
@@ -34,10 +35,11 @@ import org.kuali.kfs.module.bc.service.BudgetConstructionIntendedIncumbentServic
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kns.util.KNSGlobalVariables;
 import org.kuali.rice.kns.util.MessageList;
-import org.kuali.rice.kns.util.MessageMap;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.MessageMap;
 
 /**
  * the struts action for the salary setting for incumbent
@@ -137,7 +139,7 @@ public class IncumbentSalarySettingAction extends DetailSalarySettingAction {
         ActionForward saveAction =  super.save(mapping, form, request, response);
 
         IncumbentSalarySettingForm incumbentSalarySettingForm = (IncumbentSalarySettingForm) form;
-        this.sendWarnings(incumbentSalarySettingForm, GlobalVariables.getMessageList());
+        this.sendWarnings(incumbentSalarySettingForm, KNSGlobalVariables.getMessageList());
         
         return saveAction;
     }
@@ -170,5 +172,11 @@ public class IncumbentSalarySettingAction extends DetailSalarySettingAction {
     @Override
     protected String getFundingAwareObjectName() {
         return BCPropertyConstants.BUDGET_CONSTRUCTION_INTENDED_INCUMBENT;
+    }
+
+    //TODO UPGRADE-911
+    @Override
+    public SynchronizationCheckType getSynchronizationCheckType() {
+      return null;
     }
 }

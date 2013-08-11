@@ -27,10 +27,9 @@ import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.util.PurApObjectUtils;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.util.TypedArrayList;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * Purap Item Base Business Object.
@@ -67,9 +66,9 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
      */
     public PurApItemBase() {
         itemTypeCode = PurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE;
-        sourceAccountingLines = new TypedArrayList(getAccountingLineClass());
-        baselineSourceAccountingLines = new TypedArrayList(getAccountingLineClass());
-        useTaxItems = new TypedArrayList(getUseTaxClass());
+        sourceAccountingLines = new ArrayList();
+        baselineSourceAccountingLines = new ArrayList();
+        useTaxItems = new ArrayList();
         resetAccount();
     }
 

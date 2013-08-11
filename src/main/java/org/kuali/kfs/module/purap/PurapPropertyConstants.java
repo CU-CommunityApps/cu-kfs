@@ -15,8 +15,6 @@
  */
 package org.kuali.kfs.module.purap;
 
-import org.kuali.rice.kns.util.KualiDecimal;
-
 /**
  * Property name constants.
  */

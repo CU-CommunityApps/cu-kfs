@@ -42,9 +42,10 @@ import org.kuali.kfs.sys.service.FlexibleOffsetAccountService;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.ReportWriterService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.util.ObjectUtils;
+
 
 /**
  * A class to hold significant state for a balance forward job; it also has the methods that actually accomplish the job
@@ -177,8 +178,8 @@ public class BalanceForwardRuleHelper {
         state = new BalanceForwardProcessState();
         flexibleOffsetAccountService = SpringContext.getBean(FlexibleOffsetAccountService.class);
         parameterService = SpringContext.getBean(ParameterService.class);
-        annualClosingDocType = parameterService.getParameterValue(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, KFSConstants.SystemGroupParameterNames.GL_ANNUAL_CLOSING_DOC_TYPE);
-        glOriginationCode = parameterService.getParameterValue(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, KFSConstants.SystemGroupParameterNames.GL_ORIGINATION_CODE);
+        annualClosingDocType = parameterService.getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, KFSConstants.SystemGroupParameterNames.GL_ANNUAL_CLOSING_DOC_TYPE);
+        glOriginationCode = parameterService.getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, KFSConstants.SystemGroupParameterNames.GL_ORIGINATION_CODE);
         openAccountForwardBalanceLedgerReport = new LedgerSummaryReport();
         closedAccountForwardBalanceLedgerReport = new LedgerSummaryReport();
         
@@ -186,7 +187,7 @@ public class BalanceForwardRuleHelper {
         //If no parameter value exists, act on all charts which is the default action in the delivered foundation code.
         annualClosingCharts = new ArrayList<String>();
         try {
-        	String[] varChartsArray = parameterService.getParameterValues(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_CHARTS_PARAM).toArray(new String[] {});
+        	String[] varChartsArray = parameterService.getParameterValuesAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_CHARTS_PARAM).toArray(new String[] {});
         	
             if ((varChartsArray != null) && (varChartsArray.length != 0)) {
             	//transfer charts from parameter to List for database query       	

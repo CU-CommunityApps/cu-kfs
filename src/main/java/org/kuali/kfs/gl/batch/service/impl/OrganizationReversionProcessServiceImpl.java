@@ -20,10 +20,8 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.kuali.kfs.coa.businessobject.OrganizationReversion;
 import org.kuali.kfs.coa.businessobject.Reversion;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
-import org.kuali.kfs.gl.batch.service.OrganizationReversionProcess;
 import org.kuali.kfs.gl.batch.service.ReversionProcess;
 import org.kuali.kfs.gl.batch.service.ReversionProcessService;
 import org.kuali.kfs.sys.KFSConstants;
@@ -31,8 +29,8 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.ReportWriterService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -49,7 +47,7 @@ public class OrganizationReversionProcessServiceImpl implements ReversionProcess
 
     private ReportWriterService organizationReversionReportWriterService;
     private ParameterService parameterService;
-    private KualiConfigurationService configurationService;
+    private ConfigurationService configurationService;
 
     /**
      * Gets the organizationReversionReportWriterService attribute. 
@@ -115,12 +113,12 @@ public class OrganizationReversionProcessServiceImpl implements ReversionProcess
     public Map getJobParameters() {
         // Get job parameters
         Map jobParameters = new HashMap();
-        String strTransactionDate = getParameterService().getParameterValue(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_TRANSACTION_DATE_PARM);
-        jobParameters.put(KFSConstants.UNALLOC_OBJECT_CD, getParameterService().getParameterValue(Reversion.class, GeneralLedgerConstants.ReversionProcess.UNALLOC_OBJECT_CODE_PARM));
-        jobParameters.put(KFSConstants.CASH_REVERSION_OBJECT_CD, getParameterService().getParameterValue(Reversion.class, GeneralLedgerConstants.ReversionProcess.CASH_REVERSION_OBJECT_CODE_PARM));
-        jobParameters.put(KFSConstants.BEG_BUD_CASH_OBJECT_CD, getParameterService().getParameterValue(Reversion.class, GeneralLedgerConstants.ReversionProcess.CARRY_FORWARD_OBJECT_CODE));
-        jobParameters.put(KFSConstants.FUND_BAL_OBJECT_CD, getParameterService().getParameterValue(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_FUND_BALANCE_OBJECT_CODE_PARM));
-        String strUniversityFiscalYear = getParameterService().getParameterValue(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_FISCAL_YEAR_PARM);
+        String strTransactionDate = getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_TRANSACTION_DATE_PARM);
+        jobParameters.put(KFSConstants.UNALLOC_OBJECT_CD, getParameterService().getParameterValueAsString(Reversion.class, GeneralLedgerConstants.ReversionProcess.UNALLOC_OBJECT_CODE_PARM));
+        jobParameters.put(KFSConstants.CASH_REVERSION_OBJECT_CD, getParameterService().getParameterValueAsString(Reversion.class, GeneralLedgerConstants.ReversionProcess.CASH_REVERSION_OBJECT_CODE_PARM));
+        jobParameters.put(KFSConstants.BEG_BUD_CASH_OBJECT_CD, getParameterService().getParameterValueAsString(Reversion.class, GeneralLedgerConstants.ReversionProcess.CARRY_FORWARD_OBJECT_CODE));
+        jobParameters.put(KFSConstants.FUND_BAL_OBJECT_CD, getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_FUND_BALANCE_OBJECT_CODE_PARM));
+        String strUniversityFiscalYear = getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_FISCAL_YEAR_PARM);
 
         try {
             SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
@@ -161,7 +159,7 @@ public class OrganizationReversionProcessServiceImpl implements ReversionProcess
         getOrganizationReversionReportWriterService().pageBreak();
         
         // write ledger report
-        getOrganizationReversionReportWriterService().writeSubTitle(getConfigurationService().getPropertyString(KFSKeyConstants.MESSAGE_REPORT_YEAR_END_ORGANIZATION_REVERSION_LEDGER_TITLE_LINE));
+        getOrganizationReversionReportWriterService().writeSubTitle(getConfigurationService().getPropertyValueAsString(KFSKeyConstants.MESSAGE_REPORT_YEAR_END_ORGANIZATION_REVERSION_LEDGER_TITLE_LINE));
         organizationReversionProcess.writeLedgerSummaryReport(getOrganizationReversionReportWriterService());
     }
 
@@ -177,7 +175,7 @@ public class OrganizationReversionProcessServiceImpl implements ReversionProcess
      * Sets the implementation of the KualiConfigurationService to use
      * @param configurationService an implementation of the KualiConfigurationService
      */
-    public void setConfigurationService(KualiConfigurationService configurationService) {
+    public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
     }
 
@@ -193,7 +191,7 @@ public class OrganizationReversionProcessServiceImpl implements ReversionProcess
      * Gets the configurationService attribute. 
      * @return Returns the configurationService.
      */
-    public KualiConfigurationService getConfigurationService() {
+    public ConfigurationService getConfigurationService() {
         return configurationService;
     }
 }

@@ -30,11 +30,9 @@ import org.kuali.kfs.module.purap.document.service.impl.B2BPurchaseOrderSciquest
 import org.kuali.kfs.module.purap.util.PurApDateFormatUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.service.RoleManagementService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.util.GlobalVariables;
-
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 public class PunchOutSetupCxml {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PunchOutSetupCxml.class);
   private Person user;
@@ -126,9 +124,10 @@ public class PunchOutSetupCxml {
   private String getPreAuthValue(String principalId) {
 	  try {
 		List<String> roleIds = new ArrayList<String>();
-		roleIds.add(getRoleManagementService().getRoleIdByName(KFSConstants.ParameterNamespaces.PURCHASING,KFSConstants.SysKimConstants.ESHOP_USER_ROLE_NAME));
-		roleIds.add(getRoleManagementService().getRoleIdByName(KFSConstants.ParameterNamespaces.PURCHASING,KFSConstants.SysKimConstants.ESHOP_SUPER_USER_ROLE_NAME));
-		if (getRoleManagementService().principalHasRole(principalId,roleIds, null)) {
+		roleIds.add(KimApiServiceLocator.getRoleService().getRoleByNamespaceCodeAndName(KFSConstants.ParameterNamespaces.PURCHASING,KFSConstants.SysKimConstants.ESHOP_USER_ROLE_NAME).getId());
+		roleIds.add(KimApiServiceLocator.getRoleService().getRoleByNamespaceCodeAndName(KFSConstants.ParameterNamespaces.PURCHASING,KFSConstants.SysKimConstants.ESHOP_SUPER_USER_ROLE_NAME).getId());
+		
+		if (KimApiServiceLocator.getRoleService().principalHasRole(principalId,roleIds, null)) {
 			return "Preauthorized";
 		}
 		return "NonPreauthorized";
@@ -139,9 +138,6 @@ public class PunchOutSetupCxml {
 	  }
   }
   
-  private RoleManagementService getRoleManagementService() {
-	  return SpringContext.getBean(RoleManagementService.class);
-  }
 
 }
 

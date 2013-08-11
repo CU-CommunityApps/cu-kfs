@@ -46,13 +46,12 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.service.FlexibleOffsetAccountService;
 import org.kuali.kfs.sys.service.ReportWriterService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.service.PersistenceService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.springframework.beans.factory.InitializingBean;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.service.PersistenceService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 public abstract class ReversionProcessBase implements ReversionProcess {
 
@@ -65,7 +64,7 @@ public abstract class ReversionProcessBase implements ReversionProcess {
     private PriorYearAccountService priorYearAccountService;
     private FlexibleOffsetAccountService flexibleOffsetAccountService;
     protected ParameterService parameterService;
-    private KualiConfigurationService configurationService;
+    private ConfigurationService configurationService;
     protected BalanceService balanceService;
     private String batchFileDirectoryName;
     protected String outputFileName;
@@ -291,11 +290,11 @@ public abstract class ReversionProcessBase implements ReversionProcess {
         this.parameterService = parameterService;
     }
 
-    public KualiConfigurationService getConfigurationService() {
+    public ConfigurationService getConfigurationService() {
         return configurationService;
     }
 
-    public void setConfigurationService(KualiConfigurationService configurationService) {
+    public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
     }
 

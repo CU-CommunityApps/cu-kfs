@@ -22,18 +22,19 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsAccountAwardInformation;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.service.PersonService;
-import org.kuali.rice.kns.bo.Inactivateable;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * This class represents an association between an award and an account. It's like a reference to the account from the award. This
  * way an award can maintain a collection of these references instead of owning accounts directly.
  */
-public class AwardAccount extends PersistableBusinessObjectBase implements CGProjectDirector, Inactivateable, ContractsAndGrantsAccountAwardInformation {
+public class AwardAccount extends PersistableBusinessObjectBase implements CGProjectDirector, MutableInactivatable, ContractsAndGrantsAccountAwardInformation {
 
+    private static final long serialVersionUID = 1L;
     private Long proposalNumber;
     private String chartOfAccountsCode;
     private String accountNumber;
@@ -163,7 +164,7 @@ public class AwardAccount extends PersistableBusinessObjectBase implements CGPro
      * @see org.kuali.kfs.integration.businessobject.cg.ContractsAndGrantsAccountAwardInformation#getProjectDirector()
      */
     public Person getProjectDirector() {
-        projectDirector = SpringContext.getBean(org.kuali.rice.kim.service.PersonService.class).updatePersonIfNecessary(principalId, projectDirector);
+        projectDirector = SpringContext.getBean(PersonService.class).updatePersonIfNecessary(principalId, projectDirector);
         return projectDirector;
     }
 
@@ -182,8 +183,7 @@ public class AwardAccount extends PersistableBusinessObjectBase implements CGPro
     /**
      * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
      */
-    @SuppressWarnings("unchecked")
-    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();
         if (this.proposalNumber != null) {
@@ -232,6 +232,10 @@ public class AwardAccount extends PersistableBusinessObjectBase implements CGPro
             return projectDirector.getName();
         }
         return null;
+    }
+
+    //TODO UPGRADE-911
+    public void refresh() {      
     }
 }
 

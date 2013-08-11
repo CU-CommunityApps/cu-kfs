@@ -15,7 +15,8 @@
  */
 package org.kuali.kfs.module.ld.report;
 
-import org.kuali.rice.kns.util.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+
 
 /**
  * Keeps track of statistics for the enterprise feeder job

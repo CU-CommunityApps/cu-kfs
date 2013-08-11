@@ -68,16 +68,15 @@ import org.kuali.kfs.sys.KFSConstants.ParameterValues;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.businessobject.UniversityDate;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kns.dao.DocumentDao;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.DocumentService;
-import org.kuali.rice.kns.service.KualiModuleService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.KualiInteger;
-import org.kuali.rice.kns.util.TransactionalServiceUtils;
-import org.kuali.rice.kns.workflow.service.WorkflowDocumentService;
-
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.rice.kew.api.document.WorkflowDocumentService;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.krad.dao.DocumentDao;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.service.KualiModuleService;
+import org.kuali.rice.krad.util.TransactionalServiceUtils;
 
 public class GenesisDaoOjb extends BudgetConstructionBatchHelperDaoOjb implements GenesisDao {
     /*
@@ -850,7 +849,7 @@ public class GenesisDaoOjb extends BudgetConstructionBatchHelperDaoOjb implement
         newBCHdr.setBudgetTransactionLockUserIdentifier(BCConstants.DEFAULT_BUDGET_HEADER_LOCK_IDS);
         newBCHdr.setBudgetLockUserIdentifier(BCConstants.DEFAULT_BUDGET_HEADER_LOCK_IDS);
         newBCHdr.setVersionNumber(DEFAULT_VERSION_NUMBER);
-        FinancialSystemDocumentHeader kualiDocumentHeader = newBCHdr.getDocumentHeader();
+        FinancialSystemDocumentHeader kualiDocumentHeader = newBCHdr.getFinancialSystemDocumentHeader();
         newBCHdr.setDocumentNumber(newBCHdr.getDocumentHeader().getDocumentNumber());
         kualiDocumentHeader.setOrganizationDocumentNumber(newBCHdr.getUniversityFiscalYear().toString());
         kualiDocumentHeader.setFinancialDocumentStatusCode(KFSConstants.INITIAL_KUALI_DOCUMENT_STATUS_CD);
@@ -866,7 +865,7 @@ public class GenesisDaoOjb extends BudgetConstructionBatchHelperDaoOjb implement
        // documentService.prepareWorkflowDocument(newBCHdr);
        // documentService.saveDocument(newBCHdr);
         // September 2, 2009: since this document is not routed, calling this method should set it to final
-        workflowDocumentService.route(newBCHdr.getDocumentHeader().getWorkflowDocument(), "created by Genesis", new ArrayList());
+        documentService.routeDocument(newBCHdr, "created by Genesis", new ArrayList());
     }
 
 

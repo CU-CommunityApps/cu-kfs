@@ -25,9 +25,8 @@ import org.kuali.kfs.module.purap.document.PurapItemOperations;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.kns.bo.Country;
-import org.kuali.rice.kns.util.KualiDecimal;
-
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.location.api.country.Country;
 
 /**
  * Interface for Purchasing-Accounts Payable Documents.

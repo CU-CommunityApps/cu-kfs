@@ -16,8 +16,6 @@
 
 package org.kuali.kfs.module.purap.businessobject;
 
-import static org.kuali.rice.kns.util.KualiDecimal.ZERO;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -29,16 +27,16 @@ import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.service.SequenceAccessorService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.krad.service.SequenceAccessorService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * Purchase Order Item Business Object.
  */
 public class PurchaseOrderItem extends PurchasingItemBase {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PurchaseOrderItem.class);
-
+  
+    private static final long serialVersionUID = 1L;
     private String documentNumber;
     private KualiDecimal itemInvoicedTotalQuantity;
     private KualiDecimal itemInvoicedTotalAmount;
@@ -95,8 +93,8 @@ public class PurchaseOrderItem extends PurchasingItemBase {
         this.setExternalOrganizationB2bProductReferenceNumber(ri.getExternalOrganizationB2bProductReferenceNumber());
         this.setExternalOrganizationB2bProductTypeName(ri.getExternalOrganizationB2bProductTypeName());
 
-        this.setItemReceivedTotalQuantity(ZERO);
-        this.setItemDamagedTotalQuantity(ZERO);
+        this.setItemReceivedTotalQuantity(KualiDecimal.ZERO);
+        this.setItemDamagedTotalQuantity(KualiDecimal.ZERO);
         
         this.setItemTypeCode(ri.getItemTypeCode());
 
@@ -290,7 +288,7 @@ public class PurchaseOrderItem extends PurchasingItemBase {
             BigDecimal qty = new BigDecimal(this.getOutstandingQuantity().toString());
             outstandingAmount = outstandingAmount.add(new KualiDecimal(this.getItemUnitPrice().multiply(qty).setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR)));
             
-            KualiDecimal itemTaxAmount = this.getItemTaxAmount() == null ? ZERO : this.getItemTaxAmount();
+            KualiDecimal itemTaxAmount = this.getItemTaxAmount() == null ? KualiDecimal.ZERO : this.getItemTaxAmount();
             KualiDecimal outstandingTaxAmount = new KualiDecimal(qty).divide(this.getItemQuantity()).multiply(itemTaxAmount);
             outstandingAmount = outstandingAmount.add(outstandingTaxAmount);
         }

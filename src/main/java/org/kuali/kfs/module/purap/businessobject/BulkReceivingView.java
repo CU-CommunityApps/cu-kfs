@@ -18,12 +18,13 @@ package org.kuali.kfs.module.purap.businessobject;
 import java.util.List;
 
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.kns.bo.Note;
-
+import org.kuali.rice.krad.bo.Note;
 /**
  * Bulk Receiving View Business Object.
  */
 public class BulkReceivingView extends AbstractRelatedView {
+
+    private static final long serialVersionUID = 1L;
     private Integer purchaseOrderIdentifier;
     private boolean deliveryBuildingOtherIndicator;
     

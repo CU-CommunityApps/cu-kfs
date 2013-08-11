@@ -17,7 +17,9 @@ package org.kuali.kfs.module.bc.document.web.struts;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,10 +32,9 @@ import org.kuali.kfs.module.bc.document.service.BudgetDocumentService;
 import org.kuali.kfs.module.bc.document.service.SalarySettingService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.identity.KfsKimAttributes;
-import org.kuali.rice.kim.bo.types.dto.AttributeSet;
-import org.kuali.rice.kim.service.IdentityManagementService;
-import org.kuali.rice.kns.service.PersistenceService;
-import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kim.api.services.IdentityManagementService;
+import org.kuali.rice.krad.service.PersistenceService;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.module.bc.util.CUBudgetParameterFinder;
 
@@ -143,11 +144,11 @@ public class BudgetConstructionSelectionForm extends BudgetExpansionForm {
      */
     public boolean getCanPerformPayrateImportExport() {
         String[] rootOrg = SpringContext.getBean(OrganizationService.class).getRootOrganizationCode();
-        AttributeSet qualification = new AttributeSet();
+        Map<String, String> qualification = new HashMap<String,String>();
         qualification.put(BCPropertyConstants.ORGANIZATION_CHART_OF_ACCOUNTS_CODE, rootOrg[0]);
         qualification.put(KfsKimAttributes.ORGANIZATION_CODE, rootOrg[1]);
-        
-        return SpringContext.getBean(IdentityManagementService.class).isAuthorized(GlobalVariables.getUserSession().getPerson().getPrincipalId(), BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCConstants.KimConstants.IMPORT_EXPORT_PAYRATE_PERMISSION_NAME, null, qualification);
+         
+        return SpringContext.getBean(IdentityManagementService.class).isAuthorized(GlobalVariables.getUserSession().getPerson().getPrincipalId(), BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCConstants.KimConstants.IMPORT_EXPORT_PAYRATE_PERMISSION_NAME, qualification);
     }
 
     /**

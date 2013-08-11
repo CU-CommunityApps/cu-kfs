@@ -35,11 +35,8 @@ import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.identity.KfsKimAttributes;
-import org.kuali.rice.kim.bo.types.dto.AttributeSet;
-import org.kuali.rice.kim.service.RoleManagementService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kew.api.WorkflowDocument;
 
 /**
  * Accounting line authorizer for Requisition document which allows adding accounting lines at specified nodes
@@ -53,22 +50,22 @@ public class PurchaseOrderAccountingLineAuthorizer extends PurapAccountingLineAu
      */
     @Override
     public boolean renderNewLine(AccountingDocument accountingDocument, String accountingGroupProperty) {
-        KualiWorkflowDocument workflowDoc = accountingDocument.getDocumentHeader().getWorkflowDocument();
-        String currentRouteNodeName = workflowDoc.getCurrentRouteNodeNames();
+        WorkflowDocument workflowDoc = accountingDocument.getDocumentHeader().getWorkflowDocument();
+        String currentRouteNodeName = workflowDoc.getCurrentNodeNames().toString();
         
         //  if its in the NEW_UNORDERED_ITEMS node, then allow the new line to be drawn
         if (PurchaseOrderAccountingLineAuthorizer.NEW_UNORDERED_ITEMS_NODE.equals(currentRouteNodeName)) {
             return true;
         }
         
-        if (PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_AMENDMENT_DOCUMENT.equals(workflowDoc.getDocumentType()) && StringUtils.isNotBlank(accountingGroupProperty) && accountingGroupProperty.contains(PurapPropertyConstants.ITEM)) {
+        if (PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_AMENDMENT_DOCUMENT.equals(workflowDoc.getDocumentTypeName()) && StringUtils.isNotBlank(accountingGroupProperty) && accountingGroupProperty.contains(PurapPropertyConstants.ITEM)) {
             int itemNumber = determineItemNumberFromGroupProperty(accountingGroupProperty);
             PurchaseOrderAmendmentDocument poaDoc = (PurchaseOrderAmendmentDocument) accountingDocument;
             PurchaseOrderItem item = (PurchaseOrderItem) poaDoc.getItem(itemNumber);
             return item.isNewItemForAmendment() || item.getSourceAccountingLines().size() == 0;
         }
         
-        return super.renderNewLine(accountingDocument, accountingGroupProperty) || (accountingDocument instanceof PurchaseOrderAmendmentDocument && accountingDocument.getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames().equals(RequisitionStatuses.NODE_ACCOUNT) 
+        return super.renderNewLine(accountingDocument, accountingGroupProperty) || (accountingDocument instanceof PurchaseOrderAmendmentDocument && accountingDocument.getDocumentHeader().getWorkflowDocument().getCurrentNodeNames().equals(RequisitionStatuses.NODE_ACCOUNT) 
 				&& SpringContext.getBean(PurapAccountingService.class).isFiscalOfficersForAllAcctLines((PurchaseOrderAmendmentDocument)accountingDocument));
     }
     
@@ -115,10 +112,10 @@ public class PurchaseOrderAccountingLineAuthorizer extends PurapAccountingLineAu
         
         // check the initiation permission on the document if it is in the state of preroute, but only if
         // the PO status is not In Process.
-        KualiWorkflowDocument workflowDocument = accountingDocument.getDocumentHeader().getWorkflowDocument();
+        WorkflowDocument workflowDocument = accountingDocument.getDocumentHeader().getWorkflowDocument();
         PurchaseOrderDocument poDocument = (PurchaseOrderDocument)accountingDocument;
-        if (!poDocument.getStatusCode().equals(PurapConstants.PurchaseOrderStatuses.IN_PROCESS) && (workflowDocument.stateIsInitiated() || workflowDocument.stateIsSaved())) {
-            if (PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_AMENDMENT_DOCUMENT.equals(workflowDocument.getDocumentType())) {
+        if (!poDocument.getStatusCode().equals(PurapConstants.PurchaseOrderStatuses.IN_PROCESS) && (workflowDocument.isInitiated() || workflowDocument.isSaved())) {
+            if (PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_AMENDMENT_DOCUMENT.equals(workflowDocument.getDocumentTypeName())) {
                 PurApAccountingLine purapAccount = (PurApAccountingLine)accountingLine;
                 PurchaseOrderItem item = (PurchaseOrderItem)purapAccount.getPurapItem();
                 return item == null || item.isNewItemForAmendment() || item.getSourceAccountingLines().size() == 0;

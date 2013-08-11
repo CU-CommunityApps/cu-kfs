@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -60,20 +61,21 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.service.AccountingLineRuleHelperService;
-import org.kuali.rice.kns.datadictionary.DataDictionary;
-import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.exception.InfrastructureException;
+import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.rice.core.api.util.type.TypeUtils;
 import org.kuali.rice.kns.rules.TransactionalDocumentRuleBase;
-import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.service.PersistenceService;
-import org.kuali.rice.kns.util.ErrorMap;
-import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.KualiInteger;
-import org.kuali.rice.kns.util.MessageMap;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.util.TypeUtils;
+import org.kuali.rice.kns.util.KNSGlobalVariables;
+import org.kuali.rice.krad.datadictionary.DataDictionary;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.exception.InfrastructureException;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.PersistenceService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.MessageMap;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.ld.service.CULaborObjectService;
 
@@ -91,12 +93,12 @@ public class BudgetConstructionDocumentRules extends TransactionalDocumentRuleBa
     protected static ObjectCodeService objectCodeService  = SpringContext.getBean(ObjectCodeService.class);
     protected static CULaborObjectService cuLaborObjectService = SpringContext.getBean(CULaborObjectService.class);
     
-    protected List<String> revenueObjectTypesParamValues = BudgetParameterFinder.getRevenueObjectTypes();
-    protected List<String> expenditureObjectTypesParamValues = BudgetParameterFinder.getExpenditureObjectTypes();
-    protected List<String> budgetAggregationCodesParamValues = BudgetParameterFinder.getBudgetAggregationCodes();
-    protected List<String> fringeBenefitDesignatorCodesParamValues = BudgetParameterFinder.getFringeBenefitDesignatorCodes();
-    protected List<String> salarySettingFundGroupsParamValues = BudgetParameterFinder.getSalarySettingFundGroups();
-    protected List<String> salarySettingSubFundGroupsParamValues = BudgetParameterFinder.getSalarySettingSubFundGroups();
+    protected Collection<String> revenueObjectTypesParamValues = BudgetParameterFinder.getRevenueObjectTypes();
+    protected Collection<String> expenditureObjectTypesParamValues = BudgetParameterFinder.getExpenditureObjectTypes();
+    protected Collection<String> budgetAggregationCodesParamValues = BudgetParameterFinder.getBudgetAggregationCodes();
+    protected Collection<String> fringeBenefitDesignatorCodesParamValues = BudgetParameterFinder.getFringeBenefitDesignatorCodes();
+    protected Collection<String> salarySettingFundGroupsParamValues = BudgetParameterFinder.getSalarySettingFundGroups();
+    protected Collection<String> salarySettingSubFundGroupsParamValues = BudgetParameterFinder.getSalarySettingSubFundGroups();
 
     // this field is highlighted for any errors found on an existing line
     protected static final String TARGET_ERROR_PROPERTY_NAME = KFSPropertyConstants.ACCOUNT_LINE_ANNUAL_BALANCE_AMOUNT;
@@ -145,7 +147,7 @@ public class BudgetConstructionDocumentRules extends TransactionalDocumentRuleBa
         if (!isValid) {
 
             // tell the user we can't create a new BC document along with the error reasons
-            GlobalVariables.getMessageList().add(BCKeyConstants.MESSAGE_BUDGET_NOCREATE_DOCUMENT);
+            KNSGlobalVariables.getMessageList().add(BCKeyConstants.MESSAGE_BUDGET_NOCREATE_DOCUMENT);
         }
 
         LOG.debug("processAddBudgetConstructionDocumentRules(Document) - end");
@@ -221,7 +223,7 @@ public class BudgetConstructionDocumentRules extends TransactionalDocumentRuleBa
         List refreshFields = Collections.unmodifiableList(Arrays.asList(new String[] { KFSPropertyConstants.ACCOUNT, KFSPropertyConstants.SUB_ACCOUNT }));
         SpringContext.getBean(PersistenceService.class).retrieveReferenceObjects(budgetConstructionDocument, refreshFields);
 
-        errors.addToErrorPath(KNSConstants.DOCUMENT_PROPERTY_NAME);
+        errors.addToErrorPath(KRADConstants.DOCUMENT_PROPERTY_NAME);
 
         if (monthSpreadDeleteType == MonthSpreadDeleteType.REVENUE) {
             doRevMonthRICheck = false;
@@ -240,7 +242,7 @@ public class BudgetConstructionDocumentRules extends TransactionalDocumentRuleBa
         // iterate and validate expenditure lines
         isValid &= this.checkPendingBudgetConstructionGeneralLedgerLines(budgetConstructionDocument, errors, false, doExpMonthRICheck);
 
-        errors.removeFromErrorPath(KNSConstants.DOCUMENT_PROPERTY_NAME);
+        errors.removeFromErrorPath(KRADConstants.DOCUMENT_PROPERTY_NAME);
 
         return isValid;
     }
@@ -666,10 +668,107 @@ public class BudgetConstructionDocumentRules extends TransactionalDocumentRuleBa
         LOG.debug("checkPendingBudgetConstructionGeneralLedgerLine() end");
         return isValid;
     }
+    
+    protected boolean isBudgetAggregationAllowed(Collection<String> paramValues, PendingBudgetConstructionGeneralLedger accountingLine, MessageMap errors, boolean isAdd) {
+      boolean isAllowed = true;
+
+      if (paramValues != null) {
+          if (!paramValues.contains(accountingLine.getFinancialObject().getFinancialBudgetAggregationCd())) {
+              isAllowed = false;
+
+              this.putError(errors, KFSPropertyConstants.FINANCIAL_OBJECT_CODE, KFSKeyConstants.ERROR_DOCUMENT_INCORRECT_OBJ_CODE_WITH_BUDGET_AGGREGATION, isAdd, accountingLine.getFinancialObjectCode(), accountingLine.getFinancialObject().getFinancialBudgetAggregationCd());
+          }
+      }
+      else {
+          isAllowed = false;
+      }
+
+      return isAllowed;
+  }
+    
+    protected boolean isObjectTypeAllowed(Collection<String> paramValues, PendingBudgetConstructionGeneralLedger accountingLine, MessageMap errors, boolean isRevenue, boolean isAdd) {
+      boolean isAllowed = true;
+
+      if (paramValues != null) {
+          if (!paramValues.contains(accountingLine.getFinancialObject().getFinancialObjectTypeCode())) {
+              isAllowed = false;
+
+              String targetErrorProperty;
+              if (isAdd) {
+                  targetErrorProperty = KFSPropertyConstants.FINANCIAL_OBJECT_CODE;
+              }
+              else {
+                  targetErrorProperty = TARGET_ERROR_PROPERTY_NAME;
+              }
+
+              if (isRevenue) {
+                  this.putError(errors, targetErrorProperty, BCKeyConstants.ERROR_BUDGET_OBJECT_TYPE_INVALID_REVENUE, isAdd, accountingLine.getFinancialObjectCode(),accountingLine.getFinancialObject().getFinancialObjectTypeCode());
+              }
+              else {
+                  this.putError(errors, targetErrorProperty, BCKeyConstants.ERROR_BUDGET_OBJECT_TYPE_INVALID_EXPENSE, isAdd, accountingLine.getFinancialObjectCode(),accountingLine.getFinancialObject().getFinancialObjectTypeCode());
+              }
+          }
+      }
+      else {
+          isAllowed = false;
+      }
+
+      return isAllowed;
+  }
+    
+    protected boolean isNotSalarySettingOnly(Collection<String> fundGroupParamValues, Collection<String> subfundGroupParamValues, BudgetConstructionDocument budgetConstructionDocument, PendingBudgetConstructionGeneralLedger accountingLine, MessageMap errors, boolean isRevenue, boolean isAdd) {
+      boolean isAllowed = true;
+
+      // check if account belongs to a fund or subfund that only allows salary setting lines
+      AccountSalarySettingOnlyCause retVal = budgetParameterService.isSalarySettingOnlyAccount(budgetConstructionDocument);
+      if (retVal != AccountSalarySettingOnlyCause.MISSING_PARAM) {
+          if (retVal != AccountSalarySettingOnlyCause.NONE) {
+
+              // the line must use an object that is a detail salary labor object
+              if (isRevenue || accountingLine.getLaborObject() == null || !accountingLine.getLaborObject().isDetailPositionRequiredIndicator()) {
+
+                  isAllowed = false;
+                  if (retVal == AccountSalarySettingOnlyCause.FUND || retVal == AccountSalarySettingOnlyCause.FUND_AND_SUBFUND) {
+                      this.putError(errors, KFSPropertyConstants.FINANCIAL_OBJECT_CODE, BCKeyConstants.ERROR_SALARY_SETTING_OBJECT_ONLY, isAdd, "fund " + budgetConstructionDocument.getAccount().getSubFundGroup().getFundGroupCode());
+
+                  }
+                  if (retVal == AccountSalarySettingOnlyCause.SUBFUND || retVal == AccountSalarySettingOnlyCause.FUND_AND_SUBFUND) {
+                      this.putError(errors, KFSPropertyConstants.FINANCIAL_OBJECT_CODE, BCKeyConstants.ERROR_SALARY_SETTING_OBJECT_ONLY, isAdd, "subfund " + budgetConstructionDocument.getAccount().getSubFundGroup().getSubFundGroupCode());
+                  }
+              }
+          }
+
+      }
+      else {
+          // missing system parameter
+          this.putError(errors, KFSPropertyConstants.FINANCIAL_OBJECT_CODE, BCKeyConstants.ERROR_SALARY_SETTING_OBJECT_ONLY_NO_PARAMETER, isAdd, budgetConstructionDocument.getAccount().getSubFundGroup().getFundGroupCode() + "," + budgetConstructionDocument.getAccount().getSubFundGroup().getSubFundGroupCode());
+          isAllowed = false;
+      }
+
+      return isAllowed;
+  }
+    
+    protected boolean isNotFringeBenefitObject(Collection<String> paramValues, PendingBudgetConstructionGeneralLedger accountingLine, MessageMap errors, boolean isAdd) {
+      boolean isAllowed = true;
+
+      if (paramValues != null) {
+          if (accountingLine.getLaborObject() != null) {
+              if (paramValues.contains(accountingLine.getLaborObject().getFinancialObjectFringeOrSalaryCode())) {
+                  isAllowed = false;
+                  this.putError(errors, KFSPropertyConstants.FINANCIAL_OBJECT_CODE, BCKeyConstants.ERROR_FRINGE_BENEFIT_OBJECT_NOT_ALLOWED, isAdd, accountingLine.getFinancialObjectCode());
+              }
+          }
+      }
+      else {
+          isAllowed = false;
+      }
+
+      return isAllowed;
+  }
 
     protected boolean validatePBGLLine(PendingBudgetConstructionGeneralLedger pendingBudgetConstructionGeneralLedger, boolean isAdd) {
         if (pendingBudgetConstructionGeneralLedger == null) {
-            throw new IllegalStateException(getKualiConfigurationService().getPropertyString(KFSKeyConstants.ERROR_DOCUMENT_NULL_ACCOUNTING_LINE));
+            throw new IllegalStateException(getKualiConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_DOCUMENT_NULL_ACCOUNTING_LINE));
         }
 
         // grab the service instance that will be needed by all the validate methods
@@ -763,53 +862,6 @@ public class BudgetConstructionDocumentRules extends TransactionalDocumentRuleBa
         }
     }
 
-    protected boolean isObjectTypeAllowed(List paramValues, PendingBudgetConstructionGeneralLedger accountingLine, MessageMap errors, boolean isRevenue, boolean isAdd) {
-        boolean isAllowed = true;
-
-        if (paramValues != null) {
-            if (!paramValues.contains(accountingLine.getFinancialObject().getFinancialObjectTypeCode())) {
-                isAllowed = false;
-
-                String targetErrorProperty;
-                if (isAdd) {
-                    targetErrorProperty = KFSPropertyConstants.FINANCIAL_OBJECT_CODE;
-                }
-                else {
-                    targetErrorProperty = TARGET_ERROR_PROPERTY_NAME;
-                }
-
-                if (isRevenue) {
-                    this.putError(errors, targetErrorProperty, KFSKeyConstants.ERROR_DOCUMENT_EXPENSE_ON_INCOME_SIDE, isAdd, accountingLine.getFinancialObjectCode());
-                }
-                else {
-                    this.putError(errors, targetErrorProperty, KFSKeyConstants.ERROR_DOCUMENT_INCOME_ON_EXPENSE_SIDE, isAdd, accountingLine.getFinancialObjectCode());
-                }
-            }
-        }
-        else {
-            isAllowed = false;
-        }
-
-        return isAllowed;
-    }
-
-    protected boolean isBudgetAggregationAllowed(List paramValues, PendingBudgetConstructionGeneralLedger accountingLine, MessageMap errors, boolean isAdd) {
-        boolean isAllowed = true;
-
-        if (paramValues != null) {
-            if (!paramValues.contains(accountingLine.getFinancialObject().getFinancialBudgetAggregationCd())) {
-                isAllowed = false;
-
-                this.putError(errors, KFSPropertyConstants.FINANCIAL_OBJECT_CODE, KFSKeyConstants.ERROR_DOCUMENT_INCORRECT_OBJ_CODE_WITH_BUDGET_AGGREGATION, isAdd, accountingLine.getFinancialObjectCode(), accountingLine.getFinancialObject().getFinancialBudgetAggregationCd());
-            }
-        }
-        else {
-            isAllowed = false;
-        }
-
-        return isAllowed;
-    }
-
     protected boolean isNewLineUnique(BudgetConstructionDocument budgetConstructionDocument, PendingBudgetConstructionGeneralLedger newLine, MessageMap errors, boolean isRevenue) {
         boolean isUnique = true;
         List<PendingBudgetConstructionGeneralLedger> existingLines;
@@ -838,56 +890,6 @@ public class BudgetConstructionDocumentRules extends TransactionalDocumentRuleBa
                 this.putError(errors, KFSPropertyConstants.FINANCIAL_OBJECT_CODE, BCKeyConstants.ERROR_LABOR_OBJECT_IN_NOWAGES_ACCOUNT, isAdd, accountingLine.getFinancialObjectCode());
             }
         }
-        return isAllowed;
-    }
-
-    protected boolean isNotFringeBenefitObject(List paramValues, PendingBudgetConstructionGeneralLedger accountingLine, MessageMap errors, boolean isAdd) {
-        boolean isAllowed = true;
-
-        if (paramValues != null) {
-            if (accountingLine.getLaborObject() != null) {
-                if (paramValues.contains(accountingLine.getLaborObject().getFinancialObjectFringeOrSalaryCode())) {
-                    isAllowed = false;
-                    this.putError(errors, KFSPropertyConstants.FINANCIAL_OBJECT_CODE, BCKeyConstants.ERROR_FRINGE_BENEFIT_OBJECT_NOT_ALLOWED, isAdd, accountingLine.getFinancialObjectCode());
-                }
-            }
-        }
-        else {
-            isAllowed = false;
-        }
-
-        return isAllowed;
-    }
-
-    protected boolean isNotSalarySettingOnly(List fundGroupParamValues, List subfundGroupParamValues, BudgetConstructionDocument budgetConstructionDocument, PendingBudgetConstructionGeneralLedger accountingLine, MessageMap errors, boolean isRevenue, boolean isAdd) {
-        boolean isAllowed = true;
-
-        // check if account belongs to a fund or subfund that only allows salary setting lines
-        AccountSalarySettingOnlyCause retVal = budgetParameterService.isSalarySettingOnlyAccount(budgetConstructionDocument);
-        if (retVal != AccountSalarySettingOnlyCause.MISSING_PARAM) {
-            if (retVal != AccountSalarySettingOnlyCause.NONE) {
-
-                // the line must use an object that is a detail salary labor object
-                if (isRevenue || accountingLine.getLaborObject() == null || !accountingLine.getLaborObject().isDetailPositionRequiredIndicator()) {
-
-                    isAllowed = false;
-                    if (retVal == AccountSalarySettingOnlyCause.FUND || retVal == AccountSalarySettingOnlyCause.FUND_AND_SUBFUND) {
-                        this.putError(errors, KFSPropertyConstants.FINANCIAL_OBJECT_CODE, BCKeyConstants.ERROR_SALARY_SETTING_OBJECT_ONLY, isAdd, "fund " + budgetConstructionDocument.getAccount().getSubFundGroup().getFundGroupCode());
-
-                    }
-                    if (retVal == AccountSalarySettingOnlyCause.SUBFUND || retVal == AccountSalarySettingOnlyCause.FUND_AND_SUBFUND) {
-                        this.putError(errors, KFSPropertyConstants.FINANCIAL_OBJECT_CODE, BCKeyConstants.ERROR_SALARY_SETTING_OBJECT_ONLY, isAdd, "subfund " + budgetConstructionDocument.getAccount().getSubFundGroup().getSubFundGroupCode());
-                    }
-                }
-            }
-
-        }
-        else {
-            // missing system parameter
-            this.putError(errors, KFSPropertyConstants.FINANCIAL_OBJECT_CODE, BCKeyConstants.ERROR_SALARY_SETTING_OBJECT_ONLY_NO_PARAMETER, isAdd, budgetConstructionDocument.getAccount().getSubFundGroup().getFundGroupCode() + "," + budgetConstructionDocument.getAccount().getSubFundGroup().getSubFundGroupCode());
-            isAllowed = false;
-        }
-
         return isAllowed;
     }
 

@@ -25,13 +25,10 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
@@ -41,9 +38,6 @@ import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
-import org.kuali.kfs.coa.businessobject.SubFundGroup;
-import org.kuali.kfs.gl.businessobject.Balance;
-import org.kuali.kfs.gl.businessobject.Entry;
 import org.kuali.kfs.module.bc.BCConstants;
 import org.kuali.kfs.module.bc.BCParameterKeyConstants;
 import org.kuali.kfs.module.bc.batch.dataaccess.GeneralLedgerBudgetLoadDao;
@@ -54,22 +48,20 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.service.HomeOriginationService;
-import org.kuali.rice.core.config.ConfigContext;
-import org.kuali.rice.kew.util.KEWConstants;
-import org.kuali.rice.kns.bo.Parameter;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.KualiInteger;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.util.TransactionalServiceUtils;
+import org.kuali.rice.core.api.config.property.Config;
+import org.kuali.rice.core.api.config.property.ConfigContext;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.rice.coreservice.api.parameter.Parameter;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.rice.krad.util.TransactionalServiceUtils;
 
 import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
-import edu.cornell.kfs.coa.businessobject.SubFundProgram;
 import edu.cornell.kfs.module.bc.CUBCConstants;
-import edu.cornell.kfs.module.bc.CUBCPropertyConstants;
 
 public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelperDaoOjb implements GeneralLedgerBudgetLoadDao {
 
@@ -81,7 +73,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     private HomeOriginationService homeOriginationService;
     private ParameterService parameterService;
     private BusinessObjectService boService;
-    private KualiConfigurationService kualiConfigurationService;
+    private ConfigurationService kualiConfigurationService;
     private boolean tbRunFlag = false;
     
 
@@ -106,19 +98,19 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         //First we need to determine if we are running this for Trustee Budget(TB) or regular Budget Construction (BC)
        
     	//first we need to check all params and echo if they are setup properly
-    	Parameter tbRunFlagParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSTEE_ONLY_BUDGET);
-    	Parameter subFundsParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS);
-    	Parameter subFundProgramsParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS_PROGRAM);
-        Parameter glAcObjectsParameter = parameterService.retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_AC_OBJECTS);
+    	Parameter tbRunFlagParameter = parameterService.getParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSTEE_ONLY_BUDGET);
+    	Parameter subFundsParameter = parameterService.getParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS);
+    	Parameter subFundProgramsParameter = parameterService.getParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS_PROGRAM);
+        Parameter glAcObjectsParameter = parameterService.getParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_AC_OBJECTS);
         
         String productionSetting = ConfigContext.getCurrentContextConfig().getEnvironment();   
         boolean errorEncountered = printOutEnvironment(reportDataStream, tbRunFlagParameter, subFundsParameter, subFundProgramsParameter, glAcObjectsParameter, fiscalYear, productionSetting);
         
         
-        if(tbRunFlagParameter.getParameterValue() != null) {
-        	if(tbRunFlagParameter.getParameterValue().equals("Y")) {
+        if(tbRunFlagParameter.getValue() != null) {
+        	if(tbRunFlagParameter.getValue().equals("Y")) {
         		tbRunFlag = true;
-        	} else if(tbRunFlagParameter.getParameterValue().equals("N")) {
+        	} else if(tbRunFlagParameter.getValue().equals("N")) {
         		tbRunFlag = false;
         	}	
         }
@@ -150,8 +142,6 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         // (4) the "origination code", which comes from the database
         DaoGlobalVariables daoGlobalVariables = new DaoGlobalVariables(fiscalYear);
         
-
-        
         /**
          * make sure all the accounting periods for the load year are open, so the entry lines we create can be posted
          */
@@ -169,17 +159,18 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         
         // write out the counts for verification
         //diagnosticCounters.writeDiagnosticCounters();
-        Parameter param = this.getParameterService().retrieveParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSTEE_ONLY_BUDGET);
+        
+        Parameter param = this.getParameterService().getParameter(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_TRUSTEE_ONLY_BUDGET);
+        Parameter.Builder newParm = Parameter.Builder.create(param);
         
         if(tbRunFlag) {
-            param.setParameterValue("N");
-            this.getBusinessObjectService().save(param);
+          newParm.setValue("N");
         } else if(!tbRunFlag) {
-        	param.setParameterValue("X");
-            this.getBusinessObjectService().save(param);
+        	newParm.setValue("X");
         }
-        writeReport(reportDataStream, diagnosticCounters);
         
+        getParameterService().updateParameter(newParm.build());
+        writeReport(reportDataStream, diagnosticCounters);
         
     }
 
@@ -202,14 +193,14 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     	body.append(String.format("\nINFO: Report being run for Fiscal Year %d\n", fiscalYear));
     	body.append(String.format("\nINFO: Report is being run on the %s system.\n", productionSetting));
     	if(tbRunFlagParameter != null) {
-    		if(tbRunFlagParameter.getParameterValue() == null) {
+    		if(tbRunFlagParameter.getValue() == null) {
     			warningEncountered = true;
-    			body.append(String.format("\nWARNING: %s is NULL, suggest using 'N' as value\n", tbRunFlagParameter.getParameterName()));
-    		} else if(tbRunFlagParameter.getParameterValue().equals("Y") || tbRunFlagParameter.getParameterValue().equals("N")) {
-    			body.append(String.format("\nINFO: %s %s %s \n", tbRunFlagParameter.getParameterName(), BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, tbRunFlagParameter.getParameterValue() ));
+    			body.append(String.format("\nWARNING: %s is NULL, suggest using 'N' as value\n", tbRunFlagParameter.getName()));
+    		} else if(tbRunFlagParameter.getValue().equals("Y") || tbRunFlagParameter.getValue().equals("N")) {
+    			body.append(String.format("\nINFO: %s %s %s \n", tbRunFlagParameter.getName(), BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, tbRunFlagParameter.getValue() ));
     		} else {
     			errorEncountered = true;
-    			body.append(String.format("\nERROR: %s is %s, valid values are Y/N/Null\n", tbRunFlagParameter.getParameterName(), tbRunFlagParameter.getParameterValue()));
+    			body.append(String.format("\nERROR: %s is %s, valid values are Y/N/Null\n", tbRunFlagParameter.getName(), tbRunFlagParameter.getValue()));
     		}
     	} else {
     		errorEncountered = true;
@@ -217,14 +208,14 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     	}
     	
     	if(subFundsParameter != null) {
-    		if(subFundsParameter.getParameterValue() == null) {
+    		if(subFundsParameter.getValue() == null) {
     			warningEncountered = true;
-    			body.append(String.format("\nWARNING: %s is NULL\n", subFundsParameter.getParameterName()));
-    		} else if(StringUtils.isNotEmpty(subFundsParameter.getParameterValue())) {
-    			body.append(String.format("\nINFO: %s %s %s \n", subFundsParameter.getParameterName(), BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, subFundsParameter.getParameterValue() ));
+    			body.append(String.format("\nWARNING: %s is NULL\n", subFundsParameter.getName()));
+    		} else if(StringUtils.isNotEmpty(subFundsParameter.getValue())) {
+    			body.append(String.format("\nINFO: %s %s %s \n", subFundsParameter.getName(), BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, subFundsParameter.getValue() ));
     		} else {
     			warningEncountered = true;
-    			body.append(String.format("\nWARNING: %s is empty\n", tbRunFlagParameter.getParameterName()));
+    			body.append(String.format("\nWARNING: %s is empty\n", tbRunFlagParameter.getName()));
     		}
     		
     	} else {
@@ -233,14 +224,14 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     	}
     	
     	if(subFundProgramsParameter != null) {
-    		if(subFundProgramsParameter.getParameterValue() == null) {
+    		if(subFundProgramsParameter.getValue() == null) {
     			warningEncountered = true;
-    			body.append(String.format("\nWARNING: %s is NULL\n", subFundProgramsParameter.getParameterName()));
-    		} else if(StringUtils.isNotEmpty(subFundProgramsParameter.getParameterValue())) {
-    			body.append(String.format("\nINFO: %s %s %s \n", subFundProgramsParameter.getParameterName(), BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, subFundProgramsParameter.getParameterValue() ));
+    			body.append(String.format("\nWARNING: %s is NULL\n", subFundProgramsParameter.getName()));
+    		} else if(StringUtils.isNotEmpty(subFundProgramsParameter.getValue())) {
+    			body.append(String.format("\nINFO: %s %s %s \n", subFundProgramsParameter.getName(), BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, subFundProgramsParameter.getValue() ));
     		} else {
     			warningEncountered = true;
-    			body.append(String.format("\nWARNING: %s is empty\n", tbRunFlagParameter.getParameterName()));
+    			body.append(String.format("\nWARNING: %s is empty\n", tbRunFlagParameter.getName()));
     		}
     		
     	} else {
@@ -249,14 +240,14 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
     	}
     	
     	if(glAcObjectsParameter != null) {
-    		if(glAcObjectsParameter.getParameterValue() == null) {
+    		if(glAcObjectsParameter.getValue() == null) {
     			warningEncountered = true;
-    			body.append(String.format("\nWARNING: %s is NULL\n", glAcObjectsParameter.getParameterName()));
-    		} else if(StringUtils.isNotEmpty(glAcObjectsParameter.getParameterValue())) {
-    			body.append(String.format("\nINFO: %s %s %s \n", glAcObjectsParameter.getParameterName(), BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, glAcObjectsParameter.getParameterValue() ));
+    			body.append(String.format("\nWARNING: %s is NULL\n", glAcObjectsParameter.getName()));
+    		} else if(StringUtils.isNotEmpty(glAcObjectsParameter.getValue())) {
+    			body.append(String.format("\nINFO: %s %s %s \n", glAcObjectsParameter.getName(), BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, glAcObjectsParameter.getValue() ));
     		} else {
     			warningEncountered = true;
-    			body.append(String.format("\nWARNING: %s is empty\n", tbRunFlagParameter.getParameterName()));
+    			body.append(String.format("\nWARNING: %s is empty\n", tbRunFlagParameter.getName()));
     		}
     	} else {
     		errorEncountered = true;
@@ -461,7 +452,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         if(!tbRunFlag) {
         	boolean writeAcRecord = false;
         	String objectCd = pbgl.getFinancialObjectCode();
-        	List<String> objectCodes = this.parameterService.getParameterValues(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_AC_OBJECTS);
+        	List<String> objectCodes = new ArrayList<String> (this.parameterService.getParameterValuesAsString(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_AC_OBJECTS));
             if(objectCodes.contains(objectCd)) {
             	writeAcRecord = true;
             } else {
@@ -671,7 +662,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
         HashSet<String> bannedAccounts = new HashSet<String>();
 
         
-        List<String> subFunds = this.parameterService.getParameterValues(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS);
+        List<String> subFunds = new ArrayList<String>(this.parameterService.getParameterValuesAsString(BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL, BCParameterKeyConstants.BC_GL_SUB_FUNDS));
         Criteria criteria = new Criteria();
 
         criteria.addIn(KFSPropertyConstants.SUB_FUND_GROUP_CODE, subFunds);
@@ -697,9 +688,9 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
            
         }
         
-        List<String> subFundsProgram = this.parameterService.getParameterValues(
+        List<String> subFundsProgram = new ArrayList<String> (this.parameterService.getParameterValuesAsString(
                 BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCParameterKeyConstants.BUDGET_CONSTRUCTION_PARAM_DTL,
-                BCParameterKeyConstants.BC_GL_SUB_FUNDS_PROGRAM);
+                BCParameterKeyConstants.BC_GL_SUB_FUNDS_PROGRAM));
 
         Criteria acctExtCriteria = new Criteria();
         acctExtCriteria.addIn("programCode", subFundsProgram);
@@ -1101,7 +1092,7 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 	/**
 	 * @return the kualiConfigurationService
 	 */
-	public KualiConfigurationService getKualiConfigurationService() {
+	public ConfigurationService getKualiConfigurationService() {
 		return kualiConfigurationService;
 	}
 
@@ -1109,12 +1100,17 @@ public class GeneralLedgerBudgetLoadDaoOjb extends BudgetConstructionBatchHelper
 	 * @param kualiConfigurationService the kualiConfigurationService to set
 	 */
 	public void setKualiConfigurationService(
-			KualiConfigurationService kualiConfigurationService) {
+			ConfigurationService kualiConfigurationService) {
 		this.kualiConfigurationService = kualiConfigurationService;
 	}
 
 	protected boolean isProduction() {
-	     return ConfigContext.getCurrentContextConfig().getProperty(KEWConstants.PROD_DEPLOYMENT_CODE).equalsIgnoreCase(
+	     return ConfigContext.getCurrentContextConfig().getProperty(Config.PROD_ENVIRONMENT_CODE).equalsIgnoreCase(
 	       ConfigContext.getCurrentContextConfig().getEnvironment());
 	}
+
+	//TODO UPGRADE-911
+  public void loadGeneralLedgerFromBudget(Integer fiscalYear,
+      Date currentSqlDate, String financialSystemOriginationCode) {    
+  }
 }

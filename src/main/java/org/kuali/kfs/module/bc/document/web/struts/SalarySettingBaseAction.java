@@ -42,16 +42,18 @@ import org.kuali.kfs.module.bc.document.validation.event.NormalizePayrateAndAmou
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.service.IdentityManagementService;
-import org.kuali.rice.kns.exception.AuthorizationException;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.services.IdentityManagementService;
 import org.kuali.rice.kns.question.ConfirmationQuestion;
-import org.kuali.rice.kns.rule.event.KualiDocumentEvent;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.service.KualiRuleService;
-import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSConstants;
+import org.kuali.rice.kns.util.KNSGlobalVariables;
+import org.kuali.rice.krad.exception.AuthorizationException;
+import org.kuali.rice.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.KualiRuleService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import edu.cornell.kfs.module.bc.document.service.BudgetConstructionFlagsService;
 
@@ -63,7 +65,7 @@ public abstract class SalarySettingBaseAction extends BudgetExpansionAction {
 
     private SalarySettingService salarySettingService = SpringContext.getBean(SalarySettingService.class);
     private BusinessObjectService businessObjectService = SpringContext.getBean(BusinessObjectService.class);
-    private KualiConfigurationService kualiConfiguration = SpringContext.getBean(KualiConfigurationService.class);
+    private ConfigurationService kualiConfiguration = SpringContext.getBean(ConfigurationService.class);
     private BudgetDocumentService budgetDocumentService = SpringContext.getBean(BudgetDocumentService.class);
     private KualiRuleService kualiRuleService = SpringContext.getBean(KualiRuleService.class);
     private BudgetConstructionFlagsService budgetConstructionFlagsService = SpringContext.getBean(BudgetConstructionFlagsService.class);
@@ -89,16 +91,14 @@ public abstract class SalarySettingBaseAction extends BudgetExpansionAction {
         populateAuthorizationFields(salarySettingForm);
 
         ActionForward forward = super.execute(mapping, form, request, response);
-        if (!salarySettingForm.isLostSession()) {
-            salarySettingForm.postProcessBCAFLines();
+        salarySettingForm.postProcessBCAFLines();
 
-            // re-init the session form if session scoped
-            if (salarySettingForm.getMethodToCall().equals("refresh")) {
-                if (BCConstants.MAPPING_SCOPE_SESSION.equals(mapping.getScope())) {
-                    HttpSession sess = request.getSession(Boolean.FALSE);
-                    String formName = mapping.getAttribute();
-                    sess.setAttribute(formName, salarySettingForm);
-                }
+        // re-init the session form if session scoped
+        if (salarySettingForm.getMethodToCall().equals("refresh")) {
+            if (BCConstants.MAPPING_SCOPE_SESSION.equals(mapping.getScope())) {
+                HttpSession sess = request.getSession(Boolean.FALSE);
+                String formName = mapping.getAttribute();
+                sess.setAttribute(formName, salarySettingForm);
             }
         }
         return forward;
@@ -120,16 +120,16 @@ public abstract class SalarySettingBaseAction extends BudgetExpansionAction {
     protected void initAuthorization(SalarySettingBaseForm salarySettingForm) {
         Person user = GlobalVariables.getUserSession().getPerson();
 
-        boolean isAuthorized = SpringContext.getBean(IdentityManagementService.class).isAuthorized(user.getPrincipalId(), BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCConstants.KimConstants.USE_ORG_SALARY_SETTING_PERMISSION_NAME, null, null);
+        boolean isAuthorized = SpringContext.getBean(IdentityManagementService.class).isAuthorized(user.getPrincipalId(), BCConstants.BUDGET_CONSTRUCTION_NAMESPACE, BCConstants.KimConstants.USE_ORG_SALARY_SETTING_PERMISSION_NAME, null);
         if (isAuthorized) {
-            salarySettingForm.getDocumentActions().put(KNSConstants.KUALI_ACTION_CAN_EDIT, KNSConstants.KUALI_DEFAULT_TRUE_VALUE);
+            salarySettingForm.getDocumentActions().put(KRADConstants.KUALI_ACTION_CAN_EDIT, KRADConstants.KUALI_DEFAULT_TRUE_VALUE);
         }
         else {
             throw new AuthorizationException(user.getName(), "view", salarySettingForm.getAccountNumber() + ", " + salarySettingForm.getSubAccountNumber());
         }
 
         if (!SpringContext.getBean(FiscalYearFunctionControlService.class).isBudgetUpdateAllowed(salarySettingForm.getUniversityFiscalYear())) {
-            salarySettingForm.getEditingMode().put(BCConstants.EditModes.SYSTEM_VIEW_ONLY, KNSConstants.KUALI_DEFAULT_TRUE_VALUE);
+            salarySettingForm.getEditingMode().put(BCConstants.EditModes.SYSTEM_VIEW_ONLY, KRADConstants.KUALI_DEFAULT_TRUE_VALUE);
         }
 
         BudgetConstructionAuthorizationStatus editStatus = new BudgetConstructionAuthorizationStatus();
@@ -158,7 +158,7 @@ public abstract class SalarySettingBaseAction extends BudgetExpansionAction {
         // ask a question before closing unless it has been answered
         String question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
         if (StringUtils.isBlank(question)) {
-            String questionText = kualiConfiguration.getPropertyString(KFSKeyConstants.QUESTION_SAVE_BEFORE_CLOSE);
+            String questionText = kualiConfiguration.getPropertyValueAsString(KFSKeyConstants.QUESTION_SAVE_BEFORE_CLOSE);
             return this.performQuestionWithoutInput(mapping, salarySettingForm, request, response, KFSConstants.DOCUMENT_SAVE_BEFORE_CLOSE_QUESTION, questionText, KFSConstants.CONFIRMATION_QUESTION, KFSConstants.MAPPING_CLOSE, "");
         }
 
@@ -369,7 +369,7 @@ public abstract class SalarySettingBaseAction extends BudgetExpansionAction {
         }
 
         this.cleanupAnySessionForm(mapping, request);
-        GlobalVariables.getMessageList().add(BCKeyConstants.MESSAGE_BUDGET_SUCCESSFUL_CLOSE);
+        KNSGlobalVariables.getMessageList().add(BCKeyConstants.MESSAGE_BUDGET_SUCCESSFUL_CLOSE);
         return mapping.findForward(BCConstants.MAPPING_ORGANIZATION_SALARY_SETTING_RETURNING);
     }
 

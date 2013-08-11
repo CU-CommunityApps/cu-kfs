@@ -65,21 +65,21 @@ import org.kuali.kfs.vnd.businessobject.ShippingPaymentTerms;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.kew.dto.ActionTakenEventDTO;
-import org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kns.bo.Note;
-import org.kuali.rice.kns.rule.event.KualiDocumentEvent;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.KualiConfigurationService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
-import org.kuali.rice.kns.workflow.service.WorkflowDocumentService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kew.framework.postprocessor.ActionTakenEvent;
+import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.rice.krad.service.DataDictionaryService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.rice.krad.workflow.service.WorkflowDocumentService;
 
 /**
  * Payment Request Document Business Object. Contains the fields associated with the main document table.
@@ -149,7 +149,6 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
     /**
      * @see org.kuali.rice.kns.bo.PersistableBusinessObjectBase#isBoNotesSupport()
      */
-    @Override
     public boolean isBoNotesSupport() {
         return true;
     }
@@ -548,7 +547,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
             this.setVendorPostalCode(po.getVendorPostalCode());
             this.setVendorCountryCode(po.getVendorCountryCode());
 
-            boolean blankAttentionLine = StringUtils.equalsIgnoreCase("Y", SpringContext.getBean(KualiConfigurationService.class).getParameterValue(PurapConstants.PURAP_NAMESPACE, "Document", PurapParameterConstants.BLANK_ATTENTION_LINE_FOR_PO_TYPE_ADDRESS));
+            boolean blankAttentionLine = StringUtils.equalsIgnoreCase("Y", SpringContext.getBean(ParameterService.class).getParameterValueAsString(PurapConstants.PURAP_NAMESPACE, "Document", PurapParameterConstants.BLANK_ATTENTION_LINE_FOR_PO_TYPE_ADDRESS));
 
             if (blankAttentionLine) {
                 setVendorAttentionName(StringUtils.EMPTY);
@@ -601,7 +600,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
      */
     @Override
     public String getDocumentTitle() {
-       if (SpringContext.getBean(ParameterService.class).getIndicatorParameter(PaymentRequestDocument.class, PurapParameterConstants.PURAP_OVERRIDE_PREQ_DOC_TITLE)) {
+       if (SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(PaymentRequestDocument.class, PurapParameterConstants.PURAP_OVERRIDE_PREQ_DOC_TITLE)) {
             return getCustomDocumentTitle();
         }
         return this.buildDocumentTitle(super.getDocumentTitle());
@@ -621,10 +620,10 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
         String preqAmount = getGrandTotal().toString();
 
         String documentTitle = "";
-        String[] nodeNames =Strings.split(getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames(), ",");
+        String[] nodeNames = (String[]) getDocumentHeader().getWorkflowDocument().getCurrentNodeNames().toArray();
 
         // if this doc is final or will be final
-        if (nodeNames.length == 0 || getDocumentHeader().getWorkflowDocument().stateIsFinal()) {
+        if (nodeNames.length == 0 || getDocumentHeader().getWorkflowDocument().isFinal()) {
             documentTitle = (new StringBuffer("PO: ")).append(poNumber).append(" Vendor: ").append(vendorName).append(" Amount: ").append(preqAmount).toString();
         }
         else {
@@ -691,22 +690,22 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
      * @see org.kuali.rice.kns.document.DocumentBase#doRouteStatusChange()
      */
     @Override
-    public void doRouteStatusChange(DocumentRouteStatusChangeDTO statusChangeEvent) {
+    public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
         LOG.debug("doRouteStatusChange() started");
         
         super.doRouteStatusChange(statusChangeEvent);
         try {
             // DOCUMENT PROCESSED
-            if (this.getDocumentHeader().getWorkflowDocument().stateIsProcessed()) {
+            if (this.getDocumentHeader().getWorkflowDocument().isProcessed()) {
                 if (!PaymentRequestStatuses.AUTO_APPROVED.equals(getStatusCode())) {
-                    SpringContext.getBean(PurapService.class).updateStatus(this, PurapConstants.PaymentRequestStatuses.DEPARTMENT_APPROVED);
+                    getFinancialSystemDocumentHeader().updateAndSaveAppDocStatus(PurapConstants.PaymentRequestStatuses.DEPARTMENT_APPROVED);
                     populateDocumentForRouting();
                     SpringContext.getBean(PurapService.class).saveDocumentNoValidation(this);
                     return;
                 }
             }
             // DOCUMENT DISAPPROVED
-            else if (this.getDocumentHeader().getWorkflowDocument().stateIsDisapproved()) {
+            else if (this.getDocumentHeader().getWorkflowDocument().isDisapproved()) {
                 String nodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(getDocumentHeader().getWorkflowDocument());
                 NodeDetails currentNode = NodeDetailEnum.getNodeDetailEnumByName(nodeName);
                 if (ObjectUtils.isNotNull(currentNode)) {
@@ -722,7 +721,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
                 logAndThrowRuntimeException("No status found to set for document being disapproved in node '" + nodeName + "'");
             }
             // DOCUMENT CANCELED
-            else if (this.getDocumentHeader().getWorkflowDocument().stateIsCanceled()) {
+            else if (this.getDocumentHeader().getWorkflowDocument().isCanceled()) {
                 String currentNodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(this.getDocumentHeader().getWorkflowDocument());
                 NodeDetails currentNode = NodeDetailEnum.getNodeDetailEnumByName(currentNodeName);
                 if (ObjectUtils.isNotNull(currentNode)) {
@@ -736,7 +735,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
 
                     if (StringUtils.isNotBlank(cancelledStatusCode)) {
                     	SpringContext.getBean(AccountsPayableService.class).cancelAccountsPayableDocument(this, currentNodeName);
-                        SpringContext.getBean(PurapService.class).updateStatus(this, cancelledStatusCode);
+                    	getFinancialSystemDocumentHeader().updateAndSaveAppDocStatus(cancelledStatusCode);
                         SpringContext.getBean(PurapService.class).saveDocumentNoValidation(this);
                         return;
                     }
@@ -755,10 +754,10 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
      * @see org.kuali.rice.kns.document.Document#doActionTaken(org.kuali.rice.kew.clientapp.vo.ActionTakenEventDTO)
      */
     @Override
-    public void doActionTaken(ActionTakenEventDTO event) {
+    public void doActionTaken(ActionTakenEvent event) {
         super.doActionTaken(event);
-        KualiWorkflowDocument workflowDocument = getDocumentHeader().getWorkflowDocument();
-        String[] currentNodes = Strings.split(workflowDocument.getCurrentRouteNodeNames(), ",");
+        WorkflowDocument workflowDocument = getDocumentHeader().getWorkflowDocument();
+        String[] currentNodes = (String[]) workflowDocument.getCurrentNodeNames().toArray();
         String currentNode = null;
         if (currentNodes.length > 0) {
             currentNode = currentNodes[0];
@@ -836,7 +835,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
 
     public String getPurchaseOrderNotes() {
 
-        ArrayList poNotes = (ArrayList) this.getPurchaseOrderDocument().getBoNotes();
+        ArrayList poNotes = (ArrayList) this.getPurchaseOrderDocument().getNotes();
 
         if (poNotes.size() > 0) {
             return "Yes";
@@ -959,7 +958,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
      */
     public String getAccountsPayableRequestCancelPersonName() {
         String personName = null;
-        Person user = SpringContext.getBean(org.kuali.rice.kim.service.PersonService.class).getPerson(getAccountsPayableRequestCancelIdentifier());
+        Person user = SpringContext.getBean(PersonService.class).getPerson(getAccountsPayableRequestCancelIdentifier());
         if (user != null) {
             personName = user.getName();
         }
@@ -1055,15 +1054,10 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
      */
     @Override
     public void prepareForSave(KualiDocumentEvent event) {
-        KualiWorkflowDocument workflowDocument = this.getDocumentHeader().getWorkflowDocument();
+        WorkflowDocument workflowDocument = this.getDocumentHeader().getWorkflowDocument();
         String workflowDocumentTitle = this.buildDocumentTitle(workflowDocument.getTitle());
 
-        try {
-            this.getDocumentHeader().getWorkflowDocument().setTitle(workflowDocumentTitle);
-        }
-        catch (WorkflowException e) {
-            LOG.error("fail to access Workflow." + e);
-        }
+        this.getDocumentHeader().getWorkflowDocument().setTitle(workflowDocumentTitle);
 
         // first populate, then call super
         if (event instanceof AttributedContinuePurapEvent) {
@@ -1080,7 +1074,7 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
     protected boolean isAttachmentRequired() {
         if (getPaymentRequestElectronicInvoiceIndicator())
             return false;
-        return StringUtils.equalsIgnoreCase("Y", SpringContext.getBean(ParameterService.class).getParameterValue(PaymentRequestDocument.class, PurapParameterConstants.PURAP_PREQ_REQUIRE_ATTACHMENT));
+        return StringUtils.equalsIgnoreCase("Y", SpringContext.getBean(ParameterService.class).getParameterValueAsString(PaymentRequestDocument.class, PurapParameterConstants.PURAP_PREQ_REQUIRE_ATTACHMENT));
     }
 
     /**

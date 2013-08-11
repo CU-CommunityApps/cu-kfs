@@ -16,8 +16,7 @@
 package org.kuali.kfs.gl.batch.dataaccess.impl;
 
 import org.kuali.kfs.gl.batch.dataaccess.ReversionUnitOfWorkDao;
-import org.kuali.rice.kns.dao.jdbc.PlatformAwareDaoBaseJdbc;
-
+import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 /**
  * A JDBC implementation of the ReversionUnitOfWorkDao...we had to use this because PersistenceService
  * truncated tables, which is something you can't do on tables with primary keys.

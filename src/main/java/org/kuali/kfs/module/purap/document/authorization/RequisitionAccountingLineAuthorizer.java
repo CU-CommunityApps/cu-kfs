@@ -34,9 +34,9 @@ public class RequisitionAccountingLineAuthorizer extends PurapAccountingLineAuth
      */
     @Override
     public boolean renderNewLine(AccountingDocument accountingDocument, String accountingGroupProperty) {
-        if (accountingDocument.getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames().equals(RequisitionAccountingLineAuthorizer.INITIATOR_NODE) 
-        		|| accountingDocument.getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames().equals(RequisitionAccountingLineAuthorizer.CONTENT_REVIEW_NODE)
-        		|| (accountingDocument.getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames().equals(RequisitionStatuses.NODE_ACCOUNT) 
+        if (accountingDocument.getDocumentHeader().getWorkflowDocument().getCurrentNodeNames().equals(RequisitionAccountingLineAuthorizer.INITIATOR_NODE) 
+        		|| accountingDocument.getDocumentHeader().getWorkflowDocument().getCurrentNodeNames().equals(RequisitionAccountingLineAuthorizer.CONTENT_REVIEW_NODE)
+        		|| (accountingDocument.getDocumentHeader().getWorkflowDocument().getCurrentNodeNames().equals(RequisitionStatuses.NODE_ACCOUNT) 
         				&& SpringContext.getBean(PurapAccountingService.class).isFiscalOfficersForAllAcctLines((RequisitionDocument)accountingDocument))) return true;
         return super.renderNewLine(accountingDocument, accountingGroupProperty);
     }

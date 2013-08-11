@@ -18,7 +18,7 @@ package org.kuali.kfs.module.bc.batch.service.impl;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.module.bc.batch.dataaccess.BudgetConstructionHumanResourcesPayrollInterfaceDao;
 import org.kuali.kfs.module.bc.batch.service.BudgetConstructionHumanResourcesPayrollInterfaceService;
-import org.kuali.rice.kns.service.BusinessObjectService;
+import org.kuali.rice.krad.service.BusinessObjectService;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional

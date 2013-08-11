@@ -24,16 +24,16 @@ import org.kuali.kfs.module.purap.identity.PurapKimAttributes;
 import org.kuali.kfs.module.purap.service.SensitiveDataService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.authorization.AccountingDocumentAuthorizerBase;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.util.KimConstants;
-import org.kuali.rice.kns.bo.BusinessObject;
-import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.kim.api.KimConstants;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 public class PurchasingAccountsPayableTransactionalDocumentAuthorizerBase extends AccountingDocumentAuthorizerBase {
 
-    @Override
+    //@Override
     protected void addRoleQualification(BusinessObject businessObject, Map<String, String> attributes) {
         super.addRoleQualification(businessObject, attributes);
         attributes.put(PurapKimAttributes.DOCUMENT_SENSITIVE, "false");
@@ -61,7 +61,7 @@ public class PurchasingAccountsPayableTransactionalDocumentAuthorizerBase extend
     @Override
     public boolean canEditDocumentOverview(Document document, Person user) {
         return isAuthorizedByTemplate(document,
-                KNSConstants.KNS_NAMESPACE,
+                KRADConstants.KNS_NAMESPACE,
                 KimConstants.PermissionTemplateNames.EDIT_DOCUMENT,
                 user.getPrincipalId());
     }

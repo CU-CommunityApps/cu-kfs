@@ -16,12 +16,13 @@
 package org.kuali.kfs.module.bc.document.dataaccess.impl;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import org.kuali.kfs.module.bc.batch.dataaccess.impl.SQLForStep;
 import org.kuali.kfs.module.bc.document.dataaccess.BenefitsCalculationDao;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.kns.service.PersistenceService;
 import org.kuali.rice.kns.util.Guid;
+import org.kuali.rice.krad.service.PersistenceService;
 
 /**
  * 
@@ -550,8 +551,9 @@ public class BenefitsCalculationDaoJdbc extends BudgetConstructionDaoJdbcBase im
         ArrayList<String> stringsToInsert = new ArrayList<String>();
         stringsToInsert.add(KFSConstants.getDashFinancialSubObjectCode());
         stringsToInsert.add(KFSConstants.BALANCE_TYPE_BASE_BUDGET);
-        stringsToInsert.add(getExpenditureINList());
-        String idForSession = (new Guid()).toString();
+        //TODO UPDRADE-911
+        //stringsToInsert.add(getExpenditureINLis);
+        String idForSession = UUID.randomUUID().toString();;
 
         getSimpleJdbcTemplate().update(sqlAnnualSteps.get(0).getSQL(), documentNumber, fiscalYear, chartOfAccounts, accountNumber, subAccountNumber);
         getSimpleJdbcTemplate().update(sqlAnnualSteps.get(1).getSQL(), documentNumber, fiscalYear, chartOfAccounts, accountNumber, subAccountNumber);
@@ -582,7 +584,8 @@ public class BenefitsCalculationDaoJdbc extends BudgetConstructionDaoJdbcBase im
         ArrayList<String> stringsToInsert = new ArrayList<String>();
         stringsToInsert.add(KFSConstants.getDashFinancialSubObjectCode());
         stringsToInsert.add(KFSConstants.BALANCE_TYPE_BASE_BUDGET);
-        stringsToInsert.add(getExpenditureINList());
+        //TODO UPDRADE-911
+        //stringsToInsert.add(getExpenditureINList());
         String idForSession = (new Guid()).toString();
 
         getSimpleJdbcTemplate().update(sqlAnnualSteps.get(0).getSQL(), documentNumber, fiscalYear, chartOfAccounts, accountNumber, subAccountNumber);

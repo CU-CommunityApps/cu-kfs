@@ -56,10 +56,9 @@ import org.kuali.kfs.sys.Message;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.ReportWriterService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import com.rsmart.kuali.kfs.module.ld.LdConstants;
 import com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculationExtension;
@@ -215,10 +214,10 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
                 
                 
                 List<LaborOriginEntry> entries = new ArrayList<LaborOriginEntry>();
-                String offsetParmValue = getParameterService().getParameterValue(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_CALCULATION_OFFSET);
+                String offsetParmValue = getParameterService().getParameterValueAsString(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_CALCULATION_OFFSET);
                 String offsetDocTypes = null;
-                if(StringUtils.isNotEmpty(getParameterService().getParameterValue(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_DOCTYPE))) {
-                    offsetDocTypes = "," + getParameterService().getParameterValue(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_DOCTYPE).replace(";", ",").replace("|", ",") + ",";
+                if(StringUtils.isNotEmpty(getParameterService().getParameterValueAsString(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_DOCTYPE))) {
+                    offsetDocTypes = "," + getParameterService().getParameterValueAsString(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_DOCTYPE).replace(";", ",").replace("|", ",") + ",";
                 }
                 while ((line = dataFileReader.readLine()) != null) {
                     try {
@@ -364,7 +363,7 @@ public class FileEnterpriseFeederOffsetHelperServiceImpl extends org.kuali.kfs.m
             
             offsetEntry.setTransactionLedgerEntryDescription("GENERATED BENEFIT OFFSET");
             
-            String originCode = getParameterService().getParameterValue(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_ORIGIN_CODE);
+            String originCode = getParameterService().getParameterValueAsString(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_ORIGIN_CODE);
             
             offsetEntry.setFinancialSystemOriginationCode(originCode);
             offsetEntry.setDocumentNumber(dateTimeService.toString(dateTimeService.getCurrentDate(), "yyyyMMddhhmmssSSS"));

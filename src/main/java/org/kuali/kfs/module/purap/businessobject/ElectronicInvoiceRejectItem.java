@@ -23,11 +23,13 @@ import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 
 import org.kuali.kfs.module.purap.document.ElectronicInvoiceRejectDocument;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 
 public class ElectronicInvoiceRejectItem extends PersistableBusinessObjectBase {
 
+    private static final long serialVersionUID = 1L;
+    
     // NOT NULL FIELDS
     private Integer invoiceRejectItemIdentifier;
     private Integer purapDocumentIdentifier;

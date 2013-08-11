@@ -16,7 +16,6 @@
 package org.kuali.kfs.module.purap.document.service.impl;
 
 import java.io.*;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,17 +49,17 @@ import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kim.service.PersonService;
-import org.kuali.rice.kns.bo.Attachment;
-import org.kuali.rice.kns.bo.Note;
-import org.kuali.rice.kns.service.AttachmentService;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.krad.bo.Attachment;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.service.AttachmentService;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -72,7 +71,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
     private B2BDao b2bDao;
     private RequisitionService requisitionService;
     private ParameterService parameterService;
-    private PersonService<Person> personService;
+    private PersonService personService;
 
     // injected values
     private String b2bEnvironment;
@@ -120,7 +119,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         String vendorDuns = purchaseOrder.getVendorDetail().getVendorDunsNumber();
 
         RequisitionDocument r = requisitionService.getRequisitionById(purchaseOrder.getRequisitionIdentifier());
-        KualiWorkflowDocument reqWorkflowDoc = r.getDocumentHeader().getWorkflowDocument();
+        WorkflowDocument reqWorkflowDoc = r.getDocumentHeader().getWorkflowDocument();
 
         LOG.debug("sendPurchaseOrder(): punchoutUrl is " + b2bPunchoutURL);
 
@@ -128,7 +127,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
             prepareNonB2BPurchaseOrderForTransmission(purchaseOrder);
         }
         
-        String validateErrors = verifyCxmlPOData(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns);
+        String validateErrors = verifyCxmlPOData(purchaseOrder, reqWorkflowDoc.getInitiatorPrincipalId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns);
         if (!StringUtils.isEmpty(validateErrors)) {
             return validateErrors;
         }
@@ -137,7 +136,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
 
         try {
             LOG.debug("sendPurchaseOrder() Generating cxml");
-            String cxml = getCxml(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns, true);
+            String cxml = getCxml(purchaseOrder, reqWorkflowDoc.getInitiatorPrincipalId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns, true);
 
             
              //   cxml = 
@@ -150,7 +149,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
             // KFSPTS-1956 
             // allow PO to use old form, then POA use new form for testing
             if (!responseCxml.contains("Success") && responseCxml.contains("No custom field found") && responseCxml.contains("document configuration (DeliveryEmail)")) {            	
-                cxml = getCxml(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns, false);
+                cxml = getCxml(purchaseOrder, reqWorkflowDoc.getInitiatorPrincipalId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns, false);
             	LOG.debug("sendPurchaseOrder() re-Sending cxml\n" + cxml);
             	responseCxml = b2bDao.sendPunchOutRequest(cxml, b2bPurchaseOrderURL);
                 LOG.info("re-sendPurchaseOrder(): Response cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + ":" + responseCxml);
@@ -199,8 +198,8 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
      */
     public String getCxml(PurchaseOrderDocument purchaseOrder, String requisitionInitiatorId, String password, ContractManager contractManager, String contractManagerEmail, String vendorDuns, boolean includeNewFields) {
 
-        KualiWorkflowDocument workFlowDocument = purchaseOrder.getDocumentHeader().getWorkflowDocument();
-        String documentType = workFlowDocument.getDocumentType();
+        WorkflowDocument workFlowDocument = purchaseOrder.getDocumentHeader().getWorkflowDocument();
+        String documentType = workFlowDocument.getDocumentTypeName();
     	
         int disbMethod = 0;
         String poTransmissionCode = purchaseOrder.getPurchaseOrderTransmissionMethodCode();
@@ -747,7 +746,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
      */
     private List<Note> getNotesToSendToVendor(PurchaseOrderDocument purchaseOrder) {
         List<Note> notesToSend = new ArrayList<Note>(); // this may not work for POA because PO note is linked to oldest PO
-        List<Note> boNotes = purchaseOrder.getBoNotes(); 
+        List<Note> boNotes = purchaseOrder.getNotes(); 
         if (CollectionUtils.isEmpty(boNotes)) {
         	boNotes = SpringContext.getBean(PurchaseOrderService.class).getPurchaseOrderNotes(purchaseOrder.getPurapDocumentIdentifier());        	
         }
@@ -811,7 +810,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
     	if (purchaseOrder.getVendorCountry() == null) {
     		return KFSConstants.EMPTY_STRING;
     	} else {
-    	    return purchaseOrder.getVendorCountry().getPostalCountryName();
+    	    return purchaseOrder.getVendorCountry().getName();
     	}
     	
     }
@@ -972,7 +971,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
      */
     protected String getContractManagerEmail(ContractManager cm) {
     	if(cm.getContractManagerCode().equals(PurapConstants.APO_CONTRACT_MANAGER)) {
-    		return SpringContext.getBean(ParameterService.class).getParameterValue(PurchaseOrderDocument.class, CUPurapParameterConstants.APO_CONTRACT_MANAGER_EMAIL);
+    		return SpringContext.getBean(ParameterService.class).getParameterValueAsString(PurchaseOrderDocument.class, CUPurapParameterConstants.APO_CONTRACT_MANAGER_EMAIL);
     	} 
 
         Person contractManager = getPersonService().getPerson(cm.getContractManagerUserIdentifier());
@@ -1051,7 +1050,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
     /**
      * @return Returns the personService.
      */
-    protected PersonService<Person> getPersonService() {
+    protected PersonService getPersonService() {
         if(personService==null)
             personService = SpringContext.getBean(PersonService.class);
         return personService;
@@ -1066,7 +1065,7 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
     	String emailAddressToUse = null;
     	
     	try
-    	{	emailAddressToUse = SpringContext.getBean(ParameterService.class).getParameterValue(PurchaseOrderDocument.class, CUPurapParameterConstants.MANUAL_DISTRIBUTION_EMAIL);
+    	{	emailAddressToUse = SpringContext.getBean(ParameterService.class).getParameterValueAsString(PurchaseOrderDocument.class, CUPurapParameterConstants.MANUAL_DISTRIBUTION_EMAIL);
     		if ( (emailAddressToUse == null) || emailAddressToUse.length() == 0) {
     			//parameter value is not defined, return email address defined as a fail-safe constant when this condition occurs
     			emailAddressToUse = CUPurapConstants.MANUAL_DISRIBUTION_FAILSAFE_EMAIL_ADDRESS;

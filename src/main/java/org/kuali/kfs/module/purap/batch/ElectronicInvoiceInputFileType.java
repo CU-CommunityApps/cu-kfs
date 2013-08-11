@@ -22,7 +22,7 @@ import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.businessobject.ElectronicInvoice;
 import org.kuali.kfs.sys.batch.XmlBatchInputFileTypeBase;
-import org.kuali.rice.kns.service.DateTimeService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 
 /**
  * Batch input type for the electronic invoice job.

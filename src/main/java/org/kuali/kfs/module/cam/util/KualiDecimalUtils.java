@@ -18,14 +18,13 @@ package org.kuali.kfs.module.cam.util;
 import java.util.Currency;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.kuali.rice.kns.util.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 /**
  * Utility class that divides currency into equal targets with remainder to cents in some buckets.<br>
  */
 public class KualiDecimalUtils {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(KualiDecimalUtils.class);
     private static final int[] cents = new int[] { 1, 10, 100, 1000 };
 
     private long totalAmount;

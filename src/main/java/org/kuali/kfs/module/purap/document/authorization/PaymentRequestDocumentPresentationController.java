@@ -37,11 +37,13 @@ import org.kuali.kfs.module.purap.service.PurapAccountingService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KfsAuthorizationConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 
 public class PaymentRequestDocumentPresentationController extends PurchasingAccountsPayableDocumentPresentationController {
@@ -51,7 +53,7 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
 	Boolean canEditPreExtraction;
     
     @Override
-    protected boolean canSave(Document document) {
+    public boolean canSave(Document document) {
         PaymentRequestDocument paymentRequestDocument = (PaymentRequestDocument) document;
         
         if (StringUtils.equals(paymentRequestDocument.getStatusCode(), PaymentRequestStatuses.INITIATE)) {
@@ -66,7 +68,7 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
     }
     
     @Override
-    protected boolean canReload(Document document) {
+    public boolean canReload(Document document) {
         PaymentRequestDocument paymentRequestDocument = (PaymentRequestDocument) document;
 
         if (StringUtils.equals(paymentRequestDocument.getStatusCode(), PaymentRequestStatuses.INITIATE)) {
@@ -81,7 +83,7 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
     }
 
     @Override
-    protected boolean canCancel(Document document) {
+    public boolean canCancel(Document document) {
         //controlling the cancel button through getExtraButtons in PaymentRequestForm
         return false;
     }
@@ -98,7 +100,7 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
     }
 
     @Override
-    protected boolean canDisapprove(Document document) {
+    public boolean canDisapprove(Document document) {
         //disapprove is never allowed for PREQ
         return false;
     }
@@ -107,10 +109,10 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
      * @see org.kuali.rice.kns.document.authorization.DocumentPresentationControllerBase#canEdit(org.kuali.rice.kns.document.Document)
      */
     @Override
-    protected boolean canEdit(Document document) {
+    public boolean canEdit(Document document) {
         PaymentRequestDocument paymentRequestDocument = (PaymentRequestDocument) document;
         boolean fullDocEntryCompleted = SpringContext.getBean(PurapService.class).isFullDocumentEntryCompleted(paymentRequestDocument);
-        KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         
         //  fiscal officer review gets the doc editable once its enroute, but no one else does
         if (fullDocEntryCompleted) {
@@ -126,7 +128,7 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
         }
 
         //  in general, the doc should not be editable once its enroute
-        if (workflowDocument.stateIsEnroute() || workflowDocument.stateIsException()) {
+        if (workflowDocument.isEnroute() || workflowDocument.isException()) {
             return false; 
         }
         return super.canEdit(document);
@@ -139,7 +141,7 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
     @Override
     public Set<String> getEditModes(Document document) {
         Set<String> editModes = super.getEditModes(document);
-        KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         PaymentRequestDocument paymentRequestDocument = (PaymentRequestDocument)document;
         
         if (canProcessorCancel(paymentRequestDocument)) {
@@ -187,7 +189,7 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
         }
 
         // See if purap tax is enabled
-        boolean salesTaxInd = SpringContext.getBean(ParameterService.class).getIndicatorParameter(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);
+        boolean salesTaxInd = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);
         if (salesTaxInd) {
             editModes.add(PaymentRequestEditMode.PURAP_TAX_ENABLED);
 
@@ -245,9 +247,9 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
         // This is ported from 5.0, and Workflowdocument is different, so needs more testing.
 		try {
 //			KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-			if (workflowDocument.stateIsEnroute()) {
-				List<String> activeNodes = Arrays.asList(workflowDocument.getNodeNames());
-				;
+			if (workflowDocument.isEnroute()) {
+				List<String> activeNodes = new ArrayList<String>(workflowDocument.getNodeNames());
+				
 				for (String nodeNamesNode : activeNodes) {
 					if (RequisitionStatuses.NODE_ACCOUNT.equals(nodeNamesNode) && !SpringContext.getBean(PurapAccountingService.class).isFiscalOfficersForAllAcctLines((PurchaseOrderAmendmentDocument)document)) {
 						// disable the button for setup distribution
@@ -358,7 +360,7 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
     	
     		boolean can = !paymentRequestDocument.isHoldIndicator() && !paymentRequestDocument.isPaymentRequestedCancelIndicator() && !paymentRequestDocument.isExtracted();
     		if (can) {
-    			can = paymentRequestDocument.getDocumentHeader().getWorkflowDocument().isAdHocRequested();
+    			can = SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(paymentRequestDocument.getFinancialSystemDocumentHeader().getWorkflowDocument(), GlobalVariables.getUserSession().getPrincipalId());
     			can = can || !PaymentRequestStatuses.STATUSES_DISALLOWING_HOLD.contains(paymentRequestDocument.getStatusCode());
     		}
     		canHold = can;
@@ -380,7 +382,7 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
     	if (canRequestCancel == null) {
     		boolean can = !paymentRequestDocument.isPaymentRequestedCancelIndicator() && !paymentRequestDocument.isHoldIndicator() && !paymentRequestDocument.isExtracted();
     		if (can) {
-    			can = paymentRequestDocument.getDocumentHeader().getWorkflowDocument().isAdHocRequested();
+    			can = SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(paymentRequestDocument.getFinancialSystemDocumentHeader().getWorkflowDocument(), GlobalVariables.getUserSession().getPrincipalId());
     			can = can || !PaymentRequestStatuses.STATUSES_DISALLOWING_REQUEST_CANCEL.contains(paymentRequestDocument.getStatusCode());
     		}
     		canRequestCancel = can;
@@ -419,7 +421,7 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
     protected boolean canEditPreExtraction(PaymentRequestDocument paymentRequestDocument) {
     	if (canEditPreExtraction == null) {
     		boolean can = !paymentRequestDocument.isExtracted() && 
-                !paymentRequestDocument.getDocumentHeader().getWorkflowDocument().isAdHocRequested() &&
+                !SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(paymentRequestDocument.getFinancialSystemDocumentHeader().getWorkflowDocument(), GlobalVariables.getUserSession().getPrincipalId()) &&
                 !PurapConstants.PaymentRequestStatuses.CANCELLED_STATUSES.contains(paymentRequestDocument.getStatusCode());
     		canEditPreExtraction = can;
     	}

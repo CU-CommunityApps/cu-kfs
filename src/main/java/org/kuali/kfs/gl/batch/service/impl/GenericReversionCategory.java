@@ -19,7 +19,9 @@ import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.ReversionCategory;
 import org.kuali.kfs.gl.batch.service.ReversionCategoryLogic;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 
 /**
  * A generic implementation of ReversionCategoryLogic; it is completely based off of parameters
@@ -48,7 +50,7 @@ public class GenericReversionCategory implements ReversionCategoryLogic {
      */
     public void setCategoryCode(String code) {
         categoryCode = code;
-        isExpense = parameterService.getParameterEvaluator(ReversionCategory.class, KFSConstants.Reversion.IS_EXPENSE_PARAM, categoryCode).evaluationSucceeds();
+        isExpense = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(ReversionCategory.class, KFSConstants.Reversion.IS_EXPENSE_PARAM, categoryCode).evaluationSucceeds();
     }
 
     /**
@@ -77,10 +79,10 @@ public class GenericReversionCategory implements ReversionCategoryLogic {
         String objType = oc.getFinancialObjectTypeCode();
         String objSubType = oc.getFinancialObjectSubType().getCode();
 
-        boolean consolidationRulesPassed = parameterService.getParameterEvaluator(ReversionCategory.class, KFSConstants.Reversion.VALID_PREFIX + KFSConstants.Reversion.OBJECT_CONSOL_PARAM_SUFFIX, KFSConstants.Reversion.INVALID_PREFIX + KFSConstants.Reversion.OBJECT_CONSOL_PARAM_SUFFIX, categoryCode, cons).evaluationSucceeds();
-        boolean levelRulesPassed = parameterService.getParameterEvaluator(ReversionCategory.class, KFSConstants.Reversion.VALID_PREFIX + KFSConstants.Reversion.OBJECT_LEVEL_PARAM_SUFFIX, KFSConstants.Reversion.INVALID_PREFIX + KFSConstants.Reversion.OBJECT_LEVEL_PARAM_SUFFIX, categoryCode, level).evaluationSucceeds();
-        boolean objectTypeRulesPassed = parameterService.getParameterEvaluator(ReversionCategory.class, KFSConstants.Reversion.VALID_PREFIX + KFSConstants.Reversion.OBJECT_TYPE_PARAM_SUFFIX, KFSConstants.Reversion.INVALID_PREFIX + KFSConstants.Reversion.OBJECT_TYPE_PARAM_SUFFIX, categoryCode, objType).evaluationSucceeds();
-        boolean objectSubTypeRulesPassed = parameterService.getParameterEvaluator(ReversionCategory.class, KFSConstants.Reversion.VALID_PREFIX + KFSConstants.Reversion.OBJECT_SUB_TYPE_PARAM_SUFFIX, KFSConstants.Reversion.INVALID_PREFIX + KFSConstants.Reversion.OBJECT_SUB_TYPE_PARAM_SUFFIX, categoryCode, objSubType).evaluationSucceeds();
+        boolean consolidationRulesPassed = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(ReversionCategory.class, KFSConstants.Reversion.VALID_PREFIX + KFSConstants.Reversion.OBJECT_CONSOL_PARAM_SUFFIX, KFSConstants.Reversion.INVALID_PREFIX + KFSConstants.Reversion.OBJECT_CONSOL_PARAM_SUFFIX, categoryCode, cons).evaluationSucceeds();
+        boolean levelRulesPassed = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(ReversionCategory.class, KFSConstants.Reversion.VALID_PREFIX + KFSConstants.Reversion.OBJECT_LEVEL_PARAM_SUFFIX, KFSConstants.Reversion.INVALID_PREFIX + KFSConstants.Reversion.OBJECT_LEVEL_PARAM_SUFFIX, categoryCode, level).evaluationSucceeds();
+        boolean objectTypeRulesPassed = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(ReversionCategory.class, KFSConstants.Reversion.VALID_PREFIX + KFSConstants.Reversion.OBJECT_TYPE_PARAM_SUFFIX, KFSConstants.Reversion.INVALID_PREFIX + KFSConstants.Reversion.OBJECT_TYPE_PARAM_SUFFIX, categoryCode, objType).evaluationSucceeds();
+        boolean objectSubTypeRulesPassed = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(ReversionCategory.class, KFSConstants.Reversion.VALID_PREFIX + KFSConstants.Reversion.OBJECT_SUB_TYPE_PARAM_SUFFIX, KFSConstants.Reversion.INVALID_PREFIX + KFSConstants.Reversion.OBJECT_SUB_TYPE_PARAM_SUFFIX, categoryCode, objSubType).evaluationSucceeds();
 
         return consolidationRulesPassed && levelRulesPassed && objectTypeRulesPassed && objectSubTypeRulesPassed;
     }

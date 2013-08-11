@@ -44,16 +44,20 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kns.bo.DocumentHeader;
-import org.kuali.rice.kns.rule.event.SaveDocumentEvent;
-import org.kuali.rice.kns.service.BusinessObjectService;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.service.DocumentService;
-import org.kuali.rice.kns.service.KualiModuleService;
-import org.kuali.rice.kns.util.GlobalVariables;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.workflow.service.WorkflowDocumentService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kew.api.KewApiConstants;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.krad.bo.AdHocRoutePerson;
+import org.kuali.rice.krad.bo.AdHocRouteRecipient;
+import org.kuali.rice.krad.bo.DocumentHeader;
+import org.kuali.rice.krad.rules.rule.event.SaveDocumentEvent;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.DataDictionaryService;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.service.KualiModuleService;
+import org.kuali.rice.krad.service.SessionDocumentService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.workflow.service.WorkflowDocumentService;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -96,7 +100,6 @@ public class LaborModuleServiceImpl implements LaborModuleService {
             return;
         }
 
-        WorkflowDocumentService workflowDocumentService = SpringContext.getBean(WorkflowDocumentService.class);
         SalaryExpenseTransferDocument document = (SalaryExpenseTransferDocument) getDocumentService().getNewDocument(SalaryExpenseTransferDocument.class);
 
         document.setEmplid(sourceAccountingLines.get(0).getEmplid());
@@ -117,13 +120,20 @@ public class LaborModuleServiceImpl implements LaborModuleService {
 
         String organizationDocumentNumber = document.getDocumentHeader().getOrganizationDocumentNumber();
         if (StringUtils.isNotBlank(organizationDocumentNumber)) {
-            document.getDocumentHeader().getWorkflowDocument().setAppDocId(organizationDocumentNumber);
+            document.getDocumentHeader().getWorkflowDocument().setApplicationDocumentId(organizationDocumentNumber);
         }
 
         this.getBusinessObjectService().save(document);
+        
+        List<AdHocRouteRecipient> adHocRecipientList = new ArrayList<AdHocRouteRecipient>();
 
-        workflowDocumentService.blanketApprove(document.getDocumentHeader().getWorkflowDocument(), annotation, adHocRecipients);
-        GlobalVariables.getUserSession().setWorkflowDocument(document.getDocumentHeader().getWorkflowDocument());
+        for (String adHocRouteRecipient : adHocRecipients) {
+            adHocRecipientList.add(this.buildApprovePersonRecipient(adHocRouteRecipient));
+         }
+        
+        // blanket approve salary expense transfer doc bypassing all rules
+        SpringContext.getBean(WorkflowDocumentService.class).blanketApprove(document.getDocumentHeader().getWorkflowDocument(), annotation, adHocRecipientList);
+        SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), document.getDocumentHeader().getWorkflowDocument());
     }
 
     /**
@@ -243,6 +253,20 @@ public class LaborModuleServiceImpl implements LaborModuleService {
         List<LaborLedgerPositionObjectBenefit> objectBenefits = this.retrieveLaborPositionObjectBenefits(fiscalYear, chartOfAccountsCode, financialObjectCode);
         return (objectBenefits != null && !objectBenefits.isEmpty());
     }
+    
+    /**
+    *
+    * This method builds a recipient for Approval.
+    * @param userId
+    * @return
+    */
+   protected AdHocRouteRecipient buildApprovePersonRecipient(String userId) {
+       AdHocRouteRecipient adHocRouteRecipient = new AdHocRoutePerson();
+       adHocRouteRecipient.setActionRequested(KewApiConstants.ACTION_REQUEST_APPROVE_REQ);
+       adHocRouteRecipient.setId(userId);
+       return adHocRouteRecipient;
+   }
+   
 
     /**
      * @see org.kuali.kfs.integration.ld.LaborModuleService#getLaborOriginEntryGroupCount(java.lang.Integer)

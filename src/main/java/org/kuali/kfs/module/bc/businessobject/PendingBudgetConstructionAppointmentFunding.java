@@ -39,9 +39,9 @@ import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 /**
  * 
  */
-@SuppressWarnings("serial")
 public class PendingBudgetConstructionAppointmentFunding extends PersistableBusinessObjectBase implements MutableInactivatable {
 
+    private static final long serialVersionUID = 1L;
     private Integer universityFiscalYear;
     private String chartOfAccountsCode;
     private String accountNumber;

@@ -32,8 +32,8 @@ import org.kuali.kfs.module.bc.document.service.ReportExportService;
 import org.kuali.kfs.module.bc.document.web.struts.ReportExportForm;
 import org.kuali.kfs.sys.KFSConstants.ReportGeneration;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.WebUtils;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 /**
  * Struts action class for report dumps.

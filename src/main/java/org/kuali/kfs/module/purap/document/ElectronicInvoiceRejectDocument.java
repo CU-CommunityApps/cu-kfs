@@ -52,14 +52,14 @@ import org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.businessobject.CampusParameter;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO;
-import org.kuali.rice.kns.bo.Note;
-import org.kuali.rice.kns.document.SessionDocument;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.document.SessionDocument;
+import org.kuali.rice.krad.service.DataDictionaryService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 public class ElectronicInvoiceRejectDocument extends FinancialSystemTransactionalDocumentBase implements SessionDocument {
     protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ElectronicInvoiceRejectDocument.class);
@@ -1272,7 +1272,7 @@ public class ElectronicInvoiceRejectDocument extends FinancialSystemTransactiona
      */
     public BigDecimal getInvoiceItemTaxAmount() {
         BigDecimal returnValue = zero;
-        boolean enableSalesTaxInd = SpringContext.getBean(ParameterService.class).getIndicatorParameter(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);
+        boolean enableSalesTaxInd = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);
         try {
         	//if sales tax enabled, calculate total by totaling items
         	if(enableSalesTaxInd) {
@@ -1807,7 +1807,6 @@ public class ElectronicInvoiceRejectDocument extends FinancialSystemTransactiona
         this.relatedViews = relatedViews;
     }
     
-    @Override
     public boolean isBoNotesSupport() {
         return true;
     }
@@ -1953,10 +1952,10 @@ public class ElectronicInvoiceRejectDocument extends FinancialSystemTransactiona
      * @see org.kuali.rice.kns.document.DocumentBase#doRouteStatusChange()
      */
     @Override
-    public void doRouteStatusChange(DocumentRouteStatusChangeDTO statusChangeEvent) {
+    public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
         LOG.debug("doRouteStatusChange() started");
         super.doRouteStatusChange(statusChangeEvent);
-        if (this.getDocumentHeader().getWorkflowDocument().stateIsApproved()){ 
+        if (this.getDocumentHeader().getWorkflowDocument().isApproved()){ 
             //Set the current date as approval timestamp
             this.setAccountsPayableApprovalTimestamp(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
            } 
@@ -1966,9 +1965,9 @@ public class ElectronicInvoiceRejectDocument extends FinancialSystemTransactiona
     /**
      * @see org.kuali.rice.kns.bo.PersistableBusinessObjectBase#getBoNotes()
      */
-    @Override
+    
     public List getBoNotes() {
-        List notes = super.getBoNotes();
+        List notes = super.getNotes();
         if (!StringUtils.isBlank(this.getObjectId())) {
             for (Iterator iterator = notes.iterator(); iterator.hasNext();) {
                 Note note = (Note) iterator.next();
@@ -1978,7 +1977,7 @@ public class ElectronicInvoiceRejectDocument extends FinancialSystemTransactiona
             }
         }
         
-        return super.getBoNotes();
+        return super.getNotes();
     }
 
     public void sanitizeRejectReasons() {

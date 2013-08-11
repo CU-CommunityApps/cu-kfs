@@ -20,6 +20,7 @@ import static org.kuali.kfs.sys.KFSConstants.GL_DEBIT_CODE;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -43,12 +44,16 @@ import org.kuali.kfs.sys.businessobject.SufficientFundsItem;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kim.bo.Person;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.KualiDecimal;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.KewApiConstants;
+import org.kuali.rice.kew.api.action.ActionTaken;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * Purchase Order Amendment Document
@@ -68,10 +73,10 @@ public class PurchaseOrderAmendmentDocument extends PurchaseOrderDocument {
         super();
     }
 
-    @Override
-    public List<Long> getWorkflowEngineDocumentIdsToLock() {
-        return super.getWorkflowEngineDocumentIdsToLock();
-    }
+    //TODO UPGRADE-99
+//    public List<Long> getWorkflowEngineDocumentIdsToLock() {
+//        return super.getWorkflowEngineDocumentIdsToLock();
+//    }
 
     /**
      * When Purchase Order Amendment document has been Processed through Workflow, the general ledger entries are created and the PO
@@ -80,19 +85,18 @@ public class PurchaseOrderAmendmentDocument extends PurchaseOrderDocument {
      * @see org.kuali.kfs.module.purap.document.PurchaseOrderDocument#doRouteStatusChange()
      */
    @Override
-	public void doRouteStatusChange(DocumentRouteStatusChangeDTO statusChangeEvent) {
+	public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
         super.doRouteStatusChange(statusChangeEvent);
-
+     try {
         // DOCUMENT PROCESSED
-        if (getDocumentHeader().getWorkflowDocument().stateIsProcessed()) {
+        if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
             // generate GL entries
             SpringContext.getBean(PurapGeneralLedgerService.class).generateEntriesApproveAmendPurchaseOrder(this);
 
             // set purap status 
 //            SpringContext.getBean(PurapService.class).updateStatus(this, PurapConstants.PurchaseOrderStatuses.OPEN);
             // updated to set status to PENDING_CXML so the document will route to SciQuest for handling
-            SpringContext.getBean(PurapService.class).updateStatus(this, PurchaseOrderStatuses.PENDING_CXML);
-
+            getFinancialSystemDocumentHeader().updateAndSaveAppDocStatus(PurchaseOrderStatuses.PENDING_CXML);
             // update vendor commodity code by automatically spawning vendor maintenance document
 	        SpringContext.getBean(PurchaseOrderService.class).updateVendorCommodityCode(this);
           
@@ -101,15 +105,19 @@ public class PurchaseOrderAmendmentDocument extends PurchaseOrderDocument {
 
         }
         // DOCUMENT DISAPPROVED
-        else if (getDocumentHeader().getWorkflowDocument().stateIsDisapproved()) {
+        else if (getDocumentHeader().getWorkflowDocument().isDisapproved()) {
             SpringContext.getBean(PurchaseOrderService.class).setCurrentAndPendingIndicatorsForDisapprovedChangePODocuments(this);
             SpringContext.getBean(PurapService.class).saveDocumentNoValidation(this);
         }
         // DOCUMENT CANCELED
-        else if (getDocumentHeader().getWorkflowDocument().stateIsCanceled()) {
+        else if (getDocumentHeader().getWorkflowDocument().isCanceled()) {
             SpringContext.getBean(PurchaseOrderService.class).setCurrentAndPendingIndicatorsForCancelledChangePODocuments(this);
             SpringContext.getBean(PurapService.class).saveDocumentNoValidation(this);
         }
+     }
+     catch (WorkflowException e) {
+       logAndThrowRuntimeException("Error saving routing data while saving document with id " + getDocumentNumber(), e);
+     }
    }
 
    /**
@@ -196,14 +204,14 @@ public class PurchaseOrderAmendmentDocument extends PurchaseOrderDocument {
 //        return ((ObjectUtils.isNull(internalPurchasingLimit)) || (internalPurchasingLimit.compareTo(this.getTotalDollarAmount()) < 0));
         
         ParameterService parameterService = SpringContext.getBean(ParameterService.class);
-        KualiDecimal automaticPurchaseOrderDefaultLimit = new KualiDecimal(parameterService.getParameterValue(RequisitionDocument.class, PurapParameterConstants.AUTOMATIC_PURCHASE_ORDER_DEFAULT_LIMIT_AMOUNT));
+        KualiDecimal automaticPurchaseOrderDefaultLimit = new KualiDecimal(parameterService.getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.AUTOMATIC_PURCHASE_ORDER_DEFAULT_LIMIT_AMOUNT));
         return ((ObjectUtils.isNull(automaticPurchaseOrderDefaultLimit)) || (automaticPurchaseOrderDefaultLimit.compareTo(this.getTotalDollarAmount()) < 0));
     }
 
     
     protected boolean isSeparationOfDutiesReviewRequired() {
         try {
-            Set<Person> priorApprovers = getDocumentHeader().getWorkflowDocument().getAllPriorApprovers();
+            Set<Person> priorApprovers = getAllPriorApprovers();
             // if there are more than 0 prior approvers which means there had been at least another approver than the current approver
             // then no need for separation of duties
             if (priorApprovers.size() > 0) {
@@ -213,9 +221,9 @@ public class PurchaseOrderAmendmentDocument extends PurchaseOrderDocument {
             LOG.error("Exception while attempting to retrieve all prior approvers from workflow: " + we);
         }
         ParameterService parameterService = SpringContext.getBean(ParameterService.class);
-        KualiDecimal maxAllowedAmount = new KualiDecimal(parameterService.getParameterValue(RequisitionDocument.class, PurapParameterConstants.SEPARATION_OF_DUTIES_DOLLAR_AMOUNT));
+        KualiDecimal maxAllowedAmount = new KualiDecimal(parameterService.getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.SEPARATION_OF_DUTIES_DOLLAR_AMOUNT));
         // if app param amount is greater than or equal to documentTotalAmount... no need for separation of duties
-        KualiDecimal totalAmount = documentHeader.getFinancialDocumentTotalAmount();
+        KualiDecimal totalAmount = this.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount();
         if (ObjectUtils.isNotNull(maxAllowedAmount) && ObjectUtils.isNotNull(totalAmount) && (maxAllowedAmount.compareTo(totalAmount) >= 0)) {
             return false;
         }
@@ -281,21 +289,37 @@ public class PurchaseOrderAmendmentDocument extends PurchaseOrderDocument {
     protected boolean shouldAdhocFyi() {
         Collection<String> excludeList = new ArrayList<String>();
         if (SpringContext.getBean(ParameterService.class).parameterExists(PurchaseOrderDocument.class, PurapParameterConstants.PO_NOTIFY_EXCLUSIONS)) {
-            excludeList = SpringContext.getBean(ParameterService.class).getParameterValues(PurchaseOrderDocument.class, PurapParameterConstants.PO_NOTIFY_EXCLUSIONS);
+            excludeList = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(PurchaseOrderDocument.class, PurapParameterConstants.PO_NOTIFY_EXCLUSIONS);
         }
 
 //        if (getDocumentHeader().getWorkflowDocument().stateIsDisapproved()) {
 //            return true;
 //        }
         // CU want to exclude B2B for all FYI
-        if ((getDocumentHeader().getWorkflowDocument().stateIsFinal() || getDocumentHeader().getWorkflowDocument().stateIsDisapproved()) && !excludeList.contains(getRequisitionSourceCode()) ) {
+        if ((getDocumentHeader().getWorkflowDocument().isFinal() || getDocumentHeader().getWorkflowDocument().isDisapproved()) && !excludeList.contains(getRequisitionSourceCode()) ) {
             return true;
         }
         return false;
     }
 
 
+    public Set<Person> getAllPriorApprovers() throws WorkflowException {
+      PersonService personService = KimApiServiceLocator.getPersonService();
+       List<ActionTaken> actionsTaken = getDocumentHeader().getWorkflowDocument().getActionsTaken();
+      Set<String> principalIds = new HashSet<String>();
+      Set<Person> persons = new HashSet<Person>();
 
+      for (ActionTaken actionTaken : actionsTaken) {
+          if (KewApiConstants.ACTION_TAKEN_APPROVED_CD.equals(actionTaken.getActionTaken())) {
+              String principalId = actionTaken.getPrincipalId();
+              if (!principalIds.contains(principalId)) {
+                  principalIds.add(principalId);
+                  persons.add(personService.getPerson(principalId));
+              }
+          }
+      }
+      return persons;
+  }
 
 
 }

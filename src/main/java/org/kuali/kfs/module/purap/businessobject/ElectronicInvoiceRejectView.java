@@ -18,13 +18,14 @@ package org.kuali.kfs.module.purap.businessobject;
 import java.util.List;
 
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.kns.bo.Note;
+import org.kuali.rice.krad.bo.Note;
 
 /**
  * Electronic invoice View Business Object.
  */
 public class ElectronicInvoiceRejectView extends AbstractRelatedView {
 
+    private static final long serialVersionUID = 1L;
     private Integer purchaseOrderIdentifier;
     
     @Override

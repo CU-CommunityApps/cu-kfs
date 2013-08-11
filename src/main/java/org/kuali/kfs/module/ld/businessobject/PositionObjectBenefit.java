@@ -27,16 +27,15 @@ import org.kuali.kfs.integration.ld.LaborLedgerPositionObjectBenefit;
 import org.kuali.kfs.module.ld.service.LaborBenefitsCalculationService;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.bo.Inactivateable;
-import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.kns.service.ParameterService;
-import org.kuali.rice.kns.util.KualiPercent;
-import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.rice.core.api.util.type.KualiPercent;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 /**
  * Labor business object for Modeling of Position Object Benefit
  */
-public class PositionObjectBenefit extends PersistableBusinessObjectBase implements LaborLedgerPositionObjectBenefit, Inactivateable {
+public class PositionObjectBenefit extends PersistableBusinessObjectBase implements LaborLedgerPositionObjectBenefit, MutableInactivatable {
     private Integer universityFiscalYear;
     private String chartOfAccountsCode;
     private String financialObjectCode;
@@ -340,7 +339,7 @@ public class PositionObjectBenefit extends PersistableBusinessObjectBase impleme
             
             //make sure the parameter exists
             if(parameterService.parameterExists(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE")){
-                laborBenefitRateCategoryCode = parameterService.getParameterValue(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE");
+                laborBenefitRateCategoryCode = parameterService.getParameterValueAsString(Account.class, "DEFAULT_BENEFIT_RATE_CATEGORY_CODE");
             }
         }
         return laborBenefitRateCategoryCode;
