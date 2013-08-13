@@ -29,9 +29,12 @@ import org.kuali.rice.kns.UserSession;
 import org.kuali.rice.kns.bo.Attachment;
 import org.kuali.rice.kns.bo.Note;
 import org.kuali.rice.kns.document.MaintenanceDocument;
+import org.kuali.rice.kns.exception.ValidationException;
 import org.kuali.rice.kns.service.AttachmentService;
 import org.kuali.rice.kns.service.DocumentService;
+import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.NoteService;
+import org.kuali.rice.kns.util.ErrorMessage;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.MessageMap;
 import org.kuali.rice.kns.util.ObjectUtils;
@@ -118,13 +121,43 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
         	
             return vendorDoc.getDocumentNumber();
         } catch (Exception e) {
-        	return "Failed request : "+ e.getMessage();
+        	return "Failed request : "+ e.getMessage() + "\n" + getErrors(e);
         } finally {
             GlobalVariables.setUserSession(actualUserSession);
             GlobalVariables.setMessageMap(globalErrorMap);
 		}        
 	}
   
+	/*
+	 * get more helpful errors to return 
+	 */
+	private String getErrors(Exception e) {
+        MessageMap globalErrorMap = GlobalVariables.getMessageMap();
+        String errors = "";
+    	if (e instanceof ValidationException) {
+    		for (String key : globalErrorMap.getErrorMessages().keySet()) {
+    			for (Object errorMsg : globalErrorMap.getErrorMessages().get(key)) {
+                    // TODO : this web service is not in spring.
+    				// can this be implemented as spring bean ?
+    				String messageText = SpringContext.getBean(KualiConfigurationService.class).getPropertyString(((ErrorMessage) errorMsg).getErrorKey());
+
+    				
+    				errors = errors + replaceParams(messageText, ((ErrorMessage) errorMsg).getMessageParameters()) +  "\n";
+    			}
+    		}
+    	}
+    	return errors;
+	
+	}
+	
+	private String replaceParams (String message, String[] params) {
+		String retStr = message;
+		for (int i =0; i < params.length; i++) {
+			retStr = retStr.replace("{"+i+"}", params[i]);
+		}
+		return retStr;
+	}
+	
 	private List<VendorAddress> getVendorAddresses(List<VendorAddressParam> addresses, VendorDetail vDetail) {
     	List<VendorAddress> vAddrs = new ArrayList<VendorAddress>();
     	if (CollectionUtils.isNotEmpty(addresses)) {
