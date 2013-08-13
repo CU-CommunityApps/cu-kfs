@@ -45,7 +45,6 @@ public class DocumentReindexFlatFileInputType extends BatchInputFileTypeBase {
 		return CUKFSKeyConstants.MESSAGE_BATCH_UPLOAD_TITLE_REINDEX_FLAT_FILE;
 	}
 	
-    @Override
     public boolean isDoneFileRequired() {
     	return false;
     }

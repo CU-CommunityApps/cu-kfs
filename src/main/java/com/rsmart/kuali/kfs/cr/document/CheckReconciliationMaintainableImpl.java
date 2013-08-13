@@ -6,13 +6,13 @@ import org.apache.ojb.broker.cache.RuntimeCacheException;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kns.bo.DocumentHeader;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.kns.service.DateTimeService;
-import org.kuali.rice.kns.service.DocumentService;
-import org.kuali.rice.kns.util.ObjectUtils;
-import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
+import org.kuali.rice.krad.bo.DocumentHeader;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 
@@ -26,9 +26,9 @@ public class CheckReconciliationMaintainableImpl extends FinancialSystemMaintain
      * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#doRouteStatusChange(org.kuali.rice.kns.bo.DocumentHeader)
      */
     public void doRouteStatusChange(DocumentHeader documentHeader) {
-        KualiWorkflowDocument workflowDocument = documentHeader.getWorkflowDocument();
+        WorkflowDocument workflowDocument = documentHeader.getWorkflowDocument();
 
-        if (workflowDocument.stateIsProcessed() && !KFSConstants.MAINTENANCE_NEW_ACTION.equalsIgnoreCase(getMaintenanceAction())) {
+        if (workflowDocument.isProcessed() && !KFSConstants.MAINTENANCE_NEW_ACTION.equalsIgnoreCase(getMaintenanceAction())) {
 
             DocumentService documentService = SpringContext.getBean(DocumentService.class);
             MaintenanceDocument document;

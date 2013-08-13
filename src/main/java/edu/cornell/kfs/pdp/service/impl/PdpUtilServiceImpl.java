@@ -20,8 +20,8 @@
 package edu.cornell.kfs.pdp.service.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.businessobject.PaymentAccountDetail;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.pdp.service.PdpUtilService;
 
@@ -38,7 +38,7 @@ public class PdpUtilServiceImpl implements PdpUtilService {
     public boolean isDebit(PaymentAccountDetail paymentAccountDetail, boolean reversal) {
     	boolean isDebit = true;
     	String docType = paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode();
-    	if(StringUtils.equalsIgnoreCase(docType, PdpConstants.PdpDocumentTypes.CREDIT_MEMO)) {
+    	if(StringUtils.equalsIgnoreCase(docType, KFSConstants.FinancialDocumentTypeCodes.VENDOR_CREDIT_MEMO)) {
     		// Debits are negative for CM docs
     		isDebit &= paymentAccountDetail.getAccountNetAmount().bigDecimalValue().signum() <= 0;
         }

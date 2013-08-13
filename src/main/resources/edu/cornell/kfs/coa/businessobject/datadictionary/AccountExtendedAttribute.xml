@@ -44,8 +44,10 @@
     	<property name="label" value="eVerify Indicator"/>
     	<property name="shortLabel" value="eVerify"/>
     	<property name="maxLength" value="1"/>
-    	<property name="control" ref="CheckboxControl" />
-    	<property name="formatterClass" value="org.kuali.rice.kns.web.format.BooleanFormatter"/>
+    	<property name="control">
+			<bean parent="CheckboxControlDefinition" />
+		</property>
+    	<property name="formatterClass" value="org.kuali.rice.core.web.format.BooleanFormatter"/>
   	</bean>
     
     <dd:boAttributeRef id="AccountExtendedAttribute-laborBenefitRateCategoryCode" parent="LaborBenefitRateCategory-code"/>

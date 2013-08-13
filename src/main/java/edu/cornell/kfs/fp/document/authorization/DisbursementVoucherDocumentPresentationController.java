@@ -15,6 +15,8 @@
  */
 package edu.cornell.kfs.fp.document.authorization;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -175,5 +177,15 @@ public class DisbursementVoucherDocumentPresentationController extends Accountin
         if (!currentRouteLevels.contains(DisbursementVoucherConstants.RouteLevelNames.PURCHASING)) {
             editModes.add(KfsAuthorizationConstants.DisbursementVoucherEditMode.SPECIAL_HANDLING_CHANGING_ENTRY);
         }
+    }
+    
+    /**
+     * A helper method for determining the route levels for a given document.
+     * 
+     * @param workflowDocument
+     * @return List
+     */
+    protected List<String> getCurrentRouteLevels(WorkflowDocument workflowDocument) {
+        return new ArrayList<String>(workflowDocument.getCurrentNodeNames());
     }
 }

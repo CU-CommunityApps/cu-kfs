@@ -2,7 +2,7 @@ package edu.cornell.kfs.module.purap.document.authorization;
 
 import java.util.Set;
 
-import org.kuali.kfs.module.purap.CUPurapConstants;
+import  edu.cornell.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentPresentationControllerBase;
 import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;

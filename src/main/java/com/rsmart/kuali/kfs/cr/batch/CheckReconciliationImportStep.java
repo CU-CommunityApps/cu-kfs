@@ -459,7 +459,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
     private List<String> getFileList() throws Exception {
         List<String> fileList = new ArrayList<String>();
 
-        String prop = kualiConfigurationService.getPropertyValueAsString(KFSConstants.STAGING_DIRECTORY_KEY) + "/cr/upload";
+        String prop = kualiConfigurationService.getPropertyValueAsString(KFSConstants.GL_COLLECTOR_STAGING_DIRECTORY) + "/cr/upload";
           
         File folder = new File(prop);
 
@@ -501,7 +501,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
     private void archiveFile(String checkFile) throws Exception {
         LOG.info("Archiving File : " + checkFile);
 
-        String prop = kualiConfigurationService.getPropertyValueAsString(KFSConstants.STAGING_DIRECTORY_KEY) + "/cr/archive";
+        String prop = kualiConfigurationService.getPropertyValueAsString(KFSConstants.GL_COLLECTOR_STAGING_DIRECTORY) + "/cr/archive";
         
         File file    = new File(checkFile); // Check File
         File archive = new File(prop);      // Archive Folder

@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -142,12 +141,12 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
 
                 String noteText1 = noteText.substring(0, fromIndex);
                 Note note1 = documentService.createNoteFromDocument(accountingDocument, noteText1);
-                documentService.addNoteToDocument(accountingDocument, note1);
+                accountingDocument.addNote(note1);
                 noteText = noteText.substring(fromIndex);
             }
 
             Note note = documentService.createNoteFromDocument(accountingDocument, noteText);
-            documentService.addNoteToDocument(accountingDocument, note);
+            accountingDocument.addNote(note);
         }
         catch (Exception e) {
             LOG.error("Exception while attempting to create or add note: " + e);

@@ -63,8 +63,8 @@ public class InvoiceType extends PersistableBusinessObjectBase implements Mutabl
         this.active = active;
     }
 	
-	@Override
-	protected LinkedHashMap toStringMapper() {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+  protected LinkedHashMap toStringMapper() {
 		LinkedHashMap m = new LinkedHashMap();
 	    m.put("invoiceTypeCode", this.invoiceTypeCode);
 	    return m;

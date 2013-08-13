@@ -4,20 +4,25 @@
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 	
+	<import resource="sys/cu-spring-sys.xml" />
 	<import resource="coa/cu-spring-coa.xml" />
+	<import resource="module/cg/cu-spring-cg.xml" />
+	
+	<!--
 	<import resource="fp/cu-spring-fp.xml" />
 	<import resource="gl/cu-spring-gl.xml" />
 	<import resource="pdp/cu-spring-pdp.xml" />
-	<import resource="sys/cu-spring-sys.xml" />
+	
 	<import resource="vnd/cu-spring-vnd.xml" />
 	<import resource="module/cam/cu-spring-cam.xml" />
-	<import resource="module/cg/cu-spring-cg.xml" />
+	
 	<import resource="module/ld/cu-spring-ld.xml" />
 	<import resource="module/purap/cu-spring-purap.xml" />
 	<import resource="module/ezra/cu-spring-ezra.xml" />
 	<import resource="module/bc/cu-spring-bc.xml" />
 
 	<import resource="sys/kfs4fixes.xml" />
+	-->
 
 
 </beans>

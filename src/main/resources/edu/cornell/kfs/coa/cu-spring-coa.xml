@@ -7,7 +7,7 @@
                            http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
-
+							  	
 	<bean id="cu-coa" parent="coaModuleConfiguration-parentBean">
 		
 		<property name="packagePrefixes">
@@ -67,10 +67,22 @@
 			<ref bean="accountGlobalLookupableHelperService" />
 		</property>
 	</bean>
-
+	
+	<bean id="businessObjectDao" class="org.kuali.rice.krad.dao.proxy.BusinessObjectDaoProxy">
+	    <!-- Constructor injection only please to help enforce completeness of instances -->
+	    <property name="businessObjectDaoOjb" ref="businessObjectDaoOjb"/>
+	</bean>
+	
+	
+	<bean id="businessObjectDaoOjb" parent="platformAwareDao" class="org.kuali.rice.krad.dao.impl.BusinessObjectDaoOjb">
+	  	<!-- Constructor injection only please to help enforce completeness of instances -->
+	  	<constructor-arg ref="persistenceStructureService"/>
+    </bean>
+	
  	<bean id="accountGlobalSearchDao" parent="platformAwareDao"
       class="edu.cornell.kfs.coa.dataaccess.impl.AccountGlobalSearchDaoOjb"
-      p:lookupDao-ref="lookupDao" p:businessObjectDao-ref="businessObjectDao"/>
+      p:lookupDao-ref="lookupDao" 
+      p:businessObjectDao-ref="businessObjectDao"/>
  
  	<bean id="organizationService" class="org.kuali.kfs.coa.service.impl.OrganizationServiceImpl">
         <property name="parameterService" ref="parameterService" />

@@ -18,6 +18,7 @@ import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kns.service.DictionaryValidationService;
 import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.rice.krad.service.BusinessObjectService;
@@ -32,7 +33,6 @@ import edu.cornell.kfs.sys.service.UserProcurementProfileValidationService;
 public class UserProcurementProfileValidationServiceImpl implements UserProcurementProfileValidationService{
 	private DictionaryValidationService dictionaryValidationService;
 	private BusinessObjectService businessObjectService;
-	private RoleManagementService roleManagementService;
 
 	/**
 	 * validate the favorite accounts in maint doc
@@ -137,8 +137,8 @@ public class UserProcurementProfileValidationServiceImpl implements UserProcurem
      */
     public boolean canMaintainUserProcurementProfile() {
 		List<String> roleIds = new ArrayList<String>();
-		roleIds.add(roleManagementService.getRoleIdByName(KFSConstants.ParameterNamespaces.KFS,"Favorite Account Manager"));
-		return roleManagementService.principalHasRole(GlobalVariables.getUserSession().getPrincipalId(),roleIds, null);
+		roleIds.add(KimApiServiceLocator.getRoleService().getRoleIdByNamespaceCodeAndName(KFSConstants.ParameterNamespaces.KFS, "Favorite Account Manager"));
+		return KimApiServiceLocator.getRoleService().principalHasRole(GlobalVariables.getUserSession().getPrincipalId(), roleIds, null);
 	
     }
     
@@ -298,10 +298,6 @@ public class UserProcurementProfileValidationServiceImpl implements UserProcurem
 
 	public void setBusinessObjectService(BusinessObjectService businessObjectService) {
 		this.businessObjectService = businessObjectService;
-	}
-
-	public void setRoleManagementService(RoleManagementService roleManagementService) {
-		this.roleManagementService = roleManagementService;
 	}
 
 }

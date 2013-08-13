@@ -37,13 +37,13 @@
         <ref bean="ObjectCodeGlobal-finObjMandatoryTrnfrOrElimCd"/>
         <ref bean="ObjectCodeGlobal-financialFederalFundedCode"/>
         <ref bean="ObjectCodeGlobal-nextYearFinancialObjectCode"/>
-        <ref bean="ObjectCodeGlobal-sunyObjectCode"/>
+        <!-- UPGRADE-911 <ref bean="ObjectCodeGlobal-sunyObjectCode"/>
         <ref bean="ObjectCodeGlobal-financialObjectCodeDescr"/>
         <ref bean="ObjectCodeGlobal-code"/> 
-        <ref bean="ObjectCodeGlobal-cgReportingCode"/>       
+        <ref bean="ObjectCodeGlobal-cgReportingCode"/>    -->   
       </list>
     </property>    
-    
+    <!--  UPGRADE-911
     <property name="relationships">
       <list>
         <dd:relationship objectAttribute="contractGrantReportingCode" targetClass="edu.cornell.kfs.coa.businessobject.ContractGrantReportingCode">
@@ -52,6 +52,7 @@
         </dd:relationship>        
       </list> 
     </property>
+    -->
   </bean>
   
 
@@ -109,11 +110,13 @@
   <bean id="ObjectCodeGlobal-nextYearFinancialObjectCode" parent="ObjectCodeGlobal-nextYearFinancialObjectCode-parentBean"/>
   <bean id="ObjectCodeGlobal-nextYearFinancialObjectCode-parentBean" abstract="true" parent="ObjectCode-nextYearFinancialObjectCode" />
   
+  <!-- UPGRADE-911
   <bean id="ObjectCodeGlobal-sunyObjectCode" parent="ObjectCodeGlobal-sunyObjectCode-parentBean"/>
   <bean id="ObjectCodeGlobal-sunyObjectCode-parentBean" abstract="true" parent="ObjectCodeExtendedAttribute-sunyObjectCode" />
   
   <bean id="ObjectCodeGlobal-financialObjectCodeDescr" parent="ObjectCodeGlobal-financialObjectCodeDescr-parentBean"/>
   <bean id="ObjectCodeGlobal-financialObjectCodeDescr-parentBean" abstract="true" parent="ObjectCodeExtendedAttribute-financialObjectCodeDescr" />
+ 
   
   <bean id="ObjectCodeGlobal-code" parent="ObjectCodeGlobal-code-parentBean"/>
   <bean id="ObjectCodeGlobal-code-parentBean" abstract="true" parent="ContractGrantReportingCode-code"/>
@@ -121,5 +124,6 @@
   <bean id="ObjectCodeGlobal-cgReportingCode" parent="ContractGrantReportingCode-code">
    <property name="name" value="cgReportingCode"/>
   </bean>  
+   -->
   
 </beans>

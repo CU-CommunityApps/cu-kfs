@@ -42,10 +42,11 @@
         <ref bean="Account-accountRestrictedStatusDate"/>
         <ref bean="Account-accountCityName"/>
         <ref bean="Account-accountStateCode"/>
+        <!-- RICE20: codeAndDescription has been removed from the State object
         <ref bean="Account-accountState.codeAndDescription"/>
+        -->        
         <ref bean="Account-accountStreetAddress"/>
         <ref bean="Account-accountZipCode"/>
-        <ref bean="Account-postalZipCode.postalCode"/>
         <ref bean="Account-reportsToChartOfAccountsCode"/>
         <ref bean="Account-reportsToAccountNumber"/>
         <ref bean="Account-accountCreateDate"/>
@@ -63,8 +64,6 @@
         <ref bean="Account-acctIndirectCostRcvyType.codeAndDescription"/>
         <ref bean="Account-acctCustomIndCstRcvyExclCd"/>
         <ref bean="Account-financialIcrSeriesIdentifier"/>
-        <ref bean="Account-indirectCostRcvyFinCoaCode"/>
-        <ref bean="Account-indirectCostRecoveryAcctNbr"/>
         <ref bean="Account-accountInFinancialProcessingIndicator"/>
         <ref bean="Account-budgetRecordingLevelCode"/>
         <ref bean="Account-accountSufficientFundsCode"/>
@@ -118,41 +117,106 @@
     </property>
     <property name="relationships">
       <list>
-        <dd:relationship objectAttribute="accountFiscalOfficerUser">
-            <dd:primitiveAttribute source="accountFiscalOfficerSystemIdentifier" target="principalId"/>
-            <dd:supportAttribute source="accountFiscalOfficerUser.principalName" target="principalName" identifier="true"/>
-            <dd:supportAttribute source="accountFiscalOfficerUser.name" target="name"/>           
-        </dd:relationship>
-        <dd:relationship objectAttribute="accountSupervisoryUser">
-            <dd:primitiveAttribute source="accountsSupervisorySystemsIdentifier" target="principalId"/>
-            <dd:supportAttribute source="accountSupervisoryUser.principalName" target="principalName" identifier="true"/>
-            <dd:supportAttribute source="accountSupervisoryUser.name" target="name"/>            
-        </dd:relationship>
-        <dd:relationship objectAttribute="accountManagerUser">
-            <dd:primitiveAttribute source="accountManagerSystemIdentifier" target="principalId"/>
-            <dd:supportAttribute source="accountManagerUser.principalName" target="principalName" identifier="true"/>
-            <dd:supportAttribute source="accountManagerUser.name" target="name"/>
-        </dd:relationship>
-        <dd:relationship objectAttribute="accountGuideline">
-            <dd:primitiveAttribute source="chartOfAccountsCode" target="chartOfAccountsCode"/>
-            <dd:primitiveAttribute source="accountNumber" target="accountNumber"/>
-        </dd:relationship>
-        <dd:relationship objectAttribute="cfda">
-            <dd:primitiveAttribute source="accountCfdaNumber" target="cfdaNumber"/>
-        </dd:relationship>
-        <dd:relationship objectAttribute="awards" targetClass="org.kuali.kfs.integration.cg.ContractsAndGrantsAccountAwardInformation">
-            <dd:primitiveAttribute source="chartOfAccountsCode" target="chartOfAccountsCode"/>
-            <dd:primitiveAttribute source="accountNumber" target="accountNumber"/>
-        </dd:relationship>
-        <dd:relationship objectAttribute="postalZipCode">
-            <dd:primitiveAttribute source="accountZipCode" target="postalCode"/>
-        </dd:relationship>
-        <dd:relationship objectAttribute="accountState">
-            <dd:primitiveAttribute source="accountStateCode" target="postalStateCode"/>
-        </dd:relationship>        
-        <dd:relationship objectAttribute="accountPhysicalCampus">
-            <dd:primitiveAttribute source="accountPhysicalCampusCode" target="campusCode"/>
-        </dd:relationship>
+				<bean parent="RelationshipDefinition" p:objectAttributeName="accountFiscalOfficerUser">
+					<property name="primitiveAttributes">
+						<list>
+        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="accountFiscalOfficerSystemIdentifier" p:targetName="principalId" />
+						</list>
+					</property>
+					<property name="supportAttributes">
+						<list>
+        			<bean parent="SupportAttributeDefinition" p:identifier="true" p:sourceName="accountFiscalOfficerUser.principalName" p:targetName="principalName" />
+        			<bean parent="SupportAttributeDefinition" p:sourceName="accountFiscalOfficerUser.name" p:targetName="name" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="RelationshipDefinition" p:objectAttributeName="accountSupervisoryUser">
+					<property name="primitiveAttributes">
+						<list>
+        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="accountsSupervisorySystemsIdentifier" p:targetName="principalId" />
+						</list>
+					</property>
+					<property name="supportAttributes">
+						<list>
+        			<bean parent="SupportAttributeDefinition" p:sourceName="accountSupervisoryUser.principalName" p:targetName="principalName" p:identifier="true" />
+        			<bean parent="SupportAttributeDefinition" p:sourceName="accountSupervisoryUser.name" p:targetName="name" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="RelationshipDefinition" p:objectAttributeName="accountManagerUser">
+					<property name="primitiveAttributes">
+						<list>
+        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="accountManagerSystemIdentifier" p:targetName="principalId" />
+						</list>
+					</property>
+					<property name="supportAttributes">
+						<list>
+        			<bean parent="SupportAttributeDefinition" p:sourceName="accountManagerUser.principalName" p:targetName="principalName" p:identifier="true" />
+        			<bean parent="SupportAttributeDefinition" p:sourceName="accountManagerUser.name" p:targetName="name" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="RelationshipDefinition" p:objectAttributeName="accountGuideline">
+					<property name="primitiveAttributes">
+						<list>
+        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="chartOfAccountsCode" p:targetName="chartOfAccountsCode" />
+        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="accountNumber" p:targetName="accountNumber" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="RelationshipDefinition" p:objectAttributeName="cfda">
+					<property name="primitiveAttributes">
+						<list>
+        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="accountCfdaNumber" p:targetName="cfdaNumber" />
+						</list>
+					</property>
+				</bean>
+		        <bean parent="RelationshipDefinition" p:objectAttributeName="awards" p:targetClass="org.kuali.kfs.integration.cg.ContractsAndGrantsAccountAwardInformation">
+							<property name="primitiveAttributes">
+								<list>
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="chartOfAccountsCode" p:targetName="chartOfAccountsCode" />
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="accountNumber" p:targetName="accountNumber" />
+		        		</list>
+		        	</property>
+		        </bean>
+		        <bean parent="RelationshipDefinition" p:objectAttributeName="postalZipCode">
+		        	<property name="primitiveAttributes">
+		        		<list>
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="accountCountryCode" p:targetName="countryCode" />
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="accountZipCode" p:targetName="code" />
+		        		</list>
+		        	</property>
+		        </bean>
+		        <bean parent="RelationshipDefinition" p:objectAttributeName="accountState">
+		        	<property name="primitiveAttributes">
+		        		<list>
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="accountCountryCode" p:targetName="countryCode" />
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="accountStateCode" p:targetName="code" />
+		        		</list>
+		        	</property>
+		        </bean>
+		        <bean parent="RelationshipDefinition" p:objectAttributeName="accountPhysicalCampus">
+		        	<property name="primitiveAttributes">
+		        		<list>
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="accountPhysicalCampusCode" p:targetName="code" />
+		        		</list>
+		        	</property>
+		        </bean>        
+				<bean parent="RelationshipDefinition" p:objectAttributeName="laborBenefitRateCategory">
+					<property name="primitiveAttributes">
+						<list>
+							<bean parent="PrimitiveAttributeDefinition" p:sourceName="laborBenefitRateCategoryCode"
+								p:targetName="laborBenefitRateCategoryCode" />
+						</list>
+					</property>
+				</bean>
+		        <bean parent="RelationshipDefinition" p:objectAttributeName="accountDescription.campus">
+		        	<property name="primitiveAttributes">
+		        		<list>
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="accountDescription.campusCode" p:targetName="code" />
+		        		</list>
+		        	</property>
+		        </bean>
         <dd:relationship objectAttribute="extension.subFundProgram">
             <dd:primitiveAttribute source="extension.programCode" target="programCode"/>
             <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode" />
@@ -262,11 +326,15 @@
   	<dd:select valuesFinderClass="org.kuali.kfs.coa.businessobject.options.AcctTypeValuesFinder"/>
   </dd:boAttributeRef>
   
-  <bean id="Account-accountPhysicalCampusCode" parent="Account-accountPhysicalCampusCode-parentBean"/>
-  <dd:boAttributeRef id="Account-accountPhysicalCampusCode-parentBean" abstract="true" parent="Campus-campusCode" attributeName="accountPhysicalCampusCode">
-    <dd:select valuesFinderClass="org.kuali.rice.kns.lookup.keyvalues.CampusValuesFinder"/>
-  </dd:boAttributeRef>
-
+  	<bean id="Account-accountPhysicalCampusCode" parent="Account-accountPhysicalCampusCode-parentBean" />
+	<bean id="Account-accountPhysicalCampusCode-parentBean" abstract="true"
+		parent="Campus-code" p:name="accountPhysicalCampusCode">
+		<property name="control">
+			<bean parent="SelectControlDefinition"
+				p:valuesFinderClass="org.kuali.rice.location.framework.campus.CampusValuesFinder" />
+		</property>
+	</bean>
+	
   <bean id="Account-subFundGroupCode" parent="Account-subFundGroupCode-parentBean"/>
   <dd:boAttributeRef id="Account-subFundGroupCode-parentBean" abstract="true" parent="SubFundGroup-subFundGroupCode" shortLabel="SUbFundGrpCd"/>
 
@@ -322,18 +390,24 @@
       <bean parent="TextControlDefinition" p:size="25"/>
     </property>
   </bean>
-  <bean id="Account-accountStateCode" parent="Account-accountStateCode-parentBean"/>
-
-  <bean id="Account-accountStateCode-parentBean" abstract="true" parent="ExternalizableAttributeDefinitionProxy" p:sourceExternalizableBusinessObjectInterface="org.kuali.rice.kns.bo.State" p:sourceAttributeName="postalStateCode">
-    <property name="name" value="accountStateCode"/>
-    <property name="label" value="Account State Code"/>
-    <property name="shortLabel" value="StateCd"/>
-    <property name="required" value="true"/>
-  </bean>
-  <bean id="Account-accountState.codeAndDescription" parent="Account-accountState.codeAndDescription-parentBean"/>
-
-  <dd:boAttributeRef id="Account-accountState.codeAndDescription-parentBean" abstract="true" parent="State-codeAndDescription" attributeName="accountState.codeAndDescription" label="Account State Code" shortLabel="Account State Code"/>
   
+  	<bean id="Account-accountStateCode" parent="Account-accountStateCode-parentBean" />
+
+	<bean id="Account-accountStateCode-parentBean" abstract="true" parent="State-code">
+		<property name="name" value="accountStateCode" />
+		<property name="label" value="Account State Code" />
+		<property name="shortLabel" value="StateCd" />
+		<property name="required" value="true" />
+	</bean>
+
+<!-- RICE20: codeAndDescription has been removed from the State object 
+	<bean id="Account-accountState.codeAndDescription" parent="Account-accountState.codeAndDescription-parentBean" />
+
+	<bean id="Account-accountState.codeAndDescription-parentBean"
+		abstract="true" parent="State-codeAndDescription" p:name="accountState.codeAndDescription"
+		p:label="Account State Code" p:shortLabel="Account State Code" />
+ -->
+   
   <bean id="Account-accountStreetAddress" parent="Account-accountStreetAddress-parentBean"/>
 
   <bean id="Account-accountStreetAddress-parentBean" abstract="true" parent="AttributeDefinition">
@@ -349,19 +423,15 @@
       <bean parent="TextControlDefinition" p:size="30"/>
     </property>
   </bean>
-  <bean id="Account-accountZipCode" parent="Account-accountZipCode-parentBean"/>
-
-  <bean id="Account-accountZipCode-parentBean" abstract="true" parent="ExternalizableAttributeDefinitionProxy" p:sourceExternalizableBusinessObjectInterface="org.kuali.rice.kns.bo.PostalCode" p:sourceAttributeName="postalCode">
-    <property name="name" value="accountZipCode"/>
-    <property name="label" value="Account Postal Code"/>
-    <property name="shortLabel" value="ZipCode"/>
-  </bean>
   
-  <bean id="Account-postalZipCode.postalCode" parent="Account-postalZipCode.postalCode-parentBean"/>
+  	<bean id="Account-accountZipCode" parent="Account-accountZipCode-parentBean" />
 
-  <dd:boAttributeRef id="Account-postalZipCode.postalCode-parentBean" abstract="true" parent="PostalCode-postalCode" attributeName="postalZipCode.postalCode" label="Account Postal Code" shortLabel="ZipCode"/>
-  <bean id="Account-reportsToChartOfAccountsCode" parent="Account-reportsToChartOfAccountsCode-parentBean"/>
-
+	<bean id="Account-accountZipCode-parentBean" abstract="true" parent="PostalCode-code">
+		<property name="name" value="accountZipCode" />
+		<property name="label" value="Account Postal Code" />
+		<property name="shortLabel" value="ZipCode" />
+	</bean>
+  
   <bean id="Account-reportsToChartOfAccountsCode-parentBean" abstract="true" parent="Chart-chartOfAccountsCode">
     <property name="name" value="reportsToChartOfAccountsCode"/>
     <property name="label" value="Fringe Benefit Chart Of Accounts Code"/>
@@ -523,25 +593,8 @@
       <bean parent="TextControlDefinition" p:size="3"/>
     </property>
   </bean>
-  <bean id="Account-indirectCostRcvyFinCoaCode" parent="Account-indirectCostRcvyFinCoaCode-parentBean"/>
+  
 
-  <bean id="Account-indirectCostRcvyFinCoaCode-parentBean" abstract="true" parent="Chart-chartOfAccountsCode">
-    <property name="name" value="indirectCostRcvyFinCoaCode"/>
-    <property name="label" value="Indirect Cost Recovery Chart Of Accounts Code"/>
-    <property name="shortLabel" value="IndCstChart"/>
-    <property name="required" value="false"/>
-    <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.coa.businessobject.options.ChartValuesFinder" p:includeKeyInLabel="false"/>
-    </property>
-  </bean>
-  <bean id="Account-indirectCostRecoveryAcctNbr" parent="Account-indirectCostRecoveryAcctNbr-parentBean"/>
-
-  <bean id="Account-indirectCostRecoveryAcctNbr-parentBean" abstract="true" parent="Account-accountNumber">
-    <property name="name" value="indirectCostRecoveryAcctNbr"/>
-    <property name="label" value="Indirect Cost Recovery Account Number"/>
-    <property name="shortLabel" value="IndCstAcct"/>
-    <property name="required" value="false"/>
-  </bean>
   <bean id="Account-accountInFinancialProcessingIndicator" parent="Account-accountInFinancialProcessingIndicator-parentBean"/>
 
   <bean id="Account-accountInFinancialProcessingIndicator-parentBean" abstract="true" parent="GenericAttributes-oneDigitTextCode">
@@ -894,9 +947,7 @@
               <dd:field attributeName="accountPhysicalCampusCode"/>
               <dd:field attributeName="accountEffectiveDate"/>
               <dd:field attributeName="accountExpirationDate"/>
-              <dd:field attributeName="postalZipCode.postalCode"/>
               <dd:field attributeName="accountCityName"/>
-              <dd:field attributeName="accountState.codeAndDescription"/>
               <dd:field attributeName="accountStreetAddress"/>
               <dd:field attributeName="accountOffCampusIndicator"/>
               <dd:field attributeName="closed"/>
@@ -945,8 +996,6 @@
               <dd:field attributeName="contractControlAccountNumber"/>
               <dd:field attributeName="acctIndirectCostRcvyTypeCd"/>
               <dd:field attributeName="financialIcrSeriesIdentifier"/>
-              <dd:field attributeName="indirectCostRcvyFinCoaCode"/>
-              <dd:field attributeName="indirectCostRecoveryAcctNbr"/>
               <dd:field attributeName="accountCfdaNumber"/>
               <dd:field attributeName="contractsAndGrantsAccountResponsibilityId"/>
               <dd:field attributeName="extension.invoiceFrequencyCode"/>

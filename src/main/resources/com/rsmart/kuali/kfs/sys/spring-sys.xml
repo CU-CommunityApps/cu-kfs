@@ -34,7 +34,17 @@
             </list>
         </property>
     </bean>   
-	
+    
+    <!-- UPGRADE-911 -->
+	<bean id="mimeTypeFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg type="java.lang.String">
+          <value>mimeType.properties</value>
+        </constructor-arg>
+    </bean>
+
+    <bean id="mimeTypeProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+         <property name="location" ref="mimeTypeFile"/>
+    </bean>
     <bean id="batchFeedHelperService" class="com.rsmart.kuali.kfs.sys.batch.service.impl.BatchFeedHelperServiceImpl">
        <property name="batchInputFileService" ref="batchInputFileService"/>
        <property name="dataDictionaryService" ref="dataDictionaryService"/>

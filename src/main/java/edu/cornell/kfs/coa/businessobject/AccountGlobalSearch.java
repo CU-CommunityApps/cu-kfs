@@ -11,6 +11,7 @@ import org.kuali.kfs.coa.businessobject.Account;
  */
 public class AccountGlobalSearch extends Account {
 
+	private static final long serialVersionUID = 1L;
 	private boolean useOrgHierarchy;
 
 	public boolean isUseOrgHierarchy() {

@@ -1,7 +1,7 @@
 package edu.cornell.kfs.module.bc.document.validation.impl;
 
 import org.kuali.kfs.coa.businessobject.Account;
-import org.kuali.kfs.module.bc.CUBCKeyConstants;
+import edu.cornell.kfs.module.bc.CUBCKeyConstants;
 import org.kuali.kfs.module.bc.businessobject.BudgetConstructionAccountReports;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseConstants.ACCOUNT_NUMBER;

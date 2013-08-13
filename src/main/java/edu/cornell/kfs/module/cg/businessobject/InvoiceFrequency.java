@@ -63,8 +63,8 @@ public class InvoiceFrequency extends PersistableBusinessObjectBase implements M
         this.active = active;
     }
 	
-	@Override
-	protected LinkedHashMap toStringMapper() {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+  protected LinkedHashMap toStringMapper() {
 		 LinkedHashMap m = new LinkedHashMap();
 	     m.put("invoiceFrequencyCode", this.invoiceFrequencyCode);
 	     return m;

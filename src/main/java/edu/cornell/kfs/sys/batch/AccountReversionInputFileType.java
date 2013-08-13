@@ -67,7 +67,7 @@ public class AccountReversionInputFileType extends BatchInputFileTypeBase {
      * 
      * @see org.kuali.kfs.sys.batch.BatchInputFileTypeBase#isDoneFileRequired()
      */
-    @Override
+
     public boolean isDoneFileRequired() {
         return false;
     }

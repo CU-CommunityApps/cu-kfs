@@ -98,7 +98,7 @@ public class DisbursementVoucherInputFileType extends XmlBatchInputFileTypeBase 
         DisbursementVoucherBatchFeed batchFeed = (DisbursementVoucherBatchFeed) parsedFileContents;
 
         DisbursementVoucherBatchStatus batchStatus = new DisbursementVoucherBatchStatus();
-        disbursementVoucherDocumentBatchService.loadDisbursementVouchers(batchFeed, batchStatus, fileName, GlobalVariables.getErrorMap());
+        disbursementVoucherDocumentBatchService.loadDisbursementVouchers(batchFeed, batchStatus, fileName, GlobalVariables.getMessageMap());
         disbursementVoucherDocumentBatchService.generateAuditReport(batchStatus);
     }
 

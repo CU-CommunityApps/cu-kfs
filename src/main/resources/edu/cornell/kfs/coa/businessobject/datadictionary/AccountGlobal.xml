@@ -48,7 +48,6 @@
         <ref bean="AccountGlobal-accountManagerUser.principalName"/>
         <ref bean="AccountGlobal-accountManagerUser.name"/>
         <ref bean="AccountGlobal-laborBenefitRateCategoryCode"/>
-        <ref bean="AccountGlobal-majorReportingCategoryCode"/>
       </list>
     </property>
     <property name="relationships">
@@ -96,10 +95,10 @@
           </property>
         </bean>
         <dd:relationship objectAttribute="postalZipCode">
-            <dd:primitiveAttribute source="accountZipCode" target="postalCode"/>
+            <dd:primitiveAttribute source="accountZipCode" target="code"/>
         </dd:relationship>
         <dd:relationship objectAttribute="accountState">
-            <dd:primitiveAttribute source="accountStateCode" target="postalStateCode"/>
+            <dd:primitiveAttribute source="accountStateCode" target="code"/>
         </dd:relationship> 
       </list>
     </property>
@@ -248,8 +247,4 @@
     <property name="required" value="false"/>
   </bean>
   
-  <bean id="AccountGlobal-majorReportingCategoryCode" parent="AccountGlobal-majorReportingCategoryCode-parentBean"/>
-  <bean id="AccountGlobal-majorReportingCategoryCode-parentBean" abstract="true" parent="MajorReportingCategory-majorReportingCategoryCode">
-    <property name="required" value="false"/>
-  </bean>
 </beans>

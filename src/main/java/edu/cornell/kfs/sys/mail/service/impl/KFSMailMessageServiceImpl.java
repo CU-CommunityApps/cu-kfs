@@ -19,9 +19,9 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.mail.KFSMailMessage;
 import edu.cornell.kfs.sys.mail.service.KFSMailMessageService;
 
@@ -38,7 +38,7 @@ public class KFSMailMessageServiceImpl implements KFSMailMessageService {
 	
 	 private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(KFSMailMessageServiceImpl.class);
 	 
-	 private String EMAIL_ADDRESS_DELIMITER = KFSConstants.SEMICOLON;
+	 private String EMAIL_ADDRESS_DELIMITER = CUKFSConstants.SEMICOLON;
 	 
 	 private ConfigurationService kualiConfigurationService;
 

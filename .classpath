@@ -3,9 +3,9 @@
 	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
 	<classpathentry kind="src" output="target/classes" path="src/main/resources"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/stuff"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/kfs"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/stuff"/>
 	<classpathentry kind="lib" path="/Users/srb55/.m2/repository/javax/persistence/persistence-api/1.0/persistence-api-1.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/rice-2.1.7"/>
 	<classpathentry kind="output" path="target/kfs-war-3.0.1-SNAPSHOT"/>

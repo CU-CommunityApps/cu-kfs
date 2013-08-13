@@ -41,7 +41,8 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
             // get new document from doc service
             pcardDocument = (ProcurementCardDocument) SpringContext.getBean(DocumentService.class).getNewDocument(PROCUREMENT_CARD);
             if (ObjectUtils.isNotNull(pcardDocument.getCapitalAssetInformation())) {
-                pcardDocument.getCapitalAssetInformation().setDocumentNumber(pcardDocument.getDocumentNumber());
+                //TODO UPGRADE-911 returns Collection??
+                pcardDocument.getCapitalAssetInformation().get(0).setDocumentNumber(pcardDocument.getDocumentNumber());
             }
 
             // set the card holder record on the document from the first transaction

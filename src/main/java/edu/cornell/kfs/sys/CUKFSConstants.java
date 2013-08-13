@@ -19,4 +19,14 @@ public class CUKFSConstants {
                 public static final String PARTIAL_AMOUNT = "partialAmount";
         }
         
+        // I Want document constants
+        public static final String I_WANT_DOC_ITEM_TAB_ERRORS = "document.item*,newIWantItemLine*";
+        public static final String I_WANT_DOC_ACCOUNT_TAB_ERRORS = "newSourceLine*,document.account*";
+        public static final String I_WANT_DOC_VENDOR_TAB_ERRORS = "document.vendor*";
+        public static final String I_WANT_DOC_ORDER_COMPLETED_TAB_ERRORS = "document.completeOption";
+        
+        //KFSPTS-1460
+        public static final String SEMICOLON = ";";
+    
+        
 }

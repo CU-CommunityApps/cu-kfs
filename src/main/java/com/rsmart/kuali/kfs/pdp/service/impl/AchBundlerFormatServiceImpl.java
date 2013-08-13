@@ -15,6 +15,7 @@
  */
 package com.rsmart.kuali.kfs.pdp.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -27,9 +28,13 @@ import org.kuali.kfs.pdp.businessobject.DisbursementNumberRange;
 import org.kuali.kfs.pdp.businessobject.FormatProcessSummary;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.businessobject.PaymentProcess;
+import org.kuali.kfs.pdp.service.PaymentGroupService;
+import org.kuali.kfs.pdp.service.PendingTransactionService;
 import org.kuali.kfs.pdp.service.impl.FormatServiceImpl;
 import org.kuali.kfs.pdp.service.impl.exception.FormatException;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,7 +103,7 @@ public class AchBundlerFormatServiceImpl extends FormatServiceImpl {
         FormatProcessSummary postFormatProcessSummary = new FormatProcessSummary();
 
         // step 1 get ACH or Check, Bank info, ACH info, sorting
-        Iterator<PaymentGroup> paymentGroupIterator = getPaymentGroupService().getByProcess(paymentProcess);
+        Iterator<PaymentGroup> paymentGroupIterator = SpringContext.getBean(PaymentGroupService.class).getByProcess(paymentProcess);
         while (paymentGroupIterator.hasNext()) {
             PaymentGroup paymentGroup = paymentGroupIterator.next();
             LOG.debug("performFormat() Step 1 Payment Group ID " + paymentGroup.getId());
@@ -129,7 +134,7 @@ public class AchBundlerFormatServiceImpl extends FormatServiceImpl {
         	//match this method call: disbursementNumbersAssigned = assignDisbursementNumbersAndCombineChecks(paymentProcess, postFormatProcessSummary);
         	//Added parameter "processCampus" so method signatures matched.
         	LOG.info("ACH BUNDLER MOD: NOT Active - ACH payments will NOT be bundled");
-            disbursementNumbersAssigned = assignDisbursementNumbersAndCombineChecks(processCampus, paymentProcess, postFormatProcessSummary);
+            disbursementNumbersAssigned = assignDisbursementNumbersAndCombineChecks(paymentProcess, postFormatProcessSummary);
             
         }
         /** END MOD */
@@ -171,7 +176,7 @@ public class AchBundlerFormatServiceImpl extends FormatServiceImpl {
         // keep a map with paymentGroupKey and PaymentInfo (disbursementNumber, noteLines)
         Map<String, PaymentInfo> combinedPaymentGroupMap = new HashMap<String, PaymentInfo>();
 
-        Iterator<PaymentGroup> paymentGroupIterator = getPaymentGroupService().getByProcess(paymentProcess);
+        Iterator<PaymentGroup> paymentGroupIterator = SpringContext.getBean(PaymentGroupService.class).getByProcess(paymentProcess);
         int maxNoteLines = getMaxNoteLines();
 
         while (paymentGroupIterator.hasNext()) {
@@ -180,7 +185,11 @@ public class AchBundlerFormatServiceImpl extends FormatServiceImpl {
 
             //Use the customer's profile's campus code to check for disbursement ranges
             String campus = paymentGroup.getBatch().getCustomerProfile().getDefaultPhysicalCampusProcessingCode();
-            List<DisbursementNumberRange> disbursementRanges = getPaymentDetailDao().getDisbursementNumberRanges(campus);
+            
+            
+            //TODO UPGRADE-911
+            //Where should this come from?
+            List<DisbursementNumberRange> disbursementRanges = new ArrayList<DisbursementNumberRange>(); //SpringContext.getBean(PaymentGroupService.class).getDisbursementNumberRanges(campus);
             
             DisbursementNumberRange range = getRange(disbursementRanges, paymentGroup.getBank(), paymentGroup.getDisbursementType().getCode());
 
@@ -257,7 +266,7 @@ public class AchBundlerFormatServiceImpl extends FormatServiceImpl {
             getBusinessObjectService().save(paymentGroup);
 
             // Generate a GL entry for CHCK & ACH
-            getGlPendingTransactionService().generatePaymentGeneralLedgerPendingEntry(paymentGroup);
+            SpringContext.getBean(PendingTransactionService.class).generatePaymentGeneralLedgerPendingEntry(paymentGroup); 
             
             // Update all the ranges
             LOG.debug("assignDisbursementNumbers() Save ranges");

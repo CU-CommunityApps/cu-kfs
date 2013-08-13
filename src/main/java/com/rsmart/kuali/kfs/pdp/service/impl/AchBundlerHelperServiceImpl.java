@@ -16,32 +16,25 @@
  */
 package com.rsmart.kuali.kfs.pdp.service.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ojb.broker.query.Criteria;
-import org.apache.ojb.broker.query.QueryByCriteria;
-import org.apache.ojb.broker.query.QueryFactory;
-import org.kuali.kfs.fp.businessobject.CashieringItemInProcess;
-import org.kuali.kfs.fp.businessobject.CashieringTransaction;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.dataaccess.PaymentDetailDao;
 import org.kuali.kfs.sys.DynamicCollectionComparator;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSParameterKeyConstants;
 import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.service.BusinessObjectService;
-import org.springframework.dao.DataAccessException;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
+
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 /**
  * A custom service to help with ACH bundler modifications.
@@ -164,9 +157,9 @@ public class AchBundlerHelperServiceImpl implements AchBundlerHelperService {
         boolean bundle = false;
         
         try {
-            bundle = getParameterService().getParameterValueAsBoolean(KFSParameterKeyConstants.KFS_PDP, KFSParameterKeyConstants.ALL_COMPONENTS, KFSParameterKeyConstants.ACH_PAYMENT_COMBINING_IND);
+            bundle = getParameterService().getParameterValueAsBoolean(CUKFSParameterKeyConstants.KFS_PDP, CUKFSParameterKeyConstants.ALL_COMPONENTS, CUKFSParameterKeyConstants.ACH_PAYMENT_COMBINING_IND);
         } catch(Exception e) {
-            LOG.error("AchBundlerHelperServiceImpl MOD: shouldBundleAchPayments() The " + KFSParameterKeyConstants.KFS_PDP + ":" + KFSParameterKeyConstants.ALL_COMPONENTS + ":" + KFSParameterKeyConstants.ACH_PAYMENT_COMBINING_IND + "system parameter was not found registered in the system.");
+            LOG.error("AchBundlerHelperServiceImpl MOD: shouldBundleAchPayments() The " + CUKFSParameterKeyConstants.KFS_PDP + ":" + CUKFSParameterKeyConstants.ALL_COMPONENTS + ":" + CUKFSParameterKeyConstants.ACH_PAYMENT_COMBINING_IND + "system parameter was not found registered in the system.");
         }
         
         return bundle;

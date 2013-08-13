@@ -2,7 +2,6 @@ package edu.cornell.kfs.fp.document.validation.impl;
 
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
@@ -10,6 +9,8 @@ import org.kuali.kfs.sys.document.validation.GenericValidation;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
+
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 /**
  */
@@ -32,7 +33,7 @@ public class DisbursementVoucherInitiatorPrimaryDepartmentValidation extends Gen
 
         if (ObjectUtils.isNull(chartOrg) || ObjectUtils.isNull(chartOrg.getOrganization())) {
 
-            GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_DV_INITIATOR_INVALID_PRIMARY_DEPARTMENT);
+            GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, CUKFSKeyConstants.ERROR_DV_INITIATOR_INVALID_PRIMARY_DEPARTMENT);
 
             isValid = false;
         }

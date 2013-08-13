@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
+import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.lookup.VendorLookupableHelperServiceImpl;
@@ -117,6 +118,12 @@ public class CUVendorServiceImpl extends VendorServiceImpl implements CUVendorSe
         else {
             return vds.get(0);
         }
+    }
+
+    //TODO UPGRADE-911
+    public VendorAddress getVendorDefaultAddress(List<VendorAddress> addresses,
+        String addressType, String campus) {
+      return null;
     }
 
 }

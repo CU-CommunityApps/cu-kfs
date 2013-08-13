@@ -56,5 +56,5 @@
   <!-- workflow attributes -->
   <bean id="MajorReportingCategoryMaintenanceDocument-workflowAttributes" parent="MajorReportingCategoryMaintenanceDocument-workflowAttributes-parentBean"/>
   
-  <bean id="MajorReportingCategoryMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.kns.datadictionary.WorkflowAttributes" abstract="true"/>
+  <bean id="MajorReportingCategoryMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true"/>
 </beans>

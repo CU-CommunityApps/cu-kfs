@@ -94,11 +94,11 @@ public class GlTransactionStep extends AbstractStep {
                 else {
                     for (PaymentGroup paymentGroup : paymentGroups) {
                         
+                        //TODO UPGRADE-911
                         //Create cancellation offsets for STOPed checks. KFSPTS-1741
-                        glPendingTransactionService.generateStopGeneralLedgerPendingEntry(paymentGroup);
+                        //glPendingTransactionService.generateCancellationGeneralLedgerPendingEntry(paymentGroup);
                         
-                        
-                        //glTransactionService.generateGlPendingTransactionStop(paymentGroup);
+                        glTransactionService.generateGlPendingTransactionStop(paymentGroup);
                         
                         KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
                         if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
@@ -143,8 +143,9 @@ public class GlTransactionStep extends AbstractStep {
                 }
                 else {
                     for (PaymentGroup paymentGroup : paymentGroups) {
-                        //KFSPTS-2260
-                        glPendingTransactionService.generateCRCancellationGeneralLedgerPendingEntry(paymentGroup);
+                      //TODO UPGRADE-911  
+                      //KFSPTS-2260
+                        glPendingTransactionService.generatePaymentGeneralLedgerPendingEntry(paymentGroup);
                         //glTransactionService.generateGlPendingTransactionCancel(paymentGroup);
                     
                         KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
@@ -242,9 +243,10 @@ public class GlTransactionStep extends AbstractStep {
                 else {
                      for (PaymentGroup paymentGroup : paymentGroups) {
                          
+                         //TODO UPGRADE-911
                          //KFSPTS-2246
-                        // glTransactionService.generateGlPendingTransactionStale(paymentGroup);
-                         glPendingTransactionService.generateStaleGeneralLedgerPendingEntry(paymentGroup);
+                         glTransactionService.generateGlPendingTransactionStale(paymentGroup);
+                         //glPendingTransactionService.g .generateStaleGeneralLedgerPendingEntry(paymentGroup);
                     
                          KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
                          if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {

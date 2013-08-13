@@ -17,7 +17,7 @@ import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.module.bc.BCConstants;
 import org.kuali.kfs.module.bc.BCKeyConstants;
-import org.kuali.kfs.module.bc.CUBCKeyConstants;
+import edu.cornell.kfs.module.bc.CUBCKeyConstants;
 import org.kuali.kfs.module.bc.document.web.struts.BudgetExpansionAction;
 import org.kuali.kfs.module.bc.util.ExternalizedMessageWrapper;
 import org.kuali.kfs.sys.KFSConstants;
@@ -74,7 +74,7 @@ public class SipImportAction extends BudgetExpansionAction {
 
             sipImportService.generateValidationReportInTextFormat(messageList, baos);
             WebUtils.saveMimeOutputStreamAsFile(response, ReportGeneration.TEXT_MIME_TYPE, baos,
-                    BCConstants.SIP_IMPORT_LOG_FILE);
+                CUBCConstants.SIP_IMPORT_LOG_FILE);
             return returnToCaller(mapping, form, request, response); // This allows us to stay on the same page and the page is not refreshed
         }
 
@@ -114,7 +114,7 @@ public class SipImportAction extends BudgetExpansionAction {
             }
         }
         WebUtils.saveMimeOutputStreamAsFile(response, ReportGeneration.TEXT_MIME_TYPE, baos,
-                BCConstants.SIP_IMPORT_LOG_FILE);
+                CUBCConstants.SIP_IMPORT_LOG_FILE);
 
         return returnToCaller(mapping, form, request, response); // This allows us to stay on the same page and the page is not refreshed
     }

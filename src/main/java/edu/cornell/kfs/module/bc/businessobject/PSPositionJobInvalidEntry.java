@@ -56,9 +56,8 @@ public class PSPositionJobInvalidEntry extends BusinessObjectBase {
 
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
     protected LinkedHashMap toStringMapper() {
-        // TODO Auto-generated method stub
         return null;
     }
 

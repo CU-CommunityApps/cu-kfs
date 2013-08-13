@@ -55,7 +55,8 @@ public class DocumentReindexStep extends AbstractStep {
 			queue.indexDocument(id.toString());
 		}
 		
-		addTimeStampToFileName(f, fileName, stagingDirectory);
+		//TODO UPGRADE-911
+		//addTimeStampToFileName(f, fileName, stagingDirectory);
 		
 		return true;
 //		return SpringContext.getBean(DocumentMaintenanceService.class).requeueDocuments();

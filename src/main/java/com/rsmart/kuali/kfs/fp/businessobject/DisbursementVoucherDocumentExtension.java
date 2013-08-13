@@ -93,7 +93,7 @@ public class DisbursementVoucherDocumentExtension extends PersistableBusinessObj
     /**
      * @see org.kuali.rice.kns.bo.PersistableBusinessObjectExtensionBase#toStringMapper()
      */
-    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();
 

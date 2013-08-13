@@ -15,6 +15,7 @@
  */
 package edu.cornell.kfs.fp.document.service.impl;
 
+import java.net.URI;
 import java.net.URL;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,6 +31,7 @@ import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.rice.core.api.util.ClassLoaderUtils;
 import org.kuali.rice.core.api.util.ContextClassLoaderBinder;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 /**
  * This is the default implementation of the CULegacyTravelService interface.
@@ -88,7 +90,7 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
 			
 			//TODO UPGRADE-911 -- Figure out correct CXF deps
 			JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
-			client = dcf.createClient(wsdlUrl);
+			//client = dcf.createClient(wsdlUrl);
 			
 			configureWebServiceClient(client);
 			  
@@ -132,9 +134,10 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
         ClassLoader classLoader = ClassLoaderUtils.getDefaultClassLoader();
         try {
 			URL wsdlUrl = new URL(updateTripWsdl);
-			
+	     
+			//TODO UPGRADE-911 -- Figure out correct CXF deps
 			JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
-			client = dcf.createClient(wsdlUrl);
+			//client = dcf.createClient(wsdlUrl);
 			  
 			configureWebServiceClient(client);
 			  
@@ -258,7 +261,7 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
 	 * @author Dennis Friends
 	 *
 	 */
-	public class KfsWebServiceAuthSupplier extends HttpAuthSupplier {
+	public class KfsWebServiceAuthSupplier implements org.apache.cxf.transport.http.auth.HttpAuthSupplier {
 		public KfsWebServiceAuthSupplier() {
 		    super();
 		}
@@ -279,6 +282,12 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
 		public String getAuthorizationForRealm(HTTPConduit conduit, URL currentURL, Message message, String reqestedRealm, String fullHeader) {
 			return createUserPass(updateTripUser, updateTripPassword);
 		}
+
+		//TODO UPGRADE-911
+    public String getAuthorization(AuthorizationPolicy authPolicy, URI url,
+        Message message, String fullHeader) {
+      return null;
+    }
 	}
 
 	

@@ -173,7 +173,8 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
     		VendorSupplierDiversity vDiversity = new VendorSupplierDiversity();
 
             vDiversity.setVendorSupplierDiversityCode(diversity.getVendorSupplierDiversityCode());
-            vDiversity.setVendorSupplierDiversityExpirationDate(new java.sql.Date(diversity.getVendorSupplierDiversityExpirationDate().getTime()));
+            //TODO UPGRADE-911
+            //vDiversity.setVendorSupplierDiversityExpirationDate(new java.sql.Date(diversity.getVendorSupplierDiversityExpirationDate().getTime()));
             vDiversity.setActive(diversity.isActive());
             vendorSupplierDiversitys.add(vDiversity);
    		
@@ -202,7 +203,8 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 		}
 		// TODO : need to add poTransmissionMethodCode because it is
 		// required if PO type
-		vendorAddr.setPurchaseOrderTransmissionMethodCode(address.getPurchaseOrderTransmissionMethodCode());
+		//TODO UPGRADE-911
+		//vendorAddr.setPurchaseOrderTransmissionMethodCode(address.getPurchaseOrderTransmissionMethodCode());
 		vendorAddr.setVendorAddressEmailAddress(address.getVendorAddressEmailAddress());						
 		vendorAddr.setVendorFaxNumber(address.getVendorFaxNumber());
 		vendorAddr.setActive(address.isActive());
@@ -369,7 +371,8 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
     		VendorSupplierDiversity vDiversity = getVendorSupplierDiversity(vDetail.getVendorHeader(), diversity.getVendorSupplierDiversityCode());
             boolean isExist = StringUtils.isNotBlank(vDiversity.getVendorSupplierDiversityCode());
             vDiversity.setVendorSupplierDiversityCode(diversity.getVendorSupplierDiversityCode());
-            vDiversity.setVendorSupplierDiversityExpirationDate(new java.sql.Date(diversity.getVendorSupplierDiversityExpirationDate().getTime()));
+            //TODO UPGRADE-911
+            //vDiversity.setVendorSupplierDiversityExpirationDate(new java.sql.Date(diversity.getVendorSupplierDiversityExpirationDate().getTime()));
             vDiversity.setActive(diversity.isActive());
             if (!isExist) {
             	vDetail.getVendorHeader().getVendorSupplierDiversities().add(vDiversity);

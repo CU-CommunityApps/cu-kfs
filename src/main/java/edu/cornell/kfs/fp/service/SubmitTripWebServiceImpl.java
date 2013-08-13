@@ -142,16 +142,18 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
 
 	        for(EntityAffiliationContract entityAffiliation : ((PersonImpl)traveler).getAffiliations()) {
 	        	if(entityAffiliation.isDefaultValue()) {
-		    		if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {
-		        		dvDoc.templateStudent(traveler);
-		    		}
-		    		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.ALUMNI)) {
-		        		dvDoc.templateAlumni(traveler);
-		    		}
-		    		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.FACULTY) ||
-		    				StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.STAFF)) {
-		        		dvDoc.templateEmployee(traveler);
-		    		}
+	        	//TODO UPGRADE-9111
+	        	//NEEDS PUR DV MODS  
+//		    		if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {
+//		        		dvDoc.templateStudent(traveler);
+//		    		}
+//		    		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.ALUMNI)) {
+//		        		dvDoctemplateAlumni(traveler);
+//		    		}
+//		    		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.FACULTY) ||
+//		    				StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.STAFF)) {
+//		        		dvDoc.templateEmployee(traveler);
+//		    		}
 	        	}
 	        }
 			dvDoc.setPayeeAssigned(true);

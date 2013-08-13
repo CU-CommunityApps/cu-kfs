@@ -52,5 +52,5 @@
   <!-- workflow attributes -->
   <bean id="InvoiceTypeMaintenanceDocument-workflowAttributes" parent="InvoiceTypeMaintenanceDocument-workflowAttributes-parentBean"/>
   
-  <bean id="InvoiceTypeMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.kns.datadictionary.WorkflowAttributes" abstract="true"/>
+  <bean id="InvoiceTypeMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true"/>
 </beans>

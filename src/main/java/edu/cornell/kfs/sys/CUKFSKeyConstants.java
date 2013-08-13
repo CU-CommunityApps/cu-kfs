@@ -58,7 +58,11 @@ public class CUKFSKeyConstants extends KFSKeyConstants{
     
 	    // KFSPTS-1786
 	    public static String ERROR_CURRBALANCE_LOOKUP_CRITERIA_REQD = "error.currentbalance.lookup.criteria.required";
-	
+	    public static final String ERROR_DV_INITIATOR_INVALID_PRIMARY_DEPARTMENT = "error.dv.initiatorInvalidPrimaryDepartment";
+	    
+	    public static final String ERROR_FINAL_FINANCIAL_REPORT_DATE_REQUIRED = "error.cg.requiredFinancialReportDateNotSupplied";    
+
+
 
 	
 }

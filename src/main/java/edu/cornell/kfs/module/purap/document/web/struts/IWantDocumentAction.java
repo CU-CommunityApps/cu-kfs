@@ -15,7 +15,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.kuali.kfs.module.purap.CUPurapConstants;
+
+import edu.cornell.kfs.module.purap.CUPurapConstants;
+
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -27,6 +29,8 @@ import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.employment.EntityEmployment;
+import org.kuali.rice.kim.api.identity.entity.Entity;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.IdentityManagementService;
 import org.kuali.rice.kns.rule.event.KualiAddLineEvent;
@@ -322,13 +326,13 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             IdentityManagementService identityManagementService = SpringContext
                     .getBean(IdentityManagementService.class);
 
-           EntityInfo entityInfo = identityManagementService.getEntityInfoByPrincipalId(currentUser
+           Entity entityInfo = identityManagementService.getEntityByPrincipalId(currentUser
                     .getPrincipalId());
 
             if (ObjectUtils.isNotNull(entityInfo)) {
                 if (ObjectUtils.isNotNull(entityInfo.getEmploymentInformation())
                         && entityInfo.getEmploymentInformation().size() > 0) {
-                    EntityEmploymentInformation employmentInformation = entityInfo.getEmploymentInformation().get(0);
+                    EntityEmployment employmentInformation = entityInfo.getEmploymentInformation().get(0);
                     String primaryDepartment = employmentInformation.getPrimaryDepartmentCode();
                     primaryDeptOrg = primaryDepartment.substring(primaryDepartment.lastIndexOf("-") + 1,
                             primaryDepartment.length());

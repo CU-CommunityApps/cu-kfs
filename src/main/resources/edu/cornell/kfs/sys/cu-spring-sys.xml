@@ -80,6 +80,7 @@
 			<property name="stagingDirectory" value="${staging.directory}/sys"/>
 	</bean>
 	
+	<!--  UPGRADE-911
 	<bean id="securityRequestOrganizationRoleTypeService" class="org.kuali.kfs.sys.identity.SecurityRequestOrganizationRoleTypeServiceImpl"/>
     <bean class="org.kuali.rice.ksb.messaging.KSBExporter">
      <property name="serviceDefinition">
@@ -88,13 +89,16 @@
          p:localServiceName="securityRequestOrganizationRoleTypeService" />
      </property>
     </bean>   
-
+	-->
+	
+	
 	<bean id="documentMaintenanceService" parent="documentMaintenanceService-parentBean"/>
 
     <bean id="documentMaintenanceService-parentBean" class="edu.cornell.kfs.sys.service.impl.DocumentMaintenanceServiceImpl">
 	    <property name="documentMaintenanceDao" ref="documentMaintenanceDao"/>
     </bean>
- 	 	 	
+
+ 	
     <bean id="documentReindexFlatFileInputFileType" parent="documentReindexFlatFileInputFileType-parentBean"/>
 
     <bean id="documentReindexFlatFileInputFileType-parentBean" class="edu.cornell.kfs.sys.batch.DocumentReindexFlatFileInputType">
@@ -117,14 +121,16 @@
 	    </property>
 	</bean>
 
-	<bean id="documentMaintenanceDao" parent="platformAwareDao" class="edu.cornell.kfs.sys.dataaccess.impl.DocumentMaintenanceDaoOjb" depends-on="kewOjbConfigurer">
+ 
+	<bean id="documentMaintenanceDao" parent="platformAwareDao" class="edu.cornell.kfs.sys.dataaccess.impl.DocumentMaintenanceDaoOjb" >
 	    <property name="jcdAlias" value="enWorkflowDataSource" />
 		<property name="parameterService" ref="parameterService" />
 	</bean>
 
+
 	<bean id="autoCancelBatchDao" parent="autoCancelBatchDao-parentBean"/>
 
-    <bean id="autoCancelBatchDao-parentBean" parent="platformAwareDao" class="edu.cornell.kfs.sys.dataaccess.impl.AutoCancelBatchDaoOjb" depends-on="kewOjbConfigurer">
+    <bean id="autoCancelBatchDao-parentBean" parent="platformAwareDao" class="edu.cornell.kfs.sys.dataaccess.impl.AutoCancelBatchDaoOjb">
 	    <property name="jcdAlias" value="enWorkflowDataSource" />
     	<property name="documentService"><ref bean="documentService" /></property>
     	<property name="businessObjectService"><ref bean="businessObjectService" /></property>
@@ -144,6 +150,7 @@
 	</bean>
 	
 <!-- KFSPTS-985 : User Favorites Profile -->
+<!--  UPGRADE-911
     <bean id="userProcurementProfileValidationService" class="edu.cornell.kfs.sys.service.impl.UserProcurementProfileValidationServiceImpl">
 		<property name="dictionaryValidationService">
 			<ref bean="dictionaryValidationService" />
@@ -153,8 +160,9 @@
 		</property>
 		<property name="roleManagementService">
 			<ref bean="kimRoleManagementService" />
-		</property>		
+		</property>	
 	</bean>
+	-->
     <bean id="userFavoriteAccountService" class="edu.cornell.kfs.sys.service.impl.UserFavoriteAccountServiceImpl">
 		<property name="businessObjectService">
 			<ref bean="businessObjectService" />
@@ -162,6 +170,7 @@
 	</bean>
 
 <!-- KFSPTS-985 lookupablehelper -->
+<!--  UPGRADE-911
     <bean id="userProcurementProfileLookupableHelperService" class="edu.cornell.kfs.sys.businessobject.lookup.UserProcurementProfileLookupableHelperServiceImpl" scope="prototype">
 		<property name="userProcurementProfileValidationService">
 			<ref bean="userProcurementProfileValidationService" />
@@ -172,5 +181,6 @@
             <ref bean="userProcurementProfileLookupableHelperService" />
         </property>
     </bean>
+    -->
 	
 </beans>

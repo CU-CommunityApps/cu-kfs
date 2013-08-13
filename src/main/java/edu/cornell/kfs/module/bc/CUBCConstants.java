@@ -7,6 +7,8 @@ public class CUBCConstants extends BCConstants {
     public static final String DEFAULT_SUB_ACCOUNT_NUMBER = "-----";
     public static final String POSITION_NUMBER_PREFIX = "00";
 
+    public static final String SIP_IMPORT_LOG_FILE = "sip_import_log.txt";
+    
     // parameter constants
     public static final String RUN_FOR_NEW_YEAR_PARAMETER_NAMESPACE_CODE = "KFS-BC";
     public static final String BUDGET_CONSTRUCTION_DOCUMENT_TYPE = "BCLO";

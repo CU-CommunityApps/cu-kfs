@@ -34,7 +34,9 @@
         <bean parent="ReferenceDefinition" p:attributeName="financialObjectType" p:attributeToHighlightOnFail="financialObjectTypeCode"/>
         <bean parent="ReferenceDefinition" p:attributeName="financialObjectSubType" p:attributeToHighlightOnFail="financialObjectSubTypeCode"/>
         <bean parent="ReferenceDefinition" p:attributeName="reportsToFinancialObject" p:attributeToHighlightOnFail="reportsToFinancialObjectCode"/>
+        <!--  UPGRADE-911 
         <bean parent="ReferenceDefinition" p:attributeName="contractGrantReportingCode" p:attributeToHighlightOnFail="cgReportingCode"/>
+     	-->
       </list>
     </property>
     <property name="lockingKeys">
@@ -72,10 +74,11 @@
         <bean parent="MaintainableFieldDefinition" p:name="reportsToFinancialObjectCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="financialObjectTypeCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="financialObjectLevelCode" p:required="true"/>
-        <bean parent="MaintainableFieldDefinition" p:name="cgReportingCode" p:required="true"/>
+        <!--  UPGRADE-911 <bean parent="MaintainableFieldDefinition" p:name="cgReportingCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="financialObjectSubTypeCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="sunyObjectCode" />
         <bean parent="MaintainableFieldDefinition" p:name="financialObjectCodeDescr" />
+        -->
         <bean parent="MaintainableFieldDefinition" p:name="historicalFinancialObjectCode"/>
         <bean parent="MaintainableFieldDefinition" p:name="financialObjectActiveIndicator" p:defaultValue="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="financialBudgetAggregationCd" p:required="true"/>
@@ -132,14 +135,14 @@
 		</property>
 	</bean>
 	
-	<bean id="ObjectCodeGlobalMaintenanceDocument-RoutingAttribute-Chart" class="org.kuali.rice.kns.datadictionary.RoutingAttribute">
+	<bean id="ObjectCodeGlobalMaintenanceDocument-RoutingAttribute-Chart" class="org.kuali.rice.krad.datadictionary.RoutingAttribute">
     	<property name="qualificationAttributeName" value="chartOfAccountsCode"/>
 	</bean>
 	
    	
-   	<bean id="ObjectCodeGlobalMaintenanceDocument-DocumentValuePathGroup-Chart" class="org.kuali.rice.kns.datadictionary.DocumentValuePathGroup">
+   	<bean id="ObjectCodeGlobalMaintenanceDocument-DocumentValuePathGroup-Chart" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
     	<property name="documentCollectionPath">
-    		<bean class="org.kuali.rice.kns.datadictionary.DocumentCollectionPath">
+    		<bean class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath">
     			<property name="collectionPath" value="newMaintainableObject.businessObject.objectCodeGlobalDetails"/>
     			<property name="documentValues">
 			   		<list>
@@ -150,7 +153,7 @@
     	</property>
    	</bean>  
    	
-	<bean id="ObjectCodeGlobalMaintenanceDocument-RoutingType-Chart" class="org.kuali.rice.kns.datadictionary.RoutingTypeDefinition">
+	<bean id="ObjectCodeGlobalMaintenanceDocument-RoutingType-Chart" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
 		        <ref bean="ObjectCodeGlobalMaintenanceDocument-RoutingAttribute-Chart"/>

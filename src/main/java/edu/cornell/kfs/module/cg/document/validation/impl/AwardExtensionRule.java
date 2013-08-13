@@ -5,6 +5,8 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
+
 import org.kuali.kfs.module.cg.businessobject.Award;
 
 @SuppressWarnings("deprecation")
@@ -30,12 +32,12 @@ public class AwardExtensionRule extends AwardRule {
 
     	if (awardExtendedAttributeNew.isFinalFinancialReportRequired() && null==awardExtendedAttributeNew.getFinalFiscalReportDate()) {
     		success = false;
-    		putFieldError("extension.finalFiscalReportDate", KFSKeyConstants.ERROR_FINAL_FINANCIAL_REPORT_DATE_REQUIRED);
+    		putFieldError("extension.finalFiscalReportDate", CUKFSKeyConstants.ERROR_FINAL_FINANCIAL_REPORT_DATE_REQUIRED);
     	}
 
     	if (awardExtendedAttributeOld.isFinalFinancialReportRequired() && null==awardExtendedAttributeOld.getFinalFiscalReportDate()) {
     		success = false;
-    		putFieldError("extension.finalFiscalReportDate", KFSKeyConstants.ERROR_FINAL_FINANCIAL_REPORT_DATE_REQUIRED);
+    		putFieldError("extension.finalFiscalReportDate", CUKFSKeyConstants.ERROR_FINAL_FINANCIAL_REPORT_DATE_REQUIRED);
     	}
 
     	
