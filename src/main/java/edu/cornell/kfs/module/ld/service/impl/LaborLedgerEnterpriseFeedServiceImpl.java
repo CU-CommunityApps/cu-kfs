@@ -102,7 +102,7 @@ public class LaborLedgerEnterpriseFeedServiceImpl implements LaborLedgerEnterpri
      */
     protected File createDisencumbranceFile(String encumbranceFile) {
 
-        File disencumbranceFile = new File(StringUtils.substringBeforeLast(encumbranceFile, ".") + "DISENC.data");
+        File disencumbranceFile = new File(StringUtils.substringBeforeLast(encumbranceFile, ".") + "_DISENCUM.data");
         try {
             if (!disencumbranceFile.exists()) {
                 if (!disencumbranceFile.createNewFile()) {
