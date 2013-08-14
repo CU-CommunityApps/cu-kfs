@@ -26,6 +26,9 @@
                             <!-- I Want document Form -->
         <form-bean name="IWantDocumentForm"
 			type="edu.cornell.kfs.module.purap.document.web.struts.IWantDocumentForm" />
+	    
+	    <form-bean name="LaborLedgerKualiBatchFileAdminForm"
+			type="edu.cornell.kfs.module.ld.document.struts.LaborLedgerKualiBatchFileAdminForm" />
             
     </form-beans>
     
@@ -68,6 +71,14 @@
 			<set-property property="cancellable" value="true" />
 			<forward name="basic" path="/jsp/module/purap/IWant.jsp" />	
 			<forward name="finish" path="/jsp/module/purap/iWantDocumentFinish.jsp" />		
+		</action>
+		
+		<action path="/laborLedgerBatchFileAdmin" name="LaborLedgerKualiBatchFileAdminForm" scope="request"
+			attribute="KualiForm" parameter="methodToCall"
+			type="edu.cornell.kfs.module.ld.document.struts.LaborLedgerKualiBatchFileAdminAction">
+			<set-property property="cancellable" value="true" />
+			<forward name="basic"
+				path="/jsp/module/ld/LaborLedgerKualiFileAdmin.jsp" />
 		</action>
 	</action-mappings>
 </struts-config>		
