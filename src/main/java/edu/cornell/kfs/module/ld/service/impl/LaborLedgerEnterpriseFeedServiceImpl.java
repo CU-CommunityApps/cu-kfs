@@ -21,14 +21,14 @@ public class LaborLedgerEnterpriseFeedServiceImpl implements LaborLedgerEnterpri
     private static final int CREDIT_DEBIT_CODE_START_INDEX = 135;
     private static final int CREDIT_DEBIT_CODE_END_INDEX = 136;
     public static final String FDOC_REF_TYP_CD = "PAYE";
-    public static final int FDOC_REF_TYP_CD_START_INDEX = 165;
+    public static final int FDOC_REF_TYP_CD_START_INDEX = 164;
     public static final int FDOC_REF_TYP_CD_END_INDEX = 168;
     public static final String FS_REF_ORIGIN_CD = "P4";
     public static final int FS_REF_ORIGIN_CD_START_INDEX = 168;
     public static final int FS_REF_ORIGIN_CD_END_INDEX = 170;
     public static final String TRN_ENCUM_UPDT_CD = "R";
-    public static final int TRN_ENCUM_UPDT_CD_START_INDEX = 195;
-    public static final int TRN_ENCUM_UPDT_CD_END_INDEX = 196;
+    public static final int TRN_ENCUM_UPDT_CD_START_INDEX = 194;
+    public static final int TRN_ENCUM_UPDT_CD_END_INDEX = 195;
     public static final int LD_ENTERPRISE_FEED_LINE_LENGTH = 296;
 
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(LaborLedgerEnterpriseFeedServiceImpl.class);
