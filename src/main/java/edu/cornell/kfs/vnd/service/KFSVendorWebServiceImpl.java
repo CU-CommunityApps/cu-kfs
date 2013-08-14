@@ -39,6 +39,7 @@ import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.MessageMap;
 import org.kuali.rice.kns.util.ObjectUtils;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 import edu.cornell.kfs.vnd.document.service.CUVendorService;
 import edu.cornell.kfs.vnd.service.params.VendorAddressParam;
@@ -153,7 +154,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	private String replaceParams (String message, String[] params) {
 		String retStr = message;
 		for (int i =0; i < params.length; i++) {
-			retStr = retStr.replace("{"+i+"}", params[i]);
+			retStr = retStr.replace(CUKFSConstants.CURLY_BRACKET_LEFT + i + CUKFSConstants.CURLY_BRACKET_RIGHT, params[i]);
 		}
 		return retStr;
 	}
@@ -225,7 +226,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 		vendorAddr.setVendorDefaultAddressIndicator(true);
 		vendorAddr.setVendorDefaultAddressIndicator(address.isVendorDefaultAddressIndicator());
 		if (address.isVendorDefaultAddressIndicator()) {
-			// TODO : which one should be the vdetail's default address because there are different type address ???
+			// These vdetail's default address is not presisted in DB
         	vDetail.setDefaultAddressLine1(address.getVendorLine1Address());
         	vDetail.setDefaultAddressCity(address.getVendorCityName());
         	vDetail.setDefaultAddressStateCode(address.getVendorStateCode());
