@@ -21,8 +21,5 @@ public class CUKFSConstants extends JSTLConstants implements ParameterKeyConstan
                 public static final String PARTIAL_TRANSACTION_COUNT = "partialTransactionCount";
                 public static final String PARTIAL_AMOUNT = "partialAmount";
         }
-        // KFSPTS-1960
-        public static final String CURLY_BRACKET_LEFT = "{";
-        public static final String CURLY_BRACKET_RIGHT = "}";
-   
+        
 }
