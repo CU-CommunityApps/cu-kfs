@@ -65,7 +65,7 @@ public class SipImportAction extends BudgetExpansionAction {
                 principalId, sipImportForm.isAllowExecutivesToBeImported(), sipImportEntries);
         if (!returnStringCode.contains("OK")) {
             if (returnStringCode.contains("NOT TAB DELIMITED")) {
-                String returnCodeParts[] = StringUtils.splitPreserveAllTokens(returnStringCode, "|");
+                String[] returnCodeParts = StringUtils.splitPreserveAllTokens(returnStringCode, "|");
                 MessageMap errorMap = GlobalVariables.getMessageMap();
                 errorMap.putError(KFSConstants.GLOBAL_ERRORS,
                         CUBCKeyConstants.ERROR_SIP_IMPORT_FILE_CONTAINS_NON_TAB_DELIMITED_LINE, returnCodeParts[1]);

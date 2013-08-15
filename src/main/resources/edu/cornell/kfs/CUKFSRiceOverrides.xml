@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" 
-	   xmlns:p="http://www.springframework.org/schema/p"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util-3.1.xsd
+                           http://www.springframework.org/schema/cache
+                           http://www.springframework.org/schema/cache/spring-cache.xsd">
     <!-- Our CUWebAuthAuthenticationService is a RemoteUserAuthenticationService subclass that can 
          also look at the HTTP headers that CUWebAuth exposes -->
          
@@ -22,50 +29,11 @@
 		<property name="enabled" value="${cynergy.encryption.busEncryption}"/>
 	</bean>
       
-    <!--  UPGRADE-911
-    <bean id="enNoteService" class="org.kuali.rice.kew.notes.service.impl.NoteServiceImpl">
-		<property name="noteDAO" ref="enNoteDAO" />
-		<property name="attachmentService">
-			<bean class="org.kuali.rice.kew.notes.service.impl.AttachmentServiceImpl">
-				<property name="attachmentDir" value="${attachment.dir.location}" />
-			</bean>
-		</property>
-		<property name="antiVirusService">
-			<ref bean="${cynergy.antivirus.service}" />
-		</property>
-	</bean>
-	-->
-  
   <!--  UPGRADE-911
   	Understand order of operations with pulling in rice beans.  should not have to overried platformAwareDao or 
   	the rest of the DAOs for that matter.
    -->
-   
-  <bean id="platformAwareDao" abstract="true"
-        class="org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb">
-    <property name="jcdAlias" value="kradApplicationDataSource"/>
-    <property name="dbPlatform" ref="dbPlatform"/>
-  </bean>
-  	
-  <bean id="noteDao" class="org.kuali.rice.krad.dao.proxy.NoteDaoProxy">
-    <property name="noteDaoOjb" ref="noteDaoOjb"/>
-  </bean>
-
-  <bean id="noteDaoOjb" parent="platformAwareDao" class="org.kuali.rice.krad.dao.impl.NoteDaoOjb"/>
-
-  <bean id="attachmentDao" class="org.kuali.rice.krad.dao.proxy.AttachmentDaoProxy">
-    <property name="attachmentDaoOjb" ref="attachmentDaoOjb"/>
-  </bean>
-
-  <bean id="attachmentDaoOjb" parent="platformAwareDao" class="org.kuali.rice.krad.dao.impl.AttachmentDaoOjb"/>
-  
-  <bean id="noteService" class="org.kuali.rice.krad.service.impl.NoteServiceImpl">
-    <property name="noteDao">
-      <ref bean="noteDao"/>
-    </property>
-    <property name="attachmentService" ref="attachmentService"/>
-  </bean>
-	
+   	
 	<!-- Cynergy's "dummy" no-op anti-virus service. -->
 	<bean id="dummyAntiVirusService" class="edu.cornell.cynergy.antivirus.service.DummyAntiVirusServiceImpl" />
 	
@@ -76,13 +44,13 @@
 		<property name="timeout" value="60000" />
 	</bean>
 
-	
-  	<bean id="kualiConfigurationService" class="org.kuali.rice.krad.service.impl.ConfigurationServiceImpl"/>
-
 	<!-- Override of bean from KRADSpringBeans.xml -->
 	<!-- Override of attachment service to add anti-virus scanning for attachments. -->
 
-	<bean id="attachmentService" class="org.kuali.rice.krad.service.impl.AttachmentServiceImpl">
+	<util:constant id="cynergy.kew.serviceNamespace"
+			static-field="edu.cornell.cynergy.CynergyConstants.CYNERGY_KEW_NAMESPACE"/>
+			
+	<bean id="attachmentService" class="edu.cornell.cynergy.krad.service.impl.CynergyAttachmentServiceImpl">
 		<property name="kualiConfigurationService">
 			<ref bean="kualiConfigurationService" />
 		</property>
@@ -114,15 +82,29 @@
         </constructor-arg>
     </bean>
     -->
-    
-    <!-- CYNERGY-2365: Added a new "lastLoginTimeDAO" bean for tracking each user's most recent login. -->
-    <!--  UPGRADE-911
-    <bean id="lastLoginTimeDAO" class="edu.cornell.cynergy.kew.useroptions.dao.impl.LastLoginTimeDaoJdbcImpl">
-        <constructor-arg>
-            <ref bean="kewNonTransactionalDataSource"/>
-        </constructor-arg>
-    </bean>
-    -->
+        
+     <bean id="jdbcLastLoginTimeDAO" class="edu.cornell.cynergy.kew.dao.jdbc.impl.LastLoginTimeDaoJdbcImpl">
+		<constructor-arg>
+			<ref bean="kewNonTransactionalDataSource" />
+		</constructor-arg>
+	</bean>
+	
+    <bean id="cynergyRESTLastLoginTimeService" class="edu.cornell.cynergy.kew.rest.service.impl.RESTLastLoginTimeServiceImpl">
+		<property name="useHttpHeaders" value="true" />
+		<property name="lastLoginTimeDAO" ref="jdbcLastLoginTimeDAO" />
+	</bean>
+	
+	<bean class="org.kuali.rice.ksb.api.bus.support.ServiceBusExporter">
+		<property name="serviceBus" ref="rice.ksb.serviceBus" />
+		<property name="serviceDefinition">
+			<bean class="org.kuali.rice.ksb.api.bus.support.RestServiceDefinition">
+				<property name="serviceNameSpaceURI" ref="cynergy.kew.serviceNamespace" />
+				<property name="localServiceName" value="restLastLoginTimeService" />
+				<property name="service" ref="cynergyRESTLastLoginTimeService" />
+				<property name="resourceClass" value="edu.cornell.cynergy.kew.rest.service.RESTLastLoginTimeService" />
+			</bean>
+		</property>
+	</bean>
    
    <bean id="abstractDataSourceBase" abstract="true"> 
         <property name="driverClassName" value="${rice.datasource.driver.name}"/> 
@@ -132,58 +114,29 @@
         <property name="password" value="${rice.datasource.password}" /> 
 	</bean> 
 
-    <bean id="kewNonTransactionalDataSource" parent="abstractDataSourceBase" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"> 
-        <property name="maxActive" value="${rice.datasource.pool.size}"/> 
-        <property name="minIdle" value="5" /> 
-        <property name="initialSize" value="5"/> 
-        <property name="accessToUnderlyingConnectionAllowed" value="true"/> 
-    </bean> 
+
     
-    
-    <!-- KFSPTS-1735 -->
-    <!--  UPGRADE-911
-    <bean id="documentService" class="edu.cornell.kfs.sys.document.service.impl.CUFinancialSystemDocumentServiceImpl">
-		<property name="documentDao">
-			<ref bean="documentDao" />
+    <bean id="financialSystemDocumentService" class="edu.cornell.kfs.sys.document.service.impl.CUFinancialSystemDocumentServiceImpl">
+		<property name="documentService" ref="documentService" />
+		<property name="documentAdHocService" ref="documentAdHocService" />
+		<property name="parameterService" ref="parameterService" />
+		<property name="financialSystemDocumentDao" ref="financialSystemDocumentDao" />
+		
+	</bean>
+	
+	<bean id="kewNonTransactionalDataSource" class="org.kuali.rice.core.framework.persistence.jdbc.datasource.PrimaryDataSourceFactoryBean" lazy-init="true">
+		<property name="nullAllowed" value="true"/>
+		<property name="nonTransactionalDataSource" value="true"/>
+		<property name="preferredDataSourceParams">
+			<list>
+				<value>kew.nonTransactional.datasource</value>
+			</list>
 		</property>
-		<property name="documentHelperService">
-		<ref bean="documentHelperService" />
+		<property name="preferredDataSourceJndiParams">
+			<list>
+				<value>kew.nonTransactional.datasource.jndi.location</value>
+			</list>
 		</property>
-		<property name="dateTimeService">
-			<ref bean="dateTimeService" />
-		</property>
-		<property name="workflowDocumentService">
-			<ref bean="workflowDocumentService" />
-		</property>
-		<property name="kualiRuleService">
-			<ref bean="kualiRuleService" />
-		</property>
-		<property name="documentHeaderService">
-			<ref bean="documentHeaderService" />
-		</property>
-		<property name="businessObjectService">
-			<ref bean="businessObjectService" />
-		</property>
-		<property name="maintenanceDocumentService">
-			<ref bean="maintenanceDocumentService" />
-		</property>
-		<property name="noteService">
-			<ref bean="noteService" />
-		</property>
-		<property name="dataDictionaryService">
-			<ref bean="dataDictionaryService" />
-		</property>
-	</bean> 
-	-->
-    <!-- We override the KFS impl so that we can read properties specified at runtime -->
-<!--
-   	<bean id="properties" class="edu.cornell.kfs.sys.context.PropertyLoadingFactoryBean" />
-  	<bean id="securityProperties" class="edu.cornell.kfs.sys.context.PropertyLoadingFactoryBean"
-    	p:secureMode="true" />
-    	  -->
-    	  
-    <!-- 
-      Bringing the identity service overrides into KFS is not the preferred solution...
-    <import resource="classpath*:edu/cornell/cynergy/core/CynergyServerOverrideSpringBeans.xml"/>
-     -->
+		<property name="serverDataSource" value="false"/>
+	</bean>
 </beans>

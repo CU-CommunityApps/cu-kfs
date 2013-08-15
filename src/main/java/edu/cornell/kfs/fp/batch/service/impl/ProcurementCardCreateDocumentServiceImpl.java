@@ -110,7 +110,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
             pcardDocument.getDocumentHeader().setDocumentDescription(docDesc);
             
             // Remove duplicate messages from errorText
-            String messages[] = StringUtils.split(errorText, ".");
+            String[] messages = StringUtils.split(errorText, ".");
             for (int i = 0; i < messages.length; i++) {
                 int countMatches = StringUtils.countMatches(errorText, messages[i]) - 1;
                 errorText = StringUtils.replace(errorText, messages[i] + ".", "", countMatches);

@@ -154,13 +154,13 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	private List<VendorPhoneNumber> getVendorPhoneNumbers(List<VendorPhoneNumberParam> phoneNumbers) {
     	List<VendorPhoneNumber> vendorPhoneNumbers = new ArrayList<VendorPhoneNumber>();
     	if (CollectionUtils.isNotEmpty(phoneNumbers)) {
-    	for (VendorPhoneNumberParam phoneNumber : phoneNumbers) {
-	        LOG.info("addVendor phoneNumber "+phoneNumber);       
-    		VendorPhoneNumber vPhoneNumber = new VendorPhoneNumber();
-    		setVendorPhoneNumber(phoneNumber, vPhoneNumber);
-        	vendorPhoneNumbers.add(vPhoneNumber);
-   		
-    	}
+	    	for (VendorPhoneNumberParam phoneNumber : phoneNumbers) {
+		        LOG.info("addVendor phoneNumber " + phoneNumber);       
+				VendorPhoneNumber vPhoneNumber = new VendorPhoneNumber();
+				setVendorPhoneNumber(phoneNumber, vPhoneNumber);
+		    	vendorPhoneNumbers.add(vPhoneNumber);
+	   		
+	    	}
     	}
     	return vendorPhoneNumbers;
 	}
@@ -168,17 +168,17 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	private List<VendorSupplierDiversity> getVendorSupplierDiversitys(List<VendorSupplierDiversityParam> supplierDiversitys) {
     	List<VendorSupplierDiversity> vendorSupplierDiversitys = new ArrayList<VendorSupplierDiversity>();
     	if (CollectionUtils.isNotEmpty(supplierDiversitys)) {
-    	for (VendorSupplierDiversityParam diversity : supplierDiversitys) {
-	        LOG.info("addVendor diversity "+diversity);       
-    		VendorSupplierDiversity vDiversity = new VendorSupplierDiversity();
-
-            vDiversity.setVendorSupplierDiversityCode(diversity.getVendorSupplierDiversityCode());
-            //TODO UPGRADE-911
-            //vDiversity.setVendorSupplierDiversityExpirationDate(new java.sql.Date(diversity.getVendorSupplierDiversityExpirationDate().getTime()));
-            vDiversity.setActive(diversity.isActive());
-            vendorSupplierDiversitys.add(vDiversity);
-   		
-    	}
+	    	for (VendorSupplierDiversityParam diversity : supplierDiversitys) {
+		        LOG.info("addVendor diversity " + diversity);       
+	    		VendorSupplierDiversity vDiversity = new VendorSupplierDiversity();
+	
+	            vDiversity.setVendorSupplierDiversityCode(diversity.getVendorSupplierDiversityCode());
+	            //TODO UPGRADE-911
+	            //vDiversity.setVendorSupplierDiversityExpirationDate(new java.sql.Date(diversity.getVendorSupplierDiversityExpirationDate().getTime()));
+	            vDiversity.setActive(diversity.isActive());
+	            vendorSupplierDiversitys.add(vDiversity);
+	   		
+	    	}
     	}
     	return vendorSupplierDiversitys;
 	}
@@ -232,8 +232,8 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
     	vPhoneNumber.setActive(phoneNumber.isActive());
 	}
 	
-	public String updateVendor(String vendorName, String vendorTypeCode, boolean isForeign, String vendorNumber, 
-			String ownershipTypeCode, boolean isTaxable, boolean isEInvoice,
+	public String updateVendor(String vendorName, String vendorTypeCode, boolean isForeign, 
+			String vendorNumber,  String ownershipTypeCode, boolean isTaxable, boolean isEInvoice,
 			List<VendorAddressParam> addresses,List<VendorContactParam> contacts, List<VendorPhoneNumberParam> phoneNumbers,List<VendorSupplierDiversityParam> supplierDiversitys) throws Exception {
 		UserSession actualUserSession = GlobalVariables.getUserSession();
 		MessageMap globalErrorMap = GlobalVariables.getMessageMap();
@@ -249,16 +249,16 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 			vendorDoc.getDocumentHeader().setDocumentDescription("Update vendor from Procurement tool");
 
 			LOG.info("updateVendor " + vendorNumber);
-				VendorDetail vendor = retrieveVendor(vendorNumber, "VENDORID");
-				if (vendor != null) {
-					// Vendor does not eist
+			VendorDetail vendor = retrieveVendor(vendorNumber, "VENDORID");
+			if (vendor != null) {
+				// Vendor does not eist
 				VendorMaintainableImpl oldVendorImpl = (VendorMaintainableImpl) vendorDoc.getOldMaintainableObject();
 				oldVendorImpl.setBusinessObject(vendor);
 
-				} else {
-					// Vendor does not eist
-					return "Vendor " + vendorNumber + " Not Found.";
-				}
+			} else {
+				// Vendor does not eist
+				return "Vendor " + vendorNumber + " Not Found.";
+			}
 				
 			VendorMaintainableImpl vImpl = (VendorMaintainableImpl) vendorDoc.getNewMaintainableObject();
 
@@ -277,7 +277,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
         	updateVendorAddresses(addresses, vendor, vDetail);
 //			vDetail.setVendorAddresses(vAddrs);
 
-             updateVendorContacts(contacts, vendor, vDetail);
+            updateVendorContacts(contacts, vendor, vDetail);
         	updateVendorPhoneNumbers(phoneNumbers, vendor, vDetail);
 
         	updateVendorSupplierDiversitys(supplierDiversitys, vendor, vDetail);
@@ -366,20 +366,20 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	private void updateVendorSupplierDiversitys(List<VendorSupplierDiversityParam> supplierDiversitys, VendorDetail vendor, VendorDetail vDetail) {
     	ArrayList<VendorSupplierDiversity> vendorSupplierDiversitys = new ArrayList<VendorSupplierDiversity>();
     	if (CollectionUtils.isNotEmpty(supplierDiversitys)) {
-    	for (VendorSupplierDiversityParam diversity : supplierDiversitys) {
-			LOG.info("updateVendor diversity " + diversity);
-    		VendorSupplierDiversity vDiversity = getVendorSupplierDiversity(vDetail.getVendorHeader(), diversity.getVendorSupplierDiversityCode());
-            boolean isExist = StringUtils.isNotBlank(vDiversity.getVendorSupplierDiversityCode());
-            vDiversity.setVendorSupplierDiversityCode(diversity.getVendorSupplierDiversityCode());
-            //TODO UPGRADE-911
-            //vDiversity.setVendorSupplierDiversityExpirationDate(new java.sql.Date(diversity.getVendorSupplierDiversityExpirationDate().getTime()));
-            vDiversity.setActive(diversity.isActive());
-            if (!isExist) {
-            	vDetail.getVendorHeader().getVendorSupplierDiversities().add(vDiversity);
-            	vendor.getVendorHeader().getVendorSupplierDiversities().add(new VendorSupplierDiversity());
-            }
-   		
-    	}
+	    	for (VendorSupplierDiversityParam diversity : supplierDiversitys) {
+				LOG.info("updateVendor diversity " + diversity);
+	    		VendorSupplierDiversity vDiversity = getVendorSupplierDiversity(vDetail.getVendorHeader(), diversity.getVendorSupplierDiversityCode());
+	            boolean isExist = StringUtils.isNotBlank(vDiversity.getVendorSupplierDiversityCode());
+	            vDiversity.setVendorSupplierDiversityCode(diversity.getVendorSupplierDiversityCode());
+	            //TODO UPGRADE-911
+	            //vDiversity.setVendorSupplierDiversityExpirationDate(new java.sql.Date(diversity.getVendorSupplierDiversityExpirationDate().getTime()));
+	            vDiversity.setActive(diversity.isActive());
+	            if (!isExist) {
+	            	vDetail.getVendorHeader().getVendorSupplierDiversities().add(vDiversity);
+	            	vendor.getVendorHeader().getVendorSupplierDiversities().add(new VendorSupplierDiversity());
+	            }
+	   		
+	    	}
     	}
 	}
 
@@ -395,14 +395,13 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 			// TODO : this is for testing to get the list of vendorcontactgenerateddetailid
 			String retVal = vendor != null ? vendor.getVendorNumber() : VENDOR_NOT_FOUND;
 			if (vendor != null && CollectionUtils.isNotEmpty(vendor.getVendorContacts())) {
-			for (VendorContact contact :vendor.getVendorContacts()) {
-				retVal = retVal + "~"+contact.getVendorContactGeneratedIdentifier();
-			}
-			retVal = retVal + "p~";
-			for (VendorPhoneNumber phoneNumber :vendor.getVendorPhoneNumbers()) {
-				retVal = retVal + "~"+phoneNumber.getVendorPhoneGeneratedIdentifier();
-			}
-
+				for (VendorContact contact :vendor.getVendorContacts()) {
+					retVal = retVal + "~" + contact.getVendorContactGeneratedIdentifier();
+				}
+				retVal = retVal + "p~";
+				for (VendorPhoneNumber phoneNumber :vendor.getVendorPhoneNumbers()) {
+					retVal = retVal + "~" + phoneNumber.getVendorPhoneGeneratedIdentifier();
+				}
 		    }
 			return retVal;
 		}
@@ -420,11 +419,12 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 
 	private VendorContact getVendorContact(VendorDetail vDetail, Integer vendorContactGeneratedIdentifier) {
     	if (CollectionUtils.isNotEmpty(vDetail.getVendorContacts())) {
-		for (VendorContact vContact : vDetail.getVendorContacts()) {
-			if (vendorContactGeneratedIdentifier.equals(vContact.getVendorContactGeneratedIdentifier())) {
-				return vContact;
+			for (VendorContact vContact : vDetail.getVendorContacts()) {
+				if (vendorContactGeneratedIdentifier.equals(vContact.getVendorContactGeneratedIdentifier())) {
+					return vContact;
+				}
 			}
-		}}
+		}
 		return new VendorContact();
 	}
 	
@@ -441,11 +441,11 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	
 	private VendorSupplierDiversity getVendorSupplierDiversity(VendorHeader vHeader, String supplierDiversityCode) {
     	if (CollectionUtils.isNotEmpty(vHeader.getVendorSupplierDiversities())) {
-		for (VendorSupplierDiversity vSupplierDiversity : vHeader.getVendorSupplierDiversities()) {
-			if (StringUtils.equals(vSupplierDiversity.getVendorSupplierDiversityCode(), supplierDiversityCode)) {
-				return vSupplierDiversity;
+			for (VendorSupplierDiversity vSupplierDiversity : vHeader.getVendorSupplierDiversities()) {
+				if (StringUtils.equals(vSupplierDiversity.getVendorSupplierDiversityCode(), supplierDiversityCode)) {
+					return vSupplierDiversity;
+				}
 			}
-		}
     	}
 		return new VendorSupplierDiversity();
 	}
@@ -486,11 +486,11 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	private VendorDetail retrieveVendor(String vendorId, String vendorIdType) throws Exception {
 		VendorDetail vendor = null;
 		CUVendorService vendorService = SpringContext.getBean(CUVendorService.class);
-		if(StringUtils.equalsIgnoreCase(vendorIdType, "DUNS")) {
+		if (StringUtils.equalsIgnoreCase(vendorIdType, "DUNS")) {
 			vendor = vendorService.getVendorByDunsNumber(vendorId);
-		} else if(StringUtils.equalsIgnoreCase(vendorIdType, "VENDORID")) {
+		} else if (StringUtils.equalsIgnoreCase(vendorIdType, "VENDORID")) {
 			vendor = vendorService.getByVendorNumber(vendorId);
-		} else if(StringUtils.equalsIgnoreCase(vendorIdType, "VENDORNAME")) {
+		} else if (StringUtils.equalsIgnoreCase(vendorIdType, "VENDORNAME")) {
 			vendor = vendorService.getVendorByVendorName(vendorId);
 		}
 		return vendor;
@@ -505,7 +505,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	 */
 	private String buildVendorString(VendorDetail vendor) {
 		StringBuffer vendorValues = new StringBuffer();
-		String CARET = "^";
+		final String CARET = "^";
 
 		if(ObjectUtils.isNotNull(vendor)) {
 			VendorDetailExtension vdExtension = (VendorDetailExtension)vendor.getExtension();
@@ -531,27 +531,27 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	public String uploadAttachment(String vendorId, String fileData, String fileName, String noteText) throws Exception {
 		try {
 			LOG.info("Starting uploadAttachment");
-        GlobalVariables.setUserSession(new UserSession("kfs"));
-		VendorDetail vendor = SpringContext.getBean(VendorService.class).getVendorDetail(vendorId);
-		if (vendor == null) {
-			return VENDOR_NOT_FOUND;
-		}
-		byte[] fileDataBytes = Base64Utility.decode(fileData);
-		LOG.info("call service to create attachment");
-        Attachment attachment = SpringContext.getBean(AttachmentService.class).createAttachment(vendor, fileName, "application/pdf", fileDataBytes.length, new ByteArrayInputStream(fileDataBytes), null);
-        Note newNote = new Note();
-        newNote.setNoteText(noteText);
-        newNote.setAttachment(attachment);
-		LOG.info("create tempnote");
-
-        Note tmpNote = SpringContext.getBean(NoteService.class).createNote(newNote, vendor, "1");
-		LOG.info("save note");
-
-        SpringContext.getBean(NoteService.class).save(tmpNote);
-//		FileOutputStream bas64Out = new FileOutputStream("C:\\temp\\testBase64.pdf");
-//		bas64Out.write(Base64Utility.decode(vendorEin));
-//		bas64Out.close();
-		return "upload Attachment ok";
+	        GlobalVariables.setUserSession(new UserSession("kfs"));
+			VendorDetail vendor = SpringContext.getBean(VendorService.class).getVendorDetail(vendorId);
+			if (vendor == null) {
+				return VENDOR_NOT_FOUND;
+			}
+			byte[] fileDataBytes = Base64Utility.decode(fileData);
+			LOG.info("call service to create attachment");
+	        Attachment attachment = SpringContext.getBean(AttachmentService.class).createAttachment(vendor, fileName, "application/pdf", fileDataBytes.length, new ByteArrayInputStream(fileDataBytes), null);
+	        Note newNote = new Note();
+	        newNote.setNoteText(noteText);
+	        newNote.setAttachment(attachment);
+			LOG.info("create tempnote");
+	
+	        Note tmpNote = SpringContext.getBean(NoteService.class).createNote(newNote, vendor, GlobalVariables.getUserSession().getPrincipalId());
+			LOG.info("save note");
+	
+	        SpringContext.getBean(NoteService.class).save(tmpNote);
+	//		FileOutputStream bas64Out = new FileOutputStream("C:\\temp\\testBase64.pdf");
+	//		bas64Out.write(Base64Utility.decode(vendorEin));
+	//		bas64Out.close();
+			return "upload Attachment ok";
 		} catch (Exception e) {
 			return "Failed request : "+ e.getMessage();		}
 	}
@@ -559,34 +559,37 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	public String uploadAtt(String vendorId,  @XmlMimeType("application/octet-stream")DataHandler fileData, String fileName, String noteText) throws Exception {
 		try {
 			LOG.info("Starting uploadAtt");
-        GlobalVariables.setUserSession(new UserSession("kfs"));
-		VendorDetail vendor = SpringContext.getBean(VendorService.class).getVendorDetail(vendorId);
-		if (vendor == null) {
-			return VENDOR_NOT_FOUND;
-		}
-        BufferedInputStream bin = new BufferedInputStream(fileData.getInputStream());
-	 
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        int c;
-        while ((c = bin.read()) != -1) buffer.write(c);
-	                   
-        bin.close();
-        Attachment attachment = SpringContext.getBean(AttachmentService.class).createAttachment(vendor, fileName, "application/pdf", buffer.toByteArray().length, fileData.getInputStream(), null);
-        Note newNote = new Note();
-        newNote.setNoteText(noteText);
-        newNote.setAttachment(attachment);
-		LOG.info("create tempnote");
-  
-        Note tmpNote = SpringContext.getBean(NoteService.class).createNote(newNote, vendor, "1");
-		LOG.info("save note");
-
-        SpringContext.getBean(NoteService.class).save(tmpNote);
-//		FileOutputStream bas64Out = new FileOutputStream("C:\\temp\\testBase64.pdf");
-//		bas64Out.write(Base64Utility.decode(vendorEin));
-//		bas64Out.close();
-		return "upload Attachment ok";
+	        GlobalVariables.setUserSession(new UserSession("kfs"));
+			VendorDetail vendor = SpringContext.getBean(VendorService.class).getVendorDetail(vendorId);
+			if (vendor == null) {
+				return VENDOR_NOT_FOUND;
+			}
+	        BufferedInputStream bin = new BufferedInputStream(fileData.getInputStream());
+		 
+	        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+	        int c;
+	        while ((c = bin.read()) != -1) {
+	        	buffer.write(c);
+	        }
+		                   
+	        bin.close();
+	        Attachment attachment = SpringContext.getBean(AttachmentService.class).createAttachment(vendor, fileName, "application/pdf", buffer.toByteArray().length, fileData.getInputStream(), null);
+	        Note newNote = new Note();
+	        newNote.setNoteText(noteText);
+	        newNote.setAttachment(attachment);
+			LOG.info("create tempnote");
+	  
+	        Note tmpNote = SpringContext.getBean(NoteService.class).createNote(newNote, vendor, GlobalVariables.getUserSession().getPrincipalId());
+			LOG.info("save note");
+	
+	        SpringContext.getBean(NoteService.class).save(tmpNote);
+	//		FileOutputStream bas64Out = new FileOutputStream("C:\\temp\\testBase64.pdf");
+	//		bas64Out.write(Base64Utility.decode(vendorEin));
+	//		bas64Out.close();
+			return "upload Attachment ok";
 		} catch (Exception e) {
-			return "Failed request : "+ e.getMessage();		}
+			return "Failed request : " + e.getMessage();		
+		}
 	}
 
 	public String retrieveKfsVendorByEin(String vendorEin) throws Exception {

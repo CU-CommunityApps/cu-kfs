@@ -48,21 +48,20 @@ public class CUTransactionFilter implements Filter {
 			chain.doFilter(req, res);
 		} finally { 
 				
-			if (TransactionSynchronizationManager.isSynchronizationActive()){
+			if (TransactionSynchronizationManager.isSynchronizationActive()) {
 				LOG.error("JTA synchronizations are not active.   THIS IS SOOO BAD.   " + httpReq.getRequestURL());
 				error = true;
 			}
     	
-			if (!TransactionSynchronizationManager.getResourceMap().isEmpty()){
-				errorText = errorText + ("After: The Resource map is not empty.   THIS IS SOOO BAD.");
+			if (!TransactionSynchronizationManager.getResourceMap().isEmpty()) {
+				errorText = errorText + "After: The Resource map is not empty.   THIS IS SOOO BAD.";
 				LOG.error("After: The Resource map is not empty.   THIS IS SOOO BAD.   URL: " + httpReq.getRequestURL());
     		
 				Map aMap = TransactionSynchronizationManager.getResourceMap();
 				int mapsize = aMap.size();
 
 				Iterator keyValuePairs1 = aMap.entrySet().iterator();
-				for (int i = 0; i < mapsize; i++)
-				{
+				for (int i = 0; i < mapsize; i++) {
 					Map.Entry entry = (Map.Entry) keyValuePairs1.next();
 					errorText = errorText + (";  Resources:  key: " + entry.getKey().toString() + " ; Value " + entry.getValue().toString());
 					LOG.error("Resources:  key: " + entry.getKey().toString() + " ; Value " + entry.getValue().toString());

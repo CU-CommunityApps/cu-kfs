@@ -91,11 +91,11 @@ public class SipImportServiceImpl implements SipImportService {
 	protected PSPositionDataDao positionDataDao;
 	
 	// This stores the number of errors for each error message regardless of UnitId (C Level org)
-	protected int errorCount[];
+	protected int[] errorCount;
 	String RulesErrorList;
 	String ValuesErrorList;
 	
-	protected int warningCount[];
+	protected int[] warningCount;
 	String RulesWarningList;
 	String ValuesWarningList;
 
@@ -131,7 +131,7 @@ public class SipImportServiceImpl implements SipImportService {
 	protected String ErrorMessageNumbersForThisSipRecord;		// Contains only the sip load error message numbers
 	protected String sipLoadErrors;  				// Contains only the SIP errors so this is a subset of the combined RulesErrorList+ValidationErrorList
 	protected boolean AllowThisSipRecordForSIP;  	// This will initially be true and set to false only if the rules above that are not ignored for SIP are encountered.
-	protected String WarningMessages[];
+	protected String[] WarningMessages;
 	
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SipImportService.class);
     public Map<String, String> importedLines;
