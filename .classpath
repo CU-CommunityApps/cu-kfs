@@ -7,69 +7,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/rice-2.1.7"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/kfs-5.0.3"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/maven fail"/>
-	<classpathentry kind="output" path="target/kfs-war-3.0.1-SNAPSHOT"/>
-	<classpathentry kind="src" path="client-contrib/src/main/java"/>
-	<classpathentry kind="src" path="client-contrib/src/main/resources"/>
-	<classpathentry kind="src" path="core/api/src/main/java"/>
-	<classpathentry kind="src" path="core/framework/src/main/java"/>
-	<classpathentry kind="src" path="core/impl/src/main/java"/>
-	<classpathentry kind="src" path="core/impl/src/main/resources"/>
-	<classpathentry kind="src" path="core-service/api/src/main/java"/>
-	<classpathentry kind="src" path="core-service/framework/src/main/java"/>
-	<classpathentry kind="src" path="core-service/impl/src/main/java"/>
-	<classpathentry kind="src" path="core-service/impl/src/main/resources"/>
-	<classpathentry kind="src" path="core-service/web/src/main/java"/>
-	<classpathentry kind="src" path="core-service/web/src/main/resources"/>
-	<classpathentry kind="src" path="development-tools/src/main/java"/>
-	<classpathentry kind="src" path="development-tools/src/main/resources"/>
-	<classpathentry kind="src" path="dist/src/main/resources"/>
-	<classpathentry kind="src" path="edl/framework/src/main/java"/>
-	<classpathentry kind="src" path="edl/framework/src/main/resources"/>
-	<classpathentry kind="src" path="edl/impl/src/main/java"/>
-	<classpathentry kind="src" path="edl/impl/src/main/resources"/>
-	<classpathentry kind="src" path="impl/src/main/java"/>
-	<classpathentry kind="src" path="impl/src/main/resources"/>
-	<classpathentry kind="src" path="it/config/src/main/java"/>
-	<classpathentry kind="src" path="it/edl/src/main/java"/>
-	<classpathentry kind="src" path="it/edl/src/main/resources"/>
-	<classpathentry kind="src" path="it/internal-tools/src/main/java"/>
-	<classpathentry kind="src" path="it/internal-tools/src/main/resources"/>
-	<classpathentry kind="src" path="it/krms/src/main/java"/>
-	<classpathentry kind="src" path="ken/api/src/main/java"/>
-	<classpathentry kind="src" path="kew/api/src/main/java"/>
-	<classpathentry kind="src" path="kew/api/src/main/resources"/>
-	<classpathentry kind="src" path="kew/framework/src/main/java"/>
-	<classpathentry kind="src" path="kew/framework/src/main/resources"/>
-	<classpathentry kind="src" path="kew/impl/src/main/java"/>
-	<classpathentry kind="src" path="kew/impl/src/main/resources"/>
-	<classpathentry kind="src" path="kim/kim-api/src/main/java"/>
-	<classpathentry kind="src" path="kim/kim-framework/src/main/java"/>
-	<classpathentry kind="src" path="kim/kim-impl/src/main/java"/>
-	<classpathentry kind="src" path="kim/kim-impl/src/main/resources"/>
-	<classpathentry kind="src" path="kim/kim-ldap/src/main/java"/>
-	<classpathentry kind="src" path="kim/kim-ldap/src/main/resources"/>
-	<classpathentry kind="src" path="kns/src/main/java"/>
-	<classpathentry kind="src" path="krad/krad-app-framework/src/main/java"/>
-	<classpathentry kind="src" path="krad/krad-web-framework/src/main/java"/>
-	<classpathentry kind="src" path="krad/krad-web-framework/src/main/resources"/>
-	<classpathentry kind="src" path="krms/api/src/main/java"/>
-	<classpathentry kind="src" path="krms/framework/src/main/java"/>
-	<classpathentry kind="src" path="krms/impl/src/main/java"/>
-	<classpathentry kind="src" path="krms/impl/src/main/resources"/>
-	<classpathentry kind="src" path="ksb/api/src/main/java"/>
-	<classpathentry kind="src" path="ksb/api/src/main/resources"/>
-	<classpathentry kind="src" path="ksb/client-impl/src/main/java"/>
-	<classpathentry kind="src" path="ksb/client-impl/src/main/resources"/>
-	<classpathentry kind="src" path="ksb/server-impl/src/main/java"/>
-	<classpathentry kind="src" path="ksb/server-impl/src/main/resources"/>
-	<classpathentry kind="src" path="ksb/web/src/main/java"/>
-	<classpathentry kind="src" path="ksb/web/src/main/resources"/>
-	<classpathentry kind="src" path="location/api/src/main/java"/>
-	<classpathentry kind="src" path="location/framework/src/main/java"/>
-	<classpathentry kind="src" path="location/impl/src/main/java"/>
-	<classpathentry kind="src" path="location/impl/src/main/resources"/>
-	<classpathentry kind="src" path="location/web/src/main/java"/>
-	<classpathentry kind="src" path="location/web/src/main/resources"/>
 	<classpathentry kind="lib" path="/Users/srb55/.m2/repository/antlr/antlr/2.7.6/antlr-2.7.6.jar"/>
 	<classpathentry kind="lib" path="/Users/srb55/.m2/repository/aopalliance/aopalliance/1.0/aopalliance-1.0-sources.jar"/>
 	<classpathentry kind="lib" path="/Users/srb55/.m2/repository/aopalliance/aopalliance/1.0/aopalliance-1.0.jar"/>
@@ -705,4 +642,5 @@
 	<classpathentry kind="lib" path="/Users/srb55/.m2/repository/xom/xom/1.1/xom-1.1.jar"/>
 	<classpathentry kind="lib" path="/Users/srb55/.m2/repository/xpp3/xpp3_min/1.1.3.4.O/xpp3_min-1.1.3.4.O.jar"/>
 	<classpathentry kind="lib" path="/Users/srb55/.m2/repository/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar"/>
+	<classpathentry kind="output" path="target/kfs-war-3.0.1-SNAPSHOT"/>
 </classpath>

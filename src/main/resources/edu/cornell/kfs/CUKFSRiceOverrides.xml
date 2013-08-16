@@ -61,6 +61,19 @@
 			<ref bean="${cynergy.antivirus.service}" />
 		</property>
 	</bean>
+	
+		<!-- Override of bean from KewLocalSpringBeans.xml -->
+	<bean id="enNoteService" class="org.kuali.rice.kew.notes.service.impl.NoteServiceImpl">
+		<property name="noteDAO" ref="enNoteDAO" />
+		<property name="attachmentService">
+			<bean class="org.kuali.rice.kew.notes.service.impl.AttachmentServiceImpl">
+				<property name="attachmentDir" value="${attachment.dir.location}" />
+			</bean>
+		</property>
+		<property name="antiVirusService">
+			<ref bean="${cynergy.antivirus.service}" />
+		</property>
+	</bean>
 
 	<bean id="UserOptionsServiceInner" class="org.kuali.rice.kew.useroptions.UserOptionsServiceImpl" lazy-init="true">
        <property name="userOptionsDAO">

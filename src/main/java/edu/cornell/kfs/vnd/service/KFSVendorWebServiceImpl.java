@@ -306,60 +306,61 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	
 	private void updateVendorAddresses(List<VendorAddressParam> addresses, VendorDetail vendor, VendorDetail vDetail) {
     	if (CollectionUtils.isNotEmpty(addresses)) {
-		for (VendorAddressParam address : addresses) {
-			VendorAddress vendorAddr = new VendorAddress();
-			LOG.info("updateVendor ADDRESS " + address+ "~" +address.getVendorAddressTypeCode()+ "~" + address.getVendorAddressGeneratedIdentifier());
-			if (address.getVendorAddressGeneratedIdentifier() != null) {
-				vendorAddr = getVendorAddress(vDetail, address.getVendorAddressGeneratedIdentifier());
-			}
-			setVendorAddress(address, vendorAddr, vDetail);
-			
-			if (vendorAddr.getVendorAddressGeneratedIdentifier() == null) {
-			     vDetail.getVendorAddresses().add(vendorAddr);
-			     vendor.getVendorAddresses().add(new VendorAddress()); // oldobj
-			}
-			// TODO : how about those existing addr, but not passed from request, should they be 'inactivated' ?
-		}        	
+			for (VendorAddressParam address : addresses) {
+				VendorAddress vendorAddr = new VendorAddress();
+				LOG.info("updateVendor ADDRESS " + address +  "~"  + address.getVendorAddressTypeCode() + "~" + address.getVendorAddressGeneratedIdentifier());
+				if (address.getVendorAddressGeneratedIdentifier() != null) {
+					vendorAddr = getVendorAddress(vDetail, address.getVendorAddressGeneratedIdentifier());
+				}
+				setVendorAddress(address, vendorAddr, vDetail);
+				
+				if (vendorAddr.getVendorAddressGeneratedIdentifier() == null) {
+					vDetail.getVendorAddresses().add(vendorAddr);
+					vendor.getVendorAddresses().add(new VendorAddress()); 
+				}
+				// TODO : how about those existing addr, but not passed from request, should they be 'inactivated' ?
+			}        	
     	}
 	}
 
 	private void updateVendorContacts(List<VendorContactParam> contacts, VendorDetail vendor, VendorDetail vDetail) {
     	if (CollectionUtils.isNotEmpty(contacts)) {
-    	for (VendorContactParam contact : contacts) {
-			LOG.info("updateVendor contact " + contact+ "~" +contact.getVendorContactGeneratedIdentifier()+ "~"+contact.getVendorContactName());
-        	VendorContact vContact = new VendorContact();
-        	if (contact.getVendorContactGeneratedIdentifier() != null) {
-        		vContact = getVendorContact(vDetail, contact.getVendorContactGeneratedIdentifier());
-        	}
-			setVendorContact(contact, vContact);
-        	if (vContact.getVendorContactGeneratedIdentifier() == null) {
-            	vDetail.getVendorContacts().add(vContact);
-			     vendor.getVendorContacts().add(new VendorContact()); // oldobj
-      		
-        	}
-        	// TODO : what to do with those existing contacts, but not passed from request
-   		
-    	}
+	    	for (VendorContactParam contact : contacts) {
+				LOG.info("updateVendor contact " + contact +  "~" + contact.getVendorContactGeneratedIdentifier() + "~" + contact.getVendorContactName());
+	        	VendorContact vContact = new VendorContact();
+	        	if (contact.getVendorContactGeneratedIdentifier() != null) {
+	        		vContact = getVendorContact(vDetail, contact.getVendorContactGeneratedIdentifier());
+	        	}
+				setVendorContact(contact, vContact);
+	        	if (vContact.getVendorContactGeneratedIdentifier() == null) {
+	            	vDetail.getVendorContacts().add(vContact);
+				     vendor.getVendorContacts().add(new VendorContact());
+	      		
+	        	}
+	        	// TODO : what to do with those existing contacts, but not passed from request
+	   		
+	    	}
     	}
 	}
 
 	private void updateVendorPhoneNumbers(List<VendorPhoneNumberParam> phoneNumbers, VendorDetail vendor, VendorDetail vDetail) {
     	if (CollectionUtils.isNotEmpty(phoneNumbers)) {
-    	for (VendorPhoneNumberParam phoneNumber : phoneNumbers) {
-			LOG.info("updateVendor phoneNumber " + phoneNumber+ "~"+phoneNumber.getVendorPhoneGeneratedIdentifier()+ "~"+phoneNumber.getVendorPhoneTypeCode());
-    		VendorPhoneNumber vPhoneNumber = new VendorPhoneNumber();
-        	if (phoneNumber.getVendorPhoneGeneratedIdentifier() != null) {
-        		vPhoneNumber = getVendorPhoneNumber(vDetail, phoneNumber.getVendorPhoneGeneratedIdentifier());
-        	}
-        	setVendorPhoneNumber(phoneNumber, vPhoneNumber);
-        	if (vPhoneNumber.getVendorPhoneGeneratedIdentifier() == null) {
-            	vDetail.getVendorPhoneNumbers().add(vPhoneNumber);
-			     vendor.getVendorPhoneNumbers().add(new VendorPhoneNumber()); // oldobj
-      		
-        	}
+	    	for (VendorPhoneNumberParam phoneNumber : phoneNumbers) {
+				LOG.info("updateVendor phoneNumber " + phoneNumber + "~" + phoneNumber.getVendorPhoneGeneratedIdentifier() + "~" 
+						+ phoneNumber.getVendorPhoneTypeCode());
+	    		VendorPhoneNumber vPhoneNumber = new VendorPhoneNumber();
+	        	if (phoneNumber.getVendorPhoneGeneratedIdentifier() != null) {
+	        		vPhoneNumber = getVendorPhoneNumber(vDetail, phoneNumber.getVendorPhoneGeneratedIdentifier());
+	        	}
+	        	setVendorPhoneNumber(phoneNumber, vPhoneNumber);
+	        	if (vPhoneNumber.getVendorPhoneGeneratedIdentifier() == null) {
+	            	vDetail.getVendorPhoneNumbers().add(vPhoneNumber);
+	            	vendor.getVendorPhoneNumbers().add(new VendorPhoneNumber()); 
+	      		
+	        	}
         	// TODO : what to do with those existing contacts, but not passed from request
    		
-    	}
+	    	}
     	}
 	}
 
@@ -507,7 +508,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 		StringBuffer vendorValues = new StringBuffer();
 		final String CARET = "^";
 
-		if(ObjectUtils.isNotNull(vendor)) {
+		if (ObjectUtils.isNotNull(vendor)) {
 			VendorDetailExtension vdExtension = (VendorDetailExtension)vendor.getExtension();
 			
 			vendorValues.append(vendor.getVendorNumber()).append(CARET);
@@ -538,7 +539,9 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 			}
 			byte[] fileDataBytes = Base64Utility.decode(fileData);
 			LOG.info("call service to create attachment");
-	        Attachment attachment = SpringContext.getBean(AttachmentService.class).createAttachment(vendor, fileName, "application/pdf", fileDataBytes.length, new ByteArrayInputStream(fileDataBytes), null);
+	        Attachment attachment = SpringContext.getBean(AttachmentService.class)
+	        		.createAttachment(vendor, fileName, "application/pdf", fileDataBytes.length, new ByteArrayInputStream(fileDataBytes), null);
+	       
 	        Note newNote = new Note();
 	        newNote.setNoteText(noteText);
 	        newNote.setAttachment(attachment);
@@ -553,7 +556,7 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	//		bas64Out.close();
 			return "upload Attachment ok";
 		} catch (Exception e) {
-			return "Failed request : "+ e.getMessage();		}
+			return "Failed request : " + e.getMessage();		}
 	}
 	
 	public String uploadAtt(String vendorId,  @XmlMimeType("application/octet-stream")DataHandler fileData, String fileName, String noteText) throws Exception {
@@ -573,7 +576,9 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	        }
 		                   
 	        bin.close();
-	        Attachment attachment = SpringContext.getBean(AttachmentService.class).createAttachment(vendor, fileName, "application/pdf", buffer.toByteArray().length, fileData.getInputStream(), null);
+	        Attachment attachment = SpringContext.getBean(AttachmentService.class)
+	        		.createAttachment(vendor, fileName, "application/pdf", buffer.toByteArray().length, fileData.getInputStream(), null);
+	       
 	        Note newNote = new Note();
 	        newNote.setNoteText(noteText);
 	        newNote.setAttachment(attachment);
