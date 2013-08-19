@@ -207,7 +207,6 @@ public class CheckReconciliation extends PersistableBusinessObjectBase implement
 	}
 
 	public int compareTo(KualiInteger checkNumber) {
-		// TODO Auto-generated method stub
 		return getCheckNumber().compareTo(checkNumber);
 	}
 

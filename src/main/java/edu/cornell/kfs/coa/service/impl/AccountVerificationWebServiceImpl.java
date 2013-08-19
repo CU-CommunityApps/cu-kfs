@@ -16,7 +16,6 @@ import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.coa.service.AccountVerificationWebService;
 
-
 /**
  *
  * <p>Title: AccountVerificationServiceImpl</p>
@@ -29,104 +28,106 @@ import edu.cornell.kfs.coa.service.AccountVerificationWebService;
 @WebService(endpointInterface = "edu.cornell.kfs.coa.service.AccountVerificationWebService")
 public class AccountVerificationWebServiceImpl implements AccountVerificationWebService {
 
-
-  public boolean isValidAccountString(String chartOfAccountsCode, String accountNumber, String subAccountNumber, 
-		                              String objectCode, String subObjectCode, String projectCode ) 
-      throws Exception {
+	public boolean isValidAccountString(String chartOfAccountsCode, String accountNumber, String subAccountNumber, 
+		                              String objectCode, String subObjectCode, String projectCode) throws Exception {
 	  
-	  boolean isValid = false;
+		boolean isValid = false;
 	  
-	  if (chartOfAccountsCode == null ||
-		  chartOfAccountsCode.isEmpty() ||
-		  accountNumber == null ||
-		  accountNumber.isEmpty() ||
-		  objectCode == null ||
-		  objectCode.isEmpty()) {
-		  return false;
-	  }
+		if (chartOfAccountsCode == null 
+			|| chartOfAccountsCode.isEmpty()
+			|| accountNumber == null 
+			|| accountNumber.isEmpty() 
+			|| objectCode == null 
+			|| objectCode.isEmpty()) {
+			return false;
+		}
 	 
-	  Account account = SpringContext.getBean(AccountService.class).getByPrimaryId(chartOfAccountsCode, accountNumber); 
+		Account account = SpringContext.getBean(AccountService.class).getByPrimaryId(chartOfAccountsCode, accountNumber); 
 	  
-	  if (account == null || account.toString().isEmpty()) {
-		  isValid = false;
-	  } else {
-	//	  isValid = true;
-		  if (!account.isActive() || account.isClosed() || account.isExpired()) {
-			  isValid = false;
-		  } else {
-			  isValid = true;
-		  }
-		  if (objectCode != null && !objectCode.isEmpty()) {
-				 isValid = isValid && isValidObjectCode(chartOfAccountsCode, objectCode);
-			  }
+		if (account == null || account.toString().isEmpty()) {
+			isValid = false;
+		} else {
+//	  isValid = true;
+		    if (!account.isActive() || account.isClosed() || account.isExpired()) {
+		    	isValid = false;
+		    } else {
+		    	isValid = true;
+		    }
+		    if (objectCode != null && !objectCode.isEmpty()) {
+		    	isValid = isValid && isValidObjectCode(chartOfAccountsCode, objectCode);
+			}
 			  
-		 if (subAccountNumber != null && !subAccountNumber.isEmpty()) {
-				  isValid = isValid && isValidSubAccount(chartOfAccountsCode, accountNumber, subAccountNumber);
-			  }
+		    if (subAccountNumber != null && !subAccountNumber.isEmpty()) {
+		    	isValid = isValid && isValidSubAccount(chartOfAccountsCode, accountNumber, subAccountNumber);
+		    }
 			 
-		 if (subObjectCode != null && !subObjectCode.isEmpty()) {
-				  isValid = isValid && isValidSubObjectCode(chartOfAccountsCode, accountNumber, objectCode, subObjectCode);
-			  }
+		    if (subObjectCode != null && !subObjectCode.isEmpty()) {
+		    	isValid = isValid && isValidSubObjectCode(chartOfAccountsCode, accountNumber, objectCode, subObjectCode);
+			}
 			  
-		 if (projectCode != null && !projectCode.isEmpty()) {
-				  isValid = isValid && isValidProjectCode(projectCode);
-			  }
-	  }
+		    if (projectCode != null && !projectCode.isEmpty()) {
+		    	isValid = isValid && isValidProjectCode(projectCode);
+			}
+		}
 	  	  
-	  return isValid;
+		return isValid;
     }
   
   
-  public boolean isValidSubAccount(String chartOfAccountsCode, String accountNumber, String subAccountNumber) throws Exception{
-	boolean isValidSubAccount = false; 
+	public boolean isValidSubAccount(String chartOfAccountsCode, String accountNumber, String subAccountNumber) throws Exception {
+		boolean isValidSubAccount = false; 
 	
-	SubAccount subAccount = SpringContext.getBean(SubAccountService.class).getByPrimaryId(chartOfAccountsCode, accountNumber, subAccountNumber); 
+		SubAccount subAccount = SpringContext.getBean(SubAccountService.class).getByPrimaryId(chartOfAccountsCode, accountNumber, subAccountNumber); 
 	
-	if (subAccount == null || subAccount.toString().isEmpty() || (!subAccount.isActive()))
-		isValidSubAccount = false;
-	else
-		isValidSubAccount = true;
+		if (subAccount == null || subAccount.toString().isEmpty() || (!subAccount.isActive())) {
+			isValidSubAccount = false;
+		} else {
+			isValidSubAccount = true;
+		}
 	
-	return isValidSubAccount;
-  }
+		return isValidSubAccount;
+	}
   
-  public boolean isValidObjectCode(String chartOfAccountsCode, String objectCodeParm) throws Exception {
-	 boolean isValidObjectCode = false;
+	public boolean isValidObjectCode(String chartOfAccountsCode, String objectCodeParm) throws Exception {
+		boolean isValidObjectCode = false;
 	 
- 	 ObjectCode objectCode = SpringContext.getBean(ObjectCodeService.class).getByPrimaryIdForCurrentYear(chartOfAccountsCode, objectCodeParm);
-	 if (objectCode == null || objectCode.toString().isEmpty() || (!objectCode.isActive())) 
-		 isValidObjectCode = false;
-     else
-    	 isValidObjectCode = true;
-     
-	 return isValidObjectCode; 
-  }
+		ObjectCode objectCode = SpringContext.getBean(ObjectCodeService.class).getByPrimaryIdForCurrentYear(chartOfAccountsCode, objectCodeParm);
+		if (objectCode == null || objectCode.toString().isEmpty() || (!objectCode.isActive())) {
+			isValidObjectCode = false;
+		} else {
+			isValidObjectCode = true;
+		}
+		return isValidObjectCode; 
+	}
   
-  public boolean isValidSubObjectCode(String chartOfAccountsCode, String accountNumber, String objectCode, String subObjectCodeParm) throws Exception {
-	 boolean isValidSubObjectCode = false;
+	public boolean isValidSubObjectCode(String chartOfAccountsCode, String accountNumber, String objectCode, String subObjectCodeParm) throws Exception {
+		boolean isValidSubObjectCode = false;
 	 
-	 SubObjectCode subObjectCode = SpringContext.getBean(SubObjectCodeService.class).getByPrimaryIdForCurrentYear(chartOfAccountsCode, accountNumber, objectCode, subObjectCodeParm);
+		SubObjectCode subObjectCode = SpringContext.getBean(SubObjectCodeService.class)
+				.getByPrimaryIdForCurrentYear(chartOfAccountsCode, accountNumber, objectCode, subObjectCodeParm);
 	 
-	 if (subObjectCode == null || subObjectCode.toString().isEmpty() || (!subObjectCode.isActive())) 
-		 isValidSubObjectCode = false;
-	 else
-		 isValidSubObjectCode = true;
+		if (subObjectCode == null || subObjectCode.toString().isEmpty() || (!subObjectCode.isActive())) {
+			isValidSubObjectCode = false;
+		} else {
+			isValidSubObjectCode = true;
+		}
 
-	 return isValidSubObjectCode;
-  }
+		return isValidSubObjectCode;
+	}
   
-  public boolean isValidProjectCode(String projectCodeParm) throws Exception {
-	 boolean isValidProjectCode = false;
+	public boolean isValidProjectCode(String projectCodeParm) throws Exception {
+		boolean isValidProjectCode = false;
 	 
-	 ProjectCode projectCode = SpringContext.getBean(ProjectCodeService.class).getByPrimaryId(projectCodeParm);
+		ProjectCode projectCode = SpringContext.getBean(ProjectCodeService.class).getByPrimaryId(projectCodeParm);
 	 
-	 if (projectCode == null || projectCode.toString().isEmpty() || (!projectCode.isActive())) 
-		 isValidProjectCode = false;
-	 else
-		 isValidProjectCode = true;
+		if (projectCode == null || projectCode.toString().isEmpty() || (!projectCode.isActive())) {
+			isValidProjectCode = false;
+		} else {
+			isValidProjectCode = true;
+		}
 	 
-	 return isValidProjectCode;
-  }
+		return isValidProjectCode;
+	}
 
 
 }
