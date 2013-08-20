@@ -50,6 +50,9 @@ public class KFSParameterKeyConstants implements ParameterKeyConstants {
     
     public static class LdParameterConstants {
         public static final String DEMERGE_DOCUMENT_TYPES = "DEMERGE_DOCUMENT_TYPES";
+        // KFSPTS-1627
+        public static final String VALIDATE_TRANSFER_ACCOUNT_TYPES_IND = "VALIDATE_TRANSFER_ACCOUNT_TYPES_IND";
+        public static final String INVALID_TRANSFER_ACCOUNT_TYPES = "INVALID_TRANSFER_ACCOUNT_TYPES";
     }
     
     public static class GeneralLedgerSysParmeterKeys {
