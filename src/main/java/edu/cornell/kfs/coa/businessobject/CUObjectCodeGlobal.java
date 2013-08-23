@@ -1,0 +1,159 @@
+/*
+ * Copyright 2007 The Kuali Foundation
+ * 
+ * Licensed under the Educational Community License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.opensource.org/licenses/ecl2.php
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package edu.cornell.kfs.coa.businessobject;
+
+import java.util.HashMap;
+
+import org.kuali.kfs.coa.businessobject.ObjectCode;
+import org.kuali.kfs.coa.businessobject.ObjectCodeGlobal;
+import org.kuali.kfs.coa.businessobject.ObjectCodeGlobalDetail;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.krad.bo.GlobalBusinessObject;
+import org.kuali.rice.krad.service.BusinessObjectService;
+
+/**
+ * 
+ */
+public class CUObjectCodeGlobal extends ObjectCodeGlobal implements GlobalBusinessObject {
+
+
+    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ObjectCodeGlobal.class);
+
+   
+    
+    //added for SUNY Object Code and CG Reporting Code extended attributes
+    private String sunyObjectCode;
+    
+    //NOTE:
+    // ContractGrantReportingCode prompt table needs cgReportingCode attribute defined 
+    // as "code" to perform the lookup on ObjectCodeGlobalMaintenanceDocument but for clarity
+    // cgReportingCode needs to be used as database table column name in CA_OBJ_CD_CHG_DOC_T
+    // for this attribute so that it matches the ObjectCode extended table column name; 
+    // therefore, cgReportingCode and code are both used and the underlying value is 
+    // kept in sync in the getter and setter methods of this class.  
+    // If this was not done in this manner, the magnifying glass to get the ContractGrantReportingCode
+    // prompt table would not show on the ObjectCodeGlobalMaintenanceDocument and the 
+    // database value for cgReportingCode would not be returned to the eDoc even though
+    // it was saved to the database.
+    
+    private String financialObjectCodeDescr;
+    
+    private String cgReportingCode;
+    private String code;
+    private ContractGrantReportingCode contractGrantReportingCode;
+    
+
+   
+    ;
+
+
+    public void populate(ObjectCode old, ObjectCodeGlobalDetail detail) {
+    	super.populate(old, detail);
+        //set extended attribute values that may have changed ... 
+        //also ensure values for primary key are set so extended table insert does not fail on create new
+        ObjectCodeExtendedAttribute cuObjectCodeExtendedData = (ObjectCodeExtendedAttribute) old.getExtension();
+        cuObjectCodeExtendedData.setUniversityFiscalYear(detail.getUniversityFiscalYear());
+        cuObjectCodeExtendedData.setChartOfAccountsCode(detail.getChartOfAccountsCode());
+        cuObjectCodeExtendedData.setFinancialObjectCode(financialObjectCode);
+        cuObjectCodeExtendedData.setCgReportingCode(update(cgReportingCode, cuObjectCodeExtendedData.getCgReportingCode()));
+        cuObjectCodeExtendedData.setSunyObjectCode(update(sunyObjectCode, cuObjectCodeExtendedData.getSunyObjectCode()));
+        cuObjectCodeExtendedData.setFinancialObjectCodeDescr(update(financialObjectCodeDescr, cuObjectCodeExtendedData.getFinancialObjectCodeDescr()));
+
+    }
+
+	/**
+	 * @return the sunyObjectCode
+	 */
+	public String getSunyObjectCode() {
+		return sunyObjectCode;
+	}
+
+	/**
+	 * @param sunyObjectCode the sunyObjectCode to set
+	 */
+	public void setSunyObjectCode(String sunyObjectCode) {
+		this.sunyObjectCode = sunyObjectCode;
+	}
+	
+	public String getFinancialObjectCodeDescr() {
+		return financialObjectCodeDescr;
+	}
+
+	/**
+	 * @param financialObjectCodeDescr the financialObjectCodeDescr to set
+	 */
+	public void setFinancialObjectCodeDescr(String financialObjectCodeDescr) {
+		this.financialObjectCodeDescr = financialObjectCodeDescr;
+	}
+
+	/**
+	 * @return the cgReportingCode
+	 */
+	public String getCgReportingCode() {
+		return this.cgReportingCode;
+	}
+
+	/**
+	 * @param cgReportingCode the cgReportingCode to set
+	 */
+	public void setCgReportingCode(String cgReportingCode) {
+		this.cgReportingCode = cgReportingCode;
+		this.code = cgReportingCode;
+		BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+		HashMap<String,String> keys = new HashMap<String,String>();
+		keys.put("chartOfAccountsCode", this.chartOfAccountsCode);
+		//lookup table has class attribute defined as "code"
+	    keys.put("code", this.cgReportingCode);
+		contractGrantReportingCode = (ContractGrantReportingCode) bos.findByPrimaryKey(ContractGrantReportingCode.class, keys );
+	}
+	
+	/**
+	 * @return the code
+	 */
+	public String getCode() {
+		return this.code;
+	}
+
+	/**
+	 * @param code the code to set
+	 */
+	public void setCode(String code) {
+		this.code = code;
+		this.cgReportingCode = code;
+		BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+		HashMap<String,String> keys = new HashMap<String,String>();
+		keys.put("chartOfAccountsCode", this.chartOfAccountsCode);
+		//lookup table has class attribute defined as "code"
+	    keys.put("code", this.code);
+		contractGrantReportingCode = (ContractGrantReportingCode) bos.findByPrimaryKey(ContractGrantReportingCode.class, keys );
+	}
+
+	/**
+	 * @return the contractGrantReportingCode
+	 */
+	public ContractGrantReportingCode getContractGrantReportingCode() {
+		return this.contractGrantReportingCode;
+	}	
+
+	/**
+	 * @param contractGrantReportingCode the contractGrantReportingCode to set
+	 */
+	public void setContractGrantReportingCode(ContractGrantReportingCode contractGrantReportingCode) {
+		this.contractGrantReportingCode = contractGrantReportingCode;
+	}
+	
+}
