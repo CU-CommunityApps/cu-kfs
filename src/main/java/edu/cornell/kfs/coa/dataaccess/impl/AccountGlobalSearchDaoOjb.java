@@ -15,6 +15,8 @@
  */
 package edu.cornell.kfs.coa.dataaccess.impl;
 
+import edu.cornell.kfs.coa.dataaccess.AccountGlobalSearchDao;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,20 +26,23 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.ojb.broker.query.Criteria;
+import org.apache.ojb.broker.query.QueryFactory;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 import org.kuali.rice.krad.dao.BusinessObjectDao;
 import org.kuali.rice.krad.dao.LookupDao;
 
-import edu.cornell.kfs.coa.dataaccess.AccountGlobalSearchDao;
+
 
 public class AccountGlobalSearchDaoOjb extends PlatformAwareDaoBaseOjb implements AccountGlobalSearchDao {
     private LookupDao lookupDao;
     private BusinessObjectDao businessObjectDao;
 
+    @SuppressWarnings("rawtypes")
     public Collection getAccountsByOrgHierarchy(String chartOfAccountsCode, String organizationCode, Map<String, String> parameters) {
         Criteria criteria = new Criteria();
 
@@ -54,12 +59,19 @@ public class AccountGlobalSearchDaoOjb extends PlatformAwareDaoBaseOjb implement
             orgCriteria.addEqualTo(KFSPropertyConstants.ORGANIZATION_CODE, reportingOrg.getOrganizationCode());
             criteria.addOrCriteria(orgCriteria);
         }
-
+        Criteria dtCriteria = new Criteria();
+        dtCriteria.addGreaterThan(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
+        
+        orgCriteria = new Criteria();
+        orgCriteria.addIsNull(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE);
+        orgCriteria.addOrCriteria(dtCriteria);
+        
+        criteria.addAndCriteria(orgCriteria);
+        
         parameters.remove(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE);
         parameters.remove(KFSPropertyConstants.ORGANIZATION_CODE);
         
-        lookupDao.createCriteria(Account.class, "", "", criteria);
-        return lookupDao.findCollectionBySearchHelper(Account.class, parameters, true, false);
+        return getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(Account.class, criteria));
     }
 
     protected List<Organization> getReportingOrgs(String chartOfAccountsCode, String organizationCode, Set<Organization> seenOrgs) {
@@ -90,12 +102,12 @@ public class AccountGlobalSearchDaoOjb extends PlatformAwareDaoBaseOjb implement
         this.lookupDao = lookupDao;
     }
 
-	public BusinessObjectDao getBusinessObjectDao() {
-		return businessObjectDao;
-	}
+    public BusinessObjectDao getBusinessObjectDao() {
+        return businessObjectDao;
+    }
 
-	public void setBusinessObjectDao(BusinessObjectDao businessObjectDao) {
-		this.businessObjectDao = businessObjectDao;
-	}
+    public void setBusinessObjectDao(BusinessObjectDao businessObjectDao) {
+        this.businessObjectDao = businessObjectDao;
+    }
     
 }
