@@ -3,6 +3,7 @@
  */
 package edu.cornell.kfs.sys.dataaccess;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ public interface DocumentMaintenanceDao {
 	 * 
 	 * @return
 	 */
-	public List<String> getDocumentRequeueValues();
+	public Collection<String> getDocumentRequeueValues();
 
 	/**
 	 * 

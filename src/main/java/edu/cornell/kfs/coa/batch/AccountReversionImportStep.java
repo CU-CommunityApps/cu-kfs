@@ -18,17 +18,18 @@ package edu.cornell.kfs.coa.batch;
 import java.io.File;
 import java.util.Date;
 
-import org.kuali.kfs.sys.batch.AbstractStep;
+
 import org.kuali.kfs.sys.context.SpringContext;
 import org.springframework.util.StopWatch;
 
 import edu.cornell.kfs.coa.service.AccountReversionImportService;
+import edu.cornell.kfs.sys.batch.CuAbstractStep;
 
 /**
  * A step that runs the reversion import process, which can be used to update the defined account reversions for a given
  * year.
  */
-public class AccountReversionImportStep extends AbstractStep {
+public class AccountReversionImportStep extends CuAbstractStep {
 
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionImportStep.class);
 
@@ -44,8 +45,8 @@ public class AccountReversionImportStep extends AbstractStep {
         AccountReversionImportService aris = SpringContext.getBean(AccountReversionImportService.class);
         aris.importAccountReversions(f);
         
-        //TODO UPGRADE-911 Where did it go George?
-        //addTimeStampToFileName(f, "AccountReversion.csv", this.batchFileDirectoryName );
+        
+        addTimeStampToFileName(f, "AccountReversion.csv", this.batchFileDirectoryName );
 
         stopWatch.stop();
         LOG.info("AccountReversionImportStep took " + (stopWatch.getTotalTimeSeconds() / 60.0) + " minutes to complete");

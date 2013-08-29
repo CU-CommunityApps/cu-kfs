@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -36,8 +37,7 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
 		@Transactional
 		public boolean requeueDocuments() {
 		    boolean result = true;
-			List<String> docIds = new ArrayList<String>();
-		    docIds = documentMaintenanceDao.getDocumentRequeueValues();
+			Collection<String> docIds = documentMaintenanceDao.getDocumentRequeueValues();
 		    LOG.info("Total number of documents flagged for requeuing: "+docIds.size());
 		    
 			for (Iterator<String> it = docIds.iterator(); it.hasNext(); ) {

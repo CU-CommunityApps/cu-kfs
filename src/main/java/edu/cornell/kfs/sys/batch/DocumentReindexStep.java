@@ -11,18 +11,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.kuali.kfs.sys.batch.AbstractStep;
+
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 
 import edu.cornell.kfs.sys.service.DocumentMaintenanceService;
+import edu.cornell.kfs.sys.batch.CuAbstractStep;
 
 /**
  * @author kwk43
  *
  */
-public class DocumentReindexStep extends AbstractStep {
+public class DocumentReindexStep extends CuAbstractStep {
 
 	private String stagingDirectory;
 	private String fileName = "documentReindex.txt";
@@ -55,11 +56,11 @@ public class DocumentReindexStep extends AbstractStep {
 			queue.indexDocument(id.toString());
 		}
 		
-		//TODO UPGRADE-911
-		//addTimeStampToFileName(f, fileName, stagingDirectory);
+		
+		addTimeStampToFileName(f, fileName, stagingDirectory);
 		
 		return true;
-//		return SpringContext.getBean(DocumentMaintenanceService.class).requeueDocuments();
+		//return SpringContext.getBean(DocumentMaintenanceService.class).requeueDocuments();
 	}
 
 

@@ -6,6 +6,7 @@ package edu.cornell.kfs.sys.dataaccess.impl;
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,7 +34,7 @@ import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
  *
  */
 public class DocumentMaintenanceDaoOjb extends PlatformAwareDaoBaseOjb implements DocumentMaintenanceDao, OjbCollectionAware {
-    public static final String WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY = "routeHeaderId";
+    public static final String WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY = "documentId";
 
     
     private ParameterService parameterService;
@@ -48,7 +49,7 @@ public class DocumentMaintenanceDaoOjb extends PlatformAwareDaoBaseOjb implement
 	/**
 	 * @see edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao#getDocumentRequeueFileValues()
 	 */
-	public List<String> getDocumentRequeueValues() {
+	public Collection<String> getDocumentRequeueValues() {
 		Criteria criteria = new Criteria();
 		
 		String sql = buildRequeueSqlCriteria();
@@ -87,7 +88,7 @@ public class DocumentMaintenanceDaoOjb extends PlatformAwareDaoBaseOjb implement
 		sql.append(retrieveColumnNameFromAnnotations(DocumentRouteHeaderValue.class, KEWPropertyConstants.DOCUMENT_TYPE_ID));
 		sql.append(" NOT IN (");
 
-		List<String> docTypeIds = (List<String>) parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.NON_REQUEUABLE_DOCUMENT_TYPES);
+		Collection<String> docTypeIds = parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.NON_REQUEUABLE_DOCUMENT_TYPES);
 		sql.append(StringUtils.collectionToCommaDelimitedString(docTypeIds));
 		
 		sql.append(") AND ");
@@ -106,7 +107,7 @@ public class DocumentMaintenanceDaoOjb extends PlatformAwareDaoBaseOjb implement
 		sql.append("RSP_ID");
 		sql.append("='");
 
-		List<String> roleIds = (List<String>) parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.REQUEUABLE_ROLES);
+		Collection<String> roleIds =  parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.REQUEUABLE_ROLES);
 		sql.append(StringUtils.collectionToCommaDelimitedString(roleIds));
 
 		sql.append("')) order by ");

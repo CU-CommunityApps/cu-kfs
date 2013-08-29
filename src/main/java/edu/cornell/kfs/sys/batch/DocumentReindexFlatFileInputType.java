@@ -2,6 +2,7 @@ package edu.cornell.kfs.sys.batch;
 
 import java.io.File;
 
+import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileTypeBase;
 import org.kuali.kfs.sys.exception.ParseException;
 
@@ -43,6 +44,7 @@ public class DocumentReindexFlatFileInputType extends BatchInputFileTypeBase {
 	public String getTitleKey() {
 		// TODO Auto-generated method stub
 		return CUKFSKeyConstants.MESSAGE_BATCH_UPLOAD_TITLE_REINDEX_FLAT_FILE;
+		//return KFSKeyConstants.MESSAGE_BATCH_UPLOAD_TITLE_LABOR_ENTERPRISE_FEEDER;
 	}
 	
     public boolean isDoneFileRequired() {

@@ -123,7 +123,7 @@
 
  
 	<bean id="documentMaintenanceDao" parent="platformAwareDao" class="edu.cornell.kfs.sys.dataaccess.impl.DocumentMaintenanceDaoOjb" >
-	    <property name="jcdAlias" value="enWorkflowDataSource" />
+	    <property name="jcdAlias" value="kewDataSource" />
 		<property name="parameterService" ref="parameterService" />
 	</bean>
 
