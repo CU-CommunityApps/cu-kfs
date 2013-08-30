@@ -128,7 +128,7 @@
     	<field-descriptor name="collegeLevelOrganization" column="C_LEVEL_ORG" jdbc-type="VARCHAR"/>
     	<field-descriptor name="departmentLevelOrganization" column="D_LEVEL_ORG" jdbc-type="VARCHAR"/>
 
-    	<field-descriptor name="servicePerformedOnCampus" column="SRVC_PERF_ON_CAMPUS" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion"/>  
+    	<field-descriptor name="servicePerformedOnCampus" column="SRVC_PERF_ON_CAMPUS" jdbc-type="VARCHAR"/>  
     	
     	<field-descriptor name="completeOption" column="COMPLETED" jdbc-type="VARCHAR"/> 
     	<field-descriptor name="currentRouteToNetId" column="CRNT_RT_TO_NET_ID" jdbc-type="VARCHAR" index="true"/>   

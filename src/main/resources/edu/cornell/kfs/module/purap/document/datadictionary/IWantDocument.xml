@@ -442,6 +442,10 @@
     <property name="shortLabel" value="On Campus?"/>
     <property name="required" value="false"/>
     <property name="maxLength" value="1"/>
+    <!-- Setup validation similar to that from KFS's BarcodeInventoryErrorDocument. -->
+    <property name="validationPattern">
+      <bean parent="CharsetValidationPattern" p:validChars="YN "/>
+    </property>
     <property name="control">
       <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.module.purap.businessobject.options.YesNoValuesFinder" p:includeKeyInLabel="false"/>
     </property>

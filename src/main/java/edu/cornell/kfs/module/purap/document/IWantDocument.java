@@ -11,6 +11,7 @@ import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderView;
 import org.kuali.kfs.module.purap.util.PurApRelatedViews;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase;
@@ -106,7 +107,8 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     //Services related fields
 
     // Will service be performed on Campus: yes/no drop down box
-    private boolean servicePerformedOnCampus;
+    // Need to store as a String here due to drop-down usage; database already stores it as a String.
+    private String servicePerformedOnCampus;
 
     private KualiDecimal accountingLinesTotal;
 
@@ -138,6 +140,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         items = new TypedArrayList(IWantItem.class);
         accounts = new TypedArrayList(IWantAccount.class);
         accountingLinesTotal = KualiDecimal.ZERO;
+        servicePerformedOnCampus = KFSConstants.ParameterValues.NO;
     }
 
     public String getVendorName() {
@@ -188,12 +191,20 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         this.goods = goods;
     }
 
-    public boolean isServicePerformedOnCampus() {
+    public String getServicePerformedOnCampus() {
         return servicePerformedOnCampus;
     }
 
-    public void setServicePerformedOnCampus(boolean servicePerformedOnCampus) {
+    public void setServicePerformedOnCampus(String servicePerformedOnCampus) {
         this.servicePerformedOnCampus = servicePerformedOnCampus;
+    }
+
+    /**
+     * Returns the "servicePerformedOnCampus" property as a boolean, in case
+     * we ever need to retrieve it as such.
+     */
+    public boolean serviceIsPerformedOnCampus() {
+    	return KFSConstants.ParameterValues.YES.equals(servicePerformedOnCampus);
     }
 
     public String getInitiatorNetID() {
