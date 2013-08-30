@@ -168,6 +168,7 @@
 <class-descriptor class="org.kuali.kfs.coa.businessobject.HigherEducationFunction" table="CA_HIGHR_ED_FUNC_T">
     <field-descriptor name="financialHigherEdFunctionCd" column="FIN_HGH_ED_FUNC_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
     <field-descriptor name="financialHigherEdFunctionNm" column="FIN_HGH_ED_FUNC_NM" jdbc-type="VARCHAR" />
+    <field-descriptor name="financialHigherEdFunctionDescription" column="FIN_HGH_ED_FUNC_DESC" jdbc-type="VARCHAR" />
     <field-descriptor name="finUnivBdgtOfficeFunctionCd" column="FIN_UBO_FUNC_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="finAicpaFunctionCode" column="FIN_AICPA_FUNC_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="financialFederalFunctionCode" column="FIN_FED_FUNC_CD" jdbc-type="VARCHAR" />
