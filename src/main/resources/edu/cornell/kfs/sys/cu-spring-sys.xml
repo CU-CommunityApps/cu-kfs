@@ -80,6 +80,13 @@
 			<property name="stagingDirectory" value="${staging.directory}/sys"/>
 	</bean>
 	
+	<bean id="jobListener" parent="jobListener-parentBean"/>
+	<bean id="jobListener-parentBean" class="edu.cornell.kfs.sys.batch.CuJobListener" abstract="true">
+		<property name="configurationService" ref="kualiConfigurationService" />
+		<property name="mailService" ref="mailService" />
+		<property name="dateTimeService" ref="dateTimeService" />
+	</bean>
+	
 	<!--  UPGRADE-911
 	<bean id="securityRequestOrganizationRoleTypeService" class="org.kuali.kfs.sys.identity.SecurityRequestOrganizationRoleTypeServiceImpl"/>
     <bean class="org.kuali.rice.ksb.messaging.KSBExporter">
