@@ -17,7 +17,6 @@
             <ref bean="AccountExtendedAttribute-invoiceFrequencyCode"/> 
             <ref bean="AccountExtendedAttribute-invoiceTypeCode"/>
             <ref bean="AccountExtendedAttribute-everify"/>
-            <ref bean="AccountExtendedAttribute-laborBenefitRateCategoryCode"/>
       </list> 
     </property> 
     </bean> 
@@ -48,8 +47,5 @@
 			<bean parent="CheckboxControlDefinition" />
 		</property>
     	<property name="formatterClass" value="org.kuali.rice.core.web.format.BooleanFormatter"/>
-  	</bean>
-    
-    <dd:boAttributeRef id="AccountExtendedAttribute-laborBenefitRateCategoryCode" parent="LaborBenefitRateCategory-code"/>
-    
+  	</bean>    
 </beans> 

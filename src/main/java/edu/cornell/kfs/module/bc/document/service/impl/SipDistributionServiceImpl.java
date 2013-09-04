@@ -231,8 +231,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                 String finObjTypeExpenditureexpCd = optionsService.getOptions(fiscalYear)
                         .getFinObjTypeExpenditureexpCd();
 
-                String laborBenefitsRateCategoryCode = ((AccountExtendedAttribute) sipPoolEntry.getAccount()
-                        .getExtension())
+                String laborBenefitsRateCategoryCode = sipPoolEntry.getAccount()
                         .getLaborBenefitRateCategoryCode();
                 List<LaborLedgerPositionObjectBenefit> positionObjectBenefits = sipPoolEntry.getPositionObjectBenefit();
 
@@ -770,8 +769,7 @@ public class SipDistributionServiceImpl implements SipDistributionService {
                     finObjTypeExpenditureexpCd = optionsService.getOptions(fiscalYear).getFinObjTypeExpenditureexpCd();
                 }
 
-                String laborBenefitsRateCategoryCode = ((AccountExtendedAttribute) newPBGLEntry.getAccount()
-                        .getExtension())
+                String laborBenefitsRateCategoryCode = newPBGLEntry.getAccount()
                         .getLaborBenefitRateCategoryCode();
                 List<LaborLedgerPositionObjectBenefit> positionObjectBenefits = newPBGLEntry.getPositionObjectBenefit();
                 // create the request benefits list

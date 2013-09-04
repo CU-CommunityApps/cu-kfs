@@ -17,7 +17,6 @@ package edu.cornell.kfs.coa.businessobject;
 
 import java.util.HashMap;
 
-import org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
 import org.kuali.rice.krad.service.BusinessObjectService;
@@ -40,7 +39,6 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
     private String invoiceFrequencyCode;
     private String invoiceTypeCode;
     private boolean everify;
-    private String laborBenefitRateCategoryCode;
     private String majorReportingCategoryCode;
     private Long costShareForProjectNumber;
 
@@ -48,7 +46,6 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
     private AppropriationAccount appropriationAccount;
     private InvoiceFrequency invoiceFrequency;
     private InvoiceType invoiceType;
-    private LaborBenefitRateCategory laborBenefitRateCategory;
     private MajorReportingCategory majorReportingCategory;
 
     
@@ -254,38 +251,6 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
 		this.everify = everify;
 	}
 	
-	 /**
-     * Gets the laborBenefitRateCategoryCode attribute. 
-     * @return Returns the laborBenefitRateCategoryCode.
-     */
-    public String getLaborBenefitRateCategoryCode() {
-        return laborBenefitRateCategoryCode;
-    }
-
-    /**
-     * Sets the laborBenefitRateCategoryCode attribute value.
-     * @param laborBenefitRateCategoryCode The laborBenefitRateCategoryCode to set.
-     */
-    public void setLaborBenefitRateCategoryCode(String laborBenefitRateCategoryCode) {
-        this.laborBenefitRateCategoryCode = laborBenefitRateCategoryCode;
-    }
-
-    /**
-     * Gets the laborBenefitRateCategory attribute. 
-     * @return Returns the laborBenefitRateCategory.
-     */
-    public LaborBenefitRateCategory getLaborBenefitRateCategory() {
-        return laborBenefitRateCategory;
-    }
-
-    /**
-     * Sets the laborBenefitRateCategory attribute value.
-     * @param laborBenefitRateCategory The laborBenefitRateCategory to set.
-     */
-    public void setLaborBenefitRateCategory(LaborBenefitRateCategory laborBenefitRateCategory) {
-        this.laborBenefitRateCategory = laborBenefitRateCategory;
-    }
-    
 	/**
 	 * @return the majorReportingCategory
 	 */

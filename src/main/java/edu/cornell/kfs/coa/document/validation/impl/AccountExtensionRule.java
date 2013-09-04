@@ -42,7 +42,6 @@ public class AccountExtensionRule extends AccountRule {
 
     @Override
     protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {
-        // TODO Auto-generated method stub
         boolean success = super.processCustomRouteDocumentBusinessRules(document);
 
         success &= checkSubFundProgram(document);
@@ -53,33 +52,31 @@ public class AccountExtensionRule extends AccountRule {
         return success;
     }
 
+    //TODO This should no longer be required as laborBenefitCategoryCode is now in the base table and add to
+    // the list of fields the have existence checks.
     @SuppressWarnings("deprecation")
 	protected boolean checkLaborBenefitCategoryCode(MaintenanceDocument document) {
         boolean success = true;
 
-        String laborBenefitCategoryCode  = ((AccountExtendedAttribute) newAccount.getExtension()).getLaborBenefitRateCategoryCode();
+        String laborBenefitCategoryCode  = newAccount.getLaborBenefitRateCategoryCode();
         BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
 
         // Benefit Category Code is not a required field. if no value is entered 
         // no validation is performed.
         if (!StringUtils.isBlank(laborBenefitCategoryCode)) {
             Map<String, Object> fieldValues = new HashMap<String, Object>();
-            fieldValues.put("laborBenefitRateCategoryCode", laborBenefitCategoryCode	);
+            fieldValues.put("laborBenefitRateCategoryCode", laborBenefitCategoryCode);
             
             Collection<LaborBenefitRateCategory> retVals = bos.findMatching(LaborBenefitRateCategory.class, fieldValues);
             
             if (retVals.isEmpty()) {
                 success = false;
-                putFieldError("extension.laborBenefitRateCategoryCode", KFSKeyConstants.ERROR_EXISTENCE, " Labor Benefit Rate Category Code "+laborBenefitCategoryCode);
+                putFieldError("laborBenefitRateCategoryCode", KFSKeyConstants.ERROR_EXISTENCE, " Labor Benefit Rate Category Code " + laborBenefitCategoryCode);
             }
         	
         }
         return success;
-
-        
-        
     }
-    
     
     protected boolean checkSubFundProgram(MaintenanceDocument document) {
         boolean success = true;
@@ -89,10 +86,10 @@ public class AccountExtensionRule extends AccountRule {
 //        String subFundProgramCode = ((AccountExtendedAttribute)newAccount.getExtension()).getSubFundProgram().getProgramCode();
         BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
 
-        if (!StringUtils.isBlank(subFundProg )) {
+        if (!StringUtils.isBlank(subFundProg)) {
             Map fieldValues = new HashMap();
             fieldValues.put("subFundGroupCode", subFundGroupCode);
-            fieldValues.put("programCode", subFundProg	);
+            fieldValues.put("programCode", subFundProg);
             
             Collection<SubFundProgram> retVals = bos.findMatching(SubFundProgram.class, fieldValues);
             
@@ -110,13 +107,13 @@ public class AccountExtensionRule extends AccountRule {
             
         } else {
         	// BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
-             Map fieldValues = new HashMap();
-             fieldValues.put("subFundGroupCode", subFundGroupCode);
-             Collection<SubFundProgram> retVals = bos.findMatching(SubFundProgram.class, fieldValues);
-             if (!retVals.isEmpty()) {
-                 success = false;
-                 putFieldError("extension.programCode", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE, new String[] { subFundGroupCode});
-             }
+            Map fieldValues = new HashMap();
+            fieldValues.put("subFundGroupCode", subFundGroupCode);
+            Collection<SubFundProgram> retVals = bos.findMatching(SubFundProgram.class, fieldValues);
+            if (!retVals.isEmpty()) {
+                success = false;
+                putFieldError("extension.programCode", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE, new String[] { subFundGroupCode});
+            }
         }
         return success; 
     }
@@ -137,11 +134,15 @@ public class AccountExtensionRule extends AccountRule {
             
             if (retVals.isEmpty()) {
                 success = false;
-                putFieldError("extension.appropriationAccountNumber", CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_APPROP_ACCT_NOT_GROUP_CODE, new String[] {appropriationAccountNumber, subFundGroupCode});
+                putFieldError("extension.appropriationAccountNumber", 
+                        CUKFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_APPROP_ACCT_NOT_GROUP_CODE, 
+                        new String[] {appropriationAccountNumber, subFundGroupCode});
             } else {
             	for (AppropriationAccount sfp : retVals) {
             		if (!sfp.isActive()) {
-                        putFieldError("extension.appropriationAccountNumber", KFSKeyConstants.ERROR_INACTIVE, getFieldLabel(Account.class, "extension.appropriationAccountNumber"));
+                        putFieldError("extension.appropriationAccountNumber", 
+                                KFSKeyConstants.ERROR_INACTIVE, 
+                                getFieldLabel(Account.class, "extension.appropriationAccountNumber"));
                         success = false;
             		}
             	}

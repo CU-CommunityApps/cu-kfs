@@ -30,22 +30,18 @@ import org.apache.ojb.broker.query.QueryFactory;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 import org.kuali.rice.krad.dao.BusinessObjectDao;
-import org.kuali.rice.krad.dao.LookupDao;
-
-
+import org.kuali.rice.krad.dao.impl.LookupDaoOjb;
 
 public class AccountGlobalSearchDaoOjb extends PlatformAwareDaoBaseOjb implements AccountGlobalSearchDao {
-    private LookupDao lookupDao;
+    private LookupDaoOjb lookupDao;
     private BusinessObjectDao businessObjectDao;
 
     @SuppressWarnings("rawtypes")
     public Collection getAccountsByOrgHierarchy(String chartOfAccountsCode, String organizationCode, Map<String, String> parameters) {
+        
         Criteria criteria = new Criteria();
-
         Criteria orgCriteria = new Criteria();
 
         orgCriteria.addEqualTo(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode);
@@ -59,17 +55,11 @@ public class AccountGlobalSearchDaoOjb extends PlatformAwareDaoBaseOjb implement
             orgCriteria.addEqualTo(KFSPropertyConstants.ORGANIZATION_CODE, reportingOrg.getOrganizationCode());
             criteria.addOrCriteria(orgCriteria);
         }
-        Criteria dtCriteria = new Criteria();
-        dtCriteria.addGreaterThan(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
         
-        orgCriteria = new Criteria();
-        orgCriteria.addIsNull(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE);
-        orgCriteria.addOrCriteria(dtCriteria);
-        
-        criteria.addAndCriteria(orgCriteria);
-        
+        //Add the rest of the criteria for the lookup
         parameters.remove(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE);
         parameters.remove(KFSPropertyConstants.ORGANIZATION_CODE);
+        criteria.addAndCriteria(lookupDao.getCollectionCriteriaFromMap(new Account(), parameters));
         
         return getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(Account.class, criteria));
     }
@@ -94,11 +84,11 @@ public class AccountGlobalSearchDaoOjb extends PlatformAwareDaoBaseOjb implement
         return reportingOrgs;
     }
 
-    protected LookupDao getLookupDao() {
+    protected LookupDaoOjb getLookupDao() {
         return lookupDao;
     }
 
-    public void setLookupDao(LookupDao lookupDao) {
+    public void setLookupDao(LookupDaoOjb lookupDao) {
         this.lookupDao = lookupDao;
     }
 

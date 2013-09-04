@@ -21,49 +21,25 @@
   </bean>
 
   <!-- Maintenance Section Definitions -->
-
-  <bean id="AccountGlobalMaintenanceDocument-GlobalAccountMaintenance" parent="AccountGlobalMaintenanceDocument-GlobalAccountMaintenance-parentBean">
-    <property name="maintainableItems">
-      <list>
-        <bean parent="MaintainableFieldDefinition" p:name="accountFiscalOfficerSystemIdentifier" p:unconditionallyReadOnly="true"/>
-        <bean parent="MaintainableFieldDefinition" p:name="accountFiscalOfficerUser.principalName"/>
-        <bean parent="MaintainableFieldDefinition" p:name="accountsSupervisorySystemsIdentifier" p:unconditionallyReadOnly="true"/>
-        <bean parent="MaintainableFieldDefinition" p:name="accountSupervisoryUser.principalName"/>
-        <bean parent="MaintainableFieldDefinition" p:name="accountManagerSystemIdentifier" p:unconditionallyReadOnly="true"/>
-        <bean parent="MaintainableFieldDefinition" p:name="accountManagerUser.principalName"/>
-        <bean parent="MaintainableFieldDefinition" p:name="organizationCode"/>
-        <bean parent="MaintainableFieldDefinition" p:name="subFundGroupCode"/>
-        <bean parent="MaintainableFieldDefinition" p:name="majorReportingCategoryCode"/>
-        <bean parent="MaintainableFieldDefinition" p:name="accountExpirationDate"/>
-        <bean parent="MaintainableFieldDefinition" p:name="accountZipCode"/>
-        <bean parent="MaintainableFieldDefinition" p:name="accountCityName"/>
-        <bean parent="MaintainableFieldDefinition" p:name="accountStateCode"/>
-        <bean parent="MaintainableFieldDefinition" p:name="accountStreetAddress"/>
-        <bean parent="MaintainableFieldDefinition" p:name="continuationFinChrtOfAcctCd"/>
-        <bean parent="MaintainableFieldDefinition" p:name="continuationAccountNumber" p:webUILeaveFieldFunction="onblur_accountNumber">
-            <property name="webUILeaveFieldFunctionParameters">
-                <list>
-                    <value>continuationFinChrtOfAcctCd</value>
-                </list>
-            </property> 
-        </bean>        
-        <bean parent="MaintainableFieldDefinition" p:name="incomeStreamFinancialCoaCode"/>
-        <bean parent="MaintainableFieldDefinition" p:name="incomeStreamAccountNumber" p:webUILeaveFieldFunction="onblur_accountNumber">
-            <property name="webUILeaveFieldFunctionParameters">
-                <list>
-                    <value>incomeStreamFinancialCoaCode</value>
-                </list>
-            </property> 
-        </bean>        
-        <bean parent="MaintainableFieldDefinition" p:name="accountCfdaNumber"/>
-        <bean parent="MaintainableFieldDefinition" p:name="financialHigherEdFunctionCd"/>
-        <bean parent="MaintainableFieldDefinition" p:name="accountSufficientFundsCode"/>
-        <bean parent="MaintainableFieldDefinition" p:name="pendingAcctSufficientFundsIndicator"/>
-        <bean parent="MaintainableFieldDefinition" p:name="laborBenefitRateCategoryCode"/>
-      </list>
+  <bean parent="DataDictionaryBeanOverride">
+    <property name="beanName" value="AccountGlobalMaintenanceDocument-GlobalAccountMaintenance" />
+    <property name="fieldOverrides">
+        <list>
+            <bean parent="FieldOverrideForListElementInsert">
+                <property name="propertyName" value="maintainableItems" />
+                <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="subFundGroupCode" />
+                </property>
+                <property name="insertAfter">
+                    <list>
+                       <bean parent="MaintainableFieldDefinition" p:name="majorReportingCategoryCode" />
+                    </list>
+                </property>
+            </bean>
+        </list>
     </property>
   </bean>
-  
+   
   <bean id="AccountGlobalMaintenanceDocument-EditListofAccounts" parent="AccountGlobalMaintenanceDocument-EditListofAccounts-parentBean"/>
   <bean id="AccountGlobalMaintenanceDocument-EditListofAccounts-parentBean" abstract="true" parent="MaintainableSectionDefinition">
     <property name="id" value="Edit List of Accounts"/>

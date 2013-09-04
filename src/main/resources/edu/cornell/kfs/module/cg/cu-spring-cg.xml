@@ -16,7 +16,7 @@
             </list>
         </property>
 		<property name="dataDictionaryPackages">
-			<list merge="true">
+			<list>
                 <value>edu/cornell/kfs/module/cg/document/datadictionary</value>
                 <value>edu/cornell/kfs/module/cg/businessobject/datadictionary</value>
 			</list>

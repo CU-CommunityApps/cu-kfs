@@ -16,7 +16,7 @@
             </list>
         </property>
 		<property name="dataDictionaryPackages">
-			<list merge="true">
+			<list>
                 <value>edu/cornell/kfs/coa/document/datadictionary</value>
                 <value>edu/cornell/kfs/coa/businessobject/datadictionary</value>
 			</list>
@@ -46,16 +46,8 @@
 
 	<bean id="accountVerificationWebService" class="edu.cornell.kfs.coa.service.impl.AccountVerificationWebServiceImpl"/>
 	
+	<bean id="accountService"  parent="accountService-parentBean" class="edu.cornell.kfs.coa.service.impl.CuAccountServiceImpl"/>
 	
-	<bean id="accountService" class="org.kuali.kfs.coa.service.impl.AccountServiceImpl">
-		<property name="accountDao">
-			<ref bean="accountDao" />
-		</property>
-		<property name="parameterService">
-			<ref bean="parameterService" />
-		</property>
-	</bean>
-
 	<bean id="accountGlobalLookupableHelperService"
 		class="edu.cornell.kfs.coa.businessobject.lookup.AccountGlobalSearchLookupableHelperServiceImpl"
 		scope="prototype" parent="lookupableHelperService"
@@ -79,11 +71,17 @@
 	  	<constructor-arg ref="persistenceStructureService"/>
     </bean>
 	
+    <bean id="lookupDaoOjb" parent="platformAwareDao" class="org.kuali.rice.krad.dao.impl.LookupDaoOjb">
+        <property name="persistenceStructureService" ref="persistenceStructureService"/>
+        <property name="dateTimeService" ref="dateTimeService"/>
+        <property name="dataDictionaryService" ref="dataDictionaryService"/>
+     </bean>
+  
  	<bean id="accountGlobalSearchDao" parent="platformAwareDao"
       class="edu.cornell.kfs.coa.dataaccess.impl.AccountGlobalSearchDaoOjb"
-      p:lookupDao-ref="lookupDao" 
+      p:lookupDao-ref="lookupDaoOjb"
       p:businessObjectDao-ref="businessObjectDao"/>
- 
+      
  	<bean id="organizationService" class="org.kuali.kfs.coa.service.impl.OrganizationServiceImpl">
         <property name="parameterService" ref="parameterService" />
         <property name="chartService" ref="chartService" />
