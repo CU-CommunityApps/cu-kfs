@@ -623,7 +623,7 @@
   <distributionManagement>
     <repository>
       <id>cornell-internal</id>
-      <url>dav:https://maven.cit.cornell.edu/repository/internal/</url>
+      <url>https://maven.cit.cornell.edu/repository/internal/</url>
     </repository>
     <snapshotRepository>
       <id>cornell-snapshots</id>
