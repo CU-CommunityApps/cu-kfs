@@ -26,7 +26,11 @@
 		<property name="scriptConfigurationFilePaths">
 			<list/>
 		</property>
-		
+		<property name="databaseRepositoryFilePaths">
+            <list>
+                <value>edu/cornell/kfs/sys/cu-ojb-sys.xml</value>
+            </list>
+        </property>
 		<property name="jobNames">
             <list merge="true">
 				<value>documentRequeuerJob</value>
