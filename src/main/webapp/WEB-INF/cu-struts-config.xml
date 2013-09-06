@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+    Copyright 2005 The Kuali Foundation
+    
+    Licensed under the Educational Community License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+    http://www.opensource.org/licenses/ecl2.php
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+<struts-config>
+    <form-beans>
+
+        <form-bean name="SipImportForm"
+            type="edu.cornell.kfs.module.bc.document.web.struts.SipImportForm" />
+                            <!-- Check Recon Form -->
+        <form-bean name="CheckReconciliationReportForm"
+            type="com.rsmart.kuali.kfs.cr.document.web.struts.CheckReconciliationReportForm" /> 
+                            <!-- I Want document Form -->
+        <form-bean name="IWantDocumentForm"
+            type="edu.cornell.kfs.module.purap.document.web.struts.IWantDocumentForm" />
+            
+    </form-beans>
+    
+    <action-mappings>
+    
+            <!--  Check Recon -->
+        <action path="/cr*" name="{1}Form"
+            input="/jsp/modules/cr/{1}.jsp"
+            type="com.rsmart.kuali.kfs.cr.document.web.struts.{1}Action"
+            scope="request" parameter="methodToCall" validate="true"
+            attribute="KualiForm">
+            <set-property property="cancellable" value="true" />
+            <forward name="basic" path="/jsp/module/cr/{1}.jsp" />
+        </action> 
+        
+        <action path="/laborBatchUploadFileSet"
+            name="KualiBatchInputFileSetForm" scope="request"
+            attribute="KualiForm" parameter="methodToCall"
+            type="org.kuali.kfs.sys.web.struts.KualiBatchInputFileSetAction">
+            <set-property property="cancellable" value="true" />
+            <forward name="basic"
+                path="/jsp/sys/KualiBatchInputFileSet.jsp" />
+        </action>     
+        
+        <action path="/budgetSipImport" name="SipImportForm"
+            input="/jsp/module/bc/SipImport.jsp"
+            type="edu.cornell.kfs.module.bc.document.web.struts.SipImportAction"
+            scope="session" parameter="methodToCall" validate="true"
+            attribute="KualiForm">
+            <set-property property="cancellable" value="true" />
+            <forward name="basic" path="/jsp/module/bc/SipImport.jsp" />
+            <forward name="lostSessionReturning" path="/jsp/module/bc/LostSessionReturning.jsp" />
+        </action>
+            <!-- I Want document -->
+        <action path="/purapIWant" name="IWantDocumentForm"
+            input="/jsp/module/purap/IWant.jsp"
+            type="edu.cornell.kfs.module.purap.document.web.struts.IWantDocumentAction"
+            scope="request" parameter="methodToCall" validate="true"
+            attribute="KualiForm">
+            <set-property property="cancellable" value="true" />
+            <forward name="basic" path="/jsp/module/purap/IWant.jsp" /> 
+            <forward name="finish" path="/jsp/module/purap/iWantDocumentFinish.jsp" />      
+        </action>
+    </action-mappings>
+    
+</struts-config>
