@@ -40,14 +40,6 @@
                        </list>
                    </property>
                </bean>
-               <bean parent="FieldOverrideForListElementInsert">
-                   <property name="propertyName" value="maintainableItems" />
-                   <property name="insertAfter">
-                       <list>
-                            <bean parent="MaintainableFieldDefinition" p:name="laborBenefitRateCategoryCode" />
-                       </list>
-                   </property>
-               </bean>
            </list>
        </property>
    </bean>
