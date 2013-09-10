@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
-	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
-	<classpathentry kind="src" output="target/classes" path="src/main/resources"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/rice-2.1.7"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/kfs-5.0.3"/>
-	<classpathentry kind="output" path="target/kfs-war-3.0.1-SNAPSHOT"/>
+<classpathentry kind="src" output="target/classes" path="src/main/java"/>
+<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
+<classpathentry kind="src" output="target/classes" path="src/main/resources"/>
+<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+<classpathentry combineaccessrules="false" kind="src" path="/rice-2.1.7"/>
+<classpathentry combineaccessrules="false" kind="src" path="/kfs"/>
+<classpathentry kind="output" path="target/kfs-war-3.0.1-SNAPSHOT"/>
 </classpath>
