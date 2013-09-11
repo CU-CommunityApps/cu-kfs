@@ -16,83 +16,13 @@
 -->
       
 
-  <bean id="AccountDelegateGlobalMaintenanceDocument" parent="AccountDelegateGlobalMaintenanceDocument-parentBean"/>
-
-  <bean id="AccountDelegateGlobalMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
-    <property name="businessObjectClass" value="org.kuali.kfs.coa.businessobject.AccountDelegateGlobal"/>
-    <property name="maintainableClass" value="org.kuali.kfs.coa.document.AccountDelegateGlobalMaintainableImpl"/>
-    <property name="maintainableSections">
-      <list>
-        <ref bean="AccountDelegateGlobalMaintenanceDocument-EditGlobalDelegate"/>
-        <ref bean="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts"/>
-      </list>
-    </property>
-    <property name="lockingKeys">
-      <list>
-        <value>documentNumber</value>
-      </list>
-    </property>
-    <property name="documentTypeName" value="GDLG"/>
-    <property name="businessRulesClass" value="org.kuali.kfs.coa.document.validation.impl.DelegateGlobalRule"/>
-    <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
-    <property name="webScriptFiles">
-      <list>
-        <value>../dwr/interface/AccountService.js</value>
-        <value>../scripts/coa/accountGlobal.js</value>
-        <value>../scripts/sys/objectInfo.js</value>
-      </list>
-    </property>
-    <property name="workflowAttributes">
-    	<ref bean="AccountDelegateGlobalMaintenanceDocument-workflowAttributes"/>
-    </property>
+  <bean id="AccountDelegateGlobalMaintenanceDocument" parent="AccountDelegateGlobalMaintenanceDocument-parentBean">
+  <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal"/>
+    <property name="maintainableClass" value="edu.cornell.kfs.coa.document.CuAccountDelegateGlobalMaintainableImpl"/>   
   </bean>
 
 <!-- Maintenance Section Definitions -->
-
-
-  <bean id="AccountDelegateGlobalMaintenanceDocument-EditGlobalDelegate" parent="AccountDelegateGlobalMaintenanceDocument-EditGlobalDelegate-parentBean"/>
-
-  <bean id="AccountDelegateGlobalMaintenanceDocument-EditGlobalDelegate-parentBean" abstract="true" parent="MaintainableSectionDefinition">
-    <property name="id" value="Edit Global Delegate"/>
-    <property name="title" value="Edit Global Delegate"/>
-    <property name="maintainableItems">
-      <list>
-        <bean parent="MaintainableCollectionDefinition">
-          <property name="name" value="delegateGlobals"/>
-          <property name="businessObjectClass" value="org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail"/>
-          <property name="sourceClassName" value="org.kuali.kfs.coa.businessobject.AccountDelegate"/>
-          <property name="summaryTitle" value="Account Delegate"/>
-          <property name="summaryFields">
-            <list>
-              <bean parent="MaintainableFieldDefinition" p:name="financialDocumentTypeCode"/>
-              <bean parent="MaintainableFieldDefinition" p:name="accountDelegatePrimaryRoutingIndicator"/>
-              <bean parent="MaintainableFieldDefinition" p:name="accountDelegate.principalName"/>
-            </list>
-          </property>
-          <property name="maintainableFields">
-            <list>
-              <bean parent="MaintainableFieldDefinition" p:name="financialDocumentTypeCode" p:required="true"/>
-              <bean parent="MaintainableFieldDefinition" p:name="accountDelegatePrimaryRoutingIndicator"/>
-              <bean parent="MaintainableFieldDefinition" p:name="accountDelegateStartDate" p:required="true" p:defaultValueFinderClass="org.kuali.kfs.sys.businessobject.defaultvalue.CurrentDateMMDDYYYYFinder"/>
-              <bean parent="MaintainableFieldDefinition" p:name="accountDelegateUniversalId" p:unconditionallyReadOnly="true" p:required="true"/>
-              <bean parent="MaintainableFieldDefinition" p:name="accountDelegate.principalName" p:required="true"/>
-              <bean parent="MaintainableFieldDefinition" p:name="approvalFromThisAmount"/>
-              <bean parent="MaintainableFieldDefinition" p:name="approvalToThisAmount"/>
-              <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>
-            </list>
-          </property>
-          <property name="includeMultipleLookupLine" value="false"/>
-          <property name="duplicateIdentificationFields">
-          	<list>
-          		<bean parent="MaintainableFieldDefinition" p:name="accountDelegate.principalName"/>
-          		<bean parent="MaintainableFieldDefinition" p:name="financialDocumentTypeCode"/>
-          	</list>
-          </property>
-        </bean>
-      </list>
-    </property>
-  </bean>
-  <bean id="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts" parent="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts-parentBean"/>
+<bean id="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts" parent="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts-parentBean"/>
 
   <bean id="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts-parentBean" abstract="true" parent="MaintainableSectionDefinition">
     <property name="id" value="Edit List of Accounts"/>
@@ -130,95 +60,12 @@
     </property>
   </bean>
 
-	<!-- workflow attributes -->
-  	<bean id="AccountDelegateGlobalMaintenanceDocument-workflowAttributes" parent="AccountDelegateGlobalMaintenanceDocument-workflowAttributes-parentBean"/>
-  
-	<bean id="AccountDelegateGlobalMaintenanceDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
-		<property name="routingTypeDefinitions">
+  <bean id="AccountDelegateGlobalMaintenanceDocument-workflowAttributes" parent="AccountDelegateGlobalMaintenanceDocument-workflowAttributes-parentBean">
+    <property name="routingTypeDefinitions">
     		<map>
     			<entry key="OrganizationHierarchy" value-ref="AccountDelegateGlobalMaintenanceDocument-RoutingType-OrganizationHierarchy"/>
     			<entry key="Account" value-ref="AccountDelegateGlobalMaintenanceDocument-RoutingType-Account" />
     		</map>
-		</property>
-		
-	</bean>
-	
-	<bean id="AccountDelegateGlobalMaintenanceDocument-DocumentValuePathGroup-ChartOrganization" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
-    	<property name="documentCollectionPath">
-    		<bean parent="AccountDelegateGlobalMaintenanceDocument-DocumentCollectionPath-chartAndOrganization">
-    			<property name="collectionPath" value="newMaintainableObject.businessObject.accountGlobalDetails"/>
-    		</bean>
-    	</property>
-   	</bean>
-   	
-   	 <bean id="AccountDelegateGlobalMaintenanceDocument-DocumentCollectionPath-chartAndOrganization" class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath" abstract="true">
-		<property name="documentValues">
-	   		<list>
-	   			<value>chartOfAccountsCode</value>
-	   			<value>account.organizationCode</value>
-	   		</list>
-   		</property>
-   	</bean>
-   	
-   	<bean id="AccountDelegateGlobalMaintenanceDocument-DocumentValuePathGroup-ChartAccountNumber" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
-    	<property name="documentCollectionPath">
-    		<bean parent="AccountDelegateGlobalMaintenanceDocument-DocumentCollectionPath-chartAndAccountNumber">
-    			<property name="collectionPath" value="newMaintainableObject.businessObject.accountGlobalDetails"/>
-    		</bean>
-    	</property>
-   	</bean>
-   	
-   	<bean id="AccountDelegateGlobalMaintenanceDocument-DocumentCollectionPath-chartAndAccountNumber" class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath" abstract="true">
-		<property name="documentValues">
-	   		<list>
-	   			<value>chartOfAccountsCode</value>
-	   			<value>accountNumber</value>
-	   		</list>
-   		</property>
-   	</bean>
-   	
-   	<bean id="AccountDelegateGlobalMaintenanceDocument-DocumentValuePathGroup-Chart" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
-    	<property name="documentCollectionPath">
-    		<bean parent="AccountDelegateGlobalMaintenanceDocument-DocumentCollectionPath-chart">
-    			<property name="collectionPath" value="newMaintainableObject.businessObject.accountGlobalDetails"/>
-    		</bean>
-    	</property>
-   	</bean>
-   	
-   	 <bean id="AccountDelegateGlobalMaintenanceDocument-DocumentCollectionPath-chart" class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath" abstract="true">
-		<property name="documentValues">
-	   		<list>
-	   			<value>chartOfAccountsCode</value>
-	   		</list>
-   		</property>
-   	</bean>
-   	
-   	<bean id="AccountDelegateGlobalMaintenanceDocument-RoutingType-OrganizationHierarchy" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
-    	<property name="routingAttributes">
-    		<list>
-		        <ref bean="RoutingAttribute-Chart"/>
-    			<ref bean="RoutingAttribute-Organization"/>
-    		</list>
-    	</property>
-    	<property name="documentValuePathGroups">
-    		<list>
-    			<ref bean="AccountDelegateGlobalMaintenanceDocument-DocumentValuePathGroup-ChartOrganization"/>
-    		</list>
-    	</property>
-    </bean>
-    
-    <bean id="AccountDelegateGlobalMaintenanceDocument-RoutingType-Account" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
-    	<property name="routingAttributes">
-    		<list>
-		        <ref bean="RoutingAttribute-Chart"/>
-		        <ref bean="RoutingAttribute-Account" />
-    		</list>
-    	</property>
-    	<property name="documentValuePathGroups">
-    		<list>
-    			<ref bean="AccountDelegateGlobalMaintenanceDocument-DocumentValuePathGroup-ChartAccountNumber"/>
-    		</list>
-    	</property>
-    </bean>
-		
+		</property>		
+	</bean>				
 </beans>
