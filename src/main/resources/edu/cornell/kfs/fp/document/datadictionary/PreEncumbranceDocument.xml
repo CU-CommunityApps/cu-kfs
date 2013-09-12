@@ -25,6 +25,7 @@
  	    <property name="documentTypeName" value="PE"/>
  	    <property name="documentClass" value="org.kuali.kfs.fp.document.PreEncumbranceDocument"/>
  	    <property name="businessRulesClass" value="org.kuali.kfs.sys.document.validation.impl.AccountingRuleEngineRuleBase"/>
+ 	    <property name="promptBeforeValidationClass" value="org.kuali.kfs.fp.document.validation.impl.PreEncumbranceDocumentPreRules"/>
  	    <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.AccountingDocumentAuthorizerBase"/>
  	    <property name="importedLineParserClass" value="edu.cornell.kfs.sys.businessobject.CUPreEncumbranceDocumentAccountingLineParser" />
  	    <property name="sessionDocument" value="true"/>
