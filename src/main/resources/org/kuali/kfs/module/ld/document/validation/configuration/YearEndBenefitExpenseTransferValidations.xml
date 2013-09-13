@@ -60,5 +60,8 @@
 	<bean id="YearEndBenefitExpenseTransferDocument-updateAccountingLineValidation" parent="YearEndBenefitExpenseTransferDocument-updateAccountingLineValidation-parentBean" scope="prototype" />
 	
 	<bean id="YearEndBenefitExpenseTransferDocument-updateAccountingLineValidation-parentBean" parent="BenefitExpenseTransferDocument-updateAccountingLineValidation" abstract="true"/>
+    <!-- KFSPTS-1627 -->
+	<bean id="YearEndBenefitExpenseTransferDocument-saveDocumentValidation" parent="YearEndBenefitExpenseTransferDocument-saveDocumentValidation-parentBean" scope="prototype" />
+	<bean id="YearEndBenefitExpenseTransferDocument-saveDocumentValidation-parentBean" parent="BenefitExpenseTransferDocument-saveDocumentValidation" abstract="true"/>
 		
 </beans>
