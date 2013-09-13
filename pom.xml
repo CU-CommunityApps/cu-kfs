@@ -326,6 +326,10 @@
 	      <artifactId>rice-impl</artifactId>
 	    </exclusion>
           
+        <exclusion>
+          <groupId>org.kuali.rice</groupId>
+          <artifactId>rice-core-web</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>  
     <!-- rice-core dependencies. -->
