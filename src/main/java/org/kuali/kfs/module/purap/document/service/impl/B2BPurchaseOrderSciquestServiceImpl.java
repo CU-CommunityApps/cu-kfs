@@ -561,6 +561,10 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
         if (!notesToSendToVendor.isEmpty()) {
             String allNotes = "";
             String allNotesNoAttach = "";
+            String vendorNoteText = purchaseOrder.getVendorNoteText();
+            if (ObjectUtils.isNotNull(vendorNoteText)) {
+            	allNotesNoAttach = vendorNoteText;
+            }
             cxml.append("      <ExternalInfo>\n");
             for (int i = 0; i < notesToSendToVendor.size(); i++) {
                 Note note = notesToSendToVendor.get(i);
@@ -590,7 +594,15 @@ public class B2BPurchaseOrderSciquestServiceImpl implements B2BPurchaseOrderServ
             }
             cxml.append("        </Attachments>\n");
             cxml.append("      </ExternalInfo>\n");
-        } 
+        } else {
+            String vendorNoteText = purchaseOrder.getVendorNoteText();
+            if (ObjectUtils.isNotNull(vendorNoteText)) {
+  	            cxml.append("      <ExternalInfo>\n");
+  	            cxml.append("        <Note><![CDATA[").append(vendorNoteText).append("]]></Note>\n");
+  	            cxml.append("      </ExternalInfo>\n");
+             }
+
+        }
 /*KFSPTS-794: End new code: Define the attachments */       
         
         cxml.append("      <CustomFieldValueSet label=\"Contact Name\" name=\"InitiatorName\">\n");
