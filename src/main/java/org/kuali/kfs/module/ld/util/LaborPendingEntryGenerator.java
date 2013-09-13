@@ -344,4 +344,13 @@ public class LaborPendingEntryGenerator {
         }
         return fringeBenefitObjectCode;
     }
+    
+        public static List<LaborLedgerPendingEntry> generateOffsetPendingEntries(List<LaborLedgerPendingEntry> expenseEntries, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+    	        List<LaborLedgerPendingEntry> offsetPendingEntries = new ArrayList<LaborLedgerPendingEntry>();
+    	        for (LaborLedgerPendingEntry expenseEntry : expenseEntries) {
+    	            offsetPendingEntries.addAll(LaborPendingEntryConverter.getOffsetPendingEntries(expenseEntry, sequenceHelper));
+    	        }
+    	        
+    	        return offsetPendingEntries;
+    	    }
 }

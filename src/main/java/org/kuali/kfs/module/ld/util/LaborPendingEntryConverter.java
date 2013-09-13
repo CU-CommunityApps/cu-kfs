@@ -40,6 +40,20 @@ import org.kuali.rice.kns.bo.DocumentHeader;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.util.KualiDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.kuali.kfs.module.ld.LaborPropertyConstants;
+import org.kuali.kfs.module.ld.batch.LaborEnterpriseFeedStep;
+import org.kuali.kfs.module.ld.businessobject.PositionObjectBenefit;
+import org.kuali.kfs.module.ld.service.LaborPositionObjectBenefitService;
+import org.kuali.rice.kns.service.BusinessObjectService;
+import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.kns.util.ObjectUtils;
+import com.rsmart.kuali.kfs.module.ld.LdConstants;
+import com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculationExtension;
 
 /**
  * This class provides a set of facilities that can conver the accounting document and its accounting lines into labor pending
@@ -366,4 +380,148 @@ public class LaborPendingEntryConverter {
 
         return nextSequenceNumber;
     }
+    
+    /**
+         * convert the given document and accounting line into the benefit pending entries
+         * 
+         * @param document the given accounting document
+         * @param accountingLine the given accounting line
+         * @param sequenceHelper the given sequence helper
+         * @param benefitAmount the given benefit amount
+         * @param fringeBenefitObjectCode the given fringe benefit object code
+         * @return a set of benefit pending entries
+         */
+        public static List<LaborLedgerPendingEntry> getOffsetPendingEntries(LaborLedgerPendingEntry pendingEntry, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+            List<LaborLedgerPendingEntry> offsetEntries = new ArrayList<LaborLedgerPendingEntry>();
+            String benefitRateCategoryCode = SpringContext.getBean(LaborBenefitsCalculationService.class).getBenefitRateCategoryCode(pendingEntry.getChartOfAccountsCode(), pendingEntry.getAccountNumber(), pendingEntry.getSubAccountNumber());
+            Collection<PositionObjectBenefit> positionObjectBenefits = SpringContext.getBean(LaborPositionObjectBenefitService.class).getPositionObjectBenefits(pendingEntry.getUniversityFiscalYear(), pendingEntry.getChartOfAccountsCode(), pendingEntry.getFinancialObjectCode());
+            
+            if (positionObjectBenefits == null || positionObjectBenefits.isEmpty()) {
+                return offsetEntries;
+            }
+    
+            for (PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
+                Map<String, Object> fieldValues = new HashMap<String, Object>();
+                fieldValues.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, pendingEntry.getUniversityFiscalYear());
+                fieldValues.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, pendingEntry.getChartOfAccountsCode());
+                fieldValues.put(LaborPropertyConstants.POSITION_BENEFIT_TYPE_CODE, positionObjectBenefit.getFinancialObjectBenefitsTypeCode());
+               fieldValues.put(LaborPropertyConstants.LABOR_BENEFIT_RATE_CATEGORY_CODE, benefitRateCategoryCode);
+                
+                org.kuali.kfs.module.ld.businessobject.BenefitsCalculation benefitsCalculation = (org.kuali.kfs.module.ld.businessobject.BenefitsCalculation) SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation.class, fieldValues);
+                
+                BenefitsCalculationExtension extension = (BenefitsCalculationExtension) benefitsCalculation.getExtension();
+                
+                String offsetAccount = extension.getAccountCodeOffset();
+    
+                if(ObjectUtils.isNull(benefitsCalculation)) { 
+                    continue;
+                }
+    
+                LaborLedgerPendingEntry offsetEntry = new LaborLedgerPendingEntry();
+    
+                // Copy values from pending entry
+                offsetEntry.setReferenceFinancialDocumentNumber(pendingEntry.getReferenceFinancialDocumentNumber());
+                offsetEntry.setReferenceFinancialDocumentTypeCode(pendingEntry.getReferenceFinancialDocumentTypeCode());
+                offsetEntry.setFinancialDocumentReversalDate(pendingEntry.getFinancialDocumentReversalDate());
+                offsetEntry.setFinancialBalanceTypeCode(pendingEntry.getFinancialBalanceTypeCode());
+                offsetEntry.setFinancialObjectTypeCode(pendingEntry.getFinancialObjectTypeCode());
+                offsetEntry.setReferenceFinancialSystemOriginationCode(pendingEntry.getReferenceFinancialSystemOriginationCode());
+                offsetEntry.setOrganizationDocumentNumber(pendingEntry.getOrganizationDocumentNumber());
+                offsetEntry.setTransactionDate(pendingEntry.getTransactionDate());
+                offsetEntry.setTransactionDebitCreditCode(pendingEntry.getTransactionDebitCreditCode());
+                offsetEntry.setTransactionEncumbranceUpdateCode(pendingEntry.getTransactionEncumbranceUpdateCode());
+                offsetEntry.setPositionNumber(pendingEntry.getPositionNumber());
+                offsetEntry.setTransactionPostingDate(pendingEntry.getTransactionPostingDate());
+                offsetEntry.setPayPeriodEndDate(pendingEntry.getPayPeriodEndDate());
+                offsetEntry.setTransactionTotalHours(pendingEntry.getTransactionTotalHours());
+                offsetEntry.setPayrollEndDateFiscalYear(pendingEntry.getPayrollEndDateFiscalYear());
+                offsetEntry.setPayrollEndDateFiscalPeriodCode(pendingEntry.getPayrollEndDateFiscalPeriodCode());
+                offsetEntry.setEmplid(pendingEntry.getEmplid());
+                offsetEntry.setEmployeeRecord(pendingEntry.getEmployeeRecord());
+                offsetEntry.setEarnCode(pendingEntry.getEarnCode());
+                offsetEntry.setPayGroup(pendingEntry.getPayGroup());
+                offsetEntry.setSalaryAdministrationPlan(pendingEntry.getSalaryAdministrationPlan());
+                offsetEntry.setGrade(pendingEntry.getGrade());
+                offsetEntry.setRunIdentifier(pendingEntry.getRunIdentifier());
+                offsetEntry.setLaborLedgerOriginalChartOfAccountsCode(pendingEntry.getLaborLedgerOriginalChartOfAccountsCode());
+                offsetEntry.setLaborLedgerOriginalAccountNumber(pendingEntry.getLaborLedgerOriginalAccountNumber());
+                offsetEntry.setLaborLedgerOriginalSubAccountNumber(pendingEntry.getLaborLedgerOriginalSubAccountNumber());
+                offsetEntry.setLaborLedgerOriginalFinancialObjectCode(pendingEntry.getLaborLedgerOriginalFinancialObjectCode());
+                offsetEntry.setLaborLedgerOriginalFinancialSubObjectCode(pendingEntry.getLaborLedgerOriginalFinancialSubObjectCode());
+                offsetEntry.setHrmsCompany(pendingEntry.getHrmsCompany());
+                offsetEntry.setSetid(pendingEntry.getSetid());
+                offsetEntry.setTransactionEntryOffsetCode(pendingEntry.getTransactionEntryOffsetCode());
+                offsetEntry.setPayrollEndDateFiscalPeriod(pendingEntry.getPayrollEndDateFiscalPeriod());
+    
+                // New offset values
+                offsetEntry.setFinancialObjectCode(benefitsCalculation.getPositionFringeBenefitObjectCode());
+    
+                offsetEntry.setTransactionLedgerEntrySequenceNumber(getNextSequenceNumber(sequenceHelper));
+    
+                // calculate the offsetAmount amount (ledger amt * (benfit pct/100) )
+                KualiDecimal fringeBenefitPercent = benefitsCalculation.getPositionFringeBenefitPercent();
+                KualiDecimal offsetAmount = fringeBenefitPercent.multiply(
+                pendingEntry.getTransactionLedgerEntryAmount()).divide(KFSConstants.ONE_HUNDRED.kualiDecimalValue());
+                offsetEntry.setTransactionLedgerEntryAmount(offsetAmount.abs());
+                
+                
+                offsetEntry.setAccountNumber(extension.getAccountCodeOffset());
+                offsetEntry.setFinancialObjectCode(extension.getObjectCodeOffset());
+                
+                //Set all the fields required to process through the scrubber and poster jobs
+                offsetEntry.setUniversityFiscalPeriodCode(pendingEntry.getUniversityFiscalPeriodCode());
+                offsetEntry.setChartOfAccountsCode(pendingEntry.getChartOfAccountsCode());
+                offsetEntry.setUniversityFiscalYear(pendingEntry.getUniversityFiscalYear());
+                offsetEntry.setSubAccountNumber("-----");
+                offsetEntry.setFinancialSubObjectCode("---");
+                offsetEntry.setOrganizationReferenceId("");
+                offsetEntry.setProjectCode("");
+                
+                offsetEntry.setTransactionLedgerEntryDescription("GENERATED BENEFIT OFFSET");
+                
+                ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+                
+                String originCode = parameterService.getParameterValue(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_ORIGIN_CODE);
+                
+                offsetEntry.setFinancialSystemOriginationCode(originCode);
+                DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
+                offsetEntry.setDocumentNumber(dateTimeService.toString(dateTimeService.getCurrentDate(), "yyyyMMddhhmmssSSS"));
+    
+    
+                if(pendingEntry.getTransactionDebitCreditCode().equalsIgnoreCase("D")) {
+                    offsetAmount = offsetAmount;
+                } else {
+                    offsetAmount = offsetAmount.multiply(new KualiDecimal(-1));
+                }
+                
+                if(offsetAmount.isGreaterThan(new KualiDecimal(0))) {
+                    offsetEntry.setTransactionDebitCreditCode("C");
+                } else if(offsetAmount.isLessThan(new KualiDecimal(0))) {
+                    offsetEntry.setTransactionDebitCreditCode("D");
+                }
+                
+                String offsetDocTypes = null;
+                if(StringUtils.isNotEmpty(parameterService.getParameterValue(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_DOCTYPE))) {
+                	offsetDocTypes = "," + parameterService.getParameterValue(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_DOCTYPE).replace(";", ",").replace("|", ",") + ",";
+                }
+    
+                String docTypeCode = offsetDocTypes;
+                if (offsetDocTypes.contains(",")) {
+                    String[] splits = offsetDocTypes.split(",");
+                    for(String split : splits) {
+                        if(!StringUtils.isEmpty(split)) {
+                            docTypeCode = split;
+                            break;
+                        }
+                    }
+                }
+                offsetEntry.setFinancialDocumentTypeCode(docTypeCode);
+    
+    
+                offsetEntries.add(offsetEntry);
+            }
+        
+            return offsetEntries;
+        }
+    
 }
