@@ -80,4 +80,6 @@ public class CUPurapConstants extends PurapConstants {
     	public static final String SEND_TO_VENDOR = "sendToVendor";
     }
     
+    public static final String B2B_HIGHER_LIMIT_PERMISSION = "B2B Higher APO Limit";
+
 }

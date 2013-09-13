@@ -18,16 +18,15 @@ package org.kuali.kfs.module.purap.document;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.CUPurapParameterConstants;
 import org.kuali.kfs.module.purap.CUPurapWorkflowConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -52,18 +51,12 @@ import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.document.service.PurchasingDocumentSpecificService;
 import org.kuali.kfs.module.purap.document.service.PurchasingService;
 import org.kuali.kfs.module.purap.document.service.RequisitionService;
-import org.kuali.kfs.module.purap.util.PurapAccountingLineComparator;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.validation.event.AddAccountingLineEvent;
-import org.kuali.kfs.sys.document.validation.event.DeleteAccountingLineEvent;
-import org.kuali.kfs.sys.document.validation.event.ReviewAccountingLineEvent;
-import org.kuali.kfs.sys.document.validation.event.UpdateAccountingLineEvent;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.vnd.VendorConstants;
@@ -78,10 +71,9 @@ import org.kuali.rice.kew.dto.ReportCriteriaDTO;
 import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kew.util.KEWConstants;
 import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.kim.service.KIMServiceLocator;
 import org.kuali.rice.kim.service.RoleManagementService;
 import org.kuali.rice.kns.document.Copyable;
-import org.kuali.rice.kns.document.Document;
-import org.kuali.rice.kns.document.TransactionalDocument;
 import org.kuali.rice.kns.exception.ValidationException;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
@@ -172,10 +164,9 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
     	
     	ParameterService parameterService = SpringContext.getBean(ParameterService.class);
         KualiDecimal autoPOAmount = new KualiDecimal(parameterService.getParameterValue(RequisitionDocument.class, CUPurapParameterConstants.B2B_TOTAL_AMOUNT_FOR_AUTO_PO));
-		List<String> roleIds = new ArrayList<String>();
-		roleIds.add(getRoleManagementService().getRoleIdByName(KFSConstants.ParameterNamespaces.PURCHASING,KFSConstants.SysKimConstants.ESHOP_SUPER_USER_ROLE_NAME));
         // KFSPTS-1625
-		if (getRoleManagementService().principalHasRole(getRoutedByPrincipalId(),roleIds, null)) {			
+		if (KIMServiceLocator.getPermissionService().hasPermission(
+				getRoutedByPrincipalId(), KFSConstants.ParameterNamespaces.PURCHASING, CUPurapConstants.B2B_HIGHER_LIMIT_PERMISSION, null)) {
 			String paramVal = parameterService.getParameterValue(RequisitionDocument.class, CUPurapParameterConstants.B2B_TOTAL_AMOUNT_FOR_SUPER_USER_AUTO_PO);
 			if (StringUtils.isNotBlank(paramVal)) {
 			    autoPOAmount = new KualiDecimal(paramVal);
@@ -204,10 +195,6 @@ public class RequisitionDocument extends PurchasingDocumentBase implements Copya
         return principalId;
     }
 
-    private RoleManagementService getRoleManagementService() {
-  	  return SpringContext.getBean(RoleManagementService.class);
-    }
-    
     protected boolean isMissingAccountingLines() {
         for (Iterator iterator = getItems().iterator(); iterator.hasNext();) {
             RequisitionItem item = (RequisitionItem) iterator.next();
