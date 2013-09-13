@@ -770,16 +770,15 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
     public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         KualiAccountingDocumentFormBase tmpForm = (KualiAccountingDocumentFormBase) form;
         this.applyCapitalAssetInformation(tmpForm);
-
-        //KFSPTS-1735
-        boolean passed = SpringContext.getBean(KualiRuleService.class).applyRules(new ApproveDocumentEvent(tmpForm.getFinancialDocument()));
-        if (passed) {
-        	SpringContext.getBean(CUFinancialSystemDocumentService.class).checkAccountingLinesForChanges((AccountingDocument) tmpForm.getFinancialDocument());
-        }
-        //KFSPTS-1735
         
         ActionForward forward = super.approve(mapping, form, request, response);
 
+        if (GlobalVariables.getErrorMap().hasNoErrors()) {
+            // KFSPTS-1735
+            SpringContext.getBean(CUFinancialSystemDocumentService.class).checkAccountingLinesForChanges((AccountingDocument) tmpForm.getFinancialDocument());
+            // KFSPTS-1735
+        }
+        
         // need to check on sales tax for all the accounting lines
         checkSalesTaxRequiredAllLines(tmpForm, tmpForm.getFinancialDocument().getSourceAccountingLines());
         checkSalesTaxRequiredAllLines(tmpForm, tmpForm.getFinancialDocument().getTargetAccountingLines());
