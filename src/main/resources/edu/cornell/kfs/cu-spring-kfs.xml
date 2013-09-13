@@ -7,10 +7,11 @@
 	<import resource="sys/cu-spring-sys.xml" />
 	<import resource="coa/cu-spring-coa.xml" />
 	<import resource="module/cg/cu-spring-cg.xml" />
+	<import resource="gl/cu-spring-gl.xml" />
 	
 	<!--
 	<import resource="fp/cu-spring-fp.xml" />
-	<import resource="gl/cu-spring-gl.xml" />
+	
 	<import resource="pdp/cu-spring-pdp.xml" />
 	
 	<import resource="vnd/cu-spring-vnd.xml" />
