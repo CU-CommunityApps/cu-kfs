@@ -63,6 +63,7 @@ public class KFSParameterKeyConstants implements ParameterKeyConstants {
     	 public static final String CURRENT_ASSET_OBJECT_CODE_PARAM = "CURRENT_ASSET_OBJECT_TYPE_CODE";
     	 public static final String CURRENT_LIABILITY_OBJECT_CODE_PARAM = "CURRENT_LIABILITY_OBJECT_TYPE_CODE";
     	 public static final String ENCUMBRANCE_BALANCE_TYPE_PARAM = "ENCUMBRANCE_BALANCE_TYPE";
+    	 public static final String EXCLUDE_CB_PERIOD_PARAM = "EXCLUDE_CB_PERIOD";
     	 }
     
     //KFSPTS-1460: Added constants.

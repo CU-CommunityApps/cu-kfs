@@ -56,6 +56,8 @@ import org.kuali.rice.kns.service.ParameterEvaluator;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KualiDecimal;
 
+
+
 /**
  * An OJB implementation of BalanceDao
  */
@@ -65,6 +67,36 @@ public class BalanceDaoOjb extends PlatformAwareDaoBaseOjb implements BalanceDao
     private OptionsService optionsService;
     private BalanceTypeService balanceTypService;
 
+    /**
+	 * this is for KFSPTS-1786 begin
+	 */ 
+	
+    public Collection<Balance> getAccountBalance(Map<String, String> input) {
+        Criteria criteria = new Criteria();
+       for(String key:input.keySet()){
+           criteria.addEqualTo(key, input.get(key));
+       }
+        
+        Collection<Balance> balance = getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(Balance.class, criteria));
+        return balance;
+        
+    }
+    public Collection<Balance> getAccountBalance(Map<String, String> input,Collection objectTypeCode) {
+        Criteria criteria = new Criteria();
+       for(String key:input.keySet()){
+           criteria.addEqualTo(key, input.get(key));
+       }
+       criteria.addIn(KFSPropertyConstants.OBJECT_TYPE_CODE, objectTypeCode);
+        Collection<Balance> balance = getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(Balance.class, criteria));
+        return balance;
+        
+    }
+    
+    /**
+	 * this is for KFSPTS-1786 end
+	 */ 
+    
+    
     /**
      * Does a ReportQuery to summarize GL balance data
      * 
