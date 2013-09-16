@@ -18,6 +18,11 @@
 
   <bean id="AccountGlobalMaintenanceDocument" parent="AccountGlobalMaintenanceDocument-parentBean">
     <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CuAccountGlobal"/>
+    <property name="defaultExistenceChecks">
+      <list merge = "true">
+        <bean parent="ReferenceDefinition" p:attributeName="majorReportingCategory" p:attributeToHighlightOnFail="majorReportingCategoryCode" />
+      </list>
+    </property>
   </bean>
 
   <!-- Maintenance Section Definitions -->
