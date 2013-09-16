@@ -38,7 +38,6 @@ public class AccountGlobalSearchDaoOjb extends PlatformAwareDaoBaseOjb implement
     private LookupDaoOjb lookupDao;
     private BusinessObjectDao businessObjectDao;
 
-    @SuppressWarnings("rawtypes")
     public Collection getAccountsByOrgHierarchy(String chartOfAccountsCode, String organizationCode, Map<String, String> parameters) {
         
         Criteria criteria = new Criteria();

@@ -42,7 +42,7 @@
   <bean id="AccountGlobalSearch-lookupDefinition" parent="Account-lookupDefinition">
     <property name="title" value="Account Global Lookup"/>
     <property name="lookupableID" value="accountGlobalLookupable"/>
-    <property name="resultSetLimit" value="2500"/>
+    <property name="multipleValuesResultSetLimit" value="1000"/>
     <property name="lookupFields">
         <list>
             <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode" />
