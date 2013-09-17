@@ -7,6 +7,8 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -54,7 +56,8 @@ public class AutoCancelBatchDaoOjb extends PlatformAwareDaoBaseOjb implements Oj
     private DocumentService documentService; 
     private ParameterService parameterService; 
     
-    private List<String> cancelDocumentTypes = new ArrayList<String>();
+    private Collection<String> cancelDocumentTypes = Collections.emptySet();
+    
     
     private static final String SAVED_STATUS_CODE = "S";
     private static final String DONE_STATUS_CODE = "D";
@@ -210,8 +213,9 @@ public class AutoCancelBatchDaoOjb extends PlatformAwareDaoBaseOjb implements Oj
     		docTypes.put(docTypeId, docType);
     	}
     	
+    	
     	if(cancelDocumentTypes.isEmpty()) {
-    		cancelDocumentTypes = (List<String>) parameterService.getParameterValuesAsString(AutoCancelBatchStep.class, CUKFSParameterKeyConstants.AUTO_CANCEL_DOC_TYPES_PARAMETER);
+    		cancelDocumentTypes = (Collection<String>) parameterService.getParameterValuesAsString(AutoCancelBatchStep.class, CUKFSParameterKeyConstants.AUTO_CANCEL_DOC_TYPES_PARAMETER);
     	}
     	return cancelDocumentTypes.contains(docType.getName());
     }

@@ -142,7 +142,7 @@
 	<bean id="autoCancelBatchDao" parent="autoCancelBatchDao-parentBean"/>
 
     <bean id="autoCancelBatchDao-parentBean" parent="platformAwareDao" class="edu.cornell.kfs.sys.dataaccess.impl.AutoCancelBatchDaoOjb">
-	    <property name="jcdAlias" value="enWorkflowDataSource" />
+	    <property name="jcdAlias" value="kewDataSource" />
     	<property name="documentService"><ref bean="documentService" /></property>
     	<property name="businessObjectService"><ref bean="businessObjectService" /></property>
     	<property name="parameterService"><ref bean="parameterService" /></property>
