@@ -125,4 +125,6 @@
     
     <bean id="organizationRoutingModelLookupableHelperService" class="edu.cornell.kfs.coa.businessobject.lookup.CuOrganizationRoutingModelNameLookupableHelperServiceImpl" />	
 
+    <bean id="accountDelegateService"  class="edu.cornell.kfs.coa.service.impl.CuAccountDelegateServiceImpl" parent="accountDelegateService-parentBean"/>
+    
 </beans>
