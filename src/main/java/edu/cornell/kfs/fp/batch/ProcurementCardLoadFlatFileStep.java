@@ -98,4 +98,7 @@ public class ProcurementCardLoadFlatFileStep extends AbstractStep {
     public void setProcurementCardLoadTransactionsService(ProcurementCardLoadTransactionsService procurementCardLoadTransactionsService) {
         this.procurementCardLoadTransactionsService = procurementCardLoadTransactionsService;
     }
+    public void setReportWriterService(ReportWriterService reportWriterService) {
+        this.reportWriterService = reportWriterService;
+    }
 }

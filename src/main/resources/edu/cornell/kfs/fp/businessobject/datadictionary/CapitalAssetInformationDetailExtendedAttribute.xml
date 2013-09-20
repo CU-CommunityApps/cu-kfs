@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd"> 
-
+<!--  
 <bean id="CapitalAssetInformationDetailExtendedAttribute" parent="CapitalAssetInformationDetailExtendedAttribute-parentBean"/> 
-  <bean id="CapitalAssetInformationDetailExtendedAttribute-parentBean" abstract="true" parent="BusinessObjectEntry">
+ <bean id="CapitalAssetInformationDetailExtendedAttribute-parentBean" abstract="true" parent="BusinessObjectEntry">
     <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute"/> 
     <property name="objectLabel" value="CapitalAssetInformationDetailExtendedAttribute"/>
     <property name="attributes"> 
@@ -19,7 +19,7 @@
     </bean> 
     
     
-    <!-- Attribute Definitions -->
+    
     
   <bean id="CapitalAssetInformationDetailExtendedAttribute-documentNumber" parent="CapitalAssetInformationDetailExtendedAttribute-documentNumber-parentBean"/>
   <bean id="CapitalAssetInformationDetailExtendedAttribute-documentNumber-parentBean" abstract="true" parent="DocumentHeader-documentNumber">
@@ -58,7 +58,7 @@
   </bean>
   
    <bean id="CapitalAssetInformationDetailExtendedAttribute-assetLocationCountryCode" parent="CapitalAssetInformationDetailExtendedAttribute-assetLocationCountryCode-parentBean"/>
-  <bean id="CapitalAssetInformationDetailExtendedAttribute-assetLocationCountryCode-parentBean" abstract="true" parent="ExternalizableAttributeDefinitionProxy" p:sourceExternalizableBusinessObjectInterface="org.kuali.rice.kns.bo.Country" p:sourceAttributeName="postalCountryCode">
+  <bean id="CapitalAssetInformationDetailExtendedAttribute-assetLocationCountryCode-parentBean" abstract="true" parent="ExternalizableAttributeDefinitionProxy" p:sourceExternalizableBusinessObjectInterface="org.kuali.rice.location.api.CountryContract" p:sourceAttributeName="postalCountryCode">
     <property name="name" value="assetLocationCountryCode"/>
     <property name="forceUppercase" value="false"/>
     <property name="label" value="Asset Location Country Code"/>
@@ -68,12 +68,12 @@
       <ref bean="AnyCharacterValidation" />
     </property>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:includeBlankRow="true" p:valuesFinderClass="org.kuali.rice.kns.bo.options.CountryValuesFinder"/>
+      <bean parent="SelectControlDefinition" p:includeBlankRow="true" p:valuesFinderClass="org.kuali.rice.location.framework.country.CountryValuesFinder"/>
     </property>
   </bean>
   
   <bean id="CapitalAssetInformationDetailExtendedAttribute-assetLocationStateCode" parent="CapitalAssetInformationDetailExtendedAttribute-assetLocationStateCode-parentBean"/>
-  <bean id="CapitalAssetInformationDetailExtendedAttribute-assetLocationStateCode-parentBean" abstract="true" parent="ExternalizableAttributeDefinitionProxy" p:sourceExternalizableBusinessObjectInterface="org.kuali.rice.kns.bo.State" p:sourceAttributeName="postalStateCode">
+  <bean id="CapitalAssetInformationDetailExtendedAttribute-assetLocationStateCode-parentBean" abstract="true" parent="ExternalizableAttributeDefinitionProxy" p:sourceExternalizableBusinessObjectInterface="org.kuali.rice.location.api.state.StateContract" p:sourceAttributeName="postalStateCode">
     <property name="name" value="assetLocationStateCode"/>
     <property name="forceUppercase" value="false"/>
     <property name="label" value="Asset Location State Code"/>
@@ -96,13 +96,13 @@
   </bean>
   
   <bean id="CapitalAssetInformationDetailExtendedAttribute-assetLocationZipCode" parent="CapitalAssetInformationDetailExtendedAttribute-assetLocationZipCode-parentBean"/>
-  <bean id="CapitalAssetInformationDetailExtendedAttribute-assetLocationZipCode-parentBean" abstract="true" parent="ExternalizableAttributeDefinitionProxy" p:sourceExternalizableBusinessObjectInterface="org.kuali.rice.kns.bo.PostalCode" p:sourceAttributeName="postalCode">
+  <bean id="CapitalAssetInformationDetailExtendedAttribute-assetLocationZipCode-parentBean" abstract="true" parent="ExternalizableAttributeDefinitionProxy" p:sourceExternalizableBusinessObjectInterface="org.kuali.rice.location.api.PostalCodeContract" p:sourceAttributeName="postalCode">
     <property name="name" value="assetLocationZipCode"/>
     <property name="label" value="Asset Location Postal Code"/>
     <property name="shortLabel" value="Postal Code"/>
     <property name="required" value="false"/>
   </bean>
-  
+  -->
   </beans>
   
   

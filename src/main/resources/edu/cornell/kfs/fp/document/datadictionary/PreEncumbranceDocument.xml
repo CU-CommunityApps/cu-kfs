@@ -23,7 +23,7 @@
  	  <bean id="PreEncumbranceDocument-parentBean" abstract="true" parent="AccountingDocumentEntry">
  	    <property name="allowsErrorCorrection" value="true"/>
  	    <property name="documentTypeName" value="PE"/>
- 	    <property name="documentClass" value="org.kuali.kfs.fp.document.PreEncumbranceDocument"/>
+ 	    <property name="documentClass" value="edu.cornell.kfs.fp.document.CuPreEncumbranceDocument"/>
  	    <property name="businessRulesClass" value="org.kuali.kfs.sys.document.validation.impl.AccountingRuleEngineRuleBase"/>
  	    <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.AccountingDocumentAuthorizerBase"/>
  	    <property name="importedLineParserClass" value="edu.cornell.kfs.sys.businessobject.CUPreEncumbranceDocumentAccountingLineParser" />
@@ -161,7 +161,7 @@
 	  <property name="accountingLineView" ref="PreEncumbranceDocument-accountingLineView"/>
  	          <property name="accountingLineClass" value="org.kuali.kfs.sys.businessobject.TargetAccountingLine"/>
  	          <property name="groupLabel" value="Disencumbrance"/>
- 	          <property name="accountingLineAuthorizerClass" value="org.kuali.kfs.fp.document.authorization.PreEncumbranceAccountingLineAuthorizer"/>
+ 	          <property name="accountingLineAuthorizerClass" value="edu.cornell.kfs.fp.document.authorization.CuPreEncumbranceAccountingLineAuthorizer"/>
  	          <property name="importedLinePropertyPrefix" value="target"/>
  	          <property name="totals" ref="AccountingDocument-targetGroupTotals"/>
  	          <property name="errorKey" value="document.targetAccounting*,targetAccountingLines,newTargetLine*"/>

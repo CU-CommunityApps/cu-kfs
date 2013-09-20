@@ -16,7 +16,7 @@
 -->
 	
 	<bean id="CapitalAssetInformationDetail" parent="CapitalAssetInformationDetail-parentBean"/>
-
+ 
   <bean id="CapitalAssetInformationDetail-parentBean" abstract="true" parent="BusinessObjectEntry">
     <property name="businessObjectClass" value="org.kuali.kfs.fp.businessobject.CapitalAssetInformationDetail"/>
     
@@ -32,11 +32,13 @@
 	  	<ref bean="CapitalAssetInformationDetail-buildingSubRoomNumber"/>
 	  	<ref bean="CapitalAssetInformationDetail-capitalAssetTagNumber"/>
 		<ref bean="CapitalAssetInformationDetail-capitalAssetSerialNumber"/>
+	<!-- UPGRADE-911 	
 		<ref bean="CapitalAssetInformationDetail-extension-assetLocationStreetAddress"/> 
         <ref bean="CapitalAssetInformationDetail-extension-assetLocationCityName"/> 
         <ref bean="CapitalAssetInformationDetail-extension-assetLocationStateCode"/>  
         <ref bean="CapitalAssetInformationDetail-extension-assetLocationCountryCode"/> 
         <ref bean="CapitalAssetInformationDetail-extension-assetLocationZipCode"/> 
+     -->
 		
 	  </list>
     </property>
@@ -46,7 +48,7 @@
           <property name="objectAttributeName" value="campus"/>
           <property name="primitiveAttributes">
             <list>
-              <bean parent="PrimitiveAttributeDefinition" p:sourceName="campusCode" p:targetName="campusCode"/>
+              <bean parent="PrimitiveAttributeDefinition" p:sourceName="campusCode" p:targetName="code"/>
             </list>
           </property>
 		</bean>
@@ -108,6 +110,7 @@
      <property name="name" value="capitalAssetSerialNumber"/>
   </bean>
   
+  <!--  UPGRADE-911
   <bean id="CapitalAssetInformationDetail-extension-assetLocationStreetAddress" parent="CapitalAssetInformationDetail-extension-assetLocationStreetAddress-parentBean"/>
   <bean id="CapitalAssetInformationDetail-extension-assetLocationStreetAddress-parentBean" abstract="true" parent="CapitalAssetInformationDetailExtendedAttribute-assetLocationStreetAddress">
     <property name="name" value="extension.assetLocationStreetAddress"/>
@@ -132,5 +135,5 @@
   <bean id="CapitalAssetInformationDetail-extension-assetLocationZipCode-parentBean" abstract="true" parent="CapitalAssetInformationDetailExtendedAttribute-assetLocationZipCode">
     <property name="name" value="extension.assetLocationZipCode"/>
   </bean>
-				
+-->
 </beans>

@@ -39,7 +39,7 @@
             <call-method-rule pattern="disbVchrCheckTotalAmount" methodname="setDisbVchrCheckTotalAmount" paramcount="0" />
             <call-method-rule pattern="disbursementVoucherDocumentationLocationCode" methodname="setDisbursementVoucherDocumentationLocationCode" paramcount="0" />
             <call-method-rule pattern="disbVchrPaymentMethodCode" methodname="setDisbVchrPaymentMethodCode" paramcount="0"/>
-            <call-method-rule pattern="campusCode" methodname="setCampusCode" paramcount="0" />
+            <call-method-rule pattern="campusCode" methodname="setCampusCode" paramcount="0" /> 
             <call-method-rule pattern="disbVchrCheckStubText" methodname="setDisbVchrCheckStubText" paramcount="0" />
             <call-method-rule pattern="disbVchrBankCode" methodname="setDisbVchrBankCode" paramcount="0" />
             
@@ -127,7 +127,7 @@
              </pattern>                            
              
              <pattern value="note">
-                <object-create-rule classname="org.kuali.rice.kns.bo.Note" />
+                <object-create-rule classname=" org.kuali.rice.krad.bo.Note" />
                 
                 <call-method-rule pattern="noteText" methodname="setNoteText" paramcount="0" /> 
                 
@@ -135,7 +135,7 @@
              </pattern>
             
              <pattern value="attachment">
-                <object-create-rule classname="org.kuali.rice.kns.bo.Attachment" />
+                <object-create-rule classname=" org.kuali.rice.krad.bo.Attachment" />
                 
                 <call-method-rule pattern="mimeTypeCode" methodname="setAttachmentMimeTypeCode" paramcount="0" /> 
                 <call-method-rule pattern="fileName" methodname="setAttachmentFileName" paramcount="0" /> 
