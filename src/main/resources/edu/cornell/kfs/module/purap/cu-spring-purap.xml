@@ -16,7 +16,7 @@
             </list>
         </property>
 		<property name="dataDictionaryPackages">
-			<list merge="true">
+			<list>
 			   	<value>edu/cornell/kfs/module/purap/businessobject/datadictionary</value>
                 <value>edu/cornell/kfs/module/purap/document/datadictionary</value>
  			</list>
@@ -161,5 +161,6 @@
     </bean>
 
 	<bean id="statusOverrideQuestion" class="edu.cornell.kfs.module.purap.question.PurchaseOrderStatusOverrideQuestion" scope="prototype" />
-
+    <bean id="electronicInvoiceInputFileType" class="edu.cornell.kfs.module.purap.batch.CuElectronicInvoiceInputFileType" parent="electronicInvoiceInputFileType-parentBean"/>
+    
 </beans>
