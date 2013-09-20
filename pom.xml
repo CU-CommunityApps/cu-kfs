@@ -30,10 +30,6 @@
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
-          <excludes>
-          	<exclude>**/org/kuali/**</exclude>
-          	<exclude>**/org/kuali/**</exclude>
-          </excludes>
         </configuration>
       </plugin>
       <plugin>
