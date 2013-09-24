@@ -7,40 +7,43 @@
                            http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
-
-	<bean id="scrubberProcess-parentBean" class="org.kuali.kfs.gl.batch.service.impl.ScrubberProcessImpl" abstract="true">
+		
+	<bean id="glBalanceService" class="edu.cornell.kfs.gl.service.impl.CuBalanceServiceImpl" parent="glBalanceService-parentBean">
+	     <property name="balanceDao">
+            <bean class="edu.cornell.kfs.gl.dataaccess.impl.CuBalanceDaoOjb" parent="platformAwareDao" />
+        </property>
+	</bean>
 	
-		<property name="dateTimeService">
-			<ref bean="dateTimeService" />
-		</property>
-		<property name="runDateService">
-			<ref bean="glRunDateService" />
-		</property>
-		<property name="accountingCycleCachingService">
-		  	<ref bean="accountingCycleCachingService" />
-		</property>
-		<property name="configurationService">
-			<ref bean="kualiConfigurationService" />
-		</property>
-		<property name="scrubberValidator">
-			<ref bean="scrubberValidator" />
-		</property>
-		<property name="parameterService">
-			<ref bean="parameterService" />
-		</property>
-		<property name="businessObjectService">
-			<ref bean="businessObjectService"/>
-		</property>
-		<property name="persistenceService">
-			<ref bean="persistenceService" />
-		</property>
-		<property name="flexibleOffsetAccountService">
-			<ref bean="flexibleOffsetAccountService" />
-		</property>
-		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
-		<property name="scrubberReportWriterService" ref="scrubberReportWriterService" />
-        <property name="scrubberLedgerReportWriterService" ref="scrubberLedgerReportWriterService" />
+	<bean id="glYearEndService" class="edu.cornell.kfs.gl.batch.service.impl.CuYearEndServiceImpl" parent="glYearEndService-parentBean">
+	   <property name="yearEndDao">
+            <bean class="edu.cornell.kfs.gl.batch.dataaccess.impl.CuYearEndDaoJdbc" parent="platformAwareDaoJdbc" />
+       </property>
+       <property name="encumbranceDao">
+            <bean class="edu.cornell.kfs.gl.dataaccess.impl.CuEncumbranceDaoOjb" parent="platformAwareDao" />
+       </property>
 	</bean>
 
+    <bean id="encumbranceForwardStep" class="edu.cornell.kfs.gl.batch.CuEncumbranceForwardStep" parent="wrappedStep">
+        <property name="wrappingBatchServices">
+            <list>
+                <ref bean="accountingCycleCachingService"/>
+                <ref bean="encumbranceClosingReportWriterService"/>
+            </list>
+        </property>
+        <property name="yearEndService">
+            <ref bean="glYearEndService" />
+        </property>
+    </bean>
+    
+	<bean id="balanceForwardStep" class="edu.cornell.kfs.gl.batch.CuBalanceForwardStep" parent="wrappedStep">
+        <property name="wrappingBatchServices">
+            <list>
+                <ref bean="balanceForwardReportWriterService"/>
+            </list>
+        </property>
+        <property name="yearEndService">
+            <ref bean="glYearEndService" />
+        </property>
+    </bean>
+    
 </beans>
-	
