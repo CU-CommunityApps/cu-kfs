@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data xmlns="ns:workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
+  <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
+    <documentType>
+      <name>RCV</name>
+      <parent>PRAP</parent>
+      <label>ReceivingTransactionalDocument</label>
+      <docSearchHelpURL>${kfs.externalizable.help.url}/default.htm?turl=WordDocuments%2Freceiving.htm</docSearchHelpURL>
+      <active>true</active>
+      <routingVersion>2</routingVersion>
+    </documentType>
+    <documentType>
+      <name>RCVB</name>
+      <parent>RCV</parent>
+      <label>Bulk Receiving</label>
+      <docHandler>${kfs.url}/purapBulkReceiving.do?methodToCall=docHandler</docHandler>
+      <helpDefinitionURL>default.htm?turl=WordDocuments%2Fbulkreceiving.htm</helpDefinitionURL>
+      <active>true</active>
+      <routingVersion>2</routingVersion>
+    </documentType>
+    <documentType>
+      <name>RCVC</name>
+      <parent>RCV</parent>
+      <label>Correction Receiving</label>
+      <docHandler>${kfs.url}/purapCorrectionReceiving.do?methodToCall=docHandler</docHandler>
+      <helpDefinitionURL>default.htm?turl=WordDocuments%2Freceivingcorrectiondocument.htm</helpDefinitionURL>
+      <active>true</active>
+      <routingVersion>2</routingVersion>
+    </documentType>
+    <documentType>
+      <name>RCVL</name>
+      <parent>RCV</parent>
+      <label>Line Item Receiving</label>
+      <docHandler>${kfs.url}/purapLineItemReceiving.do?methodToCall=docHandler</docHandler>
+      <helpDefinitionURL>default.htm?turl=WordDocuments%2Freceiving.htm</helpDefinitionURL>
+      <active>true</active>
+      <validApplicationStatuses>
+      	<status>In Process</status>
+      	<status>Cancelled</status>
+      	<status>Awaiting Purchase Order Open Status</status>
+      	<status>Complete</status>
+      </validApplicationStatuses>
+      <policies>
+        <policy>
+          <name>DOCUMENT_STATUS_POLICY</name>
+          <stringValue>APP</stringValue>
+        </policy>
+      </policies>
+      <routingVersion>2</routingVersion>
+      <routePaths>
+        <routePath>
+          <start name="AdHoc" nextNode="RelatesToOutstandingTransactions"  nextAppDocStatus="Awaiting Purchase Order Open Status"/>
+          <split name="RelatesToOutstandingTransactions">
+            <branch name="True">
+              <role name="OutstandingTransactions" nextNode="Join" />
+            </branch>
+            <branch name="False">
+              <simple name="NoOp" nextNode="Join" />
+            </branch>
+            <join name="Join" />
+          </split>
+        </routePath>
+      </routePaths>
+      <routeNodes>
+        <start name="AdHoc" />
+        <split name="RelatesToOutstandingTransactions">
+          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+        </split>
+        <role name="OutstandingTransactions">
+          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+        <join name="Join" />
+        <simple name="NoOp">
+          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+        </simple>
+      </routeNodes>
+    </documentType>
+  </documentTypes>
+</data>
+
