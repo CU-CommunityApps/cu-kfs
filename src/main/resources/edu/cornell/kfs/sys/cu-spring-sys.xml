@@ -192,5 +192,6 @@
     </bean>
     -->
 	<bean id="batchInputFileService" class="edu.cornell.kfs.sys.batch.service.impl.CuBatchInputFileServiceImpl" parent="batchInputFileService-parentBean"/>   
+		<import resource="document/validation/configuration/CuFinancialSystemValidators.xml" />
 	
 </beans>

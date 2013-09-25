@@ -293,5 +293,10 @@
 	
 	<import resource="document/validation/configuration/PreEncumbranceValidation.xml" />
 	
+	<import resource="document/validation/configuration/CuYearEndBudgetAdjustmentValidation.xml" />
+	<import resource="document/validation/configuration/CuYearEndDistributionOfIncomeAndExpenseValidation.xml" />
+	<import resource="document/validation/configuration/CuYearEndGeneralErrorCorrectionValidation.xml" />
+	<import resource="document/validation/configuration/CuYearEndTransferOfFundsValidation.xml" />
+	
 
 </beans>
