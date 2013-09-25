@@ -14,6 +14,9 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
+  <bean id="AuxiliaryVoucherDocument" parent="AuxiliaryVoucherDocument-parentBean">
+    <property name="documentClass" value="edu.cornell.kfs.fp.document.CuAuxiliaryVoucherDocument"/>
+  </bean>
   
   <bean id="AuxiliaryVoucher-accountingLineView" parent="AuxiliaryVoucher-accountingLineView-parent">
   
