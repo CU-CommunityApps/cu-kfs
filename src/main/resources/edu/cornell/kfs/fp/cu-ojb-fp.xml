@@ -125,7 +125,7 @@
 
 
 
-<class-descriptor class="edu.cornell.kfs.fp.document.CuPreEncumbranceDocument" table="FP_PRE_ENCUM_DOC_T">
+<class-descriptor class="edu.cornell.kfs.fp.document.PreEncumbranceDocument" table="FP_PRE_ENCUM_DOC_T">
     <!--  common transactional document base attributes -->
     <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" />
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />

@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.TreeMap;
 
-import org.kuali.kfs.fp.document.PreEncumbranceDocument;
+
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.service.AccountingDocumentRuleHelperService;
@@ -23,6 +23,7 @@ import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.businessobject.PreEncumbranceAccountingLineUtil;
 import edu.cornell.kfs.fp.businessobject.PreEncumbranceSourceAccountingLine;
+import edu.cornell.kfs.fp.document.PreEncumbranceDocument;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 
