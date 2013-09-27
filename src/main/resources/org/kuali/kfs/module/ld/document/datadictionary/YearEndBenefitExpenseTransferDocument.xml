@@ -90,6 +90,11 @@
 				<key><value>org.kuali.kfs.sys.document.validation.event.ReviewAccountingLineEvent</value></key>
 				<value>YearEndBenefitExpenseTransferDocument-reviewAccountingLineValidation</value>
 			</entry>
+			<!-- KFSPTS-1627 -->
+			<entry>
+				<key><value>org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent</value></key>
+				<value>YearEndBenefitExpenseTransferDocument-saveDocumentValidation</value>
+			</entry>			
     	</map>
     </property>
   </bean>  
