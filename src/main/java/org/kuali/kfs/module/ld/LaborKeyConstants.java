@@ -63,6 +63,8 @@ public class LaborKeyConstants {
     public static final String ERROR_EFFORT_OPEN_PERIOD_CG_ACCOUNT = "error.labor.effortOpernPeriodCGAccount";
     public static final String ERROR_EFFORT_OPEN_PERIOD_ACCOUNTS_NOT_BALANCED = "error.labor.effortOpenPeriodAccountNonBalanced";
     public static final String ERROR_EMPTY_LABOR_BENEFIT_CATEGORY_CODE = "error.labor.laborBenefitRateCategoryEmpty";
+// KFSPTS-1627
+    public static final String INVALID_ACCOUNTTRANSFER_ERROR = "error.labor.account.invalid.transfer";
 
     public static final class Balancing {
         public static final String REPORT_ENTRY_LABEL = "message.ld.balancing.report.entry.label";
