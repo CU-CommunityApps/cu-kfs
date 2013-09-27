@@ -66,6 +66,8 @@
 		</property>
 	</bean>
 	
+    <import resource="document/validation/configuration/CuYearEndBenefitExpenseTransferValidations.xml" />
+	<import resource="document/validation/configuration/CuYearEndSalaryExpenseTransferValidations.xml" />
     
 
 </beans>

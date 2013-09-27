@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data xmlns="ns:workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
+  <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
+    <documentType>
+      <name>CM</name>
+      <parent>AP</parent>
+      <label>Vendor Credit Memo</label>
+      <docHandler>${kfs.url}/purapVendorCreditMemo.do?methodToCall=docHandler</docHandler>
+      <helpDefinitionURL>default.htm?turl=WordDocuments%2Fvendorcreditmemo.htm</helpDefinitionURL>
+      <docSearchHelpURL>${kfs.externalizable.help.url}/default.htm?turl=WordDocuments%2Fcreditmemos.htm</docSearchHelpURL>
+      <active>true</active>
+      <validApplicationStatuses>
+      	<status>Initiated</status>
+      	<status>In Process</status>
+      	<status>Cancelled In Process</status>
+      	<status>Void</status>
+      	<status>Cancelled</status>
+      	<status>Complete</status>
+      	<status>Awaiting AP Review</status>      	
+      	<status>Awaiting Fiscal Officer Approval</status>      	
+      </validApplicationStatuses>
+      <policies>  
+        <policy>
+          <name>DOCUMENT_STATUS_POLICY</name>
+          <stringValue>APP</stringValue>
+        </policy>
+      </policies>
+      <routingVersion>2</routingVersion>
+      <routePaths>
+        <routePath>
+          <start name="AdHoc" nextNode="RequiresImageAttachment"  nextAppDocStatus="Awaiting AP Review"/>
+          <split name="RequiresImageAttachment" nextNode="Account" nextAppDocStatus="Awaiting Fiscal Officer Approval">
+            <branch name="True">
+              <role name="ImageAttachment" nextNode="JoinRequiresImageAttachment" />
+            </branch>
+            <branch name="False">
+              <simple name="NoOpRequiresImageAttachment" nextNode="JoinRequiresImageAttachment" />
+            </branch>
+            <join name="JoinRequiresImageAttachment" />
+          </split>
+          <role name="Account" />
+        </routePath>
+      </routePaths>
+      <routeNodes>
+        <start name="AdHoc" />
+        <split name="RequiresImageAttachment">
+          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+        </split>
+        <role name="ImageAttachment">
+          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+        <join name="JoinRequiresImageAttachment" />
+        <simple name="NoOpRequiresImageAttachment">
+          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+        </simple>
+        <role name="Account">
+          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+      </routeNodes>
+    </documentType>
+  </documentTypes>
+</data>
+

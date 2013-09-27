@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright 2007-2008 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+<!--  
+	<bean id="YearEndSalaryExpenseTransferDocument-validAmountTransferredByObjectCodeValidation" parent="YearEndSalaryExpenseTransferDocument-validAmountTransferredByObjectCodeValidation-parentBean" scope="prototype" />
+	<bean id="YearEndSalaryExpenseTransferDocument-validAmountTransferredByObjectCodeValidation-parentBean" parent="SalaryExpenseTransferDocument-validAmountTransferredByObjectCodeValidation" abstract="true"/>
+-->
+
+
+	<bean id="YearEndSalaryExpenseTransferDocument-saveDocumentValidation" parent="YearEndSalaryExpenseTransferDocument-saveDocumentValidation-parentBean" scope="prototype" />
+	<bean id="YearEndSalaryExpenseTransferDocument-saveDocumentValidation-parentBean" parent="SalaryExpenseTransferDocument-saveDocumentValidation" abstract="true"/>
+
+
+	<bean id="YearEndSalaryExpenseTransferDocument-addAccountingLineValidation" parent="YearEndSalaryExpenseTransferDocument-addAccountingLineValidation-parentBean" scope="prototype" />
+	<bean id="YearEndSalaryExpenseTransferDocument-addAccountingLineValidation-parentBean" parent="SalaryExpenseTransferDocument-addAccountingLineValidation" abstract="true"/>
+
+
+
+	<bean id="YearEndSalaryExpenseTransferDocument-routeDocumentValidation" parent="YearEndSalaryExpenseTransferDocument-routeDocumentValidation-parentBean" scope="prototype" />
+	<bean id="YearEndSalaryExpenseTransferDocument-routeDocumentValidation-parentBean" parent="SalaryExpenseTransferDocument-routeDocumentValidation" abstract="true">
+  		<property name="validations">
+  			<list>
+  				<bean parent="YearEndDocument-orgAssignedValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="yearEndDocumentForValidation" />
+							</bean>
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+       			</bean>
+				<bean parent="SalaryExpenseTransferDocument-routeDocumentValidation" scope="prototype" />  
+  			</list>
+  		</property>
+	</bean>
+
+	<bean id="YearEndSalaryExpenseTransferDocument-updateAccountingLineValidation" parent="YearEndSalaryExpenseTransferDocument-updateAccountingLineValidation-parentBean" scope="prototype" />
+	<bean id="YearEndSalaryExpenseTransferDocument-updateAccountingLineValidation-parentBean" parent="SalaryExpenseTransferDocument-updateAccountingLineValidation" abstract="true"/>
+
+
+
+
+	<bean id="YearEndSalaryExpenseTransferDocument-validAmountTransferredByObjectCodeValidation" parent="YearEndSalaryExpenseTransferDocument-validAmountTransferredByObjectCodeValidation-parentBean" scope="prototype" />		
+	<bean id="YearEndSalaryExpenseTransferDocument-validAmountTransferredByObjectCodeValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>		
+				<bean parent="SalaryExpenseTransferDocument-validAmountTransferredByObjectCodeValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="documentForValidation" />
+							</bean>
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>				
+			</list>
+		</property>	
+	</bean>
+
+
+
+
+</beans>
