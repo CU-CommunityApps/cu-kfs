@@ -1,0 +1,129 @@
+<!--
+ Copyright 2008 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+        
+  <bean id="Voucher-accountingLineView" parent="Voucher-accountingLineView-parent" />
+  <bean id="Voucher-accountingLineView-parent" parent="AccountingLineView" abstract="true">
+	  <property name="elements">
+		<list>
+			<bean parent="AccountingLineView-sequenceNumber" />
+			<bean parent="AccountingLineView-lines">
+				<property name="lines">
+					<list>
+						<ref bean="VoucherInformation"/>
+						<bean parent="AccountingLineView-line">
+                            <property name="elementName" value="lineDescription"/>
+                            <property name="fields">
+                                <list>
+                                    <bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
+                                </list>
+                            </property>
+                        </bean>
+					</list>
+				</property>
+			</bean>
+			<bean parent="AccountingLineView-field" p:name="amount"	p:required="true" />
+			<bean parent="AccountingLineView-actions" />
+		</list>
+	</property>
+  </bean>
+  
+  <bean id="Voucher-accountingLineView-withEncumbrance" parent="Voucher-accountingLineView-withEncumbrance-parent" />
+  <bean id="Voucher-accountingLineView-withEncumbrance-parent" parent="AccountingLineView" abstract="true">
+	  <property name="elements">
+		<list>
+			<bean parent="AccountingLineView-sequenceNumber" />
+			<bean parent="AccountingLineView-lines">
+				<property name="lines">
+					<list>
+						<ref bean="VoucherInformation"/>
+						<ref bean="EncumbranceInformation"/>
+						<bean parent="AccountingLineView-line">
+                            <property name="elementName" value="lineDescription"/>
+                            <property name="fields">
+                                <list>
+                                    <bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
+                                </list>
+                            </property>
+                        </bean>
+					</list>
+				</property>
+			</bean>
+			<bean parent="AccountingLineView-field" p:name="amount"	p:required="true" />
+			<bean parent="AccountingLineView-actions" />
+		</list>
+	</property>
+  </bean>       
+
+  <bean id="Voucher-accountingLineView-withDebitCredit" parent="Voucher-accountingLineView-withDebitCredit-parent" />
+  <bean id="Voucher-accountingLineView-withDebitCredit-parent" parent="AccountingLineView" abstract="true">
+	  <property name="elements">
+		<list>
+			<bean parent="AccountingLineView-sequenceNumber" />
+			<bean parent="AccountingLineView-lines">
+				<property name="lines">
+					<list>
+						<ref bean="VoucherInformation"/>
+						<bean parent="AccountingLineView-line">
+                            <property name="elementName" value="lineDescription"/>
+                            <property name="fields">
+                                <list>
+                                    <bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
+                                </list>
+                            </property>
+                        </bean>
+					</list>
+				</property>
+			</bean>
+			<bean parent="AccountingLineView-debitCreditAmountField"  p:name="amount" p:required="true"/>
+			<bean parent="AccountingLineView-actions" />
+		</list>
+	</property>
+  </bean>
+  
+  <bean id="Voucher-accountingLineView-withDebitCreditEncumbrance" parent="Voucher-accountingLineView-withDebitCreditEncumbrance-parent" />
+  <bean id="Voucher-accountingLineView-withDebitCreditEncumbrance-parent" parent="AccountingLineView" abstract="true">
+	  <property name="elements">
+		<list>
+			<bean parent="AccountingLineView-sequenceNumber" />
+			<bean parent="AccountingLineView-lines">
+				<property name="lines">
+					<list>
+						<ref bean="VoucherInformation"/>
+						<ref bean="EncumbranceInformation"/>
+						<bean parent="AccountingLineView-line">
+                            <property name="elementName" value="lineDescription"/>
+                            <property name="fields">
+                                <list>
+                                    <bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
+                                </list>
+                            </property>
+                        </bean>
+					</list>
+				</property>
+			</bean>
+			<bean parent="AccountingLineView-debitCreditAmountField" p:name="amount" p:required="true" />
+			<bean parent="AccountingLineView-actions" />
+		</list>
+	</property>
+  </bean> 
+  
+
+</beans>

@@ -14,6 +14,9 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
+  <bean id="BudgetAdjustmentDocument" parent="BudgetAdjustmentDocument-parentBean">
+    <property name="importedLineParserClass" value="edu.cornell.kfs.fp.businessobject.CuBudgetAdjustmentAccountingLineParser"/>
+  </bean>
 
 	<bean id="BudgetAdjustment-accountingLineView" parent="BudgetAdjustment-accountingLineView-parent">
 	
