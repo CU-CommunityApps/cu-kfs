@@ -195,26 +195,8 @@
 	
 	<bean id="batchInputFileService" class="edu.cornell.kfs.sys.batch.service.impl.CuBatchInputFileServiceImpl" parent="batchInputFileService-parentBean"/>   
 
-    <bean id="autoDisapproveService" parent="autoDisapproveService-parentBean"/>
-	
-	<bean id="autoDisapproveService-parentBean" class="edu.cornell.kfs.sys.batch.service.impl.CuAutoDisapproveDocumentsServiceImpl" abstract="true">
-		<property name="documentService">
-			<ref bean="documentService" />
-		</property>
-    	<property name="parameterService">
-    	 <ref bean="parameterService" />
-		</property>		
-		<property name="dateTimeService">
-			<ref bean="dateTimeService" />
-		</property>
-		 <property name="noteService">
-			<ref bean="noteService" />
-		</property>	
-		<property name="autoDisapproveErrorReportWriterService">
-			<ref bean="autoDisapproveErrorReportWriterService" />
-		</property>
-	</bean>
-
+    <bean id="autoDisapproveService" class="edu.cornell.kfs.sys.batch.service.impl.CuAutoDisapproveDocumentsServiceImpl" parent="autoDisapproveService-parentBean"/>
+ 
     <import resource="document/validation/configuration/CuFinancialSystemValidators.xml" />
 	
 </beans>
