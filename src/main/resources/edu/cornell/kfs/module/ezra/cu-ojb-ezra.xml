@@ -59,11 +59,11 @@
 		<field-descriptor name="csVolClg" column="CS_VOL_CLG" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
 		<field-descriptor name="csVolUniv" column="CS_VOL_UNIV" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
 		<field-descriptor name="csVolExt" column="CS_VOL_EXT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
-		<field-descriptor name="csMandCntr" column="CS_VOL_CTR" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
-		<field-descriptor name="csMandDept" column="CS_VOL_DEPT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
-		<field-descriptor name="csMandClg" column="CS_VOL_CLG" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
-		<field-descriptor name="csMandUniv" column="CS_VOL_UNIV" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
-		<field-descriptor name="csMandExt" column="CS_VOL_EXT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+		<field-descriptor name="csMandCntr" column="CS_MAND_CTR" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+		<field-descriptor name="csMandDept" column="CS_MAND_DEPT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+		<field-descriptor name="csMandClg" column="CS_MAND_CLG" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+		<field-descriptor name="csMandUniv" column="CS_MAND_UNIV" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
+		<field-descriptor name="csMandExt" column="CS_MAND_EXT" jdbc-type="DECIMAL" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion"/>
 		<field-descriptor name="federalPassThrough" column="FED_FLOW_THROUGH" jdbc-type="CHAR"/>
 		<field-descriptor name="federalPassThroughAgencyNumber" column="FLOWTHROUGH_SPONSOR_ID" jdbc-type="BIGINT"/>
 		<field-descriptor name="departmentId" column="DEPT_ID" jdbc-type="VARCHAR"/>

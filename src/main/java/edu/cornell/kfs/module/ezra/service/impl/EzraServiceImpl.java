@@ -175,35 +175,52 @@ public class EzraServiceImpl implements EzraService {
 			}
 		}
 		KualiDecimal costShareRequired = KualiDecimal.ZERO;
-		if (ezraAward.getCsVolClg() != null)
-			costShareRequired.add(ezraAward.getCsVolClg());
-		if (ezraAward.getCsVolCntr() != null)
-			costShareRequired.add(ezraAward.getCsVolCntr());
-		if (ezraAward.getCsVolDept() != null)  
-			costShareRequired.add(ezraAward.getCsVolDept());
-		if (ezraAward.getCsVolExt() != null)  
-			costShareRequired.add(ezraAward.getCsVolExt());
-		if (ezraAward.getCsVolUniv() != null) 
-			costShareRequired.add(ezraAward.getCsVolUniv());
-		if (ezraAward.getCsMandClg() != null)  
-			costShareRequired.add(ezraAward.getCsMandClg());
-		if (ezraAward.getCsMandCntr() != null)  
-			costShareRequired.add(ezraAward.getCsMandCntr());
-		if (ezraAward.getCsMandDept() != null)  
-			costShareRequired.add(ezraAward.getCsMandDept());
-		if (ezraAward.getCsMandExt() != null)  
-			costShareRequired.add(ezraAward.getCsMandExt());
-		if (ezraAward.getCsMandUniv() != null) 
-			costShareRequired.add(ezraAward.getCsMandUniv());
 		
-		if (costShareRequired.isNonZero() ) {
-			AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
-			aea.setCostShareRequired(true);
+		if (ezraAward.getCsVolClg() != null) {
+		    costShareRequired = costShareRequired.add(ezraAward.getCsVolClg());
+		}
+		if (ezraAward.getCsVolCntr() != null) {
+		    costShareRequired = costShareRequired.add(ezraAward.getCsVolCntr());
+		}
+		if (ezraAward.getCsVolDept() != null) {  
+		    costShareRequired = costShareRequired.add(ezraAward.getCsVolDept());
+		}
+		if (ezraAward.getCsVolExt() != null) { 
+		    costShareRequired = costShareRequired.add(ezraAward.getCsVolExt());
+		}
+		if (ezraAward.getCsVolUniv() != null) { 
+		    costShareRequired = costShareRequired.add(ezraAward.getCsVolUniv());
+		}
+		if (ezraAward.getCsMandClg() != null) {  
+		    costShareRequired = costShareRequired.add(ezraAward.getCsMandClg());
+		}
+		if (ezraAward.getCsMandCntr() != null) {  
+		    costShareRequired = costShareRequired.add(ezraAward.getCsMandCntr());
+		}
+		if (ezraAward.getCsMandDept() != null) {  
+		    costShareRequired = costShareRequired.add(ezraAward.getCsMandDept());
+		}
+		if (ezraAward.getCsMandExt() != null) { 
+		    costShareRequired = costShareRequired.add(ezraAward.getCsMandExt());
+		}
+		if (ezraAward.getCsMandUniv() != null) { 
+		    costShareRequired = costShareRequired.add(ezraAward.getCsMandUniv());
 		}
 		
 		AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
+		
+		if (costShareRequired.isNonZero() ) {
+			aea.setCostShareRequired(true);
+		}
+		else{
+		    aea.setCostShareRequired(false);
+		}
+		
 		award.refreshReferenceObject("proposal");
 		award.refreshNonUpdateableReferences();
+		
+		award.setExtension(aea);
+		
 		return award;
 	}
 	
