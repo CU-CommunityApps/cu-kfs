@@ -16,13 +16,13 @@
 -->
 
   <bean id="ProcurementCardDocument" parent="ProcurementCardDocument-parentBean">
-   <!-- UPGRADE-911 
+    <property name="documentClass" value="edu.cornell.kfs.fp.document.CuProcurementCardDocument"/>
     <property name="attributes">
       <list>
         <ref bean="ProcurementCardDocument-accountNumberForSearching"/>
       </list>
    </property>
-   -->
+
   </bean>
   
    
@@ -72,7 +72,7 @@
     			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
     					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
-    						<property name="businessObjectClassName" value="org.kuali.kfs.fp.document.ProcurementCardDocument"/>
+    						<property name="businessObjectClassName" value="edu.cornell.kfs.fp.document.CuProcurementCardDocument"/>
     						<property name="attributeName" value="accountNumberForSearching"/>
     						<property name="showAttributeInResultSet" value="true"/>
     					</bean>

@@ -18,6 +18,7 @@ package edu.cornell.kfs.fp.batch.service.impl;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.apache.commons.io.IOUtils;
 import org.kuali.kfs.fp.batch.service.ProcurementCardLoadTransactionsService;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
+import org.kuali.kfs.sys.batch.InitiateDirectoryBase;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.kfs.sys.service.ReportWriterService;
@@ -38,9 +40,11 @@ import org.kuali.rice.krad.service.BusinessObjectService;
  * 
  * @see org.kuali.kfs.fp.batch.service.ProcurementCardCreateDocumentService
  */
-public class ProcurementCardLoadFlatTransactionsServiceImpl implements ProcurementCardLoadTransactionsService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardLoadFlatTransactionsServiceImpl.class);
+public class ProcurementCardLoadFlatTransactionsServiceImpl extends InitiateDirectoryBase implements ProcurementCardLoadTransactionsService {
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardLoadFlatTransactionsServiceImpl.class);
 
+    private static final String ERROR_PREFIX = "Error parsing flat file ";
+    
     private BusinessObjectService businessObjectService;
     private BatchInputFileService batchInputFileService;
     private BatchInputFileType procurementCardInputFileType;
@@ -53,12 +57,12 @@ public class ProcurementCardLoadFlatTransactionsServiceImpl implements Procureme
      * 
      * @see org.kuali.kfs.fp.batch.service.ProcurementCardCreateDocumentService#loadProcurementCardFile()
      */
+    @SuppressWarnings("unchecked")
     public boolean loadProcurementCardFile(String fileName) {
         FileInputStream fileContents;
         try {
             fileContents = new FileInputStream(fileName);
-        }
-        catch (FileNotFoundException e1) {
+        } catch (FileNotFoundException e1) {
             LOG.error("file to parse not found " + fileName, e1);
             throw new RuntimeException("Cannot find the file requested to be parsed " + fileName + " " + e1.getMessage(), e1);
         }
@@ -67,14 +71,12 @@ public class ProcurementCardLoadFlatTransactionsServiceImpl implements Procureme
         try {
             byte[] fileByteContent = IOUtils.toByteArray(fileContents);
             pcardTransactions = (Collection<?>) batchInputFileService.parse(procurementCardInputFileType, fileByteContent);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOG.error("error while getting file bytes:  " + e.getMessage(), e);
             throw new RuntimeException("Error encountered while attempting to get file bytes: " + e.getMessage(), e);
-        }
-        catch (ParseException e) {
-            LOG.error("Error parsing flat file " + e.getMessage());
-            throw new RuntimeException("Error parsing flat file " + e.getMessage(), e);
+        } catch (ParseException e) {
+            LOG.error(ERROR_PREFIX + e.getMessage());
+            throw new RuntimeException(ERROR_PREFIX + e.getMessage(), e);
         }
 
         if (pcardTransactions == null || pcardTransactions.isEmpty()) {
@@ -127,17 +129,14 @@ public class ProcurementCardLoadFlatTransactionsServiceImpl implements Procureme
         this.procurementCardInputFileType = procurementCardInputFileType;
     }
 
-    //TODO UPGRADE-911
-	public void prepareDirectories(List<String> directoryPaths) {		
-	}
-
-	public List<String> getRequiredDirectoryNames() {
-		return null;
-	}
+    @Override
+    public List<String> getRequiredDirectoryNames() {
+        return new ArrayList<String>() { { add(procurementCardInputFileType.getDirectoryPath()); } };
+    }
 
 	public boolean loadProcurementCardFile(String fileName,
 			ReportWriterService reportWriterService) {
-		return false;
+		return loadProcurementCardFile(fileName);
 	}
 
 }
