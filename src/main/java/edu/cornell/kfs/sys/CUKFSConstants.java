@@ -39,16 +39,17 @@ public class CUKFSConstants {
     public static class ObjectCodeConstants {
         public static final String PARAMETER_KC_ENABLE_RESEARCH_ADMIN_OBJECT_CODE_ATTRIBUTE_IND = "ENABLE_RESEARCH_ADMIN_OBJECT_CODE_ATTRIBUTE_IND";
     }
-    
-    
+      
+    // KFSUPGRADE-72 Account Reversion
     public static class Reversion {
+        public static final String VALID_PREFIX = "EXTENDED_DEFINITIONS_INCLUDE_";
+        public static final String INVALID_PREFIX = "EXTENDED_DEFINITIONS_EXCLUDE_";
+        public static final String IS_EXPENSE_PARAM = "EXTENDED_DEFINITIONS_EXPENSE_CATEGORIES";
         public static final String OBJECT_CONSOL_PARAM_SUFFIX = "OBJECT_CONSOLIDATIONS_BY_REVERSION_CATEGORY";
         public static final String OBJECT_LEVEL_PARAM_SUFFIX = "OBJECT_LEVELS_BY_REVERSION_CATEGORY";
         public static final String OBJECT_TYPE_PARAM_SUFFIX = "OBJECT_TYPES_BY_REVERSION_CATEGORY";
         public static final String OBJECT_SUB_TYPE_PARAM_SUFFIX = "OBJECT_SUB_TYPES_BY_REVERSION_CATEGORY";
-
     }
-    
     
     public static class PreEncumbranceDocumentConstants {
         public static final String BIWEEKLY = "biWeekly";

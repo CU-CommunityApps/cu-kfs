@@ -1414,5 +1414,170 @@
 	        <inverse-foreignkey field-ref="accountNumber" />
 	    </collection-descriptor>
 	</class-descriptor>
+	
+	<class-descriptor class="edu.cornell.kfs.coa.businessobject.AccountReversion" table="CA_ACCT_REVERSION_T">
+    	<field-descriptor name="universityFiscalYear" column="UNIV_FISCAL_YR" jdbc-type="INTEGER" primarykey="true" index="true" />
+    	<field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
+    	<field-descriptor name="accountNumber" column="ACCT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+    	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+    	<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+    	<field-descriptor name="budgetReversionChartOfAccountsCode" column="BDGT_RVRSN_COA_CD" jdbc-type="VARCHAR" />
+    	<field-descriptor name="budgetReversionAccountNumber" column="BDGT_RVRSNACCT_NBR" jdbc-type="VARCHAR" />
+    	<field-descriptor name="carryForwardByObjectCodeIndicator" column="CF_BY_OBJ_CD_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    	<field-descriptor name="cashReversionFinancialChartOfAccountsCode" column="CSH_RVRSNFINCOA_CD" jdbc-type="VARCHAR" />
+    	<field-descriptor name="cashReversionAccountNumber" column="CSH_RVRSN_ACCT_NBR" jdbc-type="VARCHAR" />
+  		<field-descriptor name="active" column="ROW_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    	<reference-descriptor name="chartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="chartOfAccountsCode" />
+    		</reference-descriptor>
+    	<reference-descriptor name="account" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="chartOfAccountsCode" />
+        	<foreignkey field-ref="accountNumber" />
+    	</reference-descriptor>
+    	<reference-descriptor name="cashReversionAccount" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="cashReversionFinancialChartOfAccountsCode" />
+        	<foreignkey field-ref="cashReversionAccountNumber" />
+    	</reference-descriptor>
+    	<reference-descriptor name="budgetReversionAccount" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="budgetReversionChartOfAccountsCode" />
+        	<foreignkey field-ref="budgetReversionAccountNumber" />
+    	</reference-descriptor>
+    	<reference-descriptor name="budgetReversionChartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="budgetReversionChartOfAccountsCode" />
+    	</reference-descriptor>
+    	<reference-descriptor name="cashReversionFinancialChartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="cashReversionFinancialChartOfAccountsCode" />
+    	</reference-descriptor>
+
+    	<reference-descriptor name="universityFiscal" class-ref="org.kuali.kfs.sys.businessobject.SystemOptions" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+        	<foreignkey field-ref="universityFiscalYear" />
+    	</reference-descriptor>
+
+    	<collection-descriptor name="accountReversionDetails" element-class-ref="edu.cornell.kfs.coa.businessobject.AccountReversionDetail" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="none" proxy="true">
+        	<orderby name="accountReversionCategoryCode" sort="ASC" />
+        	<inverse-foreignkey field-ref="universityFiscalYear" />
+        	<inverse-foreignkey field-ref="chartOfAccountsCode" />
+        	<inverse-foreignkey field-ref="accountNumber" />
+    	</collection-descriptor>
+	</class-descriptor>
+
+	<class-descriptor class="edu.cornell.kfs.coa.businessobject.AccountReversionDetail" table="CA_ACCT_RVRSN_DTL_T">
+    	<field-descriptor name="universityFiscalYear" column="UNIV_FISCAL_YR" jdbc-type="INTEGER" primarykey="true" index="true" />
+    	<field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
+    	<field-descriptor name="accountNumber" column="ACCOUNT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+    	<field-descriptor name="accountReversionCategoryCode" column="RVRSN_CTGRY_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
+    	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+    	<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+    	<field-descriptor name="accountReversionCode" column="ACCT_RVRSN_CD" jdbc-type="VARCHAR" />
+    	<field-descriptor name="accountReversionObjectCode" column="ACCT_RVRSN_OBJ_CD" jdbc-type="VARCHAR" />
+    	<field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+
+    	<reference-descriptor name="reversionObject" class-ref="org.kuali.kfs.coa.businessobject.ObjectCode" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="universityFiscalYear" />
+        	<foreignkey field-ref="chartOfAccountsCode" />
+        	<foreignkey field-ref="accountReversionObjectCode" />
+    	</reference-descriptor>
+
+    	<reference-descriptor name="universityFiscal" class-ref="org.kuali.kfs.sys.businessobject.SystemOptions" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+        	<foreignkey field-ref="universityFiscalYear" />
+    	</reference-descriptor>
+
+    	<reference-descriptor name="account" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="chartOfAccountsCode" />
+        	<foreignkey field-ref="accountNumber" />
+    	</reference-descriptor>
+
+    	<reference-descriptor name="chartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="chartOfAccountsCode" />
+    	</reference-descriptor>
+
+    	<reference-descriptor name="reversionCategory" class-ref="edu.cornell.kfs.coa.businessobject.ReversionCategory" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="accountReversionCategoryCode" />
+   		</reference-descriptor>
+    
+    	<reference-descriptor name="accountReversion" class-ref="edu.cornell.kfs.coa.businessobject.AccountReversion" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        	<foreignkey field-ref="universityFiscalYear" />
+        	<foreignkey field-ref="chartOfAccountsCode" />
+        	<foreignkey field-ref="accountNumber" />
+    	</reference-descriptor>
+	</class-descriptor>
+
+	<class-descriptor class="edu.cornell.kfs.coa.businessobject.ReversionCategory" table="CA_RVRSN_CTGRY_T">
+    	<field-descriptor name="reversionCategoryCode" column="RVRSN_CTGRY_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
+    	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+    	<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+    	<field-descriptor name="reversionCategoryName" column="RVRSN_CTGRY_NM" jdbc-type="VARCHAR" />
+    	<field-descriptor name="reversionSortCode" column="RVRSN_SORT_CD" jdbc-type="VARCHAR" />
+    	<field-descriptor name="active" column="ROW_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+	</class-descriptor>
+
+	<class-descriptor class="edu.cornell.kfs.coa.businessobject.AccountReversionGlobal" table="CA_ACCT_RVRSN_CHG_DOC_T">
+  		<field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+  		<field-descriptor name="universityFiscalYear" column="UNIV_FISCAL_YR" jdbc-type="INTEGER" index="true" />
+  		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+  		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+  		<field-descriptor name="budgetReversionChartOfAccountsCode" column="BDGT_RVRSN_COA_CD" jdbc-type="VARCHAR" />
+  		<field-descriptor name="budgetReversionAccountNumber" column="BDGT_RVRSNACCT_NBR" jdbc-type="VARCHAR" />
+  		<field-descriptor name="carryForwardByObjectCodeIndicator" column="CF_BY_OBJ_CD_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+  		<field-descriptor name="cashReversionFinancialChartOfAccountsCode" column="CSH_RVRSNFINCOA_CD" jdbc-type="VARCHAR" />
+  		<field-descriptor name="cashReversionAccountNumber" column="CSH_RVRSN_ACCT_NBR" jdbc-type="VARCHAR" />
+  
+  		<reference-descriptor name="cashReversionAccount" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+    		<foreignkey field-ref="cashReversionFinancialChartOfAccountsCode" />
+    		<foreignkey field-ref="cashReversionAccountNumber" />
+  		</reference-descriptor>
+  		<reference-descriptor name="budgetReversionAccount" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+    		<foreignkey field-ref="budgetReversionChartOfAccountsCode" />
+    		<foreignkey field-ref="budgetReversionAccountNumber" />
+  		</reference-descriptor>
+  		<reference-descriptor name="budgetReversionChartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+    		<foreignkey field-ref="budgetReversionChartOfAccountsCode" />
+  		</reference-descriptor>
+  		<reference-descriptor name="cashReversionFinancialChartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+    		<foreignkey field-ref="cashReversionFinancialChartOfAccountsCode" />
+  		</reference-descriptor>
+  		<reference-descriptor name="universityFiscal" class-ref="org.kuali.kfs.sys.businessobject.SystemOptions" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+			<foreignkey field-ref="universityFiscalYear" />
+		</reference-descriptor>
+  
+  		<collection-descriptor name="accountReversionGlobalDetails" element-class-ref="edu.cornell.kfs.coa.businessobject.AccountReversionGlobalDetail" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="none" proxy="true">
+    		<orderby name="accountReversionCategoryCode" sort="ASC" />
+    		<inverse-foreignkey field-ref="documentNumber" />
+  		</collection-descriptor>
+  		<collection-descriptor name="accountReversionGlobalAccounts" element-class-ref="edu.cornell.kfs.coa.businessobject.AccountReversionGlobalAccount" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="none" proxy="true">
+    		<orderby name="accountNumber" sort="ASC"/>
+    		<inverse-foreignkey field-ref="documentNumber" />
+  		</collection-descriptor>
+	</class-descriptor>
+	
+	<class-descriptor class="edu.cornell.kfs.coa.businessobject.AccountReversionGlobalDetail" table="CA_ACCT_RVRSN_CHG_DTL_T">
+  		<field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+ 		<field-descriptor name="accountReversionCategoryCode" column="ACCT_RVRSN_CTGRY_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
+  		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+  		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+  		<field-descriptor name="accountReversionCode" column="ACCT_RVRSN_CD" jdbc-type="VARCHAR" />
+  		<field-descriptor name="accountReversionObjectCode" column="ACCT_RVRSN_OBJ_CD" jdbc-type="VARCHAR" />
+  
+  		<reference-descriptor name="reversionCategory" class-ref="edu.cornell.kfs.coa.businessobject.ReversionCategory" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+    		<foreignkey field-ref="accountReversionCategoryCode" />
+  		</reference-descriptor>
+  
+	</class-descriptor>
+	
+	<class-descriptor class="edu.cornell.kfs.coa.businessobject.AccountReversionGlobalAccount" table="CA_ACCT_RVRSN_CHG_ACCT_T">
+  		<field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+ 	 	<field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
+  		<field-descriptor name="accountNumber" column="ACCOUNT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+  		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+  		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+  
+  		<reference-descriptor name="chartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+    		<foreignkey field-ref="chartOfAccountsCode" />
+  		</reference-descriptor>
+  		<reference-descriptor name="account" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+    		<foreignkey field-ref="chartOfAccountsCode" />
+    		<foreignkey field-ref="accountNumber" />
+  		</reference-descriptor>
+	</class-descriptor>
 
 </descriptor-repository>

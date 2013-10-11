@@ -7,20 +7,68 @@
                            http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+                           
+    <bean id="cu-gl" parent="glModuleConfiguration-parentBean">
 		
-	<bean id="glBalanceService" class="edu.cornell.kfs.gl.service.impl.CuBalanceServiceImpl" parent="glBalanceService-parentBean">
-	     <property name="balanceDao">
-            <bean class="edu.cornell.kfs.gl.dataaccess.impl.CuBalanceDaoOjb" parent="platformAwareDao" />
+		<property name="packagePrefixes">
+            <list merge="true">
+                <value>edu.cornell.kfs.gl</value>
+            </list>
         </property>
+        
+        <property name="dataDictionaryPackages">
+			<list/>
+		</property>
+		
+		<property name="databaseRepositoryFilePaths">
+			<list merge="true">
+				<value>edu/cornell/kfs/gl/cu-ojb-gl.xml</value>
+			</list>
+		</property>
+		
+	    <property name="fiscalYearMakers">
+			<list/>
+		</property>
+		<property name="scriptConfigurationFilePaths">
+			<list/>
+		</property>
+
+		<property name="jobNames">
+			<list>
+				<value>accountReversionPriorYearAccountJob</value>
+				<value>accountReversionCurrentYearAccountJob</value>
+			</list>
+		</property>
 	</bean>
 	
-	<bean id="glYearEndService" class="edu.cornell.kfs.gl.batch.service.impl.CuYearEndServiceImpl" parent="glYearEndService-parentBean">
-	   <property name="yearEndDao">
-            <bean class="edu.cornell.kfs.gl.batch.dataaccess.impl.CuYearEndDaoJdbc" parent="platformAwareDaoJdbc" />
-       </property>
-       <property name="encumbranceDao">
-            <bean class="edu.cornell.kfs.gl.dataaccess.impl.CuEncumbranceDaoOjb" parent="platformAwareDao" />
-       </property>
+	<bean id="accountReversionCurrentYearAccountJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="accountReversionCurrentYearAccountStep" />
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+				<entry key="posterJob" value="hardDependency" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="accountReversionPriorYearAccountJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="accountReversionPriorYearAccountStep" />
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+				<entry key="posterJob" value="hardDependency" />
+			</map>
+		</property>
+	</bean>  
+
+	<bean id="cu-glModuleService" parent="glModuleService-parentBean">
+	 	<property name="moduleConfiguration" ref="cu-gl"/>
 	</bean>
 
     <bean id="encumbranceForwardStep" class="edu.cornell.kfs.gl.batch.CuEncumbranceForwardStep" parent="wrappedStep">
@@ -46,6 +94,156 @@
         </property>
     </bean>
     
+        <bean id="glBalanceDao" parent="platformAwareDao" class="edu.cornell.kfs.gl.dataaccess.impl.CuBalanceDaoOjb">
+		<property name="parameterEvaluatorService">
+			<ref bean="parameterEvaluatorService" />
+		</property>
+		<property name="optionsService">
+			<ref bean="optionsService" />
+		</property>
+		<property name="balanceTypService">
+			<ref bean="balanceTypService" />
+		</property>
+	</bean>
+    
+    <bean id="glBalanceService" parent="glBalanceService-parentBean"/>
+	<bean id="glBalanceService-parentBean" abstract="true"  class="edu.cornell.kfs.gl.service.impl.CuBalanceServiceImpl">
+		<property name="balanceDao">
+			<ref bean="glBalanceDao" />
+		</property>
+		<property name="optionsService">
+			<ref bean="optionsService" />
+		</property>
+	    <property name="objectTypeService">
+			<ref bean="objectTypeService" />
+		</property>
+	    <property name="subFundGroupService">
+			<ref bean="subFundGroupService" />
+		</property>
+	    <property name="parameterService">
+			<ref bean="parameterService" />
+		</property>	
+		<property name="balanceTypService">
+			<ref bean="balanceTypService" />
+		</property>	
+	</bean>
+    <bean id="glAccountReversionCurrentYearAccountProcess" class="edu.cornell.kfs.gl.batch.service.impl.AccountReversionProcessImpl" scope="prototype">
+		<property name="accountReversionService" ref="accountReversionService" />
+		<property name="balanceService" ref="glBalanceService" />
+		<property name="originEntryService" ref="originEntryService" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="dateTimeService" ref="dateTimeService" />
+		<property name="priorYearAccountService" ref="priorYearAccountService" />
+		<property name="reversionUnitOfWorkService" ref="glAcctReversionUnitOfWorkService" />
+		<property name="flexibleOffsetAccountService" ref="flexibleOffsetAccountService" />
+		<property name="parameterService" ref="parameterService" />
+		<property name="configurationService" ref="kualiConfigurationService" />
+		<property name="cashReversionCategoryLogic">
+			<ref bean="glCashReversionCategoryLogic" />
+		</property>
+		<property name="usePriorYearInformation" value="false" />
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+	</bean>
+	
+	<bean id="glOrgReversionUnitOfWorkService" class="org.kuali.kfs.gl.batch.service.impl.OrganizationReversionUnitOfWorkServiceImpl">
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+		<property name="orgReversionUnitOfWorkDao">
+			<bean class="edu.cornell.kfs.gl.batch.dataaccess.impl.ReversionUnitOfWorkDaoJdbc" parent="platformAwareDaoJdbc" />
+		</property>
+	</bean>
+
+	<bean id="glAccountReversionPriorYearAccountProcess" class="edu.cornell.kfs.gl.batch.service.impl.AccountReversionProcessImpl" scope="prototype">
+		<property name="accountReversionService" ref="accountReversionService" />
+		<property name="balanceService" ref="glBalanceService" />
+		<property name="originEntryService" ref="originEntryService" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="dateTimeService" ref="dateTimeService" />
+		<property name="priorYearAccountService" ref="priorYearAccountService" />
+		<property name="reversionUnitOfWorkService" ref="glOrgReversionUnitOfWorkService" />
+		<property name="flexibleOffsetAccountService" ref="flexibleOffsetAccountService" />
+		<property name="parameterService" ref="parameterService" />
+		<property name="configurationService" ref="kualiConfigurationService" />
+		<property name="cashReversionCategoryLogic">
+			<ref bean="glCashReversionCategoryLogic" />
+		</property>
+		<property name="usePriorYearInformation" value="true" />
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+	</bean>
+
+	<bean id="glAccountReversionProcessService" class="edu.cornell.kfs.gl.batch.service.impl.AccountReversionProcessServiceImpl">
+		<property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
+		<property name="configurationService" ref="kualiConfigurationService" />
+		<property name="accountReversionReportWriterService" ref="accountReversionReportWriterService" />
+	</bean>
+
+	<bean id="glCashReversionCategoryLogic" class="edu.cornell.kfs.gl.batch.service.impl.CashReversionCategoryLogic" />
+
+	<bean id="genericReversionCategory" class="edu.cornell.kfs.gl.batch.service.impl.GenericReversionCategory" scope="prototype"> 
+    	<property name="parameterEvaluatorService"> 
+        	<ref bean="parameterEvaluatorService" /> 
+		</property> 
+	</bean>
+
+	<bean id="accountReversionPriorYearAccountStep" class="edu.cornell.kfs.gl.batch.AccountReversionPriorYearAccountStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="accountReversionReportWriterService"/>
+			</list>
+		</property>
+		<property name="accountReversionProcessService">
+			<ref bean="glAccountReversionProcessService" />
+		</property>
+		<property name="yearEndService" ref="glYearEndService" />
+	</bean>
+
+	<bean id="accountReversionCurrentYearAccountStep" class="edu.cornell.kfs.gl.batch.AccountReversionCurrentYearAccountStep" parent="wrappedStep">
+		<property name="wrappingBatchServices">
+			<list>
+				<ref bean="accountReversionReportWriterService"/>
+			</list>
+		</property>
+		<property name="accountReversionProcessService">
+			<ref bean="glAccountReversionProcessService" />
+		</property>
+		<property name="yearEndService" ref="glYearEndService" />
+	</bean>
+
+	<bean id="glAcctReversionUnitOfWorkService" class="edu.cornell.kfs.gl.batch.service.impl.AccountReversionUnitOfWorkServiceImpl">
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+		<property name="acctReversionUnitOfWorkDao">
+			<bean class="edu.cornell.kfs.gl.batch.dataaccess.impl.ReversionUnitOfWorkDaoJdbc" parent="platformAwareDaoJdbc" />
+		</property>
+	</bean>
+
+	<bean id="accountReversionReportWriterService" class="org.kuali.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
+		<property name="filePath" value="${reports.directory}/gl"/>
+		<property name="fileNamePrefix" value="year_end_acct_reversion_process_"/>
+        <property name="title" value="Account Reversion Process Report" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+        	<map>
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+        		<entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+        	</map>
+        </property>
+    </bean>
+    
+	<bean id="glYearEndService" class="edu.cornell.kfs.gl.batch.service.impl.CuYearEndServiceImpl" parent="glYearEndService-parentBean">
+	   <property name="yearEndDao">
+            <bean class="edu.cornell.kfs.gl.batch.dataaccess.impl.CuYearEndDaoJdbc" parent="platformAwareDaoJdbc" />
+       </property>
+       <property name="encumbranceDao">
+            <bean class="edu.cornell.kfs.gl.dataaccess.impl.CuEncumbranceDaoOjb" parent="platformAwareDao" />
+       </property>
+	</bean>
+    
     <bean id="scrubberValidator" class="edu.cornell.kfs.gl.service.impl.CuScrubberValidatorImpl" parent="scrubberValidator-parentBean"/>
+     
     
 </beans>

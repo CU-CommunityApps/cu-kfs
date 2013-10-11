@@ -1,15 +1,20 @@
 package edu.cornell.kfs.gl.dataaccess.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coa.businessobject.OrganizationReversion;
+import org.kuali.kfs.coa.service.BalanceTypeService;
 import org.kuali.kfs.coa.service.ObjectTypeService;
 import org.kuali.kfs.coa.service.SubFundGroupService;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
@@ -22,13 +27,22 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.OptionsService;
+import org.kuali.rice.core.api.parameter.ParameterEvaluator;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 
+import edu.cornell.kfs.coa.businessobject.Reversion;
 import edu.cornell.kfs.gl.dataaccess.CuBalanceDao;
 
-public class CuBalanceDaoOjb  extends BalanceDaoOjb implements CuBalanceDao {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuBalanceDaoOjb.class);
+public class CuBalanceDaoOjb extends BalanceDaoOjb implements CuBalanceDao {
+	 private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuBalanceDaoOjb.class);
+	 protected static final String PARAMETER_PREFIX = "SELECTION_";
+	 
+	 private ParameterEvaluatorService parameterEvaluatorService;
+	 private OptionsService optionsService;
+	 private BalanceTypeService balanceTypService;
+	 
 
     /**
      * Returns the count of balances for a given fiscal year and specified charts; this method is used for year end job reporting
@@ -194,4 +208,122 @@ public class CuBalanceDaoOjb  extends BalanceDaoOjb implements CuBalanceDao {
 
         return filteredBalances;
     }
+    
+    	 /**
+     * Returns a list of balances to return for the Organization Reversion year end job to process
+     * 
+     * @param the university fiscal year to find balances for
+     * @param endOfYear if true, use currrent year accounts, otherwise use prior year accounts
+     * @return an Iterator of Balances to process
+     * @see org.kuali.kfs.gl.dataaccess.BalanceDao#findOrganizationReversionBalancesForFiscalYear(java.lang.Integer, boolean)
+     */
+    public Iterator<Balance> findReversionBalancesForFiscalYear(Integer year, boolean endOfYear) {
+        LOG.debug("findReversionBalancesForFiscalYear() started");
+        Criteria c = new Criteria();
+        c.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
+        ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+        Map<Integer, String> parsedRules = new TreeMap<Integer, String>();
+        int i = 1;
+        boolean moreParams = true;
+        while (moreParams) {
+            if (parameterService.parameterExists(OrganizationReversion.class, PARAMETER_PREFIX + i)) {
+            	ParameterEvaluator parameterEvaluator = parameterEvaluatorService.getParameterEvaluator(Reversion.class, PARAMETER_PREFIX + i);
+                String currentRule = parameterEvaluator.getValue();
+                if (endOfYear) {
+                    currentRule = currentRule.replaceAll("account\\.", "priorYearAccount.");
+                }
+                if (StringUtils.isNotBlank(currentRule)) {
+                    String propertyName = StringUtils.substringBefore(currentRule, "=");
+                    List<String> ruleValues = Arrays.asList(StringUtils.substringAfter(currentRule, "=").split(";"));
+                    if (propertyName != null && propertyName.length() > 0 && ruleValues.size() > 0 && !StringUtils.isBlank(ruleValues.get(0))) {
+                        if (parameterEvaluator.constraintIsAllow()) {
+                            c.addIn(propertyName, ruleValues);
+                        }
+                        else {
+                            c.addNotIn(propertyName, ruleValues);
+                        }
+                    }
+                }
+            }
+            else {
+                moreParams = false;
+            }
+            i++;
+        }
+        // we only ever calculate on CB, AC, and encumbrance types, so let's only select those
+        SystemOptions options = SpringContext.getBean(OptionsService.class).getOptions(year);
+        List ReversionBalancesToSelect = new ArrayList();
+        ReversionBalancesToSelect.add(options.getActualFinancialBalanceTypeCd());
+        ReversionBalancesToSelect.add(options.getFinObjTypeExpenditureexpCd());
+        ReversionBalancesToSelect.add(options.getCostShareEncumbranceBalanceTypeCd());
+        ReversionBalancesToSelect.add(options.getIntrnlEncumFinBalanceTypCd());
+        ReversionBalancesToSelect.add(KFSConstants.BALANCE_TYPE_CURRENT_BUDGET);
+        c.addIn(KFSPropertyConstants.BALANCE_TYPE_CODE, ReversionBalancesToSelect);
+        //c.addLike("accountNumber", "L013%");
+        QueryByCriteria query = QueryFactory.newQuery(Balance.class, c);
+        query.addOrderByAscending(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE);
+        query.addOrderByAscending(KFSPropertyConstants.ACCOUNT_NUMBER);
+        query.addOrderByAscending(KFSPropertyConstants.SUB_ACCOUNT_NUMBER);
+        query.addOrderByAscending(KFSPropertyConstants.OBJECT_CODE);
+        query.addOrderByAscending(KFSPropertyConstants.SUB_OBJECT_CODE);
+        query.addOrderByAscending(KFSPropertyConstants.BALANCE_TYPE_CODE);
+        query.addOrderByAscending(KFSPropertyConstants.OBJECT_TYPE_CODE);
+
+        return getPersistenceBrokerTemplate().getIteratorByQuery(query);
+    }
+    
+	/**
+	 * Gets the optionsService
+	 * 
+	 * @return optionsService
+	 */
+	public OptionsService getOptionsService() {
+		return optionsService;
+	}
+
+	/**
+	 * Sets the optionsService
+	 * 
+	 * @param optionsService
+	 */
+	public void setOptionsService(OptionsService optionsService) {
+		this.optionsService = optionsService;
+	}
+
+	/**
+	 * Gets the balanceTypService
+	 * @return balanceTypService
+	 */
+	public BalanceTypeService getBalanceTypService() {
+		return balanceTypService;
+	}
+
+	/**
+	 * Sets the balanceTypService.
+	 * 
+	 * @param balanceTypService
+	 */
+	public void setBalanceTypService(BalanceTypeService balanceTypService) {
+		this.balanceTypService = balanceTypService;
+	}
+
+	/**
+	 * Gets the parameterEvaluatorService.
+	 * 
+	 * @return parameterEvaluatorService
+	 */
+	public ParameterEvaluatorService getParameterEvaluatorService() {
+		return parameterEvaluatorService;
+	}
+
+	/**
+	 * Sets the parameterEvaluatorService.
+	 * 
+	 * @param parameterEvaluatorService
+	 */
+	public void setParameterEvaluatorService(
+			ParameterEvaluatorService parameterEvaluatorService) {
+		this.parameterEvaluatorService = parameterEvaluatorService;
+	}
+    
 }

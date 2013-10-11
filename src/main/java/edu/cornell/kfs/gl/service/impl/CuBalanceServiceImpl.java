@@ -10,7 +10,7 @@ import edu.cornell.kfs.gl.dataaccess.CuBalanceDao;
 import edu.cornell.kfs.gl.service.CuBalanceService;
 
 public class CuBalanceServiceImpl extends BalanceServiceImpl implements CuBalanceService {
-
+	
     /**
      * Uses the DAO to count the number of balances associated with the given fiscal year and all specified  charts 
      * 
@@ -60,6 +60,16 @@ public class CuBalanceServiceImpl extends BalanceServiceImpl implements CuBalanc
     public Iterator<Balance> findGeneralBalancesToForwardForFiscalYear(Integer year, Collection<String> charts) {
         return ((CuBalanceDao) balanceDao).findGeneralBalancesToForwardForFiscalYear(year, charts);
     }
-
+    
+    /**
+     * Returns all of the balances to be forwarded for the organization reversion process
+     * @param year the year of balances to find
+     * @param endOfYear whether the organization reversion process is running end of year (before the fiscal year change over) or beginning of year (after the fiscal year change over)
+     * @return an iterator of balances to put through the strenuous organization reversion process
+     * @see org.kuali.kfs.gl.service.BalanceService#findOrganizationReversionBalancesForFiscalYear(java.lang.Integer, boolean)
+     */
+    public Iterator<Balance> findReversionBalancesForFiscalYear(Integer year, boolean endOfYear) {
+        return ((CuBalanceDao) balanceDao).findReversionBalancesForFiscalYear(year, endOfYear);
+    }
 
 }

@@ -28,7 +28,10 @@
 			</list>
 		</property>
 		<property name="fiscalYearMakers">
-			<list/>
+			<list merge="true">
+				<ref bean="accountReversionFiscalYearMaker" />
+            	<ref bean="accountReversionDetailFiscalYearMaker" />
+			</list>
 		</property>
 		<property name="scriptConfigurationFilePaths">
 			<list/>
@@ -126,5 +129,45 @@
     <bean id="organizationRoutingModelLookupableHelperService" class="edu.cornell.kfs.coa.businessobject.lookup.CuOrganizationRoutingModelNameLookupableHelperServiceImpl" />	
 
     <bean id="accountDelegateService"  class="edu.cornell.kfs.coa.service.impl.CuAccountDelegateServiceImpl" parent="accountDelegateService-parentBean"/>
+    
+    <bean id="accountReversionDao" parent="platformAwareDao"
+		class="edu.cornell.kfs.coa.dataaccess.impl.AccountReversionDaoOjb" />
+		
+    <bean id="accountReversionService" class="edu.cornell.kfs.coa.service.impl.AccountReversionServiceImpl">
+		<property name="accountReversionDao" ref="accountReversionDao" />
+		<property name="businessObjectService" ref="businessObjectService" />
+	</bean>
+	
+	<bean name="accountReversionDetailTrickleDownInactivationService"
+		class="edu.cornell.kfs.coa.service.impl.AccountReversionDetailTrickleDownInactivationServiceImpl">
+    	<property name="businessObjectService">
+    		<ref bean="businessObjectService"/>
+    	</property>
+    	<property name="noteService">
+    		<ref bean="noteService"/>
+    	</property>
+		<property name="documentHeaderService">
+			<ref bean="documentHeaderService" />
+		</property>
+    	<property name="kualiConfigurationService">
+    		<ref bean="kualiConfigurationService"/>
+    	</property>
+    </bean>
+    
+    <bean id="accountReversionFiscalYearMaker" parent="FiscalYearMaker">
+		<property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.AccountReversion" /> 
+		<property name="fiscalYearOneBehind" value="true" />
+	</bean>
+	
+	<bean id="accountReversionDetailFiscalYearMaker" parent="FiscalYearMaker">
+		<property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.AccountReversionDetail" /> 
+		<property name="parentClasses">
+		  <set>
+		    <value>org.kuali.kfs.coa.businessobject.ObjectCode</value>
+		    <value>edu.cornell.kfs.coa.businessobject.AccountReversion</value>
+		  </set>
+		</property>	
+		<property name="fiscalYearOneBehind" value="true" />
+	</bean>	
     
 </beans>

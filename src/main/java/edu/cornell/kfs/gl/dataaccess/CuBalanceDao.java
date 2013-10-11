@@ -2,7 +2,6 @@ package edu.cornell.kfs.gl.dataaccess;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.kuali.kfs.gl.businessobject.Balance;
 import org.kuali.kfs.gl.dataaccess.BalanceDao;
@@ -45,5 +44,15 @@ public interface CuBalanceDao extends BalanceDao{
      * @return and Iterator chuck full of Balances
      */
     public Iterator<Balance> findCumulativeBalancesToForwardForFiscalYear(Integer year, Collection<String> charts);
+    
+    /**
+     * Returns the balances that would specifically be picked up by the Reversion year end process
+     * 
+     * @param year the year to find balances for
+     * @return an iterator of the balances to process
+     */
+    public Iterator<Balance> findReversionBalancesForFiscalYear(Integer year, boolean endOfYear);
+
+   
 
 }

@@ -18,8 +18,8 @@
 <channel:portalChannelTop channelTitle="Chart of Accounts" />
 <div class="body">
     <ul class="chan">
-    	<li><portal:portalLink displayTitle="true" title="Account Reversion" url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.coa.businessobject.AccountReversion&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
-        <li><portal:portalLink displayTitle="true" title="Account Reversion Global" url="kr/maintenance.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.coa.businessobject.AccountReversionGlobal" /></li>
+    	<li><portal:portalLink displayTitle="true" title="Account Reversion" url="kr/lookup.do?methodToCall=start&businessObjectClassName=edu.cornell.kfs.coa.businessobject.AccountReversion&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
+        <li><portal:portalLink displayTitle="true" title="Account Reversion Global" url="kr/maintenance.do?methodToCall=start&businessObjectClassName=edu.cornell.kfs.coa.businessobject.AccountReversionGlobal" /></li>
         <li><portal:portalLink displayTitle="true" title="Account Type" url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.coa.businessobject.AccountType&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
         <li><portal:portalLink displayTitle="true" title="Accounting Period" url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.coa.businessobject.AccountingPeriod&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
 		<li><portal:portalLink displayTitle="true" title="AICPA Function" url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.coa.businessobject.AICPAFunction&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>

@@ -64,6 +64,24 @@ public class CUKFSKeyConstants extends KFSKeyConstants{
 	    public static final String ERROR_FINAL_FINANCIAL_REPORT_DATE_REQUIRED = "error.cg.requiredFinancialReportDateNotSupplied";    
 
 
-
+	    // Account Reversion Errors
+	    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_BUDGET_REVERSION_INCOMPLETE = "error.document.globalAcctReversion.incompleteBudgetReversion";
+	    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_CASH_REVERSION_INCOMPLETE = "error.document.globalAcctReversion.incompleteCashReversion";
+	    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_ACCT_REVERSION_CATEGORY = "error.document.globalAcctReversion.invalidAcctReversionCategory";
+	    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_ACCT_REVERSION_CODE = "error.document.globalAcctReversion.invalidAcctReversionCode";
+	    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_OBJECT_CODE_INVALID = "error.document.globalAcctReversion.objectCodeInvalid";
+	    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_NO_ACCOUNTS = "error.document.globalAcctReversion.noAccounts";
+	    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_CHART = "error.document.globalAcctReversion.invalidChart";
+	    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_ACCOUNT = "error.document.globalAcctReversion.invalidAccount";
+	    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_NO_ACCT_REVERSION = "error.document.globalAcctReversion.noAcctReversion";
+	    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_DUPLICATE_ACCOUNTS = "error.document.globalAcctReversion.duplicateAccts";
+	    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_NO_REVERSION_CODE = "error.document.globalAcctReversion.noReversionCode";
 	
+	    public static final String ACCOUNT_REVERSION_DETAIL_TRICKLE_DOWN_INACTIVATION = "note.trickleDownInactivation.inactivatedACCOUNTReversionDetail";
+	    public static final String ACCOUNT_REVERSION_DETAIL_TRICKLE_DOWN_INACTIVATION_ERROR_DURING_PERSISTENCE = "note.trickleDownInactivation.inactivatedACCOUNTReversionDetail.errorDuringPersistence";
+	    public static final String ACCOUNT_REVERSION_DETAIL_TRICKLE_DOWN_ACTIVATION = "note.trickleDownActivation.activatedACCOUNTReversionDetail";
+	    public static final String ACCOUNT_REVERSION_DETAIL_TRICKLE_DOWN_ACTIVATION_ERROR_DURING_PERSISTENCE = "note.trickleDownActivation.activatedACCOUNTReversionDetail.errorDuringPersistence";
+	    public static final String MESSAGE_REPORT_YEAR_END_ACCOUNT_REVERSION_LEDGER_TITLE_LINE = "message.report.yearEnd.accountReversion.ledger.titleLine";
+
+	   
 }
