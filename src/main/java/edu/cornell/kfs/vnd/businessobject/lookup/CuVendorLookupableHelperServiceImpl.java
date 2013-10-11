@@ -27,6 +27,7 @@ import org.kuali.kfs.vnd.businessobject.lookup.VendorLookupableHelperServiceImpl
 import org.kuali.rice.krad.bo.BusinessObject;
 import org.kuali.rice.krad.util.BeanPropertyComparator;
 
+import edu.cornell.kfs.vnd.businessobject.CuVendorDetail;
 import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 
 public class CuVendorLookupableHelperServiceImpl extends VendorLookupableHelperServiceImpl {
@@ -52,15 +53,15 @@ public class CuVendorLookupableHelperServiceImpl extends VendorLookupableHelperS
         searchResults = vendorDao.getSearchResults(fieldValues);
 
         for (BusinessObject bo : searchResults) {
-        	VendorDetail vd = (VendorDetail) bo;
+        	CuVendorDetail vd = (CuVendorDetail) bo;
         	updateDefaultVendorAddress(vd);
         }
         for (BusinessObject businessObject :searchResults) {
-            VendorDetail vendor = (VendorDetail) businessObject;
+        	CuVendorDetail vendor = (CuVendorDetail) businessObject;
             if (!vendor.isVendorParentIndicator()) {
                 // find the parent object in the details collection and add that§
                 for (BusinessObject tmpObject : searchResults) {
-                    VendorDetail tmpVendor = (VendorDetail) tmpObject;
+                	CuVendorDetail tmpVendor = (CuVendorDetail) tmpObject;
                     if (tmpVendor.getVendorHeaderGeneratedIdentifier().equals(vendor.getVendorHeaderGeneratedIdentifier()) 
                     		&& tmpVendor.isVendorParentIndicator()) {
                         vendor.setVendorName(tmpVendor.getVendorName() + " > " + vendor.getVendorName());

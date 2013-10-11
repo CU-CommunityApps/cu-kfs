@@ -79,4 +79,14 @@ public class CUPurapConstants extends PurapConstants {
     	public static final String SEND_TO_VENDOR = "sendToVendor";
     }
     
+    public static final class POTransmissionMethods {
+        public static final String FAX = "FAX";
+        public static final String PRINT = "PRIN";
+        public static final String NOPRINT = "NOPR";
+        public static final String ELECTRONIC = "ELEC";
+        public static final String EMAIL = "EMAL";
+        public static final String MANUAL = "MANL";
+        public static final String CONVERSION = "CNVS";
+    }
+
 }
