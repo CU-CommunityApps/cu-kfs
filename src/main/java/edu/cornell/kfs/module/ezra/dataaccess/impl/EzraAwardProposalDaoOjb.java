@@ -24,6 +24,8 @@ public class EzraAwardProposalDaoOjb extends PlatformAwareDaoBaseOjb implements 
 		criteria.addLike("awardProposalId", "A%");
 		criteria.addGreaterThan("budgetAmt",KualiDecimal.ZERO);
 		criteria.addEqualTo("status", "ASAP");
+	    //KFSPTS-1920 Edits associated with Award Descriptions of MTA(M), NDA(N), RDA(R) should not be picked up for edits to KFS Awards.
+        criteria.addNotIn("awardDescriptionCode", getExcludedAwardDescriptions());
 
 		
 //		ReportQueryByCriteria query;
@@ -47,6 +49,9 @@ public class EzraAwardProposalDaoOjb extends PlatformAwareDaoBaseOjb implements 
 		Criteria criteria = new Criteria();
 		criteria.addIn("projectId", awardNumbers);
 		criteria.addLike("awardProposalId", "A%");
+		//KFSPTS-1920 Edits associated with Award Descriptions of MTA(M), NDA(N), RDA(R) should not be picked up for edits to KFS Awards.
+		criteria.addNotIn("awardDescriptionCode", getExcludedAwardDescriptions());
+		
 		if (date != null) {
 			criteria.addGreaterThan("lastUpdated", date);
 		}
@@ -56,6 +61,21 @@ public class EzraAwardProposalDaoOjb extends PlatformAwareDaoBaseOjb implements 
 	
 		
         return (List<EzraProposalAward>)getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(EzraProposalAward.class, criteria));
+	}
+	
+	/**
+	 * Returns a list of award descriptions that should be excluded from KFS Award edits.
+	 * 
+	 * @return a list of award descriptions that should be excluded from KFS Award edits.
+	 */
+	private List<String> getExcludedAwardDescriptions(){
+	       List<String> excludedAwardDescriptions = new ArrayList<String>();
+	       
+	       excludedAwardDescriptions.add("M");
+	       excludedAwardDescriptions.add("N");
+	       excludedAwardDescriptions.add("R");
+	       
+	       return excludedAwardDescriptions;
 	}
 
 }
