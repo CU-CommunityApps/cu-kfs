@@ -34,7 +34,8 @@
     var kualiForm = document.forms['KualiForm'];
     var kualiElements = kualiForm.elements;
   </SCRIPT>
-	
+
+  <script type='text/javascript' src="dwr/interface/IWantAmountUtil.js"></script>
 
 	<kul:tabTop tabTitle="Document Overview" defaultOpen="true" tabErrorKey="${Constants.DOCUMENT_ERRORS}">
 
@@ -132,6 +133,8 @@
     var kualiForm = document.forms['KualiForm'];
     var kualiElements = kualiForm.elements;
   </SCRIPT>
+
+  <script type='text/javascript' src="dwr/interface/IWantAmountUtil.js"></script>
 
 	<c:if test="${(step eq 'customerDataStep')}">
 

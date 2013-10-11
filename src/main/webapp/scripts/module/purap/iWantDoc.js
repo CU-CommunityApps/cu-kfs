@@ -167,159 +167,130 @@ function loadAccountName(accountNumberFieldName, chartFieldName, accountNameFiel
  }
 
 function updateAccountsTotal(totalDollarAmountFieldName, totalAccountsField, itemsNbr, lineNbr) {
-	var total = 0;
 	var itemsTotal = DWRUtil.getValue(totalDollarAmountFieldName);
 
-	for (i = 0; i < lineNbr; i++) {
-		var amountToAdd = 0;
-		var useAmountOrPercent = DWRUtil
-				.getValue('document.account[' + i + '].useAmountOrPercent');
-		var amountOrPercent = DWRUtil.getValue('document.account[' + i + '].amountOrPercent');
+	var useAmountsOrPercents = new Array();
+	var accountAmountsOrPercents = new Array();
 
-		if (amountOrPercent == "" || isNaN(amountOrPercent)) {
-			amountOrPercent = 0;
-			 
+	var i = 0;
+	for (i = 0; i < lineNbr; i++) {
+		useAmountsOrPercents[i] = DWRUtil.getValue('document.account[' + i + '].useAmountOrPercent');
+		accountAmountsOrPercents[i] = DWRUtil.getValue('document.account[' + i + '].amountOrPercent');
+		if (isNaN(accountAmountsOrPercents[i])) {
+			accountAmountsOrPercents[i] = "";
 		}
-		
-		if ('PERCENT' == useAmountOrPercent) {
-			amountToAdd = (amountOrPercent * itemsTotal)/100;
-		}
-		else {
-			amountToAdd = amountOrPercent *1;
-		}
-		
-		total += amountToAdd;
 	}
 
+	var updateTotalsCallback = {callback:function(totals){
+		// Update totals accordingly upon server callback.
+		updateTotal(totalAccountsField, totals[0]);
+		updateItemAndAccountDifference(totals[1]);
+	}};
+
+	// Send the data to the server for computation.
+	IWantAmountUtil.calculateTotalsForAccountChange(useAmountsOrPercents, accountAmountsOrPercents, itemsTotal, updateTotalsCallback);
+
 	//format
-	total = total.toFixed(2);
-	total = addCommas(total);
-	
-	setRecipientValue(totalAccountsField, total);
-	
+	//total = total.toFixed(2);
+	//total = addCommas(total);
+
+	//setRecipientValue(totalAccountsField, total);
+
 	// Now update the difference between the item and account totals.
-	updateItemAndAccountDifference(totalDollarAmountFieldName, totalAccountsField, itemsNbr, lineNbr);
+	//updateItemAndAccountDifference(totalDollarAmountFieldName, totalAccountsField, itemsNbr, lineNbr);
 }
 
 function updateItemsTotal(totalDollarAmountFieldName, totalAccountsField, itemsNbr, accountsNbr, totalItemAmountFieldName, itemNbr) {
-	
-	var total = 0;
-	
-	updateItemTotal(totalItemAmountFieldName, itemNbr);
+
+	var i = 0;
+	//var total = 0;
+
+	//updateItemTotal(totalItemAmountFieldName, itemNbr);
+
+	var itemQuantities = new Array();
+	var itemUnitPrices = new Array();
+	var useAmountsOrPercents = new Array();
+	var accountAmountsOrPercents = new Array();
 
 	for (i = 0; i < itemsNbr; i++) {
-		var quantity = DWRUtil
-				.getValue('document.item[' + i + '].itemQuantity');
-		var price = DWRUtil.getValue('document.item[' + i + '].itemUnitPrice');
-
-		if (quantity == "" || isNaN(quantity)) {
-			quantity = 1;
+		itemQuantities[i] = DWRUtil.getValue('document.item[' + i + '].itemQuantity');
+		if (isNaN(itemQuantities[i])) {
+			itemQuantities[i] = "";
 		}
-		if (price == "" || isNaN(price)) {
-			price = 0;
+		itemUnitPrices[i] = DWRUtil.getValue('document.item[' + i + '].itemUnitPrice');
+		if (isNaN(itemUnitPrices[i])) {
+			itemUnitPrices[i] = "";
 		}
-		total += price * quantity;
 	}
+
+	for (i = 0; i < accountsNbr; i++) {
+		useAmountsOrPercents[i] = DWRUtil.getValue('document.account[' + i + '].useAmountOrPercent');
+		accountAmountsOrPercents[i] = DWRUtil.getValue('document.account[' + i + '].amountOrPercent');
+		if (isNaN(accountAmountsOrPercents[i])) {
+			accountAmountsOrPercents[i] = "";
+		}
+	}
+
+	var updateTotalsCallback = {callback:function(totals){
+		// Update relevant total amounts fields upon server callback.
+		updateTotal(totalItemAmountFieldName, totals[0]);
+		updateTotal(totalDollarAmountFieldName, totals[1]);
+		updateTotal(totalAccountsField, totals[2]);
+		updateItemAndAccountDifference(totals[3]);
+	}};
+
+	// Send the data to the server for computation.
+	IWantAmountUtil.calculateTotalsForItemChange(itemQuantities, itemUnitPrices, itemNbr, useAmountsOrPercents, accountAmountsOrPercents, updateTotalsCallback);
+
 	//format
-	total = total.toFixed(2);
-	total = addCommas(total);
-	
-	setRecipientValue(totalDollarAmountFieldName, total);
-	
+	//total = total.toFixed(2);
+	//total = addCommas(total);
+
+	//setRecipientValue(totalDollarAmountFieldName, total);
+
 	// now update accounts total
-	updateAccountsTotal(totalDollarAmountFieldName, totalAccountsField, itemsNbr, accountsNbr);
+	//updateAccountsTotal(totalDollarAmountFieldName, totalAccountsField, itemsNbr, accountsNbr);
 }
 
-function updateItemTotal(totalDollarAmountFieldName, itemNbr) {
-	var total = 0;
-
-		var quantity = DWRUtil
-				.getValue('document.item[' + itemNbr + '].itemQuantity');
-		var price = DWRUtil.getValue('document.item[' + itemNbr + '].itemUnitPrice');
-
-		if (quantity == "" || isNaN(quantity)) {
-			quantity = 1;
-		}
-		if (price == "" || isNaN(price)) {
-			price = 0;
-		}
-		total += price * quantity;
-	
+function updateTotal(totalAmountFieldName, total) {
 	//format
-	total = total.toFixed(2);
+	//total = total.toFixed(2);
 	total = addCommas(total);
-	
-	setRecipientValue(totalDollarAmountFieldName, total);
+
+	setRecipientValue(totalAmountFieldName, total);
 }
 
 function updateNewItemTotal() {
-	var total = 0;
+	//var total = 0;
 
-		var quantity = DWRUtil
-				.getValue('newIWantItemLine.itemQuantity');
-		var price = DWRUtil.getValue('newIWantItemLine.itemUnitPrice');
+	var quantity = DWRUtil.getValue('newIWantItemLine.itemQuantity');
+	if (isNaN(quantity)) {
+		quantity = "";
+	}
+	var price = DWRUtil.getValue('newIWantItemLine.itemUnitPrice');
+	if (isNaN(price)) {
+		price = "";
+	}
 
-		if (quantity == "" || isNaN(quantity)) {
-			quantity = 1;
-		}
-		if (price == "" || isNaN(price)) {
-			price = 0;
-		}
-		total += price * quantity;
-	
+	var updateTotalsCallback = {callback:function(total){
+		// Update line total upon server callback.
+		updateTotal('newIWantItemLine.totalAmount', total);
+	}};
+
+	// Send quantity and price to the server to perform the computation.
+	IWantAmountUtil.calculateSingleItemTotal(quantity, price, updateTotalsCallback);
+
 	//format
-	total = total.toFixed(2);
-	total = addCommas(total);
-	
-	setRecipientValue('newIWantItemLine.totalAmount', total);
+	//total = total.toFixed(2);
+	//total = addCommas(total);
+
+	//setRecipientValue('newIWantItemLine.totalAmount', total);
 }
 
-function updateItemAndAccountDifference(totalDollarAmountFieldName, totalAccountsField, itemsNbr, accountsNbr) {
-	var total = 0;
-	
-	// TODO: Is it safe to grab the total fields' formatted values, or is re-computation preferred?
-	
-	// Add item amounts to total.
-	for (i = 0; i < itemsNbr; i++) {
-		var quantity = DWRUtil
-				.getValue('document.item[' + i + '].itemQuantity');
-		var price = DWRUtil.getValue('document.item[' + i + '].itemUnitPrice');
-
-		if (quantity == "" || isNaN(quantity)) {
-			quantity = 1;
-		}
-		if (price == "" || isNaN(price)) {
-			price = 0;
-		}
-		total += price * quantity;
-	}
-	
-	var itemsTotal = total;
-	
-	// Subtract account amounts from total.
-	for (j = 0; j < accountsNbr; j++) {
-		var amountToAdd = 0;
-		var useAmountOrPercent = DWRUtil
-				.getValue('document.account[' + j + '].useAmountOrPercent');
-		var amountOrPercent = DWRUtil.getValue('document.account[' + j + '].amountOrPercent');
-
-		if (amountOrPercent == "" || isNaN(amountOrPercent)) {
-			amountOrPercent = 0;
-			 
-		}
-		
-		if ('PERCENT' == useAmountOrPercent) {
-			amountToAdd = (amountOrPercent * itemsTotal)/100;
-		}
-		else {
-			amountToAdd = amountOrPercent *1;
-		}
-		
-		total -= amountToAdd;
-	}
+function updateItemAndAccountDifference(total) {
 	
 	//format
-	total = total.toFixed(2);
+	//total = total.toFixed(2);
 	total = addCommas(total);
 	
 	setRecipientValue('document.itemAndAccountDifference', total);

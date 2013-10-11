@@ -575,7 +575,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
                 item.setItemUnitPrice(BigDecimal.ZERO);
             }
 
-            itemTotal = item.getItemQuantity().multiply(new KualiDecimal(item.getItemUnitPrice()));
+            itemTotal = new KualiDecimal(item.getItemQuantity().bigDecimalValue().multiply(item.getItemUnitPrice()));
 
             totalDollarAmount = totalDollarAmount.add(itemTotal);
         }
