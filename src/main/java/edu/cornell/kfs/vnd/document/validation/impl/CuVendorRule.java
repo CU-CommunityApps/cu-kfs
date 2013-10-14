@@ -61,7 +61,7 @@ public class CuVendorRule extends VendorRule {
 
 
         if (bo instanceof VendorAddress) {
-             CuVendorAddress address = (CuVendorAddress) bo;           
+             VendorAddress address = (VendorAddress) bo;           
             CuVendorDetail vendorDetail = (CuVendorDetail) document.getNewMaintainableObject().getBusinessObject();
             CuVendorHeader vendorHeader = (CuVendorHeader)vendorDetail.getVendorHeader();
 //            String propertyConstant = KFSConstants.ADD_PREFIX + "." + VendorPropertyConstants.VENDOR_ADDRESS + ".";

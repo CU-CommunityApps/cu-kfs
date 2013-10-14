@@ -17,7 +17,7 @@
 
   <bean id="VendorMaintenanceDocument" parent="VendorMaintenanceDocument-parentBean">
     <property name="businessObjectClass" value="edu.cornell.kfs.vnd.businessobject.CuVendorDetail"/>
-
+    <property name="maintainableClass" value="edu.cornell.kfs.vnd.document.CuVendorMaintainableImpl"/>
   
     <property name="maintainableSections">
       <list merge="true">
