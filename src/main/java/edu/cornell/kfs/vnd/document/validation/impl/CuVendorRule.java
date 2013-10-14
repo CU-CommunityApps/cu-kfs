@@ -44,14 +44,14 @@ public class CuVendorRule extends VendorRule {
             valid &= validateB2BDefaultCommodityCode(document);
         }
       
-        valid &=checkW9ReceivedIndicatorAndDate(document);
-        valid &=checkGeneralLiabilityAmountAndExpiration(document);
-        valid &=checkAutoLiabilityAmountAndExpiration(document);
-        valid &=checkWorkmansCompAmountAndExpiration(document);
-        valid &=checkUmbrellaPolicyAmountAndExpiration(document);
-        valid &=checkHealthLicenseAndExpiration(document);
-        valid &=checkSupplierDiversityExpirationDate(document);
-        valid &=checkInsuranceRequired(document);
+		valid &= checkW9ReceivedIndicatorAndDate(document);
+		valid &= checkGeneralLiabilityAmountAndExpiration(document);
+		valid &= checkAutoLiabilityAmountAndExpiration(document);
+		valid &= checkWorkmansCompAmountAndExpiration(document);
+		valid &= checkUmbrellaPolicyAmountAndExpiration(document);
+		valid &= checkHealthLicenseAndExpiration(document);
+		valid &= checkSupplierDiversityExpirationDate(document);
+		valid &= checkInsuranceRequired(document);
         
         return valid;
     }
@@ -66,7 +66,8 @@ public class CuVendorRule extends VendorRule {
             CuVendorHeader vendorHeader = (CuVendorHeader)vendorDetail.getVendorHeader();
 //            String propertyConstant = KFSConstants.ADD_PREFIX + "." + VendorPropertyConstants.VENDOR_ADDRESS + ".";
             String propertyConstant = "add.address.";
-            success &= this.checkAddressMethodOfPOTransmissionAndData(vendorHeader.getVendorTypeCode(), vendorHeader.getVendorType().getVendorAddressTypeRequiredCode(), address, propertyConstant);
+            // TODO : this is comment temporarily
+          //  success &= this.checkAddressMethodOfPOTransmissionAndData(vendorHeader.getVendorTypeCode(), vendorHeader.getVendorType().getVendorAddressTypeRequiredCode(), address, propertyConstant);
         }
         if (bo instanceof CuVendorCreditCardMerchant) {
         	CuVendorCreditCardMerchant vendorMerchant = (CuVendorCreditCardMerchant) bo;
