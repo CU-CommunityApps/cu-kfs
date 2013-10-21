@@ -26,9 +26,10 @@
       </list>
     </property>
   
-    <property name="businessRulesClass" value="edu.cornell.kfs.vnd.document.validation.impl.CuVendorRule"/>  
+   <!-- <property name="businessRulesClass" value="edu.cornell.kfs.vnd.document.validation.impl.CuVendorRule"/>  -->
+    <property name="businessRulesClass" value="org.kuali.kfs.vnd.document.validation.impl.VendorRule"/>  
     <property name="documentPresentationControllerClass" value="edu.cornell.kfs.vnd.document.authorization.CuVendorDocumentPresentationController"/>
-    <property name="promptBeforeValidationClass" value="edu.cornell.kfs.vnd.document.validation.impl.CuVendorPreRules"/>
+    <!--<property name="promptBeforeValidationClass" value="edu.cornell.kfs.vnd.document.validation.impl.CuVendorPreRules"/> -->
     
   </bean>
 
