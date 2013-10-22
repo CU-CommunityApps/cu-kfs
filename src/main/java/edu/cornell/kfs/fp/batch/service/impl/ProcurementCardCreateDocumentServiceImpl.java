@@ -147,6 +147,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
     
     @Override
     protected String validateTargetAccountingLine(ProcurementCardTargetAccountingLine targetLine) {
+        targetLine.refresh();
         final String lineNumber = targetLine.getSequenceNumber() == null ? "new" : targetLine.getSequenceNumber().toString();
 
         String errorText = "";
@@ -161,6 +162,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
             }
             
             errorText += " " + tempErrorText;
+            
 
             targetLine.setFinancialObjectCode(getErrorObjectCode());
             targetLine.refresh();
