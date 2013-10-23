@@ -16,7 +16,6 @@
 -->
   <bean id="AuxiliaryVoucherDocument" parent="AuxiliaryVoucherDocument-parentBean">
     <property name="documentClass" value="edu.cornell.kfs.fp.document.CuAuxiliaryVoucherDocument"/>
-    <property name="importedLineParserClass" value="edu.cornell.kfs.fp.businessobject.CuAuxiliaryVoucherAccountingLineParser"/>
   </bean>
   
   <bean id="AuxiliaryVoucher-accountingLineView" parent="AuxiliaryVoucher-accountingLineView-parent">
