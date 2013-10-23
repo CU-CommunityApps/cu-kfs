@@ -176,6 +176,15 @@
             <ref bean="mailService"/>
         </property>
     </bean>
+    
+    <bean id="debitDeterminerService" class="edu.cornell.kfs.fp.document.service.impl.DebitDeterminerServiceImpl">
+        <property name="optionsService">
+            <ref bean="optionsService"/>
+        </property>
+        <property name="accountingDocumentRuleUtils">
+            <ref bean="accountingDocumentRuleHelperService"/>
+        </property>
+    </bean>
 
     <bean id="cuLegacyTravelService" class="edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl">
         <property name="updateTripWsdl">
