@@ -27,6 +27,9 @@
         <form-bean name="IWantDocumentForm"
             type="edu.cornell.kfs.module.purap.document.web.struts.IWantDocumentForm" />
             
+        <form-bean name="CuDisbursementVoucherForm"
+            type="edu.cornell.kfs.fp.document.web.struts.CuDisbursementVoucherForm" />
+            
     </form-beans>
     
     <action-mappings>
@@ -75,6 +78,13 @@
 			parameter="methodToCall" validate="true" attribute="KualiForm">
 			<set-property property="cancellable" value="true" />
 			<forward name="basic" path="/jsp/fp/PreEncumbrance.jsp" />
+		</action>
+		             
+		<action path="/financialDisbursementVoucher" name="CuDisbursementVoucherForm" input="/jsp/fp/DisbursementVoucher.jsp"
+			type="edu.cornell.kfs.fp.document.web.struts.CuDisbursementVoucherAction" scope="request"
+			parameter="methodToCall" validate="true" attribute="KualiForm">
+			<set-property property="cancellable" value="true" />
+			<forward name="basic" path="/jsp/fp/DisbursementVoucher.jsp" />
 		</action>
     </action-mappings>
     

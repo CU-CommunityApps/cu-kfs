@@ -15,7 +15,7 @@
 -->
 <descriptor-repository version="1.0">
 
-<class-descriptor class="edu.cornell.kfs.fp.businessobject.DisbursementVoucherPayeeDetailExtension" table="FP_DV_PAYEE_DTL_TX">
+<class-descriptor class="edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension" table="FP_DV_PAYEE_DTL_TX">
     <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
@@ -24,7 +24,7 @@
 </class-descriptor>
 
 
-<class-descriptor class="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail" table="FP_DV_PAYEE_DTL_T">
+<class-descriptor class="edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail" table="FP_DV_PAYEE_DTL_T">
     <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
@@ -50,7 +50,7 @@
     <reference-descriptor name="disbVchrPaymentReason" class-ref="org.kuali.kfs.fp.businessobject.PaymentReasonCode" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
         <foreignkey field-ref="disbVchrPaymentReasonCode" />
     </reference-descriptor>
-    <reference-descriptor name="extension" class-ref="edu.cornell.kfs.fp.businessobject.DisbursementVoucherPayeeDetailExtension" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+    <reference-descriptor name="extension" class-ref="edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
         <foreignkey field-ref="documentNumber" />
     </reference-descriptor>
 

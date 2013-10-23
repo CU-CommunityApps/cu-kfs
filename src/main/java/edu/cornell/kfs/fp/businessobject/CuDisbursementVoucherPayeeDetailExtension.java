@@ -11,7 +11,7 @@ import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
  * @author Admin-dwf5
  *
  */
-public class DisbursementVoucherPayeeDetailExtension extends PersistableBusinessObjectExtensionBase {
+public class CuDisbursementVoucherPayeeDetailExtension extends PersistableBusinessObjectExtensionBase {
 
     private String documentNumber;
 

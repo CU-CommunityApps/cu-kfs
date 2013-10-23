@@ -68,4 +68,18 @@
 		</property>
 	</bean>
 	
+	  <bean id="DisbursementVoucher-routeDocumentValidation" parent="DisbursementVoucher-routeDocumentValidation-parentBean" >
+	<property name="validations">
+		<list merge="true">
+					<bean parent="DisbursementVoucher-initiatorPrimaryDepartmentValidation" scope="prototype">
+						<property name="parameterProperties">
+							<list>
+								<bean parent="accountingDocumentFieldConversion" />
+							</list>
+						</property>
+					</bean>	
+		</list>
+	</property>
+	</bean>
+	
 </beans>

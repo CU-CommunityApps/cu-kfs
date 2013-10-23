@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+<!--
+ Copyright 2008-2009 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+  <bean id="DisbursementPayee" parent="DisbursementPayee-parentBean">
+  	    <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.CuDisbursementPayee"/>
+  		
+  		<property name="lookupDefinition">
+      		<ref bean="DisbursementPayee-lookupDefinition"/>
+    	</property>
+    	<property name="attributes">
+  		<list merge="true">
+  				<ref bean="DisbursementPayee-principalName"/>    <!-- KFSPTS-1737 added -->
+  		</list>
+  </property>
+  </bean>
+  
+  <!-- KFSPTS-1737 added -->
+  <bean id="DisbursementPayee-principalName" parent="DisbursementPayee-principalName-parentBean"/>
+  <bean id="DisbursementPayee-principalName-parentBean" parent="PersonImpl-principalName" abstract="true">
+    <property name="label" value="NetID"/>
+  </bean>
+  
+  
+ <bean parent="DataDictionaryBeanOverride">
+       <property name="beanName" value="DisbursementPayee-lookupDefinition" />
+       <property name="fieldOverrides">
+           <list>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="lookupFields" />
+                   <property name="propertyNameForElementCompare" value="attributeName" />
+                   <property name="element">
+                       <bean parent="FieldDefinition" p:attributeName="lastName" />
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                           <bean parent="FieldDefinition" p:attributeName="principalName" />
+                       </list>
+                   </property>
+               </bean>
+           </list>
+       </property>
+   </bean>
+   
+   <bean parent="DataDictionaryBeanOverride">
+       <property name="beanName" value="DisbursementPayee-lookupDefinition" />
+       <property name="fieldOverrides">
+           <list>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="resultFields" />
+                   <property name="propertyNameForElementCompare" value="attributeName" />
+                   <property name="element">
+                       <bean parent="FieldDefinition" p:attributeName="payeeName" />
+                   </property>
+                   <property name="insertBefore">
+                       <list>
+                           <bean parent="FieldDefinition" p:attributeName="principalName" />
+                       </list>
+                   </property>
+               </bean>
+           </list>
+       </property>
+   </bean>
+   
+</beans>

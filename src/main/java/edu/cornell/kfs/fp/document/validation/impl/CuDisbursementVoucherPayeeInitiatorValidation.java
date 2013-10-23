@@ -1,0 +1,83 @@
+package edu.cornell.kfs.fp.document.validation.impl;
+
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherPayeeInitiatorValidation;
+import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.AccountingDocument;
+import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.MessageMap;
+
+import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
+import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
+
+public class CuDisbursementVoucherPayeeInitiatorValidation extends DisbursementVoucherPayeeInitiatorValidation {
+    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisbursementVoucherPayeeInitiatorValidation.class);
+    
+    protected AccountingDocument accountingDocumentForValidation;
+    
+    public boolean validate(AttributedDocumentEvent event) {
+        LOG.debug("validate start");        
+        boolean isValid = true;
+        
+        CuDisbursementVoucherDocument document = (CuDisbursementVoucherDocument) accountingDocumentForValidation;
+        CuDisbursementVoucherPayeeDetail payeeDetail = document.getDvPayeeDetail();
+        
+        MessageMap errors = GlobalVariables.getMessageMap();
+        errors.addToErrorPath(KFSPropertyConstants.DOCUMENT);
+
+        String uuid = null;
+        // If payee is a vendor, then look up SSN and look for SSN in the employee table
+        if (payeeDetail.isVendor() && StringUtils.isNotBlank(payeeDetail.getDisbVchrVendorHeaderIdNumber())) {
+            VendorDetail dvVendor = retrieveVendorDetail(payeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger(), payeeDetail.getDisbVchrVendorDetailAssignedIdNumberAsInteger());
+            // if the vendor tax type is SSN, then check the tax number
+            if (dvVendor != null && TAX_TYPE_SSN.equals(dvVendor.getVendorHeader().getVendorTaxTypeCode())) {
+                // check ssn against employee table
+                Person user = retrieveEmployeeBySSN(dvVendor.getVendorHeader().getVendorTaxNumber());
+                if (user != null) {
+                    uuid = user.getPrincipalId();
+                }
+            }
+        } else if (payeeDetail.isEmployee()) {
+            Person employee = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(payeeDetail.getDisbVchrEmployeeIdNumber());
+            uuid = employee.getPrincipalId();
+        } else if (payeeDetail.isStudent() || payeeDetail.isAlumni()) {
+            uuid = payeeDetail.getDisbVchrPayeeIdNumber();
+        }
+
+        // If a uuid was found for payee, check it against the initiator uuid
+        if (StringUtils.isNotBlank(uuid)) {
+            Person initUser = getInitiator(document);
+            if (uuid.equals(initUser.getPrincipalId())) {
+                errors.putError(DV_PAYEE_ID_NUMBER_PROPERTY_PATH, KFSKeyConstants.ERROR_PAYEE_INITIATOR);
+                isValid = false;
+            }
+        }
+        
+        errors.removeFromErrorPath(KFSPropertyConstants.DOCUMENT);   
+        
+        return isValid;
+    }
+    
+    /**
+     * Sets the accountingDocumentForValidation attribute value.
+     * @param accountingDocumentForValidation The accountingDocumentForValidation to set.
+     */
+    public void setAccountingDocumentForValidation(AccountingDocument accountingDocumentForValidation) {
+        this.accountingDocumentForValidation = accountingDocumentForValidation;
+    }
+
+    /**
+     * Gets the accountingDocumentForValidation attribute. 
+     * @return Returns the accountingDocumentForValidation.
+     */
+    public AccountingDocument getAccountingDocumentForValidation() {
+        return accountingDocumentForValidation;
+    }
+
+}

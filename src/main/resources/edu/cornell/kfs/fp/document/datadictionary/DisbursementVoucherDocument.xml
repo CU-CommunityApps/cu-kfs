@@ -3,6 +3,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd         http://rice.kuali.org/dd/dd.xsd"> 
 
   <bean id="DisbursementVoucherDocument" parent="DisbursementVoucherDocument-parentBean">
-    <property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.DisbursementVoucherDocumentPresentationController"/>
+    <property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.CuDisbursementVoucherDocumentPresentationController"/>
+    <property name="documentClass" value="edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument"/>
   </bean>
+  
 </beans>
