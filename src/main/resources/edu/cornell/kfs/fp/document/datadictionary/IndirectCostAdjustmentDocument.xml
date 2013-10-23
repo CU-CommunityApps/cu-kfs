@@ -15,9 +15,6 @@
  limitations under the License.
 -->
 
-   <bean id="IndirectCostAdjustmentDocument" parent="IndirectCostAdjustmentDocument-parentBean">
-     <property name="importedLineParserClass" value="edu.cornell.kfs.fp.businessobject.CuIndirectCostAdjustmentDocumentAccountingLineParser"/>
-  </bean>
 	
 	<bean id="IndirectCostAdjustmentDocument-accountingLineView" parent="IndirectCostAdjustmentDocument-accountingLineView-parent">
 		<property name="elements">
