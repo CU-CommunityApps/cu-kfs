@@ -12,6 +12,8 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
+import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.kim.service.KIMServiceLocator;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.util.KualiDecimal;
@@ -97,14 +99,21 @@ public class ProcurementCardSummaryFeedServiceImpl implements ProcurementCardSum
 		// assign values:
 		String cardHolderAccountNumber = pcardSummary.getCardHolderAccountNumber();
 		String cardHolderName = pcardSummary.getCardHolderName();
-		String emplid = pcardSummary.getEmplid();
+		String emplid = pcardSummary.getEmplid().replaceFirst("^0+(?!$)", "");
 		String netid = pcardSummary.getNetid();
 		String accountStatus = pcardSummary.getAccountStatus();
 		KualiDecimal summaryAmount = generateKualiDecimal(pcardSummary.getSummaryAmount());
 		Date cycleStartDate = convertDate(pcardSummary.getCycleStartDate(), "cycle start date", cardHolderAccountNumber, emplid);
 		Date loadDate = convertDate(pcardSummary.getLoadDate(), "load date", cardHolderAccountNumber, emplid);
 		
-		
+		Person person = KIMServiceLocator.getPersonService().getPersonByPrincipalName(netid);
+		if(ObjectUtils.isNull(person)) {
+			LOG.info("\n WARNING: netid(" + netid + ") does not exist. \n");
+		}
+		else if(!person.getEmployeeId().equals(emplid)) {
+			LOG.info("\n WARNING: netid(" + netid + ") and empliid (" + emplid + ") do not match. \n");
+		}
+				
 		ProcurementCardSummaryEntry entry = new ProcurementCardSummaryEntry();
 		
 		entry.setCardHolderAccountNumber(cardHolderAccountNumber);
@@ -148,8 +157,7 @@ public class ProcurementCardSummaryFeedServiceImpl implements ProcurementCardSum
 			// if no entries, log and return
 			if (pcardSummaryEntries == null
 					|| pcardSummaryEntries.isEmpty()) {
-				LOG.warn("No entries in the PCard Summary input file "
-						+ fileName);
+				LOG.warn("No entries in the PCard Summary input file " + fileName);
 				return null;
 			}
 
@@ -158,13 +166,11 @@ public class ProcurementCardSummaryFeedServiceImpl implements ProcurementCardSum
 		} catch (FileNotFoundException e) {
 			LOG.error("File to parse not found " + fileName, e);
 			throw new RuntimeException(
-					"Cannot find the file requested to be parsed " + fileName
-							+ " " + e.getMessage(), e);
+					"Cannot find the file requested to be parsed " + fileName + " " + e.getMessage(), e);
 		} catch (IOException e) {
 			LOG.error("Error while getting file bytes:  " + e.getMessage(), e);
 			throw new RuntimeException(
-					"Error encountered while attempting to get file bytes: "
-							+ e.getMessage(), e);
+					"Error encountered while attempting to get file bytes: " + e.getMessage(), e);
 		}
 	}
 	
