@@ -139,6 +139,9 @@ public class PreEncumbranceAccountingLineUtil {
         if (theDateCal.after(fifteenth) || theDateCal.equals(last)) {
                 theDateCal = fifteenth;
                 theDateCal.roll(Calendar.MONTH, true);
+                if (theDateCal.before(last)){
+                    theDateCal.roll(Calendar.YEAR, true);
+                }
         }
         return new Date(theDateCal.getTimeInMillis());
     }
