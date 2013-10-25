@@ -613,7 +613,7 @@
         </property>
     </bean>
  
-    <bean id="achPayeeLookupableHelperService" class="org.kuali.kfs.pdp.businessobject.lookup.ACHPayeeLookupableHelperServiceImpl" scope="prototype" parent="disbursementPayeeLookupableHelperService">
+    <bean id="achPayeeLookupableHelperService" class="edu.cornell.pdp.businessobject.lookup.CuACHPayeeLookupableHelperServiceImpl" scope="prototype" parent="disbursementPayeeLookupableHelperService">
     </bean> 
 
     <bean id="customerRoleTypeService" class="org.kuali.kfs.pdp.identity.CustomerRoleTypeServiceImpl"/>
@@ -640,5 +640,6 @@
             </map>
         </property>
     </bean>
+	<bean id="payeeACHAccountLookupableHelperService-parentBean" class="edu.cornell.kfs.pdp.businessobject.lookup.CuPayeeACHAccountLookupableHelperServiceImpl" scope="prototype" parent="payeeLookupableHelperServiceImpl-parentBean" abstract="true" />
 
 </beans>

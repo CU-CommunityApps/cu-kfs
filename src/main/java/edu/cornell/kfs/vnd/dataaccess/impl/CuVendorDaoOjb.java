@@ -1,8 +1,8 @@
 package edu.cornell.kfs.vnd.dataaccess.impl;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,23 +17,20 @@ import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.dataaccess.impl.VendorDaoOjb;
-import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kns.lookup.LookupUtils;
 import org.kuali.rice.krad.bo.BusinessObject;
 import org.kuali.rice.krad.lookup.CollectionIncomplete;
 
+import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
+import edu.cornell.kfs.vnd.businessobject.CuVendorDetail;
 import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 
 public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuVendorDaoOjb.class);
 
-    private DateTimeService dateTimeService;
-    private static final String activeIndicator = "activeIndicator";
-
-    public VendorContract getVendorB2BContract(VendorDetail vendorDetail, String campus) {
-        Date now = dateTimeService.getCurrentSqlDate();
-
-        Criteria header = new Criteria();
+    private static final String ACTIVE_INDICATOR = "activeIndicator";
+    public VendorContract getVendorB2BContract(VendorDetail vendorDetail, String campus, Date currentSqlDate) {
+       Criteria header = new Criteria();
         Criteria detail = new Criteria();
         Criteria campusCode = new Criteria();
         Criteria beginDate = new Criteria();
@@ -43,8 +40,8 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         header.addEqualTo("VNDR_HDR_GNRTD_ID", vendorDetail.getVendorHeaderGeneratedIdentifier());
         detail.addEqualTo("VNDR_DTL_ASND_ID", vendorDetail.getVendorDetailAssignedIdentifier());
         campusCode.addEqualTo("VNDR_CMP_CD", campus);
-        beginDate.addLessOrEqualThan("VNDR_CONTR_BEG_DT", now);
-       //endDate.addGreaterOrEqualThan("VNDR_CONTR_END_DT", now);
+        beginDate.addLessOrEqualThan("VNDR_CONTR_BEG_DT", currentSqlDate);
+       //endDate.addGreaterOrEqualThan("VNDR_CONTR_END_DT", currentSqlDate);
         b2b.addEqualTo("VNDR_B2B_IND", "Y");
 
         header.addAndCriteria(detail);
@@ -57,13 +54,9 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         return contract;
     }        
     
-    public void setDateTimeService(DateTimeService dateTimeService) {
-        this.dateTimeService = dateTimeService;
-    }
-
     public List<BusinessObject> getSearchResults(Map<String,String> fieldValues) {
-        ArrayList results = new ArrayList();
-        HashMap<String, VendorDetail> nonDupResults = new HashMap<String, VendorDetail>();
+        List results = new ArrayList();
+        Map<String, CuVendorDetail> nonDupResults = new HashMap<String, CuVendorDetail>();
         RemovalAwareCollection rac = new RemovalAwareCollection();
         
         Criteria header = new Criteria();
@@ -80,7 +73,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         String headerVal = fieldValues.get(VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID);
         String detailVal = fieldValues.get(VendorPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID);
         String taxNumVal = fieldValues.get(VendorPropertyConstants.VENDOR_TAX_NUMBER);
-        String activeVal = fieldValues.get(activeIndicator);
+        String activeVal = fieldValues.get(ACTIVE_INDICATOR);
         String nameVal = fieldValues.get(VendorPropertyConstants.VENDOR_NAME);
         String typeVal = fieldValues.get(VendorPropertyConstants.VENDOR_TYPE_CODE);
         String stateVal = fieldValues.get(VendorPropertyConstants.VENDOR_ADDRESS + "." + VendorPropertyConstants.VENDOR_ADDRESS_STATE);
@@ -99,7 +92,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         	header.addAndCriteria(taxNum);
         }
         if (StringUtils.isNotBlank(activeVal)) {
-            active.addEqualTo("activeIndicator", activeVal);  //VNDR_DTL
+            active.addEqualTo(ACTIVE_INDICATOR, activeVal);  //VNDR_DTL
             header.addAndCriteria(active);            
         }
         if (StringUtils.isNotBlank(nameVal) && nameVal.contains("*")) {
@@ -114,7 +107,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         	header.addAndCriteria(t);
         }
         if (StringUtils.isNotBlank(nameVal) && !nameVal.contains("*")) {
-        	name.addEqualTo("vendorName", nameVal);
+        	name.addEqualTo(VendorPropertyConstants.VENDOR_NAME, nameVal);
         	alias.addEqualTo(VendorPropertyConstants.VENDOR_ALIAS_NAME_FULL_PATH, nameVal);
         	alias.addEqualTo(VendorPropertyConstants.VENDOR_ALIAS_ACTIVE, "Y");
         	Criteria t = new Criteria();
@@ -123,35 +116,35 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         	header.addAndCriteria(t);
         }
         if (StringUtils.isNotBlank(typeVal)) {
-        	type.addEqualTo("vendorHeader.vendorTypeCode", typeVal); //VNDR_HDR
+        	type.addEqualTo(VendorPropertyConstants.VENDOR_TYPE_CODE, typeVal); //VNDR_HDR
             header.addAndCriteria(type);
         }
         if (StringUtils.isNotBlank(stateVal)) {
-        	state.addEqualTo("vendorAddresses.vendorStateCode", stateVal); //THIS COMES OUT OF PUR_VND_ADDR_T
+        	state.addEqualTo(VendorPropertyConstants.VENDOR_ADDRESS_STATE_CODE, stateVal); //THIS COMES OUT OF PUR_VND_ADDR_T
             header.addAndCriteria(state);
         }
         if (StringUtils.isNotBlank(commodityCodeVal)) {
-        	commodityCode.addEqualTo("vendorCommodities.purchasingCommodityCode", commodityCodeVal);  //THIS COMES OUT OF PUR_VNDR_COMM_T
+        	commodityCode.addEqualTo(VendorPropertyConstants.VENDOR_COMMODITIES_CODE_PURCHASING_COMMODITY_CODE, commodityCodeVal);  //THIS COMES OUT OF PUR_VNDR_COMM_T
             header.addAndCriteria(commodityCode); 
         }
         if (StringUtils.isNotBlank(supplierDiversityVal)) {
-        	supplierDiversity.addEqualTo("vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityCode", supplierDiversityVal); //THIS COMES OUT OF PUR_VNDR_SUPP_DVRST_T
+        	supplierDiversity.addEqualTo(CUVendorPropertyConstants.VENDOR_HEADER_SUPPLIER_DIVERSITY_CODE, supplierDiversityVal); //THIS COMES OUT OF PUR_VNDR_SUPP_DVRST_T
             header.addAndCriteria(supplierDiversity);        
         }        
         
-        Long val = new Long( getPersistenceBrokerTemplate().getCount(QueryFactory.newQuery(VendorDetail.class, header)));
-		Integer searchResultsLimit = LookupUtils.getSearchResultsLimit(VendorDetail.class);
+        Long val = new Long( getPersistenceBrokerTemplate().getCount(QueryFactory.newQuery(CuVendorDetail.class, header)));
+		Integer searchResultsLimit = LookupUtils.getSearchResultsLimit(CuVendorDetail.class);
 		if (val.intValue() > searchResultsLimit.intValue()) {
-			LookupUtils.applySearchResultsLimit(VendorDetail.class, header, getDbPlatform());
+			LookupUtils.applySearchResultsLimit(CuVendorDetail.class, header, getDbPlatform());
 		}
-        QueryByCriteria qbc = new QueryByCriteria(VendorDetail.class, header);
+        QueryByCriteria qbc = new QueryByCriteria(CuVendorDetail.class, header);
 		rac = (RemovalAwareCollection) getPersistenceBrokerTemplate().getCollectionByQuery( qbc );
         
         Criteria children = new Criteria();
         
         Iterator it = rac.iterator();
         while (it.hasNext()) {
-        	VendorDetail vd = (VendorDetail) it.next();
+        	CuVendorDetail vd = (CuVendorDetail) it.next();
         	String key = vd.getVendorNumber();
         	if (! nonDupResults.containsKey(key)) {
        			Criteria c = new Criteria();
@@ -167,11 +160,11 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         //ONLY NEED TO DO THE BELOW IF THE USER HAS ENTERED A VALUE INTO THE NAME FIELD, IN WHICH CASE
         //THE CHILDREN OF ANY MATCHING VENDOR DETAIL OBJECT MUST BE FOUND AND ADDED TO THE RESULTS LIST
         if (nonDupResults.size()>0) {
-	        qbc = new QueryByCriteria(VendorDetail.class, children);
+	        qbc = new QueryByCriteria(CuVendorDetail.class, children);
 	        rac = (RemovalAwareCollection) getPersistenceBrokerTemplate().getCollectionByQuery( qbc );
 	        it = rac.iterator();
 	        while (it.hasNext()) {
-	        	VendorDetail vd = (VendorDetail) it.next();
+	        	CuVendorDetail vd = (CuVendorDetail) it.next();
 	        	String key = vd.getVendorNumber();
 	        	if (! nonDupResults.containsKey(key)) {
 	        		nonDupResults.put(key, vd);

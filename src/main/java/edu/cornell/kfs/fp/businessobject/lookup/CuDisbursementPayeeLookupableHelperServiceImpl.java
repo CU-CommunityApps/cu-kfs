@@ -29,6 +29,7 @@ import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
+import edu.cornell.kfs.vnd.businessobject.CuVendorDetail;
 
 public class CuDisbursementPayeeLookupableHelperServiceImpl extends DisbursementPayeeLookupableHelperServiceImpl {
     
@@ -210,7 +211,7 @@ protected List<DisbursementPayee> getVendorsAsPayees(Map<String, String> fieldVa
         List<DisbursementPayee> payeeList = new ArrayList<DisbursementPayee>();
     
         Map<String, String> fieldsForLookup = this.getVendorFieldValues(fieldValues);
-        vendorLookupable.setBusinessObjectClass(VendorDetail.class);
+        vendorLookupable.setBusinessObjectClass(CuVendorDetail.class);
         vendorLookupable.validateSearchParameters(fieldsForLookup);
     
         List<? extends BusinessObject> vendorList = vendorLookupable.getSearchResults(fieldsForLookup);

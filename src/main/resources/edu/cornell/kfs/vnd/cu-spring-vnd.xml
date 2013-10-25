@@ -18,6 +18,7 @@
 		<property name="dataDictionaryPackages">
 			<list merge ="true">
                 <value>edu/cornell/kfs/vnd/businessobject/datadictionary</value>          
+                <value>edu/cornell/kfs/vnd/document/datadictionary</value>          
 			</list>
 		</property>
 		<property name="databaseRepositoryFilePaths">
@@ -135,9 +136,14 @@
 		</property>
 	</bean>
 
-    <bean id="cuVendorService" class="edu.cornell.kfs.vnd.document.service.impl.CUVendorServiceImpl" scope="prototype">
+    <bean id="cuVendorService" parent="cuVendorService-parentBean"/>
+    <bean id="cuVendorService-parentBean" class="edu.cornell.kfs.vnd.document.service.impl.CUVendorServiceImpl" scope="prototype" abstract="true">
+       <!--  TODO : not override vendorService may have some issue -->
 		<property name="businessObjectService">
 			<ref bean="businessObjectService" />
+		</property>
+		<property name="documentService">
+			<ref bean="documentService" />
 		</property>
 		<property name="vendorLookupableHelperServiceImpl">
 			<ref bean="vendorLookupableHelperService" />

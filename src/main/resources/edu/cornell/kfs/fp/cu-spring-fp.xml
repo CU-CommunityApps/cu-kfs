@@ -244,6 +244,7 @@
     <bean id="AuxliaryVoucher-accountingDocumentSingleSubFundValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuAuxiliaryVoucherSingleSubFundValidation" abstract="true" />
     
     <bean id="PreEncumbranceAutoDisEncumberValidation" class="edu.cornell.kfs.fp.document.validation.impl.PreEncumbranceAutoDisEncumberValidation" />
+	<bean id="disbursementPayeeInquirable" class="edu.cornell.kfs.fp.businessobject.inquirable.CuDisbursementPayeeInquirableImpl" scope="prototype" parent="kualiInquirable"/>
 
 	<import resource="document/validation/configuration/FinancialProcessingValidators.xml" />
     <import resource="document/validation/configuration/CU-DisbursementVoucherValidation.xml" />

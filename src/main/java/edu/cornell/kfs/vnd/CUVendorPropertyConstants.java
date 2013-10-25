@@ -41,6 +41,15 @@ public class CUVendorPropertyConstants extends VendorPropertyConstants {
 
 
     public static final String SUPPLIER_DIVERSITY_EXPRIATION = "vendorSupplierDiversityExpirationDate";
+    public static final String VENDOR_W9_RECEIVED_DATE = "vendorHeader.extension.vendorW9ReceivedDate";
+ 
+    public static final String VENDOR_W9_RECEIVED_INDICATOR = "vendorHeader.vendorW9ReceivedIndicator";
+    
+    public static final String VENDOR_ADDRESS_METHOD_OF_PO_TRANSMISSION = "purchaseOrderTransmissionMethodCode";
+    public static final String VENDOR_ADDRESS_EMAIL_ADDRESS = "vendorAddressEmailAddress";
+    public static final String VENDOR_ADDRESS_GENERATED_IDENTIFIER = "vendorAddressGeneratedIdentifier";
+
+    public static final String VENDOR_HEADER_SUPPLIER_DIVERSITY_CODE = "vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityCode";	
         
 	
 }
