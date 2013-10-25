@@ -42,7 +42,12 @@ public class PreEncumbranceDocument extends org.kuali.kfs.fp.document.PreEncumbr
         explicitEntry.setTransactionEntryProcessedTs(null);
         if (accountingLine.isSourceAccountingLine()) {
             explicitEntry.setTransactionEncumbranceUpdateCode(KFSConstants.ENCUMB_UPDT_DOCUMENT_CD);
-        } else {
+            explicitEntry.setReferenceFinancialSystemOriginationCode(SpringContext.getBean(HomeOriginationService.class)
+                    .getHomeOrigination().getFinSystemHomeOriginationCode());
+            explicitEntry.setReferenceFinancialDocumentNumber(accountingLine.getReferenceNumber());
+            explicitEntry.setReferenceFinancialDocumentTypeCode(explicitEntry.getFinancialDocumentTypeCode());
+            // "PE"
+        } else if (accountingLine.isTargetAccountingLine()) {
             explicitEntry.setTransactionEncumbranceUpdateCode(KFSConstants.ENCUMB_UPDT_REFERENCE_DOCUMENT_CD);
             explicitEntry.setReferenceFinancialSystemOriginationCode(SpringContext.getBean(HomeOriginationService.class)
                 .getHomeOrigination().getFinSystemHomeOriginationCode());
