@@ -127,7 +127,7 @@ public class UserProcurementProfileValidationServiceImpl implements UserProcurem
     
     private boolean validateWithDictionary(String propertyPreFix, PersistableBusinessObjectBase pbo) {
     	GlobalVariables.getMessageMap().addToErrorPath(propertyPreFix);
-    	dictionaryValidationService.validateBusinessObject(pbo);
+    	dictionaryValidationService.validate(pbo);
         return GlobalVariables.getMessageMap().hasNoErrors();
 
     }
