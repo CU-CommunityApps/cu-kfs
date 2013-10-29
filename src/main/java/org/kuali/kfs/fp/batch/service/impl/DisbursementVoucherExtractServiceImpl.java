@@ -91,7 +91,7 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
     protected PaymentGroupService paymentGroupService;
     protected BusinessObjectService businessObjectService;
     protected PdpEmailService paymentFileEmailService;
-    private int maxNoteLines;
+    protected int maxNoteLines;
 
     // This should only be set to true when testing this system. Setting this to true will run the code but
     // won't set the doc status to extracted
@@ -653,7 +653,7 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
      * @param limit Number of character that should represent a chopped word
      * @return String [] of chopped words
      */
-    private String [] chopWord(String word, int limit)
+    protected String [] chopWord(String word, int limit)
     {
         StringBuilder builder = new StringBuilder();
         if (word != null && word.trim().length() > 0) {
