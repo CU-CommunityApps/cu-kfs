@@ -21,6 +21,7 @@
     <property name="defaultExistenceChecks">
       <list merge = "true">
         <bean parent="ReferenceDefinition" p:attributeName="majorReportingCategory" p:attributeToHighlightOnFail="majorReportingCategoryCode" />
+        <bean parent="ReferenceDefinition" p:attributeName="laborBenefitRateCategory" p:attributeToHighlightOnFail="laborBenefitRateCategoryCode" />
       </list>
     </property>
   </bean>
