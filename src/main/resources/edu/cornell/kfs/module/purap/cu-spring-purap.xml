@@ -67,6 +67,7 @@
     </bean>
  -->
      
+     
      <bean id="b2bPunchOutOrderFileType" class="org.kuali.kfs.module.purap.util.cxml.B2BPunchOutOrderFileType">
 	    <property name="digestorRulesFileName">
 	       <value>edu/cornell/kfs/module/purap/util/cxml/b2bPunchOutOrderDigesterRules.xml</value>
@@ -76,6 +77,7 @@
 	    </property>
 	</bean>
  
+  <!-- UPGRADE-911 
   <bean id="sciQuestDataAccess" parent="platformAwareDao"  
           class="org.kuali.kfs.module.purap.dataaccess.impl.SciQuestDataAccessImpl" />
     
@@ -85,7 +87,9 @@
        <property name="sciquestDataAccess" ref="sciQuestDataAccess" />
        <property name="businessObjectService" ref="businessObjectService" />
     </bean> 
-
+    -->
+    
+    <!-- UPGRADE-911 
 	<bean id="electronicInvoiceExtractJob" parent="scheduledJobDescriptor">
 		<property name="steps">
 			<list>
@@ -98,6 +102,7 @@
 	<bean id="electronicInvoiceRouteStep" class="org.kuali.kfs.module.purap.batch.ElectronicInvoiceRouteStep" parent="step">
 		<property name="electronicInvoiceHelperService" ref="electronicInvoiceHelperService" />
 	</bean>
+	-->
 	
 	<bean id="collegeLevelOrganizationDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.purap.dataaccess.impl.LevelOrganizationDaoJdbc">
 	
@@ -114,7 +119,7 @@
 			<ref bean="personService" />
 		</property>
 		<property name="documentTypeService">
-			<ref bean="enDocumentTypeService" />
+			<ref bean="documentTypeService" />
 		</property>
 	</bean>
 	

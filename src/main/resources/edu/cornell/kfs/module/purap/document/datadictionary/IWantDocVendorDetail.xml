@@ -480,8 +480,8 @@
   </bean>
   <bean id="IWantDocVendorDetail-vendorHeader.vendorW9ReceivedDate" parent="IWantDocVendorDetail-vendorHeader.vendorW9ReceivedDate-parentBean"/>
 																							   
-  <bean id="IWantDocVendorDetail-vendorHeader.vendorW9ReceivedDate-parentBean" abstract="true" parent="VendorHeader-vendorW9ReceivedDate">
-    <property name="name" value="vendorHeader.vendorW9ReceivedDate"/>
+  <bean id="IWantDocVendorDetail-vendorHeader.vendorW9ReceivedDate-parentBean" abstract="true" parent="VendorHeaderExtension-vendorW9ReceivedDate">
+    <property name="name" value="vendorHeader.extension.vendorW9ReceivedDate"/>
   </bean>
   <bean id="IWantDocVendorDetail-vendorHeader.vendorW8BenReceivedIndicator" parent="IWantDocVendorDetail-vendorHeader.vendorW8BenReceivedIndicator-parentBean"/>
 
@@ -785,7 +785,7 @@
               <bean parent="InquirySubSectionHeaderDefinition" p:attributeName="Corporate Information"/>
               <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorTypeCode"/>
               <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorW9ReceivedIndicator"/>
-              <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorW9ReceivedDate"/>
+              <bean parent="FieldDefinition" p:attributeName="vendorHeader.extension.vendorW9ReceivedDate"/>
               <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorForeignIndicator"/>
               <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorW8BenReceivedIndicator"/>
               <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorTaxNumber"/>
@@ -1188,7 +1188,7 @@
             <list>
               <bean parent="InquiryCollectionDefinition">
                 <property name="attributeName" value="vendorCreditCardMerchants"/>
-                <property name="businessObjectClass" value="org.kuali.kfs.vnd.businessobject.VendorCreditCardMerchant"/>
+                <property name="businessObjectClass" value="edu.cornell.kfs.vnd.businessobject.CuVendorCreditCardMerchant"/>
                 <property name="numberOfColumns" value="1"/>
                 <property name="inquiryFields">
                   <list>
@@ -1223,7 +1223,7 @@
             <list>
               <bean parent="InquiryCollectionDefinition">
                 <property name="attributeName" value="boNotes"/>
-                <property name="businessObjectClass" value="org.kuali.rice.kns.bo.Note"/>
+                <property name="businessObjectClass" value="org.kuali.rice.krad.bo.Note"/>
                 <property name="numberOfColumns" value="1"/>
                 <property name="inquiryFields">
                   <list>

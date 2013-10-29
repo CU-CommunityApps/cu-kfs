@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.api.mail.MailMessage;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.rice.kew.doctype.service.DocumentTypeService;
+import org.kuali.rice.kew.api.doctype.DocumentTypeService;
 import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
