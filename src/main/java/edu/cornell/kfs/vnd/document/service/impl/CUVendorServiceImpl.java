@@ -22,12 +22,14 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorRoutingComparable;
+import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.businessobject.lookup.VendorLookupableHelperServiceImpl;
 import org.kuali.kfs.vnd.document.service.impl.VendorServiceImpl;
 import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
@@ -35,8 +37,10 @@ import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.DocumentService;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.cornell.kfs.vnd.businessobject.CuVendorDetail;
+import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
+import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
+import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 import edu.cornell.kfs.vnd.document.service.CUVendorService;
 
 @Transactional
@@ -138,12 +142,15 @@ public class CUVendorServiceImpl extends VendorServiceImpl implements CUVendorSe
 
         // The subcollections which are being compared here must implement VendorRoutingComparable.
         boolean unchanged = super.noRouteSignificantChangeOccurred(newVDtl, newVHdr, oldVDtl, oldVHdr)
+        	&& ((VendorDetailExtension)newVDtl.getExtension()).isEqualForRouting((VendorDetailExtension)oldVDtl.getExtension())
+        	&& isVendorSupplierDiversityEqualForRouting(newVHdr.getVendorSupplierDiversities(), oldVHdr.getVendorSupplierDiversities())
+            && isVendorAddressEqualForRouting(newVDtl.getVendorAddresses(), oldVDtl.getVendorAddresses())
             && ((CuVendorHeaderExtension)newVHdr.getExtension()).isEqualForRouting((CuVendorHeaderExtension)oldVHdr.getExtension())
             && (equalMemberLists(convertToRountingComparable(oldVDtl.getVendorContacts()), convertToRountingComparable(newVDtl.getVendorContacts())))
             && (equalMemberLists(convertToRountingComparable(oldVDtl.getVendorAliases()), convertToRountingComparable(newVDtl.getVendorAliases())))
             && (equalMemberLists(convertToRountingComparable(oldVDtl.getVendorCustomerNumbers()),convertToRountingComparable( newVDtl.getVendorCustomerNumbers())))
-            && (equalMemberLists(convertToRountingComparable(oldVDtl.getVendorPhoneNumbers()), convertToRountingComparable(newVDtl.getVendorPhoneNumbers())))
-            && (equalMemberLists(((CuVendorDetail)oldVDtl).getVendorCreditCardMerchants(), ((CuVendorDetail)newVDtl).getVendorCreditCardMerchants()));
+            && (equalMemberLists(convertToRountingComparable(oldVDtl.getVendorPhoneNumbers()), convertToRountingComparable(newVDtl.getVendorPhoneNumbers())));
+        //    && (equalMemberLists(((VendorDetailExtension)oldVDtl.getExtension()).getVendorCreditCardMerchants(), ((VendorDetailExtension)newVDtl.getExtension()).getVendorCreditCardMerchants()));
 
         LOG.debug("Exiting noRouteSignificantChangeOccurred.");
         return unchanged;
@@ -159,6 +166,63 @@ public class CUVendorServiceImpl extends VendorServiceImpl implements CUVendorSe
         return retList;
     }
     
+    // This is to check additional conditions for vendor addresses
+    private boolean isVendorAddressEqualForRouting(List<VendorAddress> newAddresses, List<VendorAddress> oldAddresses) {
+        boolean result = true;
+        if (CollectionUtils.isEmpty(newAddresses) || CollectionUtils.isEmpty(oldAddresses)
+        		|| newAddresses.size() != oldAddresses.size()) {
+        	result = isSameSizeList(newAddresses, oldAddresses);
+        } else {
+            for (int i = 0; i < newAddresses.size(); i++) {
+                VendorAddress newAddress = newAddresses.get(i);
+                VendorAddress oldAddress = oldAddresses.get(i);
+                boolean eq = new EqualsBuilder().append(((CuVendorAddressExtension)newAddress.getExtension()).getPurchaseOrderTransmissionMethodCode(), ((CuVendorAddressExtension)oldAddress.getExtension()).getPurchaseOrderTransmissionMethodCode()).append(
+                		newAddress.isActive(),oldAddress.isActive()).isEquals();
+                if (!eq) {
+                    result = false;
+                    break;
+                }
+            }
+
+        }
+        
+        return result;
+    	
+    }
+    
+    private boolean isVendorSupplierDiversityEqualForRouting(List<VendorSupplierDiversity> newVendorSupplierDiversities, List<VendorSupplierDiversity> oldVendorSupplierDiversities) {
+        boolean result = true;
+        if (CollectionUtils.isEmpty(newVendorSupplierDiversities) || CollectionUtils.isEmpty(oldVendorSupplierDiversities)
+        		|| newVendorSupplierDiversities.size() != oldVendorSupplierDiversities.size()) {
+        	result = isSameSizeList(newVendorSupplierDiversities, newVendorSupplierDiversities);
+        } else {
+            for (int i = 0; i < newVendorSupplierDiversities.size(); i++) {
+            	VendorSupplierDiversity newSupplierDiversity = newVendorSupplierDiversities.get(i);
+            	VendorSupplierDiversity oldSupplierDiversity = oldVendorSupplierDiversities.get(i);
+                boolean eq = new EqualsBuilder().append(((CuVendorSupplierDiversityExtension)newSupplierDiversity.getExtension()).getVendorSupplierDiversityExpirationDate(), ((CuVendorSupplierDiversityExtension)oldSupplierDiversity.getExtension()).getVendorSupplierDiversityExpirationDate()).isEquals();
+                if (!eq) {
+                    result = false;
+                    break;
+                }
+            }
+
+        }
+        
+        return result;
+    	
+    }
+
+    private boolean isSameSizeList(List<? extends PersistableBusinessObjectBase> newPboList, List<? extends PersistableBusinessObjectBase> oldPboList) {
+    	boolean result = true;
+    	if (CollectionUtils.isEmpty(newPboList) && CollectionUtils.isEmpty(oldPboList)) {
+        	result =  true;
+        } else if ((CollectionUtils.isEmpty(newPboList) && CollectionUtils.isNotEmpty(oldPboList)) ||
+        		(CollectionUtils.isNotEmpty(newPboList) && CollectionUtils.isEmpty(oldPboList)) ||	
+        		newPboList.size() != oldPboList.size()) {
+        	result = false;
+        }
+    	return result;
+    }
     
     public void setDocumentService(DocumentService documentService) {
         this.documentService = documentService;

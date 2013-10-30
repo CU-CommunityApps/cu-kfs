@@ -18,47 +18,17 @@
 
 
   <bean id="VendorAddress" parent="VendorAddress-parentBean">
-    <property name="businessObjectClass" value="edu.cornell.kfs.vnd.businessobject.CuVendorAddress"/>
-    <property name="attributes">
+   <property name="attributes">
       <list merge = "true">
         <ref bean="VendorAddress-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode"/>
       </list>
-    </property>
-    <property name="relationships">
-      <list merge="true">
-        <dd:relationship objectAttribute="purchaseOrderTransmissionMethod" targetClass="org.kuali.kfs.module.purap.businessobject.PurchaseOrderTransmissionMethod">        
-            <dd:primitiveAttribute source="purchaseOrderTransmissionMethodCode" target="purchaseOrderTransmissionMethodCode"/>            
-        </dd:relationship>       
-      </list>
-    </property>     
+    </property> 
   </bean>
 
-  <!-- Attribute Definitions -->
-
-  <bean id="VendorAddress-vendorAddressGeneratedIdentifier" parent="VendorAddress-vendorAddressGeneratedIdentifier-parentBean"/>
-
-  <bean id="VendorAddress-vendorAddressGeneratedIdentifier-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="vendorAddressGeneratedIdentifier"/>
-    <property name="forceUppercase" value="true"/>
-    <property name="label" value="Vendor Address Generated Identifier"/>
-    <property name="shortLabel" value="Vendor Address Generated Identifier"/>
-    <property name="maxLength" value="10"/>
-    <property name="validationPattern">
-      <ref bean="NumericValidation" />
-    </property>
-    <property name="control">
-      <bean parent="TextControlDefinition" p:size="12" />
-    </property>
-  </bean>
-   
+ 
   <bean id="VendorAddress-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode" parent="VendorAddress-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode-parentBean"/> 
-  <bean id="VendorAddress-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode-parentBean" abstract="true" parent="PurchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode">
-  <property name="label" value="Method of PO Transmission"/>
-  <property name="name" value="purchaseOrderTransmissionMethodCode"/>
-  <property name="required" value="false"/>
-  <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.vnd.businessobject.options.PurchaseOrderTransmissionMethodValuesFinder" p:includeKeyInLabel="false"/>
-    </property>
+  <bean id="VendorAddress-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode-parentBean" abstract="true" parent="VendorAddressExtension-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode-parentBean">
+  <property name="name" value="extension.purchaseOrderTransmissionMethodCode"/>
   </bean>
-   
+    
 </beans>

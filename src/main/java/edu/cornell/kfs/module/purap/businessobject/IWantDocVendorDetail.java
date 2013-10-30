@@ -1,8 +1,8 @@
 package edu.cornell.kfs.module.purap.businessobject;
 
-import edu.cornell.kfs.vnd.businessobject.CuVendorDetail;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
-public class IWantDocVendorDetail extends CuVendorDetail {
+public class IWantDocVendorDetail extends VendorDetail {
 
 	private static final long serialVersionUID = 1L;
 

@@ -80,12 +80,12 @@
 			<forward name="basic" path="/jsp/fp/PreEncumbrance.jsp" />
 		</action>
 		             
-		<action path="/financialDisbursementVoucher" name="CuDisbursementVoucherForm" input="/jsp/fp/DisbursementVoucher.jsp"
+	 	<action path="/financialDisbursementVoucher" name="CuDisbursementVoucherForm" input="/jsp/fp/DisbursementVoucher.jsp"
 			type="edu.cornell.kfs.fp.document.web.struts.CuDisbursementVoucherAction" scope="request"
 			parameter="methodToCall" validate="true" attribute="KualiForm">
 			<set-property property="cancellable" value="true" />
 			<forward name="basic" path="/jsp/fp/DisbursementVoucher.jsp" />
-		</action>
+		</action> 
 		
 		<!-- KFSUPGRADE-75 -->
 	   <action path="/purapRequisition" name="RequisitionForm"

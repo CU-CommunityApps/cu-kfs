@@ -9,6 +9,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.VendorUtils;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.validation.impl.VendorPreRules;
@@ -18,8 +19,8 @@ import org.kuali.rice.krad.util.GlobalVariables;
 import edu.cornell.kfs.vnd.CUVendorConstants;
 import edu.cornell.kfs.vnd.CUVendorKeyConstants;
 import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
-import edu.cornell.kfs.vnd.businessobject.CuVendorDetail;
-import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversity;
+import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
+import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuVendorPreRules extends VendorPreRules {
 
@@ -50,29 +51,29 @@ public class CuVendorPreRules extends VendorPreRules {
         
         ArrayList<String> expired = new ArrayList<String>();
         
-        CuVendorDetail vendorDetail = (CuVendorDetail) document.getNewMaintainableObject().getBusinessObject();
-                
-		if (vendorDetail.getGeneralLiabilityExpiration()!= null && vendorDetail.getGeneralLiabilityExpiration().before(new Date())) {
+        VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+        VendorDetailExtension vendorDetailext = (VendorDetailExtension)vendorDetail.getExtension();
+		if (vendorDetailext.getGeneralLiabilityExpiration()!= null && vendorDetailext.getGeneralLiabilityExpiration().before(new Date())) {
 			expired.add(CUVendorConstants.EXPIRABLE_COVERAGES.GENERAL_LIABILITY_COVERAGE);
 	        GlobalVariables.getMessageMap().putError(KFSConstants.MAINTENANCE_NEW_MAINTAINABLE+CUVendorPropertyConstants.GENERAL_LIABILITY_EXPIRATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_GENERAL_LIABILITY_EXPR_DATE_IN_PAST);
 		}
 
-		if (vendorDetail.getAutomobileLiabilityExpiration()!= null && vendorDetail.getAutomobileLiabilityExpiration().before(new Date())) {
+		if (vendorDetailext.getAutomobileLiabilityExpiration()!= null && vendorDetailext.getAutomobileLiabilityExpiration().before(new Date())) {
 			expired.add(CUVendorConstants.EXPIRABLE_COVERAGES.AUTOMOBILE_LIABILITY_COVERAGE);
 	        GlobalVariables.getMessageMap().putError(KFSConstants.MAINTENANCE_NEW_MAINTAINABLE+CUVendorPropertyConstants.AUTOMOBILE_LIABILITY_EXPIRATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_AUTO_EXPR_IN_PAST);
 		}		
 
-		if (vendorDetail.getWorkmansCompExpiration()!= null && vendorDetail.getWorkmansCompExpiration().before(new Date())) {
+		if (vendorDetailext.getWorkmansCompExpiration()!= null && vendorDetailext.getWorkmansCompExpiration().before(new Date())) {
 			expired.add(CUVendorConstants.EXPIRABLE_COVERAGES.WORKMAN_COMP_COVERAGE);
 	        GlobalVariables.getMessageMap().putError(KFSConstants.MAINTENANCE_NEW_MAINTAINABLE+CUVendorPropertyConstants.WORKMANS_COMP_EXPIRATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_WC_EXPR_IN_PAST);
 		}		
 		
-		if (vendorDetail.getExcessLiabilityUmbExpiration()!= null && vendorDetail.getExcessLiabilityUmbExpiration().before(new Date())) {
+		if (vendorDetailext.getExcessLiabilityUmbExpiration()!= null && vendorDetailext.getExcessLiabilityUmbExpiration().before(new Date())) {
 			expired.add(CUVendorConstants.EXPIRABLE_COVERAGES.EXCESS_LIABILITY_UMBRELLA_COVERAGE);
 	        GlobalVariables.getMessageMap().putError(KFSConstants.MAINTENANCE_NEW_MAINTAINABLE+CUVendorPropertyConstants.EXCESS_LIABILITY_UMBRELLA_EXPIRATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_UMB_EXPR_IN_PAST);
 		}
         
-		if (vendorDetail.getHealthOffSiteLicenseExpirationDate()!= null && vendorDetail.getHealthOffSiteLicenseExpirationDate().before(new Date())) {
+		if (vendorDetailext.getHealthOffSiteLicenseExpirationDate()!= null && vendorDetailext.getHealthOffSiteLicenseExpirationDate().before(new Date())) {
 	        expired.add(CUVendorConstants.EXPIRABLE_COVERAGES.HEALTH_DEPARTMENT_LICENSE);
 	        GlobalVariables.getMessageMap().putError(KFSConstants.MAINTENANCE_NEW_MAINTAINABLE+CUVendorPropertyConstants.HEALTH_OFFSITE_LICENSE_EXPIRATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_HEALTH_LICENSE_EXPR_IN_PAST);
 		}
@@ -83,7 +84,7 @@ public class CuVendorPreRules extends VendorPreRules {
         if (vendorSupplierDiversities.size() > 0) {
             int i = 0;
             for(VendorSupplierDiversity vendor : vendorSupplierDiversities) {
-                if (((CuVendorSupplierDiversity)vendor).getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
+                if (((CuVendorSupplierDiversityExtension)vendor.getExtension()).getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
                 	expired.add(CUVendorConstants.EXPIRABLE_COVERAGES.SUPPLIER_DIVERSITY_CERTIFICATION);
                     GlobalVariables.getMessageMap().putError(KFSConstants.MAINTENANCE_NEW_MAINTAINABLE+VendorConstants.VENDOR_HEADER_ATTR+"."+
                     										 VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+

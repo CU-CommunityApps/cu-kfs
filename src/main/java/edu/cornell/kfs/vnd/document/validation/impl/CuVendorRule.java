@@ -30,18 +30,18 @@ import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.document.service.PurchaseOrderTransmissionMethodDataRulesService;
 import edu.cornell.kfs.vnd.CUVendorKeyConstants;
 import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
-import edu.cornell.kfs.vnd.businessobject.CuVendorAddress;
+import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorCreditCardMerchant;
-import edu.cornell.kfs.vnd.businessobject.CuVendorDetail;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
-import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversity;
+import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
+import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuVendorRule extends VendorRule {
     private CommodityCodeService commodityCodeService = (CommodityCodeService) SpringContext.getService("commodityCodeService");
 
     protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {
         boolean valid = super.processCustomRouteDocumentBusinessRules(document);
-        if (ObjectUtils.isNotNull(((CuVendorDetail)getNewBo()).getVendorHeader().getVendorType())) {
+        if (ObjectUtils.isNotNull(((VendorDetail)getNewBo()).getVendorHeader().getVendorType())) {
         	// in vendorrule newVendor is set to newBo
             valid &= validateB2BDefaultCommodityCode(document);
         }
@@ -63,8 +63,8 @@ public class CuVendorRule extends VendorRule {
 
 
         if (bo instanceof VendorAddress) {
-             CuVendorAddress address = (CuVendorAddress) bo;           
-            CuVendorDetail vendorDetail = (CuVendorDetail) document.getNewMaintainableObject().getBusinessObject();
+             VendorAddress address = (VendorAddress) bo;           
+            VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
             VendorHeader vendorHeader = vendorDetail.getVendorHeader();
 //            String propertyConstant = KFSConstants.ADD_PREFIX + "." + VendorPropertyConstants.VENDOR_ADDRESS + ".";
             String propertyConstant = "add.vendorAddresses.";
@@ -80,7 +80,7 @@ public class CuVendorRule extends VendorRule {
         }
         if (bo instanceof CuVendorCreditCardMerchant) {
         	CuVendorCreditCardMerchant vendorMerchant = (CuVendorCreditCardMerchant) bo;
-            CuVendorDetail vendorDetail = (CuVendorDetail) document.getNewMaintainableObject().getBusinessObject();
+            VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
             success &=validateCreditCardMerchantAddition(vendorDetail, vendorMerchant);
         }
         if (bo instanceof VendorSupplierDiversity) {
@@ -101,11 +101,11 @@ public class CuVendorRule extends VendorRule {
     		{
     			int i = 0;
     			for(VendorSupplierDiversity vendor : vendorSupplierDiversities) {
-    				if (((CuVendorSupplierDiversity)vendor).getVendorSupplierDiversityExpirationDate() == null ) {
+    				if (((CuVendorSupplierDiversityExtension)vendor.getExtension()).getVendorSupplierDiversityExpirationDate() == null ) {
     					success = false;
     					putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);
     				}
-    				else if (((CuVendorSupplierDiversity)vendor).getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
+    				else if (((CuVendorSupplierDiversityExtension)vendor.getExtension()).getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
     					success = false;
     					putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
     				}
@@ -161,7 +161,7 @@ public class CuVendorRule extends VendorRule {
 	protected boolean checkW9ReceivedIndicatorAndDate(MaintenanceDocument document) {
 		boolean success = true;
 		
-		CuVendorDetail vendorDetail = (CuVendorDetail) document.getNewMaintainableObject().getBusinessObject();		
+		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();		
 		VendorHeader vendorHeader = vendorDetail.getVendorHeader();
 		
 		boolean vendorW9ReceivedIndicator = false;
@@ -193,17 +193,18 @@ public class CuVendorRule extends VendorRule {
 	protected boolean checkGeneralLiabilityAmountAndExpiration(MaintenanceDocument document) {
 		boolean success = true;
 		
-		CuVendorDetail vendorDetail = (CuVendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		VendorDetailExtension vendorDetailExt = ((VendorDetailExtension)vendorDetail.getExtension());
 		
-		if (vendorDetail.getGeneralLiabilityCoverageAmount()!=null && vendorDetail.getGeneralLiabilityExpiration()==null) {
+		if (vendorDetailExt.getGeneralLiabilityCoverageAmount()!=null && vendorDetailExt.getGeneralLiabilityExpiration()==null) {
 			success = false;
 			putFieldError(CUVendorPropertyConstants.GENERAL_LIABILITY_EXPIRATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_GENERAL_LIABILITY_EXPR_DATE_NEEDED);
 		}
-		if (vendorDetail.getGeneralLiabilityCoverageAmount()==null && vendorDetail.getGeneralLiabilityExpiration()!=null) {
+		if (vendorDetailExt.getGeneralLiabilityCoverageAmount()==null && vendorDetailExt.getGeneralLiabilityExpiration()!=null) {
 			success = false;
 			putFieldError(CUVendorPropertyConstants.GENERAL_LIABILITY_AMOUNT, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_GENERAL_LIABILITY_COVERAGE_NEEDED);
 		}
-		if (vendorDetail.getGeneralLiabilityExpiration()!= null && vendorDetail.getGeneralLiabilityExpiration().before(new Date())) {
+		if (vendorDetailExt.getGeneralLiabilityExpiration()!= null && vendorDetailExt.getGeneralLiabilityExpiration().before(new Date())) {
 			// Only check expiration date on new vendors
 			if(document.isNew()) {
 				success = false;
@@ -216,17 +217,18 @@ public class CuVendorRule extends VendorRule {
 	protected boolean checkAutoLiabilityAmountAndExpiration(MaintenanceDocument document) {
 		boolean success = true;
 		
-		CuVendorDetail vendorDetail = (CuVendorDetail) document.getNewMaintainableObject().getBusinessObject();
-		
-		if (vendorDetail.getAutomobileLiabilityCoverageAmount()!=null && vendorDetail.getAutomobileLiabilityExpiration()==null) {
+		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		VendorDetailExtension vendorDetailExt = ((VendorDetailExtension)vendorDetail.getExtension());
+
+		if (vendorDetailExt.getAutomobileLiabilityCoverageAmount()!=null && vendorDetailExt.getAutomobileLiabilityExpiration()==null) {
 			success = false;
 			putFieldError(CUVendorPropertyConstants.AUTOMOBILE_LIABILITY_EXPIRATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_AUTO_EXPR_NEEDED);
 		}
-		if (vendorDetail.getAutomobileLiabilityCoverageAmount()==null && vendorDetail.getAutomobileLiabilityExpiration()!=null) {
+		if (vendorDetailExt.getAutomobileLiabilityCoverageAmount()==null && vendorDetailExt.getAutomobileLiabilityExpiration()!=null) {
 			success = false;
 			putFieldError(CUVendorPropertyConstants.AUTOMOBILE_LIABILITY_AMOUNT, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_AUTO_COVERAGE_NEEDED);
 		}		
-		if (vendorDetail.getAutomobileLiabilityExpiration()!= null && vendorDetail.getAutomobileLiabilityExpiration().before(new Date())) {
+		if (vendorDetailExt.getAutomobileLiabilityExpiration()!= null && vendorDetailExt.getAutomobileLiabilityExpiration().before(new Date())) {
 			// Only check expiration date on new vendors
 			if(document.isNew()) {
 				success = false;
@@ -239,17 +241,18 @@ public class CuVendorRule extends VendorRule {
 	protected boolean checkWorkmansCompAmountAndExpiration(MaintenanceDocument document) {
 		boolean success = true;
 
-		CuVendorDetail vendorDetail = (CuVendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		VendorDetailExtension vendorDetailExt = ((VendorDetailExtension)vendorDetail.getExtension());
 
-		if (vendorDetail.getWorkmansCompCoverageAmount()!=null && vendorDetail.getWorkmansCompExpiration()==null) {
+		if (vendorDetailExt.getWorkmansCompCoverageAmount()!=null && vendorDetailExt.getWorkmansCompExpiration()==null) {
 			success = false;
 			putFieldError(CUVendorPropertyConstants.WORKMANS_COMP_EXPIRATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_WC_EXPR_NEEDED);
 		}
-		if (vendorDetail.getWorkmansCompCoverageAmount()==null && vendorDetail.getWorkmansCompExpiration()!=null) {
+		if (vendorDetailExt.getWorkmansCompCoverageAmount()==null && vendorDetailExt.getWorkmansCompExpiration()!=null) {
 			success = false;
 			putFieldError(CUVendorPropertyConstants.WORKMANS_COMP_AMOUNT, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_WC_COVERAGE_NEEDED);
 		}		
-		if (vendorDetail.getWorkmansCompExpiration()!= null && vendorDetail.getWorkmansCompExpiration().before(new Date())) {
+		if (vendorDetailExt.getWorkmansCompExpiration()!= null && vendorDetailExt.getWorkmansCompExpiration().before(new Date())) {
 			// Only check expiration date on new vendors
 			if(document.isNew()) {
 				success = false;
@@ -263,17 +266,18 @@ public class CuVendorRule extends VendorRule {
 	protected boolean checkUmbrellaPolicyAmountAndExpiration(MaintenanceDocument document) {
 		boolean success = true;
 		
-		CuVendorDetail vendorDetail = (CuVendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		VendorDetailExtension vendorDetailExt = ((VendorDetailExtension)vendorDetail.getExtension());
 
-		if (vendorDetail.getExcessLiabilityUmbrellaAmount()!=null && vendorDetail.getExcessLiabilityUmbExpiration()==null) {
+		if (vendorDetailExt.getExcessLiabilityUmbrellaAmount()!=null && vendorDetailExt.getExcessLiabilityUmbExpiration()==null) {
 			success = false;
 			putFieldError(CUVendorPropertyConstants.EXCESS_LIABILITY_UMBRELLA_AMOUNT, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_UMB_EXPR_NEEDED);
 		}
-		if (vendorDetail.getExcessLiabilityUmbrellaAmount()==null && vendorDetail.getExcessLiabilityUmbExpiration()!=null) {
+		if (vendorDetailExt.getExcessLiabilityUmbrellaAmount()==null && vendorDetailExt.getExcessLiabilityUmbExpiration()!=null) {
 			success = false;
 			putFieldError(CUVendorPropertyConstants.EXCESS_LIABILITY_UMBRELLA_EXPIRATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_UMB_COVERAGE_NEEDED);
 		}		
-		if (vendorDetail.getExcessLiabilityUmbExpiration()!= null && vendorDetail.getExcessLiabilityUmbExpiration().before(new Date())) {
+		if (vendorDetailExt.getExcessLiabilityUmbExpiration()!= null && vendorDetailExt.getExcessLiabilityUmbExpiration().before(new Date())) {
 			// Only check expiration date on new vendors
 			if(document.isNew()) {
 				success = false;
@@ -287,23 +291,23 @@ public class CuVendorRule extends VendorRule {
 	protected boolean checkHealthLicenseAndExpiration(MaintenanceDocument document) {
 		boolean success = true;
 		
-		CuVendorDetail vendorDetail = (CuVendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
 
-		Boolean offSiteCateringLicenseRequired = vendorDetail.getHealthOffSiteCateringLicenseReq();
+		Boolean offSiteCateringLicenseRequired = ((VendorDetailExtension)vendorDetail.getExtension()).getHealthOffSiteCateringLicenseReq();
 		
 		if (offSiteCateringLicenseRequired == null) {
 			offSiteCateringLicenseRequired = false;
 		}
 		
-		if ( offSiteCateringLicenseRequired && vendorDetail.getHealthOffSiteLicenseExpirationDate()==null) {
+		if ( offSiteCateringLicenseRequired && ((VendorDetailExtension)vendorDetail.getExtension()).getHealthOffSiteLicenseExpirationDate()==null) {
 			success = false;
 			putFieldError(CUVendorPropertyConstants.HEALTH_OFFSITE_LICENSE_EXPIRATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_HEALTH_LICENSE_EXPR_NEEDED);
 		}
-		if ( !offSiteCateringLicenseRequired && vendorDetail.getHealthOffSiteLicenseExpirationDate()!=null) {
+		if ( !offSiteCateringLicenseRequired && ((VendorDetailExtension)vendorDetail.getExtension()).getHealthOffSiteLicenseExpirationDate()!=null) {
 			success = false;
 			putFieldError(CUVendorPropertyConstants.HEALTH_OFFSITE_LICENSE_REQUIRED, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_HEALTH_LICENSE_NEEDED);
 		}				
-		if (vendorDetail.getHealthOffSiteLicenseExpirationDate()!= null && vendorDetail.getHealthOffSiteLicenseExpirationDate().before(new Date())) {
+		if (((VendorDetailExtension)vendorDetail.getExtension()).getHealthOffSiteLicenseExpirationDate()!= null && ((VendorDetailExtension)vendorDetail.getExtension()).getHealthOffSiteLicenseExpirationDate().before(new Date())) {
 			// Only check expiration date on new vendors
 			if(document.isNew()) {
 				success = false;
@@ -317,7 +321,7 @@ public class CuVendorRule extends VendorRule {
 	protected boolean checkSupplierDiversityExpirationDate(MaintenanceDocument document) {
 		boolean success = true;
 		
-		CuVendorDetail vendorDetail = (CuVendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
 		VendorHeader vendorHeader = vendorDetail.getVendorHeader();
 		List<VendorSupplierDiversity> vendorSupplierDiversities = vendorHeader.getVendorSupplierDiversities();
 				
@@ -325,11 +329,11 @@ public class CuVendorRule extends VendorRule {
 		{
 			int i = 0;
 			for(VendorSupplierDiversity vendor : vendorSupplierDiversities) {
-				if (((CuVendorSupplierDiversity)vendor).getVendorSupplierDiversityExpirationDate() == null ) {
+				if (((CuVendorSupplierDiversityExtension)vendor.getExtension()).getVendorSupplierDiversityExpirationDate() == null ) {
 					success = false;
 					putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);				
 				}
-				else if (((CuVendorSupplierDiversity)vendor).getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
+				else if (((CuVendorSupplierDiversityExtension)vendor.getExtension()).getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
 					// Only check expiration date on new vendors
 					if(document.isNew()) {
 						success = false;
@@ -347,22 +351,22 @@ public class CuVendorRule extends VendorRule {
 		boolean success = true;
 		boolean dataEntered = false;
 		
-		CuVendorDetail vendorDetail = (CuVendorDetail) document.getNewMaintainableObject().getBusinessObject();
-
-		if (vendorDetail.isInsuranceRequiredIndicator())
+		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		VendorDetailExtension vendorDetailExt = ((VendorDetailExtension)vendorDetail.getExtension());
+		if (vendorDetailExt.isInsuranceRequiredIndicator())
 		{
-			dataEntered |= (vendorDetail.getAutomobileLiabilityCoverageAmount()==null?false:true);
-			dataEntered |= (vendorDetail.getAutomobileLiabilityExpiration()==null?false:true);
-			dataEntered |= (vendorDetail.getCornellAdditionalInsuredIndicator()==null?false:true);
-			dataEntered |= (vendorDetail.getExcessLiabilityUmbExpiration()==null?false:true);
-			dataEntered |= (vendorDetail.getExcessLiabilityUmbrellaAmount()==null?false:true);
-			dataEntered |= (vendorDetail.getGeneralLiabilityCoverageAmount()==null?false:true);
-			dataEntered |= (vendorDetail.getGeneralLiabilityExpiration()==null?false:true);
-			dataEntered |= (vendorDetail.getWorkmansCompCoverageAmount()==null?false:true);
-			dataEntered |= (vendorDetail.getWorkmansCompExpiration()==null?false:true);
-			dataEntered |= (vendorDetail.getHealthOffSiteCateringLicenseReq()==null?false:true);
-			dataEntered |= (vendorDetail.getHealthOffSiteLicenseExpirationDate()==null?false:true);
-			dataEntered |= (vendorDetail.getInsuranceNotes()==null?false:true);
+			dataEntered |= (vendorDetailExt.getAutomobileLiabilityCoverageAmount()==null?false:true);
+			dataEntered |= (vendorDetailExt.getAutomobileLiabilityExpiration()==null?false:true);
+			dataEntered |= (vendorDetailExt.getCornellAdditionalInsuredIndicator()==null?false:true);
+			dataEntered |= (vendorDetailExt.getExcessLiabilityUmbExpiration()==null?false:true);
+			dataEntered |= (vendorDetailExt.getExcessLiabilityUmbrellaAmount()==null?false:true);
+			dataEntered |= (vendorDetailExt.getGeneralLiabilityCoverageAmount()==null?false:true);
+			dataEntered |= (vendorDetailExt.getGeneralLiabilityExpiration()==null?false:true);
+			dataEntered |= (vendorDetailExt.getWorkmansCompCoverageAmount()==null?false:true);
+			dataEntered |= (vendorDetailExt.getWorkmansCompExpiration()==null?false:true);
+			dataEntered |= (vendorDetailExt.getHealthOffSiteCateringLicenseReq()==null?false:true);
+			dataEntered |= (vendorDetailExt.getHealthOffSiteLicenseExpirationDate()==null?false:true);
+			dataEntered |= (vendorDetailExt.getInsuranceNotes()==null?false:true);
 
 			if (!dataEntered) {
 				putFieldError(CUVendorPropertyConstants.INSURANCE_REQUIRED, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_INSURANCE_REQUIRED_USED_WO_DATA);
@@ -375,8 +379,8 @@ public class CuVendorRule extends VendorRule {
 	
 	protected boolean checkMerchantNameUniqueness(MaintenanceDocument document) {
 	    boolean success = true;
-	    CuVendorDetail vendorDetail = (CuVendorDetail) document.getNewMaintainableObject().getBusinessObject();
-       List<CuVendorCreditCardMerchant> vendorCreditCardMerchants = vendorDetail.getVendorCreditCardMerchants();
+	    VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+       List<CuVendorCreditCardMerchant> vendorCreditCardMerchants = ((VendorDetailExtension)vendorDetail.getExtension()).getVendorCreditCardMerchants();
        ArrayList<String> merchantNames = new ArrayList<String>();
        int i = 0;
        for (CuVendorCreditCardMerchant vendorCreditCardMerchant : vendorCreditCardMerchants) {
@@ -397,9 +401,9 @@ public class CuVendorRule extends VendorRule {
 	   return success;
 	}
 	
-	protected boolean validateCreditCardMerchantAddition(CuVendorDetail vendorDetail, CuVendorCreditCardMerchant vendorCreditCardMerchant) {
+	protected boolean validateCreditCardMerchantAddition(VendorDetail vendorDetail, CuVendorCreditCardMerchant vendorCreditCardMerchant) {
 	    boolean success = true;
-	    List<CuVendorCreditCardMerchant> vendorCreditCardMerchants = vendorDetail.getVendorCreditCardMerchants();
+	    List<CuVendorCreditCardMerchant> vendorCreditCardMerchants = ((VendorDetailExtension)vendorDetail.getExtension()).getVendorCreditCardMerchants();
 	    for (CuVendorCreditCardMerchant existingMerchant : vendorCreditCardMerchants) {
 	        if (existingMerchant.getCreditMerchantName().equals(vendorCreditCardMerchant.getCreditMerchantName())) {
 	               putFieldError("add.vendorCreditCardMerchants.creditMerchantName", CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_CREDIT_MERCHANT_NAME_DUPLICATE);
@@ -412,12 +416,12 @@ public class CuVendorRule extends VendorRule {
 	
 	protected boolean validateSupplierDiversityAddition(VendorSupplierDiversity vendorSupplierDiversity) {
 	    boolean success = true;
-	    if (((CuVendorSupplierDiversity)vendorSupplierDiversity).getVendorSupplierDiversityExpirationDate() == null) {
+	    if (((CuVendorSupplierDiversityExtension)vendorSupplierDiversity.getExtension()).getVendorSupplierDiversityExpirationDate() == null) {
 	    	success = false;
             putFieldError("add."+VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);
             return success;
 	    }
-        if (((CuVendorSupplierDiversity)vendorSupplierDiversity).getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
+        if (((CuVendorSupplierDiversityExtension)vendorSupplierDiversity.getExtension()).getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
             success = false;
             putFieldError("add."+VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST);
             return success;
@@ -505,8 +509,8 @@ public class CuVendorRule extends VendorRule {
         	boolean poTransmissionMethodExistsForVendor = false;
         	int i = 0;
         	while ( (i < addresses.size()) && !poTransmissionMethodExistsForVendor) {        		
-            	CuVendorAddress address = (CuVendorAddress)addresses.get(i);           	
-            	if ( (!StringUtils.isBlank(address.getPurchaseOrderTransmissionMethodCode())) && (!StringUtils.equals(address.getPurchaseOrderTransmissionMethodCode(), KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) ){
+            	VendorAddress address = addresses.get(i);           	
+            	if ( (!StringUtils.isBlank(((CuVendorAddressExtension)address.getExtension()).getPurchaseOrderTransmissionMethodCode())) && (!StringUtils.equals(((CuVendorAddressExtension)address.getExtension()).getPurchaseOrderTransmissionMethodCode(), KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) ){
             		poTransmissionMethodExistsForVendor = true;
             	}
             	i++;
@@ -523,10 +527,10 @@ public class CuVendorRule extends VendorRule {
 	 * Method verifies that the vendor data is valid for the association between vendor type, required vendor address type, address type,
 	 * method of PO transmission assigned to an address, and all of the data required for the method of PO transmission selected.
 	 */
-	private boolean checkAddressMethodOfPOTransmissionAndData (String vendorTypeCode, String vendorAddressTypeRequiredCode, CuVendorAddress address, String propertyConstant) {
+	private boolean checkAddressMethodOfPOTransmissionAndData (String vendorTypeCode, String vendorAddressTypeRequiredCode, VendorAddress address, String propertyConstant) {
 		boolean success = true;
 		
-        String methodOfPOTransmission = address.getPurchaseOrderTransmissionMethodCode();
+        String methodOfPOTransmission = ((CuVendorAddressExtension)address.getExtension()).getPurchaseOrderTransmissionMethodCode();
 		
 		success &= validateVendorTypeToAddressType(methodOfPOTransmission, vendorTypeCode, vendorAddressTypeRequiredCode, address.getVendorAddressTypeCode(), propertyConstant);
 		
@@ -581,11 +585,11 @@ public class CuVendorRule extends VendorRule {
 	 * for each data element on this maintenance document as the REQ, PO, and POA.  
 	 * 
 	 */
-	private boolean validateVendorAddressForMethodOfPOTransmission(CuVendorAddress address, String propertyScope){
+	private boolean validateVendorAddressForMethodOfPOTransmission(VendorAddress address, String propertyScope){
 		boolean valid = true;
 		String propertyName;	
 		String [] parameters;
-		String transmissionMethod = address.getPurchaseOrderTransmissionMethodCode();
+		String transmissionMethod = ((CuVendorAddressExtension)address.getExtension()).getPurchaseOrderTransmissionMethodCode();
 		String addressTypeCode = address.getVendorAddressTypeCode();
 		PurchaseOrderTransmissionMethodDataRulesService purchaseOrderTransmissionMethodDataRulesService = SpringContext.getBean(PurchaseOrderTransmissionMethodDataRulesService.class);
 		

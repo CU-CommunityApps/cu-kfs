@@ -16,7 +16,6 @@
 -->
 
   <bean id="VendorMaintenanceDocument" parent="VendorMaintenanceDocument-parentBean">
-    <property name="businessObjectClass" value="edu.cornell.kfs.vnd.businessobject.CuVendorDetail"/>
     <property name="maintainableClass" value="edu.cornell.kfs.vnd.document.CuVendorMaintainableImpl"/>
   
     <property name="maintainableSections">
@@ -68,7 +67,7 @@
       <list>
         <bean parent="MaintainableCollectionDefinition">
           <property name="name" value="vendorAddresses"/>
-          <property name="businessObjectClass" value="edu.cornell.kfs.vnd.businessobject.CuVendorAddress"/>
+          <property name="businessObjectClass" value="org.kuali.kfs.vnd.businessobject.VendorAddress"/>
           <property name="summaryTitle" value="Address"/>
           <property name="summaryFields">
             <list>
@@ -96,7 +95,7 @@
               <bean parent="MaintainableFieldDefinition" p:name="vendorHeaderGeneratedIdentifier" p:unconditionallyReadOnly="true"/>
               <bean parent="MaintainableFieldDefinition" p:name="vendorDetailAssignedIdentifier" p:unconditionallyReadOnly="true"/>
               <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
-              <bean parent="MaintainableFieldDefinition" p:name="purchaseOrderTransmissionMethodCode"/>
+              <bean parent="MaintainableFieldDefinition" p:name="extension.purchaseOrderTransmissionMethodCode"/>
             </list>
           </property>
           <property name="maintainableCollections">
@@ -132,18 +131,18 @@
       <list>
         <bean parent="MaintainableCollectionDefinition">
           <property name="name" value="vendorHeader.vendorSupplierDiversities"/>
-          <property name="businessObjectClass" value="edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversity"/>
+          <property name="businessObjectClass" value="org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity"/>
           <property name="summaryTitle" value="Supplier Diversity"/>
           <property name="summaryFields">
             <list>
               <bean parent="MaintainableFieldDefinition" p:name="vendorSupplierDiversityCode"/>
-              <bean parent="MaintainableFieldDefinition" p:name="vendorSupplierDiversityExpirationDate"/>
+              <bean parent="MaintainableFieldDefinition" p:name="extension.vendorSupplierDiversityExpirationDate"/>
             </list>
           </property>
           <property name="maintainableFields">
             <list>
               <bean parent="MaintainableFieldDefinition" p:name="vendorSupplierDiversityCode" p:required="true"/>
-              <bean parent="MaintainableFieldDefinition" p:name="vendorSupplierDiversityExpirationDate" p:required="true"/>
+              <bean parent="MaintainableFieldDefinition" p:name="extension.vendorSupplierDiversityExpirationDate" p:required="true"/>
               <bean parent="MaintainableFieldDefinition" p:name="vendorHeaderGeneratedIdentifier" p:unconditionallyReadOnly="true"/>
               <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>
               <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
@@ -168,21 +167,21 @@
     <property name="defaultOpen" value="false"/>
     <property name="maintainableItems">
       <list>
-        <bean parent="MaintainableFieldDefinition" p:name="insuranceRequiredIndicator"/>
-        <bean parent="MaintainableFieldDefinition" p:name="insuranceRequirementsCompleteIndicator"/>
-        <bean parent="MaintainableFieldDefinition" p:name="cornellAdditionalInsuredIndicator"/>
-        <bean parent="MaintainableFieldDefinition" p:name="generalLiabilityCoverageAmount"/>
-        <bean parent="MaintainableFieldDefinition" p:name="generalLiabilityExpiration"/>
-        <bean parent="MaintainableFieldDefinition" p:name="automobileLiabilityCoverageAmount"/>
-        <bean parent="MaintainableFieldDefinition" p:name="automobileLiabilityExpiration"/>
-        <bean parent="MaintainableFieldDefinition" p:name="workmansCompCoverageAmount"/>
-        <bean parent="MaintainableFieldDefinition" p:name="workmansCompExpiration"/>
-        <bean parent="MaintainableFieldDefinition" p:name="excessLiabilityUmbrellaAmount"/>
-        <bean parent="MaintainableFieldDefinition" p:name="excessLiabilityUmbExpiration"/>
-        <bean parent="MaintainableFieldDefinition" p:name="healthOffSiteCateringLicenseReq"/>
-        <bean parent="MaintainableFieldDefinition" p:name="healthOffSiteLicenseExpirationDate"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.insuranceRequiredIndicator"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.insuranceRequirementsCompleteIndicator"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.cornellAdditionalInsuredIndicator"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.generalLiabilityCoverageAmount"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.generalLiabilityExpiration"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.automobileLiabilityCoverageAmount"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.automobileLiabilityExpiration"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.workmansCompCoverageAmount"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.workmansCompExpiration"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.excessLiabilityUmbrellaAmount"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.excessLiabilityUmbExpiration"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.healthOffSiteCateringLicenseReq"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.healthOffSiteLicenseExpirationDate"/>
         <bean parent="MaintainableSubSectionHeaderDefinition" p:name="**Alcohol permits are issued on an event-by-event basis; units are responsible for ensuring the chosen caterer/bartending service has the appropriate permit for the event."/>        
-        <bean parent="MaintainableFieldDefinition" p:name="insuranceNotes"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.insuranceNotes"/>
       </list>
     </property>
   </bean>
@@ -196,7 +195,7 @@
     <property name="maintainableItems">
       <list>
         <bean parent="MaintainableCollectionDefinition">
-          <property name="name" value="vendorCreditCardMerchants"/>
+          <property name="name" value="extension.vendorCreditCardMerchants"/>
           <property name="businessObjectClass" value="edu.cornell.kfs.vnd.businessobject.CuVendorCreditCardMerchant"/>
           <property name="summaryTitle" value="Credit Card Merchant"/>
           <property name="summaryFields">
@@ -219,7 +218,7 @@
           </property>
         </bean>
         <bean parent="MaintainableSubSectionHeaderDefinition" p:name="Notes"/>
-        <bean parent="MaintainableFieldDefinition" p:name="merchantNotes"/>
+        <bean parent="MaintainableFieldDefinition" p:name="extension.merchantNotes"/>
       </list>
     </property>
   </bean>  

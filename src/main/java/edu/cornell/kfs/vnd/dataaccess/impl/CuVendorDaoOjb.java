@@ -22,7 +22,6 @@ import org.kuali.rice.krad.bo.BusinessObject;
 import org.kuali.rice.krad.lookup.CollectionIncomplete;
 
 import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
-import edu.cornell.kfs.vnd.businessobject.CuVendorDetail;
 import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 
 public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
@@ -56,7 +55,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
     
     public List<BusinessObject> getSearchResults(Map<String,String> fieldValues) {
         List results = new ArrayList();
-        Map<String, CuVendorDetail> nonDupResults = new HashMap<String, CuVendorDetail>();
+        Map<String, VendorDetail> nonDupResults = new HashMap<String, VendorDetail>();
         RemovalAwareCollection rac = new RemovalAwareCollection();
         
         Criteria header = new Criteria();
@@ -132,19 +131,19 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
             header.addAndCriteria(supplierDiversity);        
         }        
         
-        Long val = new Long( getPersistenceBrokerTemplate().getCount(QueryFactory.newQuery(CuVendorDetail.class, header)));
-		Integer searchResultsLimit = LookupUtils.getSearchResultsLimit(CuVendorDetail.class);
+        Long val = new Long( getPersistenceBrokerTemplate().getCount(QueryFactory.newQuery(VendorDetail.class, header)));
+		Integer searchResultsLimit = LookupUtils.getSearchResultsLimit(VendorDetail.class);
 		if (val.intValue() > searchResultsLimit.intValue()) {
-			LookupUtils.applySearchResultsLimit(CuVendorDetail.class, header, getDbPlatform());
+			LookupUtils.applySearchResultsLimit(VendorDetail.class, header, getDbPlatform());
 		}
-        QueryByCriteria qbc = new QueryByCriteria(CuVendorDetail.class, header);
+        QueryByCriteria qbc = new QueryByCriteria(VendorDetail.class, header);
 		rac = (RemovalAwareCollection) getPersistenceBrokerTemplate().getCollectionByQuery( qbc );
         
         Criteria children = new Criteria();
         
         Iterator it = rac.iterator();
         while (it.hasNext()) {
-        	CuVendorDetail vd = (CuVendorDetail) it.next();
+        	VendorDetail vd = (VendorDetail) it.next();
         	String key = vd.getVendorNumber();
         	if (! nonDupResults.containsKey(key)) {
        			Criteria c = new Criteria();
@@ -160,11 +159,11 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         //ONLY NEED TO DO THE BELOW IF THE USER HAS ENTERED A VALUE INTO THE NAME FIELD, IN WHICH CASE
         //THE CHILDREN OF ANY MATCHING VENDOR DETAIL OBJECT MUST BE FOUND AND ADDED TO THE RESULTS LIST
         if (nonDupResults.size()>0) {
-	        qbc = new QueryByCriteria(CuVendorDetail.class, children);
+	        qbc = new QueryByCriteria(VendorDetail.class, children);
 	        rac = (RemovalAwareCollection) getPersistenceBrokerTemplate().getCollectionByQuery( qbc );
 	        it = rac.iterator();
 	        while (it.hasNext()) {
-	        	CuVendorDetail vd = (CuVendorDetail) it.next();
+	        	VendorDetail vd = (VendorDetail) it.next();
 	        	String key = vd.getVendorNumber();
 	        	if (! nonDupResults.containsKey(key)) {
 	        		nonDupResults.put(key, vd);
