@@ -328,7 +328,7 @@
     <reference-descriptor name="vendorContactType" class-ref="org.kuali.kfs.vnd.businessobject.ContactType" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         <foreignkey field-ref="vendorContactTypeCode" />
     </reference-descriptor>
-    <collection-descriptor name="vendorContactPhoneNumbers" proxy="true" element-class-ref="org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
+    <collection-descriptor name="vendorContactPhoneNumbers" proxy="true" element-class-ref="edu.cornell.kfs.vnd.businessobject.CuVendorContactPhoneNumber" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
         <orderby name="vendorContactPhoneGeneratedIdentifier" sort="ASC" />
         <inverse-foreignkey field-ref="vendorContactGeneratedIdentifier" />
     </collection-descriptor>
