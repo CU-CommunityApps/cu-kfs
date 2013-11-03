@@ -99,7 +99,7 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
 
         disbursementPayee.setPayeeTypeCode(payeeTypeCode);
         
-        String personAddress = MessageFormat.format(addressPattern, person.getAddressLine1Unmasked(), person.getAddressCityUnmasked(), person.getAddressCityUnmasked(), person.getAddressCountryCodeUnmasked());
+        String personAddress = MessageFormat.format(addressPattern, person.getAddressLine1Unmasked(), person.getAddressCityUnmasked(), person.getAddressStateProvinceCodeUnmasked(), person.getAddressCountryCode() == null ? "" : person.getAddressCountryCode());
         disbursementPayee.setAddress(personAddress);
 
         return (DisbursementPayee) disbursementPayee;
