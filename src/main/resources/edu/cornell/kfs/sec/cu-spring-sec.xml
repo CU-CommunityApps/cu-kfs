@@ -15,22 +15,6 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:p="http://www.springframework.org/schema/p"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
-        
-    <bean id="securityBalanceLookupableHelperService" parent="securityBalanceLookupableHelperService-parentBean" scope="prototype" />
-        
-    <bean id="securityBalanceLookupableHelperService-parentBean" class="org.kuali.kfs.sec.businessobject.lookup.AccessSecurityBalanceLookupableHelperServiceImpl" scope="prototype" abstract="true">
-        <property name="accessSecurityService">
-            <ref bean="accessSecurityService" />
-        </property> 
-        <property name="businessObjectMetaDataService">
-            <ref bean="businessObjectMetaDataService" />
-        </property>
-        <property name="persistenceStructureService">
-            <ref bean="persistenceStructureService" />
-        </property> 
-        <property name="businessObjectAuthorizationService">
-            <ref bean="businessObjectAuthorizationService" />
-        </property>         
-    </bean>
- </beans>
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">    
+
+</beans>
