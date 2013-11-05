@@ -88,4 +88,8 @@ public class CUPurapConstants extends PurapConstants {
         public static final String CONVERSION = "CNVS";
     }
     
+    public static final String B2B_SUBMIT_ESHOP_CART_PERMISSION = "B2B Submit Eshop Cart";
+    public static final String PREAUTHORIZED = "Preauthorized";
+    public static final String NON_PREAUTHORIZED = "NonPreauthorized";
+
 }

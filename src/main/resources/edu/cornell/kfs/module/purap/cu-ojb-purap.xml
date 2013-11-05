@@ -370,7 +370,8 @@
         <field-descriptor name="vendorRestrictedIndicator" column="VNDR_RSTRC_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
         <field-descriptor name="vendorPhoneNumber" column="VNDR_PHN_NBR" jdbc-type="VARCHAR"/>
         <field-descriptor name="vendorFaxNumber" column="VNDR_FAX_NBR" jdbc-type="VARCHAR"/>
-        <field-descriptor name="vendorEmailAddress" column="VNDR_EMAIL_ADDR" jdbc-type="VARCHAR"/>
+      <!--  KFSUPGRADE-75 this is not ready yet. TODO : uncomment after this property is added to REQS
+       <field-descriptor name="vendorEmailAddress" column="VNDR_EMAIL_ADDR" jdbc-type="VARCHAR"/>  -->     
         <field-descriptor name="vendorCustomerNumber" column="VNDR_CUST_NBR" jdbc-type="VARCHAR"/>
         <field-descriptor name="vendorContractGeneratedIdentifier" column="VNDR_CONTR_GNRTD_ID" jdbc-type="INTEGER"/>
         <field-descriptor name="vendorNoteText" column="VNDR_NTE_TXT" jdbc-type="VARCHAR"/>
@@ -2897,7 +2898,7 @@
     <field-descriptor name="itemAssignedToTradeInIndicator" column="ITM_ASND_TO_TRADE_IN_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     <field-descriptor name="purchasingCommodityCode" column="PUR_COMM_CD" jdbc-type="VARCHAR"/>
     <field-descriptor name="itemSalesTaxAmount" column="ITM_TAX_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
-<!-- KFSPTS-2257 -->
+<!-- KFSPTS-2257 : TODO KFSUPGRADE-75 : this is not ready.  Uncommemnt this when it is ready
     <field-descriptor name="controlled" column="CONTROLLED_FLAG" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     <field-descriptor name="green" column="GREEN_FLAG" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     <field-descriptor name="hazardous" column="HAZARDOUS_FLAG" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
@@ -2907,7 +2908,7 @@
     <field-descriptor name="toxin" column="TOXIN_FLAG" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     <field-descriptor name="recycled" column="RECYCLED_FLAG" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     <field-descriptor name="energyStar" column="ENERGY_STAR_FLAG" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-
+-->
     <reference-descriptor name="purapDocument" class-ref="org.kuali.kfs.module.purap.document.RequisitionDocument" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         <foreignkey field-ref="purapDocumentIdentifier" />
     </reference-descriptor>

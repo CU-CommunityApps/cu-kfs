@@ -167,5 +167,8 @@
 
 	<bean id="statusOverrideQuestion" class="edu.cornell.kfs.module.purap.question.PurchaseOrderStatusOverrideQuestion" scope="prototype" />
     <bean id="electronicInvoiceInputFileType" class="edu.cornell.kfs.module.purap.batch.CuElectronicInvoiceInputFileType" parent="electronicInvoiceInputFileType-parentBean"/>
+    <bean id="b2BShoppingService" parent="b2BShoppingService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuB2BShoppingServiceImpl">
+        <property name="userFavoriteAccountService" ref="userFavoriteAccountService"/>
+    </bean>
     
 </beans>
