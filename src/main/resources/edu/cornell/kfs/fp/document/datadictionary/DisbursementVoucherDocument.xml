@@ -7,4 +7,101 @@
     <property name="documentClass" value="edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument"/>
   </bean>
   
+  <bean id="DisbursementVoucherDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
+    	<property name="searchingTypeDefinitions">
+    		<list>
+    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    				<property name="searchingAttribute">
+    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    						<property name="businessObjectClassName" value="edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail"/>
+    						<property name="attributeName" value="disbVchrPayeeIdNumber"/>
+    					</bean>
+    				</property>
+    				<property name="documentValues">
+    					<list>
+    						<value>dvPayeeDetail.disbVchrPayeeIdNumber</value>
+    					</list>
+    				</property>
+    			</bean>
+    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    				<property name="searchingAttribute">
+    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    						<property name="businessObjectClassName" value="edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail"/>
+    						<property name="attributeName" value="disbVchrPayeePersonName"/>
+    					</bean>
+    				</property>
+    				<property name="documentValues">
+    					<list>
+    						<value>dvPayeeDetail.disbVchrPayeePersonName</value>
+    					</list>
+    				</property>
+    			</bean>
+    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    				<property name="searchingAttribute">
+    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    						<property name="businessObjectClassName" value="edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail"/>
+    						<property name="attributeName" value="disbVchrPaymentReasonCode"/>
+    					</bean>
+    				</property>
+    				<property name="documentValues">
+    					<list>
+    						<value>dvPayeeDetail.disbVchrPaymentReasonCode</value>
+    					</list>
+    				</property>
+    			</bean>
+    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    				<property name="searchingAttribute">
+    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    						<property name="businessObjectClassName" value="edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument"/>
+    						<property name="attributeName" value="extractDate"/>
+    					</bean>
+    				</property>
+    				<property name="documentValues">
+    					<list>
+    						<value>extractDate</value>
+    					</list>
+    				</property>
+    			</bean>
+    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    				<property name="searchingAttribute">
+    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    						<property name="businessObjectClassName" value="edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument"/>
+    						<property name="attributeName" value="paidDate"/>
+    					</bean>
+    				</property>
+    				<property name="documentValues">
+    					<list>
+    						<value>paidDate</value>
+    					</list>
+    				</property>
+    			</bean>
+    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    				<property name="searchingAttribute">
+    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    						<property name="businessObjectClassName" value="edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument"/>
+    						<property name="attributeName" value="cancelDate"/>
+    					</bean>
+    				</property>
+    				<property name="documentValues">
+    					<list>
+    						<value>cancelDate</value>
+    					</list>
+    				</property>
+    			</bean>
+    		</list>
+    	</property>
+    	<property name="routingTypeDefinitions">
+    		<map>
+    			<entry key="Purchasing" value-ref="DisbursementVoucherDocument-RoutingType-Campus"/>
+    			<entry key="Account" value-ref="RoutingType-AccountingDocument-Account-sourceOnly"/>
+    			<entry key="AccountingOrganizationHierarchy" value-ref="RoutingType-AccountingDocument-OrganizationHierarchy-sourceOnly"/>
+    			<entry key="Campus" value-ref="DisbursementVoucherDocument-RoutingType-Campus"/>
+    			<!-- no qualifiers for tax review -->
+    			<!-- no qualifiers for travel review -->
+    			<entry key="PaymentMethod" value-ref="DisbursementVoucherDocument-RoutingType-PaymentMethod"/>
+    			<entry key="Award" value-ref="RoutingType-AccountingDocument-Award"/>
+    		</map>
+    	</property>
+	</bean>
+  
 </beans>
