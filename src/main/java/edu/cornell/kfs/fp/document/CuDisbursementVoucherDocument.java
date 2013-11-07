@@ -455,7 +455,12 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
     
     @Override
     public void toCopy() throws WorkflowException {
+        String payeeidNumber = getDvPayeeDetail().getDisbVchrPayeeIdNumber();
+        
         super.toCopy();
+        
+        KNSGlobalVariables.getMessageList().clear();
+        getDvPayeeDetail().setDisbVchrPayeeIdNumber(payeeidNumber);
         initiateDocument();
 
         // clear fields
