@@ -207,13 +207,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     	return KFSConstants.ParameterValues.YES.equals(servicePerformedOnCampus);
     }
 
-    /**
-     * Returns the "servicePerformedOnCampus" property as a boolean, in case
-     * we ever need to retrieve it as such.
-     */
-    public boolean serviceIsPerformedOnCampus() {
-    	return KFSConstants.ParameterValues.YES.equals(servicePerformedOnCampus);
-    }
+    
 
     public String getInitiatorNetID() {
         return initiatorNetID;
