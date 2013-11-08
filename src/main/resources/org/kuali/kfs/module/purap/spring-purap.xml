@@ -244,6 +244,8 @@
         <property name="vendorService" ref="vendorService" />
         <property name="dataDictionaryService" ref="dataDictionaryService" />
         <property name="universityDateService" ref="universityDateService"/>
+        <!-- KFSPTS-1891 -->
+        <property name="paymentMethodGeneralLedgerPendingEntryService" ref="cUPaymentMethodGeneralLedgerPendingEntryService" />
     </bean>
 	
 	<bean id="creditMemoDao" parent="platformAwareDao" class="org.kuali.kfs.module.purap.document.dataaccess.impl.CreditMemoDaoOjb" />
@@ -262,6 +264,8 @@
         <property name="purchaseOrderService" ref="purchaseOrderService" />
         <property name="vendorService" ref="vendorService" />
         <property name="workflowDocumentService" ref="workflowDocumentService" />
+        <!-- KFSPTS-1891 -->
+        <property name="paymentMethodGeneralLedgerPendingEntryService" ref="cUPaymentMethodGeneralLedgerPendingEntryService" />
     </bean>
     
 	<bean id="printService" class="org.kuali.kfs.module.purap.document.service.impl.PrintServiceImpl">

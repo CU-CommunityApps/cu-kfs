@@ -15,16 +15,26 @@
  */
 package org.kuali.kfs.module.purap.document.validation.impl;
 
+import java.text.MessageFormat;
+
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.document.AccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.kns.document.Document;
+import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.web.format.CurrencyFormatter;
+
+import edu.cornell.kfs.fp.businessobject.PaymentMethod;
+import edu.cornell.kfs.module.purap.businessobject.CreditMemoWireTransfer;
 
 /**
  * Business rule(s) applicable to the Credit Memo document.
@@ -43,7 +53,11 @@ public class CreditMemoDocumentPreRules extends AccountsPayableDocumentPreRulesB
      */
     @Override
     public boolean doPrompts(Document document) {
-        return super.doPrompts(document);
+        boolean preRulesOK = true;
+        preRulesOK &= checkWireTransferTabState((VendorCreditMemoDocument) document);
+        preRulesOK &= super.doPrompts(document);
+
+        return preRulesOK;
     }
 
     /**
@@ -107,5 +121,64 @@ public class CreditMemoDocumentPreRules extends AccountsPayableDocumentPreRulesB
     protected boolean checkCAMSWarningStatus(PurchasingAccountsPayableDocument purapDocument) {
         return PurapConstants.CAMSWarningStatuses.CREDIT_MEMO_STATUS_WARNING_NO_CAMS_DATA.contains(purapDocument.getStatusCode());
     }
-    
+  
+    protected boolean checkWireTransferTabState(VendorCreditMemoDocument cmDocument) {
+        boolean tabStatesOK = true;
+
+        CreditMemoWireTransfer cmWireTransfer = cmDocument.getCmWireTransfer();
+
+        // if payment method is CHECK and wire tab contains data, ask user to clear tab
+        if (!StringUtils.equals(PaymentMethod.PM_CODE_WIRE, cmDocument.getPaymentMethodCode()) && hasWireTransferValues(cmWireTransfer)) {
+            String questionText = SpringContext.getBean(KualiConfigurationService.class).getPropertyString(KFSKeyConstants.QUESTION_CLEAR_UNNEEDED_CM_WIRW_TAB);
+
+            Object[] args = { CUPurapConstants.PAYMENT_METHOD, cmDocument.getPaymentMethodCode(), CUPurapConstants.WIRE_TRANSFER, PaymentMethod.PM_CODE_WIRE };
+            questionText = MessageFormat.format(questionText, args);
+
+            boolean clearTab = super.askOrAnalyzeYesNoQuestion(KFSConstants.DisbursementVoucherDocumentConstants.CLEAR_WIRE_TRANSFER_TAB_QUESTION_ID, questionText);
+            if (clearTab) {
+                // NOTE: Can't replace with new instance because Foreign Draft uses same object
+                clearWireTransferValues(cmWireTransfer);
+            }
+            else {
+                // return to document if the user doesn't want to clear the Wire Transfer tab
+                super.event.setActionForwardName(KFSConstants.MAPPING_BASIC);
+                tabStatesOK = false;
+            }
+        }
+
+        return tabStatesOK;
+    }
+
+    protected boolean hasWireTransferValues(CreditMemoWireTransfer cmWireTransfer) {
+        boolean hasValues = false;
+
+        // Checks each explicit field in the tab for user entered values
+        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmAutomatedClearingHouseProfileNumber());
+        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmBankName());
+        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmBankRoutingNumber());
+        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmBankCityName());
+        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmBankStateCode());
+        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmBankCountryCode());
+        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmPayeeAccountNumber());
+        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmAttentionLineText());
+        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmCurrencyTypeName());
+        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmAdditionalWireText());
+        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmPayeeAccountName());
+
+        return hasValues;
+    }
+    protected void clearWireTransferValues(CreditMemoWireTransfer cmWireTransfer) {
+    	cmWireTransfer.setCmAutomatedClearingHouseProfileNumber(null);
+    	cmWireTransfer.setCmBankName(null);
+    	cmWireTransfer.setCmBankRoutingNumber(null);
+    	cmWireTransfer.setCmBankCityName(null);
+    	cmWireTransfer.setCmBankStateCode(null);
+    	cmWireTransfer.setCmBankCountryCode(null);
+    	cmWireTransfer.setCmPayeeAccountNumber(null);
+    	cmWireTransfer.setCmAttentionLineText(null);
+    	cmWireTransfer.setCmCurrencyTypeName(null);
+    	cmWireTransfer.setCmAdditionalWireText(null);
+    	cmWireTransfer.setCmPayeeAccountName(null);
+    }
+
 }

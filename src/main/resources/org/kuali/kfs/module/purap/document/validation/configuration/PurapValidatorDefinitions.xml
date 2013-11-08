@@ -661,6 +661,9 @@
 	<bean id="VendorCreditMemo-cancelValidation" class="org.kuali.kfs.module.purap.document.validation.impl.VendorCreditMemoCancelValidation" abstract="true">
 		<property name="creditMemoService" ref="creditMemoService" />
 	</bean>
+	<!--  KFSPTS-1891 -->
+	<bean id="VendorCreditMemo-wireTransferValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CreditMemoWireTransferValidation" abstract="true" />
+	<bean id="VendorCreditMemo-foreignDraftValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CreditMemoForeignDraftValidation" abstract="true" />
 	
 <!-- Payment Request Definitions -->
 	<bean id="PaymentRequest-nonZeroAccountingLineAmountValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PaymentRequestNonZeroAccountingLineAmountValidation" abstract="true"/>
@@ -725,6 +728,9 @@
 		<property name="purapService" ref="purapService" />
 		<property name="reviewAccountingLineValidation" ref="PaymentRequest-reviewAccountingLine" />		
 	</bean>
+	<!--  KFSPTS-1891 -->
+	<bean id="PaymentRequest-wireTransferValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PaymentRequestWireTransferValidation" abstract="true" />
+	<bean id="PaymentRequest-foreignDraftValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PaymentRequestForeignDraftValidation" abstract="true" />
 	
 	<bean id="PurchasingAccountsPayable-newProcessItem-itemsCollection-itemConsideredEnteredBranchingValidation" abstract="true" parent="PurchasingAccountsPayable-itemConsideredEnteredBranchingValidation" scope="prototype">
 		<property name="branchMap">

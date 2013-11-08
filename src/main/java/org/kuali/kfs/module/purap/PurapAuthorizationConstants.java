@@ -83,6 +83,9 @@ public class PurapAuthorizationConstants extends AuthorizationConstants {
         public static final String REMOVE_HOLD = "paymentRequestHoldCancelRemoval";
         public static final String REMOVE_REQUEST_CANCEL = "paymentRequestHoldCancelRemoval";
         public static final String FULL_DOCUMENT_ENTRY_COMPLETED = "fullDocumentEntryCompleted";
+        // KFSPTS-1891
+        public static final String EDIT_AMOUNT = "editAmount";
+        public static final String WAIVE_WIRE_FEE_EDITABLE = "waiveWireFeeEditable";
     }
 
     public static class CreditMemoEditMode extends EditMode {

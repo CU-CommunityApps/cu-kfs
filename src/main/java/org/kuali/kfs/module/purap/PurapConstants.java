@@ -480,6 +480,8 @@ public class PurapConstants extends JSTLConstants {
         public static final String AWAITING_ORG_REVIEW = "ACHA"; // Waiting for Chart/Org approval
         public static final String AWAITING_TAX_REVIEW = "ATAX"; // Waiting for Vendor Tax approval
         public static final String PENDING_E_INVOICE = "PEIN";
+        // KFSPTS-1891
+        public static final String PAYMENT_METHODL_REVIEW = "PTMA"; // Waiting for Treasury Manager approval
 
         // keep these in the order of potential routing
         // Note it doesn't make much sense to compare auto_approved and dept_approved but this is
@@ -496,6 +498,8 @@ public class PurapConstants extends JSTLConstants {
             AWAITING_ORG_REVIEW(PurapConstants.PaymentRequestStatuses.AWAITING_ORG_REVIEW, false), 
             AWAITING_TAX_REVIEW(PurapConstants.PaymentRequestStatuses.AWAITING_TAX_REVIEW, false), 
             DEPARTMENT_APPROVED(PurapConstants.PaymentRequestStatuses.DEPARTMENT_APPROVED, false), 
+            // KFSPTS-1891
+            PAYMENT_METHOD_REVIEW(PurapConstants.PaymentRequestStatuses.PAYMENT_METHODL_REVIEW, false), 
             AUTO_APPROVED(PurapConstants.PaymentRequestStatuses.AUTO_APPROVED, false), ;
 
             private String statusCode = new String();

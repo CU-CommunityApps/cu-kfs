@@ -35,6 +35,8 @@ import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.util.TypedArrayList;
 
+import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
+
 /**
  * Contains all data for a specific parent or division Vendor, including a link to the <code>VendorHeader</code>, which only
  * contains information about the parent company, but can be shared between division Vendors.
@@ -733,6 +735,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
                     this.getHealthOffSiteLicenseExpirationDate(),detail.getHealthOffSiteLicenseExpirationDate()).append(
                     this.getInsuranceNotes(),detail.getInsuranceNotes()).append(
                     this.getMerchantNotes(),detail.getMerchantNotes()).append( // end CU insurance fields
+                    ((VendorDetailExtension)this.getExtension()).getDefaultB2BPaymentMethodCode(),((VendorDetailExtension)detail.getExtension()).getDefaultB2BPaymentMethodCode()).append( // KFSPTS-1891 default paymetn method
                     this.isVendorFirstLastNameIndicator(), detail.isVendorFirstLastNameIndicator()).isEquals();
         }
     }

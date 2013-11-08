@@ -209,6 +209,22 @@
 				</bean>  					
 				
 				<bean parent="PurchasingAccountsPayable-checkNegativeAccountsValidation" scope="prototype"/>
+				<!-- KFSPTS-1891 -->
+				<bean class="edu.cornell.kfs.module.purap.document.validation.impl.VendorCreditMemoPaymentMethodCodeValidation" />
+				<bean parent="VendorCreditMemo-wireTransferValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="VendorCreditMemo-foreignDraftValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
 														
 			</list>
 		</property>

@@ -21,7 +21,6 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +38,7 @@ import org.kuali.kfs.module.purap.PurapWorkflowConstants.PaymentRequestDocument.
 import org.kuali.kfs.module.purap.businessobject.ItemType;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItemUseTax;
+import org.kuali.kfs.module.purap.businessobject.PaymentRequestWireTransfer;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
@@ -53,9 +53,13 @@ import org.kuali.kfs.module.purap.service.PurapGeneralLedgerService;
 import org.kuali.kfs.module.purap.util.ExpiredOrClosedAccountEntry;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
+import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
+import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.AccountingDocument;
+import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
@@ -68,18 +72,27 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.kew.dto.ActionTakenEventDTO;
 import org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO;
 import org.kuali.rice.kew.exception.WorkflowException;
+import org.kuali.rice.kew.util.KEWConstants;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kns.bo.Note;
+import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.rice.kns.rule.event.KualiDocumentEvent;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.DateTimeService;
+import org.kuali.rice.kns.service.DocumentHelperService;
 import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 import org.kuali.rice.kns.workflow.service.WorkflowDocumentService;
+import org.springframework.util.CollectionUtils;
+
+import edu.cornell.kfs.fp.businessobject.PaymentMethod;
+import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
+import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 /**
  * Payment Request Document Business Object. Contains the fields associated with the main document table.
@@ -139,12 +152,22 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
     protected PurchaseOrderCostSource paymentRequestCostSource;
     protected RecurringPaymentType recurringPaymentType;
 
+    // KFSPTS-1891
+    public static String DOCUMENT_TYPE_NON_CHECK = "PRNC";
+    protected PaymentRequestWireTransfer preqWireTransfer;
+    
+    // default this value to "C" to preserve baseline behavior
+    protected String paymentMethodCode = "P"; //ACH check
+    private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
+    private PaymentMethod paymentMethod;
+
     /**
      * Default constructor.
      */
     public PaymentRequestDocument() {
         super();
-    }
+        preqWireTransfer = new PaymentRequestWireTransfer();
+   }
 
     /**
      * @see org.kuali.rice.kns.bo.PersistableBusinessObjectBase#isBoNotesSupport()
@@ -594,6 +617,15 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
         
         this.fixItemReferences();
         this.refreshNonUpdateableReferences();
+        // KFSPTS-1891
+        if ( ObjectUtils.isNotNull(po.getVendorDetail())
+                 && ObjectUtils.isNotNull(po.getVendorDetail().getExtension()) ) {
+             if ( po.getVendorDetail().getExtension() instanceof VendorDetailExtension
+                     && StringUtils.isNotBlank( ((VendorDetailExtension)po.getVendorDetail().getExtension()).getDefaultB2BPaymentMethodCode() ) ) {
+                 setPaymentMethodCode(
+                         ((VendorDetailExtension)po.getVendorDetail().getExtension()).getDefaultB2BPaymentMethodCode() );
+             }
+         }
     }
 
     /**
@@ -693,7 +725,12 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
     @Override
     public void doRouteStatusChange(DocumentRouteStatusChangeDTO statusChangeEvent) {
         LOG.debug("doRouteStatusChange() started");
-        
+        if (this.getDocumentHeader().getWorkflowDocument().stateIsProcessed()) {
+        	// KFSPTS-1891
+        	if (CollectionUtils.isEmpty(generalLedgerPendingEntries)) {
+        		this.refreshReferenceObject("generalLedgerPendingEntries");
+        	}
+        }
         super.doRouteStatusChange(statusChangeEvent);
         try {
             // DOCUMENT PROCESSED
@@ -702,6 +739,9 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
                     SpringContext.getBean(PurapService.class).updateStatus(this, PurapConstants.PaymentRequestStatuses.DEPARTMENT_APPROVED);
                     populateDocumentForRouting();
                     SpringContext.getBean(PurapService.class).saveDocumentNoValidation(this);
+                    // KFSPTS-2581 : GLPE need to be saved separately because not in ojb config
+                    // All GLPE approve cd has been set to 'A'
+                    saveGeneralLedgerPendingEntries();
                     return;
                 }
             }
@@ -749,6 +789,14 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
         }
     }
 
+    protected void saveGeneralLedgerPendingEntries() {
+    	// All the approve cd is set to 'A' by glpepostingdocument
+        for (GeneralLedgerPendingEntry glpe : getGeneralLedgerPendingEntries()) {
+        	
+            SpringContext.getBean(GeneralLedgerPendingEntryService.class).save(glpe);
+        }
+    }
+
     /**
      * Generates correcting entries to the GL if accounts are modified.
      * 
@@ -766,7 +814,9 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
 
         // everything in the below list requires correcting entries to be written to the GL
         if (NodeDetailEnum.getNodesRequiringCorrectingGeneralLedgerEntries().contains(currentNode)) {
-            if (NodeDetailEnum.ACCOUNT_REVIEW.getName().equals(currentNode) || NodeDetailEnum.VENDOR_TAX_REVIEW.getName().equals(currentNode)) {
+        	// KFSPTS-2598 : Treasury also can 'calculate'
+            if (NodeDetailEnum.ACCOUNT_REVIEW.getName().equals(currentNode) || NodeDetailEnum.VENDOR_TAX_REVIEW.getName().equals(currentNode)
+            		|| NodeDetailEnum.PAYMENT_METHOD_REVIEW.getName().equals(currentNode)) {
                 SpringContext.getBean(PurapGeneralLedgerService.class).generateEntriesModifyPaymentRequest(this);
             }
         }
@@ -1069,7 +1119,41 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
         if (event instanceof AttributedContinuePurapEvent) {
             SpringContext.getBean(PaymentRequestService.class).populatePaymentRequest(this);
         }
+        // KFSPTS-1891.  purchasingPreDisbursementExtractJob has NPE issue.  need this null check
+       // if (preqWireTransfer != null && !StringUtils.equals(preqWireTransfer.getDocumentNumber(),getDocumentNumber())) {
+//        LOG.info("preqWireTransfer " + preqWireTransfer != null);
+        try {
+//        if (preqWireTransfer != null) {
+//            if (!StringUtils.equals(preqWireTransfer.getDocumentNumber(),getDocumentNumber())) {
+        	preqWireTransfer.setDocumentNumber(getDocumentNumber());
+//            }
+//        }
+        } catch (Exception e) {
+          LOG.info("preqWireTransfer is null" );
+          preqWireTransfer = new PaymentRequestWireTransfer();  
+      	  preqWireTransfer.setDocumentNumber(getDocumentNumber());
+     	
+        }
         super.prepareForSave(event);
+        // First, only do this if the document is in initiated status - after that, we don't want to 
+        // accidentally reset the bank code
+        // KFSPTS-1891
+        if ( StringUtils.equals(KEWConstants.ROUTE_HEADER_INITIATED_CD, getDocumentHeader().getWorkflowDocument().getRouteHeader().getDocRouteStatus() )
+                || StringUtils.equals(KEWConstants.ROUTE_HEADER_SAVED_CD, getDocumentHeader().getWorkflowDocument().getRouteHeader().getDocRouteStatus() ) ) {
+            // need to check whether the user has the permission to edit the bank code
+            // if so, don't synchronize since we can't tell whether the value coming in
+            // was entered by the user or not.
+            DocumentAuthorizer docAuth = SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(this);
+            if ( !docAuth.isAuthorizedByTemplate(this, 
+                    KFSConstants.ParameterNamespaces.KFS, 
+                    KFSConstants.PermissionTemplate.EDIT_BANK_CODE.name, 
+                    GlobalVariables.getUserSession().getPrincipalId()  ) ) {
+                synchronizeBankCodeWithPaymentMethod();        
+            } else {
+                // ensure that the name is updated properly
+                refreshReferenceObject( "bank" );
+            }
+        }        
      
     }
 
@@ -1136,7 +1220,14 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
 
         // PREQs do not wait for document final approval to post GL entries; here we are forcing them to be APPROVED
         explicitEntry.setFinancialDocumentApprovedCode(KFSConstants.PENDING_ENTRY_APPROVED_STATUS_CODE.APPROVED);
-    }
+
+        // KFSPTS-1891
+        // if the document is not processed using PDP, then the cash entries need to be created instead of liability
+        // so, switch the document type so the offset generation uses a cash offset object code
+        if ( !getPaymentMethodGeneralLedgerPendingEntryService().isPaymentMethodProcessedUsingPdp(getPaymentMethodCode())) {
+            explicitEntry.setFinancialDocumentTypeCode(DOCUMENT_TYPE_NON_CHECK);
+        }
+}
 
     /**
      * Provides answers to the following splits: PurchaseWasReceived VendorIsEmployeeOrNonResidentAlien
@@ -1151,9 +1242,17 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
             return shouldWaitForReceiving();
         if (nodeName.equals(PurapWorkflowConstants.VENDOR_IS_EMPLOYEE_OR_NON_RESIDENT_ALIEN))
             return isVendorEmployeeOrNonResidentAlien();
+     // KFSPTS-1891
+        if (nodeName.equals(PurapWorkflowConstants.TREASURY_MANAGER))
+            return isWireOrForeignDraft();
         throw new UnsupportedOperationException("Cannot answer split question for this node you call \"" + nodeName + "\"");
     }
 
+    // KFSPTS-1891
+    private boolean isWireOrForeignDraft() {
+        return StringUtils.equals(PaymentMethod.PM_CODE_WIRE, this.getPaymentMethodCode()) || StringUtils.equals(PaymentMethod.PM_CODE_FOREIGN_DRAFT, this.getPaymentMethodCode());
+    }
+    
     protected boolean isVendorEmployeeOrNonResidentAlien() {
         String vendorHeaderGeneratedId = this.getVendorHeaderGeneratedIdentifier().toString();
         if (StringUtils.isBlank(vendorHeaderGeneratedId)) {
@@ -1376,4 +1475,65 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
         }
         return true;
     }
+    
+    protected void synchronizeBankCodeWithPaymentMethod() {
+        Bank bank = getPaymentMethodGeneralLedgerPendingEntryService().getBankForPaymentMethod( getPaymentMethodCode() );
+        if ( bank != null ) {
+            setBankCode(bank.getBankCode());
+            setBank(bank);
+        } else {
+            // no bank code, no bank needed
+            setBankCode(null);
+            setBank(null);
+        }
+    }
+
+    protected CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
+        if ( paymentMethodGeneralLedgerPendingEntryService == null ) {
+            paymentMethodGeneralLedgerPendingEntryService = SpringContext.getBean(CUPaymentMethodGeneralLedgerPendingEntryService.class);
+        }
+        return paymentMethodGeneralLedgerPendingEntryService;
+    }
+
+    public boolean generateDocumentGeneralLedgerPendingEntries(GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+        if (getGeneralLedgerPendingEntries() == null || getGeneralLedgerPendingEntries().size() < 2) {
+            LOG.warn("No gl entries for accounting lines.");
+            return true;
+        }
+//        LOG.debug("generateDocumentGeneralLedgerPendingEntries()");
+        getPaymentMethodGeneralLedgerPendingEntryService().generatePaymentMethodSpecificDocumentGeneralLedgerPendingEntries(
+                (AccountingDocument)this,getPaymentMethodCode(),getBankCode(), KNSConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", getGeneralLedgerPendingEntry(0), false, false, sequenceHelper);
+        
+        return true;
+    }
+
+	public String getPaymentMethodCode() {
+		return paymentMethodCode;
+	}
+
+	public void setPaymentMethodCode(String paymentMethodCode) {
+		this.paymentMethodCode = paymentMethodCode;
+	}
+
+	public PaymentMethod getPaymentMethod() {
+		return paymentMethod;
+	}
+
+	public void setPaymentMethod(PaymentMethod paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
+
+	public PaymentRequestWireTransfer getPreqWireTransfer() {
+		if (ObjectUtils.isNull(preqWireTransfer)) {
+			preqWireTransfer = new PaymentRequestWireTransfer();
+			preqWireTransfer.setDocumentNumber(this.getDocumentNumber());
+		}
+		return preqWireTransfer;
+	}
+
+	public void setPreqWireTransfer(PaymentRequestWireTransfer preqWireTransfer) {
+		this.preqWireTransfer = preqWireTransfer;
+	}
+    
+
 }
