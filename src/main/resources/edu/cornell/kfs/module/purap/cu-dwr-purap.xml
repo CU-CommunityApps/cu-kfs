@@ -11,5 +11,9 @@
         <param name="beanName" value="iWantDocumentService" />
         <include method="getPersonData" />
       </create>
+      <create creator="spring" javascript="CUPaymentMethodGeneralLedgerPendingEntryService">
+        <param name="beanName" value="cUPaymentMethodGeneralLedgerPendingEntryService" />
+        <include method="getBankForPaymentMethod" />
+      </create>
 	</allow>	
 </dwr>

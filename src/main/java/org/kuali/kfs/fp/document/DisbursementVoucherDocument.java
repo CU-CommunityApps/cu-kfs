@@ -45,9 +45,9 @@ import org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherPaymentReasonService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTaxService;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSConstants.AdHocPaymentIndicator;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.KFSConstants.AdHocPaymentIndicator;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
@@ -71,10 +71,10 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
-import org.kuali.rice.kew.actionrequest.ActionRequestValue;
 import org.kuali.rice.kew.actiontaken.ActionTakenValue;
 import org.kuali.rice.kew.engine.RouteContext;
 import org.kuali.rice.kew.exception.WorkflowException;
+import org.kuali.rice.kew.util.KEWConstants;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kim.bo.entity.KimEntityAddress;
 import org.kuali.rice.kim.bo.entity.KimEntityEntityType;
@@ -85,8 +85,10 @@ import org.kuali.rice.kim.service.PersonService;
 import org.kuali.rice.kim.util.KimConstants;
 import org.kuali.rice.kns.bo.DocumentHeader;
 import org.kuali.rice.kns.document.Copyable;
+import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
+import org.kuali.rice.kns.service.DocumentHelperService;
 import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.ParameterEvaluator;
 import org.kuali.rice.kns.service.ParameterService;
@@ -96,6 +98,8 @@ import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.businessobject.DisbursementVoucherPayeeDetailExtension;
+import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
+import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
@@ -180,6 +184,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
     protected DisbursementVoucherWireTransfer dvWireTransfer;
 
     protected Bank bank;
+    private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
 
     /**
      * Default no-arg constructor.
@@ -981,6 +986,15 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         if (getVendorService().isVendorForeign(vendor.getVendorHeaderGeneratedIdentifier())) {
             getDvPayeeDetail().setDisbVchrAlienPaymentCode(true);
         }
+        // KFSPTS-1891
+        if ( vendor != null ) {
+        	            if ( ObjectUtils.isNotNull( vendor.getExtension() ) 
+        	                    && vendor.getExtension() instanceof VendorDetailExtension ) {
+        	                if ( StringUtils.isNotBlank(((VendorDetailExtension)vendor.getExtension()).getDefaultB2BPaymentMethodCode())) {
+        	                    disbVchrPaymentMethodCode = ((VendorDetailExtension)vendor.getExtension()).getDefaultB2BPaymentMethodCode();
+        	                }
+        	            }
+        	        }
     }
 
     /**
@@ -1300,8 +1314,47 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         if (shouldClearSpecialHandling()) {
             clearSpecialHandling();
         }
+        // KFSPTS-1891.  This is from uadisbvdocument.  
+        // TODO : need to check again to see if cornell need this
+        if ( KEWConstants.ROUTE_HEADER_INITIATED_CD.equals( getDocumentHeader().getWorkflowDocument().getRouteHeader().getDocRouteStatus() )
+                || KEWConstants.ROUTE_HEADER_SAVED_CD.equals( getDocumentHeader().getWorkflowDocument().getRouteHeader().getDocRouteStatus() ) ) {
+            // need to check whether the user has the permission to edit the bank code
+            // if so, don't synchronize since we can't tell whether the value coming in
+            // was entered by the user or not.        
+            DocumentAuthorizer docAuth = SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(this);
+            if ( !docAuth.isAuthorizedByTemplate(this, 
+                    KFSConstants.ParameterNamespaces.KFS, 
+                    KFSConstants.PermissionTemplate.EDIT_BANK_CODE.name, 
+                    GlobalVariables.getUserSession().getPrincipalId()  ) ) {
+                synchronizeBankCodeWithPaymentMethod();        
+            } else {
+                refreshReferenceObject( "bank" );
+            }
+        }        
+    }
+
+    // KFSPTS-1891
+    protected void synchronizeBankCodeWithPaymentMethod() {
+        Bank bank = getPaymentMethodGeneralLedgerPendingEntryService().getBankForPaymentMethod( getDisbVchrPaymentMethodCode() );
+        if ( bank != null ) {
+            if ( !StringUtils.equals(bank.getBankCode(), getDisbVchrBankCode()) ) {
+                setDisbVchrBankCode(bank.getBankCode());
+                refreshReferenceObject( "bank" );
+            }
+        } else {
+            // no bank code, no bank needed
+            setDisbVchrBankCode(null);
+            setBank(null);
+        }
     }
     
+    protected CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
+        if ( paymentMethodGeneralLedgerPendingEntryService == null ) {
+            paymentMethodGeneralLedgerPendingEntryService = SpringContext.getBean(CUPaymentMethodGeneralLedgerPendingEntryService.class);
+        }
+        return paymentMethodGeneralLedgerPendingEntryService;
+    }
+
     /**
      * Determines if the special handling fields should be cleared, based on whether the special handling has been turned off and whether the current node is CAMPUS
      * @return true if special handling should be cleared, false otherwise

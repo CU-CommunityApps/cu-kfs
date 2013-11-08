@@ -20,11 +20,17 @@
     htmlFormAction="purapPaymentRequest" renderMultipart="true"
     showTabButtons="true">
 
-    <c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFiscalEntry'])}" />
+    	<c:set var="canEdit" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}" scope="request" />
+    	<c:set var="canSave" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_SAVE]}" scope="request" />
+    <c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFiscalEntry'])}"  scope="request" />
     <c:set var="displayInitTab" value="${KualiForm.editingMode['displayInitTab']}" scope="request" />    
     <c:set var="taxInfoViewable" value="${KualiForm.editingMode['taxInfoViewable']}" scope="request" />
     <c:set var="taxAreaEditable" value="${KualiForm.editingMode['taxAreaEditable']}" scope="request" />
+    <!-- KFSPTS-1891 -->
+	<c:set var="wireEntryMode" value="${(canEdit || canSave) && KualiForm.editingMode['wireEntry']}" scope="request" />
+	<c:set var="frnEntryMode" value="${(canEdit || canSave) && KualiForm.editingMode['frnEntry']}" scope="request" />
 
+    
 	<!--  Display hold message if payment is on hold -->
 	<c:if test="${KualiForm.paymentRequestDocument.holdIndicator}">	
 		<h4>This Payment Request has been Held by <c:out value="${KualiForm.paymentRequestDocument.lastActionPerformedByPersonName}"/></h4>		
@@ -80,6 +86,8 @@
            	
 	    <purap:paymentHistory documentAttributes="${DataDictionary.RelatedDocuments.attributes}" />
     	
+	    <purap:preqWireTransfer />
+	    <purap:preqForeignDraft />
         <gl:generalLedgerPendingEntries />
 
 	    <kul:notes 

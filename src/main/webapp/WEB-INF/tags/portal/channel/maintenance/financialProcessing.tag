@@ -33,7 +33,8 @@
         <li><portal:portalLink displayTitle="true" title="Fiscal Year Function Control" url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>                
         <li><portal:portalLink displayTitle="true" title="Function Control Code" url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.fp.businessobject.FunctionControlCode&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>             
         <li><portal:portalLink displayTitle="true" title="Non-Resident Alien Tax Percent" url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.fp.businessobject.NonResidentAlienTaxPercent&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
-   </ul>
+       <!-- KFSPTS-1891 -->
+       <li><portal:portalLink displayTitle="true" title="Payment Method" url="kr/lookup.do?methodToCall=start&businessObjectClassName=edu.cornell.kfs.fp.businessobject.PaymentMethod&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>           </ul>
 </div>
 <channel:portalChannelBottom />
                 

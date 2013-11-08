@@ -82,4 +82,12 @@ public class CUPurapConstants extends PurapConstants {
     
     public static final String B2B_HIGHER_LIMIT_PERMISSION = "B2B Higher APO Limit";
 
+    public static final String LABEL_BANK_NAME = "Bank Name";
+    public static final String LABEL_BANK_CITY = "Bank City";
+    public static final String LABEL_BANK_COUNTRY = "Bank Country";
+    public static final String LABEL_CURRENCY = "Currency";
+    public static final String LABEL_BANK_ACCT_NUMBER = "Bank Account#";
+    public static final String LABEL_BANK_ACCT_NAME = "Bank Account Name";
+    public static final String PAYMENT_METHOD = "payment method";
+    public static final String WIRE_TRANSFER = "Wire Transfer";
 }

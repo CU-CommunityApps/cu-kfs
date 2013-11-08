@@ -398,7 +398,9 @@ public class KFSKeyConstants {
     
     public static final String ERROR_BA_AMOUNT_ZERO = "error.document.ba.amount.zero";
     public static final String ERROR_BA_AMOUNT_NEGATIVE = "error.document.ba.amount.negative";
-    
+    public static final String QUESTION_CLEAR_UNNEEDED_WIRW_TAB = "question.preq.clearUnneededTab";
+    public static final String QUESTION_CLEAR_UNNEEDED_CM_WIRW_TAB = "question.cm.clearUnneededTab";
+
     public static final class ElectronicPaymentClaim {
         public static final String ERROR_EFT_NO_CHOSEN_CLAIMING_DOCTYPE = "error.bo.eft.no.chosen.claiming.doctype";
         public static final String ERROR_PRE_CLAIMING_DOCUMENT_DOES_NOT_EXIST = "error.bo.eft.pre.claiming.document.does.not.exist";

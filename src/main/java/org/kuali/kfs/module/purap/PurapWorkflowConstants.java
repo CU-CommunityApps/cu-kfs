@@ -53,7 +53,9 @@ public class PurapWorkflowConstants {
     public static final String RELATES_TO_OUTSTANDING_TRANSACTIONS = "RelatesToOutstandingTransactions";
     public static final String REQUIRES_IMAGE_ATTACHMENT = "RequiresImageAttachment";
     public static final String PURCHASE_WAS_RECEIVED = "PurchaseWasReceived";
-    
+    // KFSPTS-1891
+    public static final String TREASURY_MANAGER = "TreasuryManager";
+
     public static final String DOC_ADHOC_NODE_NAME = "AdHoc";
 
     public static class ContractManagerAssignmentDocument {
@@ -209,6 +211,8 @@ public class PurapWorkflowConstants {
             SUB_ACCOUNT_REVIEW("SubAccount", PaymentRequestStatuses.AWAITING_SUB_ACCT_MGR_REVIEW, PaymentRequestStatuses.CANCELLED_POST_AP_APPROVE, false), 
             ACCOUNT_REVIEW("Account", PaymentRequestStatuses.AWAITING_FISCAL_REVIEW, PaymentRequestStatuses.CANCELLED_POST_AP_APPROVE, true), 
             ORG_REVIEW("AccountingOrganizationHierarchy", PaymentRequestStatuses.AWAITING_ORG_REVIEW, PaymentRequestStatuses.CANCELLED_POST_AP_APPROVE, false), 
+            // KFSPTS-1891
+            PAYMENT_METHOD_REVIEW("PaymentMethodReviewer", PaymentRequestStatuses.PAYMENT_METHODL_REVIEW, PaymentRequestStatuses.CANCELLED_POST_AP_APPROVE, true), 
             VENDOR_TAX_REVIEW("Tax", PaymentRequestStatuses.AWAITING_TAX_REVIEW, PaymentRequestStatuses.CANCELLED_POST_AP_APPROVE, true);
             
             private final String name;

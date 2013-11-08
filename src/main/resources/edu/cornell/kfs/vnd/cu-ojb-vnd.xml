@@ -41,6 +41,9 @@
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
 
 	<field-descriptor name="einvoiceVendorIndicator" column="EINV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" />
+    <!--  KFSPTS-1891 -->
+    <field-descriptor name="defaultB2BPaymentMethodCode" column="DFLT_B2B_PMT_MTHD_CD" jdbc-type="VARCHAR" />
+    <!--  END MOD -->
 </class-descriptor>
 
 
