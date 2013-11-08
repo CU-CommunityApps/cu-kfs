@@ -139,10 +139,6 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
     @Override
     public Set<String> getEditModes(Document document) {
         Set<String> editModes = super.getEditModes(document);
-        // KFSPTS-1891
-        editModes.add(KfsAuthorizationConstants.DisbursementVoucherEditMode.FRN_ENTRY);
-        editModes.add(KfsAuthorizationConstants.DisbursementVoucherEditMode.WIRE_ENTRY);
-
         KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         PaymentRequestDocument paymentRequestDocument = (PaymentRequestDocument)document;
         
@@ -189,10 +185,6 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
         if (canEditPreExtraction(paymentRequestDocument)) {
             editModes.add(PaymentRequestEditMode.EDIT_PRE_EXTRACT);
         }
-        // KFSPTS-1891
-        if (canApprove(paymentRequestDocument) && canEditAmount(paymentRequestDocument)) {
-            editModes.add(PaymentRequestEditMode.EDIT_AMOUNT);
-        }
 
         // See if purap tax is enabled
         boolean salesTaxInd = SpringContext.getBean(ParameterService.class).getIndicatorParameter(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);
@@ -220,13 +212,8 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
         }
         */
         
-        if (paymentRequestDocument.isDocumentStoppedInRouteNode(NodeDetailEnum.PAYMENT_METHOD_REVIEW)) {
-            editModes.add(PaymentRequestEditMode.WAIVE_WIRE_FEE_EDITABLE);
-        }
-
         // the tax tab is viewable to everyone after tax is approved
-        // KFSPTS-2712 : allow payment method review to view tax info
-        if ((PaymentRequestStatuses.DEPARTMENT_APPROVED.equals(paymentRequestDocument.getStatusCode()) || PaymentRequestStatuses.PAYMENT_METHODL_REVIEW.equals(paymentRequestDocument.getStatusCode()))&&
+        if (PaymentRequestStatuses.DEPARTMENT_APPROVED.equals(paymentRequestDocument.getStatusCode()) &&
                 // if and only if the preq has gone through tax review would TaxClassificationCode be non-empty
                 !StringUtils.isEmpty(paymentRequestDocument.getTaxClassificationCode())) {
             editModes.add(PaymentRequestEditMode.TAX_INFO_VIEWABLE);
@@ -437,11 +424,6 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
     		canEditPreExtraction = can;
     	}
     	return canEditPreExtraction;
-    }
-
-    // KFSPTS-1891
-    private boolean canEditAmount(PaymentRequestDocument paymentRequestDocument) {
-    		return  PurapConstants.PaymentRequestStatuses.PAYMENT_METHODL_REVIEW.contains(paymentRequestDocument.getStatusCode());
     }
 
 }

@@ -44,13 +44,9 @@ public class PaymentRequestItem extends AccountsPayableItemBase {
     private BigDecimal purchaseOrderItemUnitPrice;
     private KualiDecimal itemOutstandingInvoiceQuantity;
     private KualiDecimal itemOutstandingInvoiceAmount;
-    
     // KFSPTS-1719
     private Integer invLineNumber;
     private boolean invNonQtyItem;
-    
-    // KFSPTS-1891
-    private List<PaymentRequestAccountRevision> preqAccounRevisions;
     /**
      * Default constructor.
      */
@@ -410,15 +406,6 @@ public class PaymentRequestItem extends AccountsPayableItemBase {
 			return getItemLineNumber();
 		}
 		return invLineNumber;
-	}
-
-	public List<PaymentRequestAccountRevision> getPreqAccounRevisions() {
-		return preqAccounRevisions;
-	}
-
-	public void setPreqAccounRevisions(
-			List<PaymentRequestAccountRevision> preqAccounRevisions) {
-		this.preqAccounRevisions = preqAccounRevisions;
 	}
     
 }

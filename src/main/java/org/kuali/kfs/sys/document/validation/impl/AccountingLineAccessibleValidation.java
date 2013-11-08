@@ -25,7 +25,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
-import org.kuali.kfs.module.purap.PurapWorkflowConstants.PaymentRequestDocument.NodeDetailEnum;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.sys.KFSConstants;
@@ -95,11 +94,11 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         final boolean lineIsAccessible = accountingLineAuthorizer.hasEditPermissionOnAccountingLine(accountingDocumentForValidation, accountingLineForValidation, getAccountingLineCollectionProperty(), currentUser, true);
         final boolean isAccessible = accountingLineAuthorizer.hasEditPermissionOnField(accountingDocumentForValidation, accountingLineForValidation, getAccountingLineCollectionProperty(), KFSPropertyConstants.ACCOUNT_NUMBER, lineIsAccessible, true, currentUser);
         boolean valid = true;
-        boolean isExceptionNode = isExceptionNode(event.getDocument());
+        boolean isContractManagementNode = isContractManagerNode(event.getDocument());
         // report errors
         if (!isAccessible) {
         	// KFSPTS-2253
-        	if (!isExceptionNode) {
+        	if (!isContractManagementNode) {
             final String principalName = currentUser.getPrincipalName();
             
             final String[] chartErrorParams = new String[] { getDataDictionaryService().getAttributeLabel(accountingLineForValidation.getClass(), KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE), accountingLineForValidation.getChartOfAccountsCode(),  principalName};
@@ -129,7 +128,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         	valid=false;
         }
 
-        return (isAccessible || isExceptionNode) && valid;
+        return (isAccessible || isContractManagementNode) && valid;
     }
     
     /**
@@ -287,7 +286,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
 
     // KFSPTS-2253
     
-    private boolean isExceptionNode(Document document) {
+    private boolean isContractManagerNode(Document document) {
 		KualiWorkflowDocument workflowDocument = document.getDocumentHeader()
 				.getWorkflowDocument();
 		if (workflowDocument == null) {
@@ -298,10 +297,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
 
 			}
 		}
-		// KFSPTS-1891 : added treasury node
-	    return workflowDocument != null && workflowDocument.getRouteHeader() != null && (
-	    		StringUtils.equals("ContractManagement", workflowDocument.getRouteHeader().getCurrentRouteNodeNames()) ||
-	                    StringUtils.equals(NodeDetailEnum.PAYMENT_METHOD_REVIEW.getName(), workflowDocument.getRouteHeader().getCurrentRouteNodeNames()));
+	    return workflowDocument != null && workflowDocument.getRouteHeader() != null && StringUtils.equals("ContractManagement", workflowDocument.getRouteHeader().getCurrentRouteNodeNames());
     }
 
 }

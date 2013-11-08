@@ -126,9 +126,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
-import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
-
 /**
  * This is a helper service to parse electronic invoice file, match it with a PO and create PREQs based on the eInvoice. Also, it 
  * provides helper methods to the reject document to match it with a PO and create PREQ.
@@ -142,9 +139,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
     public static final String WORKFLOW_SEARCH_RESULT_KEY = "routeHeaderId";
 
 	private static final int NOTE_TEXT_DEFAULT_MAX_LENGTH = 800;
-	//KFSPTS-1891
-    protected static final String DEFAULT_EINVOICE_PAYMENT_METHOD_CODE = "A";
-
+    
     private StringBuffer emailTextErrorList;
     private HashMap<String, Integer> loadCounts = new HashMap<String, Integer>();
     
@@ -1568,25 +1563,7 @@ public class ElectronicInvoiceHelperServiceImpl implements ElectronicInvoiceHelp
         
         //Copied from PaymentRequestServiceImpl.populatePaymentRequest()
         //set bank code to default bank code in the system parameter
-        //KFSPTS-1891
-        boolean hasPaymentMethodCode = false;
-        if ( preqDoc instanceof PaymentRequestDocument ) {
-            String vendorPaymentMethodCode = ((VendorDetailExtension)poDoc.getVendorDetail().getExtension()).getDefaultB2BPaymentMethodCode();
-            if ( StringUtils.isNotEmpty(vendorPaymentMethodCode) ) { 
-                ((PaymentRequestDocument)preqDoc).setPaymentMethodCode(vendorPaymentMethodCode);
-                hasPaymentMethodCode = true;
-            } else {
-                ((PaymentRequestDocument)preqDoc).setPaymentMethodCode(DEFAULT_EINVOICE_PAYMENT_METHOD_CODE);
-            }
-        }
-        Bank defaultBank = null;
-        if ( hasPaymentMethodCode ) {
-            defaultBank = SpringContext.getBean(CUPaymentMethodGeneralLedgerPendingEntryService.class).getBankForPaymentMethod( ((PaymentRequestDocument)preqDoc).getPaymentMethodCode() );
-        } else { // default to baseline behavior - extended documents not in use
-            //Copied from PaymentRequestServiceImpl.populatePaymentRequest()
-            //set bank code to default bank code in the system parameter
-            defaultBank = SpringContext.getBean(BankService.class).getDefaultBankByDocType(PaymentRequestDocument.class);
-        }
+        Bank defaultBank = SpringContext.getBean(BankService.class).getDefaultBankByDocType(PaymentRequestDocument.class);
         if (defaultBank != null) {
             preqDoc.setBankCode(defaultBank.getBankCode());
             preqDoc.setBank(defaultBank);
