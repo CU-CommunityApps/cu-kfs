@@ -23,8 +23,8 @@
  elementFormDefault="qualified"
  targetNamespace="http://www.kuali.org/kfs/pdp/check">
 
-  <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="http://127.0.0.1:8080/static/xsd/sys/types.xsd" />
-  <xsd:import namespace="http://www.kuali.org/kfs/sys/ddTypes" schemaLocation="http://127.0.0.1:8080/static/xsd/sys/ddTypes.xsd" />
+  <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="http://127.0.0.1:8080/kfs/static/xsd/sys/types.xsd" />
+  <xsd:import namespace="http://www.kuali.org/kfs/sys/ddTypes" schemaLocation="http://127.0.0.1:8080/kfs/static/xsd/sys/ddTypes.xsd" />
   
   <!-- simple data types -->
   <xsd:simpleType name="versionType">
