@@ -76,7 +76,6 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.BankService;
-import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
@@ -108,6 +107,11 @@ import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 import org.kuali.rice.kns.workflow.service.WorkflowDocumentService;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.cornell.kfs.fp.businessobject.PaymentMethod;
+import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
+import edu.cornell.kfs.sys.service.CUBankService;
+import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
+
 /**
  * This class provides services of use to a payment request document
  */
@@ -131,7 +135,8 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
     private VendorService vendorService;
     private DataDictionaryService dataDictionaryService;
     private UniversityDateService universityDateService;
-    
+    private CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
+   
     public void setDateTimeService(DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
     }
@@ -197,59 +202,12 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
     }
 
     /**
-     * @see org.kuali.module.purap.server.PaymentRequestService.getPaymentRequestsToExtractByCM()
-     */
-    public Iterator<PaymentRequestDocument> getPaymentRequestsToExtractByCM(String campusCode, VendorCreditMemoDocument cmd) {
-        LOG.debug("getPaymentRequestsByCM() started");
-
-        return paymentRequestDao.getPaymentRequestsToExtract(campusCode, null, null, cmd.getVendorHeaderGeneratedIdentifier(), cmd.getVendorDetailAssignedIdentifier());
-    }
-
-    
-    
-    /**
-     * @see org.kuali.kfs.module.purap.document.service.PaymentRequestService#getPaymentRequestsToExtractByVendor(java.lang.String, org.kuali.kfs.module.purap.util.VendorGroupingHelper, java.sql.Date)
-     */
-    public Collection<PaymentRequestDocument> getPaymentRequestsToExtractByVendor(String campusCode, VendorGroupingHelper vendor, Date onOrBeforePaymentRequestPayDate) {
-        LOG.debug("getPaymentRequestsByVendor() started");
-
-        return paymentRequestDao.getPaymentRequestsToExtractForVendor(campusCode, vendor, onOrBeforePaymentRequestPayDate);
-    }
-
-    /**
-     * @see org.kuali.module.purap.server.PaymentRequestService.getPaymentRequestsToExtract(Date)
-     */
-    public Collection<PaymentRequestDocument> getPaymentRequestsToExtract(Date onOrBeforePaymentRequestPayDate) {
-        LOG.debug("getPaymentRequestsToExtract() started");
-
-        return paymentRequestDao.getPaymentRequestsToExtract(false, null, onOrBeforePaymentRequestPayDate);
-    }
-
-    /**
-     * @see org.kuali.kfs.module.purap.document.service.PaymentRequestService#getPaymentRequestsToExtractSpecialPayments(java.lang.String, java.sql.Date)
-     */
-    public Collection<PaymentRequestDocument> getPaymentRequestsToExtractSpecialPayments(String chartCode, Date onOrBeforePaymentRequestPayDate) {
-        LOG.debug("getPaymentRequestsToExtractSpecialPayments() started");
-
-        return paymentRequestDao.getPaymentRequestsToExtract(true, chartCode, onOrBeforePaymentRequestPayDate);
-    }
-
-    /**
      * @see org.kuali.kfs.module.purap.document.service.PaymentRequestService#getImmediatePaymentRequestsToExtract(java.lang.String)
      */
     public Collection<PaymentRequestDocument> getImmediatePaymentRequestsToExtract(String chartCode) {
         LOG.debug("getImmediatePaymentRequestsToExtract() started");
 
         return paymentRequestDao.getImmediatePaymentRequestsToExtract(chartCode);
-    }
-
-    /**
-     * @see org.kuali.kfs.module.purap.document.service.PaymentRequestService#getPaymentRequestToExtractByChart(java.lang.String, java.sql.Date)
-     */
-    public Collection<PaymentRequestDocument> getPaymentRequestToExtractByChart(String chartCode, Date onOrBeforePaymentRequestPayDate) {
-        LOG.debug("getPaymentRequestToExtractByChart() started");
-
-        return paymentRequestDao.getPaymentRequestsToExtract(false, chartCode, onOrBeforePaymentRequestPayDate);
     }
 
     /**
@@ -855,6 +813,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         }
     }    
 
+
     /**
      * Generates a NRA tax item and adds to the specified payment request, according to the specified item type code.
      * 
@@ -893,7 +852,10 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         itemType = (ItemType) businessObjectService.retrieve(itemType);
         taxItem.setItemType(itemType);              
         taxItem.setItemDescription(itemType.getItemTypeDescription());              
-        
+//        // KFSPTS-1891.  added to fix validation required field error. especially after calculate tax
+        if (taxLine.getAccountLinePercent() == null) {
+        	taxLine.setAccountLinePercent(BigDecimal.ZERO);
+        }
         return taxItem;
     }
     
@@ -1322,7 +1284,12 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         distributeAccounting(paymentRequestDocument);
 
         // set bank code to default bank code in the system parameter
-        Bank defaultBank = SpringContext.getBean(BankService.class).getDefaultBankByDocType(PaymentRequestDocument.class);
+        Bank defaultBank = null;
+        if (StringUtils.equals(PaymentMethod.PM_CODE_WIRE, paymentRequestDocument.getPaymentMethodCode())) {
+        	defaultBank = SpringContext.getBean(CUBankService.class).getDefaultBankByDocType(PaymentRequestDocument.DOCUMENT_TYPE_NON_CHECK);
+        } else if (!StringUtils.equals(PaymentMethod.PM_CODE_INTERNAL_BILLING, paymentRequestDocument.getPaymentMethodCode())) {
+            defaultBank = SpringContext.getBean(BankService.class).getDefaultBankByDocType(PaymentRequestDocument.class);
+        }
         if (defaultBank != null) {
             paymentRequestDocument.setBankCode(defaultBank.getBankCode());
             paymentRequestDocument.setBank(defaultBank);
@@ -1593,7 +1560,20 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         
         //change document description
         preq.getDocumentHeader().setDocumentDescription( createPreqDocumentDescription(preq.getPurchaseOrderIdentifier(), preq.getVendorName()) );
-     }
+// KFSPTS-1891
+        if ( preq instanceof PaymentRequestDocument ) {
+            VendorDetail vdDetail = vendorService.getVendorDetail(headerId, detailId);
+            if (vdDetail != null
+                    && ObjectUtils.isNotNull(vdDetail.getExtension()) ) {
+                if ( vdDetail.getExtension() instanceof VendorDetailExtension
+                        && StringUtils.isNotBlank( ((VendorDetailExtension)vdDetail.getExtension()).getDefaultB2BPaymentMethodCode() ) ) {
+                    ((PaymentRequestDocument)preq).setPaymentMethodCode(
+                            ((VendorDetailExtension)vdDetail.getExtension()).getDefaultB2BPaymentMethodCode() );
+                }
+            }
+        }
+
+    }
 
     /**
      * Set the Vendor address of the given ID.
@@ -1798,6 +1778,95 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 		searchableAttributeService.indexDocument(Long.valueOf(document.getDocumentNumber()));
 
     }
+ 
+    // KFSPTS-1891
+    /**
+     * This method filters the payment requests given to just those which will be processed by PDP.
+     * 
+     * This will be entries with payment method "P".
+     * 
+     * @param baseResults The entire list of payment requests valid for extraction.
+     * @return A filtered subset of the passed in list.
+     */
+    protected Collection<PaymentRequestDocument> filterPaymentRequests( Collection<PaymentRequestDocument> baseResults ) {
+        ArrayList<PaymentRequestDocument> filteredResults = new ArrayList<PaymentRequestDocument>( baseResults.size() );
+        for ( PaymentRequestDocument doc : baseResults ) {
+//            if ( doc instanceof UaPaymentRequestDocument ) {
+                if ( getPaymentMethodGeneralLedgerPendingEntryService().isPaymentMethodProcessedUsingPdp( doc.getPaymentMethodCode() ) ) {
+                    filteredResults.add(doc);
+                }
+//            } else {
+//                // if not the UA modification for some reason, assume that the payment method has not
+//                // been set and is therefore check
+//                filteredResults.add(doc);
+//            }
+        }
+        return filteredResults;
+    }
     
+//    @Override
+    public Collection<PaymentRequestDocument> getPaymentRequestsToExtract(Date onOrBeforePaymentRequestPayDate) {
+        LOG.debug("getPaymentRequestsToExtract() started");
+
+        Collection<PaymentRequestDocument> baseResults = paymentRequestDao.getPaymentRequestsToExtract(false, null, onOrBeforePaymentRequestPayDate);
+        return filterPaymentRequests(baseResults);
+    }
+    
+//    @Override
+    public Iterator<PaymentRequestDocument> getPaymentRequestsToExtractByCM(String campusCode, VendorCreditMemoDocument cmd) {
+        throw new UnsupportedOperationException( "This method is not in use." );
+    }
+    
+//    @Override
+    public Collection<PaymentRequestDocument> getPaymentRequestsToExtractByVendor(String campusCode, VendorGroupingHelper vendor, Date onOrBeforePaymentRequestPayDate) {
+        LOG.debug("getPaymentRequestsByVendor() started");
+
+        Collection<PaymentRequestDocument> baseResults = paymentRequestDao.getPaymentRequestsToExtractForVendor(campusCode, vendor, onOrBeforePaymentRequestPayDate);
+        return filterPaymentRequests(baseResults);
+    }
+    
+//    @Override
+    public Collection<PaymentRequestDocument> getPaymentRequestsToExtractSpecialPayments(String chartCode, Date onOrBeforePaymentRequestPayDate) {
+        LOG.debug("getPaymentRequestsToExtractSpecialPayments() started");
+
+        Collection<PaymentRequestDocument> baseResults =  paymentRequestDao.getPaymentRequestsToExtract(true, chartCode, onOrBeforePaymentRequestPayDate);
+        return filterPaymentRequests(baseResults);
+    }
+    
+//    @Override
+    public Collection<PaymentRequestDocument> getPaymentRequestToExtractByChart(String chartCode, Date onOrBeforePaymentRequestPayDate) {
+        LOG.debug("getPaymentRequestToExtractByChart() started");
+
+        Collection<PaymentRequestDocument> baseResults = paymentRequestDao.getPaymentRequestsToExtract(false, chartCode, onOrBeforePaymentRequestPayDate);
+        return filterPaymentRequests(baseResults);
+    }
+
+    protected CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
+        return paymentMethodGeneralLedgerPendingEntryService;
+    }
+
+    public void setPaymentMethodGeneralLedgerPendingEntryService(CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService) {
+        this.paymentMethodGeneralLedgerPendingEntryService = paymentMethodGeneralLedgerPendingEntryService;
+    }
+
+    public void clearTax(PaymentRequestDocument document) {
+        // remove all existing tax items added by previous calculation
+        removeTaxItems(document);
+        // reset values
+        document.setTaxClassificationCode(null);
+        document.setTaxFederalPercent(null);
+        document.setTaxStatePercent(null);
+        document.setTaxCountryCode(null);
+        document.setTaxNQIId(null);
+
+        document.setTaxForeignSourceIndicator(false);
+        document.setTaxExemptTreatyIndicator(false);
+        document.setTaxOtherExemptIndicator(false);
+        document.setTaxGrossUpIndicator(false);
+        document.setTaxUSAIDPerDiemIndicator(false);
+        document.setTaxSpecialW4Amount(null);
+
+    }
+
 }
 

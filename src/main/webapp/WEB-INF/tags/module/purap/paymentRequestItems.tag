@@ -28,7 +28,7 @@
 <c:set var="purapTaxEnabled" value="${(not empty KualiForm.editingMode['purapTaxEnabled'])}" />
 <c:set var="tabindexOverrideBase" value="50" />
 <c:set var="fullDocEntryCompleted" value="${(not empty KualiForm.editingMode['fullDocumentEntryCompleted'])}" />
-
+<c:set var="editAmount" value="${(not empty KualiForm.editingMode['editAmount'])}" /> <!-- KFSPTS-1891 -->
 <c:set var="colSpanDescription" value="3"/>
 <c:if test="${purapTaxEnabled}">
 	<c:set var="colSpanDescription" value="1"/>
@@ -139,10 +139,11 @@
 			<td class="infoline">
 			    <div align="right">
                     <c:if test="${KualiForm.document.items[ctr].itemType.quantityBasedGeneralLedgerIndicator}">
+                    <!--  KFSPTS-1891 : added 'editAmount' check -->
                         <kul:htmlControlAttribute
                             attributeEntry="${itemAttributes.itemUnitPrice}"
                             property="document.item[${ctr}].itemUnitPrice"
-                            readOnly="${(not (fullEntryMode) or (fullDocEntryCompleted))}" 
+                            readOnly="${(not (fullEntryMode) or (fullDocEntryCompleted))  and not (editAmount)}" 
                             tabindexOverride="${tabindexOverrideBase + 0}" />
                     </c:if>
                     <c:if test="${KualiForm.document.items[ctr].itemType.amountBasedGeneralLedgerIndicator}">
@@ -156,10 +157,11 @@
 			</td>
 			<td class="infoline">
 			    <div align="right">
+			    <!-- KFSPTS-1891 : added 'editAmount' check -->
 			        <kul:htmlControlAttribute
 				        attributeEntry="${itemAttributes.extendedPrice}"
 				        property="document.item[${ctr}].extendedPrice" 
-				        readOnly="${(not (fullEntryMode) or (fullDocEntryCompleted))}" 
+				        readOnly="${(not (fullEntryMode) or (fullDocEntryCompleted)) and not (editAmount)}" 
 				        tabindexOverride="${tabindexOverrideBase + 0}" />
 			    </div>
 			</td>

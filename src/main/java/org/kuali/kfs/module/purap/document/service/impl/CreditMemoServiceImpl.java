@@ -29,11 +29,11 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapConstants.CreditMemoStatuses;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
-import org.kuali.kfs.module.purap.PurapConstants.CreditMemoStatuses;
-import org.kuali.kfs.module.purap.PurapWorkflowConstants.NodeDetails;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants.CreditMemoDocument.NodeDetailEnum;
+import org.kuali.kfs.module.purap.PurapWorkflowConstants.NodeDetails;
 import org.kuali.kfs.module.purap.businessobject.CreditMemoAccount;
 import org.kuali.kfs.module.purap.businessobject.CreditMemoItem;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
@@ -86,6 +86,9 @@ import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 import org.kuali.rice.kns.workflow.service.WorkflowDocumentService;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
+import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
+
 /**
  * Provides services to support the creation of a Credit Memo Document.
  */
@@ -106,7 +109,8 @@ public class CreditMemoServiceImpl implements CreditMemoService {
     private PurchaseOrderService purchaseOrderService;
     private VendorService vendorService;
     private WorkflowDocumentService workflowDocumentService;
-    
+    // KFSPTS-1891
+    private CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
 
     public void setAccountsPayableService(AccountsPayableService accountsPayableService) {
         this.accountsPayableService = accountsPayableService;
@@ -168,13 +172,17 @@ public class CreditMemoServiceImpl implements CreditMemoService {
     public Iterator<VendorCreditMemoDocument> getCreditMemosToExtract(String chartCode) {
         LOG.debug("getCreditMemosToExtract() started");
 
-        return creditMemoDao.getCreditMemosToExtract(chartCode);
+        // KFSPTS-1891
+        Iterator<VendorCreditMemoDocument> baseResults = creditMemoDao.getCreditMemosToExtract(chartCode);
+        return filterPaymentRequests(baseResults).iterator();
     }
 
     public Collection<VendorCreditMemoDocument> getCreditMemosToExtractByVendor(String chartCode, VendorGroupingHelper vendor ) {
         LOG.debug("getCreditMemosToExtractByVendor() started");
 
-        return creditMemoDao.getCreditMemosToExtractByVendor(chartCode,vendor);
+        // KFSPTS-1891
+        Collection<VendorCreditMemoDocument> baseResults = creditMemoDao.getCreditMemosToExtractByVendor(chartCode,vendor);
+        return filterPaymentRequests(baseResults);
     }
 
     public Set<VendorGroupingHelper> getVendorsOnCreditMemosToExtract(String chartCode) {
@@ -684,6 +692,19 @@ public class CreditMemoServiceImpl implements CreditMemoService {
             populateDocumentFromVendor(cmDocument);
         }
 
+        // KFSPTS-1891
+        
+        VendorDetail vendorDetail = vendorService.getVendorDetail(cmDocument.getVendorHeaderGeneratedIdentifier(), cmDocument.getVendorDetailAssignedIdentifier());
+        if ( ObjectUtils.isNotNull(vendorDetail)
+                && ObjectUtils.isNotNull(vendorDetail.getExtension()) ) {
+            if ( vendorDetail.getExtension() instanceof VendorDetailExtension
+                    && StringUtils.isNotBlank( ((VendorDetailExtension)vendorDetail.getExtension()).getDefaultB2BPaymentMethodCode() ) ) {
+            	cmDocument.setPaymentMethodCode(
+                        ((VendorDetailExtension)vendorDetail.getExtension()).getDefaultB2BPaymentMethodCode() );
+            }
+        }
+
+        
         populateDocumentDescription(cmDocument);
 
         // write a note for expired/closed accounts if any exist and add a message stating there were expired/closed accounts at the
@@ -888,5 +909,53 @@ public class CreditMemoServiceImpl implements CreditMemoService {
 
     }
     
+    // KFSPTS-1891
+    
+    /**
+     * This method filters the payment requests given to just those which will be processed by PDP.
+     * 
+     * This will be entries with payment methods with PDP_IND = "Y".
+     * 
+     * @param baseResults The entire list of payment requests valid for extraction.
+     * @return A filtered subset of the passed in list.
+     */
+    protected Collection<VendorCreditMemoDocument> filterPaymentRequests( Collection<VendorCreditMemoDocument> baseResults ) {
+        return filterPaymentRequests(baseResults.iterator());
+    }
+    
+    /**
+     * This method filters the payment requests given to just those which will be processed by PDP.
+     * 
+     * This will be entries with payment methods with PDP_IND = "Y".
+     * 
+     * @param baseResults An iterator over a list of payment requests valid for extraction.
+     * @return A filtered subset of the passed in list.
+     */
+    protected Collection<VendorCreditMemoDocument> filterPaymentRequests( Iterator<VendorCreditMemoDocument> baseResults ) {
+        ArrayList<VendorCreditMemoDocument> filteredResults = new ArrayList<VendorCreditMemoDocument>();
+        while ( baseResults.hasNext() ) {
+            VendorCreditMemoDocument doc = baseResults.next();
+            if ( doc instanceof VendorCreditMemoDocument ) {
+                if ( getPaymentMethodGeneralLedgerPendingEntryService().isPaymentMethodProcessedUsingPdp( ((VendorCreditMemoDocument)doc).getPaymentMethodCode() ) ) {
+                    filteredResults.add(doc);
+                }
+            } else {
+                // if not the UA modification for some reason, assume that the payment method has not
+                // been set and is therefore check
+                filteredResults.add(doc);
+            }
+        }
+        return filteredResults;
+    }
+
+	public CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
+		return paymentMethodGeneralLedgerPendingEntryService;
+	}
+
+	public void setPaymentMethodGeneralLedgerPendingEntryService(
+			CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService) {
+		this.paymentMethodGeneralLedgerPendingEntryService = paymentMethodGeneralLedgerPendingEntryService;
+	}
+
 }
 

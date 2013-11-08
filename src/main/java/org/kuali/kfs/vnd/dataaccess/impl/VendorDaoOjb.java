@@ -104,7 +104,9 @@ public class VendorDaoOjb extends PlatformAwareDaoBaseOjb implements VendorDao {
         String stateVal = fieldValues.get(VendorPropertyConstants.VENDOR_ADDRESS + "." + VendorPropertyConstants.VENDOR_ADDRESS_STATE);
         String supplierDiversityVal = fieldValues.get(VendorPropertyConstants.VENDOR_HEADER_PREFIX + VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITY_CODE);
         String commodityCodeVal = fieldValues.get(VendorPropertyConstants.VENDOR_COMMODITIES_CODE_PURCHASING_COMMODITY_CODE);
-        
+        //KFSPTS-1891
+        String defaultPaymentMethod = fieldValues.get("extension.defaultB2BPaymentMethodCode");
+     
         if (StringUtils.isNotBlank(headerVal)) {
         	header.addEqualTo("vendorHeaderGeneratedIdentifier", headerVal);  //
         }
@@ -155,8 +157,12 @@ public class VendorDaoOjb extends PlatformAwareDaoBaseOjb implements VendorDao {
         if (StringUtils.isNotBlank(supplierDiversityVal)) {
         	supplierDiversity.addEqualTo("vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityCode", supplierDiversityVal); //THIS COMES OUT OF PUR_VNDR_SUPP_DVRST_T
             header.addAndCriteria(supplierDiversity);        
-        }        
-        
+        }  
+        //KFSPTS-1891
+        if (StringUtils.isNotBlank(defaultPaymentMethod)) {
+        	header.addEqualTo("extension.defaultB2BPaymentMethodCode", defaultPaymentMethod);  //
+        }
+
         Long val = new Long( getPersistenceBrokerTemplate().getCount(QueryFactory.newQuery(VendorDetail.class, header)));
 		Integer searchResultsLimit = LookupUtils.getSearchResultsLimit(VendorDetail.class);
 		if (val.intValue() > searchResultsLimit.intValue()) {

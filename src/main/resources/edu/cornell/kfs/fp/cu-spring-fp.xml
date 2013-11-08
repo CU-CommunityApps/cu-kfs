@@ -292,5 +292,9 @@
 	
 	<import resource="document/validation/configuration/PreEncumbranceValidation.xml" />
 	
+	<!-- KFSPTS-1891 not sure why dependency are not injected-->
+    <bean id="cUPaymentMethodGeneralLedgerPendingEntryService" class="edu.cornell.kfs.fp.service.impl.CUPaymentMethodGeneralLedgerPendingEntryServiceImpl">
+     
+    </bean>
 
 </beans>

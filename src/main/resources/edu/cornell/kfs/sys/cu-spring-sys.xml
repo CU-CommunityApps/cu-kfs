@@ -172,5 +172,15 @@
             <ref bean="userProcurementProfileLookupableHelperService" />
         </property>
     </bean>
+
+<!-- KFSPTS-1891 -->
+     <bean id="cuBankService" class="edu.cornell.kfs.sys.service.impl.CUBankServiceImpl">
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" /> 
+		</property>
+		<property name="parameterService">
+			<ref bean="parameterService" /> 
+		</property>
+	</bean>
 	
 </beans>

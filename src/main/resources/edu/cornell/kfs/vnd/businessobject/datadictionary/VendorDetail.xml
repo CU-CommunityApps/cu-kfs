@@ -103,6 +103,7 @@
         <ref bean="VendorDetail-insuranceNotes"/>
         <ref bean="VendorDetail-merchantNotes"/>   
         <ref bean="VendorDetail-extension-einvoiceVendorIndicator"/>
+        <ref bean="VendorDetail-defaultB2BPaymentMethodCode" />
       </list>
     </property>
     <property name="collections">
@@ -134,6 +135,12 @@
             </list>
           </property>
         </bean>
+        <!-- KFSPTS-1891 -->
+        <dd:relationship objectAttribute="extension"> 
+ 					<dd:primitiveAttribute source="vendorHeaderGeneratedIdentifier" target="vendorHeaderGeneratedIdentifier" />
+ 					<dd:primitiveAttribute source="vendorDetailAssignedIdentifier" target="vendorDetailAssignedIdentifier" />
+			<dd:supportAttribute source="extension.defaultB2BPaymentMethodCode" target="defaultB2BPaymentMethodCode" />
+        </dd:relationship>
       </list>
     </property>
   </bean>
@@ -761,6 +768,13 @@
   	<property name="name" value="extension.einvoiceVendorIndicator"/>
   </bean>
   	
+  	    <!-- KFSPTS-1891 -->
+	<bean id="VendorDetail-defaultB2BPaymentMethodCode" parent="VendorDetail-defaultB2BPaymentMethodCode-parentBean" />
+	<dd:boAttributeRef id="VendorDetail-defaultB2BPaymentMethodCode-parentBean"
+		abstract="true" parent="VendorDetailExtension-defaultB2BPaymentMethodCode"
+		attributeName="extension.defaultB2BPaymentMethodCode" />
+	<!--  END MOD -->
+  	
 <!-- Business Object Inquiry Definition -->
 
 
@@ -816,6 +830,9 @@
               <bean parent="FieldDefinition" p:attributeName="vendorConfirmationIndicator"/>
               <bean parent="FieldDefinition" p:attributeName="vendorInactiveReasonCode"/>
               <bean parent="FieldDefinition" p:attributeName="extension.einvoiceVendorIndicator"/>
+							<!-- KFSPTS-1891 -->
+				    <bean parent="FieldDefinition" p:attributeName="extension.defaultB2BPaymentMethodCode" />
+							<!--  END MOD -->
             </list>
           </property>
         </bean>
@@ -1272,6 +1289,7 @@
         <bean parent="FieldDefinition" p:attributeName="vendorCommodities.purchasingCommodityCode"/>
         <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityCode"/>
         <bean parent="FieldDefinition" p:attributeName="extension.einvoiceVendorIndicator"/>
+        <bean parent="FieldDefinition" p:attributeName="extension.defaultB2BPaymentMethodCode"/>
       </list>
     </property>
     <property name="resultFields">

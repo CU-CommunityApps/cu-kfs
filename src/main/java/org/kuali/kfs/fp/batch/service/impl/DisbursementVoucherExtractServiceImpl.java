@@ -63,6 +63,7 @@ import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kim.service.PersonService;
 import org.kuali.rice.kns.service.BusinessObjectService;
+import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.service.ParameterEvaluator;
@@ -71,6 +72,8 @@ import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.KualiInteger;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
+
+import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 
 /**
  * This is the default implementation of the DisbursementVoucherExtractService interface.
@@ -89,6 +92,7 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
     private BusinessObjectService businessObjectService;
     private PdpEmailService paymentFileEmailService;
     private int maxNoteLines;
+    protected CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
 
     // This should only be set to true when testing this system. Setting this to true will run the code but
     // won't set the doc status to extracted
@@ -642,19 +646,19 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
      * @param statusCode The status code to retrieve disbursement vouchers by.
      * @return A collection of campus codes of all the campuses with disbursement vouchers in the status given.
      */
-    protected Set<String> getCampusListByDocumentStatusCode(String statusCode) {
-        LOG.debug("getCampusListByDocumentStatusCode() started");
-
-        Set<String> campusSet = new HashSet<String>();
-
-        Collection<DisbursementVoucherDocument> docs = disbursementVoucherDao.getDocumentsByHeaderStatus(statusCode);
-        for (DisbursementVoucherDocument element : docs) {
-            String dvdCampusCode = element.getCampusCode();
-            campusSet.add(dvdCampusCode);
-        }
-
-        return campusSet;
-    }
+//    protected Set<String> getCampusListByDocumentStatusCode(String statusCode) {
+//        LOG.debug("getCampusListByDocumentStatusCode() started");
+//
+//        Set<String> campusSet = new HashSet<String>();
+//
+//        Collection<DisbursementVoucherDocument> docs = disbursementVoucherDao.getDocumentsByHeaderStatus(statusCode);
+//        for (DisbursementVoucherDocument element : docs) {
+//            String dvdCampusCode = element.getCampusCode();
+//            campusSet.add(dvdCampusCode);
+//        }
+//
+//        return campusSet;
+//    }
 
     /**
      * This method retrieves a list of disbursement voucher documents that are in the status provided for the campus code given.
@@ -663,28 +667,31 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
      * @param campusCode The campus code that the disbursement vouchers will be associated with.
      * @return A collection of disbursement voucher objects that meet the search criteria given.
      */
-    protected Collection<DisbursementVoucherDocument> getListByDocumentStatusCodeCampus(String statusCode, String campusCode) {
-        LOG.debug("getListByDocumentStatusCodeCampus() started");
-
-        Collection<DisbursementVoucherDocument> list = new ArrayList<DisbursementVoucherDocument>();
-
-        try {
-            Collection<DisbursementVoucherDocument> docs = SpringContext.getBean(FinancialSystemDocumentService.class).findByDocumentHeaderStatusCode(DisbursementVoucherDocument.class, statusCode);
-            for (DisbursementVoucherDocument element : docs) {
-                String dvdCampusCode = element.getCampusCode();
-
-                if (dvdCampusCode.equals(campusCode) && DisbursementVoucherConstants.PAYMENT_METHOD_CHECK.equals(element.getDisbVchrPaymentMethodCode())) {
-					list.add(element);
-                }
-            }
-        }
-        catch (WorkflowException we) {
-            LOG.error("Could not load Disbursement Voucher Documents with status code = " + statusCode + ": " + we);
-            throw new RuntimeException(we);
-        }
-
-        return list;
-    }
+     // TODO : 1891 this is changed at the bottom of this cass. need clean up
+//    protected Collection<DisbursementVoucherDocument> getListByDocumentStatusCodeCampus(String statusCode, String campusCode) {
+//        LOG.debug("getListByDocumentStatusCodeCampus() started");
+//
+//        Collection<DisbursementVoucherDocument> list = new ArrayList<DisbursementVoucherDocument>();
+//
+//        try {
+//        	// KFSPTS-1891
+//         //   Collection<DisbursementVoucherDocument> docs = SpringContext.getBean(FinancialSystemDocumentService.class).findByDocumentHeaderStatusCode(DisbursementVoucherDocument.class, statusCode);
+//            Collection<DisbursementVoucherDocument> docs = SpringContext.getBean(FinancialSystemDocumentService.class).findByDocumentHeaderStatusCode(DisbursementVoucherDocument.class, statusCode);
+//            for (DisbursementVoucherDocument element : docs) {
+//                String dvdCampusCode = element.getCampusCode();
+//
+//                if (dvdCampusCode.equals(campusCode) && DisbursementVoucherConstants.PAYMENT_METHOD_CHECK.equals(element.getDisbVchrPaymentMethodCode())) {
+//					list.add(element);
+//                }
+//            }
+//        }
+//        catch (WorkflowException we) {
+//            LOG.error("Could not load Disbursement Voucher Documents with status code = " + statusCode + ": " + we);
+//            throw new RuntimeException(we);
+//        }
+//
+//        return list;
+//    }
 
     /**
      * This cancels the disbursement voucher
@@ -895,6 +902,66 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
         if(personService==null)
             personService = SpringContext.getBean(PersonService.class);
         return personService;
+    }
+
+    // KFSPTS-1891 : calling PaymentMethodGeneralLedgerPendingEntryService().isPaymentMethodProcessedUsingPdp
+    protected Collection<DisbursementVoucherDocument> getListByDocumentStatusCodeCampus(String statusCode, String campusCode) {        
+        LOG.debug("getListByDocumentStatusCodeCampus() started");
+
+        Collection<DisbursementVoucherDocument> list = new ArrayList<DisbursementVoucherDocument>();
+
+        try {
+            Collection<DisbursementVoucherDocument> docs = SpringContext.getBean(FinancialSystemDocumentService.class).findByDocumentHeaderStatusCode(SpringContext.getBean(DataDictionaryService.class).getDocumentClassByTypeName("DV"), statusCode);
+            for (DisbursementVoucherDocument doc : docs) {
+                String docCampusCode = doc.getCampusCode();
+
+                if (StringUtils.equals( docCampusCode, campusCode ) 
+                        && getPaymentMethodGeneralLedgerPendingEntryService().isPaymentMethodProcessedUsingPdp(doc.getDisbVchrPaymentMethodCode())) {
+                    list.add(doc);
+                }
+            }
+        } catch (WorkflowException we) {
+            LOG.error("Could not load Disbursement Voucher Documents with status code = " + statusCode + ": " + we);
+            throw new RuntimeException("Could not load Disbursement Voucher Documents with status code = " + statusCode, we);
+        }
+
+        return list;
+    }
+
+
+    /**
+     * This method retrieves a collection of campus instances representing all the campuses which currently have disbursement
+     * vouchers with the status code provided.
+     * 
+     * @param statusCode The status code to retrieve disbursement vouchers by.
+     * @return A collection of campus codes of all the campuses with disbursement vouchers in the status given.
+     */
+    // KFSPTS-1891 : calling PaymentMethodGeneralLedgerPendingEntryService().isPaymentMethodProcessedUsingPdp
+//    @Override
+    protected Set<String> getCampusListByDocumentStatusCode(String statusCode) {
+        LOG.debug("getCampusListByDocumentStatusCode() started");
+
+        Set<String> campusSet = new HashSet<String>();
+
+        Collection<DisbursementVoucherDocument> docs = disbursementVoucherDao.getDocumentsByHeaderStatus(statusCode);
+        for (DisbursementVoucherDocument doc : docs) {
+            if ( getPaymentMethodGeneralLedgerPendingEntryService().isPaymentMethodProcessedUsingPdp(doc.getDisbVchrPaymentMethodCode()) ) {
+                campusSet.add(doc.getCampusCode());
+            }
+        }
+
+        return campusSet;
+    }
+
+    protected CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
+        if ( paymentMethodGeneralLedgerPendingEntryService == null ) {
+            paymentMethodGeneralLedgerPendingEntryService = SpringContext.getBean(CUPaymentMethodGeneralLedgerPendingEntryService.class);
+        }
+        return paymentMethodGeneralLedgerPendingEntryService;
+    }
+
+    public void setPaymentMethodGeneralLedgerPendingEntryService(CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService) {
+        this.paymentMethodGeneralLedgerPendingEntryService = paymentMethodGeneralLedgerPendingEntryService;
     }
 
 }
