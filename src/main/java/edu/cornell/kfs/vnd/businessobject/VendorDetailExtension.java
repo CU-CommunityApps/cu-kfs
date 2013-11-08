@@ -9,9 +9,7 @@ public class VendorDetailExtension extends PersistableBusinessObjectExtensionBas
     private Integer vendorHeaderGeneratedIdentifier;
     private Integer vendorDetailAssignedIdentifier;
     private boolean einvoiceVendorIndicator;
-    // KFSPTS-1891
-    protected String    defaultB2BPaymentMethodCode;
-    
+
     public Integer getVendorHeaderGeneratedIdentifier() {
         return vendorHeaderGeneratedIdentifier;
     }
@@ -35,13 +33,5 @@ public class VendorDetailExtension extends PersistableBusinessObjectExtensionBas
     public void setEinvoiceVendorIndicator(boolean eInvoiceVendorIndicator) {
         this.einvoiceVendorIndicator = eInvoiceVendorIndicator;
     }
-
-	public String getDefaultB2BPaymentMethodCode() {
-		return defaultB2BPaymentMethodCode;
-	}
-
-	public void setDefaultB2BPaymentMethodCode(String defaultB2BPaymentMethodCode) {
-		this.defaultB2BPaymentMethodCode = defaultB2BPaymentMethodCode;
-	}
 
 }

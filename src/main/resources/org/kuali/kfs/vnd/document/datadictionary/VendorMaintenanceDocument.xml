@@ -117,9 +117,7 @@
         <bean parent="MaintainableFieldDefinition" p:name="activeIndicator" p:defaultValue="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="vendorInactiveReasonCode"/>
         <bean parent="MaintainableFieldDefinition" p:name="vendorFirstLastNameIndicator"/>
-				<!-- KFSPTS-1891 -->
- 				<bean parent="MaintainableFieldDefinition" p:name="extension.defaultB2BPaymentMethodCode" p:required="true" />
-				<!--  END MOD -->      </list>
+      </list>
     </property>
   </bean>
   <bean id="VendorMaintenanceDocument-Address" parent="VendorMaintenanceDocument-Address-parentBean"/>
