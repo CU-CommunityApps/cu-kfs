@@ -171,4 +171,9 @@ public class PdpConstants {
     	public static final String SUBUNIT_OPEN = "<sub_unit>";
     	public static final String SUBUNIT_CLOSE = "</sub_unit>";
     }
+    
+    public static class DivisionCodes {
+        public static final int US_MAIL = 1;
+        public static final int CU_MAIL_SERVICES = 16;
+    }
 }
