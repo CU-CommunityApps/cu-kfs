@@ -17,7 +17,9 @@
         </property>
         
         <property name="dataDictionaryPackages">
-			<list/>
+			<list>
+                <value>edu/cornell/kfs/gl/businessobject/datadictionary</value> 
+            </list>
 		</property>
 		
 		<property name="databaseRepositoryFilePaths">
@@ -245,5 +247,21 @@
     
     <bean id="scrubberValidator" class="edu.cornell.kfs.gl.service.impl.CuScrubberValidatorImpl" parent="scrubberValidator-parentBean"/>
      
-    
+     
+      <!-- AER-0630 - Rq_GL_630 add a simple balance inquiry menu item to KFS main menu-->
+ 	 	 	 		 <bean id="glCurrentAccountBalanceLookupableHelperService" class="edu.cornell.kfs.gl.businessobject.lookup.CurrentAccountBalanceLookupableHelperServiceImpl" scope="prototype">
+ 	 	 	 		 <property name="personService" ref="personService" />
+ 	 	 	 		 <property name="balanceService" ref="glBalanceService" />
+ 	 	 	 		 <property name="parameterService" ref="parameterService" />
+ 	 	 	 		 <property name="generalLedgerPendingEntryService" ref="generalLedgerPendingEntryService" />
+ 	 	 	 		 <property name="postBalance" ref="glPostBalance" />
+ 	 	 	 		 <property name="accountingPeriodService" ref="accountingPeriodService"/>
+ 	 	 	 		
+ 	 	 	 		 <property name="lookupService" ref="lookupService" />
+ 	 	 	 		 </bean>
+ 	 	 	 		 <bean id="glCurrentAccountBalanceLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+ 	 	 	 		 <property name="lookupableHelperService">
+ 	 	 	 		         <ref bean="glCurrentAccountBalanceLookupableHelperService" />
+ 	 	 	 		 </property>
+ 	 	 	 		 </bean>    
 </beans>

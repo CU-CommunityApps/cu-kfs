@@ -43,6 +43,35 @@ public class CuBalanceDaoOjb extends BalanceDaoOjb implements CuBalanceDao {
 	 private OptionsService optionsService;
 	 private BalanceTypeService balanceTypService;
 	 
+	 
+	 /**
+	     * this is for KFSPTS-1786 begin
+	     */ 
+	    
+	    public Collection<Balance> getAccountBalance(Map<String, String> input) {
+	        Criteria criteria = new Criteria();
+	       for(String key:input.keySet()){
+	           criteria.addEqualTo(key, input.get(key));
+	       }
+	        
+	        Collection<Balance> balance = getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(Balance.class, criteria));
+	        return balance;
+	        
+	    }
+	    public Collection<Balance> getAccountBalance(Map<String, String> input,Collection objectTypeCode) {
+	        Criteria criteria = new Criteria();
+	       for(String key:input.keySet()){
+	           criteria.addEqualTo(key, input.get(key));
+	       }
+	       criteria.addIn(KFSPropertyConstants.OBJECT_TYPE_CODE, objectTypeCode);
+	        Collection<Balance> balance = getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(Balance.class, criteria));
+	        return balance;
+	        
+	    }
+	    
+	    /**
+	     * this is for KFSPTS-1786 end
+	     */ 
 
     /**
      * Returns the count of balances for a given fiscal year and specified charts; this method is used for year end job reporting

@@ -2,11 +2,21 @@ package edu.cornell.kfs.gl.dataaccess;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.kuali.kfs.gl.businessobject.Balance;
 import org.kuali.kfs.gl.dataaccess.BalanceDao;
 
 public interface CuBalanceDao extends BalanceDao{
+    
+    /**
+     * this is for KFSPTS-1786 begin
+     */ 
+     public Collection<Balance> getAccountBalance(Map<String, String> input);
+     public Collection<Balance> getAccountBalance(Map<String, String> input,Collection objectTypeCode);
+    
+     /**
+         * this is for KFSPTS-1786 end
    
     /**
      * This method gets the size collection of cash balance entry groups according to input fields and values if the entries are
@@ -44,6 +54,7 @@ public interface CuBalanceDao extends BalanceDao{
      * @return and Iterator chuck full of Balances
      */
     public Iterator<Balance> findCumulativeBalancesToForwardForFiscalYear(Integer year, Collection<String> charts);
+    
     
     /**
      * Returns the balances that would specifically be picked up by the Reversion year end process
