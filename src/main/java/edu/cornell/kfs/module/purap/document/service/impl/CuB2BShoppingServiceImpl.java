@@ -11,6 +11,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.businessobject.B2BInformation;
+import org.kuali.kfs.module.purap.businessobject.B2BShoppingCartItem;
 import org.kuali.kfs.module.purap.businessobject.BillingAddress;
 import org.kuali.kfs.module.purap.businessobject.DefaultPrincipalAddress;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
@@ -42,6 +43,7 @@ import org.kuali.rice.krad.service.PersistenceService;
 import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.util.cxml.CuB2BShoppingCart;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
@@ -77,6 +79,11 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
 
             // create requisition
             RequisitionDocument req = (RequisitionDocument) documentService.getNewDocument(PurapConstants.REQUISITION_DOCUMENT_TYPE);
+            String description = ((B2BShoppingCartItem)items.get(0)).getExtrinsic("CartName");
+            String businessPurpose = ((CuB2BShoppingCart)message).getBusinessPurpose();
+
+            req.getDocumentHeader().setDocumentDescription(description);
+            req.getDocumentHeader().setExplanation(businessPurpose);
 
             req.setupAccountDistributionMethod();
             // set b2b contract for vendor

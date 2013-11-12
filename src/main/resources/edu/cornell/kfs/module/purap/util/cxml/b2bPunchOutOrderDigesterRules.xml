@@ -21,7 +21,7 @@
 <digester-rules>
 
 	<pattern value="cXML">
-        <object-create-rule classname="org.kuali.kfs.module.purap.util.cxml.B2BShoppingCart" />
+        <object-create-rule classname="edu.cornell.kfs.module.purap.util.cxml.CuB2BShoppingCart" />
 
 			<!-- HEADER -->
 		   <pattern value="Header">
