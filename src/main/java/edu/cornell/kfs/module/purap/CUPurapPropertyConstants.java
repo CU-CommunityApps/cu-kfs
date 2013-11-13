@@ -8,5 +8,5 @@ public class CUPurapPropertyConstants extends PurapPropertyConstants {
     public static final String IWNT_ITEM_DESC = "itemDescription";
     // KFSPTS-2096
     public static final String ITEM_TYPE_CODE = "itemTypeCode";
-
+    public static final String FUNDING_SOURCE = "fundingSource";
 }

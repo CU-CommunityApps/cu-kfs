@@ -5,6 +5,7 @@ package edu.cornell.kfs.module.purap;
 
 import java.util.HashSet;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 
 /**
@@ -12,7 +13,69 @@ import org.kuali.kfs.module.purap.PurapConstants;
  *
  */
 public class CUPurapConstants extends PurapConstants {
+    
+    public static final String SPECIAL_HANDLING_NOTE_LINE_1_NAME = "Send Check To:";  //This is how we identify the name in DV's, so to be consistent we're using the same string here
+    public static final String SPECIAL_HANDLING_NOTE_LINE_2_ADDRESS = "SH1:";  // This is how we identify the first address line in DV's but payment req's don't have a second address line
+    public static final String SPECIAL_HANDLING_NOTE_LINE_3_CITY_STATE_ZIP = "SH3:"; //This is set to SH3 to be consistent with how we've captured the city, state and zip in disbursement vouchers
+    public static final String PURAP_NOTES_IDENTIFIER = "::";  // We do this for DV's and for PURAP notes we need to do the same so they get picked up in ExtractPaymentServiceImpl
+    public static final String PAYMENT_METHODL_REVIEW = "PTMA"; // Waiting for Treasury Manager approval
 
+    public static class RequisitionStatuses {
+        public static final String AWAIT_CONTRACTS_GRANTS_REVIEW = "WCG";
+        public static final String DAPRVD_CONTRACTS_GRANTS = "DCG";
+        // KFSPTS-1768
+        public static final String NODE_ACCOUNT = "Account";
+    }
+           
+    public static class RequisitionSources {
+        public static final String IWNT = "IWNT";
+    }
+    
+    public static class PurchaseOrderStatuses {
+        public static final String AWAIT_FISCAL_REVIEW = "AFIS";
+        public static final String DAPRVD_FISCAL = "DFIS";
+    }
+    
+    public static class PODocumentsStrings {
+        // KFSPTS-794
+        public static final String CONFIRM_ATT_SEND_CHANGE_QUESTION = "POChangeAtt";
+        public static final String CONFIRM_ATT_SEND_CHANGE_RETURN = "changeAtt";
+    }       
+    
+    public enum STATUS_ORDER {
+        CANCELLED_IN_PROCESS(PurapConstants.PaymentRequestStatuses.APPDOC_CANCELLED_IN_PROCESS, false),
+        CANCELLED_POST_AP_APPROVE(PurapConstants.PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE, false),
+        INITIATE(PurapConstants.PaymentRequestStatuses.APPDOC_INITIATE, true),
+        IN_PROCESS(PurapConstants.PaymentRequestStatuses.APPDOC_IN_PROCESS, true),
+        AWAITING_ACCOUNTS_PAYABLE_REVIEW(PurapConstants.PaymentRequestStatuses.APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, false),
+        AWAITING_RECEIVING_REVIEW(PurapConstants.PaymentRequestStatuses.APPDOC_AWAITING_RECEIVING_REVIEW, false),
+        AWAITING_SUB_ACCT_MGR_REVIEW(PurapConstants.PaymentRequestStatuses.APPDOC_AWAITING_SUB_ACCT_MGR_REVIEW, false),
+        AWAITING_FISCAL_REVIEW(PurapConstants.PaymentRequestStatuses.APPDOC_AWAITING_FISCAL_REVIEW, false),
+        AWAITING_ORG_REVIEW(PurapConstants.PaymentRequestStatuses.APPDOC_AWAITING_ORG_REVIEW, false),
+        AWAITING_TAX_REVIEW(PurapConstants.PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW, false),
+        DEPARTMENT_APPROVED(PurapConstants.PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED, false),        
+        // KFSPTS-1891
+        PAYMENT_METHOD_REVIEW(CUPurapConstants.PAYMENT_METHODL_REVIEW, false), 
+        AUTO_APPROVED(PurapConstants.PaymentRequestStatuses.APPDOC_AUTO_APPROVED, false), ;
+
+        private String statusCode = new String();
+        private boolean fullEntryAllowed = false;
+
+        STATUS_ORDER(String statusCode, boolean fullEntry) {
+            this.statusCode = statusCode;
+            this.fullEntryAllowed = fullEntry;
+        }
+
+        public static STATUS_ORDER getByStatusCode(String statusCode) {
+            for (STATUS_ORDER status : STATUS_ORDER.values()) {
+                if (StringUtils.equals(status.statusCode, statusCode)) {
+                    return status;
+                }
+            }
+            return null;
+        }
+    }
+    
     public static class PaymentRequestDefaults {
         public static final String DEFAULT_PROCESSING_CAMPUS_CODE = "IT";
     }
@@ -20,11 +83,13 @@ public class CUPurapConstants extends PurapConstants {
     public static final class CUPaymentRequestStatuses {
 
         public static final HashSet<String> STATUSES_ALLOWING_AUTO_CLOSE = new HashSet<String>();
-
+       
+        
         static {
             STATUSES_ALLOWING_AUTO_CLOSE.add(PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED);
             STATUSES_ALLOWING_AUTO_CLOSE.add(PaymentRequestStatuses.APPDOC_AUTO_APPROVED);
             STATUSES_ALLOWING_AUTO_CLOSE.addAll(PaymentRequestStatuses.CANCELLED_STATUSES);
+  
         }
     }
     
@@ -88,8 +153,26 @@ public class CUPurapConstants extends PurapConstants {
         public static final String CONVERSION = "CNVS";
     }
     
+    public static final class PurapFundingSources {
+        public static final String FEDERAL_FUNDING_SOURCE = "FEDR";
+    }
+    
+    public static class ElectronicInvoice {
+     // ELECTRONIC INVOICE DISCOUNT DESCRIPTION
+        public static String DISCOUNT_DESCRIPTION = "Full Order Discount";
+
+    }
+    
     public static final String B2B_SUBMIT_ESHOP_CART_PERMISSION = "B2B Submit Eshop Cart";
     public static final String PREAUTHORIZED = "Preauthorized";
     public static final String NON_PREAUTHORIZED = "NonPreauthorized";
+    
+    public static final String MAX_SQ_NO_ATTACHMENTS = "MAX_SQ_NO_ATTACHMENTS";
+
+    // KFSPTS-1705
+    public static final String PO_FINAL_ANNOTATION_TEXT= "message.document.purap.final.annotation";
+    public static final String PO_DISAPPROVAL_ANNOTATION_TEXT= "message.document.purap.disapprove.annotation";
+    public static final String PO_CANCEL_ANNOTATION_TEXT= "message.document.purap.cancel.annotation";
+
 
 }
