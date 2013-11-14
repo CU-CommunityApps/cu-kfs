@@ -15,17 +15,15 @@
  */
 package org.kuali.kfs.module.purap.document.web.struts;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants.CreditMemoEditMode;
+import org.kuali.kfs.module.purap.PurapAuthorizationConstants.PaymentRequestEditMode;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kew.util.KEWConstants;
 import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.util.ObjectUtils;
@@ -97,7 +95,13 @@ public class VendorCreditMemoForm extends AccountsPayableFormBase {
             if (SpringContext.getBean(PurapService.class).isFullDocumentEntryCompleted(cmDocument) == false && documentActions.containsKey(KNSConstants.KUALI_ACTION_CAN_EDIT)) {
                 addExtraButton("methodToCall.calculate", appExternalImageURL + "buttonsmall_calculate.gif", "Calculate");
             }
+            // KFSPTS-1891, KFSPTS-2851
+            else if (getEditingMode().containsKey(PaymentRequestEditMode.WAIVE_WIRE_FEE_EDITABLE)) {
+                addExtraButton("methodToCall.calculate", appExternalImageURL + "buttonsmall_calculate.gif", "Calculate");
+           	
+            }
 
+            
             if (getEditingMode().containsKey(CreditMemoEditMode.ACCOUNTS_PAYABLE_PROCESSOR_CANCEL)) {
                 if (cmDocument.isSourceDocumentPaymentRequest() || cmDocument.isSourceDocumentPurchaseOrder()) {
                     //if the source is PREQ or PO, check the PO status

@@ -730,7 +730,15 @@ public class VendorCreditMemoDocument extends AccountsPayableDocumentBase {
     @Override
     public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
         if (nodeName.equals(PurapWorkflowConstants.REQUIRES_IMAGE_ATTACHMENT)) return requiresAccountsPayableReviewRouting();
+        // KFSPTS-1891, KFSPTS-2851
+        if (nodeName.equals(PurapWorkflowConstants.TREASURY_MANAGER))
+            return isWireOrForeignDraft();
         throw new UnsupportedOperationException("Cannot answer split question for this node you call \""+nodeName+"\"");
+    }
+    
+    // KFSPTS-1891, KFSPTS-2851
+    private boolean isWireOrForeignDraft() {
+        return StringUtils.equals(PaymentMethod.PM_CODE_WIRE, this.getPaymentMethodCode()) || StringUtils.equals(PaymentMethod.PM_CODE_FOREIGN_DRAFT, this.getPaymentMethodCode());
     }
     
     public String getPaidIndicatorForResult(){

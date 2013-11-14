@@ -19,10 +19,12 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants;
-import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants.CreditMemoEditMode;
+import org.kuali.kfs.module.purap.PurapAuthorizationConstants.PaymentRequestEditMode;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.CreditMemoStatuses;
+import org.kuali.kfs.module.purap.PurapWorkflowConstants.PaymentRequestDocument.NodeDetailEnum;
+import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.sys.KFSConstants;
@@ -141,6 +143,13 @@ public class VendorCreditMemoDocumentPresentationController extends PurchasingAc
         if (!vendorCreditMemoDocument.isSourceDocumentPaymentRequest()) {
             editModes.add(CreditMemoEditMode.LOCK_VENDOR_ENTRY);
         }
+        // KFSPTS-1891, KFSPTS-2851
+        if (canApprove(vendorCreditMemoDocument) && canEditAmount(vendorCreditMemoDocument)) {
+            editModes.add(PaymentRequestEditMode.EDIT_AMOUNT);
+        }
+        if (vendorCreditMemoDocument.isDocumentStoppedInRouteNode(NodeDetailEnum.PAYMENT_METHOD_REVIEW)) {
+            editModes.add(PaymentRequestEditMode.WAIVE_WIRE_FEE_EDITABLE);
+        }
 
         // See if purap tax is enabled
         boolean salesTaxInd = SpringContext.getBean(ParameterService.class).getIndicatorParameter(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);
@@ -163,6 +172,10 @@ public class VendorCreditMemoDocumentPresentationController extends PurchasingAc
         }
 
         return editModes;
+    }
+    // KFSPTS-1891, KFSPTS-2851
+    private boolean canEditAmount(VendorCreditMemoDocument vendorCreditMemoDocument) {
+    		return  PurapConstants.PaymentRequestStatuses.PAYMENT_METHODL_REVIEW.contains(vendorCreditMemoDocument.getStatusCode());
     }
 
     /**

@@ -18,6 +18,7 @@ package org.kuali.kfs.module.purap;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kuali.kfs.module.purap.PurapConstants.CreditMemoStatuses;
 import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
 
 /**
@@ -288,7 +289,10 @@ public class PurapWorkflowConstants {
 
     public static class CreditMemoDocument {
         public enum NodeDetailEnum implements NodeDetails {
-            ADHOC_REVIEW(DOC_ADHOC_NODE_NAME, null, PurapConstants.PaymentRequestStatuses.CANCELLED_IN_PROCESS, false), ACCOUNTS_PAYABLE_REVIEW("ImageAttachment", PurapConstants.CreditMemoStatuses.AWAITING_ACCOUNTS_PAYABLE_REVIEW, PurapConstants.CreditMemoStatuses.CANCELLED_PRIOR_TO_AP_APPROVAL, false), ;
+            ADHOC_REVIEW(DOC_ADHOC_NODE_NAME, null, PurapConstants.PaymentRequestStatuses.CANCELLED_IN_PROCESS, false), 
+            ACCOUNTS_PAYABLE_REVIEW("ImageAttachment", PurapConstants.CreditMemoStatuses.AWAITING_ACCOUNTS_PAYABLE_REVIEW, PurapConstants.CreditMemoStatuses.CANCELLED_PRIOR_TO_AP_APPROVAL, false), 
+            // KFSPTS-1891, KFSPTS-2851
+            PAYMENT_METHOD_REVIEW("PaymentMethodReviewer", CreditMemoStatuses.PAYMENT_METHODL_REVIEW, CreditMemoStatuses.CANCELLED_POST_AP_APPROVE, false), ;
 
             private final String name;
             private final String awaitingStatusCode;

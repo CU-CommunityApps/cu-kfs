@@ -661,9 +661,19 @@ public class PurapConstants extends JSTLConstants {
         public static final String CANCELLED_POST_AP_APPROVE = "CANC";
         public static final String COMPLETE = "CMPT";
         public static final String AWAITING_ACCOUNTS_PAYABLE_REVIEW = "APAD"; // Waiting for Accounts Payable approval
+        // KFSPTS-1891, KFSPTS-2851
+        public static final String PAYMENT_METHODL_REVIEW = "PTMA"; // Waiting for Treasury Manager approval
 
         public enum STATUS_ORDER {
-            CANCELLED_IN_PROCESS(PurapConstants.CreditMemoStatuses.CANCELLED_IN_PROCESS, false), CANCELLED_PRIOR_TO_AP_APPROVAL(PurapConstants.CreditMemoStatuses.CANCELLED_PRIOR_TO_AP_APPROVAL, false), CANCELLED_POST_AP_APPROVE(PurapConstants.CreditMemoStatuses.CANCELLED_POST_AP_APPROVE, false), INITIATE(PurapConstants.CreditMemoStatuses.INITIATE, true), IN_PROCESS(PurapConstants.CreditMemoStatuses.IN_PROCESS, true), AWAITING_ACCOUNTS_PAYABLE_REVIEW(PurapConstants.CreditMemoStatuses.AWAITING_ACCOUNTS_PAYABLE_REVIEW, false), COMPLETE(PurapConstants.CreditMemoStatuses.COMPLETE, false), ;
+            CANCELLED_IN_PROCESS(PurapConstants.CreditMemoStatuses.CANCELLED_IN_PROCESS, false), 
+            CANCELLED_PRIOR_TO_AP_APPROVAL(PurapConstants.CreditMemoStatuses.CANCELLED_PRIOR_TO_AP_APPROVAL, false), 
+            CANCELLED_POST_AP_APPROVE(PurapConstants.CreditMemoStatuses.CANCELLED_POST_AP_APPROVE, false), 
+            INITIATE(PurapConstants.CreditMemoStatuses.INITIATE, true), 
+            IN_PROCESS(PurapConstants.CreditMemoStatuses.IN_PROCESS, true), 
+            AWAITING_ACCOUNTS_PAYABLE_REVIEW(PurapConstants.CreditMemoStatuses.AWAITING_ACCOUNTS_PAYABLE_REVIEW, false), 
+            COMPLETE(PurapConstants.CreditMemoStatuses.COMPLETE, false), 
+            // KFSPTS-1891, KFSPTS-2851
+            PAYMENT_METHOD_REVIEW(PurapConstants.CreditMemoStatuses.PAYMENT_METHODL_REVIEW, false); 
 
             private String statusCode = new String();
             private boolean fullEntryAllowed = false;
