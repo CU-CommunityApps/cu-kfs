@@ -28,7 +28,7 @@
 			</list>
 		</property>
 		<property name="fiscalYearMakers">
-			<list merge="true">
+			<list>
 				<ref bean="accountReversionFiscalYearMaker" />
             	<ref bean="accountReversionDetailFiscalYearMaker" />
 			</list>
