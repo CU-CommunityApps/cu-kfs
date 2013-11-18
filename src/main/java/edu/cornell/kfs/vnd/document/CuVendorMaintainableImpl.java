@@ -1,6 +1,8 @@
 package edu.cornell.kfs.vnd.document;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
@@ -8,6 +10,7 @@ import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.service.DocumentService;
@@ -23,6 +26,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuVendorMaintainableImpl.class);
     private static final String HEADER_ID_SEQ = "VNDR_HDR_GNRTD_ID";
     private static final String ADDRESS_HEADER_ID_SEQ = "VNDR_ADDR_GNRTD_ID";
+    
     public void saveBusinessObject() {
         VendorDetail vendorDetail = (VendorDetail) super.getBusinessObject();
 
@@ -45,9 +49,19 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     }
 
     @Override
-    protected boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
+    protected boolean answerSplitNodeQuestion(String nodeName) {
+        Document document = null;
+
+        try {
+            document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(getDocumentNumber());
+        } catch (WorkflowException e) {
+            LOG.debug("Vendor doc could not find doc to answerSplitNodeQuestion " + e.getMessage());
+        }
+ 
+        Person systemUser = getPersonService().getPersonByPrincipalName(KFSConstants.SYSTEM_USER);  
+        
         if (nodeName.equals(VENDOR_REQUIRES_APPROVAL_SPLIT_NODE)) {
-            return SpringContext.getBean(CUVendorService.class).shouldVendorRouteForApproval(getDocumentNumber());
+            return !StringUtils.equalsIgnoreCase(document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId(), systemUser.getPrincipalId());
         }
         return super.answerSplitNodeQuestion(nodeName);
     }

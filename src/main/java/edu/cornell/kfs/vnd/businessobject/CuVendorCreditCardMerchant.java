@@ -1,13 +1,10 @@
 package edu.cornell.kfs.vnd.businessobject;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.vnd.businessobject.VendorRoutingComparable;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.krad.util.ObjectUtils;
 
-public class CuVendorCreditCardMerchant extends PersistableBusinessObjectBase implements VendorRoutingComparable, MutableInactivatable {
+public class CuVendorCreditCardMerchant extends PersistableBusinessObjectBase implements MutableInactivatable {
 	
 	private Integer vendorHeaderGeneratedIdentifier;
 	private Integer vendorDetailAssignedIdentifier;
@@ -82,23 +79,4 @@ public class CuVendorCreditCardMerchant extends PersistableBusinessObjectBase im
 		this.merchantCategoryCodeFour = merchantCategoryCodeFour;
 	}
 
-
-	public boolean isEqualForRouting(Object toCompare) {
-		// KFSPTS-2055
-        if ((ObjectUtils.isNull(toCompare)) || !(toCompare instanceof CuVendorCreditCardMerchant)) {
-
-            return false;
-        }
-        else {
-        	CuVendorCreditCardMerchant vndCardMerchant = (CuVendorCreditCardMerchant) toCompare;
-
-            return new EqualsBuilder().append(
-            		this.getCreditMerchantName(), vndCardMerchant.getCreditMerchantName()).append(
-                    this.getMerchantCategoryCodeOne(), vndCardMerchant.getMerchantCategoryCodeOne()).append(
-                    this.getMerchantCategoryCodeTwo(), vndCardMerchant.getMerchantCategoryCodeTwo()).append(
-                    this.getMerchantCategoryCodeThree(), vndCardMerchant.getMerchantCategoryCodeThree()).append(
-                    this.getMerchantCategoryCodeFour(), vndCardMerchant.getMerchantCategoryCodeFour()).append(
-            		this.isActive(), vndCardMerchant.isActive()).isEquals();
-        }
-	}
 }

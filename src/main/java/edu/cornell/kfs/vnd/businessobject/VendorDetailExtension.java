@@ -4,15 +4,10 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.vnd.businessobject.VendorRoutingComparable;
-import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
-import org.kuali.rice.krad.util.ObjectUtils;
 
-public class VendorDetailExtension extends PersistableBusinessObjectExtensionBase implements VendorRoutingComparable {
+public class VendorDetailExtension extends PersistableBusinessObjectExtensionBase {
 	private static final long serialVersionUID = 2L;
 
     private Integer vendorHeaderGeneratedIdentifier;
@@ -200,37 +195,6 @@ public class VendorDetailExtension extends PersistableBusinessObjectExtensionBas
 	public void setVendorCreditCardMerchants(
 			List<CuVendorCreditCardMerchant> vendorCreditCardMerchants) {
 		this.vendorCreditCardMerchants = vendorCreditCardMerchants;
-	}
-
-	@Override
-	public boolean isEqualForRouting(Object toCompare) {
-
-      if ((ObjectUtils.isNull(toCompare)) || !(toCompare instanceof VendorDetailExtension)) {
-          return false;
-      }
-      else {
-          VendorDetailExtension detailExt = (VendorDetailExtension) toCompare;
-          boolean eq = new EqualsBuilder().append(
-                          // KFSPTS-2055 also include CU insurance enhancement
-                  this.isInsuranceRequiredIndicator(),detailExt.isInsuranceRequiredIndicator()).append(
-                  this.getInsuranceRequirementsCompleteIndicator(),detailExt.getInsuranceRequirementsCompleteIndicator()).append(
-                  this.getCornellAdditionalInsuredIndicator(),detailExt.getCornellAdditionalInsuredIndicator()).append(
-                  this.getGeneralLiabilityCoverageAmount(),detailExt.getGeneralLiabilityCoverageAmount()).append(
-                  this.getGeneralLiabilityExpiration(),detailExt.getGeneralLiabilityExpiration()).append(
-                  this.getAutomobileLiabilityCoverageAmount(),detailExt.getAutomobileLiabilityCoverageAmount()).append(
-                  this.getAutomobileLiabilityExpiration(),detailExt.getAutomobileLiabilityExpiration()).append(
-                  this.getWorkmansCompCoverageAmount(),detailExt.getWorkmansCompCoverageAmount()).append(
-                  this.getWorkmansCompExpiration(),detailExt.getWorkmansCompExpiration()).append(
-                  this.getExcessLiabilityUmbExpiration(),detailExt.getExcessLiabilityUmbExpiration()).append(
-                  this.getExcessLiabilityUmbrellaAmount(),detailExt.getExcessLiabilityUmbrellaAmount()).append(
-                  this.getHealthOffSiteCateringLicenseReq(),detailExt.getHealthOffSiteCateringLicenseReq()).append(
-                  this.getHealthOffSiteLicenseExpirationDate(),detailExt.getHealthOffSiteLicenseExpirationDate()).append(
-                  this.getInsuranceNotes(),detailExt.getInsuranceNotes()).append(
-                  this.getMerchantNotes(),detailExt.getMerchantNotes()).isEquals();
-          eq &= SpringContext.getBean(VendorService.class).equalMemberLists(this.getVendorCreditCardMerchants(),detailExt.getVendorCreditCardMerchants());
-          return eq;
-
-      }
 	}
 
 }

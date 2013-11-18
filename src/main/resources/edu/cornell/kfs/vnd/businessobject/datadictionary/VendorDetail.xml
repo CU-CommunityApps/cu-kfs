@@ -289,45 +289,7 @@
              </list>
       </property>
   </bean>
-  
-   <bean parent="DataDictionaryBeanOverride">
-      <property name="beanName" value="VendorDetail-inquiryCollectionDefinition-Address-vendorDefaultAddresses" />
-      <property name="fieldOverrides">
-          <list>
-             <bean parent="FieldOverrideForValueReplace">
-                  <property name="propertyName" value="businessObjectClass" />
-                  <property name="value" value="edu.cornell.kfs.vnd.businessobject.CuVendorDefaultAddress" />
-              </bean>
-            </list>
-      </property>
-  </bean>
  
-    <bean parent="DataDictionaryBeanOverride">
-      <property name="beanName" value="VendorDetail-inquiryCollectionDefinition-vendorContacts" />
-      <property name="fieldOverrides">
-          <list>
-             <bean parent="FieldOverrideForValueReplace">
-                  <property name="propertyName" value="businessObjectClass" />
-                  <property name="value" value="edu.cornell.kfs.vnd.businessobject.CuVendorContact" />
-              </bean>
-            </list>
-      </property>
-  </bean>
- 
-    <bean parent="DataDictionaryBeanOverride">
-      <property name="beanName" value="VendorDetail-inquiryCollectionDefinition-Contacts-vendorContactPhoneNumbers" />
-      <property name="fieldOverrides">
-          <list>
-             <bean parent="FieldOverrideForValueReplace">
-                  <property name="propertyName" value="businessObjectClass" />
-                  <property name="value" value="edu.cornell.kfs.vnd.businessobject.CuVendorContactPhoneNumber" />
-              </bean>
-            </list>
-      </property>
-  </bean>
-
- 
-  
     <bean parent="DataDictionaryBeanOverride">
       <property name="beanName" value="VendorDetail-inquiryCollectionDefinition-supplierDiversities" />
       <property name="fieldOverrides">
@@ -347,59 +309,7 @@
              </list>
       </property>
   </bean>
-  
-     <bean parent="DataDictionaryBeanOverride">
-      <property name="beanName" value="VendorDetail-inquiryCollectionDefinition-vendorShippingSpecialConditions" />
-      <property name="fieldOverrides">
-          <list>
-             <bean parent="FieldOverrideForValueReplace">
-                  <property name="propertyName" value="businessObjectClass" />
-                  <property name="value" value="edu.cornell.kfs.vnd.businessobject.CuVendorShippingSpecialCondition" />
-              </bean>
-            </list>
-      </property>
-  </bean>
  
-     <bean parent="DataDictionaryBeanOverride">
-      <property name="beanName" value="VendorDetail-inquiryCollectionDefinition-vendorAliases" />
-      <property name="fieldOverrides">
-          <list>
-             <bean parent="FieldOverrideForValueReplace">
-                  <property name="propertyName" value="businessObjectClass" />
-                  <property name="value" value="edu.cornell.kfs.vnd.businessobject.CuVendorAlias" />
-              </bean>
-            </list>
-      </property>
-  </bean>
- 
-     <bean parent="DataDictionaryBeanOverride">
-      <property name="beanName" value="VendorDetail-inquiryCollectionDefinition-vendorPhoneNumbers" />
-      <property name="fieldOverrides">
-          <list>
-             <bean parent="FieldOverrideForValueReplace">
-                  <property name="propertyName" value="businessObjectClass" />
-                  <property name="value" value="edu.cornell.kfs.vnd.businessobject.CuVendorPhoneNumber" />
-              </bean>
-            </list>
-      </property>
-  </bean>
- 
-     <bean parent="DataDictionaryBeanOverride">
-      <property name="beanName" value="VendorDetail-inquiryCollectionDefinition-vendorCustomerNumbers" />
-      <property name="fieldOverrides">
-          <list>
-             <bean parent="FieldOverrideForValueReplace">
-                  <property name="propertyName" value="businessObjectClass" />
-                  <property name="value" value="edu.cornell.kfs.vnd.businessobject.CuVendorCustomerNumber" />
-              </bean>
-            </list>
-      </property>
-  </bean>
- 
- 
-    
- 
-
 	<bean id="VendorDetail-inquiryDefinition" parent="VendorDetail-inquiryDefinition-parentBean" >
 
 		<property name="presentationControllerClass"
