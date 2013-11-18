@@ -19,12 +19,13 @@ package edu.cornell.kfs.coa.businessobject;
 import java.util.LinkedHashMap;
 
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.sys.businessobject.FiscalYearBasedBusinessObject;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 
 /**
  * 
  */
-public class AccountReversionDetail extends ReversionDetail implements MutableInactivatable, ReversionCategoryInfo {
+public class AccountReversionDetail extends ReversionDetail implements MutableInactivatable, ReversionCategoryInfo, FiscalYearBasedBusinessObject {
 
     private String accountNumber;
     private String accountReversionCategoryCode;

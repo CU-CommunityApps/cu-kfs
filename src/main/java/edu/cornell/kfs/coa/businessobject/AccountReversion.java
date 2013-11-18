@@ -21,12 +21,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.sys.businessobject.FiscalYearBasedBusinessObject;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 
 /**
  * 
  */
-public class AccountReversion extends Reversion implements MutableInactivatable {
+public class AccountReversion extends Reversion implements MutableInactivatable, FiscalYearBasedBusinessObject {
 
     
     private String accountNumber;
