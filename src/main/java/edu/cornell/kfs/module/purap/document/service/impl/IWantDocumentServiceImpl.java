@@ -243,7 +243,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
         String initiator = workflowDocument.getInitiatorPrincipalId();
         String documentNumber = iWantDocument.getDocumentNumber();
         Person initiatorPerson = personService.getPerson(initiator);
-        String initiatorEmail = initiatorPerson.getEmailAddress();
+        String initiatorEmail = initiatorPerson.getEmailAddressUnmasked();
 
         MailMessage message = new MailMessage();
 
