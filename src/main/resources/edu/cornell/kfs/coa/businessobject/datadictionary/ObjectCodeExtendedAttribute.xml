@@ -57,7 +57,7 @@
     <property name="label" value="Financial Object Code Description"/>
     <property name="shortLabel" value="Description"/>
     <property name="required" value="false"/>
-    <property name="maxLength" value="255"/>
+    <property name="maxLength" value="600"/>
     <property name="validationPattern">
       <bean parent="AnyCharacterWithWhitespaceValidation" />
     </property>
