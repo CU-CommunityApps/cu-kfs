@@ -162,14 +162,14 @@
 	<bean id="CurrentAccountBalance-totalIncome" parent="CurrentAccountBalance-totalIncome-parentBean"/>
 	<bean id="CurrentAccountBalance-totalIncome-parentBean" abstract="true" parent="Balance-dummyBusinessObject.genericAmount">
 	    <property name="name" value="totalIncome"/>
-	    <property name="label" value="Total Income"/>
-	    <property name="shortLabel" value="Total Income"/>
+	    <property name="label" value="Current Income"/>
+	    <property name="shortLabel" value="Current Income"/>
 	</bean>
 	<bean id="CurrentAccountBalance-totalExpense" parent="CurrentAccountBalance-totalExpense-parentBean"/>
 	<bean id="CurrentAccountBalance-totalExpense-parentBean" abstract="true" parent="Balance-dummyBusinessObject.genericAmount">
 	    <property name="name" value="totalExpense"/>
-	    <property name="label" value="Total Expense"/>
-	    <property name="shortLabel" value="Total Expense"/>
+	    <property name="label" value="Current Expense"/>
+	    <property name="shortLabel" value="Current Expense"/>
 	</bean>
 	<bean id="CurrentAccountBalance-encumbrances" parent="CurrentAccountBalance-encumbrances-parentBean"/>
 	<bean id="CurrentAccountBalance-encumbrances-parentBean" abstract="true" parent="Balance-dummyBusinessObject.genericAmount">

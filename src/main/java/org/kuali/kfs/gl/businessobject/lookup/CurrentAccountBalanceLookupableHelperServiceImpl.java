@@ -21,39 +21,33 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.coa.service.AccountService;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
+import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.gl.Constant;
 import org.kuali.kfs.gl.batch.service.BalanceCalculator;
 import org.kuali.kfs.gl.businessobject.Balance;
-import org.kuali.kfs.gl.businessobject.lookup.AbstractGeneralLedgerLookupableHelperServiceImpl;
-import org.kuali.kfs.gl.businessobject.lookup.BusinessObjectFieldConverter;
+import org.kuali.kfs.gl.businessobject.CurrentAccountBalance;
 import org.kuali.kfs.gl.service.BalanceService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.KFSParameterKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.ObjectUtil;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kim.service.PersonService;
 import org.kuali.rice.kns.bo.BusinessObject;
 import org.kuali.rice.kns.exception.ValidationException;
 import org.kuali.rice.kns.lookup.HtmlData;
-import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
-import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.gl.businessobject.CurrentAccountBalance;
-import org.kuali.kfs.sys.KFSParameterKeyConstants;
-
-import org.kuali.kfs.gl.businessobject.CurrentAccountBalance;
 /**
  * AER-0630 - Rq_GL_630 add a simple balance inquiry menu item to KFS main menu
  * An extension of KualiLookupableImpl to support account balance lookups
@@ -170,10 +164,12 @@ public class CurrentAccountBalanceLookupableHelperServiceImpl extends AbstractGe
 		CurrentAccountBalance currentBalance = balanceMap.get(key);
 		this.updateCurrentBalance(currentBalance, balance, fiscalPeriod);
 	    } else {
+	    
 		CurrentAccountBalance currentBalance = new CurrentAccountBalance();
 		ObjectUtil.buildObject(currentBalance, balance);
 		currentBalance.resetAmounts();
-
+        
+		
 		this.updateCurrentBalance(currentBalance, balance, fiscalPeriod);
 		balanceMap.put(key, currentBalance);
 	    }
@@ -219,21 +215,26 @@ public class CurrentAccountBalanceLookupableHelperServiceImpl extends AbstractGe
 	boolean cbExclusion = this.getParameterService().getIndicatorParameter(CurrentAccountBalance.class, 
 			KFSParameterKeyConstants.GeneralLedgerSysParmeterKeys.EXCLUDE_CB_PERIOD_PARAM);
 	List<String> aSlIfBObjectTypes = Arrays.asList(new String[] { "AS", "LI", "FB" });
-
+			
+	
 	String balanceTypeCode = balance.getBalanceTypeCode();
 	String objectTypeCode = balance.getObjectTypeCode();
 	String objectCode = balance.getObjectCode();
 	Account account = balance.getAccount();
-	String bdgtCd = account.getBudgetRecordingLevelCode();
+	if (ObjectUtils.isNull(account)) {
+        account = SpringContext.getBean(AccountService.class).getByPrimaryId(balance.getChartOfAccountsCode(), balance.getAccountNumber());
+        balance.setAccount(account);
+        currentBalance.setAccount(account);
+    }
+
+	String bdgtCd = "";
+	if (ObjectUtils.isNotNull(account)) {
+	    bdgtCd = account.getBudgetRecordingLevelCode();
+	}
 
 	
 	currentBalance.setUniversityFiscalPeriodCode(fiscalPeriod);
 
-	if (ObjectUtils.isNull(account) || ObjectUtils.isNull(bdgtCd)) {
-		 account = SpringContext.getBean(AccountService.class).getByPrimaryId(balance.getChartOfAccountsCode(), balance.getAccountNumber());
-		 balance.setAccount(account);
-		 currentBalance.setAccount(account);
-		 }
 	boolean isCashBdgtRecording = cashBudgetRecordLevelCodes.contains(account.getBudgetRecordingLevelCode());
 
 	// Current Budget (A)
