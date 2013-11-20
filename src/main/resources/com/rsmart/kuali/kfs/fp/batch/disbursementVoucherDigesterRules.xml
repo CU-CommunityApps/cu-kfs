@@ -28,7 +28,14 @@
      
          <pattern value="dv">
             <object-create-rule classname="com.rsmart.kuali.kfs.fp.document.BatchDisbursementVoucherDocument" />
-           
+            <pattern value="documentHeader">
+            	<object-create-rule classname="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" />
+            	<call-method-rule pattern="explanation" methodname="setExplanation" paramcount="0" />
+            	<call-method-rule pattern="organizationDocumentNumber" methodname="setOrganizationDocumentNumber" paramcount="0" />
+            	
+            	<set-next-rule methodname="setDocumentHeader" />
+            </pattern>
+            
             <call-method-rule pattern="disbVchrContactPersonName" methodname="setDisbVchrContactPersonName" paramcount="0" />
             <call-method-rule pattern="disbVchrContactPhoneNumber" methodname="setDisbVchrContactPhoneNumber" paramcount="0" />
             <call-method-rule pattern="disbVchrContactEmailId" methodname="setDisbVchrContactEmailId" paramcount="0" />

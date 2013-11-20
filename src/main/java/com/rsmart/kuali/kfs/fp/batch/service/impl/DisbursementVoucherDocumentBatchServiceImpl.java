@@ -322,6 +322,8 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
         disbursementVoucherDocument.getDocumentHeader().setDocumentDescription(kualiConfigurationService.getPropertyString(FPKeyConstants.MESSAGE_DV_BATCH_DOCUMENT_DESCRIPTION));
 
         // populate fields of document from batch instance
+        disbursementVoucherDocument.getDocumentHeader().setExplanation(batchDisbursementVoucherDocument.getDocumentHeader().getExplanation());
+        disbursementVoucherDocument.getDocumentHeader().setOrganizationDocumentNumber(batchDisbursementVoucherDocument.getDocumentHeader().getOrganizationDocumentNumber());
         disbursementVoucherDocument.setDisbVchrContactPersonName(batchDisbursementVoucherDocument.getDisbVchrContactPersonName());
         disbursementVoucherDocument.setDisbVchrContactPhoneNumber(batchDisbursementVoucherDocument.getDisbVchrContactPhoneNumber());
         disbursementVoucherDocument.setDisbVchrContactEmailId(batchDisbursementVoucherDocument.getDisbVchrContactEmailId());

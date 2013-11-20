@@ -14,6 +14,8 @@
     </xsd:simpleType>
    
     <xsd:element name="unit" type="xsd:string"/> 
+    <xsd:element name="explanation" type="xsd:string"/>
+    <xsd:element name="organizationDocumentNumber" type="xsd:string"/>
     <xsd:element name="disbVchrContactPersonName" type="xsd:string"/>
     <xsd:element name="disbVchrContactPhoneNumber" type="xsd:string"/>
     <xsd:element name="disbVchrContactEmailId" type="xsd:string"/>
@@ -97,11 +99,21 @@
                 <xsd:element maxOccurs="1" minOccurs="1" ref="unit"/>
             </xsd:sequence>
         </xsd:complexType>
-    </xsd:element>    
+    </xsd:element>   
+    
+    <xsd:element name="documentHeader">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="explanation"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="organizationDocumentNumber"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element> 
     
     <xsd:element name="dv">
         <xsd:complexType>
             <xsd:sequence>
+            	<xsd:element maxOccurs="1" minOccurs="0" ref="documentHeader"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="disbVchrContactPersonName"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="disbVchrContactPhoneNumber"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="disbVchrContactEmailId"/>
