@@ -27,6 +27,7 @@ import static org.kuali.rice.kns.util.KualiDecimal.ZERO;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,6 +41,7 @@ import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.coa.service.OffsetDefinitionService;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.businessobject.CreditMemoItem;
 import org.kuali.kfs.module.purap.businessobject.ItemType;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
@@ -74,11 +76,13 @@ import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.FlexibleOffsetAccountService;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import org.kuali.rice.kew.exception.WorkflowException;
+import org.kuali.rice.kns.bo.Note;
 import org.kuali.rice.kns.document.Document;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.service.KualiConfigurationService;
+import org.kuali.rice.kns.service.NoteService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.KualiInteger;
@@ -87,6 +91,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.batch.CheckReconciliationImportStep;
+import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 
 import edu.cornell.kfs.pdp.service.PdpUtilService;
 
@@ -110,9 +115,12 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
     private PendingTransactionDao glPendingTransactionDao;
     private AccountingPeriodService accountingPeriodService;
     private DateTimeService dateTimeService;
+    private DocumentService documentService;
     private KualiConfigurationService kualiConfigurationService;
     private BusinessObjectService businessObjectService;
     private BankService bankService;
+    private NoteService noteService;
+    private ParameterService parameterService;
     private PdpUtilService pdpUtilService;
 
     public PendingTransactionServiceImpl() {
@@ -307,45 +315,75 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
      * @param paymentDetail
      * @param sequenceHelper
      */
-    protected void reverseSourceDocumentsEntries(PaymentDetail paymentDetail, GeneralLedgerPendingEntrySequenceHelper sequenceHelper){
+    protected void reverseSourceDocumentsEntries(PaymentDetail paymentDetail, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
 
-
-            // Need to reverse the payment document's GL entries if the check is stopped or cancelled
-            if ( PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equalsIgnoreCase(paymentDetail.getFinancialDocumentTypeCode()) || PdpConstants.PdpDocumentTypes.DISBURSEMENT_VOUCHER.equalsIgnoreCase(paymentDetail.getFinancialDocumentTypeCode()) || PdpConstants.PdpDocumentTypes.CREDIT_MEMO.equalsIgnoreCase(paymentDetail.getFinancialDocumentTypeCode())) {
+        // Need to reverse the payment document's GL entries if the check is stopped or cancelled
+        if (PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equalsIgnoreCase(paymentDetail.getFinancialDocumentTypeCode()) || PdpConstants.PdpDocumentTypes.DISBURSEMENT_VOUCHER.equalsIgnoreCase(paymentDetail.getFinancialDocumentTypeCode()) || PdpConstants.PdpDocumentTypes.CREDIT_MEMO.equalsIgnoreCase(paymentDetail.getFinancialDocumentTypeCode())) {
+            try {
+                String sourceDocumentNumber = paymentDetail.getCustPaymentDocNbr();
                 try {
-                    String sourceDocumentNumber = paymentDetail.getCustPaymentDocNbr();
-                    try {
-                        Long.valueOf(sourceDocumentNumber);
-                    } catch (NumberFormatException nfe) {
-                        sourceDocumentNumber = null;
-                    }
+                    Long.valueOf(sourceDocumentNumber);
+                } catch (NumberFormatException nfe) {
+                    sourceDocumentNumber = null;
+                }
 
-                    if (sourceDocumentNumber != null && StringUtils.isNotBlank(sourceDocumentNumber)) {
+                if (sourceDocumentNumber != null && StringUtils.isNotBlank(sourceDocumentNumber)) {
 
-                        Document doc = (AccountingDocumentBase) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(paymentDetail.getCustPaymentDocNbr());
+                    Document doc = (AccountingDocumentBase) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(paymentDetail.getCustPaymentDocNbr());
 
-                        if (ObjectUtils.isNotNull(doc)) {
-                            if (doc instanceof DisbursementVoucherDocument) {
+                    if (ObjectUtils.isNotNull(doc)) {
+                        if (doc instanceof DisbursementVoucherDocument) {
 
-                                generateDisbursementVoucherReversalEntries((DisbursementVoucherDocument) doc, sequenceHelper);
+                            generateDisbursementVoucherReversalEntries((DisbursementVoucherDocument) doc, sequenceHelper);
 
-                            } else if (doc instanceof VendorCreditMemoDocument) {
+                        } else if (doc instanceof VendorCreditMemoDocument) {
+                            // KFSPTS-2719
+                            String crCmCancelNote = parameterService.getParameterValue(VendorCreditMemoDocument.class, PurapParameterConstants.PURAP_CR_CM_CANCEL_NOTE);
+                            VendorCreditMemoDocument cmDocument = (VendorCreditMemoDocument) doc;
+                            String crCancelMaintDocNbr = getCrCancelMaintenancedocumentNumber(paymentDetail);
+                            crCmCancelNote = crCmCancelNote + crCancelMaintDocNbr;
 
-                                generateCreditMemoReversalEntries((VendorCreditMemoDocument) doc);
-
-                            } else if (doc instanceof PaymentRequestDocument) {
-
-                                generatePaymentRequestReversalEntries((PaymentRequestDocument) doc);
-
+                            try {
+                                Note noteObj = documentService.createNoteFromDocument(cmDocument, crCmCancelNote);
+                                documentService.addNoteToDocument(cmDocument, noteObj);
+                                noteService.save(noteObj);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e.getMessage());
                             }
+
+                            generateCreditMemoReversalEntries((VendorCreditMemoDocument) doc);
+
+                        } else if (doc instanceof PaymentRequestDocument) {
+                            // KFSPTS-2719
+                            String crPreqCancelNote = parameterService.getParameterValue(PaymentRequestDocument.class, PurapParameterConstants.PURAP_CR_PREQ_CANCEL_NOTE);
+                            PaymentRequestDocument paymentRequest = (PaymentRequestDocument) doc;
+                            String crCancelMaintDocNbr = getCrCancelMaintenancedocumentNumber(paymentDetail);
+
+                            crPreqCancelNote = crPreqCancelNote + crCancelMaintDocNbr;
+
+                            try {
+
+                                Note cancelNote = documentService.createNoteFromDocument(paymentRequest, crPreqCancelNote);
+                                documentService.addNoteToDocument(paymentRequest, cancelNote);
+                                noteService.save(cancelNote);
+                            } catch (Exception e) {
+                                throw new RuntimeException(PurapConstants.REQ_UNABLE_TO_CREATE_NOTE + " " + e);
+                            }
+
+                            // cancel extracted should not reopen PO
+                            paymentRequest.setReopenPurchaseOrderIndicator(false);
+
+                            generatePaymentRequestReversalEntries(paymentRequest);
+
                         }
                     }
-
-                } catch (WorkflowException we) {
-                    System.out.println("Exception retrieving document " + paymentDetail.getCustPaymentDocNbr());
                 }
+
+            } catch (WorkflowException we) {
+                System.out.println("Exception retrieving document " + paymentDetail.getCustPaymentDocNbr());
             }
-        
+        }
+
     }
     
     /**
@@ -405,6 +443,22 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
         this.businessObjectService.save(bankPendingTransaction);
 
         sequenceHelper.increment();
+    }
+    
+    private String getCrCancelMaintenancedocumentNumber(PaymentDetail paymentDetail){
+        String crCancelMaintDocNbr = KFSConstants.EMPTY_STRING;
+
+        KualiInteger crCheckNbr = paymentDetail.getPaymentGroup().getDisbursementNbr();
+        Map<String, KualiInteger> fieldValues = new HashMap<String, KualiInteger>();
+        fieldValues.put("checkNumber", crCheckNbr);
+
+        Collection<CheckReconciliation> crEntries = businessObjectService.findMatching(CheckReconciliation.class, fieldValues);
+        if (crEntries != null && crEntries.size() > 0) {
+            CheckReconciliation crEntry = crEntries.iterator().next();
+            crCancelMaintDocNbr = crEntry.getCancelDocHdrId();
+        }
+        
+        return crCancelMaintDocNbr;
     }
     
     
@@ -1092,6 +1146,60 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
      */
     public void setPdpUtilService(PdpUtilService pdpUtilService) {
         this.pdpUtilService = pdpUtilService;
+    }
+
+    /**
+     * Gets the parameterService.
+     * 
+     * @return parameterService
+     */
+    public ParameterService getParameterService() {
+        return parameterService;
+    }
+
+    /**
+     * Sets the parameterService.
+     * 
+     * @param parameterService
+     */
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
+    }
+
+    /**
+     * Gets the documentService.
+     * 
+     * @return documentService
+     */
+    public DocumentService getDocumentService() {
+        return documentService;
+    }
+
+    /**
+     * Sets the documentService.
+     * 
+     * @param documentService
+     */
+    public void setDocumentService(DocumentService documentService) {
+        this.documentService = documentService;
+    }
+
+    /**
+     * Gets the noteService.
+     * 
+     * @return noteService
+     */
+    public NoteService getNoteService() {
+        return noteService;
+    }
+
+    /**
+     * Sets the noteService.
+     * 
+     * @param noteService
+     */
+    public void setNoteService(NoteService noteService) {
+        this.noteService = noteService;
     }
 
 }

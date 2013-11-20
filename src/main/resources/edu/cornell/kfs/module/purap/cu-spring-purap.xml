@@ -103,6 +103,14 @@
 	
     </bean>
     
+    <bean id="purchasingAccountsPayableModuleService" parent="purchasingAccountsPayableModuleService-parentBean"/>
+	
+	<bean id="purchasingAccountsPayableModuleService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchasingAccountsPayableModuleServiceImpl">
+		<property name="documentService" ref="documentService" />
+		<property name="purapService" ref="purapService"/>
+		<property name="purchaseOrderService" ref="purchaseOrderService"/>
+	</bean>
+    
     <bean id="iWantDocumentService" class="edu.cornell.kfs.module.purap.document.service.impl.IWantDocumentServiceImpl">
     	<property name="attachmentService">
 			<ref bean="attachmentService" />

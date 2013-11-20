@@ -46,6 +46,10 @@ public class PurapParameterConstants implements ParameterKeyConstants {
     public static final String PURAP_PDP_PREQ_RESET_NOTE = "RESET_NOTE";
     public static final String PURAP_PDP_CM_CANCEL_NOTE = "CANCEL_NOTE";
     public static final String PURAP_PDP_CM_RESET_NOTE = "RESET_NOTE";
+    
+    //KFSPTS-2719
+    public static final String PURAP_CR_PREQ_CANCEL_NOTE = "CR_CANCEL_NOTE";
+    public static final String PURAP_CR_CM_CANCEL_NOTE = "CR_CANCEL_NOTE";
 
     public static final String PRE_DISBURSEMENT_EXTRACT_CUTOFF_TIME = "PRE_DISBURSEMENT_EXTRACT_CUTOFF_TIME";
     

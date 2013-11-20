@@ -31,6 +31,7 @@
     	<field-descriptor name="glTransIndicator" column="GL_TRANS_IND" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" jdbc-type="VARCHAR" />
     	<field-descriptor name="sourceCode" column="SRC_CD" jdbc-type="VARCHAR" />
     	<field-descriptor name="bankCode" column="BNK_CD" jdbc-type="VARCHAR" />
+    	<field-descriptor name="cancelDocHdrId" column="CNCL_DOC_HDR_ID" jdbc-type="VARCHAR" />
     	<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
     	
     	<reference-descriptor name="bank" class-ref="org.kuali.kfs.sys.businessobject.Bank" auto-retrieve="true" auto-update="none" auto-delete="none">

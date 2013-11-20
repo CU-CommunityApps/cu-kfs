@@ -14,6 +14,7 @@ import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
+import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 
 /**
@@ -44,6 +45,11 @@ public class CheckReconciliationMaintainableImpl extends FinancialSystemMaintain
                     Date currentDate = SpringContext.getBean(DateTimeService.class).getCurrentSqlDate();
 
                     newCr.setStatusChangeDate(currentDate);
+                    
+                    //KSPTS-2719
+                    if(CRConstants.CANCELLED.equalsIgnoreCase(newCr.getStatus())){
+                        newCr.setCancelDocHdrId(documentHeader.getDocumentNumber());
+                    }
                 }
 
             } catch (WorkflowException e) {
