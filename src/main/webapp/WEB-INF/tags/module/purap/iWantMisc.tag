@@ -23,7 +23,7 @@
 <c:set var="currentUserCampusCode" value="${UserSession.person.campusCode}" />
 <c:set var="tabindexOverrideBase" value="30" />
 
-<kul:tab tabTitle="Additional Info" defaultOpen="true" tabErrorKey="${PurapConstants.MISC_ERRORS}">
+<kul:tab tabTitle="Additional Info" defaultOpen="true" tabErrorKey="${KFSConstants.I_WANT_DOC_MISC_ERRORS}">
     <div class="tab-container" align=center>
 
             <table cellpadding="0" cellspacing="0" class="datatable" summary="Instructions">

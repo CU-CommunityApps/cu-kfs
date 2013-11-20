@@ -512,10 +512,18 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     public ActionForward continueToRouting(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        IWantDocumentForm iWantForm = (IWantDocumentForm) form;
-        iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.ROUTING_STEP);
+    	IWantDocumentForm iWantForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantForm.getIWantDocument();
-        iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.ROUTING_STEP);
+
+        // call business rules
+        KualiRuleService ruleService = SpringContext.getBean(KualiRuleService.class);
+        boolean rulePassed = true;
+        rulePassed &= ruleService.applyRules(new RouteDocumentEvent("", iWantDocument));
+
+        if (rulePassed) {
+        	iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.ROUTING_STEP);
+        	iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.ROUTING_STEP);
+        }
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
