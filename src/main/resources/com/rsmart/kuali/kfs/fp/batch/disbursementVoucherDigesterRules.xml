@@ -28,6 +28,13 @@
      
          <pattern value="dv">
             <object-create-rule classname="com.rsmart.kuali.kfs.fp.document.BatchDisbursementVoucherDocument" />
+            <pattern value="documentHeader">
+            	<object-create-rule classname="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" />
+            	<call-method-rule pattern="explanation" methodname="setExplanation" paramcount="0" />
+            	<call-method-rule pattern="organizationDocumentNumber" methodname="setOrganizationDocumentNumber" paramcount="0" />
+            	
+            	<set-next-rule methodname="setDocumentHeader" />
+            </pattern>
            
             <call-method-rule pattern="disbVchrContactPersonName" methodname="setDisbVchrContactPersonName" paramcount="0" />
             <call-method-rule pattern="disbVchrContactPhoneNumber" methodname="setDisbVchrContactPhoneNumber" paramcount="0" />
@@ -127,7 +134,7 @@
              </pattern>                            
              
              <pattern value="note">
-                <object-create-rule classname=" org.kuali.rice.krad.bo.Note" />
+                <object-create-rule classname="org.kuali.rice.krad.bo.Note" />
                 
                 <call-method-rule pattern="noteText" methodname="setNoteText" paramcount="0" /> 
                 
@@ -135,7 +142,7 @@
              </pattern>
             
              <pattern value="attachment">
-                <object-create-rule classname=" org.kuali.rice.krad.bo.Attachment" />
+                <object-create-rule classname="org.kuali.rice.krad.bo.Attachment" />
                 
                 <call-method-rule pattern="mimeTypeCode" methodname="setAttachmentMimeTypeCode" paramcount="0" /> 
                 <call-method-rule pattern="fileName" methodname="setAttachmentFileName" paramcount="0" /> 
