@@ -15,8 +15,8 @@ public class CUPurapParameterConstants extends PurapParameterConstants {
 	
     // KFSPTS-1625
 	public static final String B2B_TOTAL_AMOUNT_FOR_SUPER_USER_AUTO_PO = "B2B_TOTAL_AMOUNT_FOR_SUPER_USER_AUTO_PO";
-	
-	//KFSPTS-2719
+
+    //KFSUPGRADE-377
     public static final String PURAP_CR_PREQ_CANCEL_NOTE = "CR_CANCEL_NOTE";
     public static final String PURAP_CR_CM_CANCEL_NOTE = "CR_CANCEL_NOTE";
 

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
+import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentStatus;
 import org.kuali.kfs.pdp.service.PendingTransactionService;
 import org.kuali.kfs.sys.batch.AbstractStep;
@@ -36,6 +37,8 @@ import org.kuali.rice.krad.util.ObjectUtils;
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 import com.rsmart.kuali.kfs.cr.document.service.GlTransactionService;
+
+import edu.cornell.kfs.pdp.businessobject.PaymentDetailExtendedAttribute;
 
 /**
  * GlTransactionStep
@@ -158,6 +161,16 @@ public class GlTransactionStep extends AbstractStep {
                         }
                         paymentGroup.setLastUpdate(new Timestamp(lastUpdate.getTime()));
                         businessObjectService.save(paymentGroup);
+
+						// update cancel flag on payment details
+						for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
+							// paymentDetail.refreshReferenceObject("extension");
+							PaymentDetailExtendedAttribute extendedAttribute = (PaymentDetailExtendedAttribute) paymentDetail
+									.getExtension();
+							extendedAttribute
+									.setCrCancelledPayment(Boolean.TRUE);
+							businessObjectService.save(paymentDetail);
+						}
                     
                         // Update status
                         cr.setGlTransIndicator(Boolean.TRUE);

@@ -58,6 +58,9 @@ public class CheckReconciliation extends PersistableBusinessObjectBase implement
     private String payeeName;
     private String payeeType;
     
+    //KFSUPGRADE-377
+    private String cancelDocHdrId; //CNCL_DOC_HDR_ID
+    
     
     private Bank bank;
     
@@ -208,6 +211,14 @@ public class CheckReconciliation extends PersistableBusinessObjectBase implement
 
 	public int compareTo(KualiInteger checkNumber) {
 		return getCheckNumber().compareTo(checkNumber);
+	}
+
+	public String getCancelDocHdrId() {
+		return cancelDocHdrId;
+	}
+
+	public void setCancelDocHdrId(String cancelDocHdrId) {
+		this.cancelDocHdrId = cancelDocHdrId;
 	}
 
 }

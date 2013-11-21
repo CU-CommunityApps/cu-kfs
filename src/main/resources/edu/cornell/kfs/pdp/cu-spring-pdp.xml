@@ -34,6 +34,7 @@
         <property name="packagePrefixes">
             <list>
                 <value>org.kuali.kfs.pdp</value>
+                <value>edu.cornell.kfs.pdp</value>
             </list>
         </property>
         <property name="dataDictionaryPackages">
@@ -385,13 +386,16 @@
         <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />
     </bean>
     
-    <bean id="pdpGlPendingTransactionService" class="org.kuali.kfs.pdp.service.impl.PendingTransactionServiceImpl">
+    <bean id="pdpGlPendingTransactionService" class="edu.cornell.kfs.pdp.service.impl.CuPendingTransactionServiceImpl">
         <property name="glPendingTransactionDao" ref="pdpGlPendingTransactionDao"/>
         <property name="accountingPeriodService" ref="accountingPeriodService"/>
         <property name="kualiConfigurationService" ref="kualiConfigurationService"/>
         <property name="dateTimeService" ref="dateTimeService"/>
+        <property name="documentService" ref="documentService"/>
         <property name="businessObjectService" ref="businessObjectService" />
         <property name="bankService" ref="bankService"/>
+        <property name="noteService" ref="noteService"/>
+        <property name="parameterService" ref="parameterService"/>
         <property name="pdpUtilService" ref="pdpUtilService"/>
     </bean>
 
@@ -446,7 +450,7 @@
         <property name="originationCodeService" ref="originationCodeService" />
         <property name="workflowInfoService" ref="workflowInfoService" />
     </bean>
-    
+
     <bean id="paymentInputFileType" class="org.kuali.kfs.pdp.batch.PaymentInputFileType">
         <property name="directoryPath">
            <value>${staging.directory}/pdp/paymentImport</value>
@@ -500,7 +504,7 @@
     <!-- KFSPTS-1460 - New bean-->
     <bean id="achBundlerAdviceDao" parent="platformAwareDao" class="edu.cornell.kfs.pdp.dataaccess.impl.AchBundlerAdviceDaoObj"/>   
     
-    <bean id="processPdpCancelPaidService" class="org.kuali.kfs.pdp.batch.service.impl.ProcessPdpCancelPaidServiceImpl">
+    <bean id="processPdpCancelPaidService" class="edu.cornell.kfs.pdp.batch.service.impl.CuProcessPdpCancelPaidServiceImpl">
         <property name="paymentGroupService">
             <ref bean="pdpPaymentGroupService"/>
         </property>

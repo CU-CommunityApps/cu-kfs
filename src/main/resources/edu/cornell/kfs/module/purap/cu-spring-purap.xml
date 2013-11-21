@@ -123,6 +123,14 @@
 		</property>
 	</bean>
 	
+	<bean id="purchasingAccountsPayableModuleService" parent="purchasingAccountsPayableModuleService-parentBean"/>
+	
+	<bean id="purchasingAccountsPayableModuleService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchasingAccountsPayableModuleServiceImpl">
+		<property name="documentService" ref="documentService" />
+		<property name="purapService" ref="purapService"/>
+		<property name="purchaseOrderService" ref="purchaseOrderService"/>
+	</bean>
+	
 	<!-- Lookupables -->
    <bean id="unitOfMeasureLookupHelperService" class="edu.cornell.kfs.module.purap.businessobject.lookup.UnitOfMeasureLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService" />
 	
