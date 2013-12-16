@@ -12,6 +12,11 @@
 		<property name="scriptConfigurationFilePaths">
 			<list/>
 		</property>
+		<property name="dataDictionaryPackages">
+            <list merge="true">
+                <value>edu/cornell/kfs/module/ld/businessobject/datadictionary</value>
+            </list>
+        </property>
 		<property name="databaseRepositoryFilePaths">
 			<list merge="true">
 				<value>org/kuali/kfs/module/ld/cu-ojb-ld.xml</value>
@@ -65,7 +70,33 @@
 			<ref bean="cuLaborObjectDao" />
 		</property>
 	</bean>
+
+	<bean id="laborLedgerBatchFileLookupableHelperService" class="edu.cornell.kfs.module.ld.businessobject.LaborLedgerBatchFileLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService">
+        <property name="dateTimeService" ref="dateTimeService" />
+        <property name="batchFileAdminAuthorizationService" ref="batchFileAdminAuthorizationService"/>
+    </bean>
+        
+    <bean id="batchFileAdminAuthorizationService" class="org.kuali.kfs.sys.batch.service.impl.BatchFileAdminAuthorizationServiceImpl"/>
+        
+    <bean id="laborLedgerBatchFileLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+        	<ref bean="laborLedgerBatchFileLookupableHelperService" />
+        </property>
+    </bean>
+   	
+   	<bean id="ldEnterpriseFeedService" parent="ldEnterpriseFeedService-parentBean"/>
+
+    <bean id="ldEnterpriseFeedService-parentBean" class="edu.cornell.kfs.module.ld.service.impl.LaborLedgerEnterpriseFeedServiceImpl" abstract="true">
+        <property name="accountingPeriodService">
+			<ref bean="accountingPeriodService" />
+		</property>
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+	</bean>
 	
-    
+	
+	<bean id="disencumbranceEnterpriseFeederFileSetType" class="edu.cornell.kfs.module.ld.batch.DisencumbranceEnterpriseFeederFileSetType"></bean>
+	
 
 </beans>

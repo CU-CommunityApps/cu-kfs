@@ -997,4 +997,10 @@ public class KFSKeyConstants {
         public static final String ERROR_BATCH_UPLOAD_DELETE_DONE_FILE = "error.sys.batch.semaphore.upload.deleteDoneFile";
     }
 	public static final String QUESTION_NEED_OVERRIDE_ACCOUNT_FOR_EXPIRED = "question.need.override.account.for.expired";
+	
+	//KFSPTS-2400
+	public static final String MESSAGE_BATCH_UPLOAD_TITLE_DISENCUMBRANCE_FILE = "message.batchUpload.title.labor.disencumbrance.file";
+	public static final String MESSAGE_CREATE_DISENCUMBRANCE_ERROR = "message.ld.disencumbrance.error";
+	public static final String MESSAGE_CREATE_DISENCUMBRANCE_SUCCESSFUL = "message.ld.disencumber.successful";
+
 }

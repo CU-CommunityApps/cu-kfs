@@ -22,4 +22,9 @@ public class CUKFSConstants extends JSTLConstants implements ParameterKeyConstan
                 public static final String PARTIAL_AMOUNT = "partialAmount";
         }
         
+        //KFSPTS-2400
+        public static final String STAGING_DIR = "staging";
+        public static final String LD_DIR = "ld";
+        public static final String ENTERPRISE_FEED_DIR = "enterpriseFeed";
+        
 }

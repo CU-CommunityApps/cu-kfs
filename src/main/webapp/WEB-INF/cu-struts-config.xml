@@ -26,6 +26,10 @@
                             <!-- I Want document Form -->
         <form-bean name="IWantDocumentForm"
 			type="edu.cornell.kfs.module.purap.document.web.struts.IWantDocumentForm" />
+	    
+	    <form-bean name="DisencumbranceKualiBatchInputFileSetForm"
+			type="edu.cornell.kfs.module.ld.document.struts.DisencumbranceKualiBatchInputFileSetForm" />
+			
             
     </form-beans>
     
@@ -48,7 +52,16 @@
             <set-property property="cancellable" value="true" />
             <forward name="basic"
                 path="/jsp/sys/KualiBatchInputFileSet.jsp" />
-        </action>     
+        </action>  
+        
+        <action path="/disencumbranceBatchUploadFileSet"
+            name="DisencumbranceKualiBatchInputFileSetForm" scope="request"
+            attribute="KualiForm" parameter="methodToCall"
+            type="edu.cornell.kfs.module.ld.document.struts.DisencumbranceKualiBatchInputFileSetAction">
+            <set-property property="cancellable" value="true" />
+            <forward name="basic"
+                path="/jsp/module/ld/DisencumbranceBatchInputFileSet.jsp" />
+        </action>      
         
         <action path="/budgetSipImport" name="SipImportForm"
 			input="/jsp/module/bc/SipImport.jsp"
@@ -69,5 +82,6 @@
 			<forward name="basic" path="/jsp/module/purap/IWant.jsp" />	
 			<forward name="finish" path="/jsp/module/purap/iWantDocumentFinish.jsp" />		
 		</action>
+		
 	</action-mappings>
 </struts-config>		
