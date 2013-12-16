@@ -444,7 +444,7 @@ public class ElectronicInvoiceMatchingServiceImpl implements ElectronicInvoiceMa
         if (StringUtils.isNotBlank(invoiceCatalogNumberStripped) &&
             StringUtils.isNotBlank(poCatalogNumberStripped)){
             
-            if (!StringUtils.equals(poCatalogNumberStripped, invoiceCatalogNumberStripped)){
+            if (!StringUtils.equalsIgnoreCase(poCatalogNumberStripped, invoiceCatalogNumberStripped)){
                 
                 String extraDescription = "Invoice Catalog No:" + invoiceCatalogNumberStripped + ", PO Catalog No:" + poCatalogNumberStripped;
                 ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.CATALOG_NUMBER_MISMATCH,extraDescription,orderHolder.getFileName());
