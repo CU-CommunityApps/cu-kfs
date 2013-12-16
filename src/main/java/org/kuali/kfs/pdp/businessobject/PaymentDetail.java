@@ -28,6 +28,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.ojb.broker.PersistenceBroker;
+import org.apache.ojb.broker.PersistenceBrokerException;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpParameterConstants;
 import org.kuali.kfs.pdp.service.PaymentGroupService;
@@ -35,10 +37,13 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.TimestampedBusinessObjectBase;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.KualiInteger;
+
+import edu.cornell.kfs.pdp.businessobject.PaymentDetailExtendedAttribute;
 
 public class PaymentDetail extends TimestampedBusinessObjectBase {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentDetail.class);
@@ -563,4 +568,16 @@ public class PaymentDetail extends TimestampedBusinessObjectBase {
     }
     
     // ==== End CU Customization ====
+    
+    @Override
+    public void afterInsert(PersistenceBroker persistenceBroker) throws PersistenceBrokerException {
+        super.afterInsert(persistenceBroker);
+        // add extended attribute
+        PaymentDetailExtendedAttribute paymentDetailExtendedAttribute =  new PaymentDetailExtendedAttribute();;
+        paymentDetailExtendedAttribute.setId(this.getId());
+        paymentDetailExtendedAttribute.setCrCancelledPayment(false);
+        this.setExtension(paymentDetailExtendedAttribute);
+        
+        SpringContext.getBean(BusinessObjectService.class).save(paymentDetailExtendedAttribute);
+    }
 }

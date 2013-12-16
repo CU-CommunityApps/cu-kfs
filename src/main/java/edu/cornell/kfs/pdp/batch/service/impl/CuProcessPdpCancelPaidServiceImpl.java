@@ -18,6 +18,7 @@ import org.kuali.kfs.sys.KFSParameterKeyConstants;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.integration.purap.CuPurchasingAccountsPayableModuleService;
 import edu.cornell.kfs.pdp.businessobject.PaymentDetailExtendedAttribute;
@@ -52,8 +53,12 @@ public class CuProcessPdpCancelPaidServiceImpl extends ProcessPdpCancelPaidServi
 
             boolean primaryCancel = paymentDetail.getPrimaryCancelledPayment();
             boolean disbursedPayment = PdpConstants.PaymentStatusCodes.CANCEL_PAYMENT.equals(paymentDetail.getPaymentGroup().getPaymentStatusCode());
-            //KFSPTS-2719
-            boolean crCancel = ((PaymentDetailExtendedAttribute)paymentDetail.getExtension()).getCrCancelledPayment();
+            // KFSPTS-2719
+            boolean crCancel = false;
+            PaymentDetailExtendedAttribute paymentDetailExtendedAttribute = (PaymentDetailExtendedAttribute) paymentDetail.getExtension();
+            if (ObjectUtils.isNull(paymentDetailExtendedAttribute)) {
+                crCancel = paymentDetailExtendedAttribute.getCrCancelledPayment();
+            }
 
             if(purchasingAccountsPayableModuleService.isPurchasingBatchDocument(documentTypeCode)) {
                 ((CuPurchasingAccountsPayableModuleService)purchasingAccountsPayableModuleService).handlePurchasingBatchCancels(documentNumber, documentTypeCode, primaryCancel, disbursedPayment, crCancel);
