@@ -19,12 +19,12 @@ public class CUPurapConstants extends PurapConstants {
     public static final String SPECIAL_HANDLING_NOTE_LINE_3_CITY_STATE_ZIP = "SH3:"; //This is set to SH3 to be consistent with how we've captured the city, state and zip in disbursement vouchers
     public static final String PURAP_NOTES_IDENTIFIER = "::";  // We do this for DV's and for PURAP notes we need to do the same so they get picked up in ExtractPaymentServiceImpl
     public static final String PAYMENT_METHODL_REVIEW = "PTMA"; // Waiting for Treasury Manager approval
+    public static final String B2B_HIGHER_LIMIT_PERMISSION = "B2B Higher APO Limit";
 
     public static class RequisitionStatuses {
         public static final String AWAIT_CONTRACTS_GRANTS_REVIEW = "WCG";
         public static final String DAPRVD_CONTRACTS_GRANTS = "DCG";
-        // KFSPTS-1768
-        public static final String NODE_ACCOUNT = "Account";
+        
     }
            
     public static class RequisitionSources {
@@ -34,6 +34,7 @@ public class CUPurapConstants extends PurapConstants {
     public static class PurchaseOrderStatuses {
         public static final String AWAIT_FISCAL_REVIEW = "AFIS";
         public static final String DAPRVD_FISCAL = "DFIS";
+        public static final String PENDING_CXML = "CXPE";
     }
     
     public static class PODocumentsStrings {

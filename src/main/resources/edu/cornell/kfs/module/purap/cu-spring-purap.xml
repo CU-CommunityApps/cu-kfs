@@ -178,5 +178,12 @@
     <bean id="b2BShoppingService" parent="b2BShoppingService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuB2BShoppingServiceImpl">
         <property name="userFavoriteAccountService" ref="userFavoriteAccountService"/>
     </bean>
-    
+   
+   <bean id="purapAccountingService" parent="purapAccountingService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPurapAccountingServiceImpl"/>
+   
+   <bean id="requisitionService" parent="requisitionService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuRequisitionServiceImpl"/>
+   
+   <import resource="document/validation/configuration/RequisitionValidation.xml" />
+   <import resource="document/validation/configuration/PurapValidatorDefinitions.xml" />
+   
 </beans>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright 2005-2008 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+         
+    <bean id="Requisition-commodityCodeValidation" parent="Requisition-commodityCodeValidation-parentBean" scope="prototype" />
+	<bean id="Requisition-commodityCodeValidation-parentBean" class="edu.cornell.kfs.module.purap.document.validation.impl.CuRequisitionCommodityCodeValidation" abstract="true">
+		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="businessObjectService" ref="businessObjectService" />	
+		<property name="parameterService" ref="parameterService" />	
+	</bean> 
+	
+	<bean id="PurchaseOrderAmendment-commodityCodeValidation" parent="PurchaseOrderAmendment-commodityCodeValidation-parentBean" scope="prototype" />
+	<bean id="PurchaseOrderAmendment-commodityCodeValidation-parentBean" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchaseOrderAmendmentCommodityCodeValidation" abstract="true">
+		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="businessObjectService" ref="businessObjectService" />	
+		<property name="parameterService" ref="parameterService" />	
+	</bean>
+	
+	<bean id="PurchaseOrderAmendment-newIndividualItemValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchaseOrderAmendmentNewIndividualItemValidation" abstract="true">
+	    <property name="parameterService" ref="parameterService" />
+	    <property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="businessObjectService" ref="businessObjectService" />
+		<property name="capitalAssetBuilderModuleService" ref="capitalAssetBuilderModuleService" />
+		<property name="emptyItemsWithAccountsValidation" ref="PurchaseOrder-emptyItemWithAccountsValidation"/>
+		<property name="unitOfMeasureValidation" ref="Purchasing-unitOfMeasureValidation" />
+		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
+		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
+		<property name="itemQuantityValidation" ref="Purchasing-itemQuantityValidation" />
+		<property name="commodityCodeValidation" ref="PurchaseOrderAmendment-commodityCodeValidation" />
+		<property name="belowTheLineItemNoUnitCostValidation" ref="Purchasing-belowTheLineItemNoUnitCostValidation" />
+		<property name="belowTheLineValuesValidation" ref="PurchasingAccountsPayable-belowTheLineValuesValidation" />		
+	</bean>
+	  
+	<bean id="Requisition-newIndividualItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.RequisitionNewIndividualItemValidation" abstract="true">  
+	<property name="parameterService" ref="parameterService" />
+		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="businessObjectService" ref="businessObjectService" />
+		<property name="capitalAssetBuilderModuleService" ref="capitalAssetBuilderModuleService" />
+		<property name="unitOfMeasureValidation" ref="Purchasing-unitOfMeasureValidation" />
+		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
+		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
+		<property name="itemQuantityValidation" ref="Purchasing-itemQuantityValidation" />
+		<property name="commodityCodeValidation" ref="Requisition-commodityCodeValidation" />
+		<property name="belowTheLineItemNoUnitCostValidation" ref="Purchasing-belowTheLineItemNoUnitCostValidation" />
+		<property name="belowTheLineValuesValidation" ref="PurchasingAccountsPayable-belowTheLineValuesValidation" />
+	</bean>
+	
+  
+	<bean id="PurchasingAccountsPayable-accountPercentBetween0And100Validation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchasingAccountsPayableAccountPercentBetween0And100Validation" abstract="true"/>
+
+   <bean id="Purchasing-saveItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchasingProcessItemValidation" abstract="true" />
+   <bean id="Purchasing-submitItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchasingProcessItemValidation" abstract="true" />
+
+    <bean id="Purchasing-approveItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchasingProcessItemValidation" abstract="true" />
+    
+    <bean id="Purchasing-commodityCodeValidation" parent="Purchasing-commodityCodeValidation-parentBean" scope="prototype" />
+	<bean id="Purchasing-commodityCodeValidation-parentBean" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingCommodityCodeValidation" abstract="true">
+		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="businessObjectService" ref="businessObjectService" />	
+		<property name="parameterService" ref="parameterService" />	
+	</bean>
+    
+    <bean id="Purchasing-newIndividualItemValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingNewIndividualItemValidation" abstract="true">
+		<property name="dataDictionaryService" ref="dataDictionaryService" />		
+		<property name="businessObjectService" ref="businessObjectService" />
+		<property name="capitalAssetBuilderModuleService" ref="capitalAssetBuilderModuleService" />
+		<property name="parameterService" ref="parameterService" />
+		<property name="unitOfMeasureValidation" ref="Purchasing-unitOfMeasureValidation" />
+		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
+		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
+		<property name="itemQuantityValidation" ref="Purchasing-itemQuantityValidation" />
+		<property name="commodityCodeValidation" ref="Purchasing-commodityCodeValidation" />
+		<property name="belowTheLineItemNoUnitCostValidation" ref="Purchasing-belowTheLineItemNoUnitCostValidation" />
+		<property name="belowTheLineValuesValidation" ref="PurchasingAccountsPayable-belowTheLineValuesValidation" />
+	</bean>
+	
+	<bean id="PurchaseOrder-commodityCodeValidation" parent="PurchaseOrder-commodityCodeValidation-parentBean" scope="prototype" />
+	<bean id="PurchaseOrder-commodityCodeValidation-parentBean" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchaseOrderCommodityCodeValidation" abstract="true">
+		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="businessObjectService" ref="businessObjectService" />	
+		<property name="parameterService" ref="parameterService" />	
+	</bean>
+	
+	<bean id="PurchaseOrder-newIndividualItemValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchaseOrderNewIndividualItemValidation" abstract="true">
+	    <property name="parameterService" ref="parameterService" />
+	    <property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="businessObjectService" ref="businessObjectService" />
+		<property name="capitalAssetBuilderModuleService" ref="capitalAssetBuilderModuleService" />
+		<property name="emptyItemsWithAccountsValidation" ref="PurchaseOrder-emptyItemWithAccountsValidation"/>
+		<property name="unitOfMeasureValidation" ref="Purchasing-unitOfMeasureValidation" />
+		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
+		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
+		<property name="itemQuantityValidation" ref="Purchasing-itemQuantityValidation" />
+		<property name="commodityCodeValidation" ref="PurchaseOrder-commodityCodeValidation" />
+		<property name="belowTheLineItemNoUnitCostValidation" ref="Purchasing-belowTheLineItemNoUnitCostValidation" />
+		<property name="belowTheLineValuesValidation" ref="PurchasingAccountsPayable-belowTheLineValuesValidation" />		
+	</bean>
+	
+	<bean id="Purchasing-addItemValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingAddItemValidation" abstract="true">
+		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="dictionaryValidationService" ref="dictionaryValidationService" />		
+		<property name="businessObjectService" ref="businessObjectService" />		
+		<property name="unitOfMeasureValidation" ref="Purchasing-unitOfMeasureValidation" />
+		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
+		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
+		<property name="itemQuantityValidation" ref="Purchasing-itemQuantityValidation" />
+		<property name="commodityCodeValidation" ref="Purchasing-commodityCodeValidation" />
+	</bean>
+	
+	<bean id="Purchasing-importItemValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingImportItemValidation" abstract="true">
+		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="dictionaryValidationService" ref="dictionaryValidationService" />		
+		<property name="businessObjectService" ref="businessObjectService" />		
+		<property name="unitOfMeasureValidation" ref="Purchasing-unitOfMeasureValidation" />
+		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
+		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
+		<property name="commodityCodeValidation" ref="Purchasing-commodityCodeValidation" />
+	</bean>
+   
+</beans>
