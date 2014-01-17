@@ -28,6 +28,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
+import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapConstants.PurapDocTypeCodes;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
 import org.kuali.kfs.module.purap.PurapParameterConstants.NRATaxParameters;
@@ -698,7 +699,7 @@ public class PurapAccountingServiceImpl implements PurapAccountingService {
     public void updateAccountAmounts(PurchasingAccountsPayableDocument document) {
         // the percent at fiscal approve
         // don't update if past the AP review level
-        if ((document instanceof PaymentRequestDocument) && purapService.isFullDocumentEntryCompleted(document)) {
+        if ((document instanceof PaymentRequestDocument) && purapService.isFullDocumentEntryCompleted(document) && !document.getStatusCode().equals(PaymentRequestStatuses.PAYMENT_METHODL_REVIEW)) {
             //update the percent but don't update the amounts if preq and past full entry
             convertMoneyToPercent((PaymentRequestDocument)document);
             return;

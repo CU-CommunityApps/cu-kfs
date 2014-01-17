@@ -15,18 +15,35 @@
  */
 package edu.cornell.kfs.fp.service.impl;
 
+import static org.kuali.kfs.module.purap.PurapConstants.PURAP_ORIGIN_CODE;
 import static org.kuali.kfs.sys.KFSConstants.GL_CREDIT_CODE;
 import static org.kuali.kfs.sys.KFSConstants.GL_DEBIT_CODE;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.ojb.broker.query.Criteria;
+import org.apache.ojb.broker.query.QueryByCriteria;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
+import org.kuali.kfs.coa.businessobject.OffsetDefinition;
 import org.kuali.kfs.coa.service.ObjectCodeService;
+import org.kuali.kfs.coa.service.OffsetDefinitionService;
+import org.kuali.kfs.gl.businessobject.Entry;
+
+import org.kuali.kfs.module.cab.CabPropertyConstants;
+import org.kuali.kfs.module.cab.businessobject.BatchParameters;
+import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
+import org.kuali.kfs.module.purap.service.PurapGeneralLedgerService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
@@ -40,7 +57,9 @@ import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.ParameterService;
+import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.util.KualiDecimal;
+import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.util.spring.CacheNoCopy;
 
 import edu.cornell.kfs.fp.businessobject.PaymentMethod;
@@ -58,6 +77,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
     private ParameterService parameterService;
     private BusinessObjectService businessObjectService;
     private BankService bankService;
+    protected PurapGeneralLedgerService purapGeneralLedgerService; 
     
 
     @CacheNoCopy
@@ -137,7 +157,12 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
         }
         
         if ( !pm.isProcessedUsingPdp() && StringUtils.isNotBlank( bankCode ) ) {
+            if(PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(paymentMethodCode) || PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(paymentMethodCode)){
+                //do not create bank offsets unless DM approval
+            }
+            else{
             generateDocumentBankOffsetEntries(document,bankCode,bankCodePropertyName,templatePendingEntry.getFinancialDocumentTypeCode(), sequenceHelper, bankOffsetAmount );
+            }
         }
         
         return true;
@@ -363,6 +388,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
                 GeneralLedgerPendingEntry offsetEntry = new GeneralLedgerPendingEntry(bankOffsetEntry);
                 success &= getGeneralLedgerPendingEntryService().populateOffsetGeneralLedgerPendingEntry(document.getPostingYear(), bankOffsetEntry, sequenceHelper, offsetEntry);
                 bankOffsetEntry.setFinancialDocumentTypeCode(documentTypeCode);
+
                 document.addPendingEntry(offsetEntry);
                 sequenceHelper.increment();
             }
@@ -404,6 +430,119 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
             bankService = SpringContext.getBean(BankService.class);
         }
         return bankService;
+    }
+
+    /**
+     * Creates final entries for PRNC doc: Reverse all usage 2900 object codes Replaces with 1000 offset object code Generate
+     * Bank Offsets for total amounts
+     * 
+     * @see edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService#generateFinalEntriesForPRNC(org.kuali.kfs.module.purap.document.PaymentRequestDocument)
+     */
+    public void generateFinalEntriesForPRNC(PaymentRequestDocument document) {
+
+        GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper(getNextAvailableSequence(document.getDocumentNumber()));
+
+        // generate bank offset
+        if (PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(document.getPaymentMethodCode()) || PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(document.getPaymentMethodCode())) {
+            generateDocumentBankOffsetEntries((AccountingDocument) document, document.getBankCode(), KNSConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", document.DOCUMENT_TYPE_NON_CHECK, sequenceHelper, document.getTotalDollarAmount());
+        }
+
+        // check for pending entries and replace object code with chart cash object code
+        List<GeneralLedgerPendingEntry> glpes = document.getGeneralLedgerPendingEntries();
+
+        for (GeneralLedgerPendingEntry glpe : glpes) {
+            OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getByPrimaryId(glpe.getUniversityFiscalYear(), glpe.getChartOfAccountsCode(), glpe.getFinancialDocumentTypeCode(), glpe.getFinancialBalanceTypeCode());
+            if (glpe.getFinancialObjectCode().equalsIgnoreCase(offsetDefinition.getFinancialObjectCode())) {
+                if (ObjectUtils.isNull(glpe.getChart())) {
+                    glpe.refreshReferenceObject(KFSPropertyConstants.CHART);
+                }
+                glpe.setFinancialObjectCode(glpe.getChart().getFinancialCashObjectCode());
+                glpe.refreshReferenceObject(KFSPropertyConstants.FINANCIAL_OBJECT);
+                glpe.setFinancialObjectTypeCode(glpe.getFinancialObject().getFinancialObjectTypeCode());
+            }
+        }
+
+        // reverse 2900
+        // check for posted entries and create reverse pending entries
+        // get all charts on document
+        List<AccountingLine> accountingLines = new ArrayList<AccountingLine>();
+        if (ObjectUtils.isNotNull(document.getSourceAccountingLines())) {
+            accountingLines.addAll(document.getSourceAccountingLines());
+        }
+        if (ObjectUtils.isNotNull(document.getTargetAccountingLines())) {
+            accountingLines.addAll(document.getTargetAccountingLines());
+        }
+        Map<String, String> chartOffsets = new HashMap<String, String>();
+        if (accountingLines.size() > 0) {
+            for (AccountingLine accountingLine : accountingLines) {
+                if (!chartOffsets.containsKey(accountingLine.getChartOfAccountsCode())) {
+                    OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getByPrimaryId(accountingLine.getPostingYear(), accountingLine.getChartOfAccountsCode(), document.DOCUMENT_TYPE_NON_CHECK, KFSConstants.BALANCE_TYPE_ACTUAL);
+                    chartOffsets.put(accountingLine.getChartOfAccountsCode(), offsetDefinition.getFinancialObjectCode());
+
+                }
+            }
+        }
+
+        for (String offsetObjectCode : chartOffsets.values()) {
+            Collection<Entry> glEntries = findMatchingGLEntries(document, offsetObjectCode);
+            if (glEntries != null && glEntries.size() > 0) {
+                for (Entry entry : glEntries) {
+                    // create reversal
+                    GeneralLedgerPendingEntry glpe = new GeneralLedgerPendingEntry();
+                    boolean debit = KFSConstants.GL_CREDIT_CODE.equalsIgnoreCase(entry.getTransactionDebitCreditCode());
+                    glpe = getGeneralLedgerPendingEntryService().buildGeneralLedgerPendingEntry((GeneralLedgerPostingDocument) document, entry.getAccount(), entry.getFinancialObject(), entry.getSubAccountNumber(), entry.getFinancialSubObjectCode(), entry.getOrganizationReferenceId(), entry.getProjectCode(), entry.getReferenceFinancialDocumentNumber(), entry.getReferenceFinancialDocumentTypeCode(), entry.getReferenceFinancialSystemOriginationCode(), entry.getTransactionLedgerEntryDescription(), debit, entry.getTransactionLedgerEntryAmount(), sequenceHelper);
+                    glpe.setFinancialDocumentTypeCode(document.DOCUMENT_TYPE_NON_CHECK);
+                    document.addPendingEntry(glpe);
+                    sequenceHelper.increment();
+                    // create cash entry
+                    GeneralLedgerPendingEntry cashGlpe = new GeneralLedgerPendingEntry();
+                    cashGlpe = getGeneralLedgerPendingEntryService().buildGeneralLedgerPendingEntry((GeneralLedgerPostingDocument) document, entry.getAccount(), entry.getChart().getFinancialCashObject(), entry.getSubAccountNumber(), entry.getFinancialSubObjectCode(), entry.getOrganizationReferenceId(), entry.getProjectCode(), entry.getReferenceFinancialDocumentNumber(), entry.getReferenceFinancialDocumentTypeCode(), entry.getReferenceFinancialSystemOriginationCode(), entry.getTransactionLedgerEntryDescription(), !debit, entry.getTransactionLedgerEntryAmount(), sequenceHelper);
+                    cashGlpe.setFinancialDocumentTypeCode(document.DOCUMENT_TYPE_NON_CHECK);
+                    document.addPendingEntry(cashGlpe);
+                    sequenceHelper.increment();
+                }
+            }
+        }
+        
+        if (document.getGeneralLedgerPendingEntries() != null && document.getGeneralLedgerPendingEntries().size() > 0) {
+            for (GeneralLedgerPendingEntry glpe : document.getGeneralLedgerPendingEntries()) {
+                glpe.setFinancialDocumentApprovedCode(KFSConstants.PENDING_ENTRY_APPROVED_STATUS_CODE.APPROVED);
+            }
+        }
+
+    }
+
+    /**
+     * Retrieves the next available sequence number from the general ledger pending entry table for this document
+     * 
+     * @param documentNumber
+     *            Document number to find next sequence number
+     * @return Next available sequence number
+     */
+    protected int getNextAvailableSequence(String documentNumber) {
+        LOG.debug("getNextAvailableSequence() started");
+        Map fieldValues = new HashMap();
+        fieldValues.put("financialSystemOriginationCode", PURAP_ORIGIN_CODE);
+        fieldValues.put("documentNumber", documentNumber);
+        List<GeneralLedgerPendingEntry> glpes = (List<GeneralLedgerPendingEntry>) (SpringContext.getBean(BusinessObjectService.class)).findMatching(GeneralLedgerPendingEntry.class, fieldValues);
+
+        int count = 0;
+        if (CollectionUtils.isNotEmpty(glpes)) {
+            for (GeneralLedgerPendingEntry glpe : glpes) {
+                if (glpe.getTransactionLedgerEntrySequenceNumber() > count) {
+                    count = glpe.getTransactionLedgerEntrySequenceNumber();
+                }
+            }
+        }
+        return count + 1;
+    }
+    
+    public Collection<Entry> findMatchingGLEntries(PaymentRequestDocument document, String offsetObjectCode) {
+        Map<String, String> keyValues = new HashMap<String, String>();
+        keyValues.put(KFSPropertyConstants.DOCUMENT_NUMBER, document.getDocumentNumber());
+        keyValues.put(KFSPropertyConstants.FINANCIAL_OBJECT_CODE, offsetObjectCode);
+        
+        return businessObjectService.findMatching(Entry.class, keyValues);
     }
 
 }

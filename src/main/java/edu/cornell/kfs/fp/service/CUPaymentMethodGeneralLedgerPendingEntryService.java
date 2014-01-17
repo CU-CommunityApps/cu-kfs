@@ -17,6 +17,7 @@ package edu.cornell.kfs.fp.service;
 
 import java.util.Map;
 
+import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
@@ -88,5 +89,21 @@ public interface CUPaymentMethodGeneralLedgerPendingEntryService {
      * @return
      */
     boolean isPaymentMethodProcessedUsingPdp( String paymentMethodCode );
+    
+    public void generateFinalEntriesForPRNC(PaymentRequestDocument document);
+    
+    /**
+     * Generates the bank offsets.
+     * 
+     * @param document
+     * @param bankCode
+     * @param bankCodePropertyName
+     * @param documentTypeCode
+     * @param sequenceHelper
+     * @param bankOffsetAmount
+     * @return
+     */
+    public boolean generateDocumentBankOffsetEntries(AccountingDocument document, String bankCode, String bankCodePropertyName, String documentTypeCode, GeneralLedgerPendingEntrySequenceHelper sequenceHelper, KualiDecimal bankOffsetAmount );
+        
     
 }

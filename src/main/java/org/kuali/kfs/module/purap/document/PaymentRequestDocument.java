@@ -16,6 +16,8 @@
 
 package org.kuali.kfs.module.purap.document;
 
+import static org.kuali.kfs.module.purap.PurapConstants.PURAP_ORIGIN_CODE;
+
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -24,7 +26,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.util.Strings;
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -77,6 +81,7 @@ import org.kuali.rice.kim.bo.Person;
 import org.kuali.rice.kns.bo.Note;
 import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.rice.kns.rule.event.KualiDocumentEvent;
+import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.service.DocumentHelperService;
@@ -88,7 +93,7 @@ import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 import org.kuali.rice.kns.workflow.service.WorkflowDocumentService;
-import org.springframework.util.CollectionUtils;
+
 
 import edu.cornell.kfs.fp.businessobject.PaymentMethod;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
@@ -736,6 +741,10 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
             // DOCUMENT PROCESSED
             if (this.getDocumentHeader().getWorkflowDocument().stateIsProcessed()) {
                 if (!PaymentRequestStatuses.AUTO_APPROVED.equals(getStatusCode())) {
+                    //generate bank offsets for payment method wire or foreign draft
+                    if(PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(getPaymentMethodCode()) || PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(getPaymentMethodCode())){
+                       getPaymentMethodGeneralLedgerPendingEntryService().generateFinalEntriesForPRNC(this);
+                    }
                     SpringContext.getBean(PurapService.class).updateStatus(this, PurapConstants.PaymentRequestStatuses.DEPARTMENT_APPROVED);
                     populateDocumentForRouting();
                     SpringContext.getBean(PurapService.class).saveDocumentNoValidation(this);
