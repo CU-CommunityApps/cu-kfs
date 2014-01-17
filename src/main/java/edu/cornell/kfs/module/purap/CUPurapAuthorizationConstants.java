@@ -4,12 +4,13 @@ import org.kuali.kfs.module.purap.PurapAuthorizationConstants;
 
 public class CUPurapAuthorizationConstants extends PurapAuthorizationConstants {
 
-    public static class CURequisitionEditMode extends RequisitionEditMode {
+    
+    public static class CURequisitionEditMode  {
         //KFSPTS-1792
         public static final String ENABLE_CAPITAL_ASSET = "enableCapitalAsset";
     }
     
-public static class CUPaymentRequestEditMode extends PaymentRequestEditMode {
+public static class CUPaymentRequestEditMode  {
         // KFSPTS-1891
         public static final String EDIT_AMOUNT = "editAmount";
         public static final String WAIVE_WIRE_FEE_EDITABLE = "waiveWireFeeEditable";

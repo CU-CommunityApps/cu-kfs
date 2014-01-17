@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright 2005-2008 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+          
+ 
+ 
+  
+  <!-- Add Accounting Line Event -->    
+	<bean id="Requisition-addAccountingLineValidation" parent="Requisition-addAccountingLineValidation-parentBean" >
+  		<property name="validations">
+  			<list merge="true">	
+				<bean parent="PurchasingAccountsPayable-accountPercentBetween0And100Validation" scope="prototype">
+					<property name="parameterProperties">
+						<bean parent="validationFieldConversion">
+							<property name="sourceEventProperty" value="accountingLine" />
+							<property name="targetValidationProperty" value="accountingLine" />
+						</bean>
+					</property>
+					<property name="quitOnFail" value="true" />					
+				</bean>
+			</list>
+  		</property>
+	</bean>
+	
+	<bean id="Requisition-updateAccountingLineValidation" parent="Requisition-updateAccountingLineValidation-parentBean"  >
+  		<property name="validations">
+  			<list merge="true">	
+				<bean parent="PurchasingAccountsPayable-accountPercentBetween0And100Validation" scope="prototype">
+					<property name="parameterProperties">
+						<bean parent="validationFieldConversion">
+							<property name="sourceEventProperty" value="accountingLine" />
+							<property name="targetValidationProperty" value="accountingLine" />
+						</bean>
+					</property>
+					<property name="quitOnFail" value="true" />					
+				</bean>
+			</list>
+  		</property>
+	</bean>
+	
+  	<!-- Review Accounting Line Event -->
+    <bean id="Requisition-reviewAccountingLineValidation" parent="Requisition-reviewAccountingLineValidation-parentBean" >
+  		<property name="validations">
+  			<list merge="true">	
+				<bean parent="PurchasingAccountsPayable-accountPercentBetween0And100Validation" scope="prototype">
+					<property name="parameterProperties">
+						<bean parent="validationFieldConversion">
+							<property name="sourceEventProperty" value="accountingLine" />
+							<property name="targetValidationProperty" value="accountingLine" />
+						</bean>
+					</property>
+					<property name="quitOnFail" value="true" />					
+				</bean>
+			</list>
+  		</property>
+	</bean>
+
+ 
+ 
+ <bean id="Requisition-routeDocumentValidation" parent="Requisition-routeDocumentValidation-parentBean">
+  		<property name="validations">
+  			<list merge="true">              				
+             <bean parent="Purchasing-submitItemValidation" scope="prototype">								
+					<property name="quitOnFail" value="false" />
+				</bean>
+			<bean parent="Requisition-routeDocument-itemCollectionValidation-commodityCodeValidation" scope="prototype" />			   														
+  			</list>
+  		</property>
+  	</bean>
+  	
+  	<bean id="Requisition-approveDocumentValidation" parent="Requisition-approveDocumentValidation-parentBean" >
+  		<property name="validations">
+  			<list merge="true">
+				<bean parent="Purchasing-approveItemValidation" scope="prototype">								
+					<property name="quitOnFail" value="false" />
+				</bean>
+  			</list>
+  		</property>
+  	</bean>
+  	
+  	<bean id="Requisition-itemConsideredEnteredCompositeValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true"> 								
+        <property name="quitOnFail" value="false" />
+        <property name="validations">
+            <list>    
+			  
+                <bean parent="Requisition-newIndividualItemValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="itemIterationSubjectFieldConversation" />
+                        </list>
+                    </property>
+                </bean>
+				
+                <bean
+	parent="Requisition-itemConsideredEnteredComposite-requiresAccountValidation-needsAccountBranchCompositeValidation"
+	scope="prototype" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="Requisition-saveDocumentValidation" parent="Requisition-saveDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="Requisition-saveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>  				
+				<bean parent="Requisition-saveDocument-itemCollectionValidation-commodityCodeValidation" scope="prototype" />
+				  
+				<bean parent="Purchasing-saveItemValidation" scope="prototype">								
+					<property name="quitOnFail" value="false" />
+				</bean>  										
+  			</list>
+  		</property>
+  	</bean>
+  	
+  	<bean id="Requisition-saveDocument-itemCollectionValidation-commodityCodeValidation" parent="Requisition-saveDocument-itemCollectionValidation-commodityCodeValidation-parentBean" scope="prototype" />
+	<bean id="Requisition-saveDocument-itemCollectionValidation-commodityCodeValidation-parentBean" abstract="true" parent="CollectionValidation" scope="prototype">
+        <property name="quitOnFail" value="false" />
+		<property name="collectionProperty" value="document.items" />
+  		<property name="validations">
+  			<list>  				
+				<bean parent="Requisition-commodityCodeValidation" scope="prototype" >
+					<property name="parameterProperties">
+                    	<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="iterationSubject" />
+								<property name="targetValidationProperty" value="itemForValidation" />
+							</bean>
+						</list>
+					</property>
+				</bean>
+  			</list>
+  		</property>
+	</bean>
+  	
+  	<bean id="Requisition-routeDocument-itemCollectionValidation-commodityCodeValidation" parent="Requisition-routeDocument-itemCollectionValidation-commodityCodeValidation-parentBean" scope="prototype" />
+	<bean id="Requisition-routeDocument-itemCollectionValidation-commodityCodeValidation-parentBean" abstract="true" parent="CollectionValidation" scope="prototype">
+        <property name="quitOnFail" value="false" />
+		<property name="collectionProperty" value="document.items" />
+  		<property name="validations">
+  			<list>  				
+				<bean parent="Requisition-commodityCodeValidation" scope="prototype" >
+					<property name="parameterProperties">
+                    	<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="iterationSubject" />
+								<property name="targetValidationProperty" value="itemForValidation" />
+							</bean>
+						</list>
+					</property>
+				</bean>
+  			</list>
+  		</property>
+	</bean>
+  	
+  </beans>

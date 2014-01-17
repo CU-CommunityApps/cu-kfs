@@ -17,7 +17,6 @@ import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.PurchasingDocument;
-import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.validation.event.AttributedAddPurchasingAccountsPayableItemEvent;
 import org.kuali.kfs.module.purap.document.web.struts.PurchasingFormBase;
 import org.kuali.kfs.module.purap.document.web.struts.RequisitionAction;
@@ -26,11 +25,16 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorCommodityCode;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.rice.core.api.util.RiceConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.rice.krad.service.KualiRuleService;
+import org.kuali.rice.krad.service.SessionDocumentService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.module.purap.document.CuRequisitionDocument;
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 
@@ -40,15 +44,16 @@ public class CuRequisitionAction extends RequisitionAction {
     public ActionForward addItem(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
         PurApItem item = purchasingForm.getNewPurchasingItemLine();
-        RequisitionItem requisitionItem = (RequisitionItem)item;
+        RequisitionItem requisitionItem = (RequisitionItem) item;
         PurchasingDocument purDocument = (PurchasingDocument) purchasingForm.getDocument();
         
         if (StringUtils.isBlank(requisitionItem.getPurchasingCommodityCode())) {
-            boolean commCodeParam = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(RequisitionDocument.class, PurapParameterConstants.ENABLE_DEFAULT_VENDOR_COMMODITY_CODE_IND);
+            boolean commCodeParam = SpringContext.getBean(ParameterService.class)
+                    .getParameterValueAsBoolean(CuRequisitionDocument.class, PurapParameterConstants.ENABLE_DEFAULT_VENDOR_COMMODITY_CODE_IND);
 
             if (commCodeParam) {
                 if (purchasingForm instanceof RequisitionForm) {
-                    RequisitionDocument reqs =(RequisitionDocument)purchasingForm.getDocument();
+                    CuRequisitionDocument reqs = (CuRequisitionDocument) purchasingForm.getDocument();
                     VendorDetail dtl = reqs.getVendorDetail();
                     if (ObjectUtils.isNotNull(dtl)) {
                         List<VendorCommodityCode> vcc = dtl.getVendorCommodities();
@@ -66,14 +71,15 @@ public class CuRequisitionAction extends RequisitionAction {
             }
         }
         
-        boolean rulePassed = SpringContext.getBean(KualiRuleService.class).applyRules(new AttributedAddPurchasingAccountsPayableItemEvent("", purDocument, item));
+        boolean rulePassed = SpringContext.getBean(KualiRuleService.class)
+                .applyRules(new AttributedAddPurchasingAccountsPayableItemEvent("", purDocument, item));
 
         if (rulePassed) {
             item = purchasingForm.getAndResetNewPurchasingItemLine();
             purDocument.addItem(item);
             // KFSPTS-985
             if (isDocumentIntegratedFavoriteAccount(purDocument)) {
-                populatePrimaryFavoriteAccount(item.getSourceAccountingLines(), purDocument instanceof RequisitionDocument);
+                populatePrimaryFavoriteAccount(item.getSourceAccountingLines(), purDocument instanceof CuRequisitionDocument);
             }
         }
 
@@ -81,13 +87,76 @@ public class CuRequisitionAction extends RequisitionAction {
     }
 
     protected boolean isDocumentIntegratedFavoriteAccount(PurchasingDocument document) {
-        return 	document instanceof RequisitionDocument || document instanceof PurchaseOrderAmendmentDocument || document instanceof PurchaseOrderDocument;
+        return  document instanceof CuRequisitionDocument 
+                || document instanceof PurchaseOrderAmendmentDocument || document instanceof PurchaseOrderDocument;
     }
     protected void populatePrimaryFavoriteAccount(List<PurApAccountingLine> sourceAccountinglines, boolean isRequisition) {
-    	FavoriteAccount account =  SpringContext.getBean(UserFavoriteAccountService.class).getFavoriteAccount(GlobalVariables.getUserSession().getPrincipalId());
-    	if (ObjectUtils.isNotNull(account)) {
-    		sourceAccountinglines.add(SpringContext.getBean(UserFavoriteAccountService.class).getPopulatedNewAccount(account, isRequisition));
-    	}
+        FavoriteAccount account =  SpringContext.getBean(UserFavoriteAccountService.class)
+                .getFavoriteAccount(GlobalVariables.getUserSession().getPrincipalId());
+        if (ObjectUtils.isNotNull(account)) {
+            sourceAccountinglines.add(SpringContext.getBean(UserFavoriteAccountService.class).getPopulatedNewAccount(account, isRequisition));
+        }
     }
+    
+    public ActionForward clearVendor(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        PurchasingFormBase baseForm = (PurchasingFormBase) form;
+        CuRequisitionDocument document = (CuRequisitionDocument) baseForm.getDocument();
 
+        document.setVendorHeaderGeneratedIdentifier(null);
+        document.setVendorDetailAssignedIdentifier(null);
+        document.setVendorDetail(null);
+        document.setVendorName("");
+        document.setVendorLine1Address("");
+        document.setVendorLine2Address("");
+        document.setVendorAddressInternationalProvinceName("");
+        document.setVendorCityName("");
+        document.setVendorStateCode("");
+        document.setVendorPostalCode("");
+        document.setVendorCountryCode("");
+        document.setVendorContractGeneratedIdentifier(null);
+        document.setVendorContract(null);
+        document.setVendorFaxNumber("");
+        document.setVendorCustomerNumber("");
+        document.setVendorAttentionName("");
+        document.setVendorAddressGeneratedIdentifier(null);  
+        //clearing value that was set in PurchasingDocumentBase.templateVendorAction
+        document.setVendorAddressGeneratedIdentifier(null);  
+        //clearing value that was set in PurchasingDocumentBase.templateVendorAction
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+    
+    /**
+     * Overridden to guarantee that form of copied document is set to whatever the entry mode of the document is
+     * @see org.kuali.rice.kns.web.struts.action.KualiTransactionalDocumentActionBase#copy
+     * (org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, 
+     * javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    @Override
+    public ActionForward copy(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ActionForward forward = null;
+        String docID = "docId";
+        if (request.getParameter(docID) == null) {
+            forward = super.copy(mapping, form, request, response);
+        } else {
+            // this is copy document from Procurement Gateway:
+            // use this url to call: http://localhost:8080/kfs-dev/purapRequisition.do?methodToCall=copy&docId=xxxx
+            String docId = request.getParameter(docID);
+            KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+               
+            CuRequisitionDocument document = null;
+            document = (CuRequisitionDocument)getDocumentService().getByDocumentHeaderId(docId);
+            document.toCopyFromGateway();
+           
+            kualiDocumentFormBase.setDocument(document);
+            WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+            kualiDocumentFormBase.setDocTypeName(workflowDocument.getDocumentTypeName());
+            SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), workflowDocument);
+                     
+            forward = mapping.findForward(RiceConstants.MAPPING_BASIC);   
+        }
+        return forward;
+    }
+    
+    
 }
+

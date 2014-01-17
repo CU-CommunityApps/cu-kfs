@@ -25,6 +25,8 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
@@ -47,6 +49,8 @@ import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
+
+import edu.cornell.kfs.module.purap.service.CuPurapAccountingService;
 
 /**
  * The default implementation of AccountingLineAuthorizer
@@ -237,7 +241,13 @@ public class AccountingLineAuthorizerBase implements AccountingLineAuthorizer {
             if (approvedForUnqualifiedEditing(accountingDocument, accountingLine, accountingLineCollectionProperty, StringUtils.equalsIgnoreCase( accountingDocument.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId(), currentUser.getPrincipalId() ))) {
                 return true;  // don't do the KIM check, we're good
             }
-
+            WorkflowDocument workflowDocument = accountingDocument.getDocumentHeader().getWorkflowDocument();
+            if ( accountingDocument instanceof RequisitionDocument) {
+                if (workflowDocument.isEnroute() && SpringContext.getBean(CuPurapAccountingService.class).isFiscalOfficersForAllAcctLines((RequisitionDocument)accountingDocument) ) {
+                    return true;
+                }
+            }
+            
             // examine whether the whole line can be editable via KIM check
             final String lineFieldName = getKimHappyPropertyNameForField(accountingLineCollectionProperty);
             return this.determineEditPermissionByFieldName(accountingDocument, accountingLine, lineFieldName, currentUser);

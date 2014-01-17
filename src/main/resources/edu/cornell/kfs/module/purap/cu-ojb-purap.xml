@@ -341,7 +341,7 @@
     
 
     <!-- KFSPTS-1458 added field  vendorEmailAddress -->
-    <class-descriptor class="org.kuali.kfs.module.purap.document.RequisitionDocument" table="PUR_REQS_T">
+    <class-descriptor class="edu.cornell.kfs.module.purap.document.CuRequisitionDocument" table="PUR_REQS_T">
         <field-descriptor name="purapDocumentIdentifier" column="REQS_ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="REQS_ID"/>
         <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
         <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" index="true"/>
@@ -370,8 +370,7 @@
         <field-descriptor name="vendorRestrictedIndicator" column="VNDR_RSTRC_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
         <field-descriptor name="vendorPhoneNumber" column="VNDR_PHN_NBR" jdbc-type="VARCHAR"/>
         <field-descriptor name="vendorFaxNumber" column="VNDR_FAX_NBR" jdbc-type="VARCHAR"/>
-      <!--  KFSUPGRADE-75 this is not ready yet. TODO : uncomment after this property is added to REQS
-       <field-descriptor name="vendorEmailAddress" column="VNDR_EMAIL_ADDR" jdbc-type="VARCHAR"/>  -->     
+        <field-descriptor name="vendorEmailAddress" column="VNDR_EMAIL_ADDR" jdbc-type="VARCHAR"/>  
         <field-descriptor name="vendorCustomerNumber" column="VNDR_CUST_NBR" jdbc-type="VARCHAR"/>
         <field-descriptor name="vendorContractGeneratedIdentifier" column="VNDR_CONTR_GNRTD_ID" jdbc-type="INTEGER"/>
         <field-descriptor name="vendorNoteText" column="VNDR_NTE_TXT" jdbc-type="VARCHAR"/>

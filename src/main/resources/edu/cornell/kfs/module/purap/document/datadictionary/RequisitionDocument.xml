@@ -15,6 +15,73 @@
  limitations under the License.
 -->
 
-  <bean id="RequisitionDocument" parent="RequisitionDocument-parentBean"/>
+  <bean id="RequisitionDocument" parent="RequisitionDocument-parentBean">
+  <property name="documentClass" value="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"/>
+  <property name="attachmentTypesValuesFinderClass" value="edu.cornell.kfs.module.purap.businessobject.options.RequisitionAttachmentTypeValuesFinder"/>
+  <property name="documentPresentationControllerClass" value="edu.cornell.kfs.module.purap.document.authorization.CuRequisitionDocumentPresentationController"/>  
+   <property name="attributes">
+   <list merge="true">
+   	<ref bean="RequisitionDocument-vendorEmailAddress"/>
+   </list>
+   </property>
+   </bean>
+   
+   <bean id="RequisitionDocument-sourceAccountingLineGroup" parent="RequisitionDocument-sourceAccountingLineGroup-parentBean">
+   		<property name="accountingLineAuthorizerClass" value="edu.cornell.kfs.module.purap.document.authorization.CuRequisitionAccountingLineAuthorizer"/>
+   </bean>
+   
+   <bean id="RequisitionDocument-distributeSourceAccountingLineGroup" parent="RequisitionDocument-distributeSourceAccountingLineGroup-parentBean">
+   		<property name="accountingLineAuthorizerClass" value="edu.cornell.kfs.module.purap.document.authorization.CuRequisitionAccountingLineAuthorizer"/>
+   </bean>
+   
+   <bean id="RequisitionDocument-deliveryInstructionText" parent="RequisitionDocument-deliveryInstructionText-parentBean">
+       <property name="maxLength" value="125"/>    
+  </bean>
+  
+  <bean id="RequisitionDocument-institutionContactEmailAddress" parent="RequisitionDocument-institutionContactEmailAddress-parentBean">
+  	<property name="label" value="Cornell Contact Email"/>
+  </bean>
+  
+  <bean id="RequisitionDocument-institutionContactName" parent="RequisitionDocument-institutionContactName-parentBean">
+  	<property name="label" value="Cornell Contact Name"/>
+  </bean>
+  
+  <bean id="RequisitionDocument-institutionContactPhoneNumber" parent="RequisitionDocument-institutionContactPhoneNumber-parentBean">
+  	<property name="label" value="Cornell Contact Phone"/>
+  </bean>
+  
+  <!-- KFSPTS-1458 -->
+  <bean id="RequisitionDocument-vendorEmailAddress" parent="RequisitionDocument-vendorEmailAddress-parentBean"/>
 
+  <bean id="RequisitionDocument-vendorEmailAddress-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="vendorEmailAddress"/>
+    <property name="label" value="Email Address"/>
+    <property name="shortLabel" value="Email"/>
+    <property name="maxLength" value="90"/>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="90"/>
+    </property>
+  </bean>
+  
+  
+    
+     <bean id="RequisitionDocument-workflowAttributes" parent="RequisitionDocument-workflowAttributes-parentBean">
+     <property name="routingTypeDefinitions">
+    		<map>
+    		    <entry key="Organization" value-ref="RoutingType-RequisitionDocument-Organization"/>
+    		    <entry key="SubAccount" value-ref="RoutingType-PurchasingAccountsPayableDocument-SubAccount"/>
+    			<entry key="Account" value-ref="RoutingType-PurchasingAccountsPayableDocument-Account"/>
+    			<entry key="AccountingOrganizationHierarchy" value-ref="RoutingType-PurchasingAccountsPayableDocument-AccountingOrganizationHierarchy"/>
+                <entry key="Commodity" value-ref="RoutingType-PurchasingDocument-Commodity"/>
+                <entry key="CommodityAPO" value-ref="RoutingType-PurchasingDocument-Commodity"/>
+              	<entry key="Award" value-ref="RoutingType-PurchasingDocument-Award"/>
+                
+                <!-- no qualifiers for separation of duties -->
+    		</map>
+    	</property>
+    	</bean>
+    
+  
+  
+  
 </beans>

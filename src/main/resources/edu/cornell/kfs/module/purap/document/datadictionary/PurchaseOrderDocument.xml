@@ -16,5 +16,98 @@
 -->
 
   <bean id="PurchaseOrderDocument" parent="PurchaseOrderDocument-parentBean"/>
+  
+  <bean id="RequisitionDocument-deliveryInstructionText" parent="RequisitionDocument-deliveryInstructionText-parentBean">
+       <property name="maxLength" value="125"/>    
+  </bean>
+  
+  <bean id="PurchaseOrderDocument-institutionContactEmailAddress" parent="PurchaseOrderDocument-institutionContactEmailAddress-parentBean">
+  	<property name="label" value="Cornell Contact Email"/>
+  </bean>
+  
+  <bean id="PurchaseOrderDocument-institutionContactName" parent="PurchaseOrderDocument-institutionContactName-parentBean">
+  	<property name="label" value="Cornell Contact Name"/>
+  </bean>
+  
+  <bean id="PurchaseOrderDocument-institutionContactPhoneNumber" parent="PurchaseOrderDocument-institutionContactPhoneNumber-parentBean">
+  	<property name="label" value="Cornell Contact Phone"/>
+  </bean>
+  
+  <bean id="PurchaseOrderDocument-validations" parent="PurchaseOrderDocument-validations-parentBean"/>
+  
+    <bean id="PurchaseOrderDocument-validations-parentBean" class="org.springframework.beans.factory.config.MapFactoryBean">
+    	<property name="sourceMap">
+	    	<map>			
+		    	<entry> <!-- KFSPTS-2096 -->
+			    	<key><value>org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent</value></key>
+				    <value>PurchaseOrder-saveDocumentValidation</value>
+			    </entry>
+		    	<entry>
+			    	<key><value>org.kuali.kfs.sys.document.validation.event.AttributedRouteDocumentEvent</value></key>
+				    <value>PurchaseOrder-routeDocumentValidation</value>
+			    </entry>
+			    <entry>
+				    <key><value>org.kuali.kfs.sys.document.validation.event.AttributedApproveDocumentEvent</value></key>
+				    <value>PurchaseOrder-approveDocumentValidation</value>
+			    </entry>	
+			    <entry>
+				    <key><value>org.kuali.kfs.sys.document.validation.event.AddAccountingLineEvent</value></key>
+				    <value>PurchaseOrder-addAccountingLineValidation</value>
+			    </entry>		
+			    <entry>
+				    <key><value>org.kuali.kfs.sys.document.validation.event.UpdateAccountingLineEvent</value></key>
+				    <value>PurchaseOrder-updateAccountingLineValidation</value>
+			    </entry>	
+                <entry>
+                    <key><value>org.kuali.kfs.sys.document.validation.event.ReviewAccountingLineEvent</value></key>
+                    <value>PurchaseOrder-reviewAccountingLineValidation</value>
+                </entry>                
+			    <entry>
+				    <key><value>org.kuali.kfs.module.purap.document.validation.event.AttributedSplitPurchaseOrderEvent</value></key>
+				    <value>PurchaseOrder-performSplitValidation</value>
+			    </entry>	
+			    <entry>
+				    <key><value>org.kuali.kfs.module.purap.document.validation.event.AttributedAddVendorToQuoteEvent</value></key>
+				    <value>PurchaseOrder-performAddQuoteToVendorValidation</value>
+			    </entry>	
+			    <entry>
+				    <key><value>org.kuali.kfs.module.purap.document.validation.event.AttributedAssignSensitiveDataEvent</value></key>
+				    <value>PurchaseOrder-performAssignSensitiveDataValidation</value>
+			    </entry>				    			    				    	 
+				<entry>
+					<key><value>org.kuali.kfs.module.purap.document.validation.event.AttributedAddPurchasingAccountsPayableItemEvent</value></key>
+					<value>PurchaseOrder-addPurchasingAccountsPayableItemValidation</value>				
+				</entry>
+				<entry>
+					<key><value>org.kuali.kfs.module.purap.document.validation.event.AttributedImportPurchasingAccountsPayableItemEvent</value></key>
+					<value>PurchaseOrder-importPurchasingAccountsPayableItemValidation</value>				
+				</entry>						
+				<entry>
+					<key><value>org.kuali.kfs.module.purap.document.validation.event.AttributedChangeSystemPurapEvent</value></key>
+					<value>PurchaseOrder-changeSystemPurapValidation</value>				
+				</entry>			
+				<entry>
+					<key><value>org.kuali.kfs.module.purap.document.validation.event.AttributedSelectSystemPurapEvent</value></key>
+					<value>PurchaseOrder-selectSystemPurapValidation</value>				
+				</entry>			
+				<entry>
+					<key><value>org.kuali.kfs.module.purap.document.validation.event.AttributedUpdateCamsViewPurapEvent</value></key>
+					<value>PurchaseOrder-updateCamsViewPurapValidation</value>				
+				</entry>			
+				<entry>
+					<key><value>org.kuali.kfs.module.purap.document.validation.event.AttributedAddPurchasingItemCapitalAssetEvent</value></key>
+					<value>PurchaseOrder-addPurchasingItemCapitalAssetValidation</value>				
+				</entry>			
+				<entry>
+					<key><value>org.kuali.kfs.module.purap.document.validation.event.AttributedAddPurchasingCapitalAssetLocationEvent</value></key>
+					<value>PurchaseOrder-addPurchasingCapitalAssetLocationValidation</value>				
+				</entry>									       
+				<entry>
+					<key><value>org.kuali.kfs.module.purap.document.validation.event.AttributedCommodityCodesForDistributionEvent</value></key>
+					<value>PurchaseOrder-commodityCodesForDistributionValidation</value>
+				</entry>
+		    </map>
+	    </property>	  
+    </bean>
 
 </beans>
