@@ -56,7 +56,7 @@ public class CuProcessPdpCancelPaidServiceImpl extends ProcessPdpCancelPaidServi
             // KFSPTS-2719
             boolean crCancel = false;
             PaymentDetailExtendedAttribute paymentDetailExtendedAttribute = (PaymentDetailExtendedAttribute) paymentDetail.getExtension();
-            if (ObjectUtils.isNull(paymentDetailExtendedAttribute)) {
+            if (ObjectUtils.isNotNull(paymentDetailExtendedAttribute)) {
                 crCancel = paymentDetailExtendedAttribute.getCrCancelledPayment();
             }
 
