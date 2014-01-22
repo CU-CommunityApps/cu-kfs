@@ -34,5 +34,79 @@
   			</list>
   		</property>
   	</bean>
- 
+
+	<bean id="PurchaseOrderAmendment-routeDocumentValidation" parent="PurchaseOrderAmendment-routeDocumentValidation-parentBean" scope="prototype" >
+  		<property name="validations">
+  			<list merge="true">  				
+				<bean parent="PurchaseOrderAmendment-hasUnitCostAndValidPercentage" scope="prototype">
+					<property name="quitOnFail" value="false" />
+				</bean>
+            </list>
+        </property>
+    </bean>        
+  
+    	<bean id="PurchaseOrderAmendment-approveDocumentValidation" parent="PurchaseOrderAmendment-approveDocumentValidation-parentBean" scope="prototype" >
+  		<property name="validations">
+  			<list merge="true">  				
+				<bean parent="PurchaseOrderAmendment-hasUnitCostAndValidPercentage" scope="prototype">
+					<property name="quitOnFail" value="false" />
+				</bean>
+             </list>
+        </property>
+    </bean>        
+        
+    <!-- Review Accounting Line Event -->
+    <bean id="PurchaseOrderAmendment-reviewAccountingLineValidation" parent="PurchaseOrderAmendment-reviewAccountingLineValidation-parentBean" scope="prototype" />
+  
+    <bean id="PurchaseOrderAmendment-reviewAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+        <property name="validations">
+            <list>
+            <!--  comment out for now. add 0 pct check for reviewacctevent only
+                <bean parent="PurchasingAccountsPayable-accountingLine-newAccountingLineBranchingValidation" scope="prototype" />           
+                <bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <bean parent="accountingLineToBusinessObjectFieldConversion" />
+                    </property>
+                </bean>
+                <bean parent="Purchasing-accountingLineDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingLineFieldConversion" />
+                        </list>
+                    </property>
+                </bean>
+                 -->
+                <bean parent="PurchasingAccountsPayable-accountingLineValuesAllowedValidation-parentBean" scope="prototype"/>               
+				<bean parent="PurchasingAccountsPayable-accountPercentBetween0And100Validation-parentBean" scope="prototype">
+					<property name="parameterProperties">
+						<bean parent="validationFieldConversion">
+							<property name="sourceEventProperty" value="accountingLine" />
+							<property name="targetValidationProperty" value="accountingLine" />
+						</bean>
+					</property>
+					<property name="quitOnFail" value="true" />					
+				</bean>
+            </list>
+        </property>
+    </bean>
+
+	<bean id="PurchaseOrderAmendment-saveDocument-itemCollectionValidation-commodityCodeValidation" parent="PurchaseOrderAmendment-saveDocument-itemCollectionValidation-commodityCodeValidation-parentBean" scope="prototype" />
+	<bean id="PurchaseOrderAmendment-saveDocument-itemCollectionValidation-commodityCodeValidation-parentBean" abstract="true" parent="CollectionValidation" scope="prototype">
+        <property name="quitOnFail" value="false" />
+		<property name="collectionProperty" value="document.items" />
+  		<property name="validations">
+  			<list>  				
+				<bean parent="PurchaseOrderAmendment-commodityCodeValidation" scope="prototype" >
+					<property name="parameterProperties">
+                    	<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="iterationSubject" />
+								<property name="targetValidationProperty" value="itemForValidation" />
+							</bean>
+						</list>
+					</property>
+				</bean>
+  			</list>
+  		</property>
+    </bean>
  </beans>

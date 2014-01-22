@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants.PurchaseOrderEditMode;
+import org.kuali.kfs.module.purap.PurapAuthorizationConstants.RequisitionEditMode;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
@@ -18,19 +20,20 @@ import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.krad.document.Document;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
-import org.kuali.kfs.module.purap.PurapConstants;
+import edu.cornell.kfs.module.purap.CUPurapConstants.PurchaseOrderStatuses;
 
 public class CuPurchaseOrderAmendmentDocumentPresentationController extends PurchaseOrderAmendmentDocumentPresentationController {
 
     @Override
     public boolean canEdit(Document document) {
-        PurchaseOrderDocument poDocument = (PurchaseOrderDocument)document;
-        if (CUPurapConstants.PurchaseOrderStatuses.AWAIT_FISCAL_REVIEW.equals(poDocument.getStatusCode())) {
+        // KFSUPGRADE-339
+        if (PurchaseOrderStatuses.APPDOC_AWAITING_FISCAL_REVIEW.equals(((PurchaseOrderDocument)document).getApplicationDocumentStatus())) {
             return true;
         }
-        return super.canEdit(document); 
+
+        return super.canEdit(document);
     }
-    
+   
     @Override
     public Set<String> getEditModes(Document document) {
         Set<String> editModes = super.getEditModes(document);
@@ -43,8 +46,9 @@ public class CuPurchaseOrderAmendmentDocumentPresentationController extends Purc
                 editModes.add(PurchaseOrderEditMode.AMENDMENT_ENTRY);
             }
         }
-        if (PurapConstants.PurchaseOrderStatuses.APPDOC_AWAIT_NEW_UNORDERED_ITEM_REVIEW.equals(poDocument.getApplicationDocumentStatus())) {
-            editModes.add(PurchaseOrderEditMode.AMENDMENT_ENTRY);
+		// KFSUPGRADE-339
+        if (PurchaseOrderStatuses.APPDOC_AWAITING_FISCAL_REVIEW.equals(((PurchaseOrderDocument)document).getApplicationDocumentStatus())) {
+        	editModes.add(PurchaseOrderEditMode.AMENDMENT_ENTRY);
         }
         if (CUPurapConstants.PurchaseOrderStatuses.AWAIT_FISCAL_REVIEW.equals(poDocument.getStatusCode())) {
             editModes.add(PurchaseOrderEditMode.AMENDMENT_ENTRY);
@@ -73,6 +77,12 @@ public class CuPurchaseOrderAmendmentDocumentPresentationController extends Purc
             editModes.add(PurchaseOrderEditMode.DISABLE_REMOVE_ACCTS);
         }
 
+        // KFSPTS-985
+        if (document instanceof PurchaseOrderDocument && !editModes.contains(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION) && !hasEmptyAcctline((PurchaseOrderDocument)document) ) {
+            editModes.add(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION);
+        }
         return editModes;
     }
+    	
+    
 }

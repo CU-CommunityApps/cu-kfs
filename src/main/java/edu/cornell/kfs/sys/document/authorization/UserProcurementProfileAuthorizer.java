@@ -23,7 +23,6 @@ public class UserProcurementProfileAuthorizer  extends FinancialSystemMaintenanc
 	@Override
 	public Set<String> getDocumentActions(Document document, Person user,
 			Set<String> documentActions) {
-		// TODO Auto-generated method stub
 		Set<String> documentActions1 = super.getDocumentActions(document, user, documentActions);
 		if (documentActions1.contains(KRADConstants.KUALI_ACTION_CAN_EDIT)
 				&& !documentActions1.contains(KRADConstants.KUALI_ACTION_CAN_SAVE)) {

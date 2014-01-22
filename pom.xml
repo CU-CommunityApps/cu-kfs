@@ -367,10 +367,11 @@
           <groupId>javax.resource</groupId>
           <artifactId>connector-api</artifactId>
         </exclusion>
+        <!-- TODO : need jsp-api for compiling GroupTitleLineRenderer
         <exclusion>  
           <groupId>javax.servlet.jsp</groupId>
           <artifactId>jsp-api</artifactId>
-        </exclusion>
+        </exclusion> -->
         <exclusion>  
           <groupId>com.sun.xml.bind</groupId>
  		  <artifactId>jaxb-impl</artifactId>

@@ -55,7 +55,7 @@
         </category>
         <category name="INCOMPLETE STATUSES">
           <status>In Process</status>
-          <status>Awaiting Fiscal Officer Review</status>
+          <status>Awaiting Fiscal Officer</status>
           <status>Awaiting New Unordered Item Review</status>
           <status>Disapproved New Unordered Item Review</status>
           <status>Awaiting Purchasing Approval</status>
@@ -78,24 +78,24 @@
       </validApplicationStatuses>
       <routePaths>
         <routePath>
-          <start name="AdHoc" nextNode="HasNewUnorderedItems" nextAppDocStatus="Awaiting New Unordered Item Review" />
-          <split name="HasNewUnorderedItems" nextNode="SubAccount"  nextAppDocStatus="Awaiting Sub Account">
+          <start name="AdHoc" nextNode="HasNewUnorderedItems" nextAppDocStatus="Awaiting New Unordered Item Review"/>
+          <split name="HasNewUnorderedItems" nextNode="SubAccount" >
             <branch name="True">
-              <role name="NewUnorderedItems" nextNode="JoinNewUnorderedItems" />
+              <role name="NewUnorderedItems" nextNode="JoinNewUnorderedItems"  nextAppDocStatus="Awaiting Sub Account" />
             </branch>
             <branch name="False">
-              <simple name="NoOpNewUnorderedItems" nextNode="JoinNewUnorderedItems" />
+              <simple name="NoOpNewUnorderedItems" nextNode="JoinNewUnorderedItems"  nextAppDocStatus="Awaiting Sub Account"/>
             </branch>
             <join name="JoinNewUnorderedItems" />
           </split>
-          <role name="SubAccount" nextNode="Account" nextAppDocStatus="Awaiting Fiscal Officer Review" />
+          <role name="SubAccount" nextNode="Account" nextAppDocStatus="Awaiting Fiscal Officer" />
           <role name="Account" nextNode="RequiresAwardReview" nextAppDocStatus="Awaiting C and G Approval" />
-          <split name="RequiresAwardReview" nextNode="Commodity" nextAppDocStatus="Awaiting Commodity Code Approval">
+          <split name="RequiresAwardReview" nextNode="Commodity" >
             <branch name="True">
-              <role name="Award" nextNode="JoinRequiresAwardReview" />
+              <role name="Award" nextNode="JoinRequiresAwardReview" nextAppDocStatus="Awaiting Commodity Code Approval"/>
             </branch>
             <branch name="False">
-              <simple name="NoOpRequiresAwardReview" nextNode="JoinRequiresAwardReview" />
+              <simple name="NoOpRequiresAwardReview" nextNode="JoinRequiresAwardReview" nextAppDocStatus="Awaiting Commodity Code Approval" />
             </branch>
             <join name="JoinRequiresAwardReview" />
           </split>
@@ -109,12 +109,12 @@
             </branch>
             <join name="JoinSOD" />
           </split>
-          <split name="RequiresContractManagementReview" nextNode="RequiresBudgetReview"  nextAppDocStatus="Awaiting Budget Approval">
+          <split name="RequiresContractManagementReview" nextNode="RequiresBudgetReview">
             <branch name="True">
-              <role name="ContractManagement" nextNode="JoinRequiresContractManagementReview" />
+              <role name="ContractManagement" nextNode="JoinRequiresContractManagementReview"  nextAppDocStatus="Awaiting Budget Approval"/>
             </branch>
             <branch name="False">
-              <simple name="NoOpRequiresContractManagementReview" nextNode="JoinRequiresContractManagementReview" />
+              <simple name="NoOpRequiresContractManagementReview" nextNode="JoinRequiresContractManagementReview"  nextAppDocStatus="Awaiting Budget Approval"/>
             </branch>
             <join name="JoinRequiresContractManagementReview" />
           </split>
@@ -127,7 +127,7 @@
             </branch>
             <join name="JoinRequiresBudgetReview" />
           </split>
-          <role name="AccountingOrganizationHierarchy" nextNode="NoOpFinal" />
+          <role name="AccountingOrganizationHierarchy" nextNode="NoOpFinal"  nextAppDocStatus="Pending cxml" />
           <simple name="NoOpFinal" />
         </routePath>
       </routePaths>

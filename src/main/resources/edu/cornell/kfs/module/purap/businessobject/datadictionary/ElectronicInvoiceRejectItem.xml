@@ -20,6 +20,13 @@
       <ref bean="AnyCharacterWithWhitespaceValidation"/>
     </property>
   </bean>
+
+  <bean id="ElectronicInvoiceRejectItem-invoiceReferenceItemManufacturerPartIdentifier" parent="ElectronicInvoiceRejectItem-invoiceReferenceItemManufacturerPartIdentifier-parentBean">
+    <property name="validationPattern">
+      <ref bean="AnyCharacterWithWhitespaceValidation" />
+    </property>
+  </bean>
+
   
   <bean id="ElectronicInvoiceRejectItem-invoiceReferenceItemManufacturerName" parent="ElectronicInvoiceRejectItem-invoiceReferenceItemManufacturerName-parentBean">
     <property name="validationPattern">

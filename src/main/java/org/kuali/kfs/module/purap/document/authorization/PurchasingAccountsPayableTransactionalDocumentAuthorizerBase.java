@@ -52,9 +52,9 @@ public class PurchasingAccountsPayableTransactionalDocumentAuthorizerBase extend
                     attributes.put(PurapKimAttributes.ACCOUNTS_PAYABLE_PURCHASING_DOCUMENT_LINK_IDENTIFIER, purapDoc.getAccountsPayablePurchasingDocumentLinkIdentifier().toString());
                 }
                 // KFSUPGRADE-346
-            } //else if (purapDoc.isSensitive()) {
-               // attributes.put(PurapKimAttributes.DOCUMENT_SENSITIVE, "true");
-            //}
+            } else if (purapDoc.isSensitive()) {
+                attributes.put(PurapKimAttributes.DOCUMENT_SENSITIVE, "true");
+            }
         }
     }
     

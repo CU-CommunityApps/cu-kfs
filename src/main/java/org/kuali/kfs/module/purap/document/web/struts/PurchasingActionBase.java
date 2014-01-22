@@ -183,7 +183,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             VendorAddress defaultAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(document.getVendorDetail().getVendorAddresses(), document.getVendorDetail().getVendorHeader().getVendorType().getAddressType().getVendorAddressTypeCode(), document.getDeliveryCampusCode());
             
             if(defaultAddress==null){
-                //GlobalVariables.getMessageMap().putError(CUVendorPropertyConstants.VENDOR_DOC_ADDRESS, CUPurapKeyConstants.ERROR_INACTIVE_VENDORADDRESS);   
+                GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_DOC_ADDRESS, PurapKeyConstants.ERROR_INACTIVE_VENDORADDRESS);   
             }
             document.templateVendorAddress(defaultAddress);
             // CU enhancement KFSUPGRDE-348
@@ -211,7 +211,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                 // populate default address from selected vendor
                 VendorAddress defaultAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(document.getVendorDetail().getVendorAddresses(), document.getVendorDetail().getVendorHeader().getVendorType().getAddressType().getVendorAddressTypeCode(), "");
                 if(defaultAddress==null){
-                   // GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_DOC_ADDRESS, PurapKeyConstants.ERROR_INACTIVE_VENDORADDRESS);   
+                    GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_DOC_ADDRESS, PurapKeyConstants.ERROR_INACTIVE_VENDORADDRESS);   
                 }
                 document.templateVendorAddress(defaultAddress);
 
@@ -624,9 +624,9 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 
         purchasingForm.setHideDistributeAccounts(false);
         // KFSPTS-985
-        //if (((PurchasingDocumentBase)purchasingForm.getDocument()).isIntegratedWithFavoriteAccount()) {
-        //    populatePrimaryFavoriteAccount(purchasingForm.getAccountDistributionsourceAccountingLines(), (PurchasingDocument)purchasingForm.getDocument() instanceof RequisitionDocument);
-        //}
+        if (((PurchasingDocumentBase)purchasingForm.getDocument()).isIntegratedWithFavoriteAccount()) {
+            populatePrimaryFavoriteAccount(purchasingForm.getAccountDistributionsourceAccountingLines(), (PurchasingDocument)purchasingForm.getDocument() instanceof RequisitionDocument);
+        }
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }

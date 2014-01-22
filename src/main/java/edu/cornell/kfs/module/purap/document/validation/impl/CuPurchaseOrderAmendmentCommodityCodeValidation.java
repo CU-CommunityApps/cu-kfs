@@ -41,15 +41,16 @@ public class CuPurchaseOrderAmendmentCommodityCodeValidation extends PurchasingC
     }
 
     @Override
-    protected boolean commodityCodeIsRequired(PurApItem item) {
+    protected boolean commodityCodeIsRequired() {
+	        // kfs 5.1 remove the item argument in commodityCodeIsRequired
     	// commodity code is not an attribute for below the line items.
-    	if (!item.getItemType().isLineItemIndicator()) {
+    	if (!getItemForValidation().getItemType().isLineItemIndicator()) {
         	return false;
         }
 
         //if the ENABLE_COMMODITY_CODE_IND parameter is  N then we don't
         //need to check for the ITEMS_REQUIRE_COMMODITY_CODE_IND parameter anymore, just return false. 
-        boolean enableCommodityCode = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_COMMODITY_CODE_IND);
+        boolean enableCommodityCode = getParameterService().getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_COMMODITY_CODE_IND);
         if (!enableCommodityCode) {
             return false;
         }

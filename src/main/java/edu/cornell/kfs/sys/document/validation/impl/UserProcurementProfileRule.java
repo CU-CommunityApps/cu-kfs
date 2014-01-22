@@ -18,7 +18,6 @@ public class UserProcurementProfileRule extends MaintenanceDocumentRuleBase {
 	@Override
 	protected boolean processCustomSaveDocumentBusinessRules(
 			MaintenanceDocument document) {
-		// TODO Auto-generated method stub
 
 		return super.processCustomSaveDocumentBusinessRules(document);
 	}
@@ -26,7 +25,6 @@ public class UserProcurementProfileRule extends MaintenanceDocumentRuleBase {
 	@Override
 	protected boolean processCustomRouteDocumentBusinessRules(
 			MaintenanceDocument document) {
-		// TODO Auto-generated method stub
 		boolean valid =  super.processCustomRouteDocumentBusinessRules(document);
 		UserProcurementProfile userProcurementProfile = (UserProcurementProfile)document.getNewMaintainableObject().getBusinessObject();
     	if (CollectionUtils.isNotEmpty(userProcurementProfile.getFavoriteAccounts())) {

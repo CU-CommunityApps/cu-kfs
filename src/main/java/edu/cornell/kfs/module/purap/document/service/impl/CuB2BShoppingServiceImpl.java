@@ -337,7 +337,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
         } catch (Exception e) {
             // incase something goes wrong.  continue to process
             LOG.info("error from role check " + e.getMessage());
-            return "Preauthorized";
+            return CUPurapConstants.NON_PREAUTHORIZED;
         }
     }
 

@@ -35,6 +35,9 @@ public class CUPurapConstants extends PurapConstants {
         public static final String AWAIT_FISCAL_REVIEW = "AFIS";
         public static final String DAPRVD_FISCAL = "DFIS";
         public static final String PENDING_CXML = "CXPE";
+        // KFSUPGRADE-336.  override purapconstants
+            public static final String NODE_DOCUMENT_TRANSMISSION = "JoinRequiresBudgetReview";
+            public static final String APPDOC_AWAITING_FISCAL_REVIEW = "Awaiting Fiscal Officer"; // Waiting for Fiscal Officer approval
     }
     
     public static class PODocumentsStrings {
@@ -175,5 +178,6 @@ public class CUPurapConstants extends PurapConstants {
     public static final String PO_DISAPPROVAL_ANNOTATION_TEXT= "message.document.purap.disapprove.annotation";
     public static final String PO_CANCEL_ANNOTATION_TEXT= "message.document.purap.cancel.annotation";
 
+    public static final String RECEIVING_BUTTON_ALT_TEXT = "Receiving";
 
 }

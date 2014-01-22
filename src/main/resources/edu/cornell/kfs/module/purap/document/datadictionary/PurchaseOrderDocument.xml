@@ -15,10 +15,33 @@
  limitations under the License.
 -->
 
-  <bean id="PurchaseOrderDocument" parent="PurchaseOrderDocument-parentBean"/>
-  
-  <bean id="RequisitionDocument-deliveryInstructionText" parent="RequisitionDocument-deliveryInstructionText-parentBean">
-       <property name="maxLength" value="125"/>    
+  <bean id="PurchaseOrderDocument" parent="PurchaseOrderDocument-parentBean">
+ <!--     <property name="documentClass" value="edu.cornell.kfs.module.purap.document.CuPurchaseOrderDocument"/>
+    <property name="baseDocumentClass" value="edu.cornell.kfs.module.purap.document.CuPurchaseOrderDocument"/> --> 
+     <property name="attributes">
+      <list merge="true">
+        <ref bean="PurchaseOrderDocument-vendorEmailAddress"/>
+      </list>
+    </property>
+ 
+   </bean>
+
+   <!-- KFSPTS-1458 -->
+  <bean id="PurchaseOrderDocument-vendorEmailAddress" parent="PurchaseOrderDocument-vendorEmailAddress-parentBean"/>
+
+  <bean id="PurchaseOrderDocument-vendorEmailAddress-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="vendorEmailAddress"/>
+    <property name="label" value="Email Address"/>
+    <property name="shortLabel" value="Email"/>
+    <property name="maxLength" value="90"/>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="90"/>
+    </property>
+  </bean>
+ 
+ <!-- KFSUPGRADE-407 -->
+  <bean id="PurchaseOrderDocument-deliveryInstructionText" parent="PurchaseOrderDocument-deliveryInstructionText-parentBean">
+    <property name="maxLength" value="100"/>
   </bean>
   
   <bean id="PurchaseOrderDocument-institutionContactEmailAddress" parent="PurchaseOrderDocument-institutionContactEmailAddress-parentBean">
@@ -109,5 +132,25 @@
 		    </map>
 	    </property>	  
     </bean>
+ 
+     <!-- workflow attributes for routing -->
+    <bean id="PurchaseOrderDocument-workflowAttributes" parent="PurchaseOrderDocument-workflowAttributes-parentBean"/>
 
+    <bean id="PurchaseOrderDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
+    	<property name="routingTypeDefinitions">
+    		<map>
+    		<!--  TODO : can not use merge because 'Award' is deleted.  DD bean override only support 'List' delete -->
+    		    <entry key="Commodity" value-ref="RoutingType-PurchasingDocument-Commodity"/>
+                <entry key="Budget" value-ref="RoutingType-PurchaseOrderDocument-Budget"/>
+                <entry key="AccountingOrganizationHierarchy" value-ref="RoutingType-PurchasingAccountsPayableDocument-AccountingOrganizationHierarchy"/>
+    		    <entry key="Organization" value-ref="RoutingType-RequisitionDocument-Organization"/>                
+                <!-- no qualifiers for VendorIsEmployeeOrNonResidentAlien -->
+                <!-- no qualifiers for TransmissionMethodIsPrint -->
+    		</map>
+    	</property>
+  	    <property name="searchingTypeDefinitions">
+    		<ref bean="SearchingTypeDefinitions-PurchaseOrderDocumentFamily"/>
+    	</property>  	
+	</bean>      
+ 
 </beans>

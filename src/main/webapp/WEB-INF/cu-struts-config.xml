@@ -29,6 +29,8 @@
             
         <form-bean name="CuDisbursementVoucherForm"
             type="edu.cornell.kfs.fp.document.web.struts.CuDisbursementVoucherForm" />
+        <form-bean name="CuPurchaseOrderForm"
+            type="edu.cornell.kfs.module.purap.document.web.struts.CuPurchaseOrderForm" />
             
     </form-beans>
     
@@ -97,6 +99,41 @@
 			<forward name="basic" path="/jsp/module/purap/Requisition.jsp" />	
 		</action>
 
+	   <action path="/purapPurchaseOrder" name="CuPurchaseOrderForm"
+			input="/jsp/module/purap/PurchaseOrder.jsp"
+			type="edu.cornell.kfs.module.purap.document.web.struts.CuPurchaseOrderAction"
+			scope="request" parameter="methodToCall" validate="true"
+			attribute="KualiForm">
+			<set-property property="cancellable" value="true" />
+			<forward name="basic" path="/jsp/module/purap/PurchaseOrder.jsp" />	
+		</action>
+
+	   <action path="/purapLineItemReceiving" name="LineItemReceivingForm"
+			input="/jsp/module/purap/LineItemReceiving.jsp"
+			type="edu.cornell.kfs.module.purap.document.web.struts.CuLineItemReceivingAction"
+			scope="request" parameter="methodToCall" validate="true"
+			attribute="KualiForm">
+			<set-property property="cancellable" value="true" />
+			<forward name="basic" path="/jsp/module/purap/LineItemReceiving.jsp" />	
+		</action>
+
+	   <action path="/purapPaymentRequest" name="PaymentRequestForm"
+			input="/jsp/module/purap/PaymentRequest.jsp"
+			type="edu.cornell.kfs.module.purap.document.web.struts.CuPaymentRequestAction"
+			scope="request" parameter="methodToCall" validate="true"
+			attribute="KualiForm">
+			<set-property property="cancellable" value="true" />
+			<forward name="basic" path="/jsp/module/purap/PaymentRequest.jsp" />	
+		</action>
+
+		<action path="/purapElectronicInvoiceTestFileGeneration" 
+			name="ElectronicInvoiceTestForm"
+			attribute="KualiForm" 
+			input="/jsp/module/purap/ElectronicInvoiceTest.jsp"
+			type="edu.cornell.kfs.module.purap.document.web.struts.CuElectronicInvoiceTestAction"
+			scope="request">
+			<forward name="basic" path="/jsp/module/purap/ElectronicInvoiceTest.jsp" />
+		</action>
 		
     </action-mappings>
     

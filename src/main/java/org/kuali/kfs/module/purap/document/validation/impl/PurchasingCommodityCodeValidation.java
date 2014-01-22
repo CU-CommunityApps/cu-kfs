@@ -57,7 +57,8 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
         if(ObjectUtils.isNotNull(itemForValidation)) {
         	// CU fix for NPE KFSPTS-1154
 	        itemForValidation.refreshReferenceObject(PurapPropertyConstants.COMMODITY_CODE);
-	        valid &= validateCommodityCodes(itemForValidation, commodityCodeIsRequired(itemForValidation));
+	        // kfs 5.1 remove the item argument in commodityCodeIsRequired
+	        valid &= validateCommodityCodes(itemForValidation, commodityCodeIsRequired());
 	        
 	        GlobalVariables.getMessageMap().removeFromErrorPath(PurapConstants.ITEM_TAB_ERRORS);
         }
@@ -167,6 +168,10 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
 		    kwd = WorkflowDocumentFactory.loadDocument(GlobalVariables.getUserSession().getPrincipalId(), docNum);
 		    docHdr.setWorkflowDocument(kwd);
 
+            // Only check for active commodity codes if the doc is in initiated or saved status.  
+        	if(ObjectUtils.isNull(kwd)) {
+        		kwd = docHdr.getWorkflowDocument();
+        	}
 	        if(!(kwd.isInitiated() || kwd.isSaved())) { 
 	            return false;
 	        }
@@ -179,7 +184,8 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
      * 
      * @return      True if a commodity code is required.
      */
-    protected boolean commodityCodeIsRequired(PurApItem item) {
+	// in kfs5.1 'item' argument is removed from this method.
+    protected boolean commodityCodeIsRequired() {
         return false;
     }
 

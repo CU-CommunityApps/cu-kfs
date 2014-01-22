@@ -15,10 +15,8 @@ public class UserProcurementProfile extends PersistableBusinessObjectBase {
 	private static final long serialVersionUID = 1L;
 	private Integer userProfileId;
 	private String principalId;
-//	private String documentTypeCode;
     private List<FavoriteAccount> favoriteAccounts;
 	private String personName;
-	private String accountNumber;
 	private boolean personSelected;
 	private FavoriteAccount newSourceLine;
     private Person profileUser;
@@ -133,20 +131,6 @@ public class UserProcurementProfile extends PersistableBusinessObjectBase {
 		this.profileUser = profileUser;
 	}
 
-
-
-	public String getAccountNumber() {
-		return "testonly";
-	}
-
-
-
-	public void setAccountNumber(String accountNumber) {
-		this.accountNumber = accountNumber;
-	}
-
-
-
 	public FavoriteAccount getResultAccount() {
 		if (resultAccount ==null) {
 			resultAccount = new FavoriteAccount();
@@ -162,15 +146,6 @@ public class UserProcurementProfile extends PersistableBusinessObjectBase {
 	}
 
 
-//	public String getDocumentTypeCode() {
-//		return documentTypeCode;
-//	}
-//
-//
-//
-//	public void setDocumentTypeCode(String documentTypeCode) {
-//		this.documentTypeCode = documentTypeCode;
-//	}
 
 
 

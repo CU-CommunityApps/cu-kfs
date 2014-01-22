@@ -29,12 +29,12 @@
       <routePaths>
         <routePath>
           <start name="AdHoc" nextNode="RequiresImageAttachment"  nextAppDocStatus="Awaiting AP Review"/>
-          <split name="RequiresImageAttachment" nextNode="Account" nextAppDocStatus="Awaiting Fiscal Officer Approval">
+          <split name="RequiresImageAttachment" nextNode="Account">
             <branch name="True">
               <role name="ImageAttachment" nextNode="JoinRequiresImageAttachment" />
             </branch>
             <branch name="False">
-              <simple name="NoOpRequiresImageAttachment" nextNode="JoinRequiresImageAttachment" />
+              <simple name="NoOpRequiresImageAttachment" nextNode="JoinRequiresImageAttachment"/>
             </branch>
             <join name="JoinRequiresImageAttachment" />
           </split>

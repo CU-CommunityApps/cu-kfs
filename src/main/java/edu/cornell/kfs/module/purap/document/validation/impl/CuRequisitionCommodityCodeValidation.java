@@ -25,20 +25,20 @@ public class CuRequisitionCommodityCodeValidation extends PurchasingCommodityCod
      * 
      * @return
      */
-	protected boolean commodityCodeIsRequired(PurApItem item) {
+	protected boolean commodityCodeIsRequired() {
     	// commodity code is not an attribute for below the line items.
-    	if (!item.getItemType().isLineItemIndicator()) {
+    	if (!getItemForValidation().getItemType().isLineItemIndicator()) {
         	return false;
         }
 
         // if the ENABLE_COMMODITY_CODE_IND parameter is  N then we don't
         // need to check for the ITEMS_REQUIRE_COMMODITY_CODE_IND parameter anymore, just return false. 
-        boolean enableCommodityCode = SpringContext.getBean(ParameterService.class)
+        boolean enableCommodityCode = getParameterService()
                 .getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_COMMODITY_CODE_IND);
         if (!enableCommodityCode) {
             return false;
         } else {        
-            return SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(RequisitionDocument.class,
+            return getParameterService().getParameterValueAsBoolean(RequisitionDocument.class,
                     PurapRuleConstants.ITEMS_REQUIRE_COMMODITY_CODE_IND);
         }
     }

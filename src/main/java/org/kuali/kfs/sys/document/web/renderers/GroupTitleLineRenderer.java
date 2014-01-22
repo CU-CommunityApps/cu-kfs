@@ -44,7 +44,7 @@ import org.kuali.rice.kns.web.taglib.html.KNSImageTag;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 
-import edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFiner;
+import edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFinder;
 
 /**
  * Renders the standard group header/import line
@@ -126,7 +126,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
         	//KFSPTS-985 : add favorite account selection
         	// setdistribution does not have accountPrefix
         	String accountPrefix = (String)pageContext.getAttribute("accountPrefix");
-        	FavoriteAccountValuesFiner accounts = new FavoriteAccountValuesFiner();
+        	FavoriteAccountValuesFinder accounts = new FavoriteAccountValuesFinder();
             if (canEdit && isDocumentIntegratedFavoriteAccount() && CollectionUtils.isNotEmpty(accounts.getKeyValues()) && accounts.getKeyValues().size() > 1) {
         	    pageContext.getOut().write(buildFavoriteAccounts(accountPrefix));
             }
@@ -586,9 +586,9 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     	if (StringUtils.isBlank(accountPrefix)) {
     		accountPrefix = "document.";
     	}
-    	favoriteAccountLine.append("<td colspan=\"6\" class=\"infoline\">");
+    	favoriteAccountLine.append("<td colspan=\"7\" class=\"infoline\">");
     	favoriteAccountLine.append("<select name=\"").append(accountPrefix).append("favoriteAccountLineIdentifier\" id=\"").append(accountPrefix).append("favoriteAccountLineIdentifier\" title=\"* Favorite Account\">");
-    	FavoriteAccountValuesFiner accounts = new FavoriteAccountValuesFiner();
+    	FavoriteAccountValuesFinder accounts = new FavoriteAccountValuesFinder();
     	for (KeyValue keyValue : (List<KeyValue>)accounts.getKeyValues()) {
     		favoriteAccountLine.append("<option value=\"").append(keyValue.getKey());
     		if (checkToAddError(accountPrefix + "favoriteAccountLineIdentifier")) {

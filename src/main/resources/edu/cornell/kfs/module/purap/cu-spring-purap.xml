@@ -36,6 +36,8 @@
 	<bean id="cu-purapModuleService" parent="purapModuleService-parentBean">
 	 	<property name="moduleConfiguration" ref="cu-purap"/>
 	</bean>
+	
+<bean id="b2bPurchaseOrderService" parent="b2bPurchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuB2BPurchaseOrderSciquestServiceImpl" />
 <!-- 
 <bean id="b2bPurchaseOrderService" class="org.kuali.kfs.module.purap.document.service.impl.B2BPurchaseOrderSciquestServiceImpl">
         <property name="b2bDao" ref="b2bDao"/>
@@ -89,7 +91,8 @@
     </bean> 
     -->
     
-    <!-- UPGRADE-911 
+    <!-- UPGRADE-911 	-->
+    
 	<bean id="electronicInvoiceExtractJob" parent="scheduledJobDescriptor">
 		<property name="steps">
 			<list>
@@ -99,10 +102,9 @@
 		</property>
 	</bean>
 	
-	<bean id="electronicInvoiceRouteStep" class="org.kuali.kfs.module.purap.batch.ElectronicInvoiceRouteStep" parent="step">
+	<bean id="electronicInvoiceRouteStep" class="edu.cornell.kfs.module.purap.batch.CuElectronicInvoiceRouteStep" parent="step">
 		<property name="electronicInvoiceHelperService" ref="electronicInvoiceHelperService" />
 	</bean>
-	-->
 	
 	<bean id="collegeLevelOrganizationDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.purap.dataaccess.impl.LevelOrganizationDaoJdbc">
 	
@@ -182,8 +184,19 @@
    <bean id="purapAccountingService" parent="purapAccountingService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPurapAccountingServiceImpl"/>
    
    <bean id="requisitionService" parent="requisitionService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuRequisitionServiceImpl"/>
+    <bean id="purchaseOrderTransmissionMethodDataRulesService" class="edu.cornell.kfs.module.purap.document.service.impl.PurchaseOrderTransmissionMethodDataRulesServiceImpl" />
+    <bean id="paymentRequestService" parent="paymentRequestService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPaymentRequestServiceImpl" />
+    <bean id="purchaseOrderDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPurchaseOrderDaoOjb" />
+ 	<bean id="purchaseOrderService" parent="purchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchaseOrderServiceImpl" />
+ 	<bean id="relatedDocumentDerivedRoleTypeService" parent="relatedDocumentDerivedRoleTypeService-parentBean" class="edu.cornell.kfs.module.purap.identity.CuRelatedDocumentDerivedRoleTypeServiceImpl" />
+    <bean id="receivingService" parent="receivingService-parentBean"  class="edu.cornell.kfs.module.purap.document.service.impl.CuReceivingServiceImpl" />
+    <bean id="electronicInvoiceHelperService" parent="electronicInvoiceHelperService-parentBean"  class="edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceHelperServiceImpl"/>
+    <bean id="electronicInvoiceMatchingService" parent="electronicInvoiceMatchingService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceMatchingServiceImpl" />
+    <bean id="creditMemoService" parent="creditMemoService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuCreditMemoServiceImpl" />
    
    <import resource="document/validation/configuration/RequisitionValidation.xml" />
    <import resource="document/validation/configuration/PurapValidatorDefinitions.xml" />
+    <import resource="document/validation/configuration/PurchaseOrderAmendmentValidation.xml" />
+    <import resource="document/validation/configuration/PurchaseOrderValidation.xml" />
    
 </beans>

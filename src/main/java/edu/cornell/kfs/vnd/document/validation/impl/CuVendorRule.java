@@ -24,6 +24,7 @@ import org.kuali.kfs.vnd.document.validation.impl.VendorRule;
 import org.kuali.kfs.vnd.service.CommodityCodeService;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
@@ -46,6 +47,7 @@ public class CuVendorRule extends VendorRule {
             valid &= validateB2BDefaultCommodityCode(document);
         }
       
+        valid &= processCuAddressValidation(document);
 		valid &= checkW9ReceivedIndicatorAndDate(document);
 		valid &= checkGeneralLiabilityAmountAndExpiration(document);
 		valid &= checkAutoLiabilityAmountAndExpiration(document);
@@ -156,6 +158,31 @@ public class CuVendorRule extends VendorRule {
 			return success;
 		}
         return success;
+    }
+
+    // CU enhancement related po transmission KFSUPGRADE-348
+    // can't override processAddressValidation because it has no modifier, so only class/package can access it.
+    boolean processCuAddressValidation(MaintenanceDocument document) {
+    	boolean valid = true;
+        VendorDetail newVendor = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+
+        List<VendorAddress> addresses = newVendor.getVendorAddresses();
+        String vendorTypeCode = newVendor.getVendorHeader().getVendorTypeCode();
+        String vendorAddressTypeRequiredCode = newVendor.getVendorHeader().getVendorType().getVendorAddressTypeRequiredCode();
+        verifyPOTransmissionTypeAllowedForVendorType(vendorTypeCode, addresses);
+        for (int i = 0; i < addresses.size(); i++) {
+            VendorAddress address = addresses.get(i);
+            String errorPath = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_ADDRESS + "[" + i + "]";
+            GlobalVariables.getMessageMap().clearErrorPath();
+            GlobalVariables.getMessageMap().addToErrorPath(errorPath);
+            String propertyName = VendorPropertyConstants.VENDOR_ADDRESS + "[" + i + "].";
+            valid &= checkAddressMethodOfPOTransmissionAndData(vendorTypeCode, vendorAddressTypeRequiredCode, address, propertyName);
+
+            GlobalVariables.getMessageMap().clearErrorPath();
+        }
+
+
+        return valid;
     }
 
 	protected boolean checkW9ReceivedIndicatorAndDate(MaintenanceDocument document) {
@@ -539,7 +566,7 @@ public class CuVendorRule extends VendorRule {
 	        //Now verify the data for the address type specified
 			// TODO : following validation is not ready till purap service "PurchaseOrderTransmissionMethodDataRulesService" is available
 			// uncomment following when it is ready
-	        //success &= validateVendorAddressForMethodOfPOTransmission(address, propertyConstant);
+	        success &= validateVendorAddressForMethodOfPOTransmission(address, propertyConstant);
 		}
 
 		return success;
@@ -660,5 +687,13 @@ public class CuVendorRule extends VendorRule {
         }	        
 		return valid;
 	 }
+
+	@Override
+	protected boolean processCustomApproveDocumentBusinessRules(
+			MaintenanceDocument document) {
+        boolean valid = super.processCustomApproveDocumentBusinessRules(document);
+        valid &= processCuAddressValidation(document);
+		return valid;
+	}
 
 }

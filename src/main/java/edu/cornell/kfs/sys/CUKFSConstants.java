@@ -75,5 +75,7 @@ public class CUKFSConstants {
     //KFSPTS-1460
     public static final String SEMICOLON = ";";
     
+    // KFSUPGRADE-75
+    public static final String MAINTAIN_FAVORITE_ACCOUNT = "Maintain Favorite Account";
         
 }

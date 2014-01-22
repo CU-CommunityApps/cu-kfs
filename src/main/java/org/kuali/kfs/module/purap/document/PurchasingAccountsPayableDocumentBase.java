@@ -31,6 +31,7 @@ import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.ItemType;
+import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurApItemBase;
@@ -66,6 +67,8 @@ import org.kuali.rice.krad.util.NoteType;
 import org.kuali.rice.krad.util.ObjectUtils;
 import org.kuali.rice.location.api.LocationConstants;
 import org.kuali.rice.location.framework.country.CountryEbo;
+
+import edu.cornell.kfs.module.purap.document.CuPurchaseOrderAmendmentDocument;
 
 /**
  * Base class for Purchasing-Accounts Payable Documents.
@@ -460,7 +463,10 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
             // only set the item line number for above the line items
             if (item.getItemType().isLineItemIndicator()) {
-                item.setItemLineNumber(new Integer(i + 1));
+                // KFSPTS-1719/KFSUPGRADE-485 :  skip this for non-qty order
+                if (!(item instanceof PaymentRequestItem && ((PaymentRequestItem) item).getPurchaseOrderItem() != null && ((PaymentRequestItem) item).getPurchaseOrderItem().isNoQtyItem())) {
+                	item.setItemLineNumber(new Integer(i + 1));
+                }
             }
         }
     }

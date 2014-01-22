@@ -15,6 +15,65 @@
  limitations under the License.
 -->
 
-  <bean id="PurchaseOrderAmendmentDocument" parent="PurchaseOrderAmendmentDocument-parentBean"/>
+  <bean id="PurchaseOrderAmendmentDocument" parent="PurchaseOrderAmendmentDocument-parentBean">
+      <property name="documentClass" value="edu.cornell.kfs.module.purap.document.CuPurchaseOrderAmendmentDocument"/>
+      <property name="baseDocumentClass" value="edu.cornell.kfs.module.purap.document.CuPurchaseOrderAmendmentDocument"/>
+    <property name="documentPresentationControllerClass" value="edu.cornell.kfs.module.purap.document.authorization.CuPurchaseOrderAmendmentDocumentPresentationController"/>
+  </bean>
+
+    <bean id="RoutingType-PurchaseOrderAmendmentDocument-newUnorderedItemAccount" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    	<property name="routingAttributes">
+    		<list>
+		        <ref bean="RoutingAttribute-financialDocumentTotalAmount" />
+		        <ref bean="RoutingAttribute-chartOfAccountsCode" />
+		        <ref bean="RoutingAttribute-accountNumber" />
+    		</list>
+    	</property>
+    	<property name="documentValuePathGroups">
+    		<list>
+    			<ref bean="DocumentValuePathGroup-PurchaseOrderAmendmentDocument-Account-accountingLines" />
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="DocumentValuePathGroup-PurchaseOrderAmendmentDocument-Account-accountingLines" parent="DocumentValuePathGroup-AccountingDocument-financialDocumentTotalAmount">
+    	<property name="documentCollectionPath">
+    		<bean parent="DocumentCollectionPath-AccountingLine-chartAndAccountNumber">
+    			<property name="collectionPath" value="accountsForRouting" />
+    		</bean>
+    	</property>
+    </bean>
+
+
+
+  <bean id="PurchaseOrderAmendmentDocument-validations" parent="PurchaseOrderAmendmentDocument-validations-parentBean">
+    <property name="sourceMap">
+	  <map key-type="java.lang.Class" merge="true">			
+	    <entry>
+		  <key><value>org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent</value></key>
+		  <value>PurchaseOrderAmendment-saveDocumentValidation</value>
+		</entry>
+        <entry>
+           <key><value>org.kuali.kfs.sys.document.validation.event.ReviewAccountingLineEvent</value></key>
+           <value>PurchaseOrderAmendment-reviewAccountingLineValidation</value>
+        </entry>                
+      </map>
+    </property>	  
+  </bean>
+	
+    <!-- workflow attributes for routing -->
+    <bean id="PurchaseOrderAmendmentDocument-workflowAttributes" parent="PurchaseOrderAmendmentDocument-workflowAttributes-parentBean">
+    	<property name="routingTypeDefinitions">
+    		<map merge="true">
+    		    <!-- no qualifiers for HasNewUnorderedItems -->
+    		    <entry key="SubAccount" value-ref="RoutingType-PurchasingAccountsPayableDocument-SubAccount"/>
+    			<entry key="AccountingOrganizationHierarchy" value-ref="RoutingType-PurchasingAccountsPayableDocument-AccountingOrganizationHierarchy"/>
+                <entry key="Commodity" value-ref="RoutingType-PurchasingDocument-Commodity"/>
+              	<entry key="Award" value-ref="RoutingType-PurchasingDocument-Award"/>
+              	<entry key="Budget" value-ref="RoutingType-PurchaseOrderDocument-Budget"/>
+    			<entry key="NewUnorderedItems" value-ref="RoutingType-PurchaseOrderAmendmentDocument-newUnorderedItemAccount"/>              	
+    		</map>
+    	</property>
+	</bean>
 	
 </beans>

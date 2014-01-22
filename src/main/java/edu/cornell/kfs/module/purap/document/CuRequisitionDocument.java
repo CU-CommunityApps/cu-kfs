@@ -58,6 +58,11 @@ public class CuRequisitionDocument extends RequisitionDocument {
     protected String vendorEmailAddress;
     private PermissionService permissionService;
     
+   // KFSPTS-985, KFSUPGRADE-75
+    public boolean isIntegratedWithFavoriteAccount() {
+        return true;
+    }
+
     @Override
     public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
         if (nodeName.equals(CUPurapWorkflowConstants.AWARD_REVIEW_REQUIRED)) return isAwardReviewRequired();

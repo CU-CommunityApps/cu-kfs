@@ -1,6 +1,5 @@
 package edu.cornell.kfs.sys.service.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,7 @@ import org.kuali.kfs.coa.businessobject.SubObjectCode;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kns.service.DictionaryValidationService;
 import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
@@ -25,6 +24,7 @@ import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
@@ -62,7 +62,7 @@ public class UserProcurementProfileValidationServiceImpl implements UserProcurem
      */
 	public boolean validateUserProfileExist(String principalId) {
     	Map<String, String> fieldValues = new HashMap<String, String>();
-    	fieldValues.put("principalId", principalId);
+    	fieldValues.put(KFSPropertyConstants.PRINCIPAL_ID, principalId);
     	if (CollectionUtils.isNotEmpty(businessObjectService.findMatching(UserProcurementProfile.class, fieldValues))) {
 		    GlobalVariables.getMessageMap().putError("document.newMaintainableObject.profileUser.principalName", CUKFSKeyConstants.ERROR_USER_PROFILE_EXIST);
 		    return true;
@@ -84,11 +84,11 @@ public class UserProcurementProfileValidationServiceImpl implements UserProcurem
 					if (account != account1) {
 						if (StringUtils.isNotBlank(account.getDescription()) && StringUtils.isNotBlank(account1.getDescription()) 
 								&& StringUtils.equals(account.getDescription(), account1.getDescription())) {
-							GlobalVariables.getMessageMap().putError("description", CUKFSKeyConstants.ERROR_DUPLICATE_FAVORITE_ACCOUNT_DESCRIPTION);
+							GlobalVariables.getMessageMap().putError(KFSPropertyConstants.DESCRIPTION, CUKFSKeyConstants.ERROR_DUPLICATE_FAVORITE_ACCOUNT_DESCRIPTION);
 							
 						}
 						if (account.equals(account1)) {
-							GlobalVariables.getMessageMap().putError("accountNumber", CUKFSKeyConstants.ERROR_DUPLICATE_ACCOUNTINGLINE);
+							GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, CUKFSKeyConstants.ERROR_DUPLICATE_ACCOUNTINGLINE);
 							
 						}
 							
@@ -136,9 +136,8 @@ public class UserProcurementProfileValidationServiceImpl implements UserProcurem
      * check if user has permission to maintain other user's procurement profile
      */
     public boolean canMaintainUserProcurementProfile() {
-		List<String> roleIds = new ArrayList<String>();
-		roleIds.add(KimApiServiceLocator.getRoleService().getRoleIdByNamespaceCodeAndName(KFSConstants.ParameterNamespaces.KFS, "Favorite Account Manager"));
-		return KimApiServiceLocator.getRoleService().principalHasRole(GlobalVariables.getUserSession().getPrincipalId(), roleIds, null);
+    	return KimApiServiceLocator.getPermissionService().hasPermission(
+    			GlobalVariables.getUserSession().getPrincipalId(), KFSConstants.CoreModuleNamespaces.KFS, CUKFSConstants.MAINTAIN_FAVORITE_ACCOUNT);
 	
     }
     
@@ -149,22 +148,22 @@ public class UserProcurementProfileValidationServiceImpl implements UserProcurem
 	private boolean isValidCode(FavoriteAccount account) {
 	    boolean valid = true;
 	    if (StringUtils.isNotBlank(account.getChartOfAccountsCode())) {
-	    	valid &= isValidChart(account.getChart(), "Chart", "chartOfAccountsCode");
+	    	valid &= isValidChart(account.getChart(), "Chart", KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE);
 	    }
 	    if (StringUtils.isNotBlank(account.getAccountNumber())) {
-	    	valid &= isValidAccount(account.getAccount(), "Account Number", "accountNumber");
+	    	valid &= isValidAccount(account.getAccount(), "Account Number", KFSPropertyConstants.ACCOUNT_NUMBER);
 	    }
 	    if (StringUtils.isNotBlank(account.getSubAccountNumber())) {
-	    	valid &= isValidSubAccount(account.getSubAccount(), "Sub Account Number", "subAccountNumber");
+	    	valid &= isValidSubAccount(account.getSubAccount(), "Sub Account Number", KFSPropertyConstants.SUB_ACCOUNT_NUMBER);
 	    }
 	    if (StringUtils.isNotBlank(account.getFinancialObjectCode())) {
-	    	valid &= isValidObjectCode(account.getObjectCode(), "Object Code", "financialObjectCode");
+	    	valid &= isValidObjectCode(account.getObjectCode(), "Object Code", KFSPropertyConstants.FINANCIAL_OBJECT_CODE);
 	    }
 	    if (StringUtils.isNotBlank(account.getFinancialSubObjectCode())) {
-	    	valid &= isValidSubObjectCode(account.getSubObjectCode(), "Sub Object Code", "financialSubObjectCode");
+	    	valid &= isValidSubObjectCode(account.getSubObjectCode(), "Sub Object Code", KFSPropertyConstants.FINANCIAL_SUB_OBJECT_CODE);
 	    }
 	    if (StringUtils.isNotBlank(account.getProjectCode())) {
-	    	valid &= isValidProjectCode(account.getProject(), "Project Code", "projectCode");
+	    	valid &= isValidProjectCode(account.getProject(), "Project Code", KFSPropertyConstants.PROJECT_CODE);
 	    }
 	    
 	    

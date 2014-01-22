@@ -25,5 +25,6 @@ public class CUPurapParameterConstants extends PurapParameterConstants {
     
     public static class ElectronicInvoiceParameters {
         public static final String SUPPRESS_REJECT_REASON_CODES_ON_EIRT_APPROVAL = "SUPPRESS_REJECT_REASON_CODES_ON_EIRT_APPROVAL";
+        public static final String DEFAULT_PROCESSING_CAMPUS = "DEFAULT_PROCESSING_CAMPUS";
     }
 }

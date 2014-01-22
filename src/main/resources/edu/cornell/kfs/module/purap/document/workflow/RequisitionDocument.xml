@@ -35,7 +35,7 @@
 				<status>Disapproved Fiscal</status>
 				<status>Awaiting Base Org Review</status>
 				<status>Disapproved Base Org Review</status>
-				<status>Awaiting Commodity Code</status>
+				<status>Awaiting Commodity Review</status>
 				<status>Disapproved Commodity Code</status>
 				<status>Awaiting Separation of Duties</status>
 				<status>Disapproved Separation of Duties</status>
@@ -72,12 +72,12 @@
               <role name="SubAccount" nextNode="Account"  nextAppDocStatus="Awaiting Fiscal Officer"/>
               <role name="Account" nextNode="AccountingOrganizationHierarchy" nextAppDocStatus="Awaiting Base Org Review" />
               <role name="AccountingOrganizationHierarchy" nextNode="RequiresAwardReview" nextAppDocStatus="Awaiting C and G Approval" />
-              <split name="RequiresAwardReview" nextNode="Commodity"   nextAppDocStatus="Awaiting Commodity Code">
+              <split name="RequiresAwardReview" nextNode="Commodity"   >
                 <branch name="True">
-                  <role name="Award" nextNode="JoinRequiresAwardReview" />
+                  <role name="Award" nextNode="JoinRequiresAwardReview"  nextAppDocStatus="Awaiting Commodity Review" />
                 </branch>
                 <branch name="False">
-                  <simple name="NoOpRequiresAwardReview" nextNode="JoinRequiresAwardReview" />
+                  <simple name="NoOpRequiresAwardReview" nextNode="JoinRequiresAwardReview" nextAppDocStatus="Awaiting Commodity Review"  />
                 </branch>
                 <join name="JoinRequiresAwardReview" />
               </split>
