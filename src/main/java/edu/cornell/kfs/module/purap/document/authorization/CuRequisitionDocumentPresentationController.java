@@ -40,11 +40,6 @@ public class CuRequisitionDocumentPresentationController extends RequisitionDocu
             editModes.add(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION);
         }
         
-		// KFSPTS-985
-		if (document instanceof RequisitionDocument && !editModes.contains(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION) && !hasEmptyAcctline((RequisitionDocument)document) ) {
-			editModes.add(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION);
-		}
-
         return editModes;
 
     }
