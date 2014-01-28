@@ -1514,6 +1514,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 				}
 			}
 		}
+		newNote.setNoteTypeCode(KFSConstants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE.getCode());
+		
         return super.insertBONote(mapping, form, request, response);
     }
     
