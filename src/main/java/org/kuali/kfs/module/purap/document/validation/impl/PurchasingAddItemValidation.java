@@ -47,10 +47,6 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
 
     private BusinessObjectService businessObjectService;
     private DataDictionaryService dataDictionaryService;
-    private PurchasingUnitOfMeasureValidation unitOfMeasureValidation;
-    private PurchasingItemUnitPriceValidation itemUnitPriceValidation;
-    private PurchasingItemDescriptionValidation itemDescriptionValidation;
-    private PurchasingItemQuantityValidation itemQuantityValidation;
     private PurchasingCommodityCodeValidation commodityCodeValidation;
     
     public boolean validate(AttributedDocumentEvent event) {
@@ -275,36 +271,7 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
         this.dataDictionaryService = dataDictionaryService;
     }
     
-    public PurchasingItemUnitPriceValidation getItemUnitPriceValidation() {
-        return itemUnitPriceValidation;
-    }
     
-    public void setItemUnitPriceValidation(PurchasingItemUnitPriceValidation itemUnitPriceValidation) {
-        this.itemUnitPriceValidation = itemUnitPriceValidation;
-    }
-    public PurchasingUnitOfMeasureValidation getUnitOfMeasureValidation() {
-        return unitOfMeasureValidation;
-    }
-
-    public void setUnitOfMeasureValidation(PurchasingUnitOfMeasureValidation unitOfMeasureValidation) {
-        this.unitOfMeasureValidation = unitOfMeasureValidation;
-    }
-
-    public PurchasingItemDescriptionValidation getItemDescriptionValidation() {
-        return itemDescriptionValidation;
-    }
-    
-    public void setItemDescriptionValidation(PurchasingItemDescriptionValidation itemDescriptionValidation) {
-        this.itemDescriptionValidation = itemDescriptionValidation;
-    }
-
-    public PurchasingItemQuantityValidation getItemQuantityValidation() {
-        return itemQuantityValidation;
-    }
-
-    public void setItemQuantityValidation(PurchasingItemQuantityValidation itemQuantityValidation) {
-        this.itemQuantityValidation = itemQuantityValidation;
-    }
 
     public PurchasingCommodityCodeValidation getCommodityCodeValidation() {
         return commodityCodeValidation;

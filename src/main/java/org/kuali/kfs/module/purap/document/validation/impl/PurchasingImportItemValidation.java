@@ -63,19 +63,95 @@ public class PurchasingImportItemValidation extends PurchasingAccountsPayableImp
         GlobalVariables.getMessageMap().addToErrorPath(PurapConstants.ITEM_TAB_ERROR_PROPERTY);
         
         if (getItemForValidation().getItemType().isLineItemIndicator()) {
-            itemDescriptionValidation.setItemForValidation(getItemForValidation());
-            valid &= itemDescriptionValidation.validate(event);
+            valid &= validateItemDescription(getItemForValidation());
             
             commodityCodeValidation.setItemForValidation(getItemForValidation());
             valid &= commodityCodeValidation.validate(event);
         }
-        itemUnitPriceValidation.setItemForValidation(getItemForValidation());
-        valid &= itemUnitPriceValidation.validate(event);
-        unitOfMeasureValidation.setItemForValidation(getItemForValidation());
-        valid &= unitOfMeasureValidation.validate(event);     
+        valid &= validateItemUnitPrice(getItemForValidation());
+        valid &= validateUnitOfMeasureCodeExists(getItemForValidation());     
         
         
         GlobalVariables.getMessageMap().removeFromErrorPath(PurapConstants.ITEM_TAB_ERROR_PROPERTY);
+        return valid;
+    }
+    
+    /**
+     * Checks that a description was entered for the item.
+     * 
+     * @param item
+     * @return
+     */
+    public boolean validateItemDescription(PurApItem item) {
+        boolean valid = true;      
+        if (StringUtils.isEmpty(item.getItemDescription())) {
+            valid = false;
+            String attributeLabel = dataDictionaryService.
+                                    getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
+                                    getAttributeDefinition(PurapPropertyConstants.ITEM_DESCRIPTION).getLabel();
+            GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_DESCRIPTION, KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + item.getItemIdentifierString());
+        }
+        return valid;
+    }
+    
+    /**
+     * Validates the unit price for all applicable item types. It validates that the unit price field was
+     * entered on the item, and that the price is in the right range for the item type.
+     * 
+     * @param purDocument the purchasing document to be validated
+     * @return boolean false if there is any validation that fails.
+     */
+    public boolean validateItemUnitPrice(PurApItem item) {
+        boolean valid = true;
+        if (item.getItemType().isLineItemIndicator()) {
+            if (ObjectUtils.isNull(item.getItemUnitPrice())) {
+                valid = false;
+                String attributeLabel = dataDictionaryService.
+                                        getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
+                                        getAttributeDefinition(PurapPropertyConstants.ITEM_UNIT_PRICE).getLabel();
+                GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_PRICE, KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + item.getItemIdentifierString());
+            }
+        }    
+
+        if (ObjectUtils.isNotNull(item.getItemUnitPrice())) {
+            if ((BigDecimal.ZERO.compareTo(item.getItemUnitPrice()) > 0) && ((!item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE)) && (!item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE)))) {
+                // If the item type is not full order discount or trade in items, don't allow negative unit price.
+                GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_PRICE, PurapKeyConstants.ERROR_ITEM_AMOUNT_BELOW_ZERO, ItemFields.UNIT_COST, item.getItemIdentifierString());
+                valid = false;
+            }
+            else if ((BigDecimal.ZERO.compareTo(item.getItemUnitPrice()) < 0) && ((item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE)) || (item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE)))) {
+                // If the item type is full order discount or trade in items, its unit price must be negative.
+                GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_PRICE, PurapKeyConstants.ERROR_ITEM_AMOUNT_NOT_BELOW_ZERO, ItemFields.UNIT_COST, item.getItemIdentifierString());
+                valid = false;
+            }
+        }
+
+        return valid;
+    }
+    
+    /**
+     * Validates that if the item type is quantity based, that the unit of measure code is valid.
+     * Looks for the UOM Code in the table. If it is not there, the code is invalid. 
+     * This checking is needed only for imported items, since items added from new line could only 
+     * choose an existing UOM from the drop-down list.
+     * 
+     * @param item the item to be validated
+     * @return boolean false if the item type is quantity based and the unit of measure code is invalid.
+     */
+    protected boolean validateUnitOfMeasureCodeExists(PurApItem item) {
+        boolean valid = true;
+        
+        if (item.getItemType().isQuantityBasedGeneralLedgerIndicator()) {            
+            String uomCode = item.getItemUnitOfMeasureCode();
+            Map<String,String> fieldValues = new HashMap<String,String>();
+            fieldValues.put(KFSPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE, uomCode);
+            if (businessObjectService.countMatching(UnitOfMeasure.class, fieldValues) != 1) {
+                String[] errorParams = { uomCode, "" + item.getItemLineNumber() };
+                GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERRORS, PurapKeyConstants.ERROR_ITEMPARSER_INVALID_UOM_CODE, errorParams);
+                valid = false;
+            }  
+        }
+
         return valid;
     }
 
