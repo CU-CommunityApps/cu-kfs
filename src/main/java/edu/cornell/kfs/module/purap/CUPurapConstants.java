@@ -35,6 +35,11 @@ public class CUPurapConstants extends PurapConstants {
         public static final String AWAIT_FISCAL_REVIEW = "AFIS";
         public static final String DAPRVD_FISCAL = "DFIS";
         public static final String PENDING_CXML = "CXPE";
+        // KFSUPGRADE-411
+        public static final String CXML_ERROR = "CXER";
+        public static final String OPEN = "OPEN";
+        public static final String VOID = "VOID";
+        //end KFSUPGRADE-411
         // KFSUPGRADE-336.  override purapconstants
             public static final String NODE_DOCUMENT_TRANSMISSION = "JoinRequiresBudgetReview";
             public static final String APPDOC_AWAITING_FISCAL_REVIEW = "Awaiting Fiscal Officer"; // Waiting for Fiscal Officer approval

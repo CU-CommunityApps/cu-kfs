@@ -38,6 +38,7 @@ import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.web.format.PhoneNumberFormatter;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kns.web.ui.ExtraButton;
 import org.kuali.rice.krad.util.KRADConstants;
 
@@ -68,6 +69,9 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
 
     protected String locationBuildingFromLookup;
     protected String locationCampusFromLookup;
+    
+    // KFSPTS-794 related
+    protected String reasonToChange;
 
     /**
      * Constructs a PurchasingFormBase instance and sets up the appropriately casted document.
@@ -465,5 +469,27 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
 		}
 		return super.shouldPropertyBePopulatedInForm(requestParameterName, request);
 	}
+	
+    public String getReasonToChange() {
+        return reasonToChange;
+    }
+
+    public void setReasonToChange(String reasonToChange) {
+        this.reasonToChange = reasonToChange;
+    }
+    
+    public boolean isDocFinal() {
+    	WorkflowDocument workflowDocument = this.getDocument().getDocumentHeader().getWorkflowDocument();
+    	return workflowDocument != null ? workflowDocument.isApproved() : false;
+    }
+    public boolean isDocEnroute() {
+    	WorkflowDocument workflowDocument = this.getDocument().getDocumentHeader().getWorkflowDocument();
+    	return workflowDocument != null ? workflowDocument.isEnroute()  : false;
+    }
+    public boolean isDocCanceledOrDisapproved() {
+    	WorkflowDocument workflowDocument = this.getDocument().getDocumentHeader().getWorkflowDocument();
+    	return workflowDocument != null ? workflowDocument.isCanceled() ||  workflowDocument.isDisapproved() : false;
+    }
+
 
 }

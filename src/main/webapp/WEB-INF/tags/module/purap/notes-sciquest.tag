@@ -31,7 +31,7 @@
 <c:if test="${empty noteType}">
     <%-- default to document header notes this default should probably be set somewhere else --%>
     <c:set var="noteType" value="${Constants.NoteTypeEnum.DOCUMENT_HEADER_NOTE_TYPE}"/>
-    <c:set var="notesBo" value="${KualiForm.document.documentHeader.boNotes}"/>
+    <c:set var="notesBo" value="${KualiForm.document.notes}"/>
 </c:if>
 
 <c:set var="documentTypeName" value="${KualiForm.document.class.name}"/>
@@ -138,7 +138,7 @@
                     <html:select property="newNote.noteTopicText">
                         <html:optionsCollection
                                 property="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"
-                                label="label" value="key"/>
+                                label="value" value="key"/>
                     </html:select>
                     </c:otherwise>
                   </c:choose>

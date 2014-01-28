@@ -71,15 +71,13 @@
     <purap:paymentHistory
             documentAttributes="${DataDictionary.RelatedDocuments.attributes}" />
             
-     <%--KFSPTS-974:   Commenting out until sci-quest is working
+    <%--KFSPTS-974:   --%> 
     
-    <purap:notes-sciquest notesBo="${KualiForm.document.documentBusinessObject.boNotes}"
+    <purap:notes-sciquest notesBo="${KualiForm.document.notes}"
                           noteType="${Constants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE}"
                           allowsNoteFYI="true"
                           defaultOpen="true"
-                          attachmentTypesValuesFinderClass="${DataDictionary.RequisitionDocument.attachmentTypesValuesFinderClass}"/>
-	--%>   
-	<kul:notes />         
+                          attachmentTypesValuesFinderClass="${DataDictionary.RequisitionDocument.attachmentTypesValuesFinderClass}"/>       
 
 	<kul:adHocRecipients />
 

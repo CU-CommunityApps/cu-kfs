@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.businessobject.B2BInformation;
@@ -36,6 +37,7 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.role.RoleService;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.DocumentService;
@@ -50,6 +52,8 @@ import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 
 public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuB2BShoppingServiceImpl.class);
+    
+    private static final String TRUE = "true";
     private BusinessObjectService businessObjectService;
     private DocumentService documentService;
     private ParameterService parameterService;
@@ -326,19 +330,52 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
         return cxml.toString();
       }
 
-    // KFSPTS-1720
-    private String getPreAuthValue(String principalId) {
-        try {
-           if (KimApiServiceLocator.getPermissionService().hasPermission(
-                   principalId, CUKFSConstants.ParameterNamespaces.PURCHASING, CUPurapConstants.B2B_SUBMIT_ESHOP_CART_PERMISSION))  {
-              return CUPurapConstants.PREAUTHORIZED;
-          }
-          return CUPurapConstants.NON_PREAUTHORIZED;
-        } catch (Exception e) {
-            // incase something goes wrong.  continue to process
-            LOG.info("error from role check " + e.getMessage());
-            return CUPurapConstants.NON_PREAUTHORIZED;
-        }
+    // KFSUPGRADE-410
+	// KFSPTS-1720
+	private String getPreAuthValue(String principalId) {
+		try {
+			List<String> roleIds = new ArrayList<String>();
+			roleIds.add(getRoleService().getRoleIdByNamespaceCodeAndName(CUKFSConstants.ParameterNamespaces.PURCHASING, CUKFSConstants.SysKimApiConstants.ESHOP_USER_ROLE_NAME));
+			roleIds.add(getRoleService().getRoleIdByNamespaceCodeAndName(CUKFSConstants.ParameterNamespaces.PURCHASING, CUKFSConstants.SysKimApiConstants.ESHOP_SUPER_USER_ROLE_NAME));
+
+			if (getRoleService().principalHasRole(principalId, roleIds, null)) {
+				return CUPurapConstants.PREAUTHORIZED;
+			}
+			return CUPurapConstants.NON_PREAUTHORIZED;
+		} catch (Exception e) {
+			// incase something goes wrong. continue to process
+			LOG.info("error from role check " + e.getMessage());
+			return CUPurapConstants.PREAUTHORIZED;
+		}
+	}
+
+	private RoleService getRoleService() {
+		return SpringContext.getBean(RoleService.class);
+	}
+	//end KFSUPGRADE-410
+    
+    // KFSUPGRADE-404
+    /**
+     * @see org.kuali.kfs.module.purap.document.service.impl.B2BShoppingServiceImpl#createRequisitionItem(org.kuali.kfs.module.purap.businessobject.B2BShoppingCartItem, java.lang.Integer, java.lang.String)
+     */
+    @Override
+    protected RequisitionItem createRequisitionItem(B2BShoppingCartItem item,
+    		Integer itemLine, String defaultCommodityCode) {
+    	 RequisitionItem reqItem = super.createRequisitionItem(item, itemLine, defaultCommodityCode);
+    	 
+    	 // KFSPTS-2257 : eshopflag
+         Map<String, String> classification = item.getClassification();
+         reqItem.setControlled(StringUtils.equals(TRUE,classification.get("Controlled")));
+         reqItem.setRadioactiveMinor(StringUtils.equals(TRUE,classification.get("RadioactiveMinor")));
+         reqItem.setGreen(StringUtils.equals(TRUE,classification.get("GreenProduct")));
+         reqItem.setHazardous(StringUtils.equals(TRUE,classification.get("Hazardous")));
+         reqItem.setSelectAgent(StringUtils.equals(TRUE,classification.get("SelectAgent")));
+         reqItem.setRadioactive(StringUtils.equals(TRUE,classification.get("Radioactive")));
+         reqItem.setToxin(StringUtils.equals(TRUE,classification.get("Toxin")));
+         reqItem.setRecycled(StringUtils.equals(TRUE,classification.get("Green")));
+         reqItem.setEnergyStar(StringUtils.equals(TRUE,classification.get("EnergyStar")));
+         
+    	 return reqItem;
     }
 
 }

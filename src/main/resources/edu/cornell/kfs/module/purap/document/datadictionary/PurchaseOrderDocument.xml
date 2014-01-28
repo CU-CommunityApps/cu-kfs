@@ -16,8 +16,6 @@
 -->
 
   <bean id="PurchaseOrderDocument" parent="PurchaseOrderDocument-parentBean">
- <!--     <property name="documentClass" value="edu.cornell.kfs.module.purap.document.CuPurchaseOrderDocument"/>
-    <property name="baseDocumentClass" value="edu.cornell.kfs.module.purap.document.CuPurchaseOrderDocument"/> --> 
      <property name="attributes">
       <list merge="true">
         <ref bean="PurchaseOrderDocument-vendorEmailAddress"/>

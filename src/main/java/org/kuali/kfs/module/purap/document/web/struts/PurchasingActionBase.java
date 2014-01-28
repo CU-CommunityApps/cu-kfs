@@ -81,6 +81,7 @@ import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
@@ -92,7 +93,9 @@ import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.service.KualiRuleService;
+import org.kuali.rice.krad.service.NoteService;
 import org.kuali.rice.krad.service.PersistenceService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
@@ -100,6 +103,9 @@ import org.kuali.rice.krad.util.MessageMap;
 import org.kuali.rice.krad.util.ObjectUtils;
 
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.module.purap.document.web.struts.CuPurchaseOrderForm;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
@@ -113,6 +119,8 @@ import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 
 public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
     protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PurchasingActionBase.class);
+    
+    private static final int SIZE_5MB =5242880;
 
     /**
      * @see org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase#refresh(org.apache.struts.action.ActionMapping,
@@ -1416,10 +1424,20 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
 
+        // TODO : should combine all validation errors and return at the same time
+		if (isAttachmentSizeExceedSqLimit(form, "route") || isReasonToChangeRequired(form)) {
+			return mapping.findForward(KFSConstants.MAPPING_BASIC);
+		}
+		// save this flag before notes is saved during route
+		boolean isCreatingReasonNote = isCreatingReasonNote(form);
         // call prorateDiscountTradeIn
         SpringContext.getBean(PurapService.class).prorateForTradeInAndFullOrderDiscount(purDoc);
 
-        return super.route(mapping, form, request, response);
+        ActionForward forward = super.route(mapping, form, request, response);
+        if (GlobalVariables.getMessageMap().hasNoErrors() && isCreatingReasonNote) {
+    		createReasonNote(form);
+        }
+        return forward;
     }
 
     /**
@@ -1431,23 +1449,270 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
      */
     @Override
     public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
+    	PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
         PurchasingDocument purDoc = (PurchasingDocument) purchasingForm.getDocument();
+		if (isAttachmentSizeExceedSqLimit(form, "approve") || isReasonToChangeRequired(form)) {
+			return mapping.findForward(KFSConstants.MAPPING_BASIC);
+		}
 
-        // call prorateDiscountTradeIn
+		boolean isCreatingReasonNote = isCreatingReasonNote(form);
+		if (isCreatingReasonNote) {
+			// save here, so it can be picked up in b2b
+            SpringContext.getBean(NoteService.class).saveNoteList(purDoc.getNotes());
+
+		}
+       // call prorateDiscountTradeIn
         SpringContext.getBean(PurapService.class).prorateForTradeInAndFullOrderDiscount(purDoc);
+        
+        ActionForward forward = super.approve(mapping, form, request, response);
+        
+        if (GlobalVariables.getMessageMap().hasNoErrors() && isCreatingReasonNote) {
+    		createReasonNote(form);
+        }
+        return forward;
 
-        return super.approve(mapping, form, request, response);
     }
 
     @Override
     public ActionForward blanketApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
         PurchasingDocument purDoc = (PurchasingDocument) purchasingForm.getDocument();
+		if (isAttachmentSizeExceedSqLimit(form, "blanket approve") || isReasonToChangeRequired(form)) {
+			return mapping.findForward(KFSConstants.MAPPING_BASIC);
+		}
+		boolean isCreatingReasonNote = isCreatingReasonNote(form);
         // call prorateDiscountTradeIn
         SpringContext.getBean(PurapService.class).prorateForTradeInAndFullOrderDiscount(purDoc);
-        return super.blanketApprove(mapping, form, request, response);
+        ActionForward forward = super.blanketApprove(mapping, form, request, response);
+        if (GlobalVariables.getMessageMap().hasNoErrors() && isCreatingReasonNote) {
+    		createReasonNote(form);
+        }
+        return forward;
     }
+    
+    @Override
+    public ActionForward insertBONote(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+       // TODO : should use 'addnoteevent' ?
+    	/*
+    	 * KFSPTS-794 : add rule check when adding note
+    	 */
+    	KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+    	FormFile attachmentFile = kualiDocumentFormBase.getAttachmentFile();
+    	Note newNote = kualiDocumentFormBase.getNewNote();
+		if (StringUtils.equals(CUPurapConstants.AttachemntToVendorIndicators.SEND_TO_VENDOR,newNote.getNoteTopicText())) {
+			if (StringUtils.isBlank(attachmentFile.getFileName())) {
+				GlobalVariables.getMessageMap().putError(String.format("%s.%s",KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
+						KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME), CUPurapKeyConstants.ERROR_ADD_NEW_NOTE_SEND_TO_VENDOR_NO_ATT);
+				return mapping.findForward(KFSConstants.MAPPING_BASIC);
+			} else {
+				if (isAttachmentSizeExceedSqLimit(form, "add")) {
+					return mapping.findForward(KFSConstants.MAPPING_BASIC);
+				} else if (attachmentFile.getFileSize() > SIZE_5MB) {
+					GlobalVariables.getMessageMap().putError(String.format("%s.%s",KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
+							KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME), CUPurapKeyConstants.ERROR_ATT_FILE_SIZE_OVER_LIMIT, attachmentFile.getFileName(), "5");
+					return mapping.findForward(KFSConstants.MAPPING_BASIC);					
+				}
+			}
+		}
+        return super.insertBONote(mapping, form, request, response);
+    }
+    
+    /*
+     * check if number of attachments, that are sent to SQ, is over the limit.
+     * default to 10, and also use a system param to make it flexible.
+     */
+    private boolean isAttachmentSizeExceedSqLimit(ActionForm form, String action) {
+    	boolean isExceed = false;
+    	KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+		String attachmentSize = "10";
+        int addOne = StringUtils.equals("add", action) ? 1  : 0;
+		try {
+			attachmentSize = SpringContext.getBean(ParameterService.class).getParameterValueAsString(PurapConstants.PURAP_NAMESPACE, KRADConstants.DetailTypes.ALL_DETAIL_TYPE,
+					CUPurapConstants.MAX_SQ_NO_ATTACHMENTS);
+			
+		} catch (Exception e) {
+			// param not found
+			LOG.info("Parameter MAX_SQ_NO_ATTACHMENTS not found");
+		}
+		if (StringUtils.isNotBlank(attachmentSize)
+				&& Integer.parseInt(attachmentSize)  < (getNumberOfNotesToSendToVendor(kualiDocumentFormBase.getDocument()) + addOne)) {
+			GlobalVariables.getMessageMap().putError(String.format("%s.%s",KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
+					KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME),CUPurapKeyConstants.ERROR_EXCEED_SQ_NUMBER_OF_ATT_LIMIT, action, attachmentSize);
+			isExceed = true;
+		}
+		return isExceed;
+    }
+    
+    /*
+     * check if the 'send to vendor' flag is changed.  
+     */
+    private boolean isAttachmentReqChanged(ActionForm form) {
+    	boolean ischanged = false;
+    	KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        List<Note> savedNotes = getPersistedBoNotesNotes(kualiDocumentFormBase.getDocument());
+        List<Note> boNotes = kualiDocumentFormBase.getDocument().getNotes();
+        if (!(kualiDocumentFormBase.getDocument() instanceof RequisitionDocument)) {
+        	restoreSendToVendorFlag(boNotes, ((CuPurchaseOrderForm)kualiDocumentFormBase).getCopiedNotes());
+        }
+        boolean isChanged = false;
+        for (Note savedNote : savedNotes) {
+        	for (Note note : boNotes) {
+        		if (note.getNoteIdentifier().equals(savedNote.getNoteIdentifier()) && !StringUtils.equals(note.getNoteTopicText(), savedNote.getNoteTopicText())
+        				&& (StringUtils.equalsIgnoreCase(note.getNoteTopicText(), CUPurapConstants.AttachemntToVendorIndicators.SEND_TO_VENDOR) || StringUtils.equalsIgnoreCase(savedNote.getNoteTopicText(), CUPurapConstants.AttachemntToVendorIndicators.SEND_TO_VENDOR))) {
+        			isChanged = true;
+        			break;
+        		}
+        		
+        	}
+        }
+		return isChanged;
+    }
+
+    /*
+     * This is for PO/POA which will refresh bonote during populate.  This is just to restore what is in form document
+     */
+    private void restoreSendToVendorFlag(List<Note> boNotes, List<Note> curNotes) {
+		if (CollectionUtils.isNotEmpty(curNotes) && CollectionUtils.isNotEmpty(boNotes)) {
+			for (Note curNote : curNotes) {
+				for (Note note : boNotes) {
+					if (note.getNoteIdentifier().equals(curNote.getNoteIdentifier())&& !StringUtils.equals(note.getNoteTopicText(),curNote.getNoteTopicText())) {
+						note.setNoteTopicText(curNote.getNoteTopicText());
+					}
+
+				}
+			}
+		}
+
+    }
+    
+    /*
+     * check if reason is required
+     */
+    private boolean isReasonToChangeRequired(ActionForm form) {
+    	boolean isReasonRequired = false;
+    	KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+
+		if (isCreatingReasonNote(form) && StringUtils.isBlank(((PurchasingFormBase)kualiDocumentFormBase).getReasonToChange())) {
+			GlobalVariables.getMessageMap().putError(String.format("%s.%s",KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
+					KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME),CUPurapKeyConstants.ERROR_REASON_IS_REQUIRED);
+			isReasonRequired = true;
+		}
+		return isReasonRequired;
+    }
+
+    @Override
+    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		if (isAttachmentSizeExceedSqLimit(form, "save") || isReasonToChangeRequired(form)) {
+			return mapping.findForward(KFSConstants.MAPPING_BASIC);
+		}
+    	KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+		// save this flag before notes is saved during route
+		boolean isCreatingReasonNote = isCreatingReasonNote(form);
+//    	else if (!(kualiDocumentFormBase.getDocument() instanceof RequisitionDocument)) {
+//        	restoreSendToVendorFlag(kualiDocumentFormBase.getDocument().getDocumentBusinessObject().getBoNotes(), ((PurchaseOrderForm)kualiDocumentFormBase).getCopiedNotes());
+//        }
+
+		
+		ActionForward forward =  super.save(mapping, form, request, response);
+
+        if (GlobalVariables.getMessageMap().hasNoErrors() && isCreatingReasonNote) {
+    		createReasonNote(form);
+        }
+        return forward;
+
+    }
+
+    // only if it is still enroute
+    /*
+     * check if it needs to create a note for changing 'send to vendor'
+     */
+    private boolean isCreatingReasonNote(ActionForm form) {
+    	KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        return 	(((PurchasingFormBase)kualiDocumentFormBase).isDocEnroute() || !(kualiDocumentFormBase.getDocument() instanceof RequisitionDocument)) 
+        		&& isAttachmentReqChanged(form);
+    }
+    
+    /*
+     * creating the change to vendor reason note.
+     */
+	private void createReasonNote(ActionForm form) {
+		// TODO : move to service ?
+    	KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        try {
+            Note noteObj = SpringContext.getBean(DocumentService.class).createNoteFromDocument(kualiDocumentFormBase.getDocument(), ((PurchasingFormBase)kualiDocumentFormBase).getReasonToChange());
+            kualiDocumentFormBase.getDocument().addNote(noteObj);
+         //   SpringContext.getBean(NoteService.class).save(noteObj);
+            SpringContext.getBean(NoteService.class).saveNoteList(kualiDocumentFormBase.getDocument().getNotes());
+            ((PurchasingFormBase)kualiDocumentFormBase).setReasonToChange(KFSConstants.EMPTY_STRING);
+        }
+        catch(Exception e){
+            String errorMessage = "Error creating and saving close note for reason change requirement with document service";
+            LOG.error("createReasonNote " + errorMessage, e);
+            throw new RuntimeException(errorMessage, e);
+        }   
+        
+	}
+	
+ 
+    private List<Note> getPersistedBoNotesNotes(Document document) {
+    	
+        List<Note> notes = new ArrayList<Note>();
+        if (document instanceof RequisitionDocument) {
+            notes = SpringContext.getBean(NoteService.class).getByRemoteObjectId(document.getObjectId());
+        } else {
+             notes = SpringContext.getBean(PurchaseOrderService.class).getPurchaseOrderNotes(((PurchaseOrderDocument)document).getPurapDocumentIdentifier());
+        	
+        }
+        return notes;
+    }
+
+    private int getNumberOfNotesToSendToVendor(Document purchaseOrder) {
+    	int numberOfNotesToSendToVendor = 0;
+    	// for POA purchaseOrder.getBoNotes() is empty, but purchaseOrder.getDocumentBusinessObject().getBoNotes() is not.
+        List<Note> notesToSend = purchaseOrder.getNotes();
+        if (CollectionUtils.isNotEmpty(notesToSend)) {
+        	for (Note note : notesToSend) {
+                if (StringUtils.equalsIgnoreCase(note.getNoteTopicText(), CUPurapConstants.AttachemntToVendorIndicators.SEND_TO_VENDOR)) {
+            	    numberOfNotesToSendToVendor++;
+                }
+        	}
+        }
+        return numberOfNotesToSendToVendor;
+    }
+
+    @Override
+    public ActionForward close(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        KualiDocumentFormBase docForm = (KualiDocumentFormBase) form;
+        doProcessingAfterPost( docForm, request );
+
+        // only want to prompt them to save if they already can save
+        if (canSave(docForm)) {
+            Object question = getQuestion(request);
+            // logic for close question
+            if (question == null) {
+                // ask question if not already asked
+                return this.performQuestionWithoutInput(mapping, form, request, response, KRADConstants.DOCUMENT_SAVE_BEFORE_CLOSE_QUESTION, getKualiConfigurationService().getPropertyValueAsString(RiceKeyConstants.QUESTION_SAVE_BEFORE_CLOSE), KRADConstants.CONFIRMATION_QUESTION, KRADConstants.MAPPING_CLOSE, "");
+            }
+            else {
+                Object buttonClicked = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
+                if ((KRADConstants.DOCUMENT_SAVE_BEFORE_CLOSE_QUESTION.equals(question)) && ConfirmationQuestion.YES.equals(buttonClicked)) {
+                    // if yes button clicked - save the doc
+            		if (isAttachmentSizeExceedSqLimit(form, "save") || isReasonToChangeRequired(form)) {
+            			return mapping.findForward(KFSConstants.MAPPING_BASIC);
+            		} else {
+            	    	if (isCreatingReasonNote(form)) {
+            	    		createReasonNote(form);
+            	    	}
+                        getDocumentService().saveDocument(docForm.getDocument());
+            		}
+                }
+                // else go to close logic below
+            }
+        }
+
+        return returnToSender(request, mapping, docForm);
+    }
+
 
     /**
      * Checks if calculation is required. Currently it is required when it has not already been calculated and if the user can
