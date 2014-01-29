@@ -176,19 +176,19 @@
     <tr>
         <kul:htmlAttributeHeaderCell literalLabel="${status.index + 1}" scope="row"/>
         <td class="datacell center">
-            <bean:write name="KualiForm" property="${propPrefix}boNote[${status.index}].notePostedTimestamp"/>
+            <bean:write name="KualiForm" property="document.notes[${status.index}].notePostedTimestamp"/>
             &nbsp;</td>
 
         <td class="datacell center">
-                <bean:write name="KualiForm" property="${propPrefix}boNote[${status.index}].authorUniversal.name"/>
+                <bean:write name="KualiForm" property="document.notes[${status.index}].authorUniversal.name"/>
                 <%-- NEED TO ADD THIS TOPIC FIELD TO DATABASE --%>
             <c:if test="${displayTopicFieldInNotes eq true}">
         <td class="datacell center">
-            <bean:write name="KualiForm" property="${propPrefix}boNote[${status.index}].noteTopicText"/></td>
+            <bean:write name="KualiForm" property="document.notes[${status.index}].noteTopicText"/></td>
         </c:if>
 
         <td class="datacell center"><bean:write name="KualiForm"
-                                                property="${propPrefix}boNote[${status.index}].noteText"/></td>
+                                                property="document.notes[${status.index}].noteText"/></td>
 
         <c:choose>
             <c:when test="${(!empty note.attachment) and (note.attachment.complete)}">
@@ -205,12 +205,12 @@
                                         onclick="excludeSubmitRestriction=true"/>
                         </c:if>
                         <bean:write name="KualiForm"
-                                    property="${propPrefix}boNote[${status.index}].attachment.attachmentFileName"/>
+                                    property="document.notes[${status.index}].attachment.attachmentFileName"/>
                         &nbsp;
                                     <span style="white-space: nowrap">
                                       <kul:fileSize byteSize="${note.attachment.attachmentFileSize}">
                                           (<c:out value="${fileSize} ${fileSizeUnits}"/>, <bean:write name="KualiForm"
-                                                                                                      property="${propPrefix}boNote[${status.index}].attachment.attachmentMimeTypeCode"/>)
+                                                                                                      property="document.notes[${status.index}].attachment.attachmentMimeTypeCode"/>)
                                       </kul:fileSize>
                                     </span>
                     </c:if>
@@ -231,10 +231,10 @@
                             <c:if test="${empty note.noteTopicText}">No</c:if> 
                     </c:when>
                     <c:otherwise>
-                    <html:select property="${propPrefix}boNote[${status.index}].noteTopicText">
+                    <html:select property="document.notes[${status.index}].noteTopicText">
                         <html:optionsCollection
                                 property="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"
-                                label="label" value="key"/>
+                                label="value" value="key"/>
                     </html:select>
                     </c:otherwise>
                   </c:choose>
@@ -266,15 +266,15 @@
             <td class="infoline">
                 <div align="center">
                     <c:if test="${!empty KualiForm.documentActions[Constants.KUALI_ACTION_CAN_SEND_NOTE_FYI]}">
-                        <kul:user userIdFieldName="${propPrefix}boNote[${status.index}].adHocRouteRecipient.id"
+                        <kul:user userIdFieldName="document.notes[${status.index}].adHocRouteRecipient.id"
                                   userId="${note.adHocRouteRecipient.id}"
                                   universalIdFieldName=""
                                   universalId=""
-                                  userNameFieldName="${propPrefix}boNote[${status.index}].adHocRouteRecipient.name"
+                                  userNameFieldName="document.notes[${status.index}].adHocRouteRecipient.name"
                                   userName="${note.adHocRouteRecipient.name}"
                                   readOnly="false"
-                                  fieldConversions="principalName:${propPrefix}boNote[${status.index}].adHocRouteRecipient.id,name:${propPrefix}boNote[${status.index}].adHocRouteRecipient.name"
-                                  lookupParameters="${propPrefix}boNote[${status.index}].adHocRouteRecipient.id:principalName"/> 
+                                  fieldConversions="principalName:document.notes[${status.index}].adHocRouteRecipient.id,name:document.notes[${status.index}].adHocRouteRecipient.name"
+                                  lookupParameters="document.notes[${status.index}].adHocRouteRecipient.id:principalName"/> 
                     </c:if>
                     <c:if test="${empty KualiForm.documentActions[Constants.KUALI_ACTION_CAN_SEND_NOTE_FYI]}">
                         &nbsp;

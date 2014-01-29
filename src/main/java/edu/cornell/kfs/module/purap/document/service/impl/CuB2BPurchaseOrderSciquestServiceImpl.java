@@ -640,7 +640,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
                 	cxml.append("        <ProductType>").append("Form").append("</ProductType>\n");
                 }
                 cxml.append("      </Item>\n");
-                cxml.append("      <Quantity>").append(poi.getItemQuantity()).append("</Quantity>\n");
+                cxml.append("      <Quantity>").append(quantity).append("</Quantity>\n");
                 // LineCharges - All the monetary charges for this line, including the price, tax, shipping, and handling.
                 // Required.
                 cxml.append("      <LineCharges>\n");
