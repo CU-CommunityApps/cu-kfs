@@ -9,22 +9,30 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.POTransmissionMethods;
+import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderDocTypes;
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
+import org.kuali.kfs.module.purap.PurapConstants.RequisitionSources;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.businessobject.AutoClosePurchaseOrderView;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestView;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.impl.PurchaseOrderServiceImpl;
 import org.kuali.kfs.module.purap.util.PurApRelatedViews;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.krad.bo.Attachment;
 import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.exception.ValidationException;
+import org.kuali.rice.krad.service.AttachmentService;
+import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
 
@@ -183,5 +191,43 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
             }
         }
     }
+
+    protected PurchaseOrderDocument generatePurchaseOrderFromRequisition(RequisitionDocument reqDocument) throws WorkflowException {
+        PurchaseOrderDocument poDocument = super.generatePurchaseOrderFromRequisition(reqDocument);
+        return copyNotesAndAttachmentsToPO(reqDocument, poDocument); 
+    }
+
+    // mjmc *************************************************************************************************
+    private PurchaseOrderDocument copyNotesAndAttachmentsToPO(RequisitionDocument reqDoc, PurchaseOrderDocument poDoc) {
+
+        purapService.saveDocumentNoValidation(poDoc);
+        List<Note> notes = (List<Note>) reqDoc.getNotes();
+        int noteLength = notes.size();
+        if (noteLength > 0) {
+            for (Note note : notes) {
+                try {
+                    Note copyingNote = SpringContext.getBean(DocumentService.class).createNoteFromDocument(poDoc, note.getNoteText());
+                    purapService.saveDocumentNoValidation(poDoc);
+                    copyingNote.setNotePostedTimestamp(note.getNotePostedTimestamp());
+                    copyingNote.setAuthorUniversalIdentifier(note.getAuthorUniversalIdentifier());
+                    copyingNote.setNoteTopicText(note.getNoteTopicText());
+                    Attachment originalAttachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
+                    if (originalAttachment != null) {
+                    	Attachment newAttachment = SpringContext.getBean(AttachmentService.class).createAttachment((PersistableBusinessObject)copyingNote, originalAttachment.getAttachmentFileName(), originalAttachment.getAttachmentMimeTypeCode(), originalAttachment.getAttachmentFileSize().intValue(), originalAttachment.getAttachmentContents(), originalAttachment.getAttachmentTypeCode());//new Attachment();
+
+                    	if (ObjectUtils.isNotNull(originalAttachment) && ObjectUtils.isNotNull(newAttachment)) {
+                    		copyingNote.addAttachment(newAttachment);
+                    	}
+                    	poDoc.addNote(copyingNote);
+
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        purapService.saveDocumentNoValidation(poDoc);
+        return poDoc;
+    }   //  mjmc end
 
 }
