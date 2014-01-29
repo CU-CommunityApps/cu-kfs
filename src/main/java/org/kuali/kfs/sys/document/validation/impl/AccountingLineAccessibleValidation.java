@@ -152,7 +152,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
      * @param updatedAccountingLine
      * @return true if only the object code has changed on the accounting line, false otherwise
      */
-    private boolean onlyObjectCodeChanged(AccountingLine accountingLine, AccountingLine updatedAccountingLine) {
+    protected boolean onlyObjectCodeChanged(AccountingLine accountingLine, AccountingLine updatedAccountingLine) {
         // no changes, return false
         if (accountingLine.isLike(updatedAccountingLine)) {
             return false;

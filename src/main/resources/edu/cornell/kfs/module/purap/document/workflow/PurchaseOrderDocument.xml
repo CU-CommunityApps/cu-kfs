@@ -17,18 +17,38 @@
 <data xmlns="ns:workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
   <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
     <documentType>
-      <name>POA</name>
-      <parent>PO</parent>
-      <label>Purchase Order Amendment</label>
+      <name>PO</name>
+      <parent>PUR</parent>
+      <label>Purchase Order</label>
       <docHandler>${kfs.url}/purapPurchaseOrder.do?methodToCall=docHandler</docHandler>
-      <helpDefinitionURL>default.htm?turl=WordDocuments%2Fpurchaseorderamend.htm</helpDefinitionURL>
+      <helpDefinitionURL>default.htm?turl=WordDocuments%2Fpurchaseorder.htm</helpDefinitionURL>
+      <docSearchHelpURL>${kfs.externalizable.help.url}/default.htm?turl=WordDocuments%2Fpurchaseorders.htm</docSearchHelpURL>
       <active>true</active>
       <policies>
         <policy>
           <name>DOCUMENT_STATUS_POLICY</name>
           <stringValue>APP</stringValue>
         </policy>
+        <policy>
+          <name>INITIATOR_MUST_CANCEL</name>
+          <value>false</value>
+        </policy>
+        <policy>
+          <name>INITIATOR_MUST_ROUTE</name>
+          <value>false</value>
+        </policy>
       </policies>
+      <attributes>
+        <attribute>
+          <name>PurapFinancialSystemSearchableAttribute</name>
+        </attribute>
+        <attribute>
+          <name>KFSPurapDocumentSearchCustomizer</name>
+        </attribute>
+        <attribute>
+          <name>NoFyiActionListAttribute</name>
+        </attribute>
+      </attributes>
       <routingVersion>2</routingVersion>
       <validApplicationStatuses>
         <category name="COMPLETE STATUSES">
@@ -42,6 +62,7 @@
           <status>Disapproved Commodity Code</status>
           <status>Disapproved Purchasing</status>
           <status>Disapproved Tax</status>
+		  <status>Disapproved Base Org Review</status>
           <status>Open</status>
           <status>Pending Amendment</status>
           <status>Pending Close</status>
@@ -62,9 +83,8 @@
           <status>Awaiting Commodity Code Approval</status>
           <status>Awaiting C and G Approval</status>
           <status>Awaiting Budget Approval</status>
-	  <status>Awaiting Sub Account</status>
+          <status>Awaiting Base Org Review</status>
           <status>Awaiting Tax Approval</status>
-          <status>Awaiting Separation of Duties</status>
           <status>Error occurred sending cxml</status>
           <status>Error occurred sending fax</status>
           <status>Out for Quote</status>
@@ -78,106 +98,32 @@
       </validApplicationStatuses>
       <routePaths>
         <routePath>
-          <start name="AdHoc" nextNode="HasNewUnorderedItems" nextAppDocStatus="Awaiting New Unordered Item Review"/>
-          <split name="HasNewUnorderedItems" nextNode="SubAccount" >
-            <branch name="True">
-              <role name="NewUnorderedItems" nextNode="JoinNewUnorderedItems"  nextAppDocStatus="Awaiting Sub Account" />
-            </branch>
-            <branch name="False">
-              <simple name="NoOpNewUnorderedItems" nextNode="JoinNewUnorderedItems"  nextAppDocStatus="Awaiting Sub Account"/>
-            </branch>
-            <join name="JoinNewUnorderedItems" />
-          </split>
-          <role name="SubAccount" nextNode="Account" nextAppDocStatus="Awaiting Fiscal Officer" />
-          <role name="Account" nextNode="RequiresAwardReview" nextAppDocStatus="Awaiting C and G Approval" />
-          <split name="RequiresAwardReview" nextNode="Commodity" >
-            <branch name="True">
-              <role name="Award" nextNode="JoinRequiresAwardReview" nextAppDocStatus="Awaiting Commodity Code Approval"/>
-            </branch>
-            <branch name="False">
-              <simple name="NoOpRequiresAwardReview" nextNode="JoinRequiresAwardReview" nextAppDocStatus="Awaiting Commodity Code Approval" />
-            </branch>
-            <join name="JoinRequiresAwardReview" />
-          </split>
-          <role name="Commodity" nextNode="AmountRequiresSeparationOfDutiesReview" nextAppDocStatus="Awaiting Separation of Duties" />
-          <split name="AmountRequiresSeparationOfDutiesReview" nextNode="RequiresContractManagementReview"  nextAppDocStatus="Awaiting Purchasing Approval">
-            <branch name="True">
-              <role name="SeparationOfDuties" nextNode="JoinSOD" />
-            </branch>
-            <branch name="False">
-              <simple name="NoOp" nextNode="JoinSOD" />
-            </branch>
-            <join name="JoinSOD" />
-          </split>
+          <start name="AdHoc" nextNode="RequiresContractManagementReview" nextAppDocStatus="Awaiting Purchasing Approval" />
           <split name="RequiresContractManagementReview" nextNode="RequiresBudgetReview">
             <branch name="True">
-              <role name="ContractManagement" nextNode="JoinRequiresContractManagementReview"  nextAppDocStatus="Awaiting Budget Approval"/>
+              <role name="ContractManagement" nextNode="JoinRequiresContractManagementReview" nextAppDocStatus="Awaiting Budget Approval"/>
             </branch>
             <branch name="False">
-              <simple name="NoOpRequiresContractManagementReview" nextNode="JoinRequiresContractManagementReview"  nextAppDocStatus="Awaiting Budget Approval"/>
+              <simple name="NoOpRequiresContractManagementReview" nextNode="JoinRequiresContractManagementReview" nextAppDocStatus="Awaiting Budget Approval" />
             </branch>
             <join name="JoinRequiresContractManagementReview" />
           </split>
           <split name="RequiresBudgetReview" nextNode="AccountingOrganizationHierarchy">
             <branch name="True">
-              <role name="Budget" nextNode="JoinRequiresBudgetReview" />
+              <role name="Budget" nextNode="JoinRequiresBudgetReview"  nextAppDocStatus="Awaiting Base Org Review"/>
             </branch>
             <branch name="False">
-              <simple name="NoOpBudget" nextNode="JoinRequiresBudgetReview" />
+              <simple name="NoOpBudget" nextNode="JoinRequiresBudgetReview"  nextAppDocStatus="Awaiting Base Org Review" />
             </branch>
             <join name="JoinRequiresBudgetReview" />
           </split>
-          <role name="AccountingOrganizationHierarchy" nextNode="NoOpFinal"  nextAppDocStatus="Pending cxml" />
-          <simple name="NoOpFinal" />
+          <!-- TODO : This doc status may have several different possibilities.  'Open' is one of them.  Not sure how to handle this -->
+          <role name="AccountingOrganizationHierarchy" nextNode="Organization"  nextAppDocStatus="Pending cxml"/>
+          <role name="Organization"  nextAppDocStatus="Open"/>
         </routePath>
       </routePaths>
       <routeNodes>
         <start name="AdHoc" />
-        <split name="HasNewUnorderedItems">
-          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-        </split>
-        <role name="NewUnorderedItems">
-          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <join name="JoinNewUnorderedItems" />
-        <simple name="NoOpNewUnorderedItems">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
-        </simple>
-        <role name="SubAccount">
-          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <role name="Account">
-          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <split name="RequiresAwardReview">
-          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-        </split>
-        <role name="Award">
-          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <join name="JoinRequiresAwardReview" />
-        <simple name="NoOpRequiresAwardReview">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
-        </simple>
-        <role name="Commodity">
-          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <split name="AmountRequiresSeparationOfDutiesReview">
-          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-        </split>
-        <role name="SeparationOfDuties">
-          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <join name="JoinSOD" />
-        <simple name="NoOp">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
-        </simple>
         <split name="RequiresContractManagementReview">
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
@@ -204,11 +150,12 @@
           <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
-        <simple name="NoOpFinal">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
-        </simple>
+        <role name="Organization">
+          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
       </routeNodes>
     </documentType>
-  </documentTypes>
+      </documentTypes>
 </data>
 
