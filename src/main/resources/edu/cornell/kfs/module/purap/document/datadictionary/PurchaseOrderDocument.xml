@@ -149,6 +149,16 @@
   	    <property name="searchingTypeDefinitions">
     		<ref bean="SearchingTypeDefinitions-PurchaseOrderDocumentFamily"/>
     	</property>  	
-	</bean>      
+	</bean> 
+	
+	
+	<bean id="PurchaseOrderDocument-sourceAccountingLineGroup" parent="PurchaseOrderDocument-sourceAccountingLineGroup-parentBean">
+	    <property name="accountingLineAuthorizerClass" value="edu.cornell.kfs.module.purap.document.authorization.CuPurchaseOrderAccountingLineAuthorizer"/>
+	</bean> 
+	
+	<bean id="PurchaseOrderDocument-distributeSourceAccountingLineGroup" parent="PurchaseOrderDocument-distributeSourceAccountingLineGroup-parentBean">  
+		<property name="accountingLineAuthorizerClass" value="edu.cornell.kfs.module.purap.document.authorization.CuPurchaseOrderAccountingLineAuthorizer"/>
+	</bean>
+	        
  
 </beans>
