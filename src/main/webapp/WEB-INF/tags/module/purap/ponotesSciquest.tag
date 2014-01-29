@@ -212,7 +212,7 @@
                     <html:select property="document.notes[${status.index}].noteTopicText">
                         <html:optionsCollection
                                 property="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass1}"
-                                label="label" value="key"/>
+                                label="value" value="key"/>
                     </html:select>
                     </c:otherwise>
                   </c:choose>
