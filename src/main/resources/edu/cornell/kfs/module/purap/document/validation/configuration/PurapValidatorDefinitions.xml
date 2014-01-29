@@ -122,10 +122,6 @@
 		<property name="dataDictionaryService" ref="dataDictionaryService" />
 		<property name="dictionaryValidationService" ref="dictionaryValidationService" />		
 		<property name="businessObjectService" ref="businessObjectService" />		
-		<property name="unitOfMeasureValidation" ref="Purchasing-unitOfMeasureValidation" />
-		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
-		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
-		<property name="itemQuantityValidation" ref="Purchasing-itemQuantityValidation" />
 		<property name="commodityCodeValidation" ref="Purchasing-commodityCodeValidation" />
 	</bean>
 	
@@ -133,9 +129,6 @@
 		<property name="dataDictionaryService" ref="dataDictionaryService" />
 		<property name="dictionaryValidationService" ref="dictionaryValidationService" />		
 		<property name="businessObjectService" ref="businessObjectService" />		
-		<property name="unitOfMeasureValidation" ref="Purchasing-unitOfMeasureValidation" />
-		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
-		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
 		<property name="commodityCodeValidation" ref="Purchasing-commodityCodeValidation" />
 	</bean>
 
