@@ -3,13 +3,17 @@ package edu.cornell.kfs.module.purap.document.authorization;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
+import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.authorization.RequisitionAccountingLineAuthorizer;
+import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.kim.api.identity.Person;
 
 import edu.cornell.kfs.module.purap.service.CuPurapAccountingService;
 
@@ -28,6 +32,14 @@ public class CuRequisitionAccountingLineAuthorizer extends RequisitionAccounting
         }
         return super.renderNewLine(accountingDocument, accountingGroupProperty);
     }
-    
+        
+    @Override
+    public boolean hasEditPermissionOnAccountingLine(AccountingDocument accountingDocument, AccountingLine accountingLine, String accountingLineCollectionProperty, Person currentUser, boolean pageIsEditable) {
+            WorkflowDocument workflowDocument = accountingDocument.getDocumentHeader().getWorkflowDocument();            
+            if (workflowDocument.isEnroute() && SpringContext.getBean(CuPurapAccountingService.class).isFiscalOfficersForAllAcctLines((RequisitionDocument)accountingDocument) ) {
+                    return true;
+            }
+            return super.hasEditPermissionOnAccountingLine(accountingDocument, accountingLine, accountingLineCollectionProperty, currentUser, pageIsEditable);
+    }
 
 }
