@@ -635,6 +635,8 @@ public class PurapConstants {
         public static final String NODE_ACCOUNT_REVIEW = "Account";
         public static final String NODE_ORG_REVIEW = "AccountingOrganizationHierarchy";
         public static final String NODE_VENDOR_TAX_REVIEW = "Tax";
+        // KFSDUPGRADE-500
+        public static final String NODE_RECEIVING = "Receiving";
 
         // keep these in the order of potential routing
         // Note it doesn't make much sense to compare auto_approved and dept_approved but this is
@@ -733,6 +735,8 @@ public class PurapConstants {
             STATUSES_ENROUTE.add(APPDOC_AWAITING_FISCAL_REVIEW);
             STATUSES_ENROUTE.add(APPDOC_AWAITING_ORG_REVIEW);
             STATUSES_ENROUTE.add(APPDOC_AWAITING_TAX_REVIEW);
+            // KFSUPGRADE-500
+            STATUSES_ENROUTE.add(APPDOC_AWAITING_RECEIVING_REVIEW);
 
             STATUSES_POSTROUTE.add(APPDOC_DEPARTMENT_APPROVED);
             STATUSES_POSTROUTE.add(APPDOC_AUTO_APPROVED);
@@ -749,6 +753,8 @@ public class PurapConstants {
             appDocStatusMap.put(NODE_ACCOUNT_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
             appDocStatusMap.put(NODE_ORG_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
             appDocStatusMap.put(NODE_VENDOR_TAX_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
+            // KFSUPGRADE-500
+            appDocStatusMap.put(NODE_RECEIVING, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
 
             return appDocStatusMap;
 
