@@ -108,15 +108,6 @@
 			<forward name="basic" path="/jsp/module/purap/PurchaseOrder.jsp" />	
 		</action>
 
-	   <action path="/purapLineItemReceiving" name="LineItemReceivingForm"
-			input="/jsp/module/purap/LineItemReceiving.jsp"
-			type="edu.cornell.kfs.module.purap.document.web.struts.CuLineItemReceivingAction"
-			scope="request" parameter="methodToCall" validate="true"
-			attribute="KualiForm">
-			<set-property property="cancellable" value="true" />
-			<forward name="basic" path="/jsp/module/purap/LineItemReceiving.jsp" />	
-		</action>
-
 	   <action path="/purapPaymentRequest" name="PaymentRequestForm"
 			input="/jsp/module/purap/PaymentRequest.jsp"
 			type="edu.cornell.kfs.module.purap.document.web.struts.CuPaymentRequestAction"

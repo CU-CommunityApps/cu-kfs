@@ -1593,22 +1593,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
  		this.favoriteAccountLineIdentifier = favoriteAccountLineIdentifier;
  	}    
      
-    /*
-     * Check if this po is for 'No Qty', then hide 'receiving' button if it is.s
-     */
-    public boolean isNoQtyOrder() {
-        boolean isNoQtyOrderOnly = true;
-        
-        for (PurApItem item : (List<PurApItem>)this.getItems()) {
-        	 if(PurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE.equalsIgnoreCase(item.getItemTypeCode())) {
-        		 isNoQtyOrderOnly = false;
-        		 break;
-        	 }
-        	
-        }
-        return isNoQtyOrderOnly;
-    }
-
     // KFSPTS-985, KFSUPGRADE-75
     public boolean isIntegratedWithFavoriteAccount() {
         return true;

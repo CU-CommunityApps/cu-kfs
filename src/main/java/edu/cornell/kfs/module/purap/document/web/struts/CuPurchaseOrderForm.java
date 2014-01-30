@@ -104,22 +104,7 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
 	public List<ExtraButton> getExtraButtons() {
 		super.getExtraButtons();
 		Map buttonsMap = createButtonsMap();
-		
-        if (canCreateReceiving() && getPurchaseOrderDocument().isNoQtyOrder()) {
-        	// in PDForm, the 'canCreateReceiving' will add this button.  if 'isNoQtyOrder', then we don't need this, so remove it.
- //           extraButtons.remove((ExtraButton) buttonsMap.get("methodToCall.createReceivingLine"));
-            ExtraButton recButton = null;
-            for (ExtraButton extBtn : extraButtons) {
-            	if (StringUtils.equals(extBtn.getExtraButtonAltText(),CUPurapConstants.RECEIVING_BUTTON_ALT_TEXT)) {
-            		recButton = extBtn;
-            		break;
-            	}
-            }
-            if (recButton != null) {
-            	extraButtons.remove(recButton);
-            }
-        }
-		
+				
         // ==== CU Customization (KFSPTS-1457) ====
         
 		if (!canContinuePoSplit()) {
