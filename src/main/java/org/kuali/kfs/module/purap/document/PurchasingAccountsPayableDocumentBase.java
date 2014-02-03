@@ -18,6 +18,7 @@ package org.kuali.kfs.module.purap.document;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -43,6 +44,8 @@ import org.kuali.kfs.module.purap.document.service.impl.PurapServiceImpl;
 import org.kuali.kfs.module.purap.service.PurapAccountingService;
 import org.kuali.kfs.module.purap.service.SensitiveDataService;
 import org.kuali.kfs.module.purap.util.PurApRelatedViews;
+import org.kuali.kfs.module.purap.util.PurapAccountingLineComparator;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSConstants.AdHocPaymentIndicator;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
@@ -51,6 +54,10 @@ import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocumentBase;
 import org.kuali.kfs.sys.document.AmountTotaling;
+import org.kuali.kfs.sys.document.validation.event.AddAccountingLineEvent;
+import org.kuali.kfs.sys.document.validation.event.DeleteAccountingLineEvent;
+import org.kuali.kfs.sys.document.validation.event.ReviewAccountingLineEvent;
+import org.kuali.kfs.sys.document.validation.event.UpdateAccountingLineEvent;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
@@ -58,6 +65,7 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.krad.document.TransactionalDocument;
 import org.kuali.rice.krad.rules.rule.event.ApproveDocumentEvent;
 import org.kuali.rice.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.rice.krad.rules.rule.event.RouteDocumentEvent;
@@ -67,8 +75,6 @@ import org.kuali.rice.krad.util.NoteType;
 import org.kuali.rice.krad.util.ObjectUtils;
 import org.kuali.rice.location.api.LocationConstants;
 import org.kuali.rice.location.framework.country.CountryEbo;
-
-import edu.cornell.kfs.module.purap.document.CuPurchaseOrderAmendmentDocument;
 
 /**
  * Base class for Purchasing-Accounts Payable Documents.
@@ -1438,5 +1444,94 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 	public void setVendorEmailAddress(String vendorEmailAddress) {
 		this.vendorEmailAddress = vendorEmailAddress;
 	}
+
+	// KFSUPGRADE-503 copied from AccountingDocumentBase and change
+    protected List generateEvents(List persistedLines, List currentLines, String errorPathPrefix, TransactionalDocument document) {
+        List addEvents = new ArrayList();
+        List updateEvents = new ArrayList();
+        List reviewEvents = new ArrayList();
+        List deleteEvents = new ArrayList();
+        errorPathPrefix = KFSConstants.DOCUMENT_PROPERTY_NAME + ".item["; 
+
+        //
+        // generate events
+        Map persistedLineMap = buildAccountingLineMap(persistedLines);
+
+        // (iterate through current lines to detect additions and updates, removing affected lines from persistedLineMap as we go
+        // so deletions can be detected by looking at whatever remains in persistedLineMap)
+        int index = 0;
+        for (Iterator i = currentLines.iterator(); i.hasNext(); index++) {
+      //      String indexedErrorPathPrefix = errorPathPrefix + "[" + index + "]";
+            AccountingLine currentLine = (AccountingLine) i.next();
+            Integer key = currentLine.getSequenceNumber();
+            String indexedErrorPathPrefix = getIndexedErrorPathPrefix(errorPathPrefix, currentLine);
+
+            AccountingLine persistedLine = (AccountingLine) persistedLineMap.get(key);
+            // if line is both current and persisted...
+            if (persistedLine != null) {
+                // ...check for updates
+                if (!currentLine.isLike(persistedLine)) {
+                    UpdateAccountingLineEvent updateEvent = new UpdateAccountingLineEvent(indexedErrorPathPrefix, document, persistedLine, currentLine);
+                    updateEvents.add(updateEvent);
+                }
+                else {
+                    ReviewAccountingLineEvent reviewEvent = new ReviewAccountingLineEvent(indexedErrorPathPrefix, document, currentLine);
+                    reviewEvents.add(reviewEvent);
+                }
+
+                persistedLineMap.remove(key);
+            }
+            else {
+                // it must be a new addition
+                AddAccountingLineEvent addEvent = new AddAccountingLineEvent(indexedErrorPathPrefix, document, currentLine);
+                addEvents.add(addEvent);
+            }
+        }
+
+        // detect deletions
+        for (Iterator i = persistedLineMap.entrySet().iterator(); i.hasNext();) {
+            // the deleted line is not displayed on the page, so associate the error with the whole group
+            String groupErrorPathPrefix = errorPathPrefix + KFSConstants.ACCOUNTING_LINE_GROUP_SUFFIX;
+            Map.Entry e = (Map.Entry) i.next();
+            AccountingLine persistedLine = (AccountingLine) e.getValue();
+            DeleteAccountingLineEvent deleteEvent = new DeleteAccountingLineEvent(groupErrorPathPrefix, document, persistedLine, true);
+            deleteEvents.add(deleteEvent);
+        }
+
+
+        //
+        // merge the lists
+        List lineEvents = new ArrayList();
+        lineEvents.addAll(reviewEvents);
+        lineEvents.addAll(updateEvents);
+        lineEvents.addAll(addEvents);
+        lineEvents.addAll(deleteEvents);
+
+        return lineEvents;
+    }
+
+    private String getIndexedErrorPathPrefix(String errorPathPrefix, AccountingLine currentLine) {
+        int idx = 0;
+        int i = 0;
+        for (PurApItem item : (List<PurApItem>)this.getItems()) {
+            int j = 0;
+            // KFSPTS-1273 Note : The accountinglinegrouptag will sort this before the acctlines are rendered.  If we don't sort here, then
+            // the error icon may be placed in wrong line.
+            if (CollectionUtils.isNotEmpty(item.getSourceAccountingLines())) {
+                Collections.sort(item.getSourceAccountingLines(), new PurapAccountingLineComparator());
+            }
+            for (PurApAccountingLine acctLine : item.getSourceAccountingLines()) {
+                if (acctLine == currentLine) {
+                    return errorPathPrefix +  i + "]."+ KFSConstants.EXISTING_SOURCE_ACCT_LINE_PROPERTY_NAME + "["+j+"]";
+                } else {
+                    j++;
+                }
+            }
+            i++;
+        }
+        return errorPathPrefix +  0 + "]."+ KFSConstants.EXISTING_SOURCE_ACCT_LINE_PROPERTY_NAME + "["+0+"]";
+            
+    }
+
 
 }
