@@ -27,5 +27,12 @@
 
   </bean>
 
+    <bean id="AccountDelegateModelMaintenanceDocument-workflowAttributes" parent="AccountDelegateModelMaintenanceDocument-workflowAttributes-parentBean">
+        <property name="routingTypeDefinitions">
+            <map>
+                <entry key="OrganizationHierarchy" value-ref="AccountDelegateModelMaintenanceDocument-RoutingType-OrganizationHierarchy"/>
+            </map>
+        </property>
+    </bean>
 
 </beans>
