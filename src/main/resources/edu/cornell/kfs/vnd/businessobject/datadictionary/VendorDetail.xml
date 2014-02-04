@@ -33,6 +33,7 @@
 				<ref bean="VendorDetail-extension-insuranceNotes"/> 
 				<ref bean="VendorDetail-extension-merchantNotes"/> 
 				<ref bean="VendorDetail-extension-einvoiceVendorIndicator" />
+				<ref bean="VendorDetail-extension-defaultB2BPaymentMethodCode" />
 			</list>
 		</property>
 		<property name="collections">
@@ -156,7 +157,15 @@
 		abstract="true" parent="VendorDetailExtension-einvoiceVendorIndicator">
 		<property name="name" value="extension.einvoiceVendorIndicator" />
 	</bean>
+	
+    <bean id="VendorDetail-extension-defaultB2BPaymentMethodCode"
+        parent="VendorDetail-extension-defaultB2BPaymentMethodCode-parentBean" />
 
+    <bean id="VendorDetail-extension-defaultB2BPaymentMethodCode-parentBean"
+        abstract="true" parent="VendorDetailExtension-defaultB2BPaymentMethodCode">
+        <property name="name" value="extension.defaultB2BPaymentMethodCode" />
+    </bean>
+    
 	<!-- Business Object Inquiry Definition -->
 	
 	<bean id="VendorDetail-inquirySectionDefinition-vendorCreditCardMerchant"
@@ -266,9 +275,23 @@
                       </list>
                   </property>
               </bean>
+              <bean parent="FieldOverrideForListElementInsert">
+                  <property name="propertyName" value="inquiryFields" />
+                  <property name="propertyNameForElementCompare" value="attributeName" />
+                  <property name="element">
+                      <bean parent="FieldDefinition" p:attributeName="vendorFirstLastNameIndicator" />
+                  </property>
+                  <property name="insertAfter">
+                      <list>
+                          <bean parent="FieldDefinition" p:attributeName="extension.defaultB2BPaymentMethodCode" />
+                      </list>
+                  </property>
+              </bean>
            </list>
       </property>
   </bean>
+  
+  
     
    <bean parent="DataDictionaryBeanOverride">
       <property name="beanName" value="VendorDetail-inquiryCollectionDefinition-Address-vendorAddresses" />

@@ -10,26 +10,27 @@ import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
 public class VendorDetailExtension extends PersistableBusinessObjectExtensionBase {
 	private static final long serialVersionUID = 2L;
 
-    private Integer vendorHeaderGeneratedIdentifier;
-    private Integer vendorDetailAssignedIdentifier;
-    private boolean einvoiceVendorIndicator;
-
-    private boolean insuranceRequiredIndicator;
-    private Boolean insuranceRequirementsCompleteIndicator;
-    private Boolean cornellAdditionalInsuredIndicator;
-    private KualiDecimal generalLiabilityCoverageAmount;
-    private Date generalLiabilityExpiration;
-    private KualiDecimal automobileLiabilityCoverageAmount;
-    private Date automobileLiabilityExpiration;
-    private KualiDecimal workmansCompCoverageAmount;
-    private Date workmansCompExpiration;
-    private KualiDecimal excessLiabilityUmbrellaAmount;
-    private Date excessLiabilityUmbExpiration;
-    private Boolean healthOffSiteCateringLicenseReq;
-    private Date healthOffSiteLicenseExpirationDate;
-    private String insuranceNotes;
-    private String merchantNotes;
-    private List<CuVendorCreditCardMerchant> vendorCreditCardMerchants;
+	protected Integer vendorHeaderGeneratedIdentifier;
+    protected Integer vendorDetailAssignedIdentifier;
+    protected boolean einvoiceVendorIndicator;
+    protected String  defaultB2BPaymentMethodCode;
+    
+    protected boolean insuranceRequiredIndicator;
+    protected Boolean insuranceRequirementsCompleteIndicator;
+    protected Boolean cornellAdditionalInsuredIndicator;
+    protected KualiDecimal generalLiabilityCoverageAmount;
+    protected Date generalLiabilityExpiration;
+    protected KualiDecimal automobileLiabilityCoverageAmount;
+    protected Date automobileLiabilityExpiration;
+    protected KualiDecimal workmansCompCoverageAmount;
+    protected Date workmansCompExpiration;
+    protected KualiDecimal excessLiabilityUmbrellaAmount;
+    protected Date excessLiabilityUmbExpiration;
+    protected Boolean healthOffSiteCateringLicenseReq;
+    protected Date healthOffSiteLicenseExpirationDate;
+    protected String insuranceNotes;
+    protected String merchantNotes;
+    protected List<CuVendorCreditCardMerchant> vendorCreditCardMerchants;
 
     public VendorDetailExtension() {
         vendorCreditCardMerchants = new ArrayList<CuVendorCreditCardMerchant>();
@@ -58,6 +59,14 @@ public class VendorDetailExtension extends PersistableBusinessObjectExtensionBas
 
     public void setEinvoiceVendorIndicator(boolean eInvoiceVendorIndicator) {
         this.einvoiceVendorIndicator = eInvoiceVendorIndicator;
+    }
+    
+    public String getDefaultB2BPaymentMethodCode() {
+        return defaultB2BPaymentMethodCode;
+    }
+
+    public void setDefaultB2BPaymentMethodCode(String defaultB2BPaymentMethodCode) {
+        this.defaultB2BPaymentMethodCode = defaultB2BPaymentMethodCode;
     }
 
 	public boolean isInsuranceRequiredIndicator() {
