@@ -41,15 +41,19 @@
  
   <bean id="VendorAddressExtension-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode" parent="VendorAddressExtension-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode-parentBean"/> 
   <bean id="VendorAddressExtension-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode-parentBean" abstract="true" parent="PurchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode">
-  <property name="label" value="Method of PO Transmission"/>
-  <property name="name" value="purchaseOrderTransmissionMethodCode"/>
-  <property name="required" value="false"/>
-  <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.vnd.businessobject.options.PurchaseOrderTransmissionMethodValuesFinder" p:includeKeyInLabel="false"/>
+	<property name="label" value="Method of PO Transmission"/>
+	<property name="name" value="purchaseOrderTransmissionMethodCode"/>
+	<property name="required" value="false"/>
+	<property name="control">
+        <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.vnd.businessobject.options.PurchaseOrderTransmissionMethodValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
 
-  <bean id="VendorAddressExtension-vendorAddressGeneratedIdentifier" parent="VendorAddress-vendorAddressGeneratedIdentifier-parentBean"/>
+  <bean id="VendorAddressExtension-vendorAddressGeneratedIdentifier" parent="VendorAddress-vendorAddressGeneratedIdentifier-parentBean">
+	<property name="control">
+	    <bean parent="TextControlDefinition" p:size="45" />
+	</property>
+  </bean>
                                                                            
 
 </beans>

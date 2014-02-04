@@ -41,13 +41,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
 
+import edu.cornell.kfs.pdp.service.impl.CuFormatServiceImpl;
+
 /**
  * SEE THE VERY BOTTOM OF THIS FILE FOR THE MODS.  Everything else is out of the box.
  * @todo Figure out how to use extends of the FormatServiceImpl class instead of copy and paste.  Main 
  * issue is private members on parent not exposed with getters.
  */
 @Transactional
-public class AchBundlerFormatServiceImpl extends FormatServiceImpl {
+public class AchBundlerFormatServiceImpl extends CuFormatServiceImpl {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AchBundlerFormatServiceImpl.class);
     
     

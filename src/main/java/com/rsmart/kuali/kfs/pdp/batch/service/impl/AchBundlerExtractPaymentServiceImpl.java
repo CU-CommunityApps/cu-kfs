@@ -103,7 +103,7 @@ public class AchBundlerExtractPaymentServiceImpl extends ExtractPaymentServiceIm
          * MOD: This is the only section in the method that is changed.  This mod calls a new method that bundles 
          * ACHs into single disbursements if the flag to do so is turned on.
          */
-        if(SpringContext.getBean(AchBundlerHelperService.class).shouldBundleAchPayments()) {
+        if (SpringContext.getBean(AchBundlerHelperService.class).shouldBundleAchPayments()) {
             writeExtractBundledAchFile(extractedStatus, filename, processDate, sdf);
         } else {
             writeExtractAchFile(extractedStatus, filename, processDate, sdf);

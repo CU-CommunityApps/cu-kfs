@@ -13,9 +13,9 @@
 	<import resource="vnd/cu-spring-vnd.xml" />
 	<import resource="module/purap/cu-spring-purap.xml" />
 	
-	<!--  
+	 
 	<import resource="pdp/cu-spring-pdp.xml" />
-	
+	<!-- 
 	<import resource="vnd/cu-spring-vnd.xml" />
 	<import resource="module/cam/cu-spring-cam.xml" />
 	

@@ -21,6 +21,7 @@
    <property name="attributes">
       <list merge = "true">
         <ref bean="VendorAddress-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode"/>
+        <ref bean="VendorAddress-vendorAddressGeneratedIdentifier-extension" />
       </list>
     </property> 
   </bean>
@@ -29,6 +30,11 @@
   <bean id="VendorAddress-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode" parent="VendorAddress-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode-parentBean"/> 
   <bean id="VendorAddress-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode-parentBean" abstract="true" parent="VendorAddressExtension-purchaseOrderTransmissionMethod-purchaseOrderTransmissionMethodCode-parentBean">
     <property name="name" value="extension.purchaseOrderTransmissionMethodCode"/>
+  </bean>
+  
+  <bean id="VendorAddress-vendorAddressGeneratedIdentifier-extension" parent="VendorAddress-vendorAddressGeneratedIdentifier-extension-parentBean"/> 
+  <bean id="VendorAddress-vendorAddressGeneratedIdentifier-extension-parentBean" abstract="true" parent="VendorAddressExtension-vendorAddressGeneratedIdentifier">
+    <property name="name" value="extension.vendorAddressGeneratedIdentifier"/>
   </bean>
     
 </beans>

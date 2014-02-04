@@ -194,10 +194,10 @@
     <bean id="electronicInvoiceMatchingService" parent="electronicInvoiceMatchingService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceMatchingServiceImpl" />
     <bean id="creditMemoService" parent="creditMemoService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuCreditMemoServiceImpl" />
     <bean id="b2bDao" class="edu.cornell.kfs.module.purap.dataaccess.impl.CuB2BDaoImpl"/>
-   
+   <bean id="pdpExtractService" parent="pdpExtractService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPdpExtractServiceImpl" />
+
    <import resource="document/validation/configuration/RequisitionValidation.xml" />
    <import resource="document/validation/configuration/PurapValidatorDefinitions.xml" />
-    <import resource="document/validation/configuration/PurchaseOrderAmendmentValidation.xml" />
-    <import resource="document/validation/configuration/PurchaseOrderValidation.xml" />
-   
+   <import resource="document/validation/configuration/PurchaseOrderAmendmentValidation.xml" />
+   <import resource="document/validation/configuration/PurchaseOrderValidation.xml" /> 
 </beans>

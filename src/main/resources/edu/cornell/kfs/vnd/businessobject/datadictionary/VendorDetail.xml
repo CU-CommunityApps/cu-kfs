@@ -274,19 +274,33 @@
       <property name="beanName" value="VendorDetail-inquiryCollectionDefinition-Address-vendorAddresses" />
       <property name="fieldOverrides">
           <list>
-              <bean parent="FieldOverrideForListElementInsert">
-                  <property name="propertyName" value="inquiryFields" />
-                  <property name="propertyNameForElementCompare" value="attributeName" />
-                  <property name="element">
-                      <bean parent="FieldDefinition" p:attributeName="active" />
-                  </property>
-                  <property name="insertAfter">
-                      <list>
-                          <bean parent="FieldDefinition" p:attributeName="extension.purchaseOrderTransmissionMethodCode" />
-                      </list>
-                  </property>
-              </bean>
-             </list>
+			<bean parent="FieldOverrideForListElementInsert">
+			    <property name="propertyName" value="inquiryFields" />
+			    <property name="propertyNameForElementCompare" value="attributeName" />
+			    <property name="element">
+			        <bean parent="FieldDefinition" p:attributeName="active" />
+			    </property>
+			    <property name="insertAfter">
+			        <list>
+			            <bean parent="FieldDefinition" p:attributeName="extension.purchaseOrderTransmissionMethodCode" />                                                         
+			        </list>
+			    </property>
+			</bean>
+              
+			<bean parent="FieldOverrideForListElementInsert">
+				<property name="propertyName" value="inquiryFields" />
+				<property name="propertyNameForElementCompare" value="attributeName" />
+				<property name="element">
+                    <bean parent="FieldDefinition" p:attributeName="vendorAddressTypeCode" />
+                </property>
+				<property name="insertBefore">
+				    <list>
+				        <bean parent="FieldDefinition" p:attributeName="extension.vendorAddressGeneratedIdentifier"/>
+				    </list>
+				</property>
+			 </bean>
+
+          </list>
       </property>
   </bean>
  

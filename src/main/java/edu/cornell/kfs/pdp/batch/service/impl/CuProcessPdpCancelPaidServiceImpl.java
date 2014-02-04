@@ -12,13 +12,14 @@ import org.kuali.kfs.pdp.batch.service.impl.ProcessPdpCancelPaidServiceImpl;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.sys.KFSParameterKeyConstants;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.integration.purap.CuPurchasingAccountsPayableModuleService;
 import edu.cornell.kfs.pdp.businessobject.PaymentDetailExtendedAttribute;
 
 public class CuProcessPdpCancelPaidServiceImpl extends ProcessPdpCancelPaidServiceImpl {
     
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuProcessPdpCancelPaidServiceImpl.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuProcessPdpCancelPaidServiceImpl.class);
     
     
     /**
@@ -29,14 +30,18 @@ public class CuProcessPdpCancelPaidServiceImpl extends ProcessPdpCancelPaidServi
 
         Date processDate = dateTimeService.getCurrentSqlDate();
 
-        String organization = parameterService.getParameterValueAsString(KfsParameterConstants.PURCHASING_BATCH.class, KFSParameterKeyConstants.PurapPdpParameterConstants.PURAP_PDP_ORG_CODE);
-        String purapSubUnit = parameterService.getParameterValueAsString(KfsParameterConstants.PURCHASING_BATCH.class, KFSParameterKeyConstants.PurapPdpParameterConstants.PURAP_PDP_SUB_UNIT_CODE);
-        String dvSubUnit = parameterService.getParameterValueAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.DvPdpExtractGroup.DV_PDP_SBUNT_CODE);
+        String organization = parameterService.getParameterValueAsString(KfsParameterConstants.PURCHASING_BATCH.class, 
+                KFSParameterKeyConstants.PurapPdpParameterConstants.PURAP_PDP_ORG_CODE);
+        String purapSubUnit = parameterService.getParameterValueAsString(KfsParameterConstants.PURCHASING_BATCH.class, 
+                KFSParameterKeyConstants.PurapPdpParameterConstants.PURAP_PDP_SUB_UNIT_CODE);
+        String dvSubUnit = parameterService.getParameterValueAsString(DisbursementVoucherDocument.class, 
+                DisbursementVoucherConstants.DvPdpExtractGroup.DV_PDP_SBUNT_CODE);
 
         List<String> subUnits = new ArrayList<String>();
         subUnits.add(purapSubUnit);
         subUnits.add(dvSubUnit);
 
+        @SuppressWarnings("unchecked")
         Iterator<PaymentDetail> details = paymentDetailService.getUnprocessedCancelledDetails(organization, subUnits);
         while (details.hasNext()) {
             PaymentDetail paymentDetail = details.next();
@@ -46,13 +51,18 @@ public class CuProcessPdpCancelPaidServiceImpl extends ProcessPdpCancelPaidServi
 
             boolean primaryCancel = paymentDetail.getPrimaryCancelledPayment();
             boolean disbursedPayment = PdpConstants.PaymentStatusCodes.CANCEL_PAYMENT.equals(paymentDetail.getPaymentGroup().getPaymentStatusCode());
+            
             //KFSPTS-2719
-            boolean crCancel = ((PaymentDetailExtendedAttribute)paymentDetail.getExtension()).getCrCancelledPayment();
-
-            if(purchasingAccountsPayableModuleService.isPurchasingBatchDocument(documentTypeCode)) {
-                ((CuPurchasingAccountsPayableModuleService)purchasingAccountsPayableModuleService).handlePurchasingBatchCancels(documentNumber, documentTypeCode, primaryCancel, disbursedPayment, crCancel);
+            boolean crCancel = false;
+            PaymentDetailExtendedAttribute paymentDetailExtendedAttribute = (PaymentDetailExtendedAttribute) paymentDetail.getExtension();
+            if (ObjectUtils.isNull(paymentDetailExtendedAttribute)) {
+                crCancel = paymentDetailExtendedAttribute.getCrCancelledPayment();
             }
-            else if (DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH.equals(documentTypeCode)) {
+
+            if (purchasingAccountsPayableModuleService.isPurchasingBatchDocument(documentTypeCode)) {
+                ((CuPurchasingAccountsPayableModuleService) purchasingAccountsPayableModuleService)
+                    .handlePurchasingBatchCancels(documentNumber, documentTypeCode, primaryCancel, disbursedPayment, crCancel);
+            } else if (DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH.equals(documentTypeCode)) {
                 DisbursementVoucherDocument dv = dvExtractService.getDocumentById(documentNumber);
                 if (dv != null) {
                     if (disbursedPayment || primaryCancel || crCancel) {
@@ -63,8 +73,7 @@ public class CuProcessPdpCancelPaidServiceImpl extends ProcessPdpCancelPaidServi
                         dvExtractService.resetExtractedDisbursementVoucher(dv, processDate);
                     }
                 }
-            }
-            else {
+            } else {
                 LOG.warn("processPdpCancels() Unknown document type (" + documentTypeCode + ") for document ID: " + documentNumber);
                 continue;
             }

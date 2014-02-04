@@ -32,6 +32,8 @@
         <form-bean name="CuPurchaseOrderForm"
             type="edu.cornell.kfs.module.purap.document.web.struts.CuPurchaseOrderForm" />
             
+        <form-bean name="PdpFormatForm" 
+            type="edu.cornell.kfs.pdp.web.struts.CUFormatForm" />    
     </form-beans>
     
     <action-mappings>
@@ -126,6 +128,12 @@
 			<forward name="basic" path="/jsp/module/purap/ElectronicInvoiceTest.jsp" />
 		</action>
 		
+        <action path="/pdp/format" type="edu.cornell.kfs.pdp.web.struts.CuFormatAction"
+            name="PdpFormatForm" scope="session" parameter="methodToCall"
+            validate="false" attribute="KualiForm">
+            <forward name="selection" path="/jsp/pdp/format/formatSelection.jsp" />
+            <forward name="continue" path="/jsp/pdp/format/formatContinue.jsp" />
+        </action>		
     </action-mappings>
     
 </struts-config>

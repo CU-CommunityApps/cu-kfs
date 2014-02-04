@@ -21,9 +21,9 @@ package edu.cornell.kfs.pdp.service.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.pdp.businessobject.PaymentAccountDetail;
+import org.kuali.kfs.pdp.service.PdpUtilService;
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.pdp.service.PdpUtilService;
 
 /**
  * Utility service for assisting in PDP processing.
