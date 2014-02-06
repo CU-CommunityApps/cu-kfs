@@ -199,21 +199,6 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
         return valid;
     }
     
-    protected boolean validateItemTypeForEinvoiceVendors(PurApItem item, PurchasingAccountsPayableDocument purapDocument) {
-        boolean valid = true;
-        // Check that item isn't a non-qty item on an e-invoice vendor order
-        VendorDetail vendor = purapDocument.getVendorDetail();
-        if(ObjectUtils.isNotNull(vendor) && ((VendorDetailExtension)vendor.getExtension()).isEinvoiceVendorIndicator()) {
-            // Don't allow non-quantity for einvoice vendors.
-            if(CUPurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE.equalsIgnoreCase(item.getItemTypeCode())) {
-                // Throw error that the non-qty items are not allowed if the vendor is an einvoice vendor
-                GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_TYPE, CUPurapKeyConstants.PURAP_ITEM_NEW_NONQTY, vendor.getVendorName()); 
-                valid = false;
-            }        
-        }       
-        return valid;
-    }
-    
     public boolean validateUnitOfMeasure(PurApItem item) {
         boolean valid = true;
         PurchasingItemBase purItem = (PurchasingItemBase) item;
