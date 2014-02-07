@@ -17,6 +17,8 @@
 
   <bean id="ProcurementCardDocument" parent="ProcurementCardDocument-parentBean">
     <property name="documentClass" value="edu.cornell.kfs.fp.document.CuProcurementCardDocument"/>
+    <property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.CuProcurementCardDocumentPresentationController"/>
+    
     <property name="attributes">
       <list>
         <ref bean="ProcurementCardDocument-accountNumberForSearching"/>

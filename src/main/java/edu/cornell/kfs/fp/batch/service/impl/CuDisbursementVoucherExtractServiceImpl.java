@@ -230,13 +230,32 @@ public class CuDisbursementVoucherExtractServiceImpl extends DisbursementVoucher
         dvSpecialHandlingZip = dvpd.getDisbVchrSpecialHandlingZipCode();
 
         if (StringUtils.isNotEmpty(dvSpecialHandlingPersonName)) {
-            pnt = new PaymentNoteText();
-            pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
-            pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_NOTE_PREFIX_SPECIAL_HANDLING_NAME + dvSpecialHandlingPersonName);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating special handling person name note: "+pnt.getCustomerNoteText());
+            // Split into different lines of length customerNoteText. That is because DV allows for higher length then PDP.
+            // Using chopWord to keep consistent with the rest of this code. Per functional specification not required to split
+            // on words. It may be nice for future cleanup to centralize some of this instead of doing it for each field
+            String tempCustomerNoteText = "Send Check To: " + dvSpecialHandlingPersonName;
+            for (String choppedWord : chopWord(tempCustomerNoteText, DisbursementVoucherConstants.MAX_NOTE_LINE_SIZE)) {
+ 
+                // Make sure we're still under the maximum number of note lines. 15 represents the maximum number of lines that may still be
+                // added after this point
+                if (line < (maxNoteLines - 15) && !StringUtils.isEmpty(choppedWord)) {
+                    pnt = new PaymentNoteText();
+                    pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
+                    pnt.setCustomerNoteText(choppedWord.replaceAll("\\n", "").trim());
+ 
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Creating special handling person name note, line #" + pnt.getCustomerNoteLineNbr() + ": " + pnt.getCustomerNoteText());
+                    }
+ 
+                    pd.addNote(pnt);
+                }
+                // We can't add any additional note lines, or we'll exceed the maximum, therefore
+                // just break out of the loop early - there's nothing left to do.
+                else {
+                    LOG.warn("Can't add any more special handling person name note.");
+                    break;
+                }
             }
-            pd.addNote(pnt);
         }
         if (StringUtils.isNotEmpty(dvSpecialHandlingLine1Address)) {
             pnt = new PaymentNoteText();

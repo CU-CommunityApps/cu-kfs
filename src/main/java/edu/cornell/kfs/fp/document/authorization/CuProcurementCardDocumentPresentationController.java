@@ -1,0 +1,27 @@
+package edu.cornell.kfs.fp.document.authorization;
+
+import java.util.Set;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.kuali.kfs.fp.document.authorization.ProcurementCardDocumentPresentationController;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.util.GlobalVariables;
+
+public class CuProcurementCardDocumentPresentationController extends ProcurementCardDocumentPresentationController {
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public boolean canEditDocumentOverview(Document document) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
+        
+        return workflowDocument.isEnroute() && CollectionUtils.isNotEmpty(nodeNames) 
+                && nodeNames.contains(KFSConstants.RouteLevelNames.ACCOUNT_REVIEW_FULL_EDIT)
+                && !SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(
+                        workflowDocument, GlobalVariables.getUserSession().getPrincipalId());
+    }
+}
