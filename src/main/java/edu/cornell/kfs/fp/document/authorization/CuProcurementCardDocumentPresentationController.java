@@ -21,7 +21,7 @@ public class CuProcurementCardDocumentPresentationController extends Procurement
         
         return workflowDocument.isEnroute() && CollectionUtils.isNotEmpty(nodeNames) 
                 && nodeNames.contains(KFSConstants.RouteLevelNames.ACCOUNT_REVIEW_FULL_EDIT)
-                && !SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(
-                        workflowDocument, GlobalVariables.getUserSession().getPrincipalId());
+                && workflowDocument.isApprovalRequested()
+                && !workflowDocument.isAcknowledgeRequested();
     }
 }
