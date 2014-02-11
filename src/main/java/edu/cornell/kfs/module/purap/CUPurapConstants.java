@@ -110,7 +110,14 @@ public class CUPurapConstants extends PurapConstants {
         public static final String REGULAR = "regular";
     }
     
+    public static final String IWNT_DOC_TYPE = "IWNT";
+    public static final String IWNT_STEP_PARAMETER = "step";
+    
+    public static final String IWNT_DOC_CREATE_REQ = "createReq";
     public static final String IWNT_DOC_USE_LOOKUPS = "iwntUseLookups";
+    
+    public static final String USER_OPTIONS_PRINCIPAL_ID = "principalId";
+    public static final String USER_OPTIONS_OPTION_ID = "optionId";
     
     public static final String USER_OPTIONS_DEFAULT_COLLEGE = "DEFAULT_COLLEGE";
     public static final String USER_OPTIONS_DEFAULT_DEPARTMENT = "DEFAULT_DEPARTMENT";

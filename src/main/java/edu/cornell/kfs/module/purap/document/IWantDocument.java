@@ -1,34 +1,54 @@
 package edu.cornell.kfs.module.purap.document;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.Organization;
-import edu.cornell.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
+import org.kuali.kfs.module.purap.businessobject.PurApItem;
+import org.kuali.kfs.module.purap.businessobject.PurchaseOrderView;
+import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
+import org.kuali.kfs.module.purap.util.PurApRelatedViews;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.AccountingLineParser;
+import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
+import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
+import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
+import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
+import org.kuali.kfs.sys.businessobject.SufficientFundsItem;
+import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase;
+import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kew.api.KewApiConstants.SearchableAttributeConstants;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.rice.krad.document.Copyable;
 import org.kuali.rice.krad.exception.ValidationException;
+import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.rice.location.framework.country.CountryEbo;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 
-public class IWantDocument extends FinancialSystemTransactionalDocumentBase implements Copyable, AmountTotaling {
-	
-	private static final long serialVersionUID = 1L;
+public class IWantDocument extends FinancialSystemTransactionalDocumentBase implements Copyable, PurchasingAccountsPayableDocument, AmountTotaling {
 
-	private String step;
+    private static final long serialVersionUID = 1L;
+
+    private String step;
 
     private String initiatorNetID;
     private String initiatorName;
@@ -105,16 +125,23 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     //Services related fields
 
     // Will service be performed on Campus: yes/no drop down box
-    private boolean servicePerformedOnCampus;
-
-    @SuppressWarnings("unused")
-	private KualiDecimal accountingLinesTotal;
+    // Need to store as a String here due to drop-down usage; database already stores it as such.
+    private String servicePerformedOnCampus;
 
     private String explanation;
 
     private KualiDecimal internalPurchasingLimit;
 
     private VendorDetail vendorDetail;
+
+    // ID of associated reqs document, if any.
+    private String reqsDocId;
+    
+    // Copied this property from the base PURAP doc class, but made it private instead.
+    private Integer accountsPayablePurchasingDocumentLinkIdentifier;
+    
+    // Copied this property from the base PURAP doc class, but made it private instead; not persisted.
+    private transient PurApRelatedViews relatedViews;
 
     // The three fields below are for lookup purposes only; they are not persisted.
     private transient Chart collegeChartForSearch;
@@ -128,13 +155,15 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         super();
         items = new ArrayList<IWantItem>();
         accounts = new ArrayList<IWantAccount>();
-        accountingLinesTotal = KualiDecimal.ZERO;
+        servicePerformedOnCampus = KFSConstants.ParameterValues.NO;
     }
 
+    @Override
     public String getVendorName() {
         return vendorName;
     }
 
+    @Override
     public void setVendorName(String vendorName) {
         this.vendorName = vendorName;
     }
@@ -179,12 +208,20 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         this.goods = goods;
     }
 
-    public boolean isServicePerformedOnCampus() {
+    public String getServicePerformedOnCampus() {
         return servicePerformedOnCampus;
     }
 
-    public void setServicePerformedOnCampus(boolean servicePerformedOnCampus) {
+    public void setServicePerformedOnCampus(String servicePerformedOnCampus) {
         this.servicePerformedOnCampus = servicePerformedOnCampus;
+    }
+
+    /**
+     * Returns the "servicePerformedOnCampus" property as a boolean, in case
+     * we ever need to retrieve it as such.
+     */
+    public boolean serviceIsPerformedOnCampus() {
+        return KFSConstants.ParameterValues.YES.equals(servicePerformedOnCampus);
     }
 
     public String getInitiatorNetID() {
@@ -200,10 +237,10 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
      * the current initiatorNetID if it is blank.
      */
     public String getInitiatorNetIDForLookup() {
-    	if (StringUtils.isNotBlank(initiatorNetID)) {
-    		return "*" + initiatorNetID + "*";
-    	}
-    	return initiatorNetID;
+        if (StringUtils.isNotBlank(initiatorNetID)) {
+            return SearchableAttributeConstants.SEARCH_WILDCARD_CHARACTER + initiatorNetID + SearchableAttributeConstants.SEARCH_WILDCARD_CHARACTER;
+        }
+        return initiatorNetID;
     }
 
     public String getInitiatorName() {
@@ -243,10 +280,10 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
      * the current deliverToNetID value if it is blank.
      */
     public String getDeliverToNetIDForLookup() {
-    	if (StringUtils.isNotBlank(deliverToNetID)) {
-    		return "*" + deliverToNetID + "*";
-    	}
-    	return deliverToNetID;
+        if (StringUtils.isNotBlank(deliverToNetID)) {
+            return SearchableAttributeConstants.SEARCH_WILDCARD_CHARACTER + deliverToNetID + SearchableAttributeConstants.SEARCH_WILDCARD_CHARACTER;
+        }
+        return deliverToNetID;
     }
 
     public String getDeliverToName() {
@@ -281,14 +318,17 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         this.deliverToAddress = deliverToAddress;
     }
 
+    @Override
     public String getVendorNumber() {
         return vendorNumber;
     }
 
+    @Override
     public void setVendorNumber(String vendorNumber) {
         this.vendorNumber = vendorNumber;
     }
 
+    @Override
     public VendorDetail getVendorDetail() {
         return vendorDetail;
     }
@@ -297,26 +337,32 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         this.vendorDetail = vendorDetail;
     }
 
+    @Override
     public Integer getVendorDetailAssignedIdentifier() {
         return vendorDetailAssignedIdentifier;
     }
 
+    @Override
     public void setVendorDetailAssignedIdentifier(Integer vendorDetailAssignedIdentifier) {
         this.vendorDetailAssignedIdentifier = vendorDetailAssignedIdentifier;
     }
 
+    @Override
     public Integer getVendorHeaderGeneratedIdentifier() {
         return vendorHeaderGeneratedIdentifier;
     }
 
+    @Override
     public void setVendorHeaderGeneratedIdentifier(Integer vendorHeaderGeneratedIdentifier) {
         this.vendorHeaderGeneratedIdentifier = vendorHeaderGeneratedIdentifier;
     }
 
+    @Override
     public String getVendorCustomerNumber() {
         return vendorCustomerNumber;
     }
 
+    @Override
     public void setVendorCustomerNumber(String vendorCustomerNumber) {
         this.vendorCustomerNumber = vendorCustomerNumber;
     }
@@ -329,58 +375,72 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         this.vendorAttentionName = vendorAttentionName;
     }
 
+    @Override
     public String getVendorLine1Address() {
         return vendorLine1Address;
     }
 
+    @Override
     public void setVendorLine1Address(String vendorLine1Address) {
         this.vendorLine1Address = vendorLine1Address;
     }
 
+    @Override
     public String getVendorLine2Address() {
         return vendorLine2Address;
     }
 
+    @Override
     public void setVendorLine2Address(String vendorLine2Address) {
         this.vendorLine2Address = vendorLine2Address;
     }
 
+    @Override
     public String getVendorStateCode() {
         return vendorStateCode;
     }
 
+    @Override
     public void setVendorStateCode(String vendorStateCode) {
         this.vendorStateCode = vendorStateCode;
     }
 
+    @Override
     public String getVendorAddressInternationalProvinceName() {
         return vendorAddressInternationalProvinceName;
     }
 
+    @Override
     public void setVendorAddressInternationalProvinceName(String vendorAddressInternationalProvinceName) {
         this.vendorAddressInternationalProvinceName = vendorAddressInternationalProvinceName;
     }
 
+    @Override
     public String getVendorPostalCode() {
         return vendorPostalCode;
     }
 
+    @Override
     public void setVendorPostalCode(String vendorPostalCode) {
         this.vendorPostalCode = vendorPostalCode;
     }
 
+    @Override
     public String getVendorCityName() {
         return vendorCityName;
     }
 
+    @Override
     public void setVendorCityName(String vendorCityName) {
         this.vendorCityName = vendorCityName;
     }
 
+    @Override
     public String getVendorCountryCode() {
         return vendorCountryCode;
     }
 
+    @Override
     public void setVendorCountryCode(String vendorCountryCode) {
         this.vendorCountryCode = vendorCountryCode;
     }
@@ -409,11 +469,21 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         this.sameAsInitiator = sameAsInitiator;
     }
 
-    public List<IWantItem> getItems() {
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Class getItemClass() {
+        return IWantItem.class;
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public List getItems() {
         return items;
     }
 
-    public void setItems(List<IWantItem> items) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public void setItems(List items) {
         this.items = items;
     }
 
@@ -459,7 +529,9 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         this.initiatorAddress = initiatorAddress;
     }
 
-    public void addItem(IWantItem item) {
+    @Override
+    public void addItem(PurApItem purapItem) {
+        IWantItem item = (IWantItem) purapItem;
         item.refreshReferenceObject(PurapPropertyConstants.COMMODITY_CODE);
         int itemLinePosition = getItemLinePosition();
         if (ObjectUtils.isNotNull(item.getItemLineNumber()) && (item.getItemLineNumber() > 0)
@@ -475,6 +547,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     }
 
+    @Override
     public void renumberItems(int start) {
         for (int i = start; i < items.size(); i++) {
             IWantItem item = (IWantItem) items.get(i);
@@ -499,11 +572,13 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         //        renumberItems(itemLinePosition);
     }
 
+    @Override
     public int getItemLinePosition() {
-
         return items.size();
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
     public IWantItem getItem(int index) {
         if (index >= items.size()) {
             for (int i = items.size(); i <= index; i++) {
@@ -522,6 +597,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         return accounts.get(index);
     }
 
+    @Override
     public void deleteItem(int lineNum) {
         if (items.remove(lineNum) == null) {
             // throw error here
@@ -533,7 +609,6 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         if (accounts.remove(lineNum) == null) {
             // throw error here
         }
-
     }
 
     /**
@@ -541,6 +616,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
      * 
      * @return
      */
+    @Override
     public KualiDecimal getTotalDollarAmount() {
 
         KualiDecimal totalDollarAmount = KualiDecimal.ZERO;
@@ -555,7 +631,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
                 item.setItemUnitPrice(BigDecimal.ZERO);
             }
 
-            itemTotal = item.getItemQuantity().multiply(new KualiDecimal(item.getItemUnitPrice()));
+            itemTotal = new KualiDecimal(item.getItemQuantity().bigDecimalValue().multiply(item.getItemUnitPrice()));
 
             totalDollarAmount = totalDollarAmount.add(itemTotal);
         }
@@ -627,7 +703,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     public String getRoutingChart() {
         if (StringUtils.isNotEmpty(collegeLevelOrganization)) {
-            routingChart = collegeLevelOrganization.substring(0, collegeLevelOrganization.lastIndexOf("-"));
+            routingChart = collegeLevelOrganization.substring(0, collegeLevelOrganization.lastIndexOf('-'));
         }
         return routingChart;
     }
@@ -641,7 +717,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         if (StringUtils.isNotEmpty(departmentLevelOrganization)) {
             this.routingOrganization = departmentLevelOrganization;
         } else if (StringUtils.isNotEmpty(collegeLevelOrganization)) {
-            routingOrganization = collegeLevelOrganization.substring(collegeLevelOrganization.lastIndexOf("-") + 1,
+            routingOrganization = collegeLevelOrganization.substring(collegeLevelOrganization.lastIndexOf('-') + 1,
                     collegeLevelOrganization.length());
         }
         return routingOrganization;
@@ -652,25 +728,24 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     }
 
     public String getCollegeLevelChartForSearch() {
-    	return getRoutingChart();
+        return getRoutingChart();
     }
     
     public String getCollegeLevelOrgCodeForSearch() {
-    	if (StringUtils.isNotEmpty(collegeLevelOrganization)) {
-            return collegeLevelOrganization.substring(collegeLevelOrganization.lastIndexOf("-") + 1,
+        if (StringUtils.isNotEmpty(collegeLevelOrganization)) {
+            return collegeLevelOrganization.substring(collegeLevelOrganization.lastIndexOf('-') + 1,
                     collegeLevelOrganization.length());
         }
         return collegeLevelOrganization;
     }
     
     public String getDepartmentLevelOrgCodeForSearch() {
-    	return getDepartmentLevelOrganization();
+        return getDepartmentLevelOrganization();
     }
     
     /**
      * toCopyFromGateway
      */
-
     public void toCopyFromGateway() throws WorkflowException, ValidationException {
         //no validation for the KFS copy requisition rules:
         //  if (!this.getAllowsCopy()) {
@@ -686,36 +761,48 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         addCopyErrorDocumentNote("copied from document " + sourceDocumentHeaderId);
 
         copyItemsAndAccounts();
+        
+        setAccountsPayablePurchasingDocumentLinkIdentifier(null);
+        setReqsDocId(null);
+        
+        this.completeOption = null;
+        this.completed = false;
     }
 
     @Override
-	public void toCopy() throws WorkflowException, IllegalStateException {
-		super.toCopy();
-		
-		copyItemsAndAccounts();
-	}
+    public void toCopy() throws WorkflowException, IllegalStateException {
+        super.toCopy();
+
+        copyItemsAndAccounts();
+
+        setAccountsPayablePurchasingDocumentLinkIdentifier(null);
+        setReqsDocId(null);
+
+        this.completeOption = null;
+        this.completed = false;
+    }
 
     /**
      * Create copies of the items and accounts lists upon document copy.
      */
     private void copyItemsAndAccounts() {
-    	List<IWantItem> newItems = new ArrayList<IWantItem>();
-    	List<IWantAccount> newAccounts = new ArrayList<IWantAccount>();
-    	
-    	if (items != null && !items.isEmpty()) {
-    		for (IWantItem item : items) {
-    			newItems.add(IWantItem.createCopy(item));
-    		}
-    	}
-    	
-    	if (accounts != null && !accounts.isEmpty()) {
-    		for (IWantAccount account : accounts) {
-    			newAccounts.add(IWantAccount.createCopy(account));
-    		}
-    	}
-    	
-    	this.items = newItems;
-    	this.accounts = newAccounts;
+        List<IWantItem> newItems = new ArrayList<IWantItem>();
+        List<IWantAccount> newAccounts = new ArrayList<IWantAccount>();
+
+        if (items != null && !items.isEmpty()) {
+            for (IWantItem item : items) {
+                newItems.add(IWantItem.createCopy(item));
+            }
+        }
+
+        if (accounts != null && !accounts.isEmpty()) {
+            for (IWantAccount account : accounts) {
+                newAccounts.add(IWantAccount.createCopy(account));
+            }
+        }
+
+        this.items = newItems;
+        this.accounts = newAccounts;
     }
 
     /**
@@ -760,14 +847,14 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     }
 
     public void setAccountingLinesTotal(KualiDecimal accountingLinesTotal) {
-        this.accountingLinesTotal = accountingLinesTotal;
+        // Do nothing.
     }
 
     public String getNoteLabel() {
         return noteLabel;
     }
 
-    public void setNoteLAbel(String noteLabel) {
+    public void setNoteLabel(String noteLabel) {
         this.noteLabel = noteLabel;
     }
 
@@ -781,12 +868,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     @Override
     public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
-        if ("Y".equalsIgnoreCase(completeOption)) {
-            return true;
-        } else {
-            return false;
-        }
-        //return completed;
+        return KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(completeOption);
     }
 
     public String getCurrentRouteToNetId() {
@@ -813,21 +895,29 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         this.setDeliverToInfoAsDefault = setDeliverToInfoAsDefault;
     }
 
-    /**
-	 * Gets the difference between the item total amounts and the account total amounts.
-	 * Re-computes and stores this difference upon invocation.
-	 */
-	public KualiDecimal getItemAndAccountDifference() {
-		KualiDecimal itemTotal = getTotalDollarAmount();
-		KualiDecimal accountTotal = getAccountingLinesTotal();
-		itemAndAccountDifference = itemTotal.subtract(accountTotal);
-		return itemAndAccountDifference;
-	}
-	
-	public void setItemAndAccountDifference(KualiDecimal itemAndAccountDifference) {
-		this.itemAndAccountDifference = itemAndAccountDifference;
-	}
+    public String getReqsDocId() {
+        return reqsDocId;
+    }
     
+    public void setReqsDocId(String reqsDocId) {
+        this.reqsDocId = reqsDocId;
+    }
+
+    /**
+     * Gets the difference between the item total amounts and the account total amounts.
+     * Re-computes and stores this difference upon invocation.
+     */
+    public KualiDecimal getItemAndAccountDifference() {
+        KualiDecimal itemTotal = getTotalDollarAmount();
+        KualiDecimal accountTotal = getAccountingLinesTotal();
+        itemAndAccountDifference = itemTotal.subtract(accountTotal);
+        return itemAndAccountDifference;
+    }
+
+    public void setItemAndAccountDifference(KualiDecimal itemAndAccountDifference) {
+        this.itemAndAccountDifference = itemAndAccountDifference;
+    }
+
     /**
      * KFSPTS-1961:
      * We need to add the items and accounts lists to the deletion-aware-lists collection
@@ -837,12 +927,12 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-	public List buildListOfDeletionAwareLists() {
-		List deletionAwareLists = super.buildListOfDeletionAwareLists();
-		deletionAwareLists.add(items);
-		deletionAwareLists.add(accounts);
-		return deletionAwareLists;
-	}
+    public List buildListOfDeletionAwareLists() {
+        List deletionAwareLists = super.buildListOfDeletionAwareLists();
+        deletionAwareLists.add(items);
+        deletionAwareLists.add(accounts);
+        return deletionAwareLists;
+    }
     
     /**
      * Override this method to send out an email to the initiator when the document reached the final status.
@@ -862,30 +952,523 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     }
 
-    // The properties below are for lookup purposes only, and are not persisted.
+    // The following link identifier getter and setter are needed for viewing the IWNT with other related PURAP docs.
+
+    @Override
+    public Integer getAccountsPayablePurchasingDocumentLinkIdentifier() {
+        return accountsPayablePurchasingDocumentLinkIdentifier;
+    }
+
+    @Override
+    public void setAccountsPayablePurchasingDocumentLinkIdentifier(Integer accountsPayablePurchasingDocumentLinkIdentifier) {
+        this.accountsPayablePurchasingDocumentLinkIdentifier = accountsPayablePurchasingDocumentLinkIdentifier;
+    }
+
+    // Copied the getter and setter below from PurchasingAccountsPayableDocumentBase.
+
+    public PurApRelatedViews getRelatedViews() {
+        if (relatedViews == null) {
+            relatedViews = new PurApRelatedViews(this.documentNumber, this.accountsPayablePurchasingDocumentLinkIdentifier);
+        }
+        return relatedViews;
+    }
+
+    public void setRelatedViews(PurApRelatedViews relatedViews) {
+        this.relatedViews = relatedViews;
+    }
+
+    // Copied the method below from PurchasingAccountsPayableDocumentBase.
     
-	public Chart getCollegeChartForSearch() {
-		return collegeChartForSearch;
-	}
+    public boolean getNeedWarningRelatedPOs() {
+        List<PurchaseOrderView> poViews = getRelatedViews().getRelatedPurchaseOrderViews();
+        for (PurchaseOrderView poView : poViews) {
+            if (poView.getNeedWarning()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public void setCollegeChartForSearch(Chart collegeChartForSearch) {
-		this.collegeChartForSearch = collegeChartForSearch;
-	}
+    // Added this method since the relatedDocuments.tag file relies on it when getIsReqsDoc() and getIsATypeOfPODoc() return false.
 
-	public Organization getCollegeOrgForSearch() {
-		return collegeOrgForSearch;
-	}
+    public Integer getPurchaseOrderIdentifier() {
+        return null;
+    }
 
-	public void setCollegeOrgForSearch(Organization collegeOrgForSearch) {
-		this.collegeOrgForSearch = collegeOrgForSearch;
-	}
+    // The three properties below are for lookup purposes only, and are not persisted.
 
-	public Organization getDepartmentOrgForSearch() {
-		return departmentOrgForSearch;
-	}
+    public Chart getCollegeChartForSearch() {
+        return collegeChartForSearch;
+    }
 
-	public void setDepartmentOrgForSearch(Organization departmentOrgForSearch) {
-		this.departmentOrgForSearch = departmentOrgForSearch;
-	}
-	
+    public void setCollegeChartForSearch(Chart collegeChartForSearch) {
+        this.collegeChartForSearch = collegeChartForSearch;
+    }
+
+    public Organization getCollegeOrgForSearch() {
+        return collegeOrgForSearch;
+    }
+
+    public void setCollegeOrgForSearch(Organization collegeOrgForSearch) {
+        this.collegeOrgForSearch = collegeOrgForSearch;
+    }
+
+    public Organization getDepartmentOrgForSearch() {
+        return departmentOrgForSearch;
+    }
+
+    public void setDepartmentOrgForSearch(Organization departmentOrgForSearch) {
+        this.departmentOrgForSearch = departmentOrgForSearch;
+    }
+
+    /*
+     * ================================================================================
+     * NOTE:
+     * We only added the methods below to comply with the PURAP document interface and its super-interfaces.
+     * Most of them just return null/empty values or are no-ops.
+     * ================================================================================
+     */
+
+    @Override
+    public List<SufficientFundsItem> checkSufficientFunds() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<GeneralLedgerPendingEntry> getGeneralLedgerPendingEntries() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public GeneralLedgerPendingEntry getGeneralLedgerPendingEntry(int arg0) {
+        return null;
+    }
+
+    @Override
+    public List<GeneralLedgerPendingEntry> getPendingLedgerEntriesForSufficientFundsChecking() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public void setGeneralLedgerPendingEntries(List<GeneralLedgerPendingEntry> arg0) {
+        // Do nothing.
+    }
+
+    @Override
+    public AccountingPeriod getAccountingPeriod() {
+        return null;
+    }
+
+    @Override
+    public String getPostingPeriodCode() {
+        return null;
+    }
+
+    @Override
+    public Integer getPostingYear() {
+        return null;
+    }
+
+    @Override
+    public void setAccountingPeriod(AccountingPeriod arg0) {
+        // Do nothing.
+    }
+
+    @Override
+    public void setPostingPeriodCode(String arg0) {
+        // Do nothing.
+    }
+
+    @Override
+    public void setPostingYear(Integer arg0) {
+        // Do nothing.
+    }
+
+    @Override
+    public void addPendingEntry(GeneralLedgerPendingEntry arg0) {
+        // Do nothing.
+    }
+
+    @Override
+    public void clearAnyGeneralLedgerPendingEntries() {
+        // Do nothing.
+    }
+
+    @Override
+    public boolean generateDocumentGeneralLedgerPendingEntries(GeneralLedgerPendingEntrySequenceHelper arg0) {
+        return false;
+    }
+
+    @Override
+    public boolean generateGeneralLedgerPendingEntries(GeneralLedgerPendingEntrySourceDetail arg0, GeneralLedgerPendingEntrySequenceHelper arg1) {
+        return false;
+    }
+
+    @Override
+    public String getFinancialDocumentTypeCode() {
+        return CUPurapConstants.IWNT_DOC_TYPE;
+    }
+
+    @Override
+    public KualiDecimal getGeneralLedgerPendingEntryAmountForDetail(GeneralLedgerPendingEntrySourceDetail arg0) {
+        return null;
+    }
+
+    @Override
+    public List<GeneralLedgerPendingEntrySourceDetail> getGeneralLedgerPendingEntrySourceDetails() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean isDebit(GeneralLedgerPendingEntrySourceDetail arg0) {
+        return false;
+    }
+
+    @Override
+    public void addSourceAccountingLine(SourceAccountingLine arg0) {
+        // Do nothing.
+    }
+
+    @Override
+    public void addTargetAccountingLine(TargetAccountingLine arg0) {
+        // Do nothing.
+    }
+
+    @Override
+    public AccountingLineParser getAccountingLineParser() {
+        return null;
+    }
+
+    @Override
+    public Class<? extends AccountingDocument> getDocumentClassForAccountingLineValueAllowedValidation() {
+        return null;
+    }
+
+    @Override
+    public Integer getNextSourceLineNumber() {
+        return null;
+    }
+
+    @Override
+    public Integer getNextTargetLineNumber() {
+        return null;
+    }
+
+    @Override
+    public SourceAccountingLine getSourceAccountingLine(int arg0) {
+        return null;
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Class getSourceAccountingLineClass() {
+        return null;
+    }
+
+    @Override
+    public String getSourceAccountingLineEntryName() {
+        return null;
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public List getSourceAccountingLines() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public String getSourceAccountingLinesSectionTitle() {
+        return null;
+    }
+
+    @Override
+    public KualiDecimal getSourceTotal() {
+        return null;
+    }
+
+    @Override
+    public TargetAccountingLine getTargetAccountingLine(int arg0) {
+        return null;
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Class getTargetAccountingLineClass() {
+        return null;
+    }
+
+    @Override
+    public String getTargetAccountingLineEntryName() {
+        return null;
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public List getTargetAccountingLines() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public String getTargetAccountingLinesSectionTitle() {
+        return null;
+    }
+
+    @Override
+    public KualiDecimal getTargetTotal() {
+        return null;
+    }
+
+    // Copied the AccountingDocumentBase version of this method.
+    @Override
+    public boolean isDocumentFinalOrProcessed() {
+        boolean isDocumentFinalOrProcessed = false;
+        if (ObjectUtils.isNotNull(getDocumentHeader().getDocumentNumber())) {
+            if (getDocumentHeader().hasWorkflowDocument()) {
+                if (getDocumentHeader().getWorkflowDocument().isFinal() || getDocumentHeader().getWorkflowDocument().isProcessed()) {
+                    isDocumentFinalOrProcessed = true;
+                }
+            }
+           
+        }
+
+        return isDocumentFinalOrProcessed;
+    }
+
+    @Override
+    public void setNextSourceLineNumber(Integer arg0) {
+        // Do nothing.
+    }
+
+    @Override
+    public void setNextTargetLineNumber(Integer arg0) {
+        // Do nothing.
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void setSourceAccountingLines(List arg0) {
+        // Do nothing.
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void setTargetAccountingLines(List arg0) {
+        // Do nothing.
+    }
+
+    @Override
+    public boolean isPostingYearNext() {
+        return false;
+    }
+
+    @Override
+    public boolean isPostingYearPrior() {
+        return false;
+    }
+
+    @Override
+    public Integer getPostingYearNextOrCurrent() {
+        return null;
+    }
+
+    @Override
+    public PurchasingAccountsPayableDocument getPurApSourceDocumentIfPossible() {
+        return null;
+    }
+
+    @Override
+    public String getPurApSourceDocumentLabelIfPossible() {
+        return null;
+    }
+
+    @Override
+    public boolean isDocumentStoppedInRouteNode(String nodeName) {
+        return false;
+    }
+
+    @Override
+    public void itemSwap(int position1, int position2) {
+        // Do nothing.
+    }
+
+    @Override
+    public String[] getBelowTheLineTypes() {
+        return null;
+    }
+
+    @Override
+    public void setTotalDollarAmount(KualiDecimal totalDollarAmount) {
+        // Do nothing.
+    }
+
+    @Override
+    public KualiDecimal getTotalDollarAmountAllItems(String[] excludedTypes) {
+        return null;
+    }
+
+    @Override
+    public KualiDecimal getTotalDollarAmountAboveLineItems() {
+        return null;
+    }
+
+    @Override
+    public KualiDecimal getTotalPreTaxDollarAmount() {
+        return null;
+    }
+
+    @Override
+    public void setTotalPreTaxDollarAmount(KualiDecimal totalDollarAmount) {
+        // Do nothing.
+    }
+
+    @Override
+    public KualiDecimal getTotalPreTaxDollarAmountAllItems(String[] excludedTypes) {
+        return null;
+    }
+
+    @Override
+    public KualiDecimal getTotalTaxAmount() {
+        return null;
+    }
+
+    @Override
+    public void setTotalTaxAmount(KualiDecimal amount) {
+        // Do nothing.
+    }
+
+    @Override
+    public KualiDecimal getTotalTaxAmountAllItems(String[] excludedTypes) {
+        return null;
+    }
+
+    @Override
+    public KualiDecimal getTotalTaxAmountAboveLineItems() {
+        return null;
+    }
+
+    @Override
+    public KualiDecimal getTotalTaxAmountAboveLineItems(String[] excludedTypes) {
+        return null;
+    }
+
+    @Override
+    public KualiDecimal getTotalTaxAmountWithExclusions(String[] excludedTypes, boolean includeBelowTheLine) {
+        return null;
+    }
+
+    @Override
+    public void templateVendorAddress(VendorAddress vendorAddress) {
+        // Do nothing.
+    }
+
+    @Override
+    public CountryEbo getVendorCountry() {
+        return null;
+    }
+
+    @Override
+    public Integer getPurapDocumentIdentifier() {
+        return null;
+    }
+
+    @Override
+    public void setPurapDocumentIdentifier(Integer identifier) {
+        // Do nothing.
+    }
+
+    @Override
+    public Integer getVendorAddressGeneratedIdentifier() {
+        return null;
+    }
+
+    @Override
+    public void setVendorAddressGeneratedIdentifier(Integer vendorAddressGeneratedIdentifier) {
+        // Do nothing.
+    }
+
+    @Override
+    public boolean isUseTaxIndicator() {
+        return false;
+    }
+
+    @Override
+    public void setUseTaxIndicator(boolean useTaxIndicator) {
+        // Do nothing.
+    }
+
+    @Override
+    public void fixItemReferences() {
+        // Do nothing.
+    }
+
+    @Override
+    public Date getTransactionTaxDate() {
+        return null;
+    }
+
+    @Override
+    public PurApItem getTradeInItem() {
+        return null;
+    }
+
+    @Override
+    public KualiDecimal getTotalDollarAmountForTradeIn() {
+        return null;
+    }
+
+    @Override
+    public List<PurApItem> getTradeInItems() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean getIsATypeOfPurAPRecDoc() {
+        return false;
+    }
+
+    @Override
+    public boolean getIsATypeOfPurDoc() {
+        return false;
+    }
+
+    @Override
+    public boolean getIsATypeOfPODoc() {
+        return false;
+    }
+
+    @Override
+    public boolean getIsPODoc() {
+        return false;
+    }
+
+    @Override
+    public boolean getIsReqsDoc() {
+        return false;
+    }
+
+    @Override
+    public boolean isInquiryRendered() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldGiveErrorForEmptyAccountsProration() {
+        return false;
+    }
+
+    @Override
+    public boolean isCalculated() {
+        return false;
+    }
+
+    @Override
+    public void setCalculated(boolean calculated) {
+        // Do nothing.
+    }
+
+    @Override
+    public boolean isSensitive() {
+        return false;
+    }
+
 }

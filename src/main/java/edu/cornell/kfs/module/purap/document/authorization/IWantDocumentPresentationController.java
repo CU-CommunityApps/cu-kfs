@@ -2,7 +2,8 @@ package edu.cornell.kfs.module.purap.document.authorization;
 
 import java.util.Set;
 
-import  edu.cornell.kfs.module.purap.CUPurapConstants;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentPresentationControllerBase;
 import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
@@ -10,24 +11,22 @@ import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.util.GlobalVariables;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 
 public class IWantDocumentPresentationController extends FinancialSystemTransactionalDocumentPresentationControllerBase {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public boolean canSave(Document document) {
+    @Override
+    public boolean canSave(Document document) {
         return super.canSave(document);
     }
 
     public boolean canCopy(Document document) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        if (workflowDocument.isInitiated()) {
-            return false;
-        }
-        
-        if(SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(workflowDocument, GlobalVariables.getUserSession().getPrincipalId())){
+        if (workflowDocument.isInitiated() || SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(
+                workflowDocument, GlobalVariables.getUserSession().getPrincipalId())) {
             return false;
         }
         
@@ -35,29 +34,31 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
     }
 
     @Override
-	public boolean canCancel(Document document) {
+    public boolean canCancel(Document document) {
         return super.canCancel(document);
     }
 
     @Override
-	public boolean canRoute(Document document) {
+    public boolean canRoute(Document document) {
         String step = ((IWantDocument) document).getStep();
         if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)) {
             return true;
-        } else
+        } else {
             return super.canRoute(document);
+        }
     }
 
     @Override
     public boolean canClose(Document document) {
         return false;
     }
-    
+
     @Override
-	public boolean canReload(Document document) {
+    public boolean canReload(Document document) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         
-        if(SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(workflowDocument, GlobalVariables.getUserSession().getPrincipalId())){
+        if (SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(
+                workflowDocument, GlobalVariables.getUserSession().getPrincipalId())) {
             return false;
         }
         
@@ -65,37 +66,30 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
     }
 
     /*
-     * CU Customization (KFSPTS-1996):
+     * CU Customization (KFSPTS-2270): Added the ability to edit the document overview/description
+     * for enroute IWNT docs; we'll use KIM permissions to restrict this to select users.
      * 
-     * The KualiWorkflowDocument.isAdHocRequested() method is not always returning true for ad hoc
-     * recipients when first opening the IWantDocument. (One possible cause is that some authorization checks
-     * are somehow updating the document with an invalid workflow doc, possibly one created by the wrong user.)
-     * This is preventing ad hoc approvers from viewing the "Order Completed" tab without clicking reload or
-     * performing some other refresh action. To work around this without constructing a whole new
-     * KualiWorkflowDocument containing the correct user, we have copied the contents of the isAdHocRequested()
-     * method into the one below, and have tweaked it as necessary to obtain the correct principal ID.
-     * 
-     * TODO: Is there a better workaround or a fix for the workflow doc problem?
+     * We restrict the editing of the doc overview to IWNT docs in enroute status at the
+     * OrganizationHierarchy node, and further restrict it to non-ad-hoc users.
      */
-    private boolean canCompleteOrderForAdHoc(Document document) {
+    @Override
+    public boolean canEditDocumentOverview(Document document) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-
-    	return SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(workflowDocument, GlobalVariables.getUserSession().getPrincipalId());
+        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
+        return workflowDocument.isEnroute() && CollectionUtils.isNotEmpty(nodeNames) && nodeNames.contains("OrganizationHierarchy")
+                && !SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(
+                        workflowDocument, GlobalVariables.getUserSession().getPrincipalId());
     }
-    
+
     @Override
     public Set<String> getEditModes(Document document) {
         Set<String> editModes = super.getEditModes(document);
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         IWantDocument iWantDocument = (IWantDocument) document;
         
-        // TODO: Is there a better way to resolve the problem mentioned in the canCompleteOrderForAdHoc() method above?
-        
-        //if(workflowDocument.isAdHocRequested()){
-            //editModes.add("completeOrder");
-        //}
-        if(canCompleteOrderForAdHoc(document)){
-        	editModes.add("completeOrder");
+        if (SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(
+                workflowDocument, GlobalVariables.getUserSession().getPrincipalId())) {
+            editModes.add("completeOrder");
         }
 
         if (workflowDocument.isInitiated() || workflowDocument.isSaved()) {
@@ -136,6 +130,10 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
             editModes.remove(CUPurapConstants.IWantDocumentSteps.VENDOR_STEP);
         }
 
+        if (StringUtils.isBlank(iWantDocument.getReqsDocId()) && !workflowDocument.isInitiated() && !workflowDocument.isSaved()) {
+            editModes.add(CUPurapConstants.IWNT_DOC_CREATE_REQ);
+        }
+        
         editModes.add(CUPurapConstants.IWNT_DOC_USE_LOOKUPS);
         
         return editModes;

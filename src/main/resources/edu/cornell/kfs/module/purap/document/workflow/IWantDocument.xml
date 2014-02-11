@@ -19,6 +19,8 @@
     <documentType>
       <name>IWNT</name>
       <parent>KFST</parent>
+      <description>To see I Want document help page please click &lt;a href="https://confluence.cornell.edu/x/vQjPCw"&gt;here&lt;/a&gt;</description>
+      <label>I Want Document</label>
       <docHandler>${application.url}/purapIWant.do?methodToCall=docHandler</docHandler>
       
       <routePaths>
@@ -29,24 +31,26 @@
               <simple name="NoOpIsOrderCompleted" nextNode="JoinIsOrderCompleted"/>
             </branch>
             <branch name="False">
-            <requests name="OrganizationHierarchy" nextNode="JoinIsOrderCompleted"/>
+              <requests name="OrganizationHierarchy" nextNode="JoinIsOrderCompleted"/>
             </branch>
             <join name="JoinIsOrderCompleted"/>
           </split>
-          <requests name="NoOpComplete" />
+          <simple name="NoOpComplete" />
         </routePath>
       </routePaths>
       
       
       <routeNodes>
-        <start name="AdHoc"/>
+        <start name="AdHoc">
+          <activationType>P</activationType>
+        </start>
         
         <split name="IsOrderCompleted">
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
         
         <role name="OrganizationHierarchy">
-          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
         

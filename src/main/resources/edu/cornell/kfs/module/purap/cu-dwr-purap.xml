@@ -11,5 +11,12 @@
         <param name="beanName" value="iWantDocumentService" />
         <include method="getPersonData" />
       </create>
+      <!-- KFSPTS-2630: Added custom util class to calculate IWNT doc item and account totals. -->
+      <create creator="new" javascript="IWantAmountUtil" scope="application">
+        <param name="class" value="edu.cornell.kfs.module.purap.util.IWantAmountUtil" />
+        <include method="calculateSingleItemTotal" />
+        <include method="calculateTotalsForItemChange" />
+        <include method="calculateTotalsForAccountChange" />
+      </create>
 	</allow>	
 </dwr>

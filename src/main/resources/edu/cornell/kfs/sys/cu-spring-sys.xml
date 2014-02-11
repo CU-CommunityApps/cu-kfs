@@ -44,6 +44,18 @@
 	 	<property name="moduleConfiguration" ref="cu-sys"/>
 	</bean>
 
+    <bean id="CUKFSConstants" class="org.kuali.rice.core.api.util.collect.ConstantsMap">
+		<property name="constantClass" value="edu.cornell.kfs.sys.CUKFSConstants" />
+	</bean>
+
+	<bean id="cu-sys-attributeExporter" class="org.springframework.web.context.support.ServletContextAttributeExporter">
+		<property name="attributes">
+			<map>
+				<entry key="CUKFSConstants" value-ref="CUKFSConstants" />
+			</map>
+		</property>
+	</bean>
+
 	<bean id="batchContainerStep" class="org.kuali.kfs.sys.batch.BatchContainerStep" parent="step">
  	    <property name="batchContainerDirectory" value="${staging.directory.sys.batchContainer}"/>
  	    <property name="batchContainerStopStep" ref="stopBatchContainerStep" />

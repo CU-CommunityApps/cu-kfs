@@ -90,6 +90,7 @@
        <ref bean="IWantDocument-totalDollarAmount"/>
        <ref bean="IWantDocument-itemAndAccountDifference" />
        
+       <ref bean="IWantDocument-reqsDocId" />
        <ref bean="IWantDocument-collegeLevelChartForSearch" />
        <ref bean="IWantDocument-collegeLevelOrgCodeForSearch" />
        <ref bean="IWantDocument-departmentLevelOrgCodeForSearch" />
@@ -135,13 +136,23 @@
 	</property>
 	<property name="accountingLineGroups">
     	<map>
-    		<entry>
-    			<key><value>source</value></key>
-	    		<ref bean="IWantDocument-sourceAccountingLineGroup" parent="AccountingLineGroup"/>
-	    	</entry>
-	    	
+    		<entry key="source" value-ref="IWantDocument-sourceAccountingLineGroup"/>
     	</map>
     </property>
+
+	<property name="webScriptFiles">
+		<list>
+			<value>dwr/interface/AccountService.js</value>
+			<value>dwr/interface/CommodityCodeService.js</value>
+			<value>dwr/interface/ItemUnitOfMeasureService.js</value>
+			<value>dwr/interface/IWantAmountUtil.js</value>
+			<value>dwr/interface/IWantDocumentService.js</value>
+			<value>dwr/interface/PersonService.js</value>
+			<value>scripts/module/purap/iWantDoc.js</value>
+			<value>scripts/module/purap/objectInfo.js</value>
+			<value>scripts/vnd/objectInfo.js</value>
+		</list>
+	</property>
 
   </bean>
 
@@ -290,6 +301,7 @@
   <bean id="IWantDocument-initiatorPhoneNumber-parentBean" abstract="true" parent="GenericAttributes-phoneNumberWithValidation">
     <property name="name" value="initiatorPhoneNumber"/>
     <property name="label" value="Requestor's Phone Number"/>
+    <property name="maxLength" value="20"/>
   </bean>
   <bean id="IWantDocument-initiatorNetID" parent="IWantDocument-initiatorNetID-parentBean"/>
 
@@ -351,7 +363,8 @@
 
   <bean id="IWantDocument-deliverToPhoneNumber-parentBean" abstract="true" parent="GenericAttributes-phoneNumberWithValidation">
     <property name="name" value="deliverToPhoneNumber"/>
-     <property name="label" value="Deliver To Phone Number"/>
+    <property name="label" value="Deliver To Phone Number"/>
+    <property name="maxLength" value="20"/>
   </bean>
   <bean id="IWantDocument-deliverToNetID" parent="IWantDocument-deliverToNetID-parentBean"/>
 
@@ -441,6 +454,10 @@
     <property name="shortLabel" value="On Campus?"/>
     <property name="required" value="false"/>
     <property name="maxLength" value="1"/>
+    <!-- Setup validation similar to that from KFS's BarcodeInventoryErrorDocument. -->
+    <property name="validationPattern">
+      <bean parent="CharsetValidationPattern" p:validChars="YN "/>
+    </property>
     <property name="control">
       <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.module.purap.businessobject.options.YesNoValuesFinder" p:includeKeyInLabel="false"/>
     </property>
@@ -598,6 +615,19 @@
     <property name="name" value="currentRouteToNetId"/>
     <property name="label" value="Approver's Net ID"/>
    
+  </bean>
+
+  <bean id="IWantDocument-reqsDocId" parent="IWantDocument-reqsDocId-parentBean"/>
+  <bean id="IWantDocument-reqsDocId-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="shortLabel" value="Reqs Doc ID"/>
+    <property name="maxLength" value="14"/>
+    <property name="required" value="false"/>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+    <property name="summary" value="&amp;nbsp;"/>
+    <property name="name" value="reqsDocId"/>
+    <property name="label" value="Requisition Document ID"/>
   </bean>
 
   <bean id="IWantDocument-collegeLevelChartForSearch" parent="IWantDocument-collegeLevelChartForSearch-parentBean"/>

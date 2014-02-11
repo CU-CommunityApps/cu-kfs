@@ -15,14 +15,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-import edu.cornell.kfs.module.purap.CUPurapConstants;
-
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentActionBase;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
+import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.RiceConstants;
 import org.kuali.rice.kew.api.KewApiConstants;
@@ -32,7 +30,7 @@ import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.employment.EntityEmployment;
 import org.kuali.rice.kim.api.identity.entity.Entity;
 import org.kuali.rice.kim.api.identity.principal.Principal;
-import org.kuali.rice.kim.api.services.IdentityManagementService;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kns.rule.event.KualiAddLineEvent;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.rice.krad.bo.Note;
@@ -43,6 +41,8 @@ import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantDocUserOptions;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
@@ -51,11 +51,12 @@ import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
 
+@SuppressWarnings("deprecation")
 public class IWantDocumentAction extends FinancialSystemTransactionalDocumentActionBase {
 
-	private static final String IWANT_DEPT_ORGS_TO_EXCLUDE_PARM = "IWANT_DEPT_ORGS_TO_EXCLUDE";
-	
-	private final int DOCUMENT_DESCRIPTION_MAX_LENGTH = 40;
+    private static final String IWANT_DEPT_ORGS_TO_EXCLUDE_PARM = "IWANT_DEPT_ORGS_TO_EXCLUDE";
+
+    private static final int DOCUMENT_DESCRIPTION_MAX_LENGTH = 40;
 
     /**
      * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#loadDocument(org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase)
@@ -74,10 +75,13 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             if (StringUtils.isNotBlank(iWantDocument.getCurrentRouteToNetId())) {
                 iWantForm.getNewAdHocRoutePerson().setId(iWantDocument.getCurrentRouteToNetId());
             }
+        } else if (!iWantDocument.getDocumentHeader().getWorkflowDocument().isInitiated()) {
+            iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
+            iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
         }
 
         WorkflowDocument workflowDoc = iWantDocument.getDocumentHeader().getWorkflowDocument();
-	    SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), workflowDoc);
+        SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), workflowDoc);
 
     }
 
@@ -95,7 +99,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         IWantDocumentForm iWantForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantForm.getIWantDocument();
         String command = iWantForm.getCommand();
-        String step = request.getParameter("step");
+        String step = request.getParameter(CUPurapConstants.IWNT_STEP_PARAMETER);
 
         if (step != null) {
             iWantForm.setStep(step);
@@ -109,16 +113,12 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             iWantDocument.setStep(step);
 
             if (KewApiConstants.INITIATE_COMMAND.equalsIgnoreCase(command)) {
-                IdentityManagementService identityManagementService = SpringContext
-                        .getBean(IdentityManagementService.class);
-
                 iWantForm.setDocument(iWantDocument);
 
                 if (iWantDocument != null) {
 
-                    String principalId = iWantDocument.getDocumentHeader().getWorkflowDocument()
-                            .getInitiatorPrincipalId();
-                    Principal initiator = identityManagementService.getPrincipal(principalId);
+                    String principalId = iWantDocument.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+                    Principal initiator = KimApiServiceLocator.getIdentityService().getPrincipal(principalId);
                     String initiatorPrincipalID = initiator.getPrincipalId();
                     String initiatorNetID = initiator.getPrincipalName();
 
@@ -139,46 +139,48 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
                     // check default user options
                     Map<String, String> primaryKeysCollegeOption = new HashMap<String, String>();
-                    primaryKeysCollegeOption.put("principalId", initiatorPrincipalID);
-                    primaryKeysCollegeOption.put("optionId", CUPurapConstants.USER_OPTIONS_DEFAULT_COLLEGE);
+                    primaryKeysCollegeOption.put(CUPurapConstants.USER_OPTIONS_PRINCIPAL_ID, initiatorPrincipalID);
+                    primaryKeysCollegeOption.put(CUPurapConstants.USER_OPTIONS_OPTION_ID, CUPurapConstants.USER_OPTIONS_DEFAULT_COLLEGE);
                     IWantDocUserOptions userOptionsCollege = (IWantDocUserOptions) getBusinessObjectService()
                             .findByPrimaryKey(IWantDocUserOptions.class, primaryKeysCollegeOption);
 
                     Map<String, String> primaryKeysDepartmentOption = new HashMap<String, String>();
-                    primaryKeysDepartmentOption.put("principalId", initiatorPrincipalID);
-                    primaryKeysDepartmentOption.put("optionId", CUPurapConstants.USER_OPTIONS_DEFAULT_DEPARTMENT);
+                    primaryKeysDepartmentOption.put(CUPurapConstants.USER_OPTIONS_PRINCIPAL_ID, initiatorPrincipalID);
+                    primaryKeysDepartmentOption.put(CUPurapConstants.USER_OPTIONS_OPTION_ID, CUPurapConstants.USER_OPTIONS_DEFAULT_DEPARTMENT);
                     IWantDocUserOptions userOptionsDepartment = (IWantDocUserOptions) getBusinessObjectService()
                             .findByPrimaryKey(IWantDocUserOptions.class, primaryKeysDepartmentOption);
                     
                     //check default deliver to address info
 
                     Map<String, String> primaryKeysdeliverToNetIDOption = new HashMap<String, String>();
-                    primaryKeysdeliverToNetIDOption.put("principalId", initiatorPrincipalID);
-                    primaryKeysdeliverToNetIDOption.put("optionId", CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_NET_ID);
+                    primaryKeysdeliverToNetIDOption.put(CUPurapConstants.USER_OPTIONS_PRINCIPAL_ID, initiatorPrincipalID);
+                    primaryKeysdeliverToNetIDOption.put(CUPurapConstants.USER_OPTIONS_OPTION_ID, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_NET_ID);
                     IWantDocUserOptions userOptionsDeliverToNetID = (IWantDocUserOptions) getBusinessObjectService()
                             .findByPrimaryKey(IWantDocUserOptions.class, primaryKeysdeliverToNetIDOption);
 
                     Map<String, String> primaryKeysDeliverToNameOption = new HashMap<String, String>();
-                    primaryKeysDeliverToNameOption.put("principalId", initiatorPrincipalID);
-                    primaryKeysDeliverToNameOption.put("optionId", CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_NAME);
+                    primaryKeysDeliverToNameOption.put(CUPurapConstants.USER_OPTIONS_PRINCIPAL_ID, initiatorPrincipalID);
+                    primaryKeysDeliverToNameOption.put(CUPurapConstants.USER_OPTIONS_OPTION_ID, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_NAME);
                     IWantDocUserOptions userOptionsDeliverToName = (IWantDocUserOptions) getBusinessObjectService()
                             .findByPrimaryKey(IWantDocUserOptions.class, primaryKeysDeliverToNameOption);
                     
                     Map<String, String> primaryKeysDeliverToEmailOption = new HashMap<String, String>();
-                    primaryKeysDeliverToEmailOption.put("principalId", initiatorPrincipalID);
-                    primaryKeysDeliverToEmailOption.put("optionId", CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_EMAIL_ADDRESS);
+                    primaryKeysDeliverToEmailOption.put(CUPurapConstants.USER_OPTIONS_PRINCIPAL_ID, initiatorPrincipalID);
+                    primaryKeysDeliverToEmailOption.put(CUPurapConstants.USER_OPTIONS_OPTION_ID,
+                            CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_EMAIL_ADDRESS);
                     IWantDocUserOptions userOptionsDeliverToEmail = (IWantDocUserOptions) getBusinessObjectService()
                             .findByPrimaryKey(IWantDocUserOptions.class, primaryKeysDeliverToEmailOption);
                     
                     Map<String, String> primaryKeysDeliverToPhnNbrOption = new HashMap<String, String>();
-                    primaryKeysDeliverToPhnNbrOption.put("principalId", initiatorPrincipalID);
-                    primaryKeysDeliverToPhnNbrOption.put("optionId", CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_PHONE_NUMBER);
+                    primaryKeysDeliverToPhnNbrOption.put(CUPurapConstants.USER_OPTIONS_PRINCIPAL_ID, initiatorPrincipalID);
+                    primaryKeysDeliverToPhnNbrOption.put(CUPurapConstants.USER_OPTIONS_OPTION_ID,
+                            CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_PHONE_NUMBER);
                     IWantDocUserOptions userOptionsDeliverToPhnNbr = (IWantDocUserOptions) getBusinessObjectService()
                             .findByPrimaryKey(IWantDocUserOptions.class, primaryKeysDeliverToPhnNbrOption);
                     
                     Map<String, String> primaryKeysDeliverToAddressOption = new HashMap<String, String>();
-                    primaryKeysDeliverToAddressOption.put("principalId", initiatorPrincipalID);
-                    primaryKeysDeliverToAddressOption.put("optionId", CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_ADDRESS);
+                    primaryKeysDeliverToAddressOption.put(CUPurapConstants.USER_OPTIONS_PRINCIPAL_ID, initiatorPrincipalID);
+                    primaryKeysDeliverToAddressOption.put(CUPurapConstants.USER_OPTIONS_OPTION_ID, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_ADDRESS);
                     IWantDocUserOptions userOptionsDeliverToAddress = (IWantDocUserOptions) getBusinessObjectService()
                             .findByPrimaryKey(IWantDocUserOptions.class, primaryKeysDeliverToAddressOption);
 
@@ -222,8 +224,9 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
                 WorkflowDocument workflowDoc = iWantDocument.getDocumentHeader().getWorkflowDocument();
                 // KualiDocumentFormBase.populate() needs this updated in the session
-        	    SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), workflowDoc);
+                SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), workflowDoc);
 
+                setIWantDocumentDescription(iWantDocument);
             }
         }
 
@@ -248,45 +251,37 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
             iWantDoc.setExplanation(iWantDoc.getDocumentHeader().getExplanation());
 
-            if (!documentForm.getPreviousSelectedOrg().equalsIgnoreCase(
-                    ((IWantDocument) documentForm.getDocument()).getCollegeLevelOrganization())) {
+            // populate department drop down
+            if (!documentForm.getPreviousSelectedOrg().equalsIgnoreCase(((IWantDocument) documentForm.getDocument()).getCollegeLevelOrganization())) {
+                String cLevelOrg = ((IWantDocument) documentForm.getDocument()).getCollegeLevelOrganization();
 
-                // populate department drop down
-                if (documentForm != null
-                        && documentForm.getDocument() != null) {
+                documentForm.getDeptOrgKeyLabels().clear();
+                documentForm.getDeptOrgKeyLabels().add(new ConcreteKeyValue("", "Please Select"));
 
-                    String cLevelOrg = ((IWantDocument) documentForm.getDocument()).getCollegeLevelOrganization();
+                if (StringUtils.isNotEmpty(cLevelOrg)) {
 
-                    documentForm.getDeptOrgKeyLabels().clear();
-                    documentForm.getDeptOrgKeyLabels().add(new ConcreteKeyValue("", "Please Select"));
+                    IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
+                    List<LevelOrganization> dLevelOrgs = iWantDocumentService.getDLevelOrganizations(cLevelOrg);
 
-                    if (StringUtils.isNotEmpty(cLevelOrg)) {
+                    // Get the list of chart+org combos to forcibly exclude from the drop-down, if any.
+                    String routingChart = ((IWantDocument) documentForm.getDocument()).getRoutingChart();
+                    Collection<String> dLevelExcludesList = getParameterService().getParameterValuesAsString(PurapConstants.PURAP_NAMESPACE,
+                            KRADConstants.DetailTypes.DOCUMENT_DETAIL_TYPE, IWANT_DEPT_ORGS_TO_EXCLUDE_PARM);
+                    Set<String> dLevelExcludes =
+                            new HashSet<String>((dLevelExcludesList != null) ? dLevelExcludesList : Collections.<String>emptyList());
 
-                        IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
-                        List<LevelOrganization> dLevelOrgs = iWantDocumentService.getDLevelOrganizations(cLevelOrg);
+                    for (LevelOrganization levelOrganization : dLevelOrgs) {
 
-                        // Get the list of chart+org combos to forcibly exclude from the drop-down, if any.
-                        String routingChart = ((IWantDocument) documentForm.getDocument()).getRoutingChart();
-                        List<String> dLevelExcludesList = (List<String>) getParameterService().getParameterValuesAsString(PurapConstants.PURAP_NAMESPACE,
-                        		KRADConstants.DetailTypes.DOCUMENT_DETAIL_TYPE, IWANT_DEPT_ORGS_TO_EXCLUDE_PARM);
-                        Set<String> dLevelExcludes =
-                        		new HashSet<String>((dLevelExcludesList != null) ? dLevelExcludesList : Collections.<String>emptyList());
-                        
-                        for (LevelOrganization levelOrganization : dLevelOrgs) {
-
-                        	// Add each department-level org to the drop-down as long as it is not marked for exclusion.
-                        	if (!dLevelExcludes.contains(routingChart + "=" + levelOrganization.getCode())) {
-                        		documentForm.getDeptOrgKeyLabels()
-                                    	.add(
-                                    			new ConcreteKeyValue(levelOrganization.getCode(), levelOrganization
-                                    					.getCodeAndDescription()));
-                        	}
+                        // Add each department-level org to the drop-down as long as it is not marked for exclusion.
+                        if (!dLevelExcludes.contains(routingChart + "=" + levelOrganization.getCode())) {
+                            documentForm.getDeptOrgKeyLabels().add(
+                                    new ConcreteKeyValue(levelOrganization.getCode(), levelOrganization.getCodeAndDescription()));
                         }
                     }
                 }
             }
 
-            setIWantDocumentDescription(iWantDoc);
+            //setIWantDocumentDescription(iWantDoc);
 
         }
 
@@ -307,6 +302,11 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             description = description.substring(0, DOCUMENT_DESCRIPTION_MAX_LENGTH);
         }
 
+        // If necessary, add a default description.
+        if (StringUtils.isBlank(description)) {
+            description = "New IWantDocument";
+        }
+        
         iWantDocument.getDocumentHeader().setDocumentDescription(description);
     }
 
@@ -319,22 +319,22 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
         String primaryDeptOrg = null;
 
-        if (documentForm != null && documentForm.getDocument() != null
-                && StringUtils.isEmpty(((IWantDocument) documentForm.getDocument()).getCollegeLevelOrganization())) {
+        IWantDocument iWantDocument = null;
+        if (documentForm != null && documentForm.getDocument() != null) {
+            iWantDocument = (IWantDocument) documentForm.getDocument();
+        }
+        
+        if (iWantDocument != null && StringUtils.isEmpty(iWantDocument.getCollegeLevelOrganization())) {
 
             Person currentUser = GlobalVariables.getUserSession().getPerson();
-            IdentityManagementService identityManagementService = SpringContext
-                    .getBean(IdentityManagementService.class);
 
-           Entity entityInfo = identityManagementService.getEntityByPrincipalId(currentUser
-                    .getPrincipalId());
+            Entity entityInfo = KimApiServiceLocator.getIdentityService().getEntityByPrincipalId(currentUser.getPrincipalId());
 
             if (ObjectUtils.isNotNull(entityInfo)) {
-                if (ObjectUtils.isNotNull(entityInfo.getEmploymentInformation())
-                        && entityInfo.getEmploymentInformation().size() > 0) {
+                if (ObjectUtils.isNotNull(entityInfo.getEmploymentInformation()) && entityInfo.getEmploymentInformation().size() > 0) {
                     EntityEmployment employmentInformation = entityInfo.getEmploymentInformation().get(0);
                     String primaryDepartment = employmentInformation.getPrimaryDepartmentCode();
-                    primaryDeptOrg = primaryDepartment.substring(primaryDepartment.lastIndexOf("-") + 1,
+                    primaryDeptOrg = primaryDepartment.substring(primaryDepartment.lastIndexOf('-') + 1,
                             primaryDepartment.length());
 
                     String cLevelOrg = iWantDocumentService.getCLevelOrganizationForDLevelOrg(primaryDepartment);
@@ -343,9 +343,8 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             }
         }
 
-        if (documentForm != null && documentForm.getDocument() != null
-                && StringUtils.isNotEmpty(((IWantDocument) documentForm.getDocument()).getCollegeLevelOrganization())) {
-            String cLevelOrg = ((IWantDocument) documentForm.getDocument()).getCollegeLevelOrganization();
+        if (iWantDocument != null && StringUtils.isNotEmpty(iWantDocument.getCollegeLevelOrganization())) {
+            String cLevelOrg = iWantDocument.getCollegeLevelOrganization();
             documentForm.getDeptOrgKeyLabels().clear();
             documentForm.getDeptOrgKeyLabels().add(new ConcreteKeyValue("", "Please Select"));
 
@@ -358,7 +357,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             }
 
             if (primaryDeptOrg != null) {
-                ((IWantDocument) documentForm.getDocument()).setDepartmentLevelOrganization(primaryDeptOrg);
+                iWantDocument.setDepartmentLevelOrganization(primaryDeptOrg);
             }
 
         }
@@ -450,24 +449,26 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         IWantDocumentForm iWantForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantForm.getIWantDocument();
+        boolean added = true;
         
         //add new item and new accounting line if not empty
         IWantItem item = iWantForm.getNewIWantItemLine();
-        if(StringUtils.isNotBlank(item.getItemDescription()) || item.getItemUnitPrice() != null || item.getItemQuantity()!= null){
-            boolean added = addNewItem(iWantForm, iWantDocument, item);
-            
-            if(!added){
-                return mapping.findForward(RiceConstants.MAPPING_BASIC);
-            }
+        if (StringUtils.isNotBlank(item.getItemDescription()) || item.getItemUnitPrice() != null || item.getItemQuantity() != null) {
+            added &= addNewItem(iWantForm, iWantDocument, item);
         }
         
-        IWantAccount account = iWantForm.getNewSourceLine();
-        if(StringUtils.isNotBlank(account.getAccountNumber()) || StringUtils.isNotBlank(account.getSubAccountNumber()) || StringUtils.isNotBlank(account.getFinancialObjectCode()) || StringUtils.isNotBlank(account.getFinancialSubObjectCode()) || StringUtils.isNotBlank(account.getProjectCode()) || StringUtils.isNotBlank(account.getOrganizationReferenceId())){
-            boolean added = addNewAccount(iWantForm, iWantDocument, account);
-            
-            if(!added){
-                return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        if (added) {
+            IWantAccount account = iWantForm.getNewSourceLine();
+            if (StringUtils.isNotBlank(account.getAccountNumber()) || StringUtils.isNotBlank(account.getSubAccountNumber())
+                    || StringUtils.isNotBlank(account.getFinancialObjectCode()) || StringUtils.isNotBlank(account.getFinancialSubObjectCode())
+                    || StringUtils.isNotBlank(account.getProjectCode()) || StringUtils.isNotBlank(account.getOrganizationReferenceId())) {
+                added &= addNewAccount(iWantForm, iWantDocument, account);
             }
+        }
+
+        // If addition of IWNT item or account failed, then skip the rest of the validation.
+        if (!added) {
+            return mapping.findForward(RiceConstants.MAPPING_BASIC);
         }
 
         KualiRuleService ruleService = SpringContext.getBean(KualiRuleService.class);
@@ -499,9 +500,17 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             HttpServletResponse response) throws Exception {
 
         IWantDocumentForm iWantForm = (IWantDocumentForm) form;
-        iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.ROUTING_STEP);
         IWantDocument iWantDocument = iWantForm.getIWantDocument();
-        iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.ROUTING_STEP);
+
+        // call business rules
+        KualiRuleService ruleService = SpringContext.getBean(KualiRuleService.class);
+        boolean rulePassed = true;
+        rulePassed &= ruleService.applyRules(new RouteDocumentEvent("", iWantDocument));
+
+        if (rulePassed) {
+            iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.ROUTING_STEP);
+            iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.ROUTING_STEP);
+        }
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
@@ -629,25 +638,27 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+        boolean added = true;
         
         //add new item and new accounting line if not empty
         IWantItem item = iWantDocForm.getNewIWantItemLine();
-        if(StringUtils.isNotBlank(item.getItemDescription()) || item.getItemUnitPrice() != null || item.getItemQuantity()!= null){
-            boolean added = addNewItem(iWantDocForm, iWantDocument, item);
-            
-            if(!added){
-                return mapping.findForward(RiceConstants.MAPPING_BASIC);
-            }
+        if (StringUtils.isNotBlank(item.getItemDescription()) || item.getItemUnitPrice() != null || item.getItemQuantity() != null) {
+            added &= addNewItem(iWantDocForm, iWantDocument, item);
         }
         
-        IWantAccount account = iWantDocForm.getNewSourceLine();
-        if(StringUtils.isNotBlank(account.getAccountNumber()) || StringUtils.isNotBlank(account.getSubAccountNumber()) || StringUtils.isNotBlank(account.getFinancialObjectCode()) || StringUtils.isNotBlank(account.getFinancialSubObjectCode()) || StringUtils.isNotBlank(account.getProjectCode()) || StringUtils.isNotBlank(account.getOrganizationReferenceId())){
-            boolean added = addNewAccount(iWantDocForm, iWantDocument, account);
-            
-            if(!added){
-                return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        if (added) {
+            IWantAccount account = iWantDocForm.getNewSourceLine();
+            if (StringUtils.isNotBlank(account.getAccountNumber()) || StringUtils.isNotBlank(account.getSubAccountNumber())
+                    || StringUtils.isNotBlank(account.getFinancialObjectCode()) || StringUtils.isNotBlank(account.getFinancialSubObjectCode())
+                    || StringUtils.isNotBlank(account.getProjectCode()) || StringUtils.isNotBlank(account.getOrganizationReferenceId())) {
+                added &= addNewAccount(iWantDocForm, iWantDocument, account);
             }
-        }  
+        }
+
+        // Do not route if there were failures adding new items or accounts.
+        if (!added) {
+            return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        }
 
         iWantDocument.setExplanation(iWantDocument.getDocumentHeader().getExplanation());
 
@@ -668,25 +679,25 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         }
         
-        if(iWantDocument.isSetDeliverToInfoAsDefault()){
+        if (iWantDocument.isSetDeliverToInfoAsDefault()) {
             
-            if(StringUtils.isNotBlank(iWantDocument.getDeliverToNetID())){
+            if (StringUtils.isNotBlank(iWantDocument.getDeliverToNetID())) {
                 saveUserOption(principalId, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_NET_ID, iWantDocument.getDeliverToNetID());
             }
             
-            if(StringUtils.isNotBlank(iWantDocument.getDeliverToName())){
+            if (StringUtils.isNotBlank(iWantDocument.getDeliverToName())) {
                 saveUserOption(principalId, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_NAME, iWantDocument.getDeliverToName());
             }
             
-            if(StringUtils.isNotBlank(iWantDocument.getDeliverToEmailAddress())){
+            if (StringUtils.isNotBlank(iWantDocument.getDeliverToEmailAddress())) {
                 saveUserOption(principalId, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_EMAIL_ADDRESS, iWantDocument.getDeliverToEmailAddress());
             }
             
-            if(StringUtils.isNotBlank(iWantDocument.getDeliverToPhoneNumber())){
+            if (StringUtils.isNotBlank(iWantDocument.getDeliverToPhoneNumber())) {
                 saveUserOption(principalId, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_PHONE_NUMBER, iWantDocument.getDeliverToPhoneNumber());
             }
             
-            if(StringUtils.isNotBlank(iWantDocument.getDeliverToAddress())){
+            if (StringUtils.isNotBlank(iWantDocument.getDeliverToAddress())) {
                 saveUserOption(principalId, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_ADDRESS, iWantDocument.getDeliverToAddress());
             }
             
@@ -702,14 +713,10 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         }
         ActionForward actionForward = super.route(mapping, form, request, response);
 
-        if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)) {
-            return mapping.findForward("finish");
-        } else {
-            return actionForward;
-        }
+        return (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)) ? mapping.findForward("finish") : actionForward;
     }
     
-    private void saveUserOption(String principalId, String userOptionName, String userOptionValue){
+    private void saveUserOption(String principalId, String userOptionName, String userOptionValue) {
         IWantDocUserOptions userOption = new IWantDocUserOptions();
         userOption.setPrincipalId(principalId);
         userOption.setOptionId(userOptionName);
@@ -731,6 +738,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             HttpServletResponse response) throws Exception {
 
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
+        @SuppressWarnings("unused")
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
 
         //insert adhoc route person first and the route
@@ -742,20 +750,20 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     }
 
     @Override
-	public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		
-    	IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
+    public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
+        @SuppressWarnings("unused")
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
 
         //insert adhoc route person first and then approve
         if (StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())) {
             insertAdHocRoutePerson(mapping, iWantDocForm, request, response);
-
         }
-    	
-		return super.approve(mapping, form, request, response);
-	}
+
+        return super.approve(mapping, form, request, response);
+    }
     
     /**
      * Use the new attachment description field to set the note text.
@@ -768,15 +776,15 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     public ActionForward insertBONote(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-    	// If the note text is blank, set the attachment description as the text. Otherwise, concatenate both to form the text.
-    	IWantDocumentForm iWantDocumentForm = (IWantDocumentForm) form;
-    	Note note = iWantDocumentForm.getNewNote();
-    	if (StringUtils.isBlank(note.getNoteText())) {
+        // If the note text is blank, set the attachment description as the text. Otherwise, concatenate both to form the text.
+        IWantDocumentForm iWantDocumentForm = (IWantDocumentForm) form;
+        Note note = iWantDocumentForm.getNewNote();
+        if (StringUtils.isBlank(note.getNoteText())) {
             note.setNoteText(iWantDocumentForm.getIWantDocument().getAttachmentDescription());
         } else {
-        	note.setNoteText(iWantDocumentForm.getIWantDocument().getAttachmentDescription() + ": " + note.getNoteText());
+            note.setNoteText(iWantDocumentForm.getIWantDocument().getAttachmentDescription() + ": " + note.getNoteText());
         }
-    	
+        
         ActionForward actionForward = super.insertBONote(mapping, form, request, response);
         
         iWantDocumentForm.getIWantDocument().setAttachmentDescription(StringUtils.EMPTY);
@@ -796,12 +804,12 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             HttpServletResponse response) throws Exception {
         ActionForward forward = null;
 
-        if (request.getParameter("docId") == null) {
+        if (request.getParameter(KRADConstants.PARAMETER_DOC_ID) == null) {
             forward = super.copy(mapping, form, request, response);
         } else {
             // this is copy document from Procurement Gateway:
             // use this link to call: http://localhost:8080/kfs-dev/purapIWant.do?methodToCall=copy&docId=xxxx
-            String docId = request.getParameter("docId");
+            String docId = request.getParameter(KRADConstants.PARAMETER_DOC_ID);
             KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
 
             IWantDocument document = null;
@@ -811,7 +819,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             kualiDocumentFormBase.setDocument(document);
             WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
             kualiDocumentFormBase.setDocTypeName(workflowDocument.getDocumentTypeName());
-    	    SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), workflowDocument);
+            SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), workflowDocument);
 
             forward = mapping.findForward(RiceConstants.MAPPING_BASIC);
         }
@@ -850,14 +858,14 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                 Integer vendorId = iWantDocument.getVendorDetailAssignedIdentifier();
                 String phoneNumber = "Phone: ";
 
-                Map fieldValues = new HashMap();
+                Map<String,Object> fieldValues = new HashMap<String,Object>();
                 fieldValues.put("vendorHeaderGeneratedIdentifier", vendorHeaderId);
                 fieldValues.put("vendorDetailAssignedIdentifier", vendorId);
                 fieldValues.put("vendorPhoneTypeCode", "PH");
-                Collection vendorPhoneNumbers = getBusinessObjectService().findMatching(VendorPhoneNumber.class,
+                Collection<VendorPhoneNumber> vendorPhoneNumbers = getBusinessObjectService().findMatching(VendorPhoneNumber.class,
                         fieldValues);
                 if (ObjectUtils.isNotNull(vendorPhoneNumbers) && vendorPhoneNumbers.size() > 0) {
-                    VendorPhoneNumber retrievedVendorPhoneNumber = (VendorPhoneNumber) vendorPhoneNumbers.toArray()[0];
+                    VendorPhoneNumber retrievedVendorPhoneNumber = vendorPhoneNumbers.toArray(new VendorPhoneNumber[1])[0];
                     phoneNumber += retrievedVendorPhoneNumber.getVendorPhoneNumber();
                 }
 
@@ -878,16 +886,16 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                         + (iWantDocument.getVendorFaxNumber() != null ? iWantDocument.getVendorFaxNumber()
                                 : StringUtils.EMPTY);
 
-                String URL = "URL: "
+                String url = "URL: "
                         + (iWantDocument.getVendorWebURL() != null ? iWantDocument.getVendorWebURL()
                                 : StringUtils.EMPTY);
 
-                String vendorInfo = addressLine1 + "\n"
-                            + addressLine2 + "\n"
-                            + cityName + ", " + postalCode + ", " + stateCode + ", " + countryCode + "\n"
-                            + faxNumber + "\n"
-                            + phoneNumber + " \n"
-                            + URL;
+                String vendorInfo = new StringBuilder(100).append(addressLine1).append('\n').append(
+                            addressLine2).append('\n').append(
+                            cityName).append(", ").append(postalCode).append(", ").append(stateCode).append(", ").append(countryCode).append('\n').append(
+                            faxNumber).append('\n').append(
+                            phoneNumber).append(" \n").append(
+                            url).toString();
 
                 iWantDocument.setVendorDescription(vendorInfo);
             }
@@ -900,27 +908,35 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
+        // Only recreate document description if in INITIATED or SAVED status.
+        WorkflowDocument workflowDocument = ((KualiDocumentFormBase) form).getDocument().getDocumentHeader().getWorkflowDocument();
+        if (workflowDocument.isInitiated() || workflowDocument.isSaved()) {
+            setIWantDocumentDescription((IWantDocument) ((KualiDocumentFormBase) form).getDocument());
+        }
+
         ActionForward actionForward = super.save(mapping, form, request, response);
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
-        
+        boolean added = true;
+
         //add new item and new accounting line if not empty
         IWantItem item = iWantDocForm.getNewIWantItemLine();
-        if(StringUtils.isNotBlank(item.getItemDescription()) || item.getItemUnitPrice() != null || item.getItemQuantity()!= null){
-            boolean added = addNewItem(iWantDocForm, iWantDocument, item);
-            
-            if(!added){
-                return mapping.findForward(RiceConstants.MAPPING_BASIC);
-            }
+        if (StringUtils.isNotBlank(item.getItemDescription()) || item.getItemUnitPrice() != null || item.getItemQuantity() != null) {
+            added &= addNewItem(iWantDocForm, iWantDocument, item);
         }
         
-        IWantAccount account = iWantDocForm.getNewSourceLine();
-        if(StringUtils.isNotBlank(account.getAccountNumber()) || StringUtils.isNotBlank(account.getSubAccountNumber()) || StringUtils.isNotBlank(account.getFinancialObjectCode()) || StringUtils.isNotBlank(account.getFinancialSubObjectCode()) || StringUtils.isNotBlank(account.getProjectCode()) || StringUtils.isNotBlank(account.getOrganizationReferenceId())){
-            boolean added = addNewAccount(iWantDocForm, iWantDocument, account);
-            
-            if(!added){
-                return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        if (added) {
+            IWantAccount account = iWantDocForm.getNewSourceLine();
+            if (StringUtils.isNotBlank(account.getAccountNumber()) || StringUtils.isNotBlank(account.getSubAccountNumber())
+                    || StringUtils.isNotBlank(account.getFinancialObjectCode()) || StringUtils.isNotBlank(account.getFinancialSubObjectCode())
+                    || StringUtils.isNotBlank(account.getProjectCode()) || StringUtils.isNotBlank(account.getOrganizationReferenceId())) {
+                added &= addNewAccount(iWantDocForm, iWantDocument, account);
             }
+        }
+
+        // Do not save if item or account additions failed.
+        if (!added) {
+            return mapping.findForward(RiceConstants.MAPPING_BASIC);
         }
 
         iWantDocument.setExplanation(iWantDocument.getDocumentHeader().getExplanation());
@@ -931,8 +947,36 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         return actionForward;
     }
-    
-    private boolean addNewAccount(IWantDocumentForm iWantDocumentForm, IWantDocument iWantDoc, IWantAccount account){
+
+    /**
+     * Redirects the user to a URL that creates a new REQS doc with data from the current IWantDocument.
+     * However, due to configuration on the associated button from the IWantDocumentForm, client-side
+     * JavaScript should handle the redirect for us and in a separate window/tab, unless the client has
+     * disabled JavaScript.
+     */
+    public ActionForward createRequisition(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
+        IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+        @SuppressWarnings("unused")
+        IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
+
+        // Make sure a related requisition does not already exist before creating one.
+        if (StringUtils.isNotBlank(iWantDocument.getReqsDocId())) {
+            GlobalVariables.getMessageMap().putError(KRADConstants.GLOBAL_ERRORS, CUPurapKeyConstants.ERROR_IWNT_REQUISITION_EXISTS);
+            return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        }
+
+        String url = ConfigContext.getCurrentContextConfig().getProperty(KRADConstants.APPLICATION_URL_KEY)
+                + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId=" + iWantDocument.getDocumentNumber();
+
+        ActionForward actionForward = new ActionForward(url, true);
+
+        return actionForward;
+    }
+
+    private boolean addNewAccount(IWantDocumentForm iWantDocumentForm, IWantDocument iWantDoc, IWantAccount account) {
 
         KualiRuleService ruleService = SpringContext.getBean(KualiRuleService.class);
         boolean acctRulesPassed = true;
@@ -948,7 +992,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         
     }
     
-    private boolean addNewItem(IWantDocumentForm iWantDocumentForm, IWantDocument iWantDoc, IWantItem item){
+    private boolean addNewItem(IWantDocumentForm iWantDocumentForm, IWantDocument iWantDoc, IWantItem item) {
 
         KualiRuleService ruleService = SpringContext.getBean(KualiRuleService.class);
         boolean rulePassed = true;

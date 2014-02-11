@@ -5,18 +5,25 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import edu.cornell.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase;
+import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.rice.kew.api.KewApiConstants.SearchableAttributeConstants;
 import org.kuali.rice.kns.web.ui.ExtraButton;
+import org.kuali.rice.krad.service.KRADServiceLocatorWeb;
+import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 
+@SuppressWarnings("deprecation")
 public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormBase {
+
+    private static final long serialVersionUID = -82175061546434849L;
 
     protected boolean isWizard;
     protected String step;
@@ -33,7 +40,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         setNewIWantItemLine(new IWantItem());
         newSourceLine = new IWantAccount();
         this.setDeptOrgKeyLabels(new ArrayList<KeyValue>());
-        editingMode = new HashMap();
+        editingMode = new HashMap<Object,Object>();
 
     }
 
@@ -51,8 +58,10 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     }
 
     public String getLineItemImportInstructionsUrl() {
-        //return SpringContext.getBean(KualiConfigurationService.class).getPropertyString(KFSConstants.EXTERNALIZABLE_HELP_URL_KEY) + SpringContext.getBean(ParameterService.class).getParameterValue(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.LINE_ITEM_IMPORT);
-        return ""; //some help link here
+        //return SpringContext.getBean(KualiConfigurationService.class).getPropertyString(KFSConstants.EXTERNALIZABLE_HELP_URL_KEY) +
+        //SpringContext.getBean(ParameterService.class).getParameterValue(
+        //KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.LINE_ITEM_IMPORT);
+        return "";
     }
 
     public IWantItem getNewIWantItemLine() {
@@ -109,11 +118,11 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         this.newSourceLine = newSourceLine;
     }
 
-    public boolean isWizard() {
+    public boolean isIsWizard() {
         return isWizard;
     }
 
-    public void setWizard(boolean isWizard) {
+    public void setIsWizard(boolean isWizard) {
         this.isWizard = isWizard;
     }
 
@@ -123,8 +132,9 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
                 || CUPurapConstants.IWantDocumentSteps.VENDOR_STEP.equalsIgnoreCase(step)
                 || CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)) {
             return step;
-        } else
+        } else {
             return CUPurapConstants.IWantDocumentSteps.REGULAR;
+        }
     }
 
     public void setStep(String step) {
@@ -136,13 +146,13 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
      * or a blank value if the ad hoc route person is null or has a blank netId.
      */
     public String getNewAdHocRoutePersonIdForLookup() {
-    	if (getNewAdHocRoutePerson() != null) {
-    		if (StringUtils.isNotBlank(getNewAdHocRoutePerson().getId())) {
-    			return "*" + getNewAdHocRoutePerson().getId() + "*";
-    		}
-    		return getNewAdHocRoutePerson().getId();
-    	}
-    	return "";
+        if (getNewAdHocRoutePerson() != null) {
+            if (StringUtils.isNotBlank(getNewAdHocRoutePerson().getId())) {
+                return SearchableAttributeConstants.SEARCH_WILDCARD_CHARACTER + getNewAdHocRoutePerson().getId()
+                        + SearchableAttributeConstants.SEARCH_WILDCARD_CHARACTER;
+            }
+        }
+        return StringUtils.EMPTY;
     }
 
     /**
@@ -151,22 +161,20 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
      * @return
      */
     public String getHeaderTitle() {
+        String iwntTitle = headerTitle;
         if (CUPurapConstants.IWantDocumentSteps.CUSTOMER_DATA_STEP.equals(step)) {
-            return "Welcome to the I Want Doc! Submit your order request in just 4 easy steps. <br/>I Want Document Step #1";
+            iwntTitle = "Welcome to the I Want Doc! Submit your order request in just 4 easy steps. <br/>I Want Document Step #1";
+        } else if (CUPurapConstants.IWantDocumentSteps.ITEMS_AND_ACCT_DATA_STEP.equals(step)) {
+            iwntTitle = "I Want Document Step #2";
+        } else if (CUPurapConstants.IWantDocumentSteps.VENDOR_STEP.equals(step)) {
+            iwntTitle = "I Want Document Step #3";
+        } else if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equals(step)) {
+            iwntTitle = "I Want Document Step #4";
+        } else if (CUPurapConstants.IWantDocumentSteps.REGULAR.equals(step)) {
+            //iwntTitle = getDocument().getDocumentTitle();
+            iwntTitle = KRADServiceLocatorWeb.getDataDictionaryService().getDocumentLabelByClass(IWantDocument.class);
         }
-        if (CUPurapConstants.IWantDocumentSteps.ITEMS_AND_ACCT_DATA_STEP.equals(step)) {
-            return "I Want Document Step #2";
-        }
-        if (CUPurapConstants.IWantDocumentSteps.VENDOR_STEP.equals(step)) {
-            return "I Want Document Step #3";
-        }
-        if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equals(step)) {
-            return "I Want Document Step #4";
-        }
-        if ("regular".equals(step) && getDocument() != null) {
-            return getDocument().getDocumentTitle();
-        }
-        return headerTitle;
+        return iwntTitle;
     }
 
     /**
@@ -188,16 +196,12 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         if (ObjectUtils.isNotNull(customerDataStep) && wizard.equalsIgnoreCase(customerDataStep)) {
             extraButtons.add(createContinueToItemsButton());
             // extraButtons.add(createClearInitFieldsButton());
-        }
-
-        else if (ObjectUtils.isNotNull(itemsAndAcctStep) && wizard.equalsIgnoreCase(itemsAndAcctStep)) {
+        } else if (ObjectUtils.isNotNull(itemsAndAcctStep) && wizard.equalsIgnoreCase(itemsAndAcctStep)) {
             
             extraButtons.add(createBackToCustomerDataButton());
             extraButtons.add(createContinueToVendorButton());
            
-        }
-
-        else if (ObjectUtils.isNotNull(vendorDataStep) && wizard.equalsIgnoreCase(vendorDataStep)) {
+        } else if (ObjectUtils.isNotNull(vendorDataStep) && wizard.equalsIgnoreCase(vendorDataStep)) {
             
             extraButtons.add(createBackToItemsButton());
             extraButtons.add(createContinueToRoutingButton());
@@ -208,6 +212,11 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
             extraButtons.add(createSubmitButton());
             
         }
+        
+        if (getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_CREATE_REQ)) {
+            extraButtons.add(createCreateRequisitionButton());
+        }
+        
         return extraButtons;
     }
 
@@ -305,12 +314,22 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         clearButton.setExtraButtonAltText("Back");
         return clearButton;
     }
-    
-    /*@Override
-    public Note getNewNote() {
-        Note note = super.getNewNote();
-        return note;
-    }*/
-    
+
+    /**
+     * Creates the button for creating the requisition. If JavaScript is enabled on the client,
+     * then the requisition will be created in a new window/tab instead of the current one.
+     * 
+     * @return
+     */
+    protected ExtraButton createCreateRequisitionButton() {
+        ExtraButton clearButton = new ExtraButton();
+        clearButton.setExtraButtonProperty("methodToCall.createRequisition");
+        clearButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_create_req.gif");
+        clearButton.setExtraButtonAltText("Create Req");
+        clearButton.setExtraButtonOnclick("window.open('" + ConfigContext.getCurrentContextConfig().getProperty(KRADConstants.APPLICATION_URL_KEY)
+                + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId=" + getDocument().getDocumentNumber()
+                + "');return false;");
+        return clearButton;
+    }
 
 }

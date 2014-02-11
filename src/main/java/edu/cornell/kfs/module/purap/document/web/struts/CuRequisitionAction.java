@@ -1,7 +1,9 @@
 package edu.cornell.kfs.module.purap.document.web.struts;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +18,7 @@ import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
 import org.kuali.kfs.module.purap.document.PurchasingDocument;
 import org.kuali.kfs.module.purap.document.PurchasingDocumentBase;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
+import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.validation.event.AttributedAddPurchasingAccountsPayableItemEvent;
 import org.kuali.kfs.module.purap.document.web.struts.PurchasingFormBase;
 import org.kuali.kfs.module.purap.document.web.struts.RequisitionAction;
@@ -27,13 +30,21 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.core.api.util.RiceConstants;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kns.document.authorization.TransactionalDocumentAuthorizer;
+import org.kuali.rice.kns.document.authorization.TransactionalDocumentPresentationController;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
+import org.kuali.rice.krad.exception.AuthorizationException;
 import org.kuali.rice.krad.service.KualiRuleService;
 import org.kuali.rice.krad.service.SessionDocumentService;
 import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.document.CuRequisitionDocument;
+import edu.cornell.kfs.module.purap.document.IWantDocument;
+import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 
 public class CuRequisitionAction extends RequisitionAction {
 
@@ -140,6 +151,60 @@ public class CuRequisitionAction extends RequisitionAction {
             forward = mapping.findForward(RiceConstants.MAPPING_BASIC);   
         }
         return forward;
+    }
+    
+    /**
+    * Creates a requisition document based on information from an I Want document.
+    *
+    * @param mapping
+    * @param form
+    * @param request
+    * @param response
+    * @return
+    * @throws Exception
+    */
+    @SuppressWarnings("deprecation")
+    public ActionForward createReqFromIWantDoc(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        String iWantDocumentNumber = request.getParameter(KRADConstants.PARAMETER_DOC_ID);
+        RequisitionForm requisitionForm = (RequisitionForm) form;
+
+        IWantDocument iWantDocument = (IWantDocument) getDocumentService().getByDocumentHeaderId(iWantDocumentNumber);
+        if (iWantDocument == null) {
+            throw new WorkflowException("Could not find IWantDocument with ID '" + iWantDocumentNumber + "'");
+        }
+
+        // Make sure the user is authorized to create the req in this manner.
+        TransactionalDocumentPresentationController pControl =
+                (TransactionalDocumentPresentationController) getDocumentHelperService().getDocumentPresentationController(iWantDocument);
+        TransactionalDocumentAuthorizer authorizer = (TransactionalDocumentAuthorizer) getDocumentHelperService().getDocumentAuthorizer(iWantDocument);
+        Set<String> iwntEditModes = authorizer.getEditModes(iWantDocument, GlobalVariables.getUserSession().getPerson(), pControl.getEditModes(iWantDocument));
+        if (!iwntEditModes.contains(CUPurapConstants.IWNT_DOC_CREATE_REQ)) {
+            throw new AuthorizationException(GlobalVariables.getUserSession().getPrincipalId(), CUPurapConstants.IWNT_DOC_CREATE_REQ,
+                    CuRequisitionDocument.class.getSimpleName(), "user is not authorized to create requisitions from IWantDocument '"
+                    + iWantDocumentNumber + "'", Collections.<String,Object>emptyMap());
+        }
+
+        // Do not allow the req to be created if the IWNT doc is already associated with another req.
+        if (StringUtils.isNotBlank(iWantDocument.getReqsDocId())) {
+            throw new WorkflowException("Cannot create requisition from IWantDocument '" + iWantDocumentNumber
+                    + "' because a requisition has already been created from that document");
+        }
+
+        IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
+
+        createDocument(requisitionForm);
+
+        RequisitionDocument requisitionDocument = requisitionForm.getRequisitionDocument();
+
+        iWantDocumentService.setUpRequisitionDetailsFromIWantDoc(iWantDocument, requisitionDocument, requisitionForm);
+
+        // Set the requisition doc ID reference on the IWantDocument.
+        iWantDocument.setReqsDocId(requisitionDocument.getDocumentNumber());
+        SpringContext.getBean(PurapService.class).saveDocumentNoValidation(iWantDocument);
+
+        return mapping.findForward(RiceConstants.MAPPING_BASIC);
     }
     
     

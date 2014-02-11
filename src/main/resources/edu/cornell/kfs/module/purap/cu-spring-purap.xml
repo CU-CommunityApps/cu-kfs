@@ -114,15 +114,6 @@
     	<property name="collegeLevelOrganizationDao">
 			<ref bean="collegeLevelOrganizationDao" />
 		</property>
-		<property name="mailService">
-			<ref bean="mailService" />
-		</property>
-		<property name="personService">
-			<ref bean="personService" />
-		</property>
-		<property name="documentTypeService">
-			<ref bean="documentTypeService" />
-		</property>
 	</bean>
 	
 	<bean id="purchasingAccountsPayableModuleService" parent="purchasingAccountsPayableModuleService-parentBean"/>
@@ -194,6 +185,7 @@
     <bean id="electronicInvoiceMatchingService" parent="electronicInvoiceMatchingService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceMatchingServiceImpl" />
     <bean id="creditMemoService" parent="creditMemoService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuCreditMemoServiceImpl" />
     <bean id="b2bDao" class="edu.cornell.kfs.module.purap.dataaccess.impl.CuB2BDaoImpl"/>
+    <bean id="purapService" parent="purapService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurapServiceImpl" />
    <bean id="pdpExtractService" parent="pdpExtractService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPdpExtractServiceImpl" />
 
    <import resource="document/validation/configuration/RequisitionValidation.xml" />

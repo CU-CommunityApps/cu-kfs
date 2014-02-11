@@ -18,6 +18,7 @@ public class CUPurapKeyConstants extends PurapKeyConstants {
     
     //error messages
     public static final String ERROR_IWNT_CONMPLETE_ORDER_OPTION_REQUIRED = "error.iWant.document.completeOption.required";
+    public static final String ERROR_IWNT_REQUISITION_EXISTS = "error.iWant.document.requisition.exists";
     public static final String ERROR_POA_INITIATOR_CANNOT_ADHOC_TO_FO = "error.poa.initiator.cannot.adhoc.to.fo";
     public static final String ERROR_ADD_NEW_NOTE_SEND_TO_VENDOR_NO_ATT = "errors.add.new.note.sendToVendor.noAtt";
     public static final String ERROR_EXCEED_SQ_NUMBER_OF_ATT_LIMIT = "errors.exceed.sq.number.of.att.limit";

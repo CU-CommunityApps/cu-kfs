@@ -15,15 +15,16 @@ public class AddIWantItemEvent extends KualiDocumentEventBase implements KualiDo
     private IWantItem item;
 
     public AddIWantItemEvent(String errorPathPrefix, Document document, IWantItem item) {
-
         super("adding item to document " + document.getDocumentNumber(), errorPathPrefix, document);
         this.item = item;
     }
 
-    public Class getRuleInterfaceClass() {
+    @Override
+    public Class<? extends BusinessRule> getRuleInterfaceClass() {
         return AddIWantItemRule.class;
     }
 
+    @Override
     public boolean invokeRuleMethod(BusinessRule rule) {
         return ((AddIWantItemRule) rule).processAddIWantItemRules((IWantDocument) document, item,
                 KFSConstants.EMPTY_STRING);
