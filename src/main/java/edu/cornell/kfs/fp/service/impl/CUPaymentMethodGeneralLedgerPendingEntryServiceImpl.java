@@ -444,7 +444,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
 
         // generate bank offset
         if (PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(document.getPaymentMethodCode()) || PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(document.getPaymentMethodCode())) {
-            generateDocumentBankOffsetEntries((AccountingDocument) document, document.getBankCode(), KNSConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", document.DOCUMENT_TYPE_NON_CHECK, sequenceHelper, document.getTotalDollarAmount());
+            generateDocumentBankOffsetEntries((AccountingDocument) document, document.getBankCode(), KNSConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", document.DOCUMENT_TYPE_NON_CHECK, sequenceHelper, document.getTotalDollarAmount().negated());
         }
 
         // check for pending entries and replace object code with chart cash object code
