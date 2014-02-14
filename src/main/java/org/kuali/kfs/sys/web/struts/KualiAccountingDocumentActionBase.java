@@ -69,13 +69,16 @@ import org.kuali.rice.kns.rule.event.SaveDocumentEvent;
 import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.DictionaryValidationService;
+import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.service.KualiRuleService;
 import org.kuali.rice.kns.service.ParameterEvaluator;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.service.PersistenceService;
+import org.kuali.rice.kns.util.ErrorMessage;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.util.ObjectUtils;
+import org.kuali.rice.kns.util.RiceKeyConstants;
 import org.kuali.rice.kns.util.Timer;
 import org.kuali.rice.kns.util.UrlFactory;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
@@ -770,13 +773,48 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
     public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         KualiAccountingDocumentFormBase tmpForm = (KualiAccountingDocumentFormBase) form;
         this.applyCapitalAssetInformation(tmpForm);
+        ActionForward forward  = null;
         
-        ActionForward forward = super.approve(mapping, form, request, response);
+        boolean passed = SpringContext.getBean(KualiRuleService.class).applyRules(new ApproveDocumentEvent(tmpForm.getFinancialDocument()));
 
-        if (GlobalVariables.getErrorMap().hasNoErrors()) {
+        if (passed) {
             // KFSPTS-1735
             SpringContext.getBean(CUFinancialSystemDocumentService.class).checkAccountingLinesForChanges((AccountingDocument) tmpForm.getFinancialDocument());
             // KFSPTS-1735
+            forward = super.approve(mapping, form, request, response);
+        } else {
+            // KFSPTS-3057
+            // remove any error messages from this validation. After pre-rules are called document may be valid and approve may go through
+            GlobalVariables.getErrorMap().clearErrorMessages();
+            
+            // get saved document so that we can compare it with the approved version if approve succeeds
+            DocumentService docService = SpringContext.getBean(DocumentService.class);
+            AccountingDocument savedDoc = null;
+            try {
+                savedDoc = (AccountingDocument) docService.getByDocumentHeaderId(tmpForm.getFinancialDocument().getDocumentNumber());
+
+            } catch (WorkflowException we) {
+                LOG.error("Unable to retrieve document number " + tmpForm.getFinancialDocument().getDocumentNumber() + " to evaluate accounting line changes");
+            }
+
+            // attempt to approve
+            forward = super.approve(mapping, form, request, response);
+            
+            // check if the document was approved. it could be that a pre-rule was fired and the user selected no for the proceed question
+            boolean approved = GlobalVariables.getMessageList().contains(new ErrorMessage(RiceKeyConstants.MESSAGE_ROUTE_APPROVED));
+            
+            // if a saved document exists and the approve was successful log any changes in accounting lines
+            if (savedDoc != null && approved) {
+                AccountingDocument accountingDocument = (AccountingDocument) tmpForm.getFinancialDocument();
+
+                SpringContext.getBean(CUFinancialSystemDocumentService.class).checkAccountingLinesForChanges(savedDoc, accountingDocument);
+                
+                //save document after adding notes for changed accounting lines
+                getDocumentService().saveDocument(accountingDocument);
+
+            }
+            // end // KFSPTS-3057
+
         }
         
         // need to check on sales tax for all the accounting lines

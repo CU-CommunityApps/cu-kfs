@@ -63,69 +63,64 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         if (savedDoc == null) {
         	return;
         }
+        
+        checkAccountingLinesForChanges(savedDoc, accountingDocument);
       
-        if (!accountingDocument.getSourceAccountingLines().isEmpty()) {
-        	Map<Integer, AccountingLine> newSourceLines = buildAccountingLineMap(accountingDocument.getSourceAccountingLines());
-        	Map<Integer, AccountingLine> savedSourceLines = buildAccountingLineMap(savedDoc.getSourceAccountingLines());
-
-        	if (newSourceLines.isEmpty())
-        		return;
-        	
-        	
-        	int maxSourceKey = Math.max(Collections.max(newSourceLines.keySet()), Collections.max(savedSourceLines.keySet())); 
-        	int minSourceKey = Math.min(Collections.min(newSourceLines.keySet()), Collections.min(savedSourceLines.keySet())); 
-
-        	for (int i = minSourceKey; i < maxSourceKey+1; i++) {
-        		AccountingLine newLine = newSourceLines.get(i);
-        		AccountingLine oldLine = savedSourceLines.get(i);
-        		if ( !compareTo(newLine, oldLine) )  {
-        			String diff = buildLineChangedNoteText(newLine, oldLine);
-        			if (StringUtils.isNotBlank(diff)) {
-        				writeNote(accountingDocument, diff);
-        			}
-        		}
-        	}
-        }
-        
-        if (!accountingDocument.getTargetAccountingLines().isEmpty()) {
-
-        	Map<Integer, AccountingLine> newTargetLines = buildAccountingLineMap(accountingDocument.getTargetAccountingLines());
-        	Map<Integer, AccountingLine> savedTargetLines = buildAccountingLineMap(savedDoc.getTargetAccountingLines());
-
-        	if (newTargetLines.isEmpty())
-        		return;
-        	
-        	int maxTargetKey = Math.max(Collections.max(newTargetLines.keySet()), Collections.max(savedTargetLines.keySet())); 
-        	int minTargetKey = Math.min(Collections.min(newTargetLines.keySet()), Collections.min(savedTargetLines.keySet())); 
-
-        	for (int i = minTargetKey; i < maxTargetKey+1; i++) {
-        		AccountingLine newLine = newTargetLines.get(i);
-        		AccountingLine oldLine = savedTargetLines.get(i);
-        		if ( !compareTo(newLine, oldLine)) {
-        			String diff = buildLineChangedNoteText(newLine, oldLine);
-        			if (StringUtils.isNotBlank(diff)) {
-        				writeNote(accountingDocument, diff);
-        			}
-        		}
-        	}
-        }
-
-        
-
-                // Send out FYIs to all previous approvers so they're aware of the changes to the address
-//                try {
-//                    Set<Person> priorApprovers = accountingDocument.getDocumentHeader().getWorkflowDocument().getAllPriorApprovers();
-//                    String initiatorUserId = accountingDocument.getDocumentHeader().getWorkflowDocument().getRouteHeader().getInitiatorPrincipalId();
-//                    Person finSysUser = SpringContext.getBean(PersonService.class).getPerson(initiatorUserId);
-//                    setupFYIs(accountingDocument, priorApprovers, finSysUser.getPrincipalName());
-//                }
-//                catch (WorkflowException we) {
-//                    LOG.error("Exception while attempting to retrieve all prior approvers from workflow: " + we);
-//                }
-//                catch (Exception unfe) {
-//                    LOG.error("Exception while attempting to retrieve all prior approvers for a disbursement voucher: " + unfe);
-//                }
     }
+    
+    // KFSPTS-3057 add a new method that allows us to provide as input the from and to documents for which to compare accounting lines
+    /**
+     * @see edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService#checkAccountingLinesForChanges(org.kuali.kfs.sys.document.AccountingDocument, org.kuali.kfs.sys.document.AccountingDocument)
+     */
+    public void checkAccountingLinesForChanges(AccountingDocument fromAccountingDocument, AccountingDocument toAccountingDocument) {
+      
+        if (!toAccountingDocument.getSourceAccountingLines().isEmpty()) {
+            Map<Integer, AccountingLine> newSourceLines = buildAccountingLineMap(toAccountingDocument.getSourceAccountingLines());
+            Map<Integer, AccountingLine> savedSourceLines = buildAccountingLineMap(fromAccountingDocument.getSourceAccountingLines());
+
+            if (newSourceLines.isEmpty())
+                return;
+            
+            
+            int maxSourceKey = Math.max(Collections.max(newSourceLines.keySet()), Collections.max(savedSourceLines.keySet())); 
+            int minSourceKey = Math.min(Collections.min(newSourceLines.keySet()), Collections.min(savedSourceLines.keySet())); 
+
+            for (int i = minSourceKey; i < maxSourceKey+1; i++) {
+                AccountingLine newLine = newSourceLines.get(i);
+                AccountingLine oldLine = savedSourceLines.get(i);
+                if ( !compareTo(newLine, oldLine) )  {
+                    String diff = buildLineChangedNoteText(newLine, oldLine);
+                    if (StringUtils.isNotBlank(diff)) {
+                        writeNote(toAccountingDocument, diff);
+                    }
+                }
+            }
+        }
+        
+        if (!toAccountingDocument.getTargetAccountingLines().isEmpty()) {
+
+            Map<Integer, AccountingLine> newTargetLines = buildAccountingLineMap(toAccountingDocument.getTargetAccountingLines());
+            Map<Integer, AccountingLine> savedTargetLines = buildAccountingLineMap(fromAccountingDocument.getTargetAccountingLines());
+
+            if (newTargetLines.isEmpty())
+                return;
+            
+            int maxTargetKey = Math.max(Collections.max(newTargetLines.keySet()), Collections.max(savedTargetLines.keySet())); 
+            int minTargetKey = Math.min(Collections.min(newTargetLines.keySet()), Collections.min(savedTargetLines.keySet())); 
+
+            for (int i = minTargetKey; i < maxTargetKey+1; i++) {
+                AccountingLine newLine = newTargetLines.get(i);
+                AccountingLine oldLine = savedTargetLines.get(i);
+                if ( !compareTo(newLine, oldLine)) {
+                    String diff = buildLineChangedNoteText(newLine, oldLine);
+                    if (StringUtils.isNotBlank(diff)) {
+                        writeNote(toAccountingDocument, diff);
+                    }
+                }
+            }
+        }
+    }
+
 	
 	protected void writeNote(AccountingDocument accountingDocument, String noteText) {
         
