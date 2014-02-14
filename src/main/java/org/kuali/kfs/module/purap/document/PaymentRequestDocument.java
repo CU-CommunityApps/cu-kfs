@@ -741,8 +741,9 @@ public class PaymentRequestDocument extends AccountsPayableDocumentBase {
             // DOCUMENT PROCESSED
             if (this.getDocumentHeader().getWorkflowDocument().stateIsProcessed()) {
                 if (!PaymentRequestStatuses.AUTO_APPROVED.equals(getStatusCode())) {
-                    //generate bank offsets for payment method wire or foreign draft
-                    if(PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(getPaymentMethodCode()) || PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(getPaymentMethodCode())){
+                    //generate bank offsets for payment method wire or foreign draft, reverse 2900 to 1000
+                    String paymentMethodCode = getPaymentMethodCode();
+                    if(PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(paymentMethodCode) || PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(paymentMethodCode) || PaymentMethod.PM_CODE_INTERNAL_BILLING.equalsIgnoreCase(paymentMethodCode)){
                        getPaymentMethodGeneralLedgerPendingEntryService().generateFinalEntriesForPRNC(this);
                     }
                     SpringContext.getBean(PurapService.class).updateStatus(this, PurapConstants.PaymentRequestStatuses.DEPARTMENT_APPROVED);
