@@ -229,6 +229,8 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
             // KFSPTS-1891
             editModes.add(KfsAuthorizationConstants.DisbursementVoucherEditMode.FRN_ENTRY);
             editModes.add(KfsAuthorizationConstants.DisbursementVoucherEditMode.WIRE_ENTRY);
+            // KFSPTS-2968 allows DM to edit additional charge amount
+            editModes.add(PaymentRequestEditMode.ADDITONAL_CHARGE_AMOUNT_EDITABLE);
         }
 
         // the tax tab is viewable to everyone after tax is approved
