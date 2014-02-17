@@ -14,6 +14,15 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
+	<bean id="AdvanceDepositDocument" parent="AdvanceDepositDocument-parentBean">
+		<property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.AdvanceDepositDocumentPresentationController"/>
+		<property name="documentAuthorizerClass" value="edu.cornell.kfs.fp.document.authorization.AdvanceDepositDocumentAuthorizer"/>
+	</bean>
+	
+	<bean id="AdvanceDepositDocument-sourceAccountingLineGroup" parent="AdvanceDepositDocument-sourceAccountingLineGroup-parentBean">
+	  <property name="accountingLineAuthorizerClass" value="edu.cornell.kfs.fp.document.authorization.AdvanceDepositAccountingLineAuthorizer"/>
+
+	</bean>
 	
 	<bean id="AdvanceDepositDocument-workflowAttributes" parent="AdvanceDepositDocument-workflowAttributes-parentBean">
 		    <property name="routingTypeDefinitions">
