@@ -24,12 +24,15 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kim.api.identity.Person;
 
 import edu.cornell.kfs.pdp.dataaccess.CuFormatPaymentDao;
+import edu.cornell.kfs.pdp.service.CuFormatService;
 
-public class CuFormatServiceImpl extends FormatServiceImpl {
+public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuFormatServiceImpl.class);
     
     @Override
-    public FormatProcessSummary startFormatProcess(Person user, String campus, List<CustomerProfile> customers, Date paydate, String paymentTypes) {
+    public FormatProcessSummary startFormatProcess(Person user, String campus,
+			List<CustomerProfile> customers, Date paydate, String paymentTypes,
+			String paymentDistribution) {
         LOG.debug("startFormatProcess() started");
 
         for (CustomerProfile element : customers) {
@@ -82,7 +85,7 @@ public class CuFormatServiceImpl extends FormatServiceImpl {
         }
 
         // Mark all of them ready for format
-        Iterator groupIterator = ((CuFormatPaymentDao) formatPaymentDao).markPaymentsForFormat(customerIds, paydateTs, paymentTypes, paymentTypes);
+        Iterator groupIterator = ((CuFormatPaymentDao) formatPaymentDao).markPaymentsForFormat(customerIds, paydateTs, paymentTypes, paymentDistribution);
 
         while (groupIterator.hasNext()) {
             PaymentGroup paymentGroup = (PaymentGroup) groupIterator.next();
@@ -167,4 +170,5 @@ public class CuFormatServiceImpl extends FormatServiceImpl {
             paymentGroup.setAchAccountNumber(achAccountNumber);
         }
     }
+
 }

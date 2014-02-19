@@ -33,7 +33,7 @@
             type="edu.cornell.kfs.module.purap.document.web.struts.CuPurchaseOrderForm" />
             
         <form-bean name="PdpFormatForm" 
-            type="edu.cornell.kfs.pdp.web.struts.CUFormatForm" />    
+            type="edu.cornell.kfs.pdp.web.struts.CuFormatForm" />    
     </form-beans>
     
     <action-mappings>

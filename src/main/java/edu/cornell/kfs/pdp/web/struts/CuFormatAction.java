@@ -15,6 +15,7 @@ import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.FormatProcessSummary;
 import org.kuali.kfs.pdp.businessobject.FormatSelection;
+import org.kuali.kfs.pdp.service.FormatService;
 import org.kuali.kfs.pdp.web.struts.FormatAction;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -31,7 +32,7 @@ public class CuFormatAction extends FormatAction {
 
     
     public CuFormatAction() {
-        super();
+    	formatService = SpringContext.getBean(CuFormatService.class);
     }
     
     @Override
