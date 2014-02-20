@@ -20,7 +20,8 @@
 <c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}" />
 <c:set var="step" value="${KualiForm.step}" />
 <c:set var="isAdHocApprover" value="${KualiForm.editingMode['completeOrder']}"/>
-<c:set var="canAdHocRouteForApprove" value="${KualiForm.adHocActionRequestCodes[KewApiConstants.ACTION_REQUEST_APPROVE_REQ]}"/>	
+<%-- TODO: We have to use a hard-coded 'A' since constants from KewApiConstants can't be accessed when KEW is not in LOCAL mode. Should we fix this? --%>
+<c:set var="canAdHocRouteForApprove" value="${KualiForm.adHocActionRequestCodes['A']}"/>	
 <c:set var="isRegularStep" value="${ step eq 'regular' }"/>
 
 <%-- Variable storing tab title message for use at various points. --%>

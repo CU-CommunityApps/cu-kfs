@@ -264,7 +264,7 @@
     	<field-descriptor name="vendorFirstLastNameIndicator" column="VNDR_1ST_LST_NM_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     	<field-descriptor name="taxableIndicator" column="COLLECT_TAX_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     
-    	<field-descriptor name="insuranceRequiredIndicator" column="INS_REQ_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    	<!--<field-descriptor name="insuranceRequiredIndicator" column="INS_REQ_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     	<field-descriptor name="insuranceRequirementsCompleteIndicator" column="INS_REQ_COMPLETE_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     	<field-descriptor name="cornellAdditionalInsuredIndicator" column="CU_ADDITIONAL_INSURED_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     	<field-descriptor name="generalLiabilityCoverageAmount" column="GEN_LIAB_COVERAGE_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
@@ -278,7 +278,7 @@
     	<field-descriptor name="healthOffSiteCateringLicenseReq" column="HEALTH_OFF_SITE_LICENSE_REQ" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     	<field-descriptor name="healthOffSiteLicenseExpirationDate" column="HEALTH_LICENSE_EXPR_DATE" jdbc-type="DATE"/>
     	<field-descriptor name="insuranceNotes" column="INSURANCE_NOTES" jdbc-type="VARCHAR"/>
-		<field-descriptor name="merchantNotes" column="MERCHANT_NOTES" jdbc-type="VARCHAR"/>
+		<field-descriptor name="merchantNotes" column="MERCHANT_NOTES" jdbc-type="VARCHAR"/>-->
     
     	<reference-descriptor name="vendorHeader" class-ref="org.kuali.kfs.vnd.businessobject.VendorHeader" auto-retrieve="true" auto-update="none" auto-delete="object" proxy="true">
         	<foreignkey field-ref="vendorHeaderGeneratedIdentifier" />
@@ -342,10 +342,10 @@
 	        <inverse-foreignkey field-ref="vendorHeaderGeneratedIdentifier" />
 	        <inverse-foreignkey field-ref="vendorDetailAssignedIdentifier" />
 	    </collection-descriptor>
-	        <collection-descriptor name="vendorCreditCardMerchants" proxy="true" element-class-ref="edu.cornell.kfs.vnd.businessobject.CuVendorCreditCardMerchant" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
+	    <!--<collection-descriptor name="vendorCreditCardMerchants" proxy="true" element-class-ref="edu.cornell.kfs.vnd.businessobject.CuVendorCreditCardMerchant" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
 	        <inverse-foreignkey field-ref="vendorHeaderGeneratedIdentifier" />
 	        <inverse-foreignkey field-ref="vendorDetailAssignedIdentifier" />        
-	    </collection-descriptor>    
+	    </collection-descriptor>-->
 	</class-descriptor>
     
 

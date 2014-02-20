@@ -103,6 +103,10 @@
         <ref bean="IWantDocVendorDetail-insuranceNotes"/>
         <ref bean="IWantDocVendorDetail-merchantNotes"/>   
         <ref bean="IWantDocVendorDetail-extension-einvoiceVendorIndicator"/>
+        <ref bean="IWantDocVendorDetail-vendorHeader.vendorSupplierDiversitiesAsString" />
+        <ref bean="IWantDocVendorDetail-vendorAliasesAsString" />
+        <ref bean="IWantDocVendorDetail-vendorCommoditiesAsString" />
+        <ref bean="IWantDocVendorDetail-vendorContracts.vendorContractGeneratedIdentifier"/>
       </list>
     </property>
     <property name="collections">
@@ -752,15 +756,54 @@
   <bean id="IWantDocVendorDetail-vendorCreditCardMerchants.merchantCategoryCodeFour-parentBean" abstract="true" parent="VendorCreditCardMerchant-merchantCategoryCodeFour">
     <property name="name" value="extension.vendorCreditCardMerchants.merchantCategoryCodeFour"/>
   </bean>
-                                                             
-  
   
   <bean id="IWantDocVendorDetail-extension-einvoiceVendorIndicator" parent="IWantDocVendorDetail-extension-einvoiceVendorIndicator-parentBean"/> 
    
   <bean id="IWantDocVendorDetail-extension-einvoiceVendorIndicator-parentBean" abstract="true" parent="VendorDetailExtension-einvoiceVendorIndicator" >
   	<property name="name" value="extension.einvoiceVendorIndicator"/>
   </bean>
-  	
+
+  <bean id="IWantDocVendorDetail-vendorHeader.vendorSupplierDiversitiesAsString" parent="IWantDocVendorDetail-vendorHeader.vendorSupplierDiversitiesAsString-parentBean" />
+  <bean id="IWantDocVendorDetail-vendorHeader.vendorSupplierDiversitiesAsString-parentBean" abstract="true" parent="VendorHeader-vendorSupplierDiversitiesAsString">
+    <property name="name" value="vendorHeader.vendorSupplierDiversitiesAsString" />
+  </bean>
+  
+  <bean id="IWantDocVendorDetail-vendorAliasesAsString"  parent="IWantDocVendorDetail-vendorAliasesAsString-parentBean" />
+  <bean id="IWantDocVendorDetail-vendorAliasesAsString-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="vendorAliasesAsString" />
+    <property name="forceUppercase" value="true" />
+    <property name="label" value="Search Alias" />
+    <property name="shortLabel" value="Search Alias" />
+    <property name="maxLength" value="45" />
+    <property name="validationPattern">
+      <ref bean="AnyCharacterWithWhitespaceValidation" />
+    </property>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="45"/>
+    </property>
+  </bean>
+  
+  <bean id="IWantDocVendorDetail-vendorCommoditiesAsString"  parent="IWantDocVendorDetail-vendorCommoditiesAsString-parentBean" />
+  <bean id="IWantDocVendorDetail-vendorCommoditiesAsString-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="vendorCommoditiesAsString" />
+    <property name="forceUppercase" value="true" />
+    <property name="label" value="Commodity Codes" />
+    <property name="shortLabel" value="Commodity Codes" />
+    <property name="maxLength" value="45" />
+    <property name="validationPattern">
+      <ref bean="AnyCharacterWithWhitespaceValidation" />
+    </property>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="45"/>
+    </property>
+  </bean>
+  
+  <bean id="IWantDocVendorDetail-vendorContracts.vendorContractGeneratedIdentifier" parent="IWantDocVendorDetail-vendorContracts.vendorContractGeneratedIdentifier-parentBean" >
+    <property name="name" value="vendorContracts.vendorContractGeneratedIdentifier"/>
+  </bean>
+
+  <bean id="IWantDocVendorDetail-vendorContracts.vendorContractGeneratedIdentifier-parentBean"  abstract="true" parent="VendorContract-vendorContractGeneratedIdentifier" />
+  
 <!-- Business Object Inquiry Definition -->
 
 
@@ -830,7 +873,7 @@
                 <property name="numberOfColumns" value="2"/>
                 <property name="inquiryFields">
                   <list>
-                  	<bean parent="FieldDefinition" p:attributeName="vendorAddressGeneratedIdentifier"/>
+                  	<bean parent="FieldDefinition" p:attributeName="extension.vendorAddressGeneratedIdentifier"/>
                     <bean parent="FieldDefinition" p:attributeName="vendorAddressTypeCode"/>
                     <bean parent="FieldDefinition" p:attributeName="vendorCountryCode"/>
                     <bean parent="FieldDefinition" p:attributeName="vendorLine1Address"/>
@@ -952,7 +995,7 @@
                 <property name="inquiryFields">
                   <list>
                     <bean parent="FieldDefinition" p:attributeName="vendorSupplierDiversityCode"/>
-                    <bean parent="FieldDefinition" p:attributeName="vendorSupplierDiversityExpirationDate"/>
+                    <bean parent="FieldDefinition" p:attributeName="extension.vendorSupplierDiversityExpirationDate"/>
                     <bean parent="FieldDefinition" p:attributeName="active"/>
                   </list>
                 </property>
@@ -1270,19 +1313,20 @@
         <bean parent="FieldDefinition" p:attributeName="vendorAddresses.vendorStateCode"/>
         <bean parent="FieldDefinition" p:attributeName="vendorCommodities.purchasingCommodityCode"/>
         <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityCode"/>
+        <bean parent="FieldDefinition" p:attributeName="vendorContracts.vendorContractGeneratedIdentifier"/>
         <bean parent="FieldDefinition" p:attributeName="extension.einvoiceVendorIndicator"/>
       </list>
     </property>
     <property name="resultFields">
       <list>
         <bean parent="FieldDefinition" p:attributeName="vendorName"/>
-        <bean parent="FieldDefinition" p:attributeName="vendorAliases"/>
+        <bean parent="FieldDefinition" p:attributeName="vendorAliasesAsString"/>
         <bean parent="FieldDefinition" p:attributeName="vendorNumber"/>
         <bean parent="FieldDefinition" p:attributeName="activeIndicator"/>
         <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorTypeCode"/>
         <bean parent="FieldDefinition" p:attributeName="vendorStateForLookup"/>
-        <bean parent="FieldDefinition" p:attributeName="vendorCommodities"/>
-        <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorSupplierDiversities"/>
+        <bean parent="FieldDefinition" p:attributeName="vendorCommoditiesAsString"/>
+        <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorSupplierDiversitiesAsString"/>
         <bean parent="FieldDefinition" p:attributeName="extension.einvoiceVendorIndicator"/>
       </list>
     </property>
