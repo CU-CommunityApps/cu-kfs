@@ -933,8 +933,13 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 //        }
 
         try {
-        	// KFSUPGRADE-483
-            SpringContext.getBean(DocumentService.class).saveDocument(preqDoc,DocumentSystemSaveEvent.class);
+            // KFSUPGRADE-483
+            // KFSUPGRADE-490: Do save-only operations for just non-EIRT-generated PREQs.
+            if (orderHolder.isRejectDocumentHolder()) {
+            	SpringContext.getBean(DocumentService.class).routeDocument(preqDoc, null, null);
+            } else {
+                SpringContext.getBean(DocumentService.class).saveDocument(preqDoc,DocumentSystemSaveEvent.class);
+            }
         }
         catch (WorkflowException e) {
             e.printStackTrace();
