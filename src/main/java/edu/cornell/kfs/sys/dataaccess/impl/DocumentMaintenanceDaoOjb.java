@@ -104,7 +104,7 @@ public class DocumentMaintenanceDaoOjb extends PlatformAwareDaoBaseOjb implement
 		sql.append(" from ");
 		sql.append("KRIM_ROLE_RSP_T");
 		sql.append(" where ");
-		sql.append("RSP_ID");
+		sql.append("ROLE_ID");
 		sql.append("='");
 
 		Collection<String> roleIds =  parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.REQUEUABLE_ROLES);
@@ -127,7 +127,7 @@ public class DocumentMaintenanceDaoOjb extends PlatformAwareDaoBaseOjb implement
         ArrayList<String> ids = new ArrayList<String>();
         while(iter.hasNext()) {
         	Object[] next = (Object[])iter.next();
-        	ids.add(((BigDecimal)next[0]).toPlainString());
+        	ids.add(next[0].toString());	
         }
         
 		return ids;
