@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.module.cg.businessobject.Agency;
+import edu.cornell.kfs.module.cg.businessobject.CuAward;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.AwardAccount;
 import org.kuali.kfs.module.cg.businessobject.AwardOrganization;
@@ -91,7 +92,7 @@ public class EzraServiceImpl implements EzraService {
 			String proposalId = ezraAward.getProjectId();
 			fields.clear();
 			fields.put("proposalNumber", proposalId);
-			Award award = (Award)businessObjectService.findByPrimaryKey(Award.class, fields);
+			Award award = (CuAward)businessObjectService.findByPrimaryKey(CuAward.class, fields);
 			if (award == null) {
 				LOG.error("Award: "+proposalId +" is null and probably should have already been created");
 			} else {
@@ -125,7 +126,7 @@ public class EzraServiceImpl implements EzraService {
 	}
 	
 	protected Award createAward(Proposal proposal, Award oldAward, EzraProposalAward ezraAward) {
-		Award award = new Award(proposal);
+		Award award = new CuAward(proposal);
 		award.setProposal(proposal);
 		award.setAwardStatusCode(proposal.getProposalStatusCode());
 		award.setAwardBeginningDate(proposal.getProposalBeginningDate());
@@ -146,6 +147,8 @@ public class EzraServiceImpl implements EzraService {
 			AwardExtendedAttribute awardEA = (AwardExtendedAttribute)award.getExtension();
 			awardEA.setLocAccountId(((AwardExtendedAttribute)oldAward.getExtension()).getLocAccountId());
 			award.setActive(oldAward.isActive());
+			awardEA.setProposalNumber(((AwardExtendedAttribute)oldAward.getExtension()).getProposalNumber());
+            awardEA.setVersionNumber(((AwardExtendedAttribute)oldAward.getExtension()).getVersionNumber());
 		}
 		
 		for (AwardProjectDirector apd : award.getAwardProjectDirectors()) {
@@ -175,35 +178,52 @@ public class EzraServiceImpl implements EzraService {
 			}
 		}
 		KualiDecimal costShareRequired = KualiDecimal.ZERO;
-		if (ezraAward.getCsVolClg() != null)
-			costShareRequired.add(ezraAward.getCsVolClg());
-		if (ezraAward.getCsVolCntr() != null)
-			costShareRequired.add(ezraAward.getCsVolCntr());
-		if (ezraAward.getCsVolDept() != null)  
-			costShareRequired.add(ezraAward.getCsVolDept());
-		if (ezraAward.getCsVolExt() != null)  
-			costShareRequired.add(ezraAward.getCsVolExt());
-		if (ezraAward.getCsVolUniv() != null) 
-			costShareRequired.add(ezraAward.getCsVolUniv());
-		if (ezraAward.getCsMandClg() != null)  
-			costShareRequired.add(ezraAward.getCsMandClg());
-		if (ezraAward.getCsMandCntr() != null)  
-			costShareRequired.add(ezraAward.getCsMandCntr());
-		if (ezraAward.getCsMandDept() != null)  
-			costShareRequired.add(ezraAward.getCsMandDept());
-		if (ezraAward.getCsMandExt() != null)  
-			costShareRequired.add(ezraAward.getCsMandExt());
-		if (ezraAward.getCsMandUniv() != null) 
-			costShareRequired.add(ezraAward.getCsMandUniv());
+		if (ezraAward.getCsVolClg() != null) {
+    	      costShareRequired = costShareRequired.add(ezraAward.getCsVolClg());
+	    }
+	    if (ezraAward.getCsVolCntr() != null) {
+    	    costShareRequired = costShareRequired.add(ezraAward.getCsVolCntr());
+	    }
+	    if (ezraAward.getCsVolDept() != null) {
+    	    costShareRequired = costShareRequired.add(ezraAward.getCsVolDept());
+	    }
+	    if (ezraAward.getCsVolExt() != null) {
+    	    costShareRequired = costShareRequired.add(ezraAward.getCsVolExt());
+	    }
+        if (ezraAward.getCsVolUniv() != null) {
+    	    costShareRequired = costShareRequired.add(ezraAward.getCsVolUniv());
+	    }
+	    if (ezraAward.getCsMandClg() != null) {
+    	    costShareRequired = costShareRequired.add(ezraAward.getCsMandClg());
+	    }
+	    if (ezraAward.getCsMandCntr() != null) {
+    	    costShareRequired = costShareRequired.add(ezraAward.getCsMandCntr());
+	    }
+	    if (ezraAward.getCsMandDept() != null) {
+    	    costShareRequired = costShareRequired.add(ezraAward.getCsMandDept());
+	    }
+	    if (ezraAward.getCsMandExt() != null) {
+    	    costShareRequired = costShareRequired.add(ezraAward.getCsMandExt());
+	    }
+	    if (ezraAward.getCsMandUniv() != null) {
+    	    costShareRequired = costShareRequired.add(ezraAward.getCsMandUniv());
+	    }
 		
-		if (costShareRequired.isNonZero() ) {
-			AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
+		AwardExtendedAttribute aea = (AwardExtendedAttribute) award.getExtension();      
+		      
+		if (costShareRequired.isNonZero()) {
+			
 			aea.setCostShareRequired(true);
-		}
+		} else{
+
+           aea.setCostShareRequired(false);
+
+        }
 		
-		AwardExtendedAttribute aea = (AwardExtendedAttribute)award.getExtension();
+		
 		award.refreshReferenceObject("proposal");
 		award.refreshNonUpdateableReferences();
+		award.setExtension(aea);
 		return award;
 	}
 	
@@ -489,9 +509,10 @@ public class EzraServiceImpl implements EzraService {
 		fieldValues.put("investigatorRole", "CO");
 		List<ProjectInvestigator> pis = (List<ProjectInvestigator>)businessObjectService.findMatching(ProjectInvestigator.class, fieldValues);
 		for (ProjectInvestigator pi : pis) {
-			Investigator inv = (Investigator)businessObjectService.findBySinglePrimaryKey(Investigator.class, pi.getInvestigatorId());
-			if (inv != null) {
-				PersonService ps = SpringContext.getBean(PersonService.class);
+		    if (pi.getInvestigatorId() != null) {
+		    Investigator inv = (Investigator)businessObjectService.findBySinglePrimaryKey(Investigator.class, pi.getInvestigatorId());			
+		    if (inv != null) {
+		        PersonService ps = SpringContext.getBean(PersonService.class);
 				if (inv.getNetId() !=  null) {
 					Person director = ps.getPersonByPrincipalName(inv.getNetId());
 					if (director != null) {
@@ -522,8 +543,11 @@ public class EzraServiceImpl implements EzraService {
 					LOG.error("Invesigator netId for award :"+ projectId+" is null");
 
 				}
-			} else {
-				LOG.error("Null investigator: "+ pi.getInvestigatorId());
+		    } else {
+		        LOG.error("Null investigator: "+ pi.getInvestigatorId());
+		    }
+		    } else {
+				LOG.error("Null investigator id: ");
 			}
 		}
 		

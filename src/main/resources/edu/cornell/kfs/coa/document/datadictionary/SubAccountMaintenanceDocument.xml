@@ -18,6 +18,7 @@
 
     <bean id="SubAccountMaintenanceDocument" parent="SubAccountMaintenanceDocument-parentBean">
         <property name="maintainableClass" value="edu.cornell.kfs.coa.document.CuSubAccountMaintainableImpl"/>
+        <property name="businessRulesClass" value="edu.cornell.kfs.coa.document.validation.impl.CuSubAccountRule"/>
     </bean>
     
     <!-- workflow attributes -->

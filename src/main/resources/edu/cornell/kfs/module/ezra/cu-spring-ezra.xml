@@ -107,8 +107,8 @@
 	<bean id="ezraUpdateBatchJob" parent="unscheduledJobDescriptor">
 		<property name="steps">
 			<list>
-				<ref bean="proposalStep" />	
 				<ref bean="agencyStep" />
+				<ref bean="proposalStep" />	
 				<ref bean="awardStep" />
 			</list>
 		</property>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd         http://rice.kuali.org/dd/dd.xsd">
+<!--
+ Copyright 2006-2009 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<bean id="ProposalMaintenanceDocument-ProposalMaintenance" parent="ProposalMaintenanceDocument-ProposalMaintenance-parentBean">
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableFieldDefinition" p:name="proposalNumber" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="proposalStatusCode" p:defaultValue="P" p:required="true" p:webUILeaveFieldFunction="onblur_proposalStatusCode"/>
+        <bean parent="MaintainableFieldDefinition" p:name="agencyNumber" p:required="true" p:webUILeaveFieldFunction="onblur_agencyNumber"/>
+        <bean parent="MaintainableFieldDefinition" p:name="agency.fullName" p:unconditionallyReadOnly="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="proposalProjectTitle" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="proposalBeginningDate" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="proposalEndingDate" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="proposalDirectCostAmount" p:required="true" p:webUILeaveFieldFunction="onblur_proposalDirectCostAmount"/>
+        <bean parent="MaintainableFieldDefinition" p:name="proposalIndirectCostAmount" p:required="true" p:webUILeaveFieldFunction="onblur_proposalIndirectCostAmount"/>
+        <bean parent="MaintainableFieldDefinition" p:name="proposalTotalAmount" p:unconditionallyReadOnly="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="proposalSubmissionDate" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="proposalClosingDate" p:unconditionallyReadOnly="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="proposalAwardTypeCode" p:defaultValue="N" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="proposalPurposeCode" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="grantNumber"/>
+        <bean parent="MaintainableFieldDefinition" p:name="proposalFederalPassThroughIndicator"/>
+        <bean parent="MaintainableFieldDefinition" p:name="federalPassThroughAgencyNumber" p:webUILeaveFieldFunction="onblur_federalPassThroughAgencyNumber"/>
+        <bean parent="MaintainableFieldDefinition" p:name="federalPassThroughAgency.fullName" p:unconditionallyReadOnly="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="cfdaNumber"/>
+        <bean parent="MaintainableFieldDefinition" p:name="proposalFellowName"/>
+        <bean parent="MaintainableFieldDefinition" p:name="proposalDueDate"/>
+        <bean parent="MaintainableFieldDefinition" p:name="proposalRejectedDate"/>
+        <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
+      </list>
+    </property>
+  </bean>
+  
+  </beans>

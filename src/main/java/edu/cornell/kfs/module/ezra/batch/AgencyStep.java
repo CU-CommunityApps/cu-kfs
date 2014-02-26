@@ -35,14 +35,14 @@ public class AgencyStep extends AbstractStep {
 	        //    result=false;
 	     //   }
 	        if (result) {
-	        	Parameter parm = getParameterService().getParameter( PARAMETER_NAMESPACE_CODE, 
-	        													     PARAMETER_NAMESPACE_STEP, 
-	        													     LAST_SUCCESSFUL_RUN);
+	            Parameter parm = parameterService.getParameter(PARAMETER_NAMESPACE_CODE, 
+                        PARAMETER_NAMESPACE_STEP, 
+                        LAST_SUCCESSFUL_RUN);
 	        	
 	 
 	        	 Parameter.Builder newParm = Parameter.Builder.create(parm);
 	             newParm.setValue(dtService.toDateTimeString(dtService.getCurrentSqlDate()));
-	             getParameterService().updateParameter(newParm.build());
+	             parameterService.updateParameter(newParm.build());
 	        //	//parameterService.
 	        }
 	        return result;

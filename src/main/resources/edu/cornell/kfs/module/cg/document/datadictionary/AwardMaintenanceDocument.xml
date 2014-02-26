@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd         http://rice.kuali.org/dd/dd.xsd">
+<!--
+ Copyright 2007-2009 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<bean id="AwardMaintenanceDocument" parent="AwardMaintenanceDocument-parentBean">
+	<property name="businessObjectClass" value="edu.cornell.kfs.module.cg.businessobject.CuAward"/>
+	<property name="maintainableClass" value="edu.cornell.kfs.module.cg.document.CuAwardMaintainableImpl"/>
+	<property name="defaultExistenceChecks">
+      <list>
+        <bean parent="ReferenceDefinition" p:attributeName="proposal" p:attributeToHighlightOnFail="proposalNumber"/>
+        <bean parent="ReferenceDefinition" p:attributeName="proposalAwardType" p:attributeToHighlightOnFail="proposalAwardTypeCode"/>
+        <bean parent="ReferenceDefinition" p:attributeName="awardStatus" p:attributeToHighlightOnFail="awardStatusCode"/>
+        <bean parent="ReferenceDefinition" p:attributeName="letterOfCreditFundGroup" p:attributeToHighlightOnFail="letterOfCreditFundGroupCode"/>
+        <bean parent="ReferenceDefinition" p:attributeName="grantDescription" p:attributeToHighlightOnFail="grantDescriptionCode"/>
+        <bean parent="ReferenceDefinition" p:attributeName="agency" p:attributeToHighlightOnFail="agencyNumber"/>
+        <bean parent="ReferenceDefinition" p:attributeName="federalPassThroughAgency" p:attributeToHighlightOnFail="federalPassThroughAgencyNumber"/>
+        <bean parent="ReferenceDefinition" p:attributeName="awardPurpose" p:attributeToHighlightOnFail="awardPurposeCode"/>
+		<bean parent="ReferenceDefinition" p:attributeName="organization" p:collection="awardOrganizations" p:attributeToHighlightOnFail="organizationCode"/>
+        <bean parent="ReferenceDefinition" p:attributeName="subcontractor" p:collection="awardSubcontractors" p:attributeToHighlightOnFail="subcontractorNumber"/>
+      </list>
+    </property>
+ 	<property name="businessRulesClass" value="edu.cornell.kfs.module.cg.document.validation.impl.AwardExtensionRule"/>
+</bean>
+
+<bean parent="DataDictionaryBeanOverride">
+       <property name="beanName" value="AwardMaintenanceDocument-AwardMaintenance" />
+       <property name="fieldOverrides">
+           <list>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="maintainableItems" />
+                   <property name="element">
+                           <bean parent="MaintainableFieldDefinition" p:name="letterOfCreditFundGroupCode" />
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                          <bean parent="MaintainableFieldDefinition" p:name="extension.locAccountId"/>
+                       </list>
+                   </property>
+               </bean>
+           </list>
+       </property>
+   </bean>
+   
+<bean parent="DataDictionaryBeanOverride">
+       <property name="beanName" value="AwardMaintenanceDocument-AwardMaintenance" />
+       <property name="fieldOverrides">
+           <list>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="maintainableItems" />
+                   <property name="element">
+                           <bean parent="MaintainableFieldDefinition" p:name="analystTelephoneNumber" />
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                          <bean parent="MaintainableFieldDefinition" p:name="extension.costShareRequired"/>
+        				  <bean parent="MaintainableFieldDefinition" p:name="extension.finalFinancialReportRequired"/>
+        				  <bean parent="MaintainableFieldDefinition" p:name="extension.finalFiscalReportDate"/>
+                       </list>
+                   </property>
+               </bean>
+           </list>
+       </property>
+   </bean>
+
+	<bean id="AwardMaintenanceDocument-workflowAttributes" parent="AwardMaintenanceDocument-workflowAttributes-parentBean">
+	  <property name="routingTypeDefinitions">
+    		<map>
+    			<entry key="OrganizationHierarchy" value-ref="AwardMaintenanceDocument-RoutingType-OrganizationHierarchy"/>
+    			<entry key="Award" value-ref="AwardMaintenanceDocument-RoutingType-Award"/>
+    		</map>
+      </property>
+	</bean>
+	
+	<bean id="AwardMaintenanceDocument-RoutingType-Award" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    	<property name="routingAttributes">						 
+    		<list>
+		        <ref bean="AwardMaintenanceDocument-RoutingAttribute-Award"/>
+    		</list>
+    	</property>
+    	<property name="documentValuePathGroups">
+    		<list>
+    			<ref bean="AwardMaintenanceDocument-DocumentValuePathGroup-Award"/>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="AwardMaintenanceDocument-DocumentValuePathGroup-Award" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+			    	<property name="documentCollectionPath">
+			    		<bean class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath">
+    			<property name="collectionPath" value="newMaintainableObject.businessObject.awardAccounts"/>
+			    			<property name="documentValues">
+			    				<list>
+			   			<value>account.contractsAndGrantsAccountResponsibilityId</value>
+			    				</list>
+			    			</property>
+			    		</bean>
+			    	</property>
+			   	</bean>
+   	
+   	
+	<bean id="AwardMaintenanceDocument-RoutingAttribute-Award" class="org.kuali.rice.krad.datadictionary.RoutingAttribute">
+    	<property name="qualificationAttributeName" value="contractsAndGrantsAccountResponsibilityId"/>
+    </bean>
+    
+   <bean id="AwardMaintenanceDocument-SearchingType-awardStatus" class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+        <property name="searchingAttribute">
+        	<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+        		<property name="businessObjectClassName" value="edu.cornell.kfs.module.cg.businessobject.CuAward"/>
+    			<property name="attributeName" value="awardStatusCode"/>
+        	</bean>
+        </property>
+        <property name="documentValues">
+        	<list>
+        		<value>newMaintainableObject.businessObject.awardStatusCode</value>
+        	</list>
+        </property>
+    </bean>
+   
+</beans>
