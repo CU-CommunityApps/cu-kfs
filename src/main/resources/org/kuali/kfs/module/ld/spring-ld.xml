@@ -65,6 +65,7 @@
 		<property name="fiscalYearMakers">
           <list>
             <ref bean="benefitsCalculationFiscalYearMaker" />
+            <ref bean="benefitsCalculationExtensionFiscalYearMaker" />
             <ref bean="laborObjectDefinitionFiscalYearMaker" />
             <ref bean="positionObjectBenefitDefinitionFiscalYearMaker" />
           </list>	
@@ -1455,6 +1456,16 @@
 		<property name="businessObjectClass" value="org.kuali.kfs.module.ld.businessobject.BenefitsCalculation" /> 
 	    <property name="carryForwardInactive" value="true" />
 	</bean>	
+	
+	<bean id="benefitsCalculationExtensionFiscalYearMaker" parent="FiscalYearMaker">
+		<property name="businessObjectClass" value="com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculationExtension" /> 
+		<property name="parentClasses">
+		  <set>
+		    <value>org.kuali.kfs.module.ld.businessobject.BenefitsCalculation</value>
+		  </set>
+		</property>	
+		<property name="carryForwardInactive" value="true" />
+	</bean>
 	
     <bean id="laborObjectDefinitionFiscalYearMaker" parent="FiscalYearMaker">
 		<property name="businessObjectClass" value="org.kuali.kfs.module.ld.businessobject.LaborObject" /> 
