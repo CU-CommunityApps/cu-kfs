@@ -169,7 +169,7 @@
     <dependency>
       <groupId>edu.cornell.cynergy </groupId>
       <artifactId>cynergy-customizations</artifactId>
-      <version>2.x-rice2x</version>
+      <version>2.3.3</version>
       <exclusions>
       	<exclusion>
 	      <groupId>org.kuali.rice</groupId>
