@@ -18,6 +18,7 @@ import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
 public class CapitalAssetInformationDetailExtendedAttribute extends PersistableBusinessObjectExtensionBase {
  
 	private String documentNumber;
+    private Integer capitalAssetLineNumber;
     private Integer itemLineNumber;
 	private String assetLocationStreetAddress;
     private String assetLocationCityName;
@@ -212,4 +213,14 @@ public class CapitalAssetInformationDetailExtendedAttribute extends PersistableB
         
         return simpleValues;
     }
+
+
+	public Integer getCapitalAssetLineNumber() {
+		return capitalAssetLineNumber;
+	}
+
+
+	public void setCapitalAssetLineNumber(Integer capitalAssetLineNumber) {
+		this.capitalAssetLineNumber = capitalAssetLineNumber;
+	}
 }

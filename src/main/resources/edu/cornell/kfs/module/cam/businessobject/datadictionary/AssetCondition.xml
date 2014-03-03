@@ -16,16 +16,8 @@
 -->
   
   
-  <bean id="AssetCondition-assetConditionCode" parent="AssetCondition-assetConditionCode-parentBean"/>
-  <bean id="AssetCondition-assetConditionCode-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="assetConditionCode"/>
-    <property name="forceUppercase" value="true"/>
-    <property name="label" value="Asset Condition Code"/>
-    <property name="shortLabel" value="Code"/>
+  <bean id="AssetCondition-assetConditionCode" parent="AssetCondition-assetConditionCode-parentBean">
     <property name="maxLength" value="2"/>
-    <property name="validationPattern">
-      <ref bean="AnyCharacterValidation" />
-    </property>
     <property name="control">
       <bean parent="TextControlDefinition" p:size="3"/>
     </property>

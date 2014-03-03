@@ -16,17 +16,9 @@
 -->
 
   
-  <bean id="AssetOrganization-organizationTagNumber" parent="AssetOrganization-organizationTagNumber-parentBean"/>
-  <bean id="AssetOrganization-organizationTagNumber-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="organizationTagNumber"/>
-    <property name="forceUppercase" value="false"/>
-    <property name="label" value="Organization Tag Number"/>
-    <property name="shortLabel" value="Number"/>
-    <property name="maxLength" value="10"/>
-    <property name="validationPattern">
-      <ref bean="AnyCharacterWithWhitespaceValidation" />
-    </property>
-    <property name="control">
+  <bean id="AssetOrganization-organizationTagNumber" parent="AssetOrganization-organizationTagNumber-parentBean">
+     <property name="maxLength" value="10"/>
+     <property name="control">
       <ref bean="TenCharacterTextControl" />
     </property>
   </bean>

@@ -14,103 +14,23 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-	
-	<bean id="CapitalAssetInformationDetail" parent="CapitalAssetInformationDetail-parentBean"/>
+	<bean id="CapitalAssetInformationDetail" parent="CapitalAssetInformationDetail-parentBean">
  
-  <bean id="CapitalAssetInformationDetail-parentBean" abstract="true" parent="BusinessObjectEntry">
-    <property name="businessObjectClass" value="org.kuali.kfs.fp.businessobject.CapitalAssetInformationDetail"/>
-    
-    <property name="titleAttribute" value="CapitalAssetInformationDetailCode"/>
-    <property name="objectLabel" value="Delivery Required Date Reason"/>
     <property name="attributes">
-      <list>
-      	<ref bean="CapitalAssetInformationDetail-documentNumber"/>
-	  	<ref bean="CapitalAssetInformationDetail-itemLineNumber"/>
-	  	<ref bean="CapitalAssetInformationDetail-campusCode"/>
-	  	<ref bean="CapitalAssetInformationDetail-buildingCode"/>
-	  	<ref bean="CapitalAssetInformationDetail-buildingRoomNumber"/>
-	  	<ref bean="CapitalAssetInformationDetail-buildingSubRoomNumber"/>
-	  	<ref bean="CapitalAssetInformationDetail-capitalAssetTagNumber"/>
-		<ref bean="CapitalAssetInformationDetail-capitalAssetSerialNumber"/>
-	<!-- UPGRADE-911 	
+      <list merge="true">
 		<ref bean="CapitalAssetInformationDetail-extension-assetLocationStreetAddress"/> 
         <ref bean="CapitalAssetInformationDetail-extension-assetLocationCityName"/> 
         <ref bean="CapitalAssetInformationDetail-extension-assetLocationStateCode"/>  
         <ref bean="CapitalAssetInformationDetail-extension-assetLocationCountryCode"/> 
         <ref bean="CapitalAssetInformationDetail-extension-assetLocationZipCode"/> 
-     -->
-		
 	  </list>
     </property>
-    <property name="relationships">
-      <list>
-         <bean parent="RelationshipDefinition">
-          <property name="objectAttributeName" value="campus"/>
-          <property name="primitiveAttributes">
-            <list>
-              <bean parent="PrimitiveAttributeDefinition" p:sourceName="campusCode" p:targetName="code"/>
-            </list>
-          </property>
-		</bean>
-      </list>
-     </property>
   </bean>
   
-  <bean id="CapitalAssetInformationDetail-documentNumber" parent="CapitalAssetInformationDetail-documentNumber-parentBean"/>
-  <bean id="CapitalAssetInformationDetail-documentNumber-parentBean" abstract="true" parent="DocumentHeader-documentNumber">
-  	<property name="forceUppercase" value="true"/>
-  </bean>
-				
-  <bean id="CapitalAssetInformationDetail-itemLineNumber" parent="CapitalAssetInformationDetail-itemLineNumber-parentBean"/>
-  <bean id="CapitalAssetInformationDetail-itemLineNumber-parentBean" abstract="true" parent="AttributeDefinition">
-	<property name="name" value="itemLineNumber"/>
-    <property name="forceUppercase" value="true"/>
-    <property name="label" value="Item Line Number"/>
-    <property name="shortLabel" value="Line Number"/>
-    <property name="maxLength" value="3"/>
-    <property name="validationPattern">
-      <ref bean="NumericValidation" />
-    </property>
-    <property name="control">
-      <bean parent="TextControlDefinition" p:size="5"/>
-    </property>
-  </bean>
-  
-  <bean id="CapitalAssetInformationDetail-campusCode" parent="CapitalAssetInformationDetail-campusCode-parentBean"/> 
-  <bean id="CapitalAssetInformationDetail-campusCode-parentBean" abstract="true" parent="Room-campusCode">
-  	<property name="name" value="campusCode"/>
-  	<property name="required" value="true"/>
-  </bean>
-  
-  <bean id="CapitalAssetInformationDetail-buildingCode" parent="CapitalAssetInformationDetail-buildingCode-parentBean"/> 
-  <bean id="CapitalAssetInformationDetail-buildingCode-parentBean" abstract="true" parent="Room-buildingCode">
-   	<property name="name" value="buildingCode"/>
+  <bean id="CapitalAssetInformationDetail-buildingCode" parent="CapitalAssetInformationDetail-buildingCode-parentBean"> 
   	<property name="required" value="false"/>
   </bean>
   
-  <bean id="CapitalAssetInformationDetail-buildingRoomNumber" parent="CapitalAssetInformationDetail-buildingRoomNumber-parentBean"/> 
-  <bean id="CapitalAssetInformationDetail-buildingRoomNumber-parentBean" abstract="true" parent="Room-buildingRoomNumber">
-	<property name="name" value="buildingRoomNumber"/>
-	<property name="required" value="false"/>
-  </bean>
-  
-  <bean id="CapitalAssetInformationDetail-buildingSubRoomNumber" parent="CapitalAssetInformationDetail-buildingSubRoomNumber-parentBean"/> 
-  <bean id="CapitalAssetInformationDetail-buildingSubRoomNumber-parentBean" abstract="true" parent="ExternalizableAttributeDefinitionProxy" p:sourceExternalizableBusinessObjectInterface="org.kuali.kfs.integration.cam.CapitalAssetManagementAsset" p:sourceAttributeName="buildingSubRoomNumber">
-	<property name="name" value="buildingSubRoomNumber"/>
-  </bean> 
-				
-  <bean id="CapitalAssetInformationDetail-capitalAssetTagNumber" parent="CapitalAssetInformationDetail-capitalAssetTagNumber-parentBean"/> 
-  <bean id="CapitalAssetInformationDetail-capitalAssetTagNumber-parentBean" abstract="true" parent="ExternalizableAttributeDefinitionProxy" p:sourceExternalizableBusinessObjectInterface="org.kuali.kfs.integration.cam.CapitalAssetManagementAsset" p:sourceAttributeName="campusTagNumber">
-	<property name="required" value="false"/>
-	<property name="name" value="capitalAssetTagNumber"/>
-  </bean>	
-  	
-  <bean id="CapitalAssetInformationDetail-capitalAssetSerialNumber" parent="CapitalAssetInformationDetail-capitalAssetSerialNumber-parentBean"/>  
-  <bean id="CapitalAssetInformationDetail-capitalAssetSerialNumber-parentBean" abstract="true" parent="ExternalizableAttributeDefinitionProxy" p:sourceExternalizableBusinessObjectInterface="org.kuali.kfs.integration.cam.CapitalAssetManagementAsset" p:sourceAttributeName="serialNumber">
-     <property name="name" value="capitalAssetSerialNumber"/>
-  </bean>
-  
-  <!--  UPGRADE-911
   <bean id="CapitalAssetInformationDetail-extension-assetLocationStreetAddress" parent="CapitalAssetInformationDetail-extension-assetLocationStreetAddress-parentBean"/>
   <bean id="CapitalAssetInformationDetail-extension-assetLocationStreetAddress-parentBean" abstract="true" parent="CapitalAssetInformationDetailExtendedAttribute-assetLocationStreetAddress">
     <property name="name" value="extension.assetLocationStreetAddress"/>
@@ -135,5 +55,4 @@
   <bean id="CapitalAssetInformationDetail-extension-assetLocationZipCode-parentBean" abstract="true" parent="CapitalAssetInformationDetailExtendedAttribute-assetLocationZipCode">
     <property name="name" value="extension.assetLocationZipCode"/>
   </bean>
--->
 </beans>

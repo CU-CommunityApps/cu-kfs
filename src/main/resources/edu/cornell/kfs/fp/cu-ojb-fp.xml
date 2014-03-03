@@ -70,6 +70,7 @@
 
 <class-descriptor class="edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute" table="FP_CPTL_AST_INFO_DTL_EXT_T" >
 	<field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true"/>
+    <field-descriptor name="capitalAssetLineNumber" column="CPTLAST_LINE_NBR" jdbc-type="INTEGER"  primarykey="true" />
 	<field-descriptor name="itemLineNumber" column="ITM_LN_NBR" jdbc-type="INTEGER" primarykey="true"/>
 	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
 	<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
@@ -113,6 +114,7 @@
     
     <reference-descriptor name="extension" class-ref="edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
         <foreignkey field-ref="documentNumber" />
+        <foreignkey field-ref="capitalAssetLineNumber" />
         <foreignkey field-ref="itemLineNumber" />
     </reference-descriptor>
     
