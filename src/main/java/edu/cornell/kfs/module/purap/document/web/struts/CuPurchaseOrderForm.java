@@ -9,10 +9,14 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.businessobject.PaymentRequestView;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.web.struts.PurchaseOrderForm;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
+import org.kuali.rice.kns.service.DocumentHelperService;
 import org.kuali.rice.kns.web.ui.ExtraButton;
 import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.util.GlobalVariables;
@@ -64,12 +68,12 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
 	}
 	
 	protected boolean canOpenPoInCxmlErrorStatus() {
-		return PurchaseOrderStatuses.CXML_ERROR.equals(getPurchaseOrderDocument().getStatusCode()) && KimApiServiceLocator.getPermissionService().hasPermission(
+		return PurapConstants.PurchaseOrderStatuses.APPDOC_CXML_ERROR.equals(getPurchaseOrderDocument().getApplicationDocumentStatus()) && KimApiServiceLocator.getPermissionService().hasPermission(
 				GlobalVariables.getUserSession().getPrincipalId(), PurapConstants.PURAP_NAMESPACE, MOVE_CXML_ERROR_PO_PERM);
 		}
 	
 	protected boolean canVoidPoInCxmlErrorStatus() {
-		return PurchaseOrderStatuses.CXML_ERROR.equals(getPurchaseOrderDocument().getStatusCode()) && KimApiServiceLocator.getPermissionService().hasPermission(
+		return  PurapConstants.PurchaseOrderStatuses.APPDOC_CXML_ERROR.equals(getPurchaseOrderDocument().getApplicationDocumentStatus()) && KimApiServiceLocator.getPermissionService().hasPermission(
 				GlobalVariables.getUserSession().getPrincipalId(), PurapConstants.PURAP_NAMESPACE, MOVE_CXML_ERROR_PO_PERM);
 		}
 	
@@ -153,6 +157,41 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
 				}       
 			}
 	}
+	
+	// KFSUPGRADE-411
+    /**
+     * Determines whether to display the void button for the purchase order document. Conditions:
+     * PO is in Pending Print status, or is in Open status and has no PREQs against it;
+     * PO's current indicator is true and pending indicator is false;
+     * and the user is a member of the purchasing group).
+     *
+     * @return boolean true if the void button can be displayed.
+     */
+    protected boolean canVoid() {
+        // check PO status etc
+        boolean can = getPurchaseOrderDocument().isPurchaseOrderCurrentIndicator() && !getPurchaseOrderDocument().isPendingActionIndicator();
+
+        if (can) {
+            boolean pendingPrint = PurapConstants.PurchaseOrderStatuses.APPDOC_PENDING_PRINT.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
+            boolean open = PurapConstants.PurchaseOrderStatuses.APPDOC_OPEN.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
+           // boolean errorCxml = PurchaseOrderStatuses.APPDOC_CXML_ERROR.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
+            boolean errorFax = PurapConstants.PurchaseOrderStatuses.APPDOC_FAX_ERROR.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
+
+            List<PaymentRequestView> preqViews = getPurchaseOrderDocument().getRelatedViews().getRelatedPaymentRequestViews();
+            boolean hasPaymentRequest = preqViews != null && preqViews.size() > 0;
+
+            can = pendingPrint || (open && !hasPaymentRequest) || errorFax;
+        }
+
+        // check user authorization
+        if (can) {
+            DocumentAuthorizer documentAuthorizer = SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(getPurchaseOrderDocument());
+            can = documentAuthorizer.canInitiate(KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER_VOID, GlobalVariables.getUserSession().getPerson());
+        }
+
+        return can;
+    }
+    // end KFSUPGRADE-411
 
 	public List<Note> getCopiedNotes() {
 		return copiedNotes;
