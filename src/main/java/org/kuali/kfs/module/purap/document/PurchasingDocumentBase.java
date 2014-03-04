@@ -48,6 +48,7 @@ import org.kuali.kfs.module.purap.document.service.PurchasingService;
 import org.kuali.kfs.module.purap.document.service.ReceivingAddressService;
 import org.kuali.kfs.module.purap.util.ItemParser;
 import org.kuali.kfs.module.purap.util.ItemParserBase;
+import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
@@ -69,6 +70,7 @@ import org.kuali.rice.krad.util.ObjectUtils;
 import org.kuali.rice.location.api.country.Country;
 import org.kuali.rice.location.api.country.CountryService;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 
 /**
@@ -1514,6 +1516,35 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
             boolean defaultUseTaxIndicatorValue = SpringContext.getBean(PurchasingService.class).getDefaultUseTaxIndicatorValue(this);
             SpringContext.getBean(PurapService.class).updateUseTaxIndicator(this, defaultUseTaxIndicatorValue);
         }
+        // KFSUPGRADE-583
+        checkForFederalAccount();
+    }
+    
+    // KFSUPGRADE-583
+    /**
+     * Check for Federal Accounts, and if any are found, set Funding Source to Federal, 
+     * otherwise set Funding Source to default.
+     */
+    private void checkForFederalAccount() {
+    	boolean federalFunding = false;
+    	
+    	for (SourceAccountingLine sourceAccountingLine : (List<SourceAccountingLine>)this.getSourceAccountingLines()) {
+    		// On the PO, the sourceAccountingLine.account wasn't always populated even when we have an account number, so
+    	    // we refresh the reference object so we can check for CFDA number
+    	    if (ObjectUtils.isNotNull(sourceAccountingLine.getAccountNumber()) && ObjectUtils.isNull(sourceAccountingLine.getAccount().getAccountNumber())) {
+    			sourceAccountingLine.refreshReferenceObject("account");
+    		}
+			if (ObjectUtils.isNotNull(sourceAccountingLine.getAccount().getAccountCfdaNumber())) {
+				federalFunding = true;
+				break;
+			}
+		}
+    	
+    	if (federalFunding) {
+			this.setDocumentFundingSourceCode(CUPurapConstants.PurapFundingSources.FEDERAL_FUNDING_SOURCE);
+    	} else {
+            this.setDocumentFundingSourceCode(SpringContext.getBean(ParameterService.class).getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.DEFAULT_FUNDING_SOURCE));
+    	}
     }
 
     @Override
