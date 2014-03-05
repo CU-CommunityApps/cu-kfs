@@ -11,11 +11,14 @@ import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -542,7 +545,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     protected boolean routeEIRTDocuments() {
-    	List<String> documentIdList = null;
+    	Collection<String> documentIdList = null;
         try {
             documentIdList = retrieveDocumentsToRoute(KewApiConstants.ROUTE_HEADER_SAVED_CD, ElectronicInvoiceRejectDocument.class);
         } catch (WorkflowException e1) {
@@ -596,7 +599,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
      * @return
      */
     protected boolean routePREQDocuments() {
-    	List<String> documentIdList = null;
+    	Collection<String> documentIdList = null;
         try {
             documentIdList = retrieveDocumentsToRoute(KewApiConstants.ROUTE_HEADER_SAVED_CD, PaymentRequestDocument.class);
         } catch (WorkflowException e1) {
@@ -651,9 +654,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
      * Returns a list of all initiated but not yet routed payment request or reject documents, using the KualiWorkflowInfo service.
      * @return a list of payment request or eirt documents to route
      */
-    protected List<String> retrieveDocumentsToRoute(String statusCode, Class<?> document) throws WorkflowException, RemoteException {
+    protected Collection<String> retrieveDocumentsToRoute(String statusCode, Class<?> document) throws WorkflowException, RemoteException {
         // This is very much from pcardserviceimpl
-    	List<String> documentIds = new ArrayList<String>();
+    	Set<String> documentIds = new HashSet<String>();
         
         DocumentSearchCriteria.Builder criteria = DocumentSearchCriteria.Builder.create();
         criteria.setDocumentTypeName(SpringContext.getBean(DataDictionaryService.class).getDocumentTypeNameByClass(document));
