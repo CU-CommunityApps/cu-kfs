@@ -55,7 +55,6 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 @COMPONENT(component = "Requisition")
 public class CuRequisitionDocument extends RequisitionDocument {
 
-    protected String vendorEmailAddress;
     private PermissionService permissionService;
     
    // KFSPTS-985, KFSUPGRADE-75
