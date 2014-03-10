@@ -753,12 +753,6 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         KualiAccountingDocumentFormBase tmpForm = (KualiAccountingDocumentFormBase) form;
 
         //KFSPTS-1735
-      //  boolean passed = SpringContext.getBean(KualiRuleService.class).applyRules(new ApproveDocumentEvent(tmpForm.getFinancialDocument()));
-     //   if (passed) {
-     //       SpringContext.getBean(CUFinancialSystemDocumentService.class).checkAccountingLinesForChanges((AccountingDocument) tmpForm.getFinancialDocument());
-     //   }
-        //KFSPTS-1735
-        
         ActionForward forward = super.approve(mapping, form, request, response);
 
         if (GlobalVariables.getMessageMap().hasNoErrors()) {
