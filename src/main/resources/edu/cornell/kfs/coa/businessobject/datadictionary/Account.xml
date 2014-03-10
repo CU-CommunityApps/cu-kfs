@@ -70,7 +70,10 @@
   </bean>
 
   <!-- Attribute Definitions -->
-
+  <bean id="Account-financialIcrSeriesIdentifier" parent="Account-financialIcrSeriesIdentifier-parentBean" >
+  	<property name="forceUppercase" value="true" />
+  </bean>
+  
   <bean id="Account-extension-programCode" parent="Account-extension-programCode-parentBean"/>
   <bean id="Account-extension-programCode-parentBean" abstract="true" parent="AccountExtendedAttribute-programCode" >
   	<property name="name" value="extension.programCode"/>
