@@ -185,6 +185,8 @@
     <bean id="purapService" parent="purapService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurapServiceImpl" />
    <bean id="pdpExtractService" parent="pdpExtractService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPdpExtractServiceImpl" />
 
+	<bean id="PurchaseOrderActionListAttribute" class="edu.cornell.kfs.module.purap.document.workflow.CuPurchaseOrderActionListAttribute" />
+
    <import resource="document/validation/configuration/RequisitionValidation.xml" />
    <import resource="document/validation/configuration/PurapValidatorDefinitions.xml" />
    <import resource="document/validation/configuration/PurchaseOrderAmendmentValidation.xml" />
