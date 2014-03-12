@@ -17,18 +17,18 @@
 
 	<class-descriptor class="com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation" table="CU_CR_CHECK_RECON_T">
     	<field-descriptor name="id" column="CR_ID" jdbc-type="INTEGER" primarykey="true" sequence-name="CR_CR_ID_SEQ" autoincrement="true"/>
-    	<field-descriptor name="checkNumber" column="CHECK_NBR" jdbc-type="BIGINT" conversion="org.kuali.rice.kns.util.OjbKualiIntegerFieldConversion" />
-    	<field-descriptor name="bankAccountNumber" column="BANK_ACCOUNT_NBR" conversion="org.kuali.rice.kns.util.OjbKualiEncryptDecryptFieldConversion" jdbc-type="VARCHAR" />
+    	<field-descriptor name="checkNumber" column="CHECK_NBR" jdbc-type="BIGINT" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiIntegerFieldConversion" />
+    	<field-descriptor name="bankAccountNumber" column="BANK_ACCOUNT_NBR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion" jdbc-type="VARCHAR" />
     	<field-descriptor name="checkDate" column="CHECK_DT" jdbc-type="DATE" />
     	<field-descriptor name="statusChangeDate" column="STATUS_CHANGE_DT" jdbc-type="DATE" />
     	<field-descriptor name="payeeId" column="PAYEE_ID" jdbc-type="VARCHAR" />
     	<field-descriptor name="payeeName" column="PAYEE_NAME" jdbc-type="VARCHAR" />
     	<field-descriptor name="payeeType" column="PAYEE_TYPE" jdbc-type="VARCHAR" />
-    	<field-descriptor name="amount" column="AMOUNT" conversion="org.kuali.rice.kns.util.OjbKualiDecimalFieldConversion" jdbc-type="DECIMAL" />
+    	<field-descriptor name="amount" column="AMOUNT" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" jdbc-type="DECIMAL" />
     	<field-descriptor name="status" column="STATUS" jdbc-type="VARCHAR" />
     	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
     	<field-descriptor name="lastUpdate" column="LST_UPDT_TS" jdbc-type="TIMESTAMP"/>
-    	<field-descriptor name="glTransIndicator" column="GL_TRANS_IND" conversion="org.kuali.rice.kns.util.OjbCharBooleanConversion" jdbc-type="VARCHAR" />
+    	<field-descriptor name="glTransIndicator" column="GL_TRANS_IND" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" jdbc-type="VARCHAR" />
     	<field-descriptor name="sourceCode" column="SRC_CD" jdbc-type="VARCHAR" />
     	<field-descriptor name="bankCode" column="BNK_CD" jdbc-type="VARCHAR" />
     	<field-descriptor name="cancelDocHdrId" column="CNCL_DOC_HDR_ID" jdbc-type="VARCHAR" />

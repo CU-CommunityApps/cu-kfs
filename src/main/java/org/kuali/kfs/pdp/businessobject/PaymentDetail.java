@@ -28,6 +28,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.ojb.broker.PersistenceBroker;
+import org.apache.ojb.broker.PersistenceBrokerException;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpParameterConstants;
 import org.kuali.kfs.pdp.service.PaymentGroupService;
@@ -585,5 +587,17 @@ public class PaymentDetail extends TimestampedBusinessObjectBase {
         }
         return nbrOfPaymentsInDisbursement;
     }
+    
+    // ==== CU Customization (KFSUPGRADE-605) ====
+
+    public Timestamp getPaymentGroupLastUpdateForLookup() {
+        return (paymentGroup != null) ? paymentGroup.getLastUpdate() : null;
+    }
+
+    public void setPaymentGroupLastUpdateForLookup(Timestamp paymentGroupLastUpdateForLookup) {
+        // Do nothing.
+    }
+
+    // ==== End CU Customization ====
 
 }

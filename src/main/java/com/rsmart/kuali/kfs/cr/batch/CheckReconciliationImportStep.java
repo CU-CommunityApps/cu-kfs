@@ -459,7 +459,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
     private List<String> getFileList() throws Exception {
         List<String> fileList = new ArrayList<String>();
 
-        String prop = kualiConfigurationService.getPropertyValueAsString(KFSConstants.GL_COLLECTOR_STAGING_DIRECTORY) + "/cr/upload";
+        String prop = kualiConfigurationService.getPropertyValueAsString(com.rsmart.kuali.kfs.sys.KFSConstants.STAGING_DIRECTORY_KEY) + "/cr/upload";
           
         File folder = new File(prop);
 
