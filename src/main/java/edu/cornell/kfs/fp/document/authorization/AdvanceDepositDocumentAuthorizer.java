@@ -17,6 +17,7 @@ import org.kuali.kfs.fp.document.AdvanceDepositDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentAuthorizerBase;
 import org.kuali.kfs.sys.identity.KfsKimAttributes;
 import org.kuali.rice.kim.bo.Person;
@@ -26,11 +27,15 @@ import org.kuali.rice.kim.service.KIMServiceLocator;
 import org.kuali.rice.kim.service.RoleService;
 import org.kuali.rice.kns.bo.BusinessObject;
 import org.kuali.rice.kns.util.GlobalVariables;
+import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
 public class AdvanceDepositDocumentAuthorizer extends FinancialSystemTransactionalDocumentAuthorizerBase {
 
     protected RoleService roleService;
     protected OrganizationService organizationService;
+    
+    
+    
 
     @Override
     protected void addPermissionDetails(BusinessObject businessObject, Map<String, String> attributes) {
@@ -38,7 +43,7 @@ public class AdvanceDepositDocumentAuthorizer extends FinancialSystemTransaction
         super.addPermissionDetails(businessObject, attributes);
         AdvanceDepositDocument advanceDepositDocument = (AdvanceDepositDocument) businessObject;
 
-        addAttributes(advanceDepositDocument, attributes);
+      //  addAttributes(advanceDepositDocument, attributes);
 
     }
 
@@ -48,7 +53,7 @@ public class AdvanceDepositDocumentAuthorizer extends FinancialSystemTransaction
         super.addRoleQualification(businessObject, attributes);
         AdvanceDepositDocument advanceDepositDocument = (AdvanceDepositDocument) businessObject;
 
-        addAttributes(advanceDepositDocument, attributes);
+      //  addAttributes(advanceDepositDocument, attributes);
     }
 
     protected void addAttributes(AdvanceDepositDocument advanceDepositDocument, Map<String, String> attributes) {
@@ -105,7 +110,12 @@ public class AdvanceDepositDocumentAuthorizer extends FinancialSystemTransaction
                         for (Object accountingLine : advanceDepositDocument.getSourceAccountingLines()) {
                             SourceAccountingLine sourceAccountingLine = (SourceAccountingLine) accountingLine;
                             String accountingLineChart = sourceAccountingLine.getChartOfAccountsCode();
-                            String accountingLineOrg = sourceAccountingLine.getAccount().getOrganizationCode();
+                            String accountingLineOrg = KFSConstants.EMPTY_STRING;
+                            sourceAccountingLine.refreshReferenceObject("account");
+                            
+                            if(sourceAccountingLine.getAccount()!=null){
+                             accountingLineOrg = sourceAccountingLine.getAccount().getOrganizationCode();
+                            }
 
                             if (chart != null && chart.equalsIgnoreCase(accountingLineChart) && org != null && (org.equalsIgnoreCase(accountingLineOrg) || organizationService.isParentOrganization(accountingLineChart, accountingLineOrg, chart, org))) {
                                 attributes.put(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE, accountingLineChart);
@@ -117,6 +127,22 @@ public class AdvanceDepositDocumentAuthorizer extends FinancialSystemTransaction
             }
         }
 
+    }
+    
+    /**
+     * Determines if document is in org review node for approval.
+     * 
+     * @param nodeName
+     * @param accountingDocument
+     * @return true if in org review node for approval, false otherwise
+     */
+    public boolean isDocumentStoppedInRouteNode(String nodeName, AccountingDocument accountingDocument) {
+        KualiWorkflowDocument workflowDoc = accountingDocument.getDocumentHeader().getWorkflowDocument();
+        String currentRouteLevels = accountingDocument.getDocumentHeader().getWorkflowDocument().getCurrentRouteNodeNames();
+        if (currentRouteLevels.contains(nodeName) && workflowDoc.isApprovalRequested()) {
+            return true;
+        }
+        return false;
     }
 
     protected RoleService getRoleService() {
