@@ -89,5 +89,26 @@
     <bean id="paymentFileService" parent="paymentFileService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileServiceImpl"/>
     <bean id="paymentFileValidationService" parent="paymentFileValidationService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileValidationServiceImpl" />
     <bean id="pdpPaymentMaintenanceService" parent="pdpPaymentMaintenanceService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentMaintenanceServiceImpl" />
+    
+    <bean id="pdpExtractPaymentService" class="edu.cornell.kfs.pdp.batch.service.impl.CuExtractPaymentServiceImpl" >
+        <property name="parameterService" ref="parameterService"/>
+        <property name="directoryName" value="${staging.directory}/pdp/paymentExtract"/>
+        <property name="paymentGroupService" ref="pdpPaymentGroupService"/>
+        <property name="paymentDetailService" ref="pdpPaymentDetailService"/>
+        <property name="processDao" ref="pdpProcessDao"/>
+        <property name="dateTimeService" ref="dateTimeService"/>
+        <property name="paymentGroupHistoryDao" ref="pdpPaymentGroupHistoryDao"/>
+        <property name="paymentFileEmailService" ref="pdpEmailService"/>
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="configurationService" ref="kualiConfigurationService"/>
+        <property name="countryService" ref="countryService"/>
+        <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" /> 
+    </bean>
+    
+        <bean id="pdpAchBundlerHelperService" class="com.rsmart.kuali.kfs.pdp.service.impl.AchBundlerHelperServiceImpl">
+        <property name="paymentDetailDao" ref="pdpPaymentDetailDao"/>
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="parameterService" ref="parameterService"/>
+    </bean>
 
 </beans>
