@@ -42,15 +42,19 @@ import org.kuali.kfs.coa.service.OffsetDefinitionService;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.CreditMemoItem;
 import org.kuali.kfs.module.purap.businessobject.ItemType;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.businessobject.PurApItemUseTax;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
+import org.kuali.kfs.module.purap.document.AccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
+import org.kuali.kfs.module.purap.document.service.AccountsPayableDocumentSpecificService;
+import org.kuali.kfs.module.purap.document.service.AccountsPayableService;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.service.PurapAccountRevisionService;
 import org.kuali.kfs.module.purap.service.PurapAccountingService;
@@ -72,10 +76,15 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocumentBase;
+import org.kuali.kfs.sys.document.validation.event.AccountingDocumentSaveWithNoLedgerEntryGenerationEvent;
 import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.FlexibleOffsetAccountService;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
+import org.kuali.rice.kew.docsearch.service.SearchableAttributeProcessingService;
 import org.kuali.rice.kew.exception.WorkflowException;
+import org.kuali.rice.kew.messaging.MessageServiceNames;
+import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
+import org.kuali.rice.kew.service.KEWServiceLocator;
 import org.kuali.rice.kns.bo.Note;
 import org.kuali.rice.kns.document.Document;
 import org.kuali.rice.kns.service.BusinessObjectService;
@@ -333,9 +342,9 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
 
                     if (ObjectUtils.isNotNull(doc)) {
                         if (doc instanceof DisbursementVoucherDocument) {
-
-                            generateDisbursementVoucherReversalEntries((DisbursementVoucherDocument) doc, sequenceHelper);
-
+                            DisbursementVoucherDocument dv = (DisbursementVoucherDocument) doc;
+                            generateDisbursementVoucherReversalEntries(dv, sequenceHelper);
+                            
                         } else if (doc instanceof VendorCreditMemoDocument) {
                             // KFSPTS-2719
                             String crCmCancelNote = parameterService.getParameterValue(VendorCreditMemoDocument.class, PurapParameterConstants.PURAP_CR_CM_CANCEL_NOTE);
@@ -350,8 +359,14 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
                             } catch (Exception e) {
                                 throw new RuntimeException(e.getMessage());
                             }
-
-                            generateCreditMemoReversalEntries((VendorCreditMemoDocument) doc);
+                            
+                            //KFSPTS-3088
+                            VendorCreditMemoDocument cm = (VendorCreditMemoDocument) doc;
+                            AccountsPayableDocumentSpecificService accountsPayableDocumentSpecificService = cm.getDocumentSpecificService();
+                            accountsPayableDocumentSpecificService.updateStatusByNode("", cm);
+                            cm.refreshReferenceObject(PurapPropertyConstants.STATUS);
+                            //end KFSPTS-3088
+                            generateCreditMemoReversalEntries(cm);
 
                         } else if (doc instanceof PaymentRequestDocument) {
                             // KFSPTS-2719
@@ -372,7 +387,13 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
 
                             // cancel extracted should not reopen PO
                             paymentRequest.setReopenPurchaseOrderIndicator(false);
+                            
+                            //KFSPTS-3088
+                            AccountsPayableDocumentSpecificService accountsPayableDocumentSpecificService = paymentRequest.getDocumentSpecificService();
+                            accountsPayableDocumentSpecificService.updateStatusByNode("", paymentRequest);
+                            paymentRequest.refreshReferenceObject(PurapPropertyConstants.STATUS);
 
+                            //end KFSPTS-3088
                             generatePaymentRequestReversalEntries(paymentRequest);
 
                         }
@@ -385,6 +406,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
         }
 
     }
+    
     
     /**
      * Generates the bank offset for an entry (when enabled in the system)
