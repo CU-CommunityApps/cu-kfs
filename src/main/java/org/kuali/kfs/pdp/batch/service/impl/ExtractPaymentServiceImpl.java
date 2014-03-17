@@ -1926,7 +1926,7 @@ public class ExtractPaymentServiceImpl implements ExtractPaymentService {
                             	Zip = (pg.getZipCd().substring(0,((pg.getZipCd().length() >= ZipMaxLength)? ZipMaxLength: pg.getZipCd().length() ))).replace("-", "");
                             
                             os.write("PDT02010" + cDelim +      // Record Type - 8 bytes
-                            		"PR" + cDelim +             // Name qualifier - 3 bytes
+                            		"PE" + cDelim +             // Name qualifier - 3 bytes
                             		cDelim +                    // ID code qualifier - 2 bytes
                             		cDelim +                    // ID code - 80 bytes
                             		PayeeName + cDelim +       	// Name - 30 bytes
