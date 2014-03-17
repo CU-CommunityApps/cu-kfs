@@ -332,7 +332,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                             writeCloseTag(os, 6, "payment");
                        }
                         
-                       if (!isImmediate && wroteCheckHeaderRecords) {
+                       if (isImmediate && wroteImmediateHeaderRecords) {
                             writeOpenTag(osI, 6, "payment");
     
                             writeTag(osI, 8, "purchaseOrderNbr", detail.getPurchaseOrderNbr());
