@@ -30,12 +30,9 @@ public class CuProcessPdpCancelPaidServiceImpl extends ProcessPdpCancelPaidServi
 
         Date processDate = dateTimeService.getCurrentSqlDate();
 
-        String organization = parameterService.getParameterValueAsString(KfsParameterConstants.PURCHASING_BATCH.class, 
-                KFSParameterKeyConstants.PurapPdpParameterConstants.PURAP_PDP_ORG_CODE);
-        String purapSubUnit = parameterService.getParameterValueAsString(KfsParameterConstants.PURCHASING_BATCH.class, 
-                KFSParameterKeyConstants.PurapPdpParameterConstants.PURAP_PDP_SUB_UNIT_CODE);
-        String dvSubUnit = parameterService.getParameterValueAsString(DisbursementVoucherDocument.class, 
-                DisbursementVoucherConstants.DvPdpExtractGroup.DV_PDP_SBUNT_CODE);
+        String organization = parameterService.getParameterValueAsString(KfsParameterConstants.PURCHASING_BATCH.class, KFSParameterKeyConstants.PurapPdpParameterConstants.PURAP_PDP_ORG_CODE);
+        String purapSubUnit = parameterService.getParameterValueAsString(KfsParameterConstants.PURCHASING_BATCH.class, KFSParameterKeyConstants.PurapPdpParameterConstants.PURAP_PDP_SUB_UNIT_CODE);
+        String dvSubUnit = parameterService.getParameterValueAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.DvPdpExtractGroup.DV_PDP_SBUNT_CODE);
 
         List<String> subUnits = new ArrayList<String>();
         subUnits.add(purapSubUnit);
@@ -55,13 +52,12 @@ public class CuProcessPdpCancelPaidServiceImpl extends ProcessPdpCancelPaidServi
             //KFSPTS-2719
             boolean crCancel = false;
             PaymentDetailExtendedAttribute paymentDetailExtendedAttribute = (PaymentDetailExtendedAttribute) paymentDetail.getExtension();
-            if (ObjectUtils.isNull(paymentDetailExtendedAttribute)) {
+            if (ObjectUtils.isNotNull(paymentDetailExtendedAttribute)) {
                 crCancel = paymentDetailExtendedAttribute.getCrCancelledPayment();
             }
 
             if (purchasingAccountsPayableModuleService.isPurchasingBatchDocument(documentTypeCode)) {
-                ((CuPurchasingAccountsPayableModuleService) purchasingAccountsPayableModuleService)
-                    .handlePurchasingBatchCancels(documentNumber, documentTypeCode, primaryCancel, disbursedPayment, crCancel);
+                ((CuPurchasingAccountsPayableModuleService) purchasingAccountsPayableModuleService).handlePurchasingBatchCancels(documentNumber, documentTypeCode, primaryCancel, disbursedPayment, crCancel);
             } else if (DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH.equals(documentTypeCode)) {
                 DisbursementVoucherDocument dv = dvExtractService.getDocumentById(documentNumber);
                 if (dv != null) {
