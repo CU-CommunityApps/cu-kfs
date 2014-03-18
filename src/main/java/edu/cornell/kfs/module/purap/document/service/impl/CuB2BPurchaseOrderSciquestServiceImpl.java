@@ -580,7 +580,29 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
              }
 
         }
-/*KFSPTS-794: End new code: Define the attachments */      
+/*KFSPTS-794: End new code: Define the attachments */
+        
+        cxml.append("      <CustomFieldValueSet label=\"Contact Name\" name=\"InitiatorName\">\n");
+        cxml.append("        <CustomFieldValue>\n");
+        if (ObjectUtils.isNotNull(purchaseOrder.getInstitutionContactName())) {
+        	cxml.append("          <Value><![CDATA[").append(purchaseOrder.getInstitutionContactName()).append("]]></Value>\n");
+        } else {
+            cxml.append("          <Value><![CDATA[").append(purchaseOrder.getRequestorPersonName()).append("]]></Value>\n");
+        }
+        cxml.append("         </CustomFieldValue>\n");
+        cxml.append("      </CustomFieldValueSet>\n");
+        
+        cxml.append("      <CustomFieldValueSet label=\"Supplier Address\" name=\"SupplierAddress1\">\n");
+        cxml.append("        <CustomFieldValue>\n");
+        cxml.append("          <Value><![CDATA[").append(purchaseOrder.getVendorLine1Address()).append("]]></Value>\n");
+        cxml.append("         </CustomFieldValue>\n");
+        cxml.append("      </CustomFieldValueSet>\n");
+        cxml.append("      <CustomFieldValueSet label=\"Supplier City State Zip\" name=\"SupplierCityStateZip\">\n");
+        cxml.append("        <CustomFieldValue>\n");
+        cxml.append("          <Value><![CDATA[").append(purchaseOrder.getVendorCityName()).append(", ").append(purchaseOrder.getVendorStateCode()).append(" ").append(purchaseOrder.getVendorPostalCode()).append("]]></Value>\n");
+        cxml.append("         </CustomFieldValue>\n");
+        cxml.append("      </CustomFieldValueSet>\n");
+        
         String deliveryInstructionText = purchaseOrder.getDeliveryInstructionText();
         
         if (ObjectUtils.isNotNull(deliveryInstructionText)) {
