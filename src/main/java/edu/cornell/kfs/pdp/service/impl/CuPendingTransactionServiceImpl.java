@@ -67,10 +67,11 @@ import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.pdp.CUPdpConstants;
+import edu.cornell.kfs.pdp.service.CuPendingTransactionService;
 
 
 @Transactional
-public class CuPendingTransactionServiceImpl extends PendingTransactionServiceImpl {
+public class CuPendingTransactionServiceImpl extends PendingTransactionServiceImpl implements CuPendingTransactionService{
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPendingTransactionServiceImpl.class);
 	
     protected static String FDOC_TYP_CD_STOP_CHECK = "CHKS";
@@ -104,6 +105,13 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             reverseSourceDocumentsEntries(paymentDetail, sequenceHelper);
         }
         this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, FDOC_TYP_CD_CANCEL_ACH, FDOC_TYP_CD_STOP_CHECK, true);
+    }
+    
+    /**
+     * @see org.kuali.kfs.pdp.service.PendingTransactionService#generateCancellationGeneralLedgerPendingEntry(org.kuali.kfs.pdp.businessobject.PaymentGroup)
+     */
+    public void generateStaleGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
+        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, FDOC_TYP_CD_STALE_CHECK, FDOC_TYP_CD_STALE_CHECK, true);
     }
     
     /**

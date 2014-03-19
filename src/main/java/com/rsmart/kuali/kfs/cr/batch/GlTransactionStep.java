@@ -39,6 +39,7 @@ import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 import com.rsmart.kuali.kfs.cr.document.service.GlTransactionService;
 
 import edu.cornell.kfs.pdp.businessobject.PaymentDetailExtendedAttribute;
+import edu.cornell.kfs.pdp.service.CuPendingTransactionService;
 
 /**
  * GlTransactionStep
@@ -53,7 +54,7 @@ public class GlTransactionStep extends AbstractStep {
     
     private BusinessObjectService businessObjectService;
     
-    private PendingTransactionService glPendingTransactionService;
+    private CuPendingTransactionService glPendingTransactionService;
     
 
     /**
@@ -146,9 +147,8 @@ public class GlTransactionStep extends AbstractStep {
                 }
                 else {
                     for (PaymentGroup paymentGroup : paymentGroups) {
-                      //TODO UPGRADE-911  
                       //KFSPTS-2260
-                        glPendingTransactionService.generatePaymentGeneralLedgerPendingEntry(paymentGroup);
+                    	glPendingTransactionService.generateCRCancellationGeneralLedgerPendingEntry(paymentGroup);
                         //glTransactionService.generateGlPendingTransactionCancel(paymentGroup);
                     
                         KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
@@ -256,9 +256,8 @@ public class GlTransactionStep extends AbstractStep {
                 else {
                      for (PaymentGroup paymentGroup : paymentGroups) {
                          
-                         //TODO UPGRADE-911
                          //KFSPTS-2246
-                         glTransactionService.generateGlPendingTransactionStale(paymentGroup);
+                    	 glPendingTransactionService.generateStaleGeneralLedgerPendingEntry(paymentGroup);
                          //glPendingTransactionService.g .generateStaleGeneralLedgerPendingEntry(paymentGroup);
                     
                          KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
@@ -343,7 +342,7 @@ public class GlTransactionStep extends AbstractStep {
      * 
      * @return glPendingTransactionService
      */
-    public PendingTransactionService getGlPendingTransactionService() {
+    public CuPendingTransactionService getGlPendingTransactionService() {
         return glPendingTransactionService;
     }
 
@@ -352,7 +351,7 @@ public class GlTransactionStep extends AbstractStep {
      * 
      * @param glPendingTransactionService
      */
-    public void setGlPendingTransactionService(PendingTransactionService glPendingTransactionService) {
+    public void setGlPendingTransactionService(CuPendingTransactionService glPendingTransactionService) {
         this.glPendingTransactionService = glPendingTransactionService;
     }
     
