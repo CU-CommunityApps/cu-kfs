@@ -21,6 +21,7 @@ import org.kuali.kfs.coa.businessobject.OffsetDefinition;
 import org.kuali.kfs.coa.service.OffsetDefinitionService;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.CreditMemoItem;
 import org.kuali.kfs.module.purap.businessobject.ItemType;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
@@ -30,6 +31,7 @@ import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
+import org.kuali.kfs.module.purap.document.service.AccountsPayableDocumentSpecificService;
 import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.service.PurapAccountRevisionService;
 import org.kuali.kfs.module.purap.service.PurapAccountingService;
@@ -264,8 +266,10 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
                     if (ObjectUtils.isNotNull(doc)) {
                         if (doc instanceof DisbursementVoucherDocument) {
-
-                            generateDisbursementVoucherReversalEntries((DisbursementVoucherDocument) doc, sequenceHelper);
+                        	//KFSUPGRADE-775
+                            DisbursementVoucherDocument dv = (DisbursementVoucherDocument) doc;
+                            generateDisbursementVoucherReversalEntries(dv, sequenceHelper);
+                            //end KFSUPGRADE-775
 
                         } else if (doc instanceof VendorCreditMemoDocument) {
                             // KFSPTS-2719
@@ -281,6 +285,12 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                             } catch (Exception e) {
                                 throw new RuntimeException(e.getMessage());
                             }
+                            
+                            //KFSUPGRADE-775
+                            VendorCreditMemoDocument cm = (VendorCreditMemoDocument) doc;
+                            AccountsPayableDocumentSpecificService accountsPayableDocumentSpecificService = cm.getDocumentSpecificService();
+                            accountsPayableDocumentSpecificService.updateStatusByNode("", cm);
+                            //end KFSUPGRADE-775
 
                             generateCreditMemoReversalEntries((VendorCreditMemoDocument) doc);
 
@@ -303,6 +313,12 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
                             // cancel extracted should not reopen PO
                             paymentRequest.setReopenPurchaseOrderIndicator(false);
+                            
+                            //KFSUPGRADE-775
+                            AccountsPayableDocumentSpecificService accountsPayableDocumentSpecificService = paymentRequest.getDocumentSpecificService();
+                            accountsPayableDocumentSpecificService.updateStatusByNode("", paymentRequest);
+
+                            //end KFSUPGRADE-775
 
                             generatePaymentRequestReversalEntries(paymentRequest);
 
