@@ -63,7 +63,6 @@
             <ref bean="accountReversionFiscalYearMaker" />
             <ref bean="accountReversionDetailFiscalYearMaker" />
             <ref bean="subObjectCodeFiscalYearMaker" />
-            <ref bean="objectCodeExtendedAttributeFiscalYearMaker" />
             <ref bean="objectCodeFiscalYearMaker" />
             <ref bean="offsetDefinitionFiscalYearMaker" />
             <ref bean="accountingPeriodFiscalYearMaker" />
@@ -649,15 +648,6 @@
 		  </set>
 		</property>	
 	</bean>	
-	
-	<bean id="objectCodeExtendedAttributeFiscalYearMaker" parent="FiscalYearMaker">
-		<property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.ObjectCodeExtendedAttribute" /> 
-		<property name="parentClasses">
-		  <set>
-		    <value>org.kuali.kfs.coa.businessobject.ObjectCode</value>
-		  </set>
-		</property>	
-	</bean>
 	
 	<bean id="objectCodeFiscalYearMaker" class="org.kuali.kfs.coa.batch.dataaccess.impl.ObjectCodeFiscalYearMakerImpl" parent="FiscalYearMaker">
 		<property name="businessObjectClass" value="org.kuali.kfs.coa.businessobject.ObjectCode" /> 
