@@ -174,7 +174,9 @@ public class PurapConstants {
         public static final String NODE_HAS_ACCOUNTING_LINES = "Initiator";
         public static final String NODE_ORG_REVIEW = "AccountingOrganizationHierarchy";
         public static final String NODE_COMMODITY_CODE_REVIEW = "Commodity";
-
+        public static final String NODE_COMMODITY_CODE_APO_REVIEW = "CommodityAPO";
+        
+        
         public static HashMap<String, String> getRequistionAppDocStatuses() {
             HashMap<String, String> reqAppDocStatusMap;
 
@@ -185,6 +187,7 @@ public class PurapConstants {
             reqAppDocStatusMap.put(NODE_ACCOUNT, APPDOC_DAPRVD_FISCAL);
             reqAppDocStatusMap.put(NODE_ORG_REVIEW, APPDOC_DAPRVD_CHART);
             reqAppDocStatusMap.put(NODE_COMMODITY_CODE_REVIEW, APPDOC_DAPRVD_COMMODITY_CODE);
+            reqAppDocStatusMap.put(NODE_COMMODITY_CODE_APO_REVIEW, APPDOC_DAPRVD_COMMODITY_CODE);
             reqAppDocStatusMap.put(NODE_SEPARATION_OF_DUTIES, APPDOC_DAPRVD_SEP_OF_DUTY);
             reqAppDocStatusMap.put(APPDOC_IN_PROCESS,  APPDOC_IN_PROCESS);
             reqAppDocStatusMap.put(APPDOC_CLOSED, APPDOC_CLOSED);
@@ -349,6 +352,7 @@ public class PurapConstants {
         public static final String NODE_AWAIT_NEW_UNORDERED_ITEM_REVIEW = "NewUnorderedItems";
         public static final String NODE_INTERNAL_PURCHASING_REVIEW = "ContractManagement";
         public static final String NODE_COMMODITY_CODE_REVIEW = "Commodity";
+        public static final String NODE_COMMODITY_CODE_APO_REVIEW = "CommodityAPO";
         public static final String NODE_CONTRACTS_AND_GRANTS_REVIEW = "Award";
         public static final String NODE_BUDGET_OFFICE_REVIEW = "Budget";
         public static final String NODE_VENDOR_TAX_REVIEW = "Tax";
@@ -362,6 +366,7 @@ public class PurapConstants {
             poAppDocStatusMap.put(NODE_AWAIT_NEW_UNORDERED_ITEM_REVIEW,PurchaseOrderStatuses.APPDOC_DAPRVD_UNORDERED_ITEM);
             poAppDocStatusMap.put(NODE_INTERNAL_PURCHASING_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_PURCHASING);
             poAppDocStatusMap.put(NODE_COMMODITY_CODE_REVIEW,  PurchaseOrderStatuses.APPDOC_DAPRVD_COMMODITY_CODE);
+            poAppDocStatusMap.put(NODE_COMMODITY_CODE_APO_REVIEW,  PurchaseOrderStatuses.APPDOC_DAPRVD_COMMODITY_CODE);
             poAppDocStatusMap.put(NODE_CONTRACTS_AND_GRANTS_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_CG_APPROVAL);
             poAppDocStatusMap.put(NODE_BUDGET_OFFICE_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_BUDGET);
             poAppDocStatusMap.put(NODE_VENDOR_TAX_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_TAX);
