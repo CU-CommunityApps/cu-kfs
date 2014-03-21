@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?> 
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  Copyright 2009 The Kuali Foundation
  
@@ -44,6 +44,7 @@
 				<status>Cancelled</status>
 				<status>In Process</status>
 				<status>Awaiting C and G Approval</status>
+				<status>Awaiting Commodity Code</status>
 			</validApplicationStatuses>
       <policies>
         <policy>
@@ -57,54 +58,54 @@
           <start name="AdHoc" nextNode="HasAccountingLines" nextAppDocStatus="Awaiting Accounting Lines"/>
           <split name="HasAccountingLines" nextNode="B2BAutoPurchaseOrder">
             <branch name="True">
-              <simple name="NoOpHasAccountingLines" nextNode="JoinHasAccountingLines" nextAppDocStatus="Awaiting Sub Account" />
+              <simple name="NoOpHasAccountingLines" nextNode="JoinHasAccountingLines" nextAppDocStatus="Awaiting Sub Account"/>
             </branch>
             <branch name="False">
-              <role name="Initiator" nextNode="JoinHasAccountingLines" nextAppDocStatus="Awaiting Sub Account" />
+              <role name="Initiator" nextNode="JoinHasAccountingLines" nextAppDocStatus="Awaiting Sub Account"/>
             </branch>
-            <join name="JoinHasAccountingLines" />
+            <join name="JoinHasAccountingLines"/>
           </split>
           <split name="B2BAutoPurchaseOrder">
             <branch name="True">
-              <role name="CommodityAPO" nextNode="JoinB2BAPO" />
+              <role name="CommodityAPO" nextNode="JoinB2BAPO"/>
             </branch>
             <branch name="False">
-              <role name="SubAccount" nextNode="Account"  nextAppDocStatus="Awaiting Fiscal Officer"/>
-              <role name="Account" nextNode="AccountingOrganizationHierarchy" nextAppDocStatus="Awaiting Base Org Review" />
-              <role name="AccountingOrganizationHierarchy" nextNode="RequiresAwardReview" nextAppDocStatus="Awaiting C and G Approval" />
-              <split name="RequiresAwardReview" nextNode="Commodity"   >
+              <role name="SubAccount" nextNode="Account" nextAppDocStatus="Awaiting Fiscal Officer"/>
+              <role name="Account" nextNode="AccountingOrganizationHierarchy" nextAppDocStatus="Awaiting Base Org Review"/>
+              <role name="AccountingOrganizationHierarchy" nextNode="RequiresAwardReview" nextAppDocStatus="Awaiting C and G Approval"/>
+              <split name="RequiresAwardReview" nextNode="Commodity">
                 <branch name="True">
-                  <role name="Award" nextNode="JoinRequiresAwardReview"  nextAppDocStatus="Awaiting Commodity Review" />
+                  <role name="Award" nextNode="JoinRequiresAwardReview" nextAppDocStatus="Awaiting Commodity Review"/>
                 </branch>
                 <branch name="False">
-                  <simple name="NoOpRequiresAwardReview" nextNode="JoinRequiresAwardReview" nextAppDocStatus="Awaiting Commodity Review"  />
+                  <simple name="NoOpRequiresAwardReview" nextNode="JoinRequiresAwardReview" nextAppDocStatus="Awaiting Commodity Review"/>
                 </branch>
-                <join name="JoinRequiresAwardReview" />
+                <join name="JoinRequiresAwardReview"/>
               </split>
-              <role name="Commodity" nextNode="AmountRequiresSeparationOfDutiesReview" nextAppDocStatus="Awaiting Separation of Duties" />
+              <role name="Commodity" nextNode="AmountRequiresSeparationOfDutiesReview" nextAppDocStatus="Awaiting Separation of Duties"/>
               <split name="AmountRequiresSeparationOfDutiesReview" nextNode="JoinB2BAPO">
                 <branch name="True">
-                  <role name="SeparationOfDuties" nextNode="JoinSOD" />
+                  <role name="SeparationOfDuties" nextNode="JoinSOD"/>
                 </branch>
                 <branch name="False">
-                  <simple name="NoOpSOD" nextNode="JoinSOD" />
+                  <simple name="NoOpSOD" nextNode="JoinSOD"/>
                 </branch>
-                <join name="JoinSOD" />
+                <join name="JoinSOD"/>
               </split>
             </branch>
-            <join name="JoinB2BAPO" />
+            <join name="JoinB2BAPO"/>
           </split>
         </routePath>
       </routePaths>
       <routeNodes>
-        <start name="AdHoc" />
+        <start name="AdHoc"/>
         <split name="HasAccountingLines">
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
         <simple name="NoOpHasAccountingLines">
           <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
         </simple>
-        <join name="JoinHasAccountingLines" />
+        <join name="JoinHasAccountingLines"/>
         <role name="Initiator">
           <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
@@ -116,8 +117,8 @@
           <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
-        <join name="JoinB2BAPO" />
-        <join name="JoinSOD" />
+        <join name="JoinB2BAPO"/>
+        <join name="JoinSOD"/>
         <role name="SeparationOfDuties">
           <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
@@ -129,7 +130,7 @@
           <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
-        <join name="JoinRequiresAwardReview" />
+        <join name="JoinRequiresAwardReview"/>
         <role name="Award">
           <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
@@ -159,4 +160,3 @@
     </documentType>
   </documentTypes>
 </data>
-

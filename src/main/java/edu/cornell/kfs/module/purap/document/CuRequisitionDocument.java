@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
@@ -35,6 +36,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants.COMPONENT;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.permission.PermissionService;
@@ -70,6 +72,9 @@ public class CuRequisitionDocument extends RequisitionDocument {
             if(isB2BAutoPurchaseOrder) this.paymentRequestPositiveApprovalIndicator=true;
             return isB2BAutoPurchaseOrder;
         }
+        
+        
+        
         return super.answerSplitNodeQuestion(nodeName);
         
     }
@@ -80,7 +85,7 @@ public class CuRequisitionDocument extends RequisitionDocument {
         VendorDetail vendorDetail = SpringContext.getBean(VendorService.class)
                 .getVendorDetail(this.getVendorHeaderGeneratedIdentifier(), this.getVendorDetailAssignedIdentifier());
         if (vendorDetail != null) {
-            if (vendorDetail.isB2BVendor()) {
+            if (vendorDetail.isB2BVendor()) {                                                   
                 returnValue = isB2BTotalAmountForAutoPO();
             } else {
                 returnValue =  false;
@@ -114,7 +119,13 @@ public class CuRequisitionDocument extends RequisitionDocument {
         }
         KualiDecimal totalAmount = document.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount();
         if (ObjectUtils.isNotNull(autoPOAmount) && ObjectUtils.isNotNull(totalAmount) && (autoPOAmount.compareTo(totalAmount) >= 0)) {
+            try {
+                this.updateAndSaveAppDocStatus(RequisitionStatuses.APPDOC_AWAIT_COMMODITY_CODE_REVIEW);
+            } catch (WorkflowException e) {               
+                e.printStackTrace();
+            }
             returnValue = true;
+            
         } else {
             returnValue =  false;
         }
