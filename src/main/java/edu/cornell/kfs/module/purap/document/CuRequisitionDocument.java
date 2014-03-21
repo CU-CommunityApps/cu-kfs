@@ -119,13 +119,15 @@ public class CuRequisitionDocument extends RequisitionDocument {
         }
         KualiDecimal totalAmount = document.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount();
         if (ObjectUtils.isNotNull(autoPOAmount) && ObjectUtils.isNotNull(totalAmount) && (autoPOAmount.compareTo(totalAmount) >= 0)) {
-            try {
-                this.updateAndSaveAppDocStatus(RequisitionStatuses.APPDOC_AWAIT_COMMODITY_CODE_REVIEW);
-            } catch (WorkflowException e) {               
-                e.printStackTrace();
-            }
+            if  (!RequisitionStatuses.APPDOC_AWAIT_COMMODITY_CODE_REVIEW.equals(this.getApplicationDocumentStatus())) {
+                try {
+                    this.updateAndSaveAppDocStatus(RequisitionStatuses.APPDOC_AWAIT_COMMODITY_CODE_REVIEW);
+                } catch (WorkflowException e) {               
+                    e.printStackTrace();
+                }
+            }    
             returnValue = true;
-            
+               
         } else {
             returnValue =  false;
         }
