@@ -501,7 +501,7 @@ public class CheckReconciliationImportStep extends AbstractStep {
     private void archiveFile(String checkFile) throws Exception {
         LOG.info("Archiving File : " + checkFile);
 
-        String prop = kualiConfigurationService.getPropertyValueAsString(KFSConstants.GL_COLLECTOR_STAGING_DIRECTORY) + "/cr/archive";
+        String prop = kualiConfigurationService.getPropertyValueAsString(com.rsmart.kuali.kfs.sys.KFSConstants.STAGING_DIRECTORY_KEY) + "/cr/archive";
         
         File file    = new File(checkFile); // Check File
         File archive = new File(prop);      // Archive Folder
