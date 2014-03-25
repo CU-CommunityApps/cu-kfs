@@ -135,7 +135,8 @@
             <xsd:sequence>
                 <xsd:element ref="payee_name"/>
                 <xsd:element ref="payee_id"/>
-                <xsd:element maxOccurs="1" minOccurs="0" ref="payee_own_cd"/>    
+                <xsd:element maxOccurs="1" minOccurs="0" ref="payee_own_cd"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="customer_institution_identifier"/>    
                 <xsd:element maxOccurs="1" minOccurs="0" ref="address1"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="address2"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="address3"/>
@@ -179,7 +180,6 @@
                 <xsd:element maxOccurs="1" minOccurs="0" ref="po_nbr"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="req_nbr"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="org_doc_nbr"/>
-				<xsd:element maxOccurs="1" minOccurs="0" ref="customer_institution_identifier"/>
                 <xsd:element ref="invoice_date"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="orig_invoice_amt"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="net_payment_amt"/>
