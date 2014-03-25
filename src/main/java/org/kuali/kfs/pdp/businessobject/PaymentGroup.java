@@ -53,7 +53,9 @@ import com.rsmart.kuali.kfs.cr.CRConstants;
  * This class represents the PaymentGroup
  */
 public class PaymentGroup extends TimestampedBusinessObjectBase {
-    protected static KualiDecimal zero = KualiDecimal.ZERO;
+	private static final long serialVersionUID = 1L;
+
+	protected static KualiDecimal zero = KualiDecimal.ZERO;
 
     protected KualiInteger id; // PMT_GRP_ID
     protected String payeeName; // PMT_PAYEE_NM
@@ -62,6 +64,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
     protected String alternatePayeeId; // ALTRNT_PAYEE_ID
     protected String alternatePayeeIdTypeCd; // ALTRNT_PAYEE_ID_TYP_CD
     protected String payeeOwnerCd; // PAYEE_OWNR_CD
+    protected String customerInstitutionNumber; // CUST_IU_NBR
     protected String line1Address; // PMT_LN1_ADDR
     protected String line2Address; // PMT_LN2_ADDR
     protected String line3Address; // PMT_LN3_ADDR
@@ -478,7 +481,15 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
         this.bankCode = bankCode;
     }
 
-    /**
+    public String getCustomerInstitutionNumber() {
+		return customerInstitutionNumber;
+	}
+
+	public void setCustomerInstitutionNumber(String customerInstitutionNumber) {
+		this.customerInstitutionNumber = customerInstitutionNumber;
+	}
+
+	/**
      * @return
      * @hibernate.property column="CMP_ADDR_IND" type="yes_no"
      */
@@ -1078,11 +1089,10 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
     }
     
     public void validateVendorIdAndCustomerInstitutionIdentifier() {
-        PaymentDetail paymentDetail = getPaymentDetails().get(0);
         
         BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
         Map<String, String> fieldValues = new HashMap<String, String>();
-        fieldValues.put("vendorAddressGeneratedIdentifier", paymentDetail.getCustomerInstitutionNumber());
+        fieldValues.put("vendorAddressGeneratedIdentifier", customerInstitutionNumber);
         String[] headerDetails = payeeId.split("-");
         fieldValues.put("vendorHeaderGeneratedIdentifier", headerDetails[0]/*payeeId*/);
         fieldValues.put("vendorDetailAssignedIdentifier", headerDetails[1]);
@@ -1092,7 +1102,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
             VendorAddress addr = (VendorAddress) addrs.get(0);
             setVendorAddress(addr);
         } else {
-            throw new RuntimeException("Invalid Address [ "+paymentDetail.getCustomerInstitutionNumber()+" ] for payee [ "+payeeId + " ]");
+            throw new RuntimeException("Invalid Address [ "+customerInstitutionNumber+" ] for payee [ "+payeeId + " ]");
             // Need to handle bad data.
         }
     }

@@ -266,7 +266,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                             writeTag(os, 4, "attachmentIndicator", group.getPymtAttachment().booleanValue() ? "Y" : "N");
                             writeTag(os, 4, "specialHandlingIndicator", group.getPymtSpecialHandling().booleanValue() ? "Y" : "N");
                             writeTag(os, 4, "immediatePaymentIndicator", group.getProcessImmediate().booleanValue() ? "Y" : "N");
-                            writeTag(os, 4, "customerUnivNbr", detail.getCustomerInstitutionNumber());
+                            writeTag(os, 4, "customerUnivNbr", group.getCustomerInstitutionNumber());
                             writeTag(os, 4, "paymentDate", sdf.format(group.getPaymentDate()));
 
                             // Write customer profile information
@@ -295,7 +295,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                             writeTag(osI, 4, "attachmentIndicator", group.getPymtAttachment().booleanValue() ? "Y" : "N");
                             writeTag(osI, 4, "specialHandlingIndicator", group.getPymtSpecialHandling().booleanValue() ? "Y" : "N");
                             writeTag(osI, 4, "immediatePaymentIndicator", group.getProcessImmediate().booleanValue() ? "Y" : "N");
-                            writeTag(osI, 4, "customerUnivNbr", detail.getCustomerInstitutionNumber());
+                            writeTag(osI, 4, "customerUnivNbr", group.getCustomerInstitutionNumber());
                             writeTag(osI, 4, "paymentDate", sdf.format(group.getPaymentDate()));
 
                             // Write customer profile information
@@ -312,7 +312,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                             writeTag(os, 8, "invoiceNbr", detail.getInvoiceNbr());
                             writeTag(os, 8, "requisitionNbr", detail.getRequisitionNbr());
                             writeTag(os, 8, "custPaymentDocNbr", detail.getCustPaymentDocNbr());
-                            writeTag(os, 8, "customerUnivNbr", detail.getCustomerInstitutionNumber());
                             writeTag(os, 8, "invoiceDate", sdf.format(detail.getInvoiceDate()));
     
                             writeTag(os, 8, "origInvoiceAmount", detail.getOrigInvoiceAmount().toString());
@@ -339,7 +338,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                             writeTag(osI, 8, "invoiceNbr", detail.getInvoiceNbr());
                             writeTag(osI, 8, "requisitionNbr", detail.getRequisitionNbr());
                             writeTag(osI, 8, "custPaymentDocNbr", detail.getCustPaymentDocNbr());
-                            writeTag(osI, 8, "customerUnivNbr", detail.getCustomerInstitutionNumber());
                             writeTag(osI, 8, "invoiceDate", sdf.format(detail.getInvoiceDate()));
     
                             writeTag(osI, 8, "origInvoiceAmount", detail.getOrigInvoiceAmount().toString());
@@ -2090,8 +2088,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             writeTag(os, 8, "invoiceNbr", paymentDetail.getInvoiceNbr());
             writeTag(os, 8, "requisitionNbr", paymentDetail.getRequisitionNbr());
             writeTag(os, 8, "custPaymentDocNbr", paymentDetail.getCustPaymentDocNbr());
-            writeTag(os, 8, "customerUnivNbr", paymentDetail.getCustomerInstitutionNumber());
-
             writeTag(os, 8, "invoiceDate", sdf.format(paymentDetail.getInvoiceDate()));
     
             writeTag(os, 8, "origInvoiceAmount", paymentDetail.getOrigInvoiceAmount().toString());
