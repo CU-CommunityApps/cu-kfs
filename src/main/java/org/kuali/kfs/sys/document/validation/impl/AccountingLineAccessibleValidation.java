@@ -22,9 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
+import org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount;
+import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -54,6 +55,7 @@ import org.kuali.rice.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.rice.krad.service.DataDictionaryService;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.util.GlobalVariables;
+
 
 /**
  * A validation that checks whether the given accounting line is accessible to the given user or not
@@ -111,9 +113,12 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
                 }
             }
 
+            if (isPreqDiscountRecreate(event)) {
+                return true;
+            }
             // report errors
-        	// KFSPTS-2253
-        	if (!isExceptionNode) {
+            // KFSPTS-2253
+            if (!isExceptionNode) {
             final String principalName = currentUser.getPrincipalName();
             
             final String[] chartErrorParams = new String[] { getDataDictionaryService().getAttributeLabel(accountingLineForValidation.getClass(), KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE), accountingLineForValidation.getChartOfAccountsCode(),  principalName};
@@ -121,18 +126,18 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
             if (event instanceof UpdateAccountingLineEvent) {
            //     if (CollectionUtils.isEmpty(GlobalVariables.getMessageMap().getErrorPath()) && event instanceof UpdateAccountingLineEvent) {
                 GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(event.getErrorPathPrefix() + "." + KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, convertEventToMessage(event), chartErrorParams);
-        	} else {
+            } else {
                 GlobalVariables.getMessageMap().putError(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, convertEventToMessage(event), chartErrorParams);
-        	}
+            }
             
             final String[] accountErrorParams = new String[] { getDataDictionaryService().getAttributeLabel(accountingLineForValidation.getClass(), KFSPropertyConstants.ACCOUNT_NUMBER), accountingLineForValidation.getAccountNumber(), principalName };
             // KFSPTS-1273 : fixing an exisiting issue.  Limit to REQ and POA.  Broader solution need more work.
             if (event instanceof UpdateAccountingLineEvent) {
                 GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(event.getErrorPathPrefix() + "." + KFSPropertyConstants.ACCOUNT_NUMBER, convertEventToMessage(event), accountErrorParams);
-        	} else {
-        		 GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, convertEventToMessage(event), accountErrorParams);
-        	}
-        	}  // end KFSPTS-2253
+            } else {
+                 GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, convertEventToMessage(event), accountErrorParams);
+            }
+            }  // end KFSPTS-2253
         } else 
             if (event instanceof AddAccountingLineEvent && isAccountNode(event.getDocument()) && !isAccountingLineFo(event.getDocument()) && !isDiscountTradeInAccount()) {
                 final String principalName = currentUser.getPrincipalName();
@@ -140,12 +145,15 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
                 GlobalVariables.getMessageMap().putError(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, convertEventToMessage(event), chartErrorParams);
                 final String[] accountErrorParams = new String[] { getDataDictionaryService().getAttributeLabel(accountingLineForValidation.getClass(), KFSPropertyConstants.ACCOUNT_NUMBER), accountingLineForValidation.getAccountNumber(), principalName };
                 GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, convertEventToMessage(event), accountErrorParams);
-            	valid=false;
+                valid=false;
             }
 
         return (isAccessible || isExceptionNode) && valid;
     }
 
+    private boolean isPreqDiscountRecreate(AttributedDocumentEvent event) {
+        return isAccountNode(event.getDocument()) && !isAccountingLineFo(event.getDocument()) && accountingLineForValidation instanceof PaymentRequestAccount  && isDiscountTradeInAccount();
+    }
     /**
      * Checks to see if the object code is the only difference between the original accounting line and the updated accounting line.
      *
@@ -297,36 +305,36 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
     private boolean isAccountingLineFo(Document document) {
         Person currentUser = GlobalVariables.getUserSession().getPerson();
         List<String> roleIds = new ArrayList<String>();
-		roleIds.add(KimApiServiceLocator.getRoleService().getRoleIdByNamespaceCodeAndName(KFSConstants.ParameterNamespaces.KFS,
-				KFSConstants.SysKimApiConstants.FISCAL_OFFICER_KIM_ROLE_NAME));
-		roleIds.add(KimApiServiceLocator.getRoleService().getRoleIdByNamespaceCodeAndName(KFSConstants.ParameterNamespaces.KFS,
-				KFSConstants.SysKimApiConstants.FISCAL_OFFICER_PRIMARY_DELEGATE_KIM_ROLE_NAME));
-		roleIds.add(KimApiServiceLocator.getRoleService().getRoleIdByNamespaceCodeAndName(KFSConstants.ParameterNamespaces.KFS,
-				KFSConstants.SysKimApiConstants.FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME));
+        roleIds.add(KimApiServiceLocator.getRoleService().getRoleIdByNamespaceCodeAndName(KFSConstants.ParameterNamespaces.KFS,
+                KFSConstants.SysKimApiConstants.FISCAL_OFFICER_KIM_ROLE_NAME));
+        roleIds.add(KimApiServiceLocator.getRoleService().getRoleIdByNamespaceCodeAndName(KFSConstants.ParameterNamespaces.KFS,
+                KFSConstants.SysKimApiConstants.FISCAL_OFFICER_PRIMARY_DELEGATE_KIM_ROLE_NAME));
+        roleIds.add(KimApiServiceLocator.getRoleService().getRoleIdByNamespaceCodeAndName(KFSConstants.ParameterNamespaces.KFS,
+                KFSConstants.SysKimApiConstants.FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME));
         Map<String,String> roleQualifier = new HashMap<String,String>();
 
-		roleQualifier.put(KimConstants.AttributeConstants.DOCUMENT_NUMBER,document.getDocumentNumber());
-		roleQualifier.put(KimConstants.AttributeConstants.DOCUMENT_TYPE_NAME, document.getDocumentHeader().getWorkflowDocument().getDocumentTypeName());
-		roleQualifier.put(KfsKimAttributes.FINANCIAL_DOCUMENT_TOTAL_AMOUNT,
-				((FinancialSystemDocumentHeader)document.getDocumentHeader()).getFinancialDocumentTotalAmount().toString());
-		roleQualifier.put(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE,accountingLineForValidation.getChartOfAccountsCode());
-		roleQualifier.put(KfsKimAttributes.ACCOUNT_NUMBER,accountingLineForValidation.getAccountNumber());
+        roleQualifier.put(KimConstants.AttributeConstants.DOCUMENT_NUMBER,document.getDocumentNumber());
+        roleQualifier.put(KimConstants.AttributeConstants.DOCUMENT_TYPE_NAME, document.getDocumentHeader().getWorkflowDocument().getDocumentTypeName());
+        roleQualifier.put(KfsKimAttributes.FINANCIAL_DOCUMENT_TOTAL_AMOUNT,
+                ((FinancialSystemDocumentHeader)document.getDocumentHeader()).getFinancialDocumentTotalAmount().toString());
+        roleQualifier.put(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE,accountingLineForValidation.getChartOfAccountsCode());
+        roleQualifier.put(KfsKimAttributes.ACCOUNT_NUMBER,accountingLineForValidation.getAccountNumber());
               
         return KimApiServiceLocator.getRoleService().principalHasRole(currentUser.getPrincipalId(), roleIds, roleQualifier);
     }
 
     private boolean isAccountNode(Document document) {
-		WorkflowDocument workflowDocument = document.getDocumentHeader()
-				.getWorkflowDocument();
-		if (workflowDocument == null) {
-			try {
-				workflowDocument = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(document.getDocumentNumber())
-						.getDocumentHeader().getWorkflowDocument();
-			} catch (Exception e) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader()
+                .getWorkflowDocument();
+        if (workflowDocument == null) {
+            try {
+                workflowDocument = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(document.getDocumentNumber())
+                        .getDocumentHeader().getWorkflowDocument();
+            } catch (Exception e) {
 
-			}
-		}
-	    return workflowDocument != null && workflowDocument.getDocument() != null &&  workflowDocument.getCurrentNodeNames().contains(RequisitionStatuses.NODE_ACCOUNT);
+            }
+        }
+        return workflowDocument != null && workflowDocument.getDocument() != null &&  workflowDocument.getCurrentNodeNames().contains(RequisitionStatuses.NODE_ACCOUNT);
     }
     
     // KFSPTS-2200 
@@ -335,33 +343,31 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
      * The validation will treat it as new account added by fo, and cause error.  This is to ignore these system created account
      */
     private boolean isDiscountTradeInAccount() {
-    	// TODO : try to make work for now fix later
-    	return false;
-//    			return (accountingLineForValidation instanceof PurApAccountingLineBase) && ((PurApAccountingLineBase)accountingLineForValidation).isDiscountTradeIn();
+                return (accountingLineForValidation instanceof PurApAccountingLineBase) && ((PurApAccountingLineBase)accountingLineForValidation).isDiscountTradeIn();
     }
     
 
     // KFSPTS-2253
     
     private boolean isExceptionNode(Document document) {
-		WorkflowDocument workflowDocument = document.getDocumentHeader()
-				.getWorkflowDocument();
-		if (workflowDocument == null) {
-			try {
-				workflowDocument = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(document.getDocumentNumber())
-						.getDocumentHeader().getWorkflowDocument();
-			} catch (Exception e) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader()
+                .getWorkflowDocument();
+        if (workflowDocument == null) {
+            try {
+                workflowDocument = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(document.getDocumentNumber())
+                        .getDocumentHeader().getWorkflowDocument();
+            } catch (Exception e) {
 
-			}
-		}
-		// TODO : This is just to make work for now.  fix later.
-	    return workflowDocument != null && workflowDocument.getDocument() != null && 
-	    		workflowDocument.getCurrentNodeNames().contains("ContractManagement");
+            }
+        }
+        // TODO : This is just to make work for now.  fix later.
+        return workflowDocument != null && workflowDocument.getDocument() != null && 
+                workflowDocument.getCurrentNodeNames().contains("ContractManagement");
 
-		// KFSPTS-1891 : added treasury node
-//	    return workflowDocument != null && workflowDocument.getDocument() != null && (
-//	    		StringUtils.equals("ContractManagement", workflowDocument.getCurrentNodeNames().) ||
-//	                    StringUtils.equals(NodeDetailEnum.PAYMENT_METHOD_REVIEW.getName(), workflowDocument.getCurrentNodeNames()));
+        // KFSPTS-1891 : added treasury node
+//      return workflowDocument != null && workflowDocument.getDocument() != null && (
+//              StringUtils.equals("ContractManagement", workflowDocument.getCurrentNodeNames().) ||
+//                      StringUtils.equals(NodeDetailEnum.PAYMENT_METHOD_REVIEW.getName(), workflowDocument.getCurrentNodeNames()));
     }
 
 
