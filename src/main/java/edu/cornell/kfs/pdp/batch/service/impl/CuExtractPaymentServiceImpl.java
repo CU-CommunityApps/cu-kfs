@@ -756,35 +756,23 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                              
                             //Get attachment indicator
                             attachmentCode = pg.getPymtAttachment();                            
-/*
-                            Special      
-                            Handing     Attachment      
-                            Indicator   Indicator       DV/PRAP     LIBR    CSTR    STAT    CLIF
-                            NO              NO          001         002     003     004     005
-                            YES             NO          006         007     008     009     010
-                            NO              YES         011         012     013     014     015
-                            YES             YES         016         017     018     019     020                          
-*/
-                            //Determines the division code based on sub unit code, special handling indicator and attachment indicator
-                            int dvCodePart1=0;
-                            if (subUnitCode.equals(DV_EXTRACT_SUB_UNIT_CODE)) dvCodePart1 = 1;
-                            else if (subUnitCode.equals("PRAP")) dvCodePart1 = 1;
-                            else if (subUnitCode.equals("LIBR")) dvCodePart1 = 2;
-                            else if (subUnitCode.equals("CSTR")) dvCodePart1 = 3;
-                            else if (subUnitCode.equals("STAT")) dvCodePart1 = 4;
-                            else if (subUnitCode.equals("CLIF")) dvCodePart1 = 5;
-                            else dvCodePart1 = 0;
                             
-                            // See above table for details
-                            if (dvCodePart1 != 0) {
-                                int dvCodePart2 = ((specialHandlingCode ? 1 : 0) + (attachmentCode ? 2 : 0)) * 5;
-                                // String dvCodePart3 = Integer.toString(dvCodePart1 + dvCodePart2);
-                                divisionCode = String.format(String.format("%%0%dd", 3), (dvCodePart1 + dvCodePart2));
+                            //Determines the division code based on special handling indicator and attachment indicator
+                            int dvCodeInt = 0;
+                            if (specialHandlingCode == false && attachmentCode == false){
+                                dvCodeInt = CUPdpConstants.DivisionCodes.US_MAIL;
                             }
-                            else {
-                                LOG.error("writeExtractAchFileMellonBankFastTrack DIVSION CODE ERROR => SUB UNIT IS " + subUnitCode + " FOR CHECK # " + CheckNumber + " BUT CAN ONLY BE 'DV', 'PRAP', 'LIBR', 'CSTR', 'STAT' OR 'CLIF'");
-                                break;  // Go to the next record, don't throw away all records.
+                            if (specialHandlingCode == true && attachmentCode == false){
+                                dvCodeInt = CUPdpConstants.DivisionCodes.US_MAIL;
                             }
+                            if (specialHandlingCode == false && attachmentCode == true){
+                                dvCodeInt = CUPdpConstants.DivisionCodes.CU_MAIL_SERVICES;
+                            }
+                            if (specialHandlingCode == true && attachmentCode == true){
+                                dvCodeInt = CUPdpConstants.DivisionCodes.CU_MAIL_SERVICES;
+                            }
+
+                            divisionCode = String.format(String.format("%%0%dd", 3), dvCodeInt);
                             
                             Date DisbursementDate;
                             if (ObjectUtils.isNotNull(pg.getDisbursementDate()))
