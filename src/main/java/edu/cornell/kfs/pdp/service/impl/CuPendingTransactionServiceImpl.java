@@ -109,6 +109,8 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
         this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, FDOC_TYP_CD_CANCEL_ACH, FDOC_TYP_CD_STOP_CHECK, true);
     }
     
+    
+    
     /**
      * @see org.kuali.kfs.pdp.service.PendingTransactionService#generateCancellationGeneralLedgerPendingEntry(org.kuali.kfs.pdp.businessobject.PaymentGroup)
      */

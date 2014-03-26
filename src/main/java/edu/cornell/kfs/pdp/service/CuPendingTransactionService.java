@@ -18,5 +18,14 @@ public interface CuPendingTransactionService {
      * @param paymentGroup
      */
     public void generateStaleGeneralLedgerPendingEntry(PaymentGroup paymentGroup);
+    
+    /**
+     * Creates GLPE entries for a payment stop and stores to PDP pending entry table. Debit/Credit codes are
+     * reversed backing out the original GLPEs for the payment.
+     * 
+     * @param paymentGroup payment group record to create GLPE for
+     */  
+    
+    public void generateStopGeneralLedgerPendingEntry(PaymentGroup paymentGroup);
 
 }

@@ -97,10 +97,9 @@ public class GlTransactionStep extends AbstractStep {
                 }
                 else {
                     for (PaymentGroup paymentGroup : paymentGroups) {
-                        
-                        //TODO UPGRADE-911
+                        // KFSUPGRADE-636
                         //Create cancellation offsets for STOPed checks. KFSPTS-1741
-                        //glPendingTransactionService.generateCancellationGeneralLedgerPendingEntry(paymentGroup);
+                        glPendingTransactionService.generateStopGeneralLedgerPendingEntry(paymentGroup);
                         
                         glTransactionService.generateGlPendingTransactionStop(paymentGroup);
                         
