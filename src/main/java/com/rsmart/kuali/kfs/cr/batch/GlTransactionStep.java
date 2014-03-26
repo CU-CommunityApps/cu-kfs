@@ -101,7 +101,7 @@ public class GlTransactionStep extends AbstractStep {
                         //Create cancellation offsets for STOPed checks. KFSPTS-1741
                         glPendingTransactionService.generateStopGeneralLedgerPendingEntry(paymentGroup);
                         
-                        glTransactionService.generateGlPendingTransactionStop(paymentGroup);
+                        //glTransactionService.generateGlPendingTransactionStop(paymentGroup);
                         
                         KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, cr.getStatus());
                         if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
