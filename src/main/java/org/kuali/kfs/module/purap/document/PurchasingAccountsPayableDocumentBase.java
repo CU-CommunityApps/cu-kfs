@@ -283,9 +283,11 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
         Set<String> names = workflowDocument.getCurrentNodeNames();
         if (CollectionUtils.isNotEmpty(names)) {
-            List<String> currentRouteLevels = new ArrayList<String>(names);
-            if (currentRouteLevels.contains(nodeName) && workflowDocument.isApprovalRequested()) {
-                return true;
+            List<String> currentRouteLevels = new ArrayList<String>(names);                    
+            for (String routeLevel  : currentRouteLevels) {    
+                if (routeLevel.contains(nodeName) && workflowDocument.isApprovalRequested()) {
+                    return true;
+                }
             }
         }
         return false;
