@@ -2,6 +2,8 @@ package edu.cornell.kfs.module.purap.document.service;
 
 import java.util.List;
 
+import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
+import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherForm;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.web.struts.RequisitionForm;
 
@@ -72,4 +74,30 @@ public interface IWantDocumentService {
      * @return a requisition document
      */
     public RequisitionDocument setUpRequisitionDetailsFromIWantDoc(IWantDocument iWantDocument, RequisitionDocument requisitionDocumentBase, RequisitionForm requisitionForm) throws Exception;
+    
+    /**
+     * Creates a DisbursementVoucherDocument based on the information on the I Want Document.
+     * 
+     * @param iWantDocument
+     * @return a DisbursementVoucherDocument
+     */
+    public DisbursementVoucherDocument setUpDVDetailsFromIWantDoc(IWantDocument iWantDocument, DisbursementVoucherDocument disbursementVoucherDocument, DisbursementVoucherForm disbursementVoucherForm) throws Exception;
+
+    // KFSPTS-2527
+    /**
+     * Gets the related I Want document ID for the given DV document ID. This will be null if the DV was not created from an I Want doc.
+     * 
+     * @param dvID
+     * @return the related I Want document ID if DV was created from an I Want doc, null otherwise.
+     */
+    public String getIWantDocIDByDVId(String dvID);
+    
+    /**
+     * Determines if the given DV was created from an I Want doc.
+     * 
+     * @param dvID
+     * @return true if DV was created from an I Want doc, false otherwise
+     */
+    public boolean isDVgeneratedByIWantDoc(String dvID);
+    // end KFSPTS-2527
 }

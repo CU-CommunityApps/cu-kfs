@@ -83,5 +83,16 @@
 			<forward name="finish" path="/jsp/module/purap/iWantDocumentFinish.jsp" />		
 		</action>
 		
+				    <!-- I Want document -->
+	    <action path="/financialDisbursementVoucher" name="DisbursementVoucherForm"
+			input="/jsp/fp/DisbursementVocuher.jsp"
+			type="org.kuali.kfs.fp.document.web.struts.DisbursementVoucherAction"
+			scope="request" parameter="methodToCall" validate="true"
+			attribute="KualiForm">
+			<set-property property="cancellable" value="true" />
+			<forward name="basic" path="/jsp/fp/DisbursementVoucher.jsp" />	
+			<forward name="error" path="/jsp/module/purap/dvCreationError.jsp" />		
+		</action>
+		
 	</action-mappings>
 </struts-config>		

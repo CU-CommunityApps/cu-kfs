@@ -28,16 +28,19 @@ import org.kuali.kfs.fp.businessobject.TravelPerDiem;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherCoverSheetService;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.web.struts.KualiAccountingDocumentFormBase;
 import org.kuali.rice.kns.service.KeyValuesService;
+import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.web.format.SimpleBooleanFormatter;
 
 import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
+import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 
 /**
  * This class is the action form for the Disbursement Voucher.
@@ -464,4 +467,35 @@ public class DisbursementVoucherForm extends KualiAccountingDocumentFormBase {
     	return SpringContext.getBean(CULegacyTravelService.class).getLegacyTripID(this.getDocId());
     }
     
+    // KFSPTS-2527
+    /**
+     * Determines if the DV document is a DV created from and I Want doc and therefore should display the associated I Wand Doc #
+     * 
+     * @return true if the DV document is a DV created from and I Want doc; otherwise, return false
+     */
+    public boolean getCanViewIWantDoc() {
+        return SpringContext.getBean(IWantDocumentService.class).isDVgeneratedByIWantDoc(this.getDocId());
+    }
+    
+    /**
+     * Gets the IwantDocUrl for the related I Want Document if DV was created from an I Want doc.
+     * @param IwantDocUrl
+     * @return IwantDocUrl
+     */
+    public String getIwantDocUrl() {
+        String tripID = getIwantDocID();
+        LOG.info("getIWantDocUrl() called");
+        StringBuffer url = new StringBuffer();
+        url.append(SpringContext.getBean(KualiConfigurationService.class).getPropertyString(KFSConstants.WORKFLOW_URL_KEY) + "/DocHandler.do?docId=").append(tripID).append("&command=displayDocSearchView");
+        return url.toString();
+    }
+    
+    /**
+     * Gets the IwantDocID for the related I Want Document if DV was created from an I Want doc.
+     * @return IwantDocID
+     */
+    public String getIwantDocID() {
+        return SpringContext.getBean(IWantDocumentService.class).getIWantDocIDByDVId(this.getDocId());
+    }
+    // end KFSPTS-2527
 }

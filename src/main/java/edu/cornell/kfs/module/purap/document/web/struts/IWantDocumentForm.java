@@ -208,9 +208,13 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
             
         }
         
-        if(getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_CREATE_REQ))
-        {
+        if(getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_CREATE_REQ)){
             extraButtons.add(createCreateRequisitionButton());
+        }
+        
+        if(getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_CREATE_DV)){
+            //KFSPTS-2527 add create DV button
+            extraButtons.add(createCreateDVButton());
         }
         
         return extraButtons;
@@ -316,6 +320,16 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         clearButton.setExtraButtonProperty("methodToCall.createRequisition");
         clearButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_create_req.gif");
         clearButton.setExtraButtonAltText("Create Req");
+        clearButton.setExtraButtonOnclick("window.open();");
+        clearButton.setExtraButtonParams("_blank");
+        return clearButton;
+    }
+    
+    protected ExtraButton createCreateDVButton() {
+        ExtraButton clearButton = new ExtraButton();
+        clearButton.setExtraButtonProperty("methodToCall.createDV");
+        clearButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_create_DV.gif");
+        clearButton.setExtraButtonAltText("Create DV");
         clearButton.setExtraButtonOnclick("window.open();");
         clearButton.setExtraButtonParams("_blank");
         return clearButton;

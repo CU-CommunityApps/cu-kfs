@@ -2,11 +2,15 @@ package edu.cornell.kfs.module.purap.document.service.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
+import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherForm;
 import org.kuali.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
@@ -19,8 +23,12 @@ import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.service.PurchasingService;
 import org.kuali.kfs.module.purap.document.web.struts.RequisitionForm;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
+import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.AccountingDocument;
+import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.document.service.VendorService;
@@ -38,6 +46,7 @@ import org.kuali.rice.kim.util.KimConstants;
 import org.kuali.rice.kns.bo.Attachment;
 import org.kuali.rice.kns.bo.Note;
 import org.kuali.rice.kns.bo.PersistableBusinessObject;
+import org.kuali.rice.kns.document.Document;
 import org.kuali.rice.kns.mail.MailMessage;
 import org.kuali.rice.kns.service.AttachmentService;
 import org.kuali.rice.kns.service.BusinessObjectService;
@@ -342,7 +351,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
         purapService.saveDocumentNoValidation(requisitionDocument);
 
         // copy attachments from I Want document
-        copyIWantDocAttachmentsToReqDoc(requisitionDocument, iWantDocument, requisitionForm);
+        copyIWantDocAttachments(requisitionDocument, iWantDocument);
 
         // set up deliver to section
         setUpDeliverToSectionOfReqDoc(requisitionDocument, iWantDocument);
@@ -577,54 +586,17 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
      * @param requisitionForm
      * @throws Exception
      */
-    private void copyIWantDocAttachmentsToReqDoc(RequisitionDocument requisitionDocument, IWantDocument iWantDocument,
-            RequisitionForm requisitionForm) throws Exception {
-
-//        if (iWantDocument.getDocumentHeader().getBoNotes() != null
-//                && iWantDocument.getDocumentHeader().getBoNotes().size() > 0) {
-//
-//            for (Iterator iterator = iWantDocument.getDocumentHeader().getBoNotes().iterator(); iterator.hasNext();) {
-//                Note note = (Note) iterator.next();
-//
-//                Note copyNote = noteService.createNote(new Note(), requisitionDocument.getDocumentHeader());
-//                copyNote.setNoteText(note.getNoteText());
-//                copyNote.setAuthorUniversalIdentifier(note.getAuthorUniversalIdentifier());
-//
-//                String attachmentType = StringUtils.EMPTY;
-//
-//                Attachment attachment = note.getAttachment();
-//                if (attachment != null) {
-//                    Note newNote = requisitionForm.getNewNote();
-//                    String propertyName = getNoteService().extractNoteProperty(newNote);
-//                    //get BO to set
-//                    PersistableBusinessObject noteParent = (PersistableBusinessObject) ObjectUtils.getPropertyValue(
-//                            requisitionDocument, propertyName);
-//
-//                    Attachment copyAttachment = attachmentService.createAttachment(noteParent,
-//                            attachment.getAttachmentFileName(), attachment.getAttachmentMimeTypeCode(),
-//                            attachment.getAttachmentFileSize().intValue(), attachment.getAttachmentContents(),
-//                            attachment.getAttachmentTypeCode());
-//
-//                    if (copyAttachment != null) {
-//                        copyNote.addAttachment(attachment);
-//                        getNoteService().save(copyNote);
-//
-//                        requisitionDocument.addNote(copyNote);
-//                    }
-//                }
-//            }
-//
-//        }
+    private void copyIWantDocAttachments(AccountingDocument document, IWantDocument iWantDocument) throws Exception {
         
-        purapService.saveDocumentNoValidation(requisitionDocument);
+        purapService.saveDocumentNoValidation(document);
         if (iWantDocument.getDocumentHeader().getBoNotes() != null
               && iWantDocument.getDocumentHeader().getBoNotes().size() > 0) {
 
           for (Iterator iterator = iWantDocument.getDocumentHeader().getBoNotes().iterator(); iterator.hasNext();) {
               Note note = (Note) iterator.next();
                 try {
-                    Note copyingNote = SpringContext.getBean(DocumentService.class).createNoteFromDocument(requisitionDocument, note.getNoteText());
-                    purapService.saveDocumentNoValidation(requisitionDocument);
+                    Note copyingNote = SpringContext.getBean(DocumentService.class).createNoteFromDocument(document, note.getNoteText());
+                    purapService.saveDocumentNoValidation(document);
                     copyingNote.setNotePostedTimestamp(note.getNotePostedTimestamp());
                     copyingNote.setAuthorUniversalIdentifier(note.getAuthorUniversalIdentifier());
                     copyingNote.setNoteTopicText(note.getNoteTopicText());
@@ -635,7 +607,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
                         if (ObjectUtils.isNotNull(originalAttachment) && ObjectUtils.isNotNull(newAttachment)) {
                             copyingNote.addAttachment(newAttachment);
                         }
-                        requisitionDocument.addNote(copyingNote);
+                        document.addNote(copyingNote);
 
                     }
                 } catch (Exception e) {
@@ -643,9 +615,54 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
                 }
             }
         }
-        purapService.saveDocumentNoValidation(requisitionDocument);
+        purapService.saveDocumentNoValidation(document);
 
     }
+    
+    private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument, DisbursementVoucherForm disbursementVoucherForm, IWantDocument iWantDocument) {
+        
+        purapService.saveDocumentNoValidation(dvDocument);
+        if (iWantDocument.getDocumentHeader().getBoNotes() != null && iWantDocument.getDocumentHeader().getBoNotes().size() > 0) {
+
+            for (Iterator iterator = iWantDocument.getDocumentHeader().getBoNotes().iterator(); iterator.hasNext();) {
+                Note note = (Note) iterator.next();
+
+                Note copyNote;
+                try {
+                    copyNote = noteService.createNote(new Note(), dvDocument.getDocumentHeader());
+
+                    copyNote.setNoteText(note.getNoteText());
+                    copyNote.setAuthorUniversalIdentifier(note.getAuthorUniversalIdentifier());
+                    copyNote.setRemoteObjectIdentifier(dvDocument.getObjectId());
+                    copyNote.setNotePostedTimestamp(note.getNotePostedTimestamp());
+
+                    String attachmentType = StringUtils.EMPTY;
+
+                    Attachment attachment = note.getAttachment();
+                    if (attachment != null) {
+                        Note newNote = disbursementVoucherForm.getNewNote();
+                        String propertyName = getNoteService().extractNoteProperty(newNote);
+                        // get BO to set
+                        PersistableBusinessObject noteParent = (PersistableBusinessObject) ObjectUtils.getPropertyValue(dvDocument, propertyName);
+
+                        Attachment copyAttachment = attachmentService.createAttachment(noteParent, attachment.getAttachmentFileName(), attachment.getAttachmentMimeTypeCode(), attachment.getAttachmentFileSize().intValue(), attachment.getAttachmentContents(), attachment.getAttachmentTypeCode());
+
+                            if (copyAttachment != null) {
+                                copyNote.addAttachment(copyAttachment);
+                                getNoteService().save(copyNote);
+                                dvDocument.getDocumentHeader().addNote(copyNote);
+                                purapService.saveDocumentNoValidation(dvDocument);
+                                
+                            }     
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+        }
+    }
+
 
     /**
      * Copies the accounting lines from the I Want document to the Requisition document
@@ -697,6 +714,115 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
             }
         }
     }
+    
+    /**
+     * @see edu.cornell.kfs.module.purap.document.service.IWantDocumentService#setUpDVDetailsFromIWantDoc(edu.cornell.kfs.module.purap.document.IWantDocument, org.kuali.kfs.fp.document.DisbursementVoucherDocument, org.kuali.kfs.fp.document.web.struts.DisbursementVoucherForm)
+     */
+    public DisbursementVoucherDocument setUpDVDetailsFromIWantDoc(IWantDocument iWantDocument, DisbursementVoucherDocument disbursementVoucherDocument, DisbursementVoucherForm disbursementVoucherForm) throws Exception {
+        
+        // DV explanation = I Want Doc business purpose
+        disbursementVoucherDocument.getDocumentHeader().setExplanation(iWantDocument.getDocumentHeader().getExplanation());
+        // DV desc = IWantDoc desc
+        disbursementVoucherDocument.getDocumentHeader().setDocumentDescription(iWantDocument.getDocumentHeader().getDocumentDescription());
+        
+        //copy over attachments
+        copyIWantdDocAttachmentsToDV(disbursementVoucherDocument, disbursementVoucherForm, iWantDocument);
+        
+        //DV check amount - IWantDoc total amount
+        disbursementVoucherDocument.setDisbVchrCheckTotalAmount(iWantDocument.getTotalDollarAmount());
+  
+        // default bank code
+        Bank defaultBank = SpringContext.getBean(BankService.class).getDefaultBankByDocType(DisbursementVoucherDocument.class);
+        if (defaultBank != null) {
+            disbursementVoucherDocument.setDisbVchrBankCode( defaultBank.getBankCode());
+            disbursementVoucherDocument.setBank( defaultBank);
+        }
+        
+        purapService.saveDocumentNoValidation(disbursementVoucherDocument);
+        
+        //populate accounting lines
+        copyIWantDocAccountingLinesToDVDoc(disbursementVoucherDocument, iWantDocument, disbursementVoucherForm);
+ 
+        return disbursementVoucherDocument;
+    }
+    
+
+    /**
+     * Copies the accounting lines from the I Want document to the Requisition document
+     * 
+     * @param requisitionDocument
+     * @param iWantDocument
+     * @param requisitionForm
+     */
+    private void copyIWantDocAccountingLinesToDVDoc(DisbursementVoucherDocument disbursementVoucherDocument,
+            IWantDocument iWantDocument, DisbursementVoucherForm disbursementVoucherForm) {
+
+        int accountsSize = iWantDocument.getAccounts() != null ? iWantDocument.getAccounts().size() : 0;
+
+        if (accountsSize > 0) {
+
+            for (IWantAccount iWantAccount : iWantDocument.getAccounts()) {
+
+                SourceAccountingLine dvAccount = disbursementVoucherForm.getNewSourceLine();
+                dvAccount.setChartOfAccountsCode(iWantAccount.getChartOfAccountsCode());
+                dvAccount.setAccountNumber(iWantAccount.getAccountNumber());
+                dvAccount.setSubAccountNumber(iWantAccount.getSubAccountNumber());
+                dvAccount.setFinancialObjectCode(iWantAccount.getFinancialObjectCode());
+                dvAccount.setFinancialSubObjectCode(iWantAccount.getFinancialSubObjectCode());
+                dvAccount.setProjectCode(iWantAccount.getProjectCode());
+                dvAccount.setOrganizationReferenceId(iWantAccount.getOrganizationReferenceId());
+
+                if (CUPurapConstants.PERCENT.equalsIgnoreCase(iWantAccount.getUseAmountOrPercent()) && iWantAccount.getAmountOrPercent()!=null) {
+                    //compute amount
+                    KualiDecimal lineAmount = iWantAccount.getAmountOrPercent().multiply(iWantDocument.getTotalDollarAmount());
+                    if(lineAmount.isNonZero()){
+                        lineAmount = lineAmount.divide(new KualiDecimal(100));
+                    }
+                    dvAccount.setAmount(lineAmount);
+                } else {
+                   
+                    dvAccount.setAmount(iWantAccount.getAmountOrPercent());
+                }
+
+                disbursementVoucherDocument.addSourceAccountingLine(dvAccount);
+                disbursementVoucherForm.setNewSourceLine(null);
+            }
+        }
+    }
+    
+    /**
+     * @see edu.cornell.kfs.module.purap.document.service.IWantDocumentService#getIWantDocIDByDVId(java.lang.String)
+     */
+    public String getIWantDocIDByDVId(String dvID) {
+        String iWantDocID = StringUtils.EMPTY;
+        Map<String,String> fieldValues = new HashMap<String, String>();
+        fieldValues.put("dvDocId", dvID);
+        Collection<IWantDocument> results= businessObjectService.findMatching(IWantDocument.class, fieldValues);
+        if(ObjectUtils.isNotNull(results)){
+            iWantDocID = results.iterator().next().getDocumentNumber();
+        }
+        
+        return iWantDocID;
+    }
+    
+
+    /**
+     * @see edu.cornell.kfs.module.purap.document.service.IWantDocumentService#isDVgeneratedByIWantDoc(java.lang.String)
+     */
+    public boolean isDVgeneratedByIWantDoc(String dvID) {
+        String iWantDocID = StringUtils.EMPTY;
+        Map<String,String> fieldValues = new HashMap<String, String>();
+        fieldValues.put("dvDocId", dvID);
+        int count = businessObjectService.countMatching(IWantDocument.class, fieldValues);
+        
+        if(count != 0){
+            return true;
+        }
+        else
+            return false;
+        
+    }
+
 
     /**
      * Gets the mailService.

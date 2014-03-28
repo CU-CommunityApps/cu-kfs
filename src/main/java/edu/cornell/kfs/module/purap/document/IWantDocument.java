@@ -20,6 +20,8 @@ import org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO;
 import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kns.document.Copyable;
 import org.kuali.rice.kns.exception.ValidationException;
+import org.kuali.rice.kns.service.DataDictionaryService;
+import org.kuali.rice.kns.service.KualiConfigurationService;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.util.TypedArrayList;
@@ -120,6 +122,10 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     // ID of associated reqs document, if any.
     private String reqsDocId;
+    
+    // KFSPTS-2527
+    // ID of associated DV document, if any.
+    private String dvDocId;
     
     // Copied this property from the base PURAP doc class.
     protected Integer accountsPayablePurchasingDocumentLinkIdentifier;
@@ -710,6 +716,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         
         setAccountsPayablePurchasingDocumentLinkIdentifier(null);
         setReqsDocId(null);
+        setDvDocId(null);
         
         this.completeOption = null;
         this.completed = false;
@@ -723,6 +730,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 		
 		setAccountsPayablePurchasingDocumentLinkIdentifier(null);
         setReqsDocId(null);
+        setDvDocId(null);
 		
 		this.completeOption = null;
 		this.completed = false;
@@ -988,5 +996,42 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 	public void setDepartmentOrgForSearch(Organization departmentOrgForSearch) {
 		this.departmentOrgForSearch = departmentOrgForSearch;
 	}
+
+    /**
+     * Gets the dvDocId.
+     * 
+     * @return dvDocId
+     */
+    public String getDvDocId() {
+        return dvDocId;
+    }
+
+    /**
+     * Sets the dvDocId.
+     * 
+     * @param dvDocId
+     */
+    public void setDvDocId(String dvDocId) {
+        this.dvDocId = dvDocId;
+    }
+    
+    /**
+     * Gets the related DV doc URL
+     * 
+     * @return the related DV doc URL
+     */
+    public String getDvUrl() {
+        return SpringContext.getBean(KualiConfigurationService.class).getPropertyString(KFSConstants.WORKFLOW_URL_KEY) + "/DocHandler.do?docId=" + getDvDocId() + "&command=displayDocSearchView";
+    }
+    
+    /**
+     * Returns the document label according to the label specified in the data dictionary for the DV doc type.
+     * 
+     * @return
+     * @throws WorkflowException
+     */
+    public String getDvDocumentLabel() throws WorkflowException{
+        return SpringContext.getBean(DataDictionaryService.class).getDocumentLabelByTypeName("DV");      
+    }
 	
 }

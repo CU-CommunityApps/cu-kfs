@@ -44,6 +44,13 @@ import org.kuali.kfs.fp.document.service.DisbursementVoucherTaxService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
 
 import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.module.purap.document.IWantDocument;
+import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
+
+import org.kuali.kfs.module.purap.document.RequisitionDocument;
+import org.kuali.kfs.module.purap.document.service.PurapService;
+import org.kuali.kfs.module.purap.document.web.struts.RequisitionForm;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -65,6 +72,7 @@ import org.kuali.rice.kns.service.BusinessObjectService;
 import org.kuali.rice.kns.service.DictionaryValidationService;
 import org.kuali.rice.kns.service.DocumentService;
 import org.kuali.rice.kns.service.KualiConfigurationService;
+import org.kuali.rice.kns.util.ErrorMessage;
 import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KNSConstants;
 import org.kuali.rice.kns.util.KualiDecimal;
@@ -176,6 +184,45 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
 
         // set wire charge message in form
         ((DisbursementVoucherForm) kualiDocumentFormBase).setWireChargeMessage(retrieveWireChargeMessage());
+    }
+    
+    /**
+     * Creates a DV document based on information on an I Want document.
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    public ActionForward createDVFromIWantDoc(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        String iWantDocumentNumber = request.getParameter("docId");
+        DisbursementVoucherForm disbursementVoucherForm = (DisbursementVoucherForm) form;
+
+        IWantDocument iWantDocument = (IWantDocument) getDocumentService().getByDocumentHeaderId(iWantDocumentNumber);
+        
+        // Do not allow the DV to be created if the IWNT doc is already associated with another DV.
+        if (iWantDocument != null && (StringUtils.isNotBlank(iWantDocument.getReqsDocId()) || StringUtils.isNotBlank(iWantDocument.getDvDocId())) ) {
+            GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, CUPurapKeyConstants.ERROR_DV_OR_REQ_ALREADY_CREATED_FROM_IWNT, iWantDocumentNumber);
+            return mapping.findForward("error");
+        }
+        
+        IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
+
+        createDocument(disbursementVoucherForm);
+        
+        DisbursementVoucherDocument disbursementVoucherDocument = (DisbursementVoucherDocument)disbursementVoucherForm.getDocument();
+
+        iWantDocumentService.setUpDVDetailsFromIWantDoc(iWantDocument, disbursementVoucherDocument, disbursementVoucherForm);
+        
+        // Set the DV doc ID reference on the IWantDocument.
+        iWantDocument.setDvDocId(disbursementVoucherDocument.getDocumentNumber()); 
+        SpringContext.getBean(PurapService.class).saveDocumentNoValidation(iWantDocument);
+
+        return mapping.findForward(RiceConstants.MAPPING_BASIC);
     }
 
     /**

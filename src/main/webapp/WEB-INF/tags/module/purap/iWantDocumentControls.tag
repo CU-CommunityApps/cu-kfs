@@ -24,6 +24,9 @@
 <%@ attribute name="extraButtons" required="false" type="java.util.List" %>
 <%@ attribute name="viewOnly" required="false" %>
 
+<c:set var="allowCreateReq" value="${not empty KualiForm.editingMode['createReq']}" />
+<c:set var="allowCreateDV" value="${not empty KualiForm.editingMode['createDV']}" />
+
 <c:set var="documentTypeName" value="${KualiForm.docTypeName}" />
 <c:set var="documentEntry" value="${DataDictionary[documentTypeName]}" />
         <c:set var="saveButtonValue" value="save" />
@@ -35,9 +38,12 @@
 	        		<html:image src="${extraButtonSource}" styleClass="globalbuttons" property="${extraButtonProperty}" alt="${extraButtonAlt}"/>
 	        	</c:if>
 	        	<c:if test="${!empty extraButtons}">
-		        	<c:forEach items="${extraButtons}" var="extraButton">
-		        	<a href="${ConfigProperties.application.url}/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId=${KualiForm.docId}"  target="_blank" class="portal_link"><img src="static/images/buttonsmall_create_req.gif"></a>
-		        	</c:forEach>
+		        	<c:if test="${allowCreateReq}">
+		        		<a href="${ConfigProperties.application.url}/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId=${KualiForm.docId}"  target="_blank" class="portal_link"><img src="static/images/buttonsmall_create_req.gif"></a>
+		        	</c:if>
+		        	<c:if test="${allowCreateDV}">
+		        		<a href="${ConfigProperties.application.url}/financialDisbursementVoucher.do?methodToCall=createDVFromIWantDoc&docId=${KualiForm.docId}"  target="_blank" class="portal_link"><img src="static/images/buttonsmall_create_DV.gif"></a>
+		        	</c:if>
 	        	</c:if>
 	            <c:if test="${!empty KualiForm.documentActions[Constants.KUALI_ACTION_PERFORM_ROUTE_REPORT] and not suppressRoutingControls}">
 				    <html:image src="${ConfigProperties.kr.externalizable.images.url}buttonsmall_routereport.gif" styleClass="globalbuttons" property="methodToCall.performRouteReport" title="Perform Route Report" alt="Perform Route Report" />

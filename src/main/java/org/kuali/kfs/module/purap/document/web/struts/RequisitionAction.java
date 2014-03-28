@@ -229,9 +229,9 @@ public class RequisitionAction extends PurchasingActionBase {
         IWantDocument iWantDocument = (IWantDocument) getDocumentService().getByDocumentHeaderId(iWantDocumentNumber);
         
         // Do not allow the req to be created if the IWNT doc is already associated with another req.
-        if (iWantDocument != null && StringUtils.isNotBlank(iWantDocument.getReqsDocId())) {
+        if (iWantDocument != null && (StringUtils.isNotBlank(iWantDocument.getReqsDocId()) || StringUtils.isNotBlank(iWantDocument.getDvDocId()))) {
         	throw new WorkflowException("Cannot create requisition from IWantDocument '" + iWantDocumentNumber +
-        			"' because a requisition has already been created from that document");
+        			"' because a DV or Requisition has already been created from that document");
         }
         
         IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
