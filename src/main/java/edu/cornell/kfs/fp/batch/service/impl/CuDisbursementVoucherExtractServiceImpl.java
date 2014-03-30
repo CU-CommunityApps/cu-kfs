@@ -14,9 +14,6 @@ import org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceDetail;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceRegistrant;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
-
-import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
-
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpParameterConstants;
 import org.kuali.kfs.pdp.businessobject.Batch;
@@ -43,7 +40,8 @@ public class CuDisbursementVoucherExtractServiceImpl extends DisbursementVoucher
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisbursementVoucherExtractServiceImpl.class);
     private String CP = "CP";
     
-    protected PaymentGroup buildPaymentGroup(CuDisbursementVoucherDocument document, Batch batch) {
+    @Override
+    protected PaymentGroup buildPaymentGroup(DisbursementVoucherDocument document, Batch batch) {
         LOG.debug("buildPaymentGroup() started");
 
         PaymentGroup pg = new PaymentGroup();
@@ -52,7 +50,7 @@ public class CuDisbursementVoucherExtractServiceImpl extends DisbursementVoucher
         pg.setCampusAddress(Boolean.FALSE);
 
         document.refreshReferenceObject(KFSPropertyConstants.DV_PAYEE_DETAIL);
-        CuDisbursementVoucherPayeeDetail pd = document.getDvPayeeDetail();
+        CuDisbursementVoucherPayeeDetail pd = (CuDisbursementVoucherPayeeDetail) document.getDvPayeeDetail();
         String rc = pd.getDisbVchrPaymentReasonCode();
 
         // If the payee is an employee, set these flags accordingly
