@@ -291,7 +291,15 @@
     	</property>
     	</bean>
     
-  
-  
+    <bean id="RequisitionDocument-validations" parent="RequisitionDocument-validations-parentBean">
+  	    <property name="sourceMap">
+		    <map key-type="java.lang.Class" merge="true">			
+			    <entry>
+				    <key><value>org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent</value></key>
+				    <value>Requisition-saveDocumentValidation</value>				
+			    </entry>																												
+           </map>
+        </property>
+    </bean>  
   
 </beans>
