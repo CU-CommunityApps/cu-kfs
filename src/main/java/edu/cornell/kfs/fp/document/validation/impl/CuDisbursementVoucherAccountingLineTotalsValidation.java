@@ -2,10 +2,14 @@ package edu.cornell.kfs.fp.document.validation.impl;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherAccountingLineTotalsValidation;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
+import org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent;
+import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.krad.util.GlobalVariables;
 
@@ -52,7 +56,18 @@ public class CuDisbursementVoucherAccountingLineTotalsValidation extends Disburs
             return true;
         }
 
-        return super.validate(event);
+        // KFSUPGRADE-848 : should not check account total when FO/save
+        if (event instanceof AttributedSaveDocumentEvent) {
+            final WorkflowDocument workflowDocument = dvDocument.getDocumentHeader().getWorkflowDocument();
+            final Set<String> currentRouteLevels = workflowDocument.getCurrentNodeNames();
+            if (CollectionUtils.isNotEmpty(currentRouteLevels)) {
+                if (currentRouteLevels.contains(DisbursementVoucherConstants.RouteLevelNames.ACCOUNT)) {  
+                   return true; // only FO/save should not check total change
+                }
+            }
+        }
+
+       return super.validate(event);
     }
 
 }

@@ -38,6 +38,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
 import org.kuali.kfs.fp.businessobject.SalesTax;
+import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -64,13 +65,13 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.service.DictionaryValidationService;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
-import org.kuali.rice.krad.rules.rule.event.ApproveDocumentEvent;
 import org.kuali.rice.krad.rules.rule.event.SaveDocumentEvent;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.KualiRuleService;
 import org.kuali.rice.krad.service.PersistenceService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.MessageMap;
 import org.kuali.rice.krad.util.ObjectUtils;
 import org.kuali.rice.krad.util.UrlFactory;
 
@@ -481,6 +482,11 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         //SpringContext.getBean(AccountService.class).populateAccountingLineChartIfNeeded(line);
         
         boolean rulePassed = true;
+        // DV acct line amount got error during form populate; should not insert this line.  KFSUPGRADE-847
+        MessageMap msgMap = GlobalVariables.getMessageMap();
+        if (msgMap.hasErrors() && msgMap.getErrorMessages().keySet().contains("newSourceLine.amount") && financialDocumentForm.getDocument() instanceof DisbursementVoucherDocument) {
+            rulePassed = false;
+        }
         // before we check the regular rules we need to check the sales tax rules
         // TODO: Refactor rules so we no longer have to call this before a copy of the
         // accountingLine
