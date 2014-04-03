@@ -18,7 +18,7 @@
 
   <properties>
 	<job.name>${project.artifactId}</job.name>
-	<rice.version>2.1.7</rice.version>
+	<rice.version>2.1.8</rice.version>
 	<cynergy.development>true</cynergy.development>
   </properties> 
   
