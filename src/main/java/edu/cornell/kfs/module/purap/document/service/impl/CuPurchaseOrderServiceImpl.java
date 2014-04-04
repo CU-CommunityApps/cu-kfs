@@ -47,11 +47,7 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
 
         List<AutoClosePurchaseOrderView> autoCloseList = purchaseOrderDao.getAllOpenPurchaseOrders(getExcludedVendorChoiceCodes());
 
-        // we need to eliminate the AutoClosePurchaseOrderView whose workflowdocument status is not OPEN..
-        // KFSMI-7533
-        List<AutoClosePurchaseOrderView> purchaseOrderAutoCloseList = filterDocumentsForAppDocStatusOpen(autoCloseList);
-
-        for (AutoClosePurchaseOrderView poAutoClose : purchaseOrderAutoCloseList) {
+        for (AutoClosePurchaseOrderView poAutoClose : autoCloseList) {
             if ((poAutoClose.getTotalAmount() != null) && ((KualiDecimal.ZERO.compareTo(poAutoClose.getTotalAmount())) != 0)) {
                 // KFSUPGRADE-363
             	if (paymentRequestsStatusCanAutoClose(poAutoClose)) {

@@ -22,7 +22,7 @@ public class CuPurchaseOrderDaoOjb extends PurchaseOrderDaoOjb {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPurchaseOrderDaoOjb.class);
 
     public List<AutoClosePurchaseOrderView> getAllOpenPurchaseOrders(List<String> excludedVendorChoiceCodes) {
-        LOG.debug("getAllOpenPurchaseOrders() started");
+        LOG.info("getAllOpenPurchaseOrders() started");
         Criteria criteria = new Criteria();
         criteria.addIsNull(PurapPropertyConstants.RECURRING_PAYMENT_TYPE_CODE);
         criteria.addEqualTo(PurapPropertyConstants.TOTAL_ENCUMBRANCE, new KualiDecimal(0));
@@ -32,13 +32,12 @@ public class CuPurchaseOrderDaoOjb extends PurchaseOrderDaoOjb {
             criteria.addNotEqualTo(PurapPropertyConstants.VENDOR_CHOICE_CODE, excludeCode);
         }
         QueryByCriteria qbc = new QueryByCriteria(CuAutoClosePurchaseOrderView.class, criteria);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("getAllOpenPurchaseOrders() Query criteria is " + criteria.toString());
-        }
+        LOG.info("getAllOpenPurchaseOrders() Query criteria is " + criteria.toString());
+        
         // KFSUPGRADE-363
         limitResultSize(qbc);
         List<AutoClosePurchaseOrderView> l = (List<AutoClosePurchaseOrderView>) getPersistenceBrokerTemplate().getCollectionByQuery(qbc);
-        LOG.debug("getAllOpenPurchaseOrders() ended.");
+        LOG.info("getAllOpenPurchaseOrders() ended.");
 
         return l;
     }    
