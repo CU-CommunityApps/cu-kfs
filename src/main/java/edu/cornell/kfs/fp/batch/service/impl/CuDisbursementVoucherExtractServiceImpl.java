@@ -116,7 +116,7 @@ public class CuDisbursementVoucherExtractServiceImpl extends DisbursementVoucher
         }
 
         pg.setCity(pd.getDisbVchrPayeeCityName());
-        pg.setCountry(pd.getDisbVchrPayeeCountryCode());
+        pg.setCountry(pd.getDisbVchrPayeeCountry().getName());
         pg.setLine1Address(pd.getDisbVchrPayeeLine1Addr());
         pg.setLine2Address(pd.getDisbVchrPayeeLine2Addr());
         pg.setPayeeName(pd.getDisbVchrPayeePersonName());
