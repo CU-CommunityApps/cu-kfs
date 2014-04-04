@@ -1910,9 +1910,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         // we need to eliminate the AutoClosePurchaseOrderView whose workflowdocument status is not OPEN..
         // KFSMI-7533
-        List<AutoClosePurchaseOrderView> purchaseOrderAutoCloseList = filterDocumentsForAppDocStatusOpen(autoCloseList);
+        //List<AutoClosePurchaseOrderView> purchaseOrderAutoCloseList = filterDocumentsForAppDocStatusOpen(autoCloseList);
 
-        for (AutoClosePurchaseOrderView poAutoClose : purchaseOrderAutoCloseList) {
+        for (AutoClosePurchaseOrderView poAutoClose : autoCloseList) {
             if ((poAutoClose.getTotalAmount() != null) && ((KualiDecimal.ZERO.compareTo(poAutoClose.getTotalAmount())) != 0)) {
                 LOG.info("autoCloseFullyDisencumberedOrders() PO ID " + poAutoClose.getPurapDocumentIdentifier() + " with total " + poAutoClose.getTotalAmount().doubleValue() + " will be closed");
                 String newStatus = PurapConstants.PurchaseOrderStatuses.APPDOC_PENDING_CLOSE;

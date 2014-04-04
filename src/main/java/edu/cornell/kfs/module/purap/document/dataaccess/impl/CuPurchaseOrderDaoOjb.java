@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.QueryByCriteria;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.AutoClosePurchaseOrderView;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
@@ -12,8 +13,10 @@ import org.kuali.kfs.module.purap.document.dataaccess.impl.PurchaseOrderDaoOjb;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.KewApiConstants;
 
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
+import edu.cornell.kfs.module.purap.businessobject.CuAutoClosePurchaseOrderView;
 
 public class CuPurchaseOrderDaoOjb extends PurchaseOrderDaoOjb {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPurchaseOrderDaoOjb.class);
@@ -24,10 +27,11 @@ public class CuPurchaseOrderDaoOjb extends PurchaseOrderDaoOjb {
         criteria.addIsNull(PurapPropertyConstants.RECURRING_PAYMENT_TYPE_CODE);
         criteria.addEqualTo(PurapPropertyConstants.TOTAL_ENCUMBRANCE, new KualiDecimal(0));
         criteria.addEqualTo(PurapPropertyConstants.PURCHASE_ORDER_CURRENT_INDICATOR, true);
+        criteria.addEqualTo(KewApiConstants.APP_DOC_STATUS_DETAIL, PurapConstants.PurchaseOrderStatuses.APPDOC_OPEN);
         for (String excludeCode : excludedVendorChoiceCodes) {
             criteria.addNotEqualTo(PurapPropertyConstants.VENDOR_CHOICE_CODE, excludeCode);
         }
-        QueryByCriteria qbc = new QueryByCriteria(AutoClosePurchaseOrderView.class, criteria);
+        QueryByCriteria qbc = new QueryByCriteria(CuAutoClosePurchaseOrderView.class, criteria);
         if (LOG.isDebugEnabled()) {
             LOG.debug("getAllOpenPurchaseOrders() Query criteria is " + criteria.toString());
         }
