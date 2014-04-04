@@ -33,7 +33,10 @@
             type="edu.cornell.kfs.module.purap.document.web.struts.CuPurchaseOrderForm" />
             
         <form-bean name="PdpFormatForm" 
-            type="edu.cornell.kfs.pdp.web.struts.CuFormatForm" />    
+            type="edu.cornell.kfs.pdp.web.struts.CuFormatForm" /> 
+        <form-bean name="DisencumbranceKualiBatchInputFileSetForm"
+            type="edu.cornell.kfs.module.ld.document.struts.DisencumbranceKualiBatchInputFileSetForm" />   
+            
     </form-beans>
     
     <action-mappings>
@@ -66,7 +69,17 @@
             <forward name="basic" path="/jsp/module/bc/SipImport.jsp" />
             <forward name="lostSessionReturning" path="/jsp/module/bc/LostSessionReturning.jsp" />
         </action>
-            <!-- I Want document -->
+        
+		<action path="/disencumbranceBatchUploadFileSet"
+			name="DisencumbranceKualiBatchInputFileSetForm" scope="request"
+			attribute="KualiForm" parameter="methodToCall"
+			type="edu.cornell.kfs.module.ld.document.struts.DisencumbranceKualiBatchInputFileSetAction">
+			<set-property property="cancellable" value="true" />
+			 <forward name="basic"
+			path="/jsp/module/ld/DisencumbranceBatchInputFileSet.jsp" />
+		</action>
+		
+        <!-- I Want document -->
         <action path="/purapIWant" name="IWantDocumentForm"
             input="/jsp/module/purap/IWant.jsp"
             type="edu.cornell.kfs.module.purap.document.web.struts.IWantDocumentAction"

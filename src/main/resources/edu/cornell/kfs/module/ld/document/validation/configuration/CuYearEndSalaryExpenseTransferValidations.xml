@@ -20,20 +20,11 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-<!--  
-	<bean id="YearEndSalaryExpenseTransferDocument-validAmountTransferredByObjectCodeValidation" parent="YearEndSalaryExpenseTransferDocument-validAmountTransferredByObjectCodeValidation-parentBean" scope="prototype" />
-	<bean id="YearEndSalaryExpenseTransferDocument-validAmountTransferredByObjectCodeValidation-parentBean" parent="SalaryExpenseTransferDocument-validAmountTransferredByObjectCodeValidation" abstract="true"/>
--->
-
-
 	<bean id="YearEndSalaryExpenseTransferDocument-saveDocumentValidation" parent="YearEndSalaryExpenseTransferDocument-saveDocumentValidation-parentBean" scope="prototype" />
 	<bean id="YearEndSalaryExpenseTransferDocument-saveDocumentValidation-parentBean" parent="SalaryExpenseTransferDocument-saveDocumentValidation" abstract="true"/>
 
-
 	<bean id="YearEndSalaryExpenseTransferDocument-addAccountingLineValidation" parent="YearEndSalaryExpenseTransferDocument-addAccountingLineValidation-parentBean" scope="prototype" />
 	<bean id="YearEndSalaryExpenseTransferDocument-addAccountingLineValidation-parentBean" parent="SalaryExpenseTransferDocument-addAccountingLineValidation" abstract="true"/>
-
-
 
 	<bean id="YearEndSalaryExpenseTransferDocument-routeDocumentValidation" parent="YearEndSalaryExpenseTransferDocument-routeDocumentValidation-parentBean" scope="prototype" />
 	<bean id="YearEndSalaryExpenseTransferDocument-routeDocumentValidation-parentBean" parent="SalaryExpenseTransferDocument-routeDocumentValidation" abstract="true">
@@ -57,9 +48,6 @@
 
 	<bean id="YearEndSalaryExpenseTransferDocument-updateAccountingLineValidation" parent="YearEndSalaryExpenseTransferDocument-updateAccountingLineValidation-parentBean" scope="prototype" />
 	<bean id="YearEndSalaryExpenseTransferDocument-updateAccountingLineValidation-parentBean" parent="SalaryExpenseTransferDocument-updateAccountingLineValidation" abstract="true"/>
-
-
-
 
 	<bean id="YearEndSalaryExpenseTransferDocument-validAmountTransferredByObjectCodeValidation" parent="YearEndSalaryExpenseTransferDocument-validAmountTransferredByObjectCodeValidation-parentBean" scope="prototype" />		
 	<bean id="YearEndSalaryExpenseTransferDocument-validAmountTransferredByObjectCodeValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">

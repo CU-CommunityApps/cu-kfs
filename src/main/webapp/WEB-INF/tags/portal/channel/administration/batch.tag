@@ -51,6 +51,11 @@
 			<li><portal:portalLink displayTitle="true" title="Electronic Invoice Test File Generation" url="purapElectronicInvoiceTestFileGeneration.do" /></li>				
 	    </c:if>
 	</ul>
+	<strong>Labor Ledger</strong><br/>
+    <ul class="chan">
+        <li><portal:portalLink displayTitle="true" title="Create Disencumbrance" url="disencumbranceBatchUploadFileSet.do?methodToCall=start&batchUpload.batchInputTypeName=disencumbranceEnterpriseFeederFileSetType" /></li>
+        <li><portal:portalLink displayTitle="true" title="Labor Enterprise Feed Upload" url="laborBatchUploadFileSet.do?methodToCall=start&batchUpload.batchInputTypeName=laborEnterpriseFeederFileSetType" /></li>
+    </ul>
 	<strong>Vendor</strong><br/>
 	<ul class="chan">
 	    <li><portal:portalLink displayTitle="true" title="Vendor Exclusion Upload" url="batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=vendorExcludeInputFileType" /></li>

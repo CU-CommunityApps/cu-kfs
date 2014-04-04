@@ -12,9 +12,14 @@
 		<property name="scriptConfigurationFilePaths">
 			<list/>
 		</property>
+		<property name="dataDictionaryPackages">
+             <list>
+                 <value>edu/cornell/kfs/module/ld/businessobject/datadictionary</value>
+             </list>
+        </property>
 		<property name="databaseRepositoryFilePaths">
 			<list merge="true">
-				<value>org/kuali/kfs/module/ld/cu-ojb-ld.xml</value>
+				<value>edu/cornell/kfs/module/ld/cu-ojb-ld.xml</value>
 			</list>
 		</property>
 		<property name="jobNames">
@@ -66,8 +71,40 @@
 		</property>
 	</bean>
 	
-    <import resource="document/validation/configuration/CuYearEndBenefitExpenseTransferValidations.xml" />
-	<import resource="document/validation/configuration/CuYearEndSalaryExpenseTransferValidations.xml" />
+	<bean id="laborLedgerBatchFileLookupableHelperService" class="edu.cornell.kfs.module.ld.businessobject.lookup.LaborLedgerBatchFileLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService">
+         <property name="dateTimeService" ref="dateTimeService" />
+         <property name="batchFileAdminAuthorizationService" ref="batchFileAdminAuthorizationService"/>
+     </bean>
+                
+     <bean id="laborLedgerBatchFileLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+         <property name="lookupableHelperService">
+           <ref bean="laborLedgerBatchFileLookupableHelperService" />
+         </property>
+     </bean>
+     
+     <bean id="ldEnterpriseFeedService" parent="ldEnterpriseFeedService-parentBean"/>
+ 
+     <bean id="ldEnterpriseFeedService-parentBean" class="edu.cornell.kfs.module.ld.service.impl.LaborLedgerEnterpriseFeedServiceImpl" abstract="true">
+         <property name="accountingPeriodService">
+           <ref bean="accountingPeriodService" />
+       </property>
+       <property name="dateTimeService">
+           <ref bean="dateTimeService" />
+       </property>
+   </bean>
+   
+   <bean id="laborOriginEntryEnterpriseFeederHelperService" parent="laborOriginEntryEnterpriseFeederHelperService-parentBean" class="edu.cornell.kfs.module.ld.batch.service.impl.CuFileEnterpriseFeederHelperServiceImpl" />
+   <bean id="laborOriginEntryEnterpriseFeederService" parent="laborOriginEntryEnterpriseFeederService-parentBean" class="edu.cornell.kfs.module.ld.batch.service.impl.CuFileEnterpriseFeederServiceImpl"/>
+   
+   <bean id="disencumbranceEnterpriseFeederFileSetType" class="edu.cornell.kfs.module.ld.batch.DisencumbranceEnterpriseFeederFileSetType" />
+   <bean id="laborPendingEntryConverterService" parent="laborPendingEntryConverterService-parentBean" class="edu.cornell.kfs.module.ld.document.service.impl.CuLaborPendingEntryConverterServiceImpl" />	
+   
+   <!--  Validations -->
+   <import resource="document/validation/configuration/LaborValidations.xml" />
+   <import resource="document/validation/configuration/BenefitExpenseTransferValidations.xml" />
+   <import resource="document/validation/configuration/SalaryExpenseTransferValidations.xml" />
+   <import resource="document/validation/configuration/CuYearEndBenefitExpenseTransferValidations.xml" />
+   <import resource="document/validation/configuration/CuYearEndSalaryExpenseTransferValidations.xml" />
     
 
 </beans>
