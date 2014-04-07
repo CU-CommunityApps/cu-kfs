@@ -56,14 +56,12 @@ public class CuDisbursementVoucherAccountingLineTotalsValidation extends Disburs
             return true;
         }
 
-        // KFSUPGRADE-848 : should not check account total when FO/save
-        if (event instanceof AttributedSaveDocumentEvent) {
-            final WorkflowDocument workflowDocument = dvDocument.getDocumentHeader().getWorkflowDocument();
-            final Set<String> currentRouteLevels = workflowDocument.getCurrentNodeNames();
-            if (CollectionUtils.isNotEmpty(currentRouteLevels)) {
-                if (currentRouteLevels.contains(DisbursementVoucherConstants.RouteLevelNames.ACCOUNT)) {  
-                   return true; // only FO/save should not check total change
-                }
+        // KFSUPGRADE-848 : skip total check here for FO
+        final WorkflowDocument workflowDocument = dvDocument.getDocumentHeader().getWorkflowDocument();
+        final Set<String> currentRouteLevels = workflowDocument.getCurrentNodeNames();
+        if (CollectionUtils.isNotEmpty(currentRouteLevels)) {
+            if (currentRouteLevels.contains(DisbursementVoucherConstants.RouteLevelNames.ACCOUNT)) {  
+                return true; 
             }
         }
 
