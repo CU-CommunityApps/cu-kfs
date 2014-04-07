@@ -129,7 +129,7 @@ public class PurapConstants {
         public static final String APPDOC_AWAIT_HAS_ACCOUNTING_LINES = "Awaiting Accounting Lines";
         public static final String APPDOC_AWAIT_SUB_ACCT_REVIEW = "Awaiting Sub Account";
         public static final String APPDOC_AWAIT_CHART_REVIEW = "Awaiting Base Org Review";
-        public static final String APPDOC_AWAIT_COMMODITY_CODE_REVIEW = "Awaiting Commodity Code";
+        public static final String APPDOC_AWAIT_COMMODITY_CODE_REVIEW = "Awaiting Commodity Review";
         public static final String APPDOC_AWAIT_SEP_OF_DUTY_REVIEW = "Awaiting Separation of Duties";
         public static final String APPDOC_AWAIT_CONTRACT_MANAGER_ASSGN = "Awaiting Contract Manager Assignment";
 
