@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
@@ -1649,7 +1650,13 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         if (first) {
                             // Get country name for code
                             int CountryNameMaxLength = 15;
-                            Country country = this.getCountryService().getCountry(pg.getCountry());
+                            Country country = null;
+                            
+                            // KFSUPGRADE-859 check if the country name is not blank, otherwise country service will throw exception
+                            if(StringUtils.isNotBlank(pg.getCountry())){
+                            	country = this.getCountryService().getCountry(pg.getCountry());
+                            }
+                            
                             if (country != null) {
                                 sCountryName = country.getName().substring(0,((country.getName().length() >= CountryNameMaxLength)? CountryNameMaxLength: country.getName().length() ));
                                 if (sCountryName.toUpperCase().contains("UNITED STATES"))
