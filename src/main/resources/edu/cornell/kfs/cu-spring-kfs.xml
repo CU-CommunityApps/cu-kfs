@@ -18,14 +18,5 @@
 	<import resource="module/cam/cu-spring-cam.xml" />
 	<import resource="module/cab/cu-spring-cab.xml" />
 	<import resource="module/ezra/cu-spring-ezra.xml" />
-	<!-- 
-	<import resource="vnd/cu-spring-vnd.xml" />
 	
-	<import resource="module/ld/cu-spring-ld.xml" />
-	<import resource="module/purap/cu-spring-purap.xml" />
-
-
-	-->
-
-
 </beans>
