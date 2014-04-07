@@ -51,22 +51,26 @@
   	<property name="name" value="extension.locAccountId"/>
   </bean>
   
-  <bean id="Award-inquiryDefinition" parent="Award-inquiryDefinition-parentBean">
-  <property name="inquirySections">
-      <list>
-        <bean parent="InquirySectionDefinition">
-          <property name="title" value="Award Details"/>
-          <property name="numberOfColumns" value="1"/>
-          <property name="inquiryFields">
-            <list merge="true">
-            <bean parent="FieldDefinition" p:attributeName="extension.locAccountId"/>
-              <bean parent="FieldDefinition" p:attributeName="extension.costShareRequired"/>
-              <bean parent="FieldDefinition" p:attributeName="extension.finalFiscalReportDate"/>
-              <bean parent="FieldDefinition" p:attributeName="extension.finalFinancialReportRequired"/>
-            </list>
-          </property>
-        </bean>
-      </list>
-   </property>         
+    <bean parent="DataDictionaryBeanOverride">
+      <property name="beanName" value="Award-inquirySectionDefinition-awardDetails" />
+      <property name="fieldOverrides">
+          <list>
+              <bean parent="FieldOverrideForListElementInsert">
+                  <property name="propertyName" value="inquiryFields" />
+                  <property name="propertyNameForElementCompare" value="attributeName" />
+                  <property name="element">
+                      <bean parent="FieldDefinition" p:attributeName="letterOfCreditFundGroupCode" />
+                  </property>
+                  <property name="insertAfter">
+                      <list>
+                          <bean parent="FieldDefinition" p:attributeName="extension.locAccountId"/>
+                          <bean parent="FieldDefinition" p:attributeName="extension.costShareRequired"/>
+                          <bean parent="FieldDefinition" p:attributeName="extension.finalFiscalReportDate"/>
+                          <bean parent="FieldDefinition" p:attributeName="extension.finalFinancialReportRequired"/>
+                      </list>
+                  </property>
+                  </bean>
+             </list>
+      </property>
   </bean>
 </beans>

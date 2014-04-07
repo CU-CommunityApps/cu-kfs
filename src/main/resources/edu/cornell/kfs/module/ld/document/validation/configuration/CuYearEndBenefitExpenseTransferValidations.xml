@@ -42,23 +42,21 @@
   	</bean>
 		
 	<bean id="YearEndBenefitExpenseTransferDocument-approveDocumentValidation" parent="YearEndBenefitExpenseTransferDocument-approveDocumentValidation-parentBean" scope="prototype" />
-	
 	<bean id="YearEndBenefitExpenseTransferDocument-approveDocumentValidation-parentBean" parent="BenefitExpenseTransferDocument-approveDocumentValidation" abstract="true"/>
 	
 	<bean id="YearEndBenefitExpenseTransferDocument-blanketApproveDocumentValidation" parent="YearEndBenefitExpenseTransferDocument-blanketApproveDocumentValidation-parentBean" scope="prototype" />
-	
 	<bean id="YearEndBenefitExpenseTransferDocument-blanketApproveDocumentValidation-parentBean" parent="BenefitExpenseTransferDocument-blanketApproveDocumentValidation" abstract="true"/>
 	
 	<bean id="YearEndBenefitExpenseTransferDocument-addAccountingLineValidation" parent="YearEndBenefitExpenseTransferDocument-addAccountingLineValidation-parentBean" scope="prototype" />
-	
 	<bean id="YearEndBenefitExpenseTransferDocument-addAccountingLineValidation-parentBean" parent="BenefitExpenseTransferDocument-addAccountingLineValidation" abstract="true"/>
 		
 	<bean id="YearEndBenefitExpenseTransferDocument-reviewAccountingLineValidation" parent="YearEndBenefitExpenseTransferDocument-reviewAccountingLineValidation-parentBean" scope="prototype" />
-	
 	<bean id="YearEndBenefitExpenseTransferDocument-reviewAccountingLineValidation-parentBean" parent="BenefitExpenseTransferDocument-reviewAccountingLineValidation" abstract="true"/>
-		
+
 	<bean id="YearEndBenefitExpenseTransferDocument-updateAccountingLineValidation" parent="YearEndBenefitExpenseTransferDocument-updateAccountingLineValidation-parentBean" scope="prototype" />
-	
 	<bean id="YearEndBenefitExpenseTransferDocument-updateAccountingLineValidation-parentBean" parent="BenefitExpenseTransferDocument-updateAccountingLineValidation" abstract="true"/>
+	
+	<bean id="YearEndBenefitExpenseTransferDocument-saveDocumentValidation" parent="YearEndBenefitExpenseTransferDocument-saveDocumentValidation-parentBean" scope="prototype" />
+ 	<bean id="YearEndBenefitExpenseTransferDocument-saveDocumentValidation-parentBean" parent="BenefitExpenseTransferDocument-saveDocumentValidation" abstract="true"/>
 		
 </beans>

@@ -78,5 +78,11 @@ public class CUKFSConstants {
     
     // KFSUPGRADE-75
     public static final String MAINTAIN_FAVORITE_ACCOUNT = "Maintain Favorite Account";
+    
+    //KFSPTS-2400
+    public static final String STAGING_DIR = "staging";
+    public static final String LD_DIR = "ld";
+    public static final String ENTERPRISE_FEED_DIR = "enterpriseFeed";
+    public static final String FILE_SEPARATOR = "file.separator";
         
 }
