@@ -138,7 +138,7 @@ public class PurapConstants {
         public static final String APPDOC_DAPRVD_SUB_ACCT = "Disapproved Sub Account";
         public static final String APPDOC_DAPRVD_FISCAL = "Disapproved Fiscal";
         public static final String APPDOC_DAPRVD_CHART = "Disapproved Base Org Review";
-        public static final String APPDOC_DAPRVD_COMMODITY_CODE = "Disapproved Commodity Code";
+        public static final String APPDOC_DAPRVD_COMMODITY_CODE = "Disapproved Commodity Review";
         public static final String APPDOC_DAPRVD_SEP_OF_DUTY = "Disapproved Separation of Duties";
 
         public static HashMap<String, String> getAllAppDocStatuses(){
