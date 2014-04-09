@@ -85,7 +85,7 @@
     
     <bean id="pdpUtilService" class="edu.cornell.kfs.pdp.service.impl.PdpUtilServiceImpl" />
     <bean id="processPdpCancelPaidService" parent="processPdpCancelPaidService-parentBean" class="edu.cornell.kfs.pdp.batch.service.impl.CuProcessPdpCancelPaidServiceImpl" />
-    <bean id="pdpFormatService" parent="pdpFormatService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuFormatServiceImpl"/>
+    <bean id="pdpFormatService" parent="pdpFormatService-parentBean" class="com.rsmart.kuali.kfs.pdp.service.impl.AchBundlerFormatServiceImpl"/>
     <bean id="paymentFileService" parent="paymentFileService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileServiceImpl"/>
     <bean id="paymentFileValidationService" parent="paymentFileValidationService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileValidationServiceImpl" />
     <bean id="pdpPaymentMaintenanceService" parent="pdpPaymentMaintenanceService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentMaintenanceServiceImpl" />
