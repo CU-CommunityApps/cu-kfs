@@ -85,7 +85,21 @@
     
     <bean id="pdpUtilService" class="edu.cornell.kfs.pdp.service.impl.PdpUtilServiceImpl" />
     <bean id="processPdpCancelPaidService" parent="processPdpCancelPaidService-parentBean" class="edu.cornell.kfs.pdp.batch.service.impl.CuProcessPdpCancelPaidServiceImpl" />
-    <bean id="pdpFormatService" parent="pdpFormatService-parentBean" class="com.rsmart.kuali.kfs.pdp.service.impl.AchBundlerFormatServiceImpl"/>
+    <bean id="pdpFormatService" parent="pdpFormatService-parentBean" class="com.rsmart.kuali.kfs.pdp.service.impl.AchBundlerFormatServiceImpl">
+        <property name="paymentDetailDao" ref="pdpPaymentDetailDao"/>
+        <property name="paymentGroupDao" ref="pdpPaymentGroupDao"/>
+        <property name="processDao" ref="pdpProcessDao"/>
+        <property name="achService" ref="pdpAchService"/>
+        <property name="glPendingTransactionService" ref="pdpGlPendingTransactionService"/>
+        <property name="parameterService" ref="parameterService" />
+        <property name="formatPaymentDao" ref="pdpFormatPaymentDao"/>
+        <property name="schedulerService" ref="schedulerService"/>
+        <property name="businessObjectService" ref="businessObjectService"/>
+        <property name="paymentGroupService" ref="pdpPaymentGroupService"/>
+        <property name="dateTimeService" ref="dateTimeService"/>
+        <property name="extractPaymentService" ref="pdpExtractPaymentService" />
+        <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />
+    </bean>
     <bean id="paymentFileService" parent="paymentFileService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileServiceImpl"/>
     <bean id="paymentFileValidationService" parent="paymentFileValidationService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileValidationServiceImpl" />
     <bean id="pdpPaymentMaintenanceService" parent="pdpPaymentMaintenanceService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentMaintenanceServiceImpl" />
