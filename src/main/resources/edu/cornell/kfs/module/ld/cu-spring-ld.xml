@@ -15,6 +15,7 @@
 		<property name="dataDictionaryPackages">
              <list>
                  <value>edu/cornell/kfs/module/ld/businessobject/datadictionary</value>
+                 <value>edu/cornell/kfs/module/ld/document/datadictionary</value>
              </list>
         </property>
 		<property name="databaseRepositoryFilePaths">
