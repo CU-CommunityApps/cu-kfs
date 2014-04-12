@@ -43,6 +43,8 @@ import org.kuali.rice.kns.service.ParameterService;
 import org.kuali.rice.kns.util.ObjectUtils;
 import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;
 
+import edu.cornell.kfs.fp.businessobject.PaymentMethod;
+
 
 public class PaymentRequestDocumentPresentationController extends PurchasingAccountsPayableDocumentPresentationController {
 
@@ -99,8 +101,15 @@ public class PaymentRequestDocumentPresentationController extends PurchasingAcco
 
     @Override
     protected boolean canDisapprove(Document document) {
-        //disapprove is never allowed for PREQ
-        return false;
+        // disapprove is never allowed for PREQ except PRNC by Treasury
+        PaymentRequestDocument paymentRequestDocument = (PaymentRequestDocument) document;
+        String paymentMethodCode = paymentRequestDocument.getPaymentMethodCode();
+        
+        if ((PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(paymentMethodCode) || PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(paymentMethodCode)) && paymentRequestDocument.isDocumentStoppedInRouteNode(NodeDetailEnum.PAYMENT_METHOD_REVIEW)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
