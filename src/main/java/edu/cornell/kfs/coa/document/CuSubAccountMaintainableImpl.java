@@ -1,6 +1,10 @@
 package edu.cornell.kfs.coa.document;
 
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coa.businessobject.A21IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.businessobject.A21SubAccount;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.SubAccount;
@@ -9,12 +13,15 @@ import org.kuali.kfs.coa.service.A21SubAccountService;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.krad.maintenance.MaintenanceDocument;
+import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
 
 @SuppressWarnings("deprecation")
 public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
 
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuSubAccountMaintainableImpl.class);
     private static final long serialVersionUID = 1L;
     private static final String REQUIRES_CG_APPROVAL_NODE = "RequiresCGResponsibilityApproval";
     private AccountService accountService;          
@@ -49,7 +56,7 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
      * @return true when doc should route to Award node
      */
     private boolean isCAndGReviewRequired() {
-        if (isSubAccountTypeCodeCostShare() || hasCgIcrDataChanged()) {
+        if ( isSubAccountTypeCodeCostShare() || hasCgIcrDataChanged() || hasIcrSectionChanged()) {
             return true;
         }
         return false;
@@ -228,5 +235,77 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
             a21SubAccountService = SpringContext.getBean(A21SubAccountService.class);       
         }
         return a21SubAccountService;
+    }
+    
+    // KFSUPGRADE-765 :  Route edits to indirect cost to CG Resp ID
+    private boolean hasIcrSectionChanged() {
+        String maintAction = super.getMaintenanceAction();     
+        boolean retval = false;
+        
+        if ((maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_NEW_ACTION))
+             || (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_COPY_ACTION))) {
+                        
+            //need "new" bo for data comparisons
+            SubAccount subAccount = (SubAccount) super.getBusinessObject();
+            A21SubAccount newSubAccount = subAccount.getA21SubAccount();
+            retval = newSubAccount != null && !CollectionUtils.isEmpty(newSubAccount.getA21ActiveIndirectCostRecoveryAccounts());
+        } else if (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_EDIT_ACTION)) {
+            
+            //need "new" bo for data comparisons
+            SubAccount subAccount = (SubAccount) super.getBusinessObject();
+            //"new" subAccount for data comparisons
+            A21SubAccount newSubAccount = subAccount.getA21SubAccount();
+            try {
+                MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(getDocumentNumber());
+                A21SubAccount oldSubAccount = (A21SubAccount)((SubAccount)oldMaintDoc.getOldMaintainableObject().getDataObject()).getA21SubAccount();
+                retval = isIcrSectionChanged(newSubAccount, oldSubAccount);
+            } catch (Exception e) {
+                LOG.error("caught exception while getting subaccount old maintainable -> documentService.getByDocumentHeaderId(" + getDocumentNumber() + "). ", e);
+                
+            }
+        }
+        return retval; 
+    }
+    
+    private boolean isIcrSectionChanged(A21SubAccount newSubAccount, A21SubAccount oldSubAccount) {
+        boolean retval = false;
+        if (oldSubAccount == null) {
+            if (newSubAccount != null && !CollectionUtils.isEmpty(newSubAccount.getA21ActiveIndirectCostRecoveryAccounts())) {
+                retval = true;
+            }
+        } else {
+            if (CollectionUtils.isEmpty(oldSubAccount.getA21ActiveIndirectCostRecoveryAccounts())) {
+                retval = !CollectionUtils.isEmpty(newSubAccount.getA21ActiveIndirectCostRecoveryAccounts());
+            } else {
+                if (newSubAccount.getA21ActiveIndirectCostRecoveryAccounts().size() == oldSubAccount.getA21ActiveIndirectCostRecoveryAccounts().size()) {
+                    retval = isIcrSectionDataChanged(newSubAccount.getA21ActiveIndirectCostRecoveryAccounts(),  oldSubAccount.getA21ActiveIndirectCostRecoveryAccounts());
+                } else {
+                    retval = true;
+                }
+            }
+        }
+        return retval;
+        
+    }
+    
+    private boolean isIcrSectionDataChanged(List<A21IndirectCostRecoveryAccount> newIcrAccounts, List<A21IndirectCostRecoveryAccount> oldIcrAccounts) {
+        boolean retval = false;
+        for (A21IndirectCostRecoveryAccount newIcrAccount : newIcrAccounts) {
+            boolean icrAccountMatched = false;
+            for (A21IndirectCostRecoveryAccount oldIcrAccount : oldIcrAccounts) {
+                if (StringUtils.equals(newIcrAccount.getIndirectCostRecoveryFinCoaCode(), oldIcrAccount.getIndirectCostRecoveryFinCoaCode()) &&
+                        StringUtils.equals(newIcrAccount.getIndirectCostRecoveryAccountNumber(), oldIcrAccount.getIndirectCostRecoveryAccountNumber()) &&
+                        newIcrAccount.getAccountLinePercent().compareTo(oldIcrAccount.getAccountLinePercent()) == 0 &&
+                        ((newIcrAccount.isActive() && oldIcrAccount.isActive()) || (!newIcrAccount.isActive() && !oldIcrAccount.isActive()))) {
+                    icrAccountMatched = true;
+                    break;
+                }
+            }
+            if (!icrAccountMatched) {
+                retval = true;
+                break;
+            }
+        }
+        return retval;
     }
 }
