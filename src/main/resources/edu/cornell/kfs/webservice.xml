@@ -14,11 +14,11 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 	  implementor="edu.cornell.kfs.coa.service.impl.AccountVerificationWebServiceImpl" 
 	  address="/AccountVerificationWebService" />
 
-	<!--   jaxws:endpoint
+	   <jaxws:endpoint
 	  id="submitTrip"
 	  implementor="edu.cornell.kfs.fp.service.SubmitTripWebServiceImpl"
 	  address="/SubmitTripWebService" />
-
+<!--  
 	<jaxws:endpoint
 	  id="kfsVendor"
 	  implementor="edu.cornell.kfs.vnd.service.KFSVendorWebServiceImpl"

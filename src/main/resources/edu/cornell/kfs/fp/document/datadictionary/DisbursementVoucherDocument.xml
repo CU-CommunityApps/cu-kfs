@@ -4,8 +4,9 @@
 
   <bean id="DisbursementVoucherDocument" parent="DisbursementVoucherDocument-parentBean">
     <property name="documentClass" value="edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument"/>
+  	<property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.CuDisbursementVoucherDocumentPresentationController"/>  	
   </bean>
-  
+    
   <bean id="DisbursementVoucherDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
     	<property name="searchingTypeDefinitions">
     		<list>

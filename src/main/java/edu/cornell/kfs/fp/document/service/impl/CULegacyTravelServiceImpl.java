@@ -15,18 +15,14 @@
  */
 package edu.cornell.kfs.fp.document.service.impl;
 
-import java.net.URI;
 import java.net.URL;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.binding.soap.SoapFault;
-import org.apache.cxf.common.util.Base64Utility;
-import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
-import org.apache.cxf.message.Message;
-import org.apache.cxf.transport.http.*;
+import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.rice.core.api.util.ClassLoaderUtils;
@@ -54,8 +50,7 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
     private String travelUrl;
     private String updateTripWsdl;
     private String updateTripEndpoint;
-    private String updateTripUser;
-    private String updateTripPassword;
+   
     
 	//@Cached
 	public boolean isLegacyTravelGeneratedKfsDocument(String docID) {
@@ -90,6 +85,7 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
 			
 			//TODO UPGRADE-911 -- Figure out correct CXF deps
 			JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
+			client = dcf.createClient(wsdlUrl);
 			//client = dcf.createClient(wsdlUrl);
 			
 			configureWebServiceClient(client);
@@ -137,7 +133,10 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
 	     
 			//TODO UPGRADE-911 -- Figure out correct CXF deps
 			JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
-			//client = dcf.createClient(wsdlUrl);
+			
+		
+			client = dcf.createClient(wsdlUrl);
+			
 			  
 			configureWebServiceClient(client);
 			  
@@ -178,35 +177,7 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
 	 */
 	public void setUpdateTripWsdl(String updateTripWsdl) {
 		this.updateTripWsdl = updateTripWsdl;
-	}
-
-    /**
-	 * @return the updateTripUser
-	 */
-	public String getUpdateTripUser() {
-		return updateTripUser;
-	}
-
-	/**
-	 * @param updateTripUser the updateTripUser to set
-	 */
-	public void setUpdateTripUser(String updateTripUser) {
-		this.updateTripUser = updateTripUser;
-	}
-
-    /**
-	 * @return the updateTripPassword
-	 */
-	public String getUpdateTripPassword() {
-		return updateTripPassword;
-	}
-
-	/**
-	 * @param updateTripPassword the updateTripPassword to set
-	 */
-	public void setUpdateTripPassword(String updateTripPassword) {
-		this.updateTripPassword = updateTripPassword;
-	}
+	}    
 
     /**
 	 * @return the updateTripEndpoint
@@ -249,46 +220,7 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
 	    HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
 	    httpClientPolicy.setConnectionTimeout(36000);
 	    httpClientPolicy.setAllowChunking(false);
-	    httpConduit.setClient(httpClientPolicy);
-
-	    httpConduit.setAuthSupplier(new KfsWebServiceAuthSupplier());
-	}
-
-	/**
-	 * Internal class that implements an authorization mechanism to support the required username and password being passed to the 
-	 * associated endpoint for the KFS Web Services.
-	 * 
-	 * @author Dennis Friends
-	 *
-	 */
-	public class KfsWebServiceAuthSupplier implements org.apache.cxf.transport.http.auth.HttpAuthSupplier {
-		public KfsWebServiceAuthSupplier() {
-		    super();
-		}
-	
-		public boolean requiresRequestCaching() {
-		    return false;
-		}
-		    
-		private String createUserPass(String userName, String passwd) {
-		    String userAndPass = userName + ":" + passwd;
-		    return "Basic " + Base64Utility.encode(userAndPass.getBytes());
-		}
-
-		public String getPreemptiveAuthorization(HTTPConduit conduit, URL currentURL, Message message) {
-			return createUserPass(updateTripUser, updateTripPassword);
-		}
-		
-		public String getAuthorizationForRealm(HTTPConduit conduit, URL currentURL, Message message, String reqestedRealm, String fullHeader) {
-			return createUserPass(updateTripUser, updateTripPassword);
-		}
-
-		//TODO UPGRADE-911
-    public String getAuthorization(AuthorizationPolicy authPolicy, URI url,
-        Message message, String fullHeader) {
-      return null;
-    }
-	}
-
+	    httpConduit.setClient(httpClientPolicy);	
+	}	
 	
 }

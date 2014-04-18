@@ -192,13 +192,7 @@
         </property>
         <property name="updateTripEndpoint">
             <value>${cu.legacy.travel.endpoint}</value>
-        </property>
-        <property name="updateTripUser">
-            <value>${cu.legacy.travel.username}</value>
-        </property>
-        <property name="updateTripPassword">
-            <value>${cu.legacy.travel.password}</value>
-        </property>
+        </property>        
         <property name="travelUrl">
             <value>${cu.legacy.travel.url}</value>
         </property>

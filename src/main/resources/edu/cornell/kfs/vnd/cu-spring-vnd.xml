@@ -149,4 +149,7 @@
 			<ref bean="vendorLookupableHelperService" />
 		</property>
 	</bean>
+	
+	<bean id="phoneNumberService" parent="phoneNumberService-parentBean" class="edu.cornell.kfs.vnd.service.impl.CuPhoneNumberServiceImpl" />
+	
 </beans>

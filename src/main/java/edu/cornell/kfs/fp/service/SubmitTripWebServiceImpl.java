@@ -3,7 +3,6 @@ package edu.cornell.kfs.fp.service;
 import javax.jws.WebService;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -21,6 +20,9 @@ import org.kuali.rice.krad.service.DataDictionaryService;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.MessageMap;
+
+import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
+import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 
 /**
  *
@@ -121,10 +123,10 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
         GlobalVariables.setMessageMap(documentErrorMap);
 
         // Create document with description provided
-		DisbursementVoucherDocument dvDoc = null;
+		CuDisbursementVoucherDocument dvDoc = null;
 		
         try {
-            dvDoc = (DisbursementVoucherDocument) SpringContext.getBean(DocumentService.class).getNewDocument(DisbursementVoucherDocument.class);
+            dvDoc = (CuDisbursementVoucherDocument) SpringContext.getBean(DocumentService.class).getNewDocument(DisbursementVoucherDocument.class);
         }
         catch (WorkflowException e) {
             throw new RuntimeException("Error creating new disbursement voucher document: " + e.getMessage(), e);
@@ -142,18 +144,17 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
 
 	        for(EntityAffiliationContract entityAffiliation : ((PersonImpl)traveler).getAffiliations()) {
 	        	if(entityAffiliation.isDefaultValue()) {
-	        	//TODO UPGRADE-9111
-	        	//NEEDS PUR DV MODS  
-//		    		if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {
-//		        		dvDoc.templateStudent(traveler);
-//		    		}
-//		    		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.ALUMNI)) {
-//		        		dvDoctemplateAlumni(traveler);
-//		    		}
-//		    		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.FACULTY) ||
-//		    				StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), DisbursementVoucherConstants.PayeeAffiliations.STAFF)) {
-//		        		dvDoc.templateEmployee(traveler);
-//		    		}
+	       
+		    		if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), CuDisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {
+		        		dvDoc.templateStudent(traveler);
+		    		}
+		    		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), CuDisbursementVoucherConstants.PayeeAffiliations.ALUMNI)) {
+		        		dvDoc.templateAlumni(traveler);
+		    		}
+		    		else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), CuDisbursementVoucherConstants.PayeeAffiliations.FACULTY) ||
+		    				StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), CuDisbursementVoucherConstants.PayeeAffiliations.STAFF)) {
+		        		dvDoc.templateEmployee(traveler);
+		    		}
 	        	}
 	        }
 			dvDoc.setPayeeAssigned(true);
