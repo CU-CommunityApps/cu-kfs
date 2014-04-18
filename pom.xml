@@ -19,6 +19,7 @@
   <properties>
 	<job.name>${project.artifactId}</job.name>
 	<rice.version>2.1.8</rice.version>
+	<cynergy.version>2.3.4</cynergy.version>
 	<cynergy.development>true</cynergy.development>
   </properties> 
   
@@ -169,7 +170,7 @@
     <dependency>
       <groupId>edu.cornell.cynergy </groupId>
       <artifactId>cynergy-customizations</artifactId>
-      <version>2.3.3</version>
+      <version>${cynergy.version}</version>
       <exclusions>
       	<exclusion>
 	      <groupId>org.kuali.rice</groupId>
