@@ -24,6 +24,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.module.ld.businessobject.BenefitsCalculation;
 
 import com.rsmart.kuali.kfs.module.ld.LdConstants;
 import com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculationExtension;
@@ -71,7 +72,7 @@ public class CuLaborPendingEntryConverterServiceImpl extends LaborPendingEntryCo
             fieldValues.put(LaborPropertyConstants.POSITION_BENEFIT_TYPE_CODE, positionObjectBenefit.getFinancialObjectBenefitsTypeCode());
            fieldValues.put(LaborPropertyConstants.LABOR_BENEFIT_RATE_CATEGORY_CODE, benefitRateCategoryCode);
             
-            org.kuali.kfs.module.ld.businessobject.BenefitsCalculation benefitsCalculation = (org.kuali.kfs.module.ld.businessobject.BenefitsCalculation) SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation.class, fieldValues);
+            BenefitsCalculation benefitsCalculation =  SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(BenefitsCalculation.class, fieldValues);
             
             BenefitsCalculationExtension extension = (BenefitsCalculationExtension) benefitsCalculation.getExtension();
             
