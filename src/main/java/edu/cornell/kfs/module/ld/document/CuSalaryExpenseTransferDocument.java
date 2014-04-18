@@ -5,11 +5,16 @@ import java.util.List;
 import org.kuali.kfs.module.ld.businessobject.ExpenseTransferAccountingLine;
 import org.kuali.kfs.module.ld.businessobject.LaborLedgerPendingEntry;
 import org.kuali.kfs.module.ld.document.SalaryExpenseTransferDocument;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
+import org.kuali.rice.coreservice.framework.parameter.ParameterConstants.COMPONENT;
+import org.kuali.rice.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
 
 import edu.cornell.kfs.module.ld.util.CuLaborPendingEntryGenerator;
 
+@NAMESPACE(namespace = KFSConstants.OptionalModuleNamespaces.LABOR_DISTRIBUTION)
+@COMPONENT(component = "SalaryExpenseTransfer")
 public class CuSalaryExpenseTransferDocument extends SalaryExpenseTransferDocument {
 
     private static final long serialVersionUID = 1L;
