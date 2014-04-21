@@ -595,7 +595,7 @@
       <scope>compile</scope>
     </dependency>
 
-	<!-- rice-kns and rice-impl dependencies. TEST HOOK -->
+	<!-- rice-kns and rice-impl dependencies. -->
     <dependency>
       <groupId>org.kuali.rice</groupId>
       <artifactId>rice-kns</artifactId>
