@@ -40,9 +40,11 @@ import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.permission.PermissionService;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kns.datadictionary.InquirySectionDefinition;
+import org.kuali.rice.kns.datadictionary.LookupDefinition;
 import org.kuali.rice.kns.lookup.LookupableHelperService;
 import org.kuali.rice.krad.UserSession;
 import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.DataDictionaryService;
 import org.kuali.rice.krad.service.KRADServiceLocatorWeb;
 import org.kuali.rice.krad.service.PersistenceStructureService;
@@ -72,6 +74,7 @@ public class DataObjectRestServiceController {
     private PersistenceStructureService persistenceStructureService;
     private ParameterService parameterService;
     private PermissionService permissionService;
+    private BusinessObjectService businessObjectService;
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Not authorized.")
@@ -211,10 +214,14 @@ public class DataObjectRestServiceController {
             fieldValues.put(o.toString(), value[0]);
         }
 
-        LookupableHelperService lookupableHelperService = getLookupableHelperService(boe.getLookupDefinition().getLookupableID());
-        lookupableHelperService.setBusinessObjectClass(boe.getBusinessObjectClass());
-
-        return lookupableHelperService.getSearchResults(fieldValues);
+        LookupDefinition lookupDefinition = boe.getLookupDefinition();
+        if (lookupDefinition.getLookupableID() != null) {
+            LookupableHelperService lookupableHelperService = getLookupableHelperService(lookupDefinition.getLookupableID());
+            lookupableHelperService.setBusinessObjectClass(boe.getBusinessObjectClass());
+            return lookupableHelperService.getSearchResults(fieldValues);
+        } else { // if lookupable definiton exists but lookupable id is not set
+            return new ArrayList(getBusinessObjectService().findMatching(boe.getBusinessObjectClass(), fieldValues));
+        }
     }
 
     protected void validateRequest(FinancialSystemBusinessObjectEntry boe, String namespace, String dataobject, HttpServletRequest request) throws Exception {
@@ -228,7 +235,7 @@ public class DataObjectRestServiceController {
         }
 
         Boolean isModuleLocked = getParameterService().getParameterValueAsBoolean(namespace, KfsParameterConstants.PARAMETER_ALL_DETAIL_TYPE, KRADConstants.SystemGroupParameterNames.OLTP_LOCKOUT_ACTIVE_IND);
-        if (!isAuthorized(request, boe) || isModuleLocked || !boe.hasInquiryDefinition()) {
+        if (!isAuthorized(request, boe) || (isModuleLocked != null && isModuleLocked) || !boe.hasInquiryDefinition()) {
             throw new AccessDeniedException("Not authorized.");
         }
     }
@@ -322,5 +329,15 @@ public class DataObjectRestServiceController {
     public void setPermissionService(PermissionService permissionService) {
         this.permissionService = permissionService;
     }
+    
+    public BusinessObjectService getBusinessObjectService() {
+        if (businessObjectService == null) {
+            businessObjectService = SpringContext.getBean(BusinessObjectService.class);
+        }
+        return businessObjectService;
+    }
 
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
+    }
 }
