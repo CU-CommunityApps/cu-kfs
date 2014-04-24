@@ -36,6 +36,7 @@
     
 </class-descriptor>
 
+<!-- 
 <class-descriptor class="org.kuali.kfs.module.ld.businessobject.BenefitsCalculation" table="LD_BENEFITS_CALC_T">
     <field-descriptor name="universityFiscalYear" column="UNIV_FISCAL_YR" jdbc-type="INTEGER" primarykey="true" index="true" />
     <field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
@@ -163,5 +164,5 @@
 			<inverse-foreignkey field-ref="documentNumber" />
 		</collection-descriptor>
 	</class-descriptor>
-	
+	 -->
 </descriptor-repository>
