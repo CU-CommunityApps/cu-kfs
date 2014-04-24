@@ -20,7 +20,6 @@ import org.kuali.kfs.gl.batch.service.impl.FileReconOkLoadOkStatus;
 import org.kuali.kfs.gl.batch.service.impl.ReconciliationBlock;
 import org.kuali.kfs.gl.report.LedgerSummaryReport;
 import org.kuali.kfs.gl.service.impl.EnterpriseFeederStatusAndErrorMessagesWrapper;
-import org.kuali.kfs.module.ld.LaborConstants;
 import org.kuali.kfs.module.ld.LaborPropertyConstants;
 import org.kuali.kfs.module.ld.batch.LaborEnterpriseFeedStep;
 import org.kuali.kfs.module.ld.batch.service.impl.FileEnterpriseFeederHelperServiceImpl;
@@ -35,12 +34,10 @@ import org.kuali.kfs.sys.Message;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.ReportWriterService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.ObjectUtils;
 
 import com.rsmart.kuali.kfs.module.ld.LdConstants;
-import com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculationExtension;
 
 public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeederHelperServiceImpl {
     
@@ -217,10 +214,8 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
             fieldValues.put(LaborPropertyConstants.POSITION_BENEFIT_TYPE_CODE, positionObjectBenefit.getFinancialObjectBenefitsTypeCode());
             fieldValues.put(LaborPropertyConstants.LABOR_BENEFIT_RATE_CATEGORY_CODE, benefitRateCategoryCode);
             
-            org.kuali.kfs.module.ld.businessobject.BenefitsCalculation benefitsCalculation = (org.kuali.kfs.module.ld.businessobject.BenefitsCalculation) SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculation.class, fieldValues);
+            BenefitsCalculation benefitsCalculation = (org.kuali.kfs.module.ld.businessobject.BenefitsCalculation) SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(BenefitsCalculation.class, fieldValues);
             
-            BenefitsCalculationExtension extension = (BenefitsCalculationExtension) benefitsCalculation.getExtension();
-
             if(ObjectUtils.isNull(benefitsCalculation)) continue;
 
             LaborOriginEntry offsetEntry = new LaborOriginEntry(wageEntry);
@@ -235,8 +230,8 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
             offsetEntry.setTransactionLedgerEntryAmount(offsetAmount.abs());
 
 
-            offsetEntry.setAccountNumber(extension.getAccountCodeOffset());
-            offsetEntry.setFinancialObjectCode(extension.getObjectCodeOffset());
+            offsetEntry.setAccountNumber(benefitsCalculation.getAccountCodeOffset());
+            offsetEntry.setFinancialObjectCode(benefitsCalculation.getObjectCodeOffset());
             
             //Set all the fields required to process through the scrubber and poster jobs
             offsetEntry.setUniversityFiscalPeriodCode(wageEntry.getUniversityFiscalPeriodCode());

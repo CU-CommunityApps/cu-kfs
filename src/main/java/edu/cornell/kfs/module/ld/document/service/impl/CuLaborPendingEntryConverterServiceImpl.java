@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.ld.LaborPropertyConstants;
 import org.kuali.kfs.module.ld.batch.LaborEnterpriseFeedStep;
+import org.kuali.kfs.module.ld.businessobject.BenefitsCalculation;
 import org.kuali.kfs.module.ld.businessobject.LaborLedgerPendingEntry;
 import org.kuali.kfs.module.ld.businessobject.PositionObjectBenefit;
 import org.kuali.kfs.module.ld.document.LaborLedgerPostingDocument;
@@ -24,10 +25,8 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.ObjectUtils;
-import org.kuali.kfs.module.ld.businessobject.BenefitsCalculation;
 
 import com.rsmart.kuali.kfs.module.ld.LdConstants;
-import com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculationExtension;
 
 public class CuLaborPendingEntryConverterServiceImpl extends LaborPendingEntryConverterServiceImpl {
 
@@ -70,15 +69,12 @@ public class CuLaborPendingEntryConverterServiceImpl extends LaborPendingEntryCo
             fieldValues.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, pendingEntry.getUniversityFiscalYear());
             fieldValues.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, pendingEntry.getChartOfAccountsCode());
             fieldValues.put(LaborPropertyConstants.POSITION_BENEFIT_TYPE_CODE, positionObjectBenefit.getFinancialObjectBenefitsTypeCode());
-           fieldValues.put(LaborPropertyConstants.LABOR_BENEFIT_RATE_CATEGORY_CODE, benefitRateCategoryCode);
+            fieldValues.put(LaborPropertyConstants.LABOR_BENEFIT_RATE_CATEGORY_CODE, benefitRateCategoryCode);
             
-            BenefitsCalculation benefitsCalculation =  SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(BenefitsCalculation.class, fieldValues);
-            
-            BenefitsCalculationExtension extension = (BenefitsCalculationExtension) benefitsCalculation.getExtension();
-            
-            String offsetAccount = extension.getAccountCodeOffset();
+            BenefitsCalculation benefitsCalculation =  SpringContext.getBean(BusinessObjectService.class).
+                    findByPrimaryKey(BenefitsCalculation.class, fieldValues);
 
-            if(ObjectUtils.isNull(benefitsCalculation)) { 
+            if (ObjectUtils.isNull(benefitsCalculation)) { 
                 continue;
             }
 
@@ -126,12 +122,12 @@ public class CuLaborPendingEntryConverterServiceImpl extends LaborPendingEntryCo
             // calculate the offsetAmount amount (ledger amt * (benfit pct/100) )
             KualiDecimal fringeBenefitPercent = benefitsCalculation.getPositionFringeBenefitPercent();
             KualiDecimal offsetAmount = fringeBenefitPercent.multiply(
-            pendingEntry.getTransactionLedgerEntryAmount()).divide(KFSConstants.ONE_HUNDRED.kualiDecimalValue());
+                    pendingEntry.getTransactionLedgerEntryAmount()).divide(KFSConstants.ONE_HUNDRED.kualiDecimalValue());
             offsetEntry.setTransactionLedgerEntryAmount(offsetAmount.abs());
             
             
-            offsetEntry.setAccountNumber(extension.getAccountCodeOffset());
-            offsetEntry.setFinancialObjectCode(extension.getObjectCodeOffset());
+            offsetEntry.setAccountNumber(benefitsCalculation.getAccountCodeOffset());
+            offsetEntry.setFinancialObjectCode(benefitsCalculation.getObjectCodeOffset());
             
             //Set all the fields required to process through the scrubber and poster jobs
             offsetEntry.setUniversityFiscalPeriodCode(pendingEntry.getUniversityFiscalPeriodCode());
