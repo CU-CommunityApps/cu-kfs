@@ -65,6 +65,7 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.document.TransactionalDocument;
 import org.kuali.rice.krad.rules.rule.event.ApproveDocumentEvent;
 import org.kuali.rice.krad.rules.rule.event.KualiDocumentEvent;
@@ -1432,6 +1433,11 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     @Override
     public void setCalculated(boolean calculated) {
         this.calculated = calculated;
+    }
+    
+    @Override
+    public PersistableBusinessObject getNoteTarget() {
+        return this;
     }
 
     @Override
