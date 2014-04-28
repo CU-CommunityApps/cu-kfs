@@ -38,17 +38,22 @@ import org.kuali.rice.kns.rule.event.SaveDocumentEvent;
 import org.kuali.rice.kns.service.DataDictionaryService;
 import org.kuali.rice.kns.util.ObjectUtils;
 
+import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
+
 /**
  * The Distribution of Income and Expense (DI) document is used to distribute income or expense, or assets and liabilities. Amounts
  * being distributed are usually the result of an accumulation of transactions that need to be divided up between various accounts.
  */
-public class DistributionOfIncomeAndExpenseDocument extends AccountingDocumentBase implements Copyable, Correctable, AmountTotaling, ElectronicPaymentClaiming, CapitalAssetEditable {
+public class DistributionOfIncomeAndExpenseDocument extends AccountingDocumentBase implements Copyable, Correctable, AmountTotaling, ElectronicPaymentClaiming, CapitalAssetEditable, CULegacyTravelIntegrationInterface {
     protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DistributionOfIncomeAndExpenseDocument.class);
     protected List<ElectronicPaymentClaim> electronicPaymentClaims;
 
     protected transient CapitalAssetInformation capitalAssetInformation;
     protected transient CapitalAssetManagementModuleService capitalAssetManagementModuleService;
-
+    
+    //TRIP INFORMATION FILEDS
+    protected String tripAssociationStatusCode;
+    protected String tripId;
 
     /**
      * Constructs a DistributionOfIncomeAndExpenseDocument.java.
@@ -181,4 +186,24 @@ public class DistributionOfIncomeAndExpenseDocument extends AccountingDocumentBa
         }
         return capitalAssetManagementModuleService;
     }
+
+
+	public String getTripAssociationStatusCode() {
+		return this.tripAssociationStatusCode;
+	}
+
+
+	public void setTripAssociationStatusCode(String tripAssociationStatusCode) {
+		this.tripAssociationStatusCode = tripAssociationStatusCode;
+	}
+
+
+	public String getTripId() {
+		return this.tripId;
+	}
+
+
+	public void setTripId(String tripId) {
+		this.tripId = tripId;
+	}
 }

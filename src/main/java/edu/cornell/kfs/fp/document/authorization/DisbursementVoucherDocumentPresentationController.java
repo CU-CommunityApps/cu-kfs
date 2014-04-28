@@ -154,9 +154,9 @@ public class DisbursementVoucherDocumentPresentationController extends Accountin
         final KualiWorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         
         final List<String> currentRouteLevels = getCurrentRouteLevels(workflowDocument);
-
-    	if(SpringContext.getBean(CULegacyTravelService.class).isLegacyTravelGeneratedKfsDocument(dvDocument.getDocumentNumber()) &&
-    	   !currentRouteLevels.contains(DisbursementVoucherConstants.RouteLevelNames.PAYMENT_METHOD)) {
+        
+        boolean isAssociatedWithTrip = SpringContext.getBean(CULegacyTravelService.class).isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(dvDocument);
+    	if(isAssociatedWithTrip && !currentRouteLevels.contains(DisbursementVoucherConstants.RouteLevelNames.PAYMENT_METHOD)) {
     		LOG.info("Checking travel system generated entry permissions.");
         	editModes.add(CUKFSAuthorizationConstants.DisbursementVoucherEditMode.TRAVEL_SYSTEM_GENERATED_ENTRY); 
         }
