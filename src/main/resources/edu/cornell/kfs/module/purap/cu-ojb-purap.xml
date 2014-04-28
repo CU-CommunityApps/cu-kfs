@@ -3104,17 +3104,6 @@
     <field-descriptor name="preqAutomatedClearingHouseProfileNumber" column="PREQ_ACH_PRFL_NBR" jdbc-type="VARCHAR" />
     <field-descriptor name="preqForeignCurrencyTypeName" column="PREQ_FCRNCY_TYP_NM" jdbc-type="VARCHAR" />
     <field-descriptor name="preqForeignCurrencyTypeCode" column="PREQ_FCRNCY_TYP_CD" jdbc-type="VARCHAR" />
-        <!--  KFSPTS-3166 -->
-    <field-descriptor name="preqBankStreetAddress" column="PREQ_BNK_STR_ADDR" jdbc-type="VARCHAR" />
-    <field-descriptor name="preqBankProvince" column="PREQ_BNK_PRVNC" jdbc-type="VARCHAR" />
-    <field-descriptor name="preqBankSWIFTCode" column="PREQ_BNK_SWIFT_CD" jdbc-type="VARCHAR" />
-    <field-descriptor name="preqBankIBAN" column="PREQ_BNK_IBAN" jdbc-type="VARCHAR" />
-	<field-descriptor name="preqSortOrTransitCode" column="PREQ_BNK_SORT_TRNS_CD" jdbc-type="VARCHAR" />
-	<field-descriptor name="preqCorrespondentBankName" column="PREQ_CRSPNDT_BNK_NM" jdbc-type="VARCHAR" />
-	<field-descriptor name="preqCorrespondentBankAddress" column="PREQ_CRSPNDT_BNK_ADDR" jdbc-type="VARCHAR" />
-	<field-descriptor name="preqCorrespondentBankRoutingNumber" column="PREQ_CRSPNDT_BNK_RTNG_NBR" jdbc-type="VARCHAR" />
-	<field-descriptor name="preqCorrespondentBankAccountNumber" column="PREQ_CRSPNDT_BNK_ACCT_NBR" jdbc-type="VARCHAR" />
-	<field-descriptor name="preqCorrespondentBankSwiftCode" column="PREQ_CRSPNDT_BNK_SWIFT_CD" jdbc-type="VARCHAR" />
 </class-descriptor>
     
  <class-descriptor class="edu.cornell.kfs.module.purap.businessobject.CreditMemoWireTransfer" table="AP_CRDT_MEMO_WIRE_TRNFR_T">
