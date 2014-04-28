@@ -148,10 +148,11 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
 	        boolean isTravelDV = false;
 	        try {
 	        	CULegacyTravelService cuLegacyTravelService = SpringContext.getBean(CULegacyTravelService.class);
-				String tripID = cuLegacyTravelService.getLegacyTripID(kualiDocumentFormBase.getDocId());
-				if(isTravelDV = StringUtils.isNotEmpty(tripID)) { // This means the DV is a Travel DV
+	        	DisbursementVoucherDocument disbursemntVoucherDocument = (DisbursementVoucherDocument) kualiDocumentFormBase.getDocument();
+	        	isTravelDV = cuLegacyTravelService.isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(disbursemntVoucherDocument);
+	        	if(isTravelDV) { // This means the DV is a Travel DV	
 					tripReOpened &= cuLegacyTravelService.reopenLegacyTrip(kualiDocumentFormBase.getDocId(), reason);
-					System.out.println("Trip successfully reopened : "+tripReOpened);
+					LOG.info("Trip successfully reopened : "+tripReOpened);
 				} else {
 					LOG.info("DV is not a travel DV");
 				}
@@ -255,10 +256,11 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         boolean isTravelDV = false;
         try {
         	CULegacyTravelService cuLegacyTravelService = SpringContext.getBean(CULegacyTravelService.class);
-			String tripID = cuLegacyTravelService.getLegacyTripID(kualiDocumentFormBase.getDocId());
-			if(isTravelDV = StringUtils.isNotEmpty(tripID)) { // This means the DV is a Travel DV
+        	DisbursementVoucherDocument disbursemntVoucherDocument = (DisbursementVoucherDocument) kualiDocumentFormBase.getDocument();
+        	isTravelDV = cuLegacyTravelService.isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(disbursemntVoucherDocument);
+        	if(isTravelDV) { // This means the DV is a Travel DV
 				tripReOpened &= cuLegacyTravelService.reopenLegacyTrip(kualiDocumentFormBase.getDocId());
-				System.out.println("Trip successfully reopened : "+tripReOpened);
+				LOG.info("Trip successfully reopened : "+tripReOpened);
 			} else {
 				LOG.info("DV is not a travel DV");
 			}

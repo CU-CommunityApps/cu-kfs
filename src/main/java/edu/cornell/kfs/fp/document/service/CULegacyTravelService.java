@@ -15,6 +15,8 @@
  */
 package edu.cornell.kfs.fp.document.service;
 
+import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
+
 
 /**
  * 
@@ -22,8 +24,6 @@ package edu.cornell.kfs.fp.document.service;
  * 
  */
 public interface CULegacyTravelService {
-
-	public boolean isLegacyTravelGeneratedKfsDocument(String docID);
 	
 	public String getLegacyTripID(String docID);
 	
@@ -33,6 +33,8 @@ public interface CULegacyTravelService {
 
 	public boolean reopenLegacyTrip(String docID, String disapproveReason);
 	
-	public boolean updateLegacyTrip(String docID);
+	public boolean isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(CULegacyTravelIntegrationInterface cuLegacyTravelIntegrationInterace);
+	
+	public String getLegacyTripIDFromCULegacyTravelIntegrationInterface(CULegacyTravelIntegrationInterface cuLegacyTravelIntegrationInterace);
 	
 }
