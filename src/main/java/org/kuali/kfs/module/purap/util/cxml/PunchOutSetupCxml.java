@@ -22,6 +22,7 @@ package org.kuali.kfs.module.purap.util.cxml;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -31,9 +32,12 @@ import org.kuali.kfs.module.purap.util.PurApDateFormatUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kim.bo.Person;
+import org.kuali.rice.kim.service.KIMServiceLocator;
 import org.kuali.rice.kim.service.RoleManagementService;
 import org.kuali.rice.kns.service.DateTimeService;
 import org.kuali.rice.kns.util.GlobalVariables;
+
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class PunchOutSetupCxml {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PunchOutSetupCxml.class);
@@ -102,6 +106,7 @@ public class PunchOutSetupCxml {
     cxml.append("      <Extrinsic name=\"FirstName\">").append(user.getFirstName()).append("</Extrinsic>\n");
     cxml.append("      <Extrinsic name=\"LastName\">").append(user.getLastName()).append("</Extrinsic>\n");
     cxml.append("      <Extrinsic name=\"Role\">").append(getPreAuthValue(user.getPrincipalId())).append("</Extrinsic>\n");
+    cxml.append("      <Extrinsic name=\"Role\">").append(getViewValue(user.getPrincipalId())).append("</Extrinsic>\n");
     cxml.append("      <BrowserFormPost>\n");
     cxml.append("        <URL>").append(b2bInformation.getPunchbackURL()).append("</URL>\n");
     cxml.append("      </BrowserFormPost>\n");
@@ -124,19 +129,42 @@ public class PunchOutSetupCxml {
 
   // KFSPTS-1720
   private String getPreAuthValue(String principalId) {
-	  try {
-		List<String> roleIds = new ArrayList<String>();
-		roleIds.add(getRoleManagementService().getRoleIdByName(KFSConstants.ParameterNamespaces.PURCHASING,KFSConstants.SysKimConstants.ESHOP_USER_ROLE_NAME));
-		roleIds.add(getRoleManagementService().getRoleIdByName(KFSConstants.ParameterNamespaces.PURCHASING,KFSConstants.SysKimConstants.ESHOP_SUPER_USER_ROLE_NAME));
-		if (getRoleManagementService().principalHasRole(principalId,roleIds, null)) {
-			return "Preauthorized";
-		}
-		return "NonPreauthorized";
-	  } catch (Exception e) {
-		  // incase something goes wrong.  continue to process
-		  LOG.info("error from role check " + e.getMessage());
-		  return "Preauthorized";
-	  }
+      try {
+    	  //Check for special view role first
+    	  if (KIMServiceLocator.getPermissionService().hasPermission(
+              principalId, KFSConstants.ParameterNamespaces.PURCHASING, KFSConstants.SysKimConstants.B2B_SUBMIT_ESHOP_CART_PERMISSION, null))  {
+    		  return "Buyer";
+    	  } else {
+        	return "Shopper";
+    	  }
+        
+      } catch (Exception e) {
+          // incase something goes wrong.  continue to process
+          LOG.info("error from role check " + e.getMessage());
+          return "Shopper";
+      }
+  }
+  private String getViewValue(String principalId) {
+      try {
+    	  //Check for special view role first
+    	  if (KIMServiceLocator.getPermissionService().hasPermission(
+              	principalId, KFSConstants.ParameterNamespaces.PURCHASING, KFSConstants.SysKimConstants.B2B_SHOPPER_OFFICE_PERMISSION, null))  {
+    		  	return "Office";
+    	  } else if (KIMServiceLocator.getPermissionService().hasPermission(
+	      	  	principalId, KFSConstants.ParameterNamespaces.PURCHASING, KFSConstants.SysKimConstants.B2B_SHOPPER_LAB_PERMISSION, null))  {
+				return "Lab";
+		  }	else if (KIMServiceLocator.getPermissionService().hasPermission(
+			    principalId, KFSConstants.ParameterNamespaces.PURCHASING, KFSConstants.SysKimConstants.B2B_SHOPPER_FACILITIES_PERMISSION, null))  {
+				return "Facilities";
+		  } else {
+				return "Unrestricted";
+    	  }
+        
+      } catch (Exception e) {
+          // incase something goes wrong.  continue to process
+          LOG.info("error from role check " + e.getMessage());
+          return "Unrestricted";
+      }
   }
   
   private RoleManagementService getRoleManagementService() {
