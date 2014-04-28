@@ -98,6 +98,7 @@ import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.businessobject.DisbursementVoucherPayeeDetailExtension;
+import edu.cornell.kfs.fp.businessobject.DisbursementVoucherWireTransferExtendedAttribute;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -1292,6 +1293,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
 
         if (dvWireTransfer != null) {
             dvWireTransfer.setDocumentNumber(this.documentNumber);
+            ((DisbursementVoucherWireTransferExtendedAttribute)dvWireTransfer.getExtension()).setDocumentNumber(this.documentNumber);
         }
 
         if (dvNonResidentAlienTax != null) {
