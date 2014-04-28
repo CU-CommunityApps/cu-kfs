@@ -85,7 +85,7 @@
 		
 				    <!-- I Want document -->
 	    <action path="/financialDisbursementVoucher" name="DisbursementVoucherForm"
-			input="/jsp/fp/DisbursementVocuher.jsp"
+			input="/jsp/fp/DisbursementVoucher.jsp"
 			type="org.kuali.kfs.fp.document.web.struts.DisbursementVoucherAction"
 			scope="request" parameter="methodToCall" validate="true"
 			attribute="KualiForm">
