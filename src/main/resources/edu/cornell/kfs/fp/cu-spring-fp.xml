@@ -287,6 +287,8 @@
     
     </bean>
 
+
+	<bean id="procurementCardDocumentDao" parent="platformAwareDao" class="edu.cornell.kfs.fp.dataaccess.impl.ProcurementCardDocumentDaoOjb" />
 	<import resource="document/validation/configuration/CU-DisbursementVoucherValidation.xml" />
 	
 	

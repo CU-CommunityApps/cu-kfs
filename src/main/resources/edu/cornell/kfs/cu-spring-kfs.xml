@@ -16,7 +16,7 @@
 	<import resource="module/purap/cu-spring-purap.xml" />
 	<import resource="module/ezra/cu-spring-ezra.xml" />
 	<import resource="module/bc/cu-spring-bc.xml" />
-
+	<import resource="module/receiptProcessing/cu-spring-receiptProcessing.xml" />
 	<import resource="sys/kfs4fixes.xml" />
 
 
