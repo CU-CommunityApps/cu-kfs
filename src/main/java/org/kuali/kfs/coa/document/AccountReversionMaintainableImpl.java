@@ -174,11 +174,11 @@ public class AccountReversionMaintainableImpl extends FinancialSystemMaintainabl
         
         super.saveBusinessObject();
         
-//        if (isActivatingOrgReversion) {
-//            SpringContext.getBean(AccountReversionDetailTrickleDownInactivationService.class).trickleDownActiveAccountReversionDetails((AccountReversion)getBusinessObject(), documentNumber);
-//        } else if (isInactivatingOrgReversion) {
-//            SpringContext.getBean(AccountReversionDetailTrickleDownInactivationService.class).trickleDownInactiveAccountReversionDetails((AccountReversion)getBusinessObject(), documentNumber);
-//        }
+        if (isActivatingOrgReversion) {
+            SpringContext.getBean(AccountReversionDetailTrickleDownInactivationService.class).trickleDownActiveAccountReversionDetails((AccountReversion)getBusinessObject(), documentNumber);
+        } else if (isInactivatingOrgReversion) {
+            SpringContext.getBean(AccountReversionDetailTrickleDownInactivationService.class).trickleDownInactiveAccountReversionDetails((AccountReversion)getBusinessObject(), documentNumber);
+        }
     }
 
     /**
