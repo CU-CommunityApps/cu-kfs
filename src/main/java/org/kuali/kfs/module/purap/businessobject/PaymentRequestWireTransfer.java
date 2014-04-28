@@ -24,6 +24,18 @@ public class PaymentRequestWireTransfer extends PersistableBusinessObjectBase {
     private String preqAutomatedClearingHouseProfileNumber;
     private String preqForeignCurrencyTypeName;
     private String preqForeignCurrencyTypeCode;
+    
+    //KFSPTS-3166
+    protected String preqBankStreetAddress;
+    protected String preqBankProvince;
+    protected String preqBankSWIFTCode;
+    protected String preqBankIBAN;
+    protected String preqSortOrTransitCode;
+    protected String preqCorrespondentBankName;
+    protected String preqCorrespondentBankAddress;
+    protected String preqCorrespondentBankRoutingNumber;
+    protected String preqCorrespondentBankAccountNumber;
+    protected String preqCorrespondentBankSwiftCode;
 
 
     /**
@@ -212,6 +224,106 @@ public class PaymentRequestWireTransfer extends PersistableBusinessObjectBase {
 	public void setPreqForeignCurrencyTypeCode(String preqForeignCurrencyTypeCode) {
 		this.preqForeignCurrencyTypeCode = preqForeignCurrencyTypeCode;
 	}
+
+
+    public String getPreqBankStreetAddress() {
+        return preqBankStreetAddress;
+    }
+
+
+    public void setPreqBankStreetAddress(String preqBankStreetAddress) {
+        this.preqBankStreetAddress = preqBankStreetAddress;
+    }
+
+
+    public String getPreqBankProvince() {
+        return preqBankProvince;
+    }
+
+
+    public void setPreqBankProvince(String preqBankProvince) {
+        this.preqBankProvince = preqBankProvince;
+    }
+
+
+    public String getPreqBankSWIFTCode() {
+        return preqBankSWIFTCode;
+    }
+
+
+    public void setPreqBankSWIFTCode(String preqBankSWIFTCode) {
+        this.preqBankSWIFTCode = preqBankSWIFTCode;
+    }
+
+
+    public String getPreqBankIBAN() {
+        return preqBankIBAN;
+    }
+
+
+    public void setPreqBankIBAN(String preqBankIBAN) {
+        this.preqBankIBAN = preqBankIBAN;
+    }
+
+
+    public String getPreqSortOrTransitCode() {
+        return preqSortOrTransitCode;
+    }
+
+
+    public void setPreqSortOrTransitCode(String preqSortOrTransitCode) {
+        this.preqSortOrTransitCode = preqSortOrTransitCode;
+    }
+
+
+    public String getPreqCorrespondentBankName() {
+        return preqCorrespondentBankName;
+    }
+
+
+    public void setPreqCorrespondentBankName(String preqCorrespondentBankName) {
+        this.preqCorrespondentBankName = preqCorrespondentBankName;
+    }
+
+
+    public String getPreqCorrespondentBankAddress() {
+        return preqCorrespondentBankAddress;
+    }
+
+
+    public void setPreqCorrespondentBankAddress(String preqCorrespondentBankAddress) {
+        this.preqCorrespondentBankAddress = preqCorrespondentBankAddress;
+    }
+
+
+    public String getPreqCorrespondentBankRoutingNumber() {
+        return preqCorrespondentBankRoutingNumber;
+    }
+
+
+    public void setPreqCorrespondentBankRoutingNumber(String preqCorrespondentBankRoutingNumber) {
+        this.preqCorrespondentBankRoutingNumber = preqCorrespondentBankRoutingNumber;
+    }
+
+
+    public String getPreqCorrespondentBankAccountNumber() {
+        return preqCorrespondentBankAccountNumber;
+    }
+
+
+    public void setPreqCorrespondentBankAccountNumber(String preqCorrespondentBankAccountNumber) {
+        this.preqCorrespondentBankAccountNumber = preqCorrespondentBankAccountNumber;
+    }
+
+
+    public String getPreqCorrespondentBankSwiftCode() {
+        return preqCorrespondentBankSwiftCode;
+    }
+
+
+    public void setPreqCorrespondentBankSwiftCode(String preqCorrespondentBankSwiftCode) {
+        this.preqCorrespondentBankSwiftCode = preqCorrespondentBankSwiftCode;
+    }
 
 
 }

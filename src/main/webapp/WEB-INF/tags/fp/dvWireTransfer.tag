@@ -17,6 +17,7 @@
 
 <kul:tab tabTitle="Wire Transfer" defaultOpen="false" tabErrorKey="${KFSConstants.DV_WIRETRANSFER_TAB_ERRORS}">
 	<c:set var="wireTransAttributes" value="${DataDictionary.DisbursementVoucherWireTransfer.attributes}" />
+	<c:set var="wireTransAttributes2" value="${DataDictionary.DisbursementVoucherWireTransferExtendedAttribute.attributes}" />
     <div class="tab-container" align=center > 
     <h3>Wire Transfer</h3>
 	<table cellpadding=0 class="datatable" summary="Wire Transfer Section">
@@ -39,21 +40,16 @@
               <tr>
                 <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.disbursementVoucherBankName}"/></div></th>
                 <td class="datacell">
-                <c:set var="bankNameHint">
-        			<bean:message key="label.dvWireTransfer.bank.name.hint"/>
-                </c:set> 
-                  <kul:htmlControlAttribute accessibilityHint="${bankNameHint}" attributeEntry="${wireTransAttributes.disbursementVoucherBankName}" property="document.dvWireTransfer.disbursementVoucherBankName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                  <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.disbursementVoucherBankName}" property="document.dvWireTransfer.disbursementVoucherBankName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                 </td>
                 <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.disbVchrAdditionalWireText}"/></div></th>
                 <td class="datacell">
-                <c:set var="additionalWireHint">
-        			<bean:message key="label.dvWireTransfer.additional.wire.hint"/>
-                </c:set> 
-                  <kul:htmlControlAttribute accessibilityHint="${additionalWireHint}" attributeEntry="${wireTransAttributes.disbVchrAdditionalWireText}" property="document.dvWireTransfer.disbVchrAdditionalWireText" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                  <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.disbVchrAdditionalWireText}" property="document.dvWireTransfer.disbVchrAdditionalWireText" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                 </td>
               </tr>
               
               <tr>
+
                 <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.disbVchrBankRoutingNumber}"/>
                     <c:if test="${fullEntryMode||wireEntryMode||frnEntryMode}">
                         <br> *required for US bank
@@ -62,14 +58,22 @@
                 <td class="datacell">
                   <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.disbVchrBankRoutingNumber}" property="document.dvWireTransfer.disbVchrBankRoutingNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                 </td>
-                <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.disbVchrAttentionLineText}"/></div></th>
-                <td class="datacell">
-                  <c:set var="addendaHint">
-        			<bean:message key="label.dvWireTransfer.addenda.hint"/>
-                  </c:set>
-                  <kul:htmlControlAttribute accessibilityHint="${addendaHint}" attributeEntry="${wireTransAttributes.disbVchrAttentionLineText}" property="document.dvWireTransfer.disbVchrAttentionLineText" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                
+                <th scope=row class="bord-l-b" rowspan=2><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.disbVchrAttentionLineText}"/></div></th>
+                <td class="datacell" rowspan=2>
+                  <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.disbVchrAttentionLineText}" property="document.dvWireTransfer.disbVchrAttentionLineText" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                 </td>
               </tr>
+              
+              <tr>
+                <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes2.disbVchrBankStreetAddress}"/>
+                </div></th>
+                <td class="datacell" >
+                  <kul:htmlControlAttribute attributeEntry="${wireTransAttributes2.disbVchrBankStreetAddress}" property="document.dvWireTransfer.extension.disbVchrBankStreetAddress" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                </td>
+                
+              </tr>
+  
               
               <tr>
                 <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.disbVchrBankCityName}"/></div></th>
@@ -77,9 +81,11 @@
                   <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.disbVchrBankCityName}" property="document.dvWireTransfer.disbVchrBankCityName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                 </td>
                 <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.disbVchrCurrencyTypeCode}"/></div></th>
+                  <c:set var="amountHint">
+        			<bean:message key="label.wireTransfer.amount.hint"/>
+                  </c:set>
                 <td class="datacell">
-
-                  <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.disbVchrCurrencyTypeCode}" property="document.dvWireTransfer.disbVchrCurrencyTypeCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                  <kul:htmlControlAttribute accessibilityHint="${amountHint}" attributeEntry="${wireTransAttributes.disbVchrCurrencyTypeCode}" property="document.dvWireTransfer.disbVchrCurrencyTypeCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                 </td>
               </tr>
               
@@ -92,12 +98,18 @@
                 <td class="datacell">
                   <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.disbVchrBankStateCode}" property="document.dvWireTransfer.disbVchrBankStateCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                 </td>
-                <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.disbVchrCurrencyTypeName}"/></div></th>
-                <td class="datacell" colspan="3">
-                  <c:set var="currencyTypeHint">
-        			<bean:message key="label.dvWireTransfer.currency.type.hint"/>
-                  </c:set>
-                  <kul:htmlControlAttribute accessibilityHint="${currencyTypeHint}"  attributeEntry="${wireTransAttributes.disbVchrCurrencyTypeName}" property="document.dvWireTransfer.disbVchrCurrencyTypeName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                <th scope=row class="bord-l-b" rowspan=2><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.disbVchrCurrencyTypeName}"/></div></th>
+                <td class="datacell" colspan="3" rowspan=2>
+                  <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.disbVchrCurrencyTypeName}" property="document.dvWireTransfer.disbVchrCurrencyTypeName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                </td>
+              </tr>
+              
+              <tr>
+                <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes2.disbVchrBankProvince}"/>
+
+                </div></th>
+                <td class="datacell">
+                  <kul:htmlControlAttribute attributeEntry="${wireTransAttributes2.disbVchrBankProvince}" property="document.dvWireTransfer.extension.disbVchrBankProvince" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                 </td>
               </tr>
               
@@ -111,10 +123,7 @@
               <tr>
                 <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.disbVchrPayeeAccountNumber}"/></div></th>
                 <td class="datacell" colspan="3">
-                  <c:set var="bankAccountHint">
-        			<bean:message key="label.dvWireTransfer.bank.account.hint"/>
-                  </c:set>
-                  <kul:htmlControlAttribute accessibilityHint="${bankAccountHint}" attributeEntry="${wireTransAttributes.disbVchrPayeeAccountNumber}" property="document.dvWireTransfer.disbVchrPayeeAccountNumber"
+                  <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.disbVchrPayeeAccountNumber}" property="document.dvWireTransfer.disbVchrPayeeAccountNumber"
                    readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}" />
                 </td>
               </tr>
@@ -122,15 +131,91 @@
               <tr>
                 <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.disbursementVoucherPayeeAccountName}"/></div></th>
                 <td class="datacell">
-                  <c:set var="payeeAccountHint">
-        			<bean:message key="label.dvWireTransfer.payee.account.hint"/>
-                  </c:set>
-                  <kul:htmlControlAttribute accessibilityHint="${payeeAccountHint}" attributeEntry="${wireTransAttributes.disbursementVoucherPayeeAccountName}" property="document.dvWireTransfer.disbursementVoucherPayeeAccountName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                  <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.disbursementVoucherPayeeAccountName}" property="document.dvWireTransfer.disbursementVoucherPayeeAccountName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                 </td>
                 <td class="datacell" colspan="2">
                   <bean:message key="message.wiretransfer.fee"/>
                 </td>
               </tr>
+              
+              <tr>
+                <td colspan=4 valign=middle class="tab-subhead"><b><bean:message key="message.wiretransfer.foreign.wires.additional.data"/></b></td>
+              </tr>
+              
+              <tr>
+                <th scope=row class="bord-l-b" colspan="2"><div align="right">&nbsp;</div></th>
+                <td class="datacell" colspan="2">
+                  <b><bean:message key="message.wiretransfer.correspondent.bank"/></b>
+                </td>
+              </tr>
+              
+              <tr>
+                <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes2.disbVchrBankIBAN}"/>
+                </div></th>
+                   <c:set var="bankIBANHint">
+        			<bean:message key="label.wireTransfer.bankIBAN.hint"/>
+                  </c:set>
+                <td class="datacell">
+                  <kul:htmlControlAttribute accessibilityHint="${bankIBANHint}" attributeEntry="${wireTransAttributes2.disbVchrBankIBAN}" property="document.dvWireTransfer.extension.disbVchrBankIBAN" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                </td>
+                <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes2.disbVchrCorrespondentBankName}"/></div></th>
+                <td class="datacell">
+                  <kul:htmlControlAttribute attributeEntry="${wireTransAttributes2.disbVchrCorrespondentBankName}" property="document.dvWireTransfer.extension.disbVchrCorrespondentBankName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                </td>
+              </tr>
+              
+              <tr>
+                <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes2.disbVchrBankSWIFTCode}"/>
+                </div></th>
+                  <c:set var="bankSwiftCode">
+        			<bean:message key="label.wireTransfer.bankSwiftCode.hint"/>
+                  </c:set>
+                <td class="datacell">
+                  <kul:htmlControlAttribute accessibilityHint="${bankSwiftCode}" attributeEntry="${wireTransAttributes2.disbVchrBankSWIFTCode}" property="document.dvWireTransfer.extension.disbVchrBankSWIFTCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                </td>
+                <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes2.disbVchrCorrespondentBankAddress}"/></div></th>
+                <td class="datacell">
+                  <kul:htmlControlAttribute attributeEntry="${wireTransAttributes2.disbVchrCorrespondentBankAddress}" property="document.dvWireTransfer.extension.disbVchrCorrespondentBankAddress" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                </td>
+              </tr>
+              
+              <tr>
+                <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes2.disbVchrSortOrTransitCode}"/>
+                </div></th>
+                   <c:set var="sortOrTransitCodeHint">
+        			<bean:message key="label.wireTransfer.sortOrTransitCode.hint"/>
+                  </c:set>
+                <td class="datacell">
+                  <kul:htmlControlAttribute accessibilityHint="${sortOrTransitCodeHint}" attributeEntry="${wireTransAttributes2.disbVchrSortOrTransitCode}" property="document.dvWireTransfer.extension.disbVchrSortOrTransitCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                </td>
+
+
+                <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes2.disbVchrCorrespondentBankSwiftCode}"/></div></th>
+    
+                <td class="datacell">
+                  <kul:htmlControlAttribute attributeEntry="${wireTransAttributes2.disbVchrCorrespondentBankSwiftCode}" property="document.dvWireTransfer.extension.disbVchrCorrespondentBankSwiftCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                </td>
+              </tr>
+              
+              <tr>
+                <th scope=row class="bord-l-b" colspan="2"><div align="right">&nbsp;
+                </div></th>
+                <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes2.disbVchrCorrespondentBankRoutingNumber}"/></div></th>
+                <td class="datacell">
+                  <kul:htmlControlAttribute attributeEntry="${wireTransAttributes2.disbVchrCorrespondentBankRoutingNumber}" property="document.dvWireTransfer.extension.disbVchrCorrespondentBankRoutingNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                </td>
+              </tr>
+              
+              <tr>
+                <td class="datacell" colspan="2">
+                  <b><bean:message key="message.wiretransfer.use.IBAN"/></b>
+                </td>
+                <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes2.disbVchrCorrespondentBankAccountNumber}"/></div></th>
+                <td class="datacell">
+                  <kul:htmlControlAttribute attributeEntry="${wireTransAttributes2.disbVchrCorrespondentBankAccountNumber}" property="document.dvWireTransfer.extension.disbVchrCorrespondentBankAccountNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                </td>
+              </tr>
+              
             </tbody>
           </table>
         </div>
