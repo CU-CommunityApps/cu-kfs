@@ -98,7 +98,7 @@ import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.businessobject.DisbursementVoucherPayeeDetailExtension;
-import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
+import edu.cornell.kfs.fp.businessobject.DisbursementVoucherWireTransferExtendedAttribute;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -106,8 +106,9 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 /**
  * This is the business object that represents the DisbursementVoucher document in Kuali.
  */
-public class DisbursementVoucherDocument extends AccountingDocumentBase implements Copyable, AmountTotaling, CULegacyTravelIntegrationInterface {
+public class DisbursementVoucherDocument extends AccountingDocumentBase implements Copyable, AmountTotaling {
     protected static Logger LOG = Logger.getLogger(DisbursementVoucherDocument.class);
+
     
 	protected static final String DOCUMENT_REQUIRES_CAMPUS_REVIEW_SPLIT = "RequiresCampusReview";
 	protected static final String DOCUMENT_REQUIRES_AWARD_REVIEW_SPLIT = "RequiresAwardReview";
@@ -182,10 +183,6 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
     protected DisbursementVoucherPayeeDetail dvPayeeDetail;
     protected DisbursementVoucherPreConferenceDetail dvPreConferenceDetail;
     protected DisbursementVoucherWireTransfer dvWireTransfer;
-    
-    //TRIP INFORMATION FILEDS
-    protected String tripAssociationStatusCode;
-    protected String tripId;
 
     protected Bank bank;
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
@@ -248,27 +245,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
     }
 
 
-    public String getTripAssociationStatusCode() {
-		return tripAssociationStatusCode;
-	}
-
-
-	public void setTripAssociationStatusCode(String tripAssociationStatusCode) {
-		this.tripAssociationStatusCode = tripAssociationStatusCode;
-	}
-
-
-	public String getTripId() {
-		return tripId;
-	}
-
-
-	public void setTripId(String tripId) {
-		this.tripId = tripId;
-	}
-
-
-	/**
+    /**
      * Gets the finDocNextRegistrantLineNbr attribute.
      * 
      * @return Returns the finDocNextRegistrantLineNbr

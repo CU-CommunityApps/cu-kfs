@@ -155,9 +155,7 @@ public class DisbursementVoucherForm extends KualiAccountingDocumentFormBase {
      * @return true if the DV document is a travel DV; otherwise, return false
      */
     public boolean getCanViewTrip() {
-    	DisbursementVoucherDocument disbursementVoucherDocument = (DisbursementVoucherDocument)this.getDocument();
-    	boolean canViewTrip = SpringContext.getBean(CULegacyTravelService.class).isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(disbursementVoucherDocument);
-    	return canViewTrip;
+    	return SpringContext.getBean(CULegacyTravelService.class).isLegacyTravelGeneratedKfsDocument(this.getDocId());
     }
 
     /**
@@ -453,7 +451,8 @@ public class DisbursementVoucherForm extends KualiAccountingDocumentFormBase {
      * @return
      */
     public String getTripUrl() {
-    	String tripID = this.getTripID();
+    	String tripID = SpringContext.getBean(CULegacyTravelService.class).getLegacyTripID(this.getDocId());
+    	LOG.info("getTripUrl() called");
     	StringBuffer url = new StringBuffer();
     	url.append(SpringContext.getBean(CULegacyTravelService.class).getTravelUrl());
         url.append("/navigation?form_action=0&tripid=").append(tripID).append("&link=true");
@@ -465,13 +464,7 @@ public class DisbursementVoucherForm extends KualiAccountingDocumentFormBase {
      * @return
      */
     public String getTripID() {
-    	DisbursementVoucherDocument dvd = (DisbursementVoucherDocument) this.getDocument();
-    	boolean isAssociated = SpringContext.getBean(CULegacyTravelService.class).isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(dvd);
-    	if (isAssociated) {
-    		return dvd.getTripId();
-    	} else {
-    		return StringUtils.EMPTY;
-    	}
+    	return SpringContext.getBean(CULegacyTravelService.class).getLegacyTripID(this.getDocId());
     }
     
     // KFSPTS-2527

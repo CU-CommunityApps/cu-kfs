@@ -23,8 +23,6 @@ import org.kuali.rice.kns.util.GlobalVariables;
 import org.kuali.rice.kns.util.KualiDecimal;
 import org.kuali.rice.kns.util.MessageMap;
 
-import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
-
 
 /**
  *
@@ -166,8 +164,7 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
 			dvDoc.setDisbVchrPaymentMethodCode("P");
 
 			dvDoc.setDisbVchrCheckStubText(checkStubText);
-			dvDoc.setTripId(tripNumber);
-			dvDoc.setTripAssociationStatusCode(CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_TRIP_DOC);
+			
 			// Persist document
 			SpringContext.getBean(DocumentService.class).saveDocument(dvDoc);
 			
@@ -215,8 +212,6 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
         	diDoc.getDocumentHeader().setDocumentDescription(diDescription);
         	diDoc.getDocumentHeader().setExplanation(diExplanation);
         	diDoc.getDocumentHeader().setOrganizationDocumentNumber(tripNumber);
-        	diDoc.setTripAssociationStatusCode(CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_TRIP_DOC);
-        	diDoc.setTripId(tripNumber);
 			
 			// Persist document
 			SpringContext.getBean(DocumentService.class).saveDocument(diDoc);
