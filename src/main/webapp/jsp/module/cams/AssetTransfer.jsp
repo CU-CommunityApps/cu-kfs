@@ -89,7 +89,7 @@
 				    <c:if test="${not readOnly}">
 						&nbsp;						
 						<input type="hidden" name="docType" value="TF"/>
-		                <kul:lookup boClassName="org.kuali.rice.kew.impl.document.search.DocumentSearchCriteriaBo" fieldConversions="documentId:document.transferOfFundsFinancialDocumentNumber" lookupParameters="docType:documentTypeName,document.transferOfFundsFinancialDocumentNumber:documentId" />
+		                <kul:lookup boClassName="org.kuali.rice.kew.impl.document.search.DocumentSearchCriteriaBo" fieldConversions="documentId:document.transferOfFundsFinancialDocumentNumber" lookupParameters="docType:documentTypeName,document.transferOfFundsFinancialDocumentNumber:documentId" baseLookupUrl="${ConfigProperties.workflow.url}/DocumentSearch.do" />
 	                </c:if>
 	             </td>
 			</tr>
