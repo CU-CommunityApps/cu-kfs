@@ -41,7 +41,7 @@ import com.rsmart.kuali.kfs.module.ld.LdConstants;
 
 public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeederHelperServiceImpl {
     
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuFileEnterpriseFeederServiceImpl.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuFileEnterpriseFeederHelperServiceImpl.class);
     
     @Override
     public void feedOnFile(File doneFile, File dataFile, File reconFile, PrintStream enterpriseFeedPs,
