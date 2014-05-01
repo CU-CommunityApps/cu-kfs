@@ -200,7 +200,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
     protected List<LaborOriginEntry> generateOffsets(LaborOriginEntry wageEntry,String offsetDocTypes) {
         List<LaborOriginEntry> offsetEntries = new ArrayList<LaborOriginEntry>();
         String benefitRateCategoryCode = laborBenefitsCalculationService.getBenefitRateCategoryCode(wageEntry.getChartOfAccountsCode(), wageEntry.getAccountNumber(), wageEntry.getSubAccountNumber());
-        Collection<PositionObjectBenefit> positionObjectBenefits = laborPositionObjectBenefitService.getPositionObjectBenefits(wageEntry.getUniversityFiscalYear(), wageEntry.getChartOfAccountsCode(), wageEntry.getFinancialObjectCode());
+        Collection<PositionObjectBenefit> positionObjectBenefits = laborPositionObjectBenefitService.getActivePositionObjectBenefits(wageEntry.getUniversityFiscalYear(), wageEntry.getChartOfAccountsCode(), wageEntry.getFinancialObjectCode());
         
         if (positionObjectBenefits == null || positionObjectBenefits.isEmpty()) {
             return offsetEntries;

@@ -58,7 +58,7 @@ public class CuLaborPendingEntryConverterServiceImpl extends LaborPendingEntryCo
     public List<LaborLedgerPendingEntry> getOffsetPendingEntries(LaborLedgerPendingEntry pendingEntry, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         List<LaborLedgerPendingEntry> offsetEntries = new ArrayList<LaborLedgerPendingEntry>();
         String benefitRateCategoryCode = SpringContext.getBean(LaborBenefitsCalculationService.class).getBenefitRateCategoryCode(pendingEntry.getChartOfAccountsCode(), pendingEntry.getAccountNumber(), pendingEntry.getSubAccountNumber());
-        Collection<PositionObjectBenefit> positionObjectBenefits = SpringContext.getBean(LaborPositionObjectBenefitService.class).getPositionObjectBenefits(pendingEntry.getUniversityFiscalYear(), pendingEntry.getChartOfAccountsCode(), pendingEntry.getFinancialObjectCode());
+        Collection<PositionObjectBenefit> positionObjectBenefits = SpringContext.getBean(LaborPositionObjectBenefitService.class).getActivePositionObjectBenefits(pendingEntry.getUniversityFiscalYear(), pendingEntry.getChartOfAccountsCode(), pendingEntry.getFinancialObjectCode());
         
         if (positionObjectBenefits == null || positionObjectBenefits.isEmpty()) {
             return offsetEntries;
