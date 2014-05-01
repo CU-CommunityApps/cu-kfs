@@ -94,12 +94,6 @@ public class CuCapitalAssetBuilderModuleServiceImpl extends CapitalAssetBuilderM
     		String assetLocationZipCode = capDetailExt.getAssetLocationZipCode();
             
 
-            if (StringUtils.isBlank(dtl.getCampusCode())) {
-                String label = this.getDataDictionaryService().getAttributeLabel(Campus.class, KFSPropertyConstants.CAMPUS_CODE);
-                GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.CAMPUS_CODE, KFSKeyConstants.ERROR_REQUIRED, label);
-                valid = false;
-            }
-            
             // Room is not required for non-moveable
             AssetType assetType = getAssetType(capitalAssetInformation.getCapitalAssetTypeCode());
 
@@ -188,14 +182,14 @@ public class CuCapitalAssetBuilderModuleServiceImpl extends CapitalAssetBuilderM
             // populate is a better place but we CAMS team don't own FP document. This is the best we can do for now.
             businessObjectDictionaryService.performForceUppercase(dtl);
             String errorPathPrefix = KFSPropertyConstants.DOCUMENT + "." + KFSPropertyConstants.CAPITAL_ASSET_INFORMATION + "[" + capitalAssetIndex + "]." + KFSPropertyConstants.CAPITAL_ASSET_INFORMATION_DETAILS;
-
-            Campus campus = campusService.getCampus(dtl.getCampusCode());
-            if (ObjectUtils.isNull(campus)) {
-                valid = false;
-                String label = this.getDataDictionaryService().getAttributeLabel(Campus.class, KFSPropertyConstants.CAMPUS_CODE);
-                GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.CAMPUS_CODE, KFSKeyConstants.ERROR_EXISTENCE, label);
+            if (StringUtils.isNotBlank(dtl.getCampusCode())) {
+                Campus campus = campusService.getCampus(dtl.getCampusCode());
+                if (ObjectUtils.isNull(campus)) {
+                    valid = false;
+                    String label = this.getDataDictionaryService().getAttributeLabel(Campus.class, KFSPropertyConstants.CODE);
+                    GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.CAMPUS_CODE, KFSKeyConstants.ERROR_EXISTENCE, label);
+                }
             }
-
             Map<String, String> params;
             params = new HashMap<String, String>();
             params.put(KFSPropertyConstants.CAMPUS_CODE, dtl.getCampusCode());
