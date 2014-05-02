@@ -7,6 +7,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.web.struts.PurchaseOrderAction;
@@ -22,7 +23,6 @@ import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants.PurchaseOrderStatuses;
 
 public class CuPurchaseOrderAction extends PurchaseOrderAction {
 	// ==== CU Customization (KFSPTS-1457): Added some new constants and variables. ====
@@ -63,11 +63,11 @@ public class CuPurchaseOrderAction extends PurchaseOrderAction {
     }
     
 	public ActionForward openPoCxer(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		return movePoCxer(mapping, form, request, response, PurchaseOrderStatuses.OPEN, "Open");
+		return movePoCxer(mapping, form, request, response, PurchaseOrderStatuses.APPDOC_OPEN, "Open");
 	}
 	   
 	public ActionForward voidPoCxer(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-	    return movePoCxer(mapping, form, request, response, PurchaseOrderStatuses.VOID, "Void");
+	    return movePoCxer(mapping, form, request, response, PurchaseOrderStatuses.APPDOC_VOID, "Void");
 	}
 	   
 	protected ActionForward movePoCxer(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response,
@@ -85,7 +85,7 @@ public class CuPurchaseOrderAction extends PurchaseOrderAction {
 	    	// Use logic similar to the executeManualStatusChange() method to override the document's status.
 	    	try {
 	    		PurapService purapService = SpringContext.getBean(PurapService.class);
-	    		//purapService.updateStatus(po, newStatus);
+	    		po.updateAndSaveAppDocStatus(newStatus);
 	    		purapService.saveDocumentNoValidation(po);
 	    		}
 	    	catch (Exception e) {
@@ -117,7 +117,7 @@ public class CuPurchaseOrderAction extends PurchaseOrderAction {
 			}
 		
 		// Ensure that the document is currently in "CXER" status before trying to update it.
-		if (!PurchaseOrderStatuses.CXML_ERROR.equals(po.getStatusCode())) {
+		if (!PurchaseOrderStatuses.APPDOC_CXML_ERROR.equals(po.getApplicationDocumentStatus())) {
 			throw new AuthorizationException(GlobalVariables.getUserSession().getPerson().getPrincipalName(), "manuallyOverridePurchaseOrderStatus",
 					po.getDocumentNumber(), "You are not authorized to perform this action on PO documents not in 'Error occurred sending cxml' status.", null);
 			}
