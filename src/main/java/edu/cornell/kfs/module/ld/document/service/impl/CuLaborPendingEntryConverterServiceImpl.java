@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.ld.LaborPropertyConstants;
 import org.kuali.kfs.module.ld.batch.LaborEnterpriseFeedStep;
 import org.kuali.kfs.module.ld.businessobject.BenefitsCalculation;
+import org.kuali.kfs.module.ld.businessobject.ExpenseTransferAccountingLine;
 import org.kuali.kfs.module.ld.businessobject.LaborLedgerPendingEntry;
 import org.kuali.kfs.module.ld.businessobject.PositionObjectBenefit;
 import org.kuali.kfs.module.ld.document.LaborLedgerPostingDocument;
@@ -45,6 +46,19 @@ public class CuLaborPendingEntryConverterServiceImpl extends LaborPendingEntryCo
         
     }
     
+    @Override
+    public LaborLedgerPendingEntry getBenefitPendingEntry(LaborLedgerPostingDocument document, ExpenseTransferAccountingLine accountingLine, 
+            GeneralLedgerPendingEntrySequenceHelper sequenceHelper, KualiDecimal benefitAmount, String fringeBenefitObjectCode) {
+        
+        LaborLedgerPendingEntry pendingEntry = super.getBenefitPendingEntry(document, accountingLine, sequenceHelper, benefitAmount, fringeBenefitObjectCode);
+        
+        pendingEntry.setPositionNumber(accountingLine.getPositionNumber());
+        pendingEntry.setEmplid(accountingLine.getEmplid());
+        
+        return pendingEntry;
+        
+    }
+
     /**
      * convert the given document and accounting line into the benefit pending entries
      * 
