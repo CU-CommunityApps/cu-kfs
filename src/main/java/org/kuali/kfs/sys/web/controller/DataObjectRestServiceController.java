@@ -46,6 +46,7 @@ import org.kuali.rice.krad.UserSession;
 import org.kuali.rice.krad.bo.BusinessObject;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.DataDictionaryService;
+import org.kuali.rice.krad.service.KRADServiceLocator;
 import org.kuali.rice.krad.service.KRADServiceLocatorWeb;
 import org.kuali.rice.krad.service.PersistenceStructureService;
 import org.kuali.rice.krad.service.XmlObjectSerializerService;
@@ -241,11 +242,11 @@ public class DataObjectRestServiceController {
         boolean moduleIsLocked = isModuleLocked != null && isModuleLocked;
         boolean noInquiryDefinition = !boe.hasInquiryDefinition();
 
-        LOG.debug("notAuthorized: " + notAuthorized);
-        LOG.debug("moduleIsLocked: " + moduleIsLocked);
-        LOG.debug("noInquiryDefinition: " + noInquiryDefinition);
-
         if (notAuthorized || moduleIsLocked || noInquiryDefinition) {
+            LOG.debug("notAuthorized: " + notAuthorized);
+            LOG.debug("moduleIsLocked: " + moduleIsLocked);
+            LOG.debug("noInquiryDefinition: " + noInquiryDefinition);
+
             throw new AccessDeniedException("Not authorized.");
         }
     }
@@ -305,7 +306,7 @@ public class DataObjectRestServiceController {
 
     public PersistenceStructureService getPersistenceStructureService() {
         if (persistenceStructureService == null) {
-            persistenceStructureService = SpringContext.getBean(PersistenceStructureService.class);
+            persistenceStructureService = KRADServiceLocator.getPersistenceStructureService();
         }
         return persistenceStructureService;
     }
@@ -326,7 +327,7 @@ public class DataObjectRestServiceController {
     }
 
     public XmlObjectSerializerService getXmlObjectSerializerService() {
-        return SpringContext.getBean(XmlObjectSerializerService.class);
+        return KRADServiceLocator.getXmlObjectSerializerService();
     }
 
     public PermissionService getPermissionService() {
@@ -342,7 +343,7 @@ public class DataObjectRestServiceController {
 
     public BusinessObjectService getBusinessObjectService() {
         if (businessObjectService == null) {
-            businessObjectService = SpringContext.getBean(BusinessObjectService.class);
+            businessObjectService = KRADServiceLocator.getBusinessObjectService();
         }
         return businessObjectService;
     }
