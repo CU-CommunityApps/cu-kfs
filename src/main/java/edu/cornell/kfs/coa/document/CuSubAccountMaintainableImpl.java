@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.A21IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.businessobject.A21SubAccount;
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.coa.document.SubAccountMaintainableImpl;
 import org.kuali.kfs.coa.service.A21SubAccountService;
@@ -243,25 +244,57 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
         boolean retval = false;
         
         if ((maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_NEW_ACTION))
-             || (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_COPY_ACTION))) {
+                || (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_COPY_ACTION))) {
                         
             //need "new" bo for data comparisons
             SubAccount subAccount = (SubAccount) super.getBusinessObject();
-            A21SubAccount newSubAccount = subAccount.getA21SubAccount();
-            retval = newSubAccount != null && !CollectionUtils.isEmpty(newSubAccount.getA21ActiveIndirectCostRecoveryAccounts());
+            if (subAccount.getA21SubAccount().getSubAccountTypeCode().equals(KFSConstants.SubAccountType.EXPENSE)) { 
+                //We need to route only when the ICR data the user is submitting does NOT match the ICR data on the account
+                
+                //"new" subAccount for data comparisons
+                A21SubAccount newSubAccount = subAccount.getA21SubAccount();
+                
+                //"existing" data that would have pre-populated
+                Account account = this.getAccountService().getByPrimaryIdWithCaching(subAccount.getChartOfAccountsCode(), subAccount.getAccountNumber());
+                
+                if (ObjectUtils.isNotNull(account) && ObjectUtils.isNotNull(newSubAccount)) {
+                    List<IndirectCostRecoveryAccount> acctIcr = account.getIndirectCostRecoveryAccounts();
+                    List<A21IndirectCostRecoveryAccount> subAcctIcr = newSubAccount.getA21ActiveIndirectCostRecoveryAccounts();
+                    if (CollectionUtils.isEmpty(subAcctIcr)) {
+                        if (CollectionUtils.isEmpty(acctIcr)) {
+                            retval = false;
+                        } else {
+                            retval = true;
+                        }
+                    } else {
+                        if (CollectionUtils.isEmpty(acctIcr)) {
+                            retval = true;
+                        } else {
+                            if (subAcctIcr.size() == acctIcr.size()) {
+                                retval = isIcrSectionDataChanged(subAcctIcr, acctIcr);  
+                            } else {
+                                retval = true;
+                            }
+                        }
+                    }
+                                                                  
+                }
+            }
         } else if (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_EDIT_ACTION)) {
             
             //need "new" bo for data comparisons
             SubAccount subAccount = (SubAccount) super.getBusinessObject();
             //"new" subAccount for data comparisons
             A21SubAccount newSubAccount = subAccount.getA21SubAccount();
-            try {
-                MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(getDocumentNumber());
-                A21SubAccount oldSubAccount = (A21SubAccount)((SubAccount)oldMaintDoc.getOldMaintainableObject().getDataObject()).getA21SubAccount();
-                retval = isIcrSectionChanged(newSubAccount, oldSubAccount);
-            } catch (Exception e) {
-                LOG.error("caught exception while getting subaccount old maintainable -> documentService.getByDocumentHeaderId(" + getDocumentNumber() + "). ", e);
+            if (ObjectUtils.isNotNull(newSubAccount)) {
+                try {
+                    MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(getDocumentNumber());
+                    A21SubAccount oldSubAccount = (A21SubAccount)((SubAccount)oldMaintDoc.getOldMaintainableObject().getDataObject()).getA21SubAccount();
+                    retval = isIcrSectionChanged(newSubAccount, oldSubAccount);
+                } catch (Exception e) {
+                    LOG.error("caught exception while getting subaccount old maintainable -> documentService.getByDocumentHeaderId(" + getDocumentNumber() + "). ", e);
                 
+                }
             }
         }
         return retval; 
@@ -288,11 +321,11 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
         
     }
     
-    private boolean isIcrSectionDataChanged(List<A21IndirectCostRecoveryAccount> newIcrAccounts, List<A21IndirectCostRecoveryAccount> oldIcrAccounts) {
+    private boolean isIcrSectionDataChanged(List<A21IndirectCostRecoveryAccount> newIcrAccounts, List<? extends IndirectCostRecoveryAccount> oldIcrAccounts) {
         boolean retval = false;
         for (A21IndirectCostRecoveryAccount newIcrAccount : newIcrAccounts) {
             boolean icrAccountMatched = false;
-            for (A21IndirectCostRecoveryAccount oldIcrAccount : oldIcrAccounts) {
+            for (IndirectCostRecoveryAccount oldIcrAccount : oldIcrAccounts) {
                 if (StringUtils.equals(newIcrAccount.getIndirectCostRecoveryFinCoaCode(), oldIcrAccount.getIndirectCostRecoveryFinCoaCode()) &&
                         StringUtils.equals(newIcrAccount.getIndirectCostRecoveryAccountNumber(), oldIcrAccount.getIndirectCostRecoveryAccountNumber()) &&
                         newIcrAccount.getAccountLinePercent().compareTo(oldIcrAccount.getAccountLinePercent()) == 0 &&
