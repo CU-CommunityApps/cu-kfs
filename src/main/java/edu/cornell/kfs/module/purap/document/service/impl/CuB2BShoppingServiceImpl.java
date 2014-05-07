@@ -24,6 +24,7 @@ import org.kuali.kfs.module.purap.document.service.impl.B2BShoppingServiceImpl;
 import org.kuali.kfs.module.purap.exception.B2BShoppingException;
 import org.kuali.kfs.module.purap.util.PurApDateFormatUtils;
 import org.kuali.kfs.module.purap.util.cxml.B2BShoppingCart;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
@@ -308,6 +309,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
         cxml.append("      <Extrinsic name=\"FirstName\">").append(user.getFirstName()).append("</Extrinsic>\n");
         cxml.append("      <Extrinsic name=\"LastName\">").append(user.getLastName()).append("</Extrinsic>\n");
         cxml.append("      <Extrinsic name=\"Role\">").append(getPreAuthValue(user.getPrincipalId())).append("</Extrinsic>\n");
+        cxml.append("      <Extrinsic name=\"Role\">").append(getViewValue(user.getPrincipalId())).append("</Extrinsic>\n");
         cxml.append("      <BrowserFormPost>\n");
         cxml.append("        <URL>").append(b2bInformation.getPunchbackURL()).append("</URL>\n");
         cxml.append("      </BrowserFormPost>\n");
@@ -330,29 +332,44 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
         return cxml.toString();
       }
 
-    // KFSUPGRADE-410
-	// KFSPTS-1720
-	private String getPreAuthValue(String principalId) {
-		try {
-			List<String> roleIds = new ArrayList<String>();
-			roleIds.add(getRoleService().getRoleIdByNamespaceCodeAndName(CUKFSConstants.ParameterNamespaces.PURCHASING, CUKFSConstants.SysKimApiConstants.ESHOP_USER_ROLE_NAME));
-			roleIds.add(getRoleService().getRoleIdByNamespaceCodeAndName(CUKFSConstants.ParameterNamespaces.PURCHASING, CUKFSConstants.SysKimApiConstants.ESHOP_SUPER_USER_ROLE_NAME));
-
-			if (getRoleService().principalHasRole(principalId, roleIds, null)) {
-				return CUPurapConstants.PREAUTHORIZED;
-			}
-			return CUPurapConstants.NON_PREAUTHORIZED;
-		} catch (Exception e) {
-			// incase something goes wrong. continue to process
-			LOG.info("error from role check " + e.getMessage());
-			return CUPurapConstants.PREAUTHORIZED;
-		}
-	}
-
-	private RoleService getRoleService() {
-		return SpringContext.getBean(RoleService.class);
-	}
-	//end KFSUPGRADE-410
+    private String getPreAuthValue(String principalId) {
+        try {
+      	  //Check for special view role first
+      	  if (KimApiServiceLocator.getPermissionService().hasPermission(
+                principalId, KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE, CUPurapConstants.B2B_SUBMIT_ESHOP_CART_PERMISSION))  {
+      		  return CUPurapConstants.SCIQUEST_ROLE_BUYER;
+      	  } else {
+          	return CUPurapConstants.SCIQUEST_ROLE_BUYER;
+      	  }
+          
+        } catch (Exception e) {
+            // incase something goes wrong.  continue to process
+            LOG.info("error from role check " + e.getMessage());
+            return CUPurapConstants.SCIQUEST_ROLE_BUYER;
+        }
+    }
+    private String getViewValue(String principalId) {
+        try {
+      	  //Check for special view role first
+      	  if (KimApiServiceLocator.getPermissionService().hasPermission(
+                	principalId, KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE, CUPurapConstants.B2B_SHOPPER_OFFICE_PERMISSION))  {
+      		  	return CUPurapConstants.SCIQUEST_ROLE_OFFICE;
+      	  } else if (KimApiServiceLocator.getPermissionService().hasPermission(
+  	      	  	principalId, KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE, CUPurapConstants.B2B_SHOPPER_LAB_PERMISSION))  {
+  				return CUPurapConstants.SCIQUEST_ROLE_LAB;
+  		  }	else if (KimApiServiceLocator.getPermissionService().hasPermission(
+  			    principalId, KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE, CUPurapConstants.B2B_SHOPPER_FACILITIES_PERMISSION))  {
+  				return CUPurapConstants.SCIQUEST_ROLE_FACILITIES;
+  		  } else {
+  				return CUPurapConstants.SCIQUEST_ROLE_UNRESTRICTED;
+      	  }
+          
+        } catch (Exception e) {
+            // incase something goes wrong.  continue to process
+            LOG.info("error from role check " + e.getMessage());
+            return CUPurapConstants.SCIQUEST_ROLE_UNRESTRICTED;
+        }
+    }
     
     // KFSUPGRADE-404
     /**

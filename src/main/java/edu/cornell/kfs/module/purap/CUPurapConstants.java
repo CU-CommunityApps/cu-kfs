@@ -180,6 +180,21 @@ public class CUPurapConstants extends PurapConstants {
     }
     
     public static final String B2B_SUBMIT_ESHOP_CART_PERMISSION = "B2B Submit Eshop Cart";
+	public static final String B2B_SHOPPER_OFFICE_PERMISSION = "B2B Shopper Office";
+	public static final String B2B_SHOPPER_LAB_PERMISSION = "B2B Shopper Lab";
+	public static final String B2B_SHOPPER_FACILITIES_PERMISSION = "B2B Shopper Facilities";
+ 
+	//assign cart roles
+	public static final String SCIQUEST_ROLE_SHOPPER = "Shopper";
+	public static final String SCIQUEST_ROLE_BUYER = "Buyer";
+	
+	//view roles
+	public static final String SCIQUEST_ROLE_OFFICE = "Office";
+	public static final String SCIQUEST_ROLE_LAB = "Lab";
+	public static final String SCIQUEST_ROLE_FACILITIES = "Facilities";
+	public static final String SCIQUEST_ROLE_UNRESTRICTED= "Unrestricted";
+
+	
     public static final String PREAUTHORIZED = "Preauthorized";
     public static final String NON_PREAUTHORIZED = "NonPreauthorized";
     
