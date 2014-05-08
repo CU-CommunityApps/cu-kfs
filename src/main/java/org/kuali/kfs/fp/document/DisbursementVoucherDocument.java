@@ -1547,6 +1547,10 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
         this.paidDate = null;
         this.cancelDate = null;
         getDocumentHeader().setFinancialDocumentStatusCode(KFSConstants.DocumentStatusCodes.INITIATED);
+        
+        //KFSPTS-3318
+        setTripAssociationStatusCode(null);
+        setTripId(null);
     }
 
     /**

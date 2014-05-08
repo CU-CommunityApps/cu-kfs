@@ -32,6 +32,7 @@ import org.kuali.kfs.sys.document.ElectronicPaymentClaiming;
 import org.kuali.kfs.sys.document.service.DebitDeterminerService;
 import org.kuali.kfs.sys.service.ElectronicPaymentClaimingService;
 import org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO;
+import org.kuali.rice.kew.exception.WorkflowException;
 import org.kuali.rice.kns.document.Copyable;
 import org.kuali.rice.kns.rule.event.KualiDocumentEvent;
 import org.kuali.rice.kns.rule.event.SaveDocumentEvent;
@@ -205,5 +206,13 @@ public class DistributionOfIncomeAndExpenseDocument extends AccountingDocumentBa
 
 	public void setTripId(String tripId) {
 		this.tripId = tripId;
+	}
+	
+	public void toCopy() throws WorkflowException {
+		super.toCopy();
+		
+		//KFSPTS-3318
+        setTripAssociationStatusCode(null);
+        setTripId(null);
 	}
 }
