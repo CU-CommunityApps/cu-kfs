@@ -18,7 +18,7 @@
         <property name="dataDictionaryPackages">
             <list>
                 <value>edu/cornell/kfs/fp/document/datadictionary</value>
-                <value>edu/cornell/kfs/fp/businessobject/datadictionary</value> 
+                <value>edu/cornell/kfs/fp/businessobject/datadictionary</value>                 
             </list>
         </property>
         <property name="databaseRepositoryFilePaths">
@@ -223,6 +223,8 @@
 			<ref bean="disbursementVoucherPayeeService" />
 		</property>
 	</bean> 
+
+	<bean id="disbursementVoucherTaxService"  parent="disbursementVoucherTaxService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherTaxServiceImpl"/>
 		
 	
 	
