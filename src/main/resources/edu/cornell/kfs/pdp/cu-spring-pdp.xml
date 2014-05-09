@@ -124,5 +124,24 @@
         <property name="businessObjectService" ref="businessObjectService" />
         <property name="parameterService" ref="parameterService"/>
     </bean>
+    <bean id="pdpAchAdviceNotificationService" class="edu.cornell.kfs.pdp.batch.service.impl.CuAchAdviceNotificationServiceImpl">
+        <property name="pdpEmailService" ref="pdpEmailService"/>
+        <property name="paymentGroupService" ref="pdpPaymentGroupService"/>
+        <property name="dateTimeService" ref="dateTimeService"/>
+        <property name="businessObjectService" ref="businessObjectService"/>
+        <property name="achBundlerAdviceDao" ref="achBundlerAdviceDao"/>              <!-- KFSPTS-1460 - Added -->
+        <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />  <!-- KFSPTS-1460 - Added -->
+    </bean>
+    
+    <bean id="pdpEmailService" class="edu.cornell.kfs.pdp.service.impl.CuPdpEmailServiceImpl">
+        <property name="parameterService" ref="parameterService" />
+        <property name="customerProfileService" ref="pdpCustomerProfileService"/>
+        <property name="mailService" ref="mailService" />
+        <property name="dataDictionaryService" ref="dataDictionaryService"/>
+        <property name="configurationService" ref="configurationService" />
+        <property name="achBankService" ref="pdpAchBankService" />
+        <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />   <!-- KFSPTS-1460: Added -->
+        <property name="kfsMailMessageService" ref="kfsMailMessageService" />          <!-- KFSPTS-1460: Added -->
+    </bean>
 
 </beans>

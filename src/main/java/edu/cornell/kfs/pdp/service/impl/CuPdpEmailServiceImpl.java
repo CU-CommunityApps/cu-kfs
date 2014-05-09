@@ -1,0 +1,462 @@
+package edu.cornell.kfs.pdp.service.impl;
+
+import java.util.Iterator;
+import java.util.List;
+
+import javax.mail.MessagingException;
+
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
+import org.kuali.kfs.pdp.PdpKeyConstants;
+import org.kuali.kfs.pdp.businessobject.ACHBank;
+import org.kuali.kfs.pdp.businessobject.CustomerProfile;
+import org.kuali.kfs.pdp.businessobject.PaymentDetail;
+import org.kuali.kfs.pdp.businessobject.PaymentGroup;
+import org.kuali.kfs.pdp.businessobject.PaymentNoteText;
+import org.kuali.kfs.pdp.service.impl.PdpEmailServiceImpl;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.rice.core.api.mail.MailMessage;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.web.format.CurrencyFormatter;
+import org.kuali.rice.core.web.format.DateFormatter;
+import org.kuali.rice.core.web.format.Formatter;
+import org.kuali.rice.core.web.format.IntegerFormatter;
+import org.kuali.rice.krad.exception.InvalidAddressException;
+
+import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
+
+import edu.cornell.kfs.pdp.CUPdpKeyConstants;
+import edu.cornell.kfs.pdp.service.CuPdpEmailService;
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
+import edu.cornell.kfs.sys.mail.KFSMailMessage;
+import edu.cornell.kfs.sys.mail.service.KFSMailMessageService;
+
+public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpEmailService{
+	
+	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPdpEmailServiceImpl.class);
+	
+    private AchBundlerHelperService achBundlerHelperService;
+    private KFSMailMessageService kfsMailMessageService;               //KFSPTS-1460 - added
+	
+	/**
+	 * Sends advice notification email to the payee receiving an ACH payment
+	 * 
+	 * KFSPTS-1460: 
+	 * Deprecated this method signature due to need for refactoring to deal with both the unbundled and bundled cases. 
+	 * The major change is that the paymentDetail input parameter is no longer a singleton and is a list of payment details instead.
+	 * The caller will no longer loop through the payment detail records calling sendAchAdviceEmail but instead will pass the 
+	 * entire list of payment detail records and sendAchAdviceEmail will loop through them taking into account cases for
+	 * multiples and singletons when creating and sending the advice emails.
+	 * 
+	 * @param paymentGroup ACH payment group to send notification for
+	 * @param paymentDetail Payment Detail containing payment amounts
+	 * @param customer Pdp Customer profile for payment
+	 */
+	@Deprecated
+	public void sendAchAdviceEmail(PaymentGroup paymentGroup, PaymentDetail paymentDetail, CustomerProfile customer) {
+		LOG.info("DEPRECATED method sendAchAdviceEmail() with payment details as a singleton was called.  NO ACH advices were sent.");
+		//throwing run time exception so caller does not update the database that the ACH advice was sent.
+		throw new RuntimeException("DEPRECATED method sendAchAdviceEmail() with payment details as a singleton was called.  NO ACH advices were sent.");
+    }
+
+	/**
+	 * Send advice notification email to the payee receiving an ACH payment for both bundled and unbundled ACH payments.
+	 * 
+	 * KFSPTS-1460: 
+	 * New method signature due to need for refactoring to deal with both the unbundled and bundled cases. 
+	 * The major change is that the paymentDetail input parameter is now a list of payment details instead of being a singleton.
+	 * The caller will pass the entire list of payment detail records and sendAchAdviceEmail will loop through them taking into 
+	 * account cases for multiples and singletons when creating and sending the advice emails.
+	 *  
+	 * @param paymentGroup Payment group corresponding to the payment detail records
+	 * @param paymentDetails List of all payment details to process for the single advice email being sent
+	 * @param customer Pdp customer profile for payment
+	 */
+	public void sendAchAdviceEmail(PaymentGroup paymentGroup, List<PaymentDetail> paymentDetails, CustomerProfile customer) {		
+        LOG.debug("sendAchAdviceEmail() with payment details list starting");	     
+        Integer numPayments = 0;
+        String productionEnvironmentCode = kualiConfigurationService.getPropertyValueAsString(KFSConstants.PROD_ENVIRONMENT_CODE_KEY);
+        String environmentCode = kualiConfigurationService.getPropertyValueAsString(KFSConstants.ENVIRONMENT_KEY);
+        boolean shouldBundleAchPayments = this.getAchBundlerHelperService().shouldBundleAchPayments();
+        if (shouldBundleAchPayments) {
+        	//Send out one email to the payee listing all the payment details for the specified payment group
+        	
+        	MailMessage bundledMessage = createAdviceMessageAndPopulateHeader(paymentGroup, customer, productionEnvironmentCode, environmentCode);
+        	KFSMailMessage bundledPdpMessage = new KFSMailMessage(bundledMessage);
+        	
+        	//create the formatted body
+   			// this seems wasteful, but since the total net amount is needed in the message body before the payment details...it's needed
+        	KualiDecimal totalNetAmount = new KualiDecimal(0);
+        	Iterator<PaymentDetail> pdToNetAmountIter = paymentDetails.iterator();
+        	while (pdToNetAmountIter.hasNext()){
+        		numPayments = numPayments + 1;
+        		PaymentDetail pd = pdToNetAmountIter.next();
+        		totalNetAmount = totalNetAmount.add(pd.getNetPaymentAmount());
+        	}     
+            int maxNumDetailsForBody = 10; //max # of payment detail records to include in email body as well as in the attachment, only used for non-DV advices
+        	StringBuffer bundledBody = createAdviceMessageBody(paymentGroup, customer, totalNetAmount, numPayments);
+        	
+        	//format payment details based on the whether it is a DV or a PREQ
+        	boolean adviceIsForDV = false;    //formatting of payment details for DV is different than for PREQ
+        	boolean firstPass = true;         //first time through loop      
+        	StringBuffer bundledAtachmentData = new StringBuffer(); 
+        	        	    
+        	for (Iterator <PaymentDetail> payDetailsIter = paymentDetails.iterator(); payDetailsIter.hasNext();) {
+        		PaymentDetail paymentDetail = payDetailsIter.next();
+        		
+        		//initialize data the first time through the loop 
+        		if (firstPass){
+        			adviceIsForDV = (paymentDetail.getFinancialDocumentTypeCode().equalsIgnoreCase(DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH))?true:false;        			
+        			if (adviceIsForDV){
+        				//we will NOT be sending an attachment, all payment detail will be in the body of the message
+        				bundledBody.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_HEADER_LINE_ONE));
+        				bundledBody.append(customer.getAdviceHeaderText());
+        				bundledBody.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_SEPARATOR));
+        			}
+        			else {
+        				//we will be sending an attachment
+        				bundledAtachmentData = new StringBuffer();
+        	            //creating the payment detail table header
+        	        	bundledAtachmentData.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_ATTACHMENT_HEADING_SUMMARY_LINE_ONE));
+        	        	bundledAtachmentData.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_ATTACHMENT_HEADING_SUMMARY_LINE_TWO));
+        	        	bundledAtachmentData.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_ATTACHMENT_HEADING_SUMMARY_LINE_THREE));
+        	        	
+        	            //verbiage describing the payment details and attachment
+        	        	bundledBody.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_DETAIL_INFO_MSG, numPayments));
+        	        	if (numPayments <= maxNumDetailsForBody) {
+        	        		//email body will have details and an attachment will be sent 
+        	        		bundledBody.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_DETAIL_UNDER_LIMIT_MSG));
+        	        		//individual customer message for the payment
+            	        	bundledBody.append(customer.getAdviceHeaderText());
+            	        	bundledBody.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_SEPARATOR));
+        	        	}//implied else that numPayments is over the max so only send an attachment
+        			}               			
+        			firstPass = false;  //ensure headers only included once
+        		}//first-pass
+        		
+        		if (adviceIsForDV){
+        			//format payment detail information and include it in the message body, do not send an attachment
+        			bundledBody.append(createAdviceMessagePaymentDetail(paymentGroup, paymentDetail, adviceIsForDV, shouldBundleAchPayments));        			
+        		}
+        		else{ 
+        			//put payment detail information in the attachment
+        			bundledAtachmentData.append(createAdviceMessagePaymentDetail(paymentGroup, paymentDetail, adviceIsForDV, shouldBundleAchPayments));
+        			
+        			//also put payment detail in the body when the number of payments is fewer than the max
+        			if (numPayments <= maxNumDetailsForBody) {
+        				//explicitly using false instead of shouldBundleAchPayments so that we get the correct format for the email body
+        				bundledBody.append(createAdviceMessagePaymentDetail(paymentGroup, paymentDetail, adviceIsForDV, false)); 
+        			}
+        		}        		
+   
+        	}//for-loop
+        	
+        	bundledPdpMessage.setMessage(bundledBody.toString());
+        	if (!adviceIsForDV) {
+        		//only create the attachment file when the payments are NOT for DV's
+        		Formatter integerFormatter = new IntegerFormatter();
+            	String attachmentFileName = new String("paymentDetailsForDisbursement_" + (String)integerFormatter.formatForPresentation(paymentGroup.getDisbursementNbr()) + ".csv");
+            	bundledPdpMessage.setAttachmentFilename(attachmentFileName);
+            	bundledPdpMessage.setAttachmentContent(bundledAtachmentData.toString());
+            	bundledPdpMessage.setAttachmentMimeType(new String("text/csv"));
+        	}        	
+        	sendFormattedAchAdviceEmail(bundledPdpMessage, customer, paymentGroup, productionEnvironmentCode, environmentCode);        	
+        }
+        else {
+        	//Maintain original spec of sending the payee an email for each payment detail in the payment group
+        	//PdpMailMessage extends the MailMessage class.  Type casting is used in sendFormattedAchAdviceEmail
+        	//so that the appropriate mail "send" is invoked based on the message type that we created and passed.
+        	for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
+        		numPayments = paymentGroup.getPaymentDetails().size();
+        		MailMessage nonBundledMessage = createAdviceMessageAndPopulateHeader(paymentGroup, customer, productionEnvironmentCode, environmentCode);
+        		StringBuffer nonBundledBody =  createAdviceMessageBody(paymentGroup, customer, paymentDetail.getNetPaymentAmount(), numPayments);
+        		nonBundledBody.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_HEADER_LINE_ONE));
+        		nonBundledBody.append(customer.getAdviceHeaderText());
+        		nonBundledBody.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_SEPARATOR));
+        		boolean adviceIsForDV = (paymentDetail.getFinancialDocumentTypeCode().equalsIgnoreCase(DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH))?true:false;
+        		nonBundledBody.append(createAdviceMessagePaymentDetail(paymentGroup, paymentDetail, adviceIsForDV, shouldBundleAchPayments));
+        		nonBundledMessage.setMessage(nonBundledBody.toString());
+         		sendFormattedAchAdviceEmail(nonBundledMessage, customer, paymentGroup, productionEnvironmentCode, environmentCode);
+        	}
+        }
+        
+    }   
+   
+   /**
+    * KFSPTS-1460: New method. created from code in sendAchAdviceEmail.
+    * @return
+    */
+    private MailMessage createAdviceMessageAndPopulateHeader(PaymentGroup paymentGroup, CustomerProfile customer, String productionEnvironmentCode, String environmentCode) {
+    	LOG.debug("createAdviceMessageAndPopulateHeader() starting");
+    	MailMessage message = new MailMessage();
+        	
+    	String fromAddress = customer.getAdviceReturnEmailAddr();	
+		if ((fromAddress == null) || (fromAddress.isEmpty())) {
+			//get the default from address
+			fromAddress = parameterService.getParameterValueAsString(CUKFSParameterKeyConstants.KFS_PDP, CUKFSParameterKeyConstants.ALL_COMPONENTS, CUKFSParameterKeyConstants.PDP_CUSTOMER_MISSING_ADVICE_RETURN_EMAIL);
+		}	
+    	
+        if (StringUtils.equals(productionEnvironmentCode, environmentCode)) {
+            message.addToAddress(paymentGroup.getAdviceEmailAddress());
+            message.addCcAddress(paymentGroup.getAdviceEmailAddress());
+            message.addBccAddress(paymentGroup.getAdviceEmailAddress());
+            message.setFromAddress(fromAddress);
+            message.setSubject(customer.getAdviceSubjectLine());
+        }
+        else {
+            message.addToAddress(mailService.getBatchMailingList());
+            message.addCcAddress(mailService.getBatchMailingList());
+            message.addBccAddress(mailService.getBatchMailingList());
+            message.setFromAddress(fromAddress);
+            message.setSubject(environmentCode + ": " + customer.getAdviceSubjectLine() + ":" + paymentGroup.getAdviceEmailAddress());
+        }        
+        
+        LOG.debug("sending email to " + paymentGroup.getAdviceEmailAddress() + " for disb # " + paymentGroup.getDisbursementNbr());        
+    	return message;
+    }
+    
+    
+    /**
+     * KFSPTS-1460: New method. Created from code in sendAchAdviceEmail and new code.
+     * All content in the body of the email message is created in this method regardless 
+     * of the number of payment details for the payment group.
+     */
+    private StringBuffer createAdviceMessageBody(PaymentGroup paymentGroup, CustomerProfile customer, KualiDecimal netPaymentAmount, Integer numPayments) {
+    	LOG.debug("createAdviceMessageBody() starting");  	
+    	
+        // formatter for payment amounts
+        Formatter moneyFormatter = new CurrencyFormatter();
+        Formatter integerFormatter = new IntegerFormatter();
+    	
+        String payeeName = "";
+        if (paymentGroup.getPayeeName() != null) {
+        	payeeName = paymentGroup.getPayeeName();
+        }
+        
+        String paymentDescription = "";
+        if (customer.getAchPaymentDescription() != null) {
+        	paymentDescription = customer.getAchPaymentDescription();
+        }
+        
+        StringBuffer body = new StringBuffer();
+        body.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_TO, payeeName));
+        body.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_FROM, paymentDescription));
+
+        // get bank name to which the payment is being transferred
+        String bankName = "";
+        ACHBank achBank = achBankService.getByPrimaryId(paymentGroup.getAchBankRoutingNbr());
+        if (achBank == null) {
+            LOG.error("Bank cound not be found for routing number " + paymentGroup.getAchBankRoutingNbr());
+        }
+        else {
+            bankName = achBank.getBankName();
+        }
+		String disbNbr = "";
+        if (paymentGroup.getDisbursementNbr() != null) {
+        	disbNbr = (String)integerFormatter.formatForPresentation(paymentGroup.getDisbursementNbr());
+        }
+        
+        //verbiage stating bank, net amount, and disb num that was sent
+        body.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_BANK_AMOUNT, bankName, moneyFormatter.formatForPresentation(netPaymentAmount), disbNbr)); 
+        
+        //verbiage stating when the deposit should be expected
+        body.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_DEPOSIT_DAYS));
+        		
+        //verbiage stating the number of payments the net deposit was for
+        body.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_DEPOSIT_NUM_PAYMENTS, integerFormatter.formatForPresentation(numPayments.toString())));
+    	
+    	return body;
+    }
+    
+    
+    /**
+     * KFSPTS-1460: New method. Create a formatted payment detail line for the ACH advice.
+     */
+    private String createAdviceMessagePaymentDetail(PaymentGroup paymentGroup, PaymentDetail paymentDetail, boolean adviceIsForDV, boolean shouldBundleAchPayments) {
+    	LOG.debug("createAdviceMessagePaymentDetail() starting");  
+    
+        Formatter moneyFormatter = new CurrencyFormatter();
+        Formatter dateFormatter = new DateFormatter();
+        Formatter integerFormatter = new IntegerFormatter();
+        
+		String invoiceNbr =  "";
+        if (StringUtils.isNotBlank(paymentDetail.getInvoiceNbr())) {
+            invoiceNbr = paymentDetail.getInvoiceNbr();
+        }
+        
+		String poNbr = "";
+        if (StringUtils.isNotBlank(paymentDetail.getPurchaseOrderNbr())) {
+        	poNbr = paymentDetail.getPurchaseOrderNbr();
+        }
+        
+		String invoiceDate = "";
+        if (paymentDetail.getInvoiceDate() != null) {
+        	invoiceDate = (String)dateFormatter.formatForPresentation(paymentDetail.getInvoiceDate());
+        }
+        
+		String sourceDocNbr = "";
+        if (StringUtils.isNotBlank(paymentDetail.getCustPaymentDocNbr())) {
+        	sourceDocNbr = paymentDetail.getCustPaymentDocNbr();
+        }
+        
+		String payDate = "";
+        if (paymentGroup.getPaymentDate() != null) {
+        	payDate = (String)dateFormatter.formatForPresentation(paymentGroup.getPaymentDate());
+        }        
+        
+		String disbNbr = "";
+        if (paymentGroup.getDisbursementNbr() != null) {
+        	disbNbr = (String)integerFormatter.formatForPresentation(paymentGroup.getDisbursementNbr());
+        }
+		
+		String disbDate = "";
+        if (paymentGroup.getDisbursementDate() != null) {
+        	disbDate = (String)dateFormatter.formatForPresentation(paymentGroup.getDisbursementDate());
+        } 
+        
+		String originalInvoiceAmount = "";
+        if (paymentDetail.getOrigInvoiceAmount() != null) {
+        	String amount = (String)moneyFormatter.formatForPresentation(paymentDetail.getOrigInvoiceAmount());
+        	originalInvoiceAmount = StringUtils.remove(amount, KFSConstants.COMMA);
+        }
+        
+		String invoiceTotalDiscount = "";
+        if (paymentDetail.getInvTotDiscountAmount() != null) {
+        	String amount = (String)moneyFormatter.formatForPresentation(paymentDetail.getInvTotDiscountAmount());
+        	invoiceTotalDiscount = StringUtils.remove(amount, KFSConstants.COMMA);
+        }
+        
+		String netPayAmount = "";
+        if (paymentDetail.getNetPaymentAmount() != null) {
+        	 String amount = (String)moneyFormatter.formatForPresentation(paymentDetail.getNetPaymentAmount());
+        	 netPayAmount = StringUtils.remove(amount, KFSConstants.COMMA);
+        }          
+        
+        //there are three types of formats that need to be created: DV (same format for both bundled and non), PREQ-bundled, PREQ-non-bundled
+        StringBuffer formattedPaymentDetail = new StringBuffer();
+        
+        if (adviceIsForDV){
+        //DV payment detail gets put in message body, format for that
+        	formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_SOURCE_DOCUMENT_NUMBER, sourceDocNbr));
+        	formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_NET_PAYMENT_AMOUNT, netPayAmount));
+        	formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_ORIGINAL_INVOICE_AMOUNT, originalInvoiceAmount));
+        	
+            // print payment notes
+        	formattedPaymentDetail.append(KFSConstants.NEWLINE);
+            for (PaymentNoteText paymentNoteText : paymentDetail.getNotes()) {
+            	formattedPaymentDetail.append(paymentNoteText.getCustomerNoteText() + KFSConstants.NEWLINE);
+            }
+
+            if (paymentDetail.getNotes().isEmpty()) {
+            	formattedPaymentDetail.append(getMessage(PdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_NONOTES));
+            }
+        	
+            formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_SEPARATOR));        	
+        }        
+        else if (shouldBundleAchPayments){
+        //PREQ payment detail gets put in attachment	
+        	formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_ATTACHMENT_PAYMENT_TABLE_ITEM_LINE, invoiceNbr, poNbr, invoiceDate, sourceDocNbr, payDate, disbNbr, disbDate, originalInvoiceAmount, invoiceTotalDiscount, netPayAmount));
+        }        
+        else{
+        //PREQ payment detail gets put in message body	(used for BOTH non-bundled adviced and the first N payment details of bundled advices
+        	formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_INVOICE_NUMBER, invoiceNbr));
+        	formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PURCHASE_ORDER_NUMBER, poNbr));        	
+        	formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_SOURCE_DOCUMENT_NUMBER, sourceDocNbr));
+        	
+        	formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_NET_PAYMENT_AMOUNT, netPayAmount));
+        	formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_ORIGINAL_INVOICE_AMOUNT, originalInvoiceAmount));
+        	formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_TOTAL_DISCOUNT_AMOUNT, invoiceTotalDiscount));
+        	
+            // print payment notes
+        	formattedPaymentDetail.append(KFSConstants.NEWLINE);
+            for (PaymentNoteText paymentNoteText : paymentDetail.getNotes()) {
+            	formattedPaymentDetail.append(paymentNoteText.getCustomerNoteText() + KFSConstants.NEWLINE);
+            }
+
+            if (paymentDetail.getNotes().isEmpty()) {
+            	formattedPaymentDetail.append(getMessage(PdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_NONOTES));
+            }
+        	
+            formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_SEPARATOR));        	
+        }
+		        		
+		return formattedPaymentDetail.toString();
+    }
+       
+    
+    /**
+     * KFSPTS-1460: broke this logic out of sendAchAdviceEmail
+     * 
+     */
+    private void sendFormattedAchAdviceEmail(MailMessage message, CustomerProfile customer, PaymentGroup paymentGroup, String productionEnvironmentCode, String environmentCode) {
+    	LOG.debug("sendFormattedAchAdviceEmail() starting");
+    	
+    	if (message instanceof KFSMailMessage) {
+    		//send a PdpMailMessage which MailMessage with the addition of attachment data.
+    		KFSMailMessage mimeMessage = (KFSMailMessage)message;
+    		kfsMailMessageService.send(mimeMessage);    		
+    	}
+    	else {
+    		//send the message using the KSB  		
+	        //send the email we just created
+	        try {
+	            mailService.sendMessage(message);
+	        }
+	        catch (InvalidAddressException e) {
+	            LOG.error("sendAchAdviceEmail() Invalid email address. Sending message to " + customer.getAdviceReturnEmailAddr(), e);
+	
+	            // send notification to advice return address with payment details
+	            if (StringUtils.equals(productionEnvironmentCode, environmentCode)) {
+	                message.addToAddress(customer.getAdviceReturnEmailAddr());
+	            }
+	            else {
+	                message.addToAddress(mailService.getBatchMailingList());
+	            }
+	            
+	            message.setFromAddress(mailService.getBatchMailingList());
+	            message.setSubject(getMessage(PdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_INVALID_EMAIL_ADDRESS));
+	
+	            LOG.debug("bouncing email to " + customer.getAdviceReturnEmailAddr() + " for disb # " + paymentGroup.getDisbursementNbr());
+	            try {
+	                mailService.sendMessage(message);
+	            }
+	            catch (InvalidAddressException e1) {
+	                LOG.error("Could not send email to advice return email address on customer profile: " + customer.getAdviceReturnEmailAddr(), e1);
+	                throw new RuntimeException("Could not send email to advice return email address on customer profile: " + customer.getAdviceReturnEmailAddr());
+	            } catch (MessagingException e1) {
+	            	LOG.error("An exception occurred while sending email to advice return email address on customer profile: " + customer.getAdviceReturnEmailAddr(), e1);
+	                throw new RuntimeException("An exception occurred while sending email to advice return email address on customer profile: " + customer.getAdviceReturnEmailAddr());
+				}
+	        } catch (MessagingException e) {
+	        	LOG.error("An exception occurred while sending email to advice return email address on customer profile: " + customer.getAdviceReturnEmailAddr(), e);
+                throw new RuntimeException("An exception occurred while sending email to advice return email address on customer profile: " + customer.getAdviceReturnEmailAddr());
+			}
+        }
+    }
+    
+    /**
+     * KFSPTS-1460: New method
+     */
+    public AchBundlerHelperService getAchBundlerHelperService() {
+        return achBundlerHelperService;
+    }
+
+    /**
+     * KFSPTS-1460: New method
+     */
+    public void setAchBundlerHelperService(AchBundlerHelperService achBundlerHelperService) {
+        this.achBundlerHelperService = achBundlerHelperService;
+    }  
+    
+    //KFSPTS-1460 -- added
+    /**
+     * Sets the kfsMailMessageService attribute value.
+     * 
+     * @param mailService The mailService to set.
+     */
+    public void setKfsMailMessageService(KFSMailMessageService kfsMailMessageService) {
+        this.kfsMailMessageService = kfsMailMessageService;
+    }
+    
+
+}
