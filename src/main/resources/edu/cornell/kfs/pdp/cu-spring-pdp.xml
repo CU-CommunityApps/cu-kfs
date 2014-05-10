@@ -53,22 +53,8 @@
         <property name="moduleConfiguration" ref="cu-pdp"/>
     </bean>
 
-    <bean id="pdpGlPendingTransactionService" class="edu.cornell.kfs.pdp.service.impl.CuPendingTransactionServiceImpl">
-        <property name="glPendingTransactionDao" ref="pdpGlPendingTransactionDao"/>
-        <property name="accountingPeriodService" ref="accountingPeriodService"/>
-        <property name="kualiConfigurationService" ref="kualiConfigurationService"/>
-        <property name="dateTimeService" ref="dateTimeService"/>
-        <property name="documentService" ref="documentService"/>
-        <property name="businessObjectService" ref="businessObjectService" />
-        <property name="bankService" ref="bankService"/>
-        <property name="noteService" ref="noteService"/>
-        <property name="parameterService" ref="parameterService"/>
-        <property name="pdpUtilService" ref="pdpUtilService"/>
-    </bean>
+    <bean id="pdpGlPendingTransactionService" parent="pdpGlPendingTransactionService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPendingTransactionServiceImpl" />
 
-    <!--  UPGRADE-911 <bean id="achPayeeLookupableHelperService" class="edu.cornell.pdp.businessobject.lookup.CuACHPayeeLookupableHelperServiceImpl" scope="prototype" parent="disbursementPayeeLookupableHelperService" />
-	<bean id="payeeACHAccountLookupableHelperService-parentBean" class="edu.cornell.kfs.pdp.businessobject.lookup.CuPayeeACHAccountLookupableHelperServiceImpl" scope="prototype" parent="payeeLookupableHelperServiceImpl-parentBean" abstract="true" />
-    -->
     
     <bean id="achBundlerAdviceDao" parent="platformAwareDao" class="edu.cornell.kfs.pdp.dataaccess.impl.AchBundlerAdviceDaoObj"/>
     <bean id="pdpFormatPaymentDao" parent="platformAwareDao" class="edu.cornell.kfs.pdp.dataaccess.impl.CuFormatPaymentDaoOjb"/>
@@ -85,63 +71,32 @@
     
     <bean id="pdpUtilService" class="edu.cornell.kfs.pdp.service.impl.PdpUtilServiceImpl" />
     <bean id="processPdpCancelPaidService" parent="processPdpCancelPaidService-parentBean" class="edu.cornell.kfs.pdp.batch.service.impl.CuProcessPdpCancelPaidServiceImpl" />
+    
     <bean id="pdpFormatService" parent="pdpFormatService-parentBean" class="com.rsmart.kuali.kfs.pdp.service.impl.AchBundlerFormatServiceImpl">
-        <property name="paymentDetailDao" ref="pdpPaymentDetailDao"/>
-        <property name="paymentGroupDao" ref="pdpPaymentGroupDao"/>
-        <property name="processDao" ref="pdpProcessDao"/>
-        <property name="achService" ref="pdpAchService"/>
-        <property name="glPendingTransactionService" ref="pdpGlPendingTransactionService"/>
-        <property name="parameterService" ref="parameterService" />
-        <property name="formatPaymentDao" ref="pdpFormatPaymentDao"/>
-        <property name="schedulerService" ref="schedulerService"/>
-        <property name="businessObjectService" ref="businessObjectService"/>
-        <property name="paymentGroupService" ref="pdpPaymentGroupService"/>
-        <property name="dateTimeService" ref="dateTimeService"/>
-        <property name="extractPaymentService" ref="pdpExtractPaymentService" />
         <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />
     </bean>
+    
     <bean id="paymentFileService" parent="paymentFileService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileServiceImpl"/>
     <bean id="paymentFileValidationService" parent="paymentFileValidationService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileValidationServiceImpl" />
     <bean id="pdpPaymentMaintenanceService" parent="pdpPaymentMaintenanceService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentMaintenanceServiceImpl" />
     
-    <bean id="pdpExtractPaymentService" class="edu.cornell.kfs.pdp.batch.service.impl.CuExtractPaymentServiceImpl" >
-        <property name="parameterService" ref="parameterService"/>
-        <property name="directoryName" value="${staging.directory}/pdp/paymentExtract"/>
-        <property name="paymentGroupService" ref="pdpPaymentGroupService"/>
-        <property name="paymentDetailService" ref="pdpPaymentDetailService"/>
-        <property name="processDao" ref="pdpProcessDao"/>
-        <property name="dateTimeService" ref="dateTimeService"/>
-        <property name="paymentGroupHistoryDao" ref="pdpPaymentGroupHistoryDao"/>
-        <property name="paymentFileEmailService" ref="pdpEmailService"/>
-        <property name="businessObjectService" ref="businessObjectService" />
-        <property name="configurationService" ref="kualiConfigurationService"/>
-        <property name="countryService" ref="countryService"/>
+    <bean id="pdpExtractPaymentService" parent="PdpExtractPaymentService-parentBean" class="edu.cornell.kfs.pdp.batch.service.impl.CuExtractPaymentServiceImpl" >
         <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" /> 
     </bean>
     
-        <bean id="pdpAchBundlerHelperService" class="com.rsmart.kuali.kfs.pdp.service.impl.AchBundlerHelperServiceImpl">
+    <bean id="pdpAchBundlerHelperService" class="com.rsmart.kuali.kfs.pdp.service.impl.AchBundlerHelperServiceImpl">
         <property name="paymentDetailDao" ref="pdpPaymentDetailDao"/>
         <property name="businessObjectService" ref="businessObjectService" />
         <property name="parameterService" ref="parameterService"/>
     </bean>
-    <bean id="pdpAchAdviceNotificationService" class="edu.cornell.kfs.pdp.batch.service.impl.CuAchAdviceNotificationServiceImpl">
-        <property name="pdpEmailService" ref="pdpEmailService"/>
-        <property name="paymentGroupService" ref="pdpPaymentGroupService"/>
-        <property name="dateTimeService" ref="dateTimeService"/>
-        <property name="businessObjectService" ref="businessObjectService"/>
-        <property name="achBundlerAdviceDao" ref="achBundlerAdviceDao"/>              <!-- KFSPTS-1460 - Added -->
-        <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />  <!-- KFSPTS-1460 - Added -->
+    <bean id="pdpAchAdviceNotificationService" parent="pdpAchAdviceNotificationService-parentBean" class="edu.cornell.kfs.pdp.batch.service.impl.CuAchAdviceNotificationServiceImpl">
+        <property name="achBundlerAdviceDao" ref="achBundlerAdviceDao"/>              
+        <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />  
     </bean>
     
-    <bean id="pdpEmailService" class="edu.cornell.kfs.pdp.service.impl.CuPdpEmailServiceImpl">
-        <property name="parameterService" ref="parameterService" />
-        <property name="customerProfileService" ref="pdpCustomerProfileService"/>
-        <property name="mailService" ref="mailService" />
-        <property name="dataDictionaryService" ref="dataDictionaryService"/>
-        <property name="configurationService" ref="configurationService" />
-        <property name="achBankService" ref="pdpAchBankService" />
-        <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />   <!-- KFSPTS-1460: Added -->
-        <property name="kfsMailMessageService" ref="kfsMailMessageService" />          <!-- KFSPTS-1460: Added -->
+    <bean id="pdpEmailService" parent="pdpEmailService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPdpEmailServiceImpl">
+        <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />   
+        <property name="kfsMailMessageService" ref="kfsMailMessageService" />          
     </bean>
 
 </beans>
