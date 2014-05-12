@@ -33,6 +33,8 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.web.format.DateViewDateObjectFormatter;
+import org.kuali.rice.core.web.format.Formatter;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants.COMPONENT;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
@@ -364,6 +366,11 @@ public class CuRequisitionDocument extends RequisitionDocument {
             }
         }
         return accounts;
+    }
+    
+    @Override
+    public Date getCreateDateForResult() {
+        return getCreateDate();
     }
         
 }
