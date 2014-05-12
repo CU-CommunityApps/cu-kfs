@@ -53,7 +53,9 @@ public class DocumentReindexStep extends CuAbstractStep {
 	    }
 		for (Iterator<String> it = docIds.iterator(); it.hasNext(); ) {
 			Long id = new Long(it.next());
-			queue.indexDocument(id.toString());
+			try {
+			    queue.indexDocument(id.toString());
+			} catch (Exception e) {/*move to the next doc*/}
 		}
 		
 		
