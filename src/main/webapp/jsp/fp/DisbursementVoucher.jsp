@@ -23,6 +23,7 @@
 	<fp:dvPrintCoverSheet />
 	<fp:dvMessages />
 	<fp:dvTripLink />
+	<fp:dvIWantLink />
 
 	
 	<c:set var="canEdit" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}" scope="request" />

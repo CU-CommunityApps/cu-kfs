@@ -85,6 +85,10 @@
 		<c:if test="${isRegularStep && !empty(KualiForm.document.reqsDocId)}">
 			<purap:relatedDocuments documentAttributes="${DataDictionary.RelatedDocuments.attributes}" />
 		</c:if>
+		
+		<c:if test="${!empty(KualiForm.document.dvDocId)}">
+			<purap:iWantRelatedDocuments documentAttributes="${DataDictionary.RelatedDocuments.attributes}" />
+		</c:if>     
 
 		<purap:iWantNotes defaultOpen="true"/>
 	</c:if>

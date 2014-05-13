@@ -13,6 +13,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherAction;
+import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -33,6 +34,9 @@ import org.kuali.rice.krad.util.ObjectUtils;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.module.purap.document.IWantDocument;
+import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 
 
 
@@ -286,6 +290,46 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
         
         return documentActions.contains(KRADConstants.KUALI_ACTION_CAN_EDIT) && editModes.contains("fullEntry");
     }
+    
+    
+    
+    /**
+     * Creates a DV document based on information on an I Want document.
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    public ActionForward createDVFromIWantDoc(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
+        String iWantDocumentNumber = request.getParameter("docId");
+        CuDisbursementVoucherForm disbursementVoucherForm = (CuDisbursementVoucherForm) form;
+
+        IWantDocument iWantDocument = (IWantDocument) getDocumentService().getByDocumentHeaderId(iWantDocumentNumber);
+        
+        // Do not allow the DV to be created if the IWNT doc is already associated with another DV.
+        if (iWantDocument != null && (StringUtils.isNotBlank(iWantDocument.getReqsDocId()) || StringUtils.isNotBlank(iWantDocument.getDvDocId())) ) {
+            GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, CUPurapKeyConstants.ERROR_DV_OR_REQ_ALREADY_CREATED_FROM_IWNT, iWantDocumentNumber);
+            return mapping.findForward("error");
+        }
+        
+        IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
+
+        createDocument(disbursementVoucherForm);
+        
+        CuDisbursementVoucherDocument disbursementVoucherDocument = (CuDisbursementVoucherDocument)disbursementVoucherForm.getDocument();
+
+        iWantDocumentService.setUpDVDetailsFromIWantDoc(iWantDocument, disbursementVoucherDocument, disbursementVoucherForm);
+        
+        // Set the DV doc ID reference on the IWantDocument.
+        iWantDocument.setDvDocId(disbursementVoucherDocument.getDocumentNumber()); 
+        SpringContext.getBean(PurapService.class).saveDocumentNoValidation(iWantDocument);
+
+        return mapping.findForward(RiceConstants.MAPPING_BASIC);
+    }
 
 }

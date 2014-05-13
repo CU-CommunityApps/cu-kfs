@@ -114,6 +114,36 @@
     	<property name="collegeLevelOrganizationDao">
 			<ref bean="collegeLevelOrganizationDao" />
 		</property>
+		<property name="attachmentService">
+			<ref bean="attachmentService" />
+		</property>
+    	<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+		<property name="noteService">
+			<ref bean="noteService" />
+		</property>
+	    <property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
+		<property name="purapService">
+			<ref bean="purapService" />
+		</property>
+		<property name="documentService">
+			<ref bean="documentService" />
+		</property>
+		<property name="financialSystemUserService">
+			<ref bean="financialSystemUserService" />
+		</property>
+		<property name="mailService">
+			<ref bean="mailService" />
+		</property>
+		<property name="persistenceService">
+			<ref bean="persistenceService" />
+		</property>
+		<property name="personService">
+			<ref bean="personService" />
+		</property>
 	</bean>
 	
 	<bean id="purchasingAccountsPayableModuleService" parent="purchasingAccountsPayableModuleService-parentBean"/>

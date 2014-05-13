@@ -187,9 +187,9 @@ public class CuRequisitionAction extends RequisitionAction {
         }
 
         // Do not allow the req to be created if the IWNT doc is already associated with another req.
-        if (StringUtils.isNotBlank(iWantDocument.getReqsDocId())) {
-            throw new WorkflowException("Cannot create requisition from IWantDocument '" + iWantDocumentNumber
-                    + "' because a requisition has already been created from that document");
+        if (iWantDocument != null && (StringUtils.isNotBlank(iWantDocument.getReqsDocId()) || StringUtils.isNotBlank(iWantDocument.getDvDocId()))) {
+            throw new WorkflowException("Cannot create requisition from IWantDocument '" + iWantDocumentNumber +
+                    "' because a DV or Requisition has already been created from that document");
         }
 
         IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);

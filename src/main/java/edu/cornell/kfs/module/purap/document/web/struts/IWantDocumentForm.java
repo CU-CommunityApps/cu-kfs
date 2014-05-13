@@ -217,6 +217,11 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
             extraButtons.add(createCreateRequisitionButton());
         }
         
+        if(getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_CREATE_DV)){
+            //KFSPTS-2527 add create DV button
+            extraButtons.add(createCreateDVButton());
+        }
+        
         return extraButtons;
     }
 
@@ -329,6 +334,18 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         clearButton.setExtraButtonOnclick("window.open('" + ConfigContext.getCurrentContextConfig().getProperty(KRADConstants.APPLICATION_URL_KEY)
                 + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId=" + getDocument().getDocumentNumber()
                 + "');return false;");
+        return clearButton;
+    }
+    
+    protected ExtraButton createCreateDVButton() {
+ExtraButton clearButton = new ExtraButton();
+        clearButton.setExtraButtonProperty("methodToCall.createDV");
+        clearButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_create_DV.gif");
+        clearButton.setExtraButtonAltText("Create DV");
+        clearButton.setExtraButtonOnclick("window.open('" + ConfigContext.getCurrentContextConfig().getProperty(KRADConstants.APPLICATION_URL_KEY)
+                + "/financialDisbursementVoucher.do?methodToCall=createDVFromIWantDoc&docId=" + getDocument().getDocumentNumber()
+                + "');return false;");
+        clearButton.setExtraButtonParams("_blank");
         return clearButton;
     }
 

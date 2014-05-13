@@ -105,6 +105,7 @@
 			parameter="methodToCall" validate="true" attribute="KualiForm">
 			<set-property property="cancellable" value="true" />
 			<forward name="basic" path="/jsp/fp/DisbursementVoucher.jsp" />
+			<forward name="error" path="/jsp/module/purap/dvCreationError.jsp" />
 		</action> 
 		
 		<action path="/financialDistributionOfIncomeAndExpense" name="CuDistributionOfIncomeAndExpenseForm" input="/jsp/fp/DistributionOfIncomeAndExpense.jsp"

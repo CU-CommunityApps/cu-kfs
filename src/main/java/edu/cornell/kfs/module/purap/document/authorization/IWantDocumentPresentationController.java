@@ -130,8 +130,11 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
             editModes.remove(CUPurapConstants.IWantDocumentSteps.VENDOR_STEP);
         }
 
-        if (StringUtils.isBlank(iWantDocument.getReqsDocId()) && !workflowDocument.isInitiated() && !workflowDocument.isSaved()) {
+        // KFSPTS-2527 only display create req and create DV buttons if neither REQ not DV has been created from I Want doc
+        if ((StringUtils.isBlank(iWantDocument.getReqsDocId()) && StringUtils.isBlank(iWantDocument.getDvDocId())) && !workflowDocument.isInitiated() && !workflowDocument.isSaved()) {   
             editModes.add(CUPurapConstants.IWNT_DOC_CREATE_REQ);
+            editModes.add(CUPurapConstants.IWNT_DOC_CREATE_DV);
+
         }
         
         editModes.add(CUPurapConstants.IWNT_DOC_USE_LOOKUPS);

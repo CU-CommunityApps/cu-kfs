@@ -29,12 +29,14 @@ import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.KewApiConstants.SearchableAttributeConstants;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.rice.krad.document.Copyable;
 import org.kuali.rice.krad.exception.ValidationException;
+import org.kuali.rice.krad.service.DataDictionaryService;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
 import org.kuali.rice.location.framework.country.CountryEbo;
@@ -136,6 +138,9 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     // ID of associated reqs document, if any.
     private String reqsDocId;
+    
+    // ID of associated DV document, if any.
+    private String dvDocId;
     
     // Copied this property from the base PURAP doc class, but made it private instead.
     private Integer accountsPayablePurchasingDocumentLinkIdentifier;
@@ -764,6 +769,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         
         setAccountsPayablePurchasingDocumentLinkIdentifier(null);
         setReqsDocId(null);
+        setDvDocId(null);
         
         this.completeOption = null;
         this.completed = false;
@@ -777,6 +783,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         setAccountsPayablePurchasingDocumentLinkIdentifier(null);
         setReqsDocId(null);
+        setDvDocId(null);
 
         this.completeOption = null;
         this.completed = false;
@@ -1469,6 +1476,23 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     @Override
     public boolean isSensitive() {
         return false;
+    }
+
+    public String getDvDocId() {
+        return dvDocId;
+    }
+
+    public void setDvDocId(String dvDocId) {
+        this.dvDocId = dvDocId;
+    }
+    
+    public String getDvUrl() {
+        return SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.WORKFLOW_URL_KEY) + "/DocHandler.do?docId=" + getDvDocId() + "&command=displayDocSearchView";
+    }
+    
+    
+    public String getDvDocumentLabel() throws WorkflowException{
+        return SpringContext.getBean(DataDictionaryService.class).getDocumentLabelByTypeName("DV");     
     }
 
 }
