@@ -33,15 +33,16 @@
 			<list/>
 		</property>
 	</bean>
-
+	
+	<bean id="cu-camModuleService" parent="camModuleService-parentBean">
+	 	<property name="moduleConfiguration" ref="cu-cam"/>
+	</bean>
+	
  	<bean id="assetGlobalService"  parent="assetGlobalService-parentBean"
  	     class="edu.cornell.kfs.module.cam.document.service.impl.CuAssetGlobalServiceImpl" />
  	<bean id="assetLookupableHelperService" parent="assetLookupableHelperService-parentBean"
  	    class="edu.cornell.kfs.module.cam.businessobject.lookup.CuAssetLookupableHelperServiceImpl" scope="prototype"  />
  	     
-	<bean id="cu-camModuleService" parent="camModuleService-parentBean">
-	 	<property name="moduleConfiguration" ref="cu-cam"/>
-	</bean>
-
+	<bean id="assetDepreciationService"  parent="assetDepreciationService-parentBean" class="edu.cornell.kfs.module.cam.batch.service.impl.CuAssetDepreciationServiceImpl" />
 
 </beans>
