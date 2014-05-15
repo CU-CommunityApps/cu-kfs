@@ -23,6 +23,8 @@ import org.kuali.rice.krad.util.MessageMap;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
+import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
+import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
 
 /**
  *
@@ -72,7 +74,7 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
 		if(StringUtils.equalsIgnoreCase(documentName, "Disbursement Voucher")) {
 			docClass = DisbursementVoucherDocument.class;
 		} else if(StringUtils.equalsIgnoreCase(documentName, "Distribution of Income and Expense")) {
-			docClass = DistributionOfIncomeAndExpenseDocument.class;
+			docClass = CuDistributionOfIncomeAndExpenseDocument.class;
 		}
         String documentTypeName = SpringContext.getBean(DataDictionaryService.class).getDocumentTypeNameByClass(DisbursementVoucherDocument.class);
         DocumentAuthorizer documentAuthorizer = SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(documentTypeName);
@@ -166,6 +168,8 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
 
 			dvDoc.setDisbVchrCheckStubText(checkStubText);
 			
+			dvDoc.setTripId(tripNumber);
+			dvDoc.setTripAssociationStatusCode(CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_TRIP_DOC);
 			// Persist document
 			SpringContext.getBean(DocumentService.class).saveDocument(dvDoc);
 			
@@ -200,10 +204,10 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
         GlobalVariables.setMessageMap(documentErrorMap);
 
         // Create document with description provided
-		DistributionOfIncomeAndExpenseDocument diDoc = null;
+		CuDistributionOfIncomeAndExpenseDocument diDoc = null;
 		
         try {
-            diDoc = (DistributionOfIncomeAndExpenseDocument) SpringContext.getBean(DocumentService.class).getNewDocument(DistributionOfIncomeAndExpenseDocument.class);
+            diDoc = (CuDistributionOfIncomeAndExpenseDocument) SpringContext.getBean(DocumentService.class).getNewDocument(DistributionOfIncomeAndExpenseDocument.class);
         }
         catch (WorkflowException e) {
             throw new RuntimeException("Error creating new disbursement voucher document: " + e.getMessage(), e);
@@ -213,7 +217,8 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
         	diDoc.getDocumentHeader().setDocumentDescription(diDescription);
         	diDoc.getDocumentHeader().setExplanation(diExplanation);
         	diDoc.getDocumentHeader().setOrganizationDocumentNumber(tripNumber);
-			
+        	diDoc.setTripAssociationStatusCode(CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_TRIP_DOC);
+        	diDoc.setTripId(tripNumber);
 			// Persist document
 			SpringContext.getBean(DocumentService.class).saveDocument(diDoc);
 			

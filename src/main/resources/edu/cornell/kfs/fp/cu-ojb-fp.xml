@@ -86,7 +86,9 @@
     <field-descriptor name="extractDate" column="DV_EXTRT_DT" jdbc-type="DATE" />
     <field-descriptor name="paidDate" column="DV_PD_DT" jdbc-type="DATE" />
     <field-descriptor name="cancelDate" column="DV_CNCL_DT" jdbc-type="DATE" />
-    <field-descriptor name="disbVchrPdpBankCode" column="DV_PDP_BNK_CD" jdbc-type="VARCHAR" />   
+    <field-descriptor name="disbVchrPdpBankCode" column="DV_PDP_BNK_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="tripAssociationStatusCode" column="DV_TRIP_ASSC_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="tripId" column="TRIP_ID" jdbc-type="VARCHAR" />   
     <field-descriptor name="disbExcptAttachedIndicator" column="DV_EXCPT_IND" jdbc-type="CHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />       
 	<field-descriptor name="immediatePaymentIndicator" column="IMD_PMT_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>       
     <reference-descriptor name="documentHeader" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true" >
@@ -393,6 +395,65 @@
         <orderby name="capitalAssetLineNumber" sort="ASC" />
         <inverse-foreignkey field-ref="documentNumber" />
     </collection-descriptor>
+</class-descriptor>
+
+<!-- DIST OF INCOME AND EXPENSE MAPPINGS -->
+<class-descriptor class="edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument" table="FP_DISTRIB_DOC_T">
+    <!--  common transactional document base attributes -->
+    <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" />
+    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+    <field-descriptor name="postingYear" column="FDOC_POST_YR" jdbc-type="INTEGER" />
+    <field-descriptor name="nextSourceLineNumber" column="FDOC_NXT_FRM_NBR" jdbc-type="INTEGER" />
+    <field-descriptor name="nextTargetLineNumber" column="FDOC_NXT_TO_NBR" jdbc-type="INTEGER" />
+    <field-descriptor name="tripAssociationStatusCode" column="DI_TRIP_ASSC_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="tripId" column="TRIP_ID" jdbc-type="VARCHAR" />
+    
+    <!-- CSU 6702 BEGIN -->
+    <field-descriptor name="postingPeriodCode" column="FDOC_POST_PRD_CD" jdbc-type="VARCHAR" />
+    <!-- CSU 6702 END -->
+    
+    <!-- collection references -->
+    <collection-descriptor name="sourceAccountingLines" proxy="true" element-class-ref="org.kuali.kfs.sys.businessobject.SourceAccountingLine" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
+        <orderby name="sequenceNumber" sort="ASC" />
+        <inverse-foreignkey field-ref="documentNumber" />
+				<query-customizer class="org.kuali.kfs.sys.dataaccess.impl.OjbQueryCustomizer">
+						<attribute attribute-name="financialDocumentLineTypeCode" attribute-value="F" />
+				</query-customizer>
+    </collection-descriptor>
+
+    <collection-descriptor name="targetAccountingLines" proxy="true" element-class-ref="org.kuali.kfs.sys.businessobject.TargetAccountingLine" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
+        <orderby name="sequenceNumber" sort="ASC" />
+        <inverse-foreignkey field-ref="documentNumber" />
+				<query-customizer class="org.kuali.kfs.sys.dataaccess.impl.OjbQueryCustomizer">
+						<attribute attribute-name="financialDocumentLineTypeCode" attribute-value="T" />
+				</query-customizer>
+    </collection-descriptor>
+
+    <collection-descriptor name="generalLedgerPendingEntries" proxy="true" element-class-ref="org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
+        <orderby name="transactionLedgerEntrySequenceNumber" sort="ASC" />
+        <inverse-foreignkey field-ref="documentNumber" />
+    </collection-descriptor>
+    
+    <collection-descriptor name="electronicPaymentClaims" proxy="true" element-class-ref="org.kuali.kfs.sys.businessobject.ElectronicPaymentClaim" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="none" auto-delete="none">
+    	<inverse-foreignkey field-ref="referenceFinancialDocumentNumber" />
+    </collection-descriptor>
+    <!--  object references -->
+    <reference-descriptor name="documentHeader" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true" >
+        <foreignkey field-ref="documentNumber" />
+    </reference-descriptor>
+
+    <!-- capital asset specific collections -->
+    <collection-descriptor name="capitalAssetInformation" proxy="true" element-class-ref="org.kuali.kfs.fp.businessobject.CapitalAssetInformation" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
+		<orderby name="capitalAssetLineNumber" sort="ASC" />
+        <inverse-foreignkey field-ref="documentNumber" />
+    </collection-descriptor>
+
+    <reference-descriptor name="accountingPeriod" class-ref="org.kuali.kfs.coa.businessobject.AccountingPeriod" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+        <foreignkey field-ref="postingYear" />
+        <foreignkey field-ref="postingPeriodCode" />
+    </reference-descriptor>
+            
 </class-descriptor>
 
 </descriptor-repository>

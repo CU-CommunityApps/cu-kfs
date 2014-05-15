@@ -1,5 +1,6 @@
 package edu.cornell.kfs.fp.document.web.struts;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherForm;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -27,7 +28,9 @@ public class CuDisbursementVoucherForm extends DisbursementVoucherForm {
         return disbursementVoucherDocument.getDvPayeeDetail().isAlumni();
     }
     public boolean getCanViewTrip() {
-        return SpringContext.getBean(CULegacyTravelService.class).isLegacyTravelGeneratedKfsDocument(this.getDocId());
+        CuDisbursementVoucherDocument disbursementVoucherDocument = (CuDisbursementVoucherDocument)this.getDocument();
+        boolean canViewTrip = SpringContext.getBean(CULegacyTravelService.class).isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(disbursementVoucherDocument);
+        return canViewTrip;
     }
     /**
      * 
@@ -35,8 +38,7 @@ public class CuDisbursementVoucherForm extends DisbursementVoucherForm {
      * @return
      */
     public String getTripUrl() {
-        String tripID = SpringContext.getBean(CULegacyTravelService.class).getLegacyTripID(this.getDocId());
-        LOG.info("getTripUrl() called");
+        String tripID = this.getTripID();
         StringBuffer url = new StringBuffer();
         url.append(SpringContext.getBean(CULegacyTravelService.class).getTravelUrl());
         url.append("/navigation?form_action=0&tripid=").append(tripID).append("&link=true");
@@ -48,7 +50,13 @@ public class CuDisbursementVoucherForm extends DisbursementVoucherForm {
      * @return
      */
     public String getTripID() {
-        return SpringContext.getBean(CULegacyTravelService.class).getLegacyTripID(this.getDocId());
+        CuDisbursementVoucherDocument dvd = (CuDisbursementVoucherDocument) this.getDocument();
+        boolean isAssociated = SpringContext.getBean(CULegacyTravelService.class).isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(dvd);
+        if (isAssociated) {
+            return dvd.getTripId();
+        } else {
+            return StringUtils.EMPTY;
+        }
     }
     
     

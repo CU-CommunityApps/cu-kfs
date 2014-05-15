@@ -15,6 +15,7 @@ import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
 import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
 
 public class CuDistributionOfIncomeAndExpenseAction extends DistributionOfIncomeAndExpenseAction{
@@ -49,10 +50,11 @@ public class CuDistributionOfIncomeAndExpenseAction extends DistributionOfIncome
         boolean isTravelDI = false;
         try {
             CULegacyTravelService cuLegacyTravelService = SpringContext.getBean(CULegacyTravelService.class);
-            String tripID = cuLegacyTravelService.getLegacyTripID(kualiDocumentFormBase.getDocId());
-            if(isTravelDI = StringUtils.isNotEmpty(tripID)) { // This means the DI is a Travel DI
+            CuDistributionOfIncomeAndExpenseDocument diDoc = (CuDistributionOfIncomeAndExpenseDocument) kualiDocumentFormBase.getDocument();
+            boolean isTravelDi = cuLegacyTravelService.isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(diDoc);
+            if (isTravelDi) {
                 tripReOpened &= cuLegacyTravelService.reopenLegacyTrip(kualiDocumentFormBase.getDocId());
-                System.out.println("Trip successfully reopened : "+tripReOpened);
+                LOG.info("Trip successfully reopened : "+tripReOpened);
             } else {
                 LOG.info("DI is not a travel DI");
             }
@@ -89,10 +91,11 @@ public class CuDistributionOfIncomeAndExpenseAction extends DistributionOfIncome
             boolean isTravelDI = false;
             try {
                 CULegacyTravelService cuLegacyTravelService = SpringContext.getBean(CULegacyTravelService.class);
-                String tripID = cuLegacyTravelService.getLegacyTripID(kualiDocumentFormBase.getDocId());
-                if(isTravelDI = StringUtils.isNotEmpty(tripID)) { // This means the DI is a Travel DI
+                CuDistributionOfIncomeAndExpenseDocument diDoc = (CuDistributionOfIncomeAndExpenseDocument) kualiDocumentFormBase.getDocument();
+                boolean isTravelDi = cuLegacyTravelService.isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(diDoc);
+                if (isTravelDi) {
                     tripReOpened &= cuLegacyTravelService.reopenLegacyTrip(kualiDocumentFormBase.getDocId(), reason);
-                    System.out.println("Trip successfully reopened : "+tripReOpened);
+                    LOG.info("Trip successfully reopened : "+tripReOpened);
                 } else {
                     LOG.info("DV is not a travel DV");
                 }

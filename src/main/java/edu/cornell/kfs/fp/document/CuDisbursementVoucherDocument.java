@@ -44,11 +44,12 @@ import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
+import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
 
 
 @NAMESPACE(namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL)
 @COMPONENT(component = "DisbursementVoucher")
-public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
+public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument implements CULegacyTravelIntegrationInterface {
 
     protected static final String DOCUMENT_REQUIRES_CAMPUS_REVIEW_SPLIT = "RequiresCampusReview";
     protected static final String DOCUMENT_REQUIRES_AWARD_REVIEW_SPLIT = "RequiresAwardReview";
@@ -67,6 +68,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
     protected static final String OBJECT_CODES_REQUIRING_TRAVEL_REVIEW = "OBJECT_CODES_REQUIRING_TRAVEL_REVIEW";
     
     protected CuDisbursementVoucherPayeeDetail dvPayeeDetail;
+    
+    //TRIP INFORMATION FILEDS
+    protected String tripAssociationStatusCode;
+    protected String tripId;
     
     public CuDisbursementVoucherDocument() {
         super();
@@ -467,6 +472,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         setDisbVchrContactPhoneNumber(StringUtils.EMPTY);
         setDisbVchrContactEmailId(StringUtils.EMPTY);
         setDisbVchrPayeeTaxControlCode(StringUtils.EMPTY);
+        setTripAssociationStatusCode(null);
+        setTripId(null);
 
         // clear nra
         SpringContext.getBean(DisbursementVoucherTaxService.class).clearNRATaxLines(this);
@@ -708,8 +715,29 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             
             return false;
         }
+        
+        
         public void setDvPayeeDetail(CuDisbursementVoucherPayeeDetail dvPayeeDetail) {
             this.dvPayeeDetail = dvPayeeDetail;
+        }
+        
+        public String getTripAssociationStatusCode() {
+            return tripAssociationStatusCode;
+        }
+
+
+        public void setTripAssociationStatusCode(String tripAssociationStatusCode) {
+            this.tripAssociationStatusCode = tripAssociationStatusCode;
+        }
+
+
+        public String getTripId() {
+            return tripId;
+        }
+
+
+        public void setTripId(String tripId) {
+            this.tripId = tripId;
         }
         
         

@@ -12,6 +12,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.kew.api.WorkflowDocument;
 
+import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
 import edu.cornell.kfs.sys.CUKFSAuthorizationConstants;
 
@@ -52,12 +53,12 @@ public class CuDisbursementVoucherDocumentPresentationController extends Disburs
      * @param editModes the edit modes so far, which can be added to
      */
     protected void addTravelSystemGeneratedEntryMode(Document document, Set<String> editModes) {
-        final DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument)document;
+        final CuDisbursementVoucherDocument dvDocument = (CuDisbursementVoucherDocument)document;
         final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         
         final Set<String> currentRouteLevels = workflowDocument.getCurrentNodeNames();
-        if(SpringContext.getBean(CULegacyTravelService.class).isLegacyTravelGeneratedKfsDocument(dvDocument.getDocumentNumber()) &&
-           !currentRouteLevels.contains(DisbursementVoucherConstants.RouteLevelNames.PAYMENT_METHOD)) {
+        boolean isAssociatedWithTrip = SpringContext.getBean(CULegacyTravelService.class).isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(dvDocument);
+        if(isAssociatedWithTrip && !currentRouteLevels.contains(DisbursementVoucherConstants.RouteLevelNames.PAYMENT_METHOD)) {
             LOG.info("Checking travel system generated entry permissions.");
             editModes.add(CUKFSAuthorizationConstants.DisbursementVoucherEditMode.TRAVEL_SYSTEM_GENERATED_ENTRY); 
         }
