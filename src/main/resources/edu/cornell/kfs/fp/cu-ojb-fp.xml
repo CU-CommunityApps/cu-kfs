@@ -56,7 +56,7 @@
 
 </class-descriptor>
 
-<class-descriptor class="org.kuali.kfs.fp.document.DisbursementVoucherDocument" table="FP_DV_DOC_T">
+<class-descriptor class="edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument" table="FP_DV_DOC_T">
     <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" />
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
