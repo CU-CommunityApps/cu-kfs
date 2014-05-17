@@ -49,8 +49,9 @@ public class CuDisbursementVoucherExtractServiceImpl extends DisbursementVoucher
         pg.setCombineGroups(Boolean.TRUE);
         pg.setCampusAddress(Boolean.FALSE);
 
-        document.refreshReferenceObject(KFSPropertyConstants.DV_PAYEE_DETAIL);
-        CuDisbursementVoucherPayeeDetail pd = (CuDisbursementVoucherPayeeDetail) document.getDvPayeeDetail();
+        CuDisbursementVoucherPayeeDetail pd = 
+        		businessObjectService.findBySinglePrimaryKey(CuDisbursementVoucherPayeeDetail.class, document.getDocumentNumber());
+        
         String rc = pd.getDisbVchrPaymentReasonCode();
 
         // If the payee is an employee, set these flags accordingly
