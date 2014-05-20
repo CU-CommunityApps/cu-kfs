@@ -185,6 +185,9 @@
         <property name="parameterService">
             <ref bean="parameterService" />
         </property>
+        <property name="vendorDao">
+        	<ref bean="vendorDao" />
+        </property>
     </bean>
     
 	<bean id="iWantDocVendorLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
