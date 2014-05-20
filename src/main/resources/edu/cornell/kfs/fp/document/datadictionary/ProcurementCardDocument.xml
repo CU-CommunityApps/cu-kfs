@@ -27,37 +27,14 @@
    </property>
 
   </bean>
-  
    
-  
   <bean id="ProcurementCardDocument-accountNumberForSearching" parent="ProcurementCardDocument-accountNumberForSearching-parentBean"/>
 
   <bean id="ProcurementCardDocument-accountNumberForSearching-parentBean" abstract="true" parent="AccountAttribute">
     <property name="name" value="accountNumberForSearching"/>
     <property name="label" value="Transaction Account"/>
   </bean>
-  
-  
-  
-  <bean id="ProcurementCard-accountingLineView" parent="ProcurementCard-accountingLineView-parent"/> 
-  <bean id="ProcurementCard-accountingLineView-parent" parent="AccountingLineView" abstract="true">
-		<property name="elements">
-			<list>
-				<bean parent="AccountingLineView-countedSequenceNumber"/>
-				<bean parent="AccountingLineView-lines">
-					<property name="lines">
-						<list>
-							<ref bean="accountingInformation"/>
-							<ref bean="salesTaxInformation"/>
-						</list>
-					</property>
-				</bean>
-				<bean parent="AccountingLineView-field" p:name="amount" p:required="true"/>
-				<bean parent="AccountingLineView-actions"/>
-			</list>
-		</property>
-  </bean>
-  
+    
   <bean id="ProcurementCard-targetGroupTotals" class="org.springframework.beans.factory.config.ListFactoryBean">
     	<property name="sourceList">
     		<list>
