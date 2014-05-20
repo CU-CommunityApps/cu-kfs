@@ -31,16 +31,16 @@ import com.rsmart.kuali.kfs.module.ld.LdConstants;
 
 public class CuLaborPendingEntryConverterServiceImpl extends LaborPendingEntryConverterServiceImpl {
 
-    @Override
     public LaborLedgerPendingEntry getBenefitClearingPendingEntry(LaborLedgerPostingDocument document, 
                                                 GeneralLedgerPendingEntrySequenceHelper sequenceHelper, String accountNumber, 
-                                                String chartOfAccountsCode, String benefitTypeCode, KualiDecimal clearingAmount) {
+                                                String chartOfAccountsCode, String benefitTypeCode, KualiDecimal clearingAmount, String objectCode) {
                
         LaborLedgerPendingEntry pendingEntry = super.getBenefitClearingPendingEntry(
                                                        document, sequenceHelper,  accountNumber, chartOfAccountsCode,  benefitTypeCode,  clearingAmount); 
         
         pendingEntry.setPositionNumber(document.getLaborLedgerPendingEntry(0).getPositionNumber());
         pendingEntry.setEmplid(document.getLaborLedgerPendingEntry(0).getEmplid());
+        pendingEntry.setFinancialObjectCode(objectCode);
         
         return pendingEntry;
         
