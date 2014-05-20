@@ -107,6 +107,13 @@
         <ref bean="IWantDocVendorDetail-vendorAliasesAsString" />
         <ref bean="IWantDocVendorDetail-vendorCommoditiesAsString" />
         <ref bean="IWantDocVendorDetail-vendorContracts.vendorContractGeneratedIdentifier"/>
+        <ref bean="IWantDocument-defaultFaxNumber" />
+        <ref bean="IWantDocument-defaultAddressStateCode" />
+        <ref bean="IWantDocument-defaultAddressLine1" />
+        <ref bean="IWantDocument-defaultAddressPostalCode" />
+        <ref bean="IWantDocument-defaultAddressLine2" />
+        <ref bean="IWantDocument-defaultAddressCity" />
+        <ref bean="IWantDocument-defaultAddressCountryCode" />
       </list>
     </property>
     <property name="collections">
@@ -803,7 +810,49 @@
   </bean>
 
   <bean id="IWantDocVendorDetail-vendorContracts.vendorContractGeneratedIdentifier-parentBean"  abstract="true" parent="VendorContract-vendorContractGeneratedIdentifier" />
+ 
+  <bean id="IWantDocument-defaultFaxNumber" parent="IWantDocument-defaultFaxNumber-parentBean"/>
+
+  <bean id="IWantDocument-defaultFaxNumber-parentBean" abstract="true" parent="VendorGenericAttributes-line1Address">
+    <property name="name" value="defaultFaxNumber"/>
+  </bean>
   
+  <bean id="IWantDocument-defaultAddressStateCode" parent="IWantDocument-defaultAddressStateCode-parentBean"/>
+
+  <bean id="IWantDocument-defaultAddressStateCode-parentBean" abstract="true" parent="VendorGenericAttributes-line1Address">
+    <property name="name" value="defaultAddressStateCode"/>
+  </bean>
+  
+  <bean id="IWantDocument-defaultAddressLine1" parent="IWantDocument-defaultAddressLine1-parentBean"/>
+
+  <bean id="IWantDocument-defaultAddressLine1-parentBean" abstract="true" parent="VendorGenericAttributes-line1Address">
+    <property name="name" value="defaultAddressLine1"/>
+  </bean>
+  
+  <bean id="IWantDocument-defaultAddressPostalCode" parent="IWantDocument-defaultAddressPostalCode-parentBean"/>
+
+  <bean id="IWantDocument-defaultAddressPostalCode-parentBean" abstract="true" parent="VendorGenericAttributes-line1Address">
+    <property name="name" value="defaultAddressPostalCode"/>
+  </bean>
+  
+  <bean id="IWantDocument-defaultAddressLine2" parent="IWantDocument-defaultAddressLine2-parentBean"/>
+
+  <bean id="IWantDocument-defaultAddressLine2-parentBean" abstract="true" parent="VendorGenericAttributes-line1Address">
+    <property name="name" value="defaultAddressLine2"/>
+  </bean>
+  
+  <bean id="IWantDocument-defaultAddressCity" parent="IWantDocument-defaultAddressCity-parentBean"/>
+
+  <bean id="IWantDocument-defaultAddressCity-parentBean" abstract="true" parent="VendorGenericAttributes-line1Address">
+    <property name="name" value="defaultAddressCity"/>
+  </bean>
+  
+   <bean id="IWantDocument-defaultAddressCountryCode" parent="IWantDocument-defaultAddressCountryCode-parentBean"/>
+
+  <bean id="IWantDocument-defaultAddressCountryCode-parentBean" abstract="true" parent="VendorGenericAttributes-line1Address">
+    <property name="name" value="defaultAddressCountryCode"/>
+  </bean>
+
 <!-- Business Object Inquiry Definition -->
 
 
