@@ -9,12 +9,11 @@ import org.kuali.rice.kew.api.KewApiConstants.SearchableAttributeConstants;
 import org.kuali.rice.krad.bo.BusinessObject;
 
 import edu.cornell.kfs.vnd.businessobject.lookup.CuVendorLookupableHelperServiceImpl;
-import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 
 public class IWantVendorLookupableHelperServiceImpl extends CuVendorLookupableHelperServiceImpl {
     
     private static final long serialVersionUID = 1L;
-    private CuVendorDao vendorDao;
+   
 
     /**
      * Customized search so that it adds * before and after the vendor name entered by the user
@@ -33,12 +32,10 @@ public class IWantVendorLookupableHelperServiceImpl extends CuVendorLookupableHe
             }
             fieldValues.put(VendorPropertyConstants.VENDOR_NAME, vendorName);
         }
-        super.setVendorDao(vendorDao);
+        
         return super.getSearchResults(fieldValues);
     }
    
-    public void setVendorDao(CuVendorDao vendorDao) {
-        this.vendorDao = vendorDao;
-    }
+    
   
 }
