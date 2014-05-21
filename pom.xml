@@ -18,8 +18,9 @@
 
   <properties>
 	<job.name>${project.artifactId}</job.name>
-	<rice.version>2.1.8</rice.version>
+	<rice.version>2.1.9</rice.version>
 	<cynergy.version>2.3.4</cynergy.version>
+	<kfs.version>5.1.1</kfs.version>
 	<cynergy.development>true</cynergy.development>
   </properties> 
   
@@ -29,8 +30,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>1.7</source>
+          <target>1.7</target>
         </configuration>
       </plugin>
       <plugin>
@@ -66,13 +67,9 @@
 	           </overlay>
 	         </overlays>
             
-           
           </configuration>
       </plugin>
-      
     </plugins>
-   
-
   </build>
 
   <repositories>
@@ -114,7 +111,7 @@
     <dependency>
       <groupId>org.kuali.kfs</groupId>
       <artifactId>kfs-lib</artifactId>
-      <version>5.1.1</version>
+      <version>${kfs.version}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>  
@@ -134,7 +131,7 @@
     <dependency>
       <groupId>org.kuali.kfs</groupId>
       <artifactId>kfs-stock</artifactId>
-      <version>5.1.1</version>
+      <version>${kfs.version}</version>
       <type>war</type>
     </dependency>
     	 
