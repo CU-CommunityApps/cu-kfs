@@ -38,5 +38,7 @@
 
     <bean id="capitalAssetBuilderModuleService"  parent="capitalAssetBuilderModuleService-parentBean" 
        class="edu.cornell.kfs.module.cab.service.impl.CuCapitalAssetBuilderModuleServiceImpl" />
+       
+    <bean id="batchExtractService"  parent="batchExtractService-parentBean" class="edu.cornell.kfs.module.cab.batch.service.impl.CuBatchExtractServiceImpl" />
 
 </beans>

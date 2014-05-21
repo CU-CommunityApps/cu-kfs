@@ -25,6 +25,9 @@ import org.kuali.rice.krad.util.KRADPropertyConstants;
  */
 public class CUKFSPropertyConstants extends KFSPropertyConstants {
     public static final String CURRENT_ACCOUNT_BALANCE_REQUIRED_FIELDS = "currentAccountBalanceRequiredFields";
+    
+    // KFSUPGRADE-779
+    public static final String DOC_HDR_FINANCIAL_DOCUMENT_STATUS_CODE = "documentHeader.financialDocumentStatusCode";
 
 }
 

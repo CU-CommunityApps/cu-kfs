@@ -3,6 +3,11 @@ package edu.cornell.kfs.module.purap.document.service.impl;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -17,6 +22,9 @@ import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.document.service.impl.CreditMemoServiceImpl;
 import org.kuali.kfs.module.purap.service.PurapAccountingService;
 import org.kuali.kfs.module.purap.service.PurapGeneralLedgerService;
+import org.kuali.kfs.module.purap.util.ExpiredOrClosedAccountEntry;
+import org.kuali.kfs.module.purap.util.VendorGroupingHelper;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
@@ -27,7 +35,12 @@ import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.service.NoteService;
 import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
 import org.kuali.rice.krad.workflow.service.WorkflowDocumentService;
+
+import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
+import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
+import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuCreditMemoServiceImpl.class);
@@ -44,6 +57,8 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
     private PurchaseOrderService purchaseOrderService;
     private VendorService vendorService;
     private WorkflowDocumentService workflowDocumentService;
+    // KFSPTS-1891
+    private CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
 
 
     public void setAccountsPayableService(AccountsPayableService accountsPayableService) {
@@ -249,5 +264,111 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
          documentAttributeIndexingQueue.indexDocument(document.getDocumentNumber());
 
      }
+     
+     @Override
+    public List<VendorCreditMemoDocument> getCreditMemosToExtract(String chartCode) {
+         // KFSPTS-1891
+    	 Iterator<VendorCreditMemoDocument> baseResults = creditMemoDao.getCreditMemosToExtract(chartCode).iterator();
+    	 return new ArrayList<VendorCreditMemoDocument>(filterPaymentRequests(baseResults));
+    }
+     
+     @Override
+    public Collection<VendorCreditMemoDocument> getCreditMemosToExtractByVendor(String chartCode, VendorGroupingHelper vendor) {
+	     // KFSPTS-1891
+    	 Collection<VendorCreditMemoDocument> baseResults = creditMemoDao.getCreditMemosToExtractByVendor(chartCode,vendor);
+    	 return filterPaymentRequests(baseResults);
+    }
+     
+     /**
+      * @see org.kuali.kfs.module.purap.document.service.CreditMemoCreateService#populateDocumentAfterInit(org.kuali.kfs.module.purap.document.CreditMemoDocument)
+      */
+     @Override
+     public void populateDocumentAfterInit(VendorCreditMemoDocument cmDocument) {
+
+         // make a call to search for expired/closed accounts
+         HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList = accountsPayableService.getExpiredOrClosedAccountList(cmDocument);
+
+         if (cmDocument.isSourceDocumentPaymentRequest()) {
+             populateDocumentFromPreq(cmDocument, expiredOrClosedAccountList);
+         }
+         else if (cmDocument.isSourceDocumentPurchaseOrder()) {
+             populateDocumentFromPO(cmDocument, expiredOrClosedAccountList);
+         }
+         else {
+             populateDocumentFromVendor(cmDocument);
+         }
+
+         // KFSPTS-1891
+         
+         VendorDetail vendorDetail = vendorService.getVendorDetail(cmDocument.getVendorHeaderGeneratedIdentifier(), cmDocument.getVendorDetailAssignedIdentifier());
+         if ( ObjectUtils.isNotNull(vendorDetail)
+                 && ObjectUtils.isNotNull(vendorDetail.getExtension()) ) {
+             if ( vendorDetail.getExtension() instanceof VendorDetailExtension
+                     && StringUtils.isNotBlank( ((VendorDetailExtension)vendorDetail.getExtension()).getDefaultB2BPaymentMethodCode() ) ) {
+             	((CuVendorCreditMemoDocument)cmDocument).setPaymentMethodCode(
+                         ((VendorDetailExtension)vendorDetail.getExtension()).getDefaultB2BPaymentMethodCode() );
+             }
+         }
+
+         populateDocumentDescription(cmDocument);
+
+         // write a note for expired/closed accounts if any exist and add a message stating there were expired/closed accounts at the
+         // top of the document
+         accountsPayableService.generateExpiredOrClosedAccountNote(cmDocument, expiredOrClosedAccountList);
+
+         // set indicator so a message is displayed for accounts that were replaced due to expired/closed status
+         if (ObjectUtils.isNotNull(expiredOrClosedAccountList) && !expiredOrClosedAccountList.isEmpty()) {
+             cmDocument.setContinuationAccountIndicator(true);
+         }
+
+     }
+     
+     // KFSPTS-1891
+     
+     /**
+      * This method filters the payment requests given to just those which will be processed by PDP.
+      * 
+      * This will be entries with payment methods with PDP_IND = "Y".
+      * 
+      * @param baseResults The entire list of payment requests valid for extraction.
+      * @return A filtered subset of the passed in list.
+      */
+     protected Collection<VendorCreditMemoDocument> filterPaymentRequests( Collection<VendorCreditMemoDocument> baseResults ) {
+         return filterPaymentRequests(baseResults.iterator());
+     }
+     
+     /**
+      * This method filters the payment requests given to just those which will be processed by PDP.
+      * 
+      * This will be entries with payment methods with PDP_IND = "Y".
+      * 
+      * @param baseResults An iterator over a list of payment requests valid for extraction.
+      * @return A filtered subset of the passed in list.
+      */
+     protected Collection<VendorCreditMemoDocument> filterPaymentRequests( Iterator<VendorCreditMemoDocument> baseResults ) {
+         ArrayList<VendorCreditMemoDocument> filteredResults = new ArrayList<VendorCreditMemoDocument>();
+         while ( baseResults.hasNext() ) {
+             VendorCreditMemoDocument doc = baseResults.next();
+             if ( doc instanceof VendorCreditMemoDocument ) {
+                 if ( getPaymentMethodGeneralLedgerPendingEntryService().isPaymentMethodProcessedUsingPdp( ((CuVendorCreditMemoDocument)doc).getPaymentMethodCode() ) ) {
+                     filteredResults.add(doc);
+                 }
+             } else {
+                 // if not the UA modification for some reason, assume that the payment method has not
+                 // been set and is therefore check
+                 filteredResults.add(doc);
+             }
+         }
+         return filteredResults;
+     }
+
+ 	public CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
+ 		return paymentMethodGeneralLedgerPendingEntryService;
+ 	}
+
+ 	public void setPaymentMethodGeneralLedgerPendingEntryService(
+ 			CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService) {
+ 		this.paymentMethodGeneralLedgerPendingEntryService = paymentMethodGeneralLedgerPendingEntryService;
+ 	}
 
 }

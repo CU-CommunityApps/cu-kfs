@@ -91,11 +91,14 @@ import org.kuali.rice.krad.workflow.service.WorkflowDocumentService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AutoPopulatingList;
 
+import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.businessobject.CuPaymentRequestItemExtension;
 import edu.cornell.kfs.module.purap.document.CuElectronicInvoiceRejectDocument;
+import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.module.purap.service.CuElectronicInvoiceHelperService;
+import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelperServiceImpl implements CuElectronicInvoiceHelperService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuElectronicInvoiceHelperServiceImpl.class);
@@ -105,6 +108,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     private static final String REJECT = "Reject";
     private static final String ACCEPT = "Accept";
 	private static final int NOTE_TEXT_DEFAULT_MAX_LENGTH = 800;
+	
+    //KFSPTS-1891
+	protected static final String DEFAULT_EINVOICE_PAYMENT_METHOD_CODE = "A";
 
     public ElectronicInvoiceLoad loadElectronicInvoices() {
 
@@ -822,7 +828,26 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         //Copied from PaymentRequestServiceImpl.populatePaymentRequest()
         //set bank code to default bank code in the system parameter
-        Bank defaultBank = SpringContext.getBean(BankService.class).getDefaultBankByDocType(preqDoc.getClass());
+        //KFSPTS-1891
+        boolean hasPaymentMethodCode = false;
+        if ( preqDoc instanceof PaymentRequestDocument ) {
+            String vendorPaymentMethodCode = ((VendorDetailExtension)poDoc.getVendorDetail().getExtension()).getDefaultB2BPaymentMethodCode();
+            if ( StringUtils.isNotEmpty(vendorPaymentMethodCode) ) { 
+                ((CuPaymentRequestDocument)preqDoc).setPaymentMethodCode(vendorPaymentMethodCode);
+                hasPaymentMethodCode = true;
+            } else {
+                ((CuPaymentRequestDocument)preqDoc).setPaymentMethodCode(DEFAULT_EINVOICE_PAYMENT_METHOD_CODE);
+            }
+        }
+        Bank defaultBank = null;
+        if ( hasPaymentMethodCode ) {
+            defaultBank = SpringContext.getBean(CUPaymentMethodGeneralLedgerPendingEntryService.class).getBankForPaymentMethod( ((CuPaymentRequestDocument)preqDoc).getPaymentMethodCode() );
+        } else { // default to baseline behavior - extended documents not in use
+            //Copied from PaymentRequestServiceImpl.populatePaymentRequest()
+            //set bank code to default bank code in the system parameter
+            defaultBank = SpringContext.getBean(BankService.class).getDefaultBankByDocType(PaymentRequestDocument.class);
+        }
+        
         if (defaultBank != null) {
             preqDoc.setBankCode(defaultBank.getBankCode());
             preqDoc.setBank(defaultBank);
@@ -1479,7 +1504,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
          * with the payment request document identifier.  This identifier is used to associate the reject document with the payment request.
          */
         PaymentRequestDocument preqDocument = createPaymentRequest(rejectDocHolder);
-        rejectDocument.setPaymentRequestIdentifier(preqDocument.getPurapDocumentIdentifier());
+        if(ObjectUtils.isNotNull(preqDocument)){
+        	rejectDocument.setPaymentRequestIdentifier(preqDocument.getPurapDocumentIdentifier());
+        }
 
         return !rejectDocHolder.isInvoiceRejected();
 

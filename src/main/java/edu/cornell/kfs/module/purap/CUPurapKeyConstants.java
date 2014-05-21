@@ -32,7 +32,8 @@ public class CUPurapKeyConstants extends PurapKeyConstants {
     
   //KFSPTS-2527
     public static final String ERROR_DV_OR_REQ_ALREADY_CREATED_FROM_IWNT = "error.document.iwnt.dvOrReqAlreadyCreated";
-
-
+    
+    // KFSUPGRADE-779
+    public static final String ERROR_PAYMENTMETHODCODE_MUSTMATCHPREQ = "error.document.creditmemo.paymentmethodcode.mustmatchpreq";
 
 }

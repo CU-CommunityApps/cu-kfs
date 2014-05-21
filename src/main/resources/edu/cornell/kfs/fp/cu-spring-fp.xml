@@ -225,9 +225,9 @@
 	</bean> 
 
 	<bean id="disbursementVoucherTaxService"  parent="disbursementVoucherTaxService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherTaxServiceImpl"/>
-		
 	
-	
+	<bean id="disbursementVoucherDao" class="edu.cornell.kfs.fp.dataaccess.impl.CuDisbursementVoucherDaoOjb" parent="platformAwareDao" />
+
     
     <!--  Validations -->
     <bean id="AuxliaryVoucher-accountingDocumentSingleSubFundValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuAuxiliaryVoucherSingleSubFundValidation" abstract="true" />
@@ -242,5 +242,10 @@
     <import resource="document/validation/configuration/CuYearEndTransferOfFundsValidation.xml" />
     
     <bean id="procurementCardDocumentDao" parent="platformAwareDao" class="edu.cornell.kfs.fp.dataaccess.impl.ProcurementCardDocumentDaoOjb" />
+
+    <!-- KFSPTS-1891 not sure why dependency are not injected-->
+    <bean id="cUPaymentMethodGeneralLedgerPendingEntryService" class="edu.cornell.kfs.fp.service.impl.CUPaymentMethodGeneralLedgerPendingEntryServiceImpl">
+     
+    </bean>
 
 </beans>

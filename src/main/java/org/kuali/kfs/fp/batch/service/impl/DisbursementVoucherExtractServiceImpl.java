@@ -76,6 +76,8 @@ import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
+
 /**
  * This is the default implementation of the DisbursementVoucherExtractService interface.
  */
@@ -92,6 +94,8 @@ public class DisbursementVoucherExtractServiceImpl implements DisbursementVouche
     protected BusinessObjectService businessObjectService;
     protected PdpEmailService paymentFileEmailService;
     protected int maxNoteLines;
+    
+    protected CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
 
     // This should only be set to true when testing this system. Setting this to true will run the code but
     // won't set the doc status to extracted

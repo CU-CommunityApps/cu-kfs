@@ -16,7 +16,7 @@
             </list>
         </property>
 		<property name="dataDictionaryPackages">
-			<list>
+			<list merge ="true">
 			   	<value>edu/cornell/kfs/module/purap/businessobject/datadictionary</value>
                 <value>edu/cornell/kfs/module/purap/document/datadictionary</value>
  			</list>
@@ -206,20 +206,28 @@
    
    <bean id="requisitionService" parent="requisitionService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuRequisitionServiceImpl"/>
     <bean id="purchaseOrderTransmissionMethodDataRulesService" class="edu.cornell.kfs.module.purap.document.service.impl.PurchaseOrderTransmissionMethodDataRulesServiceImpl" />
-    <bean id="paymentRequestService" parent="paymentRequestService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPaymentRequestServiceImpl" />
+    <bean id="paymentRequestService" parent="paymentRequestService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPaymentRequestServiceImpl" >
+            <!-- KFSPTS-1891 -->
+        <property name="paymentMethodGeneralLedgerPendingEntryService" ref="cUPaymentMethodGeneralLedgerPendingEntryService" />
+    </bean>
     <bean id="purchaseOrderDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPurchaseOrderDaoOjb" />
  	<bean id="purchaseOrderService" parent="purchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchaseOrderServiceImpl" />
  	<bean id="relatedDocumentDerivedRoleTypeService" parent="relatedDocumentDerivedRoleTypeService-parentBean" class="edu.cornell.kfs.module.purap.identity.CuRelatedDocumentDerivedRoleTypeServiceImpl" />
     <bean id="receivingService" parent="receivingService-parentBean"  class="edu.cornell.kfs.module.purap.document.service.impl.CuReceivingServiceImpl" />
     <bean id="electronicInvoiceHelperService" parent="electronicInvoiceHelperService-parentBean"  class="edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceHelperServiceImpl"/>
     <bean id="electronicInvoiceMatchingService" parent="electronicInvoiceMatchingService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceMatchingServiceImpl" />
-    <bean id="creditMemoService" parent="creditMemoService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuCreditMemoServiceImpl" />
+    <bean id="creditMemoService" parent="creditMemoService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuCreditMemoServiceImpl" >
+            <!-- KFSPTS-1891 -->
+        <property name="paymentMethodGeneralLedgerPendingEntryService" ref="cUPaymentMethodGeneralLedgerPendingEntryService" />
+    </bean>
     <bean id="b2bDao" class="edu.cornell.kfs.module.purap.dataaccess.impl.CuB2BDaoImpl"/>
     <bean id="purapService" parent="purapService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurapServiceImpl" />
    <bean id="pdpExtractService" parent="pdpExtractService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPdpExtractServiceImpl" />
 
 	<bean id="PurchaseOrderActionListAttribute" class="edu.cornell.kfs.module.purap.document.workflow.CuPurchaseOrderActionListAttribute" />
 
+   <import resource="document/validation/configuration/CuPaymentRequestValidation.xml" />
+   <import resource="document/validation/configuration/VendorCreditMemoValidation.xml" />
    <import resource="document/validation/configuration/RequisitionValidation.xml" />
    <import resource="document/validation/configuration/PurapValidatorDefinitions.xml" />
    <import resource="document/validation/configuration/PurchaseOrderAmendmentValidation.xml" />

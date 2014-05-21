@@ -207,5 +207,15 @@ public class CUPurapConstants extends PurapConstants {
     public static final String PO_CANCEL_ANNOTATION_TEXT= "message.document.purap.cancel.annotation";
 
     public static final String RECEIVING_BUTTON_ALT_TEXT = "Receiving";
+    
+    //KFSUPGRADE-779
+    public static final String LABEL_BANK_NAME = "Bank Name";
+    public static final String LABEL_BANK_CITY = "Bank City";
+    public static final String LABEL_BANK_COUNTRY = "Bank Country";
+    public static final String LABEL_CURRENCY = "Currency";
+    public static final String LABEL_BANK_ACCT_NUMBER = "Bank Account#";
+    public static final String LABEL_BANK_ACCT_NAME = "Bank Account Name";
+    public static final String PAYMENT_METHOD = "payment method";
+    public static final String WIRE_TRANSFER = "Wire Transfer";
 
 }

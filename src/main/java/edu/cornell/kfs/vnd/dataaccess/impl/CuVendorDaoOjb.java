@@ -28,6 +28,8 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuVendorDaoOjb.class);
 
     private static final String ACTIVE_INDICATOR = "activeIndicator";
+    
+    
     public VendorContract getVendorB2BContract(VendorDetail vendorDetail, String campus, Date currentSqlDate) {
        Criteria header = new Criteria();
         Criteria detail = new Criteria();
@@ -78,6 +80,8 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         String stateVal = fieldValues.get(VendorPropertyConstants.VENDOR_ADDRESS + "." + VendorPropertyConstants.VENDOR_ADDRESS_STATE);
         String supplierDiversityVal = fieldValues.get(VendorPropertyConstants.VENDOR_HEADER_PREFIX + VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITY_CODE);
         String commodityCodeVal = fieldValues.get(VendorPropertyConstants.VENDOR_COMMODITIES_CODE_PURCHASING_COMMODITY_CODE);
+        //KFSPTS-1891
+        String defaultPaymentMethod = fieldValues.get("extension.defaultB2BPaymentMethodCode");
         
         if (StringUtils.isNotBlank(headerVal)) {
         	header.addEqualTo("vendorHeaderGeneratedIdentifier", headerVal);  //
@@ -129,7 +133,11 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         if (StringUtils.isNotBlank(supplierDiversityVal)) {
         	supplierDiversity.addEqualTo(CUVendorPropertyConstants.VENDOR_HEADER_SUPPLIER_DIVERSITY_CODE, supplierDiversityVal); //THIS COMES OUT OF PUR_VNDR_SUPP_DVRST_T
             header.addAndCriteria(supplierDiversity);        
-        }        
+        }     
+        //KFSPTS-1891
+        if (StringUtils.isNotBlank(defaultPaymentMethod)) {
+        	header.addEqualTo("extension.defaultB2BPaymentMethodCode", defaultPaymentMethod);  //
+        }
         
         Long val = new Long( getPersistenceBrokerTemplate().getCount(QueryFactory.newQuery(VendorDetail.class, header)));
 		Integer searchResultsLimit = LookupUtils.getSearchResultsLimit(VendorDetail.class);

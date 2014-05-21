@@ -42,6 +42,16 @@
 					p:name="extension.vendorCreditCardMerchants" p:label="Credit Card Merchant" p:elementLabel="Credit Card Merchant" /> 
 			</list>
 		</property>
+		<property name="relationships">
+      		<list>
+      		        <!-- KFSPTS-1891 -->
+       			 <dd:relationship objectAttribute="extension"> 
+ 					<dd:primitiveAttribute source="vendorHeaderGeneratedIdentifier" target="vendorHeaderGeneratedIdentifier" />
+ 					<dd:primitiveAttribute source="vendorDetailAssignedIdentifier" target="vendorDetailAssignedIdentifier" />
+					<dd:supportAttribute source="extension.defaultB2BPaymentMethodCode" target="defaultB2BPaymentMethodCode" />
+        		 </dd:relationship>
+      		</list>
+        </property>
 	</bean>
 
 	<!-- Attribute Definitions -->
@@ -372,19 +382,24 @@
 	</bean>
 
 	<!-- Business Object Lookup Definition -->
+   <bean parent="DataDictionaryBeanOverride">
+       <property name="beanName" value="VendorDetail-lookupDefinition" />
+       <property name="fieldOverrides">
+           <list>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="lookupFields" />
+                   <property name="propertyNameForElementCompare" value="attributeName" />
+                   <property name="element">
+                       <bean parent="FieldDefinition" p:attributeName="extension.einvoiceVendorIndicator" />
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                           <bean parent="FieldDefinition" p:attributeName="extension.defaultB2BPaymentMethodCode" />
+                       </list>
+                   </property>
+               </bean>
+           </list>
+       </property>
+   </bean>
 
-
-	<bean id="VendorDetail-lookupDefinition" parent="VendorDetail-lookupDefinition-parentBean" >
-
-		<property name="lookupFields">
-			<list merge = "true">
-				<bean parent="FieldDefinition" p:attributeName="extension.einvoiceVendorIndicator" />
-			</list>
-		</property>
-		<property name="resultFields">
-			<list merge = "true">
-				<bean parent="FieldDefinition" p:attributeName="extension.einvoiceVendorIndicator" />
-			</list>
-		</property>
-	</bean>
 </beans>

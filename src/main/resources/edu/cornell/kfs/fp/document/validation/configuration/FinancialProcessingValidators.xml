@@ -29,6 +29,7 @@
     <bean id="DisbursementVoucher-initiatorPrimaryDepartmentValidation" class="edu.cornell.kfs.fp.document.validation.impl.DisbursementVoucherInitiatorPrimaryDepartmentValidation" abstract="true" />
 	<bean id="DisbursementVoucher-accountingLineTotalsValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherAccountingLineTotalsValidation" abstract="true" />
 	<bean id="DisbursementVoucher-nonResidentAlienInformationValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherNonResidentAlienInformationValidation" abstract="true" />
+	<bean id="DisbursementVoucher-bankCodeValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherBankCodeValidation" abstract="true" />
 	
 	
 	<bean id="DisbursementVoucher-paymentReasonValidation" class="org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherPaymentReasonValidation" abstract="true" >

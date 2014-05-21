@@ -17,8 +17,12 @@
 
 <kul:documentPage showDocumentInfo="true" documentTypeName="VendorCreditMemoDocument" htmlFormAction="purapVendorCreditMemo" renderMultipart="true" showTabButtons="true">
 
-    <c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}" />
- 
+    <c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}" scope="request"/>
+    
+    <!-- KFSPTS-1891 -->
+    <c:set var="wireEntryMode" value="${KualiForm.editingMode['wireEntry']}" scope="request" />
+    <c:set var="frnEntryMode" value="${KualiForm.editingMode['frnEntry']}" scope="request" />
+    
     <c:set var="displayInitTab" value="${KualiForm.editingMode['displayInitTab']}" scope="request" />
                      
     <c:if test="${displayInitTab}" > 
@@ -54,7 +58,10 @@
 		<purap:relatedDocuments documentAttributes="${DataDictionary.RelatedDocuments.attributes}"/>
            	
 	    <purap:paymentHistory documentAttributes="${DataDictionary.RelatedDocuments.attributes}" />
-	
+	    
+	    <purap:cmWireTransfer />
+	    <purap:cmForeignDraft />
+	    
 	    <gl:generalLedgerPendingEntries />
 	    
 		<kul:notes attachmentTypesValuesFinderClass="${documentEntry.attachmentTypesValuesFinderClass}" 

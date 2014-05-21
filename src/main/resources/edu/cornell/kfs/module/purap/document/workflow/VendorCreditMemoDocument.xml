@@ -17,7 +17,8 @@
       	<status>Cancelled</status>
       	<status>Complete</status>
       	<status>Awaiting AP Review</status>      	
-      	<status>Awaiting Fiscal Officer Approval</status>      	
+      	<status>Awaiting Fiscal Officer Approval</status>   
+      	<status>Awaiting Treasury Manager Approval</status>   	
       </validApplicationStatuses>
       <policies>  
         <policy>
@@ -38,7 +39,16 @@
             </branch>
             <join name="JoinRequiresImageAttachment" />
           </split>
-          <role name="Account" />
+          <role name="Account" nextNode="TreasuryManager"/>
+          <split name="TreasuryManager">
+           <branch name="True">
+             <role name="PaymentMethodReviewer" nextNode="JoinTreasury"/>
+           </branch>
+           <branch name="False">
+             <simple name="NoOpTreasury" nextNode="JoinTreasury"/>
+           </branch>
+           <join name="JoinTreasury"/>
+         </split>
         </routePath>
       </routePaths>
       <routeNodes>
@@ -58,6 +68,18 @@
           <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
+       <!-- KFSPTS-1891 -->
+       <role name="PaymentMethodReviewer">
+         <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+         <activationType>P</activationType>
+       </role>
+       <split name="TreasuryManager">
+         <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+       </split>
+       <simple name="NoOpTreasury">
+         <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+       </simple>
+       <join name="JoinTreasury"/>
       </routeNodes>
     </documentType>
   </documentTypes>

@@ -18,5 +18,11 @@
         <include method="calculateTotalsForItemChange" />
         <include method="calculateTotalsForAccountChange" />
       </create>
+      
+      <!-- KFSUPGRADE-779 -->
+      <create creator="spring" javascript="CUPaymentMethodGeneralLedgerPendingEntryService">
+        <param name="beanName" value="cUPaymentMethodGeneralLedgerPendingEntryService" />
+        <include method="getBankForPaymentMethod" />
+      </create>
 	</allow>	
 </dwr>

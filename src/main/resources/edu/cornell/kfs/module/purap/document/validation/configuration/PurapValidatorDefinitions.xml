@@ -154,6 +154,26 @@
 		<property name="reviewAccountingLineValidation" ref="PaymentRequest-reviewAccountingLine" />		
 	</bean>
     <bean id="PaymentRequest-lineItemQuantityNotZero" class="edu.cornell.kfs.module.purap.document.validation.impl.CuLineItemQuantityNotZero" abstract="true" />
+    
+    <bean id="PurchasingAccountsPayable-objectCodeOverrideBranchingValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchasingAccountsPayableObjectCodeOverrideBranchingValidation" abstract="true">
+    	<property name="parameterService" ref="parameterService" />
+		<property name="responsibleProperty" value="financialObjectCode" />
+		<property name="propertyPath" value="financialObjectCode" />
+		<property name="parameterToCheckAgainst" value="OBJECT_CODES_OVERRIDING_RESTRICTIONS" />		
+	</bean>
+    
+    <bean id="PaymentRequest-taxAreaValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPaymentRequestTaxAreaValidation" >
+    <property name="businessObjectService" ref="businessObjectService" />
+    </bean>
+    
+    <bean id="PurchasingAccountsPayable-bankCodeValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuAccountsPayableBankCodeValidation" abstract="true"/>
+    
+    	<!--  KFSPTS-1891 -->
+	<bean id="PaymentRequest-wireTransferValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PaymentRequestWireTransferValidation" abstract="true" />
+	<bean id="PaymentRequest-foreignDraftValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PaymentRequestForeignDraftValidation" abstract="true" />
+	
+	<bean id="VendorCreditMemo-wireTransferValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CreditMemoWireTransferValidation" abstract="true" />
+	<bean id="VendorCreditMemo-foreignDraftValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CreditMemoForeignDraftValidation" abstract="true" />
 
     <bean id="Purchasing-itemConsideredEnteredCompositeValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true"> 								
         <property name="quitOnFail" value="false" />

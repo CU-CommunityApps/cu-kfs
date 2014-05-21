@@ -38,6 +38,8 @@ import org.kuali.rice.kew.engine.RouteContext;
 import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.address.EntityAddress;
+import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
+import org.kuali.rice.kns.service.DocumentHelperService;
 import org.kuali.rice.kns.util.KNSGlobalVariables;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
@@ -45,6 +47,8 @@ import org.kuali.rice.krad.util.ObjectUtils;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
 import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
+import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
+import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 
 @NAMESPACE(namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL)
@@ -72,6 +76,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     //TRIP INFORMATION FILEDS
     protected String tripAssociationStatusCode;
     protected String tripId;
+    
+    private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
+    
     
     public CuDisbursementVoucherDocument() {
         super();
@@ -142,6 +149,16 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         if (getVendorService().isVendorForeign(vendor.getVendorHeaderGeneratedIdentifier())) {
             getDvPayeeDetail().setDisbVchrAlienPaymentCode(true);
         }
+        
+        // KFSPTS-1891
+        if ( vendor != null ) {
+        	            if ( ObjectUtils.isNotNull( vendor.getExtension() ) 
+        	                    && vendor.getExtension() instanceof VendorDetailExtension ) {
+        	                if ( StringUtils.isNotBlank(((VendorDetailExtension)vendor.getExtension()).getDefaultB2BPaymentMethodCode())) {
+        	                    disbVchrPaymentMethodCode = ((VendorDetailExtension)vendor.getExtension()).getDefaultB2BPaymentMethodCode();
+        	                }
+        	            }
+        	        }
     }
     
     public void templateEmployee(Person employee) {
@@ -423,6 +440,44 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         if (shouldClearSpecialHandling()) {
             clearSpecialHandling();
         }
+        // KFSPTS-1891.  This is from uadisbvdocument.  
+        // TODO : need to check again to see if cornell need this
+        if ( getDocumentHeader().getWorkflowDocument().isInitiated() ||  getDocumentHeader().getWorkflowDocument().isSaved() ) {
+            // need to check whether the user has the permission to edit the bank code
+            // if so, don't synchronize since we can't tell whether the value coming in
+            // was entered by the user or not.        
+            DocumentAuthorizer docAuth = SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(this);
+            if ( !docAuth.isAuthorizedByTemplate(this, 
+                    KFSConstants.ParameterNamespaces.KFS, 
+                    KFSConstants.PermissionTemplate.EDIT_BANK_CODE.name, 
+                    GlobalVariables.getUserSession().getPrincipalId()  ) ) {
+                synchronizeBankCodeWithPaymentMethod();        
+            } else {
+                refreshReferenceObject( "bank" );
+            }
+        }
+    }
+    
+    // KFSPTS-1891
+    protected void synchronizeBankCodeWithPaymentMethod() {
+        Bank bank = getPaymentMethodGeneralLedgerPendingEntryService().getBankForPaymentMethod( getDisbVchrPaymentMethodCode() );
+        if ( bank != null ) {
+            if ( !StringUtils.equals(bank.getBankCode(), getDisbVchrBankCode()) ) {
+                setDisbVchrBankCode(bank.getBankCode());
+                refreshReferenceObject( "bank" );
+            }
+        } else {
+            // no bank code, no bank needed
+            setDisbVchrBankCode(null);
+            setBank(null);
+        }
+    }
+    
+    protected CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
+        if ( paymentMethodGeneralLedgerPendingEntryService == null ) {
+            paymentMethodGeneralLedgerPendingEntryService = SpringContext.getBean(CUPaymentMethodGeneralLedgerPendingEntryService.class);
+        }
+        return paymentMethodGeneralLedgerPendingEntryService;
     }
     
     public CuDisbursementVoucherPayeeDetail getDvPayeeDetail() {

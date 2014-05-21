@@ -37,9 +37,15 @@
             
         <form-bean name="PdpFormatForm" 
             type="edu.cornell.kfs.pdp.web.struts.CuFormatForm" /> 
+            
         <form-bean name="DisencumbranceKualiBatchInputFileSetForm"
             type="edu.cornell.kfs.module.ld.document.struts.DisencumbranceKualiBatchInputFileSetForm" />   
             
+        <form-bean name="CuPaymentRequestForm" 
+            type="edu.cornell.kfs.module.purap.document.web.struts.CuPaymentRequestForm" />  
+		<form-bean name="CuVendorCreditMemoForm"
+			type="edu.cornell.kfs.module.purap.document.web.struts.CuVendorCreditMemoForm" /> 
+
     </form-beans>
     
     <action-mappings>
@@ -134,13 +140,22 @@
 			<forward name="basic" path="/jsp/module/purap/PurchaseOrder.jsp" />	
 		</action>
 
-	   <action path="/purapPaymentRequest" name="PaymentRequestForm"
+	   <action path="/purapPaymentRequest" name="CuPaymentRequestForm"
 			input="/jsp/module/purap/PaymentRequest.jsp"
 			type="edu.cornell.kfs.module.purap.document.web.struts.CuPaymentRequestAction"
 			scope="request" parameter="methodToCall" validate="true"
 			attribute="KualiForm">
 			<set-property property="cancellable" value="true" />
 			<forward name="basic" path="/jsp/module/purap/PaymentRequest.jsp" />	
+		</action>
+		
+	    <action path="/purapVendorCreditMemo" name="CuVendorCreditMemoForm"
+			input="/jsp/module/purap/VendorCreditMemo.jsp"
+			type="edu.cornell.kfs.module.purap.document.web.struts.CuVendorCreditMemoAction"
+			scope="request" parameter="methodToCall" validate="true"
+			attribute="KualiForm">
+			<set-property property="cancellable" value="true" />
+			<forward name="basic" path="/jsp/module/purap/VendorCreditMemo.jsp" />	
 		</action>
 
 		<action path="/purapElectronicInvoiceTestFileGeneration" 

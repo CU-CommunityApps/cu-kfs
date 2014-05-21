@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
@@ -360,14 +361,11 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
 
             }
         }
-        // TODO : This is just to make work for now.  fix later.
-        return workflowDocument != null && workflowDocument.getDocument() != null && 
-                workflowDocument.getCurrentNodeNames().contains("ContractManagement");
 
         // KFSPTS-1891 : added treasury node
-//      return workflowDocument != null && workflowDocument.getDocument() != null && (
-//              StringUtils.equals("ContractManagement", workflowDocument.getCurrentNodeNames().) ||
-//                      StringUtils.equals(NodeDetailEnum.PAYMENT_METHOD_REVIEW.getName(), workflowDocument.getCurrentNodeNames()));
+      return workflowDocument != null && workflowDocument.getDocument() != null && (
+    		  workflowDocument.getCurrentNodeNames().contains("ContractManagement") ||
+    		  workflowDocument.getCurrentNodeNames().contains(PurapConstants.PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW));
     }
 
 
