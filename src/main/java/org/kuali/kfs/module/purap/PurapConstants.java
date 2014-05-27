@@ -894,7 +894,7 @@ public class PurapConstants {
         public static final String NODE_PAYMENT_METHOD_REVIEW = "PaymentMethodReviewer";
 
         public enum STATUS_ORDER {
-            CANCELLED_IN_PROCESS(PurapConstants.CreditMemoStatuses.APPDOC_CANCELLED_IN_PROCESS, false), CANCELLED_PRIOR_TO_AP_APPROVAL(PurapConstants.CreditMemoStatuses.APPDOC_CANCELLED_PRIOR_TO_AP_APPROVAL, false), CANCELLED_POST_AP_APPROVE(PurapConstants.CreditMemoStatuses.APPDOC_CANCELLED_POST_AP_APPROVE, false), INITIATE(PurapConstants.CreditMemoStatuses.APPDOC_INITIATE, true), IN_PROCESS(PurapConstants.CreditMemoStatuses.APPDOC_IN_PROCESS, true), AWAITING_ACCOUNTS_PAYABLE_REVIEW(PurapConstants.CreditMemoStatuses.APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, false), COMPLETE(PurapConstants.CreditMemoStatuses.APPDOC_COMPLETE, false), PAYMENT_METHOD_REVIEW(CreditMemoStatuses.APPDOC_PAYMENT_METHOD_REVIEW, false), ;
+            CANCELLED_IN_PROCESS(PurapConstants.CreditMemoStatuses.APPDOC_CANCELLED_IN_PROCESS, false), CANCELLED_PRIOR_TO_AP_APPROVAL(PurapConstants.CreditMemoStatuses.APPDOC_CANCELLED_PRIOR_TO_AP_APPROVAL, false), CANCELLED_POST_AP_APPROVE(PurapConstants.CreditMemoStatuses.APPDOC_CANCELLED_POST_AP_APPROVE, false), INITIATE(PurapConstants.CreditMemoStatuses.APPDOC_INITIATE, true), IN_PROCESS(PurapConstants.CreditMemoStatuses.APPDOC_IN_PROCESS, true), AWAITING_ACCOUNTS_PAYABLE_REVIEW(PurapConstants.CreditMemoStatuses.APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, false),PAYMENT_METHOD_REVIEW(CreditMemoStatuses.APPDOC_PAYMENT_METHOD_REVIEW, false), COMPLETE(PurapConstants.CreditMemoStatuses.APPDOC_COMPLETE, false), ;
 
             private String statusCode = new String();
             private boolean fullEntryAllowed = false;
