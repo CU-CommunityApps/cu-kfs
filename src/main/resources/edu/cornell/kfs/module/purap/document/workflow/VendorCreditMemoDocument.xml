@@ -39,7 +39,7 @@
             </branch>
             <join name="JoinRequiresImageAttachment" />
           </split>
-          <role name="Account" nextNode="TreasuryManager"/>
+          <role name="Account" nextNode="TreasuryManager" nextAppDocStatus="Awaiting Treasury Manager Approval"/>
           <split name="TreasuryManager">
            <branch name="True">
              <role name="PaymentMethodReviewer" nextNode="JoinTreasury"/>
