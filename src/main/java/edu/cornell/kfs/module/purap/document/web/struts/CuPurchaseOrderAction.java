@@ -3,6 +3,7 @@ package edu.cornell.kfs.module.purap.document.web.struts;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -16,10 +17,11 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.document.attribute.DocumentAttributeIndexingQueue;
-
-import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
-import org.kuali.rice.krad.exception.AuthorizationException;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.rice.kns.question.ConfirmationQuestion;
+import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.exception.AuthorizationException;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
 
@@ -125,5 +127,39 @@ public class CuPurchaseOrderAction extends PurchaseOrderAction {
 	   
 	   // ==== End CU Customization ====
 
+    public ActionForward cancel(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
+        ActionForward forward = super.cancel(mapping, form, request, response);
+        if (question == null) {
+            return forward;
+        } else {
+            Object buttonClicked = request.getParameter(KFSConstants.QUESTION_CLICKED_BUTTON);
+            if ((KFSConstants.DOCUMENT_CANCEL_QUESTION.equals(question)) && ConfirmationQuestion.NO.equals(buttonClicked)) {
+
+                // if no button clicked just reload the doc
+                return forward;
+            }
+            // else go to cancel logic below
+        }
+
+        // TODO : need to check note length ?
+        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        String reason = request.getParameter(KFSConstants.QUESTION_REASON_ATTRIBUTE_NAME);
+        if (StringUtils.isNotBlank(reason)) {
+            String noteText = "Reason for cancelling PO : " + reason;
+            Note newNote = new Note();
+            newNote.setNoteText(noteText);
+            newNote.setNoteTypeCode(KFSConstants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE.getCode());
+            kualiDocumentFormBase.setNewNote(newNote);
+            try {
+                insertBONote(mapping, kualiDocumentFormBase, request, response);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return forward;
+    }
 
 }
