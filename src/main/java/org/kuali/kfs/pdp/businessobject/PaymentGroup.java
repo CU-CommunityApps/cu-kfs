@@ -1132,7 +1132,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
         setCity(addr.getVendorCityName());
         setState(addr.getVendorState()!=null?addr.getVendorState().getCode():"");
         setZipCd(addr.getVendorZipCode());
-        setCountry(addr.getVendorCountry()!=null?addr.getVendorCountry().getCode():"");
+        setCountry(addr.getVendorCountry()!=null?addr.getVendorCountry().getName():"");
     }
     
     /**
