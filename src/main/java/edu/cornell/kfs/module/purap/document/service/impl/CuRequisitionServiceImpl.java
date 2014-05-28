@@ -18,6 +18,8 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
+
 public class CuRequisitionServiceImpl extends RequisitionServiceImpl {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuRequisitionServiceImpl.class);
     /**
@@ -87,7 +89,10 @@ public class CuRequisitionServiceImpl extends RequisitionServiceImpl {
             //vendor contract expirated date validation....KFSMI-8502
             // if the vendor is selected through vendor contract is selected 
             if (StringUtils.isNotBlank(requisition.getVendorContractName())) {
-                if (vendorService.isVendorContractExpired(requisition, requisition.getVendorContractGeneratedIdentifier(), vendorDetail)) {
+                boolean routeToCM = parameterService.getParameterValueAsBoolean(RequisitionDocument.class,
+                        CUPurapParameterConstants.ROUTE_REQS_WITH_EXPIRED_CONTRACT_TO_CM, Boolean.FALSE);
+
+                if (routeToCM && vendorService.isVendorContractExpired(requisition, requisition.getVendorContractGeneratedIdentifier(), vendorDetail)) {
                     return "Contracted Vendor used where the contract end date is expired.";
                 }
             }

@@ -27,4 +27,7 @@ public class CUPurapParameterConstants extends PurapParameterConstants {
         public static final String SUPPRESS_REJECT_REASON_CODES_ON_EIRT_APPROVAL = "SUPPRESS_REJECT_REASON_CODES_ON_EIRT_APPROVAL";
         public static final String DEFAULT_PROCESSING_CAMPUS = "DEFAULT_PROCESSING_CAMPUS";
     }
+    
+    public static final String ROUTE_REQS_WITH_EXPIRED_CONTRACT_TO_CM = "ROUTE_REQS_WITH_EXPIRED_CONTRACT_TO_CM";
+
 }
