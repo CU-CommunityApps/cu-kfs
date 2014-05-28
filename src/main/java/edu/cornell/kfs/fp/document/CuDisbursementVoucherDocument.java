@@ -46,6 +46,7 @@ import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
+import edu.cornell.kfs.fp.businessobject.DisbursementVoucherWireTransferExtendedAttribute;
 import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
@@ -418,6 +419,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
         if (dvWireTransfer != null) {
             dvWireTransfer.setDocumentNumber(this.documentNumber);
+            ((DisbursementVoucherWireTransferExtendedAttribute)dvWireTransfer.getExtension()).setDocumentNumber(this.documentNumber);
         }
 
         if (dvNonResidentAlienTax != null) {
