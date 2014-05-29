@@ -15,6 +15,9 @@
  limitations under the License.
 -->
 
+  <bean id="AssetMaintenanceDocument" parent="AssetMaintenanceDocument-parentBean">
+    <property name="businessRulesClass" value="edu.cornell.kfs.module.cam.document.validation.impl.CuAssetRule"/>
+  </bean>
 
 <!-- Maintenance Section Definitions -->
   
