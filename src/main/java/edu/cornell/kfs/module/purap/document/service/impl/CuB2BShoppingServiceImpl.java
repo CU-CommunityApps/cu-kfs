@@ -380,6 +380,14 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
     		Integer itemLine, String defaultCommodityCode) {
     	 RequisitionItem reqItem = super.createRequisitionItem(item, itemLine, defaultCommodityCode);
     	 
+         boolean commCodeParam = parameterService.getParameterValueAsBoolean(RequisitionDocument.class, PurapParameterConstants.ENABLE_DEFAULT_VENDOR_COMMODITY_CODE_IND);
+
+         if (commCodeParam) {
+             if (reqItem.getCommodityCode() != null && !reqItem.getCommodityCode().isActive() && StringUtils.isNotBlank(defaultCommodityCode)) {
+                 reqItem.setPurchasingCommodityCode(defaultCommodityCode);
+             }
+         }
+  	 
     	 // KFSPTS-2257 : eshopflag
          Map<String, String> classification = item.getClassification();
          reqItem.setControlled(StringUtils.equals(TRUE,classification.get("Controlled")));
