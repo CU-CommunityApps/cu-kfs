@@ -255,6 +255,7 @@
         <bean parent="FieldDefinition" p:attributeName="payeeName"/>
         <bean parent="FieldDefinition" p:attributeName="payeeEmailAddress"/>
         <bean parent="FieldDefinition" p:attributeName="payeeIdentifierTypeCode"/>
+        <bean parent="FieldDefinition" p:attributeName="achTransactionType"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
     </property>
