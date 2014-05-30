@@ -166,16 +166,8 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         }
 
         super.doRouteStatusChange(statusChangeEvent);
-        try{
-            //KFSCNTRB-1207 - UMD - Muddu -- start
-            // if the document was processed but approved by the auto approve payment request job
-            // then all we want to do is to change the application document status to auto-approved
-            // by looking at the autoApprovedIndicator on the preq.
-            // DOCUEMNT PROCESSED BY THE AUTOAPPROVEPAYMENTREQUEST JOB...
-            if (this.isAutoApprovedIndicator()) {
-                updateAndSaveAppDocStatus(PurapConstants.PaymentRequestStatuses.APPDOC_AUTO_APPROVED);
-            } // DOCUMENT PROCESSED .. //KFSCNTRB-1207 - UMD - Muddu -- end
-            else if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isProcessed()) {
+        
+        if (!this.isAutoApprovedIndicator() && this.getFinancialSystemDocumentHeader().getWorkflowDocument().isProcessed()) {
                 if (!PaymentRequestStatuses.APPDOC_AUTO_APPROVED.equals(getApplicationDocumentStatus())) {
                 	
                 	//generate bank offsets for payment method wire or foreign draft, reverse 2900 to 1000
@@ -184,56 +176,11 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
                        getPaymentMethodGeneralLedgerPendingEntryService().generateFinalEntriesForPRNC(this);
                     }
                     
-                    populateDocumentForRouting();
-                    updateAndSaveAppDocStatus(PurapConstants.PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED);
-                    
                     // KFSPTS-2581 : GLPE need to be saved separately because not in ojb config
                     // All GLPE approve cd has been set to 'A'
                     saveGeneralLedgerPendingEntries();
                 }
             }
-            // DOCUMENT DISAPPROVED
-            else if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isDisapproved()) {
-                String nodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(getDocumentHeader().getWorkflowDocument());
-                String disapprovalStatus = PurapConstants.PaymentRequestStatuses.getPaymentRequestAppDocDisapproveStatuses().get(nodeName);
-
-                if (ObjectUtils.isNotNull(nodeName)) {
-                    if (((StringUtils.isBlank(disapprovalStatus)) && ((PaymentRequestStatuses.APPDOC_INITIATE.equals(getApplicationDocumentStatus())) || (PaymentRequestStatuses.APPDOC_IN_PROCESS.equals(getApplicationDocumentStatus()))))) {
-                        disapprovalStatus = PaymentRequestStatuses.APPDOC_CANCELLED_IN_PROCESS;
-                    }
-                    if (StringUtils.isNotBlank(disapprovalStatus)) {
-                        SpringContext.getBean(AccountsPayableService.class).cancelAccountsPayableDocument(this, nodeName);
-                    }
-                }
-                else {
-                    logAndThrowRuntimeException("No status found to set for document being disapproved in node '" + nodeName + "'");
-                }
-            }
-            // DOCUMENT CANCELED
-            else if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isCanceled()) {
-                String currentNodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(this.getDocumentHeader().getWorkflowDocument());
-                String cancelledStatus = PurapConstants.PaymentRequestStatuses.getPaymentRequestAppDocDisapproveStatuses().get(currentNodeName);
-
-                //**START AZ** KATTS-37 KevinMcO
-                if (StringUtils.isBlank(cancelledStatus) &&
-                        StringUtils.isBlank(PurapConstants.PaymentRequestStatuses.getPaymentRequestAppDocDisapproveStatuses().get(currentNodeName)) &&
-                        (PaymentRequestStatuses.APPDOC_INITIATE.equals(getStatusCode()) || PaymentRequestStatuses.APPDOC_IN_PROCESS.equals(getStatusCode()))) {
-                cancelledStatus = PaymentRequestStatuses.APPDOC_CANCELLED_IN_PROCESS;
-                }
-                //**END AZ**
-
-                if (ObjectUtils.isNotNull(cancelledStatus)) {
-                    SpringContext.getBean(AccountsPayableService.class).cancelAccountsPayableDocument(this, currentNodeName);
-                    updateAndSaveAppDocStatus(cancelledStatus);
-                }
-                else {
-                    logAndThrowRuntimeException("No status found to set for document being canceled in node '" + currentNodeName + "'");
-                }
-            }
-        }
-        catch (WorkflowException e) {
-            logAndThrowRuntimeException("Error saving routing data while saving document with id " + getDocumentNumber(), e);
-        }
         
     }
     
