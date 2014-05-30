@@ -240,6 +240,7 @@
     <import resource="document/validation/configuration/CuYearEndDistributionOfIncomeAndExpenseValidation.xml" />
     <import resource="document/validation/configuration/CuYearEndGeneralErrorCorrectionValidation.xml" />
     <import resource="document/validation/configuration/CuYearEndTransferOfFundsValidation.xml" />
+    <import resource="document/validation/configuration/CuIntraAccountAdjustmentValidation.xml" />
     
     <bean id="procurementCardDocumentDao" parent="platformAwareDao" class="edu.cornell.kfs.fp.dataaccess.impl.ProcurementCardDocumentDaoOjb" />
 
