@@ -183,6 +183,9 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                 glPendingTransaction.setFinancialObjectCode(obCode);
                 glPendingTransaction.setChartOfAccountsCode(coaCode);
                 glPendingTransaction.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
+                
+                // KFSUPGRADE-943
+                glPendingTransaction.setSubAccountNumber(KFSConstants.getDashSubAccountNumber());              
             } else {
 
                 Boolean relieveLiabilities = paymentGroup.getBatch().getCustomerProfile().getRelieveLiabilities();
