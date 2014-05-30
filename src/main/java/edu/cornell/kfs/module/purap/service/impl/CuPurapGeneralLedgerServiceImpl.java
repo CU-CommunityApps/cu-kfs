@@ -1,10 +1,13 @@
 package edu.cornell.kfs.module.purap.service.impl;
 
+import static org.kuali.kfs.module.purap.PurapConstants.HUNDRED;
 import static org.kuali.kfs.module.purap.PurapConstants.PURAP_ORIGIN_CODE;
 import static org.kuali.kfs.sys.KFSConstants.GL_CREDIT_CODE;
 import static org.kuali.kfs.sys.KFSConstants.GL_DEBIT_CODE;
+import static org.kuali.rice.core.api.util.type.KualiDecimal.ZERO;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -13,8 +16,13 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.PurapDocTypeCodes;
+import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.businessobject.PurApItemUseTax;
+import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
+import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
+import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.service.PurapAccountRevisionService;
 import org.kuali.kfs.module.purap.service.PurapAccountingService;
 import org.kuali.kfs.module.purap.service.impl.PurapGeneralLedgerServiceImpl;
@@ -26,6 +34,7 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
 
@@ -39,6 +48,7 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
     // KFSPTS-1891
     protected CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
     // END MOD
+    private PurchaseOrderService purchaseOrderService;
     
     protected int getNextAvailableSequence(String documentNumber) {
         LOG.debug("getNextAvailableSequence() started");
@@ -189,12 +199,205 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
         return success;
     }
 
-		public CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
-			return paymentMethodGeneralLedgerPendingEntryService;
-		}
+	public CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
+		return paymentMethodGeneralLedgerPendingEntryService;
+	}
 
-		public void setPaymentMethodGeneralLedgerPendingEntryService(
+	public void setPaymentMethodGeneralLedgerPendingEntryService(
 				CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService) {
-			this.paymentMethodGeneralLedgerPendingEntryService = paymentMethodGeneralLedgerPendingEntryService;
-		}
+		this.paymentMethodGeneralLedgerPendingEntryService = paymentMethodGeneralLedgerPendingEntryService;
+	}
+		
+    @Override
+    protected List<SourceAccountingLine> reencumberEncumbrance(PaymentRequestDocument preq) {
+        LOG.debug("reencumberEncumbrance() started");
+
+        PurchaseOrderDocument po = purchaseOrderService.getCurrentPurchaseOrder(preq.getPurchaseOrderIdentifier());
+        Map encumbranceAccountMap = new HashMap();
+
+        // Get each item one by one
+        for (Iterator items = preq.getItems().iterator(); items.hasNext();) {
+            PaymentRequestItem payRequestItem = (PaymentRequestItem) items.next();
+            PurchaseOrderItem poItem = getPoItem(po, payRequestItem.getItemLineNumber(), payRequestItem.getItemType());
+
+            KualiDecimal itemReEncumber = null; // Amount to reencumber for this item
+
+            String logItmNbr = "Item # " + payRequestItem.getItemLineNumber();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("reencumberEncumbrance() " + logItmNbr);
+            }
+
+            // If there isn't a PO item or the total amount is 0, we don't need encumbrances
+            final KualiDecimal preqItemTotalAmount = (payRequestItem.getTotalAmount() == null) ? KualiDecimal.ZERO : payRequestItem.getTotalAmount();
+            if ((poItem == null) || (preqItemTotalAmount.doubleValue() == 0)) {
+                if (poItem != null) {
+                    // KFSUPGRADE-893 recumber $0 item too
+                    if (poItem.getItemType().isQuantityBasedGeneralLedgerIndicator()) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("reencumberEncumbrance() " + logItmNbr + " Calculate encumbrance based on quantity");
+                        }
+
+                        // Do disencumbrance calculations based on quantity
+                        KualiDecimal preqQuantity = payRequestItem.getItemQuantity() == null ? ZERO : payRequestItem.getItemQuantity();
+                        KualiDecimal outstandingEncumberedQuantity = poItem.getItemOutstandingEncumberedQuantity() == null ? ZERO : poItem.getItemOutstandingEncumberedQuantity();
+                        KualiDecimal invoicedTotal = poItem.getItemInvoicedTotalQuantity() == null ? ZERO : poItem.getItemInvoicedTotalQuantity();
+
+                        poItem.setItemInvoicedTotalQuantity(invoicedTotal.subtract(preqQuantity));
+                        poItem.setItemOutstandingEncumberedQuantity(outstandingEncumberedQuantity.add(preqQuantity));
+                    }
+                }
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("reencumberEncumbrance() " + logItmNbr + " No encumbrances required");
+                }
+            }
+            else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("reencumberEncumbrance() " + logItmNbr + " Calculate encumbrance GL entries");
+                }
+
+                // Do we calculate the encumbrance amount based on quantity or amount?
+                if (poItem.getItemType().isQuantityBasedGeneralLedgerIndicator()) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("reencumberEncumbrance() " + logItmNbr + " Calculate encumbrance based on quantity");
+                    }
+
+                    // Do disencumbrance calculations based on quantity
+                    KualiDecimal preqQuantity = payRequestItem.getItemQuantity() == null ? ZERO : payRequestItem.getItemQuantity();
+                    KualiDecimal outstandingEncumberedQuantity = poItem.getItemOutstandingEncumberedQuantity() == null ? ZERO : poItem.getItemOutstandingEncumberedQuantity();
+                    KualiDecimal invoicedTotal = poItem.getItemInvoicedTotalQuantity() == null ? ZERO : poItem.getItemInvoicedTotalQuantity();
+
+                    poItem.setItemInvoicedTotalQuantity(invoicedTotal.subtract(preqQuantity));
+                    poItem.setItemOutstandingEncumberedQuantity(outstandingEncumberedQuantity.add(preqQuantity));
+
+                    //do math as big decimal as doing it as a KualiDecimal will cause the item price to round to 2 digits
+                    itemReEncumber = new KualiDecimal(preqQuantity.bigDecimalValue().multiply(poItem.getItemUnitPrice()));
+
+                    //add tax for encumbrance
+                    KualiDecimal itemTaxAmount = poItem.getItemTaxAmount() == null ? ZERO : poItem.getItemTaxAmount();
+                    KualiDecimal encumbranceTaxAmount = preqQuantity.divide(poItem.getItemQuantity()).multiply(itemTaxAmount);
+                    itemReEncumber = itemReEncumber.add(encumbranceTaxAmount);
+
+                }
+                else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("reencumberEncumbrance() " + logItmNbr + " Calculate encumbrance based on amount");
+                    }
+
+                    itemReEncumber = preqItemTotalAmount;
+                    // if re-encumber amount is more than original PO ordered amount... do not exceed ordered amount
+                    // this prevents negative encumbrance
+                    if ((poItem.getTotalAmount() != null) && (poItem.getTotalAmount().bigDecimalValue().signum() < 0)) {
+                        // po item extended cost is negative
+                        if ((poItem.getTotalAmount().compareTo(itemReEncumber)) > 0) {
+                            itemReEncumber = poItem.getTotalAmount();
+                        }
+                    }
+                    else if ((poItem.getTotalAmount() != null) && (poItem.getTotalAmount().bigDecimalValue().signum() >= 0)) {
+                        // po item extended cost is positive
+                        if ((poItem.getTotalAmount().compareTo(itemReEncumber)) < 0) {
+                            itemReEncumber = poItem.getTotalAmount();
+                        }
+                    }
+                }
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("reencumberEncumbrance() " + logItmNbr + " Amount to reencumber: " + itemReEncumber);
+                }
+
+                KualiDecimal outstandingEncumberedAmount = poItem.getItemOutstandingEncumberedAmount() == null ? ZERO : poItem.getItemOutstandingEncumberedAmount();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("reencumberEncumbrance() " + logItmNbr + " PO Item Outstanding Encumbrance Amount set to: " + outstandingEncumberedAmount);
+                }
+                KualiDecimal newOutstandingEncumberedAmount = outstandingEncumberedAmount.add(itemReEncumber);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("reencumberEncumbrance() " + logItmNbr + " New PO Item Outstanding Encumbrance Amount to set: " + newOutstandingEncumberedAmount);
+                }
+                poItem.setItemOutstandingEncumberedAmount(newOutstandingEncumberedAmount);
+
+                KualiDecimal invoicedTotalAmount = poItem.getItemInvoicedTotalAmount() == null ? ZERO : poItem.getItemInvoicedTotalAmount();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("reencumberEncumbrance() " + logItmNbr + " PO Item Invoiced Total Amount set to: " + invoicedTotalAmount);
+                }
+                KualiDecimal newInvoicedTotalAmount = invoicedTotalAmount.subtract(preqItemTotalAmount);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("reencumberEncumbrance() " + logItmNbr + " New PO Item Invoiced Total Amount to set: " + newInvoicedTotalAmount);
+                }
+                poItem.setItemInvoicedTotalAmount(newInvoicedTotalAmount);
+
+                // make the list of accounts for the reencumbrance entry
+                PurchaseOrderAccount lastAccount = null;
+                KualiDecimal accountTotal = ZERO;
+
+                // Sort accounts
+                Collections.sort((List) poItem.getSourceAccountingLines());
+
+                for (Iterator accountIter = poItem.getSourceAccountingLines().iterator(); accountIter.hasNext();) {
+                    PurchaseOrderAccount account = (PurchaseOrderAccount) accountIter.next();
+                    if (!account.isEmpty()) {
+                        SourceAccountingLine acctString = account.generateSourceAccountingLine();
+
+                        // amount = item reencumber * account percent / 100
+                        KualiDecimal reencumbranceAmount = itemReEncumber.multiply(new KualiDecimal(account.getAccountLinePercent().toString())).divide(HUNDRED);
+
+                        account.setItemAccountOutstandingEncumbranceAmount(account.getItemAccountOutstandingEncumbranceAmount().add(reencumbranceAmount));
+
+                        // For rounding check at the end
+                        accountTotal = accountTotal.add(reencumbranceAmount);
+
+                        lastAccount = account;
+
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("reencumberEncumbrance() " + logItmNbr + " " + acctString + " = " + reencumbranceAmount);
+                        }
+                        if (encumbranceAccountMap.containsKey(acctString)) {
+                            KualiDecimal currentAmount = (KualiDecimal) encumbranceAccountMap.get(acctString);
+                            encumbranceAccountMap.put(acctString, reencumbranceAmount.add(currentAmount));
+                        }
+                        else {
+                            encumbranceAccountMap.put(acctString, reencumbranceAmount);
+                        }
+                    }
+                }
+
+                // account for rounding by adjusting last account as needed
+                if (lastAccount != null) {
+                    KualiDecimal difference = itemReEncumber.subtract(accountTotal);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("reencumberEncumbrance() difference: " + logItmNbr + " " + difference);
+                    }
+
+                    SourceAccountingLine acctString = lastAccount.generateSourceAccountingLine();
+                    KualiDecimal amount = (KualiDecimal) encumbranceAccountMap.get(acctString);
+                    if (amount == null) {
+                        encumbranceAccountMap.put(acctString, difference);
+                    }
+                    else {
+                        encumbranceAccountMap.put(acctString, amount.add(difference));
+                    }
+                    lastAccount.setItemAccountOutstandingEncumbranceAmount(lastAccount.getItemAccountOutstandingEncumbranceAmount().add(difference));
+                }
+            }
+        }
+
+        SpringContext.getBean(BusinessObjectService.class).save(po);
+
+        List<SourceAccountingLine> encumbranceAccounts = new ArrayList<SourceAccountingLine>();
+        for (Iterator<SourceAccountingLine> iter = encumbranceAccountMap.keySet().iterator(); iter.hasNext();) {
+            SourceAccountingLine acctString = iter.next();
+            KualiDecimal amount = (KualiDecimal) encumbranceAccountMap.get(acctString);
+            if (amount.doubleValue() != 0) {
+                acctString.setAmount(amount);
+                encumbranceAccounts.add(acctString);
+            }
+        }
+
+        return encumbranceAccounts;
+    }
+
+    public void setPurchaseOrderService(PurchaseOrderService purchaseOrderService) {
+        this.purchaseOrderService = purchaseOrderService;
+        super.setPurchaseOrderService(purchaseOrderService);
+    }
+
+
 }
