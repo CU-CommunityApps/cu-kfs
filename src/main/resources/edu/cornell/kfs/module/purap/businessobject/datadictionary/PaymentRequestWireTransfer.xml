@@ -289,7 +289,7 @@
   <bean id="PaymentRequestWireTransfer-preqBankIBAN-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="preqBankIBAN"/>
     <property name="forceUppercase" value="false"/>
-    <property name="label" value="Bank IBAN #, Account # or CLABE (Mexico)"/>
+    <property name="label" value="Bank IBAN # or CLABE (Mexico)"/>
     <property name="shortLabel" value="Bnk IBAN"/>
     <property name="maxLength" value="34"/>
     <property name="validationPattern" >
