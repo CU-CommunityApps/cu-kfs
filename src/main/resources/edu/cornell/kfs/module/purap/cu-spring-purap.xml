@@ -37,40 +37,9 @@
 	 	<property name="moduleConfiguration" ref="cu-purap"/>
 	</bean>
 	
-<bean id="b2bPurchaseOrderService" parent="b2bPurchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuB2BPurchaseOrderSciquestServiceImpl" />
-<!-- 
-<bean id="b2bPurchaseOrderService" class="org.kuali.kfs.module.purap.document.service.impl.B2BPurchaseOrderSciquestServiceImpl">
-        <property name="b2bDao" ref="b2bDao"/>
-        <property name="requisitionService" ref="requisitionService"/>
-        <property name="parameterService" ref="parameterService"/>
-        <property name="vendorService" ref="vendorService"/>
-        <property name="defaultDistributionFaxNumber" value="9704915523"/>        
-        <property name="b2bEnvironment">
-            <value>${b2b.environment}</value>
-        </property>
-        <property name="b2bPunchoutURL">
-            <value>${b2b.punch.out.url}</value>
-        </property>
-        <property name="b2bPunchbackURL">
-            <value>${b2b.punch.back.url}</value>
-        </property>
-        <property name="b2bUserAgent">
-            <value>${b2b.user.agent}</value>
-        </property>
-        <property name="b2bShoppingPassword">
-            <value>${b2b.shopping.password}</value>
-        </property>
-        <property name="b2bPurchaseOrderURL">
-            <value>${b2b.purchase.order.url}</value>
-        </property>
-        <property name="b2bPurchaseOrderPassword">
-            <value>${b2b.purchase.order.password}</value>
-        </property>
-    </bean>
- -->
+	<bean id="b2bPurchaseOrderService" parent="b2bPurchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuB2BPurchaseOrderSciquestServiceImpl" />
      
-     
-     <bean id="b2bPunchOutOrderFileType" class="org.kuali.kfs.module.purap.util.cxml.B2BPunchOutOrderFileType">
+    <bean id="b2bPunchOutOrderFileType" class="org.kuali.kfs.module.purap.util.cxml.B2BPunchOutOrderFileType">
 	    <property name="digestorRulesFileName">
 	       <value>edu/cornell/kfs/module/purap/util/cxml/b2bPunchOutOrderDigesterRules.xml</value>
 	    </property>
@@ -79,20 +48,6 @@
 	    </property>
 	</bean>
  
-  <!-- UPGRADE-911 
-  <bean id="sciQuestDataAccess" parent="platformAwareDao"  
-          class="org.kuali.kfs.module.purap.dataaccess.impl.SciQuestDataAccessImpl" />
-    
-    <bean id="sciQuestService" parent="sciQuestService-parent"/>    
-    <bean id="sciQuestService-parent"
-          class="org.kuali.kfs.module.purap.document.service.impl.SciQuestServiceImpl">
-       <property name="sciquestDataAccess" ref="sciQuestDataAccess" />
-       <property name="businessObjectService" ref="businessObjectService" />
-    </bean> 
-    -->
-    
-    <!-- UPGRADE-911 	-->
-    
 	<bean id="electronicInvoiceExtractJob" parent="scheduledJobDescriptor">
 		<property name="steps">
 			<list>
@@ -210,6 +165,7 @@
             <!-- KFSPTS-1891 -->
         <property name="paymentMethodGeneralLedgerPendingEntryService" ref="cUPaymentMethodGeneralLedgerPendingEntryService" />
     </bean>
+    
     <bean id="purchaseOrderDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPurchaseOrderDaoOjb" />
  	<bean id="purchaseOrderService" parent="purchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchaseOrderServiceImpl" />
  	<bean id="relatedDocumentDerivedRoleTypeService" parent="relatedDocumentDerivedRoleTypeService-parentBean" class="edu.cornell.kfs.module.purap.identity.CuRelatedDocumentDerivedRoleTypeServiceImpl" />
@@ -220,16 +176,19 @@
             <!-- KFSPTS-1891 -->
         <property name="paymentMethodGeneralLedgerPendingEntryService" ref="cUPaymentMethodGeneralLedgerPendingEntryService" />
     </bean>
+    
     <bean id="b2bDao" class="edu.cornell.kfs.module.purap.dataaccess.impl.CuB2BDaoImpl"/>
     <bean id="purapService" parent="purapService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurapServiceImpl" />
-   <bean id="pdpExtractService" parent="pdpExtractService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPdpExtractServiceImpl" />
+    <bean id="pdpExtractService" parent="pdpExtractService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPdpExtractServiceImpl" />
 
-	<bean id="PurchaseOrderActionListAttribute" class="edu.cornell.kfs.module.purap.document.workflow.CuPurchaseOrderActionListAttribute" />
+	<bean id="creditMemoDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuCreditMemoDaoOjb" />
+    <bean id="paymentRequestDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPaymentRequestDaoOjb"/>
+    <bean id="PurchaseOrderActionListAttribute" class="edu.cornell.kfs.module.purap.document.workflow.CuPurchaseOrderActionListAttribute" />
 
-   <import resource="document/validation/configuration/CuPaymentRequestValidation.xml" />
-   <import resource="document/validation/configuration/VendorCreditMemoValidation.xml" />
-   <import resource="document/validation/configuration/RequisitionValidation.xml" />
-   <import resource="document/validation/configuration/PurapValidatorDefinitions.xml" />
-   <import resource="document/validation/configuration/PurchaseOrderAmendmentValidation.xml" />
-   <import resource="document/validation/configuration/PurchaseOrderValidation.xml" /> 
+	<import resource="document/validation/configuration/CuPaymentRequestValidation.xml" />
+	<import resource="document/validation/configuration/VendorCreditMemoValidation.xml" />
+	<import resource="document/validation/configuration/RequisitionValidation.xml" />
+	<import resource="document/validation/configuration/PurapValidatorDefinitions.xml" />
+	<import resource="document/validation/configuration/PurchaseOrderAmendmentValidation.xml" />
+	<import resource="document/validation/configuration/PurchaseOrderValidation.xml" /> 
 </beans>

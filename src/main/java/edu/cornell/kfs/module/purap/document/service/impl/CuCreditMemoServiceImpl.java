@@ -265,20 +265,6 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
 
      }
      
-     @Override
-    public List<VendorCreditMemoDocument> getCreditMemosToExtract(String chartCode) {
-         // KFSPTS-1891
-    	 Iterator<VendorCreditMemoDocument> baseResults = creditMemoDao.getCreditMemosToExtract(chartCode).iterator();
-    	 return new ArrayList<VendorCreditMemoDocument>(filterPaymentRequests(baseResults));
-    }
-     
-     @Override
-    public Collection<VendorCreditMemoDocument> getCreditMemosToExtractByVendor(String chartCode, VendorGroupingHelper vendor) {
-	     // KFSPTS-1891
-    	 Collection<VendorCreditMemoDocument> baseResults = creditMemoDao.getCreditMemosToExtractByVendor(chartCode,vendor);
-    	 return filterPaymentRequests(baseResults);
-    }
-     
      /**
       * @see org.kuali.kfs.module.purap.document.service.CreditMemoCreateService#populateDocumentAfterInit(org.kuali.kfs.module.purap.document.CreditMemoDocument)
       */
@@ -321,47 +307,8 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
              cmDocument.setContinuationAccountIndicator(true);
          }
 
-     }
+    }
      
-     // KFSPTS-1891
-     
-     /**
-      * This method filters the payment requests given to just those which will be processed by PDP.
-      * 
-      * This will be entries with payment methods with PDP_IND = "Y".
-      * 
-      * @param baseResults The entire list of payment requests valid for extraction.
-      * @return A filtered subset of the passed in list.
-      */
-     protected Collection<VendorCreditMemoDocument> filterPaymentRequests( Collection<VendorCreditMemoDocument> baseResults ) {
-         return filterPaymentRequests(baseResults.iterator());
-     }
-     
-     /**
-      * This method filters the payment requests given to just those which will be processed by PDP.
-      * 
-      * This will be entries with payment methods with PDP_IND = "Y".
-      * 
-      * @param baseResults An iterator over a list of payment requests valid for extraction.
-      * @return A filtered subset of the passed in list.
-      */
-     protected Collection<VendorCreditMemoDocument> filterPaymentRequests( Iterator<VendorCreditMemoDocument> baseResults ) {
-         ArrayList<VendorCreditMemoDocument> filteredResults = new ArrayList<VendorCreditMemoDocument>();
-         while ( baseResults.hasNext() ) {
-             VendorCreditMemoDocument doc = baseResults.next();
-             if ( doc instanceof VendorCreditMemoDocument ) {
-                 if ( getPaymentMethodGeneralLedgerPendingEntryService().isPaymentMethodProcessedUsingPdp( ((CuVendorCreditMemoDocument)doc).getPaymentMethodCode() ) ) {
-                     filteredResults.add(doc);
-                 }
-             } else {
-                 // if not the UA modification for some reason, assume that the payment method has not
-                 // been set and is therefore check
-                 filteredResults.add(doc);
-             }
-         }
-         return filteredResults;
-     }
-
  	public CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
  		return paymentMethodGeneralLedgerPendingEntryService;
  	}

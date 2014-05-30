@@ -302,68 +302,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl {
         }
     }
     
-    // KFSPTS-1891
-    /**
-     * This method filters the payment requests given to just those which will be processed by PDP.
-     * 
-     * This will be entries with payment method "P".
-     * 
-     * @param baseResults The entire list of payment requests valid for extraction.
-     * @return A filtered subset of the passed in list.
-     */
-    protected Collection<PaymentRequestDocument> filterPaymentRequests( Collection<PaymentRequestDocument> baseResults ) {
-        ArrayList<PaymentRequestDocument> filteredResults = new ArrayList<PaymentRequestDocument>( baseResults.size() );
-        for ( PaymentRequestDocument doc : baseResults ) {
-//            if ( doc instanceof UaPaymentRequestDocument ) {
-                if ( getPaymentMethodGeneralLedgerPendingEntryService().isPaymentMethodProcessedUsingPdp( ((CuPaymentRequestDocument)doc).getPaymentMethodCode() ) ) {
-                    filteredResults.add(doc);
-                }
-//            } else {
-//                // if not the UA modification for some reason, assume that the payment method has not
-//                // been set and is therefore check
-//                filteredResults.add(doc);
-//            }
-        }
-        return filteredResults;
-    }
-    
-//    @Override
-    public Collection<PaymentRequestDocument> getPaymentRequestsToExtract(Date onOrBeforePaymentRequestPayDate) {
-        LOG.debug("getPaymentRequestsToExtract() started");
-
-        Collection<PaymentRequestDocument> baseResults = paymentRequestDao.getPaymentRequestsToExtract(false, null, onOrBeforePaymentRequestPayDate);
-        return filterPaymentRequests(baseResults);
-    }
-    
-//    @Override
-    public Collection<PaymentRequestDocument> getPaymentRequestsToExtractByCM(String campusCode, VendorCreditMemoDocument cmd) {
-        throw new UnsupportedOperationException( "This method is not in use." );
-    }
-    
-//    @Override
-    public Collection<PaymentRequestDocument> getPaymentRequestsToExtractByVendor(String campusCode, VendorGroupingHelper vendor, Date onOrBeforePaymentRequestPayDate) {
-        LOG.debug("getPaymentRequestsByVendor() started");
-
-        Collection<PaymentRequestDocument> baseResults = paymentRequestDao.getPaymentRequestsToExtractForVendor(campusCode, vendor, onOrBeforePaymentRequestPayDate);
-        return filterPaymentRequests(baseResults);
-    }
-    
-//    @Override
-    public Collection<PaymentRequestDocument> getPaymentRequestsToExtractSpecialPayments(String chartCode, Date onOrBeforePaymentRequestPayDate) {
-        LOG.debug("getPaymentRequestsToExtractSpecialPayments() started");
-
-        Collection<PaymentRequestDocument> baseResults =  paymentRequestDao.getPaymentRequestsToExtract(true, chartCode, onOrBeforePaymentRequestPayDate);
-        return filterPaymentRequests(baseResults);
-    }
-    
-//    @Override
-    public Collection<PaymentRequestDocument> getPaymentRequestToExtractByChart(String chartCode, Date onOrBeforePaymentRequestPayDate) {
-        LOG.debug("getPaymentRequestToExtractByChart() started");
-
-        Collection<PaymentRequestDocument> baseResults = paymentRequestDao.getPaymentRequestsToExtract(false, chartCode, onOrBeforePaymentRequestPayDate);
-        return filterPaymentRequests(baseResults);
-    }
-
     protected CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
         return paymentMethodGeneralLedgerPendingEntryService;
     }
