@@ -78,7 +78,26 @@ public class EzraServiceImpl implements EzraService {
 				
 				Award award = createAward(proposal, null, ezraProposal);
 				routeAwardDocument(award, null);
+						
 			}
+			else
+			{
+			    if (StringUtils.isNotEmpty(ezraProposal.getSponsorProjectId())) {
+			        if (StringUtils.isNotEmpty(proposal.getGrantNumber())) {
+    			        if (!proposal.getGrantNumber().equals(ezraProposal.getSponsorProjectId()))
+                        {
+                            proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
+                            routeProposalDocument(proposal);
+                        }
+			        }
+			        else
+			        {
+			            proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
+                        routeProposalDocument(proposal);
+			        }
+			    }
+			}
+			
 		}
 		return true;
 	}
