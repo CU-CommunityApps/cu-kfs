@@ -33,7 +33,8 @@ import edu.cornell.kfs.gl.service.CuBalanceService;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class CuYearEndServiceImpl extends YearEndServiceImpl implements CuYearEndService {
-    
+    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuYearEndServiceImpl.class);
+
     @Override
     public void closeNominalActivity(String nominalClosingFileName, Map nominalClosingJobParameters) {
 
