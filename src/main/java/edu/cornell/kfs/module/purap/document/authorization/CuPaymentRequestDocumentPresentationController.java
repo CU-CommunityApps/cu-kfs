@@ -13,10 +13,9 @@ import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.fp.businessobject.PaymentMethod;
 import edu.cornell.kfs.module.purap.CUPurapAuthorizationConstants.CUPaymentRequestEditMode;
-import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.module.purap.CUPurapConstants.CUPaymentRequestStatuses;
-import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants.PaymentRequestDocument.NodeDetailEnum;
+import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 
 public class CuPaymentRequestDocumentPresentationController extends PaymentRequestDocumentPresentationController {
 	
@@ -67,5 +66,19 @@ public class CuPaymentRequestDocumentPresentationController extends PaymentReque
 			return false;
 		}
 	}
+	
+	// KFSUPGRADE-964
+    @Override
+    public boolean canDisapprove(Document document) {
+        // disapprove is never allowed for PREQ except PRNC by Treasury
+        CuPaymentRequestDocument paymentRequestDocument = (CuPaymentRequestDocument) document;
+        String paymentMethodCode = paymentRequestDocument.getPaymentMethodCode();
+        
+        if ((PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(paymentMethodCode) || PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(paymentMethodCode)) && paymentRequestDocument.isDocumentStoppedInRouteNode(PurapConstants.PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 }
