@@ -229,9 +229,14 @@ public class AssetSeparatePaymentDistributor {
             AssetPayment lastSource = this.separatedPayments.get(this.separatedPayments.size() - 1);
             lastSource.setAccountChargeAmount(lastSource.getAccountChargeAmount().add(diff));
             // adjust primary depreciation base amount, same as account charge amount
+            // KFSUPGRADE-929 : for payments that are 0 amount but not non-zero depr amount
+            // TODO : need more testing
             if (lastPayment.getPrimaryDepreciationBaseAmount() != null && lastPayment.getPrimaryDepreciationBaseAmount().isNonZero()) {
-                lastPayment.setPrimaryDepreciationBaseAmount(lastPayment.getAccountChargeAmount());
-                lastSource.setPrimaryDepreciationBaseAmount(lastSource.getAccountChargeAmount());
+                if (lastPayment.getAccountChargeAmount().isNonZero()
+                || lastPayment.getAccumulatedPrimaryDepreciationAmount() == null || lastPayment.getAccumulatedPrimaryDepreciationAmount().isZero()) {
+                   lastPayment.setPrimaryDepreciationBaseAmount(lastPayment.getAccountChargeAmount());
+                   lastSource.setPrimaryDepreciationBaseAmount(lastSource.getAccountChargeAmount());
+                }
             }
         }
     }
