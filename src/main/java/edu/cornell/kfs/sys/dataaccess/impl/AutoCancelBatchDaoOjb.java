@@ -100,6 +100,8 @@ public class AutoCancelBatchDaoOjb extends PlatformAwareDaoBaseOjb implements Oj
             for(String docId : cancelDocumentIds) {
             	String docTypeId = cancelIds.get(docId);
             	if (autoCancelAllowedForDocType(docTypeId)) {
+    				LOG.info("Retrieving document : " + docId.trim());
+
             		Document document = documentService.getByDocumentHeaderId(docId.trim());
         			
                 	try {
