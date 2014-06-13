@@ -297,11 +297,15 @@ public class EzraServiceImpl implements EzraService {
 		if (project.getProjectTitle() != null) {
 			proposal.setProposalProjectTitle(project.getProjectTitle().trim());
 		}
-		int sponsorId = ezraProposal.getSponsorProjectId().length();
-		if (ObjectUtils.isNotNull(ezraProposal.getSponsorProjectId()) && (sponsorId > grantIdMax)) {
-			proposal.setGrantNumber(ezraProposal.getSponsorProjectId().substring(0,26));
-		} else {
-			proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
+		
+		if (ObjectUtils.isNotNull(ezraProposal.getSponsorProjectId())) {
+		    int sponsorId = ezraProposal.getSponsorProjectId().length();    
+		    if (sponsorId > grantIdMax) {
+		        proposal.setGrantNumber(ezraProposal.getSponsorProjectId().substring(0,26));    
+		    }
+			else {
+			    proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
+			}
 		}
 		proposal.setProposalStatusCode(EzraUtils.getProposalAwardStatusMap().get(ezraProposal.getStatus()));
 		proposal.setProposalPurposeCode(EzraUtils.getProposalPurposeMap().get(ezraProposal.getPurpose()));
