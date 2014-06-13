@@ -166,22 +166,24 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         }
 
         super.doRouteStatusChange(statusChangeEvent);
-        
-        if (!this.isAutoApprovedIndicator() && this.getFinancialSystemDocumentHeader().getWorkflowDocument().isProcessed()) {
-                if (!PaymentRequestStatuses.APPDOC_AUTO_APPROVED.equals(getApplicationDocumentStatus())) {
-                	
-                	//generate bank offsets for payment method wire or foreign draft, reverse 2900 to 1000
-                    String paymentMethodCode = getPaymentMethodCode();
-                    if(PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(paymentMethodCode) || PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(paymentMethodCode) || PaymentMethod.PM_CODE_INTERNAL_BILLING.equalsIgnoreCase(paymentMethodCode)){
-                       getPaymentMethodGeneralLedgerPendingEntryService().generateFinalEntriesForPRNC(this);
-                    }
-                    
-                    // KFSPTS-2581 : GLPE need to be saved separately because not in ojb config
-                    // All GLPE approve cd has been set to 'A'
-                    saveGeneralLedgerPendingEntries();
-                }
-            }
-        
+    }
+    
+    @Override
+    public void populateDocumentForRouting() {
+    	super.populateDocumentForRouting();
+    	// KFSPTS-1891
+    	if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isProcessed() && !PaymentRequestStatuses.APPDOC_AUTO_APPROVED.equals(getApplicationDocumentStatus())) {
+
+    		//generate bank offsets for payment method wire or foreign draft, reverse 2900 to 1000
+    		String paymentMethodCode = getPaymentMethodCode();
+    		if(PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(paymentMethodCode) || PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(paymentMethodCode) || PaymentMethod.PM_CODE_INTERNAL_BILLING.equalsIgnoreCase(paymentMethodCode)){
+    			getPaymentMethodGeneralLedgerPendingEntryService().generateFinalEntriesForPRNC(this);
+    		}
+
+    		// KFSPTS-2581 : GLPE need to be saved separately because not in ojb config
+    		// All GLPE approve cd has been set to 'A'
+    		saveGeneralLedgerPendingEntries();
+    	}
     }
     
     protected void saveGeneralLedgerPendingEntries() {
