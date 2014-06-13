@@ -154,6 +154,10 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
             }                        
         }
         
+        if ( pm.isOffsetUsingClearingAccount() ) {
+            generateClearingAccountOffsetEntries(pm, document, sequenceHelper, actualTotalsByChart);
+        }
+        
         if ( !pm.isProcessedUsingPdp() && StringUtils.isNotBlank( bankCode ) ) {
             if(PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(paymentMethodCode) || PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(paymentMethodCode)){
                 //do not create bank offsets unless DM approval
