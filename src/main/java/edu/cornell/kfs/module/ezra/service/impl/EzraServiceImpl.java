@@ -61,6 +61,9 @@ public class EzraServiceImpl implements EzraService {
 	
 	public static String UNKNOWN_DEFAULT_CFDA_NUMBER = "XX.XXX";
 	
+	
+    private int grantIdMax = 27;
+	
 
 	public boolean updateProposals() {
 		
@@ -85,8 +88,9 @@ public class EzraServiceImpl implements EzraService {
 			    if (StringUtils.isNotEmpty(ezraProposal.getSponsorProjectId())) {
 			        if (StringUtils.isNotEmpty(proposal.getGrantNumber())) {
     			        if (!proposal.getGrantNumber().equals(ezraProposal.getSponsorProjectId()))
-                        {
-    			            if (ezraProposal.getSponsorProjectId().length() > 27) {
+                        {   
+    			            int sponsorId = ezraProposal.getSponsorProjectId().length();
+    			            if (sponsorId > grantIdMax) {
     			                proposal.setGrantNumber(ezraProposal.getSponsorProjectId().substring(0,26));
     			            } else {
     			                proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
@@ -293,8 +297,8 @@ public class EzraServiceImpl implements EzraService {
 		if (project.getProjectTitle() != null) {
 			proposal.setProposalProjectTitle(project.getProjectTitle().trim());
 		}
-		
-		if (ObjectUtils.isNotNull(ezraProposal.getSponsorProjectId()) && ezraProposal.getSponsorProjectId().length() > 27) {
+		int sponsorId = ezraProposal.getSponsorProjectId().length();
+		if (ObjectUtils.isNotNull(ezraProposal.getSponsorProjectId()) && (sponsorId > grantIdMax)) {
 			proposal.setGrantNumber(ezraProposal.getSponsorProjectId().substring(0,26));
 		} else {
 			proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
