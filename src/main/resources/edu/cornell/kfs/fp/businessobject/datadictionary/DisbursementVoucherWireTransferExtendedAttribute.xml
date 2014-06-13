@@ -82,9 +82,6 @@
     <property name="label" value="Bank IBAN # or CLABE (Mexico)"/>
     <property name="shortLabel" value="Bnk IBAN"/>
     <property name="maxLength" value="34"/>
-    <property name="validationPattern" >
-      <bean parent="AlphaNumericValidationPattern" />
-    </property>
     <property name="required" value="false"/>
     <property name="control">
       <bean parent="TextControlDefinition" p:size="34"/>
