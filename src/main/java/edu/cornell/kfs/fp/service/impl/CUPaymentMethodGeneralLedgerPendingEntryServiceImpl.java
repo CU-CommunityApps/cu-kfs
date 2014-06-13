@@ -154,10 +154,6 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
             }                        
         }
         
-        if ( !PaymentMethod.PM_CODE_INTERNAL_BILLING.equalsIgnoreCase(paymentMethodCode) && pm.isOffsetUsingClearingAccount() ) {
-            generateClearingAccountOffsetEntries(pm, document, sequenceHelper, actualTotalsByChart);
-        }
-        
         if ( !pm.isProcessedUsingPdp() && StringUtils.isNotBlank( bankCode ) ) {
             if(PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(paymentMethodCode) || PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(paymentMethodCode)){
                 //do not create bank offsets unless DM approval
@@ -447,13 +443,6 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
         // generate bank offset
         if (PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(((CuPaymentRequestDocument)document).getPaymentMethodCode()) || PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(((CuPaymentRequestDocument)document).getPaymentMethodCode())) {
             generateDocumentBankOffsetEntries((AccountingDocument) document, document.getBankCode(), KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", ((CuPaymentRequestDocument)document).DOCUMENT_TYPE_NON_CHECK, sequenceHelper, document.getTotalDollarAmount().negated());
-        }
-        
-        // KFPTS-3046
-        // for internal billing generate entries to clearing accounts
-        if(PaymentMethod.PM_CODE_INTERNAL_BILLING.equalsIgnoreCase(((CuPaymentRequestDocument)document).getPaymentMethodCode())){
-            PaymentMethod pm = getBusinessObjectService().findBySinglePrimaryKey(PaymentMethod.class, ((CuPaymentRequestDocument)document).getPaymentMethodCode());
-            generateClearingAccountOffsetEntries(pm, document, sequenceHelper, null);
         }
 
         // check for pending entries and replace object code with chart cash object code
