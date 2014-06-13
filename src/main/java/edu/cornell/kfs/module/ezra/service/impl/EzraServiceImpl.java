@@ -313,15 +313,15 @@ public class EzraServiceImpl implements EzraService {
 		proposal.setProposalEndingDate(ezraProposal.getStopDate());
 		proposal.setProposalDirectCostAmount(ezraProposal.getTotalAmt());
 		proposal.setProposalIndirectCostAmount(KualiDecimal.ZERO);
-//		if (ezraProposal.getFederalPassThroughAgencyNumber() != null) {
-//			Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getFederalPassThroughAgencyNumber().toString());
-//			if (ObjectUtils.isNull(agency)) {
-//				agency = createAgency(ezraProposal.getFederalPassThroughAgencyNumber());
-//				routeAgencyDocument(agency, null);
-//			}
-//			proposal.setFederalPassThroughAgencyNumber(ezraProposal.getFederalPassThroughAgencyNumber().toString());
-//		}
-//		proposal.setProposalFederalPassThroughIndicator(ezraProposal.getFederalPassThroughBoolean());
+		if (ezraProposal.getFederalPassThroughAgencyNumber() != null) {
+			Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getFederalPassThroughAgencyNumber().toString());
+			if (ObjectUtils.isNull(agency)) {
+				agency = createAgency(ezraProposal.getFederalPassThroughAgencyNumber());
+				routeAgencyDocument(agency, null);
+			}
+			proposal.setFederalPassThroughAgencyNumber(ezraProposal.getFederalPassThroughAgencyNumber().toString());
+		}
+		proposal.setProposalFederalPassThroughIndicator(ezraProposal.getFederalPassThroughBoolean());
 		proposal.setProposalAwardTypeCode("Z");
 		proposal.setActive(true);
 		return proposal;
