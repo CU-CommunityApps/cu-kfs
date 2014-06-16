@@ -89,13 +89,17 @@ public class EzraServiceImpl implements EzraService {
 			        if (StringUtils.isNotEmpty(proposal.getGrantNumber())) {
     			        if (!proposal.getGrantNumber().equals(ezraProposal.getSponsorProjectId()))
                         {   
+    			            
     			            int sponsorId = ezraProposal.getSponsorProjectId().length();
     			            if (sponsorId > grantIdMax) {
-    			                proposal.setGrantNumber(ezraProposal.getSponsorProjectId().substring(0,26));
+    			                String grantShort = ezraProposal.getSponsorProjectId().substring(0,26);
+    			                if (!grantShort.equalsIgnoreCase(proposal.getGrantNumber())) {
+    			                    proposal.setGrantNumber(grantShort);
+    			                } 
     			            } else {
     			                proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
     			            }
-                            routeProposalDocument(proposal);
+    			            businessObjectService.save(proposal);
                         }
 			        }
 			        else
