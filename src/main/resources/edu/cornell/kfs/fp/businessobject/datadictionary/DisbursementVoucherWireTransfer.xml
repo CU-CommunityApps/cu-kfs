@@ -15,7 +15,7 @@
  limitations under the License.
 -->
 
-  <bean id="DisbursementVoucherWireTransfer" parent="DisbursementVoucherWireTransfer-parentBean">
+  <bean id="PaymentSourceWireTransfer" parent="PaymentSourceWireTransfer-parentBean">
     <property name="attributes">
       <list merge="true">
         <ref bean="DisbursementVoucherWireTransfer-extension-disbVchrBankStreetAddress"/>
@@ -32,10 +32,10 @@
     </property>
   </bean>
   
-  <bean id="DisbursementVoucherWireTransfer-disbursementVoucherBankName" parent="DisbursementVoucherWireTransfer-disbursementVoucherBankName-parentBean">
+  <bean id="DisbursementVoucherWireTransfer-disbursementVoucherBankName" parent="PaymentSourceWireTransfer-bankName-parentBean">
   	<property name="maxLength" value="55"/>
   </bean>
-  <bean id="DisbursementVoucherWireTransfer-disbursementVoucherPayeeAccountName" parent="DisbursementVoucherWireTransfer-disbursementVoucherPayeeAccountName-parentBean">
+  <bean id="DisbursementVoucherWireTransfer-disbursementVoucherPayeeAccountName" parent="PaymentSourceWireTransfer-bankRoutingNumber-parentBean">
   	<property name="maxLength" value="55"/>
   </bean>
     

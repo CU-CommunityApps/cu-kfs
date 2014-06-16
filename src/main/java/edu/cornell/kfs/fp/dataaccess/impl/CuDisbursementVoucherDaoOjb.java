@@ -5,8 +5,8 @@ import java.util.Collection;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.kuali.kfs.fp.dataaccess.impl.DisbursementVoucherDaoOjb;
-import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.krad.service.DataDictionaryService;
 
@@ -34,7 +34,7 @@ public class CuDisbursementVoucherDaoOjb extends DisbursementVoucherDaoOjb {
 
         Criteria criteria = new Criteria();
         criteria.addEqualTo("documentHeader.financialDocumentStatusCode", statusCode);
-        criteria.addEqualTo("disbVchrPaymentMethodCode", DisbursementVoucherConstants.PAYMENT_METHOD_CHECK);
+        criteria.addEqualTo("disbVchrPaymentMethodCode", KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
         if (immediatesOnly) {
             criteria.addEqualTo("immediatePaymentIndicator", Boolean.TRUE);
         }

@@ -16,14 +16,16 @@
 package com.rsmart.kuali.kfs.fp.businessobject;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.fp.businessobject.DisbursementVoucherWireTransfer;
+//import org.kuali.kfs.fp.businessobject.DisbursementVoucherWireTransfer;
 import org.kuali.rice.core.web.format.BooleanFormatter;
 
+
+// UPGRADE-911 Code has been commented out for the purpose of getting things to compile. This must be revisited.
 
 /**
  * Provides String setter methods for population from XML (batch)
  */
-public class BatchDisbursementVoucherWireTransfer extends DisbursementVoucherWireTransfer {
+public class BatchDisbursementVoucherWireTransfer /*extends DisbursementVoucherWireTransfer*/ {
 
     /**
      * Takes a <code>String</code> and attempt to format as <code>Boolean</code> for setting the
@@ -34,7 +36,7 @@ public class BatchDisbursementVoucherWireTransfer extends DisbursementVoucherWir
     public void setDisbursementVoucherWireTransferFeeWaiverIndicator(String disbursementVoucherWireTransferFeeWaiverIndicator) {
         if (StringUtils.isNotBlank(disbursementVoucherWireTransferFeeWaiverIndicator)) {
             Boolean disbursementVoucherWireTransferFeeWaiver = (Boolean) (new BooleanFormatter()).convertFromPresentationFormat(disbursementVoucherWireTransferFeeWaiverIndicator);
-            super.setDisbursementVoucherWireTransferFeeWaiverIndicator(disbursementVoucherWireTransferFeeWaiver);
+            //super.setDisbursementVoucherWireTransferFeeWaiverIndicator(disbursementVoucherWireTransferFeeWaiver);
         }
     }
 

@@ -28,8 +28,8 @@ public class CuPaymentRequestDocumentPresentationController extends PaymentReque
 		
         if(workflowDocument.isInitiated() || workflowDocument.isSaved()){
             // KFSPTS-1891
-            editModes.add(KfsAuthorizationConstants.DisbursementVoucherEditMode.FRN_ENTRY);
-            editModes.add(KfsAuthorizationConstants.DisbursementVoucherEditMode.WIRE_ENTRY);
+            editModes.add(KfsAuthorizationConstants.TransactionalEditMode.FRN_ENTRY);
+            editModes.add(KfsAuthorizationConstants.TransactionalEditMode.WIRE_ENTRY);
         }
 		
         // KFSPTS-1891
@@ -40,8 +40,8 @@ public class CuPaymentRequestDocumentPresentationController extends PaymentReque
 		if (paymentRequestDocument.isDocumentStoppedInRouteNode(PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW)) {
             editModes.add(CUPaymentRequestEditMode.WAIVE_WIRE_FEE_EDITABLE);
             // KFSPTS-1891
-            editModes.add(KfsAuthorizationConstants.DisbursementVoucherEditMode.FRN_ENTRY);
-            editModes.add(KfsAuthorizationConstants.DisbursementVoucherEditMode.WIRE_ENTRY);
+            editModes.add(KfsAuthorizationConstants.TransactionalEditMode.FRN_ENTRY);
+            editModes.add(KfsAuthorizationConstants.TransactionalEditMode.WIRE_ENTRY);
             // KFSPTS-2968 allows DM to edit additional charge amount
             editModes.add(CUPaymentRequestEditMode.ADDITONAL_CHARGE_AMOUNT_EDITABLE);
 		}

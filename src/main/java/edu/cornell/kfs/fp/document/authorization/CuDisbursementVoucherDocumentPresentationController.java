@@ -1,16 +1,15 @@
 package edu.cornell.kfs.fp.document.authorization;
 
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
-import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.authorization.DisbursementVoucherDocumentPresentationController;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KfsAuthorizationConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.krad.document.Document;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
@@ -58,7 +57,7 @@ public class CuDisbursementVoucherDocumentPresentationController extends Disburs
         
         final Set<String> currentRouteLevels = workflowDocument.getCurrentNodeNames();
         boolean isAssociatedWithTrip = SpringContext.getBean(CULegacyTravelService.class).isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(dvDocument);
-        if(isAssociatedWithTrip && !currentRouteLevels.contains(DisbursementVoucherConstants.RouteLevelNames.PAYMENT_METHOD)) {
+        if(isAssociatedWithTrip && !currentRouteLevels.contains(KFSConstants.RouteLevelNames.PAYMENT_METHOD)) {
             LOG.info("Checking travel system generated entry permissions.");
             editModes.add(CUKFSAuthorizationConstants.DisbursementVoucherEditMode.TRAVEL_SYSTEM_GENERATED_ENTRY); 
         }

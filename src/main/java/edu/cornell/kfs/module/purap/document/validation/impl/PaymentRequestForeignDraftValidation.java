@@ -39,13 +39,13 @@ public class PaymentRequestForeignDraftValidation extends GenericValidation {
 
         /* currency type code required */
         if (StringUtils.isBlank(((CuPaymentRequestDocument)document).getPreqWireTransfer().getPreqForeignCurrencyTypeCode())) {
-            errors.putError(CUPurapPropertyConstants.PREQ_FD_CURRENCY_TYPE_CODE, KFSKeyConstants.ERROR_DV_CURRENCY_TYPE_CODE);
+            errors.putError(CUPurapPropertyConstants.PREQ_FD_CURRENCY_TYPE_CODE, KFSKeyConstants.ERROR_PAYMENT_SOURCE_CURRENCY_TYPE_CODE);
             isValid = false;
         }
 
         /* currency type name required */
         if (StringUtils.isBlank(((CuPaymentRequestDocument)document).getPreqWireTransfer().getPreqForeignCurrencyTypeName())) {
-            errors.putError(CUPurapPropertyConstants.PREQ_FD_CURRENCY_TYPE_NAME, KFSKeyConstants.ERROR_DV_CURRENCY_TYPE_NAME);
+            errors.putError(CUPurapPropertyConstants.PREQ_FD_CURRENCY_TYPE_NAME, KFSKeyConstants.ERROR_PAYMENT_SOURCE_CURRENCY_TYPE_NAME);
             isValid = false;
         }
 

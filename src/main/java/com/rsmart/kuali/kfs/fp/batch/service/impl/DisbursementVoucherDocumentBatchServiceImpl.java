@@ -403,9 +403,11 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
         disbursementVoucherDocument.setDvNonResidentAlienTax(batchDisbursementVoucherDocument.getDvNonResidentAlienTax());
         disbursementVoucherDocument.getDvNonResidentAlienTax().setDocumentNumber(disbursementVoucherDocument.getDocumentNumber());
 
+        /* UPGRADE-911
         disbursementVoucherDocument.setDvWireTransfer(batchDisbursementVoucherDocument.getDvWireTransfer());
         disbursementVoucherDocument.getDvWireTransfer().setDocumentNumber(disbursementVoucherDocument.getDocumentNumber());
-
+        */
+        
         // set defaults
         if (batchDefault != null) {
             if (StringUtils.isBlank(disbursementVoucherDocument.getDisbVchrContactPersonName())) {

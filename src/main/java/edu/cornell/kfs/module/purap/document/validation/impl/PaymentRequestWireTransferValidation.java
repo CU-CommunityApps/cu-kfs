@@ -49,7 +49,7 @@ public class PaymentRequestWireTransferValidation extends GenericValidation  {
         isValid &= isValid(wireTransfer.getPreqPayeeAccountName(), CUPurapConstants.LABEL_BANK_ACCT_NAME, CUPurapPropertyConstants.PREQ_PAYEE_ACCT_NAME);
 
         if (KFSConstants.COUNTRY_CODE_UNITED_STATES.equals(wireTransfer.getPreqBankCountryCode()) && StringUtils.isBlank(wireTransfer.getPreqBankRoutingNumber())) {
-            errors.putError(CUPurapPropertyConstants.PREQ_BANK_ROUTING_NUMBER, KFSKeyConstants.ERROR_DV_BANK_ROUTING_NUMBER);
+            errors.putError(CUPurapPropertyConstants.PREQ_BANK_ROUTING_NUMBER, KFSKeyConstants.ERROR_PAYMENT_SOURCE_BANK_ROUTING_NUMBER);
             isValid = false;
         }
 

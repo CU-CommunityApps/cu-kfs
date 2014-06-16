@@ -51,7 +51,7 @@ public class CreditMemoWireTransferValidation extends GenericValidation  {
         isValid &= isValid(wireTransfer.getCmPayeeAccountName(), CUPurapConstants.LABEL_BANK_ACCT_NAME, CUPurapPropertyConstants.CM_PAYEE_ACCT_NAME);
 
         if (KFSConstants.COUNTRY_CODE_UNITED_STATES.equals(wireTransfer.getCmBankCountryCode()) && StringUtils.isBlank(wireTransfer.getCmBankRoutingNumber())) {
-            errors.putError(CUPurapPropertyConstants.CM_BANK_ROUTING_NUMBER, KFSKeyConstants.ERROR_DV_BANK_ROUTING_NUMBER);
+            errors.putError(CUPurapPropertyConstants.CM_BANK_ROUTING_NUMBER, KFSKeyConstants.ERROR_PAYMENT_SOURCE_BANK_ROUTING_NUMBER);
             isValid = false;
         }
 

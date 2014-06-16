@@ -39,13 +39,13 @@ public class CreditMemoForeignDraftValidation extends GenericValidation {
 
         /* currency type code required */
         if (StringUtils.isBlank(((CuVendorCreditMemoDocument)document).getCmWireTransfer().getCmForeignCurrencyTypeCode())) {
-            errors.putError(CUPurapPropertyConstants.CM_FD_CURRENCY_TYPE_CODE, KFSKeyConstants.ERROR_DV_CURRENCY_TYPE_CODE);
+            errors.putError(CUPurapPropertyConstants.CM_FD_CURRENCY_TYPE_CODE, KFSKeyConstants.ERROR_PAYMENT_SOURCE_CURRENCY_TYPE_CODE);
             isValid = false;
         }
 
         /* currency type name required */
         if (StringUtils.isBlank(((CuVendorCreditMemoDocument)document).getCmWireTransfer().getCmForeignCurrencyTypeName())) {
-            errors.putError(CUPurapPropertyConstants.CM_FD_CURRENCY_TYPE_NAME, KFSKeyConstants.ERROR_DV_CURRENCY_TYPE_NAME);
+            errors.putError(CUPurapPropertyConstants.CM_FD_CURRENCY_TYPE_NAME, KFSKeyConstants.ERROR_PAYMENT_SOURCE_CURRENCY_TYPE_NAME);
             isValid = false;
         }
 

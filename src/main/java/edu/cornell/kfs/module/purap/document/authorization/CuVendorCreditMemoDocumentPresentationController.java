@@ -2,7 +2,6 @@ package edu.cornell.kfs.module.purap.document.authorization;
 
 import java.util.Set;
 
-import org.kuali.kfs.module.purap.PurapAuthorizationConstants.PaymentRequestEditMode;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.module.purap.document.authorization.VendorCreditMemoDocumentPresentationController;
@@ -10,8 +9,6 @@ import org.kuali.kfs.sys.KfsAuthorizationConstants;
 import org.kuali.rice.krad.document.Document;
 
 import edu.cornell.kfs.module.purap.CUPurapAuthorizationConstants.CUPaymentRequestEditMode;
-import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants.PaymentRequestDocument.NodeDetailEnum;
 
 public class CuVendorCreditMemoDocumentPresentationController extends VendorCreditMemoDocumentPresentationController {
 	
@@ -20,8 +17,8 @@ public class CuVendorCreditMemoDocumentPresentationController extends VendorCred
 		Set<String> editModes = super.getEditModes(document);
 		
         // KFSPTS-1891
-        editModes.add(KfsAuthorizationConstants.DisbursementVoucherEditMode.FRN_ENTRY);
-        editModes.add(KfsAuthorizationConstants.DisbursementVoucherEditMode.WIRE_ENTRY);
+        editModes.add(KfsAuthorizationConstants.TransactionalEditMode.FRN_ENTRY);
+        editModes.add(KfsAuthorizationConstants.TransactionalEditMode.WIRE_ENTRY);
         
         VendorCreditMemoDocument vendorCreditMemoDocument = (VendorCreditMemoDocument)document;
         

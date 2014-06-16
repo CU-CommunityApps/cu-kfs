@@ -1,9 +1,10 @@
+//UPGRADE-911 all changes to wire have been commented out
 package edu.cornell.kfs.fp.document.validation.impl;
 
 import java.text.MessageFormat;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.fp.businessobject.DisbursementVoucherWireTransfer;
+//import org.kuali.kfs.fp.businessobject.DisbursementVoucherWireTransfer;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherDocumentPreRules;
@@ -23,7 +24,8 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
     protected boolean checkForeignDraftTabState(DisbursementVoucherDocument dvDocument) {
         boolean tabStatesOK = true;
 
-        DisbursementVoucherWireTransfer dvForeignDraft = dvDocument.getDvWireTransfer();
+      /*  DisbursementVoucherWireTransfer dvForeignDraft = dvDocument.getWireTransfer();
+                dvDocument.getDvWireTransfer();
 
         // if payment method is CHECK and wire tab contains data, ask user to clear tab
         if ( !StringUtils.equals(DisbursementVoucherConstants.PAYMENT_METHOD_DRAFT, dvDocument.getDisbVchrPaymentMethodCode())
@@ -43,7 +45,7 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
                 super.event.setActionForwardName(KFSConstants.MAPPING_BASIC);
                 tabStatesOK = false;
             }
-        }
+        }*/
 
         return tabStatesOK;
     }
@@ -58,7 +60,7 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
     protected boolean checkWireTransferTabState(DisbursementVoucherDocument dvDocument) {
         boolean tabStatesOK = true;
 
-        DisbursementVoucherWireTransfer dvWireTransfer = dvDocument.getDvWireTransfer();
+        /*DisbursementVoucherWireTransfer dvWireTransfer = dvDocument.getDvWireTransfer();
 
         // if payment method is CHECK and wire tab contains data, ask user to clear tab
         // NOTE: This is lousy - but there is no distinction in the payment method table 
@@ -81,7 +83,7 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
                 super.event.setActionForwardName(KFSConstants.MAPPING_BASIC);
                 tabStatesOK = false;
             }
-        }
+        }*/
 
         return tabStatesOK;
     }

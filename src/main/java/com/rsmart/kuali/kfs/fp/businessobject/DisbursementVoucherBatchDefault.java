@@ -23,8 +23,8 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
-import org.kuali.kfs.fp.businessobject.DisbursementVoucherDocumentationLocation;
 import org.kuali.kfs.sys.businessobject.Bank;
+import org.kuali.kfs.sys.businessobject.PaymentDocumentationLocation;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.rice.krad.service.KualiModuleService;
@@ -55,7 +55,7 @@ public class DisbursementVoucherBatchDefault extends PersistableBusinessObjectBa
     private String financialDocumentLineDescription;
 
     private CampusEbo campus;
-    private DisbursementVoucherDocumentationLocation documentationLocation;
+    private PaymentDocumentationLocation documentationLocation;
     private Bank bank;
     private Chart chart;
     private Account account;
@@ -339,7 +339,7 @@ public class DisbursementVoucherBatchDefault extends PersistableBusinessObjectBa
      * 
      * @return Returns the documentationLocation.
      */
-    public DisbursementVoucherDocumentationLocation getDocumentationLocation() {
+    public PaymentDocumentationLocation getDocumentationLocation() {
         return documentationLocation;
     }
 
@@ -348,7 +348,7 @@ public class DisbursementVoucherBatchDefault extends PersistableBusinessObjectBa
      * 
      * @param documentationLocation The documentationLocation to set.
      */
-    public void setDocumentationLocation(DisbursementVoucherDocumentationLocation documentationLocation) {
+    public void setDocumentationLocation(PaymentDocumentationLocation documentationLocation) {
         this.documentationLocation = documentationLocation;
     }
 

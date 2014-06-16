@@ -95,7 +95,7 @@
         <foreignkey field-ref="documentNumber" />
     </reference-descriptor>
 
-    <reference-descriptor name="disbVchrDocumentationLoc" class-ref="org.kuali.kfs.fp.businessobject.DisbursementVoucherDocumentationLocation" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+    <reference-descriptor name="disbVchrDocumentationLoc" class-ref="org.kuali.kfs.sys.businessobject.PaymentDocumentationLocation" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         <foreignkey field-ref="disbursementVoucherDocumentationLocationCode" />
     </reference-descriptor>
 
@@ -115,7 +115,7 @@
         <foreignkey field-ref="documentNumber" />
     </reference-descriptor>
 
-    <reference-descriptor name="dvWireTransfer" class-ref="org.kuali.kfs.fp.businessobject.DisbursementVoucherWireTransfer" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true" >
+    <reference-descriptor name="dvWireTransfer" class-ref="org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true" >
         <foreignkey field-ref="documentNumber" />
     </reference-descriptor>
     
@@ -557,7 +557,7 @@
  	 	 	 		        <field-descriptor name="disbVchrCorrespondentBankSwiftCode" column="DV_CRSPNDT_BNK_SWIFT_CD" jdbc-type="VARCHAR" />
 	 		</class-descriptor>
 
-	 		<class-descriptor class="org.kuali.kfs.fp.businessobject.DisbursementVoucherWireTransfer" table="FP_DV_WIRE_TRNFR_T">
+	 		<class-descriptor class="org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer" table="FP_DV_WIRE_TRNFR_T">
  	 	 	 		    <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
  	 	 	 		    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
  	 	 	 		    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
