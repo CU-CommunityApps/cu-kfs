@@ -449,11 +449,11 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
             generateDocumentBankOffsetEntries((AccountingDocument) document, document.getBankCode(), KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", ((CuPaymentRequestDocument)document).DOCUMENT_TYPE_NON_CHECK, sequenceHelper, document.getTotalDollarAmount().negated());
         }
 
-        // check for pending entries and replace object code with chart cash object code
+        // check for balance type Actual offset pending entries and replace the object code with chart cash object code (currently replacing object code 2900 with 1000)
         List<GeneralLedgerPendingEntry> glpes = document.getGeneralLedgerPendingEntries();
 
         for (GeneralLedgerPendingEntry glpe : glpes) {
-            OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getByPrimaryId(glpe.getUniversityFiscalYear(), glpe.getChartOfAccountsCode(), glpe.getFinancialDocumentTypeCode(), glpe.getFinancialBalanceTypeCode());
+            OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getByPrimaryId(glpe.getUniversityFiscalYear(), glpe.getChartOfAccountsCode(), ((CuPaymentRequestDocument)document).DOCUMENT_TYPE_NON_CHECK, KFSConstants.BALANCE_TYPE_ACTUAL);
             if (glpe.getFinancialObjectCode().equalsIgnoreCase(offsetDefinition.getFinancialObjectCode())) {
                 if (ObjectUtils.isNull(glpe.getChart())) {
                     glpe.refreshReferenceObject(KFSPropertyConstants.CHART);
