@@ -1182,7 +1182,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         List<CapitalAccountingLines> capitalAccountingLines = caldb.getCapitalAccountingLines();        
         List<CapitalAssetInformation> capitalAssetInformation = new ArrayList<CapitalAssetInformation>();
         
-        KualiAccountingDocumentFormBase kadfb = (KualiAccountingDocumentFormBase) calfb;
+        KualiAccountingDocumentFormBase kadfb = calfb;
 
         List<CapitalAssetInformation> currentCapitalAssetInformation =  this.getCurrentCapitalAssetInformationObject(kadfb);
         
@@ -1567,7 +1567,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
 
         List<CapitalAccountingLines> capitalAccountingLines = caldb.getCapitalAccountingLines();        
 
-        KualiAccountingDocumentFormBase kadfb = (KualiAccountingDocumentFormBase) calfb;
+        KualiAccountingDocumentFormBase kadfb = calfb;
 
         List<CapitalAssetInformation> currentCapitalAssetInformation =  this.getCurrentCapitalAssetInformationObject(kadfb);
         
@@ -1643,7 +1643,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         tabStates.remove(tabIdForModifyCapitalAsset);
         
         //if there are any capital accounting lines for capitalization exists then
-        if (caldb.getCapitalAccountingLines().size() > 0) {
+        if (caldb.getCapitalAccountingLines().size() > 0 || caldb.isCapitalAccountingLinesExist()) {
             tabStates.put(tabIdForAccountingLinesForCapitalization, KFSConstants.CapitalAssets.CAPITAL_ASSET_TAB_STATE_OPEN);
         }
         else {
@@ -1932,7 +1932,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         CapitalAccountingLinesDocumentBase caldb = (CapitalAccountingLinesDocumentBase) calfb.getDocument();
         
         List<CapitalAccountingLines> capitalAccountingLines = caldb.getCapitalAccountingLines();        
-        KualiAccountingDocumentFormBase kadfb = (KualiAccountingDocumentFormBase) calfb;
+        KualiAccountingDocumentFormBase kadfb = calfb;
 
         List<CapitalAssetInformation> currentCapitalAssetInformation =  this.getCurrentCapitalAssetInformationObject(kadfb);
         
@@ -1964,7 +1964,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     protected void checkSelectForCapitalAccountingLines(CapitalAccountingLinesFormBase calfb) {
         CapitalAccountingLinesDocumentBase caldb = (CapitalAccountingLinesDocumentBase) calfb.getFinancialDocument();
         List<CapitalAccountingLines> capitalAccountingLines = caldb.getCapitalAccountingLines();        
-        KualiAccountingDocumentFormBase kadfb = (KualiAccountingDocumentFormBase) calfb;
+        KualiAccountingDocumentFormBase kadfb = calfb;
         List<CapitalAssetInformation> currentCapitalAssetInformation =  this.getCurrentCapitalAssetInformationObject(kadfb);
         
         for (CapitalAccountingLines capitalAccountingLine : capitalAccountingLines) {
@@ -2120,11 +2120,12 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         for (CapitalAssetInformation capitalAsset : capitalAssetInformation) {
         //redistribute the capital asset modify amount to the group accounting lines
         //based on amount.
-            if (!capitalAssetAmountAlreadyDistributedToGroupAccountingLines(capitalAsset))
-            redistributeToGroupAccountingLinesFromAssetsByAmounts(selectedCapitalAccountingLines, capitalAsset);
+            if (!capitalAssetAmountAlreadyDistributedToGroupAccountingLines(capitalAsset)) {
+            	redistributeToGroupAccountingLinesFromAssetsByAmounts(selectedCapitalAccountingLines, capitalAsset);
+            }
         }
     }
-    
+
     /**
      * checks if the capital asset amount already distributed to its group accounting lines
      * 
