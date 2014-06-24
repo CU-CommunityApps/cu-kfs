@@ -1,4 +1,3 @@
-//UPGRADE-911 all changes to wire have been commented out
 package edu.cornell.kfs.fp.document;
 
 import java.sql.Date;
@@ -8,7 +7,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax;
-//import org.kuali.kfs.fp.businessobject.WireCharge;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTaxService;
@@ -19,6 +17,7 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
+import org.kuali.kfs.sys.businessobject.WireCharge;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.kfs.sys.service.BankService;
@@ -93,7 +92,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             return;
         }
 
-        this.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(CuDisbursementVoucherConstants.DV_PAYEE_TYPE_VENDOR);
+        this.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(KFSConstants.PaymentPayeeTypes.VENDOR);
         this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(vendor.getVendorNumber());
         ((CuDisbursementVoucherPayeeDetailExtension) this.getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(
                 CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_VENDOR);
@@ -168,7 +167,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             return;
         }
 
-        this.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE);
+        this.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(KFSConstants.PaymentPayeeTypes.EMPLOYEE);
         if (StringUtils.isNotBlank(employee.getEmployeeId())) {
             this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(employee.getEmployeeId());
             ((CuDisbursementVoucherPayeeDetailExtension) this.getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(
@@ -418,10 +417,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             }
         }
 
-       /* if (dvWireTransfer != null) {
-            dvWireTransfer.setDocumentNumber(this.documentNumber);
-            ((DisbursementVoucherWireTransferExtendedAttribute)dvWireTransfer.getExtension()).setDocumentNumber(this.documentNumber);
-        }*/
+        if (wireTransfer != null) {
+            wireTransfer.setDocumentNumber(this.documentNumber);
+            ((DisbursementVoucherWireTransferExtendedAttribute) wireTransfer.getExtension()).setDocumentNumber(this.documentNumber);
+        }
 
         if (dvNonResidentAlienTax != null) {
             dvNonResidentAlienTax.setDocumentNumber(this.documentNumber);
@@ -538,7 +537,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         setDvNonResidentAlienTax(new DisbursementVoucherNonResidentAlienTax());
 
         // clear waive wire
-        //getDvWireTransfer().setDisbursementVoucherWireTransferFeeWaiverIndicator(false);
+        getWireTransfer().setWireTransferFeeWaiverIndicator(false);
 
         // check vendor id number to see if still valid, if not, clear dvPayeeDetail; otherwise, use the current dvPayeeDetail as is
         if (!StringUtils.isBlank(getDvPayeeDetail().getDisbVchrPayeeIdNumber())) {
@@ -622,27 +621,27 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         /*
          * only generate additional charge entries for payment method wire charge, and if the fee has not been waived
          */
-        /* if (DisbursementVoucherConstants.PAYMENT_METHOD_WIRE.equals(getDisbVchrPaymentMethodCode()) && !getDvWireTransfer().isDisbursementVoucherWireTransferFeeWaiverIndicator()) {
-            LOG.debug("generating wire charge gl pending entries.");
-
-            // retrieve wire charge
-            WireCharge wireCharge = retrieveWireCharge();
-            //KFSPTS-764: Added if check to eliminate zero dollar wire charge generating zero dollar accounting entries
-            if (!isZeroDollarWireCharge(wireCharge)) {
-                
+            if (KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE.equals(getDisbVchrPaymentMethodCode()) && !getWireTransfer().isWireTransferFeeWaiverIndicator()) {
+                LOG.debug("generating wire charge gl pending entries.");
+    
+                // retrieve wire charge
+                WireCharge wireCharge = getPaymentSourceHelperService().retrieveCurrentYearWireCharge();
+                //KFSPTS-764: Added if check to eliminate zero dollar wire charge generating zero dollar accounting entries
+                if (!isZeroDollarWireCharge(wireCharge)) {
+                    
                 //KFSPTS-764: only generate GLPE entries when wire charges are NOT zero dollars.
-            // generate debits
-            GeneralLedgerPendingEntry chargeEntry = processWireChargeDebitEntries(sequenceHelper, wireCharge);
-
-            // generate credits
-            processWireChargeCreditEntries(sequenceHelper, wireCharge, chargeEntry);
-        }
+                // generate debits
+                GeneralLedgerPendingEntry chargeEntry = getPaymentSourceHelperService().processWireChargeDebitEntries(this, sequenceHelper, wireCharge);
+    
+                // generate credits
+                getPaymentSourceHelperService().processWireChargeCreditEntries(this, sequenceHelper, wireCharge, chargeEntry);
+            }
         }
 
         // for wire or drafts generate bank offset entry (if enabled), for ACH and checks offset will be generated by PDP
-        if (DisbursementVoucherConstants.PAYMENT_METHOD_WIRE.equals(getDisbVchrPaymentMethodCode()) || DisbursementVoucherConstants.PAYMENT_METHOD_DRAFT.equals(getDisbVchrPaymentMethodCode())) {
-            generateDocumentBankOffsetEntries(sequenceHelper);
-        }*/
+        if (KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE.equals(getDisbVchrPaymentMethodCode()) || KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT.equals(getDisbVchrPaymentMethodCode())) {
+            getPaymentSourceHelperService().generateDocumentBankOffsetEntries(this, sequenceHelper, DisbursementVoucherConstants.DOCUMENT_TYPE_WTFD);
+        }
 
         return true;
     }
@@ -655,15 +654,15 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
          * @param wireCharge
          * @return true when wire charge for DV bank is zero dollars.
          */
-     /*  private boolean isZeroDollarWireCharge(WireCharge wireCharge) {
+       private boolean isZeroDollarWireCharge(WireCharge wireCharge) {
             
-            if ( (KFSConstants.COUNTRY_CODE_UNITED_STATES.equals(getDvWireTransfer().getDisbVchrBankCountryCode()) && wireCharge.getDomesticChargeAmt().isZero()) ||
-                 (!KFSConstants.COUNTRY_CODE_UNITED_STATES.equals(getDvWireTransfer().getDisbVchrBankCountryCode()) && wireCharge.getForeignChargeAmt().isZero()) ){
+            if ( (KFSConstants.COUNTRY_CODE_UNITED_STATES.equals(getWireTransfer().getBankCountryCode()) && wireCharge.getDomesticChargeAmt().isZero()) ||
+                 (!KFSConstants.COUNTRY_CODE_UNITED_STATES.equals(getWireTransfer().getBankCountryCode()) && wireCharge.getForeignChargeAmt().isZero()) ){
                 //DV is for a US bank and wire charge value is zero dollars OR DV is for a foreign bank and wire charge is zero dollars.
                 return true;
             }
             return false;
-        }*/
+        }
         
         @Override
         public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {

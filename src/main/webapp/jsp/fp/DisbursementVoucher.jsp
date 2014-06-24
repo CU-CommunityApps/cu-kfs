@@ -21,7 +21,35 @@
 	renderMultipart="true" showTabButtons="true">
 	
 	<fp:dvPrintCoverSheet />
-	<fp:dvMessages />
+	   <script type="text/javascript">
+        function clearSpecialHandlingTab() {
+        var prefix = "document.dvPayeeDetail.";
+        var ctrl;
+        
+        ctrl = kualiElements[prefix+"disbVchrSpecialHandlingPersonName"];
+        ctrl.value = "";
+        
+        ctrl = kualiElements[prefix + "disbVchrSpecialHandlingCityName"]
+        ctrl.value = "";
+        
+        ctrl = kualiElements[prefix + "disbVchrSpecialHandlingLine1Addr"];
+        ctrl.value = "";
+        
+        ctrl = kualiElements[prefix + "disbVchrSpecialHandlingStateCode"];
+        ctrl.value = "";
+        
+        ctrl = kualiElements[prefix + "disbVchrSpecialHandlingLine2Addr"];
+        ctrl.value = "";
+        
+        ctrl = kualiElements[prefix + "disbVchrSpecialHandlingZipCode"];
+        ctrl.value = "";
+        
+        ctrl = kualiElements[prefix + "disbVchrSpecialHandlingCountryCode"];
+        ctrl.value = "";
+       }
+    </script>
+    <sys:paymentMessages />
+    
 	<fp:dvTripLink />
 	<fp:dvIWantLink />
 
@@ -58,8 +86,8 @@
 	<fp:dvContact />
     <fp:dvSpecialHandling />
 	<fp:dvNRATax />
-	<fp:dvWireTransfer />
-	<fp:dvForeignDraft />
+	<fp:wireTransfer />
+	<fp:foreignDraft />
 	<fp:dvNonEmployeeTravel />
 	<fp:dvPrePaidTravel />
     <fp:dvPDPStatus />

@@ -75,7 +75,6 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
         try {
 			URL wsdlUrl = new URL(updateTripWsdl);
 			
-			//TODO UPGRADE-911 -- Figure out correct CXF deps
 			JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
 			client = dcf.createClient(wsdlUrl);
 			//client = dcf.createClient(wsdlUrl);
@@ -123,7 +122,6 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
         try {
 			URL wsdlUrl = new URL(updateTripWsdl);
 	     
-			//TODO UPGRADE-911 -- Figure out correct CXF deps
 			JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
 			
 		

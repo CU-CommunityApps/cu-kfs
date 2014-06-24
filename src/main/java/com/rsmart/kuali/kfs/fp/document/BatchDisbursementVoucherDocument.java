@@ -32,6 +32,8 @@ import org.kuali.rice.krad.bo.Attachment;
  * Provides String setter methods and additional properties for population from XML (batch)
  */
 public class BatchDisbursementVoucherDocument extends DisbursementVoucherDocument {
+
+    private static final long serialVersionUID = 1L;
     private List<Attachment> attachments;
 
     public BatchDisbursementVoucherDocument() {

@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
-import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -341,7 +340,7 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
 
         String payeeTypeCode = batchDisbursementVoucherDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode();
         String payeeIdNumber = batchDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPayeeIdNumber();
-        if (DisbursementVoucherConstants.DV_PAYEE_TYPE_VENDOR.equals(payeeTypeCode)) {
+        if (KFSConstants.PaymentPayeeTypes.VENDOR.equals(payeeTypeCode)) {
             if (StringUtils.contains(payeeIdNumber, "-")) {
                 VendorDetail vendorDetail = vendorService.getVendorDetail(payeeIdNumber);
                 if (vendorDetail != null) {
@@ -361,7 +360,7 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
                 batchFeedHelperService.addExistenceError(KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER, payeeIdNumber, MessageMap);
             }
         }
-        else if (DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE.equals(payeeTypeCode)) {
+        else if (KFSConstants.PaymentPayeeTypes.EMPLOYEE.equals(payeeTypeCode)) {
             Person person = personService.getPersonByEmployeeId(payeeIdNumber);
             if (person != null) {
                 disbursementVoucherDocument.templateEmployee(person);

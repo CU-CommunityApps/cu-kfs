@@ -121,7 +121,7 @@
                 <call-method-rule pattern="disbursementVoucherPayeeAccountName" methodname="setDisbursementVoucherPayeeAccountName" paramcount="0" />    
                 <call-method-rule pattern="disbursementVoucherAutomatedClearingHouseProfileNumber" methodname="setDisbursementVoucherAutomatedClearingHouseProfileNumber" paramcount="0" />    
                                 
-                <set-next-rule methodname="setDvWireTransfer" />
+                <set-next-rule methodname="setWireTransfer" />
              </pattern>
              
              <pattern value="foreigndraft">
@@ -130,7 +130,7 @@
                 <call-method-rule pattern="disbursementVoucherForeignCurrencyTypeCode" methodname="setDisbursementVoucherForeignCurrencyTypeCode" paramcount="0" />    
                 <call-method-rule pattern="disbursementVoucherForeignCurrencyTypeName" methodname="setDisbursementVoucherForeignCurrencyTypeName" paramcount="0" /> 
                 
-                <set-next-rule methodname="setDvWireTransfer" />
+                <set-next-rule methodname="setWireTransfer" />
              </pattern>                            
              
              <pattern value="note">

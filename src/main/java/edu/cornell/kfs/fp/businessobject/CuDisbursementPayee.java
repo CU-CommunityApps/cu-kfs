@@ -19,7 +19,6 @@ public class CuDisbursementPayee extends DisbursementPayee {
     private static final long serialVersionUID = 1L;
     private String principalName;
     
-  //KFSPTS-1737 -- added
     /**
      * Gets the principalName attribute. 
      * @return Returns the principalName.
@@ -28,7 +27,6 @@ public class CuDisbursementPayee extends DisbursementPayee {
         return principalName;
     }
 
-    //KFSPTS-1737 -- added
     /**
      * Sets the principalName attribute value.
      * @param principalName The principalId to set.
