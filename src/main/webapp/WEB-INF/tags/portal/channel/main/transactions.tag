@@ -90,6 +90,20 @@
 	        <li><portal:portalLink displayTitle="true" title="Security Transfer" url="endowSecurityTransferDocument.do?methodToCall=docHandler&command=initiate&docTypeName=EST" /></li>
 	     </ul>
 	 </c:if>
+
+	<c:if test="${ConfigProperties.module.travel.enabled == 'true'}">
+         <strong>Travel</strong><br />
+         <ul class="chan">
+             <li><portal:portalLink displayTitle="true" title="Entertainment Reimbursement" url="temTravelEntertainment.do?methodToCall=docHandler&command=initiate&docTypeName=ENT" /></li>
+             <li><portal:portalLink displayTitle="true" title="Moving and Relocation Reimbursement" url="temTravelRelocation.do?methodToCall=docHandler&command=initiate&docTypeName=RELO" /></li>
+             <li><portal:portalLink displayTitle="true" title="Travel Arranger" url="temTravelArranger.do?methodToCall=docHandler&command=initiate&docTypeName=TTA" /></li>
+             <li><portal:portalLink displayTitle="true" title="Travel Authorization" url="temTravelAuthorization.do?methodToCall=docHandler&command=initiate&docTypeName=TA" /></li>
+             <c:if test="${ConfigProperties.module.travel.reimbursement.initiatelink.enabled == 'true'}">
+                 <li><portal:portalLink displayTitle="true" title="Travel Reimbursement" url="temTravelReimbursement.do?methodToCall=docHandler&command=initiate&docTypeName=TR" /></li>
+             </c:if>
+         </ul>
+   	 </c:if>
+
 </div>
 <channel:portalChannelBottom />
 

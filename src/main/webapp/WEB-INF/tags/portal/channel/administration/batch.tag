@@ -51,6 +51,15 @@
 			<li><portal:portalLink displayTitle="true" title="Electronic Invoice Test File Generation" url="purapElectronicInvoiceTestFileGeneration.do" /></li>				
 	    </c:if>
 	</ul>
+	<c:if test="${ConfigProperties.module.travel.enabled == 'true'}">
+    <strong>Travel</strong><br/>
+	<ul class="chan">
+	    <li><portal:portalLink displayTitle="true" title="Credit Card Data Upload" url="batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=creditCardDataXmlInputFileType" /></li>
+	    <li><portal:portalLink displayTitle="true" title="Per Diem XML Batch Upload" url="batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=perDiemXmlInputFileType" /></li>
+	    <li><portal:portalLink displayTitle="true" title="Per Diem TXT Batch Upload" url="batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=perDiemTxtInputFileType" /></li>
+	    <li><portal:portalLink displayTitle="true" title="Travel Agency Data Upload" url="batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=agencyDataXmlInputFileType" /></li>
+    </ul>	
+	</c:if>
 	<strong>Labor Ledger</strong><br/>
     <ul class="chan">
         <li><portal:portalLink displayTitle="true" title="Create Disencumbrance" url="disencumbranceBatchUploadFileSet.do?methodToCall=start&batchUpload.batchInputTypeName=disencumbranceEnterpriseFeederFileSetType" /></li>

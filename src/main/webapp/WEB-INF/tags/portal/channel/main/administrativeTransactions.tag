@@ -79,6 +79,12 @@
 	        <li><portal:portalLink displayTitle="true" title="Holding Tax Lot Rebalance" url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.endow.businessobject.HoldingTaxLotRebalance&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
 	        <li><portal:portalLink displayTitle="true" title="Unit/Share Adjustment" url="endowEndowmentUnitShareAdjustmentDocument.do?methodToCall=docHandler&command=initiate&docTypeName=EUSA" /></li> 
 	    </ul>
+	  </c:if>
+	  <c:if test="${ConfigProperties.module.travel.enabled == 'true'}">	   
+    <strong>Travel</strong>
+    <ul class="chan">
+        <li><portal:portalLink displayTitle="true" title="Travel Agency Audit and Correction" url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.tem.businessobject.AgencyStagingData&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
+    </ul>
     </c:if>
 </div>
 <channel:portalChannelBottom />
