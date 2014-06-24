@@ -30,8 +30,8 @@ import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.exception.PurError;
 import org.kuali.kfs.module.purap.util.ExpiredOrClosedAccountEntry;
 import org.kuali.kfs.module.purap.util.PurApItemUtils;
-import org.kuali.kfs.module.purap.util.PurApObjectUtils;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.util.ObjectPopulationUtils;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.krad.util.ObjectUtils;
 
@@ -75,7 +75,7 @@ public class PaymentRequestItem extends AccountsPayableItemBase {
     public PaymentRequestItem(PurchaseOrderItem poi, PaymentRequestDocument preq, HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList) {
 
         // copy base attributes w/ extra array of fields not to be copied
-        PurApObjectUtils.populateFromBaseClass(PurApItemBase.class, poi, this, PurapConstants.PREQ_ITEM_UNCOPYABLE_FIELDS);
+    	ObjectPopulationUtils.populateFromBaseClass(PurApItemBase.class, poi, this, PurapConstants.PREQ_ITEM_UNCOPYABLE_FIELDS);
         
         setItemDescription(poi.getItemDescription());
         
@@ -213,6 +213,7 @@ public class PaymentRequestItem extends AccountsPayableItemBase {
      * @deprecated
      * @param amount - po outstanding amount
      */
+    @Deprecated
     public void setPoOutstandingAmount(KualiDecimal amount) {
         // do nothing
     }
@@ -237,6 +238,7 @@ public class PaymentRequestItem extends AccountsPayableItemBase {
      * @deprecated
      * @param amount - po outstanding quantity
      */
+    @Deprecated
     public void setPoOutstandingQuantity(KualiDecimal qty) {
         // do nothing
     }
@@ -298,6 +300,7 @@ public class PaymentRequestItem extends AccountsPayableItemBase {
     /**
      * @see org.kuali.kfs.module.purap.businessobject.PurApItem#getAccountingLineClass()
      */
+    @Override
     public Class getAccountingLineClass() {
         return PaymentRequestAccount.class;
     }
