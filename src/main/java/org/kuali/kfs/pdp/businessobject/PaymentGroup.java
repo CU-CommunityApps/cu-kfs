@@ -80,7 +80,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
     protected Boolean taxablePayment; // PMT_TXBL_IND
     protected Boolean nraPayment; // NRA_PMT_IND
     protected Boolean processImmediate; // PROC_IMD_IND
-    protected boolean combineGroups; // PMT_GRP_CMB_IND
+    protected Boolean combineGroups; // PMT_GRP_CMB_IND
     protected String achBankRoutingNbr; // ACH_BNK_RTNG_NBR
     protected String adviceEmailAddress; // ADV_EMAIL_ADDR
     protected Boolean employeeIndicator; // EMP_IND
@@ -374,11 +374,11 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
         this.city = city;
     }
 
-    public boolean getCombineGroups() {
+    public Boolean getCombineGroups() {
         return combineGroups;
     }
 
-    public void setCombineGroups(boolean combineGroups) {
+    public void setCombineGroups(Boolean combineGroups) {
         this.combineGroups = combineGroups;
     }
 

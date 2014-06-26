@@ -38,6 +38,7 @@ import org.kuali.kfs.module.purap.service.PurapAccountingService;
 import org.kuali.kfs.module.purap.util.SummaryAccount;
 import org.kuali.kfs.module.purap.util.UseTaxContainer;
 import org.kuali.kfs.pdp.PdpConstants;
+import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.GlPendingTransaction;
 import org.kuali.kfs.pdp.businessobject.PaymentAccountDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
@@ -57,6 +58,10 @@ import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.datadictionary.AttributeDefinition;
+import org.kuali.rice.krad.datadictionary.AttributeSecurity;
+import org.kuali.rice.krad.datadictionary.BusinessObjectEntry;
+import org.kuali.rice.krad.datadictionary.mask.MaskFormatterLiteral;
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.service.NoteService;
@@ -205,29 +210,43 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             
             glPendingTransaction.setAmount(paymentAccountDetail.getAccountNetAmount().abs());
 
-            String trnDesc = "";
+            //Changes for Research Participant Upload
+            String trnDesc = StringUtils.EMPTY;
+            CustomerProfile customerProfile = paymentGroup.getBatch().getCustomerProfile();
 
-            String payeeName = paymentGroup.getPayeeName();
-            if (StringUtils.isNotBlank(payeeName)) {
-                trnDesc = payeeName.length() > 40 ? payeeName.substring(0, 40) : StringUtils.rightPad(payeeName, 40);
-            }
-
-            if (reversal) {
-                String poNbr = paymentAccountDetail.getPaymentDetail().getPurchaseOrderNbr();
-                if (StringUtils.isNotBlank(poNbr)) {
-                    trnDesc += " " + (poNbr.length() > 9 ? poNbr.substring(0, 9) : StringUtils.rightPad(poNbr, 9));
-                }
-
-                String invoiceNbr = paymentAccountDetail.getPaymentDetail().getInvoiceNbr();
-                if (StringUtils.isNotBlank(invoiceNbr)) {
-                    trnDesc += " " + (invoiceNbr.length() > 14 ? invoiceNbr.substring(0, 14) : StringUtils.rightPad(invoiceNbr, 14));
-                }
-
-                if (trnDesc.length() > 40) {
-                    trnDesc = trnDesc.substring(0, 40);
+            // KFSUPGRADE-973 
+            if (researchParticipantPaymentValidationService.isResearchParticipantPayment(customerProfile)) {
+                BusinessObjectEntry businessObjectEntry = dataDictionaryService.getDataDictionary().getBusinessObjectEntry(PaymentDetail.class.getName());
+                AttributeDefinition attributeDefinition = businessObjectEntry.getAttributeDefinition("paymentGroup.payeeName");
+                AttributeSecurity originalPayeeNameAttributeSecurity = attributeDefinition.getAttributeSecurity();
+                //This is a temporary work around for an issue introduced with KFSCNTRB-705.
+                if (ObjectUtils.isNotNull(originalPayeeNameAttributeSecurity)) {
+                    String maskLiteral = ((MaskFormatterLiteral) originalPayeeNameAttributeSecurity.getMaskFormatter()).getLiteral();
+                    trnDesc = maskLiteral;
                 }
             }
+            else {
+                String payeeName = paymentGroup.getPayeeName();
+                if (StringUtils.isNotBlank(payeeName)) {
+                    trnDesc = payeeName.length() > 40 ? payeeName.substring(0, 40) : StringUtils.rightPad(payeeName, 40);
+                }
 
+                if (reversal) {
+                    String poNbr = paymentAccountDetail.getPaymentDetail().getPurchaseOrderNbr();
+                    if (StringUtils.isNotBlank(poNbr)) {
+                        trnDesc += " " + (poNbr.length() > 9 ? poNbr.substring(0, 9) : StringUtils.rightPad(poNbr, 9));
+                    }
+
+                    String invoiceNbr = paymentAccountDetail.getPaymentDetail().getInvoiceNbr();
+                    if (StringUtils.isNotBlank(invoiceNbr)) {
+                        trnDesc += " " + (invoiceNbr.length() > 14 ? invoiceNbr.substring(0, 14) : StringUtils.rightPad(invoiceNbr, 14));
+                    }
+
+                    if (trnDesc.length() > 40) {
+                        trnDesc = trnDesc.substring(0, 40);
+                    }
+                }
+            }
             glPendingTransaction.setDescription(trnDesc);
 
             glPendingTransaction.setOrgDocNbr(paymentAccountDetail.getPaymentDetail().getOrganizationDocNbr());

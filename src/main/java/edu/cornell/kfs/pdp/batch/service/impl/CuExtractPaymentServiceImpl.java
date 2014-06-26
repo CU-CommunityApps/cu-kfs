@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.ObjectUtils;
 import org.kuali.rice.location.api.country.Country;
@@ -234,14 +236,19 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         totalNetAmount = totalNetAmount.add(pd.getNetPaymentAmount());
                     }
 
+                    List<KualiInteger> paymentGroupIdsSaved = new ArrayList<KualiInteger>();
+
                     Iterator<PaymentDetail> paymentDetails = paymentDetailService.getByDisbursementNumber(disbursementNbr, processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
                     while (paymentDetails.hasNext()) {
                         PaymentDetail detail = paymentDetails.next();
                         PaymentGroup group = detail.getPaymentGroup();
                         if (!testMode) {
-                            group.setDisbursementDate(new java.sql.Date(processDate.getTime()));
-                            group.setPaymentStatus(extractedStatus);
-                            this.businessObjectService.save(group);
+                            if (!paymentGroupIdsSaved.contains(group.getId())) {
+                                group.setDisbursementDate(new java.sql.Date(processDate.getTime()));
+                                group.setPaymentStatus(extractedStatus);
+                                this.businessObjectService.save(group);
+                                paymentGroupIdsSaved.add(group.getId());
+                            }
                         }
 
                         isImmediate = group.getProcessImmediate();
