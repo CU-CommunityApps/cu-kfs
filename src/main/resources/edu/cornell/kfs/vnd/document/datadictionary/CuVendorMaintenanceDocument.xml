@@ -47,6 +47,22 @@
                        </list>
                    </property>
                </bean>
+                            <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="maintainableItems" />
+                   <property name="element">
+                           <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.vendorW8BenReceivedIndicator" />
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                          <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.extension.vendorW8BenReceivedDate" />
+                          <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.extension.vendorChapter4StatusCode" />
+                          <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.extension.vendorForeignTaxNumber" />
+                          <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.extension.vendorGIIN" />
+                          <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.extension.vendorForeignRecipientBirthDate" />
+                       </list>
+                   </property>
+               </bean>
+              
                <bean parent="FieldOverrideForListElementInsert">
                    <property name="propertyName" value="maintainableItems" />
                    <property name="element">
