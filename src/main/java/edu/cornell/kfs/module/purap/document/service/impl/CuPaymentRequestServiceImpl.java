@@ -273,7 +273,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl {
          
         // set bank code to default bank code in the system parameter
         Bank defaultBank = null;
-        if (StringUtils.equals(PaymentMethod.PM_CODE_WIRE, ((CuPaymentRequestDocument)paymentRequestDocument).getPaymentMethodCode())) {
+        if (StringUtils.equals(PaymentMethod.PM_CODE_WIRE, ((CuPaymentRequestDocument)paymentRequestDocument).getPaymentMethodCode()) || StringUtils.equals(PaymentMethod.PM_CODE_FOREIGN_DRAFT, ((CuPaymentRequestDocument)paymentRequestDocument).getPaymentMethodCode())) {
         	defaultBank = SpringContext.getBean(CUBankService.class).getDefaultBankByDocType(CuPaymentRequestDocument.DOCUMENT_TYPE_NON_CHECK);
         } else if (!StringUtils.equals(PaymentMethod.PM_CODE_INTERNAL_BILLING, ((CuPaymentRequestDocument)paymentRequestDocument).getPaymentMethodCode())) {
             defaultBank = SpringContext.getBean(BankService.class).getDefaultBankByDocType(PaymentRequestDocument.class);
