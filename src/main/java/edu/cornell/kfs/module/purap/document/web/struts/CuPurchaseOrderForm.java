@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestView;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.web.struts.PurchaseOrderForm;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -174,10 +175,10 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
         if (can) {
             boolean pendingPrint = PurapConstants.PurchaseOrderStatuses.APPDOC_PENDING_PRINT.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
             boolean open = PurapConstants.PurchaseOrderStatuses.APPDOC_OPEN.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
-           // boolean errorCxml = PurchaseOrderStatuses.APPDOC_CXML_ERROR.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
             boolean errorFax = PurapConstants.PurchaseOrderStatuses.APPDOC_FAX_ERROR.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
 
-            List<PaymentRequestView> preqViews = getPurchaseOrderDocument().getRelatedViews().getRelatedPaymentRequestViews();
+            List<PaymentRequestView> preqViews = SpringContext.getBean(PurapService.class)
+                    .getRelatedViews(PaymentRequestView.class, getPurchaseOrderDocument().getPurapDocumentIdentifier());
             boolean hasPaymentRequest = preqViews != null && preqViews.size() > 0;
 
             can = pendingPrint || (open && !hasPaymentRequest) || errorFax;
