@@ -66,8 +66,8 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 					documentHeaderId = result.getDocument().getDocumentId();
 					Document document = findDocumentForAutoDisapproval(documentHeaderId);
 					if (document != null) {
-						if (checkIfDocumentEligibleForAutoDisapproval(document, parentDocumentTypes)) {
-							if (!exceptionsToAutoDisapproveProcess(document, documentCompareDate)) {
+						if (checkIfDocumentEligibleForAutoDispproval(document.getDocumentHeader())) {
+							if (!exceptionsToAutoDisapproveProcess(document.getDocumentHeader(), documentCompareDate)) {
 								try {
 	                            	String successMessage = buildSuccessMessage(document);
 									autoDisapprovalYearEndDocument(document, annotation);
@@ -145,24 +145,6 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 	   	
 	   	return parameterExists;
    }
-
-    protected boolean checkIfDocumentEligibleForAutoDisapproval(Document document, List<DocumentType> parentDocumentTypes) {
-    	// foundation is named as checkIfDocumentEligibleForAutoDispproval. ie, no 'a' between 'Dis' and 'pproval'.
-    	// Following is not efficient because it is retrieving for every document ? so pass as argument
-		//List<DocumentType> parentDocumentTypes = this.getYearEndAutoDisapproveParentDocumentTypes();
-
-		String documentTypeName = document.getDocumentHeader().getWorkflowDocument().getDocumentTypeName();
-		DocumentType childDocumentType = (DocumentType) getDocumentTypeService().getDocumentTypeByName(documentTypeName);
-
-		for (DocumentType parentDocumentType : parentDocumentTypes) {
-			// TODO :this is a discouraged access,  other alternative to check this ?
-			if (org.kuali.rice.kew.doctype.bo.DocumentType.from(parentDocumentType).isParentOf(org.kuali.rice.kew.doctype.bo.DocumentType.from(childDocumentType))) {
-				return true;
-			}
-		}
-
-		return false;
-    }
 
     protected boolean checkIfRunDateParameterExists() {
         boolean parameterExists = true;
