@@ -40,6 +40,7 @@ import org.kuali.rice.krad.util.ObjectUtils;
 import edu.cornell.kfs.fp.businessobject.PaymentMethod;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
+import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 import edu.cornell.kfs.sys.service.CUBankService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
@@ -329,5 +330,27 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl {
 
     }
  
+    /**
+     * @see org.kuali.kfs.module.purap.document.service.PaymentRequestService#getPaymentRequestsByStatusAndPurchaseOrderId(java.lang.String, java.lang.Integer)
+     */
+    @Override
+    public Map <String, String> getPaymentRequestsByStatusAndPurchaseOrderId(String applicationDocumentStatus, Integer purchaseOrderId) {
+    	Map <String, String> paymentRequestResults = new HashMap<String, String>();
+    	paymentRequestResults.put("hasInProcess", "N");
+    	paymentRequestResults.put("checkInProcess", "N");
 
+    	final int numInProcess = ((CuPaymentRequestDao) paymentRequestDao).countDocumentsByPurchaseOrderId(purchaseOrderId, applicationDocumentStatus);
+    	final int numTotal = ((CuPaymentRequestDao)paymentRequestDao).countDocumentsByPurchaseOrderId(purchaseOrderId, "");
+
+    	if (numInProcess > 0) {
+    	    paymentRequestResults.put("hasInProcess", "Y");
+    	}
+
+    	if (numTotal > 0 && numTotal != numInProcess) {
+    	    paymentRequestResults.put("checkInProcess", "Y");
+    	}
+    	
+    	return paymentRequestResults;
+    }
+    
 }

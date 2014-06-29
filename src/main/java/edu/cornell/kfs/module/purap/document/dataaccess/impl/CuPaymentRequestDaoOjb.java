@@ -4,17 +4,22 @@ import java.sql.Date;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
+import org.apache.ojb.broker.query.QueryFactory;
+import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.dataaccess.impl.PaymentRequestDaoOjb;
 import org.kuali.kfs.module.purap.util.VendorGroupingHelper;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
+import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 
 @SuppressWarnings("unchecked")
-public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb {
+public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPaymentRequestDao {
     private static final Logger LOG = Logger.getLogger(CuPaymentRequestDaoOjb.class);
 
     @Override
@@ -95,6 +100,21 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb {
 
         return (List<PaymentRequestDocument>) getPersistenceBrokerTemplate()
         		.getCollectionByQuery(new QueryByCriteria(CuPaymentRequestDocument.class, criteria));
+    }
+    
+    @Override
+    public int countDocumentsByPurchaseOrderId(Integer poPurApId, String applicationDocumentStatus) {
+
+        Criteria criteria = new Criteria();
+        criteria.addEqualTo(PurapPropertyConstants.PURCHASE_ORDER_IDENTIFIER, poPurApId);
+        if (StringUtils.isNotBlank(applicationDocumentStatus)) {
+            criteria.addEqualTo(KFSPropertyConstants.DOCUMENT_HEADER + "." + KFSPropertyConstants.APPLICATION_DOCUMENT_STATUS, applicationDocumentStatus);
+        }
+
+        QueryByCriteria query = QueryFactory.newQuery(PaymentRequestDocument.class, criteria);
+
+        final int numOfPreqs = getPersistenceBrokerTemplate().getCount(query);
+        return numOfPreqs;
     }
 
 }
