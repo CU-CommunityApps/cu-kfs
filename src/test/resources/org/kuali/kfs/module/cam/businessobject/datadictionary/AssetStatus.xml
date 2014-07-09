@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+<!--
+ Copyright 2007-2009 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+  <bean id="AssetStatus" parent="AssetStatus-parentBean"/>
+
+  <bean id="AssetStatus-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="org.kuali.kfs.module.cam.businessobject.AssetStatus"/>
+    <property name="inquiryDefinition">
+      <ref bean="AssetStatus-inquiryDefinition"/>
+    </property>
+    <property name="lookupDefinition">
+      <ref bean="AssetStatus-lookupDefinition"/>
+    </property>
+    <property name="objectLabel" value="Asset Status"/>
+    <property name="attributes">
+      <list>
+        <ref bean="AssetStatus-active"/>
+        <ref bean="AssetStatus-inventoryStatusCode"/>
+        <ref bean="AssetStatus-inventoryStatusName"/>
+      </list>
+    </property>
+  </bean>
+
+<!-- Attribute Definitions -->
+
+
+  <bean id="AssetStatus-active" parent="AssetStatus-active-parentBean"/>
+
+  <bean id="AssetStatus-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
+    <property name="name" value="active"/>
+  </bean>
+  <bean id="AssetStatus-inventoryStatusCode" parent="AssetStatus-inventoryStatusCode-parentBean"/>
+
+  <bean id="AssetStatus-inventoryStatusCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="inventoryStatusCode"/>
+    <property name="forceUppercase" value="true"/>
+    <property name="label" value="Asset Status Code"/>
+    <property name="shortLabel" value="Code"/>
+    <property name="maxLength" value="1"/>
+    <property name="validationPattern">
+      <ref bean="AnyCharacterValidation" />
+    </property>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="3"/>
+    </property>
+  </bean>
+  <bean id="AssetStatus-inventoryStatusName" parent="AssetStatus-inventoryStatusName-parentBean"/>
+
+  <bean id="AssetStatus-inventoryStatusName-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="inventoryStatusName"/>
+    <property name="forceUppercase" value="false"/>
+    <property name="label" value="Asset Status Name"/>
+    <property name="shortLabel" value="Name"/>
+    <property name="maxLength" value="40"/>
+    <property name="validationPattern">
+      <ref bean="AnyCharacterWithWhitespaceValidation" />
+    </property>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="42"/>
+    </property>
+  </bean>
+
+<!-- Business Object Inquiry Definition -->
+
+
+  <bean id="AssetStatus-inquiryDefinition" parent="AssetStatus-inquiryDefinition-parentBean"/>
+
+  <bean id="AssetStatus-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+    <property name="title" value="Asset Status Inquiry"/>
+    <property name="inquirySections">
+      <list>
+        <bean parent="InquirySectionDefinition">
+          <property name="title" value=""/>
+          <property name="numberOfColumns" value="1"/>
+          <property name="inquiryFields">
+            <list>
+              <bean parent="FieldDefinition" p:attributeName="inventoryStatusCode"/>
+              <bean parent="FieldDefinition" p:attributeName="inventoryStatusName"/>
+              <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+<!-- Business Object Lookup Definition -->
+
+
+  <bean id="AssetStatus-lookupDefinition" parent="AssetStatus-lookupDefinition-parentBean"/>
+
+  <bean id="AssetStatus-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+    <property name="title" value="Asset Status Lookup"/>
+    <property name="lookupableID" value="assetStatusLookupable"/>    
+    
+    <property name="defaultSort">
+      <bean parent="SortDefinition">
+      </bean>
+    </property>
+    <property name="lookupFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="inventoryStatusCode"/>
+        <bean parent="FieldDefinition" p:attributeName="inventoryStatusName"/>
+        <bean parent="FieldDefinition" p:defaultValue="Y" p:attributeName="active"/>
+      </list>
+    </property>
+    <property name="resultFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="inventoryStatusCode"/>
+        <bean parent="FieldDefinition" p:attributeName="inventoryStatusName"/>
+        <bean parent="FieldDefinition" p:attributeName="active"/>
+      </list>
+    </property>
+  </bean>
+</beans>

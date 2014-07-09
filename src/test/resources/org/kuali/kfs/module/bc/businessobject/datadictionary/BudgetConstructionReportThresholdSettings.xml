@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright 2009 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <bean id="BudgetConstructionReportThresholdSettings" parent="BudgetConstructionReportThresholdSettings-parentBean"/>
+
+  <bean id="BudgetConstructionReportThresholdSettings-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="org.kuali.kfs.module.bc.businessobject.BudgetConstructionReportThresholdSettings"/>
+    <property name="objectLabel" value="Budget Construction Report Threshold Settings"/>
+    <property name="attributes">
+      <list>
+        <ref bean="BudgetConstructionReportThresholdSettings-lockThreshold"/>
+        <ref bean="BudgetConstructionReportThresholdSettings-useThreshold"/>
+        <ref bean="BudgetConstructionReportThresholdSettings-thresholdPercent"/>
+        <ref bean="BudgetConstructionReportThresholdSettings-useGreaterThanOperator"/>
+      </list>
+    </property>
+  </bean>
+
+<!-- Attribute Definitions -->
+
+
+  <bean id="BudgetConstructionReportThresholdSettings-lockThreshold" parent="BudgetConstructionReportThresholdSettings-lockThreshold-parentBean"/>
+
+  <bean id="BudgetConstructionReportThresholdSettings-lockThreshold-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="lockThreshold"/>
+    <property name="forceUppercase" value="true"/>
+    <property name="label" value="Lock Threshold"/>
+    <property name="shortLabel" value="Lock"/>
+    <property name="maxLength" value="1"/>
+    <property name="control">
+      <bean parent="CheckboxControlDefinition"/>
+    </property>
+    
+    
+  </bean>
+  <bean id="BudgetConstructionReportThresholdSettings-useThreshold" parent="BudgetConstructionReportThresholdSettings-useThreshold-parentBean"/>
+
+  <bean id="BudgetConstructionReportThresholdSettings-useThreshold-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="useThreshold"/>
+    <property name="forceUppercase" value="true"/>
+    <property name="label" value="Use Threshold Settings"/>
+    <property name="shortLabel" value="Use Thres."/>
+    <property name="maxLength" value="1"/>
+    <property name="control">
+      <bean parent="CheckboxControlDefinition"/>
+    </property>
+    
+    
+  </bean>
+  <bean id="BudgetConstructionReportThresholdSettings-thresholdPercent" parent="BudgetConstructionReportThresholdSettings-thresholdPercent-parentBean"/>
+
+  <bean id="BudgetConstructionReportThresholdSettings-thresholdPercent-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="thresholdPercent"/>
+    <property name="forceUppercase" value="false"/>
+    <property name="label" value="Percent Change Threshold"/>
+    <property name="shortLabel" value="Thres. Percent"/>
+    <property name="maxLength" value="26"/>
+    <property name="validationPattern">
+      <bean parent="FixedPointValidationPattern" p:precision="19" p:scale="2" p:allowNegative="true"/>
+    </property>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="26"/>
+    </property>
+    
+    
+  </bean>
+  <bean id="BudgetConstructionReportThresholdSettings-useGreaterThanOperator" parent="BudgetConstructionReportThresholdSettings-useGreaterThanOperator-parentBean"/>
+
+  <bean id="BudgetConstructionReportThresholdSettings-useGreaterThanOperator-parentBean" abstract="true" parent="GenericAttributes-genericBoolean">
+    <property name="name" value="useGreaterThanOperator"/>
+    <property name="forceUppercase" value="true"/>
+    <property name="label" value="Include records that are"/>
+    <property name="shortLabel" value="Include operator"/>
+    <property name="maxLength" value="1"/>
+    <property name="control">
+      <bean parent="RadioControlDefinition" p:valuesFinderClass="org.kuali.kfs.module.bc.businessobject.options.ThresholdSettingsOperatorValuesFinder" p:includeKeyInLabel="false"/>
+    </property>
+    
+    
+  </bean>
+</beans>

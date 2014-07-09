@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd         http://rice.kuali.org/dd/dd.xsd">
+<!--
+ Copyright 2008-2009 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+  <bean id="CustomerInvoiceItemCodeMaintenanceDocument" parent="CustomerInvoiceItemCodeMaintenanceDocument-parentBean"/>
+
+  <bean id="CustomerInvoiceItemCodeMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
+    <property name="businessObjectClass" value="org.kuali.kfs.module.ar.businessobject.CustomerInvoiceItemCode"/>
+    <property name="maintainableClass" value="org.kuali.kfs.module.ar.document.CustomerInvoiceItemCodeMaintainableImpl"/>
+    <property name="maintainableSections">
+      <list>
+        <ref bean="CustomerInvoiceItemCodeMaintenanceDocument-EditBillingOrg"/>
+        <ref bean="CustomerInvoiceItemCodeMaintenanceDocument-EditInvoiceItemCodes"/>
+        <ref bean="CustomerInvoiceItemCodeMaintenanceDocument-EditItemCodeDefaultAccount"/>
+      </list>
+    </property>
+    <property name="defaultExistenceChecks">
+      <list>
+        <bean parent="ReferenceDefinition" p:attributeName="chartOfAccounts" p:attributeToHighlightOnFail="chartOfAccountsCode"/>
+        <bean parent="ReferenceDefinition" p:attributeName="organization" p:attributeToHighlightOnFail="organizationCode"/>
+        <bean parent="ReferenceDefinition" p:attributeName="defaultInvoiceAccount" p:attributeToHighlightOnFail="defaultInvoiceAccountNumber"/>
+        <bean parent="ReferenceDefinition" p:attributeName="defaultInvoiceSubAccount" p:attributeToHighlightOnFail="defaultInvoiceSubAccountNumber"/>
+        <bean parent="ReferenceDefinition" p:attributeName="defaultInvoiceChartOfAccounts" p:attributeToHighlightOnFail="defaultInvoiceChartOfAccountsCode"/>
+        <bean parent="ReferenceDefinition" p:attributeName="defaultInvoiceFinancialObject" p:attributeToHighlightOnFail="defaultInvoiceFinancialObjectCode"/>
+        <bean parent="ReferenceDefinition" p:attributeName="defaultInvoiceFinancialSubObject" p:attributeToHighlightOnFail="defaultInvoiceFinancialSubObjectCode"/>
+        <bean parent="ReferenceDefinition" p:attributeName="defaultInvoiceProject" p:attributeToHighlightOnFail="defaultInvoiceProjectCode"/>
+        <bean parent="ReferenceDefinition" p:attributeName="unitOfMeasure" p:attributeToHighlightOnFail="defaultUnitOfMeasureCode"/>
+      </list>
+    </property>
+    <property name="lockingKeys">
+      <list>
+        <value>chartOfAccountsCode</value>
+        <value>organizationCode</value>
+        <value>invoiceItemCode</value>
+      </list>
+    </property>
+    
+    
+    <property name="documentTypeName" value="IICO"/>
+    <property name="businessRulesClass" value="org.kuali.kfs.module.ar.document.validation.impl.CustomerInvoiceItemCodeRule"/>
+    <property name="documentAuthorizerClass" value="org.kuali.kfs.module.ar.document.authorization.CustomerInvoiceItemCodeAuthorizer"/>
+
+    <property name="webScriptFiles">
+      <list>
+        <value>../dwr/interface/AccountService.js</value>
+        <value>../scripts/coa/accountDocument.js</value>
+      </list>
+    </property>
+
+    <property name="workflowAttributes">
+    	<ref bean="CustomerInvoiceItemCodeMaintenanceDocument-workflowAttributes"/>
+    </property>
+  </bean>
+
+<!-- Maintenance Section Definitions -->
+
+
+  <bean id="CustomerInvoiceItemCodeMaintenanceDocument-EditBillingOrg" parent="CustomerInvoiceItemCodeMaintenanceDocument-EditBillingOrg-parentBean"/>
+
+  <bean id="CustomerInvoiceItemCodeMaintenanceDocument-EditBillingOrg-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Edit Billing Organization"/>
+    <property name="title" value="Edit Billing Organization"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true" p:defaultValueFinderClass="org.kuali.kfs.coa.businessobject.defaultvalue.CurrentUserChartValueFinder"/>
+        <bean parent="MaintainableFieldDefinition" p:name="organizationCode" p:required="true" p:defaultValueFinderClass="org.kuali.kfs.coa.businessobject.defaultvalue.CurrentUserOrgValueFinder"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="CustomerInvoiceItemCodeMaintenanceDocument-EditInvoiceItemCodes" parent="CustomerInvoiceItemCodeMaintenanceDocument-EditInvoiceItemCodes-parentBean"/>
+
+  <bean id="CustomerInvoiceItemCodeMaintenanceDocument-EditInvoiceItemCodes-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Edit Invoice Item Code"/>
+    <property name="title" value="Edit Invoice Item Code"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableFieldDefinition" p:name="invoiceItemCode" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="invoiceItemDescription" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="relatedStockNumber"/>
+        <bean parent="MaintainableFieldDefinition" p:name="itemDefaultPrice"/>
+        <bean parent="MaintainableFieldDefinition" p:name="itemDefaultQuantity"/>
+        <bean parent="MaintainableFieldDefinition" p:name="defaultUnitOfMeasureCode"/>
+        <bean parent="MaintainableFieldDefinition" p:name="active"/>
+        <bean parent="MaintainableFieldDefinition" p:name="taxableIndicator"/>              
+      </list>
+    </property>
+  </bean>
+  <bean id="CustomerInvoiceItemCodeMaintenanceDocument-EditItemCodeDefaultAccount" parent="CustomerInvoiceItemCodeMaintenanceDocument-EditItemCodeDefaultAccount-parentBean"/>
+
+  <bean id="CustomerInvoiceItemCodeMaintenanceDocument-EditItemCodeDefaultAccount-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Edit Item Code Default Account"/>
+    <property name="title" value="Edit Item Code Default Account"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableFieldDefinition" p:name="defaultInvoiceChartOfAccountsCode" p:defaultValueFinderClass="org.kuali.kfs.module.ar.businessobject.defaultvalue.ChartOrganizationAccountingDefaultValueFinder"/>
+        <bean parent="MaintainableFieldDefinition" p:name="defaultInvoiceAccountNumber" p:defaultValueFinderClass="org.kuali.kfs.module.ar.businessobject.defaultvalue.AccountOrganizationAccountingDefaultValueFinder" 
+        	p:webUILeaveFieldFunction="onblur_accountNumber">
+			<property name="webUILeaveFieldFunctionParameters">
+				<list>
+					<value>defaultInvoiceChartOfAccountsCode</value>
+				</list>
+			</property> 
+		</bean>        
+        <bean parent="MaintainableFieldDefinition" p:name="defaultInvoiceSubAccountNumber" p:defaultValueFinderClass="org.kuali.kfs.module.ar.businessobject.defaultvalue.SubAccountOrganizationAccountingDefaultValueFinder"/>
+        <bean parent="MaintainableFieldDefinition" p:name="defaultInvoiceFinancialObjectCode" p:defaultValueFinderClass="org.kuali.kfs.module.ar.businessobject.defaultvalue.ObjectOrganizationAccountingDefaultValueFinder"/>
+        <bean parent="MaintainableFieldDefinition" p:name="defaultInvoiceFinancialSubObjectCode" p:defaultValueFinderClass="org.kuali.kfs.module.ar.businessobject.defaultvalue.SubObjectOrganizationAccountingDefaultValueFinder"/>
+        <bean parent="MaintainableFieldDefinition" p:name="defaultInvoiceProjectCode" p:defaultValueFinderClass="org.kuali.kfs.module.ar.businessobject.defaultvalue.ProjectOrganizationAccountingDefaultValueFinder"/>
+        <bean parent="MaintainableFieldDefinition" p:name="defaultInvoiceOrganizationReferenceIdentifier" p:defaultValueFinderClass="org.kuali.kfs.module.ar.businessobject.defaultvalue.OrgReferenceOrganizationAccountingDefaultValueFinder"/>
+      </list>
+    </property>
+  </bean>
+  
+  <!-- workflow attributes -->
+  <bean id="CustomerInvoiceItemCodeMaintenanceDocument-workflowAttributes" parent="CustomerInvoiceItemCodeMaintenanceDocument-workflowAttributes-parentBean"/>
+  
+  <bean id="CustomerInvoiceItemCodeMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true">
+  </bean>
+</beans>

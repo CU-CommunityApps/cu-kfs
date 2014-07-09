@@ -1,0 +1,206 @@
+<!--
+ Copyright 2009 The Kuali Foundation
+
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.opensource.org/licenses/ecl2.php
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+>
+  <!--  Define RoutingAttribute base -->
+  <bean id="RoutingAttribute-capitalAssetNumber" class="org.kuali.rice.krad.datadictionary.RoutingAttribute" >
+    	<property name="qualificationAttributeName" value="capitalAssetNumber" />
+  </bean>
+  
+  <!--  Define DocumentValuePathGroup base --> 
+    
+  <!--  Define DocumentCollectionPath base --> 
+    <bean id="DocumentCollectionPath-AssetDetail-chartAndOrgCode" class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath" abstract="true">
+   		<property name="documentValues">
+	   		<list>
+	   			<value>asset.organizationOwnerChartOfAccountsCode</value>
+	   			<value>asset.organizationOwnerAccount.organizationCode</value>
+	   		</list>
+   		</property>
+    </bean>
+    
+    <bean id="DocumentCollectionPath-AssetDetail-chartAndAccountNumber" class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath" abstract="true">
+   		<property name="documentValues">
+	   		<list>
+	   			<value>asset.organizationOwnerChartOfAccountsCode</value>
+	   			<value>asset.organizationOwnerAccountNumber</value>
+	   		</list>
+   		</property>
+   </bean>
+  <!--  Define RoutingType base -->
+  
+  <bean id="RoutingType-CapitalAssetManagementComplexMaintenanceDocument-OrganizationHierarchy" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    	<property name="routingAttributes">
+    		<list>
+		        <ref bean="RoutingAttribute-chartOfAccountsCode" />
+		        <ref bean="RoutingAttribute-organizationCode" />
+    		</list>
+    	</property>
+    	<property name="documentValuePathGroups">
+    		<list>
+    			<bean class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+    				<property name="documentValues">
+	    				<list>
+	    					<value>newMaintainableObject.businessObject.organizationOwnerChartOfAccountsCode</value>
+	    					<value>newMaintainableObject.businessObject.organizationOwnerAccount.organizationCode</value>	    					
+	    				</list>
+    				</property>
+    			</bean>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="RoutingType-CapitalAssetManagementComplexMaintenanceDocument-Account" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    	<property name="routingAttributes">
+    		<list>
+		        <ref bean="RoutingAttribute-chartOfAccountsCode" />
+		        <ref bean="RoutingAttribute-accountNumber" />
+    		</list>
+    	</property>
+    	<property name="documentValuePathGroups">
+    		<list>
+    			<bean class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+    				<property name="documentValues">
+	    				<list>
+	    					<value>newMaintainableObject.businessObject.organizationOwnerChartOfAccountsCode</value>
+	    					<value>newMaintainableObject.businessObject.organizationOwnerAccountNumber</value>	    					
+	    				</list>
+    				</property>
+    			</bean>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="RoutingType-CapitalAssetManagementTransactionalDocument-OrganizationHierarchy" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    	<property name="routingAttributes">
+    		<list>
+		        <ref bean="RoutingAttribute-chartOfAccountsCode" />
+		        <ref bean="RoutingAttribute-organizationCode" />
+    		</list>
+    	</property>
+    	<property name="documentValuePathGroups">
+    		<list>
+    			<bean class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+    				<property name="documentValues">
+	    				<list>
+	    					<value>asset.organizationOwnerChartOfAccountsCode</value>
+	    					<value>asset.organizationOwnerAccount.organizationCode</value>	    					
+	    				</list>
+    				</property>
+    			</bean>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="RoutingType-CapitalAssetManagementTransactionalDocument-Account" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    	<property name="routingAttributes">
+    		<list>
+		        <ref bean="RoutingAttribute-chartOfAccountsCode" />
+		        <ref bean="RoutingAttribute-accountNumber" />
+    		</list>
+    	</property>
+    	<property name="documentValuePathGroups">
+    		<list>
+    			<bean class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+    				<property name="documentValues">
+	    				<list>
+	    					<value>asset.organizationOwnerChartOfAccountsCode</value>
+	    					<value>asset.organizationOwnerAccountNumber</value>	    					
+	    				</list>
+    				</property>
+    			</bean>
+    		</list>
+    	</property>
+    </bean>
+    
+    <!--  Define searching type base -->
+    <bean id="SearchingType-CapitalAssetManagementComplexMaintenanceDocument-campusTagNumber" class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    	<property name="searchingAttribute">
+    		<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    			<property name="businessObjectClassName" value="org.kuali.kfs.module.cam.businessobject.Asset" />
+    			<property name="attributeName" value="campusTagNumber" />
+    		</bean>
+    	</property>
+    	<property name="documentValues">
+    		<list>
+    			<value>newMaintainableObject.businessObject.campusTagNumber</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="SearchingType-CapitalAssetManagementComplexMaintenanceDocument-organizationOwnerChartOfAccountsCode" class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    	<property name="searchingAttribute">
+    		<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    			<property name="businessObjectClassName" value="org.kuali.kfs.module.cam.businessobject.Asset" />
+    			<property name="attributeName" value="organizationOwnerChartOfAccountsCode" />
+    		</bean>
+    	</property>
+    	<property name="documentValues">
+    		<list>
+    			<value>newMaintainableObject.businessObject.organizationOwnerChartOfAccountsCode</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="SearchingType-CapitalAssetManagementComplexMaintenanceDocument-organizationCode" class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    	<property name="searchingAttribute">
+    		<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    			<property name="businessObjectClassName" value="org.kuali.kfs.coa.businessobject.Organization" />
+    			<property name="attributeName" value="organizationCode" />
+    		</bean>
+    	</property>
+    	<property name="documentValues">
+    		<list>
+    			<value>newMaintainableObject.businessObject.organizationOwnerAccount.organizationCode</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="SearchingType-CapitalAssetManagementComplexMaintenanceDocument-organizationOwnerAccountNumber" class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    	<property name="searchingAttribute">
+    		<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    			<property name="businessObjectClassName" value="org.kuali.kfs.module.cam.businessobject.Asset" />
+    			<property name="attributeName" value="organizationOwnerAccountNumber" />
+    		</bean>
+    	</property>
+    	<property name="documentValues">
+    		<list>
+    			<value>newMaintainableObject.businessObject.organizationOwnerAccountNumber</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="SearchingType-CapitalAssetManagementComplexMaintenanceDocument-capitalAssetNumber" class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    	<property name="searchingAttribute">
+    		<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    			<property name="businessObjectClassName" value="org.kuali.kfs.module.cam.businessobject.Asset" />
+    			<property name="attributeName" value="capitalAssetNumber" />
+    		</bean>
+    	</property>
+    	<property name="documentValues">
+    		<list>
+    			<value>newMaintainableObject.businessObject.capitalAssetNumber</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    
+</beans>

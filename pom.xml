@@ -22,10 +22,20 @@
 	<cynergy.version>2.3.4</cynergy.version>
 	<kfs.version>5.2.1</kfs.version>
 	<cynergy.development>true</cynergy.development>
+	<skipTests>true</skipTests>
   </properties> 
   
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.17</version>
+        <configuration>
+          	<argLine>-Xmx2G -Xms2G -XX:MaxPermSize=512m</argLine>
+        	<skipTests>${skipTests}</skipTests>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
@@ -121,6 +131,75 @@
       </exclusions> 
     </dependency>
     
+    <dependency>
+      <groupId>org.kuali.kfs</groupId>
+      <artifactId>kfs-lib-test</artifactId>
+      <version>${kfs.version}</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+	</dependency>
+	
+	<dependency>
+      <groupId>net.bull.javamelody</groupId>
+      <artifactId>javamelody-core</artifactId>
+      <version>1.51.0</version>
+      <scope>test</scope>
+	</dependency>
+
+<dependency>
+    <groupId>javax.transaction</groupId>
+    <artifactId>jta</artifactId>
+    <version>1.1</version>
+    <scope>test</scope>	
+</dependency>
+
+<dependency>
+    <groupId>com.experlog</groupId>
+    <artifactId>xapool</artifactId>
+    <version>1.5.0</version>
+    <scope>test</scope>	
+</dependency>
+
+<dependency>
+    <groupId>org.kuali.jotm</groupId>
+    <artifactId>jotm-core</artifactId>
+    <version>2.1.10-kuali-1</version>
+    <scope>test</scope>	
+</dependency>
+
+<dependency>
+    <groupId>javax.resource</groupId>
+    <artifactId>connector-api</artifactId>
+    <version>1.5</version>
+    <scope>test</scope>
+</dependency>
+
+<dependency>
+  <groupId>com.sun.xml.bind</groupId>
+  <artifactId>jaxb-impl</artifactId>
+  <version>2.2.6</version>
+  <scope>test</scope>	
+</dependency>
+
+<dependency>
+    <groupId>org.apache.velocity</groupId>
+    <artifactId>velocity</artifactId>
+    <version>1.7</version>
+    <scope>test</scope>
+</dependency>
+
+<dependency>
+    <groupId>commons-lang</groupId>
+    <artifactId>commons-lang</artifactId>
+    <version>2.6</version>
+</dependency>
+
 	<dependency>
 		<groupId>com.oracle</groupId>
 		<artifactId>ojdbc6</artifactId>
@@ -374,7 +453,7 @@
           <groupId>com.sun.xml.bind</groupId>
  		  <artifactId>jaxb-impl</artifactId>
  		</exclusion>  
- 		<exclusion>
+ 		<exclusion> 
  		  <groupId>javax.transaction</groupId>
   		  <artifactId>jta</artifactId>
  		</exclusion>

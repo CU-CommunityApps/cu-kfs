@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+<!--
+ Copyright 2008-2009 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+  <bean id="AssetRetirementGlobalMaintenanceDocument" parent="AssetRetirementGlobalMaintenanceDocument-parentBean"/>
+
+  <bean id="AssetRetirementGlobalMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
+    <property name="businessObjectClass" value="org.kuali.kfs.module.cam.businessobject.AssetRetirementGlobal"/>
+    <property name="maintainableClass" value="org.kuali.kfs.module.cam.document.AssetRetirementGlobalMaintainableImpl"/>
+    <property name="maintainableSections">
+      <list>
+      	<ref bean="AssetRetirementGlobalMaintenanceDocument-AccountingPeriod"/>
+      	<ref bean="AssetRetirementGlobalMaintenanceDocument-RetirementTargetAssetInformation"/>
+        <ref bean="AssetRetirementGlobalMaintenanceDocument-RetirementInformation"/>
+        <ref bean="AssetRetirementGlobalMaintenanceDocument-ExternalTransferorGift"/>
+        <ref bean="AssetRetirementGlobalMaintenanceDocument-Theft"/>
+        <ref bean="AssetRetirementGlobalMaintenanceDocument-AuctionorSold"/>
+        <ref bean="AssetRetirementGlobalMaintenanceDocument-AssetDetailInformation"/>        
+      </list>
+    </property>
+    <property name="defaultExistenceChecks">
+      <list>
+        <bean parent="ReferenceDefinition" p:attributeName="asset" p:collection="assetRetirementGlobalDetails" p:attributeToHighlightOnFail="capitalAssetNumber"/>
+        <bean parent="ReferenceDefinition" p:attributeName="postalZipCode" p:attributeToHighlightOnFail="retirementZipCode"/>
+      </list>
+    </property>
+    <property name="lockingKeys">
+      <list>
+        <value>documentNumber</value>
+      </list>
+    </property>
+    <property name="documentTypeName" value="ARG"/>
+    <property name="businessRulesClass" value="org.kuali.kfs.module.cam.document.validation.impl.AssetRetirementGlobalRule"/>
+    <property name="documentAuthorizerClass" value="org.kuali.kfs.module.cam.document.authorization.AssetRetirementGlobalAuthorizer"/>
+    <property name="documentPresentationControllerClass" value="org.kuali.kfs.module.cam.document.authorization.AssetRetirementPresentationController"/>
+    <property name="workflowAttributes">
+      <ref bean="AssetRetirementGlobalMaintenanceDocument-workflowAttributes"/>
+    </property>
+    <property name="webScriptFiles">
+      <list>
+        <value>../dwr/interface/AssetRetirementService.js</value>
+        <value>../scripts/module/cams/assetRetirementGlobalMaintenanceDocument.js</value>
+        <value>../dwr/interface/AccountService.js</value>
+        <value>../scripts/coa/accountDocument.js</value>        
+      </list>
+    </property>
+    <property name="additionalSectionsFile" value="/jsp/module/cams/AssetMaintenanceGlpe.jsp"/>
+  </bean>
+
+<!-- Maintenance Section Definitions -->
+  	<bean id="AssetRetirementGlobalMaintenanceDocument-AccountingPeriod" parent="AssetGlobalMaintenanceDocument-AccountingPeriod-parentBean"/>
+  	<bean id="AssetRetirementGlobalMaintenanceDocument-AccountingPeriod-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    	<property name="id" value="Accounting Period"/>
+    	<property name="title" value="Accounting Period"/>
+    	<property name="maintainableItems">
+      		<list>
+        		<bean parent="MaintainableFieldDefinition" p:name="accountingPeriodCompositeString" p:required="false"/>
+      		</list>
+    	</property>
+  	</bean>
+
+
+
+  <bean id="AssetRetirementGlobalMaintenanceDocument-RetirementTargetAssetInformation" parent="AssetRetirementGlobalMaintenanceDocument-RetirementTargetAssetInformation-parentBean"/>
+
+  <bean id="AssetRetirementGlobalMaintenanceDocument-RetirementTargetAssetInformation-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Retirement Target Information"/>
+    <property name="title" value="Target Asset Information"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableSubSectionHeaderDefinition" p:name="Target Asset"/>
+        <bean parent="MaintainableFieldDefinition" p:name="mergedTargetCapitalAssetNumber"/>              
+         <bean parent="MaintainableFieldDefinition" p:name="mergedTargetCapitalAssetDescription" p:unconditionallyReadOnly="false" p:required="false"/>
+        <bean parent="MaintainableFieldDefinition" p:name="mergedTargetCapitalAsset.organizationOwnerAccount.organizationCode" p:unconditionallyReadOnly="true" p:template="organizationOwnerAccount.organizationCode"/>
+          <bean parent="MaintainableFieldDefinition" p:name="mergedTargetCapitalAsset.capitalAssetTypeCode" p:unconditionallyReadOnly="true" p:template="capitalAssetTypeCode"/>
+        <bean parent="MaintainableFieldDefinition" p:name="mergedTargetCapitalAsset.createDate" p:unconditionallyReadOnly="true"/>              
+        <bean parent="MaintainableFieldDefinition" p:name="mergedTargetCapitalAsset.capitalAssetInServiceDate" p:unconditionallyReadOnly="true" p:template="capitalAssetInServiceDate"/>              
+        <bean parent="MaintainableFieldDefinition" p:name="mergedTargetCapitalAsset.capitalAssetType.depreciableLifeLimit" p:unconditionallyReadOnly="true"/>
+      </list>
+    </property>
+  </bean>
+
+
+  <bean id="AssetRetirementGlobalMaintenanceDocument-RetirementInformation" parent="AssetRetirementGlobalMaintenanceDocument-RetirementInformation-parentBean"/>
+
+  <bean id="AssetRetirementGlobalMaintenanceDocument-RetirementInformation-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Retirement Information"/>
+    <property name="title" value="Retirement Information"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableSubSectionHeaderDefinition" p:name="Retirement Reason"/>
+        <bean parent="MaintainableFieldDefinition" p:name="retirementReasonCode" p:unconditionallyReadOnly="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="retirementDate" p:unconditionallyReadOnly="true"/>
+      </list>
+    </property>
+  </bean>
+  <bean id="AssetRetirementGlobalMaintenanceDocument-ExternalTransferorGift" parent="AssetRetirementGlobalMaintenanceDocument-ExternalTransferorGift-parentBean"/>
+
+  <bean id="AssetRetirementGlobalMaintenanceDocument-ExternalTransferorGift-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="ExternalTransferOrGift"/>
+    <property name="title" value="External Transfer or Gift"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableFieldDefinition" p:name="retirementContactName"/>
+        <bean parent="MaintainableFieldDefinition" p:name="retirementInstitutionName"/>
+        <bean parent="MaintainableFieldDefinition" p:name="retirementStreetAddress"/>
+        <bean parent="MaintainableFieldDefinition" p:name="retirementCityName"/>
+        <bean parent="MaintainableFieldDefinition" p:name="retirementStateCode"/>
+        <bean parent="MaintainableFieldDefinition" p:name="retirementZipCode"/>
+        <bean parent="MaintainableFieldDefinition" p:name="retirementCountryCode"/>
+        <bean parent="MaintainableFieldDefinition" p:name="retirementPhoneNumber"/>
+      </list>
+    </property>
+  </bean>
+  <bean id="AssetRetirementGlobalMaintenanceDocument-Theft" parent="AssetRetirementGlobalMaintenanceDocument-Theft-parentBean"/>
+
+  <bean id="AssetRetirementGlobalMaintenanceDocument-Theft-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Theft"/>
+    <property name="title" value="Theft"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableFieldDefinition" p:name="paidCaseNumber"/>
+      </list>
+    </property>
+  </bean>
+  <bean id="AssetRetirementGlobalMaintenanceDocument-AuctionorSold" parent="AssetRetirementGlobalMaintenanceDocument-AuctionorSold-parentBean"/>
+
+  <bean id="AssetRetirementGlobalMaintenanceDocument-AuctionorSold-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="AuctionOrSold"/>
+    <property name="title" value="Auction or Sold"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableFieldDefinition" p:name="buyerDescription"/>
+        <bean parent="MaintainableFieldDefinition" p:name="salePrice" p:webUILeaveFieldFunction="onblur_generateCalculatedTotal" p:webUILeaveFieldCallbackFunction="generateCalculatedTotal_Callback"/>
+        <bean parent="MaintainableFieldDefinition" p:name="handlingFeeAmount" p:webUILeaveFieldFunction="onblur_generateCalculatedTotal" p:webUILeaveFieldCallbackFunction="generateCalculatedTotal_Callback"/>
+        <bean parent="MaintainableFieldDefinition" p:name="preventiveMaintenanceAmount" p:webUILeaveFieldFunction="onblur_generateCalculatedTotal" p:webUILeaveFieldCallbackFunction="generateCalculatedTotal_Callback"/>
+        <bean parent="MaintainableFieldDefinition" p:name="calculatedTotal" p:unconditionallyReadOnly="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="cashReceiptFinancialDocumentNumber"/>
+        <bean parent="MaintainableFieldDefinition" p:name="retirementChartOfAccountsCode"/>
+        <bean parent="MaintainableFieldDefinition" p:name="retirementAccountNumber" p:webUILeaveFieldFunction="onblur_accountNumber">
+			<property name="webUILeaveFieldFunctionParameters">
+				<list>
+					<value>retirementChartOfAccountsCode</value>
+				</list>
+			</property> 
+		</bean>        
+      </list>
+    </property>
+  </bean>
+  <bean id="AssetRetirementGlobalMaintenanceDocument-AssetDetailInformation" parent="AssetRetirementGlobalMaintenanceDocument-AssetDetailInformation-parentBean"/>
+
+  <bean id="AssetRetirementGlobalMaintenanceDocument-AssetDetailInformation-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Asset Detail Information"/>
+    <property name="title" value="Asset Detail Information"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableCollectionDefinition">
+          <property name="name" value="assetRetirementGlobalDetails"/>
+          <property name="businessObjectClass" value="org.kuali.kfs.module.cam.businessobject.AssetRetirementGlobalDetail"/>
+          <property name="sourceClassName" value="org.kuali.kfs.module.cam.businessobject.Asset"/>
+          <property name="summaryTitle" value="Asset Retired"/>
+          <property name="summaryFields">
+            <list>
+              <bean parent="MaintainableFieldDefinition" p:name="capitalAssetNumber"/>
+            </list>
+          </property>
+          <property name="duplicateIdentificationFields">
+          	<list>
+          		<bean parent="MaintainableFieldDefinition" p:name="capitalAssetNumber"/>
+          	</list>
+          </property>
+          <property name="maintainableFields">
+            <list>
+              <bean parent="MaintainableFieldDefinition" p:name="capitalAssetNumber" p:readOnlyAfterAdd="true" p:template="capitalAssetNumber" p:required="true"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.organizationOwnerChartOfAccountsCode" p:unconditionallyReadOnly="true" p:template="organizationOwnerChartOfAccountsCode"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.organizationOwnerAccountNumber" p:unconditionallyReadOnly="true" p:template="organizationOwnerAccountNumber"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.organizationOwnerAccount.organizationCode" p:unconditionallyReadOnly="true" p:template="organizationOwnerAccount.organizationCode"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.acquisitionTypeCode" p:unconditionallyReadOnly="true" p:template="acquisitionTypeCode"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.inventoryStatusCode" p:unconditionallyReadOnly="true" p:template="inventoryStatusCode"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.conditionCode" p:unconditionallyReadOnly="true" p:template="conditionCode"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.capitalAssetDescription" p:unconditionallyReadOnly="true" p:template="capitalAssetDescription"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.capitalAssetTypeCode" p:unconditionallyReadOnly="true" p:template="capitalAssetTypeCode"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.vendorName" p:unconditionallyReadOnly="true" p:template="vendorName"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.manufacturerModelNumber" p:unconditionallyReadOnly="true" p:template="manufacturerModelNumber"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.serialNumber" p:unconditionallyReadOnly="true" p:template="serialNumber"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.campusTagNumber" p:unconditionallyReadOnly="true" p:template="campusTagNumber"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.governmentTagNumber" p:unconditionallyReadOnly="true" p:template="governmentTagNumber"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.lastInventoryDate" p:unconditionallyReadOnly="true" p:template="lastInventoryDate"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.createDate" p:unconditionallyReadOnly="true" p:template="createDate"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.capitalAssetInServiceDate" p:unconditionallyReadOnly="true" p:template="capitalAssetInServiceDate"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.depreciationDate" p:unconditionallyReadOnly="true" p:template="depreciationDate"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.totalCostAmount" p:unconditionallyReadOnly="true" p:template="totalCostAmount"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.accumulatedDepreciation" p:unconditionallyReadOnly="true" p:template="accumulatedDepreciation"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.bookValue" p:unconditionallyReadOnly="true" p:template="bookValue"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.federalContribution" p:unconditionallyReadOnly="true" p:template="federalContribution"/>
+              <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>
+              <bean parent="MaintainableFieldDefinition" p:name="asset.assetOrganization.organizationText" p:unconditionallyReadOnly="true"/>                    
+            </list>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+  
+  <bean id="AssetRetirementGlobalMaintenanceDocument-workflowAttributes" parent="AssetRetirementGlobalMaintenanceDocument-workflowAttributes-parentBean"/>
+
+  <bean id="AssetRetirementGlobalMaintenanceDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
+    <property name="searchingTypeDefinitions">
+    	<list>
+		    <bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		    	<property name="searchingAttribute">
+		    		<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		    			<property name="businessObjectClassName" value="org.kuali.kfs.module.cam.businessobject.Asset"/>
+		    			<property name="attributeName" value="campusTagNumber"/>
+		    		</bean>
+		    	</property>
+		    	<property name="documentValues">
+		    		<list>
+		    			<value>newMaintainableObject.businessObject.assetRetirementGlobalDetails.asset.campusTagNumber</value>
+		    			<value>newMaintainableObject.businessObject.mergedTargetCapitalAsset.campusTagNumber</value>
+		    		</list>
+		    	</property>
+		    </bean>
+	    
+		    <bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		    	<property name="searchingAttribute">
+		    		<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		    			<property name="businessObjectClassName" value="org.kuali.kfs.module.cam.businessobject.Asset"/>
+		    			<property name="attributeName" value="organizationOwnerChartOfAccountsCode"/>
+		    		</bean>
+		    	</property>
+		    	<property name="documentValues">
+		    		<list>
+		    			<value>newMaintainableObject.businessObject.assetRetirementGlobalDetails.asset.organizationOwnerChartOfAccountsCode</value>
+		    			<value>newMaintainableObject.businessObject.mergedTargetCapitalAsset.organizationOwnerChartOfAccountsCode</value>
+		    		</list>
+		    	</property>
+		    </bean>
+	    
+		    <bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		    	<property name="searchingAttribute">
+		    		<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		    			<property name="businessObjectClassName" value="org.kuali.kfs.coa.businessobject.Organization"/>
+		    			<property name="attributeName" value="organizationCode"/>
+		    		</bean>
+		    	</property>
+		    	<property name="documentValues">
+		    		<list>
+		    			<value>newMaintainableObject.businessObject.assetRetirementGlobalDetails.asset.organizationOwnerAccount.organizationCode</value>
+		    			<value>newMaintainableObject.businessObject.mergedTargetCapitalAsset.organizationOwnerAccount.organizationCode</value>
+		    		</list>
+		    	</property>
+		    </bean>
+	    
+		    <bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		    	<property name="searchingAttribute">
+		    		<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		    			<property name="businessObjectClassName" value="org.kuali.kfs.module.cam.businessobject.Asset"/>
+		    			<property name="attributeName" value="organizationOwnerAccountNumber"/>
+		    		</bean>
+		    	</property>
+		    	<property name="documentValues">
+		    		<list>
+		    			<value>newMaintainableObject.businessObject.assetRetirementGlobalDetails.asset.organizationOwnerAccountNumber</value>
+		    			<value>newMaintainableObject.businessObject.mergedTargetCapitalAsset.organizationOwnerAccountNumber</value>
+		    		</list>
+		    	</property>
+		    </bean>
+    	</list>
+    </property>
+    <property name="routingTypeDefinitions">
+    	<map>
+    		<entry key="Account" value-ref="RoutingType-AssetRetirementGlobalMaintenanceDocument-Account"/>
+    		<entry key="ExternalTransfer" value-ref="RoutingType-AssetRetirementGlobalMaintenanceDocument-ExternalTransfer"/>
+    		<entry key="OrganizationHierarchy" value-ref="RoutingType-AssetRetirementGlobalMaintenanceDocument-OrganizationHierarchy"/>
+    		<entry key="Purchasing" value-ref="RoutingType-AssetRetirementGlobalMaintenanceDocument-Purchasing"/>
+    	</map>
+    </property>
+  </bean>
+   
+  <bean id="RoutingType-AssetRetirementGlobalMaintenanceDocument-Purchasing" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    	<property name="routingAttributes">
+    		<list>
+		        <ref bean="RoutingAttribute-campusCode"/>
+    		</list>
+    	</property>
+    	<property name="documentValuePathGroups">
+    		<list>
+    			<bean class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+    				<property name="documentCollectionPath">
+    					<bean class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath">
+    				  		<property name="documentValues">
+	   							<list>
+	   								<value>asset.organizationOwnerAccount.accountPhysicalCampusCode</value>
+	   							</list>
+	   						</property>
+	    					<property name="collectionPath" value="newMaintainableObject.businessObject.assetRetirementGlobalDetails"/>
+	    				</bean>
+    				</property>
+    			</bean>
+    		</list>
+    	</property>
+   </bean>
+    
+  <bean id="RoutingType-AssetRetirementGlobalMaintenanceDocument-Account" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    	<property name="routingAttributes">
+    		<list>
+		        <ref bean="RoutingAttribute-chartOfAccountsCode"/>
+		        <ref bean="RoutingAttribute-accountNumber"/>
+    		</list>
+    	</property>
+    	<property name="documentValuePathGroups">
+    		<list>
+    			<ref bean="DocumentValuePathGroup-AssetRetirementGlobalMaintenanceDocument-AssetRetirmentGlobalDetails"/>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="DocumentValuePathGroup-AssetRetirementGlobalMaintenanceDocument-AssetRetirmentGlobalDetails" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+	    <property name="documentCollectionPath">
+    		<bean parent="DocumentCollectionPath-AssetDetail-chartAndAccountNumber">
+    			<property name="collectionPath" value="newMaintainableObject.businessObject.assetRetirementGlobalDetails"/>
+    		</bean>
+    	</property>
+    </bean>
+    
+    <bean id="RoutingType-AssetRetirementGlobalMaintenanceDocument-ExternalTransfer" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    	<property name="routingAttributes">
+    		<list>
+		        <ref bean="RoutingAttribute-chartOfAccountsCode"/>
+		        <ref bean="RoutingAttribute-accountNumber"/>
+    		</list>
+    	</property>
+    	<property name="documentValuePathGroups">
+    		<list>
+    			<ref bean="DocumentValuePathGroup-AssetRetirementGlobalMaintenanceDocument-AssetRetirmentGlobalDetails"/>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="DocumentValuePathGroup-AssetRetirementGlobalMaintenanceDocument-OrganizationHierarchy-assetRetirementGlobalDetails" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+    	<property name="documentCollectionPath">
+    		<bean parent="DocumentCollectionPath-AssetDetail-chartAndOrgCode">
+    			<property name="collectionPath" value="newMaintainableObject.businessObject.assetRetirementGlobalDetails"/>
+    		</bean>
+    	</property>
+    </bean>
+    <bean id="RoutingType-AssetRetirementGlobalMaintenanceDocument-OrganizationHierarchy" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    	<property name="routingAttributes">
+    		<list>
+		        <ref bean="RoutingAttribute-chartOfAccountsCode"/>
+		        <ref bean="RoutingAttribute-organizationCode"/>
+    		</list>
+    	</property>
+    	<property name="documentValuePathGroups">
+    		<list>
+    			<ref bean="DocumentValuePathGroup-AssetRetirementGlobalMaintenanceDocument-OrganizationHierarchy-assetRetirementGlobalDetails"/>
+    		</list>
+    	</property>
+    </bean>
+</beans>
