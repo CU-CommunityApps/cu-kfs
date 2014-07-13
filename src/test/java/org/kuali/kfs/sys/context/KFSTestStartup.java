@@ -26,7 +26,7 @@ public class KFSTestStartup {
         context.setConfigLocation(bootstrapSpringBeans);
         try {
             context.refresh();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LOG.error("problem during context.refresh()", e);
 
             throw e;

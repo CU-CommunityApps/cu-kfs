@@ -19,6 +19,7 @@ import edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal;
 
 import java.util.List;
 import java.util.Properties;
+
 import org.kuali.kfs.coa.businessobject.lookup.OrganizationRoutingModelNameLookupableHelperServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.kns.document.authorization.BusinessObjectRestrictions;
@@ -33,6 +34,7 @@ import org.kuali.rice.krad.bo.BusinessObject;
  * This class overrides the getBackLocation, getReturnUrl, setFieldConversions and getActionUrls for
  * {@link OrganizationRoutingModelName}
  */
+@SuppressWarnings("deprecation")
 public class CuOrganizationRoutingModelNameLookupableHelperServiceImpl extends OrganizationRoutingModelNameLookupableHelperServiceImpl {
     
     @Override

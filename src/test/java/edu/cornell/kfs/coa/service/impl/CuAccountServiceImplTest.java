@@ -21,7 +21,6 @@ public class CuAccountServiceImplTest extends KualiTestBase {
     public void testGetDefaultLaborBenefitRateCategoryCodeForAccountType() {
     	assertEquals("--", accountService.getDefaultLaborBenefitRateCategoryCodeForAccountType("EX"));
     	assertEquals("EN", accountService.getDefaultLaborBenefitRateCategoryCodeForAccountType("EN"));
-    	
     }
     
 }
