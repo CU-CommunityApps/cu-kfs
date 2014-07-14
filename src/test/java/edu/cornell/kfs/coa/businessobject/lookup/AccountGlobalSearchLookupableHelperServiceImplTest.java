@@ -4,13 +4,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.sys.ConfigureContext;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.rice.kns.lookup.LookupableHelperService;
-import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 @ConfigureContext
+@SuppressWarnings("deprecation")
 public class AccountGlobalSearchLookupableHelperServiceImplTest extends KualiTestBase {
 
     private LookupableHelperService lookupableHelperServiceImpl;
@@ -26,7 +29,6 @@ public class AccountGlobalSearchLookupableHelperServiceImplTest extends KualiTes
     }
     
     public void testGetSearchResults() {
-        //{chartOfAccountsCode=IT, accountManagerUser.principalName=, subFundGroupCode=, accountTypeCode=, extension.appropriationAccountNumber=, backLocation=http://localhost:8080/kfs/kr/maintenance.do, accountSupervisoryUser.principalName=, docNum=5690634, organizationCode=044Q, accountNumber=, accountName=, extension.programCode=, extension.majorReportingCategoryCode=, closed=N, useOrgHierarchy=Y, docFormKey=2, accountFiscalOfficerUser.principalName=}
         fieldValues.put("chartOfAccountsCode", "IT");
         fieldValues.put("organizationCode", "044Q");
         fieldValues.put("useOrgHierarchy", "Y");
@@ -43,6 +45,37 @@ public class AccountGlobalSearchLookupableHelperServiceImplTest extends KualiTes
         accounts = (List<Account>) lookupableHelperServiceImpl.getSearchResults(fieldValues);
         assertTrue("should not have results", accounts.isEmpty());
 
+    }
+    
+    public void testValidateSearchParameters() {
+        fieldValues.put("chartOfAccountsCode", "IT");
+        fieldValues.put("organizationCode", "044Q");
+        fieldValues.put("useOrgHierarchy", "Y");
+        fieldValues.put("closed", "N");
+        
+        lookupableHelperServiceImpl.validateSearchParameters(fieldValues);
+        
+        assertTrue("should have any error messages", GlobalVariables.getMessageMap().hasNoMessages());
+        
+        fieldValues.clear();
+        fieldValues.put("organizationCode", "044Q");
+        fieldValues.put("useOrgHierarchy", "Y");
+        fieldValues.put("closed", "N");
+
+        lookupableHelperServiceImpl.validateSearchParameters(fieldValues);
+        assertTrue("should have error for chart code", GlobalVariables.getMessageMap().getErrorMessages().containsKey(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE));
+
+        GlobalVariables.getMessageMap().clearErrorMessages();
+        
+        fieldValues.clear();
+        fieldValues.put("chartOfAccountsCode", "IT");
+        fieldValues.put("useOrgHierarchy", "Y");
+        fieldValues.put("closed", "N");
+
+        lookupableHelperServiceImpl.validateSearchParameters(fieldValues);
+        assertTrue("should have error for org code", GlobalVariables.getMessageMap().getErrorMessages().containsKey(KFSPropertyConstants.ORGANIZATION_CODE));
+        
+        GlobalVariables.getMessageMap().clearErrorMessages();
     }
     
 }
