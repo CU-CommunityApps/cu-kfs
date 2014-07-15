@@ -169,19 +169,9 @@ public class DataObjectRestServiceController {
         return resultMap;
     }
 
-    protected boolean isAuthorized(HttpServletRequest request, FinancialSystemBusinessObjectEntry boe) throws Exception {
-        if (request != null && boe != null) {
-            UserSession clientUserSession = KRADUtils.getUserSessionFromRequest(request);
-            UserSession serverUserSession = GlobalVariables.getUserSession();
-
-            if (clientUserSession == null || serverUserSession == null) {
-                return false;
-            }
-
-            if (serverUserSession.getKualiSessionId().equals(clientUserSession.getKualiSessionId())) {
-                Class businessObjectClass = boe.getBusinessObjectClass();
-                return getPermissionService().isAuthorizedByTemplate(serverUserSession.getPrincipalId(), KRADConstants.KNS_NAMESPACE, KimConstants.PermissionTemplateNames.LOOK_UP_RECORDS, KRADUtils.getNamespaceAndComponentSimpleName(businessObjectClass), Collections.<String, String> emptyMap());
-            }
+    protected boolean isAuthorized(FinancialSystemBusinessObjectEntry boe) throws Exception {
+        if (boe != null) {
+	        return getPermissionService().isAuthorizedByTemplate( GlobalVariables.getUserSession().getPrincipalId(), KRADConstants.KNS_NAMESPACE, KimConstants.PermissionTemplateNames.LOOK_UP_RECORDS, KRADUtils.getNamespaceAndComponentSimpleName(boe.getBusinessObjectClass()), Collections.<String, String> emptyMap());
         }
 
         return false;
@@ -238,7 +228,7 @@ public class DataObjectRestServiceController {
         }
 
         Boolean isModuleLocked = getParameterService().getParameterValueAsBoolean(namespace, KfsParameterConstants.PARAMETER_ALL_DETAIL_TYPE, KRADConstants.SystemGroupParameterNames.OLTP_LOCKOUT_ACTIVE_IND);
-        boolean notAuthorized = !isAuthorized(request, boe);
+        boolean notAuthorized = !isAuthorized(boe);
         boolean moduleIsLocked = isModuleLocked != null && isModuleLocked;
         boolean noInquiryDefinition = !boe.hasInquiryDefinition();
 
@@ -250,33 +240,6 @@ public class DataObjectRestServiceController {
             throw new AccessDeniedException("Not authorized.");
         }
     }
-
-    /*
-    protected boolean verifySignature(HttpHeaders headers) {
-        try {
-            String encodedSignature = headers.getRequestHeader(KSBConstants.DIGITAL_SIGNATURE_HEADER).get(0);
-            String encodedCertificate = headers.getRequestHeader(KSBConstants.KEYSTORE_CERTIFICATE_HEADER).get(0);
-            //String verificationAlias = headers.getRequestHeader(KSBConstants.KEYSTORE_ALIAS_HEADER).get(0);
-
-            Signature verifySig = null;
-            byte[] digitalSignature = null;
-
-            digitalSignature = Base64.decodeBase64(encodedSignature.getBytes("UTF-8"));
-            if (StringUtils.isNotBlank(encodedCertificate)) {
-                byte[] certificate = Base64.decodeBase64(encodedCertificate.getBytes("UTF-8"));
-                CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                verifySig = getDigitalSignatureService().getSignatureForVerification(cf.generateCertificate(new ByteArrayInputStream(certificate)));
-            }// else if (StringUtils.isNotBlank(verificationAlias)) {
-                //verifySig = getDigitalSignatureService().getSignatureForVerification(verificationAlias);
-            //}
-
-            return verifySig.verify(digitalSignature);
-        } catch (Exception e) {
-            LOG.error("Failed to initialize digital signature verification.", e);
-        }
-
-        return false;
-    }*/
 
     protected FinancialSystemBusinessObjectEntry getBusinessObject(String dataobject) {
         try {
