@@ -590,7 +590,7 @@ public class CuVendorRule extends VendorRule {
 				 valid &= false;
 		 }
 		 else if ( (!StringUtils.equals(addressTypeCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) && 
-				   ((methodOfPOTransmission != null) || (!StringUtils.isBlank(methodOfPOTransmission))) ) {
+				   (StringUtils.isNotBlank(methodOfPOTransmission)) ) {
 			     //User selected address type of not PO and a Method of PO transmission value is selected
 				 String propertyName = propertyScope + CUVendorPropertyConstants.VENDOR_ADDRESS_METHOD_OF_PO_TRANSMISSION;         
 		         putFieldError(propertyName, CUVendorKeyConstants.ERROR_NO_PO_TRANSMISSION_WITH_NON_PO_ADDRESS);
