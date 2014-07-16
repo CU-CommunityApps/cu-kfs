@@ -17,6 +17,11 @@
 			<list merge="true">
 				<ref bean="VendorDetail-vendorHeader.vendorW9ReceivedDate" /> 
 			    <ref bean="VendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate"/>
+			    <ref bean="VendorDetail-vendorHeader.vendorW8BenReceivedDate"/>
+        		<ref bean="VendorDetail-vendorHeader.vendorChapter4StatusCode"/>
+        		<ref bean="VendorDetail-vendorHeader.vendorForeignTaxNumber"/>
+        		<ref bean="VendorDetail-vendorHeader.vendorGIIN"/>
+        		<ref bean="VendorDetail-vendorHeader.vendorForeignRecipientBirthDate"/>
 				<ref bean="VendorDetail-extension-insuranceRequiredIndicator"/> 
 				<ref bean="VendorDetail-extension-insuranceRequirementsCompleteIndicator"/> 
 				<ref bean="VendorDetail-extension-cornellAdditionalInsuredIndicator"/> 
@@ -67,6 +72,31 @@
 		abstract="true" parent="VendorSupplierDiversityExtension-vendorSupplierDiversityExpirationDate"> 
 		<property name="name" value="vendorHeader.vendorSupplierDiversities.extension.vendorSupplierDiversityExpirationDate"/> 
 		</bean> 
+
+ 	<bean id="VendorDetail-vendorHeader.vendorW8BenReceivedDate"  parent="VendorDetail-vendorHeader.vendorW8BenReceivedDate-parentBean"/> 
+	<bean id="VendorDetail-vendorHeader.vendorW8BenReceivedDate-parentBean" abstract="true"	parent="VendorHeaderExtension-vendorW8BenReceivedDate"> 
+		<property name="name" value="vendorHeader.extension.vendorW8BenReceivedDate"/> 
+	</bean> 
+ 
+ 	<bean id="VendorDetail-vendorHeader.vendorChapter4StatusCode"  parent="VendorDetail-vendorHeader.vendorChapter4StatusCode-parentBean"/> 
+	<bean id="VendorDetail-vendorHeader.vendorChapter4StatusCode-parentBean" abstract="true" parent="VendorHeaderExtension-vendorChapter4StatusCode"> 
+		<property name="name" value="vendorHeader.extension.vendorChapter4StatusCode"/> 
+	</bean> 
+ 
+  	<bean id="VendorDetail-vendorHeader.vendorForeignTaxNumber"  parent="VendorDetail-vendorHeader.vendorForeignTaxNumber-parentBean"/> 
+	<bean id="VendorDetail-vendorHeader.vendorForeignTaxNumber-parentBean" abstract="true" parent="VendorHeaderExtension-vendorForeignTaxNumber"> 
+		<property name="name" value="vendorHeader.extension.vendorForeignTaxNumber"/> 
+	</bean> 
+
+  	<bean id="VendorDetail-vendorHeader.vendorGIIN"  parent="VendorDetail-vendorHeader.vendorGIIN-parentBean"/> 
+	<bean id="VendorDetail-vendorHeader.vendorGIIN-parentBean" abstract="true" parent="VendorHeaderExtension-vendorGIIN"> 
+		<property name="name" value="vendorHeader.extension.vendorGIIN"/> 
+	</bean> 
+ 
+   	<bean id="VendorDetail-vendorHeader.vendorForeignRecipientBirthDate"  parent="VendorDetail-vendorHeader.vendorForeignRecipientBirthDate-parentBean"/> 
+	<bean id="VendorDetail-vendorHeader.vendorForeignRecipientBirthDate-parentBean" abstract="true" parent="VendorHeaderExtension-vendorForeignRecipientBirthDate"> 
+		<property name="name" value="vendorHeader.extension.vendorForeignRecipientBirthDate"/> 
+	</bean> 
 
   <bean id="VendorDetail-extension-insuranceRequiredIndicator" parent="VendorDetail-extension-insuranceRequiredIndicator-parentBean"/>
 
@@ -270,6 +300,22 @@
                   <property name="insertAfter">
                       <list>
                           <bean parent="FieldDefinition" p:attributeName="vendorHeader.extension.vendorW9ReceivedDate" />
+                      </list>
+                  </property>
+              </bean>
+              <bean parent="FieldOverrideForListElementInsert">
+                  <property name="propertyName" value="inquiryFields" />
+                  <property name="propertyNameForElementCompare" value="attributeName" />
+                  <property name="element">
+                      <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorW8BenReceivedIndicator" />
+                  </property>
+                  <property name="insertAfter">
+                      <list>
+                          <bean parent="FieldDefinition" p:attributeName="vendorHeader.extension.vendorW8BenReceivedDate" />
+                          <bean parent="FieldDefinition" p:attributeName="vendorHeader.extension.vendorChapter4StatusCode" />
+                          <bean parent="FieldDefinition" p:attributeName="vendorHeader.extension.vendorForeignTaxNumber" />
+                          <bean parent="FieldDefinition" p:attributeName="vendorHeader.extension.vendorGIIN" />
+                          <bean parent="FieldDefinition" p:attributeName="vendorHeader.extension.vendorForeignRecipientBirthDate" />
                       </list>
                   </property>
               </bean>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright 2012 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="PaymentApplicationDocument" parent="PaymentApplicationDocument-parentBean"/>
+
+	<bean id="PaymentApplicationDocument-parentBean" abstract="true" parent="TransactionalDocumentEntry">
+		
+		
+		<property name="documentTypeName" value="APP"/>
+		<property name="documentClass" value="org.kuali.kfs.module.ar.document.PaymentApplicationDocument"/>
+		<property name="baseDocumentClass" value="org.kuali.kfs.module.ar.document.PaymentApplicationDocument"/>
+		<property name="businessRulesClass" value="org.kuali.kfs.module.ar.document.validation.impl.PaymentApplicationDocumentRule"/>
+<!-- Uncommenting this line will move to the accounting line validation framework. To enable it comment out the line above and uncomment this line. -->
+<!-- 
+		<property name="businessRulesClass" value="org.kuali.kfs.sys.document.validation.impl.AccountingRuleEngineRuleBase" />
+ -->
+		<property name="documentAuthorizerClass" value="org.kuali.kfs.module.ar.document.authorization.PaymentApplicationDocumentAuthorizer"/>
+		<property name="documentPresentationControllerClass" value="org.kuali.kfs.module.ar.document.authorization.PaymentApplicationDocumentPresentationController"/>
+		<property name="attributes">
+			<list>
+			    <ref bean="PaymentApplicationDocument-unappliedCustomerNumber"/>
+			    <ref bean="PaymentApplicationDocument-unappliedCustomerName"/>
+			    <ref bean="PaymentApplicationDocument-appliedCustomerNumber"/>
+			    <ref bean="PaymentApplicationDocument-appliedCustomerName"/>
+				<ref bean="PaymentApplicationDocument-versionNumber"/>
+			</list>
+		</property>
+		<property name="validationMap" ref="PaymentApplicationDocument-validations"/>
+    <property name="workflowAttributes">
+      <ref bean="PaymentApplicationDocument-workflowAttributes"/>
+    </property>
+	</bean>
+    
+    <bean id="PaymentApplicationDocument-unappliedCustomerNumber" parent="PaymentApplicationDocument-unappliedCustomerNumber-parentBean"/>
+    <bean id="PaymentApplicationDocument-unappliedCustomerNumber-parentBean" abstract="true" parent="Customer-customerNumber">
+		<property name="name" value="unappliedCustomerNumber"/>
+    	<property name="label" value="Unapplied Customer Number"/>
+    </bean>
+    
+    <bean id="PaymentApplicationDocument-appliedCustomerNumber" parent="PaymentApplicationDocument-appliedCustomerNumber-parentBean"/>
+    <bean id="PaymentApplicationDocument-appliedCustomerNumber-parentBean" abstract="true" parent="Customer-customerNumber">
+		<property name="name" value="invoiceAppliedCustomerNumber"/>
+    	<property name="label" value="Invoice Applied Customer Number"/>
+    </bean>
+    
+    <bean id="PaymentApplicationDocument-unappliedCustomerName" parent="PaymentApplicationDocument-unappliedCustomerName-parentBean"/>
+    <bean id="PaymentApplicationDocument-unappliedCustomerName-parentBean" abstract="true" parent="Customer-customerName">
+		<property name="name" value="unappliedCustomerName"/>
+    	<property name="label" value="Unapplied Customer Name"/>
+    </bean>
+    
+    <bean id="PaymentApplicationDocument-appliedCustomerName" parent="PaymentApplicationDocument-appliedCustomerName-parentBean"/>
+    <bean id="PaymentApplicationDocument-appliedCustomerName-parentBean" abstract="true" parent="Customer-customerName">
+		<property name="name" value="invoiceAppliedCustomerName"/>
+    	<property name="label" value="Invoice Applied Customer Name"/>
+    </bean>
+    
+    
+	<bean id="PaymentApplicationDocument-versionNumber" parent="PaymentApplicationDocument-versionNumber-parentBean"/>
+	<bean id="PaymentApplicationDocument-versionNumber-parentBean" abstract="true" parent="GenericAttributes-versionNumber"/>
+
+	<bean id="PaymentApplicationDocument-validations" parent="PaymentApplicationDocument-validations-parentBean"/>
+	<bean id="PaymentApplicationDocument-validations-parentBean" abstract="true"  class="org.springframework.beans.factory.config.MapFactoryBean">
+	  <property name="sourceMap">
+		<map key-type="java.lang.Class">			
+			<entry>
+				<key><value>org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent</value></key>
+				<value>PaymentApplication-saveDocumentValidation</value>
+			</entry>
+			<entry>
+				<key><value>org.kuali.kfs.sys.document.validation.event.AttributedRouteDocumentEvent</value></key>
+				<value>PaymentApplication-routeDocumentValidation</value>
+			</entry>
+			<entry>
+				<key><value>org.kuali.kfs.sys.document.validation.event.AttributedApproveDocumentEvent</value></key>
+				<value>PaymentApplication-approveDocumentValidation</value>
+			</entry>
+			<entry>
+				<key><value>org.kuali.kfs.sys.document.validation.event.AttributedBlanketApproveDocumentEvent</value></key>
+				<value>PaymentApplication-blanketApproveDocumentValidation</value>
+			</entry>
+			<entry>
+				<key><value>org.kuali.kfs.sys.document.validation.event.AddAccountingLineEvent</value></key>
+				<value>PaymentApplication-addAccountingLineValidation</value>
+			</entry>
+			<entry>
+				<key><value>org.kuali.kfs.sys.document.validation.event.DeleteAccountingLineEvent</value></key>
+				<value>PaymentApplication-deleteAccountingLineValidation</value>
+			</entry>
+			<entry>
+				<key><value>org.kuali.kfs.sys.document.validation.event.UpdateAccountingLineEvent</value></key>
+				<value>PaymentApplication-updateAccountingLineValidation</value>
+			</entry>
+			<entry>
+				<key><value>org.kuali.kfs.sys.document.validation.event.ReviewAccountingLineEvent</value></key>
+				<value>PaymentApplication-reviewAccountingLineValidation</value>
+			</entry>
+			<entry>
+				<key><value>org.kuali.kfs.module.ar.document.validation.event.DiscountCustomerInvoiceDetailEvent</value></key>
+				<value>PaymentApplication-discountCustomerInvoiceDetailValidation</value>
+			</entry>
+			<entry>
+				<key><value>org.kuali.kfs.module.ar.document.validation.event.RecalculateCustomerInvoiceDetailEvent</value></key>
+				<value>PaymentApplication-recalculateCustomerInvoiceDetailValidation</value>
+			</entry>			
+		</map>
+	  </property>
+  </bean>
+   
+<!-- Start - Workflow Attribute Beans -->   
+
+    <bean id="PaymentApplicationDocument-workflowAttributes" parent="PaymentApplicationDocument-workflowAttributes-parentBean"/>
+	<bean id="PaymentApplicationDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
+    	<property name="searchingTypeDefinitions">
+    		<list>
+	   			<ref bean="SearchingType-AccountsReceivableDocument-createDate-resultsOnly"/>
+   				<ref bean="SearchingType-AccountsReceivableDocument-initiatorId-resultsOnly"/>
+	   			<ref bean="SearchingType-PaymentApplicationDocument-appliedCustomerNumber-criteriaOnly"/>
+   				<ref bean="SearchingType-PaymentApplicationDocument-appliedCustomerName-criteriaOnly"/>
+	   			<ref bean="SearchingType-PaymentApplicationDocument-unappliedCustomerNumber-criteriaOnly"/>
+   				<ref bean="SearchingType-PaymentApplicationDocument-unappliedCustomerName-criteriaOnly"/>
+   				<ref bean="SearchingType-AccountsReceivableDocument-documentStatus-resultsOnly"/>
+	   			<ref bean="SearchingType-AccountsReceivableDocument-processingChartOfAccountsCode-criteriaOnly"/>
+   				<ref bean="SearchingType-AccountsReceivableDocument-processingOrganizationCode-criteriaOnly"/>
+
+    			<ref bean="SearchingType-PaymentApplicationDocument-billingChartOfAccountsCode-criteriaOnly"/>
+    			<ref bean="SearchingType-PaymentApplicationDocument-billingOrganizationCode-criteriaOnly"/>
+    			<ref bean="SearchingType-PaymentApplicationDocument-chartOfAccountsCode-sourceOnly"/>
+    			<ref bean="SearchingType-PaymentApplicationDocument-accountNumber-sourceOnly"/>
+    			<ref bean="SearchingType-PaymentApplicationDocument-financialDocumentReferenceInvoiceNumber-criteriaOnly"/>
+    			<ref bean="SearchingType-PaymentApplicationDocument-customerPaymentMediumIdentifier-criteriaOnly"/>
+
+    		</list>
+    	</property>
+	</bean>
+
+</beans>

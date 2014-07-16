@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+<!--
+ Copyright 2007-2009 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+  <bean id="EffortCertificationReportType" parent="EffortCertificationReportType-parentBean"/>
+
+  <bean id="EffortCertificationReportType-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="org.kuali.kfs.module.ec.businessobject.EffortCertificationReportType"/>
+    <property name="objectLabel" value="Effort Certification Report Type"/>
+    
+    <property name="inquiryDefinition">
+      <ref bean="EffortCertificationReportType-inquiryDefinition"/>
+    </property>
+    <property name="lookupDefinition">
+      <ref bean="EffortCertificationReportType-lookupDefinition"/>
+    </property>
+    <property name="attributes">
+      <list>
+        <ref bean="EffortCertificationReportType-effortCertificationReportDescription"/>
+        <ref bean="EffortCertificationReportType-effortCertificationReportTypeCode"/>
+        <ref bean="EffortCertificationReportType-active"/>
+      </list>
+    </property>
+  </bean>
+
+<!-- Attribute Definitions -->
+
+
+  <bean id="EffortCertificationReportType-effortCertificationReportDescription" parent="EffortCertificationReportType-effortCertificationReportDescription-parentBean"/>
+
+  <bean id="EffortCertificationReportType-effortCertificationReportDescription-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="effortCertificationReportDescription"/>
+    <property name="forceUppercase" value="false"/>
+    <property name="label" value="Report Description"/>
+    <property name="shortLabel" value="Description"/>
+    <property name="maxLength" value="40"/>
+    <property name="validationPattern">
+      <ref bean="AnyCharacterWithWhitespaceValidation" />
+    </property>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="42"/>
+    </property>
+    
+    
+  </bean>
+  <bean id="EffortCertificationReportType-effortCertificationReportTypeCode" parent="EffortCertificationReportType-effortCertificationReportTypeCode-parentBean"/>
+
+  <bean id="EffortCertificationReportType-effortCertificationReportTypeCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="effortCertificationReportTypeCode"/>
+    <property name="forceUppercase" value="true"/>
+    <property name="label" value="Report Type Code"/>
+    <property name="shortLabel" value="Code"/>
+    <property name="maxLength" value="2"/>
+    <property name="validationPattern">
+      <ref bean="AnyCharacterValidation" />
+    </property>
+    <property name="control">
+      <ref bean="FourCharacterTextControl" />
+    </property>
+    
+    
+  </bean>
+  <bean id="EffortCertificationReportType-active" parent="EffortCertificationReportType-active-parentBean"/>
+
+  <bean id="EffortCertificationReportType-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
+    <property name="name" value="active"/>
+  </bean>
+
+<!-- Business Object Inquiry Definition -->
+
+
+  <bean id="EffortCertificationReportType-inquiryDefinition" parent="EffortCertificationReportType-inquiryDefinition-parentBean"/>
+
+  <bean id="EffortCertificationReportType-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+    <property name="title" value="Report Type Code"/>
+    <property name="inquirySections">
+      <list>
+         <ref bean="EffortCertificationReportType-inquirySectionDefinition"/>
+      </list>
+    </property>
+  </bean>
+ <bean id="EffortCertificationReportType-inquirySectionDefinition" parent="EffortCertificationReportType-inquirySectionDefinition-parentBean"/>
+ <bean id="EffortCertificationReportType-inquirySectionDefinition-parentBean" parent="InquirySectionDefinition" abstract="true">
+          <property name="title" value=""/>
+          <property name="numberOfColumns" value="1"/>
+          <property name="inquiryFields">
+            <list>
+              <bean parent="FieldDefinition" p:attributeName="effortCertificationReportTypeCode"/>
+              <bean parent="FieldDefinition" p:attributeName="effortCertificationReportDescription"/>
+              <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+          </property>
+  </bean>
+        
+<!-- Business Object Lookup Definition -->
+
+
+  <bean id="EffortCertificationReportType-lookupDefinition" parent="EffortCertificationReportType-lookupDefinition-parentBean"/>
+
+  <bean id="EffortCertificationReportType-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+    <property name="title" value="Report Type Lookup"/>
+    
+    <property name="defaultSort">
+      <bean parent="SortDefinition">
+      </bean>
+    </property>
+    <property name="lookupFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="effortCertificationReportTypeCode"/>
+        <bean parent="FieldDefinition" p:attributeName="active"/>
+      </list>
+    </property>
+    <property name="resultFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="effortCertificationReportTypeCode"/>
+        <bean parent="FieldDefinition" p:attributeName="effortCertificationReportDescription"/>
+        <bean parent="FieldDefinition" p:attributeName="active"/>
+      </list>
+    </property>
+  </bean>
+</beans>

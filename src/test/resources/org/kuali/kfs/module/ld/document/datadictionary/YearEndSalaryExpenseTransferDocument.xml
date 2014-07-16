@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+<!--
+ Copyright 2007-2009 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+  <bean id="YearEndSalaryExpenseTransferDocument" parent="YearEndSalaryExpenseTransferDocument-parentBean"/>
+
+  <bean id="YearEndSalaryExpenseTransferDocument-parentBean" abstract="true" parent="TransactionalDocumentEntry">
+    <property name="allowsErrorCorrection" value="true"/>
+    <property name="documentTypeName" value="YEST"/>
+    <property name="documentClass" value="org.kuali.kfs.module.ld.document.YearEndSalaryExpenseTransferDocument"/>
+    <property name="baseDocumentClass" value="org.kuali.kfs.module.ld.document.YearEndSalaryExpenseTransferDocument"/>
+    <property name="businessRulesClass" value="org.kuali.kfs.module.ld.document.validation.impl.LaborDocumentRuleEngineRuleBase"/>
+    <property name="documentAuthorizerClass" value="org.kuali.kfs.module.ld.document.authorization.LaborExpenseDocumentAuthorizerBase"/>
+    <property name="documentPresentationControllerClass" value="org.kuali.kfs.module.ld.document.authorization.LaborExpensesDocumentPresentationController"/>
+    
+    <property name="sessionDocument" value="true"/>    
+    <property name="allowsCopy" value="true"/>
+    <property name="workflowAttributes">
+      <ref bean="YearEndSalaryExpenseTransferDocument-workflowAttributes"/>
+    </property>    
+       
+    <property name="validationMap" ref="YearEndSalaryExpenseTransferDocument-validations"/> 
+    <property name="accountingLineGroups">
+    	<map>
+    		<entry>
+    			<key><value>source</value></key>
+    			<ref bean="YearEndSalaryExpenseTransferDocument-sourceAccountingLineGroup" parent="AccountingLineGroup"/>
+    		</entry>
+    		<entry>
+    			<key><value>target</value></key>
+    			<ref bean="YearEndSalaryExpenseTransferDocument-targetAccountingLineGroup" parent="AccountingLineGroup"/>
+    		</entry>    		
+    	</map>
+    </property>  
+    
+  </bean>
+
+<!-- Exported Workflow Attributes -->
+  <bean id="YearEndSalaryExpenseTransferDocument-workflowAttributes" parent="YearEndSalaryExpenseTransferDocument-workflowAttributes-parentBean"/>
+  
+  <bean id="YearEndSalaryExpenseTransferDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
+    <property name="routingTypeDefinitions">
+    	<map>
+    		<entry key="AccountingOrganizationHierarchy" value-ref="RoutingType-AccountingDocument-OrganizationHierarchy"/>
+    		<entry key="SubFund" value-ref="RoutingType-AccountingDocument-SubFund"/>
+    		<entry key="Award" value-ref="RoutingType-AccountingDocument-Award"/>
+    	</map>
+    </property>
+  </bean>
+  
+  <!-- Validations -->
+  
+  <bean id="YearEndSalaryExpenseTransferDocument-validations" parent="YearEndSalaryExpenseTransferDocument-validations-parentBean"/>
+  
+  <bean id="YearEndSalaryExpenseTransferDocument-validations-parentBean" abstract="true"  class="org.springframework.beans.factory.config.MapFactoryBean">
+  	<property name="sourceMap">
+		<map key-type="java.lang.Class">
+			<entry>
+				<key><value>org.kuali.kfs.sys.document.validation.event.AttributedApproveDocumentEvent</value></key>
+				<value>SalaryExpenseTransferDocument-blanketApproveDocumentValidation</value>
+			</entry>
+			<entry>
+				<key><value>org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent</value></key>
+				<value>SalaryExpenseTransferDocument-saveDocumentValidation</value>
+			</entry>
+			<entry>
+				<key><value>org.kuali.kfs.sys.document.validation.event.AddAccountingLineEvent</value></key>
+				<value>SalaryExpenseTransferDocument-addAccountingLineValidation</value>
+			</entry>					
+			<entry>
+				<key><value>org.kuali.kfs.sys.document.validation.event.AttributedRouteDocumentEvent</value></key>
+				<value>SalaryExpenseTransferDocument-routeDocumentValidation</value>
+			</entry>
+			<entry>
+				<key><value>org.kuali.kfs.sys.document.validation.event.UpdateAccountingLineEvent</value></key>
+				<value>SalaryExpenseTransferDocument-updateAccountingLineValidation</value>
+			</entry>											
+    	</map>
+    </property>
+  </bean>
+      
+  <!-- accounting line groups -->
+  <bean id="YearEndSalaryExpenseTransferDocument-sourceAccountingLineGroup" parent="SalaryExpenseTransferDocument-sourceAccountingLineGroup-parentBean"/>   
+  <bean id="YearEndSalaryExpenseTransferDocument-targetAccountingLineGroup" parent="SalaryExpenseTransferDocument-targetAccountingLineGroup-parentBean"/>
+    
+</beans>

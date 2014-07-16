@@ -107,9 +107,28 @@
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
 
-    <field-descriptor name="vendorW9ReceivedDate" column="VNDR_W9_RCVD_DATE" jdbc-type="DATE"/> 
+    <field-descriptor name="vendorW9ReceivedDate" column="VNDR_W9_RCVD_DATE" jdbc-type="DATE"/>
+    <field-descriptor name="vendorChapter4StatusCode" column="VNDR_CHPT4_STAT_CD" jdbc-type="VARCHAR"/> 
+    <field-descriptor name="vendorW8BenReceivedDate" column="VNDR_W8_BEN_RCVD_DT" jdbc-type="DATE"/> 
+    <field-descriptor name="vendorForeignTaxNumber" column="VNDR_FRGN_TAX_NBR" jdbc-type="VARCHAR"/> 
+    <field-descriptor name="vendorGIIN" column="VNDR_GIIN" jdbc-type="VARCHAR"/> 
+    <field-descriptor name="vendorForeignRecipientBirthDate" column="VNDR_FRGN_RECIPNT_BIRTH_DT" jdbc-type="DATE"/>
+
+	<reference-descriptor name="vendorChapter4Status"
+		class-ref="edu.cornell.kfs.vnd.businessobject.CuVendorChapter4Status"
+		auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+		<foreignkey field-ref="vendorChapter4StatusCode" />
+	</reference-descriptor>
 </class-descriptor>
 
+<class-descriptor
+	class="edu.cornell.kfs.vnd.businessobject.CuVendorChapter4Status" table="PUR_VNDR_CHPT4_STAT_CD_TC">
+	<field-descriptor name="vendorChapter4StatusCode" column="VNDR_CHPT4_STAT_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
+	<field-descriptor name="vendorChapter4StatusDescription" column="VNDR_CHPT4_STAT_CD_DESC" jdbc-type="VARCHAR" />
+	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+	<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+	<field-descriptor name="active" column="ROW_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+</class-descriptor>
 
 <class-descriptor class="org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity" table="PUR_VNDR_SUPP_DVRST_T">
     <field-descriptor name="vendorHeaderGeneratedIdentifier" column="VNDR_HDR_GNRTD_ID" jdbc-type="INTEGER" primarykey="true" index="true"/>

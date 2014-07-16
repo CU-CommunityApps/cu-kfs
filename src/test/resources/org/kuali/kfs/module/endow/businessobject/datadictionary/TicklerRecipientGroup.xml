@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright 2011 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:dd="http://rice.kuali.org/dd"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans         
+			http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         
+			http://rice.kuali.org/dd         
+			http://rice.kuali.org/dd/dd.xsd">
+
+	<bean id="TicklerRecipientGroup" parent="TicklerRecipientGroup-parentBean" />
+
+	<bean id="TicklerRecipientGroup-parentBean" abstract="true"
+		parent="BusinessObjectEntry">
+		<property name="businessObjectClass"
+			value="org.kuali.kfs.module.endow.businessobject.TicklerRecipientGroup" />
+		<property name="inquiryDefinition">
+			<ref bean="TicklerRecipientGroup-inquiryDefinition" />
+		</property>
+		<property name="lookupDefinition">
+			<ref bean="TicklerRecipientGroup-lookupDefinition" />
+		</property>
+		<property name="titleAttribute" value="number" />
+		<property name="objectLabel" value="Tickler Recipient Group" />
+		<property name="attributes">
+			<list>
+				<ref bean="TicklerRecipientGroup-number" />
+				<ref bean="TicklerRecipientGroup-active" />
+				<ref bean="TicklerRecipientGroup-newCollectionRecord" />
+
+				<ref bean="TicklerRecipientGroup-groupId" />
+				<ref bean="TicklerRecipientGroup-assignedToGroupNameForLookup" />
+				<ref bean="TicklerRecipientGroup-assignedToGroupNamespaceForLookup" />
+
+			</list>
+		</property>
+		<property name="relationships">
+			<list>
+				<bean parent="RelationshipDefinition">
+					<property name="objectAttributeName" value="assignedToGroup" />
+					<property name="primitiveAttributes">
+						<list>
+							<bean parent="PrimitiveAttributeDefinition" p:sourceName="groupId" p:targetName="id" />
+						</list>
+					</property>
+					<property name="supportAttributes">
+						<list>
+							<bean parent="SupportAttributeDefinition" p:sourceName="assignedToGroup.name" p:targetName="name" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- Attribute Definitions -->
+
+	<!--  Group ID -->
+	<bean id="TicklerRecipientGroup-groupId" parent="TicklerRecipientGroup-groupId-parentBean" />
+	<bean id="TicklerRecipientGroup-groupId-parentBean" parent="Group-id"
+		abstract="true" p:name="groupId" p:required="false">
+		<property name="control">
+			<bean parent="HiddenControlDefinition" />
+		</property>
+	</bean>
+
+	<!--  Group Name -->
+
+	<bean id="TicklerRecipientGroup-assignedToGroupNamespaceForLookup" parent="TicklerRecipientGroup-assignedToGroupNamespaceForLookup-parentBean" />
+	<bean id="TicklerRecipientGroup-assignedToGroupNamespaceForLookup-parentBean"
+		parent="Group-namespaceCode" abstract="true"
+		p:name="assignedToGroup.namespaceCode" p:required="false" />
+
+	<bean id="TicklerRecipientGroup-assignedToGroupNameForLookup" parent="TicklerRecipientGroup-assignedToGroupNameForLookup-parentBean" />
+	<bean id="TicklerRecipientGroup-assignedToGroupNameForLookup-parentBean"
+		parent="Group-name" abstract="true" p:name="assignedToGroup.name"
+		p:required="false" />
+
+	<!-- Tickler Number -->
+	<bean id="TicklerRecipientGroup-number" parent="TicklerRecipientGroup-number-parentBean" />
+
+	<bean id="TicklerRecipientGroup-number-parentBean" abstract="true"
+		parent="Tickler-number-parentBean" />
+
+	<!--  Active -->
+	<bean id="TicklerRecipientGroup-active" parent="TicklerRecipientGroup-active-parentBean" />
+
+	<bean id="TicklerRecipientGroup-active-parentBean" abstract="true"
+		parent="GenericAttributes-genericBoolean">
+		<property name="name" value="active" />
+		<property name="label" value="Active Indicator" />
+	</bean>
+	<bean id="TicklerRecipientGroup-newCollectionRecord" parent="TicklerRecipientGroup-newCollectionRecord-parentBean" />
+
+	<bean id="TicklerRecipientGroup-newCollectionRecord-parentBean"
+		abstract="true" parent="GenericAttributes-newCollectionRecord">
+	</bean>
+
+
+	<!-- Business Object Inquiry Definition -->
+
+	<bean id="TicklerRecipientGroup-inquiryDefinition" parent="TicklerRecipientGroup-inquiryDefinition-parentBean" />
+
+	<bean id="TicklerRecipientGroup-inquiryDefinition-parentBean"
+		abstract="true" parent="InquiryDefinition">
+		<property name="title" value="Tickler Recipient Group Inquiry" />
+		<property name="inquirySections">
+			<list>
+				<ref bean="TicklerRecipientGroup-inquirySectionDefinition" />
+			</list>
+		</property>
+	</bean>
+	<bean id="TicklerRecipientGroup-inquirySectionDefinition"
+		parent="TicklerRecipientGroup-inquirySectionDefinition-parentBean" />
+	<bean id="TicklerRecipientGroup-inquirySectionDefinition-parentBean"
+		parent="InquirySectionDefinition" abstract="true">
+		<property name="title" value="Tickler Group" />
+		<property name="numberOfColumns" value="1" />
+		<property name="inquiryFields">
+			<list>
+				<bean parent="FieldDefinition" p:attributeName="assignedToGroup.name" />
+				<bean parent="FieldDefinition" p:attributeName="number" />
+				<bean parent="FieldDefinition" p:attributeName="active" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- Business Object Lookup Definition -->
+
+	<bean id="TicklerRecipientGroup-lookupDefinition" parent="TicklerRecipientGroup-lookupDefinition-parentBean" />
+
+	<bean id="TicklerRecipientGroup-lookupDefinition-parentBean"
+		abstract="true" parent="LookupDefinition">
+		<property name="title" value="Tickler Recipient Group Inquiry" />
+		<property name="defaultSort">
+			<bean parent="SortDefinition" />
+		</property>
+		<property name="lookupFields">
+			<list>
+				<bean parent="FieldDefinition" p:attributeName="groupId" />
+				<bean parent="FieldDefinition" p:attributeName="assignedToGroupNamespaceForLookup" />
+				<bean parent="FieldDefinition" p:attributeName="assignedToGroup.name"
+					p:forceLookup="true" />
+				<bean parent="FieldDefinition" p:attributeName="number" />
+				<bean parent="FieldDefinition" p:attributeName="active" />
+			</list>
+		</property>
+		<property name="resultFields">
+			<list>
+				<bean parent="FieldDefinition" p:attributeName="groupName" />
+				<bean parent="FieldDefinition" p:attributeName="number" />
+				<bean parent="FieldDefinition" p:attributeName="active" />
+			</list>
+		</property>
+	</bean>
+
+</beans>
