@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-     <classpathentry kind="src" output="target/classes" path="src/main/java"/>
-     <classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
-     <classpathentry kind="src" output="target/classes" path="src/main/resources"/>
-     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-     <classpathentry combineaccessrules="false" kind="src" path="/release-5-1-1"/>
-     <classpathentry combineaccessrules="false" kind="src" path="/cynergy-customizations"/>
-     <classpathentry combineaccessrules="false" kind="src" path="/rice-2.1.7"/>
-     <classpathentry kind="lib" path="C:\Users\manning/.m2/repository/org/kuali/db/ojb/db-ojb/1.0.4-patch7-SNAPSHOT/db-ojb-1.0.4-patch7-SNAPSHOT.jar"/>
-     <classpathentry kind="lib" path="C:\Users\manning/.m2/repository/org/springmodules/spring-modules-ojb/0.8a/spring-modules-ojb-0.8a.jar"/>
-     <classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
-          <attributes>
-               <attribute name="org.eclipse.jst.component.nondependency" value=""/>
-          </attributes>
-     </classpathentry>
-     <classpathentry kind="output" path="bin"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/release-5-1-1"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/cynergy-customizations"/>
+	<classpathentry kind="lib" path="C:/Users/Manning/.m2/repository/org/kuali/db/ojb/db-ojb/1.0.4-patch7-SNAPSHOT/db-ojb-1.0.4-patch7-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Manning/.m2/repository/org/springmodules/spring-modules-ojb/0.8a/spring-modules-ojb-0.8a.jar"/>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/cynergy-standalone"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
