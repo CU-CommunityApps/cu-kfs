@@ -44,6 +44,7 @@ public class CuLedgerEntryBalanceCachingDaoJdbc extends LedgerEntryBalanceCachin
 
     }
     
+<<<<<<< HEAD
     public List compareBalanceHistory(String balanceTable, String historyTable, int fiscalYear) {
         List<Map<String, Object>> data = null;
         StringBuilder queryBuilder = new StringBuilder();
@@ -102,5 +103,7 @@ public class CuLedgerEntryBalanceCachingDaoJdbc extends LedgerEntryBalanceCachin
         return data;
 
     }
+=======
+>>>>>>> KFSUPGRADE-981
 
 }
