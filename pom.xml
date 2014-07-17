@@ -42,10 +42,10 @@
         <version>2.6</version>
         <configuration>
           <instrumentation>
-            <ignores>
-              <ignore>com.rsmart.*</ignore>
-              <ignore>org.kuali.*</ignore>
-            </ignores>
+            <excludes>
+              <exclude>org/kuali/**/*.class</exclude>
+              <exclude>com/rsmart/**/*.class</exclude>
+            </excludes>
           </instrumentation>
         </configuration>
       </plugin>
