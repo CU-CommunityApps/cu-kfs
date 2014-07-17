@@ -7,7 +7,7 @@ import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 
-@ConfigureContext(session = ccs1)
+@ConfigureContext
 public class CuAccountServiceImplTest extends KualiTestBase {
 
 	private AccountService accountService;

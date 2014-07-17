@@ -24,8 +24,6 @@ public class AccountReversionServiceImplTest extends KualiTestBase {
 	private AccountReversionService accountReversionService;
 	private BusinessObjectService businessObjectService;
 
-	
-	
     @Override
     protected void setUp() throws Exception {
         super.setUp();
