@@ -218,10 +218,4 @@
 		</property>
 	</bean>
 
-<!-- TODO : if we need to schedule, then uncomment and change the schedule time accordingly -->
-	<bean id="vendorBatchJobTrigger" parent="cronTrigger">
-		<property name="jobName" value="vendorBatchJob" />
-		<property name="cronExpression" value="0 0 23 * * ?" />
-	</bean>
-
 </beans>
