@@ -1,12 +1,14 @@
 package edu.cornell.kfs.coa.fixture;
 
+import org.kuali.kfs.sys.context.TestUtils;
 import org.kuali.rice.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.coa.businessobject.AccountReversion;
 
 public enum AccountReversionFixture {
 
-	ACCOUNT_REVERSION_GOOD("G254700", 2014, "IT", "IT", "G104895", false, "IT", "G104895");
+	ACCOUNT_REVERSION_GOOD("G254700", 2014, "IT", "IT", "G104895", false, "IT", "G104895"),
+	ACCOUNT_REVERSION_UPLOAD("1008000", "IT", "IT", "B023005", false, "IT", "B023005");
 	
     public final String accountNumber;
     public final Integer universityFiscalYear;
@@ -17,7 +19,21 @@ public enum AccountReversionFixture {
     public final String cashReversionFinancialChartOfAccountsCode;
     public final String cashReversionAccountNumber;
 
-	private AccountReversionFixture(String accountNumber, Integer universityFiscalYear, String chartOfAccountsCode, 
+    private  AccountReversionFixture(String accountNumber, String chartOfAccountsCode, 
+            String budgetReversionChartOfAccountsCode, String budgetReversionAccountNumber, boolean carryForwardByObjectCodeIndicator,
+            String cashReversionFinancialChartOfAccountsCode, String cashReversionAccountNumber) {
+        this.accountNumber = accountNumber;
+        this.universityFiscalYear = Integer.parseInt(TestUtils.getParameterService().getParameterValueAsString("KFS-COA", "Reversion", "ACCOUNT_REVERSION_FISCAL_YEAR"));;
+        this.chartOfAccountsCode = chartOfAccountsCode;
+        this.budgetReversionChartOfAccountsCode = budgetReversionChartOfAccountsCode;
+        this.budgetReversionAccountNumber = budgetReversionAccountNumber;
+        this.carryForwardByObjectCodeIndicator = carryForwardByObjectCodeIndicator;
+        this.cashReversionFinancialChartOfAccountsCode = cashReversionFinancialChartOfAccountsCode;
+        this.cashReversionAccountNumber = cashReversionAccountNumber;
+          
+    }
+    
+    private  AccountReversionFixture(String accountNumber, Integer universityFiscalYear, String chartOfAccountsCode, 
 			String budgetReversionChartOfAccountsCode, String budgetReversionAccountNumber, boolean carryForwardByObjectCodeIndicator,
 			String cashReversionFinancialChartOfAccountsCode, String cashReversionAccountNumber) {
         this.accountNumber = accountNumber;

@@ -1,7 +1,5 @@
 package edu.cornell.kfs.coa.service.impl;
 
-import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
-
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
