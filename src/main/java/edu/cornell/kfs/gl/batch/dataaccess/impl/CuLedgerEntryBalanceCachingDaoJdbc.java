@@ -15,12 +15,8 @@ public class CuLedgerEntryBalanceCachingDaoJdbc extends LedgerEntryBalanceCachin
         List<Map<String, Object>> data = null;
                 
         StringBuilder queryBuilder = new StringBuilder();
-        String drop = "delete from table GL_ENTRY_STATS_T where 1>0";
-        
-        StringBuilder create = new StringBuilder();
-
-        create.append("create table GL_ENTRY_STATS_T AS (SELECT UNIV_FISCAL_YR, FIN_COA_CD, FIN_OBJECT_CD, FIN_BALANCE_TYP_CD, UNIV_FISCAL_PRD_CD, TRN_DEBIT_CRDT_CD, count(*) as entry_row_cnt, sum(TRN_LDGR_ENTR_AMT) as entry_amt FROM GL_ENTRY_T GROUP BY UNIV_FISCAL_YR, FIN_COA_CD, FIN_OBJECT_CD, FIN_BALANCE_TYP_CD, UNIV_FISCAL_PRD_CD, TRN_DEBIT_CRDT_CD)");
-        
+        String drop = "delete from GL_ENTRY_STATS_T";
+                
         StringBuilder populate = new StringBuilder();
         
         populate.append("insert into gl_entry_stats_t ");
@@ -30,12 +26,7 @@ public class CuLedgerEntryBalanceCachingDaoJdbc extends LedgerEntryBalanceCachin
         populate.append("' ");
         populate.append("GROUP BY UNIV_FISCAL_YR, FIN_COA_CD, FIN_OBJECT_CD, FIN_BALANCE_TYP_CD, UNIV_FISCAL_PRD_CD, TRN_DEBIT_CRDT_CD");
         
-        
-        //insert into gl_entry_stats_t
-//        SELECT UNIV_FISCAL_YR, FIN_COA_CD, FIN_OBJECT_CD, FIN_BALANCE_TYP_CD, UNIV_FISCAL_PRD_CD, TRN_DEBIT_CRDT_CD, count(*) as entry_row_cnt, sum(TRN_LDGR_ENTR_AMT) as entry_amt 
-//        FROM GL_ENTRY_T where GL_ENTRY_T.UNIV_FISCAL_YR='2014'
-//       GROUP BY UNIV_FISCAL_YR, FIN_COA_CD, FIN_OBJECT_CD, FIN_BALANCE_TYP_CD, UNIV_FISCAL_PRD_CD, TRN_DEBIT_CRDT_CD;        
-        
+                
         queryBuilder.append("select eh.* ");
         queryBuilder.append("from " + historyTable + " eh ");
         queryBuilder.append("left join ");
@@ -44,10 +35,6 @@ public class CuLedgerEntryBalanceCachingDaoJdbc extends LedgerEntryBalanceCachin
         queryBuilder.append("eh.fin_balance_typ_cd = e.fin_balance_typ_cd and eh.univ_fiscal_prd_cd = e.univ_fiscal_prd_cd and eh.trn_debit_crdt_cd = e.trn_debit_crdt_cd ");
         queryBuilder.append("where e.univ_fiscal_yr >= " + fiscalYear + " and (eh.row_cnt <> e.entry_row_cnt or eh.trn_ldgr_entr_amt <> e.entry_amt or e.entry_row_cnt is null) ");
         
-
-//      	getJdbcTemplate().execute(drop.toString());
-//      	getJdbcTemplate().execute(create.toString());
-
 	  	getJdbcTemplate().execute(drop.toString());
 	  	getJdbcTemplate().execute(populate.toString());        
       
