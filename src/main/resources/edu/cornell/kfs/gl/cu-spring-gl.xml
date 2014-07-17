@@ -263,5 +263,9 @@
  	 	 	 		 <property name="lookupableHelperService">
  	 	 	 		         <ref bean="glCurrentAccountBalanceLookupableHelperService" />
  	 	 	 		 </property>
- 	 	 	 		 </bean>    
+ 	 	 	 		 </bean>
+ 	 	 	 		 
+	
+		<bean id="glLedgerEntryBalanceCachingDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.gl.batch.dataaccess.impl.CuLedgerEntryBalanceCachingDaoJdbc" />
+	 	 	 	 		     
 </beans>
