@@ -15,7 +15,7 @@ import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import edu.cornell.kfs.module.ezra.dataaccess.EzraAwardProposalDao;
-import edu.cornell.kfs.module.receiptProcessing.service.ReceiptProcessingService;
+
 
 @ConfigureContext(session = ccs1)
 public class ezraUpdateProposalImplTest extends KualiTestBase {
