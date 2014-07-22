@@ -105,7 +105,7 @@ public class EzraServiceImpl implements EzraService {
 			        else
 			        {
 			            proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
-                        routeProposalDocument(proposal);
+			            businessObjectService.save(proposal);
 			        }
 			    }
 			}

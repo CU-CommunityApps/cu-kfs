@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.ezra.batch;
+package edu.cornell.kfs.module.ezra.service;
 
 import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
 

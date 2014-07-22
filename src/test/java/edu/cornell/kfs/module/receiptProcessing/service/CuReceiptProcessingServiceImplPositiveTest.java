@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.receiptProcessing.batch;
+package edu.cornell.kfs.module.receiptProcessing.service;
 
 import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
 
@@ -22,8 +22,8 @@ public class CuReceiptProcessingServiceImplPositiveTest extends KualiTestBase {
     private ConfigurationService  kualiConfigurationService;
     
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ReceiptProcessingService.class);
-    private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/module/receiptProcessing/batch/fixture/receiptProcessing_test.csv";
-    private static final String IMG_FILE_PATH = "src/test/java/edu/cornell/kfs/module/receiptProcessing/batch/attachements/testUnit.pdf";
+    private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/module/receiptProcessing/service/fixture/receiptProcessing_test.csv";
+    private static final String IMG_FILE_PATH = "src/test/java/edu/cornell/kfs/module/receiptProcessing/service/attachements/testUnit.pdf";
     private String batchDirectory;  
     private String receiptDir = "/infra/receipt_processing/CIT-csv-archive/";
     
