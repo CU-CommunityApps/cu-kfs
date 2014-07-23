@@ -542,6 +542,7 @@ public class VendorBatchServiceImpl implements VendorBatchService{
                 // TODO : urlconnection is working for java 7 and under, but it return null for 'docx/pptx/xslx' 
 //                String type = URLConnection.guessContentTypeFromName(attachmentFile.getAbsolutePath());
 
+                LOG.info("Mime type " + fileName + " " + mimeTypeCode);
                 String attachType = KFSConstants.EMPTY_STRING;
 
                 Attachment noteAttachment = attachmentService.createAttachment(document.getDocumentHeader(), attachment, mimeTypeCode, fileSize, fileInputStream, attachType);
