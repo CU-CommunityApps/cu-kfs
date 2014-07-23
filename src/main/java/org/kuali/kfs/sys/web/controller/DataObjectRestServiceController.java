@@ -156,15 +156,14 @@ public class DataObjectRestServiceController {
             Map<String, String> objectMap = new HashMap<String, String>();
             Object object = ObjectUtils.createNewObjectFromClass(boe.getBusinessObjectClass());
             for (String propertyName : inquiryFields) {
-                if (propertyName.contains(" ")) {
-                    LOG.warn("Found Bad propertyName: " + propertyName);
-                    continue;
-                }
-
-                Object propertyValue = ObjectUtils.getPropertyValue(bo, propertyName);
-                Class<?> propertyType = ObjectUtils.getPropertyType(bo, propertyName, getPersistenceStructureService());
-                if (isPropertyTypeValid(propertyType)) {
-                    objectMap.put(propertyName, propertyValue + "");
+                try {
+                    Object propertyValue = ObjectUtils.getPropertyValue(bo, propertyName);
+                    Class<?> propertyType = ObjectUtils.getPropertyType(bo, propertyName, getPersistenceStructureService());
+                    if (isPropertyTypeValid(propertyType)) {
+                        objectMap.put(propertyName, propertyValue + "");
+                    }
+                } catch (RuntimeException e) {
+                    LOG.warn("Failed to process propertyName: " + propertyName, e);
                 }
             }
 
@@ -221,15 +220,15 @@ public class DataObjectRestServiceController {
         String limitByParameter = fieldValues.remove(LIMIT_BY_PARAMETER);
 
         if (StringUtils.isEmpty(limitByParameter) || limitByParameter.equalsIgnoreCase("Y")) {
-			return lookupableHelperService.getSearchResults(fieldValues);
-		}
+            return lookupableHelperService.getSearchResults(fieldValues);
+        }
 
-		try {
-			return lookupableHelperService.getSearchResultsUnbounded(fieldValues);
-		} catch (UnsupportedOperationException e) {
-			LOG.warn("lookupableHelperService.getSearchResultsUnbounded failed. Retrying the lookup using the default search.", e);
-			return lookupableHelperService.getSearchResults(fieldValues);
-		}
+        try {
+            return lookupableHelperService.getSearchResultsUnbounded(fieldValues);
+        } catch (UnsupportedOperationException e) {
+            LOG.warn("lookupableHelperService.getSearchResultsUnbounded failed. Retrying the lookup using the default search.", e);
+            return lookupableHelperService.getSearchResults(fieldValues);
+        }
     }
 
     protected void validateRequest(FinancialSystemBusinessObjectEntry boe, String namespace, String dataobject, HttpServletRequest request) throws Exception {
