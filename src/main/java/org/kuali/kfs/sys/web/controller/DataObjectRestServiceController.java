@@ -230,8 +230,6 @@ public class DataObjectRestServiceController {
 			LOG.warn("lookupableHelperService.getSearchResultsUnbounded failed. Retrying the lookup using the default search.", e);
 			return lookupableHelperService.getSearchResults(fieldValues);
 		}
-
-        return lookupableHelperService.getSearchResults(fieldValues);
     }
 
     protected void validateRequest(FinancialSystemBusinessObjectEntry boe, String namespace, String dataobject, HttpServletRequest request) throws Exception {
