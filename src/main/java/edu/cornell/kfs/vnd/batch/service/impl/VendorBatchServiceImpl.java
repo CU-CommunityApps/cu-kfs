@@ -99,13 +99,18 @@ public class VendorBatchServiceImpl implements VendorBatchService{
             LOG.info("Beginning processing of filename: " + inputFileName + ".");
             processResults.append("Beginning processing of filename: " + inputFileName + ". \n");
   
-            if (maintainVendors(inputFileName, fileNamesToLoad.get(inputFileName), processResults)) {
-                result &= true;
-                LOG.info("Successfully loaded csv file");
-                processedFiles.add(inputFileName);
-            } else {
-                LOG.error("Failed to load file");
-                result &= false;
+            try {
+                if (maintainVendors(inputFileName, fileNamesToLoad.get(inputFileName), processResults)) {
+                    result &= true;
+                    LOG.info("Successfully loaded csv file");
+                    processedFiles.add(inputFileName);
+                } else {
+                    LOG.error("Failed to load file");
+                    result &= false;
+                }
+            } catch (Exception e) {
+                processResults.append("Faild request : Failed to load file: " + e.getMessage());
+                result &= false;                              
             }
         }
 
