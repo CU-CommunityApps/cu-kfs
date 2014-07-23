@@ -157,13 +157,15 @@ public class DataObjectRestServiceController {
             Object object = ObjectUtils.createNewObjectFromClass(boe.getBusinessObjectClass());
             for (String propertyName : inquiryFields) {
                 try {
-                    Object propertyValue = ObjectUtils.getPropertyValue(bo, propertyName);
-                    Class<?> propertyType = ObjectUtils.getPropertyType(bo, propertyName, getPersistenceStructureService());
-                    if (isPropertyTypeValid(propertyType)) {
-                        objectMap.put(propertyName, propertyValue + "");
-                    }
-                } catch (RuntimeException e) {
-                    LOG.warn("Failed to process propertyName: " + propertyName, e);
+                    object.getClass().getDeclaredField(propertyName);
+                } catch (NoSuchFieldException e) {
+                    continue;
+                }
+
+                Object propertyValue = ObjectUtils.getPropertyValue(bo, propertyName);
+                Class<?> propertyType = ObjectUtils.getPropertyType(bo, propertyName, getPersistenceStructureService());
+                if (isPropertyTypeValid(propertyType)) {
+                    objectMap.put(propertyName, propertyValue + "");
                 }
             }
 
