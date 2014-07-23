@@ -220,13 +220,16 @@ public class DataObjectRestServiceController {
 
         String limitByParameter = fieldValues.remove(LIMIT_BY_PARAMETER);
 
-        if (StringUtils.isEmpty(limitByParameter) || limitByParameter.equalsIgnoreCase("N")) {
-            try {
-                return lookupableHelperService.getSearchResultsUnbounded(fieldValues);
-            } catch (UnsupportedOperationException e) {
-                LOG.warn("lookupableHelperService.getSearchResultsUnbounded failed.", e);
-            }
-        }
+        if (StringUtils.isEmpty(limitByParameter) || limitByParameter.equalsIgnoreCase("Y")) {
+			return lookupableHelperService.getSearchResults(fieldValues);
+		}
+
+		try {
+			return lookupableHelperService.getSearchResultsUnbounded(fieldValues);
+		} catch (UnsupportedOperationException e) {
+			LOG.warn("lookupableHelperService.getSearchResultsUnbounded failed. Retrying the lookup using the default search.", e);
+			return lookupableHelperService.getSearchResults(fieldValues);
+		}
 
         return lookupableHelperService.getSearchResults(fieldValues);
     }
