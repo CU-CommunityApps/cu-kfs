@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -40,11 +41,9 @@ import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.permission.PermissionService;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kns.datadictionary.InquirySectionDefinition;
-import org.kuali.rice.kns.datadictionary.LookupDefinition;
 import org.kuali.rice.kns.lookup.LookupableHelperService;
 import org.kuali.rice.krad.UserSession;
 import org.kuali.rice.krad.bo.BusinessObject;
-import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.DataDictionaryService;
 import org.kuali.rice.krad.service.KRADServiceLocator;
 import org.kuali.rice.krad.service.KRADServiceLocatorWeb;
@@ -69,13 +68,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Controller
 public class DataObjectRestServiceController {
 
+    private static final String LIMIT_BY_PARAMETER = "limitByParameter";
+
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DataObjectRestServiceController.class);
 
     private DataDictionaryService dataDictionaryService;
     private PersistenceStructureService persistenceStructureService;
     private ParameterService parameterService;
     private PermissionService permissionService;
-    private BusinessObjectService businessObjectService;
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Not authorized.")
@@ -156,6 +156,11 @@ public class DataObjectRestServiceController {
             Map<String, String> objectMap = new HashMap<String, String>();
             Object object = ObjectUtils.createNewObjectFromClass(boe.getBusinessObjectClass());
             for (String propertyName : inquiryFields) {
+                if (propertyName.contains(" ")) {
+                    LOG.warn("Found Bad propertyName: " + propertyName);
+                    continue;
+                }
+
                 Object propertyValue = ObjectUtils.getPropertyValue(bo, propertyName);
                 Class<?> propertyType = ObjectUtils.getPropertyType(bo, propertyName, getPersistenceStructureService());
                 if (isPropertyTypeValid(propertyType)) {
@@ -171,7 +176,12 @@ public class DataObjectRestServiceController {
 
     protected boolean isAuthorized(FinancialSystemBusinessObjectEntry boe) throws Exception {
         if (boe != null) {
-	        return getPermissionService().isAuthorizedByTemplate( GlobalVariables.getUserSession().getPrincipalId(), KRADConstants.KNS_NAMESPACE, KimConstants.PermissionTemplateNames.LOOK_UP_RECORDS, KRADUtils.getNamespaceAndComponentSimpleName(boe.getBusinessObjectClass()), Collections.<String, String> emptyMap());
+        	return getPermissionService().isAuthorizedByTemplate( GlobalVariables.getUserSession().getPrincipalId(), KRADConstants.KNS_NAMESPACE, KimConstants.PermissionTemplateNames.LOOK_UP_RECORDS, KRADUtils.getNamespaceAndComponentSimpleName(boe.getBusinessObjectClass()), Collections.<String, String> emptyMap());
+        } else {
+            if (boe == null) {
+                LOG.warn("boe is null");
+                return false;
+            }
         }
 
         return false;
@@ -205,14 +215,20 @@ public class DataObjectRestServiceController {
             fieldValues.put(o.toString(), value[0]);
         }
 
-        LookupDefinition lookupDefinition = boe.getLookupDefinition();
-        if (lookupDefinition.getLookupableID() != null) {
-            LookupableHelperService lookupableHelperService = getLookupableHelperService(lookupDefinition.getLookupableID());
-            lookupableHelperService.setBusinessObjectClass(boe.getBusinessObjectClass());
-            return lookupableHelperService.getSearchResults(fieldValues);
-        } else { // if lookupable definiton exists but lookupable id is not set
-            return new ArrayList(getBusinessObjectService().findMatching(boe.getBusinessObjectClass(), fieldValues));
+        LookupableHelperService lookupableHelperService = getLookupableHelperService(boe.getLookupDefinition().getLookupableID());
+        lookupableHelperService.setBusinessObjectClass(boe.getBusinessObjectClass());
+
+        String limitByParameter = fieldValues.remove(LIMIT_BY_PARAMETER);
+
+        if (StringUtils.isEmpty(limitByParameter) || limitByParameter.equalsIgnoreCase("N")) {
+            try {
+                return lookupableHelperService.getSearchResultsUnbounded(fieldValues);
+            } catch (UnsupportedOperationException e) {
+                LOG.warn("lookupableHelperService.getSearchResultsUnbounded failed.", e);
+            }
         }
+
+        return lookupableHelperService.getSearchResults(fieldValues);
     }
 
     protected void validateRequest(FinancialSystemBusinessObjectEntry boe, String namespace, String dataobject, HttpServletRequest request) throws Exception {
@@ -252,8 +268,11 @@ public class DataObjectRestServiceController {
     }
 
     protected LookupableHelperService getLookupableHelperService(String lookupableID) {
-        LookupableHelperService lookupableHelperService = LookupableSpringContext.getLookupable(lookupableID).getLookupableHelperService();
-        return lookupableHelperService;
+        if (lookupableID != null) {
+            return LookupableSpringContext.getLookupable(lookupableID).getLookupableHelperService();
+        } else {
+            return LookupableSpringContext.getLookupableHelperService("lookupableHelperService");
+        }
     }
 
     public DataDictionaryService getDataDictionaryService() {
@@ -302,17 +321,6 @@ public class DataObjectRestServiceController {
 
     public void setPermissionService(PermissionService permissionService) {
         this.permissionService = permissionService;
-    }
-
-    public BusinessObjectService getBusinessObjectService() {
-        if (businessObjectService == null) {
-            businessObjectService = KRADServiceLocator.getBusinessObjectService();
-        }
-        return businessObjectService;
-    }
-
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
-        this.businessObjectService = businessObjectService;
     }
 
 }
