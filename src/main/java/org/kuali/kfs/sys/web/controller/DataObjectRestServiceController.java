@@ -68,6 +68,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Controller
 public class DataObjectRestServiceController {
 
+    private static final String LOOKUPABLE_HELPER_SERVICE = "lookupableHelperService";
+    private static final String MAX_OBJECTS_TO_RETURN = "maxObjectsToReturn";
     private static final String LIMIT_BY_PARAMETER = "limitByParameter";
 
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DataObjectRestServiceController.class);
@@ -156,13 +158,13 @@ public class DataObjectRestServiceController {
             Map<String, String> objectMap = new HashMap<String, String>();
             Object object = ObjectUtils.createNewObjectFromClass(boe.getBusinessObjectClass());
             for (String propertyName : inquiryFields) {
+                Object propertyValue;
                 try {
-                    object.getClass().getDeclaredField(propertyName);
-                } catch (NoSuchFieldException e) {
+                    propertyValue = ObjectUtils.getPropertyValue(bo, propertyName);
+                } catch (RuntimeException e) {
                     continue;
                 }
 
-                Object propertyValue = ObjectUtils.getPropertyValue(bo, propertyName);
                 Class<?> propertyType = ObjectUtils.getPropertyType(bo, propertyName, getPersistenceStructureService());
                 if (isPropertyTypeValid(propertyType)) {
                     objectMap.put(propertyName, propertyValue + "");
@@ -177,7 +179,7 @@ public class DataObjectRestServiceController {
 
     protected boolean isAuthorized(FinancialSystemBusinessObjectEntry boe) throws Exception {
         if (boe != null) {
-        	return getPermissionService().isAuthorizedByTemplate( GlobalVariables.getUserSession().getPrincipalId(), KRADConstants.KNS_NAMESPACE, KimConstants.PermissionTemplateNames.LOOK_UP_RECORDS, KRADUtils.getNamespaceAndComponentSimpleName(boe.getBusinessObjectClass()), Collections.<String, String> emptyMap());
+            return getPermissionService().isAuthorizedByTemplate( GlobalVariables.getUserSession().getPrincipalId(), KRADConstants.KNS_NAMESPACE, KimConstants.PermissionTemplateNames.LOOK_UP_RECORDS, KRADUtils.getNamespaceAndComponentSimpleName(boe.getBusinessObjectClass()), Collections.<String, String> emptyMap());
         } else {
             if (boe == null) {
                 LOG.warn("boe is null");
@@ -220,17 +222,28 @@ public class DataObjectRestServiceController {
         lookupableHelperService.setBusinessObjectClass(boe.getBusinessObjectClass());
 
         String limitByParameter = fieldValues.remove(LIMIT_BY_PARAMETER);
+        String maxObjectsToReturn = fieldValues.remove(MAX_OBJECTS_TO_RETURN);
 
+        List<? extends BusinessObject> searchResults;
         if (StringUtils.isEmpty(limitByParameter) || limitByParameter.equalsIgnoreCase("Y")) {
-            return lookupableHelperService.getSearchResults(fieldValues);
+            searchResults = lookupableHelperService.getSearchResults(fieldValues);
+        } else {
+            try {
+                searchResults = lookupableHelperService.getSearchResultsUnbounded(fieldValues);
+            } catch (UnsupportedOperationException e) {
+                LOG.warn("lookupableHelperService.getSearchResultsUnbounded failed. Retrying the lookup using the default search.", e);
+                searchResults = lookupableHelperService.getSearchResults(fieldValues);
+            }
         }
 
-        try {
-            return lookupableHelperService.getSearchResultsUnbounded(fieldValues);
-        } catch (UnsupportedOperationException e) {
-            LOG.warn("lookupableHelperService.getSearchResultsUnbounded failed. Retrying the lookup using the default search.", e);
-            return lookupableHelperService.getSearchResults(fieldValues);
+        if (StringUtils.isNotEmpty(maxObjectsToReturn)) {
+            int searchLimit = Integer.parseInt(maxObjectsToReturn);
+            if (searchLimit > 0) {
+                return searchResults.subList(0, Math.min(searchResults.size(), searchLimit));
+            }
         }
+
+        return searchResults;
     }
 
     protected void validateRequest(FinancialSystemBusinessObjectEntry boe, String namespace, String dataobject, HttpServletRequest request) throws Exception {
@@ -273,7 +286,7 @@ public class DataObjectRestServiceController {
         if (lookupableID != null) {
             return LookupableSpringContext.getLookupable(lookupableID).getLookupableHelperService();
         } else {
-            return LookupableSpringContext.getLookupableHelperService("lookupableHelperService");
+            return LookupableSpringContext.getLookupableHelperService(LOOKUPABLE_HELPER_SERVICE);
         }
     }
 

@@ -21,7 +21,6 @@ import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.ReportWriterService;
 import org.kuali.kfs.sys.service.impl.ReportWriterTextServiceImpl;
-import org.kuali.rice.krad.service.BusinessObjectService;
 
 @ConfigureContext
 public class CuFileEnterpriseFeederHelperServiceImplTest  extends KualiTestBase {
@@ -30,7 +29,6 @@ public class CuFileEnterpriseFeederHelperServiceImplTest  extends KualiTestBase 
     private static final String RECON_FILE_PATH = "src/test/java/edu/cornell/kfs/module/ld/fixture/SMGROS.recon";
     
     private FileEnterpriseFeederHelperService fileEnterpriseFeederHelperService;
-    private BusinessObjectService businessObjectService;
     
     private EnterpriseFeederStatusAndErrorMessagesWrapper statusAndErrors;
     private PrintStream enterpriseFeedPs;
@@ -47,7 +45,6 @@ public class CuFileEnterpriseFeederHelperServiceImplTest  extends KualiTestBase 
     protected void setUp() throws Exception {
         super.setUp();
         fileEnterpriseFeederHelperService = SpringContext.getBean(FileEnterpriseFeederHelperService.class);
-        businessObjectService = SpringContext.getBean(BusinessObjectService.class);
         
         //make sure we have a batch directory
         String batchDirectory = SpringContext.getBean(EnterpriseFeederService.class).getDirectoryName();
