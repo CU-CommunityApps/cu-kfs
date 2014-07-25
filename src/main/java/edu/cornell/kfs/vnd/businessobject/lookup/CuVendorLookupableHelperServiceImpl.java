@@ -58,7 +58,7 @@ public class CuVendorLookupableHelperServiceImpl extends VendorLookupableHelperS
         for (BusinessObject businessObject :searchResults) {
         	VendorDetail vendor = (VendorDetail) businessObject;
             if (!vendor.isVendorParentIndicator()) {
-                // find the parent object in the details collection and add that§
+                // find the parent object in the details collection and add that
                 for (BusinessObject tmpObject : searchResults) {
                 	VendorDetail tmpVendor = (VendorDetail) tmpObject;
                     if (tmpVendor.getVendorHeaderGeneratedIdentifier().equals(vendor.getVendorHeaderGeneratedIdentifier()) 
