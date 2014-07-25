@@ -71,7 +71,8 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         Criteria commodityCode = new Criteria();
         Criteria supplierDiversity = new Criteria();
         Criteria vendorOwnershipCode = new Criteria();
-            	
+        Criteria vendorSupplierDiversityExpirationDate = new Criteria();
+        
         String headerVal = fieldValues.get(VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID);
         String detailVal = fieldValues.get(VendorPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID);
         String taxNumVal = fieldValues.get(VendorPropertyConstants.VENDOR_TAX_NUMBER);
@@ -82,6 +83,9 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         String supplierDiversityVal = fieldValues.get(VendorPropertyConstants.VENDOR_HEADER_PREFIX + VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITY_CODE);
         String vendorOwnershipCodeVal = fieldValues.get(VendorPropertyConstants.VENDOR_OWNERSHIP_CODE);
         String commodityCodeVal = fieldValues.get(VendorPropertyConstants.VENDOR_COMMODITIES_CODE_PURCHASING_COMMODITY_CODE);
+        String vendorSupplierDiversityExpirationDateVal = fieldValues.get(VendorPropertyConstants.VENDOR_HEADER_PREFIX + "." +
+                VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES + "." + CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION);
+        
         //KFSPTS-1891
         String defaultPaymentMethod = fieldValues.get("extension.defaultB2BPaymentMethodCode");
         
@@ -138,6 +142,11 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         }     
         if (StringUtils.isNotBlank(vendorOwnershipCodeVal)) {
             vendorOwnershipCode.addEqualTo(VendorPropertyConstants.VENDOR_OWNERSHIP_CODE, vendorOwnershipCodeVal); //VNDR_HDR
+            header.addAndCriteria(vendorOwnershipCode);
+        }
+        if (StringUtils.isNotBlank(vendorSupplierDiversityExpirationDateVal)) {
+            vendorSupplierDiversityExpirationDate.addEqualTo(VendorPropertyConstants.VENDOR_HEADER_PREFIX + "." +
+                    VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES + "." + CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, vendorSupplierDiversityExpirationDateVal); //VNDR_HDR
             header.addAndCriteria(vendorOwnershipCode);
         }
         //KFSPTS-1891
