@@ -70,6 +70,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         Criteria state = new Criteria();
         Criteria commodityCode = new Criteria();
         Criteria supplierDiversity = new Criteria();
+        Criteria vendorOwnershipCode = new Criteria();
             	
         String headerVal = fieldValues.get(VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID);
         String detailVal = fieldValues.get(VendorPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID);
@@ -79,6 +80,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         String typeVal = fieldValues.get(VendorPropertyConstants.VENDOR_TYPE_CODE);
         String stateVal = fieldValues.get(VendorPropertyConstants.VENDOR_ADDRESS + "." + VendorPropertyConstants.VENDOR_ADDRESS_STATE);
         String supplierDiversityVal = fieldValues.get(VendorPropertyConstants.VENDOR_HEADER_PREFIX + VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITY_CODE);
+        String vendorOwnershipCodeVal = fieldValues.get(VendorPropertyConstants.VENDOR_OWNERSHIP_CODE);
         String commodityCodeVal = fieldValues.get(VendorPropertyConstants.VENDOR_COMMODITIES_CODE_PURCHASING_COMMODITY_CODE);
         //KFSPTS-1891
         String defaultPaymentMethod = fieldValues.get("extension.defaultB2BPaymentMethodCode");
@@ -134,6 +136,10 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         	supplierDiversity.addEqualTo(CUVendorPropertyConstants.VENDOR_HEADER_SUPPLIER_DIVERSITY_CODE, supplierDiversityVal); //THIS COMES OUT OF PUR_VNDR_SUPP_DVRST_T
             header.addAndCriteria(supplierDiversity);        
         }     
+        if (StringUtils.isNotBlank(vendorOwnershipCodeVal)) {
+            vendorOwnershipCode.addEqualTo(VendorPropertyConstants.VENDOR_OWNERSHIP_CODE, vendorOwnershipCodeVal); //VNDR_HDR
+            header.addAndCriteria(vendorOwnershipCode);
+        }
         //KFSPTS-1891
         if (StringUtils.isNotBlank(defaultPaymentMethod)) {
         	header.addEqualTo("extension.defaultB2BPaymentMethodCode", defaultPaymentMethod);  //
