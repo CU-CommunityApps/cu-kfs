@@ -145,7 +145,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
             header.addAndCriteria(vendorOwnershipCode);
         }
         if (StringUtils.isNotBlank(vendorSupplierDiversityExpirationDateVal)) {
-            vendorSupplierDiversityExpirationDate.addEqualTo(VendorPropertyConstants.VENDOR_HEADER_PREFIX + "." +
+            vendorSupplierDiversityExpirationDate.addGreaterOrEqualThan(VendorPropertyConstants.VENDOR_HEADER_PREFIX + "." +
                     VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES + "." + CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, vendorSupplierDiversityExpirationDateVal); //VNDR_HDR
             header.addAndCriteria(vendorOwnershipCode);
         }
