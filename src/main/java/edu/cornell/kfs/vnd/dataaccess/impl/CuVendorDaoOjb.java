@@ -83,7 +83,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         String supplierDiversityVal = fieldValues.get(VendorPropertyConstants.VENDOR_HEADER_PREFIX + VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITY_CODE);
         String vendorOwnershipCodeVal = fieldValues.get(VendorPropertyConstants.VENDOR_OWNERSHIP_CODE);
         String commodityCodeVal = fieldValues.get(VendorPropertyConstants.VENDOR_COMMODITIES_CODE_PURCHASING_COMMODITY_CODE);
-        String vendorSupplierDiversityExpirationDateVal = fieldValues.get(VendorPropertyConstants.VENDOR_HEADER_PREFIX + "." +
+        String vendorSupplierDiversityExpirationDateVal = fieldValues.get(VendorPropertyConstants.VENDOR_HEADER_PREFIX  +
                 VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES + "." + CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION);
         
         //KFSPTS-1891
@@ -145,7 +145,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
             header.addAndCriteria(vendorOwnershipCode);
         }
         if (StringUtils.isNotBlank(vendorSupplierDiversityExpirationDateVal)) {
-            vendorSupplierDiversityExpirationDate.addGreaterOrEqualThan(VendorPropertyConstants.VENDOR_HEADER_PREFIX + "." +
+            vendorSupplierDiversityExpirationDate.addGreaterOrEqualThan(VendorPropertyConstants.VENDOR_HEADER_PREFIX +
                     VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES + "." + CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, vendorSupplierDiversityExpirationDateVal); //VNDR_HDR
             header.addAndCriteria(vendorOwnershipCode);
         }
