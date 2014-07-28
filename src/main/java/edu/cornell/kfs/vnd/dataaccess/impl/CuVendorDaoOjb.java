@@ -1,6 +1,8 @@
 package edu.cornell.kfs.vnd.dataaccess.impl;
 
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -145,9 +147,15 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
             header.addAndCriteria(vendorOwnershipCode);
         }
         if (StringUtils.isNotBlank(vendorSupplierDiversityExpirationDateVal)) {
-            vendorSupplierDiversityExpirationDate.addGreaterOrEqualThan(VendorPropertyConstants.VENDOR_HEADER_PREFIX +
-                    VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES + "." + CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, vendorSupplierDiversityExpirationDateVal); //VNDR_HDR
-            header.addAndCriteria(vendorOwnershipCode);
+            try {
+                Date date = new java.sql.Date(new SimpleDateFormat("MM/dd/yyyy").parse(vendorSupplierDiversityExpirationDateVal).getTime());
+                vendorSupplierDiversityExpirationDate.addGreaterOrEqualThan(VendorPropertyConstants.VENDOR_HEADER_PREFIX +
+                        VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES + "." + CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, date);
+                header.addAndCriteria(vendorSupplierDiversityExpirationDate);
+            } catch (ParseException e) {
+                LOG.error("unable to parse date");
+            }
+           
         }
         //KFSPTS-1891
         if (StringUtils.isNotBlank(defaultPaymentMethod)) {
