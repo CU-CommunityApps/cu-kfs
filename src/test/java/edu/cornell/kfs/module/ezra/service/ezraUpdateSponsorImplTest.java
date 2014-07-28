@@ -89,7 +89,7 @@ public class ezraUpdateSponsorImplTest extends KualiTestBase {
                 c.add(Calendar.DATE, count);
                 sqlDate = new java.sql.Date(c.getTimeInMillis());
                 sponsors = sponsorDao.getSponsorsUpdatedSince(sqlDate);                    
-                } while (!agencyInKfs(sponsors));
+                } while (sponsors.isEmpty() || !agencyInKfs(sponsors));
         }
         count = 0;
         LOG.info("The Sql Date is "+sqlDate);
