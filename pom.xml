@@ -86,6 +86,7 @@
 	             <filtered>false</filtered>
 	             <excludes>
 	              <exclude>WEB-INF/lib/rice*.jar</exclude>
+	              <exclude>WEB-INF/lib/xapool-1.5.0*.jar</exclude>
 	             </excludes>
 	           </overlay>
 	         </overlays>
@@ -140,7 +141,11 @@
         <exclusion>  
           <groupId>com.oracle</groupId>
           <artifactId>ojdbc14</artifactId>
-        </exclusion>      
+        </exclusion>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
       </exclusions> 
     </dependency>
     
@@ -149,6 +154,12 @@
       <artifactId>kfs-lib-test</artifactId>
       <version>${kfs.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
@@ -169,13 +180,6 @@
     <groupId>javax.transaction</groupId>
     <artifactId>jta</artifactId>
     <version>1.1</version>
-    <scope>test</scope>	
-</dependency>
-
-<dependency>
-    <groupId>com.experlog</groupId>
-    <artifactId>xapool</artifactId>
-    <version>1.5.0</version>
     <scope>test</scope>	
 </dependency>
 
@@ -213,6 +217,13 @@
     <version>2.6</version>
 </dependency>
 
+<!-- Use a newer Kuali-specific XAPool version than what KFS 5.x or Rice 2.1.x uses. -->
+<dependency>
+    <groupId>xapool</groupId>
+    <artifactId>xapool</artifactId>
+    <version>1.5.0-patch6</version>
+</dependency>
+
 	<dependency>
 		<groupId>com.oracle</groupId>
 		<artifactId>ojdbc6</artifactId>
@@ -225,6 +236,12 @@
       <artifactId>kfs-stock</artifactId>
       <version>${kfs.version}</version>
       <type>war</type>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     	 
    <dependency>
@@ -424,6 +441,12 @@
       <artifactId>rice-core-api</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
 	<dependency>
@@ -436,6 +459,10 @@
  		  <groupId>javax.transaction</groupId>
   		  <artifactId>jta</artifactId>
  		</exclusion>
+ 		<exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -470,6 +497,10 @@
  		  <groupId>javax.transaction</groupId>
   		  <artifactId>jta</artifactId>
  		</exclusion>
+ 		<exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
       </exclusions> 
     </dependency>
 
@@ -479,6 +510,12 @@
       <artifactId>rice-core-service-api</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -486,6 +523,12 @@
       <artifactId>rice-core-service-framework</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -506,6 +549,10 @@
  		  <groupId>xml-apis</groupId>
           <artifactId>xml-apis</artifactId>
  		</exclusion>
+ 		<exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
       </exclusions> 
     </dependency>
     
@@ -514,6 +561,12 @@
       <artifactId>rice-core-service-web</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- rice-edl dependencies. -->
@@ -522,6 +575,12 @@
       <artifactId>rice-edl-framework</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
@@ -529,6 +588,12 @@
       <artifactId>rice-edl-impl</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- rice-ken dependencies. -->
@@ -537,6 +602,12 @@
       <artifactId>rice-ken-api</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- rice-kew dependencies. -->
@@ -545,6 +616,12 @@
       <artifactId>rice-kew-api</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
@@ -552,6 +629,12 @@
       <artifactId>rice-kew-framework</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
@@ -559,6 +642,12 @@
       <artifactId>rice-kew-impl</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- rice-kim dependencies. -->
@@ -567,6 +656,12 @@
       <artifactId>rice-kim-api</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
@@ -574,6 +669,12 @@
       <artifactId>rice-kim-framework</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
@@ -581,6 +682,12 @@
       <artifactId>rice-kim-impl</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- rice-krad dependencies. -->
@@ -589,6 +696,12 @@
       <artifactId>rice-krad-app-framework</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
@@ -596,6 +709,12 @@
       <artifactId>rice-krad-web-framework</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- rice-krms dependencies. -->
@@ -604,6 +723,12 @@
       <artifactId>rice-krms-api</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
@@ -611,6 +736,12 @@
       <artifactId>rice-krms-framework</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
@@ -618,6 +749,12 @@
       <artifactId>rice-krms-impl</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
 	<!-- rice-ksb dependencies. -->
@@ -626,6 +763,12 @@
       <artifactId>rice-ksb-api</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
@@ -638,6 +781,10 @@
  		  <groupId>javax.transaction</groupId>
   		  <artifactId>jta</artifactId>
  		</exclusion>
+ 		<exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     
@@ -646,6 +793,12 @@
       <artifactId>rice-ksb-server-impl</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
@@ -653,6 +806,12 @@
       <artifactId>rice-ksb-web</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- rice-location dependencies. -->
@@ -661,6 +820,12 @@
       <artifactId>rice-location-api</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
@@ -668,6 +833,12 @@
       <artifactId>rice-location-framework</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
@@ -675,6 +846,12 @@
       <artifactId>rice-location-impl</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
@@ -682,6 +859,12 @@
       <artifactId>rice-location-web</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
 	<!-- rice-kns and rice-impl dependencies. -->
@@ -690,6 +873,12 @@
       <artifactId>rice-kns</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -706,6 +895,10 @@
  		  <groupId>javax.transaction</groupId>
   		  <artifactId>jta</artifactId>
  		</exclusion>
+ 		<exclusion>
+          <groupId>xapool</groupId>
+          <artifactId>xapool</artifactId>
+        </exclusion>
       </exclusions> 
     </dependency>
     
