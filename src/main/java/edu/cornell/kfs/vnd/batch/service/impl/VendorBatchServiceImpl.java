@@ -759,8 +759,9 @@ public class VendorBatchServiceImpl implements VendorBatchService{
 	    		VendorSupplierDiversity vDiversity = getVendorSupplierDiversity(vDetail.getVendorHeader(), diversity.getVendorSupplierDiversityCode());
 	            boolean isExist = StringUtils.isNotBlank(vDiversity.getVendorSupplierDiversityCode());
 	            vDiversity.setVendorSupplierDiversityCode(diversity.getVendorSupplierDiversityCode());
-
-	            ((CuVendorSupplierDiversityExtension)vDiversity.getExtension()).setVendorSupplierDiversityExpirationDate(new java.sql.Date(getFormatDate(diversity.getVendorSupplierDiversityExpirationDate()).getTime()));
+                if (StringUtils.isNotBlank(diversity.getVendorSupplierDiversityExpirationDate())) {
+	                ((CuVendorSupplierDiversityExtension)vDiversity.getExtension()).setVendorSupplierDiversityExpirationDate(new java.sql.Date(getFormatDate(diversity.getVendorSupplierDiversityExpirationDate()).getTime()));
+                }
 	            vDiversity.setActive(StringUtils.equalsIgnoreCase(YES, diversity.getActive()));
 	            if (!isExist) {
 	            	vDetail.getVendorHeader().getVendorSupplierDiversities().add(vDiversity);
@@ -854,7 +855,9 @@ public class VendorBatchServiceImpl implements VendorBatchService{
 	    		VendorSupplierDiversity vDiversity = new VendorSupplierDiversity();
 	
 	            vDiversity.setVendorSupplierDiversityCode(diversity.getVendorSupplierDiversityCode());
-	            ((CuVendorSupplierDiversityExtension)vDiversity.getExtension()).setVendorSupplierDiversityExpirationDate(new java.sql.Date(getFormatDate(diversity.getVendorSupplierDiversityExpirationDate()).getTime()));
+                if (StringUtils.isNotBlank(diversity.getVendorSupplierDiversityExpirationDate())) {
+	                ((CuVendorSupplierDiversityExtension)vDiversity.getExtension()).setVendorSupplierDiversityExpirationDate(new java.sql.Date(getFormatDate(diversity.getVendorSupplierDiversityExpirationDate()).getTime()));
+                }
 	            vDiversity.setActive(StringUtils.equalsIgnoreCase(YES, diversity.getActive()));
 	            vendorSupplierDiversitys.add(vDiversity);
 	   		

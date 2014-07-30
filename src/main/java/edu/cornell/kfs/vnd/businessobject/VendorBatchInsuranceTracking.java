@@ -143,6 +143,8 @@ public class VendorBatchInsuranceTracking {
 
 	private KualiDecimal getAmount(String amount) {
 		if (StringUtils.isNotBlank(amount)) {
+            amount = amount.replace("$", "");
+            amount = amount.replaceAll(",", "");
 			return new KualiDecimal(amount);
 		}
 		return null;
