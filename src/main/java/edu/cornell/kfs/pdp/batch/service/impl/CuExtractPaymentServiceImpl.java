@@ -746,7 +746,12 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                             
                             // Get country name
                             int CountryNameMaxLength = 15;
-                            Country country = countryService.getCountry(pg.getCountry());
+                            Country country = null;
+                            
+							if (StringUtils.isNotBlank(pg.getCountry())) {
+								country = countryService.getCountry(pg.getCountry());
+							}
+                            
                             if (country != null)
                                 sCountryName = country.getName().substring(0,((country.getName().length() >= CountryNameMaxLength)? CountryNameMaxLength: country.getName().length() ));
                             else
