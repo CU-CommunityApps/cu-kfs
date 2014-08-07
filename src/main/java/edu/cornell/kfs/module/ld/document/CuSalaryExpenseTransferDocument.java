@@ -39,11 +39,6 @@ public class CuSalaryExpenseTransferDocument extends SalaryExpenseTransferDocume
             isSuccessful &= this.getLaborLedgerPendingEntries().addAll(benefitPendingEntries);
         }
         
-        List<LaborLedgerPendingEntry> offsetPendingEntries = CuLaborPendingEntryGenerator.generateOffsetPendingEntries(expensePendingEntries, sequenceHelper);
-        if (offsetPendingEntries != null && !offsetPendingEntries.isEmpty()) {
-            isSuccessful &= this.getLaborLedgerPendingEntries().addAll(offsetPendingEntries);
-        }
-
         return isSuccessful;
     }
     
