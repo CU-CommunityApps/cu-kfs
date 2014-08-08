@@ -57,38 +57,80 @@ public class CommodityCodeUpdateServiceImpl implements CommodityCodeUpdateServic
     /**
      * 
      */
-    public void loadCommodityCodeFile(String fileName) {
-        FileInputStream fileContents;
-        try {
-            fileContents = new FileInputStream(fileName);
-        }
-        catch (FileNotFoundException e1) {
-            LOG.error("Commodity Code update file to parse not found " + fileName, e1);
-            throw new RuntimeException("Cannot find the file requested to be parsed " + fileName + " " + e1.getMessage(), e1);
-        }
-
-    	Collection<CommodityCode> batchList = null;
-        try {
-            byte[] fileByteContent = IOUtils.toByteArray(fileContents);
-            batchList = (Collection<CommodityCode>) batchInputFileService.parse(commodityCodeInputFileType, fileByteContent);
-        }
-        catch (IOException e) {
-            LOG.error("error while getting file bytes:  " + e.getMessage(), e);
-            throw new RuntimeException("Error encountered while attempting to get file bytes: " + e.getMessage(), e);
-        }
-        catch (ParseException e) {
-            LOG.error("Error parsing flat file " + e.getMessage());
-            throw new RuntimeException("Error parsing flat file " + e.getMessage(), e);
-        }
-
+//    public void loadCommodityCodeFile(String fileName) {
+//        FileInputStream fileContents;
+//        try {
+//            fileContents = new FileInputStream(fileName);
+//        }
+//        catch (FileNotFoundException e1) {
+//            LOG.error("Commodity Code update file to parse not found " + fileName, e1);
+//            throw new RuntimeException("Cannot find the file requested to be parsed " + fileName + " " + e1.getMessage(), e1);
+//        }
+//
+//    	Collection<CommodityCode> batchList = null;
+//        try {
+//            byte[] fileByteContent = IOUtils.toByteArray(fileContents);
+//            batchList = (Collection<CommodityCode>) batchInputFileService.parse(commodityCodeInputFileType, fileByteContent);
+//        }
+//        catch (IOException e) {
+//            LOG.error("error while getting file bytes:  " + e.getMessage(), e);
+//            throw new RuntimeException("Error encountered while attempting to get file bytes: " + e.getMessage(), e);
+//        }
+//        catch (ParseException e) {
+//            LOG.error("Error parsing flat file " + e.getMessage());
+//            throw new RuntimeException("Error parsing flat file " + e.getMessage(), e);
+//        }
+//
+//        if (batchList == null || batchList.isEmpty()) {
+//            LOG.warn("No commodity codes in input file " + fileName);
+//        }
+//
+//        updateCommodityCodes((List<CommodityCode>) batchList);
+//
+//        LOG.info("Total transactions loaded: " + Integer.toString(batchList.size()));
+//    }
+    
+    public boolean loadCommodityCodeFile(String fileName) {
+    	byte[] fileContent = getFileContent(fileName);
+    	Collection <CommodityCode> batchList = parseCommodityCodeList(fileContent);
+    	
         if (batchList == null || batchList.isEmpty()) {
             LOG.warn("No commodity codes in input file " + fileName);
+            return false;
         }
 
         updateCommodityCodes((List<CommodityCode>) batchList);
 
         LOG.info("Total transactions loaded: " + Integer.toString(batchList.size()));
+
+        return true;
     }
+    
+    public byte[] getFileContent(String fileName) {
+    	FileInputStream fileInputStream;
+    	byte[] contents = {}; 
+    	try {
+    		fileInputStream = new FileInputStream(fileName);
+    		contents = IOUtils.toByteArray(fileInputStream);
+    	} catch (FileNotFoundException fnfe) {
+            LOG.error("Commodity Code update file to parse not found " + fileName, fnfe);
+    	} catch (IOException ioe) {
+            LOG.error("error while getting file bytes:  " + ioe.getMessage(), ioe);
+    	} finally {
+    		return contents;
+    	}
+    }
+    
+   public Collection<CommodityCode> parseCommodityCodeList(byte[] fileContents) {
+	   Collection<CommodityCode> commodityCodeList = new ArrayList<CommodityCode>();
+	   try {
+		   commodityCodeList = (Collection<CommodityCode>) batchInputFileService.parse(commodityCodeInputFileType, fileContents);
+	   } catch (ParseException pe) {
+           LOG.error("Error parsing flat file " + pe.getMessage());   
+	   } finally {
+		   return commodityCodeList;
+	   }
+   }
 
     /**
      * 
