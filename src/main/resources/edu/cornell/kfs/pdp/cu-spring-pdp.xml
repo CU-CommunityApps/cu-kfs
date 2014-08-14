@@ -53,7 +53,10 @@
         <property name="moduleConfiguration" ref="cu-pdp"/>
     </bean>
 
-    <bean id="pdpGlPendingTransactionService" parent="pdpGlPendingTransactionService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPendingTransactionServiceImpl" />
+    <bean id="pdpGlPendingTransactionService" parent="pdpGlPendingTransactionService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPendingTransactionServiceImpl" >
+    		<property name="documentService" ref="documentService"/>
+    		<property name="noteService" ref="noteService"/>
+    </bean>
 
     
     <bean id="achBundlerAdviceDao" parent="platformAwareDao" class="edu.cornell.kfs.pdp.dataaccess.impl.AchBundlerAdviceDaoObj"/>
