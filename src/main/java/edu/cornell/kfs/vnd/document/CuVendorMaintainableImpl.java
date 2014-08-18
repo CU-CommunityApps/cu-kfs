@@ -1,8 +1,6 @@
 package edu.cornell.kfs.vnd.document;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
@@ -10,7 +8,6 @@ import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.service.DocumentService;
@@ -20,7 +17,6 @@ import org.kuali.rice.krad.util.KRADConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
-import edu.cornell.kfs.vnd.document.service.CUVendorService;
 
 public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuVendorMaintainableImpl.class);
@@ -57,11 +53,9 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         } catch (WorkflowException e) {
             LOG.debug("Vendor doc could not find doc to answerSplitNodeQuestion " + e.getMessage());
         }
- 
-        Person systemUser = getPersonService().getPersonByPrincipalName(KFSConstants.SYSTEM_USER);  
-        
+         
         if (nodeName.equals(VENDOR_REQUIRES_APPROVAL_SPLIT_NODE)) {
-            return !StringUtils.equalsIgnoreCase(document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId(), systemUser.getPrincipalId());
+            return true;
         }
         return super.answerSplitNodeQuestion(nodeName);
     }
