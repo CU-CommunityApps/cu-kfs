@@ -56,7 +56,7 @@ public class CuProcessPdpCancelPaidServiceImpl extends ProcessPdpCancelPaidServi
                     try {
                         PaymentSource dv = (PaymentSource)getDocumentService().getByDocumentHeaderId(documentNumber);
                         if (dv != null) {
-                            if (disbursedPayment || primaryCancel) {
+                            if (disbursedPayment || primaryCancel || crCancel) {
                                 if (!crCancel) {
                                     extractService.cancelPayment(dv, processDate);
                                 }
