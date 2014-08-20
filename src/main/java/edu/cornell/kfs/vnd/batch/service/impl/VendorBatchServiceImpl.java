@@ -423,20 +423,25 @@ public class VendorBatchServiceImpl implements VendorBatchService{
 	 */
 	private void setVendorAddress(VendorBatchAddress address,VendorAddress vendorAddr, VendorDetail vDetail) {
 		vendorAddr.setVendorAddressTypeCode(address.getVendorAddressTypeCode());
-		vendorAddr.setVendorLine1Address(address.getVendorLine1Address());
+        vendorAddr.setVendorLine1Address(address.getVendorLine1Address());
+        vendorAddr.setVendorLine2Address(address.getVendorLine2Address());
 		vendorAddr.setVendorCityName(address.getVendorCityName());
 		vendorAddr.setVendorStateCode(address.getVendorStateCode());
 		vendorAddr.setVendorZipCode(address.getVendorZipCode());
-		vendorAddr.setVendorCountryCode(address.getVendorCountryCode());
-		vendorAddr.setVendorDefaultAddressIndicator(true);
+        vendorAddr.setVendorCountryCode(address.getVendorCountryCode());
+        vendorAddr.setVendorAttentionName(address.getVendorAttentionName());
+        vendorAddr.setVendorAddressInternationalProvinceName(address.getVendorAddressInternationalProvinceName());
+        vendorAddr.setVendorBusinessToBusinessUrlAddress(address.getVendorBusinessToBusinessUrlAddress());
 		vendorAddr.setVendorDefaultAddressIndicator(StringUtils.equalsIgnoreCase(YES, address.getVendorDefaultAddressIndicator()));
 		if (vendorAddr.isVendorDefaultAddressIndicator()) {
-			// TODO : which one should be the vdetail's default address because there are different type address ???
-        	vDetail.setDefaultAddressLine1(address.getVendorLine1Address());
+            vDetail.setDefaultAddressLine1(address.getVendorLine1Address());
+            vDetail.setDefaultAddressLine2(address.getVendorLine2Address());
         	vDetail.setDefaultAddressCity(address.getVendorCityName());
         	vDetail.setDefaultAddressStateCode(address.getVendorStateCode());
         	vDetail.setDefaultAddressPostalCode(address.getVendorZipCode());
-        	vDetail.setDefaultAddressCountryCode(address.getVendorCountryCode());
+            vDetail.setDefaultAddressCountryCode(address.getVendorCountryCode());
+            vDetail.setDefaultFaxNumber(address.getVendorFaxNumber());
+            vDetail.setDefaultAddressInternationalProvince(address.getVendorAddressInternationalProvinceName());
 			
 		}
 		((CuVendorAddressExtension)vendorAddr.getExtension()).setPurchaseOrderTransmissionMethodCode(address.getPurchaseOrderTransmissionMethodCode());
