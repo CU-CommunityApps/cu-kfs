@@ -23,7 +23,9 @@ cknotts,
 // Accounting Hierarchy Reviewer
 jrichard,
 ccs1,
-rae28;
+rae28,
+// favorite account manager
+db18;
 
 static {
 // Assert.assertEquals(KualiUser.SYSTEM_USER, kuluser.toString());
