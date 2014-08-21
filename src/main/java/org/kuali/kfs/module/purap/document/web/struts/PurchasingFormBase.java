@@ -26,11 +26,13 @@ import org.apache.struts.upload.FormFile;
 import org.kuali.kfs.integration.purap.CapitalAssetLocation;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PurchasingDocument;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -93,7 +95,13 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
     }
 
 
+    @Override
+    protected void populateAccountingLinesForResponse(String methodToCall, Map parameterMap) {
+        super.populateAccountingLinesForResponse(methodToCall, parameterMap);
+        populateAccountingLine(getAccountDistributionnewSourceLine(), PurapPropertyConstants.ACCOUNT_DISTRIBUTION_NEW_SRC_LINE, parameterMap);
 
+    }
+    
     public Boolean getNotOtherDeliveryBuilding() {
         return notOtherDeliveryBuilding;
     }
