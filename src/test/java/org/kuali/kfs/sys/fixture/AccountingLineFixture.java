@@ -28,7 +28,9 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 public enum AccountingLineFixture {
     ST_LINE_1(1, "IT", "R704750", "AC", "", "5200", "", "", "", "", "", "", "", GL_DEBIT_CODE, "6916.68"),
-    ST_LINE_2(1, "IT", "L683714", "AC", "", "5200", "", "", "", "", "", "", "", GL_CREDIT_CODE, "6916.68");
+    ST_LINE_2(1, "IT", "L683714", "AC", "", "5200", "", "", "", "", "", "", "", GL_CREDIT_CODE, "6916.68"),
+    ICA_LINE_1(1, "IT", "G264700", "", "", "9070", "", "", "", "", "", "", "", GL_DEBIT_CODE, "6916.68"),
+    ICA_LINE_2(1, "IT", "G254700", "", "", "4290", "", "", "", "", "", "", "", GL_CREDIT_CODE, "6916.68");
 
     public final String accountNumber;
     public final String balanceTypeCode;

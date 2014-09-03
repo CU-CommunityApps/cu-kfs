@@ -25,7 +25,8 @@ jrichard,
 ccs1,
 rae28,
 // favorite account manager
-db18;
+db18,
+kan2;
 
 static {
 // Assert.assertEquals(KualiUser.SYSTEM_USER, kuluser.toString());
