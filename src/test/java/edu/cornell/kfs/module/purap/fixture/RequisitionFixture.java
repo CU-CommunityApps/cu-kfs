@@ -266,7 +266,7 @@ public enum RequisitionFixture {
 					capitalAssetFixture.REC1.newRecord());
 		}
 
-		requisitionDocument.refreshNonUpdateableReferences();
+		//requisitionDocument.refreshNonUpdateableReferences();
 
 		return requisitionDocument;
 	}
