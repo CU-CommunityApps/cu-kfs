@@ -1,0 +1,47 @@
+package edu.cornell.kfs.module.purap.identity;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.kuali.kfs.module.purap.identity.PurapKimAttributes;
+import org.kuali.kfs.sys.ConfigureContext;
+import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.TestUtils;
+import org.kuali.kfs.sys.fixture.UserNameFixture;
+import org.kuali.rice.kim.api.role.RoleMembership;
+
+@ConfigureContext(session = UserNameFixture.ccs1)
+public class CuRelatedDocumentDerivedRoleTypeServiceImplTest extends KualiTestBase {
+
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuRelatedDocumentDerivedRoleTypeServiceImplTest.class);
+
+    private CuRelatedDocumentDerivedRoleTypeServiceImpl cuRelatedDocumentDerivedRoleTypeServiceImpl;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        cuRelatedDocumentDerivedRoleTypeServiceImpl = (CuRelatedDocumentDerivedRoleTypeServiceImpl) TestUtils.getUnproxiedService("relatedDocumentDerivedRoleTypeService");
+
+    }
+
+    public void testGetRoleMembersFromDerivedRole() throws Exception {
+        changeCurrentUser(UserNameFixture.ccs1);
+
+        Map<String, String> qualification = new HashMap<String, String>();
+
+        qualification.put(PurapKimAttributes.DOCUMENT_SENSITIVE, "true");
+
+        qualification.put(PurapKimAttributes.SENSITIVE_DATA_CODE, "CHEM");
+        qualification.put("documentNumber", "1129294");
+
+        qualification.put(PurapKimAttributes.ACCOUNTS_PAYABLE_PURCHASING_DOCUMENT_LINK_IDENTIFIER, "74037");
+
+        List<RoleMembership> roleMembers = cuRelatedDocumentDerivedRoleTypeServiceImpl.getRoleMembersFromDerivedRole("KFS-PURAP", "Sensitive Related Document Initiator Or Reviewer", qualification);
+        assertNotNull(roleMembers);
+        assertTrue(roleMembers.size() >0);
+
+    }
+
+}
