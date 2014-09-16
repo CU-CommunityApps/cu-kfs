@@ -66,7 +66,7 @@ public class IWantDocumentServiceImplTest extends KualiTestBase {
 
 	public void testIsDVgeneratedByIWantDoc() throws Exception {
 		
-		boolean result = iWantDocumentService.isDVgeneratedByIWantDoc("DV_DOC_NBR_FROM_I_WANT_DOC");
+		boolean result = iWantDocumentService.isDVgeneratedByIWantDoc("I_WANT_DOC_NBR_THAT_CREATED_DV");
 
 		assertTrue(result);
 
