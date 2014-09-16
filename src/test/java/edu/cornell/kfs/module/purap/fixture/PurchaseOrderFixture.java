@@ -56,7 +56,7 @@ public enum PurchaseOrderFixture {
 	public PurchaseOrderDocument createPurchaseOrderdDocument(DocumentService documentService)throws WorkflowException {
 		PurchaseOrderDocument purchaseOrderDocument = this.createPurchaseOrderdDocument(true);
 
-		purchaseOrderDocument.refreshNonUpdateableReferences();
+		//purchaseOrderDocument.refreshNonUpdateableReferences();
 		purchaseOrderDocument.prepareForSave();
 		AccountingDocumentTestUtils.saveDocument(purchaseOrderDocument, documentService);
 
