@@ -89,7 +89,17 @@ limitations under the License.
 			<td class="datacell" colspan="3" rowspan=2>
 				<kul:htmlControlAttribute attributeEntry="${wireTransAttributes.currencyTypeName}" property="document.wireTransfer.currencyTypeName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
 			</td>
-		</tr>
+		</tr>	
+        <tr>
+            <th scope=row class="bord-l-b">
+             	<div align="right">
+               		<kul:htmlAttributeLabel attributeEntry="${wireTransAttributes2.disbVchrBankProvince}"/>
+               	</div>
+            </th>                  
+            <td class="datacell">
+              <kul:htmlControlAttribute attributeEntry="${wireTransAttributes2.disbVchrBankProvince}" property="document.wireTransfer.extension.disbVchrBankProvince" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+            </td>
+        </tr>		
 		<tr>
 			<th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.bankCountryCode}"/></div></th>
 			<td class="datacell" colspan="3">
