@@ -65,7 +65,7 @@ public class ReversionUnitOfWorkServiceImplTest extends KualiTestBase {
     }
 
     private boolean unitOfworkExists() {
-        List results = unitTestSqlDao.sqlSelect("select * from GL_RVRSN_CTGRY_AMT_T where FIN_COA_CD = 'IT' and ACCOUNT_NBR = '1003000' and SUB_ACCT_NBR = '-----'");
+        List results = unitTestSqlDao.sqlSelect("select * from GL_RVRSN_UNIT_WRK_T where FIN_COA_CD = 'IT' and ACCOUNT_NBR = '1003000' and SUB_ACCT_NBR = '-----'");
 
         if (ObjectUtils.isNotNull(results) && !results.isEmpty()) {
             return true;
