@@ -46,6 +46,10 @@ public class ReversionUnitOfWorkCategoryAmount extends PersistableBusinessObject
     private SubAccount subAccount;
     private ReversionCategory reversionCategory;
     private ReversionUnitOfWork reversionUnitOfWork;
+    
+    public ReversionUnitOfWorkCategoryAmount() {
+		super();
+	}
 
     public ReversionUnitOfWorkCategoryAmount(String cat) {
         this.categoryCode = cat;

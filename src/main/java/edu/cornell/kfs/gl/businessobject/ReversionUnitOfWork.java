@@ -201,8 +201,8 @@ public class ReversionUnitOfWork extends PersistableBusinessObjectBase {
     public LinkedHashMap toStringMapper() {
         LinkedHashMap pkMap = new LinkedHashMap();
         pkMap.put("chartOfAccountsCode", this.chartOfAccountsCode);
-        pkMap.put("accountNbr", this.accountNumber);
-        pkMap.put("subAccountNbr", this.subAccountNumber);
+        pkMap.put("accountNumber", this.accountNumber);
+        pkMap.put("subAccountNumber", this.subAccountNumber);
         return pkMap;
     }
 
