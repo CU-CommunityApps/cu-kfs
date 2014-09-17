@@ -27,6 +27,8 @@ public class VendorBatchDetail {
 	private String defaultB2BPaymentMethodCode;
 	private String taxable;
 	private String eInvoice;
+    private String w9ReceivedIndicator;
+    private String w9ReceivedDate;
 	private String addresses;
 	private String contacts;
 	private String phoneNumbers;
@@ -137,14 +139,30 @@ public class VendorBatchDetail {
 	
 	public List<VendorBatchContact> getVendorContacts() {
 		List<VendorBatchContact> vendorContacts = new ArrayList<VendorBatchContact>();
+		List<VendorBatchContactPhoneNumber> contactPhoneNumbers = getVendorContactPhoneNumbers();
 		String[] contactLines = getContacts().split(COLLECTION_ITEM_DELIMITER);
 		for (String contactLine : contactLines) {
 			if (StringUtils.isNotBlank(contactLine)) {
-			    vendorContacts.add(new VendorBatchContact(contactLine.split(COLLECTION_FIELD_DELIMITER, -1)));
+			    VendorBatchContact contact = new VendorBatchContact(contactLine.split(COLLECTION_FIELD_DELIMITER, -1));
+                populatePhoneNumbers(contact, contactPhoneNumbers);
+			    vendorContacts.add(contact);
 			}
 		}
 		return vendorContacts;
 	}
+	
+	/*
+	 * get contact's phone number
+	 */
+	private void populatePhoneNumbers(VendorBatchContact contact, List<VendorBatchContactPhoneNumber> contactPhoneNumbers) {
+	    for (VendorBatchContactPhoneNumber contactPhoneNumber : contactPhoneNumbers) {
+	        if (StringUtils.equals(contact.getVendorContactGeneratedIdentifier(), contactPhoneNumber.getVendorContactGeneratedIdentifier())) {
+	            contact.getVendorBatchContactPhoneNumbers().add(contactPhoneNumber);
+	        }
+	    }
+	    
+	}
+	
 	public String getPhoneNumbers() {
 		return phoneNumbers;
 	}
@@ -157,12 +175,12 @@ public class VendorBatchDetail {
 	public void setSupplierDiversities(String supplierDiversities) {
 		this.supplierDiversities = supplierDiversities;
 	}
-	public List<VendorBatchPhoneNumber> getVendorPhoneNumbers() {
-		List<VendorBatchPhoneNumber> vendorPhoneNumbers = new ArrayList<VendorBatchPhoneNumber>();
+	public List<VendorBatchContactPhoneNumber> getVendorContactPhoneNumbers() {
+		List<VendorBatchContactPhoneNumber> vendorPhoneNumbers = new ArrayList<VendorBatchContactPhoneNumber>();
 		String[] phoneNumberLines = getPhoneNumbers().split(COLLECTION_ITEM_DELIMITER);
 		for (String phoneNumberLine : phoneNumberLines) {
 			if (StringUtils.isNotBlank(phoneNumberLine)) {
-				vendorPhoneNumbers.add(new VendorBatchPhoneNumber(phoneNumberLine.split(COLLECTION_FIELD_DELIMITER, -1)));
+				vendorPhoneNumbers.add(new VendorBatchContactPhoneNumber(phoneNumberLine.split(COLLECTION_FIELD_DELIMITER, -1)));
 			}
 		}
 		return vendorPhoneNumbers;
@@ -222,5 +240,17 @@ public class VendorBatchDetail {
 	public void setLegalLastName(String legalLastName) {
 		this.legalLastName = legalLastName;
 	}
+    public String getW9ReceivedIndicator() {
+        return w9ReceivedIndicator;
+    }
+    public void setW9ReceivedIndicator(String w9ReceivedIndicator) {
+        this.w9ReceivedIndicator = w9ReceivedIndicator;
+    }
+    public String getW9ReceivedDate() {
+        return w9ReceivedDate;
+    }
+    public void setW9ReceivedDate(String w9ReceivedDate) {
+        this.w9ReceivedDate = w9ReceivedDate;
+    }
 
 }

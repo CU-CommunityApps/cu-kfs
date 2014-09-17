@@ -1,5 +1,8 @@
 package edu.cornell.kfs.vnd.businessobject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *  non-persistable to hold vendor contact converted from input data file
  **/
@@ -19,6 +22,7 @@ public class VendorBatchContact {
     private String vendorAddressInternationalProvinceName;
     private String vendorContactCommentText;
     private String active;
+    private List<VendorBatchContactPhoneNumber> vendorBatchContactPhoneNumbers;
     
     public VendorBatchContact(String[] contacts) {
     	vendorContactGeneratedIdentifier = contacts[0];
@@ -35,6 +39,7 @@ public class VendorBatchContact {
     	vendorAddressInternationalProvinceName = contacts[11];
     	vendorContactCommentText = contacts[12];
     	active = contacts[13];
+    	vendorBatchContactPhoneNumbers = new ArrayList<VendorBatchContactPhoneNumber>();
     }
 
 	public String getVendorContactGeneratedIdentifier() {
@@ -123,5 +128,14 @@ public class VendorBatchContact {
 	public void setActive(String active) {
 		this.active = active;
 	}
+
+    public List<VendorBatchContactPhoneNumber> getVendorBatchContactPhoneNumbers() {
+        return vendorBatchContactPhoneNumbers;
+    }
+
+    public void setVendorBatchContactPhoneNumbers(
+            List<VendorBatchContactPhoneNumber> vendorBatchContactPhoneNumbers) {
+        this.vendorBatchContactPhoneNumbers = vendorBatchContactPhoneNumbers;
+    }
 
 }

@@ -68,6 +68,8 @@ public class VendorBatchCsvBuilder {
         vendor.setDefaultB2BPaymentMethodCode(rowDataMap.get(VendorBatchCsv.defaultB2BPaymentMethodCode.name()));        
         vendor.setTaxable(rowDataMap.get(VendorBatchCsv.taxable.name()));        
         vendor.seteInvoice(rowDataMap.get(VendorBatchCsv.eInvoice.name()));        
+        vendor.setW9ReceivedIndicator(rowDataMap.get(VendorBatchCsv.w9ReceivedIndicator.name()));        
+        vendor.setW9ReceivedDate(rowDataMap.get(VendorBatchCsv.w9ReceivedDate.name()));        
         vendor.setAddresses(filterQuote(rowDataMap.get(VendorBatchCsv.addresses.name())));        
         vendor.setContacts(filterQuote(rowDataMap.get(VendorBatchCsv.contacts.name())));        
         vendor.setPhoneNumbers(filterQuote(rowDataMap.get(VendorBatchCsv.phoneNumbers.name())));        
