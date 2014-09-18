@@ -34,6 +34,10 @@
     <property name="name" value="accountNumberForSearching"/>
     <property name="label" value="Transaction Account"/>
   </bean>
+  
+  <bean id="ProcurementCardDocument-targetAccountingLineGroup" parent="ProcurementCardDocument-targetAccountingLineGroup-parentBean">  
+    <property name="accountingLineAuthorizerClass" value="edu.cornell.kfs.fp.document.authorization.CuProcurementCardAccountingLineAuthorizer"/>
+  </bean>
     
   <bean id="ProcurementCard-targetGroupTotals" class="org.springframework.beans.factory.config.ListFactoryBean">
     	<property name="sourceList">
