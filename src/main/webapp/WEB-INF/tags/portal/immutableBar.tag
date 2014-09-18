@@ -38,11 +38,21 @@
 <div class="header2">
   <div class="header2-left-focus">
     <div class="breadcrumb-focus"><a href="asdf.html"> 
-    	<portal:portalLink displayTitle="false" title='Action List' url='${ConfigProperties.cynergy.dashboard.url}' target='_blank'>
-   		<img src="images-portal/icon-port-actionlist.gif" alt="action list" width="91" height="19" border="0"></portal:portalLink>
-    	<portal:portalLink displayTitle="false" title='Document Search' url='${ConfigProperties.cynergy.dashboard.url}/search.jsp' target='_blank'>
-    	<img src="images-portal/icon-port-docsearch.gif" alt="doc search" width="96" height="19" border="0"></portal:portalLink>
-     </div>
+    <c:choose>
+    	<c:when test="${empty ConfigProperties.cynergy.dashboard.url}">
+    		<portal:portalLink displayTitle="false" title='Action List' url='${ConfigProperties.workflow.url}/ActionList.do${empty backdoorIdUrl ? "" : "?"}${backdoorIdUrl}'>
+   			<img src="images-portal/icon-port-actionlist.gif" alt="action list" width="91" height="19" border="0"></portal:portalLink>
+    		<portal:portalLink displayTitle="false" title='Document Search' url='${ConfigProperties.workflow.documentsearch.base.url}${empty backdoorIdUrl ? "" : "&"}${backdoorIdUrl}'>
+    		<img src="images-portal/icon-port-docsearch.gif" alt="doc search" width="96" height="19" border="0"></portal:portalLink>    		
+    	</c:when>
+    	<c:otherwise>
+		   	<portal:portalLink displayTitle="false" title='Action List' url='${ConfigProperties.cynergy.dashboard.url}' target='_blank'>
+		  	<img src="images-portal/icon-port-actionlist.gif" alt="action list" width="91" height="19" border="0"></portal:portalLink>
+		   	<portal:portalLink displayTitle="false" title='Document Search' url='${ConfigProperties.cynergy.dashboard.url}/search.jsp' target='_blank'>
+		   	<img src="images-portal/icon-port-docsearch.gif" alt="doc search" width="96" height="19" border="0"></portal:portalLink>
+    	</c:otherwise>
+    </c:choose>	
+     </div>     
   </div>
 </div>
 <div id="login-info"> <c:choose> <c:when test="${empty UserSession.loggedInUserPrincipalName}" > <strong>You are not logged in.</strong> </c:when> <c:otherwise> <strong>Logged in User:&nbsp;${UserSession.loggedInUserPrincipalName}</strong> <c:if test="${UserSession.backdoorInUse}" > <strong>&nbsp;&nbsp;Impersonating User:&nbsp;${UserSession.principalName}</strong> </c:if> </c:otherwise> </c:choose></div>
