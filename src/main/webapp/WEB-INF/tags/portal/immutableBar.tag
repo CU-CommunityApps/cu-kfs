@@ -39,7 +39,7 @@
   <div class="header2-left-focus">
     <div class="breadcrumb-focus"><a href="asdf.html"> 
     <c:choose>
-    	<c:when test="${empty ConfigProperties.cynergy.dashboard.url}">
+    	<c:when test="${ConfigProperties.cynergy.dashboard.url == null}">
     		<portal:portalLink displayTitle="false" title='Action List' url='${ConfigProperties.workflow.url}/ActionList.do${empty backdoorIdUrl ? "" : "?"}${backdoorIdUrl}'>
    			<img src="images-portal/icon-port-actionlist.gif" alt="action list" width="91" height="19" border="0"></portal:portalLink>
     		<portal:portalLink displayTitle="false" title='Document Search' url='${ConfigProperties.workflow.documentsearch.base.url}${empty backdoorIdUrl ? "" : "&"}${backdoorIdUrl}'>
