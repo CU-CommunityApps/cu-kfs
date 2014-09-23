@@ -178,7 +178,7 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
             boolean errorFax = PurapConstants.PurchaseOrderStatuses.APPDOC_FAX_ERROR.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
 
             List<PaymentRequestView> preqViews = SpringContext.getBean(PurapService.class)
-                    .getRelatedViews(PaymentRequestView.class, getPurchaseOrderDocument().getPurapDocumentIdentifier());
+                    .getRelatedViews(PaymentRequestView.class, getPurchaseOrderDocument().getAccountsPayablePurchasingDocumentLinkIdentifier());
             boolean hasPaymentRequest = preqViews != null && preqViews.size() > 0;
 
             can = pendingPrint || (open && !hasPaymentRequest) || errorFax;
