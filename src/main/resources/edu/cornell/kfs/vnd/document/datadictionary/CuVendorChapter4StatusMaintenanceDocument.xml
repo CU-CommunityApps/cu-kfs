@@ -26,7 +26,6 @@
       </list>
     </property>
     
-    
     <property name="documentTypeName" value="VC4S"/>
     <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
    
@@ -39,7 +38,6 @@
 <!-- Maintenance Section Definitions -->
 
   <bean id="VendorChapter4StatusMaintenanceDocument-EditVendorChapter4Status" parent="VendorChapter4StatusMaintenanceDocument-EditVendorChapter4Status-parentBean"/>
-
   <bean id="VendorChapter4StatusMaintenanceDocument-EditVendorChapter4Status-parentBean" abstract="true" parent="MaintainableSectionDefinition">
     <property name="id" value="Edit Chapter 4 Status"/>
     <property name="title" value="Edit Chapter 4 Status"/>
@@ -51,7 +49,7 @@
       </list>
     </property>
   </bean>
-  
+            
   <!-- workflow attributes -->
   <bean id="VendorChapter4StatusMaintenanceDocument-workflowAttributes" parent="VendorChapter4StatusMaintenanceDocument-workflowAttributes-parentBean"/>
   

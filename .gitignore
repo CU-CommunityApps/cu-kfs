@@ -1,2 +1,12 @@
+# Deployment
 target/
+overlays/
+
+# Workspace junk
 .classpath
+.settings/
+*.iml
+.idea/
+
+# Other junk
+.DS_Store
