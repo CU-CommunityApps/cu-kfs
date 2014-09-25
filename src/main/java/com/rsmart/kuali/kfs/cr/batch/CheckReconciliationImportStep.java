@@ -54,6 +54,8 @@ import com.rsmart.kuali.kfs.cr.businessobject.CheckReconError;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 import com.rsmart.kuali.kfs.cr.document.service.GlTransactionService;
 
+import edu.cornell.kfs.sys.batch.CuAbstractStep;
+
 
 /**
  * Check Reconciliation Import Step
@@ -61,7 +63,7 @@ import com.rsmart.kuali.kfs.cr.document.service.GlTransactionService;
  * @author Derek Helbert
  * @version $Revision$
  */
-public class CheckReconciliationImportStep extends AbstractStep {
+public class CheckReconciliationImportStep extends CuAbstractStep {
 
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CheckReconciliationImportStep.class);
 
@@ -520,20 +522,9 @@ public class CheckReconciliationImportStep extends AbstractStep {
             throw new Exception("'" + prop + "' is not a folder.");
         }
 
-        // Create Folder Today
-        File datedFolder = new File(prop + System.getProperty("file.separator") + ARCHIVE_DATEFORMAT.format(new Date()));
-
-        if (!datedFolder.exists()) {
-            LOG.info("Creating archive folder : " + datedFolder.getAbsoluteFile());
-            datedFolder.mkdir();
-        }
-
-        // Move file to dated folder
-        boolean success = file.renameTo(new File(datedFolder, file.getName()));
-
-        if (!success) {
-            throw new Exception("Unable to archive check file.");
-        }
+        // Add timestamp to the file name and save it in the archive folder
+        addTimeStampToFileName(file, file.getName(), prop);
+        
     }
 
     /**
