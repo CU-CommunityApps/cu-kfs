@@ -29,9 +29,11 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
         VendorCreditMemoDocument creditMemoDocument = null;
         Map<String, String> keys = new LinkedHashMap<String, String>();
         keys.put(CabPropertyConstants.DOCUMENT_NUMBER, entry.getDocumentNumber());
-        Collection<VendorCreditMemoDocument> matchingCms = (Collection<VendorCreditMemoDocument>)businessObjectService.findMatching(
-                SpringContext.getBean(DataDictionaryService.class)
-                        .getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT), keys);
+        DataDictionaryService dDS = SpringContext.getBean(DataDictionaryService.class);
+        Class docClass = dDS.getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT);
+        
+        Collection<VendorCreditMemoDocument> matchingCms;
+        matchingCms = (Collection<VendorCreditMemoDocument>)businessObjectService.findMatching(docClass, keys);
         if (matchingCms != null && matchingCms.size() == 1) {
             creditMemoDocument = matchingCms.iterator().next();
         }
