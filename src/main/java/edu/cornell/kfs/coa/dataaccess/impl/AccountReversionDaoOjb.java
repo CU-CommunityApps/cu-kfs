@@ -61,6 +61,39 @@ public class AccountReversionDaoOjb extends PlatformAwareDaoBaseOjb implements A
 
         return (List) getPersistenceBrokerTemplate().getCollectionByQuery(q);
     }
+
+    /**
+     * @see edu.cornell.kfs.coa.dataaccess.AccountReversionDao#getAccountReversionsByCashReversionAcount(java.lang.Integer, java.lang.String, java.lang.String)
+     */
+    @Override
+    public List<AccountReversion> getAccountReversionsByCashReversionAcount(Integer universityFiscalYear, String cashReversionFinancialChartOfAccountsCode, String cashReversionAccountNumber) {
+        LOG.debug("getAccountReversionsByCashReversionAcount() started");
+
+        Criteria criteria = new Criteria();
+        criteria.addEqualTo("universityFiscalYear", universityFiscalYear);
+        criteria.addEqualTo("cashReversionFinancialChartOfAccountsCode", cashReversionFinancialChartOfAccountsCode);
+        criteria.addEqualTo("cashReversionAccountNumber", cashReversionAccountNumber);
+        
+        QueryByCriteria q = QueryFactory.newQuery(AccountReversion.class, criteria);
+        return (List) getPersistenceBrokerTemplate().getCollectionByQuery(q);
+    }
+
+
+    /**
+     * @see edu.cornell.kfs.coa.dataaccess.AccountReversionDao#getAccountReversionsByBudgetReversionAcount(java.lang.Integer, java.lang.String, java.lang.String)
+     */
+    @Override
+    public List<AccountReversion> getAccountReversionsByBudgetReversionAcount(Integer universityFiscalYear, String budgetReversionChartOfAccountsCode, String budgetReversionAccountNumber) {
+        LOG.debug("getAccountReversionsByBudgetReversionAcount() started");
+
+        Criteria criteria = new Criteria();
+        criteria.addEqualTo("universityFiscalYear", universityFiscalYear);
+        criteria.addEqualTo("budgetReversionChartOfAccountsCode", budgetReversionChartOfAccountsCode);
+        criteria.addEqualTo("budgetReversionAccountNumber", budgetReversionAccountNumber);
+        
+        QueryByCriteria q = QueryFactory.newQuery(AccountReversion.class, criteria);
+        return (List) getPersistenceBrokerTemplate().getCollectionByQuery(q);
+    }
     
     
 }

@@ -1,0 +1,373 @@
+package edu.cornell.kfs.coa.service.impl;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.sys.service.UniversityDateService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.kns.maintenance.Maintainable;
+import org.kuali.rice.kns.service.MaintenanceDocumentDictionaryService;
+import org.kuali.rice.krad.bo.DocumentHeader;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.dao.MaintenanceDocumentDao;
+import org.kuali.rice.krad.maintenance.MaintenanceLock;
+import org.kuali.rice.krad.service.DocumentHeaderService;
+import org.kuali.rice.krad.service.NoteService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
+import org.springframework.transaction.annotation.Transactional;
+
+import edu.cornell.kfs.coa.businessobject.AccountReversion;
+import edu.cornell.kfs.coa.dataaccess.AccountReversionDao;
+import edu.cornell.kfs.coa.service.AccountReversionTrickleDownInactivationService;
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
+
+@Transactional
+public class AccountReversionTrickleDownInactivationServiceImpl implements AccountReversionTrickleDownInactivationService {
+    
+    private static final Logger LOG = Logger.getLogger(AccountReversionTrickleDownInactivationServiceImpl.class);
+
+    protected AccountReversionDao accountReversionDao;
+    protected MaintenanceDocumentDictionaryService maintenanceDocumentDictionaryService;
+    protected MaintenanceDocumentDao maintenanceDocumentDao;
+    protected NoteService noteService;
+    protected ConfigurationService kualiConfigurationService;
+    protected DocumentHeaderService documentHeaderService;
+    protected UniversityDateService universityDateService;
+    
+    /**
+     * Will generate Maintenance Locks for all (active or not) AccountReversions in the system related to the inactivated account using the AccountReversion
+     * maintainable registered for the AccountReversion maintenance document
+     * 
+     * @see edu.cornell.kfs.coa.service.AccountReversionTrickleDownInactivationService#generateTrickleDownMaintenanceLocks(org.kuali.kfs.coa.businessobject.Account, java.lang.String)
+     */
+    public List<MaintenanceLock> generateTrickleDownMaintenanceLocks(Account inactivatedAccount, String documentNumber) {
+        List<MaintenanceLock> maintenanceLocks = new ArrayList<MaintenanceLock>();
+        
+        Maintainable accountReversionMaintainable;
+        try {
+            accountReversionMaintainable = (Maintainable) maintenanceDocumentDictionaryService.getMaintainableClass(AccountReversion.class.getName()).newInstance();
+            accountReversionMaintainable.setBoClass(AccountReversion.class);
+            accountReversionMaintainable.setDocumentNumber(documentNumber);
+        }
+        catch (Exception e) {
+            LOG.error("Unable to instantiate Account Reversion Maintainable" , e);
+            throw new RuntimeException("Unable to instantiate Account Reversion Maintainable" , e);
+        }
+        
+        Integer universityFiscalYear = universityDateService.getCurrentFiscalYear() - 1;
+        List<AccountReversion> accountReversionRules = new ArrayList<AccountReversion>();
+        AccountReversion accountReversionRule = accountReversionDao.getByPrimaryId(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
+        if(ObjectUtils.isNotNull(accountReversionRule)){
+            accountReversionRules.add(accountReversionRule);
+        }
+        
+        List<AccountReversion> cashAccountReversionRules = accountReversionDao.getAccountReversionsByCashReversionAcount(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
+        
+        if(ObjectUtils.isNotNull(cashAccountReversionRules) && cashAccountReversionRules.size() > 0){
+            accountReversionRules.addAll(cashAccountReversionRules);
+        }
+        
+        List<AccountReversion> budgetAccountReversionRules = accountReversionDao.getAccountReversionsByBudgetReversionAcount(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
+        
+        if(ObjectUtils.isNotNull(budgetAccountReversionRules) && budgetAccountReversionRules.size() > 0){
+            accountReversionRules.addAll(budgetAccountReversionRules);
+        }
+        
+        if (ObjectUtils.isNotNull(accountReversionRules) && !accountReversionRules.isEmpty()) {
+            for (AccountReversion accountReversion : accountReversionRules) {         
+                accountReversionMaintainable.setBusinessObject(accountReversion);
+                maintenanceLocks.addAll(accountReversionMaintainable.generateMaintenanceLocks());
+            }
+        }
+        return maintenanceLocks;
+    }
+    
+    /**
+     * Inactivates all related AccountReversion rules.
+     * 
+     * @see edu.cornell.kfs.coa.service.AccountReversionTrickleDownInactivationService#trickleDownInactivateAccountReversions(org.kuali.kfs.coa.businessobject.Account, java.lang.String)
+     */
+    public void trickleDownInactivateAccountReversions(Account inactivatedAccount, String documentNumber) {
+        List<AccountReversion> inactivatedAccountReversions = new ArrayList<AccountReversion>();
+        Map<AccountReversion, String> alreadyLockedAccountReversions = new HashMap<AccountReversion, String>();
+        List<AccountReversion> errorPersistingAccountReversions = new ArrayList<AccountReversion>();
+        
+        Maintainable accountReversionMaintainable;
+        try {
+            accountReversionMaintainable = (Maintainable) maintenanceDocumentDictionaryService.getMaintainableClass(AccountReversion.class.getName()).newInstance();
+            accountReversionMaintainable.setBoClass(AccountReversion.class);
+            accountReversionMaintainable.setDocumentNumber(documentNumber);
+        }
+        catch (Exception e) {
+            LOG.error("Unable to instantiate accountReversionMaintainable Maintainable" , e);
+            throw new RuntimeException("Unable to instantiate accountReversionMaintainable Maintainable" , e);
+        }
+        
+
+        Integer universityFiscalYear = universityDateService.getCurrentFiscalYear() - 1;
+        List<AccountReversion> accountReversionRules = new ArrayList<AccountReversion>();
+        AccountReversion accountReversionRule = accountReversionDao.getByPrimaryId(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
+        if(ObjectUtils.isNotNull(accountReversionRule)){
+            accountReversionRules.add(accountReversionRule);
+        }
+        
+        List<AccountReversion> cashAccountReversionRules = accountReversionDao.getAccountReversionsByCashReversionAcount(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
+        
+        if(ObjectUtils.isNotNull(cashAccountReversionRules) && cashAccountReversionRules.size() > 0){
+            accountReversionRules.addAll(cashAccountReversionRules);
+        }
+        
+        List<AccountReversion> budgetAccountReversionRules = accountReversionDao.getAccountReversionsByBudgetReversionAcount(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
+        
+        if(ObjectUtils.isNotNull(budgetAccountReversionRules) && budgetAccountReversionRules.size() > 0){
+            accountReversionRules.addAll(budgetAccountReversionRules);
+        }
+        
+        if (ObjectUtils.isNotNull(accountReversionRules) && !accountReversionRules.isEmpty()) {
+            for (AccountReversion accountReversion : accountReversionRules ) {
+               
+                if (accountReversion.isActive()) {
+                    accountReversionMaintainable.setBusinessObject(accountReversion);
+                    List<MaintenanceLock> accountReversionLocks = accountReversionMaintainable.generateMaintenanceLocks();
+                    
+                    MaintenanceLock failedLock = verifyAllLocksFromThisDocument(accountReversionLocks, documentNumber);
+                    if (failedLock != null) {
+                        // another document has locked this AccountReversion, so we don't try to inactivate the account
+                        alreadyLockedAccountReversions.put(accountReversion, failedLock.getDocumentNumber());
+                    }
+                    else {
+                        // no locks other than our own (but there may have been no locks at all), just go ahead and try to update
+                        accountReversion.setActive(false);
+                        
+                        try {
+                            accountReversionMaintainable.saveBusinessObject();
+                            inactivatedAccountReversions.add(accountReversion);
+                        }
+                        catch (RuntimeException e) {
+                            LOG.error("Unable to trickle-down inactivate accountReversion " + accountReversion.toString(), e);
+                            errorPersistingAccountReversions.add(accountReversion);
+                        }
+                    }
+                }
+            }
+            
+            addNotesToDocument(documentNumber, inactivatedAccountReversions, alreadyLockedAccountReversions, errorPersistingAccountReversions);
+        }
+    }
+
+    /**
+     * Adds notes about inactivated AccountReversions, any errors while persisting inactivated account reversions or account reversions that were loccked.
+     * 
+     * @param documentNumber
+     * @param inactivatedAccountReversions
+     * @param alreadyLockedAccountReversions
+     * @param errorPersistingAccountReversions
+     */
+    protected void addNotesToDocument(String documentNumber, List<AccountReversion> inactivatedAccountReversions, Map<AccountReversion, String> alreadyLockedAccountReversions, List<AccountReversion> errorPersistingAccountReversions) {
+        if (inactivatedAccountReversions.isEmpty() && alreadyLockedAccountReversions.isEmpty() && errorPersistingAccountReversions.isEmpty()) {
+            // if we didn't try to inactivate any AccountReversions, then don't bother
+            return;
+        }
+        DocumentHeader noteParent = documentHeaderService.getDocumentHeaderById(documentNumber);
+        Note newNote = new Note();
+        
+        addNotes(documentNumber, inactivatedAccountReversions, CUKFSKeyConstants.ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION, noteParent, newNote);
+        addNotes(documentNumber, errorPersistingAccountReversions, CUKFSKeyConstants.ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION_ERROR_DURING_PERSISTENCE, noteParent, newNote);
+        addMaintenanceLockedNotes(documentNumber, alreadyLockedAccountReversions, CUKFSKeyConstants.ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION_RECORD_ALREADY_MAINTENANCE_LOCKED, noteParent, newNote);
+    }
+    
+    /**
+     * Adds notes about any maintence locks on Account Reversions.
+     * 
+     * @param documentNumber
+     * @param lockedAccountReversions
+     * @param messageKey
+     * @param noteParent
+     * @param noteTemplate
+     */
+    protected void addMaintenanceLockedNotes(String documentNumber, Map<AccountReversion, String> lockedAccountReversions, String messageKey, PersistableBusinessObject noteParent, Note noteTemplate) {
+        for (Map.Entry<AccountReversion, String> entry : lockedAccountReversions.entrySet()) {
+            try {
+                AccountReversion accountReversion = entry.getKey();
+                String accountReversionString = accountReversion.getUniversityFiscalYear() + " - " + accountReversion.getChartOfAccountsCode() + " - " + accountReversion.getAccountNumber();
+                if (StringUtils.isNotBlank(accountReversionString)) {
+                    String noteTextTemplate = kualiConfigurationService.getPropertyValueAsString(messageKey);
+                    String noteText = MessageFormat.format(noteTextTemplate, accountReversionString, entry.getValue());
+                    Note note = noteService.createNote(noteTemplate, noteParent, GlobalVariables.getUserSession().getPrincipalId());
+                    note.setNoteText(noteText);
+                    noteService.save(note);
+                }
+            }
+            catch (Exception e) {
+                LOG.error("Unable to create/save notes for document " + documentNumber, e);
+                throw new RuntimeException("Unable to create/save notes for document " + documentNumber, e);
+            }
+        }
+    }
+
+    /**
+     * Adds notes for the given account reversions.
+     * 
+     * @param documentNumber
+     * @param listOfAccountReversions
+     * @param messageKey
+     * @param noteParent
+     * @param noteTemplate
+     */
+    protected void addNotes(String documentNumber, List<AccountReversion> listOfAccountReversions, String messageKey, PersistableBusinessObject noteParent, Note noteTemplate) {
+        for (int i = 0; i < listOfAccountReversions.size(); i += getNumAccountReversionsPerNote()) {
+            try {
+                String accountReversionString = createAccountReversionChunk(listOfAccountReversions, i, i + getNumAccountReversionsPerNote());
+                if (StringUtils.isNotBlank(accountReversionString)) {
+                    String noteTextTemplate = kualiConfigurationService.getPropertyValueAsString(messageKey);
+                    String noteText = MessageFormat.format(noteTextTemplate, accountReversionString);
+                    Note note = noteService.createNote(noteTemplate, noteParent, GlobalVariables.getUserSession().getPrincipalId());
+                    note.setNoteText(noteText);
+                    note.setNotePostedTimestampToCurrent();
+                    noteService.save(note);
+                }
+            }
+            catch (Exception e) {
+                LOG.error("Unable to create/save notes for document " + documentNumber, e);
+                throw new RuntimeException("Unable to create/save notes for document " + documentNumber, e);
+            }
+        }
+    }
+    
+    /**
+     * Creates a String for the given account reversions.
+     * 
+     * @param listOfAccountReversions
+     * @param startIndex
+     * @param endIndex
+     * @return
+     */
+    protected String createAccountReversionChunk(List<AccountReversion> listOfAccountReversions, int startIndex, int endIndex) {
+        StringBuilder buf = new StringBuilder(); 
+        for (int i = startIndex; i < endIndex && i < listOfAccountReversions.size(); i++) {
+            AccountReversion accountReversion = listOfAccountReversions.get(i);
+            buf.append(accountReversion.getUniversityFiscalYear()).append(" - ").append(accountReversion.getChartOfAccountsCode()).append(" - ")
+                    .append(accountReversion.getAccountNumber());
+            if (i + 1 < endIndex && i + 1 < listOfAccountReversions.size()) {
+                buf.append(", ");
+            }
+        }
+        return buf.toString();
+    }
+    
+    /**
+     * Returns the number of account reversions to be included in one note.
+     * 
+     * @return
+     */
+    protected int getNumAccountReversionsPerNote() {
+        return 20;
+    }
+    
+    /**
+     * Verify if a lock exists.
+     * 
+     * @param maintenanceLocks
+     * @param documentNumber
+     * @return the maintenance lock
+     */
+    protected MaintenanceLock verifyAllLocksFromThisDocument(List<MaintenanceLock> maintenanceLocks, String documentNumber) {
+        for (MaintenanceLock maintenanceLock : maintenanceLocks) {
+            String lockingDocNumber = maintenanceDocumentDao.getLockingDocumentNumber(maintenanceLock.getLockingRepresentation(), documentNumber);
+            if (StringUtils.isNotBlank(lockingDocNumber)) {
+                return maintenanceLock;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Sets the maintenanceDocumentDictionaryService.
+     * 
+     * @param maintenanceDocumentDictionaryService
+     */
+    public void setMaintenanceDocumentDictionaryService(MaintenanceDocumentDictionaryService maintenanceDocumentDictionaryService) {
+        this.maintenanceDocumentDictionaryService = maintenanceDocumentDictionaryService;
+    }
+
+    /**
+     * Sets the maintenanceDocumentDao.
+     * 
+     * @param maintenanceDocumentDao
+     */
+    public void setMaintenanceDocumentDao(MaintenanceDocumentDao maintenanceDocumentDao) {
+        this.maintenanceDocumentDao = maintenanceDocumentDao;
+    }
+
+    /**
+     * Sets the noteService.
+     * 
+     * @param noteService
+     */
+    public void setNoteService(NoteService noteService) {
+        this.noteService = noteService;
+    }
+
+    /**
+     * Sets the kualiConfigurationService.
+     * 
+     * @param kualiConfigurationService
+     */
+    public void setConfigurationService(ConfigurationService kualiConfigurationService) {
+        this.kualiConfigurationService = kualiConfigurationService;
+    }
+
+    /**
+     * Sets the documentHeaderService.
+     * 
+     * @param documentHeaderService
+     */
+    public void setDocumentHeaderService(DocumentHeaderService documentHeaderService) {
+        this.documentHeaderService = documentHeaderService;
+    }
+
+    /**
+     * Gets the accountReversionDao.
+     * 
+     * @return accountReversionDao
+     */
+    public AccountReversionDao getAccountReversionDao() {
+        return accountReversionDao;
+    }
+
+    /**
+     * Sets the accountReversionDao.
+     * 
+     * @param accountReversionDao
+     */
+    public void setAccountReversionDao(AccountReversionDao accountReversionDao) {
+        this.accountReversionDao = accountReversionDao;
+    }
+
+    /**
+     * Gets the universityDateService.
+     * 
+     * @return universityDateService
+     */
+    public UniversityDateService getUniversityDateService() {
+        return universityDateService;
+    }
+
+    /**
+     * Sets the universityDateService.
+     * 
+     * @param universityDateService
+     */
+    public void setUniversityDateService(UniversityDateService universityDateService) {
+        this.universityDateService = universityDateService;
+    }
+
+}

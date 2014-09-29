@@ -157,4 +157,30 @@
 		<property name="fiscalYearOneBehind" value="true" />
 	</bean>	
     
+    <bean name="accountReversionTrickleDownInactivationService" parent="accountReversionTrickleDownInactivationService-parentBean" />
+	<bean name="accountReversionTrickleDownInactivationService-parentBean" abstract="true" 
+		class="edu.cornell.kfs.coa.service.impl.AccountReversionTrickleDownInactivationServiceImpl">
+		<property name="maintenanceDocumentDictionaryService">
+			<ref bean="maintenanceDocumentDictionaryService" />
+		</property>
+		<property name="maintenanceDocumentDao">
+			<ref bean="maintenanceDocumentDao" />
+		</property>
+		<property name="noteService">
+			<ref bean="noteService" />
+		</property>
+		<property name="configurationService">
+			<ref bean="kualiConfigurationService" />
+		</property>
+		<property name="documentHeaderService">
+			<ref bean="documentHeaderService" />
+		</property>
+		<property name="accountReversionDao">
+			<ref bean="accountReversionDao" />
+		</property>
+		<property name="universityDateService">
+			<ref bean="universityDateService" />
+		</property>
+		
+    </bean>
 </beans>
