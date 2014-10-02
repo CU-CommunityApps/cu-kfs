@@ -198,4 +198,8 @@
         </property>
     </bean>    	
    
+    <bean id="Requisition-assignToTradeInValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuRequisitionAssignToTradeInValidation" abstract="true">
+        <property name="dataDictionaryService" ref="dataDictionaryService" />
+    </bean>
+   
 </beans>
