@@ -54,15 +54,34 @@ public class KFSVendorWebServiceImplTest extends KualiTestBase {
 			String vendorWebServiceResult = "";
 			boolean vendorExists = false;
 
-			//need to determine what is problematic about the fixtures before these addVendor calls will work
+			//KFSVendorWebserviceImpl will have to be remediated before "updateVendor" and "addVendor" methods will work
+			//
+			// see KFSUPGRADE-1017
 			//
 			
 //			vendorWebServiceResult = kfsVendorWebService.addVendor(vd.getVendorName(), vh.getVendorTypeCode(), vh.getVendorForeignIndicator(), vh.getVendorTaxNumber(),
 //					vh.getVendorTaxTypeCode(), vh.getVendorOwnershipCode(), vd.isTaxableIndicator(), vdx.isEinvoiceVendorIndicator(), theAddresses, theContacts, thePhoneNumbers, theSupplierDiversities);
-						
-//			vendorWebServiceResult = kfsVendorWebService.addVendor(vdf.vendorName, vdf.vendorTypeCode, vdf.isForeign, vdf.taxNumber, vdf.taxNumberType, 
-//					vdf.ownershipTypeCode, vdf.isTaxable, vdf.isEInvoice, theAddresses, theContacts, thePhoneNumbers, theSupplierDiversities);
-
+//			
+//
+//			VendorDetailFixture updateFixture = VendorDetailFixture.UPDATE_ADD_ASSOCIATES_INC;
+//			VendorDetail updateDetail = updateFixture.createVendorDetail();
+//			VendorHeader updateHeader = updateDetail.getVendorHeader();
+//			vd.setExtension(vdx);
+//			
+//			String vendorId = updateDetail.getVendorHeaderGeneratedIdentifier().toString() + "-" + updateDetail.getVendorDetailAssignedIdentifier().toString();
+// 
+//			
+//			vendorWebServiceResult = kfsVendorWebService.updateVendor(updateDetail.getVendorName(),
+//					updateHeader.getVendorTypeCode(),
+//					updateHeader.getVendorForeignIndicator().booleanValue(),
+//					vendorId,
+//					updateHeader.getVendorOwnershipCode(),
+//					updateDetail.isTaxableIndicator(),
+//					vdx.isEinvoiceVendorIndicator(),
+//					theAddresses,
+//					theContacts,
+//					thePhoneNumbers,
+//					theSupplierDiversities);			
 			
 			VendorDetail vdetail = VendorDetailFixture.ADD_ASSOCIATES_INC.createVendorDetail();
 

@@ -63,6 +63,9 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	 * 
 	 */
 	// TODO : need to add poTransmissionMethodCode in web service params. 'name' in contact is also required
+    //
+    //  KFSUPGRADE-1017 method needs to be remediated so that document created will route successfully
+    //
 	public String addVendor(String vendorName, String vendorTypeCode, boolean isForeign, String taxNumber, String taxNumberType, String ownershipTypeCode, boolean isTaxable, boolean isEInvoice,
 			                 List<VendorAddressParam> addresses,List<VendorContactParam> contacts, List<VendorPhoneNumberParam> phoneNumbers, List<VendorSupplierDiversityParam> supplierDiversitys) throws Exception {
         UserSession actualUserSession = GlobalVariables.getUserSession();
@@ -166,6 +169,12 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
 	}
 	
 	private List<VendorSupplierDiversity> getVendorSupplierDiversitys(List<VendorSupplierDiversityParam> supplierDiversitys) {
+		
+		//
+		//  method will need to be remediated to set vendorSupplierDiversityExpriationDate
+		//  see KFSUPGRADE-1017
+		//
+		
     	List<VendorSupplierDiversity> vendorSupplierDiversitys = new ArrayList<VendorSupplierDiversity>();
     	if (CollectionUtils.isNotEmpty(supplierDiversitys)) {
 	    	for (VendorSupplierDiversityParam diversity : supplierDiversitys) {
@@ -232,6 +241,9 @@ public class KFSVendorWebServiceImpl implements KFSVendorWebService {
     	vPhoneNumber.setActive(phoneNumber.isActive());
 	}
 	
+    //
+    //  KFSUPGRADE-1017 method needs to be remediated so that document created will route successfully
+    //	
 	public String updateVendor(String vendorName, String vendorTypeCode, boolean isForeign, 
 			String vendorNumber,  String ownershipTypeCode, boolean isTaxable, boolean isEInvoice,
 			List<VendorAddressParam> addresses,List<VendorContactParam> contacts, List<VendorPhoneNumberParam> phoneNumbers,List<VendorSupplierDiversityParam> supplierDiversitys) throws Exception {

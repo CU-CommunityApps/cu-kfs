@@ -8,8 +8,9 @@ public enum VendorDetailFixture {
 	ANAK_INC("Anak Inc", true, 4506, 0),
 	ADD_ASSOCIATES_INC("ADD Associates Inc", true, 4435, 0),
 	NO_SUCH_VENDOR("NO SUCH VENDOR", false, -1, -1),
-	VENDOR_TO_CREATE("Test Vendor", true, 1234567, 0, "", false, "999887676","", "", true, false );
-
+	VENDOR_TO_CREATE("Test Vendor", true, 1234567, 0, "", false, "999887676","", "", true, false, "P" ),
+	UPDATE_ADD_ASSOCIATES_INC("ADD Associates Inc", true, 4435, 0, "", false, "999887676","", "", true, false, "P" );
+	
 	
 	public final String vendorName;
 	public final boolean vendorParentIndicator;
@@ -22,6 +23,7 @@ public enum VendorDetailFixture {
 	public final String ownershipTypeCode;
 	public final boolean isTaxable;
 	public final boolean isEInvoice;
+	public final String defaultB2BPaymentMethodCode;
 	
 	private VendorDetailFixture(String vendorName, boolean vendorParentIndicator, 
 			Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier) 
@@ -37,11 +39,12 @@ public enum VendorDetailFixture {
 		this.ownershipTypeCode = "";
 		this.isTaxable = true;
 		this.isEInvoice = true;
+		this.defaultB2BPaymentMethodCode = "";
 	}
 	
 	private VendorDetailFixture(String vendorName, boolean vendorParentIndicator, 
 			Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier, String vendorTypeCode, boolean isForeign, String taxNumber,
-			String taxNumberType, String ownershipTypeCode, boolean isTaxable, boolean isEInvoice) {
+			String taxNumberType, String ownershipTypeCode, boolean isTaxable, boolean isEInvoice, String defaultB2BPaymentMethodCode) {
 		this.vendorName = vendorName;
 		this.vendorDetailAssignedIdentifier = vendorDetailAssignedIdentifier;
 		this.vendorHeaderGeneratedIdentifier = vendorHeaderGeneratedIdentifier;
@@ -53,6 +56,7 @@ public enum VendorDetailFixture {
 		this.ownershipTypeCode = ownershipTypeCode;
 		this.isTaxable = isTaxable;
 		this.isEInvoice = isEInvoice;
+		this.defaultB2BPaymentMethodCode = defaultB2BPaymentMethodCode;
 	}
 	
 	public VendorDetail createVendorDetail() {

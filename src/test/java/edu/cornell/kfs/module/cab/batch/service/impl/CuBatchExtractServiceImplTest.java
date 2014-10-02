@@ -73,11 +73,7 @@ public class CuBatchExtractServiceImplTest extends KualiTestBase {
 		
 		
 		cuBatchExtractServiceImpl.separatePOLines(fpEntries, purapEntries, glEntries);
-	
-		System.out.println("fpEntries size: " + fpEntries.size());
-		
-		System.out.println("purapEntries size: " + purapEntries.size());
-		
+			
 		assertTrue("fpEntries size is zero", fpEntries.size() == 0);
 		
 		assertTrue("purapEntries size is greater than zero", purapEntries.size() > 0);

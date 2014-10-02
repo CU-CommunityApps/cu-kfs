@@ -9,19 +9,20 @@ public enum VendorHeaderFixture {
 	
 	public final String vendorTypeCode;
 	public final Boolean vendorForeignIndicator;
+	public final String vendorTaxNumber;
 	
-	private VendorHeaderFixture(String vendorTypeCode, Boolean vendorForeignIndicator) {
+	private VendorHeaderFixture(String vendorTypeCode, Boolean vendorForeignIndicator, String vendorTaxNumber) {
 		this.vendorTypeCode = vendorTypeCode;
 		this.vendorForeignIndicator = vendorForeignIndicator;
+		this.vendorTaxNumber = vendorTaxNumber;
 	}
 	
 	public VendorHeader createVendorHeader() {
 		VendorHeader vendorHeader = new VendorHeader();
 		vendorHeader.setVendorOwnershipCode(VendorOwnershipTypeFixture.ONE.vendorOwnershipCode);
-//		vendorHeader.setVendorOwnership(VendorOwnershipTypeFixture.ONE.createVendorOwnershipType());
 		vendorHeader.setVendorForeignIndicator(this.vendorForeignIndicator);
 		vendorHeader.setVendorTypeCode(vendorTypeCode);
-//		vendorHeader.setVendorType(this.createVendorType());
+		vendorHeader.setVendorTaxNumber(vendorTaxNumber);
 		return vendorHeader;
 	}
 
