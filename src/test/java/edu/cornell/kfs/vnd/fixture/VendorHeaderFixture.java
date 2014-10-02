@@ -5,7 +5,7 @@ import org.kuali.kfs.vnd.businessobject.VendorType;
 
 public enum VendorHeaderFixture {
 	
-	ONE("PO", Boolean.TRUE);
+	ONE("PO", Boolean.TRUE, "999999999");
 	
 	public final String vendorTypeCode;
 	public final Boolean vendorForeignIndicator;
