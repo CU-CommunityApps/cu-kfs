@@ -686,10 +686,6 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
 
         boolean success = true;
 
-        // Income Stream account is required if this account is CG fund group,
-        // or GF (general fund) fund group (with some exceptions)
-        success &= checkCgIncomeStreamRequired(newAccountGlobal);
-
         return success;
     }
 
