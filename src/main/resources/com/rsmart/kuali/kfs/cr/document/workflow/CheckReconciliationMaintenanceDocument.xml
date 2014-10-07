@@ -14,7 +14,7 @@
       <routeNodes>
         <start name="AdHoc"/>
         <role name="CheckReconRole">
-          <qualifierResolverClass>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
       </routeNodes>
