@@ -12,3 +12,4 @@ overlays/
 
 # Other junk
 .DS_Store
+/bin/
