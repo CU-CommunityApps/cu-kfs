@@ -31,6 +31,11 @@
     <property name="workflowAttributes">
     	<ref bean="SubFundProgramMaintenanceDocument-workflowAttributes"/>
     </property>
+    <property name="defaultExistenceChecks">
+        <list>
+            <bean parent="ReferenceDefinition" p:attributeName="subFundGroup" p:attributeToHighlightOnFail="subFundGroupCode" /> 
+        </list>   
+    </property>
      <property name="lockingKeys">
       <list>
         <value>programCode</value>
