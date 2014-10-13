@@ -248,7 +248,7 @@ public abstract class PurchasingItemBase extends PurApItemBase implements Purcha
             sb.append("Hazardous,");
         }
         if (sb.length() == 0) {
-            return "No e-Shop flag is set to true";
+            return "None";
         }
         return sb.substring(0, sb.length()-1);
     }
