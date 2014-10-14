@@ -82,7 +82,10 @@ public class CuAdvanceDepositAccountingLineAuthorizer extends FinancialProcessin
     
     @Override
     protected boolean approvedForUnqualifiedEditing(AccountingDocument accountingDocument, AccountingLine accountingLine, String accountingLineCollectionProperty, boolean currentUserIsDocumentInitiator) {
-       return true;
+    	if (currentUserIsDocumentInitiator) {
+            return true;
+        }
+        return false;    	
     }
 
     /**
