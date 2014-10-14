@@ -59,7 +59,7 @@
   <bean id="VendorHeaderExtension-vendorW8BenReceivedDate" parent="VendorHeaderExtension-vendorW8BenReceivedDate-parentBean" />
   <bean id="VendorHeaderExtension-vendorW8BenReceivedDate-parentBean" abstract="true" parent="GenericAttributes-genericDate">
     <property name="name" value="vendorW8BenReceivedDate" />
-    <property name="label" value="W-8BEN Receive Date" />
+    <property name="label" value="W-8BEN Signed Date" />
     <property name="shortLabel" value="W-8BEN Date" />
     <property name="maxLength" value="10" />
   </bean>
