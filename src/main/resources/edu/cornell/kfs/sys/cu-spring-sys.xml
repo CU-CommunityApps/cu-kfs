@@ -159,6 +159,10 @@
     	<property name="businessObjectService"><ref bean="businessObjectService" /></property>
     	<property name="parameterService"><ref bean="parameterService" /></property>
     </bean>
+    
+    	<bean id="fiscalYearMakersDao" parent="platformAwareDao" class="edu.cornell.kfs.sys.batch.dataaccess.impl.CuFiscalYearMakerDaoOjb" >
+		<property name="persistenceStructureService" ref="persistenceStructureService" />
+	</bean>
  	 	 	
 	<bean id="autoCancelBatchJob" parent="unscheduledJobDescriptor">
 		<property name="steps">
