@@ -255,7 +255,7 @@ public class CuBalanceDaoOjb extends BalanceDaoOjb implements CuBalanceDao {
         int i = 1;
         boolean moreParams = true;
         while (moreParams) {
-            if (parameterService.parameterExists(OrganizationReversion.class, PARAMETER_PREFIX + i)) {
+            if (parameterService.parameterExists(Reversion.class, PARAMETER_PREFIX + i)) {
             	ParameterEvaluator parameterEvaluator = parameterEvaluatorService.getParameterEvaluator(Reversion.class, PARAMETER_PREFIX + i);
                 String currentRule = parameterEvaluator.getValue();
                 if (endOfYear) {

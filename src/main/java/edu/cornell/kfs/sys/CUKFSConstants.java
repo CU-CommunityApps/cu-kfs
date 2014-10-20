@@ -50,6 +50,8 @@ public class CUKFSConstants {
         public static final String OBJECT_LEVEL_PARAM_SUFFIX = "OBJECT_LEVELS_BY_REVERSION_CATEGORY";
         public static final String OBJECT_TYPE_PARAM_SUFFIX = "OBJECT_TYPES_BY_REVERSION_CATEGORY";
         public static final String OBJECT_SUB_TYPE_PARAM_SUFFIX = "OBJECT_SUB_TYPES_BY_REVERSION_CATEGORY";
+        public static final String SELECTION_1 = "SELECTION_1";
+        public static final String SELECTION_4 = "SELECTION_4";
     }
     
     public static class PreEncumbranceDocumentConstants {
