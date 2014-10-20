@@ -18,6 +18,7 @@
   <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
     <documentType>
       <name>ACCT</name>
+      <label>Account</label>
       <parent>COA</parent>
       <routePaths>
         <routePath>
@@ -26,7 +27,16 @@
           <requests name="OrganizationHierarchy" nextNode="Award"/>
           <requests name="Award" nextNode="SubFund"/>
           <requests name="SubFund" nextNode="AccountSupervisor"/>
-          <requests name="AccountSupervisor"/>
+          <requests name="AccountSupervisor" nextNode="InitiatorAccountFYISplit"/>
+          <split name="InitiatorAccountFYISplit">
+            <branch name="True">
+              <requests name="InitiatorAccountFYI" nextNode="InitiatorAccountFYIJoin"/>
+            </branch>
+            <branch name="False">
+              <simple name="InitiatorAccountFYIDoNothing" nextNode="InitiatorAccountFYIJoin"/>
+            </branch>
+            <join name="InitiatorAccountFYIJoin"/>
+          </split>
         </routePath>
       </routePaths>
       <routeNodes>
@@ -51,6 +61,17 @@
           <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
+        <role name="InitiatorAccountFYI">
+          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+        <split name="InitiatorAccountFYISplit">
+          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+        </split>
+        <simple name="InitiatorAccountFYIDoNothing">
+          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+        </simple>
+        <join name="InitiatorAccountFYIJoin"/>
       </routeNodes>
     </documentType>
   </documentTypes>
