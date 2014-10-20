@@ -695,8 +695,8 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
         disbursementVoucherDocument.getDocumentHeader().setDocumentDescription(iWantDocument.getDocumentHeader().getDocumentDescription());
         
         //copy over attachments
-        copyIWantdDocAttachmentsToDV(disbursementVoucherDocument, disbursementVoucherForm, iWantDocument);
-        
+        //copyIWantdDocAttachmentsToDV(disbursementVoucherDocument, disbursementVoucherForm, iWantDocument);
+        copyIWantDocAttachments(disbursementVoucherDocument, iWantDocument);   
         //DV check amount - IWantDoc total amount
         disbursementVoucherDocument.setDisbVchrCheckTotalAmount(iWantDocument.getTotalDollarAmount());
   
