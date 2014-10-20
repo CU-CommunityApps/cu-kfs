@@ -312,6 +312,7 @@ public class VendorBatchServiceImpl implements VendorBatchService{
             vendorDoc.getDocumentHeader().setDocumentDescription(getDocumentDescription(vendorBatch, true));
                         
         	VendorMaintainableImpl vImpl = (VendorMaintainableImpl)vendorDoc.getNewMaintainableObject();
+            vImpl.setMaintenanceAction(KFSConstants.MAINTENANCE_NEW_ACTION);
 
         	VendorDetail vDetail = (VendorDetail)vImpl.getBusinessObject();
         	
