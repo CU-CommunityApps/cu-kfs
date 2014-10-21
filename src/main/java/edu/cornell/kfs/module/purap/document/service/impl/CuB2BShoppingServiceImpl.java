@@ -302,17 +302,16 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
         //cxml.append(" <Extrinsic
         // name=\"UserEmail\">jdoe@TOPS.com</Extrinsic>\n"); // we can't reliably
         // get the e-mail address, so we're leaving it out
+        cxml.append("      <Extrinsic name=\"UserEmail\">").append(user.getEmailAddressUnmasked()).append("</Extrinsic>\n"); 
         cxml.append("      <Extrinsic name=\"UniqueName\">").append(user.getPrincipalName().toUpperCase()).append("</Extrinsic>\n");
-        cxml.append("      <Extrinsic name=\"Department\">IU").append(user.getCampusCode()).append(user.getPrimaryDepartmentCode()).append("</Extrinsic>\n");
+        cxml.append("      <Extrinsic name=\"PhoneNumber\">").append(user.getPhoneNumberUnmasked()).append("</Extrinsic>\n");
+        cxml.append("      <Extrinsic name=\"Department\">").append(user.getCampusCode()).append(user.getPrimaryDepartmentCode()).append("</Extrinsic>\n");
         cxml.append("      <Extrinsic name=\"Campus\">").append(user.getCampusCode()).append("</Extrinsic>\n");
         // KFSPTS-1720
         cxml.append("      <Extrinsic name=\"FirstName\">").append(user.getFirstName()).append("</Extrinsic>\n");
         cxml.append("      <Extrinsic name=\"LastName\">").append(user.getLastName()).append("</Extrinsic>\n");
         cxml.append("      <Extrinsic name=\"Role\">").append(getPreAuthValue(user.getPrincipalId())).append("</Extrinsic>\n");
         cxml.append("      <Extrinsic name=\"Role\">").append(getViewValue(user.getPrincipalId())).append("</Extrinsic>\n");
-        cxml.append("      <BrowserFormPost>\n");
-        cxml.append("        <URL>").append(b2bInformation.getPunchbackURL()).append("</URL>\n");
-        cxml.append("      </BrowserFormPost>\n");
 
         cxml.append("      <BrowserFormPost>\n");
         cxml.append("        <URL>").append(b2bInformation.getPunchbackURL()).append("</URL>\n");
