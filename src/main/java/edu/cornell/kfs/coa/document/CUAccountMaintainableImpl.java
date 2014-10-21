@@ -67,6 +67,36 @@ public class CUAccountMaintainableImpl extends KualiAccountMaintainableImpl {
         System.out.println("Inside processAfterEdit");
     }
     
+    /**
+     * Checks if the document should be routed to initiator for FYI when a new account was created.
+     * 
+     * @see org.kuali.kfs.sys.document.FinancialSystemMaintainable#answerSplitNodeQuestion(java.lang.String)
+     */
+    @Override
+    protected boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
+        if (nodeName.equals(INITIATOR_ACCOUNT_FYI_SPLIT_NODE)) {
+            return isNewAccount();
+        }
+        // this is not a node we recognize
+        throw new UnsupportedOperationException("AccountMaintainableImpl.answerSplitNodeQuestion cannot answer split node question " + "for the node called('" + nodeName + "')");
+    }
+
+    /**
+     * Checks if this is a newly created account.
+     * 
+     * @return true if new (NEW, COPY actions), false otherwise
+     */
+    private boolean isNewAccount() {
+        boolean retVal = false;
+        String maintAction = super.getMaintenanceAction();
+
+        if ((maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_NEW_ACTION)) || (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_COPY_ACTION))) {
+            retVal = true;
+        }
+
+        return retVal;
+    }
+
     @Override
     public List<MaintenanceLock> generateMaintenanceLocks() {
         List<MaintenanceLock> maintenanceLocks = super.generateMaintenanceLocks();
@@ -76,4 +106,5 @@ public class CUAccountMaintainableImpl extends KualiAccountMaintainableImpl {
         }
         return maintenanceLocks;
     }
+
 }
