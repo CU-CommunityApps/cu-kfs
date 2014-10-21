@@ -52,6 +52,14 @@
   	<property name="label" value="Cornell Contact Phone"/>
   </bean>
   
+   <bean id="RequisitionDocument-deliveryToEmailAddress" parent="RequisitionDocument-deliveryToEmailAddress-parentBean">
+                        <property name="required" value="true"/>
+  </bean>
+
+  <bean id="RequisitionDocument-deliveryToPhoneNumber" parent="RequisitionDocument-deliveryToPhoneNumber-parentBean">
+                        <property name="required" value="true"/>
+  </bean>
+  
   <!-- KFSPTS-1458 -->
   <bean id="RequisitionDocument-vendorEmailAddress" parent="RequisitionDocument-vendorEmailAddress-parentBean"/>
 
