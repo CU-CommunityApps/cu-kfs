@@ -17,6 +17,7 @@
             <ref bean="AccountExtendedAttribute-invoiceFrequencyCode"/> 
             <ref bean="AccountExtendedAttribute-invoiceTypeCode"/>
             <ref bean="AccountExtendedAttribute-everify"/>
+            <ref bean="AccountExtendedAttribute-accountClosedDate"/>
       </list> 
     </property> 
     </bean> 
@@ -48,4 +49,17 @@
 		</property>
     	<property name="formatterClass" value="org.kuali.rice.core.web.format.BooleanFormatter"/>
   	</bean>    
+
+    <bean id="AccountExtendedAttribute-accountClosedDate" parent="AccountExtendedAttribute-accountClosedDate-parentBean" />
+
+    <bean id="AccountExtendedAttribute-accountClosedDate-parentBean" abstract="true"
+        parent="GenericAttributes-genericTimestamp">
+        <property name="name" value="accountClosedDate" />
+        <property name="label" value="Account Closed Date" />
+        <property name="shortLabel" value="Closed Date" />
+        <property name="control">
+            <ref bean="HiddenControl" />
+        </property>
+    </bean>
+
 </beans> 

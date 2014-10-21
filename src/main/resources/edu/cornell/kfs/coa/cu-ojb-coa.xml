@@ -116,6 +116,8 @@
 			jdbc-type="VARCHAR" index="true" />
 		<field-descriptor name="versionNumber" column="VER_NBR"
 			jdbc-type="BIGINT" locking="true" />
+        <field-descriptor name="accountClosedDate" column="ACCT_CLOSED_DT"
+            jdbc-type="DATE" />
 
 		<reference-descriptor name="subFundProgram"
 			class-ref="edu.cornell.kfs.coa.businessobject.SubFundProgram"

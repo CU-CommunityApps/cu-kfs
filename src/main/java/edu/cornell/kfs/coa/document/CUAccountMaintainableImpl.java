@@ -17,6 +17,7 @@ import org.kuali.kfs.coa.document.KualiAccountMaintainableImpl;
 import org.kuali.kfs.coa.service.SubAccountTrickleDownInactivationService;
 import org.kuali.kfs.coa.service.SubObjectTrickleDownInactivationService;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.krad.maintenance.MaintenanceLock;
 import org.kuali.rice.krad.service.BusinessObjectService;
@@ -54,6 +55,11 @@ public class CUAccountMaintainableImpl extends KualiAccountMaintainableImpl {
         AppropriationAccount aan = (AppropriationAccount) bos.findByPrimaryKey(AppropriationAccount.class, keys);
         aea.setAppropriationAccount(aan);
         
+        if (account.isClosed() && aea.getAccountClosedDate() == null) {
+            aea.setAccountClosedDate(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
+        } else if (!account.isClosed() && aea.getAccountClosedDate() != null) {
+            aea.setAccountClosedDate(null);           
+        }
         super.saveBusinessObject();
         
         // trickle down Account Reversion inactivation

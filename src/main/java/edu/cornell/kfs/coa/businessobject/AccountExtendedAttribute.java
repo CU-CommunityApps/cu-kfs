@@ -15,6 +15,7 @@
  */
 package edu.cornell.kfs.coa.businessobject;
 
+import java.sql.Date;
 import java.util.HashMap;
 
 import org.kuali.kfs.sys.context.SpringContext;
@@ -41,6 +42,7 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
     private boolean everify;
     private String majorReportingCategoryCode;
     private Long costShareForProjectNumber;
+    protected Date accountClosedDate;
 
     private SubFundProgram subFundProgram;
     private AppropriationAccount appropriationAccount;
@@ -302,5 +304,13 @@ public class AccountExtendedAttribute extends PersistableBusinessObjectExtension
 		keys.put("majorReportingCategoryCode", majorReportingCategoryCode);
 		majorReportingCategory = (MajorReportingCategory) bos.findByPrimaryKey(MajorReportingCategory.class, keys);
 	}
+
+    public Date getAccountClosedDate() {
+        return accountClosedDate;
+    }
+
+    public void setAccountClosedDate(Date accountClosedDate) {
+        this.accountClosedDate = accountClosedDate;
+    }
 
 }
