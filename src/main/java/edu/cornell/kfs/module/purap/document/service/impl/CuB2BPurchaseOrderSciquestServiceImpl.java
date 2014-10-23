@@ -439,7 +439,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         cxml.append("        <Address>\n");
         cxml.append("          <TemplateName>Ship To</TemplateName>\n");
         // AddressCode. A code to identify the address, that is sent to the supplier.
-        cxml.append("          <AddressCode>").append(purchaseOrder.getDeliveryCampusCode()).append(purchaseOrder.getOrganizationCode()).append("</AddressCode>\n");
+        cxml.append("          <AddressCode>").append(purchaseOrder.getDeliveryBuildingCode()).append("</AddressCode>\n");
         cxml.append("          <Contact label=\"Name\" linenumber=\"1\"><![CDATA[").append(purchaseOrder.getDeliveryToName().trim()).append("]]></Contact>\n");
         cxml.append("          <Contact label=\"PurchasingEmail\" linenumber=\"2\"><![CDATA[").append(contractManagerEmail).append("]]></Contact>\n");
         if (ObjectUtils.isNotNull(purchaseOrder.getInstitutionContactEmailAddress())) {
