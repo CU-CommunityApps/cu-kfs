@@ -102,9 +102,9 @@
     </property>
     <property name="attributeSecurity">
 		<bean parent="AttributeSecurity">
-  			<property name="mask" value="true"/> 
+  			<property name="mask" value="true" /> 
 			<property name="maskFormatter">
-  			<bean parent="MaskFormatterLiteral" p:literal="*****************"/> 
+  			<bean parent="MaskFormatterLiteral" p:literal="*****************"/>
   			</property>
   			<property name="partialMask" value="true"/> 
   			<property name="partialMaskFormatter">
@@ -187,6 +187,14 @@
   <bean id="PayeeACHAccount-bankRouting.bankName-parentBean" abstract="true" parent="ACHBank-bankName">
     <property name="name" value="bankRouting.bankName"/>
     <property name="required" value="false"/>
+    <property name="attributeSecurity">
+		<bean parent="AttributeSecurity">
+  			<property name="mask" value="true"/> 
+			<property name="maskFormatter">
+  			<bean parent="MaskFormatterLiteral" p:literal="*****************"/> 
+  			</property>
+  		</bean>
+  	</property>
   </bean>
 
 <!-- Business Object Inquiry Definition -->
