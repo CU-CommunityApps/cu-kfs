@@ -1,14 +1,18 @@
 package edu.cornell.kfs.module.purap.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
+import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount;
+import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
@@ -25,11 +29,14 @@ import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.identity.KfsKimAttributes;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.kew.api.action.ActionRequest;
 import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.role.RoleService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.KualiRuleService;
 import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.purap.service.CuPurapAccountingService;
 
@@ -117,12 +124,20 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
         String accountDistributionMethod = purApDocument.getAccountDistributionMethod();
 
         KualiRuleService kualiRuleService = SpringContext.getBean(KualiRuleService.class);
+        WorkflowDocument workflowDocument = purApDocument.getDocumentHeader().getWorkflowDocument();
+
+        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
 
         // the percent at fiscal approve
         // don't update if past the AP review level
-        if ((document instanceof PaymentRequestDocument) && purapService.isFullDocumentEntryCompleted(document) && !PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW.equalsIgnoreCase(document.getFinancialSystemDocumentHeader().getApplicationDocumentStatus())) {
-            // update the percent but don't update the amounts if preq and past full entry
-            convertMoneyToPercent((PaymentRequestDocument) document);
+        if ((document instanceof PaymentRequestDocument) && purapService.isFullDocumentEntryCompleted(document)) {
+            if (nodeNames.contains(PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW)) {  
+                for (PurApItem item : document.getItems()) {
+                    updatePreqItemAccountAmountsOnly(item);
+                }
+            } else {
+               convertMoneyToPercent((PaymentRequestDocument) document);
+            }
             return;
         }
         document.fixItemReferences();
@@ -198,6 +213,89 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
                 }
             }
         }
+    }
+
+    private void updatePreqItemAccountAmountsOnly(PurApItem item) {
+        List<PurApAccountingLine> sourceAccountingLines = item.getSourceAccountingLines();
+        KualiDecimal totalAmount = item.getTotalAmount();
+        if (ObjectUtils.isNull(totalAmount) || totalAmount.equals(KualiDecimal.ZERO)) {
+            totalAmount = getExtendedPrice(item);
+        }
+
+        if (!totalAmount.equals(KualiDecimal.ZERO) && getItemAccountTotal(sourceAccountingLines).equals(KualiDecimal.ZERO)) {
+           // item.refreshReferenceObject("sourceAccountingLines"); // this is not working
+            refreshAccountAmount(item);
+        }
+        updatePreqAccountAmountsOnly(sourceAccountingLines, totalAmount);
+    }
+
+    private KualiDecimal getItemAccountTotal(List<PurApAccountingLine> sourceAccountingLines) {
+        KualiDecimal accountTotal = KualiDecimal.ZERO;
+       for (PurApAccountingLine account : sourceAccountingLines) {
+            accountTotal = accountTotal.add(account.getAmount());                
+        }
+       return accountTotal;
+
+    }
+    
+    private KualiDecimal getExtendedPrice(PurApItem item) {
+        KualiDecimal extendedPrice = KualiDecimal.ZERO;
+        if (ObjectUtils.isNotNull(item.getItemUnitPrice())) {
+            if (item.getItemType().isAmountBasedGeneralLedgerIndicator()) {
+                // SERVICE ITEM: return unit price as extended price
+                extendedPrice = new KualiDecimal(item.getItemUnitPrice().toString());
+            }
+            else if (ObjectUtils.isNotNull(item.getItemQuantity())) {
+                BigDecimal calcExtendedPrice = item.getItemUnitPrice().multiply(item.getItemQuantity().bigDecimalValue());
+                // ITEM TYPE (qty driven): return (unitPrice x qty)
+                extendedPrice = new KualiDecimal(calcExtendedPrice.setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR));
+            }
+        }
+        return extendedPrice;
+    }
+
+    private <T extends PurApAccountingLine> void updatePreqAccountAmountsOnly(List<T> sourceAccountingLines, KualiDecimal totalAmount) {
+        if ((totalAmount != null) && KualiDecimal.ZERO.compareTo(totalAmount) != 0) {
+            KualiDecimal accountTotal = getItemAccountTotal((List<PurApAccountingLine>)sourceAccountingLines);
+            if (!accountTotal.equals(totalAmount) && !accountTotal.equals(KualiDecimal.ZERO)) {
+                BigDecimal tmpPercent = totalAmount.bigDecimalValue().divide(accountTotal.bigDecimalValue(), PurapConstants.CREDITMEMO_PRORATION_SCALE.intValue(), KualiDecimal.ROUND_BEHAVIOR);
+
+                int accountNum = 0;
+                accountTotal = KualiDecimal.ZERO;
+                for (T account : sourceAccountingLines) {
+                    if (accountNum++ < sourceAccountingLines.size() - 1) {
+                        BigDecimal calcAmountBd = tmpPercent.multiply(account.getAmount().bigDecimalValue());
+                        calcAmountBd = calcAmountBd.setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR);
+                        KualiDecimal calcAmount = new KualiDecimal(calcAmountBd);
+                        account.setAmount(calcAmount);
+                        accountTotal = accountTotal.add(calcAmount);
+                    } else {
+                        account.setAmount(totalAmount.subtract(accountTotal));
+                    }
+                }
+            }
+
+        }
+        else {
+            for (T account : sourceAccountingLines) {
+                account.setAmount(KualiDecimal.ZERO);
+            }
+        }
+    }
+
+    private void refreshAccountAmount(PurApItem item) {
+            Map fieldValues = new HashMap();
+            fieldValues.put(PurapPropertyConstants.ITEM_IDENTIFIER, item.getItemIdentifier());
+            PurApItem orgItem = businessObjectService.findByPrimaryKey(PaymentRequestItem.class, fieldValues);
+            if (ObjectUtils.isNotNull(orgItem)) {
+                for (PurApAccountingLine account : item.getSourceAccountingLines()) {
+                    for (PurApAccountingLine orgAccount : orgItem.getSourceAccountingLines()) {
+                        if (account.getAccountIdentifier().equals(orgAccount.getAccountIdentifier())) {
+                            account.setAmount(orgAccount.getAmount());
+                        }
+                    }
+                }
+            }
     }
 
 }
