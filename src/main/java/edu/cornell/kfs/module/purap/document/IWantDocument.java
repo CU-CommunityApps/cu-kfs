@@ -760,8 +760,12 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         String sourceDocumentHeaderId = getDocumentNumber();
         setNewDocumentHeader();
 
-        getNotes();
+        //getNotes();
         getDocumentHeader().setDocumentTemplateNumber(sourceDocumentHeaderId);
+        // Clear out existing notes.
+        if (getNotes() != null) {
+            getNotes().clear();
+        }
 
         addCopyErrorDocumentNote("copied from document " + sourceDocumentHeaderId);
 
