@@ -257,21 +257,31 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
     private <T extends PurApAccountingLine> void updatePreqAccountAmountsOnly(List<T> sourceAccountingLines, KualiDecimal totalAmount) {
         if ((totalAmount != null) && KualiDecimal.ZERO.compareTo(totalAmount) != 0) {
             KualiDecimal accountTotal = getItemAccountTotal((List<PurApAccountingLine>)sourceAccountingLines);
-            if (!accountTotal.equals(totalAmount) && !accountTotal.equals(KualiDecimal.ZERO)) {
+            if ((!accountTotal.equals(totalAmount)  || isAccountLinePercentEmpty((List<PurApAccountingLine>)sourceAccountingLines)) && !accountTotal.equals(KualiDecimal.ZERO)) {
                 BigDecimal tmpPercent = totalAmount.bigDecimalValue().divide(accountTotal.bigDecimalValue(), PurapConstants.CREDITMEMO_PRORATION_SCALE.intValue(), KualiDecimal.ROUND_BEHAVIOR);
 
                 int accountNum = 0;
                 accountTotal = KualiDecimal.ZERO;
+                BigDecimal percentTotalRoundUp = BigDecimal.ZERO;
                 for (T account : sourceAccountingLines) {
                     if (accountNum++ < sourceAccountingLines.size() - 1) {
                         BigDecimal calcAmountBd = tmpPercent.multiply(account.getAmount().bigDecimalValue());
                         calcAmountBd = calcAmountBd.setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR);
                         KualiDecimal calcAmount = new KualiDecimal(calcAmountBd);
                         account.setAmount(calcAmount);
+                        if (account.getAccountLinePercent() == null || account.getAccountLinePercent().compareTo(BigDecimal.ZERO) == 0) {
+                            // Tax Item is regenerated if Treasury Manager 'calculate'
+                            BigDecimal tmpAcctPercent = account.getAmount().bigDecimalValue().divide(totalAmount.bigDecimalValue(), PurapConstants.CREDITMEMO_PRORATION_SCALE.intValue(), KualiDecimal.ROUND_BEHAVIOR);
+                            account.setAccountLinePercent(tmpAcctPercent.multiply(new BigDecimal(100)));
+                        }
                         accountTotal = accountTotal.add(calcAmount);
                     } else {
                         account.setAmount(totalAmount.subtract(accountTotal));
-                    }
+                        if (account.getAccountLinePercent() == null || account.getAccountLinePercent().compareTo(BigDecimal.ZERO) == 0) {
+                            account.setAccountLinePercent(new BigDecimal(100).subtract(percentTotalRoundUp));
+                        }
+                   }
+                    percentTotalRoundUp = percentTotalRoundUp.add(account.getAccountLinePercent());
                 }
             }
 
@@ -283,6 +293,17 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
         }
     }
 
+    private boolean isAccountLinePercentEmpty(List<PurApAccountingLine> sourceAccountingLines) {
+        boolean isAccountLinePercentEmpty = false;;
+        for (PurApAccountingLine account : sourceAccountingLines) {
+            if (account.getAccountLinePercent() == null || account.getAccountLinePercent().compareTo(BigDecimal.ZERO) == 0) {
+                isAccountLinePercentEmpty = true;
+                break;
+            }
+        }
+        return isAccountLinePercentEmpty;
+    }
+    
     private void refreshAccountAmount(PurApItem item) {
             Map fieldValues = new HashMap();
             fieldValues.put(PurapPropertyConstants.ITEM_IDENTIFIER, item.getItemIdentifier());
