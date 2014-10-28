@@ -236,7 +236,17 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
             // We need to refresh the accounting line amount from DB in order to continue.
             refreshAccountAmount(item);
         }
-        updatePreqAccountAmountsOnly(sourceAccountingLines, totalAmount);
+        
+        if (StringUtils.equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_MISC_CODE,item.getItemTypeCode()) || StringUtils.equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_FREIGHT_CODE,item.getItemTypeCode())
+                || StringUtils.equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_SHIP_AND_HAND_CODE,item.getItemTypeCode())) {
+            if (!totalAmount.equals(KualiDecimal.ZERO) && getItemAccountTotal(sourceAccountingLines).equals(KualiDecimal.ZERO)) {
+                updateMiscFrtSphdAccountAmountsWithTotal(sourceAccountingLines, totalAmount);
+            } else {
+                updatePreqAccountAmountsOnly(sourceAccountingLines, totalAmount);
+            }
+        } else {
+            updatePreqAccountAmountsOnly(sourceAccountingLines, totalAmount);
+        }
     }
 
     private KualiDecimal getItemAccountTotal(List<PurApAccountingLine> sourceAccountingLines) {
@@ -336,6 +346,55 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
                     }
                 }
             }
+    }
+
+    /*
+     * This is for MISC, Freight, SPHD item.  
+     * Treasury can change the item amount.  If it is from 0 to some specific amount, then it has to use this method to 
+     * calculate amount based on accounting line percentage.
+     */
+    private <T extends PurApAccountingLine> void updateMiscFrtSphdAccountAmountsWithTotal(List<T> sourceAccountingLines, KualiDecimal totalAmount) {
+        if ((totalAmount != null) && KualiDecimal.ZERO.compareTo(totalAmount) != 0) {
+            KualiDecimal accountTotal = KualiDecimal.ZERO;
+            BigDecimal accountTotalPercent = BigDecimal.ZERO;
+            T lastAccount = null;
+
+            for (T account : sourceAccountingLines) {
+                if (ObjectUtils.isNotNull(account.getAccountLinePercent()) || ObjectUtils.isNotNull(account.getAmount())) {
+                    if (ObjectUtils.isNotNull(account.getAccountLinePercent())) {
+                        BigDecimal pct = new BigDecimal(account.getAccountLinePercent().toString()).divide(new BigDecimal(100));
+                        account.setAmount(new KualiDecimal(pct.multiply(new BigDecimal(totalAmount.toString())).setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR)));
+                    }
+                }
+
+                if (ObjectUtils.isNotNull(account.getAmount())) {
+                    accountTotal = accountTotal.add(account.getAmount());
+                }
+                if (ObjectUtils.isNotNull(account.getAccountLinePercent())) {
+                    accountTotalPercent = accountTotalPercent.add(account.getAccountLinePercent());
+                }
+
+                lastAccount = account;
+            }
+
+            // put excess on last account
+            if (lastAccount != null) {
+                KualiDecimal difference = totalAmount.subtract(accountTotal);
+                if (ObjectUtils.isNotNull(lastAccount.getAmount())) {
+                    lastAccount.setAmount(lastAccount.getAmount().add(difference));
+                }
+
+                BigDecimal percentDifference = new BigDecimal(100).subtract(accountTotalPercent).setScale(BIG_DECIMAL_SCALE);
+                if (ObjectUtils.isNotNull(lastAccount.getAccountLinePercent())) {
+                    lastAccount.setAccountLinePercent(lastAccount.getAccountLinePercent().add(percentDifference));
+                }
+            }
+        }
+        else {
+            for (T account : sourceAccountingLines) {
+                account.setAmount(KualiDecimal.ZERO);
+            }
+        }
     }
 
 }
