@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
@@ -132,6 +133,7 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
         // don't update if past the AP review level
         if ((document instanceof PaymentRequestDocument) && purapService.isFullDocumentEntryCompleted(document)) {
             if (nodeNames.contains(PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW)) {  
+                // CU needs this update because the customization allows Treasury Manager to change unit/extended price and 'calculate'
                 for (PurApItem item : document.getItems()) {
                     updatePreqItemAccountAmountsOnly(item);
                 }
@@ -215,6 +217,12 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
         }
     }
 
+    /*
+     * This is for Treasury Manager to calculate PREQ.
+     * Currently, the foundation 'updateAccountAmounts' is based on the saved accounting line percentage which is rounded to 2 decimal digits.
+     * If the total amount is changed by Treasury Manager, and the calculation is based on 'percentage' saved, then it will cause some amount fraction rounding issue.
+     * This is reported in KFSPTS-3644.  You can see the detail explanation of the rounding issues.
+     */
     private void updatePreqItemAccountAmountsOnly(PurApItem item) {
         List<PurApAccountingLine> sourceAccountingLines = item.getSourceAccountingLines();
         KualiDecimal totalAmount = item.getTotalAmount();
@@ -224,6 +232,8 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
 
         if (!totalAmount.equals(KualiDecimal.ZERO) && getItemAccountTotal(sourceAccountingLines).equals(KualiDecimal.ZERO)) {
            // item.refreshReferenceObject("sourceAccountingLines"); // this is not working
+            // The item account totals can become '0' if Treasury Manager set the unit price to '0 by accident and do calculate.
+            // We need to refresh the accounting line amount from DB in order to continue.
             refreshAccountAmount(item);
         }
         updatePreqAccountAmountsOnly(sourceAccountingLines, totalAmount);
@@ -254,10 +264,15 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
         return extendedPrice;
     }
 
+    /*
+     * the calculation is based on the percentage of new total amount divided by the existing item totals.
+     * The calculated percentage is high precision (20 decimal digits).
+     * Then this calculated percentage is used to update each accounting line amount accordingly.
+     */
     private <T extends PurApAccountingLine> void updatePreqAccountAmountsOnly(List<T> sourceAccountingLines, KualiDecimal totalAmount) {
         if ((totalAmount != null) && KualiDecimal.ZERO.compareTo(totalAmount) != 0) {
             KualiDecimal accountTotal = getItemAccountTotal((List<PurApAccountingLine>)sourceAccountingLines);
-            if ((!accountTotal.equals(totalAmount)  || isAccountLinePercentEmpty((List<PurApAccountingLine>)sourceAccountingLines)) && !accountTotal.equals(KualiDecimal.ZERO)) {
+            if ((!accountTotal.equals(totalAmount)  || isAnyAccountLinePercentEmpty((List<PurApAccountingLine>)sourceAccountingLines)) && !accountTotal.equals(KualiDecimal.ZERO)) {
                 BigDecimal tmpPercent = totalAmount.bigDecimalValue().divide(accountTotal.bigDecimalValue(), PurapConstants.CREDITMEMO_PRORATION_SCALE.intValue(), KualiDecimal.ROUND_BEHAVIOR);
 
                 int accountNum = 0;
@@ -265,19 +280,21 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
                 BigDecimal percentTotalRoundUp = BigDecimal.ZERO;
                 for (T account : sourceAccountingLines) {
                     if (accountNum++ < sourceAccountingLines.size() - 1) {
-                        BigDecimal calcAmountBd = tmpPercent.multiply(account.getAmount().bigDecimalValue());
-                        calcAmountBd = calcAmountBd.setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR);
-                        KualiDecimal calcAmount = new KualiDecimal(calcAmountBd);
-                        account.setAmount(calcAmount);
-                        if (account.getAccountLinePercent() == null || account.getAccountLinePercent().compareTo(BigDecimal.ZERO) == 0) {
-                            // Tax Item is regenerated if Treasury Manager 'calculate'
-                            BigDecimal tmpAcctPercent = account.getAmount().bigDecimalValue().divide(totalAmount.bigDecimalValue(), PurapConstants.CREDITMEMO_PRORATION_SCALE.intValue(), KualiDecimal.ROUND_BEHAVIOR);
-                            account.setAccountLinePercent(tmpAcctPercent.multiply(new BigDecimal(100)));
+                        if (ObjectUtils.isNotNull(account.getAmount())) {
+                            BigDecimal calcAmountBd = tmpPercent.multiply(account.getAmount().bigDecimalValue());
+                            calcAmountBd = calcAmountBd.setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR);
+                            KualiDecimal calcAmount = new KualiDecimal(calcAmountBd);
+                            account.setAmount(calcAmount);
+                            if (ObjectUtils.isNull(account.getAccountLinePercent()) || account.getAccountLinePercent().compareTo(BigDecimal.ZERO) == 0) {
+                                // Tax Item is regenerated if Treasury Manager 'calculate'
+                                BigDecimal tmpAcctPercent = account.getAmount().bigDecimalValue().divide(totalAmount.bigDecimalValue(), PurapConstants.CREDITMEMO_PRORATION_SCALE.intValue(), KualiDecimal.ROUND_BEHAVIOR);
+                                account.setAccountLinePercent(tmpAcctPercent.multiply(new BigDecimal(100)));
+                            }
+                            accountTotal = accountTotal.add(calcAmount);
                         }
-                        accountTotal = accountTotal.add(calcAmount);
                     } else {
                         account.setAmount(totalAmount.subtract(accountTotal));
-                        if (account.getAccountLinePercent() == null || account.getAccountLinePercent().compareTo(BigDecimal.ZERO) == 0) {
+                        if (ObjectUtils.isNull(account.getAccountLinePercent()) || account.getAccountLinePercent().compareTo(BigDecimal.ZERO) == 0) {
                             account.setAccountLinePercent(new BigDecimal(100).subtract(percentTotalRoundUp));
                         }
                    }
@@ -293,12 +310,14 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
         }
     }
 
-    private boolean isAccountLinePercentEmpty(List<PurApAccountingLine> sourceAccountingLines) {
+    private boolean isAnyAccountLinePercentEmpty(List<PurApAccountingLine> sourceAccountingLines) {
         boolean isAccountLinePercentEmpty = false;;
-        for (PurApAccountingLine account : sourceAccountingLines) {
-            if (account.getAccountLinePercent() == null || account.getAccountLinePercent().compareTo(BigDecimal.ZERO) == 0) {
-                isAccountLinePercentEmpty = true;
-                break;
+        if (CollectionUtils.isNotEmpty(sourceAccountingLines)) {
+            for (PurApAccountingLine account : sourceAccountingLines) {
+                if (ObjectUtils.isNull(account.getAccountLinePercent()) || account.getAccountLinePercent().compareTo(BigDecimal.ZERO) == 0) {
+                    isAccountLinePercentEmpty = true;
+                    break;
+                }
             }
         }
         return isAccountLinePercentEmpty;
@@ -308,7 +327,7 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
             Map fieldValues = new HashMap();
             fieldValues.put(PurapPropertyConstants.ITEM_IDENTIFIER, item.getItemIdentifier());
             PurApItem orgItem = businessObjectService.findByPrimaryKey(PaymentRequestItem.class, fieldValues);
-            if (ObjectUtils.isNotNull(orgItem)) {
+            if (ObjectUtils.isNotNull(orgItem) && CollectionUtils.isNotEmpty(item.getSourceAccountingLines()) && CollectionUtils.isNotEmpty(orgItem.getSourceAccountingLines())) {
                 for (PurApAccountingLine account : item.getSourceAccountingLines()) {
                     for (PurApAccountingLine orgAccount : orgItem.getSourceAccountingLines()) {
                         if (account.getAccountIdentifier().equals(orgAccount.getAccountIdentifier())) {
