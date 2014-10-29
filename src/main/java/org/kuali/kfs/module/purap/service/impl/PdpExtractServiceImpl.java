@@ -709,7 +709,7 @@ public class PdpExtractServiceImpl implements PdpExtractService {
              lineAmount = lineAmount.negated();
           }
 
-          paymentAccountDetail.setAccountNetAmount(sourceAccountingLine.getAmount());
+          paymentAccountDetail.setAccountNetAmount(lineAmount);
           paymentAccountDetail.setFinChartCode(sourceAccountingLine.getChartOfAccountsCode());
           paymentAccountDetail.setFinObjectCode(sourceAccountingLine.getFinancialObjectCode());
 
