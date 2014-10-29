@@ -105,10 +105,15 @@ public class CuRequisitionDocument extends RequisitionDocument {
                 CUPurapParameterConstants.B2B_TOTAL_AMOUNT_FOR_AUTO_PO));
         KualiDecimal autoPOAmount = new KualiDecimal(autoPOAmountString);
         // KFSPTS-1625
-         
-        if (KimApiServiceLocator.getPermissionService().hasPermission(
-                getRoutedByPrincipalId(), CUKFSConstants.ParameterNamespaces.PURCHASING, CUPurapConstants.B2B_HIGHER_LIMIT_PERMISSION)) {
-            String paramVal = parameterService.getParameterValueAsString(RequisitionDocument.class,
+        
+        String routedBy = getRoutedByPrincipalId();
+        if (StringUtils.isBlank(routedBy)) {
+        	routedBy = this.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+        }
+        if (KimApiServiceLocator.getPermissionService().hasPermission( routedBy,
+                CUKFSConstants.ParameterNamespaces.PURCHASING, CUPurapConstants.B2B_HIGHER_LIMIT_PERMISSION)) {
+            
+        	String paramVal = parameterService.getParameterValueAsString(RequisitionDocument.class,
                     CUPurapParameterConstants.B2B_TOTAL_AMOUNT_FOR_SUPER_USER_AUTO_PO);
             if (StringUtils.isNotBlank(paramVal)) {
                 autoPOAmount = new KualiDecimal(paramVal);
