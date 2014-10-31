@@ -73,11 +73,6 @@
           <input name="imageField" type="submit" value="Login" class="go" title="Click to login.">
           <input name="methodToCall" type="hidden" value="login" />
         </html:form>
-      
-        <html:form action="/backdoorlogin.do" method="post" style="margin:0; display:inline">
-          <input name="imageField" type="submit" value="Logout" class="go" title="Click to logout.">
-          <input name="methodToCall" type="hidden" value="logout" />
-        </html:form> 
       </c:if>
     </c:otherwise> 
   </c:choose> 
