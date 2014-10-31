@@ -239,7 +239,7 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
         
         if (StringUtils.equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_MISC_CODE,item.getItemTypeCode()) || StringUtils.equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_FREIGHT_CODE,item.getItemTypeCode())
                 || StringUtils.equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_SHIP_AND_HAND_CODE,item.getItemTypeCode())) {
-            if (!totalAmount.equals(KualiDecimal.ZERO) && getItemAccountTotal(sourceAccountingLines).equals(KualiDecimal.ZERO)) {
+            if (totalAmount.isNonZero() && getItemAccountTotal(sourceAccountingLines).isZero()) {
                 updateMiscFrtSphdAccountAmountsWithTotal(sourceAccountingLines, totalAmount);
             } else {
                 updatePreqAccountAmountsOnly(sourceAccountingLines, totalAmount);
@@ -354,7 +354,7 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
      * calculate amount based on accounting line percentage.
      */
     private <T extends PurApAccountingLine> void updateMiscFrtSphdAccountAmountsWithTotal(List<T> sourceAccountingLines, KualiDecimal totalAmount) {
-        if ((totalAmount != null) && KualiDecimal.ZERO.compareTo(totalAmount) != 0) {
+        if (ObjectUtils.isNotNull(totalAmount) && totalAmount.isNonZero()) {
             KualiDecimal accountTotal = KualiDecimal.ZERO;
             BigDecimal accountTotalPercent = BigDecimal.ZERO;
             T lastAccount = null;
@@ -378,7 +378,7 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
             }
 
             // put excess on last account
-            if (lastAccount != null) {
+            if (ObjectUtils.isNotNull(lastAccount)) {
                 KualiDecimal difference = totalAmount.subtract(accountTotal);
                 if (ObjectUtils.isNotNull(lastAccount.getAmount())) {
                     lastAccount.setAmount(lastAccount.getAmount().add(difference));
