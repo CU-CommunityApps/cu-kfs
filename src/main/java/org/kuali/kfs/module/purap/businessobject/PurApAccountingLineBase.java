@@ -291,5 +291,15 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
         this.discountTradeIn = discountTradeIn;
     }
 
+    @Override
+    public String toString() {
+        String acctLineString =  super.toString();
+        if (StringUtils.isNotBlank(organizationReferenceId)) {
+            acctLineString = acctLineString + ", " + organizationReferenceId;
+
+        }
+        
+        return acctLineString;
+    }
  
 }
