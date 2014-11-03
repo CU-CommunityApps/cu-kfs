@@ -1,6 +1,13 @@
 package edu.cornell.kfs.module.purap.document.web.struts;
 
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
+import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.web.struts.PaymentRequestForm;
+import org.kuali.rice.kns.web.ui.ExtraButton;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.purap.CUPurapAuthorizationConstants.CUPaymentRequestEditMode;
 
@@ -29,5 +36,24 @@ public class CuPaymentRequestForm extends PaymentRequestForm {
 	public void setWireChargeMessage(String wireChargeMessage) {
 		this.wireChargeMessage = wireChargeMessage;
 	}
+
+    @Override
+    public List<ExtraButton> getExtraButtons() {
+        super.getExtraButtons();
+        PaymentRequestDocument paymentRequestDocument = this.getPaymentRequestDocument();
+        if (StringUtils.equalsIgnoreCase(paymentRequestDocument.getFinancialSystemDocumentHeader().getApplicationDocumentStatus(), PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED)) {
+            ExtraButton cancelButton = null;
+            for (ExtraButton extraButton : extraButtons) {
+                if (StringUtils.equals("methodToCall.cancel", extraButton.getExtraButtonProperty())) {
+                    cancelButton = extraButton;
+                }                
+            }
+            if (ObjectUtils.isNotNull(cancelButton)) {
+                extraButtons.remove(cancelButton);
+            }
+            
+        }
+        return extraButtons;
+    }
 
 }
