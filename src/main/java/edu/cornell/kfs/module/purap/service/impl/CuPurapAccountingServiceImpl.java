@@ -218,7 +218,7 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
     }
 
     /*
-     * This is for Treasury Manager to calculate PREQ.
+     * Updates PREQ accounting line amounts only when Treasury Manager is doing 'calculate'.
      * Currently, the foundation 'updateAccountAmounts' is based on the saved accounting line percentage which is rounded to 2 decimal digits.
      * If the total amount is changed by Treasury Manager, and the calculation is based on 'percentage' saved, then it will cause some amount fraction rounding issue.
      * This is reported in KFSPTS-3644.  You can see the detail explanation of the rounding issues.
