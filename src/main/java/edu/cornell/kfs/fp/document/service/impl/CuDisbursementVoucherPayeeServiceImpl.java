@@ -3,11 +3,12 @@ package edu.cornell.kfs.fp.document.service.impl;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
+import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.service.impl.DisbursementVoucherPayeeServiceImpl;
@@ -17,8 +18,12 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kim.impl.KIMPropertyConstants;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
@@ -29,6 +34,8 @@ import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
 
 
 public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPayeeServiceImpl implements CuDisbursementVoucherPayeeService {
+
+	private org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuDisbursementVoucherPayeeServiceImpl.class);
 
     /**
      * @see org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService#getPayeeFromVendor(org.kuali.kfs.vnd.businessobject.VendorDetail)
@@ -108,7 +115,68 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
 
         return (DisbursementPayee) disbursementPayee;
     }
-    
+
+    /**
+     * Copied from superclass, and updated to use the initiator's principal name instead of principal ID when preparing the ad hoc FYI to the initiator.
+     * 
+     * @see org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService#checkPayeeAddressForChanges(org.kuali.kfs.fp.document.DisbursementVoucherDocument)
+     */
+    @Override
+    public void checkPayeeAddressForChanges(DisbursementVoucherDocument dvDoc) {
+        Map<String, String> pks = new HashMap<String, String>();
+        pks.put("documentNumber", dvDoc.getDocumentNumber());
+
+        DisbursementVoucherDocument savedDv = businessObjectService.findByPrimaryKey(DisbursementVoucherDocument.class, pks);
+        DisbursementVoucherPayeeDetail newPayeeDetail = dvDoc.getDvPayeeDetail();
+        DisbursementVoucherPayeeDetail oldPayeeDetail = savedDv.getDvPayeeDetail();
+
+        if (ObjectUtils.isNotNull(oldPayeeDetail) && ObjectUtils.isNotNull(newPayeeDetail)) {
+            if (!oldPayeeDetail.hasSameAddress(newPayeeDetail)) {// Addresses don't match, so let's start the recording of
+                // changes
+
+                // Put a note on the document to record the change to the address
+                try {
+                    String noteText = buildPayeeChangedNoteText(newPayeeDetail, oldPayeeDetail);
+
+                    int noteMaxSize = dataDictionaryService.getAttributeMaxLength("Note", "noteText");
+
+                    // Break up the note into multiple pieces if the note is too large to fit in the database field.
+                    while (noteText.length() > noteMaxSize) {
+                        int fromIndex = 0;
+                        fromIndex = noteText.lastIndexOf(';', noteMaxSize);
+
+                        String noteText1 = noteText.substring(0, fromIndex);
+                        Note note1 = documentService.createNoteFromDocument(dvDoc, noteText1);
+                        dvDoc.addNote(note1);
+                        noteText = noteText.substring(fromIndex);
+                    }
+
+                    Note note = documentService.createNoteFromDocument(dvDoc, noteText);
+                    dvDoc.addNote(note);
+                }
+                catch (Exception e) {
+                    LOG.error("Exception while attempting to create or add note: " + e);
+                }
+
+                // Send out FYIs to all previous approvers so they're aware of the changes to the address
+                try {
+                    Set<Person> priorApprovers = dvDoc.getAllPriorApprovers();
+
+                    // ==== Cornell Customization: Retrieve and use the initiator's principal name. ====
+                    String initiatorUserId = KimApiServiceLocator.getIdentityService().getPrincipal(
+                            dvDoc.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId()).getPrincipalName();
+                    setupFYIs(dvDoc, priorApprovers, initiatorUserId);
+                }
+                catch (WorkflowException we) {
+                    LOG.error("Exception while attempting to retrieve all prior approvers from workflow: " + we);
+                }
+                catch (Exception unfe) {
+                    LOG.error("Exception while attempting to retrieve all prior approvers for a disbursement voucher: " + unfe);
+                }
+            }
+        }
+    }
+
     /**
      * @see org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService#getFieldConversionBetweenPayeeAndPerson()
      */

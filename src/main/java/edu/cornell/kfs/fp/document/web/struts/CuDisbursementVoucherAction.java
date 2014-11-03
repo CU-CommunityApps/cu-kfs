@@ -10,10 +10,12 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.fp.document.service.impl.DisbursementVoucherPayeeServiceImpl;
 import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherAction;
 import org.kuali.kfs.integration.ar.AccountsReceivableCustomer;
 import org.kuali.kfs.integration.ar.AccountsReceivableCustomerAddress;
@@ -31,7 +33,9 @@ import org.kuali.rice.kns.document.authorization.TransactionalDocumentAuthorizer
 import org.kuali.rice.kns.document.authorization.TransactionalDocumentPresentationController;
 import org.kuali.rice.kns.question.ConfirmationQuestion;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
+import org.kuali.rice.krad.rules.rule.event.SaveDocumentEvent;
 import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.KualiRuleService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
@@ -372,6 +376,39 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
         SpringContext.getBean(PurapService.class).saveDocumentNoValidation(iWantDocument);
 
         return mapping.findForward(RiceConstants.MAPPING_BASIC);
+    }
+
+    /**
+     * Overridden to also perform address change notifications if the document is enroute.
+     * 
+     * @see org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase#save()
+     */
+    @SuppressWarnings("deprecation")
+    @Override
+    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        CuDisbursementVoucherForm dvForm = (CuDisbursementVoucherForm) form;
+        ActionForward forward;
+        
+        // If the document is ENROUTE, then also send address change notifications as needed.
+        if (dvForm.getFinancialDocument().getDocumentHeader().getWorkflowDocument().isEnroute()) {
+            boolean passed = SpringContext.getBean(KualiRuleService.class).applyRules(new SaveDocumentEvent(dvForm.getFinancialDocument()));
+            if (passed) {
+                SpringContext.getBean(DisbursementVoucherPayeeServiceImpl.class).checkPayeeAddressForChanges(
+                        (CuDisbursementVoucherDocument) dvForm.getFinancialDocument());
+            }
+            
+            forward = super.save(mapping, form, request, response);
+            
+            if (passed && CollectionUtils.isNotEmpty(dvForm.getFinancialDocument().getAdHocRoutePersons())
+                    && GlobalVariables.getMessageMap().hasNoErrors()) {
+                sendAdHocRequests(mapping, form, request, response);
+            }
+        } else {
+            // If the document is not ENROUTE, then just proceed as in the superclass.
+            forward = super.save(mapping, form, request, response);
+        }
+        
+        return forward;
     }
 
 }
