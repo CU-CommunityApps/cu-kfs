@@ -41,5 +41,16 @@
   			</list>
   		</property>
   	</bean>
+    <!-- Calculate Accounts Payable Event --> 
+    <bean id="PaymentRequest-calculateAccountsPayableValidation" parent="PaymentRequest-calculateAccountsPayableValidation-parentBean" scope="prototype">
+        <property name="validations">
+            <list>
+                <bean parent="PaymentRequest-totalsValidation" scope="prototype" />
+                <bean parent="PaymentRequest-payDateNotOverThresholdDaysAwayValidation" scope="prototype" />
+                <bean parent="PaymentRequest-grandTotalOverZeroValidation" scope="prototype" />
+                <bean parent="PaymentRequest-payDateNotPastValidation" scope="prototype" />
+            </list>
+        </property>                                     
+    </bean>
   
  </beans>
