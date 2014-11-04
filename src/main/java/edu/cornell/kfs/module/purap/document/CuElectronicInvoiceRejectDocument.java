@@ -12,7 +12,9 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.service.DataDictionaryService;
+import org.kuali.rice.krad.util.NoteType;
 
 import edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceItemHolder;
 
@@ -132,6 +134,16 @@ public class CuElectronicInvoiceRejectDocument extends ElectronicInvoiceRejectDo
         }
         return returnValue;
 
+    }
+
+    @Override
+    public PersistableBusinessObject getNoteTarget() {
+        return this;
+    }
+
+    @Override
+    public NoteType getNoteType() {
+        return NoteType.BUSINESS_OBJECT;
     }
 
 }
