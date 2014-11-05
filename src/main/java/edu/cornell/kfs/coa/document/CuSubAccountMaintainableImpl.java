@@ -1,6 +1,8 @@
 package edu.cornell.kfs.coa.document;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -341,4 +343,24 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
         }
         return retval;
     }
+    
+    /**
+     * After a copy is done set specific fields on {@link SubAccount} to default values
+     *
+     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#processAfterCopy()
+     */
+    @Override
+    public void processAfterCopy(org.kuali.rice.kns.document.MaintenanceDocument  document, Map<String, String[]> parameters) {
+        super.processAfterCopy(document, parameters);
+        SubAccount subAccount = (SubAccount) this.getBusinessObject();
+
+        List<A21IndirectCostRecoveryAccount> copyIndirectCostRecoveryAccounts = new ArrayList<A21IndirectCostRecoveryAccount>();
+        for(A21IndirectCostRecoveryAccount indirectAccount : subAccount.getA21SubAccount().getA21ActiveIndirectCostRecoveryAccounts()) {
+            indirectAccount.setA21IndirectCostRecoveryAccountGeneratedIdentifier(null);
+            copyIndirectCostRecoveryAccounts.add(indirectAccount);
+        }
+
+        subAccount.getA21SubAccount().setA21IndirectCostRecoveryAccounts(copyIndirectCostRecoveryAccounts);
+    }
+    
 }
