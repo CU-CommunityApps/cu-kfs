@@ -41,22 +41,29 @@ public interface AccountReversionDao {
     /**
      * Retrieves all AccountReversion entries that have the given CashReversionAcount.
      * 
-     * @param universityFiscalYear
      * @param cashReversionFinancialChartOfAccountsCode
      * @param cashReversionAccountNumber
      * @return a list of all AccountReversion entries that have the given CashReversionAcount
      */
-    public List<AccountReversion> getAccountReversionsByCashReversionAcount(Integer universityFiscalYear, String cashReversionFinancialChartOfAccountsCode, String cashReversionAccountNumber);
+    public List<AccountReversion> getAccountReversionsByCashReversionAcount(String cashReversionFinancialChartOfAccountsCode, String cashReversionAccountNumber);
     
     /**
      * Retrieves all AccountReversion entries that have the given BudgetReversionAccount.
      * 
-     * @param universityFiscalYear
      * @param budgetReversionChartOfAccountsCode
      * @param budgetReversionAccountNumber
      * @return a list of all AccountReversion entries that have the given BudgetReversionAccount
      */
-    public List<AccountReversion> getAccountReversionsByBudgetReversionAcount(Integer universityFiscalYear, String budgetReversionChartOfAccountsCode, String budgetReversionAccountNumber);
+    public List<AccountReversion> getAccountReversionsByBudgetReversionAcount(String budgetReversionChartOfAccountsCode, String budgetReversionAccountNumber);
+    
+    /**
+     * Retrieve all account Reversions with the given chart and account number
+     * 
+     * @param chartOfAccountsCode
+     * @param accountNumber
+     * @return a list of account Reversions with the given chart and account number
+     */
+    public List<AccountReversion> getAccountReversionsByChartAndAccount(String chartOfAccountsCode, String accountNumber);
 
     /**
      * Get all the categories {@link OrganizationReversionCategory}

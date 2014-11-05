@@ -25,6 +25,7 @@ import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb
 import edu.cornell.kfs.coa.businessobject.AccountReversion;
 import edu.cornell.kfs.coa.businessobject.ReversionCategory;
 import edu.cornell.kfs.coa.dataaccess.AccountReversionDao;
+import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
 
 /**
@@ -63,16 +64,16 @@ public class AccountReversionDaoOjb extends PlatformAwareDaoBaseOjb implements A
     }
 
     /**
-     * @see edu.cornell.kfs.coa.dataaccess.AccountReversionDao#getAccountReversionsByCashReversionAcount(java.lang.Integer, java.lang.String, java.lang.String)
+     * @see edu.cornell.kfs.coa.dataaccess.AccountReversionDao#getAccountReversionsByCashReversionAcount(java.lang.String, java.lang.String)
      */
     @Override
-    public List<AccountReversion> getAccountReversionsByCashReversionAcount(Integer universityFiscalYear, String cashReversionFinancialChartOfAccountsCode, String cashReversionAccountNumber) {
+    public List<AccountReversion> getAccountReversionsByCashReversionAcount(String cashReversionFinancialChartOfAccountsCode, String cashReversionAccountNumber) {
         LOG.debug("getAccountReversionsByCashReversionAcount() started");
 
         Criteria criteria = new Criteria();
-        criteria.addEqualTo("universityFiscalYear", universityFiscalYear);
-        criteria.addEqualTo("cashReversionFinancialChartOfAccountsCode", cashReversionFinancialChartOfAccountsCode);
-        criteria.addEqualTo("cashReversionAccountNumber", cashReversionAccountNumber);
+        criteria.addEqualTo(CUKFSPropertyConstants.ACCT_REVERSION_CASH_REVERSION_CHART_OF_ACCT_CODE, cashReversionFinancialChartOfAccountsCode);
+        criteria.addEqualTo(CUKFSPropertyConstants.ACCT_REVERSION_CASH_REVERSION_ACCT_NUMBER, cashReversionAccountNumber);
+        criteria.addEqualTo(CUKFSPropertyConstants.ACCT_REVERSION_ACTIVE, true);
         
         QueryByCriteria q = QueryFactory.newQuery(AccountReversion.class, criteria);
         return (List) getPersistenceBrokerTemplate().getCollectionByQuery(q);
@@ -80,16 +81,33 @@ public class AccountReversionDaoOjb extends PlatformAwareDaoBaseOjb implements A
 
 
     /**
-     * @see edu.cornell.kfs.coa.dataaccess.AccountReversionDao#getAccountReversionsByBudgetReversionAcount(java.lang.Integer, java.lang.String, java.lang.String)
+     * @see edu.cornell.kfs.coa.dataaccess.AccountReversionDao#getAccountReversionsByBudgetReversionAcount(java.lang.String, java.lang.String)
      */
     @Override
-    public List<AccountReversion> getAccountReversionsByBudgetReversionAcount(Integer universityFiscalYear, String budgetReversionChartOfAccountsCode, String budgetReversionAccountNumber) {
+    public List<AccountReversion> getAccountReversionsByBudgetReversionAcount(String budgetReversionChartOfAccountsCode, String budgetReversionAccountNumber) {
         LOG.debug("getAccountReversionsByBudgetReversionAcount() started");
 
         Criteria criteria = new Criteria();
-        criteria.addEqualTo("universityFiscalYear", universityFiscalYear);
-        criteria.addEqualTo("budgetReversionChartOfAccountsCode", budgetReversionChartOfAccountsCode);
-        criteria.addEqualTo("budgetReversionAccountNumber", budgetReversionAccountNumber);
+        criteria.addEqualTo(CUKFSPropertyConstants.ACCT_REVERSION_BUDGET_REVERSION_CHART_OF_ACCT_CODE, budgetReversionChartOfAccountsCode);
+        criteria.addEqualTo(CUKFSPropertyConstants.ACCT_REVERSION_BUDGET_REVERSION_ACCT_NUMBER, budgetReversionAccountNumber);
+        criteria.addEqualTo(CUKFSPropertyConstants.ACCT_REVERSION_ACTIVE, true);
+        
+        QueryByCriteria q = QueryFactory.newQuery(AccountReversion.class, criteria);
+        return (List) getPersistenceBrokerTemplate().getCollectionByQuery(q);
+    }
+    
+
+    /**
+     * @see edu.cornell.kfs.coa.dataaccess.AccountReversionDao#getAccountReversionsByChartAndAccount(java.lang.String, java.lang.String)
+     */
+    @Override
+    public List<AccountReversion> getAccountReversionsByChartAndAccount(String chartOfAccountsCode, String accountNumber) {
+        LOG.debug("getAccountReversionsByChartAndAccount() started");
+
+        Criteria criteria = new Criteria();
+        criteria.addEqualTo(CUKFSPropertyConstants.ACCT_REVERSION_CHART_OF_ACCT_CODE, chartOfAccountsCode);
+        criteria.addEqualTo(CUKFSPropertyConstants.ACCT_REVERSION_ACCT_NUMBER, accountNumber);
+        criteria.addEqualTo(CUKFSPropertyConstants.ACCT_REVERSION_ACTIVE, true);
         
         QueryByCriteria q = QueryFactory.newQuery(AccountReversion.class, criteria);
         return (List) getPersistenceBrokerTemplate().getCollectionByQuery(q);

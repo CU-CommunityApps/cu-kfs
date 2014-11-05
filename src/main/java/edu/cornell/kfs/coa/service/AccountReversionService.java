@@ -66,4 +66,31 @@ public interface AccountReversionService {
      * @return true if the given category name represents an active category; false otherwise
      */
     public boolean isCategoryActiveByName(String categoryName);
+    
+    /**
+     * Retrieves all AccountReversion entries that have the given CashReversionAcount.
+     * 
+     * @param cashReversionFinancialChartOfAccountsCode
+     * @param cashReversionAccountNumber
+     * @return a list of all AccountReversion entries that have the given CashReversionAcount
+     */
+    public List<AccountReversion> getAccountReversionsByCashReversionAcount(String cashReversionFinancialChartOfAccountsCode, String cashReversionAccountNumber);
+    
+    /**
+     * Retrieves all AccountReversion entries that have the given BudgetReversionAccount.
+     * 
+     * @param budgetReversionChartOfAccountsCode
+     * @param budgetReversionAccountNumber
+     * @return a list of all AccountReversion entries that have the given BudgetReversionAccount
+     */
+    public List<AccountReversion> getAccountReversionsByBudgetReversionAcount(String budgetReversionChartOfAccountsCode, String budgetReversionAccountNumber);
+    
+    /**
+     * Retrieve all account Reversions with the given chart and account number
+     * 
+     * @param chartOfAccountsCode
+     * @param accountNumber
+     * @return a list of account Reversions with the given chart and account number
+     */
+    public List<AccountReversion> getAccountReversionsByChartAndAccount(String chartOfAccountsCode, String accountNumber);
 }

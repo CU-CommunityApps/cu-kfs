@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.coa.businessobject.AccountReversion;
 import edu.cornell.kfs.coa.dataaccess.AccountReversionDao;
+import edu.cornell.kfs.coa.service.AccountReversionService;
 import edu.cornell.kfs.coa.service.AccountReversionTrickleDownInactivationService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
@@ -34,7 +36,7 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
     
     private static final Logger LOG = Logger.getLogger(AccountReversionTrickleDownInactivationServiceImpl.class);
 
-    protected AccountReversionDao accountReversionDao;
+    protected AccountReversionService accountReversionService;
     protected MaintenanceDocumentDictionaryService maintenanceDocumentDictionaryService;
     protected MaintenanceDocumentDao maintenanceDocumentDao;
     protected NoteService noteService;
@@ -62,20 +64,19 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
             throw new RuntimeException("Unable to instantiate Account Reversion Maintainable" , e);
         }
         
-        Integer universityFiscalYear = universityDateService.getCurrentFiscalYear() - 1;
         List<AccountReversion> accountReversionRules = new ArrayList<AccountReversion>();
-        AccountReversion accountReversionRule = accountReversionDao.getByPrimaryId(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
-        if(ObjectUtils.isNotNull(accountReversionRule)){
-            accountReversionRules.add(accountReversionRule);
+        List<AccountReversion> matchingAccountReversionRules = accountReversionService.getAccountReversionsByChartAndAccount(inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
+        if(ObjectUtils.isNotNull(matchingAccountReversionRules) && CollectionUtils.isNotEmpty(matchingAccountReversionRules)){
+            accountReversionRules.addAll(matchingAccountReversionRules);
         }
         
-        List<AccountReversion> cashAccountReversionRules = accountReversionDao.getAccountReversionsByCashReversionAcount(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
+        List<AccountReversion> cashAccountReversionRules = accountReversionService.getAccountReversionsByCashReversionAcount(inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
         
         if(ObjectUtils.isNotNull(cashAccountReversionRules) && cashAccountReversionRules.size() > 0){
             accountReversionRules.addAll(cashAccountReversionRules);
         }
         
-        List<AccountReversion> budgetAccountReversionRules = accountReversionDao.getAccountReversionsByBudgetReversionAcount(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
+        List<AccountReversion> budgetAccountReversionRules = accountReversionService.getAccountReversionsByBudgetReversionAcount(inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
         
         if(ObjectUtils.isNotNull(budgetAccountReversionRules) && budgetAccountReversionRules.size() > 0){
             accountReversionRules.addAll(budgetAccountReversionRules);
@@ -114,18 +115,18 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
 
         Integer universityFiscalYear = universityDateService.getCurrentFiscalYear() - 1;
         List<AccountReversion> accountReversionRules = new ArrayList<AccountReversion>();
-        AccountReversion accountReversionRule = accountReversionDao.getByPrimaryId(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
-        if(ObjectUtils.isNotNull(accountReversionRule)){
-            accountReversionRules.add(accountReversionRule);
+        List<AccountReversion> matchingAccountReversionRules = accountReversionService.getAccountReversionsByChartAndAccount(inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
+        if(ObjectUtils.isNotNull(matchingAccountReversionRules) && CollectionUtils.isNotEmpty(matchingAccountReversionRules)){
+            accountReversionRules.addAll(matchingAccountReversionRules);
         }
         
-        List<AccountReversion> cashAccountReversionRules = accountReversionDao.getAccountReversionsByCashReversionAcount(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
+        List<AccountReversion> cashAccountReversionRules = accountReversionService.getAccountReversionsByCashReversionAcount(inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
         
         if(ObjectUtils.isNotNull(cashAccountReversionRules) && cashAccountReversionRules.size() > 0){
             accountReversionRules.addAll(cashAccountReversionRules);
         }
         
-        List<AccountReversion> budgetAccountReversionRules = accountReversionDao.getAccountReversionsByBudgetReversionAcount(universityFiscalYear, inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
+        List<AccountReversion> budgetAccountReversionRules = accountReversionService.getAccountReversionsByBudgetReversionAcount(inactivatedAccount.getChartOfAccountsCode(), inactivatedAccount.getAccountNumber());
         
         if(ObjectUtils.isNotNull(budgetAccountReversionRules) && budgetAccountReversionRules.size() > 0){
             accountReversionRules.addAll(budgetAccountReversionRules);
@@ -335,24 +336,6 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
     }
 
     /**
-     * Gets the accountReversionDao.
-     * 
-     * @return accountReversionDao
-     */
-    public AccountReversionDao getAccountReversionDao() {
-        return accountReversionDao;
-    }
-
-    /**
-     * Sets the accountReversionDao.
-     * 
-     * @param accountReversionDao
-     */
-    public void setAccountReversionDao(AccountReversionDao accountReversionDao) {
-        this.accountReversionDao = accountReversionDao;
-    }
-
-    /**
      * Gets the universityDateService.
      * 
      * @return universityDateService
@@ -369,5 +352,22 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
     public void setUniversityDateService(UniversityDateService universityDateService) {
         this.universityDateService = universityDateService;
     }
+
+	/**
+	 * Gets the accountReversionService.
+	 * @return accountReversionService
+	 */
+	public AccountReversionService getAccountReversionService() {
+		return accountReversionService;
+	}
+
+	/**
+	 * Sets the accountReversionService.
+	 * 
+	 * @param accountReversionService
+	 */
+	public void setAccountReversionService(AccountReversionService accountReversionService) {
+		this.accountReversionService = accountReversionService;
+	}
 
 }

@@ -175,8 +175,8 @@
 		<property name="documentHeaderService">
 			<ref bean="documentHeaderService" />
 		</property>
-		<property name="accountReversionDao">
-			<ref bean="accountReversionDao" />
+		<property name="accountReversionService">
+			<ref bean="accountReversionService" />
 		</property>
 		<property name="universityDateService">
 			<ref bean="universityDateService" />

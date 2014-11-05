@@ -120,6 +120,31 @@ public class AccountReversionServiceImpl implements AccountReversionService {
         if (category == null) return false;
         return category.isActive();
     }
+    
+
+	/**
+	 * @see edu.cornell.kfs.coa.service.AccountReversionService#getAccountReversionsByCashReversionAcount(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public List<AccountReversion> getAccountReversionsByCashReversionAcount(String cashReversionFinancialChartOfAccountsCode, String cashReversionAccountNumber) {
+		return accountReversionDao.getAccountReversionsByCashReversionAcount(cashReversionFinancialChartOfAccountsCode, cashReversionAccountNumber);
+	}
+
+	/**
+	 * @see edu.cornell.kfs.coa.service.AccountReversionService#getAccountReversionsByBudgetReversionAcount(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public List<AccountReversion> getAccountReversionsByBudgetReversionAcount(String budgetReversionChartOfAccountsCode, String budgetReversionAccountNumber) {
+		return accountReversionDao.getAccountReversionsByBudgetReversionAcount(budgetReversionChartOfAccountsCode, budgetReversionAccountNumber);
+	}
+
+	/**
+	 * @see edu.cornell.kfs.coa.service.AccountReversionService#getAccountReversionsByChartAndAccount(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public List<AccountReversion> getAccountReversionsByChartAndAccount(String chartOfAccountsCode, String accountNumber) {
+		return accountReversionDao.getAccountReversionsByChartAndAccount(chartOfAccountsCode, accountNumber);
+	}
 
     /**
      * 
@@ -137,4 +162,5 @@ public class AccountReversionServiceImpl implements AccountReversionService {
     public void setBusinessObjectService(BusinessObjectService boService) {
         this.businessObjectService = boService;
     }
+
 }
