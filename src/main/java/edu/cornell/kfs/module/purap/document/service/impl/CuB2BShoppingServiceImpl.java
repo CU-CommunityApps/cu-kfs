@@ -338,13 +338,13 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
                 principalId, KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE, CUPurapConstants.B2B_SUBMIT_ESHOP_CART_PERMISSION))  {
       		  return CUPurapConstants.SCIQUEST_ROLE_BUYER;
       	  } else {
-          	return CUPurapConstants.SCIQUEST_ROLE_BUYER;
+          	return CUPurapConstants.SCIQUEST_ROLE_SHOPPER;
       	  }
           
         } catch (Exception e) {
             // incase something goes wrong.  continue to process
             LOG.info("error from role check " + e.getMessage());
-            return CUPurapConstants.SCIQUEST_ROLE_BUYER;
+            return CUPurapConstants.SCIQUEST_ROLE_SHOPPER;
         }
     }
     private String getViewValue(String principalId) {
