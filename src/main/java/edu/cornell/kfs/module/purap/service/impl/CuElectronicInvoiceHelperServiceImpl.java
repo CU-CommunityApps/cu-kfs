@@ -76,6 +76,7 @@ import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kns.util.KNSGlobalVariables;
 import org.kuali.rice.krad.bo.Attachment;
 import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.exception.ValidationException;
 import org.kuali.rice.krad.service.AttachmentService;
 import org.kuali.rice.krad.service.BusinessObjectService;
@@ -1332,7 +1333,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         try {
             note = SpringContext.getBean(DocumentService.class).createNoteFromDocument(eInvoiceRejectDocument, noteText);
             // KFSCNTRB-1369: Can't add note without remoteObjectIdentifier
-            note.setRemoteObjectIdentifier(eInvoiceRejectDocument.getDocumentHeader().getObjectId());
+            note.setRemoteObjectIdentifier(eInvoiceRejectDocument.getNoteTarget().getObjectId());
         } catch (Exception e1) {
             throw new RuntimeException("Unable to create note from document: ", e1);
         }
@@ -1708,5 +1709,19 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
     }
    
+    protected void addRejectReasonsToNote(String rejectReasons, ElectronicInvoiceRejectDocument eInvoiceRejectDocument){
+
+        try {
+            Note note = SpringContext.getBean(DocumentService.class).createNoteFromDocument(eInvoiceRejectDocument, rejectReasons);
+            // KFSCNTRB-1369: Can't add note without remoteObjectIdentifier
+            note.setRemoteObjectIdentifier(eInvoiceRejectDocument.getNoteTarget().getObjectId());
+            PersistableBusinessObject noteParent = eInvoiceRejectDocument.getNoteTarget();
+            SpringContext.getBean(NoteService.class).save(note);
+        }catch (Exception e) {
+            LOG.error("Error creating reject reason note - " + e.getMessage());
+        }
+    }
+
+
 
 }
