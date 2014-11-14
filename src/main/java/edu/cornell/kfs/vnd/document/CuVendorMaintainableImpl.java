@@ -1,10 +1,5 @@
 package edu.cornell.kfs.vnd.document;
 
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -12,15 +7,12 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
-import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.krad.document.Document;
-import org.kuali.rice.krad.maintenance.MaintenanceLock;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.service.SequenceAccessorService;
 import org.kuali.rice.krad.util.KRADConstants;
-import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
@@ -98,48 +90,4 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
  
     }
 
-    @Override 
-    public List<MaintenanceLock> generateMaintenanceLocks() {
-        if (ObjectUtils.isNull(((VendorDetail) getBusinessObject()).getVendorDetailAssignedIdentifier())) {
-            return new ArrayList();
-        }
-
-        List<MaintenanceLock> maintenanceLocks = new ArrayList<MaintenanceLock>();
-        
-        Class dataObjectClass = this.getDataObjectClass();
-        StringBuffer lockRepresentation = new StringBuffer(dataObjectClass.getName());
-        lockRepresentation.append(KRADConstants.Maintenance.LOCK_AFTER_CLASS_DELIM);
-
-        Object bo = getDataObject();
-        List keyFieldNames = getDocumentDictionaryService().getLockingKeys(getDocumentTypeName());
-
-        StringBuffer old = new StringBuffer();
-        old.append(lockRepresentation);
-        for (Iterator i = keyFieldNames.iterator(); i.hasNext(); ) {
-            String fieldName = (String) i.next();
-            Object fieldValue = ObjectUtils.getPropertyValue(bo, fieldName);
-            if (fieldValue == null) {
-                fieldValue = "";
-            }
-            if (!i.hasNext()) {
-            	//prevents the Vendor Detail info from being appended to the lock
-            	//lock will be on the Vendor Header
-            	break;
-            }
-            lockRepresentation.append(fieldName);
-            lockRepresentation.append(KRADConstants.Maintenance.LOCK_AFTER_FIELDNAME_DELIM);
-            lockRepresentation.append(String.valueOf(fieldValue));
-            if (i.hasNext()) {
-                lockRepresentation.append(KRADConstants.Maintenance.LOCK_AFTER_VALUE_DELIM);
-            }
-        }
-        
-        MaintenanceLock maintenanceLock = new MaintenanceLock();
-        maintenanceLock.setDocumentNumber(this.getDocumentNumber());
-        maintenanceLock.setLockingRepresentation(lockRepresentation.toString());
-        maintenanceLocks.add(maintenanceLock);
-
-        return maintenanceLocks;
-	
-    }
 }
