@@ -63,6 +63,8 @@ import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute;
+
 public class GlLineServiceImpl implements GlLineService {
     private static final String CAB_DESC_PREFIX = "CAB created for FP ";
 
@@ -163,7 +165,15 @@ public class GlLineServiceImpl implements GlLineService {
                     assetGlobalDetail.setSerialNumber(capitalAssetInformationDetail.getCapitalAssetSerialNumber());
                     assetGlobalDetail.setCapitalAssetNumber(NextAssetNumberFinder.getLongValue());
                     assetGlobalDetail.setCampusTagNumber(capitalAssetInformationDetail.getCapitalAssetTagNumber());
-
+                    
+                    //KFSPTS-3597 add off campus information
+                    CapitalAssetInformationDetailExtendedAttribute extendedAttribute = (CapitalAssetInformationDetailExtendedAttribute)capitalAssetInformationDetail.getExtension();
+                    assetGlobalDetail.setOffCampusAddress(extendedAttribute.getAssetLocationStreetAddress());
+                    assetGlobalDetail.setOffCampusCityName(extendedAttribute.getAssetLocationCityName());
+                    assetGlobalDetail.setOffCampusCountryCode(extendedAttribute.getAssetLocationCountryCode());
+                    assetGlobalDetail.setOffCampusStateCode(extendedAttribute.getAssetLocationStateCode());
+                    assetGlobalDetail.setOffCampusZipCode(extendedAttribute.getAssetLocationZipCode());
+                    
                     AssetGlobalDetail uniqueAsset = new AssetGlobalDetail();
                     ObjectValueUtils.copySimpleProperties(assetGlobalDetail, uniqueAsset);
                     assetGlobalDetail.getAssetGlobalUniqueDetails().add(uniqueAsset);
