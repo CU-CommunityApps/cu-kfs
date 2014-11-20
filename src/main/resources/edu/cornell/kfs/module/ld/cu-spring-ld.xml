@@ -100,6 +100,8 @@
    <bean id="disencumbranceEnterpriseFeederFileSetType" class="edu.cornell.kfs.module.ld.batch.DisencumbranceEnterpriseFeederFileSetType" />
    <bean id="laborPendingEntryConverterService" parent="laborPendingEntryConverterService-parentBean" class="edu.cornell.kfs.module.ld.document.service.impl.CuLaborPendingEntryConverterServiceImpl" />	
    
+   <bean id="laborBenefitsCalculationService" parent="laborBenefitsCalculationService-parentBean" class="edu.cornell.kfs.module.ld.service.impl.CuLaborBenefitsCalculationServiceImpl" />
+
    <!--  Validations -->
    <import resource="document/validation/configuration/LaborValidations.xml" />
    <import resource="document/validation/configuration/BenefitExpenseTransferValidations.xml" />
