@@ -23,6 +23,7 @@
 	<kfs.version>5.2.1</kfs.version>
 	<cynergy.development>true</cynergy.development>
 	<skipTests>true</skipTests>
+	<test.excludes>**/*Test.java.bogus</test.excludes>
   </properties> 
   
   <build>
@@ -34,6 +35,9 @@
         <configuration>
           	<argLine>-Xmx2G -Xms2G -XX:MaxPermSize=512m</argLine>
         	<skipTests>${skipTests}</skipTests>
+            <excludes>
+              <exclude>${test.excludes}</exclude>
+            </excludes>
         </configuration>
       </plugin>
       <plugin>
