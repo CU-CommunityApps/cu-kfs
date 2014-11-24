@@ -33,6 +33,7 @@
 			<list>
 				<value>commodityCodeUpdateJob</value>
 				<value>vendorBatchJob</value>
+				<value>vendorInactivateConvertBatchJob</value>
 			</list>
 		</property>
         <property name="batchFileDirectories">
@@ -166,6 +167,23 @@
 			<value>edu.cornell.kfs.vnd.batch.VendorBatchCsv</value>
 		</property>
 	</bean>
+	
+	<bean id="vendorInactivateConvertBatchCsvInputFileType" parent="vendorInactivateConvertBatchCsvInputFileType-parentBean" />
+    <bean id="vendorInactivateConvertBatchCsvInputFileType-parentBean" class="edu.cornell.kfs.vnd.batch.VendorInactivateConvertBatchCsvInputFileType"
+        abstract="true">
+        <property name="directoryPath">
+            <value>${staging.directory}/vnd/vendorInactivateConvertBatch</value>
+        </property>
+        <property name="fileExtension">
+            <value>csv</value>
+        </property>
+        <property name="csvEnumClass">
+            <value>edu.cornell.kfs.vnd.batch.VendorInactivateConvertBatchCsv</value>
+        </property>
+        <property name="dateTimeService">
+	       <ref bean="dateTimeService"/>
+	    </property>
+    </bean>
 
 	<bean id="vendorBatchService" parent="vendorBatchService-parentBean" />
 	<bean id="vendorBatchService-parentBean"
@@ -201,6 +219,36 @@
 			<value>${reports.directory}/vnd/</value>
 		</property>
 	</bean>
+	
+	<bean id="vendorInactivateConvertBatchService" parent="vendorInactivateConvertBatchService-parentBean" />
+	<bean id="vendorInactivateConvertBatchService-parentBean"
+		class="edu.cornell.kfs.vnd.batch.service.impl.VendorInactivateConvertBatchServiceImpl"
+		abstract="true">
+		<property name="batchInputFileService">
+			<ref bean="batchInputFileService" />
+		</property>				        
+        
+        <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property>
+        
+        <property name="noteService">
+            <ref bean="noteService" />
+        </property>
+        
+        <property name="cuVendorService">
+            <ref bean="cuVendorService" />
+        </property>
+        
+		<property name="batchInputFileTypes">
+			<list>
+				<ref bean="vendorInactivateConvertBatchCsvInputFileType" />
+			</list>
+		</property>
+		<property name="reportsDirectoryPath">
+			<value>${reports.directory}/vnd/</value>
+		</property>
+	</bean>
 
 	<bean id="vendorBatchStep" class="edu.cornell.kfs.vnd.batch.VendorBatchStep"
 		parent="step">
@@ -208,6 +256,14 @@
 			<ref bean="vendorBatchService" />
 		</property>
 		<property name="batchInputFileType" ref="vendorBatchCsvInputFileType" />
+	</bean>
+	
+	<bean id="vendorInactivateConvertBatchStep" class="edu.cornell.kfs.vnd.batch.VendorInactivateConvertBatchStep"
+		parent="step">
+		<property name="vendorInactivateConvertBatchService">
+			<ref bean="vendorInactivateConvertBatchService" />
+		</property>
+		<property name="batchInputFileType" ref="vendorInactivateConvertBatchCsvInputFileType" />
 	</bean>
 
 	<bean id="vendorBatchJob" parent="unscheduledJobDescriptor">
@@ -217,5 +273,13 @@
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="vendorInactivateConvertBatchJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="vendorInactivateConvertBatchStep" />
+            </list>
+        </property>
+    </bean>
 
 </beans>

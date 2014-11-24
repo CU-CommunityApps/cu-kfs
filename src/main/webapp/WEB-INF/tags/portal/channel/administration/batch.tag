@@ -69,6 +69,7 @@
 	<ul class="chan">
 	    <li><portal:portalLink displayTitle="true" title="Vendor Exclusion Upload" url="batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=vendorExcludeInputFileType" /></li>
 	    <li><portal:portalLink displayTitle="true" title="Commodity Code File Upload" url="batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=commodityCodeInputFileType" /></li>
+		<li><portal:portalLink displayTitle="true" title="Vendor Inactive or Convert File Upload" url="batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=vendorInactivateConvertBatchCsvInputFileType" /></li>
 	</ul>
 	<strong>Batch/Scheduled Jobs</strong><br/>
     <ul class="chan">
