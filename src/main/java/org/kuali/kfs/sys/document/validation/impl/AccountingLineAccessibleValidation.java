@@ -152,8 +152,13 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         return (isAccessible || isExceptionNode) && valid;
     }
 
+    /*
+     * Returns true if validating a PREQ discountTradeIn account at the Account or Org Review node. If at the Account node,
+     * the current user must also not be a FO or FO delegate for the account being validated.
+     */
     private boolean isPreqDiscountRecreate(AttributedDocumentEvent event) {
-        return isAccountNode(event.getDocument()) && !isAccountingLineFo(event.getDocument()) && accountingLineForValidation instanceof PaymentRequestAccount  && isDiscountTradeInAccount();
+        return (isAccountNode(event.getDocument()) ? !isAccountingLineFo(event.getDocument()) : isOrgReviewNode(event.getDocument()))
+                && accountingLineForValidation instanceof PaymentRequestAccount  && isDiscountTradeInAccount();
     }
     /**
      * Checks to see if the object code is the only difference between the original accounting line and the updated accounting line.
@@ -324,7 +329,8 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         return KimApiServiceLocator.getRoleService().principalHasRole(currentUser.getPrincipalId(), roleIds, roleQualifier);
     }
 
-    private boolean isAccountNode(Document document) {
+    // Determines whether the document is currently at the given route node.
+    private boolean isDocumentAtNode(Document document, String nodeName) {
         WorkflowDocument workflowDocument = document.getDocumentHeader()
                 .getWorkflowDocument();
         if (workflowDocument == null) {
@@ -335,9 +341,19 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
 
             }
         }
-        return workflowDocument != null && workflowDocument.getDocument() != null &&  workflowDocument.getCurrentNodeNames().contains(RequisitionStatuses.NODE_ACCOUNT);
+        
+        return workflowDocument != null && workflowDocument.getDocument() != null
+                && workflowDocument.getCurrentNodeNames().contains(nodeName);
     }
-    
+
+    private boolean isAccountNode(Document document) {
+        return isDocumentAtNode(document, RequisitionStatuses.NODE_ACCOUNT);
+    }
+
+    private boolean isOrgReviewNode(Document document) {
+        return isDocumentAtNode(document, RequisitionStatuses.NODE_ORG_REVIEW);
+    }
+
     // KFSPTS-2200 
     /*
      * Discount is prorated and account is recreated when saving or approving document.  This caused problem for FO to approve account that does not belong to him/her.
