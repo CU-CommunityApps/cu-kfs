@@ -62,9 +62,6 @@
     <c:when test="${empty UserSession.loggedInUserPrincipalName}" > 
     </c:when> 
     <c:when test="${fn:trim(ConfigProperties.environment) == fn:trim(ConfigProperties.production.environment.code)}" >
-	      <html:form action="/logout.do" method="post" style="margin:0; display:inline">
-    	    <input name="imageField" type="submit" value="Logout" class="go" title="Click to logout.">
-      	  </html:form>
     </c:when>
     <c:otherwise> 
       <c:if test="${backdoorEnabled}">
