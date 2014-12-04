@@ -102,5 +102,7 @@
         <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />   
         <property name="kfsMailMessageService" ref="kfsMailMessageService" />          
     </bean>
+    
+    <bean id="achPayeeLookupableHelperService" parent="achPayeeLookupableHelperService-parentBean" class="edu.cornell.kfs.pdp.businessobject.lookup.CuACHPayeeLookupableHelperServiceImpl" />
 
 </beans>
