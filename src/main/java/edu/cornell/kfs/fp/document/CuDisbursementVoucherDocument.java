@@ -444,7 +444,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         }
         // KFSPTS-1891.  This is from uadisbvdocument.  
         // TODO : need to check again to see if cornell need this
-        if ( getDocumentHeader().getWorkflowDocument().isInitiated() ||  getDocumentHeader().getWorkflowDocument().isSaved() ) {
+        // CU Customization: Also perform check below when an ENROUTE doc is at the initial "AdHoc" node.
+        if ( getDocumentHeader().getWorkflowDocument().isInitiated() ||  getDocumentHeader().getWorkflowDocument().isSaved()
+                || (getDocumentHeader().getWorkflowDocument().isEnroute()
+                        && getDocumentHeader().getWorkflowDocument().getCurrentNodeNames().contains("AdHoc")) ) {
             // need to check whether the user has the permission to edit the bank code
             // if so, don't synchronize since we can't tell whether the value coming in
             // was entered by the user or not.        
@@ -469,9 +472,15 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
                 refreshReferenceObject( "bank" );
             }
         } else {
-            // no bank code, no bank needed
-            setDisbVchrBankCode(null);
-            setBank(null);
+            // CU Customization: Load default bank if no payment method is given, or set to null if no default bank could be found.
+            Bank defaultBank = SpringContext.getBean(BankService.class).getDefaultBankByDocType(this.getClass());
+            if (defaultBank != null) {
+                setDisbVchrBankCode(defaultBank.getBankCode());
+                setBank(defaultBank);
+            } else {
+                setDisbVchrBankCode(null);
+                setBank(null);
+            }
         }
     }
     
