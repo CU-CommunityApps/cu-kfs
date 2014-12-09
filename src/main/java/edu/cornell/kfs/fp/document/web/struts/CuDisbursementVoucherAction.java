@@ -93,14 +93,17 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
      *
      * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#cancel()
      */
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public ActionForward cancel(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Object question = request.getParameter(KRADConstants.QUESTION_INST_ATTRIBUTE_NAME);
+        String reason = request.getParameter(KRADConstants.QUESTION_REASON_ATTRIBUTE_NAME);
+        
         // this should probably be moved into a private instance variable
         // logic for cancel question
         if (question == null) {
-            // ask question if not already asked
-            return this.performQuestionWithoutInput(mapping, form, request, response, KRADConstants.DOCUMENT_CANCEL_QUESTION, getKualiConfigurationService().getPropertyValueAsString("document.question.cancel.text"), KRADConstants.CONFIRMATION_QUESTION, KRADConstants.MAPPING_CANCEL, "");
+          // ask question if not already asked
+          return this.performQuestionWithInput(mapping, form, request, response, KRADConstants.DOCUMENT_CANCEL_QUESTION, getKualiConfigurationService().getPropertyValueAsString("document.question.cancel.text"), KRADConstants.CONFIRMATION_QUESTION, KRADConstants.MAPPING_CANCEL, "");
         }
         else {
             Object buttonClicked = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
@@ -121,7 +124,7 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
             CuDisbursementVoucherDocument disbursemntVoucherDocument = (CuDisbursementVoucherDocument) kualiDocumentFormBase.getDocument();
             isTravelDV = cuLegacyTravelService.isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(disbursemntVoucherDocument);
             if(isTravelDV) { // This means the DV is a Travel DV
-                tripReOpened &= cuLegacyTravelService.reopenLegacyTrip(kualiDocumentFormBase.getDocId());
+                tripReOpened &= cuLegacyTravelService.reopenLegacyTrip(kualiDocumentFormBase.getDocId(), reason);
                 LOG.info("Trip successfully reopened : "+tripReOpened);
             } else {
                 LOG.info("DV is not a travel DV");
