@@ -263,8 +263,9 @@ public class GlLineServiceImpl implements GlLineService {
                     groupAccountLine.getAccountNumber().equals(entry.getAccountNumber()) &&
                     groupAccountLine.getFinancialObjectCode().equals(entry.getFinancialObjectCode())) {
             	// check that debit matches target acct lines and credit matches source accounting lines
-            	if((StringUtils.equals(groupAccountLine.getFinancialDocumentLineTypeCode(), KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE) && StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE)) || (StringUtils.equals(groupAccountLine.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE)) && StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_DEBIT_CODE)){
-            	  matchingAssets.add(capitalAsset);
+            	if((StringUtils.equals(groupAccountLine.getFinancialDocumentLineTypeCode(), KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE) && StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE))
+            			|| (StringUtils.equals(groupAccountLine.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE) && StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_DEBIT_CODE))){
+            	matchingAssets.add(capitalAsset);
             	  break;
               }
  
