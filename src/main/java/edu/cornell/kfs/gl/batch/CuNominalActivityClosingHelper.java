@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.kuali.kfs.coa.service.ObjectTypeService;
 import org.kuali.kfs.gl.batch.NominalActivityClosingHelper;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
@@ -19,8 +20,8 @@ public class CuNominalActivityClosingHelper extends NominalActivityClosingHelper
     protected List<String> varCharts;
     
     public CuNominalActivityClosingHelper(Integer fiscalYear, Date transactionDate, 
-            ParameterService parameterService, ConfigurationService configurationService) {
-        super(fiscalYear, transactionDate, parameterService, configurationService);
+            ParameterService parameterService, ConfigurationService configurationService, ObjectTypeService objectTypeService) {
+        super(fiscalYear, transactionDate, parameterService, configurationService, objectTypeService);
         
         //Obtain list of charts to close from Parameter ANNUAL_CLOSING_CHARTS_PARAM.
         //If no parameter value exists, act on all charts which is the default action in the delivered foundation code.
