@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="SalaryExpenseTransferDocument-blanketApproveDocumentValidation" parent="SalaryExpenseTransferDocument-blanketApproveDocumentValidation-parentBean" scope="prototype" />        
+  	<bean id="SalaryExpenseTransferDocument-blanketApproveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+  				<bean parent="AccountingDocument-BlanketApproveDocument-DefaultValidation" scope="prototype" /> 
+  			</list>
+  		</property>
+	</bean>        
+
+	<bean id="SalaryExpenseTransferDocument-approveDocumentValidation" parent="SalaryExpenseTransferDocument-approveDocumentValidation-parentBean" scope="prototype" />
+	<bean id="SalaryExpenseTransferDocument-approveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="AccountingDocument-ApproveDocument-DefaultValidation" scope="prototype" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="SalaryExpenseTransferDocument-reviewAccountingLineValidation" parent="SalaryExpenseTransferDocument-reviewAccountingLineValidation-parentBean" scope="prototype" /> 
+	<bean id="SalaryExpenseTransferDocument-reviewAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<bean parent="AccountingDocument-ReviewAccountingLine-DefaultValidation" scope="prototype" />
+  		</property>
+	</bean>	
+		
+	<bean id="SalaryExpenseTransferDocument-saveDocumentValidation" parent="SalaryExpenseTransferDocument-saveDocumentValidation-parentBean" scope="prototype" />		
+	<bean id="SalaryExpenseTransferDocument-saveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>		
+				<bean parent="SalaryExpenseTransferDocument-accountingLinesSameEmployeeValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="documentForValidation" />
+							</bean>
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>				
+			</list>
+		</property>	
+	</bean>
+		
+	<bean id="SalaryExpenseTransferDocument-addAccountingLineValidation" parent="SalaryExpenseTransferDocument-addAccountingLineValidation-parentBean" scope="prototype" />	
+	<bean id="SalaryExpenseTransferDocument-addAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="AccountingDocument-AddAccountingLine-DefaultValidation" scope="prototype" />	
+				<bean parent="LaborExpenseTransferDocument-duplicateSourceAccountingLineValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="accountingDocumentForValidation" />
+							</bean>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="LaborExpenseTransferDocument-expiredAccountBeUsedValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="LaborExpenseTransferDocument-accountAcceptFringeBenefitValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>				
+				
+				<bean parent="SalaryExpenseTransferDocument-salaryObjectCodeValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>		
+				<bean parent="SalaryExpenseTransferDocument-accountingLinesNoSalaryWagesValidation"
+					scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>	
+			</list>
+		</property>	
+	</bean>
+	
+	<bean id="SalaryExpenseTransferDocument-updateAccountingLineValidation" parent="SalaryExpenseTransferDocument-updateAccountingLineValidation-parentBean" scope="prototype" />		
+	<bean id="SalaryExpenseTransferDocument-updateAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="SalaryExpenseTransferDocument-accountingLinesSameEmployeeValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="documentForValidation" />
+							</bean>
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>				
+				<bean parent="AccountingDocument-UpdateAccountingLine-DefaultValidation" scope="prototype" />
+				<bean parent="LaborExpenseTransferDocument-duplicateSourceAccountingLineValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+							<bean parent="updatedAccountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="LaborExpenseTransferDocument-expiredAccountBeUsedValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="updatedAccountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="LaborExpenseTransferDocument-accountAcceptFringeBenefitValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="updatedAccountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>				
+				
+				<bean parent="SalaryExpenseTransferDocument-salaryObjectCodeValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="updatedAccountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>			
+				<bean parent="SalaryExpenseTransferDocument-accountingLinesNoSalaryWagesValidation"
+					scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>	
+			</list>
+		</property>	
+	</bean>
+
+	<bean id="SalaryExpenseTransferDocument-routeDocumentValidation" parent="SalaryExpenseTransferDocument-routeDocumentValidation-parentBean" scope="prototype" />	
+	<bean id="SalaryExpenseTransferDocument-routeDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="LaborExpenseTransferDocument-accountLineTotalsMatchValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="documentForValidation" />
+							</bean>
+						</list>					
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="LaborExpenseTransferDocument-AccountingLineTotalsMatchByPayFYAndPayPeriodValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="documentForValidation" />
+							</bean>
+						</list>					
+					</property>
+					<property name="quitOnFail" value="true" />				
+				</bean>
+				<bean parent="LaborExpenseTransferDocument-negtiveAmountBeTransferredValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="documentForValidation" />
+							</bean>
+						</list>					
+					</property>
+					<property name="quitOnFail" value="true" />				
+				</bean>
+				<bean parent="SalaryExpenseTransferDocument-validAmountTransferredByObjectCodeValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="documentForValidation" />
+							</bean>                          
+						</list>					
+					</property>
+					<property name="quitOnFail" value="true" />				
+				</bean>
+				<bean parent="LaborExpenseTransferDocument-validTransferAmountValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="documentForValidation" />
+							</bean>
+						</list>					
+					</property>
+					<property name="quitOnFail" value="true" />				
+				</bean>		
+				<bean parent="SalaryExpenseTransferDocument-pendingLedgerEntryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="documentForValidation" />
+							</bean>
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="SalaryExpenseTransferDocument-errorCertificationValidation" scope="prototype" />
+				<bean parent="SalaryExpenseTransferDocument-errorCertificationTabValidation" scope="prototype" />
+			</list>
+		</property>	
+	</bean>	
+</beans>

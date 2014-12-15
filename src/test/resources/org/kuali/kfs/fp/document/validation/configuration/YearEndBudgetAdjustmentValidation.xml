@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="YearEndBudgetAdjustment-routeDocumentValidation" parent="YearEndBudgetAdjustment-routeDocumentValidation-parentBean" scope="prototype" />
+
+	<bean id="YearEndBudgetAdjustment-routeDocumentValidation-parentBean" parent="BudgetAdjustment-routeDocumentValidation" abstract="true"/>
+	
+	<bean id="YearEndBudgetAdjustment-saveDocumentValidation" parent="YearEndBudgetAdjustment-saveDocumentValidation-parentBean" scope="prototype" />
+	
+	<bean id="YearEndBudgetAdjustment-saveDocumentValidation-parentBean" parent="BudgetAdjustment-saveDocumentValidation" abstract="true"/>
+	
+	<bean id="YearEndBudgetAdjustment-approveDocumentValidation" parent="YearEndBudgetAdjustment-approveDocumentValidation-parentBean" scope="prototype" />
+	
+	<bean id="YearEndBudgetAdjustment-approveDocumentValidation-parentBean" parent="BudgetAdjustment-approveDocumentValidation" abstract="true"/>
+	
+	<bean id="YearEndBudgetAdjustment-addAccountingLineValidation" parent="YearEndBudgetAdjustment-addAccountingLineValidation-parentBean" />
+	
+	<bean id="YearEndBudgetAdjustment-addAccountingLineValidation-parentBean" parent="BudgetAdjustment-addAccountingLineValidation" abstract="true"/>
+	
+	<bean id="YearEndBudgetAdjustment-deleteAccountingLineValidation" parent="BudgetAdjustment-deleteAccountingLineValidation-parentBean" scope="prototype" />
+	
+	<bean id="YearEndBudgetAdjustment-deleteAccountingLineValidation-parentBean" parent="BudgetAdjustment-deleteAccountingLineValidation" abstract="true"/>
+	
+	<bean id="YearEndBudgetAdjustment-reviewAccountingLineValidation" parent="BudgetAdjustment-reviewAccountingLineValidation-parentBean" scope="prototype" />
+
+	<bean id="YearEndBudgetAdjustment-reviewAccountingLineValidation-parentBean" parent="BudgetAdjustment-reviewAccountingLineValidation" abstract="true"/>
+		
+	<bean id="YearEndBudgetAdjustment-updateAccountingLineValidation" parent="BudgetAdjustment-updateAccountingLineValidation-parentBean" scope="prototype" />
+	
+	<bean id="YearEndBudgetAdjustment-updateAccountingLineValidation-parentBean" parent="BudgetAdjustment-updateAccountingLineValidation" abstract="true"/>
+		
+</beans>

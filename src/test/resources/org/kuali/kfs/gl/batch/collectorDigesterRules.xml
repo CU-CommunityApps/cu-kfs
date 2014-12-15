@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<!DOCTYPE digester-rules 
+    PUBLIC "-//Jakarta Apache //DTD digester-rules XML V1.0//EN" 
+    "http://jakarta.apache.org/commons/digester/dtds/digester-rules.dtd">
+
+<digester-rules>
+    <pattern value="batch">
+        <object-create-rule classname="org.kuali.kfs.gl.batch.CollectorBatch" />
+
+        <pattern value="header">
+            <call-method-rule pattern="chartOfAccountsCode" methodname="setChartOfAccountsCode" paramcount="0" />
+            <call-method-rule pattern="organizationCode"    methodname="setOrganizationCode" paramcount="0" />
+            <call-method-rule pattern="transmissionDate"    methodname="setTransmissionDate" paramcount="0" paramtypes="java.sql.Date" />
+            <call-method-rule pattern="batchSequenceNumber" methodname="setBatchSequenceNumber" paramcount="0" paramtypes="java.lang.Integer" />
+            <call-method-rule pattern="personUserId"        methodname="setPersonUserID" paramcount="0" />
+            <call-method-rule pattern="emailAddress"        methodname="setEmailAddress" paramcount="0" />
+            <call-method-rule pattern="campusCode"          methodname="setCampusCode" paramcount="0" />
+            <call-method-rule pattern="phoneNumber"         methodname="setPhoneNumber" paramcount="0" />
+            <call-method-rule pattern="mailingAddress"      methodname="setMailingAddress" paramcount="0" />
+            <call-method-rule pattern="departmentName"      methodname="setDepartmentName" paramcount="0" />
+        </pattern>
+        
+        <pattern value="glEntry">  
+            <object-create-rule classname="org.kuali.kfs.gl.businessobject.OriginEntryFull" />
+
+            <call-method-rule pattern="universityFiscalYear"              methodname="setUniversityFiscalYear" paramcount="0" paramtypes="java.lang.Integer" />
+            <call-method-rule pattern="chartOfAccountsCode"               methodname="setChartOfAccountsCode" paramcount="0" />
+            <call-method-rule pattern="accountNumber"                     methodname="setAccountNumber" paramcount="0" />
+            <call-method-rule pattern="subAccountNumber"                  methodname="setSubAccountNumber" paramcount="0" />
+            <call-method-rule pattern="objectCode"                        methodname="setFinancialObjectCode" paramcount="0" />
+            <call-method-rule pattern="subObjectCode"                     methodname="setFinancialSubObjectCode" paramcount="0" />
+            <call-method-rule pattern="balanceTypeCode"                   methodname="setFinancialBalanceTypeCode" paramcount="0" />
+            <call-method-rule pattern="objectTypeCode"                    methodname="setFinancialObjectTypeCode" paramcount="0" />
+            <call-method-rule pattern="universityFiscalAccountingPeriod"  methodname="setUniversityFiscalPeriodCode" paramcount="0" />
+            <call-method-rule pattern="documentTypeCode"                  methodname="setFinancialDocumentTypeCode" paramcount="0" />
+            <call-method-rule pattern="originationCode"                        methodname="setFinancialSystemOriginationCode" paramcount="0" />
+            <call-method-rule pattern="documentNumber"                    methodname="setDocumentNumber" paramcount="0" />
+            <call-method-rule pattern="transactionEntrySequenceId"        methodname="setTransactionLedgerEntrySequenceNumber" paramcount="0" paramtypes="java.lang.Integer"/>
+            <call-method-rule pattern="transactionLedgerEntryDescription" methodname="setTransactionLedgerEntryDescription" paramcount="0" />
+            <call-method-rule pattern="transactionLedgerEntryAmount"      methodname="setTransactionLedgerEntryAmount" paramcount="0" />
+            <call-method-rule pattern="debitOrCreditCode"                 methodname="setTransactionDebitCreditCode" paramcount="0" />
+            <call-method-rule pattern="transactionDate"                   methodname="setTransactionDate" paramcount="0" paramtypes="java.sql.Date"/>
+            <call-method-rule pattern="organizationDocumentNumber"        methodname="setOrganizationDocumentNumber" paramcount="0" />
+            <call-method-rule pattern="projectCode"                       methodname="setProjectCode" paramcount="0" />
+            <call-method-rule pattern="organizationReferenceId"           methodname="setOrganizationReferenceId" paramcount="0" />
+            <call-method-rule pattern="referenceDocumentTypeCode"         methodname="setReferenceFinancialDocumentTypeCode" paramcount="0" />
+            <call-method-rule pattern="referenceOriginationCode"          methodname="setReferenceFinancialSystemOriginationCode" paramcount="0" />
+            <call-method-rule pattern="referenceDocumentNumber"           methodname="setReferenceFinancialDocumentNumber" paramcount="0" />
+            <call-method-rule pattern="documentReversalDate"              methodname="setFinancialDocumentReversalDate" paramcount="0" paramtypes="java.sql.Date"/>
+            <call-method-rule pattern="encumbranceUpdateCode"             methodname="setTransactionEncumbranceUpdateCode" paramcount="0" />
+            
+            <set-next-rule methodname="addOriginEntry" />
+        </pattern>
+        
+        <pattern value="detail">
+            <object-create-rule classname="org.kuali.kfs.gl.businessobject.CollectorDetail" />
+            
+            <call-method-rule pattern="universityFiscalAccountingPeriod"       methodname="setUniversityFiscalPeriodCode" paramcount="0" />
+            <call-method-rule pattern="universityFiscalYear"                   methodname="setUniversityFiscalYear" paramcount="0" paramtypes="java.lang.Integer"/>
+            <call-method-rule pattern="createDate"                             methodname="setCreateDate" paramcount="0" paramtypes="java.sql.Date"/>
+            <call-method-rule pattern="chartOfAccountsCode"                    methodname="setChartOfAccountsCode" paramcount="0" />
+            <call-method-rule pattern="accountNumber"                          methodname="setAccountNumber" paramcount="0" />
+            <call-method-rule pattern="subAccountNumber"                       methodname="setSubAccountNumber" paramcount="0" />
+            <call-method-rule pattern="balanceTypeCode"                        methodname="setFinancialBalanceTypeCode" paramcount="0" />
+            <call-method-rule pattern="objectTypeCode"                         methodname="setFinancialObjectTypeCode" paramcount="0" />
+            <call-method-rule pattern="objectCode"                             methodname="setFinancialObjectCode" paramcount="0" />
+            <call-method-rule pattern="subObjectCode"                          methodname="setFinancialSubObjectCode" paramcount="0" />
+            <call-method-rule pattern="collectorDetailSequenceNumber"          methodname="setCollectorDetailSequenceNumber" paramcount="0" />
+            <call-method-rule pattern="originationCode"                        methodname="setFinancialSystemOriginationCode" paramcount="0" />
+            <call-method-rule pattern="documentTypeCode"                       methodname="setFinancialDocumentTypeCode" paramcount="0"/>
+            <call-method-rule pattern="documentNumber"                         methodname="setDocumentNumber" paramcount="0" />
+            <call-method-rule pattern="amount"                                 methodname="setCollectorDetailItemAmount" paramcount="0" />
+            <call-method-rule pattern="detailText"                             methodname="setCollectorDetailNoteText" paramcount="0" />
+            
+            <set-next-rule methodname="addCollectorDetail" />
+        </pattern>  
+                                  
+        <pattern value="trailer">
+            <call-method-rule pattern="totalRecords" methodname="setTotalRecords" paramcount="0" paramtypes="java.lang.Integer"/>
+            <call-method-rule pattern="totalAmount"  methodname="setTotalAmount" paramcount="0"/>
+        </pattern>
+
+    </pattern>
+</digester-rules>

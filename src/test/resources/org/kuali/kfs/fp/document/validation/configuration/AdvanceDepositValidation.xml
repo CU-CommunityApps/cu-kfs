@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+        
+    <bean id="advanceDepositDocumentFieldConversion" parent="validationFieldConversion">
+		<property name="sourceEventProperty" value="document" />
+		<property name="targetValidationProperty" value="advanceDepositDocumentForValidation" />
+	</bean>
+        
+    <bean id="AdvanceDeposit-routeDocument-FailFastValidation" abstract="true" parent="CompositeValidation" scope="prototype">
+		<property name="validations">
+			<list>
+				<bean parent="AccountingDocument-oneSidedRequiredAccountingLinesCountValidation" scope="prototype">
+					<property name="requiredMinimumCount" value="1" />
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="CashReceiptFamily-accountingLineTotalValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="AdvanceDeposit-documentTotalValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="advanceDepositDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="AdvanceDeposit-anyElectronicFundAccountingLineAllElectronicFundAccountingLinesValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="advanceDepositDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="AdvanceDeposit-routeDocumentValidation" parent="AdvanceDeposit-routeDocumentValidation-parentBean" scope="prototype" />
+	
+	<bean id="AdvanceDeposit-routeDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="AdvanceDeposit-routeDocument-FailFastValidation" scope="prototype" p:quitOnFail="true" />
+				<bean parent="AdvanceDeposit-minimumAdvanceDepositValidation" scope="prototype">
+					<property name="requiredMinimumCount" value="1" />
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="AccountingDocument-capitalAssetLineUniquenessValidation" scope="prototype" />
+				<bean parent="CapitalAccountingLines-capitalAccountingLinesValidations" scope="prototype" />
+				
+				<bean parent="CapitialAssetInformation-capitalAssetInformationValidation" scope="prototype" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="AdvanceDeposit-saveValidation-advanceDepositsValidation" abstract="true" parent="CollectionValidation" scope="prototype">
+		<property name="collectionProperty" value="document.advanceDeposits" />
+		<property name="validations">
+			<list>
+				<bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype" p:quitOnFail="true">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="iterationSubject" />
+								<property name="targetValidationProperty" value="businessObjectForValidation" />
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="AdvanceDeposit-advanceDepositValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="iterationSubject" />
+								<property name="targetValidationProperty" value="advanceDepositDetailForValidation" />
+							</bean>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="AdvanceDeposit-saveDocumentValidation" parent="AdvanceDeposit-saveDocumentValidation-parentBean" scope="prototype" />
+	
+	<bean id="AdvanceDeposit-saveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="AccountingDocument-SaveDocument-DefaultValidation" scope="prototype" />
+				<bean parent="AccountingDocument-oneSidedRequiredAccountingLinesCountValidation" scope="prototype">
+					<property name="requiredMinimumCount" value="1" />
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="AdvanceDeposit-saveValidation-advanceDepositsValidation" scope="prototype" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="AdvanceDeposit-addAccountingLine-failFastValidation" abstract="true" parent="CompositeValidation" scope="prototype"> <!-- here to get the quit on fail issues correct -->
+		<property name="validations">
+			<list>
+				<bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<bean parent="accountingLineToBusinessObjectFieldConversion" />
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="CashReceiptFamily-accountingLineAmountValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="AccountingDocument-accountingLineDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
+					<property name="accountingDocumentParameterPropertyName" value="document" />
+					<property name="accountingLineParameterPropertyName" value="accountingLine" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="AdvanceDeposit-addAccountingLineValidation" parent="AdvanceDeposit-addAccountingLineValidation-parentBean" scope="prototype" />
+	
+	<bean id="AdvanceDeposit-addAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="AdvanceDeposit-addAccountingLine-failFastValidation" scope="prototype" />
+				<bean parent="AccountingDocument-capitalAccountingLinesAccessibleValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="AdvanceDeposit-updateAccountingLine-failFastValidation" abstract="true" parent="CompositeValidation" scope="prototype"> <!-- here to get the quit on fail issues correct -->
+		<property name="validations">
+			<list>
+				<bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<bean parent="updatedAccountingLineToBusinessObjectFieldConversion" />
+					</property>
+				</bean>
+				<bean parent="CashReceiptFamily-accountingLineAmountValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="updatedAccountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="AccountingDocument-accountingLineDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="updatedAccountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
+					<property name="accountingDocumentParameterPropertyName" value="document" />
+					<property name="accountingLineParameterPropertyName" value="updatedAccountingLine" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="AdvanceDeposit-updateAccountingLineValidation" parent="AdvanceDeposit-updateAccountingLineValidation-parentBean" scope="prototype" />
+	
+	<bean id="AdvanceDeposit-updateAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="AdvanceDeposit-updateAccountingLine-failFastValidation" scope="prototype" />
+				<bean parent="AccountingDocument-capitalAccountingLinesAccessibleValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+							<bean parent="updatedAccountingLineFieldConversion" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="AdvanceDeposit-reviewAccountingLineValidation" parent="AdvanceDeposit-reviewAccountingLineValidation-parentBean" scope="prototype" />	
+	<bean id="AdvanceDeposit-reviewAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<bean parent="accountingLineToBusinessObjectFieldConversion" />
+					</property>
+				</bean>
+				<bean parent="CashReceiptFamily-accountingLineAmountValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="AccountingDocument-accountingLineDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
+					<property name="accountingDocumentParameterPropertyName" value="document" />
+					<property name="accountingLineParameterPropertyName" value="accountingLine" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="AdvanceDeposit-deleteAccountingLineValidation" parent="AdvanceDeposit-deleteAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="AdvanceDeposit-deleteAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<bean parent="AccountingDocument-DeleteAccountingLine-DefaultValidation" scope="prototype" />
+  		</property>
+	</bean>
+    
+    <bean id="AdvanceDeposit-approveDocumentValidation" parent="AdvanceDeposit-approveDocumentValidation-parentBean" />   
+    <bean id="AdvanceDeposit-approveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+    	<property name="validations">
+    		<list>
+    			<bean parent="AccountingDocument-ApproveDocument-DefaultValidation" scope="prototype"/>
+				<bean parent="AccountingDocument-capitalAssetLineUniquenessValidation" scope="prototype" />
+    		</list>
+    	</property>
+    </bean> 
+    
+    <bean id="AdvanceDeposit-blanketApproveDocumentValidation" parent="AdvanceDeposit-blanketApproveDocumentValidation-parentBean" /> 
+    <bean id="AdvanceDeposit-blanketApproveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+    	<property name="validations">
+    		<list>
+    			<bean parent="AccountingDocument-BlanketApproveDocument-DefaultValidation" scope="prototype" />
+				<bean parent="AccountingDocument-capitalAssetLineUniquenessValidation" scope="prototype" />
+				<bean parent="CapitalAccountingLines-capitalAccountingLinesValidations" scope="prototype" />
+    		</list>
+    	</property>
+    </bean>  
+      <!-- object sub type check Event  -->
+	<bean id="AdvanceDeposit-capitalAccountingLinesObjectSubtypeValidations" parent="AdvanceDeposit-capitalAccountingLinesObjectSubtypeValidations-parentBean" scope="prototype" />
+  
+	<bean id="AdvanceDeposit-capitalAccountingLinesObjectSubtypeValidations-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+  				<bean parent="CapitalAccountingLines-objectCodeSubTypeValidation" scope="prototype">
+        			<property name="parameterProperties">
+           				<list>
+             				<bean parent="accountingDocumentFieldConversion" />
+           				</list> 
+                   </property>
+       			</bean>
+  			</list>
+  		</property>
+	</bean>
+      
+</beans>

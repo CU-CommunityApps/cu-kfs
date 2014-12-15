@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="SalaryExpenseTransferDocument-accountingLinesSameEmployeeValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.SalaryExpenseTransferAccountingLinesSameEmployeeValidation" />
+
+	<bean id="SalaryExpenseTransferDocument-accountingLinesNoSalaryWagesValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.SalaryExpenseTransferAccountingLinesNoSalariesWagesValidation" />
+
+	<bean id="SalaryExpenseTransferDocument-objectCodeBalancesUnchangedValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.SalaryExpenseTransferObjectCodeBalancesUnchangedValidation" />
+	
+	<bean id="SalaryExpenseTransferDocument-pendingLedgerEntryValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.SalaryExpenseTransferPendingLegerEntryValidation" />
+	
+	<bean id="SalaryExpenseTransferDocument-salaryObjectCodeValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.SalaryExpenseTransferSalaryObjectCodeValidation" />
+	
+	<bean id="SalaryExpenseTransferDocument-validAmountTransferredByObjectCodeValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.SalaryExpenseTransferValidAmountTransferredByObjectCodeValidation" ></bean>
+
+	<bean id="SalaryExpenseTransferDocument-errorCertificationValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.SalaryExpenseTransferErrorCertificationValidation">
+		<property name="parameterService" ref="parameterService" />
+		<property name="salaryExpenseTransferTransactionAgeService" ref="salaryExpenseTransferTransactionAgeService" />
+	</bean>
+	
+	<bean id="SalaryExpenseTransferDocument-errorCertificationTabValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.ErrorCertificationValidation" />
+	
+	<bean id="BenefitExpenseTransferDocument-fringeBenefitObjectCodeValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.BenefitExpenseTransferFringeBenefitObjectCodeValidation" ></bean>
+
+	<bean id="BenefitExpenseTransferDocument-sameAccountValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.BenefitExpenseTransferSameAccountValidation" ></bean>
+
+	<bean id="BenefitExpenseTransferDocument-sameFringeBenefitObjectCodeValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.BenefitExpenseTransferSameFringeBenefitObjectCodeValidation" ></bean>
+	
+	<bean id="BenefitExpenseTransferDocument-pendingLedgerEntryValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.BenefitExpenseTransferPendingLegerEntryValidation" />
+	
+	<bean id="LaborExpenseTransferDocument-amountValidValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.LaborExpenseTransfeAmountValidValidation" ></bean>	
+
+	<bean id="LaborExpenseTransferDocument-accountAcceptFringeBenefitValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.LaborExpenseTransferAccountAcceptFringeBenefitValidation" />	
+
+	<bean id="LaborExpenseTransferDocument-AccountingLineTotalsMatchByPayFYAndPayPeriodValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.LaborExpenseTransferAccountingLineTotalsMatchByPayFYAndPayPeriodValidation" />
+	
+	<bean id="LaborExpenseTransferDocument-accountLineTotalsMatchValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.LaborExpenseTransferAccountLineTotalsMatchValidation" />
+		
+	<bean id="LaborExpenseTransferDocument-duplicateSourceAccountingLineValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.LaborExpenseTransferDuplicateSourceAccountingLineValidation" />
+	
+	<bean id="LaborExpenseTransferDocument-expiredAccountBeUsedValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.LaborExpenseTransferExpiredAccountBeUsedValidation" />
+	
+	<bean id="LaborExpenseTransferDocument-negtiveAmountBeTransferredValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.LaborExpenseTransferNegtiveAmountBeTransferredValidation" />
+
+	<bean id="LaborExpenseTransferDocument-validAccountValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.LaborExpenseTransferValidAccountValidation" />	
+	
+	<bean id="LaborExpenseTransferDocument-validAmountTransferredByObjectCodeValidationForRouting" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.LaborExpenseTransferValidAmountTransferredByObjectCodeValidation" />	
+	
+	<bean id="LaborExpenseTransferDocument-validTransferAmountValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.LaborExpenseTransferValidTransferAmountValidation" />	
+
+	<bean id="LaborJournalVoucherDocument-laborJournalVoucherEmployeeIDExistenceCheckValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.LaborJournalVoucherEmployeeIDExistenceCheckValidation" ></bean>
+	
+	<bean id="LaborJournalVoucherDocument-laborJournalVoucherPositionCodeExistenceCheckValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.LaborJournalVoucherPositionCodeExistenceCheckValidation" ></bean>
+	
+	<bean id="LaborJournalVoucherDocument-laborJournalVoucherExternalEncumbranceValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.LaborJournalVoucherExternalEncumbranceValidation" ></bean>
+	
+	<bean id="LaborJournalVoucherDocument-offsetTypeCodeValidation" abstract="true" class="org.kuali.kfs.module.ld.document.validation.impl.LaborJournalVoucherOffsetTypeCodeValidation">
+		<property name="financialSystemDocumentTypeService" ref="financialSystemDocumentTypeService" />
+	</bean>	
+</beans>
