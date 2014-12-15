@@ -1,0 +1,646 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+        
+    <bean id="CustomerInvoice-saveDocumentValidation" parent="CustomerInvoice-saveDocumentValidation-parentBean" scope="prototype" />
+	
+	<bean id="CustomerInvoice-saveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="CustomerInvoice-customerNumberValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>
+						</list>
+					</property>
+				</bean>				
+			</list>
+		</property>
+	</bean>
+  
+  	<bean id="CustomerInvoice-approveDocumentValidation" parent="CustomerInvoice-approveDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="CustomerInvoice-approveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list></list>
+  		</property>
+  	</bean>
+  
+	<bean id="CustomerInvoice-blanketApproveDocumentValidation" parent="CustomerInvoice-blanketApproveDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="CustomerInvoice-blanketApproveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list></list>
+  		</property>
+	</bean>        
+   	
+	<bean id="CustomerInvoice-addAccountingLineValidation" parent="CustomerInvoice-addAccountingLineValidation-parentBean" scope="prototype" />
+	
+	<bean id="CustomerInvoice-addAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+				<bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineToBusinessObjectFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>	  			
+				<bean parent="AccountingDocument-accountingLineDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>							
+				<bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
+					<property name="accountingDocumentParameterPropertyName" value="document" />
+					<property name="accountingLineParameterPropertyName" value="accountingLine" />
+				</bean>
+				<bean parent="CustomerInvoice-receivableBranchingValidation" scope="prototype">
+					<property name="branchMap">
+						<map>
+							<entry>
+								<key><value>isChartCodeReceivableValidation</value></key>
+								<bean parent="CustomerInvoice-isChartCodeReceivableBranch" scope="prototype"/>
+							</entry>
+							<entry>
+								<key><value>isSubFundGroupReceivableValidation</value></key>
+								<bean parent="CustomerInvoice-isSubFundGroupReceivableBranch" scope="prototype"/>
+							</entry>
+							<entry>
+								<key><value>isFauReceivableValidation</value></key>
+								<bean parent="AccountingDocument-alwaysTrueValidation" scope="prototype" />
+							</entry>
+						</map>
+					</property>
+				</bean>
+				<bean parent="CustomerInvoice-detailUnitPriceValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>						
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="accountingLine" />
+								<property name="targetValidationProperty" value="customerInvoiceDetail" />
+							</bean>
+						</list>
+					</property>				
+				</bean>
+				<bean parent="CustomerInvoice-detailItemQuantityValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="accountingLine" />
+								<property name="targetValidationProperty" value="customerInvoiceDetail" />
+							</bean>
+						</list>
+					</property>				
+				</bean>				
+				<bean parent="CustomerInvoice-detailUnitOfMeasureValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="accountingLine" />
+								<property name="targetValidationProperty" value="customerInvoiceDetail" />
+							</bean>
+						</list>
+					</property>				
+				</bean>
+				<bean parent="CustomerInvoice-detailAmountValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="accountingLine" />
+								<property name="targetValidationProperty" value="customerInvoiceDetail" />
+							</bean>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>							
+						</list>
+					</property>				
+				</bean>	
+				<bean parent="CustomerInvoice-discountRelatedBranchingValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="accountingLine" />
+								<property name="targetValidationProperty" value="customerInvoiceDetail" />
+							</bean>
+						</list>
+					</property>					
+					<property name="branchMap">
+						<map>
+							<entry>
+								<key><value>isDiscountValidation</value></key>
+								<bean parent="CustomerInvoice-isDiscountBranch" scope="prototype"/>
+							</entry>
+							<entry>
+								<key><value>isParentValidation</value></key>
+								<bean parent="CustomerInvoice-isParentBranch" scope="prototype"/>
+							</entry>							
+						</map>
+					</property>
+				</bean>							
+			</list>
+  		</property>
+	</bean>
+	
+	<bean id="CustomerInvoice-isChartCodeReceivableBranch" abstract="true" parent="CustomerInvoice-detailChartCodeReceivableValidation" scope="prototype">
+		<property name="parameterProperties">
+			<list>
+				<bean parent="validationFieldConversion">
+					<property name="sourceEventProperty" value="accountingLine" />
+					<property name="targetValidationProperty" value="customerInvoiceDetail" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+							
+	<bean id="CustomerInvoice-isSubFundGroupReceivableBranch" abstract="true" parent="CustomerInvoice-detailSubFundGroupReceivableValidation" scope="prototype">
+		<property name="parameterProperties">
+			<list>
+				<bean parent="validationFieldConversion">
+					<property name="sourceEventProperty" value="accountingLine" />
+					<property name="targetValidationProperty" value="customerInvoiceDetail" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="CustomerInvoice-isDiscountBranch" abstract="true" parent="CustomerInvoice-detailDiscountGreaterThanParentValidation" scope="prototype">
+		<property name="parameterProperties">
+			<list>
+				<bean parent="validationFieldConversion">
+					<property name="sourceEventProperty" value="accountingLine" />
+					<property name="targetValidationProperty" value="discountCustomerInvoiceDetail" />
+				</bean>
+				<bean parent="validationFieldConversion">
+					<property name="sourceEventProperty" value="document" />
+					<property name="targetValidationProperty" value="customerInvoiceDocument" />
+				</bean>											
+			</list>
+		</property>
+	</bean>
+
+	<bean id="CustomerInvoice-isParentBranch" abstract="true" parent="CustomerInvoice-detailParentLessThanDiscountValidation" scope="prototype">
+		<property name="parameterProperties">
+			<list>
+				<bean parent="validationFieldConversion">
+					<property name="sourceEventProperty" value="accountingLine" />
+					<property name="targetValidationProperty" value="parentCustomerInvoiceDetail" />
+				</bean>
+				<bean parent="validationFieldConversion">
+					<property name="sourceEventProperty" value="document" />
+					<property name="targetValidationProperty" value="customerInvoiceDocument" />
+				</bean>											
+			</list>
+		</property>
+	</bean>
+	
+	
+<bean id="CustomerInvoice-deleteAccountingLineValidation" parent="CustomerInvoice-deleteAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="CustomerInvoice-deleteAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<bean parent="AccountingDocument-DeleteAccountingLine-DefaultValidation" scope="prototype" />
+  		</property>
+	</bean>
+  
+	<bean id="CustomerInvoice-updateAccountingLineValidation" parent="CustomerInvoice-updateAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="CustomerInvoice-updateAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list></list>
+  		</property>
+	</bean>
+  
+	<bean id="CustomerInvoice-reviewAccountingLineValidation" parent="CustomerInvoice-reviewAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="CustomerInvoice-reviewAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list></list>
+  		</property>
+	</bean>	
+	
+	<bean id="CustomerInvoice-receivableValidation" parent="CustomerInvoice-receivableValidation-parentBean" scope="prototype" />
+	
+	<bean id="CustomerInvoice-receivableValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+				<bean parent="CustomerInvoice-receivableChartOfAccountsCodeValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="CustomerInvoice-receivableAccountNumberValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>
+						</list>
+					</property>
+				</bean>				
+				<bean parent="CustomerInvoice-receivableSubAccountNumberValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>
+						</list>
+					</property>
+				</bean>				
+				<bean parent="CustomerInvoice-receivableFinancialObjectCodeValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="CustomerInvoice-receivableFinancialSubObjectCodeValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>
+						</list>
+					</property>
+				</bean>				
+				<bean parent="CustomerInvoice-receivableProjectCodeValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>
+						</list>
+					</property>
+				</bean>																																				  										
+			</list>
+  		</property>
+	</bean>
+	
+	<bean id="CustomerInvoice-recalculateCustomerInvoiceDetailValidation" parent="CustomerInvoice-recalculateCustomerInvoiceDetailValidation-parentBean" scope="prototype" />
+	
+	<bean id="CustomerInvoice-recalculateCustomerInvoiceDetailValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+				<bean parent="CustomerInvoice-detailUnitPriceValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>						
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="customerInvoiceDetail" />
+								<property name="targetValidationProperty" value="customerInvoiceDetail" />
+							</bean>
+						</list>
+					</property>				
+				</bean>
+				<bean parent="CustomerInvoice-detailItemQuantityValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="customerInvoiceDetail" />
+								<property name="targetValidationProperty" value="customerInvoiceDetail" />
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="CustomerInvoice-detailUnitPriceValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>						
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="customerInvoiceDetail" />
+								<property name="targetValidationProperty" value="customerInvoiceDetail" />
+							</bean>
+						</list>
+					</property>	
+					<property name="quitOnFail" value="true" />			
+				</bean>				
+				<bean parent="CustomerInvoice-discountRelatedBranchingValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>				
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="customerInvoiceDetail" />
+								<property name="targetValidationProperty" value="customerInvoiceDetail" />
+							</bean>
+						</list>
+					</property>					
+					<property name="branchMap">
+						<map>
+							<entry>
+								<key><value>isDiscountValidation</value></key>
+								<bean parent="CustomerInvoice-isDiscountBranch" scope="prototype"/>
+							</entry>
+							<entry>
+								<key><value>isParentValidation</value></key>
+								<bean parent="CustomerInvoice-isParentBranch" scope="prototype"/>
+							</entry>							
+						</map>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="CustomerInvoice-discountCustomerInvoiceDetailValidation" parent="CustomerInvoice-discountCustomerInvoiceDetailValidation-parentBean" scope="prototype" />
+	
+	<bean id="CustomerInvoice-discountCustomerInvoiceDetailValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+				<bean parent="CustomerInvoice-detailUnitPriceValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>						
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="customerInvoiceDetail" />
+								<property name="targetValidationProperty" value="customerInvoiceDetail" />
+							</bean>
+						</list>
+					</property>				
+				</bean>
+				<bean parent="CustomerInvoice-detailItemQuantityValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="customerInvoiceDetail" />
+								<property name="targetValidationProperty" value="customerInvoiceDetail" />
+							</bean>
+						</list>
+					</property>	
+				</bean>
+				<bean parent="CustomerInvoice-detailSystemInformationDiscountValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>
+						</list>
+					</property>	
+				</bean>				
+			</list>
+		</property>
+	</bean>	
+	
+	<bean id="CustomerInvoice-routeDocumentValidation" parent="CustomerInvoice-routeDocumentValidation-parentBean" scope="prototype" />
+	
+	<bean id="CustomerInvoice-routeDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+  			<list>
+				<bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="businessObjectForValidation" />
+							</bean>
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="CustomerInvoice-customerNumberValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>
+						</list>
+					</property>
+				</bean>				
+				<bean parent="CustomerInvoice-billedByChartOfAccountsCodeValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="CustomerInvoice-billedByOrganizationCodeValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>
+						</list>
+					</property>
+				</bean>	
+				<bean parent="CustomerInvoice-billingOrgOptionValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>
+						</list>
+					</property>
+				</bean>	
+				<bean parent="CustomerInvoice-dueDateValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>
+						</list>
+					</property>
+				</bean>	
+				<bean parent="CustomerInvoice-numberOfInvoiceDetailsValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="CustomerInvoice-customerAddressValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>											
+						</list>
+					</property>					
+				</bean>				
+				<bean parent="CustomerInvoice-receivableBranchingValidation" scope="prototype">
+					<property name="branchMap">
+						<map>
+							<entry>
+								<key><value>isChartCodeReceivableValidation</value></key>
+								<bean parent="AccountingDocument-alwaysTrueValidation" scope="prototype" />
+							</entry>						
+							<entry>
+								<key><value>isSubFundGroupReceivableValidation</value></key>
+								<bean parent="AccountingDocument-alwaysTrueValidation" scope="prototype" />
+							</entry>						
+							<entry>
+								<key><value>isFauReceivableValidation</value></key>
+								<bean parent="CustomerInvoice-receivableValidation" scope="prototype" />
+							</entry>													
+						</map>
+					</property>
+				</bean>
+				<bean parent="CustomerInvoice-recurrenceDataSufficiencyValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>											
+						</list>
+					</property>					
+				</bean>
+				<bean parent="CustomerInvoice-recurrenceIntervalCodeValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>											
+						</list>
+					</property>					
+				</bean>
+				<bean parent="CustomerInvoice-recurrenceBeginDateValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>											
+						</list>
+					</property>					
+				</bean>				
+				<bean parent="CustomerInvoice-recurrenceEndDateValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>											
+						</list>
+					</property>					
+				</bean>
+				<bean parent="CustomerInvoice-recurrenceActiveIndicatorValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>											
+						</list>
+					</property>					
+				</bean>
+				<bean parent="CustomerInvoice-maximumNumberOfRecurrencesValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>											
+						</list>
+					</property>					
+				</bean>
+				<bean parent="CustomerInvoice-bothEndDateAndTotalRecurrenceNumberValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>											
+						</list>
+					</property>					
+				</bean>
+				<bean parent="CustomerInvoice-recurrenceEndDateOrNumberOfRecurrencesValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>											
+						</list>
+					</property>					
+				</bean>
+				<bean parent="CustomerInvoice-recurrenceWorkgroupValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>											
+						</list>
+					</property>					
+				</bean>
+				<bean parent="CustomerInvoice-recurrenceInitiatorValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="customerInvoiceDocument" />
+							</bean>											
+						</list>
+					</property>					
+				</bean>
+			</list>
+  		</property>
+	</bean>	
+
+	
+</beans>

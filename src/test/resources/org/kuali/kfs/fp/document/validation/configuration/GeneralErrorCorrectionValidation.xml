@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="GeneralErrorCorrection-routeDocumentValidation" parent="GeneralErrorCorrection-routeDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="GeneralErrorCorrection-routeDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+  				<bean parent="AccountingDocument-debitsAndCreditsBalanceValidation" scope="prototype">
+        			<property name="parameterProperties">
+           				<list>
+             				<bean parent="accountingDocumentFieldConversion" />
+           				</list> 
+                   </property>
+       			</bean>
+
+  				<bean parent="AccountingDocument-optionalOneSidedDocumentAccountingLinesCountValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				
+				<bean parent="AccountingDocument-capitalAssetLineUniquenessValidation" scope="prototype" />
+
+				<bean parent="CapitalAccountingLines-capitalAccountingLinesValidations" scope="prototype" />
+				
+				<bean parent="CapitialAssetInformation-capitalAssetInformationValidation" scope="prototype" />  			
+  			</list>
+  		</property>
+  	</bean>
+  	
+  	<bean id="GeneralErrorCorrection-saveDocumentValidation" parent="GeneralErrorCorrection-saveDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="GeneralErrorCorrection-saveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+    	<property name="validations">
+    		<list>
+    			<bean parent="AccountingDocument-SaveDocument-DefaultValidation" scope="prototype" />
+    		</list>
+    	</property>
+    </bean>
+  
+  	<bean id="GeneralErrorCorrection-approveDocumentValidation" parent="GeneralErrorCorrection-approveDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="GeneralErrorCorrection-approveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+  				<bean parent="AccountingDocument-ApproveDocument-DefaultValidation" scope="prototype" />
+				<bean parent="AccountingDocument-capitalAssetLineUniquenessValidation" scope="prototype" />
+  			</list>
+  		</property>
+  	</bean>
+  
+	<bean id="GeneralErrorCorrection-blanketApproveDocumentValidation" parent="GeneralErrorCorrection-blanketApproveDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="GeneralErrorCorrection-blanketApproveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+  				<bean parent="AccountingDocument-BlanketApproveDocument-DefaultValidation" scope="prototype" />
+				<bean parent="AccountingDocument-capitalAssetLineUniquenessValidation" scope="prototype" />
+				<bean parent="CapitalAccountingLines-capitalAccountingLinesValidations" scope="prototype" />
+  				<bean parent="CapitialAssetInformation-capitalAssetInformationValidation" scope="prototype" />  
+  			</list>
+  		</property>
+	</bean>
+  
+	<bean id="GeneralErrorCorrection-addAccountingLineValidation" parent="GeneralErrorCorrection-addAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="GeneralErrorCorrection-addAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+  			  	<bean parent="AccountingDocument-AddCapitalAccountingLines-DefaultValidation" />
+  				<bean parent="GeneralErrorCorrection-objectTypeValidation" scope="prototype" >
+  					<property name="parameterProperties">
+           				<list>
+            				<bean parent="accountingLineFieldConversion" />
+    	       			</list> 
+      	          </property>
+     	       </bean>
+      	       <bean parent="GeneralErrorCorrection-requiredReferenceFieldValidation" scope="prototype" >
+  					<property name="parameterProperties">
+       	    			<list>
+       		     			<bean parent="accountingLineFieldConversion" />
+           				</list> 
+           			</property>
+            	</bean> 
+            </list>
+  		</property>
+	</bean>
+  
+	<bean id="GeneralErrorCorrection-deleteAccountingLineValidation" parent="GeneralErrorCorrection-deleteAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="GeneralErrorCorrection-deleteAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<bean parent="AccountingDocument-DeleteAccountingLine-DefaultValidation" scope="prototype" />
+  		</property>
+	</bean>
+  
+	<bean id="GeneralErrorCorrection-updateAccountingLineValidation" parent="GeneralErrorCorrection-updateAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="GeneralErrorCorrection-updateAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<bean parent="AccountingDocument-UpdateCapitalAccountingLines-DefaultValidation" scope="prototype" />
+  		</property>
+	</bean>
+  
+	<bean id="GeneralErrorCorrection-reviewAccountingLineValidation" parent="GeneralErrorCorrection-reviewAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="GeneralErrorCorrection-reviewAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+  				<bean parent="AccountingDocument-ReviewAccountingLine-DefaultValidation"  />
+  				<bean parent="GeneralErrorCorrection-objectTypeValidation" scope="prototype" >
+  					<property name="parameterProperties">
+           				<list>
+            				<bean parent="accountingLineFieldConversion" />
+    	       			</list> 
+      	          </property>
+     	       </bean>
+      	      <bean parent="GeneralErrorCorrection-requiredReferenceFieldValidation" scope="prototype" >
+  					<property name="parameterProperties">
+       	    			<list>
+       		     			<bean parent="accountingLineFieldConversion" />
+           				</list> 
+           			</property>
+            	</bean>
+            </list>
+  		</property>
+	</bean>
+      <!-- object sub type check Event  -->
+	<bean id="GeneralErrorCorrection-capitalAccountingLinesObjectSubtypeValidations" parent="GeneralErrorCorrection-capitalAccountingLinesObjectSubtypeValidations-parentBean" scope="prototype" />
+  
+	<bean id="GeneralErrorCorrection-capitalAccountingLinesObjectSubtypeValidations-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+  				<bean parent="CapitalAccountingLines-objectCodeSubTypeValidation" scope="prototype">
+        			<property name="parameterProperties">
+           				<list>
+             				<bean parent="accountingDocumentFieldConversion" />
+           				</list> 
+                   </property>
+       			</bean>
+  			</list>
+  		</property>
+	</bean>
+
+</beans>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="YearEndTransferOfFunds-routeDocumentValidation" parent="YearEndTransferOfFunds-routeDocumentValidation-parentBean" scope="prototype" />
+
+	<bean id="YearEndTransferOfFunds-routeDocumentValidation-parentBean" parent="TransferOfFunds-routeDocumentValidation" abstract="true"/>
+		
+	<bean id="YearEndTransferOfFunds-approveDocumentValidation" parent="YearEndTransferOfFunds-approveDocumentValidation-parentBean" scope="prototype" />
+	
+	<bean id="YearEndTransferOfFunds-approveDocumentValidation-parentBean" parent="TransferOfFunds-approveDocumentValidation" abstract="true"/>
+	
+	<bean id="YearEndTransferOfFunds-saveDocumentValidation" parent="YearEndTransferOfFunds-saveDocumentValidation-parentBean" scope="prototype" />
+	
+	<bean id="YearEndTransferOfFunds-saveDocumentValidation-parentBean" parent="TransferOfFunds-saveDocumentValidation" abstract="true"/>
+	
+	<bean id="YearEndTransferOfFunds-blanketApproveDocumentValidation" parent="YearEndTransferOfFunds-blanketApproveDocumentValidation-parentBean" scope="prototype" />
+	
+	<bean id="YearEndTransferOfFunds-blanketApproveDocumentValidation-parentBean" parent="TransferOfFunds-blanketApproveDocumentValidation" abstract="true"/>
+	
+	<bean id="YearEndTransferOfFunds-accountingLineValuesAllowedValidation" parent="YearEndTransferOfFunds-accountingLineValuesAllowedValidation-parentBean" scope="prototype" />
+	
+	<bean id="YearEndTransferOfFunds-accountingLineValuesAllowedValidation-parentBean" parent="TransferOfFunds-accountingLineValuesAllowedValidation" abstract="true"/>
+		
+	<bean id="YearEndTransferOfFunds-addAccountingLineValidation" parent="YearEndTransferOfFunds-addAccountingLineValidation-parentBean" scope="prototype" />
+	
+	<bean id="YearEndTransferOfFunds-addAccountingLineValidation-parentBean" parent="TransferOfFunds-addAccountingLineValidation" abstract="true"/>
+		
+	<bean id="YearEndTransferOfFunds-deleteAccountingLineValidation" parent="YearEndTransferOfFunds-deleteAccountingLineValidation-parentBean" scope="prototype" />
+	
+	<bean id="YearEndTransferOfFunds-deleteAccountingLineValidation-parentBean" parent="TransferOfFunds-deleteAccountingLineValidation" abstract="true"/>
+	
+	<bean id="YearEndTransferOfFunds-reviewAccountingLineValidation" parent="YearEndTransferOfFunds-reviewAccountingLineValidation-parentBean" scope="prototype" />
+	
+	<bean id="YearEndTransferOfFunds-reviewAccountingLineValidation-parentBean" parent="TransferOfFunds-reviewAccountingLineValidation" abstract="true"/>
+		
+	<bean id="YearEndTransferOfFunds-updateAccountingLineValidation" parent="YearEndTransferOfFunds-updateAccountingLineValidation-parentBean" scope="prototype" />
+	
+	<bean id="YearEndTransferOfFunds-updateAccountingLineValidation-parentBean" parent="TransferOfFunds-updateAccountingLineValidation" abstract="true"/>
+		
+</beans>

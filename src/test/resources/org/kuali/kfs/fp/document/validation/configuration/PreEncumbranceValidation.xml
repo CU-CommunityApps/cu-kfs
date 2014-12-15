@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="PreEncumbrance-routeDocumentValidation" parent="PreEncumbrance-routeDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="PreEncumbrance-routeDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+  		 		<bean parent="PreEncumbrance-requiredAccountingLinesCountValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="PreEncumbrance-reversalDateValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
+  			</list>
+  		</property>
+  	</bean>
+  	
+  	<bean id="PreEncumbrance-saveDocumentValidation" parent="PreEncumbrance-saveDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="PreEncumbrance-saveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+    	<property name="validations">
+    		<list>
+    			<bean parent="AccountingDocument-SaveDocument-DefaultValidation" scope="prototype" />
+    		</list>
+    	</property>
+    </bean>
+  
+  	<bean id="PreEncumbrance-approveDocumentValidation" parent="PreEncumbrance-approveDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="PreEncumbrance-approveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list><bean parent="AccountingDocument-ApproveDocument-DefaultValidation" scope="prototype" /></list>
+  		</property>
+  	</bean>
+  
+	<bean id="PreEncumbrance-blanketApproveDocumentValidation" parent="PreEncumbrance-blanketApproveDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="PreEncumbrance-blanketApproveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list><bean parent="AccountingDocument-BlanketApproveDocument-DefaultValidation" scope="prototype" /></list>
+  		</property>
+	</bean>
+  
+	<bean id="PreEncumbrance-addAccountingLineValidation" parent="PreEncumbrance-addAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="PreEncumbrance-addAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+  				<bean parent="AccountingDocument-AddAccountingLine-DefaultValidation" scope="prototype" />
+				<bean parent="PreEncumbrance-requiredReferenceFieldValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="PreEncumbrance-accountingLineObjectCodeRestrictionValidation" scope="prototype">
+					<property name="quitOnFail" value="true" />
+						<property name="parameterProperties">
+							<list>
+								<bean parent="validationFieldConversion">
+									<property name="sourceEventProperty" value="document" />
+									<property name="targetValidationProperty" value="accountingDocumentForValidation" />
+								</bean>
+								<bean parent="validationFieldConversion">
+									<property name="sourceEventProperty" value="accountingLine" />
+									<property name="targetValidationProperty" value="accountingLineForValidation" />
+								</bean>
+							</list>
+						</property>
+				</bean>	
+			</list>
+  		</property>
+	</bean>
+  
+	<bean id="PreEncumbrance-deleteAccountingLineValidation" parent="PreEncumbrance-deleteAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="PreEncumbrance-deleteAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<bean parent="AccountingDocument-DeleteAccountingLine-DefaultValidation" scope="prototype" />
+  		</property>
+	</bean>
+  
+	<bean id="PreEncumbrance-updateAccountingLineValidation" parent="PreEncumbrance-updateAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="PreEncumbrance-updateAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+  				<bean parent="AccountingDocument-UpdateAccountingLine-DefaultValidation" scope="prototype" />
+  				<bean parent="PreEncumbrance-requiredReferenceFieldValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="updatedAccountingLineFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="PreEncumbrance-accountingLineObjectCodeRestrictionValidation" scope="prototype">
+					<property name="quitOnFail" value="true" />
+						<property name="parameterProperties">
+							<list>
+								<bean parent="validationFieldConversion">
+									<property name="sourceEventProperty" value="document" />
+									<property name="targetValidationProperty" value="accountingDocumentForValidation" />
+								</bean>
+								<bean parent="validationFieldConversion">
+									<property name="sourceEventProperty" value="updatedAccountingLine" />
+									<property name="targetValidationProperty" value="accountingLineForValidation" />
+								</bean>
+							</list>
+						</property>
+				</bean>	
+			</list>
+  		</property>
+	</bean>
+  
+	<bean id="PreEncumbrance-reviewAccountingLineValidation" parent="PreEncumbrance-reviewAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="PreEncumbrance-reviewAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+  				<bean parent="AccountingDocument-ReviewAccountingLine-DefaultValidation" scope="prototype" />
+			</list>
+  		</property>
+	</bean>
+
+</beans>

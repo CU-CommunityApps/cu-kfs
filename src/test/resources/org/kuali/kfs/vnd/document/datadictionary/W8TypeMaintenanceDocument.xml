@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd         http://rice.kuali.org/dd/dd.xsd">
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+
+  <bean id="W8TypeMaintenanceDocument" parent="W8TypeMaintenanceDocument-parentBean"/>
+
+  <bean id="W8TypeMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
+    <property name="businessObjectClass" value="org.kuali.kfs.vnd.businessobject.W8Type"/>
+    <property name="maintainableClass" value="org.kuali.kfs.sys.document.FinancialSystemMaintainable"/>
+    <property name="maintainableSections">
+      <list>
+        <ref bean="W8TypeMaintenanceDocument-EditW8Type"/>
+        <ref bean="W8TypeMaintenanceDocument-W8TypeOwnership"/>
+        
+      </list>
+    </property>
+    <property name="lockingKeys">
+      <list>
+        <value>vendorW8TypeCode</value>
+      </list>
+    </property>
+    
+    <property name="documentTypeName" value="PVFT"/>
+    <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
+    <property name="workflowAttributes">
+    	<ref bean="W8TypeMaintenanceDocument-workflowAttributes"/>
+    </property>
+  </bean>
+
+<!-- Maintenance Section Definitions -->
+
+  <bean id="W8TypeMaintenanceDocument-EditW8Type" parent="W8TypeMaintenanceDocument-EditW8Type-parentBean"/>
+
+  <bean id="W8TypeMaintenanceDocument-EditW8Type-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Edit W-8 Type"/>
+    <property name="title" value="Edit W-8 Type"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableFieldDefinition" p:name="vendorW8TypeCode" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="vendorW8TypeDescription" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
+      </list>
+    </property>
+  </bean>
+  
+  <bean id="W8TypeMaintenanceDocument-W8TypeOwnership" parent="W8TypeMaintenanceDocument-W8TypeOwnership-parentBean"/>
+  
+  <bean id="W8TypeMaintenanceDocument-W8TypeOwnership-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="w8TypeOwnershipTypes"/>
+    <property name="title" value="W-8 Ownership Types"/>
+    <property name="defaultOpen" value="true"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableCollectionDefinition">
+          <property name="name" value="w8TypeOwnershipTypes"/>
+          <property name="businessObjectClass" value="org.kuali.kfs.vnd.businessobject.W8TypeOwnershipType"/>
+          <property name="summaryTitle" value="Ownership Types"/>
+          <property name="summaryFields">
+            <list>
+              <bean parent="MaintainableFieldDefinition" p:name="vendorOwnershipCode"/>
+            </list>
+          </property>
+          <property name="maintainableFields">
+            <list>
+            	<bean parent="MaintainableFieldDefinition" p:name="id" p:unconditionallyReadOnly="true" p:defaultValueFinderClass="org.kuali.kfs.vnd.businessobject.defaultValue.NextW8OwnershipIdFinder" />
+              	<bean parent="MaintainableFieldDefinition" p:name="vendorOwnershipCode" p:required="true"/>
+             <!--  <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/> -->
+              	<bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
+            </list>
+          </property>
+          <property name="duplicateIdentificationFields">
+          	<list>
+          		<bean parent="MaintainableFieldDefinition" p:name="vendorOwnershipCode"/>
+          	</list>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+  
+  <!-- workflow attributes -->
+  <bean id="W8TypeMaintenanceDocument-workflowAttributes" parent="W8TypeMaintenanceDocument-workflowAttributes-parentBean"/>
+  
+  <bean id="W8TypeMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+</beans>
