@@ -1,0 +1,46 @@
+########################################
+## The Kuali Financial System, a comprehensive financial management system for higher education.
+## 
+## Copyright 2012-2014 The Kuali Foundation
+## 
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as
+## published by the Free Software Foundation, either version 3 of the
+## License, or (at your option) any later version.
+## 
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+## 
+## You should have received a copy of the GNU Affero General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+########################################
+Dear $!{customer.customerName}:
+
+$!{notificationText}
+
+ADVANCE NUMBER:  $!{customerInvoiceDocument.organizationInvoiceNumber}
+DUE DATE:        $!{customerInvoiceDocument.invoiceDueDate}
+INVOICE AGE:     $!{customerInvoiceDocument.age}
+
+ORIGINAL AMOUNT: $!{customerInvoiceDocument.totalDollarAmount}
+AMOUNT DUE:      $!{customerInvoiceDocument.openAmount}
+
+<table>
+<tr><td>0-30 days</td><td>31-60 days</td><td>61-90 days</td><td>120 days</td></tr>
+<tr><td>$!{total0to30}</td><td>$!{total31to60}</td><td>$!{total61to90}</td><td>$!{total90toSYSPR}</td></tr>
+</table>
+      
+PAYMENT TERM: $!{customerInvoiceDocument.invoiceTermsText}
+
+REMIT TO:
+$!{organizationOptions.organizationCheckPayableToName}
+$!{organizationOptions.organizationRemitToAddressName}
+$!{organizationOptions.organizationRemitToLine1StreetAddress}
+$!{organizationOptions.organizationRemitToLine2StreetAddress}
+$!{organizationOptions.organizationRemitToCityName} $!{organizationOptions.organizationRemitToStateCode} $!{organizationOptions.organizationRemitToZipCode}
+$!{organizationOptions.organizationPhoneNumber}
+
+
+           *** PLEASE DO NOT RESPOND TO THIS EMAIL ***

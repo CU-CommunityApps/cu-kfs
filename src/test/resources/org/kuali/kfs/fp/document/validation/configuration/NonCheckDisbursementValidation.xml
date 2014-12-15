@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="NonCheckDisbursement-routeDocumentValidation" parent="NonCheckDisbursement-routeDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="NonCheckDisbursement-routeDocumentValidation-parentBean" parent="CompositeValidation" abstract="true">
+  		<property name="validations">
+  			<list>
+  				<bean parent="NonCheckDisbursement-bankCodeValidation" scope="prototype">
+  					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+						</list>
+					</property>
+  				</bean>
+  				<bean parent="AccountingDocument-oneSidedRequiredAccountingLinesCountValidation" scope="prototype">
+					<property name="requiredMinimumCount" value="1" />
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
+  			</list>
+  		</property>
+  	</bean>
+  	
+  	<bean id="NonCheckDisbursement-saveDocumentValidation" parent="NonCheckDisbursement-saveDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="NonCheckDisbursement-saveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+    	<property name="validations">
+    		<list>
+    			<bean parent="AccountingDocument-SaveDocument-DefaultValidation" scope="prototype" />
+    		</list>
+    	</property>
+    </bean>
+  
+  	<bean id="NonCheckDisbursement-approveDocumentValidation" parent="NonCheckDisbursement-approveDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="NonCheckDisbursement-approveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list><bean parent="AccountingDocument-ApproveDocument-DefaultValidation" scope="prototype" /></list>
+  		</property>
+  	</bean>
+  
+	<bean id="NonCheckDisbursement-blanketApproveDocumentValidation" parent="NonCheckDisbursement-blanketApproveDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="NonCheckDisbursement-blanketApproveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list><bean parent="AccountingDocument-BlanketApproveDocument-DefaultValidation" scope="prototype" /></list>
+  		</property>
+	</bean>
+  
+	<bean id="NonCheckDisbursement-addAccountingLineValidation" parent="NonCheckDisbursement-addAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="NonCheckDisbursement-addAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+  				<bean parent="AccountingDocument-AddAccountingLine-DefaultValidation" scope="prototype" >
+					<property name="quitOnFail" value="true" />
+				</bean>	
+  				<bean parent="AccountingDocument-accountingLineDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="NonCheckDisbursement-requiredReferenceFieldValidation" scope="prototype" >
+  					<property name="parameterProperties">
+       	    			<list>
+       		     			<bean parent="accountingLineFieldConversion" />
+           				</list> 
+           			</property>
+            	</bean> 
+			</list>
+  		</property>
+	</bean>
+  
+	<bean id="NonCheckDisbursement-deleteAccountingLineValidation" parent="NonCheckDisbursement-deleteAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="NonCheckDisbursement-deleteAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<bean parent="AccountingDocument-DeleteAccountingLine-DefaultValidation" scope="prototype" />
+  		</property>
+	</bean>
+  
+	<bean id="NonCheckDisbursement-updateAccountingLineValidation" parent="NonCheckDisbursement-updateAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="NonCheckDisbursement-updateAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+  				<bean parent="AccountingDocument-UpdateAccountingLine-DefaultValidation" scope="prototype" />
+  				<bean parent="NonCheckDisbursement-requiredReferenceFieldValidation" scope="prototype" >
+  					<property name="parameterProperties">
+       	    			<list>
+       		     			<bean parent="updatedAccountingLineFieldConversion" />
+           				</list> 
+           			</property>
+            	</bean>
+            </list> 
+  		</property>
+	</bean>
+  
+	<bean id="NonCheckDisbursement-reviewAccountingLineValidation" parent="NonCheckDisbursement-reviewAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="NonCheckDisbursement-reviewAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  				<bean parent="AccountingDocument-ReviewAccountingLine-DefaultValidation" scope="prototype" />
+  		</property>
+	</bean>
+
+</beans>

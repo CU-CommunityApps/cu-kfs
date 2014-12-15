@@ -1,0 +1,1996 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+  
+
+    <bean id="ldModuleConfiguration" parent="ldModuleConfiguration-parentBean" />
+
+    <bean id="ldModuleConfiguration-parentBean" parent="ldModuleConfiguration-base-parentBean" abstract="true" />
+    
+    <bean id="ldModuleConfiguration-base-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration" abstract="true">
+        <property name="namespaceCode" value="KFS-LD" />
+        <property name="initializeDataDictionary" value="true" />
+        <property name="packagePrefixes">
+            <list>
+                <value>org.kuali.kfs.module.ld</value>
+                <value>org.kuali.kfs.integration.ld</value>
+            </list>
+        </property>
+        <property name="dataDictionaryPackages">
+            <list>
+                <value>org/kuali/kfs/module/ld/businessobject/datadictionary</value>
+                <value>org/kuali/kfs/module/ld/document/datadictionary</value>
+            </list>
+        </property>
+        <property name="databaseRepositoryFilePaths">
+            <list>
+                <value>org/kuali/kfs/module/ld/ojb-ld.xml</value>
+            </list>
+        </property>
+        <property name="scriptConfigurationFilePaths">
+            <list>
+                <value>org/kuali/kfs/module/ld/dwr-ld.xml</value>
+            </list>
+        </property>
+
+        <property name="jobNames">
+            <list>
+                <value>laborEnterpriseFeedJob</value>
+                <value>laborNightlyOutJob</value>
+                <value>laborScrubberJob</value>
+                <value>laborPosterJob</value>
+                <value>laborBalancingJob</value>
+                <value>laborBalancingHistorySyncJob</value>
+                <value>laborFeedJob</value>
+                <value>clearLaborPendingEntriesJob</value>
+                <value>laborBalanceForwardJob</value>
+                <value>laborPurgeJob</value>
+
+            </list>
+        </property>
+        <property name="fiscalYearMakers">
+            <list>
+                <ref bean="benefitsCalculationFiscalYearMaker" />
+                <ref bean="laborObjectDefinitionFiscalYearMaker" />
+                <ref bean="positionObjectBenefitDefinitionFiscalYearMaker" />
+            </list>
+        </property>
+        <property name="externalizableBusinessObjectImplementations">
+            <map>
+                <entry key="org.kuali.kfs.integration.ld.LaborLedgerBenefitsCalculation" value="org.kuali.kfs.module.ld.businessobject.BenefitsCalculation" />
+                <entry key="org.kuali.kfs.integration.ld.LaborLedgerBalanceForEffortCertification" value="org.kuali.kfs.module.ld.businessobject.LedgerBalanceForEffortCertification" />               
+                <entry key="org.kuali.kfs.integration.ld.LaborLedgerBenefitsType" value="org.kuali.kfs.module.ld.businessobject.BenefitsType" />
+                <entry key="org.kuali.kfs.integration.ld.LaborLedgerEntry" value="org.kuali.kfs.module.ld.businessobject.LedgerEntry" />
+ 				<entry key="org.kuali.kfs.integration.ld.LaborLedgerEntryGLSummary" value="org.kuali.kfs.module.ld.businessobject.LedgerEntryGLSummary" />
+ 				<entry key="org.kuali.kfs.integration.ld.LaborLedgerEntryForExpenseTransfer" value="org.kuali.kfs.module.ld.businessobject.LedgerEntryForExpenseTransfer" />
+                <entry key="org.kuali.kfs.integration.ld.LaborLedgerObject" value="org.kuali.kfs.module.ld.businessobject.LaborObject" />
+                <entry key="org.kuali.kfs.integration.ld.LaborLedgerPositionData" value="org.kuali.kfs.module.ld.businessobject.PositionData" />
+                <entry key="org.kuali.kfs.integration.ld.LaborLedgerPositionObjectBenefit" value="org.kuali.kfs.module.ld.businessobject.PositionObjectBenefit" />
+                <entry key="org.kuali.kfs.integration.ld.LaborLedgerPositionObjectGroup" value="org.kuali.kfs.module.ld.businessobject.PositionObjectGroup" />
+                <entry key="org.kuali.kfs.integration.ld.LaborLedgerExpenseTransferSourceAccountingLine" value="org.kuali.kfs.module.ld.businessobject.ExpenseTransferSourceAccountingLine" />
+                <entry key="org.kuali.kfs.integration.ld.LaborLedgerExpenseTransferTargetAccountingLine" value="org.kuali.kfs.module.ld.businessobject.ExpenseTransferTargetAccountingLine" />
+                <entry key="org.kuali.kfs.integration.ld.LaborBenefitsCalculation" value="org.kuali.kfs.module.ld.businessobject.BenefitsCalculation" />
+ 				<entry key="org.kuali.kfs.integration.ld.LaborBenefitRateCategory" value="org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory" />
+            </map>
+        </property>
+        <property name="batchFileDirectories">
+            <list>
+                <value>${reports.directory}/ld</value>
+                <value>${staging.directory}/ld</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ldModuleService" parent="ldModuleService-parentBean" />
+
+    <bean id="ldModuleService-parentBean" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl" abstract="true">
+        <property name="moduleConfiguration" ref="ldModuleConfiguration" />
+    </bean>
+    <bean id="laborModuleService" parent="laborModuleService-parentBean" />
+
+    <bean id="laborModuleService-parentBean" class="org.kuali.kfs.module.ld.service.impl.LaborModuleServiceImpl" abstract="true" />
+
+    <!-- Section 1: Spring Beans for Business Objects -->
+    <bean id="laborLedgerPendingEntryService" parent="laborLedgerPendingEntryService-parentBean" />
+
+    <bean id="laborLedgerPendingEntryService-parentBean" class="org.kuali.kfs.module.ld.service.impl.LaborLedgerPendingEntryServiceImpl" abstract="true">
+        <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property>
+        <property name="laborLedgerPendingEntryDao">
+            <ref bean="laborLedgerPendingEntryDao" />
+        </property>
+        <property name="universityDateService">
+            <ref bean="universityDateService" />
+        </property>     
+        <property name="generalLedgerPendingEntryService">
+            <ref bean="generalLedgerPendingEntryService" />
+        </property>
+    </bean>
+    <bean id="laborGeneralLedgerEntryService" parent="laborGeneralLedgerEntryService-parentBean" />
+
+    <bean id="laborGeneralLedgerEntryService-parentBean" class="org.kuali.kfs.module.ld.service.impl.LaborGeneralLedgerEntryServiceImpl" abstract="true">
+        <property name="laborGeneralLedgerEntryDao">
+            <ref bean="laborGeneralLedgerEntryDao" />
+        </property>
+        <property name="laborDao">
+            <ref bean="laborDao" />
+        </property>
+    </bean>
+    <bean id="laborLedgerEntryService" parent="laborLedgerEntryService-parentBean" />
+
+    <bean id="laborLedgerEntryService-parentBean" class="org.kuali.kfs.module.ld.service.impl.LaborLedgerEntryServiceImpl" abstract="true">
+        <property name="laborLedgerEntryDao">
+            <ref bean="laborLedgerEntryDao" />
+        </property>
+        <property name="laborAccountingCycleCachingService">
+            <ref bean="laborAccountingCycleCachingService" />
+        </property>
+    </bean>
+    <bean id="laborOriginEntryService" parent="laborOriginEntryService-parentBean" />
+
+    <bean id="laborOriginEntryService-parentBean" class="org.kuali.kfs.module.ld.service.impl.LaborOriginEntryServiceImpl" abstract="true">
+        <!-- <property name="laborOriginEntryDao"> <ref bean="laborOriginEntryDao" /> </property> -->
+        <property name="originEntryGroupService">
+            <ref bean="laborOriginEntryGroupService" />
+        </property>
+        <property name="dateTimeService">
+            <ref bean="dateTimeService" />
+        </property>
+        <!-- <property name="originEntryDao"> <ref bean="originEntryDao" /> </property> -->
+
+        <property name="batchFileDirectoryName" value="${staging.directory}/ld/originEntry" />
+    </bean>
+    <bean id="laborPositionObjectBenefitService" parent="laborPositionObjectBenefitService-parentBean" />
+
+    <bean id="laborPositionObjectBenefitService-parentBean" class="org.kuali.kfs.module.ld.service.impl.LaborPositionObjectBenefitServiceImpl" abstract="true">
+        <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property>
+    </bean>
+    <bean id="laborBenefitsTypeService" parent="laborBenefitsTypeService-parentBean" />
+
+    <bean id="laborBenefitsTypeService-parentBean" class="org.kuali.kfs.module.ld.service.impl.LaborBenefitsTypeServiceImpl" abstract="true">
+        <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property>
+    </bean>
+    <bean id="laborBenefitsCalculationService" parent="laborBenefitsCalculationService-parentBean" />
+
+    <bean id="laborBenefitsCalculationService-parentBean" class="org.kuali.kfs.module.ld.service.impl.LaborBenefitsCalculationServiceImpl" abstract="true">
+        <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property>
+        <property name="laborPositionObjectBenefitService">
+            <ref bean="laborPositionObjectBenefitService" />
+        </property>
+    </bean>
+    <bean id="laborBaseFundsService" parent="laborBaseFundsService-parentBean" />
+
+    <bean id="laborBaseFundsService-parentBean" class="org.kuali.kfs.module.ld.service.impl.LaborBaseFundsServiceImpl" abstract="true">
+        <property name="laborBaseFundsDao">
+            <ref bean="laborBaseFundsDao" />
+        </property>
+        <property name="laborCalculatedSalaryFoundationTrackerService">
+            <ref bean="laborCalculatedSalaryFoundationTrackerService" />
+        </property>
+    </bean>
+    <bean id="laborLedgerBalanceService" parent="laborLedgerBalanceService-parentBean" />
+
+    <bean id="laborLedgerBalanceService-parentBean" class="org.kuali.kfs.module.ld.service.impl.LaborLedgerBalanceServiceImpl" abstract="true">
+        <property name="laborLedgerBalanceDao">
+            <ref bean="laborLedgerBalanceDao" />
+        </property>
+        <property name="laborCalculatedSalaryFoundationTrackerService">
+            <ref bean="laborCalculatedSalaryFoundationTrackerService" />
+        </property>
+    </bean>
+    <bean id="laborObjectService" parent="laborObjectService-parentBean" />
+
+    <bean id="laborObjectService-parentBean" class="org.kuali.kfs.module.ld.service.impl.LaborObjectServiceImpl" abstract="true">
+        <property name="laborObjectDao">
+            <ref bean="laborObjectDao" />
+        </property>
+    </bean>
+
+    <!-- Section 2: Spring Beans for DAO -->
+
+    <!-- <bean id="laborOriginEntryDao" parent="platformAwareDao" class="org.kuali.kfs.module.ld.dataaccess.impl.LaborOriginEntryDaoOjb"> 
+        <property name="entryClass" value="org.kuali.kfs.module.ld.businessobject.LaborOriginEntry"/> </bean> -->
+    <bean id="laborLedgerEntryDao" parent="platformAwareDao" class="org.kuali.kfs.module.ld.dataaccess.impl.LaborLedgerEntryDaoOjb" />
+
+    <bean id="laborLedgerEntryHistoryDao" parent="platformAwareDao"
+        class="org.kuali.kfs.module.ld.dataaccess.impl.LaborLedgerEntryHistoryDaoOjb" />
+
+    <bean id="laborLedgerBalanceHistoryDao" parent="platformAwareDao"
+        class="org.kuali.kfs.module.ld.dataaccess.impl.LaborLedgerBalanceHistoryDaoOjb" />
+
+    <bean id="laborLedgerEntryBalanceCachingDao" parent="platformAwareDaoJdbc"
+        class="org.kuali.kfs.module.ld.batch.dataaccess.impl.LaborLedgerEntryBalanceCachingDaoJdbc"
+    />
+
+    <bean id="laborBalancingDao" parent="platformAwareDaoJdbc" class="org.kuali.kfs.module.ld.dataaccess.impl.LaborBalancingDaoJdbc" />
+
+    <bean id="laborGeneralLedgerEntryDao" parent="platformAwareDao"
+        class="org.kuali.kfs.module.ld.dataaccess.impl.LaborGeneralLedgerEntryDaoOjb" />
+
+    <bean id="laborLedgerBalanceDao" parent="platformAwareDao" class="org.kuali.kfs.module.ld.dataaccess.impl.LaborLedgerBalanceDaoOjb"/>
+
+    <bean id="laborBaseFundsDao" parent="platformAwareDao" class="org.kuali.kfs.module.ld.dataaccess.impl.LaborBaseFundsDaoOjb" />
+    <bean id="laborCalculatedSalaryFoundationTrackerDao" parent="platformAwareDao"
+        class="org.kuali.kfs.module.ld.dataaccess.impl.LaborCalculatedSalaryFoundationTrackerDaoOjb" />
+    <bean id="laborLedgerPendingEntryDao" parent="platformAwareDao"
+        class="org.kuali.kfs.module.ld.dataaccess.impl.LaborLedgerPendingEntryDaoOjb" />
+
+    <bean id="laborObjectDao" parent="platformAwareDao" class="org.kuali.kfs.module.ld.dataaccess.impl.LaborObjectDaoOjb" />
+
+    <bean id="laborClearGeneralLedgerEntryDao" parent="platformAwareDaoJdbc"
+        class="org.kuali.kfs.module.ld.dataaccess.impl.LaborClearGeneralLedgerEntryDaoJdbc" />
+
+    <!-- Section 3: Spring Bean for Batch processes -->
+    <bean id="laborNightlyOutService" parent="laborNightlyOutService-parentBean" />
+
+    <bean id="laborNightlyOutService-parentBean" class="org.kuali.kfs.module.ld.batch.service.impl.LaborNightlyOutServiceImpl" abstract="true">
+        <property name="laborLedgerPendingEntryService">
+            <ref bean="laborLedgerPendingEntryService" />
+        </property>
+        <property name="originEntryGroupService">
+            <ref bean="laborOriginEntryGroupService" />
+        </property>
+
+        <property name="dateTimeService">
+            <ref bean="dateTimeService" />
+        </property>
+        <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property>
+        <property name="batchFileDirectoryName" value="${staging.directory}/ld/originEntry" />
+        <property name="batchGlFileDirectoryName" value="${staging.directory}/gl/originEntry" />
+
+        <property name="laborGLEntryReportWriterService" ref="laborGLEntryReportWriterService" />
+        <property name="laborPendingEntryLedgerReportWriterService" ref="laborPendingEntryLedgerReportWriterService" />
+        <property name="laborClearGeneralLedgerEntryDao" ref="laborClearGeneralLedgerEntryDao" />
+    </bean>
+    <bean id="laborGLEntryReportWriterService" parent="laborGLEntryReportWriterService-parentBean" />
+
+    <bean id="laborGLEntryReportWriterService-parentBean" parent="reportWriterService" abstract="true">
+        <property name="filePath" value="${reports.directory}/ld" />
+        <property name="fileNamePrefix" value="labor_gl_summary_ledger_" />
+        <property name="title" value="Labor General Ledger Summary" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+                <entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+                <entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+            </map>
+        </property>
+    </bean>
+    <bean id="laborPendingEntryLedgerReportWriterService" parent="laborPendingEntryLedgerReportWriterService-parentBean" />
+
+    <bean id="laborPendingEntryLedgerReportWriterService-parentBean" parent="reportWriterService" abstract="true">
+        <property name="filePath" value="${reports.directory}/ld" />
+        <property name="fileNamePrefix" value="llpe_ledger_" />
+        <property name="title" value="Labor Pending Ledger Entry Summary" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+                <entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+                <entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+            </map>
+        </property>
+    </bean>
+    <bean id="laborScrubberService" parent="laborScrubberService-parentBean" />
+
+    <bean id="laborScrubberService-parentBean" class="org.kuali.kfs.module.ld.batch.service.impl.LaborScrubberServiceImpl" abstract="true">
+        <property name="flexibleOffsetAccountService">
+            <ref bean="flexibleOffsetAccountService" />
+        </property>
+        <property name="laborOriginEntryService">
+            <ref bean="laborOriginEntryService" />
+        </property>
+        <property name="dateTimeService">
+            <ref bean="dateTimeService" />
+        </property>
+        <property name="offsetDefinitionService">
+            <ref bean="offsetDefinitionService" />
+        </property>
+        <property name="objectCodeService">
+            <ref bean="objectCodeService" />
+        </property>
+        <property name="configurationService">
+            <ref bean="kualiConfigurationService" />
+        </property>
+        <property name="universityDateDao">
+            <ref bean="universityDateDao" />
+        </property>
+        <property name="originEntryGroupService">
+            <ref bean="laborOriginEntryGroupService" />
+        </property>
+        <property name="persistenceService">
+            <ref bean="persistenceService" />
+        </property>
+        <property name="scrubberValidator">
+            <ref bean="laborScrubberValidator" />
+        </property>
+        <property name="laborAccountingCycleCachingService">
+            <ref bean="laborAccountingCycleCachingService" />
+        </property>
+        <property name="laborMainReportWriterService">
+            <ref bean="laborMainReportWriterService" />
+        </property>
+        <property name="llcpMainReportWriterService">
+            <ref bean="llcpMainReportWriterService" />
+        </property>
+        <property name="laborLedgerReportWriterService">
+            <ref bean="laborLedgerReportWriterService" />
+        </property>
+        <property name="llcpLedgerReportWriterService">
+            <ref bean="llcpLedgerReportWriterService" />
+        </property>
+        <property name="laborBadBalanceTypeReportWriterService">
+            <ref bean="laborBadBalanceTypeReportWriterService" />
+        </property>
+        <property name="laborErrorListingReportWriterService">
+            <ref bean="laborErrorListingReportWriterService" />
+        </property>
+        <property name="laborGeneratedTransactionsReportWriterService">
+            <ref bean="laborGeneratedTransactionsReportWriterService" />
+        </property>
+        <property name="laborDemergerReportWriterService">
+            <ref bean="laborDemergerReportWriterService" />
+        </property>
+        <property name="parameterService">
+            <ref bean="parameterService" />
+        </property>
+        <property name="laborPreScrubberService" ref="laborPreScrubberService" />
+        <property name="llcpPreScrubberReportWriterService" ref="llcpPreScrubberReportWriterService" />
+        <property name="batchFileDirectoryName" value="${staging.directory}/ld/originEntry" />
+    </bean>
+
+    <bean id="laborGLScrubberValidator" parent="laborGLScrubberValidator-parentBean" />
+    <bean id="laborGLScrubberValidator-parentBean" class="org.kuali.kfs.module.ld.batch.service.impl.LaborGLScrubberValidatorImpl" parent="scrubberValidator" abstract="true" />
+
+    <bean id="laborScrubberValidator" parent="laborScrubberValidator-parentBean" />
+    <bean id="laborScrubberValidator-parentBean" class="org.kuali.kfs.module.ld.batch.service.impl.ScrubberValidatorImpl" abstract="true">
+        <property name="scrubberValidator">
+            <ref bean="laborGLScrubberValidator" />
+        </property>
+        <property name="configurationService">
+            <ref bean="kualiConfigurationService" />
+        </property>
+        <property name="accountService">
+            <ref bean="accountService" />
+        </property>
+        <property name="persistenceService">
+            <ref bean="persistenceService" />
+        </property>
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="parameterService">
+            <ref bean="parameterService" />
+        </property>
+        <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property>
+        <property name="balanceTypService">
+            <ref bean="balanceTypService" />
+        </property>
+        <property name="optionsService">
+            <ref bean="optionsService" />
+        </property>
+
+    </bean>
+
+    <bean id="laborLedgerPreparedStatementCachingDao" parent="preparedStatementCachingDao"
+        class="org.kuali.kfs.module.ld.batch.dataaccess.impl.LedgerPreparedStatementCachingDaoJdbc" />
+
+	<bean id="laborAccountingCycleCachingService" parent="laborAccountingCycleCachingService-parentBean"/>
+    <bean id="laborAccountingCycleCachingService-parentBean" abstract="true"  parent="accountingCycleCachingService" class="org.kuali.kfs.module.ld.batch.service.impl.LaborAccountingCycleCachingServiceImpl">        
+        <property name="laborLedgerDao" ref="laborLedgerPreparedStatementCachingDao" />
+    </bean>
+    
+    <bean id="laborPosterService" parent="laborPosterService-parentBean" />
+
+    <bean id="laborPosterService-parentBean" class="org.kuali.kfs.module.ld.batch.service.impl.LaborPosterServiceImpl" abstract="true">
+        <property name="laborOriginEntryService">
+            <ref bean="laborOriginEntryService" />
+        </property>
+        <property name="originEntryGroupService">
+            <ref bean="laborOriginEntryGroupService" />
+        </property>
+        <property name="laborTransactionDescriptionService">
+            <ref bean="laborTransactionDescriptionService" />
+        </property>
+
+        <property name="dateTimeService">
+            <ref bean="dateTimeService" />
+        </property>
+        <property name="parameterService">
+            <ref bean="parameterService" />
+        </property>
+
+        <property name="reportWriterService">
+            <ref bean="laborPosterReportWriterService" />
+        </property>
+        <property name="errorListingReportWriterService">
+            <ref bean="laborPosterErrorListingReportWriterService" />
+        </property>
+        <property name="ledgerSummaryReportWriterService">
+            <ref bean="laborPosterLedgerSummaryReportWriterService" />
+        </property>
+        <property name="laborGlEntryStatisticsReportWriterService">
+            <ref bean="laborGlEntryStatisticsReportWriterService" />
+        </property>
+
+        <property name="laborPosterTransactionValidator">
+            <ref bean="laborPosterTransactionValidator" />
+        </property>
+
+        <property name="laborLedgerEntryPoster">
+            <ref bean="laborLedgerEntryPoster" />
+        </property>
+        <property name="laborLedgerBalancePoster">
+            <ref bean="laborLedgerBalancePoster" />
+        </property>
+        <property name="laborGLLedgerEntryPoster">
+            <ref bean="laborGLLedgerEntryPoster" />
+        </property>
+
+        <property name="batchFileDirectoryName" value="${staging.directory}/ld/originEntry" />
+    </bean>
+    <bean id="laborTransactionDescriptionService" parent="laborTransactionDescriptionService-parentBean" />
+
+    <bean id="laborTransactionDescriptionService-parentBean" class="org.kuali.kfs.module.ld.service.impl.LaborTransactionDescriptionServiceImpl" abstract="true">
+        <property name="transactionDescriptionMap">
+            <map>
+                <entry key="PAY" value="NORMAL PAYROLL ACTIVITY" />
+                <entry key="PAYN" value="PAYROLL ACCRUAL REVERSAL" />
+                <entry key="PAYA" value="PAYROLL ACCRUALS" />
+                <entry key="PAYC" value="PAYROLL CHECK CANCELLATIONS" />
+                <entry key="PAYE" value="PAYROLL ENCUMBRANCES" />
+                <entry key="ET" value="PAYROLL EXPENSE TRANSFERS" />
+                <entry key="SACH" value="PAYROLL EXPENSE TRANSFERS" />
+                <entry key="HDRW" value="PAYROLL HAND DRAWN CHECK PAYMENTS" />
+                <entry key="OPAY" value="PAYROLL OVERPAYMENT COLLECTIONS" />
+                <entry key="RETR" value="PAYROLL RETROACTIVE ADJUSTMENTS" />
+            </map>
+        </property>
+    </bean>
+    <bean id="laborBalancingService" parent="laborBalancingService-parentBean" />
+
+    <bean id="laborBalancingService-parentBean" class="org.kuali.kfs.module.ld.batch.service.impl.LaborBalancingServiceImpl" abstract="true">
+        <property name="parameterService">
+            <ref bean="parameterService" />
+        </property>
+        <property name="configurationService">
+            <ref bean="kualiConfigurationService" />
+        </property>
+        <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property>
+        <property name="dateTimeService">
+            <ref bean="dateTimeService" />
+        </property>
+        <property name="universityDateService">
+            <ref bean="universityDateService" />
+        </property>
+        <property name="ledgerBalancingDao">
+            <ref bean="laborBalancingDao" />
+        </property>
+        <property name="ledgerEntryBalancingDao">
+            <ref bean="laborLedgerEntryDao" />
+        </property>
+        <property name="ledgerBalanceBalancingDao">
+            <ref bean="laborLedgerBalanceDao" />
+        </property>
+        <property name="ledgerBalanceHistoryBalancingDao">
+            <ref bean="laborLedgerBalanceHistoryDao" />
+        </property>
+        <property name="ledgerEntryHistoryBalancingDao">
+            <ref bean="laborLedgerEntryHistoryDao" />
+        </property>
+        <property name="ledgerEntryBalanceCachingDao">
+            <ref bean="laborLedgerEntryBalanceCachingDao" />
+        </property>
+        <property name="reportWriterService">
+            <ref bean="laborBalancingReportWriterService" />
+        </property>
+        <property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		
+        <property name="batchFileDirectoryName" value="${staging.directory}/ld/originEntry" />
+    </bean>
+    <bean id="laborBalanceSummaryReportService" parent="laborBalanceSummaryReportService-parentBean" />
+
+    <bean id="laborBalanceSummaryReportService-parentBean" class="org.kuali.kfs.module.ld.batch.service.impl.LaborBalanceSummaryReportServiceImpl" abstract="true">
+        <property name="dateTimeService">
+            <ref bean="dateTimeService" />
+        </property>
+        <property name="parameterService">
+            <ref bean="parameterService" />
+        </property>
+        <property name="optionsService">
+            <ref bean="optionsService" />
+        </property>
+        <property name="laborLedgerBalanceService">
+            <ref bean="laborLedgerBalanceService" />
+        </property>
+        <property name="laborActualBalanceSummaryReportWriterService">
+            <ref bean="laborActualBalanceSummaryReportWriterService" />
+        </property>
+        <property name="laborBudgetBalanceSummaryReportWriterService">
+            <ref bean="laborBudgetBalanceSummaryReportWriterService" />
+        </property>
+        <property name="laborEncumbranceSummaryReportWriterService">
+            <ref bean="laborEncumbranceSummaryReportWriterService" />
+        </property>
+        <property name="laborPosterOutputSummaryReportWriterService">
+            <ref bean="laborPosterOutputSummaryReportWriterService" />
+        </property>
+        <property name="batchFileDirectoryName" value="${staging.directory}/ld/originEntry" />
+    </bean>
+    <bean id="laborPosterOutputSummaryReportWriterService" parent="laborPosterOutputSummaryReportWriterService-parentBean" />
+
+    <bean id="laborPosterOutputSummaryReportWriterService-parentBean" parent="laborOutputSummaryReportWriterService" abstract="true">
+        <property name="filePath" value="${temp.directory}" />
+        <property name="fileNamePrefix" value="laborPosterJob-05-labor_poster_output_summary" />
+        <property name="title" value="Labor Poster Output Summary" />
+        <property name="aggregationModeOn" value="true" />
+    </bean>
+    <bean id="laborActualBalanceSummaryReportWriterService" parent="laborActualBalanceSummaryReportWriterService-parentBean" />
+
+    <bean id="laborActualBalanceSummaryReportWriterService-parentBean" parent="laborSummaryReportWriterService" abstract="true">
+        <property name="fileNamePrefix" value="laborPosterJob-07-labor_summary_act" />
+        <property name="title" value="Labor Actual Balance Summary" />
+    </bean>
+    <bean id="laborBudgetBalanceSummaryReportWriterService" parent="laborBudgetBalanceSummaryReportWriterService-parentBean" />
+
+    <bean id="laborBudgetBalanceSummaryReportWriterService-parentBean" parent="laborSummaryReportWriterService" abstract="true">
+        <property name="fileNamePrefix" value="laborPosterJob-06-labor_summary_bud" />
+        <property name="title" value="Labor Budget Balance Summary" />
+    </bean>
+    <bean id="laborEncumbranceSummaryReportWriterService" parent="laborEncumbranceSummaryReportWriterService-parentBean" />
+
+    <bean id="laborEncumbranceSummaryReportWriterService-parentBean" parent="laborSummaryReportWriterService" abstract="true">
+        <property name="fileNamePrefix" value="laborPosterJob-08-labor_summary_enc" />
+        <property name="title" value="Labor Encumbrance Summary" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.module.ld.businessobject.LaborBalanceSummary" value="yearToDaySummaryReportHelper" />
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="laborSummaryReportWriterService" parent="laborSummaryReportWriterService-parentBean" />
+    <bean id="laborSummaryReportWriterService-parentBean"  abstract="true" parent="reportWriterService"
+        class="org.kuali.kfs.sys.service.impl.BalanceSummaryReportWriterTextServiceImpl"
+    >
+        <property name="filePath" value="${temp.directory}" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.module.ld.businessobject.LaborBalanceSummary" value="summaryReportHelper" />
+            </map>
+        </property>
+        <property name="aggregationModeOn" value="true" />
+    </bean>
+
+    <bean id="laborLedgerEntryPoster" parent="laborLedgerEntryPoster-parentBean" />
+    <bean id="laborLedgerEntryPoster-parentBean" class="org.kuali.kfs.module.ld.batch.service.impl.LaborLedgerEntryPoster" abstract="true">
+        <property name="laborAccountingCycleCachingService">
+            <ref bean="laborAccountingCycleCachingService" />
+        </property>
+    </bean>
+
+    <bean id="laborLedgerBalancePoster" parent="laborLedgerBalancePoster-parentBean" />
+    <bean id="laborLedgerBalancePoster-parentBean" class="org.kuali.kfs.module.ld.batch.service.impl.LaborLedgerBalancePoster" abstract="true">
+        <property name="laborAccountingCycleCachingService">
+            <ref bean="laborAccountingCycleCachingService" />
+        </property>
+    </bean>
+
+    <bean id="laborGLLedgerEntryPoster" parent="laborGLLedgerEntryPoster-parentBean" />
+    <bean id="laborGLLedgerEntryPoster-parentBean" class="org.kuali.kfs.module.ld.batch.service.impl.LaborGLLedgerEntryPoster" abstract="true">
+        <property name="laborGeneralLedgerEntryService">
+            <ref bean="laborGeneralLedgerEntryService" />
+        </property>
+        <property name="laborAccountingCycleCachingService">
+            <ref bean="laborAccountingCycleCachingService" />
+        </property>
+    </bean>
+
+    <bean id="laborPosterTransactionValidator" parent="laborPosterTransactionValidator-parentBean" />
+    <bean id="laborPosterTransactionValidator-parentBean" class="org.kuali.kfs.module.ld.batch.service.impl.LaborPosterTransactionValidator" abstract="true" />
+    
+    <bean id="laborYearEndBalanceForwardService" parent="laborYearEndBalanceForwardService-parentBean" />
+    <bean id="laborYearEndBalanceForwardService-parentBean" class="org.kuali.kfs.module.ld.batch.service.impl.LaborYearEndBalanceForwardServiceImpl" abstract="true">
+        <property name="laborLedgerBalanceService">
+            <ref bean="laborLedgerBalanceService" />
+        </property>
+
+        <property name="optionsService">
+            <ref bean="optionsService" />
+        </property>
+        <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property>
+
+        <property name="dateTimeService">
+            <ref bean="dateTimeService" />
+        </property>
+        <property name="parameterService">
+            <ref bean="parameterService" />
+        </property>
+
+        <property name="laborBalanceForwardReportWriterService">
+            <ref bean="laborBalanceForwardReportWriterService" />
+        </property>
+
+        <property name="batchFileDirectoryName" value="${staging.directory}/ld/originEntry" />
+    </bean>
+
+    <bean id="laborNightlyOutStep" class="org.kuali.kfs.module.ld.batch.LaborNightlyOutStep" parent="step">
+        <property name="laborNightlyOutService">
+            <ref bean="laborNightlyOutService" />
+        </property>
+    </bean>
+
+    <bean id="clearLaborPendingStep" class="org.kuali.kfs.module.ld.batch.ClearLaborPendingStep" parent="step">
+        <property name="laborNightlyOutService">
+            <ref bean="laborNightlyOutService" />
+        </property>
+    </bean>
+
+    <bean id="laborClearGLEntryStep" class="org.kuali.kfs.module.ld.batch.ClearLaborGLEntryStep" parent="step">
+        <property name="laborNightlyOutService">
+            <ref bean="laborNightlyOutService" />
+        </property>
+    </bean>
+
+    <bean id="laborFeedStep" class="org.kuali.kfs.module.ld.batch.LaborFeedStep" parent="step">
+        <property name="laborNightlyOutService">
+            <ref bean="laborNightlyOutService" />
+        </property>
+    </bean>
+
+    <bean id="createLaborBackupGroupStep" class="org.kuali.kfs.module.ld.batch.CreateLaborBackupGroupStep" parent="step" />
+
+    <bean id="laborScrubberStep" class="org.kuali.kfs.module.ld.batch.LaborScrubberStep" parent="wrappedStep">
+        <property name="wrappingBatchServices">
+            <list>
+                <ref bean="laborAccountingCycleCachingService" />
+                <ref bean="laborBadBalanceTypeReportWriterService" />
+            </list>
+        </property>
+        <property name="laborScrubberService" ref="laborScrubberService" />
+    </bean>
+    <bean id="laborPosterReportWriterService" parent="laborPosterReportWriterService-parentBean" />
+
+    <bean id="laborPosterReportWriterService-parentBean" parent="reportWriterService" abstract="true">
+        <property name="filePath" value="${temp.directory}" />
+        <property name="fileNamePrefix" value="laborPosterJob-01-labor_poster_main" />
+        <property name="title" value="Labor Poster Report" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.module.ld.businessobject.LaborOriginEntry" value="laborTransactionReportHelper" />
+            </map>
+        </property>
+        <property name="aggregationModeOn" value="true" />
+    </bean>
+    <bean id="laborPosterErrorListingReportWriterService" parent="laborPosterErrorListingReportWriterService-parentBean" />
+
+    <bean id="laborPosterErrorListingReportWriterService-parentBean" parent="reportWriterService" abstract="true">
+        <property name="filePath" value="${temp.directory}" />
+        <property name="fileNamePrefix" value="laborPosterJob-02-labor_poster_main_error_list" />
+        <property name="title" value="Main Labor Poster Error Transaction Listing" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.module.ld.businessobject.LaborOriginEntry" value="laborTransactionListingReportHelper" />
+            </map>
+        </property>
+        <property name="aggregationModeOn" value="true" />
+    </bean>
+    <bean id="laborGlEntryStatisticsReportWriterService" parent="laborGlEntryStatisticsReportWriterService-parentBean" />
+
+    <bean id="laborGlEntryStatisticsReportWriterService-parentBean" parent="reportWriterService" abstract="true">
+        <property name="filePath" value="${temp.directory}" />
+        <property name="fileNamePrefix" value="laborPosterJob-04-labor_poster_gl_summary" />
+        <property name="title" value="Labor Poster General Ledger Summary" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.module.ld.businessobject.LaborOriginEntry" value="laborTransactionReportHelper" />
+            </map>
+        </property>
+        <property name="aggregationModeOn" value="true" />
+    </bean>
+    <bean id="laborPosterLedgerSummaryReportWriterService" parent="laborPosterLedgerSummaryReportWriterService-parentBean" />
+
+    <bean id="laborPosterLedgerSummaryReportWriterService-parentBean" parent="reportWriterService" abstract="true">
+        <property name="filePath" value="${temp.directory}" />
+        <property name="fileNamePrefix" value="laborPosterJob-03-labor_poster_main_ledger" />
+        <property name="title" value="Main Labor Poster Input Transactions" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+                <entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+                <entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+            </map>
+        </property>
+        <property name="aggregationModeOn" value="true" />
+    </bean>
+
+    <bean id="laborPosterStep" class="org.kuali.kfs.module.ld.batch.LaborPosterStep" parent="wrappedStep">
+        <property name="wrappingBatchServices">
+            <list>
+                <ref bean="laborAccountingCycleCachingService" />
+                <ref bean="laborPosterReportWriterService" />
+                <ref bean="laborPosterErrorListingReportWriterService" />
+                <ref bean="laborPosterLedgerSummaryReportWriterService" />
+                <ref bean="laborGlEntryStatisticsReportWriterService" />
+            </list>
+        </property>
+        <property name="laborPosterService" ref="laborPosterService" />
+    </bean>
+
+    <bean id="laborBalanceSummaryStep" class="org.kuali.kfs.module.ld.batch.LaborBalanceSummaryStep" parent="wrappedStep">
+        <property name="laborBalanceSummaryReportService">
+            <ref bean="laborBalanceSummaryReportService" />
+        </property>
+        <property name="wrappingBatchServices">
+            <list>
+                <ref bean="laborPosterOutputSummaryReportWriterService" />
+                <ref bean="accountingCycleCachingService" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="laborYearEndBalanceForwardStep" class="org.kuali.kfs.module.ld.batch.LaborYearEndBalanceForwardStep"
+        parent="wrappedStep"
+    >
+        <property name="laborYearEndBalanceForwardService">
+            <ref bean="laborYearEndBalanceForwardService" />
+        </property>
+        <property name="wrappingBatchServices">
+            <list>
+                <ref bean="laborBalanceForwardReportWriterService" />
+                <ref bean="accountingCycleCachingService" />
+            </list>
+        </property>
+    </bean>
+    <bean id="laborBalanceForwardReportWriterService" parent="laborBalanceForwardReportWriterService-parentBean" />
+
+    <bean id="laborBalanceForwardReportWriterService-parentBean" parent="reportWriterService" abstract="true">
+        <property name="filePath" value="${reports.directory}/ld" />
+        <property name="fileNamePrefix" value="labor_year_end_balance_forward_" />
+        <property name="title" value="Balance Forward Report" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.module.ld.businessobject.LaborOriginEntry" value="laborTransactionReportHelper" />
+                <entry key="org.kuali.kfs.gl.businessobject.PosterOutputSummaryEntry" value="posterOutputSummaryEntryReportHelper" />
+                <entry key="org.kuali.kfs.gl.businessobject.PosterOutputSummaryBalanceTypeFiscalYearAndPeriodTotal"
+                    value="posterOutputSummaryBalanceTypeFiscalYearAndPeriodTotalReportHelper" />
+                <entry key="org.kuali.kfs.gl.businessobject.PosterOutputSummaryBalanceTypeFiscalYearTotal" value="posterOutputSummaryBalanceTypeFiscalYearTotalReportHelper" />
+                <entry key="org.kuali.kfs.gl.businessobject.PosterOutputSummaryBalanceTypeTotal" value="posterOutputSummaryBalanceTypeTotal" />
+                <entry key="org.kuali.kfs.gl.businessobject.PosterOutputSummaryTotal" value="posterOutputSummaryTotal" />
+            </map>
+        </property>
+    </bean>
+    <bean id="laborOutputSummaryReportWriterService" parent="laborOutputSummaryReportWriterService-parentBean" />
+
+    <bean id="laborOutputSummaryReportWriterService-parentBean" parent="reportWriterService" abstract="true">
+        <property name="filePath" value="${reports.directory}/ld" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.gl.businessobject.PosterOutputSummaryEntry" value="posterOutputSummaryEntryReportHelper" />
+                <entry key="org.kuali.kfs.gl.businessobject.PosterOutputSummaryBalanceTypeFiscalYearAndPeriodTotal"
+                    value="posterOutputSummaryBalanceTypeFiscalYearAndPeriodTotalReportHelper" />
+                <entry key="org.kuali.kfs.gl.businessobject.PosterOutputSummaryBalanceTypeFiscalYearTotal" value="posterOutputSummaryBalanceTypeFiscalYearTotalReportHelper" />
+                <entry key="org.kuali.kfs.gl.businessobject.PosterOutputSummaryBalanceTypeTotal" value="posterOutputSummaryBalanceTypeTotal" />
+                <entry key="org.kuali.kfs.gl.businessobject.PosterOutputSummaryTotal" value="posterOutputSummaryTotal" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="laborPurgeEntryStep" class="org.kuali.kfs.module.ld.batch.LaborPurgeEntryStep" parent="step">
+        <property name="laborLedgerEntryService">
+            <ref bean="laborLedgerEntryService" />
+        </property>
+        <property name="chartService">
+            <ref bean="chartService" />
+        </property>
+    </bean>
+
+    <bean id="laborPurgeBalanceStep" class="org.kuali.kfs.module.ld.batch.LaborPurgeBalanceStep" parent="step">
+        <property name="laborLedgerBalanceService">
+            <ref bean="laborLedgerBalanceService" />
+        </property>
+        <property name="chartService">
+            <ref bean="chartService" />
+        </property>
+    </bean>
+
+    <bean id="laborPurgeJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="laborPurgeBalanceStep" />
+                <ref bean="laborPurgeEntryStep" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="laborNightlyOutJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="laborNightlyOutStep" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="laborScrubberJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createLaborBackupGroupStep" />
+                <ref bean="laborPreScrubberStep" />
+                <ref bean="laborScrubberSortStep" />
+                <ref bean="laborScrubberStep" />
+                <ref bean="laborDemergerSortStep" />
+                <ref bean="laborDemergerStep" />
+                <ref bean="aggregateLaborScrubberReportsStep" />
+            </list>
+        </property>
+        <property name="dependencies">
+            <map>
+                <entry key="laborEnterpriseFeedJob" value="hardDependency" />
+                <entry key="laborNightlyOutJob" value="hardDependency" />
+            </map>
+        </property>
+    </bean>
+
+	<bean id="laborEnterpriseFeedJob" parent="laborEnterpriseFeedJob-parentBean" />
+
+	<bean id="laborEnterpriseFeedJob-parentBean" parent="scheduledJobDescriptor" abstract="true">
+        <property name="steps">
+            <list>
+                <ref bean="laborEnterpriseFeedStep" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="laborDemergerStep" class="org.kuali.kfs.module.ld.batch.LaborDemergerStep" parent="wrappedStep">
+        <property name="wrappingBatchServices">
+            <list>
+                <ref bean="laborDemergerReportWriterService" />
+                <ref bean="laborErrorListingReportWriterService" />
+            </list>
+        </property>
+        <property name="laborScrubberService">
+            <ref bean="laborScrubberService" />
+        </property>
+    </bean>
+
+    <bean id="laborScrubberSortStep" parent="flatFileSortStep">
+        <property name="inputFileName" value="${staging.directory}/ld/originEntry/ld_prescrub.data"/>
+		<property name="outputFileName" value="${staging.directory}/ld/originEntry/ld_sortscrb.data"/>
+		<property name="lineComparatorClass" value="org.kuali.kfs.module.ld.batch.LaborScrubberSortComparator"/>
+    </bean>
+
+    <bean id="laborDemergerSortStep" parent="flatFileSortStep">
+        <property name="inputFileName" value="${staging.directory}/ld/originEntry/ld_scrberr1.data"/>
+		<property name="outputFileName" value="${staging.directory}/ld/originEntry/ld_sorterr1.data"/>
+		<property name="lineComparatorClass" value="org.kuali.kfs.module.ld.batch.LaborDemergerSortComparator"/>
+    </bean>
+
+    <bean id="laborPosterSortStep" parent="flatFileSortStep">
+        <property name="inputFileName" value="${staging.directory}/ld/originEntry/ld_scrbout2.data"/>
+		<property name="outputFileName" value="${staging.directory}/ld/originEntry/ld_sortpost.data"/>
+		<property name="lineComparatorClass" value="org.kuali.kfs.module.ld.batch.LaborPosterSortComparator"/>
+    </bean>
+
+    <bean id="laborFileRenameStep" class="org.kuali.kfs.module.ld.batch.LaborFileRenameStep" parent="step">
+        <property name="batchFileDirectoryName" value="${staging.directory}/ld/originEntry" />
+    </bean>
+
+    <bean id="aggregateLaborScrubberReportsStep" class="org.kuali.kfs.sys.batch.ReportAggregationStep" parent="step">
+        <property name="outputFilePath" value="${reports.directory}/ld" />
+        <property name="outputFilePrefix" value="laborScrubberJob_" />
+        <property name="outputFileSuffix" value=".txt" />
+        <property name="inputFilePath" value="${temp.directory}" />
+        <property name="inputFilePrefix" value="laborScrubberJob-" />
+        <property name="inputFileSuffix" value=".txt" />
+        <property name="reportAggregatorService" ref="reportAggregatorService" />
+    </bean>
+
+    <bean id="laborPosterJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="laborPosterSortStep" />
+                <ref bean="laborPosterStep" />
+                <ref bean="laborFileRenameStep" />
+                <ref bean="laborBalanceSummaryStep" />
+                <ref bean="aggregateLaborPosterReportsStep" />
+            </list>
+        </property>
+        <property name="dependencies">
+            <map>
+                <entry key="laborScrubberJob" value="hardDependency" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="aggregateLaborPosterReportsStep" class="org.kuali.kfs.sys.batch.ReportAggregationStep" parent="step">
+        <property name="outputFilePath" value="${reports.directory}/ld" />
+        <property name="outputFilePrefix" value="laborPosterJob_" />
+        <property name="outputFileSuffix" value=".txt" />
+        <property name="inputFilePath" value="${temp.directory}" />
+        <property name="inputFilePrefix" value="laborPosterJob-" />
+        <property name="inputFileSuffix" value=".txt" />
+        <property name="reportAggregatorService" ref="reportAggregatorService" />
+    </bean>
+    <bean id="laborBalancingReportWriterService" parent="laborBalancingReportWriterService-parentBean" />
+
+    <bean id="laborBalancingReportWriterService-parentBean" parent="reportWriterService" abstract="true">
+        <property name="filePath" value="${reports.directory}/ld" />
+        <property name="fileNamePrefix" value="laborBalancing_" />
+        <property name="title" value="Labor Balancing Report" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.module.ld.businessobject.LaborOriginEntry" value="laborTransactionReportHelper" />
+                <entry key="org.kuali.kfs.module.ld.businessobject.LaborEntryHistory" value="ledgerEntryHistoryReportHelper" />
+                <entry key="org.kuali.kfs.module.ld.businessobject.LaborBalanceHistory" value="laborLedgerBalanceHistoryReportHelper" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="laborBalancingStep" class="org.kuali.kfs.module.ld.batch.LaborBalancingStep" parent="wrappedStep">
+        <property name="wrappingBatchServices">
+            <list>
+                <ref bean="laborBalancingReportWriterService" />
+            </list>
+        </property>
+        <property name="balancingService">
+            <ref bean="laborBalancingService" />
+        </property>
+    </bean>
+
+    <bean id="laborBalancingJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="laborBalancingStep" />
+            </list>
+        </property>
+        <property name="dependencies">
+            <map>
+                <entry key="laborPosterJob" value="hardDependency" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="laborBalancingHistorySyncStep" class="org.kuali.kfs.module.ld.batch.LaborBalancingHistorySyncStep"
+        parent="wrappedStep"
+    >
+        <property name="wrappingBatchServices">
+            <list>
+                <ref bean="laborBalancingReportWriterService" />
+            </list>
+        </property>
+        <property name="balancingService">
+            <ref bean="laborBalancingService" />
+        </property>
+    </bean>
+
+    <bean id="laborBalancingHistorySyncJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="laborBalancingHistorySyncStep" />
+                <ref bean="laborBalancingStep" />
+            </list>
+        </property>
+        <property name="dependencies">
+            <map>
+                <entry key="laborPosterJob" value="hardDependency" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="laborFeedJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="laborFeedStep" />
+            </list>
+        </property>
+        <property name="dependencies">
+            <map>
+                <entry key="laborPosterJob" value="hardDependency" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="clearLaborPendingEntriesJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="laborClearGLEntryStep" />
+                <ref bean="clearLaborPendingStep" />
+            </list>
+        </property>
+        <property name="dependencies">
+            <map>
+                <entry key="laborFeedJob" value="hardDependency" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="laborBalanceForwardJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="laborYearEndBalanceForwardStep" />
+            </list>
+        </property>
+         <property name="dependencies">
+            <map>
+                <entry key="laborPosterJob" value="hardDependency" />
+            </map>
+        </property>
+        
+    </bean>
+
+    <!-- Section 4: Spring Bean for Balance Inquiry -->
+    <bean id="laborPendingEntryLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="laborPendingEntryLookupableHelperService" />
+        </property>
+    </bean>
+    
+    <bean id="laborPendingEntryLookupableHelperService" scope="prototype" parent="laborPendingEntryLookupableHelperService-parentBean" />
+
+    <bean id="laborPendingEntryLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.ld.businessobject.lookup.LaborPendingEntryLookupableHelperServiceImpl"
+        scope="prototype"
+    >
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+        <property name="laborLedgerPendingEntryService">
+            <ref bean="laborLedgerPendingEntryService" />
+        </property>
+        <property name="laborInquiryOptionsService">
+            <ref bean="laborInquiryOptionsService" />
+        </property>
+    </bean>
+    
+    <bean id="laborLedgerBalanceLookupableHelperService"  scope="prototype"  parent="laborLedgerBalanceLookupableHelperService-parentBean" />
+
+    <bean id="laborLedgerBalanceLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.ld.businessobject.lookup.LedgerBalanceLookupableHelperServiceImpl"
+        scope="prototype"
+    >
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+        <property name="balanceService">
+            <ref bean="laborLedgerBalanceService" />
+        </property>
+        <property name="laborInquiryOptionsService">
+            <ref bean="laborInquiryOptionsService" />
+        </property>
+        <property name="balanceTypService">
+            <ref bean="balanceTypService" />
+        </property>
+    </bean>
+
+    <bean id="laborLedgerBalanceLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="laborLedgerBalanceLookupableHelperService" />
+        </property>
+    </bean>
+    
+    <bean id="laborLedgerBalanceForBenefitExpenseTransferLookupableHelperService" scope="prototype"  parent="laborLedgerBalanceForBenefitExpenseTransferLookupableHelperService-parentBean" />
+
+    <bean id="laborLedgerBalanceForBenefitExpenseTransferLookupableHelperService-parentBean" abstract="true" 
+        class="org.kuali.kfs.module.ld.businessobject.lookup.LedgerBalanceForBenefitExpenseTransferLookupableHelperServiceImpl"
+        scope="prototype"
+    >
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="balanceService">
+            <ref bean="laborLedgerBalanceService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+        <property name="optionsService">
+            <ref bean="optionsService" />
+        </property>
+        <property name="balanceTypService">
+            <ref bean="balanceTypService" />
+        </property>        
+    </bean>
+    
+    <bean id="laborLedgerBalanceForSalaryExpenseTransferLookupableHelperService" scope="prototype"  parent="laborLedgerBalanceForSalaryExpenseTransferLookupableHelperService-parentBean" />
+
+    <bean id="laborLedgerBalanceForSalaryExpenseTransferLookupableHelperService-parentBean" abstract="true" 
+        class="org.kuali.kfs.module.ld.businessobject.lookup.LedgerBalanceForSalaryExpenseTransferLookupableHelperServiceImpl"
+        scope="prototype"
+    >
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="balanceService">
+            <ref bean="laborLedgerBalanceService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+        <property name="optionsService">
+            <ref bean="optionsService" />
+        </property>
+        <property name="balanceTypService">
+            <ref bean="balanceTypService" />
+        </property>
+    </bean>
+    
+    <bean id="laborLedgerEntryForExpenseTransferLookupableHelperService" scope="prototype"  parent="laborLedgerEntryForExpenseTransferLookupableHelperService-parentBean" />
+
+    <bean id="laborLedgerEntryForExpenseTransferLookupableHelperService-parentBean" abstract="true" 
+        class="org.kuali.kfs.module.ld.businessobject.lookup.LedgerEntryForExpenseTransferLookupableHelperServiceImpl"
+        scope="prototype"
+    >
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+    </bean>
+
+    <bean id="laborLedgerEntryLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="laborLedgerEntryLookupableHelperService" />
+        </property>
+    </bean>
+    
+    <bean id="laborLedgerEntryLookupableHelperService" scope="prototype"  parent="laborLedgerEntryLookupableHelperService-parentBean" />
+
+    <bean id="laborLedgerEntryLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.ld.businessobject.lookup.LedgerEntryLookupableHelperServiceImpl"
+        scope="prototype"
+    >
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+        <property name="laborInquiryOptionsService">
+            <ref bean="laborInquiryOptionsService" />
+        </property>
+    </bean>
+
+    <bean id="laborLedgerEntryForExpenseTransferLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl"
+        scope="prototype"
+    >
+        <property name="lookupableHelperService">
+            <ref bean="laborLedgerEntryForExpenseTransferLookupableHelperService" />
+        </property>
+    </bean>
+
+    <bean id="laborLedgerBalanceForSalaryExpenseTransferLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl"
+        scope="prototype"
+    >
+        <property name="lookupableHelperService">
+            <ref bean="laborLedgerBalanceForSalaryExpenseTransferLookupableHelperService" />
+        </property>
+    </bean>
+
+    <bean id="laborLedgerBalanceForBenefitExpenseTransferLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl"
+        scope="prototype"
+    >
+        <property name="lookupableHelperService">
+            <ref bean="laborLedgerBalanceForBenefitExpenseTransferLookupableHelperService" />
+        </property>
+    </bean>
+
+    <bean id="laborCalculatedSalaryFoundationTrackerLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl"
+        scope="prototype"
+    >
+        <property name="lookupableHelperService">
+            <ref bean="laborCalculatedSalaryFoundationTrackerLookupableHelperService" />
+        </property>
+    </bean>
+    
+    <bean id="laborCalculatedSalaryFoundationTrackerLookupableHelperService" scope="prototype"  parent="laborCalculatedSalaryFoundationTrackerLookupableHelperService-parentBean" />
+
+    <bean id="laborCalculatedSalaryFoundationTrackerLookupableHelperService-parentBean" abstract="true" 
+        class="org.kuali.kfs.module.ld.businessobject.lookup.LaborCalculatedSalaryFoundationTrackerLookupableHelperServiceImpl"
+        scope="prototype"
+    >
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+        <property name="laborCalculatedSalaryFoundationTrackerService">
+            <ref bean="laborCalculatedSalaryFoundationTrackerService" />
+        </property>
+    </bean>
+    
+    <bean id="laborPositionDataLookupableHelperService" scope="prototype"  parent="laborPositionDataLookupableHelperService-parentBean" />
+
+    <bean id="laborPositionDataLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.ld.businessobject.lookup.PositionDataLookupableHelperServiceImpl"
+        scope="prototype"
+    >
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+    </bean>
+
+    <bean id="laborPositionDataLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="laborPositionDataLookupableHelperService" />
+        </property>
+    </bean>
+    <bean id="laborCalculatedSalaryFoundationTrackerService" parent="laborCalculatedSalaryFoundationTrackerService-parentBean" />
+
+    <bean id="laborCalculatedSalaryFoundationTrackerService-parentBean" class="org.kuali.kfs.module.ld.service.impl.LaborCalculatedSalaryFoundationTrackerServiceImpl" abstract="true">
+        <property name="laborCalculatedSalaryFoundationTrackerDao">
+            <ref bean="laborCalculatedSalaryFoundationTrackerDao" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+    </bean>
+
+    <bean id="CurrentFundsLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="CurrentFundsLookupableHelperService" />
+        </property>
+    </bean>
+    
+    <bean id="CurrentFundsLookupableHelperService" scope="prototype"  parent="CurrentFundsLookupableHelperService-parentBean" />
+
+    <bean id="CurrentFundsLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.ld.businessobject.lookup.CurrentFundsLookupableHelperServiceImpl"
+        scope="prototype"
+    >
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+        <property name="laborInquiryOptionsService">
+            <ref bean="laborInquiryOptionsService" />
+        </property>
+        <property name="balanceService">
+            <ref bean="laborLedgerBalanceService" />
+        </property>
+        <property name="laborDao">
+            <ref bean="laborDao" />
+        </property>
+        <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property>
+    </bean>
+
+    <bean id="BaseFundsLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="BaseFundsLookupableHelperService" />
+        </property>
+    </bean>
+    <bean id="BaseFundsLookupableHelperService" scope="prototype"  parent="BaseFundsLookupableHelperService-parentBean" />
+
+    <bean id="BaseFundsLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.ld.businessobject.lookup.BaseFundsLookupableHelperServiceImpl"
+        scope="prototype"
+    >
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+        <property name="laborBaseFundsService">
+            <ref bean="laborBaseFundsService" />
+        </property>
+        <property name="laborInquiryOptionsService">
+            <ref bean="laborInquiryOptionsService" />
+        </property>
+    </bean>
+
+    <bean id="EmployeeFundingLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="EmployeeFundingLookupableHelperService" />
+        </property>
+    </bean>
+    <bean id="EmployeeFundingLookupableHelperService" scope="prototype"  parent="EmployeeFundingLookupableHelperService-parentBean" />
+
+    <bean id="EmployeeFundingLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.ld.businessobject.lookup.EmployeeFundingLookupableHelperServiceImpl"
+        scope="prototype"
+    >
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+        <property name="laborLedgerBalanceService">
+            <ref bean="laborLedgerBalanceService" />
+        </property>
+        <property name="laborInquiryOptionsService">
+            <ref bean="laborInquiryOptionsService" />
+        </property>
+        <property name="laborLedgerPendingEntryService">
+            <ref bean="laborLedgerPendingEntryService" />
+        </property>
+    </bean>
+
+    <bean id="laborDao" parent="platformAwareDao" class="org.kuali.kfs.module.ld.dataaccess.impl.LaborDaoOjb" />
+    <bean id="laborCorrectionDocumentService" parent="laborCorrectionDocumentService-parentBean" />
+
+    <bean id="laborCorrectionDocumentService-parentBean" class="org.kuali.kfs.module.ld.document.service.impl.LaborCorrectionDocumentServiceImpl" abstract="true">
+        <property name="correctionChangeGroupDao">
+            <ref bean="glCorrectionChangeGroupDao" />
+        </property>
+        <property name="correctionChangeDao">
+            <ref bean="glCorrectionChangeDao" />
+        </property>
+        <property name="correctionCriteriaDao">
+            <ref bean="glCorrectionCriteriaDao" />
+        </property>
+        <property name="documentDao">
+            <ref bean="documentDao" />
+        </property>
+        <property name="laborOriginEntryService">
+            <ref bean="laborOriginEntryService" />
+        </property>
+        <property name="originEntryGroupService">
+            <ref bean="laborOriginEntryGroupService" />
+        </property>
+        <property name="laborCorrectionDocumentReportWriterService">
+            <ref bean="laborCorrectionReportWriterService" />
+        </property>
+        <property name="llcpDirectoryName" value="${staging.directory}/ld/correctionProcess" />
+        <property name="batchFileDirectoryName" value="${staging.directory}/ld/originEntry" />
+        <property name="temporaryReportsDirectory" value="${temp.directory}" />
+        <property name="temporaryReportFilenameComponent" value="llcpScrubberReports-" />
+        <property name="temporaryReportFilenameSuffix" value=".txt" />
+        <property name="reportsDirectory" value="${reports.directory}/ld" />
+        <property name="reportFilenamePrefix" value="llcp_" />
+        <property name="reportFilenameSuffix" value=".txt" />
+        <property name="dateTimeService" ref="dateTimeService" />
+        <property name="reportAggregatorService" ref="reportAggregatorService" />
+    </bean>
+    <bean id="laborInquiryOptionsService" parent="laborInquiryOptionsService-parentBean" />
+
+    <bean id="laborInquiryOptionsService-parentBean" class="org.kuali.kfs.module.ld.service.impl.LaborInquiryOptionsServiceImpl" abstract="true">
+        <property name="laborLedgerPendingEntryService">
+            <ref bean="laborLedgerPendingEntryService" />
+        </property>
+        <property name="laborLedgerBalanceService">
+            <ref bean="laborLedgerBalanceService" />
+        </property>
+    </bean>
+
+    <bean id="july1PositionFundingLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="july1PositionFundingLookupableHelperService" />
+        </property>
+    </bean>
+    
+    <bean id="july1PositionFundingLookupableHelperService" scope="prototype"  parent="july1PositionFundingLookupableHelperService-parentBean" />
+
+    <bean id="july1PositionFundingLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.ld.businessobject.lookup.July1PositionFundingLookupableHelperServiceImpl"
+        scope="prototype"
+    >
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+        <property name="laborDao">
+            <ref bean="laborDao" />
+        </property>
+    </bean>
+    <bean id="salaryTransferPeriodValidationService" parent="salaryTransferPeriodValidationService-parentBean" />
+
+    <bean id="salaryTransferPeriodValidationService-parentBean" class="org.kuali.kfs.module.ld.document.service.impl.SalaryTransferPeriodValidationServiceImpl" abstract="true">
+        <property name="effortCertificationService">
+            <ref bean="effortCertificationModuleService" />
+        </property>
+        <property name="documentService">
+            <ref bean="documentService" />
+        </property>
+        <property name="noteService">
+            <ref bean="noteService" />
+        </property>
+        <property name="configurationService">
+            <ref bean="kualiConfigurationService" />
+        </property>
+    </bean>
+    <bean id="salaryExpenseTransferTransactionAgeService" parent="salaryExpenseTransferTransactionAgeService-parentBean" />
+    
+    <bean id="salaryExpenseTransferTransactionAgeService-parentBean" class="org.kuali.kfs.module.ld.document.service.impl.SalaryExpenseTransferTransactionAgeServiceImpl" abstract="true">
+    	<property name="universityDateService">
+    		<ref bean="universityDateService" />
+    	</property>
+    	<property name="parameterService">
+            <ref bean="parameterService" />
+        </property>
+    </bean>
+    <bean id="expenseTransferAccountingLineService" parent="expenseTransferAccountingLineService-parentBean" />
+
+    <bean id="expenseTransferAccountingLineService-parentBean" class="org.kuali.kfs.sys.service.impl.AccountingLineServiceImpl" abstract="true">
+        <property name="accountingLineDao">
+            <bean parent="platformAwareDao" class="org.kuali.kfs.module.ld.dataaccess.impl.ExpenseTransferAccountingLineDaoOjb" />
+        </property>
+    </bean>
+    
+    <bean id="positionObjectBenefitLookupableHelperService" scope="prototype"  parent="positionObjectBenefitLookupableHelperService-parentBean" />
+
+    <bean id="positionObjectBenefitLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.ld.businessobject.lookup.PositionObjectBenefitLookupableHelperServiceImpl"
+        scope="prototype" parent="lookupableHelperService" />
+
+    <bean id="positionObjectBenefitLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="positionObjectBenefitLookupableHelperService" />
+        </property>
+    </bean>
+    
+    <bean id="laborPositionFundingLookupableHelperService" scope="prototype"  parent="laborPositionFundingLookupableHelperService-parentBean" />
+
+    <bean id="laborPositionFundingLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.ld.businessobject.lookup.PositionFundingLookupableHelperServiceImpl"
+        scope="prototype">
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+    </bean>
+
+    <bean id="laborPositionFundingLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="laborPositionFundingLookupableHelperService" />
+        </property>
+    </bean>
+
+    <bean id="laborLedgerBalanceForEffortCertificationLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl"
+        scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="laborLedgerBalanceForEffortCertificationLookupableHelperService" />
+        </property>
+    </bean>
+    
+    <bean id="laborLedgerBalanceForEffortCertificationLookupableHelperService" scope="prototype"  parent="laborLedgerBalanceForEffortCertificationLookupableHelperService-parentBean" />
+
+	<bean id="laborLedgerBalanceForEffortCertificationLookupableHelperService-parentBean" abstract="true" 
+        class="org.kuali.kfs.module.ld.businessobject.lookup.LedgerBalanceForEffortCertificationLookupableHelperServiceImpl"
+        scope="prototype" >
+        <property name="effortLedgerBalanceLookupableHelperService">
+            <ref bean="effortLedgerBalanceLookupableHelperService" />
+        </property>
+    </bean>
+
+    <bean id="benefitsCalculationFiscalYearMaker" parent="FiscalYearMaker">
+        <property name="businessObjectClass" value="org.kuali.kfs.module.ld.businessobject.BenefitsCalculation" />
+        <property name="carryForwardInactive" value="true" />
+    </bean>
+
+    <bean id="laborObjectDefinitionFiscalYearMaker" parent="FiscalYearMaker">
+        <property name="businessObjectClass" value="org.kuali.kfs.module.ld.businessobject.LaborObject" />
+        <property name="parentClasses">
+            <set>
+                <value>org.kuali.kfs.coa.businessobject.ObjectCode</value>
+            </set>
+        </property>
+        <property name="carryForwardInactive" value="true" />
+    </bean>
+
+    <bean id="positionObjectBenefitDefinitionFiscalYearMaker" parent="FiscalYearMaker">
+        <property name="businessObjectClass" value="org.kuali.kfs.module.ld.businessobject.PositionObjectBenefit" />
+        <property name="parentClasses">
+            <set>
+                <value>org.kuali.kfs.module.ld.businessobject.BenefitsCalculation</value>
+            </set>
+        </property>
+    </bean>
+
+    <!-- validations -->
+    <import resource="document/validation/configuration/LaborValidations.xml" />
+    <import resource="document/validation/configuration/SalaryExpenseTransferValidations.xml" />
+    <import resource="document/validation/configuration/BenefitExpenseTransferValidations.xml" />
+    <import resource="document/validation/configuration/LaborJournalVoucherValidations.xml" />
+
+    <!-- not exist <import resource="document/validation/configuration/YearEndSalaryExpenseTransferValidations.xml" /> -->
+
+    <!-- <bean id="clearOldLaborOriginEntriesJob" parent="unscheduledJobDescriptor"> -->
+    <!-- <property name="steps"> -->
+    <!-- <list> -->
+    <!-- <ref bean="clearOldLaborOriginEntryStep" /> -->
+    <!-- </list> -->
+    <!-- </property> -->
+    <!-- </bean> -->
+    <!-- -->
+    <!-- <bean id="clearOldLaborOriginEntryStep" class="org.kuali.kfs.module.ld.batch.ClearOldLaborOriginEntryStep" parent="step"> -->
+    <!-- <property name="originEntryGroupService"> -->
+    <!-- <ref bean="originEntryGroupService" /> -->
+    <!-- </property> -->
+    <!-- </bean> -->
+    <!-- -->
+    <bean id="laborCorrectionProcessScrubberStep" class="org.kuali.kfs.module.ld.batch.LaborCorrectionProcessScrubberStep"
+        parent="wrappedStep"
+    >
+        <property name="wrappingBatchServices">
+            <list>
+                <ref bean="laborAccountingCycleCachingService" />
+            </list>
+        </property>
+        <property name="laborCorrectionDocumentService" ref="laborCorrectionDocumentService" />
+        <property name="laborScrubberService" ref="laborScrubberService" />
+    </bean>
+
+    <bean id="laborTransactionReportHelper" parent="transactionReportHelper">
+    </bean>
+
+    <bean id="laborTransactionListingReportHelper" parent="transactionListingReportHelper">
+    </bean>
+
+    <bean id="laborLedgerBalanceHistoryReportHelper" parent="ledgerBalanceHistoryReportHelper">
+    </bean>
+
+    <bean id="laborLedgerEntryHistoryReportHelper" parent="ledgerEntryHistoryReportHelper">
+    </bean>
+    <bean id="laborMainReportWriterService" parent="laborMainReportWriterService-parentBean" />
+
+    <bean id="laborMainReportWriterService-parentBean" abstract="true" class="org.kuali.kfs.sys.service.impl.ScrubberListingReportWriterTextServiceImpl"
+        parent="reportWriterService"
+    >
+        <property name="filePath" value="${temp.directory}" />
+        <property name="fileNamePrefix" value="laborScrubberJob-01-labor_scrubber_report" />
+        <property name="title" value="LABOR SCRUBBER REPORT" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.module.ld.businessobject.LaborOriginEntry" value="transactionReportHelper" />
+            </map>
+        </property>
+        <property name="aggregationModeOn" value="true" />
+    </bean>
+    <bean id="llcpMainReportWriterService" parent="llcpMainReportWriterService-parentBean" />
+
+    <bean id="llcpMainReportWriterService-parentBean" parent="laborMainReportWriterService" abstract="true">
+        <property name="fileNamePrefix" value="llcpScrubberReports-03-labor_scrubber_report" />
+    </bean>
+    <bean id="laborBadBalanceTypeReportWriterService" parent="laborBadBalanceTypeReportWriterService-parentBean" />
+
+    <bean id="laborBadBalanceTypeReportWriterService-parentBean" parent="reportWriterService" abstract="true">
+        <property name="filePath" value="${temp.directory}" />
+        <property name="fileNamePrefix" value="laborScrubberJob-03-labor_scrubber_badbal" />
+        <property name="title" value="Labor Scrubber Input Transactions with Bad Balance Types" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.module.ld.businessobject.LaborOriginEntry" value="laborTransactionListingReportHelper" />
+            </map>
+        </property>
+        <property name="aggregationModeOn" value="true" />
+    </bean>
+    <bean id="laborErrorListingReportWriterService" parent="laborErrorListingReportWriterService-parentBean" />
+
+    <bean id="laborErrorListingReportWriterService-parentBean" parent="reportWriterService" abstract="true">
+        <property name="filePath" value="${temp.directory}" />
+        <property name="fileNamePrefix" value="laborScrubberJob-04-labor_scrubber_error_listing" />
+        <property name="title" value="Labor Error Listing - Transactions Removed From the Scrubber" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.module.ld.businessobject.LaborOriginEntry" value="laborTransactionListingReportHelper" />
+            </map>
+        </property>
+        <property name="aggregationModeOn" value="true" />
+    </bean>
+    <bean id="laborGeneratedTransactionsReportWriterService" parent="laborGeneratedTransactionsReportWriterService-parentBean" />
+
+    <bean id="laborGeneratedTransactionsReportWriterService-parentBean" class="org.kuali.kfs.sys.service.impl.ScrubberListingReportWriterTextServiceImpl"
+         abstract="true" parent="reportWriterService"
+    >
+        <property name="filePath" value="${temp.directory}" />
+        <property name="fileNamePrefix" value="llcpScrubberReports-04-labor_scrubber_listing" />
+        <property name="title" value="Labor Transaction Listing" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.module.ld.businessobject.LaborOriginEntry" value="laborTransactionListingReportHelper" />
+            </map>
+        </property>
+        <property name="aggregationModeOn" value="true" />
+    </bean>
+    <bean id="laborLedgerReportWriterService" parent="laborLedgerReportWriterService-parentBean" />
+
+    <bean id="laborLedgerReportWriterService-parentBean" class="org.kuali.kfs.sys.service.impl.ScrubberListingReportWriterTextServiceImpl"
+         abstract="true" parent="reportWriterService"
+    >
+        <property name="filePath" value="${temp.directory}" />
+        <property name="fileNamePrefix" value="laborScrubberJob-05-labor_scrubber_ledger" />
+        <property name="title" value="Labor Ledger Report" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+                <entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+                <entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+            </map>
+        </property>
+        <property name="aggregationModeOn" value="true" />
+    </bean>
+    <bean id="llcpLedgerReportWriterService" parent="llcpLedgerReportWriterService-parentBean" />
+
+    <bean id="llcpLedgerReportWriterService-parentBean" parent="laborLedgerReportWriterService" abstract="true">
+        <property name="fileNamePrefix" value="llcpScrubberReports-05-labor_scrubber_ledger" />
+    </bean>
+    <bean id="laborDemergerReportWriterService" parent="laborDemergerReportWriterService-parentBean" />
+
+    <bean id="laborDemergerReportWriterService-parentBean" parent="reportWriterService" abstract="true">
+        <property name="filePath" value="${temp.directory}" />
+        <property name="fileNamePrefix" value="laborScrubberJob-02-labor_demerger_report" />
+        <property name="title" value="LABOR DEMERGER REPORT" />
+        <property name="aggregationModeOn" value="true" />
+    </bean>
+    <bean id="laborCorrectionReportWriterService" parent="laborCorrectionReportWriterService-parentBean" />
+
+    <bean id="laborCorrectionReportWriterService-parentBean" class="org.kuali.kfs.sys.service.impl.ScrubberListingReportWriterTextServiceImpl"
+         abstract="true" parent="reportWriterService"
+    >
+        <property name="filePath" value="${temp.directory}" />
+        <property name="fileNamePrefix" value="llcpScrubberReports-01-llcp" />
+        <property name="title" value="Labor Ledger Correction Process Report" />
+        <property name="aggregationModeOn" value="true" />
+    </bean>
+    <bean id="laborPreScrubberService" parent="laborPreScrubberService-parentBean" />
+
+    <bean id="laborPreScrubberService-parentBean" class="org.kuali.kfs.gl.service.impl.PreScrubberServiceImpl" abstract="true">
+        <property name="parameterService" ref="parameterService" />
+    </bean>
+
+    <bean id="laborPreScrubberStep" class="org.kuali.kfs.module.ld.batch.LaborPreScrubberStep" parent="wrappedStep">
+        <property name="batchFileDirectoryName" value="${staging.directory}/ld/originEntry" />
+        <property name="laborPreScrubberService" ref="laborPreScrubberService" />
+        <property name="laborPreScrubberReportWriterService" ref="laborPreScrubberReportWriterService" />
+        <property name="wrappingBatchServices">
+            <list>
+                <ref bean="laborPreScrubberReportWriterService" />
+            </list>
+        </property>
+    </bean>
+    <bean id="laborPreScrubberReportWriterService" parent="laborPreScrubberReportWriterService-parentBean" />
+
+    <bean id="laborPreScrubberReportWriterService-parentBean" class="org.kuali.kfs.gl.service.impl.PreScrubberReportWriterTextServiceImpl"
+         abstract="true" parent="reportWriterService"
+    >
+        <property name="filePath" value="${temp.directory}" />
+        <property name="fileNamePrefix" value="laborScrubberJob-00-preScrubber" />
+        <property name="title"
+            value="Labor Pre-Scrubber Report - Find Chart of Accounts Code For Records With Blank Chart of Accounts Code" />
+        <property name="aggregationModeOn" value="true" />
+        <property name="preScrubberService" ref="laborPreScrubberService" />
+    </bean>
+    <bean id="llcpPreScrubberReportWriterService" parent="llcpPreScrubberReportWriterService-parentBean" />
+
+    <bean id="llcpPreScrubberReportWriterService-parentBean" parent="laborPreScrubberReportWriterService" abstract="true">
+        <property name="fileNamePrefix" value="llcpScrubberReports-02-preScrubber" />
+    </bean>
+    <bean id="laborReconciliationService" parent="laborReconciliationService-parentBean" />
+
+    <bean id="laborReconciliationService-parentBean" class="org.kuali.kfs.module.ld.batch.service.impl.ReconciliationServiceImpl" abstract="true">
+        <property name="reconciliationDao">
+            <ref bean="glReconciliationDao" />
+        </property>
+        <property name="originEntryClass" value="org.kuali.kfs.module.ld.businessobject.LaborOriginEntry" />
+    </bean>
+    <bean id="laborOriginEntryEnterpriseFeederService" parent="laborOriginEntryEnterpriseFeederService-parentBean" />
+
+    <bean id="laborOriginEntryEnterpriseFeederService-parentBean" class="org.kuali.kfs.module.ld.batch.service.impl.FileEnterpriseFeederServiceImpl" abstract="true">
+        <property name="dateTimeService">
+            <ref bean="dateTimeService" />
+        </property>
+        <property name="fileEnterpriseFeederHelperService">
+            <ref bean="laborOriginEntryEnterpriseFeederHelperService" />
+        </property>
+        <property name="enterpriseFeederNotificationService">
+            <ref bean="laborOriginEntryEnterpriseFeederNotificationService" />
+        </property>
+        <property name="parameterService">
+            <ref bean="parameterService" />
+        </property>            
+        <property name="configurationService">
+            <ref bean="kualiConfigurationService" />
+        </property>  
+        <property name="directoryName" value="${staging.directory}/ld/enterpriseFeed" />
+        <property name="laborOriginEntryDirectoryName" value="${staging.directory}/ld/originEntry" />
+        <property name="reconciliationTableId" value="ld_ldgr_entr_t" />
+        <property name="reportWriterService" ref="laborEnterpriseFeedReportWriterService" />
+        <property name="errorStatisticsReport" ref="laborEnterpriseFeedErrorStatisticsWriterService" />
+    </bean>
+
+    <bean id="laborEnterpriseFeedStep" class="org.kuali.kfs.module.ld.batch.LaborEnterpriseFeedStep" parent="wrappedStep">
+        <property name="wrappingBatchServices">
+            <list>
+                <ref bean="laborEnterpriseFeedReportWriterService" />
+                <ref bean="laborEnterpriseFeedErrorStatisticsWriterService" />
+            </list>
+        </property>
+        <property name="enterpriseFeederService">
+            <ref bean="laborOriginEntryEnterpriseFeederService" />
+        </property>
+    </bean>
+    <bean id="laborOriginEntryEnterpriseFeederNotificationService" parent="laborOriginEntryEnterpriseFeederNotificationService-parentBean" />
+
+    <bean id="laborOriginEntryEnterpriseFeederNotificationService-parentBean" class="org.kuali.kfs.gl.batch.service.impl.EnterpriseFeederNotificationServiceImpl" abstract="true">
+        <property name="configurationService">
+            <ref bean="kualiConfigurationService" />
+        </property>
+        <property name="parameterService">
+            <ref bean="parameterService" />
+        </property>
+        <property name="mailService">
+            <ref bean="mailService" />
+        </property>
+    </bean>
+    <bean id="laborEnterpriseFeedReportWriterService" parent="laborEnterpriseFeedReportWriterService-parentBean" />
+
+    <bean id="laborEnterpriseFeedReportWriterService-parentBean" class="org.kuali.kfs.sys.service.impl.ReportWriterTextServiceImpl"
+         abstract="true" parent="reportWriterService">
+        <property name="filePath" value="${reports.directory}/ld" />
+        <property name="fileNamePrefix" value="labor_enterprise_feed_" />
+        <property name="title" value="Labor Enterprise Feed Report" />
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryTotalLine" value="ledgerSummaryTotalLineReportHelper" />
+                <entry key="org.kuali.kfs.gl.businessobject.LedgerBalanceTypeSummaryTotalLine" value="ledgerBalanceTypeSummaryTotalLineReportHelper" />
+                <entry key="org.kuali.kfs.gl.businessobject.LedgerSummaryDetailLine" value="ledgerSummaryDetailLineReportHelper" />
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="laborEnterpriseFeedErrorStatisticsWriterService"  parent="laborEnterpriseFeedErrorStatisticsWriterService-parentBean" />
+    <bean id="laborEnterpriseFeedErrorStatisticsWriterService-parentBean"  parent="reportWriterService" abstract="true">
+        <property name="filePath" value="${reports.directory}/ld"/>
+        <property name="fileNamePrefix" value="labor_enterprise_feed_error_statistics_"/>
+        <property name="title" value="ERROR AND STATISTICS REPORT"/>
+        <property name="classToBusinessObjectReportHelperBeanNames">
+            <map>
+                <entry key="org.kuali.kfs.module.ld.businessobject.LaborOriginEntry" value="transactionReportHelper"/>
+            </map>
+        </property>
+        <property name="aggregationModeOn" value="false"/>
+    </bean>
+	
+    <bean id="laborOriginEntryEnterpriseFeederHelperService" parent="laborOriginEntryEnterpriseFeederHelperService-parentBean" />
+
+    <bean id="laborOriginEntryEnterpriseFeederHelperService-parentBean" class="org.kuali.kfs.module.ld.batch.service.impl.FileEnterpriseFeederHelperServiceImpl" abstract="true">
+         <property name="originEntryService">
+            <ref bean="originEntryService" />
+        </property>
+        <property name="reconciliationParserService">
+            <ref bean="glReconciliationParserService" />
+        </property>
+        <property name="reconciliationService">
+            <ref bean="laborReconciliationService" />
+        </property>
+        <property name="laborPositionObjectBenefitService">
+            <ref bean="laborPositionObjectBenefitService" />
+        </property>
+        <property name="laborBenefitsCalculationService">
+            <ref bean="laborBenefitsCalculationService" />
+        </property>   
+        <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property>         
+        <property name="parameterService">
+            <ref bean="parameterService" />
+        </property>   
+        <property name="configurationService">
+            <ref bean="kualiConfigurationService" />
+        </property>   
+        <property name="dateTimeService">
+  	        <ref bean="dateTimeService"/>
+  	    </property>
+    </bean>
+
+    <bean id="laborEnterpriseFeederFileSetType" class="org.kuali.kfs.module.ld.batch.LaborEnterpriseFeederFileSetType"></bean>
+
+    <bean id="ldBenefitsCalculationLookupableHelperService" parent="ldBenefitsCalculationLookupableHelperService-parentBean" scope="prototype" />
+
+    <bean id="ldBenefitsCalculationLookupableHelperService-parentBean" class="org.kuali.kfs.module.ld.businessobject.lookup.BenefitsCalculationLookupableHelperServiceImpl" abstract="true">
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+        <property name="parameterService">
+            <ref bean="parameterService" />
+        </property>
+    </bean>
+
+    <bean id="laborPendingEntryConverterService" parent="laborPendingEntryConverterService-parentBean" />
+
+    <bean id="laborPendingEntryConverterService-parentBean" abstract="true"
+        class="org.kuali.kfs.module.ld.document.service.impl.LaborPendingEntryConverterServiceImpl">
+        <property name="homeOriginationService" ref="homeOriginationService" />
+        <property name="laborBenefitsCalculationService" ref="laborBenefitsCalculationService" />
+        <property name="optionsService" ref="optionsService" />
+        <property name="objectCodeService" ref="objectCodeService" />
+        <property name="dataDictionaryService" ref="dataDictionaryService" />
+        <property name="dateTimeService" ref="dateTimeService" />
+        <property name="yearEndPendingEntryService" ref="yearEndPendingEntryService" />
+    </bean>
+    <bean id="laborOriginEntryGroupService" parent="laborOriginEntryGroupService-parentBean" />
+
+    <bean id="laborOriginEntryGroupService-parentBean" class="org.kuali.kfs.module.ld.service.impl.LaborOriginEntryGroupServiceImpl" abstract="true">
+        <property name="dateTimeService">
+            <ref bean="dateTimeService" />
+        </property>
+        <property name="kualiModuleService">
+            <ref bean="kualiModuleService" />
+        </property>
+        <property name="batchFileDirectoryName" value="${staging.directory}/ld/originEntry" />
+        <property name="nightlyOutFileName" value="ld_labentry_kfs" />
+        <property name="backupFileName" value="ld_ldbackup" />
+    </bean>
+</beans>

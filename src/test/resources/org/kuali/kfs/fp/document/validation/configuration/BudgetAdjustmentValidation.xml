@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="BudgetAdjustment-routeDocumentValidation" parent="BudgetAdjustment-routeDocumentValidation-parentBean" scope="prototype" />
+
+	<bean id="BudgetAdjustment-routeDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="BudgetAdjustment-documentBalancedValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="BudgetAdjustment-accountingLinesRequiredForRoutingValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="BudgetAdjustment-fundGroupAdjustmentRestrictionValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="BudgetAdjustment-saveDocumentValidation" parent="BudgetAdjustment-saveDocumentValidation-parentBean" scope="prototype" />
+	
+	<bean id="BudgetAdjustment-saveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="AccountingDocument-SaveDocument-DefaultValidation" scope="prototype" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="BudgetAdjustment-approveDocumentValidation" parent="BudgetAdjustment-approveDocumentValidation-parentBean" scope="prototype" />
+	
+	<bean id="BudgetAdjustment-approveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="BudgetAdjustment-accountingLineTotalsUnchangedValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="BudgetAdjustment-blanketApproveDocumentValidation" parent="BudgetAdjustment-blanketApproveDocumentValidation-parentBean" scope="prototype" />
+	
+	<bean id="BudgetAdjustment-blanketApproveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="AccountingDocument-BlanketApproveDocument-DefaultValidation" scope="prototype" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="BudgetAdjustment-addAccountingLine-failFastValidation" abstract="true" parent="CompositeValidation" scope="prototype"> <!-- here to get the quit on fail issues correct -->
+		<property name="validations">
+			<list>
+				<bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<bean parent="accountingLineToBusinessObjectFieldConversion" />
+					</property>
+				</bean>
+				<bean parent="BudgetAdjustment-accountingLineAmountValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="BudgetAdjustment-accountingLineDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
+					<property name="accountingDocumentParameterPropertyName" value="document" />
+					<property name="accountingLineParameterPropertyName" value="accountingLine" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="BudgetAdjustment-addAccountingLineValidation" parent="BudgetAdjustment-addAccountingLineValidation-parentBean" />
+	
+	<bean id="BudgetAdjustment-addAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="BudgetAdjustment-addAccountingLine-failFastValidation" scope="prototype" />
+				<bean parent="AccountingDocument-accountingLineAccessibleValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="BudgetAdjustment-accountingLineBaseAmountValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="BudgetAdjustment-accountingLineMonthlyLinesValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="BudgetAdjustment-accountingLineAccountHasRecordingLevelValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="BudgetAdjustment-accountingLineAccountIncomeStreamValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="BudgetAdjustment-deleteAccountingLineValidation" parent="BudgetAdjustment-deleteAccountingLineValidation-parentBean" scope="prototype" />
+	
+	<bean id="BudgetAdjustment-deleteAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="AccountingDocument-DeleteAccountingLine-DefaultValidation" scope="prototype" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="BudgetAdjustment-reviewAccountingLineValidation" parent="BudgetAdjustment-reviewAccountingLineValidation-parentBean" scope="prototype" />
+
+	<bean id="BudgetAdjustment-reviewAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<bean parent="accountingLineToBusinessObjectFieldConversion" />
+					</property>
+				</bean>
+				<bean parent="BudgetAdjustment-accountingLineAmountValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="BudgetAdjustment-accountingLineDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
+					<property name="accountingDocumentParameterPropertyName" value="document" />
+					<property name="accountingLineParameterPropertyName" value="accountingLine" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="BudgetAdjustment-updateAccountingLine-failFastValidation" abstract="true" parent="CompositeValidation" scope="prototype"> <!-- here to get the quit on fail issues correct -->
+		<property name="validations">
+			<list>
+				<bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<bean parent="updatedAccountingLineToBusinessObjectFieldConversion" />
+					</property>
+				</bean>
+				<bean parent="BudgetAdjustment-accountingLineAmountValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+							<bean parent="updatedAccountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="BudgetAdjustment-accountingLineDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="updatedAccountingLineFieldConversion" />
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
+					<property name="accountingDocumentParameterPropertyName" value="document" />
+					<property name="accountingLineParameterPropertyName" value="updatedAccountingLine" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="BudgetAdjustment-updateAccountingLineValidation" parent="BudgetAdjustment-updateAccountingLineValidation-parentBean" scope="prototype" />
+	
+	<bean id="BudgetAdjustment-updateAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+			<list>
+				<bean parent="BudgetAdjustment-updateAccountingLine-failFastValidation" scope="prototype" />
+				<bean parent="AccountingDocument-accountingLineAccessibleValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+							<bean parent="updatedAccountingLineFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="BudgetAdjustment-accountingLineBaseAmountValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingDocumentFieldConversion" />
+							<bean parent="updatedAccountingLineFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="BudgetAdjustment-accountingLineMonthlyLinesValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="updatedAccountingLineFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="BudgetAdjustment-accountingLineAccountHasRecordingLevelValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="updatedAccountingLineFieldConversion" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="BudgetAdjustment-accountingLineAccountIncomeStreamValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="updatedAccountingLineFieldConversion" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+</beans>

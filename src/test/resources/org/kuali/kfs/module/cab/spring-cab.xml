@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+
+    <bean id="cabModuleConfiguration" parent="cabModuleConfiguration-parentBean" />
+	
+    <bean id="cabModuleConfiguration-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration" abstract="true">
+    	<property name="namespaceCode" value="KFS-CAB" />
+		<property name="initializeDataDictionary" value="true" />
+        <property name="packagePrefixes">
+            <list>
+                <value>org.kuali.kfs.module.cab</value>
+                <value>org.kuali.kfs.integration.cab</value>
+            </list>
+        </property>
+		<property name="dataDictionaryPackages">
+			<list>
+                <value>org/kuali/kfs/module/cab/businessobject/datadictionary</value>
+                <value>org/kuali/kfs/module/cab/document/datadictionary</value>
+			</list>
+		</property>
+		<property name="databaseRepositoryFilePaths">
+			<list>
+				<value>org/kuali/kfs/module/cab/ojb-cab.xml</value>
+			</list>
+		</property>
+		<property name="scriptConfigurationFilePaths">
+			<list>
+				<value>org/kuali/kfs/module/cab/dwr-cab.xml</value>
+			</list>
+		</property>
+		<property name="jobNames">
+			<list>
+				<value>cabExtractJob</value>		
+				<value>preAssetTaggingExtractJob</value>								
+			</list>
+		</property>
+		<property name="triggerNames">
+			<list>
+				<value>preAssetTaggingExtractJobTrigger</value>
+			</list>
+		</property>		
+		<property name="externalizableBusinessObjectImplementations">
+            <map>
+				<entry key="org.kuali.kfs.integration.cab.CapitalAssetBuilderAssetTransactionType" value="org.kuali.kfs.module.cab.businessobject.AssetTransactionType" />
+            </map>
+        </property> 
+        <property name="batchFileDirectories">
+          	<list>
+            	<value>${reports.directory}/cab</value>
+          	</list>
+        </property>
+        
+	</bean>
+
+    <bean id="cabModuleService" parent="cabModuleService-parentBean"/>
+
+    <bean id="cabModuleService-parentBean" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl" abstract="true">
+		<property name="moduleConfiguration" ref="cabModuleConfiguration" />
+	</bean>
+
+    <bean id="capitalAssetBuilderModuleService"  parent="capitalAssetBuilderModuleService-parentBean"/>
+    <bean id="capitalAssetBuilderModuleService-parentBean" class="org.kuali.kfs.module.cab.service.impl.CapitalAssetBuilderModuleServiceImpl" abstract="true">
+    	<property name="glLineService" ref="glLineService" />
+    	<property name="dataDictionaryService" ref="dataDictionaryService" />
+    	<property name="parameterEvaluatorService" ref="parameterEvaluatorService" />
+    	<property name="configurationService" ref="configurationService" />
+    	<property name="parameterRepositoryService" ref="parameterRepositoryService" />
+    	<property name="parameterService" ref="parameterService" />
+    	<property name="businessObjectService" ref="businessObjectService" />
+    	<property name="assetService" ref="assetService" />
+    	<property name="purApInfoService" ref="purApInfoService" />
+    	<property name="capitalAssetManagementModuleService" ref="capitalAssetManagementModuleService" />
+    	<property name="kualiModuleService" ref="kualiModuleService" />
+    	<property name="businessObjectDictionaryService" ref="businessObjectDictionaryService" />
+    	<property name="campusService" ref="campusService" />
+    	<property name="dictionaryValidationService" ref="dictionaryValidationService" />
+    	<property name="purchasingAccountsPayableModuleService" ref="purchasingAccountsPayableModuleService" />
+    </bean>
+	
+<!-- Begin - CAB Batch Beans -->
+	<bean id="extractDao" parent="platformAwareDao" class="org.kuali.kfs.module.cab.batch.dataaccess.impl.ExtractDaoOjb" />
+	<bean id="purchasingAccountsPayableItemAssetDao" parent="platformAwareDao" class="org.kuali.kfs.module.cab.batch.dataaccess.impl.PurchasingAccountsPayableItemAssetDaoOjb" />
+	
+	
+	<bean id="batchExtractService"  parent="batchExtractService-parentBean"/>
+	<bean id="batchExtractService-parentBean" class="org.kuali.kfs.module.cab.batch.service.impl.BatchExtractServiceImpl" abstract="true">
+		<property name="extractDao" ref="extractDao" />
+		<property name="purchasingAccountsPayableItemAssetDao" ref="purchasingAccountsPayableItemAssetDao" />
+		<property name="parameterService" ref="parameterService" />
+		<property name="dateTimeService" ref="dateTimeService" />
+		<property name="businessObjectService" ref="businessObjectService" />
+		<property name="purApLineService" ref="purApLineService" />
+		<property name="purApInfoService" ref="purApInfoService" />
+	</bean>
+	
+	<bean id="batchExtractReportService"  parent="batchExtractReportService-parentBean"/>
+	<bean id="batchExtractReportService-parentBean" class="org.kuali.kfs.module.cab.batch.service.impl.BatchExtractReportServiceImpl" abstract="true">
+		<property name="dateTimeService" ref="dateTimeService" />
+		<property name="cabBatchStatusReportInfo" ref="cabBatchStatusReportInfo" />
+		<property name="cabBatchMismatchReportInfo" ref="cabBatchMismatchReportInfo" />
+		<property name="reportGenerationService" ref="reportGenerationService" />
+	</bean>
+
+    <bean id="reconciliationDao" parent="platformAwareDao"
+        class="org.kuali.kfs.module.cab.dataaccess.impl.ReconciliationDaoOjb" />
+	
+	<bean id="reconciliationService"  parent="reconciliationService-parentBean" singleton="false"/>
+	<bean id="reconciliationService-parentBean" class="org.kuali.kfs.module.cab.batch.service.impl.ReconciliationServiceImpl" abstract="true">
+		<property name="businessObjectService" ref="businessObjectService" />
+		<property name="reconciliationDao" ref="reconciliationDao" />
+	</bean>
+	
+	 <bean id="cabExtractStep" class="org.kuali.kfs.module.cab.batch.ExtractStep" parent="step">
+	 	<property name="batchExtractService" ref="batchExtractService" />
+	 	<property name="batchExtractReportService" ref="batchExtractReportService" />
+	 	<property name="dateTimeService" ref="dateTimeService" />	 	
+	</bean>
+	
+	<bean id="cabExtractJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="cabExtractStep"/>
+			</list>
+		</property>
+		<property name="dependencies">
+			<map>
+				<entry key="posterJob" value="hardDependency" />
+			</map>
+		</property>
+	</bean>
+	<!-- End - CAB Batch Beans -->
+	
+	<!-- START - Pre-Asset tagging extract job beans -->
+	<bean id="preAssetTaggingStep" class="org.kuali.kfs.module.cab.batch.PreAssetTaggingStep" parent="step">
+	 	<property name="batchExtractService" ref="batchExtractService" />
+	 	<property name="dateTimeService" ref="dateTimeService" />	 	
+	</bean>
+	<bean id="preAssetTaggingExtractJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="preAssetTaggingStep"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="preAssetTaggingExtractJobTrigger" parent="cronTrigger">
+		<property name="jobName" value="preAssetTaggingExtractJob" />
+		<!--  it will run every day at 7 AM -->
+		<property name="cronExpression" value="0 0 7 ? * *" />
+	</bean>
+
+	<bean id="cabBatchStatusReportInfo"  parent="cabBatchStatusReportInfo-parentBean"/>
+	<bean id="cabBatchStatusReportInfo-parentBean" class="org.kuali.kfs.sys.report.ReportInfoHolder"  abstract="true">
+		<property name="reportTitle" value="CAB Batch Status Report" />
+		<property name="reportFileName" value="cab_batch_status_report" />
+		<property name="reportsDirectory" value="${reports.directory}/cab/" />
+		<property name="resourceBundleBaseName" value="org/kuali/kfs/module/cab/report/messages" />
+		<property name="reportTemplateClassPath" value="org/kuali/kfs/module/cab/report/" />
+		<property name="reportTemplateName" value="BatchStatusReport" />
+		<property name="subReportTemplateClassPath" value="org/kuali/kfs/module/cab/report/" />
+		<property name="subReports">
+			<map>
+				<entry key="batchReportDetails" value="BatchReportDetails"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="cabBatchMismatchReportInfo"  parent="cabBatchMismatchReportInfo-parentBean"/>
+	<bean id="cabBatchMismatchReportInfo-parentBean" class="org.kuali.kfs.sys.report.ReportInfoHolder"  abstract="true">
+		<property name="reportTitle" value="CAB Batch Mismatch Report" />
+		<property name="reportFileName" value="cab_batch_mismatch_report" />
+		<property name="reportsDirectory" value="${reports.directory}/cab/" />
+		<property name="resourceBundleBaseName" value="org/kuali/kfs/module/cab/report/messages" />
+		<property name="reportTemplateClassPath" value="org/kuali/kfs/module/cab/report/" />
+		<property name="reportTemplateName" value="BatchMismatchReport" />
+		<property name="subReportTemplateClassPath" value="org/kuali/kfs/module/cab/report/" />
+		<property name="subReports">
+			<map>
+				<entry key="batchReportDetails" value="BatchReportDetails"/>
+			</map>
+		</property>
+	</bean>
+		
+	<!-- END Pre-Asset tagging extract job beans -->
+	
+<!-- **** Begin of Lookupable beans **** -->
+	<bean id="purApReportLookupableHelperService" singleton="false" parent="purApReportLookupableHelperService-parentBean"/>
+    <bean id="purApReportLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.cab.businessobject.lookup.PurApReportLookupableHelperServiceImpl" singleton="false" parent="lookupableHelperService">
+        <property name="purApReportService">
+            <ref bean="purchasingAccountsPayableReportService" />
+        </property>
+    </bean>
+    <bean id="cabPurApReportLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" singleton="false">
+        <property name="lookupableHelperService">
+            <ref bean="purApReportLookupableHelperService" />
+        </property>
+    </bean>
+    
+   	<bean id="generalLedgerEntryLookupableHelperService" singleton="false"  parent="generalLedgerEntryLookupableHelperService-parentBean"/>
+	<bean id="generalLedgerEntryLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.cab.businessobject.lookup.GeneralLedgerEntryLookupableHelperServiceImpl" singleton="false"  parent="lookupableHelperService">
+		<property name="businessObjectService" ref="businessObjectService" />
+    </bean>
+
+    <bean id="cabGlEntryLookupable"  parent="cabGlEntryLookupable-parentBean" singleton="false"/>
+    <bean id="cabGlEntryLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
+        <property name="lookupableHelperService">
+            <ref bean="generalLedgerEntryLookupableHelperService" />
+        </property>
+    </bean>
+    
+<!-- **** End of Lookupable beans **** -->
+
+<!--  **** PurAp service beans **** -->
+	<bean id="purchasingAccountsPayableReportDao" parent="platformAwareDao" class="org.kuali.kfs.module.cab.dataaccess.impl.PurchasingAccountsPayableReportDaoOjb"></bean>
+	
+	<bean id="purchasingAccountsPayableReportService" parent="purchasingAccountsPayableReportService-parentBean"/>
+    <bean id="purchasingAccountsPayableReportService-parentBean" abstract="true"  class="org.kuali.kfs.module.cab.service.impl.PurchasingAccountsPayableReportServiceImpl" >
+    	<property name="purApReportDao">
+    		<ref bean="purchasingAccountsPayableReportDao" />
+    	</property>
+    </bean>
+    
+	<bean id="purApInfoService"  parent="purApInfoService-parentBean"/>
+	<bean id="purApInfoService-parentBean" class="org.kuali.kfs.module.cab.document.service.impl.PurApInfoServiceImpl" abstract="true">
+		<property name="businessObjectService" ref="businessObjectService" />
+	</bean>  
+	
+	<bean id="purApLineDao" parent="platformAwareDao" class="org.kuali.kfs.module.cab.dataaccess.impl.PurApLineDaoOjb"></bean>
+	
+	<bean id="purApLineService" parent="purApLineService-parentBean"/>
+	<bean id="purApLineService-parentBean" abstract="true"  class="org.kuali.kfs.module.cab.document.service.impl.PurApLineServiceImpl">
+		<property name="businessObjectService" ref="businessObjectService" />
+		<property name="purApLineDao" ref="purApLineDao" />
+		<property name="purApInfoService" ref="purApInfoService" />
+		<property name="capitalAssetManagementModuleService" ref="capitalAssetManagementModuleService" />
+	</bean>  
+	
+	<bean id="purApLineDocumentService"  parent="purApLineDocumentService-parentBean"/>
+	<bean id="purApLineDocumentService-parentBean" class="org.kuali.kfs.module.cab.document.service.impl.PurApLineDocumentServiceImpl" abstract="true">
+		<property name="businessObjectService" ref="businessObjectService" />
+		<property name="purApLineService" ref="purApLineService" />
+		<property name="purApInfoService" ref="purApInfoService" />
+		<property name="documentService" ref="documentService" />
+		<property name="assetGlobalService" ref="assetGlobalService" />
+	</bean>  
+<!-- **** End of PurAp service beans **** -->
+
+<!-- Start Gl Line Processing beans -->
+	<bean id="glLineService"  parent="glLineService-parentBean"/>
+	<bean id="glLineService-parentBean" class="org.kuali.kfs.module.cab.document.service.impl.GlLineServiceImpl" abstract="true">
+		<property name="businessObjectService" ref="businessObjectService" />
+		<property name="assetGlobalService" ref="assetGlobalService"/>
+		<property name="objectTypeService" ref="objectTypeService"/>
+		<property name="documentService" ref="documentService"/>
+		<property name="documentHeaderService" ref="documentHeaderService"/>
+		<property name="parameterService" ref="parameterService"/>
+		<property name="parameterEvaluatorService" ref="parameterEvaluatorService"/>
+	</bean> 
+<!-- End GL Line Processing beans -->
+
+<!-- Start Gl and PurAp helper beans -->
+	<bean id="glAndPurApHelperService"  parent="glAndPurApHelperService-parentBean"/>
+	<bean id="glAndPurApHelperService-parentBean" class="org.kuali.kfs.module.cab.document.service.impl.GlAndPurApHelperServiceImpl"  abstract="true"/>
+<!-- End Gl and PurAp helper beans -->	
+</beans>

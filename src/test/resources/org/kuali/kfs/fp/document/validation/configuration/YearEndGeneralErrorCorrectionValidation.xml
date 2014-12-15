@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="YearEndGeneralErrorCorrection-routeDocumentValidation" parent="YearEndGeneralErrorCorrection-routeDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="YearEndGeneralErrorCorrection-routeDocumentValidation-parentBean" parent="GeneralErrorCorrection-routeDocumentValidation" abstract="true" />
+
+  	<bean id="YearEndGeneralErrorCorrection-approveDocumentValidation" parent="YearEndGeneralErrorCorrection-approveDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="YearEndGeneralErrorCorrection-approveDocumentValidation-parentBean" parent="GeneralErrorCorrection-approveDocumentValidation" abstract="true" />
+  	
+  	<bean id="YearEndGeneralErrorCorrection-saveDocumentValidation" parent="YearEndGeneralErrorCorrection-saveDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="YearEndGeneralErrorCorrection-saveDocumentValidation-parentBean" parent="GeneralErrorCorrection-saveDocumentValidation" abstract="true" />
+  
+	<bean id="YearEndGeneralErrorCorrection-blanketApproveDocumentValidation" parent="YearEndGeneralErrorCorrection-blanketApproveDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="YearEndGeneralErrorCorrection-blanketApproveDocumentValidation-parentBean" parent="GeneralErrorCorrection-blanketApproveDocumentValidation" abstract="true" />
+  		  
+	<bean id="YearEndGeneralErrorCorrection-addAccountingLineValidation" parent="YearEndGeneralErrorCorrection-addAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="YearEndGeneralErrorCorrection-addAccountingLineValidation-parentBean" parent="GeneralErrorCorrection-addAccountingLineValidation" abstract="true" />
+  		
+	<bean id="YearEndGeneralErrorCorrection-deleteAccountingLineValidation" parent="YearEndGeneralErrorCorrection-deleteAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="YearEndGeneralErrorCorrection-deleteAccountingLineValidation-parentBean" parent="GeneralErrorCorrection-deleteAccountingLineValidation" abstract="true" />
+  		
+	<bean id="YearEndGeneralErrorCorrection-updateAccountingLineValidation" parent="YearEndGeneralErrorCorrection-updateAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="YearEndGeneralErrorCorrection-updateAccountingLineValidation-parentBean" parent="GeneralErrorCorrection-updateAccountingLineValidation" abstract="true" />
+  	
+	<bean id="YearEndGeneralErrorCorrection-reviewAccountingLineValidation" parent="YearEndGeneralErrorCorrection-reviewAccountingLineValidation-parentBean" scope="prototype" />
+  
+	<bean id="YearEndGeneralErrorCorrection-reviewAccountingLineValidation-parentBean" parent="GeneralErrorCorrection-reviewAccountingLineValidation" abstract="true" />
+
+	<bean id="YearEndGeneralErrorCorrection-capitalAccountingLinesObjectSubtypeValidations" parent="YearEndGeneralErrorCorrection-capitalAccountingLinesObjectSubtypeValidations-parentBean" scope="prototype" />
+	<bean id="YearEndGeneralErrorCorrection-capitalAccountingLinesObjectSubtypeValidations-parentBean" parent="DistributionOfIncomeAndExpense-capitalAccountingLinesObjectSubtypeValidations" abstract="true"/>
+</beans>

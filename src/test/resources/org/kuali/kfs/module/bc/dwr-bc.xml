@@ -1,0 +1,73 @@
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN" "http://directwebremoting.org/schema/dwr30.dtd">
+
+<dwr>
+	<init>
+		<creator id="spring" class="org.kuali.rice.kns.web.servlet.dwr.GlobalResourceDelegatingSpringCreator"/>
+	</init>
+	<allow>
+	    <create creator="new" javascript="BudgetConstructionPosition">
+	    	<param name="class" value="org.kuali.kfs.module.bc.businessobject.BudgetConstructionPosition" />
+	    	<include method="getCalculatedBCPositionFTE" />
+	    </create>
+
+	    <convert converter="bean" match="org.kuali.kfs.module.bc.businessobject.BudgetConstructionPosition">
+	   		<param name="include" value="positionFullTimeEquivalency,iuNormalWorkMonths,iuPayMonths,positionDescription" />
+	   	</convert>
+	    <create creator="spring" javascript="BudgetConstructionPositionService">
+	    	<param name="beanName" value="budgetConstructionPositionService" />
+	    	<include method="getByPrimaryId" />
+	    </create>
+	    
+	    <convert converter="bean" match="org.kuali.kfs.module.bc.businessobject.BudgetConstructionAppointmentFundingReasonCode">
+	   		<param name="include" value="appointmentFundingReasonCode,appointmentFundingReasonDescription" />
+	   	</convert>
+	    <create creator="spring" javascript="BudgetConstructionAppointmentFundingReasonCodeService">
+	    	<param name="beanName" value="budgetConstructionAppointmentFundingReasonCodeService" />
+	    	<include method="getByPrimaryId" />
+	    </create>
+	    
+	    <convert converter="bean" match="org.kuali.kfs.module.bc.businessobject.BudgetConstructionDuration">
+	   		<param name="include" value="appointmentDurationCode,appointmentDurationDescription" />
+	   	</convert>
+	    <create creator="spring" javascript="BudgetConstructionDurationService">
+	    	<param name="beanName" value="budgetConstructionDurationService" />
+	    	<include method="getByPrimaryId" />
+	    </create>
+	    
+	    <convert converter="bean" match="org.kuali.kfs.module.bc.businessobject.BudgetConstructionIntendedIncumbent">
+	    	<param name="include" value="emplid,name,setidSalary,salaryAdministrationPlan,grade,iuClassificationLevel" />
+	    </convert>
+	    <create creator="spring" javascript="BudgetConstructionIntendedIncumbentService">
+	    	<param name="beanName" value="budgetConstructionIntendedIncumbentService" />
+	    	<include method="getByPrimaryId" />
+	    </create>
+	    
+	    <convert converter="bean" match="org.kuali.kfs.module.bc.businessobject.BudgetConstructionAdministrativePost" />
+	    <create creator="spring" javascript="BudgetConstructionAdministrativePostService">
+	    	<param name="beanName" value="budgetConstructionAdministrativePostService" />
+	    	<include method="getByPrimaryId" />
+	    </create>
+	    
+	    <create creator="spring" javascript="SalarySettingService">
+	    	<param name="beanName" value="salarySettingService" />
+	    </create>
+	</allow>
+</dwr>

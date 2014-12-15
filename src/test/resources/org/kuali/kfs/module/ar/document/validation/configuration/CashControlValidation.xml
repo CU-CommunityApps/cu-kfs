@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+        
+	<bean id="CashControl-validateCustomerNumberAndLineAmounts" abstract="true" parent="CollectionValidation" scope="prototype">
+  		<property name="collectionProperty" value="document.cashControlDetails" />
+  		<property name="validations">
+ 			<list>
+				<bean parent="CashControl-customerNumberValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="iterationSubject" />
+								<property name="targetValidationProperty" value="cashControlDetail" />
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean parent="CashControl-lineAmountValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="iterationSubject" />
+								<property name="targetValidationProperty" value="cashControlDetail" />
+							</bean>
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+        
+    <bean id="CashControl-saveDocumentValidation" parent="CashControl-saveDocumentValidation-parentBean" scope="prototype" />
+	
+	<bean id="CashControl-saveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+  			<list>
+				<bean parent="CashControl-checkGLPEsNotGeneratedValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="cashControlDocument" />
+							</bean>						
+						</list>
+					</property>				
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="CashControl-refDocNumberValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="cashControlDocument" />
+							</bean>						
+						</list>
+					</property>				
+					<property name="quitOnFail" value="true" />
+				</bean>
+ 				<bean parent="CashControl-validateCustomerNumberAndLineAmounts" scope="prototype"/>
+
+  			</list>
+		</property>
+	</bean>
+  
+  	<bean id="CashControl-approveDocumentValidation" parent="CashControl-approveDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="CashControl-approveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+				<bean parent="CashControl-allAppDocsApprovedValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="cashControlDocument" />
+							</bean>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="cashControlDetail" />
+								<property name="targetValidationProperty" value="cashControlDetail" />
+							</bean>						
+						</list>
+					</property>				
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="CashControl-checkGLPEsNotGeneratedValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="cashControlDocument" />
+							</bean>						
+						</list>
+					</property>				
+					<property name="quitOnFail" value="true" />
+				</bean>
+  			</list>
+  		</property>
+  	</bean>
+  
+	<bean id="CashControl-blanketApproveDocumentValidation" parent="CashControl-blanketApproveDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="CashControl-blanketApproveDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list></list>
+  		</property>
+	</bean>
+	
+	<bean id="CashControl-addCashControlDetailValidation" parent="CashControl-addCashControlDetailValidation-parentBean" scope="prototype" />
+  
+  	<bean id="CashControl-addCashControlDetailValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+				<bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="cashControlDetail" />
+								<property name="targetValidationProperty" value="businessObjectForValidation" />
+							</bean>
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>	  			
+				<bean parent="CashControl-checkGLPEsNotGeneratedValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="cashControlDocument" />
+							</bean>						
+						</list>
+					</property>
+				</bean>
+				<bean parent="CashControl-customerNumberValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="cashControlDocument" />
+							</bean>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="cashControlDetail" />
+								<property name="targetValidationProperty" value="cashControlDetail" />
+							</bean>						
+						</list>
+					</property>
+				</bean>
+				<bean parent="CashControl-lineAmountValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="cashControlDocument" />
+							</bean>						
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="cashControlDetail" />
+								<property name="targetValidationProperty" value="cashControlDetail" />
+							</bean>						
+						</list>
+					</property>
+				</bean>
+  			</list>
+  		</property>
+	</bean>
+	
+	<bean id="CashControl-deleteCashControlDetailValidation" parent="CashControl-deleteCashControlDetailValidation-parentBean" scope="prototype" />
+  
+  	<bean id="CashControl-deleteCashControlDetailValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+				<bean parent="CashControl-checkGLPEsNotGeneratedValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="cashControlDocument" />
+							</bean>						
+						</list>
+					</property>
+				</bean>
+  			</list>
+  		</property>
+	</bean>
+	
+	<bean id="CashControl-generateReferenceDocumentValidation" parent="CashControl-generateReferenceDocumentValidation-parentBean" scope="prototype" />
+  
+  	<bean id="CashControl-generateReferenceDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+  		<property name="validations">
+  			<list>
+				<bean parent="CashControl-paymentMediumValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="cashControlDocument" />
+							</bean>						
+						</list>
+					</property>				
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="CashControl-checkGLPEsNotGeneratedValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="cashControlDocument" />
+							</bean>						
+						</list>
+					</property>				
+					<property name="quitOnFail" value="true" />
+				</bean>
+  			</list>
+  		</property>
+	</bean>
+	
+	<bean id="CashControl-routeDocumentValidation" parent="CashControl-routeDocumentValidation-parentBean" scope="prototype" />
+	
+	<bean id="CashControl-routeDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+		<property name="validations">
+  			<list>
+				<bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="businessObjectForValidation" />
+							</bean>
+						</list>
+					</property>
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="CashControl-paymentMediumValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="cashControlDocument" />
+							</bean>						
+						</list>
+					</property>				
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="CashControl-refDocNumberValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="cashControlDocument" />
+							</bean>						
+						</list>
+					</property>				
+					<property name="quitOnFail" value="true" />
+				</bean>
+				<bean parent="CashControl-documentHasDetailsValidation">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="validationFieldConversion">
+								<property name="sourceEventProperty" value="document" />
+								<property name="targetValidationProperty" value="cashControlDocument" />
+							</bean>						
+						</list>
+					</property>				
+					<property name="quitOnFail" value="true" />
+				</bean>
+				
+ 				<bean parent="CashControl-validateCustomerNumberAndLineAmounts" scope="prototype"/>
+  					
+			</list>
+  		</property>
+	</bean>	
+
+</beans>
