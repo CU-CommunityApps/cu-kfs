@@ -10,6 +10,8 @@ import org.kuali.kfs.module.purap.document.validation.impl.PaymentRequestTotalsV
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.krad.util.GlobalVariables;
 
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+
 public class CuPaymentRequestTotalsValidation extends PaymentRequestTotalsValidation {
 
     protected void flagLineItemTotals(List<PurApItem> itemList) {
@@ -19,7 +21,7 @@ public class CuPaymentRequestTotalsValidation extends PaymentRequestTotalsValida
             // KFSPTS-1719 if po is no qty, inv is qty. 
             if (item.getItemQuantity() != null && (item.getExtendedPrice()!=null && KualiDecimal.ZERO.compareTo(item.getExtendedPrice())!=0)) {
                 if (!item.getPurchaseOrderItem().isNoQtyItem() && item.calculateExtendedPrice().compareTo(item.getExtendedPrice()) != 0) {
-                    GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY, PurapKeyConstants.ERROR_PAYMENT_REQUEST_ITEM_TOTAL_NOT_EQUAL, item.getItemIdentifierString());
+                    GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY, CUPurapKeyConstants.ERROR_PAYMENT_REQUEST_ITEM_TOTAL_NOT_EQUAL, item.getItemIdentifierString());
                 }
             }
         }

@@ -18,10 +18,10 @@
 				<ref bean="VendorDetail-vendorHeader.vendorW9ReceivedDate" /> 
 			    <ref bean="VendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate"/>
 			    <ref bean="VendorDetail-vendorHeader.vendorW8BenReceivedDate"/>
-        		<ref bean="VendorDetail-vendorHeader.vendorChapter4StatusCode"/>
+        		<!--  <ref bean="VendorDetail-vendorHeader.vendorChapter4StatusCode"/>
         		<ref bean="VendorDetail-vendorHeader.vendorForeignTaxNumber"/>
         		<ref bean="VendorDetail-vendorHeader.vendorGIIN"/>
-        		<ref bean="VendorDetail-vendorHeader.vendorForeignRecipientBirthDate"/>
+        		<ref bean="VendorDetail-vendorHeader.vendorForeignRecipientBirthDate"/>-->
 				<ref bean="VendorDetail-extension-insuranceRequiredIndicator"/> 
 				<ref bean="VendorDetail-extension-insuranceRequirementsCompleteIndicator"/> 
 				<ref bean="VendorDetail-extension-cornellAdditionalInsuredIndicator"/> 
@@ -78,11 +78,12 @@
 		<property name="name" value="vendorHeader.extension.vendorW8BenReceivedDate"/> 
 	</bean> 
  
+ <!-- 
  	<bean id="VendorDetail-vendorHeader.vendorChapter4StatusCode"  parent="VendorDetail-vendorHeader.vendorChapter4StatusCode-parentBean"/> 
 	<bean id="VendorDetail-vendorHeader.vendorChapter4StatusCode-parentBean" abstract="true" parent="VendorHeaderExtension-vendorChapter4StatusCode"> 
 		<property name="name" value="vendorHeader.extension.vendorChapter4StatusCode"/> 
 	</bean> 
- 
+
   	<bean id="VendorDetail-vendorHeader.vendorForeignTaxNumber"  parent="VendorDetail-vendorHeader.vendorForeignTaxNumber-parentBean"/> 
 	<bean id="VendorDetail-vendorHeader.vendorForeignTaxNumber-parentBean" abstract="true" parent="VendorHeaderExtension-vendorForeignTaxNumber"> 
 		<property name="name" value="vendorHeader.extension.vendorForeignTaxNumber"/> 
@@ -97,7 +98,7 @@
 	<bean id="VendorDetail-vendorHeader.vendorForeignRecipientBirthDate-parentBean" abstract="true" parent="VendorHeaderExtension-vendorForeignRecipientBirthDate"> 
 		<property name="name" value="vendorHeader.extension.vendorForeignRecipientBirthDate"/> 
 	</bean> 
-
+ --> 
   <bean id="VendorDetail-extension-insuranceRequiredIndicator" parent="VendorDetail-extension-insuranceRequiredIndicator-parentBean"/>
 
   <bean id="VendorDetail-extension-insuranceRequiredIndicator-parentBean" abstract="true" parent="VendorDetailExtension-insuranceRequiredIndicator-parentBean">
