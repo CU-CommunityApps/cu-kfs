@@ -1472,7 +1472,23 @@ public class CapitalAssetBuilderModuleServiceImpl implements CapitalAssetBuilder
         return accountCapitalObjectCode != null && !accountCapitalObjectCode.equals(AccountCapitalObjectCode.BOTH_NONCAP);
     }
 
-
+    /**
+     * Get the Capital Asset Object Code from the accounting lines.
+     *
+     * @param accountingLine
+     * @return true if the accounting line has an object code that belongs to
+     * CAPITAL_OBJECT_SUB_TYPES system paramters list else return false;
+     */
+    public boolean hasCAMSCapitalAssetObjectSubType(AccountingLine line){
+        Collection<String> capitalObjectSubTypes = getParameterService().getParameterValuesAsString(
+                AssetGlobal.class, CamsConstants.Parameters.CAPITAL_OBJECT_SUB_TYPES);
+        ObjectCode objectCode = line.getObjectCode();
+        if (ObjectUtils.isNotNull(objectCode)) {
+            return capitalObjectSubTypes.contains(objectCode.getFinancialObjectSubTypeCode());
+        }
+        return false ;
+    }
+    
     /**
      * To check if data exists on create new asset
      *

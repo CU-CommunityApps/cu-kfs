@@ -68,7 +68,7 @@
         <ref bean="IWantDocVendorDetail-vendorHeader.vendorOwnershipCategoryCode"/>
         <ref bean="IWantDocVendorDetail-vendorHeader.vendorW9ReceivedIndicator"/>
         <ref bean="IWantDocVendorDetail-vendorHeader.vendorW9ReceivedDate"/>
-        <ref bean="IWantDocVendorDetail-vendorHeader.vendorW8BenReceivedIndicator"/>
+        <!-- <ref bean="IWantDocVendorDetail-vendorHeader.vendorW8BenReceivedIndicator"/> -->
         <ref bean="IWantDocVendorDetail-vendorHeader.vendorFederalWithholdingTaxEndDate"/>
         <ref bean="IWantDocVendorDetail-vendorHeader.vendorDebarredIndicator"/>
         <ref bean="IWantDocVendorDetail-vendorHeader.vendorForeignIndicator"/>
@@ -494,11 +494,11 @@
   <bean id="IWantDocVendorDetail-vendorHeader.vendorW9ReceivedDate-parentBean" abstract="true" parent="VendorHeaderExtension-vendorW9ReceivedDate">
     <property name="name" value="vendorHeader.extension.vendorW9ReceivedDate"/>
   </bean>
-  <bean id="IWantDocVendorDetail-vendorHeader.vendorW8BenReceivedIndicator" parent="IWantDocVendorDetail-vendorHeader.vendorW8BenReceivedIndicator-parentBean"/>
+  <!-- <bean id="IWantDocVendorDetail-vendorHeader.vendorW8BenReceivedIndicator" parent="IWantDocVendorDetail-vendorHeader.vendorW8BenReceivedIndicator-parentBean"/>
 
   <bean id="IWantDocVendorDetail-vendorHeader.vendorW8BenReceivedIndicator-parentBean" abstract="true" parent="VendorHeader-vendorW8BenReceivedIndicator">
     <property name="name" value="vendorHeader.vendorW8BenReceivedIndicator"/>
-  </bean>
+  </bean> -->
   <bean id="IWantDocVendorDetail-vendorHeader.vendorFederalWithholdingTaxEndDate" parent="IWantDocVendorDetail-vendorHeader.vendorFederalWithholdingTaxEndDate-parentBean"/>
 
   <bean id="IWantDocVendorDetail-vendorHeader.vendorFederalWithholdingTaxEndDate-parentBean" abstract="true" parent="VendorHeader-vendorFederalWithholdingTaxEndDate">

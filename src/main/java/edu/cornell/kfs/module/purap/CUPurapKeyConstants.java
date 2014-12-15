@@ -9,7 +9,8 @@ import org.kuali.kfs.module.purap.PurapKeyConstants;
  *
  */
 public class CUPurapKeyConstants extends PurapKeyConstants {
-
+	public static final String ERROR_PAYMENT_REQUEST_ITEM_TOTAL_NOT_EQUAL = "error.paymentRequest.item.TotalInvoice.notEqual";
+	
     public static final String PURAP_ITEM_NONQTY = "error.purap.item.itemtype.nonqty";
     public static final String PURAP_ITEM_NEW_NONQTY = "error.purap.item.new.itemtype.nonqty";
     public static final String PURAP_MOPOT_REQUIRED_DATA_MISSING = "error.purap.mopot.required.data.missing";  //KFSPTS-1458

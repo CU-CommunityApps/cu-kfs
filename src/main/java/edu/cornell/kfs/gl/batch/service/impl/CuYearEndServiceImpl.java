@@ -41,7 +41,7 @@ public class CuYearEndServiceImpl extends YearEndServiceImpl implements CuYearEn
         Integer varFiscalYear = (Integer) nominalClosingJobParameters.get(GeneralLedgerConstants.ColumnNames.UNIVERSITY_FISCAL_YEAR);
         CuNominalActivityClosingHelper closingHelper = new CuNominalActivityClosingHelper(
                 varFiscalYear, (Date) nominalClosingJobParameters.get(GeneralLedgerConstants.ColumnNames.UNIV_DT), 
-                parameterService, configurationService);
+                parameterService, configurationService, objectTypeService);
         
         closingHelper.addNominalClosingJobParameters(nominalClosingJobParameters);
 
