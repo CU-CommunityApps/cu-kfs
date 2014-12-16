@@ -511,11 +511,10 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
      * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)
      */
-    public ActionForward close(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        super.close(mapping, form, request, response);
-
-        return mapping.findForward(KFSConstants.MAPPING_PORTAL);
+    public ActionForward close(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	// KFSPTS-3606 : Always redirect to Action List on close.
+    	((IWantDocumentForm) form).setReturnToActionList(true);
+    	return super.close(mapping, form, request, response);
     }
 
     /**
