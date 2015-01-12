@@ -82,10 +82,16 @@ public class CuAdvanceDepositAccountingLineAuthorizer extends FinancialProcessin
     
     @Override
     protected boolean approvedForUnqualifiedEditing(AccountingDocument accountingDocument, AccountingLine accountingLine, String accountingLineCollectionProperty, boolean currentUserIsDocumentInitiator) {
-    	if (currentUserIsDocumentInitiator) {
-            return true;
-        }
-        return false;    	
+       boolean approved = super.approvedForUnqualifiedEditing(accountingDocument, accountingLine, accountingLineCollectionProperty, currentUserIsDocumentInitiator);
+       boolean orgReviewEditable = false;
+       if (isDocumentStoppedInRouteNode(RouteLevelNames.ACCOUNTING_ORGANIZATION_HIERARCHY, accountingDocument)) {
+            if (ObjectUtils.isNotNull(accountingLine.getAccount()) && StringUtils.isNotBlank(accountingLine.getAccount().getAccountNumber())) {
+               orgReviewEditable = isOrgReviewEditable(accountingLine);
+           }
+       }
+       
+       approved = approved || orgReviewEditable;
+       return approved;
     }
 
     /**
