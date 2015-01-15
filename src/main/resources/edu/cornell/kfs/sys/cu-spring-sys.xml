@@ -230,6 +230,22 @@
 			<ref bean="parameterService" /> 
 		</property>
 	</bean>	
+	
+	<bean id="createDoneBatchFileLookupableHelperService" parent="createDoneBatchFileLookupableHelperService-parentBean" scope="prototype" />	
+	<bean id="createDoneBatchFileLookupableHelperService-parentBean" class="edu.cornell.kfs.sys.businessobject.lookup.CreateDoneBatchFileLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService" abstract="true">
+		<property name="dateTimeService" ref="dateTimeService" />
+		<property name="createDoneAuthorizationService" ref="createDoneAuthorizationService"/>
+	</bean>
+	
+    <bean id="createDoneAuthorizationService" parent="createDoneAuthorizationService-parentBean" />	
+	<bean id="createDoneAuthorizationService-parentBean" class="edu.cornell.kfs.sys.batch.service.impl.CreateDoneBatchFileAuthorizationServiceImpl" abstract="true" />
+
+    <bean id="createDoneBatchFileLookupable" parent="createDoneBatchFileLookupable-parentBean" scope="prototype" />	
+	<bean id="createDoneBatchFileLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
+	    <property name="lookupableHelperService">
+	        <ref bean="createDoneBatchFileLookupableHelperService" />
+	    </property>
+	</bean>
 
     <import resource="document/validation/configuration/CuFinancialSystemValidators.xml" />
 	

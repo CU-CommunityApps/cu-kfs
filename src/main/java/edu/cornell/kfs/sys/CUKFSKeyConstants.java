@@ -108,4 +108,8 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
 	    public static final String ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION_ERROR_DURING_PERSISTENCE = "note.trickleDownInactivation.inactivatedAccountReversions.errorDuringPersistence";
 	    public static final String ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION_RECORD_ALREADY_MAINTENANCE_LOCKED = "note.trickleDownInactivation.inactivatedAccountReversions.recordAlreadyMaintenanceLocked";
 
+	    // KFSPTS-3416
+	    public static final String MESSAGE_DONE_FILE_ALREADY_EXISTS = "message.system.batch.doneFileAlreadyExists";
+	    public static final String MESSAGE_DONE_FILE_SUCCESSFULLY_CREATED = "message.system.batch.doneFileSuccessfullyCreated";
+
 }
