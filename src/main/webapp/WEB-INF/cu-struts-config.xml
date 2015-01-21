@@ -45,6 +45,8 @@
             type="edu.cornell.kfs.module.purap.document.web.struts.CuPaymentRequestForm" />  
 		<form-bean name="CuVendorCreditMemoForm"
 			type="edu.cornell.kfs.module.purap.document.web.struts.CuVendorCreditMemoForm" /> 
+		<form-bean name="CuAuxiliaryVoucherForm"
+			type="edu.cornell.kfs.fp.document.web.struts.CuAuxiliaryVoucherForm" /> 
 
     </form-beans>
     
