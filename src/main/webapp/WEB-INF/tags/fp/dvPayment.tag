@@ -19,6 +19,8 @@
 <c:set var="payeeAttributes" value="${DataDictionary.CuDisbursementVoucherPayeeDetail.attributes}" />
 <c:set var="dvAttributes" value="${DataDictionary.CuDisbursementVoucherDocument.attributes}" />
 <c:set var="payeeAttributes" value="${DataDictionary.CuDisbursementVoucherPayeeDetail.attributes}" />
+<c:set var="travelEntryMode" value="${(not empty KualiForm.editingMode['travelEntry'])}" />
+<c:set var="travelSystemGeneratedEntryMode" value="${(not empty KualiForm.editingMode['travelSystemGeneratedEntry'])}" />
 
 
 <kul:tab tabTitle="Payment Information" defaultOpen="true" tabErrorKey="${KFSConstants.DV_PAYMENT_TAB_ERRORS},document.disbVchrPaymentMethodCode,${KFSConstants.DV_PAYEE_TAB_ERRORS},document.dvPayeeDetail.disbursementVoucherPayeeTypeCode">
@@ -123,7 +125,7 @@
             
             <tr>
               <th width="20%"  class="bord-l-b">
-              	<div align="right"><kul:htmlAttributeLabel attributeEntry="${dvAttributes.disbVchrCheckTotalAmount}"/></div>
+                <div align="right"><kul:htmlAttributeLabel attributeEntry="${dvAttributes.disbVchrCheckTotalAmount}"/></div>
               </th>
               <td width="30%"  class="datacell">
                 <kul:htmlControlAttribute attributeEntry="${dvAttributes.disbVchrCheckTotalAmount}" property="document.disbVchrCheckTotalAmount" readOnly="${!fullEntryMode&&!frnEntryMode&&!taxEntryMode&&!travelEntryMode&&!wireEntryMode||travelSystemGeneratedEntryMode}"/>
