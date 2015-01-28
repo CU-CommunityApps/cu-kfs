@@ -6,10 +6,13 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.web.struts.PaymentRequestForm;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kns.web.ui.ExtraButton;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.CUPurapAuthorizationConstants.CUPaymentRequestEditMode;
+import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 
 public class CuPaymentRequestForm extends PaymentRequestForm {
 	
@@ -41,7 +44,10 @@ public class CuPaymentRequestForm extends PaymentRequestForm {
     public List<ExtraButton> getExtraButtons() {
         super.getExtraButtons();
         PaymentRequestDocument paymentRequestDocument = this.getPaymentRequestDocument();
-        if (StringUtils.equalsIgnoreCase(paymentRequestDocument.getFinancialSystemDocumentHeader().getApplicationDocumentStatus(), PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED)) {
+        if (StringUtils.equalsIgnoreCase(paymentRequestDocument.getFinancialSystemDocumentHeader().getApplicationDocumentStatus(),
+                PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED) && paymentRequestDocument.getFinancialSystemDocumentHeader().getWorkflowDocument().isFinal()
+                        && !SpringContext.getBean(CUPaymentMethodGeneralLedgerPendingEntryService.class).isPaymentMethodProcessedUsingPdp(
+                                ((CuPaymentRequestDocument) paymentRequestDocument).getPaymentMethodCode())) {
             ExtraButton cancelButton = null;
             for (ExtraButton extraButton : extraButtons) {
                 if (StringUtils.equals("methodToCall.cancel", extraButton.getExtraButtonProperty())) {
