@@ -18,23 +18,36 @@
 <head>
 <script>var jsContextPath = "${pageContext.request.contextPath}";</script>
 
+<%-- ==== CU Customization: Make sure that jquery script files get included as needed. ==== --%>
+<c:set var="foundJqueryFile" value="false" />
 <c:forEach items="${fn:split(ConfigProperties.javascript.files, ',')}" var="javascriptFile">
 	<c:if test="${fn:length(fn:trim(javascriptFile)) > 0}">
 		<script language="JavaScript" type="text/javascript"
 				src="${pageContext.request.contextPath}/${javascriptFile}">
 		</script>
+		<c:if test="${fn:contains(javascriptFile,'jquery')}"><c:set var="foundJqueryFile" value="true" /></c:if>
 	</c:if>
 </c:forEach>
+<c:if test="${!foundJqueryFile}">
+		<script language="JavaScript" type="text/javascript"
+				src="${pageContext.request.contextPath}/krad/plugins/jquery/jquery-1.6.3.js">
+		</script>
+</c:if>
+<%-- ==== End CU Customization ==== --%>
 </head>
 
-<body onload="reload()">
+<%-- ==== CU Customization: Catch exceptions from the "reload" function in case it doesn't exist. ==== --%>
+<body onload="try{reload();}catch(exc){}">
 <c:set var="frameHeight" value="950"/>
 <c:set var="channelUrl" value="${KualiForm.shopUrl}" />
 
+<%-- ==== CU Customization: Wrap a view div around the iframe to allow for proper portal resizing. ==== --%>
+<div id="view_div" style="margin:0px;padding:0px;">
 <iframe src="${channelUrl}"
         onload='<c:if test="${ConfigProperties.test.mode ne 'true'}">setIframeAnchor("iframeportlet")</c:if>'
         name="iframeportlet" id="iframeportlet" style="width: 100%;"
         title="E-Doc" scrolling="auto" frameborder="0" height="${frameHeight}" width="100%"></iframe>
+</div>
 
 <script type="text/javascript">
   jQuery(function () {
