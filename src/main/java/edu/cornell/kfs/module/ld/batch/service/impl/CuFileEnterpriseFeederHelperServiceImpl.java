@@ -247,7 +247,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
             String originCode = parameterService.getParameterValueAsString(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_ORIGIN_CODE);
             
             offsetEntry.setFinancialSystemOriginationCode(originCode);
-            offsetEntry.setDocumentNumber(dateTimeService.toString(dateTimeService.getCurrentDate(), "yyyyMMddhhmmssSSS"));
+            offsetEntry.setDocumentNumber(wageEntry.getDocumentNumber());
 
 
             if(!wageEntry.getTransactionDebitCreditCode().equalsIgnoreCase("D")) {
