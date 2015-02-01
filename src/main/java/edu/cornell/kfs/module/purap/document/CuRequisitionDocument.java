@@ -33,13 +33,11 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.core.web.format.DateViewDateObjectFormatter;
-import org.kuali.rice.core.web.format.Formatter;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants.COMPONENT;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kew.framework.postprocessor.DocumentRouteLevelChange;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.permission.PermissionService;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
@@ -125,14 +123,7 @@ public class CuRequisitionDocument extends RequisitionDocument {
         } catch (WorkflowException we) {            
         }
         KualiDecimal totalAmount = document.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount();
-        if (ObjectUtils.isNotNull(autoPOAmount) && ObjectUtils.isNotNull(totalAmount) && (autoPOAmount.compareTo(totalAmount) >= 0)) {
-            if  (!RequisitionStatuses.APPDOC_AWAIT_COMMODITY_CODE_REVIEW.equals(this.getApplicationDocumentStatus())) {
-                try {
-                    this.updateAndSaveAppDocStatus(RequisitionStatuses.APPDOC_AWAIT_COMMODITY_CODE_REVIEW);
-                } catch (WorkflowException e) {               
-                    e.printStackTrace();
-                }
-            }    
+        if (ObjectUtils.isNotNull(autoPOAmount) && ObjectUtils.isNotNull(totalAmount) && (autoPOAmount.compareTo(totalAmount) >= 0)) {  
             returnValue = true;
                
         } else {
@@ -369,6 +360,29 @@ public class CuRequisitionDocument extends RequisitionDocument {
             }
         }
         return accounts;
+    }
+    
+    /**
+     * @see org.kuali.kfs.module.purap.document.RequisitionDocument#doRouteLevelChange(org.kuali.rice.kew.framework.postprocessor.DocumentRouteLevelChange)
+     */
+    @Override
+    public void doRouteLevelChange(DocumentRouteLevelChange change) {
+    	super.doRouteLevelChange(change);
+    	
+    	// if route node is CommodityAPO change to app doc status Awaiting Commodity Review
+    	try {
+    		String nodeName = change.getNewNodeName();
+    		
+    		if (PurapConstants.RequisitionStatuses.NODE_COMMODITY_CODE_APO_REVIEW.equalsIgnoreCase(nodeName)) {
+    			if (!RequisitionStatuses.APPDOC_AWAIT_COMMODITY_CODE_REVIEW.equals(this.getApplicationDocumentStatus())) {
+    				this.updateAndSaveAppDocStatus(RequisitionStatuses.APPDOC_AWAIT_COMMODITY_CODE_REVIEW);
+
+	            }    
+			}
+		} catch (WorkflowException e) {
+			logAndThrowRuntimeException("Error saving app doc status while changing route level for document with id " + getDocumentNumber(), e);
+		}
+    	
     }
     
     @Override

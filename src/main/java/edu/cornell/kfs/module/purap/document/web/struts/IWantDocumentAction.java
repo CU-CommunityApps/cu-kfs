@@ -33,10 +33,10 @@ import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kns.rule.event.KualiAddLineEvent;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
+import org.kuali.rice.krad.UserSessionUtils;
 import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.rules.rule.event.RouteDocumentEvent;
 import org.kuali.rice.krad.service.KualiRuleService;
-import org.kuali.rice.krad.service.SessionDocumentService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
@@ -79,9 +79,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
             iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
         }
-
-        WorkflowDocument workflowDoc = iWantDocument.getDocumentHeader().getWorkflowDocument();
-        SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), workflowDoc);
 
     }
 
@@ -219,12 +216,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                         iWantDocument.setDeliverToAddress(userOptionsDeliverToAddress.getOptionValue());
                     }
                 }
-
-                // put workflow doc on session
-
-                WorkflowDocument workflowDoc = iWantDocument.getDocumentHeader().getWorkflowDocument();
-                // KualiDocumentFormBase.populate() needs this updated in the session
-                SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), workflowDoc);
 
                 setIWantDocumentDescription(iWantDocument);
             }
@@ -520,11 +511,10 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
      * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)
      */
-    public ActionForward close(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        super.close(mapping, form, request, response);
-
-        return mapping.findForward(KFSConstants.MAPPING_PORTAL);
+    public ActionForward close(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	// KFSPTS-3606 : Always redirect to Action List on close.
+    	((IWantDocumentForm) form).setReturnToActionList(true);
+    	return super.close(mapping, form, request, response);
     }
 
     /**
@@ -819,7 +809,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             kualiDocumentFormBase.setDocument(document);
             WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
             kualiDocumentFormBase.setDocTypeName(workflowDocument.getDocumentTypeName());
-            SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), workflowDocument);
+            UserSessionUtils.addWorkflowDocument(GlobalVariables.getUserSession(), workflowDocument);
 
             forward = mapping.findForward(RiceConstants.MAPPING_BASIC);
         }

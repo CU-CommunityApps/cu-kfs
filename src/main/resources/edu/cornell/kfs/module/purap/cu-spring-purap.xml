@@ -188,6 +188,9 @@
             <property name="paymentMethodGeneralLedgerPendingEntryService" ref="cUPaymentMethodGeneralLedgerPendingEntryService" />
     </bean>
 
+    <bean id="potentiallySensitiveDocumentRoleTypeService" parent="potentiallySensitiveDocumentRoleTypeService-parentBean"
+            class="edu.cornell.kfs.module.purap.identity.CuPotentiallySensitiveDocumentRoleTypeServiceImpl"/>
+
 	<import resource="document/validation/configuration/CuPaymentRequestValidation.xml" />
 	<import resource="document/validation/configuration/VendorCreditMemoValidation.xml" />
 	<import resource="document/validation/configuration/RequisitionValidation.xml" />

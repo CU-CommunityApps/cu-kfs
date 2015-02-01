@@ -184,7 +184,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
      */
     public List<ExtraButton> getExtraButtons() {
         extraButtons.clear();
-
+        
         String wizard = (String) getEditingMode().get("wizard");
 
         String customerDataStep = (String) getEditingMode().get(CUPurapConstants.IWantDocumentSteps.CUSTOMER_DATA_STEP);
@@ -338,7 +338,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     }
     
     protected ExtraButton createCreateDVButton() {
-ExtraButton clearButton = new ExtraButton();
+        ExtraButton clearButton = new ExtraButton();
         clearButton.setExtraButtonProperty("methodToCall.createDV");
         clearButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_create_DV.gif");
         clearButton.setExtraButtonAltText("Create DV");

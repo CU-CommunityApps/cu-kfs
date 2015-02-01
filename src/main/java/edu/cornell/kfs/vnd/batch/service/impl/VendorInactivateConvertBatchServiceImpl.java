@@ -30,6 +30,7 @@ import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.NoteService;
 import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.vnd.batch.service.VendorInactivateConvertBatchService;
 import edu.cornell.kfs.vnd.businessobject.VendorInactivateConvertBatch;
@@ -172,10 +173,13 @@ public class VendorInactivateConvertBatchServiceImpl implements VendorInactivate
             GlobalVariables.setUserSession(new UserSession("kfs"));
             
             VendorDetail vnd = cuVendorService.getByVendorNumber(vendor.getVendorId());
-            VendorHeader vHead = businessObjectService.findBySinglePrimaryKey(VendorHeader.class, vnd.getVendorHeaderGeneratedIdentifier());
             
+            if(ObjectUtils.isNull(vnd)){
+            	LOG.info("Vendor with id: " + vendor.getVendorId() + " does not exist in the database.");
+            }
            
-            if ((vnd != null)) {
+            if ((ObjectUtils.isNotNull(vnd))) {
+            	VendorHeader vHead = businessObjectService.findBySinglePrimaryKey(VendorHeader.class, vnd.getVendorHeaderGeneratedIdentifier());
                 if (vendor.getAction().equalsIgnoreCase("inactivate") && ((vendorDets.size() == 1) || !(vendorId[1].equalsIgnoreCase("0")))) {
                       inactivateVendor(vnd, vendor.getNote(), vendor.getReason());
                 }

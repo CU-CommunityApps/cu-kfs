@@ -50,7 +50,7 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
 
     @Override
     public boolean canClose(Document document) {
-        return false;
+        return super.canClose(document);
     }
 
     @Override
