@@ -155,15 +155,17 @@ function saveScrollPosition() {
 		// KULRICE-8292: Timeout issues across servers (3535) 
 		scrollPositionKey = document.forms[0].formKey.value % 20;
 		
+		// ==== CU Customization: Updated code below to account for the extra iframe nesting. ====
+		var tempParent = (parent.parent && parent.parent != parent) ? parent.parent : parent;
 		if( document.documentElement ) { 
-			x = Math.max(parent.document.documentElement.scrollLeft, parent.document.body.scrollLeft); 
-		  	y = Math.max(parent.document.documentElement.scrollTop, parent.document.body.scrollTop); 
+			x = Math.max(tempParent.document.documentElement.scrollLeft, tempParent.document.body.scrollLeft); 
+		  	y = Math.max(tempParent.document.documentElement.scrollTop, tempParent.document.body.scrollTop); 
 		} else if( document.body && typeof document.body.scrollTop != "undefined" ) { 
-			x = parent.document.body.scrollLeft; 
-		  	y = parent.document.body.scrollTop; 
+			x = tempParent.document.body.scrollLeft; 
+		  	y = tempParent.document.body.scrollTop; 
 		} else if ( typeof window.pageXOffset != "undefined" ) { 
-			x = parent.window.pageXOffset; 
-		  	y = parent.window.pageYOffset; 
+			x = tempParent.window.pageXOffset; 
+		  	y = tempParent.window.pageYOffset; 
 		} 
 		// ==== CU Customization: Use encoded comma in cookie value, and truncate path to avoid a known IE cookie bug. ====
 		document.cookie = "KulScrollPos"+scrollPositionKey+"="+x+"%2C"+y+"; path="+document.location.pathname.replace(new RegExp('/[^/]+$'), '/');
@@ -182,11 +184,13 @@ function restoreScrollPosition() {
     	
         var cookieName = "KulScrollPos"+scrollPositionKey;
         var matchResult = document.cookie.match(new RegExp(cookieName+"=([^;]+);?"));
+        // ==== CU Customization: Updated code below to account for the extra iframe nesting. ====
+        var tempParent = (parent.parent && parent.parent != parent) ? parent.parent : parent;
         if ( matchResult ) {
             // ==== CU Customization: Split on encoded comma instead. ====
             var coords = matchResult[1].split( '%2C' );
             window.scrollTo(coords[0],coords[1]);
-            parent.window.scrollTo(coords[0],coords[1]);
+            tempParent.window.scrollTo(coords[0],coords[1]);
             expireCookie( cookieName );
             return true;
         } else { // check for entry before form key set
@@ -196,7 +200,7 @@ function restoreScrollPosition() {
 	            // ==== CU Customization: Split on encoded comma instead. ====
 	            var coords = matchResult[1].split( '%2C' );
 	            window.scrollTo(coords[0],coords[1]);
-	            parent.window.scrollTo(coords[0],coords[1]);
+	            tempParent.window.scrollTo(coords[0],coords[1]);
 	            expireCookie( cookieName );
 	            return true;
 	        } //else {
