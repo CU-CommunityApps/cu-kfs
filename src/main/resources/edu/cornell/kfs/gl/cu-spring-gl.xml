@@ -73,41 +73,8 @@
 	 	<property name="moduleConfiguration" ref="cu-gl"/>
 	</bean>
 
-    <bean id="encumbranceForwardStep" class="edu.cornell.kfs.gl.batch.CuEncumbranceForwardStep" parent="wrappedStep">
-        <property name="wrappingBatchServices">
-            <list>
-                <ref bean="accountingCycleCachingService"/>
-                <ref bean="encumbranceClosingReportWriterService"/>
-            </list>
-        </property>
-        <property name="yearEndService">
-            <ref bean="glYearEndService" />
-        </property>
-    </bean>
-    
-	<bean id="balanceForwardStep" class="edu.cornell.kfs.gl.batch.CuBalanceForwardStep" parent="wrappedStep">
-        <property name="wrappingBatchServices">
-            <list>
-                <ref bean="balanceForwardReportWriterService"/>
-            </list>
-        </property>
-        <property name="yearEndService">
-            <ref bean="glYearEndService" />
-        </property>
-    </bean>
-    
-        <bean id="glBalanceDao" parent="platformAwareDao" class="edu.cornell.kfs.gl.dataaccess.impl.CuBalanceDaoOjb">
-		<property name="parameterEvaluatorService">
-			<ref bean="parameterEvaluatorService" />
-		</property>
-		<property name="optionsService">
-			<ref bean="optionsService" />
-		</property>
-		<property name="balanceTypService">
-			<ref bean="balanceTypService" />
-		</property>
-	</bean>
-    
+    <bean id="glBalanceDao" parent="platformAwareDao" class="edu.cornell.kfs.gl.dataaccess.impl.CuBalanceDaoOjb"/>
+
     <bean id="glBalanceService" parent="glBalanceService-parentBean"/>
 	<bean id="glBalanceService-parentBean" abstract="true"  class="edu.cornell.kfs.gl.service.impl.CuBalanceServiceImpl">
 		<property name="balanceDao">
@@ -235,16 +202,13 @@
         	</map>
         </property>
     </bean>
-    
-	<bean id="glYearEndService" class="edu.cornell.kfs.gl.batch.service.impl.CuYearEndServiceImpl" parent="glYearEndService-parentBean">
-	   <property name="yearEndDao">
-            <bean class="edu.cornell.kfs.gl.batch.dataaccess.impl.CuYearEndDaoJdbc" parent="platformAwareDaoJdbc" />
-       </property>
+
+	<bean id="glYearEndService" parent="glYearEndService-parentBean">
        <property name="encumbranceDao">
             <bean class="edu.cornell.kfs.gl.dataaccess.impl.CuEncumbranceDaoOjb" parent="platformAwareDao" />
        </property>
 	</bean>
-    
+
     <bean id="scrubberValidator" class="edu.cornell.kfs.gl.service.impl.CuScrubberValidatorImpl" parent="scrubberValidator-parentBean"/>
      
      
