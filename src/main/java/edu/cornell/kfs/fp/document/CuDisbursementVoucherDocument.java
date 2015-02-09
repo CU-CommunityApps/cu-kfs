@@ -416,6 +416,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
                 getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(((AmountTotaling) this).getTotalDollarAmount());
             }
         }
+        captureWorkflowHeaderInformation();
 
         if (wireTransfer != null) {
             wireTransfer.setDocumentNumber(this.documentNumber);
