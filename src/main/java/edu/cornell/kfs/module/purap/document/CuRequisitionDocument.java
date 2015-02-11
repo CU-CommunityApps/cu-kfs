@@ -198,7 +198,7 @@ public class CuRequisitionDocument extends RequisitionDocument {
         VendorContract vendorContract = new VendorContract();
         vendorContract.setVendorContractGeneratedIdentifier(this.getVendorContractGeneratedIdentifier());
         Map keys = SpringContext.getBean(PersistenceService.class).getPrimaryKeyFieldValues(vendorContract);
-        vendorContract = (VendorContract) SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(VendorContract.class, keys);
+        vendorContract = SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(VendorContract.class, keys);
         if (!(vendorContract != null && today.after(vendorContract.getVendorContractBeginningDate())
                 && today.before(vendorContract.getVendorContractEndDate()))) {
             activeContract = false;

@@ -19,7 +19,6 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.krad.document.Document;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants.PurchaseOrderStatuses;
 
 public class CuPurchaseOrderAmendmentDocumentPresentationController extends PurchaseOrderAmendmentDocumentPresentationController {
@@ -49,9 +48,6 @@ public class CuPurchaseOrderAmendmentDocumentPresentationController extends Purc
 		// KFSUPGRADE-339
         if (PurchaseOrderStatuses.APPDOC_AWAITING_FISCAL_REVIEW.equals(((PurchaseOrderDocument)document).getApplicationDocumentStatus())) {
         	editModes.add(PurchaseOrderEditMode.AMENDMENT_ENTRY);
-        }
-        if (CUPurapConstants.PurchaseOrderStatuses.AWAIT_FISCAL_REVIEW.equals(poDocument.getStatusCode())) {
-            editModes.add(PurchaseOrderEditMode.AMENDMENT_ENTRY);
         }
         if (SpringContext.getBean(PurapService.class).isDocumentStoppedInRouteNode((PurchasingAccountsPayableDocument) document, "New Unordered Items")) {
             editModes.add(PurchaseOrderEditMode.UNORDERED_ITEM_ACCOUNT_ENTRY);

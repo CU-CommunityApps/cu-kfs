@@ -440,7 +440,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
             // for CM cancel or create, do not book encumbrances if PO is CLOSED, but do update the amounts on the PO
             List encumbrances = getCreditMemoEncumbrance(cm, po);
-            if (!(PurapConstants.PurchaseOrderStatuses.APPDOC_CLOSED.equals(po.getStatusCode()))) {
+            if (!(PurapConstants.PurchaseOrderStatuses.APPDOC_CLOSED.equals(po.getApplicationDocumentStatus()))) {
                 if (encumbrances != null) {
                     cm.setGenerateEncumbranceEntries(true);
 

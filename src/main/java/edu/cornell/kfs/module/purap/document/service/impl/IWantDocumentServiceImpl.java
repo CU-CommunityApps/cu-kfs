@@ -299,7 +299,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
         requisitionDocument.getDocumentHeader().setExplanation(iWantDocument.getExplanation());
 
         requisitionDocument.setRequisitionSourceCode(CUPurapConstants.RequisitionSources.IWNT);
-        requisitionDocument.setStatusCode(PurapConstants.AccountsPayableSharedStatuses.IN_PROCESS);
+        requisitionDocument.setApplicationDocumentStatus(PurapConstants.RequisitionStatuses.APPDOC_IN_PROCESS);
 
         requisitionDocument.setPurchaseOrderCostSourceCode(PurapConstants.POCostSources.ESTIMATE);
         requisitionDocument.setPurchaseOrderTransmissionMethodCode(parameterService.getParameterValueAsString(

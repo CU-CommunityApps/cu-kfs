@@ -1,17 +1,20 @@
 /*
- * Copyright 2007 The Kuali Foundation
- *
- * Licensed under the Educational Community License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.opensource.org/licenses/ecl2.php
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * The Kuali Financial System, a comprehensive financial management system for higher education.
+ * 
+ * Copyright 2005-2014 The Kuali Foundation
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kuali.kfs.module.purap.service.impl;
 
@@ -60,13 +63,12 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.sys.util.KfsDateUtils;
-import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.rice.coreservice.api.parameter.Parameter;
-import org.kuali.rice.coreservice.api.parameter.ParameterType;
 import org.kuali.rice.coreservice.api.parameter.Parameter.Builder;
+import org.kuali.rice.coreservice.api.parameter.ParameterType;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
@@ -708,7 +710,6 @@ public class PdpExtractServiceImpl implements PdpExtractService {
           if (creditMemoDocType.equals(documentType)) {
              lineAmount = lineAmount.negated();
           }
-
           paymentAccountDetail.setAccountNetAmount(lineAmount);
           paymentAccountDetail.setFinChartCode(sourceAccountingLine.getChartOfAccountsCode());
           paymentAccountDetail.setFinObjectCode(sourceAccountingLine.getFinancialObjectCode());
@@ -811,8 +812,8 @@ public class PdpExtractServiceImpl implements PdpExtractService {
         paymentGroup.setPayeeId(paymentRequestDocument.getVendorHeaderGeneratedIdentifier() + "-" + paymentRequestDocument.getVendorDetailAssignedIdentifier());
         paymentGroup.setPayeeIdTypeCd(PdpConstants.PayeeIdTypeCodes.VENDOR_ID);
 
-        if (paymentRequestDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCategoryCode() != null) {
-            paymentGroup.setPayeeOwnerCd(paymentRequestDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCategoryCode());
+        if (paymentRequestDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCode() != null) {
+            paymentGroup.setPayeeOwnerCd(paymentRequestDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCode());
         }
 
 //        if (paymentRequestDocument.getVendorCustomerNumber() != null) {
@@ -838,7 +839,7 @@ public class PdpExtractServiceImpl implements PdpExtractService {
         paymentGroup.setProcessImmediate(paymentRequestDocument.getImmediatePaymentIndicator());
         paymentGroup.setPymtSpecialHandling(StringUtils.isNotBlank(paymentRequestDocument.getSpecialHandlingInstructionLine1Text()) || StringUtils.isNotBlank(paymentRequestDocument.getSpecialHandlingInstructionLine2Text()) || StringUtils.isNotBlank(paymentRequestDocument.getSpecialHandlingInstructionLine3Text()));
         paymentGroup.setTaxablePayment(Boolean.FALSE);
-        paymentGroup.setNraPayment(VendorConstants.OwnerTypes.NR.equals(paymentRequestDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCode()));
+        paymentGroup.setNraPayment(paymentRequestDocument.getVendorDetail().getVendorHeader().getVendorForeignIndicator());
         paymentGroup.setCombineGroups(Boolean.TRUE);
 
         return paymentGroup;
@@ -873,8 +874,8 @@ public class PdpExtractServiceImpl implements PdpExtractService {
         paymentGroup.setPayeeId(creditMemoDocument.getVendorHeaderGeneratedIdentifier() + "-" + creditMemoDocument.getVendorDetailAssignedIdentifier());
         paymentGroup.setPayeeIdTypeCd(PdpConstants.PayeeIdTypeCodes.VENDOR_ID);
 
-        if (creditMemoDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCategoryCode() != null) {
-            paymentGroup.setPayeeOwnerCd(creditMemoDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCategoryCode());
+        if (creditMemoDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCode() != null) {
+            paymentGroup.setPayeeOwnerCd(creditMemoDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCode());
         }
 
 //        if (creditMemoDocument.getVendorCustomerNumber() != null) {
@@ -900,7 +901,7 @@ public class PdpExtractServiceImpl implements PdpExtractService {
         paymentGroup.setProcessImmediate(Boolean.FALSE);
         paymentGroup.setPymtSpecialHandling(Boolean.FALSE);
         paymentGroup.setTaxablePayment(Boolean.FALSE);
-        paymentGroup.setNraPayment(VendorConstants.OwnerTypes.NR.equals(creditMemoDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCode()));
+        paymentGroup.setNraPayment(creditMemoDocument.getVendorDetail().getVendorHeader().getVendorForeignIndicator());
         paymentGroup.setCombineGroups(Boolean.TRUE);
 
         return paymentGroup;

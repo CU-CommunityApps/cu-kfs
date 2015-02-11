@@ -1,17 +1,20 @@
 /*
- * Copyright 2006 The Kuali Foundation
- *
- * Licensed under the Educational Community License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.opensource.org/licenses/ecl2.php
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * The Kuali Financial System, a comprehensive financial management system for higher education.
+ * 
+ * Copyright 2005-2014 The Kuali Foundation
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kuali.kfs.module.purap.document.service.impl;
 
@@ -25,6 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.integration.cab.CapitalAssetBuilderModuleService;
 import org.kuali.kfs.integration.purap.CapitalAssetSystem;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.PurapRuleConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
@@ -464,8 +468,8 @@ public class RequisitionServiceImpl implements RequisitionService {
     public boolean hasContentReviewer(String org, String chart) {
         String roleId = roleService.getRoleIdByNamespaceCodeAndName(PurapConstants.PURAP_NAMESPACE, "Content Reviewer");
         Map<String, String> qualification = new HashMap<String, String>(2);
-        qualification.put("organizationCode", org);
-        qualification.put("chartOfAccountsCode", chart);
+        qualification.put(PurapPropertyConstants.ORGANIZATION_CODE, org);
+        qualification.put(PurapPropertyConstants.CHART_OF_ACCOUNTS_CODE, chart);
         List<RoleMembership> members = roleService.getRoleMembers(java.util.Arrays.asList(roleId), qualification);
         return members.size() > 0;
     }
