@@ -46,6 +46,7 @@
 				<status>Awaiting C and G Approval</status>
 				<status>Disapproved Commodity Review</status>
         <status>Disapproved AdHoc</status>
+        <status>Disapproved Award</status>
 			</validApplicationStatuses>
       <policies>
         <policy>

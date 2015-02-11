@@ -134,6 +134,7 @@ public class PurapConstants {
         public static final String APPDOC_AWAIT_CONTRACT_MANAGER_ASSGN = "Awaiting Contract Manager Assignment";
 
         public static final String APPDOC_DAPRVD_ADHOC = "Disapproved AdHoc";
+        public static final String APPDOC_DAPRVD_AWARD = "Disapproved Award";
         public static final String APPDOC_DAPRVD_CONTENT = "Disapproved Content";
         public static final String APPDOC_DAPRVD_HAS_ACCOUNTING_LINES = "Disapproved Accounting Lines";
         public static final String APPDOC_DAPRVD_SUB_ACCT = "Disapproved Sub Account";
@@ -157,6 +158,7 @@ public class PurapConstants {
             appDocStatusMap.put(APPDOC_AWAIT_SEP_OF_DUTY_REVIEW, APPDOC_AWAIT_SEP_OF_DUTY_REVIEW);
             appDocStatusMap.put(APPDOC_AWAIT_CONTRACT_MANAGER_ASSGN, APPDOC_AWAIT_CONTRACT_MANAGER_ASSGN);
             appDocStatusMap.put(APPDOC_DAPRVD_ADHOC, APPDOC_DAPRVD_ADHOC);
+            appDocStatusMap.put(APPDOC_DAPRVD_AWARD, APPDOC_DAPRVD_AWARD);
             appDocStatusMap.put(APPDOC_DAPRVD_CONTENT, APPDOC_DAPRVD_CONTENT);
             appDocStatusMap.put(APPDOC_DAPRVD_HAS_ACCOUNTING_LINES, APPDOC_DAPRVD_HAS_ACCOUNTING_LINES);
             appDocStatusMap.put(APPDOC_DAPRVD_SUB_ACCT, APPDOC_DAPRVD_SUB_ACCT);
@@ -170,6 +172,7 @@ public class PurapConstants {
 
         // Node Name Declarations
         public static final String NODE_ADHOC= "AdHoc";
+        public static final String NODE_AWARD= "Award";
         public static final String NODE_CONTENT_REVIEW = "Organization";
         public static final String NODE_SUBACCOUNT = "SubAccount";
         public static final String NODE_SEPARATION_OF_DUTIES = "SeparationOfDuties";
@@ -185,6 +188,7 @@ public class PurapConstants {
 
             reqAppDocStatusMap = new HashMap<String, String>();
             reqAppDocStatusMap.put(NODE_ADHOC, APPDOC_DAPRVD_ADHOC);
+            reqAppDocStatusMap.put(NODE_AWARD, APPDOC_DAPRVD_AWARD);
             reqAppDocStatusMap.put(NODE_CONTENT_REVIEW, APPDOC_DAPRVD_CONTENT);
             reqAppDocStatusMap.put(NODE_HAS_ACCOUNTING_LINES, APPDOC_DAPRVD_HAS_ACCOUNTING_LINES);
             reqAppDocStatusMap.put(NODE_SUBACCOUNT,  APPDOC_DAPRVD_SUB_ACCT);
