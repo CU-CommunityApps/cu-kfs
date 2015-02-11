@@ -103,8 +103,6 @@ public class CuPdpExtractServiceImpl extends PdpExtractServiceImpl {
     protected PaymentGroup populatePaymentGroup(PaymentRequestDocument paymentRequestDocument, Batch batch) {
         PaymentGroup paymentGroup = super.populatePaymentGroup(paymentRequestDocument, batch);
         
-        paymentGroup.setPayeeOwnerCd(paymentRequestDocument.getVendorDetail().getVendorHeader().getVendorOwnershipCode());
-        
         if (paymentGroup.isPayableByACH()) {
             paymentGroup.setDisbursementTypeCode(CUPdpConstants.DisbursementTypeCodes.ACH);
         } else {
