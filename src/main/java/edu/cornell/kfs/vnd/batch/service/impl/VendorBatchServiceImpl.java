@@ -50,7 +50,6 @@ import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.vnd.batch.service.VendorBatchService;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
-import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 import edu.cornell.kfs.vnd.businessobject.VendorBatchAdditionalNote;
 import edu.cornell.kfs.vnd.businessobject.VendorBatchAddress;
@@ -379,11 +378,11 @@ public class VendorBatchServiceImpl implements VendorBatchService{
     	   	vHeader.setVendorTaxTypeCode(vendorBatch.getTaxNumberType());
     	}
         if (StringUtils.isNotBlank(vendorBatch.getW9ReceivedDate())) {
-            ((CuVendorHeaderExtension)vHeader.getExtension()).setVendorW9ReceivedDate(new java.sql.Date(getFormatDate(vendorBatch.getW9ReceivedDate()).getTime()));
+            vHeader.setVendorW9SignedDate(new java.sql.Date(getFormatDate(vendorBatch.getW9ReceivedDate()).getTime()));
         }
         vHeader.setVendorW9ReceivedIndicator(StringUtils.equalsIgnoreCase(YES, vendorBatch.getW9ReceivedIndicator()));
         if (!vHeader.getVendorW9ReceivedIndicator() || StringUtils.isBlank(vendorBatch.getW9ReceivedDate())) {
-            ((CuVendorHeaderExtension)vHeader.getExtension()).setVendorW9ReceivedDate(null);                        
+            vHeader.setVendorW9SignedDate(null);                        
         }
         vHeader.setVendorForeignIndicator(StringUtils.equalsIgnoreCase(YES, vendorBatch.getForeignVendor()));
     	vHeader.setVendorOwnershipCode(vendorBatch.getOwnershipTypeCode());

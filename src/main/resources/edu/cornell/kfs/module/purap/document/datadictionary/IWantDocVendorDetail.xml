@@ -67,7 +67,7 @@
         <ref bean="IWantDocVendorDetail-vendorHeader.vendorOwnershipCode"/>
         <ref bean="IWantDocVendorDetail-vendorHeader.vendorOwnershipCategoryCode"/>
         <ref bean="IWantDocVendorDetail-vendorHeader.vendorW9ReceivedIndicator"/>
-        <ref bean="IWantDocVendorDetail-vendorHeader.vendorW9ReceivedDate"/>
+        <ref bean="IWantDocVendorDetail-vendorHeader.vendorW9SignedDate"/>
         <!-- <ref bean="IWantDocVendorDetail-vendorHeader.vendorW8BenReceivedIndicator"/> -->
         <ref bean="IWantDocVendorDetail-vendorHeader.vendorFederalWithholdingTaxEndDate"/>
         <ref bean="IWantDocVendorDetail-vendorHeader.vendorDebarredIndicator"/>
@@ -489,10 +489,10 @@
   <bean id="IWantDocVendorDetail-vendorHeader.vendorW9ReceivedIndicator-parentBean" abstract="true" parent="VendorHeader-vendorW9ReceivedIndicator">
     <property name="name" value="vendorHeader.vendorW9ReceivedIndicator"/>
   </bean>
-  <bean id="IWantDocVendorDetail-vendorHeader.vendorW9ReceivedDate" parent="IWantDocVendorDetail-vendorHeader.vendorW9ReceivedDate-parentBean"/>
+  <bean id="IWantDocVendorDetail-vendorHeader.vendorW9SignedDate" parent="IWantDocVendorDetail-vendorHeader.vendorW9SignedDate-parentBean"/>
 																							   
-  <bean id="IWantDocVendorDetail-vendorHeader.vendorW9ReceivedDate-parentBean" abstract="true" parent="VendorHeaderExtension-vendorW9ReceivedDate">
-    <property name="name" value="vendorHeader.extension.vendorW9ReceivedDate"/>
+  <bean id="IWantDocVendorDetail-vendorHeader.vendorW9SignedDate-parentBean" abstract="true" parent="VendorHeader-vendorW9SignedDate">
+    <property name="name" value="vendorHeader.vendorW9SignedDate"/>
   </bean>
   <!-- <bean id="IWantDocVendorDetail-vendorHeader.vendorW8BenReceivedIndicator" parent="IWantDocVendorDetail-vendorHeader.vendorW8BenReceivedIndicator-parentBean"/>
 
@@ -877,7 +877,7 @@
               <bean parent="InquirySubSectionHeaderDefinition" p:attributeName="Corporate Information"/>
               <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorTypeCode"/>
               <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorW9ReceivedIndicator"/>
-              <bean parent="FieldDefinition" p:attributeName="vendorHeader.extension.vendorW9ReceivedDate"/>
+              <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorW9SignedDate"/>
               <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorForeignIndicator"/>
               <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorW8BenReceivedIndicator"/>
               <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorTaxNumber"/>

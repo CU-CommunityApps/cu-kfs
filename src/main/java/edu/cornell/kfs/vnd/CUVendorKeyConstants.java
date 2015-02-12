@@ -25,14 +25,6 @@ public class CUVendorKeyConstants extends VendorKeyConstants {
     // Vendor Maintenance
     public static final String CONFIRM_VENDOR_DATE_EXPIRED = "message.vendorMaint.confirm.expired.date";
     
-    //Vendor Maintenance W9 Received Date
-    public static final String ERROR_DOCUMENT_VNDMAINT_W9RECEIVED_NOT_POPULATED = "error.document.vendor.w9ReceivedNotPopulatedButIndicatorIsTrue";
-    public static final String ERROR_DOCUMENT_VNDMAINT_W9RECEIVED_POPULATED_W_O_IND = "error.document.vendor.w9ReceivedPopulatedButIndicatorIsNull";
-    
-    //Vendor Maintenance W9 Received Date
-    public static final String ERROR_DOCUMENT_VNDMAINT_W8BENRECEIVED_NOT_POPULATED = "error.document.vendor.w8BENReceivedNotPopulatedButIndicatorIsTrue";
-    public static final String ERROR_DOCUMENT_VNDMAINT_W8BENRECEIVED_POPULATED_W_O_IND = "error.document.vendor.w8BENReceivedPopulatedButIndicatorIsNull";
-    
     //Vendor Maintenance Supplier Diversity Expiration Date
     public static final String ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST = "error.document.vendor.supplierDiversityExpirationDateIsInPast";
     public static final String ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK = "error.document.vendor.supplierDiversityExpirationDateCannotBeBlank";

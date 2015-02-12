@@ -30,7 +30,6 @@ import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
-import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 
 public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
@@ -83,7 +82,6 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         if (vendorHeader.getVendorHeaderGeneratedIdentifier() == null) {
             Integer generatedHeaderId = SpringContext.getBean(SequenceAccessorService.class).getNextAvailableSequenceNumber(HEADER_ID_SEQ).intValue();
             vendorHeader.setVendorHeaderGeneratedIdentifier(generatedHeaderId.intValue());
-            ((CuVendorHeaderExtension)vendorHeader.getExtension()).setVendorHeaderGeneratedIdentifier(generatedHeaderId);
         }
         if (CollectionUtils.isNotEmpty(vendorHeader.getVendorSupplierDiversities())) {
             for (VendorSupplierDiversity supplierDiversity : vendorHeader.getVendorSupplierDiversities()) {

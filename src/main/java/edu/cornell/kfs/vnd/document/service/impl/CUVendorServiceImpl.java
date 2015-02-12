@@ -38,7 +38,6 @@ import org.kuali.rice.krad.service.DocumentService;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
-import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 import edu.cornell.kfs.vnd.document.service.CUVendorService;

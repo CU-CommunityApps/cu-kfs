@@ -33,7 +33,6 @@ import edu.cornell.kfs.vnd.CUVendorKeyConstants;
 import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorCreditCardMerchant;
-import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
@@ -48,7 +47,6 @@ public class CuVendorRule extends VendorRule {
         }
       
         valid &= processCuAddressValidation(document);
-		valid &= checkW9ReceivedIndicatorAndDate(document);
 		valid &= checkGeneralLiabilityAmountAndExpiration(document);
 		valid &= checkAutoLiabilityAmountAndExpiration(document);
 		valid &= checkWorkmansCompAmountAndExpiration(document);
@@ -184,38 +182,6 @@ public class CuVendorRule extends VendorRule {
 
         return valid;
     }
-
-	protected boolean checkW9ReceivedIndicatorAndDate(MaintenanceDocument document) {
-		boolean success = true;
-		
-		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();		
-		VendorHeader vendorHeader = vendorDetail.getVendorHeader();
-		
-		boolean vendorW9ReceivedIndicator = false;
-		
-		if (vendorHeader.getVendorW9ReceivedIndicator()!= null) {
-			vendorW9ReceivedIndicator =	vendorHeader.getVendorW9ReceivedIndicator();
-		}
-
-		Date w9ReceivedDate = ((CuVendorHeaderExtension)vendorHeader.getExtension()).getVendorW9ReceivedDate();
-		
-		if (vendorW9ReceivedIndicator && (w9ReceivedDate == null) ) {
-			success = false;
-			putFieldError("vendorHeader.extension.vendorW9ReceivedDate", CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_W9RECEIVED_NOT_POPULATED);
-		}
-		
-		if ( (!vendorW9ReceivedIndicator) && (w9ReceivedDate!=null)) {
-			success = false;
-			putFieldError("vendorHeader.vendorW9ReceivedIndicator", CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_W9RECEIVED_POPULATED_W_O_IND);
-		}			
-		
-		if (w9ReceivedDate!=null && w9ReceivedDate.after(new Date())) {
-			success = false;
-			putFieldError("vendorHeader.extension.vendorW9ReceivedDate", CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_DATE_IN_FUTURE);
-		}
-		
-		return success;
-	}
 
 	protected boolean checkGeneralLiabilityAmountAndExpiration(MaintenanceDocument document) {
 		boolean success = true;
