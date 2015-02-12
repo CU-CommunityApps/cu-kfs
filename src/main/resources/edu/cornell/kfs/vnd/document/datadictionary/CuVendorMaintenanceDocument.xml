@@ -27,7 +27,6 @@
   
     <property name="businessRulesClass" value="edu.cornell.kfs.vnd.document.validation.impl.CuVendorRule"/>  
     <property name="documentAuthorizerClass" value="edu.cornell.kfs.vnd.document.authorization.CuVendorDocumentAuthorizer"/>
-    <property name="documentPresentationControllerClass" value="edu.cornell.kfs.vnd.document.authorization.CuVendorDocumentPresentationController"/>
     <property name="promptBeforeValidationClass" value="edu.cornell.kfs.vnd.document.validation.impl.CuVendorPreRules"/>
     
   </bean>
@@ -36,32 +35,6 @@
        <property name="beanName" value="VendorMaintenanceDocument-Vendor" />
        <property name="fieldOverrides">
            <list>
-               <bean parent="FieldOverrideForListElementInsert">
-                   <property name="propertyName" value="maintainableItems" />
-                   <property name="element">
-                           <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.vendorW9ReceivedIndicator" />
-                   </property>
-                   <property name="insertAfter">
-                       <list>
-                          <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.extension.vendorW9ReceivedDate" />
-                       </list>
-                   </property>
-               </bean>
-                            <bean parent="FieldOverrideForListElementInsert">
-                   <property name="propertyName" value="maintainableItems" />
-                   <property name="element">
-                           <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.vendorW8BenReceivedIndicator" />
-                   </property>
-                   <property name="insertAfter">
-                       <list>
-                          <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.extension.vendorW8BenReceivedDate" />
-                          <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.extension.vendorChapter4StatusCode" />
-                          <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.extension.vendorForeignTaxNumber" />
-                          <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.extension.vendorGIIN" />
-                          <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.extension.vendorForeignRecipientBirthDate" />
-                       </list>
-                   </property>
-               </bean>
               
                <bean parent="FieldOverrideForListElementInsert">
                    <property name="propertyName" value="maintainableItems" />
