@@ -250,6 +250,7 @@ public class AccountReversionDetailTrickleDownInactivationServiceImpl implements
                 final String noteText = MessageFormat.format(noteTextTemplate, description);
                 note = noteService.createNote(noteTemplate, noteParent, GlobalVariables.getUserSession().getPrincipalId());
                 note.setNoteText(noteText);
+                note.setNotePostedTimestampToCurrent();
             }
             catch (Exception e) {
                 // noteService.createNote throws *Exception*???
