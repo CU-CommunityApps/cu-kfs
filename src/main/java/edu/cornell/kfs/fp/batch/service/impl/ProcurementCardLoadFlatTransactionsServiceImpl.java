@@ -34,6 +34,8 @@ import org.kuali.kfs.sys.service.ReportWriterService;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.service.BusinessObjectService;
 
+import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
+
 /**
  * This is the default implementation of the ProcurementCardLoadTransactionsService interface.
  * Handles loading, parsing, and storing of incoming procurement card batch files.
@@ -93,6 +95,7 @@ public class ProcurementCardLoadFlatTransactionsServiceImpl extends InitiateDire
      * Calls businessObjectService to remove all the procurement card transaction rows from the transaction load table.
      */
     public void cleanTransactionsTable() {
+    	businessObjectService.deleteMatching(ProcurementCardTransactionExtendedAttribute.class, new HashMap<String, Object>());
         businessObjectService.deleteMatching(ProcurementCardTransaction.class, new HashMap<String, Object>());
     }
 

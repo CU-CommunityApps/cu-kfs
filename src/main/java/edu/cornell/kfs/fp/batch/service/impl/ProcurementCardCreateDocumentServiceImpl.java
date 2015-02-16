@@ -2,6 +2,7 @@ package edu.cornell.kfs.fp.batch.service.impl;
 
 import static edu.cornell.kfs.fp.document.validation.impl.CuProcurementCardDocumentRuleConstants.ERROR_TRANS_OBJECT_CODE_PARM_NM; 
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.fp.batch.ProcurementCardCreateDocumentsStep;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
+import org.kuali.kfs.fp.businessobject.ProcurementCardHolder;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTargetAccountingLine;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
@@ -24,11 +26,13 @@ import org.kuali.rice.krad.service.DataDictionaryService;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
+
 
 public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardCreateDocumentServiceImpl.class);
     private static final int CARD_HOLDER_MAX_LENGTH = 15;
-    private static final int VENDOR_NAME_MAX_LENGTH = 19;
+    private static int VENDOR_NAME_MAX_LENGTH = 19;
     private static final int CC_LAST_FOUR = 4;
     private static final int MAX_DOC_DESC_LENGTH = 40;
     
@@ -86,6 +90,14 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
             
             String cardHolderName = transaction.getCardHolderName();
             String vendorName = transaction.getVendorName();
+            String transactionType = ((ProcurementCardTransactionExtendedAttribute)transaction.getExtension()).getTransactionType();
+            
+            if(transactionType!=null && StringUtils.isNotBlank(transactionType)){
+            	VENDOR_NAME_MAX_LENGTH = 16;
+            }
+            else{
+            	VENDOR_NAME_MAX_LENGTH = 19;
+            }
 
             if (cardHolderName.length() > CARD_HOLDER_MAX_LENGTH && vendorName.length() > VENDOR_NAME_MAX_LENGTH) {
                 cardHolderName = cardHolderName.substring(0, CARD_HOLDER_MAX_LENGTH);
@@ -117,6 +129,10 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
                 lastFour = creditCardNumber.substring(creditCardNumber.length() - CC_LAST_FOUR);
             }
             String docDesc = cardHolderName + "/" + vendorName + "/" + lastFour;
+            
+            if(transactionType!=null && StringUtils.isNotBlank(transactionType)){
+            	docDesc = transactionType + "/" + cardHolderName + "/" + vendorName + "/" + lastFour;
+            }
  
             if (docDesc.length() > MAX_DOC_DESC_LENGTH) {
                 docDesc = docDesc.substring(0, MAX_DOC_DESC_LENGTH);
@@ -203,4 +219,5 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
     protected String getErrorObjectCode() {
         return parameterService.getParameterValueAsString(ProcurementCardCreateDocumentsStep.class, ERROR_TRANS_OBJECT_CODE_PARM_NM);
     }
+    
 }

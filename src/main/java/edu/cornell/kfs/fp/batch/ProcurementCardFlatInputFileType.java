@@ -27,18 +27,23 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileTypeBase;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.service.SequenceAccessorService;
 
 import edu.cornell.kfs.fp.batch.service.ProcurementCardErrorEmailService;
+import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
     
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardFlatInputFileType.class);
+    
+    private static final String FP_PRCRMNT_CARD_TRN_MT_SEQ = "FP_PRCRMNT_CARD_TRN_MT_SEQ";
 
     private ProcurementCardTransaction parent;
     private boolean duplicateTransactions = false;
@@ -353,6 +358,16 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             } else {
             	accumulatedCredits = accumulatedCredits.add(child.getTransactionSettlementAmount());	            	
             }
+            
+            ProcurementCardTransactionExtendedAttribute extension = new ProcurementCardTransactionExtendedAttribute();
+            extension.setTransactionType(extractNormalizedString(line, 333, 335));
+            if (child.getTransactionSequenceRowNumber() == null) {
+                Integer generatedTransactionSequenceRowNumber = SpringContext.getBean(SequenceAccessorService.class).getNextAvailableSequenceNumber(FP_PRCRMNT_CARD_TRN_MT_SEQ).intValue();
+                child.setTransactionSequenceRowNumber(generatedTransactionSequenceRowNumber);
+                extension.setTransactionSequenceRowNumber(child.getTransactionSequenceRowNumber());
+            }            
+            
+            child.setExtension(extension);
             
             transactionCount++;
             return child;
