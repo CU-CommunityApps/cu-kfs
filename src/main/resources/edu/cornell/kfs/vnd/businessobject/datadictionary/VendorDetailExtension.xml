@@ -40,6 +40,9 @@
 		<ref bean="VendorDetailExtension-healthOffSiteLicenseExpirationDate"/> 
 		<ref bean="VendorDetailExtension-insuranceNotes"/>
 		<ref bean="VendorDetailExtension-merchantNotes"/> 
+        <ref bean="VendorDetailExtension-procurementMethods" />
+        <ref bean="VendorDetailExtension-procurementMethodsArray" />
+        <ref bean="VendorDetailExtension-procurementMethodsForDisplay" />
       </list>
     </property>
   </bean>
@@ -230,6 +233,35 @@
 	<property name="label" value="Default Payment Method" />
 	<property name="shortLabel" value="Dflt Pmt Mthd" />
 	<property name="control" ref="PaymentMethodsForVendorSelectControl" />
+  </bean>
+
+  <!-- KFSPTS-3918 -->
+  <bean id="VendorDetailExtension-procurementMethods" parent="VendorDetailExtension-procurementMethods-parentBean" />
+  <bean id="VendorDetailExtension-procurementMethods-parentBean" abstract="true" parent="AttributeDefinition">
+	<property name="name" value="procurementMethods" />
+	<property name="label" value="Allowed Procurement Methods" />
+	<property name="shortLabel" value="Proc Mthds" />
+	<property name="maxLength" value="40" />
+	<property name="validationPattern">
+	  <bean parent="AnyCharacterValidationPattern" />
+	</property>
+	<property name="control">
+	  <bean parent="TextControlDefinition" p:size="30" />
+	</property>
+  </bean>
+
+  <bean id="VendorDetailExtension-procurementMethodsArray" parent="VendorDetailExtension-procurementMethodsArray-parentBean" />
+  <bean id="VendorDetailExtension-procurementMethodsArray-parentBean" abstract="true" parent="VendorDetailExtension-procurementMethods">
+	<property name="name" value="procurementMethodsArray" />
+	<property name="control">
+	  <bean parent="MultiselectControlDefinition" p:size="4"
+	          p:valuesFinderClass="edu.cornell.kfs.vnd.businessobject.options.CuProcurementMethodValuesFinder" />
+	</property>
+  </bean>
+
+  <bean id="VendorDetailExtension-procurementMethodsForDisplay" parent="VendorDetailExtension-procurementMethodsForDisplay-parentBean" />
+  <bean id="VendorDetailExtension-procurementMethodsForDisplay-parentBean" abstract="true" parent="VendorDetailExtension-procurementMethods">
+	<property name="name" value="procurementMethodsForDisplay" />
   </bean>
 
 </beans>

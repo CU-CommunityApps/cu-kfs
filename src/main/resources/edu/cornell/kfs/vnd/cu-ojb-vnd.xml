@@ -59,6 +59,7 @@
     <field-descriptor name="healthOffSiteLicenseExpirationDate" column="HEALTH_LICENSE_EXPR_DATE" jdbc-type="DATE"/>
     <field-descriptor name="insuranceNotes" column="INSURANCE_NOTES" jdbc-type="VARCHAR"/>
 	<field-descriptor name="merchantNotes" column="MERCHANT_NOTES" jdbc-type="VARCHAR"/>
+	<field-descriptor name="procurementMethods" column="PROC_MTHDS" jdbc-type="VARCHAR" />
         <collection-descriptor name="vendorCreditCardMerchants" proxy="true" element-class-ref="edu.cornell.kfs.vnd.businessobject.CuVendorCreditCardMerchant" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
         <inverse-foreignkey field-ref="vendorHeaderGeneratedIdentifier" />
         <inverse-foreignkey field-ref="vendorDetailAssignedIdentifier" />        
@@ -113,6 +114,7 @@
     <field-descriptor name="vendorForeignTaxNumber" column="VNDR_FRGN_TAX_NBR" jdbc-type="VARCHAR"/> 
     <field-descriptor name="vendorGIIN" column="VNDR_GIIN" jdbc-type="VARCHAR"/> 
     <field-descriptor name="vendorForeignRecipientBirthDate" column="VNDR_FRGN_RECIPNT_BIRTH_DT" jdbc-type="DATE"/>
+    <field-descriptor name="vendorLocale" column="VNDR_LCLE" jdbc-type="VARCHAR"/>
 
 	<reference-descriptor name="vendorChapter4Status"
 		class-ref="edu.cornell.kfs.vnd.businessobject.CuVendorChapter4Status"

@@ -4,8 +4,12 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
+
+import edu.cornell.kfs.vnd.CUVendorConstants;
 
 public class VendorDetailExtension extends PersistableBusinessObjectExtensionBase {
 	private static final long serialVersionUID = 2L;
@@ -31,6 +35,7 @@ public class VendorDetailExtension extends PersistableBusinessObjectExtensionBas
     protected String insuranceNotes;
     protected String merchantNotes;
     protected List<CuVendorCreditCardMerchant> vendorCreditCardMerchants;
+    protected String procurementMethods;
 
     public VendorDetailExtension() {
         vendorCreditCardMerchants = new ArrayList<CuVendorCreditCardMerchant>();
@@ -206,4 +211,42 @@ public class VendorDetailExtension extends PersistableBusinessObjectExtensionBas
 		this.vendorCreditCardMerchants = vendorCreditCardMerchants;
 	}
 
+	public String getProcurementMethods() {
+		return procurementMethods;
+	}
+
+	public void setProcurementMethods(String procurementMethods) {
+		this.procurementMethods = procurementMethods;
+	}
+
+	// This getter is for the multiselect version of the procurementMethods field.
+	public Object getProcurementMethodsArray() {
+		return StringUtils.split(procurementMethods, ','); 
+	}
+
+	// This setter is for the multiselect version of the procurementMethods field.
+	public void setProcurementMethodsArray(Object procurementMethodsArray) {
+		// Only set property if null or an array, in the event of a string value being passed in instead.
+		if (procurementMethodsArray == null) {
+			this.procurementMethods = null;
+		} else if (procurementMethodsArray instanceof String[]) {
+			this.procurementMethods = StringUtils.join((String[]) procurementMethodsArray, ',');
+		}
+	}
+
+	// This getter handles read-only UI display of the procurementMethods field.
+	public String getProcurementMethodsForDisplay() {
+		if (StringUtils.isBlank(procurementMethods)) {
+			return KFSConstants.EMPTY_STRING;
+		}
+		
+		// Get the results as comma-plus-space-delimited labels instead of comma-delimited keys.
+		StringBuilder displayValue = new StringBuilder(50);
+		for (String procurementMethod : StringUtils.split(procurementMethods, ',')) {
+			displayValue.append(CUVendorConstants.PROC_METHODS_LABEL_MAP.get(procurementMethod)).append(',').append(' ');
+		}
+		
+		// Remove trailing ", " from the returned result.
+		return displayValue.substring(0, displayValue.length() - 2);
+	}
 }

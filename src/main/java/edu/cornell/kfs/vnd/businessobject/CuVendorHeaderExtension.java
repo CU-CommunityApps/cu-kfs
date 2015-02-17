@@ -1,7 +1,6 @@
 package edu.cornell.kfs.vnd.businessobject;
 
 import java.sql.Date;
-
 import java.util.HashMap;
 
 import org.kuali.kfs.sys.context.SpringContext;
@@ -20,6 +19,7 @@ public class CuVendorHeaderExtension extends PersistableBusinessObjectExtensionB
     private String vendorGIIN;
     private Date vendorForeignRecipientBirthDate;
     private CuVendorChapter4Status vendorChapter4Status;
+    private String vendorLocale;
    
     public Date getVendorW9ReceivedDate() {
         return vendorW9ReceivedDate;
@@ -91,6 +91,13 @@ public class CuVendorHeaderExtension extends PersistableBusinessObjectExtensionB
 			Date vendorForeignRecipientBirthDate) {
 		this.vendorForeignRecipientBirthDate = vendorForeignRecipientBirthDate;
 	}
-    
-    
+
+	public String getVendorLocale() {
+		return vendorLocale;
+	}
+
+	public void setVendorLocale(String vendorLocale) {
+		this.vendorLocale = vendorLocale;
+	}
+
 }

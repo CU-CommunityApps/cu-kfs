@@ -15,6 +15,10 @@
  */
 package edu.cornell.kfs.vnd;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.kuali.kfs.vnd.VendorConstants;
 
 
@@ -34,4 +38,37 @@ public class CUVendorConstants extends VendorConstants {
 	    public static final String SUPPLIER_DIVERSITY_CERTIFICATION = "Supplier Diversity Certification";
     }
 
+    public static final String LOCALE_LOCAL = "LOCAL";
+    public static final String LOCALE_REGIONAL = "REGIONAL";
+    public static final String LOCALE_LOCAL_LABEL = "Local";
+    public static final String LOCALE_REGIONAL_LABEL = "Regional";
+
+    public static final String PROC_METHOD_PO = "PO";
+    public static final String PROC_METHOD_PCARD = "PCARD";
+    public static final String PROC_METHOD_ESHOP = "ESHOP";
+    public static final String PROC_METHOD_DV = "DV";
+    public static final String PROC_METHOD_PO_LABEL = "Purchase Order";
+    public static final String PROC_METHOD_PCARD_LABEL = "Pcard";
+    public static final String PROC_METHOD_ESHOP_LABEL = "e-SHOP";
+    public static final String PROC_METHOD_DV_LABEL = "Disbursement Voucher";
+
+    public static final Map<String, String> PROC_METHODS_LABEL_MAP;
+    public static final Map<String, String> LOCALES_LABEL_MAP;
+
+
+
+    static {
+        // Build the label maps as "linked" ones to preserve insertion order, to help with using these maps in values finders.
+        Map<String, String> labelsMap = new LinkedHashMap<String, String>();
+        labelsMap.put(PROC_METHOD_PO, PROC_METHOD_PO_LABEL);
+        labelsMap.put(PROC_METHOD_PCARD, PROC_METHOD_PCARD_LABEL);
+        labelsMap.put(PROC_METHOD_ESHOP, PROC_METHOD_ESHOP_LABEL);
+        labelsMap.put(PROC_METHOD_DV, PROC_METHOD_DV_LABEL);
+        PROC_METHODS_LABEL_MAP = Collections.unmodifiableMap(labelsMap);
+        
+        labelsMap = new LinkedHashMap<String, String>();
+        labelsMap.put(LOCALE_LOCAL, LOCALE_LOCAL_LABEL);
+        labelsMap.put(LOCALE_REGIONAL, LOCALE_REGIONAL_LABEL);
+        LOCALES_LABEL_MAP = Collections.unmodifiableMap(labelsMap);
+    }
 }

@@ -29,6 +29,11 @@
     <property name="documentAuthorizerClass" value="edu.cornell.kfs.vnd.document.authorization.CuVendorDocumentAuthorizer"/>
     <property name="documentPresentationControllerClass" value="edu.cornell.kfs.vnd.document.authorization.CuVendorDocumentPresentationController"/>
     <property name="promptBeforeValidationClass" value="edu.cornell.kfs.vnd.document.validation.impl.CuVendorPreRules"/>
+    <property name="webScriptFiles">
+      <list merge="true">
+        <value>../scripts/vnd/procMethods.js</value>
+      </list>
+    </property>
     
   </bean>
 
@@ -62,7 +67,19 @@
                        </list>
                    </property>
                </bean>
-              
+               
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="maintainableItems" />
+                   <property name="element">
+                           <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.vendorDebarredIndicator" />
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                          <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.extension.vendorLocale" />
+                       </list>
+                   </property>
+               </bean>
+               
                <bean parent="FieldOverrideForListElementInsert">
                    <property name="propertyName" value="maintainableItems" />
                    <property name="element">
@@ -71,6 +88,9 @@
                    <property name="insertAfter">
                        <list>
                           <bean parent="MaintainableFieldDefinition" p:name="extension.einvoiceVendorIndicator" />
+                          <bean parent="MaintainableFieldDefinition" p:name="extension.procurementMethodsArray"
+                                  p:alternateDisplayAttributeName="extension.procurementMethodsForDisplay" />
+                          <bean parent="MaintainableFieldDefinition" p:name="extension.procurementMethods" />
                        </list>
                    </property>
                </bean>
@@ -249,6 +269,5 @@
       </list>
     </property>
   </bean>  
-   
-     	  	  
+
 </beans>

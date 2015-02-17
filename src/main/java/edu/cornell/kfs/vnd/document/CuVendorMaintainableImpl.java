@@ -1,6 +1,5 @@
 package edu.cornell.kfs.vnd.document;
 
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -12,13 +11,17 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
-import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kns.document.MaintenanceDocument;
+import org.kuali.rice.kns.maintenance.Maintainable;
+import org.kuali.rice.kns.web.ui.Field;
+import org.kuali.rice.kns.web.ui.Row;
+import org.kuali.rice.kns.web.ui.Section;
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.maintenance.MaintenanceLock;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.service.SequenceAccessorService;
+import org.kuali.rice.krad.uif.util.ObjectPropertyUtils;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
 
@@ -30,6 +33,10 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuVendorMaintainableImpl.class);
     private static final String HEADER_ID_SEQ = "VNDR_HDR_GNRTD_ID";
     private static final String ADDRESS_HEADER_ID_SEQ = "VNDR_ADDR_GNRTD_ID";
+    private static final String VENDOR_SECTION_ID = "Vendor";
+    private static final String PROC_METHODS_FIELD_NAME = "extension.procurementMethods";
+    private static final String PROC_METHODS_MULTISELECT_FIELD_NAME = "extension.procurementMethodsArray";
+    private static final String PROC_METHODS_MULTISELECT_FIELD_PATH = "dataObject.extension.procurementMethodsArray";
     
     public void saveBusinessObject() {
         VendorDetail vendorDetail = (VendorDetail) super.getBusinessObject();
@@ -142,4 +149,49 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         return maintenanceLocks;
 	
     }
+
+    /**
+     * Overridden to forcibly populate the multi-select procurementMethodsArray KNS field values,
+     * and to forcibly hide the procurementMethods field's row.
+     * 
+     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#getSections(org.kuali.rice.kns.document.MaintenanceDocument,
+     *      org.kuali.rice.kns.maintenance.Maintainable)
+     */
+    @SuppressWarnings("rawtypes")
+    @Override
+    public List getSections(MaintenanceDocument document, Maintainable oldMaintainable) {
+        @SuppressWarnings("unchecked")
+        List<Section> sections = super.getSections(document, oldMaintainable);
+        
+        // Perform the forcible updates on the generated sections.
+        boolean doneWithSections = false;
+        for (int i = 0; !doneWithSections && i < sections.size(); i++) {
+            Section section = sections.get(i);
+            if (VENDOR_SECTION_ID.equals(section.getSectionId())) {
+                // Find and update the appropriate fields/rows.
+                List<Row> rows = section.getRows();
+                int fieldsDone = 0;
+                for (int j = 0; fieldsDone < 2 && j < rows.size(); j++) {
+                    List<Field> fields = rows.get(j).getFields();
+                    for (int k = 0; fieldsDone < 2 && k < fields.size(); k++) {
+                        String fieldName = fields.get(k).getPropertyName();
+                        if (PROC_METHODS_MULTISELECT_FIELD_NAME.equals(fieldName)) {
+                            // Update the property values on the multiselect field.
+                            Object val = ObjectPropertyUtils.getPropertyValue(this, PROC_METHODS_MULTISELECT_FIELD_PATH);
+                            fields.get(k).setPropertyValues((String[]) val);
+                            fieldsDone++;
+                        } else if (PROC_METHODS_FIELD_NAME.equals(fieldName)) {
+                            // Hide the row containing the flattened version of the multiselect field.
+                            rows.get(j).setHidden(true);
+                            fieldsDone++;
+                        }
+                    }
+                }
+                doneWithSections = true;
+            }
+        }
+        
+        return sections;
+    }
+
 }

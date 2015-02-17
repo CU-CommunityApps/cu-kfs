@@ -28,6 +28,7 @@
        		<ref bean="VendorHeader-extension-vendorForeignTaxNumber"/>
        		<ref bean="VendorHeader-extension-vendorGIIN"/>
        		<ref bean="VendorHeader-extension-vendorForeignRecipientBirthDate"/>
+       		<ref bean="VendorHeader-extension-vendorLocale"/>
       </list>
     </property>
  		<property name="relationships">
@@ -75,6 +76,11 @@
   <bean id="VendorHeader-extension-vendorForeignRecipientBirthDate" parent="VendorHeader-extension-vendorForeignRecipientBirthDate-parentBean"/>
   <bean id="VendorHeader-extension-vendorForeignRecipientBirthDate-parentBean" abstract="true" parent="VendorHeaderExtension-vendorForeignRecipientBirthDate" >
     <property name="name" value="extension.vendorForeignRecipientBirthDate"/>
+  </bean>
+
+  <bean id="VendorHeader-extension-vendorLocale" parent="VendorHeader-extension-vendorLocale-parentBean"/>
+  <bean id="VendorHeader-extension-vendorLocale-parentBean" abstract="true" parent="VendorHeaderExtension-vendorLocale" >
+    <property name="name" value="extension.vendorLocale"/>
   </bean>
 
 

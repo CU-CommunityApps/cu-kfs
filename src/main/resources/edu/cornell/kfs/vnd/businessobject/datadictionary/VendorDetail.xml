@@ -22,6 +22,7 @@
         		<ref bean="VendorDetail-vendorHeader.vendorForeignTaxNumber"/>
         		<ref bean="VendorDetail-vendorHeader.vendorGIIN"/>
         		<ref bean="VendorDetail-vendorHeader.vendorForeignRecipientBirthDate"/>
+        		<ref bean="VendorDetail-vendorHeader.vendorLocale" />
 				<ref bean="VendorDetail-extension-insuranceRequiredIndicator"/> 
 				<ref bean="VendorDetail-extension-insuranceRequirementsCompleteIndicator"/> 
 				<ref bean="VendorDetail-extension-cornellAdditionalInsuredIndicator"/> 
@@ -39,6 +40,9 @@
 				<ref bean="VendorDetail-extension-merchantNotes"/> 
 				<ref bean="VendorDetail-extension-einvoiceVendorIndicator" />
 				<ref bean="VendorDetail-extension-defaultB2BPaymentMethodCode" />
+				<ref bean="VendorDetail-extension-procurementMethods" />
+				<ref bean="VendorDetail-extension-procurementMethodsArray" />
+				<ref bean="VendorDetail-extension-procurementMethodsForDisplay" />
 			</list>
 		</property>
 		<property name="collections">
@@ -97,6 +101,12 @@
 	<bean id="VendorDetail-vendorHeader.vendorForeignRecipientBirthDate-parentBean" abstract="true" parent="VendorHeaderExtension-vendorForeignRecipientBirthDate"> 
 		<property name="name" value="vendorHeader.extension.vendorForeignRecipientBirthDate"/> 
 	</bean> 
+
+    <bean id="VendorDetail-vendorHeader.vendorLocale" parent="VendorDetail-vendorHeader.vendorLocale-parentBean" />
+    <bean id="VendorDetail-vendorHeader.vendorLocale-parentBean" abstract="true" parent="VendorHeaderExtension-vendorLocale">
+        <property name="name" value="vendorHeader.extension.vendorLocale" />
+    </bean>
+    
 
   <bean id="VendorDetail-extension-insuranceRequiredIndicator" parent="VendorDetail-extension-insuranceRequiredIndicator-parentBean"/>
 
@@ -205,7 +215,22 @@
         abstract="true" parent="VendorDetailExtension-defaultB2BPaymentMethodCode">
         <property name="name" value="extension.defaultB2BPaymentMethodCode" />
     </bean>
-    
+
+    <bean id="VendorDetail-extension-procurementMethods" parent="VendorDetail-extension-procurementMethods-parentBean" />
+    <bean id="VendorDetail-extension-procurementMethods-parentBean" abstract="true" parent="VendorDetailExtension-procurementMethods">
+        <property name="name" value="extension.procurementMethods" />
+    </bean>
+
+    <bean id="VendorDetail-extension-procurementMethodsArray" parent="VendorDetail-extension-procurementMethodsArray-parentBean" />
+    <bean id="VendorDetail-extension-procurementMethodsArray-parentBean" abstract="true" parent="VendorDetailExtension-procurementMethodsArray">
+        <property name="name" value="extension.procurementMethodsArray" />
+    </bean>
+
+    <bean id="VendorDetail-extension-procurementMethodsForDisplay" parent="VendorDetail-extension-procurementMethodsForDisplay-parentBean" />
+    <bean id="VendorDetail-extension-procurementMethodsForDisplay-parentBean" abstract="true" parent="VendorDetailExtension-procurementMethodsForDisplay">
+        <property name="name" value="extension.procurementMethodsForDisplay" />
+    </bean>
+
 	<!-- Business Object Inquiry Definition -->
 	
 	<bean id="VendorDetail-inquirySectionDefinition-vendorCreditCardMerchant"
@@ -323,11 +348,25 @@
                   <property name="propertyName" value="inquiryFields" />
                   <property name="propertyNameForElementCompare" value="attributeName" />
                   <property name="element">
+                      <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorDebarredIndicator" />
+                  </property>
+                  <property name="insertAfter">
+                      <list>
+                          <bean parent="FieldDefinition" p:attributeName="vendorHeader.extension.vendorLocale" />
+                      </list>
+                  </property>
+              </bean>
+              <bean parent="FieldOverrideForListElementInsert">
+                  <property name="propertyName" value="inquiryFields" />
+                  <property name="propertyNameForElementCompare" value="attributeName" />
+                  <property name="element">
                       <bean parent="FieldDefinition" p:attributeName="vendorInactiveReasonCode" />
                   </property>
                   <property name="insertAfter">
                       <list>
                           <bean parent="FieldDefinition" p:attributeName="extension.einvoiceVendorIndicator" />
+                          <bean parent="FieldDefinition" p:attributeName="extension.procurementMethodsArray"
+                                  p:alternateDisplayAttributeName="extension.procurementMethodsForDisplay" />
                       </list>
                   </property>
               </bean>

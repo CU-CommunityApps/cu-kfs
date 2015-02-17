@@ -27,6 +27,7 @@
         <ref bean="VendorHeaderExtension-vendorForeignTaxNumber"/>
         <ref bean="VendorHeaderExtension-vendorGIIN"/>
         <ref bean="VendorHeaderExtension-vendorForeignRecipientBirthDate"/>
+        <ref bean="VendorHeaderExtension-vendorLocale"/>
       </list>
     </property>
   </bean>
@@ -125,6 +126,20 @@
   			</property>
   		</bean>
   	</property>
+  </bean>
+
+  <bean id="VendorHeaderExtension-vendorLocale" parent="VendorHeaderExtension-vendorLocale-parentBean" />
+  <bean id="VendorHeaderExtension-vendorLocale-parentBean" abstract="true" parent="AttributeDefinition">
+	<property name="name" value="vendorLocale" />
+	<property name="label" value="Locale" />
+	<property name="shortLabel" value="Locale" />
+	<property name="maxLength" value="40" />
+	<property name="validationPattern">
+	  <bean parent="AnyCharacterValidationPattern" />
+	</property>
+	<property name="control">
+	  <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.vnd.businessobject.options.CuLocaleValuesFinder" />
+	</property>
   </bean>
 
 </beans>
