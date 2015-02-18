@@ -13,7 +13,10 @@ import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kns.document.MaintenanceDocument;
+import org.kuali.rice.kns.document.authorization.FieldRestriction;
+import org.kuali.rice.kns.document.authorization.MaintenanceDocumentRestrictions;
 import org.kuali.rice.kns.maintenance.Maintainable;
+import org.kuali.rice.kns.service.KNSServiceLocator;
 import org.kuali.rice.kns.web.ui.Field;
 import org.kuali.rice.kns.web.ui.Row;
 import org.kuali.rice.kns.web.ui.Section;
@@ -22,6 +25,7 @@ import org.kuali.rice.krad.maintenance.MaintenanceLock;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.service.SequenceAccessorService;
 import org.kuali.rice.krad.uif.util.ObjectPropertyUtils;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
 
@@ -36,7 +40,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private static final String VENDOR_SECTION_ID = "Vendor";
     private static final String PROC_METHODS_FIELD_NAME = "extension.procurementMethods";
     private static final String PROC_METHODS_MULTISELECT_FIELD_NAME = "extension.procurementMethodsArray";
-    private static final String PROC_METHODS_MULTISELECT_FIELD_PATH = "dataObject.extension.procurementMethodsArray";
+    private static final String MULTISELECT_FIELD_PATH_PREFIX = "dataObject.";
     
     public void saveBusinessObject() {
         VendorDetail vendorDetail = (VendorDetail) super.getBusinessObject();
@@ -162,6 +166,8 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     public List getSections(MaintenanceDocument document, Maintainable oldMaintainable) {
         @SuppressWarnings("unchecked")
         List<Section> sections = super.getSections(document, oldMaintainable);
+        MaintenanceDocumentRestrictions restrictions = KNSServiceLocator.getBusinessObjectAuthorizationService().getMaintenanceDocumentRestrictions(
+                document, GlobalVariables.getUserSession().getPerson());
         
         // Perform the forcible updates on the generated sections.
         boolean doneWithSections = false;
@@ -176,9 +182,8 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
                     for (int k = 0; fieldsDone < 2 && k < fields.size(); k++) {
                         String fieldName = fields.get(k).getPropertyName();
                         if (PROC_METHODS_MULTISELECT_FIELD_NAME.equals(fieldName)) {
-                            // Update the property values on the multiselect field.
-                            Object val = ObjectPropertyUtils.getPropertyValue(this, PROC_METHODS_MULTISELECT_FIELD_PATH);
-                            fields.get(k).setPropertyValues((String[]) val);
+                            // Update the property values and security on the multiselect field.
+                            setupMultiselectField(document, restrictions, fields.get(k), MULTISELECT_FIELD_PATH_PREFIX + fieldName);
                             fieldsDone++;
                         } else if (PROC_METHODS_FIELD_NAME.equals(fieldName)) {
                             // Hide the row containing the flattened version of the multiselect field.
@@ -192,6 +197,39 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         }
         
         return sections;
+    }
+
+    /*
+     * Convenience method for performing final custom setup of multiselect fields.
+     * KNS maintenance documents do not populate multiselect property values on such fields,
+     * and a FieldUtils limitation will make it skip multiselect read-only/hidden restriction setup.
+     * Thus, this method will forcibly update the multiselect's property values from the BO,
+     * as well as configure the field's read-only/hidden restrictions.
+     */
+    private void setupMultiselectField(MaintenanceDocument document, MaintenanceDocumentRestrictions restrictions, Field field, String propertyPath) {
+        // Manually update the property values.
+        Object val = ObjectPropertyUtils.getPropertyValue(this, propertyPath);
+        field.setPropertyValues((String[]) val);
+        
+        // Update the read-only and hidden restrictions accordingly, similar to the setup in the FieldUtils.applyAuthorization() method.
+        if (document.getNewMaintainableObject() == this && restrictions.hasRestriction(field.getPropertyName())) {
+            FieldRestriction restriction = restrictions.getFieldRestriction(field.getPropertyName());
+            // Copied and tweaked the code below from the FieldUtils.applyAuthorization() method.
+            if (restriction.isReadOnly()) {
+                if (!field.isReadOnly() && !restriction.isMasked() && !restriction.isPartiallyMasked()) {
+                    field.setReadOnly(true);
+                }
+            } else if (restriction.isHidden()) {
+                if (field.getFieldType() != Field.HIDDEN) {
+                    field.setFieldType(Field.HIDDEN);
+                }
+            }
+            
+            if (field.isReadOnly() && restriction.isHidden()) {
+                field.setFieldType(Field.HIDDEN);
+            }
+        }
+        
     }
 
 }

@@ -140,6 +140,11 @@
 	<property name="control">
 	  <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.vnd.businessobject.options.CuLocaleValuesFinder" />
 	</property>
+	<property name="attributeSecurity">
+      <bean parent="AttributeSecurity">
+        <property name="readOnly" value="true" />
+      </bean>
+    </property>
   </bean>
 
 </beans>
