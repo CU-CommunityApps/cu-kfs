@@ -11,13 +11,20 @@ import org.kuali.kfs.module.cg.businessobject.AwardProjectDirector;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.document.validation.impl.AwardRule;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kns.document.MaintenanceDocument;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
+import edu.cornell.kfs.module.cg.service.CuAwardAccountService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 @SuppressWarnings("deprecation")
 public class AwardExtensionRule extends AwardRule {
+	protected ParameterService parameterService;
 
     @Override
     protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {
@@ -25,9 +32,24 @@ public class AwardExtensionRule extends AwardRule {
     	success &= super.processCustomRouteDocumentBusinessRules(document);
     	success &= checkFinalFinancialReportRequired();
         success &= checkForDuplicateAccoutnts();
+        success &= checkAccountsNotUsedOnOtherAwards();
         success &= checkForDuplicateAwardProjectDirector();
         success &= checkForDuplicateAwardOrganization();
     	
+    	return success;
+    }
+    
+    /**
+     * @see org.kuali.kfs.module.cg.document.validation.impl.AwardRule#processCustomAddCollectionLineBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument, java.lang.String, org.kuali.rice.krad.bo.PersistableBusinessObject)
+     */
+    @Override
+    public boolean processCustomAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName, PersistableBusinessObject bo) {
+    	boolean success = super.processCustomAddCollectionLineBusinessRules(document, collectionName, bo);
+    	
+        if (bo instanceof AwardAccount) {
+        	AwardAccount awardAccount = (AwardAccount) bo;
+            success &= checkAccountNotUsedOnOtherAwards(awardAccount);
+        }
     	return success;
     }
     
@@ -128,4 +150,65 @@ public class AwardExtensionRule extends AwardRule {
         return success;
     }
     
+    
+	/**
+	 * Checks that none of the accounts on the award are being used on an award.
+	 * 
+	 * @return true if not used, false otherwise
+	 */
+	protected boolean checkAccountsNotUsedOnOtherAwards() {
+        boolean success = true;
+        
+        Collection<AwardAccount> awardAccounts = newAwardCopy.getAwardAccounts();
+
+        //validate if the accounts on the award are not already used on another award
+        for(AwardAccount account: awardAccounts){
+        	success &= checkAccountNotUsedOnOtherAwards(account);  
+         }        
+         return success;     
+    }
+	
+	/**
+	 * Checks that the current account is not already used on another award.
+	 * 
+	 * @param awardAccount
+	 * @return true if not used, false otherwise
+	 */
+	protected boolean checkAccountNotUsedOnOtherAwards(AwardAccount awardAccount) {
+		boolean success = true;
+
+		if (ObjectUtils.isNotNull(awardAccount) && StringUtils.isNotBlank(awardAccount.getChartOfAccountsCode()) && StringUtils.isNotBlank(awardAccount.getAccountNumber()) && awardAccount.isActive()) {
+			String accountNumber = awardAccount.getAccountNumber();
+			String accountChart = awardAccount.getChartOfAccountsCode();
+			Long proposalNumber = newAwardCopy.getProposalNumber();
+			
+			Collection<String> exemptAccounts = getParameterService().getParameterValuesAsString(AwardAccount.class, CUKFSConstants.CGParms.ACCOUNTS_EXEMPT_FROM_MULTIPLE_AWARDS_VALIDATION);
+			
+			if(exemptAccounts.contains(StringUtils.upperCase(accountChart) + ":" + StringUtils.upperCase(accountNumber))){
+				// validation not needed
+				return true;
+			}
+
+			boolean alreadyUsed = SpringContext.getBean(CuAwardAccountService.class).isAccountUsedOnAnotherAward(accountChart, accountNumber, proposalNumber);
+			
+			if (alreadyUsed) {
+				putFieldError(KFSPropertyConstants.AWARD_ACCOUNTS, CUKFSKeyConstants.ERROR_AWARD_ACCOUNT_ALREADY_IN_USE, accountChart + "-" + accountNumber);
+				success = false;
+			}
+		}
+
+		return success;
+	}
+	
+    /**
+     * Gets the parameterService
+     * 
+     * @return parameterService
+     */
+    public ParameterService getParameterService() {
+        if ( parameterService == null ) {
+            parameterService = SpringContext.getBean(ParameterService.class);
+        }
+        return parameterService;
+    }
 }

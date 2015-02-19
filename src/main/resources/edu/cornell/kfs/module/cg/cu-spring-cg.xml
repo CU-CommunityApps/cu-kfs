@@ -51,7 +51,11 @@
 	</bean>
 	
 	
-		
+	<bean id="awardAccountDao" parent="platformAwareDao"  class="edu.cornell.kfs.module.cg.dataaccess.impl.AwardAccountDaoOjb" />
+	
+	<bean id="cuAwardAccountService" class="edu.cornell.kfs.module.cg.service.impl.CuAwardAccountServiceImpl">
+		<property name="awardAccountDao" ref="awardAccountDao"/>
+	</bean>
   
 
 
