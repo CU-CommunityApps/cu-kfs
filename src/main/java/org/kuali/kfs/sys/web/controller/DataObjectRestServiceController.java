@@ -247,12 +247,6 @@ public class DataObjectRestServiceController {
     }
 
     protected void validateRequest(FinancialSystemBusinessObjectEntry boe, String namespace, String dataobject, HttpServletRequest request) throws Exception {
-        // check for https (will be ignored in dev mode), authorization
-        if ((!ConfigContext.getCurrentContextConfig().getDevMode() && !request.isSecure())) {
-            LOG.debug("HTTPS check failed.");
-            throw new AccessDeniedException("Not authorized.");
-        }
-
         if (boe == null) {
             LOG.debug("BusinessObjectEntry is null.");
             throw new NoSuchBeanDefinitionException("Data object not found.");
