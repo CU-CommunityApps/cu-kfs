@@ -36,7 +36,62 @@
               </td> 
             </tr>
             
-            <tr>
+                 <tr>
+              <th class="bord-l-b"><div align="right">
+                <kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrPayeeIdNumber}"/>             
+              </div></th>
+              <td colspan="3" class="datacell">               
+                <c:choose>       
+                  <%-- If payee is vendor (including employee-vendor), display vendor inquiry link using vendor header-detail ID --%>       
+                <c:when test="${KualiForm.document.dvPayeeDetail.vendor &&
+                          not empty KualiForm.document.dvPayeeDetail.disbVchrVendorHeaderIdNumber && 
+                          not empty KualiForm.document.dvPayeeDetail.disbVchrVendorDetailAssignedIdNumber}">
+              <kul:inquiry boClassName="org.kuali.kfs.vnd.businessobject.VendorDetail" 
+                    keyValues="vendorHeaderGeneratedIdentifier=${KualiForm.document.dvPayeeDetail.disbVchrVendorHeaderIdNumber}&vendorDetailAssignedIdentifier=${KualiForm.document.dvPayeeDetail.disbVchrVendorDetailAssignedIdNumber}" 
+                    render="true">
+                    <kul:htmlControlAttribute 
+                        attributeEntry="${payeeAttributes.disbVchrPayeeIdNumber}" 
+                        property="document.dvPayeeDetail.disbVchrPayeeIdNumber" 
+                        readOnly="true" />
+                </kul:inquiry>
+                </c:when> 
+                <%-- If payee is non-vendor employee, retrieve principalId using payeeId (which shall hold employeeIdnc in this case), and display Person inquiry link --%>   
+                <c:when test="${KualiForm.document.dvPayeeDetail.employee && 
+                          not empty KualiForm.document.dvPayeeDetail.disbVchrPayeeIdNumber}"> 
+          <c:set var="employeePrincipalId" value="${KualiForm.document.dvPayeeDetail.employeePrincipalId}"/>
+                  <c:if test="${not empty employeePrincipalId}"> 
+                <kul:inquiry boClassName="org.kuali.rice.kim.api.identity.Person" 
+                    keyValues="principalId=${employeePrincipalId}" 
+                    render="true">
+                    <kul:htmlControlAttribute 
+                        attributeEntry="${payeeAttributes.disbVchrPayeeIdNumber}" 
+                        property="document.dvPayeeDetail.disbVchrPayeeIdNumber" 
+                        readOnly="true" />
+                  </kul:inquiry>
+                </c:if>
+          </c:when>          
+          <%-- Otherwise, payee is neither vendor nor employee, probably customer or empty. 
+            Note: We currently don't handle the potential case that DV payee might be a Customer.
+            If in the future we decide otherwise, logic could be added here to handle hyper link for 
+            Customer inquiry when the returned payee is a Customer.
+          --%>
+                <c:otherwise> 
+                    <kul:htmlControlAttribute 
+                        attributeEntry="${payeeAttributes.disbVchrPayeeIdNumber}" 
+                        property="document.dvPayeeDetail.disbVchrPayeeIdNumber" 
+                        readOnly="true" />
+          </c:otherwise>          
+              </c:choose>                                    
+                <c:if test="${fullEntryMode}">
+                  <kul:lookup boClassName="edu.cornell.kfs.fp.businessobject.CuDisbursementPayee"
+                    fieldConversions="payeeIdNumber:document.dvPayeeDetail.disbVchrPayeeIdNumber,payeeTypeCode:document.dvPayeeDetail.disbursementVoucherPayeeTypeCode,paymentReasonCode:document.dvPayeeDetail.disbVchrPaymentReasonCode"
+            lookupParameters="document.dvPayeeDetail.disbVchrPaymentReasonCode:paymentReasonCode"
+                    />
+                </c:if>
+              </td>
+            </tr>
+            
+<%--             <tr>
               <th class="bord-l-b"><div align="right">
               	<kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrPayeeIdNumber}"/>           	
               </div></th>
@@ -49,7 +104,7 @@
 	                	/>
                 </c:if>
               </td>
-            </tr>
+            </tr> --%>
 		
             <tr>
               <th class="bord-l-b">
