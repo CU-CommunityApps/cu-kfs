@@ -69,9 +69,8 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         	if (newSourceLines.isEmpty())
         		return;
         	
-        	
-        	int maxSourceKey = Math.max(Collections.max(newSourceLines.keySet()), Collections.max(savedSourceLines.keySet())); 
-        	int minSourceKey = Math.min(Collections.min(newSourceLines.keySet()), Collections.min(savedSourceLines.keySet())); 
+        	int maxSourceKey = Math.max(findMaxOrMin(newSourceLines.keySet(), true), findMaxOrMin(savedSourceLines.keySet(), true)); 
+        	int minSourceKey = Math.min(findMaxOrMin(newSourceLines.keySet(), false), findMaxOrMin(savedSourceLines.keySet(), false)); 
 
         	for (int i = minSourceKey; i < maxSourceKey+1; i++) {
         		AccountingLine newLine = newSourceLines.get(i);
@@ -93,8 +92,8 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         	if (newTargetLines.isEmpty())
         		return;
         	
-        	int maxTargetKey = Math.max(Collections.max(newTargetLines.keySet()), Collections.max(savedTargetLines.keySet())); 
-        	int minTargetKey = Math.min(Collections.min(newTargetLines.keySet()), Collections.min(savedTargetLines.keySet())); 
+        	int maxTargetKey = Math.max(findMaxOrMin(newTargetLines.keySet(), true), findMaxOrMin(savedTargetLines.keySet(), true)); 
+        	int minTargetKey = Math.min(findMaxOrMin(newTargetLines.keySet(), false), findMaxOrMin(savedTargetLines.keySet(), false)); 
 
         	for (int i = minTargetKey; i < maxTargetKey+1; i++) {
         		AccountingLine newLine = newTargetLines.get(i);
@@ -123,6 +122,14 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
 //                catch (Exception unfe) {
 //                    LOG.error("Exception while attempting to retrieve all prior approvers for a disbursement voucher: " + unfe);
 //                }
+    }
+    
+    protected Integer findMaxOrMin(Set<Integer> keySet, boolean findMax) {
+    	if (keySet != null && keySet.size() > 0) {
+    		return findMax ? Collections.max(keySet) : Collections.min(keySet);
+    	} else {
+    		return 0;
+    	}
     }
 	
 	protected void writeNote(AccountingDocument accountingDocument, String noteText) {
