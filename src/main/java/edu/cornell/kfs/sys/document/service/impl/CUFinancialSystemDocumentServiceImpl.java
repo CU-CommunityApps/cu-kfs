@@ -70,8 +70,8 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         		return;
         	
         	
-        	int maxSourceKey = Math.max(Collections.max(newSourceLines.keySet()), Collections.max(savedSourceLines.keySet())); 
-        	int minSourceKey = Math.min(Collections.min(newSourceLines.keySet()), Collections.min(savedSourceLines.keySet())); 
+        	int maxSourceKey = findMinOrMaxKeyValue(newSourceLines, savedSourceLines, false); 
+        	int minSourceKey = findMinOrMaxKeyValue(newSourceLines, savedSourceLines, true); 
 
         	for (int i = minSourceKey; i < maxSourceKey+1; i++) {
         		AccountingLine newLine = newSourceLines.get(i);
@@ -93,8 +93,8 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         	if (newTargetLines.isEmpty())
         		return;
         	
-        	int maxTargetKey = Math.max(Collections.max(newTargetLines.keySet()), Collections.max(savedTargetLines.keySet())); 
-        	int minTargetKey = Math.min(Collections.min(newTargetLines.keySet()), Collections.min(savedTargetLines.keySet())); 
+        	int maxTargetKey = findMinOrMaxKeyValue(newTargetLines, savedTargetLines, false); 
+        	int minTargetKey = findMinOrMaxKeyValue(newTargetLines, savedTargetLines, true); 
 
         	for (int i = minTargetKey; i < maxTargetKey+1; i++) {
         		AccountingLine newLine = newTargetLines.get(i);
@@ -107,23 +107,24 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         		}
         	}
         }
-
-        
-
-                // Send out FYIs to all previous approvers so they're aware of the changes to the address
-//                try {
-//                    Set<Person> priorApprovers = accountingDocument.getDocumentHeader().getWorkflowDocument().getAllPriorApprovers();
-//                    String initiatorUserId = accountingDocument.getDocumentHeader().getWorkflowDocument().getRouteHeader().getInitiatorPrincipalId();
-//                    Person finSysUser = SpringContext.getBean(PersonService.class).getPerson(initiatorUserId);
-//                    setupFYIs(accountingDocument, priorApprovers, finSysUser.getPrincipalName());
-//                }
-//                catch (WorkflowException we) {
-//                    LOG.error("Exception while attempting to retrieve all prior approvers from workflow: " + we);
-//                }
-//                catch (Exception unfe) {
-//                    LOG.error("Exception while attempting to retrieve all prior approvers for a disbursement voucher: " + unfe);
-//                }
     }
+
+	protected int findMinOrMaxKeyValue(Map<Integer, AccountingLine> newSourceLines, 
+			Map<Integer, AccountingLine> savedSourceLines, boolean isMinSearch) {
+		int newSourceValue = findKeySetMaxOrMin(newSourceLines, isMinSearch);
+		int savedSourceValue = findKeySetMaxOrMin(savedSourceLines, isMinSearch);
+		int returnValue = isMinSearch ? Math.min(newSourceValue, savedSourceValue) : 
+			Math.max(newSourceValue, savedSourceValue);
+		return returnValue;
+	}
+	
+	protected Integer findKeySetMaxOrMin(Map<Integer, AccountingLine> sourceLines, boolean isMinSearch) {
+		if (sourceLines != null && sourceLines.keySet().size() > 0) {
+			return isMinSearch ? Collections.min(sourceLines.keySet()) : Collections.max(sourceLines.keySet());
+		} else {
+			return 0;
+		}
+	}
 	
 	protected void writeNote(AccountingDocument accountingDocument, String noteText) {
         
