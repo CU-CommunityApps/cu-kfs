@@ -80,7 +80,7 @@
    						</branch>
    						<join name="JoinVendorIsEmployeeOrNonResidentAlien" />
    					</split>
-   				    <split name="TreasuryManager">
+   				    <split name="TreasuryManager" nextNode="RequiresAutoApprovalNotification">
                         <branch name="True">
                             <role name="PaymentMethodReviewer" nextNode="JoinTreasury"/>
                         </branch>
@@ -89,6 +89,15 @@
                         </branch>
                         <join name="JoinTreasury"/>
                     </split>
+					<split name="RequiresAutoApprovalNotification">
+						<branch name = "True">
+							<role name="AutoApprove" nextNode="joinOnAutoApproval"/>
+						</branch>
+						<branch name="False">
+							<simple name="NoOpAutoApproval" nextNode="joinOnAutoApproval"/>
+						</branch>
+						<join name="joinOnAutoApproval"/>
+					</split>
    				</routePath>
          </routePaths>
          <routeNodes>
@@ -152,6 +161,23 @@
              <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
            </simple>
            <join name="JoinTreasury"/>
+          <split name="RequiresAutoApprovalNotification">
+          <type>
+            org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode
+          </type>
+        </split>
+        <role name="AutoApprove">
+          <qualifierResolverClass>
+            org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver
+          </qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+        <join name="joinOnAutoApproval"/>
+        <simple name="NoOpAutoApproval">
+          <type>
+            org.kuali.rice.kew.engine.node.NoOpNode
+          </type>
+        </simple>
          </routeNodes>
        </documentType>
   </documentTypes>
