@@ -4,6 +4,7 @@ import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.ItemFields;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
+import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.validation.impl.PaymentRequestProcessItemValidation;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.MessageMap;
@@ -11,7 +12,7 @@ import org.kuali.rice.krad.util.ObjectUtils;
 
 public class CuPaymentRequestProcessItemValidation extends PaymentRequestProcessItemValidation {
 
-    protected boolean validateAboveTheLineItems(PaymentRequestItem item, String identifierString, boolean isReceivingDocumentRequiredIndicator) {
+    protected boolean validateAboveTheLineItems(PaymentRequestItem item, String identifierString, boolean isReceivingDocumentRequiredIndicator, PaymentRequestDocument paymentRequestDocument) {
         boolean valid = true;
         // Currently Quantity is allowed to be NULL on screen;
         // must be either a positive number or NULL for DB
@@ -43,8 +44,9 @@ public class CuPaymentRequestProcessItemValidation extends PaymentRequestProcess
             }
         }
 
+        //Modified to use the payment request document to not cause unnecessary refetch
         // check that non-quantity based items are not trying to pay on a zero encumbrance amount (check only prior to ap approval)
-        if ((ObjectUtils.isNull(item.getPaymentRequest().getPurapDocumentIdentifier())) || (PurapConstants.PaymentRequestStatuses.APPDOC_IN_PROCESS.equals(item.getPaymentRequest().getApplicationDocumentStatus()))) {
+        if ((ObjectUtils.isNull(paymentRequestDocument.getPurapDocumentIdentifier())) || (PurapConstants.PaymentRequestStatuses.APPDOC_IN_PROCESS.equals(paymentRequestDocument.getApplicationDocumentStatus()))) {
 // RICE20 : needed? :  !purapService.isFullDocumentEntryCompleted(item.getPaymentRequest())) {
             if ((item.getItemType().isAmountBasedGeneralLedgerIndicator()) && ((item.getExtendedPrice() != null) && item.getExtendedPrice().isNonZero())) {
                 if (item.getPoOutstandingAmount() == null || item.getPoOutstandingAmount().isZero()) {
@@ -56,6 +58,5 @@ public class CuPaymentRequestProcessItemValidation extends PaymentRequestProcess
 
         return valid;
     }
-
 
 }

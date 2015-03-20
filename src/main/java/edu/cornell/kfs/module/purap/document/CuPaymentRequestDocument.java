@@ -122,9 +122,12 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
             return isVendorEmployeeOrNonResidentAlien();
         }
         // KFSPTS-1891
-        if (nodeName.equals(CUPurapWorkflowConstants.TREASURY_MANAGER))
+        if (nodeName.equals(CUPurapWorkflowConstants.TREASURY_MANAGER)) {
             return isWireOrForeignDraft();
-        
+        }
+        if (nodeName.equals(PurapWorkflowConstants.IS_DOCUMENT_AUTO_APPROVED)) {
+            return isAutoApprovedIndicator();
+        }
         throw new UnsupportedOperationException("Cannot answer split question for this node you call \"" + nodeName + "\"");
     }
     
