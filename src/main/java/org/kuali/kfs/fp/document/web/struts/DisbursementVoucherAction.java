@@ -46,6 +46,7 @@ import org.kuali.kfs.integration.ar.AccountsReceivableModuleService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.batch.service.PaymentSourceExtractionService;
 import org.kuali.kfs.sys.businessobject.WireCharge;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
@@ -817,5 +818,19 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
             GlobalVariables.getMessageMap().putWarning(reasonCodeProperty, tab.messageKey);
             GlobalVariables.getMessageMap().putWarning(tab.getDocumentPropertyKey(), tab.messageKey);
         }
+    }   
+
+    /**
+     * Extracts the DV as immediate payment upon user's request after it routes to FINAL.
+     */
+    public ActionForward extractNow(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+        DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
+
+        PaymentSourceExtractionService disbursementVoucherExtractService = DisbursementVoucherDocument.getDisbursementVoucherExtractService();
+        dvDocument.setImmediatePaymentIndicator(true);
+        disbursementVoucherExtractService.extractSingleImmediatePayment(dvDocument);
+
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 }
