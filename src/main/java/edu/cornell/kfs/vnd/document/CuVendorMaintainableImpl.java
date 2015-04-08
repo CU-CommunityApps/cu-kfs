@@ -47,18 +47,8 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
             // a  workaround for now.  headerextension's pk is not linked
         populateGeneratedHerderId(vendorDetail.getVendorHeader());
         populateGeneratedAddressId(vendorDetail);
+        vendorDetail.setVendorHeaderGeneratedIdentifier(vendorDetail.getVendorHeader().getVendorHeaderGeneratedIdentifier());
         super.saveBusinessObject();
-        try {
-            Document document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(getDocumentNumber());
-            VendorDetail vndDetail = (VendorDetail) ((MaintenanceDocument) document).getNewMaintainableObject().getBusinessObject();
-            if (vndDetail.getVendorHeaderGeneratedIdentifier() == null
-                    || KRADConstants.MAINTENANCE_NEWWITHEXISTING_ACTION.equals(getMaintenanceAction())) {
-                ((MaintenanceDocument) document).getNewMaintainableObject().setBusinessObject(vendorDetail);
-                SpringContext.getBean(DocumentService.class).saveDocument(document);
-            }
-        } catch (WorkflowException e) {
-            LOG.debug("Vendor doc not saved successfully " + e.getMessage());
-        }
 
     }
 
