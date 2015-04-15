@@ -47,13 +47,7 @@
 	<bean id="cu-vndModuleService" parent="vndModuleService-parentBean">
 	 	<property name="moduleConfiguration" ref="cu-vnd"/>
 	</bean>
-    <bean id="vendorDao" parent="platformAwareDao" class="edu.cornell.kfs.vnd.dataaccess.impl.CuVendorDaoOjb" />
-
-    <bean id="vendorLookupableHelperService" class="edu.cornell.kfs.vnd.businessobject.lookup.CuVendorLookupableHelperServiceImpl" parent="vendorLookupableHelperService-parentBean" scope="prototype">
-        <property name="vendorDao">
-        	<ref bean="vendorDao" />
-        </property>
-    </bean>
+  <bean id="vendorDao" parent="platformAwareDao" class="edu.cornell.kfs.vnd.dataaccess.impl.CuVendorDaoOjb" />
 
 	<bean id="commodityCodeUpdateService" class="edu.cornell.kfs.vnd.batch.service.impl.CommodityCodeUpdateServiceImpl">
 		<property name="commodityCodeInputFileType">

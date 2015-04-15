@@ -5,12 +5,11 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
+import org.kuali.kfs.vnd.businessobject.lookup.VendorLookupableHelperServiceImpl;
 import org.kuali.rice.kew.api.KewApiConstants.SearchableAttributeConstants;
 import org.kuali.rice.krad.bo.BusinessObject;
 
-import edu.cornell.kfs.vnd.businessobject.lookup.CuVendorLookupableHelperServiceImpl;
-
-public class IWantVendorLookupableHelperServiceImpl extends CuVendorLookupableHelperServiceImpl {
+public class IWantVendorLookupableHelperServiceImpl extends VendorLookupableHelperServiceImpl {
     
     private static final long serialVersionUID = 1L;
    
