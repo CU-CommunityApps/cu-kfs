@@ -24,7 +24,6 @@ public class CUVendorKeyConstants extends VendorKeyConstants {
 
     // Vendor Maintenance
     public static final String CONFIRM_VENDOR_DATE_EXPIRED = "message.vendorMaint.confirm.expired.date";
-    public static final String ERROR_PO_VENDOR_REQUIRES_PAYMENT_TERMS = "error.document.vendor.poVendorPaymentTermsRequired";
     
     //Vendor Maintenance Supplier Diversity Expiration Date
     public static final String ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_IN_PAST = "error.document.vendor.supplierDiversityExpirationDateIsInPast";
