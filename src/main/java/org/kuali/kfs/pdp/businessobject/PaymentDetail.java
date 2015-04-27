@@ -208,6 +208,12 @@ public class PaymentDetail extends TimestampedBusinessObjectBase {
         }
     }
 
+    public void addNotes(List<PaymentNoteText> pnts) {
+        for(PaymentNoteText pnt : pnts) {
+            addNote(pnt);
+        }
+    }
+
     /**
      * Constructs a new <code>PaymentNoteText</code> for the given payment text and adds to the detail <code>List</code>
      * 
