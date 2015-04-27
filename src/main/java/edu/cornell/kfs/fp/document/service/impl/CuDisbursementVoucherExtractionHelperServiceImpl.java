@@ -344,12 +344,15 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         // Get the original, raw form, note text from the DV document.
         final String text = document.getDisbVchrCheckStubText();
         if (!StringUtils.isBlank(text)) {
-            pnt = buildNoteForCheckStubText(text, line);
+            List<PaymentNoteText> pntList = buildNoteForCheckStubText(text, line);
             // Logging...
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating check stub text note: " + pnt.getCustomerNoteText());
+                LOG.debug("Creating check stub text notes: ");
+                for(PaymentNoteText p:pntList) {
+                    LOG.debug(p.getCustomerNoteText());
+                }
             }
-            pd.addNote(pnt);
+            pd.addNotes(pntList);
         }
 
         return pd;
@@ -415,13 +418,17 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 		this.paymentMethodGeneralLedgerPendingEntryService = paymentMethodGeneralLedgerPendingEntryService;
 	}
 
-	/* This is a copy from PaymentSourceHelperServiceImpl
-	 * DV has different max note size '72'.  Also,  it added note text identifier
+	/* This is similar to the function from PaymentSourceHelperServiceImpl, but note that it returns a list of 
+	 * PaymentNoteText objects instead of a single one. This is because the implementation in PaymentSourceHelperServiceImpl
+	 * results in only the last line of text being returned in the case of a split.
+	 * ========
+	 * DV has different max note size '72'.  Also, it added note text identifier
 	 * Since this is only referenced here, so I did create a new method for DV in PaymentSourceHelperServiceImpl
 	 * If it should be in PaymentSourceHelperServiceImpl, then we need to refactor.
 	 */
-	   private PaymentNoteText buildNoteForCheckStubText(String text, int previousLineCount) {
+	   private List<PaymentNoteText> buildNoteForCheckStubText(String text, int previousLineCount) {
 	       PaymentNoteText pnt = null;
+	       List<PaymentNoteText> pnts = new ArrayList<PaymentNoteText>();
 	       final String maxNoteLinesParam = parameterService.getParameterValueAsString(KfsParameterConstants.PRE_DISBURSEMENT_ALL.class, PdpParameterConstants.MAX_NOTE_LINES);
 
 	       int maxNoteLines;
@@ -467,10 +474,15 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 	               else {
 	                   pnt = new PaymentNoteText();
 	                   pnt.setCustomerNoteLineNbr(new KualiInteger(previousLineCount++));
-                       pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER + noteLine.replaceAll("\\n", "").trim());	               }
+                       pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER + noteLine.replaceAll("\\n", "").trim());
+                   }
+
+	               if(pnt != null) {
+                       pnts.add(pnt); // This should never be null at this point, but...
+	               }
 	           }
 	       }
-	       return pnt;
+	       return pnts;
 	   }
 
 	   /**
