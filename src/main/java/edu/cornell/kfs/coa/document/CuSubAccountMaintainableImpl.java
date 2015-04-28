@@ -272,7 +272,17 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
                         if (CollectionUtils.isEmpty(acctIcr)) {
                             retval = true;
                         } else {
-                            if (subAcctIcr.size() == acctIcr.size()) {
+                        	/*
+                        	 * the ICR accounts on the sub account needs to match the active ICR accounts on the parent account.
+                        	 */
+                        	
+                        	int activeAcctIcrCount = 0;
+                        	for (IndirectCostRecoveryAccount acct : acctIcr) {
+                        		if (acct.isActive()) {
+                        			activeAcctIcrCount++;
+                        		}
+                        	}
+                            if (subAcctIcr.size() == activeAcctIcrCount) {
                                 retval = isIcrSectionDataChanged(subAcctIcr, acctIcr);  
                             } else {
                                 retval = true;
