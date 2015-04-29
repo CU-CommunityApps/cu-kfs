@@ -1006,9 +1006,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             eInvoice = loadElectronicInvoice(xmlAsBytes);
         } catch (CxmlParseException e) {
             LOG.info("Error loading file - " + e.getMessage());
-            // TODO : addnamespacedefinition already did rejectElectronicInvoiceFile, so this will created twice.
-            // need further investigation
-//            rejectElectronicInvoiceFile(eInvoiceLoad, UNKNOWN_DUNS_IDENTIFIER, invoiceFile, e.getMessage(),PurapConstants.ElectronicInvoice.FILE_FORMAT_INVALID);
+            rejectElectronicInvoiceFile(eInvoiceLoad, UNKNOWN_DUNS_IDENTIFIER, invoiceFile, e.getMessage(),PurapConstants.ElectronicInvoice.FILE_FORMAT_INVALID);
             isExtractFailure = true;
             updateSummaryCounts(EXTRACT_FAILURES);
           } catch (IllegalArgumentException iae) {
