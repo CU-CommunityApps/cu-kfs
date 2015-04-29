@@ -570,25 +570,7 @@ public class CuVendorRule extends VendorRule {
 		 } 
 		 return valid;
 	}
-
-	/**
-	 * This routine ensures that there is a Payment Terms value set when the Vendor is a PO type
-	 */
-	private boolean checkPOHasPaymentTerms(MaintenanceDocument document) {
-		 boolean valid = true;
-         VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
-         String paymentTermsCode = vendorDetail.getVendorPaymentTermsCode();
-         String vendorTypeCode = vendorDetail.getVendorHeader().getVendorTypeCode();
-
-	     //(vendorTypeCode = PO) && (payment terms is blank ) == error
-		 if ( (StringUtils.equals(vendorTypeCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) && 
-		      ((paymentTermsCode == null) || (StringUtils.isBlank(paymentTermsCode))) ) {
-             putFieldError(CUVendorPropertyConstants.VENDOR_PAYMENT_TERMS, CUVendorKeyConstants.ERROR_PO_VENDOR_REQUIRES_PAYMENT_TERMS);
-			 valid &= false;
-		 }
-		 return valid;
-	}
-
+ 
 	/**
 	 * This routine verifies that the data necessary for the Method of PO Transmission chosen exists and that data
 	 * is in the proper format on the VendorAddress section of the Vendor maintenance document.  
@@ -680,7 +662,6 @@ public class CuVendorRule extends VendorRule {
 			MaintenanceDocument document) {
         boolean valid = super.processCustomApproveDocumentBusinessRules(document);
         valid &= processCuAddressValidation(document);
-        valid &= checkPOHasPaymentTerms(document);
 		return valid;
 	}
 

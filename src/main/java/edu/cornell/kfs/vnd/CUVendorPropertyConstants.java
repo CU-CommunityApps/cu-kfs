@@ -49,6 +49,6 @@ public class CUVendorPropertyConstants extends VendorPropertyConstants {
     public static final String VENDOR_ADDRESS_GENERATED_IDENTIFIER = "vendorAddressGeneratedIdentifier";
 
     public static final String VENDOR_HEADER_SUPPLIER_DIVERSITY_CODE = "vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityCode";	
-
-    public static final String VENDOR_PAYMENT_TERMS = "vendorPaymentTermsCode";
+        
+	
 }
