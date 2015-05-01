@@ -360,7 +360,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             }
             
             ProcurementCardTransactionExtendedAttribute extension = new ProcurementCardTransactionExtendedAttribute();
-            extension.setTransactionType(extractNormalizedString(line, 333, 335));
+            extension.setTransactionType(extractNormalizedString(line, 346, 348));
             if (child.getTransactionSequenceRowNumber() == null) {
                 Integer generatedTransactionSequenceRowNumber = SpringContext.getBean(SequenceAccessorService.class).getNextAvailableSequenceNumber(FP_PRCRMNT_CARD_TRN_MT_SEQ).intValue();
                 child.setTransactionSequenceRowNumber(generatedTransactionSequenceRowNumber);
