@@ -101,5 +101,12 @@ public interface IWantDocumentService {
           */
     public boolean isDVgeneratedByIWantDoc(String dvID);
        // end KFSPTS-2527
+    
+    /**
+     * Generates and sets the IWantDocument description based on the field values on the document.
+     * 
+     * @param iWantDocument
+     */
+    public void setIWantDocumentDescription(IWantDocument iWantDocument);
 
 }
