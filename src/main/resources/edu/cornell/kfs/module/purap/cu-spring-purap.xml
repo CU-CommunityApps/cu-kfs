@@ -31,6 +31,11 @@
                 <value>edu/cornell/kfs/module/purap/cu-dwr-purap.xml</value>
             </list>
         </property>
+        <property name="jobNames">
+			<list merge ="true">
+				<value>iWantDocumentBatchFeedJob</value>
+			</list>
+		</property>
 	</bean>
 	
 	<bean id="cu-purapModuleService" parent="purapModuleService-parentBean">
@@ -47,6 +52,8 @@
 	       <value>${externalizable.static.content.url}/xsd/purap/b2bPunchOutOrder.xsd</value> 
 	    </property>
 	</bean>
+	
+	
  
 	<bean id="electronicInvoiceExtractJob" parent="scheduledJobDescriptor">
 		<property name="steps">
@@ -59,6 +66,18 @@
 	
 	<bean id="electronicInvoiceRouteStep" class="edu.cornell.kfs.module.purap.batch.CuElectronicInvoiceRouteStep" parent="step">
 		<property name="electronicInvoiceHelperService" ref="electronicInvoiceHelperService" />
+	</bean>
+	
+	<bean id="iWantDocumentBatchFeedJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="iWantDocumentBatchFeedStep" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="iWantDocumentBatchFeedStep" class="edu.cornell.kfs.module.purap.batch.IWantDocumentFeedStep" parent="step">
+		<property name="iWantDocumentFeedService" ref="iWantDocumentFeedService" />
 	</bean>
 	
 	<bean id="collegeLevelOrganizationDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.purap.dataaccess.impl.LevelOrganizationDaoJdbc">
@@ -165,6 +184,35 @@
             <!-- KFSPTS-1891 -->
         <property name="paymentMethodGeneralLedgerPendingEntryService" ref="cUPaymentMethodGeneralLedgerPendingEntryService" />
     </bean>
+    
+    <bean id="iWantDocumentInputFileType" class="edu.cornell.kfs.module.purap.batch.IWantDocumentInputFileType">
+    	<property name="directoryPath">
+	       <value>${staging.directory}/purap/iWantDoc</value>
+	    </property>
+	    <property name="fileExtension">
+	       <value>xml</value>
+	    </property>
+	    <property name="digestorRulesFileName">
+	       <value>edu/cornell/kfs/module/purap/batch/iWantDocumentDigesterRules.xml</value>
+	    </property>
+	    <property name="schemaLocation">
+	       <value>${externalizable.static.content.url}/xsd/purap/iWantDocument.xsd</value>
+	    </property>
+	    <property name="dateTimeService">
+	       <ref bean="dateTimeService"/>
+	    </property>
+	</bean> 
+    
+    <bean id="iWantDocumentFeedService" class="edu.cornell.kfs.module.purap.batch.service.impl.IWantDocumentFeedServiceImpl">
+		<property name="batchInputFileService" ref="batchInputFileService"/>
+		<property name="iWantDocumentInputFileType" ref="iWantDocumentInputFileType" />
+		<property name="documentService" ref="documentService" />
+		<property name="personService" ref="personService" />
+		<property name="iWantDocumentService" ref="iWantDocumentService" />
+		<property name="ruleService" ref="kualiRuleService"/>
+		<property name="attachmentService" ref="attachmentService" />
+		<property name="mimeTypeProperties" ref="mimeTypeProperties" />
+	</bean>
     
     <bean id="purchaseOrderDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPurchaseOrderDaoOjb" />
  	<bean id="purchaseOrderService" parent="purchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchaseOrderServiceImpl" />

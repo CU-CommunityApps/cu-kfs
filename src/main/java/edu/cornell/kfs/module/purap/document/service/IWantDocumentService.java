@@ -5,6 +5,7 @@ import java.util.List;
 import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherForm;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.web.struts.RequisitionForm;
+import org.kuali.rice.kim.api.identity.Person;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.module.purap.businessobject.LevelOrganization;
@@ -101,5 +102,19 @@ public interface IWantDocumentService {
           */
     public boolean isDVgeneratedByIWantDoc(String dvID);
        // end KFSPTS-2527
+    
+    /**
+     * Generates and sets the IWantDocument description based on the field values on the document.
+     * 
+     * @param iWantDocument
+     */
+    public void setIWantDocumentDescription(IWantDocument iWantDocument);
+    
+    /**
+     * Sets default values on a newly initiated I Want Document
+     * 
+     * @param iWantDocument
+     */
+    public void setUpIWantDocDefaultValues(IWantDocument iWantDocument, Person initiatorUser);
 
 }
