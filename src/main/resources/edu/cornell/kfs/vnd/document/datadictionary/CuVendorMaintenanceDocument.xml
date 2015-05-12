@@ -40,7 +40,18 @@
        <property name="beanName" value="VendorMaintenanceDocument-Vendor" />
        <property name="fieldOverrides">
            <list>
-              
+               
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="maintainableItems" />
+                   <property name="element">
+                       <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.vendorDebarredIndicator" />
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                           <bean parent="MaintainableFieldDefinition" p:name="vendorHeader.extension.vendorLocale" />
+                       </list>
+                   </property>
+               </bean>
                <bean parent="FieldOverrideForListElementInsert">
                    <property name="propertyName" value="maintainableItems" />
                    <property name="element">
