@@ -66,69 +66,6 @@
     </collection-descriptor>  
 </class-descriptor>
 
-<class-descriptor class="org.kuali.kfs.vnd.businessobject.VendorHeader" table="PUR_VNDR_HDR_T">
-    <field-descriptor name="vendorHeaderGeneratedIdentifier" column="VNDR_HDR_GNRTD_ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="VNDR_HDR_GNRTD_ID"/>
-    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
-    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
-    <field-descriptor name="vendorTypeCode" column="VNDR_TYP_CD" jdbc-type="VARCHAR"/>
-    <field-descriptor name="vendorTaxNumber" column="VNDR_US_TAX_NBR" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
-    <field-descriptor name="vendorTaxTypeCode" column="VNDR_TAX_TYP_CD" jdbc-type="VARCHAR"/>
-    <field-descriptor name="vendorOwnershipCode" column="VNDR_OWNR_CD" jdbc-type="VARCHAR"/>
-    <field-descriptor name="vendorOwnershipCategoryCode" column="VNDR_OWNR_CTGRY_CD" jdbc-type="VARCHAR"/>
-    <field-descriptor name="vendorFederalWithholdingTaxBeginningDate" column="VNDR_FWT_BEG_DT" jdbc-type="DATE"/>
-    <field-descriptor name="vendorFederalWithholdingTaxEndDate" column="VNDR_FWT_END_DT" jdbc-type="DATE"/>
-    <field-descriptor name="vendorW9ReceivedIndicator" column="VNDR_W9_RCVD_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="vendorW8BenReceivedIndicator" column="VNDR_W8_RCVD_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="vendorDebarredIndicator" column="VNDR_DEBRD_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="vendorForeignIndicator" column="VNDR_FRGN_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-     
-    <field-descriptor name="vendorW8TypeCode" column="VNDR_W8_TYP_CD" jdbc-type="VARCHAR"/>
-    <field-descriptor name="vendorW8SignedDate" column="VNDR_W8_SIGNED_DT" jdbc-type="DATE"/>
-    <field-descriptor name="vendorW9SignedDate" column="VNDR_W9_SIGNED_DT" jdbc-type="DATE"/>
-    <field-descriptor name="vendorCorpCitizenCode" column="VNDR_CORP_CTZN_CNTRY_CD" jdbc-type="VARCHAR"/>
-    <field-descriptor name="vendorForeignTaxId" column="VNDR_FOREIGN_TAX_ID" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
-    <field-descriptor name="vendorGIIN" column="VNDR_GIIN" jdbc-type="VARCHAR"/>
-    <field-descriptor name="vendorDOB" column="VNDR_DOB_DT" jdbc-type="DATE"/>
-    <field-descriptor name="vendorChapter3StatusCode" column="VNDR_CHAP_3_STAT_CD" jdbc-type="VARCHAR"/>
-    <field-descriptor name="vendorChapter4StatusCode" column="VNDR_CHAP_4_STAT_CD" jdbc-type="VARCHAR"/>
-    
-    <reference-descriptor name="vendorType" class-ref="org.kuali.kfs.vnd.businessobject.VendorType" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-        <foreignkey field-ref="vendorTypeCode" />
-    </reference-descriptor>
-    <reference-descriptor name="vendorOwnership" class-ref="org.kuali.kfs.vnd.businessobject.OwnershipType" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
-        <foreignkey field-ref="vendorOwnershipCode" />
-    </reference-descriptor>
-    <reference-descriptor name="vendorOwnershipCategory" class-ref="org.kuali.kfs.vnd.businessobject.OwnershipCategory" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
-        <foreignkey field-ref="vendorOwnershipCategoryCode" />
-    </reference-descriptor>
-    <reference-descriptor name="w8Type" class-ref="org.kuali.kfs.vnd.businessobject.W8Type" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-        <foreignkey field-ref="vendorW8TypeCode" />
-    </reference-descriptor>
-    <reference-descriptor name="chapter3Status" class-ref="org.kuali.kfs.vnd.businessobject.Chapter3Status" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-        <foreignkey field-ref="vendorChapter3StatusCode" />
-    </reference-descriptor>
-    <reference-descriptor name="chapter4Status" class-ref="org.kuali.kfs.vnd.businessobject.Chapter4Status" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-        <foreignkey field-ref="vendorChapter4StatusCode" />
-    </reference-descriptor>
-    
-    <collection-descriptor name="vendorSupplierDiversities" proxy="true" element-class-ref="org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="none">
-        <inverse-foreignkey field-ref="vendorHeaderGeneratedIdentifier" />
-    </collection-descriptor>
-    <collection-descriptor name="vendorTaxChanges" element-class-ref="org.kuali.kfs.vnd.businessobject.VendorTaxChange" auto-retrieve="false" auto-update="none" auto-delete="none" proxy="true">
-        <inverse-foreignkey field-ref="vendorHeaderGeneratedIdentifier" />
-    </collection-descriptor>
-    <reference-descriptor name="extension" class-ref="edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
-        <foreignkey field-ref="vendorHeaderGeneratedIdentifier" />        
-    </reference-descriptor>
-</class-descriptor>
-
-<class-descriptor class="edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension" table="PUR_VNDR_HDR_TX">
-    <field-descriptor name="vendorHeaderGeneratedIdentifier" column="VNDR_HDR_GNRTD_ID" jdbc-type="INTEGER" primarykey="true" index="true"/>
-    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
-    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
-    <field-descriptor name="vendorLocale" column="VNDR_LCLE" jdbc-type="VARCHAR"/>
-</class-descriptor>
-
 <class-descriptor class="org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity" table="PUR_VNDR_SUPP_DVRST_T">
     <field-descriptor name="vendorHeaderGeneratedIdentifier" column="VNDR_HDR_GNRTD_ID" jdbc-type="INTEGER" primarykey="true" index="true"/>
     <field-descriptor name="vendorSupplierDiversityCode" column="VNDR_SUPP_DVRST_CD" jdbc-type="VARCHAR" primarykey="true" index="true"/>
