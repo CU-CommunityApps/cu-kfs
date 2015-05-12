@@ -369,6 +369,9 @@ public class VendorBatchServiceImpl implements VendorBatchService{
 	
 	private void setupVendorHeaderFields (VendorHeader vHeader, VendorBatchDetail vendorBatch) {
 		
+		// Call extension getter to make sure the extension object gets constructed.
+		vHeader.getExtension();
+		
     	vHeader.setVendorTypeCode(vendorBatch.getVendorTypeCode());
     	if (StringUtils.isNotBlank(vendorBatch.getTaxNumber())) {
     		// if this is not included in update vendor data
