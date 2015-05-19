@@ -151,13 +151,16 @@ public class CuRequisitionDocument extends RequisitionDocument {
      */
     
     public void toCopyFromGateway() throws WorkflowException, ValidationException {
-       //no validation for the KFS copy requisition rules:
-       
+        //no validation for the KFS copy requisition rules:
+        
         String sourceDocumentHeaderId = getDocumentNumber();
         setNewDocumentHeader();
-        getNotes();
-                
+        
         getDocumentHeader().setDocumentTemplateNumber(sourceDocumentHeaderId);
+        // Clear out existing notes.
+        if (getNotes() != null) {
+            getNotes().clear();
+        }
 
         addCopyErrorDocumentNote("copied from document " + sourceDocumentHeaderId);   
         
@@ -239,9 +242,6 @@ public class CuRequisitionDocument extends RequisitionDocument {
         // These fields should not be set in this method; force to be null
         this.setOrganizationAutomaticPurchaseOrderLimit(null);
         this.setPurchaseOrderAutomaticIndicator(false);
-
-        // Fill the BO Notes with an empty List.
-        this.setNotes(new ArrayList());
 
         for (Iterator iter = this.getItems().iterator(); iter.hasNext();) {
             RequisitionItem item = (RequisitionItem) iter.next();
