@@ -28,6 +28,7 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
+
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
@@ -39,6 +40,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.kew.doctype.service.DocumentTypeService;
 import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
@@ -57,6 +59,7 @@ import org.kuali.rice.krad.service.PersistenceService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
+import org.springframework.util.CollectionUtils;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
@@ -67,7 +70,6 @@ import edu.cornell.kfs.module.purap.businessobject.PersonData;
 import edu.cornell.kfs.module.purap.dataaccess.LevelOrganizationDao;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
-import edu.cornell.kfs.sys.CUKFSConstants.ConfidentialAttachmentTypeCodes;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 
 public class IWantDocumentServiceImpl implements IWantDocumentService {
@@ -313,7 +315,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
         purapService.saveDocumentNoValidation(requisitionDocument);
 
         // copy attachments from I Want document
-        copyIWantDocAttachments(requisitionDocument, iWantDocument, false);
+        copyIWantDocAttachments(requisitionDocument, iWantDocument);
 
         // set up deliver to section
         setUpDeliverToSectionOfReqDoc(requisitionDocument, iWantDocument, purapService);
@@ -545,21 +547,21 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
     }
 
     /**
-     * Copies all attachments from the I Want document to the accounting document
+     * Copies all attachments from the I Want document to the requisition document
      * 
-     * @param document
+     * @param requisitionDocument
      * @param iWantDocument
-     * @param copyConfidentialAttachments
+     * @param requisitionForm
      * @throws Exception
      */
-    private void copyIWantDocAttachments(AccountingDocument document, IWantDocument iWantDocument, boolean copyConfidentialAttachments) throws Exception {
+    private void copyIWantDocAttachments(AccountingDocument document, IWantDocument iWantDocument) throws Exception {
         
         purapService.saveDocumentNoValidation(document);
         if (iWantDocument.getNotes() != null
               && iWantDocument.getNotes().size() > 0) {
 
-            for (Iterator iterator = iWantDocument.getNotes().iterator(); iterator.hasNext();) {
-                Note note = (Note) iterator.next();
+          for (Iterator iterator = iWantDocument.getNotes().iterator(); iterator.hasNext();) {
+              Note note = (Note) iterator.next();
                 try {
                     Note copyingNote = documentService.createNoteFromDocument(document, note.getNoteText());
                     purapService.saveDocumentNoValidation(document);
@@ -567,8 +569,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
                     copyingNote.setAuthorUniversalIdentifier(note.getAuthorUniversalIdentifier());
                     copyingNote.setNoteTopicText(note.getNoteTopicText());
                     Attachment originalAttachment = attachmentService.getAttachmentByNoteId(note.getNoteIdentifier());
-                    if (originalAttachment != null && (copyConfidentialAttachments
-                            || !ConfidentialAttachmentTypeCodes.CONFIDENTIAL_ATTACHMENT_TYPE.equals(originalAttachment.getAttachmentTypeCode()))) {
+                    if (originalAttachment != null) {
                         Attachment newAttachment = attachmentService.createAttachment((PersistableBusinessObject)copyingNote, originalAttachment.getAttachmentFileName(), originalAttachment.getAttachmentMimeTypeCode(), originalAttachment.getAttachmentFileSize().intValue(), originalAttachment.getAttachmentContents(), originalAttachment.getAttachmentTypeCode());//new Attachment();
 
                         if (ObjectUtils.isNotNull(originalAttachment) && ObjectUtils.isNotNull(newAttachment)) {
@@ -695,7 +696,7 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
         
         //copy over attachments
         //copyIWantdDocAttachmentsToDV(disbursementVoucherDocument, disbursementVoucherForm, iWantDocument);
-        copyIWantDocAttachments(disbursementVoucherDocument, iWantDocument, true);
+        copyIWantDocAttachments(disbursementVoucherDocument, iWantDocument);   
         //DV check amount - IWantDoc total amount
         disbursementVoucherDocument.setDisbVchrCheckTotalAmount(iWantDocument.getTotalDollarAmount());
   
