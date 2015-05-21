@@ -16,7 +16,6 @@
 		<property name="attributes">
 			<list merge="true">
 			    <ref bean="VendorDetail-vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityExpirationDate"/>
-			    <ref bean="VendorDetail-vendorHeader.vendorLocale" />
 				<ref bean="VendorDetail-extension-insuranceRequiredIndicator"/> 
 				<ref bean="VendorDetail-extension-insuranceRequirementsCompleteIndicator"/> 
 				<ref bean="VendorDetail-extension-cornellAdditionalInsuredIndicator"/> 
@@ -65,11 +64,6 @@
 		abstract="true" parent="VendorSupplierDiversityExtension-vendorSupplierDiversityExpirationDate"> 
 		<property name="name" value="vendorHeader.vendorSupplierDiversities.extension.vendorSupplierDiversityExpirationDate"/> 
 	</bean> 
-
-    <bean id="VendorDetail-vendorHeader.vendorLocale" parent="VendorDetail-vendorHeader.vendorLocale-parentBean" />
-    <bean id="VendorDetail-vendorHeader.vendorLocale-parentBean" abstract="true" parent="VendorHeaderExtension-vendorLocale">
-        <property name="name" value="vendorHeader.extension.vendorLocale" />
-    </bean>
 
   <bean id="VendorDetail-extension-insuranceRequiredIndicator" parent="VendorDetail-extension-insuranceRequiredIndicator-parentBean"/>
 
@@ -279,18 +273,6 @@
       <property name="beanName" value="VendorDetail-inquirySectionDefinition-vendorDetail" />
       <property name="fieldOverrides">
           <list>
-              <bean parent="FieldOverrideForListElementInsert">
-                  <property name="propertyName" value="inquiryFields" />
-                  <property name="propertyNameForElementCompare" value="attributeName" />
-                  <property name="element">
-                      <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorDebarredIndicator" />
-                  </property>
-                  <property name="insertAfter">
-                      <list>
-                          <bean parent="FieldDefinition" p:attributeName="vendorHeader.extension.vendorLocale" />
-                      </list>
-                  </property>
-              </bean>
               <bean parent="FieldOverrideForListElementInsert">
                   <property name="propertyName" value="inquiryFields" />
                   <property name="propertyNameForElementCompare" value="attributeName" />
