@@ -90,7 +90,7 @@
 			<purap:iWantRelatedDocuments documentAttributes="${DataDictionary.RelatedDocuments.attributes}" />
 		</c:if>     
 
-		<purap:iWantNotes attachmentTypesValuesFinderClass="${documentEntry.attachmentTypesValuesFinderClass}" defaultOpen="true"/>
+		<purap:iWantNotes defaultOpen="true"/>
 	</c:if>
 
 	<%-- Display routing and submission tab, if at the regular or routing steps. --%>

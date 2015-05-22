@@ -70,14 +70,6 @@ public class CUKFSConstants {
         public static final String PARTIAL_AMOUNT = "partialAmount";
     }
     
-    // Confidential-attachment-related constants.
-    public static class ConfidentialAttachmentTypeCodes {
-        public static final String CONFIDENTIAL_ATTACHMENT_TYPE = "Confidential";
-        public static final String NON_CONFIDENTIAL_ATTACHMENT_TYPE = "";
-    }
-
-    public static final String NON_CONFIDENTIAL_ATTACHMENT_TYPE_LABEL = "Default";
-    
     // I Want document constants
     public static final String I_WANT_DOC_ITEM_TAB_ERRORS = "document.item*,newIWantItemLine*";
     public static final String I_WANT_DOC_ACCOUNT_TAB_ERRORS = "newSourceLine*,document.account*";
