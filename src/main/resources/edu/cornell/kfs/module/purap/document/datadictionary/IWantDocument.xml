@@ -24,6 +24,7 @@
     <property name="documentAuthorizerClass" value="edu.cornell.kfs.module.purap.document.authorization.IWantDocumentAuthorizer"/>
     <property name="documentPresentationControllerClass" value="edu.cornell.kfs.module.purap.document.authorization.IWantDocumentPresentationController"/>
     <property name="promptBeforeValidationClass" value="edu.cornell.kfs.module.purap.document.validation.impl.IWantDocumentPreRules"/>
+    <property name="attachmentTypesValuesFinderClass" value="edu.cornell.kfs.sys.businessobject.options.CUConfidentialAttachmentTypeValuesFinder"/>
     <property name="allowsCopy" value="true"/>
     <property name="allowsNoteFYI" value="false"/>    
     <property name="sessionDocument" value="true"/>
