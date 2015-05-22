@@ -90,6 +90,9 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
             "note.trickleDownActivation.activatedACCOUNTReversionDetail.errorDuringPersistence";
     public static final String MESSAGE_REPORT_YEAR_END_ACCOUNT_REVERSION_LEDGER_TITLE_LINE = "message.report.yearEnd.accountReversion.ledger.titleLine";
 
+    // Error messages pertaining to particular attachment types.
+    public static final String ERROR_DOCUMENT_ADD_TYPED_ATTACHMENT = "error.document.add.typed.attachment";
+
     //KFSPTS-2400
     public static final String MESSAGE_BATCH_UPLOAD_TITLE_DISENCUMBRANCE_FILE = "message.batchUpload.title.labor.disencumbrance.file";
     public static final String MESSAGE_CREATE_DISENCUMBRANCE_ERROR = "message.ld.disencumbrance.error";

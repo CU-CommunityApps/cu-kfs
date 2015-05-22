@@ -33,6 +33,7 @@ import org.kuali.rice.kns.document.authorization.TransactionalDocumentAuthorizer
 import org.kuali.rice.kns.document.authorization.TransactionalDocumentPresentationController;
 import org.kuali.rice.kns.question.ConfirmationQuestion;
 import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
+import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.rules.rule.event.SaveDocumentEvent;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.KualiRuleService;
@@ -46,6 +47,8 @@ import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
+import edu.cornell.kfs.sys.CUKFSConstants.ConfidentialAttachmentTypeCodes;
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuDisbursementVoucherAction extends DisbursementVoucherAction {    
     @SuppressWarnings("deprecation")
@@ -379,6 +382,31 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
         SpringContext.getBean(PurapService.class).saveDocumentNoValidation(iWantDocument);
 
         return mapping.findForward(RiceConstants.MAPPING_BASIC);
+    }
+
+    /**
+     * Overridden to treat "Confidential" add-attachment authorization failures as validation errors, rather than throwing an authorization exception.
+     * 
+     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#insertBONote()
+     */
+    @SuppressWarnings("deprecation")
+    @Override
+    public ActionForward insertBONote(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        CuDisbursementVoucherForm dvForm = (CuDisbursementVoucherForm) form;
+        Note newNote = dvForm.getNewNote();
+        
+        // If not authorized to add "Confidential" attachments, then treat it as a validation error instead of letting the superclass throw an exception.
+        if (newNote.getAttachment() != null
+                && ConfidentialAttachmentTypeCodes.CONFIDENTIAL_ATTACHMENT_TYPE.equals(newNote.getAttachment().getAttachmentTypeCode())
+                && !getDocumentHelperService().getDocumentAuthorizer(dvForm.getDocument()).canAddNoteAttachment(
+                        dvForm.getDocument(), newNote.getAttachment().getAttachmentTypeCode(), GlobalVariables.getUserSession().getPerson())) {
+            GlobalVariables.getMessageMap().putError("newNote.attachment.attachmentTypeCode", CUKFSKeyConstants.ERROR_DOCUMENT_ADD_TYPED_ATTACHMENT,
+                    newNote.getAttachment().getAttachmentTypeCode());
+            return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        }
+        
+        // If not "Confidential" or if authorized to add such attachments, then proceed with the superclass processing.
+        return super.insertBONote(mapping, form, request, response);
     }
 
     /**
