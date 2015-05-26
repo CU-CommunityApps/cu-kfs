@@ -99,6 +99,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         IWantDocument iWantDocument = iWantForm.getIWantDocument();
         String command = iWantForm.getCommand();
         String step = request.getParameter(CUPurapConstants.IWNT_STEP_PARAMETER);
+        IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
 
         if (step != null) {
             iWantForm.setStep(step);
@@ -128,7 +129,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                     String initiatorPhoneNumber = currentUser.getPhoneNumber();
                     String initiatorEmailAddress = currentUser.getEmailAddress();
 
-                    IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
                     String address = iWantDocumentService.getPersonCampusAddress(initiatorNetID);
 
                     iWantDocument.setInitiatorName(initiatorName);
@@ -219,7 +219,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                     }
                 }
 
-                setIWantDocumentDescription(iWantDocument);
+                iWantDocumentService.setIWantDocumentDescription(iWantDocument);
             }
         }
 
@@ -281,27 +281,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         return actionForward;
     }
 
-    private void setIWantDocumentDescription(IWantDocument iWantDocument) {
-        // add selected chart and department to document description
-        String routingChart = iWantDocument.getRoutingChart() == null ? StringUtils.EMPTY : iWantDocument
-                .getRoutingChart() + "-";
-        String routingOrg = iWantDocument.getRoutingOrganization() == null ? StringUtils.EMPTY : iWantDocument
-                .getRoutingOrganization();
-        String addChartOrgToDesc = routingChart + routingOrg;
-        String vendorName = iWantDocument.getVendorName() == null ? StringUtils.EMPTY : iWantDocument.getVendorName();
-        String description = addChartOrgToDesc + " " + vendorName;
-
-        if (StringUtils.isNotBlank(description) && description.length() > DOCUMENT_DESCRIPTION_MAX_LENGTH) {
-            description = description.substring(0, DOCUMENT_DESCRIPTION_MAX_LENGTH);
-        }
-
-        // If necessary, add a default description.
-        if (StringUtils.isBlank(description)) {
-            description = "New IWantDocument";
-        }
-        
-        iWantDocument.getDocumentHeader().setDocumentDescription(description);
-    }
 
     /**
      * Sets the College and Department based on the initiator primary department.
@@ -630,6 +609,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+        IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
         boolean added = true;
         
         //add new item and new accounting line if not empty
@@ -695,7 +675,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             
         }
 
-        setIWantDocumentDescription(iWantDocument);
+        iWantDocumentService.setIWantDocumentDescription(iWantDocument);
 
         //insert adhoc route person first and the route
         if (StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())) {
@@ -910,11 +890,12 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     @Override
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
+    	IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
 
         // Only recreate document description if in INITIATED or SAVED status.
         WorkflowDocument workflowDocument = ((KualiDocumentFormBase) form).getDocument().getDocumentHeader().getWorkflowDocument();
         if (workflowDocument.isInitiated() || workflowDocument.isSaved()) {
-            setIWantDocumentDescription((IWantDocument) ((KualiDocumentFormBase) form).getDocument());
+            iWantDocumentService.setIWantDocumentDescription((IWantDocument) ((KualiDocumentFormBase) form).getDocument());
         }
 
         ActionForward actionForward = super.save(mapping, form, request, response);
