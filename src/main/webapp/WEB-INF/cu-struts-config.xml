@@ -47,6 +47,9 @@
 			type="edu.cornell.kfs.module.purap.document.web.struts.CuVendorCreditMemoForm" /> 
 		<form-bean name="CuAuxiliaryVoucherForm"
 			type="edu.cornell.kfs.fp.document.web.struts.CuAuxiliaryVoucherForm" /> 
+			
+		<form-bean name="YearEndJournalVoucherForm"
+			type="edu.cornell.kfs.fp.document.web.struts.YearEndJournalVoucherForm" />
 
     </form-beans>
     
@@ -188,6 +191,13 @@
 			type="edu.cornell.kfs.sys.web.struts.CreateDoneKualiBatchFileAdminAction">
 			<set-property property="cancellable" value="true" />
 			<forward name="basic" path="/jsp/sys/CreateDoneBatchFile.jsp" />
+		</action>
+		
+		<action path="/financialYearEndJournalVoucher" name="YearEndJournalVoucherForm" input="/jsp/fp/YearEndJournalVoucher.jsp"
+			type="edu.cornell.kfs.fp.document.web.struts.YearEndJournalVoucherAction" scope="request"
+			parameter="methodToCall" validate="true" attribute="KualiForm">
+			<set-property property="cancellable" value="true" />
+			<forward name="basic" path="/jsp/fp/YearEndJournalVoucher.jsp" />
 		</action>
         		
     </action-mappings>
