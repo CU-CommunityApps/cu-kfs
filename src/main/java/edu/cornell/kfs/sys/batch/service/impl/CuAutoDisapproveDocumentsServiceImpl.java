@@ -28,6 +28,7 @@ import org.kuali.rice.kew.api.document.search.DocumentSearchResults;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.krad.UserSessionUtils;
+import org.kuali.rice.krad.bo.DocumentHeader;
 import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.service.KRADServiceLocator;
@@ -369,5 +370,29 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         getDocumentService().superUserDisapproveDocumentWithoutSaving(document, "Disapproval of Outstanding Documents - Year End Cancellation Process");
         UserSessionUtils.addWorkflowDocument(GlobalVariables.getUserSession(),document.getDocumentHeader().getWorkflowDocument());
    }
+    
+    /**
+     * This method will check the document's document type against the parent document types as specified in the system parameter
+     * @param document
+     * @return true if  document type of the document is a child of one of the the parent document types.
+     */
+	protected boolean checkIfDocumentEligibleForAutoDispproval(DocumentHeader documentHeader) {
+		boolean documentEligible = false;
+
+		List<DocumentType> parentDocumentTypes = this.getYearEndAutoDisapproveParentDocumentTypes();
+		String documentTypeName = documentHeader.getWorkflowDocument().getDocumentTypeName();
+		DocumentType childDocumentType = getDocumentTypeService().getDocumentTypeByName(documentTypeName);
+
+		for (DocumentType parentDocumentType : parentDocumentTypes) {
+			documentEligible = childDocumentType.getParentId().equals(parentDocumentType.getId());
+
+			if (documentEligible) {
+				break;
+			}
+		}
+
+		return documentEligible;
+	}
+    
 
 }
