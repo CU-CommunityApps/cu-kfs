@@ -9,10 +9,7 @@ public enum ReceiptProcessingCSV {
     cardHolder,
     amount,
     purchasedate,
-    filepath,
-    filename,
-    cardHolderNetID,
-    sourceUniqueID,
-    eDocNumber
+    SharePointPath,
+    filename
     
 }
