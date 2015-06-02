@@ -19,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
@@ -33,6 +34,7 @@ import org.kuali.rice.krad.bo.Attachment;
 import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.service.AttachmentService;
 import org.kuali.rice.krad.service.NoteService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.dataaccess.ProcurementCardDocumentDao;
 import edu.cornell.kfs.module.receiptProcessing.businessobject.ReceiptProcessing;
@@ -40,6 +42,9 @@ import edu.cornell.kfs.module.receiptProcessing.service.ReceiptProcessingService
 
 public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ReceiptProcessingServiceImpl.class);
+    
+    public static final String RESULT_FILE_HEADER_LINE_WITH_EXTRA_FIELDS = "\"cardHolder\",\"amount\",\"purchasedate\",\"filePath\",\"filename\",\"cardHolderNetID\",\"sourceUniqueID\",\"eDocNumber\",\"Success\"\n";  
+    public static final String RESULT_FILE_HEADER_LINE = "\"cardHolder\",\"amount\",\"purchasedate\",\"filePath\",\"filename\",\"Success\"\n";  
     
     private BatchInputFileService batchInputFileService;    
     private ProcurementCardDocumentDao procurementCardDocumentDao;
@@ -159,120 +164,298 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
             String errorMessage = "Parsed file was not of the expected type.  Expected [" + List.class + "] but got [" + parsedObject.getClass() + "].";
             criticalError(errorMessage);
         }
-        
-        
-        
-        StringBuilder processResults = new StringBuilder();
-        processResults.append("\"cardHolder\",\"amount\",\"purchasedate\",\"SharePointPath\",\"filename\",\"Success\"\n");        
-       
+
         List<ReceiptProcessing> receipts =  ((List<ReceiptProcessing>) parsedObject);
         final String attachmentsPath = pdfDirectory;
         String mimeTypeCode = "pdf";
         
-        for (ReceiptProcessing receipt  : receipts) {                                   
-            Note note = new Note();
+        // determine in which mode we are: match& attach, match, attach
+        // if first 5 fields ate not blank then it is a match and attach
+        boolean matchAndAttach = false;
 
-            java.util.Date pdate = null;
-            DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-            try
-            {
-                pdate = (java.util.Date) df.parse(receipt.getPurchasedate());
-            }
-            catch(ParseException e)
-            {
-                processResults.append(receipt.badData()); 
-                LOG.error("Bad date field on incoming csv");
-                continue;
-            } catch (java.text.ParseException e) {
-                processResults.append(receipt.badData()); 
-                LOG.error("Bad date field on incoming csv");
-                continue;
-            }
-            Date pdateSQL = null;
-            if (pdate != null) {             
-                pdateSQL = new Date(pdate.getTime());
-            }
-            List<ProcurementCardDocument> pcdoList = procurementCardDocumentDao.getDocumentByCarhdHolderAmountDateVendor(receipt.getCardHolder(), receipt.getAmount(), pdateSQL);
-            ProcurementCardDocument pcdo = null;
-             
-            if (pcdoList.isEmpty()) {
-                processResults.append(receipt.noMatch());
-                continue;
-            }
-            if (pcdoList.size() >1 ){
-                processResults.append(receipt.multipleMatch());
-                continue;
-            }
-            if (pcdoList.size() == 1){
-                pcdo = pcdoList.get(0);
-            }
-            
-            String pdfFileName = attachmentsPath + "/" + receipt.getFilename();
-            
-            File f = null;
-            FileInputStream fileInputStream = null;
-            try {
-                f = new File(pdfFileName);
-                fileInputStream = new FileInputStream(pdfFileName);                                
-            }
-            catch (FileNotFoundException e) {
-                LOG.error("file not found for Document " + pcdo.getDocumentNumber());
-                processResults.append(receipt.badData());;
-                continue;
-            }
-            catch (IOException e) {
-                LOG.error("generic Io exception for Document " + pcdo.getDocumentNumber());
-                processResults.append(receipt.badData());
-                continue;
-            }
-            
-            long fileSizeLong = f.length();          
-            Integer fileSize = Integer.parseInt(Long.toString(fileSizeLong));
-    
-            String attachType = "";
-            Attachment noteAttachment = null;
-            try {
-                noteAttachment = attachmentService.createAttachment(pcdo.getDocumentHeader(), pdfFileName, mimeTypeCode , fileSize, fileInputStream, attachType);
-            } catch (IOException e) {
-                LOG.error("Failed to attache file for Document " + pcdo.getDocumentNumber());
-                processResults.append(receipt.noMatch());               
-                e.printStackTrace();
-                continue;
-            }
-            
-            if (noteAttachment != null) {
-                note.setNoteText("Receipt Attached");
-                note.addAttachment(noteAttachment);
-                note.setRemoteObjectIdentifier(pcdo.getDocumentHeader().getObjectId());
-                note.setAuthorUniversalIdentifier(getSystemUser().getPrincipalId());
-                note.setNoteTypeCode(KFSConstants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE.getCode());
-                note.setNotePostedTimestampToCurrent();
-                                
-                try {
-                    noteService.save(note);
-                } catch (Exception e) {
-                    LOG.error("Failed to save note for Document " + pcdo.getDocumentNumber());
-                    processResults.append(receipt.noMatch());               
-                    e.printStackTrace();
-                    continue;
-                }
-                
-                LOG.info("Attached pdf for document " + pcdo.getDocumentNumber());
-                processResults.append(receipt.match() + pcdo.getDocumentNumber() +"\n");                
-            }
-            
-            
-        }        
-        String outputCsv = processResults.toString();
-        getcsvWriter(outputCsv);       
-                
+        // if any receipt get the first one
+        if(ObjectUtils.isNotNull(receipts) && receipts.size() > 0){
+        	ReceiptProcessing receipt = receipts.get(0);
+        	// match and attach only occurs for CALS; for CALS files the source unique ID is blank
+        	matchAndAttach = StringUtils.isBlank(receipt.getSourceUniqueID()) ;
+        }
+        
+        if(matchAndAttach){
+        	matchAndAttach(receipts, attachmentsPath, mimeTypeCode);
+        }
+        else{
+        	matchOrAttachOnly(fileName, batchInputFileType, receipts, attachmentsPath, mimeTypeCode);
+		}  
+        
         return result;
+        
     }  
     
+    /**
+     * Performs match and attach. It will search for a match PCDO document and attempt to attach the receipt.
+     * 
+     * @param receipts
+     * @param attachmentsPath
+     * @param mimeTypeCode
+     */
+    protected void matchAndAttach(List<ReceiptProcessing> receipts, String attachmentsPath, String mimeTypeCode){
+		StringBuilder processResults = new StringBuilder();
+		processResults.append(RESULT_FILE_HEADER_LINE);
+
+		for (ReceiptProcessing receipt : receipts) {
+			Note note = new Note();
+
+			java.util.Date pdate = null;
+			DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+			try {
+				pdate = (java.util.Date) df.parse(receipt.getPurchasedate());
+			} catch (ParseException e) {
+				processResults.append(receipt.badData(false));
+				LOG.error("Bad date field on incoming csv");
+				continue;
+			} catch (java.text.ParseException e) {
+				processResults.append(receipt.badData(false));
+				LOG.error("Bad date field on incoming csv");
+				continue;
+			}
+			Date pdateSQL = null;
+			if (pdate != null) {
+				pdateSQL = new Date(pdate.getTime());
+			}
+
+			List<ProcurementCardDocument> pcdoList = procurementCardDocumentDao.getDocumentByCarhdHolderAmountDateVendor(receipt.getCardHolder(), receipt.getAmount(), pdateSQL);
+			ProcurementCardDocument pcdo = null;
+
+			if (pcdoList.isEmpty()) {
+				processResults.append(receipt.noMatch(false));
+				continue;
+			}
+			if (pcdoList.size() > 1) {
+				processResults.append(receipt.multipleMatch(false));
+				continue;
+			}
+			if (pcdoList.size() == 1) {
+				pcdo = pcdoList.get(0);
+			}
+
+			String pdfFileName = attachmentsPath + "/" + receipt.getFilename();
+
+			File f = null;
+			FileInputStream fileInputStream = null;
+			try {
+				f = new File(pdfFileName);
+				fileInputStream = new FileInputStream(pdfFileName);
+			} catch (FileNotFoundException e) {
+				LOG.error("file not found for Document " + pcdo.getDocumentNumber());
+				processResults.append(receipt.badData(false));
+				continue;
+			} catch (IOException e) {
+				LOG.error("generic Io exception for Document "
+						+ pcdo.getDocumentNumber());
+				processResults.append(receipt.badData(false));
+				continue;
+			}
+
+			long fileSizeLong = f.length();
+			Integer fileSize = Integer.parseInt(Long.toString(fileSizeLong));
+
+			String attachType = "";
+			Attachment noteAttachment = null;
+			try {
+				noteAttachment = attachmentService.createAttachment(pcdo.getDocumentHeader(), pdfFileName, mimeTypeCode, fileSize, fileInputStream, attachType);
+			} catch (IOException e) {
+				LOG.error("Failed to attache file for Document " + pcdo.getDocumentNumber());
+				processResults.append(receipt.noMatch(false));
+				e.printStackTrace();
+				continue;
+			}
+
+			if (noteAttachment != null) {
+				note.setNoteText("Receipt Attached");
+				note.addAttachment(noteAttachment);
+				note.setRemoteObjectIdentifier(pcdo.getDocumentHeader().getObjectId());
+				note.setAuthorUniversalIdentifier(getSystemUser().getPrincipalId());
+				note.setNoteTypeCode(KFSConstants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE.getCode());
+				note.setNotePostedTimestampToCurrent();
+
+				try {
+					noteService.save(note);
+				} catch (Exception e) {
+					LOG.error("Failed to save note for Document " + pcdo.getDocumentNumber());
+					processResults.append(receipt.noMatch(false));
+					e.printStackTrace();
+					continue;
+				}
+
+				LOG.info("Attached pdf for document " + pcdo.getDocumentNumber());
+				processResults.append(receipt.match(pcdo.getDocumentNumber(), false));
+			}
+		}
+
+		String outputCsv = processResults.toString();
+		// this is CALS output folder and it has to stay unchanged
+		String reportDropFolder = pdfDirectory + "/CIT-csv-archive/";
+		getcsvWriter(outputCsv, reportDropFolder);
+	}
     
-    protected void getcsvWriter(String csvDoc) {
+	/**
+	 * Performs match or attach on each incoming record. The method determines
+	 * for each incoming record if a match only or attach only should be
+	 * performed. If first card holder, amount and purchase date are not blank
+	 * then a match only is performed. If the source unique id and edoc number
+	 * are not blank then an attach only is performed.
+	 * 
+	 * @param fileName
+	 * @param receipts
+	 * @param attachmentsPath
+	 * @param mimeTypeCode
+	 */
+    protected void matchOrAttachOnly(String fileName, BatchInputFileType batchInputFileType, List<ReceiptProcessing> receipts, String attachmentsPath, String mimeTypeCode){
+        StringBuilder processResults = new StringBuilder();
+        processResults.append(RESULT_FILE_HEADER_LINE_WITH_EXTRA_FIELDS);  
         
-        String reportDropFolder = pdfDirectory + "/CIT-csv-archive/";
+    	for (ReceiptProcessing receipt  : receipts) {   
+			boolean matchOnly = StringUtils.isNotBlank(receipt.getCardHolder()) && StringUtils.isNotBlank(receipt.getAmount()) && StringUtils.isNotBlank(receipt.getPurchasedate()) && StringUtils.isBlank(receipt.getFilePath()) && StringUtils.isBlank(receipt.getFilename());
+			boolean attachOnly = StringUtils.isNotBlank(receipt.getSourceUniqueID()) && StringUtils.isNotBlank(receipt.geteDocNumber());
+
+			if (matchOnly) {
+				java.util.Date pdate = null;
+				DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+				try {
+					pdate = (java.util.Date) df.parse(receipt.getPurchasedate());
+				} catch (ParseException e) {
+					processResults.append(receipt.badData(true));
+					LOG.error("Bad date field on incoming csv");
+					continue;
+				} catch (java.text.ParseException e) {
+					processResults.append(receipt.badData(true));
+					LOG.error("Bad date field on incoming csv");
+					continue;
+				}
+				Date pdateSQL = null;
+				if (pdate != null) {
+					pdateSQL = new Date(pdate.getTime());
+				}
+
+				List<ProcurementCardDocument> pcdoList = procurementCardDocumentDao.getDocumentByCarhdHolderNameAmountDateCardHolderNetID(receipt.getAmount(), pdateSQL, receipt.getCardHolderNetID());
+				ProcurementCardDocument pcdo = null;
+
+				if (pcdoList.isEmpty()) {
+					processResults.append(receipt.noMatch(true));
+					continue;
+				}
+				if (pcdoList.size() > 1) {
+					processResults.append(receipt.multipleMatch(true));
+					continue;
+				}
+				if (pcdoList.size() == 1) {
+					pcdo = pcdoList.get(0);
+					String eDocNumber = pcdo.getDocumentNumber();
+					receipt.seteDocNumber(eDocNumber);
+					processResults.append(receipt.match(eDocNumber, true));
+				}
+
+			}
+
+			if (attachOnly) {
+				Note note = new Note();
+
+				List<ProcurementCardDocument> pcdoList = procurementCardDocumentDao.getDocumentByEdocNumber(receipt.geteDocNumber());
+				ProcurementCardDocument pcdo = null;
+
+				if (pcdoList.isEmpty()) {
+					processResults.append(receipt.attachOnlyError());
+					continue;
+				}
+				if (pcdoList.size() > 1) {
+					processResults.append(receipt.attachOnlyError());
+					continue;
+				}
+				if (pcdoList.size() == 1) {
+					pcdo = pcdoList.get(0);
+				}
+
+				String pdfFileName = attachmentsPath + "/" + receipt.getFilename();
+
+				File f = null;
+				FileInputStream fileInputStream = null;
+				try {
+					f = new File(pdfFileName);
+					fileInputStream = new FileInputStream(pdfFileName);
+				} catch (FileNotFoundException e) {
+					LOG.error("file not found for Document " + pcdo.getDocumentNumber());
+					processResults.append(receipt.attachOnlyError());
+					continue;
+				} catch (IOException e) {
+					LOG.error("generic Io exception for Document " + pcdo.getDocumentNumber());
+					processResults.append(receipt.attachOnlyError());
+					continue;
+				}
+
+				long fileSizeLong = f.length();
+				Integer fileSize = Integer.parseInt(Long.toString(fileSizeLong));
+
+				String attachType = "";
+				Attachment noteAttachment = null;
+				try {
+					noteAttachment = attachmentService.createAttachment(pcdo.getDocumentHeader(), pdfFileName, mimeTypeCode, fileSize, fileInputStream, attachType);
+				} catch (IOException e) {
+					LOG.error("Failed to attache file for Document " + pcdo.getDocumentNumber());
+					processResults.append(receipt.attachOnlyError());
+					e.printStackTrace();
+					continue;
+				}
+
+				if (noteAttachment != null) {
+					note.setNoteText("Receipt Attached");
+					note.addAttachment(noteAttachment);
+					note.setRemoteObjectIdentifier(pcdo.getDocumentHeader().getObjectId());
+					note.setAuthorUniversalIdentifier(getSystemUser().getPrincipalId());
+					note.setNoteTypeCode(KFSConstants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE.getCode());
+					note.setNotePostedTimestampToCurrent();
+
+					try {
+						noteService.save(note);
+					} catch (Exception e) {
+						LOG.error("Failed to save note for Document " + pcdo.getDocumentNumber());
+						processResults.append(receipt.attachOnlyError());
+						e.printStackTrace();
+						continue;
+					}
+
+					LOG.info("Attached pdf for document " + pcdo.getDocumentNumber());
+					processResults.append(receipt.match( "8", true));
+				}
+
+			}
+		}
+    	
+		String outputCsv = processResults.toString();
+		// each customer will have a separate output folder for easier processing of the results files
+		String customerName = getCustomerNameFromFileName(fileName, batchInputFileType);
+	    String reportDropFolder = pdfDirectory + "/CIT-" + customerName  +"-csv-archive/";
+	    
+        try {
+            /**
+             * Create, if not there
+             */
+            FileUtils.forceMkdir(new File(reportDropFolder));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+		getcsvWriter(outputCsv, reportDropFolder);
+
+    }
+    
+    
+    /**
+     * Writes the processing results in the output folder.
+     * 
+     * @param csvDoc
+     * @param reportDropFolder
+     */
+    protected void getcsvWriter(String csvDoc, String reportDropFolder) {
+        
         String fileName = "CIT_OUT_" +
             new SimpleDateFormat("yyyyMMdd_HHmmssSSS").format(dateTimeService.getCurrentDate()) + ".csv";
         
@@ -286,10 +469,21 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
          } catch (IOException e1) {
              LOG.error("IOException when trying to write report file");
              e1.printStackTrace();
-         }
-         
+         }         
                          
      }
+    
+    /**
+     * Gets the customer name from the input file name. Files other than cals files will have the file name in this format: receiptProcessing_kfs_${customerName}_${date}.csv
+     * 
+     * @param fileName
+     * @param batchInputFileType
+     * @return the customer name
+     */
+    protected String getCustomerNameFromFileName(String fileName, BatchInputFileType batchInputFileType){
+    	String customerName = fileName.substring(fileName.lastIndexOf(batchInputFileType.getFileTypeIdentifer() + "_") + batchInputFileType.getFileTypeIdentifer().length() + 1, fileName.lastIndexOf("_"));
+    	return customerName;
+    }
     
  
     protected byte[] safelyLoadFileBytes(String fileName) {
