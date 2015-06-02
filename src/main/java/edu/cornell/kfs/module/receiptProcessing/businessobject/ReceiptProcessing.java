@@ -12,11 +12,8 @@ public class ReceiptProcessing  {
     private String cardHolder;
     private String amount;
     private String purchasedate;
-    private String filePath;
+    private String SharePointPath;
     private String filename;
-    private String cardHolderNetID;
-    private String sourceUniqueID;
-    private String eDocNumber;
         
 
     public String getCardHolder() {
@@ -53,65 +50,36 @@ public class ReceiptProcessing  {
         this.purchasedate = purchasedate;
     }
 
-    public String returnBoLine(boolean extraFields) {
-        return this.getCardHolder() + "," + this.getAmount() + "," + this.getPurchasedate() + "," + this.getFilePath() + "," + this.getFilename() + "," + (extraFields? (this.getCardHolderNetID() + "," + this.getSourceUniqueID() + "," + this.geteDocNumber() + "," ):"");
+    public String returnBoLine() {
+        return this.getCardHolder() + "," + this.getAmount() + "," + this.getPurchasedate() + "," + this.getSharePointPath() + "," + this.getFilename() + ",";
     }
     
-    public String noMatch(boolean extraFields) {
-        String line = returnBoLine(extraFields) + "0\n";
+    public String noMatch() {
+        String line = returnBoLine() + "0\n";
         return line;        
     }
     
-    public String match(String eDocNumber, boolean extraFields) {
-        String line = returnBoLine(extraFields) + eDocNumber + "\n";
+    public String match() {
+        String line = returnBoLine();
         return line;        
     }
     
-    public String multipleMatch(boolean extraFields) {
-        String line = returnBoLine(extraFields) + "1\n";
+    public String multipleMatch() {
+        String line = returnBoLine() + "1\n";
         return line;        
     }
     
-    public String badData(boolean extraFields) {
-        String line = returnBoLine(extraFields) + "2\n";
+    public String badData() {
+        String line = returnBoLine() + "2\n";
         return line;        
-    }   
-    
-    public String attachOnlyError(){
-        String line = returnBoLine(true) + "9\n";
-        return line;  
     }
 
-	public String getFilePath() {
-		return filePath;
-	}
+    public String getSharePointPath() {
+        return SharePointPath;
+    }
 
-	public void setFilePath(String filePath) {
-		this.filePath = filePath;
-	}
-
-	public String getCardHolderNetID() {
-		return cardHolderNetID;
-	}
-
-	public void setCardHolderNetID(String cardHolderNetID) {
-		this.cardHolderNetID = cardHolderNetID;
-	}
-
-	public String getSourceUniqueID() {
-		return sourceUniqueID;
-	}
-
-	public void setSourceUniqueID(String sourceUniqueID) {
-		this.sourceUniqueID = sourceUniqueID;
-	}
-
-	public String geteDocNumber() {
-		return eDocNumber;
-	}
-
-	public void seteDocNumber(String eDocNumber) {
-		this.eDocNumber = eDocNumber;
-	}
+    public void setSharePointPath(String sharePointPath) {
+        SharePointPath = sharePointPath;
+    }
 
 }
