@@ -217,5 +217,9 @@ public class CUPurapConstants extends PurapConstants {
     public static final String LABEL_BANK_ACCT_NAME = "Bank Account Name";
     public static final String PAYMENT_METHOD = "payment method";
     public static final String WIRE_TRANSFER = "Wire Transfer";
+    
+    //KFSPTS-3718
+    public static final String I_WANT_DOC_FEED_FILE_PREFIX = "purap_iwantdoc_";
+    public static final String I_WANT_DOC_FEED_FILE_TYPE_INDENTIFIER = "iWantDocumentInputFileType";
 
 }
