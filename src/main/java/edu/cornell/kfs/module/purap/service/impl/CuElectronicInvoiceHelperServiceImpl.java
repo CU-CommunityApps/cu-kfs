@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -31,6 +33,7 @@ import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.batch.ElectronicInvoiceStep;
 import org.kuali.kfs.module.purap.businessobject.ElectronicInvoice;
+import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceItem;
 import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceItemMapping;
 import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceLoad;
 import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceLoadSummary;
@@ -1006,9 +1009,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             eInvoice = loadElectronicInvoice(xmlAsBytes);
         } catch (CxmlParseException e) {
             LOG.info("Error loading file - " + e.getMessage());
-            // TODO : addnamespacedefinition already did rejectElectronicInvoiceFile, so this will created twice.
-            // need further investigation
-//            rejectElectronicInvoiceFile(eInvoiceLoad, UNKNOWN_DUNS_IDENTIFIER, invoiceFile, e.getMessage(),PurapConstants.ElectronicInvoice.FILE_FORMAT_INVALID);
+            rejectElectronicInvoiceFile(eInvoiceLoad, UNKNOWN_DUNS_IDENTIFIER, invoiceFile, e.getMessage(),PurapConstants.ElectronicInvoice.FILE_FORMAT_INVALID);
             isExtractFailure = true;
             updateSummaryCounts(EXTRACT_FAILURES);
           } catch (IllegalArgumentException iae) {
@@ -1042,6 +1043,10 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 		        boolean validateHeader = true;
 	
 		        try {
+		            // ==== CU Customization: Added patterns to test for special characters and/or whitespace. ====
+		            Pattern specialCharsPattern = Pattern.compile("[^\\p{Graph}\\p{Space}]");
+		            Pattern specialCharsOrWhitespacePattern = Pattern.compile("[^\\p{Graph}]");
+		            
 			        for (ElectronicInvoiceOrder order : eInvoice.getInvoiceDetailOrders()) {
 			
 			            String poID = order.getOrderReferenceOrderID();
@@ -1059,6 +1064,40 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			                    }
 			                }
 			            }
+			            
+			            // ==== CU Customization: Remove special characters from certain ID and description fields. ====
+			            Matcher tempMatcher;
+			            
+			            if (StringUtils.isNotEmpty(order.getOrderReferenceDocumentRefPayloadID())) {
+			                tempMatcher = specialCharsOrWhitespacePattern.matcher(order.getOrderReferenceDocumentRefPayloadID());
+			                if (tempMatcher.find()) {
+			                    LOG.warn("Found document ref payload ID with special or whitespace characters; these will be removed. Order: "
+			                            + order.getOrderReferenceOrderID());
+			                    order.setOrderReferenceDocumentRefPayloadID(tempMatcher.replaceAll(KRADConstants.EMPTY_STRING));
+			                }
+			            }
+			            
+			            if (StringUtils.isNotEmpty(order.getOrderReferenceOrderID())) {
+			                tempMatcher = specialCharsOrWhitespacePattern.matcher(order.getOrderReferenceOrderID());
+			                if (tempMatcher.find()) {
+			                    LOG.warn("Found ref order ID with special or whitespace characters; these will be removed. Order: "
+			                            + order.getOrderReferenceOrderID());
+			                    order.setOrderReferenceOrderID(tempMatcher.replaceAll(KRADConstants.EMPTY_STRING));
+			                }
+			            }
+			            
+			            for (ElectronicInvoiceItem item : order.getInvoiceItems()) {
+			                if (StringUtils.isNotEmpty(item.getReferenceDescription())) {
+			                    tempMatcher = specialCharsPattern.matcher(item.getReferenceDescription());
+			                    if (tempMatcher.find()) {
+			                        LOG.warn("Found item description with special characters; these will be removed. Line number: "
+			                                + item.getInvoiceLineNumber());
+			                        item.setReferenceDescription(tempMatcher.replaceAll(KRADConstants.EMPTY_STRING));
+			                    }
+			                }
+			            }
+			            
+			            
 			            
 			            CuElectronicInvoiceOrderHolder orderHolder = new CuElectronicInvoiceOrderHolder(eInvoice,order,po,itemTypeMappings,kualiItemTypes,validateHeader);
 			            matchingService.doMatchingProcess(orderHolder);
