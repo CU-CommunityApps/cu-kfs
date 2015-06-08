@@ -16,7 +16,7 @@ public interface ReceiptProcessingService {
     /**
      * 
      */
-    public boolean attachFiles(String fileName, BatchInputFileType batchInputFileType);           
+    public boolean attachFiles(String fileName, BatchInputFileType batchInputFileType, String customerName);           
    
 }
 
