@@ -84,7 +84,7 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
             validateCSVFileInput(headerList, validateFileContents);
             
             //use csv reader to parse the csv content
-            CSVReader csvReader = new CSVReader(new InputStreamReader(new ByteArrayInputStream(fileByteContent)));
+            CSVReader csvReader = new CSVReader(new InputStreamReader(new ByteArrayInputStream(fileByteContent)),',','"','|');
             List<String[]>dataList = csvReader.readAll();
             
             //remove first header line
