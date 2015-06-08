@@ -7,22 +7,4 @@ import org.kuali.kfs.fp.document.ProcurementCardDocument;
 
 public interface ProcurementCardDocumentDao {    
     public List<ProcurementCardDocument> getDocumentByCarhdHolderAmountDateVendor(String cardHolder, String amount, Date transactionDate);
-    
-    /**
-     * Gets a list of Procurement Card Document based on the amount, transaction date and net id.
-     * 
-     * @param amount
-     * @param transactionDate
-     * @param cardHolderNetID
-     * @return a list of PCDO docs that meet the criteria
-     */
-    public List<ProcurementCardDocument> getDocumentByCarhdHolderNameAmountDateCardHolderNetID(String amount, Date transactionDate, String cardHolderNetID);
-    
-    /**
-     * Gets a list of Procurement Card Document based on the edoc number.
-     * 
-     * @param edocNumber
-     * @return a list of PCDO docs that meet the criteria
-     */
-    public List<ProcurementCardDocument> getDocumentByEdocNumber(String edocNumber);
 }

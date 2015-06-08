@@ -12,6 +12,7 @@ import org.apache.ojb.broker.query.QueryByCriteria;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 
+
 import edu.cornell.kfs.fp.dataaccess.ProcurementCardDocumentDao;
 
 public class ProcurementCardDocumentDaoOjb extends PlatformAwareDaoBaseOjb implements ProcurementCardDocumentDao {
@@ -46,49 +47,6 @@ public class ProcurementCardDocumentDaoOjb extends PlatformAwareDaoBaseOjb imple
 		String replacement ="$1%$2";
 		
 		return cardHodlerName.replaceAll(regex, replacement).toUpperCase() + WILD_CARD;
-	}
-
-	/**
-	 * @see edu.cornell.kfs.fp.dataaccess.ProcurementCardDocumentDao#getDocumentByCarhdHolderNameAmountDateCardHolderNetID(java.lang.String, java.sql.Date, java.lang.String)
-	 */
-	@Override
-	public List<ProcurementCardDocument> getDocumentByCarhdHolderNameAmountDateCardHolderNetID(String amount, Date transactionDate, String cardHolderNetID) {
-		 LOG.debug("getDocumentByCarhdHolderNameAmountDateCardHolderNetID() started");
-			
-			if (StringUtils.isBlank(amount) || transactionDate == null || StringUtils.isBlank(cardHolderNetID)) {
-				LOG.error("Unable to validate input");
-				return null;
-			}
-			
-			GregorianCalendar gc = new GregorianCalendar();
-			gc.setTime(transactionDate);
-			gc.add(Calendar.DATE, 21);
-			
-			Criteria criteria = new Criteria();
-	        criteria.addLike("procurementCardHolder.cardHolderAlternateName", cardHolderNetID.toUpperCase() + WILD_CARD);
-	        criteria.addEqualTo("transactionEntries.transactionTotalAmount", amount);
-	        criteria.addGreaterOrEqualThan("transactionEntries.transactionDate", transactionDate);
-			criteria.addLessOrEqualThan("transactionEntries.transactionDate", new Timestamp(gc.getTimeInMillis()));
-	        
-	        return (List<ProcurementCardDocument>) getPersistenceBrokerTemplate().getCollectionByQuery(new QueryByCriteria(ProcurementCardDocument.class, criteria));
-	}
-
-	/**
-	 * @see edu.cornell.kfs.fp.dataaccess.ProcurementCardDocumentDao#getDocumentByEdocNumber(java.lang.String)
-	 */
-	@Override
-	public List<ProcurementCardDocument> getDocumentByEdocNumber(String edocNumber) {
-		LOG.debug("getDocumentByCarhdHolderNameAmountDateCardHolderNetID() started");
-			
-			if (StringUtils.isBlank(edocNumber)) {
-				LOG.error("Unable to validate input");
-				return null;
-			}
-			
-			Criteria criteria = new Criteria();
-	        criteria.addEqualTo("documentNumber", edocNumber);
-	        
-	        return (List<ProcurementCardDocument>) getPersistenceBrokerTemplate().getCollectionByQuery(new QueryByCriteria(ProcurementCardDocument.class, criteria));
 	}
 
 }
