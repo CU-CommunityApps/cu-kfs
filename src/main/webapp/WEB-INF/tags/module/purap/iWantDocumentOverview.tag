@@ -57,6 +57,18 @@
 				</div>
 			</td>
 		</tr>
+		
+		<c:if test="${!empty(KualiForm.document.documentHeader.organizationDocumentNumber)}">
+		<tr>		
+		    <th align="right" valign="middle" class="neutral">
+				<kul:htmlAttributeLabel attributeEntry="${docHeaderAttributes.organizationDocumentNumber}"/>
+			</th>	  
+            <td align="left" valign="middle" class="neutral">
+              	<kul:htmlControlAttribute property="document.documentHeader.organizationDocumentNumber" attributeEntry="${docHeaderAttributes.organizationDocumentNumber}" readOnly="true"/>
+            </td>
+         </tr>
+         </c:if>
+            
 		<tr>
 			<th align="right" valign="middle" class="neutral">
 				&nbsp;
