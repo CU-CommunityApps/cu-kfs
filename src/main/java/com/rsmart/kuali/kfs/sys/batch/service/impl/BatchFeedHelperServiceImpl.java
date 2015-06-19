@@ -219,6 +219,7 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
             note.setRemoteObjectIdentifier(document.getObjectId());
             note.setAuthorUniversalIdentifier(getSystemUser().getPrincipalId());
             note.setNoteTypeCode(KFSConstants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE.getCode());
+            note.setNotePostedTimestampToCurrent();
 
             // attempt to load file
             String fileName = attachmentsPath + "/" + attachment.getAttachmentFileName();
