@@ -17,6 +17,7 @@
 	<bean id="AdvanceDepositDocument" parent="AdvanceDepositDocument-parentBean">
 		<property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.CuAdvanceDepositDocumentPresentationController"/>
 		<property name="documentAuthorizerClass" value="edu.cornell.kfs.fp.document.authorization.CuAdvanceDepositDocumentAuthorizer"/>
+		<property name="allowsErrorCorrection" value="false"/>
 	</bean>
 	
 	<bean id="AdvanceDepositDocument-sourceAccountingLineGroup" parent="AdvanceDepositDocument-sourceAccountingLineGroup-parentBean">
