@@ -31,7 +31,7 @@
 <kul:tab tabTitle="Accounting Lines" defaultOpen="true" tabErrorKey="${KFSConstants.TARGET_ACCOUNTING_LINE_ERROR_PATTERN},document.transactionEntries*">
   <c:set var="transactionAttributes" value="${DataDictionary.ProcurementCardTransactionDetail.attributes}" />
   <c:set var="vendorAttributes" value="${DataDictionary.ProcurementCardVendor.attributes}" />
-  <c:set var="cardAttributes" value="${DataDictionary.ProcurementCardHolder.attributes}" />
+  <c:set var="cardAttributes" value="${DataDictionary.CuProcurementCardHolder.attributes}" />
 	
   <div class="tab-container" align="center">
   <logic:iterate indexId="ctr" name="KualiForm" property="document.transactionEntries" id="currentTransaction">
@@ -41,7 +41,7 @@
 	      <tr>
 	        <th scope="row"><div align="right"><kul:htmlAttributeLabel attributeEntry="${cardAttributes.transactionCreditCardNumber}" readOnly="true"/></div></th>
 	        <td>
-	          <kul:inquiry boClassName="org.kuali.kfs.fp.businessobject.ProcurementCardHolder" 
+	          <kul:inquiry boClassName="edu.cornell.kfs.fp.businessobject.CuProcurementCardHolder" 
                keyValues="documentNumber=${currentTransaction.documentNumber}" render="true">
 				<c:choose>
 					<c:when test="${KualiForm.transactionCreditCardNumbersViewStatus[ctr]}">

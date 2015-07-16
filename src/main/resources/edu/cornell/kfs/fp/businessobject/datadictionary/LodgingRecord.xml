@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xmlns:p="http://www.springframework.org/schema/p" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans         
+	   http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <bean id="LodgingRecord" parent="LodgingRecord-parentBean"/>
+
+  <bean id="LodgingRecord-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.LodgingRecord"/>
+    <property name="objectLabel" value="Lodging Record"/>
+    <property name="attributes">
+      <list>
+     	<ref bean="LodgingRecord-lodgingId"/>
+        <ref bean="LodgingRecord-transactionSequenceRowNumber"/>
+        <ref bean="LodgingRecord-arrivalDate"/>
+        <ref bean="LodgingRecord-departureDate"/>
+        <ref bean="LodgingRecord-folioNumber"/>
+        <ref bean="LodgingRecord-propertyPhoneNumber"/>
+        <ref bean="LodgingRecord-customerServiceNumber"/>
+        <ref bean="LodgingRecord-roomRate"/>
+        <ref bean="LodgingRecord-roomTax"/>
+        <ref bean="LodgingRecord-programCode"/>
+        <ref bean="LodgingRecord-telephoneCharges"/>
+        <ref bean="LodgingRecord-roomService"/>
+        <ref bean="LodgingRecord-barCharges"/>
+        <ref bean="LodgingRecord-giftShopCharges"/>
+        <ref bean="LodgingRecord-laundryCharges"/>
+        <ref bean="LodgingRecord-otherServicesCode"/>
+        <ref bean="LodgingRecord-otherServicesCharges"/>
+        <ref bean="LodgingRecord-billingAdjustmentIndicator"/>
+        <ref bean="LodgingRecord-billingAdjustmentAmount"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="LodgingRecord-lodgingId" parent="LodgingRecord-lodgingId-parentBean" />
+  <bean id="LodgingRecord-lodgingId-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="lodgingId" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="9" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="9"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-transactionSequenceRowNumber" parent="LodgingRecord-transactionSequenceRowNumber-parentBean" />
+  <bean id="LodgingRecord-transactionSequenceRowNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="transactionSequenceRowNumber" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="9" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="9"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-arrivalDate" parent="LodgingRecord-arrivalDate-parentBean" />
+  <bean id="LodgingRecord-arrivalDate-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="arrivalDate" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="8" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="8"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-departureDate" parent="LodgingRecord-departureDate-parentBean" />
+  <bean id="LodgingRecord-departureDate-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="departureDate" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="8" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="8"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-folioNumber" parent="LodgingRecord-folioNumber-parentBean" />
+  <bean id="LodgingRecord-folioNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="folioNumber" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="10" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="10"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-propertyPhoneNumber" parent="LodgingRecord-propertyPhoneNumber-parentBean" />
+  <bean id="LodgingRecord-propertyPhoneNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="propertyPhoneNumber" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="25" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="25"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-customerServiceNumber" parent="LodgingRecord-customerServiceNumber-parentBean" />
+  <bean id="LodgingRecord-customerServiceNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="customerServiceNumber" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="25" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="25"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-roomRate" parent="LodgingRecord-roomRate-parentBean" />
+  <bean id="LodgingRecord-roomRate-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="roomRate" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-roomTax" parent="LodgingRecord-roomTax-parentBean" />
+  <bean id="LodgingRecord-roomTax-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="roomTax" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-programCode" parent="LodgingRecord-programCode-parentBean" />
+  <bean id="LodgingRecord-programCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="programCode" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="2" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="2"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-telephoneCharges" parent="LodgingRecord-telephoneCharges-parentBean" />
+  <bean id="LodgingRecord-telephoneCharges-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="telephoneCharges" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-roomService" parent="LodgingRecord-roomService-parentBean" />
+  <bean id="LodgingRecord-roomService-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="roomService" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-barCharges" parent="LodgingRecord-barCharges-parentBean" />
+  <bean id="LodgingRecord-barCharges-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="barCharges" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-giftShopCharges" parent="LodgingRecord-giftShopCharges-parentBean" />
+  <bean id="LodgingRecord-giftShopCharges-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="giftShopCharges" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-laundryCharges" parent="LodgingRecord-laundryCharges-parentBean" />
+  <bean id="LodgingRecord-laundryCharges-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="laundryCharges" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-otherServicesCode" parent="LodgingRecord-otherServicesCode-parentBean" />
+  <bean id="LodgingRecord-otherServicesCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="otherServicesCode" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="3" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="3"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-otherServicesCharges" parent="LodgingRecord-otherServicesCharges-parentBean" />
+  <bean id="LodgingRecord-otherServicesCharges-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="otherServicesCharges" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-billingAdjustmentIndicator" parent="LodgingRecord-billingAdjustmentIndicator-parentBean" />
+  <bean id="LodgingRecord-billingAdjustmentIndicator-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="billingAdjustmentIndicator" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="1"/>
+    </property>
+  </bean>
+  
+  <bean id="LodgingRecord-billingAdjustmentAmount" parent="LodgingRecord-billingAdjustmentAmount-parentBean" />
+  <bean id="LodgingRecord-billingAdjustmentAmount-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="billingAdjustmentAmount" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+</beans>

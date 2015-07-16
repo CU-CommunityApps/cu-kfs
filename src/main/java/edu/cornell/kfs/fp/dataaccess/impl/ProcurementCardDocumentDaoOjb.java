@@ -18,7 +18,7 @@ public class ProcurementCardDocumentDaoOjb extends PlatformAwareDaoBaseOjb imple
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardDocumentDaoOjb.class);
 	private static final String WILD_CARD = "%";			
 	
-	public List<ProcurementCardDocument> getDocumentByCarhdHolderAmountDateVendor(String cardHolder, String amount, Date transactionDate) {
+	public List<ProcurementCardDocument> getDocumentByCardHolderAmountDateVendor(String cardHolder, String amount, Date transactionDate) {
 
         LOG.debug("getDocumentByAmountDateVendor() started");
 		

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xmlns:p="http://www.springframework.org/schema/p" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans         
+	   http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <bean id="ProcurementCardUserAmountDetail" parent="ProcurementCardUserAmountDetail-parentBean"/>
+
+  <bean id="ProcurementCardUserAmountDetail-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.ProcurementCardUserAmountDetail"/>
+    <property name="objectLabel" value="Procurement Card User Amount Detail"/>
+    <property name="attributes">
+      <list>
+      	<ref bean="ProcurementCardUserAmountDetail-pcardUserAmountId"/>
+        <ref bean="ProcurementCardUserAmountDetail-documentNumber"/>
+        <ref bean="ProcurementCardUserAmountDetail-financialDocumentTransactionLineNumber"/>
+        <ref bean="ProcurementCardUserAmountDetail-userAmount"/>
+      </list>
+    </property>
+  </bean>
+
+
+  <bean id="ProcurementCardUserAmountDetail-pcardUserAmountId" parent="ProcurementCardUserAmountDetail-pcardUserAmountId-parentBean" />
+  <bean id="ProcurementCardUserAmountDetail-pcardUserAmountId-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="pcardUserAmountId" />
+    <property name="label" value="Pcard User Amount Id" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="9" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="9"/>
+    </property>
+  </bean>
+  
+  <bean id="ProcurementCardUserAmountDetail-documentNumber" parent="ProcurementCardUserAmountDetail-documentNumber-parentBean" />
+  <bean id="ProcurementCardUserAmountDetail-documentNumber-parentBean" abstract="true" parent="DocumentHeader-documentNumber">
+    <property name="forceUppercase" value="false" />
+  </bean>
+
+  <bean id="ProcurementCardUserAmountDetail-financialDocumentTransactionLineNumber" parent="ProcurementCardUserAmountDetail-financialDocumentTransactionLineNumber-parentBean" />
+  <bean id="ProcurementCardUserAmountDetail-financialDocumentTransactionLineNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="financialDocumentTransactionLineNumber"/>
+    <property name="forceUppercase" value="true"/>
+    <property name="label" value="Financial Document Transaction Line Number"/>
+    <property name="shortLabel" value="Number"/>
+    <property name="maxLength" value="7"/>
+    <property name="validationPattern">
+      <ref bean="NumericValidation" />
+    </property>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="9"/>
+    </property>
+  </bean>
+
+  <bean id="ProcurementCardUserAmountDetail-userAmount" parent="ProcurementCardUserAmountDetail-userAmount-parentBean" />
+  <bean id="ProcurementCardUserAmountDetail-userAmount-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="userAmount" />
+    <property name="label" value="User Amount" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+</beans>
