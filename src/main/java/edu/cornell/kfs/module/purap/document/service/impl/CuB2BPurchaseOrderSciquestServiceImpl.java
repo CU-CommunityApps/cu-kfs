@@ -652,6 +652,11 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
                         uom = NON_QUANTITY_UOM;
                 }
                 //end KFSUPGRADE-406
+                // ==== CU Customization: Use quantity of zero for inactive PO items, allowing SciQuest to cancel them properly. ====
+                if (!poi.isItemActiveIndicator()) {
+                    quantity = new KualiDecimal(0);
+                }
+                // ==== End CU Customization ====
                 
                 cxml.append("    <POLine linenumber=\"").append(poi.getItemLineNumber()).append("\">\n");
                 cxml.append("      <Item>\n");

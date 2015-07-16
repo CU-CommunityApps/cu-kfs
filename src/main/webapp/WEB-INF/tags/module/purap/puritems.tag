@@ -506,7 +506,8 @@
 					<td class="infoline" rowspan="${itemRowSpan}" colspan="${colSpanAction}">
 					    <div align="center">
 					    	<c:choose>	
-					    	<c:when test="${(fullEntryMode and !amendmentEntry) or (amendmentEntry and (itemLine.itemInvoicedTotalAmount == null or itemLine.itemInvoicedTotalAmount == 0.00)or itemLine.newItemForAmendment)}">
+					    	<%-- ==== CU Customization: Updated first c:when condition to not show the "delete" button for not-new-item lines with invoiced totals of zero. ==== --%>
+					    	<c:when test="${(fullEntryMode and !amendmentEntry) or (amendmentEntry and (itemLine.itemInvoicedTotalAmount == null or itemLine.newItemForAmendment))}">
 					    						        	<html:image
 						        	property="methodToCall.deleteItem.line${ctr}"
 						        	src="${ConfigProperties.kr.externalizable.images.url}tinybutton-delete1.gif"
