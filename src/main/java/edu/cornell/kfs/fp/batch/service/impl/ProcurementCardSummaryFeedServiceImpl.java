@@ -61,8 +61,8 @@ public class ProcurementCardSummaryFeedServiceImpl implements ProcurementCardSum
 		List<ProcurementCardSummaryEntry> entriesToLoad = new ArrayList<ProcurementCardSummaryEntry>();
 		generatePCardEntryToLoadToDB(pcardSummaryList, entriesToLoad); 
 		
-		LOG.info("\n Loading data into the database: FP_PCARD_SUMMARY_T table. \n");
-		// load entries into FP_PCARD_SUMMARY_T table
+		LOG.info("\n Loading data into the database: CU_FP_PCARD_SUMMARY_T table. \n");
+		// load entries into CU_FP_PCARD_SUMMARY_T table
 		loadDataInDB(entriesToLoad);
 		return true;
 	}	
@@ -169,7 +169,7 @@ public class ProcurementCardSummaryFeedServiceImpl implements ProcurementCardSum
 	}
 	
 	/**
-	 * Load entries in the FP_PCARD_SUMMARY_T table.
+	 * Load entries in the CU_FP_PCARD_SUMMARY_T table.
 	 * 
 	 * @param entriesToLoad
 	 */

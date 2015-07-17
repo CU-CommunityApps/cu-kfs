@@ -6,7 +6,7 @@ import java.util.List;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 
 public interface ProcurementCardDocumentDao {    
-    public List<ProcurementCardDocument> getDocumentByCardHolderAmountDateVendor(String cardHolder, String amount, Date transactionDate);
+    public List<ProcurementCardDocument> getDocumentByCarhdHolderAmountDateVendor(String cardHolder, String amount, Date transactionDate);
     
     /**
      * Gets a list of Procurement Card Document based on the amount, transaction date and net id.
