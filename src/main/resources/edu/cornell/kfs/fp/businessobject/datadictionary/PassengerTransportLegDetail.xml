@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xmlns:p="http://www.springframework.org/schema/p" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans         
+	   http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <bean id="PassengerTransportLegDetail" parent="PassengerTransportLegDetail-parentBean"/>
+
+  <bean id="PassengerTransportLegDetail-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.PassengerTransportLegDetail"/>
+    <property name="objectLabel" value="Passenger Transport Leg Detail"/>
+    <property name="attributes">
+      <list>
+      	<ref bean="PassengerTransportLegDetail-passengerTransportLegId"/>
+        <ref bean="PassengerTransportLegDetail-documentNumber"/>
+        <ref bean="PassengerTransportLegDetail-financialDocumentTransactionLineNumber"/>
+        <ref bean="PassengerTransportLegDetail-tripLegNumber"/>
+        <ref bean="PassengerTransportLegDetail-carrierCode"/>
+        <ref bean="PassengerTransportLegDetail-serviceClass"/>
+        <ref bean="PassengerTransportLegDetail-stopOverCode"/>
+        <ref bean="PassengerTransportLegDetail-cityOfOrigin"/>
+        <ref bean="PassengerTransportLegDetail-conjunctionTicket"/>
+        <ref bean="PassengerTransportLegDetail-travelDate"/>
+        <ref bean="PassengerTransportLegDetail-exchangeTicket"/>
+        <ref bean="PassengerTransportLegDetail-couponNumber"/>
+        <ref bean="PassengerTransportLegDetail-cityOfDestination"/>
+        <ref bean="PassengerTransportLegDetail-fareBaseCode"/>
+        <ref bean="PassengerTransportLegDetail-flightNumber"/>
+        <ref bean="PassengerTransportLegDetail-departureTime"/>
+        <ref bean="PassengerTransportLegDetail-departureTimeSegment"/>
+        <ref bean="PassengerTransportLegDetail-arrivalTime"/>
+        <ref bean="PassengerTransportLegDetail-arrivalTimeSegment"/>
+        <ref bean="PassengerTransportLegDetail-fare"/>
+        <ref bean="PassengerTransportLegDetail-fee"/>
+        <ref bean="PassengerTransportLegDetail-taxes"/>
+        <ref bean="PassengerTransportLegDetail-endorsements"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="PassengerTransportLegDetail-passengerTransportLegId" parent="PassengerTransportLegDetail-passengerTransportLegId-parentBean" />
+  <bean id="PassengerTransportLegDetail-passengerTransportLegId-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="passengerTransportLegId" />
+    <property name="label" value="Passenger Transport Leg Id" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="9" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="9"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-documentNumber" parent="PassengerTransportLegDetail-documentNumber-parentBean" />
+  <bean id="PassengerTransportLegDetail-documentNumber-parentBean" abstract="true" parent="DocumentHeader-documentNumber">
+    <property name="forceUppercase" value="false" />
+  </bean>
+
+  <bean id="PassengerTransportLegDetail-financialDocumentTransactionLineNumber" parent="PassengerTransportLegDetail-financialDocumentTransactionLineNumber-parentBean" />
+  <bean id="PassengerTransportLegDetail-financialDocumentTransactionLineNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="financialDocumentTransactionLineNumber"/>
+    <property name="forceUppercase" value="true"/>
+    <property name="label" value="Financial Document Transaction Line Number"/>
+    <property name="shortLabel" value="Number"/>
+    <property name="maxLength" value="7"/>
+    <property name="validationPattern">
+      <ref bean="NumericValidation" />
+    </property>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="9"/>
+    </property>
+  </bean>
+
+  <bean id="PassengerTransportLegDetail-tripLegNumber" parent="PassengerTransportLegDetail-tripLegNumber-parentBean" />
+  <bean id="PassengerTransportLegDetail-tripLegNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="tripLegNumber" />
+    <property name="label" value="Trip Leg Number" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="2" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="2"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-carrierCode" parent="PassengerTransportLegDetail-carrierCode-parentBean" />
+  <bean id="PassengerTransportLegDetail-carrierCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="carrierCode" />
+    <property name="label" value="Carrier Code" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="2" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="2"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-serviceClass" parent="PassengerTransportLegDetail-serviceClass-parentBean" />
+  <bean id="PassengerTransportLegDetail-serviceClass-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="serviceClass" />
+    <property name="label" value="Service Class" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="2" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="2"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-stopOverCode" parent="PassengerTransportLegDetail-stopOverCode-parentBean" />
+  <bean id="PassengerTransportLegDetail-stopOverCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="stopOverCode" />
+     <property name="label" value="Stop Over Code" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="1"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-cityOfOrigin" parent="PassengerTransportLegDetail-cityOfOrigin-parentBean" />
+  <bean id="PassengerTransportLegDetail-cityOfOrigin-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="cityOfOrigin" />
+    <property name="label" value="City Of Origin" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="5" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="5"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-conjunctionTicket" parent="PassengerTransportLegDetail-conjunctionTicket-parentBean" />
+  <bean id="PassengerTransportLegDetail-conjunctionTicket-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="conjunctionTicket" />
+    <property name="label" value="Conjunction Ticket" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="14" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="14"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-travelDate" parent="PassengerTransportLegDetail-travelDate-parentBean" />
+  <bean id="PassengerTransportLegDetail-travelDate-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="travelDate" />
+    <property name="label" value="Travel Date" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="8" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="8"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-exchangeTicket" parent="PassengerTransportLegDetail-exchangeTicket-parentBean" />
+  <bean id="PassengerTransportLegDetail-exchangeTicket-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="exchangeTicket" />
+    <property name="label" value="Exchange Ticket" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="15" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="15"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-couponNumber" parent="PassengerTransportLegDetail-couponNumber-parentBean" />
+  <bean id="PassengerTransportLegDetail-couponNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="couponNumber" />
+    <property name="label" value="Coupon Number" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="1"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-cityOfDestination" parent="PassengerTransportLegDetail-cityOfDestination-parentBean" />
+  <bean id="PassengerTransportLegDetail-cityOfDestination-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="cityOfDestination" />
+    <property name="label" value="City Of Destination" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="5" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="5"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-fareBaseCode" parent="PassengerTransportLegDetail-fareBaseCode-parentBean" />
+  <bean id="PassengerTransportLegDetail-fareBaseCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="fareBaseCode" />
+    <property name="label" value="Fare Base Code" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="15" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="15"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-flightNumber" parent="PassengerTransportLegDetail-flightNumber-parentBean" />
+  <bean id="PassengerTransportLegDetail-flightNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="flightNumber" />
+    <property name="label" value="Flight Number" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="5" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="5"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-departureTime" parent="PassengerTransportLegDetail-departureTime-parentBean" />
+  <bean id="PassengerTransportLegDetail-departureTime-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="departureTime" />
+    <property name="label" value="Departure Time" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="4" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="4"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-departureTimeSegment" parent="PassengerTransportLegDetail-departureTimeSegment-parentBean" />
+  <bean id="PassengerTransportLegDetail-departureTimeSegment-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="departureTimeSegment" />
+    <property name="label" value="Departure Time Segment" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="1"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-arrivalTime" parent="PassengerTransportLegDetail-arrivalTime-parentBean" />
+  <bean id="PassengerTransportLegDetail-arrivalTime-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="arrivalTime" />
+    <property name="label" value="Arrival Time" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="4" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="4"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-arrivalTimeSegment" parent="PassengerTransportLegDetail-arrivalTimeSegment-parentBean" />
+  <bean id="PassengerTransportLegDetail-arrivalTimeSegment-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="arrivalTimeSegment" />
+    <property name="label" value="Arrival Time Segment" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="1"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-fare" parent="PassengerTransportLegDetail-fare-parentBean" />
+  <bean id="PassengerTransportLegDetail-fare-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="fare" />
+    <property name="label" value="Fare" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-fee" parent="PassengerTransportLegDetail-fee-parentBean" />
+  <bean id="PassengerTransportLegDetail-fee-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="fee" />
+    <property name="label" value="Fee" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="26"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-taxes" parent="PassengerTransportLegDetail-taxes-parentBean" />
+  <bean id="PassengerTransportLegDetail-taxes-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="taxes" />
+    <property name="label" value="Taxes" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="PassengerTransportLegDetail-endorsements" parent="PassengerTransportLegDetail-endorsements-parentBean" />
+  <bean id="PassengerTransportLegDetail-endorsements-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="endorsements" />
+    <property name="label" value="Endorsements" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="20" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="20"/>
+    </property>
+  </bean>
+  
+</beans>

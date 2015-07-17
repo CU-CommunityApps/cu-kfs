@@ -71,7 +71,7 @@
     <xsd:element name="cardCycleVolumeLimit" type="xsd:decimal"/>
     <xsd:element name="cardStatusCode" type="xsd:normalizedString"/>
     <xsd:element name="cardNoteText" type="xsd:normalizedString"/>
- 
+
     <!-- definition of complex type elements -->
     <xsd:element name="transactions">
         <xsd:complexType>
@@ -132,9 +132,275 @@
                <xsd:element maxOccurs="1" minOccurs="0" ref="cardCycleVolumeLimit" />
                <xsd:element maxOccurs="1" minOccurs="0" ref="cardStatusCode" />
                <xsd:element maxOccurs="1" minOccurs="0" ref="cardNoteText" />
+               <xsd:element maxOccurs="1" minOccurs="0" ref="transactionDetails" />
              </xsd:sequence>  
         </xsd:complexType>
     </xsd:element>
 
+	<xsd:element name="transactionDetails">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="1" minOccurs="0" name="customerCode" type="ProcurementCardTransaction.customerCode" />
+               <xsd:element maxOccurs="1" minOccurs="0" ref="pcardDetails" />
+               <xsd:element maxOccurs="1" minOccurs="0" ref="pcardUserAmountDetails" />
+               <xsd:element maxOccurs="1" minOccurs="0" ref="passengerTransportDetails" />
+               <xsd:element maxOccurs="1" minOccurs="0" ref="passengerTransportLegDetails" />
+               <xsd:element maxOccurs="1" minOccurs="0" ref="lodgingDetails" />
+               <xsd:element maxOccurs="1" minOccurs="0" ref="rentalCarDetails" />
+               <xsd:element maxOccurs="1" minOccurs="0" ref="genericDetails" />
+               <xsd:element maxOccurs="1" minOccurs="0" ref="fuelDetails" />
+               <xsd:element maxOccurs="1" minOccurs="0" ref="nonFuelDetails" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="pcardDetails">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="unbounded" minOccurs="0" ref="pcard" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="pcard">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="1" minOccurs="0" name="productCode" type="ProcurementCardTransaction.ProcurementCard.productCode" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="itemDescription" type="ProcurementCardTransaction.ProcurementCard.itemDescription" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="itemQuantity" type="ProcurementCardTransaction.ProcurementCard.itemQuantity" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="itemUnitOfMeasure" type="ProcurementCardTransaction.ProcurementCard.itemUnitOfMeasure" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="extendedItemAmount" type="ProcurementCardTransaction.ProcurementCard.extendedItemAmount" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="debitCreditInd" type="ProcurementCardTransaction.ProcurementCard.debitCreditInd" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="netGrossIndicator" type="ProcurementCardTransaction.ProcurementCard.netGrossIndicator" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="taxRateApplied" type="ProcurementCardTransaction.ProcurementCard.taxRateApplied" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="taxTypeApplied" type="ProcurementCardTransaction.ProcurementCard.taxTypeApplied" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="taxAmount" type="ProcurementCardTransaction.ProcurementCard.taxAmount" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="discountIndicator" type="ProcurementCardTransaction.ProcurementCard.discountIndicator" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="discountAmount" type="ProcurementCardTransaction.ProcurementCard.discountAmount" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="pcardUserAmountDetails">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="unbounded" minOccurs="0" ref="pcardUserAmount" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="pcardUserAmount">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="1" minOccurs="0" name="userAmount" type="ProcurementCardTransaction.ProcurementCardUserAmount.userAmount" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="passengerTransportDetails">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="unbounded" minOccurs="0" ref="passengerTransport" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="passengerTransport">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="1" minOccurs="0" name="passengerName" type="ProcurementCardTransaction.PassengerTransport.passengerName" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="departureDate" type="ProcurementCardTransaction.PassengerTransport.departureDate" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="airportCode" type="ProcurementCardTransaction.PassengerTransport.airportCode" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="travelAgencyCode" type="ProcurementCardTransaction.PassengerTransport.travelAgencyCode" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="travelAgencyName" type="ProcurementCardTransaction.PassengerTransport.travelAgencyName" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="ticketNumber" type="ProcurementCardTransaction.PassengerTransport.ticketNumber" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="customerCode" type="ProcurementCardTransaction.PassengerTransport.customerCode" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="issueDate" type="ProcurementCardTransaction.PassengerTransport.issueDate" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="issuingCarrier" type="ProcurementCardTransaction.PassengerTransport.issuingCarrier" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="totalFare" type="ProcurementCardTransaction.PassengerTransport.totalFare" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="totalFees" type="ProcurementCardTransaction.PassengerTransport.totalFees" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="totalTaxes" type="ProcurementCardTransaction.PassengerTransport.totalTaxes" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="passengerTransportLegDetails">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="unbounded" minOccurs="0" ref="passengerTransportLeg" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="passengerTransportLeg">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="1" minOccurs="0" name="tripLegNumber" type="ProcurementCardTransaction.PassengerTransportLeg.tripLegNumber" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="carrierCode" type="ProcurementCardTransaction.PassengerTransportLeg.carrierCode" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="serviceClass" type="ProcurementCardTransaction.PassengerTransportLeg.serviceClass" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="stopOverCode" type="ProcurementCardTransaction.PassengerTransportLeg.stopOverCode" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="cityOfOrigin" type="ProcurementCardTransaction.PassengerTransportLeg.cityOfOrigin" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="conjunctionTicket" type="ProcurementCardTransaction.PassengerTransportLeg.conjunctionTicket" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="travelDate" type="ProcurementCardTransaction.PassengerTransportLeg.travelDate" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="exchangeTicket" type="ProcurementCardTransaction.PassengerTransportLeg.exchangeTicket" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="couponNumber" type="ProcurementCardTransaction.PassengerTransportLeg.couponNumber" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="cityOfDestination" type="ProcurementCardTransaction.PassengerTransportLeg.cityOfDestination" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="fareBaseCode" type="ProcurementCardTransaction.PassengerTransportLeg.fareBaseCode" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="flightNumber" type="ProcurementCardTransaction.PassengerTransportLeg.flightNumber" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="departureTime" type="ProcurementCardTransaction.PassengerTransportLeg.departureTime" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="departureTimeSegment" type="ProcurementCardTransaction.PassengerTransportLeg.departureTimeSegment" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="arrivalTime" type="ProcurementCardTransaction.PassengerTransportLeg.arrivalTime" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="arrivalTimeSegment" type="ProcurementCardTransaction.PassengerTransportLeg.arrivalTimeSegment" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="fare" type="ProcurementCardTransaction.PassengerTransportLeg.fare" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="fee" type="ProcurementCardTransaction.PassengerTransportLeg.fee" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="taxes" type="ProcurementCardTransaction.PassengerTransportLeg.taxes" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="endorsements" type="ProcurementCardTransaction.PassengerTransportLeg.endorsements" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="lodgingDetails">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="unbounded" minOccurs="0" ref="lodging" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="lodging">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="1" minOccurs="0" name="arrivalDate" type="ProcurementCardTransaction.Lodging.arrivalDate" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="departureDate" type="ProcurementCardTransaction.Lodging.departureDate" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="folioNumber" type="ProcurementCardTransaction.Lodging.folioNumber" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="propertyPhoneNumber" type="ProcurementCardTransaction.Lodging.propertyPhoneNumber" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="customerServiceNumber" type="ProcurementCardTransaction.Lodging.customerServiceNumber" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="roomRate" type="ProcurementCardTransaction.Lodging.roomRate" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="roomTax" type="ProcurementCardTransaction.Lodging.roomTax" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="programCode" type="ProcurementCardTransaction.Lodging.programCode" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="telephoneCharges" type="ProcurementCardTransaction.Lodging.telephoneCharges" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="roomService" type="ProcurementCardTransaction.Lodging.roomService" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="barCharges" type="ProcurementCardTransaction.Lodging.barCharges" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="giftShopCharges" type="ProcurementCardTransaction.Lodging.giftShopCharges" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="laundryCharges" type="ProcurementCardTransaction.Lodging.laundryCharges" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="otherServicesCode" type="ProcurementCardTransaction.Lodging.otherServicesCode" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="otherServicesCharges" type="ProcurementCardTransaction.Lodging.otherServicesCharges" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="billingAdjustmentIndicator" type="ProcurementCardTransaction.Lodging.billingAdjustmentIndicator" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="billingAdjustmentAmount" type="ProcurementCardTransaction.Lodging.billingAdjustmentAmount" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="rentalCarDetails">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="unbounded" minOccurs="0" ref="rentalCar" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="rentalCar">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="1" minOccurs="0" name="rentalAgreementNumber" type="ProcurementCardTransaction.RentalCar.rentalAgreementNumber" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="renterName" type="ProcurementCardTransaction.RentalCar.renterName" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="rentalReturnCity" type="ProcurementCardTransaction.RentalCar.rentalReturnCity" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="rentalReturnState" type="ProcurementCardTransaction.RentalCar.rentalReturnState" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="rentalReturnCountry" type="ProcurementCardTransaction.RentalCar.rentalReturnCountry" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="rentalReturnDate" type="ProcurementCardTransaction.RentalCar.rentalReturnDate" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="returnLocationId" type="ProcurementCardTransaction.RentalCar.returnLocationId" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="customerServiceNumber" type="ProcurementCardTransaction.RentalCar.customerServiceNumber" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="rentalClass" type="ProcurementCardTransaction.RentalCar.rentalClass" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="dailyRentalRate" type="ProcurementCardTransaction.RentalCar.dailyRentalRate" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="ratePerMile" type="ProcurementCardTransaction.RentalCar.ratePerMile" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="totalMiles" type="ProcurementCardTransaction.RentalCar.totalMiles" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="maxFreeMiles" type="ProcurementCardTransaction.RentalCar.maxFreeMiles" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="insuranceIndicator" type="ProcurementCardTransaction.RentalCar.insuranceIndicator" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="insuranceCharges" type="ProcurementCardTransaction.RentalCar.insuranceCharges" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="adjustedAmountIndicator" type="ProcurementCardTransaction.RentalCar.adjustedAmountIndicator" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="adjustedAmount" type="ProcurementCardTransaction.RentalCar.adjustedAmount" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="programCode" type="ProcurementCardTransaction.RentalCar.programCode" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="checkoutDate" type="ProcurementCardTransaction.RentalCar.checkoutDate" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="genericDetails">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="unbounded" minOccurs="0" ref="generic" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="generic">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="1" minOccurs="0" name="genericAddendumData" type="ProcurementCardTransaction.Generic.genericAddendumData" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="fuelDetails">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="unbounded" minOccurs="0" ref="fuel" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="fuel">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="1" minOccurs="0" name="oilCompanyBrand" type="ProcurementCardTransaction.Fuel.oilCompanyBrand" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="merchantStreetAddress" type="ProcurementCardTransaction.Fuel.merchantStreetAddress" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="merchantPostalCode" type="ProcurementCardTransaction.Fuel.merchantPostalCode" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="timeOfPurchase" type="ProcurementCardTransaction.Fuel.timeOfPurchase" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="motorFuelServiceType" type="ProcurementCardTransaction.Fuel.motorFuelServiceType" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="motorFuelProductCode" type="ProcurementCardTransaction.Fuel.motorFuelProductCode" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="motorFuelUnitPrice" type="ProcurementCardTransaction.Fuel.motorFuelUnitPrice" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="motorFuelUnitOfMeasure" type="ProcurementCardTransaction.Fuel.motorFuelUnitOfMeasure" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="motorFuelQuantity" type="ProcurementCardTransaction.Fuel.motorFuelQuantity" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="motorFuelSaleAmount" type="ProcurementCardTransaction.Fuel.motorFuelSaleAmount" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="odomoterReading" type="ProcurementCardTransaction.Fuel.odomoterReading" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="vehicleNumber" type="ProcurementCardTransaction.Fuel.vehicleNumber" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="driverNumber" type="ProcurementCardTransaction.Fuel.driverNumber" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="magneticStripeProductTypeCode" type="ProcurementCardTransaction.Fuel.magneticStripeProductTypeCode" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="couponDiscountAmount" type="ProcurementCardTransaction.Fuel.couponDiscountAmount" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="taxExemptAmount" type="ProcurementCardTransaction.Fuel.taxExemptAmount" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="taxAmount1" type="ProcurementCardTransaction.Fuel.taxAmount1" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="taxAmount2" type="ProcurementCardTransaction.Fuel.taxAmount2" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="nonFuelDetails">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="unbounded" minOccurs="0" ref="nonFuel" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="nonFuel">
+		<xsd:complexType>
+			<xsd:sequence>
+               <xsd:element maxOccurs="1" minOccurs="0" name="itemProductCode" type="ProcurementCardTransaction.NonFuel.itemProductCode" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="itemDescription" type="ProcurementCardTransaction.NonFuel.itemDescription" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="itemQuantity" type="ProcurementCardTransaction.NonFuel.itemQuantity" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="itemUnitOfMeasure" type="ProcurementCardTransaction.NonFuel.itemUnitOfMeasure" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="extendedItemAmount" type="ProcurementCardTransaction.NonFuel.extendedItemAmount" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="discountIndicator" type="ProcurementCardTransaction.NonFuel.discountIndicator" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="discountAmount" type="ProcurementCardTransaction.NonFuel.discountAmount" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="netGrossIndicator" type="ProcurementCardTransaction.NonFuel.netGrossIndicator" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="taxRateApplied" type="ProcurementCardTransaction.NonFuel.taxRateApplied" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="taxTypeApplied" type="ProcurementCardTransaction.NonFuel.taxTypeApplied" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="taxAmount" type="ProcurementCardTransaction.NonFuel.taxAmount" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="debitCreditInd" type="ProcurementCardTransaction.NonFuel.debitCreditInd" />
+               <xsd:element maxOccurs="1" minOccurs="0" name="alternateTaxIdentifier" type="ProcurementCardTransaction.NonFuel.alternateTaxIdentifier" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
 </xsd:schema>
 

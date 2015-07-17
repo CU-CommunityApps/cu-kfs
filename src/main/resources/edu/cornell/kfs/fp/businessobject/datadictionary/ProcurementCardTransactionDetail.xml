@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+<!--
+ Copyright 2006-2008 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+	<bean id="ProcurementCardTransactionDetail" parent="CuProcurementCardTransactionDetail-parentBean"/>
+	
+	<bean id="CuProcurementCardTransactionDetail-parentBean" abstract="true" parent="ProcurementCardTransactionDetail-parentBean">
+		<property name="attributes">
+			<list merge="true">
+				<ref bean="ProcurementCardTransactionDetail-extension-customerCode"/>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Attribute Definitions -->
+
+	<bean id="ProcurementCardTransactionDetail-extension-customerCode"  parent="ProcurementCardTransactionDetailExtension-customerCode">
+		<property name="name" value="extension.customerCode" />
+	</bean>
+
+	<!-- Business Object Inquiry Definition -->
+	<bean id="ProcurementCardTransactionDetail-inquiryDefinition" parent="CuProcurementCardTransactionDetail-inquiryDefinition-parentBean"/>
+	<bean id="CuProcurementCardTransactionDetail-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+		<property name="title" value="Procurement Card Transaction Detail Inquiry"/>
+		<property name="inquirySections">
+			<list>
+				<bean parent="InquirySectionDefinition">
+					<property name="title" value=""/>
+					<property name="numberOfColumns" value="1"/>
+					<property name="inquiryFields">
+						<list>
+							<bean parent="FieldDefinition" p:attributeName="documentNumber"/>
+							<bean parent="FieldDefinition" p:attributeName="financialDocumentTransactionLineNumber"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionReferenceNumber"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionBillingCurrencyCode"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionCurrencyExchangeRate"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionDate"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionOriginalCurrencyAmount"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionOriginalCurrencyCode"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionPointOfSaleCode"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionPostingDate"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionPurchaseIdentifierDescription"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionPurchaseIdentifierIndicator"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionSalesTaxAmount"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionSettlementAmount"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionTaxExemptIndicator"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionTravelAuthorizationCode"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionUnitContactName"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionCycleEndDate"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionCycleStartDate"/>
+							<bean parent="FieldDefinition" p:attributeName="transactionTotalAmount"/>
+							<bean parent="FieldDefinition" p:attributeName="extension.customerCode"/>
+						</list>
+					</property>
+				</bean>
+		
+				<bean parent="InquirySectionDefinition">
+					<property name="title" value="Purchasing Card"/>
+					<property name="numberOfColumns" value="1"/>
+					<property name="inquiryFields">
+						<list>
+							<bean parent="InquiryCollectionDefinition">
+								<property name="attributeName" value="extension.pcardDetails"/>
+								<property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.ProcurementCardDetail"/>
+								<property name="numberOfColumns" value="1"/>
+								<property name="inquiryFields">
+									<list>
+										<bean parent="FieldDefinition" p:attributeName="pcardId"/>
+										<bean parent="FieldDefinition" p:attributeName="productCode"/>
+										<bean parent="FieldDefinition" p:attributeName="itemDescription"/>
+										<bean parent="FieldDefinition" p:attributeName="itemQuantity"/>
+										<bean parent="FieldDefinition" p:attributeName="itemUnitOfMeasure"/>
+										<bean parent="FieldDefinition" p:attributeName="extendedItemAmount"/>
+										<bean parent="FieldDefinition" p:attributeName="debitCreditInd"/>
+										<bean parent="FieldDefinition" p:attributeName="netGrossIndicator"/>
+										<bean parent="FieldDefinition" p:attributeName="taxRateApplied"/>
+										<bean parent="FieldDefinition" p:attributeName="taxTypeApplied"/>
+										<bean parent="FieldDefinition" p:attributeName="taxAmount"/>
+										<bean parent="FieldDefinition" p:attributeName="discountIndicator"/>
+										<bean parent="FieldDefinition" p:attributeName="discountAmount"/>
+									</list>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				
+		        <bean parent="InquirySectionDefinition">
+					<property name="title" value="Purchasing Card User Amount" />
+					<property name="numberOfColumns" value="1" />
+					<property name="inquiryFields">
+						<list>
+							<bean parent="InquiryCollectionDefinition">
+								<property name="attributeName" value="extension.pcardUserAmountDetails" />
+								<property name="businessObjectClass"
+									value="edu.cornell.kfs.fp.businessobject.ProcurementCardUserAmountDetail" />
+								<property name="numberOfColumns" value="1" />
+								<property name="inquiryFields">
+									<list>
+										<bean parent="FieldDefinition" p:attributeName="pcardUserAmountId" />
+										<bean parent="FieldDefinition" p:attributeName="userAmount" />
+									</list>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+		
+				<bean parent="InquirySectionDefinition">
+					<property name="title" value="Passenger Transport" />
+					<property name="numberOfColumns" value="1" />
+					<property name="inquiryFields">
+						<list>
+							<bean parent="InquiryCollectionDefinition">
+								<property name="attributeName" value="extension.passengerTransportDetails" />
+								<property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.PassengerTransportDetail" />
+								<property name="numberOfColumns" value="1" />
+								<property name="inquiryFields">
+									<list>
+										<bean parent="FieldDefinition" p:attributeName="passengerTransportId" />
+										<bean parent="FieldDefinition" p:attributeName="passengerName" />
+										<bean parent="FieldDefinition" p:attributeName="departureDate" />
+										<bean parent="FieldDefinition" p:attributeName="airportCode" />
+										<bean parent="FieldDefinition" p:attributeName="travelAgencyCode" />
+										<bean parent="FieldDefinition" p:attributeName="travelAgencyName" />
+										<bean parent="FieldDefinition" p:attributeName="ticketNumber" />
+										<bean parent="FieldDefinition" p:attributeName="customerCode" />
+										<bean parent="FieldDefinition" p:attributeName="issueDate" />
+										<bean parent="FieldDefinition" p:attributeName="issuingCarrier" />
+										<bean parent="FieldDefinition" p:attributeName="totalFare" />
+										<bean parent="FieldDefinition" p:attributeName="totalFees" />
+										<bean parent="FieldDefinition" p:attributeName="totalTaxes" />
+									</list>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+		
+				<bean parent="InquirySectionDefinition">
+					<property name="title" value="Passenger Transport Leg" />
+					<property name="numberOfColumns" value="1" />
+					<property name="inquiryFields">
+						<list>
+							<bean parent="InquiryCollectionDefinition">
+								<property name="attributeName" value="extension.passengerTransportLegDetails" />
+								<property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.PassengerTransportLegDetail" />
+								<property name="numberOfColumns" value="1" />
+								<property name="inquiryFields">
+									<list>
+										<bean parent="FieldDefinition" p:attributeName="passengerTransportLegId" />
+										<bean parent="FieldDefinition" p:attributeName="tripLegNumber" />
+										<bean parent="FieldDefinition" p:attributeName="carrierCode" />
+										<bean parent="FieldDefinition" p:attributeName="serviceClass" />
+										<bean parent="FieldDefinition" p:attributeName="stopOverCode" />
+										<bean parent="FieldDefinition" p:attributeName="cityOfOrigin" />
+										<bean parent="FieldDefinition" p:attributeName="conjunctionTicket" />
+										<bean parent="FieldDefinition" p:attributeName="travelDate" />
+										<bean parent="FieldDefinition" p:attributeName="exchangeTicket" />
+										<bean parent="FieldDefinition" p:attributeName="couponNumber" />
+										<bean parent="FieldDefinition" p:attributeName="cityOfDestination" />
+										<bean parent="FieldDefinition" p:attributeName="fareBaseCode" />
+										<bean parent="FieldDefinition" p:attributeName="flightNumber" />
+										<bean parent="FieldDefinition" p:attributeName="departureTime" />
+										<bean parent="FieldDefinition" p:attributeName="departureTimeSegment" />
+										<bean parent="FieldDefinition" p:attributeName="arrivalTime" />
+										<bean parent="FieldDefinition" p:attributeName="arrivalTimeSegment" />
+										<bean parent="FieldDefinition" p:attributeName="fare" />
+										<bean parent="FieldDefinition" p:attributeName="fee" />
+										<bean parent="FieldDefinition" p:attributeName="taxes" />
+										<bean parent="FieldDefinition" p:attributeName="endorsements" />
+									</list>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				
+				<bean parent="InquirySectionDefinition">
+					<property name="title" value="Lodging" />
+					<property name="numberOfColumns" value="1" />
+					<property name="inquiryFields">
+						<list>
+							<bean parent="InquiryCollectionDefinition">
+								<property name="attributeName" value="extension.lodgingDetails" />
+								<property name="businessObjectClass"
+									value="edu.cornell.kfs.fp.businessobject.LodgingDetail" />
+								<property name="numberOfColumns" value="1" />
+								<property name="inquiryFields">
+									<list>
+										<bean parent="FieldDefinition" p:attributeName="lodgingId" />
+										<bean parent="FieldDefinition" p:attributeName="arrivalDate" />
+										<bean parent="FieldDefinition" p:attributeName="departureDate" />
+										<bean parent="FieldDefinition" p:attributeName="folioNumber" />
+										<bean parent="FieldDefinition" p:attributeName="propertyPhoneNumber" />
+										<bean parent="FieldDefinition" p:attributeName="customerServiceNumber" />
+										<bean parent="FieldDefinition" p:attributeName="roomRate" />
+										<bean parent="FieldDefinition" p:attributeName="roomTax" />
+										<bean parent="FieldDefinition" p:attributeName="programCode" />
+										<bean parent="FieldDefinition" p:attributeName="telephoneCharges" />
+										<bean parent="FieldDefinition" p:attributeName="roomService" />
+										<bean parent="FieldDefinition" p:attributeName="barCharges" />
+										<bean parent="FieldDefinition" p:attributeName="giftShopCharges" />
+										<bean parent="FieldDefinition" p:attributeName="laundryCharges" />
+										<bean parent="FieldDefinition" p:attributeName="otherServicesCode" />
+										<bean parent="FieldDefinition" p:attributeName="otherServicesCharges" />
+										<bean parent="FieldDefinition" p:attributeName="billingAdjustmentIndicator" />
+										<bean parent="FieldDefinition" p:attributeName="billingAdjustmentAmount" />
+									</list>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				
+				<bean parent="InquirySectionDefinition">
+					<property name="title" value="Rental Car" />
+					<property name="numberOfColumns" value="1" />
+					<property name="inquiryFields">
+						<list>
+							<bean parent="InquiryCollectionDefinition">
+								<property name="attributeName" value="extension.rentalCarDetails" />
+								<property name="businessObjectClass"
+									value="edu.cornell.kfs.fp.businessobject.RentalCarDetail" />
+								<property name="numberOfColumns" value="1" />
+								<property name="inquiryFields">
+									<list>
+										<bean parent="FieldDefinition" p:attributeName="rentalCarId" />
+										<bean parent="FieldDefinition" p:attributeName="rentalAgreementNumber" />
+										<bean parent="FieldDefinition" p:attributeName="renterName" />
+										<bean parent="FieldDefinition" p:attributeName="rentalReturnCity" />
+										<bean parent="FieldDefinition" p:attributeName="rentalReturnState" />
+										<bean parent="FieldDefinition" p:attributeName="rentalReturnCountry" />
+										<bean parent="FieldDefinition" p:attributeName="rentalReturnDate" />
+										<bean parent="FieldDefinition" p:attributeName="returnLocationId" />
+										<bean parent="FieldDefinition" p:attributeName="customerServiceNumber" />
+										<bean parent="FieldDefinition" p:attributeName="rentalClass" />
+										<bean parent="FieldDefinition" p:attributeName="dailyRentalRate" />
+										<bean parent="FieldDefinition" p:attributeName="ratePerMile" />
+										<bean parent="FieldDefinition" p:attributeName="totalMiles" />
+										<bean parent="FieldDefinition" p:attributeName="maxFreeMiles" />
+										<bean parent="FieldDefinition" p:attributeName="insuranceIndicator" />
+										<bean parent="FieldDefinition" p:attributeName="insuranceCharges" />
+										<bean parent="FieldDefinition" p:attributeName="adjustedAmountIndicator" />
+										<bean parent="FieldDefinition" p:attributeName="adjustedAmount" />
+										<bean parent="FieldDefinition" p:attributeName="programCode" />
+										<bean parent="FieldDefinition" p:attributeName="checkoutDate" />
+									</list>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				
+				<bean parent="InquirySectionDefinition">
+					<property name="title" value="Purchasing Card Generic" />
+					<property name="numberOfColumns" value="1" />
+					<property name="inquiryFields">
+						<list>
+							<bean parent="InquiryCollectionDefinition">
+								<property name="attributeName" value="extension.pcardGenericDetails" />
+								<property name="businessObjectClass"
+									value="edu.cornell.kfs.fp.businessobject.ProcurementCardGenericDetail" />
+								<property name="numberOfColumns" value="1" />
+								<property name="inquiryFields">
+									<list>
+										<bean parent="FieldDefinition" p:attributeName="genericId" />
+										<bean parent="FieldDefinition" p:attributeName="genericAddendumData" />
+									</list>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				
+				<bean parent="InquirySectionDefinition">
+					<property name="title" value="Fuel" />
+					<property name="numberOfColumns" value="1" />
+					<property name="inquiryFields">
+						<list>
+							<bean parent="InquiryCollectionDefinition">
+								<property name="attributeName" value="extension.fuelDetails" />
+								<property name="businessObjectClass"
+									value="edu.cornell.kfs.fp.businessobject.FuelDetail" />
+								<property name="numberOfColumns" value="1" />
+								<property name="inquiryFields">
+									<list>
+										<bean parent="FieldDefinition" p:attributeName="fuelId" />
+										<bean parent="FieldDefinition" p:attributeName="oilCompanyBrand" />
+										<bean parent="FieldDefinition" p:attributeName="merchantStreetAddress" />
+										<bean parent="FieldDefinition" p:attributeName="merchantPostalCode" />
+										<bean parent="FieldDefinition" p:attributeName="timeOfPurchase" />
+										<bean parent="FieldDefinition" p:attributeName="motorFuelServiceType" />
+										<bean parent="FieldDefinition" p:attributeName="motorFuelProductCode" />
+										<bean parent="FieldDefinition" p:attributeName="motorFuelUnitPrice" />
+										<bean parent="FieldDefinition" p:attributeName="motorFuelUnitOfMeasure" />
+										<bean parent="FieldDefinition" p:attributeName="motorFuelQuantity" />
+										<bean parent="FieldDefinition" p:attributeName="motorFuelSaleAmount" />
+										<bean parent="FieldDefinition" p:attributeName="odomoterReading" />
+										<bean parent="FieldDefinition" p:attributeName="vehicleNumber" />
+										<bean parent="FieldDefinition" p:attributeName="driverNumber" />
+										<bean parent="FieldDefinition" p:attributeName="magneticStripeProductTypeCode" />
+										<bean parent="FieldDefinition" p:attributeName="couponDiscountAmount" />
+										<bean parent="FieldDefinition" p:attributeName="taxExemptAmount" />
+										<bean parent="FieldDefinition" p:attributeName="taxAmount1" />
+										<bean parent="FieldDefinition" p:attributeName="taxAmount2" />
+									</list>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				
+				<bean parent="InquirySectionDefinition">
+					<property name="title" value="Non Fuel" />
+					<property name="numberOfColumns" value="1" />
+					<property name="inquiryFields">
+						<list>
+							<bean parent="InquiryCollectionDefinition">
+								<property name="attributeName" value="extension.nonFuelDetails" />
+								<property name="businessObjectClass"
+									value="edu.cornell.kfs.fp.businessobject.NonFuelDetail" />
+								<property name="numberOfColumns" value="1" />
+								<property name="inquiryFields">
+									<list>
+										<bean parent="FieldDefinition" p:attributeName="nonFuelId" />
+										<bean parent="FieldDefinition" p:attributeName="itemProductCode" />
+										<bean parent="FieldDefinition" p:attributeName="itemDescription" />
+										<bean parent="FieldDefinition" p:attributeName="itemQuantity" />
+										<bean parent="FieldDefinition" p:attributeName="itemUnitOfMeasure" />
+										<bean parent="FieldDefinition" p:attributeName="extendedItemAmount" />
+										<bean parent="FieldDefinition" p:attributeName="discountIndicator" />
+										<bean parent="FieldDefinition" p:attributeName="discountAmount" />
+										<bean parent="FieldDefinition" p:attributeName="netGrossIndicator" />
+										<bean parent="FieldDefinition" p:attributeName="taxRateApplied" />
+										<bean parent="FieldDefinition" p:attributeName="taxTypeApplied" />
+										<bean parent="FieldDefinition" p:attributeName="taxAmount" />
+										<bean parent="FieldDefinition" p:attributeName="debitCreditInd" />
+										<bean parent="FieldDefinition" p:attributeName="alternateTaxIdentifier" />
+									</list>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				
+			</list>
+		</property>
+	</bean>
+
+</beans>

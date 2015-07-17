@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xmlns:p="http://www.springframework.org/schema/p" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans         
+	   http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <bean id="FuelRecord" parent="FuelRecord-parentBean"/>
+
+  <bean id="FuelRecord-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.FuelRecord"/>
+    <property name="objectLabel" value="Fuel Record"/>
+    <property name="attributes">
+      <list>
+      	<ref bean="FuelRecord-fuelId"/>
+        <ref bean="FuelRecord-transactionSequenceRowNumber"/>
+        <ref bean="FuelRecord-oilCompanyBrand"/>
+        <ref bean="FuelRecord-merchantStreetAddress"/>
+        <ref bean="FuelRecord-merchantPostalCode"/>
+        <ref bean="FuelRecord-timeOfPurchase"/>
+        <ref bean="FuelRecord-motorFuelServiceType"/>
+        <ref bean="FuelRecord-motorFuelProductCode"/>
+        <ref bean="FuelRecord-motorFuelUnitPrice"/>
+        <ref bean="FuelRecord-motorFuelUnitOfMeasure"/>
+        <ref bean="FuelRecord-motorFuelQuantity"/>
+        <ref bean="FuelRecord-motorFuelSaleAmount"/>
+        <ref bean="FuelRecord-odomoterReading"/>
+        <ref bean="FuelRecord-vehicleNumber"/>
+        <ref bean="FuelRecord-driverNumber"/>
+        <ref bean="FuelRecord-magneticStripeProductTypeCode"/>
+        <ref bean="FuelRecord-couponDiscountAmount"/>
+        <ref bean="FuelRecord-taxExemptAmount"/>
+        <ref bean="FuelRecord-taxAmount1"/>
+        <ref bean="FuelRecord-taxAmount2"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="FuelRecord-fuelId" parent="FuelRecord-fuelId-parentBean" />
+  <bean id="FuelRecord-fuelId-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="fuelId" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="9" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="9"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-transactionSequenceRowNumber" parent="FuelRecord-transactionSequenceRowNumber-parentBean" />
+  <bean id="FuelRecord-transactionSequenceRowNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="transactionSequenceRowNumber" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="9" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="9"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-oilCompanyBrand" parent="FuelRecord-oilCompanyBrand-parentBean" />
+  <bean id="FuelRecord-oilCompanyBrand-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="oilCompanyBrand" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="4" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="4"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-merchantStreetAddress" parent="FuelRecord-merchantStreetAddress-parentBean" />
+  <bean id="FuelRecord-merchantStreetAddress-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="merchantStreetAddress" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="35" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="35"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-merchantPostalCode" parent="FuelRecord-merchantPostalCode-parentBean" />
+  <bean id="FuelRecord-merchantPostalCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="merchantPostalCode" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="10" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="10"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-timeOfPurchase" parent="FuelRecord-timeOfPurchase-parentBean" />
+  <bean id="FuelRecord-timeOfPurchase-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="timeOfPurchase" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="4" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="4"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-motorFuelServiceType" parent="FuelRecord-motorFuelServiceType-parentBean" />
+  <bean id="FuelRecord-motorFuelServiceType-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="motorFuelServiceType" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="1"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-motorFuelProductCode" parent="FuelRecord-motorFuelProductCode-parentBean" />
+  <bean id="FuelRecord-motorFuelProductCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="motorFuelProductCode" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="3" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="3"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-motorFuelUnitPrice" parent="FuelRecord-motorFuelUnitPrice-parentBean" />
+  <bean id="FuelRecord-motorFuelUnitPrice-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="motorFuelUnitPrice" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-motorFuelUnitOfMeasure" parent="FuelRecord-motorFuelUnitOfMeasure-parentBean" />
+  <bean id="FuelRecord-motorFuelUnitOfMeasure-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="motorFuelUnitOfMeasure" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="1"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-motorFuelQuantity" parent="FuelRecord-motorFuelQuantity-parentBean" />
+  <bean id="FuelRecord-motorFuelQuantity-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="motorFuelQuantity" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-motorFuelSaleAmount" parent="FuelRecord-motorFuelSaleAmount-parentBean" />
+  <bean id="FuelRecord-motorFuelSaleAmount-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="motorFuelSaleAmount" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-odomoterReading" parent="FuelRecord-odomoterReading-parentBean" />
+  <bean id="FuelRecord-odomoterReading-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="odomoterReading" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="7" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="7"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-vehicleNumber" parent="FuelRecord-vehicleNumber-parentBean" />
+  <bean id="FuelRecord-vehicleNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="vehicleNumber" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="17" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="17"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-driverNumber" parent="FuelRecord-driverNumber-parentBean" />
+  <bean id="FuelRecord-driverNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="driverNumber" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="17" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="17"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-magneticStripeProductTypeCode" parent="FuelRecord-magneticStripeProductTypeCode-parentBean" />
+  <bean id="FuelRecord-magneticStripeProductTypeCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="magneticStripeProductTypeCode" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="1"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-couponDiscountAmount" parent="FuelRecord-couponDiscountAmount-parentBean" />
+  <bean id="FuelRecord-couponDiscountAmount-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="couponDiscountAmount" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-taxExemptAmount" parent="FuelRecord-taxExemptAmount-parentBean" />
+  <bean id="FuelRecord-taxExemptAmount-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="taxExemptAmount" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-taxAmount1" parent="FuelRecord-taxAmount1-parentBean" />
+  <bean id="FuelRecord-taxAmount1-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="taxAmount1" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="FuelRecord-taxAmount2" parent="FuelRecord-taxAmount2-parentBean" />
+  <bean id="FuelRecord-taxAmount2-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="taxAmount2" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+</beans>

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xmlns:p="http://www.springframework.org/schema/p" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans         
+	   http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <bean id="NonFuelDetail" parent="NonFuelDetail-parentBean"/>
+
+  <bean id="NonFuelDetail-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.NonFuelDetail"/>
+    <property name="objectLabel" value="Non Fuel Detail"/>
+    <property name="attributes">
+      <list>
+      	<ref bean="NonFuelDetail-nonFuelId"/>
+        <ref bean="NonFuelDetail-documentNumber"/>
+        <ref bean="NonFuelDetail-financialDocumentTransactionLineNumber"/>
+        <ref bean="NonFuelDetail-itemProductCode"/>
+        <ref bean="NonFuelDetail-itemDescription"/>
+        <ref bean="NonFuelDetail-itemQuantity"/>
+        <ref bean="NonFuelDetail-itemUnitOfMeasure"/>
+        <ref bean="NonFuelDetail-extendedItemAmount"/>
+        <ref bean="NonFuelDetail-discountIndicator"/>
+        <ref bean="NonFuelDetail-discountAmount"/>
+        <ref bean="NonFuelDetail-netGrossIndicator"/>
+        <ref bean="NonFuelDetail-taxRateApplied"/>
+        <ref bean="NonFuelDetail-taxTypeApplied"/>
+        <ref bean="NonFuelDetail-taxAmount"/>
+        <ref bean="NonFuelDetail-debitCreditIndicator"/>
+        <ref bean="NonFuelDetail-alternateTaxIdentifier"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="NonFuelDetail-nonFuelId" parent="NonFuelDetail-nonFuelId-parentBean" />
+  <bean id="NonFuelDetail-nonFuelId-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="nonFuelId" />
+    <property name="label" value="Non Fuel Id" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="9" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="9"/>
+    </property>
+  </bean>
+  
+  <bean id="NonFuelDetail-documentNumber" parent="NonFuelDetail-documentNumber-parentBean" />
+  <bean id="NonFuelDetail-documentNumber-parentBean" abstract="true" parent="DocumentHeader-documentNumber">
+    <property name="forceUppercase" value="false" />
+  </bean>
+
+  <bean id="NonFuelDetail-financialDocumentTransactionLineNumber" parent="NonFuelDetail-financialDocumentTransactionLineNumber-parentBean" />
+  <bean id="NonFuelDetail-financialDocumentTransactionLineNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="financialDocumentTransactionLineNumber"/>
+    <property name="forceUppercase" value="true"/>
+    <property name="label" value="Financial Document Transaction Line Number"/>
+    <property name="shortLabel" value="Number"/>
+    <property name="maxLength" value="7"/>
+    <property name="validationPattern">
+      <ref bean="NumericValidation" />
+    </property>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="9"/>
+    </property>
+  </bean>
+  
+  <bean id="NonFuelDetail-itemProductCode" parent="NonFuelDetail-itemProductCode-parentBean" />
+  <bean id="NonFuelDetail-itemProductCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="itemProductCode" />
+    <property name="label" value="Item Product Code" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="12" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="12"/>
+    </property>
+  </bean>
+  
+  <bean id="NonFuelDetail-itemDescription" parent="NonFuelDetail-itemDescription-parentBean" />
+  <bean id="NonFuelDetail-itemDescription-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="itemDescription" />
+    <property name="label" value="Item Description" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="35" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="35"/>
+    </property>
+  </bean>
+  
+  <bean id="NonFuelDetail-itemQuantity" parent="NonFuelDetail-itemQuantity-parentBean" />
+  <bean id="NonFuelDetail-itemQuantity-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="itemQuantity" />
+    <property name="label" value="Item Quantity" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="5" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="5"/>
+    </property>
+  </bean>
+  
+  <bean id="NonFuelDetail-itemUnitOfMeasure" parent="NonFuelDetail-itemUnitOfMeasure-parentBean" />
+  <bean id="NonFuelDetail-itemUnitOfMeasure-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="itemUnitOfMeasure" />
+    <property name="label" value="Item Unit Of Measure" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="3" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="3"/>
+    </property>
+  </bean>
+  
+  <bean id="NonFuelDetail-extendedItemAmount" parent="NonFuelDetail-extendedItemAmount-parentBean" />
+  <bean id="NonFuelDetail-extendedItemAmount-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="extendedItemAmount" />
+    <property name="label" value="Extended Item Amount" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="NonFuelDetail-discountIndicator" parent="NonFuelDetail-discountIndicator-parentBean" />
+  <bean id="NonFuelDetail-discountIndicator-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="discountIndicator" />
+    <property name="label" value="Discount Indicator" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="1"/>
+    </property>
+  </bean>
+  
+  <bean id="NonFuelDetail-discountAmount" parent="NonFuelDetail-discountAmount-parentBean" />
+  <bean id="NonFuelDetail-discountAmount-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="discountAmount" />
+    <property name="label" value="Discount Amount" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="NonFuelDetail-netGrossIndicator" parent="NonFuelDetail-netGrossIndicator-parentBean" />
+  <bean id="NonFuelDetail-netGrossIndicator-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="netGrossIndicator" />
+    <property name="label" value="Net/Gross Indicator" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="1"/>
+    </property>
+  </bean>
+  
+  <bean id="NonFuelDetail-taxRateApplied" parent="NonFuelDetail-taxRateApplied-parentBean" />
+  <bean id="NonFuelDetail-taxRateApplied-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="taxRateApplied" />
+    <property name="label" value="Tax Rate Applied" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="5" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="5"/>
+    </property>
+  </bean>
+  
+  <bean id="NonFuelDetail-taxTypeApplied" parent="NonFuelDetail-taxTypeApplied-parentBean" />
+  <bean id="NonFuelDetail-taxTypeApplied-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="taxTypeApplied" />
+    <property name="label" value="Tax Type Applied" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="4" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="4"/>
+    </property>
+  </bean>
+  
+  <bean id="NonFuelDetail-taxAmount" parent="NonFuelDetail-taxAmount-parentBean" />
+  <bean id="NonFuelDetail-taxAmount-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="taxAmount" />
+    <property name="label" value="Tax Amount" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="NonFuelDetail-debitCreditIndicator" parent="NonFuelDetail-debitCreditIndicator-parentBean" />
+  <bean id="NonFuelDetail-debitCreditIndicator-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="debitCreditInd" />
+    <property name="label" value="Debit/Credit Indicator" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="1"/>
+    </property>
+  </bean>
+  
+  <bean id="NonFuelDetail-alternateTaxIdentifier" parent="NonFuelDetail-alternateTaxIdentifier-parentBean" />
+  <bean id="NonFuelDetail-alternateTaxIdentifier-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="alternateTaxIdentifier" />
+    <property name="label" value="Alternate Tax Identifier" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="15" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="15"/>
+    </property>
+  </bean>
+  
+</beans>
