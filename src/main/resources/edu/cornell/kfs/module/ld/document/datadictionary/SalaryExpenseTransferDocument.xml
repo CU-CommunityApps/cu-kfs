@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 <!--
- Copyright 2006-2009 The Kuali Foundation
+ Copyright 2006-2015 The Kuali Foundation
  
  Licensed under the Educational Community License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -20,4 +20,11 @@
     <property name="promptBeforeValidationClass" value="edu.cornell.kfs.module.ld.document.validation.impl.CUSalaryExpenseTransferDocumentPreRules"/>
   </bean>
   
+  <bean id="SalaryExpenseTransferDocument-targetAccountingLineGroup" parent="SalaryExpenseTransferDocument-targetAccountingLineGroup-parentBean">
+    <property name="accountingLineAuthorizerClass" value="edu.cornell.kfs.module.ld.document.authorization.CuSalaryExpenseTransferAccountingLineAuthorizer"/>
+  </bean>
+  
+  <bean id="SalaryExpenseTransferDocument-sourceAccountingLineGroup" parent="SalaryExpenseTransferDocument-sourceAccountingLineGroup-parentBean">
+    <property name="accountingLineAuthorizerClass" value="edu.cornell.kfs.module.ld.document.authorization.CuSalaryExpenseTransferAccountingLineAuthorizer"/>
+  </bean>     
 </beans>
