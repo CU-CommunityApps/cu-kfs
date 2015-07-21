@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xmlns:p="http://www.springframework.org/schema/p" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans         
+	   http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <bean id="MasterCardTransactionDetailAddendum6" parent="MasterCardTransactionDetailAddendum6-parentBean"/>
+
+  <bean id="MasterCardTransactionDetailAddendum6-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.MasterCardTransactionDetailAddendum6"/>
+    <property name="objectLabel" value="Master Card Transaction Detail Addemdum 6"/>
+    <property name="attributes">
+      <list>
+        <ref bean="TransactionDetailAddendum6-recordType"/>
+        <ref bean="TransactionDetailAddendum6-filler1"/>
+        <ref bean="TransactionDetailAddendum6-addendumType"/>
+        <ref bean="TransactionDetailAddendum6-filler2"/>
+        <ref bean="TransactionDetailAddendum6-oilCompanyBrand"/>
+        <ref bean="TransactionDetailAddendum6-merchantStreetAddress"/>
+        <ref bean="TransactionDetailAddendum6-merchantPostalCode"/>
+        <ref bean="TransactionDetailAddendum6-timeOfPurchase"/>
+        <ref bean="TransactionDetailAddendum6-motorFuelServiceType"/>
+        <ref bean="TransactionDetailAddendum6-motorFuelProductCode"/>
+        <ref bean="TransactionDetailAddendum6-motorFuelUnitPrice"/>
+        <ref bean="TransactionDetailAddendum6-motorFuelUnitOfMeasure"/>
+        <ref bean="TransactionDetailAddendum6-motorFuelQuantity"/>
+        <ref bean="TransactionDetailAddendum6-motorFuelSaleAmount"/>
+        <ref bean="TransactionDetailAddendum6-odomoterReading"/>
+        <ref bean="TransactionDetailAddendum6-vehicleNumber"/>
+        <ref bean="TransactionDetailAddendum6-driverNumber"/>
+        <ref bean="TransactionDetailAddendum6-magneticStripeProductTypeCode"/>
+        <ref bean="TransactionDetailAddendum6-couponDiscountAmount"/>
+        <ref bean="TransactionDetailAddendum6-taxExemptAmount"/>
+        <ref bean="TransactionDetailAddendum6-taxAmount1"/>
+        <ref bean="TransactionDetailAddendum6-taxAmount2"/>
+        <ref bean="TransactionDetailAddendum6-filler3"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetailAddendum6-recordType" parent="TransactionDetailAddendum6-recordType-parentBean" />
+  <bean id="TransactionDetailAddendum6-recordType-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="recordType" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="4" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="4"/>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetailAddendum6-filler1" parent="TransactionDetailAddendum6-filler1-parentBean" />
+  <bean id="TransactionDetailAddendum6-filler1-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="filler1" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="35" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="35"/>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetailAddendum6-addendumType" parent="TransactionDetailAddendum6-addendumType-parentBean" />
+  <bean id="TransactionDetailAddendum6-addendumType-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="addendumType" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="3" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="3"/>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetailAddendum6-filler2" parent="TransactionDetailAddendum6-filler2-parentBean" />
+  <bean id="TransactionDetailAddendum6-filler2-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="filler2" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="23" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="23"/>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetailAddendum6-oilCompanyBrand" parent="TransactionDetailAddendum6-oilCompanyBrand-parentBean" />
+  <bean id="TransactionDetailAddendum6-oilCompanyBrand-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="oilCompanyBrand" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="4" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="4"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-merchantStreetAddress" parent="TransactionDetailAddendum6-merchantStreetAddress-parentBean" />
+  <bean id="TransactionDetailAddendum6-merchantStreetAddress-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="merchantStreetAddress" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="35" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="35"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-merchantPostalCode" parent="TransactionDetailAddendum6-merchantPostalCode-parentBean" />
+  <bean id="TransactionDetailAddendum6-merchantPostalCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="merchantPostalCode" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="10" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="10"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-timeOfPurchase" parent="TransactionDetailAddendum6-timeOfPurchase-parentBean" />
+  <bean id="TransactionDetailAddendum6-timeOfPurchase-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="timeOfPurchase" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="4" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="4"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-motorFuelServiceType" parent="TransactionDetailAddendum6-motorFuelServiceType-parentBean" />
+  <bean id="TransactionDetailAddendum6-motorFuelServiceType-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="motorFuelServiceType" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="1"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-motorFuelProductCode" parent="TransactionDetailAddendum6-motorFuelProductCode-parentBean" />
+  <bean id="TransactionDetailAddendum6-motorFuelProductCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="motorFuelProductCode" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="3" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="3"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-motorFuelUnitPrice" parent="TransactionDetailAddendum6-motorFuelUnitPrice-parentBean" />
+  <bean id="TransactionDetailAddendum6-motorFuelUnitPrice-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="motorFuelUnitPrice" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-motorFuelUnitOfMeasure" parent="TransactionDetailAddendum6-motorFuelUnitOfMeasure-parentBean" />
+  <bean id="TransactionDetailAddendum6-motorFuelUnitOfMeasure-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="motorFuelUnitOfMeasure" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="1"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-motorFuelQuantity" parent="TransactionDetailAddendum6-motorFuelQuantity-parentBean" />
+  <bean id="TransactionDetailAddendum6-motorFuelQuantity-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="motorFuelQuantity" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-motorFuelSaleAmount" parent="TransactionDetailAddendum6-motorFuelSaleAmount-parentBean" />
+  <bean id="TransactionDetailAddendum6-motorFuelSaleAmount-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="motorFuelSaleAmount" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-odomoterReading" parent="TransactionDetailAddendum6-odomoterReading-parentBean" />
+  <bean id="TransactionDetailAddendum6-odomoterReading-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="odomoterReading" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="7" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="7"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-vehicleNumber" parent="TransactionDetailAddendum6-vehicleNumber-parentBean" />
+  <bean id="TransactionDetailAddendum6-vehicleNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="vehicleNumber" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="17" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="17"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-driverNumber" parent="TransactionDetailAddendum6-driverNumber-parentBean" />
+  <bean id="TransactionDetailAddendum6-driverNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="driverNumber" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="17" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="17"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-magneticStripeProductTypeCode" parent="TransactionDetailAddendum6-magneticStripeProductTypeCode-parentBean" />
+  <bean id="TransactionDetailAddendum6-magneticStripeProductTypeCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="magneticStripeProductTypeCode" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="1"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-couponDiscountAmount" parent="TransactionDetailAddendum6-couponDiscountAmount-parentBean" />
+  <bean id="TransactionDetailAddendum6-couponDiscountAmount-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="couponDiscountAmount" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-taxExemptAmount" parent="TransactionDetailAddendum6-taxExemptAmount-parentBean" />
+  <bean id="TransactionDetailAddendum6-taxExemptAmount-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="taxExemptAmount" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-taxAmount1" parent="TransactionDetailAddendum6-taxAmount1-parentBean" />
+  <bean id="TransactionDetailAddendum6-taxAmount1-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="taxAmount1" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-taxAmount2" parent="TransactionDetailAddendum6-taxAmount2-parentBean" />
+  <bean id="TransactionDetailAddendum6-taxAmount2-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="taxAmount2" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum6-filler3" parent="TransactionDetailAddendum6-filler3-parentBean" />
+  <bean id="TransactionDetailAddendum6-filler3-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="filler3" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="12" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="12"/>
+    </property>
+  </bean>
+ 
+</beans>

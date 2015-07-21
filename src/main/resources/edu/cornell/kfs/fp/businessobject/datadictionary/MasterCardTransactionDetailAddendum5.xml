@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xmlns:p="http://www.springframework.org/schema/p" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans         
+	   http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <bean id="MasterCardTransactionDetailAddendum5" parent="MasterCardTransactionDetailAddendum5-parentBean"/>
+
+  <bean id="MasterCardTransactionDetailAddendum5-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.MasterCardTransactionDetailAddendum5"/>
+    <property name="objectLabel" value="Master Card Transaction Detail Addemdum 5"/>
+    <property name="attributes">
+      <list>
+        <ref bean="TransactionDetailAddendum5-recordType"/>
+        <ref bean="TransactionDetailAddendum5-filler1"/>
+        <ref bean="TransactionDetailAddendum5-addendumType"/>
+        <ref bean="TransactionDetailAddendum5-filler2"/>
+        <ref bean="TransactionDetailAddendum5-genericAddendumData"/>
+        <ref bean="TransactionDetailAddendum5-filler3"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetailAddendum5-recordType" parent="TransactionDetailAddendum5-recordType-parentBean" />
+  <bean id="TransactionDetailAddendum5-recordType-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="recordType" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="4" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="4"/>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetailAddendum5-filler1" parent="TransactionDetailAddendum5-filler1-parentBean" />
+  <bean id="TransactionDetailAddendum5-filler1-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="filler1" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="35" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="35"/>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetailAddendum5-addendumType" parent="TransactionDetailAddendum5-addendumType-parentBean" />
+  <bean id="TransactionDetailAddendum5-addendumType-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="addendumType" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="3" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="3"/>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetailAddendum5-filler2" parent="TransactionDetailAddendum5-filler2-parentBean" />
+  <bean id="TransactionDetailAddendum5-filler2-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="filler2" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="23" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="23"/>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetailAddendum5-genericAddendumData" parent="TransactionDetailAddendum5-genericAddendumData-parentBean" />
+  <bean id="TransactionDetailAddendum5-genericAddendumData-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="genericAddendumData" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="131" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="131"/>
+    </property>
+  </bean>
+  
+  <bean id="TransactionDetailAddendum5-filler3" parent="TransactionDetailAddendum5-filler3-parentBean" />
+  <bean id="TransactionDetailAddendum5-filler3-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="filler3" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="12" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="12"/>
+    </property>
+  </bean>
+  
+</beans>

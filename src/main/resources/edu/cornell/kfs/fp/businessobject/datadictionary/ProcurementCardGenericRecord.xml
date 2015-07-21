@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xmlns:p="http://www.springframework.org/schema/p" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans         
+	   http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <bean id="ProcurementCardGenericRecord" parent="ProcurementCardGenericRecord-parentBean"/>
+
+  <bean id="ProcurementCardGenericRecord-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.ProcurementCardGenericRecord"/>
+    <property name="objectLabel" value="Master Card Transaction Detail Addemdum 5"/>
+    <property name="attributes">
+      <list>
+      	<ref bean="ProcurementCardGenericRecord-genericId"/>
+        <ref bean="ProcurementCardGenericRecord-transactionSequenceRowNumber"/>
+        <ref bean="ProcurementCardGenericRecord-genericAddendumData"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="ProcurementCardGenericRecord-genericId" parent="ProcurementCardGenericRecord-genericId-parentBean" />
+  <bean id="ProcurementCardGenericRecord-genericId-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="genericId" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="9" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="9"/>
+    </property>
+  </bean>
+  
+  <bean id="ProcurementCardGenericRecord-transactionSequenceRowNumber" parent="ProcurementCardGenericRecord-transactionSequenceRowNumber-parentBean" />
+  <bean id="ProcurementCardGenericRecord-transactionSequenceRowNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="transactionSequenceRowNumber" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="9" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="9"/>
+    </property>
+  </bean>
+  
+  <bean id="ProcurementCardGenericRecord-genericAddendumData" parent="ProcurementCardGenericRecord-genericAddendumData-parentBean" />
+  <bean id="ProcurementCardGenericRecord-genericAddendumData-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="genericAddendumData" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="131" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="131"/>
+    </property>
+  </bean>
+  
+</beans>

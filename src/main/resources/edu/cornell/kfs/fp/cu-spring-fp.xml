@@ -8,230 +8,285 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-	<bean id="cu-fp" parent="fpModuleConfiguration-parentBean">
+  <bean id="cu-fp" parent="fpModuleConfiguration-parentBean">
 		
-		<property name="packagePrefixes">
-            <list merge="true">
-                <value>edu.cornell.kfs.fp</value>
-            </list>
-        </property>
-        <property name="dataDictionaryPackages">
-            <list>
-                <value>edu/cornell/kfs/fp/document/datadictionary</value>
-                <value>edu/cornell/kfs/fp/businessobject/datadictionary</value>                 
-            </list>
-        </property>
-        <property name="databaseRepositoryFilePaths">
-            <list merge ="true">
-                <value>edu/cornell/kfs/fp/cu-ojb-fp.xml</value>
-            </list>
-        </property>
-        <property name="fiscalYearMakers">
-            <list/>
-        </property>
-        <property name="scriptConfigurationFilePaths">
-            <list/>
-        </property>
+    <property name="packagePrefixes">
+      <list merge="true">
+        <value>edu.cornell.kfs.fp</value>
+      </list>
+    </property>
+    <property name="dataDictionaryPackages">
+      <list>
+        <value>edu/cornell/kfs/fp/document/datadictionary</value>
+        <value>edu/cornell/kfs/fp/businessobject/datadictionary</value>                 
+      </list>
+    </property>
+    <property name="databaseRepositoryFilePaths">
+      <list merge ="true">
+        <value>edu/cornell/kfs/fp/cu-ojb-fp.xml</value>
+      </list>
+    </property>
+    <property name="fiscalYearMakers">
+      <list/>
+    </property>
+    <property name="scriptConfigurationFilePaths">
+      <list/>
+    </property>
         
         
-        <property name="jobNames">
-            <list merge="true">
-                <value>procurementCardSummaryFeedJob</value>
-            </list>
-        </property>
+    <property name="jobNames">
+      <list merge="true">
+        <value>procurementCardSummaryFeedJob</value>
+      </list>
+    </property>
         
-    </bean>
-    <bean id="cu-fpModuleService" parent="fpModuleService-parentBean">
-        <property name="moduleConfiguration" ref="cu-fp"/>
-    </bean>
-
-    <bean id="procurementCardCreateDocumentService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl" parent="procurementCardCreateDocumentService-parentBean"/>
+  </bean>
+  <bean id="cu-fpModuleService" parent="fpModuleService-parentBean">
+    <property name="moduleConfiguration" ref="cu-fp"/>
+  </bean>
     
-    <bean id="procurementCardDocumentJob" parent="scheduledJobDescriptor">
-        <property name="steps">
+  <bean id="procurementCardDocumentJob" parent="scheduledJobDescriptor">
+    <property name="steps">
+      <list>
+        <ref bean="procurementCardLoadStep" />
+        <ref bean="procurementCardLoadFlatFileStep"/>
+        <ref bean="procurementCardCreateDocumentsStep" />
+        <ref bean="procurementCardRouteDocumentsStep" />
+        <ref bean="procurementCardAutoApproveDocumentsStep" />
+      </list>
+    </property>
+  </bean>
+    
+  <bean id="procurementCardSummaryFeedJob" parent="scheduledJobDescriptor">
+    <property name="steps">
+      <list>
+        <ref bean="procurementCardSummaryFeedStep" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="procurementCardLoadFlatTransactionsService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardLoadFlatTransactionsServiceImpl" parent="procurementCardLoadTransactionsService-parentBean" >
+    <property name="procurementCardInputFileType">
+      <ref bean="procurementCardFlatInputFileType" />
+    </property>
+  </bean>
+    
+  <bean id="procurementCardLoadStep" parent="procurementCardLoadStep-parentBean"/>
+  <bean id="procurementCardLoadFlatFileStep" class="edu.cornell.kfs.fp.batch.ProcurementCardLoadFlatFileStep" parent="procurementCardLoadStep-parentBean" >
+    <property name="procurementCardLoadTransactionsService">
+      <ref bean="procurementCardLoadFlatTransactionsService" />
+    </property>
+    <property name="procurementCardInputFileType">
+      <ref bean="procurementCardFlatInputFileType" />
+    </property>
+  </bean>
+
+  <bean id="procurementCardSummaryFeedStep" class="edu.cornell.kfs.fp.batch.ProcurementCardSummaryFeedStep" parent="step">
+    <property name="procurementCardSummaryFeedService" ref="procurementCardSummaryFeedService" />
+    <property name="batchInputFileService"  ref="batchInputFileService" />
+    <property name="dateTimeService"  ref="dateTimeService" />
+    <property name="procurementCardSummaryFlatInputFileType"  ref="procurementCardSummaryFlatInputFileType" />
+    <property name="businessObjectService" ref="businessObjectService" />
+  </bean> 
+
+
+  <bean id="procurementCardSummaryFeedService" parent="procurementCardSummaryFeedService-parentBean"/>
+
+  <bean id="procurementCardSummaryFeedService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardSummaryFeedServiceImpl" abstract="true">
+    <property name="batchInputFileService">
+      <ref bean="batchInputFileService" />
+    </property>
+    <property name="procurementCardSummaryFlatInputFileType">
+      <ref bean="procurementCardSummaryFlatInputFileType" />
+    </property>
+    <property name="businessObjectService" ref="businessObjectService" />
+    <property name="dateTimeService" ref="dateTimeService" />
+  </bean>
+    
+  <bean id="procurementCardSummaryFlatInputFileType" class= "edu.cornell.kfs.fp.batch.ProcurementCardSummaryFlatInputFileType">
+    <property name="directoryPath">
+      <value>${staging.directory}/fp/pcardSummary</value>
+    </property>
+    <property name="fileExtension">
+      <value>data</value>
+    </property>
+    <property name="dateTimeService">
+      <ref bean="dateTimeService"/>
+    </property>
+    <property name="flatFileSpecification">
+      <ref bean="pCardSummaryFlatFileSpecification"/>
+    </property>
+
+    <property name="processor" ref="ProcurementCardSummaryFlatInputFileHandler" />
+  </bean>
+
+  <bean id="ProcurementCardSummaryFlatInputFileHandler" parent="ProcurementCardSummaryFlatInputFileHandler-parentBean" />
+  <bean id="ProcurementCardSummaryFlatInputFileHandler-parentBean" class="edu.cornell.kfs.fp.batch.ProcurementCardSummaryFlatInputFileHandler" abstract="true"/>
+    
+  <bean id="pCardSummaryFlatFileSpecification" parent="FixedWidthFlatFileSpecification" p:defaultBusinessObjectClass="edu.cornell.kfs.fp.businessobject.ProcurementCardSummary">
+    <property name="objectSpecifications">
+      <list>
+        <bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.fp.businessobject.ProcurementCardSummary">
+          <property name="parseProperties">
             <list>
-                <ref bean="procurementCardLoadStep" />
-                <ref bean="procurementCardLoadFlatFileStep"/>
-                <ref bean="procurementCardCreateDocumentsStep" />
-                <ref bean="procurementCardRouteDocumentsStep" />
-                <ref bean="procurementCardAutoApproveDocumentsStep" />
+              <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderAccountNumber" p:start="0" p:end="4" p:rightTrim="true" />
+              <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderName" p:start="16" p:end="41" p:rightTrim="true" />    
+              <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="emplid" p:start="41" p:end="50" p:rightTrim="true" />
+              <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="netid" p:start="50" p:end="65" p:rightTrim="true" />
+              <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountStatus" p:start="65" p:end="75" p:rightTrim="true" />
+              <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cycleStartDate" p:start="75" p:end="83" />
+              <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="summaryAmount" p:start="83" p:end="100" p:rightTrim="true" />
+              <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="loadDate" p:start="100" p:end="108" />
             </list>
-        </property>
-    </bean>
+          </property>
+        </bean>        
+      </list>
+    </property>
+  </bean>
     
-    <bean id="procurementCardSummaryFeedJob" parent="scheduledJobDescriptor">
-        <property name="steps">
-            <list>
-                <ref bean="procurementCardSummaryFeedStep" />
-            </list>
-        </property>
-    </bean>
-    
-    <bean id="procurementCardLoadTransactionsService"  parent="procurementCardLoadTransactionsService-parentBean"/> 
-    <bean id="procurementCardLoadFlatTransactionsService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardLoadFlatTransactionsServiceImpl" parent="procurementCardLoadTransactionsService-parentBean" >
-        <property name="procurementCardInputFileType">
-            <ref bean="procurementCardFlatInputFileType" />
-        </property>
-    </bean>
-    
-    <bean id="procurementCardLoadStep" parent="procurementCardLoadStep-parentBean"/>
-    <bean id="procurementCardLoadFlatFileStep" class="edu.cornell.kfs.fp.batch.ProcurementCardLoadFlatFileStep" parent="procurementCardLoadStep-parentBean" >
-        <property name="procurementCardLoadTransactionsService">
-            <ref bean="procurementCardLoadFlatTransactionsService" />
-        </property>
-        <property name="procurementCardInputFileType">
-            <ref bean="procurementCardFlatInputFileType" />
-        </property>
-    </bean>
+  <bean id="procurementCardFlatInputFileType" class="edu.cornell.kfs.fp.batch.ProcurementCardFlatInputFileType"> 
+    <property name="directoryPath">
+      <value>${staging.directory}/fp/procurementCard</value>
+    </property>
+    <property name="fileExtension">
+      <value>data</value>
+    </property>
+    <property name="parameterService">
+      <ref bean="parameterService"/>
+    </property>
+    <property name="procurementCardErrorEmailService">
+      <ref bean="procurementCardErrorEmailService"/>
+    </property>
+    <property name="dateTimeService">
+      <ref bean="dateTimeService"/>
+    </property>
+  </bean>
 
-    <bean id="procurementCardSummaryFeedStep" class="edu.cornell.kfs.fp.batch.ProcurementCardSummaryFeedStep" parent="step">
-        <property name="procurementCardSummaryFeedService" ref="procurementCardSummaryFeedService" />
-        <property name="batchInputFileService"  ref="batchInputFileService" />
-        <property name="dateTimeService"  ref="dateTimeService" />
-        <property name="procurementCardSummaryFlatInputFileType"  ref="procurementCardSummaryFlatInputFileType" />
-        <property name="businessObjectService" ref="businessObjectService" />
-    </bean> 
+  <bean id="procurementCardErrorEmailService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardErrorEmailServiceImpl">
+    <property name="parameterService">
+      <ref bean="parameterService"/>
+    </property>
+    <property name="mailService">
+      <ref bean="mailService"/>
+    </property>
+  </bean>
+    
+  <bean id="debitDeterminerService" class="edu.cornell.kfs.fp.document.service.impl.DebitDeterminerServiceImpl">
+    <property name="optionsService">
+      <ref bean="optionsService"/>
+    </property>
+    <property name="accountingDocumentRuleUtils">
+      <ref bean="accountingDocumentRuleHelperService"/>
+    </property>
+  </bean>
 
-
-    <bean id="procurementCardSummaryFeedService" parent="procurementCardSummaryFeedService-parentBean"/>
-
-    <bean id="procurementCardSummaryFeedService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardSummaryFeedServiceImpl" abstract="true">
-        <property name="batchInputFileService">
-            <ref bean="batchInputFileService" />
-        </property>
-        <property name="procurementCardSummaryFlatInputFileType">
-            <ref bean="procurementCardSummaryFlatInputFileType" />
-        </property>
-        <property name="businessObjectService" ref="businessObjectService" />
-        <property name="dateTimeService" ref="dateTimeService" />
-    </bean>
+  <bean id="cuLegacyTravelService" class="edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl">
+    <property name="updateTripWsdl">
+      <value>${cu.legacy.travel.wsdl}</value>
+    </property>
+    <property name="updateTripEndpoint">
+      <value>${cu.legacy.travel.endpoint}</value>
+    </property>        
+    <property name="travelUrl">
+      <value>${cu.legacy.travel.url}</value>
+    </property>
+  </bean>
     
-    <bean id="procurementCardSummaryFlatInputFileType" class= "edu.cornell.kfs.fp.batch.ProcurementCardSummaryFlatInputFileType">
-        <property name="directoryPath">
-           <value>${staging.directory}/fp/pcardSummary</value>
-        </property>
-        <property name="fileExtension">
-           <value>data</value>
-        </property>
-        <property name="dateTimeService">
-           <ref bean="dateTimeService"/>
-        </property>
-        <property name="flatFileSpecification">
-            <ref bean="pCardSummaryFlatFileSpecification"/>
-       </property>
-
-       <property name="processor" ref="ProcurementCardSummaryFlatInputFileHandler" />
-    </bean>
-
-    <bean id="ProcurementCardSummaryFlatInputFileHandler" parent="ProcurementCardSummaryFlatInputFileHandler-parentBean" />
-    <bean id="ProcurementCardSummaryFlatInputFileHandler-parentBean" class="edu.cornell.kfs.fp.batch.ProcurementCardSummaryFlatInputFileHandler" abstract="true"/>
-    
-    <bean id="pCardSummaryFlatFileSpecification" parent="FixedWidthFlatFileSpecification" p:defaultBusinessObjectClass="edu.cornell.kfs.fp.businessobject.ProcurementCardSummary">
-        <property name="objectSpecifications">
-            <list>
-                <bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.fp.businessobject.ProcurementCardSummary">
-                    <property name="parseProperties">
-                        <list>
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderAccountNumber" p:start="0" p:end="4" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cardHolderName" p:start="16" p:end="41" p:rightTrim="true" />    
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="emplid" p:start="41" p:end="50" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="netid" p:start="50" p:end="65" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="accountStatus" p:start="65" p:end="75" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="cycleStartDate" p:start="75" p:end="83" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="summaryAmount" p:start="83" p:end="100" p:rightTrim="true" />
-                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="loadDate" p:start="100" p:end="108" />
-                        </list>
-                    </property>
-                </bean>
-                
-            </list>
-        </property>
-    </bean>
-    
-    <bean id="procurementCardFlatInputFileType" class="edu.cornell.kfs.fp.batch.ProcurementCardFlatInputFileType"> 
-        <property name="directoryPath">
-           <value>${staging.directory}/fp/procurementCard</value>
-        </property>
-        <property name="fileExtension">
-           <value>data</value>
-        </property>
-        <property name="parameterService">
-            <ref bean="parameterService"/>
-        </property>
-        <property name="procurementCardErrorEmailService">
-            <ref bean="procurementCardErrorEmailService"/>
-        </property>
-        <property name="dateTimeService">
-           <ref bean="dateTimeService"/>
-        </property>
-    </bean>
-    
-     <bean id="procurementCardInputFileType"  parent="procurementCardInputFileType-parentBean"/>
-    
-    <bean id="procurementCardErrorEmailService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardErrorEmailServiceImpl">
-        <property name="parameterService">
-            <ref bean="parameterService"/>
-        </property>
-        <property name="mailService">
-            <ref bean="mailService"/>
-        </property>
-    </bean>
-    
-    <bean id="debitDeterminerService" class="edu.cornell.kfs.fp.document.service.impl.DebitDeterminerServiceImpl">
-        <property name="optionsService">
-            <ref bean="optionsService"/>
-        </property>
-        <property name="accountingDocumentRuleUtils">
-            <ref bean="accountingDocumentRuleHelperService"/>
-        </property>
-    </bean>
-
-    <bean id="cuLegacyTravelService" class="edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl">
-        <property name="updateTripWsdl">
-            <value>${cu.legacy.travel.wsdl}</value>
-        </property>
-        <property name="updateTripEndpoint">
-            <value>${cu.legacy.travel.endpoint}</value>
-        </property>        
-        <property name="travelUrl">
-            <value>${cu.legacy.travel.url}</value>
-        </property>
-    </bean>
-    
-    <bean id="disbursementVoucherPayeeService" parent="disbursementVoucherPayeeService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherPayeeServiceImpl" />
+  <bean id="disbursementVoucherPayeeService" parent="disbursementVoucherPayeeService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherPayeeServiceImpl" />
      	
- 	<bean id="disbursementVoucherPaymentReasonService" parent="disbursementVoucherPaymentReasonService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherPaymentReasonServiceImpl" >
+  <bean id="disbursementVoucherPaymentReasonService" parent="disbursementVoucherPaymentReasonService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherPaymentReasonServiceImpl" >
  	
-		<property name="disbursementVoucherPayeeService">
-			<ref bean="disbursementVoucherPayeeService" />
-		</property>
-	</bean>
+    <property name="disbursementVoucherPayeeService">
+      <ref bean="disbursementVoucherPayeeService" />
+    </property>
+  </bean>
 	
-	<bean id="disbursementPayeeLookupable"  parent="disbursementPayeeLookupable-parentBean" scope="prototype">
-		<property name="lookupableHelperService">
-			<ref bean="disbursementPayeeLookupableHelperService" />
-		</property>
-	</bean>
+  <bean id="disbursementPayeeLookupable"  parent="disbursementPayeeLookupable-parentBean" scope="prototype">
+    <property name="lookupableHelperService">
+      <ref bean="disbursementPayeeLookupableHelperService" />
+    </property>
+  </bean>
 	
-	<bean id="disbursementPayeeLookupableHelperService" parent="disbursementPayeeLookupableHelperService-parentBean" class="edu.cornell.kfs.fp.businessobject.lookup.CuDisbursementPayeeLookupableHelperServiceImpl" > 
+  <bean id="disbursementPayeeLookupableHelperService" parent="disbursementPayeeLookupableHelperService-parentBean" class="edu.cornell.kfs.fp.businessobject.lookup.CuDisbursementPayeeLookupableHelperServiceImpl" > 
 		
-		<property name="disbursementVoucherPaymentReasonService">
-			<ref bean="disbursementVoucherPaymentReasonService" />	
-		</property>
-		<property name="disbursementVoucherPayeeService">
-			<ref bean="disbursementVoucherPayeeService" />
-		</property>
-	</bean> 
+    <property name="disbursementVoucherPaymentReasonService">
+      <ref bean="disbursementVoucherPaymentReasonService" />	
+    </property>
+    <property name="disbursementVoucherPayeeService">
+      <ref bean="disbursementVoucherPayeeService" />
+    </property>
+  </bean> 
 
-	<bean id="disbursementVoucherTaxService"  parent="disbursementVoucherTaxService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherTaxServiceImpl"/>
+  <bean id="disbursementVoucherTaxService"  parent="disbursementVoucherTaxService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherTaxServiceImpl"/>
 	
-	<bean id="disbursementVoucherDao" class="edu.cornell.kfs.fp.dataaccess.impl.CuDisbursementVoucherDaoOjb" parent="platformAwareDao" />
+  <bean id="disbursementVoucherDao" class="edu.cornell.kfs.fp.dataaccess.impl.CuDisbursementVoucherDaoOjb" parent="platformAwareDao" />
 
+  <!-- KFSPTS-4030 -->
+  <bean id="procurementCardInputFileType" class="org.kuali.kfs.fp.batch.ProcurementCardInputFileType" parent="procurementCardInputFileType-parentBean"> 
+    <property name="directoryPath">
+      <value>${staging.directory}/fp/procurementCard</value>
+    </property>
+    <property name="fileExtension">
+      <value>xml</value>
+    </property>
+    <property name="digestorRulesFileName">
+      <value>edu/cornell/kfs/fp/batch/pcdoDigesterRules.xml</value>
+    </property>
+    <property name="schemaLocation">
+      <value>${externalizable.static.content.url}/xsd/fp/procurementCard.xsd</value>
+    </property>
+    <property name="dateTimeService">
+      <ref bean="dateTimeService"/>
+    </property>
+  </bean>
+
+  <bean id="procurementCardLoadTransactionsService" class="edu.cornell.kfs.fp.batch.service.impl.CuProcurementCardLoadTransactionsServiceImpl" parent="procurementCardLoadTransactionsService-parentBean">
+    <property name="businessObjectService">
+      <ref bean="businessObjectService" />
+    </property>
+    <property name="batchInputFileService">
+      <ref bean="batchInputFileService" />
+    </property>
+    <property name="procurementCardInputFileType">
+      <ref bean="procurementCardInputFileType" />
+    </property>
+    <property name="sequenceAccessorService">
+      <ref bean="sequenceAccessorService" />
+    </property>
+  </bean>
+
+  <bean id="procurementCardCreateDocumentService" class="edu.cornell.kfs.fp.batch.service.impl.CuProcurementCardCreateDocumentServiceImpl" parent="procurementCardCreateDocumentService-parentBean">
+    <property name="parameterService">
+      <ref bean="parameterService" />
+    </property>
+    <property name="businessObjectService">
+      <ref bean="businessObjectService" />
+    </property>
+    <property name="documentService">
+      <ref bean="documentService" />
+    </property>
+    <property name="dataDictionaryService">
+      <ref bean="dataDictionaryService" />
+    </property>
+    <property name="dateTimeService">
+      <ref bean="dateTimeService" />
+    </property>
+    <property name="workflowDocumentService">
+      <ref bean="workflowDocumentService" />
+    </property>
+    <property name="accountingLineRuleUtil">
+      <ref bean="accountingLineRuleHelperService" />
+    </property>
+    <property name="capitalAssetBuilderModuleService">
+      <ref bean="capitalAssetBuilderModuleService" />
+    </property>
+  </bean>
+  <!-- End KFSPTS-4030 -->
+
+  <!--  Validations -->
+  <bean id="AuxliaryVoucher-accountingDocumentSingleSubFundValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuAuxiliaryVoucherSingleSubFundValidation" abstract="true" />
     
-    <!--  Validations -->
-    <bean id="AuxliaryVoucher-accountingDocumentSingleSubFundValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuAuxiliaryVoucherSingleSubFundValidation" abstract="true" />
-    
-    <bean id="PreEncumbranceAutoDisEncumberValidation" class="edu.cornell.kfs.fp.document.validation.impl.PreEncumbranceAutoDisEncumberValidation" />
+  <bean id="PreEncumbranceAutoDisEncumberValidation" class="edu.cornell.kfs.fp.document.validation.impl.PreEncumbranceAutoDisEncumberValidation" />
 	<import resource="document/validation/configuration/FinancialProcessingValidators.xml" />
     <import resource="document/validation/configuration/CU-DisbursementVoucherValidation.xml" />
     <import resource="document/validation/configuration/PreEncumbranceValidation.xml" />
@@ -244,12 +299,12 @@
     <import resource="document/validation/configuration/YearEndJournalVoucherValidation.xml" />
     <import resource="document/validation/configuration/ProcurementCardValidation.xml" />
     
-    <bean id="procurementCardDocumentDao" parent="platformAwareDao" class="edu.cornell.kfs.fp.dataaccess.impl.ProcurementCardDocumentDaoOjb" />
+  <bean id="procurementCardDocumentDao" parent="platformAwareDao" class="edu.cornell.kfs.fp.dataaccess.impl.ProcurementCardDocumentDaoOjb" />
 
-    <!-- KFSPTS-1891 not sure why dependency are not injected-->
-    <bean id="cUPaymentMethodGeneralLedgerPendingEntryService" class="edu.cornell.kfs.fp.service.impl.CUPaymentMethodGeneralLedgerPendingEntryServiceImpl">
+  <!-- KFSPTS-1891 not sure why dependency are not injected-->
+  <bean id="cUPaymentMethodGeneralLedgerPendingEntryService" class="edu.cornell.kfs.fp.service.impl.CUPaymentMethodGeneralLedgerPendingEntryServiceImpl">
      
-    </bean>
+  </bean>
 
     <!-- KFSUPGRADE-973 -->
 	<bean id="disbursementVoucherExtractionHelperService" parent="disbursementVoucherExtractionHelperService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherExtractionHelperServiceImpl">

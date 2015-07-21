@@ -225,7 +225,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 				pdateSQL = new Date(pdate.getTime());
 			}
 
-			List<ProcurementCardDocument> pcdoList = procurementCardDocumentDao.getDocumentByCarhdHolderAmountDateVendor(receipt.getCardHolder(), receipt.getAmount(), pdateSQL);
+			List<ProcurementCardDocument> pcdoList = procurementCardDocumentDao.getDocumentByCardHolderAmountDateVendor(receipt.getCardHolder(), receipt.getAmount(), pdateSQL);
 			ProcurementCardDocument pcdo = null;
 
 			if (pcdoList.isEmpty()) {
@@ -340,7 +340,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 					pdateSQL = new Date(pdate.getTime());
 				}
 
-				List<ProcurementCardDocument> pcdoList = procurementCardDocumentDao.getDocumentByCarhdHolderNameAmountDateCardHolderNetID(receipt.getAmount(), pdateSQL, receipt.getCardHolderNetID());
+				List<ProcurementCardDocument> pcdoList = procurementCardDocumentDao.getDocumentByCardHolderNameAmountDateCardHolderNetID(receipt.getAmount(), pdateSQL, receipt.getCardHolderNetID());
 				ProcurementCardDocument pcdo = null;
 
 				if (pcdoList.isEmpty()) {

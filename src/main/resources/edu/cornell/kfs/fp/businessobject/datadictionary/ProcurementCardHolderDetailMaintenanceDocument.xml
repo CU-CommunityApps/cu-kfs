@@ -1,0 +1,106 @@
+<beans  xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:dd="http://rice.kuali.org/dd"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+              http://www.springframework.org/schema/beans/spring-beans-2.0.xsd    
+              http://rice.kuali.org/dd    
+              http://rice.kuali.org/dd/dd.xsd">
+
+  <bean id="ProcurementCardHolderDetailMaintenanceDocument" parent="ProcurementCardHolderDetailMaintenanceDocument-parentBean" />
+
+  <bean id="ProcurementCardHolderDetailMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.ProcurementCardHolderDetail" />
+    <property name="maintainableClass" value="org.kuali.rice.kns.maintenance.KualiMaintainableImpl" />
+    <property name="maintainableSections" >
+      <list>
+        <ref bean="ProcurementCardHolderDetailMaintenanceDocument-EditProcurementCardHolder" />
+      </list>
+    </property>
+    <property name="defaultExistenceChecks">    
+     <list>
+        <bean parent="ReferenceDefinition" p:attributeName="chartOfAccounts" p:attributeToHighlightOnFail="chartOfAccountsCode" />
+        <bean parent="ReferenceDefinition" p:attributeName="account"         p:attributeToHighlightOnFail="accountNumber" />
+        <bean parent="ReferenceDefinition" p:attributeName="subAccount"      p:attributeToHighlightOnFail="subAccountNumber" />
+        <bean parent="ReferenceDefinition" p:attributeName="objectCode"      p:attributeToHighlightOnFail="financialObjectCode" />
+        <bean parent="ReferenceDefinition" p:attributeName="subObjectCode"   p:attributeToHighlightOnFail="financialSubObjectCode" />
+        <bean parent="ReferenceDefinition" p:attributeName="organization"    p:attributeToHighlightOnFail="organizationCode"/>
+        <bean parent="ReferenceDefinition" p:attributeName="cardholderUser"  p:attributeToHighlightOnFail="cardholderUser.principalName" /> 
+     </list>      
+    </property>
+    <property name="lockingKeys" >
+      <list>
+        <value>creditCardNumber</value>
+      </list>
+    </property>   
+    <property name="documentTypeName" value="PCDH" />
+    <property name="businessRulesClass" value="edu.cornell.kfs.fp.document.validation.impl.ProcurementCardHolderDetailRule"/>
+    <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase" />
+    <property name="workflowAttributes">
+      <ref bean="ProcurementCardHolderDetailMaintenanceDocument-workflowAttributes" />
+    </property>
+  </bean>
+
+<!-- Maintenance Section Definitions -->
+
+  <bean id="ProcurementCardHolderDetailMaintenanceDocument-EditProcurementCardHolder" parent="ProcurementCardHolderDetailMaintenanceDocument-EditProcurementCardHolder-parentBean" />
+
+  <bean id="ProcurementCardHolderDetailMaintenanceDocument-EditProcurementCardHolder-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Edit PCDH Settings" />
+    <property name="title" value="Edit PCDH Settings" />
+    <property name="maintainableItems" >
+      <list>
+        <bean parent="MaintainableFieldDefinition" p:name="creditCardNumber" p:required="true" />              
+        <bean parent="MaintainableFieldDefinition" p:name="cardHolderName" p:required="false" />
+        <bean parent="MaintainableFieldDefinition" p:name="cardHolderAlternateName" p:required="false" />
+        <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true" />
+        <bean parent="MaintainableFieldDefinition" p:name="organizationCode" p:required="true" />
+        <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true" />
+        <bean parent="MaintainableFieldDefinition" p:name="subAccountNumber" p:required="false" />
+        <bean parent="MaintainableFieldDefinition" p:name="financialObjectCode" p:required="false"  />
+        <bean parent="MaintainableFieldDefinition" p:name="financialSubObjectCode" p:required="false"  />  
+        <bean parent="MaintainableFieldDefinition" p:name="cardHolderSystemId" p:unconditionallyReadOnly="true" p:required="true"  /> 
+        <bean parent="MaintainableFieldDefinition" p:name="cardholderUser.principalName" p:required="true" />               
+        <bean parent="MaintainableFieldDefinition" p:name="cardGroupId" p:unconditionallyReadOnly="true" p:required="true" />   
+        <bean parent="MaintainableFieldDefinition" p:name="reconcilerGroup.name" p:required="true" p:overrideFieldConversions="id:cardGroupId,name:reconcilerGroup.name" p:overrideLookupClass="org.kuali.rice.kim.api.group.Group" />
+        <bean parent="MaintainableFieldDefinition" p:name="cardLimit" p:required="false"  />  
+        <bean parent="MaintainableFieldDefinition" p:name="cardCycleAmountLimit" p:required="false"  />  
+        <bean parent="MaintainableFieldDefinition" p:name="cardCycleVolumeLimit" p:required="false"  />  
+        <bean parent="MaintainableFieldDefinition" p:name="cardStatusCode" p:required="false"  />  
+        <bean parent="MaintainableFieldDefinition" p:name="cardCancelCode" p:required="false"  />  
+        <bean parent="MaintainableFieldDefinition" p:name="cardNoteText" p:required="false"  />  
+        <bean parent="MaintainableFieldDefinition" p:name="cardCancelDate" p:required="false"  />  
+        <bean parent="MaintainableFieldDefinition" p:name="cardExpireDate" p:required="false"  /> 
+        <bean parent="MaintainableFieldDefinition" p:name="cardHolderLine1Address" p:required="false"  />
+        <bean parent="MaintainableFieldDefinition" p:name="cardHolderLine2Address" p:required="false"  /> 
+        <bean parent="MaintainableFieldDefinition" p:name="cardApprovalOfficial" p:required="false"  />
+      </list>
+    </property>
+  </bean>
+  
+  <!-- workflow attributes -->
+  <bean id="ProcurementCardHolderDetailMaintenanceDocument-workflowAttributes" parent="ProcurementCardHolderDetailMaintenanceDocument-workflowAttributes-parentBean" />
+  
+  <bean id="ProcurementCardHolderDetailMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true">
+    <property name="searchingTypeDefinitions">
+      <list>
+        <bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">                    
+          <property name="searchingAttribute">
+            <bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+              <property name="businessObjectClassName" value="edu.cornell.kfs.fp.businessobject.ProcurementCardHolderDetail"/>
+              <property name="attributeName" value="creditCardNumber"/>
+              <property name="showAttributeInSearchCriteria" value="false"/>
+              <property name="showAttributeInResultSet" value="false"/>
+            </bean>
+          </property>
+          <property name="documentValues">
+            <list>
+              <value>newMaintainableObject.businessObject.creditCardNumber</value>
+            </list>
+          </property>
+        </bean>             
+      </list>
+    </property>
+  </bean>
+  
+</beans>

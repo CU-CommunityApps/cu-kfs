@@ -19,6 +19,4 @@ public class CuFPConstants {
 
     public static final String PAYMENT_REASON = "payment reason";
     public static final String NON_EMPLOYEE_TRAVEL = "Non-Employee Travel";
-
-    
 }

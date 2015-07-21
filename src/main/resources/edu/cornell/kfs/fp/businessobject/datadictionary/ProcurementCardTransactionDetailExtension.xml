@@ -1,0 +1,121 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="ProcurementCardTransactionDetailExtension" parent="ProcurementCardTransactionDetailExtension-parentBean"/>
+	<bean id="ProcurementCardTransactionDetailExtension-parentBean" abstract="true" parent="BusinessObjectEntry">
+		<property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionDetailExtension" />
+	    <property name="titleAttribute" value="extension"/>
+    	<property name="objectLabel" value="Procurement Card Transaction Detail Extension"/>
+		<property name="attributes">
+			<list merge="true">
+        		<ref bean="ProcurementCardTransactionDetail-documentNumber"/>
+        		<ref bean="ProcurementCardTransactionDetail-financialDocumentTransactionLineNumber"/>
+				<ref bean="ProcurementCardTransactionDetailExtension-customerCode" />
+			</list>
+		</property>
+        <property name="collections">
+            <list merge="true">
+                <bean parent="CollectionDefinition" p:name="pcardDetails" p:label="PCard Details" p:shortLabel="PCard Details" p:elementLabel="PCard Details"/>
+                <bean parent="CollectionDefinition" p:name="pcardUserAmountDetails" p:label="PCard User Amount Details" p:shortLabel="PCard User Amount Details" p:elementLabel="PCard User Amount Details"/>
+                <bean parent="CollectionDefinition" p:name="passengerTransportDetails" p:label="Passenger Transport Details" p:shortLabel="Passenger Transport Details" p:elementLabel="Passenger Transport Details"/>
+                <bean parent="CollectionDefinition" p:name="passengerTransportLegDetails" p:label="Passenger Transport Leg Details" p:shortLabel="Passenger Transport Leg Details" p:elementLabel="Passenger Transport Leg Details"/>
+                <bean parent="CollectionDefinition" p:name="lodgingDetails" p:label="Lodging Details" p:shortLabel="Lodging Details" p:elementLabel="Lodging Details"/>
+                <bean parent="CollectionDefinition" p:name="rentalCarDetails" p:label="Rental Car Details" p:shortLabel="Rental Car Details" p:elementLabel="Rental Car Details"/>
+                <bean parent="CollectionDefinition" p:name="pcardGenericDetails" p:label="PCard Generic Details" p:shortLabel="PCard Generic Details" p:elementLabel="PCard Generic Details"/>
+                <bean parent="CollectionDefinition" p:name="fuelDetails" p:label="Fuel Details" p:shortLabel="Fuel Details" p:elementLabel="Fuel Details"/>
+                <bean parent="CollectionDefinition" p:name="nonFuelDetails" p:label="Non Fuel Details" p:shortLabel="Non Fuel Details" p:elementLabel="Non Fuel Details"/>
+            </list>
+        </property>
+    	<property name="relationships">
+	      	<list merge="true">
+		        <bean parent="RelationshipDefinition" p:objectAttributeName="pcardDetails" p:targetClass="edu.cornell.kfs.fp.businessobject.ProcurementCardDetail">
+		        	<property name="primitiveAttributes">
+		        		<list>
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="documentNumber" p:targetName="documentNumber" />
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="financialDocumentTransactionLineNumber" p:targetName="financialDocumentTransactionLineNumber" />
+		        		</list>
+		        	</property>
+		        </bean>
+		        <bean parent="RelationshipDefinition" p:objectAttributeName="pcardUserAmountDetails" p:targetClass="edu.cornell.kfs.fp.businessobject.ProcurementCardUserAmountDetail">
+		        	<property name="primitiveAttributes">
+		        		<list>
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="documentNumber" p:targetName="documentNumber" />
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="financialDocumentTransactionLineNumber" p:targetName="financialDocumentTransactionLineNumber" />
+		        		</list>
+		        	</property>
+		        </bean>
+		        <bean parent="RelationshipDefinition" p:objectAttributeName="passengerTransportDetails" p:targetClass="edu.cornell.kfs.fp.businessobject.PassengerTransportDetail">
+		        	<property name="primitiveAttributes">
+		        		<list>
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="documentNumber" p:targetName="documentNumber" />
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="financialDocumentTransactionLineNumber" p:targetName="financialDocumentTransactionLineNumber" />
+		        		</list>
+		        	</property>
+		        </bean>
+		        <bean parent="RelationshipDefinition" p:objectAttributeName="passengerTransportLegDetails" p:targetClass="edu.cornell.kfs.fp.businessobject.PassengerTransportLegDetail">
+		        	<property name="primitiveAttributes">
+		        		<list>
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="documentNumber" p:targetName="documentNumber" />
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="financialDocumentTransactionLineNumber" p:targetName="financialDocumentTransactionLineNumber" />
+		        		</list>
+		        	</property>
+		        </bean>
+		        <bean parent="RelationshipDefinition" p:objectAttributeName="lodgingDetails" p:targetClass="edu.cornell.kfs.fp.businessobject.LodgingDetail">
+		        	<property name="primitiveAttributes">
+		        		<list>
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="documentNumber" p:targetName="documentNumber" />
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="financialDocumentTransactionLineNumber" p:targetName="financialDocumentTransactionLineNumber" />
+		        		</list>
+		        	</property>
+		        </bean>
+		        <bean parent="RelationshipDefinition" p:objectAttributeName="rentalCarDetails" p:targetClass="edu.cornell.kfs.fp.businessobject.RentalCarDetail">
+		        	<property name="primitiveAttributes">
+		        		<list>
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="documentNumber" p:targetName="documentNumber" />
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="financialDocumentTransactionLineNumber" p:targetName="financialDocumentTransactionLineNumber" />
+		        		</list>
+		        	</property>
+		        </bean>
+		        <bean parent="RelationshipDefinition" p:objectAttributeName="pcardGenericDetails" p:targetClass="edu.cornell.kfs.fp.businessobject.ProcurementCardGenericDetail">
+		        	<property name="primitiveAttributes">
+		        		<list>
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="documentNumber" p:targetName="documentNumber" />
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="financialDocumentTransactionLineNumber" p:targetName="financialDocumentTransactionLineNumber" />
+		        		</list>
+		        	</property>
+		        </bean>
+		        <bean parent="RelationshipDefinition" p:objectAttributeName="fuelDetails" p:targetClass="edu.cornell.kfs.fp.businessobject.FuelDetail">
+		        	<property name="primitiveAttributes">
+		        		<list>
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="documentNumber" p:targetName="documentNumber" />
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="financialDocumentTransactionLineNumber" p:targetName="financialDocumentTransactionLineNumber" />
+		        		</list>
+		        	</property>
+		        </bean>
+		        <bean parent="RelationshipDefinition" p:objectAttributeName="nonFuelDetails" p:targetClass="edu.cornell.kfs.fp.businessobject.NonFuelDetail">
+		        	<property name="primitiveAttributes">
+		        		<list>
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="documentNumber" p:targetName="documentNumber" />
+		        			<bean parent="PrimitiveAttributeDefinition" p:sourceName="financialDocumentTransactionLineNumber" p:targetName="financialDocumentTransactionLineNumber" />
+		        		</list>
+		        	</property>
+		        </bean>
+        	</list>
+       	</property>
+	</bean>
+
+	<!-- Attribute Definitions -->
+
+	<bean id="ProcurementCardTransactionDetailExtension-customerCode" parent="ProcurementCardTransactionDetailExtension-customerCode-parentBean" />
+	<bean id="ProcurementCardTransactionDetailExtension-customerCode-parentBean" abstract="true" parent="AttributeDefinition">
+		<property name="name" value="customerCode" />
+		<property name="forceUppercase" value="false" />
+		<property name="label" value="Customer Code" />
+		<property name="shortLabel" value="Customer Code" />
+		<property name="maxLength" value="17" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="17" />
+		</property>
+	</bean>
+</beans>

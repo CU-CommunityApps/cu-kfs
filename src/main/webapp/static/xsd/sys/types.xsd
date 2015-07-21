@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  Copyright 2007-2008 The Kuali Foundation
- 
+
  Licensed under the Educational Community License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
- 
+
  http://www.opensource.org/licenses/ecl2.php
- 
+
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,7 +18,7 @@
     targetNamespace="http://www.kuali.org/kfs/sys/types"
     xmlns:kfs="http://www.kuali.org/kfs/sys/types"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-        
+
     <!-- simple data types -->
     <xsd:simpleType name="yearType">
         <xsd:restriction base="xsd:string">
@@ -26,56 +26,56 @@
             <xsd:pattern value="[0-9]{4}"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="transactionEntrySequenceType">
         <xsd:restriction base="xsd:string">
             <xsd:pattern value="[0-9]{1,5}"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="fdocNumberType">
         <xsd:restriction base="xsd:string">
             <xsd:pattern value="[A-Za-z0-9]{1,14}"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="fdocNumberTypeOptional">
         <xsd:restriction base="xsd:string">
             <xsd:pattern value="[A-Za-z0-9]{0,14}"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="campusPhoneType">
         <xsd:restriction base="xsd:string">
             <xsd:pattern value="[0-9]{1,10}"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneAlphaType">
         <xsd:restriction base="xsd:string">
             <xsd:pattern value="[A-Z]"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="twoAlphaType">
         <xsd:restriction base="xsd:string">
             <xsd:pattern value="[A-Z][A-Z]"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToFourAlphaType">
         <xsd:restriction base="xsd:string">
             <xsd:pattern value="[A-Z]{1,4}"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="detailsType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="0"/>
             <xsd:maxLength value="120"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="zeroToTwoCharType">
         <xsd:restriction base="xsd:string">
             <xsd:maxLength value="2"/>
@@ -88,183 +88,183 @@
             <xsd:maxLength value="2"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="twoCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="2"/>
             <xsd:maxLength value="2"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToThreeCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="3"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToFourCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="4"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="zeroToFourCharType">
         <xsd:restriction base="xsd:string">
             <xsd:maxLength value="4"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToEightCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="8"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="ZeroToEightCharType">
         <xsd:restriction base="xsd:string">
             <xsd:maxLength value="8"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToNineCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="9"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToTenCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="10"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToTwelveCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="12"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToFourteenCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="14"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToSixteenCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="16"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToTwentyCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="20"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="zeroToTwentyCharType">
         <xsd:restriction base="xsd:string">
             <xsd:maxLength value="20"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToTwentyOneCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="21"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToTwentyThreeCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="23"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToTwentyFiveCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="25"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToThirtyCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="30"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="zeroToThirtyCharType">
         <xsd:restriction base="xsd:string">
             <xsd:maxLength value="30"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToThirtyFiveCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="35"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToFortyCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="40"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToFortyFiveCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="45"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="zeroToFortyFiveCharType">
         <xsd:restriction base="xsd:string">
             <xsd:maxLength value="45"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToFiftyCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="50"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToFiftyFiveCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="55"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="zeroToFiftyFiveCharType">
         <xsd:restriction base="xsd:string">
             <xsd:maxLength value="55"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="oneToSeventyCharType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="70"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="zeroToNinetyCharType">
         <xsd:restriction base="xsd:string">
             <xsd:maxLength value="90"/>
@@ -278,7 +278,7 @@
 	    <!-- FIXME: add regex for email address -->
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="encumbranceUpdateCodeType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="R"/>
@@ -286,48 +286,48 @@
             <xsd:enumeration value=" "/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="debitCreditCodeType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="D"/>
             <xsd:enumeration value="C"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="accountType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="7"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="subAcctType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="5"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="objectType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="4"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="subObjectType">
         <xsd:restriction base="xsd:string">
             <xsd:minLength value="1"/>
             <xsd:maxLength value="3"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="amountType">
         <xsd:restriction base="xsd:decimal">
             <xsd:fractionDigits value="2"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="indicatorType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="Y"/>
@@ -335,5 +335,747 @@
         </xsd:restriction>
     </xsd:simpleType>
     <!-- definition of simple type elements -->
-    
+
+    <!-- KFSPTS-4030: Types associated with UConn Mod -->
+
+    <xsd:simpleType name="ProcurementCardTransaction.customerCode">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="17"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.ProcurementCard.productCode">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="12"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.ProcurementCard.itemDescription">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="35"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.ProcurementCard.itemQuantity">
+        <xsd:restriction base="xsd:integer">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.ProcurementCard.itemUnitOfMeasure">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="3"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.ProcurementCard.extendedItemAmount">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.ProcurementCard.debitCreditInd">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="1"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.ProcurementCard.netGrossIndicator">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="1"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.ProcurementCard.taxRateApplied">
+        <xsd:restriction base="xsd:decimal">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.ProcurementCard.taxTypeApplied">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="4"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.ProcurementCard.taxAmount">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.ProcurementCard.discountIndicator">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="1"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.ProcurementCard.discountAmount">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.ProcurementCardUserAmount.userAmount">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransport.passengerName">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="25"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransport.departureDate">
+        <xsd:restriction base="xsd:date">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransport.airportCode">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="5"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransport.travelAgencyCode">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="8"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransport.travelAgencyName">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="25"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransport.ticketNumber">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="15"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransport.customerCode">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="64"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransport.issueDate">
+        <xsd:restriction base="xsd:date">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransport.issuingCarrier">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="4"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransport.totalFare">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransport.totalFees">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransport.totalTaxes">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.tripLegNumber">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="2"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.carrierCode">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="2"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.serviceClass">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="2"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.stopOverCode">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="1"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.cityOfOrigin">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="5"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.conjunctionTicket">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="14"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.travelDate">
+        <xsd:restriction base="xsd:date">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.exchangeTicket">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="15"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.couponNumber">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="1"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.cityOfDestination">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="5"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.fareBaseCode">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="15"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.flightNumber">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="5"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.departureTime">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="4"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.departureTimeSegment">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="1"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.arrivalTime">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="4"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.arrivalTimeSegment">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="1"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.fare">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.fee">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.taxes">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.PassengerTransportLeg.endorsements">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="20"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Lodging.arrivalDate">
+        <xsd:restriction base="xsd:date">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Lodging.departureDate">
+        <xsd:restriction base="xsd:date">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Lodging.folioNumber">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="10"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Lodging.propertyPhoneNumber">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="25"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Lodging.customerServiceNumber">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="25"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Lodging.roomRate">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Lodging.roomTax">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Lodging.programCode">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="2"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Lodging.telephoneCharges">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Lodging.roomService">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Lodging.barCharges">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Lodging.giftShopCharges">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Lodging.laundryCharges">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Lodging.otherServicesCode">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="3"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Lodging.otherServicesCharges">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Lodging.billingAdjustmentIndicator">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="1"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Lodging.billingAdjustmentAmount">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.rentalAgreementNumber">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="9"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.renterName">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="20"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.rentalReturnCity">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="18"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.rentalReturnState">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="3"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.rentalReturnCountry">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="3"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.rentalReturnDate">
+        <xsd:restriction base="xsd:date">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.returnLocationId">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="10"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.customerServiceNumber">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="25"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.rentalClass">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="24"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.dailyRentalRate">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.ratePerMile">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.totalMiles">
+        <xsd:restriction base="xsd:integer">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.maxFreeMiles">
+        <xsd:restriction base="xsd:integer">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.insuranceIndicator">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="1"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.insuranceCharges">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.adjustedAmountIndicator">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="1"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.adjustedAmount">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.programCode">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="2"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.RentalCar.checkoutDate">
+        <xsd:restriction base="xsd:date">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Generic.genericAddendumData">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="131"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.oilCompanyBrand">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="4"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.merchantStreetAddress">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="35"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.merchantPostalCode">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="10"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.timeOfPurchase">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="4"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.motorFuelServiceType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="1"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.motorFuelProductCode">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="3"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.motorFuelUnitPrice">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.motorFuelUnitOfMeasure">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="1"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.motorFuelQuantity">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="5"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.motorFuelSaleAmount">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.odomoterReading">
+        <xsd:restriction base="xsd:integer">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.vehicleNumber">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="17"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.driverNumber">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="17"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.magneticStripeProductTypeCode">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="1"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.couponDiscountAmount">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.taxExemptAmount">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.taxAmount1">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.Fuel.taxAmount2">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.NonFuel.itemProductCode">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="12"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.NonFuel.itemDescription">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="35"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.NonFuel.itemQuantity">
+        <xsd:restriction base="xsd:integer">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.NonFuel.itemUnitOfMeasure">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="3"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.NonFuel.extendedItemAmount">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.NonFuel.discountIndicator">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="1"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.NonFuel.discountAmount">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.NonFuel.netGrossIndicator">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="1"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.NonFuel.taxRateApplied">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="5"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.NonFuel.taxTypeApplied">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="4"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.NonFuel.taxAmount">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.NonFuel.debitCreditInd">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="1"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProcurementCardTransaction.NonFuel.alternateTaxIdentifier">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="15"/>
+            <xsd:whiteSpace value="replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <!-- End KFSPTS-4030 -->
+
 </xsd:schema>

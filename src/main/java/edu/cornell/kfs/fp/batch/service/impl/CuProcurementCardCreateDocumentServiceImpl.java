@@ -11,7 +11,6 @@ import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.fp.batch.ProcurementCardCreateDocumentsStep;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
-import org.kuali.kfs.fp.businessobject.ProcurementCardHolder;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTargetAccountingLine;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
@@ -29,8 +28,8 @@ import org.kuali.rice.krad.util.ObjectUtils;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
 
 
-public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardCreateDocumentServiceImpl.class);
+public class CuProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl {
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuProcurementCardCreateDocumentServiceImpl.class);
     private static final int CARD_HOLDER_MAX_LENGTH = 15;
     private static int VENDOR_NAME_MAX_LENGTH = 19;
     private static final int CC_LAST_FOUR = 4;

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xmlns:p="http://www.springframework.org/schema/p" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans         
+	   http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <bean id="RentalCarRecord" parent="RentalCarRecord-parentBean"/>
+
+  <bean id="RentalCarRecord-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.RentalCarRecord"/>
+    <property name="objectLabel" value="Rental Car Record"/>
+    <property name="attributes">
+      <list>
+      	<ref bean="RentalCarRecord-rentalCarId"/>
+        <ref bean="RentalCarRecord-transactionSequenceRowNumber"/>
+        <ref bean="RentalCarRecord-rentalAgreementNumber"/>
+        <ref bean="RentalCarRecord-renterName"/>
+        <ref bean="RentalCarRecord-rentalReturnCity"/>
+        <ref bean="RentalCarRecord-rentalReturnState"/>
+        <ref bean="RentalCarRecord-rentalReturnCountry"/>
+        <ref bean="RentalCarRecord-rentalReturnDate"/>
+        <ref bean="RentalCarRecord-returnLocationId"/>
+        <ref bean="RentalCarRecord-customerServiceNumber"/>
+        <ref bean="RentalCarRecord-rentalClass"/>
+        <ref bean="RentalCarRecord-dailyRentalRate"/>
+        <ref bean="RentalCarRecord-ratePerMile"/>
+        <ref bean="RentalCarRecord-totalMiles"/>
+        <ref bean="RentalCarRecord-maxFreeMiles"/>
+        <ref bean="RentalCarRecord-insuranceIndicator"/>
+        <ref bean="RentalCarRecord-insuranceCharges"/>
+        <ref bean="RentalCarRecord-adjustedAmountIndicator"/>
+        <ref bean="RentalCarRecord-adjustedAmount"/>
+        <ref bean="RentalCarRecord-programCode"/>
+        <ref bean="RentalCarRecord-checkoutDate"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="RentalCarRecord-rentalCarId" parent="RentalCarRecord-rentalCarId-parentBean" />
+  <bean id="RentalCarRecord-rentalCarId-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="rentalCarId" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="9" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="9"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-transactionSequenceRowNumber" parent="RentalCarRecord-transactionSequenceRowNumber-parentBean" />
+  <bean id="RentalCarRecord-transactionSequenceRowNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="transactionSequenceRowNumber" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="9" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="9"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-rentalAgreementNumber" parent="RentalCarRecord-rentalAgreementNumber-parentBean" />
+  <bean id="RentalCarRecord-rentalAgreementNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="rentalAgreementNumber" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="9" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="9"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-renterName" parent="RentalCarRecord-renterName-parentBean" />
+  <bean id="RentalCarRecord-renterName-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="renterName" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="20" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="20"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-rentalReturnCity" parent="RentalCarRecord-rentalReturnCity-parentBean" />
+  <bean id="RentalCarRecord-rentalReturnCity-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="rentalReturnCity" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="18" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="18"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-rentalReturnState" parent="RentalCarRecord-rentalReturnState-parentBean" />
+  <bean id="RentalCarRecord-rentalReturnState-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="rentalReturnState" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="3" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="3"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-rentalReturnCountry" parent="RentalCarRecord-rentalReturnCountry-parentBean" />
+  <bean id="RentalCarRecord-rentalReturnCountry-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="rentalReturnCountry" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="3" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="3"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-rentalReturnDate" parent="RentalCarRecord-rentalReturnDate-parentBean" />
+  <bean id="RentalCarRecord-rentalReturnDate-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="rentalReturnDate" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="8" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="8"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-returnLocationId" parent="RentalCarRecord-returnLocationId-parentBean" />
+  <bean id="RentalCarRecord-returnLocationId-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="returnLocationId" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="10" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="10"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-customerServiceNumber" parent="RentalCarRecord-customerServiceNumber-parentBean" />
+  <bean id="RentalCarRecord-customerServiceNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="customerServiceNumber" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="25" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="25"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-rentalClass" parent="RentalCarRecord-rentalClass-parentBean" />
+  <bean id="RentalCarRecord-rentalClass-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="rentalClass" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="2" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="2"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-dailyRentalRate" parent="RentalCarRecord-dailyRentalRate-parentBean" />
+  <bean id="RentalCarRecord-dailyRentalRate-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="dailyRentalRate" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-ratePerMile" parent="RentalCarRecord-ratePerMile-parentBean" />
+  <bean id="RentalCarRecord-ratePerMile-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="ratePerMile" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-totalMiles" parent="RentalCarRecord-totalMiles-parentBean" />
+  <bean id="RentalCarRecord-totalMiles-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="totalMiles" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="6" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="6"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-maxFreeMiles" parent="RentalCarRecord-maxFreeMiles-parentBean" />
+  <bean id="RentalCarRecord-maxFreeMiles-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="maxFreeMiles" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="6" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="6"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-insuranceIndicator" parent="RentalCarRecord-insuranceIndicator-parentBean" />
+  <bean id="RentalCarRecord-insuranceIndicator-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="insuranceIndicator" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="1"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-insuranceCharges" parent="RentalCarRecord-insuranceCharges-parentBean" />
+  <bean id="RentalCarRecord-insuranceCharges-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="insuranceCharges" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-adjustedAmountIndicator" parent="RentalCarRecord-adjustedAmountIndicator-parentBean" />
+  <bean id="RentalCarRecord-adjustedAmountIndicator-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="adjustedAmountIndicator" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="1"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-adjustedAmount" parent="RentalCarRecord-adjustedAmount-parentBean" />
+  <bean id="RentalCarRecord-adjustedAmount-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="adjustedAmount" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="16"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-programCode" parent="RentalCarRecord-programCode-parentBean" />
+  <bean id="RentalCarRecord-programCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="programCode" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="2" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="2"/>
+    </property>
+  </bean>
+  
+  <bean id="RentalCarRecord-checkoutDate" parent="RentalCarRecord-checkoutDate-parentBean" />
+  <bean id="RentalCarRecord-checkoutDate-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="checkoutDate" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="8" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="8"/>
+    </property>
+  </bean>
+  
+</beans>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <bean id="MasterCardTransactionDetailAddendum7" parent="MasterCardTransactionDetailAddendum7-parentBean"/>
+
+  <bean id="MasterCardTransactionDetailAddendum7-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.MasterCardTransactionDetailAddendum7"/>
+    <property name="objectLabel" value="Master Card Transaction Detail Addemdum 7"/>
+    <property name="attributes">
+      <list>
+        <ref bean="TransactionDetail-recordType"/>
+        <ref bean="TransactionDetail-filler7"/>
+        <ref bean="TransactionDetail-addendumType"/>
+        <ref bean="TransactionDetail-filler8"/>
+        <ref bean="TransactionDetail-merchantAddress"/>
+        <ref bean="TransactionDetail-filler9"/>
+        <ref bean="TransactionDetail-corporationName"/>
+        <ref bean="TransactionDetail-filler10"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetail-recordType" parent="TransactionDetail-recordType-parentBean" />
+  <bean id="TransactionDetail-recordType-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="recordType" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="4" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="4"/>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetail-filler7" parent="TransactionDetail-filler7-parentBean" />
+  <bean id="TransactionDetail-filler7-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="filler7" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="35" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="35"/>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetail-addendumType" parent="TransactionDetail-addendumType-parentBean" />
+  <bean id="TransactionDetail-addendumType-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="addendumType" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="3" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="3"/>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetail-filler8" parent="TransactionDetail-filler8-parentBean" />
+  <bean id="TransactionDetail-filler8-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="filler8" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="23" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="23"/>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetail-merchantAddress" parent="TransactionDetail-merchantAddress-parentBean" />
+  <bean id="TransactionDetail-merchantAddress-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="merchantAddress" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="25" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="25"/>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetail-filler9" parent="TransactionDetail-filler9-parentBean" />
+  <bean id="TransactionDetail-filler9-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="filler9" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="50" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="50"/>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetail-corporationName" parent="TransactionDetail-corporationName-parentBean" />
+  <bean id="TransactionDetail-corporationName-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="corporationName" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="25" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="25"/>
+    </property>
+  </bean>
+
+  <bean id="TransactionDetail-filler10" parent="TransactionDetail-filler10-parentBean" />
+  <bean id="TransactionDetail-filler10-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="filler10" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="1"/>
+    </property>
+  </bean>
+
+</beans>

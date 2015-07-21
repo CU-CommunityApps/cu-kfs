@@ -2,8 +2,10 @@ package edu.cornell.kfs.fp.document;
 
 import java.sql.Date;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.kuali.kfs.fp.batch.ProcurementCardLoadStep;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
@@ -18,11 +20,20 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants.COMPONENT;
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
+import org.kuali.rice.kew.api.KewApiConstants;
+import org.kuali.rice.kew.api.action.ActionTaken;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.fp.businessobject.ProcurementCardSourceAccountingLine;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTargetAccountingLine;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
 
 import edu.cornell.kfs.fp.batch.ProcurementCardParameterConstants;
+import edu.cornell.kfs.fp.businessobject.CuProcurementCardHolder;
 
 @NAMESPACE(namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL)
 @COMPONENT(component = "ProcurementCard")
@@ -30,6 +41,7 @@ public class CuProcurementCardDocument extends ProcurementCardDocument {
 
     private static final long serialVersionUID = 1L;
     private static final String FINAL_ACCOUNTING_PERIOD = "13";
+    private static final String HAS_RECONCILER_NODE = "HasReconciler";
     
     /**
      * @return the previous fiscal year used with all GLPE
@@ -182,4 +194,76 @@ public class CuProcurementCardDocument extends ProcurementCardDocument {
         return new StringBuffer(super.getDocumentTitle()).append(" - Amount: ").append(pcdoAmount).toString();
 
     }
+    
+    @Override
+    public void prepareForSave()
+    {
+      List<CapitalAssetInformation> caiList = getCapitalAssetInformation();
+
+      if (caiList != null)
+      {
+        for (CapitalAssetInformation cai : caiList)
+        {
+          cai.setDocumentNumber(this.getDocumentNumber());
+        }
+      }
+      super.prepareForSave();
+    }
+
+    /**
+     * Answers true when invoice recurrence details are provided by the user
+     *
+     * @see org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase#answerSplitNodeQuestion(java.lang.String)
+     */
+    @Override
+    public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException
+    {
+      if (HAS_RECONCILER_NODE.equalsIgnoreCase(nodeName))
+      {
+        return hasReconciler();
+      }
+          return super.answerSplitNodeQuestion(nodeName);
+    }
+
+    /**
+     * Determines whether this document has a Recurrence filled out enough to create an INVR doc.
+     *
+     * @return
+     */
+    private boolean hasReconciler()
+    {
+      CuProcurementCardHolder cardHolder = (CuProcurementCardHolder) getProcurementCardHolder();
+      return (ObjectUtils.isNotNull(cardHolder)
+        && ObjectUtils.isNotNull(cardHolder.getProcurementCardHolderDetail())
+        && ObjectUtils.isNotNull(cardHolder.getProcurementCardHolderDetail().getCardGroupId()));
+    }
+
+    /**
+     * Copied from Rice 1 WorkflowDocumentImpl because functionality was removed from rice.
+     *
+     * @return
+     * @throws WorkflowException
+     */
+    public Set<Person> getAllPriorApprovers() throws WorkflowException
+    {
+      PersonService personService = KimApiServiceLocator.getPersonService();
+      List<ActionTaken> actionsTaken = getDocumentHeader().getWorkflowDocument().getActionsTaken();
+      Set<String> principalIds = new HashSet<String>();
+      Set<Person> persons = new HashSet<Person>();
+
+      for (ActionTaken actionTaken : actionsTaken)
+      {
+        if (KewApiConstants.ACTION_TAKEN_APPROVED_CD.equals(actionTaken.getActionTaken().getCode()))
+        {
+          String principalId = actionTaken.getPrincipalId();
+          if ( ! principalIds.contains(principalId))
+          {
+            principalIds.add(principalId);
+            persons.add(personService.getPerson(principalId));
+          }
+        }
+      }
+      return persons;
+    }
+
 }
