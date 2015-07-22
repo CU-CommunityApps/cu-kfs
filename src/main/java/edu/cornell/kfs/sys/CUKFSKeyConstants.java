@@ -119,4 +119,9 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
 	    // KFSPTS-3933
 	    public static final String ERROR_AWARD_ACCOUNT_ALREADY_IN_USE = "error.award.awardAccount.alreadyInUse";
 
+        // KFSPTS-4337
+        public static final String QUESTION_ACCOUNT_OFF_CAMPUS_INDICATOR = "question.coa.account.confirm.offCampusIndicator";
+        public static final String QUESTION_A21SUBACCOUNT_OFF_CAMPUS_INDICATOR = "question.coa.a21subaccount.confirm.offCampusIndicator";
+	// KFSPTS-4366
+    public static final String QUESTION_CLEAR_UNNEEDED_WIRE_TAB = "question.dv.clearUnneededWireTab";
 }
