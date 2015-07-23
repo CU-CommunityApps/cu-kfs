@@ -3,15 +3,8 @@ package edu.cornell.kfs.coa.document.validation.impl;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.A21SubAccount;
 import org.kuali.kfs.coa.document.validation.impl.SubAccountRule;
-import org.kuali.kfs.coa.service.SubFundGroupService;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.krad.util.ObjectUtils;
-
-import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuSubAccountRule extends SubAccountRule {
 
@@ -47,27 +40,7 @@ public class CuSubAccountRule extends SubAccountRule {
                 success &= false;
             }
         }
-
-        return success;
-    }
-
-    /**
-     * This method tests if all fields in the ICR section are empty.
-     *
-     * @return true if the ICR values passed in are empty, otherwise false.
-     */
-    @Override
-    protected boolean checkCgIcrIsEmpty() {
-        boolean success = true;
-
-        A21SubAccount newA21SubAccount = newSubAccount.getA21SubAccount();
-        if (ObjectUtils.isNotNull(newA21SubAccount)) {
-            success &= StringUtils.isEmpty(newA21SubAccount.getFinancialIcrSeriesIdentifier());
-
-            success &= checkICRCollectionExist(false);
-            success &= StringUtils.isEmpty(newA21SubAccount.getIndirectCostRecoveryTypeCode());
-        }
-
+        
         return success;
     }
 

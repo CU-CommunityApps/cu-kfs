@@ -1,17 +1,13 @@
 package edu.cornell.kfs.coa.document.validation.impl;
 
-import java.text.MessageFormat;
-
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.A21IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.businessobject.A21SubAccount;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.document.validation.impl.SubAccountPreRules;
-import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.document.authorization.MaintenanceDocumentRestrictions;
@@ -19,22 +15,7 @@ import org.kuali.rice.kns.service.BusinessObjectAuthorizationService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.fp.businessobject.PaymentMethod;
-import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.module.purap.businessobject.CreditMemoWireTransfer;
-import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
-import edu.cornell.kfs.sys.CUKFSKeyConstants;
-
 public class CuSubAccountPreRules extends SubAccountPreRules {
-
-  @SuppressWarnings("deprecation")
-  protected boolean doCustomPreRules(MaintenanceDocument document) {
-    boolean preRulesOK = super.doCustomPreRules(document);
-    preRulesOK &= checkOffCampus(document);
-    return preRulesOK;
-  }
-
-    @SuppressWarnings("deprecation")
     protected void copyICRFromAccount(MaintenanceDocument document) {
         Person user = GlobalVariables.getUserSession().getPerson();
 
@@ -58,6 +39,7 @@ public class CuSubAccountPreRules extends SubAccountPreRules {
                     }
                     if (StringUtils.isBlank(a21SubAccount.getFinancialIcrSeriesIdentifier())) {
                         a21SubAccount.setFinancialIcrSeriesIdentifier(account.getFinancialIcrSeriesIdentifier());
+                        a21SubAccount.setOffCampusCode(account.isAccountOffCampusIndicator());
                     }
                     if (StringUtils.isBlank(a21SubAccount.getIndirectCostRecoveryTypeCode())) {
                         a21SubAccount.setIndirectCostRecoveryTypeCode(account.getAcctIndirectCostRcvyTypeCd());
@@ -67,23 +49,4 @@ public class CuSubAccountPreRules extends SubAccountPreRules {
         }
     }
 
-    @SuppressWarnings("deprecation")
-    protected boolean checkOffCampus(MaintenanceDocument saccDoc) {
-      boolean continueRules = true;
-      boolean saccOffCampus = newSubAccount.getA21SubAccount().getOffCampusCode();
-
-      if (saccOffCampus) {
-        String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.QUESTION_A21SUBACCOUNT_OFF_CAMPUS_INDICATOR);
-
-        boolean leaveAsIs = super.askOrAnalyzeYesNoQuestion(KFSConstants.A21SubAccountDocumentConstants.OFF_CAMPUS_INDICATOR_QUESTION_ID, questionText);
-
-        if (!leaveAsIs) {
-          // return to document if the user doesn't want to clear the indicator
-          super.event.setActionForwardName(KFSConstants.MAPPING_BASIC);
-          continueRules = false;
-        }
-      }
-
-      return continueRules;
-    }
 }

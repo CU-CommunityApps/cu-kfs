@@ -20,7 +20,6 @@
     <property name="maintainableClass" value="edu.cornell.kfs.coa.document.CUAccountMaintainableImpl"/>
     <property name="businessRulesClass" value="edu.cornell.kfs.coa.document.validation.impl.AccountExtensionRule"/>
     <property name="workflowAttributes" ref="AccountMaintenanceDocument-workflowAttributes"/>
-    <property name="promptBeforeValidationClass" value="edu.cornell.kfs.coa.document.validation.impl.CuAccountPreRules"/>
   </bean>
 
    <!-- Maintenance Section Definitions -->    

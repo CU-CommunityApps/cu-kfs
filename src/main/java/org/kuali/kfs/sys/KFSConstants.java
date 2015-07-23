@@ -711,14 +711,6 @@ public class KFSConstants {
         public static final String CLEAR_FOREIGN_DRAFT_TAB_QUESTION_ID = "ClearForeignDraftTabQuestion";
     }
 
-    public static class A21SubAccountDocumentConstants {
-        public static final String OFF_CAMPUS_INDICATOR_QUESTION_ID = "OffCampusIndicatorQuestion";
-    }
-
-    public static class AccountDocumentConstants {
-        public static final String OFF_CAMPUS_INDICATOR_QUESTION_ID = "OffCampusIndicatorQuestion";
-    }
-
     public static final String ACCOUNTING_LINE_IMPORT_MAX_FILE_SIZE_PARM_NM = "MAX_FILE_SIZE_ACCOUNTING_LINE_IMPORT";
     public static final String ORIGIN_ENTRY_IMPORT_MAX_FILE_SIZE_PARM_NM = "MAX_FILE_SIZE_ORIGIN_ENTRY_IMPORT";
 
