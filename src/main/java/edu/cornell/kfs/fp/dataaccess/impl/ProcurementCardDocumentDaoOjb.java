@@ -18,7 +18,7 @@ public class ProcurementCardDocumentDaoOjb extends PlatformAwareDaoBaseOjb imple
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardDocumentDaoOjb.class);
 	private static final String WILD_CARD = "%";			
 	
-	public List<ProcurementCardDocument> getDocumentByCardHolderAmountDateVendor(String cardHolder, String amount, Date transactionDate) {
+	public List<ProcurementCardDocument> getDocumentByCarhdHolderAmountDateVendor(String cardHolder, String amount, Date transactionDate) {
 
         LOG.debug("getDocumentByAmountDateVendor() started");
 		
@@ -49,11 +49,11 @@ public class ProcurementCardDocumentDaoOjb extends PlatformAwareDaoBaseOjb imple
 	}
 
 	/**
-	 * @see edu.cornell.kfs.fp.dataaccess.ProcurementCardDocumentDao#getDocumentByCardHolderNameAmountDateCardHolderNetID(java.lang.String, java.sql.Date, java.lang.String)
+	 * @see edu.cornell.kfs.fp.dataaccess.ProcurementCardDocumentDao#getDocumentByCarhdHolderNameAmountDateCardHolderNetID(java.lang.String, java.sql.Date, java.lang.String)
 	 */
 	@Override
-	public List<ProcurementCardDocument> getDocumentByCardHolderNameAmountDateCardHolderNetID(String amount, Date transactionDate, String cardHolderNetID) {
-		 LOG.debug("getDocumentByCardHolderNameAmountDateCardHolderNetID() started");
+	public List<ProcurementCardDocument> getDocumentByCarhdHolderNameAmountDateCardHolderNetID(String amount, Date transactionDate, String cardHolderNetID) {
+		 LOG.debug("getDocumentByCarhdHolderNameAmountDateCardHolderNetID() started");
 			
 			if (StringUtils.isBlank(amount) || transactionDate == null || StringUtils.isBlank(cardHolderNetID)) {
 				LOG.error("Unable to validate input");
@@ -78,7 +78,7 @@ public class ProcurementCardDocumentDaoOjb extends PlatformAwareDaoBaseOjb imple
 	 */
 	@Override
 	public List<ProcurementCardDocument> getDocumentByEdocNumber(String edocNumber) {
-		LOG.debug("getDocumentByCardHolderNameAmountDateCardHolderNetID() started");
+		LOG.debug("getDocumentByCarhdHolderNameAmountDateCardHolderNetID() started");
 			
 			if (StringUtils.isBlank(edocNumber)) {
 				LOG.error("Unable to validate input");
