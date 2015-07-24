@@ -248,13 +248,6 @@ protected List<DisbursementPayee> getVendorsAsPayees(Map<String, String> fieldVa
         DisbursementPayee payee =  ((CuDisbursementVoucherPayeeService)disbursementVoucherPayeeService).getPayeeFromPerson(personDetail, payeeTypeCode);
         payee.setPaymentReasonCode(fieldValues.get(KFSPropertyConstants.PAYMENT_REASON_CODE));
 
-        //KFSMI-5497
-        //get the attributeSecurity property and unmask the field so that on results screen, it will set as blank.
-        DataDictionaryService dataDictionaryService = SpringContext.getBean(DataDictionaryService.class);
-        AttributeSecurity attributeSecurity =  dataDictionaryService.getAttributeSecurity(CuDisbursementPayee.class.getName(), "taxNumber");
-        if (attributeSecurity != null) {
-            attributeSecurity.setMask(false);
-        }
         return (CuDisbursementPayee) payee;
     }
     
@@ -287,14 +280,6 @@ protected List<DisbursementPayee> getVendorsAsPayees(Map<String, String> fieldVa
     protected CuDisbursementPayee getPayeeFromVendor(VendorDetail vendorDetail, Map<String, String> fieldValues) {
         CuDisbursementPayee payee =  ((CuDisbursementVoucherPayeeService)disbursementVoucherPayeeService).getPayeeFromVendor(vendorDetail);
         payee.setPaymentReasonCode(fieldValues.get(KFSPropertyConstants.PAYMENT_REASON_CODE));
-
-        //KFSMI-5497
-        //get the attributeSecurity property and mask the field so that on results screen will be shown masked.
-        DataDictionaryService dataDictionaryService = SpringContext.getBean(DataDictionaryService.class);
-        AttributeSecurity attributeSecurity =  dataDictionaryService.getAttributeSecurity(CuDisbursementPayee.class.getName(), "taxNumber");
-        if (attributeSecurity != null) {
-            attributeSecurity.setMask(true);
-        }
 
         return payee;
     }
