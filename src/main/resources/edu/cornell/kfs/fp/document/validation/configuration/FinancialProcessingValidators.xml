@@ -30,6 +30,8 @@
 	<bean id="DisbursementVoucher-bankCodeValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherBankCodeValidation" abstract="true" />
 	    
 	<bean id="YearEndJournalVoucher-accountingLinesBalanceValidation" class="edu.cornell.kfs.fp.document.validation.impl.YearEndJournalVoucherAccountingLinesBalanceValidation" abstract="true" />
+
+	<bean id="NonCheckDisbursement-documentAmountValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuNonCheckDisbursementDocumentAmountValidation" abstract="true" />
 	
 	
 	<bean id="DisbursementVoucher-paymentReasonValidation" class="org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherPaymentReasonValidation" abstract="true" >
