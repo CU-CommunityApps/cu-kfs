@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <!-- Overridden to add positive-total-amount validation to ND docs. -->
+    <bean id="NonCheckDisbursement-routeDocumentValidation" parent="NonCheckDisbursement-routeDocumentValidation-parentBean" scope="prototype">
+        <property name="validations">
+            <list merge="true">
+                <bean parent="NonCheckDisbursement-documentAmountValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion" />
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Overridden to allow negative line amounts on ND docs. The new route-document validation will ensure that the total is positive. -->
+    <bean id="NonCheckDisbursement-addAccountingLineValidation" parent="NonCheckDisbursement-addAccountingLineValidation-parentBean" scope="prototype">
+        <property name="validations">
+            <!-- Removed the positive-account-amount validation, meaning we cannot use merge="true" on this list. -->
+            <list>
+                <bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <bean parent="validationFieldConversion">
+                            <property name="sourceEventProperty" value="accountingLine" />
+                            <property name="targetValidationProperty" value="businessObjectForValidation" />
+                        </bean>
+                    </property>
+                    <property name="quitOnFail" value="true" />
+                </bean>
+                <bean parent="AccountingDocument-accountingLineDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingLineFieldConversion" />
+                        </list>
+                    </property>
+                    <property name="quitOnFail" value="true" />
+                </bean>
+                <bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
+                    <property name="accountingDocumentParameterPropertyName" value="document" />
+                    <property name="accountingLineParameterPropertyName" value="accountingLine" />
+                </bean>
+                <bean parent="AccountingDocument-accountingLineAccessibleValidation" scope="prototype">
+                    <property name="parameterProperties">
+                      <list>
+                          <bean parent="accountingDocumentFieldConversion" />
+                          <bean parent="accountingLineFieldConversion" />
+                      </list>
+                  </property>
+                </bean>
+                <bean parent="AccountingDocument-accountingLineDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingLineFieldConversion" />
+                        </list>
+                    </property>
+                    <property name="quitOnFail" value="true" />
+                </bean>
+                <bean parent="NonCheckDisbursement-requiredReferenceFieldValidation" scope="prototype" >
+                    <property name="parameterProperties">
+                         <list>
+                              <bean parent="accountingLineFieldConversion" />
+                         </list> 
+                     </property>
+                </bean> 
+            </list>
+        </property>
+    </bean>
+
+    <!-- Overridden to allow negative line amounts on ND docs. The new route-document validation will ensure that the total is positive. -->
+    <bean id="NonCheckDisbursement-updateAccountingLineValidation" parent="NonCheckDisbursement-updateAccountingLineValidation-parentBean" scope="prototype">
+        <property name="validations">
+            <!-- Removed the positive-account-amount validation, meaning we cannot use merge="true" on this list. -->
+            <list>
+                <bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <bean parent="validationFieldConversion">
+                            <property name="sourceEventProperty" value="updatedAccountingLine" />
+                            <property name="targetValidationProperty" value="businessObjectForValidation" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean parent="AccountingDocument-accountingLineDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="updatedAccountingLineFieldConversion" />
+                        </list>
+                    </property>
+                    <property name="quitOnFail" value="true" />
+                </bean>
+                <bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
+                    <property name="accountingDocumentParameterPropertyName" value="document" />
+                    <property name="accountingLineParameterPropertyName" value="updatedAccountingLine" />
+                </bean>
+                <bean parent="AccountingDocument-accountingLineAccessibleValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion" />
+                            <bean parent="updatedAccountingLineFieldConversion" />
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="NonCheckDisbursement-requiredReferenceFieldValidation" scope="prototype" >
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="updatedAccountingLineFieldConversion" />
+                        </list> 
+                    </property>
+                </bean>
+            </list> 
+        </property>
+    </bean>
+
+    <!-- Overridden to allow negative line amounts on ND docs. The new route-document validation will ensure that the total is positive. -->
+    <bean id="NonCheckDisbursement-reviewAccountingLineValidation" parent="NonCheckDisbursement-reviewAccountingLineValidation-parentBean" scope="prototype">
+        <property name="validations">
+            <!-- Removed the positive-account-amount validation, meaning we cannot use merge="true" on this list. -->
+            <list>
+                <bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <bean parent="validationFieldConversion">
+                            <property name="sourceEventProperty" value="accountingLine" />
+                            <property name="targetValidationProperty" value="businessObjectForValidation" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean parent="AccountingDocument-accountingLineDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingLineFieldConversion" />
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
+                    <property name="accountingDocumentParameterPropertyName" value="document" />
+                    <property name="accountingLineParameterPropertyName" value="accountingLine" />
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+</beans>
