@@ -319,7 +319,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
         
     	for (ReceiptProcessing receipt  : receipts) {   
 			boolean matchOnly = StringUtils.isNotBlank(receipt.getCardHolder()) && StringUtils.isNotBlank(receipt.getAmount()) && StringUtils.isNotBlank(receipt.getPurchasedate()) && StringUtils.isBlank(receipt.getFilePath()) && StringUtils.isBlank(receipt.getFilename());
-			boolean attachOnly = StringUtils.isNotBlank(receipt.getSourceUniqueID()) && StringUtils.isNotBlank(receipt.geteDocNumber());
+			boolean attachOnly = StringUtils.isNotBlank(receipt.getSourceUniqueID()) && StringUtils.isNotBlank(receipt.getFilePath()) && StringUtils.isNotBlank(receipt.getFilename());
 
 			if (matchOnly) {
 				java.util.Date pdate = null;
@@ -343,7 +343,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 				List<ProcurementCardDocument> pcdoList = procurementCardDocumentDao.getDocumentByCarhdHolderNameAmountDateCardHolderNetID(receipt.getAmount(), pdateSQL, receipt.getCardHolderNetID());
 				ProcurementCardDocument pcdo = null;
 
-				if (pcdoList.isEmpty()) {
+				if (ObjectUtils.isNull(pcdoList) || pcdoList.isEmpty()) {
 					processResults.append(receipt.noMatch(true));
 					continue;
 				}
@@ -366,7 +366,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 				List<ProcurementCardDocument> pcdoList = procurementCardDocumentDao.getDocumentByEdocNumber(receipt.geteDocNumber());
 				ProcurementCardDocument pcdo = null;
 
-				if (pcdoList.isEmpty()) {
+				if (ObjectUtils.isNull(pcdoList) || pcdoList.isEmpty()) {
 					processResults.append(receipt.attachOnlyError());
 					continue;
 				}
@@ -432,6 +432,10 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 					processResults.append(receipt.match( "8", true));
 				}
 
+			}
+			
+			if(!matchOnly && !attachOnly){
+				LOG.info("Invalid input data does not meet either match only nor attach only conditions: " + receipt.returnBoLine(true));
 			}
 		}
     	
