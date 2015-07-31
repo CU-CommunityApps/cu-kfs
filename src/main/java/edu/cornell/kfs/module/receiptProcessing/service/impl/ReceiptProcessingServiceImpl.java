@@ -228,7 +228,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 			List<ProcurementCardDocument> pcdoList = procurementCardDocumentDao.getDocumentByCarhdHolderAmountDateVendor(receipt.getCardHolder(), receipt.getAmount(), pdateSQL);
 			ProcurementCardDocument pcdo = null;
 
-			if (pcdoList.isEmpty()) {
+			if (ObjectUtils.isNull(pcdoList) || pcdoList.isEmpty()) {
 				processResults.append(receipt.noMatch(false));
 				continue;
 			}
