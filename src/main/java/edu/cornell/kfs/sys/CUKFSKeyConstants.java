@@ -127,4 +127,7 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
 
     // KFSPTS-4388
     public static final String ERROR_ZERO_OR_NEGATIVE_ACCOUNTING_TOTAL = "error.document.accountingtotal.zeroOrNegative";
+
+    // KFSPTS-4438
+    public static final String ERROR_DOCUMENT_DV_BLANK_STATE_AND_COUNTRY = "error.document.dv.blank.state.and.country";
 }
