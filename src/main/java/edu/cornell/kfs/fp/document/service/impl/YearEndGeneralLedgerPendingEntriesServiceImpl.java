@@ -13,6 +13,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
+import org.kuali.kfs.coa.businessobject.OffsetDefinition;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.coa.service.ObjectTypeService;
@@ -576,10 +577,11 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
 	 */
 	public GeneralLedgerPendingEntry generateBBCashOffset(AccountingDocumentBase document, AccountingLine accountingLine, Integer sequenceNumber, String documentTypeCode, Integer fiscalYear, Date reversalDate){
 		
-		String varFundBalanceObjectTypeCode = getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_FUND_BALANCE_OBJECT_TYPE_PARM);
 		Integer closingFiscalYear = new Integer(getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_FISCAL_YEAR_PARM));
 		String currentDocumentTypeName = document.getFinancialSystemDocumentHeader().getWorkflowDocument().getDocumentTypeName();
-		String cashOffsetObjectCode = offsetDefinitionService.getByPrimaryId(fiscalYear, accountingLine.getChartOfAccountsCode(), documentTypeCode, KFSConstants.BALANCE_TYPE_ACTUAL).getFinancialObjectCode();
+		OffsetDefinition cashOffsetDefinition = offsetDefinitionService.getByPrimaryId(fiscalYear, accountingLine.getChartOfAccountsCode(), documentTypeCode, KFSConstants.BALANCE_TYPE_ACTUAL);
+		ObjectCode cashObjectCode = cashOffsetDefinition.getFinancialObject();
+		String cashOffsetObjectCode = cashOffsetDefinition.getFinancialObjectCode();
 		String debitCreditCode = null;
 
 
@@ -591,7 +593,7 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
 		offsetEntry.setFinancialObjectCode(cashOffsetObjectCode);
 		offsetEntry.setFinancialSubObjectCode(StringUtils.isBlank(accountingLine.getFinancialSubObjectCode()) ? KFSConstants.getDashFinancialSubObjectCode() : accountingLine.getFinancialSubObjectCode());
 		offsetEntry.setFinancialBalanceTypeCode(KFSConstants.BALANCE_TYPE_ACTUAL);
-		offsetEntry.setFinancialObjectTypeCode(varFundBalanceObjectTypeCode);
+		offsetEntry.setFinancialObjectTypeCode(cashObjectCode.getFinancialObjectTypeCode());
 		offsetEntry.setUniversityFiscalPeriodCode(KFSConstants.PERIOD_CODE_BEGINNING_BALANCE);
 		offsetEntry.setFinancialDocumentTypeCode(currentDocumentTypeName);
 		offsetEntry.setFinancialSystemOriginationCode(homeOriginationService.getHomeOrigination().getFinSystemHomeOriginationCode());
