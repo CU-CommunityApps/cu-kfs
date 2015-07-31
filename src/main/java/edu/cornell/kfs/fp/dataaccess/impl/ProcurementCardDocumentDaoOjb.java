@@ -23,7 +23,7 @@ public class ProcurementCardDocumentDaoOjb extends PlatformAwareDaoBaseOjb imple
         LOG.debug("getDocumentByAmountDateVendor() started");
 		
 		if (StringUtils.isBlank(cardHolder) || StringUtils.isBlank(amount) || transactionDate == null) {
-			LOG.error("Unable to validate input");
+			LOG.error("Unable to validate input. Card Holder Name: " + cardHolder + ", Amount: " + amount + ", Transaction Date: " + transactionDate);
 			return null;
 		}
 		
@@ -56,7 +56,7 @@ public class ProcurementCardDocumentDaoOjb extends PlatformAwareDaoBaseOjb imple
 		 LOG.debug("getDocumentByCarhdHolderNameAmountDateCardHolderNetID() started");
 			
 			if (StringUtils.isBlank(amount) || transactionDate == null || StringUtils.isBlank(cardHolderNetID)) {
-				LOG.error("Unable to validate input");
+				LOG.error("Unable to validate input. Amount: " + amount + ", Transaction Date: " + transactionDate + ", Card Holder NetID: " + cardHolderNetID + ".");
 				return null;
 			}
 			
