@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:dd="http://rice.kuali.org/dd"
+    xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+
+  <bean id="CuKfsKimAttributes" parent="CuKfsKimAttributes-parentBean" />
+
+  <bean id="CuKfsKimAttributes-parentBean" abstract="true" parent="KfsKimAttributes-parentBean"
+        p:businessObjectClass="edu.cornell.kfs.sys.identity.CuKfsKimAttributes"
+        p:objectLabel="Cornell-Specific KFS Core KIM Attributes">
+    <property name="attributes">
+      <list merge="true">
+        <ref bean="CuKfsKimAttributes-withinPayPeriodLimit" />
+      </list>
+    </property>
+  </bean>
+
+
+
+  <bean id="CuKfsKimAttributes-withinPayPeriodLimit" parent="CuKfsKimAttributes-withinPayPeriodLimit-parentBean" />
+  <bean id="CuKfsKimAttributes-withinPayPeriodLimit-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="withinPayPeriodLimit" />
+    <property name="label" value="Within Pay Period Limit" />
+    <property name="shortLabel" value="In Period Limit" />
+    <property name="summary" value="Indicates whether the recipient should receive docs within or outside the defined pay period limit." />
+    <property name="description" value="Use this to restrict routing based on the difference between doc creation period and earliest account line pay period." />
+    <property name="maxLength" value="1" />
+    <property name="required" value="true" />
+    <property name="forceUppercase" value="true" />
+    <property name="control">
+      <bean parent="IndicatorYNSelectControl" />
+    </property>
+  </bean>
+
+</beans>
