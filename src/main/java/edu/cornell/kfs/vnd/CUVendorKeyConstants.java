@@ -70,4 +70,6 @@ public class CUVendorKeyConstants extends VendorKeyConstants {
     public static final String ERROR_PO_TRANSMISSION_REQUIRES_US_POSTAL = "error.vendorMaint.vendorAddress.USPostalAddressMissing";
 
     public static final String ERROR_DOCUMENT_VENDOR_TYPE_IS_REQUIRED_FOR_ADD_VENDORADRESS = "error.document.vendortype.isrequired.for.add.vendoraddress";
+
+    public static final String ERROR_VENDOR_TAX_TYPE_AND_NUMBER_COMBO_EXISTS_AND_PRINT_EXISTING = "error.vendorMaint.addVendor.vendor.exists.printExisting";
 }
