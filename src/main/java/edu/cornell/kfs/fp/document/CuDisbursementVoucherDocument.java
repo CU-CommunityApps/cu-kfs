@@ -33,10 +33,8 @@ import org.kuali.rice.coreservice.framework.parameter.ParameterConstants.COMPONE
 import org.kuali.rice.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.actiontaken.ActionTakenValue;
-import org.kuali.rice.kew.api.action.ActionTaken;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.engine.RouteContext;
-import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.address.EntityAddress;
@@ -50,7 +48,6 @@ import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
 import edu.cornell.kfs.fp.businessobject.DisbursementVoucherWireTransferExtendedAttribute;
 import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
-import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
@@ -59,100 +56,35 @@ import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 @COMPONENT(component = "DisbursementVoucher")
 public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument implements CULegacyTravelIntegrationInterface {
 
-    private static final long serialVersionUID = 1L;
     protected static final String DOCUMENT_REQUIRES_CAMPUS_REVIEW_SPLIT = "RequiresCampusReview";
     protected static final String DOCUMENT_REQUIRES_AWARD_REVIEW_SPLIT = "RequiresAwardReview";
-
+    
+    
     protected static final String OBJECT_CODES_REQUIRING_CAMPUS_REVIEW = "OBJECT_CODES_REQUIRING_CAMPUS_REVIEW";
     protected static final String PAYMENT_REASONS_REQUIRING_CAMPUS_REVIEW = "PAYMENT_REASONS_REQUIRING_CAMPUS_REVIEW";
     protected static final String DOLLAR_THRESHOLD_REQUIRING_CAMPUS_REVIEW = "DOLLAR_THRESHOLD_REQUIRING_CAMPUS_REVIEW";
-
+    
     protected static final String DOLLAR_THRESHOLD_REQUIRING_TAX_REVIEW = "DOLLAR_THRESHOLD_REQUIRING_TAX_REVIEW";
-
+    
     protected static final String DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW = "DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW";
     protected static final String OBJECT_CODES_REQUIRING_AWARD_REVIEW = "OBJECT_CODES_REQUIRING_AWARD_REVIEW";
-
+    
     protected static final String DOLLAR_THRESHOLD_REQUIRING_TRAVEL_REVIEW = "DOLLAR_THRESHOLD_REQUIRING_TRAVEL_REVIEW";
     protected static final String OBJECT_CODES_REQUIRING_TRAVEL_REVIEW = "OBJECT_CODES_REQUIRING_TRAVEL_REVIEW";
-
-    /**
-     *  Results that may be returned regarding whether the trip was reopened during the call to the Legacy Travel service.
-     */
-    protected enum REOPEN_LEGACY_TRIP_RESULT {
-      NOT_A_TRAVEL_DV,
-      TRAVEL_DV_NOT_REOPENED,
-      TRAVEL_DV_REOPENED
-    }
-
+    
     protected CuDisbursementVoucherPayeeDetail dvPayeeDetail;
-
-    // TRIP INFORMATION FIELDS
+    
+    //TRIP INFORMATION FILEDS
     protected String tripAssociationStatusCode;
     protected String tripId;
-
+    
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
-
-
+    
+    
     public CuDisbursementVoucherDocument() {
         super();
         dvPayeeDetail = new CuDisbursementVoucherPayeeDetail();
-    }
-
-    /**
-     *  Attempts to reopen a trip
-     *  @return -1 = Not a Travel Doc,
-     *           0 = Failed to reopen,
-     *           1 = Reopened
-     *  @see https://jira.cornell.edu/browse/KFSPTS-2715
-     */
-    public REOPEN_LEGACY_TRIP_RESULT reopenLegacyTrip() {
-      REOPEN_LEGACY_TRIP_RESULT tripReOpened = REOPEN_LEGACY_TRIP_RESULT.TRAVEL_DV_NOT_REOPENED;
-      boolean isTravelDoc = false;
-      List<ActionTaken> actionsTaken = this.getDocumentHeader().getWorkflowDocument().getActionsTaken();
-      String reason = "";
-
-      if(actionsTaken.size() > 0) {
-        String annotation = actionsTaken.get(actionsTaken.size() - 1).getAnnotation();
-        if(StringUtils.isNotEmpty(annotation)) {
-          reason = annotation.substring("Disapproval reason - ".length());
-        }
-      }
-
-      try {
-        CULegacyTravelService cuLegacyTravelService = SpringContext.getBean(CULegacyTravelService.class);
-        isTravelDoc = cuLegacyTravelService.isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(this);
-        if(isTravelDoc) {
-          // This means the DV is a Travel DV
-          tripReOpened = cuLegacyTravelService.reopenLegacyTrip(this.getDocumentNumber(), reason) ?
-              REOPEN_LEGACY_TRIP_RESULT.TRAVEL_DV_REOPENED :
-                REOPEN_LEGACY_TRIP_RESULT.TRAVEL_DV_NOT_REOPENED;
-          LOG.info("Trip successfully reopened : "+ (tripReOpened == REOPEN_LEGACY_TRIP_RESULT.TRAVEL_DV_REOPENED ? true : false));
-        } else {
-          LOG.info("DV is not a travel DV");
-          tripReOpened = REOPEN_LEGACY_TRIP_RESULT.NOT_A_TRAVEL_DV;
-        }
-      } catch (Exception ex) {
-        LOG.info("Exception occurred while trying to cancel a trip.");
-        ex.printStackTrace();
-        tripReOpened = REOPEN_LEGACY_TRIP_RESULT.TRAVEL_DV_NOT_REOPENED;
-      }
-
-      return tripReOpened;
-    }
-
-    /**
-     * Overridden to interact with the Legacy Travel service
-     * @see https://jira.cornell.edu/browse/KFSPTS-2715
-     */
-    @Override
-    public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
-      // If the DV is Canceled or Disapproved, we need to reopen the trip in the Legacy Travel service.
-      if (getDocumentHeader().getWorkflowDocument().isCanceled() ||
-          getDocumentHeader().getWorkflowDocument().isDisapproved()) {
-        this.reopenLegacyTrip(); // Reopen the trip in CU Legacy travel service
-      }
-
-      super.doRouteStatusChange(statusChangeEvent);
+        
     }
 
     public void templateVendor(VendorDetail vendor, VendorAddress vendorAddress) {
@@ -197,8 +129,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
         boolean w9AndW8Checked = false;
         if ((ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW9ReceivedIndicator())
-                && vendor.getVendorHeader().getVendorW9ReceivedIndicator() == true)
-                || (ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW8BenReceivedIndicator())
+                && vendor.getVendorHeader().getVendorW9ReceivedIndicator() == true) 
+                || (ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW8BenReceivedIndicator()) 
                         && vendor.getVendorHeader().getVendorW8BenReceivedIndicator() == true)) {
 
             w9AndW8Checked = true;
@@ -209,7 +141,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         Date vendorFederalWithholdingTaxBeginDate = vendor.getVendorHeader().getVendorFederalWithholdingTaxBeginningDate();
         Date vendorFederalWithholdingTaxEndDate = vendor.getVendorHeader().getVendorFederalWithholdingTaxEndDate();
         java.util.Date today = getDateTimeService().getCurrentDate();
-        if ((vendorFederalWithholdingTaxBeginDate != null && vendorFederalWithholdingTaxBeginDate.before(today))
+        if ((vendorFederalWithholdingTaxBeginDate != null && vendorFederalWithholdingTaxBeginDate.before(today)) 
                 && (vendorFederalWithholdingTaxEndDate == null || vendorFederalWithholdingTaxEndDate.after(today))) {
             this.disbVchrPayeeTaxControlCode = CuDisbursementVoucherConstants.TAX_CONTROL_CODE_BEGIN_WITHHOLDING;
         }
@@ -218,18 +150,18 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         if (getVendorService().isVendorForeign(vendor.getVendorHeaderGeneratedIdentifier())) {
             getDvPayeeDetail().setDisbVchrAlienPaymentCode(true);
         }
-
+        
         // KFSPTS-1891
         if ( vendor != null ) {
-                      if ( ObjectUtils.isNotNull( vendor.getExtension() )
-                              && vendor.getExtension() instanceof VendorDetailExtension ) {
-                          if ( StringUtils.isNotBlank(((VendorDetailExtension)vendor.getExtension()).getDefaultB2BPaymentMethodCode())) {
-                              disbVchrPaymentMethodCode = ((VendorDetailExtension)vendor.getExtension()).getDefaultB2BPaymentMethodCode();
-                          }
-                      }
-                  }
+        	            if ( ObjectUtils.isNotNull( vendor.getExtension() ) 
+        	                    && vendor.getExtension() instanceof VendorDetailExtension ) {
+        	                if ( StringUtils.isNotBlank(((VendorDetailExtension)vendor.getExtension()).getDefaultB2BPaymentMethodCode())) {
+        	                    disbVchrPaymentMethodCode = ((VendorDetailExtension)vendor.getExtension()).getDefaultB2BPaymentMethodCode();
+        	                }
+        	            }
+        	        }
     }
-
+    
     public void templateEmployee(Person employee) {
         if (employee == null) {
             return;
@@ -250,7 +182,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
         final ParameterService parameterService = this.getParameterService();
 
-        if (parameterService.parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME)
+        if (parameterService.parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME) 
                 && parameterService.getParameterValueAsBoolean(
                         DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME)) {
             this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(employee.getAddressLine1Unmasked());
@@ -313,10 +245,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         this.disbVchrPayeeTaxControlCode = "";
         this.disbVchrPayeeW9CompleteCode = true;
     }
-
+    
     /**
      * Convenience method to set dv payee detail fields based on a given student.
-     *
+     * 
      * @param student
      */
     public void templateStudent(Person student) {
@@ -325,7 +257,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         }
 
         this.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(CuDisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT);
-
+        
         this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(student.getPrincipalId());
         ((CuDisbursementVoucherPayeeDetailExtension) this.getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(
                 CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_ENTITY);
@@ -333,7 +265,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         this.getDvPayeeDetail().setDisbVchrPayeePersonName(student.getNameUnmasked());
 
         final ParameterService parameterService = this.getParameterService();
-
+        
         // Use the same parameter as for employees even though this is a student as basic intention is the same
         if (parameterService.parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME)
                 && parameterService.getParameterValueAsBoolean(DisbursementVoucherDocument.class,
@@ -359,7 +291,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
                 this.getDvPayeeDetail().setDisbVchrPayeeCityName("");
                 this.getDvPayeeDetail().setDisbVchrPayeeStateCode("");
                 this.getDvPayeeDetail().setDisbVchrPayeeZipCode("");
-                this.getDvPayeeDetail().setDisbVchrPayeeCountryCode("");
+                this.getDvPayeeDetail().setDisbVchrPayeeCountryCode("");            
             }
         }
 
@@ -370,8 +302,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             }
         }
         // Determine if student is a research subject
-
-
+        
+        
         ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(
                 DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM);
         if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()) {
@@ -392,10 +324,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         this.disbVchrPayeeTaxControlCode = "";
         this.disbVchrPayeeW9CompleteCode = true;
     }
-
+    
     /**
      * Convenience method to set dv payee detail fields based on a given Alumnus.
-     *
+     * 
      * @param alumni
      */
     public void templateAlumni(Person alumni) {
@@ -404,7 +336,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         }
 
         this.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(CuDisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI);
-
+        
         this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(alumni.getPrincipalId());
         ((CuDisbursementVoucherPayeeDetailExtension) this.getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(
                 CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_ENTITY);
@@ -413,9 +345,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         this.getDvPayeeDetail().setDisbVchrPayeePersonName(alumni.getNameUnmasked());
 
         final ParameterService parameterService = this.getParameterService();
-
+        
         // Use the same parameter as for employees even though this is a alumni as basic intention is the same
-        if (parameterService.parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME)
+        if (parameterService.parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME) 
                 && parameterService.getParameterValueAsBoolean(DisbursementVoucherDocument.class,
                         DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME)) {
             this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(alumni.getAddressLine1Unmasked());
@@ -439,7 +371,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
                 this.getDvPayeeDetail().setDisbVchrPayeeCityName("");
                 this.getDvPayeeDetail().setDisbVchrPayeeStateCode("");
                 this.getDvPayeeDetail().setDisbVchrPayeeZipCode("");
-                this.getDvPayeeDetail().setDisbVchrPayeeCountryCode("");
+                this.getDvPayeeDetail().setDisbVchrPayeeCountryCode("");            
             }
         }
 
@@ -471,7 +403,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         this.disbVchrPayeeTaxControlCode = "";
         this.disbVchrPayeeW9CompleteCode = true;
     }
-
+    
     @Override
     public void prepareForSave() {
         if (this instanceof AmountTotaling) {
@@ -497,7 +429,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
         dvPayeeDetail.setDocumentNumber(this.documentNumber);
         ((CuDisbursementVoucherPayeeDetailExtension)dvPayeeDetail.getExtension()).setDocumentNumber(this.documentNumber);
-
+        
         if (dvNonEmployeeTravel != null) {
             dvNonEmployeeTravel.setDocumentNumber(this.documentNumber);
             dvNonEmployeeTravel.setTotalTravelAmount(dvNonEmployeeTravel.getTotalTravelAmount());
@@ -511,7 +443,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         if (shouldClearSpecialHandling()) {
             clearSpecialHandling();
         }
-        // KFSPTS-1891.  This is from uadisbvdocument.
+        // KFSPTS-1891.  This is from uadisbvdocument.  
         // TODO : need to check again to see if cornell need this
         // CU Customization: Also perform check below when an ENROUTE doc is at the initial "AdHoc" node.
         if ( getDocumentHeader().getWorkflowDocument().isInitiated() ||  getDocumentHeader().getWorkflowDocument().isSaved()
@@ -519,19 +451,19 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
                         && getDocumentHeader().getWorkflowDocument().getCurrentNodeNames().contains("AdHoc")) ) {
             // need to check whether the user has the permission to edit the bank code
             // if so, don't synchronize since we can't tell whether the value coming in
-            // was entered by the user or not.
+            // was entered by the user or not.        
             DocumentAuthorizer docAuth = SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(this);
-            if ( !docAuth.isAuthorizedByTemplate(this,
-                    KFSConstants.ParameterNamespaces.KFS,
-                    KFSConstants.PermissionTemplate.EDIT_BANK_CODE.name,
+            if ( !docAuth.isAuthorizedByTemplate(this, 
+                    KFSConstants.ParameterNamespaces.KFS, 
+                    KFSConstants.PermissionTemplate.EDIT_BANK_CODE.name, 
                     GlobalVariables.getUserSession().getPrincipalId()  ) ) {
-                synchronizeBankCodeWithPaymentMethod();
+                synchronizeBankCodeWithPaymentMethod();        
             } else {
                 refreshReferenceObject( "bank" );
             }
         }
     }
-
+    
     // KFSPTS-1891
     protected void synchronizeBankCodeWithPaymentMethod() {
         Bank bank = getPaymentMethodGeneralLedgerPendingEntryService().getBankForPaymentMethod( getDisbVchrPaymentMethodCode() );
@@ -552,14 +484,14 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             }
         }
     }
-
+    
     protected CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
         if ( paymentMethodGeneralLedgerPendingEntryService == null ) {
             paymentMethodGeneralLedgerPendingEntryService = SpringContext.getBean(CUPaymentMethodGeneralLedgerPendingEntryService.class);
         }
         return paymentMethodGeneralLedgerPendingEntryService;
     }
-
+    
     public CuDisbursementVoucherPayeeDetail getDvPayeeDetail() {
         return dvPayeeDetail;
     }
@@ -592,13 +524,13 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
         super.populateDocumentForRouting(); // Call last, serializes to XML
     }
-
+    
     @Override
     public void toCopy() throws WorkflowException {
         String payeeidNumber = getDvPayeeDetail().getDisbVchrPayeeIdNumber();
-
+        
         super.toCopy();
-
+        
         KNSGlobalVariables.getMessageList().clear();
         getDvPayeeDetail().setDisbVchrPayeeIdNumber(payeeidNumber);
         initiateDocument();
@@ -634,14 +566,14 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         this.cancelDate = null;
         getFinancialSystemDocumentHeader().setFinancialDocumentStatusCode(KFSConstants.DocumentStatusCodes.INITIATED);
     }
-
+    
     public void initiateDocument() {
         PhoneNumberService phoneNumberService = SpringContext.getBean(PhoneNumberService.class);
         Person currentUser = GlobalVariables.getUserSession().getPerson();
         setDisbVchrContactPersonName(currentUser.getName());
         setDisbVchrContactEmailId(currentUser.getEmailAddressUnmasked());
         String phoneNumber = currentUser.getPhoneNumber();
-
+        
         if(StringUtils.isNotBlank(phoneNumber) && !StringUtils.equalsIgnoreCase("null", phoneNumber)) {
             if(!phoneNumberService.isDefaultFormatPhoneNumber(currentUser.getPhoneNumber())) {
                 setDisbVchrContactPhoneNumber(phoneNumberService.formatNumberIfPossible(currentUser.getPhoneNumber()));
@@ -650,7 +582,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             } else {
                 setDisbVchrContactPhoneNumber(phoneNumber);
             }
-        }
+        }        
 
         if(!phoneNumberService.isDefaultFormatPhoneNumber(currentUser.getPhoneNumber())) {
             setDisbVchrContactPhoneNumber(phoneNumberService.formatNumberIfPossible(currentUser.getPhoneNumber()));
@@ -688,7 +620,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             this.bank = defaultBank;
         }
     }
-
+    
     @Override
     public boolean generateDocumentGeneralLedgerPendingEntries(GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         if (getGeneralLedgerPendingEntries() == null || getGeneralLedgerPendingEntries().size() < 2) {
@@ -701,16 +633,16 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
          */
             if (KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE.equals(getDisbVchrPaymentMethodCode()) && !getWireTransfer().isWireTransferFeeWaiverIndicator()) {
                 LOG.debug("generating wire charge gl pending entries.");
-
+    
                 // retrieve wire charge
                 WireCharge wireCharge = getPaymentSourceHelperService().retrieveCurrentYearWireCharge();
                 //KFSPTS-764: Added if check to eliminate zero dollar wire charge generating zero dollar accounting entries
                 if (!isZeroDollarWireCharge(wireCharge)) {
-
+                    
                 //KFSPTS-764: only generate GLPE entries when wire charges are NOT zero dollars.
                 // generate debits
                 GeneralLedgerPendingEntry chargeEntry = getPaymentSourceHelperService().processWireChargeDebitEntries(this, sequenceHelper, wireCharge);
-
+    
                 // generate credits
                 getPaymentSourceHelperService().processWireChargeCreditEntries(this, sequenceHelper, wireCharge, chargeEntry);
             }
@@ -723,17 +655,17 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
         return true;
     }
-
+        
         /**
          * KFSPTS-764
          * Returns true when the wire charge amount is found to be zero dollars based on the bank country code
          * otherwise, returns false.
-         *
+         * 
          * @param wireCharge
          * @return true when wire charge for DV bank is zero dollars.
          */
        private boolean isZeroDollarWireCharge(WireCharge wireCharge) {
-
+            
             if ( (KFSConstants.COUNTRY_CODE_UNITED_STATES.equals(getWireTransfer().getBankCountryCode()) && wireCharge.getDomesticChargeAmt().isZero()) ||
                  (!KFSConstants.COUNTRY_CODE_UNITED_STATES.equals(getWireTransfer().getBankCountryCode()) && wireCharge.getForeignChargeAmt().isZero()) ){
                 //DV is for a US bank and wire charge value is zero dollars OR DV is for a foreign bank and wire charge is zero dollars.
@@ -741,7 +673,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             }
             return false;
         }
-
+        
         @Override
         public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
             if (nodeName.equals(CuDisbursementVoucherDocument.DOCUMENT_REQUIRES_AWARD_REVIEW_SPLIT))
@@ -759,21 +691,21 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             }
             throw new UnsupportedOperationException("Cannot answer split question for this node you call \""+nodeName+"\"");
         }
-
+        
         public boolean isTravelReviewRequired() {
             List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;
-
+            
             for (AccountingLine alb : theList )
             {
                 ParameterEvaluator objectCodes = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_TRAVEL_REVIEW, alb.getFinancialObjectCode());
                 if (objectCodes.evaluationSucceeds())
                 {
-                    LOG.info("Object Code " + alb.getFinancialObjectCode() + " requires this document to undergo Travel review.");
+                    LOG.info("Object Code " + alb.getFinancialObjectCode() + " requires this document to undergo Travel review.");              
                     return true;
                 }
             }
-
-
+            
+            
             boolean overDollarThreshold = false;
             String dollarThreshold = getParameterService().getParameterValueAsString("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_TRAVEL_REVIEW);
             KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
@@ -781,24 +713,24 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
                 overDollarThreshold = true;
             }
 
-
+            
             boolean paymentReasonCodeIsNorP = false;
             String paymentReasonCode = this.getDvPayeeDetail().getDisbVchrPaymentReasonCode();
             paymentReasonCodeIsNorP = this.getDvPymentReasonService().isPrepaidTravelPaymentReason(paymentReasonCode) || this.getDvPymentReasonService().isNonEmployeeTravelPaymentReason(paymentReasonCode);
 
-
+            
             return (this.getDvPymentReasonService().isPrepaidTravelPaymentReason(paymentReasonCode) || this.getDvPymentReasonService().isNonEmployeeTravelPaymentReason(paymentReasonCode) && overDollarThreshold);
             }
-
+        
         protected boolean isCAndGReviewRequired() {
-
+            
             String awardThreshold = getParameterService().getParameterValueAsString("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW);
             KualiDecimal dollarThresholdDecimal = new KualiDecimal(awardThreshold);
             if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
                 return true;
             }
-
-            List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;
+            
+            List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;       
             for (AccountingLine alb : theList )
             {
                 ParameterEvaluator objectCodes = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_AWARD_REVIEW, alb.getFinancialObjectCode());
@@ -807,10 +739,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
                     return true;
                 }
             }
-
+            
             return false;
         }
-
+        
         protected boolean isCampusReviewRequired() {
 
             List<ActionTakenValue> actions = RouteContext.getCurrentRouteContext().getDocument().getActionsTaken();
@@ -823,10 +755,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             if (people.size()<2)
             {
                 return true;
-            }
-
+            }               
+                        
             List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;
-
+            
             for (AccountingLine alb : theList )
             {
                 ParameterEvaluator objectCodes = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_CAMPUS_REVIEW, alb.getFinancialObjectCode());
@@ -836,7 +768,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
                     return true;
                 }
             }
-
+            
             ParameterEvaluator paymentReasons = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", PAYMENT_REASONS_REQUIRING_CAMPUS_REVIEW, this.dvPayeeDetail.getDisbVchrPaymentReasonCode());
             if (paymentReasons.evaluationSucceeds()) {
                 return true;
@@ -846,16 +778,16 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
             if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
                 return true;
-            }
-
+            }               
+            
             return false;
         }
-
-
+        
+        
         public void setDvPayeeDetail(CuDisbursementVoucherPayeeDetail dvPayeeDetail) {
             this.dvPayeeDetail = dvPayeeDetail;
         }
-
+        
         public String getTripAssociationStatusCode() {
             return tripAssociationStatusCode;
         }
@@ -874,7 +806,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         public void setTripId(String tripId) {
             this.tripId = tripId;
         }
-
-
+        
+        
 }
 
