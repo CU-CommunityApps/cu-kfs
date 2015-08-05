@@ -20,7 +20,7 @@ import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
-import org.kuali.kfs.vnd.document.validation.impl.VendorRule;
+import org.kuali.kfs.vnd.document.validation.impl.CuVendorRuleBase;
 import org.kuali.kfs.vnd.service.CommodityCodeService;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
@@ -36,7 +36,7 @@ import edu.cornell.kfs.vnd.businessobject.CuVendorCreditCardMerchant;
 import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
-public class CuVendorRule extends VendorRule {
+public class CuVendorRule extends CuVendorRuleBase {
     private CommodityCodeService commodityCodeService = (CommodityCodeService) SpringContext.getService("commodityCodeService");
 
     protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {
