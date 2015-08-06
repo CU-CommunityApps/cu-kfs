@@ -443,17 +443,22 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
     public void generateFinalEntriesForPRNC(PaymentRequestDocument document) {
 
         GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper(getNextAvailableSequence(document.getDocumentNumber()));
+        String documentType = CuPaymentRequestDocument.DOCUMENT_TYPE_NON_CHECK;
+        if (PaymentMethod.PM_CODE_INTERNAL_BILLING.equalsIgnoreCase(((CuPaymentRequestDocument)document).getPaymentMethodCode())){
+        	documentType = CuPaymentRequestDocument.DOCUMENT_TYPE_INTERNAL_BILLING;
+        }
+        
 
         // generate bank offset
         if (PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(((CuPaymentRequestDocument)document).getPaymentMethodCode()) || PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(((CuPaymentRequestDocument)document).getPaymentMethodCode())) {
-            generateDocumentBankOffsetEntries((AccountingDocument) document, document.getBankCode(), KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", ((CuPaymentRequestDocument)document).DOCUMENT_TYPE_NON_CHECK, sequenceHelper, document.getTotalDollarAmount().negated());
+            generateDocumentBankOffsetEntries((AccountingDocument) document, document.getBankCode(), KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", documentType, sequenceHelper, document.getTotalDollarAmount().negated());
         }
 
         // check for balance type Actual offset pending entries and replace the object code with chart cash object code (currently replacing object code 2900 with 1000)
         List<GeneralLedgerPendingEntry> glpes = document.getGeneralLedgerPendingEntries();
 
         for (GeneralLedgerPendingEntry glpe : glpes) {
-            OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getByPrimaryId(glpe.getUniversityFiscalYear(), glpe.getChartOfAccountsCode(), ((CuPaymentRequestDocument)document).DOCUMENT_TYPE_NON_CHECK, KFSConstants.BALANCE_TYPE_ACTUAL);
+            OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getByPrimaryId(glpe.getUniversityFiscalYear(), glpe.getChartOfAccountsCode(), documentType, KFSConstants.BALANCE_TYPE_ACTUAL);
             if (glpe.getFinancialObjectCode().equalsIgnoreCase(offsetDefinition.getFinancialObjectCode())) {
                 if (ObjectUtils.isNull(glpe.getChart())) {
                     glpe.refreshReferenceObject(KFSPropertyConstants.CHART);
@@ -478,7 +483,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
         if (accountingLines.size() > 0) {
             for (AccountingLine accountingLine : accountingLines) {
                 if (!chartOffsets.containsKey(accountingLine.getChartOfAccountsCode())) {
-                    OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getByPrimaryId(accountingLine.getPostingYear(), accountingLine.getChartOfAccountsCode(), ((CuPaymentRequestDocument)document).DOCUMENT_TYPE_NON_CHECK, KFSConstants.BALANCE_TYPE_ACTUAL);
+                    OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getByPrimaryId(accountingLine.getPostingYear(), accountingLine.getChartOfAccountsCode(), documentType, KFSConstants.BALANCE_TYPE_ACTUAL);
                     chartOffsets.put(accountingLine.getChartOfAccountsCode(), offsetDefinition.getFinancialObjectCode());
 
                 }
@@ -493,13 +498,13 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
                     GeneralLedgerPendingEntry glpe = new GeneralLedgerPendingEntry();
                     boolean debit = KFSConstants.GL_CREDIT_CODE.equalsIgnoreCase(entry.getTransactionDebitCreditCode());
                     glpe = getGeneralLedgerPendingEntryService().buildGeneralLedgerPendingEntry((GeneralLedgerPostingDocument) document, entry.getAccount(), entry.getFinancialObject(), entry.getSubAccountNumber(), entry.getFinancialSubObjectCode(), entry.getOrganizationReferenceId(), entry.getProjectCode(), entry.getReferenceFinancialDocumentNumber(), entry.getReferenceFinancialDocumentTypeCode(), entry.getReferenceFinancialSystemOriginationCode(), entry.getTransactionLedgerEntryDescription(), debit, entry.getTransactionLedgerEntryAmount(), sequenceHelper);
-                    glpe.setFinancialDocumentTypeCode(((CuPaymentRequestDocument)document).DOCUMENT_TYPE_NON_CHECK);
+                    glpe.setFinancialDocumentTypeCode(documentType);
                     document.addPendingEntry(glpe);
                     sequenceHelper.increment();
                     // create cash entry
                     GeneralLedgerPendingEntry cashGlpe = new GeneralLedgerPendingEntry();
                     cashGlpe = getGeneralLedgerPendingEntryService().buildGeneralLedgerPendingEntry((GeneralLedgerPostingDocument) document, entry.getAccount(), entry.getChart().getFinancialCashObject(), entry.getSubAccountNumber(), entry.getFinancialSubObjectCode(), entry.getOrganizationReferenceId(), entry.getProjectCode(), entry.getReferenceFinancialDocumentNumber(), entry.getReferenceFinancialDocumentTypeCode(), entry.getReferenceFinancialSystemOriginationCode(), entry.getTransactionLedgerEntryDescription(), !debit, entry.getTransactionLedgerEntryAmount(), sequenceHelper);
-                    cashGlpe.setFinancialDocumentTypeCode(((CuPaymentRequestDocument)document).DOCUMENT_TYPE_NON_CHECK);
+                    cashGlpe.setFinancialDocumentTypeCode(documentType);
                     document.addPendingEntry(cashGlpe);
                     sequenceHelper.increment();
                 }

@@ -47,6 +47,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
 	
     // KFSPTS-1891
     public static String DOCUMENT_TYPE_NON_CHECK = "PRNC";
+    public static String DOCUMENT_TYPE_INTERNAL_BILLING = "PRID";
     protected PaymentRequestWireTransfer preqWireTransfer;
     
     // default this value to "C" to preserve baseline behavior
@@ -235,7 +236,13 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         // if the document is not processed using PDP, then the cash entries need to be created instead of liability
         // so, switch the document type so the offset generation uses a cash offset object code
         if ( !getPaymentMethodGeneralLedgerPendingEntryService().isPaymentMethodProcessedUsingPdp(getPaymentMethodCode())) {
-            explicitEntry.setFinancialDocumentTypeCode(DOCUMENT_TYPE_NON_CHECK);
+        	
+        	if (PaymentMethod.PM_CODE_INTERNAL_BILLING.equalsIgnoreCase(getPaymentMethodCode())){
+        		 explicitEntry.setFinancialDocumentTypeCode(DOCUMENT_TYPE_INTERNAL_BILLING);
+            }
+        	else{
+        		explicitEntry.setFinancialDocumentTypeCode(DOCUMENT_TYPE_NON_CHECK);
+        	}
         }
     }
     
