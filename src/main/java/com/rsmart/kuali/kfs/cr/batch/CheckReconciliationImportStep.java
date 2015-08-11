@@ -36,18 +36,17 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.commons.io.comparator.NameFileComparator;
+import org.kuali.kfs.pdp.PdpConstants.PaymentStatusCodes;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.businessobject.PaymentStatus;
 import org.kuali.kfs.pdp.service.PaymentDetailService;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.rice.krad.bo.KualiCode;
 import org.kuali.rice.krad.service.BusinessObjectService;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconError;
@@ -900,12 +899,19 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
                     	String checkStatus = updateCheckStatus(cr,banks,records);
                     	//update CheckRecon record if checkstatus is cleared	
                         if(checkStatus.equals(CRConstants.CLEARED)){
-                            cr.setStatus(checkStatus);
-                            existingRecord.setStatus(checkStatus);
-                            existingRecord.setStatusChangeDate(cr.getStatusChangeDate());
-                            existingRecord.setLastUpdate(ts);
-                            businessObjectService.save(existingRecord);
-                            LOG.info("Updated Check Recon Record : " + existingRecord.getId());
+                            // ==== CU Customization: Only update when previous check status is Issued. ====
+                            if (CRConstants.ISSUED.equals(existingRecord.getStatus())) {
+                                cr.setStatus(checkStatus);
+                                existingRecord.setStatus(checkStatus);
+                                existingRecord.setStatusChangeDate(cr.getStatusChangeDate());
+                                existingRecord.setLastUpdate(ts);
+                                businessObjectService.save(existingRecord);
+                                LOG.info("Updated Check Recon Record : " + existingRecord.getId());
+                            } else {
+                                LOG.warn("Could not update PDP-sourced Check Recon Record status to " + CRConstants.CLEARED
+                                        + " because the existing status is " + existingRecord.getStatus()
+                                        + " for this PDP-sourced record : " + existingRecord.getId());
+                            }
                         }
                         else if(checkStatus.equals(CRConstants.STOP)){
                         	if(!existingRecord.getStatus().equalsIgnoreCase(CRConstants.STOP)){
@@ -924,12 +930,19 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
                     else {
                         String checkStatus = getCheckStatus(cr);
                         if(checkStatus.equals(CRConstants.CLEARED)){
-                            cr.setStatus(checkStatus);
-                            existingRecord.setStatus(checkStatus);
-                            existingRecord.setStatusChangeDate(cr.getStatusChangeDate());
-                            existingRecord.setLastUpdate(ts);
-                            businessObjectService.save(existingRecord);
-                            LOG.info("Updated Check Recon Record : " + existingRecord.getId());
+                            // ==== CU Customization: Only update when previous check status is Issued. ====
+                            if (CRConstants.ISSUED.equals(existingRecord.getStatus())) {
+                                cr.setStatus(checkStatus);
+                                existingRecord.setStatus(checkStatus);
+                                existingRecord.setStatusChangeDate(cr.getStatusChangeDate());
+                                existingRecord.setLastUpdate(ts);
+                                businessObjectService.save(existingRecord);
+                                LOG.info("Updated Check Recon Record : " + existingRecord.getId());
+                            } else {
+                                LOG.warn("Could not update Check Recon Record status to " + CRConstants.CLEARED
+                                        + " because the current status is " + existingRecord.getStatus()
+                                        + " for this record : " + existingRecord.getId());
+                            }
 
                         }
                         else if(checkStatus.equals(CRConstants.STOP)){
@@ -1022,6 +1035,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
      */
     private String updateCheckStatus(CheckReconciliation cr, Collection<Bank> banks, List<CheckReconError> records) throws Exception {
         String defaultStatus = CRConstants.EXCP;
+        String oldStatus = CRConstants.EXCP;
 
         List<String> bankCodes = new ArrayList<String>();
         
@@ -1054,6 +1068,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
         	
             if( statusMap.get(cr.getStatus()) != null ) {
                 defaultStatus = statusMap.get(cr.getStatus());
+                oldStatus = paymentGroup.getPaymentStatusCode();
                 // Update PDP status and save
                 KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, defaultStatus);
                 if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
@@ -1062,10 +1077,16 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
                 }
                 
                 // Update PDP if the check status is cleared from the bank file
+                // ==== CU Customization: If the status is being updated to Cleared, only allow it when the current status is Extracted. ====
                 
-                if(defaultStatus.equals(CRConstants.CLEARED)){
-                	businessObjectService.save(paymentGroup);
-                	LOG.info("Check Status in the bank file is cleared. Updated Payment Group : " + paymentGroup.getId() + " Disbursement  " + paymentGroup.getDisbursementNbr());
+                if (defaultStatus.equals(CRConstants.CLEARED)) {
+                    if (PaymentStatusCodes.EXTRACTED.equals(oldStatus)) {
+                	    businessObjectService.save(paymentGroup);
+                	    LOG.info("Check Status in the bank file is cleared. Updated Payment Group : " + paymentGroup.getId() + " Disbursement  " + paymentGroup.getDisbursementNbr());
+                    } else {
+                        LOG.warn("Check Status in the bank file is cleared, but Payment Group " + paymentGroup.getId() + " for Disbursement "
+                                + paymentGroup.getDisbursementNbr() + " has a current status of " + oldStatus + " and cannot be cleared.");
+                    }
                 }
                 
                 	
