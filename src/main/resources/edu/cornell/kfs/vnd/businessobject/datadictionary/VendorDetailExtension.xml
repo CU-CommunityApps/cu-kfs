@@ -92,10 +92,16 @@
 
   <bean id="VendorDetailExtension-generalLiabilityCoverageAmount" parent="VendorDetailExtension-generalLiabilityCoverageAmount-parentBean"/>
 
-  <bean id="VendorDetailExtension-generalLiabilityCoverageAmount-parentBean" abstract="true" parent="GenericAttributes-genericAmount">
+  <bean id="VendorDetailExtension-generalLiabilityCoverageAmount-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="generalLiabilityCoverageAmount"/>
     <property name="label" value="General Liability Coverage Amount"/>
     <property name="shortLabel" value="General Liability Coverage Amount"/>
+    <property name="validationPattern">
+      <bean parent="FixedPointValidationPattern" p:precision="13" p:scale="2" p:allowNegative="true"/>
+    </property>
+    <property name="control">
+      <bean parent="CurrencyControlDefinition" p:formattedMaxLength="18" p:size="10"/>
+    </property>
   </bean>
 
   <bean id="VendorDetailExtension-generalLiabilityExpiration" parent="VendorDetailExtension-generalLiabilityExpiration-parentBean"/>
@@ -108,10 +114,16 @@
 
   <bean id="VendorDetailExtension-automobileLiabilityCoverageAmount" parent="VendorDetailExtension-automobileLiabilityCoverageAmount-parentBean"/>
 
-  <bean id="VendorDetailExtension-automobileLiabilityCoverageAmount-parentBean" abstract="true" parent="GenericAttributes-genericAmount">
+  <bean id="VendorDetailExtension-automobileLiabilityCoverageAmount-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="automobileLiabilityCoverageAmount"/>
     <property name="label" value="Automobile Liability Coverage Amount"/>
     <property name="shortLabel" value="Automobile Liability Coverage Amount"/>
+    <property name="validationPattern">
+      <bean parent="FixedPointValidationPattern" p:precision="13" p:scale="2" p:allowNegative="true"/>
+    </property>
+    <property name="control">
+      <bean parent="CurrencyControlDefinition" p:formattedMaxLength="18" p:size="10"/>
+    </property>
   </bean>
 
   <bean id="VendorDetailExtension-automobileLiabilityExpiration" parent="VendorDetailExtension-automobileLiabilityExpiration-parentBean"/>
@@ -122,12 +134,19 @@
     <property name="shortLabel" value="Automobile Liability Expiration"/>
   </bean>
 
+
   <bean id="VendorDetailExtension-workmansCompCoverageAmount" parent="VendorDetailExtension-workmansCompCoverageAmount-parentBean"/>
 
-  <bean id="VendorDetailExtension-workmansCompCoverageAmount-parentBean" abstract="true" parent="GenericAttributes-genericAmount">
+  <bean id="VendorDetailExtension-workmansCompCoverageAmount-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="workmansCompCoverageAmount"/>
     <property name="label" value="Workman's Comp Coverage Amount"/>
     <property name="shortLabel" value="Workman's Comp Coverage Amount"/>
+    <property name="validationPattern">
+      <bean parent="FixedPointValidationPattern" p:precision="13" p:scale="2" p:allowNegative="true"/>
+    </property>
+    <property name="control">
+      <bean parent="CurrencyControlDefinition" p:formattedMaxLength="18" p:size="10"/>
+    </property>
   </bean>
 
   <bean id="VendorDetailExtension-workmansCompExpiration" parent="VendorDetailExtension-workmansCompExpiration-parentBean"/>
@@ -140,10 +159,16 @@
   
   <bean id="VendorDetailExtension-excessLiabilityUmbrellaAmount" parent="VendorDetailExtension-excessLiabilityUmbrellaAmount-parentBean"/>
 
-  <bean id="VendorDetailExtension-excessLiabilityUmbrellaAmount-parentBean" abstract="true" parent="GenericAttributes-genericAmount">
+  <bean id="VendorDetailExtension-excessLiabilityUmbrellaAmount-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="excessLiabilityUmbrellaAmount"/>
     <property name="label" value="Excess Liability Umbrella Policy Amount"/>
     <property name="shortLabel" value="Excess Liability Umbrella Policy Amount"/>
+    <property name="validationPattern">
+      <bean parent="FixedPointValidationPattern" p:precision="13" p:scale="2" p:allowNegative="true"/>
+    </property>
+    <property name="control">
+      <bean parent="CurrencyControlDefinition" p:formattedMaxLength="18" p:size="10"/>
+    </property>
   </bean>
   
   <bean id="VendorDetailExtension-excessLiabilityUmbExpiration" parent="VendorDetailExtension-excessLiabilityUmbExpiration-parentBean"/>
