@@ -1,0 +1,64 @@
+<descriptor-repository version="1.0">
+
+    <class-descriptor class="edu.cornell.kfs.tax.businessobject.ObjectCodeBucketMapping" table="TX_OBJ_CODE_BUCKET_T">
+        <field-descriptor name="financialObjectCode" column="FIN_OBJECT_CD" jdbc-type="VARCHAR" primarykey="true" />
+        <field-descriptor name="dvPaymentReasonCode" column="DV_PMT_REAS_CD" jdbc-type="VARCHAR" primarykey="true" />
+        <field-descriptor name="boxNumber" column="BOX_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+        <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    </class-descriptor>
+
+    <class-descriptor class="edu.cornell.kfs.tax.businessobject.TransactionOverride" table="TX_TRANSACTION_OVERRIDE_T">
+        <field-descriptor name="universityDate" column="UNIV_DT" jdbc-type="DATE" primarykey="true" />
+        <field-descriptor name="taxType" column="TAX_TYPE" jdbc-type="VARCHAR" primarykey="true" />
+        <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" />
+        <field-descriptor name="financialDocumentLineNumber" column="FDOC_LINE_NBR" jdbc-type="INTEGER" primarykey="true" />
+        <field-descriptor name="boxNumber" column="BOX_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+        <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    </class-descriptor>
+
+    <!-- NOTE: We primarily interact with the TX_TRANSACTION_DETAIL_T table via JDBC; this descriptor is mostly for SQL generation convenience. -->
+    <class-descriptor class="edu.cornell.kfs.tax.businessobject.TransactionDetail" table="TX_TRANSACTION_DETAIL_T">
+        <field-descriptor name="transactionDetailId" column="IRS_1099_1042S_DETAIL_ID" jdbc-type="VARCHAR" primarykey="true" />
+        <field-descriptor name="reportYear" column="REPORT_YEAR" jdbc-type="INTEGER" />
+        <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="documentType" column="DOC_TYPE" jdbc-type="VARCHAR" />
+        <field-descriptor name="financialDocumentLineNumber" column="FDOC_LINE_NBR" jdbc-type="INTEGER" />
+        <field-descriptor name="finObjectCode" column="FIN_OBJECT_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="netPaymentAmount" column="NET_PMT_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" />
+        <field-descriptor name="documentTitle" column="DOC_TITLE" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorTaxNumber" column="VENDOR_TAX_NBR" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion" />
+        <field-descriptor name="incomeCode" column="INCOME_CODE" jdbc-type="VARCHAR" />
+        <field-descriptor name="incomeCodeSubType" column="INCOME_CODE_SUB_TYPE" jdbc-type="VARCHAR" />
+        <field-descriptor name="dvCheckStubText" column="DV_CHK_STUB_TXT" jdbc-type="VARCHAR" />
+        <field-descriptor name="payeeId" column="PAYEE_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorName" column="VENDOR_NAME" jdbc-type="VARCHAR" />
+        <field-descriptor name="parentVendorName" column="PARENT_VENDOR_NAME" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorTypeCode" column="VNDR_TYP_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorOwnershipCode" column="VNDR_OWNR_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorOwnershipCategoryCode" column="VNDR_OWNR_CTGRY_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorForeignIndicator" column="VNDR_FRGN_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+        <field-descriptor name="nraPaymentIndicator" column="NRA_PAYMENT_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+        <field-descriptor name="paymentDate" column="PMT_DT" jdbc-type="DATE" />
+        <field-descriptor name="paymentPayeeName" column="PMT_PAYEE_NM" jdbc-type="VARCHAR" />
+        <field-descriptor name="incomeClassCode" column="INC_CLS_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="incomeTaxTreatyExemptIndicator" column="INC_TAX_TRTY_EXMPT_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+        <field-descriptor name="foreignSourceIncomeIndicator" column="FRGN_SRC_INC_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+        <field-descriptor name="federalIncomeTaxPercent" column="FED_INC_TAX_PCT" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" />
+        <field-descriptor name="paymentDescription" column="PMT_DESC" jdbc-type="VARCHAR" />
+        <field-descriptor name="paymentLine1Address" column="PMT_LN1_ADDR" jdbc-type="VARCHAR" />
+        <field-descriptor name="paymentCountryName" column="PMT_CNTRY_NM" jdbc-type="VARCHAR" />
+        <field-descriptor name="chartCode" column="KFS_CHART" jdbc-type="VARCHAR" />
+        <field-descriptor name="accountNumber" column="KFS_ACCOUNT" jdbc-type="VARCHAR" />
+        <field-descriptor name="initiatorNetId" column="INITIATOR_NETID" jdbc-type="VARCHAR" />
+        <field-descriptor name="form1099Box" column="FORM_1099_BOX" jdbc-type="VARCHAR" />
+        <field-descriptor name="form1099OverriddenBox" column="FORM_1099_OVERRIDDEN_BOX" jdbc-type="VARCHAR" />
+        <field-descriptor name="form1042SBox" column="FORM_1042S_BOX" jdbc-type="VARCHAR" />
+        <field-descriptor name="form1042SOverriddenBox" column="FORM_1042S_OVERRIDDEN_BOX" jdbc-type="VARCHAR" />
+        <field-descriptor name="paymentReasonCode" column="PMT_REASON_CD" jdbc-type="VARCHAR" />
+    </class-descriptor>
+
+</descriptor-repository>

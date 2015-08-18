@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Cornell-specific XSD file defining the structure of tax data definition objects,
+    which are used to help build metadata for reading/writing tax data.
+ -->
+<xsd:schema elementFormDefault="qualified"
+            targetNamespace="http://www.kuali.org/kfs/tax/taxDataDefinition"
+            xmlns="http://www.kuali.org/kfs/tax/taxDataDefinition" 
+            xmlns:kfs="http://www.kuali.org/kfs/sys/types"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://127.0.0.1:8080/kfs/static/xsd/sys/xml.xsd"/>
+  <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="http://127.0.0.1:8080/kfs/static/xsd/sys/types.xsd" />
+
+  <!-- The root "taxDataDefinition" element. -->
+  <xsd:element name="taxDataDefinition">
+    <xsd:complexType>
+      <xsd:sequence>
+        <!-- There should be one "row" element for each chunk of tax data. -->
+        <xsd:element name="row" minOccurs="1" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:sequence>
+              <!-- There should be, at most, one "objectClasses" element per data row. -->
+              <xsd:element name="objectClasses" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <!-- There should be one "objectClass" element for each ORM-mapped class in the retrieved row. -->
+                    <xsd:element name="objectClass" minOccurs="1" maxOccurs="unbounded">
+                      <xsd:complexType>
+                        <xsd:attribute name="name" type="oneToTwoFiftyFiveCharType" use="required" />
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <!-- There should be one "field" element for each aliased or non-ORM-mapped tax data field. -->
+              <xsd:element name="field" minOccurs="1" maxOccurs="unbounded">
+                <xsd:complexType>
+                  <xsd:attribute name="name" type="oneToTwoFiftyFiveCharType" use="required" />
+                  <xsd:attribute name="alias" type="kfs:oneToFiftyCharType" use="optional" />
+                  <xsd:attribute name="type" type="kfs:oneToThirtyCharType" use="optional" />
+                  <xsd:attribute name="skip" type="xsd:boolean" use="optional" />
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="id" type="kfs:oneToSeventyCharType" use="required" />
+            <xsd:attribute name="numAutoAssignedFieldsForInsert" type="xsd:integer" use="optional" />
+            <xsd:attribute name="explicitFieldsOnly" type="xsd:boolean" use="optional" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:simpleType name="oneToTwoFiftyFiveCharType">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="255" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+</xsd:schema>

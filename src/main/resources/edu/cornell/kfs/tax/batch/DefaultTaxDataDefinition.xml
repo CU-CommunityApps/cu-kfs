@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Default data definition for 1099/1042S tax processing. 
+ -->
+<taxDataDefinition xmlns="http://www.kuali.org/kfs/tax/taxDataDefinition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <!--
+        ==================================================================
+        The definition pertaining to the retrieval of PDP tax source data.
+        ==================================================================
+     -->
+    <row id="PDP">
+        <objectClasses>
+            <objectClass name="org.kuali.kfs.pdp.businessobject.ProcessSummary" />
+            <objectClass name="org.kuali.kfs.pdp.businessobject.CustomerProfile" />
+            <objectClass name="org.kuali.kfs.pdp.businessobject.PaymentGroup" />
+            <objectClass name="org.kuali.kfs.pdp.businessobject.PaymentDetail" />
+            <objectClass name="org.kuali.kfs.pdp.businessobject.PaymentAccountDetail" />
+            <objectClass name="org.kuali.kfs.vnd.businessobject.VendorHeader" />
+        </objectClasses>
+        <!-- ==== Fields from PDP_PROC_SUM_T ==== -->
+        <field name="org.kuali.kfs.pdp.businessobject.ProcessSummary::id" alias="summary.id" />
+        <field name="org.kuali.kfs.pdp.businessobject.ProcessSummary::beginDisbursementNbr" alias="beginDisbursementNbr" />
+        <field name="org.kuali.kfs.pdp.businessobject.ProcessSummary::endDisbursementNbr" alias="endDisbursementNbr" />
+        <field name="org.kuali.kfs.pdp.businessobject.ProcessSummary::customerId" alias="summary.customerId" />
+        <field name="org.kuali.kfs.pdp.businessobject.ProcessSummary::processId" alias="summary.processId" />
+        <field name="org.kuali.kfs.pdp.businessobject.ProcessSummary::lastUpdate" alias="lastUpdate" />
+        <!-- ==== Fields from PDP_CUST_PRFL_T ==== -->
+        <field name="org.kuali.kfs.pdp.businessobject.CustomerProfile::id" alias="customer.id" />
+        <field name="org.kuali.kfs.pdp.businessobject.CustomerProfile::chartCode" alias="customer.chartCode" />
+        <field name="org.kuali.kfs.pdp.businessobject.CustomerProfile::unitCode" alias="unitCode" />
+        <field name="org.kuali.kfs.pdp.businessobject.CustomerProfile::subUnitCode" alias="subUnitCode" />
+        <field name="org.kuali.kfs.pdp.businessobject.CustomerProfile::achPaymentDescription" alias="achPaymentDescription" />
+        <!-- ==== Fields from PDP_PMT_GRP_T ==== -->
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::id" alias="paymentGroup.id" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::processId" alias="paymentGroup.processId" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::payeeName" alias="payeeName" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::payeeId" alias="payeeId" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::country" alias="country" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::disbursementDate" alias="disbursementDate" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::disbursementNbr" alias="disbursementNbr" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::payeeIdTypeCd" alias="payeeIdTypeCode" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::line1Address" alias="line1Address" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::nraPayment" alias="nraPayment" />
+        <!-- ==== Fields from PDP_PMT_DTL_T ==== -->
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentDetail::id" alias="paymentDetail.id" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentDetail::custPaymentDocNbr" alias="custPaymentDocNbr" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentDetail::paymentGroupId" alias="paymentDetail.paymentGroupId" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentDetail::financialDocumentTypeCode" alias="financialDocumentTypeCode" />
+        <!-- ==== Fields from PDP_PMT_ACCT_DTL_T ==== -->
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentAccountDetail::id" alias="accountDetail.id" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentAccountDetail::paymentDetailId" alias="accountDetail.paymentDetailId" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentAccountDetail::finChartCode" alias="accountDetail.finChartCode" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentAccountDetail::accountNbr" alias="accountNbr" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentAccountDetail::finObjectCode" alias="finObjectCode" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentAccountDetail::accountNetAmount" alias="accountNetAmount" />
+        <!-- ==== Fields from PUR_VNDR_HDR_T ==== -->
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorHeaderGeneratedIdentifier" alias="vendorHeaderGeneratedIdentifier" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorTaxNumber" alias="vendorTaxNumber" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorTypeCode" alias="vendorTypeCode" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorOwnershipCode" alias="vendorOwnershipCode" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorOwnershipCategoryCode" alias="vendorOwnershipCategoryCode" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorForeignIndicator" alias="vendorForeignIndicator" />
+    </row>
+    <!--
+        =================================================================
+        The definition pertaining to the retrieval of DV tax source data.
+        =================================================================
+     -->
+    <row id="DV">
+        <objectClasses>
+            <objectClass name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail" />
+            <objectClass name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax" />
+            <objectClass name="org.kuali.kfs.sys.businessobject.SourceAccountingLine" />
+            <objectClass name="org.kuali.kfs.fp.document.DisbursementVoucherDocument" />
+            <objectClass name="org.kuali.kfs.vnd.businessobject.VendorHeader" />
+            <objectClass name="org.kuali.kfs.sys.businessobject.UniversityDate" />
+        </objectClasses>
+        <!-- ==== Fields from FP_DV_PAYEE_DTL_T ==== -->
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::documentNumber" alias="payeeDetail.documentNumber" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrPaymentReasonCode" alias="disbVchrPaymentReasonCode" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrAlienPaymentCode" alias="disbVchrAlienPaymentCode" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrPayeeIdNumber" alias="disbVchrPayeeIdNumber" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrPayeePersonName" alias="disbVchrPayeePersonName" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrPayeeLine1Addr" alias="disbVchrPayeeLine1Addr" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrPayeeCountryCode" alias="disbVchrPayeeCountryCode" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbursementVoucherPayeeTypeCode" alias="disbursementVoucherPayeeTypeCode" />
+        <!-- ==== Fields from FP_DV_NRA_TAX_T ==== -->
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax::documentNumber" alias="nra.documentNumber" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax::federalIncomeTaxPercent" alias="federalIncomeTaxPercent" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax::incomeClassCode" alias="incomeClassCode" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax::incomeTaxTreatyExemptCode" alias="incomeTaxTreatyExemptCode" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax::foreignSourceIncomeCode" alias="foreignSourceIncomeCode" />
+        <!-- ==== Fields from FP_ACCT_LINES_T ==== -->
+        <field name="org.kuali.kfs.sys.businessobject.SourceAccountingLine::documentNumber" alias="accountingLine.documentNumber" />
+        <field name="org.kuali.kfs.sys.businessobject.SourceAccountingLine::sequenceNumber" alias="accountingLine.sequenceNumber" />
+        <field name="org.kuali.kfs.sys.businessobject.SourceAccountingLine::financialDocumentLineTypeCode" alias="financialDocumentLineTypeCode" />
+        <field name="org.kuali.kfs.sys.businessobject.SourceAccountingLine::amount" alias="amount" />
+        <field name="org.kuali.kfs.sys.businessobject.SourceAccountingLine::chartOfAccountsCode" alias="chartOfAccountsCode" />
+        <field name="org.kuali.kfs.sys.businessobject.SourceAccountingLine::accountNumber" alias="accountNumber" />
+        <field name="org.kuali.kfs.sys.businessobject.SourceAccountingLine::financialObjectCode" alias="financialObjectCode" />
+        <field name="org.kuali.kfs.sys.businessobject.SourceAccountingLine::financialDocumentLineDescription" alias="financialDocumentLineDescription" />
+        <field name="org.kuali.kfs.sys.businessobject.SourceAccountingLine::debitCreditCode" alias="debitCreditCode" />
+        <!-- ==== Fields from FP_DV_DOC_T ==== -->
+        <field name="org.kuali.kfs.fp.document.DisbursementVoucherDocument::documentNumber" alias="dv.documentNumber" />
+        <field name="org.kuali.kfs.fp.document.DisbursementVoucherDocument::disbVchrCheckStubText" alias="disbVchrCheckStubText" />
+        <field name="org.kuali.kfs.fp.document.DisbursementVoucherDocument::disbVchrPaymentMethodCode" alias="document.disbVchrPaymentMethodCode" />
+        <field name="org.kuali.kfs.fp.document.DisbursementVoucherDocument::extractDate" alias="extractDate" />
+        <field name="org.kuali.kfs.fp.document.DisbursementVoucherDocument::paidDate" alias="paidDate" />
+        <!-- ==== Fields from PUR_VNDR_HDR_T ==== -->
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorHeaderGeneratedIdentifier" alias="vendorHeaderGeneratedIdentifier" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorTaxNumber" alias="vendorTaxNumber" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorTypeCode" alias="vendorTypeCode" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorOwnershipCode" alias="vendorOwnershipCode" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorOwnershipCategoryCode" alias="vendorOwnershipCategoryCode" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorForeignIndicator" alias="vendorForeignIndicator" />
+        <!-- ==== Fields from SH_UNIV_DATE_T ==== -->
+        <field name="org.kuali.kfs.sys.businessobject.UniversityDate::universityDate" alias="universityDate" />
+    </row>
+    <!--
+        ===============================================================
+        The definition pertaining to the retrieval of vendor data only.
+        ===============================================================
+     -->
+    <row id="VENDOR">
+        <objectClasses>
+            <objectClass name="org.kuali.kfs.vnd.businessobject.VendorHeader" />
+            <objectClass name="org.kuali.kfs.vnd.businessobject.VendorDetail" />
+        </objectClasses>
+        <!-- ==== Fields from PUR_VNDR_HDR_T ==== -->
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorHeaderGeneratedIdentifier" alias="vendorHeaderGeneratedIdentifier" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorTaxNumber" alias="vendorTaxNumber" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorTypeCode" alias="vendorTypeCode" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorOwnershipCode" alias="vendorOwnershipCode" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorOwnershipCategoryCode" alias="vendorOwnershipCategoryCode" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorForeignIndicator" alias="vendorForeignIndicator" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorGIIN" alias="vendorGIIN" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorChapter4StatusCode" alias="vendorChapter4StatusCode" />
+        <!-- ==== Fields from PUR_VNDR_DTL_T ==== -->
+        <field name="org.kuali.kfs.vnd.businessobject.VendorDetail::vendorHeaderGeneratedIdentifier" alias="vendorDetail.vendorHeaderGeneratedIdentifier" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorDetail::vendorDetailAssignedIdentifier" alias="vendorDetailAssignedIdentifier" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorDetail::vendorParentIndicator" alias="vendorParentIndicator" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorDetail::vendorFirstLastNameIndicator" alias="vendorFirstLastNameIndicator" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorDetail::vendorName" alias="vendorName" />
+    </row>
+    <!--
+        ==================================================================
+        The definition pertaining to the retrieval of vendor address data.
+        ==================================================================
+     -->
+    <row id="VENDOR_ANY_ADDRESS">
+        <objectClasses>
+            <objectClass name="org.kuali.kfs.vnd.businessobject.VendorAddress" />
+        </objectClasses>
+        <!-- ==== Fields from PUR_VNDR_ADDR_T ==== -->
+        <field name="org.kuali.kfs.vnd.businessobject.VendorAddress::vendorAddressGeneratedIdentifier" alias="vendorAddressGeneratedIdentifier" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorAddress::vendorHeaderGeneratedIdentifier" alias="vendorHeaderGeneratedIdentifier" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorAddress::vendorDetailAssignedIdentifier" alias="vendorDetailAssignedIdentifier" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorAddress::vendorAddressTypeCode" alias="vendorAddressTypeCode" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorAddress::vendorLine1Address" alias="vendorLine1Address" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorAddress::vendorLine2Address" alias="vendorLine2Address" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorAddress::vendorCityName" alias="vendorCityName" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorAddress::vendorStateCode" alias="vendorStateCode" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorAddress::vendorZipCode" alias="vendorZipCode" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorAddress::vendorCountryCode" alias="vendorCountryCode" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorAddress::vendorAttentionName" alias="vendorAttentionName" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorAddress::vendorAddressInternationalProvinceName" alias="vendorAddressInternationalProvinceName" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorAddress::vendorAddressEmailAddress" alias="vendorAddressEmailAddress" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorAddress::active" alias="active" />
+    </row>
+    <!--
+        ==================================================================
+        The definition pertaining to the retrieval of document notes data.
+        ==================================================================
+     -->
+    <row id="DOCUMENT_NOTE">
+        <objectClasses>
+            <objectClass name="org.kuali.rice.krad.bo.Note" />
+        </objectClasses>
+        <!-- ==== Fields from KRNS_NTE_T ==== -->
+        <field name="org.kuali.rice.krad.bo.Note::noteIdentifier" alias="noteIdentifier" />
+        <field name="org.kuali.rice.krad.bo.Note::remoteObjectIdentifier" alias="remoteObjectIdentifier" />
+        <field name="org.kuali.rice.krad.bo.Note::noteText" alias="noteText" />
+    </row>
+    <!--
+        =====================================================
+        The definition pertaining to transaction detail rows.
+        =====================================================
+     -->
+    <row id="DETAIL" numAutoAssignedFieldsForInsert="1">
+        <objectClasses>
+            <objectClass name="edu.cornell.kfs.tax.businessobject.TransactionDetail" />
+        </objectClasses>
+        <!-- ==== Fields from TX_TRANSACTION_DETAIL_T ==== -->
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::transactionDetailId" alias="transactionDetailId" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::reportYear" alias="reportYear" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::documentNumber" alias="documentNumber" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::documentType" alias="documentType" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::financialDocumentLineNumber" alias="financialDocumentLineNumber" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::finObjectCode" alias="finObjectCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::netPaymentAmount" alias="netPaymentAmount" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::documentTitle" alias="documentTitle" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorTaxNumber" alias="vendorTaxNumber" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::incomeCode" alias="incomeCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::incomeCodeSubType" alias="incomeCodeSubType" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::dvCheckStubText" alias="dvCheckStubText" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::payeeId" alias="payeeId" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorName" alias="vendorName" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::parentVendorName" alias="parentVendorName" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorTypeCode" alias="vendorTypeCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorOwnershipCode" alias="vendorOwnershipCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorOwnershipCategoryCode" alias="vendorOwnershipCategoryCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorForeignIndicator" alias="vendorForeignIndicator" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::nraPaymentIndicator" alias="nraPaymentIndicator" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::paymentDate" alias="paymentDate" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::paymentPayeeName" alias="paymentPayeeName" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::incomeClassCode" alias="incomeClassCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::incomeTaxTreatyExemptIndicator" alias="incomeTaxTreatyExemptIndicator" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::foreignSourceIncomeIndicator" alias="foreignSourceIncomeIndicator" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::federalIncomeTaxPercent" alias="federalIncomeTaxPercent" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::paymentDescription" alias="paymentDescription" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::paymentLine1Address" alias="paymentLine1Address" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::paymentCountryName" alias="paymentCountryName" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::chartCode" alias="chartCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::accountNumber" alias="accountNumber" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::initiatorNetId" alias="initiatorNetId" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::form1099Box" alias="form1099Box" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::form1099OverriddenBox" alias="form1099OverriddenBox" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::form1042SBox" alias="form1042SBox" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::form1042SOverriddenBox" alias="form1042SOverriddenBox" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::paymentReasonCode" alias="paymentReasonCode" />
+    </row>
+    <!--
+        ===========================================================================================
+        The definition pertaining to fields whose values are derived or tweaked from other sources.
+        ===========================================================================================
+     -->
+    <row id="DERIVED">
+        <!-- ==== These fields are not directly tied to the database, but are instead derived by the 1099/1042S processing. ==== -->
+        <field name="vendorLastName" type="VARCHAR" />
+        <field name="vendorFirstName" type="VARCHAR" />
+        <field name="vendorEmailAddress" type="VARCHAR" />
+        <field name="vendorUSAddressLine1" type="VARCHAR" />
+        <field name="vendorForeignAddressLine1" type="VARCHAR" />
+        <field name="vendorAnyAddressLine1" type="VARCHAR" />
+        <field name="vendorZipCodeNumOnly" type="VARCHAR" />
+        <field name="ssn" type="VARCHAR" />
+        <field name="itin" type="VARCHAR" />
+        <field name="chapter3StatusCode" type="VARCHAR" />
+        <field name="chapter3ExemptionCode" type="VARCHAR" />
+        <field name="chapter4ExemptionCode" type="VARCHAR" />
+        <field name="incomeCode" type="VARCHAR" />
+        <field name="ein" type="VARCHAR" />
+        <field name="chapter3TaxRate" type="DECIMAL" />
+        <field name="grossAmount" type="DECIMAL" />
+        <field name="fedTaxWithheldAmount" type="DECIMAL" />
+        <field name="stateIncomeTaxWithheldAmount" type="DECIMAL" />
+        <field name="stateCode" type="VARCHAR" />
+        <field name="dvCheckStubTextWithUpdatedWhitespace" type="VARCHAR" />
+        <field name="tabSiteId" type="VARCHAR" />
+        <field name="box1" type="DECIMAL" />
+        <field name="box2" type="DECIMAL" />
+        <field name="box3" type="DECIMAL" />
+        <field name="box4" type="DECIMAL" />
+        <field name="box5" type="DECIMAL" />
+        <field name="box6" type="DECIMAL" />
+        <field name="box7" type="DECIMAL" />
+        <field name="box8" type="DECIMAL" />
+        <field name="box9" type="VARCHAR" />
+        <field name="box10" type="DECIMAL" />
+        <field name="box11" type="DECIMAL" />
+        <field name="box12" type="DECIMAL" />
+        <field name="box13" type="DECIMAL" />
+        <field name="box14" type="DECIMAL" />
+        <field name="box15a" type="DECIMAL" />
+        <field name="box15b" type="DECIMAL" />
+        <field name="box16" type="DECIMAL" />
+        <field name="box17" type="VARCHAR" />
+        <field name="box18" type="DECIMAL" />
+    </row>
+</taxDataDefinition>

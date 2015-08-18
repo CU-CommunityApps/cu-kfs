@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE digester-rules 
+    PUBLIC "-//Jakarta Apache //DTD digester-rules XML V1.0//EN" 
+    "http://jakarta.apache.org/commons/digester/dtds/digester-rules.dtd">
+
+<!--
+    XML digester rules for creating tax data definitions.
+ -->
+<digester-rules>
+
+  <pattern value="taxDataDefinition">
+    <object-create-rule classname="edu.cornell.kfs.tax.batch.TaxDataDefinition" />
+    
+    <pattern value="row">
+      <object-create-rule classname="edu.cornell.kfs.tax.batch.TaxDataRow" />
+      
+      <set-properties-rule>
+        <alias attr-name="id" prop-name="rowId" />
+        <alias attr-name="numAutoAssignedFieldsForInsert" prop-name="numAutoAssignedFieldsForInsert" />
+        <alias attr-name="explicitFieldsOnly" prop-name="explicitFieldsOnly" />
+      </set-properties-rule>
+      
+      <pattern value="objectClasses/objectClass">
+        <call-method-rule methodname="addObjectClass" paramcount="1" />
+        <call-param-rule attrname="name" paramnumber="0" />
+      </pattern>
+      
+      <pattern value="field">
+        <object-create-rule classname="edu.cornell.kfs.tax.batch.TaxDataField" />
+        
+        <set-properties-rule>
+          <alias attr-name="name" prop-name="propertyName" />
+          <alias attr-name="alias" prop-name="propertyAlias" />
+          <alias attr-name="type" prop-name="propertyType" />
+          <alias attr-name="skip" prop-name="skip" />
+        </set-properties-rule>
+        
+        <set-next-rule methodname="addDataField" />
+      </pattern>
+      
+      <set-next-rule methodname="addDataRow" />
+    </pattern>
+    
+  </pattern>
+
+</digester-rules>

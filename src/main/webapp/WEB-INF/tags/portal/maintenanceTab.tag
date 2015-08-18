@@ -53,4 +53,6 @@
     <c:if test="${ConfigProperties.module.travel.enabled == 'true'}"> 
       <maintenanceChannel:tem />
     </c:if>
+    <%-- CU Customization: Added channel for Cornell's tax module. --%>
+    <maintenanceChannel:tax />
 </td>

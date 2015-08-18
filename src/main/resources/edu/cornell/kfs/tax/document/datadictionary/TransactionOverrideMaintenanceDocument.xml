@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <bean id="TransactionOverrideMaintenanceDocument" parent="TransactionOverrideMaintenanceDocument-parentBean"/>
+
+  <bean id="TransactionOverrideMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.tax.businessobject.TransactionOverride"/>
+    <property name="maintainableClass" value="org.kuali.kfs.sys.document.FinancialSystemMaintainable"/>
+    <property name="businessRulesClass" value="edu.cornell.kfs.tax.document.validation.impl.TransactionOverrideMaintenanceDocumentRule"/>
+    <property name="maintainableSections">
+      <list>
+        <ref bean="TransactionOverrideMaintenanceDocument-EditTransactionOverride"/>
+      </list>
+    </property>
+    <property name="lockingKeys">
+      <list>
+        <value>universityDate</value>
+        <value>taxType</value>
+        <value>documentNumber</value>
+        <value>financialDocumentLineNumber</value>
+      </list>
+    </property>
+    <property name="documentTypeName" value="TXTO"/>
+    <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
+    <property name="workflowAttributes">
+      <ref bean="TransactionOverrideMaintenanceDocument-workflowAttributes"/>
+    </property>
+  </bean>
+
+  <!-- Maintenance Section Definitions -->
+
+  <bean id="TransactionOverrideMaintenanceDocument-EditTransactionOverride" parent="TransactionOverrideMaintenanceDocument-EditTransactionOverride-parentBean"/>
+
+  <bean id="TransactionOverrideMaintenanceDocument-EditTransactionOverride-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Edit Transaction Override"/>
+    <property name="title" value="Edit Transaction Override"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableFieldDefinition" p:name="universityDate" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="taxType" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="documentNumber" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="financialDocumentLineNumber" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="boxNumber" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
+      </list>
+    </property>
+  </bean>
+
+  <!-- Workflow Attributes -->
+
+  <bean id="TransactionOverrideMaintenanceDocument-workflowAttributes" parent="TransactionOverrideMaintenanceDocument-workflowAttributes-parentBean"/>
+
+  <bean id="TransactionOverrideMaintenanceDocument-workflowAttributes-parentBean" abstract="true" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes"/>
+
+</beans>
