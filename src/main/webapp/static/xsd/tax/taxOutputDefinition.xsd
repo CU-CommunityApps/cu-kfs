@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Cornell-specific XSD file defining the structure of tax output definition objects,
+    which are used to help build tax record output.
+ -->
+<xsd:schema elementFormDefault="qualified"
+            targetNamespace="http://www.kuali.org/kfs/tax/taxOutputDefinition"
+            xmlns="http://www.kuali.org/kfs/tax/taxOutputDefinition" 
+            xmlns:kfs="http://www.kuali.org/kfs/sys/types"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://127.0.0.1:8080/kfs/static/xsd/sys/xml.xsd"/>
+  <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="http://127.0.0.1:8080/kfs/static/xsd/sys/types.xsd" />
+
+  <!-- The root "taxOutputDefinition" element. -->
+  <xsd:element name="taxOutputDefinition">
+    <xsd:complexType>
+      <xsd:sequence>
+        <!-- There should be one "section" element for each chunk of output. -->
+        <xsd:element name="section" minOccurs="1" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:sequence>
+              <!-- There should be one "field" element for each individual tax record field. -->
+              <xsd:element name="field" minOccurs="1" maxOccurs="unbounded">
+                <xsd:complexType>
+                  <xsd:attribute name="name" type="kfs:oneToFiftyCharType" use="required" />
+                  <xsd:attribute name="length" type="xsd:integer" use="required" />
+                  <xsd:attribute name="type" type="kfs:oneToFiftyCharType" use="required" />
+                  <xsd:attribute name="value" type="kfs:oneToSeventyCharType" use="optional" />
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="length" type="xsd:integer" use="required" />
+            <xsd:attribute name="hasExactLength" type="xsd:boolean" use="optional" />
+            <xsd:attribute name="hasSeparators" type="xsd:boolean" use="optional" />
+            <xsd:attribute name="separator" type="kfs:oneToEightCharType" use="optional" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>

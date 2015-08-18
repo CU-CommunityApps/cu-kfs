@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE digester-rules 
+    PUBLIC "-//Jakarta Apache //DTD digester-rules XML V1.0//EN" 
+    "http://jakarta.apache.org/commons/digester/dtds/digester-rules.dtd">
+
+<!--
+    XML digester rules for creating tax output definitions.
+ -->
+<digester-rules>
+
+  <pattern value="taxOutputDefinition">
+    <object-create-rule classname="edu.cornell.kfs.tax.batch.TaxOutputDefinition" />
+    
+    <pattern value="section">
+      <object-create-rule classname="edu.cornell.kfs.tax.batch.TaxOutputSection" />
+      
+      <set-properties-rule>
+        <alias attr-name="length" prop-name="length" />
+        <alias attr-name="hasExactLength" prop-name="hasExactLength" />
+        <alias attr-name="hasSeparators" prop-name="hasSeparators" />
+        <alias attr-name="separator" prop-name="separator" />
+      </set-properties-rule>
+      
+      <pattern value="field">
+        <object-create-rule classname="edu.cornell.kfs.tax.batch.TaxOutputField" />
+        
+        <set-properties-rule>
+          <alias attr-name="name" prop-name="name" />
+          <alias attr-name="length" prop-name="length" />
+          <alias attr-name="type" prop-name="type" />
+          <alias attr-name="value" prop-name="value" />
+        </set-properties-rule>
+        
+        <set-next-rule methodname="addField" />
+        
+      </pattern>
+      
+      <set-next-rule methodname="addSection" />
+      
+    </pattern>
+    
+  </pattern>
+
+</digester-rules>

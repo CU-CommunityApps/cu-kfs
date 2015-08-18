@@ -21,4 +21,6 @@
 	<import resource="module/ezra/cu-spring-ezra.xml" />
 	<import resource="module/receiptProcessing/cu-spring-receiptProcessing.xml" />
 	
+	<import resource="tax/cu-spring-tax.xml" />
+	
 </beans>

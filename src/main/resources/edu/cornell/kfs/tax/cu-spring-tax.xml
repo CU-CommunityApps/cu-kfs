@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+    <bean id="taxModuleConfiguration" parent="taxModuleConfiguration-parentBean" />
+
+    <bean id="taxModuleConfiguration-parentBean" abstract="true" parent="taxModuleConfiguration-base-parentBean" />
+
+    <bean id="taxModuleConfiguration-base-parentBean" abstract="true" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration">
+        <property name="namespaceCode" value="KFS-TAX" />
+        <property name="initializeDataDictionary" value="true" />
+        <property name="packagePrefixes">
+            <list>
+                <value>edu.cornell.kfs.tax</value>
+            </list>
+        </property>
+        <property name="dataDictionaryPackages">
+            <list>
+                <value>edu/cornell/kfs/tax/businessobject/datadictionary</value>
+                <value>edu/cornell/kfs/tax/document/datadictionary</value>
+            </list>
+        </property>
+        <property name="databaseRepositoryFilePaths">
+            <list>
+                <value>edu/cornell/kfs/tax/cu-ojb-tax.xml</value>
+            </list>
+        </property>
+        <property name="jobNames">
+            <list>
+                <value>taxProcessingJob</value>
+            </list>
+        </property>
+        <property name="batchFileDirectories">
+              <list>
+                <value>${reports.directory}/tax</value>
+                <value>${staging.directory}/tax</value>
+              </list>
+        </property>
+    </bean>
+
+    <bean id="taxModuleService" parent="taxModuleService-parentBean" />
+
+    <bean id="taxModuleService-parentBean" abstract="true" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl">
+        <property name="moduleConfiguration" ref="taxModuleConfiguration" />
+    </bean>
+
+
+
+    <!-- Services -->
+
+    <bean id="taxProcessingService" class="edu.cornell.kfs.tax.service.impl.TaxProcessingServiceImpl">
+        <property name="taxOutputDefinitionFileType" ref="taxOutputDefinitionFileType" />
+        <property name="taxDataDefinitionFileType" ref="taxDataDefinitionFileType" />
+        <property name="taxProcessingDao" ref="taxProcessingDao" />
+    </bean>
+
+    <bean id="taxOutputDefinitionFileType" parent="taxOutputDefinitionFileType-parentBean" />
+    <bean id="taxOutputDefinitionFileType-parentBean" abstract="true" class="edu.cornell.kfs.tax.batch.TaxOutputDefinitionFileType">
+        <property name="directoryPath">
+            <value>${staging.directory}/tax</value>
+        </property>
+        <property name="digestorRulesFileName">
+            <value>edu/cornell/kfs/tax/batch/taxOutputDefinitionDigesterRules.xml</value>
+        </property>
+        <property name="schemaLocation">
+            <value>${externalizable.static.content.url}/xsd/tax/taxOutputDefinition.xsd</value>
+        </property>
+    </bean>
+
+    <bean id="taxDataDefinitionFileType" parent="taxDataDefinitionFileType-parentBean" />
+    <bean id="taxDataDefinitionFileType-parentBean" abstract="true" class="edu.cornell.kfs.tax.batch.TaxDataDefinitionFileType">
+        <property name="directoryPath">
+            <value>${staging.directory}/tax</value>
+        </property>
+        <property name="digestorRulesFileName">
+            <value>edu/cornell/kfs/tax/batch/taxDataDefinitionDigesterRules.xml</value>
+        </property>
+        <property name="schemaLocation">
+            <value>${externalizable.static.content.url}/xsd/tax/taxDataDefinition.xsd</value>
+        </property>
+    </bean>
+
+    <bean id="taxProcessingDao" class="edu.cornell.kfs.tax.dataaccess.impl.TaxProcessingDaoJdbc" parent="platformAwareDaoJdbc">
+        <property name="reportsDirectory">
+            <value>${reports.directory}/tax</value>
+        </property>
+    </bean>
+
+    <bean id="taxTableMetadataService" class="edu.cornell.kfs.tax.dataaccess.impl.TaxTableMetadataServiceOjbImpl" />
+
+
+
+    <!-- Batch Jobs -->
+
+    <bean id="taxProcessingStep" class="edu.cornell.kfs.tax.batch.TaxProcessingStep" parent="step">
+        <property name="taxProcessingService" ref="taxProcessingService" />
+    </bean>
+
+    <bean id="taxProcessingJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="taxProcessingStep" />
+            </list>
+        </property>
+    </bean>
+
+</beans>

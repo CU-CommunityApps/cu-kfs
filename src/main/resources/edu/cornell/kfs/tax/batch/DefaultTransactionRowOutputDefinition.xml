@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Default output definition for printing the contents
+    of the transaction detail rows.
+ -->
+<taxOutputDefinition xmlns="http://www.kuali.org/kfs/tax/taxOutputDefinition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <!--
+        ================================================
+        This section represents the column title header.
+        ================================================
+     -->
+    <section length="2854" hasExactLength="true" hasSeparators="true" separator=" ">
+        <field name="Header1" length="40" type="STATIC" value="Transaction_Detail_ID" />
+        <field name="Header2" length="11" type="STATIC" value="Report_Year" />
+        <field name="Header3" length="14" type="STATIC" value="Doc_Number" />
+        <field name="Header4" length="8" type="STATIC" value="Doc_Type" />
+        <field name="Header5" length="15" type="STATIC" value="Doc_Line_Number" />
+        <field name="Header6" length="11" type="STATIC" value="Object_Code" />
+        <field name="Header7" length="23" type="STATIC" value="Payment_Amount" />
+        <field name="Header8" length="255" type="STATIC" value="Document_Title" />
+        <field name="Header9" length="255" type="STATIC" value="Vendor_Tax_Number" />
+        <field name="Header10" length="11" type="STATIC" value="Income_Code" />
+        <field name="Header11" length="20" type="STATIC" value="Income_Code_Sub-Type" />
+        <field name="Header12" length="1400" type="STATIC" value="DV_Check_Stub_Text" />
+        <field name="Header13" length="25" type="STATIC" value="Payee_ID" />
+        <field name="Header14" length="45" type="STATIC" value="Vendor_Name" />
+        <field name="Header15" length="45" type="STATIC" value="Parent_Vendor_Name" />
+        <field name="Header16" length="11" type="STATIC" value="Vendor_Type" />
+        <field name="Header17" length="12" type="STATIC" value="Vendor_Owner" />
+        <field name="Header18" length="25" type="STATIC" value="Vendor_Ownership_Category" />
+        <field name="Header19" length="14" type="STATIC" value="Foreign_Vendor" />
+        <field name="Header20" length="11" type="STATIC" value="NRA_Payment" />
+        <field name="Header21" length="12" type="STATIC" value="Payment_Date" />
+        <field name="Header22" length="123" type="STATIC" value="Payee_Name" />
+        <field name="Header23" length="12" type="STATIC" value="Income_Class" />
+        <field name="Header24" length="17" type="STATIC" value="Tax_Treaty_Exempt" />
+        <field name="Header25" length="14" type="STATIC" value="Foreign_Source" />
+        <field name="Header26" length="19" type="STATIC" value="Fed_Inc_Tax_Percent" />
+        <field name="Header27" length="100" type="STATIC" value="Payment_Description" />
+        <field name="Header28" length="45" type="STATIC" value="Payment_Address_Line_1" />
+        <field name="Header29" length="30" type="STATIC" value="Payment_Country_Name" />
+        <field name="Header30" length="10" type="STATIC" value="Chart_Code" />
+        <field name="Header31" length="14" type="STATIC" value="Account_Number" />
+        <field name="Header32" length="100" type="STATIC" value="Initiator_NetId" />
+        <field name="Header33" length="8" type="STATIC" value="1099_Box" />
+        <field name="Header34" length="19" type="STATIC" value="1099_Overridden_Box" />
+        <field name="Header35" length="10" type="STATIC" value="1042S_Box" />
+        <field name="Header36" length="20" type="STATIC" value="1042S_Overridden_Box" />
+        <field name="Header37" length="14" type="STATIC" value="Payment_Reason" />
+    </section>
+    <!--
+        =================================================
+        This section represents a transaction detail row.
+        =================================================
+     -->
+    <section length="2854" hasExactLength="true" hasSeparators="true" separator=" ">
+        <field name="Field1" length="40" type="DETAIL" value="transactionDetailId" />
+        <field name="Field2" length="11" type="DETAIL" value="reportYear" />
+        <field name="Field3" length="14" type="DETAIL" value="documentNumber" />
+        <field name="Field4" length="8" type="DETAIL" value="documentType" />
+        <field name="Field5" length="15" type="DETAIL" value="financialDocumentLineNumber" />
+        <field name="Field6" length="11" type="DETAIL" value="finObjectCode" />
+        <field name="Field7" length="23" type="DETAIL" value="netPaymentAmount" />
+        <field name="Field8" length="255" type="DETAIL" value="documentTitle" />
+        <field name="Field9" length="255" type="DERIVED" value="ssn" /><!-- This will print the VENDOR_TAX_NBR in unencrypted format. -->
+        <field name="Field10" length="11" type="DETAIL" value="incomeCode" />
+        <field name="Field11" length="20" type="DETAIL" value="incomeCodeSubType" />
+        <field name="Field12" length="1400" type="DERIVED" value="dvCheckStubTextWithUpdatedWhitespace" /><!-- Converts stub whitespace to regular spaces. -->
+        <field name="Field13" length="25" type="DETAIL" value="payeeId" />
+        <field name="Field14" length="45" type="DETAIL" value="vendorName" />
+        <field name="Field15" length="45" type="DETAIL" value="parentVendorName" />
+        <field name="Field16" length="11" type="DETAIL" value="vendorTypeCode" />
+        <field name="Field17" length="12" type="DETAIL" value="vendorOwnershipCode" />
+        <field name="Field18" length="25" type="DETAIL" value="vendorOwnershipCategoryCode" />
+        <field name="Field19" length="14" type="DETAIL" value="vendorForeignIndicator" />
+        <field name="Field20" length="11" type="DETAIL" value="nraPaymentIndicator" />
+        <field name="Field21" length="12" type="DETAIL" value="paymentDate" />
+        <field name="Field22" length="123" type="DETAIL" value="paymentPayeeName" />
+        <field name="Field23" length="12" type="DETAIL" value="incomeClassCode" />
+        <field name="Field24" length="17" type="DETAIL" value="incomeTaxTreatyExemptIndicator" />
+        <field name="Field25" length="14" type="DETAIL" value="foreignSourceIncomeIndicator" />
+        <field name="Field26" length="19" type="DETAIL" value="federalIncomeTaxPercent" />
+        <field name="Field27" length="100" type="DETAIL" value="paymentDescription" />
+        <field name="Field28" length="45" type="DETAIL" value="paymentLine1Address" />
+        <field name="Field29" length="30" type="DETAIL" value="paymentCountryName" />
+        <field name="Field30" length="10" type="DETAIL" value="chartCode" />
+        <field name="Field31" length="14" type="DETAIL" value="accountNumber" />
+        <field name="Field32" length="100" type="DETAIL" value="initiatorNetId" />
+        <field name="Field33" length="8" type="DETAIL" value="form1099Box" />
+        <field name="Field34" length="19" type="DETAIL" value="form1099OverriddenBox" />
+        <field name="Field35" length="10" type="DETAIL" value="form1042SBox" />
+        <field name="Field36" length="20" type="DETAIL" value="form1042SOverriddenBox" />
+        <field name="Field37" length="14" type="DETAIL" value="paymentReasonCode" />
+    </section>
+</taxOutputDefinition>
