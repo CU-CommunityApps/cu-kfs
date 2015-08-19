@@ -35,7 +35,6 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.core.api.mail.MailMessage;
-import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.KewApiConstants;
@@ -44,12 +43,8 @@ import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.identity.address.EntityAddress;
-import org.kuali.rice.kim.api.identity.employment.EntityEmployment;
-import org.kuali.rice.kim.api.identity.entity.Entity;
-import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.krad.bo.Attachment;
-import org.kuali.rice.krad.bo.DocumentHeader;
 import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.exception.InvalidAddressException;
@@ -66,7 +61,6 @@ import org.kuali.rice.krad.util.ObjectUtils;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
-import edu.cornell.kfs.module.purap.businessobject.IWantDocUserOptions;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.businessobject.LevelOrganization;
 import edu.cornell.kfs.module.purap.businessobject.PersonData;
@@ -311,11 +305,6 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
         requisitionDocument.setDocumentFundingSourceCode(parameterService.getParameterValueAsString(
                 RequisitionDocument.class, PurapParameterConstants.DEFAULT_FUNDING_SOURCE));
         requisitionDocument.setUseTaxIndicator(SpringContext.getBean(PurchasingService.class).getDefaultUseTaxIndicatorValue(requisitionDocument));
-        
-        // if org doc number present on I Want doc, copy it to REQ
-        if(StringUtils.isNotBlank(iWantDocument.getDocumentHeader().getOrganizationDocumentNumber())){
-        	requisitionDocument.getDocumentHeader().setOrganizationDocumentNumber(iWantDocument.getDocumentHeader().getOrganizationDocumentNumber());
-        }
 
         // set up document link identifier.
         requisitionDocument.setAccountsPayablePurchasingDocumentLinkIdentifier(iWantDocument.getAccountsPayablePurchasingDocumentLinkIdentifier());
@@ -704,11 +693,6 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
         // DV desc = IWantDoc desc
         disbursementVoucherDocument.getDocumentHeader().setDocumentDescription(iWantDocument.getDocumentHeader().getDocumentDescription());
         
-        // if org doc number present on I Want doc, copy it to DV
-        if(StringUtils.isNotBlank(iWantDocument.getDocumentHeader().getOrganizationDocumentNumber())){
-        	disbursementVoucherDocument.getDocumentHeader().setOrganizationDocumentNumber(iWantDocument.getDocumentHeader().getOrganizationDocumentNumber());
-        }
-        
         //copy over attachments
         //copyIWantdDocAttachmentsToDV(disbursementVoucherDocument, disbursementVoucherForm, iWantDocument);
         copyIWantDocAttachments(disbursementVoucherDocument, iWantDocument, true);
@@ -809,156 +793,6 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
         
     }
     
-	/**
-	 * @see edu.cornell.kfs.module.purap.document.service.IWantDocumentService#setIWantDocumentDescription(edu.cornell.kfs.module.purap.document.IWantDocument)
-	 */
-	@Override
-	public void setIWantDocumentDescription(IWantDocument iWantDocument) {
-        // add selected chart and department to document description
-        String routingChart = iWantDocument.getRoutingChart() == null ? StringUtils.EMPTY : iWantDocument
-                .getRoutingChart() + "-";
-        String routingOrg = iWantDocument.getRoutingOrganization() == null ? StringUtils.EMPTY : iWantDocument
-                .getRoutingOrganization();
-        String addChartOrgToDesc = routingChart + routingOrg;
-        String vendorName = iWantDocument.getVendorName() == null ? StringUtils.EMPTY : iWantDocument.getVendorName();
-        String description = addChartOrgToDesc + " " + vendorName;
-
-        int maxLengthOfDocumentDescription = KFSConstants.getMaxLengthOfDocumentDescription();
-        if (StringUtils.isNotBlank(description) && description.length() > maxLengthOfDocumentDescription) {
-            description = description.substring(0, maxLengthOfDocumentDescription);
-        }
-
-        // If necessary, add a default description.
-        if (StringUtils.isBlank(description)) {
-            description = "New IWantDocument";
-        }
-        
-        iWantDocument.getDocumentHeader().setDocumentDescription(description);
-	}
-    
-	/**
-	 * @see edu.cornell.kfs.module.purap.document.service.IWantDocumentService#setUpIWantDocDefaultValues(IWantDocument, Person)
-	 */
-	@Override
-	public void setUpIWantDocDefaultValues(IWantDocument iWantDocument, Person initiatorUser) {
-		String principalId = iWantDocument.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
-		Principal initiator = KimApiServiceLocator.getIdentityService().getPrincipal(principalId);
-		String initiatorPrincipalID = initiator.getPrincipalId();
-		String initiatorNetID = initiator.getPrincipalName();
-
-		iWantDocument.setInitiatorNetID(initiatorNetID);
-
-		String initiatorName = initiatorUser.getName();
-		String initiatorPhoneNumber = initiatorUser.getPhoneNumber();
-		String initiatorEmailAddress = initiatorUser.getEmailAddress();
-
-		String address = getPersonCampusAddress(initiatorNetID);
-
-		iWantDocument.setInitiatorName(initiatorName);
-		iWantDocument.setInitiatorPhoneNumber(initiatorPhoneNumber);
-		iWantDocument.setInitiatorEmailAddress(initiatorEmailAddress);
-		iWantDocument.setInitiatorAddress(address);
-
-		// check default user options
-		Map<String, String> primaryKeysCollegeOption = new HashMap<String, String>();
-		primaryKeysCollegeOption.put(CUPurapConstants.USER_OPTIONS_PRINCIPAL_ID, initiatorPrincipalID);
-		primaryKeysCollegeOption.put(CUPurapConstants.USER_OPTIONS_OPTION_ID, CUPurapConstants.USER_OPTIONS_DEFAULT_COLLEGE);
-		IWantDocUserOptions userOptionsCollege = (IWantDocUserOptions) getBusinessObjectService().findByPrimaryKey(IWantDocUserOptions.class, primaryKeysCollegeOption);
-
-		Map<String, String> primaryKeysDepartmentOption = new HashMap<String, String>();
-		primaryKeysDepartmentOption.put(CUPurapConstants.USER_OPTIONS_PRINCIPAL_ID, initiatorPrincipalID);
-		primaryKeysDepartmentOption.put(CUPurapConstants.USER_OPTIONS_OPTION_ID, CUPurapConstants.USER_OPTIONS_DEFAULT_DEPARTMENT);
-		IWantDocUserOptions userOptionsDepartment = (IWantDocUserOptions) getBusinessObjectService().findByPrimaryKey(IWantDocUserOptions.class, primaryKeysDepartmentOption);
-
-		// check default deliver to address info
-
-		Map<String, String> primaryKeysdeliverToNetIDOption = new HashMap<String, String>();
-		primaryKeysdeliverToNetIDOption.put(CUPurapConstants.USER_OPTIONS_PRINCIPAL_ID, initiatorPrincipalID);
-		primaryKeysdeliverToNetIDOption.put(CUPurapConstants.USER_OPTIONS_OPTION_ID, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_NET_ID);
-		IWantDocUserOptions userOptionsDeliverToNetID = (IWantDocUserOptions) getBusinessObjectService().findByPrimaryKey(IWantDocUserOptions.class, primaryKeysdeliverToNetIDOption);
-
-		Map<String, String> primaryKeysDeliverToNameOption = new HashMap<String, String>();
-		primaryKeysDeliverToNameOption.put(CUPurapConstants.USER_OPTIONS_PRINCIPAL_ID, initiatorPrincipalID);
-		primaryKeysDeliverToNameOption.put(CUPurapConstants.USER_OPTIONS_OPTION_ID, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_NAME);
-		IWantDocUserOptions userOptionsDeliverToName = (IWantDocUserOptions) getBusinessObjectService().findByPrimaryKey(IWantDocUserOptions.class, primaryKeysDeliverToNameOption);
-
-		Map<String, String> primaryKeysDeliverToEmailOption = new HashMap<String, String>();
-		primaryKeysDeliverToEmailOption.put(CUPurapConstants.USER_OPTIONS_PRINCIPAL_ID, initiatorPrincipalID);
-		primaryKeysDeliverToEmailOption.put(CUPurapConstants.USER_OPTIONS_OPTION_ID, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_EMAIL_ADDRESS);
-		IWantDocUserOptions userOptionsDeliverToEmail = (IWantDocUserOptions) getBusinessObjectService().findByPrimaryKey(IWantDocUserOptions.class, primaryKeysDeliverToEmailOption);
-
-		Map<String, String> primaryKeysDeliverToPhnNbrOption = new HashMap<String, String>();
-		primaryKeysDeliverToPhnNbrOption.put(CUPurapConstants.USER_OPTIONS_PRINCIPAL_ID, initiatorPrincipalID);
-		primaryKeysDeliverToPhnNbrOption.put(CUPurapConstants.USER_OPTIONS_OPTION_ID, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_PHONE_NUMBER);
-		IWantDocUserOptions userOptionsDeliverToPhnNbr = (IWantDocUserOptions) getBusinessObjectService().findByPrimaryKey(IWantDocUserOptions.class, primaryKeysDeliverToPhnNbrOption);
-
-		Map<String, String> primaryKeysDeliverToAddressOption = new HashMap<String, String>();
-		primaryKeysDeliverToAddressOption.put(CUPurapConstants.USER_OPTIONS_PRINCIPAL_ID, initiatorPrincipalID);
-		primaryKeysDeliverToAddressOption.put(CUPurapConstants.USER_OPTIONS_OPTION_ID, CUPurapConstants.USER_OPTIONS_DEFAULT_DELIVER_TO_ADDRESS);
-		IWantDocUserOptions userOptionsDeliverToAddress = (IWantDocUserOptions) getBusinessObjectService().findByPrimaryKey(IWantDocUserOptions.class, primaryKeysDeliverToAddressOption);
-
-		if (ObjectUtils.isNotNull(userOptionsCollege)) {
-			iWantDocument.setCollegeLevelOrganization(userOptionsCollege.getOptionValue());
-		}
-
-		if (ObjectUtils.isNotNull(userOptionsDepartment)) {
-			iWantDocument.setDepartmentLevelOrganization(userOptionsDepartment.getOptionValue());
-		}
-
-		// if no default user options check primary department
-		if (ObjectUtils.isNull(userOptionsCollege) && ObjectUtils.isNull(userOptionsDepartment)) {
-			String primaryDeptOrg = null;
-
-			if (ObjectUtils.isNotNull(iWantDocument)) {
-
-				Entity entityInfo = KimApiServiceLocator.getIdentityService().getEntityByPrincipalId(initiatorUser.getPrincipalId());
-
-				if (ObjectUtils.isNotNull(entityInfo)) {
-					if (ObjectUtils.isNotNull(entityInfo.getEmploymentInformation()) && entityInfo.getEmploymentInformation().size() > 0) {
-						EntityEmployment employmentInformation = entityInfo.getEmploymentInformation().get(0);
-						String primaryDepartment = employmentInformation.getPrimaryDepartmentCode();
-						primaryDeptOrg = primaryDepartment.substring(primaryDepartment.lastIndexOf('-') + 1, primaryDepartment.length());
-
-						String cLevelOrg = getCLevelOrganizationForDLevelOrg(primaryDepartment);
-						iWantDocument.setCollegeLevelOrganization(cLevelOrg);
-					}
-				}
-			}
-
-			if (ObjectUtils.isNotNull(iWantDocument) && StringUtils.isNotEmpty(iWantDocument.getCollegeLevelOrganization())) {
-
-				if (ObjectUtils.isNotNull(primaryDeptOrg)) {
-					iWantDocument.setDepartmentLevelOrganization(primaryDeptOrg);
-				}
-
-			}
-		}
-
-		if (ObjectUtils.isNotNull(userOptionsDeliverToNetID)) {
-			iWantDocument.setDeliverToNetID(userOptionsDeliverToNetID.getOptionValue());
-		}
-
-		if (ObjectUtils.isNotNull(userOptionsDeliverToName)) {
-			iWantDocument.setDeliverToName(userOptionsDeliverToName.getOptionValue());
-		}
-
-		if (ObjectUtils.isNotNull(userOptionsDeliverToEmail)) {
-			iWantDocument.setDeliverToEmailAddress(userOptionsDeliverToEmail.getOptionValue());
-		}
-
-		if (ObjectUtils.isNotNull(userOptionsDeliverToPhnNbr)) {
-			iWantDocument.setDeliverToPhoneNumber(userOptionsDeliverToPhnNbr.getOptionValue());
-		}
-
-		if (ObjectUtils.isNotNull(userOptionsDeliverToAddress)) {
-			iWantDocument.setDeliverToAddress(userOptionsDeliverToAddress.getOptionValue());
-		}
-
-		setIWantDocumentDescription(iWantDocument);
-
-	}
-
-    
     public AttachmentService getAttachmentService() {
         return attachmentService;
     }
@@ -1054,4 +888,6 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
     }
+    
+
 }

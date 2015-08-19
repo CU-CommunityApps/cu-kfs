@@ -150,7 +150,7 @@
     <property name="forceUppercase" value="true"/>
     <property name="label" value="Commodity Code"/>
     <property name="shortLabel" value="Commodity Code"/>
-    <property name="maxLength" value="40"/>
+    <property name="maxLength" value="45"/>
     <property name="validationPattern">
       <ref bean="AnyCharacterWithWhitespaceValidation" />
     </property>
