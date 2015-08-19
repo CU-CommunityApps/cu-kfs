@@ -334,6 +334,90 @@
             <xsd:enumeration value="N"/>
         </xsd:restriction>
     </xsd:simpleType>
+    
+    <xsd:simpleType name="docExplanationType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="400"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="zeroToThreeCharType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="3"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="zeroToFiveCharType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="5"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="zeroToSevenCharType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="7"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="zeroToTenCharType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="10"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="zeroToFortyCharType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="zeroToOneHundredCharType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="100"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="zeroToTwoHundredCharType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="200"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="zeroToTwoHundredFiftyCharType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="250"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+   <xsd:simpleType name="zeroToTwoHundredFiftyFiveCharType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="255"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="zeroToThreeHundredCharType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="300"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="zeroToFiveHundredCharType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="500"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="zeroToEightHundredCharType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="800"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="phoneType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="([0-9]{3}-{0,1}[0-9]{3}-{0,1}[0-9]{4}){0,1}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
     <!-- definition of simple type elements -->
     
 </xsd:schema>
