@@ -136,4 +136,31 @@
         </xsd:restriction>
     </xsd:simpleType>
     
+    <xsd:simpleType name="quantityType">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="amountOrPercentType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="A"/>
+            <xsd:enumeration value="P"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="collegeLevelOrganizationType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="(.{0,2}-.{0,4}){0,1}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="vendorIdType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="([0-9]{0,10}-[0-9]{0,10}){0,1}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    
+    
 </xsd:schema>    
