@@ -2,10 +2,12 @@ package edu.cornell.kfs.fp.document.web.struts;
 
 
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,6 +51,7 @@ import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 import edu.cornell.kfs.sys.CUKFSConstants.ConfidentialAttachmentTypeCodes;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
     
@@ -306,6 +309,25 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
             GlobalVariables.getMessageMap().putError("newNote.attachment.attachmentTypeCode", CUKFSKeyConstants.ERROR_DOCUMENT_ADD_TYPED_ATTACHMENT,
                     newNote.getAttachment().getAttachmentTypeCode());
             return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        }
+        
+        // Make sure the user is not trying to add a potentially-confidential attachment unless it's been explicitly flagged as such.
+        if (newNote.getAttachment() != null
+                && !ConfidentialAttachmentTypeCodes.CONFIDENTIAL_ATTACHMENT_TYPE.equals(newNote.getAttachment().getAttachmentTypeCode())
+                && dvForm.getAttachmentFile() != null && StringUtils.isNotBlank(dvForm.getAttachmentFile().getFileName())) {
+            String fileName = dvForm.getAttachmentFile().getFileName().toUpperCase();
+            Collection<String> confFilenamePatterns = getParameterService().getParameterValuesAsString(
+                    KFSConstants.CoreModuleNamespaces.KFS, KRADConstants.DetailTypes.DOCUMENT_DETAIL_TYPE,
+                    CUKFSParameterKeyConstants.CONFIDENTIAL_ATTACHMENT_FILENAME_PATTERNS);
+            
+            // Check for naming patterns that may indicate a confidential file.
+            for (String confFilenamePattern : confFilenamePatterns) {
+                if (Pattern.compile(confFilenamePattern).matcher(fileName).find()) {
+                    // If the file is potentially-confidential despite not being flagged as such, then don't allow it to be attached.
+                    GlobalVariables.getMessageMap().putError("attachmentFile", CUKFSKeyConstants.ERROR_DOCUMENT_ADD_UNFLAGGED_CONFIDENTIAL_ATTACHMENT);
+                    return mapping.findForward(RiceConstants.MAPPING_BASIC);
+                }
+            }
         }
         
         // If not "Confidential" or if authorized to add such attachments, then proceed with the superclass processing.
