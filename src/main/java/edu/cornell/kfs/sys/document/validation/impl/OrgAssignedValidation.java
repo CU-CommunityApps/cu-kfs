@@ -93,18 +93,18 @@ public class OrgAssignedValidation extends GenericValidation {
 		Role role = roleService.getRole(documentTypeRoleID);
 		
 		// or roleservice.getRoleByName(namespaceCode, roleName)
-		List<RoleMembership> roleMembers = roleService.findRoleMemberships(QueryByCriteria.Builder.fromPredicates(equal("ROLE_ID", role.getId()))).getResults();   		
+		List<RoleMembership> roleMemberships = roleService.findRoleMemberships(QueryByCriteria.Builder.fromPredicates(equal("ROLE_ID", role.getId()))).getResults();   		
 		
 		boolean hasReviewer = false;
-		for(RoleMembership member : roleMembers) {
-	        RoleMemberQueryResults members = KimApiServiceLocator.getRoleService().findRoleMembers(QueryByCriteria.Builder.fromPredicates( PredicateUtils.convertMapToPredicate(Collections.singletonMap(KimConstants.PrimaryKeyConstants.ID, member.getId()))));
-            boolean isActiveMember = true;
+		for(RoleMembership membership : roleMemberships) {
+	        RoleMemberQueryResults members = KimApiServiceLocator.getRoleService().findRoleMembers(QueryByCriteria.Builder.fromPredicates( PredicateUtils.convertMapToPredicate(Collections.singletonMap(KimConstants.PrimaryKeyConstants.ID, membership.getId()))));
+            boolean hasActiveMember = true;
             if ( members != null && CollectionUtils.isNotEmpty(members.getResults())) {
-                isActiveMember = members.getResults().get(0).isActive();
+                hasActiveMember = members.getResults().get(0).isActive();
             }
 
-	        String memberOrg = member.getQualifier().get(KFSConstants.ORGANIZATION_CODE_PROPERTY_NAME);
-			if(isActiveMember && org.getOrganizationCode().equalsIgnoreCase(memberOrg)) {
+	        String memberOrg = membership.getQualifier().get(KFSConstants.ORGANIZATION_CODE_PROPERTY_NAME);
+			if(hasActiveMember && org.getOrganizationCode().equalsIgnoreCase(memberOrg)) {
 				hasReviewer = true;
 				break;
 			}
