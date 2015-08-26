@@ -13,20 +13,33 @@
    - but WITHOUT ANY WARRANTY; without even the implied warranty of
    - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    - GNU Affero General Public License for more details.
-   -
+   - 
    - You should have received a copy of the GNU Affero General Public License
    - along with this program.  If not, see <http://www.gnu.org/licenses/>.
  -->
 
-  <!-- Validations -->
+  <bean id="YearEndSalaryExpenseTransferDocument" parent="YearEndSalaryExpenseTransferDocument-parentBean">
+    <property name="documentClass" value="edu.cornell.kfs.module.ld.document.CuYearEndSalaryExpenseTransferDocument"/>
+  </bean>
+  
+  <bean id="YearEndSalaryExpenseTransferDocument-targetAccountingLineGroup" parent="SalaryExpenseTransferDocument-targetAccountingLineGroup-parentBean">
+    <property name="accountingLineAuthorizerClass" value="edu.cornell.kfs.module.ld.document.authorization.CuSalaryExpenseTransferAccountingLineAuthorizer"/>
+  </bean>
+  
+  <bean id="YearEndSalaryExpenseTransferDocument-sourceAccountingLineGroup" parent="SalaryExpenseTransferDocument-sourceAccountingLineGroup-parentBean">
+    <property name="accountingLineAuthorizerClass" value="edu.cornell.kfs.module.ld.document.authorization.CuSalaryExpenseTransferAccountingLineAuthorizer"/>
+  </bean> 
+
+ <!-- Validations -->
   <bean id="YearEndSalaryExpenseTransferDocument-validations" parent="YearEndSalaryExpenseTransferDocument-validations-parentBean">
-  	<property name="sourceMap">
-		  <map key-type="java.lang.Class" merge="true">
-			  <entry>
-				  <key><value>org.kuali.kfs.sys.document.validation.event.AttributedRouteDocumentEvent</value></key>
-				  <value>YearEndSalaryExpenseTransferDocument-routeDocumentValidation</value>
-			  </entry>
-    	</map>
+    <property name="sourceMap">
+      <map key-type="java.lang.Class" merge="true">
+        <entry>
+          <key><value>org.kuali.kfs.sys.document.validation.event.AttributedRouteDocumentEvent</value></key>
+          <value>YearEndSalaryExpenseTransferDocument-routeDocumentValidation</value>
+        </entry>
+      </map>
     </property>
   </bean>
+
 </beans>
