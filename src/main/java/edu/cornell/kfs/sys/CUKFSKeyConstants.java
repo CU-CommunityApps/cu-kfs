@@ -96,6 +96,7 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
 
     // Error messages pertaining to particular attachment types.
     public static final String ERROR_DOCUMENT_ADD_TYPED_ATTACHMENT = "error.document.add.typed.attachment";
+    public static final String ERROR_DOCUMENT_ADD_UNFLAGGED_CONFIDENTIAL_ATTACHMENT = "error.document.add.unflagged.confidential.attachment";
 
     //KFSPTS-2400
     public static final String MESSAGE_BATCH_UPLOAD_TITLE_DISENCUMBRANCE_FILE = "message.batchUpload.title.labor.disencumbrance.file";
