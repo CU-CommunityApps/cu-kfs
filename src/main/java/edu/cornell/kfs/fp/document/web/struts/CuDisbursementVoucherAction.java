@@ -47,7 +47,8 @@ import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
-import edu.cornell.kfs.sys.util.ConfidentialAttachmentUtil;
+import edu.cornell.kfs.sys.CUKFSConstants.ConfidentialAttachmentTypeCodes;
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
     
@@ -297,10 +298,13 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
         CuDisbursementVoucherForm dvForm = (CuDisbursementVoucherForm) form;
         Note newNote = dvForm.getNewNote();
         
-        // If trying to add a conf attachment without authorization or not properly flagging a potentially-conf attachment, then treat as a validation failure.
-        if (!ConfidentialAttachmentUtil.attachmentIsNonConfidentialOrCanAddConfAttachment(newNote, dvForm.getDocument(), dvForm.getAttachmentFile(),
-                getDocumentHelperService().getDocumentAuthorizer(dvForm.getDocument()))) {
-            // Just return without adding the note/attachment. The ConfidentialAttachmentUtil method will handle updating the message map accordingly.
+        // If not authorized to add "Confidential" attachments, then treat it as a validation error instead of letting the superclass throw an exception.
+        if (newNote.getAttachment() != null
+                && ConfidentialAttachmentTypeCodes.CONFIDENTIAL_ATTACHMENT_TYPE.equals(newNote.getAttachment().getAttachmentTypeCode())
+                && !getDocumentHelperService().getDocumentAuthorizer(dvForm.getDocument()).canAddNoteAttachment(
+                        dvForm.getDocument(), newNote.getAttachment().getAttachmentTypeCode(), GlobalVariables.getUserSession().getPerson())) {
+            GlobalVariables.getMessageMap().putError("newNote.attachment.attachmentTypeCode", CUKFSKeyConstants.ERROR_DOCUMENT_ADD_TYPED_ATTACHMENT,
+                    newNote.getAttachment().getAttachmentTypeCode());
             return mapping.findForward(RiceConstants.MAPPING_BASIC);
         }
         
