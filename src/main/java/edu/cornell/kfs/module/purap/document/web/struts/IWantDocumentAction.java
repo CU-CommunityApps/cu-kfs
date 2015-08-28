@@ -50,8 +50,7 @@ import edu.cornell.kfs.module.purap.businessobject.LevelOrganization;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
-import edu.cornell.kfs.sys.CUKFSConstants.ConfidentialAttachmentTypeCodes;
-import edu.cornell.kfs.sys.CUKFSKeyConstants;
+import edu.cornell.kfs.sys.util.ConfidentialAttachmentUtil;
 
 @SuppressWarnings("deprecation")
 public class IWantDocumentAction extends FinancialSystemTransactionalDocumentActionBase {
@@ -751,13 +750,10 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         IWantDocumentForm iWantDocumentForm = (IWantDocumentForm) form;
         Note note = iWantDocumentForm.getNewNote();
         
-        // If not authorized to add "Confidential" attachments, then treat it as a validation error instead of letting the superclass throw an exception.
-        if (note.getAttachment() != null
-                && ConfidentialAttachmentTypeCodes.CONFIDENTIAL_ATTACHMENT_TYPE.equals(note.getAttachment().getAttachmentTypeCode())
-                && !getDocumentHelperService().getDocumentAuthorizer(iWantDocumentForm.getDocument()).canAddNoteAttachment(
-                        iWantDocumentForm.getDocument(), note.getAttachment().getAttachmentTypeCode(), GlobalVariables.getUserSession().getPerson())) {
-            GlobalVariables.getMessageMap().putError("newNote.attachment.attachmentTypeCode", CUKFSKeyConstants.ERROR_DOCUMENT_ADD_TYPED_ATTACHMENT,
-                    note.getAttachment().getAttachmentTypeCode());
+        // If trying to add a conf attachment without authorization or not properly flagging a potentially-conf attachment, then treat as a validation failure.
+        if (!ConfidentialAttachmentUtil.attachmentIsNonConfidentialOrCanAddConfAttachment(note, iWantDocumentForm.getDocument(),
+                iWantDocumentForm.getAttachmentFile(), getDocumentHelperService().getDocumentAuthorizer(iWantDocumentForm.getDocument()))) {
+            // Just return without adding the note/attachment. The ConfidentialAttachmentUtil method will handle updating the message map accordingly.
             return mapping.findForward(RiceConstants.MAPPING_BASIC);
         }
         
