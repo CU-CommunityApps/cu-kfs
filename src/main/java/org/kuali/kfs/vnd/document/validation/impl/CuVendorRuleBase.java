@@ -39,8 +39,13 @@ public abstract class CuVendorRuleBase extends VendorRule {
 
         // ==== CU Customization: Use criteria API instead, due to limited BO service methods with negative criteria. ====
         List<Predicate> criteria = new ArrayList<Predicate>();
-        criteria.add(PredicateFactory.equal(VendorPropertyConstants.VENDOR_TAX_TYPE_CODE, vendorDetail.getVendorHeader().getVendorTaxTypeCode()));
-        criteria.add(PredicateFactory.equal(VendorPropertyConstants.VENDOR_TAX_NUMBER, vendorDetail.getVendorHeader().getVendorTaxNumber()));
+        if (ObjectUtils.isNotNull(vendorDetail.getVendorHeader().getVendorTaxTypeCode()) && ObjectUtils.isNotNull(vendorDetail.getVendorHeader().getVendorTaxNumber())) {
+        	criteria.add(PredicateFactory.equal(VendorPropertyConstants.VENDOR_TAX_TYPE_CODE, vendorDetail.getVendorHeader().getVendorTaxTypeCode()));
+        	criteria.add(PredicateFactory.equal(VendorPropertyConstants.VENDOR_TAX_NUMBER, vendorDetail.getVendorHeader().getVendorTaxNumber()));
+        }   
+        else{
+        	return valid;
+        }
 
         // ==== CU Customization: Use the actual vendor details, not just the count. ====
         List<VendorDetail> existingVendors;
