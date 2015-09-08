@@ -1,6 +1,5 @@
 package edu.cornell.kfs.fp.document.service;
 
-import java.sql.Date;
 import java.util.Collection;
 import java.util.List;
 
@@ -10,6 +9,16 @@ import org.kuali.kfs.sys.document.AccountingDocumentBase;
 
 public interface YearEndGeneralLedgerPendingEntriesService {
 	
-	public boolean generateYearEndGeneralLedgerPendingEntries(AccountingDocumentBase document, String documentTypeCode, List<AccountingLine> accountingLines, GeneralLedgerPendingEntrySequenceHelper sequenceHelper, Collection<String> closingCharts, Date reversalDate);
+	/**
+	 * Generated year end general ledger pending entries for the given doc.
+	 * 
+	 * @param document
+	 * @param documentTypeCode
+	 * @param accountingLines
+	 * @param sequenceHelper
+	 * @param closingCharts
+	 * @return
+	 */
+	public boolean generateYearEndGeneralLedgerPendingEntries(AccountingDocumentBase document, String documentTypeCode, List<AccountingLine> accountingLines, GeneralLedgerPendingEntrySequenceHelper sequenceHelper, Collection<String> closingCharts);
 
 }
