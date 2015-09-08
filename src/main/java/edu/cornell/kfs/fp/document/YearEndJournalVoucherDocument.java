@@ -21,7 +21,7 @@ public class YearEndJournalVoucherDocument extends JournalVoucherDocument implem
 	public boolean generateDocumentGeneralLedgerPendingEntries(GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
 		
 		Collection<String> yejvClosingCharts = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,"YearEndJournalVoucherDocument", CUKFSParameterKeyConstants.FpParameterConstants.YEJV_CLOSING_CHARTS);
-		return SpringContext.getBean(YearEndGeneralLedgerPendingEntriesService.class).generateYearEndGeneralLedgerPendingEntries(this, "YEJV", this.getSourceAccountingLines(), sequenceHelper, yejvClosingCharts, reversalDate);
+		return SpringContext.getBean(YearEndGeneralLedgerPendingEntriesService.class).generateYearEndGeneralLedgerPendingEntries(this, "YEJV", this.getSourceAccountingLines(), sequenceHelper, yejvClosingCharts);
 
 	}
 	
