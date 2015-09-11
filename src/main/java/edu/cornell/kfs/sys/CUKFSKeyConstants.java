@@ -8,9 +8,13 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String MESSAGE_BATCH_UPLOAD_TITLE_INACTIVATE_CONVERT_CODE = "message.batchUpload.title.InactivateConvertCode";
 
     public static final String ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_NOT_GROUP_CODE = "error.document.accountMaintenance.programCodeNotAssociatedWithGroupCode";
+    public static final String ERROR_DOCUMENT_ACCMAINT_ACCT_PROGRAM_CODE_NOT_GROUP_CODE = "error.document.accountMaintenance.acct.programCodeNotAssociatedWithGroupCode";
     public static final String ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE = 
             "error.document.accountMaintenance.programCodeCannotBeBlank";
+    public static final String ERROR_DOCUMENT_ACCMAINT_ACCT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE = 
+            "error.document.accountMaintenance.acct.programCodeCannotBeBlank";
     public static final String ERROR_DOCUMENT_ACCMAINT_APPROP_ACCT_NOT_GROUP_CODE = "error.document.accountMaintenance.appropAcctNotAssociatedWithGroupCode";
+    public static final String ERROR_DOCUMENT_ACCMAINT_ACCT_APPROP_ACCT_NOT_GROUP_CODE = "error.document.accountMaintenance.acct.appropAcctNotAssociatedWithGroupCode";
     public static final String ERROR_DOCUMENT_ACCMAINT_MJR_RPT_CAT_CODE_NOT_EXIST = 
             "error.document.accountMaintenance.majorRptgCatCodeEnteredDoesNotExist";
     public static final String ERROR_DOCUMENT_BA_ACCOUNT_AMOUNTS_BALANCED = "error.document.ba.accountAmountsNotBalanced";
@@ -119,6 +123,29 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
 	    
 	    // KFSPTS-3933
 	    public static final String ERROR_AWARD_ACCOUNT_ALREADY_IN_USE = "error.award.awardAccount.alreadyInUse";
+	
+	    // KFSPTS-3599
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_INVALID_CG_RESPONSIBILITY = "error.document.accountGlobalMaintenance.invalidContractsAndGrantsResponsibility";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_EXP_DATE_CANNOT_BE_BEFORE_EFFECTIVE_DATE  = "error.document.accountGlobal.acct.expDateCannotBeBeforeEffectiveDate";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CLOSED_PENDING_LEDGER_ENTRIES = "error.document.accountGlobal.acct.closedAccount.noPendingLedgerEntriesAllowed"; 	   
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CLOSED_NO_LOADED_BEGINNING_BALANCE = "error.document.accountGlobal.acct.closedAccount.beginningBalanceNotLoaded";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CLOSED_NO_FUND_BALANCES = "error.document.accountGlobal.acct.closedAccount.noFundBalances";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CLOSED_PENDING_LABOR_LEDGER_ENTRIES = "error.document.accountGlobal.acct.closedAccount.noPendingLaborLedgerEntriesAllowed";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ICR_ACCOUNT_TOTAL_NOT_100_PERCENT = "error.document.accountGlobal.acct.indirectCostRecoveryAccounts.totalNot100Percent";
+	    
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_CG_ICR_FIELDS_FILLED_FOR_NON_CG_ACCOUNT = "error.document.accountGlobal.acct.cgICRFieldsFilledInForNonCGAccount";
+	    
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_CG_FIELDS_FILLED_FOR_NON_CG_ACCOUNT = "error.document.accountGlobalMaintenance.cgFieldsFilledInForNonCGAccount";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CG_FIELDS_FILLED_FOR_NON_CG_ACCOUNT = "error.document.accountGlobalMaintenance.acct.cgFieldsFilledInForNonCGAccount";
+	    
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_EXP_DATE_NOT_EMPTY_AND_REMOVE_EXP_DATE_CHECKED = "error.document.accountGlobalMaintenance.expDateNotEmptyAndRemoveExpDateChecked";
+	    
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_CNT_CHART_NOT_EMPTY_AND_REMOVE_CNT_CHART_AND_ACCT_CHECKED = "error.document.accountGlobalMaintenance.contChartNotEmptyAndRemoveContChartAndAcctChecked";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_CNT_ACCT_NOT_EMPTY_AND_REMOVE_CNT_CHART_AND_ACCT_CHECKED = "error.document.accountGlobalMaintenance.contAcctNotEmptyAndRemoveContChartAndAcctChecked";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_INC_STR_CHART_NOT_EMPTY_AND_REMOVE_INC_STR_CHART_AND_ACCT_CHECKED = "error.document.accountGlobalMaintenance.incStrChartNotEmptyAndRemoveIncStrChartAndAcctChecked";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_INC_STR_ACCT_NOT_EMPTY_AND_REMOVE_INC_STR_CHART_AND_ACCT_CHECKED = "error.document.accountGlobalMaintenance.incStrAcctNotEmptyAndRemoveIncStrChartAndAcctChecked";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ICR_ACCT_EXISTS = "error.document.accountGlobalMaintenance.icrAccountExists";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ICR_ACCT_DUPLICATE = "error.document.accountGlobalMaintenance.icrAccountDuplicate";
 
         // KFSPTS-4337
         public static final String QUESTION_ACCOUNT_OFF_CAMPUS_INDICATOR = "question.coa.account.confirm.offCampusIndicator";
