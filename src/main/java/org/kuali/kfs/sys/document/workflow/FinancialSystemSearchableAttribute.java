@@ -62,6 +62,8 @@ import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.util.ObjectUtils;
 import org.kuali.rice.krad.workflow.attribute.DataDictionarySearchableAttribute;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
+
 //RICE20 This class needs to be fixed to support pre-rice2.0 features
 public class FinancialSystemSearchableAttribute extends DataDictionarySearchableAttribute {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(FinancialSystemSearchableAttribute.class);
@@ -102,6 +104,16 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         DataDictionaryService ddService = SpringContext.getBean(DataDictionaryService.class);
 
         List<Row> docSearchRows = super.getSearchingRows(documentTypeName);
+        
+        // add account number search field when selected document type is COA
+        if (StringUtils.isNotEmpty(documentTypeName)) {
+        	if(CUKFSConstants.COA_DOCUMENT_TYPE.equalsIgnoreCase( documentTypeName)){
+                Field accountField = FieldUtils.getPropertyField(Account.class, KFSPropertyConstants.ACCOUNT_NUMBER, true);
+                accountField.setFieldDataType(SearchableAttributeConstants.DATA_TYPE_STRING);
+                accountField.setColumnVisible(true);
+                docSearchRows.add(new Row(Collections.singletonList(accountField)));
+        	}
+        }
 
         DocumentEntry entry = ddService.getDataDictionary().getDocumentEntry(documentTypeName);
 
