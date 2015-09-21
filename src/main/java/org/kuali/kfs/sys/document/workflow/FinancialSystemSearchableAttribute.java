@@ -24,7 +24,10 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coa.businessobject.AccountGlobal;
+import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.coa.businessobject.Organization;
+import org.kuali.kfs.coa.document.AccountGlobalMaintainableImpl;
 import org.kuali.kfs.integration.ld.LaborLedgerPendingEntryForSearching;
 import org.kuali.kfs.integration.ld.LaborLedgerPostingDocumentForSearching;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -35,6 +38,7 @@ import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.AmountTotaling;
+import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
 import org.kuali.kfs.sys.document.GeneralLedgerPostingDocument;
 import org.kuali.kfs.sys.document.datadictionary.AccountingLineGroupDefinition;
 import org.kuali.kfs.sys.document.datadictionary.FinancialSystemTransactionalDocumentEntry;
@@ -56,11 +60,14 @@ import org.kuali.rice.kns.util.FieldUtils;
 import org.kuali.rice.kns.web.ui.Field;
 import org.kuali.rice.kns.web.ui.Row;
 import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.rice.krad.bo.DocumentHeader;
 import org.kuali.rice.krad.datadictionary.DocumentEntry;
 import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.util.ObjectUtils;
 import org.kuali.rice.krad.workflow.attribute.DataDictionarySearchableAttribute;
+
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 //RICE20 This class needs to be fixed to support pre-rice2.0 features
 public class FinancialSystemSearchableAttribute extends DataDictionarySearchableAttribute {
@@ -102,6 +109,16 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         DataDictionaryService ddService = SpringContext.getBean(DataDictionaryService.class);
 
         List<Row> docSearchRows = super.getSearchingRows(documentTypeName);
+        
+        // add account number search field when selected document type is COA
+        if (StringUtils.isNotEmpty(documentTypeName)) {
+        	if(CUKFSConstants.COA_DOCUMENT_TYPE.equalsIgnoreCase( documentTypeName)){
+                Field accountField = FieldUtils.getPropertyField(Account.class, KFSPropertyConstants.ACCOUNT_NUMBER, true);
+                accountField.setFieldDataType(SearchableAttributeConstants.DATA_TYPE_STRING);
+                accountField.setColumnVisible(true);
+                docSearchRows.add(new Row(Collections.singletonList(accountField)));
+        	}
+        }
 
         DocumentEntry entry = ddService.getDataDictionary().getDocumentEntry(documentTypeName);
 
@@ -215,6 +232,18 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
             if (doc instanceof GeneralLedgerPostingDocument && !indexedLedgerDoc) {
                 GeneralLedgerPostingDocument GLPostingDoc = (GeneralLedgerPostingDocument) doc;
                 searchAttrValues.addAll(harvestGLPDocumentSearchableAttributes(GLPostingDoc));
+            }
+            
+            DocumentHeader docHeader = doc.getDocumentHeader();
+
+            if (ObjectUtils.isNotNull(docHeader) && ObjectUtils.isNotNull(docHeader.getWorkflowDocument())  && CUKFSConstants.GACC_DOCUMENT_TYPE.equalsIgnoreCase(docHeader.getWorkflowDocument().getDocumentTypeName())) {
+            	for ( AccountGlobalDetail detail : ((AccountGlobal)((AccountGlobalMaintainableImpl)((FinancialSystemMaintenanceDocument)doc).getNewMaintainableObject()).getBusinessObject()).getAccountGlobalDetails()){           		
+                    if (!StringUtils.isBlank(detail.getAccountNumber())) {
+                    	DocumentAttributeString.Builder searchableAttributeValue = DocumentAttributeString.Builder.create(KFSPropertyConstants.ACCOUNT_NUMBER);
+                        searchableAttributeValue.setValue(detail.getAccountNumber());
+                        searchAttrValues.add(searchableAttributeValue.build());
+                    }
+            	}
             }
 
         }
