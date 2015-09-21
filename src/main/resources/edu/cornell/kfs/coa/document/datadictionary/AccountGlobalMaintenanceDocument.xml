@@ -340,25 +340,6 @@
 	          <entry key="SubFund" value-ref="AccountGlobalMaintenanceDocument-RoutingType-SubFund"/>
 	      </map>
 	  </property>
-	  
-	  <property name="searchingTypeDefinitions">
-    		<list>
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
-    				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
-    						<property name="businessObjectClassName" value="org.kuali.kfs.coa.businessobject.AccountGlobalDetail"/>
-    						<property name="attributeName" value="accountNumber"/>
-    						<property name="showAttributeInSearchCriteria" value="false"/>
-    					</bean>
-    				</property>
-    				<property name="documentValues">
-    					<list>
-    						<value>newMaintainableObject.businessObject.accountGlobalDetails.accountNumber</value>
-    					</list>
-    				</property>
-    			</bean>
-    		</list>
-       </property>
   </bean>
   
     <bean id="AccountGlobalMaintenanceDocument-RoutingAttribute-SubFund" class="org.kuali.rice.krad.datadictionary.RoutingAttribute">
