@@ -2,6 +2,7 @@ package edu.cornell.kfs.module.purap.document.dataaccess.impl;
 
 import java.sql.Date;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
+import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.dataaccess.impl.PaymentRequestDaoOjb;
@@ -115,6 +117,26 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
 
         final int numOfPreqs = getPersistenceBrokerTemplate().getCount(query);
         return numOfPreqs;
+    }
+
+    @Override
+    public String getObjectIdByPaymentRequestDocumentNumber(String documentNumber) {
+        // Build PREQ query that matches only on document number.
+        Criteria crit = new Criteria();
+        crit.addEqualTo("documentNumber", documentNumber);
+        
+        // Prepare report query that only retrieves object ID.
+        ReportQueryByCriteria reportQuery = QueryFactory.newReportQuery(PaymentRequestDocument.class, crit);
+        reportQuery.setAttributes(new String[] {"objectId"});
+        reportQuery.setJdbcTypes(new int[] {java.sql.Types.VARCHAR});
+        
+        // Run query and return results.
+        Iterator<Object[]> results = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(reportQuery);
+        if (results.hasNext()) {
+            return (String) results.next()[0];
+        }
+        
+        return null;
     }
 
 }

@@ -225,5 +225,23 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
         purapService.saveDocumentNoValidation(poDoc);
         return poDoc;
     }   //  mjmc end
-    
+
+    /**
+     * Overridden to use the PO's note target object ID to retrieve the notes, instead of always using the doc header as the target.
+     * 
+     * @see org.kuali.kfs.module.purap.document.service.impl.PurchaseOrderServiceImpl#getPurchaseOrderNotes(java.lang.Integer)
+     */
+    @Override
+    public List<Note> getPurchaseOrderNotes(Integer id) {
+        List<Note> notes = new ArrayList<Note>();
+        PurchaseOrderDocument po = getPurchaseOrderByDocumentNumber(purchaseOrderDao.getOldestPurchaseOrderDocumentNumber(id));
+
+        if (ObjectUtils.isNotNull(po)) {
+
+            // ==== CU Customization: Use the PO's actual note target instead of assuming that the doc header is the target. ====
+            notes = noteService.getByRemoteObjectId(po.getNoteTarget().getObjectId());
+        }
+        return notes;
+    }
+
 }
