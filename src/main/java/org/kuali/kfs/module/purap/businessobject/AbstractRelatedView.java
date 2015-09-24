@@ -1,0 +1,205 @@
+/*
+ * The Kuali Financial System, a comprehensive financial management system for higher education.
+ * 
+ * Copyright 2005-2014 The Kuali Foundation
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.kuali.kfs.module.purap.businessobject;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import org.joda.time.DateTime;
+import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.kew.api.KewApiConstants;
+import org.kuali.rice.kew.api.KewApiServiceLocator;
+import org.kuali.rice.kew.api.doctype.DocumentType;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kns.service.DataDictionaryService;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.datadictionary.exception.UnknownDocumentTypeException;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.service.NoteService;
+import org.kuali.rice.krad.util.KRADConstants;
+
+/**
+ * Base class for Related View Business Objects.
+ */
+public abstract class AbstractRelatedView extends PersistableBusinessObjectBase {
+    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AbstractRelatedView.class);
+
+    private Integer accountsPayablePurchasingDocumentLinkIdentifier;
+    private Integer purapDocumentIdentifier;
+    private String documentNumber;
+    private String poNumberMasked;
+
+    //create date from the workflow document header...
+    private DateTime createDate;
+
+    // REFERENCE OBJECTS
+    protected FinancialSystemDocumentHeader documentHeader;
+
+    public Integer getAccountsPayablePurchasingDocumentLinkIdentifier() {
+        return accountsPayablePurchasingDocumentLinkIdentifier;
+    }
+
+    public void setAccountsPayablePurchasingDocumentLinkIdentifier(Integer accountsPayablePurchasingDocumentLinkIdentifier) {
+        this.accountsPayablePurchasingDocumentLinkIdentifier = accountsPayablePurchasingDocumentLinkIdentifier;
+    }
+
+    public Integer getPurapDocumentIdentifier() {
+        return purapDocumentIdentifier;
+    }
+
+    public void setPurapDocumentIdentifier(Integer purapDocumentIdentifier) {
+        this.purapDocumentIdentifier = purapDocumentIdentifier;
+    }
+
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
+    }
+
+    public List<Note> getNotes() {
+        List<Note> notes = new ArrayList<Note>();
+        //reverse the order of notes only when anything exists in it..
+        NoteService noteService = SpringContext.getBean(NoteService.class);
+        // ==== CU Customization: Use the note target property, rather than always assuming that the doc header is the target. ====
+        List<Note> tmpNotes = noteService.getByRemoteObjectId(findDocument(this.documentNumber).getNoteTarget().getObjectId());
+        notes.clear();
+        // reverse the order of notes retrieved so that newest note is in the front
+        for (int i = tmpNotes.size()-1; i>=0; i--) {
+            Note note = tmpNotes.get(i);
+            notes.add(note);
+        }
+        return notes;
+    }
+
+    public String getUrl() {
+        String documentTypeName = this.getDocumentTypeName();
+        DocumentType docType = KewApiServiceLocator.getDocumentTypeService().getDocumentTypeByName(documentTypeName);
+        String docHandlerUrl = docType.getResolvedDocumentHandlerUrl();
+        int endSubString = docHandlerUrl.lastIndexOf("/");
+        String serverName = docHandlerUrl.substring(0, endSubString);
+        String handler = docHandlerUrl.substring(endSubString + 1, docHandlerUrl.lastIndexOf("?"));
+        return serverName + "/" + handler + "?channelTitle=" + docType.getName() + "&" + KRADConstants.DISPATCH_REQUEST_PARAMETER + "=" + KRADConstants.DOC_HANDLER_METHOD +"&" + KRADConstants.PARAMETER_DOC_ID + "=" + this.getDocumentNumber() + "&" + KRADConstants.PARAMETER_COMMAND + "=" + KewApiConstants.DOCSEARCH_COMMAND;
+    }
+
+    public String getDocumentIdentifierString() {
+        if (purapDocumentIdentifier != null) {
+            return purapDocumentIdentifier.toString();
+        } else {
+            return documentNumber;
+        }
+    }
+
+    /**
+     * Returns the document label according to the label specified in the data dictionary.
+     *
+     * @return
+     * @throws WorkflowException
+     */
+    public String getDocumentLabel() throws WorkflowException{
+        return SpringContext.getBean(DataDictionaryService.class).getDocumentLabelByTypeName(getDocumentTypeName());
+    }
+
+    /**
+     * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
+     */
+    public abstract String getDocumentTypeName();
+
+    /**
+     * @see org.kuali.rice.krad.bo.BusinessObjectBase#toStringMapper()
+     */
+    protected LinkedHashMap toStringMapper_RICE20_REFACTORME() {
+        LinkedHashMap m = new LinkedHashMap();
+        if (this.accountsPayablePurchasingDocumentLinkIdentifier != null) {
+            m.put("accountsPayablePurchasingDocumentLinkIdentifier", this.accountsPayablePurchasingDocumentLinkIdentifier.toString());
+        }
+        return m;
+    }
+
+    /**
+     * Gets the poNumberMasked attribute.
+     *
+     * @return Returns the poNumberMasked
+     */
+
+    public String getPoNumberMasked() {
+        return poNumberMasked;
+    }
+
+    /**
+     * Sets the poNumberMasked attribute.
+     *
+     * @param poNumberMasked The poNumberMasked to set.
+     */
+    public void setPoNumberMasked(String poNumberMasked) {
+        this.poNumberMasked = poNumberMasked;
+    }
+
+    /**
+     * This method calls the workflow helper to allow for customization method to quickly grab status
+     * without any fetching of extraneous information which causes problems for large numbers
+     * of related documents
+     * an api call will be added to core Rice to support this in the next release
+     */
+    public String getApplicationDocumentStatus() {
+        return documentHeader.getApplicationDocumentStatus();
+    }
+
+    public org.kuali.rice.kew.api.document.Document findWorkflowDocument(String documentId){
+        return KewApiServiceLocator.getWorkflowDocumentService().getDocument(documentId);
+    }
+
+    /**
+     * This method finds the document for the given document header id
+     * @param documentHeaderId
+     * @return document The document in the workflow that matches the document header id.
+     */
+    protected Document findDocument(String documentHeaderId) {
+        Document document = null;
+
+        try {
+            document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(documentHeaderId);
+        }
+        catch (WorkflowException ex) {
+            LOG.error("Exception encountered on finding the document: " + documentHeaderId, ex );
+        } catch ( UnknownDocumentTypeException ex ) {
+            // don't blow up just because a document type is not installed (but don't return it either)
+            LOG.error("Exception encountered on finding the document: " + documentHeaderId, ex );
+        }
+
+        return document;
+    }
+
+    /**
+     * Gets the createDate attribute.
+     *
+     * @return Returns the createDate
+     */
+    public DateTime getCreateDate() {
+        org.kuali.rice.kew.api.document.Document document = findWorkflowDocument(this.getDocumentNumber());
+        return document.getDateCreated();
+
+    }
+}
