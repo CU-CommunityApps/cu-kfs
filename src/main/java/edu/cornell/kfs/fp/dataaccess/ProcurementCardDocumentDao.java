@@ -10,6 +10,7 @@ public interface ProcurementCardDocumentDao {
     
     /**
      * Gets a list of Procurement Card Document based on the amount, transaction date and net id.
+     * If provided transaction date between PCDO transaction date - 3 and PCDO transaction date +21 then auto-match = true
      * 
      * @param amount
      * @param transactionDate

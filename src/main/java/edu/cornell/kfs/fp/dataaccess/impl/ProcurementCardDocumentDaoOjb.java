@@ -60,15 +60,19 @@ public class ProcurementCardDocumentDaoOjb extends PlatformAwareDaoBaseOjb imple
 				return null;
 			}
 			
-			GregorianCalendar gc = new GregorianCalendar();
-			gc.setTime(transactionDate);
-			gc.add(Calendar.DATE, 21);
+			GregorianCalendar gcStartDate = new GregorianCalendar();
+			gcStartDate.setTime(transactionDate);
+			gcStartDate.add(Calendar.DATE, -3);
+			
+			GregorianCalendar gcEndDate = new GregorianCalendar();
+			gcEndDate.setTime(transactionDate);
+			gcEndDate.add(Calendar.DATE, 21);
 			
 			Criteria criteria = new Criteria();
 	        criteria.addLike("procurementCardHolder.cardHolderAlternateName", cardHolderNetID.toUpperCase() + WILD_CARD);
 	        criteria.addEqualTo("transactionEntries.transactionTotalAmount", amount);
-	        criteria.addGreaterOrEqualThan("transactionEntries.transactionDate", transactionDate);
-			criteria.addLessOrEqualThan("transactionEntries.transactionDate", new Timestamp(gc.getTimeInMillis()));
+	        criteria.addGreaterOrEqualThan("transactionEntries.transactionDate", new Timestamp(gcStartDate.getTimeInMillis()));
+			criteria.addLessOrEqualThan("transactionEntries.transactionDate", new Timestamp(gcEndDate.getTimeInMillis()));
 	        
 	        return (List<ProcurementCardDocument>) getPersistenceBrokerTemplate().getCollectionByQuery(new QueryByCriteria(ProcurementCardDocument.class, criteria));
 	}
