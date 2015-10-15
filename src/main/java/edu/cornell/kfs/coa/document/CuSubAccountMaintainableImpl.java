@@ -16,6 +16,7 @@ import org.kuali.kfs.coa.service.A21SubAccountService;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.kns.maintenance.Maintainable;
 import org.kuali.rice.krad.maintenance.MaintenanceDocument;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.util.KRADConstants;
@@ -372,5 +373,45 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
 
         subAccount.getA21SubAccount().setA21IndirectCostRecoveryAccounts(copyIndirectCostRecoveryAccounts);
     }
-    
+
+    /**
+     * Overridden to force the old maintenance object to include the relevant A21 sub-account and ICR account sections
+     * if the new object has them. This is necessary to work around a section size mismatch issue when the old
+     * sub-account has a type of "CS" but the new one has a type of "EX".
+     * 
+     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#getSections(org.kuali.rice.kns.document.MaintenanceDocument, Maintainable)
+     */
+    @SuppressWarnings("rawtypes")
+    @Override
+    public List getSections(org.kuali.rice.kns.document.MaintenanceDocument document, Maintainable oldMaintainable) {
+        // The special handling only applies to the old maintainable.
+        if (this == document.getOldMaintainableObject()) {
+            SubAccount oldAccount = (SubAccount) getDataObject();
+            SubAccount newAccount = (SubAccount) document.getNewMaintainableObject().getDataObject();
+            
+            if (ObjectUtils.isNotNull(newAccount.getA21SubAccount()) && (ObjectUtils.isNull(oldAccount.getA21SubAccount())
+                    || (KFSConstants.SubAccountType.COST_SHARE.equals(oldAccount.getA21SubAccount().getSubAccountTypeCode())
+                            && KFSConstants.SubAccountType.EXPENSE.equals(newAccount.getA21SubAccount().getSubAccountTypeCode())))) {
+                // If necessary, set up an A21 sub-account with sufficient ICR accounts on the old maintainable before generating the sections.
+                List sections;
+                A21SubAccount oldA21Account = oldAccount.getA21SubAccount();
+                A21SubAccount tempA21Account = ObjectUtils.isNull(oldA21Account) ? new A21SubAccount() : (A21SubAccount) ObjectUtils.deepCopy(oldA21Account);
+                
+                for (int i = newAccount.getA21SubAccount().getA21IndirectCostRecoveryAccounts().size()
+                        - tempA21Account.getA21IndirectCostRecoveryAccounts().size() - 1; i >= 0; i--) {
+                    tempA21Account.getA21IndirectCostRecoveryAccounts().add(new A21IndirectCostRecoveryAccount());
+                }
+                
+                // Temporarily override the old A21 account as needed when generating the sections.
+                oldAccount.setA21SubAccount(tempA21Account);
+                sections = super.getSections(document, oldMaintainable);
+                oldAccount.setA21SubAccount(oldA21Account);
+                
+                return sections;
+            }
+        }
+        
+        return super.getSections(document, oldMaintainable);
+    }
+        
 }
