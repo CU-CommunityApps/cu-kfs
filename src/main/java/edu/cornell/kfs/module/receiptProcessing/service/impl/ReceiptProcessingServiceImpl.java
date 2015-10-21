@@ -241,6 +241,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 			}
 
 			String pdfFileName = attachmentsPath + "/" + receipt.getFilename();
+			LOG.info("Start creating note and attaching pdf file " + pdfFileName + " to PCDO document #" + pcdo.getDocumentNumber());
 
 			File f = null;
 			FileInputStream fileInputStream = null;
@@ -248,7 +249,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 				f = new File(pdfFileName);
 				fileInputStream = new FileInputStream(pdfFileName);
 			} catch (FileNotFoundException e) {
-				LOG.error("file not found for Document " + pcdo.getDocumentNumber());
+				LOG.error("File " + pdfFileName + " not found for Document " + pcdo.getDocumentNumber());
 				processResults.append(receipt.badData(false));
 				continue;
 			} catch (IOException e) {
@@ -266,7 +267,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 			try {
 				noteAttachment = attachmentService.createAttachment(pcdo.getDocumentHeader(), pdfFileName, mimeTypeCode, fileSize, fileInputStream, attachType);
 			} catch (IOException e) {
-				LOG.error("Failed to attache file for Document " + pcdo.getDocumentNumber());
+				LOG.error("Failed to attach file for Document " + pcdo.getDocumentNumber());
 				processResults.append(receipt.noMatch(false));
 				e.printStackTrace();
 				continue;
@@ -289,7 +290,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 					continue;
 				}
 
-				LOG.info("Attached pdf for document " + pcdo.getDocumentNumber());
+				LOG.info("Attached pdf " + pdfFileName + " for document " + pcdo.getDocumentNumber());
 				processResults.append(receipt.match(pcdo.getDocumentNumber(), false));
 			}
 		}
@@ -381,6 +382,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 		        	attachmentsPath = pdfDirectory + "/" + StringUtils.upperCase(customerName) + CUSTOMER_PDF_SUBFOLDER_SUFFIX ;
 		        }
 				String pdfFileName = attachmentsPath + "/" + receipt.getFilename();
+				LOG.info("Start creating note and attaching pdf file " + pdfFileName + " to PCDO document #" + pcdo.getDocumentNumber());
 
 				File f = null;
 				FileInputStream fileInputStream = null;
@@ -388,7 +390,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 					f = new File(pdfFileName);
 					fileInputStream = new FileInputStream(pdfFileName);
 				} catch (FileNotFoundException e) {
-					LOG.error("file not found for Document " + pcdo.getDocumentNumber());
+					LOG.error("File " + pdfFileName + " not found for Document " + pcdo.getDocumentNumber());
 					processResults.append(receipt.attachOnlyError());
 					continue;
 				} catch (IOException e) {
@@ -405,7 +407,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 				try {
 					noteAttachment = attachmentService.createAttachment(pcdo.getDocumentHeader(), pdfFileName, mimeTypeCode, fileSize, fileInputStream, attachType);
 				} catch (IOException e) {
-					LOG.error("Failed to attache file for Document " + pcdo.getDocumentNumber());
+					LOG.error("Failed to attach file for Document " + pcdo.getDocumentNumber());
 					processResults.append(receipt.attachOnlyError());
 					e.printStackTrace();
 					continue;
@@ -428,7 +430,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 						continue;
 					}
 
-					LOG.info("Attached pdf for document " + pcdo.getDocumentNumber());
+					LOG.info("Attached pdf " + pdfFileName + " for document " + pcdo.getDocumentNumber());
 					processResults.append(receipt.match( "8", true));
 				}
 
