@@ -298,7 +298,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 					continue;
 				}
 
-				LOG.info("Attached pdf " + pdfFileName + " for document " + pcdo.getDocumentNumber());
+				LOG.info("Attached pdf for document " + pcdo.getDocumentNumber());
 				processResults.append(receipt.match(pcdo.getDocumentNumber(), false));
 			}
 		}
@@ -446,7 +446,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 						continue;
 					}
 
-					LOG.info("Attached pdf " + pdfFileName + " for document " + pcdo.getDocumentNumber());
+					LOG.info("Attached pdf for document " + pcdo.getDocumentNumber());
 					processResults.append(receipt.match( "8", true));
 				}
 
