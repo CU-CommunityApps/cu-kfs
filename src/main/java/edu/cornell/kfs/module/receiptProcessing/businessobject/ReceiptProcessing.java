@@ -77,11 +77,6 @@ public class ReceiptProcessing  {
         return line;        
     }   
     
-    public String attachmentCreationError(boolean extraFields) {
-        String line = returnBoLine(extraFields) + "7\n";
-        return line;
-    }
-    
     public String attachOnlyError(){
         String line = returnBoLine(true) + "9\n";
         return line;  
