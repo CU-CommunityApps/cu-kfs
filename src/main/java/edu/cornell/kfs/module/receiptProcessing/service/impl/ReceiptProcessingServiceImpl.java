@@ -271,6 +271,15 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 				processResults.append(receipt.noMatch(false));
 				e.printStackTrace();
 				continue;
+			} catch (IllegalArgumentException e) {
+			    /*
+			     * Our custom attachment service will throw an IllegalArgumentException if the virus scan fails.
+			     * The virus scan could also end up failing if the file size is too large. In such cases,
+			     * return an error code indicating such a problem (or a problem with invalid parameters).
+			     */
+			    LOG.error("Failed to create attachment for Document " + pcdo.getDocumentNumber(), e);
+			    processResults.append(receipt.attachmentCreationError(false));
+			    continue;
 			}
 
 			if (noteAttachment != null) {
@@ -411,6 +420,15 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 					processResults.append(receipt.attachOnlyError());
 					e.printStackTrace();
 					continue;
+				} catch (IllegalArgumentException e) {
+				    /*
+				     * Our custom attachment service will throw an IllegalArgumentException if the virus scan fails.
+				     * The virus scan could also end up failing if the file size is too large. In such cases,
+				     * return an error code indicating such a problem (or a problem with invalid parameters).
+				     */
+				    LOG.error("Failed to create attachment for Document " + pcdo.getDocumentNumber(), e);
+				    processResults.append(receipt.attachmentCreationError(true));
+				    continue;
 				}
 
 				if (noteAttachment != null) {
