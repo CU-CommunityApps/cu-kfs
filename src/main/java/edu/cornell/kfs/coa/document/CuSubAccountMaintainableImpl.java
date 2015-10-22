@@ -366,32 +366,14 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
         SubAccount subAccount = (SubAccount) this.getBusinessObject();
 
         List<A21IndirectCostRecoveryAccount> copyIndirectCostRecoveryAccounts = new ArrayList<A21IndirectCostRecoveryAccount>();
-        for(A21IndirectCostRecoveryAccount indirectAccount : subAccount.getA21SubAccount().getA21IndirectCostRecoveryAccounts()) {
+        for(A21IndirectCostRecoveryAccount indirectAccount : subAccount.getA21SubAccount().getA21ActiveIndirectCostRecoveryAccounts()) {
             indirectAccount.setA21IndirectCostRecoveryAccountGeneratedIdentifier(null);
-            indirectAccount.setNewCollectionRecord(true);
             copyIndirectCostRecoveryAccounts.add(indirectAccount);
         }
 
         subAccount.getA21SubAccount().setA21IndirectCostRecoveryAccounts(copyIndirectCostRecoveryAccounts);
     }
     
-    @Override
-    public void refresh(String refreshCaller, Map fieldValues, org.kuali.rice.kns.document.MaintenanceDocument document) {
-    	super.refresh(refreshCaller, fieldValues, document);
-    	 String maintAction = super.getMaintenanceAction();   
-    	 
-    	 if (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_NEW_ACTION)){
-    		 SubAccount subAccount = (SubAccount) super.getBusinessObject();
-    		 A21SubAccount newSubAccount = subAccount.getA21SubAccount();
-    		 if(ObjectUtils.isNotNull(newSubAccount) && ObjectUtils.isNotNull(newSubAccount.getA21IndirectCostRecoveryAccounts()) && newSubAccount.getA21IndirectCostRecoveryAccounts().size() >0){
-    			 for(A21IndirectCostRecoveryAccount recoveryAccount : newSubAccount.getA21IndirectCostRecoveryAccounts()){
-    				 // set the newCollectionRecord indicator to true so that the entries can be deleted
-    				 recoveryAccount.setNewCollectionRecord(true);
-    			 }
-    		 }
-    		 
-    	 }
-    }
     
     /**
      * Overridden to force the old maintenance object to include the relevant A21 sub-account and ICR account sections

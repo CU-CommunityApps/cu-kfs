@@ -53,9 +53,7 @@ public class CuSubAccountPreRules extends SubAccountPreRules {
                 if (ObjectUtils.isNotNull(account)) {
                     if (a21SubAccount.getA21ActiveIndirectCostRecoveryAccounts().isEmpty()) {
                         for (IndirectCostRecoveryAccount icrAccount : account.getActiveIndirectCostRecoveryAccounts()){
-                        	A21IndirectCostRecoveryAccount copyAccount = A21IndirectCostRecoveryAccount.copyICRAccount(icrAccount);
-                        	copyAccount.setNewCollectionRecord(true);
-                            a21SubAccount.getA21IndirectCostRecoveryAccounts().add(copyAccount);
+                            a21SubAccount.getA21IndirectCostRecoveryAccounts().add(A21IndirectCostRecoveryAccount.copyICRAccount(icrAccount));
                         }
                     }
                     if (StringUtils.isBlank(a21SubAccount.getFinancialIcrSeriesIdentifier())) {
