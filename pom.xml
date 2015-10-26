@@ -20,6 +20,7 @@
 	<job.name>${project.artifactId}</job.name>
 	<rice.version>2.1.9</rice.version>
 	<cynergy.version>2.3.4</cynergy.version>
+	<cynergy.version.suffix>current</cynergy.version.suffix>
 	<kfs.version>5.3.1</kfs.version>
 	<cynergy.development>true</cynergy.development>
 	<skipTests>true</skipTests>
@@ -280,7 +281,7 @@
     <dependency>
       <groupId>edu.cornell.cynergy </groupId>
       <artifactId>cynergy-customizations</artifactId>
-      <version>${cynergy.version}</version>
+      <version>${cynergy.version}-${cynergy.version.suffix}</version>
       <exclusions>
       	<exclusion>
 	      <groupId>org.kuali.rice</groupId>
