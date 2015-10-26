@@ -92,6 +92,7 @@
 	             <excludes>
 	              <exclude>WEB-INF/lib/rice*.jar</exclude>
 	              <exclude>WEB-INF/lib/xapool-1.5.0*.jar</exclude>
+	              <exclude>WEB-INF/lib/wss4j-1.6.*.jar</exclude>
 	             </excludes>
 	           </overlay>
 	         </overlays>
@@ -151,6 +152,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions> 
     </dependency>
     
@@ -163,6 +168,10 @@
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -229,6 +238,23 @@
     <version>1.5.0-patch6</version>
 </dependency>
 
+<!-- Use a newer WSS4J version that the latest Rice 2.1.x and 2.3.x releases use. -->
+<dependency>
+    <groupId>org.apache.ws.security</groupId>
+    <artifactId>wss4j</artifactId>
+    <version>1.6.18</version>
+    <exclusions>
+        <exclusion>
+            <artifactId>commons-logging</artifactId>
+            <groupId>commons-logging</groupId>
+        </exclusion>
+        <exclusion>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk14</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+
 	<dependency>
 		<groupId>com.oracle</groupId>
 		<artifactId>ojdbc6</artifactId>
@@ -245,6 +271,10 @@
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -451,6 +481,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -467,6 +501,10 @@
  		<exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -506,6 +544,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions> 
     </dependency>
 
@@ -520,6 +562,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -532,6 +578,10 @@
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -558,6 +608,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions> 
     </dependency>
     
@@ -570,6 +624,10 @@
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -585,6 +643,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     
@@ -597,6 +659,10 @@
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -612,6 +678,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -626,6 +696,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     
@@ -639,6 +713,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     
@@ -651,6 +729,10 @@
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -666,6 +748,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     
@@ -679,6 +765,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     
@@ -691,6 +781,10 @@
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -706,6 +800,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     
@@ -718,6 +816,10 @@
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -733,6 +835,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     
@@ -745,6 +851,10 @@
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -759,6 +869,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -772,6 +886,10 @@
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -790,6 +908,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     
@@ -803,6 +925,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     
@@ -815,6 +941,10 @@
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -830,6 +960,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     
@@ -842,6 +976,10 @@
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -856,6 +994,10 @@
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     
@@ -868,6 +1010,10 @@
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -882,6 +1028,10 @@
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -903,6 +1053,10 @@
  		<exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.security</groupId>
+          <artifactId>wss4j</artifactId>
         </exclusion>
       </exclusions> 
     </dependency>
