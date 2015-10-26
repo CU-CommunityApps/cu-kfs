@@ -158,4 +158,7 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
 
     // KFSPTS-4438
     public static final String ERROR_DOCUMENT_DV_BLANK_STATE_AND_COUNTRY = "error.document.dv.blank.state.and.country";
+
+    // KFSPTS-4484
+    public static final String QUESTION_OVERSIZED_CHECK_STUB_TEXT = "question.dv.confirm.oversizedCheckStubText";
 }
