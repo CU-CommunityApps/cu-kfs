@@ -161,4 +161,8 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
 
     // KFSPTS-4484
     public static final String QUESTION_OVERSIZED_CHECK_STUB_TEXT = "question.dv.confirm.oversizedCheckStubText";
+    
+    // KFSPTS-3956
+    public static final String ERROR_DOCUMENT_GLOBAL_SUBPOBJ_CD_INACTIVATION_NO_SUB_OBJ_CDS = "error.document.subObjCdGlobalEditDetails.noSubObjectCodesEntered";
+    
 }
