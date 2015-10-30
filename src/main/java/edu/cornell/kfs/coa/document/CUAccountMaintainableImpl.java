@@ -3,25 +3,27 @@
  */
 package edu.cornell.kfs.coa.document;
 
-import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
-import edu.cornell.kfs.coa.businessobject.AppropriationAccount;
-import edu.cornell.kfs.coa.businessobject.SubFundProgram;
-import edu.cornell.kfs.coa.service.AccountReversionTrickleDownInactivationService;
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.document.KualiAccountMaintainableImpl;
-import org.kuali.kfs.coa.service.SubAccountTrickleDownInactivationService;
-import org.kuali.kfs.coa.service.SubObjectTrickleDownInactivationService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kns.document.MaintenanceDocument;
+import org.kuali.rice.kns.maintenance.Maintainable;
 import org.kuali.rice.krad.maintenance.MaintenanceLock;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.ObjectUtils;
+
+import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
+import edu.cornell.kfs.coa.businessobject.AppropriationAccount;
+import edu.cornell.kfs.coa.businessobject.SubFundProgram;
+import edu.cornell.kfs.coa.service.AccountReversionTrickleDownInactivationService;
 
 /**
  * @author kwk43
@@ -111,6 +113,45 @@ public class CUAccountMaintainableImpl extends KualiAccountMaintainableImpl {
             maintenanceLocks.addAll(SpringContext.getBean(AccountReversionTrickleDownInactivationService.class).generateTrickleDownMaintenanceLocks((Account) getBusinessObject(), getDocumentNumber()));
         }
         return maintenanceLocks;
+    }
+
+    /**
+     * Overridden to force the old maintenance object to include the relevant ICR account sections
+     * if the new object has them. This is necessary to work around a section size mismatch issue
+     * on certain ACCT maintenance documents.
+     * 
+     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#getSections(org.kuali.rice.kns.document.MaintenanceDocument, Maintainable)
+     */
+    @SuppressWarnings("rawtypes")
+    @Override
+    public List getSections(org.kuali.rice.kns.document.MaintenanceDocument document, Maintainable oldMaintainable) {
+        // The special handling only applies to the old maintainable.
+        if (this == document.getOldMaintainableObject()) {
+            Account oldAccount = (Account) getDataObject();
+            Account newAccount = (Account) document.getNewMaintainableObject().getDataObject();
+            
+            if (oldAccount.getIndirectCostRecoveryAccounts().size() < newAccount.getIndirectCostRecoveryAccounts().size()) {
+                // If necessary, add ICR accounts on the old account to match the quantity on the new account.
+                List sections;
+                List<IndirectCostRecoveryAccount> oldIcrAccounts = oldAccount.getIndirectCostRecoveryAccounts();
+                oldAccount.setIndirectCostRecoveryAccounts(new ArrayList<IndirectCostRecoveryAccount>());
+                
+                for (IndirectCostRecoveryAccount oldIcrAccount : oldIcrAccounts) {
+                    oldAccount.getIndirectCostRecoveryAccounts().add((IndirectCostRecoveryAccount) ObjectUtils.deepCopy(oldIcrAccount));
+                }
+                for (int i = newAccount.getIndirectCostRecoveryAccounts().size() - oldAccount.getIndirectCostRecoveryAccounts().size() - 1; i >= 0; i--) {
+                    oldAccount.getIndirectCostRecoveryAccounts().add(new IndirectCostRecoveryAccount());
+                }
+                
+                // Generate the sections using the temporarily-overridden list.
+                sections = super.getSections(document, oldMaintainable);
+                oldAccount.setIndirectCostRecoveryAccounts(oldIcrAccounts);
+                
+                return sections;
+            }
+        }
+        
+        return super.getSections(document, oldMaintainable);
     }
 
 }
