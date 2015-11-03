@@ -100,7 +100,7 @@
 		<property name="vendorService" ref="vendorService"/>
 		<property name="batchFeedHelperService" ref="batchFeedHelperService"/>
 		<property name="attachmentsPath">
-	       <value>${staging.directory}/fp/disbursementVoucher</value>
+	       <value>${staging.directory}/fp/disbursementVoucher/attachment</value>
 	    </property>
 	</bean>
 	
