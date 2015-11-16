@@ -80,7 +80,11 @@
         <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />
     </bean>
 
-    <bean id="paymentFileService" parent="paymentFileService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileServiceImpl"/>
+    <bean id="paymentFileService" parent="paymentFileService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileServiceImpl">
+        <property name="vendorService" ref="vendorService" />
+        <property name="mailService" ref="mailService" />
+    </bean>
+
     <bean id="paymentFileValidationService" parent="paymentFileValidationService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileValidationServiceImpl" />
     <bean id="pdpPaymentMaintenanceService" parent="pdpPaymentMaintenanceService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentMaintenanceServiceImpl" />
     

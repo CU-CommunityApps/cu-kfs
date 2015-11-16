@@ -6,13 +6,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.List;
+
+import javax.mail.MessagingException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.pdp.businessobject.Batch;
 import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.LoadPaymentStatus;
+import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentFileLoad;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.service.impl.PaymentFileServiceImpl;
@@ -20,13 +24,23 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.exception.ParseException;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.kfs.vnd.document.service.VendorService;
+import org.kuali.rice.core.api.mail.MailMessage;
+import org.kuali.rice.krad.exception.InvalidAddressException;
+import org.kuali.rice.krad.service.MailService;
 import org.kuali.rice.krad.util.MessageMap;
 import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.pdp.CUPdpConstants;
+import edu.cornell.kfs.pdp.CUPdpParameterConstants;
 
 public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPaymentFileServiceImpl.class);
+    
+    private VendorService vendorService;
+    private MailService mailService;
     
     public CuPaymentFileServiceImpl() {
         super();
@@ -57,6 +71,9 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
             assignDisbursementTypeCode(paymentGroup);
             businessObjectService.save(paymentGroup);
         }
+
+        // CU Customization: Check for and warn about inactive vendors.
+        checkForInactiveVendors(paymentFile.getPaymentGroups(), batch.getCustomerProfile());
 
         // send list of warnings
         paymentFileEmailService.sendLoadEmail(paymentFile, warnings);
@@ -184,5 +201,106 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         return paymentFile;
     }
 
-    
+    /**
+     * Checks whether any of the batch load's payment groups reference inactive vendors,
+     * and sends warning emails appropriately if so.
+     * 
+     * @param paymentGroups The payment groups that were loaded.
+     * @param customer The customer's profile.
+     */
+    private void checkForInactiveVendors(List<PaymentGroup> paymentGroups, CustomerProfile customer) {
+        final int MESSAGE_START_SIZE = 300;
+        StringBuilder inactiveVendorsMessage = new StringBuilder(MESSAGE_START_SIZE);
+        
+        for (PaymentGroup paymentGroup : paymentGroups) {
+            // Determine whether the payment group's vendor is inactive.
+            VendorDetail vendor = vendorService.getVendorDetail(paymentGroup.getPayeeId());
+            
+            if (vendor != null && !vendor.isActiveIndicator()) {
+                // If vendor is inactive, then append warning text to final email message.
+                LOG.warn("Found payment group with inactive vendor payee. Payment Group ID: " + paymentGroup.getId()
+                        + ", Vendor ID: " + paymentGroup.getPayeeId());
+                String warnMessageStart = getStartOfVendorInactiveMessage(vendor);
+                if (inactiveVendorsMessage.length() == 0) {
+                    // Add header if necessary.
+                    inactiveVendorsMessage.append("The PDP feed submitted by your unit includes payments to inactive vendors.  ")
+                            .append("Action is needed on your part to rectify the situation for future payments.  ")
+                            .append("Review the inactive reason to determine action needed.  Details follow:\n\n");
+                }
+                
+                // Append payment detail information to the message. (As per the payment file XSD, there should be at least one detail.)
+                for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
+                    inactiveVendorsMessage.append(warnMessageStart)
+                            .append("Customer Payment Doc Nbr: ").append(paymentDetail.getCustPaymentDocNbr()).append('\n')
+                            .append("Payment Group ID: ").append(paymentDetail.getPaymentGroupId()).append('\n')
+                            .append("Payment Date: ").append(paymentGroup.getPaymentDate()).append('\n')
+                            .append("Amount: ").append(paymentDetail.getNetPaymentAmount()).append("\n\n");
+                }
+            }
+        }
+        
+        // If one or more inactive vendors were found, then send notification emails to warn about their presence.
+        if (inactiveVendorsMessage.length() > 0) {
+            sendInactiveVendorsMessage(customer, inactiveVendorsMessage.toString());
+        }
+    }
+
+    /**
+     * Builds the common start of all vendor-inactive-warning messages for a specific payment group's vendor.
+     * 
+     * @param vendor The inactive vendor.
+     */
+    private String getStartOfVendorInactiveMessage(VendorDetail vendor) {
+        final int BUILDER_SIZE = 100;
+        // Have the inactivation reason printed as "reasonCode -- reasonDescription", or as "None" if no reason is given.
+        String reasonCode = vendor.getVendorInactiveReasonCode();
+        String reasonDesc = " -- " + (ObjectUtils.isNotNull(vendor.getVendorInactiveReason())
+                ? vendor.getVendorInactiveReason().getVendorInactiveReasonDescription() : "No Reason Description Given");
+        if (StringUtils.isBlank(reasonCode)) {
+            reasonCode = "None";
+            reasonDesc = KFSConstants.EMPTY_STRING;
+        }
+        
+        // Build and return the message.
+        return new StringBuilder(BUILDER_SIZE)
+                .append("Vendor Number: ").append(vendor.getVendorNumber()).append('\n')
+                .append("Vendor Name: ").append(vendor.getVendorName()).append('\n')
+                .append("Vendor Inactivation Reason: ").append(reasonCode).append(reasonDesc).append('\n').toString();
+    }
+
+    /**
+     * Sends notification emails when a PDP XML file has one or more inactive vendors.
+     * 
+     * @param customer The customer's profile.
+     * @param messageText The text to use as the body of the email message.
+     */
+    private void sendInactiveVendorsMessage(CustomerProfile customer, String messageText) {
+        MailMessage message = new MailMessage();
+        message.setFromAddress(parameterService.getParameterValueAsString(
+                KFSConstants.CoreModuleNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, KFSConstants.FROM_EMAIL_ADDRESS_PARM_NM));
+        message.setSubject("Inactive vendors detected in PDP feed for customer: " + customer.getCustomerDescription());
+        message.setMessage(messageText);
+        // Send to pre-determined recipient list, plus the customer's process email address.
+        message.setToAddresses(new HashSet<String>(parameterService.getParameterValuesAsString(KFSConstants.CoreModuleNamespaces.PDP,
+                KfsParameterConstants.BATCH_COMPONENT, CUPdpParameterConstants.WARNING_INACTIVE_VENDOR_TO_EMAIL_ADDRESSES)));
+        message.addToAddress(customer.getProcessingEmailAddr());
+        
+        // Attempt to send the email. If an error occurs, just log it and allow execution to continue.
+        try {
+            mailService.sendMessage(message);
+        } catch (InvalidAddressException e) {
+            LOG.error("Invalid email address(es) for inactive vendor warning. Message not sent.", e);
+        } catch (MessagingException e) {
+            LOG.error("Unexpected error sending inactive vendor warning email. Message not sent.", e);
+        }
+    }
+
+    public void setVendorService(VendorService vendorService) {
+        this.vendorService = vendorService;
+    }
+
+    public void setMailService(MailService mailService) {
+        this.mailService = mailService;
+    }
+
 }
