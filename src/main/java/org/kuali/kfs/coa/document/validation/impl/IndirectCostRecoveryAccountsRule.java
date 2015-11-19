@@ -216,15 +216,16 @@ abstract public class IndirectCostRecoveryAccountsRule extends KfsMaintenanceDoc
         int i=0;
         BigDecimal totalDistribution = BigDecimal.ZERO;
        
-        for (IndirectCostRecoveryAccount icra : indirectCostRecoveryAccountList){       	
-            String errorPath = MAINTAINABLE_ERROR_PREFIX + boFieldPath + "[" + i++ + "]";
-            GlobalVariables.getMessageMap().addToErrorPath(errorPath);
-            checkIndirectCostRecoveryAccount(icra);
-            GlobalVariables.getMessageMap().removeFromErrorPath(errorPath);
-            
-	        if(icra.isActive()){    
+        for (IndirectCostRecoveryAccount icra : indirectCostRecoveryAccountList){   
+        	if(icra.isActive()){ 
+	            String errorPath = MAINTAINABLE_ERROR_PREFIX + boFieldPath + "[" + i + "]";
+	            GlobalVariables.getMessageMap().addToErrorPath(errorPath);
+	            checkIndirectCostRecoveryAccount(icra);
+	            GlobalVariables.getMessageMap().removeFromErrorPath(errorPath);
+	            
 	            totalDistribution = totalDistribution.add(icra.getAccountLinePercent());
             }
+        	i++;
 
         }
         

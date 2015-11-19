@@ -40,15 +40,6 @@ import org.kuali.rice.krad.util.GlobalVariables;
 import edu.cornell.kfs.module.purap.businessobject.CuPaymentRequestItemExtension;
 
 public class CuPaymentRequestAction extends PaymentRequestAction {
-	
-	@Override
-	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		ActionForward actionForward =super.execute(mapping, form, request, response);
-		GlobalVariables.getMessageMap();
-		return actionForward;
-	}
 
 	@Override
 	public ActionForward docHandler(ActionMapping mapping, ActionForm form,
