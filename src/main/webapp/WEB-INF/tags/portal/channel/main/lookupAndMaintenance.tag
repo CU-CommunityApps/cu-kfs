@@ -48,6 +48,8 @@
 	    <li><portal:portalLink displayTitle="true" title="Sub-Account" url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.coa.businessobject.SubAccount&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
 	    <li><portal:portalLink displayTitle="true" title="Sub-Object Code" url="kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.coa.businessobject.SubObjectCode&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
 	    <li><portal:portalLink displayTitle="true" title="Sub-Object Code Global" url="kr/maintenance.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.coa.businessobject.SubObjectCodeGlobal" /></li>
+	    <li><portal:portalLink displayTitle="true" title="Sub-Object Code Global Inactivation" url="kr/maintenance.do?methodToCall=start&businessObjectClassName=edu.cornell.kfs.coa.businessobject.SubObjectCodeGlobalEdit" /></li>
+	    
 	</ul>
 	<c:choose>
  	<c:when test="${ConfigProperties['module.external.kuali.coeus.enabled'] == 'true'}"> 

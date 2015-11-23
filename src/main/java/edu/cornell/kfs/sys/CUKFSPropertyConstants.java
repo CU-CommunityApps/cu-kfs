@@ -36,6 +36,8 @@ public class CUKFSPropertyConstants extends KFSPropertyConstants {
     public static final String ACCT_REVERSION_BUDGET_REVERSION_ACCT_NUMBER = "budgetReversionAccountNumber";
     public static final String ACCT_REVERSION_CASH_REVERSION_ACCT_NUMBER = "cashReversionAccountNumber";
     public static final String ACCT_REVERSION_ACTIVE = "active";
+    
+    public static final String SUB_OBJ_CODE_EDIT_CHANGE_DETAILS = "subObjCdGlobalEditDetails";
 
 }
 
