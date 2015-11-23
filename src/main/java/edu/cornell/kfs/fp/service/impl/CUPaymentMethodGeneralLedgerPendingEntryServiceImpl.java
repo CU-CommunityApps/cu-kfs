@@ -549,7 +549,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
         keyValues.put(KFSPropertyConstants.DOCUMENT_NUMBER, document.getDocumentNumber());
         keyValues.put(KFSPropertyConstants.FINANCIAL_OBJECT_CODE, offsetObjectCode);
         
-        return businessObjectService.findMatching(Entry.class, keyValues);
+        return getBusinessObjectService().findMatching(Entry.class, keyValues);
     }
 
 }
