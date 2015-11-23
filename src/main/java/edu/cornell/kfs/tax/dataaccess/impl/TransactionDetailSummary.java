@@ -297,10 +297,9 @@ abstract class TransactionDetailSummary {
      * the form { "key1=pattern1a", "key1=pattern1b", ... , "key2=pattern2a", ... }
      * and converts them into a Map of keys to uppercased-Pattern lists.
      * Any "%" and "_" characters in the patterns will be converted to ".*" and ".",
-     * respectively, when generating the Pattern objects. (However, "%" characters
-     * at the beginning and end of the pattern will simply be excluded instead.
+     * respectively, when generating the Pattern objects.
      * Also, "^" and "$" will be added appropriately if the pattern does not start or
-     * end with those characters or with "%".)
+     * end with those characters or with "%".
      */
     Map<String,List<Pattern>> convertPatternListingsToMap(Collection<String> parameterValues) {
         if (parameterValues.isEmpty()) {
@@ -325,10 +324,7 @@ abstract class TransactionDetailSummary {
                 // Create the Pattern.
                 switch (value.charAt(0)) {
                     case '%' :
-                        // Remove '%' prefix if it's not the only remaining character.
-                        if (value.length() > 1) {
-                            value = value.substring(1);
-                        }
+                        // Leave as-is if the pattern begins with '%'; such chars will be auto-converted to ".*" below.
                         break;
                         
                     case '^' :
@@ -346,10 +342,7 @@ abstract class TransactionDetailSummary {
                         break;
                         
                     case '%' :
-                        // Remove '%' suffix if it's not the only remaining character.
-                        if (value.length() > 1) {
-                            value = value.substring(0, value.length() - 1);
-                        }
+                        // Leave as-is if the pattern ends with '%'; such chars will be auto-converted to ".*" below.
                         break;
                         
                     default :
