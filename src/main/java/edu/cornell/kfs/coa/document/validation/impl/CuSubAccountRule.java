@@ -17,6 +17,8 @@ import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
+
 public class CuSubAccountRule extends SubAccountRule {
 	
 	/**

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd         http://rice.kuali.org/dd/dd.xsd">
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+
+  <bean id="SubAccountGlobalMaintenanceDocument" parent="SubAccountGlobalMaintenanceDocument-parentBean"/>
+
+  <bean id="SubAccountGlobalMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.SubAccountGlobal"/>
+    <property name="maintainableClass" value="edu.cornell.kfs.coa.document.SubAccountGlobalMaintainableImpl"/>
+    <property name="maintainableSections">
+      <list>
+        <ref bean="SubAccountGlobalMaintenanceDocument-GlobalSubAccountMaintenance"/>
+        <ref bean="SubAccountGlobalMaintenanceDocument-EditListofSubAccounts"/>
+      </list>
+    </property>
+    <property name="lockingKeys">
+      <list>
+        <value>documentNumber</value>
+      </list>
+    </property>
+    <property name="documentTypeName" value="GSACC"/>
+    <property name="businessRulesClass" value="edu.cornell.kfs.coa.document.validation.impl.SubAccountGlobalRule"/>
+    <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
+
+    <property name="workflowAttributes">
+    	<ref bean="SubAccountGlobalMaintenanceDocument-workflowAttributes"/>
+    </property>
+  </bean>
+
+<!-- Maintenance Section Definitions -->
+
+
+  <bean id="SubAccountGlobalMaintenanceDocument-GlobalSubAccountMaintenance" parent="SubAccountGlobalMaintenanceDocument-GlobalSubAccountMaintenance-parentBean"/>
+
+  <bean id="SubAccountGlobalMaintenanceDocument-GlobalSubAccountMaintenance-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Global Sub Account Maintenance"/>
+    <property name="title" value="Global Sub Account Maintenance"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableFieldDefinition" p:name="inactivate"/>
+      </list>
+    </property>
+  </bean>
+  <bean id="SubAccountGlobalMaintenanceDocument-EditListofSubAccounts" parent="SubAccountGlobalMaintenanceDocument-EditListofSubAccounts-parentBean"/>
+
+  <bean id="SubAccountGlobalMaintenanceDocument-EditListofSubAccounts-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Edit List of Sub Accounts"/>
+    <property name="title" value="Edit List of Sub Accounts"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableCollectionDefinition">
+          <property name="name" value="subAccountGlobalDetails"/>
+          <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.SubAccountGlobalDetail"/>
+          <property name="sourceClassName" value="org.kuali.kfs.coa.businessobject.SubAccount"/>
+          <property name="summaryTitle" value="Sub Account"/>
+          <property name="summaryFields">
+            <list>
+              <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode"/>
+              <bean parent="MaintainableFieldDefinition" p:name="accountNumber"/>
+              <bean parent="MaintainableFieldDefinition" p:name="subAccountNumber"/>
+              <bean parent="MaintainableFieldDefinition" p:name="subAccount.subAccountName"/>
+            </list>
+          </property>
+          <property name="maintainableFields">
+            <list>
+              <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true" p:readOnlyAfterAdd="true" p:template="chartOfAccountsCode"/>
+              <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true" p:readOnlyAfterAdd="true" p:template="accountNumber" />
+              <bean parent="MaintainableFieldDefinition" p:name="subAccountNumber" p:required="true" p:template="subAccountNumber"/>
+              <bean parent="MaintainableFieldDefinition" p:name="subAccount.subAccountName" p:unconditionallyReadOnly="true"  p:template="subAccountName"/>
+              <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>
+            </list>
+          </property>
+          <property name="duplicateIdentificationFields">
+          	<list>
+          		<bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode"/>
+          		<bean parent="MaintainableFieldDefinition" p:name="accountNumber"/>
+          		<bean parent="MaintainableFieldDefinition" p:name="subAccountNumber"/>
+          	</list>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+<!-- workflow attributes -->
+  	<bean id="SubAccountGlobalMaintenanceDocument-workflowAttributes" parent="SubAccountGlobalMaintenanceDocument-workflowAttributes-parentBean"/>
+  
+	<bean id="SubAccountGlobalMaintenanceDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
+		<property name="routingTypeDefinitions">
+    		<map>
+	    		<entry key="Account" value-ref="SubAccountGlobalMaintenanceDocument-RoutingType-Account"/>
+	    		<entry key="Award" value-ref="SubAccountGlobalMaintenanceDocument-RoutingType-Award"/>
+    			<entry key="OrganizationHierarchy" value-ref="SubAccountGlobalMaintenanceDocument-RoutingType-OrganizationHierarchy"/>
+       		</map>
+		</property>
+	</bean>
+
+	<bean id="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-ChartOrganization" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+    	<property name="documentCollectionPath">
+    		<bean parent="SubAccountGlobalMaintenanceDocument-DocumentCollectionPath-chartOrganization">
+    			<property name="collectionPath" value="newMaintainableObject.businessObject.subAccountGlobalDetails"/>
+    		</bean>
+    	</property>
+   	</bean>
+   	
+   	<bean id="SubAccountGlobalMaintenanceDocument-DocumentCollectionPath-chartOrganization" class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath" abstract="true">
+		<property name="documentValues">
+	   		<list>
+	   			<value>chartOfAccountsCode</value>
+	   			<value>subAccount.account.organizationCode</value>
+	   		</list>
+   		</property>
+   	</bean>
+   	
+   	<bean id="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-ChartAccount" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+    	<property name="documentCollectionPath">
+    		<bean parent="SubAccountGlobalMaintenanceDocument-DocumentCollectionPath-chartAccount">
+    			<property name="collectionPath" value="newMaintainableObject.businessObject.subAccountGlobalDetails"/>
+    		</bean>
+    	</property>
+   	</bean>
+	
+   	<bean id="SubAccountGlobalMaintenanceDocument-DocumentCollectionPath-chartAccount" class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath" abstract="true">
+		<property name="documentValues">
+	   		<list>
+	   			<value>chartOfAccountsCode</value>
+	   			<value>accountNumber</value>
+	   		</list>
+   		</property>
+   	</bean>
+   	
+   	<bean id="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-subAccountGlobalDetails" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+    	<property name="documentCollectionPath">
+    		<bean parent="SubAccountGlobalMaintenanceDocument-DocumentCollectionPath-chart">
+    			<property name="collectionPath" value="newMaintainableObject.businessObject.subAccountGlobalDetails"/>
+    		</bean>
+    	</property>
+   	</bean>
+   	
+   	
+   	<bean id="SubAccountGlobalMaintenanceDocument-RoutingType-OrganizationHierarchy" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    	<property name="routingAttributes">
+    		<list>
+		        <ref bean="RoutingAttribute-Chart"/>
+    			<ref bean="RoutingAttribute-Organization"/>
+    		</list>
+    	</property>
+    	<property name="documentValuePathGroups">
+    		<list>
+    			<ref bean="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-ChartOrganization"/>
+    		</list>
+    	</property>
+    </bean>
+   	
+	<bean id="SubAccountGlobalMaintenanceDocument-RoutingType-Account" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    	<property name="routingAttributes">
+    		<list>
+		        <ref bean="RoutingAttribute-Chart"/>
+		        <ref bean="RoutingAttribute-Account"/>
+    		</list>
+    	</property>
+    	<property name="documentValuePathGroups">
+    		<list>
+    			<ref bean="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-ChartAccount"/>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="SubAccountGlobalMaintenanceDocument-RoutingType-Award" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+        <property name="routingAttributes">
+            <list>
+                <ref bean="SubAccountGlobalMaintenanceDocument-RoutingAttribute-Award"/>
+            </list>
+        </property>
+        <property name="documentValuePathGroups">
+            <list>
+                <ref bean="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-Award"/>
+            </list>
+        </property>
+    </bean>
+    
+     <bean id="SubAccountGlobalMaintenanceDocument-RoutingAttribute-Award" class="org.kuali.rice.krad.datadictionary.RoutingAttribute">
+        <property name="qualificationAttributeName" value="contractsAndGrantsAccountResponsibilityId"/>
+    </bean>
+    
+       	
+   	<bean id="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-Award" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+    	<property name="documentCollectionPath">
+    		<bean parent="SubAccountGlobalMaintenanceDocument-DocumentCollectionPath-responsibilityId">
+    			<property name="collectionPath" value="newMaintainableObject.businessObject.subAccountGlobalDetails"/>
+    		</bean>
+    	</property>
+   	</bean>
+	
+   	<bean id="SubAccountGlobalMaintenanceDocument-DocumentCollectionPath-responsibilityId" class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath" abstract="true">
+		<property name="documentValues">
+	   		<list>
+	   			<value>contractsAndGrantsAccountResponsibilityIdForRouting</value>
+	   		</list>
+   		</property>
+   	</bean>
+
+	
+</beans>
