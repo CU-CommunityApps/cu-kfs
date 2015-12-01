@@ -137,10 +137,7 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
   
     // KFSPTS-4566
     public static final String ERROR_DOCUMENT_ACCMAINT_ICR_ACCOUNT_CANNOT_BE_INACTIVE ="error.document.accountMaintenance.icrAccountCannotBeInactive";  
-    
-    // KFSPTS-3956
-    public static final String ERROR_DOCUMENT_GLOBAL_SUBPOBJ_CD_INACTIVATION_NO_SUB_OBJ_CDS = "error.document.subObjCdGlobalEditDetails.noSubObjectCodesEntered";
-     
+
     //KFSPTS-4563
     public static final String ERROR_DOCUMENT_GLOBAL_SUS_ACCOUNT_NO_SUB_ACCOUNTS = "error.document.subAccountGlobalDetails.noSubAccountsEntered";
     public static final String ERROR_DOCUMENT_GLOBAL_SUB_ACCOUNT_INVALID_ACCOUNT = "error.document.subAccountGlobalDetails.invalidAccount";
