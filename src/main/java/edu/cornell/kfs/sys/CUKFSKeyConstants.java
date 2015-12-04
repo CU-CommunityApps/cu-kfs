@@ -133,4 +133,10 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String ERROR_DOCUMENT_DV_BLANK_STATE_AND_COUNTRY = "error.document.dv.blank.state.and.country";
     // KFSPTS-4566
     public static final String ERROR_DOCUMENT_ACCMAINT_ICR_ACCOUNT_CANNOT_BE_INACTIVE ="error.document.accountMaintenance.icrAccountCannotBeInactive";  
+     
+    //KFSPTS-4563
+    public static final String ERROR_DOCUMENT_GLOBAL_SUS_ACCOUNT_NO_SUB_ACCOUNTS = "error.document.subAccountGlobalDetails.noSubAccountsEntered";
+    public static final String ERROR_DOCUMENT_GLOBAL_SUB_ACCOUNT_INVALID_ACCOUNT = "error.document.subAccountGlobalDetails.invalidAccount";
+    public static final String ERROR_DOCUMENT_GLOBAL_SUB_ACCOUNT_INVALID_SUB_ACCOUNT = "error.document.subAccountGlobalDetails.invalidSubAccount";
+    
 }
