@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	<bean id="SubObjectCodeGlobalEditDetail" parent="SubObjectCodeGlobalEditDetail-parentBean" />
+
+  <bean id="SubObjectCodeGlobalEditDetail-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.SubObjectCodeGlobalEditDetail"/>
+    <property name="inquiryDefinition">
+      <ref bean="SubObjectCodeGlobalEditDetail-inquiryDefinition"/>
+    </property>
+    <property name="lookupDefinition">
+      <ref bean="SubObjectCodeGlobalEditDetail-lookupDefinition"/>
+    </property>
+    <property name="titleAttribute" value="financialSubObjectCode"/>
+    <property name="objectLabel" value="Sub-Object Code"/>
+    <property name="attributes">
+      <list>
+        <ref bean="SubObjectCodeGlobalEditDetail-universityFiscalYear"/>
+        <ref bean="SubObjectCodeGlobalEditDetail-chartOfAccountsCode"/>
+        <ref bean="SubObjectCodeGlobalEditDetail-financialObjectCode"/>
+        <ref bean="SubObjectCodeGlobalEditDetail-accountNumber"/>
+        <ref bean="SubObjectCodeGlobalEditDetail-financialSubObjectCode"/>
+        <ref bean="SubObjectCodeGlobalEditDetail-objectCode.financialObjectLevelCode"/>
+        <ref bean="SubObjectCodeGlobalEditDetail-objectCode.financialObjectLevel.financialConsolidationObjectCode"/>
+        <ref bean="SubObjectCodeGlobalEditDetail-account.organizationCode"/>
+        <ref bean="SubObjectCodeGlobalEditDetail-newCollectionRecord" />
+      </list>
+    </property>
+    <property name="accessRestrictedAttributes">
+       <list>
+           <bean parent="ChartRestriction"><property name="attribute" ref="ObjectCode-chartOfAccountsCode"/></bean>
+           <bean parent="ChartHierarchyRestriction"><property name="attribute" ref="ObjectCode-chartOfAccountsCode"/></bean>
+           <bean parent="AccountRestriction"><property name="attribute" ref="Account-accountNumber"/></bean>
+           <bean parent="PrincipalInvestigatorRestriction"><property name="attribute" ref="Account-accountNumber"/></bean>
+           <bean parent="ObjectLevelRestriction"><property name="attribute" ref="SubObjectCode-objectCode.financialObjectLevelCode"/></bean>
+           <bean parent="ObjectConsolidationRestriction"><property name="attribute" ref="SubObjectCode-objectCode.financialObjectLevel.financialConsolidationObjectCode"/></bean>
+           <bean parent="OrganizationRestriction"><property name="attribute" ref="SubObjectCode-account.organizationCode"/></bean>
+           <bean parent="OrganizationHierarchyRestriction"><property name="attribute" ref="SubObjectCode-account.organizationCode"/></bean>
+       </list>
+    </property>
+  </bean>
+
+	<!-- Attribute Definitions -->
+
+    <bean id="SubObjectCodeGlobalEditDetail-universityFiscalYear" parent="SubObjectCodeGlobalEditDetail-universityFiscalYear-parentBean"/>
+    <bean id="SubObjectCodeGlobalEditDetail-universityFiscalYear-parentBean" abstract="true" parent="ObjectCode-universityFiscalYear">
+         <property name="name" value="universityFiscalYear"/>
+    </bean>
+    
+    <bean id="SubObjectCodeGlobalEditDetail-chartOfAccountsCode" parent="SubObjectCodeGlobalEditDetail-chartOfAccountsCode-parentBean"/>
+    <bean id="SubObjectCodeGlobalEditDetail-chartOfAccountsCode-parentBean" abstract="true" parent="ObjectCode-chartOfAccountsCode">
+         <property name="name" value="chartOfAccountsCode"/>
+    </bean>
+    
+    <bean id="SubObjectCodeGlobalEditDetail-financialObjectCode" parent="SubObjectCodeGlobalEditDetail-financialObjectCode-parentBean"/>
+    <bean id="SubObjectCodeGlobalEditDetail-financialObjectCode-parentBean" abstract="true" parent="ObjectCode-financialObjectCode">
+         <property name="name" value="financialObjectCode"/>
+    </bean>
+    
+    <bean id="SubObjectCodeGlobalEditDetail-accountNumber" parent="SubObjectCodeGlobalEditDetail-accountNumber-parentBean"/>
+    <bean id="SubObjectCodeGlobalEditDetail-accountNumber-parentBean" abstract="true" parent="Account-accountNumber">
+         <property name="name" value="accountNumber"/>
+    </bean>
+
+	<bean id="SubObjectCodeGlobalEditDetail-financialSubObjectCode" parent="SubObjectCodeGlobalEditDetail-financialSubObjectCode-parentBean" />
+	<bean id="SubObjectCodeGlobalEditDetail-financialSubObjectCode-parentBean"
+		abstract="true" parent="SubObjectAttribute" />
+
+
+    <bean id="SubObjectCodeGlobalEditDetail-objectCode.financialObjectLevelCode" parent="SubObjectCodeGlobalEditDetail-objectCode.financialObjectLevelCode-parentBean"/>
+    <bean id="SubObjectCodeGlobalEditDetail-objectCode.financialObjectLevelCode-parentBean" abstract="true" parent="ObjectLevel-financialObjectLevelCode">
+         <property name="name" value="financialObject.financialObjectLevelCode"/>
+    </bean>
+        
+    <bean id="SubObjectCodeGlobalEditDetail-objectCode.financialObjectLevel.financialConsolidationObjectCode" parent="SubObjectCodeGlobalEditDetail-objectCode.financialObjectLevel.financialConsolidationObjectCode-parentBean"/>
+    <bean id="SubObjectCodeGlobalEditDetail-objectCode.financialObjectLevel.financialConsolidationObjectCode-parentBean" abstract="true" parent="ObjectConsolidation-finConsolidationObjectCode">
+         <property name="name" value="financialObject.financialObjectLevel.financialConsolidationObjectCode"/>
+    </bean>
+   
+    <bean id="SubObjectCodeGlobalEditDetail-account.organizationCode" parent="SubObjectCodeGlobalEditDetail-account.organizationCode-parentBean"/>
+    <bean id="SubObjectCodeGlobalEditDetail-account.organizationCode-parentBean" abstract="true" parent="Organization-organizationCode">
+         <property name="name" value="account.organizationCode"/>
+    </bean>         
+    
+    <bean id="SubObjectCodeGlobalEditDetail-newCollectionRecord" parent="SubObjectCodeGlobalEditDetail-newCollectionRecord-parentBean" />
+	<bean id="SubObjectCodeGlobalEditDetail-newCollectionRecord-parentBean" abstract="true" parent="GenericAttributes-newCollectionRecord" />                                      
+
+<!-- Business Object Inquiry Definition -->
+
+
+	<bean id="SubObjectCodeGlobalEditDetail-inquiryDefinition" parent="SubObjectCodeGlobalEditDetail-inquiryDefinition-parentBean" />
+
+	<bean id="SubObjectCodeGlobalEditDetail-inquiryDefinition-parentBean" abstract="true"
+		parent="InquiryDefinition">
+		<property name="title" value="Sub-Object Code Inquiry" />
+		<property name="inquirySections">
+			<list>
+				<ref bean="SubObjectCodeGlobalEditDetail-inquirySectionDefinition" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="SubObjectCodeGlobalEditDetail-inquirySectionDefinition" parent="SubObjectCodeGlobalEditDetail-inquirySectionDefinition-parentBean" />
+	<bean id="SubObjectCodeGlobalEditDetail-inquirySectionDefinition-parentBean"
+		parent="InquirySectionDefinition" abstract="true">
+		<property name="title" value="" />
+		<property name="numberOfColumns" value="1" />
+		<property name="inquiryFields">
+			<list>
+				<bean parent="FieldDefinition" p:attributeName="universityFiscalYear" />
+				<bean parent="FieldDefinition" p:attributeName="accountNumber" />
+				<bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode" />
+				<bean parent="FieldDefinition" p:attributeName="financialObjectCode" />
+				<bean parent="FieldDefinition" p:attributeName="financialSubObjectCode" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- Business Object Lookup Definition -->
+
+  <bean id="SubObjectCodeGlobalEditDetail-lookupDefinition" parent="SubObjectCodeGlobalEditDetail-lookupDefinition-parentBean" />
+  <bean id="SubObjectCodeGlobalEditDetail-lookupDefinition-parentBean" abstract="true" parent="SubObjectCodeGlobalEditDetail-lookupDefinition-base-parentBean" />
+  <bean id="SubObjectCodeGlobalEditDetail-lookupDefinition-base-parentBean" abstract="true" parent="LookupDefinition">
+    <property name="title" value="Sub-Object Code Lookup"/>
+    
+    <property name="defaultSort">
+      <bean parent="SortDefinition">
+        <property name="attributeNames">
+          <list>
+            <value>financialSubObjectCode</value>
+          </list>
+        </property>
+      </bean>
+    </property>
+    <property name="lookupFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="universityFiscalYear" p:defaultValueFinderClass="org.kuali.kfs.sys.businessobject.defaultvalue.FiscalYearFinder"/>
+        <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
+        <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="financialObjectCode"/>
+        <bean parent="FieldDefinition" p:attributeName="financialSubObjectCode"/>
+      </list>
+    </property>
+    <property name="resultFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="universityFiscalYear"/>
+        <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
+        <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="financialObjectCode"/>
+        <bean parent="FieldDefinition" p:attributeName="financialSubObjectCode"/>
+      </list>
+    </property>
+  </bean>
+</beans>
