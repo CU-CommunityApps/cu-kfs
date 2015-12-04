@@ -131,4 +131,6 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
 
     // KFSPTS-4438
     public static final String ERROR_DOCUMENT_DV_BLANK_STATE_AND_COUNTRY = "error.document.dv.blank.state.and.country";
+    // KFSPTS-4566
+    public static final String ERROR_DOCUMENT_ACCMAINT_ICR_ACCOUNT_CANNOT_BE_INACTIVE ="error.document.accountMaintenance.icrAccountCannotBeInactive";  
 }
