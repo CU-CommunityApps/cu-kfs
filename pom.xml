@@ -90,6 +90,8 @@
 	             <artifactId>kfs-stock</artifactId>
 	             <filtered>false</filtered>
 	             <excludes>
+	              <exclude>WEB-INF/lib/commons-collections-3.2.1.jar</exclude>
+	              <exclude>WEB-INF/lib/commons-collections-3.2.jar</exclude>
 	              <exclude>WEB-INF/lib/rice*.jar</exclude>
 	              <exclude>WEB-INF/lib/xapool-1.5.0*.jar</exclude>
 	              <exclude>WEB-INF/lib/wss4j-1.6.*.jar</exclude>
@@ -145,6 +147,10 @@
       <scope>provided</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>com.oracle</groupId>
           <artifactId>ojdbc14</artifactId>
         </exclusion>
@@ -165,6 +171,10 @@
       <version>${kfs.version}</version>
       <scope>test</scope>
       <exclusions>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
@@ -261,6 +271,12 @@
     </exclusions>
 </dependency>
 
+<dependency>
+    <groupId>commons-collections</groupId>
+    <artifactId>commons-collections</artifactId>
+    <version>3.2.2</version>
+</dependency>
+
 	<dependency>
 		<groupId>com.oracle</groupId>
 		<artifactId>ojdbc6</artifactId>
@@ -274,6 +290,10 @@
       <version>${kfs.version}</version>
       <type>war</type>
       <exclusions>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
@@ -484,6 +504,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -500,6 +524,10 @@
       <version>${rice.version}</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
        	<exclusion>
  		  <groupId>javax.transaction</groupId>
   		  <artifactId>jta</artifactId>
@@ -521,6 +549,10 @@
       <version>${rice.version}</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
       	<exclusion>
       	  <groupId>org.igniterealtime</groupId>
   		  <artifactId>smack</artifactId>
@@ -565,6 +597,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -582,6 +618,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -598,6 +638,10 @@
       <version>${rice.version}</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>javax.resource</groupId>
           <artifactId>connector-api</artifactId>
@@ -628,6 +672,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -646,6 +694,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -662,6 +714,10 @@
       <version>${rice.version}</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
@@ -681,6 +737,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -699,6 +759,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -716,6 +780,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -732,6 +800,10 @@
       <version>${rice.version}</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
@@ -751,6 +823,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -768,6 +844,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -784,6 +864,10 @@
       <version>${rice.version}</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
@@ -803,6 +887,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -819,6 +907,10 @@
       <version>${rice.version}</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
@@ -838,6 +930,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -855,6 +951,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -871,6 +971,10 @@
       <version>${rice.version}</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
@@ -890,6 +994,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -906,6 +1014,10 @@
       <version>${rice.version}</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
        	<exclusion>
  		  <groupId>javax.transaction</groupId>
   		  <artifactId>jta</artifactId>
@@ -928,6 +1040,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -944,6 +1060,10 @@
       <version>${rice.version}</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
@@ -963,6 +1083,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -979,6 +1103,10 @@
       <version>${rice.version}</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
@@ -997,6 +1125,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -1013,6 +1145,10 @@
       <version>${rice.version}</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
@@ -1032,6 +1168,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -1048,6 +1188,10 @@
       <version>${rice.version}</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>javax.resource</groupId>
           <artifactId>connector-api</artifactId>
