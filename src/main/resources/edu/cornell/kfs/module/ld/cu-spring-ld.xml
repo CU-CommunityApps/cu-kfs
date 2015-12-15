@@ -102,6 +102,10 @@
    
    <bean id="laborBenefitsCalculationService" parent="laborBenefitsCalculationService-parentBean" class="edu.cornell.kfs.module.ld.service.impl.CuLaborBenefitsCalculationServiceImpl" />
 
+   <bean id="cuContractsAndGrantsResponsibilityPlusPayPeriodRoleTypeService" parent="cuContractsAndGrantsResponsibilityPlusPayPeriodRoleTypeService-parentBean" />
+   <bean id="cuContractsAndGrantsResponsibilityPlusPayPeriodRoleTypeService-parentBean" abstract="true"
+           class="edu.cornell.kfs.module.ld.identity.CuContractsAndGrantsResponsibilityPlusPayPeriodRoleTypeServiceImpl" />
+
    <!--  Validations -->
    <import resource="document/validation/configuration/LaborValidations.xml" />
    <import resource="document/validation/configuration/BenefitExpenseTransferValidations.xml" />
@@ -109,5 +113,6 @@
    <import resource="document/validation/configuration/CuYearEndBenefitExpenseTransferValidations.xml" />
    <import resource="document/validation/configuration/CuYearEndSalaryExpenseTransferValidations.xml" />
     
+   <import resource="cu-spring-ld-bus-exports.xml" />
 
 </beans>
