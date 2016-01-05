@@ -1205,7 +1205,7 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
             } else if (CUTaxConstants.FORM_1042S_STATE_INC_TAX_WITHHELD_BOX.equals(overrideTaxBox)) {
                 taxBox = sitwAmountField;
             } else {
-                taxBox = null;
+                taxBox = summary.derivedValues.boxUnknown1042s;
             }
         } else {
             overriddenTaxBox = null;
@@ -1220,8 +1220,8 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
         }
         
         // Perform logging and updates depending on amount type and exclusions.
-        if (isParm1042SExclusion && StringUtils.isBlank(overrideTaxBox)) {
-            // If exclusion and no overrides, then do not update amounts.
+        if ((isParm1042SExclusion && StringUtils.isBlank(overrideTaxBox)) || CUTaxConstants.TAX_1042S_UNKNOWN_BOX_KEY.equals(overrideTaxBox)) {
+            // If exclusion and no overrides (or an override to a non-reportable box type), then do not update amounts.
             rs.updateString(detailRow.form1042SBox.index, CUTaxConstants.TAX_1042S_UNKNOWN_BOX_KEY);
             if (taxBox != null) {
                 if (LOG.isDebugEnabled()) {

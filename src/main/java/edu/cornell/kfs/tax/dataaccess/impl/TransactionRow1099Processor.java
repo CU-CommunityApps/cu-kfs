@@ -1138,12 +1138,16 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         }
         
         // Perform logging and updates depending on box type and exclusions.
-        if (isParm1099Exclusion && overrideTaxBox == null) {
-            // If exclusion without an override, then do not update amounts.
+        if ((isParm1099Exclusion && overrideTaxBox == null) || summary.derivedValues.boxUnknown1099.equals(overrideTaxBox)) {
+            // If exclusion without an override (or an override to a non-reportable box type), then do not update amounts.
             rs.updateString(detailRow.form1099Box.index, CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
             if (taxBox != null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Found exclusions for row with key: " + rowKey);
+                }
+                if (overrideTaxBox != null) {
+                    rs.updateString(detailRow.form1099OverriddenBox.index, (overriddenTaxBox != null)
+                            ? overriddenTaxBox.propertyName.substring(BOX_PREFIX.length()).toUpperCase() : CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
                 }
             } else {
                 numNoBoxDeterminedRows++;

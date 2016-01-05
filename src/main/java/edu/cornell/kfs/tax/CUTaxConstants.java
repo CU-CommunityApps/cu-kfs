@@ -71,6 +71,8 @@ public final class CUTaxConstants {
         public static final String TAX_OUTPUT_EIN = "tax.output.ein";
         public static final String MESSAGE_BATCH_UPLOAD_TITLE_TAX_OUTPUT_DEFINITION = "message.batchUpload.title.taxOutputDefinition";
         public static final String MESSAGE_BATCH_UPLOAD_TITLE_TAX_DATA_DEFINITION = "message.batchUpload.title.taxDataDefinition";
+        public static final String MESSAGE_BATCH_UPLOAD_TITLE_TRANSACTION_OVERRIDE = "message.batchUpload.title.transactionOverride";
+        public static final String ERROR_BATCH_UPLOAD_INVALID_TRANSACTION_OVERRIDES = "error.batchUpload.invalidTransactionOverrides";
         public static final String ERROR_DOCUMENT_TRANSACTIONOVERRIDEMAINTENANCE_1099_BOX_LENGTH =
                 "error.document.transactionOverrideMaintenance.1099.box.length";
         
