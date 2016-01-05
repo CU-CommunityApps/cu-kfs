@@ -549,12 +549,12 @@
 		<field-descriptor name="disbVchrBankStreetAddress" column="DV_BNK_STR_ADDR" jdbc-type="VARCHAR" />
 		<field-descriptor name="disbVchrBankProvince" column="DV_BNK_PRVNC" jdbc-type="VARCHAR" />
 		<field-descriptor name="disbVchrBankSWIFTCode" column="DV_BNK_SWIFT_CD" jdbc-type="VARCHAR" />
-		<field-descriptor name="disbVchrBankIBAN" column="DV_BNK_IBAN" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+		<field-descriptor name="disbVchrBankIBAN" column="DV_BNK_IBAN" jdbc-type="VARCHAR" />
 		<field-descriptor name="disbVchrSortOrTransitCode" column="DV_BNK_SORT_TRNS_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="disbVchrCorrespondentBankName" column="DV_CRSPNDT_BNK_NM" jdbc-type="VARCHAR" />
 		<field-descriptor name="disbVchrCorrespondentBankAddress" column="DV_CRSPNDT_BNK_ADDR" jdbc-type="VARCHAR" />
 		<field-descriptor name="disbVchrCorrespondentBankRoutingNumber" column="DV_CRSPNDT_BNK_RTNG_NBR" jdbc-type="VARCHAR" />
-		<field-descriptor name="disbVchrCorrespondentBankAccountNumber" column="DV_CRSPNDT_BNK_ACCT_NBR" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+		<field-descriptor name="disbVchrCorrespondentBankAccountNumber" column="DV_CRSPNDT_BNK_ACCT_NBR" jdbc-type="VARCHAR" />
 		<field-descriptor name="disbVchrCorrespondentBankSwiftCode" column="DV_CRSPNDT_BNK_SWIFT_CD" jdbc-type="VARCHAR" />
 	</class-descriptor>
 
