@@ -226,7 +226,8 @@ class Transaction1042SSummary extends TransactionDetailSummary {
     private String getBoxNumberConstant(String boxNumber) {
         if (StringUtils.isNotBlank(boxNumber) && (CUTaxConstants.FORM_1042S_GROSS_BOX.equalsIgnoreCase(boxNumber)
                 || CUTaxConstants.FORM_1042S_FED_TAX_WITHHELD_BOX.equalsIgnoreCase(boxNumber)
-                || CUTaxConstants.FORM_1042S_STATE_INC_TAX_WITHHELD_BOX.equalsIgnoreCase(boxNumber))) {
+                || CUTaxConstants.FORM_1042S_STATE_INC_TAX_WITHHELD_BOX.equalsIgnoreCase(boxNumber)
+                || CUTaxConstants.TAX_1042S_UNKNOWN_BOX_KEY.equalsIgnoreCase(boxNumber))) {
             return boxNumber.toUpperCase();
         }
         return null;

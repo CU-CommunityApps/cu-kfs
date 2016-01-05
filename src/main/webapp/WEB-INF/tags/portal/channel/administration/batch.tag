@@ -71,6 +71,11 @@
 	    <li><portal:portalLink displayTitle="true" title="Commodity Code File Upload" url="batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=commodityCodeInputFileType" /></li>
 		<li><portal:portalLink displayTitle="true" title="Vendor Inactive or Convert File Upload" url="batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=vendorInactivateConvertBatchCsvInputFileType" /></li>
 	</ul>
+	<%-- CU Customization: Added section for batch upload of tax transaction overrides. --%>
+	<strong>Tax Reporting</strong><br/>
+	<ul class="chan">
+	    <li><portal:portalLink displayTitle="true" title="Transaction Override Upload" url="batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=bulkTransactionOverrideFileType" /></li>
+	</ul>
 	<strong>Batch/Scheduled Jobs</strong><br/>
     <ul class="chan">
         <li><portal:portalLink displayTitle="true" title="Batch Semaphore File Upload" url="batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=semaphoreInputFileTypeError" /></li>

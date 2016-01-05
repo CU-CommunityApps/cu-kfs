@@ -276,5 +276,7 @@
         <field name="box16" type="DECIMAL" />
         <field name="box17" type="VARCHAR" />
         <field name="box18" type="DECIMAL" />
+        <field name="box???" type="DECIMAL" />
+        <field name="box????" type="DECIMAL" />
     </row>
 </taxDataDefinition>

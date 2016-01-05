@@ -538,6 +538,9 @@ abstract class TaxTableRow {
         final TaxTableField box16;
         final TaxTableField box17;
         final TaxTableField box18;
+        // These two represent unknown/undefined 1099/1042S tax boxes. They allow for using TransactionOverride BOs to exclude transactions.
+        final TaxTableField boxUnknown1099;
+        final TaxTableField boxUnknown1042s;
         
         DerivedValuesRow(String rowId, Map<String,TaxTableField> fields, List<String> tables, Map<String,TaxTableField> aliasedFields, Integer insertOffset) {
             super(rowId, fields, tables, aliasedFields, insertOffset);
@@ -582,6 +585,8 @@ abstract class TaxTableRow {
             this.box16 = getAliasedField(DerivedFieldNames.BOX16);
             this.box17 = getAliasedField(DerivedFieldNames.BOX17);
             this.box18 = getAliasedField(DerivedFieldNames.BOX18);
+            this.boxUnknown1099 = getAliasedField(DerivedFieldNames.BOX_UNKNOWN_1099);
+            this.boxUnknown1042s = getAliasedField(DerivedFieldNames.BOX_UNKNOWN_1042S);
         }
     }
 
