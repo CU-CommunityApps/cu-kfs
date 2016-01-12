@@ -1,24 +1,14 @@
 package edu.cornell.kfs.coa.service.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.service.impl.AccountServiceImpl;
-import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.krad.service.NoteService;
-import org.kuali.rice.krad.util.ObjectUtils;
-import org.kuali.rice.krad.bo.Note;
 
-import edu.cornell.kfs.coa.service.CuAccountService;
-
-public class CuAccountServiceImpl extends AccountServiceImpl implements CuAccountService{
+public class CuAccountServiceImpl extends AccountServiceImpl {
     
     private static final String DEFAULT_BENEFIT_RATE_CATEGORY_CODE_BY_ACCOUNT_TYPE = "DEFAULT_BENEFIT_RATE_CATEGORY_CODE_BY_ACCOUNT_TYPE";
     private static final String DEFAULT_BENEFIT_RATE_CATEGORY_CODE = "DEFAULT_BENEFIT_RATE_CATEGORY_CODE";
-    
-    protected NoteService noteService;
 
     public String getDefaultLaborBenefitRateCategoryCodeForAccountType(String accountTypeCode) {
         String value = "";
@@ -53,22 +43,5 @@ public class CuAccountServiceImpl extends AccountServiceImpl implements CuAccoun
         }
         return value;
     }
-
-	@Override
-	public List<Note> getAccountNotes(Account account) {
-	        List<Note> notes = new ArrayList<Note>();
-	        if (ObjectUtils.isNotNull(account)) {
-	            notes = noteService.getByRemoteObjectId(account.getObjectId());
-	        }
-	        return notes;
-	}
-
-	public NoteService getNoteService() {
-		return noteService;
-	}
-
-	public void setNoteService(NoteService noteService) {
-		this.noteService = noteService;
-	}
 
 }
