@@ -358,7 +358,7 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
     /**
      * After a copy is done set specific fields on {@link SubAccount} to default values
      *
-     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#processAfterCopy()
+     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#processAfterCopy(MaintenanceDocument, Map)
      */
     @Override
     public void processAfterCopy(org.kuali.rice.kns.document.MaintenanceDocument  document, Map<String, String[]> parameters) {
@@ -374,8 +374,8 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
 
         subAccount.getA21SubAccount().setA21IndirectCostRecoveryAccounts(copyIndirectCostRecoveryAccounts);
     }
-        
-    public void refresh(String refreshCaller, Map fieldValues, org.kuali.rice.kns.document.MaintenanceDocument document) {
+    
+        public void refresh(String refreshCaller, Map fieldValues, org.kuali.rice.kns.document.MaintenanceDocument document) {
     	super.refresh(refreshCaller, fieldValues, document);
     	 String maintAction = super.getMaintenanceAction();   
     	 
@@ -391,12 +391,12 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
     		 
     	 }
     }
-
+    
     /**
      * Overridden to force the old maintenance object to include the relevant A21 sub-account and ICR account sections
-     * if the new object has them. This is necessary to work around a section size mismatch issue when the old
-     * sub-account has a type of "CS" but the new one has a type of "EX".
-     * 
+     * if the new object has them. This is necessary to work around a section size mismatch issue, which can occur
+     * when the old sub-account has a type of "CS" but the new one has a type of "EX" and possibly under other circumstances.
+     *
      * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#getSections(org.kuali.rice.kns.document.MaintenanceDocument, Maintainable)
      */
     @SuppressWarnings("rawtypes")
@@ -406,10 +406,10 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
         if (this == document.getOldMaintainableObject()) {
             SubAccount oldAccount = (SubAccount) getDataObject();
             SubAccount newAccount = (SubAccount) document.getNewMaintainableObject().getDataObject();
-            
-            if (ObjectUtils.isNotNull(newAccount.getA21SubAccount()) && (ObjectUtils.isNull(oldAccount.getA21SubAccount())
-                    || (KFSConstants.SubAccountType.COST_SHARE.equals(oldAccount.getA21SubAccount().getSubAccountTypeCode())
-                            && KFSConstants.SubAccountType.EXPENSE.equals(newAccount.getA21SubAccount().getSubAccountTypeCode())))) {
+
+            if (hasA21SubAccount(newAccount) && (doesNotHaveA21SubAccount(oldAccount)
+                || (isCostShareSubAccount(oldAccount) && isExpenseSubAccount(newAccount))
+                || oldAccountHasFewerIndirectCostRecoveryAccounts(oldAccount, newAccount))) {
                 // If necessary, set up an A21 sub-account with sufficient ICR accounts on the old maintainable before generating the sections.
                 List sections;
                 A21SubAccount oldA21Account = oldAccount.getA21SubAccount();
@@ -431,5 +431,33 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
         
         return super.getSections(document, oldMaintainable);
     }
-        
+
+    private boolean doesNotHaveA21SubAccount(SubAccount oldAccount) {
+        return ObjectUtils.isNull(oldAccount.getA21SubAccount());
+    }
+
+    private boolean hasA21SubAccount(SubAccount oldAccount) {
+        return ObjectUtils.isNotNull(oldAccount.getA21SubAccount());
+    }
+
+    private boolean hasA21IndirectCostRecoveryAccounts(SubAccount newAccount) {
+        return ObjectUtils.isNotNull(newAccount.getA21SubAccount().getA21IndirectCostRecoveryAccounts());
+    }
+
+    private boolean isExpenseSubAccount(SubAccount newAccount) {
+        return KFSConstants.SubAccountType.EXPENSE.equals(newAccount.getA21SubAccount().getSubAccountTypeCode());
+    }
+
+    private boolean isCostShareSubAccount(SubAccount oldAccount) {
+        return KFSConstants.SubAccountType.COST_SHARE.equals(oldAccount.getA21SubAccount().getSubAccountTypeCode());
+    }
+
+    private boolean oldAccountHasFewerIndirectCostRecoveryAccounts(SubAccount oldAccount, SubAccount newAccount) {
+        return hasA21SubAccount(oldAccount)
+            && hasA21IndirectCostRecoveryAccounts(oldAccount)
+            && hasA21IndirectCostRecoveryAccounts(newAccount)
+            && (oldAccount.getA21SubAccount().getA21IndirectCostRecoveryAccounts().size()
+                < newAccount.getA21SubAccount().getA21IndirectCostRecoveryAccounts().size());
+    }
+
 }
