@@ -1,16 +1,26 @@
 package edu.cornell.kfs.sys.service.mock;
 
+import edu.cornell.kfs.fp.CuFPParameterConstants;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.vnd.VendorParameterConstants;
-import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.coreservice.api.parameter.Parameter;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MockParameterServiceImpl implements ParameterService {
 
-    private static final String VENDOR_DETAIL_NAME = "org.kuali.kfs.vnd.businessobject.VendorDetail";
+    Map<String, String> parameters;
+
+    public MockParameterServiceImpl() {
+        parameters = new HashMap<>();
+        parameters.put(CuFPParameterConstants.AdvanceDepositDocument.CHART, "IT");
+        parameters.put(CuFPParameterConstants.AdvanceDepositDocument.OBJECT_CODE, "2240");
+        parameters.put(CuFPParameterConstants.AdvanceDepositDocument.ACCOUNT, "G621060");
+        parameters.put(VendorParameterConstants.DEFAULT_PHONE_NUMBER_DIGITS, "10");
+    }
 
     @Override
     public Parameter createParameter(Parameter parameter) {
@@ -34,11 +44,7 @@ public class MockParameterServiceImpl implements ParameterService {
 
     @Override
     public String getParameterValueAsString(Class<?> componentClass, String parameterName) {
-        if (StringUtils.equals(componentClass.getName(), VENDOR_DETAIL_NAME) && StringUtils.equals(parameterName, VendorParameterConstants.DEFAULT_PHONE_NUMBER_DIGITS)) {
-            return "10";
-        } else {
-            return null;
-        }
+        return parameters.get(parameterName);
     }
 
     @Override
