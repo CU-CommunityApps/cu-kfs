@@ -28,12 +28,12 @@ Copyright Indiana University
     <bean id="iuFpModuleConfiguration-parentBean" abstract="true" parent="fpModuleConfiguration-parentBean" >
         <property name="packagePrefixes">
             <list merge="true">
-                <value>iu.ebs.kfs.fp</value>
+                <value>edu.iu.ebs.kfs.fp</value>
             </list>
         </property>
         <property name="databaseRepositoryFilePaths">
             <list merge="true">
-                <value>iu/ebs/kfs/fp/iu-ojb-fp.xml</value>
+                <value>edu/iu/ebs/kfs/fp/iu-ojb-fp.xml</value>
             </list>
         </property>
         <property name="jobNames">
@@ -41,6 +41,10 @@ Copyright Indiana University
                 <value>iu.achIncomeJob</value>
             </list>
         </property>
+    </bean>
+
+    <bean id="iu-fpModuleService" parent="fpModuleService-parentBean">
+        <property name="moduleConfiguration" ref="iu-fp"/>
     </bean>
 
     <bean id="iu.achIncomeJob" parent="scheduledJobDescriptor">
