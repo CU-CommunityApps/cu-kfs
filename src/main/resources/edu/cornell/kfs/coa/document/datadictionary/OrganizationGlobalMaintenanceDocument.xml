@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd         http://rice.kuali.org/dd/dd.xsd">
+
+  <bean id="OrganizationGlobalMaintenanceDocument" parent="OrganizationGlobalMaintenanceDocument-parentBean"/>
+
+  <bean id="OrganizationGlobalMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.OrganizationGlobal"/>
+    <property name="maintainableClass" value="edu.cornell.kfs.coa.document.OrganizationGlobalMaintainableImpl"/>
+    <property name="maintainableSections">
+      <list>
+        <ref bean="OrganizationGlobalMaintenanceDocument-GlobalOrganizationMaintenance"/>
+        <ref bean="OrganizationGlobalMaintenanceDocument-EditListofOrganizations"/>
+      </list>
+    </property>
+    <property name="defaultExistenceChecks">
+      <list>
+        <bean parent="ReferenceDefinition" p:attributeName="organizationManagerUniversal" p:attributeToHighlightOnFail="organizationManagerUniversal.principalName"/>
+        <bean parent="ReferenceDefinition" p:attributeName="organizationPhysicalCampus" p:attributeToHighlightOnFail="organizationPhysicalCampusCode"/>
+        <bean parent="ReferenceDefinition" p:attributeName="postalZip" p:attributeToHighlightOnFail="organizationZipCode"/>
+        <bean parent="ReferenceDefinition" p:attributeName="organizationCountry" p:attributeToHighlightOnFail="organizationCountryCode"/>
+      </list>
+    </property>
+    <property name="lockingKeys">
+      <list>
+        <value>documentNumber</value>
+      </list>
+    </property>
+    <property name="documentTypeName" value="GORG"/>
+    <property name="businessRulesClass" value="edu.cornell.kfs.coa.document.validation.impl.OrganizationGlobalRule"/>
+    <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
+    <property name="webScriptFiles">
+      <list>
+        <value>../dwr/interface/PostalCodeService.js</value>
+        <value>../dwr/interface/OrganizationService.js</value>
+        <value>../scripts/sys/objectInfo.js</value>
+        <value>../scripts/coa/organizationDocument.js</value>
+        <value>../scripts/coa/organizationGlobal.js</value>
+      </list>
+    </property>
+    <property name="workflowAttributes">
+        <ref bean="OrganizationGlobalMaintenanceDocument-workflowAttributes"/>
+    </property>
+  </bean>
+
+<!-- Maintenance Section Definitions -->
+
+
+  <bean id="OrganizationGlobalMaintenanceDocument-GlobalOrganizationMaintenance" parent="OrganizationGlobalMaintenanceDocument-GlobalOrganizationMaintenance-parentBean"/>
+
+  <bean id="OrganizationGlobalMaintenanceDocument-GlobalOrganizationMaintenance-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Global Organization Maintenance"/>
+    <property name="title" value="Global Organization Maintenance"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableFieldDefinition" p:name="organizationManagerUniversalId" p:unconditionallyReadOnly="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="organizationManagerUniversal.principalName"/>
+        <bean parent="MaintainableFieldDefinition" p:name="organizationPhysicalCampusCode"/>
+        <bean parent="MaintainableFieldDefinition" p:name="organizationLine1Address"/>
+        <bean parent="MaintainableFieldDefinition" p:name="organizationLine2Address"/>
+        <bean parent="MaintainableFieldDefinition" p:name="organizationCityName" p:unconditionallyReadOnly="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="organizationStateCode" p:unconditionallyReadOnly="true"/>
+        <!-- This definition uses the lookup override properties so that the city name and state code will also be updated when the lookup returns. -->
+        <bean parent="MaintainableFieldDefinition" p:name="organizationZipCode" p:webUILeaveFieldCallbackFunction="updateLocationByPostalCode_Callback" p:webUILeaveFieldFunction="updateOrgGlobalLocationByPostalCode"
+            p:overrideLookupClass="org.kuali.rice.location.framework.postalcode.PostalCodeEbo" p:overrideFieldConversions="code:organizationZipCode,stateCode:organizationStateCode,cityName:organizationCityName"/>
+        <bean parent="MaintainableFieldDefinition" p:name="organizationCountryCode" p:webUILeaveFieldCallbackFunction="updateLocationByCountryCode_Callback" p:webUILeaveFieldFunction="updateOrgGlobalLocationByCountryCode"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="OrganizationGlobalMaintenanceDocument-EditListofOrganizations" parent="OrganizationGlobalMaintenanceDocument-EditListofOrganizations-parentBean"/>
+
+  <bean id="OrganizationGlobalMaintenanceDocument-EditListofOrganizations-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Edit List of Organizations"/>
+    <property name="title" value="Edit List of Organizations"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableCollectionDefinition">
+          <property name="name" value="organizationGlobalDetails"/>
+          <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.OrganizationGlobalDetail"/>
+          <property name="sourceClassName" value="org.kuali.kfs.coa.businessobject.Organization"/>
+          <property name="summaryTitle" value="Organization"/>
+          <property name="summaryFields">
+            <list>
+              <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode"/>
+              <bean parent="MaintainableFieldDefinition" p:name="organizationCode"/>
+              <bean parent="MaintainableFieldDefinition" p:name="organization.organizationName"/>
+            </list>
+          </property>
+          <property name="maintainableFields">
+            <list>
+              <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true" p:readOnlyAfterAdd="true" p:template="chartOfAccountsCode"/>
+              <bean parent="MaintainableFieldDefinition" p:name="organizationCode" p:required="true" p:readOnlyAfterAdd="true" p:template="organizationCode" p:webUILeaveFieldFunction="loadOrganizationName"/>
+              <bean parent="MaintainableFieldDefinition" p:name="organization.organizationName" p:unconditionallyReadOnly="true" p:template="organizationName"/>
+              <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>
+            </list>
+          </property>
+          <property name="duplicateIdentificationFields">
+              <list>
+                  <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode"/>
+                  <bean parent="MaintainableFieldDefinition" p:name="organizationCode"/>
+              </list>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+    <!-- workflow attributes -->
+    <bean id="OrganizationGlobalMaintenanceDocument-workflowAttributes" parent="OrganizationGlobalMaintenanceDocument-workflowAttributes-parentBean"/>
+
+    <bean id="OrganizationGlobalMaintenanceDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
+        <property name="routingTypeDefinitions">
+            <map>
+                <entry key="Chart" value-ref="OrganizationGlobalMaintenanceDocument-RoutingType-Chart"/>
+                <entry key="OrganizationHierarchy" value-ref="OrganizationGlobalMaintenanceDocument-RoutingType-OrganizationHierarchy"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="OrganizationGlobalMaintenanceDocument-DocumentValuePathGroup-ChartOrganization" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+        <property name="documentCollectionPath">
+            <bean parent="OrganizationGlobalMaintenanceDocument-DocumentCollectionPath-chartAndOrganization">
+                <property name="collectionPath" value="newMaintainableObject.businessObject.organizationGlobalDetails"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="OrganizationGlobalMaintenanceDocument-DocumentCollectionPath-chartAndOrganization" class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath" abstract="true">
+        <property name="documentValues">
+            <list>
+                <value>chartOfAccountsCode</value>
+                <value>organizationCode</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="OrganizationGlobalMaintenanceDocument-DocumentValuePathGroup-Chart" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+        <property name="documentCollectionPath">
+            <bean parent="OrganizationGlobalMaintenanceDocument-DocumentCollectionPath-chart">
+                <property name="collectionPath" value="newMaintainableObject.businessObject.organizationGlobalDetails"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="OrganizationGlobalMaintenanceDocument-DocumentCollectionPath-chart" class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath" abstract="true">
+        <property name="documentValues">
+            <list>
+                <value>chartOfAccountsCode</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="OrganizationGlobalMaintenanceDocument-RoutingType-OrganizationHierarchy" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+        <property name="routingAttributes">
+            <list>
+                <ref bean="RoutingAttribute-Chart"/>
+                <ref bean="RoutingAttribute-Organization"/>
+            </list>
+        </property>
+        <property name="documentValuePathGroups">
+            <list>
+                <ref bean="OrganizationGlobalMaintenanceDocument-DocumentValuePathGroup-ChartOrganization"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="OrganizationGlobalMaintenanceDocument-RoutingType-Chart" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+        <property name="routingAttributes">
+            <list>
+                <ref bean="RoutingAttribute-Chart"/>
+            </list>
+        </property>
+        <property name="documentValuePathGroups">
+            <list>
+                <ref bean="OrganizationGlobalMaintenanceDocument-DocumentValuePathGroup-Chart"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>
