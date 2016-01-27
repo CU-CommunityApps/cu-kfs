@@ -143,4 +143,9 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     // KFSPTS-3956
     public static final String ERROR_DOCUMENT_GLOBAL_SUBPOBJ_CD_INACTIVATION_NO_SUB_OBJ_CDS = "error.document.subObjCdGlobalEditDetails.noSubObjectCodesEntered";
     
+
+    // KFSPTS-3959
+    public static final String ERROR_DOCUMENT_GLOBAL_ORGANIZATION_COUNTRY_AND_ZIP_MISMATCH = "error.document.organizationGlobal.countryAndZipMismatch";
+    public static final String ERROR_DOCUMENT_GLOBAL_ORGANIZATION_NO_ORGANIZATIONS = "error.document.organizationGlobalDetails.noOrganizationsEntered";
+    public static final String ERROR_DOCUMENT_GLOBAL_ORGANIZATION_INVALID_ORGANIZATION = "error.document.organizationGlobalDetails.invalidOrganization";
 }
