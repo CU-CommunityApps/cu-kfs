@@ -285,7 +285,7 @@ public class AdvanceDepositServiceImpl extends AbstractAdvanceDepositServiceBase
 
             Attachment attachment = null;
             try {
-                attachment = SpringContext.getBean(AttachmentService.class).createAttachment(document, file.getName(),"text" , (int)file.length(), fileStream, attachmentType);
+                attachment = SpringContext.getBean(AttachmentService.class).createAttachment(document.getDocumentHeader(), file.getName(),"text" , (int)file.length(), fileStream, attachmentType);
             }
             catch (IOException e) {
                 throw new RuntimeException(e);
