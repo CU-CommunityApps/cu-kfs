@@ -4,6 +4,9 @@
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 	
+	<!-- Import KEW RouteHeaderService, which is not auto-GRL-loaded by the base KFS beans. -->
+	<bean id="enDocumentRouteHeaderService" p:serviceName="enDocumentRouteHeaderService" parent="grlBeanImporter" />
+	
 	<import resource="sys/cu-spring-sys.xml" />
 	<import resource="coa/cu-spring-coa.xml" />
 	<import resource="module/cg/cu-spring-cg.xml" />
