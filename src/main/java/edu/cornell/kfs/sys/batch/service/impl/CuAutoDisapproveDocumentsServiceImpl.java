@@ -2,29 +2,32 @@ package edu.cornell.kfs.sys.batch.service.impl;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSParameterKeyConstants;
 import org.kuali.kfs.sys.batch.AutoDisapproveDocumentsStep;
 import org.kuali.kfs.sys.batch.service.impl.AutoDisapproveDocumentsServiceImpl;
+import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocumentBase;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.parameter.ParameterEvaluator;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
-import org.kuali.rice.kew.api.WorkflowRuntimeException;
 import org.kuali.rice.kew.api.action.ActionTaken;
 import org.kuali.rice.kew.api.doctype.DocumentType;
 import org.kuali.rice.kew.api.document.DocumentStatus;
-import org.kuali.rice.kew.api.document.search.DocumentSearchCriteria;
-import org.kuali.rice.kew.api.document.search.DocumentSearchResult;
-import org.kuali.rice.kew.api.document.search.DocumentSearchResults;
+import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
+import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.krad.UserSessionUtils;
@@ -42,87 +45,128 @@ import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocumentsServiceImpl {
 
     private static final String TAB = "\t";
-	
+
+    private RouteHeaderService routeHeaderService;
 
     protected boolean processAutoDisapproveDocuments(String principalId, String annotation, Date documentCompareDate) {
         boolean success = true;
-        
-        DocumentSearchCriteria.Builder criteria = DocumentSearchCriteria.Builder.create();
-        criteria.setDocumentStatuses(Collections.singletonList(DocumentStatus.ENROUTE));
-        criteria.setSaveName(null);
-        List<DocumentType> parentDocumentTypes = this.getYearEndAutoDisapproveParentDocumentTypes();
-        
-		for (DocumentType parentDocumentType : parentDocumentTypes) {
-			// If optional document parameters have been defined, use these in
-			// the criteria, if not, use the default values
-			setOptionalDocumentSearchCriteria(criteria, parentDocumentType.getName());
+        Date documentStartDate = null;
+        if(checkIfStartDateParameterExists()){
+        	documentStartDate = getDocumentStartDateParameter();
+        }
+        Collection<FinancialSystemDocumentHeader> documentList = this.getFinancialSystemDocumentService().findByWorkflowStatusCode(DocumentStatus.ENROUTE);
+		String documentHeaderId = null;
 
-			try {
-				// If optional document parameters have been defined, use these
-				DocumentSearchResults results = KewApiServiceLocator.getWorkflowDocumentService().documentSearch(principalId, criteria.build());
-
-				String documentHeaderId = null;
-
-				for (DocumentSearchResult result : results.getSearchResults()) {
-					documentHeaderId = result.getDocument().getDocumentId();
-					Document document = findDocumentForAutoDisapproval(documentHeaderId);
-					if (document != null) {
-						if (checkIfDocumentEligibleForAutoDispproval(document.getDocumentHeader())) {
-							if (!exceptionsToAutoDisapproveProcess(document.getDocumentHeader(), documentCompareDate)) {
-								try {
-	                            	String successMessage = buildSuccessMessage(document);
-									autoDisapprovalYearEndDocument(document, annotation);
-									LOG.info("The document with header id: " + documentHeaderId + " is automatically disapproved by this job.");
-									getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(successMessage);
-								} catch (Exception e) {
-									LOG.error("Exception encountered trying to auto disapprove the document " + e.getMessage());
-	                                String message = ("Exception encountered trying to auto disapprove the document: ").concat(documentHeaderId);                                    
-									getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
-								}
-							} else {
-								LOG.info("Year End Auto Disapproval Exceptions:  The document: " + documentHeaderId + " is NOT AUTO DISAPPROVED.");
-							}
+		// CU Customization: Filter out documents whose workflow statuses are not actually ENROUTE (see referenced method for details).
+		documentList = getDocumentsWithActualWorkflowStatus(documentList, DocumentStatus.ENROUTE);
+		
+		for (FinancialSystemDocumentHeader result : documentList) {
+			documentHeaderId = result.getDocumentNumber();
+			Document document = findDocumentForAutoDisapproval(documentHeaderId);
+			if (document != null) {
+				if (checkIfDocumentEligibleForAutoDispproval(document.getDocumentHeader())) {
+					if (!exceptionsToAutoDisapproveProcess(document.getDocumentHeader(), documentCompareDate, documentStartDate)) {
+						try {
+                        	String successMessage = buildSuccessMessage(document);
+							autoDisapprovalYearEndDocument(document, annotation);
+							LOG.info("The document with header id: " + documentHeaderId + " is automatically disapproved by this job.");
+							getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(successMessage);
+						} catch (Exception e) {
+							LOG.error("Exception encountered trying to auto disapprove the document " + e.getMessage());
+                            String message = ("Exception encountered trying to auto disapprove the document: ").concat(documentHeaderId);                                    
+							getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
 						}
 					} else {
-						LOG.error("Document is NULL.  It should never have been null");
-						String message = ("Error: Document with id: ").concat(documentHeaderId).concat(" - Document is NULL.  It should never have been null");
-						getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
+						LOG.info("Year End Auto Disapproval Exceptions:  The document: " + documentHeaderId + " is NOT AUTO DISAPPROVED.");
 					}
 				}
-			} catch (WorkflowRuntimeException wfre) {
-				success = false;
-				LOG.warn("Error with workflow search for documents for auto disapproval");
-				String message = ("Error with workflow search for documents for auto disapproval.  The auto disapproval job is stopped.");
+			} else {
+				LOG.error("Document is NULL.  It should never have been null");
+				String message = ("Error: Document with id: ").concat(documentHeaderId).concat(" - Document is NULL.  It should never have been null");
 				getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
 			}
 		}
+			
         return success;
     }
+    
+    /**
+     * This method first checks the document's create date with system parameter date and then
+     * checks the document type name to the system parameter values and returns true if the type name exists
+     * @param document document to check for its document type,  documentCompareDate the system parameter specified date
+     * to compare the current date to this date.
+     * @return true if  document's create date is <= documentCompareDate and if document type is not in the
+     * system parameter document types that are set to disallow.
+     */
+    protected boolean exceptionsToAutoDisapproveProcess(DocumentHeader documentHeader, Date documentCompareDate, Date documentStartDate) {
+        boolean exceptionToDisapprove = true;
+        Date createDate = null;
 
-    protected void setOptionalDocumentSearchCriteria(DocumentSearchCriteria.Builder documentSearchCriteriaDTO, String docType) {
+        String documentNumber =  documentHeader.getDocumentNumber();
+
+        DateTime documentCreateDate = documentHeader.getWorkflowDocument().getDateCreated();
+        createDate = documentCreateDate.toDate();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(documentCompareDate);
+        String strCompareDate = calendar.getTime().toString();
+
+        calendar.setTime(createDate);
+        String strCreateDate = calendar.getTime().toString();
+        
+        boolean startDateValid = documentStartDate == null  || (documentStartDate!=null && (createDate.after(documentStartDate) || createDate.equals(documentStartDate))); 
+
+        if (startDateValid && (createDate.before(documentCompareDate) || createDate.equals(documentCompareDate))) {
+            String documentTypeName = documentHeader.getWorkflowDocument().getDocumentTypeName();
+
+            ParameterEvaluator evaluatorDocumentType = /*REFACTORME*/SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES, documentTypeName);
+            exceptionToDisapprove = !evaluatorDocumentType.evaluationSucceeds();
+            if (exceptionToDisapprove) {
+                LOG.info("Document Id: " + documentNumber + " - Exception to Auto Disapprove:  Document's type: " + documentTypeName + " is in the System Parameter For Document Types Exception List.");
+            }
+        }
+        else {
+            LOG.info("Document Id: " + documentNumber + " - Exception to Auto Disapprove:  Document's create date: " + strCreateDate + " is NOT less than or equal to System Parameter Compare Date: " + strCompareDate);
+            exceptionToDisapprove = true;
+        }
+
+        return exceptionToDisapprove;
+    }
+    
+    /**
+     * This method finds the date in the system parameters that will be used to compare the create date.
+     * It then adds 23 hours, 59 minutes and 59 seconds to the compare date.
+     * @return  documentCompareDate returns YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE from the system parameter
+     */
+    protected Date getDocumentStartDateParameter() {
+        Date documentCompareDate = null;
+
+        String yearEndAutoDisapproveDocumentDate = getParameterService().getParameterValueAsString(AutoDisapproveDocumentsStep.class, CUKFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_START_DATE);
+
+        if (ObjectUtils.isNull(yearEndAutoDisapproveDocumentDate)) {
+            LOG.warn("Exception: System Parameter YEAR_END_AUTO_DISAPPROVE_START_DATE can not be determined.");
+            String message = ("Exception: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_START_DATE can not be determined.  The auto disapproval job is stopped.");
+            getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
+            throw new RuntimeException("Exception: AutoDisapprovalStep job stopped because System Parameter YEAR_END_AUTO_DISAPPROVE_START_DATE is null");
+        }
+
         try {
-			if (checkIfParentDocumentTypeParameterExists()) {
-				LOG.info("\"Root Document Parameter\" set to: " + docType);
-				documentSearchCriteriaDTO.setDocumentTypeName(docType);
-			} else {
-				documentSearchCriteriaDTO.setDocumentTypeName(KFSConstants.ROOT_DOCUMENT_TYPE);
-			}
-			if (checkIfStartDateParameterExists()) {
-				String startDateCreated = getParameterService().getParameterValueAsString(AutoDisapproveDocumentsStep.class,
-								CUKFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_START_DATE);
-				LOG.info("\"Start Date Parameter\" set to: " + startDateCreated);
-				documentSearchCriteriaDTO.setDateCreatedFrom(new DateTime(getDateTimeService().convertToDateTime(startDateCreated)));
-			}
-			if (checkIfDocumentCompareCreateDateParameterExists()) {
-				String toDateCreated = getParameterService().getParameterValueAsString(AutoDisapproveDocumentsStep.class,
-								KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE);
-				LOG.info("\"To Date Parameter\" set to: " + toDateCreated);
-				documentSearchCriteriaDTO.setDateCreatedTo(new DateTime(getDateTimeService().convertToDateTime(toDateCreated)));
-			}
-		} catch (ParseException e) {
-			LOG.info("exception " + e.getMessage());
-		}
+            Date compareDate = getDateTimeService().convertToDate(yearEndAutoDisapproveDocumentDate);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(compareDate);
+            calendar.set(Calendar.HOUR, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 59);
+            documentCompareDate = calendar.getTime();
+        }
+        catch (ParseException pe) {
+            LOG.warn("ParseException: System Parameter YEAR_END_AUTO_DISAPPROVE_START_DATE can not be determined.");
+            String message = ("ParseException: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_START_DATE is invalid.  The auto disapproval job is stopped.");
+            getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
+            throw new RuntimeException("ParseException: AutoDisapprovalStep job stopped because System Parameter YEAR_END_AUTO_DISAPPROVE_START_DATE is invalid");
+        }
 
+        return documentCompareDate;
     }
 
     protected boolean checkIfStartDateParameterExists() {
@@ -393,6 +437,58 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 
 		return documentEligible;
 	}
-    
+
+    /**
+     * CU Customization:
+     * 
+     * There is a known Rice issue where the KFS document headers are not auto-saved when a KFS
+     * document gets recalled to the action list. This is due to Rice explicitly avoiding any
+     * auto-saves on documents moving to SAVED status, to prevent Optimistic Locking problems
+     * for end-users as per the Rice PostProcessorServiceImpl code comments.
+     * 
+     * Therefore, to prevent problems with auto-disapprovals accidentally targeting recalled
+     * documents (due to them being retrieved based on KFS document header status), this method
+     * filters out any documents whose KEW doc statuses do not match the expected one.
+     * 
+     * @param documentList The document headers to filter; cannot be null.
+     * @param workflowStatus The workflow status that the documents are expected to have; cannot be null.
+     * @return A new collection containing only the KFS doc headers whose matching route headers actually have the given workflow status.
+     */
+    protected Collection<FinancialSystemDocumentHeader> getDocumentsWithActualWorkflowStatus(
+            Collection<FinancialSystemDocumentHeader> documentList, DocumentStatus status) {
+        final int SCALED_SET_SIZE = (int) (documentList.size() * 1.4);
+        Set<String> documentIds = new HashSet<String>(SCALED_SET_SIZE);
+        Collection<DocumentRouteHeaderValue> routeHeaders;
+        Collection<FinancialSystemDocumentHeader> finalList = new ArrayList<FinancialSystemDocumentHeader>(documentList.size());
+        
+        // Assemble document IDs, then search for workflow headers.
+        for (FinancialSystemDocumentHeader docHeader : documentList) {
+            documentIds.add(docHeader.getDocumentNumber());
+        }
+        routeHeaders = routeHeaderService.getRouteHeaders(documentIds);
+        
+        // Track which headers have the expected document status.
+        documentIds = new HashSet<String>(SCALED_SET_SIZE);
+        if (routeHeaders != null) {
+            for (DocumentRouteHeaderValue routeHeader : routeHeaders) {
+                if (status.equals(routeHeader.getStatus())) {
+                    documentIds.add(routeHeader.getDocumentId());
+                }
+            }
+        }
+        
+        // Update final-headers collection with any doc headers that actually have the given workflow status in KEW.
+        for (FinancialSystemDocumentHeader docHeader : documentList) {
+            if (documentIds.contains(docHeader.getDocumentNumber())) {
+                finalList.add(docHeader);
+            }
+        }
+        
+        return finalList;
+    }
+
+    public void setRouteHeaderService(RouteHeaderService routeHeaderService) {
+        this.routeHeaderService = routeHeaderService;
+    }
 
 }
