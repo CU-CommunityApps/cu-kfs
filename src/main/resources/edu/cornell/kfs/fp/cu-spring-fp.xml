@@ -266,7 +266,9 @@
         <property name="objectTypeService" ref="objectTypeService" />
         <property name="optionsService" ref="optionsService" />   
         <property name="offsetDefinitionService" ref="offsetDefinitionService" />  
-        <property name="parameterService" ref="parameterService" />                   
+        <property name="parameterService" ref="parameterService" />  
+        <property name="flexibleOffsetAccountService" ref="flexibleOffsetAccountService" />
+        <property name="subFundGroupService" ref="subFundGroupService" />                 
     </bean>
 
 </beans>

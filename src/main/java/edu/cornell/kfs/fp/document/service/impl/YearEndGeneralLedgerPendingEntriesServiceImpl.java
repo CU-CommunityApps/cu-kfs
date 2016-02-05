@@ -10,13 +10,16 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
 import org.kuali.kfs.coa.service.ObjectTypeService;
 import org.kuali.kfs.coa.service.OffsetDefinitionService;
+import org.kuali.kfs.coa.service.SubFundGroupService;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.gl.batch.BalanceForwardStep;
 import org.kuali.kfs.gl.batch.NominalActivityClosingStep;
+import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
@@ -26,6 +29,8 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.document.AccountingDocumentBase;
+import org.kuali.kfs.sys.exception.InvalidFlexibleOffsetException;
+import org.kuali.kfs.sys.service.FlexibleOffsetAccountService;
 import org.kuali.kfs.sys.service.HomeOriginationService;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
@@ -47,6 +52,8 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
 	 protected ConfigurationService configurationService;
 	 protected DateTimeService dateTimeService;
 	 protected OffsetDefinitionService offsetDefinitionService;
+	protected FlexibleOffsetAccountService flexibleOffsetAccountService;
+	protected SubFundGroupService subFundGroupService;
 
 	/**
 	 * @see edu.cornell.kfs.fp.document.service.YearEndGeneralLedgerPendingEntriesService#generateYearEndGeneralLedgerPendingEntries(org.kuali.kfs.sys.document.AccountingDocumentBase, java.lang.String, java.util.List, org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper, java.util.Collection)
@@ -311,6 +318,39 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
             	GeneralLedgerPendingEntry bbActivityEntry = generateGeneralForwardOriginEntry(document, postable, fiscalYear, sequenceHelper.getSequenceCounter());
 				glpes.add(bbActivityEntry);
 				sequenceHelper.increment();
+            }
+        }
+
+        // Do the C & G balance forwards, using logic similar to that from BalanceServiceImpl and BalanceDaoOjb.
+        if (ObjectUtils.isNull(closingCharts) || closingCharts.isEmpty()) {
+            //do nothing
+        } else if (closingCharts.contains(postable.getChartOfAccountsCode())) {
+            // Accounting line contains a closing chart, check to see if line needs a CG balance forwarding entry generated.
+            List<String> cumulativeForwardBalanceObjectTypes = objectTypeService.getCumulativeForwardBalanceObjectTypes(fiscalYear);
+            Collection<String> contractsAndGrantsDenotingValues = subFundGroupService.getContractsAndGrantsDenotingValues();
+            Collection<String> cumulativeBalanceForwardBalanceTypesArray = getParameterService().getParameterValuesAsString(
+                    BalanceForwardStep.class, GeneralLedgerConstants.BalanceForwardRule.BALANCE_TYPES_TO_ROLL_FORWARD_FOR_INCOME_EXPENSE);
+            Collection<String> subFundGroupsForCumulativeBalanceForwardingArray = getParameterService().getParameterValuesAsString(
+                    BalanceForwardStep.class, GeneralLedgerConstants.BalanceForwardRule.SUB_FUND_GROUPS_FOR_INCEPTION_TO_DATE_REPORTING);
+            Boolean fundGroupDenotesCGInd = getParameterService().getParameterValueAsBoolean(
+                    Account.class, KFSConstants.ChartApcParms.ACCOUNT_FUND_GROUP_DENOTES_CG);
+            /*
+             * NOTE: The base KFS code may have a bug where the contractsAndGrantsDenotingValues check does not normally
+             * match anything unless the list contains only one value. The "if" block below has been coded to match the
+             * current KFS behavior from BalanceServiceImpl and BalanceDaoOjb. If this does end up getting fixed in the
+             * base KFS code, then this "if" block will need to be updated accordingly.
+             */
+            if (cumulativeBalanceForwardBalanceTypesArray.contains(postable.getBalanceTypeCode())
+                    && cumulativeForwardBalanceObjectTypes.contains(postable.getObjectCode().getFinancialObjectTypeCode())
+                    && (subFundGroupsForCumulativeBalanceForwardingArray.contains(postable.getAccount().getSubFundGroupCode())
+                            || (contractsAndGrantsDenotingValues.size() == 1 && contractsAndGrantsDenotingValues.contains(
+                                    (fundGroupDenotesCGInd != null && fundGroupDenotesCGInd.booleanValue())
+                                            ? postable.getAccount().getSubFundGroup().getFundGroupCode() : postable.getAccount().getSubFundGroupCode())))) {
+                // Create CG Balance Forward entry.
+                GeneralLedgerPendingEntry cbActivityEntry = generateCGBalanceForwardPendingEntry(
+                        document, postable, sequenceHelper.getSequenceCounter(), fiscalYear);
+                glpes.add(cbActivityEntry);
+                sequenceHelper.increment();
             }
         }
 
@@ -622,6 +662,97 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
 		return offsetEntry;
 	}
 
+    /**
+     * Generates the CG Balance Forward entry.
+     * 
+     * @param document
+     * @param postable
+     * @param sequenceNumber
+     * @param fiscalYear
+     * @return The GL pending entry
+     */
+    public GeneralLedgerPendingEntry generateCGBalanceForwardPendingEntry(
+            AccountingDocumentBase document, AccountingLine postable, Integer sequenceNumber, Integer fiscalYear) {
+        /*
+         * Much of the code below was copied from BalanceForwardRuleHelper.generateCumulativeForwardOriginEntry,
+         * and adapted for generating a YEJV GL pending entry instead of a full origin entry.
+         */
+        GeneralLedgerPendingEntry entry = new GeneralLedgerPendingEntry();
+        
+        // Populate a temporary OriginEntryFull object so that we can use the FlexibleOffsetAccountService functionality.
+        OriginEntryFull originEntry = new OriginEntryFull();
+        originEntry.setUniversityFiscalYear(new Integer(fiscalYear + 1));
+        originEntry.setChartOfAccountsCode(postable.getChartOfAccountsCode());
+        originEntry.setAccountNumber(postable.getAccountNumber());
+        originEntry.setSubAccountNumber(StringUtils.isBlank(postable.getSubAccountNumber())
+                ? KFSConstants.getDashSubAccountNumber() : postable.getSubAccountNumber());
+        originEntry.setFinancialObjectCode(postable.getFinancialObjectCode());
+        originEntry.setFinancialSubObjectCode(StringUtils.isBlank(postable.getFinancialSubObjectCode())
+                ? KFSConstants.getDashFinancialSubObjectCode() : postable.getFinancialSubObjectCode());
+        originEntry.setFinancialBalanceTypeCode(postable.getBalanceTypeCode());
+        originEntry.setFinancialObjectTypeCode(postable.getObjectCode().getFinancialObjectTypeCode());
+        // Use the FlexibleOffsetAccountService to make updates as needed.
+        try {
+            getFlexibleOffsetAccountService().updateOffset(originEntry);
+        } catch (InvalidFlexibleOffsetException e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("generateCGBalanceForwardPendingEntry() Balance Forward Flexible Offset Error: " + e.getMessage());
+            }
+        }
+        
+        // Copy the potentially-changed data into the GL pending entry accordingly.
+        entry.setUniversityFiscalYear(originEntry.getUniversityFiscalYear());
+        entry.setChartOfAccountsCode(originEntry.getChartOfAccountsCode());
+        entry.setAccountNumber(originEntry.getAccountNumber());
+        entry.setSubAccountNumber(originEntry.getSubAccountNumber());
+        entry.setFinancialObjectCode(originEntry.getFinancialObjectCode());
+        entry.setFinancialSubObjectCode(originEntry.getFinancialSubObjectCode());
+        entry.setFinancialBalanceTypeCode(originEntry.getFinancialBalanceTypeCode());
+        entry.setFinancialObjectTypeCode(originEntry.getFinancialObjectTypeCode());
+        
+        // Continue with regular setup.
+        entry.setUniversityFiscalPeriodCode(KFSConstants.PERIOD_CODE_CG_BEGINNING_BALANCE);
+        entry.setFinancialDocumentTypeCode(document.getFinancialSystemDocumentHeader().getWorkflowDocument().getDocumentTypeName());
+        entry.setFinancialSystemOriginationCode(homeOriginationService.getHomeOrigination().getFinSystemHomeOriginationCode());
+        entry.setDocumentNumber(new StringBuilder(KFSConstants.BALANCE_TYPE_ACTUAL).append(postable.getAccountNumber()).toString());
+        entry.setTransactionLedgerEntrySequenceNumber(sequenceNumber);
+        entry.setTransactionLedgerEntryDescription(new StringBuilder("BEG C & G BAL BROUGHT FORWARD FROM ").append(fiscalYear).toString());
+        entry.setTransactionLedgerEntryAmount(postable.getAmount());
+        
+        if (KFSConstants.BALANCE_TYPE_CURRENT_BUDGET.equals(postable.getBalanceTypeCode())
+                || KFSConstants.BALANCE_TYPE_BASE_BUDGET.equals(postable.getBalanceTypeCode())) {
+            entry.setTransactionDebitCreditCode(null);
+        } else {
+            entry.setTransactionDebitCreditCode(postable.getDebitCreditCode());
+        }
+        
+        Timestamp transactionTimestamp = new Timestamp(dateTimeService.getCurrentDate().getTime());
+        entry.setTransactionDate(new java.sql.Date(transactionTimestamp.getTime()));
+        
+        entry.setOrganizationDocumentNumber(null);
+        entry.setProjectCode(KFSConstants.getDashProjectCode());
+        entry.setOrganizationReferenceId(null);
+        entry.setReferenceFinancialDocumentNumber(null);
+        entry.setReferenceFinancialSystemOriginationCode(null);
+        entry.setReferenceFinancialDocumentNumber(null);
+        entry.setFinancialDocumentReversalDate(null);
+        
+        String transactionEncumbranceUpdateCode = KFSConstants.ENCUMB_UPDT_NO_ENCUMBRANCE_CD;
+        entry.setTransactionEncumbranceUpdateCode(transactionEncumbranceUpdateCode);
+        
+        if (KFSConstants.BALANCE_TYPE_AUDIT_TRAIL.equals(postable.getBalanceTypeCode())) {
+            entry.setFinancialBalanceTypeCode(KFSConstants.BALANCE_TYPE_ACTUAL);
+        }
+        if (entry.getTransactionLedgerEntryAmount().isNegative()) {
+            if (KFSConstants.BALANCE_TYPE_ACTUAL.equals(entry.getFinancialBalanceTypeCode())) {
+                entry.setTransactionLedgerEntryAmount(entry.getTransactionLedgerEntryAmount().negated());
+            }
+        }
+        
+        
+        return entry;
+    }
+
 	/**
 	 * Creates the glpe description
 	 * 
@@ -785,5 +916,41 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
 	public void setParameterService(ParameterService parameterService) {
 		this.parameterService = parameterService;
 	}
+
+    /**
+     * Gets the flexibleOffsetAccountService
+     * 
+     * @return flexibleOffsetAccountService
+     */
+    public FlexibleOffsetAccountService getFlexibleOffsetAccountService() {
+        return flexibleOffsetAccountService;
+    }
+
+    /**
+     * Sets the flexibleOffsetAccountService
+     * 
+     * @param flexibleOffsetAccountService
+     */
+    public void setFlexibleOffsetAccountService(FlexibleOffsetAccountService flexibleOffsetAccountService) {
+        this.flexibleOffsetAccountService = flexibleOffsetAccountService;
+    }
+
+    /**
+     * Gets the subFundGroupService
+     * 
+     * @return subFundGroupService
+     */
+    public SubFundGroupService getSubFundGroupService() {
+        return subFundGroupService;
+    }
+
+    /**
+     * Sets the subFundGroupService
+     * 
+     * @param subFundGroupService
+     */
+    public void setSubFundGroupService(SubFundGroupService subFundGroupService) {
+        this.subFundGroupService = subFundGroupService;
+    }
 
 }
