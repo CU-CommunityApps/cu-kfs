@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-#kdo-1101
+#kdo-1101-2
 src_folder = ARGV.shift
 
 dd_folders = `find #{src_folder} -type d -name datadictionary`;
