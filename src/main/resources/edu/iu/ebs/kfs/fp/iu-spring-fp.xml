@@ -77,8 +77,9 @@ Copyright Indiana University
     </bean>
 
     <!--FSNKS-186: iu-custom IU Service -->
-    <bean id="iu.advanceDepositService"
-          class="edu.iu.ebs.kfs.fp.batch.service.impl.AdvanceDepositServiceImpl">
+    <bean id="iu.advanceDepositService" parent="iu.advanceDepositService-parent"/>
+
+    <bean id="iu.advanceDepositService-parent" class="edu.iu.ebs.kfs.fp.batch.service.impl.AdvanceDepositServiceImpl" abstract="true">
         <property name="batchInputFileService" ref="batchInputFileService"/>
         <property name="batchInputFileType" ref="iu.achIncomeInputFileType"/>
         <property name="dateTimeService" ref="dateTimeService"/>

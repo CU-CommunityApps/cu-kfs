@@ -130,6 +130,23 @@
     <bean id="mimeTypeProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
          <property name="location" ref="mimeTypeFile"/>
     </bean>
-	
+
+	<bean id="iu.advanceDepositService"
+		  class="edu.iu.ebs.kfs.fp.batch.service.impl.AdvanceDepositServiceImpl">
+		<property name="batchInputFileService" ref="batchInputFileService"/>
+		<property name="batchInputFileType" ref="iu.achIncomeInputFileType"/>
+		<property name="dateTimeService" ref="dateTimeService"/>
+		<property name="businessObjectService" ref="businessObjectService"/>
+		<property name="parameterService" ref="parameterService"/>
+		<property name="mailService" ref="mailService"/>
+		<property name="configurationService" ref="kualiConfigurationService"/>
+		<property name="documentService" ref="documentService"/>
+		<property name="noteService" ref="noteService"/>
+		<property name="workflowDocumentService" ref="workflowDocumentService"/>
+		<property name="attachmentsDirectory">
+			<value>${attachment.dir.location}</value>
+		</property>
+	</bean>
+
 </beans>
 

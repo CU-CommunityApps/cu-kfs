@@ -322,11 +322,16 @@ public class AdvanceDepositServiceImpl extends AbstractAdvanceDepositServiceBase
 
     }
 
-    private  void createSourceAccountingLine(AchIncomeTransaction transaction , AdvanceDepositDocument advanceDepositDocument) {
+    protected void createSourceAccountingLine(AchIncomeTransaction transaction , AdvanceDepositDocument advanceDepositDocument) {
 
         String chart = parameterService.getParameterValueAsString(GenerateAdvanceDepositDocumentsStep.class, FinancialProcessingParameterConstants.AdvanceDepositDocument.CHART);
         String objectCode = parameterService.getParameterValueAsString(GenerateAdvanceDepositDocumentsStep.class, FinancialProcessingParameterConstants.AdvanceDepositDocument.OBJECT_CODE);
         String account = parameterService.getParameterValueAsString(GenerateAdvanceDepositDocumentsStep.class, FinancialProcessingParameterConstants.AdvanceDepositDocument.ACCOUNT);
+        setupSourceAccountingLine(transaction, advanceDepositDocument, chart, objectCode, account);
+
+    }
+
+    protected void setupSourceAccountingLine(AchIncomeTransaction transaction, AdvanceDepositDocument advanceDepositDocument, String chart, String objectCode, String account) {
         SourceAccountingLine sourceAccountingLine = new SourceAccountingLine();
         sourceAccountingLine.setSequenceNumber(advanceDepositDocument.getNextSourceLineNumber());
         sourceAccountingLine.setChartOfAccountsCode(chart);
@@ -346,7 +351,6 @@ public class AdvanceDepositServiceImpl extends AbstractAdvanceDepositServiceBase
         List<SourceAccountingLine> sourceLines = new ArrayList<SourceAccountingLine>();
         sourceLines.add(sourceAccountingLine);
         advanceDepositDocument.setSourceAccountingLines(sourceLines);
-
     }
 
     public void setDocumentService(DocumentService documentService) {
