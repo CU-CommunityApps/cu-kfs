@@ -46,10 +46,14 @@
 	<bean id="cu-coaModuleService" parent="coaModuleService-parentBean">
 	 	<property name="moduleConfiguration" ref="cu-coa"/>
 	</bean>
-
+	
 	<bean id="accountVerificationWebService" class="edu.cornell.kfs.coa.service.impl.AccountVerificationWebServiceImpl"/>
 	
-	<bean id="accountService"  parent="accountService-parentBean" class="edu.cornell.kfs.coa.service.impl.CuAccountServiceImpl"/>
+	<bean id="accountService"  parent="accountService-parentBean" class="edu.cornell.kfs.coa.service.impl.CuAccountServiceImpl">
+			<property name="noteService">
+			<ref bean="noteService" />
+		</property>
+	</bean>
 	
 	<bean id="accountGlobalLookupableHelperService"
 		class="edu.cornell.kfs.coa.businessobject.lookup.AccountGlobalSearchLookupableHelperServiceImpl"
@@ -183,4 +187,9 @@
 		</property>
 		
     </bean>
+    
+    <bean id="subAccountTrickleDownInactivationService" parent="subAccountTrickleDownInactivationService-parentBean" class="edu.cornell.kfs.coa.service.impl.CuSubAccountTrickleDownInactivationServiceImpl"/>
+    
+    <bean id="subObjectTrickleDownInactivationService" parent="subObjectTrickleDownInactivationService-parentBean" class="edu.cornell.kfs.coa.service.impl.CuSubObjectTrickleDownInactivationServiceImpl"/>
+
 </beans>

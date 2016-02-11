@@ -116,5 +116,11 @@ public class CUKFSConstants {
     
     public static final String COA_DOCUMENT_TYPE = "COA";
     public static final String GACC_DOCUMENT_TYPE = "GACC";
+    
+    // KFSPTS-3877
+    public static class AccountCreateAndUpdateNotePrefixes {
+        public static final String ADD = "Add";
+        public static final String CHANGE = "Change";
+    }
         
 }
