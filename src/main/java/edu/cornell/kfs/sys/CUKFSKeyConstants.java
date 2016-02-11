@@ -151,4 +151,7 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String ERROR_DOCUMENT_GLOBAL_ORGANIZATION_COUNTRY_AND_ZIP_MISMATCH = "error.document.organizationGlobal.countryAndZipMismatch";
     public static final String ERROR_DOCUMENT_GLOBAL_ORGANIZATION_NO_ORGANIZATIONS = "error.document.organizationGlobalDetails.noOrganizationsEntered";
     public static final String ERROR_DOCUMENT_GLOBAL_ORGANIZATION_INVALID_ORGANIZATION = "error.document.organizationGlobalDetails.invalidOrganization";
+
+    // KFSPTS-4390
+    public static final String ERROR_ICRACCOUNT_CONTINUATION_ACCOUNT_CLOSED ="error.icrAccount.continuationAccount.closed";
 }
