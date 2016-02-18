@@ -109,4 +109,10 @@
     
     <bean id="achPayeeLookupableHelperService" parent="achPayeeLookupableHelperService-parentBean" class="edu.cornell.kfs.pdp.businessobject.lookup.CuACHPayeeLookupableHelperServiceImpl" />
 
+    <bean id="payeeACHAccountLookupableHelperService" parent="payeeACHAccountLookupableHelperService-parentBean" scope="prototype"
+            class="edu.cornell.kfs.pdp.businessobject.lookup.CuPayeeACHAccountLookupableHelperServiceImpl">
+        <property name="personService" ref="personService" />
+        <property name="criteriaLookupService" ref="criteriaLookupService" />
+    </bean>
+
 </beans>
