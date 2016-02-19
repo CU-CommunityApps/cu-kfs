@@ -8,15 +8,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.document.KualiAccountMaintainableImpl;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.kew.api.document.DocumentStatus;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.maintenance.Maintainable;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.document.Document;
 import org.kuali.rice.krad.maintenance.MaintenanceLock;
 import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.service.KRADServiceLocator;
+import org.kuali.rice.krad.service.NoteService;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
 
@@ -24,6 +34,7 @@ import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
 import edu.cornell.kfs.coa.businessobject.AppropriationAccount;
 import edu.cornell.kfs.coa.businessobject.SubFundProgram;
 import edu.cornell.kfs.coa.service.AccountReversionTrickleDownInactivationService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 /**
  * @author kwk43
@@ -35,6 +46,10 @@ public class CUAccountMaintainableImpl extends KualiAccountMaintainableImpl {
     private static final long serialVersionUID = 1L;
     private static final String SUB_FUND_GROUP_CODE = "subFundGroupCode";
     protected static final String INITIATOR_ACCOUNT_FYI_SPLIT_NODE = "InitiatorAccountFYISplit";
+    
+    private static final Logger LOG = Logger.getLogger(CUAccountMaintainableImpl.class);
+    
+    protected transient NoteService noteService;
     
     @Override
     public void saveBusinessObject() {
@@ -68,11 +83,27 @@ public class CUAccountMaintainableImpl extends KualiAccountMaintainableImpl {
         if (isClosingAccount) {
             SpringContext.getBean(AccountReversionTrickleDownInactivationService.class).trickleDownInactivateAccountReversions((Account) getBusinessObject(), getDocumentNumber());
         }
+        
+		// KFSPTS-3877 save xml again so that object id is persisted, this way
+		// notes on the doc will be retrieved form the DB instead of xml doc
+		// content and will display any future notes on account edits as well
+        try {
+            Document document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(getDocumentNumber());
+            Account xmlaccount = (Account) ((MaintenanceDocument) document).getNewMaintainableObject().getBusinessObject();
+            if (ObjectUtils.isNull(xmlaccount.getObjectId()) &&( KFSConstants.MAINTENANCE_NEW_ACTION.equals(getMaintenanceAction()) || KFSConstants.MAINTENANCE_COPY_ACTION.equals(getMaintenanceAction()))) {
+                ((MaintenanceDocument) document).getNewMaintainableObject().setBusinessObject(account);
+                SpringContext.getBean(DocumentService.class).saveDocument(document);
+            }
+        } catch (Exception e) {
+            LOG.error("Account doc not saved successfully "+ e.getMessage());
+        }
     }
+    
 
     @Override
     public void processAfterEdit(MaintenanceDocument document, Map<String,String[]> parameters) {
         System.out.println("Inside processAfterEdit");
+        document.getNotes().add(getNewBoNote(CUKFSConstants.AccountCreateAndUpdateNotePrefixes.EDIT));
     }
     
     /**
@@ -153,5 +184,65 @@ public class CUAccountMaintainableImpl extends KualiAccountMaintainableImpl {
         
         return super.getSections(document, oldMaintainable);
     }
+    
+    @Override
+    public void processAfterCopy(MaintenanceDocument document, Map<String, String[]> parameters) {
+    	document.getNotes().add(getNewBoNote(CUKFSConstants.AccountCreateAndUpdateNotePrefixes.ADD));
+    	super.processAfterCopy(document, parameters);
+    }
+    
+    @Override
+    public void processAfterNew(MaintenanceDocument document, Map<String, String[]> requestParameters) {
+    	document.getNotes().add(getNewBoNote(CUKFSConstants.AccountCreateAndUpdateNotePrefixes.ADD));
+    	super.processAfterNew(document, requestParameters);
+    }
+    
+    @Override
+	public void processAfterPost(MaintenanceDocument document, Map<String, String[]> requestParameters) {
+		super.processAfterPost(document, requestParameters);
+		String statusCode = document.getDocumentHeader().getWorkflowDocument().getStatus().getCode();
+		boolean isPreRoute = DocumentStatus.INITIATED.getCode().equals(statusCode)
+				|| DocumentStatus.SAVED.getCode().equals(statusCode);
+
+		if (isPreRoute) {
+			// Search for edit note and update it to include the doc description
+			for (Note note : document.getNotes()) {
+				if (note.getNoteText().startsWith(CUKFSConstants.AccountCreateAndUpdateNotePrefixes.EDIT + CUKFSConstants.ACCOUNT_NOTE_TEXT + getDocumentNumber())) {
+					note.setNoteText(CUKFSConstants.AccountCreateAndUpdateNotePrefixes.EDIT + CUKFSConstants.ACCOUNT_NOTE_TEXT + getDocumentNumber() + " " + document.getDocumentHeader().getDocumentDescription());
+				}
+			}
+		}
+	}
+    
+    /**
+     * creates a new bo note and sets the timestamp.
+     *
+     * @return a newly created note
+     */
+    protected Note getNewBoNote(String prefix){
+        Note newBoNote = new Note();
+        newBoNote.setNoteText(prefix + CUKFSConstants.ACCOUNT_NOTE_TEXT + getDocumentNumber());
+        newBoNote.setNotePostedTimestampToCurrent();
+
+        try {
+            newBoNote = getNoteService().createNote(newBoNote, this.getBusinessObject(), GlobalVariables.getUserSession().getPrincipalId());
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Caught Exception While Trying To Add Note to Account", e);
+        }
+
+        return newBoNote;
+    }
+
+	public NoteService getNoteService() {
+		if(noteService == null){
+			this.noteService = KRADServiceLocator.getNoteService();
+		}
+		return noteService;
+	}
+
+	public void setNoteService(NoteService noteService) {
+		this.noteService = noteService;
+	}
 
 }
