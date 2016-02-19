@@ -320,13 +320,7 @@
 		<module name="RedundantModifier">
 			<property name="severity" value="warning"/>
 		</module>
-		
-		<module name="RedundantThrows">
-			<property name="severity" value="warning"/>
-			<property name="logLoadErrors" value="true"/>
-            <property name="suppressLoadErrors" value="true"/>
-		</module>
-		
+
 		<!-- new in checkstyle 5 -->
 		<module name="RegexpSinglelineJava">
 			<property name="severity" value="warning"/>
