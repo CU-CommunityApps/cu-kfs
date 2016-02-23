@@ -15,7 +15,7 @@ import org.kuali.rice.krad.service.DocumentService;
 import edu.cornell.kfs.module.ld.document.CuSalaryExpenseTransferDocument;
 import edu.cornell.kfs.module.ld.fixture.CuSalaryExpenseTransferDocumentFixture;
 
-@ConfigureContext(session = UserNameFixture.rae28)
+@ConfigureContext(session = UserNameFixture.ls35)
 public class CuLaborPendingEntryConverterServiceImplTest extends KualiTestBase {
 
     private LaborPendingEntryConverterService laborPendingEntryConverterService;
