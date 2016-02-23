@@ -21,8 +21,8 @@ public class AccountVerificationWebServiceImplTest extends KualiTestBase {
     }
     
     public void testIsValidSubAccount() throws Exception {
-        assertFalse("should not be a valid object code", accountVerificationWebService.isValidSubAccount("IT", "U728612", "NOTVALID"));
-        assertTrue("should be a valid object code", accountVerificationWebService.isValidSubAccount("IT", "U728612", "8240"));
+        assertFalse("should not be a valid sub account", accountVerificationWebService.isValidSubAccount("IT", "1003724", "NOTVALID"));
+        assertTrue("should be a valid sub account", accountVerificationWebService.isValidSubAccount("IT", "1003724", "00018"));
     }
     
     public void testIsValidSubObjectCode() throws Exception {
@@ -32,12 +32,12 @@ public class AccountVerificationWebServiceImplTest extends KualiTestBase {
     
     public void testIsValidProjectCode() throws Exception {
         assertFalse("should not be a valid project code", accountVerificationWebService.isValidProjectCode("NOTVALID"));
-        assertTrue("should be a valid project code", accountVerificationWebService.isValidProjectCode("990-AA-AT"));
+        assertTrue("should be a valid project code", accountVerificationWebService.isValidProjectCode("F-ARUBA"));
     }
     
     public void testIsValidAccountString() throws Exception {
         assertFalse("should not be a valid account string", accountVerificationWebService.isValidAccountString("IT", "G904714", "", "6115", "NOTVALID", "" ));
-        assertTrue("should be a valid object account string", accountVerificationWebService.isValidAccountString("IT", "G904714", "", "6115", "150", ""));
+        assertTrue("should be a valid account string", accountVerificationWebService.isValidAccountString("IT", "G904714", "", "6115", "150", ""));
     }
     
 }
