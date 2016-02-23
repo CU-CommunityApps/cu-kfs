@@ -1,15 +1,7 @@
 package edu.cornell.kfs.fp.businessobject.lookup;
 
-import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.kuali.kfs.fp.businessobject.DisbursementPayee;
-import org.kuali.kfs.fp.businessobject.lookup.DisbursementPayeeLookupableHelperServiceImpl;
+import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
@@ -23,91 +15,79 @@ import org.kuali.rice.kns.lookup.LookupableHelperService;
 import org.kuali.rice.krad.bo.BusinessObject;
 import org.kuali.rice.krad.exception.ValidationException;
 
-import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
 
 @ConfigureContext(session = ccs1)
 public class CuDisbursementPayeeLookupableHelperServiceImplTest extends KualiTestBase {
-	private DisbursementPayeeLookupableHelperServiceImpl disbursementPayeeLookupableHelperServiceImpl;
 
 	private PersonService personService;
 	private UnitTestSqlDao unitTestSqlDao;
-	private String alumniSql = "SELECT dv_payee_id_nbr,fdoc_nbr FROM FP_DV_PAYEE_DTL_T where dv_payee_typ_cd = 'A'";
-	private String vendorSql = "select VNDR_NM from PUR_VNDR_DTL_T where rownum <= 1";
+	private String alumniSql = "SELECT dv_payee_id_nbr FROM FP_DV_PAYEE_DTL_T where dv_payee_typ_cd = 'A' and rownum <= 1";
+	private String vendorSql = "select VNDR_NM from PUR_VNDR_DTL_T where dobj_maint_cd_actv_ind = 'Y' and rownum <= 1";
 	@SuppressWarnings("deprecation")
 	private LookupableHelperService cuDisbursementPayeeLookupableHelperService;
 
-	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
 		cuDisbursementPayeeLookupableHelperService = LookupableSpringContext.getLookupableHelperService("disbursementPayeeLookupableHelperService");
-		
-		
 		cuDisbursementPayeeLookupableHelperService.setBusinessObjectClass(CuDisbursementPayee.class);
-						
+
 		personService = SpringContext.getBean(PersonService.class);
 		unitTestSqlDao = SpringContext.getBean(UnitTestSqlDao.class);
-		
 	}
 
-	public void test() {
-
-		Person alumni = null;
-		Person student = null;
-
+	public void testLookupAlumni() {
 		List alumniResults = unitTestSqlDao.sqlSelect(alumniSql);
-		Object aresult = alumniResults.get(0);
-		String[] asplit = aresult.toString().split(",");
-		String aFdocSplit[] = asplit[0].split("=");
-		String aFdoc = aFdocSplit[1].replaceAll(",", "");
-		aFdoc = aFdoc.trim();
-		String aIdSplit[] = asplit[1].split("=");
-		String aentid = aIdSplit[1].replaceAll("}", "");
-		aentid = aentid.trim();
-		alumniResults.clear();
+		assertFalse("alumni query didn't return any results, which is just wrong", alumniResults.isEmpty());
+		HashMap alumniResult = (HashMap)alumniResults.get(0);
+		String entityId = (String)alumniResult.get("DV_PAYEE_ID_NBR");
+		assertTrue("couldn't get entityId from query results", StringUtils.isNotBlank(entityId));
 
-		List<Person> people;
+		List<Person> people = personService.findPeople(Collections.singletonMap(KIMPropertyConstants.Person.ENTITY_ID, entityId));
+		assertFalse("couldn't find a person for entityId " + entityId, people.isEmpty());
+		Person alumni = people.get(0);
 
-		people = personService.findPeople(Collections.singletonMap(
-				KIMPropertyConstants.Person.ENTITY_ID, aentid));
-		alumni = people.get(0);
-		people.clear();
+		Map<String, String> fieldValues = new LinkedHashMap();
+		fieldValues.put(KIMPropertyConstants.Person.PRINCIPAL_NAME, alumni.getPrincipalName());
 
+		validateSearch("Alumni", fieldValues);
+	}
+
+	public void testLookupVendor() {
 		List vendorResults = unitTestSqlDao.sqlSelect(vendorSql);
-		Object vresult = vendorResults.get(0);		
-		String vSplit[] = vresult.toString().split("=");
-		String vNm = vSplit[1].replaceAll("}", "");
-		vNm = vNm.trim();
-		vendorResults.clear();			
-		
-		
-		Map<String, String> m = new LinkedHashMap();
-		Map<String, String> v = new LinkedHashMap();
-		List<DisbursementPayee> searchResults = new ArrayList<DisbursementPayee>();
+		assertFalse("vendor query didn't return any results, which is just wrong", vendorResults.isEmpty());
+		HashMap vendorResult = (HashMap)vendorResults.get(0);
+		String vendorName = (String)vendorResult.get("VNDR_NM");
+		assertTrue("couldn't get vendorName from query results", StringUtils.isNotBlank(vendorName));
 
-		m.put(KIMPropertyConstants.Person.PRINCIPAL_NAME,
-				alumni.getPrincipalName());
+		Map<String, String> fieldValues = new LinkedHashMap();
 
-		v.put(KFSPropertyConstants.VENDOR_NAME, vNm);
+		fieldValues.put(KFSPropertyConstants.ACTIVE, "Y");
+		fieldValues.put(KFSPropertyConstants.VENDOR_NAME, vendorName);
+		fieldValues.put(KFSPropertyConstants.VENDOR_NUMBER, StringUtils.EMPTY);
+		fieldValues.put(KFSPropertyConstants.TAX_NUMBER, StringUtils.EMPTY);
 
-		List<? extends BusinessObject> p_payee = cuDisbursementPayeeLookupableHelperService
-				.getSearchResults(m);
-		
-		List<? extends BusinessObject> v_payee = cuDisbursementPayeeLookupableHelperService
-				.getSearchResults(v);
-	
-		
+		validateSearch("Vendor", fieldValues);
+	}
+
+	private void validateSearch(String searchType, Map<String, String> fieldValues) {
 		try {
-			cuDisbursementPayeeLookupableHelperService.validateSearchParameters(v);
-			cuDisbursementPayeeLookupableHelperService.validateSearchParameters(m);
+			cuDisbursementPayeeLookupableHelperService.validateSearchParameters(fieldValues);
 		} catch (ValidationException e) {
-			fail("Failed validation");
+			fail(searchType + " Search Parameters failed validation");
 		}
 
-		assertTrue(!p_payee.isEmpty());
-		assertTrue(!v_payee.isEmpty());
+		List<? extends BusinessObject> payee = cuDisbursementPayeeLookupableHelperService.getSearchResults(fieldValues);
 
+		assertFalse(searchType + " search didn't return any results, but it should have", payee.isEmpty());
 	}
 
 }
