@@ -30,7 +30,7 @@ public class AccountGlobalSearchLookupableHelperServiceImplTest extends KualiTes
     
     public void testGetSearchResults() {
         fieldValues.put("chartOfAccountsCode", "IT");
-        fieldValues.put("organizationCode", "044Q");
+        fieldValues.put("organizationCode", "0121");
         fieldValues.put("useOrgHierarchy", "Y");
         fieldValues.put("closed", "N");
         
@@ -38,7 +38,7 @@ public class AccountGlobalSearchLookupableHelperServiceImplTest extends KualiTes
         assertTrue("should have results", accounts.size() > 0);
         
         fieldValues.put("chartOfAccountsCode", "IT");
-        fieldValues.put("organizationCode", "044Q");
+        fieldValues.put("organizationCode", "0121");
         fieldValues.put("useOrgHierarchy", "N");
         fieldValues.put("closed", "N");
         
@@ -49,16 +49,16 @@ public class AccountGlobalSearchLookupableHelperServiceImplTest extends KualiTes
     
     public void testValidateSearchParameters() {
         fieldValues.put("chartOfAccountsCode", "IT");
-        fieldValues.put("organizationCode", "044Q");
+        fieldValues.put("organizationCode", "0121");
         fieldValues.put("useOrgHierarchy", "Y");
         fieldValues.put("closed", "N");
         
         lookupableHelperServiceImpl.validateSearchParameters(fieldValues);
         
-        assertTrue("should have any error messages", GlobalVariables.getMessageMap().hasNoMessages());
+        assertTrue("should not have any error messages", GlobalVariables.getMessageMap().hasNoMessages());
         
         fieldValues.clear();
-        fieldValues.put("organizationCode", "044Q");
+        fieldValues.put("organizationCode", "0121");
         fieldValues.put("useOrgHierarchy", "Y");
         fieldValues.put("closed", "N");
 
