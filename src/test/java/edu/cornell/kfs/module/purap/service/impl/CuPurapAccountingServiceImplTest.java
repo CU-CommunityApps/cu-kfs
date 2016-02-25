@@ -6,6 +6,8 @@ import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
+import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
+import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
@@ -45,7 +47,7 @@ public class CuPurapAccountingServiceImplTest extends KualiTestBase {
 	public void testIsFiscalOfficersForAllAcctLines_True() throws Exception {
 		RequisitionDocument requisitionDocument = RequisitionFixture.REQ_NON_B2B_WITH_ITEMS.createRequisition();
 		requisitionDocument.getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(new KualiDecimal(200));
-		requisitionDocument.addItem(RequisitionItemFixture.REQ_ITEM3.createRequisitionItem());
+		requisitionDocument.addItem(RequisitionItemFixture.REQ_ITEM3.createRequisitionItem(true));
 		changeCurrentUser(UserNameFixture.nja3);
 		assertTrue(cuPurapAccountingServiceImpl.isFiscalOfficersForAllAcctLines(requisitionDocument));
 	}
@@ -53,7 +55,7 @@ public class CuPurapAccountingServiceImplTest extends KualiTestBase {
 	public void testIsFiscalOfficersForAllAcctLines_False() throws Exception {
 		RequisitionDocument requisitionDocument = RequisitionFixture.REQ_NON_B2B_WITH_ITEMS.createRequisition();
 		requisitionDocument.getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(new KualiDecimal(200));
-		requisitionDocument.addItem(RequisitionItemFixture.REQ_ITEM2.createRequisitionItem());
+		requisitionDocument.addItem(RequisitionItemFixture.REQ_ITEM2.createRequisitionItem(true));
 		changeCurrentUser(UserNameFixture.nja3);
 
 		assertFalse(cuPurapAccountingServiceImpl.isFiscalOfficersForAllAcctLines(requisitionDocument));
@@ -62,13 +64,21 @@ public class CuPurapAccountingServiceImplTest extends KualiTestBase {
 	public void testUpdateAccountAmounts_AccountingLinePercentChanged() throws Exception {
 		changeCurrentUser(UserNameFixture.ccs1);
 
-		RequisitionDocument requisitionDocument = RequisitionFixture.REQ_NON_B2B_WITH_ITEMS.createRequisition();
+		// Save the requisition with items, but without accounting lines and then add the accounting lines and save again
+		// This odd methodology is to workaround an NPE that occurs when access security is enabled and refreshNonUpdatableReferences
+		// is called on the account. For some reason the RequisitionItem cannot be found in ojb's cache and so when
+		// it is attempted to be instantiated and constructor methods called, an NPE is thrown. This little dance works around the exception.
+		// More analysis could probably be done to determine the root cause and address it, but for now this is good enough.
+		RequisitionDocument requisitionDocument = RequisitionFixture.REQ_NON_B2B_WITH_ITEMS.createRequisition(documentService);
 		requisitionDocument.getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(new KualiDecimal(200));
-		RequisitionItem item = RequisitionItemFixture.REQ_ITEM3.createRequisitionItem();
+		RequisitionItem item = RequisitionItemFixture.REQ_ITEM3.createRequisitionItem(false);
+		requisitionDocument.addItem(item);
+		AccountingDocumentTestUtils.saveDocument(requisitionDocument, documentService);
+		requisitionDocument.refreshNonUpdateableReferences();
+
+		item.getSourceAccountingLines().add(PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE3.createRequisitionAccount(item.getItemIdentifier()));
 		item.getSourceAccountingLines().add(PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE3.createRequisitionAccount(item.getItemIdentifier()));
 		item.refreshNonUpdateableReferences();
-
-		requisitionDocument.addItem(item);
 
 		AccountingDocumentTestUtils.saveDocument(requisitionDocument, documentService);
 
@@ -109,13 +119,21 @@ public class CuPurapAccountingServiceImplTest extends KualiTestBase {
 
 		changeCurrentUser(UserNameFixture.ccs1);
 
-		RequisitionDocument requisitionDocument = RequisitionFixture.REQ_NON_B2B_WITH_ITEMS.createRequisition();
+		// Save the requisition with items, but without accounting lines and then add the accounting lines and save again
+		// This odd methodology is to workaround an NPE that occurs when access security is enabled and refreshNonUpdatableReferences
+		// is called on the account. For some reason the RequisitionItem cannot be found in ojb's cache and so when
+		// it is attempted to be instantiated and constructor methods called, an NPE is thrown. This little dance works around the exception.
+		// More analysis could probably be done to determine the root cause and address it, but for now this is good enough.
+		RequisitionDocument requisitionDocument = RequisitionFixture.REQ_NON_B2B_WITH_ITEMS.createRequisition(documentService);
 		requisitionDocument.getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(new KualiDecimal(200));
-		RequisitionItem item = RequisitionItemFixture.REQ_ITEM3.createRequisitionItem();
+		RequisitionItem item = RequisitionItemFixture.REQ_ITEM3.createRequisitionItem(false);
+		requisitionDocument.addItem(item);
+		AccountingDocumentTestUtils.saveDocument(requisitionDocument, documentService);
+		requisitionDocument.refreshNonUpdateableReferences();
+
+		item.getSourceAccountingLines().add(PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE3.createRequisitionAccount(item.getItemIdentifier()));
 		item.getSourceAccountingLines().add(PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE3.createRequisitionAccount(item.getItemIdentifier()));
 		item.refreshNonUpdateableReferences();
-
-		requisitionDocument.addItem(item);
 
 		AccountingDocumentTestUtils.saveDocument(requisitionDocument, documentService);
 

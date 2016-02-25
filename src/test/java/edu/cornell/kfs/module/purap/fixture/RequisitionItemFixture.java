@@ -76,7 +76,7 @@ public enum RequisitionItemFixture {
 
 	}
 
-	public RequisitionItem createRequisitionItem() {
+	public RequisitionItem createRequisitionItem(boolean addAccountingLine) {
 		// item
 		RequisitionItem item = new RequisitionItem();
 		item.setItemIdentifier(new Integer(SpringContext.getBean(org.kuali.rice.krad.service.SequenceAccessorService.class).getNextAvailableSequenceNumber("REQS_ITM_ID").toString()));
@@ -92,9 +92,17 @@ public enum RequisitionItemFixture {
 		item.setItemUnitPrice(itemUnitPrice);
 		item.setItemAssignedToTradeInIndicator(itemAssignedToTradeInIndicator);
 
-		item.getSourceAccountingLines().add(
-				accountingLineFixture.createRequisitionAccount(item.getItemIdentifier()));
-		item.refreshNonUpdateableReferences();
+		// We don't always want to add the accounting line to the item immediately. That is because we need to
+		// workaround an NPE that occurs when access security is enabled and refreshNonUpdatableReferences
+		// is called on the account. For some reason the RequisitionItem cannot be found in ojb's cache and so when
+		// it is attempted to be instantiated and constructor methods called, an NPE is thrown. So to workaround that issue
+		// we add and save the item first, then add the accounting line and save again.
+		// More analysis could probably be done to determine the root cause and address it, but for now this is good enough.
+		if (addAccountingLine) {
+			item.getSourceAccountingLines().add(
+					accountingLineFixture.createRequisitionAccount(item.getItemIdentifier()));
+			item.refreshNonUpdateableReferences();
+		}
 
 		return item;
 
