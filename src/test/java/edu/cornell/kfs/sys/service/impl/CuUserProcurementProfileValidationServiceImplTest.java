@@ -75,7 +75,7 @@ public class CuUserProcurementProfileValidationServiceImplTest extends KualiTest
      */
     public void testFavoriteAccounts_Valid() {
         List<FavoriteAccount> favoriteAccounts = new ArrayList<FavoriteAccount>();
-        favoriteAccounts.add(createFavoriteAccount("IT", "G264700", "6540", true));
+        favoriteAccounts.add(createFavoriteAccount("IT", "G264750", "6540", true));
         favoriteAccounts.add(createFavoriteAccount("IT", "G254700", "6540", false));
         assertTrue("Validated 2 favorite accounts",userProcurementProfileValidationService.validateAccounts(favoriteAccounts));
         favoriteAccounts.remove(0);
