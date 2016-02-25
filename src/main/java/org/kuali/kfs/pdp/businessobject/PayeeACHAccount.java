@@ -22,7 +22,6 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
@@ -35,6 +34,7 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.identity.entity.EntityDefault;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
@@ -172,82 +172,6 @@ public class PayeeACHAccount extends TimestampedBusinessObjectBase implements Mu
     public void setPayeeName(String payeeName) {
         this.payeeName = payeeName;
     }
-
-    // CU Customization: Added getter and setter for principal name.
-
-    /**
-     * Gets the payee's principal name from KIM if payee type is Employee or Entity; otherwise returns null.
-     * If the payee is an entity with multiple principals, then this method will return all the principal names
-     * in a single String, with ", " as the separator.
-     * 
-     * @return The payee's principal name if an Employee or Entity payee, null otherwise.
-     */
-    public String getPayeePrincipalName() {
-        String principalName = null;
-        
-        if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.EMPLOYEE)) {
-            // For employee, find a person with the given employee ID.
-            if (ObjectUtils.isNotNull(payeeIdNumber)) {
-                Person person = KimApiServiceLocator.getPersonService().getPersonByEmployeeId(payeeIdNumber);
-                if (ObjectUtils.isNotNull(person) && StringUtils.isNotBlank(person.getEntityId())) {
-                    // If a valid KIM-backed person was found, then return the person's principal name.
-                    principalName = person.getPrincipalName();
-                }
-            }
-        } else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.ENTITY)) {
-            // For an entity, find all principals with the given entity ID.
-            if (ObjectUtils.isNotNull(payeeIdNumber)) {
-                List<Principal> principals = KimApiServiceLocator.getIdentityService().getPrincipalsByEntityId(payeeIdNumber);
-                if (CollectionUtils.isNotEmpty(principals)) {
-                    // It is possible for KIM entities to have multiple principals, so return a list of all of their principal names.
-                    if (principals.size() > 1) {
-                        StringBuilder allNames = new StringBuilder();
-                        for (Principal principal : principals) {
-                            allNames.append(principal.getPrincipalName()).append(", ");
-                        }
-                        // Remove the trailing ", " separator from the final result.
-                        principalName = allNames.substring(0, allNames.length() - 2);
-                    } else {
-                        // Shortcut for when entity has only one principal, which is the vast majority of cases.
-                        principalName = principals.get(0).getPrincipalName();
-                    }
-                }
-            }
-        }
-        
-        return principalName;
-    }
-
-    /**
-     * No-op setter for payee principal name, which is derived at runtime instead.
-     * 
-     * @param payeePrincipalName The principal name to set; not actually used.
-     */
-    public void setPayeePrincipalName(String payeePrincipalName) {
-        // Do nothing.
-    }
-
-    /**
-     * Getter for payee person that always returns null; it is only intended to aid with
-     * generating a lookup icon for the "payeePrincipalName" property.
-     * 
-     * @return null.
-     */
-    public Person getPayeePerson() {
-        return null;
-    }
-
-    /**
-     * No-op setter for payee person; it is only intended to aid with
-     * generating a lookup icon for the "payeePrincipalName" property.
-     * 
-     * @param payeePerson The payee person to set; not actually used.
-     */
-    public void setPayeePerson(Person payeePerson) {
-        // Do nothing.
-    }
-
-    // End CU Customization.
 
     /**
      * Gets the payee's email address from KIM data if the payee type is Employee or Entity; otherwise, returns the stored field

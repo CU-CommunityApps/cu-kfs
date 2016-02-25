@@ -36,7 +36,6 @@
         <ref bean="PayeeACHAccount-payeeName"/>
         <ref bean="PayeeACHAccount-payeeEmailAddress"/>
         <ref bean="PayeeACHAccount-payeeIdentifierTypeCode"/>
-        <ref bean="PayeeACHAccount-payeePrincipalName"/><!-- CU Customization: Added principal name. -->
         <ref bean="PayeeACHAccount-achTransactionType"/>
         <ref bean="PayeeACHAccount-bankRoutingNumber"/>
         <ref bean="PayeeACHAccount-active"/>
@@ -54,7 +53,6 @@
       <list>
         <bean parent="RelationshipDefinition">
           <property name="objectAttributeName" value="achPayee"/>
-          <property name="targetClass" value="edu.cornell.kfs.pdp.businessobject.CuACHPayee" /><!-- CU Customization: Changed target class. -->
           <property name="primitiveAttributes">
             <list>
               <bean parent="PrimitiveAttributeDefinition" p:sourceName="payeeIdNumber" p:targetName="payeeIdNumber"/>
@@ -64,19 +62,8 @@
             <list>
               <bean parent="SupportAttributeDefinition" p:sourceName="payeeIdentifierTypeCode" p:targetName="payeeTypeCode"/>
               <bean parent="SupportAttributeDefinition" p:sourceName="payeeName" p:targetName="payeeName"/>                    
-              <!-- CU Customization: Added principal name as a support attribute. -->
-              <bean parent="SupportAttributeDefinition" p:sourceName="payeePrincipalName" p:targetName="principalName"/>
             </list>
           </property>      
-        </bean>
-        <!-- CU Customization: Added person relationship definition. -->
-        <bean parent="RelationshipDefinition">
-          <property name="objectAttributeName" value="payeePerson"/>
-          <property name="primitiveAttributes">
-            <list>
-              <bean parent="PrimitiveAttributeDefinition" p:sourceName="payeePrincipalName" p:targetName="principalName"/>
-            </list>
-          </property>
         </bean>
       </list>
     </property>        
@@ -179,13 +166,6 @@
     <property name="required" value="true"/>
   </bean>
 
-  <!-- CU Customization: Added principal name. -->
-  <bean id="PayeeACHAccount-payeePrincipalName" parent="PayeeACHAccount-payeePrincipalName-parentBean"/>
-  <bean id="PayeeACHAccount-payeePrincipalName-parentBean" abstract="true" parent="ACHPayee-principalName">
-    <property name="name" value="payeePrincipalName"/>
-    <property name="required" value="false" />
-  </bean>
-
   <bean id="PayeeACHAccount-achTransactionType" parent="PayeeACHAccount-achTransactionType-parentBean"/>
 
   <bean id="PayeeACHAccount-achTransactionType-parentBean" abstract="true" parent="ACHTransactionType-code-parentBean">
@@ -256,7 +236,6 @@
               <bean parent="FieldDefinition" p:attributeName="payeeIdNumber"/>                    
               <bean parent="FieldDefinition" p:attributeName="payeeName"/>
               <bean parent="FieldDefinition" p:attributeName="payeeEmailAddress"/>
-              <bean parent="FieldDefinition" p:attributeName="payeePrincipalName"/><!-- CU Customization: Added principal name. -->
               <bean parent="FieldDefinition" p:attributeName="achTransactionType"/>
               <bean parent="FieldDefinition" p:attributeName="active"/>
 			        <bean parent="FieldDefinition" p:attributeName="autoInactivationIndicator"/>
@@ -277,7 +256,6 @@
 
   <bean id="PayeeACHAccount-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
     <property name="title" value="Payee ACH Account Lookup"/>
-    <property name="lookupableID" value="payeeACHAccountLookupable" />    
     
     <property name="defaultSort">
       <bean parent="SortDefinition">
@@ -297,7 +275,6 @@
         <bean parent="FieldDefinition" p:attributeName="bankAccountTypeCode"/>
         <bean parent="FieldDefinition" p:attributeName="payeeEmailAddress"/>
         <bean parent="FieldDefinition" p:attributeName="payeeName"/>
-        <bean parent="FieldDefinition" p:attributeName="payeePrincipalName"/><!-- CU Customization: Added principal name. -->
         <bean parent="FieldDefinition" p:attributeName="achTransactionType"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
@@ -307,7 +284,6 @@
         <bean parent="FieldDefinition" p:attributeName="payeeName"/>
         <bean parent="FieldDefinition" p:attributeName="payeeEmailAddress"/>
         <bean parent="FieldDefinition" p:attributeName="payeeIdentifierTypeCode"/>
-        <bean parent="FieldDefinition" p:attributeName="payeePrincipalName"/><!-- CU Customization: Added principal name. -->
         <bean parent="FieldDefinition" p:attributeName="achTransactionType"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
