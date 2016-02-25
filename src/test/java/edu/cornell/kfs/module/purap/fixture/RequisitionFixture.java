@@ -1,7 +1,10 @@
 package edu.cornell.kfs.module.purap.fixture;
 
+import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
+import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
@@ -122,6 +125,8 @@ public enum RequisitionFixture {
 
 	public final RequisitionItemFixture item;
 	public final RequisitionCapitalAssetFixture capitalAssetFixture;
+
+	private boolean addAccountingLine = true;
 
 	private RequisitionFixture(String documentDescription,
 			String requisitionSourceCode,
@@ -258,7 +263,7 @@ public enum RequisitionFixture {
 		requisitionDocument.setBillingName(billingName);
 
 		if (item != null) {
-			requisitionDocument.addItem(item.createRequisitionItem());
+			requisitionDocument.addItem(item.createRequisitionItem(addAccountingLine));
 		}
 
 		if (capitalAssetFixture != null) {
@@ -273,7 +278,23 @@ public enum RequisitionFixture {
 
 	public RequisitionDocument createRequisition(DocumentService documentService)
 			throws WorkflowException {
+		addAccountingLine = false;
 		RequisitionDocument requisitionDocument = this.createRequisition();
+
+		// Save the requisition with items, but without accounting lines and then add the accounting lines and save again
+		// This odd methodology is to workaround an NPE that occurs when access security is enabled and refreshNonUpdatableReferences
+		// is called on the account. For some reason the RequisitionItem cannot be found in ojb's cache and so when
+		// it is attempted to be instantiated and constructor methods called, an NPE is thrown. This little dance works around the exception.
+		// More analysis could probably be done to determine the root cause and address it, but for now this is good enough.
+		documentService.saveDocument(requisitionDocument);
+		requisitionDocument.refreshNonUpdateableReferences();
+
+		if (item != null && item.accountingLineFixture != null) {
+			for (Object item : requisitionDocument.getItems()) {
+				PurApAccountingLine accountingLine = this.item.accountingLineFixture.createRequisitionAccount(((PurApItem) item).getItemIdentifier());
+				((PurApItem) item).getSourceAccountingLines().add(accountingLine);
+			}
+		}
 
 		documentService.saveDocument(requisitionDocument);
 		requisitionDocument.refreshNonUpdateableReferences();
