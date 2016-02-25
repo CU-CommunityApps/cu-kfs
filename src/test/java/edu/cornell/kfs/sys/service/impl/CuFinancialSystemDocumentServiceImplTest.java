@@ -22,30 +22,26 @@ public class CuFinancialSystemDocumentServiceImplTest extends KualiTestBase {
     private CUFinancialSystemDocumentService cUFinancialSystemDocumentService;
     IndirectCostAdjustmentDocument icaDocument;
     IndirectCostAdjustmentDocument copied;   
-    List<Note> savedNotes ;
-    List<Note> originalNotes ;
+    List<Note> savedNotes;
+    List<Note> originalNotes;
+
     @Override
     protected void setUp() throws Exception {
-        // TODO Auto-generated method stub
         super.setUp();
         cUFinancialSystemDocumentService = SpringContext.getBean(CUFinancialSystemDocumentService.class);
-        try {
-            icaDocument = IndirectCostAdjustmentDocumentFixture.ICA_GOOD.createIndirectCostAdjustmentDocument();
-            AccountingDocumentTestUtils.routeDocument(icaDocument, SpringContext.getBean(DocumentService.class));
+        icaDocument = IndirectCostAdjustmentDocumentFixture.ICA_GOOD.createIndirectCostAdjustmentDocument();
+        AccountingDocumentTestUtils.routeDocument(icaDocument, SpringContext.getBean(DocumentService.class));
         // switch user to FO
-            changeCurrentUser(UserNameFixture.kan2);
-            // icaDocument, and the 'saveDoc' in cUFinancialSystemDocumentService are the same instance.
-            // So, need a copied
-            copied = (IndirectCostAdjustmentDocument)ObjectUtils.deepCopy(icaDocument);         
-            savedNotes = copied.getNotes();
-            originalNotes = icaDocument.getNotes();
-        } catch (Exception e) {
-        }
+        changeCurrentUser(UserNameFixture.kan2);
+        // icaDocument, and the 'saveDoc' in cUFinancialSystemDocumentService are the same instance.
+        // So, need a copy
+        copied = (IndirectCostAdjustmentDocument)ObjectUtils.deepCopy(icaDocument);
+        savedNotes = copied.getNotes();
+        originalNotes = icaDocument.getNotes();
     }
 
     /*
      * test Add note for accounting line change
-     * 
      */
     public void testAddNoteForAccountingLineChange() {
         cUFinancialSystemDocumentService.checkAccountingLinesForChanges(copied);;
@@ -68,8 +64,8 @@ public class CuFinancialSystemDocumentServiceImplTest extends KualiTestBase {
         cUFinancialSystemDocumentService.checkAccountingLinesForChanges(copied);;
         assertTrue("Should have new note added for Source Account Number change ", savedNotes.size() > originalNotes.size());
         assertTrue("New note is accounting line change note ", savedNotes.get(0).getNoteText().startsWith("Accounting Line changed from:"));
-        copied.getSourceAccountingLine(0).setAccountNumber("G264700");
-        copied.getTargetAccountingLine(0).setAccountNumber("G264700");
+        copied.getSourceAccountingLine(0).setAccountNumber("G264750");
+        copied.getTargetAccountingLine(0).setAccountNumber("G264750");
         savedNotes.clear();
         cUFinancialSystemDocumentService.checkAccountingLinesForChanges(copied);;
         // Note is only created, but not saved yet.
@@ -79,12 +75,10 @@ public class CuFinancialSystemDocumentServiceImplTest extends KualiTestBase {
     
     /*
      * test no note being added for no accounting line change
-     * 
      */
     public void testNotAddNoteForNoAccountingLineChange() {
         cUFinancialSystemDocumentService.checkAccountingLinesForChanges(copied);;
         assertTrue("Should have no New note added", savedNotes.size() == originalNotes.size());
-            
     }
 
 }
