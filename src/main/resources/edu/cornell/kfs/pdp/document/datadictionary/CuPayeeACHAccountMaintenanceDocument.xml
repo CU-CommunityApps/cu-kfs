@@ -22,4 +22,25 @@
     
   </bean>
 
+  <bean parent="DataDictionaryBeanOverride">
+    <property name="beanName" value="PayeeACHAccountMaintenanceDocument-EditPayeeACHAccount" />
+    <property name="fieldOverrides">
+      <list>
+        <!-- Add read-only "payeePrincipalName" to the Payee ACH Account maintenance document. -->
+        <bean parent="FieldOverrideForListElementInsert">
+          <property name="propertyName" value="maintainableItems" />
+          <property name="propertyNameForElementCompare" value="name" />
+          <property name="element">
+            <bean parent="MaintainableFieldDefinition" p:name="payeeName" />
+          </property>
+          <property name="insertAfter">
+            <list>
+              <bean parent="MaintainableFieldDefinition" p:name="payeePrincipalName" p:noLookup="true" p:unconditionallyReadOnly="true" />
+            </list>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
 </beans>
