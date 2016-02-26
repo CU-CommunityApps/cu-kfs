@@ -127,7 +127,7 @@ public class CuBalanceServiceTest extends KualiTestBase {
     	purgeTestData();
     	
     	BalanceFixture.BALANCE_CHART_IT_CUMULATIVE_BALANCES_FORWARD.createBalance(closingFiscalYear);
-    	BalanceFixture.BALANCE_CHART_CS_CUMULATIVE_BALANCES_FORWARD.createBalance(closingFiscalYear);
+    	BalanceFixture.BALANCE_CHART_FS_CUMULATIVE_BALANCES_FORWARD.createBalance(closingFiscalYear);
     	
     	Iterator<Balance> balanceIterator = balanceService.findCumulativeBalancesToForwardForFiscalYear(closingFiscalYear, charts);
     	int cumulativeBalancesToForwardCounter = 0;
