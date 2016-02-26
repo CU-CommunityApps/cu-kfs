@@ -37,6 +37,10 @@ public enum BalanceFixture {
 			
 	BALANCE_CHART_CS_CUMULATIVE_BALANCES_FORWARD(
 			"CS", "J971800", "-----", "4430", "123", "AC", "IN",
+			new KualiDecimal(1), new KualiDecimal(2), new KualiDecimal(3)),
+	
+	BALANCE_CHART_FS_CUMULATIVE_BALANCES_FORWARD(
+			"FS", "G051647", "-----", "4430", "123", "AC", "IN",
 			new KualiDecimal(1), new KualiDecimal(2), new KualiDecimal(3));
 	;
 
