@@ -17,7 +17,7 @@ package edu.iu.ebs.kfs.fp;
  */
 
 public class FinancialProcessingConstants {
-    public static final String ACH_INCOME_FILE_DATE_FORMAT = "yymmddhhmm"; // (change "m"s appropriately to distinguish between hours and minutes)
+    public static final String ACH_INCOME_FILE_DATE_FORMAT = "yymmddHHmm"; // (change "m"s appropriately to distinguish between hours and minutes)
     public static final String ADVACE_DEPOSIT_DEFAULT_CAMPUS_CODE = "IT";
     public static final String ADVACE_DEPOSIT_REFERENCE_ORIGIN_CODE = "01";
     public static final String ADVACE_DEPOSIT_REFEENCE_TYPE_CODE = "CR";
