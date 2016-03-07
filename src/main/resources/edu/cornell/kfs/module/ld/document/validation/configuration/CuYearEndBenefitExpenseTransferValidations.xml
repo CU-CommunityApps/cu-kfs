@@ -25,17 +25,6 @@
 	<bean id="YearEndBenefitExpenseTransferDocument-routeDocumentValidation-parentBean" parent="BenefitExpenseTransferDocument-routeDocumentValidation" abstract="true">
   		<property name="validations">
   			<list>
-  				<bean parent="YearEndDocument-orgAssignedValidation" scope="prototype">
-					<property name="parameterProperties">
-						<list>
-							<bean parent="validationFieldConversion">
-								<property name="sourceEventProperty" value="document" />
-								<property name="targetValidationProperty" value="yearEndDocumentForValidation" />
-							</bean>
-						</list>
-					</property>
-					<property name="quitOnFail" value="true" />
-       			</bean>
 				<bean parent="BenefitExpenseTransferDocument-routeDocumentValidation" scope="prototype" />  
   			</list>
   		</property>
