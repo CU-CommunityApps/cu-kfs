@@ -40,15 +40,5 @@
     	</map>
     </property>
   </bean>  
-  
-  <bean id="YearEndBenefitExpenseTransferDocument-workflowAttributes" parent="YearEndBenefitExpenseTransferDocument-workflowAttributes-parentBean">
-    <property name="routingTypeDefinitions">
-    	<map>
-    		<entry key="Account" value-ref="RoutingType-AccountingDocument-Account"/>
-    		<entry key="SubFund" value-ref="RoutingType-AccountingDocument-SubFund"/>
-    		<entry key="Award" value-ref="RoutingType-AccountingDocument-Award"/>
-    	</map>
-    </property>
-  </bean>
 
 </beans>
