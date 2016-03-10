@@ -41,9 +41,9 @@ Copyright Indiana University
     <!-- FSNKS-186 iu-custom -->
     <class-descriptor class="edu.iu.ebs.kfs.fp.businessobject.AchIncomeNote" table="IU_FP_INC_ACH_NTE_MT">
         <field-descriptor name="sequenceNumber" column="ACH_TRN_SEQ_NBR" jdbc-type="INTEGER" primarykey="true"/>
+        <field-descriptor name="noteLineNumber" column="ACH_NTE_LN_NBR" jdbc-type="INTEGER" primarykey="true"/>
         <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
         <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
-        <field-descriptor name="noteLineNumber" column="ACH_NTE_LN_NBR" jdbc-type="INTEGER" primarykey="true"/>
         <field-descriptor name="noteText" column="ACH_NTE_TXT" jdbc-type="VARCHAR"/>
     </class-descriptor>
 </descriptor-repository>
