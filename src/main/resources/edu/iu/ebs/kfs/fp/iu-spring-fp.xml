@@ -1,0 +1,344 @@
+<!--
+Copyright Indiana University
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Affero General Public License as
+   published by the Free Software Foundation, either version 3 of the
+   License, or (at your option) any later version.
+   
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Affero General Public License for more details.
+   
+   You should have received a copy of the GNU Affero General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+    <bean id="iu-fp" parent="iuFpModuleConfiguration-parentBean" />
+    <bean id="iuFpModuleConfiguration-parentBean" abstract="true" parent="fpModuleConfiguration-parentBean" >
+        <property name="packagePrefixes">
+            <list merge="true">
+                <value>edu.iu.ebs.kfs.fp</value>
+            </list>
+        </property>
+        <property name="databaseRepositoryFilePaths">
+            <list merge="true">
+                <value>edu/iu/ebs/kfs/fp/iu-ojb-fp.xml</value>
+            </list>
+        </property>
+        <property name="jobNames">
+            <list merge="true">
+                <value>iu.achIncomeJob</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="iu-fpModuleService" parent="fpModuleService-parentBean">
+        <property name="moduleConfiguration" ref="iu-fp"/>
+    </bean>
+
+    <bean id="iu.achIncomeJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="iu.loadAchIncomeFileStep"/>
+                <ref bean="iu.generateAdvanceDepositDocumentsStep"/>
+                <ref bean="iu.routeAdvanceDepositDocumentsStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--FSNKS-186: iu-custom IU Step -->
+    <bean id="iu.loadAchIncomeFileStep" class="edu.iu.ebs.kfs.fp.batch.LoadAchIncomeFileStep"
+          parent="step">
+        <property name="advanceDepositService" ref="iu.advanceDepositService"/>
+    </bean>
+
+    <!--FSNKS-186: iu-custom IU Step -->
+    <bean id="iu.generateAdvanceDepositDocumentsStep"
+          class="edu.iu.ebs.kfs.fp.batch.GenerateAdvanceDepositDocumentsStep"
+          parent="step">
+        <property name="advanceDepositService" ref="iu.advanceDepositService"/>
+    </bean>
+
+    <bean id="iu.routeAdvanceDepositDocumentsStep"
+          class="edu.iu.ebs.kfs.fp.batch.RouteAdvanceDepositDocumentsStep"
+          parent="step">
+        <property name="advanceDepositService" ref="iu.advanceDepositService"/>
+    </bean>
+
+    <!--FSNKS-186: iu-custom IU Service -->
+    <bean id="iu.advanceDepositService" parent="iu.advanceDepositService-parent"/>
+
+    <bean id="iu.advanceDepositService-parent" class="edu.iu.ebs.kfs.fp.batch.service.impl.AdvanceDepositServiceImpl" abstract="true">
+        <property name="batchInputFileService" ref="batchInputFileService"/>
+        <property name="batchInputFileType" ref="iu.achIncomeInputFileType"/>
+        <property name="dateTimeService" ref="dateTimeService"/>
+        <property name="businessObjectService" ref="businessObjectService"/>
+        <property name="parameterService" ref="parameterService"/>
+        <property name="mailService" ref="mailService"/>
+        <property name="configurationService" ref="kualiConfigurationService"/>
+        <property name="documentService" ref="documentService"/>
+        <property name="noteService" ref="noteService"/>
+        <property name="workflowDocumentService" ref="workflowDocumentService"/>
+        <property name="attachmentsDirectory">
+            <value>${attachment.dir.location}</value>
+        </property>
+    </bean>
+
+    <!--FSNKS-186: iu-custom IU Batch Input File -->
+    <bean id="iu.achIncomeInputFileType" parent="FlatFileParser">
+        <property name="flatFileSpecification">
+            <bean
+                    class="edu.iu.ebs.kfs.fp.batch.AchIncomeDelimitedFlatFileSpecification">
+                <property name="endOfLineCharacter" value="\"/>
+                <property name="delimiter" value="*"/>
+                <property name="objectSpecifications">
+                    <list>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="ISA" p:businessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFile">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="9" p:propertyName="fileDate"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="10" p:propertyName="fileTime"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="13" p:propertyName="interchangeControlNumber"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="15" p:propertyName="productionOrTestIndicator"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="GS"
+                              p:businessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileGroup"
+                              p:parentBusinessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFile"
+                              p:parentTargetProperty="groups">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="6" p:propertyName="groupControlNumber"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="1" p:propertyName="groupFunctionIdentifierCode"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="ST"
+                              p:businessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransactionSet"
+                              p:parentBusinessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileGroup"
+                              p:parentTargetProperty="transactionSet">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="2" p:propertyName="transactionSetControlNumber"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="BPR"
+                              p:businessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransaction"
+                              p:parentBusinessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransactionSet"
+                              p:parentTargetProperty="transactionGuts">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="2" p:propertyName="transactionAmount"
+                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.KualiDecimalFormatter"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="3" p:propertyName="creditDebitIndicator"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="4" p:propertyName="paymentMethodCode"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="16" p:propertyName="effectiveDate"
+                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.BatchDateFormatter"
+                                          p:dateFormat="yyyyMMdd"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="10" p:propertyName="companyId"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="TRN"
+                              p:businessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransactionTrace"
+                              p:parentBusinessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransaction"
+                              p:parentTargetProperty="trace">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="2" p:propertyName="traceNumber"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="REF"
+                              p:businessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransactionReference"
+                              p:parentBusinessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransaction"
+                              p:parentTargetProperty="references">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="1" p:propertyName="type"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="2" p:propertyName="value"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="DTM"
+                              p:businessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransactionDateTime"
+                              p:parentBusinessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransaction"
+                              p:parentTargetProperty="dateTimes">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="1" p:propertyName="type"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="2" p:propertyName="value"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="N1"
+                              p:businessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransactionPayerOrPayeeName"
+                              p:parentBusinessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransaction"
+                              p:parentTargetProperty="payerOrPayees">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="1" p:propertyName="type"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="2" p:propertyName="value"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="3" p:propertyName="idQualifier"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="4" p:propertyName="idCode"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="NM1"
+                              p:businessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransactionPremiumReceiverName"
+                              p:parentBusinessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransaction"
+                              p:parentTargetProperty="premiumReceiverName">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="3" p:propertyName="value"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="PER"
+                              p:businessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransactionPremiumPayersAdminsContact"
+                              p:parentBusinessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransaction"
+                              p:parentTargetProperty="premiumAdminsContact">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="2" p:propertyName="value"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="NTE"
+                              p:businessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransactionNote"
+                              p:parentBusinessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransaction"
+                              p:parentTargetProperty="notes">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="1" p:propertyName="type"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="2" p:propertyName="value"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="RMR"
+                              p:businessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransactionOpenItemReference"
+                              p:parentBusinessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransaction"
+                              p:parentTargetProperty="openItemReferences">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="1" p:propertyName="type"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="2" p:propertyName="value"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="4" p:propertyName="netAmount"
+                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.KualiDecimalFormatter"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="5" p:propertyName="invoiceAmount"
+                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.KualiDecimalFormatter"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="SE"
+                              p:businessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransactionSetTrailer"
+                              p:parentBusinessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTransactionSet"
+                              p:parentTargetProperty="transactionSetTrailer">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="2" p:propertyName="transactionSetControlNumber"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="GE"
+                              p:businessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileGroupTrailer"
+                              p:parentBusinessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileGroup"
+                              p:parentTargetProperty="groupTrailer">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="1" p:propertyName="totalTransactionSets"
+                                          p:formatterClass="org.kuali.rice.core.web.format.IntegerFormatter"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="2" p:propertyName="groupControlNumber"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="IEA"
+                              p:businessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFileTrailer"
+                              p:parentBusinessObjectClass="edu.iu.ebs.kfs.fp.businessobject.AchIncomeFile"
+                              p:parentTargetProperty="trailer">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="1" p:propertyName="totalGroups"
+                                          p:formatterClass="org.kuali.rice.core.web.format.IntegerFormatter"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="2" p:propertyName="interchangeControlNumber"/>
+                                </list>
+                            </property>
+                        </bean>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="directoryPath">
+            <value>${staging.directory}/fp/achIncome</value>
+        </property>
+        <property name="fileExtension">
+            <value>txt</value>
+        </property>
+        <property name="fileNamePrefix" value="achIncome_"/>
+        <property name="fileTypeIdentifier" value="iu.achIncomeInputFileType"/>
+        <property name="titleKey" value="message.batchUpload.title.achIncome"/>
+        <property name="processor" ref="iu.advanceDepositService"/>
+    </bean>
+</beans>

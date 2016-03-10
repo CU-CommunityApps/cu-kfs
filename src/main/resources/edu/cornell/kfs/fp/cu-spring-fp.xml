@@ -271,4 +271,6 @@
         <property name="subFundGroupService" ref="subFundGroupService" />                 
     </bean>
 
+    <bean id="iu.advanceDepositService" class="edu.cornell.kfs.fp.batch.service.impl.CuAdvanceDepositServiceImpl" parent="iu.advanceDepositService-parent"/>
+
 </beans>
