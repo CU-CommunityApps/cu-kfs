@@ -72,7 +72,7 @@
 			<ref bean="dateTimeService" />
 		</property>
 		<property name="pdfDirectory">
-			<value>/infra/receipt_processing</value>
+			<value>${receipt.processing.output.directory}</value>
 		</property>
 	</bean>
 	
