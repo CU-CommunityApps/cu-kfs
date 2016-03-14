@@ -4,7 +4,7 @@
     <documentType>
       <name>GSACC</name>
       <parent>COA</parent>
-      <label>Global Sub-Account</label>
+      <label>Sub-Account Global</label>
       <active>true</active>
       <routingVersion>2</routingVersion>
       <routePaths>
