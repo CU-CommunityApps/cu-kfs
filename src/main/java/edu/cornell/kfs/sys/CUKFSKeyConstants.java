@@ -156,4 +156,8 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String ERROR_ICRACCOUNT_CONTINUATION_ACCOUNT_CLOSED ="error.icrAccount.continuationAccount.closed";
     public static final String ERROR_ICRACCOUNT_CONTINUATION_ACCOUNT_INVALID_TRANSACTION = "error.icrAccount.continuationAccount.invalidTransaction";
     public static final String WARNING_ICRACCOUNT_CONTINUATION_ACCOUNT_USED = "warning.icrAccount.continuationAccount.used";
+
+    // KFSPTS-4905
+    public static final String ERROR_CSACCOUNT_CONTINUATION_ACCOUNT_CLOSED = "error.csAccount.continuationAccount.closed";
+    public static final String WARNING_CSACCOUNT_CONTINUATION_ACCOUNT_USED = "warning.csAccount.continuationAccount.used";
 }
