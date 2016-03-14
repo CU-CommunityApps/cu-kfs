@@ -209,6 +209,39 @@
        </property>
 	</bean>
 
+	<bean id="scrubberProcess-parentBean" class="org.kuali.kfs.gl.batch.service.impl.CuScrubberProcessImpl" abstract="true">
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+		<property name="runDateService">
+			<ref bean="glRunDateService" />
+		</property>
+		<property name="accountingCycleCachingService">
+		  	<ref bean="accountingCycleCachingService" />
+		</property>
+		<property name="configurationService">
+			<ref bean="kualiConfigurationService" />
+		</property>
+		<property name="scrubberValidator">
+			<ref bean="scrubberValidator" />
+		</property>
+		<property name="parameterService">
+			<ref bean="parameterService" />
+		</property>
+        <property name="businessObjectService">
+            <ref bean="businessObjectService"/>
+        </property>
+		<property name="persistenceService">
+			<ref bean="persistenceService" />
+		</property>
+		<property name="flexibleOffsetAccountService">
+			<ref bean="flexibleOffsetAccountService" />
+		</property>
+		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
+		<property name="scrubberReportWriterService" ref="scrubberReportWriterService" />
+        <property name="scrubberLedgerReportWriterService" ref="scrubberLedgerReportWriterService" />
+	</bean>
+
     <bean id="scrubberValidator" class="edu.cornell.kfs.gl.service.impl.CuScrubberValidatorImpl" parent="scrubberValidator-parentBean"/>
      
      
