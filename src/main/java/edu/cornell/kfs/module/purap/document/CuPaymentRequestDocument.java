@@ -153,6 +153,11 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
                          ((VendorDetailExtension)po.getVendorDetail().getExtension()).getDefaultB2BPaymentMethodCode() );
              }
          }
+        
+        // Copy PO explanation to PREQ.
+        if (StringUtils.isNotBlank(po.getDocumentHeader().getExplanation())) {
+            this.getDocumentHeader().setExplanation(po.getDocumentHeader().getExplanation());
+        }
     }
     
     /**
