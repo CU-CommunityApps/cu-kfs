@@ -26,7 +26,18 @@
     <property name="maintainableSections">
       <list>
         <ref bean="SubAccountGlobalMaintenanceDocument-GlobalSubAccountMaintenance"/>
+        <ref bean="SubAccountGlobalMaintenanceDocument-GlobalSubAccountFinancialReportingMaintenance"/>
+        <ref bean="SubAccountGlobalMaintenanceDocument-GlobalSubAccountCGCostSharingMaintenance"/>
+        <ref bean="SubAccountGlobalMaintenanceDocument-GlobalSubAccountCGICRMaintenance"/>
+        <ref bean="SubAccountGlobalMaintenanceDocument-IndirectCostRecoveryAccounts"/>
+        
         <ref bean="SubAccountGlobalMaintenanceDocument-EditListofSubAccounts"/>
+      </list>
+    </property>
+    <property name="defaultExistenceChecks">
+      <list>
+        <bean parent="ReferenceDefinition" p:attributeName="financialReportChart" p:attributeToHighlightOnFail="financialReportChartCode" p:displayFieldName="Financial Reporting Chart Code"/>
+        <bean parent="ReferenceDefinition" p:attributeName="reportingCode" p:attributeToHighlightOnFail="financialReportingCode" p:displayFieldName="Financial Reporting Code for this Financial Reporting Chart Code and Financial Reporting Org Code combination"/>
       </list>
     </property>
     <property name="lockingKeys">
@@ -52,11 +63,93 @@
     <property name="id" value="Global Sub Account Maintenance"/>
     <property name="title" value="Global Sub Account Maintenance"/>
     <property name="maintainableItems">
-      <list>
+      <list>      
+        <bean parent="MaintainableFieldDefinition" p:name="subAccountName"/>     
         <bean parent="MaintainableFieldDefinition" p:name="inactivate"/>
+        <bean parent="MaintainableFieldDefinition" p:name="a21SubAccount.offCampusCode"/>
       </list>
     </property>
   </bean>
+  
+  <bean id="SubAccountGlobalMaintenanceDocument-GlobalSubAccountFinancialReportingMaintenance" parent="SubAccountGlobalMaintenanceDocument-GlobalSubAccountFinancialReportingMaintenance-parentBean"/>
+
+  <bean id="SubAccountGlobalMaintenanceDocument-GlobalSubAccountFinancialReportingMaintenance-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Global Sub Account Financial Reporting Code Maintenance"/>
+    <property name="title" value="Global Sub Account Financial Reporting Code Maintenance"/>
+    <property name="maintainableItems">
+      <list>      
+        <bean parent="MaintainableFieldDefinition" p:name="financialReportChartCode"/>
+        <bean parent="MaintainableFieldDefinition" p:name="finReportOrganizationCode"/>     
+        <bean parent="MaintainableFieldDefinition" p:name="financialReportingCode"/>
+      </list>
+    </property>
+  </bean>
+  
+  <bean id="SubAccountGlobalMaintenanceDocument-GlobalSubAccountCGCostSharingMaintenance" parent="SubAccountGlobalMaintenanceDocument-GlobalSubAccountCGCostSharingMaintenance-parentBean"/>
+
+  <bean id="SubAccountGlobalMaintenanceDocument-GlobalSubAccountCGCostSharingMaintenance-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Global Sub Account CG Cost Sharing Maintenance"/>
+    <property name="title" value="Global Sub Account CG Cost Sharing Maintenance"/>
+    <property name="maintainableItems">
+      <list>      
+        <bean parent="MaintainableFieldDefinition" p:name="a21SubAccount.costShareChartOfAccountCode"/>
+        <bean parent="MaintainableFieldDefinition" p:name="a21SubAccount.costShareSourceAccountNumber"/>     
+        <bean parent="MaintainableFieldDefinition" p:name="a21SubAccount.costShareSourceSubAccountNumber"/>
+      </list>
+    </property>
+  </bean>
+  <bean id="SubAccountGlobalMaintenanceDocument-GlobalSubAccountCGICRMaintenance" parent="SubAccountGlobalMaintenanceDocument-GlobalSubAccountCGICRMaintenance-parentBean"/>
+
+  <bean id="SubAccountGlobalMaintenanceDocument-GlobalSubAccountCGICRMaintenance-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Global Sub Account CG ICR Maintenance"/>
+    <property name="title" value="Global Sub Account CG ICR Maintenance"/>
+    <property name="maintainableItems">
+      <list>   
+      	<bean parent="MaintainableFieldDefinition" p:name="a21SubAccount.financialIcrSeriesIdentifier"/>     
+        <bean parent="MaintainableFieldDefinition" p:name="a21SubAccount.indirectCostRecoveryTypeCode"/>         
+      </list>
+    </property>
+  </bean>
+  
+  <bean id="SubAccountGlobalMaintenanceDocument-IndirectCostRecoveryAccounts" parent="SubAccountGlobalMaintenanceDocument-IndirectCostRecoveryAccounts-parentBean"/>
+  
+  <bean id="SubAccountGlobalMaintenanceDocument-IndirectCostRecoveryAccounts-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="indirectCostRecoveryAccounts"/>
+    <property name="title" value="Global Sub Account Indirect Cost Recovery Accounts Maintenance"/>
+    <property name="maintainableItems">
+      <list>
+          <bean parent="MaintainableCollectionDefinition">
+            <property name="name" value="indirectCostRecoveryAccounts"/>
+            <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.IndirectCostRecoveryAccountChange"/>
+            <property name="summaryTitle" value="Indirect Cost Recovery Account"/>
+            <property name="summaryFields">
+              <list>
+                <dd:maintField attributeName="indirectCostRecoveryFinCoaCode"/>
+                <dd:maintField attributeName="indirectCostRecoveryAccountNumber"/>
+                <dd:maintField attributeName="accountLinePercent"/>
+              </list>
+            </property>
+            <property name="maintainableFields">
+              <list>
+                <bean parent="MaintainableFieldDefinition" p:name="indirectCostRecoveryAccountGeneratedIdentifier" p:unconditionallyReadOnly="true"/>
+                <dd:maintField attributeName="indirectCostRecoveryFinCoaCode"/>
+                <bean parent="MaintainableFieldDefinition" p:name="indirectCostRecoveryAccountNumber" p:webUILeaveFieldFunction="onblur_accountNumber_newAccount">
+                  <property name="webUILeaveFieldFunctionParameters">
+                    <list>
+                      <value>indirectCostRecoveryFinCoaCode</value>
+                    </list>
+                  </property> 
+                </bean>      
+                <dd:maintField attributeName="accountLinePercent" />
+                <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>
+              </list>
+            </property>
+          </bean>
+      </list>
+    </property>
+  </bean>
+  
   <bean id="SubAccountGlobalMaintenanceDocument-EditListofSubAccounts" parent="SubAccountGlobalMaintenanceDocument-EditListofSubAccounts-parentBean"/>
 
   <bean id="SubAccountGlobalMaintenanceDocument-EditListofSubAccounts-parentBean" abstract="true" parent="MaintainableSectionDefinition">
