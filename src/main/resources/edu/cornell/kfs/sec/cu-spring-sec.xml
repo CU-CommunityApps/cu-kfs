@@ -17,4 +17,17 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">    
 
+    <!--
+        The Access Security module configuration bean hierarchy has two levels of parent beans.
+        We override the one higher up in the path, to minimize required changes and to prevent
+        reloading of the whole SEC module (which could mess up our other modules' bean overrides).
+     -->
+    <bean id="secModule-parentBean" parent="secModule-coreOnly-parentBean" abstract="true">
+        <property name="dataDictionaryPackages">
+            <list merge="true">
+                <value>edu/cornell/kfs/sec/document/datadictionary</value>
+            </list>
+        </property>
+    </bean>
+
 </beans>
