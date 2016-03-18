@@ -38,6 +38,7 @@ public class CUKFSPropertyConstants extends KFSPropertyConstants {
     public static final String ACCT_REVERSION_ACTIVE = "active";
     
     public static final String SUB_OBJ_CODE_EDIT_CHANGE_DETAILS = "subObjCdGlobalEditDetails";
+    public static final String SUB_ACCOUNT_GLBL_CHANGE_DETAILS = "subAccountGlobalDetails";
 
 }
 

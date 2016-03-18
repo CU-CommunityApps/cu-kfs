@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	<bean id="IndirectCostRecoveryAccountChange" parent="IndirectCostRecoveryAccountChange-parentBean" />
+
+	<bean id="IndirectCostRecoveryAccountChange-parentBean" abstract="true"
+		parent="BusinessObjectEntry">
+		<property name="businessObjectClass"
+			value="edu.cornell.kfs.coa.businessobject.IndirectCostRecoveryAccountChange" />
+		<property name="inquiryDefinition">
+			<ref bean="IndirectCostRecoveryAccountChange-inquiryDefinition" />
+		</property>
+		<property name="lookupDefinition">
+			<ref bean="IndirectCostRecoveryAccountChange-lookupDefinition" />
+		</property>
+		<property name="objectLabel" value="Indirect Cost Recovery Account Detail" />
+		<property name="attributes">
+			<list>
+        <ref bean="IndirectCostRecoveryAccountChange-indirectCostRecoveryAccountGeneratedIdentifier"/>
+        <ref bean="IndirectCostRecoveryAccountChange-indirectCostRecoveryFinCoaCode"/>
+        <ref bean="IndirectCostRecoveryAccountChange-indirectCostRecoveryAccountNumber"/>
+        <ref bean="IndirectCostRecoveryAccountChange-accountLinePercent"/>
+        <ref bean="IndirectCostRecoveryAccountChange-newCollectionRecord"/>
+        <ref bean="IndirectCostRecoveryAccountChange-active" />
+        <ref bean="IndirectCostRecoveryAccountChange-documentNumber" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- Attribute Definitions -->
+
+
+	<bean id="IndirectCostRecoveryAccountChange-indirectCostRecoveryAccountGeneratedIdentifier" parent="IndirectCostRecoveryAccountChange-indirectCostRecoveryAccountGeneratedIdentifier-parentBean" />
+	<bean id="IndirectCostRecoveryAccountChange-indirectCostRecoveryAccountGeneratedIdentifier-parentBean" abstract="true"
+		parent="IndirectCostRecoveryAccount-indirectCostRecoveryAccountGeneratedIdentifier" />
+		
+	<bean id="IndirectCostRecoveryAccountChange-indirectCostRecoveryFinCoaCode" parent="IndirectCostRecoveryAccountChange-indirectCostRecoveryFinCoaCode-parentBean" />
+	<bean id="IndirectCostRecoveryAccountChange-indirectCostRecoveryFinCoaCode-parentBean" abstract="true"
+		parent="IndirectCostRecoveryAccount-indirectCostRecoveryFinCoaCode" />
+
+	<bean id="IndirectCostRecoveryAccountChange-indirectCostRecoveryAccountNumber" parent="IndirectCostRecoveryAccountChange-indirectCostRecoveryAccountNumber-parentBean" />
+	<bean id="IndirectCostRecoveryAccountChange-indirectCostRecoveryAccountNumber-parentBean" abstract="true"
+		parent="IndirectCostRecoveryAccount-indirectCostRecoveryAccountNumber" />
+		
+	<bean id="IndirectCostRecoveryAccountChange-accountLinePercent" parent="IndirectCostRecoveryAccountChange-accountLinePercent-parentBean" />
+	<bean id="IndirectCostRecoveryAccountChange-accountLinePercent-parentBean" abstract="true"
+		parent="IndirectCostRecoveryAccount-accountLinePercent" />
+
+	<bean id="IndirectCostRecoveryAccountChange-active" parent="IndirectCostRecoveryAccountChange-active-parentBean" />
+	<bean id="IndirectCostRecoveryAccountChange-active-parentBean" abstract="true"
+		parent="IndirectCostRecoveryAccount-active" />
+		
+	<bean id="IndirectCostRecoveryAccountChange-documentNumber" parent="IndirectCostRecoveryAccountChange-documentNumber-parentBean" />
+	<bean id="IndirectCostRecoveryAccountChange-documentNumber-parentBean" abstract="true"
+		parent="DocumentHeader-documentNumber" />
+
+	<bean id="IndirectCostRecoveryAccountChange-newCollectionRecord" parent="IndirectCostRecoveryAccountChange-newCollectionRecord-parentBean" />
+	<bean id="IndirectCostRecoveryAccountChange-newCollectionRecord-parentBean" abstract="true" parent="GenericAttributes-newCollectionRecord" />
+
+	<!-- Business Object Inquiry Definition -->
+
+	<bean id="IndirectCostRecoveryAccountChange-inquiryDefinition" parent="IndirectCostRecoveryAccountChange-inquiryDefinition-parentBean" />
+	<bean id="IndirectCostRecoveryAccountChange-inquiryDefinition-parentBean"
+		abstract="true" parent="InquiryDefinition">
+		<property name="title" value="Indirect Cost Recovery Account Detail Inquiry" />
+		<property name="inquirySections">
+			<list>
+				<ref bean="IndirectCostRecoveryAccountChange-inquirySectionDefinition" />
+			</list>
+		</property>
+	</bean>
+	<bean id="IndirectCostRecoveryAccountChange-inquirySectionDefinition" parent="IndirectCostRecoveryAccountChange-inquirySectionDefinition-parentBean" />
+	<bean id="IndirectCostRecoveryAccountChange-inquirySectionDefinition-parentBean"
+		parent="InquirySectionDefinition" abstract="true">
+		<property name="title" value="" />
+		<property name="numberOfColumns" value="1" />
+		<property name="inquiryFields">
+			<list>
+				<bean parent="FieldDefinition" p:attributeName="indirectCostRecoveryFinCoaCode" />
+				<bean parent="FieldDefinition" p:attributeName="indirectCostRecoveryAccountNumber" />
+				<bean parent="FieldDefinition" p:attributeName="documentNumber" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- Business Object Lookup Definition -->
+
+	<bean id="IndirectCostRecoveryAccountChange-lookupDefinition" parent="IndirectCostRecoveryAccountChange-lookupDefinition-parentBean" />
+	<bean id="IndirectCostRecoveryAccountChange-lookupDefinition-parentBean"
+		abstract="true" parent="LookupDefinition">
+		<property name="title" value="Indirect Cost Recovery Account Detail Lookup" />
+		<property name="defaultSort">
+			<bean parent="SortDefinition">
+			</bean>
+		</property>
+		<property name="lookupFields">
+			<list>
+				<bean parent="FieldDefinition" p:attributeName="indirectCostRecoveryFinCoaCode" />
+				<bean parent="FieldDefinition" p:attributeName="indirectCostRecoveryAccountNumber" />
+				<bean parent="FieldDefinition" p:attributeName="documentNumber" />
+			</list>
+		</property>
+		<property name="resultFields">
+			<list>
+				<bean parent="FieldDefinition" p:attributeName="indirectCostRecoveryFinCoaCode" />
+				<bean parent="FieldDefinition" p:attributeName="indirectCostRecoveryAccountNumber" />
+				<bean parent="FieldDefinition" p:attributeName="documentNumber" />
+			</list>
+		</property>
+	</bean>
+</beans>
