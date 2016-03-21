@@ -30,17 +30,6 @@
 		<property name="attributes">
 			<list>
 				<ref bean="SubAccountGlobal-inactivate" />
-				<ref bean="SubAccountGlobal-subAccountName" />
-				<ref bean="SubAccountGlobal-financialReportChartCode" />
-				<ref bean="SubAccountGlobal-finReportOrganizationCode" />
-				<ref bean="SubAccountGlobal-financialReportingCode" />
-				
-				<ref bean="SubAccountGlobal-a21SubAccount.indirectCostRecoveryTypeCode" />
-				<ref bean="SubAccountGlobal-a21SubAccount.financialIcrSeriesIdentifier" />
-				<ref bean="SubAccountGlobal-a21SubAccount.offCampusCode" />
-				<ref bean="SubAccountGlobal-a21SubAccount.costShareChartOfAccountCode" />
-				<ref bean="SubAccountGlobal-a21SubAccount.costShareSourceAccountNumber" />
-				<ref bean="SubAccountGlobal-a21SubAccount.costShareSourceSubAccountNumber" />
 			</list>
 		</property>
 
@@ -55,77 +44,6 @@
 		<property name="name" value="inactivate" />
 		<property name="label" value="Inactivate" />
 	</bean>
-	
-    <bean id="SubAccountGlobal-subAccountName" parent="SubAccountGlobal-subAccountName-parentBean"/>
-    <bean id="SubAccountGlobal-subAccountName-parentBean" abstract="true" parent="SubAccount-subAccountName">
-    	<property name="required" value="false" />
-    </bean>
-    <bean id="SubAccountGlobal-financialReportChartCode" parent="SubAccountGlobal-financialReportChartCode-parentBean"/>
-	<bean id="SubAccountGlobal-financialReportChartCode-parentBean"
-		abstract="true" parent="Chart-chartOfAccountsCode">
-		<property name="name" value="financialReportChartCode" />
-		<property name="label" value="Financial Reporting Chart Code" />
-		<property name="shortLabel" value="Fin. Rpt. Chart" />
-		<property name="required" value="false" />
-	</bean>
-    <bean id="SubAccountGlobal-finReportOrganizationCode" parent="SubAccountGlobal-finReportOrganizationCode-parentBean"/>
-    <bean id="SubAccountGlobal-finReportOrganizationCode-parentBean" abstract="true" parent="SubAccount-finReportOrganizationCode">
-    </bean>
-    <bean id="SubAccountGlobal-financialReportingCode" parent="SubAccountGlobal-financialReportingCode-parentBean"/>
-    <bean id="SubAccountGlobal-financialReportingCode-parentBean" abstract="true" parent="SubAccount-financialReportingCode">
-    </bean>
-    
-    <bean id="SubAccountGlobal-a21SubAccount.indirectCostRecoveryTypeCode" parent="SubAccountGlobal-a21SubAccount.indirectCostRecoveryTypeCode-parentBean"/>
-    <bean id="SubAccountGlobal-a21SubAccount.indirectCostRecoveryTypeCode-parentBean" abstract="true" parent="IndirectCostRecoveryType-code">
-        <property name="name" value="a21SubAccount.indirectCostRecoveryTypeCode" />
-		<property name="label" value="ICR Type Code" />
-		<property name="shortLabel" value="ICRTypeCd" />
-		<property name="required" value="false" />
-		<property name="attributeSecurity" ref="ReadOnlyAttributeSecurity" />
-		<property name="control">
-			<bean parent="SelectControlDefinition"
-				p:valuesFinderClass="org.kuali.kfs.coa.businessobject.options.IndirectCostRecoveryTypeValuesFinder"
-				p:includeKeyInLabel="false" />
-		</property>
-    </bean>
-    <bean id="SubAccountGlobal-a21SubAccount.financialIcrSeriesIdentifier" parent="SubAccountGlobal-a21SubAccount.financialIcrSeriesIdentifier-parentBean"/>
-    <bean id="SubAccountGlobal-a21SubAccount.financialIcrSeriesIdentifier-parentBean" abstract="true" parent="A21SubAccountChange-financialIcrSeriesIdentifier">
-    	<property name="name" value="a21SubAccount.financialIcrSeriesIdentifier" />
-		<property name="required" value="false" />
-		<property name="attributeSecurity" ref="ReadOnlyAttributeSecurity" />
-    </bean>
-    <bean id="SubAccountGlobal-a21SubAccount.offCampusCode" parent="SubAccountGlobal-a21SubAccount.offCampusCode-parentBean"/>
-    <bean id="SubAccountGlobal-a21SubAccount.offCampusCode-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
-        <property name="name" value="a21SubAccount.offCampusCode" />
-		<property name="label" value="Off Campus Indicator" />
-		<property name="shortLabel" value="Off Campus" />
-		<property name="required" value="false" />
-		<property name="attributeSecurity" ref="ReadOnlyAttributeSecurity" />
-    </bean>
-    
-    <bean id="SubAccountGlobal-a21SubAccount.costShareChartOfAccountCode" parent="SubAccountGlobal-a21SubAccount.costShareChartOfAccountCode-parentBean"/>
-    <bean id="SubAccountGlobal-a21SubAccount.costShareChartOfAccountCode-parentBean" abstract="true" parent="ChartAttribute-SelectControl">
-    	<property name="name" value="a21SubAccount.costShareChartOfAccountCode" />
-		<property name="label" value="Cost Sharing Chart of Accounts Code" />
-		<property name="shortLabel" value="CostShareCOACode" />
-		<property name="required" value="false" />
-		<property name="attributeSecurity" ref="ReadOnlyAttributeSecurity" />
-    </bean>
-    <bean id="SubAccountGlobal-a21SubAccount.costShareSourceAccountNumber" parent="SubAccountGlobal-a21SubAccount.costShareSourceAccountNumber-parentBean"/>
-    <bean id="SubAccountGlobal-a21SubAccount.costShareSourceAccountNumber-parentBean" abstract="true" parent="Account-accountNumber">
-    	<property name="name" value="a21SubAccount.costShareSourceAccountNumber" />
-		<property name="label" value="Cost Sharing Account Number" />
-		<property name="shortLabel" value="CostShareAcctNbr" />
-		<property name="required" value="false" />
-		<property name="attributeSecurity" ref="ReadOnlyAttributeSecurity" />
-    </bean>
-    <bean id="SubAccountGlobal-a21SubAccount.costShareSourceSubAccountNumber" parent="SubAccountGlobal-a21SubAccount.costShareSourceSubAccountNumber-parentBean"/>
-    <bean id="SubAccountGlobal-a21SubAccount.costShareSourceSubAccountNumber-parentBean" abstract="true" parent="SubAccount-subAccountNumber">
-    	<property name="name" value="a21SubAccount.costShareSourceSubAccountNumber" />
-		<property name="label" value="Cost Sharing Sub-Account Number" />
-		<property name="shortLabel" value="CostShareSubAcctNbr" />
-		<property name="required" value="false" />
-		<property name="attributeSecurity" ref="ReadOnlyAttributeSecurity" />
-    </bean>
+
     
 </beans>

@@ -3,16 +3,15 @@ package edu.cornell.kfs.coa.document;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kuali.kfs.coa.businessobject.A21SubAccount;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.document.FinancialSystemGlobalMaintainable;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.maintenance.MaintenanceLock;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.rice.krad.util.KRADConstants;
 
-import edu.cornell.kfs.coa.businessobject.A21SubAccountChange;
 import edu.cornell.kfs.coa.businessobject.SubAccountGlobal;
 import edu.cornell.kfs.coa.businessobject.SubAccountGlobalDetail;
 
@@ -34,11 +33,11 @@ public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaint
             StringBuffer lockrep = new StringBuffer();
 
             lockrep.append(Account.class.getName() + KFSConstants.Maintenance.AFTER_CLASS_DELIM);
-            lockrep.append(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE + KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
+            lockrep.append("chartOfAccountsCode" + KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
             lockrep.append(detail.getChartOfAccountsCode() + KFSConstants.Maintenance.AFTER_VALUE_DELIM);
-            lockrep.append(KFSPropertyConstants.ACCOUNT_NUMBER + KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
+            lockrep.append("accountNumber" + KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
             lockrep.append(detail.getAccountNumber());
-            lockrep.append(KFSPropertyConstants.SUB_ACCOUNT_NUMBER + KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
+            lockrep.append("subAccountNumber" + KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
             lockrep.append(detail.getSubAccountNumber());
 
             maintenanceLock.setDocumentNumber(subAccountGlobal.getDocumentNumber());
@@ -48,9 +47,6 @@ public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaint
         return maintenanceLocks;
     }
     
-    /**
-     * @see org.kuali.kfs.sys.document.FinancialSystemGlobalMaintainable#answerSplitNodeQuestion(java.lang.String)
-     */
     @Override
     public boolean answerSplitNodeQuestion(String nodeName) {
         
@@ -81,11 +77,11 @@ public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaint
         SubAccountGlobal subAccountGlobal = (SubAccountGlobal) getBusinessObject();
 
         for (SubAccountGlobalDetail detail : subAccountGlobal.getSubAccountGlobalDetails()) {
-        	detail.refreshReferenceObject(KFSPropertyConstants.SUB_ACCOUNT);
+        	detail.refreshReferenceObject("subAccount");
         	SubAccount subAccount = detail.getSubAccount();
         	if(subAccount.getA21SubAccount().getSubAccountTypeCode().equals(KFSConstants.SubAccountType.COST_SHARE)){
         		retval = true;
-        		subAccount.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
+        		subAccount.refreshReferenceObject("account");
         		break;
         	}
         }
@@ -93,29 +89,8 @@ public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaint
         return retval; 
     }
 
-    /**
-     * @see org.kuali.rice.kns.maintenance.KualiGlobalMaintainableImpl#getPrimaryEditedBusinessObjectClass()
-     */
     @Override
     public Class<? extends PersistableBusinessObject> getPrimaryEditedBusinessObjectClass() {
         return SubAccount.class;
     }
-    
-	/**
-	 * Overriden to set the document number on the a21SubAccount.
-	 * 
-	 * @see org.kuali.rice.kns.maintenance.KualiGlobalMaintainableImpl#prepareGlobalsForSave()
-	 */
-	@Override
-	protected void prepareGlobalsForSave() {
-		SubAccountGlobal subAccountGlobal = (SubAccountGlobal) businessObject;
-		super.prepareGlobalsForSave();
-
-		if (businessObject != null) {
-			A21SubAccountChange a21SubAccount = subAccountGlobal.getA21SubAccount();
-			if (a21SubAccount != null) {
-				a21SubAccount.setDocumentNumber(getDocumentNumber());
-			}
-		}
-	}
 }
