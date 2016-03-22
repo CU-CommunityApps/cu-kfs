@@ -21,7 +21,7 @@
 	<rice.version>2.1.9</rice.version>
 	<cynergy.version>2.3.4</cynergy.version>
 	<cynergy.version.suffix>current</cynergy.version.suffix>
-	<kfs.version>5.3.1</kfs.version>
+	<kfs.version>6.0.1-SNAPSHOT</kfs.version>
 	<cynergy.development>true</cynergy.development>
 	<skipTests>true</skipTests>
 	<test.excludes>**/*Test.java.bogus</test.excludes>
@@ -285,7 +285,7 @@
 
     <dependency>
       <groupId>org.kuali.kfs</groupId>
-      <artifactId>kfs-stock</artifactId>
+      <artifactId>kfs</artifactId>
       <version>${kfs.version}</version>
       <type>war</type>
       <exclusions>
