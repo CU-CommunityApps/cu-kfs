@@ -56,6 +56,7 @@ import org.kuali.kfs.integration.purap.CapitalAssetSystem;
 import org.kuali.kfs.integration.purap.ExternalPurApItem;
 import org.kuali.kfs.integration.purap.ItemCapitalAsset;
 import org.kuali.kfs.integration.purap.PurchasingAccountsPayableModuleService;
+import org.kuali.kfs.krad.datadictionary.BusinessObjectEntry;
 import org.kuali.kfs.module.cab.CabConstants;
 import org.kuali.kfs.module.cab.CabKeyConstants;
 import org.kuali.kfs.module.cab.CabParameterConstants;
@@ -113,19 +114,19 @@ import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.api.parameter.Parameter;
 import org.kuali.rice.coreservice.api.parameter.ParameterRepositoryService;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.rice.kns.service.BusinessObjectDictionaryService;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.kns.service.DictionaryValidationService;
-import org.kuali.rice.kns.util.KNSGlobalVariables;
-import org.kuali.rice.krad.bo.DocumentHeader;
-import org.kuali.rice.krad.datadictionary.AttributeDefinition;
-import org.kuali.rice.krad.service.BusinessObjectService;
-import org.kuali.rice.krad.service.KualiModuleService;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.MessageMap;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.service.BusinessObjectDictionaryService;
+import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.kns.service.DictionaryValidationService;
+import org.kuali.kfs.kns.util.KNSGlobalVariables;
+import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.KualiModuleService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.MessageMap;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.rice.location.api.campus.Campus;
 import org.kuali.rice.location.api.campus.CampusService;
 
@@ -805,7 +806,7 @@ public class CapitalAssetBuilderModuleServiceImpl implements CapitalAssetBuilder
                 catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
-                org.kuali.rice.krad.datadictionary.BusinessObjectEntry boe = dataDictionaryService.getDataDictionary().getBusinessObjectEntry(offendingClass.getSimpleName());
+                BusinessObjectEntry boe = dataDictionaryService.getDataDictionary().getBusinessObjectEntry(offendingClass.getSimpleName());
                 List<AttributeDefinition> offendingAttributes = boe.getAttributes();
                 AttributeDefinition offendingAttribute = offendingAttributes.get(0);
                 String fieldName = dataDictionaryService.getAttributeShortLabel(offendingClass, offendingAttribute.getName());
@@ -1488,7 +1489,7 @@ public class CapitalAssetBuilderModuleServiceImpl implements CapitalAssetBuilder
         }
         return false ;
     }
-    
+
     /**
      * To check if data exists on create new asset
      *
@@ -1908,12 +1909,12 @@ public class CapitalAssetBuilderModuleServiceImpl implements CapitalAssetBuilder
      * detail lines containing tag information
      */
     public final class TagRecord {
+
         protected String tagNumber;
         protected int assetLineNumber;
         protected int assetDetailLineNumber;
         protected int assetItemLineNumber;
         protected boolean duplicate;
-
         public TagRecord(String tagNumber, int assetLineNumber, int assetDetailLineNumber, int itemLineNumber) {
             this.tagNumber = tagNumber;
             this.assetLineNumber = assetLineNumber;
@@ -1978,6 +1979,7 @@ public class CapitalAssetBuilderModuleServiceImpl implements CapitalAssetBuilder
         public void setAssetDetailLineNumber(int assetDetailLineNumber) {
             this.assetDetailLineNumber = assetDetailLineNumber;
         }
+
         /**
          * Gets the assetItemLineNumber attribute.
          *
@@ -1987,7 +1989,6 @@ public class CapitalAssetBuilderModuleServiceImpl implements CapitalAssetBuilder
         public int getAssetItemLineNumber() {
             return assetItemLineNumber;
         }
-
         /**
          * Sets the assetItemLineNumber attribute.
          *
@@ -2015,8 +2016,8 @@ public class CapitalAssetBuilderModuleServiceImpl implements CapitalAssetBuilder
         public void setDuplicate(boolean duplicate) {
             this.duplicate = duplicate;
         }
-    }
 
+    }
     /**
      * validates asset tag location lines for existence of any duplicate tag/location details.
      * Collects all the detail lines for all the capital assets and then checks if there
@@ -2608,7 +2609,6 @@ public class CapitalAssetBuilderModuleServiceImpl implements CapitalAssetBuilder
         }
     }
 
-
     /**
      * gets the document type based on the instance of a class
      *
@@ -2656,6 +2656,7 @@ public class CapitalAssetBuilderModuleServiceImpl implements CapitalAssetBuilder
 
         return documentTypeName;
     }
+
 
     public BusinessObjectService getBusinessObjectService() {
         return businessObjectService;
@@ -2938,6 +2939,112 @@ public class CapitalAssetBuilderModuleServiceImpl implements CapitalAssetBuilder
         return true;
     }
 
+    /**
+     * Check FP document eligibility by document type for CAB Extract batch.
+     *
+     * @param documentType
+     * @return
+     */
+    @Override
+    public boolean isDocumentEligibleForCABBatch(String documentType) {
+        boolean eligible = true;
+        List<String> excludedDocTypeCodes = new ArrayList<String>(parameterService.getParameterValuesAsString(KfsParameterConstants.CAPITAL_ASSET_BUILDER_BATCH.class, CabConstants.Parameters.DOCUMENT_TYPES));
+        // check with the docTypeCodes system parameter
+        if (excludedDocTypeCodes.contains(documentType)) {
+            eligible = false;
+        }
+        return eligible;
+    }
+
+
+    @Override
+    public List<String> getBatchIncludedObjectSubTypes() {
+        List<String> includedFinancialObjectSubTypeCodes = new ArrayList<String>(parameterService.getParameterValuesAsString(KfsParameterConstants.CAPITAL_ASSET_BUILDER_BATCH.class, CabConstants.Parameters.OBJECT_SUB_TYPES));
+        return includedFinancialObjectSubTypeCodes;
+    }
+
+    @Override
+    public List<String> getBatchExcludedChartCodes() {
+        List<String> excludedChartCodes = new ArrayList<String>(parameterService.getParameterValuesAsString(KfsParameterConstants.CAPITAL_ASSET_BUILDER_BATCH.class, CabConstants.Parameters.CHARTS));
+        return excludedChartCodes;
+    }
+
+    @Override
+    public List<String> getBatchExcludedSubFundCodes() {
+        List<String> excludedSubFundCodes = new ArrayList<String>(parameterService.getParameterValuesAsString(KfsParameterConstants.CAPITAL_ASSET_BUILDER_BATCH.class, CabConstants.Parameters.SUB_FUND_GROUPS));
+        return excludedSubFundCodes;
+    }
+
+
+    /**
+     * Check FP document individual Capital Asset line eligibility for CAB Extract Batch
+     *
+     * @param assetLine
+     * @param postingYear
+     * @return
+     */
+    @Override
+    public boolean isAssetLineEligibleForCABBatch(
+            CapitalAssetInformation assetLine, Integer postingYear,
+            List<String> includedFinancialObjectSubTypeCodes,
+            List<String> excludedChartCodes, List<String> excludedSubFundCodes) {
+        boolean eligible = true;
+
+        List<CapitalAssetAccountsGroupDetails> acctDetailLines = assetLine.getCapitalAssetAccountsGroupDetails();
+        for (CapitalAssetAccountsGroupDetails detailLine : acctDetailLines) {
+            eligible = true;
+            // This is clumsy since we're not persistent posting year
+            ObjectCode objectCodeBO = retrieveFinancialObject(postingYear, detailLine);
+            // check with the CAB-financialObjectSubTypeCodes system parameter
+            if (ObjectUtils.isNotNull(objectCodeBO) && includedFinancialObjectSubTypeCodes != null && !includedFinancialObjectSubTypeCodes.contains(objectCodeBO.getFinancialObjectSubTypeCode())) {
+                eligible = false;
+            }
+
+            // check with the CAB-charOfAccountCode system parameter
+            if (eligible && excludedChartCodes != null && excludedChartCodes.contains(detailLine.getChartOfAccountsCode())) {
+                eligible = false;
+            }
+
+            // check with the CAB-subFundCodes system parameter
+            if (eligible && excludedSubFundCodes != null && ObjectUtils.isNotNull(detailLine.getAccount()) && excludedSubFundCodes.contains(detailLine.getAccount().getSubFundGroupCode())) {
+                eligible = false;
+            }
+
+            // As long as one accounting line has capital asset transaction, it will be extract to CAB.
+            if (eligible) {
+                break;
+            }
+        }
+        // If none of the accounting line eligible for CAB batch, CAB batch won't take the FP document into CAB
+        return eligible;
+    }
+
+    /**
+     * Retrieving Object BO from table
+     *
+     * @param postingYear
+     * @param acctDetailLine
+     * @return
+     */
+    protected ObjectCode retrieveFinancialObject(Integer postingYear,
+                                                 CapitalAssetAccountsGroupDetails acctDetailLine) {
+        ObjectCode financialObject = null;
+        if (ObjectUtils.isNotNull(acctDetailLine)) {
+            Map<String, Object> primaryKeys = new HashMap<String, Object>();
+            primaryKeys.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, postingYear);
+            primaryKeys.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, acctDetailLine.getChartOfAccountsCode());
+            primaryKeys.put(KFSPropertyConstants.FINANCIAL_OBJECT_CODE, acctDetailLine.getFinancialObjectCode());
+            financialObject = businessObjectService.findByPrimaryKey(ObjectCode.class, primaryKeys);
+        }
+        return financialObject;
+    }
+
+    @Override
+    public void filterNonCapitalAssets(List<CapitalAssetInformation> infos) {
+        // do nothing here- this is where the institution would place it's own implementation if desired
+        return;
+    }
+
     public void setGlLineService(GlLineService glLineService) {
         this.glLineService = glLineService;
     }
@@ -3032,4 +3139,5 @@ public class CapitalAssetBuilderModuleServiceImpl implements CapitalAssetBuilder
             }
         }
     }
+
 }

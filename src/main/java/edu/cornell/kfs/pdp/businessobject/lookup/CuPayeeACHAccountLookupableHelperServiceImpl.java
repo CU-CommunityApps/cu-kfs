@@ -21,10 +21,10 @@ import org.kuali.rice.core.api.encryption.EncryptionService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.impl.KIMPropertyConstants;
-import org.kuali.rice.kns.lookup.LookupUtils;
+import org.kuali.kfs.kns.lookup.LookupUtils;
 import org.kuali.rice.krad.bo.BusinessObject;
-import org.kuali.rice.krad.util.BeanPropertyComparator;
-import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.BeanPropertyComparator;
+import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.pdp.CUPdpPropertyConstants;
 

@@ -16,11 +16,11 @@ import org.kuali.kfs.coa.service.A21SubAccountService;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.maintenance.Maintainable;
-import org.kuali.rice.krad.maintenance.MaintenanceDocument;
-import org.kuali.rice.krad.service.DocumentService;
-import org.kuali.rice.krad.util.KRADConstants;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.maintenance.Maintainable;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 @SuppressWarnings("deprecation")
 public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
@@ -358,10 +358,10 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
     /**
      * After a copy is done set specific fields on {@link SubAccount} to default values
      *
-     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#processAfterCopy(MaintenanceDocument, Map)
+     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#processAfterCopy(org.kuali.rice.kns.document.MaintenanceDocument, Map)
      */
     @Override
-    public void processAfterCopy(org.kuali.rice.kns.document.MaintenanceDocument  document, Map<String, String[]> parameters) {
+    public void processAfterCopy(MaintenanceDocument  document, Map<String, String[]> parameters) {
         super.processAfterCopy(document, parameters);
         SubAccount subAccount = (SubAccount) this.getBusinessObject();
 
@@ -375,21 +375,21 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
         subAccount.getA21SubAccount().setA21IndirectCostRecoveryAccounts(copyIndirectCostRecoveryAccounts);
     }
     
-        public void refresh(String refreshCaller, Map fieldValues, org.kuali.rice.kns.document.MaintenanceDocument document) {
+    public void refresh(String refreshCaller, Map fieldValues, MaintenanceDocument document) {
     	super.refresh(refreshCaller, fieldValues, document);
-    	 String maintAction = super.getMaintenanceAction();   
+    	String maintAction = super.getMaintenanceAction();
     	 
-    	 if (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_NEW_ACTION)){
-    		 SubAccount subAccount = (SubAccount) super.getBusinessObject();
-    		 A21SubAccount newSubAccount = subAccount.getA21SubAccount();
-    		 if(ObjectUtils.isNotNull(newSubAccount) && ObjectUtils.isNotNull(newSubAccount.getA21IndirectCostRecoveryAccounts()) && newSubAccount.getA21IndirectCostRecoveryAccounts().size() >0){
-    			 for(A21IndirectCostRecoveryAccount recoveryAccount : newSubAccount.getA21IndirectCostRecoveryAccounts()){
-    				 // set the newCollectionRecord indicator to true so that the entries can be deleted
-    				 recoveryAccount.setNewCollectionRecord(true);
-    			 }
-    		 }
+    	if (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_NEW_ACTION)){
+    		SubAccount subAccount = (SubAccount) super.getBusinessObject();
+    		A21SubAccount newSubAccount = subAccount.getA21SubAccount();
+    		if(ObjectUtils.isNotNull(newSubAccount) && ObjectUtils.isNotNull(newSubAccount.getA21IndirectCostRecoveryAccounts()) && newSubAccount.getA21IndirectCostRecoveryAccounts().size() >0){
+    			for(A21IndirectCostRecoveryAccount recoveryAccount : newSubAccount.getA21IndirectCostRecoveryAccounts()){
+    				// set the newCollectionRecord indicator to true so that the entries can be deleted
+    				recoveryAccount.setNewCollectionRecord(true);
+    			}
+    		}
     		 
-    	 }
+    	}
     }
     
     /**
@@ -397,11 +397,11 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
      * if the new object has them. This is necessary to work around a section size mismatch issue, which can occur
      * when the old sub-account has a type of "CS" but the new one has a type of "EX" and possibly under other circumstances.
      *
-     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#getSections(org.kuali.rice.kns.document.MaintenanceDocument, Maintainable)
+     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#getSections(org.kuali.rice.kns.document.MaintenanceDocument, org.kuali.rice.kns.maintenance.Maintainable)
      */
     @SuppressWarnings("rawtypes")
     @Override
-    public List getSections(org.kuali.rice.kns.document.MaintenanceDocument document, Maintainable oldMaintainable) {
+    public List getSections(MaintenanceDocument document, Maintainable oldMaintainable) {
         // The special handling only applies to the old maintainable.
         if (this == document.getOldMaintainableObject()) {
             SubAccount oldAccount = (SubAccount) getDataObject();

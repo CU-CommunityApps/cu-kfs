@@ -8,7 +8,7 @@ import java.util.TreeMap;
 
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 

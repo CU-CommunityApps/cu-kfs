@@ -5,7 +5,7 @@ import java.util.Calendar;
 
 import org.kuali.kfs.fp.document.web.struts.AuxiliaryVoucherForm;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class CuAuxiliaryVoucherForm extends AuxiliaryVoucherForm {
 	

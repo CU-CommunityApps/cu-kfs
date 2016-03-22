@@ -8,8 +8,8 @@ import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.krad.document.Document;
-import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.service.DocumentService;
 
 import edu.cornell.kfs.fp.service.SubmitTripWebServiceImpl;
 

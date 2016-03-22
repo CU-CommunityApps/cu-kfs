@@ -2,7 +2,7 @@ package edu.cornell.kfs.sec.businessobject.defaultvalue;
 
 import org.kuali.kfs.sec.businessobject.SecurityModelDefinition;
 import org.kuali.kfs.sys.businessobject.defaultvalue.SequenceValueFinder;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 
 import edu.cornell.kfs.sec.CUSecConstants;
 

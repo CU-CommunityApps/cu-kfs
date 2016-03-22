@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.text.ParseException;
 
 import org.apache.log4j.Logger;
-import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 public class USBankAddendumRecord extends PersistableBusinessObjectBase {
     private static final long serialVersionUID = 1L;

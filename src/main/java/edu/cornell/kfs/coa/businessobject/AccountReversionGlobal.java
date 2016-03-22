@@ -28,12 +28,12 @@ import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.krad.bo.GlobalBusinessObject;
-import org.kuali.rice.krad.bo.GlobalBusinessObjectDetail;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.krad.service.PersistenceStructureService;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.bo.GlobalBusinessObject;
+import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetail;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.service.PersistenceStructureService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.service.AccountReversionService;
 
@@ -275,7 +275,7 @@ public class AccountReversionGlobal extends PersistableBusinessObjectBase implem
     }
 
     public Boolean isReversionActiveIndicator() {
-        return reversionActiveIndicator; 
+        return reversionActiveIndicator;
     }
 
     public Boolean getReversionActiveIndicator() {
@@ -390,7 +390,7 @@ public class AccountReversionGlobal extends PersistableBusinessObjectBase implem
                     currAcctRev.addAccountReversionDetail(revDetail);
                 }
             }
-            
+
             // 2. update account reversion
             if (!StringUtils.isBlank(this.getBudgetReversionChartOfAccountsCode())) {
                 currAcctRev.setBudgetReversionChartOfAccountsCode(this.getBudgetReversionChartOfAccountsCode());

@@ -9,8 +9,8 @@ import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.document.validation.impl.ObjectCodeRule;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.coa.businessobject.ContractGrantReportingCode;
 import edu.cornell.kfs.coa.businessobject.ObjectCodeExtendedAttribute;

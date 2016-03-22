@@ -11,7 +11,7 @@ import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
-import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 
 
 @ConfigureContext(session = ccs1)
@@ -21,9 +21,9 @@ public class ezraUpdateProposalImplTest extends KualiTestBase {
 	private EzraService ezraService;	
 	private BusinessObjectService businessObjectService;
 	private UnitTestSqlDao unitTestSqlDao;
-	
+
 	private static String GET_PROPOSAL_NUMBER_SQL ="select PROJ_ID from AWARD_PROP where AWARD_PROP_ID like 'A%' and BUDG_TOTAL > 0 and STATUS_CD = 'ASAP' and ROWNUM =1";
-	
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -33,13 +33,13 @@ public class ezraUpdateProposalImplTest extends KualiTestBase {
     }
     
     public void testUpdateProposal () {
-    	
+
 		List ezraProposals =  unitTestSqlDao.sqlSelect(GET_PROPOSAL_NUMBER_SQL);
 		Map proposalNumberResult = (Map)ezraProposals.get(0);
 		Object proposalNumber = proposalNumberResult.get("PROJ_ID");
         Map fields = new HashMap();
         fields.clear();
-        fields.put("proposalNumber", proposalNumber);        
+        fields.put("proposalNumber", proposalNumber);
         String grantIdTest = "ezraUpdateTest";
         String grantIdAfter = "";
         Proposal proposal = (Proposal)businessObjectService.findByPrimaryKey(Proposal.class, fields);

@@ -9,8 +9,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.krad.service.BusinessObjectService;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
@@ -45,7 +45,7 @@ public class UserFavoriteAccountServiceImpl implements UserFavoriteAccountServic
 	 * populate favorite account to the accounting line.
 	 * This method supports PurApAccountingLine implementations that have a default constructor,
 	 * as well as IWantAccount objects.
-	 * 
+	 *
 	 * @param account
 	 * @return
 	 */
@@ -55,7 +55,7 @@ public class UserFavoriteAccountServiceImpl implements UserFavoriteAccountServic
         } else if (!PurApAccountingLine.class.isAssignableFrom(accountLineClass) && !IWantAccount.class.isAssignableFrom(accountLineClass)) {
             throw new IllegalArgumentException("Unsupported accounting line implementation: " + accountLineClass.getName());
         }
-        
+
         if (ObjectUtils.isNotNull(account)) {
             T acctLine;
             try {
@@ -74,7 +74,7 @@ public class UserFavoriteAccountServiceImpl implements UserFavoriteAccountServic
         }
         return null;
     }
-    
+
     protected void populatePurApAccountingLine(FavoriteAccount account, PurApAccountingLine acctLine) {
         final int ONE_HUNDRED = 100;
         populateAccountNumberOnPurApAccountingLine(account, acctLine);
@@ -86,7 +86,7 @@ public class UserFavoriteAccountServiceImpl implements UserFavoriteAccountServic
 		acctLine.setOrganizationReferenceId(account.getOrganizationReferenceId());
 		acctLine.setAccountLinePercent(new BigDecimal(ONE_HUNDRED));
     }
-    
+
     /*
      * This operation has been moved to a separate method for unit testing convenience.
      * The setAccountNumber() method on accounting lines will invoke SpringContext.getBean(),
@@ -95,7 +95,7 @@ public class UserFavoriteAccountServiceImpl implements UserFavoriteAccountServic
     protected void populateAccountNumberOnPurApAccountingLine(FavoriteAccount account, PurApAccountingLine acctLine) {
         acctLine.setAccountNumber(account.getAccountNumber());
     }
-    
+
     protected void populateIWantAccountingLine(FavoriteAccount account, IWantAccount acctLine) {
         final int ONE_HUNDRED = 100;
         acctLine.setAccountNumber(account.getAccountNumber());
@@ -108,7 +108,7 @@ public class UserFavoriteAccountServiceImpl implements UserFavoriteAccountServic
         acctLine.setUseAmountOrPercent(CUPurapConstants.PERCENT);
         acctLine.setAmountOrPercent(new KualiDecimal(ONE_HUNDRED));
     }
-    
+
     protected void refreshReferenceObjectsForPopulatedAccountingLine(GeneralLedgerPendingEntrySourceDetail acctLine) {
         acctLine.refreshReferenceObject("chart");
         acctLine.refreshReferenceObject("account");

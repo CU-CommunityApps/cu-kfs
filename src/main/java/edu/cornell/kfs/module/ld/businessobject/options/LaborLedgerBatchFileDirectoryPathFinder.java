@@ -1,7 +1,7 @@
 package edu.cornell.kfs.module.ld.businessobject.options;
 
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.krad.valuefinder.ValueFinder;
+import org.kuali.kfs.krad.valuefinder.ValueFinder;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 

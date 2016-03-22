@@ -21,7 +21,7 @@ import org.kuali.rice.core.web.format.CurrencyFormatter;
 import org.kuali.rice.core.web.format.DateFormatter;
 import org.kuali.rice.core.web.format.Formatter;
 import org.kuali.rice.core.web.format.IntegerFormatter;
-import org.kuali.rice.krad.exception.InvalidAddressException;
+import org.kuali.kfs.krad.exception.InvalidAddressException;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
 

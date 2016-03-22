@@ -15,7 +15,7 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
@@ -65,7 +65,7 @@ public class CuUserFavoriteAccountServiceImplTest extends KualiTestBase {
         assertEquals("Account Number should be populated", favoriteAccount.getAccountNumber(), acct.getAccountNumber());
         assertEquals("Object Code should be populated", favoriteAccount.getFinancialObjectCode(), acct.getFinancialObjectCode());
         assertEquals("Incorrect percentage (comparison against 100% should have been zero)", 0, acct.getAccountLinePercent().compareTo(new BigDecimal(100)));
-        
+
         acct = userFavoriteAccountService.getPopulatedNewAccount(favoriteAccount, PurchaseOrderAccount.class);
         assertNotNull("Account should be populated", acct);
         assertTrue("Account should be PO Account", acct instanceof PurchaseOrderAccount);

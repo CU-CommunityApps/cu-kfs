@@ -39,10 +39,10 @@ import org.kuali.kfs.sys.document.datadictionary.AccountingLineViewActionDefinit
 import org.kuali.kfs.sys.document.web.AccountingLineViewAction;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.KeyValue;
-import org.kuali.rice.kns.web.taglib.html.KNSFileTag;
-import org.kuali.rice.kns.web.taglib.html.KNSImageTag;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.kfs.kns.web.taglib.html.KNSFileTag;
+import org.kuali.kfs.kns.web.taglib.html.KNSImageTag;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFinder;
 
@@ -262,17 +262,13 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
         for (AccountingLineViewActionDefinition action : accountingLineGroupActions) {
             String actionMethod = action.getActionMethod();
             String actionLabel = action.getActionLabel();
-            String imageName = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString("externalizable.images.url") + action.getImageName();
 
-            AccountingLineViewAction viewAction = new AccountingLineViewAction(actionMethod, actionLabel, imageName);
+            AccountingLineViewAction viewAction = new AccountingLineViewAction(actionMethod, actionLabel, action.getButtonStyle(), action.getButtonLabel(), action.getButtonIcon());
             viewActions.add(viewAction);
         }
 
         if (!viewActions.isEmpty()) {
             ActionsRenderer actionsRenderer = new ActionsRenderer();
-            actionsRenderer.setTagBeginning(" ");
-            actionsRenderer.setTagEnding(" ");
-            actionsRenderer.setPostButtonSpacing(" ");
             actionsRenderer.setActions(viewActions);
             actionsRenderer.render(pageContext, parentTag);
             actionsRenderer.clear();

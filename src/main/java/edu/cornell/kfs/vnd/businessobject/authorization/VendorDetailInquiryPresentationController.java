@@ -15,12 +15,12 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.services.IdentityManagementService;
-import org.kuali.rice.kns.inquiry.InquiryPresentationControllerBase;
-import org.kuali.rice.krad.UserSession;
+import org.kuali.kfs.kns.inquiry.InquiryPresentationControllerBase;
+import org.kuali.kfs.krad.UserSession;
 import org.kuali.rice.krad.bo.BusinessObject;
-import org.kuali.rice.krad.bo.Note;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
 
 /**
  * @author kwk43
