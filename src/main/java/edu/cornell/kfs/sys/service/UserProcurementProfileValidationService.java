@@ -3,7 +3,7 @@ package edu.cornell.kfs.sys.service;
 import java.util.List;
 
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
-import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 

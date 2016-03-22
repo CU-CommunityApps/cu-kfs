@@ -6,7 +6,7 @@ import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.kfs.krad.service.DocumentService;
 
 public enum PaymentRequestFixture {
 	PAYMENT_REQ_DOC(new Integer(311), // purapDocumentIdentifier

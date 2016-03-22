@@ -22,7 +22,7 @@ import java.util.Set;
 
 import org.kuali.kfs.module.tem.TemPropertyConstants;
 import org.kuali.kfs.module.tem.document.authorization.TemProfileDocumentPresentationController;
-import org.kuali.rice.kns.document.MaintenanceDocument;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
 
 @SuppressWarnings("deprecation")
 public class CuTemProfileDocumentPresentationController extends TemProfileDocumentPresentationController {

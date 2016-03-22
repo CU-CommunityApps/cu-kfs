@@ -2,7 +2,7 @@ package edu.cornell.kfs.module.purap.businessobject;
 
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 public class PersonData extends PersistableBusinessObjectBase {
 

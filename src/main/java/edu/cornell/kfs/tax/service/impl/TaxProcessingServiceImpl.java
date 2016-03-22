@@ -19,8 +19,8 @@ import org.kuali.rice.core.api.criteria.CriteriaLookupService;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.util.RiceUtilities;
-import org.kuali.rice.coreservice.framework.CoreFrameworkServiceLocator;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.tax.CUTaxConstants;

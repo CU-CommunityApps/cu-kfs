@@ -43,8 +43,8 @@ import edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherExtractionH
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.krad.document.Document;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.document.Document;
 
 /**
  * Checks warnings and prompt conditions for dv document.

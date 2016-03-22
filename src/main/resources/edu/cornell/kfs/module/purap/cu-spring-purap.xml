@@ -212,10 +212,11 @@
 		<property name="vendorService" ref="vendorService" />
 		<property name="mimeTypeProperties" ref="mimeTypeProperties" />
 	</bean>
-    
-    <bean id="purchaseOrderDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPurchaseOrderDaoOjb" />
- 	<bean id="purchaseOrderService" parent="purchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchaseOrderServiceImpl" />
- 	<bean id="relatedDocumentDerivedRoleTypeService" parent="relatedDocumentDerivedRoleTypeService-parentBean" class="edu.cornell.kfs.module.purap.identity.CuRelatedDocumentDerivedRoleTypeServiceImpl" />
+
+	<bean id="autoClosePurchaseOrderService" parent="autoClosePurchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.batch.service.impl.CuAutoClosePurchaseOrderServiceImpl" />
+	<bean id="purchaseOrderDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPurchaseOrderDaoOjb" />
+	<bean id="purchaseOrderService" parent="purchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchaseOrderServiceImpl" />
+	<bean id="relatedDocumentDerivedRoleTypeService" parent="relatedDocumentDerivedRoleTypeService-parentBean" class="edu.cornell.kfs.module.purap.identity.CuRelatedDocumentDerivedRoleTypeServiceImpl" />
     <bean id="receivingService" parent="receivingService-parentBean"  class="edu.cornell.kfs.module.purap.document.service.impl.CuReceivingServiceImpl" />
     <bean id="electronicInvoiceHelperService" parent="electronicInvoiceHelperService-parentBean"  class="edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceHelperServiceImpl"/>
     <bean id="electronicInvoiceMatchingService" parent="electronicInvoiceMatchingService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceMatchingServiceImpl" />

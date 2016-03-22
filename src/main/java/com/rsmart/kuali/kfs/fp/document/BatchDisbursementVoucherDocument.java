@@ -25,7 +25,7 @@ import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.web.format.BooleanFormatter;
-import org.kuali.rice.krad.bo.Attachment;
+import org.kuali.kfs.krad.bo.Attachment;
 
 
 /**

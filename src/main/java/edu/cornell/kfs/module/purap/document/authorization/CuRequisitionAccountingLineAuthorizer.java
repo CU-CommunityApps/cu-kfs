@@ -34,12 +34,12 @@ public class CuRequisitionAccountingLineAuthorizer extends RequisitionAccounting
     }
         
     @Override
-    public boolean hasEditPermissionOnAccountingLine(AccountingDocument accountingDocument, AccountingLine accountingLine, String accountingLineCollectionProperty, Person currentUser, boolean pageIsEditable) {
+    public boolean hasEditPermissionOnAccountingLine(AccountingDocument accountingDocument, AccountingLine accountingLine, String accountingLineCollectionProperty, Person currentUser, boolean pageIsEditable, Set<String> currentNodes) {
             WorkflowDocument workflowDocument = accountingDocument.getDocumentHeader().getWorkflowDocument();            
             if (workflowDocument.isEnroute() && SpringContext.getBean(CuPurapAccountingService.class).isFiscalOfficersForAllAcctLines((RequisitionDocument)accountingDocument) ) {
                     return true;
             }
-            return super.hasEditPermissionOnAccountingLine(accountingDocument, accountingLine, accountingLineCollectionProperty, currentUser, pageIsEditable);
+            return super.hasEditPermissionOnAccountingLine(accountingDocument, accountingLine, accountingLineCollectionProperty, currentUser, pageIsEditable, currentNodes);
     }
 
 }

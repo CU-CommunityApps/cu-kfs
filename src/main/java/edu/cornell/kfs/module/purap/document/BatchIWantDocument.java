@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.web.format.BooleanFormatter;
-import org.kuali.rice.krad.bo.Attachment;
+import org.kuali.kfs.krad.bo.Attachment;
 
 import edu.cornell.kfs.module.purap.businessobject.BatchIWantAttachment;
 import edu.cornell.kfs.module.purap.businessobject.BatchIWantNote;

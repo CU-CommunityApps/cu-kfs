@@ -2,7 +2,7 @@ package edu.cornell.kfs.fp.businessobject;
 
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 public class ProcurementCardSummary extends PersistableBusinessObjectBase{
     protected String cardHolderAccountNumber;

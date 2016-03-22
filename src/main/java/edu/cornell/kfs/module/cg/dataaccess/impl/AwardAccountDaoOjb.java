@@ -12,11 +12,10 @@ import edu.cornell.kfs.module.cg.dataaccess.AwardAccountDao;
 public class AwardAccountDaoOjb extends PlatformAwareDaoBaseOjb implements AwardAccountDao {
 
 	/**
-	 * @see edu.cornell.kfs.module.cg.dataaccess.AwardAccountDao#isAccountUsedOnAnotherAward(java.lang.String,
-	 *      java.lang.String, java.lang.Long)
+	 * @see edu.cornell.kfs.module.cg.dataaccess.AwardAccountDao#isAccountUsedOnAnotherAward(String, String, String)
 	 */
 	@Override
-	public boolean isAccountUsedOnAnotherAward(String chart, String account,Long proposalNumber) {
+	public boolean isAccountUsedOnAnotherAward(String chart, String account, String proposalNumber) {
 		Criteria criteria = new Criteria();
 
 		criteria.addNotEqualTo(KFSPropertyConstants.PROPOSAL_NUMBER,proposalNumber);

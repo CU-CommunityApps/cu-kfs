@@ -26,7 +26,7 @@ import edu.cornell.kfs.fp.document.YearEndJournalVoucherDocument;
 import org.kuali.kfs.sys.document.validation.GenericValidation;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.GlobalVariables;
 
 /**
  * Validation for Year End Journal Voucher, which checks that the accounting lines on the document, with all of

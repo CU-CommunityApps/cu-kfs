@@ -11,7 +11,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.metadata.FieldDescriptor;
-import org.kuali.rice.krad.service.impl.PersistenceServiceStructureImplBase;
+import org.kuali.kfs.krad.service.impl.PersistenceServiceStructureImplBase;
 
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants;
 import edu.cornell.kfs.tax.batch.TaxDataField;
