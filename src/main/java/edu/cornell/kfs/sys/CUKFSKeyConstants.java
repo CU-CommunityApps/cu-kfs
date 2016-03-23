@@ -160,7 +160,4 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     // KFSPTS-4905
     public static final String ERROR_CSACCOUNT_CONTINUATION_ACCOUNT_CLOSED = "error.csAccount.continuationAccount.closed";
     public static final String WARNING_CSACCOUNT_CONTINUATION_ACCOUNT_USED = "warning.csAccount.continuationAccount.used";
-
-    // KFSPTS-4792
-    public static final String ERROR_DOCUMENT_GLB_MAINT_ICR_ACCOUNT_TOTAL_NOT_100_PERCENT = "error.document.global.indirectCostRecoveryAccounts.totalNot100Percent";
 }
