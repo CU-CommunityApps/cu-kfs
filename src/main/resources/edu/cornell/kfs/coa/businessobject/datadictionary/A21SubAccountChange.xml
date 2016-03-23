@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+
+  <bean id="A21SubAccountChange" parent="A21SubAccountChange-parentBean"/>
+
+  <bean id="A21SubAccountChange-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.A21SubAccountChange"/>
+    <property name="titleAttribute" value="A21SubAccountChangeNumber"/>
+    <property name="objectLabel" value="A21 Sub-Account"/>
+    <property name="attributes">
+      <list>
+        <ref bean="A21SubAccountChange-documentNumber"/>
+        <ref bean="A21SubAccountChange-indirectCostRecoveryTypeCode"/>
+        <ref bean="A21SubAccountChange-financialIcrSeriesIdentifier"/>
+        <ref bean="A21SubAccountChange-offCampusCode"/>
+        <ref bean="A21SubAccountChange-costShareChartOfAccountCode"/>
+        <ref bean="A21SubAccountChange-costShareSourceAccountNumber"/>
+        <ref bean="A21SubAccountChange-costShareSourceSubAccountNumber"/>
+      </list>
+    </property>
+  </bean>
+
+<!-- Attribute Definitions -->
+  <bean id="A21SubAccountChange-documentNumber" parent="A21SubAccountChange-documentNumber-parentBean" />
+  <bean id="A21SubAccountChange-documentNumber-parentBean" abstract="true"
+		parent="DocumentHeader-documentNumber" />
+  
+  <bean id="A21SubAccountChange-indirectCostRecoveryTypeCode" parent="A21SubAccountChange-indirectCostRecoveryTypeCode-parentBean"/>
+  <bean id="A21SubAccountChange-indirectCostRecoveryTypeCode-parentBean" abstract="true" parent="IndirectCostRecoveryType-code">
+    <property name="name" value="indirectCostRecoveryTypeCode"/>
+  </bean>
+  
+  <bean id="A21SubAccountChange-financialIcrSeriesIdentifier" parent="A21SubAccountChange-financialIcrSeriesIdentifier-parentBean"/>
+  <bean id="A21SubAccountChange-financialIcrSeriesIdentifier-parentBean" abstract="true" parent="IndirectCostRecoveryRate-financialIcrSeriesIdentifier">
+    <property name="name" value="financialIcrSeriesIdentifier"/>
+    <property name="label" value="Indirect Cost Rate Id"/>
+  </bean>
+  
+  <bean id="A21SubAccountChange-offCampusCode" parent="A21SubAccountChange-offCampusCode-parentBean"/>
+  <bean id="A21SubAccountChange-offCampusCode-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
+    <property name="name" value="offCampusCode"/>
+    <property name="label" value="Off Campus Indicator"/>
+    <property name="shortLabel" value="Off Campus"/>
+  </bean>
+
+  <bean id="A21SubAccountChange-costShareChartOfAccountCode" parent="A21SubAccountChange-costShareChartOfAccountCode-parentBean"/>
+  <bean id="A21SubAccountChange-costShareChartOfAccountCode-parentBean" abstract="true" parent="ChartAttribute-SelectControl">
+    <property name="name" value="costShareChartOfAccountCode"/>
+    <property name="label" value="Cost Sharing Chart of Accounts Code"/>
+    <property name="shortLabel" value="Cost Sharting Chart Code"/>
+  </bean>
+
+  <bean id="A21SubAccountChange-costShareSourceAccountNumber" parent="A21SubAccountChange-costShareSourceAccountNumber-parentBean"/>
+  <bean id="A21SubAccountChange-costShareSourceAccountNumber-parentBean" abstract="true" parent="Account-accountNumber">
+    <property name="name" value="costShareSourceAccountNumber"/>
+    <property name="label" value="Cost Sharing Account Number"/>
+    <property name="shortLabel" value="Cost Sharing Account"/>
+  </bean>
+
+  <bean id="A21SubAccountChange-costShareSourceSubAccountNumber" parent="A21SubAccountChange-costShareSourceSubAccountNumber-parentBean"/>
+  <bean id="A21SubAccountChange-costShareSourceSubAccountNumber-parentBean" abstract="true" parent="SubAccount-subAccountNumber">
+    <property name="name" value="costShareSourceSubAccountNumber"/>
+    <property name="label" value="Cost Sharing Sub-Account Number"/>
+    <property name="shortLabel" value="Cost Sharing Sub-Account"/>
+  </bean>
+</beans>

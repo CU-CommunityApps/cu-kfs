@@ -163,4 +163,6 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
 
     public static final String MESSAGE_DV_PAYEE_INVALID_PAYMENT_TYPE = "message.dv.payee.invalid.payment.type";
 
+    // KFSPTS-4792   
+    public static final String ERROR_DOCUMENT_GLB_MAINT_ICR_ACCOUNT_TOTAL_NOT_100_PERCENT = "error.document.global.indirectCostRecoveryAccounts.totalNot100Percent";
 }
