@@ -115,66 +115,26 @@
 
     <!--
         File format for batch upload of transaction overrides via a modified raw transaction row file.
-        NOTE: If the raw transaction row output formatting is updated, the start/end values on here will need to be updated accordingly.
      -->
 
-    <bean id="bulkTransactionOverrideFileType" parent="FlatFileParser" class="edu.cornell.kfs.tax.batch.TransactionOverrideParser">
-        <property name="flatFileSpecification">
-            <bean parent="FixedWidthFlatFileSpecification">
-                <property name="objectSpecifications">
-                    <list>
-                        <!-- This specification just reads the file header, and uses a transient BO for property-setting convenience. -->
-                        <bean parent="FlatFilePrefixObjectSpecification" p:linePrefix="Transaction_Detail_ID"
-                                p:businessObjectClass="edu.cornell.kfs.tax.businessobject.TransactionOverrideHeader">
-                            <property name="parseProperties">
-                                <list>
-                                    <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="header" p:start="0" p:end="2854" />
-                                </list>
-                            </property>
-                        </bean>
-                        <!-- This specification reads the actual overrides. -->
-                        <bean parent="FlatFilePrefixObjectSpecification" p:businessObjectClass="edu.cornell.kfs.tax.businessobject.TransactionOverride">
-                            <!--
-                                NOTE: This specification temporarily stores the 1099 and 1042S boxes in the "taxType" and "boxNumber"
-                                properties, respectively. The properties will be set to the correct final values by the processing.
-                                
-                                We also insert the whole line into "objectId" for easy retrieval, in case errors are encountered and
-                                we need to include it in an error file.
-                             -->
-                            <property name="parseProperties">
-                                <list>
-                                    <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="universityDate" p:start="2271" p:end="2281"
-                                            p:formatterClass="org.kuali.kfs.sys.businessobject.format.BatchDateFormatter" p:dateFormat="yyyy-MM-dd" />
-                                    <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="documentNumber"
-                                            p:start="53" p:end="67" p:rightTrim="true" />
-                                    <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="financialDocumentLineNumber"
-                                            p:start="77" p:end="92" p:formatterClass="org.kuali.rice.core.web.format.IntegerFormatter" p:rightTrim="true" />
-                                    <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="taxType"
-                                            p:start="2779" p:end="2787" p:rightTrim="true" />
-                                    <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="boxNumber"
-                                            p:start="2808" p:end="2818" p:rightTrim="true" />
-                                    <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="objectId" p:start="0" p:end="2854" />
-                                </list>
-                            </property>
-                        </bean>
-                    </list>
-                </property>
-                <property name="defaultBusinessObjectClass" value="edu.cornell.kfs.tax.businessobject.TransactionOverride" />
-            </bean>
-        </property>
+    <bean id="bulkTransactionOverrideFileType" parent="bulkTransactionOverrideFileType-parentBean" />
+    <bean id="bulkTransactionOverrideFileType-parentBean" abstract="true" class="edu.cornell.kfs.tax.batch.TransactionOverrideCsvBatchInputFileType">
         <property name="directoryPath">
             <value>${staging.directory}/tax</value>
         </property>
         <property name="fileExtension">
             <value>txt</value>
         </property>
-        <property name="fileNamePrefix" value="taxoverride" />
-        <property name="fileTypeIdentifier" value="bulkTransactionOverrideFileType" />
-        <property name="titleKey" value="message.batchUpload.title.transactionOverride" />
-        <property name="processor" ref="transactionOverrideProcessor" />
-    </bean>
-
-    <bean id="transactionOverrideProcessor" class="edu.cornell.kfs.tax.batch.TransactionOverrideProcessor">
+        <property name="csvEnumClass">
+            <value>edu.cornell.kfs.tax.batch.TransactionOverrideCsv</value>
+        </property>
+        <property name="dataDictionaryService" ref="dataDictionaryService" />
+        <property name="criteriaLookupService" ref="criteriaLookupService" />
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="dateTimeService" ref="dateTimeService" />
+        <property name="dateFormatter">
+            <bean class="org.kuali.kfs.sys.businessobject.format.BatchDateFormatter" p:dateFormat="yyyy-MM-dd" />
+        </property>
     </bean>
 
 </beans>
