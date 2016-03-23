@@ -14,6 +14,7 @@ public final class CUTaxConstants {
 
     public static final String TAX_OUTPUT_DEFINITION_FILE_TYPE_IDENTIFIER = "taxOutputDefinitionFileType";
     public static final String TAX_DATA_DEFINITION_FILE_TYPE_IDENTIFIER = "taxDataDefinitionFileType";
+    public static final String TRANSACTION_OVERRIDE_FILE_TYPE_IDENTIFIER = "transactionOverrideCSVInputFileType";
 
     public static final String RECORD_SOURCE_KFS = "KFS";
     public static final String TAX_TYPE_1099 = "1099";
