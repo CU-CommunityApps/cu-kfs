@@ -5,14 +5,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.fp.businessobject.DisbursementPayee;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
-import org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService;
-import org.kuali.kfs.fp.document.service.DisbursementVoucherPaymentReasonService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTaxService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
@@ -29,7 +25,6 @@ import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.core.api.parameter.ParameterEvaluator;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
@@ -87,8 +82,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     protected String tripId;
 
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
-    private static DisbursementVoucherPayeeService disbursementVoucherPayeeService;
-    private static DisbursementVoucherTaxService disbursementVoucherTaxService;
+
 
     public CuDisbursementVoucherDocument() {
         super();
@@ -97,7 +91,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
     /**
      * Overridden to interact with the Legacy Travel service
-     * @see <a href="https://jira.cornell.edu/browse/KFSPTS-2715">https://jira.cornell.edu/browse/KFSPTS-2715</a>
+     * @see https://jira.cornell.edu/browse/KFSPTS-2715
      */
     @Override
     public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
@@ -540,20 +534,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         return paymentMethodGeneralLedgerPendingEntryService;
     }
 
-    protected DisbursementVoucherTaxService getDisbursementVoucherTaxService() {
-        if ( disbursementVoucherTaxService == null ) {
-            disbursementVoucherTaxService = SpringContext.getBean(DisbursementVoucherTaxService.class);
-        }
-        return disbursementVoucherTaxService;
-    }
-
-    protected DisbursementVoucherPayeeService getDisbursementVoucherPayeeService() {
-        if ( disbursementVoucherPayeeService == null ) {
-            disbursementVoucherPayeeService = SpringContext.getBean(DisbursementVoucherPayeeService.class);
-        }
-        return disbursementVoucherPayeeService;
-    }
-
     public CuDisbursementVoucherPayeeDetail getDvPayeeDetail() {
         return dvPayeeDetail;
     }
@@ -605,45 +585,28 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         setTripId(null);
 
         // clear nra
-        getDisbursementVoucherTaxService().clearNRATaxLines(this);
+        SpringContext.getBean(DisbursementVoucherTaxService.class).clearNRATaxLines(this);
         setDvNonResidentAlienTax(new DisbursementVoucherNonResidentAlienTax());
 
         // clear waive wire
         getWireTransfer().setWireTransferFeeWaiverIndicator(false);
-        clearInvalidPayee();
 
+        // check vendor id number to see if still valid, if not, clear dvPayeeDetail; otherwise, use the current dvPayeeDetail as is
+        if (!StringUtils.isBlank(getDvPayeeDetail().getDisbVchrPayeeIdNumber())) {
+            VendorDetail vendorDetail = getVendorService().getVendorDetail(dvPayeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger(), dvPayeeDetail.getDisbVchrVendorDetailAssignedIdNumberAsInteger());
+            if (vendorDetail == null) {
+                dvPayeeDetail = new CuDisbursementVoucherPayeeDetail();;
+                getDvPayeeDetail().setDisbVchrPayeeIdNumber(StringUtils.EMPTY);
+                ((CuDisbursementVoucherPayeeDetailExtension)getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(StringUtils.EMPTY);
+                KNSGlobalVariables.getMessageList().add(KFSKeyConstants.WARNING_DV_PAYEE_NONEXISTANT_CLEARED);
+            }
+        }
 
         // this copied DV has not been extracted
         this.extractDate = null;
         this.paidDate = null;
         this.cancelDate = null;
         getFinancialSystemDocumentHeader().setFinancialDocumentStatusCode(KFSConstants.DocumentStatusCodes.INITIATED);
-    }
-
-    protected void clearInvalidPayee() {
-        // check vendor id number to see if still valid, if not, clear dvPayeeDetail; otherwise, use the current dvPayeeDetail as is
-        if (!StringUtils.isBlank(getDvPayeeDetail().getDisbVchrPayeeIdNumber())) {
-            VendorDetail vendorDetail = getVendorService().getVendorDetail(dvPayeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger(), dvPayeeDetail.getDisbVchrVendorDetailAssignedIdNumberAsInteger());
-            if (vendorDetail == null) {
-                clearPayee(KFSKeyConstants.WARNING_DV_PAYEE_NONEXISTANT_CLEARED);
-            } else {
-                DisbursementPayee payee = getDisbursementVoucherPayeeService().getPayeeFromVendor(vendorDetail);
-                if (!getDvPymentReasonService().isPayeeQualifiedForPayment(payee, dvPayeeDetail.getDisbVchrPaymentReasonCode())) {
-                    clearPayee(CUKFSKeyConstants.MESSAGE_DV_PAYEE_INVALID_PAYMENT_TYPE);
-                }
-            }
-        }
-    }
-
-    protected void clearPayee(String messageKey) {
-        dvPayeeDetail = new CuDisbursementVoucherPayeeDetail();
-        getDvPayeeDetail().setDisbVchrPayeeIdNumber(StringUtils.EMPTY);
-        clearDvPayeeIdType();
-        KNSGlobalVariables.getMessageList().add(messageKey);
-    }
-
-    protected void clearDvPayeeIdType() {
-        ((CuDisbursementVoucherPayeeDetailExtension)getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(StringUtils.EMPTY);
     }
 
     public void initiateDocument() {
@@ -735,177 +698,157 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         return true;
     }
 
-    /**
-     * KFSPTS-764
-     * Returns true when the wire charge amount is found to be zero dollars based on the bank country code
-     * otherwise, returns false.
-     *
-     * @param wireCharge
-     * @return true when wire charge for DV bank is zero dollars.
-     */
-   private boolean isZeroDollarWireCharge(WireCharge wireCharge) {
+        /**
+         * KFSPTS-764
+         * Returns true when the wire charge amount is found to be zero dollars based on the bank country code
+         * otherwise, returns false.
+         *
+         * @param wireCharge
+         * @return true when wire charge for DV bank is zero dollars.
+         */
+       private boolean isZeroDollarWireCharge(WireCharge wireCharge) {
 
-        if ( (KFSConstants.COUNTRY_CODE_UNITED_STATES.equals(getWireTransfer().getBankCountryCode()) && wireCharge.getDomesticChargeAmt().isZero()) ||
-             (!KFSConstants.COUNTRY_CODE_UNITED_STATES.equals(getWireTransfer().getBankCountryCode()) && wireCharge.getForeignChargeAmt().isZero()) ){
-            //DV is for a US bank and wire charge value is zero dollars OR DV is for a foreign bank and wire charge is zero dollars.
-            return true;
+            if ( (KFSConstants.COUNTRY_CODE_UNITED_STATES.equals(getWireTransfer().getBankCountryCode()) && wireCharge.getDomesticChargeAmt().isZero()) ||
+                 (!KFSConstants.COUNTRY_CODE_UNITED_STATES.equals(getWireTransfer().getBankCountryCode()) && wireCharge.getForeignChargeAmt().isZero()) ){
+                //DV is for a US bank and wire charge value is zero dollars OR DV is for a foreign bank and wire charge is zero dollars.
+                return true;
+            }
+            return false;
         }
-        return false;
-    }
 
-    @Override
-    public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
-        if (nodeName.equals(CuDisbursementVoucherDocument.DOCUMENT_REQUIRES_AWARD_REVIEW_SPLIT))
-            return isCAndGReviewRequired();
-        if (nodeName.equals(CuDisbursementVoucherDocument.DOCUMENT_REQUIRES_CAMPUS_REVIEW_SPLIT))
-            return isCampusReviewRequired();
-        if (nodeName.equals(DisbursementVoucherDocument.DOCUMENT_REQUIRES_TAX_REVIEW_SPLIT)) {
-            return isTaxReviewRequired();
+        @Override
+        public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
+            if (nodeName.equals(CuDisbursementVoucherDocument.DOCUMENT_REQUIRES_AWARD_REVIEW_SPLIT))
+                return isCAndGReviewRequired();
+            if (nodeName.equals(CuDisbursementVoucherDocument.DOCUMENT_REQUIRES_CAMPUS_REVIEW_SPLIT))
+                return isCampusReviewRequired();
+            if (nodeName.equals(DisbursementVoucherDocument.DOCUMENT_REQUIRES_TAX_REVIEW_SPLIT)) {
+                return isTaxReviewRequired();
+            }
+            if (nodeName.equals(DisbursementVoucherDocument.DOCUMENT_REQUIRES_TRAVEL_REVIEW_SPLIT)) {
+                return isTravelReviewRequired();
+            }
+            if (nodeName.equals(DOCUMENT_REQUIRES_SEPARATION_OF_DUTIES)) {
+                return isSeparationOfDutiesReviewRequired();
+            }
+            throw new UnsupportedOperationException("Cannot answer split question for this node you call \""+nodeName+"\"");
         }
-        if (nodeName.equals(DisbursementVoucherDocument.DOCUMENT_REQUIRES_TRAVEL_REVIEW_SPLIT)) {
-            return isTravelReviewRequired();
-        }
-        if (nodeName.equals(DOCUMENT_REQUIRES_SEPARATION_OF_DUTIES)) {
-            return isSeparationOfDutiesReviewRequired();
-        }
-        throw new UnsupportedOperationException("Cannot answer split question for this node you call \""+nodeName+"\"");
-    }
 
-    public boolean isTravelReviewRequired() {
-        List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;
+        public boolean isTravelReviewRequired() {
+            List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;
 
-        for (AccountingLine alb : theList )
-        {
-            ParameterEvaluator objectCodes = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_TRAVEL_REVIEW, alb.getFinancialObjectCode());
-            if (objectCodes.evaluationSucceeds())
+            for (AccountingLine alb : theList )
             {
-                LOG.info("Object Code " + alb.getFinancialObjectCode() + " requires this document to undergo Travel review.");
+                ParameterEvaluator objectCodes = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_TRAVEL_REVIEW, alb.getFinancialObjectCode());
+                if (objectCodes.evaluationSucceeds())
+                {
+                    LOG.info("Object Code " + alb.getFinancialObjectCode() + " requires this document to undergo Travel review.");
+                    return true;
+                }
+            }
+
+
+            boolean overDollarThreshold = false;
+            String dollarThreshold = getParameterService().getParameterValueAsString("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_TRAVEL_REVIEW);
+            KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
+            if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
+                overDollarThreshold = true;
+            }
+
+
+            boolean paymentReasonCodeIsNorP = false;
+            String paymentReasonCode = this.getDvPayeeDetail().getDisbVchrPaymentReasonCode();
+            paymentReasonCodeIsNorP = this.getDvPymentReasonService().isPrepaidTravelPaymentReason(paymentReasonCode) || this.getDvPymentReasonService().isNonEmployeeTravelPaymentReason(paymentReasonCode);
+
+
+            return (this.getDvPymentReasonService().isPrepaidTravelPaymentReason(paymentReasonCode) || this.getDvPymentReasonService().isNonEmployeeTravelPaymentReason(paymentReasonCode) && overDollarThreshold);
+            }
+
+        protected boolean isCAndGReviewRequired() {
+
+            String awardThreshold = getParameterService().getParameterValueAsString("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW);
+            KualiDecimal dollarThresholdDecimal = new KualiDecimal(awardThreshold);
+            if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
                 return true;
             }
-        }
 
-
-        boolean overDollarThreshold = false;
-        String dollarThreshold = getParameterService().getParameterValueAsString("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_TRAVEL_REVIEW);
-        KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
-        if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
-            overDollarThreshold = true;
-        }
-
-
-        boolean paymentReasonCodeIsNorP = false;
-        String paymentReasonCode = this.getDvPayeeDetail().getDisbVchrPaymentReasonCode();
-        paymentReasonCodeIsNorP = this.getDvPymentReasonService().isPrepaidTravelPaymentReason(paymentReasonCode) || this.getDvPymentReasonService().isNonEmployeeTravelPaymentReason(paymentReasonCode);
-
-
-        return (this.getDvPymentReasonService().isPrepaidTravelPaymentReason(paymentReasonCode) || this.getDvPymentReasonService().isNonEmployeeTravelPaymentReason(paymentReasonCode) && overDollarThreshold);
-        }
-
-    protected boolean isCAndGReviewRequired() {
-
-        String awardThreshold = getParameterService().getParameterValueAsString("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW);
-        KualiDecimal dollarThresholdDecimal = new KualiDecimal(awardThreshold);
-        if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
-            return true;
-        }
-
-        List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;
-        for (AccountingLine alb : theList )
-        {
-            ParameterEvaluator objectCodes = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_AWARD_REVIEW, alb.getFinancialObjectCode());
-            if (objectCodes.evaluationSucceeds()) {
-                LOG.info("Object Code " + alb.getFinancialObjectCode() + " requires this document to undergo Award review.");
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    protected boolean isCampusReviewRequired() {
-
-        List<ActionTakenValue> actions = RouteContext.getCurrentRouteContext().getDocument().getActionsTaken();
-        List<String> people = new ArrayList<String>();
-        for(ActionTakenValue atv: actions) {
-            if( !people.contains(atv.getPrincipalId())) {
-                people.add(atv.getPrincipalId());
-            }
-        }
-        if (people.size()<2)
-        {
-            return true;
-        }
-
-        List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;
-
-        for (AccountingLine alb : theList )
-        {
-            ParameterEvaluator objectCodes = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_CAMPUS_REVIEW, alb.getFinancialObjectCode());
-            if (objectCodes.evaluationSucceeds())
+            List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;
+            for (AccountingLine alb : theList )
             {
-                LOG.info("Object Code " + alb.getFinancialObjectCode() + " requires this document to undergo Campus review.");
+                ParameterEvaluator objectCodes = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_AWARD_REVIEW, alb.getFinancialObjectCode());
+                if (objectCodes.evaluationSucceeds()) {
+                    LOG.info("Object Code " + alb.getFinancialObjectCode() + " requires this document to undergo Award review.");
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        protected boolean isCampusReviewRequired() {
+
+            List<ActionTakenValue> actions = RouteContext.getCurrentRouteContext().getDocument().getActionsTaken();
+            List<String> people = new ArrayList<String>();
+            for(ActionTakenValue atv: actions) {
+                if( !people.contains(atv.getPrincipalId())) {
+                    people.add(atv.getPrincipalId());
+                }
+            }
+            if (people.size()<2)
+            {
                 return true;
             }
+
+            List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;
+
+            for (AccountingLine alb : theList )
+            {
+                ParameterEvaluator objectCodes = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_CAMPUS_REVIEW, alb.getFinancialObjectCode());
+                if (objectCodes.evaluationSucceeds())
+                {
+                    LOG.info("Object Code " + alb.getFinancialObjectCode() + " requires this document to undergo Campus review.");
+                    return true;
+                }
+            }
+
+            ParameterEvaluator paymentReasons = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", PAYMENT_REASONS_REQUIRING_CAMPUS_REVIEW, this.dvPayeeDetail.getDisbVchrPaymentReasonCode());
+            if (paymentReasons.evaluationSucceeds()) {
+                return true;
+            }
+
+            String dollarThreshold = getParameterService().getParameterValueAsString("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_CAMPUS_REVIEW);
+            KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
+            if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
+                return true;
+            }
+
+            return false;
         }
 
-        ParameterEvaluator paymentReasons = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", PAYMENT_REASONS_REQUIRING_CAMPUS_REVIEW, this.dvPayeeDetail.getDisbVchrPaymentReasonCode());
-        if (paymentReasons.evaluationSucceeds()) {
-            return true;
+
+        public void setDvPayeeDetail(CuDisbursementVoucherPayeeDetail dvPayeeDetail) {
+            this.dvPayeeDetail = dvPayeeDetail;
         }
 
-        String dollarThreshold = getParameterService().getParameterValueAsString("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_CAMPUS_REVIEW);
-        KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
-        if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
-            return true;
+        public String getTripAssociationStatusCode() {
+            return tripAssociationStatusCode;
         }
 
-        return false;
-    }
+
+        public void setTripAssociationStatusCode(String tripAssociationStatusCode) {
+            this.tripAssociationStatusCode = tripAssociationStatusCode;
+        }
 
 
-    public void setDvPayeeDetail(CuDisbursementVoucherPayeeDetail dvPayeeDetail) {
-        this.dvPayeeDetail = dvPayeeDetail;
-    }
-
-    public String getTripAssociationStatusCode() {
-        return tripAssociationStatusCode;
-    }
+        public String getTripId() {
+            return tripId;
+        }
 
 
-    public void setTripAssociationStatusCode(String tripAssociationStatusCode) {
-        this.tripAssociationStatusCode = tripAssociationStatusCode;
-    }
+        public void setTripId(String tripId) {
+            this.tripId = tripId;
+        }
 
-
-    public String getTripId() {
-        return tripId;
-    }
-
-
-    public void setTripId(String tripId) {
-        this.tripId = tripId;
-    }
-
-
-    protected static void setVendorService(VendorService vendorService) {
-        CuDisbursementVoucherDocument.vendorService = vendorService;
-    }
-
-    public static void setPaymentMethodGeneralLedgerPendingEntryService(CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService) {
-        CuDisbursementVoucherDocument.paymentMethodGeneralLedgerPendingEntryService = paymentMethodGeneralLedgerPendingEntryService;
-    }
-
-    public static void setDisbursementVoucherTaxService(DisbursementVoucherTaxService disbursementVoucherTaxService) {
-        CuDisbursementVoucherDocument.disbursementVoucherTaxService = disbursementVoucherTaxService;
-    }
-
-    public static void setDisbursementVoucherPayeeService(DisbursementVoucherPayeeService disbursementVoucherPayeeService) {
-        CuDisbursementVoucherDocument.disbursementVoucherPayeeService = disbursementVoucherPayeeService;
-    }
-
-    public static void setDvPymentReasonService(DisbursementVoucherPaymentReasonService disbursementVoucherPaymentReasonService) {
-        CuDisbursementVoucherDocument.dvPymentReasonService = disbursementVoucherPaymentReasonService;
-    }
 
 }
 
