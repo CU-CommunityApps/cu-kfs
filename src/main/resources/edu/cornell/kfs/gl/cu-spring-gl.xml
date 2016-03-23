@@ -338,5 +338,7 @@
 		<property name="persistenceStructureService">
 			<ref bean="persistenceStructureService" />
 		</property>
-	</bean> 	 		     
+	</bean> 	 
+	
+	<bean id="glPostExpenditureTransaction" parent="glPostExpenditureTransaction-parentBean" class="edu.cornell.kfs.gl.batch.service.impl.CuPostExpenditureTransaction"/>	     
 </beans>
