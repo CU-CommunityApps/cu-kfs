@@ -25,6 +25,10 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
  * sent to a file that is named according to the tax type and report year.
  * See the static nested classes for tax-type-specific implementations.
  * 
+ * <p>This implementation will automatically replace tab characters with spaces
+ * in the various text-based fields, to support printing the data to a
+ * tab-delimited text file.</p>
+ * 
  * <p>The following DERIVED-type "pieces" will be populated by this implementation:</p>
  * 
  * <ul>
@@ -50,6 +54,7 @@ abstract class TransactionRowPrintProcessor<T extends TransactionDetailSummary> 
     private DerivedFieldStringPiece dvCheckStubTextP;
 
     private ResultSet rsTransactionDetail;
+    private String tempStringValue;
     private BigDecimal tempBigDecimalValue;
     private java.sql.Date tempDateValue;
 
@@ -301,6 +306,8 @@ abstract class TransactionRowPrintProcessor<T extends TransactionDetailSummary> 
 
     /**
      * A RecordPiece representing a String column on a transaction detail row.
+     * Replaces tab characters with spaces, due to the output file depending on
+     * tab characters as delimiters.
      */
     private final class TransactionDetailStringPiece extends IndexedColumnRecordPiece {
         
@@ -310,7 +317,8 @@ abstract class TransactionRowPrintProcessor<T extends TransactionDetailSummary> 
         
         @Override
         String getValue() throws SQLException {
-            return rsTransactionDetail.getString(columnIndex);
+            tempStringValue = rsTransactionDetail.getString(columnIndex);
+            return (tempStringValue != null) ? tempStringValue.replace('\t', ' ') : null;
         }
     }
 
