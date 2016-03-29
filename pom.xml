@@ -141,6 +141,41 @@
         <updatePolicy>always</updatePolicy>
       </snapshots>
     </repository>
+      <repository>
+          <id>kualico.nexus.financials.releases</id>
+          <name>KualiCo Nexus Financials</name>
+          <url>https://nexus.kuali.co/nexus/content/repositories/financials-repos/</url>
+          <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>always</updatePolicy>
+          </snapshots>
+          <releases>
+              <enabled>true</enabled>
+          </releases>
+      </repository>
+      <repository>
+          <id>kualico.nexus.financials.snapshots</id>
+          <name>KualiCo Nexus Snapshots Financials</name>
+          <url>https://nexus.kuali.co/nexus/content/repositories/financials-snapshots/</url>
+          <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>always</updatePolicy>
+          </snapshots>
+          <releases>
+              <enabled>false</enabled>
+          </releases>
+      </repository>
+      <repository>
+          <id>foundation.nexus</id>
+          <name>Kuali Foundation Nexus Group</name>
+          <url>http://nexus.kuali.org/content/groups/public</url>
+          <snapshots>
+              <enabled>true</enabled>
+          </snapshots>
+          <releases>
+              <enabled>true</enabled>
+          </releases>
+      </repository>
   </repositories>
 
   <dependencies>
