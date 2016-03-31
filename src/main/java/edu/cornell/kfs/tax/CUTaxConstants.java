@@ -31,6 +31,9 @@ public final class CUTaxConstants {
     public static final String TAX_1099_UNKNOWN_BOX_KEY = "???";
     public static final String TAX_1042S_UNKNOWN_BOX_KEY = "????";
     public static final String ANY_OR_NONE_PAYMENT_REASON = "*";
+    public static final String MASKED_VALUE_9_CHARS = "XXXXXXXXX";
+    public static final String MASKED_VALUE_11_CHARS = "XXXXXXXXXXX";
+    public static final String MASKED_VALUE_19_CHARS = "XXXXXXXXXXXXXXXXXXX";
     public static final int INSERT_BATCH_SIZE = 500;
     public static final int TAX_1099_MAX_BUCKET_LENGTH = 3;
 
@@ -70,6 +73,7 @@ public final class CUTaxConstants {
      */
     public static final class CUTaxKeyConstants {
         public static final String TAX_OUTPUT_EIN = "tax.output.ein";
+        public static final String TAX_OUTPUT_SCRUBBED = "tax.output.scrubbed";
         public static final String MESSAGE_BATCH_UPLOAD_TITLE_TAX_OUTPUT_DEFINITION = "message.batchUpload.title.taxOutputDefinition";
         public static final String MESSAGE_BATCH_UPLOAD_TITLE_TAX_DATA_DEFINITION = "message.batchUpload.title.taxDataDefinition";
         public static final String MESSAGE_BATCH_UPLOAD_TITLE_TRANSACTION_OVERRIDE = "message.batchUpload.title.transactionOverride";
