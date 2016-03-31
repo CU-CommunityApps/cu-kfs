@@ -38,6 +38,12 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
  * 
  * <p>Using these derived field types instead of their raw value counterparts is recommended,
  * since they can print a more user-friendly representation of the data.</p>
+ * 
+ * <p>When running in "scrubbed" mode, the following fields will be forcibly masked in the output:</p>
+ * 
+ * <ul>
+ *   <li>ssn (DERIVED field)</li>
+ * </ul>
  */
 abstract class TransactionRowPrintProcessor<T extends TransactionDetailSummary> extends TransactionRowProcessor<T> {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TransactionRowPrintProcessor.class);
@@ -255,6 +261,9 @@ abstract class TransactionRowPrintProcessor<T extends TransactionDetailSummary> 
         Pattern whitespacePattern = Pattern.compile("\\p{Space}");
         EncryptionService encryptionService = CoreApiServiceLocator.getEncryptionService();
         rsTransactionDetail = rs;
+        if (summary.scrubbedOutput) {
+            ssnP.value = CUTaxConstants.MASKED_VALUE_9_CHARS;
+        }
         
         LOG.info("Starting raw transaction row printing to file...");
         
@@ -266,10 +275,12 @@ abstract class TransactionRowPrintProcessor<T extends TransactionDetailSummary> 
         // Print the data for each row to the file.
         while (rsTransactionDetail.next()) {
             // Prepare the tax number.
-            try {
-                ssnP.value = encryptionService.decrypt(rsTransactionDetail.getString(detailRow.vendorTaxNumber.index));
-            } catch (GeneralSecurityException e) {
-                throw new RuntimeException(e);
+            if (!summary.scrubbedOutput) {
+                try {
+                    ssnP.value = encryptionService.decrypt(rsTransactionDetail.getString(detailRow.vendorTaxNumber.index));
+                } catch (GeneralSecurityException e) {
+                    throw new RuntimeException(e);
+                }
             }
             // Prepare the whitespace-replaced-with-spaces DV check stub text.
             dvCheckStubTextP.value = rsTransactionDetail.getString(detailRow.dvCheckStubText.index);

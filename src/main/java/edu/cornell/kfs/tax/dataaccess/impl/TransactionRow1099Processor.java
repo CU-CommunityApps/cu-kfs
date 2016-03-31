@@ -78,6 +78,12 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorRow;
  *   <li>vendorName</li>
  *   <li>parentVendorName</li>
  * </ul>
+ * 
+ * <p>When running in "scrubbed" mode, the following fields will be forcibly masked in the output:</p>
+ * 
+ * <ul>
+ *   <li>ssn (DERIVED field)</li>
+ * </ul>
  */
 public class TransactionRow1099Processor extends TransactionRowProcessor<Transaction1099Summary> {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TransactionRow1099Processor.class);
@@ -595,6 +601,9 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         vendorRow = summary.vendorRow;
         vendorAddressRow = summary.vendorAddressRow;
         docNoteTextField = summary.documentNoteRow.noteText;
+        if (summary.scrubbedOutput) {
+            outputTaxIdP.value = CUTaxConstants.MASKED_VALUE_9_CHARS;
+        }
         
         // Print header.
         resetBuffer(HEADER_BUFFER_INDEX);
@@ -1185,7 +1194,9 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
      */
     private void writeTabLineToFile(Transaction1099Summary summary) throws SQLException, IOException {
         // Setup unencrypted tax ID piece.
-        outputTaxIdP.value = unencryptedTaxId;
+        if (!summary.scrubbedOutput) {
+            outputTaxIdP.value = unencryptedTaxId;
+        }
         
         // Setup tax names. (Even though these are detail fields, they have been updated in the transaction table as part of the 1099 processing.)
         vendorNameP.value = vendorNameForOutput;
