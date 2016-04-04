@@ -39,6 +39,11 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorRow;
  * Base helper class containing numerous constants and immutable sets/maps
  * for processing convenience.
  * 
+ * <p>This class also has a "scrubbedOutput" flag that indicates whether
+ * TransactionRowProcessor implementations should mask any confidential or
+ * potentially-sensitive fields in their output files. The flag is currently
+ * controlled by the "tax.output.scrubbed" config property.</p>
+ * 
  * <p>Since the start date and end date fields are technically mutable,
  * they have been declared private, and copies of them can only be accessed
  * through their getter methods.</p>
@@ -83,6 +88,8 @@ abstract class TransactionDetailSummary {
     final String wireTransferCode;
     // Convenience constant for holding a BigDecimal zero value with the proper scale.
     final BigDecimal zeroAmount;
+    // Convenience constant for the config property indicating whether confidential data needs to be "scrubbed" in the output.
+    final boolean scrubbedOutput;
     
     // The payment date to start at (inclusive). It is expected to be in the same year as the reporting year.
     private final java.sql.Date startDate;
@@ -111,6 +118,7 @@ abstract class TransactionDetailSummary {
         
         // Setup constants obtained from config params.
         this.taxEIN = ConfigContext.getCurrentContextConfig().getProperty(CUTaxKeyConstants.TAX_OUTPUT_EIN);
+        this.scrubbedOutput = ConfigContext.getCurrentContextConfig().getBooleanProperty(CUTaxKeyConstants.TAX_OUTPUT_SCRUBBED, false);
         
         // Setup constants for Foreign Draft and Wire Transfer codes so that we don't need to keep calling the enum values.
         this.foreignDraftCode = PaymentMethod.FOREIGN_DRAFT.getCode();

@@ -70,6 +70,15 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorRow;
  *   <li>stateIncomeTaxWithheldAmount</li>
  *   <li>stateCode</li>
  * </ul>
+ * 
+ * <p>When running in "scrubbed" mode, the following fields will be forcibly masked in the output:</p>
+ * 
+ * <ul>
+ *   <li>ssn (DERIVED field)</li>
+ *   <li>itin (DERIVED field)</li>
+ *   <li>ein (DERIVED field)</li>
+ *   <li>vendorGIIN (VENDOR field)</li>
+ * </ul>
  */
 class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction1042SSummary> {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TransactionRow1042SProcessor.class);
@@ -269,9 +278,10 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
                 throw new IllegalArgumentException("Cannot create piece for DV type");
             
             case VENDOR :
-                // Create a piece that derives its value directly from the vendor ResultSet at runtime.
-                piece = new RecordPiece1042SResultSetDerivedString(name, len,
-                        field.index, CUTaxConstants.VENDOR_DETAIL_INDEX);
+                // Create a piece that derives its value directly from the vendor ResultSet at runtime, or a static masked piece if GIIN and in scrubbed mode.
+                piece = (!summary.scrubbedOutput || field.index != summary.vendorRow.vendorGIIN.index)
+                        ? new RecordPiece1042SResultSetDerivedString(name, len, field.index, CUTaxConstants.VENDOR_DETAIL_INDEX)
+                        : new StaticStringRecordPiece(name, len, CUTaxConstants.MASKED_VALUE_19_CHARS);
                 break;
             
             case VENDOR_US_ADDRESS :
@@ -584,7 +594,7 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
         sitwAmountP.value = summary.zeroAmount;
         
         // Setup values that are not expected to change between each iteration.
-        taxEINValueP.value = summary.taxEIN;
+        taxEINValueP.value = summary.scrubbedOutput ? CUTaxConstants.MASKED_VALUE_9_CHARS : summary.taxEIN;
         stateCodeP.value = summary.stateCode;
         rsDummy = new DummyResultSet();
         detailRow = summary.transactionDetailRow;
@@ -1280,9 +1290,9 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
             if (unencryptedTaxId.charAt(0) == '9'
                     && (unencryptedTaxId.charAt(FOURTH_DIGIT_INDEX) == '7' || unencryptedTaxId.charAt(FOURTH_DIGIT_INDEX) == '8')) {
                 formattedSSNValueP.value = null;
-                formattedITINValueP.value = buildFormattedTaxId(unencryptedTaxId);
+                formattedITINValueP.value = summary.scrubbedOutput ? CUTaxConstants.MASKED_VALUE_11_CHARS : buildFormattedTaxId(unencryptedTaxId);
             } else {
-                formattedSSNValueP.value = buildFormattedTaxId(unencryptedTaxId);
+                formattedSSNValueP.value = summary.scrubbedOutput ? CUTaxConstants.MASKED_VALUE_11_CHARS : buildFormattedTaxId(unencryptedTaxId);
                 formattedITINValueP.value = null;
             }
             
