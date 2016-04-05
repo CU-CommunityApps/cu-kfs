@@ -2,7 +2,7 @@ package edu.cornell.kfs.vnd.businessobject;
 
 import java.sql.Date;
 
-import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
 
 public class CuVendorSupplierDiversityExtension  extends PersistableBusinessObjectExtensionBase {
 

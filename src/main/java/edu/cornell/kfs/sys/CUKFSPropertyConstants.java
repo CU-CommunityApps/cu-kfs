@@ -17,7 +17,7 @@ package edu.cornell.kfs.sys;
 
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.kim.impl.KIMPropertyConstants;
-import org.kuali.rice.krad.util.KRADPropertyConstants;
+import org.kuali.kfs.krad.util.KRADPropertyConstants;
 
 
 /**

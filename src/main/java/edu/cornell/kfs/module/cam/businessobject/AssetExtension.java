@@ -3,7 +3,7 @@
  */
 package edu.cornell.kfs.module.cam.businessobject;
 
-import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
 
 
 /**

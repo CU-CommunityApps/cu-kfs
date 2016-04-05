@@ -2,7 +2,7 @@ package edu.cornell.kfs.vnd.businessobject;
 
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
-import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 public class CuVendorCreditCardMerchant extends PersistableBusinessObjectBase implements MutableInactivatable {
 	

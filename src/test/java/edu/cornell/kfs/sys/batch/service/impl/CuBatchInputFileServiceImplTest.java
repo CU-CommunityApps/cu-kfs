@@ -19,7 +19,7 @@ import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.impl.identity.PersonImpl;
-import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.sys.batch.AccountReversionInputFileType;
 import edu.cornell.kfs.vnd.batch.VendorBatchCsvInputFileType;

@@ -25,12 +25,12 @@ import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorInactiveReason;
-import org.kuali.rice.krad.UserSession;
-import org.kuali.rice.krad.bo.Note;
-import org.kuali.rice.krad.service.BusinessObjectService;
-import org.kuali.rice.krad.service.NoteService;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.UserSession;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.NoteService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.vnd.batch.service.VendorInactivateConvertBatchService;
 import edu.cornell.kfs.vnd.businessobject.VendorInactivateConvertBatch;

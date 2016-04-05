@@ -5,7 +5,7 @@ package edu.cornell.kfs.module.cg.businessobject;
 
 import java.sql.Date;
 
-import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
 
 
 /**

@@ -18,7 +18,7 @@ package com.rsmart.kuali.kfs.fp.batch.service;
 import java.util.Collection;
 
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
-import org.kuali.rice.krad.util.MessageMap;
+import org.kuali.kfs.krad.util.MessageMap;
 
 import com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchFeed;
 import com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchStatus;

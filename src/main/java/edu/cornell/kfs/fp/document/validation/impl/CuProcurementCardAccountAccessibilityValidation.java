@@ -2,7 +2,7 @@ package edu.cornell.kfs.fp.document.validation.impl;
 
 import org.kuali.kfs.fp.document.validation.impl.CapitalAccountingLinesAccessibleValidation;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.GlobalVariables;
 
 /**
  * Custom subclass of CapitalAccountingLinesAccessibleValidation that includes the "newSourceLine"

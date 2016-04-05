@@ -1,6 +1,6 @@
 package edu.cornell.kfs.pdp.businessobject;
 
-import org.kuali.rice.krad.bo.TransientBusinessObjectBase;
+import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
 
 /**
  * Transient BO representing the a parsed line from a Payee ACH Account Extract .csv file.

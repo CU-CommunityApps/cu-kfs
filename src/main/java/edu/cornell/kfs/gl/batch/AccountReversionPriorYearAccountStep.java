@@ -48,7 +48,7 @@ public class AccountReversionPriorYearAccountStep extends AbstractWrappedBatchSt
              * Runs the account reversion process, retrieving parameter, creating the origin entry group for output entries, and
              * generating the reports on the process.
              * @return true if the job completed successfully, false if otherwise
-             * @see org.kuali.kfs.sys.batch.Step#execute(java.lang.String)
+             * @see org.kuali.kfs.kns.bo.Step#execute(java.lang.String)
              */
             public boolean execute() {
                 StopWatch stopWatch = new StopWatch();

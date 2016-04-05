@@ -11,9 +11,9 @@ import org.kuali.kfs.sys.batch.service.SchedulerService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.mail.MailMessage;
-import org.kuali.rice.krad.service.MailService;
+import org.kuali.kfs.krad.service.MailService;
 import org.quartz.JobExecutionContext;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 
 public class CuJobListener extends JobListener  {
 

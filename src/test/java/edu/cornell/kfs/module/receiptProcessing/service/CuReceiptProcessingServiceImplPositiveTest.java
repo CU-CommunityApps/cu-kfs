@@ -11,7 +11,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import java.io.File;
 import java.util.Collection;
 import org.apache.commons.io.FileUtils;
-import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 

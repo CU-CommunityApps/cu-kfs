@@ -7,7 +7,7 @@ import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.context.TestUtils;
-import org.kuali.rice.krad.service.MailService;
+import org.kuali.kfs.krad.service.MailService;
 
 import edu.cornell.kfs.fp.batch.service.ProcurementCardErrorEmailService;
 
