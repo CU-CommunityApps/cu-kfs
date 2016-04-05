@@ -220,6 +220,10 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
             insertStatement.setBigDecimal(detailRow.federalIncomeTaxPercent.index - offset, null);
             insertStatement.setString(detailRow.paymentDescription.index - offset, rs.getString(pdpRow.achPaymentDescription.index));
             insertStatement.setString(detailRow.paymentLine1Address.index - offset, rs.getString(pdpRow.line1Address.index));
+            insertStatement.setString(detailRow.paymentLine2Address.index - offset, rs.getString(pdpRow.line2Address.index));
+            insertStatement.setString(detailRow.paymentCityAddress.index - offset, rs.getString(pdpRow.cityAddress.index));
+            insertStatement.setString(detailRow.paymentStateAddress.index - offset, rs.getString(pdpRow.stateAddress.index));
+            insertStatement.setString(detailRow.paymentZipAddress.index - offset, rs.getString(pdpRow.zipAddress.index));
             insertStatement.setString(detailRow.paymentCountryName.index - offset, rs.getString(pdpRow.country.index));
             insertStatement.setString(detailRow.chartCode.index - offset, rs.getString(pdpRow.accountDetailFinChartCode.index)); // ?
             insertStatement.setString(detailRow.accountNumber.index - offset, rs.getString(pdpRow.accountNbr.index));

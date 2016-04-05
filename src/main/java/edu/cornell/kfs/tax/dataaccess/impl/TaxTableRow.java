@@ -172,6 +172,10 @@ abstract class TaxTableRow {
         final TaxTableField disbursementNbr;
         final TaxTableField payeeIdTypeCode;
         final TaxTableField line1Address;
+        final TaxTableField line2Address;
+        final TaxTableField cityAddress;
+        final TaxTableField stateAddress;
+        final TaxTableField zipAddress;
         final TaxTableField nraPayment;
         // Fields from PDP_PMT_DTL_T (PaymentDetail)
         final TaxTableField paymentDetailId;
@@ -209,6 +213,10 @@ abstract class TaxTableRow {
             this.disbursementNbr = getAliasedField(CommonPdpSourceFieldNames.DISBURSEMENT_NUMBER);
             this.payeeIdTypeCode = getAliasedField(CommonPdpSourceFieldNames.PAYEE_ID_TYPE_CODE);
             this.line1Address = getAliasedField(CommonPdpSourceFieldNames.LINE1_ADDRESS);
+            this.line2Address = getAliasedField(CommonPdpSourceFieldNames.LINE2_ADDRESS);
+            this.cityAddress = getAliasedField(CommonPdpSourceFieldNames.CITY_ADDRESS);
+            this.stateAddress = getAliasedField(CommonPdpSourceFieldNames.STATE_ADDRESS);
+            this.zipAddress = getAliasedField(CommonPdpSourceFieldNames.ZIP_ADDRESS);
             this.nraPayment = getAliasedField(CommonPdpSourceFieldNames.NRA_PAYMENT_IND);
             this.paymentDetailId = getAliasedField(CommonPdpSourceFieldNames.PAYMENT_DETAIL_ID);
             this.custPaymentDocNbr = getAliasedField(CommonPdpSourceFieldNames.CUSTOMER_PAYMENT_DOC_NUMBER);
@@ -237,6 +245,10 @@ abstract class TaxTableRow {
         final TaxTableField disbVchrPayeeIdNumber;
         final TaxTableField disbVchrPayeePersonName;
         final TaxTableField disbVchrPayeeLine1Addr;
+        final TaxTableField disbVchrPayeeLine2Addr;
+        final TaxTableField disbVchrPayeeCityAddr;
+        final TaxTableField disbVchrPayeeStateAddr;
+        final TaxTableField disbVchrPayeeZipAddr;
         final TaxTableField disbVchrPayeeCountryCode;
         final TaxTableField disbursementVoucherPayeeTypeCode;
         // Fields from FP_DV_NRA_TAX_T (DisbursementVoucherNonResidentAlienTax)
@@ -273,6 +285,10 @@ abstract class TaxTableRow {
             this.disbVchrPayeeIdNumber = getAliasedField(CommonDvSourceFieldNames.DV_PAYEE_ID_NUMBER);
             this.disbVchrPayeePersonName = getAliasedField(CommonDvSourceFieldNames.DV_PAYEE_PERSON_NAME);
             this.disbVchrPayeeLine1Addr = getAliasedField(CommonDvSourceFieldNames.DV_PAYEE_LINE1_ADDRESS);
+            this.disbVchrPayeeLine2Addr = getAliasedField(CommonDvSourceFieldNames.DV_PAYEE_LINE2_ADDRESS);
+            this.disbVchrPayeeCityAddr = getAliasedField(CommonDvSourceFieldNames.DV_PAYEE_CITY_ADDRESS);
+            this.disbVchrPayeeStateAddr = getAliasedField(CommonDvSourceFieldNames.DV_PAYEE_STATE_ADDRESS);
+            this.disbVchrPayeeZipAddr = getAliasedField(CommonDvSourceFieldNames.DV_PAYEE_ZIP_ADDRESS);
             this.disbVchrPayeeCountryCode = getAliasedField(CommonDvSourceFieldNames.DV_PAYEE_COUNTRY_CODE);
             this.disbursementVoucherPayeeTypeCode = getAliasedField(CommonDvSourceFieldNames.DV_PAYEE_TYPE_CODE);
             this.nraDocumentNumber = getAliasedField(CommonDvSourceFieldNames.NRA_DOCUMENT_NUMBER);
@@ -446,6 +462,10 @@ abstract class TaxTableRow {
         final TaxTableField form1042SBox;
         final TaxTableField form1042SOverriddenBox;
         final TaxTableField paymentReasonCode;
+        final TaxTableField paymentLine2Address;
+        final TaxTableField paymentCityAddress;
+        final TaxTableField paymentStateAddress;
+        final TaxTableField paymentZipAddress;
         
         TransactionDetailRow(String rowId, Map<String,TaxTableField> fields, List<String> tables, Map<String,TaxTableField> aliasedFields,
                 Integer insertOffset) {
@@ -488,6 +508,10 @@ abstract class TaxTableRow {
             this.form1042SBox = getAliasedField(TransactionDetailFieldNames.FORM_1042S_BOX);
             this.form1042SOverriddenBox = getAliasedField(TransactionDetailFieldNames.FORM_1042S_OVERRIDDEN_BOX);
             this.paymentReasonCode = getAliasedField(TransactionDetailFieldNames.PAYMENT_REASON_CODE);
+            this.paymentLine2Address = getAliasedField(TransactionDetailFieldNames.PAYMENT_LINE2_ADDRESS);
+            this.paymentCityAddress = getAliasedField(TransactionDetailFieldNames.PAYMENT_CITY_ADDRESS);
+            this.paymentStateAddress = getAliasedField(TransactionDetailFieldNames.PAYMENT_STATE_ADDRESS);
+            this.paymentZipAddress = getAliasedField(TransactionDetailFieldNames.PAYMENT_ZIP_ADDRESS);
         }
     }
 

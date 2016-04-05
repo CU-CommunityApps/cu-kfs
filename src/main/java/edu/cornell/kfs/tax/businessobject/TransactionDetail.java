@@ -40,6 +40,10 @@ public class TransactionDetail extends TransientBusinessObjectBase {
     private KualiDecimal federalIncomeTaxPercent;
     private String paymentDescription;
     private String paymentLine1Address;
+	private String paymentLine2Address;
+    private String paymentCityAddress;
+    private String paymentStateAddress;
+    private String paymentZipAddress;
     private String paymentCountryName;
     private String chartCode;
     private String accountNumber;
@@ -345,5 +349,36 @@ public class TransactionDetail extends TransientBusinessObjectBase {
     public void setPaymentReasonCode(String paymentReasonCode) {
         this.paymentReasonCode = paymentReasonCode;
     }
+    
+    public String getPaymentLine2Address() {
+		return paymentLine2Address;
+	}
 
+	public void setPaymentLine2Address(String paymentLine2Address) {
+		this.paymentLine2Address = paymentLine2Address;
+	}
+
+	public String getPaymentCityAddress() {
+		return paymentCityAddress;
+	}
+
+	public void setPaymentCityAddress(String paymentCityAddress) {
+		this.paymentCityAddress = paymentCityAddress;
+	}
+
+	public String getPaymentStateAddress() {
+		return paymentStateAddress;
+	}
+
+	public void setPaymentStateAddress(String paymentStateAddress) {
+		this.paymentStateAddress = paymentStateAddress;
+	}
+
+	public String getPaymentZipAddress() {
+		return paymentZipAddress;
+	}
+
+	public void setPaymentZipAddress(String paymentZipAddress) {
+		this.paymentZipAddress = paymentZipAddress;
+	}
 }

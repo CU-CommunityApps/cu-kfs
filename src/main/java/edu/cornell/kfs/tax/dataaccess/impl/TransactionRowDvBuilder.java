@@ -301,6 +301,10 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
             insertStatement.setBigDecimal(detailRow.federalIncomeTaxPercent.index - offset, rs.getBigDecimal(dvRow.federalIncomeTaxPercent.index));
             insertStatement.setString(detailRow.paymentDescription.index - offset, rs.getString(dvRow.financialDocumentLineDescription.index));
             insertStatement.setString(detailRow.paymentLine1Address.index - offset, rs.getString(dvRow.disbVchrPayeeLine1Addr.index));
+            insertStatement.setString(detailRow.paymentLine2Address.index - offset, rs.getString(dvRow.disbVchrPayeeLine2Addr.index));
+            insertStatement.setString(detailRow.paymentCityAddress.index - offset, rs.getString(dvRow.disbVchrPayeeCityAddr.index));
+            insertStatement.setString(detailRow.paymentStateAddress.index - offset, rs.getString(dvRow.disbVchrPayeeStateAddr.index));
+            insertStatement.setString(detailRow.paymentZipAddress.index - offset, rs.getString(dvRow.disbVchrPayeeZipAddr.index));
             insertStatement.setString(detailRow.paymentCountryName.index - offset, rs.getString(dvRow.disbVchrPayeeCountryCode.index));
             insertStatement.setString(detailRow.chartCode.index - offset, rs.getString(dvRow.chartOfAccountsCode.index));
             insertStatement.setString(detailRow.accountNumber.index - offset, rs.getString(dvRow.accountNumber.index));

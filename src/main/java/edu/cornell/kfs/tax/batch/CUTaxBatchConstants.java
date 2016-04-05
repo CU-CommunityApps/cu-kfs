@@ -106,6 +106,10 @@ public final class CUTaxBatchConstants {
         public static final String DISBURSEMENT_NUMBER = "disbursementNbr";
         public static final String PAYEE_ID_TYPE_CODE = "payeeIdTypeCode";
         public static final String LINE1_ADDRESS = "line1Address";
+        public static final String LINE2_ADDRESS = "line2Address";
+        public static final String CITY_ADDRESS = "cityAddress";
+        public static final String STATE_ADDRESS = "stateAddress";
+        public static final String ZIP_ADDRESS = "zipAddress";
         public static final String NRA_PAYMENT_IND = "nraPayment";
         // Fields from PDP_PMT_DTL_T (PaymentDetail)
         public static final String PAYMENT_DETAIL_ID = "paymentDetail.id";
@@ -147,6 +151,10 @@ public final class CUTaxBatchConstants {
         public static final String DV_PAYEE_ID_NUMBER = "disbVchrPayeeIdNumber";
         public static final String DV_PAYEE_PERSON_NAME = "disbVchrPayeePersonName";
         public static final String DV_PAYEE_LINE1_ADDRESS = "disbVchrPayeeLine1Addr";
+        public static final String DV_PAYEE_LINE2_ADDRESS = "disbVchrPayeeLine2Addr";
+        public static final String DV_PAYEE_CITY_ADDRESS = "disbVchrPayeeCityAddr";
+        public static final String DV_PAYEE_STATE_ADDRESS = "disbVchrPayeeStateAddr";
+        public static final String DV_PAYEE_ZIP_ADDRESS = "disbVchrPayeeZipAddr";
         public static final String DV_PAYEE_COUNTRY_CODE = "disbVchrPayeeCountryCode";
         public static final String DV_PAYEE_TYPE_CODE = "disbursementVoucherPayeeTypeCode";
         // Fields from FP_DV_NRA_TAX_T (DisbursementVoucherNonResidentAlienTax)
@@ -279,6 +287,10 @@ public final class CUTaxBatchConstants {
         public static final String FORM_1042S_BOX = "form1042SBox";
         public static final String FORM_1042S_OVERRIDDEN_BOX = "form1042SOverriddenBox";
         public static final String PAYMENT_REASON_CODE = "paymentReasonCode";
+        public static final String PAYMENT_LINE2_ADDRESS = "paymentLine2Address";
+        public static final String PAYMENT_CITY_ADDRESS = "paymentCityAddress";
+        public static final String PAYMENT_STATE_ADDRESS = "paymentStateAddress";
+        public static final String PAYMENT_ZIP_ADDRESS = "paymentZipAddress";
         
         
         

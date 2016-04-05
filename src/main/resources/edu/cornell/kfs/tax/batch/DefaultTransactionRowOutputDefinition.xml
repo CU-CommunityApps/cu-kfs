@@ -9,7 +9,7 @@
         This section represents the column title header.
         ================================================
      -->
-    <section length="2854" hasExactLength="false" hasSeparators="true" separator="\t">
+    <section length="3023" hasExactLength="false" hasSeparators="true" separator="\t">
         <field name="Header1" length="40" type="STATIC" value="Transaction_Detail_ID" />
         <field name="Header2" length="11" type="STATIC" value="Report_Year" />
         <field name="Header3" length="14" type="STATIC" value="Doc_Number" />
@@ -37,23 +37,27 @@
         <field name="Header25" length="14" type="STATIC" value="Foreign_Source" />
         <field name="Header26" length="19" type="STATIC" value="Fed_Inc_Tax_Percent" />
         <field name="Header27" length="100" type="STATIC" value="Payment_Description" />
-        <field name="Header28" length="45" type="STATIC" value="Payment_Address_Line_1" />
-        <field name="Header29" length="30" type="STATIC" value="Payment_Country_Name" />
-        <field name="Header30" length="10" type="STATIC" value="Chart_Code" />
-        <field name="Header31" length="14" type="STATIC" value="Account_Number" />
-        <field name="Header32" length="100" type="STATIC" value="Initiator_NetId" />
-        <field name="Header33" length="8" type="STATIC" value="1099_Box" />
-        <field name="Header34" length="19" type="STATIC" value="1099_Overridden_Box" />
-        <field name="Header35" length="10" type="STATIC" value="1042S_Box" />
-        <field name="Header36" length="20" type="STATIC" value="1042S_Overridden_Box" />
-        <field name="Header37" length="14" type="STATIC" value="Payment_Reason" />
+        <field name="Header28" length="55" type="STATIC" value="Payment_Address_Line_1" />
+        <field name="Header29" length="55" type="STATIC" value="Payment_Address_Line_2" />
+        <field name="Header30" length="50" type="STATIC" value="Payment_City" />
+        <field name="Header31" length="30" type="STATIC" value="Payment_State" />
+        <field name="Header32" length="20" type="STATIC" value="Payment_Zip" />
+        <field name="Header33" length="30" type="STATIC" value="Payment_Country_Name" />
+        <field name="Header34" length="10" type="STATIC" value="Chart_Code" />
+        <field name="Header35" length="14" type="STATIC" value="Account_Number" />
+        <field name="Header36" length="100" type="STATIC" value="Initiator_NetId" />
+        <field name="Header37" length="8" type="STATIC" value="1099_Box" />
+        <field name="Header38" length="19" type="STATIC" value="1099_Overridden_Box" />
+        <field name="Header39" length="10" type="STATIC" value="1042S_Box" />
+        <field name="Header40" length="20" type="STATIC" value="1042S_Overridden_Box" />
+        <field name="Header41" length="14" type="STATIC" value="Payment_Reason" />
     </section>
     <!--
         =================================================
         This section represents a transaction detail row.
         =================================================
      -->
-    <section length="2854" hasExactLength="false" hasSeparators="true" separator="\t">
+    <section length="3023" hasExactLength="false" hasSeparators="true" separator="\t">
         <field name="Field1" length="40" type="DETAIL" value="transactionDetailId" />
         <field name="Field2" length="11" type="DETAIL" value="reportYear" />
         <field name="Field3" length="14" type="DETAIL" value="documentNumber" />
@@ -81,15 +85,19 @@
         <field name="Field25" length="14" type="DETAIL" value="foreignSourceIncomeIndicator" />
         <field name="Field26" length="19" type="DETAIL" value="federalIncomeTaxPercent" />
         <field name="Field27" length="100" type="DETAIL" value="paymentDescription" />
-        <field name="Field28" length="45" type="DETAIL" value="paymentLine1Address" />
-        <field name="Field29" length="30" type="DETAIL" value="paymentCountryName" />
-        <field name="Field30" length="10" type="DETAIL" value="chartCode" />
-        <field name="Field31" length="14" type="DETAIL" value="accountNumber" />
-        <field name="Field32" length="100" type="DETAIL" value="initiatorNetId" />
-        <field name="Field33" length="8" type="DETAIL" value="form1099Box" />
-        <field name="Field34" length="19" type="DETAIL" value="form1099OverriddenBox" />
-        <field name="Field35" length="10" type="DETAIL" value="form1042SBox" />
-        <field name="Field36" length="20" type="DETAIL" value="form1042SOverriddenBox" />
-        <field name="Field37" length="14" type="DETAIL" value="paymentReasonCode" />
+        <field name="Field28" length="55" type="DETAIL" value="paymentLine1Address" />
+        <field name="Field29" length="55" type="DETAIL" value="paymentLine2Address" />
+        <field name="Field30" length="50" type="DETAIL" value="paymentCityAddress" />
+        <field name="Field31" length="30" type="DETAIL" value="paymentStateAddress" />
+        <field name="Field32" length="20" type="DETAIL" value="paymentZipAddress" />
+        <field name="Field33" length="30" type="DETAIL" value="paymentCountryName" />
+        <field name="Field34" length="10" type="DETAIL" value="chartCode" />
+        <field name="Field35" length="14" type="DETAIL" value="accountNumber" />
+        <field name="Field36" length="100" type="DETAIL" value="initiatorNetId" />
+        <field name="Field37" length="8" type="DETAIL" value="form1099Box" />
+        <field name="Field38" length="19" type="DETAIL" value="form1099OverriddenBox" />
+        <field name="Field39" length="10" type="DETAIL" value="form1042SBox" />
+        <field name="Field40" length="20" type="DETAIL" value="form1042SOverriddenBox" />
+        <field name="Field41" length="14" type="DETAIL" value="paymentReasonCode" />
     </section>
 </taxOutputDefinition>
