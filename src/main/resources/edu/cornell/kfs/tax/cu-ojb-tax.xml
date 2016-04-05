@@ -59,6 +59,10 @@
         <field-descriptor name="form1042SBox" column="FORM_1042S_BOX" jdbc-type="VARCHAR" />
         <field-descriptor name="form1042SOverriddenBox" column="FORM_1042S_OVERRIDDEN_BOX" jdbc-type="VARCHAR" />
         <field-descriptor name="paymentReasonCode" column="PMT_REASON_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="paymentLine2Address" column="PMT_LN2_ADDR" jdbc-type="VARCHAR" />
+        <field-descriptor name="paymentCityAddress" column="PMT_CTY_ADDR" jdbc-type="VARCHAR" />
+        <field-descriptor name="paymentStateAddress" column="PMT_ST_ADDR" jdbc-type="VARCHAR" />
+        <field-descriptor name="paymentZipAddress" column="PMT_ZIP_ADDR" jdbc-type="VARCHAR" />
     </class-descriptor>
 
 </descriptor-repository>
