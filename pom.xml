@@ -255,6 +255,20 @@
           <version>${kfs.version}</version>
           <type>war</type>
       </dependency>
+      <dependency>
+          <groupId>org.kuali.kfs</groupId>
+          <artifactId>kfs-web</artifactId>
+          <version>${kfs.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.kuali.kfs</groupId>
+          <artifactId>kfs-core</artifactId>
+          <version>${kfs.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+      </dependency>
 
 <!--
     <dependency>
