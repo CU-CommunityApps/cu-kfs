@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
@@ -35,11 +34,9 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.service.SequenceAccessorService;
-import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.batch.service.ProcurementCardErrorEmailService;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
-import edu.cornell.kfs.fp.businessobject.USBankRecordFieldUtils;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
@@ -67,15 +64,6 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
     private DateTimeService dateTimeService;
     private ParameterService parameterService;
     private ProcurementCardErrorEmailService procurementCardErrorEmailService;
-    
-    // USBank record ID's
-    // If/when we create dedicated classes for representing these records, 
-    // these lines can move there as we've done with the addendum records.
-    public static final String FILE_HEADER_RECORD_ID = "01";
-    public static final String CARDHOLDER_DATA_HEADER_RECORD_ID = "02";
-    public static final String TRANSACTION_INFORMATION_RECORD_ID = "05";
-    public static final String CARDHOLDER_TRAILER_RECORD_ID = "95";
-    public static final String FILE_TRAILER_RECORD_ID = "98";
 
     /**
      * @see org.kuali.kfs.sys.batch.BatchInputFileType#getFileTypeIdentifer()
@@ -188,12 +176,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         	
             while ((fileLine=bufferedFileReader.readLine()) != null) {
             	ProcurementCardTransaction theTransaction = generateProcurementCardTransaction(fileLine);
-                
             	if (theTransaction!=null){
-                    if(ObjectUtils.isNotNull(theTransaction.getExtension())) {
-                      lineCount = ((ProcurementCardTransactionExtendedAttribute)theTransaction.getExtension()).addAddendumLines(bufferedFileReader, lineCount);
-                    }
-
             		transactions.add(theTransaction);
             	}
             	lineCount++;
@@ -248,34 +231,24 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         
     }
 
-    /**
-     * Parses a line into a ProcurementCardTransaction.
-     * 
-     * The data in the ProcurementCardTransaction comes from USBank record types 02 and 05. 
-     * Other USBank record types (01, 95, 98) are either skipped or used for validation.
-     * 
-     * @param line The current line
-     * @return A completed transaction or null if there are additional lines in the transaction
-     * @throws Exception
-     */
     private ProcurementCardTransaction generateProcurementCardTransaction(String line) throws Exception {
 	        
-        String recordId = USBankRecordFieldUtils.extractNormalizedString(line, 0, 2);
+        String recordId = extractNormalizedString(line, 0, 2);
         if (recordId == null) {
         	throw new Exception("Unable to determine record Id necessary in order to parse line " + lineCount);
         }
-        if (recordId.equals(FILE_HEADER_RECORD_ID)){ //file header record
-        	headerTransactionCount = Integer.parseInt(USBankRecordFieldUtils.extractNormalizedString(line, 67, 75));
+        if (recordId.equals("01")){ //file header record
+        	headerTransactionCount = Integer.parseInt(extractNormalizedString(line, 67, 75));
         }
-        if (recordId.equals(FILE_TRAILER_RECORD_ID)) { //file footer record
+        if (recordId.equals("98")) { //file footer record
         		        	
-        	footerTransactionCount = Integer.parseInt(USBankRecordFieldUtils.extractNormalizedString(line, 21, 29));
-        	fileFooterCredits = fileFooterCredits.add( new KualiDecimal(USBankRecordFieldUtils.extractNormalizedString(line,44,59)));
-        	fileFooterDebits = fileFooterDebits.add( new KualiDecimal(USBankRecordFieldUtils.extractNormalizedString(line,29,44)));
+        	footerTransactionCount = Integer.parseInt(extractNormalizedString(line, 21, 29));
+        	fileFooterCredits = fileFooterCredits.add( new KualiDecimal(extractNormalizedString(line,44,59)));
+        	fileFooterDebits = fileFooterDebits.add( new KualiDecimal(extractNormalizedString(line,29,44)));
         	if (totalDebits.compareTo(fileFooterDebits.abs()) != 0) {
         		StringBuffer sb = new StringBuffer();
         		sb.append("Debits in file footer do not match the sum of debits in transaction.");
-        		sb.append(USBankRecordFieldUtils.lineCountMessage(lineCount));
+        		sb.append(lineCountMessage());
         		sb.append(" Debit value given in file footer: ");
         		sb.append(fileFooterDebits.abs());
         		sb.append(" Debit value generated by summing transactions: ");
@@ -285,7 +258,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         	if (totalCredits.compareTo(fileFooterCredits.abs()) != 0) {
         		StringBuffer sb = new StringBuffer();
         		sb.append("Credits in file footer do not match the sum of credits in transaction.");
-        		sb.append(USBankRecordFieldUtils.lineCountMessage(lineCount));
+        		sb.append(lineCountMessage());
         		sb.append(" Credit value given in file footer: ");
         		sb.append(fileFooterCredits.abs());
         		sb.append(" Credit value generated by summing transactions: ");
@@ -294,28 +267,28 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
 
         	}
         }
-        if (recordId.equals(CARDHOLDER_DATA_HEADER_RECORD_ID)) { //cardholder header
+        if (recordId.equals("02")) { //cardholder header
 
         	parent = new ProcurementCardTransaction();
 
-            parent.setTransactionCreditCardNumber(USBankRecordFieldUtils.extractNormalizedString(line, 2, 18, true, lineCount)); //req
+            parent.setTransactionCreditCardNumber(extractNormalizedString(line, 2, 18, true)); //req
             parent.setChartOfAccountsCode(defaultChart); //req
-            parent.setTransactionCycleEndDate(USBankRecordFieldUtils.extractCycleDate(line, 294, 296, lineCount));
+            parent.setTransactionCycleEndDate(extractCycleDate(line, 294, 296));
 //            parent.setTransactionCycleStartDate(transactionCycleStartDate); //may not be able to have
-            parent.setCardHolderName(USBankRecordFieldUtils.extractNormalizedString(line, 43, 68));
-            parent.setCardHolderLine1Address(USBankRecordFieldUtils.extractNormalizedString(line, 68, 104));
-            parent.setCardHolderLine2Address(USBankRecordFieldUtils.extractNormalizedString(line, 104,140));
-            parent.setCardHolderCityName(USBankRecordFieldUtils.extractNormalizedString(line, 140, 165));
-            parent.setCardHolderStateCode(USBankRecordFieldUtils.extractNormalizedString(line, 165, 167));
+            parent.setCardHolderName(extractNormalizedString(line, 43, 68));
+            parent.setCardHolderLine1Address(extractNormalizedString(line, 68, 104));
+            parent.setCardHolderLine2Address(extractNormalizedString(line, 104,140));
+            parent.setCardHolderCityName(extractNormalizedString(line, 140, 165));
+            parent.setCardHolderStateCode(extractNormalizedString(line, 165, 167));
             // KITI-2203 : Removing last four characters from zip+4 so validation performs properly.
-            parent.setCardHolderZipCode(USBankRecordFieldUtils.extractNormalizedString(line, 167, 172));
+            parent.setCardHolderZipCode(extractNormalizedString(line, 167, 172));
 //            parent.setCardHolderZipCode(extractNormalizedString(line, 167, 176)); 
-            parent.setCardHolderAlternateName(USBankRecordFieldUtils.extractNormalizedString(line, 191, 206));
-            parent.setCardHolderWorkPhoneNumber(USBankRecordFieldUtils.extractNormalizedString(line, 206, 216));
+            parent.setCardHolderAlternateName(extractNormalizedString(line, 191, 206));
+            parent.setCardHolderWorkPhoneNumber(extractNormalizedString(line, 206, 216));
 //            parent.setCardLimit(extractDecimal(line, 352, 363));
-            parent.setCardStatusCode(USBankRecordFieldUtils.extractNormalizedString(line, 267, 268));
+            parent.setCardStatusCode(extractNormalizedString(line, 267, 268));
             
-            String companyCode = USBankRecordFieldUtils.extractNormalizedString(line, 252, 257);
+            String companyCode = extractNormalizedString(line, 252, 257);
             
             if(companyCode.equals("99998")) {
             	duplicateTransactions = true;
@@ -323,7 +296,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             	duplicateTransactions = false;
             }
         }
-        if (recordId.equals(TRANSACTION_INFORMATION_RECORD_ID) && !duplicateTransactions){	        		        	
+        if (recordId.equals("05") && !duplicateTransactions){	        		        	
         	
         	ProcurementCardTransaction child = new ProcurementCardTransaction();
         	
@@ -342,43 +315,43 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
 //            child.setCardLimit(parent.getCardLimit());
             child.setCardStatusCode(parent.getCardStatusCode());
             
-            child.setAccountNumber(USBankRecordFieldUtils.extractNormalizedString(line, 317, 324, true, lineCount)); //req
-            child.setSubAccountNumber(USBankRecordFieldUtils.extractNormalizedString(line, 324, 329));
+            child.setAccountNumber(extractNormalizedString(line, 317, 324, true)); //req
+            child.setSubAccountNumber(extractNormalizedString(line, 324, 329));
             // KITI-2583 : Object code is not a required field and will be replaced by an error code if it is not present.
-            child.setFinancialObjectCode(USBankRecordFieldUtils.extractNormalizedString(line, 329, 333, false, lineCount)); //req
-            child.setFinancialSubObjectCode(USBankRecordFieldUtils.extractNormalizedString(line,333,336));
-            child.setProjectCode(USBankRecordFieldUtils.extractNormalizedString(line, 336, 346));	        	
-            child.setFinancialDocumentTotalAmount(USBankRecordFieldUtils.extractDecimal(line, 79, 91, lineCount));  //req
-            child.setTransactionDebitCreditCode(USBankRecordFieldUtils.convertDebitCreditCode(line.substring(64,65))); //req
-            child.setTransactionDate(USBankRecordFieldUtils.extractDate(line, 45, 53, lineCount)); // req	
-            child.setTransactionOriginalCurrencyCode(USBankRecordFieldUtils.extractNormalizedString(line, 61, 64));
-            child.setTransactionBillingCurrencyCode(USBankRecordFieldUtils.extractNormalizedString(line, 76, 79));
-            child.setVendorName(USBankRecordFieldUtils.extractNormalizedString(line, 95, 120));
-            child.setTransactionReferenceNumber(USBankRecordFieldUtils.extractNormalizedString(line, 18, 41));
-            child.setTransactionMerchantCategoryCode(USBankRecordFieldUtils.extractNormalizedString(line, 91, 95));
-            child.setTransactionPostingDate(USBankRecordFieldUtils.extractDate(line, 53, 61, lineCount));
-            child.setTransactionOriginalCurrencyAmount(USBankRecordFieldUtils.extractDecimalWithCents(line, 64, 76, lineCount));
-            child.setTransactionCurrencyExchangeRate(USBankRecordFieldUtils.extractDecimal(line, 304, 317, lineCount).bigDecimalValue());
-            child.setTransactionSettlementAmount(USBankRecordFieldUtils.extractDecimal(line, 79, 91, lineCount));
+            child.setFinancialObjectCode(extractNormalizedString(line, 329, 333, false)); //req
+            child.setFinancialSubObjectCode(extractNormalizedString(line,333,336));
+            child.setProjectCode(extractNormalizedString(line, 336, 346));	        	
+            child.setFinancialDocumentTotalAmount(extractDecimal(line, 79, 91));  //req
+            child.setTransactionDebitCreditCode(convertDebitCreditCode(line.substring(64,65))); //req
+            child.setTransactionDate(extractDate(line, 45, 53)); // req	
+            child.setTransactionOriginalCurrencyCode(extractNormalizedString(line, 61, 64));
+            child.setTransactionBillingCurrencyCode(extractNormalizedString(line, 76, 79));
+            child.setVendorName(extractNormalizedString(line, 95, 120));
+            child.setTransactionReferenceNumber(extractNormalizedString(line, 18, 41));
+            child.setTransactionMerchantCategoryCode(extractNormalizedString(line, 91, 95));
+            child.setTransactionPostingDate(extractDate(line, 53, 61));
+            child.setTransactionOriginalCurrencyAmount(extractDecimalWithCents(line, 64, 76));
+            child.setTransactionCurrencyExchangeRate(extractDecimal(line, 304,317).bigDecimalValue());
+            child.setTransactionSettlementAmount(extractDecimal(line, 79, 91));
 
-//            child.setTransactionTaxExemptIndicator(USBankAddendumRecordFieldUtils.extractNormalizedString(line, 234, 235));
-            child.setTransactionPurchaseIdentifierIndicator(USBankRecordFieldUtils.extractNormalizedString(line, 272, 273));
+//            child.setTransactionTaxExemptIndicator(extractNormalizedString(line, 234, 235));
+            child.setTransactionPurchaseIdentifierIndicator(extractNormalizedString(line, 272, 273));
             
-            child.setTransactionPurchaseIdentifierDescription(USBankRecordFieldUtils.extractNormalizedString(line, 273, 298));
-            child.setVendorCityName(USBankRecordFieldUtils.extractNormalizedString(line, 120, 146));
-            child.setVendorStateCode(USBankRecordFieldUtils.extractNormalizedString(line, 146, 148));
-//            child.setVendorZipCode(USBankAddendumRecordFieldUtils.extractNormalizedString(line, 152, 161));
+            child.setTransactionPurchaseIdentifierDescription(extractNormalizedString(line, 273, 298));
+            child.setVendorCityName(extractNormalizedString(line, 120, 146));
+            child.setVendorStateCode(extractNormalizedString(line, 146, 148));
+//            child.setVendorZipCode(extractNormalizedString(line, 152, 161));
 
             //
             //   Fix to handle zip codes provided by US Bank
             //
-            String vendorZipCode = USBankRecordFieldUtils.extractNormalizedString(line,152,161);
+            String vendorZipCode = extractNormalizedString(line,152,161);
             if (vendorZipCode.startsWith("0000")) {
-            	vendorZipCode = USBankRecordFieldUtils.extractNormalizedString(line,156,161);
+            	vendorZipCode = extractNormalizedString(line,156,161);
             }
             child.setVendorZipCode(vendorZipCode);
 
-            child.setVisaVendorIdentifier(USBankRecordFieldUtils.extractNormalizedString(line, 176, 192));
+            child.setVisaVendorIdentifier(extractNormalizedString(line, 176, 192));
             
             if (child.getTransactionDebitCreditCode().equals("D")) {
             	accumulatedDebits = accumulatedDebits.add(child.getTransactionSettlementAmount());
@@ -387,13 +360,13 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             }
             
             ProcurementCardTransactionExtendedAttribute extension = new ProcurementCardTransactionExtendedAttribute();
-            extension.setTransactionType(USBankRecordFieldUtils.extractNormalizedString(line, 346, 348));
+            extension.setTransactionType(extractNormalizedString(line, 346, 348));
             if (child.getTransactionSequenceRowNumber() == null) {
                 Integer generatedTransactionSequenceRowNumber = SpringContext.getBean(SequenceAccessorService.class).getNextAvailableSequenceNumber(FP_PRCRMNT_CARD_TRN_MT_SEQ).intValue();
                 child.setTransactionSequenceRowNumber(generatedTransactionSequenceRowNumber);
                 extension.setTransactionSequenceRowNumber(child.getTransactionSequenceRowNumber());
-            }
-
+            }            
+            
             child.setExtension(extension);
             
             transactionCount++;
@@ -401,22 +374,22 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
 
         } 
         // Still need to update totals and transaction count so validation works properly, but don't want transactions to be loaded
-        if (recordId.equals(TRANSACTION_INFORMATION_RECORD_ID) && duplicateTransactions){	        		        	
-            if (USBankRecordFieldUtils.convertDebitCreditCode(line.substring(64,65)).equals("D")) {
-            	accumulatedDebits = accumulatedDebits.add(USBankRecordFieldUtils.extractDecimal(line, 79, 91, lineCount));
+        if (recordId.equals("05") && duplicateTransactions){	        		        	
+            if (convertDebitCreditCode(line.substring(64,65)).equals("D")) {
+            	accumulatedDebits = accumulatedDebits.add(extractDecimal(line, 79, 91));
             } else {
-            	accumulatedCredits = accumulatedCredits.add(USBankRecordFieldUtils.extractDecimal(line, 79, 91, lineCount));	            	
+            	accumulatedCredits = accumulatedCredits.add(extractDecimal(line, 79, 91));	            	
             }
             transactionCount++;
         }
-        if (recordId.equals(CARDHOLDER_TRAILER_RECORD_ID)) { //cardholder footer
-        	KualiDecimal recordDebits = new KualiDecimal(USBankRecordFieldUtils.extractNormalizedString(line, 24, 36));
-        	KualiDecimal recordCredits = new KualiDecimal(USBankRecordFieldUtils.extractNormalizedString(line, 36, 48));
+        if (recordId.equals("95")) { //cardholder footer
+        	KualiDecimal recordDebits = new KualiDecimal(extractNormalizedString(line, 24, 36));
+        	KualiDecimal recordCredits = new KualiDecimal(extractNormalizedString(line, 36, 48));
         	
         	if (accumulatedCredits.compareTo(recordCredits.abs()) !=0) {
         		StringBuffer sb = new StringBuffer();
         		sb.append("Total credits given in cardholder footer do not sum to same value as transactions.");
-        		sb.append(USBankRecordFieldUtils.lineCountMessage(lineCount));
+        		sb.append(lineCountMessage());
         		sb.append(" Credit value given in cardholder footer: ");
         		sb.append(recordCredits.abs());
         		sb.append(" Credit value generated by summing transactions: ");
@@ -426,7 +399,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         	if (accumulatedDebits.compareTo(recordDebits.abs()) != 0) {
         		StringBuffer sb = new StringBuffer();
         		sb.append("Total debits given in cardholder footer do not sum to same value as transactions."); 
-        		sb.append(USBankRecordFieldUtils.lineCountMessage(lineCount));
+        		sb.append(lineCountMessage());
         		sb.append(" Debit value given in cardholder footer: "); 
         		sb.append(recordDebits.abs());
         		sb.append(" Debit value generated by summing transactions: ");
@@ -443,5 +416,94 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
 
         return null;
     }
+        
+    private Date extractDate(String line, int begin, int end) throws Exception {
+    	Date theDate;
+    	try {
+	    	String sub = line.substring(begin, end);
+	    	String year = sub.substring(0,4);
+	    	String month = sub.substring(4,6);
+	    	String day = sub.substring(6,8);
+	    	theDate = Date.valueOf(year+"-"+month+"-"+day);
+    	}
+    	catch (Exception e) {
+    		throw new Exception("Unable to parse date from the value " + line.substring(begin,end) + " on line " + lineCount);
+    	}
+    	return theDate;
+    }
+    
+    private String extractNormalizedString(String line, int begin, int end) throws Exception {
+    	String theString = line.substring(begin, end);
+    	if(theString.trim().length()==0) {
+    		return null;
+    	}
+    	return theString;
+    }
 
+    private KualiDecimal extractDecimal(String line, int begin, int end) throws Exception {
+    	KualiDecimal theDecimal;
+    	try {
+	    	String sanitized = line.substring(begin, end);
+	    	sanitized = StringUtils.remove(sanitized, '-');
+	    	sanitized = StringUtils.remove(sanitized, '+');
+	    	theDecimal = new KualiDecimal(sanitized);
+    	}
+    	catch (Exception e) {
+    		throw new Exception("Unable to parse " +  line.substring(begin, end) + " into a decimal value on line " + lineCount);
+    	}
+    	return theDecimal;
+    }
+    
+    private KualiDecimal extractDecimalWithCents(String line, int begin, int end) throws Exception {
+    	KualiDecimal theDecimal;
+    	KualiDecimal theCents;
+    	try {
+	    	String sanitized = line.substring(begin, end-2);
+	    	sanitized = StringUtils.remove(sanitized, '-');
+	    	sanitized = StringUtils.remove(sanitized, '+');
+	    	theDecimal = new KualiDecimal(sanitized);
+	    	theCents = new KualiDecimal(line.substring(end-2, end));
+	    	theCents = theCents.multiply(new KualiDecimal("0.01"));
+	    	theDecimal = theDecimal.add(theCents);
+    	}
+    	catch (Exception e) {
+    		throw new Exception("Unable to parse " +  line.substring(begin, end) + " into a decimal value on line " + lineCount);
+    	}
+    	return theDecimal;
+    }
+
+    
+    @SuppressWarnings("deprecation")
+	private Date extractCycleDate(String line, int begin, int end) throws Exception {
+    	String day = line.substring(begin, end);
+    	Date theDate = new Date(System.currentTimeMillis());
+    	theDate.setDate(Integer.parseInt(day));
+    	return theDate;
+    }
+    
+    private String extractNormalizedString(String line, int begin, int end, boolean required) throws Exception {
+    	String theValue = extractNormalizedString(line, begin, end);
+    	if (required) {
+    		if (theValue==null) {
+    			throw new Exception("A required value was missing at " + begin + " " + end + " on line " + lineCount);
+    		}
+    	}
+    	return theValue;
+    }
+           
+    private String convertDebitCreditCode(String val) throws Exception {
+    	if (val.equals("+")) {
+    		return "D";
+    	}
+    	else if (val.equals("-")) {
+    		return "C";
+    	}
+    	else {
+    		throw new Exception("Unable to determine whether transaction line is a debit or a credit");
+    	}
+    }
+    
+    private String lineCountMessage() {
+    	return " Error occurred on line # " + lineCount;
+    }
 }
