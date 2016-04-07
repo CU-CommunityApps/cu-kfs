@@ -234,8 +234,7 @@
                 <purap:camsLocation camsLocationAttributes="${camsLocationAttributes}" ctr="${ctr}"
                                     ctr2="new"
                                     camsAssetLocationProperty="${locationPrefix}newPurchasingCapitalAssetLocationLine"
-                                    availability="${availability}" poItemInactive="${poItemInactive}"
-                                    fullEntryMode="${fullEntryMode}"/>
+                                    availability="${availability}" poItemInactive="${poItemInactive}"/>
     	    </c:if>
 			
             <table class="standard">

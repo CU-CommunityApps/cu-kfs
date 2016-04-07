@@ -121,6 +121,8 @@ public class CUKFSConstants {
         
     public static final String ACCOUNT_NOTE_TEXT = " account document ID ";
 
+    public static final String NOTE_SEQUENCE_NAME = "KRNS_NTE_S";
+
     public static class A21SubAccountDocumentConstants {
         public static final String OFF_CAMPUS_INDICATOR_QUESTION_ID = "OffCampusIndicatorQuestion";
     }
