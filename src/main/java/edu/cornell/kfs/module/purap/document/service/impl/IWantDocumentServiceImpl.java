@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.mail.MessagingException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherForm;
@@ -35,7 +36,6 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.core.api.mail.MailMessage;
-import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.KewApiConstants;
@@ -49,7 +49,6 @@ import org.kuali.rice.kim.api.identity.entity.Entity;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.krad.bo.Attachment;
-import org.kuali.rice.krad.bo.DocumentHeader;
 import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.exception.InvalidAddressException;
@@ -64,6 +63,7 @@ import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
+import edu.cornell.kfs.krad.businessobject.NoteExtendedAttribute;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantDocUserOptions;
@@ -324,7 +324,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
         purapService.saveDocumentNoValidation(requisitionDocument);
 
         // copy attachments from I Want document
-        copyIWantDocAttachments(requisitionDocument, iWantDocument, false);
+        copyIWantDocAttachments(requisitionDocument, iWantDocument, false, true);
 
         // set up deliver to section
         setUpDeliverToSectionOfReqDoc(requisitionDocument, iWantDocument, purapService);
@@ -558,12 +558,17 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
     /**
      * Copies all attachments from the I Want document to the accounting document
      * 
+     * NOTE: A true extCopyNoteIndicator value will cause the copied notes to also
+     * include an extended attribute with copyNoteIndicator set to true.
+     * 
      * @param document
      * @param iWantDocument
      * @param copyConfidentialAttachments
+     * @param extCopyNoteIndicator
      * @throws Exception
      */
-    private void copyIWantDocAttachments(AccountingDocument document, IWantDocument iWantDocument, boolean copyConfidentialAttachments) throws Exception {
+    private void copyIWantDocAttachments(AccountingDocument document, IWantDocument iWantDocument, boolean copyConfidentialAttachments,
+            boolean extCopyNoteIndicator) throws Exception {
         
         purapService.saveDocumentNoValidation(document);
         if (iWantDocument.getNotes() != null
@@ -594,6 +599,16 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
             }
         }
         purapService.saveDocumentNoValidation(document);
+
+        // If specified, auto-construct extended attributes on the document notes at this point. (Doing so before initial persistence can cause save problems.)
+        if (extCopyNoteIndicator && CollectionUtils.isNotEmpty(document.getNotes())) {
+            for (Note copiedNote : document.getNotes()) {
+                NoteExtendedAttribute noteExtension = (NoteExtendedAttribute) copiedNote.getExtension();
+                noteExtension.setNoteIdentifier(copiedNote.getNoteIdentifier());
+                noteExtension.setCopyNoteIndicator(true);
+            }
+            purapService.saveDocumentNoValidation(document);
+        }
 
     }
     
@@ -711,7 +726,7 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
         
         //copy over attachments
         //copyIWantdDocAttachmentsToDV(disbursementVoucherDocument, disbursementVoucherForm, iWantDocument);
-        copyIWantDocAttachments(disbursementVoucherDocument, iWantDocument, true);
+        copyIWantDocAttachments(disbursementVoucherDocument, iWantDocument, true, false);
         //DV check amount - IWantDoc total amount
         disbursementVoucherDocument.setDisbVchrCheckTotalAmount(iWantDocument.getTotalDollarAmount());
   

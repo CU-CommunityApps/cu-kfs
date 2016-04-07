@@ -124,4 +124,6 @@ public class CUKFSConstants {
     }
         
     public static final String ACCOUNT_NOTE_TEXT = " account document ID ";
+
+    public static final String NOTE_SEQUENCE_NAME = "KRNS_NTE_S";
 }
