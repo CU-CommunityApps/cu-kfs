@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
 
+import junit.framework.TestCase;
 import org.kuali.kfs.module.cam.batch.service.AssetDepreciationService;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
@@ -12,7 +13,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import edu.cornell.kfs.module.cam.businessobject.lookup.CuAssetLookupableHelperServiceImpl;
 
 @ConfigureContext
-public class CuAssetDepreciationServiceImplTest extends KualiTestBase {
+public class CuAssetDepreciationServiceImplTest extends TestCase {
 
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuAssetDepreciationServiceImpl.class);
 	private CuAssetDepreciationServiceImpl cuAssetDepreciationServiceImpl;
@@ -24,22 +25,13 @@ public class CuAssetDepreciationServiceImplTest extends KualiTestBase {
 		cuAssetDepreciationServiceImpl = new CuAssetDepreciationServiceImpl();
 	}
 	
-	public void testRunAssetDepreciationService() {
-		try {
-			Class assetDepreciationServiceImplClass = CuAssetDepreciationServiceImpl.class;
-			Method runAssetDepreciation = assetDepreciationServiceImplClass.getDeclaredMethod("runAssetDepreciation");
-			runAssetDepreciation.setAccessible(true);
-			boolean result = (boolean) runAssetDepreciation.invoke(cuAssetDepreciationServiceImpl);
-			LOG.info("Value of result returned by runAssetDepreciation: " + result);
-			assertTrue("Run asset deprecation service value was true!", result);
-		} catch (NoSuchMethodException nmse) {
-			nmse.printStackTrace();
-		} catch (InvocationTargetException ite) {
-			ite.printStackTrace();
-		} catch (IllegalAccessException iae) {
-			iae.printStackTrace();
-		}
+	public void testRunAssetDepreciationService() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+		Class assetDepreciationServiceImplClass = CuAssetDepreciationServiceImpl.class;
+		Method runAssetDepreciation = assetDepreciationServiceImplClass.getDeclaredMethod("runAssetDepreciation");
+		runAssetDepreciation.setAccessible(true);
+		boolean result = (boolean) runAssetDepreciation.invoke(cuAssetDepreciationServiceImpl);
+		LOG.info("Value of result returned by runAssetDepreciation: " + result);
+		assertTrue("Run asset deprecation service value was true!", result);
 	}
-	
-	
+
 }
