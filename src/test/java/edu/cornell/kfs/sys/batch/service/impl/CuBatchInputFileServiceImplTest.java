@@ -1,6 +1,17 @@
 package edu.cornell.kfs.sys.batch.service.impl;
 
-import static org.kuali.kfs.sys.fixture.UserNameFixture.kfs;
+import edu.cornell.kfs.sys.batch.AccountReversionInputFileType;
+import edu.cornell.kfs.vnd.batch.VendorBatchCsvInputFileType;
+import junit.framework.TestCase;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.RandomUtils;
+import org.kuali.kfs.fp.batch.ProcurementCardInputFileType;
+import org.kuali.kfs.sys.ConfigureContext;
+import org.kuali.kfs.sys.batch.BatchInputFileType;
+import org.kuali.kfs.sys.batch.service.BatchInputFileService;
+import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.impl.identity.PersonImpl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,20 +20,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.RandomUtils;
-import org.kuali.kfs.fp.batch.ProcurementCardInputFileType;
-import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.batch.BatchInputFileType;
-import org.kuali.kfs.sys.batch.service.BatchInputFileService;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.impl.identity.PersonImpl;
-import org.kuali.rice.krad.util.GlobalVariables;
-
-import edu.cornell.kfs.sys.batch.AccountReversionInputFileType;
-import edu.cornell.kfs.vnd.batch.VendorBatchCsvInputFileType;
+import static org.kuali.kfs.sys.fixture.UserNameFixture.kfs;
 
 
 /**
@@ -31,7 +29,7 @@ import edu.cornell.kfs.vnd.batch.VendorBatchCsvInputFileType;
  *
  */
 @ConfigureContext(session = kfs)
-public class CuBatchInputFileServiceImplTest extends KualiTestBase {
+public class CuBatchInputFileServiceImplTest extends TestCase {
 
     private BatchInputFileService batchInputFileService;
     
@@ -41,30 +39,33 @@ public class CuBatchInputFileServiceImplTest extends KualiTestBase {
     private InputStream validAccountReversionFileContents;
     private InputStream validPcdoFileContents;
 
-    private BatchInputFileType pcdoBatchInputFileType;
-    private BatchInputFileType accountReversionInputFileType;
+    private ProcurementCardInputFileType pcdoBatchInputFileType;
+    private AccountReversionInputFileType accountReversionInputFileType;
     private List<File> createdTestFiles;
 
     private Person user;
     private BatchInputFileType batchInputFileType;
     private String fileUserIdentifier; 
     private InputStream fileContents;
-    private Object parsedObject;
-    /**
-     * basic set up for each test.
-     */
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        batchInputFileService = SpringContext.getBean(BatchInputFileService.class);
-        pcdoBatchInputFileType = SpringContext.getBean(ProcurementCardInputFileType.class);
-        accountReversionInputFileType = SpringContext.getBean(AccountReversionInputFileType.class);
+        batchInputFileService = new CuBatchInputFileServiceImpl();
+        pcdoBatchInputFileType = new ProcurementCardInputFileType();
+        pcdoBatchInputFileType.setDirectoryPath("test/fp/procurementCard");
+        pcdoBatchInputFileType.setFileExtension("data");
+        pcdoBatchInputFileType.setDateTimeService(new MockDateTimeService());
+
+        accountReversionInputFileType = new AccountReversionInputFileType();
+        accountReversionInputFileType.setDirectoryPath("test/gl/accountReversion/");
+        accountReversionInputFileType.setFileExtension("csv");
+
         testFileIdentifier = "junit" + RandomUtils.nextInt();
         validAccountReversionFileContents = new FileInputStream(TEST_BATCH_DIRECTORY + "AccountReversion.csv");
         validPcdoFileContents = new FileInputStream(TEST_BATCH_DIRECTORY + "BatchInputValidPCDO.xml");
  
-        createdTestFiles = new ArrayList<File>();
-    
+        createdTestFiles = new ArrayList<>();
     }
     
     protected void tearDown() throws Exception {
@@ -94,25 +95,23 @@ public class CuBatchInputFileServiceImplTest extends KualiTestBase {
         batchInputFileType = new VendorBatchCsvInputFileType();
         runTestIllegalArgument();
         fileContents = new InputStream() {            
-           @Override
+            @Override
             public int read() throws IOException {
-                // TODO Auto-generated method stub
                 return 0;
             }
         };
-        fileUserIdentifier = " 123.abc"; // Only allow alphnumeric
+        fileUserIdentifier = " 123.abc"; // Only allow alphanumeric
         runTestIllegalArgument();
     }
 
     private void runTestIllegalArgument() {
         boolean isCorrectException = false;
         try {
-            batchInputFileService.save(user, batchInputFileType, fileUserIdentifier, fileContents, parsedObject);
+            batchInputFileService.save(user, batchInputFileType, fileUserIdentifier, fileContents, null);
         } catch (IllegalArgumentException ie) {
             isCorrectException = true;
         }
         assertTrue("Not throw IllegalArgumentException", isCorrectException);
-
     }
     
     /*
@@ -125,7 +124,7 @@ public class CuBatchInputFileServiceImplTest extends KualiTestBase {
      * This is based on BatchInputFileTypeServiceTest
      */
     public final void testSave() throws Exception {
-        user = GlobalVariables.getUserSession().getPerson();
+        user = new PersonImpl(); //GlobalVariables.getUserSession().getPerson();
         String savedFileName = batchInputFileService.save(user, pcdoBatchInputFileType, testFileIdentifier, validPcdoFileContents, new ArrayList());
 
         File expectedFile = new File(savedFileName);
@@ -134,7 +133,6 @@ public class CuBatchInputFileServiceImplTest extends KualiTestBase {
         // Make sure CU mods does not affect the inputfiletype is not an instance of CuBatchInputFileType
         assertTrue("uploaded pcdo file not found", expectedFile.exists());
         assertTrue("uploaded pcdo file is empty", expectedFile.length() > 0);
-
 
         checkForDoneFile(expectedFile, true);
 
@@ -162,6 +160,14 @@ public class CuBatchInputFileServiceImplTest extends KualiTestBase {
         } else {
             assertTrue("done file " + doneFile.getPath() + " does exist", !doneFile.exists());
         }
+    }
+
+    private class MockDateTimeService extends DateTimeServiceImpl {
+
+        public MockDateTimeService() {
+            timestampToStringFormatForFileName = "yyyyMMdd-HH-mm-ss-S";
+        }
+
     }
 
 }
