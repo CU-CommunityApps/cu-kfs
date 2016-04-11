@@ -210,6 +210,19 @@
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorOwnershipCode" alias="vendorOwnershipCode" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorOwnershipCategoryCode" alias="vendorOwnershipCategoryCode" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorForeignIndicator" alias="vendorForeignIndicator" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorEmailAddress" alias="vendorEmailAddress" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorChapter4StatusCode" alias="vendorChapter4StatusCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorGIIN" alias="vendorGIIN" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorLine1Address" alias="vendorLine1Address" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorLine2Address" alias="vendorLine2Address" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorCityName" alias="vendorCityName" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorStateCode" alias="vendorStateCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorZipCode" alias="vendorZipCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorForeignLine1Address" alias="vendorForeignLine1Address" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorForeignLine2Address" alias="vendorForeignLine2Address" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorForeignCityName" alias="vendorForeignCityName" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorForeignZipCode" alias="vendorForeignZipCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorForeignCountryCode" alias="vendorForeignCountryCode" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::nraPaymentIndicator" alias="nraPaymentIndicator" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::paymentDate" alias="paymentDate" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::paymentPayeeName" alias="paymentPayeeName" />

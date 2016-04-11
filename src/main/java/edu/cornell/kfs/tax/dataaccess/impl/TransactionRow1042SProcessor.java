@@ -378,7 +378,7 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
                         detailRow.payeeId,
                         detailRow.vendorOwnershipCode,
                         detailRow.paymentDate,
-                        detailRow.incomeTaxTreadyExemptIndicator,
+                        detailRow.incomeTaxTreatyExemptIndicator,
                         detailRow.foreignSourceIncomeIndicator,
                         detailRow.federalIncomeTaxPercent,
                         detailRow.paymentLine1Address,
@@ -491,7 +491,7 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
         payeeIdP = (RecordPiece1042SString) complexPieces.get(detailRow.payeeId.propertyName);
         vendorOwnershipCodeP = (RecordPiece1042SString) complexPieces.get(detailRow.vendorOwnershipCode.propertyName);
         paymentDateP = (RecordPiece1042SDate) complexPieces.get(detailRow.paymentDate.propertyName);
-        taxTreatyExemptIncomeYesNoP = (RecordPiece1042SString) complexPieces.get(detailRow.incomeTaxTreadyExemptIndicator.propertyName);
+        taxTreatyExemptIncomeYesNoP = (RecordPiece1042SString) complexPieces.get(detailRow.incomeTaxTreatyExemptIndicator.propertyName);
         foreignSourceIncomeYesNoP = (RecordPiece1042SString) complexPieces.get(detailRow.foreignSourceIncomeIndicator.propertyName);
         fedIncomeTaxPctP = (RecordPiece1042SBigDecimal) complexPieces.get(detailRow.federalIncomeTaxPercent.propertyName);
         paymentAddressLine1P = (RecordPiece1042SString) complexPieces.get(detailRow.paymentLine1Address.propertyName);
@@ -689,9 +689,22 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
             // Perform final inclusion/exclusion processing, and update amounts accordingly.
             processExclusionsAndAmounts(rs, detailRow, summary);
             
-            // Update current row's vendor name and parent vendor name.
+            // Update current row's vendor-related data.
             rs.updateString(detailRow.vendorName.index, vendorNameForOutput);
             rs.updateString(detailRow.parentVendorName.index, parentVendorNameForOutput);
+            rs.updateString(detailRow.vendorEmailAddress.index, vendorEmailAddressP.value);
+            rs.updateString(detailRow.vendorChapter4StatusCode.index, rsVendor.getString(vendorRow.vendorChapter4StatusCode.index));
+            rs.updateString(detailRow.vendorGIIN.index, rsVendor.getString(vendorRow.vendorGIIN.index));
+            rs.updateString(detailRow.vendorLine1Address.index, vendorUSAddressLine1P.value);
+            rs.updateString(detailRow.vendorLine2Address.index, rsVendorUSAddress.getString(vendorAddressRow.vendorLine2Address.index));
+            rs.updateString(detailRow.vendorCityName.index, rsVendorUSAddress.getString(vendorAddressRow.vendorCityName.index));
+            rs.updateString(detailRow.vendorStateCode.index, rsVendorUSAddress.getString(vendorAddressRow.vendorStateCode.index));
+            rs.updateString(detailRow.vendorZipCode.index, rsVendorUSAddress.getString(vendorAddressRow.vendorZipCode.index));
+            rs.updateString(detailRow.vendorForeignLine1Address.index, vendorForeignAddressLine1P.value);
+            rs.updateString(detailRow.vendorForeignLine2Address.index, rsVendorForeignAddress.getString(vendorAddressRow.vendorLine2Address.index));
+            rs.updateString(detailRow.vendorForeignCityName.index, rsVendorForeignAddress.getString(vendorAddressRow.vendorCityName.index));
+            rs.updateString(detailRow.vendorForeignZipCode.index, rsVendorForeignAddress.getString(vendorAddressRow.vendorZipCode.index));
+            rs.updateString(detailRow.vendorForeignCountryCode.index, rsVendorForeignAddress.getString(vendorAddressRow.vendorCountryCode.index));
             
             // Store any changes made to the current transaction detail row.
             rs.updateRow();
