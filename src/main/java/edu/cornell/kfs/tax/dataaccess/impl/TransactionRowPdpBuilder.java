@@ -203,10 +203,7 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
             insertStatement.setBigDecimal(detailRow.netPaymentAmount.index - offset, netPaymentAmount);
             insertStatement.setString(detailRow.documentTitle.index - offset, rs.getString(pdpRow.customerChartCode.index));
             insertStatement.setString(detailRow.vendorTaxNumber.index - offset, rs.getString(pdpRow.vendorTaxNumber.index));
-            insertStatement.setString(detailRow.dvCheckStubText.index - offset, null);
             insertStatement.setString(detailRow.payeeId.index - offset, rs.getString(pdpRow.payeeId.index));
-            insertStatement.setString(detailRow.vendorName.index - offset, null);
-            insertStatement.setString(detailRow.parentVendorName.index - offset, null);
             insertStatement.setString(detailRow.vendorTypeCode.index - offset, rs.getString(pdpRow.vendorTypeCode.index));
             insertStatement.setString(detailRow.vendorOwnershipCode.index - offset, rs.getString(pdpRow.vendorOwnershipCode.index));
             insertStatement.setString(detailRow.vendorOwnershipCategoryCode.index - offset, rs.getString(pdpRow.vendorOwnershipCategoryCode.index));
@@ -214,17 +211,13 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
             insertStatement.setString(detailRow.nraPaymentIndicator.index - offset, rs.getString(pdpRow.nraPayment.index));
             insertStatement.setDate(detailRow.paymentDate.index - offset, rs.getDate(pdpRow.disbursementDate.index));
             insertStatement.setString(detailRow.paymentPayeeName.index - offset, rs.getString(pdpRow.payeeName.index));
-            insertStatement.setString(detailRow.incomeClassCode.index - offset, null);
-            insertStatement.setString(detailRow.incomeTaxTreadyExemptIndicator.index - offset, null);
-            insertStatement.setString(detailRow.foreignSourceIncomeIndicator.index - offset, null);
-            insertStatement.setBigDecimal(detailRow.federalIncomeTaxPercent.index - offset, null);
             insertStatement.setString(detailRow.paymentDescription.index - offset, rs.getString(pdpRow.achPaymentDescription.index));
             insertStatement.setString(detailRow.paymentLine1Address.index - offset, rs.getString(pdpRow.line1Address.index));
             insertStatement.setString(detailRow.paymentCountryName.index - offset, rs.getString(pdpRow.country.index));
             insertStatement.setString(detailRow.chartCode.index - offset, rs.getString(pdpRow.accountDetailFinChartCode.index)); // ?
             insertStatement.setString(detailRow.accountNumber.index - offset, rs.getString(pdpRow.accountNbr.index));
-            insertStatement.setString(detailRow.initiatorNetId.index - offset, null);
-            insertStatement.setString(detailRow.paymentReasonCode.index - offset, null);
+            
+            insertNullsForTransactionRow(insertStatement, detailRow, offset);
             
             // Add to batch, and execute batch if needed.
             insertStatement.addBatch();
@@ -242,6 +235,32 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
         
         // Prepare collected docIds for next processing iteration.
         prepareForSecondPass(summary, docIds);
+    }
+
+    /**
+     * Overridden to also insert nulls for the following field placeholders:
+     * 
+     * <ul>
+     *   <li>dvCheckStubText</li>
+     *   <li>incomeClassCode</li>
+     *   <li>incomeTaxTreatyExemptIndicator</li>
+     *   <li>foreignSourceIncomeIndicator</li>
+     *   <li>federalIncomeTaxPercent</li>
+     *   <li>paymentReasonCode</li>
+     * </ul>
+     * 
+     * @see edu.cornell.kfs.tax.dataaccess.impl.TransactionRowBuilder#insertNullsForTransactionRow(java.sql.PreparedStatement,
+     * edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow, int)
+     */
+    @Override
+    void insertNullsForTransactionRow(PreparedStatement insertStatement, TransactionDetailRow detailRow, int offset) throws SQLException {
+        super.insertNullsForTransactionRow(insertStatement, detailRow, offset);
+        insertStatement.setString(detailRow.dvCheckStubText.index - offset, null);
+        insertStatement.setString(detailRow.incomeClassCode.index - offset, null);
+        insertStatement.setString(detailRow.incomeTaxTreatyExemptIndicator.index - offset, null);
+        insertStatement.setString(detailRow.foreignSourceIncomeIndicator.index - offset, null);
+        insertStatement.setBigDecimal(detailRow.federalIncomeTaxPercent.index - offset, null);
+        insertStatement.setString(detailRow.paymentReasonCode.index - offset, null);
     }
 
 

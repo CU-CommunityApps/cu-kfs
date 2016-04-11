@@ -286,8 +286,6 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
             insertStatement.setString(detailRow.vendorTaxNumber.index - offset, rs.getString(dvRow.vendorTaxNumber.index));
             insertStatement.setString(detailRow.dvCheckStubText.index - offset, rs.getString(dvRow.disbVchrCheckStubText.index));
             insertStatement.setString(detailRow.payeeId.index - offset, rs.getString(dvRow.disbVchrPayeeIdNumber.index));
-            insertStatement.setString(detailRow.vendorName.index - offset, null);
-            insertStatement.setString(detailRow.parentVendorName.index - offset, null);
             insertStatement.setString(detailRow.vendorTypeCode.index - offset, rs.getString(dvRow.vendorTypeCode.index));
             insertStatement.setString(detailRow.vendorOwnershipCode.index - offset, rs.getString(dvRow.vendorOwnershipCode.index));
             insertStatement.setString(detailRow.vendorOwnershipCategoryCode.index - offset, rs.getString(dvRow.vendorOwnershipCategoryCode.index));
@@ -296,7 +294,7 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
             insertStatement.setDate(detailRow.paymentDate.index - offset, rs.getDate(dvRow.paidDate.index));
             insertStatement.setString(detailRow.paymentPayeeName.index - offset, rs.getString(dvRow.disbVchrPayeePersonName.index));
             insertStatement.setString(detailRow.incomeClassCode.index - offset, rs.getString(dvRow.incomeClassCode.index));
-            insertStatement.setString(detailRow.incomeTaxTreadyExemptIndicator.index - offset, rs.getString(dvRow.incomeTaxTreatyExemptCode.index));
+            insertStatement.setString(detailRow.incomeTaxTreatyExemptIndicator.index - offset, rs.getString(dvRow.incomeTaxTreatyExemptCode.index));
             insertStatement.setString(detailRow.foreignSourceIncomeIndicator.index - offset, rs.getString(dvRow.foreignSourceIncomeCode.index));
             insertStatement.setBigDecimal(detailRow.federalIncomeTaxPercent.index - offset, rs.getBigDecimal(dvRow.federalIncomeTaxPercent.index));
             insertStatement.setString(detailRow.paymentDescription.index - offset, rs.getString(dvRow.financialDocumentLineDescription.index));
@@ -304,8 +302,9 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
             insertStatement.setString(detailRow.paymentCountryName.index - offset, rs.getString(dvRow.disbVchrPayeeCountryCode.index));
             insertStatement.setString(detailRow.chartCode.index - offset, rs.getString(dvRow.chartOfAccountsCode.index));
             insertStatement.setString(detailRow.accountNumber.index - offset, rs.getString(dvRow.accountNumber.index));
-            insertStatement.setString(detailRow.initiatorNetId.index - offset, null);
             insertStatement.setString(detailRow.paymentReasonCode.index - offset, rs.getString(dvRow.disbVchrPaymentReasonCode.index));
+            
+            insertNullsForTransactionRow(insertStatement, detailRow, offset);
             
             // Add to batch, and execute batch if needed.
             insertStatement.addBatch();

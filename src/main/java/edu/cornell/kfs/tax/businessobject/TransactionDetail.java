@@ -31,6 +31,19 @@ public class TransactionDetail extends TransientBusinessObjectBase {
     private String vendorOwnershipCode;
     private String vendorOwnershipCategoryCode;
     private Boolean vendorForeignIndicator;
+    private String vendorEmailAddress;
+    private String vendorChapter4StatusCode;
+    private String vendorGIIN;
+    private String vendorLine1Address;
+    private String vendorLine2Address;
+    private String vendorCityName;
+    private String vendorStateCode;
+    private String vendorZipCode;
+    private String vendorForeignLine1Address;
+    private String vendorForeignLine2Address;
+    private String vendorForeignCityName;
+    private String vendorForeignZipCode;
+    private String vendorForeignCountryCode;
     private Boolean nraPaymentIndicator;
     private java.sql.Date paymentDate;
     private String paymentPayeeName;
@@ -200,6 +213,110 @@ public class TransactionDetail extends TransientBusinessObjectBase {
 
     public void setVendorForeignIndicator(Boolean vendorForeignIndicator) {
         this.vendorForeignIndicator = vendorForeignIndicator;
+    }
+
+    public String getVendorEmailAddress() {
+        return vendorEmailAddress;
+    }
+
+    public void setVendorEmailAddress(String vendorEmailAddress) {
+        this.vendorEmailAddress = vendorEmailAddress;
+    }
+
+    public String getVendorChapter4StatusCode() {
+        return vendorChapter4StatusCode;
+    }
+
+    public void setVendorChapter4StatusCode(String vendorChapter4StatusCode) {
+        this.vendorChapter4StatusCode = vendorChapter4StatusCode;
+    }
+
+    public String getVendorGIIN() {
+        return vendorGIIN;
+    }
+
+    public void setVendorGIIN(String vendorGIIN) {
+        this.vendorGIIN = vendorGIIN;
+    }
+
+    public String getVendorLine1Address() {
+        return vendorLine1Address;
+    }
+
+    public void setVendorLine1Address(String vendorLine1Address) {
+        this.vendorLine1Address = vendorLine1Address;
+    }
+
+    public String getVendorLine2Address() {
+        return vendorLine2Address;
+    }
+
+    public void setVendorLine2Address(String vendorLine2Address) {
+        this.vendorLine2Address = vendorLine2Address;
+    }
+
+    public String getVendorCityName() {
+        return vendorCityName;
+    }
+
+    public void setVendorCityName(String vendorCityName) {
+        this.vendorCityName = vendorCityName;
+    }
+
+    public String getVendorStateCode() {
+        return vendorStateCode;
+    }
+
+    public void setVendorStateCode(String vendorStateCode) {
+        this.vendorStateCode = vendorStateCode;
+    }
+
+    public String getVendorZipCode() {
+        return vendorZipCode;
+    }
+
+    public void setVendorZipCode(String vendorZipCode) {
+        this.vendorZipCode = vendorZipCode;
+    }
+
+    public String getVendorForeignLine1Address() {
+        return vendorForeignLine1Address;
+    }
+
+    public void setVendorForeignLine1Address(String vendorForeignLine1Address) {
+        this.vendorForeignLine1Address = vendorForeignLine1Address;
+    }
+
+    public String getVendorForeignLine2Address() {
+        return vendorForeignLine2Address;
+    }
+
+    public void setVendorForeignLine2Address(String vendorForeignLine2Address) {
+        this.vendorForeignLine2Address = vendorForeignLine2Address;
+    }
+
+    public String getVendorForeignCityName() {
+        return vendorForeignCityName;
+    }
+
+    public void setVendorForeignCityName(String vendorForeignCityName) {
+        this.vendorForeignCityName = vendorForeignCityName;
+    }
+
+    public String getVendorForeignZipCode() {
+        return vendorForeignZipCode;
+    }
+
+    public void setVendorForeignZipCode(String vendorForeignZipCode) {
+        this.vendorForeignZipCode = vendorForeignZipCode;
+    }
+
+    public String getVendorForeignCountryCode() {
+        return vendorForeignCountryCode;
+    }
+
+    public void setVendorForeignCountryCode(String vendorForeignCountryCode) {
+        this.vendorForeignCountryCode = vendorForeignCountryCode;
     }
 
     public Boolean getNraPaymentIndicator() {

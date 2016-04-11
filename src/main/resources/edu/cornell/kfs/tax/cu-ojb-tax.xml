@@ -41,6 +41,19 @@
         <field-descriptor name="vendorOwnershipCode" column="VNDR_OWNR_CD" jdbc-type="VARCHAR" />
         <field-descriptor name="vendorOwnershipCategoryCode" column="VNDR_OWNR_CTGRY_CD" jdbc-type="VARCHAR" />
         <field-descriptor name="vendorForeignIndicator" column="VNDR_FRGN_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+        <field-descriptor name="vendorEmailAddress" column="VNDR_EMAIL_ADDR" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorChapter4StatusCode" column="VNDR_CHAP_4_STAT_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorGIIN" column="VNDR_GIIN" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorLine1Address" column="VNDR_LN1_ADDR" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorLine2Address" column="VNDR_LN2_ADDR" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorCityName" column="VNDR_CTY_NM" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorStateCode" column="VNDR_ST_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorZipCode" column="VNDR_ZIP_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorForeignLine1Address" column="VNDR_FRGN_LN1_ADDR" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorForeignLine2Address" column="VNDR_FRGN_LN2_ADDR" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorForeignCityName" column="VNDR_FRGN_CTY_NM" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorForeignZipCode" column="VNDR_FRGN_ZIP_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorForeignCountryCode" column="VNDR_FRGN_CNTRY_CD" jdbc-type="VARCHAR" />
         <field-descriptor name="nraPaymentIndicator" column="NRA_PAYMENT_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
         <field-descriptor name="paymentDate" column="PMT_DT" jdbc-type="DATE" />
         <field-descriptor name="paymentPayeeName" column="PMT_PAYEE_NM" jdbc-type="VARCHAR" />

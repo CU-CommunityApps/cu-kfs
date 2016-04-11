@@ -35,6 +35,7 @@ import org.kuali.rice.krad.util.BeanPropertyComparator;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
+import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
 
 /**
  * Base helper class for objects that construct transaction detail rows from KFS-side tax data.
@@ -229,6 +230,56 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
             this.accountService = SpringContext.getBean(AccountService.class);
             this.organizationService = SpringContext.getBean(OrganizationService.class);
         }
+    }
+
+
+
+    /**
+     * Helper method for explicitly inserting nulls into the appropriate placeholders
+     * on the transaction detail insertion statement. The default implementation inserts
+     * nulls for the following field placeholders:
+     * 
+     * <ul>
+     *   <li>vendorName</li>
+     *   <li>parentVendorName</li>
+     *   <li>vendorEmailAddress</li>
+     *   <li>vendorChapter4StatusCode</li>
+     *   <li>vendorGIIN</li>
+     *   <li>vendorLine1Address</li>
+     *   <li>vendorLine2Address</li>
+     *   <li>vendorCityName</li>
+     *   <li>vendorStateCode</li>
+     *   <li>vendorZipCode</li>
+     *   <li>vendorForeignLine1Address</li>
+     *   <li>vendorForeignLine2Address</li>
+     *   <li>vendorForeignCityName</li>
+     *   <li>vendorForeignZipCode</li>
+     *   <li>vendorForeignCountryCode</li>
+     *   <li>initiatorNetId</li>
+     * </ul>
+     * 
+     * @param insertStatement The prepared statement that will insert the transaction detail rows.
+     * @param detailRow The helper object containing metadata about the transaction detail table.
+     * @param offset The amount to subtract from the metadata indexes to get the actual insertion statement indexes.
+     * @throws SQLException
+     */
+    void insertNullsForTransactionRow(PreparedStatement insertStatement, TransactionDetailRow detailRow, int offset) throws SQLException {
+        insertStatement.setString(detailRow.vendorName.index - offset, null);
+        insertStatement.setString(detailRow.parentVendorName.index - offset, null);
+        insertStatement.setString(detailRow.vendorEmailAddress.index - offset, null);
+        insertStatement.setString(detailRow.vendorChapter4StatusCode.index - offset, null);
+        insertStatement.setString(detailRow.vendorGIIN.index - offset, null);
+        insertStatement.setString(detailRow.vendorLine1Address.index - offset, null);
+        insertStatement.setString(detailRow.vendorLine2Address.index - offset, null);
+        insertStatement.setString(detailRow.vendorCityName.index - offset, null);
+        insertStatement.setString(detailRow.vendorStateCode.index - offset, null);
+        insertStatement.setString(detailRow.vendorZipCode.index - offset, null);
+        insertStatement.setString(detailRow.vendorForeignLine1Address.index - offset, null);
+        insertStatement.setString(detailRow.vendorForeignLine2Address.index - offset, null);
+        insertStatement.setString(detailRow.vendorForeignCityName.index - offset, null);
+        insertStatement.setString(detailRow.vendorForeignZipCode.index - offset, null);
+        insertStatement.setString(detailRow.vendorForeignCountryCode.index - offset, null);
+        insertStatement.setString(detailRow.initiatorNetId.index - offset, null);
     }
 
 
