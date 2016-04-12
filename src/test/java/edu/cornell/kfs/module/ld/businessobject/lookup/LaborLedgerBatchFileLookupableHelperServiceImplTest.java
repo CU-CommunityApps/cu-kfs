@@ -1,8 +1,8 @@
 package edu.cornell.kfs.module.ld.businessobject.lookup;
 
-import org.kuali.kfs.sys.context.KualiTestBase;
+import junit.framework.TestCase;
 
-public class LaborLedgerBatchFileLookupableHelperServiceImplTest extends KualiTestBase {
+public class LaborLedgerBatchFileLookupableHelperServiceImplTest extends TestCase {
 
     private LaborLedgerBatchFileLookupableHelperServiceImpl laborLedgerBatchFileLookupableHelperService;
     

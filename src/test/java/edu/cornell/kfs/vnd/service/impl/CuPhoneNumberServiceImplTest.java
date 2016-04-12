@@ -1,20 +1,24 @@
 package edu.cornell.kfs.vnd.service.impl;
 
-import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.SpringContext;
-
+import edu.cornell.kfs.sys.service.mock.MockParameterServiceImpl;
 import edu.cornell.kfs.vnd.fixture.PhoneNumberFixture;
+import junit.framework.TestCase;
+import org.kuali.kfs.sys.ConfigureContext;
+import org.kuali.rice.coreservice.api.parameter.Parameter;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+
+import java.util.Collection;
 
 @ConfigureContext
-public class CuPhoneNumberServiceImplTest extends KualiTestBase {
+public class CuPhoneNumberServiceImplTest extends TestCase {
 
 	CuPhoneNumberServiceImpl cuPhoneNumberServiceImpl;
 	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		cuPhoneNumberServiceImpl = SpringContext.getBean(CuPhoneNumberServiceImpl.class);
+		cuPhoneNumberServiceImpl = new CuPhoneNumberServiceImpl();
+		cuPhoneNumberServiceImpl.setParameterService(new MockParameterServiceImpl());
 	}
 	
 	public void testFormatNumberIfPossible( ) {
@@ -29,4 +33,5 @@ public class CuPhoneNumberServiceImplTest extends KualiTestBase {
 		assertEquals(cuPhoneNumberServiceImpl.formatNumberIfPossible(losAngeles.unformatted), losAngeles.formatted);
 		assertEquals(cuPhoneNumberServiceImpl.formatNumberIfPossible(nyc.unformatted), nyc.formatted);
 	}
+
 }
