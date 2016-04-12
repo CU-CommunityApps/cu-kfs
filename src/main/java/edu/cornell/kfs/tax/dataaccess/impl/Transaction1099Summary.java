@@ -200,7 +200,7 @@ class Transaction1099Summary extends TransactionDetailSummary {
         this.taxBoxDvCheckStubTextsAreWhitelists = Collections.unmodifiableMap(tempWhitelistFlagsMap);
     }
 
-    private TaxTableField getBoxNumberConstant(String boxNumber) {
+    protected TaxTableField getBoxNumberConstant(String boxNumber) {
         return (StringUtils.isNotBlank(boxNumber)) ? derivedValues.fields.get("box" + boxNumber.toLowerCase()) : null;
     }
 }
