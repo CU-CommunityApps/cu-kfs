@@ -94,8 +94,11 @@
     </bean>
 
     <bean id="taxTableMetadataService" class="edu.cornell.kfs.tax.dataaccess.impl.TaxTableMetadataServiceOjbImpl" />
-
-
+    
+    <bean id="paymentReason1099BoxService" parent="paymentReason1099BoxService-parentBean" />
+    <bean id="paymentReason1099BoxService-parentBean" abstract="true" class="edu.cornell.kfs.tax.service.impl.PaymentReason1099BoxServiceImpl">
+        <property name="parameterService" ref="parameterService" />
+    </bean>
 
     <!-- Batch Jobs -->
 

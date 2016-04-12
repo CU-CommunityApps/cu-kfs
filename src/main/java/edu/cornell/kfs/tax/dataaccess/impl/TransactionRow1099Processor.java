@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.core.api.encryption.EncryptionService;
 import org.kuali.rice.krad.util.KRADConstants;
@@ -28,6 +29,7 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DerivedValuesRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorAddressRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorRow;
+import edu.cornell.kfs.tax.service.PaymentReason1099BoxService;
 
 /**
  * Default TransactionRowProcessor implementation for handling 1099 tax processing.
@@ -238,6 +240,8 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
     private OriginSpecificStats dvStats;
     private OriginSpecificStats pdpStats;
     private OriginSpecificStats currentStats;
+
+	private PaymentReason1099BoxService paymentReason1099BoxService;
 
 
 
@@ -911,12 +915,21 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         int idx;
         
         // Find tax box.
-        taxBox = summary.objectCodeBucketMappings.get(new StringBuilder().append(objectCodeP.value)
-                .append(';').append((isDVRow && StringUtils.isNotBlank(paymentReasonCodeP.value))
-                        ? paymentReasonCodeP.value : CUTaxConstants.ANY_OR_NONE_PAYMENT_REASON).toString());
-        if (taxBox == null && isDVRow && StringUtils.isNotBlank(paymentReasonCodeP.value)) {
-            taxBox = summary.objectCodeBucketMappings.get(new StringBuilder().append(objectCodeP.value)
-                    .append(';').append(CUTaxConstants.ANY_OR_NONE_PAYMENT_REASON).toString());
+        if (getPaymentReason1099BoxService().isPaymentReasonMappedTo1099Box(paymentReasonCodeP.value)) {
+        	String mappedBox = getPaymentReason1099BoxService().getPaymentReason1099Box(paymentReasonCodeP.value);
+			LOG.debug("Overriding to tax box " + mappedBox + "  because of payment reason " + paymentReasonCodeP.value + " for vendor " + vendorNameForOutput);
+			taxBox = summary.getBoxNumberConstant(mappedBox);
+        } else if (getPaymentReason1099BoxService().isPaymentReasonMappedToNo1099Box(paymentReasonCodeP.value)) {
+        	LOG.debug("Overriding to NO tax box because of payment reason " + paymentReasonCodeP.value + " for vendor " + vendorNameForOutput);
+        	taxBox = null;
+        } else {
+	        taxBox = summary.objectCodeBucketMappings.get(new StringBuilder().append(objectCodeP.value)
+	                .append(';').append((isDVRow && StringUtils.isNotBlank(paymentReasonCodeP.value))
+	                        ? paymentReasonCodeP.value : CUTaxConstants.ANY_OR_NONE_PAYMENT_REASON).toString());
+	        if (taxBox == null && isDVRow && StringUtils.isNotBlank(paymentReasonCodeP.value)) {
+	            taxBox = summary.objectCodeBucketMappings.get(new StringBuilder().append(objectCodeP.value)
+	                    .append(';').append(CUTaxConstants.ANY_OR_NONE_PAYMENT_REASON).toString());
+	        }
         }
         
         // Check for vendor type or vendor ownership type exclusions.
@@ -1574,5 +1587,16 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
             }
         }
     }
+    
+    public PaymentReason1099BoxService getPaymentReason1099BoxService() {
+		if (paymentReason1099BoxService == null) {
+			paymentReason1099BoxService = SpringContext.getBean(PaymentReason1099BoxService.class);
+		}
+		return paymentReason1099BoxService;
+	}
+
+	public void setPaymentReason1099BoxService(PaymentReason1099BoxService paymentReason1099BoxService) {
+		this.paymentReason1099BoxService = paymentReason1099BoxService;
+	}
 
 }
