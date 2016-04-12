@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.core.api.encryption.EncryptionService;
 import org.kuali.rice.krad.util.KRADConstants;
@@ -28,6 +29,7 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DerivedValuesRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorAddressRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorRow;
+import edu.cornell.kfs.tax.service.PaymentReason1099BoxService;
 
 /**
  * Default TransactionRowProcessor implementation for handling 1099 tax processing.
@@ -238,6 +240,8 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
     private OriginSpecificStats dvStats;
     private OriginSpecificStats pdpStats;
     private OriginSpecificStats currentStats;
+    
+    private PaymentReason1099BoxService paymentReason1099BoxService;
 
 
 
@@ -1137,6 +1141,14 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                         .append(paymentDateP.value).append(';')
                         .append(docNumberP.value).append(';')
                         .append(docLineNumberP.value).toString());
+        
+        //Determine if there is override of tax box due to the payment reason
+        if (getPaymentReason1099BoxService().isPaymentReasonMappedTo1099Box(paymentReasonCodeP.value)) {
+			String mappedBox = getPaymentReason1099BoxService().getPaymentReason1099Box(paymentReasonCodeP.value);
+			LOG.info("Overriding to tax box " + mappedBox + "  because of payment reason " + paymentReasonCodeP.value + " for vendor " + vendorNameForOutput);
+			overrideTaxBox = summary.getBoxNumberConstant(mappedBox);
+		}
+        
         if (overrideTaxBox != null) {
             overriddenTaxBox = taxBox;
             taxBox = overrideTaxBox;
@@ -1145,9 +1157,7 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
             }
         } else {
             overriddenTaxBox = null;
-        }
-        
-        
+        }       
         
         // If explicit inclusion, log stats accordingly.
         if (isParm1099Inclusion) {
@@ -1156,44 +1166,52 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
             }
         }
         
-        // Perform logging and updates depending on box type and exclusions.
-        if ((isParm1099Exclusion && overrideTaxBox == null) || summary.derivedValues.boxUnknown1099.equals(overrideTaxBox)) {
-            // If exclusion without an override (or an override to a non-reportable box type), then do not update amounts.
-            rs.updateString(detailRow.form1099Box.index, CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
-            if (taxBox != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Found exclusions for row with key: " + rowKey);
-                }
-                if (overrideTaxBox != null) {
-                    rs.updateString(detailRow.form1099OverriddenBox.index, (overriddenTaxBox != null)
-                            ? overriddenTaxBox.propertyName.substring(BOX_PREFIX.length()).toUpperCase() : CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
-                }
-            } else {
-                numNoBoxDeterminedRows++;
-            }
-            
-        } else if (taxBox != null) {
-            // If not an exclusion and a tax box was found, then update the box's current amount.
-            taxBoxPiece = boxesMap.get(taxBox);
-            if (taxBoxPiece != null) {
-                taxBoxPiece.value = taxBoxPiece.value.add(paymentAmountP.value);
-                
-            } else if (!summary.derivedValues.box9.equals(taxBox) && !summary.derivedValues.box17.equals(taxBox)) {
-                throw new RuntimeException("Unrecognized 1099 tax box type");
-            }
-            
-            // Update tax box indicator fields.
-            foundAmount = true;
-            rs.updateString(detailRow.form1099Box.index, taxBox.propertyName.substring(BOX_PREFIX.length()).toUpperCase());
-            if (overrideTaxBox != null) {
-                rs.updateString(detailRow.form1099OverriddenBox.index, (overriddenTaxBox != null)
-                        ? overriddenTaxBox.propertyName.substring(BOX_PREFIX.length()).toUpperCase() : CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
-            }
-            
-        } else {
-            // Otherwise, do not update amounts.
+        //If the payment reason has been marked to go to NO tax boxes, then don't update the tax boxes.
+        if (getPaymentReason1099BoxService().isPaymentReasonMappedToNo1099Box(paymentReasonCodeP.value)) {
+        	// Do not update amounts.
             rs.updateString(detailRow.form1099Box.index, CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
             numNoBoxDeterminedRows++;
+            LOG.info("Overriding to NO tax box because of payment reason " + paymentReasonCodeP.value + " for vendor " + vendorNameForOutput);
+        } else {
+	        // Perform logging and updates depending on box type and exclusions.
+	        if ((isParm1099Exclusion && overrideTaxBox == null) || summary.derivedValues.boxUnknown1099.equals(overrideTaxBox)) {
+	            // If exclusion without an override (or an override to a non-reportable box type), then do not update amounts.
+	            rs.updateString(detailRow.form1099Box.index, CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
+	            if (taxBox != null) {
+	                if (LOG.isDebugEnabled()) {
+	                    LOG.debug("Found exclusions for row with key: " + rowKey);
+	                }
+	                if (overrideTaxBox != null) {
+	                    rs.updateString(detailRow.form1099OverriddenBox.index, (overriddenTaxBox != null)
+	                            ? overriddenTaxBox.propertyName.substring(BOX_PREFIX.length()).toUpperCase() : CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
+	                }
+	            } else {
+	                numNoBoxDeterminedRows++;
+	            }
+	            
+	        } else if (taxBox != null) {
+	            // If not an exclusion and a tax box was found, then update the box's current amount.
+	            taxBoxPiece = boxesMap.get(taxBox);
+	            if (taxBoxPiece != null) {
+	                taxBoxPiece.value = taxBoxPiece.value.add(paymentAmountP.value);
+	                
+	            } else if (!summary.derivedValues.box9.equals(taxBox) && !summary.derivedValues.box17.equals(taxBox)) {
+	                throw new RuntimeException("Unrecognized 1099 tax box type");
+	            }
+	            
+	            // Update tax box indicator fields.
+	            foundAmount = true;
+	            rs.updateString(detailRow.form1099Box.index, taxBox.propertyName.substring(BOX_PREFIX.length()).toUpperCase());
+	            if (overrideTaxBox != null) {
+	                rs.updateString(detailRow.form1099OverriddenBox.index, (overriddenTaxBox != null)
+	                        ? overriddenTaxBox.propertyName.substring(BOX_PREFIX.length()).toUpperCase() : CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
+	            }
+	            
+	        } else {
+	            // Otherwise, do not update amounts.
+	            rs.updateString(detailRow.form1099Box.index, CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
+	            numNoBoxDeterminedRows++;
+	        }
         }
     }
 
@@ -1581,5 +1599,18 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
             }
         }
     }
+
+	public PaymentReason1099BoxService getPaymentReason1099BoxService() {
+		if (paymentReason1099BoxService == null) {
+			paymentReason1099BoxService = SpringContext.getBean(PaymentReason1099BoxService.class);
+		}
+		return paymentReason1099BoxService;
+	}
+
+
+
+	public void setPaymentReason1099BoxService(PaymentReason1099BoxService paymentReason1099BoxService) {
+		this.paymentReason1099BoxService = paymentReason1099BoxService;
+	}
 
 }
