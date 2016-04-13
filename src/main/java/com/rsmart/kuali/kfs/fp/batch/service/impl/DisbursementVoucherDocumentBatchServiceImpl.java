@@ -115,6 +115,9 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
                 LOG.error("Caught exception trying to load disbursement voucher file: " + incomingFileName, e);
                 throw new RuntimeException("Caught exception trying to load disbursement voucher file: " + incomingFileName, e);
             }
+            finally{
+            	 batchFeedHelperService.removeDoneFile(incomingFileName);
+            }
         }
     }
 
@@ -195,7 +198,6 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
             MessageMap.putError(KFSConstants.GLOBAL_ERRORS, FPKeyConstants.ERROR_BATCH_DISBURSEMENT_VOUCHER_ERRORS_NOTIFICATION);
         }
 
-        batchFeedHelperService.removeDoneFile(incomingFileName);
     }
 
     /**
