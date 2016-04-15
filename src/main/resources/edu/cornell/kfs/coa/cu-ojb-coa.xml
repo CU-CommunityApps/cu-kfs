@@ -1575,6 +1575,7 @@
   		<field-descriptor name="carryForwardByObjectCodeIndicator" column="CF_BY_OBJ_CD_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
   		<field-descriptor name="cashReversionFinancialChartOfAccountsCode" column="CSH_RVRSNFINCOA_CD" jdbc-type="VARCHAR" />
   		<field-descriptor name="cashReversionAccountNumber" column="CSH_RVRSN_ACCT_NBR" jdbc-type="VARCHAR" />
+  		<field-descriptor name="reversionActiveIndicator" column="RVRSN_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
   
   		<reference-descriptor name="cashReversionAccount" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
     		<foreignkey field-ref="cashReversionFinancialChartOfAccountsCode" />

@@ -56,7 +56,11 @@ import edu.cornell.kfs.sys.CUKFSPropertyConstants;
  * This class implements the business rules for {@link AccountReversionGlobal}
  */
 public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
-    protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionGlobalRule.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionGlobalRule.class);
+
+    private static final String GLOBAL_ACCOUNT_FIELDS_SECTION = "Edit Global Account Reversion";
+    private static final String GLOBAL_DETAIL_FIELDS_SECTION = "Edit Global Account Reversion Details";
+
     protected AccountReversionGlobal globalAccountReversion;
     protected AccountReversionService accountReversionService;
     protected ObjectCodeService objectCodeService;
@@ -132,18 +136,17 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
     }
 
     /**
-     * This performs rules checks whenever a new {@link AccountReversionGlobalDetail} or {@link AccountReversionGlobalOrganization} is added
+     * This performs rules checks whenever a new {@link AccountReversionGlobalDetail} or {@link AccountReversionGlobalAccount} is added
      * <p>
      * This includes:
      * <ul>
      * <li>{@link AccountReversionGlobalRule#checkDetailObjectCodeValidity(AccountReversionGlobal, AccountReversionGlobalDetail)}</li>
      * <li>{@link AccountReversionGlobalRule#checkDetailObjectReversionCodeValidity(AccountReversionGlobalDetail)}</li>
-     * <li>ensure that the chart of accounts code and organization codes for {@link AccountReversionGlobalOrganization} are not empty values</li>
-     * <li>{@link AccountReversionGlobalRule#checkAllObjectCodesForValidity(AccountReversionGlobal, AccountReversionGlobalOrganization)}</li>
-     * <li>{@link AccountReversionGlobalRule#checkOrganizationChartValidity(AccountReversionGlobalOrganization)</li>
-     * <li>{@link AccountReversionGlobalRule#checkOrganizationValidity(AccountReversionGlobalOrganization)</li>
-     * <li>{@link AccountReversionGlobalRule#checkAccountReversionForOrganizationExists(AccountReversionGlobal, AccountReversionGlobalOrganization)</li>
-     * <li>{@link AccountReversionGlobalRule#checkOrganizationIsNotAmongOrgRevOrganizations(AccountReversionGlobal, AccountReversionGlobalOrganization)</li>
+     * <li>ensure that the chart of accounts code and account number for {@link AccountReversionGlobalAccount} are not empty values</li>
+     * <li>{@link AccountReversionGlobalRule#checkAllObjectCodesForValidity(AccountReversionGlobal, AccountReversionGlobalAccount)}</li>
+     * <li>{@link AccountReversionGlobalRule#checkAccountChartValidity(AccountReversionGlobalAccount)</li>
+     * <li>{@link AccountReversionGlobalRule#checkAccountValidity(AccountReversionGlobalAccount)</li>
+     * <li>{@link AccountReversionGlobalRule#checkAccountIsNotAmongAcctRevAccounts(AccountReversionGlobal, AccountReversionGlobalAccount)</li>
      * </ul>
      * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomAddCollectionLineBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument,
      *      java.lang.String, org.kuali.rice.kns.bo.PersistableBusinessObject)
@@ -159,17 +162,14 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
         }
         else if (line instanceof AccountReversionGlobalAccount) {
             AccountReversionGlobalAccount acct = (AccountReversionGlobalAccount) line;
-            if (!checkEmptyValue(acct.getChartOfAccountsCode())) {
-                GlobalVariables.getMessageMap().putError("chartOfAccountsCode", KFSKeyConstants.ERROR_REQUIRED, "Chart of Accounts Code");
-            }
-            if (!checkEmptyValue(acct.getAccountNumber())) {
-                GlobalVariables.getMessageMap().putError("accountNumber", KFSKeyConstants.ERROR_REQUIRED, "Account Number");
+            if (!checkEmptyValue(acct.getChartOfAccountsCode()) || !checkEmptyValue(acct.getAccountNumber())) {
+                // Skip Most validation if chart or account are empty. The default required-field checking will populate the error map accordingly.
+                success = false;
             }
             if (success) {
                 success &= checkAllObjectCodesForValidity(globalAcctRev, acct);
                 success &= checkAccountChartValidity(acct);
                 success &= checkAccountValidity(acct);
-                success &= checkAccountReversionForAccountExists(globalAcctRev, acct);
                 success &= checkAccountIsNotAmongAcctRevAccounts(globalAcctRev, acct);
             }
         }
@@ -205,7 +205,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
      * This method makes sure that if one part of the Budget Reversion Chart/Account pair is specified, both are specified, or an
      * error is thrown.
      * 
-     * @param globalOrgRev the Global Organization Reversion to check
+     * @param globalAcctRev the Global Account Reversion to check
      * @return true if budget reversion chart/account pair is specified correctly, false if otherwise
      */
     public boolean checkBudgetReversionAccountPair(AccountReversionGlobal globalAcctRev) {
@@ -221,7 +221,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
      * This method makes sure that if one part of the Cash Reversion Chart/Account pair is specified, both are specified, or an
      * error is thrown.
      * 
-     * @param globalOrgRev the Global Organization Reversion to check
+     * @param globalAcctRev the Global Account Reversion to check
      * @return true if cash reversion chart/account pair is specified correctly, false if otherwise
      */
     public boolean checkCashReversionAccountPair(AccountReversionGlobal globalAcctRev) {
@@ -234,10 +234,10 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
     }
 
     /**
-     * Tests if all of the {@link AccountReversionGlobalDetail} objects associated with the given global organization reversion are
+     * Tests if all of the {@link AccountReversionGlobalDetail} objects associated with the given global account reversion are
      * valid.
      * 
-     * @param globalOrgRev the global organization reversion to check
+     * @param globalAcctRev the global account reversion to check
      * @return true if valid, false otherwise
      */
     public boolean areAllDetailsValid(AccountReversionGlobal globalAcctRev) {
@@ -259,7 +259,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
     }
 
     /**
-     * Tests if the Organization Reversion Category existed in the database and was active.
+     * Tests if the Account Reversion Category existed in the database and was active.
      * 
      * @param detail AccountReversionGlobalDetail to check
      * @return true if the category is valid, false if otherwise
@@ -268,21 +268,24 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
         boolean success = true;
         if (StringUtils.isBlank(detail.getAccountReversionCategoryCode())) {
             success = false;
-            GlobalVariables.getMessageMap().putError("accountReversionCategoryCode", KFSKeyConstants.ERROR_REQUIRED, new String[] {});
-        }
-        else {
+            GlobalVariables.getMessageMap().putError(CUKFSPropertyConstants.ACCT_REVERSION_CATEGORY_CODE,
+                    KFSKeyConstants.ERROR_REQUIRED, "Account Reversion Category");
+        } else {
             detail.refreshReferenceObject("reversionCategory");
-            if (detail.getReversionCategory() == null || !detail.getReversionCategory().isActive()) {
+            if (ObjectUtils.isNull(detail.getReversionCategory()) || !detail.getReversionCategory().isActive()) {
                 success = false;
-                GlobalVariables.getMessageMap().putError("organizationReversionCategoryCode", CUKFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_ACCT_REVERSION_CATEGORY, new String[] { detail.getAccountReversionCategoryCode() });
+                GlobalVariables.getMessageMap().putError(CUKFSPropertyConstants.ACCT_REVERSION_CATEGORY_CODE,
+                        CUKFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_ACCT_REVERSION_CATEGORY,
+                        new String[] { detail.getAccountReversionCategoryCode() });
             }
         }
         return success;
     }
 
     /**
-     * For each organization, tests if the object code in the detail exists in the system and is active
+     * For each account, tests if the object code in the detail exists in the system and is active
      * 
+     * @param globalAcctRev the global account reversion to check
      * @param detail the AccountReversionGlobalDetail to check
      * @return true if it is valid, false if otherwise
      */
@@ -299,10 +302,10 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
 
     /**
      * This method loops through each of the AccountReversionGlobalDetail objects, checking that the entered object codes for
-     * each of them are compatible with the AccountReversionGlobalOrganization specified.
+     * each of them are compatible with the AccountReversionGlobalAccount specified.
      * 
-     * @param globalOrgRev the global organization reversion to check
-     * @param org the AccountReversionGlobalOrganization with a new chart to check against all of the object codes
+     * @param globalAcctRev the global account reversion to check
+     * @param acct the AccountReversionGlobalOrganization with a new chart to check against all of the object codes
      * @return true if there are no conflicts, false if otherwise
      */
     public boolean checkAllObjectCodesForValidity(AccountReversionGlobal globalAcctRev, AccountReversionGlobalAccount acct) {
@@ -310,7 +313,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
         for (AccountReversionGlobalDetail detail : globalAcctRev.getAccountReversionGlobalDetails()) {
             if (!validObjectCode(globalAcctRev.getUniversityFiscalYear(), acct.getChartOfAccountsCode(), detail.getAccountReversionObjectCode())) {
                 success = false;
-                GlobalVariables.getMessageMap().putError("accountNumber", CUKFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_OBJECT_CODE_INVALID, new String[] { globalAcctRev.getUniversityFiscalYear().toString(), acct.getChartOfAccountsCode(), detail.getAccountReversionObjectCode(), acct.getChartOfAccountsCode(), acct.getAccountNumber() });
+                GlobalVariables.getMessageMap().putError(CUKFSPropertyConstants.ACCT_REVERSION_ACCT_NUMBER, CUKFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_OBJECT_CODE_INVALID, new String[] { globalAcctRev.getUniversityFiscalYear().toString(), acct.getChartOfAccountsCode(), detail.getAccountReversionObjectCode(), acct.getChartOfAccountsCode(), acct.getAccountNumber() });
             }
         }
         return success;
@@ -344,7 +347,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
         boolean success = true;
         if (!StringUtils.isBlank(detail.getAccountReversionCode())) {
             boolean foundInList = false;
-            // TODO Dude!! The *only* place that the org reversion code values are defined
+            // TODO Dude!! The *only* place that the acct reversion code values are defined
             // is in the lookup class, so I've got to use a web-based class to actually
             // search through the values. Is that right good & healthy?
             for (Object kvPairObj : new ReversionCodeValuesFinder().getKeyValues()) {
@@ -363,18 +366,20 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
     }
 
     /**
-     * This method tests if all the AccountReversionGlobalOrganization objects associated with the given global organization
+     * This method tests if all the AccountReversionGlobalAccount objects associated with the given global account
      * reversion pass all of their tests.
      * 
-     * @param globalOrgRev the global organization reversion to check
+     * @param globalAcctRev the global account reversion to check
      * @return true if valid, false otherwise
      */
     public boolean areAllAccountsValid(AccountReversionGlobal globalAcctRev) {
         boolean success = true;
         if (globalAcctRev.getAccountReversionGlobalAccounts().size() == 0) {
             putFieldError(KFSConstants.MAINTENANCE_ADD_PREFIX + "accountReversionGlobalAccounts.organizationCode", CUKFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_NO_ACCOUNTS);
+            success = false;
         }
         else {
+            success &= checkAllAccountReversionsExistOrAllFieldsAreDefined(globalAcctRev);
             for (int i = 0; i < globalAcctRev.getAccountReversionGlobalAccounts().size(); i++) {
                 AccountReversionGlobalAccount acct = globalAcctRev.getAccountReversionGlobalAccounts().get(i);
                 String errorPath = MAINTAINABLE_ERROR_PREFIX + "accountReversionGlobalAccounts[" + i + "]";
@@ -382,7 +387,6 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
                 success &= checkAllObjectCodesForValidity(globalAcctRev, acct);
                 success &= checkAccountValidity(acct);
                 success &= checkAccountChartValidity(acct);
-                success &= checkAccountReversionForAccountExists(globalAcctRev, acct);
                 success &= validateAccountFundGroup( acct);
                 success &= validateAccountSubFundGroup( acct);
                 GlobalVariables.getMessageMap().removeFromErrorPath(errorPath);
@@ -392,11 +396,10 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
     }
 
     /**
-     * Tests if the the organization of the given AccountReversionGlobalOrganization is within the chart of the global
-     * organization reversion as a whole.
+     * Tests if the the account of the given AccountReversionGlobalAccount is within the chart of the global
+     * account reversion as a whole.
      * 
-     * @param globalOrgRev the global organization reversion that is currently being validated.
-     * @param org the AccountReversionGlobalOrganization to check
+     * @param acct the AccountReversionGlobalAccount to check
      * @return true if valid, false otherwise
      */
     public boolean checkAccountChartValidity(AccountReversionGlobalAccount acct) {
@@ -404,24 +407,24 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
         if (StringUtils.isBlank(acct.getChartOfAccountsCode())) {
             if (!StringUtils.isBlank(acct.getAccountNumber())) {
                 success = false;
-                GlobalVariables.getMessageMap().putError("chartOfAccountsCode", KFSKeyConstants.ERROR_REQUIRED, new String[] {});
+                GlobalVariables.getMessageMap().putError(CUKFSPropertyConstants.ACCT_REVERSION_CHART_OF_ACCT_CODE, KFSKeyConstants.ERROR_REQUIRED, "Chart of Accounts Code");
             }
         }
         else {
             acct.setChartOfAccountsCode(acct.getChartOfAccountsCode().toUpperCase());
             acct.refreshReferenceObject("chartOfAccounts");
-            if (acct.getChartOfAccounts() == null) {
+            if (ObjectUtils.isNull(acct.getChartOfAccounts())) {
                 success = false;
-                GlobalVariables.getMessageMap().putError("chartOfAccountsCode", CUKFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_CHART, new String[] { acct.getChartOfAccountsCode() });
+                GlobalVariables.getMessageMap().putError(CUKFSPropertyConstants.ACCT_REVERSION_CHART_OF_ACCT_CODE, CUKFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_CHART, new String[] { acct.getChartOfAccountsCode() });
             }
         }
         return success;
     }
 
     /**
-     * Tests if the given AccountReversionGlobalOrganization's Organization is active and within the system.
+     * Tests if the given AccountReversionGlobalAccount's Account is active and within the system.
      * 
-     * @param org the AccountReversionGlobalOrganization to check
+     * @param acct the AccountReversionGlobalAccount to check
      * @return true if valid, false otherwise
      */
     public boolean checkAccountValidity(AccountReversionGlobalAccount acct) {
@@ -429,35 +432,63 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
         if (StringUtils.isBlank(acct.getAccountNumber())) {
             if (!StringUtils.isBlank(acct.getChartOfAccountsCode())) {
                 success = false;
-                GlobalVariables.getMessageMap().putError("accountNumber", KFSKeyConstants.ERROR_REQUIRED, new String[] {});
+                GlobalVariables.getMessageMap().putError(CUKFSPropertyConstants.ACCT_REVERSION_ACCT_NUMBER, KFSKeyConstants.ERROR_REQUIRED, "Account Number");
             }
         }
         else if (!StringUtils.isBlank(acct.getChartOfAccountsCode())) {
             acct.refreshReferenceObject("account");
-            if (acct.getAccount() == null) {
+            if (ObjectUtils.isNull(acct.getAccount())) {
                 success = false;
-                GlobalVariables.getMessageMap().putError("accountNumber", CUKFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_ACCOUNT, new String[] { acct.getChartOfAccountsCode(), acct.getAccountNumber() });
+                GlobalVariables.getMessageMap().putError(CUKFSPropertyConstants.ACCT_REVERSION_ACCT_NUMBER, CUKFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_INVALID_ACCOUNT, new String[] { acct.getChartOfAccountsCode(), acct.getAccountNumber() });
             }
         }
         return success;
     }
 
     /**
-     * Checks that an organization reversion for the given organization reversion change and organization reversion change
-     * organization exist.
+     * Checks that either every account reversion on the document references an existing account reversion object,
+     * or that all fields have been filled in so that new account reversions can be saved properly.
+     * Will skip validation if a fiscal year has not been specified on the document.
      * 
-     * @param globalOrgRev global Organization Reversion to check
-     * @param org organization within that Global Organization Reversion to check specifically
-     * @return true if organization reversion for organization exists, false if otherwise
+     * @param globalAcctRev global Account Reversion to check
+     * @return true if all referenced account reversions already exist or all reversion and detail fields are filled in, false otherwise.
      */
-    public boolean checkAccountReversionForAccountExists(AccountReversionGlobal globalAcctRev, AccountReversionGlobalAccount acct) {
+    public boolean checkAllAccountReversionsExistOrAllFieldsAreDefined(AccountReversionGlobal globalAcctRev) {
         boolean success = true;
+        
         if (globalAcctRev.getUniversityFiscalYear() != null) {
-            if (accountReversionService.getByPrimaryId(globalAcctRev.getUniversityFiscalYear(), acct.getChartOfAccountsCode(), acct.getAccountNumber()) == null) {
-                success = false;
-                GlobalVariables.getMessageMap().putError("accountNumber", CUKFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_NO_ACCT_REVERSION, new String[] { globalAcctRev.getUniversityFiscalYear().toString(), acct.getChartOfAccountsCode(), acct.getAccountNumber() });
+            boolean allAccountReversionsExist = true;
+            List<AccountReversionGlobalAccount> globalAccounts = globalAcctRev.getAccountReversionGlobalAccounts();
+            for (int i = 0; allAccountReversionsExist && i < globalAccounts.size(); i++) {
+                allAccountReversionsExist &= ObjectUtils.isNotNull(accountReversionService.getByPrimaryId(globalAcctRev.getUniversityFiscalYear(),
+                        globalAccounts.get(i).getChartOfAccountsCode(), globalAccounts.get(i).getAccountNumber()));
+            }
+            if (!allAccountReversionsExist) {
+                // If new account reversions were specified, make sure all reversion fields are filled. (We know fiscal year is defined at this point.)
+                boolean allFieldsFilled = StringUtils.isNotBlank(globalAcctRev.getBudgetReversionChartOfAccountsCode())
+                        && StringUtils.isNotBlank(globalAcctRev.getBudgetReversionAccountNumber())
+                        && globalAcctRev.getCarryForwardByObjectCodeIndicator() != null
+                        && StringUtils.isNotBlank(globalAcctRev.getCashReversionFinancialChartOfAccountsCode())
+                        && StringUtils.isNotBlank(globalAcctRev.getCashReversionAccountNumber())
+                        && globalAcctRev.getReversionActiveIndicator() != null;
+                if (!allFieldsFilled) {
+                    GlobalVariables.getMessageMap().putError(GLOBAL_ACCOUNT_FIELDS_SECTION,
+                            CUKFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_MISSING_FIELDS_FOR_NEW_REVERSION);
+                    success = false;
+                }
+                // Also check that reversion details are all filled. (Reversion category code should already be set up by the document initialization.)
+                for (AccountReversionGlobalDetail globalDetail : globalAcctRev.getAccountReversionGlobalDetails()) {
+                    allFieldsFilled &= StringUtils.isNotBlank(globalDetail.getAccountReversionCategoryCode())
+                            && StringUtils.isNotBlank(globalDetail.getAccountReversionCode());
+                }
+                if (!allFieldsFilled) {
+                    GlobalVariables.getMessageMap().putError(GLOBAL_DETAIL_FIELDS_SECTION,
+                            CUKFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_MISSING_FIELDS_FOR_NEW_REVERSION_DETAIL);
+                    success = false;
+                }
             }
         }
+        
         return success;
     }
 
@@ -476,18 +507,18 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
             AccountReversionGlobalAccount currAcct = iter.next();
             if (areContainingSameAccounts(currAcct, acctRevAcct)) {
                 success = false;
-                GlobalVariables.getMessageMap().putError("accountNumber", CUKFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_DUPLICATE_ACCOUNTS, new String[] { acctRevAcct.getChartOfAccountsCode(), acctRevAcct.getAccountNumber() });
+                GlobalVariables.getMessageMap().putError(CUKFSPropertyConstants.ACCT_REVERSION_ACCT_NUMBER, CUKFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_DUPLICATE_ACCOUNTS, new String[] { acctRevAcct.getChartOfAccountsCode(), acctRevAcct.getAccountNumber() });
             }
         }
         return success;
     }
 
     /**
-     * This method tests if two AccountReversionGlobalOrganization objects are holding the same underlying Organization.
+     * This method tests if two AccountReversionGlobalAccount objects are holding the same underlying Account.
      * 
-     * @param orgRevOrgA the first AccountReversionGlobalOrganization to check
-     * @param orgRevOrgB the second AccountReversionGlobalOrganization to check
-     * @return true if they share the organization, false if otherwise
+     * @param acctRevAcctA the first AccountReversionGlobalAccount to check
+     * @param acctRevAcctB the second AccountReversionGlobalAccount to check
+     * @return true if they share the account, false if otherwise
      */
     public static boolean areContainingSameAccounts(AccountReversionGlobalAccount acctRevAcctA, AccountReversionGlobalAccount acctRevAcctB) {
         boolean containingSame = false;
