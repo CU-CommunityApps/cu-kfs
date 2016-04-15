@@ -32,18 +32,19 @@ import org.kuali.rice.krad.bo.GlobalBusinessObject;
 import org.kuali.rice.krad.bo.GlobalBusinessObjectDetail;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.PersistenceStructureService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.service.AccountReversionService;
 
 /**
- * The representation of a Global Organization Reversion. A Global Organization Reversion is made up of three sections: 1. The
- * University Fiscal Year and Chart of Accounts code for the Organizations going through reversion, with some account information.
- * 2. A list of the appropriate Object Reversion Details 3. A list of Organizations to apply the Organization Reversion to
+ * The representation of a Global Account Reversion. A Global Account Reversion is made up of three sections: 1. The
+ * University Fiscal Year for the Accounts going through reversion, with some account information.
+ * 2. A list of the appropriate Object Reversion Details 3. A list of Accounts to apply the Account Reversion to
  */
 public class AccountReversionGlobal extends PersistableBusinessObjectBase implements GlobalBusinessObject {
-    protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionGlobal.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionGlobal.class);
+
     private String documentNumber;
 
     private Integer universityFiscalYear;
@@ -52,6 +53,7 @@ public class AccountReversionGlobal extends PersistableBusinessObjectBase implem
     private Boolean carryForwardByObjectCodeIndicator;
     private String cashReversionFinancialChartOfAccountsCode;
     private String cashReversionAccountNumber;
+    private Boolean reversionActiveIndicator;
 
     private Account cashReversionAccount;
     private Account budgetReversionAccount;
@@ -272,7 +274,19 @@ public class AccountReversionGlobal extends PersistableBusinessObjectBase implem
         this.cashReversionFinancialChartOfAccountsCode = cashReversionFinancialChartOfAccountsCode;
     }
 
-    /**
+    public Boolean isReversionActiveIndicator() {
+        return reversionActiveIndicator; 
+    }
+
+    public Boolean getReversionActiveIndicator() {
+        return this.isReversionActiveIndicator();
+    }
+
+    public void setReversionActiveIndicator(Boolean reversionActiveIndicator) {
+        this.reversionActiveIndicator = reversionActiveIndicator;
+    }
+
+	/**
 	 * @return the accountReversionGlobalDetails
 	 */
 	public List<AccountReversionGlobalDetail> getAccountReversionGlobalDetails() {
@@ -339,8 +353,8 @@ public class AccountReversionGlobal extends PersistableBusinessObjectBase implem
     }
 
     /**
-     * @see org.kuali.rice.kns.bo.GlobalBusinessObject#generateDeactivationsToPersist() As global organization reversions only update
-     *      existing records, deactivations will never be produced by creating one; thus, this method always returns an empty list.
+     * @see org.kuali.rice.kns.bo.GlobalBusinessObject#generateDeactivationsToPersist() As global account reversions only update
+     *      existing (or add new) records, deactivations will never be produced by creating one; thus, this method always returns an empty list.
      */
     public List<PersistableBusinessObject> generateDeactivationsToPersist() {
         return null;
@@ -348,53 +362,74 @@ public class AccountReversionGlobal extends PersistableBusinessObjectBase implem
 
     /**
      * @see org.kuali.rice.kns.bo.GlobalBusinessObject#generateGlobalChangesToPersist() This creates a list of changes to be made to the
-     *      existing Organization Reversion records impacted by this global reversion.
+     *      existing and/or new Account Reversion records impacted by this global reversion.
      */
     public List<PersistableBusinessObject> generateGlobalChangesToPersist() {
         List<PersistableBusinessObject> persistingChanges = new ArrayList<PersistableBusinessObject>();
 
-        BusinessObjectService boService = SpringContext.getBean(BusinessObjectService.class);
+        AccountReversionService accountReversionService = SpringContext.getBean(AccountReversionService.class);
         Map<String, AccountReversionGlobalDetail> detailsMap = this.rearrangeAccountReversionDetailsAsMap();
 
         for (AccountReversionGlobalAccount acctRevAccount : this.getAccountReversionGlobalAccounts()) {
             // 1. find that account reversion
-            AccountReversion currAcctRev = SpringContext.getBean(AccountReversionService.class).getByPrimaryId(this.getUniversityFiscalYear(), acctRevAccount.getChartOfAccountsCode(), acctRevAccount.getAccountNumber());
+            AccountReversion currAcctRev = accountReversionService.getByPrimaryId(
+                    this.getUniversityFiscalYear(), acctRevAccount.getChartOfAccountsCode(), acctRevAccount.getAccountNumber());
 
-            if (currAcctRev != null) { // only proceed if there's a pre-existing org reversion; we don't want to insert any new
-                                        // records
-                if (!StringUtils.isBlank(this.getBudgetReversionChartOfAccountsCode())) {
-                	currAcctRev.setBudgetReversionChartOfAccountsCode(this.getBudgetReversionChartOfAccountsCode());
+            if (ObjectUtils.isNull(currAcctRev)) {
+                // If account reversion does not exist, then create it and its details.
+                currAcctRev = new AccountReversion();
+                currAcctRev.setUniversityFiscalYear(this.getUniversityFiscalYear());
+                currAcctRev.setChartOfAccountsCode(acctRevAccount.getChartOfAccountsCode());
+                currAcctRev.setAccountNumber(acctRevAccount.getAccountNumber());
+                for (AccountReversionGlobalDetail globalDetail : this.getAccountReversionGlobalDetails()) {
+                    AccountReversionDetail revDetail = new AccountReversionDetail();
+                    revDetail.setAccountReversionCategoryCode(globalDetail.getAccountReversionCategoryCode());
+                    revDetail.setUniversityFiscalYear(currAcctRev.getUniversityFiscalYear());
+                    revDetail.setChartOfAccountsCode(currAcctRev.getChartOfAccountsCode());
+                    revDetail.setAccountNumber(currAcctRev.getAccountNumber());
+                    currAcctRev.addAccountReversionDetail(revDetail);
                 }
-                if (!StringUtils.isBlank(this.getBudgetReversionAccountNumber())) {
-                	currAcctRev.setBudgetReversionAccountNumber(this.getBudgetReversionAccountNumber());
-                }
-                if (!StringUtils.isBlank(this.getCashReversionFinancialChartOfAccountsCode())) {
-                	currAcctRev.setCashReversionFinancialChartOfAccountsCode(this.getCashReversionFinancialChartOfAccountsCode());
-                }
-                if (!StringUtils.isBlank(this.getCashReversionAccountNumber())) {
-                	currAcctRev.setCashReversionAccountNumber(this.getCashReversionAccountNumber());
-                }
+            }
+            
+            // 2. update account reversion
+            if (!StringUtils.isBlank(this.getBudgetReversionChartOfAccountsCode())) {
+                currAcctRev.setBudgetReversionChartOfAccountsCode(this.getBudgetReversionChartOfAccountsCode());
+            }
+            if (!StringUtils.isBlank(this.getBudgetReversionAccountNumber())) {
+                currAcctRev.setBudgetReversionAccountNumber(this.getBudgetReversionAccountNumber());
+            }
+            if (!StringUtils.isBlank(this.getCashReversionFinancialChartOfAccountsCode())) {
+                currAcctRev.setCashReversionFinancialChartOfAccountsCode(this.getCashReversionFinancialChartOfAccountsCode());
+            }
+            if (!StringUtils.isBlank(this.getCashReversionAccountNumber())) {
+                currAcctRev.setCashReversionAccountNumber(this.getCashReversionAccountNumber());
+            }
 
-                if (this.isCarryForwardByObjectCodeIndicator() != null) {
-                	currAcctRev.setCarryForwardByObjectCodeIndicator(this.isCarryForwardByObjectCodeIndicator().booleanValue());
-                }
+            if (this.isCarryForwardByObjectCodeIndicator() != null) {
+                currAcctRev.setCarryForwardByObjectCodeIndicator(this.isCarryForwardByObjectCodeIndicator().booleanValue());
+            }
+            if (this.isReversionActiveIndicator() != null) {
+                currAcctRev.setActive(this.isReversionActiveIndicator().booleanValue());
+            }
 
-                // 3. now, go through each org reversion detail and update each of those
-                for (AccountReversionDetail acctRevDetail : currAcctRev.getAccountReversionDetails()) {
-                    AccountReversionGlobalDetail changeDetail = detailsMap.get(acctRevDetail.getAccountReversionCategoryCode());
-                    if (changeDetail != null) {
-                        if (!StringUtils.isBlank(changeDetail.getAccountReversionCode())) {
-                        	acctRevDetail.setAccountReversionCode(changeDetail.getAccountReversionCode());
-                        }
-                        if (!StringUtils.isBlank(changeDetail.getAccountReversionObjectCode())) {
-                        	acctRevDetail.setAccountReversionObjectCode(changeDetail.getAccountReversionObjectCode());
-                        }
+            // 3. now, go through each account reversion detail and update each of those
+            for (AccountReversionDetail acctRevDetail : currAcctRev.getAccountReversionDetails()) {
+                AccountReversionGlobalDetail changeDetail = detailsMap.get(acctRevDetail.getAccountReversionCategoryCode());
+                if (changeDetail != null) {
+                    if (!StringUtils.isBlank(changeDetail.getAccountReversionCode())) {
+                        acctRevDetail.setAccountReversionCode(changeDetail.getAccountReversionCode());
+                    }
+                    if (!StringUtils.isBlank(changeDetail.getAccountReversionObjectCode())) {
+                        acctRevDetail.setAccountReversionObjectCode(changeDetail.getAccountReversionObjectCode());
+                    }
+                    if (this.isReversionActiveIndicator() != null) {
+                        acctRevDetail.setActive(this.isReversionActiveIndicator().booleanValue());
                     }
                 }
+            }
 
-                currAcctRev.refreshNonUpdateableReferences();
-                persistingChanges.add(currAcctRev);
-           }
+            currAcctRev.refreshNonUpdateableReferences();
+            persistingChanges.add(currAcctRev);
 
         }
         return persistingChanges;
@@ -404,7 +439,7 @@ public class AccountReversionGlobal extends PersistableBusinessObjectBase implem
      * This sticks all of the Account Reversion Change Details into a map, for quicker access in
      * generateGlobalChangesToPersist.
      * 
-     * @return a map of all organization reversion change details, keyed by AccountReversionCategory
+     * @return a map of all account reversion change details, keyed by AccountReversionCategory
      */
     private Map<String, AccountReversionGlobalDetail> rearrangeAccountReversionDetailsAsMap() {
         Map<String, AccountReversionGlobalDetail> acctRevMap = new HashMap<String, AccountReversionGlobalDetail>();

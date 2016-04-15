@@ -29,6 +29,7 @@
         <ref bean="AccountReversionGlobal-cashReversionFinancialChartOfAccountsCode"/>
         <ref bean="AccountReversionGlobal-cashReversionAccountNumber"/>
         <ref bean="AccountReversionGlobal-carryForwardByObjectCodeIndicator"/>
+        <ref bean="AccountReversionGlobal-reversionActiveIndicator"/>
       </list>
     </property>
   </bean>
@@ -82,6 +83,14 @@
     <property name="name" value="carryForwardByObjectCodeIndicator"/>
     <property name="label" value="Carry Forward by Object Code Indicator"/>
     <property name="shortLabel" value="CF by Object Code"/>
+    <property name="control" ref="IndicatorYNNullSelectControl" />
+  </bean>
+
+  <bean id="AccountReversionGlobal-reversionActiveIndicator" parent="AccountReversionGlobal-reversionActiveIndicator-parentBean"/>
+  <bean id="AccountReversionGlobal-reversionActiveIndicator-parentBean" abstract="true" parent="GenericAttributes-genericBoolean">
+    <property name="name" value="reversionActiveIndicator"/>
+    <property name="label" value="Active"/>
+    <property name="shortLabel" value="Active"/>
     <property name="control" ref="IndicatorYNNullSelectControl" />
   </bean>
 </beans>

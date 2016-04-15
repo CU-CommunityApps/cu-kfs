@@ -37,15 +37,21 @@ function updateObjectNames( objField ) {
   if (chartCode) {
     chartCodes.push(chartCode);
   }
+  // get chart codes from labels with nested inquiry anchors, due to chart being read-only on non-addLines.
   var acctCount = 0;
-  var chartElementName = elPrefix + ".accountReversionGlobalAccounts["+acctCount+"].chartOfAccountsCode";
-  while (kualiElements[chartElementName]) {
-    chartCode = getElementValue(chartElementName);
+  var chartElementName = elPrefix + ".accountReversionGlobalAccounts["+acctCount+"].chartOfAccountsCode.div";
+  var searchResults = null;
+  var chartLabel = document.getElementById(chartElementName);
+  while (chartLabel) {
+    // Find chart code, which should be the first word between the anchor tags and referenced by the "(\w+)" capture group below.
+    searchResults = chartLabel.innerHTML.match(/<[Aa]\s[^>]*>\W*(\w+)[^<]*<\/[Aa]>/);
+    chartCode = (searchResults && searchResults.length > 1) ? searchResults[1] : null;
     if (chartCode && !arrayContains(chartCodes, chartCode)) {
       chartCodes.push(chartCode);
     }
     acctCount += 1;
-    chartElementName = elPrefix + ".accountReversionGlobalAccounts["+acctCount+"].chartOfAccountsCode";
+    chartElementName = elPrefix + ".accountReversionGlobalAccounts["+acctCount+"].chartOfAccountsCode.div";
+    chartLabel = document.getElementById(chartElementName);
   }
   
 	var objectCode = getElementValue( objField.name );

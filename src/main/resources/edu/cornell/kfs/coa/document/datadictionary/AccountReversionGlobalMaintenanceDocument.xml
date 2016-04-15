@@ -100,6 +100,7 @@
         <bean parent="MaintainableFieldDefinition" p:name="cashReversionFinancialChartOfAccountsCode"/>
         <bean parent="MaintainableFieldDefinition" p:name="cashReversionAccountNumber"/>
         <bean parent="MaintainableFieldDefinition" p:name="carryForwardByObjectCodeIndicator"/>
+        <bean parent="MaintainableFieldDefinition" p:name="reversionActiveIndicator"/>
       </list>
     </property>
   </bean>
