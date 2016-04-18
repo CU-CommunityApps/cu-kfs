@@ -26,7 +26,7 @@
 <%@ attribute name="allowsNoteFYI" required="false"
               description="Indicator for determing whether to render the ad hoc fyi recipient box and send fyi button" %>
 
-<c:set var="noteColSpan" value="7"/>
+<c:set var="noteColSpan" value="6"/>
 
 <c:if test="${empty noteType}">
     <%-- default to document header notes this default should probably be set somewhere else --%>
@@ -56,13 +56,10 @@
     <c:set var="noteColSpan" value="${noteColSpan + 1}"/>
 </c:if>
 
-<c:set var="poCreated" value="${KualiForm.docFinal and KualiForm.document.documentHeader.applicationDocumentStatus eq 'Closed'}"/>
-
 <kul:tab tabTitle="${tabTitle}" defaultOpen="${!empty notesBo or (not empty defaultOpen and defaultOpen)}"
          tabErrorKey="${Constants.DOCUMENT_NOTES_ERRORS}" tabItemCount="${fn:length(notesBo)}"
          transparentBackground="${transparentBackground}">
 <c:set var="notesAttributes" value="${DataDictionary.Note.attributes}"/>
-<c:set var="noteExtensionAttributes" value="${DataDictionary.NoteExtendedAttribute.attributes}"/>
 <div class="tab-container" align=center id="G4">
 <p align=left><jsp:doBody/>
 
@@ -94,8 +91,7 @@
         <kul:htmlAttributeHeaderCell literalLabel="Send to Vendor?" scope="col" align="left"/>
     </c:if>
         <%--mjmc ************************************************************** --%>
-    <%-- CU custom column for indicating whether to copy the note to the PO. --%>
-    <kul:htmlAttributeHeaderCell literalLabel="Copy Note to PO?" scope="col" align="left"/>
+
     <c:if test="${allowsNoteFYI}">
         <kul:htmlAttributeHeaderCell literalLabel="Notification Recipient" scope="col"/>
     </c:if>
@@ -119,7 +115,7 @@
         <c:if test="${allowsNoteAttachments eq true}">
             <td class="infoline">
                 <div align="center"><br/>
-                    <html:file property="attachmentFile" size="30" styleId="attachmentFile" value="" onchange="forceNewNoteCopyToPO()"/><br/><br/>
+                    <html:file property="attachmentFile" size="30" styleId="attachmentFile" value=""/><br/><br/>
                     <html:image property="methodToCall.cancelBOAttachment"
                                 src="${ConfigProperties.kr.externalizable.images.url}tinygrey-cancel.gif"
                                 title="Cancel Attachment" alt="Cancel Attachment" styleClass="tinybutton"/>
@@ -151,24 +147,6 @@
 
 
         </c:if>
-        
-        <%-- CU custom column for indicating whether to copy the note to the PO. --%>
-        <td class="infoline">
-          <div align="center">
-            <c:choose>
-              <c:when test="${poCreated or KualiForm.docCanceledOrDisapproved}">
-                No
-              </c:when>
-              <c:otherwise>
-                <kul:htmlControlAttribute attributeEntry="${noteExtensionAttributes.copyNoteIndicator}"
-                                                         property="newNote.extension.copyNoteIndicator"
-                                                         forceRequired="false"/>
-                <div id="newNoteForceCopyYesLabel" style="display:none;">Yes</div>
-              </c:otherwise>
-            </c:choose>
-          </div>
-        </td>
-        
         <c:if test="${allowsNoteFYI}">
             <td>&nbsp;</td>
         </c:if>
@@ -283,23 +261,6 @@
                 </c:if>
             </c:otherwise>
         </c:choose>
-        
-        <%-- CU custom column for indicating whether to copy the note to the PO. --%>
-        <td class="datacell center">
-          <div align="center">
-            <c:choose>
-              <c:when test="${poCreated or KualiForm.docCanceledOrDisapproved or ((!empty note.attachment) and (note.attachment.complete))}">
-                <bean:write name="KualiForm" property="document.notes[${status.index}].extension.copyNoteIndicator"/>
-              </c:when>
-              <c:otherwise>
-                <kul:htmlControlAttribute attributeEntry="${noteExtensionAttributes.copyNoteIndicator}"
-                        property="document.notes[${status.index}].extension.copyNoteIndicator"
-                        forceRequired="false"/>
-              </c:otherwise>
-            </c:choose>
-          </div>
-        </td>
-
 
         <c:if test="${allowsNoteFYI}">
             <td class="infoline">

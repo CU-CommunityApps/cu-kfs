@@ -9,7 +9,9 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.POTransmissionMethods;
+import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderDocTypes;
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
+import org.kuali.kfs.module.purap.PurapConstants.RequisitionSources;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.businessobject.AutoClosePurchaseOrderView;
@@ -20,6 +22,7 @@ import org.kuali.kfs.module.purap.document.service.impl.PurchaseOrderServiceImpl
 import org.kuali.kfs.module.purap.util.PurApRelatedViews;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
@@ -33,7 +36,6 @@ import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.krad.businessobject.NoteExtendedAttribute;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 
 public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
@@ -206,19 +208,15 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
                     copyingNote.setAuthorUniversalIdentifier(note.getAuthorUniversalIdentifier());
                     copyingNote.setNoteTopicText(note.getNoteTopicText());
                     Attachment originalAttachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
-                    NoteExtendedAttribute noteExtendedAttribute = (NoteExtendedAttribute) note.getExtension();
-                    if (ObjectUtils.isNotNull(noteExtendedAttribute) && noteExtendedAttribute.isCopyNoteIndicator()) {
-                    	if (originalAttachment != null) {
-                    		Attachment newAttachment = SpringContext.getBean(AttachmentService.class).createAttachment((PersistableBusinessObject)copyingNote, originalAttachment.getAttachmentFileName(), originalAttachment.getAttachmentMimeTypeCode(), originalAttachment.getAttachmentFileSize().intValue(), originalAttachment.getAttachmentContents(), originalAttachment.getAttachmentTypeCode());//new Attachment();
+                    if (originalAttachment != null) {
+                    	Attachment newAttachment = SpringContext.getBean(AttachmentService.class).createAttachment((PersistableBusinessObject)copyingNote, originalAttachment.getAttachmentFileName(), originalAttachment.getAttachmentMimeTypeCode(), originalAttachment.getAttachmentFileSize().intValue(), originalAttachment.getAttachmentContents(), originalAttachment.getAttachmentTypeCode());//new Attachment();
 
-                    		if (ObjectUtils.isNotNull(originalAttachment) && ObjectUtils.isNotNull(newAttachment)) {
-                    			copyingNote.addAttachment(newAttachment);
-                    		}
+                    	if (ObjectUtils.isNotNull(originalAttachment) && ObjectUtils.isNotNull(newAttachment)) {
+                    		copyingNote.addAttachment(newAttachment);
                     	}
-                    	
                     	poDoc.addNote(copyingNote);
-                    }
 
+                    }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

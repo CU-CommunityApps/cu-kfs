@@ -25,15 +25,6 @@
    	<ref bean="RequisitionDocument-vendorEmailAddress"/>
    </list>
    </property>
-   <property name="webScriptFiles" ref="reqsWebScriptFiles" />
-   </bean>
-   
-   <bean id="reqsWebScriptFiles" parent="commonWebScriptFiles">
-       <property name="sourceList">
-           <list merge="true">
-               <value>scripts/module/purap/reqsNotes.js</value>
-           </list>
-       </property>
    </bean>
    
    <bean id="RequisitionDocument-sourceAccountingLineGroup" parent="RequisitionDocument-sourceAccountingLineGroup-parentBean">
