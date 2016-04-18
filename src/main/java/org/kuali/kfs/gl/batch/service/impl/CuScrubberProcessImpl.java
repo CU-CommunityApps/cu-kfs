@@ -20,10 +20,14 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.Message;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.exception.InvalidFlexibleOffsetException;
+import org.kuali.rice.core.api.parameter.ParameterEvaluator;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 /**
@@ -306,6 +310,28 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
             costShareSourceAccountEntry.setSubAccountNumber(scrubbedEntryA21SubAccount.getCostShareSourceSubAccountNumber());
         }
         
+        return null;
+    }
+
+    /**
+     * Overridden to also restrict plant indebtedness based on document type,
+     * by means of a custom PLANT_INDEBTEDNESS_DOCUMENT_TYPES parameter.
+     * 
+     * @see org.kuali.kfs.gl.batch.service.impl.ScrubberProcessImpl#processPlantIndebtedness(
+     * org.kuali.kfs.gl.businessobject.OriginEntryInformation, org.kuali.kfs.gl.service.ScrubberReportData)
+     */
+    @Override
+    protected String processPlantIndebtedness(OriginEntryInformation scrubbedEntry, ScrubberReportData scrubberReport) {
+        // Make sure plant indebtedness processing is enabled.
+        if (parameterService.getParameterValueAsBoolean(ScrubberStep.class,
+                GeneralLedgerConstants.GlScrubberGroupParameters.PLANT_INDEBTEDNESS_IND, Boolean.FALSE).booleanValue()) {
+            // Make sure the entry was from a document that supports plant indebtedness, similar to the logic from the processCapitalization() method.
+            ParameterEvaluator plantIndebtednessDocTypes = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(ScrubberStep.class,
+                    CuGeneralLedgerConstants.CuGlScrubberGroupRules.PLANT_INDEBTEDNESS_DOC_TYPE_CODES, scrubbedEntry.getFinancialDocumentTypeCode());
+            if (plantIndebtednessDocTypes.evaluationSucceeds()) {
+                return super.processPlantIndebtedness(scrubbedEntry, scrubberReport);
+            }
+        }
         return null;
     }
 
