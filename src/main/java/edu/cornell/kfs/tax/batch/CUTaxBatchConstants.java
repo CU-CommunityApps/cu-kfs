@@ -15,6 +15,7 @@ public final class CUTaxBatchConstants {
     public static final String INCOME_CLASS_CODE = "incomeClassCode";
     public static final String ACCOUNT_NUMBER = "accountNumber";
     public static final String INCOME_CODE = "incomeCode";
+    public static final String VENDOR_EMAIL_ADDRESS = "vendorEmailAddress";
 
     /**
      * Helper enum identifying the various sources/types of the tax data/output fields
@@ -261,6 +262,19 @@ public final class CUTaxBatchConstants {
         public static final String VENDOR_OWNERSHIP_CODE = CommonVendorFieldNames.VENDOR_OWNERSHIP_CODE;
         public static final String VENDOR_OWNERSHIP_CATEGORY_CODE = CommonVendorFieldNames.VENDOR_OWNERSHIP_CATEGORY_CODE;
         public static final String VENDOR_FOREIGN_INDICATOR = CommonVendorFieldNames.VENDOR_FOREIGN_IND;
+        public static final String VENDOR_EMAIL_ADDRESS = CUTaxBatchConstants.VENDOR_EMAIL_ADDRESS;
+        public static final String VENDOR_CHAPTER4_STATUS_CODE = CommonVendorFieldNames.VENDOR_CHAPTER4_STATUS_CODE;
+        public static final String VENDOR_GIIN = CommonVendorFieldNames.VENDOR_GIIN;
+        public static final String VENDOR_LINE1_ADDRESS = CommonVendorAddressFieldNames.VENDOR_LINE1_ADDRESS;
+        public static final String VENDOR_LINE2_ADDRESS = CommonVendorAddressFieldNames.VENDOR_LINE2_ADDRESS;
+        public static final String VENDOR_CITY_NAME = CommonVendorAddressFieldNames.VENDOR_CITY_NAME;
+        public static final String VENDOR_STATE_CODE = CommonVendorAddressFieldNames.VENDOR_STATE_CODE;
+        public static final String VENDOR_ZIP_CODE = CommonVendorAddressFieldNames.VENDOR_ZIP_CODE;
+        public static final String VENDOR_FOREIGN_LINE1_ADDRESS = "vendorForeignLine1Address";
+        public static final String VENDOR_FOREIGN_LINE2_ADDRESS = "vendorForeignLine2Address";
+        public static final String VENDOR_FOREIGN_CITY_NAME = "vendorForeignCityName";
+        public static final String VENDOR_FOREIGN_ZIP_CODE = "vendorForeignZipCode";
+        public static final String VENDOR_FOREIGN_COUNTRY_CODE = "vendorForeignCountryCode";
         public static final String NRA_PAYMENT_INDICATOR = "nraPaymentIndicator";
         public static final String PAYMENT_DATE = "paymentDate";
         public static final String PAYMENT_PAYEE_NAME = "paymentPayeeName";
@@ -296,7 +310,7 @@ public final class CUTaxBatchConstants {
         // These fields are derived from other object fields or from parameters. A few refer to DB-backed fields that have been modified in some way.
         public static final String VENDOR_LAST_NAME = "vendorLastName";
         public static final String VENDOR_FIRST_NAME = "vendorFirstName";
-        public static final String VENDOR_EMAIL_ADDRESS = "vendorEmailAddress";
+        public static final String VENDOR_EMAIL_ADDRESS = CUTaxBatchConstants.VENDOR_EMAIL_ADDRESS;
         public static final String VENDOR_US_ADDRESS_LINE_1 = "vendorUSAddressLine1";
         public static final String VENDOR_FOREIGN_ADDRESS_LINE_1 = "vendorForeignAddressLine1";
         public static final String VENDOR_ANY_ADDRESS_LINE_1 = "vendorAnyAddressLine1";

@@ -690,9 +690,17 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
             // Determine final inclusion/exclusion state, and update tax boxes accordingly.
             processExclusionsAndAmounts(rs, detailRow, summary);
             
-            // Update current row's vendor name and parent vendor name.
+            // Update current row's vendor-related data.
             rs.updateString(detailRow.vendorName.index, vendorNameForOutput);
             rs.updateString(detailRow.parentVendorName.index, parentVendorNameForOutput);
+            rs.updateString(detailRow.vendorEmailAddress.index, vendorEmailAddressP.value);
+            rs.updateString(detailRow.vendorChapter4StatusCode.index, rsVendor.getString(vendorRow.vendorChapter4StatusCode.index));
+            rs.updateString(detailRow.vendorGIIN.index, rsVendor.getString(vendorRow.vendorGIIN.index));
+            rs.updateString(detailRow.vendorLine1Address.index, vendorAddressLine1P.value);
+            rs.updateString(detailRow.vendorLine2Address.index, rsVendorAnyAddress.getString(vendorAddressRow.vendorLine2Address.index));
+            rs.updateString(detailRow.vendorCityName.index, rsVendorAnyAddress.getString(vendorAddressRow.vendorCityName.index));
+            rs.updateString(detailRow.vendorStateCode.index, rsVendorAnyAddress.getString(vendorAddressRow.vendorStateCode.index));
+            rs.updateString(detailRow.vendorZipCode.index, rsVendorAnyAddress.getString(vendorAddressRow.vendorZipCode.index));
             
             // Store any changes made to the current transaction detail row.
             rs.updateRow();
@@ -893,6 +901,8 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
             rsVendorAnyAddress = rsDummy;
         }
         
+        // Setup email address.
+        vendorEmailAddressP.value = rsVendorAnyAddress.getString(vendorAddressRow.vendorAddressEmailAddress.index);
         
         
         // Decrypt tax ID for usage later.
@@ -1214,9 +1224,6 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         // Setup tax names. (Even though these are detail fields, they have been updated in the transaction table as part of the 1099 processing.)
         vendorNameP.value = vendorNameForOutput;
         parentVendorNameP.value = parentVendorNameForOutput;
-        
-        // Setup email address, for consistency with the DerivedField email usage of the 1042S processing.
-        vendorEmailAddressP.value = rsVendorAnyAddress.getString(vendorAddressRow.vendorAddressEmailAddress.index);
         
         // Setup zip code without hyphens.
         vendorNumbersOnlyZipCodeP.value = StringUtils.remove(rsVendorAnyAddress.getString(vendorAddressRow.vendorZipCode.index), '-');

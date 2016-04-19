@@ -43,6 +43,7 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
  * 
  * <ul>
  *   <li>ssn (DERIVED field)</li>
+ *   <li>vendorGIIN (DETAIL field)</li>
  * </ul>
  */
 abstract class TransactionRowPrintProcessor<T extends TransactionDetailSummary> extends TransactionRowProcessor<T> {
@@ -87,8 +88,9 @@ abstract class TransactionRowPrintProcessor<T extends TransactionDetailSummary> 
                 throw new IllegalArgumentException("Cannot create piece for STATIC type");
             
             case DETAIL :
-                // Create a piece that pre-loads its value from the current transaction detail ResultSet line at runtime.
-                piece = getPieceForDetailField(field, name, len);
+                // Create a piece that pre-loads its value from the transaction detail ResultSet line, or a static masked piece if GIIN and in scrubbed mode.
+                piece = (!summary.scrubbedOutput || field.index != summary.transactionDetailRow.vendorGIIN.index)
+                        ? getPieceForDetailField(field, name, len) : new StaticStringRecordPiece(name, len, CUTaxConstants.MASKED_VALUE_19_CHARS);
                 break;
             
             case PDP :
