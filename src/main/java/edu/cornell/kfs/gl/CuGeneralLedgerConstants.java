@@ -26,4 +26,8 @@ public class CuGeneralLedgerConstants extends GeneralLedgerConstants {
 		public static final String CASH_REVERSION_OBJECT_CODE_PARM = "CASH_REVERSION_OBJECT_CODE";
 	}
 
+    public static class CuGlScrubberGroupRules {
+        public static final String PLANT_INDEBTEDNESS_DOC_TYPE_CODES = "PLANT_INDEBTEDNESS_DOCUMENT_TYPES";
+    }
+
 }
