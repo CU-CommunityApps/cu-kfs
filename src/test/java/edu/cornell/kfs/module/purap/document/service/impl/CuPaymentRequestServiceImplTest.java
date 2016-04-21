@@ -15,13 +15,18 @@ import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.coreservice.api.parameter.Parameter;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.UserSession;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.util.GlobalVariables;
 
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
+import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
 import edu.cornell.kfs.module.purap.fixture.PaymentRequestFixture;
 import edu.cornell.kfs.module.purap.fixture.PurchaseOrderFixture;
+import edu.cornell.kfs.module.purap.fixture.RequisitionItemFixture;
 
 @ConfigureContext(session = UserNameFixture.mo14)
 public class CuPaymentRequestServiceImplTest extends KualiTestBase {
@@ -38,6 +43,15 @@ public class CuPaymentRequestServiceImplTest extends KualiTestBase {
         paymentRequestService = SpringContext
                 .getBean(PaymentRequestService.class);
 
+
+        // Override auto-approval-limit parameter for the duration of the test. The old value will be restored by the post-test rollback.
+        // NOTE: If this test class ever gets configured to not roll back, then this override should change accordingly to restore the old param value.
+        ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+        Parameter oldAmountLimit = parameterService.getParameter(
+                PaymentRequestDocument.class, CUPurapParameterConstants.DEFAULT_PURCHASE_ORDER_POS_APRVL_LMT_FOR_PREQ);
+        Parameter.Builder newAmountLimit = Parameter.Builder.create(oldAmountLimit);
+        newAmountLimit.setValue(RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_5K.extendedPrice.toString());
+        parameterService.updateParameter(newAmountLimit.build());
     }
 
     public void testRemoveIneligibleAdditionalCharges_NoEligibleItems()
@@ -381,8 +395,61 @@ public class CuPaymentRequestServiceImplTest extends KualiTestBase {
 
     }
 
+    public void testAmountAnalysisForNonQuantityOrderBelowLimit() throws Exception {
+        CuPaymentRequestDocument paymentRequestDocument = createPaymentRequestForTestingPOAmountLimit(
+                PurchaseOrderFixture.PO_NON_B2B_OPEN_WITH_NON_QTY_ITEM_BELOW_5K);
+        assertTrue("Payment should have passed the within-amount-limit check, due to non-quantity order with amount below the threshold",
+                ((CuPaymentRequestService) paymentRequestService).purchaseOrderForPaymentRequestIsWithinAutoApproveAmountLimit(paymentRequestDocument));
+    }
+
+    public void testAmountAnalysisForNonQuantityOrderAtLimit() throws Exception {
+        CuPaymentRequestDocument paymentRequestDocument = createPaymentRequestForTestingPOAmountLimit(
+                PurchaseOrderFixture.PO_NON_B2B_OPEN_WITH_NON_QTY_ITEM_AT_5K);
+        assertFalse("Payment should have failed the within-amount-limit check, due to non-quantity order with amount equal to the threshold",
+                ((CuPaymentRequestService) paymentRequestService).purchaseOrderForPaymentRequestIsWithinAutoApproveAmountLimit(paymentRequestDocument));
+    }
+
+    public void testAmountAnalysisForNonQuantityOrderAboveLimit() throws Exception {
+        CuPaymentRequestDocument paymentRequestDocument = createPaymentRequestForTestingPOAmountLimit(
+                PurchaseOrderFixture.PO_NON_B2B_OPEN_WITH_NON_QTY_ITEM_ABOVE_5K);
+        assertFalse("Payment should have failed the within-amount-limit check, due to non-quantity order with amount above the threshold",
+                ((CuPaymentRequestService) paymentRequestService).purchaseOrderForPaymentRequestIsWithinAutoApproveAmountLimit(paymentRequestDocument));
+    }
+
+    public void testAmountAnalysisForQuantityOrderBelowLimit() throws Exception {
+        CuPaymentRequestDocument paymentRequestDocument = createPaymentRequestForTestingPOAmountLimit(
+                PurchaseOrderFixture.PO_NON_B2B_OPEN_WITH_QTY_ITEM_BELOW_5K);
+        assertTrue("Payment should have passed the within-amount-limit check, due to quantity-based order with amount below the threshold",
+                ((CuPaymentRequestService) paymentRequestService).purchaseOrderForPaymentRequestIsWithinAutoApproveAmountLimit(paymentRequestDocument));
+    }
+
+    public void testAmountAnalysisForQuantityOrderAtLimit() throws Exception {
+        CuPaymentRequestDocument paymentRequestDocument = createPaymentRequestForTestingPOAmountLimit(
+                PurchaseOrderFixture.PO_NON_B2B_OPEN_WITH_QTY_ITEM_AT_5K);
+        assertFalse("Payment should have failed the within-amount-limit check, due to quantity-based order with amount equal to the threshold",
+                ((CuPaymentRequestService) paymentRequestService).purchaseOrderForPaymentRequestIsWithinAutoApproveAmountLimit(paymentRequestDocument));
+    }
+
+    public void testAmountAnalysisForQuantityOrderAboveLimit() throws Exception {
+        CuPaymentRequestDocument paymentRequestDocument = createPaymentRequestForTestingPOAmountLimit(
+                PurchaseOrderFixture.PO_NON_B2B_OPEN_WITH_QTY_ITEM_ABOVE_5K);
+        assertFalse("Payment should have failed the within-amount-limit check, due to quantity-based order with amount above the threshold",
+                ((CuPaymentRequestService) paymentRequestService).purchaseOrderForPaymentRequestIsWithinAutoApproveAmountLimit(paymentRequestDocument));
+    }
+
     protected void changeCurrentUser(UserNameFixture sessionUser)
             throws Exception {
         GlobalVariables.setUserSession(new UserSession(sessionUser.toString()));
+    }
+
+    protected CuPaymentRequestDocument createPaymentRequestForTestingPOAmountLimit(PurchaseOrderFixture poFixture) throws Exception {
+        changeCurrentUser(UserNameFixture.ccs1);
+        PurchaseOrderDocument po = poFixture.createPurchaseOrderdDocument(SpringContext.getBean(DocumentService.class));
+        changeCurrentUser(UserNameFixture.mo14);
+        PaymentRequestDocument paymentRequestDocument = PaymentRequestFixture.PAYMENT_REQ_DOC.createPaymentRequestDocument(po.getPurapDocumentIdentifier());
+        paymentRequestDocument.initiateDocument();
+        paymentRequestDocument.populatePaymentRequestFromPurchaseOrder(po);
+        
+        return (CuPaymentRequestDocument) paymentRequestDocument;
     }
 }

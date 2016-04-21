@@ -88,7 +88,61 @@ public enum RequisitionFixture {
 			"Delivery City Name", "110", "US", null, null, "billing City Name",
 			"US", "abc@email.com", "billing line 1 address", "607-220-3712",
 			"14850", "NY", "Billing name",
-			RequisitionItemFixture.REQ_ITEM_TRADE_IN, null);
+			RequisitionItemFixture.REQ_ITEM_TRADE_IN, null),
+
+	REQ_NON_B2B_WITH_NON_QTY_ITEM_BELOW_5K("Description", "STAN", 0, 4291, null,
+			"line 1 address", "line 2 address", "city", "NY", "14850", "US",
+			"abc@email.com", "6072203712", "attn name", 1,
+			"Delivery Line 1 address", "Delivery Line 2 address",
+			"Delivery City Name", "110", "US", null, null, "billing City Name",
+			"US", "abc@email.com", "billing line 1 address", "607-220-3712",
+			"14850", "NY", "Billing name",
+			RequisitionItemFixture.REQ_NON_QTY_ITEM_AMOUNT_BELOW_5K, null),
+
+	REQ_NON_B2B_WITH_NON_QTY_ITEM_AT_5K("Description", "STAN", 0, 4291, null,
+			"line 1 address", "line 2 address", "city", "NY", "14850", "US",
+			"abc@email.com", "6072203712", "attn name", 1,
+			"Delivery Line 1 address", "Delivery Line 2 address",
+			"Delivery City Name", "110", "US", null, null, "billing City Name",
+			"US", "abc@email.com", "billing line 1 address", "607-220-3712",
+			"14850", "NY", "Billing name",
+			RequisitionItemFixture.REQ_NON_QTY_ITEM_AMOUNT_AT_5K, null),			
+
+	REQ_NON_B2B_WITH_NON_QTY_ITEM_ABOVE_5K("Description", "STAN", 0, 4291, null,
+			"line 1 address", "line 2 address", "city", "NY", "14850", "US",
+			"abc@email.com", "6072203712", "attn name", 1,
+			"Delivery Line 1 address", "Delivery Line 2 address",
+			"Delivery City Name", "110", "US", null, null, "billing City Name",
+			"US", "abc@email.com", "billing line 1 address", "607-220-3712",
+			"14850", "NY", "Billing name",
+			RequisitionItemFixture.REQ_NON_QTY_ITEM_AMOUNT_ABOVE_5K, null),
+
+	REQ_NON_B2B_WITH_QTY_ITEM_BELOW_5K("Description", "STAN", 0, 4291, null,
+			"line 1 address", "line 2 address", "city", "NY", "14850", "US",
+			"abc@email.com", "6072203712", "attn name", 1,
+			"Delivery Line 1 address", "Delivery Line 2 address",
+			"Delivery City Name", "110", "US", null, null, "billing City Name",
+			"US", "abc@email.com", "billing line 1 address", "607-220-3712",
+			"14850", "NY", "Billing name",
+			RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_BELOW_5K, null),
+
+	REQ_NON_B2B_WITH_QTY_ITEM_AT_5K("Description", "STAN", 0, 4291, null,
+			"line 1 address", "line 2 address", "city", "NY", "14850", "US",
+			"abc@email.com", "6072203712", "attn name", 1,
+			"Delivery Line 1 address", "Delivery Line 2 address",
+			"Delivery City Name", "110", "US", null, null, "billing City Name",
+			"US", "abc@email.com", "billing line 1 address", "607-220-3712",
+			"14850", "NY", "Billing name",
+			RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_5K, null),
+
+	REQ_NON_B2B_WITH_QTY_ITEM_ABOVE_5K("Description", "STAN", 0, 4291, null,
+			"line 1 address", "line 2 address", "city", "NY", "14850", "US",
+			"abc@email.com", "6072203712", "attn name", 1,
+			"Delivery Line 1 address", "Delivery Line 2 address",
+			"Delivery City Name", "110", "US", null, null, "billing City Name",
+			"US", "abc@email.com", "billing line 1 address", "607-220-3712",
+			"14850", "NY", "Billing name",
+			RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_ABOVE_5K, null);
 
 	public final String documentDescription;
 	public final String requisitionSourceCode;
