@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
@@ -17,8 +18,10 @@ import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
+import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.document.AccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
+import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.impl.PaymentRequestServiceImpl;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -26,6 +29,7 @@ import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 import org.kuali.rice.krad.bo.Note;
@@ -413,6 +417,69 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     @Override
     public String getPaymentRequestNoteTargetObjectId(String documentNumber) {
         return ((CuPaymentRequestDao) paymentRequestDao).getObjectIdByPaymentRequestDocumentNumber(documentNumber);
+    }
+
+    /**
+     * This implementation delegates to the is-quantity or is-within-amount-limit methods
+     * to make the determination.
+     * 
+     * This logic separation into multiple methods was largely done to help with unit testing.
+     * 
+     * @see edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService#purchaseOrderForPaymentRequestIsNonQuantityOrWithinAutoApproveAmountLimit(
+     * org.kuali.kfs.module.purap.document.PaymentRequestDocument)
+     */
+    @Override
+    public boolean purchaseOrderForPaymentRequestIsNonQuantityOrWithinAutoApproveAmountLimit(PaymentRequestDocument document) {
+        return !purchaseOrderForPaymentRequestHasQuantityItems(document) || purchaseOrderForPaymentRequestIsWithinAutoApproveAmountLimit(document);
+    }
+
+    /**
+     * This implementation uses the "DEFAULT_POS_APRVL_LMT" parameter to get the cutoff value
+     * for which the PO amount can allow for automatic PREQ approval.
+     * 
+     * @see edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService#isPurchaseOrderWithinAmountLimitForPaymentRequestAutoApprove(
+     * org.kuali.kfs.module.purap.document.PaymentRequestDocument)
+     */
+    @Override
+    public boolean purchaseOrderForPaymentRequestIsWithinAutoApproveAmountLimit(PaymentRequestDocument document) {
+        PurchaseOrderDocument po = document.getPurchaseOrderDocument();
+        String amountParameterValue = parameterService.getParameterValueAsString(
+                PaymentRequestDocument.class, PurapParameterConstants.PURAP_DEFAULT_NEGATIVE_PAYMENT_REQUEST_APPROVAL_LIMIT);
+        KualiDecimal amountLimit = new KualiDecimal(amountParameterValue);
+        boolean withinLimit = po.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount().isLessThan(amountLimit);
+        LOG.info("PayReq " + document.getDocumentNumber()
+                + (withinLimit
+                        ? " has the potential for auto-approval because the amount on the associated PO is below the limit of "
+                        : " cannot be auto-approved because the amount on the associated PO matches or exceeds the limit of ")
+                + amountLimit.toString());
+        
+        return withinLimit;
+    }
+
+    /**
+     * This implementation just checks the first item since CU does not allow a mix of
+     * quantity and non-quantity items on the same document. In the odd event of the
+     * PO not having any items, the return value will default to false.
+     * 
+     * @see edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService#purchaseOrderForPaymentRequestHasQuantityItems(
+     * org.kuali.kfs.module.purap.document.PaymentRequestDocument)
+     */
+    @Override
+    public boolean purchaseOrderForPaymentRequestHasQuantityItems(PaymentRequestDocument document) {
+        return CollectionUtils.isNotEmpty(document.getPurchaseOrderDocument().getItems())
+                && !((PurchaseOrderItem) document.getPurchaseOrderDocument().getItems().get(0)).isNoQtyItem();
+    }
+
+    /**
+     * Overridden to also require that if the associated PO has quantity items, then its amount must be within auto-approval limits.
+     * 
+     * @see org.kuali.kfs.module.purap.document.service.impl.PaymentRequestServiceImpl#isEligibleForAutoApproval(
+     * org.kuali.kfs.module.purap.document.PaymentRequestDocument, org.kuali.rice.core.api.util.type.KualiDecimal)
+     */
+    @Override
+    protected boolean isEligibleForAutoApproval(PaymentRequestDocument document, KualiDecimal defaultMinimumLimit) {
+        return purchaseOrderForPaymentRequestIsNonQuantityOrWithinAutoApproveAmountLimit(document)
+                && super.isEligibleForAutoApproval(document, defaultMinimumLimit);
     }
 
 }
