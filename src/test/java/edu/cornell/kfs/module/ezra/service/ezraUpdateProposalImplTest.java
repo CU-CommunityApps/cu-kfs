@@ -6,15 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward;
-import edu.cornell.kfs.module.ezra.service.EzraService;
-import org.kuali.rice.krad.service.BusinessObjectService;
-
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import edu.cornell.kfs.module.ezra.dataaccess.EzraAwardProposalDao;
+import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 
 @ConfigureContext(session = ccs1)
@@ -23,18 +20,26 @@ public class ezraUpdateProposalImplTest extends KualiTestBase {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(EzraService.class);
 	private EzraService ezraService;	
 	private BusinessObjectService businessObjectService;
+	private UnitTestSqlDao unitTestSqlDao;
+	
+	private static String GET_PROPOSAL_NUMBER_SQL ="select PROJ_ID from AWARD_PROP where AWARD_PROP_ID like 'A%' and BUDG_TOTAL > 0 and STATUS_CD = 'ASAP' and ROWNUM =1";
 	
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         ezraService = SpringContext.getBean(EzraService.class);
         businessObjectService = SpringContext.getBean(BusinessObjectService.class);
+        unitTestSqlDao = SpringContext.getBean(UnitTestSqlDao.class);
     }
     
     public void testUpdateProposal () {
+    	
+		List ezraProposals =  unitTestSqlDao.sqlSelect(GET_PROPOSAL_NUMBER_SQL);
+		Map proposalNumberResult = (Map)ezraProposals.get(0);
+		Object proposalNumber = proposalNumberResult.get("PROJ_ID");
         Map fields = new HashMap();
         fields.clear();
-        fields.put("proposalNumber", "13800");        
+        fields.put("proposalNumber", proposalNumber);        
         String grantIdTest = "ezraUpdateTest";
         String grantIdAfter = "";
         Proposal proposal = (Proposal)businessObjectService.findByPrimaryKey(Proposal.class, fields);
