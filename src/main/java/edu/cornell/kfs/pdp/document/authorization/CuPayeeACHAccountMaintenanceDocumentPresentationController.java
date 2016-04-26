@@ -7,7 +7,7 @@ import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.pdp.document.authorization.PayeeACHAccountMaintenanceDocumentPresentationController;
-import org.kuali.rice.kns.document.MaintenanceDocument;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
 
 
 public class CuPayeeACHAccountMaintenanceDocumentPresentationController extends PayeeACHAccountMaintenanceDocumentPresentationController {

@@ -3,7 +3,7 @@ package edu.cornell.kfs.coa.service;
 import java.util.List;
 
 import org.kuali.kfs.coa.businessobject.Account;
-import org.kuali.rice.krad.maintenance.MaintenanceLock;
+import org.kuali.kfs.krad.maintenance.MaintenanceLock;
 
 public interface AccountReversionTrickleDownInactivationService {
 

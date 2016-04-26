@@ -21,68 +21,23 @@ import org.kuali.kfs.module.purap.util.PurApRelatedViews;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.krad.bo.Attachment;
-import org.kuali.rice.krad.bo.Note;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.exception.ValidationException;
-import org.kuali.rice.krad.service.AttachmentService;
-import org.kuali.rice.krad.service.DocumentService;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.bo.Attachment;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.exception.ValidationException;
+import org.kuali.kfs.krad.service.AttachmentService;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.krad.businessobject.NoteExtendedAttribute;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 
 public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPurchaseOrderServiceImpl.class);
-
-    @Override
-    public boolean autoCloseFullyDisencumberedOrders() {
-        LOG.debug("autoCloseFullyDisencumberedOrders() started");
-
-        List<AutoClosePurchaseOrderView> autoCloseList = purchaseOrderDao.getAllOpenPurchaseOrders(getExcludedVendorChoiceCodes());
-
-        for (AutoClosePurchaseOrderView poAutoClose : autoCloseList) {
-            if ((poAutoClose.getTotalAmount() != null) && ((KualiDecimal.ZERO.compareTo(poAutoClose.getTotalAmount())) != 0)) {
-                // KFSUPGRADE-363
-            	if (paymentRequestsStatusCanAutoClose(poAutoClose)) {
-                    LOG.info("autoCloseFullyDisencumberedOrders() PO ID " + poAutoClose.getPurapDocumentIdentifier() + " with total " + poAutoClose.getTotalAmount().doubleValue() + " will be closed");
-                    String newStatus = PurapConstants.PurchaseOrderStatuses.APPDOC_PENDING_CLOSE;
-                    String annotation = "This PO was automatically closed in batch.";
-                    String documentType = PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_CLOSE_DOCUMENT;
-                    PurchaseOrderDocument document = getPurchaseOrderByDocumentNumber(poAutoClose.getDocumentNumber());
-                    createNoteForAutoCloseOrders(document, annotation);
-                    createAndRoutePotentialChangeDocument(poAutoClose.getDocumentNumber(), documentType, annotation, null, newStatus);
-                }
-            }
-        }
-
-        LOG.debug("autoCloseFullyDisencumberedOrders() ended");
-
-        return true;
-    }
-
-    /**
-     * Check to make sure all PaymentRequestViews related to the passed in AutoClosePurchaseOrderView 
-     * are in statuses that allow auto close. If so, return true. If not return false.
-     * 
-     * @param poAutoClose The AutoClosePurchaseOrderView used to get related PaymentRequestView(s) to check
-     * @return whether the PaymentRequestView(s) are in a status that will should allow auto closing the related PO.
-     */
-    private boolean paymentRequestsStatusCanAutoClose(AutoClosePurchaseOrderView poAutoClose) {
-        PurApRelatedViews relatedViews = new PurApRelatedViews(poAutoClose.getPurapDocumentIdentifier().toString(), poAutoClose.getAccountsPayablePurchasingDocumentLinkIdentifier());
-        if (relatedViews.getRelatedPaymentRequestViews() != null) {
-            for (PaymentRequestView paymentRequestView : relatedViews.getRelatedPaymentRequestViews()) {
-                if (!CUPurapConstants.CUPaymentRequestStatuses.STATUSES_ALLOWING_AUTO_CLOSE.contains(paymentRequestView.getApplicationDocumentStatus())) {
-                    return false;
-                }
-            }
-        }
-        return true;
-	}
 
     @Override
     public void performPurchaseOrderFirstTransmitViaPrinting(String documentNumber, ByteArrayOutputStream baosPDF) {

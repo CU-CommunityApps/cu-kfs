@@ -19,7 +19,7 @@ public class CommodityCodeUpdateStep extends AbstractStep {
     private BatchInputFileType commodityCodeInputFileType;
 
     /**
-     * @see org.kuali.kfs.sys.batch.Step#execute(java.lang.String, java.util.Date)
+     * @see org.kuali.kfs.kns.bo.Step#execute(java.lang.String, java.util.Date)
      */
     public boolean execute(String jobName, Date jobRunDate) {
         List<String> fileNamesToLoad = batchInputFileService.listInputFileNamesWithDoneFile(commodityCodeInputFileType);

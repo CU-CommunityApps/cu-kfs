@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.sys.businessobject.YearEndPersistableBusinessObjectExtensionBase;
 

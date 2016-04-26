@@ -3,7 +3,7 @@ package edu.cornell.kfs.module.purap.businessobject;
 import java.util.List;
 
 import org.kuali.kfs.module.purap.businessobject.AbstractRelatedView;
-import org.kuali.rice.krad.bo.Note;
+import org.kuali.kfs.krad.bo.Note;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 

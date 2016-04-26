@@ -1,10 +1,9 @@
 package edu.cornell.kfs.sys.service.mock;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coreservice.api.parameter.Parameter;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.vnd.VendorParameterConstants;
-import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.coreservice.api.parameter.Parameter;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 
 import java.util.Collection;
 

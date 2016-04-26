@@ -11,9 +11,9 @@ import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.impl.KIMPropertyConstants;
-import org.kuali.rice.kns.lookup.LookupableHelperService;
+import org.kuali.kfs.kns.lookup.LookupableHelperService;
 import org.kuali.rice.krad.bo.BusinessObject;
-import org.kuali.rice.krad.exception.ValidationException;
+import org.kuali.kfs.krad.exception.ValidationException;
 
 import java.util.Collections;
 import java.util.HashMap;

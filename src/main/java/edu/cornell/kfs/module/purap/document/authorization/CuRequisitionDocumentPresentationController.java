@@ -9,7 +9,7 @@ import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.authorization.RequisitionDocumentPresentationController;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.rice.krad.document.Document;
+import org.kuali.kfs.krad.document.Document;
 
 import edu.cornell.kfs.module.purap.CUPurapAuthorizationConstants.CURequisitionEditMode;
 import edu.cornell.kfs.module.purap.service.CuPurapAccountingService;
