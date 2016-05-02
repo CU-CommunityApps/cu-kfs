@@ -8,7 +8,7 @@ import java.util.Map;
 
 import edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward;
 import edu.cornell.kfs.module.ezra.service.EzraService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.sys.ConfigureContext;

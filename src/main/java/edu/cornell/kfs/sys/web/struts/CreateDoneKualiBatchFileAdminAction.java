@@ -19,7 +19,7 @@ import org.kuali.kfs.sys.web.struts.KualiBatchFileAdminAction;
 import org.kuali.kfs.sys.web.struts.KualiBatchFileAdminForm;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.RiceConstants;
-import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.batch.CreateDoneBatchFile;

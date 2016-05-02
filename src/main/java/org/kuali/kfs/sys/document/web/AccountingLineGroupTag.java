@@ -42,11 +42,11 @@ import org.kuali.kfs.sys.document.datadictionary.FinancialSystemTransactionalDoc
 import org.kuali.kfs.sys.document.service.AccountingLineRenderingService;
 import org.kuali.kfs.sys.web.struts.KualiAccountingDocumentFormBase;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.kfs.kns.service.DataDictionaryService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.rice.kns.service.DataDictionaryService;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 /**
  * Tag that is responsible for rendering an accounting line group
@@ -176,7 +176,7 @@ public class AccountingLineGroupTag extends TagSupport {
     public int doEndTag() throws JspException {
         super.doEndTag();
         if (!(getParent() instanceof AccountingLinesTag)) {
-            group.renderEverything(pageContext, getParent(), null);
+            group.renderEverything(pageContext, getParent());
             resetTag();
         }
         return Tag.EVAL_PAGE;
@@ -273,24 +273,22 @@ public class AccountingLineGroupTag extends TagSupport {
         final AccountingDocument document = getDocument();
         final Person currentUser = GlobalVariables.getUserSession().getPerson();
         boolean addedTopLine = false;
-
+        
         // add all existing lines
         int count = 0;
         boolean anyEditableLines = false;
-        final boolean pageIsEditable = getForm().getDocumentActions().containsKey(KRADConstants.KUALI_ACTION_CAN_EDIT);
         List<AccountingLine> lines = getAccountingLineCollection();
         Collections.sort(lines, getGroupDefinition().getAccountingLineComparator());
-        // add the new line
-        if (StringUtils.isNotBlank(newLinePropertyName) && ((getForm().getDocumentActions().containsKey(KRADConstants.KUALI_ACTION_CAN_EDIT) && groupDefinition.getAccountingLineAuthorizer().renderNewLine(document, collectionPropertyName)) || anyEditableLines)) {
-            containers.add(0, buildContainerForLine(groupDefinition, document, getNewAccountingLine(), currentUser, null, true, pageIsEditable));
-            addedTopLine = true;
-        }
         for (AccountingLine accountingLine : lines) {
-            final RenderableAccountingLineContainer container = buildContainerForLine(groupDefinition, document, accountingLine, currentUser, new Integer(count), !addedTopLine, pageIsEditable);
+            final RenderableAccountingLineContainer container = buildContainerForLine(groupDefinition, document, accountingLine, currentUser, new Integer(count), (addedTopLine ? false : true));
             containers.add(container);
             anyEditableLines = anyEditableLines || container.isEditableLine() || isMessageMapContainingErrorsOnLine(container.getAccountingLinePropertyPath());
             count += 1;
             addedTopLine = true;
+        }
+        // add the new line
+        if (StringUtils.isNotBlank(newLinePropertyName) && ((getForm().getDocumentActions().containsKey(KRADConstants.KUALI_ACTION_CAN_EDIT) && groupDefinition.getAccountingLineAuthorizer().renderNewLine(document, collectionPropertyName)) || anyEditableLines)) {
+            containers.add(0, buildContainerForLine(groupDefinition, document, getNewAccountingLine(), currentUser, null, true));
         }
         
         return containers;
@@ -317,12 +315,12 @@ public class AccountingLineGroupTag extends TagSupport {
      * @param count the count of this line within the collection represented by the group; null if this is a new line for the group
      * @return the container created
      */
-    protected RenderableAccountingLineContainer buildContainerForLine(AccountingLineGroupDefinition groupDefinition, AccountingDocument accountingDocument, AccountingLine accountingLine, Person currentUser, Integer count, boolean topLine, boolean pageIsEditable) {
+    protected RenderableAccountingLineContainer buildContainerForLine(AccountingLineGroupDefinition groupDefinition, AccountingDocument accountingDocument, AccountingLine accountingLine, Person currentUser, Integer count, boolean topLine) {
         final String accountingLinePropertyName = count == null ? newLinePropertyName : collectionItemPropertyName+"["+count.toString()+"]";
         final boolean newLine = (count == null);
         final List<AccountingLineTableRow> rows = getRenderableElementsForLine(groupDefinition, accountingLine, newLine, topLine, accountingLinePropertyName);
 
-        //final boolean pageIsEditable = getForm().getDocumentActions().containsKey(KRADConstants.KUALI_ACTION_CAN_EDIT);
+        final boolean pageIsEditable = getForm().getDocumentActions().containsKey(KRADConstants.KUALI_ACTION_CAN_EDIT);
         // KFSPTS-1273 : this method is final, so can't be overriden by REQ Auth.  This is a fix for REQ existing issue.  a broader solution need more work.
         // the authorizer is called by validation rule and rendertag, so has to do it here.  otherwise the invalid account will be saved.
         boolean isExistingReqAcctline = false;
@@ -357,10 +355,8 @@ public class AccountingLineGroupTag extends TagSupport {
                 }
             }
         }
-
-        final Set<String> currentNodes = document.getDocumentHeader().getWorkflowDocument().getCurrentNodeNames();
-
-        RenderableAccountingLineContainer container = new RenderableAccountingLineContainer(getForm(), accountingLine, accountingLinePropertyName, rows, count, groupDefinition.getGroupLabel(), getErrors(), groupDefinition.getAccountingLineAuthorizer(), groupDefinition.getAccountingLineAuthorizer().hasEditPermissionOnAccountingLine(getDocument(), accountingLine, collectionPropertyName, currentUser, pageIsEditable, currentNodes), currentNodes);
+        
+        RenderableAccountingLineContainer container = new RenderableAccountingLineContainer(getForm(), accountingLine, accountingLinePropertyName, rows, count, groupDefinition.getGroupLabel(), getErrors(), groupDefinition.getAccountingLineAuthorizer(), groupDefinition.getAccountingLineAuthorizer().hasEditPermissionOnAccountingLine(getDocument(), accountingLine, collectionPropertyName, currentUser, pageIsEditable));
         if (isExistingReqAcctline) {
             accountingLine.setAccountNumber(updatedAccountNumber);
         }

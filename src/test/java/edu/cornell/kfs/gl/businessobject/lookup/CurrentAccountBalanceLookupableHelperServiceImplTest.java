@@ -10,7 +10,7 @@ import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
-import org.kuali.kfs.kns.lookup.LookupableHelperService;
+import org.kuali.rice.kns.lookup.LookupableHelperService;
 
 import edu.cornell.kfs.gl.businessobject.CurrentAccountBalance;
 

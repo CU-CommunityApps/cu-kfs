@@ -9,8 +9,8 @@ import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.kns.lookup.LookupableHelperService;
-import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.rice.kns.lookup.LookupableHelperService;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 @ConfigureContext
 @SuppressWarnings("deprecation")

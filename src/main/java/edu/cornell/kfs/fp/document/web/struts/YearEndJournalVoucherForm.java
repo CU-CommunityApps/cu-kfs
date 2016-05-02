@@ -11,7 +11,7 @@ import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 
 public class YearEndJournalVoucherForm extends JournalVoucherForm {
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(YearEndJournalVoucherForm.class);

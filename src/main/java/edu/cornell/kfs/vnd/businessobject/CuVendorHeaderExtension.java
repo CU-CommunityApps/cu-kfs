@@ -1,6 +1,6 @@
 package edu.cornell.kfs.vnd.businessobject;
 
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
 
 
 public class CuVendorHeaderExtension extends PersistableBusinessObjectExtensionBase {

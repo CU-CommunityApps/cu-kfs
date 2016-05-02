@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
 
 public class ProcurementCardTransactionExtendedAttribute extends PersistableBusinessObjectExtensionBase{
 

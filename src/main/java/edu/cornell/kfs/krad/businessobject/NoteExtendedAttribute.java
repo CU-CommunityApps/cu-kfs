@@ -1,6 +1,6 @@
 package edu.cornell.kfs.krad.businessobject;
 
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
 
 public class NoteExtendedAttribute extends PersistableBusinessObjectExtensionBase {
     private static final long serialVersionUID = 3659103869891847806L;

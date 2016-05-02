@@ -23,9 +23,9 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.exception.FileStorageException;
 import org.kuali.kfs.sys.web.struts.KualiBatchInputFileSetAction;
 import org.kuali.kfs.sys.web.struts.KualiBatchInputFileSetForm;
-import org.kuali.kfs.kns.util.KNSGlobalVariables;
-import org.kuali.kfs.krad.exception.ValidationException;
-import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.rice.kns.util.KNSGlobalVariables;
+import org.kuali.rice.krad.exception.ValidationException;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.module.ld.service.LaborLedgerEnterpriseFeedService;
 import edu.cornell.kfs.sys.CUKFSConstants;

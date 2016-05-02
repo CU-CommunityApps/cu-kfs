@@ -19,7 +19,7 @@ import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.core.api.encryption.EncryptionService;
-import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxFieldSource;

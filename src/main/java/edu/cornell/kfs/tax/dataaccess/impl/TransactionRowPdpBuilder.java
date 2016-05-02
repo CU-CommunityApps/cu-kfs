@@ -12,7 +12,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.rice.kew.api.document.Document;
-import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxSqlUtils.SqlText;

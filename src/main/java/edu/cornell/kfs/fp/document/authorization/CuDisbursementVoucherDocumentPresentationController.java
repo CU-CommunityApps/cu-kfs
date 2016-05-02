@@ -9,7 +9,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KfsAuthorizationConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.kfs.krad.document.Document;
+import org.kuali.rice.krad.document.Document;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.service.CULegacyTravelService;

@@ -27,7 +27,7 @@ import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.RiceConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 public class CuElectronicInvoiceTestAction extends ElectronicInvoiceTestAction {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuElectronicInvoiceTestAction.class);

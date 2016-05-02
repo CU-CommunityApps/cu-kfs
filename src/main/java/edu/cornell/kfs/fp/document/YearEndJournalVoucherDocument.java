@@ -7,7 +7,7 @@ import org.kuali.kfs.fp.document.YearEndDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 
 import edu.cornell.kfs.fp.document.service.YearEndGeneralLedgerPendingEntriesService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;

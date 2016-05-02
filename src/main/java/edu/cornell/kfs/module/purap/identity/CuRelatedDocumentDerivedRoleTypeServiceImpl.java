@@ -15,7 +15,7 @@ import org.kuali.rice.kew.role.service.impl.RouteLogDerivedRoleTypeServiceImpl;
 import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.role.RoleMembership;
 import org.kuali.rice.kim.api.role.RoleMembership.Builder;
-import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.KRADConstants;
 
 public class CuRelatedDocumentDerivedRoleTypeServiceImpl extends RelatedDocumentDerivedRoleTypeServiceImpl {
 

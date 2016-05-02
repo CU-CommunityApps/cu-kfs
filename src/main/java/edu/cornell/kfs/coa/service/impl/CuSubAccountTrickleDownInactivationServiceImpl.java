@@ -12,10 +12,10 @@ import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.coa.service.impl.SubAccountTrickleDownInactivationServiceImpl;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.kns.maintenance.Maintainable;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.maintenance.MaintenanceLock;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.rice.kns.maintenance.Maintainable;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.maintenance.MaintenanceLock;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 public class CuSubAccountTrickleDownInactivationServiceImpl extends SubAccountTrickleDownInactivationServiceImpl {
 	private static final Logger LOG = Logger.getLogger(CuSubAccountTrickleDownInactivationServiceImpl.class);

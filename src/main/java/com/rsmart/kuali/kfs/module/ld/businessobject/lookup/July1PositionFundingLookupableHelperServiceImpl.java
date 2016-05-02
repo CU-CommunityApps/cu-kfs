@@ -24,8 +24,8 @@ import org.kuali.kfs.module.ld.businessobject.inquiry.AbstractLaborInquirableImp
 import org.kuali.kfs.module.ld.businessobject.inquiry.PositionDataDetailsInquirableImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.kns.lookup.HtmlData;
-import org.kuali.kfs.kns.lookup.HtmlData.AnchorHtmlData;
+import org.kuali.rice.kns.lookup.HtmlData;
+import org.kuali.rice.kns.lookup.HtmlData.AnchorHtmlData;
 import org.kuali.rice.krad.bo.BusinessObject;
 
 import com.rsmart.kuali.kfs.module.ld.businessobject.inquiry.July1PositionFundingInquirableImpl;

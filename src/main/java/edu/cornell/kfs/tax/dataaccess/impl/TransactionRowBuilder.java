@@ -31,7 +31,7 @@ import org.kuali.rice.kew.api.document.search.DocumentSearchResults;
 import org.kuali.rice.kim.api.identity.IdentityService;
 import org.kuali.rice.kim.api.identity.principal.EntityNamePrincipalName;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.kfs.krad.util.BeanPropertyComparator;
+import org.kuali.rice.krad.util.BeanPropertyComparator;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;

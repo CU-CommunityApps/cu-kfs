@@ -2,7 +2,7 @@ package edu.cornell.kfs.module.purap.question;
 
 import java.util.ArrayList;
 
-import org.kuali.kfs.kns.question.QuestionBase;
+import org.kuali.rice.kns.question.QuestionBase;
 
 /**
  * This Question implementation is used by a CU-KFS-specific feature that allows users to move

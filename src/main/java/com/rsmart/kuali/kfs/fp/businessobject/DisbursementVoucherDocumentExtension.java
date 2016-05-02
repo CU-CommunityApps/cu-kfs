@@ -19,7 +19,7 @@ import java.util.LinkedHashMap;
 
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.core.api.util.type.KualiInteger;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
 
 
 /**

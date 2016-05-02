@@ -18,9 +18,9 @@ package edu.cornell.kfs.fp.document.validation.impl;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.document.validation.impl.KfsMaintenanceDocumentRuleBase;
-import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.rice.kns.document.MaintenanceDocument;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.fp.businessobject.PaymentMethod;
 import edu.cornell.kfs.fp.businessobject.PaymentMethodChart;

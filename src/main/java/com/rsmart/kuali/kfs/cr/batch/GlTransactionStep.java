@@ -30,9 +30,9 @@ import org.kuali.kfs.pdp.service.PendingTransactionService;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.krad.bo.KualiCode;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.rice.krad.bo.KualiCode;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
@@ -62,7 +62,7 @@ public class GlTransactionStep extends AbstractStep {
      * 
      * @param jobName Job Name
      * @param jobRunDate Job Date
-     * @see org.kuali.kfs.kns.bo.Step#execute(java.lang.String, java.util.Date)
+     * @see org.kuali.kfs.sys.batch.Step#execute(java.lang.String, java.util.Date)
      */
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
         LOG.info("Started GlTransactionStep @ " + (new Date()).toString());

@@ -6,11 +6,11 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.kfs.kns.document.MaintenanceDocumentBase;
-import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.exception.AuthorizationException;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.rice.kns.document.MaintenanceDocumentBase;
+import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.exception.AuthorizationException;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
 import edu.cornell.kfs.sys.service.UserProcurementProfileValidationService;

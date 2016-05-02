@@ -3,7 +3,7 @@ package edu.cornell.kfs.coa.service.impl;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.coa.businessobject.AccountReversion;
 import edu.cornell.kfs.coa.businessobject.AccountReversionDetail;

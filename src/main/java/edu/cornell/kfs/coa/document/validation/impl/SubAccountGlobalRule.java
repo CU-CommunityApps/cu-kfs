@@ -17,11 +17,11 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
-import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.kns.service.DataDictionaryService;
-import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.rice.kns.document.MaintenanceDocument;
+import org.kuali.rice.kns.service.DataDictionaryService;
+import org.kuali.rice.krad.bo.PersistableBusinessObject;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.businessobject.A21SubAccountChange;
 import edu.cornell.kfs.coa.businessobject.IndirectCostRecoveryAccountChange;
@@ -31,22 +31,22 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
 public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
-
+	
 	/**
 	 * @see edu.cornell.kfs.coa.document.validation.impl.GlobalIndirectCostRecoveryAccountsRule#processCustomSaveDocumentBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument)
 	 */
 	protected boolean processCustomSaveDocumentBusinessRules(MaintenanceDocument document) {
 		boolean success = super.processCustomSaveDocumentBusinessRules(document);
-
+		
 		// check sub account details
 		checkSubAccountDetails();
-
+		
         // check that the reporting fields are entered altogether or none at all
         checkForPartiallyEnteredReportingFields();
 
         // process CG rules if appropriate
         checkCgRules(document);
-
+        
 		return success;
 	}
 	
@@ -56,16 +56,16 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
 	@Override
 	protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {
 		boolean success = super.processCustomRouteDocumentBusinessRules(document);
-
+		
 		// check sub account details
 		success &= checkSubAccountDetails();
-
+		
         // check that the reporting fields are entered altogether or none at all
         success &= checkForPartiallyEnteredReportingFields();
 
         // process CG rules if appropriate
         success &= checkCgRules(document);
-
+        
 		return success;
 	}
 	
@@ -77,13 +77,13 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
 		boolean success = super.processCustomApproveDocumentBusinessRules(document);
 		// check sub account details
 		success &= checkSubAccountDetails();
-
+		
         // check that the reporting fields are entered altogether or none at all
         success &= checkForPartiallyEnteredReportingFields();
 
         // process CG rules if appropriate
         success &= checkCgRules(document);
-
+        
 		return success;
 	}
 	
@@ -113,12 +113,12 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
 	public boolean processCustomAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName, PersistableBusinessObject line) {
 		boolean success = true;
 		success &= super.processCustomAddCollectionLineBusinessRules(document, collectionName, line);
-
+		
 		if (line instanceof SubAccountGlobalDetail) {
 			SubAccountGlobalDetail detail = (SubAccountGlobalDetail) line;
 			success &= checkSubAccountDetail(detail);
 		}
-
+		
 		return success;
 	}
 	
@@ -150,7 +150,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
     
     /**
      * Checks that the reporting fields are entered altogether or none at all
-     *
+     * 
      * @return false if only one reporting field filled out and not all of them, true otherwise
      */
     protected boolean checkForPartiallyEnteredReportingFields() {
@@ -177,10 +177,10 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
 
         return success;
     }
-
+    
     /**
      * Checks CG rules.
-     *
+     * 
      * @param document
      * @return true if valid, false otherwise
      */
@@ -188,13 +188,13 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
     	boolean success = true;
     	SubAccountGlobal newSubAccountGlobal = (SubAccountGlobal) super.getNewBo();
     	List<SubAccountGlobalDetail> subAccountGlobalDetails = newSubAccountGlobal.getSubAccountGlobalDetails();
-
+    	
     	for(SubAccountGlobalDetail subAccountGlobalDetail : subAccountGlobalDetails){
     		success &= checkCgRules(newSubAccountGlobal, subAccountGlobalDetail );
     	}
     	return success;
     }
-
+    
     /**
      * Checks to make sure that if cgAuthorized is false it succeeds immediately, otherwise it checks that all the information
      * for CG is correctly entered and identified including:
@@ -203,7 +203,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
      * not empty</li>
      * <li>If it isn't a child of CG, then the SubAccount must be of type ICR</li>
      * </ul>
-     *
+     * 
      * @param document
      * @return true if the user is not authorized to change CG fields, otherwise it checks the above conditions
      */
@@ -216,7 +216,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
         subAccountGlobalDetail.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
         if (ObjectUtils.isNotNull(subAccountGlobalDetail.getAccount())) {
         	Account account = subAccountGlobalDetail.getAccount();
-        	account.refreshReferenceObject(KFSPropertyConstants.SUB_FUND_GROUP);
+        	account.refreshReferenceObject(KFSPropertyConstants.SUB_FUND_GROUP); 
             if (ObjectUtils.isNotNull(account.getSubFundGroup())) {
 
                 // compare them, exit if the account isn't for contracts and grants
@@ -226,12 +226,12 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
                         putFieldError(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_CHART_OF_ACCOUNTS_CODE, KFSKeyConstants.ERROR_DOCUMENT_SUBACCTMAINT_NON_FUNDED_ACCT_CS_INVALID, new String[] { getSubFundGroupService().getContractsAndGrantsDenotingAttributeLabel(), getSubFundGroupService().getContractsAndGrantsDenotingValueForMessage() });
                         success = false;
                     }
-
+                    
                     if (checkCgIcrIsEmpty() == false) {
                         putFieldError(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.INDIRECT_COST_RECOVERY_TYPE_CODE, KFSKeyConstants.ERROR_DOCUMENT_SUBACCTMAINT_NON_FUNDED_ACCT_ICR_INVALID, new String[] { getSubFundGroupService().getContractsAndGrantsDenotingAttributeLabel(), getSubFundGroupService().getContractsAndGrantsDenotingValueForMessage() });
                         success = false;
                     }
-
+                    
                     if (newSubAccountGlobal.getIndirectCostRecoveryAccounts().isEmpty() == false) {
                         putFieldError(KFSPropertyConstants.INDIRECT_COST_RECOVERY_ACCOUNTS, KFSKeyConstants.ERROR_DOCUMENT_SUBACCTMAINT_NON_FUNDED_ACCT_ICR_INVALID, new String[] { getSubFundGroupService().getContractsAndGrantsDenotingAttributeLabel(), getSubFundGroupService().getContractsAndGrantsDenotingValueForMessage() });
                         success = false;
@@ -246,11 +246,11 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
         if(ObjectUtils.isNull(subAccountGlobalDetail.getSubAccount())){
         	return success;
         }
-
+        
         SubAccount subAccount = subAccountGlobalDetail.getSubAccount();
         subAccount.refreshReferenceObject(KFSPropertyConstants.A21_SUB_ACCOUNT);
         A21SubAccount a21 = subAccount.getA21SubAccount();
-
+        
         // short circuit if there is no A21SubAccount object at all (ie, null)
         if (ObjectUtils.isNull(a21)) {
             return success;
@@ -258,16 +258,16 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
 
         // FROM HERE ON IN WE CAN ASSUME THERE IS A VALID A21 SUBACCOUNT OBJECT
 
-        // since there is a ICR Collection Account object, change refresh to perform
+        // since there is a ICR Collection Account object, change refresh to perform 
         // manually refresh the a21SubAccount object, as it wont have been
         // refreshed by the parent, as its updateable
         // though only refresh if we didn't refresh in the checks above
-
+        
         if (!a21SubAccountRefreshed) {
             //preserve the ICRAccounts before refresh to prevent the list from dropping
-            List<A21IndirectCostRecoveryAccount>icrAccounts =a21.getA21IndirectCostRecoveryAccounts();
+            List<A21IndirectCostRecoveryAccount>icrAccounts =a21.getA21IndirectCostRecoveryAccounts(); 
             a21.refresh();
-            a21.setA21IndirectCostRecoveryAccounts(icrAccounts);
+            a21.setA21IndirectCostRecoveryAccounts(icrAccounts);        
         }
 
         // get a convenience reference to this code
@@ -285,30 +285,30 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
 
         return success;
     }
-
-
+   
+    
     /**
      * This method tests if all fields in the Cost Sharing section are empty.
-     *
+     * 
      * @return true if the cost sharing values passed in are empty, otherwise false.
      */
     protected boolean checkCgCostSharingIsEmpty(SubAccountGlobalDetail subAccountGlobalDetail) {
         boolean success = true;
         SubAccountGlobal newSubAccountGlobal = (SubAccountGlobal) super.getNewBo();
         A21SubAccountChange newA21SubAccount = newSubAccountGlobal.getA21SubAccount();
-
+        
         boolean cgCostSharingEmptyOnGlobal = true;
         if (ObjectUtils.isNotNull(newA21SubAccount)) {
         	cgCostSharingEmptyOnGlobal &= StringUtils.isEmpty(newA21SubAccount.getCostShareChartOfAccountCode());
         	cgCostSharingEmptyOnGlobal &= StringUtils.isEmpty(newA21SubAccount.getCostShareSourceAccountNumber());
         	cgCostSharingEmptyOnGlobal &= StringUtils.isEmpty(newA21SubAccount.getCostShareSourceSubAccountNumber());
         }
-
+        
         success &= cgCostSharingEmptyOnGlobal;
 
         return success;
     }
-
+    
     /**
      * This method tests if all fields in the ICR section are empty.
      *
@@ -331,7 +331,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
     /**
      * This checks that if the cost share information is filled out that it is valid and exists, or if fields are missing (such as
      * the chart of accounts code and account number) an error is recorded
-     *
+     * 
      * @return true if all cost share fields filled out correctly, false if the chart of accounts code and account number for cost
      *         share are missing
      */
@@ -339,7 +339,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
 
         boolean success = true;
         boolean allFieldsSet = false;
-
+        
         SubAccountGlobal newSubAccountGlobal = (SubAccountGlobal) super.getNewBo();
 
         A21SubAccountChange a21 = newSubAccountGlobal.getA21SubAccount();
@@ -353,7 +353,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
         if (!allFieldsSet && StringUtils.isNotBlank(a21.getCostShareChartOfAccountCode())) {
         	success &= checkEmptyBOField(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT_NUMBER, a21.getCostShareSourceAccountNumber(), getDisplayName(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT_NUMBER));
         }
-
+        
         if (!allFieldsSet && StringUtils.isNotBlank(a21.getCostShareSourceAccountNumber())) {
         	success &= checkEmptyBOField(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_CHART_OF_ACCOUNTS_CODE, a21.getCostShareChartOfAccountCode(),  getDisplayName(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_CHART_OF_ACCOUNTS_CODE));
         }
@@ -366,7 +366,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
                 success &= false;
             }
         }
-
+        
         a21.refreshReferenceObject(KFSPropertyConstants.COST_SHARE_SOURCE_SUB_ACCOUNT);
         // existence test on Cost Share SubAccount
         if (allFieldsSet && StringUtils.isNotBlank(a21.getCostShareSourceSubAccountNumber())) {
@@ -378,18 +378,18 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
 
         return success;
     }
-
+    
 
     /**
      * This checks that if the ICR information is entered that it is valid for this fiscal year and that all of its fields are valid
      * as well (such as account)
-     *
+     * 
      * @return true if the ICR information is filled in and it is valid
      */
     protected boolean checkCgIcrRules(String subAccountTypeCode, SubAccountGlobalDetail subAccountGlobalDetail) {
     	SubAccountGlobal newSubAccountGlobal = (SubAccountGlobal) super.getNewBo();
         A21SubAccountChange a21 = newSubAccountGlobal.getA21SubAccount();
-
+        
         if(ObjectUtils.isNull(a21)) {
             return true;
         }
@@ -397,15 +397,15 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
         boolean success = true;
 
         // existence check for Financial Series ID
-        if (StringUtils.isNotEmpty(a21.getFinancialIcrSeriesIdentifier())) {
+        if (StringUtils.isNotEmpty(a21.getFinancialIcrSeriesIdentifier())) {            
             String fiscalYear = StringUtils.EMPTY + SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear();
             String icrSeriesId = a21.getFinancialIcrSeriesIdentifier();
-
+            
             Map<String, String> pkMap = new HashMap<String, String>();
             pkMap.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, fiscalYear);
             pkMap.put(KFSPropertyConstants.FINANCIAL_ICR_SERIES_IDENTIFIER, icrSeriesId);
             Collection<IndirectCostRecoveryRateDetail> icrRateDetails = getBoService().findMatching(IndirectCostRecoveryRateDetail.class, pkMap);
-
+            
             if (ObjectUtils.isNull(icrRateDetails) || icrRateDetails.isEmpty()) {
                 String label = SpringContext.getBean(DataDictionaryService.class).getAttributeLabel(A21SubAccount.class, KFSPropertyConstants.FINANCIAL_ICR_SERIES_IDENTIFIER);
                 putFieldError(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.FINANCIAL_ICR_SERIES_IDENTIFIER, KFSKeyConstants.ERROR_EXISTENCE, label + " (" + icrSeriesId + ")");
@@ -413,20 +413,20 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
             }
             else {
                 for(IndirectCostRecoveryRateDetail icrRateDetail : icrRateDetails) {
-                    if(ObjectUtils.isNull(icrRateDetail.getIndirectCostRecoveryRate())){
+                    if(ObjectUtils.isNull(icrRateDetail.getIndirectCostRecoveryRate())){                                
                         putFieldError(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.FINANCIAL_ICR_SERIES_IDENTIFIER, KFSKeyConstants.IndirectCostRecovery.ERROR_DOCUMENT_ICR_RATE_NOT_FOUND, new String[]{fiscalYear, icrSeriesId});
                         success = false;
                         break;
                     }
                 }
-            }
+            }            
         }
 
         // existence check for ICR Account
         for (IndirectCostRecoveryAccountChange account : newSubAccountGlobal.getActiveIndirectCostRecoveryAccounts()){
             if (StringUtils.isNotBlank(account.getIndirectCostRecoveryAccountNumber())
                 && StringUtils.isNotBlank(account.getIndirectCostRecoveryFinCoaCode())){
-                if(ObjectUtils.isNull(account.getIndirectCostRecoveryAccount())){
+                if(ObjectUtils.isNull(account.getIndirectCostRecoveryAccount())){                                
                     putFieldError(KFSPropertyConstants.INDIRECT_COST_RECOVERY_ACCOUNTS, KFSKeyConstants.ERROR_EXISTENCE, "ICR Account: " + account.getIndirectCostRecoveryFinCoaCode() + "-" + account.getIndirectCostRecoveryAccountNumber());
                     success = false;
                     break;
@@ -442,11 +442,11 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
         }
 
         return success;
-    }
-
+    }  
+    
     /**
      * Retrieves the label name for a specific property
-     *
+     * 
      * @param propertyName - property to retrieve label for (from the DD)
      * @return the label
      */

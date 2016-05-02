@@ -3,8 +3,8 @@ package edu.cornell.kfs.module.purap.businessobject;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 public class CuPaymentRequestItemExtension extends PersistableBusinessObjectExtensionBase {
     private Integer itemIdentifier;

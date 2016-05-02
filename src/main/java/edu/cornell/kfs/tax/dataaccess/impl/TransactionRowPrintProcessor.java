@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.core.api.encryption.EncryptionService;
-import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxFieldSource;

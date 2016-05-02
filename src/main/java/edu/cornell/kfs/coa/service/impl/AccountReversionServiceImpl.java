@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.NonTransactional;
-import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.coa.businessobject.AccountReversion;
 import edu.cornell.kfs.coa.businessobject.ReversionCategory;

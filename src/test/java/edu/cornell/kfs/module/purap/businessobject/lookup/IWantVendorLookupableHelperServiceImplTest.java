@@ -10,7 +10,7 @@ import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.kns.lookup.LookupableHelperService;
+import org.kuali.rice.kns.lookup.LookupableHelperService;
 
 @ConfigureContext
 @SuppressWarnings("deprecation")
