@@ -26,17 +26,17 @@ public class PaymentReason1099BoxServiceImplTest {
 	}
 
 	@Test
-	public void isPaymentReasonMappedTo1099BoxTrueTest() {
+	public void testisPaymentReasonMappedTo1099BoxTrue() {
 		assertTrue(paymntReasonService.isPaymentReasonMappedTo1099Box("R"));
 	}
 	
 	@Test
-	public void isPaymentReasonMappedTo1099BoxFalseTest() {
+	public void testisPaymentReasonMappedTo1099BoxFalse() {
 		assertFalse(paymntReasonService.isPaymentReasonMappedTo1099Box("X"));
 	}
 	
 	@Test
-	public void getPaymentReason1099BoxGoodTest() {
+	public void testgetPaymentReason1099BoxGood() {
 		String expected = "2";
 		String results = paymntReasonService.getPaymentReason1099Box("R");
 		String message = "We expected 2 but got " + results;
@@ -44,7 +44,7 @@ public class PaymentReason1099BoxServiceImplTest {
 	}
 	
 	@Test
-	public void getPaymentReason1099BoxGood2Test() {
+	public void testgetPaymentReason1099BoxGood2() {
 		String expected = "3";
 		String results = paymntReasonService.getPaymentReason1099Box("O");
 		String message = "We expected 3 but got " + results;
@@ -52,7 +52,7 @@ public class PaymentReason1099BoxServiceImplTest {
 	}
 	
 	@Test
-	public void getPaymentReason1099BoxBadTest() {
+	public void testgetPaymentReason1099BoxBad() {
 		String expected = null;
 		String results = paymntReasonService.getPaymentReason1099Box("X");
 		String message = "We expected NULL but got " + results;
@@ -60,19 +60,19 @@ public class PaymentReason1099BoxServiceImplTest {
 	}
 	
 	@Test
-	public void getPaumentReasonToNo1099BoxesGoodTest() {
+	public void testgetPaumentReasonToNo1099BoxesGood() {
 		boolean results = paymntReasonService.isPaymentReasonMappedToNo1099Box("B");
 		assertTrue(results);
 	}
 	
 	@Test
-	public void getPaumentReasonToNo1099BoxesGood2Test() {
+	public void testgetPaumentReasonToNo1099BoxesGood2() {
 		boolean results = paymntReasonService.isPaymentReasonMappedToNo1099Box("J");
 		assertTrue(results);
 	}
 	
 	@Test
-	public void getPaumentReasonToNo1099BoxesBadTest() {
+	public void testgetPaumentReasonToNo1099BoxesBad() {
 		boolean results = paymntReasonService.isPaymentReasonMappedToNo1099Box("x");
 		assertFalse(results);
 	}

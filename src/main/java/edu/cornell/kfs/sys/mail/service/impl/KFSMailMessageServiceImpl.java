@@ -102,7 +102,7 @@ public class KFSMailMessageServiceImpl implements KFSMailMessageService {
 			message.setContent(multipartMessage);
 			
 			//send the email
-			transportMessage(message);
+			Transport.send(message);
 			
 		}
 		catch (IOException ioe){
@@ -115,15 +115,6 @@ public class KFSMailMessageServiceImpl implements KFSMailMessageService {
 			//throwing run time exception so caller does not update the database that the ACH advice was sent.
 			throw new RuntimeException("KFSMailMessageServiceImpl.send caught MessagingException for message Subject Line " + messageData.getSubject());
 		}
-	}
-	
-	/**
-	 * Extracted method out to support testing
-	 * @param message
-	 * @throws MessagingException
-	 */
-	protected void transportMessage(MimeMessage message) throws MessagingException {
-		Transport.send(message);
 	}
 	
 	
