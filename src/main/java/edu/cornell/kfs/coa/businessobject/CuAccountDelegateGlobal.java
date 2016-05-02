@@ -27,9 +27,9 @@ import org.kuali.kfs.coa.businessobject.AccountDelegateGlobal;
 import org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail;
 import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.krad.bo.GlobalBusinessObject;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.bo.GlobalBusinessObject;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 
 /**
  * This class simply acts as a container to hold the List of Delegate Changes and the list of Account entries, for the Global
@@ -38,7 +38,7 @@ import org.kuali.rice.krad.service.BusinessObjectService;
 public class CuAccountDelegateGlobal extends AccountDelegateGlobal implements GlobalBusinessObject {
     
     /**
-     * @see org.kuali.rice.krad.document.GlobalBusinessObject#applyGlobalChanges(org.kuali.rice.krad.bo.BusinessObject)
+     * @see org.kuali.kfs.krad.document.GlobalBusinessObject#applyGlobalChanges(org.kuali.rice.krad.bo.BusinessObject)
      */
     @SuppressWarnings("deprecation")
     public List<PersistableBusinessObject> generateGlobalChangesToPersist() {

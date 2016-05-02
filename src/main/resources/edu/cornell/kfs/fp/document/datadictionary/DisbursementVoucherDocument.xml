@@ -19,9 +19,9 @@
  
     	<property name="searchingTypeDefinitions">
     		<list>
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
     						<property name="businessObjectClassName" value="edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail"/>
     						<property name="attributeName" value="disbVchrPayeeIdNumber"/>
     					</bean>
@@ -32,9 +32,9 @@
     					</list>
     				</property>
     			</bean>
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
     						<property name="businessObjectClassName" value="edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail"/>
     						<property name="attributeName" value="disbVchrPayeePersonName"/>
     					</bean>
@@ -45,9 +45,9 @@
     					</list>
     				</property>
     			</bean>
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
     						<property name="businessObjectClassName" value="edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail"/>
     						<property name="attributeName" value="disbVchrPaymentReasonCode"/>
     					</bean>
@@ -58,9 +58,9 @@
     					</list>
     				</property>
     			</bean>
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
     						<property name="businessObjectClassName" value="edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument"/>
     						<property name="attributeName" value="extractDate"/>
     					</bean>
@@ -71,9 +71,9 @@
     					</list>
     				</property>
     			</bean>
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
     						<property name="businessObjectClassName" value="edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument"/>
     						<property name="attributeName" value="paidDate"/>
     					</bean>
@@ -84,9 +84,9 @@
     					</list>
     				</property>
     			</bean>
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
     						<property name="businessObjectClassName" value="edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument"/>
     						<property name="attributeName" value="cancelDate"/>
     					</bean>
@@ -97,9 +97,9 @@
     					</list>
     				</property>
     			</bean>
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
     						<property name="businessObjectClassName" value="edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument"/>
                         <property name="attributeName" value="disbVchrPaymentMethodCode"/>                        
     					</bean>

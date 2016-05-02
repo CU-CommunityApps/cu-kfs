@@ -25,7 +25,7 @@
 
 <bean id="PerDiemMealIncidentalBreakDownMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
 	<property name="businessObjectClass" value="org.kuali.kfs.module.tem.businessobject.PerDiemMealIncidentalBreakDown" />
-	<property name="maintainableClass"   value="org.kuali.rice.kns.maintenance.KualiMaintainableImpl" />
+	<property name="maintainableClass"   value="org.kuali.kfs.kns.maintenance.KualiMaintainableImpl" />
 	<property name="businessRulesClass" value="org.kuali.kfs.module.tem.document.validation.impl.PerDiemMealIncidentalBreakDownRule"/>
 	<property name="maintainableSections" >
 	<list>

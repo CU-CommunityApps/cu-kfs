@@ -678,9 +678,9 @@
         <property name="searchingTypeDefinitions">
     		<list>
                
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
     						<property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.IWantDocument"/>
     						<property name="attributeName" value="vendorName"/>
     						<property name="showAttributeInSearchCriteria" value="false"/>
@@ -693,9 +693,9 @@
     					</list>
     				</property>
     			</bean>
-                <bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+                <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
                     <property name="searchingAttribute">
-                        <bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+                        <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
                             <property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.IWantDocument"/>
                             <property name="attributeName" value="vendorNumber"/>
                         </bean>
@@ -706,9 +706,9 @@
                         </list>
                     </property>
                 </bean>             
-                <bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+                <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
                     <property name="searchingAttribute">
-                        <bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+                        <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
                             <property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.IWantDocument"/>
                             <property name="attributeName" value="collegeLevelChartForSearch"/>
                         </bean>
@@ -719,9 +719,9 @@
                         </list>
                     </property>
                 </bean>
-                <bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+                <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
                     <property name="searchingAttribute">
-                        <bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+                        <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
                             <property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.IWantDocument"/>
                             <property name="attributeName" value="collegeLevelOrgCodeForSearch"/>
                         </bean>
@@ -732,9 +732,9 @@
                         </list>
                     </property>
                 </bean>
-                <bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+                <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
                     <property name="searchingAttribute">
-                        <bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+                        <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
                             <property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.IWantDocument"/>
                             <property name="attributeName" value="departmentLevelOrgCodeForSearch"/>
                         </bean>
@@ -756,14 +756,14 @@
 		
 	</bean> 
 	
-	<bean id="IWantDocument-RoutingAttribute-Chart" class="org.kuali.rice.krad.datadictionary.RoutingAttribute">
+	<bean id="IWantDocument-RoutingAttribute-Chart" class="org.kuali.kfs.krad.datadictionary.RoutingAttribute">
     	<property name="qualificationAttributeName" value="chartOfAccountsCode"/>
 	</bean>
-	<bean id="IWantDocument-RoutingAttribute-Organization" class="org.kuali.rice.krad.datadictionary.RoutingAttribute">
+	<bean id="IWantDocument-RoutingAttribute-Organization" class="org.kuali.kfs.krad.datadictionary.RoutingAttribute">
     	<property name="qualificationAttributeName" value="organizationCode"/>
 	</bean>
 	
-	<bean id="IWantDocument-DocumentValuePathGroup-ChartOrganization" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+	<bean id="IWantDocument-DocumentValuePathGroup-ChartOrganization" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
 		<property name="documentValues">
 	   		<list>
 	   			<value>routingChart</value>
@@ -772,7 +772,7 @@
    		</property>
    	</bean>
    	
-   	<bean id="IWantDocument-RoutingType-OrganizationHierarchy" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+   	<bean id="IWantDocument-RoutingType-OrganizationHierarchy" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
 		        <ref bean="IWantDocument-RoutingAttribute-Chart"/>

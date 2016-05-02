@@ -62,5 +62,5 @@
   <!-- workflow attributes -->
   <bean id="OwnershipCategoryMaintenanceDocument-workflowAttributes" parent="OwnershipCategoryMaintenanceDocument-workflowAttributes-parentBean"/>
   
-  <bean id="OwnershipCategoryMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+  <bean id="OwnershipCategoryMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
 </beans>

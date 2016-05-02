@@ -19,11 +19,11 @@ import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.identity.affiliation.EntityAffiliationContract;
 import org.kuali.rice.kim.impl.KIMPropertyConstants;
 import org.kuali.rice.kim.impl.identity.PersonImpl;
-import org.kuali.rice.kns.service.DataDictionaryService;
+import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.rice.krad.bo.BusinessObject;
-import org.kuali.rice.krad.datadictionary.AttributeSecurity;
-import org.kuali.rice.krad.exception.ValidationException;
-import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
+import org.kuali.kfs.krad.exception.ValidationException;
+import org.kuali.kfs.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
@@ -37,7 +37,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
     private static final String RETIRED = "R";
     
     /**
-     * @see org.kuali.rice.kns.lookup.KualiLookupableHelperServiceImpl#getSearchResults(java.util.Map)
+     * @see org.kuali.kfs.kns.lookup.KualiLookupableHelperServiceImpl#getSearchResults(java.util.Map)
      */
     @Override
     public List<? extends BusinessObject> getSearchResults(Map<String, String> fieldValues) {

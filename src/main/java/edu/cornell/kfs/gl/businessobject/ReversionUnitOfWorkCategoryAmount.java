@@ -23,7 +23,7 @@ import org.kuali.kfs.coa.businessobject.Chart;
 
 import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 import edu.cornell.kfs.coa.businessobject.ReversionCategory;
 
@@ -268,7 +268,7 @@ public class ReversionUnitOfWorkCategoryAmount extends PersistableBusinessObject
     }
 
     /**
-     * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
+     * @see org.kuali.kfs.kns.bo.BusinessObjectBase#toStringMapper()
      */
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap pkMap = new LinkedHashMap();

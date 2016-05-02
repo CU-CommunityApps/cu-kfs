@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.rice.kns.lookup.KualiLookupableHelperServiceImpl;
+import org.kuali.kfs.kns.lookup.KualiLookupableHelperServiceImpl;
 import org.kuali.rice.krad.bo.BusinessObject;
 
 public class UnitOfMeasureLookupableHelperServiceImpl extends KualiLookupableHelperServiceImpl {
@@ -13,7 +13,7 @@ public class UnitOfMeasureLookupableHelperServiceImpl extends KualiLookupableHel
      * Add * to the end of the search values. This way if user only enters the first few
      * letters of a value it will get as result all entries that start with that value
      * 
-     * @see org.kuali.rice.kns.lookup.KualiLookupableHelperServiceImpl#getSearchResults(java.util.Map)
+     * @see org.kuali.kfs.kns.lookup.KualiLookupableHelperServiceImpl#getSearchResults(java.util.Map)
      */
     @Override
     public List<? extends BusinessObject> getSearchResults(Map<String, String> fieldValues) {

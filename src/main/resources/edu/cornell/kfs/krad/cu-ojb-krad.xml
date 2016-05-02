@@ -1,6 +1,6 @@
 <descriptor-repository version="1.0">
 
-	<class-descriptor class="org.kuali.rice.krad.bo.Note" table="KRNS_NTE_T">
+	<class-descriptor class="org.kuali.kfs.krad.bo.Note" table="KRNS_NTE_T">
 		<field-descriptor name="noteIdentifier" column="NTE_ID" jdbc-type="BIGINT" primarykey="true" indexed="true" autoincrement="true"
 			sequence-name="KRNS_NTE_S" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true" />
@@ -12,11 +12,11 @@
 		<field-descriptor name="noteText" column="TXT" jdbc-type="VARCHAR" />
 		<field-descriptor name="notePurgeCode" column="PRG_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="noteTopicText" column="TPC_TXT" jdbc-type="VARCHAR" />
-		<reference-descriptor name="noteType" class-ref="org.kuali.rice.krad.bo.NoteType" auto-retrieve="true" auto-update="none" auto-delete="none">
+		<reference-descriptor name="noteType" class-ref="org.kuali.kfs.krad.bo.NoteType" auto-retrieve="true" auto-update="none" auto-delete="none">
 			<foreignkey field-ref="noteTypeCode" />
 		</reference-descriptor>
 		<!-- fdocAttachmentIdentifier ABOVE AND REFERENCE BELOW ARE TEMPORARY B/C THIS SHOULD BE 1 TO MANY -->
-		<reference-descriptor name="attachment" class-ref="org.kuali.rice.krad.bo.Attachment" auto-retrieve="true" auto-update="object" auto-delete="object">
+		<reference-descriptor name="attachment" class-ref="org.kuali.kfs.krad.bo.Attachment" auto-retrieve="true" auto-update="object" auto-delete="object">
 			<foreignkey field-ref="noteIdentifier" />
 		</reference-descriptor>
 		

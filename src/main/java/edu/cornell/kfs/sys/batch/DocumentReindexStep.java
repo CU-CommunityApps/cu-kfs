@@ -31,7 +31,7 @@ public class DocumentReindexStep extends CuAbstractStep {
 	
 	
 	/* (non-Javadoc)
-	 * @see org.kuali.kfs.sys.batch.Step#execute(java.lang.String, java.util.Date)
+	 * @see org.kuali.kfs.kns.bo.Step#execute(java.lang.String, java.util.Date)
 	 */
 	public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
         

@@ -125,7 +125,7 @@
 <!-- Start - Workflow Attribute Beans -->
   <bean id="OrganizationOptionsMaintenanceDocument-SearchingTypeDefinition-chartOfAccountsCode" parent="OrganizationOptionsMaintenanceDocument-SearchingTypeDefinition-chartOfAccountsCode-parentBean"/>
   
-  <bean id="OrganizationOptionsMaintenanceDocument-SearchingTypeDefinition-chartOfAccountsCode-parentBean" abstract="true" class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+  <bean id="OrganizationOptionsMaintenanceDocument-SearchingTypeDefinition-chartOfAccountsCode-parentBean" abstract="true" class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 	<property name="searchingAttribute" ref="SearchingAttribute-chartOfAccountsCode"/>
 	  <property name="documentValues">
 	  	<list>
@@ -136,7 +136,7 @@
 
   <bean id="OrganizationOptionsMaintenanceDocument-SearchingTypeDefinition-organizationCode" parent="OrganizationOptionsMaintenanceDocument-SearchingTypeDefinition-organizationCode-parentBean"/>
   
-  <bean id="OrganizationOptionsMaintenanceDocument-SearchingTypeDefinition-organizationCode-parentBean" abstract="true" class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+  <bean id="OrganizationOptionsMaintenanceDocument-SearchingTypeDefinition-organizationCode-parentBean" abstract="true" class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 	<property name="searchingAttribute" ref="SearchingAttribute-organizationCode"/>
 	  <property name="documentValues">
 	  	<list>
@@ -147,7 +147,7 @@
 
   <bean id="OrganizationOptionsMaintenanceDocument-DocumentValuePathGroup" parent="OrganizationOptionsMaintenanceDocument-DocumentValuePathGroup-parentBean"/>
   
-  <bean id="OrganizationOptionsMaintenanceDocument-DocumentValuePathGroup-parentBean" abstract="true" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+  <bean id="OrganizationOptionsMaintenanceDocument-DocumentValuePathGroup-parentBean" abstract="true" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
 		<property name="documentValues">
 			<list>
 				<value>newMaintainableObject.businessObject.chartOfAccountsCode</value>
@@ -158,7 +158,7 @@
   
   <bean id="RoutingType-OrganizationOptionsMaintenanceDocument-OrganizationHierarchy" parent="RoutingType-OrganizationOptionsMaintenanceDocument-parentBean"/>  			
   
-  <bean id="RoutingType-OrganizationOptionsMaintenanceDocument-parentBean" abstract="true" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+  <bean id="RoutingType-OrganizationOptionsMaintenanceDocument-parentBean" abstract="true" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
 		        <ref bean="RoutingAttribute-chartOfAccountsCode"/>

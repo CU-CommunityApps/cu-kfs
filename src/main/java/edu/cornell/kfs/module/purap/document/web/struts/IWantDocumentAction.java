@@ -31,15 +31,15 @@ import org.kuali.rice.kim.api.identity.employment.EntityEmployment;
 import org.kuali.rice.kim.api.identity.entity.Entity;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.rice.kns.rule.event.KualiAddLineEvent;
-import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
-import org.kuali.rice.krad.UserSessionUtils;
-import org.kuali.rice.krad.bo.Note;
-import org.kuali.rice.krad.rules.rule.event.RouteDocumentEvent;
-import org.kuali.rice.krad.service.KualiRuleService;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.KRADConstants;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.rule.event.KualiAddLineEvent;
+import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
+import org.kuali.kfs.krad.UserSessionUtils;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
+import org.kuali.kfs.krad.service.KualiRuleService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
@@ -60,7 +60,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     private static final int DOCUMENT_DESCRIPTION_MAX_LENGTH = 40;
 
     /**
-     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#loadDocument(org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase)
+     * @see org.kuali.kfs.kns.web.struts.action.KualiDocumentActionBase#loadDocument(org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase)
      */
     @Override
     protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
@@ -85,7 +85,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
     /**
      * 
-     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#docHandler(org.apache.struts.action.ActionMapping,
+     * @see org.kuali.kfs.kns.web.struts.action.KualiDocumentActionBase#docHandler(org.apache.struts.action.ActionMapping,
      * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)
      */
@@ -227,7 +227,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
     /**
      * 
-     * @see org.kuali.rice.kns.web.struts.action.KualiAction#execute(org.apache.struts.action.ActionMapping,
+     * @see org.kuali.kfs.kns.web.struts.action.KualiAction#execute(org.apache.struts.action.ActionMapping,
      * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)
      */
@@ -487,7 +487,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     }
 
     /**
-     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#close(org.apache.struts.action.ActionMapping,
+     * @see org.kuali.kfs.kns.web.struts.action.KualiDocumentActionBase#close(org.apache.struts.action.ActionMapping,
      * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)
      */
@@ -542,7 +542,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     /**
      * Retrieves the selected line.
      * 
-     * @see org.kuali.rice.kns.web.struts.action.KualiAction#getSelectedLine(javax.servlet.http.HttpServletRequest)
+     * @see org.kuali.kfs.kns.web.struts.action.KualiAction#getSelectedLine(javax.servlet.http.HttpServletRequest)
      */
     protected int getSelectedLine(HttpServletRequest request) {
         int selectedLine = -1;
@@ -598,7 +598,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
     /**
      * 
-     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#route(org.apache.struts.action.ActionMapping,
+     * @see org.kuali.kfs.kns.web.struts.action.KualiDocumentActionBase#route(org.apache.struts.action.ActionMapping,
      * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)
      */
@@ -739,7 +739,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     /**
      * Use the new attachment description field to set the note text.
      * 
-     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#insertBONote(org.apache.struts.action.ActionMapping,
+     * @see org.kuali.kfs.kns.web.struts.action.KualiDocumentActionBase#insertBONote(org.apache.struts.action.ActionMapping,
      * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)
      */
@@ -774,7 +774,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     /**
      * Overridden to guarantee that form of copied document is set to whatever the entry
      * mode of the document is
-     * @see org.kuali.rice.kns.web.struts.action.KualiTransactionalDocumentActionBase#copy(org.apache.struts.action.ActionMapping,
+     * @see org.kuali.kfs.kns.web.struts.action.KualiTransactionalDocumentActionBase#copy(org.apache.struts.action.ActionMapping,
      * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)
      */
@@ -807,7 +807,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
     /**
      * 
-     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#refresh(org.apache.struts.action.ActionMapping,
+     * @see org.kuali.kfs.kns.web.struts.action.KualiDocumentActionBase#refresh(org.apache.struts.action.ActionMapping,
      * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)
      */

@@ -8,9 +8,9 @@ import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.document.FinancialSystemGlobalMaintainable;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.maintenance.MaintenanceLock;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.maintenance.MaintenanceLock;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.businessobject.A21SubAccountChange;
 import edu.cornell.kfs.coa.businessobject.SubAccountGlobal;
@@ -22,7 +22,7 @@ public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaint
     /**
      * This creates the particular locking representation for this global document.
      * 
-     * @see org.kuali.rice.kns.maintenance.Maintainable#generateMaintenanceLocks()
+     * @see org.kuali.kfs.kns.maintenance.Maintainable#generateMaintenanceLocks()
      */
     @Override
     public List<MaintenanceLock> generateMaintenanceLocks() {
@@ -94,7 +94,7 @@ public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaint
     }
 
     /**
-     * @see org.kuali.rice.kns.maintenance.KualiGlobalMaintainableImpl#getPrimaryEditedBusinessObjectClass()
+     * @see org.kuali.kfs.kns.maintenance.KualiGlobalMaintainableImpl#getPrimaryEditedBusinessObjectClass()
      */
     @Override
     public Class<? extends PersistableBusinessObject> getPrimaryEditedBusinessObjectClass() {
@@ -104,7 +104,7 @@ public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaint
 	/**
 	 * Overriden to set the document number on the a21SubAccount.
 	 * 
-	 * @see org.kuali.rice.kns.maintenance.KualiGlobalMaintainableImpl#prepareGlobalsForSave()
+	 * @see org.kuali.kfs.kns.maintenance.KualiGlobalMaintainableImpl#prepareGlobalsForSave()
 	 */
 	@Override
 	protected void prepareGlobalsForSave() {

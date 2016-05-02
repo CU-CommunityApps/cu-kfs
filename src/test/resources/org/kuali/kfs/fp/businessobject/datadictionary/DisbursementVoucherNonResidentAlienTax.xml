@@ -85,7 +85,7 @@
     <property name="name" value="postalCountryCode"/>
     <property name="required" value="false"/>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.rice.location.framework.country.CountryValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.kns.bo.lookup.CountryValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
   

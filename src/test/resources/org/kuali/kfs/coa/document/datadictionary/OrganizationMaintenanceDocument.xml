@@ -170,9 +170,9 @@
 		</property>
 			<property name="searchingTypeDefinitions">
     		<list>
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
     						<property name="businessObjectClassName" value="org.kuali.kfs.coa.businessobject.Organization"/>
     						<property name="attributeName" value="organizationManagerUniversalId"/>
     					</bean>
@@ -183,9 +183,9 @@
     					</list>
     				</property>
     			</bean>
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
     						<property name="businessObjectClassName" value="org.kuali.kfs.coa.businessobject.Organization"/>
     						<property name="attributeName" value="responsibilityCenterCode"/>
     					</bean>

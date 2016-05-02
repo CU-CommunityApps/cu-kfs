@@ -90,7 +90,7 @@
 			<call-method-rule pattern="adHocRouteToNetID" methodname="setCurrentRouteToNetId" paramcount="0" /> 
 			
              <pattern value="note">
-                <object-create-rule classname="org.kuali.rice.krad.bo.Note" />
+                <object-create-rule classname="org.kuali.kfs.krad.bo.Note" />
                 
                 <call-method-rule pattern="noteText" methodname="setNoteText" paramcount="0" /> 
                 

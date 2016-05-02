@@ -30,7 +30,7 @@
         <!--<property name="maintainableClass" value="org.kuali.kfs.module.cam.document.AssetRetirementGlobalMaintainableImpl"/>-->
         <property name="maintainableClass" value="org.kuali.kfs.module.cam.document.AssetYearEndDepreciationMaintainableImpl"/>
         <!--<property name="maintainableClass" value="org.kuali.kfs.sys.document.FinancialSystemMaintainable"/>-->
-        <!--<property name="maintainableClass" value="org.kuali.rice.kns.maintenance.KualiMaintainableImpl"/>-->
+        <!--<property name="maintainableClass" value="org.kuali.kfs.kns.maintenance.KualiMaintainableImpl"/>-->
 
         <property name="maintainableSections">
             <list>
@@ -53,7 +53,7 @@
             </list>
         </property>
         <property name="documentTypeName" value="YDPA"/>
-        <property name="businessRulesClass" value="org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase"/>
+        <property name="businessRulesClass" value="org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase"/>
         <!--<property name="businessRulesClass"-->
                   <!--value="org.kuali.kfs.module.cam.document.validation.impl.AssetYearEndDepreciationRule"/>-->
         <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
@@ -158,6 +158,6 @@
     <bean id="AssetYearEndDepreciationMaintenanceDocument-workflowAttributes"
           parent="AssetYearEndDepreciationMaintenanceDocument-workflowAttributes-parentBean"/>
 
-    <bean id="AssetYearEndDepreciationMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+    <bean id="AssetYearEndDepreciationMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
 
 </beans>

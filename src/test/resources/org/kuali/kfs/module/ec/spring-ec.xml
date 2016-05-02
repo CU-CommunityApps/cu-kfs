@@ -250,22 +250,22 @@
 	
 	<!-- lookup declarations -->
 	<bean id="outstandingReportsByOrganizationLookupable"  parent="outstandingReportsByOrganizationLookupable-parentBean" singleton="false"/>
-	<bean id="outstandingReportsByOrganizationLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="outstandingReportsByOrganizationLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+		<property name="cf.lookupableHelperService">
 			<ref bean="outstandingReportsByOrganizationLookupableHelperService" />
 		</property>
 	</bean>
 
 	<bean id="outstandingCertificationsByReportLookupable"  parent="outstandingCertificationsByReportLookupable-parentBean" singleton="false"/>
-	<bean id="outstandingCertificationsByReportLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="outstandingCertificationsByReportLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+		<property name="cf.lookupableHelperService">
 			<ref bean="outstandingCertificationsByReportLookupableHelperService" />
 		</property>
 	</bean>
 	
 	<bean id="duplicateCertificationsReportLookupable"  parent="duplicateCertificationsReportLookupable-parentBean" singleton="false"/>
-	<bean id="duplicateCertificationsReportLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="duplicateCertificationsReportLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+		<property name="cf.lookupableHelperService">
 			<ref bean="duplicateCertificationsReportLookupableHelperService" />
 		</property>
 	</bean>
@@ -360,8 +360,8 @@
 	</bean> 
 	
 	<bean id="effortCertificationDetailBuildLookupable"  parent="effortCertificationDetailBuildLookupable-parentBean" singleton="false"/>
-	<bean id="effortCertificationDetailBuildLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl"  abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="effortCertificationDetailBuildLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"  abstract="true">
+		<property name="cf.lookupableHelperService">
 			<ref bean="effortCertificationDetailBuildLookupableHelperService" />
 		</property>
 	</bean>

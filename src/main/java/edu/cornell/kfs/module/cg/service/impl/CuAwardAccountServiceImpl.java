@@ -11,7 +11,7 @@ public class CuAwardAccountServiceImpl implements CuAwardAccountService {
 	 * @see edu.cornell.kfs.module.cg.service.CuAwardAccountService#isAccountUsedOnAnotherAward(java.lang.String, java.lang.String, java.lang.Long)
 	 */
 	@Override
-	public boolean isAccountUsedOnAnotherAward(String chart, String account, Long proposalNumber) {
+	public boolean isAccountUsedOnAnotherAward(String chart, String account, String proposalNumber) {
 		return awardAccountDao.isAccountUsedOnAnotherAward(chart, account, proposalNumber);
 	}
 

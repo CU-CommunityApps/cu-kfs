@@ -31,10 +31,10 @@ import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.rice.krad.document.Document;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 
 public class PurchaseOrderDocumentPresentationController extends PurchasingAccountsPayableDocumentPresentationController {

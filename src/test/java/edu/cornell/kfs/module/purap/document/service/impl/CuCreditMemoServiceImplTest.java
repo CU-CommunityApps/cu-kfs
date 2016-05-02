@@ -11,7 +11,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.context.TestUtils;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.kfs.krad.service.DocumentService;
 
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 import edu.cornell.kfs.module.purap.fixture.VendorCreditMemoDocumentFixture;

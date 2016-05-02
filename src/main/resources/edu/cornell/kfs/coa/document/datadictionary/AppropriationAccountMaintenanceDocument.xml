@@ -61,5 +61,5 @@
   <!-- workflow attributes -->
   <bean id="AppropriationAccountMaintenanceDocument-workflowAttributes" parent="AppropriationAccountMaintenanceDocument-workflowAttributes-parentBean"/>
   
-  <bean id="AppropriationAccountMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+  <bean id="AppropriationAccountMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
 </beans>

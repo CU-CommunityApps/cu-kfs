@@ -93,7 +93,7 @@
   		p:name="capitalAssetCountryCode" 
 		p:label="Country" p:shortLabel="Country" p:required="false">
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.rice.location.framework.country.CountryNotRestrictedValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.kns.bo.lookup.CountryNotRestrictedValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
 
@@ -130,7 +130,7 @@
   		p:label="State" p:shortLabel="State" 
   		p:required="false">
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.rice.location.framework.state.StateValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.kns.bo.lookup.StateValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
 

@@ -66,6 +66,6 @@
   <!-- workflow attributes -->
   <bean id="BasicAccountingCategoryMaintenanceDocument-workflowAttributes" parent="BasicAccountingCategoryMaintenanceDocument-workflowAttributes-parentBean"/>
   
-  <bean id="BasicAccountingCategoryMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true">
+  <bean id="BasicAccountingCategoryMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true">
   </bean>
 </beans>

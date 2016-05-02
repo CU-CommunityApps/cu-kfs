@@ -25,11 +25,11 @@ import java.util.Map;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemGlobalMaintainable;
-import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.maintenance.MaintenanceLock;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.maintenance.MaintenanceLock;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.coa.businessobject.AccountReversion;
 import edu.cornell.kfs.coa.businessobject.AccountReversionGlobal;
@@ -70,7 +70,7 @@ public class AccountReversionGlobalMaintainableImpl extends FinancialSystemGloba
      * This implementation locks all account reversions that would be accessed by this global account reversion. It does
      * not lock any AccountReversionDetail objects, as we expect that those will be inaccessible
      * 
-     * @see org.kuali.rice.kns.maintenance.KualiGlobalMaintainableImpl#generateMaintenaceLocks()
+     * @see org.kuali.kfs.kns.maintenance.KualiGlobalMaintainableImpl#generateMaintenaceLocks()
      */
     @Override
     public List<MaintenanceLock> generateMaintenanceLocks() {
@@ -109,7 +109,7 @@ public class AccountReversionGlobalMaintainableImpl extends FinancialSystemGloba
      * Just like AccountReversionMaintainableImpl's setBusinessObject method populates the list of details so there is one
      * detail per active Account Reversion Category, this method populates a list of Account Reversion Change details.
      * 
-     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#setBusinessObject(org.kuali.rice.kns.bo.PersistableBusinessObject)
+     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#setBusinessObject(org.kuali.kfs.kns.bo.PersistableBusinessObject)
      */
     @Override
     public void setBusinessObject(PersistableBusinessObject businessObject) {
@@ -148,7 +148,7 @@ public class AccountReversionGlobalMaintainableImpl extends FinancialSystemGloba
      * Prevents Account Reversion Change Details from being refreshed by a look up (because doing that refresh before a save
      * would wipe out the list of account reversion change details).
      * 
-     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#isRelationshipRefreshable(java.lang.Class, java.lang.String)
+     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#isRelationshipRefreshable(java.lang.Class, java.lang.String)
      */
     @Override
     protected boolean isRelationshipRefreshable(Class boClass, String relationshipName) {
@@ -165,7 +165,7 @@ public class AccountReversionGlobalMaintainableImpl extends FinancialSystemGloba
      * Just like OrganizationReversionMaintainableImpl's setBusinessObject method populates the list of details so there is one
      * detail per active Organization Reversion Category, this method populates a list of Organization Reversion Change details.
      *
-     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#setBusinessObject(org.kuali.rice.krad.bo.PersistableBusinessObject)
+     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#setBusinessObject(org.kuali.kfs.krad.bo.PersistableBusinessObject)
      */
     @Override
     public void processAfterNew(MaintenanceDocument document, Map<String, String[]> requestParameters) {
@@ -205,7 +205,7 @@ public class AccountReversionGlobalMaintainableImpl extends FinancialSystemGloba
      * The account reversion detail collection does not behave like a true collection (no add lines). The records on the collection
      * should not have the delete option.
      * 
-     * @see org.kuali.rice.kns.maintenance.KualiGlobalMaintainableImpl#processGlobalsAfterRetrieve()
+     * @see org.kuali.kfs.kns.maintenance.KualiGlobalMaintainableImpl#processGlobalsAfterRetrieve()
      */
     @Override
     protected void processGlobalsAfterRetrieve() {

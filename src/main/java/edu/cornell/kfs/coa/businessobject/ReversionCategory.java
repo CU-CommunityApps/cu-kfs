@@ -19,7 +19,7 @@ package edu.cornell.kfs.coa.businessobject;
 import java.util.LinkedHashMap;
 
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
-import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 /**
  * 
@@ -112,7 +112,7 @@ public class ReversionCategory extends PersistableBusinessObjectBase implements 
     }
 
     /**
-     * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
+     * @see org.kuali.kfs.kns.bo.BusinessObjectBase#toStringMapper()
      */
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();

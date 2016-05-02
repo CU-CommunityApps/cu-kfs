@@ -204,25 +204,25 @@
 	
 <!-- **** Begin of Lookupable beans **** -->
 	<bean id="purApReportLookupableHelperService" singleton="false" parent="purApReportLookupableHelperService-parentBean"/>
-    <bean id="purApReportLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.cab.businessobject.lookup.PurApReportLookupableHelperServiceImpl" singleton="false" parent="lookupableHelperService">
+    <bean id="purApReportLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.cab.businessobject.lookup.PurApReportLookupableHelperServiceImpl" singleton="false" parent="cf.lookupableHelperService">
         <property name="purApReportService">
             <ref bean="purchasingAccountsPayableReportService" />
         </property>
     </bean>
-    <bean id="cabPurApReportLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" singleton="false">
-        <property name="lookupableHelperService">
+    <bean id="cabPurApReportLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" singleton="false">
+        <property name="cf.lookupableHelperService">
             <ref bean="purApReportLookupableHelperService" />
         </property>
     </bean>
     
    	<bean id="generalLedgerEntryLookupableHelperService" singleton="false"  parent="generalLedgerEntryLookupableHelperService-parentBean"/>
-	<bean id="generalLedgerEntryLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.cab.businessobject.lookup.GeneralLedgerEntryLookupableHelperServiceImpl" singleton="false"  parent="lookupableHelperService">
+	<bean id="generalLedgerEntryLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.cab.businessobject.lookup.GeneralLedgerEntryLookupableHelperServiceImpl" singleton="false"  parent="cf.lookupableHelperService">
 		<property name="businessObjectService" ref="businessObjectService" />
     </bean>
 
     <bean id="cabGlEntryLookupable"  parent="cabGlEntryLookupable-parentBean" singleton="false"/>
-    <bean id="cabGlEntryLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-        <property name="lookupableHelperService">
+    <bean id="cabGlEntryLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+        <property name="cf.lookupableHelperService">
             <ref bean="generalLedgerEntryLookupableHelperService" />
         </property>
     </bean>

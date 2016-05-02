@@ -60,5 +60,5 @@
   <!-- workflow attributes -->
   <bean id="RequisitionSourceMaintenanceDocument-workflowAttributes" parent="RequisitionSourceMaintenanceDocument-workflowAttributes-parentBean"/>
   
-  <bean id="RequisitionSourceMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+  <bean id="RequisitionSourceMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
 </beans>

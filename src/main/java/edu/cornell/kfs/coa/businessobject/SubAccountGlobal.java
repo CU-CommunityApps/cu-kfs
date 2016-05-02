@@ -14,11 +14,11 @@ import org.kuali.kfs.coa.businessobject.ReportingCode;
 import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.krad.bo.GlobalBusinessObject;
-import org.kuali.rice.krad.bo.GlobalBusinessObjectDetail;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.krad.service.PersistenceStructureService;
+import org.kuali.kfs.krad.bo.GlobalBusinessObject;
+import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetail;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.service.PersistenceStructureService;
 
 public class SubAccountGlobal extends PersistableBusinessObjectBase implements GlobalBusinessObject {
 	protected String documentNumber;
@@ -50,7 +50,7 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 	}
 
 	/**
-	 * @see org.kuali.rice.krad.bo.GlobalBusinessObject#generateDeactivationsToPersist()
+	 * @see org.kuali.kfs.krad.bo.GlobalBusinessObject#generateDeactivationsToPersist()
 	 */
 	@Override
 	public List<PersistableBusinessObject> generateDeactivationsToPersist() {
@@ -66,7 +66,7 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 	}
 
 	/**
-	 * @see org.kuali.rice.krad.bo.GlobalBusinessObject#generateGlobalChangesToPersist()
+	 * @see org.kuali.kfs.krad.bo.GlobalBusinessObject#generateGlobalChangesToPersist()
 	 */
 	@Override
 	public List<PersistableBusinessObject> generateGlobalChangesToPersist() {
@@ -213,7 +213,7 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 	}	
 
 	/** 
-	 * @see org.kuali.rice.krad.bo.GlobalBusinessObject#getAllDetailObjects()
+	 * @see org.kuali.kfs.krad.bo.GlobalBusinessObject#getAllDetailObjects()
 	 */
 	@Override
 	public List<? extends GlobalBusinessObjectDetail> getAllDetailObjects() {
@@ -221,7 +221,7 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 	}
 
 	/**
-	 * @see org.kuali.rice.krad.bo.GlobalBusinessObject#isPersistable()
+	 * @see org.kuali.kfs.krad.bo.GlobalBusinessObject#isPersistable()
 	 */
 	@Override
 	public boolean isPersistable() {
@@ -244,14 +244,14 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 	}
 
 	/**
-	 * @see org.kuali.rice.krad.bo.GlobalBusinessObject#getDocumentNumber()
+	 * @see org.kuali.kfs.krad.bo.GlobalBusinessObject#getDocumentNumber()
 	 */
 	public String getDocumentNumber() {
 		return documentNumber;
 	}
 
 	/** 
-	 * @see org.kuali.rice.krad.bo.GlobalBusinessObject#setDocumentNumber(java.lang.String)
+	 * @see org.kuali.kfs.krad.bo.GlobalBusinessObject#setDocumentNumber(java.lang.String)
 	 */
 	public void setDocumentNumber(String documentNumber) {
 		this.documentNumber = documentNumber;

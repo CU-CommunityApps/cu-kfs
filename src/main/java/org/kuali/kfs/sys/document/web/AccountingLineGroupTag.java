@@ -42,11 +42,11 @@ import org.kuali.kfs.sys.document.datadictionary.FinancialSystemTransactionalDoc
 import org.kuali.kfs.sys.document.service.AccountingLineRenderingService;
 import org.kuali.kfs.sys.web.struts.KualiAccountingDocumentFormBase;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.krad.service.BusinessObjectService;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.KRADConstants;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 /**
  * Tag that is responsible for rendering an accounting line group
@@ -176,7 +176,7 @@ public class AccountingLineGroupTag extends TagSupport {
     public int doEndTag() throws JspException {
         super.doEndTag();
         if (!(getParent() instanceof AccountingLinesTag)) {
-            group.renderEverything(pageContext, getParent());
+            group.renderEverything(pageContext, getParent(), null);
             resetTag();
         }
         return Tag.EVAL_PAGE;
@@ -355,8 +355,10 @@ public class AccountingLineGroupTag extends TagSupport {
                 }
             }
         }
-        
-        RenderableAccountingLineContainer container = new RenderableAccountingLineContainer(getForm(), accountingLine, accountingLinePropertyName, rows, count, groupDefinition.getGroupLabel(), getErrors(), groupDefinition.getAccountingLineAuthorizer(), groupDefinition.getAccountingLineAuthorizer().hasEditPermissionOnAccountingLine(getDocument(), accountingLine, collectionPropertyName, currentUser, pageIsEditable));
+
+        final Set<String> currentNodes = document.getDocumentHeader().getWorkflowDocument().getCurrentNodeNames();
+
+        RenderableAccountingLineContainer container = new RenderableAccountingLineContainer(getForm(), accountingLine, accountingLinePropertyName, rows, count, groupDefinition.getGroupLabel(), getErrors(), groupDefinition.getAccountingLineAuthorizer(), groupDefinition.getAccountingLineAuthorizer().hasEditPermissionOnAccountingLine(getDocument(), accountingLine, collectionPropertyName, currentUser, pageIsEditable, currentNodes), currentNodes);
         if (isExistingReqAcctline) {
             accountingLine.setAccountNumber(updatedAccountNumber);
         }

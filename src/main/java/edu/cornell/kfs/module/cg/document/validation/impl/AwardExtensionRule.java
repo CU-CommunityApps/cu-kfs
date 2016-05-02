@@ -12,10 +12,10 @@ import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.document.validation.impl.AwardRule;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.module.cg.service.CuAwardAccountService;
@@ -40,7 +40,7 @@ public class AwardExtensionRule extends AwardRule {
     }
     
     /**
-     * @see org.kuali.kfs.module.cg.document.validation.impl.AwardRule#processCustomAddCollectionLineBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument, java.lang.String, org.kuali.rice.krad.bo.PersistableBusinessObject)
+     * @see org.kuali.kfs.module.cg.document.validation.impl.AwardRule#processCustomAddCollectionLineBusinessRules(org.kuali.kfs.kns.document.MaintenanceDocument, java.lang.String, org.kuali.kfs.krad.bo.PersistableBusinessObject)
      */
     @Override
     public boolean processCustomAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName, PersistableBusinessObject bo) {
@@ -76,7 +76,7 @@ public class AwardExtensionRule extends AwardRule {
     }
 	
 	/**
-     * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#setupBaseConvenienceObjects(org.kuali.rice.kns.document.MaintenanceDocument)
+     * @see org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase#setupBaseConvenienceObjects(org.kuali.kfs.kns.document.MaintenanceDocument)
      */
 	@Override
     public void setupBaseConvenienceObjects(MaintenanceDocument document) {
@@ -180,7 +180,7 @@ public class AwardExtensionRule extends AwardRule {
 		if (ObjectUtils.isNotNull(awardAccount) && StringUtils.isNotBlank(awardAccount.getChartOfAccountsCode()) && StringUtils.isNotBlank(awardAccount.getAccountNumber()) && awardAccount.isActive()) {
 			String accountNumber = awardAccount.getAccountNumber();
 			String accountChart = awardAccount.getChartOfAccountsCode();
-			Long proposalNumber = newAwardCopy.getProposalNumber();
+			String proposalNumber = newAwardCopy.getProposalNumber();
 			
 			Collection<String> exemptAccounts = getParameterService().getParameterValuesAsString(AwardAccount.class, CUKFSConstants.CGParms.ACCOUNTS_EXEMPT_FROM_MULTIPLE_AWARDS_VALIDATION);
 			

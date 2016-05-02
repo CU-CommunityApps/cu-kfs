@@ -4,7 +4,7 @@ import java.sql.Date;
 import java.util.LinkedHashMap;
 
 import org.kuali.kfs.module.cg.businessobject.Agency;
-import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 public class Sponsor extends PersistableBusinessObjectBase {
 

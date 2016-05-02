@@ -25,14 +25,14 @@ import java.util.Map;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
 
-import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.kns.maintenance.Maintainable;
-import org.kuali.rice.kns.web.ui.Field;
-import org.kuali.rice.kns.web.ui.Row;
-import org.kuali.rice.kns.web.ui.Section;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.util.KRADConstants;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.kns.maintenance.Maintainable;
+import org.kuali.kfs.kns.web.ui.Field;
+import org.kuali.kfs.kns.web.ui.Row;
+import org.kuali.kfs.kns.web.ui.Section;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.businessobject.AccountReversion;
 import edu.cornell.kfs.coa.businessobject.AccountReversionDetail;
@@ -99,7 +99,7 @@ public class AccountReversionMaintainableImpl extends FinancialSystemMaintainabl
     /**
      * pre-populate the static list of details with each category
      * 
-     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#setBusinessObject(org.kuali.rice.kns.bo.BusinessObject)
+     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#setBusinessObject(org.kuali.kfs.kns.bo.BusinessObject)
      */
     public void setBusinessObject(PersistableBusinessObject businessObject) {
 
@@ -136,7 +136,7 @@ public class AccountReversionMaintainableImpl extends FinancialSystemMaintainabl
      * A method that prevents lookups from refreshing the Organization Reversion Detail list (because, if it is refreshed before a
      * save...it ends up destroying the list).
      * 
-     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#isRelationshipRefreshable(java.lang.Class, java.lang.String)
+     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#isRelationshipRefreshable(java.lang.Class, java.lang.String)
      */
     @Override
     protected boolean isRelationshipRefreshable(Class boClass, String relationshipName) {
@@ -196,7 +196,7 @@ public class AccountReversionMaintainableImpl extends FinancialSystemMaintainabl
 
     /**
      * Overridden to trickle down inactivation or activation to details
-     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#saveBusinessObject()
+     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#saveBusinessObject()
      */
     @Override
     public void saveBusinessObject() {
@@ -213,7 +213,7 @@ public class AccountReversionMaintainableImpl extends FinancialSystemMaintainabl
     }
 
     /**
-     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#getSections(org.kuali.rice.kns.document.MaintenanceDocument, org.kuali.rice.kns.maintenance.Maintainable)
+     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#getSections(org.kuali.kfs.kns.document.MaintenanceDocument, org.kuali.kfs.kns.maintenance.Maintainable)
      */
     @Override
     public List getSections(MaintenanceDocument document, Maintainable oldMaintainable) {

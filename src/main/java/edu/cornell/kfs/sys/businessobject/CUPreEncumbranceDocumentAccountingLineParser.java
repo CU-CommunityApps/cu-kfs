@@ -22,7 +22,7 @@ package edu.cornell.kfs.sys.businessobject;
  	    private static final String[] TARGET_FORMAT = { CHART_OF_ACCOUNTS_CODE, ACCOUNT_NUMBER, SUB_ACCOUNT_NUMBER, FINANCIAL_OBJECT_CODE, FINANCIAL_SUB_OBJECT_CODE, PROJECT_CODE, ORGANIZATION_REFERENCE_ID, REFERENCE_NUMBER, AMOUNT,FINANCIAL_DOCUMENT_LINE_DESCRIPTION };
  	
  	    /**
- 	     * @see org.kuali.rice.kns.bo.AccountingLineParserBase#getSourceAccountingLineFormat()
+ 	     * @see org.kuali.kfs.kns.bo.AccountingLineParserBase#getSourceAccountingLineFormat()
  	     */
  	    @Override
  	    public String[] getSourceAccountingLineFormat() {
@@ -30,7 +30,7 @@ package edu.cornell.kfs.sys.businessobject;
  	    }
  	
  	    /**
- 	     * @see org.kuali.rice.kns.bo.AccountingLineParserBase#getTargetAccountingLineFormat()
+ 	     * @see org.kuali.kfs.kns.bo.AccountingLineParserBase#getTargetAccountingLineFormat()
  	     */
  	    @Override
  	    public String[] getTargetAccountingLineFormat() {

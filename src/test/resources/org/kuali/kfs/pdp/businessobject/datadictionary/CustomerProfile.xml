@@ -348,7 +348,7 @@
     <property name="shortLabel" value="Country"/>
     <property name="required" value="true"/>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.rice.location.framework.country.CountryNotRestrictedValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.kns.bo.lookup.CountryNotRestrictedValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>  
   

@@ -31,11 +31,11 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
-import org.kuali.rice.krad.exception.ValidationException;
-import org.kuali.rice.krad.rules.rule.event.ApproveDocumentEvent;
-import org.kuali.rice.krad.rules.rule.event.KualiDocumentEvent;
-import org.kuali.rice.krad.rules.rule.event.RouteDocumentEvent;
-import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.exception.ValidationException;
+import org.kuali.kfs.krad.rules.rule.event.ApproveDocumentEvent;
+import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
+import org.kuali.kfs.krad.util.GlobalVariables;
 
 /**
  * Base implementation for a general ledger posting document.
@@ -154,7 +154,7 @@ public class GeneralLedgerPostingDocumentBase extends LedgerPostingDocumentBase 
     }
 
     /**
-     * @see org.kuali.rice.krad.document.DocumentBase#toCopy()
+     * @see org.kuali.kfs.krad.document.DocumentBase#toCopy()
      */
     @Override
     public void toCopy() throws WorkflowException {
@@ -163,7 +163,7 @@ public class GeneralLedgerPostingDocumentBase extends LedgerPostingDocumentBase 
     }
 
     /**
-     * @see org.kuali.rice.krad.document.TransactionalDocumentBase#toErrorCorrection()
+     * @see org.kuali.kfs.krad.document.TransactionalDocumentBase#toErrorCorrection()
      */
     @Override
     public void toErrorCorrection() throws WorkflowException {

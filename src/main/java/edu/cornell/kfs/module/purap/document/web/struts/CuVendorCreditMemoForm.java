@@ -10,8 +10,8 @@ import org.kuali.kfs.module.purap.document.web.struts.VendorCreditMemoForm;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.kns.web.ui.ExtraButton;
-import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.kfs.kns.web.ui.ExtraButton;
+import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.module.purap.CUPurapAuthorizationConstants.CUPaymentRequestEditMode;
 

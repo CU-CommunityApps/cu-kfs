@@ -61,5 +61,5 @@
   
   <!-- workflow attributes -->
   <bean id="NonResidentAlienTaxPercentMaintenanceDocument-workflowAttributes" parent="NonResidentAlienTaxPercentMaintenanceDocument-workflowAttributes-parentBean"/>  
-  <bean id="NonResidentAlienTaxPercentMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+  <bean id="NonResidentAlienTaxPercentMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
 </beans>

@@ -340,7 +340,7 @@
 		parent="Campus-code" p:name="accountPhysicalCampusCode">
 		<property name="control">
 			<bean parent="SelectControlDefinition"
-				p:valuesFinderClass="org.kuali.rice.location.framework.campus.CampusValuesFinder" />
+				p:valuesFinderClass="org.kuali.kfs.kns.bo.lookup.CampusValuesFinder" />
 		</property>
 	</bean>
 

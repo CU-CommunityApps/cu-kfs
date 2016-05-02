@@ -199,7 +199,7 @@
       <routeNodes>
         <start name="AdHoc" />
         <role name="AccountsPayable">
-          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
       </routeNodes>

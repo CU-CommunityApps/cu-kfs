@@ -50,6 +50,6 @@
 
   <bean id="TransactionOverrideMaintenanceDocument-workflowAttributes" parent="TransactionOverrideMaintenanceDocument-workflowAttributes-parentBean"/>
 
-  <bean id="TransactionOverrideMaintenanceDocument-workflowAttributes-parentBean" abstract="true" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes"/>
+  <bean id="TransactionOverrideMaintenanceDocument-workflowAttributes-parentBean" abstract="true" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes"/>
 
 </beans>

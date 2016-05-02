@@ -158,15 +158,15 @@
 		</property>
 	</bean>
 	
-	<bean id="OrganizationReversionGlobalMaintenanceDocument-RoutingAttribute-Chart" class="org.kuali.rice.krad.datadictionary.RoutingAttribute">
+	<bean id="OrganizationReversionGlobalMaintenanceDocument-RoutingAttribute-Chart" class="org.kuali.kfs.krad.datadictionary.RoutingAttribute">
     	<property name="qualificationAttributeName" value="chartOfAccountsCode"/>
 	</bean>
 	
-	<bean id="OrganizationReversionGlobalMaintenanceDocument-RoutingAttribute-Organization" class="org.kuali.rice.krad.datadictionary.RoutingAttribute">
+	<bean id="OrganizationReversionGlobalMaintenanceDocument-RoutingAttribute-Organization" class="org.kuali.kfs.krad.datadictionary.RoutingAttribute">
     	<property name="qualificationAttributeName" value="organizationCode"/>
 	</bean>
 	
-	<bean id="OrganizationReversionGlobalMaintenanceDocument-DocumentValuePathGroup-ChartOrganization" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+	<bean id="OrganizationReversionGlobalMaintenanceDocument-DocumentValuePathGroup-ChartOrganization" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
     	<property name="documentCollectionPath">
     		<bean parent="OrganizationReversionGlobalMaintenanceDocument-DocumentCollectionPath-chartAndOrganization">
     			<property name="collectionPath" value="newMaintainableObject.businessObject.organizationReversionGlobalOrganizations"/>
@@ -174,7 +174,7 @@
     	</property>
    	</bean>
    	
-   	 <bean id="OrganizationReversionGlobalMaintenanceDocument-DocumentCollectionPath-chartAndOrganization" class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath" abstract="true">
+   	 <bean id="OrganizationReversionGlobalMaintenanceDocument-DocumentCollectionPath-chartAndOrganization" class="org.kuali.kfs.krad.datadictionary.DocumentCollectionPath" abstract="true">
 		<property name="documentValues">
 	   		<list>
 	   			<value>chartOfAccountsCode</value>
@@ -183,7 +183,7 @@
    		</property>
    	</bean>
    	
-   	<bean id="OrganizationReversionGlobalMaintenanceDocument-DocumentValuePathGroup-Chart" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+   	<bean id="OrganizationReversionGlobalMaintenanceDocument-DocumentValuePathGroup-Chart" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
     	<property name="documentCollectionPath">
     		<bean parent="OrganizationReversionGlobalMaintenanceDocument-DocumentCollectionPath-chart">
     			<property name="collectionPath" value="newMaintainableObject.businessObject.organizationReversionGlobalOrganizations"/>
@@ -191,7 +191,7 @@
     	</property>
    	</bean>
    	
-   	 <bean id="OrganizationReversionGlobalMaintenanceDocument-DocumentCollectionPath-chart" class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath" abstract="true">
+   	 <bean id="OrganizationReversionGlobalMaintenanceDocument-DocumentCollectionPath-chart" class="org.kuali.kfs.krad.datadictionary.DocumentCollectionPath" abstract="true">
 		<property name="documentValues">
 	   		<list>
 	   			<value>chartOfAccountsCode</value>
@@ -199,7 +199,7 @@
    		</property>
    	</bean>
    	
-   	<bean id="OrganizationReversionGlobalMaintenanceDocument-RoutingType-OrganizationHierarchy" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+   	<bean id="OrganizationReversionGlobalMaintenanceDocument-RoutingType-OrganizationHierarchy" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
 		        <ref bean="OrganizationReversionGlobalMaintenanceDocument-RoutingAttribute-Chart"/>
@@ -213,7 +213,7 @@
     	</property>
     </bean>
    	
-	<bean id="OrganizationReversionGlobalMaintenanceDocument-RoutingType-Chart" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+	<bean id="OrganizationReversionGlobalMaintenanceDocument-RoutingType-Chart" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
 		        <ref bean="OrganizationReversionGlobalMaintenanceDocument-RoutingAttribute-Chart"/>

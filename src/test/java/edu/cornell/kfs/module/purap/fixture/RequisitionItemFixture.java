@@ -79,7 +79,7 @@ public enum RequisitionItemFixture {
 	public RequisitionItem createRequisitionItem(boolean addAccountingLine) {
 		// item
 		RequisitionItem item = new RequisitionItem();
-		item.setItemIdentifier(new Integer(SpringContext.getBean(org.kuali.rice.krad.service.SequenceAccessorService.class).getNextAvailableSequenceNumber("REQS_ITM_ID").toString()));
+		item.setItemIdentifier(new Integer(SpringContext.getBean(org.kuali.kfs.krad.service.SequenceAccessorService.class).getNextAvailableSequenceNumber("REQS_ITM_ID").toString()));
 		item.setItemLineNumber(itemLineNumber);
 		item.setItemUnitOfMeasureCode(itemUnitOfMeasureCode);
 		item.setItemCatalogNumber(itemCatalogNumber);

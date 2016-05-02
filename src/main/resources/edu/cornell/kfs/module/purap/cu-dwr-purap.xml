@@ -1,6 +1,6 @@
 <dwr>
 	<init>
-		<creator id="spring" class="org.kuali.rice.kns.web.servlet.dwr.GlobalResourceDelegatingSpringCreator"/>
+		<creator id="spring" class="org.kuali.kfs.kns.web.servlet.dwr.GlobalResourceDelegatingSpringCreator"/>
 	</init>
 	<allow>
       

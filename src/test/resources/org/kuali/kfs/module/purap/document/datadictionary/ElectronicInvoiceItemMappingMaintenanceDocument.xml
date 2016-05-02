@@ -69,5 +69,5 @@
   <!-- workflow attributes -->
   <bean id="ElectronicInvoiceItemMappingMaintenanceDocument-workflowAttributes" parent="ElectronicInvoiceItemMappingMaintenanceDocument-workflowAttributes-parentBean"/>
   
-  <bean id="ElectronicInvoiceItemMappingMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+  <bean id="ElectronicInvoiceItemMappingMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
 </beans>

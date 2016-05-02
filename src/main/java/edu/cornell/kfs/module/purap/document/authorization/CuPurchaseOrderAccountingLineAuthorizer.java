@@ -54,7 +54,7 @@ public class CuPurchaseOrderAccountingLineAuthorizer extends PurchaseOrderAccoun
                 
     @Override
     public boolean hasEditPermissionOnAccountingLine(AccountingDocument accountingDocument, AccountingLine accountingLine,
-            String accountingLineCollectionProperty, Person currentUser, boolean pageIsEditable) {
+            String accountingLineCollectionProperty, Person currentUser, boolean pageIsEditable, Set<String> currentNodes) {
         
         WorkflowDocument workflowDocument = accountingDocument.getDocumentHeader().getWorkflowDocument();
         if (accountingDocument instanceof PurchaseOrderAmendmentDocument) {
@@ -63,7 +63,7 @@ public class CuPurchaseOrderAccountingLineAuthorizer extends PurchaseOrderAccoun
                 return true;
             }
         }                                
-        return super.hasEditPermissionOnAccountingLine(accountingDocument, accountingLine, accountingLineCollectionProperty, currentUser, pageIsEditable);
+        return super.hasEditPermissionOnAccountingLine(accountingDocument, accountingLine, accountingLineCollectionProperty, currentUser, pageIsEditable, currentNodes);
     }    
 
     @Override

@@ -44,7 +44,7 @@
     
     
     <property name="documentTypeName" value="MOTD"/>
-    <property name="businessRulesClass" value="org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase"/>
+    <property name="businessRulesClass" value="org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase"/>
     <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
     <property name="workflowAttributes">
     	<ref bean="MessageOfTheDayMaintenanceDocument-workflowAttributes"/>
@@ -69,5 +69,5 @@
   <!-- workflow attributes -->
   <bean id="MessageOfTheDayMaintenanceDocument-workflowAttributes" parent="MessageOfTheDayMaintenanceDocument-workflowAttributes-parentBean"/>
   
-  <bean id="MessageOfTheDayMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+  <bean id="MessageOfTheDayMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
 </beans>

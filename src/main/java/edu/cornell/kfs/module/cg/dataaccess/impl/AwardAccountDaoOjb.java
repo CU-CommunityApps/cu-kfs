@@ -16,7 +16,7 @@ public class AwardAccountDaoOjb extends PlatformAwareDaoBaseOjb implements Award
 	 *      java.lang.String, java.lang.Long)
 	 */
 	@Override
-	public boolean isAccountUsedOnAnotherAward(String chart, String account,Long proposalNumber) {
+	public boolean isAccountUsedOnAnotherAward(String chart, String account, String proposalNumber) {
 		Criteria criteria = new Criteria();
 
 		criteria.addNotEqualTo(KFSPropertyConstants.PROPOSAL_NUMBER,proposalNumber);

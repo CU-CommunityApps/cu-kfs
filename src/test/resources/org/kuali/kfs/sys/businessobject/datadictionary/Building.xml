@@ -149,7 +149,7 @@
     <property name="label" value="Building Address State Code"/>
     <property name="shortLabel" value="Bldg. State"/>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.rice.location.framework.state.StateValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.kns.bo.lookup.StateValuesFinder" p:includeKeyInLabel="false"/>
     </property>
     <property name="required" value="false"/>
   </bean>
@@ -169,7 +169,7 @@
     <property name="shortLabel" value="Bldg. Country"/>
     <property name="required" value="false"/>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.rice.location.framework.country.CountryValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.kns.bo.lookup.CountryValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
   

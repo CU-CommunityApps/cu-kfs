@@ -11,15 +11,15 @@ import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.krad.bo.DocumentHeader;
-import org.kuali.rice.krad.bo.GlobalBusinessObject;
-import org.kuali.rice.krad.bo.GlobalBusinessObjectDetail;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.krad.service.BusinessObjectService;
-import org.kuali.rice.krad.service.KualiModuleService;
-import org.kuali.rice.krad.service.ModuleService;
-import org.kuali.rice.krad.service.PersistenceStructureService;
+import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.krad.bo.GlobalBusinessObject;
+import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetail;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.KualiModuleService;
+import org.kuali.kfs.krad.service.ModuleService;
+import org.kuali.kfs.krad.service.PersistenceStructureService;
 import org.kuali.rice.location.api.LocationConstants;
 import org.kuali.rice.location.framework.campus.CampusEbo;
 import org.kuali.rice.location.framework.country.CountryEbo;
@@ -310,7 +310,7 @@ public class OrganizationGlobal extends PersistableBusinessObjectBase implements
      * Overridden to do special org manager object refreshing. This is a tweaked copy
      * of similar handling on the regular Organization BO.
      * 
-     * @see org.kuali.rice.krad.bo.PersistableBusinessObjectBase#refreshReferenceObject(java.lang.String)
+     * @see org.kuali.kfs.krad.bo.PersistableBusinessObjectBase#refreshReferenceObject(java.lang.String)
      */
     @Override
     public void refreshReferenceObject(String referenceObjectName) {

@@ -62,5 +62,5 @@
   <!-- workflow attributes -->
   <bean id="SupplierDiversityMaintenanceDocument-workflowAttributes" parent="SupplierDiversityMaintenanceDocument-workflowAttributes-parentBean"/>
   
-  <bean id="SupplierDiversityMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+  <bean id="SupplierDiversityMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
 </beans>

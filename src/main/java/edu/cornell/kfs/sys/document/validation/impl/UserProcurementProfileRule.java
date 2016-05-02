@@ -3,10 +3,10 @@ package edu.cornell.kfs.sys.document.validation.impl;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase;
-import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase;
+import org.kuali.kfs.kns.util.KNSConstants;
+import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;

@@ -1,5 +1,5 @@
 <%@ tag import="java.util.Map" %>
-<%@ tag import="org.kuali.rice.kns.util.ActionFormUtilMap" %>
+<%@ tag import="org.kuali.kfs.kns.util.ActionFormUtilMap" %>
 <%@ tag import="java.util.ArrayList" %>
 <%--
  Copyright 2005-2007 The Kuali Foundation

@@ -94,11 +94,11 @@
 
   </bean>
   
-    <bean id="AccountGlobalMaintenanceDocument-RoutingAttribute-SubFund" class="org.kuali.rice.krad.datadictionary.RoutingAttribute">
+    <bean id="AccountGlobalMaintenanceDocument-RoutingAttribute-SubFund" class="org.kuali.kfs.krad.datadictionary.RoutingAttribute">
         <property name="qualificationAttributeName" value="subFundGroupCode"/>
     </bean>
     
-  <bean id="AccountGlobalMaintenanceDocument-DocumentValuePathGroup-SubFund" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+  <bean id="AccountGlobalMaintenanceDocument-DocumentValuePathGroup-SubFund" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
        <property name="documentCollectionPath">
            <bean parent="AccountGlobalMaintenanceDocument-DocumentValueCollectionPathGroup-SubFund">
                <property name="collectionPath" value="newMaintainableObject.businessObject.accountGlobalDetails"/>
@@ -106,7 +106,7 @@
        </property>
   </bean>
   
-  <bean id="AccountGlobalMaintenanceDocument-DocumentValueCollectionPathGroup-SubFund" class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath">
+  <bean id="AccountGlobalMaintenanceDocument-DocumentValueCollectionPathGroup-SubFund" class="org.kuali.kfs.krad.datadictionary.DocumentCollectionPath">
       <property name="documentValues">
           <list>
               <value>account.subFundGroupCode</value>
@@ -114,7 +114,7 @@
       </property>
   </bean>
     
-  <bean id="AccountGlobalMaintenanceDocument-RoutingType-SubFund" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+  <bean id="AccountGlobalMaintenanceDocument-RoutingType-SubFund" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
       <property name="routingAttributes">
           <list>
               <ref bean="AccountGlobalMaintenanceDocument-RoutingAttribute-SubFund"/>

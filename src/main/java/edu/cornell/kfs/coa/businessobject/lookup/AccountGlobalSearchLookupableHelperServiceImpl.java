@@ -23,11 +23,11 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.lookup.KualiAccountLookupableHelperServiceImpl;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.core.web.format.BooleanFormatter;
-import org.kuali.rice.kns.util.KNSConstants;
+import org.kuali.kfs.kns.util.KNSConstants;
 import org.kuali.rice.krad.bo.BusinessObject;
-import org.kuali.rice.krad.util.BeanPropertyComparator;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.BeanPropertyComparator;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.coa.dataaccess.AccountGlobalSearchDao;
 
@@ -94,7 +94,7 @@ public class AccountGlobalSearchLookupableHelperServiceImpl extends KualiAccount
 
 
     /**
-     * @see org.kuali.rice.kns.lookup.AbstractLookupableHelperServiceImpl#validateSearchParameters(java.util.Map)
+     * @see org.kuali.kfs.kns.lookup.AbstractLookupableHelperServiceImpl#validateSearchParameters(java.util.Map)
      */
     @Override
     public void validateSearchParameters(Map parameters) {

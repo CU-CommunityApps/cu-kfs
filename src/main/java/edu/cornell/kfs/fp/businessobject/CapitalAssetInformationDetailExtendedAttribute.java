@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
 
 
 /**
@@ -34,7 +34,7 @@ public class CapitalAssetInformationDetailExtendedAttribute extends PersistableB
     
 
     /**
-     * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
+     * @see org.kuali.kfs.kns.bo.BusinessObjectBase#toStringMapper()
      */
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap<String, Object> m = new LinkedHashMap<String, Object>();

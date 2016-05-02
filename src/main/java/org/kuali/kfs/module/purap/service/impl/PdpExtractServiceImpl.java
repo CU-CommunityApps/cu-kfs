@@ -66,18 +66,18 @@ import org.kuali.kfs.sys.util.KfsDateUtils;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
-import org.kuali.rice.coreservice.api.parameter.Parameter;
-import org.kuali.rice.coreservice.api.parameter.Parameter.Builder;
-import org.kuali.rice.coreservice.api.parameter.ParameterType;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.api.parameter.Parameter;
+import org.kuali.kfs.coreservice.api.parameter.Parameter.Builder;
+import org.kuali.kfs.coreservice.api.parameter.ParameterType;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.krad.document.Document;
-import org.kuali.rice.krad.service.BusinessObjectService;
-import org.kuali.rice.krad.service.DocumentService;
-import org.kuali.rice.krad.service.KRADServiceLocatorWeb;
+import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.service.KRADServiceLocatorWeb;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

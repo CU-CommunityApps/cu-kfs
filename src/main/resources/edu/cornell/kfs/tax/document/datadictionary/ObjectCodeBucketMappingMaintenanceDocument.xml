@@ -45,6 +45,6 @@
 
   <bean id="ObjectCodeBucketMappingMaintenanceDocument-workflowAttributes" parent="ObjectCodeBucketMappingMaintenanceDocument-workflowAttributes-parentBean"/>
 
-  <bean id="ObjectCodeBucketMappingMaintenanceDocument-workflowAttributes-parentBean" abstract="true" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes"/>
+  <bean id="ObjectCodeBucketMappingMaintenanceDocument-workflowAttributes-parentBean" abstract="true" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes"/>
 
 </beans>

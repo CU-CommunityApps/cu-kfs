@@ -87,7 +87,7 @@
 
         <c:choose>
             <c:when test="${itemLine.objectId == null}">
-                <c:set var="newObjectId" value="<%= (new org.kuali.rice.kns.util.Guid()).toString()%>" />
+                <c:set var="newObjectId" value="<%= (new org.kuali.kfs.kns.util.Guid()).toString()%>" />
                 <c:set var="tabKey" value="Item-${newObjectId}" />
             </c:when>
             <c:when test="${itemLine.objectId != null}">

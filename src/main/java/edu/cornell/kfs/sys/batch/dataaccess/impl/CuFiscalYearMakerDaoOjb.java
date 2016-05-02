@@ -7,8 +7,8 @@ import org.apache.ojb.broker.query.QueryByCriteria;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.batch.dataaccess.FiscalYearMaker;
 import org.kuali.kfs.sys.batch.dataaccess.impl.FiscalYearMakersDaoOjb;
-import org.kuali.rice.krad.bo.DataObjectRelationship;
-import org.kuali.rice.krad.service.PersistenceStructureService;
+import org.kuali.kfs.krad.bo.DataObjectRelationship;
+import org.kuali.kfs.krad.service.PersistenceStructureService;
 
 public class CuFiscalYearMakerDaoOjb extends FiscalYearMakersDaoOjb {
     private static final Logger LOG = org.apache.log4j.Logger.getLogger(CuFiscalYearMakerDaoOjb.class);

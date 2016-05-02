@@ -578,7 +578,7 @@
 	</bean>
     <bean id="batchLookupableHelperService" parent="batchLookupableHelperService-parentBean"  scope="prototype"/>
 
-	<bean id="batchLookupableHelperService-parentBean" class="org.kuali.kfs.pdp.businessobject.lookup.BatchLookupableHelperService"  parent="lookupableHelperService" scope="prototype" abstract="true">
+	<bean id="batchLookupableHelperService-parentBean" class="org.kuali.kfs.pdp.businessobject.lookup.BatchLookupableHelperService"  parent="cf.lookupableHelperService" scope="prototype" abstract="true">
         <property name="configurationService" ref="kualiConfigurationService" />
         <property name="batchMaintenanceService">
             <ref bean="pdpBatchMaintenanceService"/>
@@ -592,14 +592,14 @@
 	</bean>
     <bean id="batchLookupable" parent="batchLookupable-parentBean"/>
 
-	<bean id="batchLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="batchLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
+		<property name="cf.lookupableHelperService">
 			<ref bean="batchLookupableHelperService" />
 		</property>
 	</bean>	
     <bean id="paymentDetailLookupableHelperService" parent="paymentDetailLookupableHelperService-parentBean" scope="prototype"/>
 	
-	<bean id="paymentDetailLookupableHelperService-parentBean" class="org.kuali.kfs.pdp.businessobject.lookup.PaymentDetailLookupableHelperService"  parent="lookupableHelperService" scope="prototype" abstract="true">
+	<bean id="paymentDetailLookupableHelperService-parentBean" class="org.kuali.kfs.pdp.businessobject.lookup.PaymentDetailLookupableHelperService"  parent="cf.lookupableHelperService" scope="prototype" abstract="true">
         <property name="configurationService">
             <ref bean="kualiConfigurationService" />
         </property>
@@ -609,8 +609,8 @@
 	</bean>
     <bean id="paymentDetailLookupable" parent="paymentDetailLookupable-parentBean"/>
 
-	<bean id="paymentDetailLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="paymentDetailLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
+		<property name="cf.lookupableHelperService">
 			<ref bean="paymentDetailLookupableHelperService" />
 		</property>
 	</bean>	
@@ -618,27 +618,27 @@
 	
 	<bean id="purchasingPaymentDetailLookupableHelperService-parentBean" class="org.kuali.kfs.pdp.businessobject.lookup.PurchasingPaymentDetailLookupableHelperService" parent="paymentDetailLookupableHelperService-parentBean" abstract="true" />
 	
-	<bean id="purchasingPaymentDetailLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-		<property name="lookupableHelperService">
+	<bean id="purchasingPaymentDetailLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
+		<property name="cf.lookupableHelperService">
 			<ref bean="purchasingPaymentDetailLookupableHelperService" />
 		</property>
 	</bean>	
     <bean id="formatProcessLookupableHelperService" parent="formatProcessLookupableHelperService-parentBean" scope="prototype" />
 	
-	<bean id="formatProcessLookupableHelperService-parentBean" class="org.kuali.kfs.pdp.businessobject.lookup.FormatProcessLookupableHelperService" parent="lookupableHelperService" scope="prototype" abstract="true">
+	<bean id="formatProcessLookupableHelperService-parentBean" class="org.kuali.kfs.pdp.businessobject.lookup.FormatProcessLookupableHelperService" parent="cf.lookupableHelperService" scope="prototype" abstract="true">
         <property name="configurationService" ref="kualiConfigurationService" />
         <property name="pdpAuthorizationService" ref="pdpAuthorizationService" />
 	</bean>
     <bean id="formatProcessLookupable" parent="formatProcessLookupable-parentBean"/>
 
-	<bean id="formatProcessLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="formatProcessLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
+		<property name="cf.lookupableHelperService">
 			<ref bean="formatProcessLookupableHelperService" />
 		</property>
 	</bean>		
     <bean id="paymentProcessLookupableHelperService" parent="paymentProcessLookupableHelperService-parentBean"  scope="prototype" />
 	
-	<bean id="paymentProcessLookupableHelperService-parentBean" class="org.kuali.kfs.pdp.businessobject.lookup.PaymentProcessLookupableHelperService" parent="lookupableHelperService" scope="prototype" abstract="true">
+	<bean id="paymentProcessLookupableHelperService-parentBean" class="org.kuali.kfs.pdp.businessobject.lookup.PaymentProcessLookupableHelperService" parent="cf.lookupableHelperService" scope="prototype" abstract="true">
 	    <property name="persistenceStructureService">
             <ref bean="persistenceStructureService" />
         </property>
@@ -657,26 +657,26 @@
 	</bean>
     <bean id="paymentProcessLookupable" parent="paymentProcessLookupable-parentBean"/>
 
-	<bean id="paymentProcessLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="paymentProcessLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
+		<property name="cf.lookupableHelperService">
 			<ref bean="paymentProcessLookupableHelperService" />
 		</property>
 	</bean>			
     <bean id="bankChangeHistoryLookupableHelperService" parent="bankChangeHistoryLookupableHelperService-parentBean"  scope="prototype" />
 	
-	<bean id="bankChangeHistoryLookupableHelperService-parentBean" class="org.kuali.kfs.pdp.businessobject.lookup.BankChangeHistoryLookupableHelperServiceImpl" parent="lookupableHelperService" scope="prototype" abstract="true">
+	<bean id="bankChangeHistoryLookupableHelperService-parentBean" class="org.kuali.kfs.pdp.businessobject.lookup.BankChangeHistoryLookupableHelperServiceImpl" parent="cf.lookupableHelperService" scope="prototype" abstract="true">
 	</bean>
     <bean id="bankChangeHistoryLookupable" parent="bankChangeHistoryLookupable-parentBean" scope="prototype"/>
 	
-	<bean id="bankChangeHistoryLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="bankChangeHistoryLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+		<property name="cf.lookupableHelperService">
 			<ref bean="bankChangeHistoryLookupableHelperService" />
 		</property>
 	</bean>	
 	
     <bean id="achPayeeLookupable" parent="achPayeeLookupable-parentBean"/>	
-	<bean id="achPayeeLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="achPayeeLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
+		<property name="cf.lookupableHelperService">
 			<ref bean="achPayeeLookupableHelperService" />
 		</property>
 	</bean>
@@ -685,8 +685,8 @@
 	<bean id="achPayeeLookupableHelperService-parentBean" class="org.kuali.kfs.pdp.businessobject.lookup.ACHPayeeLookupableHelperServiceImpl" scope="prototype" parent="payeeLookupableHelperServiceImpl-parentBean" abstract="true" />
 
     <bean id="payeeACHAccountLookupable" parent="payeeACHAccountLookupable-parentBean"/>	
-	<bean id="payeeACHAccountLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="payeeACHAccountLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
+		<property name="cf.lookupableHelperService">
 			<ref bean="payeeACHAccountLookupableHelperService" />
 		</property>
 	</bean>

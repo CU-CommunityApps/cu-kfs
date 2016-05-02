@@ -45,13 +45,13 @@ import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.krad.bo.DocumentHeader;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.maintenance.MaintenanceLock;
-import org.kuali.rice.krad.service.BusinessObjectService;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.maintenance.MaintenanceLock;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 /**
  * Methods for the Award maintenance document UI.
@@ -190,8 +190,8 @@ public class AwardMaintainableImpl extends FinancialSystemMaintainable {
     /**
      * This method is called for refreshing the Agency after a lookup to display its full name without AJAX.
      *
-     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#refresh(java.lang.String, java.util.Map,
-     *      org.kuali.rice.kns.document.MaintenanceDocument)
+     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#refresh(java.lang.String, java.util.Map,
+     *      org.kuali.kfs.kns.document.MaintenanceDocument)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -321,7 +321,7 @@ public class AwardMaintainableImpl extends FinancialSystemMaintainable {
      * Called for refreshing the {@link Subcontractor} on {@link ProposalSubcontractor} before adding to the proposalSubcontractors
      * collection on the proposal. this is to ensure that the summary fields are show correctly. i.e. {@link Subcontractor} name
      *
-     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#addNewLineToCollection(java.lang.String)
+     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#addNewLineToCollection(java.lang.String)
      */
     @Override
     public void addNewLineToCollection(String collectionName) {
@@ -333,7 +333,7 @@ public class AwardMaintainableImpl extends FinancialSystemMaintainable {
      * This method overrides the parent method to check the status of the award document and change the linked
      * {@link ProposalStatus} to A (Approved) if the {@link Award} is now in approved status.
      *
-     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#doRouteStatusChange(org.kuali.rice.krad.bo.DocumentHeader)
+     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#doRouteStatusChange(org.kuali.kfs.krad.bo.DocumentHeader)
      */
     @Override
     public void doRouteStatusChange(DocumentHeader header) {

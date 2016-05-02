@@ -31,14 +31,14 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.validation.GenericValidation;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.kfs.vnd.businessobject.CommodityCode;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kew.api.WorkflowDocumentFactory;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.krad.service.BusinessObjectService;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.ObjectUtils;
-import org.kuali.rice.krad.workflow.service.WorkflowDocumentService;
+import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.workflow.service.WorkflowDocumentService;
 
 public class PurchasingCommodityCodeValidation extends GenericValidation {
     // TODO : CU has quite a few change in this class.  Just try to make this work for POAmendmentValidation.

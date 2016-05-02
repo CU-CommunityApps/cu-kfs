@@ -7,7 +7,7 @@ import java.util.Map;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.KeyValue;
-import org.kuali.rice.krad.keyvalues.KeyValuesBase;
+import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
 
 import edu.cornell.kfs.vnd.CUVendorConstants;
 
@@ -16,7 +16,7 @@ public class CuLocaleValuesFinder extends KeyValuesBase {
     private static final long serialVersionUID = 600417262632569839L;
 
     /**
-     * @see org.kuali.rice.krad.keyvalues.KeyValuesFinder#getKeyValues()
+     * @see org.kuali.kfs.krad.keyvalues.KeyValuesFinder#getKeyValues()
      */
     public List<KeyValue> getKeyValues() {
         List<KeyValue> keyValues = new ArrayList<KeyValue>();

@@ -23,11 +23,11 @@ import java.util.Map;
 import org.apache.commons.lang.time.DateUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.type.TypeUtils;
-import org.kuali.rice.krad.datadictionary.DataObjectEntry;
-import org.kuali.rice.krad.service.DataDictionaryService;
-import org.kuali.rice.krad.service.KRADServiceLocatorWeb;
-import org.kuali.rice.krad.service.PersistenceStructureService;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.datadictionary.DataObjectEntry;
+import org.kuali.kfs.krad.service.DataDictionaryService;
+import org.kuali.kfs.krad.service.KRADServiceLocatorWeb;
+import org.kuali.kfs.krad.service.PersistenceStructureService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import com.thoughtworks.xstream.XStream;
 

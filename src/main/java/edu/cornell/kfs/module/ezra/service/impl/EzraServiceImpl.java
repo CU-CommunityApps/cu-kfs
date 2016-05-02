@@ -22,19 +22,19 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kim.impl.services.KimImplServiceLocator;
-import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.kns.maintenance.Maintainable;
-import org.kuali.rice.krad.UserSession;
-import org.kuali.rice.krad.service.BusinessObjectService;
-import org.kuali.rice.krad.service.DocumentService;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.kns.maintenance.Maintainable;
+import org.kuali.kfs.krad.UserSession;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.module.ezra.businessobject.Deliverable;
@@ -174,7 +174,7 @@ public class EzraServiceImpl implements EzraService {
 			award.setAwardAccounts(oldAward.getAwardAccounts());
 			setAwardOrgVersionNumbers(oldAward.getAwardOrganizations(), award.getAwardOrganizations());
 			award.setVersionNumber(oldAward.getVersionNumber());
-			award.setLetterOfCreditFundGroupCode(oldAward.getLetterOfCreditFundGroupCode());
+			award.setLetterOfCreditFundCode(oldAward.getLetterOfCreditFundCode());
 			AwardExtendedAttribute awardEA = (AwardExtendedAttribute)award.getExtension();
 			awardEA.setLocAccountId(((AwardExtendedAttribute)oldAward.getExtension()).getLocAccountId());
 			award.setActive(oldAward.isActive());
@@ -262,7 +262,7 @@ public class EzraServiceImpl implements EzraService {
 		String proposalId = ezraProposal.getProjectId();
 
 		Proposal proposal = new Proposal();
-		proposal.setProposalNumber(Long.valueOf(proposalId));
+		proposal.setProposalNumber(proposalId);
 		LOG.info("Creating Proposal: "+proposalId);
 		if (ezraProposal.getSponsorNumber() != null) {
 			Agency agency = businessObjectService.findBySinglePrimaryKey(Agency.class, ezraProposal.getSponsorNumber().toString());
@@ -505,7 +505,7 @@ public class EzraServiceImpl implements EzraService {
 	
 	
 
-	private List<ProposalProjectDirector> createProjectDirectors(Long projectId, EzraProject project) {
+	private List<ProposalProjectDirector> createProjectDirectors(String projectId, EzraProject project) {
 		List<ProposalProjectDirector> projDirs = new ArrayList<ProposalProjectDirector>();
 		Investigator investigator = (Investigator)businessObjectService.findBySinglePrimaryKey(Investigator.class, project.getProjectDirectorId());
 		if (investigator != null) {
@@ -524,7 +524,7 @@ public class EzraServiceImpl implements EzraService {
 					//				ppd.setVersionNumber(ppd.getVersionNumber());
 					//			}
 					ppd.setPrincipalId(director.getPrincipalId());
-					ppd.setProposalNumber(new Long(project.getProjectId()));
+					ppd.setProposalNumber(project.getProjectId());
 					ppd.setProposalPrimaryProjectDirectorIndicator(true);
 					ppd.setActive(true);
 					KimApiServiceLocator.getRoleService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new HashMap<String, String>());
@@ -559,7 +559,7 @@ public class EzraServiceImpl implements EzraService {
 							ppd = new ProposalProjectDirector();
 						}
 						ppd.setPrincipalId(director.getPrincipalId());
-						ppd.setProposalNumber(new Long(project.getProjectId()));
+						ppd.setProposalNumber(project.getProjectId());
 						ppd.setProposalPrimaryProjectDirectorIndicator(false);
 						ppd.setActive(true);
 						KimApiServiceLocator.getRoleService().assignPrincipalToRole(director.getPrincipalId(), "KFS-SYS", "Contracts & Grants Project Director", new HashMap<String, String>());
@@ -589,7 +589,7 @@ public class EzraServiceImpl implements EzraService {
 		return projDirs;
 	}
 
-	private List<ProposalOrganization> createProposalOrganizations(Long projectId, EzraProject project) {
+	private List<ProposalOrganization> createProposalOrganizations(String projectId, EzraProject project) {
 		
 		//EzraProject ep = (EzraProject)businessObjectService.findBySinglePrimaryKey(EzraProject.class, projectId);
 		String orgCode = project.getProjectDepartmentId();

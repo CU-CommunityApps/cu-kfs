@@ -57,28 +57,28 @@
 	
 	<bean id="accountGlobalLookupableHelperService"
 		class="edu.cornell.kfs.coa.businessobject.lookup.AccountGlobalSearchLookupableHelperServiceImpl"
-		scope="prototype" parent="lookupableHelperService"
+		scope="prototype" parent="cf.lookupableHelperService"
 		p:accountGlobalSearchDao-ref="accountGlobalSearchDao" />
 
-	<bean id="accountGlobalLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl"
+	<bean id="accountGlobalLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
 		scope="prototype">
-		<property name="lookupableHelperService">
+		<property name="cf.lookupableHelperService">
 			<ref bean="accountGlobalLookupableHelperService" />
 		</property>
 	</bean>
 	
-	<bean id="businessObjectDao" class="org.kuali.rice.krad.dao.proxy.BusinessObjectDaoProxy">
+	<bean id="businessObjectDao" class="org.kuali.kfs.krad.dao.proxy.BusinessObjectDaoProxy">
 	    <!-- Constructor injection only please to help enforce completeness of instances -->
 	    <property name="businessObjectDaoOjb" ref="businessObjectDaoOjb"/>
 	</bean>
 	
 	
-	<bean id="businessObjectDaoOjb" parent="platformAwareDao" class="org.kuali.rice.krad.dao.impl.BusinessObjectDaoOjb">
+	<bean id="businessObjectDaoOjb" parent="platformAwareDao" class="org.kuali.kfs.krad.dao.impl.BusinessObjectDaoOjb">
 	  	<!-- Constructor injection only please to help enforce completeness of instances -->
 	  	<constructor-arg ref="persistenceStructureService"/>
     </bean>
 	
-    <bean id="lookupDaoOjb" parent="platformAwareDao" class="org.kuali.rice.krad.dao.impl.LookupDaoOjb">
+    <bean id="lookupDaoOjb" parent="platformAwareDao" class="org.kuali.kfs.krad.dao.impl.LookupDaoOjb">
         <property name="persistenceStructureService" ref="persistenceStructureService"/>
         <property name="dateTimeService" ref="dateTimeService"/>
         <property name="dataDictionaryService" ref="dataDictionaryService"/>

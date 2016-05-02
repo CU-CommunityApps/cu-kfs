@@ -10,9 +10,9 @@ import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.krad.bo.GlobalBusinessObjectDetailBase;
-import org.kuali.rice.krad.service.PersistenceStructureService;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
+import org.kuali.kfs.krad.service.PersistenceStructureService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class SubAccountGlobalDetail extends GlobalBusinessObjectDetailBase {
 	
