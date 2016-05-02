@@ -83,5 +83,5 @@
   <!-- workflow attributes -->
   <bean id="ReceivingThresholdMaintenanceDocument-workflowAttributes" parent="ReceivingThresholdMaintenanceDocument-workflowAttributes-parentBean"/>
   
-  <bean id="ReceivingThresholdMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+  <bean id="ReceivingThresholdMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
 </beans>

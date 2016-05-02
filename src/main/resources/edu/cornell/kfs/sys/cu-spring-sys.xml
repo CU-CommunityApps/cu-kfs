@@ -201,8 +201,8 @@
 			<ref bean="userProcurementProfileValidationService" />
 		</property>
     </bean>
-	    <bean id="userProfileLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-        <property name="lookupableHelperService">
+	    <bean id="userProfileLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="cf.lookupableHelperService">
             <ref bean="userProcurementProfileLookupableHelperService" />
         </property>
     </bean>
@@ -235,7 +235,7 @@
 	</bean>	
 	
 	<bean id="createDoneBatchFileLookupableHelperService" parent="createDoneBatchFileLookupableHelperService-parentBean" scope="prototype" />	
-	<bean id="createDoneBatchFileLookupableHelperService-parentBean" class="edu.cornell.kfs.sys.businessobject.lookup.CreateDoneBatchFileLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService" abstract="true">
+	<bean id="createDoneBatchFileLookupableHelperService-parentBean" class="edu.cornell.kfs.sys.businessobject.lookup.CreateDoneBatchFileLookupableHelperServiceImpl" scope="prototype" parent="cf.lookupableHelperService" abstract="true">
 		<property name="dateTimeService" ref="dateTimeService" />
 		<property name="createDoneAuthorizationService" ref="createDoneAuthorizationService"/>
 	</bean>
@@ -244,8 +244,8 @@
 	<bean id="createDoneAuthorizationService-parentBean" class="edu.cornell.kfs.sys.batch.service.impl.CreateDoneBatchFileAuthorizationServiceImpl" abstract="true" />
 
     <bean id="createDoneBatchFileLookupable" parent="createDoneBatchFileLookupable-parentBean" scope="prototype" />	
-	<bean id="createDoneBatchFileLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-	    <property name="lookupableHelperService">
+	<bean id="createDoneBatchFileLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+	    <property name="cf.lookupableHelperService">
 	        <ref bean="createDoneBatchFileLookupableHelperService" />
 	    </property>
 	</bean>

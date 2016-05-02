@@ -67,7 +67,7 @@
 		</property>
 	</bean>
 	
-    <bean id="SubObjectCodeGlobalMaintenanceDocument-RoutingType-Chart" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    <bean id="SubObjectCodeGlobalMaintenanceDocument-RoutingType-Chart" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
         <property name="routingAttributes">
             <list>
                 <ref bean="RoutingAttribute-Chart"/>

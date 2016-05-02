@@ -19,7 +19,7 @@ import java.util.LinkedHashMap;
 
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.core.api.util.type.KualiInteger;
-import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
 
 
 /**
@@ -91,7 +91,7 @@ public class DisbursementVoucherDocumentExtension extends PersistableBusinessObj
     }
 
     /**
-     * @see org.kuali.rice.kns.bo.PersistableBusinessObjectExtensionBase#toStringMapper()
+     * @see org.kuali.kfs.kns.bo.PersistableBusinessObjectExtensionBase#toStringMapper()
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected LinkedHashMap toStringMapper() {

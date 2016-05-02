@@ -5,7 +5,7 @@ import java.util.List;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.KeyValue;
-import org.kuali.rice.krad.keyvalues.KeyValuesBase;
+import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -14,7 +14,7 @@ public class AutoDisEncumberType extends KeyValuesBase{
     /**
      * Creates a list of {@link Chart}s using their code as their key, and their code as the display value
      * 
-     * @see org.kuali.rice.kns.lookup.keyvalues.KeyValuesFinder#getKeyValues()
+     * @see org.kuali.kfs.kns.lookup.keyvalues.KeyValuesFinder#getKeyValues()
      */
     public List<KeyValue> getKeyValues() {
         List<KeyValue> chartKeyLabels = new ArrayList<KeyValue>();

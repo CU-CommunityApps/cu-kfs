@@ -127,7 +127,7 @@ public class AccountReversionDetail extends ReversionDetail implements MutableIn
 	}
 
 	/**
-     * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
+     * @see org.kuali.kfs.kns.bo.BusinessObjectBase#toStringMapper()
      */
     protected LinkedHashMap toStringMapper() {
         LinkedHashMap m = new LinkedHashMap();

@@ -6,7 +6,7 @@ import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.gl.batch.service.ReversionUnitOfWorkService;
 import edu.cornell.kfs.gl.businessobject.ReversionUnitOfWork;

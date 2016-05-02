@@ -144,15 +144,15 @@
 		</property>
 	</bean>
 	
-	<bean id="AccountReversionGlobalMaintenanceDocument-RoutingAttribute-Chart" class="org.kuali.rice.krad.datadictionary.RoutingAttribute">
+	<bean id="AccountReversionGlobalMaintenanceDocument-RoutingAttribute-Chart" class="org.kuali.kfs.krad.datadictionary.RoutingAttribute">
     	<property name="qualificationAttributeName" value="chartOfAccountsCode"/>
 	</bean>
 	
-	<bean id="AccountReversionGlobalMaintenanceDocument-RoutingAttribute-Organization" class="org.kuali.rice.krad.datadictionary.RoutingAttribute">
+	<bean id="AccountReversionGlobalMaintenanceDocument-RoutingAttribute-Organization" class="org.kuali.kfs.krad.datadictionary.RoutingAttribute">
     	<property name="qualificationAttributeName" value="accountNumber"/>
 	</bean>
 	
-	<bean id="AccountReversionGlobalMaintenanceDocument-DocumentValuePathGroup-ChartOrganization" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+	<bean id="AccountReversionGlobalMaintenanceDocument-DocumentValuePathGroup-ChartOrganization" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
     	<property name="documentCollectionPath">
     		<bean parent="AccountReversionGlobalMaintenanceDocument-DocumentCollectionPath-chartAndOrganization">
     			<property name="collectionPath" value="newMaintainableObject.businessObject.accountReversionGlobalAccounts"/>
@@ -160,7 +160,7 @@
     	</property>
    	</bean>
    	
-   	 <bean id="AccountReversionGlobalMaintenanceDocument-DocumentCollectionPath-chartAndOrganization" class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath" abstract="true">
+   	 <bean id="AccountReversionGlobalMaintenanceDocument-DocumentCollectionPath-chartAndOrganization" class="org.kuali.kfs.krad.datadictionary.DocumentCollectionPath" abstract="true">
 		<property name="documentValues">
 	   		<list>
 	   			<value>chartOfAccountsCode</value>
@@ -169,7 +169,7 @@
    		</property>
    	</bean>
    	
-   	<bean id="AccountReversionGlobalMaintenanceDocument-DocumentValuePathGroup-Chart" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+   	<bean id="AccountReversionGlobalMaintenanceDocument-DocumentValuePathGroup-Chart" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
     	<property name="documentCollectionPath">
     		<bean parent="AccountReversionGlobalMaintenanceDocument-DocumentCollectionPath-chart">
     			<property name="collectionPath" value="newMaintainableObject.businessObject.accountReversionGlobalAccounts"/>
@@ -177,7 +177,7 @@
     	</property>
    	</bean>
    	
-   	 <bean id="AccountReversionGlobalMaintenanceDocument-DocumentCollectionPath-chart" class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath" abstract="true">
+   	 <bean id="AccountReversionGlobalMaintenanceDocument-DocumentCollectionPath-chart" class="org.kuali.kfs.krad.datadictionary.DocumentCollectionPath" abstract="true">
 		<property name="documentValues">
 	   		<list>
 	   			<value>chartOfAccountsCode</value>
@@ -185,7 +185,7 @@
    		</property>
    	</bean>
    	
-   	<bean id="AccountReversionGlobalMaintenanceDocument-RoutingType-OrganizationHierarchy" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+   	<bean id="AccountReversionGlobalMaintenanceDocument-RoutingType-OrganizationHierarchy" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
 		        <ref bean="AccountReversionGlobalMaintenanceDocument-RoutingAttribute-Chart"/>
@@ -199,7 +199,7 @@
     	</property>
     </bean> 
    	
-	<bean id="AccountReversionGlobalMaintenanceDocument-RoutingType-Chart" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+	<bean id="AccountReversionGlobalMaintenanceDocument-RoutingType-Chart" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
 		        <ref bean="AccountReversionGlobalMaintenanceDocument-RoutingAttribute-Chart"/>

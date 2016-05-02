@@ -20,7 +20,7 @@
 
 <dwr>
 	<init>
-		<creator id="spring" class="org.kuali.rice.kns.web.servlet.dwr.GlobalResourceDelegatingSpringCreator"/>
+		<creator id="spring" class="org.kuali.kfs.kns.web.servlet.dwr.GlobalResourceDelegatingSpringCreator"/>
 		<converter id="kualinumber" class="org.kuali.kfs.sys.KualiNumberConverter"/>
 	</init>
 	<allow>

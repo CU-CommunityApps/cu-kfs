@@ -25,10 +25,10 @@
         
 	<bean id="glAccountBalanceLookupable" parent="glAccountBalanceLookupable-parentBean"/>
 	
-	<bean id="glAccountBalanceLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="glAccountBalanceLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
+		<property name="cf.lookupableHelperService">
 		    <bean parent="securityBalanceLookupableHelperService" scope="prototype" p:glInquiry="true">
-		        <property name="lookupableHelperService">
+		        <property name="cf.lookupableHelperService">
 		    	    <ref bean="glAccountBalanceLookupableHelperService" />
 		        </property>			    
 		    </bean>
@@ -49,17 +49,17 @@
 	</bean>
 	<bean id="glAccountBalanceByConsolidationLookupable" parent="glAccountBalanceByConsolidationLookupable-parentBean"/>
 	
-	<bean id="glAccountBalanceByConsolidationLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="glAccountBalanceByConsolidationLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
+		<property name="cf.lookupableHelperService">
 		    <ref bean="securityAccountBalanceByConsolidationLookupableHelperService" />
 		</property>
 	</bean>	
 	<bean id="glAccountBalanceByLevelLookupable" parent="glAccountBalanceByLevelLookupable-parentBean"/>
 
-	<bean id="glAccountBalanceByLevelLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="glAccountBalanceByLevelLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
+		<property name="cf.lookupableHelperService">
 		    <bean parent="securityBalanceLookupableHelperService" scope="prototype" p:glInquiry="true">
-		        <property name="lookupableHelperService">
+		        <property name="cf.lookupableHelperService">
 		    	    <ref bean="glAccountBalanceByLevelLookupableHelperService" />
 		        </property>			    
 		    </bean>
@@ -67,10 +67,10 @@
 	</bean>	
 	<bean id="glAccountBalanceByObjectLookupable" parent="glAccountBalanceByObjectLookupable-parentBean"/>
 		
-	<bean id="glAccountBalanceByObjectLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="glAccountBalanceByObjectLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
+		<property name="cf.lookupableHelperService">
 		    <bean parent="securityBalanceLookupableHelperService" scope="prototype" p:glInquiry="true">
-		        <property name="lookupableHelperService">
+		        <property name="cf.lookupableHelperService">
 		    	    <ref bean="glAccountBalanceByObjectLookupableHelperService" />
 		        </property>			    
 		    </bean>
@@ -78,10 +78,10 @@
 	</bean>	
 	<bean id="glCashBalanceLookupable" parent="glCashBalanceLookupable-parentBean"/>
 			
-	<bean id="glCashBalanceLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="glCashBalanceLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
+		<property name="cf.lookupableHelperService">
 		    <bean parent="securityBalanceLookupableHelperService" scope="prototype" p:glInquiry="true">
-		        <property name="lookupableHelperService">
+		        <property name="cf.lookupableHelperService">
 		    	    <ref bean="glCashBalanceLookupableHelperService" />
 		        </property>			    
 		    </bean>
@@ -89,10 +89,10 @@
 	</bean>	
 	<bean id="glBalanceLookupable" parent="glBalanceLookupable-parentBean"/>
 	
-	<bean id="glBalanceLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="glBalanceLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
+		<property name="cf.lookupableHelperService">
 		    <bean parent="securityBalanceLookupableHelperService" scope="prototype" p:glInquiry="true">
-		        <property name="lookupableHelperService">
+		        <property name="cf.lookupableHelperService">
 		    	    <ref bean="glBalanceLookupableHelperService" />
 		        </property>			    
 		    </bean>
@@ -100,10 +100,10 @@
 	</bean>	
 	<bean id="glPendingEntryLookupable" parent="glPendingEntryLookupable-parentBean"/>
 	
-	<bean id="glPendingEntryLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="glPendingEntryLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
+		<property name="cf.lookupableHelperService">
 		    <bean parent="securityBalanceLookupableHelperService" scope="prototype" p:glInquiry="true">
-		        <property name="lookupableHelperService">
+		        <property name="cf.lookupableHelperService">
 		    	    <ref bean="glPendingEntryLookupableHelperService" />
 		        </property>			    
 		    </bean>
@@ -111,10 +111,10 @@
 	</bean>		
 	<bean id="glEntryLookupable" parent="glEntryLookupable-parentBean"/>
 
-	<bean id="glEntryLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="glEntryLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
+		<property name="cf.lookupableHelperService">
 		    <bean parent="securityBalanceLookupableHelperService" scope="prototype" p:glInquiry="true">
-		        <property name="lookupableHelperService">
+		        <property name="cf.lookupableHelperService">
 		    	    <ref bean="glEntryLookupableHelperService" />
 		        </property>			    
 		    </bean>
@@ -122,10 +122,10 @@
 	</bean>		
 	<bean id="glEncumbranceLookupable" parent="glEncumbranceLookupable-parentBean"/>
 
-	<bean id="glEncumbranceLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="glEncumbranceLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
+		<property name="cf.lookupableHelperService">
 		    <bean parent="securityBalanceLookupableHelperService" scope="prototype" p:glInquiry="true">
-		        <property name="lookupableHelperService">
+		        <property name="cf.lookupableHelperService">
 		    	    <ref bean="glEncumbranceLookupableHelperService" />
 		        </property>			    
 		    </bean>

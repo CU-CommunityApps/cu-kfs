@@ -1878,33 +1878,33 @@
 	</bean>
 	
     <bean id="frequencyCodeLookupableHelperService" parent="frequencyCodeLookupableHelperService-parentBean" scope="prototype"/>	
-    <bean id="frequencyCodeLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.FrequencyCodeLookupableHelperService"  parent="lookupableHelperService" scope="prototype">
+    <bean id="frequencyCodeLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.FrequencyCodeLookupableHelperService"  parent="cf.lookupableHelperService" scope="prototype">
 	</bean>
 	
 	<bean id="frequencyCodeLookupable"  parent="frequencyCodeLookupable-parentBean" scope="prototype"/>
-	<bean id="frequencyCodeLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="frequencyCodeLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+		<property name="cf.lookupableHelperService">
 			<ref bean="frequencyCodeLookupableHelperService" />
 		</property>
 	</bean>	
 	
 	<bean id="pooledFundValueLookupableHelperService" parent="pooledFundValueLookupableHelperService-parentBean" scope="prototype"/>
-	<bean id="pooledFundValueLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.PooledFundValueLookupableHelperService"  parent="lookupableHelperService" scope="prototype">
+	<bean id="pooledFundValueLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.PooledFundValueLookupableHelperService"  parent="cf.lookupableHelperService" scope="prototype">
 	</bean>
 	
 	<bean id="pooledFundValueLookupable"  parent="pooledFundValueLookupable-parentBean" scope="prototype"/>
-	<bean id="pooledFundValueLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="pooledFundValueLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+		<property name="cf.lookupableHelperService">
 			<ref bean="pooledFundValueLookupableHelperService" />
 		</property>
 	</bean>	
 	
 	<bean id="feeTypeCodeLookupableHelperService" parent="feeTypeCodeLookupableHelperService-parentBean" scope="prototype" />
-	<bean id="feeTypeCodeLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.FeeTypeCodeLookupableHelperService"  parent="lookupableHelperService" scope="prototype" />
+	<bean id="feeTypeCodeLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.FeeTypeCodeLookupableHelperService"  parent="cf.lookupableHelperService" scope="prototype" />
 	
 	<bean id="feeTypeCodeLookupable"  parent="feeTypeCodeLookupable-parentBean" scope="prototype"/>
-	<bean id="feeTypeCodeLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="feeTypeCodeLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+		<property name="cf.lookupableHelperService">
 			<ref bean="feeTypeCodeLookupableHelperService" />
 		</property>
 	</bean>	
@@ -1936,42 +1936,42 @@
 	</bean>
 		
 	<bean id="holdingTaxLotLookupableHelperService" parent="holdingTaxLotLookupableHelperService-parentBean" scope="prototype"/>
-	<bean id="holdingTaxLotLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.HoldingTaxLotLookupableHelperService"  parent="lookupableHelperService" scope="prototype">
+	<bean id="holdingTaxLotLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.HoldingTaxLotLookupableHelperService"  parent="cf.lookupableHelperService" scope="prototype">
 	</bean>
 
-	<bean id="holdingTaxLotLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-		<property name="lookupableHelperService">
+	<bean id="holdingTaxLotLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
+		<property name="cf.lookupableHelperService">
 			<ref bean="holdingTaxLotLookupableHelperService" />
 		</property>
 	</bean>
 	
 	<bean id="currentTaxLotBalanceLookupableHelperService" parent="currentTaxLotBalanceLookupableHelperService-parentBean" scope="prototype"/>
-    <bean id="currentTaxLotBalanceLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.CurrentTaxLotBalanceLookupableHelperService"  parent="lookupableHelperService" scope="prototype">
+    <bean id="currentTaxLotBalanceLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.CurrentTaxLotBalanceLookupableHelperService"  parent="cf.lookupableHelperService" scope="prototype">
 	</bean>
 	
-	<bean id="currentTaxLotBalanceLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-		<property name="lookupableHelperService">
+	<bean id="currentTaxLotBalanceLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
+		<property name="cf.lookupableHelperService">
 			<ref bean="currentTaxLotBalanceLookupableHelperService" />
 		</property>
 	</bean>	
 
 	<bean id="holdingTaxLotRebalanceLookupableHelperService" parent="holdingTaxLotRebalanceLookupableHelperService-parentBean" scope="prototype"/>
-    <bean id="holdingTaxLotRebalanceLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.HoldingTaxLotRebalanceLookupableHelperService"  parent="lookupableHelperService" scope="prototype">
+    <bean id="holdingTaxLotRebalanceLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.HoldingTaxLotRebalanceLookupableHelperService"  parent="cf.lookupableHelperService" scope="prototype">
     </bean>
     
-    <bean id="holdingTaxLotRebalanceLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-        <property name="lookupableHelperService">
+    <bean id="holdingTaxLotRebalanceLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="cf.lookupableHelperService">
             <ref bean="holdingTaxLotRebalanceLookupableHelperService" />
         </property>
     </bean>
     
     <bean id="kemidCurrentBalanceDetailLookupableHelperService" parent="kemidCurrentBalanceDetailLookupableHelperService-parentBean" scope="prototype"/>
-    <bean id="kemidCurrentBalanceDetailLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.KEMIDCurrentBalanceDetailLookupableHelperService"  parent="lookupableHelperService" scope="prototype">
+    <bean id="kemidCurrentBalanceDetailLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.KEMIDCurrentBalanceDetailLookupableHelperService"  parent="cf.lookupableHelperService" scope="prototype">
 	</bean>
 
 	<bean id="kemidCurrentBalanceDetailLookupable"  parent="kemidCurrentBalanceDetailLookupable-parentBean" scope="prototype"/>
-	<bean id="kemidCurrentBalanceDetailLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="kemidCurrentBalanceDetailLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+		<property name="cf.lookupableHelperService">
 			<ref bean="kemidCurrentBalanceDetailLookupableHelperService" />
 		</property>
 	</bean>
@@ -2058,12 +2058,12 @@
 	</bean>	
 	
 	<bean id="ticklerLookupableHelperService" scope="prototype" parent="ticklerLookupableHelperService-parentBean" />
-	<bean id="ticklerLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.TicklerLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService" >
+	<bean id="ticklerLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.TicklerLookupableHelperServiceImpl" scope="prototype" parent="cf.lookupableHelperService" >
 	</bean>
 
 	<bean id="ticklerLookupable"  parent="ticklerLookupable-parentBean" scope="prototype"/>
-	<bean id="ticklerLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="ticklerLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+		<property name="cf.lookupableHelperService">
 			<ref bean="ticklerLookupableHelperService" />
 		</property>
 	</bean>
@@ -2251,9 +2251,9 @@
     
     
     <bean id="transactionArchiveLookupableHelperService" parent="transactionArchiveLookupableHelperService-parentBean" scope="prototype" />
-    <bean id="transactionArchiveLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.TransactionArchiveLookupableHelperService"  parent="lookupableHelperService" scope="prototype" />
-    <bean id="transactionArchiveLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-        <property name="lookupableHelperService">
+    <bean id="transactionArchiveLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.endow.businessobject.lookup.TransactionArchiveLookupableHelperService"  parent="cf.lookupableHelperService" scope="prototype" />
+    <bean id="transactionArchiveLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="cf.lookupableHelperService">
             <ref bean="transactionArchiveLookupableHelperService" />
         </property>
     </bean>

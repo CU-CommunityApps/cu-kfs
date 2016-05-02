@@ -1,8 +1,8 @@
 package edu.cornell.kfs.coa.document.validation.impl;
 
 import org.kuali.kfs.coa.document.validation.impl.GlobalDocumentRuleBase;
-import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.businessobject.SubObjectCodeGlobalEdit;
 import edu.cornell.kfs.coa.businessobject.SubObjectCodeGlobalEditDetail;
@@ -13,7 +13,7 @@ public class SubObjectCodeGlobalEditRule extends GlobalDocumentRuleBase {
 	protected SubObjectCodeGlobalEdit subObjectCodeGlobalEdit;
 	
     /**
-     * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#setupConvenienceObjects()
+     * @see org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase#setupConvenienceObjects()
      */
     public void setupConvenienceObjects() {
 
@@ -26,7 +26,7 @@ public class SubObjectCodeGlobalEditRule extends GlobalDocumentRuleBase {
     }
     
     /**
-     * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomApproveDocumentBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument)
+     * @see org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomApproveDocumentBusinessRules(org.kuali.kfs.kns.document.MaintenanceDocument)
      */
     @Override
     protected boolean processCustomApproveDocumentBusinessRules(MaintenanceDocument document) {
@@ -44,7 +44,7 @@ public class SubObjectCodeGlobalEditRule extends GlobalDocumentRuleBase {
 
 
     /**
-     * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomRouteDocumentBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument)
+     * @see org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomRouteDocumentBusinessRules(org.kuali.kfs.kns.document.MaintenanceDocument)
      */
     @Override
     protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {

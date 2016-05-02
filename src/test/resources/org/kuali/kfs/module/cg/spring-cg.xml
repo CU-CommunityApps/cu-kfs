@@ -139,23 +139,23 @@
 	</bean>
 	
 	<bean id="proposalLookupableHelperService" parent="proposalLookupableHelperService-parentBean" scope="prototype" />
-	<bean id="proposalLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.cg.businessobject.lookup.ProposalLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService" >
+	<bean id="proposalLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.cg.businessobject.lookup.ProposalLookupableHelperServiceImpl" scope="prototype" parent="cf.lookupableHelperService" >
 	</bean>
 
 	<bean id="proposalLookupable"  parent="proposalLookupable-parentBean" scope="prototype"/>
-	<bean id="proposalLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-		<property name="lookupableHelperService">
+	<bean id="proposalLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+		<property name="cf.lookupableHelperService">
 			<ref bean="proposalLookupableHelperService" />
 		</property>
 	</bean>
 
 	<bean id="awardLookupableHelperService" scope="prototype" parent="awardLookupableHelperService-parentBean"/>
-    <bean id="awardLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.cg.businessobject.lookup.AwardLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService" >
+    <bean id="awardLookupableHelperService-parentBean" abstract="true"  class="org.kuali.kfs.module.cg.businessobject.lookup.AwardLookupableHelperServiceImpl" scope="prototype" parent="cf.lookupableHelperService" >
     </bean>
 
     <bean id="awardLookupable"  parent="awardLookupable-parentBean" scope="prototype"/>
-    <bean id="awardLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-        <property name="lookupableHelperService">
+    <bean id="awardLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+        <property name="cf.lookupableHelperService">
             <ref bean="awardLookupableHelperService" />
         </property>
     </bean>

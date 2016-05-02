@@ -31,7 +31,7 @@ public enum PurapAccountingLineFixture {
 	public PurApAccountingLine createRequisitionAccount(Integer itemIdentifier){
 		PurApAccountingLine purapAcctLine = new RequisitionAccount();
 		
-		purapAcctLine.setItemIdentifier(new Integer(SpringContext.getBean(org.kuali.rice.krad.service.SequenceAccessorService.class).getNextAvailableSequenceNumber("REQS_ACCT_ID").toString()));
+		purapAcctLine.setItemIdentifier(new Integer(SpringContext.getBean(org.kuali.kfs.krad.service.SequenceAccessorService.class).getNextAvailableSequenceNumber("REQS_ACCT_ID").toString()));
 		purapAcctLine.setAccountLinePercent(accountLinePercent);
 		purapAcctLine.setAccountNumber(accountNumber);
 		purapAcctLine.setChartOfAccountsCode(chartOfAccountsCode);

@@ -10,6 +10,6 @@ public interface CuAwardAccountService {
 	 * @param proposalNumber
 	 * @return true if used, false otherwise
 	 */
-	public boolean isAccountUsedOnAnotherAward(String chart, String account, Long proposalNumber);
+	public boolean isAccountUsedOnAnotherAward(String chart, String account, String proposalNumber);
 
 }

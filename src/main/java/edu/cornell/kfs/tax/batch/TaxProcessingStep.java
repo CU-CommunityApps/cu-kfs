@@ -3,7 +3,7 @@ package edu.cornell.kfs.tax.batch;
 import java.util.Date;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
-import org.kuali.rice.coreservice.framework.CoreFrameworkServiceLocator;
+import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.CUTaxConstants.TaxCommonParameterNames;

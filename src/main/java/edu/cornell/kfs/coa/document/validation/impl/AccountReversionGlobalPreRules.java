@@ -19,8 +19,8 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.OrganizationReversionGlobal;
 import org.kuali.kfs.coa.document.validation.impl.MaintenancePreRulesBase;
-import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.businessobject.AccountReversionGlobal;
 import edu.cornell.kfs.coa.businessobject.AccountReversionGlobalAccount;
@@ -39,7 +39,7 @@ public class AccountReversionGlobalPreRules extends MaintenancePreRulesBase {
      * <li>{@link AccountReversionGlobalPreRules#checkForContinuationAccounts(OrganizationReversionGlobal)}</li>
      * <li>{@link AccountReversionGlobalPreRules#copyKeyAttributesToCollections(OrganizationReversionGlobal)}</li>
      * </ul>
-     * @see org.kuali.kfs.coa.document.validation.impl.MaintenancePreRulesBase#doCustomPreRules(org.kuali.rice.kns.document.MaintenanceDocument)
+     * @see org.kuali.kfs.coa.document.validation.impl.MaintenancePreRulesBase#doCustomPreRules(org.kuali.kfs.kns.document.MaintenanceDocument)
      */
     @Override
     public boolean doCustomPreRules(MaintenanceDocument maintenanceDocument) {

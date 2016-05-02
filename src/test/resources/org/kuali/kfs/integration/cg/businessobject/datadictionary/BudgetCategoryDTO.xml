@@ -112,7 +112,7 @@
 
   <bean id="budgetCategoryDTO-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
     <property name="title" value="Budget Category Code Lookup"/>
-	<property name="lookupableID" value="kualiLookupable"/>
+	<property name="lookupableID" value="cf.kualiLookupable"/>
 	
     <property name="lookupFields">
       <list>

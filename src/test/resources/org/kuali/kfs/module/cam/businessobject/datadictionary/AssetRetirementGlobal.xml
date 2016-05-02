@@ -118,7 +118,7 @@
   <bean id="AssetRetirementGlobal-retirementReasonCode" parent="AssetRetirementGlobal-retirementReasonCode-parentBean"/>
   <bean id="AssetRetirementGlobal-retirementReasonCode-parentBean" abstract="true" parent="AssetRetirementReason-retirementReasonCode">
     <property name="control">
-      <bean parent="SelectControlDefinition" p:businessObjectClass="org.kuali.kfs.module.cam.businessobject.AssetRetirementReason" p:valuesFinderClass=" org.kuali.rice.krad.keyvalues.PersistableBusinessObjectValuesFinder" p:includeKeyInLabel="true" p:includeBlankRow="true" p:keyAttribute="retirementReasonCode" p:labelAttribute="retirementReasonName"/>
+      <bean parent="SelectControlDefinition" p:businessObjectClass="org.kuali.kfs.module.cam.businessobject.AssetRetirementReason" p:valuesFinderClass=" org.kuali.kfs.krad.keyvalues.PersistableBusinessObjectValuesFinder" p:includeKeyInLabel="true" p:includeBlankRow="true" p:keyAttribute="retirementReasonCode" p:labelAttribute="retirementReasonName"/>
     </property>
   </bean>
 
@@ -214,7 +214,7 @@
     <property name="label" value="State Code"/>
     <property name="shortLabel" value="Code"/>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.rice.location.framework.state.StateValuesFinder"/>
+      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.kns.bo.lookup.StateValuesFinder"/>
     </property>
   </bean>
   
@@ -230,7 +230,7 @@
     <property name="name" value="retirementCountryCode"/>
     <property name="label" value="Country Code"/>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.rice.location.framework.country.CountryValuesFinder"/>
+      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.kns.bo.lookup.CountryValuesFinder"/>
     </property>
   </bean>
   

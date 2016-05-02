@@ -4,8 +4,8 @@ import edu.cornell.kfs.sys.service.mock.MockParameterServiceImpl;
 import edu.cornell.kfs.vnd.fixture.PhoneNumberFixture;
 import junit.framework.TestCase;
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.rice.coreservice.api.parameter.Parameter;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.api.parameter.Parameter;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 
 import java.util.Collection;
 

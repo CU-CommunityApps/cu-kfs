@@ -12,13 +12,13 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
-import org.kuali.rice.krad.bo.DocumentHeader;
-import org.kuali.rice.krad.bo.GlobalBusinessObject;
-import org.kuali.rice.krad.bo.GlobalBusinessObjectDetail;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.krad.service.BusinessObjectService;
-import org.kuali.rice.krad.service.PersistenceStructureService;
+import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.krad.bo.GlobalBusinessObject;
+import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetail;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.PersistenceStructureService;
 
 public class SubObjectCodeGlobalEdit extends PersistableBusinessObjectBase implements GlobalBusinessObject, MutableInactivatable {
 
@@ -255,7 +255,7 @@ public class SubObjectCodeGlobalEdit extends PersistableBusinessObjectBase imple
 
 
     /**
-     * @see org.kuali.rice.krad.document.GlobalBusinessObject#getGlobalChangesToDelete()
+     * @see org.kuali.kfs.krad.document.GlobalBusinessObject#getGlobalChangesToDelete()
      */
     public List<PersistableBusinessObject> generateDeactivationsToPersist() {
         return null;
@@ -263,7 +263,7 @@ public class SubObjectCodeGlobalEdit extends PersistableBusinessObjectBase imple
 
 
     /**
-     * @see org.kuali.rice.krad.document.GlobalBusinessObject#isPersistable()
+     * @see org.kuali.kfs.krad.document.GlobalBusinessObject#isPersistable()
      */
     @Override
     public boolean isPersistable() {
@@ -286,7 +286,7 @@ public class SubObjectCodeGlobalEdit extends PersistableBusinessObjectBase imple
     }
 
 	/**
-	 * @see org.kuali.rice.krad.bo.GlobalBusinessObject#generateGlobalChangesToPersist()
+	 * @see org.kuali.kfs.krad.bo.GlobalBusinessObject#generateGlobalChangesToPersist()
 	 */
 	@Override
 	public List<PersistableBusinessObject> generateGlobalChangesToPersist() {
@@ -311,7 +311,7 @@ public class SubObjectCodeGlobalEdit extends PersistableBusinessObjectBase imple
 	}
 
 	/**
-	 * @see org.kuali.rice.krad.bo.GlobalBusinessObject#getAllDetailObjects()
+	 * @see org.kuali.kfs.krad.bo.GlobalBusinessObject#getAllDetailObjects()
 	 */
 	@Override
 	public List<? extends GlobalBusinessObjectDetail> getAllDetailObjects() {

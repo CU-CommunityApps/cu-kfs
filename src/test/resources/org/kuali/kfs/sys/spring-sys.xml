@@ -252,21 +252,21 @@
 	</bean>
 	
     <bean id="batchJobStatusLookupableHelperService" parent="batchJobStatusLookupableHelperService-parentBean" scope="prototype" />	 
- 	<bean id="batchJobStatusLookupableHelperService-parentBean" class="org.kuali.kfs.sys.businessobject.lookup.BatchJobStatusLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService" abstract="true">
+ 	<bean id="batchJobStatusLookupableHelperService-parentBean" class="org.kuali.kfs.sys.businessobject.lookup.BatchJobStatusLookupableHelperServiceImpl" scope="prototype" parent="cf.lookupableHelperService" abstract="true">
     	<property name="schedulerService" ref="schedulerService" />
     	<property name="parameterService" ref="parameterService" />
     	<property name="configurationService" ref="kualiConfigurationService" />
     </bean>
 
     <bean id="batchJobStatusLookupable" parent="batchJobStatusLookupable-parentBean" scope="prototype" />	
-	<bean id="batchJobStatusLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
-	    <property name="lookupableHelperService">
+	<bean id="batchJobStatusLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
+	    <property name="cf.lookupableHelperService">
 	        <ref bean="batchJobStatusLookupableHelperService" />
 	    </property>
 	</bean>
 
     <bean id="batchFileLookupableHelperService" parent="batchFileLookupableHelperService-parentBean" scope="prototype" />	
-	<bean id="batchFileLookupableHelperService-parentBean" class="org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService" abstract="true">
+	<bean id="batchFileLookupableHelperService-parentBean" class="org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupableHelperServiceImpl" scope="prototype" parent="cf.lookupableHelperService" abstract="true">
 		<property name="dateTimeService" ref="dateTimeService" />
 		<property name="batchFileAdminAuthorizationService" ref="batchFileAdminAuthorizationService"/>
 	</bean>
@@ -275,8 +275,8 @@
 	<bean id="batchFileAdminAuthorizationService-parentBean" class="org.kuali.kfs.sys.batch.service.impl.BatchFileAdminAuthorizationServiceImpl" abstract="true" />
 
     <bean id="batchFileLookupable" parent="batchFileLookupable-parentBean" scope="prototype" />	
-	<bean id="batchFileLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-	    <property name="lookupableHelperService">
+	<bean id="batchFileLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+	    <property name="cf.lookupableHelperService">
 	        <ref bean="batchFileLookupableHelperService" />
 	    </property>
 	</bean>
@@ -590,26 +590,26 @@
 	</bean>	
 	<bean id="taxRegionTypeLookupableHelperService" parent="taxRegionTypeLookupableHelperService-parentBean" scope="prototype"/>
 	
-	<bean id="taxRegionTypeLookupableHelperService-parentBean" class="org.kuali.kfs.sys.businessobject.lookup.TaxRegionTypeLookupableServiceImpl" parent="lookupableHelperService" abstract="true" />
+	<bean id="taxRegionTypeLookupableHelperService-parentBean" class="org.kuali.kfs.sys.businessobject.lookup.TaxRegionTypeLookupableServiceImpl" parent="cf.lookupableHelperService" abstract="true" />
 	
     <bean id="taxRegionTypeLookupable" parent="taxRegionTypeLookupable-parentBean" scope="prototype" />
-    <bean id="taxRegionTypeLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-        <property name="lookupableHelperService">
+    <bean id="taxRegionTypeLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+        <property name="cf.lookupableHelperService">
     		<ref bean="taxRegionTypeLookupableHelperService" /> 
         </property>
     </bean>		
 	
 	<bean id="taxRegionLookupable" parent="taxRegionLookupable-parentBean" scope="prototype"/>
     <bean id="taxRegionLookupable-parentBean" class="org.kuali.kfs.sys.businessobject.lookup.TaxRegionLookupableImpl" abstract="true">
-        <property name="lookupableHelperService">
-            <ref bean="lookupableHelperService" />
+        <property name="cf.lookupableHelperService">
+            <ref bean="cf.lookupableHelperService" />
         </property>
     </bean>	    
 	<bean id="moduleLookupable" parent="moduleLookupable-parentBean"/>
 	
-	<bean id="moduleLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
-		<property name="lookupableHelperService">
-        	<bean class="org.kuali.kfs.sys.businessobject.lookup.ModuleLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService" >
+	<bean id="moduleLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype" abstract="true">
+		<property name="cf.lookupableHelperService">
+        	<bean class="org.kuali.kfs.sys.businessobject.lookup.ModuleLookupableHelperServiceImpl" scope="prototype" parent="cf.lookupableHelperService" >
         		<property name="configService" ref="kualiConfigurationService" />
         	</bean>
 		</property>
@@ -636,36 +636,36 @@
     </bean>
 	<bean id="businessObjectComponentLookupable" parent="businessObjectComponentLookupable-parentBean" scope="prototype"/>
 
-    <bean id="businessObjectComponentLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-        <property name="lookupableHelperService">
-			<bean class="org.kuali.kfs.sys.businessobject.lookup.BusinessObjectComponentLookupableHelperServiceImpl" parent="lookupableHelperService">
+    <bean id="businessObjectComponentLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+        <property name="cf.lookupableHelperService">
+			<bean class="org.kuali.kfs.sys.businessobject.lookup.BusinessObjectComponentLookupableHelperServiceImpl" parent="cf.lookupableHelperService">
             	<property name="kfsBusinessObjectMetaDataService" ref="kfsBusinessObjectMetaDataService" />
             </bean>
         </property>
     </bean>
 	<bean id="businessObjectPropertyLookupable" parent="businessObjectPropertyLookupable-parentBean" scope="prototype"/>
     
-    <bean id="businessObjectPropertyLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-        <property name="lookupableHelperService">
-            <bean class="org.kuali.kfs.sys.businessobject.lookup.BusinessObjectPropertyLookupableHelperServiceImpl" parent="lookupableHelperService">
+    <bean id="businessObjectPropertyLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+        <property name="cf.lookupableHelperService">
+            <bean class="org.kuali.kfs.sys.businessobject.lookup.BusinessObjectPropertyLookupableHelperServiceImpl" parent="cf.lookupableHelperService">
             	<property name="kfsBusinessObjectMetaDataService" ref="kfsBusinessObjectMetaDataService" />
             </bean>
         </property>
     </bean>
 	<bean id="functionalFieldDescriptionLookupable" parent="functionalFieldDescriptionLookupable-parentBean" scope="prototype"/>
 
-    <bean id="functionalFieldDescriptionLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-        <property name="lookupableHelperService">
-        	<bean class="org.kuali.kfs.sys.businessobject.lookup.FunctionalFieldDescriptionLookupableHelperServiceImpl" parent="lookupableHelperService">
+    <bean id="functionalFieldDescriptionLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+        <property name="cf.lookupableHelperService">
+        	<bean class="org.kuali.kfs.sys.businessobject.lookup.FunctionalFieldDescriptionLookupableHelperServiceImpl" parent="cf.lookupableHelperService">
     	<property name="kfsBusinessObjectMetaDataService" ref="kfsBusinessObjectMetaDataService" />
     </bean>
         </property>
     </bean>
 	<bean id="dataMappingFieldDefinitionLookupable" parent="dataMappingFieldDefinitionLookupable-parentBean" scope="prototype"/>
 
-    <bean id="dataMappingFieldDefinitionLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" abstract="true">
-        <property name="lookupableHelperService">
-			<bean class="org.kuali.kfs.sys.businessobject.lookup.DataMappingFieldDefinitionLookupableHelperServiceImpl" parent="lookupableHelperService">
+    <bean id="dataMappingFieldDefinitionLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true">
+        <property name="cf.lookupableHelperService">
+			<bean class="org.kuali.kfs.sys.businessobject.lookup.DataMappingFieldDefinitionLookupableHelperServiceImpl" parent="cf.lookupableHelperService">
             	<property name="kfsBusinessObjectMetaDataService" ref="kfsBusinessObjectMetaDataService" />
             </bean>
         </property>
@@ -731,12 +731,12 @@
 
 	<bean id="electronicPaymentClaimLookupableHelperService" parent="electronicPaymentClaimLookupableHelperService-parentBean"  scope="prototype"/>
     
-    <bean id="electronicPaymentClaimLookupableHelperService-parentBean" class="org.kuali.kfs.sys.businessobject.lookup.ElectronicPaymentClaimLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService" abstract="true">
+    <bean id="electronicPaymentClaimLookupableHelperService-parentBean" class="org.kuali.kfs.sys.businessobject.lookup.ElectronicPaymentClaimLookupableHelperServiceImpl" scope="prototype" parent="cf.lookupableHelperService" abstract="true">
     	<property name="lookupDao"><ref bean="lookupDao" /></property>
     </bean>
     
-    <bean id="electronicPaymentClaimLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-        <property name="lookupableHelperService">
+    <bean id="electronicPaymentClaimLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="cf.lookupableHelperService">
             <ref bean="electronicPaymentClaimLookupableHelperService" />
         </property>
     </bean>
@@ -841,7 +841,7 @@
 	<bean id="batchJobModifierRoleTypeService" parent="batchJobModifierRoleTypeService-parentBean"/>
 
 	<bean id="batchJobModifierRoleTypeService-parentBean"
-		class="org.kuali.rice.krad.kim.PermissionDerivedRoleTypeServiceImpl" abstract="true">
+		class="org.kuali.kfs.krad.kim.PermissionDerivedRoleTypeServiceImpl" abstract="true">
 		<property name="permissionTemplateNamespace" value="KR-NS" />
 		<property name="permissionTemplateName" value="Modify Batch Job" />
 	</bean>

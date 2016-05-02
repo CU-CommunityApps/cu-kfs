@@ -280,12 +280,12 @@
 	<bean id="accountLookupableHelperService" parent="accountLookupableHelperService-parentBean" scope="prototype" />		
 	<bean id="accountLookupableHelperService-parentBean" abstract="true" 
 		class="org.kuali.kfs.coa.businessobject.lookup.KualiAccountLookupableHelperServiceImpl"
-		scope="prototype" parent="lookupableHelperService" />
+		scope="prototype" parent="cf.lookupableHelperService" />
 
 	<bean id="accountLookupable"  parent="accountLookupable-parentBean" scope="prototype"/>
-	<bean id="accountLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl"
+	<bean id="accountLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
 		 abstract="true">
-		<property name="lookupableHelperService">
+		<property name="cf.lookupableHelperService">
 			<ref bean="accountLookupableHelperService" />
 		</property>
 	</bean>
@@ -293,12 +293,12 @@
 	<bean id="organizationRoutingModelLookupableHelperService" parent="organizationRoutingModelLookupableHelperService-parentBean" scope="prototype" />
 	<bean id="organizationRoutingModelLookupableHelperService-parentBean" abstract="true" 
 		class="org.kuali.kfs.coa.businessobject.lookup.OrganizationRoutingModelNameLookupableHelperServiceImpl"
-		scope="prototype" parent="lookupableHelperService" />
+		scope="prototype" parent="cf.lookupableHelperService" />
 
 	<bean id="organizationRoutingModelLookupable"  parent="organizationRoutingModelLookupable-parentBean" scope="prototype"/>
-	<bean id="organizationRoutingModelLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl"
+	<bean id="organizationRoutingModelLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
 		 abstract="true">
-		<property name="lookupableHelperService">
+		<property name="cf.lookupableHelperService">
 			<ref bean="organizationRoutingModelLookupableHelperService" />
 		</property>
 	</bean>
@@ -306,12 +306,12 @@
 	<bean id="indirectCostRecoveryExclusionByTypeLookupableHelperService" parent="indirectCostRecoveryExclusionByTypeLookupableHelperService-parentBean" scope="prototype" />
 	<bean id="indirectCostRecoveryExclusionByTypeLookupableHelperService-parentBean" abstract="true" 
 		class="org.kuali.kfs.coa.businessobject.lookup.IndirectCostRecoveryExclusionTypeLookupableHelperServiceImpl"
-		scope="prototype" parent="lookupableHelperService" />
+		scope="prototype" parent="cf.lookupableHelperService" />
 
 	<bean id="indirectCostRecoveryExclusionByTypeLookupable"  parent="indirectCostRecoveryExclusionByTypeLookupable-parentBean" scope="prototype"/>
-	<bean id="indirectCostRecoveryExclusionByTypeLookupable-parentBean" class="org.kuali.rice.kns.lookup.KualiLookupableImpl"
+	<bean id="indirectCostRecoveryExclusionByTypeLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
 		 abstract="true">
-		<property name="lookupableHelperService">
+		<property name="cf.lookupableHelperService">
 			<ref bean="indirectCostRecoveryExclusionByTypeLookupableHelperService" />
 		</property>
 	</bean>
@@ -596,12 +596,12 @@
 	</bean>	
 
     <bean id="orgReviewRoleLookupableHelperService" parent="orgReviewRoleLookupableHelperService-parentBean" />
-    <bean id="orgReviewRoleLookupableHelperService-parentBean" class="org.kuali.kfs.coa.identity.OrgReviewRoleLookupableHelperServiceImpl" parent="lookupableHelperService" abstract="true">
+    <bean id="orgReviewRoleLookupableHelperService-parentBean" class="org.kuali.kfs.coa.identity.OrgReviewRoleLookupableHelperServiceImpl" parent="cf.lookupableHelperService" abstract="true">
 		<property name="orgReviewRoleService" ref="orgReviewRoleService" />
     </bean>
 
-	<bean id="orgReviewRoleLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" parent="kualiLookupable" scope="prototype">
-        <property name="lookupableHelperService" ref="orgReviewRoleLookupableHelperService" />
+	<bean id="orgReviewRoleLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" parent="cf.kualiLookupable" scope="prototype">
+        <property name="cf.lookupableHelperService" ref="orgReviewRoleLookupableHelperService" />
     </bean>
     
     <bean id="accountDelegateService"  parent="accountDelegateService-parentBean"/>

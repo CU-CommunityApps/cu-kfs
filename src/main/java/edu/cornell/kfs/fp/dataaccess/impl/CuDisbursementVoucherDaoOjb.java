@@ -8,7 +8,7 @@ import org.kuali.kfs.fp.dataaccess.impl.DisbursementVoucherDaoOjb;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.krad.service.DataDictionaryService;
+import org.kuali.kfs.krad.service.DataDictionaryService;
 
 public class CuDisbursementVoucherDaoOjb extends DisbursementVoucherDaoOjb {
 	

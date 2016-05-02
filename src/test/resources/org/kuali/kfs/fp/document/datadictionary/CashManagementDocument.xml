@@ -92,7 +92,7 @@
     	</property>
 	</bean>
 	
-	<bean id="CashManagementDocument-DocumentValuePathGroup-InitiatorCampus" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+	<bean id="CashManagementDocument-DocumentValuePathGroup-InitiatorCampus" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
     	<property name="documentValues">
     		<list>
     			<value>documentHeader.workflowDocument.initiator.campusCode</value>
@@ -100,7 +100,7 @@
     	</property>
    	</bean>
    	
-   	<bean id="CashManagementDocument-RoutingType-InitiatorCampus" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+   	<bean id="CashManagementDocument-RoutingType-InitiatorCampus" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
 		        <ref bean="RoutingAttribute-campusCode"/>

@@ -19,7 +19,7 @@
 <!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN" "http://directwebremoting.org/schema/dwr30.dtd">
 <dwr>
     <init>
-        <creator id="spring" class= "org.kuali.rice.kns.web.servlet.dwr.GlobalResourceDelegatingSpringCreator" />
+        <creator id="spring" class= "org.kuali.kfs.kns.web.servlet.dwr.GlobalResourceDelegatingSpringCreator" />
     </init>
     <allow>
         <convert converter="bean" match="org.kuali.kfs.module.endow.businessobject.EndowmentTransactionCode">

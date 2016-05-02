@@ -134,7 +134,7 @@
              </pattern>                            
              
              <pattern value="note">
-                <object-create-rule classname="org.kuali.rice.krad.bo.Note" />
+                <object-create-rule classname="org.kuali.kfs.krad.bo.Note" />
                 
                 <call-method-rule pattern="noteText" methodname="setNoteText" paramcount="0" /> 
                 
@@ -142,7 +142,7 @@
              </pattern>
             
              <pattern value="attachment">
-                <object-create-rule classname="org.kuali.rice.krad.bo.Attachment" />
+                <object-create-rule classname="org.kuali.kfs.krad.bo.Attachment" />
                 
                 <call-method-rule pattern="mimeTypeCode" methodname="setAttachmentMimeTypeCode" paramcount="0" /> 
                 <call-method-rule pattern="fileName" methodname="setAttachmentFileName" paramcount="0" /> 

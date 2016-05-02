@@ -53,9 +53,9 @@
     	
     	<property name="searchingTypeDefinitions">
     		<list>
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
     						<property name="businessObjectClassName" value="edu.cornell.kfs.fp.document.CuProcurementCardDocument"/>
     						<property name="attributeName" value="accountNumberForSearching"/>
     						<property name="showAttributeInResultSet" value="true"/>

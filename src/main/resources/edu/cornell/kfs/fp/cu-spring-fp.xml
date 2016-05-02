@@ -238,7 +238,7 @@
 	</bean>
 	
 	<bean id="disbursementPayeeLookupable"  parent="disbursementPayeeLookupable-parentBean" scope="prototype">
-		<property name="lookupableHelperService">
+		<property name="cf.lookupableHelperService">
 			<ref bean="disbursementPayeeLookupableHelperService" />
 		</property>
 	</bean>

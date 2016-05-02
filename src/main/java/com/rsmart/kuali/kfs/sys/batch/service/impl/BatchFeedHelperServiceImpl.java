@@ -43,21 +43,21 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.kns.util.KNSConstants;
-import org.kuali.rice.krad.bo.Attachment;
-import org.kuali.rice.krad.bo.Note;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.datadictionary.AttributeDefinition;
-import org.kuali.rice.krad.datadictionary.DataDictionary;
-import org.kuali.rice.krad.datadictionary.DataDictionaryEntry;
-import org.kuali.rice.krad.datadictionary.DataDictionaryEntryBase;
-import org.kuali.rice.krad.document.Document;
-import org.kuali.rice.krad.service.AttachmentService;
-import org.kuali.rice.krad.service.DataDictionaryService;
-import org.kuali.rice.krad.util.ErrorMessage;
-import org.kuali.rice.krad.util.KRADConstants;
-import org.kuali.rice.krad.util.MessageMap;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.util.KNSConstants;
+import org.kuali.kfs.krad.bo.Attachment;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
+import org.kuali.kfs.krad.datadictionary.DataDictionary;
+import org.kuali.kfs.krad.datadictionary.DataDictionaryEntry;
+import org.kuali.kfs.krad.datadictionary.DataDictionaryEntryBase;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.service.AttachmentService;
+import org.kuali.kfs.krad.service.DataDictionaryService;
+import org.kuali.kfs.krad.util.ErrorMessage;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.MessageMap;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import com.rsmart.kuali.kfs.sys.KFSKeyConstants;
 import com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService;
@@ -137,7 +137,7 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
 
     /**
      * @see com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService#getAuditMessage(java.lang.String, java.lang.String,
-     *      org.kuali.rice.kns.util.ErrorMap)
+     *      org.kuali.kfs.kns.util.ErrorMap)
      */
     public String getAuditMessage(String successfulErrorKey, String documentNumber, MessageMap errorMap) {
         String auditMessage = "";
@@ -208,8 +208,8 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
     }
 
     /**
-     * @see com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService#loadDocumentAttachments(org.kuali.rice.kns.document.Document,
-     *      java.util.List, java.lang.String, java.lang.String, org.kuali.rice.kns.util.ErrorMap)
+     * @see com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService#loadDocumentAttachments(org.kuali.kfs.kns.document.Document,
+     *      java.util.List, java.lang.String, java.lang.String, org.kuali.kfs.kns.util.ErrorMap)
      */
     public void loadDocumentAttachments(Document document, List<Attachment> attachments, String attachmentsPath, String attachmentType, MessageMap errorMap) {
         for (Attachment attachment : attachments) {
@@ -260,8 +260,8 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
     }
 
     /**
-     * @see com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService#performExistenceAndActiveValidation(org.kuali.rice.kns.bo.PersistableBusinessObject,
-     *      java.lang.String, java.lang.String, org.kuali.rice.kns.util.ErrorMap)
+     * @see com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService#performExistenceAndActiveValidation(org.kuali.kfs.kns.bo.PersistableBusinessObject,
+     *      java.lang.String, java.lang.String, org.kuali.kfs.kns.util.ErrorMap)
      */
     public void performExistenceAndActiveValidation(PersistableBusinessObject businessObject, String referenceName, String propertyName, MessageMap errorMap) {
         Object propertyValue = ObjectUtils.getPropertyValue(businessObject, propertyName);
@@ -282,8 +282,8 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
     }
 
     /**
-     * @see com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService#addRequiredError(org.kuali.rice.kns.bo.PersistableBusinessObject,
-     *      java.lang.String, org.kuali.rice.kns.util.ErrorMap)
+     * @see com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService#addRequiredError(org.kuali.kfs.kns.bo.PersistableBusinessObject,
+     *      java.lang.String, org.kuali.kfs.kns.util.ErrorMap)
      */
     public void addRequiredError(PersistableBusinessObject businessObject, String propertyName, MessageMap errorMap) {
         String propertyLabel = dataDictionaryService.getAttributeLabel(businessObject.getClass(), propertyName);
@@ -292,7 +292,7 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
 
     /**
      * @see com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService#addExistenceError(java.lang.String, java.lang.String,
-     *      org.kuali.rice.kns.util.ErrorMap)
+     *      org.kuali.kfs.kns.util.ErrorMap)
      */
     public void addExistenceError(String propertyName, String propertyValue, MessageMap errorMap) {
         String propertyLabel = dataDictionaryService.getAttributeLabel(PurchaseOrderDocument.class, propertyName);
@@ -301,7 +301,7 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
 
     /**
      * @see com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService#addInactiveError(java.lang.String, java.lang.String,
-     *      org.kuali.rice.kns.util.ErrorMap)
+     *      org.kuali.kfs.kns.util.ErrorMap)
      */
     public void addInactiveError(String propertyName, String propertyValue, MessageMap errorMap) {
         String propertyLabel = dataDictionaryService.getAttributeLabel(PurchaseOrderDocument.class, propertyName);

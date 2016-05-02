@@ -122,7 +122,7 @@
 		</property>
 	</bean>
 	
-	<bean id="AccountDelegateModelMaintenanceDocument-DocumentValuePathGroup-ChartOrganization" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+	<bean id="AccountDelegateModelMaintenanceDocument-DocumentValuePathGroup-ChartOrganization" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
     	<property name="documentCollectionPath">
     		<bean parent="AccountDelegateModelMaintenanceDocument-DocumentCollectionPath-chartAndOrganization">
     			<property name="collectionPath" value="newMaintainableObject.businessObject.accountDelegateModelDetails"/>
@@ -130,7 +130,7 @@
     	</property>
    	</bean>
    	
-   	 <bean id="AccountDelegateModelMaintenanceDocument-DocumentCollectionPath-chartAndOrganization" class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath" abstract="true">
+   	 <bean id="AccountDelegateModelMaintenanceDocument-DocumentCollectionPath-chartAndOrganization" class="org.kuali.kfs.krad.datadictionary.DocumentCollectionPath" abstract="true">
 		<property name="documentValues">
 	   		<list>
 	   			<value>chartOfAccountsCode</value>
@@ -139,7 +139,7 @@
    		</property>
    	</bean>
    	
-   	<bean id="AccountDelegateModelMaintenanceDocument-DocumentValuePathGroup-Chart" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+   	<bean id="AccountDelegateModelMaintenanceDocument-DocumentValuePathGroup-Chart" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
     	<property name="documentCollectionPath">
     		<bean parent="AccountDelegateModelMaintenanceDocument-DocumentCollectionPath-chart">
     			<property name="collectionPath" value="newMaintainableObject.businessObject.accountDelegateModelDetails"/>
@@ -147,7 +147,7 @@
     	</property>
    	</bean>
    	
-   	 <bean id="AccountDelegateModelMaintenanceDocument-DocumentCollectionPath-chart" class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath" abstract="true">
+   	 <bean id="AccountDelegateModelMaintenanceDocument-DocumentCollectionPath-chart" class="org.kuali.kfs.krad.datadictionary.DocumentCollectionPath" abstract="true">
 		<property name="documentValues">
 	   		<list>
 	   			<value>chartOfAccountsCode</value>
@@ -155,7 +155,7 @@
    		</property>
    	</bean>
    	
-   	<bean id="AccountDelegateModelMaintenanceDocument-RoutingType-OrganizationHierarchy" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+   	<bean id="AccountDelegateModelMaintenanceDocument-RoutingType-OrganizationHierarchy" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
 		        <ref bean="RoutingAttribute-Chart"/>
@@ -169,7 +169,7 @@
     	</property>
     </bean>
    	
-	<bean id="AccountDelegateModelMaintenanceDocument-RoutingType-Chart" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+	<bean id="AccountDelegateModelMaintenanceDocument-RoutingType-Chart" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
 		        <ref bean="RoutingAttribute-Chart"/>

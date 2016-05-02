@@ -31,8 +31,8 @@ import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.role.RoleService;
-import org.kuali.rice.krad.document.Document;
-import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.util.GlobalVariables;
 
 
 public class PurchasingAccountsPayableDocumentPresentationController extends FinancialSystemTransactionalDocumentPresentationControllerBase {
@@ -43,7 +43,7 @@ public class PurchasingAccountsPayableDocumentPresentationController extends Fin
     /**
      * None of the PURAP documents allowing editing by adhoc requests
      *
-     * @see org.kuali.rice.krad.document.authorization.DocumentPresentationControllerBase#canEdit(org.kuali.rice.krad.document.Document)
+     * @see org.kuali.kfs.krad.document.authorization.DocumentPresentationControllerBase#canEdit(org.kuali.kfs.krad.document.Document)
      */
     @Override
     public boolean canEdit(Document document) {

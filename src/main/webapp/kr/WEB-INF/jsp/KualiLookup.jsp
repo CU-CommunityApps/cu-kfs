@@ -244,7 +244,7 @@
                 <c:set var="totalColumnNums" value=""/>
                 
 				<c:forEach items="${row.columns}" var="column" varStatus="loopStatus">
-                    <c:set var="colClass" value="${ fn:startsWith(column.formatter, 'org.kuali.rice.krad.web.format.CurrencyFormatter') ? 'numbercell' : 'infocell' }" />
+                    <c:set var="colClass" value="${ fn:startsWith(column.formatter, 'org.kuali.kfs.krad.web.format.CurrencyFormatter') ? 'numbercell' : 'infocell' }" />
               
                     <c:if test="${!empty columnNums}" >
                       <c:set var="columnNums" value="${columnNums},"/>
@@ -282,7 +282,7 @@
 						<c:otherwise>
 							<display:column class="${colClass}" sortable="${column.sortable}"
 								title="${column.columnTitle}" comparator="${column.comparator}" total="${column.total}" value="${fn:escapeXml(staticColumnValue)}"
-								maxLength="${column.maxLength}" decorator="org.kuali.rice.kns.web.ui.FormatAwareDecorator"><c:out value="${column.propertyValue}"/>&nbsp;</display:column>
+								maxLength="${column.maxLength}" decorator="org.kuali.kfs.kns.web.ui.FormatAwareDecorator"><c:out value="${column.propertyValue}"/>&nbsp;</display:column>
                         </c:otherwise>
 					</c:choose>
 				</c:forEach>

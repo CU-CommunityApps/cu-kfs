@@ -67,6 +67,6 @@
 
   <bean id="AICPAFunctionMaintenanceDocument-workflowAttributes" parent="AICPAFunctionMaintenanceDocument-workflowAttributes-parentBean"/>
 
-  <bean id="AICPAFunctionMaintenanceDocument-workflowAttributes-parentBean" abstract="true" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes">
+  <bean id="AICPAFunctionMaintenanceDocument-workflowAttributes-parentBean" abstract="true" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes">
   </bean>
 </beans>

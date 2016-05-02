@@ -20,8 +20,8 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.sys.service.PostalCodeValidationService;
-import org.kuali.rice.kns.datadictionary.validation.fieldlevel.ZipcodeValidationPattern;
-import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.kfs.kns.datadictionary.validation.fieldlevel.ZipcodeValidationPattern;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.rice.location.api.state.State;
 import org.kuali.rice.location.api.state.StateService;
 

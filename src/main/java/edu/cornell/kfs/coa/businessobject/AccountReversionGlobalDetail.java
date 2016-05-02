@@ -27,7 +27,7 @@ import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.krad.bo.GlobalBusinessObjectDetailBase;
+import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
 
 /**
  * This is a representation of an Account Reversion Detail, made specifically for Global Account Reversions. However, as
@@ -47,7 +47,7 @@ public class AccountReversionGlobalDetail extends GlobalBusinessObjectDetailBase
     private ObjectCode accountReversionObject;
 
     /**
-     * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
+     * @see org.kuali.kfs.kns.bo.BusinessObjectBase#toStringMapper()
      */
     protected LinkedHashMap toStringMapperr_RICE20_REFACTORME() {
         LinkedHashMap stringMapper = new LinkedHashMap();

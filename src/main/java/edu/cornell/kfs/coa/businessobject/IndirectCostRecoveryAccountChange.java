@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
-import org.kuali.rice.krad.bo.GlobalBusinessObjectDetailBase;
+import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
 import org.springframework.beans.BeanUtils;
 
 public class IndirectCostRecoveryAccountChange extends GlobalBusinessObjectDetailBase {

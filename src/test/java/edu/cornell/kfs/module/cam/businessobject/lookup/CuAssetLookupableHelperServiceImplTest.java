@@ -11,9 +11,9 @@ import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.rice.kns.lookup.AbstractLookupableHelperServiceImpl;
-import org.kuali.rice.kns.lookup.LookupableHelperService;
-import org.kuali.rice.krad.lookup.CollectionIncomplete;
+import org.kuali.kfs.kns.lookup.AbstractLookupableHelperServiceImpl;
+import org.kuali.kfs.kns.lookup.LookupableHelperService;
+import org.kuali.kfs.krad.lookup.CollectionIncomplete;
 
 import edu.cornell.kfs.module.ezra.service.EzraService;
 

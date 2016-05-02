@@ -174,12 +174,12 @@
      -->
     <row id="DOCUMENT_NOTE">
         <objectClasses>
-            <objectClass name="org.kuali.rice.krad.bo.Note" />
+            <objectClass name="org.kuali.kfs.krad.bo.Note" />
         </objectClasses>
         <!-- ==== Fields from KRNS_NTE_T ==== -->
-        <field name="org.kuali.rice.krad.bo.Note::noteIdentifier" alias="noteIdentifier" />
-        <field name="org.kuali.rice.krad.bo.Note::remoteObjectIdentifier" alias="remoteObjectIdentifier" />
-        <field name="org.kuali.rice.krad.bo.Note::noteText" alias="noteText" />
+        <field name="org.kuali.kfs.krad.bo.Note::noteIdentifier" alias="noteIdentifier" />
+        <field name="org.kuali.kfs.krad.bo.Note::remoteObjectIdentifier" alias="remoteObjectIdentifier" />
+        <field name="org.kuali.kfs.krad.bo.Note::noteText" alias="noteText" />
     </row>
     <!--
         =====================================================

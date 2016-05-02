@@ -17,11 +17,11 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
-import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.businessobject.A21SubAccountChange;
 import edu.cornell.kfs.coa.businessobject.IndirectCostRecoveryAccountChange;
@@ -33,7 +33,7 @@ import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	
 	/**
-	 * @see edu.cornell.kfs.coa.document.validation.impl.GlobalIndirectCostRecoveryAccountsRule#processCustomSaveDocumentBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument)
+	 * @see edu.cornell.kfs.coa.document.validation.impl.GlobalIndirectCostRecoveryAccountsRule#processCustomSaveDocumentBusinessRules(org.kuali.kfs.kns.document.MaintenanceDocument)
 	 */
 	protected boolean processCustomSaveDocumentBusinessRules(MaintenanceDocument document) {
 		boolean success = super.processCustomSaveDocumentBusinessRules(document);
@@ -51,7 +51,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
 	}
 	
 	/**
-	 * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomRouteDocumentBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument)
+	 * @see org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomRouteDocumentBusinessRules(org.kuali.kfs.kns.document.MaintenanceDocument)
 	 */
 	@Override
 	protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {
@@ -70,7 +70,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
 	}
 	
 	/**
-	 * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomApproveDocumentBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument)
+	 * @see org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomApproveDocumentBusinessRules(org.kuali.kfs.kns.document.MaintenanceDocument)
 	 */
 	@Override
 	protected boolean processCustomApproveDocumentBusinessRules(MaintenanceDocument document) {
@@ -107,7 +107,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
 	 
 	
 	/**
-	 * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomAddCollectionLineBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument, java.lang.String, org.kuali.rice.krad.bo.PersistableBusinessObject)
+	 * @see org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomAddCollectionLineBusinessRules(org.kuali.kfs.kns.document.MaintenanceDocument, java.lang.String, org.kuali.kfs.krad.bo.PersistableBusinessObject)
 	 */
 	@Override
 	public boolean processCustomAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName, PersistableBusinessObject line) {

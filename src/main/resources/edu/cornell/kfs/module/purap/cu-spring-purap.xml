@@ -129,10 +129,10 @@
 	</bean>
 	
 	<!-- Lookupables -->
-   <bean id="unitOfMeasureLookupHelperService" class="edu.cornell.kfs.module.purap.businessobject.lookup.UnitOfMeasureLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService" />
+   <bean id="unitOfMeasureLookupHelperService" class="edu.cornell.kfs.module.purap.businessobject.lookup.UnitOfMeasureLookupableHelperServiceImpl" scope="prototype" parent="cf.lookupableHelperService" />
 	
-    <bean id="unitOfMeasureLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-		<property name="lookupableHelperService">
+    <bean id="unitOfMeasureLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
+		<property name="cf.lookupableHelperService">
 			<ref bean="unitOfMeasureLookupHelperService" />
 		</property>
 	</bean>
@@ -161,8 +161,8 @@
         </property>
     </bean>
     
-	<bean id="iWantDocVendorLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-        <property name="lookupableHelperService">
+	<bean id="iWantDocVendorLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="cf.lookupableHelperService">
             <ref bean="iWantDocVendorLookupableHelperService" />
         </property>
     </bean>
@@ -217,8 +217,9 @@
 		<property name="vendorService" ref="vendorService" />
 		<property name="mimeTypeProperties" ref="mimeTypeProperties" />
 	</bean>
-    
-    <bean id="purchaseOrderDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPurchaseOrderDaoOjb" />
+
+	<bean id="autoClosePurchaseOrderService" parent="autoClosePurchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.batch.service.impl.CuAutoClosePurchaseOrderServiceImpl" />
+	<bean id="purchaseOrderDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPurchaseOrderDaoOjb" />
  	<bean id="purchaseOrderService" parent="purchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchaseOrderServiceImpl" />
  	<bean id="relatedDocumentDerivedRoleTypeService" parent="relatedDocumentDerivedRoleTypeService-parentBean" class="edu.cornell.kfs.module.purap.identity.CuRelatedDocumentDerivedRoleTypeServiceImpl" />
     <bean id="receivingService" parent="receivingService-parentBean"  class="edu.cornell.kfs.module.purap.document.service.impl.CuReceivingServiceImpl" />

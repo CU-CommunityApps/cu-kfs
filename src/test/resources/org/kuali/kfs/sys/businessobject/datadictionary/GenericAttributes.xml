@@ -35,9 +35,9 @@
   <bean id="GenericAmountControl" parent="CurrencyControlDefinition" p:formattedMaxLength="26" p:size="10"/>
   <bean id="GenericBigTextControl" parent="TextareaControlDefinition" p:rows="5" p:cols="40"/>
   <bean id="PhoneNumberTextControl" parent="TextControlDefinition" p:size="40"/>
-  <bean id="StateCodeSelectControl" parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.rice.location.framework.state.StateValuesFinder" p:includeKeyInLabel="false"/>
-  <bean id="IndicatorYNNullSelectControl" parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.rice.krad.keyvalues.IndicatorYNNullValuesFinder" p:includeKeyInLabel="false"/>
-  <bean id="IndicatorYNOnlySelectControl" parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.rice.krad.keyvalues.IndicatorYNOnlyValuesFinder" p:includeKeyInLabel="false"/>
+  <bean id="StateCodeSelectControl" parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.kns.bo.lookup.StateValuesFinder" p:includeKeyInLabel="false"/>
+  <bean id="IndicatorYNNullSelectControl" parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.krad.keyvalues.IndicatorYNNullValuesFinder" p:includeKeyInLabel="false"/>
+  <bean id="IndicatorYNOnlySelectControl" parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.krad.keyvalues.IndicatorYNOnlyValuesFinder" p:includeKeyInLabel="false"/>
 
   <bean id="IndicatorYNSelectControl" parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.sys.businessobject.options.YesNoValuesFinder" p:includeKeyInLabel="false"/>
 

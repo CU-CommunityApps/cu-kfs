@@ -60,6 +60,6 @@
   <!-- workflow attributes -->
   <bean id="OrganizationReversionCategoryMaintenanceDocument-workflowAttributes" parent="OrganizationReversionCategoryMaintenanceDocument-workflowAttributes-parentBean"/>
   
-  <bean id="OrganizationReversionCategoryMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+  <bean id="OrganizationReversionCategoryMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
   
 </beans>

@@ -100,9 +100,9 @@
   <bean id="AssetLocationGlobalMaintenanceDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
     <property name="searchingTypeDefinitions">
     	<list>
-		    <bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		    <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		    	<property name="searchingAttribute">
-		    		<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		    		<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		    			<property name="businessObjectClassName" value="org.kuali.kfs.module.cam.businessobject.Asset"/>
 		    			<property name="attributeName" value="campusTagNumber"/>
 		    		</bean>
@@ -114,9 +114,9 @@
 		    	</property>
 		    </bean>
 		    
-		    <bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		    <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		    	<property name="searchingAttribute">
-		    		<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		    		<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		    			<property name="businessObjectClassName" value="org.kuali.kfs.module.cam.businessobject.Asset"/>
 		    			<property name="attributeName" value="organizationOwnerChartOfAccountsCode"/>
 		    		</bean>
@@ -128,9 +128,9 @@
 		    	</property>
 		    </bean>
 		    
-		    <bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		    <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		    	<property name="searchingAttribute">
-		    		<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		    		<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		    			<property name="businessObjectClassName" value="org.kuali.kfs.coa.businessobject.Organization"/>
 		    			<property name="attributeName" value="organizationCode"/>
 		    		</bean>
@@ -142,9 +142,9 @@
 		    	</property>
 		    </bean>
 		    
-		    <bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		    <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		    	<property name="searchingAttribute">
-		    		<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		    		<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		    			<property name="businessObjectClassName" value="org.kuali.kfs.module.cam.businessobject.Asset"/>
 		    			<property name="attributeName" value="organizationOwnerAccountNumber"/>
 		    		</bean>
@@ -164,14 +164,14 @@
     </property>
   </bean>
   
-    <bean id="DocumentValuePathGroup-AssetLocationGlobalMaintenanceDocument-OrganizationHierarchy-assetLocationGlobalDetails" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+    <bean id="DocumentValuePathGroup-AssetLocationGlobalMaintenanceDocument-OrganizationHierarchy-assetLocationGlobalDetails" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
     	<property name="documentCollectionPath">
     		<bean parent="DocumentCollectionPath-AssetDetail-chartAndOrgCode">
     			<property name="collectionPath" value="newMaintainableObject.businessObject.assetLocationGlobalDetails"/>
     		</bean>
     	</property>
     </bean>
-    <bean id="RoutingType-AssetLocationGlobalMaintenanceDocument-OrganizationHierarchy" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    <bean id="RoutingType-AssetLocationGlobalMaintenanceDocument-OrganizationHierarchy" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
 		        <ref bean="RoutingAttribute-chartOfAccountsCode"/>

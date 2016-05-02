@@ -21,7 +21,7 @@ public class CuPotentiallySensitiveDocumentRoleTypeServiceImpl extends Potential
     /**
      * Overridden to perform improved matching for the document sensitivity indicator.
      * 
-     * @see org.kuali.rice.kns.kim.type.DataDictionaryTypeServiceBase#performMatch(java.util.Map, java.util.Map)
+     * @see org.kuali.kfs.kns.kim.type.DataDictionaryTypeServiceBase#performMatch(java.util.Map, java.util.Map)
      */
     @Override
     protected boolean performMatch(Map<String, String> inputAttributes, Map<String, String> storedAttributes) {

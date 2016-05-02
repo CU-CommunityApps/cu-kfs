@@ -308,7 +308,7 @@
     <property name="name" value="campusCode"/>
     <property name="required" value="false"/>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.rice.location.framework.campus.CampusValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.kns.bo.lookup.CampusValuesFinder" p:includeKeyInLabel="false"/>
     </property>
     
   </bean>
@@ -432,9 +432,9 @@
 	<bean id="DisbursementVoucherDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
     	<property name="searchingTypeDefinitions">
     		<list>
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
     						<property name="businessObjectClassName" value="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail"/>
     						<property name="attributeName" value="disbVchrPayeeIdNumber"/>
     					</bean>
@@ -445,9 +445,9 @@
     					</list>
     				</property>
     			</bean>
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
     						<property name="businessObjectClassName" value="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail"/>
     						<property name="attributeName" value="disbVchrPayeePersonName"/>
     					</bean>
@@ -458,9 +458,9 @@
     					</list>
     				</property>
     			</bean>
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
     						<property name="businessObjectClassName" value="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail"/>
     						<property name="attributeName" value="disbVchrPaymentReasonCode"/>
     					</bean>
@@ -471,9 +471,9 @@
     					</list>
     				</property>
     			</bean>
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
     						<property name="businessObjectClassName" value="org.kuali.kfs.fp.document.DisbursementVoucherDocument"/>
     						<property name="attributeName" value="extractDate"/>
     					</bean>
@@ -484,9 +484,9 @@
     					</list>
     				</property>
     			</bean>
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
     						<property name="businessObjectClassName" value="org.kuali.kfs.fp.document.DisbursementVoucherDocument"/>
     						<property name="attributeName" value="paidDate"/>
     					</bean>
@@ -497,9 +497,9 @@
     					</list>
     				</property>
     			</bean>
-    			<bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+    			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
     						<property name="businessObjectClassName" value="org.kuali.kfs.fp.document.DisbursementVoucherDocument"/>
     						<property name="attributeName" value="cancelDate"/>
     					</bean>
@@ -526,17 +526,17 @@
     	</property>
 	</bean>
   
-	<bean id="DisbursementVoucherDocument-RoutingType-PaymentMethod" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+	<bean id="DisbursementVoucherDocument-RoutingType-PaymentMethod" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
-		        <bean class="org.kuali.rice.krad.datadictionary.RoutingAttribute">
+		        <bean class="org.kuali.kfs.krad.datadictionary.RoutingAttribute">
 			    	<property name="qualificationAttributeName" value="paymentMethodCode"/>
 			    </bean>
     		</list>
     	</property>
     	<property name="documentValuePathGroups">
     		<list>
-    			<bean class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+    			<bean class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
     				<property name="documentValues">
     					<list>
     						<value>disbVchrPaymentMethodCode</value>
@@ -547,7 +547,7 @@
     	</property>
 	</bean>
 	
-	<bean id="DisbursementVoucherDocument-RoutingType-Campus" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+	<bean id="DisbursementVoucherDocument-RoutingType-Campus" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
 		        <ref bean="RoutingAttribute-campusCode"/>
@@ -555,7 +555,7 @@
     	</property>
     	<property name="documentValuePathGroups">
     		<list>
-    			<bean class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+    			<bean class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
     				<property name="documentValues">
     					<list>
     						<value>campusCode</value>

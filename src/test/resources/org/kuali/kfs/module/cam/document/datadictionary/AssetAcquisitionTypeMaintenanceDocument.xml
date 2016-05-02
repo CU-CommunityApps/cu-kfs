@@ -38,7 +38,7 @@
     
     
     <property name="documentTypeName" value="ACQT"/>
-    <property name="businessRulesClass" value="org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase"/>
+    <property name="businessRulesClass" value="org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase"/>
     <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
     <property name="workflowAttributes">
     	<ref bean="AssetAcquisitionTypeMaintenanceDocument-workflowAttributes"/>
@@ -66,6 +66,6 @@
   <!-- workflow attributes -->
   <bean id="AssetAcquisitionTypeMaintenanceDocument-workflowAttributes" parent="AssetAcquisitionTypeMaintenanceDocument-workflowAttributes-parentBean"/>
   
-  <bean id="AssetAcquisitionTypeMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true">
+  <bean id="AssetAcquisitionTypeMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true">
   </bean>
 </beans>
