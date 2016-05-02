@@ -1,6 +1,6 @@
 package edu.cornell.kfs.module.purap.businessobject;
 
-import org.kuali.kfs.krad.bo.Attachment;
+import org.kuali.rice.krad.bo.Attachment;
 
 public class BatchIWantAttachment extends Attachment{
 

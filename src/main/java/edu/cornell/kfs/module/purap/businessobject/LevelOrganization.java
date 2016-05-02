@@ -1,6 +1,6 @@
 package edu.cornell.kfs.module.purap.businessobject;
 
-import org.kuali.kfs.krad.bo.KualiCodeBase;
+import org.kuali.rice.krad.bo.KualiCodeBase;
 
 
 public class LevelOrganization extends KualiCodeBase{

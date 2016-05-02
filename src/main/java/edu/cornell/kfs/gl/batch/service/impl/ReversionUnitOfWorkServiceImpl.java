@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.gl.batch.service.ReversionUnitOfWorkService;
 import edu.cornell.kfs.gl.businessobject.ReversionUnitOfWork;

@@ -6,7 +6,7 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.SubObjectCode;
 import org.kuali.kfs.coa.service.impl.SubObjectTrickleDownInactivationServiceImpl;
 import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.krad.bo.Note;
+import org.kuali.rice.krad.bo.Note;
 
 public class CuSubObjectTrickleDownInactivationServiceImpl extends SubObjectTrickleDownInactivationServiceImpl {
 	

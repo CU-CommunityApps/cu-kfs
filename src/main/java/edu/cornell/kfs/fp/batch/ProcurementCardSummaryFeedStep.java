@@ -11,7 +11,7 @@ import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.fp.batch.service.ProcurementCardSummaryFeedService;
 
@@ -24,7 +24,7 @@ public class ProcurementCardSummaryFeedStep extends AbstractStep {
 	    protected ProcurementCardSummaryFeedService procurementCardSummaryFeedService;
 	    
 	    /**
-	     * @see org.kuali.kfs.kns.bo.Step#execute(java.lang.String, java.util.Date)
+	     * @see org.kuali.kfs.sys.batch.Step#execute(java.lang.String, java.util.Date)
 	     */
 	public boolean execute(String arg0, Date arg1) throws InterruptedException {
 

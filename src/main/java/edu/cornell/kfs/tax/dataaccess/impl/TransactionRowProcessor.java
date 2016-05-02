@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxFieldSource;

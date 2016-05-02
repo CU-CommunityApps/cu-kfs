@@ -41,7 +41,7 @@ public class AutoCancelBatchStep extends AbstractStep {
      * 
      * @param jobName Job Name
      * @param jobRunDate Job Date
-     * @see org.kuali.kfs.kns.bo.Step#execute(java.lang.String, java.util.Date)
+     * @see org.kuali.kfs.sys.batch.Step#execute(java.lang.String, java.util.Date)
      */
     @Transactional
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {

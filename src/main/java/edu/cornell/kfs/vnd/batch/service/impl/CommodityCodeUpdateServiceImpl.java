@@ -22,9 +22,9 @@ import org.kuali.kfs.vnd.businessobject.CommodityCode;
 import org.kuali.kfs.vnd.service.CommodityCodeService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.vnd.batch.CommodityCodeInputFileType;

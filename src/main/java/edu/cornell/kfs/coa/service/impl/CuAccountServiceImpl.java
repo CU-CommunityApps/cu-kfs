@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.service.impl.AccountServiceImpl;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.service.NoteService;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.service.NoteService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.service.CuAccountService;
 

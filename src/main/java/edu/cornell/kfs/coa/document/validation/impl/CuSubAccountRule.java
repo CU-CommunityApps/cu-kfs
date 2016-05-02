@@ -8,7 +8,7 @@ import org.kuali.kfs.coa.businessobject.A21SubAccount;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.document.validation.impl.SubAccountRule;
 import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 

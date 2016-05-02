@@ -9,7 +9,7 @@ import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.businessobject.UnitOfMeasure;
 import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.kns.lookup.LookupableHelperService;
+import org.kuali.rice.kns.lookup.LookupableHelperService;
 
 @ConfigureContext
 @SuppressWarnings("deprecation")

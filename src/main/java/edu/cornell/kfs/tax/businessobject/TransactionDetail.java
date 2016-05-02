@@ -1,7 +1,7 @@
 package edu.cornell.kfs.tax.businessobject;
 
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
+import org.kuali.rice.krad.bo.TransientBusinessObjectBase;
 
 /**
  * Convenience lightweight BO to allow for ORM tools to map to the

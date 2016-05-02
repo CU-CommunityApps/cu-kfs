@@ -13,8 +13,8 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.validation.impl.VendorPreRules;
-import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.rice.kns.document.MaintenanceDocument;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.vnd.CUVendorConstants;
 import edu.cornell.kfs.vnd.CUVendorKeyConstants;

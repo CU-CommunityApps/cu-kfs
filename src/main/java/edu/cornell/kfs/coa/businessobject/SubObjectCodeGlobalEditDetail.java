@@ -11,9 +11,9 @@ import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.SubObjectCode;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
-import org.kuali.kfs.krad.service.PersistenceStructureService;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.rice.krad.bo.GlobalBusinessObjectDetailBase;
+import org.kuali.rice.krad.service.PersistenceStructureService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 public class SubObjectCodeGlobalEditDetail extends GlobalBusinessObjectDetailBase {
 	private static final Logger LOG = Logger.getLogger(SubObjectCodeGlobalEditDetail.class);

@@ -10,9 +10,9 @@ import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.kns.lookup.LookupableHelperService;
+import org.kuali.rice.kns.lookup.LookupableHelperService;
 import org.kuali.rice.krad.bo.BusinessObject;
-import org.kuali.kfs.krad.lookup.CollectionIncomplete;
+import org.kuali.rice.krad.lookup.CollectionIncomplete;
 
 @ConfigureContext(session = ccs1)
 public class CuVendorLookupableHelperServiceImplTest extends KualiTestBase{

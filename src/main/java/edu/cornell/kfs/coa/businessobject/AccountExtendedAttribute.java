@@ -19,8 +19,8 @@ import java.sql.Date;
 import java.util.HashMap;
 
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
-import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency;
 import edu.cornell.kfs.module.cg.businessobject.InvoiceType;

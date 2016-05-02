@@ -15,7 +15,7 @@ import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.businessobject.ProposalOrganization;
 import org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector;
 import org.kuali.kfs.module.cg.businessobject.ProposalSubcontractor;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 public class CuAward extends Award {
 

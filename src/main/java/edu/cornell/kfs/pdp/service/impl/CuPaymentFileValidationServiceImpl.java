@@ -11,7 +11,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.OriginationCode;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.krad.util.MessageMap;
+import org.kuali.rice.krad.util.MessageMap;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 

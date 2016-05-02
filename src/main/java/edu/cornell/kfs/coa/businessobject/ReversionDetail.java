@@ -20,7 +20,7 @@ package edu.cornell.kfs.coa.businessobject;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 
 public abstract class ReversionDetail extends PersistableBusinessObjectBase {

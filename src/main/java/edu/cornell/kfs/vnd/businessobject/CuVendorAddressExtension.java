@@ -4,8 +4,8 @@ import java.util.HashMap;
 
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderTransmissionMethod;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
-import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 public class CuVendorAddressExtension extends PersistableBusinessObjectExtensionBase {
 

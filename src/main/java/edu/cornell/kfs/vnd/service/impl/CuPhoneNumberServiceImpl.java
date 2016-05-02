@@ -3,7 +3,7 @@ package edu.cornell.kfs.vnd.service.impl;
 import org.kuali.kfs.vnd.VendorParameterConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.service.impl.PhoneNumberServiceImpl;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 
 public class CuPhoneNumberServiceImpl extends PhoneNumberServiceImpl {

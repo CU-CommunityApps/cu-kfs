@@ -5,7 +5,7 @@ import org.kuali.kfs.sys.DocumentTestUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.fixture.AccountingLineFixture;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.rice.krad.service.DocumentService;
 
 public enum IndirectCostAdjustmentDocumentFixture {
     ICA_GOOD();

@@ -13,7 +13,7 @@ public class IWantDocumentFeedStep extends AbstractStep {
 	protected IWantDocumentFeedService iWantDocumentFeedService;
 
 	/**
-	 * @see org.kuali.kfs.kns.bo.Step#execute(java.lang.String, java.util.Date)
+	 * @see org.kuali.kfs.sys.batch.Step#execute(java.lang.String, java.util.Date)
 	 */
 	public boolean execute(String jobName, Date jobRunDate) {
 		return iWantDocumentFeedService.processIWantDocumentFiles();

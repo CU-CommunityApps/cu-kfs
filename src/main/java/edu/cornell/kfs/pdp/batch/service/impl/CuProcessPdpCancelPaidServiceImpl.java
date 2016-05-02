@@ -11,7 +11,7 @@ import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.sys.batch.service.PaymentSourceToExtractService;
 import org.kuali.kfs.sys.document.PaymentSource;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.integration.purap.CuPurchasingAccountsPayableModuleService;
 import edu.cornell.kfs.pdp.businessobject.PaymentDetailExtendedAttribute;

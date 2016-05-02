@@ -7,8 +7,8 @@ import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.web.struts.PaymentRequestForm;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.kns.web.ui.ExtraButton;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.rice.kns.web.ui.ExtraButton;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.CUPurapAuthorizationConstants.CUPaymentRequestEditMode;

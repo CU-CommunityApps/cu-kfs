@@ -9,10 +9,10 @@ import org.kuali.kfs.coa.businessobject.AccountDelegateModel;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.kns.document.authorization.BusinessObjectRestrictionsBase;
-import org.kuali.kfs.kns.lookup.HtmlData;
-import org.kuali.kfs.kns.lookup.LookupableHelperService;
-import org.kuali.kfs.kns.web.struts.form.LookupForm;
+import org.kuali.rice.kns.document.authorization.BusinessObjectRestrictionsBase;
+import org.kuali.rice.kns.lookup.HtmlData;
+import org.kuali.rice.kns.lookup.LookupableHelperService;
+import org.kuali.rice.kns.web.struts.form.LookupForm;
 
 @SuppressWarnings("deprecation")
 @ConfigureContext

@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.mail.MailMessage;
-import org.kuali.kfs.krad.service.MailService;
+import org.kuali.rice.krad.service.MailService;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 public class CUTransactionFilter implements Filter {

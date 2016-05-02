@@ -1,7 +1,7 @@
 package edu.cornell.kfs.tax.businessobject;
 
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 /**
  * Business object that overrides the default 1099/1042S tax bucket mapping
