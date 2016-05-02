@@ -17,7 +17,7 @@ import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.util.PurApItemUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.kfs.krad.document.Document;
+import org.kuali.rice.krad.document.Document;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants.PurchaseOrderStatuses;
 

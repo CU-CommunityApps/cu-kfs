@@ -45,8 +45,8 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
-import org.kuali.kfs.krad.bo.KualiCode;
-import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.bo.KualiCode;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconError;
@@ -127,7 +127,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
      * 
      * @param jobName Job Name
      * @param jobRunDate Job Date
-     * @see org.kuali.kfs.kns.bo.Step#execute(java.lang.String, java.util.Date)
+     * @see org.kuali.kfs.sys.batch.Step#execute(java.lang.String, java.util.Date)
      */
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
         LOG.info("Started CheckReconciliationImportStep @ " + (new Date()).toString());

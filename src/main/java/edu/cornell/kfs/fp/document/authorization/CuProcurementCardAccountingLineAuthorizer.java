@@ -17,7 +17,7 @@ import org.kuali.rice.kim.api.identity.Person;
 public class CuProcurementCardAccountingLineAuthorizer extends ProcurementCardAccountingLineAuthorizer {
 
     @Override
-    protected boolean determineEditPermissionByFieldName(AccountingDocument accountingDocument, AccountingLine accountingLine, String fieldName, Person currentUser, Set<String> currentNodes) {
+    protected boolean determineEditPermissionByFieldName(AccountingDocument accountingDocument, AccountingLine accountingLine, String fieldName, Person currentUser) {
         WorkflowDocument workflowDocument = accountingDocument.getDocumentHeader().getWorkflowDocument();
 
         List<ActionRequest> actionRequests = workflowDocument.getRootActionRequests();
@@ -39,6 +39,7 @@ public class CuProcurementCardAccountingLineAuthorizer extends ProcurementCardAc
         // 2. Check that the document is at AccountFullEdit route node
         if (accountingDocument.getDocumentHeader() != null &&
                 accountingDocument.getDocumentHeader().getWorkflowDocument() != null) {
+            Set<String> currentNodes = accountingDocument.getDocumentHeader().getWorkflowDocument().getCurrentNodeNames();
             if (currentNodes != null && currentNodes.contains(RouteLevelNames.ACCOUNT_REVIEW_FULL_EDIT)) {
                 // 3. Check that the current user has the permission to edit the document, which means in this case he can edit the accounting line
                 if (getDocumentAuthorizer(accountingDocument).canEdit(accountingDocument, currentUser)) {
@@ -49,7 +50,7 @@ public class CuProcurementCardAccountingLineAuthorizer extends ProcurementCardAc
             }
         }
 
-        return super.determineEditPermissionByFieldName(accountingDocument, accountingLine, fieldName, currentUser, currentNodes);
+        return super.determineEditPermissionByFieldName(accountingDocument, accountingLine, fieldName, currentUser);
     }
 
 }

@@ -1,7 +1,7 @@
 package edu.cornell.kfs.vnd.fixture;
 
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.rice.krad.service.BusinessObjectService;
 
 public enum VendorDetailFixture {
 

@@ -12,7 +12,7 @@ import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.sys.document.validation.GenericValidation;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
-import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.module.purap.document.CuPurchaseOrderAmendmentDocument;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;

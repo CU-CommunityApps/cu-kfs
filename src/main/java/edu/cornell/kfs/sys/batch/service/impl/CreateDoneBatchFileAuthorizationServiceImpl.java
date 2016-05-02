@@ -8,7 +8,7 @@ import org.kuali.kfs.sys.batch.service.impl.BatchFileAdminAuthorizationServiceIm
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.services.IdentityManagementService;
-import org.kuali.kfs.krad.service.KualiModuleService;
+import org.kuali.rice.krad.service.KualiModuleService;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.batch.service.CreateDoneBatchFileAuthorizationService;

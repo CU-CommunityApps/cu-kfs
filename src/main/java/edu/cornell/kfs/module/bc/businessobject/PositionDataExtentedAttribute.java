@@ -1,7 +1,7 @@
 package edu.cornell.kfs.module.bc.businessobject;
 import java.sql.Date;
 
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.rice.krad.bo.PersistableBusinessObjectExtensionBase;
 
 
 public class PositionDataExtentedAttribute extends PersistableBusinessObjectExtensionBase {

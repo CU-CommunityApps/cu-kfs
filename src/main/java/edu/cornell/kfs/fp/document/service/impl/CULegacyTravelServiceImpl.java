@@ -27,7 +27,7 @@ import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.rice.core.api.util.ClassLoaderUtils;
 import org.kuali.rice.core.api.util.ContextClassLoaderBinder;
-import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
 

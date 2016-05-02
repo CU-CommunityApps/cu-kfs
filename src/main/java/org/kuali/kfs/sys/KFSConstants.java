@@ -27,9 +27,9 @@ import org.kuali.rice.core.api.config.property.Config;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.kfs.kns.service.DataDictionaryService;
-import org.kuali.kfs.krad.bo.DocumentHeader;
-import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.rice.kns.service.DataDictionaryService;
+import org.kuali.rice.krad.bo.DocumentHeader;
+import org.kuali.rice.krad.util.KRADConstants;
 
 /**
  * This class is used to define global constants.

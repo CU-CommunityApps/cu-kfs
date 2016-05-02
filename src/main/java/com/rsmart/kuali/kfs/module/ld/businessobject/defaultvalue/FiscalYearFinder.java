@@ -19,8 +19,8 @@ import org.kuali.kfs.module.ld.batch.LaborEnterpriseFeedStep;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.valuefinder.ValueFinder;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.valuefinder.ValueFinder;
 
 import com.rsmart.kuali.kfs.module.ld.LdConstants;
 

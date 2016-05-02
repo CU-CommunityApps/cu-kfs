@@ -13,8 +13,8 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.batch.FiscalYearMakerStep;
 import org.kuali.kfs.sys.batch.dataaccess.impl.UniversityDateFiscalYearMakerImpl;
 import org.kuali.kfs.sys.businessobject.UniversityDate;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 public class CuUniversityDateFiscalYearMakerImpl extends UniversityDateFiscalYearMakerImpl {
 

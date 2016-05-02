@@ -26,7 +26,7 @@ import org.kuali.kfs.pdp.businessobject.DisbursementNumberFormatter;
 import org.kuali.kfs.pdp.businessobject.DisbursementNumberRange;
 import org.kuali.kfs.pdp.businessobject.FormatProcessSummary;
 import org.kuali.rice.core.web.format.CurrencyFormatter;
-import org.kuali.kfs.kns.web.struts.form.KualiForm;
+import org.kuali.rice.kns.web.struts.form.KualiForm;
 
 /**
  * Struts Action Form for Format Checks/ACH

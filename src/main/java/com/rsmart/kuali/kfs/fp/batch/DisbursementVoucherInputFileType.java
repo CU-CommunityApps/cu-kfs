@@ -23,7 +23,7 @@ import java.text.SimpleDateFormat;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.XmlBatchInputFileTypeBase;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.GlobalVariables;
 
 import com.rsmart.kuali.kfs.fp.FPConstants;
 import com.rsmart.kuali.kfs.fp.FPKeyConstants;

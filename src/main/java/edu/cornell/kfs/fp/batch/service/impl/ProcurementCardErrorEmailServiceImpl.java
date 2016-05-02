@@ -13,9 +13,9 @@ import java.util.Set;
 import javax.mail.MessagingException;
 
 import org.kuali.rice.core.api.mail.MailMessage;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.exception.InvalidAddressException;
-import org.kuali.kfs.krad.service.MailService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.exception.InvalidAddressException;
+import org.kuali.rice.krad.service.MailService;
 
 import edu.cornell.kfs.fp.batch.service.ProcurementCardErrorEmailService;
 

@@ -10,10 +10,10 @@ import org.kuali.kfs.module.purap.document.service.LogicContainer;
 import org.kuali.kfs.module.purap.document.service.impl.ReceivingServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.kfs.krad.UserSession;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.rice.krad.UserSession;
+import org.kuali.rice.krad.bo.Note;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import edu.cornell.kfs.module.purap.document.CuPurchaseOrderAmendmentDocument;
 
