@@ -18,7 +18,7 @@ package com.rsmart.kuali.kfs.module.ld.businessobject.lookup;
 import java.util.List;
 import java.util.Map;
 
-import org.kuali.rice.kns.lookup.HtmlData;
+import org.kuali.kfs.kns.lookup.HtmlData;
 import org.kuali.rice.krad.bo.BusinessObject;
 
 import com.rsmart.kuali.kfs.module.ld.businessobject.inquiry.BaseFundsInquirableImpl;
@@ -26,7 +26,7 @@ import com.rsmart.kuali.kfs.module.ld.businessobject.inquiry.BaseFundsInquirable
 public class BaseFundsLookupableHelperServiceImpl extends org.kuali.kfs.module.ld.businessobject.lookup.BaseFundsLookupableHelperServiceImpl {
 
     /**
-     * @see org.kuali.rice.kns.lookup.Lookupable#getInquiryUrl(org.kuali.rice.kns.bo.BusinessObject, java.lang.String)
+     * @see org.kuali.kfs.kns.lookup.Lookupable#getInquiryUrl(org.kuali.kfs.kns.bo.BusinessObject, java.lang.String)
      */
     @Override
     public HtmlData getInquiryUrl(BusinessObject bo, String propertyName) {

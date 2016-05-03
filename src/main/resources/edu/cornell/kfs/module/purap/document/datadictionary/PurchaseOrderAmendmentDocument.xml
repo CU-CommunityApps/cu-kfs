@@ -21,7 +21,7 @@
     <property name="documentPresentationControllerClass" value="edu.cornell.kfs.module.purap.document.authorization.CuPurchaseOrderAmendmentDocumentPresentationController"/>
   </bean>
 
-    <bean id="RoutingType-PurchaseOrderAmendmentDocument-newUnorderedItemAccount" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    <bean id="RoutingType-PurchaseOrderAmendmentDocument-newUnorderedItemAccount" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
 		        <ref bean="RoutingAttribute-financialDocumentTotalAmount" />

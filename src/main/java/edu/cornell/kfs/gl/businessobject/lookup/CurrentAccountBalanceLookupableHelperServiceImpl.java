@@ -41,11 +41,11 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.kns.lookup.HtmlData;
+import org.kuali.kfs.kns.lookup.HtmlData;
 import org.kuali.rice.krad.bo.BusinessObject;
-import org.kuali.rice.krad.exception.ValidationException;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.exception.ValidationException;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.gl.businessobject.CurrentAccountBalance;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
@@ -72,7 +72,7 @@ public class CurrentAccountBalanceLookupableHelperServiceImpl extends AbstractGe
     private AccountingPeriodService accountingPeriodService;
 
     /**
-     * @see org.kuali.rice.kns.lookup.AbstractLookupableHelperServiceImpl#getInquiryUrl(org.kuali.rice.kns.bo.BusinessObject,
+     * @see org.kuali.kfs.kns.lookup.AbstractLookupableHelperServiceImpl#getInquiryUrl(org.kuali.kfs.kns.bo.BusinessObject,
      *      java.lang.String)
      */
     @Override
@@ -89,7 +89,7 @@ public class CurrentAccountBalanceLookupableHelperServiceImpl extends AbstractGe
     }
 
     /**
-     * @see org.kuali.rice.kns.lookup.AbstractLookupableHelperServiceImpl#getSearchResults(java.util.Map)
+     * @see org.kuali.kfs.kns.lookup.AbstractLookupableHelperServiceImpl#getSearchResults(java.util.Map)
      */
     @Override
     public List getSearchResults(Map fieldValues) {
@@ -326,7 +326,7 @@ public class CurrentAccountBalanceLookupableHelperServiceImpl extends AbstractGe
     }
 
     /**
-     * @see org.kuali.rice.kns.lookup.AbstractLookupableHelperServiceImpl#validateSearchParameters(java.util.Map)
+     * @see org.kuali.kfs.kns.lookup.AbstractLookupableHelperServiceImpl#validateSearchParameters(java.util.Map)
      */
     @Override
     public void validateSearchParameters(Map fieldValues) {

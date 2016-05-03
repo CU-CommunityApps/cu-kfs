@@ -49,25 +49,25 @@
 	</bean>
 
   <!-- Need a full override of this bean, since Rice doesn't use the "parentBean" convention on this one. -->
-  <bean id="kradApplicationModule" class="org.kuali.rice.krad.service.impl.KRADModuleService">
+  <bean id="kradApplicationModule" class="org.kuali.kfs.krad.service.impl.KRADModuleService">
     <property name="moduleConfiguration" ref="kradApplicationModuleConfiguration"/>
     <property name="kualiModuleService" ref="kualiModuleService"/>
     <property name="businessObjects">
       <list>
-        <value>org.kuali.rice.krad.maintenance.MaintenanceDocumentBase</value>
-        <value>org.kuali.rice.krad.bo.DocumentAttachment</value>
-        <value>org.kuali.rice.krad.maintenance.MaintenanceLock</value>
-        <value>org.kuali.rice.krad.bo.DocumentHeader</value>
-        <value>org.kuali.rice.krad.document.authorization.PessimisticLock</value>
-        <value>org.kuali.rice.krad.bo.Note</value>
-        <value>org.kuali.rice.krad.bo.NoteType</value>
-        <value>org.kuali.rice.krad.bo.Attachment</value>
-        <value>org.kuali.rice.krad.bo.AdHocRouteRecipient</value>
-        <value>org.kuali.rice.krad.bo.AdHocRoutePerson</value>
-        <value>org.kuali.rice.krad.bo.AdHocRouteWorkgroup</value>
-        <value>org.kuali.rice.krad.bo.LookupResults</value>
-        <value>org.kuali.rice.krad.bo.SelectedObjectIds</value>
-        <value>org.kuali.rice.krad.bo.SessionDocument</value>
+        <value>org.kuali.kfs.krad.maintenance.MaintenanceDocumentBase</value>
+        <value>org.kuali.kfs.krad.bo.DocumentAttachment</value>
+        <value>org.kuali.kfs.krad.maintenance.MaintenanceLock</value>
+        <value>org.kuali.kfs.krad.bo.DocumentHeader</value>
+        <value>org.kuali.kfs.krad.document.authorization.PessimisticLock</value>
+        <value>org.kuali.kfs.krad.bo.Note</value>
+        <value>org.kuali.kfs.krad.bo.NoteType</value>
+        <value>org.kuali.kfs.krad.bo.Attachment</value>
+        <value>org.kuali.kfs.krad.bo.AdHocRouteRecipient</value>
+        <value>org.kuali.kfs.krad.bo.AdHocRoutePerson</value>
+        <value>org.kuali.kfs.krad.bo.AdHocRouteWorkgroup</value>
+        <value>org.kuali.kfs.krad.bo.LookupResults</value>
+        <value>org.kuali.kfs.krad.bo.SelectedObjectIds</value>
+        <value>org.kuali.kfs.krad.bo.SessionDocument</value>
         <!-- CU Customization: Add NoteExtendedAttribute to the list. -->
         <value>edu.cornell.kfs.krad.businessobject.NoteExtendedAttribute</value>
       </list>

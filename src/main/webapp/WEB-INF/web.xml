@@ -37,7 +37,7 @@
 	
   <filter>
     <filter-name>HideWebInfFilter</filter-name>
-    <filter-class>org.kuali.rice.krad.web.filter.HideWebInfFilter</filter-class>
+    <filter-class>org.kuali.kfs.krad.web.filter.HideWebInfFilter</filter-class>
   </filter>
 
   <filter>
@@ -47,7 +47,7 @@
   
   <filter>
      <filter-name>ParameterFilter</filter-name>
-     <filter-class>org.kuali.rice.kns.web.filter.ParameterFilter</filter-class>
+     <filter-class>org.kuali.kfs.kns.web.filter.ParameterFilter</filter-class>
      <init-param>
        <param-name>excludeParams</param-name>
        <param-value>(.*\.|^|\[('|"))(c|C)lass(\.|('|")]|\[).*</param-value>
@@ -162,7 +162,7 @@
   </filter-mapping>
 
   <listener>
-    <listener-class>org.kuali.rice.krad.web.session.NonSerializableSessionListener</listener-class>
+    <listener-class>org.kuali.kfs.krad.web.session.NonSerializableSessionListener</listener-class>
   </listener>
 
   <listener>
@@ -178,7 +178,7 @@
   </listener>
 
   <listener>
-    <listener-class>org.kuali.rice.krad.web.listener.KualiHttpSessionListener</listener-class>
+    <listener-class>org.kuali.kfs.krad.web.listener.KualiHttpSessionListener</listener-class>
   </listener>
 
   <listener>
@@ -197,7 +197,7 @@
 
   <servlet>
     <servlet-name>action</servlet-name>
-    <servlet-class>org.kuali.rice.kns.web.struts.action.KualiActionServlet</servlet-class>
+    <servlet-class>org.kuali.kfs.kns.web.struts.action.KualiActionServlet</servlet-class>
     <init-param>
       <param-name>config</param-name>
       <param-value>/WEB-INF/struts-config.xml,/WEB-INF/cu-struts-config.xml</param-value>

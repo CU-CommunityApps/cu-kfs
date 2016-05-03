@@ -1,6 +1,6 @@
 package edu.cornell.kfs.module.purap.document.validation;
 
-import org.kuali.rice.krad.rules.rule.BusinessRule;
+import org.kuali.kfs.krad.rules.rule.BusinessRule;
 
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.document.IWantDocument;

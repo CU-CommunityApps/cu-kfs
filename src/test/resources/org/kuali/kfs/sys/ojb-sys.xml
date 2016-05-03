@@ -31,7 +31,7 @@
     
     <!-- The name="super" attribute below is not used to address an actual attribute of the super-class but as a marker keyword defining the JOIN  to the super-class.
          See OJB documentation: http://db.apache.org/ojb/docu/guides/advanced-technique.html#table-per-subclass -->
-    <reference-descriptor name="super" class-ref="org.kuali.rice.krad.bo.DocumentHeader" proxy="true" >
+    <reference-descriptor name="super" class-ref="org.kuali.kfs.krad.bo.DocumentHeader" proxy="true" >
         <foreignkey field-ref="documentNumber" />
     </reference-descriptor>
 </class-descriptor>
@@ -42,7 +42,7 @@
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
     <field-descriptor name="xmlDocumentContents" column="DOC_CNTNT" jdbc-type="CLOB"
          conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion" />
-	<reference-descriptor name="attachment" class-ref="org.kuali.rice.krad.bo.DocumentAttachment" auto-retrieve="true" auto-update="object"
+	<reference-descriptor name="attachment" class-ref="org.kuali.kfs.krad.bo.DocumentAttachment" auto-retrieve="true" auto-update="object"
 		auto-delete="object" proxy="true">
 		<foreignkey field-ref="documentNumber" />
 	</reference-descriptor>

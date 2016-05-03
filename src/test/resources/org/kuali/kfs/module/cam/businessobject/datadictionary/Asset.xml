@@ -1406,7 +1406,7 @@
     </property>
     <property name="required" value="true"/>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.rice.location.framework.country.CountryValuesFinder" p:includeBlankRow="true"/>
+      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.kns.bo.lookup.CountryValuesFinder" p:includeBlankRow="true"/>
     </property>
   </bean>
   

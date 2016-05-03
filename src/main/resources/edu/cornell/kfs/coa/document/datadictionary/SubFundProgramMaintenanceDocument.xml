@@ -65,5 +65,5 @@
   <!-- workflow attributes -->
   <bean id="SubFundProgramMaintenanceDocument-workflowAttributes" parent="SubFundProgramMaintenanceDocument-workflowAttributes-parentBean"/>
   
-  <bean id="SubFundProgramMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+  <bean id="SubFundProgramMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
 </beans>

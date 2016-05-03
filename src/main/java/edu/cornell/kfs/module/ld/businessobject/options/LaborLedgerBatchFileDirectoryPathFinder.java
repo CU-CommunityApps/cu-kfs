@@ -1,14 +1,14 @@
 package edu.cornell.kfs.module.ld.businessobject.options;
 
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.krad.valuefinder.ValueFinder;
+import org.kuali.kfs.krad.valuefinder.ValueFinder;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class LaborLedgerBatchFileDirectoryPathFinder implements ValueFinder {
 
     /**
-     * @see org.kuali.rice.kns.lookup.valueFinder.ValueFinder#getValue()
+     * @see org.kuali.kfs.kns.lookup.valueFinder.ValueFinder#getValue()
      */
     public String getValue() {
         // KualiConfigurationService kualiConfigurationService = SpringContext.getBean(KualiConfigurationService.class);

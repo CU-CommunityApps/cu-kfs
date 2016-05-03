@@ -43,15 +43,15 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.ObjectUtil;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kns.lookup.AbstractLookupableHelperServiceImpl;
-import org.kuali.rice.kns.lookup.HtmlData;
-import org.kuali.rice.kns.lookup.HtmlData.AnchorHtmlData;
-import org.kuali.rice.kns.web.ui.Row;
+import org.kuali.kfs.kns.lookup.AbstractLookupableHelperServiceImpl;
+import org.kuali.kfs.kns.lookup.HtmlData;
+import org.kuali.kfs.kns.lookup.HtmlData.AnchorHtmlData;
+import org.kuali.kfs.kns.web.ui.Row;
 import org.kuali.rice.krad.bo.BusinessObject;
-import org.kuali.rice.krad.lookup.CollectionIncomplete;
-import org.kuali.rice.krad.service.BusinessObjectService;
-import org.kuali.rice.krad.util.BeanPropertyComparator;
-import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.lookup.CollectionIncomplete;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.BeanPropertyComparator;
+import org.kuali.kfs.krad.util.GlobalVariables;
 
 import com.rsmart.kuali.kfs.module.ld.businessobject.inquiry.CurrentFundsInquirableImpl;
 
@@ -63,7 +63,7 @@ public class CurrentFundsLookupableHelperServiceImpl extends AbstractLookupableH
     private BusinessObjectService businessObjectService;
 
     /**
-     * @see org.kuali.rice.kns.lookup.Lookupable#getInquiryUrl(org.kuali.rice.kns.bo.BusinessObject, java.lang.String)
+     * @see org.kuali.kfs.kns.lookup.Lookupable#getInquiryUrl(org.kuali.kfs.kns.bo.BusinessObject, java.lang.String)
      */
     @Override
     public HtmlData getInquiryUrl(BusinessObject bo, String propertyName) {
@@ -85,7 +85,7 @@ public class CurrentFundsLookupableHelperServiceImpl extends AbstractLookupableH
      * Gets a list with the fields that will be displayed on page
      * 
      * @param fieldValues list of fields that are used as a key to filter out data
-     * @see org.kuali.rice.kns.lookup.Lookupable#getSearchResults(java.util.Map)
+     * @see org.kuali.kfs.kns.lookup.Lookupable#getSearchResults(java.util.Map)
      */
     @Override
     public List getSearchResults(Map fieldValues) {

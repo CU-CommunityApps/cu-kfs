@@ -114,7 +114,7 @@ public class AccountReversion extends Reversion implements MutableInactivatable,
    
 
     /**
-     * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
+     * @see org.kuali.kfs.kns.bo.BusinessObjectBase#toStringMapper()
      */
     protected LinkedHashMap toStringMapper() {
         

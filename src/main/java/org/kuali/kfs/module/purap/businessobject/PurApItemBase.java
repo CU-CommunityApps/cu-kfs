@@ -28,8 +28,8 @@ import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.sys.util.ObjectPopulationUtils;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 /**
  * Purap Item Base Business Object.
@@ -347,7 +347,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
      * instances at indices before that one are not being instantiated. So changing the code below will cause adding lines to break
      * if you add more than one item to the list.
      *
-     * @see org.kuali.rice.krad.document.FinancialDocument#getTargetAccountingLine(int)
+     * @see org.kuali.kfs.krad.document.FinancialDocument#getTargetAccountingLine(int)
      */
     public PurApAccountingLine getSourceAccountingLine(int index) {
         while (getSourceAccountingLines().size() <= index) {
@@ -364,7 +364,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
      * instances at indices before that one are not being instantiated. So changing the code below will cause adding lines to break
      * if you add more than one item to the list.
      *
-     * @see org.kuali.rice.krad.document.FinancialDocument#getTargetAccountingLine(int)
+     * @see org.kuali.kfs.krad.document.FinancialDocument#getTargetAccountingLine(int)
      */
     public PurApAccountingLine getBaselineSourceAccountingLine(int index) {
         while (getBaselineSourceAccountingLines().size() <= index) {
@@ -410,7 +410,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     /**
-     * @see org.kuali.rice.krad.document.DocumentBase#buildListOfDeletionAwareLists()
+     * @see org.kuali.kfs.krad.document.DocumentBase#buildListOfDeletionAwareLists()
      */
 
     @Override

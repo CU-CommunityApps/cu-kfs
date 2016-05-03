@@ -2,7 +2,7 @@ package edu.cornell.kfs.tax.businessobject;
 
 import java.util.List;
 
-import org.kuali.rice.krad.bo.TransientBusinessObjectBase;
+import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
 
 /**
  * Helper BO for holding data about invalid transaction override lines as needed.

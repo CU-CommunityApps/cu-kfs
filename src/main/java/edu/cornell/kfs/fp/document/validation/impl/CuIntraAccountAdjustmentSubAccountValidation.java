@@ -4,7 +4,7 @@ import org.kuali.kfs.fp.document.IntraAccountAdjustmentDocument;
 import org.kuali.kfs.fp.document.validation.impl.IntraAccountAdjustmentSubAccountValidation;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 

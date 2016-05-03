@@ -3,7 +3,7 @@ package edu.cornell.kfs.gl.fixture;
 import org.kuali.kfs.gl.businessobject.Balance;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 
 public enum BalanceFixture {
 

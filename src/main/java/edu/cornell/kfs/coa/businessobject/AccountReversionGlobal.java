@@ -28,12 +28,12 @@ import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.krad.bo.GlobalBusinessObject;
-import org.kuali.rice.krad.bo.GlobalBusinessObjectDetail;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.krad.service.PersistenceStructureService;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.bo.GlobalBusinessObject;
+import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetail;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.service.PersistenceStructureService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.service.AccountReversionService;
 
@@ -71,7 +71,7 @@ public class AccountReversionGlobal extends PersistableBusinessObjectBase implem
     }
 
     /**
-     * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()
+     * @see org.kuali.kfs.kns.bo.BusinessObjectBase#toStringMapper()
      */
     protected LinkedHashMap toStringMapperr_RICE20_REFACTORME() {
         LinkedHashMap stringMapper = new LinkedHashMap();
@@ -353,7 +353,7 @@ public class AccountReversionGlobal extends PersistableBusinessObjectBase implem
     }
 
     /**
-     * @see org.kuali.rice.kns.bo.GlobalBusinessObject#generateDeactivationsToPersist() As global account reversions only update
+     * @see org.kuali.kfs.kns.bo.GlobalBusinessObject#generateDeactivationsToPersist() As global account reversions only update
      *      existing (or add new) records, deactivations will never be produced by creating one; thus, this method always returns an empty list.
      */
     public List<PersistableBusinessObject> generateDeactivationsToPersist() {
@@ -361,7 +361,7 @@ public class AccountReversionGlobal extends PersistableBusinessObjectBase implem
     }
 
     /**
-     * @see org.kuali.rice.kns.bo.GlobalBusinessObject#generateGlobalChangesToPersist() This creates a list of changes to be made to the
+     * @see org.kuali.kfs.kns.bo.GlobalBusinessObject#generateGlobalChangesToPersist() This creates a list of changes to be made to the
      *      existing and/or new Account Reversion records impacted by this global reversion.
      */
     public List<PersistableBusinessObject> generateGlobalChangesToPersist() {
@@ -452,7 +452,7 @@ public class AccountReversionGlobal extends PersistableBusinessObjectBase implem
     }
 
     /**
-     * @see org.kuali.rice.kns.bo.GlobalBusinessObject#getAllDetailObjects() This returns a list of all the detail objects held within
+     * @see org.kuali.kfs.kns.bo.GlobalBusinessObject#getAllDetailObjects() This returns a list of all the detail objects held within
      *      this main global account reversion container.
      */
     public List<? extends GlobalBusinessObjectDetail> getAllDetailObjects() {
@@ -463,7 +463,7 @@ public class AccountReversionGlobal extends PersistableBusinessObjectBase implem
     }
 
     /**
-     * @see org.kuali.rice.kns.bo.GlobalBusinessObject#isPersistable() returns whether this global object reversion can be stored in the
+     * @see org.kuali.kfs.kns.bo.GlobalBusinessObject#isPersistable() returns whether this global object reversion can be stored in the
      *      database, which is really a question of whether it and all of its details have all of their appropriate primary keys
      *      set.
      */
@@ -491,7 +491,7 @@ public class AccountReversionGlobal extends PersistableBusinessObjectBase implem
     }
 
     /**
-     * @see org.kuali.rice.krad.bo.PersistableBusinessObjectBase#buildListOfDeletionAwareLists()
+     * @see org.kuali.kfs.krad.bo.PersistableBusinessObjectBase#buildListOfDeletionAwareLists()
      */
     @Override
     public List<Collection<PersistableBusinessObject>> buildListOfDeletionAwareLists() {

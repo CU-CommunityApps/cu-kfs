@@ -49,9 +49,9 @@
     	<property name="searchingTypeDefinitions">
     		<list merge="true">
     		    			<!-- KFSPTS-1891 -->
-	            <bean class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">                    
+	            <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">                    
 	                <property name="searchingAttribute">
-	                    <bean class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+	                    <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 	                        <property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument"/>
 	                        <property name="attributeName" value="paymentMethodCode"/>	                       
 	                    </bean>

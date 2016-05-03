@@ -32,7 +32,7 @@
       <routeNodes>
         <start name="AdHoc"/>
          <role name="AccountingOrganizationHierarchy">
-          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
       </routeNodes>

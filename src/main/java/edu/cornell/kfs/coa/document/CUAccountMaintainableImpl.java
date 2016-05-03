@@ -17,18 +17,18 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kew.api.document.DocumentStatus;
-import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.kns.maintenance.Maintainable;
-import org.kuali.rice.krad.bo.Note;
-import org.kuali.rice.krad.document.Document;
-import org.kuali.rice.krad.maintenance.MaintenanceLock;
-import org.kuali.rice.krad.service.BusinessObjectService;
-import org.kuali.rice.krad.service.DocumentService;
-import org.kuali.rice.krad.service.KRADServiceLocator;
-import org.kuali.rice.krad.service.NoteService;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.KRADConstants;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.kns.maintenance.Maintainable;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.maintenance.MaintenanceLock;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.service.KRADServiceLocator;
+import org.kuali.kfs.krad.service.NoteService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
 import edu.cornell.kfs.coa.businessobject.AppropriationAccount;
@@ -151,11 +151,11 @@ public class CUAccountMaintainableImpl extends KualiAccountMaintainableImpl {
      * if the new object has them. This is necessary to work around a section size mismatch issue
      * on certain ACCT maintenance documents.
      * 
-     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#getSections(org.kuali.rice.kns.document.MaintenanceDocument, Maintainable)
+     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#getSections(org.kuali.kfs.kns.document.MaintenanceDocument, Maintainable)
      */
     @SuppressWarnings("rawtypes")
     @Override
-    public List getSections(org.kuali.rice.kns.document.MaintenanceDocument document, Maintainable oldMaintainable) {
+    public List getSections(org.kuali.kfs.kns.document.MaintenanceDocument document, Maintainable oldMaintainable) {
         // The special handling only applies to the old maintainable.
         if (this == document.getOldMaintainableObject()) {
             Account oldAccount = (Account) getDataObject();

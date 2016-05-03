@@ -13,12 +13,12 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.document.validation.GenericValidation;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
-import org.kuali.rice.coreservice.framework.CoreFrameworkServiceLocator;
-import org.kuali.rice.coreservice.framework.parameter.ParameterConstants;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.rice.krad.document.Document;
-import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.module.ld.CuLaborConstants;
 import edu.cornell.kfs.module.ld.CuLaborKeyConstants;

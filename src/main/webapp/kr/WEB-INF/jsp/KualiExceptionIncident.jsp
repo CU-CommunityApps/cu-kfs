@@ -15,7 +15,7 @@
     limitations under the License.
 
 --%>
-<%@ page import="org.kuali.rice.krad.exception.KualiExceptionIncident"%>
+<%@ page import="org.kuali.kfs.krad.exception.KualiExceptionIncident"%>
 <%@ include file="tldHeader.jsp"%>
 
 <%-- CU Customization: Added the Rice 2.1.11 version of this file, to introduce some fixes. --%>

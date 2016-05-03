@@ -62,5 +62,5 @@
   <!-- workflow attributes -->
   <bean id="PhoneTypeMaintenanceDocument-workflowAttributes" parent="PhoneTypeMaintenanceDocument-workflowAttributes-parentBean"/>
   
-  <bean id="PhoneTypeMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+  <bean id="PhoneTypeMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
 </beans>

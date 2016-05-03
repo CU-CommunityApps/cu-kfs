@@ -72,13 +72,13 @@
 		</property>
 	</bean>
 	
-	<bean id="laborLedgerBatchFileLookupableHelperService" class="edu.cornell.kfs.module.ld.businessobject.lookup.LaborLedgerBatchFileLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService">
+	<bean id="laborLedgerBatchFileLookupableHelperService" class="edu.cornell.kfs.module.ld.businessobject.lookup.LaborLedgerBatchFileLookupableHelperServiceImpl" scope="prototype" parent="cf.lookupableHelperService">
          <property name="dateTimeService" ref="dateTimeService" />
          <property name="batchFileAdminAuthorizationService" ref="batchFileAdminAuthorizationService"/>
      </bean>
                 
-     <bean id="laborLedgerBatchFileLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
-         <property name="lookupableHelperService">
+     <bean id="laborLedgerBatchFileLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
+         <property name="cf.lookupableHelperService">
            <ref bean="laborLedgerBatchFileLookupableHelperService" />
          </property>
      </bean>

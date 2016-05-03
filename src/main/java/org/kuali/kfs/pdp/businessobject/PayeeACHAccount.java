@@ -39,9 +39,9 @@ import org.kuali.rice.kim.api.identity.entity.EntityDefault;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.krad.bo.BusinessObject;
-import org.kuali.rice.krad.datadictionary.AttributeSecurity;
-import org.kuali.rice.krad.service.DataDictionaryService;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
+import org.kuali.kfs.krad.service.DataDictionaryService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class PayeeACHAccount extends TimestampedBusinessObjectBase implements MutableInactivatable {
 

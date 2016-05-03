@@ -8,9 +8,9 @@ import org.kuali.kfs.coa.businessobject.ObjectCodeGlobal;
 import org.kuali.kfs.coa.document.validation.impl.ObjectCodeGlobalRule;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.krad.bo.GlobalBusinessObjectDetail;
-import org.kuali.rice.krad.service.BusinessObjectService;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetail;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.coa.businessobject.ObjectCodeGlobalDetail;
 
 import edu.cornell.kfs.coa.businessobject.CUObjectCodeGlobal;
@@ -23,7 +23,7 @@ public class ObjectCodeGlobalExtensionRule extends ObjectCodeGlobalRule {
 
   /*
    * (non-Javadoc)
-   * @see org.kuali.kfs.coa.document.validation.impl.ObjectCodeGlobalRule#processCustomRouteDocumentBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument)
+   * @see org.kuali.kfs.coa.document.validation.impl.ObjectCodeGlobalRule#processCustomRouteDocumentBusinessRules(org.kuali.kfs.kns.document.MaintenanceDocument)
    */
   @Override
   protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {

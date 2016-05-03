@@ -23,7 +23,7 @@
         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
 	<bean id="SearchingAttribute-customerNumber"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader" />
 		<property name="attributeName" value="customerNumber" />
@@ -31,13 +31,13 @@
 		<property name="showAttributeInResultSet" value="true" />
 	</bean>
 	<bean id="RoutingAttribute-customerNumber"
-		class="org.kuali.rice.krad.datadictionary.RoutingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.RoutingAttribute">
 		<property name="qualificationAttributeName"
 			value="customerNumber" />
 	</bean>
 
 	<bean id="SearchingAttribute-customerName"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.businessobject.Customer" />
 		<property name="attributeName" value="customerName" />
@@ -45,13 +45,13 @@
 		<property name="showAttributeInResultSet" value="true" />
 	</bean>
 	<bean id="RoutingAttribute-customerName"
-		class="org.kuali.rice.krad.datadictionary.RoutingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.RoutingAttribute">
 		<property name="qualificationAttributeName"
 			value="customerName" />
 	</bean>
 
 	<bean id="SearchingAttribute-customerNumber-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader" />
 		<property name="attributeName" value="customerNumber" />
@@ -59,7 +59,7 @@
 		<property name="showAttributeInResultSet" value="false" />
 	</bean>
 	<bean id="SearchingAttribute-appliedCustomerNumber-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.document.PaymentApplicationDocument" />
 		<property name="attributeName" value="invoiceAppliedCustomerNumber" />
@@ -67,7 +67,7 @@
 		<property name="showAttributeInResultSet" value="false" />
 	</bean>
 	<bean id="SearchingAttribute-unappliedCustomerNumber-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.document.PaymentApplicationDocument" />
 		<property name="attributeName" value="unappliedCustomerNumber" />
@@ -75,7 +75,7 @@
 		<property name="showAttributeInResultSet" value="false" />
 	</bean>
 	<bean id="SearchingAttribute-customerName-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.businessobject.Customer" />
 		<property name="attributeName" value="customerName" />
@@ -83,7 +83,7 @@
 		<property name="showAttributeInResultSet" value="false" />
 	</bean>
 	<bean id="SearchingAttribute-appliedCustomerName-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.document.PaymentApplicationDocument" />
 		<property name="attributeName" value="invoiceAppliedCustomerName" />
@@ -91,7 +91,7 @@
 		<property name="showAttributeInResultSet" value="false" />
 	</bean>
 	<bean id="SearchingAttribute-unappliedCustomerName-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.document.PaymentApplicationDocument" />
 		<property name="attributeName" value="unappliedCustomerName" />
@@ -99,7 +99,7 @@
 		<property name="showAttributeInResultSet" value="false" />
 	</bean>
 	<bean id="SearchingAttribute-processingChartOfAccountsCode"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader" />
 		<property name="attributeName"
@@ -109,7 +109,7 @@
 	</bean>
 	<bean
 		id="SearchingAttribute-processingChartOfAccountsCode-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader" />
 		<property name="attributeName"
@@ -118,7 +118,7 @@
 		<property name="showAttributeInResultSet" value="false" />
 	</bean>
 	<bean id="SearchingAttribute-processingOrganizationCode"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader" />
 		<property name="attributeName"
@@ -128,7 +128,7 @@
 	</bean>
 	<bean
 		id="SearchingAttribute-processingOrganizationCode-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader" />
 		<property name="attributeName"
@@ -137,7 +137,7 @@
 		<property name="showAttributeInResultSet" value="false" />
 	</bean>
 	<bean id="SearchingAttribute-billingChartOfAccountsCode"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.document.CustomerInvoiceDocument" />
 		<property name="attributeName" value="billByChartOfAccountCode" />
@@ -146,7 +146,7 @@
 	</bean>
 	<bean
 		id="SearchingAttribute-billingChartOfAccountsCode-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.document.CustomerInvoiceDocument" />
 		<property name="attributeName" value="billByChartOfAccountCode" />
@@ -154,7 +154,7 @@
 		<property name="showAttributeInResultSet" value="false" />
 	</bean>
 	<bean id="SearchingAttribute-billingOrganizationCode"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.document.CustomerInvoiceDocument" />
 		<property name="attributeName" value="billedByOrganizationCode" />
@@ -163,7 +163,7 @@
 		<property name="showAttributeInResultSet" value="true" />
 	</bean>
 	<bean id="SearchingAttribute-billingOrganizationCode-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.document.CustomerInvoiceDocument" />
 		<property name="attributeName" value="billedByOrganizationCode" />
@@ -171,7 +171,7 @@
 		<property name="showAttributeInResultSet" value="false" />
 	</bean>
 	<bean id="SearchingAttribute-invoiceItemCode-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.businessobject.CustomerInvoiceDetail" />
 		<property name="attributeName" value="invoiceItemCode" />
@@ -179,7 +179,7 @@
 		<property name="showAttributeInResultSet" value="false" />
 	</bean>
 	<bean id="SearchingAttribute-parentInvoiceNumber-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.document.CustomerInvoiceDocument" />
 		<property name="attributeName" value="parentInvoiceNumber" />
@@ -187,7 +187,7 @@
 		<property name="showAttributeInResultSet" value="false" />
 	</bean>
 	<bean id="SearchingAttribute-documentStatus"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader" />
 		<property name="attributeName" value="documentStatus" />
@@ -195,7 +195,7 @@
 		<property name="showAttributeInResultSet" value="true" />
 	</bean>
 	<bean id="SearchingAttribute-documentStatus-resultsOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader" />
 		<property name="attributeName" value="documentStatus" />
@@ -203,7 +203,7 @@
 		<property name="showAttributeInResultSet" value="true" />
 	</bean>
 	<bean id="SearchingAttribute-createDate-resultsOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader" />
 		<property name="attributeName" value="createDate" />
@@ -211,7 +211,7 @@
 		<property name="showAttributeInResultSet" value="true" />
 	</bean>
 	<bean id="SearchingAttribute-initiatorId-resultsOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader" />
 		<property name="attributeName" value="initiatorId" />
@@ -220,7 +220,7 @@
 	</bean>
 	<bean
 		id="SearchingAttribute-financialDocumentReferenceInvoiceNumber"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.document.CustomerCreditMemoDocument" />
 		<property name="attributeName"
@@ -230,7 +230,7 @@
 	</bean>
 	<bean
 		id="SearchingAttribute-financialDocumentReferenceInvoiceNumber-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.document.CustomerCreditMemoDocument" />
 		<property name="attributeName"
@@ -240,7 +240,7 @@
 	</bean>
 	<bean
 		id="SearchingAttribute-financialDocumentReferenceInvoiceNumberForPaymentApplication-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.businessobject.InvoicePaidApplied" />
 		<property name="attributeName"
@@ -249,7 +249,7 @@
 		<property name="showAttributeInResultSet" value="false" />
 	</bean>
 	<bean id="SearchingAttribute-lockboxNumber"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.businessobject.SystemInformation" />
 		<property name="attributeName" value="lockboxNumber" />
@@ -257,7 +257,7 @@
 		<property name="showAttributeInResultSet" value="true" />
 	</bean>
 	<bean id="SearchingAttribute-customerPaymentMediumCode"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.document.CashControlDocument" />
 		<property name="attributeName"
@@ -266,7 +266,7 @@
 		<property name="showAttributeInResultSet" value="true" />
 	</bean>
 	<bean id="SearchingAttribute-customerPaymentMediumIdentifier"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.businessobject.CashControlDetail" />
 		<property name="attributeName"
@@ -276,7 +276,7 @@
 	</bean>
 	<bean
 		id="SearchingAttribute-customerPaymentMediumIdentifier-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingAttribute">
+		class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
 		<property name="businessObjectClassName"
 			value="org.kuali.kfs.module.ar.businessobject.CashControlDetail" />
 		<property name="attributeName"
@@ -286,7 +286,7 @@
 	</bean>
 
 	<bean id="SearchingType-AccountsReceivableDocument-customerNumber"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-customerNumber" />
 		<property name="documentValues">
@@ -299,7 +299,7 @@
 	</bean>
 	<bean
 		id="SearchingType-AccountsReceivableDocument-customerNumber-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-customerNumber-criteriaOnly" />
 		<property name="documentValues">
@@ -312,7 +312,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CashControlDocument-customerNumber-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-customerNumber-criteriaOnly" />
 		<property name="documentValues">
@@ -323,7 +323,7 @@
 	</bean>
 	<bean
 		id="SearchingType-PaymentApplicationDocument-appliedCustomerNumber-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-appliedCustomerNumber-criteriaOnly" />
 		<property name="documentValues">
@@ -336,7 +336,7 @@
 	</bean>
 	<bean
 		id="SearchingType-PaymentApplicationDocument-unappliedCustomerNumber-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-unappliedCustomerNumber-criteriaOnly" />
 		<property name="documentValues">
@@ -348,7 +348,7 @@
 		</property>
 	</bean>
 	<bean id="SearchingType-AccountsReceivableDocument-customerName"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-customerName" />
 		<property name="documentValues">
@@ -361,7 +361,7 @@
 	</bean>
 	<bean
 		id="SearchingType-AccountsReceivableDocument-customerName-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-customerName-criteriaOnly" />
 		<property name="documentValues">
@@ -374,7 +374,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CashControlDocument-customerName-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-customerName-criteriaOnly" />
 		<property name="documentValues">
@@ -385,7 +385,7 @@
 	</bean>
 	<bean
 		id="SearchingType-PaymentApplicationDocument-appliedCustomerName-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-appliedCustomerName-criteriaOnly" />
 		<property name="documentValues">
@@ -396,7 +396,7 @@
 	</bean>
 	<bean
 		id="SearchingType-PaymentApplicationDocument-unappliedCustomerName-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-unappliedCustomerName-criteriaOnly" />
 		<property name="documentValues">
@@ -407,7 +407,7 @@
 	</bean>
 	<bean
 		id="SearchingType-AccountsReceivableDocument-processingChartOfAccountsCode"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-processingChartOfAccountsCode" />
 		<property name="documentValues">
@@ -420,7 +420,7 @@
 	</bean>
 	<bean
 		id="SearchingType-AccountsReceivableDocument-processingChartOfAccountsCode-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-processingChartOfAccountsCode-criteriaOnly" />
 		<property name="documentValues">
@@ -433,7 +433,7 @@
 	</bean>
 	<bean
 		id="SearchingType-AccountsReceivableDocument-processingOrganizationCode"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-processingOrganizationCode" />
 		<property name="documentValues">
@@ -446,7 +446,7 @@
 	</bean>
 	<bean
 		id="SearchingType-AccountsReceivableDocument-processingOrganizationCode-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-processingOrganizationCode-criteriaOnly" />
 		<property name="documentValues">
@@ -458,7 +458,7 @@
 		</property>
 	</bean>
 	<bean id="SearchingType-AccountsReceivableDocument-documentStatus"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-documentStatus" />
 		<property name="documentValues">
@@ -468,7 +468,7 @@
 		</property>
 	</bean>
 	<bean id="SearchingType-AccountsReceivableDocument-documentStatus-resultsOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-documentStatus-resultsOnly" />
 		<property name="documentValues">
@@ -478,7 +478,7 @@
 		</property>
 	</bean>
 	<bean id="SearchingType-AccountsReceivableDocument-createDate-resultsOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-createDate-resultsOnly" />
 		<property name="documentValues">
@@ -488,7 +488,7 @@
 		</property>
 	</bean>
 	<bean id="SearchingType-AccountsReceivableDocument-initiatorId-resultsOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-initiatorId-resultsOnly" />
 		<property name="documentValues">
@@ -499,7 +499,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CustomerInvoiceDocument-billingChartOfAccountsCode"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-billingChartOfAccountsCode" />
 		<property name="documentValues">
@@ -510,7 +510,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CustomerCreditMemoDocument-billingChartOfAccountsCode"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-billingChartOfAccountsCode" />
 		<property name="documentValues">
@@ -521,7 +521,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CustomerInvoiceWriteoffDocument-billingChartOfAccountsCode-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-billingChartOfAccountsCode-criteriaOnly" />
 		<property name="documentValues">
@@ -534,7 +534,7 @@
 	</bean>
 	<bean
 		id="SearchingType-PaymentApplicationDocument-billingChartOfAccountsCode-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-billingChartOfAccountsCode-criteriaOnly" />
 		<property name="documentValues">
@@ -547,7 +547,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CustomerInvoiceDocument-billingOrganizationCode"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-billingOrganizationCode" />
 		<property name="documentValues">
@@ -558,7 +558,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CustomerCreditMemoDocument-billingOrganizationCode"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-billingOrganizationCode" />
 		<property name="documentValues">
@@ -569,7 +569,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CustomerInvoiceWriteoffDocument-billingOrganizationCode-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-billingOrganizationCode-criteriaOnly" />
 		<property name="documentValues">
@@ -582,7 +582,7 @@
 	</bean>
 	<bean
 		id="SearchingType-PaymentApplicationDocument-billingOrganizationCode-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-billingOrganizationCode-criteriaOnly" />
 		<property name="documentValues">
@@ -595,7 +595,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CustomerCreditMemoDocument-chartOfAccountsCode-sourceOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-chartOfAccountsCode" />
 		<property name="documentValues">
@@ -608,7 +608,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CustomerInvoiceWriteoffDocument-chartOfAccountsCode-sourceOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-chartOfAccountsCode" />
 		<property name="documentValues">
@@ -621,7 +621,7 @@
 	</bean>
 	<bean
 		id="SearchingType-PaymentApplicationDocument-chartOfAccountsCode-sourceOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-chartOfAccountsCode" />
 		<property name="documentValues">
@@ -634,7 +634,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CustomerCreditMemoDocument-accountNumber-sourceOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-accountNumber" />
 		<property name="documentValues">
@@ -647,7 +647,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CustomerInvoiceWriteoffDocument-accountNumber-sourceOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-accountNumber" />
 		<property name="documentValues">
@@ -660,7 +660,7 @@
 	</bean>
 	<bean
 		id="SearchingType-PaymentApplicationDocument-accountNumber-sourceOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-accountNumber" />
 		<property name="documentValues">
@@ -673,7 +673,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CustomerInvoiceDocument-invoiceItemCode-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-invoiceItemCode-criteriaOnly" />
 		<property name="documentValues">
@@ -684,7 +684,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CustomerCreditMemoDocument-invoiceItemCode-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-invoiceItemCode-criteriaOnly" />
 		<property name="documentValues">
@@ -697,7 +697,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CustomerCreditMemoDocument-financialDocumentReferenceInvoiceNumber"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-financialDocumentReferenceInvoiceNumber" />
 		<property name="documentValues">
@@ -708,7 +708,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CustomerInvoiceWriteoffDocument-financialDocumentReferenceInvoiceNumber"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-financialDocumentReferenceInvoiceNumber" />
 		<property name="documentValues">
@@ -719,7 +719,7 @@
 	</bean>
 	<bean
 		id="SearchingType-PaymentApplicationDocument-financialDocumentReferenceInvoiceNumber-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-financialDocumentReferenceInvoiceNumberForPaymentApplication-criteriaOnly" />
 		<property name="documentValues">
@@ -731,7 +731,7 @@
 		</property>
 	</bean>
 	<bean id="SearchingType-CustomerInvoiceDocument-parentInvoiceNumber-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-parentInvoiceNumber-criteriaOnly" />
 		<property name="documentValues">
@@ -741,7 +741,7 @@
 		</property>
 	</bean>
 	<bean id="SearchingType-CashControlDocument-lockboxNumber"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-lockboxNumber" />
 		<property name="documentValues">
@@ -752,7 +752,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CashControlDocument-customerPaymentMediumCode"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-customerPaymentMediumCode" />
 		<property name="documentValues">
@@ -763,7 +763,7 @@
 	</bean>
 	<bean
 		id="SearchingType-CashControlDocument-customerPaymentMediumIdentifier-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-customerPaymentMediumIdentifier-criteriaOnly" />
 		<property name="documentValues">
@@ -776,7 +776,7 @@
 	</bean>
 	<bean
 		id="SearchingType-PaymentApplicationDocument-customerPaymentMediumIdentifier-criteriaOnly"
-		class="org.kuali.rice.krad.datadictionary.SearchingTypeDefinition">
+		class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
 		<property name="searchingAttribute"
 			ref="SearchingAttribute-customerPaymentMediumIdentifier-criteriaOnly" />
 		<property name="documentValues">

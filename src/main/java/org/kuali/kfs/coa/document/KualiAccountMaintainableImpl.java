@@ -33,11 +33,11 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.maintenance.MaintenanceLock;
-import org.kuali.rice.krad.util.KRADConstants;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.maintenance.MaintenanceLock;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 /**
  * This class overrides the saveBusinessObject() method which is called during post process from the KualiPostProcessor so that it
@@ -51,7 +51,7 @@ public class KualiAccountMaintainableImpl extends FinancialSystemMaintainable {
     /**
      * Automatically deactivates {@link SubAccount}s after saving the {@link Account}
      * 
-     * @see org.kuali.rice.kns.maintenance.Maintainable#saveBusinessObject()
+     * @see org.kuali.kfs.kns.maintenance.Maintainable#saveBusinessObject()
      */
     @Override
     public void saveBusinessObject() {
@@ -71,7 +71,7 @@ public class KualiAccountMaintainableImpl extends FinancialSystemMaintainable {
     /**
      * After a copy is done set specific fields on {@link Account} to default values
      * 
-     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#processAfterCopy()
+     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#processAfterCopy()
      */
     @Override
     public void processAfterCopy(MaintenanceDocument document, Map<String, String[]> parameters) {
@@ -140,8 +140,8 @@ public class KualiAccountMaintainableImpl extends FinancialSystemMaintainable {
     /**
      * Had to override this method because account guideline data was lost when copied and then a lookup is performed
      * 
-     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#refresh(java.lang.String, java.util.Map,
-     *      org.kuali.rice.kns.document.MaintenanceDocument)
+     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#refresh(java.lang.String, java.util.Map,
+     *      org.kuali.kfs.kns.document.MaintenanceDocument)
      */
     @Override
     public void refresh(String refreshCaller, Map fieldValues, MaintenanceDocument document) {

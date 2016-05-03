@@ -292,7 +292,7 @@
         <property name="summary" value="Moving From Country" />
         <property name="description" value="Moving From Country" />
         <property name="control">
-            <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.rice.location.framework.country.CountryNotRestrictedValuesFinder"
+            <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.kns.bo.lookup.CountryNotRestrictedValuesFinder"
                 p:includeKeyInLabel="false" />
         </property>
     </bean>
@@ -355,7 +355,7 @@
         <property name="summary" value="Moving To Country" />
         <property name="description" value="Moving To Country" />
         <property name="control">
-            <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.rice.location.framework.country.CountryNotRestrictedValuesFinder"
+            <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.kns.bo.lookup.CountryNotRestrictedValuesFinder"
                 p:includeKeyInLabel="false" />
         </property>
     </bean>
@@ -535,7 +535,7 @@
         </property>
     </bean>
 
-    <bean id="RoutingType-TravelRelocationDocument-AccountingOrganizationHierarchy" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    <bean id="RoutingType-TravelRelocationDocument-AccountingOrganizationHierarchy" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
         <property name="routingAttributes">
             <list>
                 <ref bean="RoutingAttribute-financialDocumentTotalAmount" />
@@ -554,7 +554,7 @@
     <bean id="DocumentValuePathGroup-TravelRelocationDocument-AccountingOrganizationHierarchy-accountingLines"
         parent="DocumentValuePathGroup-AccountingDocument-financialDocumentTotalAmount">
         <property name="documentCollectionPath">
-            <bean class="org.kuali.rice.krad.datadictionary.DocumentCollectionPath">
+            <bean class="org.kuali.kfs.krad.datadictionary.DocumentCollectionPath">
                 <property name="collectionPath" value="sourceAccountingLines" />
                 <property name="documentValues">
                     <list>
@@ -567,7 +567,7 @@
         </property>
     </bean>
     
-    <bean id="TravelRelocationDocument-RoutingType-JobClassification" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    <bean id="TravelRelocationDocument-RoutingType-JobClassification" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
         <property name="routingAttributes">
             <list>
                 <ref bean="RoutingAttribute-jobClassificationCode" />
@@ -579,10 +579,10 @@
             </list>
         </property>
     </bean>
-    <bean id="RoutingAttribute-jobClassificationCode"  class="org.kuali.rice.krad.datadictionary.RoutingAttribute" >
+    <bean id="RoutingAttribute-jobClassificationCode"  class="org.kuali.kfs.krad.datadictionary.RoutingAttribute" >
   	  <property name="qualificationAttributeName" value="jobClsCode" />
     </bean>
-    <bean id="DocumentValuePathGroup-TravelRelocationDocument-jobClassificationCode" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+    <bean id="DocumentValuePathGroup-TravelRelocationDocument-jobClassificationCode" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
     	<property name="documentValues">
     		<list>
     			<value>jobClsCode</value>

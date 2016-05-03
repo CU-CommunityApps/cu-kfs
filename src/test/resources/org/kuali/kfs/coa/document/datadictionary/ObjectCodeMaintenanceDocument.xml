@@ -107,16 +107,16 @@
 		</property>
 	</bean>
 	
-	<bean id="ObjectCodeMaintenanceDocument-RoutingAttribute-Chart" class="org.kuali.rice.krad.datadictionary.RoutingAttribute">
+	<bean id="ObjectCodeMaintenanceDocument-RoutingAttribute-Chart" class="org.kuali.kfs.krad.datadictionary.RoutingAttribute">
     	<property name="qualificationAttributeName" value="chartOfAccountsCode"/>
 	</bean>
 	
-	<bean id="ObjectCodeMaintenanceDocument-RoutingAttribute-Organization" class="org.kuali.rice.krad.datadictionary.RoutingAttribute">
+	<bean id="ObjectCodeMaintenanceDocument-RoutingAttribute-Organization" class="org.kuali.kfs.krad.datadictionary.RoutingAttribute">
     	<property name="qualificationAttributeName" value="organizationCode"/>
 	</bean>
 	
 	
-	<bean id="ObjectCodeMaintenanceDocument-DocumentValuePathGroup-ChartOrganization" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+	<bean id="ObjectCodeMaintenanceDocument-DocumentValuePathGroup-ChartOrganization" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
     	<property name="documentValues">
     		<list>
     			<value>initiatorChartOfAccountsCode</value>
@@ -125,7 +125,7 @@
     	</property>
    	</bean>
    	
-   	<bean id="ObjectCodeMaintenanceDocument-DocumentValuePathGroup-Chart" class="org.kuali.rice.krad.datadictionary.DocumentValuePathGroup">
+   	<bean id="ObjectCodeMaintenanceDocument-DocumentValuePathGroup-Chart" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
     	<property name="documentValues">
     		<list>
     			<value>newMaintainableObject.businessObject.chartOfAccountsCode</value>
@@ -133,7 +133,7 @@
     	</property>
    	</bean>
    	
-   	<bean id="ObjectCodeMaintenanceDocument-RoutingType-OrganizationHierarchy" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+   	<bean id="ObjectCodeMaintenanceDocument-RoutingType-OrganizationHierarchy" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
 		        <ref bean="ObjectCodeMaintenanceDocument-RoutingAttribute-Chart"/>
@@ -147,7 +147,7 @@
     	</property>
     </bean>
     
-    <bean id="ObjectCodeMaintenanceDocument-RoutingType-Chart" class="org.kuali.rice.krad.datadictionary.RoutingTypeDefinition">
+    <bean id="ObjectCodeMaintenanceDocument-RoutingType-Chart" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
     	<property name="routingAttributes">
     		<list>
 		        <ref bean="ObjectCodeMaintenanceDocument-RoutingAttribute-Chart"/>

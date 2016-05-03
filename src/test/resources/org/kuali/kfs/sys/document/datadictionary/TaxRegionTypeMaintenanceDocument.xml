@@ -61,5 +61,5 @@
   <!-- workflow attributes -->
   <bean id="TaxRegionTypeMaintenanceDocument-workflowAttributes" parent="TaxRegionTypeMaintenanceDocument-workflowAttributes-parentBean"/>
   
-  <bean id="TaxRegionTypeMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+  <bean id="TaxRegionTypeMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
 </beans>

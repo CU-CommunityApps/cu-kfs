@@ -98,7 +98,7 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kew.api.action.ActionRequestType;
@@ -110,17 +110,17 @@ import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.dao.DocumentDao;
-import org.kuali.rice.krad.rules.rule.event.KualiDocumentEvent;
-import org.kuali.rice.krad.service.BusinessObjectService;
-import org.kuali.rice.krad.service.KRADServiceLocatorInternal;
-import org.kuali.rice.krad.service.SequenceAccessorService;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.NoteType;
-import org.kuali.rice.krad.util.ObjectUtils;
-import org.kuali.rice.krad.workflow.service.WorkflowDocumentService;
+import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.dao.DocumentDao;
+import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.KRADServiceLocatorInternal;
+import org.kuali.kfs.krad.service.SequenceAccessorService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.NoteType;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.workflow.service.WorkflowDocumentService;
 
 /**
  * Purchase Order Document
@@ -223,7 +223,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     }
 
     /**
-     * @see org.kuali.rice.krad.document.DocumentBase#getDocumentTitle()
+     * @see org.kuali.kfs.krad.document.DocumentBase#getDocumentTitle()
      */
     @Override
     public String getDocumentTitle() {
@@ -797,7 +797,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     }
 
     /**
-     * @see org.kuali.rice.krad.document.DocumentBase#handleRouteLevelChange(org.kuali.rice.kew.clientapp.vo.DocumentRouteLevelChangeDTO)
+     * @see org.kuali.kfs.krad.document.DocumentBase#handleRouteLevelChange(org.kuali.rice.kew.clientapp.vo.DocumentRouteLevelChangeDTO)
      */
     @Override
     public void doRouteLevelChange(DocumentRouteLevelChange levelChangeEvent) {
@@ -835,7 +835,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         }
 
     /**
-     * @see org.kuali.rice.krad.document.DocumentBase#doActionTaken(org.kuali.rice.kew.clientapp.vo.ActionTakenEventDTO)
+     * @see org.kuali.kfs.krad.document.DocumentBase#doActionTaken(org.kuali.rice.kew.clientapp.vo.ActionTakenEventDTO)
      */
     @Override
     public void doActionTaken(ActionTakenEvent event) {

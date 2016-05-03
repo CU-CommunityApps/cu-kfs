@@ -78,5 +78,5 @@
   <!-- workflow attributes -->
   <bean id="ReceivingAddressMaintenanceDocument-workflowAttributes" parent="ReceivingAddressMaintenanceDocument-workflowAttributes-parentBean"/>
   
-  <bean id="ReceivingAddressMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.rice.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+  <bean id="ReceivingAddressMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
 </beans>

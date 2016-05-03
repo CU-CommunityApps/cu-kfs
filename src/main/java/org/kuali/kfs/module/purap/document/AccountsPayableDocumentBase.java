@@ -38,9 +38,9 @@ import org.kuali.kfs.vnd.businessobject.CampusParameter;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.framework.postprocessor.DocumentRouteLevelChange;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kns.service.DataDictionaryService;
-import org.kuali.rice.krad.rules.rule.event.KualiDocumentEvent;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 /**
  * Accounts Payable Document Base
@@ -156,7 +156,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     /**
      * Calls a custom prepare for save method, as the super class does GL entry creation that causes problems with AP documents.
      *
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#prepareForSave(org.kuali.rice.krad.rule.event.KualiDocumentEvent)
+     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#prepareForSave(org.kuali.kfs.krad.rule.event.KualiDocumentEvent)
      */
     @Override
     public void prepareForSave(KualiDocumentEvent event) {
@@ -176,7 +176,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     public abstract String getPoDocumentTypeForAccountsPayableDocumentCancel();
 
     /**
-     * @see org.kuali.rice.krad.document.DocumentBase#handleRouteLevelChange(org.kuali.rice.kew.clientapp.vo.DocumentRouteLevelChangeDTO)
+     * @see org.kuali.kfs.krad.document.DocumentBase#handleRouteLevelChange(org.kuali.rice.kew.clientapp.vo.DocumentRouteLevelChangeDTO)
      */
     @Override
     public void doRouteLevelChange(DocumentRouteLevelChange levelChangeEvent) {

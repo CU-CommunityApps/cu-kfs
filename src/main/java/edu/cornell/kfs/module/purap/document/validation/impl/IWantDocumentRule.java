@@ -4,9 +4,9 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
-import org.kuali.rice.kns.rules.DocumentRuleBase;
-import org.kuali.rice.krad.document.Document;
-import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.kfs.kns.rules.DocumentRuleBase;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.CUPurapPropertyConstants;

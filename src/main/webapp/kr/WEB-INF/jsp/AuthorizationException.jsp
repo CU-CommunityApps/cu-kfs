@@ -15,11 +15,11 @@
     limitations under the License.
 
 --%>
-<%@ page import="org.kuali.rice.krad.exception.AuthorizationException"%>
+<%@ page import="org.kuali.kfs.krad.exception.AuthorizationException"%>
 <%@ include file="/kr/WEB-INF/jsp/tldHeader.jsp" %>
 
 <c:set var="parameters"
-       value="<%=request.getAttribute(\"org.kuali.rice.kns.web.struts.action.AuthorizationExceptionAction\")%>" />
+       value="<%=request.getAttribute(\"org.kuali.kfs.kns.web.struts.action.AuthorizationExceptionAction\")%>" />
 
 <c:if test="${not empty parameters}">
 	<c:set var="message" value="${parameters.message}" />

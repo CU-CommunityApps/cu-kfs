@@ -5,8 +5,8 @@ import java.text.ParseException;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.coreservice.api.parameter.Parameter;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.api.parameter.Parameter;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 
 import edu.cornell.kfs.module.ezra.service.EzraService;
 

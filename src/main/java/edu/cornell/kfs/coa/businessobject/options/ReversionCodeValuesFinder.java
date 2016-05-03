@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.KeyValue;
-import org.kuali.rice.krad.keyvalues.KeyValuesBase;
+import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
 
 
 /**
@@ -40,7 +40,7 @@ public class ReversionCodeValuesFinder extends KeyValuesBase {
      * <li>"R2", "R2 - Don't CF budget then R Remaining"</li>
      * </ul>
      * 
-     * @see org.kuali.rice.kns.lookup.keyvalues.KeyValuesFinder#getKeyValues()
+     * @see org.kuali.kfs.kns.lookup.keyvalues.KeyValuesFinder#getKeyValues()
      */
     public List getKeyValues() {
         List<KeyValue> keyValues = new ArrayList<KeyValue>();

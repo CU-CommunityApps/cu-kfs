@@ -8,7 +8,7 @@ import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.rice.krad.document.Document;
+import org.kuali.kfs.krad.document.Document;
 
 
 import edu.cornell.kfs.sys.CUKFSAuthorizationConstants;
@@ -18,7 +18,7 @@ public class CuAdvanceDepositDocumentPresentationController extends
 	   private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuAdvanceDepositDocumentPresentationController.class);
 
 	    /**
-	     * @see org.kuali.rice.kns.document.authorization.DocumentPresentationControllerBase#canEdit(org.kuali.rice.kns.document.Document)
+	     * @see org.kuali.kfs.kns.document.authorization.DocumentPresentationControllerBase#canEdit(org.kuali.kfs.kns.document.Document)
 	     */
 	    @Override
 	    public boolean canEdit(Document document) {

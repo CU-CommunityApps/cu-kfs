@@ -109,47 +109,47 @@
         </simple>
         <join name="JoinHasAccountingLines"/>
         <role name="Initiator">
-          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
         <split name="B2BAutoPurchaseOrder">
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
         <role name="CommodityAPO">
-          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
         <join name="JoinB2BAPO"/>
         <join name="JoinSOD"/>
         <role name="SeparationOfDuties">
-          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
         <split name="AmountRequiresSeparationOfDutiesReview">
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
         <role name="Commodity">
-          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
         <join name="JoinRequiresAwardReview"/>
         <role name="Award">
-          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
         <split name="RequiresAwardReview">
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
         <role name="AccountingOrganizationHierarchy">
-          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
         <role name="Account">
-          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
         <role name="SubAccount">
-          <qualifierResolverClass>org.kuali.rice.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
         <simple name="NoOpRequiresAwardReview">

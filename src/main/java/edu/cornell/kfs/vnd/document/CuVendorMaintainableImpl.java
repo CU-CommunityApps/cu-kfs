@@ -12,22 +12,22 @@ import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.kns.document.authorization.FieldRestriction;
-import org.kuali.rice.kns.document.authorization.MaintenanceDocumentRestrictions;
-import org.kuali.rice.kns.maintenance.Maintainable;
-import org.kuali.rice.kns.service.KNSServiceLocator;
-import org.kuali.rice.kns.web.ui.Field;
-import org.kuali.rice.kns.web.ui.Row;
-import org.kuali.rice.kns.web.ui.Section;
-import org.kuali.rice.krad.document.Document;
-import org.kuali.rice.krad.maintenance.MaintenanceLock;
-import org.kuali.rice.krad.service.DocumentService;
-import org.kuali.rice.krad.service.SequenceAccessorService;
-import org.kuali.rice.krad.uif.util.ObjectPropertyUtils;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.KRADConstants;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.kns.document.authorization.FieldRestriction;
+import org.kuali.kfs.kns.document.authorization.MaintenanceDocumentRestrictions;
+import org.kuali.kfs.kns.maintenance.Maintainable;
+import org.kuali.kfs.kns.service.KNSServiceLocator;
+import org.kuali.kfs.kns.web.ui.Field;
+import org.kuali.kfs.kns.web.ui.Row;
+import org.kuali.kfs.kns.web.ui.Section;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.maintenance.MaintenanceLock;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.service.SequenceAccessorService;
+import org.kuali.kfs.krad.uif.util.ObjectPropertyUtils;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
@@ -148,8 +148,8 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
      * Overridden to forcibly populate the multi-select procurementMethodsArray KNS field values,
      * and to forcibly hide the procurementMethods field's row.
      * 
-     * @see org.kuali.rice.kns.maintenance.KualiMaintainableImpl#getSections(org.kuali.rice.kns.document.MaintenanceDocument,
-     *      org.kuali.rice.kns.maintenance.Maintainable)
+     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#getSections(org.kuali.kfs.kns.document.MaintenanceDocument,
+     *      org.kuali.kfs.kns.maintenance.Maintainable)
      */
     @SuppressWarnings("rawtypes")
     @Override

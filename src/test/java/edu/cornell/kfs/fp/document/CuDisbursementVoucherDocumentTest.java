@@ -28,11 +28,11 @@ import org.kuali.kfs.vnd.businessobject.VendorRoutingComparable;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kns.util.KNSGlobalVariables;
-import org.kuali.rice.kns.util.MessageList;
-import org.kuali.rice.krad.bo.Note;
-import org.kuali.rice.krad.bo.PersistableBusinessObjectExtension;
-import org.kuali.rice.krad.document.Document;
+import org.kuali.kfs.kns.util.KNSGlobalVariables;
+import org.kuali.kfs.kns.util.MessageList;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
+import org.kuali.kfs.krad.document.Document;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

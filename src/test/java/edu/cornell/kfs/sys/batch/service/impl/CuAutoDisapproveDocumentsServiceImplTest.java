@@ -11,16 +11,16 @@ import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.KFSParameterKeyConstants;
 import org.kuali.kfs.sys.batch.AutoDisapproveDocumentsStep;
 import org.kuali.kfs.sys.batch.BatchSpringContext;
-import org.kuali.kfs.sys.batch.Step;
+import org.kuali.kfs.kns.bo.Step;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.ProxyUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.context.TestUtils;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.doctype.DocumentType;
 import org.kuali.rice.kew.api.doctype.DocumentTypeService;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.aop.support.AopUtils;
 
 @ConfigureContext(session = kfs)

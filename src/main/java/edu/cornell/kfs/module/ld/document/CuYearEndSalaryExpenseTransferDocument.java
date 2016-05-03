@@ -21,8 +21,8 @@ package edu.cornell.kfs.module.ld.document;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.fp.document.YearEndDocument;
 import org.kuali.kfs.sys.document.AccountingDocument;
-import org.kuali.rice.coreservice.framework.parameter.ParameterConstants.COMPONENT;
-import org.kuali.rice.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
 
 /**
  * Labor Document Class for the Year End Salary Expense Transfer Document for Cornell University.

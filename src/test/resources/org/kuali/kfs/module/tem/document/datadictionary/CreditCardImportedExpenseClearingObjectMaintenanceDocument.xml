@@ -25,7 +25,7 @@
 	<bean id="CreditCardImportedExpenseClearingObjectMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
 		<property name="businessObjectClass" value="org.kuali.kfs.module.tem.businessobject.CreditCardImportedExpenseClearingObject" />
 		<property name="maintainableClass"   value="org.kuali.kfs.module.tem.document.maintenance.CreditCardImportedExpenseClearingObjectMaintainableImpl" />
-		<property name="businessRulesClass" value="org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase"/>
+		<property name="businessRulesClass" value="org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase"/>
 		<property name="maintainableSections">
 			<list>
 				<ref bean="CreditCardImportedExpenseClearingObjectMaintenanceDocument-ExpensesToClear" />

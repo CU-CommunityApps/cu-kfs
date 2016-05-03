@@ -34,9 +34,9 @@ import org.kuali.kfs.module.cab.document.service.GlAndPurApHelperService;
 import org.kuali.kfs.module.cab.document.service.GlLineService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.RiceConstants;
-import org.kuali.rice.krad.service.BusinessObjectService;
-import org.kuali.rice.krad.util.KRADConstants;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 /**
  * Struts action class that handles Capital Asset Information Screen actions
@@ -144,7 +144,7 @@ public class CapitalAssetInformationAction extends CabActionBase {
     }
 
     /**
-     * @see org.kuali.rice.kns.web.struts.action.KualiAction#showAllTabs(org.apache.struts.action.ActionMapping,
+     * @see org.kuali.kfs.kns.web.struts.action.KualiAction#showAllTabs(org.apache.struts.action.ActionMapping,
      *      org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override

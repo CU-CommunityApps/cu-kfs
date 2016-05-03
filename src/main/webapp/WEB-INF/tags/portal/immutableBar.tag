@@ -16,7 +16,7 @@
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
 <%-- JSTLConstants magic doesn't work for nested class KRADConstants.DetailTypes, hence the following uglyness: --%>
-<c:set var="backdoorEnabled" value="<%=org.kuali.rice.coreservice.framework.CoreFrameworkServiceLocator.getParameterService().getParameterValueAsBoolean(org.kuali.rice.kew.api.KewApiConstants.KEW_NAMESPACE, org.kuali.rice.krad.util.KRADConstants.DetailTypes.BACKDOOR_DETAIL_TYPE, org.kuali.rice.kew.api.KewApiConstants.SHOW_BACK_DOOR_LOGIN_IND)%>"/>
+<c:set var="backdoorEnabled" value="<%=org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator.getParameterService().getParameterValueAsBoolean(org.kuali.rice.kew.api.KewApiConstants.KEW_NAMESPACE, org.kuali.kfs.krad.util.KRADConstants.DetailTypes.BACKDOOR_DETAIL_TYPE, org.kuali.rice.kew.api.KewApiConstants.SHOW_BACK_DOOR_LOGIN_IND)%>"/>
 <c:if test="${backdoorEnabled}">
 	<c:choose> 
 		<c:when test="${empty UserSession.loggedInUserPrincipalName}" > 

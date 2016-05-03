@@ -4,7 +4,7 @@ import org.kuali.kfs.coa.document.validation.impl.MaintenancePreRulesBase;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.kns.document.MaintenanceDocument;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
 
 import edu.cornell.kfs.coa.businessobject.SubAccountGlobal;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
@@ -12,7 +12,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 public class SubAccountGlobalPreRules extends MaintenancePreRulesBase{
 	
 	/**
-	 * @see org.kuali.kfs.coa.document.validation.impl.MaintenancePreRulesBase#doCustomPreRules(org.kuali.rice.kns.document.MaintenanceDocument)
+	 * @see org.kuali.kfs.coa.document.validation.impl.MaintenancePreRulesBase#doCustomPreRules(org.kuali.kfs.kns.document.MaintenanceDocument)
 	 */
 	protected boolean doCustomPreRules(MaintenanceDocument maintenanceDocument) {
 	    boolean preRulesOK = super.doCustomPreRules(maintenanceDocument);

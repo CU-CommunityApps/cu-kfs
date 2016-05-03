@@ -17,7 +17,7 @@ package com.rsmart.kuali.kfs.module.ld.businessobject.lookup;
 
 import org.kuali.kfs.module.ld.businessobject.inquiry.PositionDataDetailsInquirableImpl;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.rice.kns.lookup.HtmlData;
+import org.kuali.kfs.kns.lookup.HtmlData;
 import org.kuali.rice.krad.bo.BusinessObject;
 
 import com.rsmart.kuali.kfs.module.ld.businessobject.inquiry.PositionDataInquirableImpl;
@@ -25,7 +25,7 @@ import com.rsmart.kuali.kfs.module.ld.businessobject.inquiry.PositionDataInquira
 public class PositionDataLookupableHelperServiceImpl extends org.kuali.kfs.module.ld.businessobject.lookup.PositionDataLookupableHelperServiceImpl {
 
     /**
-     * @see org.kuali.rice.kns.lookup.Lookupable#getInquiryUrl(org.kuali.rice.kns.bo.BusinessObject, java.lang.String)
+     * @see org.kuali.kfs.kns.lookup.Lookupable#getInquiryUrl(org.kuali.kfs.kns.bo.BusinessObject, java.lang.String)
      */
     @Override
     public HtmlData getInquiryUrl(BusinessObject businessObject, String propertyName) {

@@ -17,7 +17,7 @@
 
 <%@ attribute name="view" required="true" 
               description="The view instance the html page is being rendered for."
-              type="org.kuali.rice.krad.uif.view.View"%>
+              type="org.kuali.kfs.krad.uif.view.View"%>
 
 <%-- ==== CU Customization: Updated DOCTYPE element for Kuali's CONTRIB-101 frame resizing enhancement ==== --%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">

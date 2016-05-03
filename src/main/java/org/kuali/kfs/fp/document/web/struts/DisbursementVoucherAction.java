@@ -61,17 +61,17 @@ import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.identity.entity.Entity;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.rice.kns.document.authorization.TransactionalDocumentAuthorizer;
-import org.kuali.rice.kns.document.authorization.TransactionalDocumentPresentationController;
-import org.kuali.rice.kns.service.DictionaryValidationService;
-import org.kuali.rice.kns.util.WebUtils;
-import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
-import org.kuali.rice.krad.service.BusinessObjectService;
-import org.kuali.rice.krad.service.DocumentService;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.KRADConstants;
-import org.kuali.rice.krad.util.ObjectUtils;
-import org.kuali.rice.krad.util.UrlFactory;
+import org.kuali.kfs.kns.document.authorization.TransactionalDocumentAuthorizer;
+import org.kuali.kfs.kns.document.authorization.TransactionalDocumentPresentationController;
+import org.kuali.kfs.kns.service.DictionaryValidationService;
+import org.kuali.kfs.kns.util.WebUtils;
+import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.util.UrlFactory;
 
 /**
  * This class handles Actions for the DisbursementVoucher.
@@ -82,7 +82,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     private static final String DV_ADHOC_NODE = "AdHoc"; // ==== CU Customization ====
 
     /**
-     * @see org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase#loadDocument(org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase)
+     * @see org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase#loadDocument(org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase)
      */
     @Override
     protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
@@ -142,7 +142,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     }
 
     /**
-     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#approve(org.apache.struts.action.ActionMapping,
+     * @see org.kuali.kfs.kns.web.struts.action.KualiDocumentActionBase#approve(org.apache.struts.action.ActionMapping,
      *      org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
@@ -156,7 +156,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Do initialization for a new disbursement voucher
      *
-     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#createDocument(org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase)
+     * @see org.kuali.kfs.kns.web.struts.action.KualiDocumentActionBase#createDocument(org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase)
      */
     @Override
     protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
@@ -501,7 +501,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     }
 
     /**
-     * @see org.kuali.rice.kns.web.struts.action.KualiAction#refresh(org.apache.struts.action.ActionMapping,
+     * @see org.kuali.kfs.kns.web.struts.action.KualiAction#refresh(org.apache.struts.action.ActionMapping,
      *      org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
