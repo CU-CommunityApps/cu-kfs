@@ -75,7 +75,7 @@ public class CuFileEnterpriseFeederHelperServiceImplTest  extends KualiTestBase 
         
         File enterpriseFeedFile = null;
         String enterpriseFeedFileName = LaborConstants.BatchFileSystem.LABOR_ENTERPRISE_FEED + LaborConstants.BatchFileSystem.EXTENSION;
-        enterpriseFeedFile = new File("/tmp" + File.separator + enterpriseFeedFileName);
+        enterpriseFeedFile = new File(batchDirectory + File.separator + enterpriseFeedFileName);
 
         enterpriseFeedPs = null;
         try {
