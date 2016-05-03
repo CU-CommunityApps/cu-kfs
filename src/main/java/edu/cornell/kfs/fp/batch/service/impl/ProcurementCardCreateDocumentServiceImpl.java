@@ -2,7 +2,9 @@ package edu.cornell.kfs.fp.batch.service.impl;
 
 import static edu.cornell.kfs.fp.document.validation.impl.CuProcurementCardDocumentRuleConstants.ERROR_TRANS_OBJECT_CODE_PARM_NM; 
 
+import java.sql.Date;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.fp.businessobject.ProcurementCardHolder;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTargetAccountingLine;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
+import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -26,7 +29,10 @@ import org.kuali.rice.krad.service.DataDictionaryService;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionDetailExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
+import edu.cornell.kfs.fp.businessobject.PurchasingDataDetail;
+import edu.cornell.kfs.fp.businessobject.PurchasingDataRecord;
 
 
 public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl {
@@ -159,6 +165,55 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
         }
 
         return pcardDocument;
+    }
+    
+    /**
+     * 
+     * @see org.kuali.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl#createTransactionDetailRecord(org.kuali.kfs.fp.document.ProcurementCardDocument, org.kuali.kfs.fp.businessobject.ProcurementCardTransaction, java.lang.Integer)
+     */
+    @Override
+    protected String createTransactionDetailRecord(ProcurementCardDocument pcardDocument, ProcurementCardTransaction transaction, Integer transactionLineNumber) {
+      String errorText = super.createTransactionDetailRecord(pcardDocument, transaction, transactionLineNumber);
+      
+      // create the Extension object, which contains the Level 3 info
+      createProcurementCardTransactionDetailExtension(transaction, 
+                                                      (ProcurementCardTransactionDetail) pcardDocument.getTransactionEntries()
+                                                                                                      .get(pcardDocument.getTransactionEntries().size() - 1));
+      
+      return errorText;
+    }
+
+
+    protected void createProcurementCardTransactionDetailExtension(ProcurementCardTransaction transaction, ProcurementCardTransactionDetail transactionDetail) {
+      ProcurementCardTransactionDetailExtendedAttribute detailExtension;
+      if (ObjectUtils.isNull(transactionDetail.getExtension())) {
+          detailExtension = new ProcurementCardTransactionDetailExtendedAttribute();
+      } else {
+          detailExtension = (ProcurementCardTransactionDetailExtendedAttribute) transactionDetail.getExtension();
+      }
+
+      if (ObjectUtils.isNotNull(transaction.getExtension())) {
+          ProcurementCardTransactionExtendedAttribute extension = (ProcurementCardTransactionExtendedAttribute) transaction.getExtension();
+
+          detailExtension.setDocumentNumber(transactionDetail.getDocumentNumber());
+          detailExtension.setFinancialDocumentTransactionLineNumber(transactionDetail.getFinancialDocumentTransactionLineNumber());
+
+          createPurchasingDataDetails(extension, detailExtension);
+      }
+      transactionDetail.setExtension(detailExtension);
+    }
+    
+
+    private void createPurchasingDataDetails(ProcurementCardTransactionExtendedAttribute extension, ProcurementCardTransactionDetailExtendedAttribute detailExtension) {
+        List<PurchasingDataDetail> details = new ArrayList<PurchasingDataDetail>();
+        for (PurchasingDataRecord record : extension.getPurchasingDataRecords()) {
+          PurchasingDataDetail detail = new PurchasingDataDetail();
+          detail.setDocumentNumber(detailExtension.getDocumentNumber());
+          detail.setFinancialDocumentTransactionLineNumber(detailExtension.getFinancialDocumentTransactionLineNumber());
+          detail.populateFromRecord(record);
+          details.add(detail);
+        }
+        detailExtension.setPurchasingDataDetails(details);
     }
     
     @Override

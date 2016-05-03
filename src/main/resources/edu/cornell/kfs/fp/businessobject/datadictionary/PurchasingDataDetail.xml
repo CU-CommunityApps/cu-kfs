@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+     xmlns:p="http://www.springframework.org/schema/p" 
+     xsi:schemaLocation="http://www.springframework.org/schema/beans         
+     http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <bean id="PurchasingDataDetail" parent="PurchasingDataDetail-parentBean"/>
+
+  <bean id="PurchasingDataDetail-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.PurchasingDataDetail"/>
+    <property name="objectLabel" value="Purchasing Data Detail"/>
+    <property name="inquiryDefinition">
+      <ref bean="PurchasingDataDetail-inquiryDefinition"/>
+    </property>
+    <property name="attributes">
+      <list>
+        <ref bean="PurchasingDataDetail-purchasingDataId"/>
+        <ref bean="PurchasingDataDetail-documentNumber"/>
+        <ref bean="PurchasingDataDetail-financialDocumentTransactionLineNumber"/>
+        <ref bean="PurchasingDataDetail-accountNumber"/>
+        <ref bean="PurchasingDataDetail-tsysTranCode"/>
+        <ref bean="PurchasingDataDetail-itemCommodityCode"/>
+        <ref bean="PurchasingDataDetail-merchantOrderNumber"/>
+        <ref bean="PurchasingDataDetail-discountAmount"/>
+        <ref bean="PurchasingDataDetail-freightShippingAmount"/>
+        <ref bean="PurchasingDataDetail-dutyAmount"/>
+        <ref bean="PurchasingDataDetail-destinationPostalZipCode"/>
+        <ref bean="PurchasingDataDetail-shipFromPostalZipCode"/>
+        <ref bean="PurchasingDataDetail-destinationCountryCode"/>
+        <ref bean="PurchasingDataDetail-uniqueVATInvoice"/>
+        <ref bean="PurchasingDataDetail-orderDate"/>
+        <ref bean="PurchasingDataDetail-itemDescriptor"/>
+        <ref bean="PurchasingDataDetail-quantity"/>
+        <ref bean="PurchasingDataDetail-unitOfMeasure"/>
+        <ref bean="PurchasingDataDetail-unitCost"/>
+        <ref bean="PurchasingDataDetail-typeOfSupply"/>
+        <ref bean="PurchasingDataDetail-serviceIdentifier"/>
+        <ref bean="PurchasingDataDetail-messageIdentifier"/>
+        <ref bean="PurchasingDataDetail-itemSequenceNumber"/>
+        <ref bean="PurchasingDataDetail-lineItemDetailIndicator"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-purchasingDataId" parent="PurchasingDataDetail-purchasingDataId-parentBean" />
+  <bean id="PurchasingDataDetail-purchasingDataId-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="purchasingDataId" />
+    <property name="label" value="Purchasing Data Id" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="9" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="11"/>
+    </property>
+  </bean>
+  
+  <bean id="PurchasingDataDetail-documentNumber" parent="PurchasingDataDetail-documentNumber-parentBean" />
+  <bean id="PurchasingDataDetail-documentNumber-parentBean" abstract="true" parent="DocumentHeader-documentNumber">
+    <property name="forceUppercase" value="false" />
+  </bean>
+
+  <bean id="PurchasingDataDetail-financialDocumentTransactionLineNumber" parent="PurchasingDataDetail-financialDocumentTransactionLineNumber-parentBean" />
+  <bean id="PurchasingDataDetail-financialDocumentTransactionLineNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="financialDocumentTransactionLineNumber"/>
+    <property name="forceUppercase" value="true"/>
+    <property name="label" value="Financial Document Transaction Line Number"/>
+    <property name="shortLabel" value="Number"/>
+    <property name="maxLength" value="7"/>
+    <property name="validationPattern">
+      <ref bean="NumericValidation" />
+    </property>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="9"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-accountNumber" parent="PurchasingDataDetail-accountNumber-parentBean" />
+  <bean id="PurchasingDataDetail-accountNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="accountNumber" />
+    <property name="label" value="Account Number" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="16" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="18"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-tsysTranCode" parent="PurchasingDataDetail-tsysTranCode-parentBean" />
+  <bean id="PurchasingDataDetail-tsysTranCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="tsysTranCode" />
+    <property name="label" value="TSYS Tran Code" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="4" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="6"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-itemCommodityCode" parent="PurchasingDataDetail-itemCommodityCode-parentBean" />
+  <bean id="PurchasingDataDetail-itemCommodityCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="itemCommodityCode" />
+    <property name="label" value="Item Commodity Code" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="15" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="17"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-merchantOrderNumber" parent="PurchasingDataDetail-merchantOrderNumber-parentBean" />
+  <bean id="PurchasingDataDetail-merchantOrderNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="merchantOrderNumber" />
+    <property name="label" value="Merchant Order Number" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="12" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="14"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-discountAmount" parent="PurchasingDataDetail-discountAmount-parentBean" />
+  <bean id="PurchasingDataDetail-discountAmount-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="discountAmount" />
+    <property name="label" value="Discount Amount" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="12" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="14"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-freightShippingAmount" parent="PurchasingDataDetail-freightShippingAmount-parentBean" />
+  <bean id="PurchasingDataDetail-freightShippingAmount-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="freightShippingAmount" />
+    <property name="label" value="Freight/Shipping Amount" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="12" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="14"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-dutyAmount" parent="PurchasingDataDetail-dutyAmount-parentBean" />
+  <bean id="PurchasingDataDetail-dutyAmount-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="dutyAmount" />
+    <property name="label" value="Duty Amount" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="12" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="14"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-destinationPostalZipCode" parent="PurchasingDataDetail-destinationPostalZipCode-parentBean" />
+  <bean id="PurchasingDataDetail-destinationPostalZipCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="destinationPostalZipCode" />
+    <property name="label" value="Destination Postal/Zip Code" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="9" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="11"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-shipFromPostalZipCode" parent="PurchasingDataDetail-shipFromPostalZipCode-parentBean" />
+  <bean id="PurchasingDataDetail-shipFromPostalZipCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="shipFromPostalZipCode" />
+    <property name="label" value="Ship From Postal/Zip Code" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="9" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="11"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-destinationCountryCode" parent="PurchasingDataDetail-destinationCountryCode-parentBean" />
+  <bean id="PurchasingDataDetail-destinationCountryCode-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="destinationCountryCode" />
+    <property name="label" value="Destination Country Code" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="3" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="5"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-uniqueVATInvoice" parent="PurchasingDataDetail-uniqueVATInvoice-parentBean" />
+  <bean id="PurchasingDataDetail-uniqueVATInvoice-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="uniqueVATInvoice" />
+    <property name="label" value="Unique VAT Invoice" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="15" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="17"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-orderDate" parent="PurchasingDataDetail-orderDate-parentBean" />
+  <bean id="PurchasingDataDetail-orderDate-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="orderDate" />
+    <property name="label" value="Order Date" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="8" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="10"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-itemDescriptor" parent="PurchasingDataDetail-itemDescriptor-parentBean" />
+  <bean id="PurchasingDataDetail-itemDescriptor-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="itemDescriptor" />
+    <property name="label" value="Item Descriptor" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="26" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="28"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-quantity" parent="PurchasingDataDetail-quantity-parentBean" />
+  <bean id="PurchasingDataDetail-quantity-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="quantity" />
+    <property name="label" value="Quantity" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="10" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="12"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-unitOfMeasure" parent="PurchasingDataDetail-unitOfMeasure-parentBean" />
+  <bean id="PurchasingDataDetail-unitOfMeasure-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="unitOfMeasure" />
+    <property name="label" value="Unit of Measure" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="12" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="14"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-unitCost" parent="PurchasingDataDetail-unitCost-parentBean" />
+  <bean id="PurchasingDataDetail-unitCost-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="unitCost" />
+    <property name="label" value="Unit Cost" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="12" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="14"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-typeOfSupply" parent="PurchasingDataDetail-typeOfSupply-parentBean" />
+  <bean id="PurchasingDataDetail-typeOfSupply-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="typeOfSupply" />
+    <property name="label" value="Type of Supply" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="2" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="4"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-serviceIdentifier" parent="PurchasingDataDetail-serviceIdentifier-parentBean" />
+  <bean id="PurchasingDataDetail-serviceIdentifier-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="serviceIdentifier" />
+    <property name="label" value="Service Identifier" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="6" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="8"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-messageIdentifier" parent="PurchasingDataDetail-messageIdentifier-parentBean" />
+  <bean id="PurchasingDataDetail-messageIdentifier-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="messageIdentifier" />
+    <property name="label" value="Message Identifier" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="15" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="17"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-itemSequenceNumber" parent="PurchasingDataDetail-itemSequenceNumber-parentBean" />
+  <bean id="PurchasingDataDetail-itemSequenceNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="itemSequenceNumber" />
+    <property name="label" value="Item Sequence Number" />
+    <property name="forceUppercase" value="false" />
+    <property name="maxLength" value="3" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="5"/>
+    </property>
+  </bean>
+
+  <bean id="PurchasingDataDetail-lineItemDetailIndicator" parent="PurchasingDataDetail-lineItemDetailIndicator-parentBean" />
+  <bean id="PurchasingDataDetail-lineItemDetailIndicator-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="lineItemDetailIndicator" />
+    <property name="label" value="Line Item Detail Indicator" />
+    <property name="forceUppercase" value="false" />
+    <property name="minLength" value="1" />
+    <property name="maxLength" value="1" />
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="3"/>
+    </property>
+  </bean>
+
+  
+<!-- Business Object Inquiry Definition -->
+
+
+  <bean id="PurchasingDataDetail-inquiryDefinition" parent="PurchasingDataDetail-inquiryDefinition-parentBean"/>
+
+  <bean id="PurchasingDataDetail-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+    <property name="title" value="Purchasing Data Detail Inquiry"/>
+    <property name="inquirySections">
+      <list>
+        <bean parent="InquirySectionDefinition">
+          <property name="title" value=""/>
+          <property name="numberOfColumns" value="1"/>
+          <property name="inquiryFields">
+            <list>
+			        <bean parent="FieldDefinition" p:attributeName="documentNumber"/>
+			        <bean parent="FieldDefinition" p:attributeName="financialDocumentTransactionLineNumber"/>
+			        <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
+			        <bean parent="FieldDefinition" p:attributeName="tsysTranCode"/>
+			        <bean parent="FieldDefinition" p:attributeName="itemCommodityCode"/>
+			        <bean parent="FieldDefinition" p:attributeName="merchantOrderNumber"/>
+			        <bean parent="FieldDefinition" p:attributeName="discountAmount"/>
+			        <bean parent="FieldDefinition" p:attributeName="freightShippingAmount"/>
+			        <bean parent="FieldDefinition" p:attributeName="dutyAmount"/>
+			        <bean parent="FieldDefinition" p:attributeName="destinationPostalZipCode"/>
+			        <bean parent="FieldDefinition" p:attributeName="shipFromPostalZipCode"/>
+			        <bean parent="FieldDefinition" p:attributeName="destinationCountryCode"/>
+			        <bean parent="FieldDefinition" p:attributeName="uniqueVATInvoice"/>
+			        <bean parent="FieldDefinition" p:attributeName="orderDate"/>
+			        <bean parent="FieldDefinition" p:attributeName="itemDescriptor"/>
+			        <bean parent="FieldDefinition" p:attributeName="quantity"/>
+			        <bean parent="FieldDefinition" p:attributeName="unitOfMeasure"/>
+			        <bean parent="FieldDefinition" p:attributeName="unitCost"/>
+			        <bean parent="FieldDefinition" p:attributeName="typeOfSupply"/>
+			        <bean parent="FieldDefinition" p:attributeName="serviceIdentifier"/>
+			        <bean parent="FieldDefinition" p:attributeName="messageIdentifier"/>
+			        <bean parent="FieldDefinition" p:attributeName="itemSequenceNumber"/>
+			        <bean parent="FieldDefinition" p:attributeName="lineItemDetailIndicator"/>
+            </list>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+  
+</beans>
