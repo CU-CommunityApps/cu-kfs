@@ -26,6 +26,34 @@
 	<skipTests>true</skipTests>
 	<test.excludes>**/*Test.java.bogus</test.excludes>
   </properties>
+  
+  <profiles>
+  	<profile>
+    <id>fastLocalTests</id>
+    <properties>
+    	<test.excludes>
+    		**/CuBalanceServiceTest.java,
+			**/CuDisbursementVoucherPayeeServiceImplTest.java,
+			**/CuB2BPurchaseOrderSciquestServiceImplTest.java,
+			**/CuCreditMemoServiceImplTest.java,
+			**/CuPaymentRequestServiceImplTest.java,
+			**/CuPurchase*Test.java,
+			**/CuRequisitionServiceImplTest.java,
+			**/IWantDocumentServiceImplTest.java,
+			**/PurchaseOrderTransmissionMethodDataRulesServiceImplTest.java,
+			**/CuElectronicInvoiceHelperServiceImplTest.java,
+			**/CuPurapAccountingServiceImplTest.java,
+			**/CuPurapGeneralLedgerServiceImplTest.java,
+			**/ezraUpdateAwardImplTest.java,
+			**/ezraUpdateProposalImplTest.java,
+			**/ezraUpdateSponsorImplTest.java,
+			**/CuCommodityCodeUpdateServiceImplTest.java,
+			**/CuPurapAccountingServiceImplTest.java,
+			**/CuVendorLookupableHelperServiceImplTest.java
+      	</test.excludes>
+    </properties>
+  </profile>
+</profiles>
 
   <build>
     <plugins>
@@ -37,8 +65,8 @@
           	<argLine>-Xmx2G -Xms2G -XX:MaxPermSize=512m</argLine>
         	<skipTests>${skipTests}</skipTests>
             <excludes>
-              <exclude>${test.excludes}</exclude>
-            </excludes>
+		     <exclude>${test.excludes}</exclude>
+		    </excludes>
         </configuration>
       </plugin>
       <plugin>
