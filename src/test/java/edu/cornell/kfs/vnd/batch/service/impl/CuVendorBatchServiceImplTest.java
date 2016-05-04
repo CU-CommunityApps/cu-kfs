@@ -4,7 +4,6 @@ import static org.kuali.kfs.sys.fixture.UserNameFixture.kfs;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +45,7 @@ public class CuVendorBatchServiceImplTest extends KualiTestBase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        vendorBatchService = new testableVenddorBatchServiceImpl();
+        vendorBatchService = SpringContext.getBean(VendorBatchService.class);
         kualiConfigurationService = SpringContext.getBean(ConfigurationService.class);
         batchDirectory = kualiConfigurationService.getPropertyValueAsString(com.rsmart.kuali.kfs.sys.KFSConstants.STAGING_DIRECTORY_KEY) + "/vnd/vendorBatch";
         attachmentDirectory = batchDirectory + ATTACHMENT_DIR;
@@ -173,13 +172,6 @@ public class CuVendorBatchServiceImplTest extends KualiTestBase {
         attachments.add(PDF_ATTACHMENT_FILE_NAME);
         attachments.add(DOC_ATTACHMENT_FILE_NAME);
         runTestWithAttachments(UPDATE_VENDOR_OK_FILE_NAME, attachments, true);        
-    }
-    
-    private class testableVenddorBatchServiceImpl extends VendorBatchServiceImpl {
-    	@Override
-    	protected String getMimeTypeFromAttachmentFile(File attachmentFile) throws IOException {
-    		return attachmentFile.getName();
-    	}
     }
 
 }
