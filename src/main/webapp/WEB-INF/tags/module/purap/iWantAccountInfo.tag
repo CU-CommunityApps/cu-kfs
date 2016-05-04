@@ -67,6 +67,43 @@
 			</tr>
 
 			<c:if test="${fullEntryMode}">
+				<%-- Render Favorite Accounts drop-down if the user has more than just the empty row in the values list. --%>
+				<c:set var="favoriteAccountsFinder" value="${fn:replace(documentAttributes.favoriteAccountLineIdentifier.control.valuesFinder, '.', '|')}" />
+				<c:if test="${not empty favoriteAccountsFinder}">
+					<%-- Use the ActionFormUtilMap's custom method-invoking feature to retrieve the user's favorite accounts. --%>
+					<c:set var="optionsMapMethodCallString" value="getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${favoriteAccountsFinder}" />
+					<c:set var="favoriteAccountsValues" value="${KualiForm.actionFormUtilMap[optionsMapMethodCallString]}" />
+					<c:if test="${not empty favoriteAccountsValues && fn:length(favoriteAccountsValues) > 1}">
+						<tr>
+							<td colspan="11" class="neutral">
+								<table border="0">
+									<tr>
+										<th align="right" valign="middle" class="neutral" width="50%">
+											<div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.favoriteAccountLineIdentifier}" /></div>
+										</th>
+										<td align="left" valign="middle" class="neutral" width="50%">
+											<kul:htmlControlAttribute attributeEntry="${documentAttributes.favoriteAccountLineIdentifier}"
+													property="document.favoriteAccountLineIdentifier" tabindexOverride="${tabindexOverrideBase + 0}"
+											/>&nbsp;<html:image
+													property="methodToCall.addFavoriteAccount" src="${ConfigProperties.externalizable.images.url}tinybutton-addacct.gif"
+													alt="Add Favorite Account" title="Add Favorite Account" styleClass="tinybutton" tabindex="${tabindexOverrideBase + 0}"/>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<th height="30" colspan="11" class="neutral" valign="middle">&nbsp;</th>
+						</tr>
+						<tr>
+							<th height="30" colspan="11" class="neutral" valign="middle">or</th>
+						</tr>
+						<tr>
+							<th height="30" colspan="11" class="neutral" valign="middle">&nbsp;</th>
+						</tr>
+					</c:if>
+				</c:if>
+				
 			<tr>
 				<th align="left" valign="middle" class="neutral">
 					<div align="left">&nbsp;</div>

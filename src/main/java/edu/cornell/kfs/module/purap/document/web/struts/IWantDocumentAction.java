@@ -50,6 +50,7 @@ import edu.cornell.kfs.module.purap.businessobject.LevelOrganization;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
+import edu.cornell.kfs.module.purap.util.PurApFavoriteAccountLineBuilderForIWantDocument;
 import edu.cornell.kfs.sys.util.ConfidentialAttachmentUtil;
 
 @SuppressWarnings("deprecation")
@@ -428,6 +429,8 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             added &= addNewItem(iWantForm, iWantDocument, item);
         }
         
+        added &= addNewFavoriteAccountIfNecessary(added, iWantDocument);
+        
         if (added) {
             IWantAccount account = iWantForm.getNewSourceLine();
             if (StringUtils.isNotBlank(account.getAccountNumber()) || StringUtils.isNotBlank(account.getSubAccountNumber())
@@ -616,6 +619,8 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         if (StringUtils.isNotBlank(item.getItemDescription()) || item.getItemUnitPrice() != null || item.getItemQuantity() != null) {
             added &= addNewItem(iWantDocForm, iWantDocument, item);
         }
+        
+        added &= addNewFavoriteAccountIfNecessary(added, iWantDocument);
         
         if (added) {
             IWantAccount account = iWantDocForm.getNewSourceLine();
@@ -905,6 +910,8 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             added &= addNewItem(iWantDocForm, iWantDocument, item);
         }
         
+        added &= addNewFavoriteAccountIfNecessary(added, iWantDocument);
+        
         if (added) {
             IWantAccount account = iWantDocForm.getNewSourceLine();
             if (StringUtils.isNotBlank(account.getAccountNumber()) || StringUtils.isNotBlank(account.getSubAccountNumber())
@@ -926,6 +933,22 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         }
 
         return actionForward;
+    }
+
+    /**
+     * Adds a new IWNT account to the document using the selected Favorite Account from the drop-down.
+     * This is similar to a method on PurchasingActionBase, but has been modified for IWNT use instead.
+     */
+    public ActionForward addFavoriteAccount(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        IWantDocumentForm iwntForm = (IWantDocumentForm) form;
+        IWantDocument document = iwntForm.getIWantDocument();
+        
+        if (addNewFavoriteAccount(document)) {
+            document.setFavoriteAccountLineIdentifier(null);
+        }
+        
+        return mapping.findForward(RiceConstants.MAPPING_BASIC);
     }
 
     /**
@@ -986,6 +1009,39 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         }
         
         return rulePassed;
+    }
+
+    /**
+     * Adds a new Favorite Account line to the document for a document-save/route or move-to-next-step action,
+     * if the user selected a Favorite Account on the drop-down but did not click the "add" button, and if
+     * any prior auto-line-addition operations for other lists have also succeeded or skipped accordingly.
+     * 
+     * @param added An indicator of whether any prior auto-line-addition actions succeeded or are unneeded.
+     * @param iWantDocument The document to add the line to.
+     * @return True if the given flag is true and the Favorite Account is either added successfully or doesn't need to be added, false otherwise.
+     */
+    private boolean addNewFavoriteAccountIfNecessary(boolean added, IWantDocument iWantDocument) {
+        if (added && iWantDocument.getFavoriteAccountLineIdentifier() != null) {
+            added &= addNewFavoriteAccount(iWantDocument);
+            if (added) {
+                iWantDocument.setFavoriteAccountLineIdentifier(null);
+            }
+        }
+        return added;
+    }
+
+    /**
+     * Adds a new Favorite Account line to the IWantDocument.
+     * 
+     * @param iWantDocument The document to add the line to.
+     * @return true if the Favorite-Account-based line was added successfully, false otherwise.
+     */
+    private boolean addNewFavoriteAccount(IWantDocument iWantDocument) {
+        int numErrors = GlobalVariables.getMessageMap().getErrorCount();
+        
+        new PurApFavoriteAccountLineBuilderForIWantDocument(iWantDocument).addNewFavoriteAccountLineToListIfPossible();
+        
+        return numErrors == GlobalVariables.getMessageMap().getErrorCount();
     }
 
 }
