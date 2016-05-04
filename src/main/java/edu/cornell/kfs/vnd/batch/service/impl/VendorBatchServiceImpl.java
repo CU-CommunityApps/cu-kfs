@@ -572,7 +572,7 @@ public class VendorBatchServiceImpl implements VendorBatchService{
                 Integer fileSize = Integer.parseInt(Long.toString(attachmentFile.length()));
 
                 // TODO : Files.probeContentType is supported by java 7.  Not sure if this will be an issue
-                String mimeTypeCode = Files.probeContentType(attachmentFile.toPath());
+                String mimeTypeCode = getMimeTypeFromAttachmentFile(attachmentFile);
                 // TODO : urlconnection is working for java 7 and under, but it return null for 'docx/pptx/xslx' 
 //                String type = URLConnection.guessContentTypeFromName(attachmentFile.getAbsolutePath());
 
@@ -590,6 +590,16 @@ public class VendorBatchServiceImpl implements VendorBatchService{
             }
         }
     }
+    
+    /**
+     * Extracting this out to support testing.
+     * @param attachmentFile
+     * @return
+     * @throws IOException
+     */
+	protected String getMimeTypeFromAttachmentFile(File attachmentFile) throws IOException {
+		return Files.probeContentType(attachmentFile.toPath());
+	}
 
     /*
      * populate insurance tracking from batch input data to vendor detail extension

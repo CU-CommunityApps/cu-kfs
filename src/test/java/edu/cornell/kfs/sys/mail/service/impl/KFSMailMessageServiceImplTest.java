@@ -1,18 +1,19 @@
 package edu.cornell.kfs.sys.mail.service.impl;
 
-import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-import org.kuali.kfs.sys.ConfigureContext;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
 import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.sys.mail.KFSMailMessage;
 import edu.cornell.kfs.sys.mail.service.KFSMailMessageService;
 
-@ConfigureContext(session = ccs1)
 public class KFSMailMessageServiceImplTest extends KualiTestBase {
     private KFSMailMessageService kFSMailMessageService;
     private String sender = "testSender@test.kuali.org";
@@ -20,9 +21,9 @@ public class KFSMailMessageServiceImplTest extends KualiTestBase {
 
     @Override
     protected void setUp() throws Exception {
-        // TODO Auto-generated method stub
         super.setUp();
-        kFSMailMessageService = SpringContext.getBean(KFSMailMessageService.class);
+        kFSMailMessageService = new testableKFSMailMessageServiceImpl();
+        ((testableKFSMailMessageServiceImpl)kFSMailMessageService).setKualiConfigurationService(new testableConfigurationService());
     }
 
     /*
@@ -33,10 +34,9 @@ public class KFSMailMessageServiceImplTest extends KualiTestBase {
         KFSMailMessage messageData = new KFSMailMessage();
         try {
             kFSMailMessageService.send(messageData);
-            assertTrue("should get runtime exception ", false);            
+            assertTrue("Expected a runtime exception, but did not happen.", false);            
         } catch (RuntimeException re) {
-            assertTrue("should get runtime exception " + re.getMessage(), true);            
-            
+            assertTrue("Expected a runtime exception, and we did: " + re.getMessage(), true);            
         }
     }
   
@@ -53,12 +53,35 @@ public class KFSMailMessageServiceImplTest extends KualiTestBase {
         messageData.setMessage("KFSMailMessageServiceImplTest - testMessageSend");
         try {
             kFSMailMessageService.send(messageData);
-            assertTrue("should send email ", true);            
+            assertTrue("Mail was successfully sent", true);            
         } catch (Exception re) {
-            assertTrue("should not get exceltion " + re.getMessage(), false);            
-            
+            assertTrue("Mail should have been sent, but was not: " + re.getMessage(), false);            
         }
     }
-  
+    
+    private class testableConfigurationService implements ConfigurationService {
+		@Override
+		public String getPropertyValueAsString(String key) {
+			// TODO Auto-generated method stub
+			return "does_not_matter";
+		}
+		@Override
+		public boolean getPropertyValueAsBoolean(String key) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		@Override
+		public Map<String, String> getAllProperties() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+    }
+    
+    private class testableKFSMailMessageServiceImpl extends KFSMailMessageServiceImpl {
+    	@Override
+    	protected void transportMessage(MimeMessage message) throws MessagingException {
+    		//We don't care that the message actually sends or not, we care about business rules earlier on.
+    	}
+    }
 
 }
