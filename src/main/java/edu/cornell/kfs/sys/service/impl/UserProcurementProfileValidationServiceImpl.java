@@ -13,10 +13,10 @@ import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.ProjectCode;
 import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.coa.businessobject.SubObjectCode;
-import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kns.service.DictionaryValidationService;
 import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
@@ -272,27 +272,27 @@ public class UserProcurementProfileValidationServiceImpl implements UserProcurem
     }
 
     /**
-     * check if the favorite account is alreadded to accounting line
+     * check if the favorite account is already added to accounting line
      */
-    public boolean isAccountExist(FavoriteAccount accountingLine, List<PurApAccountingLine> acctLines, int itemIdx) {
-    	// itemIdx = -2 is for setdistribution
-    	boolean isExist = false;
-    	for (PurApAccountingLine acctline : acctLines) {
+    public boolean isAccountExist(FavoriteAccount accountingLine, List<? extends GeneralLedgerPendingEntrySourceDetail> acctLines) {
+    	for (GeneralLedgerPendingEntrySourceDetail acctline : acctLines) {
     		if (isEqualAcct(accountingLine, acctline)) {
-    			String propertyName = "document.favoriteAccountLineIdentifier";
-    			if (itemIdx >= 0) {
-    				propertyName = "document.item["+itemIdx+"].favoriteAccountLineIdentifier" ;
-    			}
-				GlobalVariables.getMessageMap().putError(propertyName, CUKFSKeyConstants.ERROR_FAVORITE_ACCOUNT_EXIST);
-    			isExist = true;
+    			return true;
     		}
     	}
     	
-    	return isExist;
+    	return false;
     }
     
-    private boolean isEqualAcct(FavoriteAccount accountingLine, PurApAccountingLine acctLine) {
-        return new EqualsBuilder().append(acctLine.getChartOfAccountsCode(), accountingLine.getChartOfAccountsCode()).append(acctLine.getAccountNumber(), accountingLine.getAccountNumber()).append(acctLine.getSubAccountNumber(), accountingLine.getSubAccountNumber()).append(acctLine.getFinancialObjectCode(), accountingLine.getFinancialObjectCode()).append(acctLine.getFinancialSubObjectCode(), accountingLine.getFinancialSubObjectCode()).append(acctLine.getProjectCode(), accountingLine.getProjectCode()).append(acctLine.getOrganizationReferenceId(), accountingLine.getOrganizationReferenceId()).isEquals();
+    private boolean isEqualAcct(FavoriteAccount accountingLine, GeneralLedgerPendingEntrySourceDetail acctLine) {
+        return new EqualsBuilder().append(acctLine.getChartOfAccountsCode(), accountingLine.getChartOfAccountsCode())
+                .append(acctLine.getAccountNumber(), accountingLine.getAccountNumber())
+                .append(acctLine.getSubAccountNumber(), accountingLine.getSubAccountNumber())
+                .append(acctLine.getFinancialObjectCode(), accountingLine.getFinancialObjectCode())
+                .append(acctLine.getFinancialSubObjectCode(), accountingLine.getFinancialSubObjectCode())
+                .append(acctLine.getProjectCode(), accountingLine.getProjectCode())
+                .append(acctLine.getOrganizationReferenceId(), accountingLine.getOrganizationReferenceId())
+                .isEquals();
     }
 
 	public void setBusinessObjectService(BusinessObjectService businessObjectService) {

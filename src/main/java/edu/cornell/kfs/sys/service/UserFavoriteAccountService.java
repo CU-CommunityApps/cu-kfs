@@ -1,6 +1,6 @@
 package edu.cornell.kfs.sys.service;
 
-import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
+import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 
@@ -18,7 +18,7 @@ public interface UserFavoriteAccountService {
 	 * @param account
 	 * @return
 	 */
-	PurApAccountingLine getPopulatedNewAccount(FavoriteAccount account, boolean isRequisition);
+	<T extends GeneralLedgerPendingEntrySourceDetail> T getPopulatedNewAccount(FavoriteAccount account, Class<T> accountLineClass);
 	
 	/**
 	 * retrieve the favorite account based on PK

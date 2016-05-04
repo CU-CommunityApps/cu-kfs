@@ -8,13 +8,15 @@ import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.ProjectCode;
 import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.coa.businessobject.SubObjectCode;
-import edu.cornell.kfs.module.purap.CUPurapConstants;
+import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
-public class IWantAccount extends PersistableBusinessObjectBase {
+import edu.cornell.kfs.module.purap.CUPurapConstants;
+
+public class IWantAccount extends PersistableBusinessObjectBase implements GeneralLedgerPendingEntrySourceDetail {
 
 	private static final long serialVersionUID = 1L;
 	private String documentNumber;
@@ -207,6 +209,46 @@ public class IWantAccount extends PersistableBusinessObjectBase {
     }
 
     /**
+     * Returns the amount-or-percent value if configured to use amounts, zero otherwise.
+     * 
+     * @see org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail#getAmount()
+     */
+    @Override
+    public KualiDecimal getAmount() {
+        return CUPurapConstants.AMOUNT.equals(getUseAmountOrPercent()) ? getAmountOrPercent() : KualiDecimal.ZERO;
+    }
+
+    // Only here to comply with the GeneralLedgerPendingEntrySourceDetail interface.
+    @Override
+    public String getBalanceTypeCode() {
+        return null;
+    }
+
+    // Only here to comply with the GeneralLedgerPendingEntrySourceDetail interface.
+    @Override
+    public String getFinancialDocumentLineDescription() {
+        return null;
+    }
+
+    // Only here to comply with the GeneralLedgerPendingEntrySourceDetail interface.
+    @Override
+    public String getReferenceNumber() {
+        return null;
+    }
+
+    // Only here to comply with the GeneralLedgerPendingEntrySourceDetail interface.
+    @Override
+    public String getReferenceOriginCode() {
+        return null;
+    }
+
+    // Only here to comply with the GeneralLedgerPendingEntrySourceDetail interface.
+    @Override
+    public String getReferenceTypeCode() {
+        return null;
+    }
+
+	/**
      * Helper method for copying an account.
      * 
      * @param oldAccount

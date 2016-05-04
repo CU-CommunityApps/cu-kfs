@@ -90,6 +90,7 @@
        <!-- <ref bean="IWantDocument-sensitive"/>--> 
        <ref bean="IWantDocument-totalDollarAmount"/>
        <ref bean="IWantDocument-itemAndAccountDifference" />
+       <ref bean="IWantDocument-favoriteAccountLineIdentifier" />
        
        <ref bean="IWantDocument-reqsDocId" />
        <ref bean="IWantDocument-collegeLevelChartForSearch" />
@@ -568,6 +569,18 @@
     <property name="name" value="itemAndAccountDifference"/>
     <property name="label" value="Remaining Total Needing an Account"/>
     <property name="shortLabel" value="Total Needing Acct"/>
+  </bean>
+  
+  <bean id="IWantDocument-favoriteAccountLineIdentifier" parent="IWantDocument-favoriteAccountLineIdentifier-parentBean"/>
+
+  <bean id="IWantDocument-favoriteAccountLineIdentifier-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="favoriteAccountLineIdentifier"/>
+    <property name="label" value="Favorite Account"/>
+    <property name="shortLabel" value="Favorite Acct"/>
+    <property name="maxLength" value="20" />
+    <property name="control">
+      <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFinder" p:includeKeyInLabel="false"/>
+    </property>
   </bean>
   
   <bean id="IWantDocument-noteLabel" parent="IWantDocument-noteLabel-parentBean"/>

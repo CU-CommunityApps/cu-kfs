@@ -102,15 +102,14 @@ import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.util.MessageMap;
 import org.kuali.rice.krad.util.ObjectUtils;
 
-
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.document.web.struts.CuPurchaseOrderForm;
-import edu.cornell.kfs.sys.CUKFSKeyConstants;
+import edu.cornell.kfs.module.purap.util.PurchasingFavoriteAccountLineBuilderBase;
+import edu.cornell.kfs.module.purap.util.PurchasingFavoriteAccountLineBuilderForDistribution;
+import edu.cornell.kfs.module.purap.util.PurchasingFavoriteAccountLineBuilderForLineItem;
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
-import edu.cornell.kfs.sys.service.UserProcurementProfileValidationService;
-
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 
 /**
@@ -451,6 +450,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
      * @throws Exception
      * @return An ActionForward
      */
+    @SuppressWarnings("unchecked")
     public ActionForward addItem(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
         PurApItem item = purchasingForm.getNewPurchasingItemLine();
@@ -462,7 +462,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             purDocument.addItem(item);
             // KFSPTS-985
             if (((PurchasingDocumentBase)purDocument).isIntegratedWithFavoriteAccount()) {
-                populatePrimaryFavoriteAccount(item.getSourceAccountingLines(), purDocument instanceof RequisitionDocument);
+                populatePrimaryFavoriteAccount(item.getSourceAccountingLines(), getAccountClassFromNewPurApAccountingLine(purchasingForm));
             }
         }
 
@@ -627,13 +627,17 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
      * @throws Exception
      * @return An ActionForward
      */
-    public ActionForward setupAccountDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @SuppressWarnings("unchecked")
+    public ActionForward setupAccountDistribution(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
+        PurchasingDocumentBase document = (PurchasingDocumentBase) purchasingForm.getDocument();
 
         purchasingForm.setHideDistributeAccounts(false);
         // KFSPTS-985
-        if (((PurchasingDocumentBase)purchasingForm.getDocument()).isIntegratedWithFavoriteAccount()) {
-            populatePrimaryFavoriteAccount(purchasingForm.getAccountDistributionsourceAccountingLines(), (PurchasingDocument)purchasingForm.getDocument() instanceof RequisitionDocument);
+        if (document.isIntegratedWithFavoriteAccount()) {
+            populatePrimaryFavoriteAccount(
+                    purchasingForm.getAccountDistributionsourceAccountingLines(), getAccountClassFromNewPurApAccountingLine(purchasingForm));
         }
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
@@ -1732,13 +1736,27 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
     
     // KFSPTS_985, KFSUPGRADE-75
     
-    protected void populatePrimaryFavoriteAccount(List<PurApAccountingLine> sourceAccountinglines, boolean isRequisition) {
-    	FavoriteAccount account =  SpringContext.getBean(UserFavoriteAccountService.class).getFavoriteAccount(GlobalVariables.getUserSession().getPrincipalId());
+    protected void populatePrimaryFavoriteAccount(List<PurApAccountingLine> sourceAccountinglines, Class<? extends PurApAccountingLine> accountingLineClass) {
+        UserFavoriteAccountService userFavoriteAccountService = SpringContext.getBean(UserFavoriteAccountService.class);
+    	FavoriteAccount account =  userFavoriteAccountService.getFavoriteAccount(GlobalVariables.getUserSession().getPrincipalId());
     	if (ObjectUtils.isNotNull(account)) {
-    		sourceAccountinglines.add(SpringContext.getBean(UserFavoriteAccountService.class).getPopulatedNewAccount(account, isRequisition));
+    		sourceAccountinglines.add(userFavoriteAccountService.getPopulatedNewAccount(account, accountingLineClass));
     	}
     }
    
+    /**
+     * Gets the actual source accounting line class by retrieving and examining
+     * a new instance from the form's setupNewPurchasingAccountingLine() method.
+     * This is needed for cases where the document's source line implementation
+     * does not match the one configured in its associated data dictionary group.
+     * 
+     * @param purchasingForm The document form to retrieve the new accounting line from; cannot be null.
+     * @return The implementation class of the document form's new source accounting lines.
+     */
+    protected Class<? extends PurApAccountingLine> getAccountClassFromNewPurApAccountingLine(PurchasingFormBase purchasingForm) {
+        return purchasingForm.setupNewPurchasingAccountingLine().getClass();
+    }
+    
     /*
      * KFSPTS-985 : add favorite account.
      * This is a copy from requisitionaction.  to be shared by both req & po
@@ -1746,43 +1764,27 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
     public ActionForward addFavoriteAccount(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
     	PurchasingFormBase poForm = (PurchasingFormBase) form;
     	PurchasingDocumentBase document = (PurchasingDocumentBase) poForm.getDocument();
+    	
         int itemIdx = getSelectedLine(request);
+        final int DISTRIBUTION_INDEX = -2;
+        PurchasingFavoriteAccountLineBuilderBase<? extends PurApAccountingLine> favoriteAccountBuilder;
+        
+        // Initialize the correct builder based on whether the Favorite Account is for an item in the list or for account distribution.
 		if (itemIdx >= 0) {
-			PurchasingItemBase item = (PurchasingItemBase) document.getItem(getSelectedLine(request));
-			if (item.getFavoriteAccountLineIdentifier() != null) {
-				FavoriteAccount account = SpringContext.getBean(UserFavoriteAccountService.class).getSelectedFavoriteAccount(item.getFavoriteAccountLineIdentifier());
-				if (ObjectUtils.isNotNull(account)) {
-					if (!SpringContext.getBean(UserProcurementProfileValidationService.class).isAccountExist(account, item.getSourceAccountingLines(), itemIdx)) {
-					  item.getSourceAccountingLines().add(SpringContext.getBean(UserFavoriteAccountService.class).getPopulatedNewAccount(account, document instanceof RequisitionDocument));
-					}
-				} else {
-					GlobalVariables.getMessageMap().putError("document.item["+itemIdx+"].favoriteAccountLineIdentifier", CUKFSKeyConstants.ERROR_FAVORITE_ACCOUNT_NOT_EXIST);
-				}
-
-			} else {
-				GlobalVariables.getMessageMap().putError("document.item["+itemIdx+"].favoriteAccountLineIdentifier", CUKFSKeyConstants.ERROR_FAVORITE_ACCOUNT_NOT_SELECTED);
-			}
-		} else if (itemIdx == -2) {
-			// TODO : also need error handling here
-			if (document.getFavoriteAccountLineIdentifier() != null) {
-				FavoriteAccount account = SpringContext.getBean(UserFavoriteAccountService.class).getSelectedFavoriteAccount(document.getFavoriteAccountLineIdentifier());
-				if (ObjectUtils.isNotNull(account)) {
-					if (ObjectUtils.isNotNull(account)) {
-						if (!SpringContext.getBean(UserProcurementProfileValidationService.class).isAccountExist(account,poForm.getAccountDistributionsourceAccountingLines(),itemIdx)) {
-							poForm.getAccountDistributionsourceAccountingLines().add(SpringContext.getBean(UserFavoriteAccountService.class).getPopulatedNewAccount(account, document instanceof RequisitionDocument));
-						}
-					}
-				} else {
-					GlobalVariables.getMessageMap().putError("document.favoriteAccountLineIdentifier",CUKFSKeyConstants.ERROR_FAVORITE_ACCOUNT_NOT_EXIST);
-				}
-
-			} else {
-				GlobalVariables.getMessageMap().putError("document.favoriteAccountLineIdentifier",CUKFSKeyConstants.ERROR_FAVORITE_ACCOUNT_NOT_SELECTED);
-			}
+			PurchasingItemBase item = (PurchasingItemBase) document.getItem(itemIdx);
+			favoriteAccountBuilder = new PurchasingFavoriteAccountLineBuilderForLineItem<PurApAccountingLine>(
+					item, itemIdx, poForm.setupNewPurchasingAccountingLine());
+		} else if (itemIdx == DISTRIBUTION_INDEX) {
+			favoriteAccountBuilder = new PurchasingFavoriteAccountLineBuilderForDistribution<PurApAccountingLine>(
+					document, poForm.getAccountDistributionsourceAccountingLines(), poForm.setupNewAccountDistributionAccountingLine());
+		} else {
+		    return mapping.findForward(KFSConstants.MAPPING_BASIC);
 		}
 
+		// Add a new Favorite-Account-derived accounting line to the list, with errors inserted into the message map as appropriate.
+		favoriteAccountBuilder.addNewFavoriteAccountLineToListIfPossible();
+		
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
-
 
 }
