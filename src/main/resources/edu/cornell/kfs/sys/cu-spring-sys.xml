@@ -249,5 +249,9 @@
 	        <ref bean="createDoneBatchFileLookupableHelperService" />
 	    </property>
 	</bean>
-
+	
+	<bean id="postalCodeValidationService-parentBean" class="org.kuali.kfs.sys.service.impl.PostalCodeValidationServiceImpl" abstract="true">
+		<property name="stateService" ref="stateService" />
+    </bean>
+	
 </beans>
