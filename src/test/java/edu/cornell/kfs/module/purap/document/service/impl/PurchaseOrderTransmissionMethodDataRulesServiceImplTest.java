@@ -1,104 +1,183 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
-import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.fixture.UserNameFixture;
+import static org.junit.Assert.*;
+
+import org.easymock.EasyMock;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.kuali.kfs.sys.service.PostalCodeValidationService;
+import org.kuali.kfs.vnd.service.PhoneNumberService;
+import org.kuali.kfs.vnd.service.impl.PhoneNumberServiceImpl;
+import org.kuali.rice.kns.datadictionary.validation.fieldlevel.ZipcodeValidationPattern;
+import org.kuali.rice.location.api.state.State;
+import org.kuali.rice.location.api.state.StateService;
+import org.kuali.rice.location.impl.state.StateBo;
+import org.springframework.util.StringUtils;
 
 import edu.cornell.kfs.module.purap.document.service.PurchaseOrderTransmissionMethodDataRulesService;
+import edu.cornell.kfs.sys.service.impl.CuPostalCodeValidationServiceImpl;
 
-@ConfigureContext(session = UserNameFixture.ccs1)
-public class PurchaseOrderTransmissionMethodDataRulesServiceImplTest extends KualiTestBase {
+public class PurchaseOrderTransmissionMethodDataRulesServiceImplTest {
+	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PurchaseOrderTransmissionMethodDataRulesServiceImpl.class);
+	private static final String PHONE_NUMBER_GOOD = "607-220-3712";
+	private static final String PHONE_NUMBER_BAD = "ab258h c23";
+	private static final String ADDRESS = "line 1 address";
+	private static final String CITY = "Ithaca";
+	private static final String STATE = "NY";
+	private static final String COUNTRY = "US";
+	private static final String ZIP_GOOD = "14850";
+	private static final String ZIP_BAD = "64835634856";
+	private static final String EMPTY = "";
 	
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-			.getLogger(PurchaseOrderTransmissionMethodDataRulesServiceImpl.class);
-
 	private PurchaseOrderTransmissionMethodDataRulesService poTransMethodSataRulesService;
+	
+	@Before
+	public void setUp() throws Exception {
+		poTransMethodSataRulesService = new PurchaseOrderTransmissionMethodDataRulesServiceImpl();
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		poTransMethodSataRulesService = SpringContext.getBean(PurchaseOrderTransmissionMethodDataRulesService.class);
+		PostalCodeValidationService postalCodeValidationSerivce = new testableCuPostalCodeValidationServiceImpl();
+		StateService mockStateService = EasyMock.createMock(StateService.class);
+		EasyMock.expect(mockStateService.getState(COUNTRY, STATE)).andReturn(makeState());
+		EasyMock.replay(mockStateService);
+		((CuPostalCodeValidationServiceImpl)postalCodeValidationSerivce).setStateService(mockStateService);
+		((PurchaseOrderTransmissionMethodDataRulesServiceImpl)this.poTransMethodSataRulesService).setPostalCodeValidationService(postalCodeValidationSerivce);
+		
+		PhoneNumberService phoneNumberService = new testablePhoneNumberServiceImpl();
+		((PurchaseOrderTransmissionMethodDataRulesServiceImpl)this.poTransMethodSataRulesService).setPhoneNumberService(phoneNumberService);
 	}
 	
-	public void testIsFaxNumberValid_Success(){		
-		boolean valid = poTransMethodSataRulesService.isFaxNumberValid("607-220-3712");
+	@After
+	public void testDown() {
+		poTransMethodSataRulesService = null;
+	}
+	
+	@Test
+	public void testIsFaxNumberValid_Success(){	
+		boolean valid = poTransMethodSataRulesService.isFaxNumberValid(PHONE_NUMBER_GOOD);
 		assertTrue(valid);	
 	}
 	
+	@Test
 	public void testIsFaxNumberValid_Fail(){		
-		boolean valid = poTransMethodSataRulesService.isFaxNumberValid("ab258h c23");
+		boolean valid = poTransMethodSataRulesService.isFaxNumberValid(PHONE_NUMBER_BAD);
 		assertFalse(valid);	
 	}
 	
+	@Test
 	public void testIsEmailAddressValid_Success(){
 		boolean valid = poTransMethodSataRulesService.isEmailAddressValid("abc@email.com");
 		assertTrue(valid);
 	}
 	
+	@Test
 	public void testIsEmailAddressValid_Fail(){
 		boolean valid = poTransMethodSataRulesService.isEmailAddressValid("abc.email.com");
 		assertFalse(valid);
 	}
 	
+	@Test
 	public void testIsCountryCodeValid_Success(){
-		boolean valid = poTransMethodSataRulesService.isCountryCodeValid("US");
+		boolean valid = poTransMethodSataRulesService.isCountryCodeValid(COUNTRY);
 		assertTrue(valid);
 	}
 	
+	@Test
 	public void testIsCountryCodeValid_Fail(){
-		boolean valid = poTransMethodSataRulesService.isCountryCodeValid("");
+		boolean valid = poTransMethodSataRulesService.isCountryCodeValid(EMPTY);
 		assertFalse(valid);
 	}
 	
+	@Test
 	public void testIsStateCodeValid_Success(){
-		boolean valid = poTransMethodSataRulesService.isStateCodeValid("NY");
+		boolean valid = poTransMethodSataRulesService.isStateCodeValid(STATE);
 		assertTrue(valid);
 	}
 	
+	@Test
 	public void testIsStateCodeValid_Fail(){
-		boolean valid = poTransMethodSataRulesService.isStateCodeValid("");
+		boolean valid = poTransMethodSataRulesService.isStateCodeValid(EMPTY);
 		assertFalse(valid);
 	}
 	
+	@Test
 	public void testIsZipCodeValid_Success(){
-		boolean valid = poTransMethodSataRulesService.isZipCodeValid("14950");
+		boolean valid = poTransMethodSataRulesService.isZipCodeValid(ZIP_GOOD);
 		assertTrue(valid);
 	}
 	
+	@Test
 	public void testIsZipCodeValid_Fail(){
-		boolean valid = poTransMethodSataRulesService.isZipCodeValid("");
+		boolean valid = poTransMethodSataRulesService.isZipCodeValid(EMPTY);
 		assertFalse(valid);
 	}
 	
+	@Test
 	public void testIsAddress1Valid_Success(){
-		boolean valid = poTransMethodSataRulesService.isAddress1Valid("line 1 address");
+		boolean valid = poTransMethodSataRulesService.isAddress1Valid(ADDRESS);
 		assertTrue(valid);
 	}
 	
+	@Test
 	public void testIsAddress1Valid_Fail(){
-		boolean valid = poTransMethodSataRulesService.isAddress1Valid("");
+		boolean valid = poTransMethodSataRulesService.isAddress1Valid(EMPTY);
 		assertFalse(valid);
 	}
 	
+	@Test
 	public void testIsCityValid_Success(){
-		boolean valid = poTransMethodSataRulesService.isCityValid("Ithaca");
+		boolean valid = poTransMethodSataRulesService.isCityValid(CITY);
 		assertTrue(valid);
 	}
 	
+	@Test
 	public void testIsCityValid_Fail(){
-		boolean valid = poTransMethodSataRulesService.isCityValid("");
+		boolean valid = poTransMethodSataRulesService.isCityValid(EMPTY);
 		assertFalse(valid);
 	}
 	
+	@Test
 	public void testIsPostalAddressValid_Success(){
-		boolean valid = poTransMethodSataRulesService.isPostalAddressValid("line 1 address", "Ithaca", "NY", "14850", "US");
+		boolean valid = poTransMethodSataRulesService.isPostalAddressValid(ADDRESS, CITY, STATE, ZIP_GOOD, COUNTRY);
 		assertTrue(valid);
 	}
 	
+	@Test
 	public void testIsPostalAddressValid_Fail(){
-		boolean valid = poTransMethodSataRulesService.isPostalAddressValid("line 1 address", "Ithaca", "NY", "64835634856", "US");
+		boolean valid = poTransMethodSataRulesService.isPostalAddressValid(ADDRESS, CITY, STATE, ZIP_BAD, COUNTRY);
 		assertFalse(valid);
 	}
+	
+	private State makeState() {
+		StateBo bo = new StateBo();
+		bo.setCode(STATE);
+		bo.setName("New York");
+		bo.setCountryCode(COUNTRY);
+		return StateBo.to(bo);
+	}
+	
+	private class testablePhoneNumberServiceImpl extends PhoneNumberServiceImpl{
+		@Override
+		protected String[] parseFormats() {
+			//This is the string that is in our parameter table
+			String phoneNumberRegX = "\\d{3}-\\d{3}-\\d{4};\\(\\d{3}\\)\\s\\d{3}-\\d{4};\\d{3}\\s\\d{3}\\s\\d{4};\\d{10}";
+			return StringUtils.delimitedListToStringArray(phoneNumberRegX, ";");
+		}
+	}
+	
+	private class testableCuPostalCodeValidationServiceImpl extends CuPostalCodeValidationServiceImpl {
+		@Override
+		protected ZipcodeValidationPattern getZipcodeValidatePattern() {
+			return new testableZipcodeValidationPattern();
+		}
+	}
+	
+	private class testableZipcodeValidationPattern extends ZipcodeValidationPattern {
+		@Override
+		protected String getRegexString() {
+			//this is the string that is in the rice properties file.
+	        return "[0-9]{5}(\\-[0-9]{4})?";
+	    }
+	}
+	
 }
