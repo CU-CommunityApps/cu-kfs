@@ -800,7 +800,9 @@
 
 	<bean id="postalCodeValidationService" parent="postalCodeValidationService-parentBean"/>
 	
-    <bean id="postalCodeValidationService-parentBean" class="org.kuali.kfs.sys.service.impl.PostalCodeValidationServiceImpl" abstract="true" />
+    <bean id="postalCodeValidationService-parentBean" class="org.kuali.kfs.sys.service.impl.PostalCodeValidationServiceImpl" abstract="true">
+    	<property name="stateService" ref="stateService" />
+    </bean>
 	<bean id="segmentedLookupResultsService" parent="segmentedLookupResultsService-parentBean"/>
     
 	<bean id="segmentedLookupResultsService-parentBean" class="org.kuali.kfs.sys.service.impl.SegmentedLookupResultsServiceImpl" abstract="true">
