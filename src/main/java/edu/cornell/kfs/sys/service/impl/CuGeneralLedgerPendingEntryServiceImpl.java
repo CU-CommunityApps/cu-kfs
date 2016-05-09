@@ -5,12 +5,12 @@ import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.UniversityDate;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.service.impl.GeneralLedgerPendingEntryServiceImpl;
 
 public class CuGeneralLedgerPendingEntryServiceImpl extends GeneralLedgerPendingEntryServiceImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuGeneralLedgerPendingEntryServiceImpl.class);
+    
+    protected AccountingPeriodService accountingPeriodService;
 
     /**
      * This method takes a GLPE and updates the fiscal year and fiscal accounting period to the current open values if either or both of them are not currently
@@ -31,8 +31,7 @@ public class CuGeneralLedgerPendingEntryServiceImpl extends GeneralLedgerPending
         } else if (glpe.getFinancialDocumentTypeCode().equals(KFSConstants.FinancialDocumentTypeCodes.PROCUREMENT_CARD)) {
          // Need to handle backposted PCard transactions if they don't get auto-approved before the CLOSING accounting period is closed.
             if ((glpe.getUniversityFiscalPeriodCode() != null) && (glpe.getUniversityFiscalYear() != null)) {
-                AccountingPeriod acctPer = SpringContext.getBean(AccountingPeriodService.class)
-                        .getByPeriod(glpe.getUniversityFiscalPeriodCode(), glpe.getUniversityFiscalYear());
+                AccountingPeriod acctPer = accountingPeriodService.getByPeriod(glpe.getUniversityFiscalPeriodCode(), glpe.getUniversityFiscalYear());
                 // Reset accounting period on GLPE if period assigned is no longer active
                 if (!acctPer.isActive()) {
                     setFiscalPeriodYearToToday(glpe);
@@ -46,10 +45,14 @@ public class CuGeneralLedgerPendingEntryServiceImpl extends GeneralLedgerPending
      * @param glpe
      */
     private void setFiscalPeriodYearToToday(GeneralLedgerPendingEntry glpe) {
-        UniversityDate ud = SpringContext.getBean(UniversityDateService.class).getCurrentUniversityDate();
+        UniversityDate ud = universityDateService.getCurrentUniversityDate();
 
         glpe.setUniversityFiscalYear(ud.getUniversityFiscalYear());
         glpe.setUniversityFiscalPeriodCode(ud.getUniversityFiscalAccountingPeriod());
     }
+
+	public void setAccountingPeriodService(AccountingPeriodService accountingPeriodService) {
+		this.accountingPeriodService = accountingPeriodService;
+	}
 
 }
