@@ -1,16 +1,40 @@
 package edu.cornell.kfs.sys.service.mock;
 
+import edu.cornell.kfs.fp.CuFPParameterConstants;
+import edu.cornell.kfs.pdp.CUPdpParameterConstants;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.vnd.VendorParameterConstants;
-import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.coreservice.api.parameter.Parameter;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MockParameterServiceImpl implements ParameterService {
 
-    private static final String VENDOR_DETAIL_NAME = "org.kuali.kfs.vnd.businessobject.VendorDetail";
+    Map<String, String> parameters;
+
+    public MockParameterServiceImpl() {
+        parameters = new HashMap<>();
+        parameters.put(CuFPParameterConstants.AdvanceDepositDocument.CHART, "IT");
+        parameters.put(CuFPParameterConstants.AdvanceDepositDocument.OBJECT_CODE, "2240");
+        parameters.put(CuFPParameterConstants.AdvanceDepositDocument.ACCOUNT, "G621060");
+        parameters.put(VendorParameterConstants.DEFAULT_PHONE_NUMBER_DIGITS, "10");
+        parameters.put(CuFPParameterConstants.AchIncome.ACH_INCOME_SUMMARY_FROM_EMAIL_ADDRESS, "achIncomeTest@cornell.edu");
+        parameters.put(CuFPParameterConstants.AchIncome.ACH_INCOME_SUMMARY_EMAIL_SUBJECT, "Advance Deposit Service Test Summary Email");
+        parameters.put(CuFPParameterConstants.AchIncome.ACH_INCOME_SUMMARY_TO_EMAIL_ADDRESSES, "achIncomeTest@cornell.edu");
+        parameters.put(VendorParameterConstants.DEFAULT_PHONE_NUMBER_DIGITS, "10");
+        parameters.put(CUPdpParameterConstants.ACH_PERSONAL_CHECKING_TRANSACTION_CODE, "22PPD");
+        parameters.put(CUPdpParameterConstants.ACH_PERSONAL_SAVINGS_TRANSACTION_CODE, "32PPD");
+        parameters.put(CUPdpParameterConstants.ACH_DIRECT_DEPOSIT_TRANSACTION_TYPE, "PRAP");
+        parameters.put(CUPdpParameterConstants.GENERATED_PAYEE_ACH_ACCOUNT_DOC_NOTE_TEXT, "Created from Workday ACH data extract.");
+        parameters.put(CUPdpParameterConstants.NEW_PAYEE_ACH_ACCOUNT_EMAIL_SUBJECT, "New ACH Account in KFS.");
+        parameters.put(CUPdpParameterConstants.NEW_PAYEE_ACH_ACCOUNT_EMAIL_BODY,
+                "Payment for [payeeIdentifierTypeCode] of [payeeIdNumber] will go to [bankAccountTypeCode] account at [bankRouting.bankName].");
+    }
 
     @Override
     public Parameter createParameter(Parameter parameter) {
@@ -34,11 +58,7 @@ public class MockParameterServiceImpl implements ParameterService {
 
     @Override
     public String getParameterValueAsString(Class<?> componentClass, String parameterName) {
-        if (StringUtils.equals(componentClass.getName(), VENDOR_DETAIL_NAME) && StringUtils.equals(parameterName, VendorParameterConstants.DEFAULT_PHONE_NUMBER_DIGITS)) {
-            return "10";
-        } else {
-            return null;
-        }
+        return parameters.get(parameterName);
     }
 
     @Override
@@ -92,7 +112,19 @@ public class MockParameterServiceImpl implements ParameterService {
 
     @Override
     public Collection<String> getParameterValuesAsString(Class<?> componentClass, String parameterName) {
-        return null;
+        String strValues = getParameterValueAsString(componentClass, parameterName);
+
+        if (StringUtils.isBlank(strValues)) {
+            return Collections.emptyList();
+        }
+
+        final Collection<String> values = new ArrayList<String>();
+        for (String value : strValues.split(";")) {
+            values.add(value.trim());
+        }
+
+        return Collections.unmodifiableCollection(values);
+
     }
 
     @Override
