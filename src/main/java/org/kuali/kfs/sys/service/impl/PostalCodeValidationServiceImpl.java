@@ -18,7 +18,6 @@ package org.kuali.kfs.sys.service.impl;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.sys.service.PostalCodeValidationService;
 import org.kuali.rice.kns.datadictionary.validation.fieldlevel.ZipcodeValidationPattern;
@@ -33,7 +32,10 @@ import org.kuali.rice.location.api.state.StateService;
 @NonTransactional
 public class PostalCodeValidationServiceImpl implements PostalCodeValidationService {
 
-    public boolean validateAddress(String postalCountryCode, String stateCode, String postalCode, String statePropertyConstant, String postalCodePropertyConstant) {
+protected StateService stateService;
+	
+	@Override
+	public boolean validateAddress(String postalCountryCode, String stateCode, String postalCode, String statePropertyConstant, String postalCodePropertyConstant) {
         boolean valid = true;
 
         if (StringUtils.equals(KFSConstants.COUNTRY_CODE_UNITED_STATES, postalCountryCode)) {
@@ -52,7 +54,7 @@ public class PostalCodeValidationServiceImpl implements PostalCodeValidationServ
                 }
             }
             else {
-                ZipcodeValidationPattern zipPattern = new ZipcodeValidationPattern();
+                ZipcodeValidationPattern zipPattern = getZipcodeValidatePattern();
                 if (!zipPattern.matches(StringUtils.defaultString(postalCode))) {
                     valid &= false;
                     if (StringUtils.isNotBlank(postalCodePropertyConstant)) {
@@ -65,7 +67,7 @@ public class PostalCodeValidationServiceImpl implements PostalCodeValidationServ
 
         // verify state code exist
         if (StringUtils.isNotBlank(postalCountryCode) && StringUtils.isNotBlank(stateCode)) {
-            State state = SpringContext.getBean(StateService.class).getState(postalCountryCode, stateCode);
+            State state = getStateService().getState(postalCountryCode, stateCode);
             if (state == null) {
                 GlobalVariables.getMessageMap().putError(statePropertyConstant, KFSKeyConstants.ERROR_STATE_CODE_INVALID, stateCode);
                 //KFSPTS-3490
@@ -75,6 +77,21 @@ public class PostalCodeValidationServiceImpl implements PostalCodeValidationServ
         
         return valid;
     }
-
+	
+	/**
+	 * Pulling getZipcodeValidatePattern() out for testability.  Lower down, ZipcodeValidationPattern loads params from a config file.
+	 * @return
+	 */
+	protected ZipcodeValidationPattern getZipcodeValidatePattern() {
+		return new ZipcodeValidationPattern();
+	}
+	
+	public StateService getStateService() {
+		return stateService;
+	}
+	
+	public void setStateService(StateService stateService) {
+		this.stateService = stateService;
+	}
 
 }
