@@ -48,11 +48,6 @@
         <property name="scriptConfigurationFilePaths">
             <list/>
         </property>
-        <property name="jobNames">
-            <list merge="true">
-                <value>payeeACHAccountExtractJob</value>
-            </list>
-        </property>
     </bean>
     
     <bean id="cu-pdpModuleService" parent="pdpModuleService-parentBean">
@@ -118,50 +113,6 @@
             class="edu.cornell.kfs.pdp.businessobject.lookup.CuPayeeACHAccountLookupableHelperServiceImpl">
         <property name="personService" ref="personService" />
         <property name="criteriaLookupService" ref="criteriaLookupService" />
-    </bean>
-
-    <bean id="payeeACHAccountExtractCsvInputFileType" parent="payeeACHAccountExtractCsvInputFileType-parentBean" />
-    <bean id="payeeACHAccountExtractCsvInputFileType-parentBean" abstract="true" class="edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractCsvInputFileType">
-        <property name="directoryPath">
-            <value>${staging.directory}/pdp/payeeACHAccountExtract</value>
-        </property>
-        <property name="fileExtension">
-            <value>csv</value>
-        </property>
-        <property name="csvEnumClass">
-            <value>edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractCsv</value>
-        </property>
-    </bean>
-
-    <bean id="payeeACHAccountExtractService" parent="payeeACHAccountExtractService-parentBean" />
-    <bean id="payeeACHAccountExtractService-parentBean" abstract="true" class="edu.cornell.kfs.pdp.batch.service.impl.PayeeACHAccountExtractServiceImpl">
-        <property name="batchInputFileService" ref="batchInputFileService" />
-        <property name="parameterService" ref="parameterService" />
-        <property name="mailService" ref="mailService" />
-        <property name="documentService" ref="documentService" />
-        <property name="dataDictionaryService" ref="dataDictionaryService" />
-        <property name="personService" ref="personService" />
-        <property name="sequenceAccessorService" ref="sequenceAccessorService" />
-        <property name="achService" ref="pdpAchService" />
-        <property name="achBankService" ref="pdpAchBankService" />
-        <property name="batchInputFileTypes">
-            <list>
-                <ref bean="payeeACHAccountExtractCsvInputFileType" />
-            </list>
-        </property>
-    </bean>
-
-    <bean id="payeeACHAccountExtractStep" class="edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractStep" parent="step">
-        <property name="payeeACHAccountExtractService" ref="payeeACHAccountExtractService" />
-        <property name="batchInputFileType" ref="payeeACHAccountExtractCsvInputFileType" />
-    </bean>
-
-    <bean id="payeeACHAccountExtractJob" parent="unscheduledJobDescriptor">
-       <property name="steps">
-           <list>
-               <ref bean="payeeACHAccountExtractStep" />
-           </list>
-       </property>
     </bean>
 
 </beans>

@@ -33,6 +33,4 @@ public class CUPdpConstants extends PdpConstants {
         public static final String SUBUNIT_OPEN = "<sub_unit>";
         public static final String SUBUNIT_CLOSE = "</sub_unit>";
     }
-    
-    public static final String PAYEE_ACH_ACCOUNT_EXTRACT_FILE_TYPE_ID = "payeeACHAccountExtract_kfs";
 }
