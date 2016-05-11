@@ -33,4 +33,12 @@ public class CUPdpConstants extends PdpConstants {
         public static final String SUBUNIT_OPEN = "<sub_unit>";
         public static final String SUBUNIT_CLOSE = "</sub_unit>";
     }
+    
+    public static final String PAYEE_ACH_ACCOUNT_EXTRACT_FILE_TYPE_ID = "payeeACHAccountExtract_kfs";
+    public static final String PAYEE_ACH_ACCOUNT_EXTRACT_MAINT_DOC_TYPE = "PAAT";
+    public static final String PAYEE_ACH_ACCOUNT_EXTRACT_DIRECT_DEPOSIT_PAYMENT_TYPE = "Direct Deposit";
+    public static final String PAYEE_ACH_ACCOUNT_EXTRACT_BALANCE_ACCOUNT_YES_INDICATOR = "1";
+    public static final String PAYEE_ACH_ACCOUNT_EXTRACT_CHECKING_ACCOUNT_TYPE = "Checking";
+    public static final String PAYEE_ACH_ACCOUNT_EXTRACT_SAVINGS_ACCOUNT_TYPE = "Savings";
+    public static final String PAYEE_ACH_ACCOUNT_EXTRACT_BANK_NAME_PROPERTY = "bankRouting.bankName";
 }
