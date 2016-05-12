@@ -33,7 +33,7 @@
         </property>
         <property name="dataDictionaryPackages">
             <list>
-                <value>org/kuali/kfs/integration/ld/businessobject/datadictionary</value>
+                <value>classpath:org/kuali/kfs/integration/ld/businessobject/datadictionary/*.xml</value>
             </list>
         </property>
         <property name="externalizableBusinessObjectImplementations">
@@ -74,7 +74,7 @@
         </property>
         <property name="dataDictionaryPackages">
             <list>
-                <value>org/kuali/kfs/integration/cg/businessobject/datadictionary</value>
+                <value>classpath:org/kuali/kfs/integration/cg/businessobject/datadictionary/*.xml</value>
             </list>
         </property>
         <property name="externalizableBusinessObjectImplementations">
@@ -112,7 +112,7 @@
         </property>
         <property name="dataDictionaryPackages">
             <list>
-                <value>org/kuali/kfs/integration/cam/businessobject/datadictionary</value>
+                <value>classpath:org/kuali/kfs/integration/cam/businessobject/datadictionary/*.xml</value>
             </list>
         </property>
     </bean>
@@ -134,7 +134,7 @@
         </property>
         <property name="dataDictionaryPackages">
             <list>
-                <value>org/kuali/kfs/integration/cab/businessobject/datadictionary</value>
+                <value>classpath:org/kuali/kfs/integration/cab/businessobject/datadictionary/*.xml</value>
             </list>
         </property>
                 
@@ -161,7 +161,7 @@
         </property>
         <property name="dataDictionaryPackages">
             <list>
-                <value>org/kuali/kfs/integration/purap/businessobject/datadictionary</value>
+                <value>classpath:org/kuali/kfs/integration/purap/businessobject/datadictionary/*.xml</value>
             </list>
         </property>
         <property name="externalizableBusinessObjectImplementations">

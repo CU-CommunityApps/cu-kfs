@@ -18,7 +18,7 @@
         
         <property name="dataDictionaryPackages">
 			<list>
-                <value>edu/cornell/kfs/gl/businessobject/datadictionary</value> 
+                <value>classpath:edu/cornell/kfs/gl/businessobject/datadictionary/*.xml</value>
             </list>
 		</property>
 		

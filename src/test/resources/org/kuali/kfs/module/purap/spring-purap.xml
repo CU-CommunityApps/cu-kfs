@@ -44,8 +44,8 @@
         </property>
 		<property name="dataDictionaryPackages">
 			<list>
-                <value>org/kuali/kfs/module/purap/businessobject/datadictionary</value>
-                <value>org/kuali/kfs/module/purap/document/datadictionary</value>
+                <value>classpath:org/kuali/kfs/module/purap/businessobject/datadictionary/*.xml</value>
+                <value>classpath:org/kuali/kfs/module/purap/document/datadictionary/*.xml</value>
 			</list>
 		</property>
 		<property name="scriptConfigurationFilePaths">

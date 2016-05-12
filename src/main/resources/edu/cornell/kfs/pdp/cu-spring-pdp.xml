@@ -36,8 +36,8 @@
         </property>
         <property name="dataDictionaryPackages">
             <list>
-                <value>edu/cornell/kfs/pdp/businessobject/datadictionary</value>
-                <value>edu/cornell/kfs/pdp/document/datadictionary</value>
+                <value>classpath:edu/cornell/kfs/pdp/businessobject/datadictionary/*.xml</value>
+                <value>classpath:edu/cornell/kfs/pdp/document/datadictionary/*.xml</value>
             </list>
         </property>
         <property name="databaseRepositoryFilePaths">
