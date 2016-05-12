@@ -141,70 +141,8 @@
 		</c:if>
 	</c:if>
 
-	<kul:panelFooter />
-
 	<c:set var="extraButtons" value="${KualiForm.extraButtons}"/>
 
 	<sys:documentControls transactionalDocument="true" extraButtons="${extraButtons}" suppressRoutingControls="${!isRegularStep and KualiForm.editingMode['wizard']}"/>
 
 </kul:documentPage>
-<%--<kul:page showDocumentInfo="true"
-		htmlFormAction="purapIWant" renderMultipart="true"
-		docTitle="${headerTitle}"
-		transactionalDocument="true">
-
-	<SCRIPT type="text/javascript">
-		var kualiForm = document.forms['KualiForm'];
-		var kualiElements = kualiForm.elements;
-	</SCRIPT>
-
-	<script type='text/javascript' src="dwr/interface/IWantAmountUtil.js"></script>
-
-	<c:if test="${(step eq 'customerDataStep')}">
-
-		<kul:tabTop tabTitle="Document Overview" defaultOpen="true" tabErrorKey="${Constants.DOCUMENT_ERRORS}">
-
-			<purap:iWantDocumentOverview editingMode="${KualiForm.editingMode}" readOnly="false" />
-
-			<purap:iWantCustomerData documentAttributes="${DataDictionary.IWantDocument.attributes}" />
-
-		</kul:tabTop>
-
-	</c:if>
-
-	<c:if test="${(step eq 'itemAndAcctDataStep')}">
-		<kul:tabTop tabTitle="Items & Account Info" defaultOpen="true" tabErrorKey="${KFSConstants.I_WANT_DOC_ITEM_TAB_ERRORS}">
-			<purap:iWantItems itemAttributes="${DataDictionary.IWantItem.attributes}"/>
-		</kul:tabTop>
-
-		<kul:tab tabTitle="Account" defaultOpen="true" tabErrorKey="${KFSConstants.I_WANT_DOC_ACCOUNT_TAB_ERRORS}" >
-			<purap:iWantAccountInfo documentAttributes="${DataDictionary.IWantDocument.attributes}" wizard="true" />
-		</kul:tab>
-
-	</c:if>
-	<c:if test="${(step eq 'vendorStep')}">
-		<kul:tabTop tabTitle="Vendor" defaultOpen="true" tabErrorKey="${KFSConstants.I_WANT_DOC_VENDOR_TAB_ERRORS}">
-			<purap:iWantVendor documentAttributes="${DataDictionary.IWantDocument.attributes}" wizard="true"/>
-		</kul:tabTop>
-
-		<purap:iWantMisc documentAttributes="${DataDictionary.IWantDocument.attributes}" />
-
-		<purap:iWantNotes defaultOpen="true"/>
-
-	</c:if>
-
-	<c:if test="${(step eq 'routingStep')}">
-		<kul:tabTop tabTitle="Routing and Submission" defaultOpen="true" tabErrorKey="${PurapConstants.VENDOR_ERRORS}">
-			<c:if test="${canAdHocRouteForApprove != null}">
-				<purap:iWantAdHocRecipients />
-			</c:if>
-		</kul:tabTop>
-	</c:if>
-
-	<kul:panelFooter />
-
-	<c:set var="extraButtons" value="${KualiForm.extraButtons}"/>
-
-	<sys:documentControls transactionalDocument="true" extraButtons="${extraButtons}" suppressRoutingControls="${KualiForm.editingMode['wizard']}"/>
-
-</kul:page>--%>

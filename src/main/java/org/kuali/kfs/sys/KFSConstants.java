@@ -1046,6 +1046,8 @@ public class KFSConstants {
         public static final String OPEN = "O";
     }
 
+    public static final String ACCOUNT_DISTRIBUTION_SRC_LINES = "accountDistributionsourceAccountingLines";
+
     @Deprecated
     public static final class CustomerParameter {
         public static final String TAX_NUMBER_REQUIRED_IND = "TAX_NUMBER_REQUIRED_IND";

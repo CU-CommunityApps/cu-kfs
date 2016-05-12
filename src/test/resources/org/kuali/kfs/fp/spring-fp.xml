@@ -41,8 +41,8 @@
 		</property>
 		<property name="dataDictionaryPackages">
 			<list>
-                <value>org/kuali/kfs/fp/businessobject/datadictionary</value>
-                <value>org/kuali/kfs/fp/document/datadictionary</value>
+                <value>classpath:org/kuali/kfs/fp/businessobject/datadictionary/*.xml</value>
+                <value>classpath:org/kuali/kfs/fp/document/datadictionary/*.xml</value>
 			</list>
 		</property>
 		<property name="databaseRepositoryFilePaths">

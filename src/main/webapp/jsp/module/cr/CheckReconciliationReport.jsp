@@ -59,8 +59,6 @@
 
 	</kul:tabTop>
 
-	<kul:panelFooter />
-
     <div id="globalbuttons" class="globalbuttons">
 		<html:image src="${ConfigProperties.kr.externalizable.images.url}buttonsmall_submit.gif" styleClass="globalbuttons" property="methodToCall.performReport" title="submit" alt="submit" onclick="excludeSubmitRestriction=true"/>
         <html:image src="${ConfigProperties.kr.externalizable.images.url}buttonsmall_close.gif"  styleClass="globalbuttons" property="methodToCall.returnToIndex" title="close"  alt="close"/>

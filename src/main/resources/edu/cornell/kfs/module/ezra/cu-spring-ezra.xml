@@ -20,7 +20,7 @@
         </property>
 		<property name="dataDictionaryPackages">
 			<list>
-                <value>edu/cornell/kfs/module/ezra/businessobject/datadictionary</value>
+                <value>classpath:edu/cornell/kfs/module/ezra/businessobject/datadictionary/*.xml</value>
 			</list>
 		</property>
 		<property name="databaseRepositoryFilePaths">

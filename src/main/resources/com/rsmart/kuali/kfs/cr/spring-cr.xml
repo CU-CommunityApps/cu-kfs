@@ -28,8 +28,8 @@
         </property>
 		<property name="dataDictionaryPackages">
 			<list>
-                <value>com/rsmart/kuali/kfs/cr/businessobject/datadictionary</value>
-                <value>com/rsmart/kuali/kfs/cr/document/datadictionary</value>
+                <value>classpath:com/rsmart/kuali/kfs/cr/businessobject/datadictionary/*.xml</value>
+                <value>classpath:com/rsmart/kuali/kfs/cr/document/datadictionary/*.xml</value>
 			</list>
 		</property>
 		<property name="databaseRepositoryFilePaths">

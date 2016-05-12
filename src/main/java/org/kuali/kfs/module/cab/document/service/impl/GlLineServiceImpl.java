@@ -27,6 +27,7 @@ import org.kuali.kfs.fp.businessobject.CapitalAccountingLines;
 import org.kuali.kfs.fp.businessobject.CapitalAssetAccountsGroupDetails;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformationDetail;
+import org.kuali.kfs.fp.document.dataaccess.CapitalAssetInformationDao;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.module.cab.CabConstants;
 import org.kuali.kfs.module.cab.CabPropertyConstants;
@@ -48,6 +49,7 @@ import org.kuali.kfs.module.cam.util.ObjectValueUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
+import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.parameter.ParameterEvaluator;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
@@ -64,6 +66,7 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute;
+import org.springframework.transaction.annotation.Transactional;
 
 public class GlLineServiceImpl implements GlLineService {
     private static final String CAB_DESC_PREFIX = "CAB created for FP ";
@@ -75,13 +78,14 @@ public class GlLineServiceImpl implements GlLineService {
     protected ParameterService parameterService;
     protected ParameterEvaluatorService parameterEvaluatorService;
     protected DocumentHeaderService documentHeaderService;
-
+    protected CapitalAssetInformationDao capitalAssetInformationDao;
 
     /**
      * @see org.kuali.kfs.module.cab.document.service.GlLineService#createAssetGlobalDocument(java.util.List,
      *      org.kuali.kfs.module.cab.businessobject.GeneralLedgerEntry)
      */
     @Override
+    @NonTransactional
     public Document createAssetGlobalDocument(GeneralLedgerEntry primary, Integer capitalAssetLineNumber) throws WorkflowException {
         // initiate a new document
         MaintenanceDocument document = (MaintenanceDocument) documentService.getNewDocument(DocumentTypeName.ASSET_ADD_GLOBAL);
@@ -194,6 +198,7 @@ public class GlLineServiceImpl implements GlLineService {
      * @see org.kuali.kfs.module.cab.document.service.GlLineService#findCapitalAssetInformation(org.kuali.kfs.module.cab.businessobject.GeneralLedgerEntry)
      */
     @Override
+    @NonTransactional
     public CapitalAssetInformation findCapitalAssetInformation(String documentNumber, Integer capitalAssetLineNumber) {
         Map<String, String> primaryKeys = new HashMap<String, String>(2);
         primaryKeys.put(CabPropertyConstants.CapitalAssetInformation.DOCUMENT_NUMBER, documentNumber);
@@ -204,6 +209,7 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
     @Override
+    @NonTransactional
     public List<CapitalAssetInformation> findAllCapitalAssetInformation(String documentNumber) {
         Map<String, String> primaryKeys = new HashMap<String, String>(1);
         primaryKeys.put(CabPropertyConstants.CapitalAssetInformation.DOCUMENT_NUMBER, documentNumber);
@@ -217,6 +223,7 @@ public class GlLineServiceImpl implements GlLineService {
      * @see org.kuali.kfs.module.cab.document.service.GlLineService#findCapitalAssetInformationForGLLine(org.kuali.kfs.module.cab.businessobject.GeneralLedgerEntry)
      */
     @Override
+    @NonTransactional
     public List<CapitalAssetInformation> findCapitalAssetInformationForGLLine(GeneralLedgerEntry entry) {
         Map<String, String> primaryKeys = new HashMap<String, String>();
         primaryKeys.put(CabPropertyConstants.CapitalAssetInformation.DOCUMENT_NUMBER, entry.getDocumentNumber());
@@ -231,11 +238,11 @@ public class GlLineServiceImpl implements GlLineService {
 
         return matchingAssets;
     }
-    
+
 
     /**
      * Finds capital asset information for a given GL entry by matching also on the accounting line type.
-     * 
+     *
      * @param entry
      * @return matching capital asset info
      */
@@ -253,12 +260,12 @@ public class GlLineServiceImpl implements GlLineService {
 
         return matchingAssets;
     }
-    
-    
+
+
     /**
      * Compares the gl line to the group accounting lines in each capital asset and
      * when finds a match, adds the capital asset to the list of matching assets. It also checks the accounting line type against the GL line credit/debit code.
-     * 
+     *
      * @param matchingAssets
      * @param capitalAsset
      * @param entry
@@ -278,7 +285,7 @@ public class GlLineServiceImpl implements GlLineService {
             	matchingAssets.add(capitalAsset);
             	  break;
               }
- 
+
             }
         }
     }
@@ -295,18 +302,31 @@ public class GlLineServiceImpl implements GlLineService {
         List<CapitalAssetAccountsGroupDetails> groupAccountLines = capitalAsset.getCapitalAssetAccountsGroupDetails();
 
         for (CapitalAssetAccountsGroupDetails groupAccountLine : groupAccountLines) {
-            if (groupAccountLine.getDocumentNumber().equals(entry.getDocumentNumber()) &&
-                    groupAccountLine.getChartOfAccountsCode().equals(entry.getChartOfAccountsCode()) &&
-                    groupAccountLine.getAccountNumber().equals(entry.getAccountNumber()) &&
-                    groupAccountLine.getFinancialObjectCode().equals(entry.getFinancialObjectCode())) {
-            	matchingAssets.add(capitalAsset);
-
+            // Unfortunately, when no organization reference id is input, the General Ledger Entry's organizationReferenceId is
+            // set to "" while the groupAccountLine's organizationReferenceId is set to null. These are equivalent for the
+            // present concerns.
+            boolean isOrganizationReferenceIdEqual;
+            if (StringUtils.equals(groupAccountLine.getOrganizationReferenceId(), entry.getOrganizationReferenceId())){
+                isOrganizationReferenceIdEqual = true;
+            } else if (StringUtils.isBlank(groupAccountLine.getOrganizationReferenceId()) &&
+                    StringUtils.isBlank(entry.getOrganizationReferenceId())){
+                isOrganizationReferenceIdEqual = true;
+            } else {
+                isOrganizationReferenceIdEqual = false;
+            }
+            if (isOrganizationReferenceIdEqual &&
+                    StringUtils.equals(groupAccountLine.getDocumentNumber(), entry.getDocumentNumber()) &&
+                    StringUtils.equals(groupAccountLine.getChartOfAccountsCode(), entry.getChartOfAccountsCode()) &&
+                    StringUtils.equals(groupAccountLine.getAccountNumber(), entry.getAccountNumber()) &&
+                    StringUtils.equals(groupAccountLine.getFinancialObjectCode(), entry.getFinancialObjectCode()) ){
+                matchingAssets.add(capitalAsset);
                 break;
             }
         }
     }
 
     @Override
+    @NonTransactional
     public long findUnprocessedCapitalAssetInformation( String documentNumber ) {
         Map<String, String> fieldValues = new HashMap<String, String>(2);
         fieldValues.put(CabPropertyConstants.CapitalAssetInformation.DOCUMENT_NUMBER, documentNumber);
@@ -316,6 +336,7 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
     @Override
+    @NonTransactional
     public Collection<GeneralLedgerEntry> findMatchingGeneralLedgerEntries( Collection<GeneralLedgerEntry> allGLEntries, CapitalAssetAccountsGroupDetails accountingDetails ) {
         Collection<GeneralLedgerEntry> matchingGLEntries = new ArrayList<GeneralLedgerEntry>();
 
@@ -395,6 +416,7 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
     @Override
+    @NonTransactional
     public Collection<GeneralLedgerEntry> findAllGeneralLedgerEntry(String documentNumber) {
         Map<String, String> fieldValues = new HashMap<String, String>(1);
         fieldValues.put(CabPropertyConstants.GeneralLedgerEntry.DOCUMENT_NUMBER, documentNumber);
@@ -454,6 +476,7 @@ public class GlLineServiceImpl implements GlLineService {
      * @see org.kuali.kfs.module.cab.document.service.GlLineService#createAssetPaymentDocument(org.kuali.kfs.module.cab.businessobject.GeneralLedgerEntry, java.lang.Integer)
      */
     @Override
+    @NonTransactional
     public Document createAssetPaymentDocument(GeneralLedgerEntry primaryGlEntry, Integer capitalAssetLineNumber) throws WorkflowException {
         // Find out the GL Entry
         // initiate a new document
@@ -549,13 +572,14 @@ public class GlLineServiceImpl implements GlLineService {
 
             for (CapitalAssetAccountsGroupDetails accountingLine : groupAccountingLines) {
                 AssetPaymentDetail detail = new AssetPaymentDetail();
-                
+
                 // find matching gl entry for asset accounting line
                 for (GeneralLedgerEntry glEntry : documentGlEntries){
                     if(doesGeneralLedgerEntryMatchAssetAccountingDetails(glEntry, accountingLine)) {
                         entry = glEntry;
                     }
                 }
+
                 //TODO
                 // sub-object code, as well as sub-account, project code, and org ref id, shall not be populated from GL entry;
                 // instead, they need to be passed from the original FP document for each individual accounting line to be stored in CapitalAssetAccountsGroupDetails,
@@ -732,51 +756,47 @@ public class GlLineServiceImpl implements GlLineService {
      * @param entry
      */
     @Override
+    @Transactional
     public void setupCapitalAssetInformation(GeneralLedgerEntry entry) {
         List<CapitalAccountingLines> capitalAccountingLines;
 
+        int nextCapitalAssetLineNumber = capitalAssetInformationDao.getNextCapitalAssetLineNumber(entry.getDocumentNumber());
+
+        capitalAccountingLines = new ArrayList<CapitalAccountingLines>();
+        createCapitalAccountingLine(capitalAccountingLines, entry, null);
+        createNewCapitalAsset(capitalAccountingLines,entry.getDocumentNumber(),null,nextCapitalAssetLineNumber);
+    }
+
+    /**
+     * Setup shell Capital Asset Information where it doesn't already exist (for
+     * example for a PRNC that is in Process and has already generated some
+     * capital asset information in a previous processing)
+     *
+     * @param entry
+     */
+    @Override
+    public void setupMissingCapitalAssetInformation(String documentNumber) {
+        List<CapitalAccountingLines> capitalAccountingLines;
+
         // get all related entries and create capital asset record for each
-        Collection<GeneralLedgerEntry> glEntries = findAllGeneralLedgerEntry(entry.getDocumentNumber());       
-        int nextCapitalAssetLineNumber = 1;
-        for (GeneralLedgerEntry glEntry: glEntries) {
-            capitalAccountingLines = new ArrayList<CapitalAccountingLines>();
-            createCapitalAccountingLine(capitalAccountingLines, glEntry, null);
-            createNewCapitalAsset(capitalAccountingLines,entry.getDocumentNumber(),null,nextCapitalAssetLineNumber);
-            nextCapitalAssetLineNumber++;
+        Collection<GeneralLedgerEntry> glEntries = findAllGeneralLedgerEntry(documentNumber);
+        Collection<CapitalAssetInformation> allCapitalAssetInformation = findAllCapitalAssetInformation(documentNumber);
+
+        int nextCapitalAssetLineNumber = allCapitalAssetInformation.size() + 1;
+        for (GeneralLedgerEntry glEntry : glEntries) {
+            // check if it has capital Asset Info
+            List<CapitalAssetInformation> entryCapitalAssetInfo = findCapitalAssetInformationForGLLineMatchLineType(glEntry);
+            if (entryCapitalAssetInfo.isEmpty()) {
+                capitalAccountingLines = new ArrayList<CapitalAccountingLines>();
+                createCapitalAccountingLine(capitalAccountingLines, glEntry, null);
+                createNewCapitalAsset(capitalAccountingLines, documentNumber, null, nextCapitalAssetLineNumber);
+                nextCapitalAssetLineNumber++;
+            }
         }
 
     }
-    
-	/**
-	 * Setup shell Capital Asset Information where it doesn't already exist (for
-	 * example for a PRNC that is in Process and has already generated some
-	 * capital asset information in a previous processing)
-	 *
-	 * @param entry
-	 */
-	@Override
-	public void setupMissingCapitalAssetInformation(String documentNumber) {
-		List<CapitalAccountingLines> capitalAccountingLines;
 
-		// get all related entries and create capital asset record for each
-		Collection<GeneralLedgerEntry> glEntries = findAllGeneralLedgerEntry(documentNumber);
-		Collection<CapitalAssetInformation> allCapitalAssetInformation = findAllCapitalAssetInformation(documentNumber);
-
-		int nextCapitalAssetLineNumber = allCapitalAssetInformation.size() + 1;
-		for (GeneralLedgerEntry glEntry : glEntries) {
-			// check if it has capital Asset Info
-			List<CapitalAssetInformation> entryCapitalAssetInfo = findCapitalAssetInformationForGLLineMatchLineType(glEntry);
-			if (entryCapitalAssetInfo.isEmpty()) {
-				capitalAccountingLines = new ArrayList<CapitalAccountingLines>();
-				createCapitalAccountingLine(capitalAccountingLines, glEntry, null);
-				createNewCapitalAsset(capitalAccountingLines, documentNumber, null, nextCapitalAssetLineNumber);
-				nextCapitalAssetLineNumber++;
-			}
-		}
-
-	}
-
-    private List<CapitalAccountingLines> createCapitalAccountingLine(List<CapitalAccountingLines> capitalAccountingLines, GeneralLedgerEntry entry, String distributionAmountCode) {
+    protected List<CapitalAccountingLines> createCapitalAccountingLine(List<CapitalAccountingLines> capitalAccountingLines, GeneralLedgerEntry entry, String distributionAmountCode) {
         Integer sequenceNumber = capitalAccountingLines.size() + 1;
 
         //capital object code so we need to build the capital accounting line...
@@ -886,32 +906,36 @@ public class GlLineServiceImpl implements GlLineService {
 
         return ++nextAccountingLineNumber;
     }
-    
+    @NonTransactional
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
-
+    @NonTransactional
     public void setAssetGlobalService(AssetGlobalService assetGlobalService) {
         this.assetGlobalService = assetGlobalService;
     }
-
+    @NonTransactional
     public void setObjectTypeService(ObjectTypeService objectTypeService) {
         this.objectTypeService = objectTypeService;
     }
-
+    @NonTransactional
     public void setDocumentService(DocumentService documentService) {
         this.documentService = documentService;
     }
-
+    @NonTransactional
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
     }
-
+    @NonTransactional
     public void setParameterEvaluatorService(ParameterEvaluatorService parameterEvaluatorService) {
         this.parameterEvaluatorService = parameterEvaluatorService;
     }
-
+    @NonTransactional
     public void setDocumentHeaderService(DocumentHeaderService documentHeaderService) {
         this.documentHeaderService = documentHeaderService;
+    }
+    @NonTransactional
+    public void setCapitalAssetInformationDao(CapitalAssetInformationDao dao) {
+        this.capitalAssetInformationDao = dao;
     }
 }

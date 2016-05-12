@@ -26,7 +26,7 @@
 	<bean id="ldModuleConfiguration-parentBean" parent="ldModuleConfiguration-base-parentBean" abstract="true">
 		<property name="dataDictionaryPackages">
 			<list merge="true">
-				<value>org/kuali/kfs/module/ld/accesssecurity</value>
+				<value>classpath:org/kuali/kfs/module/ld/accesssecurity/*.xml</value>
 			</list>
 		</property>
 	</bean>

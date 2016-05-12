@@ -295,7 +295,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                     Map<String, String> keys = SpringContext.getBean(PersistenceService.class).getPrimaryKeyFieldValues(locationBuilding);
                     locationBuilding = SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(Building.class, keys);
 
-                    Map<String, String> parameters = request.getParameterMap();
+                    Map<String, String[]> parameters = request.getParameterMap();
                     Set<String> parameterKeys = parameters.keySet();
                     String locationCapitalAssetLocationNumber = "";
                     String locationCapitalAssetItemNumber = "";

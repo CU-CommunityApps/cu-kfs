@@ -1,36 +1,37 @@
 /*
- * Copyright 2008 The Kuali Foundation
+ * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Licensed under the Educational Community License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Copyright 2005-2014 The Kuali Foundation
  *
- * http://www.opensource.org/licenses/ecl2.php
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kuali.kfs.sys.document.web.renderers;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
+import edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFinder;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts.taglib.html.HiddenTag;
+import org.kuali.kfs.kns.web.taglib.html.KNSFileTag;
+import org.kuali.kfs.kns.web.taglib.html.KNSSubmitTag;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
 import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.PurchasingDocumentBase;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
@@ -39,12 +40,14 @@ import org.kuali.kfs.sys.document.datadictionary.AccountingLineViewActionDefinit
 import org.kuali.kfs.sys.document.web.AccountingLineViewAction;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.KeyValue;
-import org.kuali.kfs.kns.web.taglib.html.KNSFileTag;
-import org.kuali.kfs.kns.web.taglib.html.KNSImageTag;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.KRADConstants;
 
-import edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFinder;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.tagext.Tag;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Renders the standard group header/import line
@@ -57,12 +60,16 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     private String lineCollectionProperty;
     private KNSFileTag scriptFileTag = new KNSFileTag();
     private KNSFileTag noscriptFileTag = new KNSFileTag();
-    private KNSImageTag uploadButtonTag = new KNSImageTag();
-    private KNSImageTag cancelButtonTag = new KNSImageTag();
+    private KNSSubmitTag uploadButtonTag = new KNSSubmitTag();
+    private KNSSubmitTag showHideTag = new KNSSubmitTag();
+    private HiddenTag hideStateTag = new HiddenTag();
+    private KNSSubmitTag cancelButtonTag = new KNSSubmitTag();
     private boolean shouldUpload = true;
     private boolean canEdit = false;
 
     private boolean groupActionsRendered = false;
+
+    private boolean hideDetails;
     // KFSPTS-985
     private String riceImageBase;
 
@@ -72,12 +79,15 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     public GroupTitleLineRenderer() {
         scriptFileTag.setSize("30");
         noscriptFileTag.setSize("30");
-        noscriptFileTag.setStyle("font:10px;height:16px;");
-        uploadButtonTag.setSrc(SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString("externalizable.images.url") + "tinybutton-add1.gif");
-        uploadButtonTag.setStyleClass("tinybutton");
+        uploadButtonTag.setStyleClass("btn btn-green");
+        uploadButtonTag.setValue("Add");
         cancelButtonTag.setProperty("methodToCall.cancel");
-        cancelButtonTag.setSrc(SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString("externalizable.images.url") + "tinybutton-cancelimport.gif");
-        cancelButtonTag.setStyleClass("tinybutton");
+        cancelButtonTag.setStyleClass("btn btn-default");
+        cancelButtonTag.setValue("Cancel");
+
+        showHideTag.setStyleClass("btn btn-default uppercase");
+        hideStateTag.setName("KualiForm");
+        hideStateTag.setProperty("hideDetails");
     }
 
     /**
@@ -115,23 +125,40 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
         cancelButtonTag.setAlt(null);
         cancelButtonTag.setTitle(null);
         cancelButtonTag.setOnclick(null);
+
+        showHideTag.setPageContext(null);
+        showHideTag.setParent(null);
+        showHideTag.setProperty(null);
+        showHideTag.setAlt(null);
+        showHideTag.setTitle(null);
+        showHideTag.setValue(null);
+
+        hideStateTag.setPageContext(null);
+        hideStateTag.setParent(null);
+
+        hideDetails = false;
     }
 
     /**
-     * @see org.kuali.kfs.sys.document.web.renderers.Renderer#render(javax.servlet.jsp.PageContext, javax.servlet.jsp.tagext.Tag,
-     *      org.kuali.core.bo.BusinessObject)
+     * @see org.kuali.kfs.sys.document.web.renderers.Renderer#render(javax.servlet.jsp.PageContext, javax.servlet.jsp.tagext.Tag)
      */
     public void render(PageContext pageContext, Tag parentTag) throws JspException {
         try {
-        	//KFSPTS-985 : add favorite account selection
-        	// setdistribution does not have accountPrefix
-        	String accountPrefix = (String)pageContext.getAttribute("accountPrefix");
-        	FavoriteAccountValuesFinder accounts = new FavoriteAccountValuesFinder();
+            //KFSPTS-985 : add favorite account selection
+            // setdistribution does not have accountPrefix
+            String accountPrefix = (String)pageContext.getAttribute("accountPrefix");
+            FavoriteAccountValuesFinder accounts = new FavoriteAccountValuesFinder();
             if (canEdit && isDocumentIntegratedFavoriteAccount() && CollectionUtils.isNotEmpty(accounts.getKeyValues()) && accounts.getKeyValues().size() > 1) {
-        	    pageContext.getOut().write(buildFavoriteAccounts(accountPrefix));
+                pageContext.getOut().write(buildFavoriteAccounts(accountPrefix));
             }
-            pageContext.getOut().write(buildRowBeginning());
 
+            String rowClass = null;
+            if (lineCollectionProperty.equals(KFSConstants.ACCOUNT_DISTRIBUTION_SRC_LINES)) {
+                rowClass = "distribution";
+            }
+            pageContext.getOut().write(buildRowBeginning(rowClass));
+
+            pageContext.getOut().write(buildBlankCell());
             pageContext.getOut().write(buildTitleCell());
             this.renderGroupLevelActions(pageContext, parentTag);
 
@@ -147,8 +174,15 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      *
      * @returns the String with the HTML for the row opening
      */
-    protected String buildRowBeginning() {
-        return "<tr>";
+    protected String buildRowBeginning(String additionalClass) {
+        StringBuilder rowBeginning = new StringBuilder();
+        rowBeginning.append("<tr class=\"title");
+        if (StringUtils.isNotBlank(additionalClass)) {
+            rowBeginning.append(" ");
+            rowBeginning.append(additionalClass);
+        }
+        rowBeginning.append("\">");
+        return rowBeginning.toString();
     }
 
     /**
@@ -168,6 +202,8 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
 
             this.renderGroupActions(pageContext, parentTag);
 
+            this.renderHideDetails(pageContext, parentTag);
+
             this.renderUploadCell(pageContext, parentTag);
 
             out.write(this.buildGroupActionsColumnEnding());
@@ -183,25 +219,21 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      * @returns the String with the HTML for the row opening
      */
     protected String buildGroupActionsBeginning() {
-        if (this.canUpload() || this.isGroupActionsRendered()) {
-            StringBuilder groupActionsBeginning = new StringBuilder();
-            final int width = cellCount - titleCellSpan;
+        StringBuilder groupActionsBeginning = new StringBuilder();
+        final int width = cellCount - titleCellSpan;
 
-            groupActionsBeginning.append("<td ");
-            groupActionsBeginning.append("colspan=\"");
-            groupActionsBeginning.append(Integer.toString(width));
-            groupActionsBeginning.append("\" ");
+        groupActionsBeginning.append("<td ");
+        groupActionsBeginning.append("colspan=\"");
+        groupActionsBeginning.append(Integer.toString(width));
+        groupActionsBeginning.append("\" ");
 
-            groupActionsBeginning.append("class=\"tab-subhead-import\" ");
-            groupActionsBeginning.append("align=\"right\" ");
-            groupActionsBeginning.append("nowrap=\"nowrap\" ");
-            groupActionsBeginning.append("style=\"border-right: none;\"");
-            groupActionsBeginning.append(">");
+        groupActionsBeginning.append("class=\"tab-subhead-import\" ");
+        groupActionsBeginning.append("align=\"right\" ");
+        groupActionsBeginning.append("nowrap=\"nowrap\" ");
+        groupActionsBeginning.append("style=\"border-right: none;\"");
+        groupActionsBeginning.append(">");
 
-            return groupActionsBeginning.toString();
-        }
-
-        return StringUtils.EMPTY;
+        return groupActionsBeginning.toString();
     }
 
     /**
@@ -218,9 +250,14 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      *
      * @return the String with the HTML for the title cell
      */
-    protected String buildTitleCell() {
+    protected String buildTitleCell() throws JspException{
         StringBuilder titleCell = new StringBuilder();
-        int colSpan = (this.canUpload() || this.isGroupActionsRendered()) ? titleCellSpan : cellCount;
+        int colSpan = titleCellSpan;
+
+        // subtract one for the blank cell before the title
+        if (colSpan > 0) {
+            colSpan--;
+        }
 
         titleCell.append("<td ");
 
@@ -234,12 +271,22 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
 
         titleCell.append(">");
 
+        titleCell.append("<h2>");
+
         titleCell.append(buildGroupAnchor());
 
         titleCell.append(accountingLineGroupDefinition.getGroupLabel());
 
+        titleCell.append("</h2>");
+
         titleCell.append("</td>");
 
+        return titleCell.toString();
+    }
+
+    protected String buildBlankCell() throws JspException{
+        StringBuilder titleCell = new StringBuilder();
+        titleCell.append("<th style=\"visibility:hidden;\"></th>");
         return titleCell.toString();
     }
 
@@ -258,7 +305,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
             return;
         }
 
-        List<AccountingLineViewAction> viewActions = new ArrayList<AccountingLineViewAction>();
+        List<AccountingLineViewAction> viewActions = new ArrayList<>();
         for (AccountingLineViewActionDefinition action : accountingLineGroupActions) {
             String actionMethod = action.getActionMethod();
             String actionLabel = action.getActionLabel();
@@ -283,6 +330,34 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     protected String getGroupInfix() {
         Class accountingLineClass = accountingLineGroupDefinition.getAccountingLineClass();
         return (accountingLineClass.isAssignableFrom(SourceAccountingLine.class) ? "source" : "target");
+    }
+
+    /**
+     * Renders the show/hide button
+     * @param pageContext the page context to render to
+     * @param parentTag the tag requesting all this rendering
+     * @throws JspException thrown under terrible circumstances when the rendering failed and had to be left behind like so much refuse
+     */
+    protected void renderHideDetails(PageContext pageContext, Tag parentTag) throws JspException {
+        hideStateTag.setPageContext(pageContext);
+        hideStateTag.setParent(parentTag);
+
+        hideStateTag.doStartTag();
+        hideStateTag.doEndTag();
+
+        String toggle = hideDetails ? "show" : "hide";
+        String displayToggle = hideDetails ? "Show" : "Hide";
+
+        showHideTag.setPageContext(pageContext);
+        showHideTag.setParent(parentTag);
+        showHideTag.setProperty("methodToCall."+toggle+"Details");
+        showHideTag.setStyleClass("btn btn-default uppercase");
+        showHideTag.setAlt(toggle+" transaction details");
+        showHideTag.setTitle(toggle+" transaction details");
+        showHideTag.setValue(displayToggle + " Details");
+
+        showHideTag.doStartTag();
+        showHideTag.doEndTag();
     }
 
     /**
@@ -314,11 +389,8 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
                 out.write("\t\tdocument.getElementById(uploadDivId).style.display=\"inline\";\n");
                 out.write("\t}\n");
                 out.write("\tdocument.write(\n");
-                out.write("\t\t'<a id=\"" + showLink + "\" href=\"#\" onclick=\"" + showImport + "(\\\'" + showLink + "\\\',\\\'" + uploadDiv + "\\\');return false;\">' +\n");
-                out.write("\t\t'<img src=\"" + SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString("externalizable.images.url") + "tinybutton-importlines.gif\" title=\"import file\" alt=\"import file\"' +\n");
-                out.write("\t\t'width=\"72\" border=\"0\">' +\n");
-                out.write("\t\t'</a>' +\n");
-                out.write("\t\t'<div id=\"" + uploadDiv + "\" style=\"display:none;\" >' +\n");
+                out.write("\t\t'<a class=\"btn btn-default uppercase\" id=\"" + showLink + "\" href=\"#\" onclick=\"" + showImport + "(\\\'" + showLink + "\\\',\\\'" + uploadDiv + "\\\');return false;\">Import Lines</a>'+\n");
+                out.write("\t\t'<div class=\"uploadDiv\" id=\"" + uploadDiv + "\" style=\"display:none;\" >' +\n");
 
                 out.write("\t\t'");
 
@@ -537,7 +609,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     /**
      * Sets the groupActionsRendered attribute value.
      *
-     * @param groupActionsRendered The groupActionsRendered to set.
+     * @param groupActionsRenderred The groupActionsRendered to set.
      */
     public void setGroupActionsRendered(boolean groupActionsRenderred) {
         this.groupActionsRendered = groupActionsRenderred;
@@ -551,89 +623,105 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
         this.canEdit = canEdit;
     }
 
+    /**
+     * Gets the hideDetails attribute.
+     * @return Returns the hideDetails.
+     */
+    public boolean getHideDetails() {
+        return hideDetails;
+    }
+
+    /**
+     * Sets the hideDetails attribute value.
+     * @param hideDetails The hideDetails to set.
+     */
+    public void setHideDetails(boolean hideDetails) {
+        this.hideDetails = hideDetails;
+    }
+
     // Begin KFSPTS-985, KFSUPGRADE-75 customization
-	public void setRiceImageBase(String riceImageBase) {
-		this.riceImageBase = riceImageBase;
-	}
+    public void setRiceImageBase(String riceImageBase) {
+        this.riceImageBase = riceImageBase;
+    }
 
     private boolean isDocumentIntegratedFavoriteAccount() {
         return 	getAccountingDocument() instanceof RequisitionDocument || getAccountingDocument() instanceof PurchaseOrderAmendmentDocument || getAccountingDocument() instanceof PurchaseOrderDocument;
     }
-    
+
     private String buildFavoriteAccounts(String accountPrefix) {
-    	int itemIdx = getItemIdx(accountPrefix);
-    	Integer accountLineId = null; 
+        int itemIdx = getItemIdx(accountPrefix);
+        Integer accountLineId = null;
         if (isDocumentIntegratedFavoriteAccount()) {
-        	if (itemIdx >= 0) {
-        		accountLineId = ((PurchasingItemBase)((PurchasingDocumentBase)this.getAccountingDocument()).getItem(itemIdx)).getFavoriteAccountLineIdentifier();
-        	} else {
-        		accountLineId = ((PurchasingDocumentBase)this.getAccountingDocument()).getFavoriteAccountLineIdentifier();
-        	}
+            if (itemIdx >= 0) {
+                accountLineId = ((PurchasingItemBase)((PurchasingDocumentBase)this.getAccountingDocument()).getItem(itemIdx)).getFavoriteAccountLineIdentifier();
+            } else {
+                accountLineId = ((PurchasingDocumentBase)this.getAccountingDocument()).getFavoriteAccountLineIdentifier();
+            }
         }
-    	StringBuffer favoriteAccountLine = new StringBuffer();
-    	favoriteAccountLine.append("<tr>");
-    	
-    	favoriteAccountLine.append("<th colspan=\"2\" align=\"right\" valign=\"middle\" class=\"bord-l-b\">");
-    	favoriteAccountLine.append("<div  align=\"right\">");
-    	favoriteAccountLine.append("Favorite Account");
-    	favoriteAccountLine.append("</div>");
-    	favoriteAccountLine.append("</th>");
-    	
-    	if (StringUtils.isBlank(accountPrefix)) {
-    		accountPrefix = "document.";
-    	}
-    	favoriteAccountLine.append("<td colspan=\"7\" class=\"infoline\">");
-    	favoriteAccountLine.append("<select name=\"").append(accountPrefix).append("favoriteAccountLineIdentifier\" id=\"").append(accountPrefix).append("favoriteAccountLineIdentifier\" title=\"* Favorite Account\">");
-    	FavoriteAccountValuesFinder accounts = new FavoriteAccountValuesFinder();
-    	for (KeyValue keyValue : (List<KeyValue>)accounts.getKeyValues()) {
-    		favoriteAccountLine.append("<option value=\"").append(keyValue.getKey());
-    		if (checkToAddError(accountPrefix + "favoriteAccountLineIdentifier")) {
-    			favoriteAccountLine.append(getSelected(accountLineId, keyValue.getKey()));
-    		} else {
-    			favoriteAccountLine.append("\" >");
-    		}
-    		favoriteAccountLine.append(keyValue.getValue());
-    		favoriteAccountLine.append("</option>\n");
-    	}
-    	favoriteAccountLine.append("</select>");
+        StringBuffer favoriteAccountLine = new StringBuffer();
+        favoriteAccountLine.append("<tr>");
+
+        favoriteAccountLine.append("<th colspan=\"2\" align=\"right\" valign=\"middle\" class=\"bord-l-b\">");
+        favoriteAccountLine.append("<div  align=\"right\">");
+        favoriteAccountLine.append("Favorite Account");
+        favoriteAccountLine.append("</div>");
+        favoriteAccountLine.append("</th>");
+
+        if (StringUtils.isBlank(accountPrefix)) {
+            accountPrefix = "document.";
+        }
+        favoriteAccountLine.append("<td colspan=\"7\" class=\"infoline\">");
+        favoriteAccountLine.append("<select name=\"").append(accountPrefix).append("favoriteAccountLineIdentifier\" id=\"").append(accountPrefix).append("favoriteAccountLineIdentifier\" title=\"* Favorite Account\">");
+        FavoriteAccountValuesFinder accounts = new FavoriteAccountValuesFinder();
+        for (KeyValue keyValue : (List<KeyValue>)accounts.getKeyValues()) {
+            favoriteAccountLine.append("<option value=\"").append(keyValue.getKey());
+            if (checkToAddError(accountPrefix + "favoriteAccountLineIdentifier")) {
+                favoriteAccountLine.append(getSelected(accountLineId, keyValue.getKey()));
+            } else {
+                favoriteAccountLine.append("\" >");
+            }
+            favoriteAccountLine.append(keyValue.getValue());
+            favoriteAccountLine.append("</option>\n");
+        }
+        favoriteAccountLine.append("</select>");
         if (checkToAddError(accountPrefix + "favoriteAccountLineIdentifier")) {
             favoriteAccountLine.append(getErrorIconImageTag());
         }
-    	favoriteAccountLine.append("</td>");
-    	
-    	favoriteAccountLine.append("<td valign=\"top\" class=\"infoline\">");
+        favoriteAccountLine.append("</td>");
+
+        favoriteAccountLine.append("<td valign=\"top\" class=\"infoline\">");
         favoriteAccountLine.append("<div style=\"text-align: center;\">");
         favoriteAccountLine.append("<input type=\"image\" name=\"methodToCall.addFavoriteAccount.line").append(itemIdx).append(".anchorFavoriteAnchor\" src=\"kr/static/images/tinybutton-add1.gif\" tabindex=\"0\" class=\"tinybutton\"");
         favoriteAccountLine.append(" title=\"Add Favorite  Accounting Line\" alt=\"Add Favorite Accounting Line\">");
         favoriteAccountLine.append("</input>");
         favoriteAccountLine.append("<br></div></td>");
-    	
-    	favoriteAccountLine.append("</tr>");
-    	
-    	return favoriteAccountLine.toString();
+
+        favoriteAccountLine.append("</tr>");
+
+        return favoriteAccountLine.toString();
     }
 
     private String getSelected(Object propertyValue, Object keyValue) {
-		if (propertyValue != null) {
-			if (propertyValue.toString().equalsIgnoreCase(keyValue.toString())) {
-				return "\" selected=\"selected\" >";
-			}
-		}
-    	return "\" >";
-	
+        if (propertyValue != null) {
+            if (propertyValue.toString().equalsIgnoreCase(keyValue.toString())) {
+                return "\" selected=\"selected\" >";
+            }
+        }
+        return "\" >";
+
     }
-    
+
     private boolean checkToAddError(String errorKey) {
         if (CollectionUtils.isNotEmpty(GlobalVariables.getMessageMap().getErrorMessagesForProperty(errorKey))) {
             return true;
         }
         return false;
     }
-    
+
     protected String getErrorIconImageTag() {
         return "<img src=\""+getErrorIconImageSrc()+"\" alt=\"error\" />";
     }
-    
+
     private String getErrorIconImageSrc() {
         return getRiceImageBase()+"errormark.gif";
     }
@@ -646,13 +734,13 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     }
 
     private int getItemIdx(String accountPrefix) {
-    	if (StringUtils.isNotBlank(accountPrefix)) {
-        int startIdx = 	accountPrefix.indexOf("[");
-        return Integer.parseInt(accountPrefix.substring(accountPrefix.indexOf("[")+1,accountPrefix.indexOf("]")));
-    	} else {
-    		// set distribution.
-    		return -2;
-    	}
+        if (StringUtils.isNotBlank(accountPrefix)) {
+            int startIdx = 	accountPrefix.indexOf("[");
+            return Integer.parseInt(accountPrefix.substring(accountPrefix.indexOf("[")+1,accountPrefix.indexOf("]")));
+        } else {
+            // set distribution.
+            return -2;
+        }
     }
     // End KFSPTS-985, KFSUPGRADE-75 customization
 

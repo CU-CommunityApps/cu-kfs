@@ -27,9 +27,7 @@
                      
     <c:if test="${displayInitTab}" > 
     	<purap:creditMemoInit documentAttributes="${DataDictionary.VendorCreditMemoDocument.attributes}" /> 
-    	
-    	<kul:panelFooter />
-    
+
 	    <div align="right"><br><bean:message key="message.creditMemo.initMessage" /></div><br>
 	</c:if>
 	
@@ -72,8 +70,6 @@
 	    <kul:routeLog />
 	
 		<kul:superUserActions />
-	
-        <kul:panelFooter />
 	</c:if>
 	
 	<c:set var="extraButtons" value="${KualiForm.extraButtons}" scope="request"/>
