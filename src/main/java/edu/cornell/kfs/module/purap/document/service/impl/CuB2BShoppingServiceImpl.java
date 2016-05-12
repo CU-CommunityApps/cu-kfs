@@ -16,6 +16,7 @@ import org.kuali.kfs.module.purap.businessobject.B2BShoppingCartItem;
 import org.kuali.kfs.module.purap.businessobject.BillingAddress;
 import org.kuali.kfs.module.purap.businessobject.DefaultPrincipalAddress;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
+import org.kuali.kfs.module.purap.businessobject.RequisitionAccount;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
@@ -38,7 +39,6 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.role.RoleService;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.DocumentService;
@@ -47,7 +47,6 @@ import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.util.cxml.CuB2BShoppingCart;
-import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 
@@ -201,7 +200,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
     			if (item.getSourceAccountingLines() == null) {
     				item.setSourceAccountingLines(new ArrayList<PurApAccountingLine>());
     			}
-    			item.getSourceAccountingLines().add(userFavoriteAccountService.getPopulatedNewAccount(account, true));
+    			item.getSourceAccountingLines().add(userFavoriteAccountService.getPopulatedNewAccount(account, RequisitionAccount.class));
     		}
     	}
     }

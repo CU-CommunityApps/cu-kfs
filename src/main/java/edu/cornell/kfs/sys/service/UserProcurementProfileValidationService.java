@@ -2,7 +2,7 @@ package edu.cornell.kfs.sys.service;
 
 import java.util.List;
 
-import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
+import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
@@ -26,9 +26,9 @@ public interface UserProcurementProfileValidationService {
 	
 	
     /**
-     * check if the favorite account is alreadded to accounting line
+     * check if the favorite account is already added to accounting line
      */
-	boolean isAccountExist(FavoriteAccount accountingLine, List<PurApAccountingLine> acctLines, int itemIdx);
+	boolean isAccountExist(FavoriteAccount accountingLine, List<? extends GeneralLedgerPendingEntrySourceDetail> acctLines);
 
 	/**
 	 * validate the favorite account 

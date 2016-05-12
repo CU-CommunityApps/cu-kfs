@@ -7,15 +7,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
 import org.kuali.kfs.module.purap.businessobject.RequisitionAccount;
 import org.kuali.kfs.sys.ConfigureContext;
+import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.krad.service.BusinessObjectService;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 
@@ -52,23 +55,36 @@ public class CuUserFavoriteAccountServiceImplTest extends KualiTestBase {
     public void testPopulatedNewAccount() {
         Map<String, String> fieldMap = new HashMap<String, String>();
         fieldMap.put("primaryInd", "Y");
-        FavoriteAccount favoriteAccount = ((List<FavoriteAccount>)SpringContext.getBean(BusinessObjectService.class).findMatching(FavoriteAccount.class, fieldMap)).get(0);
-        PurApAccountingLine acct = userFavoriteAccountService.getPopulatedNewAccount(favoriteAccount, true);
-        assertTrue("Account should be populated", acct != null);
-        assertTrue("Account should be REQS Acount", acct instanceof RequisitionAccount);
-        assertTrue("Account Number should be populated", StringUtils.equals(acct.getAccountNumber(), favoriteAccount.getAccountNumber()));
-        assertTrue("Object Code should be populated", StringUtils.equals(acct.getFinancialObjectCode(), favoriteAccount.getFinancialObjectCode()));
-        assertTrue("Percent should be 100", acct.getAccountLinePercent().compareTo(new BigDecimal(100)) == 0);
+        FavoriteAccount favoriteAccount =
+                SpringContext.getBean(BusinessObjectService.class).findMatching(FavoriteAccount.class, fieldMap).iterator().next();
+        GeneralLedgerPendingEntrySourceDetail iwntAccount;
         
-        acct = userFavoriteAccountService.getPopulatedNewAccount(favoriteAccount, false);
-        assertTrue("Account should be populated", acct != null);
-        assertTrue("Account should be PO Acount", acct instanceof PurchaseOrderAccount);
-        assertTrue("Account Number should be populated", StringUtils.equals(acct.getAccountNumber(), favoriteAccount.getAccountNumber()));
-        assertTrue("Object Code should be populated", StringUtils.equals(acct.getFinancialObjectCode(), favoriteAccount.getFinancialObjectCode()));
-        assertTrue("Percent should be 100", acct.getAccountLinePercent().compareTo(new BigDecimal(100)) == 0);
- 
-        acct = userFavoriteAccountService.getPopulatedNewAccount(null, false);
-        assertTrue("Account should not be populated", acct == null);
+        PurApAccountingLine acct = userFavoriteAccountService.getPopulatedNewAccount(favoriteAccount, RequisitionAccount.class);
+        assertNotNull("Account should be populated", acct);
+        assertTrue("Account should be REQS Account", acct instanceof RequisitionAccount);
+        assertEquals("Account Number should be populated", favoriteAccount.getAccountNumber(), acct.getAccountNumber());
+        assertEquals("Object Code should be populated", favoriteAccount.getFinancialObjectCode(), acct.getFinancialObjectCode());
+        assertEquals("Incorrect percentage (comparison against 100% should have been zero)", 0, acct.getAccountLinePercent().compareTo(new BigDecimal(100)));
+        
+        acct = userFavoriteAccountService.getPopulatedNewAccount(favoriteAccount, PurchaseOrderAccount.class);
+        assertNotNull("Account should be populated", acct);
+        assertTrue("Account should be PO Account", acct instanceof PurchaseOrderAccount);
+        assertEquals("Account Number should be populated", favoriteAccount.getAccountNumber(), acct.getAccountNumber());
+        assertEquals("Object Code should be populated", favoriteAccount.getFinancialObjectCode(), acct.getFinancialObjectCode());
+        assertEquals("Incorrect percentage (comparison against 100% should have been zero)", 0, acct.getAccountLinePercent().compareTo(new BigDecimal(100)));
+
+        iwntAccount = userFavoriteAccountService.getPopulatedNewAccount(favoriteAccount, IWantAccount.class);
+        assertNotNull("Account should be populated", iwntAccount);
+        assertTrue("Account should be IWNT Account", iwntAccount instanceof IWantAccount);
+        assertEquals("Account Number should be populated", favoriteAccount.getAccountNumber(), iwntAccount.getAccountNumber());
+        assertEquals("Object Code should be populated", favoriteAccount.getFinancialObjectCode(), iwntAccount.getFinancialObjectCode());
+        assertEquals("Amount-or-Percent indicator should be Percent",
+                CUPurapConstants.PERCENT, ((IWantAccount) iwntAccount).getUseAmountOrPercent());
+        assertEquals("Incorrect percentage (comparison against 100% should have been zero)",
+                0, ((IWantAccount) iwntAccount).getAmountOrPercent().compareTo(new KualiDecimal(100)));
+
+        acct = userFavoriteAccountService.getPopulatedNewAccount(null, PurchaseOrderAccount.class);
+        assertNull("Account should not be populated", acct);
        
 
     }

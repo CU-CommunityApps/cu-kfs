@@ -145,6 +145,9 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     // Copied this property from the base PURAP doc class, but made it private instead.
     private Integer accountsPayablePurchasingDocumentLinkIdentifier;
     
+    // The selected line's ID from the Favorite Accounts drop-down, if any; not persisted.
+    private Integer favoriteAccountLineIdentifier;
+    
     // Copied this property from the base PURAP doc class, but made it private instead; not persisted.
     private transient PurApRelatedViews relatedViews;
 
@@ -1494,6 +1497,13 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         return SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.WORKFLOW_URL_KEY) + "/DocHandler.do?docId=" + getDvDocId() + "&command=displayDocSearchView";
     }
     
+    public Integer getFavoriteAccountLineIdentifier() {
+        return favoriteAccountLineIdentifier;
+    }
+    
+    public void setFavoriteAccountLineIdentifier(Integer favoriteAccountLineIdentifier) {
+        this.favoriteAccountLineIdentifier = favoriteAccountLineIdentifier;
+    }
     
     public String getDvDocumentLabel() throws WorkflowException{
         return SpringContext.getBean(DataDictionaryService.class).getDocumentLabelByTypeName("DV");     
