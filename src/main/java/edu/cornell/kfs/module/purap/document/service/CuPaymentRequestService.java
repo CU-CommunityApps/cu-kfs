@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.purap.document.service;
 
+import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.service.PaymentRequestService;
 
 public interface CuPaymentRequestService extends PaymentRequestService {
@@ -18,4 +19,33 @@ public interface CuPaymentRequestService extends PaymentRequestService {
      */
     String getPaymentRequestNoteTargetObjectId(String documentNumber);
 
+    /**
+     * Determines whether a Payment Request's associated Purchase Order
+     * is either a non-quantity order, or an order whose total amount
+     * is within the auto-approve threshold. If either case applies,
+     * then the document is eligible for further analysis to determine
+     * whether it can indeed be auto-approved.
+     * 
+     * @param document The Payment Request whose Purchase Order should be evaluated.
+     * @return true if the Purchase Order has non-quantity items or its total amount is within the Payment Request auto-approve limit, false otherwise.
+     */
+    boolean purchaseOrderForPaymentRequestIsNonQuantityOrWithinAutoApproveAmountLimit(PaymentRequestDocument document);
+
+    /**
+     * Determines whether a Payment Request's associated Purchase Order
+     * is within the threshold to allow for automatic Payment Request approval.
+     * 
+     * @param document The Payment Request Document whose Purchase Order should be evaluated.
+     * @return true if the Purchase Order's amount is within the limit for automatic Payment Request approval, false otherwise.
+     */
+    boolean purchaseOrderForPaymentRequestIsWithinAutoApproveAmountLimit(PaymentRequestDocument document);
+
+    /**
+     * Determines whether a Payment Request's associated Purchase Order
+     * has quantity-type items (as opposed to non-quantity items).
+     * 
+     * @param document The Payment Request Document whose Purchase Order should be evaluated.
+     * @return true if the Purchase Order has quantity items, false otherwise.
+     */
+    boolean purchaseOrderForPaymentRequestHasQuantityItems(PaymentRequestDocument document);
 }
