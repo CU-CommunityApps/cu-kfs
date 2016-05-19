@@ -133,6 +133,14 @@
   </bean>
   <bean id="Award-awardAccounts.account.accountNumber" parent="Award-awardAccounts.account.accountNumber-parentBean"/>
 
+  <bean id="Account-endowmentIncomeAcctFinCoaCd" parent="Account-endowmentIncomeAcctFinCoaCd-parentBean">
+    <property name="label" value="Endowment Income Chart Of Accounts Code" />
+  </bean>
+
+  <bean id="Account-endowmentIncomeAccountNumber" parent="Account-endowmentIncomeAccountNumber-parentBean">
+    <property name="label" value="Endowment Income Account Number" />
+  </bean>
+
 <!-- Business Object Inquiry Definition -->
 
   <bean parent="DataDictionaryBeanOverride">
