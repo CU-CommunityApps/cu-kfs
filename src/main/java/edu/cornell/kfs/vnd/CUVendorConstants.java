@@ -47,10 +47,12 @@ public class CUVendorConstants extends VendorConstants {
     public static final String PROC_METHOD_PCARD = "PCARD";
     public static final String PROC_METHOD_ESHOP = "ESHOP";
     public static final String PROC_METHOD_DV = "DV";
+    public static final String PROC_METHOD_FTC_BSC_PCARD = "FTC_BSC_PCARD";
     public static final String PROC_METHOD_PO_LABEL = "Purchase Order";
     public static final String PROC_METHOD_PCARD_LABEL = "Pcard";
     public static final String PROC_METHOD_ESHOP_LABEL = "e-SHOP";
     public static final String PROC_METHOD_DV_LABEL = "Disbursement Voucher";
+    public static final String PROC_METHOD_FTC_BSC_PCARD_LABEL = "FTC/BSC Pcard";
 
     public static final Map<String, String> PROC_METHODS_LABEL_MAP;
     public static final Map<String, String> LOCALES_LABEL_MAP;
@@ -64,6 +66,7 @@ public class CUVendorConstants extends VendorConstants {
         labelsMap.put(PROC_METHOD_PCARD, PROC_METHOD_PCARD_LABEL);
         labelsMap.put(PROC_METHOD_ESHOP, PROC_METHOD_ESHOP_LABEL);
         labelsMap.put(PROC_METHOD_DV, PROC_METHOD_DV_LABEL);
+        labelsMap.put(PROC_METHOD_FTC_BSC_PCARD, PROC_METHOD_FTC_BSC_PCARD_LABEL);
         PROC_METHODS_LABEL_MAP = Collections.unmodifiableMap(labelsMap);
         
         labelsMap = new LinkedHashMap<String, String>();
