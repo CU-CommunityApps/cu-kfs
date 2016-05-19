@@ -102,10 +102,6 @@ public class CUPurapConstants extends PurapConstants {
         }
     }
     
-    public static final class PREQDocumentsStrings {
-        public static final String CONFIRM_POSITIVE_APPROVE_FOR_PO_AMOUNT_QUESTION = "posApprovePOAmt";
-    }
-    
     public static final class IWantDocumentSteps {
         public static final String CUSTOMER_DATA_STEP = "customerDataStep";
         public static final String ITEMS_AND_ACCT_DATA_STEP = "itemAndAcctDataStep";

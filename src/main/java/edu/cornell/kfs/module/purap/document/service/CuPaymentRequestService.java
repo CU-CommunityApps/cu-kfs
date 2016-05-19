@@ -1,6 +1,5 @@
 package edu.cornell.kfs.module.purap.document.service;
 
-import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.service.PaymentRequestService;
 
 public interface CuPaymentRequestService extends PaymentRequestService {
@@ -18,14 +17,5 @@ public interface CuPaymentRequestService extends PaymentRequestService {
      * @return The payment request's note target object ID, or null if no such PREQ exists.
      */
     String getPaymentRequestNoteTargetObjectId(String documentNumber);
-
-    /**
-     * Determines whether a Payment Request's associated Purchase Order
-     * is within the threshold to allow for automatic Payment Request approval.
-     * 
-     * @param document The Payment Request Document whose Purchase Order should be evaluated.
-     * @return true if the Purchase Order's amount is within the limit for automatic Payment Request approval, false otherwise.
-     */
-    boolean isPurchaseOrderWithinAmountLimitForPaymentRequestAutoApprove(PaymentRequestDocument document);
 
 }

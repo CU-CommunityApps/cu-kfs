@@ -3,24 +3,16 @@ package edu.cornell.kfs.module.purap.document.validation.impl;
 import java.text.MessageFormat;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
-import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
-import org.kuali.kfs.module.purap.document.service.PaymentRequestService;
 import org.kuali.kfs.module.purap.document.validation.impl.PaymentRequestDocumentPreRules;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.document.Document;
 
 import edu.cornell.kfs.fp.businessobject.PaymentMethod;
-import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.businessobject.PaymentRequestWireTransfer;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
-import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuPaymentRequestDocumentPreRules extends PaymentRequestDocumentPreRules {
@@ -31,7 +23,6 @@ public class CuPaymentRequestDocumentPreRules extends PaymentRequestDocumentPreR
 		PaymentRequestDocument preq = (PaymentRequestDocument) document;
 		
 		preRulesOK &= checkWireTransferTabState(preq);
-		preRulesOK &= checkAmountFromPurchaseOrder(preq);
 		preRulesOK &= super.doPrompts(document);
 		return preRulesOK;
 	}
@@ -94,49 +85,5 @@ public class CuPaymentRequestDocumentPreRules extends PaymentRequestDocumentPreR
 	        preqWireTransfer.setPreqAdditionalWireText(null);
 	        preqWireTransfer.setPreqPayeeAccountName(null);
 	    }
-
-    /**
-     * Checks if the associated Purchase Order's amount is at or above the PREQ auto-approval threshold,
-     * but only when awaiting approval from the Fiscal Officer or Fiscal Officer Delegate.
-     * If so, prompt the user to confirm whether they want to proceed with approving the PREQ
-     * due to positive approval being required as a result of the PO amount.
-     * 
-     * @param preqDocument The Payment Request whose PO should be checked.
-     * @return true if not at FO routing step or the PO amount is below the limit or the user answered "yes" to the question, false otherwise.
-     * @throws IsAskingException if the prompt applies to the PREQ but the user has not been asked yet.
-     */
-    @SuppressWarnings("deprecation")
-    protected boolean checkAmountFromPurchaseOrder(PaymentRequestDocument preqDocument) {
-        boolean confirmPositiveApproval = true;
-        
-        if (PaymentRequestStatuses.APPDOC_AWAITING_FISCAL_REVIEW.equals(preqDocument.getDocumentHeader().getWorkflowDocument().getApplicationDocumentStatus())
-                && !getCuPaymentRequestService().isPurchaseOrderWithinAmountLimitForPaymentRequestAutoApprove(preqDocument)) {
-            // Build the message (with arguments formatted accordingly), which should have placeholders for PO ID, PO Amount, and amount limit.
-            KualiDecimal amountLimit = new KualiDecimal(getParameterService().getParameterValueAsString(PaymentRequestDocument.class,
-                    PurapParameterConstants.PURAP_DEFAULT_NEGATIVE_PAYMENT_REQUEST_APPROVAL_LIMIT));
-            String questionText = MessageFormat.format(getParameterService().getParameterValueAsString(
-                    PaymentRequestDocument.class, CUPurapParameterConstants.QUESTION_PREQ_POSITIVE_APPROVE_FOR_PO_AMOUNT),
-                            preqDocument.getPurchaseOrderIdentifier().toString(),
-                            preqDocument.getPurchaseOrderDocument().getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount(),
-                            amountLimit);
-            
-            // Ask or check the question.
-            confirmPositiveApproval = super.askOrAnalyzeYesNoQuestion(
-                    CUPurapConstants.PREQDocumentsStrings.CONFIRM_POSITIVE_APPROVE_FOR_PO_AMOUNT_QUESTION, questionText);
-            if (!confirmPositiveApproval) {
-                super.event.setActionForwardName(KFSConstants.MAPPING_BASIC);
-            }
-        }
-        
-        return confirmPositiveApproval;
-    }
-
-    protected CuPaymentRequestService getCuPaymentRequestService() {
-        return (CuPaymentRequestService) SpringContext.getBean(PaymentRequestService.class);
-    }
-
-    protected ParameterService getParameterService() {
-        return SpringContext.getBean(ParameterService.class);
-    }
 
 }

@@ -30,7 +30,4 @@ public class CUPurapParameterConstants extends PurapParameterConstants {
     
     public static final String ROUTE_REQS_WITH_EXPIRED_CONTRACT_TO_CM = "ROUTE_REQS_WITH_EXPIRED_CONTRACT_TO_CM";
 
-    // KFSPTS-5643
-    public static final String QUESTION_PREQ_POSITIVE_APPROVE_FOR_PO_AMOUNT = "QUESTION_PREQ_POSITIVE_APPROVE_FOR_PO_AMOUNT";
-
 }

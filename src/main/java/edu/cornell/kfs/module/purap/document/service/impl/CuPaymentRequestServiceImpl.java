@@ -19,7 +19,6 @@ import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.AccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
-import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.impl.PaymentRequestServiceImpl;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -27,7 +26,6 @@ import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 import org.kuali.rice.krad.bo.Note;
@@ -415,41 +413,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     @Override
     public String getPaymentRequestNoteTargetObjectId(String documentNumber) {
         return ((CuPaymentRequestDao) paymentRequestDao).getObjectIdByPaymentRequestDocumentNumber(documentNumber);
-    }
-
-    /**
-     * This implementation uses the "DEFAULT_POS_APRVL_LMT" parameter to get the maximum value
-     * for which the PO amount can allow for automatic PREQ approval.
-     * 
-     * @see edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService#isPurchaseOrderWithinAmountLimitForPaymentRequestAutoApprove(
-     * org.kuali.kfs.module.purap.document.PaymentRequestDocument)
-     */
-    @Override
-    public boolean isPurchaseOrderWithinAmountLimitForPaymentRequestAutoApprove(PaymentRequestDocument document) {
-        PurchaseOrderDocument po = document.getPurchaseOrderDocument();
-        boolean withinLimit = true;
-        if (po != null) {
-            String paramAmount = parameterService.getParameterValueAsString(
-                    PaymentRequestDocument.class, PurapParameterConstants.PURAP_DEFAULT_NEGATIVE_PAYMENT_REQUEST_APPROVAL_LIMIT);
-            KualiDecimal amountLimit = new KualiDecimal(paramAmount);
-            withinLimit = po.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount().isLessThan(amountLimit);
-            LOG.info("PayReq " + document.getDocumentNumber() + (withinLimit
-                    ? " has the potential for auto-approval because the amount on the associated PO is below the limit of "
-                    : " cannot be auto-approved because the amount on the associated PO matches or exceeds the limit of ")
-                    + amountLimit.toString());
-        }
-        return withinLimit;
-    }
-
-    /**
-     * Overridden to also check if the associated PO's amount is within auto-approval limits.
-     * 
-     * @see org.kuali.kfs.module.purap.document.service.impl.PaymentRequestServiceImpl#isEligibleForAutoApproval(
-     * org.kuali.kfs.module.purap.document.PaymentRequestDocument, org.kuali.rice.core.api.util.type.KualiDecimal)
-     */
-    @Override
-    protected boolean isEligibleForAutoApproval(PaymentRequestDocument document, KualiDecimal defaultMinimumLimit) {
-        return isPurchaseOrderWithinAmountLimitForPaymentRequestAutoApprove(document) && super.isEligibleForAutoApproval(document, defaultMinimumLimit);
     }
 
 }
