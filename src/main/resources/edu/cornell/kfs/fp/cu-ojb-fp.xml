@@ -1,36 +1,4 @@
 <!--
-   Copyright Cornell University
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU Affero General Public License as
-   published by the Free Software Foundation, either version 3 of the
-   License, or (at your option) any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU Affero General Public License for more details.
-
-   You should have received a copy of the GNU Affero General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
-
-<!--
-   Portions modified 04/2016 and Copyright Indiana University
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU Affero General Public License as
-   published by the Free Software Foundation, either version 3 of the
-   License, or (at your option) any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU Affero General Public License for more details.
-
-   You should have received a copy of the GNU Affero General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
-
-<!--
  Copyright 2005-2008 The Kuali Foundation
  
  Licensed under the Educational Community License, Version 2.0 (the "License");
@@ -950,33 +918,6 @@
         <foreignkey field-ref="projectCode" />
     </reference-descriptor>
 
-  </class-descriptor>
-
-  <class-descriptor class="edu.cornell.kfs.fp.businessobject.AchIncomeTransaction" table="FP_INC_ACH_TRN_TC">
-    <field-descriptor name="sequenceNumber" column="ACH_TRN_SEQ_NBR" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="FP_INC_ACH_TRN_TC_SEQ"/>
-    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
-    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
-    <field-descriptor name="effectiveDate" column="ACH_EFF_DT" jdbc-type="DATE"/>
-    <field-descriptor name="loadTimestamp" column="ACH_LOAD_TS" jdbc-type="TIMESTAMP"/>
-    <field-descriptor name="bankTimestamp" column="ACH_BANK_TS" jdbc-type="TIMESTAMP"/>
-    <field-descriptor name="payerName" column="ACH_TRN_PAYR_NM" jdbc-type="VARCHAR"/>
-    <field-descriptor name="transactionAmount" column="ACH_TRN_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
-    <field-descriptor name="paymentMethodCode" column="ACH_TRN_PMT_MTHD_CD" jdbc-type="VARCHAR"/>
-    <collection-descriptor name="notes" proxy="true"
-                           element-class-ref="edu.cornell.kfs.fp.businessobject.AchIncomeNote"
-                           collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
-                           auto-retrieve="true" auto-update="object" auto-delete="object">
-      <orderby name="noteLineNumber" sort="ASC"/>
-      <inverse-foreignkey field-ref="sequenceNumber"/>
-    </collection-descriptor>
-  </class-descriptor>
-
-  <class-descriptor class="edu.cornell.kfs.fp.businessobject.AchIncomeNote" table="FP_INC_ACH_NTE_TC">
-    <field-descriptor name="sequenceNumber" column="ACH_TRN_SEQ_NBR" jdbc-type="INTEGER" primarykey="true"/>
-    <field-descriptor name="noteLineNumber" column="ACH_NTE_LN_NBR" jdbc-type="INTEGER" primarykey="true"/>
-    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
-    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
-    <field-descriptor name="noteText" column="ACH_NTE_TXT" jdbc-type="VARCHAR"/>
   </class-descriptor>
 
 </descriptor-repository>
