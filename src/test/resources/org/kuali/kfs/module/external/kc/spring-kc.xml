@@ -78,8 +78,8 @@
         </property>        
  		<property name="dataDictionaryPackages">
 			<list>
-                <value>org/kuali/kfs/module/external/kc/businessobject/datadictionary</value>
-                <value>org/kuali/kfs/module/external/kc/document/datadictionary</value>
+                <value>classpath:org/kuali/kfs/module/external/kc/businessobject/datadictionary/*.xml</value>
+                <value>classpath:org/kuali/kfs/module/external/kc/document/datadictionary/*.xml</value>
 			</list>
 		</property> 	
 		<property name="databaseRepositoryFilePaths">

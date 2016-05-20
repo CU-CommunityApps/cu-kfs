@@ -18,7 +18,7 @@
 
   <properties>
 	<job.name>${project.artifactId}</job.name>
-	<rice.version>2.1.9</rice.version>
+	<rice.version>2.5.8</rice.version>
 	<cynergy.version>2.3.4</cynergy.version>
 	<cynergy.version.suffix>current</cynergy.version.suffix>
 	<kfs.version>6.0.1-SNAPSHOT</kfs.version>
@@ -92,7 +92,6 @@
 	          <filtered>false</filtered>
 	          <excludes>
 	            <exclude>WEB-INF/lib/commons-collections-3.2.*.jar</exclude>
-	            <exclude>WEB-INF/lib/rice*.jar</exclude>
 	            <exclude>WEB-INF/lib/xapool-1.5.0*.jar</exclude>
 	            <exclude>WEB-INF/lib/wss4j-1.6.*.jar</exclude>
 	          </excludes>
@@ -197,6 +196,13 @@
       <dependency>
           <groupId>org.kuali.kfs</groupId>
           <artifactId>kfs-cg</artifactId>
+          <version>${kfs.version}</version>
+          <type>jar</type>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.kuali.kfs</groupId>
+          <artifactId>kfs-kns</artifactId>
           <version>${kfs.version}</version>
           <type>jar</type>
           <scope>provided</scope>
@@ -318,13 +324,6 @@
       <scope>test</scope>
 	</dependency>
 
-	<dependency>
-      <groupId>net.bull.javamelody</groupId>
-      <artifactId>javamelody-core</artifactId>
-      <version>1.51.0</version>
-      <scope>test</scope>
-	</dependency>
-
 <dependency>
     <groupId>javax.transaction</groupId>
     <artifactId>jta</artifactId>
@@ -419,29 +418,6 @@
         <scope>runtime</scope>
 	</dependency>
 
-      <!--
-    <dependency>
-      <groupId>org.kuali.kfs</groupId>
-      <artifactId>kfs</artifactId>
-      <version>${kfs.version}</version>
-      <type>war</type>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
--->
-
    <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
@@ -471,168 +447,6 @@
       <version>2.2</version>
     </dependency>
 
-    <dependency>
-      <groupId>edu.cornell.cynergy</groupId>
-      <artifactId>cynergy-customizations</artifactId>
-      <version>${cynergy.version}-${cynergy.version.suffix}</version>
-      <exclusions>
-      	<exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-core-framework</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-core-impl</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-core-service-api</artifactId>
-	    </exclusion>
-
-	   <exclusion>
-	     <groupId>org.kuali.rice</groupId>
-	     <artifactId>rice-core-service-framework</artifactId>
-	   </exclusion>
-
-	   <exclusion>
-	     <groupId>org.kuali.rice</groupId>
-	     <artifactId>rice-core-service-impl</artifactId>
-	   </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-core-service-web</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-edl-framework</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-edl-impl</artifactId>
-	    </exclusion>
-
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-ken-api</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-kew-api</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-kew-framework</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-kew-impl</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-kim-api</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-kim-framework</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-kim-impl</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-krad-app-framework</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-krad-web-framework</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-krms-api</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-krms-framework</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-krms-impl</artifactId>
-	    </exclusion>
-
-		<exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-ksb-api</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-ksb-client-impl</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-ksb-server-impl</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-ksb-web</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-location-api</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-location-framework</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-location-impl</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-location-web</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-kns</artifactId>
-	    </exclusion>
-
-	    <exclusion>
-	      <groupId>org.kuali.rice</groupId>
-	      <artifactId>rice-impl</artifactId>
-	    </exclusion>
-
-        <exclusion>
-          <groupId>org.kuali.rice</groupId>
-          <artifactId>rice-core-web</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
     <!-- rice-core dependencies. -->
     <dependency>
       <groupId>org.kuali.rice</groupId>
@@ -640,18 +454,6 @@
       <version>${rice.version}</version>
       <scope>compile</scope>
       <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
       </exclusions>
     </dependency>
 
@@ -670,214 +472,6 @@
   		  <artifactId>jta</artifactId>
  		</exclusion>
  		<exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-core-impl</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-      	<exclusion>
-      	  <groupId>org.igniterealtime</groupId>
-  		  <artifactId>smack</artifactId>
-      	</exclusion>
-      	<exclusion>
-      	  <groupId>org.igniterealtime</groupId>
-  		  <artifactId>smackx</artifactId>
-      	</exclusion>
-        <exclusion>
-          <groupId>javax.resource</groupId>
-          <artifactId>connector-api</artifactId>
-        </exclusion>
-        <!-- TODO : need jsp-api for compiling GroupTitleLineRenderer
-        <exclusion>
-          <groupId>javax.servlet.jsp</groupId>
-          <artifactId>jsp-api</artifactId>
-        </exclusion> -->
-        <exclusion>
-          <groupId>com.sun.xml.bind</groupId>
- 		  <artifactId>jaxb-impl</artifactId>
- 		</exclusion>
- 		<exclusion>
- 		  <groupId>javax.transaction</groupId>
-  		  <artifactId>jta</artifactId>
- 		</exclusion>
- 		<exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <!-- rice-core-service dependencies. -->
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-core-service-api</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-core-service-framework</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-core-service-impl</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.resource</groupId>
-          <artifactId>connector-api</artifactId>
-        </exclusion>
- 		<exclusion>
- 		  <groupId>javax.transaction</groupId>
-  		  <artifactId>jta</artifactId>
- 		</exclusion>
- 		<exclusion>
- 		  <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
- 		</exclusion>
- 		<exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-core-service-web</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <!-- rice-edl dependencies. -->
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-edl-framework</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-edl-impl</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <!-- rice-ken dependencies. -->
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-ken-api</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>xapool</groupId>
           <artifactId>xapool</artifactId>
         </exclusion>
@@ -913,27 +507,6 @@
     <dependency>
       <groupId>org.kuali.rice</groupId>
       <artifactId>rice-kew-framework</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-kew-impl</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
       <exclusions>
@@ -992,133 +565,9 @@
           <groupId>org.apache.ws.security</groupId>
           <artifactId>wss4j</artifactId>
         </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-kim-impl</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
         <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <!-- rice-krad dependencies. -->
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-krad-app-framework</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-krad-web-framework</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <!-- rice-krms dependencies. -->
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-krms-api</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-krms-framework</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-krms-impl</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
+          <groupId>org.kuali.rice</groupId>
+          <artifactId>rice-krad-app-framework</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -1127,73 +576,6 @@
 	<dependency>
       <groupId>org.kuali.rice</groupId>
       <artifactId>rice-ksb-api</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-ksb-client-impl</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-       	<exclusion>
- 		  <groupId>javax.transaction</groupId>
-  		  <artifactId>jta</artifactId>
- 		</exclusion>
- 		<exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-ksb-server-impl</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-ksb-web</artifactId>
       <version>${rice.version}</version>
       <scope>compile</scope>
       <exclusions>
@@ -1252,99 +634,10 @@
           <groupId>org.apache.ws.security</groupId>
           <artifactId>wss4j</artifactId>
         </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-location-impl</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-location-web</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-	<!-- rice-kns and rice-impl dependencies. -->
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-kns</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kuali.rice</groupId>
-      <artifactId>rice-impl</artifactId>
-      <version>${rice.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.resource</groupId>
-          <artifactId>connector-api</artifactId>
-        </exclusion>
-        <exclusion>
- 		  <groupId>javax.transaction</groupId>
-  		  <artifactId>jta</artifactId>
- 		</exclusion>
- 		<exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
+          <exclusion>
+              <groupId>org.kuali.rice</groupId>
+              <artifactId>rice-krad-app-framework</artifactId>
+          </exclusion>
       </exclusions>
     </dependency>
 
@@ -1360,6 +653,16 @@
         <artifactId>easymock</artifactId>
         <version>3.4</version>
         <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>3.0.1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-core</artifactId>
+        <version>3.2.7.RELEASE</version>
     </dependency>
 
   </dependencies>

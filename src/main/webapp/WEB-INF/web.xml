@@ -35,6 +35,11 @@
 	    <listener-class>net.bull.javamelody.SessionListener</listener-class>
 	</listener>
 	
+    <filter>
+        <filter-name>AuthenticationFilter</filter-name>
+        <filter-class>org.kuali.kfs.sys.web.filter.DelegatingAuthenticationFilter</filter-class>
+    </filter>
+
   <filter>
     <filter-name>HideWebInfFilter</filter-name>
     <filter-class>org.kuali.kfs.krad.web.filter.HideWebInfFilter</filter-class>
@@ -56,17 +61,22 @@
   
   <filter>
     <filter-name>BootstrapFilter</filter-name>
-    <filter-class>org.kuali.rice.kew.web.BootstrapFilter</filter-class>
+    <filter-class>org.kuali.rice.krad.web.filter.BootstrapFilter</filter-class>
   </filter>
 
   <filter>
     <filter-name>UserLoginFilter</filter-name>
-    <filter-class>org.kuali.rice.kew.web.UserLoginFilter</filter-class>
+    <filter-class>org.kuali.kfs.krad.web.filter.UserLoginFilter</filter-class>
   </filter>
+
+    <filter>
+        <filter-name>ResourceLoginFilter</filter-name>
+        <filter-class>org.kuali.kfs.web.filter.ResourceLoginFilter</filter-class>
+    </filter>
 
   <filter>
     <filter-name>UserPreferencesFilter</filter-name>
-    <filter-class>org.kuali.rice.kew.web.UserPreferencesFilter</filter-class>
+    <filter-class>org.kuali.kfs.krad.web.filter.UserPreferencesFilter</filter-class>
   </filter>
   
   <filter>
@@ -75,6 +85,18 @@
   </filter>
 
   <!--  FILTER MAPPINGS  -->
+
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <servlet-name>action</servlet-name>
+        <servlet-name>dwr-invoker</servlet-name>
+        <servlet-name>batchFileUpload</servlet-name>
+        <servlet-name>reports</servlet-name>
+        <url-pattern>/purap/*</url-pattern>
+        <url-pattern>/app/*</url-pattern>
+        <url-pattern>/index.jsp</url-pattern>
+    </filter-mapping>
+
   <filter-mapping>
     <filter-name>HideWebInfFilter</filter-name>
     <url-pattern>/*</url-pattern>
@@ -98,6 +120,13 @@
   <filter-mapping>
     <filter-name>UserLoginFilter</filter-name>
     <servlet-name>action</servlet-name>
+        <servlet-name>reports</servlet-name>
+        <url-pattern>/index.jsp</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>ResourceLoginFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
   </filter-mapping>
 
   <filter-mapping>
@@ -108,57 +137,6 @@
   <filter-mapping>
   	<filter-name>SessionExpirationFilter</filter-name>
   	<servlet-name>action</servlet-name>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>BootstrapFilter</filter-name>
-    <servlet-name>notification</servlet-name>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>UserLoginFilter</filter-name>
-    <servlet-name>notification</servlet-name>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>UserPreferencesFilter</filter-name>
-    <servlet-name>notification</servlet-name>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>UserLoginFilter</filter-name>
-    <servlet-name>krad</servlet-name>
-  </filter-mapping>
-
-  <!-- for KCB Spring Web MVC pages -->
-  <filter-mapping>
-    <filter-name>BootstrapFilter</filter-name>
-    <servlet-name>kcb</servlet-name>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>UserLoginFilter</filter-name>
-    <servlet-name>kcb</servlet-name>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>UserPreferencesFilter</filter-name>
-    <servlet-name>kcb</servlet-name>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>BootstrapFilter</filter-name>
-    <servlet-name>edoclite</servlet-name>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>UserLoginFilter</filter-name>
-    <servlet-name>edoclite</servlet-name>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>UserPreferencesFilter</filter-name>
-    <servlet-name>edoclite</servlet-name>
   </filter-mapping>
 
   <listener>
@@ -200,7 +178,7 @@
     <servlet-class>org.kuali.kfs.kns.web.struts.action.KualiActionServlet</servlet-class>
     <init-param>
       <param-name>config</param-name>
-      <param-value>/WEB-INF/struts-config.xml,/WEB-INF/cu-struts-config.xml</param-value>
+            <param-value>/WEB-INF/struts-config.xml,/WEB-INF/institutional-struts-config.xml</param-value>
     </init-param>
     <init-param>
       <param-name>config/core</param-name>
@@ -261,9 +239,8 @@
   </servlet>
 
   <servlet>
-    <servlet-name>krad</servlet-name>
-    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-    <load-on-startup>3</load-on-startup>
+        <servlet-name>reports</servlet-name>
+        <jsp-file>/WEB-INF/jsp/reports.jsp</jsp-file>
   </servlet>
 
   <servlet-mapping>
@@ -296,12 +273,6 @@
     <url-pattern>/kew/attachment/*</url-pattern>
   </servlet-mapping>
 
-  <servlet-mapping>
-    <servlet-name>krad</servlet-name>
-    <url-pattern>/kr-krad/*</url-pattern>
-  </servlet-mapping>
-
-
 	<servlet>
 		<servlet-name>heartbeat</servlet-name>
 		<servlet-class>org.kuali.kfs.sys.web.servlet.KualiHeartbeatServlet</servlet-class>
@@ -319,6 +290,10 @@
 		<servlet-name>heartbeat</servlet-name>
 		<url-pattern>/heartbeat</url-pattern>
 	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>reports</servlet-name>
+        <url-pattern>/reports</url-pattern>
+    </servlet-mapping>
 
 
 	<!-- ******************* END Embedded KEW Servlet Mappings ********************* -->
@@ -372,13 +347,13 @@
 	</listener>
 
 	<servlet>
-		<servlet-name>CXFServlet</servlet-name>
-		<display-name>CXF Servlet</display-name>
-		<servlet-class>
+        <display-name>CXF Servlet</display-name>
+        <servlet-name>CXFServlet</servlet-name>
+        <servlet-class>
 		        org.apache.cxf.transport.servlet.CXFServlet
 		</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
 
 	<servlet-mapping>
 		<servlet-name>CXFServlet</servlet-name>

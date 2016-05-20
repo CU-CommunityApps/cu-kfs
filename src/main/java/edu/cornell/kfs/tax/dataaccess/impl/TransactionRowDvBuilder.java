@@ -1,5 +1,21 @@
 package edu.cornell.kfs.tax.dataaccess.impl;
 
+import edu.cornell.kfs.tax.CUTaxConstants;
+import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
+import edu.cornell.kfs.tax.dataaccess.impl.TaxSqlUtils.SqlText;
+import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DvSourceRow;
+import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.CoreApiServiceLocator;
+import org.kuali.rice.kew.api.document.Document;
+import org.kuali.rice.kew.api.document.DocumentStatus;
+import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
+import org.kuali.rice.kew.service.KEWServiceLocator;
+
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,30 +24,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.CoreApiServiceLocator;
-import org.kuali.rice.kew.api.document.Document;
-import org.kuali.rice.kew.api.document.DocumentStatus;
-import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
-import org.kuali.rice.kew.service.KEWServiceLocator;
-import org.kuali.kfs.krad.util.KRADConstants;
-
-import edu.cornell.cynergy.kew.routeheader.service.BulkFinalizedDateRouteHeaderService;
-import edu.cornell.kfs.tax.CUTaxConstants;
-import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
-import edu.cornell.kfs.tax.dataaccess.impl.TaxSqlUtils.SqlText;
-import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DvSourceRow;
-import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
 
 /**
  * Base class for building transaction detail rows from DV data.
@@ -75,10 +74,16 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
         endDateTime.set(Calendar.SECOND, FIFTY_NINE);
         
         // Find all DV documents that were finalized between the start and end dates.
-        BulkFinalizedDateRouteHeaderService routeHeaderService = (BulkFinalizedDateRouteHeaderService) SpringContext.getBean(
+        //TODO: need to fix this when we reintroduce cynergy as a dependency
+//        BulkFinalizedDateRouteHeaderService routeHeaderService = (BulkFinalizedDateRouteHeaderService) SpringContext.getBean(
+//                RouteHeaderService.class, KEWServiceLocator.DOC_ROUTE_HEADER_SRV);
+//        Map<String,java.sql.Timestamp> datesMap = routeHeaderService.getFinalizedDatesForDocumentType(DisbursementVoucherConstants.DOCUMENT_TYPE_CODE,
+//                new java.sql.Timestamp(summary.getStartDate().getTime()), new java.sql.Timestamp(endDateTime.getTime().getTime()));
+
+        RouteHeaderService routeHeaderService = (RouteHeaderService) SpringContext.getBean(
                 RouteHeaderService.class, KEWServiceLocator.DOC_ROUTE_HEADER_SRV);
-        Map<String,java.sql.Timestamp> datesMap = routeHeaderService.getFinalizedDatesForDocumentType(DisbursementVoucherConstants.DOCUMENT_TYPE_CODE,
-                new java.sql.Timestamp(summary.getStartDate().getTime()), new java.sql.Timestamp(endDateTime.getTime().getTime()));
+        Map<String,java.sql.Timestamp> datesMap = new HashMap<>(); //routeHeaderService.getFinalizedDatesForDocumentType(DisbursementVoucherConstants.DOCUMENT_TYPE_CODE,
+                //new java.sql.Timestamp(summary.getStartDate().getTime()), new java.sql.Timestamp(endDateTime.getTime().getTime()));
         // Filter results to only include Foreign Draft and Wire Transfer DVs.
         finalizedDvDocuments = processingDao.findForeignDraftsAndWireTransfers(new ArrayList<String>(datesMap.keySet()), summary);
         if (finalizedDvDocuments.isEmpty()) {
