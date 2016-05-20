@@ -1,0 +1,9 @@
+ISA*?*?*?*?*?*?*?*?*160129*0233*?*?*12345*?*T\
+GS*RA*?*?*?*?*12345\
+ST*?*1\
+BPR*?*100.00*C*ACH*?*?*?*?*?*companyId*?*?*?*?*?*20160209\
+N1*PR*NYS DMV*idQualifier*idCode\
+NTE*description*NYS DMV1         -HCCLAIMPMT TRN*1*021300075403284*1141797\
+SE*?*1\
+GE*1*12345\
+IEA*1*12345\
