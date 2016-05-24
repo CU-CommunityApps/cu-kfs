@@ -18,4 +18,12 @@
   <bean id="DisbursementVoucherPayeeDetail" parent="DisbursementVoucherPayeeDetail-parentBean">
   <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail"/>
   </bean>
-  </beans>
+
+  <bean id="DisbursementVoucherPayeeDetail-disbursementVoucherPayeeTypeName" parent="DisbursementVoucherPayeeDetail-disbursementVoucherPayeeTypeName-parentBean">
+    <property name="maxLength" value="85"/>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="86"/>
+    </property>
+  </bean>
+
+</beans>

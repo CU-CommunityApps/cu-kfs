@@ -1,11 +1,21 @@
 package edu.cornell.kfs.fp.document;
 
-import com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherDocumentExtension;
-import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
-import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
-import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
-import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
-import edu.cornell.kfs.sys.CUKFSKeyConstants;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
 import org.easymock.IMockBuilder;
@@ -16,49 +26,76 @@ import org.junit.Test;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.businessobject.PaymentReasonCode;
+import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherPaymentReasonService;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.KfsAuthorizationConstants;
+import org.kuali.kfs.sys.fixture.UserNameFixture;
+import org.kuali.kfs.sys.service.impl.DocumentHelperServiceImpl;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorRoutingComparable;
+import org.kuali.kfs.vnd.businessobject.VendorType;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.impl.identity.PersonImpl;
+import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
+import org.kuali.rice.kns.document.authorization.DocumentPresentationController;
+import org.kuali.rice.kns.document.authorization.TransactionalDocumentAuthorizer;
+import org.kuali.rice.kns.document.authorization.TransactionalDocumentPresentationController;
 import org.kuali.rice.kns.util.KNSGlobalVariables;
 import org.kuali.rice.kns.util.MessageList;
+import org.kuali.rice.krad.UserSession;
 import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.bo.PersistableBusinessObjectExtension;
 import org.kuali.rice.krad.document.Document;
+import org.kuali.rice.krad.util.GlobalVariables;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
+import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
+import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
+import edu.cornell.kfs.fp.document.authorization.CuDisbursementVoucherDocumentPresentationController;
+import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuDisbursementVoucherDocumentTest {
 
+    private static final String VENDOR_PAYEE_TYPE_NAME = "Vendor";
+    private static final String VENDOR_TYPE_CODE_DV = "DV";
+    private static final String VENDOR_TYPE_DESCRIPTION_DV = "DISBURSEMENT VOUCHER";
+    private static final String VENDOR_PAYEE_TYPE_SUFFIX = VENDOR_TYPE_CODE_DV + " - " + VENDOR_TYPE_DESCRIPTION_DV;
+    private static final String VENDOR_PAYEE_TYPE_SUFFIX_FOR_DISPLAY = " (" + VENDOR_PAYEE_TYPE_SUFFIX + ")";
+    private static final String VENDOR_PAYEE_TYPE_NAME_WITH_SUFFIX = VENDOR_PAYEE_TYPE_NAME + VENDOR_PAYEE_TYPE_SUFFIX_FOR_DISPLAY;
+
     @Mock
     private static CuDisbursementVoucherDocument cuDisbursementVoucherDocument;
+    @Mock
+    private static Person ccs1Person;
+    @Mock
+    private static Person mo14Person;
+    @Mock
+    private static UserSession ccs1Session;
+    @Mock
+    private static UserSession mo14Session;
     private static VendorService vendorService;
     private static DisbursementVoucherPayeeService disbursementVoucherPayeeService;
     private static DisbursementVoucherPaymentReasonService disbursementVoucherPaymentReasonService;
+    private static TestDocumentHelperService documentHelperService;
     private static CuDisbursementVoucherPayeeDetail dvPayeeDetail;
 
     @BeforeClass
     public static void setUp() throws Exception {
         ArrayList<String> methodNames = new ArrayList<>();
+        Set<String> mockingBlacklist = new HashSet<>(Arrays.asList("refreshPayeeTypeSuffixIfPaymentIsEditable", "createVendorPayeeTypeSuffix"));
         for (Method method : CuDisbursementVoucherDocument.class.getMethods()) {
-            if (!Modifier.isFinal(method.getModifiers()) && !method.getName().startsWith("set") && !method.getName().startsWith("get")) {
+            if (!Modifier.isFinal(method.getModifiers()) && !method.getName().startsWith("set") && !method.getName().startsWith("get")
+                    && !mockingBlacklist.contains(method.getName())) {
                 methodNames.add(method.getName());
             }
         }
@@ -67,18 +104,48 @@ public class CuDisbursementVoucherDocumentTest {
 
         cuDisbursementVoucherDocument = builder.createNiceMock();
 
+        ccs1Person = createMockPerson(UserNameFixture.ccs1);
+        mo14Person = createMockPerson(UserNameFixture.mo14);
+        ccs1Session = createMockUserSession(ccs1Person);
+        mo14Session = createMockUserSession(mo14Person);
+
         vendorService = new TestVendorService();
         disbursementVoucherPayeeService = new TestDisbursementVoucherPayeeService();
         disbursementVoucherPaymentReasonService = new TestDisbursementVoucherPaymentReasonService();
+        documentHelperService = new TestDocumentHelperService();
 
         cuDisbursementVoucherDocument.setVendorService(vendorService);
         cuDisbursementVoucherDocument.setDisbursementVoucherPayeeService(disbursementVoucherPayeeService);
         cuDisbursementVoucherDocument.setDvPymentReasonService(disbursementVoucherPaymentReasonService);
+        cuDisbursementVoucherDocument.setDocumentHelperService(documentHelperService);
+    }
+
+    protected static UserSession createMockUserSession(Person person) {
+        UserSession userSession = EasyMock.createMock(UserSession.class);
+        EasyMock.expect(userSession.getPrincipalId()).andStubReturn(person.getPrincipalId());
+        EasyMock.expect(userSession.getPrincipalName()).andStubReturn(person.getPrincipalName());
+        EasyMock.expect(userSession.getLoggedInUserPrincipalName()).andStubReturn(person.getPrincipalName());
+        EasyMock.expect(userSession.getPerson()).andStubReturn(person);
+        EasyMock.expect(userSession.getActualPerson()).andStubReturn(person);
+        EasyMock.replay(userSession);
+        return userSession;
+    }
+
+    protected static Person createMockPerson(UserNameFixture userNameFixture) {
+        Person person = EasyMock.createMock(PersonImpl.class);
+        EasyMock.expect(person.getPrincipalName()).andStubReturn(userNameFixture.toString());
+        EasyMock.expect(person.getPrincipalId()).andStubReturn(userNameFixture.toString());
+        EasyMock.replay(person);
+        return person;
     }
 
     @Before
-    public void clearMessages() {
+    public void clearMessagesAndResetServices() {
         KNSGlobalVariables.getMessageList().clear();
+        documentHelperService.setAuthorizedPerson(ccs1Person);
+        documentHelperService.setPresentationEditModes(new HashSet<String>());
+        documentHelperService.setAuthorizationEditModes(new HashSet<String>());
+        documentHelperService.setupMockObjects();
     }
 
     @Test
@@ -87,7 +154,7 @@ public class CuDisbursementVoucherDocumentTest {
 
         cuDisbursementVoucherDocument.clearInvalidPayee();
         assertTrue("Should be valid and have no error messages, but had " + KNSGlobalVariables.getMessageList().size(), KNSGlobalVariables.getMessageList().size() == 0);
-        assertEquals("DV Payee ID Number should not be cleared", "0", cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPayeeIdNumber());
+        assertEquals("DV Payee ID Number should not be cleared", "12345-0", cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPayeeIdNumber());
     }
 
     @Test
@@ -135,12 +202,135 @@ public class CuDisbursementVoucherDocumentTest {
         assertNull("Trip ID should be null", cuDisbursementVoucherDocument.getTripId());
     }
 
-    public void setupPayeeDetail(String disbVchrPayeeIdNumber, String disbVchrVendorHeaderIdNumber) {
+    @Test
+    public void testGeneratePayeeTypeDisplayName() throws Exception {
+        setupPayeeDetail("0", "12345");
+        assertTrue("Payee Detail Extension should have had a blank suffix", StringUtils.isBlank(getDetailExtensionFromDv().getPayeeTypeSuffix()));
+        assertTrue("Payee Detail Extension should have had a blank suffix display value",
+                StringUtils.isBlank(getDetailExtensionFromDv().getPayeeTypeSuffixForDisplay()));
+        assertEquals("Payee Detail has the wrong Payee Type display name",
+                VENDOR_PAYEE_TYPE_NAME, cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeName());
+        
+        VendorDetail vendor = vendorService.getVendorDetail("12345-0");
+        assertNotNull("Vendor 12345-0 should have been found", vendor);
+        
+        getDetailExtensionFromDv().setPayeeTypeSuffix(cuDisbursementVoucherDocument.createVendorPayeeTypeSuffix(vendor.getVendorHeader().getVendorType()));
+        assertEquals("Payee Detail Extension has the wrong suffix defined", VENDOR_PAYEE_TYPE_SUFFIX, getDetailExtensionFromDv().getPayeeTypeSuffix());
+        assertEquals("Payee Detail Extension has the wrong suffix display value",
+                VENDOR_PAYEE_TYPE_SUFFIX_FOR_DISPLAY, getDetailExtensionFromDv().getPayeeTypeSuffixForDisplay());
+        assertEquals("Payee Detail has the wrong Payee Type suffix-included display name",
+                VENDOR_PAYEE_TYPE_NAME_WITH_SUFFIX, cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeName());
+        
+        cuDisbursementVoucherDocument.setDvPayeeDetail(new TestDisbursementVoucherPayeeDetail());
+        assertTrue("DV Payee ID Number should be cleared",
+                StringUtils.isBlank(cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPayeeIdNumber()));
+        assertTrue("Payee Type Code should be cleared",
+                StringUtils.isBlank(cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode()));
+        assertTrue("Payee Detail Extension should have had its suffix cleared out",
+                StringUtils.isBlank(getDetailExtensionFromDv().getPayeeTypeSuffix()));
+        assertTrue("Payee Detail Extension should have had a blank suffix display value due to suffix being cleared",
+                StringUtils.isBlank(getDetailExtensionFromDv().getPayeeTypeSuffixForDisplay()));
+        assertEquals("Payee Detail should have had an empty Payee Type display name",
+                StringUtils.EMPTY, cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeName());
+    }
+
+    @Test
+    public void testSuccessfulPayeeSuffixRefresh() throws Exception {
+        setupPayeeDetail("0", "12345");
+        getDetailExtensionFromDv().setPayeeTypeSuffix(StringUtils.EMPTY);
+        setupDocumentHelperWithPayeeEditMode(ccs1Person);
+        assertRefreshPerformedForUser(ccs1Session, VENDOR_PAYEE_TYPE_SUFFIX);
+    }
+
+    @Test
+    public void testSuccessfulPayeeSuffixRefreshToEmptyValueForInvalidVendor() throws Exception {
+        setupPayeeDetail("0", "23456");
+        getDetailExtensionFromDv().setPayeeTypeSuffix(VENDOR_PAYEE_TYPE_SUFFIX);
+        setupDocumentHelperWithPayeeEditMode(ccs1Person);
+        assertRefreshPerformedForUser(ccs1Session, StringUtils.EMPTY);
+    }
+
+    @Test
+    public void testSuccessfulPayeeSuffixRefreshToEmptyValueForNonVendorPayee() throws Exception {
+        setupEmployeePayeeDetail("1234567");
+        getDetailExtensionFromDv().setPayeeTypeSuffix(VENDOR_PAYEE_TYPE_SUFFIX);
+        setupDocumentHelperWithPayeeEditMode(ccs1Person);
+        assertRefreshPerformedForUser(ccs1Session, StringUtils.EMPTY);
+    }
+
+    @Test
+    public void testPayeeSuffixRefreshCanceledForUserWithoutEditPermission() throws Exception {
+        setupPayeeDetail("0", "23456");
+        getDetailExtensionFromDv().setPayeeTypeSuffix(VENDOR_PAYEE_TYPE_SUFFIX);
+        setupDocumentHelperWithPayeeEditMode(ccs1Person);
+        assertRefreshNotPerformedForUser(mo14Session);
+    }
+
+    @Test
+    public void testPayeeSuffixRefreshCanceledForUserWithoutPayeeEditModeAuthorization() throws Exception {
+        setupPayeeDetail("0", "23456");
+        getDetailExtensionFromDv().setPayeeTypeSuffix(VENDOR_PAYEE_TYPE_SUFFIX);
+        setupDocumentHelper(ccs1Person,
+                createEditModeSet(KfsAuthorizationConstants.DisbursementVoucherEditMode.PAYEE_ENTRY,
+                        KfsAuthorizationConstants.DisbursementVoucherEditMode.TRAVEL_ENTRY),
+                createEditModeSet(KfsAuthorizationConstants.DisbursementVoucherEditMode.TRAVEL_ENTRY));
+        assertRefreshNotPerformedForUser(ccs1Session);
+    }
+
+    protected void assertRefreshPerformedForUser(UserSession userSession, String expectedValue) throws Exception {
+        String oldSuffix = getDetailExtensionFromDv().getPayeeTypeSuffix();
+        GlobalVariables.setUserSession(userSession);
+        cuDisbursementVoucherDocument.refreshPayeeTypeSuffixIfPaymentIsEditable();
+        assertNotEquals("Payee Type suffix should have been refreshed", oldSuffix, getDetailExtensionFromDv().getPayeeTypeSuffix());
+        assertEquals("Payee Type suffix has the wrong new value", expectedValue, getDetailExtensionFromDv().getPayeeTypeSuffix());
+    }
+
+    protected void assertRefreshNotPerformedForUser(UserSession userSession) throws Exception {
+        String oldSuffix = getDetailExtensionFromDv().getPayeeTypeSuffix();
+        GlobalVariables.setUserSession(userSession);
+        cuDisbursementVoucherDocument.refreshPayeeTypeSuffixIfPaymentIsEditable();
+        assertEquals("Payee Type suffix should not have been refreshed", oldSuffix, getDetailExtensionFromDv().getPayeeTypeSuffix());
+    }
+
+
+
+    public void setupPayeeDetail(String disbVchrVendorDetailAssignedIdNumber, String disbVchrVendorHeaderIdNumber) {
         CuDisbursementVoucherPayeeDetail dvPayeeDetail = new TestDisbursementVoucherPayeeDetail();
-        dvPayeeDetail.setDisbVchrPayeeIdNumber(disbVchrPayeeIdNumber);
+        dvPayeeDetail.setDisbVchrPayeeIdNumber(disbVchrVendorHeaderIdNumber + "-" + disbVchrVendorDetailAssignedIdNumber);
         dvPayeeDetail.setDisbVchrVendorHeaderIdNumber(disbVchrVendorHeaderIdNumber);
+        dvPayeeDetail.setDisbVchrVendorDetailAssignedIdNumber(disbVchrVendorDetailAssignedIdNumber);
+        dvPayeeDetail.setDisbursementVoucherPayeeTypeCode(KFSConstants.PaymentPayeeTypes.VENDOR);
         cuDisbursementVoucherDocument.setDvPayeeDetail(dvPayeeDetail);
     }
+
+    public void setupEmployeePayeeDetail(String employeeId) {
+        CuDisbursementVoucherPayeeDetail dvPayeeDetail = new TestEmployeeDisbursementVoucherPayeeDetail();
+        dvPayeeDetail.setDisbVchrPayeeIdNumber(employeeId);
+        dvPayeeDetail.setDisbursementVoucherPayeeTypeCode(KFSConstants.PaymentPayeeTypes.EMPLOYEE);
+        cuDisbursementVoucherDocument.setDvPayeeDetail(dvPayeeDetail);
+    }
+
+    protected void setupDocumentHelperWithPayeeEditMode(Person authorizedPerson) {
+        setupDocumentHelper(authorizedPerson, createEditModeSet(KfsAuthorizationConstants.DisbursementVoucherEditMode.PAYEE_ENTRY),
+                createEditModeSet(KfsAuthorizationConstants.DisbursementVoucherEditMode.PAYEE_ENTRY));
+    }
+
+    protected void setupDocumentHelper(Person authorizedPerson, Set<String> presentationEditModes, Set<String> authorizationEditModes) {
+        documentHelperService.setAuthorizedPerson(authorizedPerson);
+        documentHelperService.setPresentationEditModes(presentationEditModes);
+        documentHelperService.setAuthorizationEditModes(authorizationEditModes);
+        documentHelperService.setupMockObjects();
+    }
+
+    protected CuDisbursementVoucherPayeeDetailExtension getDetailExtensionFromDv() {
+        return (CuDisbursementVoucherPayeeDetailExtension) cuDisbursementVoucherDocument.getDvPayeeDetail().getExtension();
+    }
+
+    protected Set<String> createEditModeSet(String... values) {
+        return new HashSet<String>(Arrays.asList(values));
+    }
+
+
 
     private static class TestVendorService implements VendorService {
 
@@ -151,12 +341,18 @@ public class CuDisbursementVoucherDocumentTest {
 
         @Override
         public VendorDetail getByVendorNumber(String s) {
-            return null;
+            return getVendorDetail(s);
         }
 
         @Override
         public VendorDetail getVendorDetail(String s) {
-            return null;
+            try {
+                return getVendorDetail(
+                        Integer.valueOf(StringUtils.substringBefore(s, "-")),
+                        Integer.valueOf(StringUtils.substringAfter(s, "-")));
+            } catch (NumberFormatException e) {
+                return null;
+            }
         }
 
         @Override
@@ -164,9 +360,19 @@ public class CuDisbursementVoucherDocumentTest {
             if (integer == 23456) {
                 return null;
             } else {
+                VendorType vendorType = new VendorType();
+                vendorType.setVendorTypeCode(VENDOR_TYPE_CODE_DV);
+                vendorType.setVendorTypeDescription(VENDOR_TYPE_DESCRIPTION_DV);
+                
+                VendorHeader vendorHeader = new VendorHeader();
+                vendorHeader.setVendorHeaderGeneratedIdentifier(integer);
+                vendorHeader.setVendorTypeCode(VENDOR_TYPE_CODE_DV);
+                vendorHeader.setVendorType(vendorType);
+                
                 VendorDetail vendorDetail = new VendorDetail();
                 vendorDetail.setVendorHeaderGeneratedIdentifier(integer);
                 vendorDetail.setVendorDetailAssignedIdentifier(integer1);
+                vendorDetail.setVendorHeader(vendorHeader);
                 return vendorDetail;
             }
         }
@@ -256,7 +462,12 @@ public class CuDisbursementVoucherDocumentTest {
 
         @Override
         public String getPayeeTypeDescription(String s) {
-            return null;
+            if (StringUtils.isNotBlank(s)) {
+                if (KFSConstants.PaymentPayeeTypes.VENDOR.equals(s)) {
+                    return "Vendor";
+                }
+            }
+            return StringUtils.EMPTY;
         }
 
         @Override
@@ -405,13 +616,124 @@ public class CuDisbursementVoucherDocumentTest {
     }
 
     private static class TestDisbursementVoucherPayeeDetail extends CuDisbursementVoucherPayeeDetail {
+        private CuDisbursementVoucherPayeeDetailExtension extension;
+
+        public TestDisbursementVoucherPayeeDetail() {
+            super();
+            this.extension = new CuDisbursementVoucherPayeeDetailExtension();
+        }
 
         public boolean isVendor() {
             return true;
         }
 
+        @Override
         public PersistableBusinessObjectExtension getExtension() {
-            return new DisbursementVoucherDocumentExtension();
+            return extension;
+        }
+
+        @Override
+        public void setExtension(PersistableBusinessObjectExtension extension) {
+            this.extension = (CuDisbursementVoucherPayeeDetailExtension) extension;
+        }
+        
+        @Override
+        protected DisbursementVoucherPayeeService getDisbursementVoucherPayeeService() {
+            return disbursementVoucherPayeeService;
+        }
+    }
+
+    private static class TestEmployeeDisbursementVoucherPayeeDetail extends TestDisbursementVoucherPayeeDetail {
+        @Override
+        public boolean isVendor() {
+            return false;
+        }
+        
+        @Override
+        public boolean isEmployee() {
+            return true;
+        }
+    }
+
+    private static class TestDocumentHelperService extends DocumentHelperServiceImpl {
+        private TransactionalDocumentPresentationController documentPresentationController;
+        private TransactionalDocumentAuthorizer documentAuthorizer;
+        private Set<String> presentationEditModes;
+        private Set<String> authorizationEditModes;
+        private Person authorizedPerson;
+        
+        public void setPresentationEditModes(Set<String> presentationEditModes) {
+            this.presentationEditModes = presentationEditModes;
+        }
+        
+        public void setAuthorizationEditModes(Set<String> authorizationEditModes) {
+            this.authorizationEditModes = authorizationEditModes;
+        }
+        
+        public void setAuthorizedPerson(Person authorizedPerson) {
+            this.authorizedPerson = authorizedPerson;
+        }
+        
+        
+        
+        public void setupMockObjects() {
+            this.documentPresentationController = createMockPresentationController();
+            this.documentAuthorizer = createMockAuthorizer();
+        }
+        
+        private TransactionalDocumentPresentationController createMockPresentationController() {
+            TransactionalDocumentPresentationController presentationController = EasyMock.createMock(
+                    CuDisbursementVoucherDocumentPresentationController.class);
+            EasyMock.expect(presentationController.getEditModes(EasyMock.isA(CuDisbursementVoucherDocument.class)))
+                    .andStubReturn(presentationEditModes);
+            EasyMock.replay(presentationController);
+            return presentationController;
+        }
+        
+        private TransactionalDocumentAuthorizer createMockAuthorizer() {
+            TransactionalDocumentAuthorizer authorizer = EasyMock.createMock(TransactionalDocumentAuthorizer.class);
+            EasyMock.expect(authorizer.canEdit(EasyMock.isA(CuDisbursementVoucherDocument.class), EasyMock.eq(authorizedPerson)))
+                    .andStubReturn(Boolean.TRUE);
+            EasyMock.expect(authorizer.canEdit(EasyMock.isA(CuDisbursementVoucherDocument.class), EasyMock.not(EasyMock.eq(authorizedPerson))))
+                    .andStubReturn(Boolean.FALSE);
+            EasyMock.expect(authorizer.getEditModes(EasyMock.isA(CuDisbursementVoucherDocument.class), EasyMock.eq(authorizedPerson),
+                    EasyMock.eq(presentationEditModes))).andStubReturn(authorizationEditModes);
+            EasyMock.replay(authorizer);
+            return authorizer;
+        }
+        
+        
+        
+        @Override
+        public DocumentAuthorizer getDocumentAuthorizer(String documentType) {
+            if (DisbursementVoucherConstants.DOCUMENT_TYPE_CODE.equals(documentType)) {
+                return documentAuthorizer;
+            }
+            return null;
+        }
+        
+        @Override
+        public DocumentAuthorizer getDocumentAuthorizer(Document document) {
+            if (document instanceof CuDisbursementVoucherDocument) {
+                return documentAuthorizer;
+            }
+            return null;
+        }
+        
+        @Override
+        public DocumentPresentationController getDocumentPresentationController(String documentType) {
+            if (DisbursementVoucherConstants.DOCUMENT_TYPE_CODE.equals(documentType)) {
+                return documentPresentationController;
+            }
+            return null;
+        }
+        
+        @Override
+        public DocumentPresentationController getDocumentPresentationController(Document document) {
+            if (document instanceof CuDisbursementVoucherDocument) {
+                return documentPresentationController;
+            }
+            return null;
         }
     }
 }

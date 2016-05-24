@@ -16,7 +16,9 @@ public class CuDisbursementVoucherPayeeDetailExtension extends PersistableBusine
     private String documentNumber;
 
     private String disbVchrPayeeIdType;
-	
+
+    private String payeeTypeSuffix;
+
     /**
      * Gets the documentNumber attribute.
      * 
@@ -60,5 +62,19 @@ public class CuDisbursementVoucherPayeeDetailExtension extends PersistableBusine
 		this.disbVchrPayeeIdType = disbVchrPayeeIdType;
 	}
 
-	
+	public String getPayeeTypeSuffix() {
+		return payeeTypeSuffix;
+	}
+
+	public void setPayeeTypeSuffix(String payeeTypeSuffix) {
+		this.payeeTypeSuffix = payeeTypeSuffix;
+	}
+
+	public String getPayeeTypeSuffixForDisplay() {
+		if (StringUtils.isBlank(getPayeeTypeSuffix())) {
+			return StringUtils.EMPTY;
+		}
+		return " (" + getPayeeTypeSuffix() + ")";
+	}
+
 }
