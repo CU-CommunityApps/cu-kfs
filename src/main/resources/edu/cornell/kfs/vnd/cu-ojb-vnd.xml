@@ -28,7 +28,7 @@
 	<field-descriptor name="merchantCategoryCodeThree" column="MRCHNT_CAT_CODE_THREE" jdbc-type="VARCHAR" />
 	<field-descriptor name="merchantCategoryCodeFour" column="MRCHNT_CAT_CODE_FOUR" jdbc-type="VARCHAR" />
 	
-	<field-descriptor name="active" column="MRCHNT_ACTIVE_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+	<field-descriptor name="active" column="MRCHNT_ACTIVE_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     <reference-descriptor name="vendorDetail" class-ref="org.kuali.kfs.vnd.businessobject.VendorDetail" auto-retrieve="true" auto-update="none" auto-delete="object" proxy="true">
         <foreignkey field-ref="vendorDetailAssignedIdentifier" />
         <foreignkey field-ref="vendorHeaderGeneratedIdentifier" />        
@@ -42,20 +42,20 @@
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
 
-	<field-descriptor name="einvoiceVendorIndicator" column="EINV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+	<field-descriptor name="einvoiceVendorIndicator" column="EINV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     <field-descriptor name="defaultB2BPaymentMethodCode" column="DFLT_B2B_PMT_MTHD_CD" jdbc-type="VARCHAR" />
-    <field-descriptor name="insuranceRequiredIndicator" column="INS_REQ_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="insuranceRequirementsCompleteIndicator" column="INS_REQ_COMPLETE_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="cornellAdditionalInsuredIndicator" column="CU_ADDITIONAL_INSURED_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="generalLiabilityCoverageAmount" column="GEN_LIAB_COVERAGE_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+    <field-descriptor name="insuranceRequiredIndicator" column="INS_REQ_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="insuranceRequirementsCompleteIndicator" column="INS_REQ_COMPLETE_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="cornellAdditionalInsuredIndicator" column="CU_ADDITIONAL_INSURED_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="generalLiabilityCoverageAmount" column="GEN_LIAB_COVERAGE_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
     <field-descriptor name="generalLiabilityExpiration" column="GEN_LIAB_EXPR_DATE" jdbc-type="DATE"/>
-    <field-descriptor name="automobileLiabilityCoverageAmount" column="AUTO_LIAB_COVERAGE_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+    <field-descriptor name="automobileLiabilityCoverageAmount" column="AUTO_LIAB_COVERAGE_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
     <field-descriptor name="automobileLiabilityExpiration" column="AUTO_LIAB_EXPR_DATE" jdbc-type="DATE"/>
-    <field-descriptor name="workmansCompCoverageAmount" column="WRKMANS_COMP_COVERAGE_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+    <field-descriptor name="workmansCompCoverageAmount" column="WRKMANS_COMP_COVERAGE_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
     <field-descriptor name="workmansCompExpiration" column="WRKMANS_COMP_EXPR_DT" jdbc-type="DATE"/>
-    <field-descriptor name="excessLiabilityUmbrellaAmount" column="EXCESS_LIAB_UMB_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+    <field-descriptor name="excessLiabilityUmbrellaAmount" column="EXCESS_LIAB_UMB_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
     <field-descriptor name="excessLiabilityUmbExpiration" column="EXCESS_LIAB_UMB_EXPR_DATE" jdbc-type="DATE"/>
-    <field-descriptor name="healthOffSiteCateringLicenseReq" column="HEALTH_OFF_SITE_LICENSE_REQ" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="healthOffSiteCateringLicenseReq" column="HEALTH_OFF_SITE_LICENSE_REQ" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     <field-descriptor name="healthOffSiteLicenseExpirationDate" column="HEALTH_LICENSE_EXPR_DATE" jdbc-type="DATE"/>
     <field-descriptor name="insuranceNotes" column="INSURANCE_NOTES" jdbc-type="VARCHAR"/>
 	<field-descriptor name="merchantNotes" column="MERCHANT_NOTES" jdbc-type="VARCHAR"/>
@@ -71,22 +71,22 @@
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
     <field-descriptor name="vendorTypeCode" column="VNDR_TYP_CD" jdbc-type="VARCHAR"/>
-    <field-descriptor name="vendorTaxNumber" column="VNDR_US_TAX_NBR" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+    <field-descriptor name="vendorTaxNumber" column="VNDR_US_TAX_NBR" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
     <field-descriptor name="vendorTaxTypeCode" column="VNDR_TAX_TYP_CD" jdbc-type="VARCHAR"/>
     <field-descriptor name="vendorOwnershipCode" column="VNDR_OWNR_CD" jdbc-type="VARCHAR"/>
     <field-descriptor name="vendorOwnershipCategoryCode" column="VNDR_OWNR_CTGRY_CD" jdbc-type="VARCHAR"/>
     <field-descriptor name="vendorFederalWithholdingTaxBeginningDate" column="VNDR_FWT_BEG_DT" jdbc-type="DATE"/>
     <field-descriptor name="vendorFederalWithholdingTaxEndDate" column="VNDR_FWT_END_DT" jdbc-type="DATE"/>
-    <field-descriptor name="vendorW9ReceivedIndicator" column="VNDR_W9_RCVD_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="vendorW8BenReceivedIndicator" column="VNDR_W8_RCVD_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="vendorDebarredIndicator" column="VNDR_DEBRD_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="vendorForeignIndicator" column="VNDR_FRGN_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="vendorW9ReceivedIndicator" column="VNDR_W9_RCVD_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="vendorW8BenReceivedIndicator" column="VNDR_W8_RCVD_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="vendorDebarredIndicator" column="VNDR_DEBRD_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="vendorForeignIndicator" column="VNDR_FRGN_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
      
     <field-descriptor name="vendorW8TypeCode" column="VNDR_W8_TYP_CD" jdbc-type="VARCHAR"/>
     <field-descriptor name="vendorW8SignedDate" column="VNDR_W8_SIGNED_DT" jdbc-type="DATE"/>
     <field-descriptor name="vendorW9SignedDate" column="VNDR_W9_SIGNED_DT" jdbc-type="DATE"/>
     <field-descriptor name="vendorCorpCitizenCode" column="VNDR_CORP_CTZN_CNTRY_CD" jdbc-type="VARCHAR"/>
-    <field-descriptor name="vendorForeignTaxId" column="VNDR_FOREIGN_TAX_ID" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+    <field-descriptor name="vendorForeignTaxId" column="VNDR_FOREIGN_TAX_ID" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
     <field-descriptor name="vendorGIIN" column="VNDR_GIIN" jdbc-type="VARCHAR"/>
     <field-descriptor name="vendorDOB" column="VNDR_DOB_DT" jdbc-type="DATE"/>
     <field-descriptor name="vendorChapter3StatusCode" column="VNDR_CHAP_3_STAT_CD" jdbc-type="VARCHAR"/>
@@ -135,7 +135,7 @@
    <!-- <field-descriptor name="vendorSupplierDiversityExpirationDate" column="VNDR_SUPP_DVRST_EXPIR_DATE" jdbc-type="DATE" />   -->
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
-    <field-descriptor name="active" column="DOBJ_MAINT_CD_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="active" column="DOBJ_MAINT_CD_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     <reference-descriptor name="vendorHeader" class-ref="org.kuali.kfs.vnd.businessobject.VendorHeader" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         <foreignkey field-ref="vendorHeaderGeneratedIdentifier" />
     </reference-descriptor>
@@ -162,44 +162,29 @@
     <field-descriptor name="vendorDetailAssignedIdentifier" column="VNDR_DTL_ASND_ID" jdbc-type="INTEGER" primarykey="true" index="true"/>
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
-    <field-descriptor name="vendorParentIndicator" column="VNDR_PARENT_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="vendorParentIndicator" column="VNDR_PARENT_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     <field-descriptor name="vendorName" column="VNDR_NM" jdbc-type="VARCHAR"/>
-    <field-descriptor name="activeIndicator" column="DOBJ_MAINT_CD_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="activeIndicator" column="DOBJ_MAINT_CD_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     <field-descriptor name="vendorInactiveReasonCode" column="VNDR_INACTV_REAS_CD" jdbc-type="VARCHAR"/>
     <field-descriptor name="vendorDunsNumber" column="VNDR_DUNS_NBR" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="vendorPaymentTermsCode" column="VNDR_PMT_TERM_CD" jdbc-type="VARCHAR"/>
     <field-descriptor name="vendorShippingTitleCode" column="VNDR_SHP_TTL_CD" jdbc-type="VARCHAR"/>
     <field-descriptor name="vendorShippingPaymentTermsCode" column="VNDR_SHP_PMT_TERM_CD" jdbc-type="VARCHAR"/>
-    <field-descriptor name="vendorConfirmationIndicator" column="VNDR_CNFM_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="vendorPrepaymentIndicator" column="VNDR_PRPYMT_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="vendorCreditCardIndicator" column="VNDR_CCRD_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="vendorMinimumOrderAmount" column="VNDR_MIN_ORD_AMT" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+    <field-descriptor name="vendorConfirmationIndicator" column="VNDR_CNFM_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="vendorPrepaymentIndicator" column="VNDR_PRPYMT_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="vendorCreditCardIndicator" column="VNDR_CCRD_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="vendorMinimumOrderAmount" column="VNDR_MIN_ORD_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
     <field-descriptor name="vendorUrlAddress" column="VNDR_URL_ADDR" jdbc-type="VARCHAR"/>
     <field-descriptor name="vendorSoldToName" column="VNDR_SOLD_TO_NM" jdbc-type="VARCHAR"/>
     <field-descriptor name="vendorRemitName" column="VNDR_RMT_NM" jdbc-type="VARCHAR"/>
-    <field-descriptor name="vendorRestrictedIndicator" column="VNDR_RSTRC_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="vendorRestrictedIndicator" column="VNDR_RSTRC_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     <field-descriptor name="vendorRestrictedReasonText" column="VNDR_RSTRC_REAS_TXT" jdbc-type="VARCHAR"/>
     <field-descriptor name="vendorRestrictedDate" column="VNDR_RSTRC_DT" jdbc-type="DATE"/>
     <field-descriptor name="vendorRestrictedPersonIdentifier" column="VNDR_RSTRC_PRSN_ID" jdbc-type="VARCHAR"/>
     <field-descriptor name="vendorSoldToGeneratedIdentifier" column="VNDR_SOLD_TO_GNRTD_ID" jdbc-type="INTEGER"/>
     <field-descriptor name="vendorSoldToAssignedIdentifier" column="VNDR_SOLD_TO_ASND_ID" jdbc-type="INTEGER"/>
-    <field-descriptor name="vendorFirstLastNameIndicator" column="VNDR_1ST_LST_NM_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="taxableIndicator" column="COLLECT_TAX_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-<!--     <field-descriptor name="insuranceRequiredIndicator" column="INS_REQ_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="insuranceRequirementsCompleteIndicator" column="INS_REQ_COMPLETE_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="cornellAdditionalInsuredIndicator" column="CU_ADDITIONAL_INSURED_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="generalLiabilityCoverageAmount" column="GEN_LIAB_COVERAGE_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
-    <field-descriptor name="generalLiabilityExpiration" column="GEN_LIAB_EXPR_DATE" jdbc-type="DATE"/>
-    <field-descriptor name="automobileLiabilityCoverageAmount" column="AUTO_LIAB_COVERAGE_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
-    <field-descriptor name="automobileLiabilityExpiration" column="AUTO_LIAB_EXPR_DATE" jdbc-type="DATE"/>
-    <field-descriptor name="workmansCompCoverageAmount" column="WRKMANS_COMP_COVERAGE_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
-    <field-descriptor name="workmansCompExpiration" column="WRKMANS_COMP_EXPR_DT" jdbc-type="DATE"/>
-    <field-descriptor name="excessLiabilityUmbrellaAmount" column="EXCESS_LIAB_UMB_AMNT" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
-    <field-descriptor name="excessLiabilityUmbExpiration" column="EXCESS_LIAB_UMB_EXPR_DATE" jdbc-type="DATE"/>
-    <field-descriptor name="healthOffSiteCateringLicenseReq" column="HEALTH_OFF_SITE_LICENSE_REQ" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="healthOffSiteLicenseExpirationDate" column="HEALTH_LICENSE_EXPR_DATE" jdbc-type="DATE"/>
-    <field-descriptor name="insuranceNotes" column="INSURANCE_NOTES" jdbc-type="VARCHAR"/>
-	<field-descriptor name="merchantNotes" column="MERCHANT_NOTES" jdbc-type="VARCHAR"/> -->
+    <field-descriptor name="vendorFirstLastNameIndicator" column="VNDR_1ST_LST_NM_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="taxableIndicator" column="COLLECT_TAX_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     <reference-descriptor name="vendorHeader" class-ref="org.kuali.kfs.vnd.businessobject.VendorHeader" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
         <foreignkey field-ref="vendorHeaderGeneratedIdentifier" />
     </reference-descriptor>
@@ -286,8 +271,8 @@
     <field-descriptor name="vendorAddressEmailAddress" column="VNDR_ADDR_EMAIL_ADDR" jdbc-type="VARCHAR"/>
     <field-descriptor name="vendorBusinessToBusinessUrlAddress" column="VNDR_B2B_URL_ADDR" jdbc-type="VARCHAR"/>
     <field-descriptor name="vendorFaxNumber" column="VNDR_FAX_NBR" jdbc-type="VARCHAR"/>
-    <field-descriptor name="vendorDefaultAddressIndicator" column="VNDR_DFLT_ADDR_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="active" column="DOBJ_MAINT_CD_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="vendorDefaultAddressIndicator" column="VNDR_DFLT_ADDR_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="active" column="DOBJ_MAINT_CD_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
    <!--  UPGRADE-329 <field-descriptor name="purchaseOrderTransmissionMethodCode" column="PO_TRNS_MTHD_CD" jdbc-type="VARCHAR" nullable="true"/> -->
     <reference-descriptor name="vendorDetail" class-ref="org.kuali.kfs.vnd.businessobject.VendorDetail" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         <foreignkey field-ref="vendorHeaderGeneratedIdentifier" />

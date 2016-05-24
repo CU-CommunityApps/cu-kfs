@@ -2,7 +2,7 @@ package edu.cornell.kfs.fp.businessobject;
 
 import org.kuali.kfs.sys.batch.FlatFileData;
 import org.kuali.kfs.sys.batch.FlatFileTransactionInformation;
-import org.kuali.rice.krad.bo.TransientBusinessObjectBase;
+import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
 
 import java.util.ArrayList;
 import java.util.List;

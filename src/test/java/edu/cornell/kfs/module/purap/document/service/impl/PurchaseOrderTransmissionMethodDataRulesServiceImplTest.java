@@ -10,7 +10,7 @@ import org.kuali.kfs.sys.service.PostalCodeValidationService;
 import org.kuali.kfs.sys.service.impl.PostalCodeValidationServiceImpl;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.kfs.vnd.service.impl.PhoneNumberServiceImpl;
-import org.kuali.rice.kns.datadictionary.validation.fieldlevel.ZipcodeValidationPattern;
+import org.kuali.kfs.kns.datadictionary.validation.fieldlevel.ZipcodeValidationPattern;
 import org.kuali.rice.location.api.state.State;
 import org.kuali.rice.location.api.state.StateService;
 import org.kuali.rice.location.impl.state.StateBo;

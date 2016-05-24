@@ -1,7 +1,7 @@
 package edu.cornell.kfs.module.purap.util;
 
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.util.FavoriteAccountLineBuilderBase;
 

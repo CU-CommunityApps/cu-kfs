@@ -43,7 +43,7 @@ public class RouteAdvanceDepositDocumentsStep extends AbstractStep {
     private AdvanceDepositService advanceDepositService;
 
     /**
-     * @see org.kuali.kfs.sys.batch.Step#execute(String, Date)
+     * @see org.kuali.kfs.kns.bo.Step#execute(String, Date)
      */
     public boolean execute(String jobName, Date jobRunDate) {
         // put a delay in here to workaround locking exception happening with ach income advance deposit approve and indexing
