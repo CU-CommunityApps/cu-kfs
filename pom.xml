@@ -26,6 +26,8 @@
 	<skipTests>true</skipTests>
 	<test.excludes>**/*Test.java.bogus</test.excludes>
     <buildNumber>6.0.1-SNAPSHOT</buildNumber>
+    <mysql.artifactId>mysql-connector-java</mysql.artifactId>
+    <mysql.version>5.1.25</mysql.version>
   </properties>
   
   <profiles>
@@ -297,53 +299,186 @@
           <scope>test</scope>
       </dependency>
 
-<!--
-    <dependency>
-      <groupId>org.kuali.kfs</groupId>
-      <artifactId>kfs-lib</artifactId>
-      <version>${kfs.version}</version>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.oracle</groupId>
-          <artifactId>ojdbc14</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+      <dependency>
+          <groupId>edu.cornell.cynergy </groupId>
+          <artifactId>cynergy-customizations</artifactId>
+          <version>${cynergy.version}-${cynergy.version.suffix}</version>
+          <scope>test</scope>
+          <exclusions>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-core-framework</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-core-impl</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-core-service-api</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-core-service-framework</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-core-service-impl</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-core-service-web</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-edl-framework</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-edl-impl</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-ken-api</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-kew-api</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-kew-framework</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-kew-impl</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-kim-api</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-kim-framework</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-kim-impl</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-krad-app-framework</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-krad-web-framework</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-krms-api</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-krms-framework</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-krms-impl</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-ksb-api</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-ksb-client-impl</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-ksb-server-impl</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-ksb-web</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-location-api</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-location-framework</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-location-impl</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-location-web</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-kns</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-impl</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-core-web</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>
 
-    <dependency>
-      <groupId>org.kuali.kfs</groupId>
-      <artifactId>kfs-lib-test</artifactId>
-      <version>${kfs.version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xapool</groupId>
-          <artifactId>xapool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
--->
+      <!--
+          <dependency>
+            <groupId>org.kuali.kfs</groupId>
+            <artifactId>kfs-lib</artifactId>
+            <version>${kfs.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+              <exclusion>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>com.oracle</groupId>
+                <artifactId>ojdbc14</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>xapool</groupId>
+                <artifactId>xapool</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.apache.ws.security</groupId>
+                <artifactId>wss4j</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+
+          <dependency>
+            <groupId>org.kuali.kfs</groupId>
+            <artifactId>kfs-lib-test</artifactId>
+            <version>${kfs.version}</version>
+            <scope>test</scope>
+            <exclusions>
+              <exclusion>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>xapool</groupId>
+                <artifactId>xapool</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.apache.ws.security</groupId>
+                <artifactId>wss4j</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+      -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -438,7 +573,14 @@
     <version>3.2.2</version>
 </dependency>
 
-	<dependency>
+      <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>${mysql.artifactId}</artifactId>
+          <version>${mysql.version}</version>
+          <scope>test</scope>
+      </dependency>
+
+      <dependency>
 		<groupId>com.oracle</groupId>
 		<artifactId>ojdbc6</artifactId>
 		<version>11.2.0.3</version>

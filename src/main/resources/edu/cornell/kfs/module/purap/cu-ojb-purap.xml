@@ -3265,10 +3265,10 @@
     <field-descriptor name="preqBankCountryCode" column="PREQ_BNK_CNTRY_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="preqAttentionLineText" column="PREQ_ATTN_LN_TXT" jdbc-type="VARCHAR" />
     <field-descriptor name="preqAdditionalWireText" column="PREQ_ADDL_WIRE_TXT" jdbc-type="VARCHAR" />
-    <field-descriptor name="preqPayeeAccountNumber" column="PREQ_PAYEE_ACCT_NBR" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+    <field-descriptor name="preqPayeeAccountNumber" column="PREQ_PAYEE_ACCT_NBR" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
     <field-descriptor name="preqCurrencyTypeName" column="PREQ_CRNCY_TYP_NM" jdbc-type="VARCHAR" />
     <field-descriptor name="preqCurrencyTypeCode" column="PREQ_CRNCY_TYP_CD" jdbc-type="VARCHAR" />
-    <field-descriptor name="preqWireTransferFeeWaiverIndicator" column="PREQ_WIRE_TRNFR_FEE_WVR_IND" jdbc-type="CHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    <field-descriptor name="preqWireTransferFeeWaiverIndicator" column="PREQ_WIRE_TRNFR_FEE_WVR_IND" jdbc-type="CHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     <field-descriptor name="preqPayeeAccountName" column="PREQ_PAYEE_ACCT_NM" jdbc-type="VARCHAR" />
     <field-descriptor name="preqPayeeAccountTypeCode" column="PREQ_PAYEE_ACCT_TYP_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="preqAutomatedClearingHouseProfileNumber" column="PREQ_ACH_PRFL_NBR" jdbc-type="VARCHAR" />
@@ -3387,7 +3387,7 @@
     <field-descriptor name="cmBankCountryCode" column="CM_BNK_CNTRY_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="cmAttentionLineText" column="CM_ATTN_LN_TXT" jdbc-type="VARCHAR" />
     <field-descriptor name="cmAdditionalWireText" column="CM_ADDL_WIRE_TXT" jdbc-type="VARCHAR" />
-    <field-descriptor name="cmPayeeAccountNumber" column="CM_PAYEE_ACCT_NBR" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+    <field-descriptor name="cmPayeeAccountNumber" column="CM_PAYEE_ACCT_NBR" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
     <field-descriptor name="cmCurrencyTypeName" column="CM_CRNCY_TYP_NM" jdbc-type="VARCHAR" />
     <field-descriptor name="cmCurrencyTypeCode" column="CM_CRNCY_TYP_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="cmWireTransferFeeWaiverIndicator" column="CM_WIRE_TRNFR_FEE_WVR_IND" jdbc-type="CHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />

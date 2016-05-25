@@ -1,6 +1,6 @@
 package edu.cornell.kfs.fp.businessobject;
 
-import org.kuali.rice.krad.bo.TransientBusinessObjectBase;
+import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
 
 import java.util.LinkedHashMap;
 /**

@@ -1,7 +1,7 @@
 package edu.cornell.kfs.fp.businessobject;
 
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 import java.sql.Date;
 import java.sql.Timestamp;
