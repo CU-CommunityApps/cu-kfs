@@ -1749,14 +1749,14 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
      * a new instance from the form's setupNewPurchasingAccountingLine() method.
      * This is needed for cases where the document's source line implementation
      * does not match the one configured in its associated data dictionary group.
-     * 
+     *
      * @param purchasingForm The document form to retrieve the new accounting line from; cannot be null.
      * @return The implementation class of the document form's new source accounting lines.
      */
     protected Class<? extends PurApAccountingLine> getAccountClassFromNewPurApAccountingLine(PurchasingFormBase purchasingForm) {
         return purchasingForm.setupNewPurchasingAccountingLine().getClass();
     }
-    
+
     /*
      * KFSPTS-985 : add favorite account.
      * This is a copy from requisitionaction.  to be shared by both req & po
@@ -1764,11 +1764,11 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
     public ActionForward addFavoriteAccount(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
     	PurchasingFormBase poForm = (PurchasingFormBase) form;
     	PurchasingDocumentBase document = (PurchasingDocumentBase) poForm.getDocument();
-    	
+
         int itemIdx = getSelectedLine(request);
         final int DISTRIBUTION_INDEX = -2;
         PurchasingFavoriteAccountLineBuilderBase<? extends PurApAccountingLine> favoriteAccountBuilder;
-        
+
         // Initialize the correct builder based on whether the Favorite Account is for an item in the list or for account distribution.
 		if (itemIdx >= 0) {
 			PurchasingItemBase item = (PurchasingItemBase) document.getItem(itemIdx);
@@ -1783,7 +1783,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 
 		// Add a new Favorite-Account-derived accounting line to the list, with errors inserted into the message map as appropriate.
 		favoriteAccountBuilder.addNewFavoriteAccountLineToListIfPossible();
-		
+
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 

@@ -210,7 +210,7 @@ public class IWantAccount extends PersistableBusinessObjectBase implements Gener
 
     /**
      * Returns the amount-or-percent value if configured to use amounts, zero otherwise.
-     * 
+     *
      * @see org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail#getAmount()
      */
     @Override

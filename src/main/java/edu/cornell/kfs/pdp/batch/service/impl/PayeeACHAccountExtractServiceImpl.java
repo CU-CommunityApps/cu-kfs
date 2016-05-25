@@ -102,9 +102,9 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
                 numFail++;
             }
         }
-        
+
         removeDoneFiles(processedFiles);
-        
+
         LOG.info("==== Summary of Payee ACH Account Extract ====");
         LOG.info("Files loaded successfully: " + Integer.toString(numSuccess));
         LOG.info("Files loaded with one or more failed rows: " + Integer.toString(numPartial));
@@ -188,7 +188,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
      */
     protected boolean processACHBatchDetail(PayeeACHAccountExtractDetail achDetail) {
         Person payee = personService.getPersonByPrincipalName(achDetail.getNetID());
-        
+
         if (!validateACHBatchDetail(achDetail, payee)) {
             return false;
         }
