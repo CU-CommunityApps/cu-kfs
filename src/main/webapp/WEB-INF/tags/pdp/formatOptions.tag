@@ -1,17 +1,20 @@
 <%--
- Copyright 2006-2008 The Kuali Foundation
- 
- Licensed under the Educational Community License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
- 
- http://www.opensource.org/licenses/ecl2.php
- 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   -
+   - Copyright 2005-2014 The Kuali Foundation
+   -
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   -
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   -
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
@@ -21,8 +24,7 @@
 
 <kul:tab tabTitle="Format Options" defaultOpen="true" tabErrorKey="ranges*">
 	<div id="formatOptions" class="tab-container" align=center>
-		<table cellpadding="0" cellspacing="0" class="datatable"
-			summary="Format Options">
+        <table class="standard" summary="Format Options">
 			<tr>
 				<td colspan="3" class="subhead">
 					Enter a Pay Date and any other selection criteria required
@@ -30,57 +32,57 @@
 			</tr>
 			<tr>
 			
-			 <tr>
-            <th align="right" nowrap="nowrap" width="50%">
-            <kul:htmlAttributeLabel attributeEntry="${paymentGroupAttributes.paymentDate}" labelFor="paymentDate" />
-            <br><font size="1"> Ex. 11/26/2004</font></th>
-            <td class="datacell" align="left">
-            <kul:dateInput attributeEntry="${paymentGroupAttributes.paymentDate}" property="paymentDate"/></td>
-          </tr>
-         <tr>
-            <th align="right" nowrap="nowrap">Only Disbursements Flagged as Immediate:</th>
-            <td class="datacell" align="left"><html:checkbox property="paymentTypes" value="immediate"/></td>
-          </tr>
-          <tr>
-            <th align="right" nowrap="nowrap">All Payment Types:</th>
-            <td class="datacell" align="left"><html:radio property="paymentTypes" value="all"/></td>
-          </tr>
-          <tr>
-            <th align="right" nowrap="nowrap">Only Disbursements with Attachments:</th>
-            <td class="datacell" align="left"><html:radio property="paymentTypes" value="pymtAttachment"/></td>
-          </tr>
-          <tr>
-            <th align="right" nowrap="nowrap">Only Disbursements with No Attachments:</th>
-            <td class="datacell" align="left"><html:radio property="paymentTypes" value="pymtAttachmentFalse"/></td>
-          </tr>
-          <tr>
-            <th align="right" nowrap="nowrap">Only Disbursements with Special Handling:</th>
-            <td class="datacell" align="left"><html:radio property="paymentTypes" value="pymtSpecialHandling"/></td>
-          </tr>
-          <tr>
-            <th align="right" nowrap="nowrap">Only Disbursements with No Special Handling:</th>
-            <td class="datacell" align="left"><html:radio property="paymentTypes" value="pymtSpecialHandlingFalse"/></td>
-          </tr>
-          <tr>
-              <td colspan="3" class="subhead">
-                  Select which payment methods you want to format
-              </td>
-          </tr>
-          <tr>
-            <th align="right" nowrap="nowrap">All Payments:</th>
-            <td class="datacell" align="left"><html:radio property="paymentDistribution" value="all"/></td>
-          </tr>
-          <tr>
-            <th align="right" nowrap="nowrap">ACH Payments Only:</th>
-            <td class="datacell" align="left"><html:radio property="paymentDistribution" value="achOnly"/></td>
-          </tr>
-          <tr>
-            <th align="right" nowrap="nowrap">Check Payments Only:</th>
-            <td class="datacell" align="left"><html:radio property="paymentDistribution" value="checkOnly"/></td>
-          </tr>
+			<tr>
+                <th class="right" width="50%">
+                    <kul:htmlAttributeLabel attributeEntry="${paymentGroupAttributes.paymentDate}" labelFor="paymentDate" />
+                    <br><font size="1"> Ex. 11/26/2004</font>
+                </th>
+                <td class="datacell" align="left">
+                    <kul:dateInput attributeEntry="${paymentGroupAttributes.paymentDate}" property="paymentDate"/>
+                </td>
+            </tr>
+            <tr>
+                <th class="right">Only Disbursements Flagged as Immediate:</th>
+                <td><html:checkbox property="paymentTypes" value="immediate"/></td>
+            </tr>
+            <tr>
+                <th class="right">All Payment Types:</th>
+                <td><html:radio property="paymentTypes" value="all"/></td>
+            </tr>
+            <tr>
+                <th class="right">Only Disbursements with Attachments:</th>
+                <td><html:radio property="paymentTypes" value="pymtAttachment"/></td>
+            </tr>
+            <tr>
+                <th class="right" nowrap="nowrap">Only Disbursements with No Attachments:</th>
+                <td><html:radio property="paymentTypes" value="pymtAttachmentFalse"/></td>
+            </tr>
+            <tr>
+                <th class="right">Only Disbursements with Special Handling:</th>
+                <td><html:radio property="paymentTypes" value="pymtSpecialHandling"/></td>
+            </tr>
+            <tr>
+                <th class="right">Only Disbursements with No Special Handling:</th>
+                <td><html:radio property="paymentTypes" value="pymtSpecialHandlingFalse"/></td>
+            </tr>
+            <tr>
+                <td colspan="3" class="subhead">
+                    Select which payment methods you want to format
+                </td>
+            </tr>
+            <tr>
+                <th class="right">All Payments:</th>
+                <td><html:radio property="paymentDistribution" value="all"/></td>
+            </tr>
+            <tr>
+                <th class="right">ACH Payments Only:</th>
+                <td><html:radio property="paymentDistribution" value="achOnly"/></td>
+            </tr>
+            <tr>
+                <th class="right">Check Payments Only:</th>
+                <td><html:radio property="paymentDistribution" value="checkOnly"/></td>
+            </tr>
 		</table>
-
-		
 	</div>
 </kul:tab>
     

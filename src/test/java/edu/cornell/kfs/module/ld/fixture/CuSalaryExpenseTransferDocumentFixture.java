@@ -3,7 +3,7 @@ package edu.cornell.kfs.module.ld.fixture;
 import org.kuali.kfs.module.ld.businessobject.ExpenseTransferSourceAccountingLine;
 import org.kuali.kfs.sys.DocumentTestUtils;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.fixture.AccountingLineFixture;
+import edu.cornell.kfs.sys.fixture.CuAccountingLineFixture;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.kfs.krad.service.DocumentService;
 
@@ -26,7 +26,7 @@ public enum CuSalaryExpenseTransferDocumentFixture {
         document.setEmplid(emplid);
         document.setPostingYear(postingYear);
         
-        ExpenseTransferSourceAccountingLine expenseTransferSourceAccountingLine = AccountingLineFixture.ST_LINE_1.createAccountingLine(
+        ExpenseTransferSourceAccountingLine expenseTransferSourceAccountingLine = CuAccountingLineFixture.ST_LINE_1.createAccountingLine(
                 ExpenseTransferSourceAccountingLine.class, document.getDocumentNumber(), document.getPostingYear(), document.getNextSourceLineNumber());
         
         expenseTransferSourceAccountingLine.setPositionNumber("1");
@@ -35,7 +35,7 @@ public enum CuSalaryExpenseTransferDocumentFixture {
         
         document.addSourceAccountingLine(expenseTransferSourceAccountingLine);
         
-        //AccountingLineFixture.ST_LINE_2.addAsTargetTo(document);
+        //CuAccountingLineFixture.ST_LINE_2.addAsTargetTo(document);
 
         return document;
     }

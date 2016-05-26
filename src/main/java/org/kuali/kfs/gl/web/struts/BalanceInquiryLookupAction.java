@@ -220,7 +220,9 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
         parameters.put(KFSConstants.DOC_FORM_KEY, multipleValueLookupForm.getFormKey());
         parameters.put(KFSConstants.DISPATCH_REQUEST_PARAMETER, KFSConstants.RETURN_METHOD_TO_CALL);
         parameters.put(KFSConstants.REFRESH_CALLER, KFSConstants.MULTIPLE_VALUE);
-        parameters.put(KFSConstants.ANCHOR, multipleValueLookupForm.getLookupAnchor());
+        if (!StringUtils.isBlank(multipleValueLookupForm.getLookupAnchor())) {
+            parameters.put(KFSConstants.ANCHOR, multipleValueLookupForm.getLookupAnchor());
+        }
 
         String backUrl = UrlFactory.parameterizeUrl(multipleValueLookupForm.getBackLocation(), parameters);
         return new ActionForward(backUrl, true);
@@ -252,7 +254,9 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
         parameters.put(KFSConstants.DOC_FORM_KEY, multipleValueLookupForm.getFormKey());
         parameters.put(KFSConstants.DISPATCH_REQUEST_PARAMETER, KFSConstants.RETURN_METHOD_TO_CALL);
         parameters.put(KFSConstants.REFRESH_CALLER, KFSConstants.MULTIPLE_VALUE);
-        parameters.put(KFSConstants.ANCHOR, multipleValueLookupForm.getLookupAnchor());
+        if (!StringUtils.isBlank(multipleValueLookupForm.getLookupAnchor())) {
+            parameters.put(KFSConstants.ANCHOR, multipleValueLookupForm.getLookupAnchor());
+        }
         String backUrl = UrlFactory.parameterizeUrl(multipleValueLookupForm.getBackLocation(), parameters);
         return new ActionForward(backUrl, true);
     }

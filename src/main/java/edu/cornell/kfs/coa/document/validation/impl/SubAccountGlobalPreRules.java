@@ -1,5 +1,6 @@
 package edu.cornell.kfs.coa.document.validation.impl;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import org.kuali.kfs.coa.document.validation.impl.MaintenancePreRulesBase;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -35,7 +36,7 @@ public class SubAccountGlobalPreRules extends MaintenancePreRulesBase{
         if (saccOffCampus) {
           String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.QUESTION_A21SUBACCOUNT_OFF_CAMPUS_INDICATOR);
 
-          boolean leaveAsIs = super.askOrAnalyzeYesNoQuestion(KFSConstants.A21SubAccountDocumentConstants.OFF_CAMPUS_INDICATOR_QUESTION_ID, questionText);
+          boolean leaveAsIs = super.askOrAnalyzeYesNoQuestion(CUKFSConstants.A21SubAccountDocumentConstants.OFF_CAMPUS_INDICATOR_QUESTION_ID, questionText);
 
           if (!leaveAsIs) {
             // return to document if the user doesn't want to clear the indicator

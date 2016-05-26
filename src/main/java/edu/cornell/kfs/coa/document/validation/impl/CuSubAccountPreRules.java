@@ -1,14 +1,12 @@
 package edu.cornell.kfs.coa.document.validation.impl;
 
-import java.text.MessageFormat;
-
+import edu.cornell.kfs.sys.CUKFSConstants;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.A21IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.businessobject.A21SubAccount;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.document.validation.impl.SubAccountPreRules;
-import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
@@ -19,10 +17,6 @@ import org.kuali.kfs.kns.service.BusinessObjectAuthorizationService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.fp.businessobject.PaymentMethod;
-import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.module.purap.businessobject.CreditMemoWireTransfer;
-import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuSubAccountPreRules extends SubAccountPreRules {
@@ -77,7 +71,7 @@ public class CuSubAccountPreRules extends SubAccountPreRules {
       if (saccOffCampus) {
         String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.QUESTION_A21SUBACCOUNT_OFF_CAMPUS_INDICATOR);
 
-        boolean leaveAsIs = super.askOrAnalyzeYesNoQuestion(KFSConstants.A21SubAccountDocumentConstants.OFF_CAMPUS_INDICATOR_QUESTION_ID, questionText);
+        boolean leaveAsIs = super.askOrAnalyzeYesNoQuestion(CUKFSConstants.A21SubAccountDocumentConstants.OFF_CAMPUS_INDICATOR_QUESTION_ID, questionText);
 
         if (!leaveAsIs) {
           // return to document if the user doesn't want to clear the indicator

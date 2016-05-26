@@ -22,7 +22,7 @@
 		</init-param>
 		<init-param>
 			<param-name>http-transform-pattern</param-name>
-			<param-value>\d+</param-value>
+            <param-value>\\d+</param-value>
 		</init-param>
 	</filter>
 	
@@ -92,6 +92,7 @@
         <servlet-name>dwr-invoker</servlet-name>
         <servlet-name>batchFileUpload</servlet-name>
         <servlet-name>reports</servlet-name>
+        <url-pattern>/monitoring/*</url-pattern>
         <url-pattern>/purap/*</url-pattern>
         <url-pattern>/app/*</url-pattern>
         <url-pattern>/index.jsp</url-pattern>
@@ -201,10 +202,6 @@
     <init-param>
       <param-name>debug</param-name>
       <param-value>true</param-value>
-    </init-param>
-    <init-param>
-      <param-name>config-kew</param-name>
-      <param-value>WEB-INF/dwr-kew.xml</param-value>
     </init-param>
     <init-param>
       <param-name>config-kns</param-name>
@@ -370,5 +367,9 @@
     <servlet-name>dataobjects</servlet-name>
     <url-pattern>/dataobjects/*</url-pattern>
   </servlet-mapping>
-    
+
+  <error-page>
+    <exception-type>org.kuali.kfs.krad.exception.AuthenticationException</exception-type>
+    <location>/autherror.html</location>
+  </error-page>
 </web-app>
