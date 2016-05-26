@@ -31,6 +31,7 @@
       
 
        <ref bean="DisbursementVoucherPayeeDetailExtension-disbVchrPayeeIdType"/>
+       <ref bean="DisbursementVoucherPayeeDetailExtension-payeeTypeSuffix"/>
 
      </list>
 
@@ -84,7 +85,21 @@
 
   </bean>
 
- 
+
+
+  <bean id="DisbursementVoucherPayeeDetailExtension-payeeTypeSuffix" parent="DisbursementVoucherPayeeDetailExtension-payeeTypeSuffix-parentBean"/>
+        
+  <bean id="DisbursementVoucherPayeeDetailExtension-payeeTypeSuffix-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="payeeTypeSuffix"/>
+    <property name="forceUppercase" value="false"/>
+    <property name="label" value="Payee Type Suffix"/>
+    <property name="shortLabel" value="Payee Type Suffix"/>
+    <property name="maxLength" value="52"/>
+    <property name="required" value="false"/>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="54"/>
+    </property>
+  </bean>
 
 </beans>
 

@@ -53,6 +53,7 @@
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
 
 	<field-descriptor name="disbVchrPayeeIdType" column="DV_PAYEE_ID_TYP" jdbc-type="VARCHAR" />
+	<field-descriptor name="payeeTypeSuffix" column="DV_PAYEE_TYP_SUF" jdbc-type="VARCHAR" />
 </class-descriptor>
 
 
