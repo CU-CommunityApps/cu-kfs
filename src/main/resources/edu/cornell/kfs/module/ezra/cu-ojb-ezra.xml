@@ -53,6 +53,8 @@
 		<field-descriptor name="startDate" column="AWD_PROP_START_DT" jdbc-type="DATE"/>
 		<field-descriptor name="stopDate" column="AWD_PROP_END_DT" jdbc-type="DATE"/>
 		<field-descriptor name="totalAmt" column="AWD_PROP_TOTAL" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+		<field-descriptor name="budgetStartDate" column="BUDG_START_DT" jdbc-type="DATE"/>
+		<field-descriptor name="budgetStopDate" column="BUDG_END_DT" jdbc-type="DATE"/>
 		<field-descriptor name="budgetAmt" column="BUDG_TOTAL" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
 		<field-descriptor name="csVolCntr" column="CS_VOL_CTR" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
 		<field-descriptor name="csVolDept" column="CS_VOL_DEPT" jdbc-type="DECIMAL" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
