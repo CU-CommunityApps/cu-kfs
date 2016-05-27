@@ -251,6 +251,9 @@ public class EzraServiceImpl implements EzraService {
 
         }
 		
+		aea.setBudgetBeginningDate(ezraAward.getBudgetStartDate());
+		aea.setBudgetEndingDate(ezraAward.getBudgetStopDate());
+		aea.setBudgetTotalAmount(ezraAward.getBudgetAmt());
 		
 		award.refreshReferenceObject("proposal");
 		award.refreshNonUpdateableReferences();
