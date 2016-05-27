@@ -2,24 +2,26 @@ package edu.cornell.kfs.module.ezra.service.impl;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Organization;
+import org.kuali.kfs.module.cg.CGConstants;
 import org.kuali.kfs.module.cg.businessobject.Agency;
-import edu.cornell.kfs.module.cg.businessobject.CuAward;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.AwardAccount;
 import org.kuali.kfs.module.cg.businessobject.AwardOrganization;
 import org.kuali.kfs.module.cg.businessobject.AwardProjectDirector;
+import org.kuali.kfs.module.cg.businessobject.CFDA;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.businessobject.ProposalOrganization;
 import org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector;
-import org.kuali.kfs.module.cg.businessobject.CFDA;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
@@ -27,7 +29,6 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.rice.kim.impl.services.KimImplServiceLocator;
 import org.kuali.rice.kns.document.MaintenanceDocument;
 import org.kuali.rice.kns.maintenance.Maintainable;
 import org.kuali.rice.krad.UserSession;
@@ -36,7 +37,9 @@ import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.module.cg.CuCGParameterConstants;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
+import edu.cornell.kfs.module.cg.businessobject.CuAward;
 import edu.cornell.kfs.module.ezra.businessobject.Deliverable;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProject;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward;
@@ -46,7 +49,6 @@ import edu.cornell.kfs.module.ezra.businessobject.Sponsor;
 import edu.cornell.kfs.module.ezra.dataaccess.EzraAwardProposalDao;
 import edu.cornell.kfs.module.ezra.dataaccess.SponsorDao;
 import edu.cornell.kfs.module.ezra.service.EzraService;
-import edu.cornell.kfs.module.ezra.util.EzraUtils;
 
 public class EzraServiceImpl implements EzraService {
 
@@ -164,7 +166,7 @@ public class EzraServiceImpl implements EzraService {
 		award.setAwardEndingDate(proposal.getProposalEndingDate());
 		award.setAwardDirectCostAmount(proposal.getProposalDirectCostAmount());
 		award.setAwardIndirectCostAmount(KualiDecimal.ZERO);
-		award.setGrantDescriptionCode(EzraUtils.getGrantDescriptionMap().get(ezraAward.getAwardDescriptionCode()));
+		award.setGrantDescriptionCode(getGrantDescriptionMap().get(ezraAward.getAwardDescriptionCode()));
 		award.setAwardEntryDate(dateTimeService.getCurrentSqlDate());
 		if (ObjectUtils.isNull(oldAward)) {
 			List<AwardAccount> accounts = getAwardAccounts(proposal);
@@ -314,8 +316,8 @@ public class EzraServiceImpl implements EzraService {
 			    proposal.setGrantNumber(ezraProposal.getSponsorProjectId());
 			}
 		}
-		proposal.setProposalStatusCode(EzraUtils.getProposalAwardStatusMap().get(ezraProposal.getStatus()));
-		proposal.setProposalPurposeCode(EzraUtils.getProposalPurposeMap().get(ezraProposal.getPurpose()));
+		proposal.setProposalStatusCode(getProposalStatusMap().get(ezraProposal.getStatus()));
+		proposal.setProposalPurposeCode(getProposalPurposeMap().get(ezraProposal.getPurpose()));
 		proposal.setProposalBeginningDate(ezraProposal.getStartDate());
 		proposal.setProposalEndingDate(ezraProposal.getStopDate());
 		proposal.setProposalDirectCostAmount(ezraProposal.getTotalAmt());
@@ -354,7 +356,7 @@ public class EzraServiceImpl implements EzraService {
 			}
 			agency.setReportsToAgencyNumber(sponsor.getParentSponsor().toString());
 		}
-		String sponsorTypeCode = EzraUtils.getAgencyTypeMap().get(sponsor.getSourceCode().toString());
+		String sponsorTypeCode = getAgencyTypeMap().get(sponsor.getSourceCode().toString());
 		agency.setAgencyTypeCode(sponsorTypeCode);
 		agency.setActive(true);
 //		AgencyExtension ext = (AgencyExtension)agency.getExtension();
@@ -390,7 +392,7 @@ public class EzraServiceImpl implements EzraService {
 			}
 			agency.setReportsToAgencyNumber(sponsor.getParentSponsor().toString());
 		}
-		String sponsorTypeCode = EzraUtils.getAgencyTypeMap().get(sponsor.getSourceCode().toString());
+		String sponsorTypeCode = getAgencyTypeMap().get(sponsor.getSourceCode().toString());
 		if (!StringUtils.equals(agency.getAgencyTypeCode(), sponsorTypeCode)) {
 			agency.setAgencyTypeCode(sponsorTypeCode);
 		}
@@ -660,8 +662,48 @@ public class EzraServiceImpl implements EzraService {
 		}
 		
 	}
-	
-	
+
+
+
+    protected Map<String,String> getAgencyTypeMap() {
+        return getKeyValueMappingsFromParameter(CuCGParameterConstants.AGENCY_TYPE_MAPPINGS);
+    }
+
+    protected Map<String,String> getProposalStatusMap() {
+        return getKeyValueMappingsFromParameter(CuCGParameterConstants.PROPOSAL_STATUS_MAPPINGS);
+    }
+
+    protected Map<String,String> getGrantDescriptionMap() {
+        return getKeyValueMappingsFromParameter(CuCGParameterConstants.GRANT_DESCRIPTION_MAPPINGS);
+    }
+
+    protected Map<String,String> getProposalPurposeMap() {
+        return getKeyValueMappingsFromParameter(CuCGParameterConstants.PROPOSAL_PURPOSE_MAPPINGS);
+    }
+
+    /**
+     * Retrieves a multi-value parameter under the "KFS-CG" namespace and "Batch" component code,
+     * and converts it into a Map. Each semicolon-delimited parameter value represents a
+     * key-value mapping, and the key and value should be separated by an equals sign.
+     * Example: "key1=value1;key2=value2;...;keyN=valueN"
+     * 
+     * @param parameterName The name of the parameter containing the mappings.
+     * @return A Map containing the parameter's key-value mappings, or an empty map if the parameter does not exist or has an empty value.
+     * @throws IndexOutOfBoundsException if a given key-value mapping does not have an equals sign due to misconfiguration.
+     */
+    protected Map<String,String> getKeyValueMappingsFromParameter(String parameterName) {
+        Map<String,String> mappings = new HashMap<String,String>();
+        Collection<String> keyValuePairs = parameterService.getParameterValuesAsString(
+                CGConstants.CG_NAMESPACE_CODE, KfsParameterConstants.BATCH_COMPONENT, parameterName);
+        for (String keyValuePair : keyValuePairs) {
+            int equalsSignIndex = keyValuePair.indexOf('=');
+            mappings.put(keyValuePair.substring(0, equalsSignIndex), keyValuePair.substring(equalsSignIndex + 1));
+        }
+        return mappings;
+    }
+
+
+
 	/**
 	 * @return the businessObjectService
 	 */
