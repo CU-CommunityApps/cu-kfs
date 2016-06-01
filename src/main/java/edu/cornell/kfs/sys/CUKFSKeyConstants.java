@@ -8,9 +8,13 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String MESSAGE_BATCH_UPLOAD_TITLE_INACTIVATE_CONVERT_CODE = "message.batchUpload.title.InactivateConvertCode";
 
     public static final String ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_NOT_GROUP_CODE = "error.document.accountMaintenance.programCodeNotAssociatedWithGroupCode";
+    public static final String ERROR_DOCUMENT_ACCMAINT_ACCT_PROGRAM_CODE_NOT_GROUP_CODE = "error.document.accountMaintenance.acct.programCodeNotAssociatedWithGroupCode";
     public static final String ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE = 
             "error.document.accountMaintenance.programCodeCannotBeBlank";
+    public static final String ERROR_DOCUMENT_ACCMAINT_ACCT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE = 
+            "error.document.accountMaintenance.acct.programCodeCannotBeBlank";
     public static final String ERROR_DOCUMENT_ACCMAINT_APPROP_ACCT_NOT_GROUP_CODE = "error.document.accountMaintenance.appropAcctNotAssociatedWithGroupCode";
+    public static final String ERROR_DOCUMENT_ACCMAINT_ACCT_APPROP_ACCT_NOT_GROUP_CODE = "error.document.accountMaintenance.acct.appropAcctNotAssociatedWithGroupCode";
     public static final String ERROR_DOCUMENT_ACCMAINT_MJR_RPT_CAT_CODE_NOT_EXIST = 
             "error.document.accountMaintenance.majorRptgCatCodeEnteredDoesNotExist";
     public static final String ERROR_DOCUMENT_BA_ACCOUNT_AMOUNTS_BALANCED = "error.document.ba.accountAmountsNotBalanced";
@@ -81,10 +85,6 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_NO_ACCT_REVERSION = "error.document.globalAcctReversion.noAcctReversion";
     public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_DUPLICATE_ACCOUNTS = "error.document.globalAcctReversion.duplicateAccts";
     public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_NO_REVERSION_CODE = "error.document.globalAcctReversion.noReversionCode";
-    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_MISSING_FIELDS_FOR_NEW_REVERSION
-            = "error.document.globalAcctReversion.missingFieldsForNewReversion";
-    public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_MISSING_FIELDS_FOR_NEW_REVERSION_DETAIL
-            = "error.document.globalAcctReversion.missingFieldsForNewReversionDetail";
     
     public static final String ACCOUNT_REVERSION_DETAIL_TRICKLE_DOWN_INACTIVATION = "note.trickleDownInactivation.inactivatedACCOUNTReversionDetail";
     public static final String ACCOUNT_REVERSION_DETAIL_TRICKLE_DOWN_INACTIVATION_ERROR_DURING_PERSISTENCE = 
@@ -103,31 +103,53 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String MESSAGE_CREATE_DISENCUMBRANCE_ERROR = "message.ld.disencumbrance.error";
     public static final String MESSAGE_CREATE_DISENCUMBRANCE_SUCCESSFUL = "message.ld.disencumber.successful";
 
-    //KFSPTS-990 Award
-    public static final String ERROR_DUPLICATE_AWARD_ACCOUNT = "error.duplicate.awardAccount";
-    public static final String ERROR_DUPLICATE_AWARD_PROJECT_DIRECTOR = "error.duplicate.awardProjectDirector";
-    public static final String ERROR_DUPLICATE_AWARD_ORGANIZATION = "error.duplicate.awardOrganization";
+	    //KFSPTS-990 Award 
+	    public static final String ERROR_DUPLICATE_AWARD_ACCOUNT = "error.duplicate.awardAccount";
+	    public static final String ERROR_DUPLICATE_AWARD_PROJECT_DIRECTOR = "error.duplicate.awardProjectDirector";
+	    public static final String ERROR_DUPLICATE_AWARD_ORGANIZATION = "error.duplicate.awardOrganization";
+	    
+	    // KFSUPGRADE-779
+	    public static final String QUESTION_CLEAR_UNNEEDED_WIRW_TAB = "question.preq.clearUnneededTab";
+	    public static final String QUESTION_CLEAR_UNNEEDED_CM_WIRW_TAB = "question.cm.clearUnneededTab";
 
-    // KFSUPGRADE-779
-    public static final String QUESTION_CLEAR_UNNEEDED_WIRW_TAB = "question.preq.clearUnneededTab";
-    public static final String QUESTION_CLEAR_UNNEEDED_CM_WIRW_TAB = "question.cm.clearUnneededTab";
+	    public static final String ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION = "note.trickleDownInactivation.inactivatedAccountReversions";
+	    public static final String ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION_ERROR_DURING_PERSISTENCE = "note.trickleDownInactivation.inactivatedAccountReversions.errorDuringPersistence";
+	    public static final String ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION_RECORD_ALREADY_MAINTENANCE_LOCKED = "note.trickleDownInactivation.inactivatedAccountReversions.recordAlreadyMaintenanceLocked";
 
-    public static final String ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION = "note.trickleDownInactivation.inactivatedAccountReversions";
-    public static final String ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION_ERROR_DURING_PERSISTENCE = "note.trickleDownInactivation.inactivatedAccountReversions.errorDuringPersistence";
-    public static final String ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION_RECORD_ALREADY_MAINTENANCE_LOCKED = "note.trickleDownInactivation.inactivatedAccountReversions.recordAlreadyMaintenanceLocked";
+	    // KFSPTS-3416
+	    public static final String MESSAGE_DONE_FILE_ALREADY_EXISTS = "message.system.batch.doneFileAlreadyExists";
+	    public static final String MESSAGE_DONE_FILE_SUCCESSFULLY_CREATED = "message.system.batch.doneFileSuccessfullyCreated";
 
-    // KFSPTS-3416
-    public static final String MESSAGE_DONE_FILE_ALREADY_EXISTS = "message.system.batch.doneFileAlreadyExists";
-    public static final String MESSAGE_DONE_FILE_SUCCESSFULLY_CREATED = "message.system.batch.doneFileSuccessfullyCreated";
+	    
+	    // KFSPTS-3933
+	    public static final String ERROR_AWARD_ACCOUNT_ALREADY_IN_USE = "error.award.awardAccount.alreadyInUse";
+	
+	    // KFSPTS-3599
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_INVALID_CG_RESPONSIBILITY = "error.document.accountGlobalMaintenance.invalidContractsAndGrantsResponsibility";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_EXP_DATE_CANNOT_BE_BEFORE_EFFECTIVE_DATE  = "error.document.accountGlobal.acct.expDateCannotBeBeforeEffectiveDate";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CLOSED_PENDING_LEDGER_ENTRIES = "error.document.accountGlobal.acct.closedAccount.noPendingLedgerEntriesAllowed"; 	   
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CLOSED_NO_LOADED_BEGINNING_BALANCE = "error.document.accountGlobal.acct.closedAccount.beginningBalanceNotLoaded";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CLOSED_NO_FUND_BALANCES = "error.document.accountGlobal.acct.closedAccount.noFundBalances";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CLOSED_PENDING_LABOR_LEDGER_ENTRIES = "error.document.accountGlobal.acct.closedAccount.noPendingLaborLedgerEntriesAllowed";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ICR_ACCOUNT_TOTAL_NOT_100_PERCENT = "error.document.accountGlobal.acct.indirectCostRecoveryAccounts.totalNot100Percent";
+	    
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_CG_ICR_FIELDS_FILLED_FOR_NON_CG_ACCOUNT = "error.document.accountGlobal.acct.cgICRFieldsFilledInForNonCGAccount";
+	    
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_CG_FIELDS_FILLED_FOR_NON_CG_ACCOUNT = "error.document.accountGlobalMaintenance.cgFieldsFilledInForNonCGAccount";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCOUNT_CG_FIELDS_FILLED_FOR_NON_CG_ACCOUNT = "error.document.accountGlobalMaintenance.acct.cgFieldsFilledInForNonCGAccount";
+	    
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_EXP_DATE_NOT_EMPTY_AND_REMOVE_EXP_DATE_CHECKED = "error.document.accountGlobalMaintenance.expDateNotEmptyAndRemoveExpDateChecked";
+	    
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_CNT_CHART_NOT_EMPTY_AND_REMOVE_CNT_CHART_AND_ACCT_CHECKED = "error.document.accountGlobalMaintenance.contChartNotEmptyAndRemoveContChartAndAcctChecked";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_CNT_ACCT_NOT_EMPTY_AND_REMOVE_CNT_CHART_AND_ACCT_CHECKED = "error.document.accountGlobalMaintenance.contAcctNotEmptyAndRemoveContChartAndAcctChecked";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_INC_STR_CHART_NOT_EMPTY_AND_REMOVE_INC_STR_CHART_AND_ACCT_CHECKED = "error.document.accountGlobalMaintenance.incStrChartNotEmptyAndRemoveIncStrChartAndAcctChecked";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_INC_STR_ACCT_NOT_EMPTY_AND_REMOVE_INC_STR_CHART_AND_ACCT_CHECKED = "error.document.accountGlobalMaintenance.incStrAcctNotEmptyAndRemoveIncStrChartAndAcctChecked";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ICR_ACCT_EXISTS = "error.document.accountGlobalMaintenance.icrAccountExists";
+	    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ICR_ACCT_DUPLICATE = "error.document.accountGlobalMaintenance.icrAccountDuplicate";
 
-
-    // KFSPTS-3933
-    public static final String ERROR_AWARD_ACCOUNT_ALREADY_IN_USE = "error.award.awardAccount.alreadyInUse";
-
-    // KFSPTS-4337
-    public static final String QUESTION_ACCOUNT_OFF_CAMPUS_INDICATOR = "question.coa.account.confirm.offCampusIndicator";
-    public static final String QUESTION_A21SUBACCOUNT_OFF_CAMPUS_INDICATOR = "question.coa.a21subaccount.confirm.offCampusIndicator";
-
+        // KFSPTS-4337
+        public static final String QUESTION_ACCOUNT_OFF_CAMPUS_INDICATOR = "question.coa.account.confirm.offCampusIndicator";
+        public static final String QUESTION_A21SUBACCOUNT_OFF_CAMPUS_INDICATOR = "question.coa.a21subaccount.confirm.offCampusIndicator";
 	// KFSPTS-4366
     public static final String QUESTION_CLEAR_UNNEEDED_WIRE_TAB = "question.dv.clearUnneededWireTab";
 
@@ -136,37 +158,4 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
 
     // KFSPTS-4438
     public static final String ERROR_DOCUMENT_DV_BLANK_STATE_AND_COUNTRY = "error.document.dv.blank.state.and.country";
-
-    // KFSPTS-4484
-    public static final String QUESTION_OVERSIZED_CHECK_STUB_TEXT = "question.dv.confirm.oversizedCheckStubText";
-  
-    // KFSPTS-4566
-    public static final String ERROR_DOCUMENT_ACCMAINT_ICR_ACCOUNT_CANNOT_BE_INACTIVE ="error.document.accountMaintenance.icrAccountCannotBeInactive";  
-
-    //KFSPTS-4563
-    public static final String ERROR_DOCUMENT_GLOBAL_SUS_ACCOUNT_NO_SUB_ACCOUNTS = "error.document.subAccountGlobalDetails.noSubAccountsEntered";
-    public static final String ERROR_DOCUMENT_GLOBAL_SUB_ACCOUNT_INVALID_ACCOUNT = "error.document.subAccountGlobalDetails.invalidAccount";
-    public static final String ERROR_DOCUMENT_GLOBAL_SUB_ACCOUNT_INVALID_SUB_ACCOUNT = "error.document.subAccountGlobalDetails.invalidSubAccount";
-
-    // KFSPTS-3956
-    public static final String ERROR_DOCUMENT_GLOBAL_SUBPOBJ_CD_INACTIVATION_NO_SUB_OBJ_CDS = "error.document.subObjCdGlobalEditDetails.noSubObjectCodesEntered";
-
-    // KFSPTS-3959
-    public static final String ERROR_DOCUMENT_GLOBAL_ORGANIZATION_COUNTRY_AND_ZIP_MISMATCH = "error.document.organizationGlobal.countryAndZipMismatch";
-    public static final String ERROR_DOCUMENT_GLOBAL_ORGANIZATION_NO_ORGANIZATIONS = "error.document.organizationGlobalDetails.noOrganizationsEntered";
-    public static final String ERROR_DOCUMENT_GLOBAL_ORGANIZATION_INVALID_ORGANIZATION = "error.document.organizationGlobalDetails.invalidOrganization";
-
-    // KFSPTS-4390
-    public static final String ERROR_ICRACCOUNT_CONTINUATION_ACCOUNT_CLOSED ="error.icrAccount.continuationAccount.closed";
-    public static final String ERROR_ICRACCOUNT_CONTINUATION_ACCOUNT_INVALID_TRANSACTION = "error.icrAccount.continuationAccount.invalidTransaction";
-    public static final String WARNING_ICRACCOUNT_CONTINUATION_ACCOUNT_USED = "warning.icrAccount.continuationAccount.used";
-
-    // KFSPTS-4905
-    public static final String ERROR_CSACCOUNT_CONTINUATION_ACCOUNT_CLOSED = "error.csAccount.continuationAccount.closed";
-    public static final String WARNING_CSACCOUNT_CONTINUATION_ACCOUNT_USED = "warning.csAccount.continuationAccount.used";
-
-    public static final String MESSAGE_DV_PAYEE_INVALID_PAYMENT_TYPE = "message.dv.payee.invalid.payment.type";
-
-    // KFSPTS-4792   
-    public static final String ERROR_DOCUMENT_GLB_MAINT_ICR_ACCOUNT_TOTAL_NOT_100_PERCENT = "error.document.global.indirectCostRecoveryAccounts.totalNot100Percent";
 }
