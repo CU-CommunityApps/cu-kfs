@@ -50,8 +50,6 @@ public class CuFPConstants {
     public static final String PAYMENT_REASON = "payment reason";
     public static final String NON_EMPLOYEE_TRAVEL = "Non-Employee Travel";
 
-    public static final String USE_OVERSIZED_CHECK_STUB_TEXT_QUESTION_ID = "UseOversizedCheckStubTextQuestion";
-
     public static final String ACH_INCOME_FILE_DATE_FORMAT = "yyMMddHHmm";
     public static final String ADVANCE_DEPOSIT_DEFAULT_CAMPUS_CODE = "IT";
     public static final String ADVANCE_DEPOSIT_NOTE_FILE_PREFIX = "advancedeposit_note_";
