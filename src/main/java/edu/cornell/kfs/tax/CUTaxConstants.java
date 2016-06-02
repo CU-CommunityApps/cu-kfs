@@ -169,6 +169,7 @@ public final class CUTaxConstants {
         public static final String STATE_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT = "1099_STATE_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT";
         public static final String PAYMENT_REASON_TO_TAX_BOX = "1099_PAYMENT_REASON_TO_TAX_BOX";
         public static final String PAYMENT_REASON_TO_NO_TAX_BOX = "1099_PAYMENT_REASON_TO_NO_TAX_BOX";
+        public static final String DOCUMENT_TYPE_TO_TAX_BOX = "1099_DOCUMENT_TYPE_TO_TAX_BOX";
         
         private Tax1099ParameterNames() {
             throw new UnsupportedOperationException("do not call Tax1099ParameterNames constructor");
