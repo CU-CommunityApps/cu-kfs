@@ -55,6 +55,8 @@ public class CuFPConstants {
     public static final String ADVANCE_DEPOSIT_NOTE_FILE_PREFIX = "advancedeposit_note_";
     public static final String BATCH_DETAIL_TYPE = "Batch";
 
+    public static final String USE_OVERSIZED_CHECK_STUB_TEXT_QUESTION_ID = "UseOversizedCheckStubTextQuestion";
+
     public static class AchIncomeFileGroup {
         public static final String GROUP_FUNCTIONAL_IDENTIFIER_CD_RA = "RA";
     }
