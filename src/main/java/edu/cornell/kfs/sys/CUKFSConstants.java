@@ -1,5 +1,8 @@
 package edu.cornell.kfs.sys;
 
+import java.util.Collections;
+import java.util.Set;
+
 public class CUKFSConstants {
         
     public static final String COMMODITY_CODE_FILE_TYPE_INDENTIFIER = "commodityCodeInputFileType";
@@ -126,4 +129,6 @@ public class CUKFSConstants {
     public static final String ACCOUNT_NOTE_TEXT = " account document ID ";
 
     public static final String NOTE_SEQUENCE_NAME = "KRNS_NTE_S";
+
+    public static final Set<String> OBJECTS_WITH_IMMEDIATE_BO_LEVEL_NOTE_UPDATE = Collections.singleton("org.kuali.kfs.coa.businessobject.Account");
 }
