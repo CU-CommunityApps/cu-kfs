@@ -35,27 +35,7 @@ public enum RequisitionItemFixture {
 	REQ_ITEM_TRADE_IN(new Integer(1), "EA", "1234567", "item desc", "ITEM",
 			"Punchout", new KualiDecimal(1), new KualiDecimal(1), "80141605",
 			new BigDecimal(1), PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE,
-			true),
-
-	REQ_ITEM_NON_QTY(new Integer(1), null, "1234567", "item desc", "SRVC", "Punchout",
-			new KualiDecimal(6000), null, "80141605",
-			new BigDecimal(6000), PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE,
-			false),
-
-	REQ_ITEM_AMOUNT_BELOW_5K(new Integer(1), "EA", "1234567", "item desc", "ITEM", "Punchout",
-			new KualiDecimal(4000), new KualiDecimal(1), "80141605",
-			new BigDecimal(4000), PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE,
-			false),
-
-	REQ_ITEM_AMOUNT_AT_5K(new Integer(1), "EA", "1234567", "item desc", "ITEM", "Punchout",
-			new KualiDecimal(5000), new KualiDecimal(1), "80141605",
-			new BigDecimal(5000), PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE,
-			false),
-
-	REQ_ITEM_AMOUNT_ABOVE_5K(new Integer(1), "EA", "1234567", "item desc", "ITEM", "Punchout",
-			new KualiDecimal(6000), new KualiDecimal(1), "80141605",
-			new BigDecimal(6000), PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE,
-			false);
+			true);
 
 	public final Integer itemLineNumber;
 	public final String itemUnitOfMeasureCode;
