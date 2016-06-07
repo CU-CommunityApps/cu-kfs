@@ -18,10 +18,25 @@
 
   <bean id="AccountGlobalMaintenanceDocument" parent="AccountGlobalMaintenanceDocument-parentBean">
     <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CuAccountGlobal"/>
+    <property name="promptBeforeValidationClass" value="edu.cornell.kfs.coa.document.validation.impl.AccountGlobalPreRules"/>
+  	<property name="maintainableSections">
+      <list>
+        <ref bean="AccountGlobalMaintenanceDocument-GlobalAccountMaintenance"/>
+        <ref bean="AccountGlobalMaintenanceDocument-IndirectCostRecoveryAccounts"/>
+        <ref bean="AccountGlobalMaintenanceDocument-EditListofAccounts"/>
+      </list>
+    </property>
     <property name="defaultExistenceChecks">
       <list merge = "true">
         <bean parent="ReferenceDefinition" p:attributeName="majorReportingCategory" p:attributeToHighlightOnFail="majorReportingCategoryCode" />
         <bean parent="ReferenceDefinition" p:attributeName="laborBenefitRateCategory" p:attributeToHighlightOnFail="laborBenefitRateCategoryCode" />
+        <bean parent="ReferenceDefinition" p:attributeName="accountPhysicalCampus" p:attributeToHighlightOnFail="accountPhysicalCampusCode" /> 
+        <bean parent="ReferenceDefinition" p:attributeName="accountType" p:attributeToHighlightOnFail="accountTypeCode" /> 
+        <bean parent="ReferenceDefinition" p:attributeName="reportsToAccount" p:attributeToHighlightOnFail="reportsToAccountNumber" />
+        <bean parent="ReferenceDefinition" p:attributeName="continuationAccount" p:attributeToHighlightOnFail="continuationAccountNumber" /> 
+        <bean parent="ReferenceDefinition" p:attributeName="endowmentIncomeAccount" p:attributeToHighlightOnFail="endowmentIncomeAccountNumber" />
+        <bean parent="ReferenceDefinition" p:attributeName="budgetRecordingLevel" p:attributeToHighlightOnFail="budgetRecordingLevelCode" />
+        <bean parent="ReferenceDefinition" p:attributeName="acctIndirectCostRcvyType" p:attributeToHighlightOnFail="acctIndirectCostRcvyTypeCd" />
       </list>
     </property>
   </bean>
@@ -38,6 +53,7 @@
                 </property>
                 <property name="insertAfter">
                     <list>
+                       <bean parent="MaintainableFieldDefinition" p:name="programCode" />
                        <bean parent="MaintainableFieldDefinition" p:name="majorReportingCategoryCode" />
                     </list>
                 </property>
@@ -45,7 +61,238 @@
         </list>
     </property>
   </bean>
-   
+  
+  <bean parent="DataDictionaryBeanOverride">
+    <property name="beanName" value="AccountGlobalMaintenanceDocument-GlobalAccountMaintenance" />
+    <property name="fieldOverrides">
+        <list>
+            <bean parent="FieldOverrideForListElementInsert">
+                <property name="propertyName" value="maintainableItems" />
+                <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="accountExpirationDate" />
+                </property>
+                <property name="insertBefore">
+                    <list>
+                       <bean parent="MaintainableFieldDefinition" p:name="removeAccountExpirationDate" />
+                    </list>
+                </property>
+            </bean>
+        </list>
+    </property>
+  </bean>
+  
+  <bean parent="DataDictionaryBeanOverride">
+    <property name="beanName" value="AccountGlobalMaintenanceDocument-GlobalAccountMaintenance" />
+    <property name="fieldOverrides">
+        <list>
+            <bean parent="FieldOverrideForListElementInsert">
+                <property name="propertyName" value="maintainableItems" />
+                <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="continuationFinChrtOfAcctCd" />
+                </property>
+                <property name="insertBefore">
+                    <list>
+                       <bean parent="MaintainableFieldDefinition" p:name="removeContinuationChartAndAccount" />
+                    </list>
+                </property>
+            </bean>
+        </list>
+    </property>
+  </bean>
+  
+    <bean parent="DataDictionaryBeanOverride">
+    <property name="beanName" value="AccountGlobalMaintenanceDocument-GlobalAccountMaintenance" />
+    <property name="fieldOverrides">
+        <list>
+            <bean parent="FieldOverrideForListElementInsert">
+                <property name="propertyName" value="maintainableItems" />
+                <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="incomeStreamFinancialCoaCode" />
+                </property>
+                <property name="insertBefore">
+                    <list>
+                       <bean parent="MaintainableFieldDefinition" p:name="removeIncomeStreamChartAndAccount" />
+                    </list>
+                </property>
+            </bean>
+        </list>
+    </property>
+  </bean>
+  
+  <bean parent="DataDictionaryBeanOverride">
+    <property name="beanName" value="AccountGlobalMaintenanceDocument-GlobalAccountMaintenance" />
+    <property name="fieldOverrides">
+        <list>
+            <bean parent="FieldOverrideForListElementInsert">
+                <property name="propertyName" value="maintainableItems" />
+                <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="organizationCode" />
+                </property>
+                <property name="insertAfter">
+                    <list>
+                       <bean parent="MaintainableFieldDefinition" p:name="accountPhysicalCampusCode" />
+                    </list>
+                </property>
+            </bean>
+        </list>
+    </property>
+  </bean>
+  
+  <bean parent="DataDictionaryBeanOverride">
+    <property name="beanName" value="AccountGlobalMaintenanceDocument-GlobalAccountMaintenance" />
+    <property name="fieldOverrides">
+        <list>
+            <bean parent="FieldOverrideForListElementInsert">
+                <property name="propertyName" value="maintainableItems" />
+                <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="accountStreetAddress" />
+                </property>
+                <property name="insertAfter">
+                    <list>
+                       <bean parent="MaintainableFieldDefinition" p:name="accountOffCampusIndicator" />
+                       <bean parent="MaintainableFieldDefinition" p:name="closed" />
+                       <bean parent="MaintainableFieldDefinition" p:name="accountTypeCode" />
+                       <bean parent="MaintainableFieldDefinition" p:name="appropriationAccountNumber" />
+                       <bean parent="MaintainableFieldDefinition" p:name="accountsFringesBnftIndicator" p:defaultValue="true"/>
+                       <bean parent="MaintainableFieldDefinition" p:name="reportsToChartOfAccountsCode" />
+                       <bean parent="MaintainableFieldDefinition" p:name="reportsToAccountNumber" />
+                       <bean parent="MaintainableFieldDefinition" p:name="accountRestrictedStatusCode" />
+                       <bean parent="MaintainableFieldDefinition" p:name="accountRestrictedStatusDate" />
+                       <bean parent="MaintainableFieldDefinition" p:name="endowmentIncomeAcctFinCoaCd" />
+                       <bean parent="MaintainableFieldDefinition" p:name="endowmentIncomeAccountNumber" />
+                    </list>
+                </property>
+            </bean>
+        </list>
+    </property>
+  </bean>
+  
+  <bean parent="DataDictionaryBeanOverride">
+    <property name="beanName" value="AccountGlobalMaintenanceDocument-GlobalAccountMaintenance" />
+    <property name="fieldOverrides">
+        <list>
+            <bean parent="FieldOverrideForListElementInsert">
+                <property name="propertyName" value="maintainableItems" />
+                <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="majorReportingCategoryCode" />
+                </property>
+                <property name="insertAfter">
+                    <list>
+                       <bean parent="MaintainableFieldDefinition" p:name="accountEffectiveDate" />
+                    </list>
+                </property>
+            </bean>
+        </list>
+    </property>
+  </bean>
+  
+  <bean parent="DataDictionaryBeanOverride">
+    <property name="beanName" value="AccountGlobalMaintenanceDocument-GlobalAccountMaintenance" />
+    <property name="fieldOverrides">
+        <list>
+            <bean parent="FieldOverrideForListElementInsert">
+                <property name="propertyName" value="maintainableItems" />
+                <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="financialHigherEdFunctionCd" />
+                </property>
+                <property name="insertAfter">
+                    <list>
+                       <bean parent="MaintainableFieldDefinition" p:name="budgetRecordingLevelCode" />
+                    </list>
+                </property>
+            </bean>
+        </list>
+    </property>
+  </bean>
+  
+  <bean parent="DataDictionaryBeanOverride">
+    <property name="beanName" value="AccountGlobalMaintenanceDocument-GlobalAccountMaintenance" />
+    <property name="fieldOverrides">
+        <list>
+            <bean parent="FieldOverrideForListElementInsert">
+                <property name="propertyName" value="maintainableItems" />
+                <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="pendingAcctSufficientFundsIndicator" />
+                </property>
+                <property name="insertAfter">
+                    <list>
+                       <bean parent="MaintainableFieldDefinition" p:name="extrnlFinEncumSufficntFndIndicator" />
+                       <bean parent="MaintainableFieldDefinition" p:name="intrnlFinEncumSufficntFndIndicator" />
+                       <bean parent="MaintainableFieldDefinition" p:name="finPreencumSufficientFundIndicator" />
+                       <bean parent="MaintainableFieldDefinition" p:name="financialObjectivePrsctrlIndicator" />
+                    </list>
+                </property>
+            </bean>
+        </list>
+    </property>
+  </bean>
+  
+  <bean parent="DataDictionaryBeanOverride">
+    <property name="beanName" value="AccountGlobalMaintenanceDocument-GlobalAccountMaintenance" />
+    <property name="fieldOverrides">
+        <list>
+            <bean parent="FieldOverrideForListElementInsert">
+                <property name="propertyName" value="maintainableItems" />
+                <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="laborBenefitRateCategoryCode" />
+                </property>
+                <property name="insertAfter">
+                    <list>
+                       <bean parent="MaintainableFieldDefinition" p:name="contractControlFinCoaCode" />
+                       <bean parent="MaintainableFieldDefinition" p:name="contractControlAccountNumber" />
+                       <bean parent="MaintainableFieldDefinition" p:name="acctIndirectCostRcvyTypeCd" />
+                       <bean parent="MaintainableFieldDefinition" p:name="financialIcrSeriesIdentifier" p:overrideFieldConversions="financialIcrSeriesIdentifier:financialIcrSeriesIdentifier" p:overrideLookupClass="org.kuali.kfs.coa.businessobject.IndirectCostRecoveryRateDetail"/>
+                       <bean parent="MaintainableFieldDefinition" p:name="contractsAndGrantsAccountResponsibilityId" />
+                       <bean parent="MaintainableFieldDefinition" p:name="invoiceFrequencyCode" />
+                       <bean parent="MaintainableFieldDefinition" p:name="invoiceTypeCode" />
+                       <bean parent="MaintainableFieldDefinition" p:name="everify" />
+                       <bean parent="MaintainableFieldDefinition" p:name="costShareForProjectNumber" />    
+                    </list>
+                </property>
+            </bean>
+        </list>
+    </property>
+  </bean>
+  
+  <bean id="AccountGlobalMaintenanceDocument-IndirectCostRecoveryAccounts" parent="AccountGlobalMaintenanceDocument-IndirectCostRecoveryAccounts-parentBean"/>
+  
+  <bean id="AccountGlobalMaintenanceDocument-IndirectCostRecoveryAccounts-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="indirectCostRecoveryAccounts"/>
+    <property name="title" value="Indirect Cost Recovery Accounts"/>
+    <property name="maintainableItems">
+      <list>
+          <bean parent="MaintainableCollectionDefinition">
+            <property name="name" value="indirectCostRecoveryAccounts"/>
+            <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.IndirectCostRecoveryAccountChange"/>
+            <property name="summaryTitle" value="Indirect Cost Recovery Account"/>
+            <property name="summaryFields">
+            <list>
+              <dd:maintField attributeName="indirectCostRecoveryFinCoaCode"/>
+              <dd:maintField attributeName="indirectCostRecoveryAccountNumber"/>
+              <dd:maintField attributeName="accountLinePercent"/>
+            </list>
+            </property>
+            <property name="maintainableFields">
+              <list>
+                <bean parent="MaintainableFieldDefinition" p:name="indirectCostRecoveryAccountGeneratedIdentifier" p:unconditionallyReadOnly="true"/>
+                <dd:maintField attributeName="indirectCostRecoveryFinCoaCode"/>
+                <bean parent="MaintainableFieldDefinition" p:name="indirectCostRecoveryAccountNumber" p:webUILeaveFieldFunction="onblur_accountNumber_newAccount">
+                  <property name="webUILeaveFieldFunctionParameters">
+                    <list>
+                      <value>indirectCostRecoveryFinCoaCode</value>
+                    </list>
+                  </property> 
+                </bean>      
+                <dd:maintField attributeName="accountLinePercent" />
+                <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>
+              </list>
+            </property>
+          </bean>
+        </list>
+       </property>
+      </bean>
+ 
   <bean id="AccountGlobalMaintenanceDocument-EditListofAccounts" parent="AccountGlobalMaintenanceDocument-EditListofAccounts-parentBean"/>
   <bean id="AccountGlobalMaintenanceDocument-EditListofAccounts-parentBean" abstract="true" parent="MaintainableSectionDefinition">
     <property name="id" value="Edit List of Accounts"/>
