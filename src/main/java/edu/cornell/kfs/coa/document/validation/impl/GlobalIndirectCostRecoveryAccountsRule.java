@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.coa.businessobject.A21IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.document.validation.impl.GlobalDocumentRuleBase;
@@ -23,15 +23,14 @@ import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.coa.businessobject.GlobalObjectWithIndirectCostRecoveryAccounts;
 import edu.cornell.kfs.coa.businessobject.IndirectCostRecoveryAccountChange;
-import edu.cornell.kfs.coa.businessobject.SubAccountGlobal;
 import edu.cornell.kfs.coa.businessobject.SubAccountGlobalDetail;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
-import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
 public class GlobalIndirectCostRecoveryAccountsRule extends GlobalDocumentRuleBase {
 
-	protected static final BigDecimal BD100 = new BigDecimal(100);
+	protected static final BigDecimal ONE_HUNDRED_PERCENT = new BigDecimal(100);
 
 	protected SubFundGroupService subFundGroupService;
 
@@ -46,7 +45,7 @@ public class GlobalIndirectCostRecoveryAccountsRule extends GlobalDocumentRuleBa
 
 		if (line instanceof IndirectCostRecoveryAccountChange) {
 			IndirectCostRecoveryAccountChange account = (IndirectCostRecoveryAccountChange) line;
-			success &= checkIndirectCostRecoveryAccount(account);
+			success &= validateIndirectCostRecoveryAccount(account);
 		}
 
 		return success;
@@ -58,10 +57,10 @@ public class GlobalIndirectCostRecoveryAccountsRule extends GlobalDocumentRuleBa
 	@Override
 	protected boolean processCustomSaveDocumentBusinessRules(MaintenanceDocument document) {
 		boolean success = super.processCustomSaveDocumentBusinessRules(document);
-		SubAccountGlobal subAccountGlobal = (SubAccountGlobal) getNewBo();
+		GlobalObjectWithIndirectCostRecoveryAccounts globalObjectWithIndirectCostRecoveryAccounts = (GlobalObjectWithIndirectCostRecoveryAccounts) getNewBo();
 		
-		if( ObjectUtils.isNotNull(subAccountGlobal.getIndirectCostRecoveryAccounts()) && subAccountGlobal.getIndirectCostRecoveryAccounts().size() >0){
-			validateIndirectCostRecoveryAccounts(subAccountGlobal.getIndirectCostRecoveryAccounts());
+		if( ObjectUtils.isNotNull(globalObjectWithIndirectCostRecoveryAccounts.getIndirectCostRecoveryAccounts()) && globalObjectWithIndirectCostRecoveryAccounts.getIndirectCostRecoveryAccounts().size() >0){
+			validateIndirectCostRecoveryAccounts(globalObjectWithIndirectCostRecoveryAccounts.getIndirectCostRecoveryAccounts());
 		}
 		return success;
 	}
@@ -72,12 +71,12 @@ public class GlobalIndirectCostRecoveryAccountsRule extends GlobalDocumentRuleBa
 	@Override
 	protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {
 		boolean success = super.processCustomRouteDocumentBusinessRules(document);
-		SubAccountGlobal subAccountGlobal = (SubAccountGlobal) getNewBo();
+		GlobalObjectWithIndirectCostRecoveryAccounts globalObjectWithIndirectCostRecoveryAccounts = (GlobalObjectWithIndirectCostRecoveryAccounts)  getNewBo();
 		
-		if( ObjectUtils.isNotNull(subAccountGlobal.getIndirectCostRecoveryAccounts()) && subAccountGlobal.getIndirectCostRecoveryAccounts().size() >0){
-			success &= validateIndirectCostRecoveryAccounts(subAccountGlobal.getIndirectCostRecoveryAccounts());
+		if( ObjectUtils.isNotNull(globalObjectWithIndirectCostRecoveryAccounts.getIndirectCostRecoveryAccounts()) && globalObjectWithIndirectCostRecoveryAccounts.getIndirectCostRecoveryAccounts().size() >0){
+			success &= validateIndirectCostRecoveryAccounts(globalObjectWithIndirectCostRecoveryAccounts.getIndirectCostRecoveryAccounts());
 			if(success){
-				success &= checkIndirectCostRecoveryAccountDistributions(subAccountGlobal.getSubAccountGlobalDetails(), subAccountGlobal.getIndirectCostRecoveryAccounts());
+				success &= checkICRAccountsTotalDistributionIs100PercentOnAllDetails(globalObjectWithIndirectCostRecoveryAccounts);
 			}
 		}
 		
@@ -90,48 +89,37 @@ public class GlobalIndirectCostRecoveryAccountsRule extends GlobalDocumentRuleBa
 	@Override
 	protected boolean processCustomApproveDocumentBusinessRules(MaintenanceDocument document) {
 		boolean success = super.processCustomApproveDocumentBusinessRules(document);
-		SubAccountGlobal subAccountGlobal = (SubAccountGlobal) getNewBo();
+		GlobalObjectWithIndirectCostRecoveryAccounts globalObjectWithIndirectCostRecoveryAccounts = (GlobalObjectWithIndirectCostRecoveryAccounts) getNewBo();
 		
-		if( ObjectUtils.isNotNull(subAccountGlobal.getIndirectCostRecoveryAccounts()) && subAccountGlobal.getIndirectCostRecoveryAccounts().size() >0){
-			success &= validateIndirectCostRecoveryAccounts(subAccountGlobal.getIndirectCostRecoveryAccounts());
+		if( ObjectUtils.isNotNull(globalObjectWithIndirectCostRecoveryAccounts.getIndirectCostRecoveryAccounts()) && globalObjectWithIndirectCostRecoveryAccounts.getIndirectCostRecoveryAccounts().size() >0){
+			success &= validateIndirectCostRecoveryAccounts(globalObjectWithIndirectCostRecoveryAccounts.getIndirectCostRecoveryAccounts());
 			if(success){
-				success &= checkIndirectCostRecoveryAccountDistributions(subAccountGlobal.getSubAccountGlobalDetails(), subAccountGlobal.getIndirectCostRecoveryAccounts());
+				success &= checkICRAccountsTotalDistributionIs100PercentOnAllDetails(globalObjectWithIndirectCostRecoveryAccounts);
 			}
 		}
 		
 		return success;
 	}
+
 	
-	/**
-	 * Validates indirect cost recovery accounts
-	 * 
-	 * @param indirectCostRecoveryAccounts
-	 * @return
-	 */
 	protected boolean validateIndirectCostRecoveryAccounts(List<IndirectCostRecoveryAccountChange> indirectCostRecoveryAccounts){
 		boolean success = true;
 		int index = 0;
         for (IndirectCostRecoveryAccountChange icrAccount : indirectCostRecoveryAccounts) {
             String errorPath = MAINTAINABLE_ERROR_PREFIX + KFSPropertyConstants.INDIRECT_COST_RECOVERY_ACCOUNTS + "[" + index + "]";
             GlobalVariables.getMessageMap().addToErrorPath(errorPath);
-            success &= checkIndirectCostRecoveryAccount(icrAccount);             
+            success &= validateIndirectCostRecoveryAccount(icrAccount);             
             GlobalVariables.getMessageMap().removeFromErrorPath(errorPath);
             index++;
         }
         return success;
 	}
 
-	/**
-	 * Validates indirect cost recovery account.
-	 * 
-	 * @param icrAccount
-	 * @return true if valid, false otherwise
-	 */
-	protected boolean checkIndirectCostRecoveryAccount(IndirectCostRecoveryAccountChange icrAccount) {
+
+	protected boolean validateIndirectCostRecoveryAccount(IndirectCostRecoveryAccountChange icrAccount) {
 
 		boolean success = true;
 
-		// The chart and account must exist in the database.
 		String chartOfAccountsCode = icrAccount.getIndirectCostRecoveryFinCoaCode();
 		String accountNumber = icrAccount.getIndirectCostRecoveryAccountNumber();
 		BigDecimal icraAccountLinePercentage = ObjectUtils.isNotNull(icrAccount.getAccountLinePercent()) ? icrAccount.getAccountLinePercent() : BigDecimal.ZERO;
@@ -160,7 +148,6 @@ public class GlobalIndirectCostRecoveryAccountsRule extends GlobalDocumentRuleBa
 				success &= false;
 			}
 
-			// check if account is closed
 			if (success && active) {
 				Collection<Account> accounts = getBoService().findMatching(Account.class, chartAccountMap);
 				if (ObjectUtils.isNotNull(accounts) && accounts.size() > 0) {
@@ -173,8 +160,7 @@ public class GlobalIndirectCostRecoveryAccountsRule extends GlobalDocumentRuleBa
 			}
 		}
 
-		// check the percent line
-		if (icraAccountLinePercentage.compareTo(BigDecimal.ZERO) <= 0 || icraAccountLinePercentage.compareTo(BD100) == 1) {
+		if (icraAccountLinePercentage.compareTo(BigDecimal.ZERO) <= 0 || icraAccountLinePercentage.compareTo(ONE_HUNDRED_PERCENT) == 1) {
 			GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ICR_ACCOUNT_LINE_PERCENT, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ICR_ACCOUNT_INVALID_LINE_PERCENT);
 			success &= false;
 		}
@@ -183,152 +169,17 @@ public class GlobalIndirectCostRecoveryAccountsRule extends GlobalDocumentRuleBa
 	}
 
 
-	/**
-	 * Checks the total distribution is 100.
-	 * 
-	 * @param globalDetails
-	 * @param newIcrAccounts
-	 * @return true if valid, false otherwise
-	 */
-	protected boolean checkIndirectCostRecoveryAccountDistributions(List<SubAccountGlobalDetail> globalDetails, List<IndirectCostRecoveryAccountChange> newIcrAccounts) {
-
+	protected boolean checkICRAccountsTotalDistributionIs100PercentOnAllDetails(GlobalObjectWithIndirectCostRecoveryAccounts globalObjectWithIndirectCostRecoveryAccounts) {
 		boolean result = true;
-		
-		if(ObjectUtils.isNull(newIcrAccounts) || (newIcrAccounts.size() == 0)){
+
+		if (!globalObjectWithIndirectCostRecoveryAccounts.hasIcrAccounts()) {
 			return true;
-		}
-		
-		for (GlobalBusinessObjectDetailBase globalDetail : globalDetails) {
-			List<IndirectCostRecoveryAccount> existingIcrAccounts = new ArrayList<IndirectCostRecoveryAccount>();
+		} else {
 
-			SubAccountGlobalDetail subAccountGlobalDetail = (SubAccountGlobalDetail) globalDetail;
-
-			subAccountGlobalDetail.refreshReferenceObject(KFSPropertyConstants.SUB_ACCOUNT);
-			
-			List<A21IndirectCostRecoveryAccount> a21IcrAccounts = subAccountGlobalDetail.getSubAccount().getA21SubAccount().getA21IndirectCostRecoveryAccounts();
-			List<IndirectCostRecoveryAccount> currentActiveIndirectCostRecoveryAccountList = new ArrayList<IndirectCostRecoveryAccount>();
-			List<IndirectCostRecoveryAccount> existingICRs = new ArrayList<IndirectCostRecoveryAccount>(); 
-			List<IndirectCostRecoveryAccount> existingICRsWorkList = new ArrayList<IndirectCostRecoveryAccount>();
-			
-			for (A21IndirectCostRecoveryAccount a21ICRAccount : a21IcrAccounts) {
-				IndirectCostRecoveryAccount icrAcct = new IndirectCostRecoveryAccount();
-				icrAcct.setChartOfAccountsCode(a21ICRAccount.getChartOfAccountsCode());
-				icrAcct.setAccountNumber(a21ICRAccount.getAccountNumber());
-				icrAcct.setIndirectCostRecoveryAccountNumber(a21ICRAccount.getIndirectCostRecoveryAccountNumber());
-				icrAcct.setIndirectCostRecoveryFinCoaCode(a21ICRAccount.getIndirectCostRecoveryFinCoaCode());
-				icrAcct.setAccountLinePercent(a21ICRAccount.getAccountLinePercent());
-				icrAcct.setActive(a21ICRAccount.isActive());
-				existingIcrAccounts.add(icrAcct);
-			}
-
-			for (IndirectCostRecoveryAccount icrAccount : existingIcrAccounts) {
-				existingICRsWorkList.add(icrAccount);
-			}
-			
-			List<IndirectCostRecoveryAccountChange> newICRs = newIcrAccounts;
-			List<IndirectCostRecoveryAccount> updateActive = new ArrayList<IndirectCostRecoveryAccount>();
-			List<IndirectCostRecoveryAccount> addActive = new ArrayList<IndirectCostRecoveryAccount>();
-
-
-			if (newIcrAccounts.size() > 0) {
-				for (IndirectCostRecoveryAccountChange newICR : newICRs) {
-					boolean found = false;
-					existingICRs.clear();
-					for (IndirectCostRecoveryAccount icrAccount : existingICRsWorkList) {
-						existingICRs.add(icrAccount);
-					}
-					
-					IndirectCostRecoveryAccount tempIcrAccount = null;
-					int i = 0;
-					
-					while(i < existingICRs.size() && (!found || (found && ObjectUtils.isNotNull(tempIcrAccount))) ){
-						IndirectCostRecoveryAccount existingICR = existingICRs.get(i);
-						
-						if (existingICR.getIndirectCostRecoveryFinCoaCode().equalsIgnoreCase(newICR.getIndirectCostRecoveryFinCoaCode()) 
-								&& existingICR.getIndirectCostRecoveryAccountNumber().equalsIgnoreCase(newICR.getIndirectCostRecoveryAccountNumber()) 
-								&& existingICR.getAccountLinePercent().equals(newICR.getAccountLinePercent())) {
-							
-							found = true;
-							if (newICR.isActive() == existingICR.isActive()) {
-								// both have the same active indicator, save in
-								// a temp and keep looking
-								tempIcrAccount = existingICR;
-							} else {
-								// done stop looking
-								if (newICR.isActive()) {
-									// add to update active
-									IndirectCostRecoveryAccount icrAccount = createIndirectCostRecoveryAccountFromChange(
-											subAccountGlobalDetail, newICR);
-									updateActive.add(icrAccount);
-								}
-								
-								existingICRsWorkList.remove(existingICR);
-								if(ObjectUtils.isNotNull(tempIcrAccount)){
-									tempIcrAccount = null;
-								}
-							}
-						}
-						
-						i++;
-					}
-
-					if (found && ObjectUtils.isNotNull(tempIcrAccount)) {
-						// done stop looking
-						if (tempIcrAccount.isActive()) {
-							// add to update active
-							IndirectCostRecoveryAccount icrAccount = createIndirectCostRecoveryAccountFromChange(subAccountGlobalDetail, newICR);
-							updateActive.add(icrAccount);
-						} 
-
-						existingICRsWorkList.remove(tempIcrAccount);
-					}
-
-					if (!found) {
-						// done stop looking
-						if (newICR.isActive()) {
-							// add to update active
-							IndirectCostRecoveryAccount icrAccount = createIndirectCostRecoveryAccountFromChange(subAccountGlobalDetail, newICR);
-							addActive.add(icrAccount);
-						}
-					}
-				}
-				
-				if (updateActive.size() > 0) {
-					for (IndirectCostRecoveryAccount icrAccount : updateActive) {
-						currentActiveIndirectCostRecoveryAccountList.add(icrAccount);
-					}
-				}
-
-				if (addActive.size() > 0) {
-					for (IndirectCostRecoveryAccount icrAccount : addActive) {
-						currentActiveIndirectCostRecoveryAccountList.add(icrAccount);
-					}
-				}
-
-				if (ObjectUtils.isNotNull(existingICRsWorkList) && !existingICRsWorkList.isEmpty()) {
-					for (IndirectCostRecoveryAccount icrAccount : existingICRsWorkList) {
-						if (icrAccount.isActive()) {
-							currentActiveIndirectCostRecoveryAccountList.add(icrAccount);
-						}
-					}
-				}
-
-				if ((ObjectUtils.isNull(currentActiveIndirectCostRecoveryAccountList) || (currentActiveIndirectCostRecoveryAccountList.size() == 0))) {
-					return true;
-				}
-
-				BigDecimal totalDistribution = BigDecimal.ZERO;
-
-				if (ObjectUtils.isNotNull(currentActiveIndirectCostRecoveryAccountList) && (currentActiveIndirectCostRecoveryAccountList.size() > 0)) {
-					for (IndirectCostRecoveryAccount icra : currentActiveIndirectCostRecoveryAccountList) {
-						totalDistribution = totalDistribution.add(icra.getAccountLinePercent());
-					}
-				}
-
-				// check the total distribution is 100
-				if (totalDistribution.compareTo(BD100) != 0) {
-					putFieldError(CUKFSPropertyConstants.SUB_ACCOUNT_GLBL_CHANGE_DETAILS, CUKFSKeyConstants.ERROR_DOCUMENT_GLB_MAINT_ICR_ACCOUNT_TOTAL_NOT_100_PERCENT, new String[] { subAccountGlobalDetail.getChartOfAccountsCode() + "-"+ subAccountGlobalDetail.getAccountNumber() + "-" + subAccountGlobalDetail.getSubAccountNumber() });
-					result &= false;
+			for (GlobalBusinessObjectDetailBase globalDetail : globalObjectWithIndirectCostRecoveryAccounts.getGlobalObjectDetailsAndIcrAccountsMap().keySet()) {
+				if (!checkICRAccuntTotalDistributionOnDetailWillBe100PercentAfterUpdate(globalObjectWithIndirectCostRecoveryAccounts.getIndirectCostRecoveryAccounts(), globalObjectWithIndirectCostRecoveryAccounts.getGlobalObjectDetailsAndIcrAccountsMap().get(globalDetail), globalDetail, globalObjectWithIndirectCostRecoveryAccounts)) {
+					putFieldError(globalObjectWithIndirectCostRecoveryAccounts.getGlobalDetailsPropertyName(), CUKFSKeyConstants.ERROR_DOCUMENT_GLB_MAINT_ICR_ACCOUNT_TOTAL_NOT_100_PERCENT, new String[] { buildMessageFromPrimaryKey(globalDetail) });
+					result = false;
 				}
 			}
 		}
@@ -336,33 +187,164 @@ public class GlobalIndirectCostRecoveryAccountsRule extends GlobalDocumentRuleBa
 		return result;
 	}
 	
-	/**
-	 * Creates an IndirectCostRecoveryAccount from the global icr change object.
-	 * 
-	 * @param subAccountGlobalDetail
-	 * @param newICR
-	 * @return an IndirectCostRecoveryAccount
-	 */
-	private IndirectCostRecoveryAccount createIndirectCostRecoveryAccountFromChange(SubAccountGlobalDetail subAccountGlobalDetail, IndirectCostRecoveryAccountChange newICR){
-		String chart = subAccountGlobalDetail.getChartOfAccountsCode();
-		String account = subAccountGlobalDetail.getAccountNumber();
-		
-		IndirectCostRecoveryAccount icrAccount = new IndirectCostRecoveryAccount();
-		icrAccount.setAccountNumber(account);
-		icrAccount.setChartOfAccountsCode(chart);
-		icrAccount.setIndirectCostRecoveryAccountNumber(newICR.getIndirectCostRecoveryAccountNumber());
-		icrAccount.setIndirectCostRecoveryFinCoaCode(newICR.getIndirectCostRecoveryFinCoaCode());
-		icrAccount.setActive(newICR.isActive());
-		icrAccount.setAccountLinePercent(newICR.getAccountLinePercent());
-		
-		return icrAccount;
-	}
 
-	/**
-	 * Gets the subFundGroupService.
-	 * 
-	 * @return subFundGroupService
-	 */
+	protected boolean checkICRAccuntTotalDistributionOnDetailWillBe100PercentAfterUpdate(List<IndirectCostRecoveryAccountChange> icrUpdates, List<IndirectCostRecoveryAccount> existingICRs, GlobalBusinessObjectDetailBase globalDetail, GlobalObjectWithIndirectCostRecoveryAccounts globalObjectWithIndirectCostRecoveryAccounts) {
+		List<IndirectCostRecoveryAccount> currentActiveIndirectCostRecoveryAccountList = buildCurrentActiveICRAccountsAfterICRUpdates(icrUpdates, existingICRs, globalDetail, globalObjectWithIndirectCostRecoveryAccounts);
+
+		if ((ObjectUtils.isNull(currentActiveIndirectCostRecoveryAccountList) || (currentActiveIndirectCostRecoveryAccountList.size() == 0))) {
+			return true;
+		} else {
+
+			if (totalDistributionOnUpdatedActiveICRsIs100Percent(currentActiveIndirectCostRecoveryAccountList)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+	
+
+	protected boolean totalDistributionOnUpdatedActiveICRsIs100Percent(List<IndirectCostRecoveryAccount> currentActiveIndirectCostRecoveryAccountList) {
+		BigDecimal totalDistribution =  computeTotalDistribution(currentActiveIndirectCostRecoveryAccountList);
+		if (totalDistribution.compareTo(ONE_HUNDRED_PERCENT) == 0) {
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+
+	protected BigDecimal computeTotalDistribution(List<IndirectCostRecoveryAccount> currentActiveIndirectCostRecoveryAccountList) {
+		BigDecimal totalDistribution = BigDecimal.ZERO;
+		if (ObjectUtils.isNotNull(currentActiveIndirectCostRecoveryAccountList) && (currentActiveIndirectCostRecoveryAccountList.size() > 0)) {
+			for (IndirectCostRecoveryAccount icra : currentActiveIndirectCostRecoveryAccountList) {
+				totalDistribution = totalDistribution.add(icra.getAccountLinePercent());
+			}
+		}
+		return totalDistribution;
+	}
+	
+
+    protected List<IndirectCostRecoveryAccount> buildCurrentActiveICRAccountsAfterICRUpdates(List<IndirectCostRecoveryAccountChange> icrUpdates, List<IndirectCostRecoveryAccount> existingIcrAccounts, GlobalBusinessObjectDetailBase globalDetail, GlobalObjectWithIndirectCostRecoveryAccounts globalObjectWithIndirectCostRecoveryAccounts){
+    	List<IndirectCostRecoveryAccount> currentActiveIndirectCostRecoveryAccountList = new ArrayList<IndirectCostRecoveryAccount>();				
+		List<IndirectCostRecoveryAccount> existingICRsToBeUpdated = new ArrayList<IndirectCostRecoveryAccount>(); 
+		List<IndirectCostRecoveryAccount> icrAccountsNotUpdated = new ArrayList<IndirectCostRecoveryAccount>();
+
+		for (IndirectCostRecoveryAccount icrAccount : existingIcrAccounts) {
+			icrAccountsNotUpdated.add(icrAccount);
+		}
+		
+		List<IndirectCostRecoveryAccount> icrAccountsToBeUpdatedToActive = new ArrayList<IndirectCostRecoveryAccount>();
+		List<IndirectCostRecoveryAccount> icrAccountsToBeAddedAsActive = new ArrayList<IndirectCostRecoveryAccount>();
+
+
+		if (icrUpdates.size() > 0) {
+			//for each new icr on account global doc search for a matching icr on account to be updated
+			for (IndirectCostRecoveryAccountChange newICR : icrUpdates) {
+				boolean found = false;
+				existingICRsToBeUpdated.clear();
+				for (IndirectCostRecoveryAccount icrAccount : icrAccountsNotUpdated) {
+					existingICRsToBeUpdated.add(icrAccount);
+				}
+				
+				IndirectCostRecoveryAccount tempIcrAccount = null;
+				int i = 0;
+				
+				while(i < existingICRsToBeUpdated.size() && (!found || (found && ObjectUtils.isNotNull(tempIcrAccount))) ){
+					IndirectCostRecoveryAccount existingICR = existingICRsToBeUpdated.get(i);
+					
+					if (newICR.matchesICRAccount(existingICR)) {
+						
+						found = true;
+						if (newICR.isActive() == existingICR.isActive()) {
+							// both have the same active indicator, save in
+							// a temp and keep looking
+							tempIcrAccount = existingICR;
+						} else {
+							// done stop looking
+							if (newICR.isActive()) {
+								
+								// add to update active
+								IndirectCostRecoveryAccount icrAccount =  globalObjectWithIndirectCostRecoveryAccounts.createIndirectCostRecoveryAccountFromChange(globalDetail, newICR);
+								icrAccountsToBeUpdatedToActive.add(icrAccount);
+							}
+							
+							icrAccountsNotUpdated.remove(existingICR);
+							if(ObjectUtils.isNotNull(tempIcrAccount)){
+								tempIcrAccount = null;
+							}
+						}
+					}
+					
+					i++;
+				}
+
+				if (found && ObjectUtils.isNotNull(tempIcrAccount)) {
+					// done stop looking
+					if (tempIcrAccount.isActive()) {
+						// add to update active
+						IndirectCostRecoveryAccount icrAccount = globalObjectWithIndirectCostRecoveryAccounts.createIndirectCostRecoveryAccountFromChange(globalDetail, newICR);
+						icrAccountsToBeUpdatedToActive.add(icrAccount);
+					} 
+
+					icrAccountsNotUpdated.remove(tempIcrAccount);
+				}
+
+				if (!found) {
+					// done stop looking
+					if (newICR.isActive()) {
+						// add to update active
+						IndirectCostRecoveryAccount icrAccount = globalObjectWithIndirectCostRecoveryAccounts.createIndirectCostRecoveryAccountFromChange(globalDetail, newICR);
+						icrAccountsToBeAddedAsActive.add(icrAccount);
+					}
+				}
+			}
+			
+			if (icrAccountsToBeUpdatedToActive.size() > 0) {
+				for (IndirectCostRecoveryAccount icrAccount : icrAccountsToBeUpdatedToActive) {
+					currentActiveIndirectCostRecoveryAccountList.add(icrAccount);
+				}
+			}
+
+			if (icrAccountsToBeAddedAsActive.size() > 0) {
+				for (IndirectCostRecoveryAccount icrAccount : icrAccountsToBeAddedAsActive) {
+					currentActiveIndirectCostRecoveryAccountList.add(icrAccount);
+				}
+			}
+
+			if (ObjectUtils.isNotNull(icrAccountsNotUpdated) && !icrAccountsNotUpdated.isEmpty()) {
+				for (IndirectCostRecoveryAccount icrAccount : icrAccountsNotUpdated) {
+					if (icrAccount.isActive()) {
+						currentActiveIndirectCostRecoveryAccountList.add(icrAccount);
+					}
+				}
+			}
+		}
+		
+		return  currentActiveIndirectCostRecoveryAccountList;
+    }
+
+	private String buildMessageFromPrimaryKey(GlobalBusinessObjectDetailBase detail){
+		StringBuffer message = new StringBuffer();
+		if(detail instanceof AccountGlobalDetail){
+			AccountGlobalDetail accountGlobalDetail = (AccountGlobalDetail)detail;
+			message.append(accountGlobalDetail.getChartOfAccountsCode());
+			message.append("-");
+			message.append(accountGlobalDetail.getAccountNumber());
+		}
+		
+		if(detail instanceof SubAccountGlobalDetail){
+			SubAccountGlobalDetail subAccountGlobalDetail = (SubAccountGlobalDetail)detail;
+			message.append(subAccountGlobalDetail.getChartOfAccountsCode());
+			message.append("-");
+			message.append(subAccountGlobalDetail.getAccountNumber());
+			message.append("-");
+			message.append(subAccountGlobalDetail.getSubAccountNumber());
+		}
+		return message.toString();
+	}	
+
 	public SubFundGroupService getSubFundGroupService() {
 		if (subFundGroupService == null) {
 			subFundGroupService = SpringContext.getBean(SubFundGroupService.class);
@@ -370,21 +352,10 @@ public class GlobalIndirectCostRecoveryAccountsRule extends GlobalDocumentRuleBa
 		return subFundGroupService;
 	}
 
-	/**
-	 * Sets the subFundGroupService.
-	 * 
-	 * @param subFundGroupService
-	 */
 	public void setSubFundGroupService(SubFundGroupService subFundGroupService) {
 		this.subFundGroupService = subFundGroupService;
 	}
 
-	/**
-	 * Gets the DD attribute label.
-	 * 
-	 * @param attribute the DD attribute label
-	 * @return
-	 */
 	protected String getDDAttributeLabel(String attribute) {
 		return ddService.getAttributeLabel(IndirectCostRecoveryAccount.class, attribute);
 	}

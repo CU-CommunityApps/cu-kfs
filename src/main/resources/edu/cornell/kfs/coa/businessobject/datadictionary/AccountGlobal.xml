@@ -10,9 +10,52 @@
     <property name="attributes">
       <list merge = "true">
         <ref bean="AccountGlobal-majorReportingCategoryCode"/>
+        <ref bean="AccountGlobal-accountPhysicalCampusCode"/>
+        <ref bean="AccountGlobal-accountEffectiveDate"/>
+        <ref bean="AccountGlobal-accountOffCampusIndicator"/>
+        <ref bean="AccountGlobal-closed"/>
+        <ref bean="AccountGlobal-accountTypeCode"/>
+        <ref bean="AccountGlobal-appropriationAccountNumber"/>
+        <ref bean="AccountGlobal-accountsFringesBnftIndicator"/>
+        <ref bean="AccountGlobal-reportsToChartOfAccountsCode"/>
+        <ref bean="AccountGlobal-reportsToAccountNumber"/>
+        <ref bean="AccountGlobal-accountRestrictedStatusCode"/>
+        <ref bean="AccountGlobal-accountRestrictedStatusDate"/>
+        <ref bean="AccountGlobal-endowmentIncomeAcctFinCoaCd"/>
+        <ref bean="AccountGlobal-endowmentIncomeAccountNumber"/>
+        <ref bean="AccountGlobal-programCode"/>
+        <ref bean="AccountGlobal-budgetRecordingLevelCode"/>
+        <ref bean="AccountGlobal-extrnlFinEncumSufficntFndIndicator"/>
+        <ref bean="AccountGlobal-intrnlFinEncumSufficntFndIndicator"/>
+        <ref bean="AccountGlobal-finPreencumSufficientFundIndicator"/>
+        <ref bean="AccountGlobal-financialObjectivePrsctrlIndicator"/>
+        <ref bean="AccountGlobal-contractControlFinCoaCode"/>
+        <ref bean="AccountGlobal-contractControlAccountNumber"/>
+        <ref bean="AccountGlobal-acctIndirectCostRcvyTypeCd"/>
+        <ref bean="AccountGlobal-contractsAndGrantsAccountResponsibilityId"/>
+        <ref bean="AccountGlobal-invoiceFrequencyCode"/>
+        <ref bean="AccountGlobal-invoiceTypeCode"/>
+        <ref bean="AccountGlobal-costShareForProjectNumber"/>
+        <ref bean="AccountGlobal-removeAccountExpirationDate"/>
+        <ref bean="AccountGlobal-removeContinuationChartAndAccount"/>
+        <ref bean="AccountGlobal-financialIcrSeriesIdentifier"/>
+        <ref bean="AccountGlobal-everify"/>
+        <ref bean="AccountGlobal-removeIncomeStreamChartAndAccount"/>
       </list>
     </property>
+    <property name="relationships">
+      <list merge="true">
+        <bean parent="RelationshipDefinition" p:objectAttributeName="accountPhysicalCampus">
+			<property name="primitiveAttributes">
+		    	<list>
+		        	<bean parent="PrimitiveAttributeDefinition" p:sourceName="accountPhysicalCampusCode" p:targetName="code" />
+		        </list>
+		    </property>
+		</bean> 
+      </list>
+      </property>
   </bean>
+  
 
   <!-- Attribute Definitions -->
   <bean id="AccountGlobal-majorReportingCategoryCode" parent="AccountGlobal-majorReportingCategoryCode-parentBean"/>
@@ -20,4 +63,185 @@
     <property name="required" value="false"/>
   </bean>
   
+	<bean id="AccountGlobal-accountPhysicalCampusCode" parent="AccountGlobal-accountPhysicalCampusCode-parentBean" />
+	<bean id="AccountGlobal-accountPhysicalCampusCode-parentBean" abstract="true"
+		parent="Account-accountPhysicalCampusCode">
+	</bean>
+	
+	<bean id="AccountGlobal-accountEffectiveDate" parent="AccountGlobal-accountEffectiveDate-parentBean" />
+	<bean id="AccountGlobal-accountEffectiveDate-parentBean" abstract="true"
+		parent="Account-accountEffectiveDate">
+	</bean>
+	
+	<bean id="AccountGlobal-accountOffCampusIndicator" parent="AccountGlobal-accountOffCampusIndicator-parentBean" />
+	<bean id="AccountGlobal-accountOffCampusIndicator-parentBean" abstract="true"
+		parent="Account-accountOffCampusIndicator">
+	</bean>
+	
+	<bean id="AccountGlobal-closed" parent="AccountGlobal-closed-parentBean" />
+	<bean id="AccountGlobal-closed-parentBean" abstract="true"
+		parent="Account-closed">
+	</bean>
+	
+	<bean id="AccountGlobal-accountTypeCode" parent="AccountGlobal-accountTypeCode-parentBean" />
+	<bean id="AccountGlobal-accountTypeCode-parentBean" abstract="true"
+		parent="Account-accountTypeCode">
+	</bean>
+	
+	<bean id="AccountGlobal-appropriationAccountNumber" parent="AccountGlobal-appropriationAccountNumber-parentBean" />
+	<bean id="AccountGlobal-appropriationAccountNumber-parentBean" abstract="true" parent="AppropriationAccount-appropriationAccountNumber">
+		<property name="required" value="false"/>
+	</bean>
+		
+	<bean id="AccountGlobal-accountsFringesBnftIndicator" parent="AccountGlobal-accountsFringesBnftIndicator-parentBean" />
+	<bean id="AccountGlobal-accountsFringesBnftIndicator-parentBean" abstract="true"
+		parent="Account-accountsFringesBnftIndicator">
+	</bean>
+	
+	<bean id="AccountGlobal-reportsToChartOfAccountsCode" parent="AccountGlobal-reportsToChartOfAccountsCode-parentBean" />
+	<bean id="AccountGlobal-reportsToChartOfAccountsCode-parentBean" abstract="true"
+		parent="Account-reportsToChartOfAccountsCode">
+	</bean>
+	
+	<bean id="AccountGlobal-reportsToAccountNumber" parent="AccountGlobal-reportsToAccountNumber-parentBean" />
+	<bean id="AccountGlobal-reportsToAccountNumber-parentBean" abstract="true"
+		parent="Account-reportsToAccountNumber">
+	</bean>
+	
+	<bean id="AccountGlobal-accountRestrictedStatusCode" parent="AccountGlobal-accountRestrictedStatusCode-parentBean" />
+	<bean id="AccountGlobal-accountRestrictedStatusCode-parentBean" abstract="true"
+		parent="Account-accountRestrictedStatusCode">
+	</bean>
+	
+	<bean id="AccountGlobal-accountRestrictedStatusDate" parent="AccountGlobal-accountRestrictedStatusDate-parentBean" />
+	<bean id="AccountGlobal-accountRestrictedStatusDate-parentBean" abstract="true"
+		parent="Account-accountRestrictedStatusDate">
+	</bean>
+	
+	<bean id="AccountGlobal-endowmentIncomeAcctFinCoaCd" parent="AccountGlobal-endowmentIncomeAcctFinCoaCd-parentBean" />
+	<bean id="AccountGlobal-endowmentIncomeAcctFinCoaCd-parentBean" abstract="true"
+		parent="Account-endowmentIncomeAcctFinCoaCd">
+	</bean>
+
+	<bean id="AccountGlobal-endowmentIncomeAccountNumber" parent="AccountGlobal-endowmentIncomeAccountNumber-parentBean" />
+	<bean id="AccountGlobal-endowmentIncomeAccountNumber-parentBean" abstract="true"
+		parent="Account-endowmentIncomeAccountNumber">
+	</bean>
+	
+	<bean id="AccountGlobal-programCode" parent="AccountGlobal-programCode-parentBean" />
+	<bean id="AccountGlobal-programCode-parentBean" abstract="true"
+		parent="SubFundProgram-programCode">
+		<property name="required" value="false"/>
+	</bean>
+	
+	<bean id="AccountGlobal-budgetRecordingLevelCode" parent="AccountGlobal-budgetRecordingLevelCode-parentBean" />
+	<bean id="AccountGlobal-budgetRecordingLevelCode-parentBean" abstract="true"
+		parent="Account-budgetRecordingLevelCode">
+	</bean>
+	
+	<bean id="AccountGlobal-extrnlFinEncumSufficntFndIndicator" parent="AccountGlobal-extrnlFinEncumSufficntFndIndicator-parentBean" />
+	<bean id="AccountGlobal-extrnlFinEncumSufficntFndIndicator-parentBean" abstract="true"
+		parent="Account-extrnlFinEncumSufficntFndIndicator">
+	</bean>
+	
+	<bean id="AccountGlobal-intrnlFinEncumSufficntFndIndicator" parent="AccountGlobal-intrnlFinEncumSufficntFndIndicator-parentBean" />
+	<bean id="AccountGlobal-intrnlFinEncumSufficntFndIndicator-parentBean" abstract="true"
+		parent="Account-intrnlFinEncumSufficntFndIndicator">
+	</bean>
+	
+	<bean id="AccountGlobal-finPreencumSufficientFundIndicator" parent="AccountGlobal-finPreencumSufficientFundIndicator-parentBean" />
+	<bean id="AccountGlobal-finPreencumSufficientFundIndicator-parentBean" abstract="true"
+		parent="Account-finPreencumSufficientFundIndicator">
+	</bean>
+	
+	<bean id="AccountGlobal-financialObjectivePrsctrlIndicator" parent="AccountGlobal-financialObjectivePrsctrlIndicator-parentBean" />
+	<bean id="AccountGlobal-financialObjectivePrsctrlIndicator-parentBean" abstract="true"
+		parent="Account-financialObjectivePrsctrlIndicator">
+	</bean>
+	
+	<bean id="AccountGlobal-contractControlFinCoaCode" parent="AccountGlobal-contractControlFinCoaCode-parentBean" />
+	<bean id="AccountGlobal-contractControlFinCoaCode-parentBean" abstract="true"
+		parent="Account-contractControlFinCoaCode">
+	</bean>
+	
+	<bean id="AccountGlobal-contractControlAccountNumber" parent="AccountGlobal-contractControlAccountNumber-parentBean" />
+	<bean id="AccountGlobal-contractControlAccountNumber-parentBean" abstract="true"
+		parent="Account-contractControlAccountNumber">
+	</bean>
+	
+	<bean id="AccountGlobal-acctIndirectCostRcvyTypeCd" parent="AccountGlobal-acctIndirectCostRcvyTypeCd-parentBean" />
+	<bean id="AccountGlobal-acctIndirectCostRcvyTypeCd-parentBean" abstract="true"
+		parent="Account-acctIndirectCostRcvyTypeCd">
+	</bean>
+	
+	<bean id="AccountGlobal-contractsAndGrantsAccountResponsibilityId" parent="AccountGlobal-contractsAndGrantsAccountResponsibilityId-parentBean" />
+	<bean id="AccountGlobal-contractsAndGrantsAccountResponsibilityId-parentBean" abstract="true"
+		parent="Account-contractsAndGrantsAccountResponsibilityId">
+	</bean>
+	
+	<bean id="AccountGlobal-invoiceFrequencyCode" parent="AccountGlobal-invoiceFrequencyCode-parentBean" />
+	<bean id="AccountGlobal-invoiceFrequencyCode-parentBean" abstract="true"
+		parent="InvoiceFrequency-invoiceFrequencyCode">
+	</bean>
+	
+	<bean id="AccountGlobal-invoiceTypeCode" parent="AccountGlobal-invoiceTypeCode-parentBean" />
+	<bean id="AccountGlobal-invoiceTypeCode-parentBean" abstract="true"
+		parent="InvoiceType-invoiceTypeCode">
+	</bean>
+	
+	<bean id="AccountGlobal-costShareForProjectNumber" parent="AccountGlobal-costShareForProjectNumber-parentBean" />
+	<bean id="AccountGlobal-costShareForProjectNumber-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="costShareForProjectNumber"/>
+    <property name="forceUppercase" value="true"/>
+    <property name="label" value="Cost Share for Project Number"/>
+    <property name="shortLabel" value="Cost Share"/>
+    <property name="maxLength" value="12"/>
+    <property name="validationPattern">
+      <ref bean="NumericValidation" />
+    </property>
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="14"/>
+    </property>
+	</bean>
+	
+	<bean id="AccountGlobal-removeAccountExpirationDate" parent="AccountGlobal-removeAccountExpirationDate-parentBean" />
+
+	<bean id="AccountGlobal-removeAccountExpirationDate-parentBean"
+		abstract="true" parent="GenericAttributes-activeIndicator">
+		<property name="name" value="removeAccountExpirationDate" />
+		<property name="label"
+			value="Remove Account Expiration Date" />
+		<property name="shortLabel" value="Remove Acct Exp Dt" />
+	</bean>
+	
+    <bean id="AccountGlobal-removeContinuationChartAndAccount" parent="AccountGlobal-removeContinuationChartAndAccount-parentBean" />
+
+	<bean id="AccountGlobal-removeContinuationChartAndAccount-parentBean"
+		abstract="true" parent="GenericAttributes-activeIndicator">
+		<property name="name" value="removeContinuationChartAndAccount" />
+		<property name="label"
+			value="Remove Continuation Chart and Account" />
+		<property name="shortLabel" value="Remove Cnt Chart and Acct" />
+	</bean>
+	
+    <bean id="AccountGlobal-financialIcrSeriesIdentifier" parent="AccountGlobal-financialIcrSeriesIdentifier-parentBean" />
+	<bean id="AccountGlobal-financialIcrSeriesIdentifier-parentBean" abstract="true"
+		parent="Account-financialIcrSeriesIdentifier">
+	</bean>
+	
+	<bean id="AccountGlobal-everify" parent="AccountGlobal-everify-parentBean" />
+	<bean id="AccountGlobal-everify-parentBean" abstract="true"
+		parent="AccountExtendedAttribute-everify">
+	</bean>
+	
+	<bean id="AccountGlobal-removeIncomeStreamChartAndAccount" parent="AccountGlobal-removeIncomeStreamChartAndAccount-parentBean" />
+
+	<bean id="AccountGlobal-removeIncomeStreamChartAndAccount-parentBean"
+		abstract="true" parent="GenericAttributes-activeIndicator">
+		<property name="name" value="removeIncomeStreamChartAndAccount" />
+		<property name="label"
+			value="Remove Income Stream Chart and Account" />
+		<property name="shortLabel" value="Remove Inc Str Chart and Acct" />
+	</bean>
+
 </beans>
