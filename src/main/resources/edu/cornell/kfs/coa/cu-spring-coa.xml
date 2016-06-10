@@ -73,12 +73,12 @@
 	    <property name="businessObjectDaoOjb" ref="businessObjectDaoOjb"/>
 	</bean>
 	-->
-	
+
 	<bean id="businessObjectDaoOjb" parent="platformAwareDao" class="org.kuali.kfs.krad.dao.impl.BusinessObjectDaoOjb">
-	  	<!-- Constructor injection only please to help enforce completeness of instances -->
-	  	<constructor-arg ref="persistenceStructureService"/>
-    </bean>
-	
+		<!-- Constructor injection only please to help enforce completeness of instances -->
+		<constructor-arg ref="persistenceStructureService"/>
+	</bean>
+
     <bean id="lookupDaoOjb" parent="platformAwareDao" class="org.kuali.kfs.krad.dao.impl.LookupDaoOjb">
         <property name="persistenceStructureService" ref="persistenceStructureService"/>
         <property name="dateTimeService" ref="dateTimeService"/>

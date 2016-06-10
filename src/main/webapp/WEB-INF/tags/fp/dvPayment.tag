@@ -1,17 +1,20 @@
 <%--
- Copyright 2007-2009 The Kuali Foundation
- 
- Licensed under the Educational Community License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
- 
- http://www.opensource.org/licenses/ecl2.php
- 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   -
+   - Copyright 2005-2014 The Kuali Foundation
+   -
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   -
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   -
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
@@ -24,9 +27,8 @@
 
 
 <kul:tab tabTitle="Payment Information" defaultOpen="true" tabErrorKey="${KFSConstants.DV_PAYMENT_TAB_ERRORS},document.disbVchrPaymentMethodCode,${KFSConstants.DV_PAYEE_TAB_ERRORS},document.dvPayeeDetail.disbursementVoucherPayeeTypeCode">
-    <div class="tab-container" align=center > 
-        <h3>Payment Information</h3>
-		<table cellpadding=0 class="datatable" summary="Payment Section">			            
+    <div class="tab-container">
+		<table class="datatable standard" summary="Payment Section">
             <tr>
               <th class="bord-l-b"><div align="right">
               	<kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrPaymentReasonCode}"/>
@@ -90,22 +92,7 @@
                 </c:if>
               </td>
             </tr>
-            
-<%--             <tr>
-              <th class="bord-l-b"><div align="right">
-              	<kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrPayeeIdNumber}"/>           	
-              </div></th>
-              <td colspan="3" class="datacell">              	
-                <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrPayeeIdNumber}" property="document.dvPayeeDetail.disbVchrPayeeIdNumber" readOnly="true" /> 
-                <kul:htmlControlAttribute attributeEntry="${payeeAttributesEx.disbVchrPayeeIdType}" property="document.dvPayeeDetail.extension.disbVchrPayeeIdTypeDisplay" readOnly="true" />
-                <c:if test="${fullEntryMode}">
-	                <kul:lookup boClassName="edu.cornell.kfs.fp.businessobject.CuDisbursementPayee"
-	                	fieldConversions="payeeIdNumber:document.dvPayeeDetail.disbVchrPayeeIdNumber,payeeTypeCode:document.dvPayeeDetail.disbursementVoucherPayeeTypeCode,paymentReasonCode:document.dvPayeeDetail.disbVchrPaymentReasonCode"
-	                	/>
-                </c:if>
-              </td>
-            </tr> --%>
-		
+
             <tr>
               <th class="bord-l-b">
               	<div align="right"><kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbursementVoucherPayeeTypeName}"/></div>
@@ -282,14 +269,24 @@
               <td  class="datacell">
                 <kul:htmlControlAttribute attributeEntry="${dvAttributes.disbursementVoucherDocumentationLocationCode}" property="document.disbursementVoucherDocumentationLocationCode" extraReadOnlyProperty="document.disbursementVoucherDocumentationLocationName" onchange="documentationMessage(this.value);" readOnly="${!fullEntryMode}"/>
                 <c:if test="${fullEntryMode}">
-              		<kul:lookup boClassName="org.kuali.kfs.fp.businessobject.DisbursementVoucherDocumentationLocation" fieldConversions="disbursementVoucherDocumentationLocationCode:document.disbursementVoucherDocumentationLocationCode" 
-              		lookupParameters="document.disbursementVoucherDocumentationLocationCode:disbursementVoucherDocumentationLocationCode" />
+              		<kul:lookup boClassName="org.kuali.kfs.sys.businessobject.PaymentDocumentationLocation" fieldConversions="paymentDocumentationLocationCode:document.disbursementVoucherDocumentationLocationCode"
+              		lookupParameters="document.disbursementVoucherDocumentationLocationCode:paymentDocumentationLocationCode" />
               	</c:if>
               </td>
             </tr>
             <tr>
               <th scope="row"><div align="right"><kul:htmlAttributeLabel attributeEntry="${dvAttributes.disbVchrCheckStubText}"/></div></th>
-              <td colspan="3"><kul:htmlControlAttribute attributeEntry="${dvAttributes.disbVchrCheckStubText}" property="document.disbVchrCheckStubText" readOnly="${!fullEntryMode && !paymentHandlingEntryMode}"/></td>
+              <td><kul:htmlControlAttribute attributeEntry="${dvAttributes.disbVchrCheckStubText}" property="document.disbVchrCheckStubText" readOnly="${!fullEntryMode && !paymentHandlingEntryMode}"/></td>
+				<c:choose>
+					<c:when test="${achAccountInfoDisplayed}">
+						<th align=right valign=middle class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${dvAttributes.achSignUpStatusFlag}" /></div></th>
+						<td align=left valign=middle class="datacell"><kul:htmlControlAttribute property="document.achSignUpStatusFlag" attributeEntry="${dvAttributes.achSignUpStatusFlag}" readOnly="true" /></td>
+					</c:when>
+					<c:otherwise>
+						<th align=right valign=middle class="bord-l-b">&nbsp;</th>
+						<td align=left valign=middle class="datacell">&nbsp;</td>
+					</c:otherwise>
+				</c:choose>
             </tr>
         </table>
      </div>

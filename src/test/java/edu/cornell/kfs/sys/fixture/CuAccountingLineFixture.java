@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.kfs.sys.fixture;
+package edu.cornell.kfs.sys.fixture;
 
 import static org.kuali.kfs.sys.KFSConstants.GL_CREDIT_CODE;
 import static org.kuali.kfs.sys.KFSConstants.GL_DEBIT_CODE;
@@ -26,7 +26,7 @@ import org.kuali.kfs.sys.context.TestUtils;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
-public enum AccountingLineFixture {
+public enum CuAccountingLineFixture {
     ST_LINE_1(1, "IT", "R704750", "AC", "", "5200", "", "", "", "", "", "", "", GL_DEBIT_CODE, "6916.68"),
     ST_LINE_2(1, "IT", "L683714", "AC", "", "5200", "", "", "", "", "", "", "", GL_CREDIT_CODE, "6916.68"),
     ICA_LINE_1(1, "IT", "G264750", "", "", "9070", "", "", "", "", "", "", "", GL_DEBIT_CODE, "6916.68"),
@@ -50,7 +50,7 @@ public enum AccountingLineFixture {
     public final Integer sequenceNumber;
 
 
-    AccountingLineFixture(Integer sequenceNumber, String chartOfAccountsCode, String accountNumber, String balanceTypeCode, String subAccountNumber, String financialObjectCode, String financialSubObjectCode, String projectCode, String encumbranceUpdateCode, String organizationReferenceId, String referenceOriginCode, String referenceNumber, String referenceTypeCode, String debitCreditCode, String amount) {
+    CuAccountingLineFixture(Integer sequenceNumber, String chartOfAccountsCode, String accountNumber, String balanceTypeCode, String subAccountNumber, String financialObjectCode, String financialSubObjectCode, String projectCode, String encumbranceUpdateCode, String organizationReferenceId, String referenceOriginCode, String referenceNumber, String referenceTypeCode, String debitCreditCode, String amount) {
 
         this.postingYear = TestUtils.getFiscalYearForTesting();
         this.sequenceNumber = sequenceNumber;

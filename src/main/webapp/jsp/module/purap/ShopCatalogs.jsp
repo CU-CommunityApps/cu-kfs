@@ -38,7 +38,7 @@
 
 <%-- ==== CU Customization: Catch exceptions from the "reload" function in case it doesn't exist. ==== --%>
 <body onload="try{reload();}catch(exc){}">
-<c:set var="frameHeight" value="950"/>
+<c:set var="frameHeight" value="1000"/>
 <c:set var="channelUrl" value="${KualiForm.shopUrl}" />
 
 <%-- ==== CU Customization: Wrap a view div around the iframe to allow for proper portal resizing. ==== --%>

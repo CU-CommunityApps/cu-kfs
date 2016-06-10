@@ -32,6 +32,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeTravel;
+import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceRegistrant;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants.TabByReasonCode;
@@ -49,6 +50,7 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.batch.service.PaymentSourceExtractionService;
 import org.kuali.kfs.sys.businessobject.WireCharge;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.service.PayeeACHService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -135,10 +137,24 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
                         clearTravelPerDiem(dvNet);
                     }
                 }
+
+                updateAchSignupStatusFlagForPayee(dvDoc);
             }
         }
 
         return dest;
+    }
+
+    private void updateAchSignupStatusFlagForPayee(
+            DisbursementVoucherDocument dvDoc) {
+        DisbursementVoucherPayeeDetail dvPayee = dvDoc.getDvPayeeDetail();
+        boolean signedupForACH = false;
+        if (dvPayee != null) {
+            String payeeTypeCode = dvPayee.getDisbursementVoucherPayeeTypeCode();
+            String payeeIdNumber = dvPayee.getDisbVchrPayeeIdNumber();
+            signedupForACH = SpringContext.getBean(PayeeACHService.class).isPayeeSignedUpForACH(payeeTypeCode, payeeIdNumber);
+        }
+        dvDoc.setAchSignUpStatusFlag(signedupForACH);
     }
 
     /**

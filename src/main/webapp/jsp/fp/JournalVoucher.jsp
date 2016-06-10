@@ -38,20 +38,19 @@
 	showTabButtons="true">
 	<sys:hiddenDocumentFields />
 	<sys:documentOverview editingMode="${KualiForm.editingMode}" />
-	<!-- JOURNAL VOUCHER SPECIFIC FIELDS -->
+
 	<kul:tab tabTitle="Journal Voucher Details" defaultOpen="true"
 		tabErrorKey="${KFSConstants.EDIT_JOURNAL_VOUCHER_ERRORS}">
 		<div class="tab-container" align=center>
-		<h3>Journal Voucher Details</h3>
-		<table cellpadding=0 class="datatable"
-			summary="Journal Voucher Details">
+		<table cellpadding=0 class="datatable" summary="Journal Voucher Details">
 			<tbody>
 
 				<tr>
-					<th width="35%" class="bord-l-b">
-					<div align="right"><kul:htmlAttributeLabel
-						labelFor="selectedAccountingPeriod" attributeEntry="${journalVoucherAttributes.accountingPeriod}"
-						useShortLabel="false" /></div>
+					<th width="35%" class="right">
+						<kul:htmlAttributeLabel
+								labelFor="selectedAccountingPeriod"
+								attributeEntry="${journalVoucherAttributes.accountingPeriod}"
+								useShortLabel="false"/>
 					</th>
 					<td class="datacell-nowrap">
 					<c:if test="${readOnly or isYearEnd}">
@@ -79,10 +78,10 @@
 					</c:if></td>
 				</tr>
 				<tr>
-					<th width="35%" class="bord-l-b">
-					<div align="right"><kul:htmlAttributeLabel
-						labelFor="" attributeEntry="${journalVoucherAttributes.balanceTypeCode}"
-						useShortLabel="false" /></div>
+					<th width="35%" class="right">
+						<kul:htmlAttributeLabel
+								labelFor="" attributeEntry="${journalVoucherAttributes.balanceTypeCode}"
+								useShortLabel="false" />
 					</th>
 					<td class="datacell-nowrap">
 					<c:if test="${readOnly or isYearEnd}">
@@ -119,7 +118,7 @@
                         attributeEntry="${journalVoucherAttributes.reversalDate}"
                         horizontal="true"
                         width="35%"
-                        />
+                        addClass="right"/>
                     <td class="datacell-nowrap"><kul:htmlControlAttribute
                         attributeEntry="${journalVoucherAttributes.reversalDate}"
                         datePicker="true"
@@ -151,7 +150,8 @@
 		</c:otherwise>
 	</c:choose>
 
-	<kul:tab tabTitle="Accounting Lines" defaultOpen="true" tabErrorKey="${KFSConstants.NEW_SOURCE_LINE_ERRORS}">
+	<kul:tab tabTitle="Accounting Lines" defaultOpen="true" tabErrorKey="${KFSConstants.NEW_SOURCE_LINE_ERRORS}"
+			 helpUrl="${KualiForm.accountingLineImportInstructionsUrl}" helpLabel="Import Templates">
 		<sys-java:accountingLines>
 			<sys-java:accountingLineGroup newLinePropertyName="newSourceLine" collectionPropertyName="document.sourceAccountingLines" collectionItemPropertyName="document.sourceAccountingLine" attributeGroupName="${attributeGroupName}" />
 		</sys-java:accountingLines>
