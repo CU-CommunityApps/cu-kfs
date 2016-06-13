@@ -48,7 +48,7 @@ for the existing misc items." %>
 	<c:if test="${fullEntryMode}">
 		<tr>
 			<td colspan="7" class="subhead">
-				<span class="subhead-left">Add Item <a href="${KualiForm.lineItemImportInstructionsUrl}" target="helpWindow"><img src="${ConfigProperties.kr.externalizable.images.url}my_cp_inf.gif" title="Line Item Import Help" alt="Line Item Import Help" hspace="5" border="0" align="middle" /></a>
+				<span class="subhead-left">Add Item <a href="${KualiForm.lineItemImportInstructionsUrl}" target="helpWindow"><img src="${ConfigProperties.kr.externalizable.images.url}my_cp_inf.png" title="Line Item Import Help" alt="Line Item Import Help" hspace="5" border="0" align="middle" /></a>
 			</td>
 			<td colspan="2" class="subhead" align="right" nowrap="nowrap" style="border-left: none;">
 
