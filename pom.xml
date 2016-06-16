@@ -210,10 +210,24 @@
       </dependency>
       <dependency>
           <groupId>org.kuali.kfs</groupId>
+          <artifactId>kfs-ar</artifactId>
+          <version>${kfs.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.kuali.kfs</groupId>
           <artifactId>kfs-bc</artifactId>
           <version>${kfs.version}</version>
           <type>jar</type>
           <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.kuali.kfs</groupId>
+          <artifactId>kfs-bc</artifactId>
+          <version>${kfs.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
       </dependency>
       <dependency>
           <groupId>org.kuali.kfs</groupId>
@@ -224,10 +238,24 @@
       </dependency>
       <dependency>
           <groupId>org.kuali.kfs</groupId>
+          <artifactId>kfs-cam</artifactId>
+          <version>${kfs.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.kuali.kfs</groupId>
           <artifactId>kfs-cg</artifactId>
           <version>${kfs.version}</version>
           <type>jar</type>
           <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.kuali.kfs</groupId>
+          <artifactId>kfs-cg</artifactId>
+          <version>${kfs.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
       </dependency>
       <dependency>
           <groupId>org.kuali.kfs</groupId>
@@ -245,10 +273,24 @@
       </dependency>
       <dependency>
           <groupId>org.kuali.kfs</groupId>
+          <artifactId>kfs-core</artifactId>
+          <version>${kfs.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.kuali.kfs</groupId>
           <artifactId>kfs-ec</artifactId>
           <version>${kfs.version}</version>
           <type>jar</type>
           <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.kuali.kfs</groupId>
+          <artifactId>kfs-ec</artifactId>
+          <version>${kfs.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
       </dependency>
       <dependency>
           <groupId>org.kuali.kfs</groupId>
@@ -259,10 +301,24 @@
       </dependency>
       <dependency>
           <groupId>org.kuali.kfs</groupId>
+          <artifactId>kfs-kc</artifactId>
+          <version>${kfs.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.kuali.kfs</groupId>
           <artifactId>kfs-ld</artifactId>
           <version>${kfs.version}</version>
           <type>jar</type>
           <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.kuali.kfs</groupId>
+          <artifactId>kfs-ld</artifactId>
+          <version>${kfs.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
       </dependency>
       <dependency>
           <groupId>org.kuali.kfs</groupId>
@@ -273,10 +329,24 @@
       </dependency>
       <dependency>
           <groupId>org.kuali.kfs</groupId>
+          <artifactId>kfs-purap</artifactId>
+          <version>${kfs.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.kuali.kfs</groupId>
           <artifactId>kfs-tem</artifactId>
           <version>${kfs.version}</version>
           <type>jar</type>
           <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.kuali.kfs</groupId>
+          <artifactId>kfs-tem</artifactId>
+          <version>${kfs.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
       </dependency>
       <dependency>
           <groupId>org.kuali.kfs</groupId>
@@ -287,13 +357,6 @@
       <dependency>
           <groupId>org.kuali.kfs</groupId>
           <artifactId>kfs-web</artifactId>
-          <version>${kfs.version}</version>
-          <type>test-jar</type>
-          <scope>test</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.kuali.kfs</groupId>
-          <artifactId>kfs-core</artifactId>
           <version>${kfs.version}</version>
           <type>test-jar</type>
           <scope>test</scope>
