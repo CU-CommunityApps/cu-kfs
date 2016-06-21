@@ -585,4 +585,6 @@
         <property name="titleKey" value="message.batchUpload.title.achIncome"/>
         <property name="processor" ref="advanceDepositService"/>
     </bean>
+    
+    <bean id="scheduledAccountingLineService" class="edu.cornell.kfs.fp.service.impl.ScheduledAccountingLineServiceImpl"/>
 </beans>
