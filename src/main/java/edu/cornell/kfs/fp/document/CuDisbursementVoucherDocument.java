@@ -88,8 +88,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     protected String tripId;
 
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
-    private static DisbursementVoucherPayeeService disbursementVoucherPayeeService;
-    private static DisbursementVoucherTaxService disbursementVoucherTaxService;
 
     public CuDisbursementVoucherDocument() {
         super();
@@ -535,27 +533,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         }
     }
 
-    protected CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
-        if ( paymentMethodGeneralLedgerPendingEntryService == null ) {
-            paymentMethodGeneralLedgerPendingEntryService = SpringContext.getBean(CUPaymentMethodGeneralLedgerPendingEntryService.class);
-        }
-        return paymentMethodGeneralLedgerPendingEntryService;
-    }
-
-    protected DisbursementVoucherTaxService getDisbursementVoucherTaxService() {
-        if ( disbursementVoucherTaxService == null ) {
-            disbursementVoucherTaxService = SpringContext.getBean(DisbursementVoucherTaxService.class);
-        }
-        return disbursementVoucherTaxService;
-    }
-
-    protected DisbursementVoucherPayeeService getDisbursementVoucherPayeeService() {
-        if ( disbursementVoucherPayeeService == null ) {
-            disbursementVoucherPayeeService = SpringContext.getBean(DisbursementVoucherPayeeService.class);
-        }
-        return disbursementVoucherPayeeService;
-    }
-
     public CuDisbursementVoucherPayeeDetail getDvPayeeDetail() {
         return dvPayeeDetail;
     }
@@ -597,50 +574,15 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
         KNSGlobalVariables.getMessageList().clear();
         getDvPayeeDetail().setDisbVchrPayeeIdNumber(payeeidNumber);
-        initiateDocument();
-
-        clearFieldsThatShouldNotBeCopied();
-
-        // clear nra
-        getDisbursementVoucherTaxService().clearNRATaxLines(this);
-        setDvNonResidentAlienTax(new DisbursementVoucherNonResidentAlienTax());
-
-        // clear waive wire
-        getWireTransfer().setWireTransferFeeWaiverIndicator(false);
-        clearInvalidPayee();
-
-
-        // this copied DV has not been extracted
-        this.extractDate = null;
-        this.paidDate = null;
-        this.cancelDate = null;
-        getFinancialSystemDocumentHeader().setFinancialDocumentStatusCode(KFSConstants.DocumentStatusCodes.INITIATED);
     }
 
     /**
      * Clear fields that shouldn't be copied to to the new DV.
      */
     protected void clearFieldsThatShouldNotBeCopied() {
-        setDisbVchrContactPhoneNumber(StringUtils.EMPTY);
-        setDisbVchrContactEmailId(StringUtils.EMPTY);
-        setDisbVchrPayeeTaxControlCode(StringUtils.EMPTY);
+        super.clearFieldsThatShouldNotBeCopied();
         setTripAssociationStatusCode(CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC);
         setTripId(null);
-    }
-
-    protected void clearInvalidPayee() {
-        // check vendor id number to see if still valid, if not, clear dvPayeeDetail; otherwise, use the current dvPayeeDetail as is
-        if (!StringUtils.isBlank(getDvPayeeDetail().getDisbVchrPayeeIdNumber())) {
-            VendorDetail vendorDetail = getVendorService().getVendorDetail(dvPayeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger(), dvPayeeDetail.getDisbVchrVendorDetailAssignedIdNumberAsInteger());
-            if (vendorDetail == null) {
-                clearPayee(KFSKeyConstants.WARNING_DV_PAYEE_NONEXISTANT_CLEARED);
-            } else {
-                DisbursementPayee payee = getDisbursementVoucherPayeeService().getPayeeFromVendor(vendorDetail);
-                if (!getDvPymentReasonService().isPayeeQualifiedForPayment(payee, dvPayeeDetail.getDisbVchrPaymentReasonCode())) {
-                    clearPayee(CUKFSKeyConstants.MESSAGE_DV_PAYEE_INVALID_PAYMENT_TYPE);
-                }
-            }
-        }
     }
 
     protected void clearPayee(String messageKey) {
@@ -800,14 +742,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             overDollarThreshold = true;
         }
 
-
-        boolean paymentReasonCodeIsNorP = false;
         String paymentReasonCode = this.getDvPayeeDetail().getDisbVchrPaymentReasonCode();
-        paymentReasonCodeIsNorP = this.getDvPymentReasonService().isPrepaidTravelPaymentReason(paymentReasonCode) || this.getDvPymentReasonService().isNonEmployeeTravelPaymentReason(paymentReasonCode);
 
-
-        return (this.getDvPymentReasonService().isPrepaidTravelPaymentReason(paymentReasonCode) || this.getDvPymentReasonService().isNonEmployeeTravelPaymentReason(paymentReasonCode) && overDollarThreshold);
-        }
+        return (this.getDisbursementVoucherPaymentReasonService().isPrepaidTravelPaymentReason(paymentReasonCode) || this.getDisbursementVoucherPaymentReasonService().isNonEmployeeTravelPaymentReason(paymentReasonCode) && overDollarThreshold);
+    }
 
     protected boolean isCAndGReviewRequired() {
 
@@ -894,25 +832,15 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         this.tripId = tripId;
     }
 
-
-    protected static void setVendorService(VendorService vendorService) {
-        CuDisbursementVoucherDocument.vendorService = vendorService;
+    protected CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
+        if ( paymentMethodGeneralLedgerPendingEntryService == null ) {
+            paymentMethodGeneralLedgerPendingEntryService = SpringContext.getBean(CUPaymentMethodGeneralLedgerPendingEntryService.class);
+        }
+        return paymentMethodGeneralLedgerPendingEntryService;
     }
 
     public static void setPaymentMethodGeneralLedgerPendingEntryService(CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService) {
         CuDisbursementVoucherDocument.paymentMethodGeneralLedgerPendingEntryService = paymentMethodGeneralLedgerPendingEntryService;
-    }
-
-    public static void setDisbursementVoucherTaxService(DisbursementVoucherTaxService disbursementVoucherTaxService) {
-        CuDisbursementVoucherDocument.disbursementVoucherTaxService = disbursementVoucherTaxService;
-    }
-
-    public static void setDisbursementVoucherPayeeService(DisbursementVoucherPayeeService disbursementVoucherPayeeService) {
-        CuDisbursementVoucherDocument.disbursementVoucherPayeeService = disbursementVoucherPayeeService;
-    }
-
-    public static void setDvPymentReasonService(DisbursementVoucherPaymentReasonService disbursementVoucherPaymentReasonService) {
-        CuDisbursementVoucherDocument.dvPymentReasonService = disbursementVoucherPaymentReasonService;
     }
 
 }
