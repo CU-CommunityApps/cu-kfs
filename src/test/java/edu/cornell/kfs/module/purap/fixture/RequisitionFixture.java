@@ -14,7 +14,7 @@ import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 
 public enum RequisitionFixture {
 
-	REQ_B2B("Description", "B2B", 0, 5314, 4190, "line 1 address",
+	REQ_B2B("Description", "B2B", 0, 4130, 4216, "line 1 address",
 			"line 2 address", "city", "NY", "14850", "US", "abc@email.com",
 			"6072203712", "attn name", 1, "Delivery Line 1 address",
 			"Delivery Line 2 address", "Delivery City Name", "110", "US", "NY",
@@ -22,7 +22,7 @@ public enum RequisitionFixture {
 			"billing line 1 address", "607-220-3712", "14850", "NY",
 			"Billing name", RequisitionItemFixture.REQ_ITEM, null),
 
-	REQ_B2B_INVALID("Description", "B2B", 0, 5314, 4190, null,
+	REQ_B2B_INVALID("Description", "B2B", 0, 4130, 4216, null,
 			"line 2 address", "city", "NY", "14850", "US", "abc@email.com",
 			"6072203712", "attn name", 1, "Delivery Line 1 address",
 			"Delivery Line 2 address", "Delivery City Name", "110", "US", "NY",
@@ -30,7 +30,7 @@ public enum RequisitionFixture {
 			"billing line 1 address", "607-220-3712", "14850", "NY",
 			"Billing name", RequisitionItemFixture.REQ_ITEM, null),
 
-	REQ_B2B_CXML("Description", "B2B", 0, 5314, 4190, "line 1 address",
+	REQ_B2B_CXML("Description", "B2B", 0, 4130, 4216, "line 1 address",
 			"line 2 address", "city", "NY", "14850", "US", "abc@email.com",
 			"6072203712", "attn name", 1, "Delivery Line 1 address",
 			"Delivery Line 2 address", "Delivery City Name", "110", "US", "NY",
@@ -38,7 +38,7 @@ public enum RequisitionFixture {
 			"billing line 1 address", "607-220-3712", "14850", "NY",
 			"Billing name", RequisitionItemFixture.REQ_ITEM, null),
 
-	REQ_B2B_CXML_INVALID("Description", "B2B", 0, 5314, 4190, null,
+	REQ_B2B_CXML_INVALID("Description", "B2B", 0, 4130, 4216, null,
 			"line 2 address", "city", "NY", "14850", "US", "abc@email.com",
 			"6072203712", "attn name", 1, "Delivery Line 1 address",
 			"Delivery Line 2 address", "Delivery City Name", "110", "US", null,
