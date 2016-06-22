@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:dd="http://rice.kuali.org/dd"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd         http://rice.kuali.org/dd/dd.xsd">
+	<!-- Copyright 2007-2009 The Kuali Foundation Licensed under the Educational 
+		Community License, Version 2.0 (the "License"); you may not use this file 
+		except in compliance with the License. You may obtain a copy of the License 
+		at http://www.opensource.org/licenses/ecl2.php Unless required by applicable 
+		law or agreed to in writing, software distributed under the License is distributed 
+		on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+		express or implied. See the License for the specific language governing permissions 
+		and limitations under the License. -->
+
+	<bean id="RecurringDisbursementVoucherDocument" parent="DisbursementVoucherDocument-parentBean">
+		<property name="documentTypeName" value="RCDV" />
+		<property name="documentClass" value="edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument" />
+		<property name="baseDocumentClass" value="edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument" />
+		<property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.RecurringDisbursementVoucherDocumentPresentationController"/>
+			
+		<property name="accountingLineGroups">
+	    	<map>
+	    		<entry>
+	    			<key><value>source</value></key>
+		    		<ref bean="RecurringDisbursementVoucherDocument-sourceAccountingLineGroup" parent="AccountingLineGroup"/>
+		    	</entry>
+	    	</map>
+	    </property>
+	    
+	    <property name="attributes">
+      <list>
+        <ref bean="DisbursementVoucherDocument-documentHeader.documentDescription"/>
+        <ref bean="DisbursementVoucherDocument-disbVchrContactPersonName"/>
+        <ref bean="DisbursementVoucherDocument-disbVchrContactPhoneNumber"/>
+        <ref bean="DisbursementVoucherDocument-disbVchrContactEmailId"/>
+        <ref bean="DisbursementVoucherDocument-disbursementVoucherDueDate"/>
+        <ref bean="DisbursementVoucherDocument-disbVchrAttachmentCode"/>
+        <ref bean="DisbursementVoucherDocument-disbVchrSpecialHandlingCode"/>
+        <ref bean="DisbursementVoucherDocument-disbVchrCheckTotalAmount"/>
+        <ref bean="DisbursementVoucherDocument-disbursementVoucherDocumentationLocationCode"/>
+        <ref bean="DisbursementVoucherDocument-dvCheckStubOverflowCode"/>
+        <ref bean="DisbursementVoucherDocument-disbVchrPayeeTaxControlCode"/>
+        <ref bean="DisbursementVoucherDocument-disbVchrPayeeChangedInd"/>
+        <ref bean="DisbursementVoucherDocument-disbursementVoucherCheckNbr"/>
+        <ref bean="DisbursementVoucherDocument-disbursementVoucherCheckDate"/>
+        <ref bean="DisbursementVoucherDocument-disbVchrPayeeW9CompleteCode"/>
+        <ref bean="RecurringDisbursementVoucherDocument-disbVchrPaymentMethodCode"/>
+        <ref bean="DisbursementVoucherDocument-campusCode"/>
+        <ref bean="DisbursementVoucherDocument-disbVchrCheckStubText"/>
+        <ref bean="DisbursementVoucherDocument-extractDate"/>
+        <ref bean="DisbursementVoucherDocument-paidDate"/>
+        <ref bean="DisbursementVoucherDocument-cancelDate"/>
+        <ref bean="DisbursementVoucherDocument-disbursementVoucherPdpStatus"/>
+        <ref bean="DisbursementVoucherDocument-disbVchrBankCode"/>
+        <ref bean="DisbursementVoucherDocument-disbVchrPdpBankCode"/>
+        <ref bean="DisbursementVoucherDocument-disbExcptAttachedIndicator"/>
+        <ref bean="DisbursementVoucherDocument-immediatePaymentIndicator"/>
+      </list>
+    </property>
+
+	</bean>
+	
+	<bean id="RecurringDisbursementVoucherDocument-disbVchrPaymentMethodCode" parent="RecurringDisbursementVoucherDocument-disbVchrPaymentMethodCode-parentBean"/> 
+	  <bean id="RecurringDisbursementVoucherDocument-disbVchrPaymentMethodCode-parentBean" abstract="true" parent="DisbursementVoucherDocument-disbVchrPaymentMethodCode">
+      <property name="name" value="disbVchrPaymentMethodCode"/>
+      <property name="control">
+        <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.fp.businessobject.options.RecurringDisbursementVoucherPaymentMethodValuesFinder" p:includeKeyInLabel="false"/>
+      </property>
+    </bean>
+	
+	<!-- accounting line groups -->
+  <bean id="RecurringDisbursementVoucherDocument-sourceAccountingLineGroup" parent="RecurringDisbursementVoucherDocument-sourceAccountingLineGroup-parentBean"/>  
+  <bean id="RecurringDisbursementVoucherDocument-sourceAccountingLineGroup-parentBean" parent="AccountingLineGroup" abstract="true">
+	  <property name="accountingLineView" ref="RecurringDisbursementVoucherDocument-accountingLineView"/>
+	  <property name="accountingLineClass" value="edu.cornell.kfs.fp.businessobject.ScheduledSourceAccountingLine"/>
+	  <property name="groupLabel" value="Source"/>
+	  <property name="accountingLineAuthorizerClass" value="org.kuali.kfs.fp.document.authorization.FinancialProcessingAccountingLineAuthorizer"/>
+	  <property name="importedLinePropertyPrefix" value="source"/>
+	  <property name="totals" ref="AccountingDocument-sourceGroupTotals"/>
+	  <property name="errorKey" value="document.sourceAccounting*,sourceAccountingLines,newSourceLine*"/>
+  </bean>
+	
+  <bean id="RecurringDisbursementVoucherDocument-accountingLineView" parent="RecurringDisbursementVoucherDocument-accountingLineView-parent"/>
+  <bean id="RecurringDisbursementVoucherDocument-accountingLineView-parent" parent="AccountingLineView" abstract="true">
+	  <property name="elements">
+		<list>
+			<bean parent="AccountingLineView-sequenceNumber"/>
+			<bean parent="AccountingLineView-lines">
+				<property name="lines">
+					<list>
+						<ref bean="accountingInformation"/>
+						<bean parent="AccountingLineView-line">
+							<property name="elementName" value="lineDescription"/>
+							<property name="fields">
+								<list>
+									<bean parent="AccountingLineView-field" p:name="financialDocumentLineDescription" p:overrideColSpan="2"/>
+									<bean parent="AccountingLineView-field" p:name="scheduleType" />
+                                    <bean parent="AccountingLineView-field" p:name="partialTransactionCount"/>
+                                    <bean parent="AccountingLineView-field" p:name="startDate" />
+                                    <bean parent="AccountingLineView-field" p:name="partialAmount" />
+                                    <bean parent="AccountingLineView-field" p:name="endDate" p:unconditionallyReadOnly="true" />
+								</list>
+							</property>
+						</bean>
+						<ref bean="salesTaxInformation" />						
+					</list>
+				</property>
+			</bean>
+			<bean parent="AccountingLineView-field" p:name="amount" p:required="true"/>
+			<bean parent="AccountingLineView-actions"/>
+		</list>
+	</property>
+  </bean> 
+
+	
+
+</beans>
