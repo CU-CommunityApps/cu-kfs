@@ -23,6 +23,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
+import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
+import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherDocumentPreRules;
 import org.kuali.kfs.pdp.PdpParameterConstants;
@@ -33,13 +35,13 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.document.Document;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
+import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
-
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.krad.document.Document;
 
 /**
  * Checks warnings and prompt conditions for dv document.
@@ -67,11 +69,30 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
 
         // Handle custom pre-rules:
         preRulesOK &= this.checkCheckStubTextOverflow((DisbursementVoucherDocument) document);
+        
+        setIncomeClassNonReportableForForeignVendorWithNoTaxReviewRequired(document);
 
         return preRulesOK;
     }
 
-    /**
+	private void setIncomeClassNonReportableForForeignVendorWithNoTaxReviewRequired(Document document) {
+		DisbursementVoucherDocument dvDoc = (DisbursementVoucherDocument) document;
+		DisbursementVoucherPayeeDetail dvPayeeDetail = dvDoc.getDvPayeeDetail();
+		
+		String payeeTypeCode = dvPayeeDetail.getDisbursementVoucherPayeeTypeCode();
+		String paymentReasonCode = dvPayeeDetail.getDisbVchrPaymentReasonCode();
+		Integer vendorHeaderId = dvPayeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger();
+
+		if (getCuDisbursementVoucherTaxService().isForeignVendorAndTaxReviewNotRequired(payeeTypeCode,paymentReasonCode, vendorHeaderId)) {
+			dvDoc.getDvNonResidentAlienTax().setIncomeClassCode(DisbursementVoucherConstants.NRA_TAX_INCOME_CLASS_NON_REPORTABLE);
+		}
+	}
+	
+	protected CuDisbursementVoucherTaxService getCuDisbursementVoucherTaxService(){
+		return SpringContext.getBean(CuDisbursementVoucherTaxService.class);
+	}
+
+	/**
      * This method returns true if the state of all the tabs is valid, false otherwise.
      *
      * @param dvDocument submitted disbursement voucher document
