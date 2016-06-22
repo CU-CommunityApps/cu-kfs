@@ -60,6 +60,7 @@ import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtensi
 import edu.cornell.kfs.fp.businessobject.DisbursementVoucherWireTransferExtendedAttribute;
 import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
 import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
+import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
 import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
@@ -922,6 +923,56 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         }
 
         return false;
+    }
+    
+    @Override
+    protected boolean isTaxReviewRequired() {
+        if (isPayeePurchaseOrderVendorHasWithholding()) {
+            return true;
+        }
+
+        String payeeTypeCode = this.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode();
+        if (payeeTypeCode.equals(KFSConstants.PaymentPayeeTypes.EMPLOYEE)) {
+            return false;
+        } else if (payeeTypeCode.equals(KFSConstants.PaymentPayeeTypes.VENDOR)) {
+            if(getVendorService().isVendorInstitutionEmployee(this.getDvPayeeDetail().getDisbVchrVendorHeaderIdNumberAsInteger())){
+                return true;
+            }
+        }
+        
+        String paymentReasonCode = this.getDvPayeeDetail().getDisbVchrPaymentReasonCode();
+        Integer vendorHeaderId = getDvPayeeDetail().getDisbVchrVendorHeaderIdNumberAsInteger();
+        if (getCuDisbursementVoucherTaxService().isForeignVendorAndTaxReviewRequired(payeeTypeCode, paymentReasonCode, vendorHeaderId)) {
+        	return true;
+        }
+
+        String taxControlCode = this.getDisbVchrPayeeTaxControlCode();
+        if (StringUtils.equals(taxControlCode, DisbursementVoucherDocument.TAX_CONTROL_BACKUP_HOLDING) || StringUtils.equals(taxControlCode,DisbursementVoucherDocument.TAX_CONTROL_HOLD_PAYMENTS)) {
+            return true;
+        }
+
+       
+        if (this.getDvPymentReasonService().isDecedentCompensationPaymentReason(paymentReasonCode)) {
+            return true;
+        }
+
+        if (this.getDvPymentReasonService().isMovingPaymentReason(paymentReasonCode) && taxedCampusForMovingReimbursements()) {
+            return true;
+        }
+
+        if (getParameterEvaluatorService().getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherDocument.PAYMENT_REASONS_REQUIRING_TAX_REVIEW_PARAMETER_NAME, paymentReasonCode).evaluationSucceeds()) {
+            return true;
+        }
+
+        return false;
+    }
+    
+    protected CuDisbursementVoucherTaxService getCuDisbursementVoucherTaxService() {
+        return SpringContext.getBean(CuDisbursementVoucherTaxService.class);
+    }
+    
+    protected ParameterEvaluatorService getParameterEvaluatorService(){
+    	return SpringContext.getBean(ParameterEvaluatorService.class);
     }
 
 
