@@ -11,6 +11,7 @@ import org.kuali.kfs.fp.document.CapitalAssetEditable;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.module.cab.CabParameterConstants;
 import org.kuali.kfs.module.cab.service.impl.CapitalAssetBuilderModuleServiceImpl;
+import org.kuali.kfs.module.cam.CamsConstants;
 import org.kuali.kfs.module.cam.CamsKeyConstants;
 import org.kuali.kfs.module.cam.CamsPropertyConstants;
 import org.kuali.kfs.module.cam.businessobject.Asset;
@@ -220,5 +221,37 @@ public class CuCapitalAssetBuilderModuleServiceImpl extends CapitalAssetBuilderM
         return valid;
     }
 
- 
+    /**
+     * Build the appropriate note text being set to the purchase order document.
+     * Our version includes all assetNumbers, not just the first and last.
+     *
+     * @param documentType
+     * @param assetNumbers
+     * @return
+     */
+    @Override
+    protected String buildNoteTextForPurApDoc(String documentType, List<Long> assetNumbers) {
+        StringBuffer noteText = new StringBuffer();
+
+        if (CamsConstants.DocumentTypeName.ASSET_ADD_GLOBAL.equalsIgnoreCase(documentType)) {
+            noteText.append("Asset Numbers have been created for this document: ");
+        }
+        else {
+            noteText.append("Existing Asset Numbers have been applied for this document: ");
+        }
+
+        if (assetNumbers != null && assetNumbers.size() > 0) {
+            int i = 0;
+            for (Long assetNumber : assetNumbers) {
+                if (i++ == 0) {
+                    noteText.append(assetNumber.toString());
+                } else {
+                    noteText.append(",").append(assetNumber.toString());
+                }
+            }
+        }
+
+        return noteText.toString();
+    }
+
 }
