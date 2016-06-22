@@ -16,8 +16,6 @@ public class CUKFSConstants {
     public static final String RULE_CODE_CA = "CA";
     
     public static class SysKimApiConstants {
-        public static final String ESHOP_USER_ROLE_NAME = "eShop User (cu)";
-        public static final String ESHOP_SUPER_USER_ROLE_NAME = "eShop Plus User(cu)";
         public static final String CONTRACTS_AND_GRANTS_PROCESSOR = "Contracts & Grants Processor";
         public static final String ADVANCE_DEPOSIT_ORGANIZATION_REVIEWER_ROLE_NAME = "Advanced Deposit Organization Review";
         public static final String CREATE_DONE_FILE_PERMISSION_TEMPLATE_NAME = "Create Done File";
