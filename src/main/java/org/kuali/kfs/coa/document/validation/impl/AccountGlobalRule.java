@@ -457,7 +457,7 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
 
             if (ObjectUtils.isNull(oldExpDate) || !oldExpDate.equals(newExpDate)) {
             	// KFSUPGRADE-925 check parameter to see if back date is allowed
-            	Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(Account.class, CUKFSConstants.ChartApcParms.EXPIRATION_DATE_BACKDATING_FUND_GROUPS);
+            	Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(Account.class, KFSConstants.ChartApcParms.EXPIRATION_DATE_BACKDATING_FUND_GROUPS);
                 if (fundGroups == null || (ObjectUtils.isNotNull(newAccountGlobal.getSubFundGroup()) && !fundGroups.contains(newAccountGlobal.getSubFundGroup().getFundGroupCode()))) {
                 	if (!newExpDate.after(today) && !newExpDate.equals(today)) {
                 		putFieldError("accountExpirationDate", KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_TODAY_LATER);
@@ -532,7 +532,7 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
                         if (ObjectUtils.isNotNull(account.getSubFundGroup())) {
                             if (!account.isForContractsAndGrants()) {
                             	// KFSUPGRADE-925 check parameter to see if back date is allowed
-                            	Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(Account.class, CUKFSConstants.ChartApcParms.EXPIRATION_DATE_BACKDATING_FUND_GROUPS);
+                            	Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(Account.class, KFSConstants.ChartApcParms.EXPIRATION_DATE_BACKDATING_FUND_GROUPS);
                                 if (fundGroups == null || !fundGroups.contains(account.getSubFundGroup())) {
                                 	if (!newExpDate.after(today) && !newExpDate.equals(today)) {
                                 		putGlobalError(KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_TODAY_LATER);
@@ -624,7 +624,7 @@ public class AccountGlobalRule extends GlobalDocumentRuleBase {
 
         
         // KFSUPGRADE-925
-        Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(Account.class, CUKFSConstants.ChartApcParms.EXPIRATION_DATE_BACKDATING_FUND_GROUPS);
+        Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(Account.class, KFSConstants.ChartApcParms.EXPIRATION_DATE_BACKDATING_FUND_GROUPS);
         if (fundGroups != null && !ObjectUtils.isNull(newAccountGlobal.getSubFundGroup()) && fundGroups.contains(newAccountGlobal.getSubFundGroup().getFundGroupCode())) {
         		return false;
         }
