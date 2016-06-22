@@ -18,12 +18,12 @@ public enum B2BShoppingCartItemFixture {
             "EA", // unitOfMeasure
             "64068F", // manufacturerPartID
             "Dell", // manufacturerName
-            "5314-0", // externalSupplierId - vendorID
+            "4130-0", // externalSupplierId - vendorID
             "Punchout", // productSource
             "", // systemProductID
             //"624007902" // SupplierID-DUNS: value in KFS
-            "12829371", // SupplierID-DUNS: value from SciQuest
-            "4050097", // SupplierID-SystemSupplierID
+            "002617843", // SupplierID-DUNS: value from SciQuest
+            "14035", // SupplierID-SystemSupplierID
             "Cart name", // Cart Name
             "true",
             "true",
