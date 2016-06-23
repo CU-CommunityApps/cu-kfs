@@ -17,7 +17,7 @@
 			jdbc-type="BIGINT" locking="true" />
 		<field-descriptor name="active" column="ROW_ACTV_IND"
 			jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 	</class-descriptor>
 
 	<class-descriptor
@@ -36,7 +36,7 @@
 			jdbc-type="BIGINT" locking="true" />
 		<field-descriptor name="active" column="ROW_ACTV_IND"
 			jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 	</class-descriptor>
 
 	<class-descriptor
@@ -54,7 +54,7 @@
 			jdbc-type="BIGINT" locking="true" />
 		<field-descriptor name="active" column="ROW_ACTV_IND"
 			jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 	</class-descriptor>
 
 	<class-descriptor
@@ -70,7 +70,7 @@
 			jdbc-type="BIGINT" locking="true" />
 		<field-descriptor name="active" column="ROW_ACTV_IND"
 			jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 	</class-descriptor>
 
 	<class-descriptor
@@ -85,7 +85,7 @@
 			jdbc-type="BIGINT" locking="true" />
 		<field-descriptor name="active" column="ROW_ACTV_IND"
 			jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 	</class-descriptor>
 
 	<class-descriptor
@@ -107,7 +107,7 @@
 			jdbc-type="VARCHAR" />
 		<field-descriptor name="everify" column="E_VERIFY_IND"
 			jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="majorReportingCategoryCode"
 			column="MJR_RPT_CTG_CD" jdbc-type="VARCHAR" index="true" />
 		<field-descriptor name="costShareForProjectNumber"
@@ -158,10 +158,10 @@
     <field-descriptor name="subFundGroupCode" column="SUB_FUND_GRP_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
     <field-descriptor name="fundGroupCode" column="FUND_GRP_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="subFundGroupDescription" column="SUB_FUND_GRP_DESC" jdbc-type="VARCHAR" />
-    <field-descriptor name="active" column="SUBFUNDGRP_ACTV_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    <field-descriptor name="active" column="SUBFUNDGRP_ACTV_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     <field-descriptor name="subFundGroupTypeCode" column="SUB_FUNDGRP_TYP_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="financialReportingSortCode" column="FIN_REPORT_SORT_CD" jdbc-type="VARCHAR" />
-    <field-descriptor name="subFundGroupWagesIndicator" column="SUB_FUND_GRP_WAGE_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    <field-descriptor name="subFundGroupWagesIndicator" column="SUB_FUND_GRP_WAGE_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
     <field-descriptor name="fundGroupBudgetAdjustmentRestrictionLevelCode" column="FND_GRP_BA_RSTR_LVL_CD" jdbc-type="VARCHAR" />
@@ -228,7 +228,7 @@
 			jdbc-type="VARCHAR" />
 		<field-descriptor name="accountsFringesBnftIndicator"
 			column="ACCT_FRNG_BNFT_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="financialHigherEdFunctionCd"
 			column="FIN_HGH_ED_FUNC_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="accountRestrictedStatusCode"
@@ -277,31 +277,31 @@
 			column="FIN_SERIES_ID" jdbc-type="VARCHAR" />
 		<field-descriptor name="accountInFinancialProcessingIndicator"
 			column="ACCT_IN_FP_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="budgetRecordingLevelCode"
 			column="BDGT_REC_LVL_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="accountSufficientFundsCode"
 			column="ACCT_SF_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="pendingAcctSufficientFundsIndicator"
 			column="ACCT_PND_SF_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="extrnlFinEncumSufficntFndIndicator"
 			column="FIN_EXT_ENC_SF_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="intrnlFinEncumSufficntFndIndicator"
 			column="FIN_INT_ENC_SF_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="finPreencumSufficientFundIndicator"
 			column="FIN_PRE_ENC_SF_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="financialObjectivePrsctrlIndicator"
 			column="FIN_OBJ_PRSCTRL_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="accountCfdaNumber" column="CG_CFDA_NBR"
 			jdbc-type="VARCHAR" />
 		<field-descriptor name="accountOffCampusIndicator"
 			column="ACCT_OFF_CMP_IND" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="contractsAndGrantsAccountResponsibilityId"
 			column="CG_ACCT_RESP_ID" jdbc-type="INTEGER" />
 		<field-descriptor name="active" column="ACCT_CLOSED_IND"
@@ -527,7 +527,7 @@
 			column="ACCT_SF_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="pendingAcctSufficientFundsIndicator"
 			column="ACCT_PND_SF_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="accountSearchCriteriaTxt"
 			column="ACCT_SRCH_CRTA_TXT" jdbc-type="VARCHAR" />
 		<field-descriptor name="laborBenefitRateCategoryCode"
@@ -628,7 +628,7 @@
 			jdbc-type="BIGINT" locking="true" />
 		<field-descriptor name="active" column="ROW_ACTV_IND"
 			jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 
 		<reference-descriptor name="chartOfAccounts"
 			class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true"
@@ -695,7 +695,7 @@
 			column="HIST_FIN_OBJECT_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="active" column="FIN_OBJ_ACTIVE_CD"
 			jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="financialBudgetAggregationCd"
 			column="FOBJ_BDGT_AGGR_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="finObjMandatoryTrnfrelimCd"
@@ -799,7 +799,7 @@
 			column="HIST_FIN_OBJECT_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="active" column="FIN_OBJ_ACTIVE_CD"
 			jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="financialBudgetAggregationCd"
 			column="FOBJ_BDGT_AGGR_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="finObjMandatoryTrnfrelimCd"
@@ -907,7 +907,7 @@
 			column="HIST_FIN_OBJECT_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="financialObjectActiveIndicator"
 			column="FIN_OBJ_ACTIVE_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="financialBudgetAggregationCd"
 			column="FOBJ_BDGT_AGGR_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="finObjMandatoryTrnfrOrElimCd"
@@ -1029,7 +1029,7 @@
 			jdbc-type="VARCHAR" />
 		<field-descriptor name="accountsFringesBnftIndicator"
 			column="ACCT_FRNG_BNFT_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="financialHigherEdFunctionCd"
 			column="FIN_HGH_ED_FUNC_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="accountRestrictedStatusCode"
@@ -1078,31 +1078,31 @@
 			column="FIN_SERIES_ID" jdbc-type="VARCHAR" />
 		<field-descriptor name="accountInFinancialProcessingIndicator"
 			column="ACCT_IN_FP_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="budgetRecordingLevelCode"
 			column="BDGT_REC_LVL_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="accountSufficientFundsCode"
 			column="ACCT_SF_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="pendingAcctSufficientFundsIndicator"
 			column="ACCT_PND_SF_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="extrnlFinEncumSufficntFndIndicator"
 			column="FIN_EXT_ENC_SF_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="intrnlFinEncumSufficntFndIndicator"
 			column="FIN_INT_ENC_SF_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="finPreencumSufficientFundIndicator"
 			column="FIN_PRE_ENC_SF_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="financialObjectivePrsctrlIndicator"
 			column="FIN_OBJ_PRSCTRL_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="accountCfdaNumber" column="CG_CFDA_NBR"
 			jdbc-type="VARCHAR" />
 		<field-descriptor name="accountOffCampusIndicator"
 			column="ACCT_OFF_CMP_IND" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="contractsAndGrantsAccountResponsibilityId"
 			column="CG_ACCT_RESP_ID" jdbc-type="INTEGER" />
 		<field-descriptor name="active" column="ACCT_CLOSED_IND"
@@ -1316,7 +1316,7 @@
 	    <field-descriptor name="versionNumber" column="VER_NBR" 
 	    	jdbc-type="BIGINT" locking="true" />
 	    <field-descriptor name="active" column="ROW_ACTV_IND" 
-	    	jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+	    	jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 	
 	    <reference-descriptor name="universityBudgetOfficeFunction" 
 	    	class-ref="org.kuali.kfs.coa.businessobject.UniversityBudgetOfficeFunction" 
@@ -1348,7 +1348,7 @@
 	    <field-descriptor name="accountTypeCode" column="ACCT_TYP_CD" jdbc-type="VARCHAR" />
 	    <field-descriptor name="accountPhysicalCampusCode" column="ACCT_PHYS_CMP_CD" jdbc-type="VARCHAR" />
 	    <field-descriptor name="subFundGroupCode" column="SUB_FUND_GRP_CD" jdbc-type="VARCHAR" />
-	    <field-descriptor name="accountsFringesBnftIndicator" column="ACCT_FRNG_BNFT_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+	    <field-descriptor name="accountsFringesBnftIndicator" column="ACCT_FRNG_BNFT_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 	    <field-descriptor name="financialHigherEdFunctionCd" column="FIN_HGH_ED_FUNC_CD" jdbc-type="VARCHAR" />
 	    <field-descriptor name="accountRestrictedStatusCode" column="ACCT_RSTRC_STAT_CD" jdbc-type="VARCHAR" />
 	    <field-descriptor name="accountRestrictedStatusDate" column="ACCT_RSTRC_STAT_DT" jdbc-type="DATE" />
@@ -1372,16 +1372,16 @@
 	    <field-descriptor name="acctIndirectCostRcvyTypeCd" column="ACCT_ICR_TYP_CD" jdbc-type="VARCHAR" />
 	    <field-descriptor name="acctCustomIndCstRcvyExclCd" column="AC_CSTM_ICREXCL_CD" jdbc-type="VARCHAR" />
 	    <field-descriptor name="financialIcrSeriesIdentifier" column="FIN_SERIES_ID" jdbc-type="VARCHAR" />
-		<field-descriptor name="accountInFinancialProcessingIndicator" column="ACCT_IN_FP_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+		<field-descriptor name="accountInFinancialProcessingIndicator" column="ACCT_IN_FP_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 	    <field-descriptor name="budgetRecordingLevelCode" column="BDGT_REC_LVL_CD" jdbc-type="VARCHAR" />
 	    <field-descriptor name="accountSufficientFundsCode" column="ACCT_SF_CD" jdbc-type="VARCHAR" />
-	    <field-descriptor name="pendingAcctSufficientFundsIndicator" column="ACCT_PND_SF_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-	    <field-descriptor name="extrnlFinEncumSufficntFndIndicator" column="FIN_EXT_ENC_SF_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-	    <field-descriptor name="intrnlFinEncumSufficntFndIndicator" column="FIN_INT_ENC_SF_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-	    <field-descriptor name="finPreencumSufficientFundIndicator" column="FIN_PRE_ENC_SF_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-	    <field-descriptor name="financialObjectivePrsctrlIndicator" column="FIN_OBJ_PRSCTRL_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+	    <field-descriptor name="pendingAcctSufficientFundsIndicator" column="ACCT_PND_SF_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+	    <field-descriptor name="extrnlFinEncumSufficntFndIndicator" column="FIN_EXT_ENC_SF_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+	    <field-descriptor name="intrnlFinEncumSufficntFndIndicator" column="FIN_INT_ENC_SF_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+	    <field-descriptor name="finPreencumSufficientFundIndicator" column="FIN_PRE_ENC_SF_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+	    <field-descriptor name="financialObjectivePrsctrlIndicator" column="FIN_OBJ_PRSCTRL_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 	    <field-descriptor name="accountCfdaNumber" column="CG_CFDA_NBR" jdbc-type="VARCHAR" />
-	    <field-descriptor name="accountOffCampusIndicator" column="ACCT_OFF_CMP_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+	    <field-descriptor name="accountOffCampusIndicator" column="ACCT_OFF_CMP_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 	    <field-descriptor name="active" column="ACCT_CLOSED_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.coa.util.OjbAccountActiveIndicatorConversion" />
 	    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
 	    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
@@ -1477,10 +1477,10 @@
     	<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
     	<field-descriptor name="budgetReversionChartOfAccountsCode" column="BDGT_RVRSN_COA_CD" jdbc-type="VARCHAR" />
     	<field-descriptor name="budgetReversionAccountNumber" column="BDGT_RVRSNACCT_NBR" jdbc-type="VARCHAR" />
-    	<field-descriptor name="carryForwardByObjectCodeIndicator" column="CF_BY_OBJ_CD_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    	<field-descriptor name="carryForwardByObjectCodeIndicator" column="CF_BY_OBJ_CD_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     	<field-descriptor name="cashReversionFinancialChartOfAccountsCode" column="CSH_RVRSNFINCOA_CD" jdbc-type="VARCHAR" />
     	<field-descriptor name="cashReversionAccountNumber" column="CSH_RVRSN_ACCT_NBR" jdbc-type="VARCHAR" />
-  		<field-descriptor name="active" column="ROW_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+  		<field-descriptor name="active" column="ROW_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     	<reference-descriptor name="chartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         	<foreignkey field-ref="chartOfAccountsCode" />
     		</reference-descriptor>
@@ -1524,7 +1524,7 @@
     	<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
     	<field-descriptor name="accountReversionCode" column="ACCT_RVRSN_CD" jdbc-type="VARCHAR" />
     	<field-descriptor name="accountReversionObjectCode" column="ACCT_RVRSN_OBJ_CD" jdbc-type="VARCHAR" />
-    	<field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    	<field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 
     	<reference-descriptor name="reversionObject" class-ref="org.kuali.kfs.coa.businessobject.ObjectCode" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         	<foreignkey field-ref="universityFiscalYear" />
@@ -1562,7 +1562,7 @@
     	<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
     	<field-descriptor name="reversionCategoryName" column="RVRSN_CTGRY_NM" jdbc-type="VARCHAR" />
     	<field-descriptor name="reversionSortCode" column="RVRSN_SORT_CD" jdbc-type="VARCHAR" />
-    	<field-descriptor name="active" column="ROW_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    	<field-descriptor name="active" column="ROW_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 	</class-descriptor>
 
 	<class-descriptor class="edu.cornell.kfs.coa.businessobject.AccountReversionGlobal" table="CA_ACCT_RVRSN_CHG_DOC_T">
@@ -1572,10 +1572,10 @@
   		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
   		<field-descriptor name="budgetReversionChartOfAccountsCode" column="BDGT_RVRSN_COA_CD" jdbc-type="VARCHAR" />
   		<field-descriptor name="budgetReversionAccountNumber" column="BDGT_RVRSNACCT_NBR" jdbc-type="VARCHAR" />
-  		<field-descriptor name="carryForwardByObjectCodeIndicator" column="CF_BY_OBJ_CD_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+  		<field-descriptor name="carryForwardByObjectCodeIndicator" column="CF_BY_OBJ_CD_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
   		<field-descriptor name="cashReversionFinancialChartOfAccountsCode" column="CSH_RVRSNFINCOA_CD" jdbc-type="VARCHAR" />
   		<field-descriptor name="cashReversionAccountNumber" column="CSH_RVRSN_ACCT_NBR" jdbc-type="VARCHAR" />
-  		<field-descriptor name="reversionActiveIndicator" column="RVRSN_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+  		<field-descriptor name="reversionActiveIndicator" column="RVRSN_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
   
   		<reference-descriptor name="cashReversionAccount" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
     		<foreignkey field-ref="cashReversionFinancialChartOfAccountsCode" />
@@ -1644,7 +1644,7 @@
   	<field-descriptor name="financialSubObjectCode" column="FIN_SUB_OBJ_CD" jdbc-type="VARCHAR" index="true" />
   	<field-descriptor name="financialSubObjectCodeName" column="FIN_SUB_OBJ_CD_NM" jdbc-type="VARCHAR" />
   	<field-descriptor name="financialSubObjectCodeShortName" column="FIN_SUBOBJ_SHRT_NM" jdbc-type="VARCHAR" />
-  	<field-descriptor name="active" column="FIN_SUBOBJ_ACTV_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+  	<field-descriptor name="active" column="FIN_SUBOBJ_ACTV_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 	
 	<reference-descriptor name="financialDocument" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
 		<foreignkey field-ref="documentNumber" />
@@ -1702,7 +1702,7 @@
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
     <field-descriptor name="financialSubObjectCodeName" column="FIN_SUB_OBJ_CD_NM" jdbc-type="VARCHAR" />
     <field-descriptor name="financialSubObjectCdshortNm" column="FIN_SUBOBJ_SHRT_NM" jdbc-type="VARCHAR" />
-    <field-descriptor name="active" column="FIN_SUBOBJ_ACTV_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    <field-descriptor name="active" column="FIN_SUBOBJ_ACTV_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 
     <reference-descriptor name="financialObject" class-ref="org.kuali.kfs.coa.businessobject.ObjectCode" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
         <foreignkey field-ref="universityFiscalYear" />
@@ -1751,7 +1751,7 @@
 		<field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
   		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
   		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
-  		<field-descriptor name="inactivate" column="INACTVT" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+  		<field-descriptor name="inactivate" column="INACTVT" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
   		<field-descriptor name="subAccountName" column="SUB_ACCT_NM" jdbc-type="VARCHAR" />
   		<field-descriptor name="financialReportChartCode" column="FIN_RPT_CHRT_CD" jdbc-type="VARCHAR" />
   		<field-descriptor name="finReportOrganizationCode" column="FIN_RPT_ORG_CD" jdbc-type="VARCHAR" />
@@ -1795,7 +1795,7 @@
     	<field-descriptor name="indirectCostRecoveryFinCoaCode" column="ICR_FIN_COA_CD" jdbc-type="VARCHAR" />
     	<field-descriptor name="indirectCostRecoveryAccountNumber" column="ICR_FIN_ACCT_NBR" jdbc-type="VARCHAR" />
     	<field-descriptor name="accountLinePercent" column="ACLN_PCT" jdbc-type="DECIMAL" />
-    	<field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    	<field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
 
     	<reference-descriptor name="indirectCostRecoveryAccount" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
         	<foreignkey field-ref="indirectCostRecoveryFinCoaCode" />
@@ -1850,7 +1850,7 @@
     	<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
     	<field-descriptor name="indirectCostRecoveryTypeCode" column="ICR_TYP_CD" jdbc-type="VARCHAR" />
     	<field-descriptor name="financialIcrSeriesIdentifier" column="FIN_SERIES_ID" jdbc-type="VARCHAR" />
-    	<field-descriptor name="offCampusCode" column="OFF_CMP_CD" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    	<field-descriptor name="offCampusCode" column="OFF_CMP_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     	<field-descriptor name="costShareChartOfAccountCode" column="CST_SHR_COA_CD" jdbc-type="VARCHAR" />
     	<field-descriptor name="costShareSourceAccountNumber" column="CST_SHRSRCACCT_NBR" jdbc-type="VARCHAR" />
     	<field-descriptor name="costShareSourceSubAccountNumber" column="CST_SRCSUBACCT_NBR" jdbc-type="VARCHAR" />
