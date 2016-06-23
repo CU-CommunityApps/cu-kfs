@@ -1,17 +1,20 @@
 /*
- * Copyright 2006 The Kuali Foundation
+ * The Kuali Financial System, a comprehensive financial management system for higher education.
  * 
- * Licensed under the Educational Community License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Copyright 2005-2014 The Kuali Foundation
  * 
- * http://www.opensource.org/licenses/ecl2.php
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kuali.kfs.fp.document.web.struts;
 
@@ -38,6 +41,7 @@ import org.kuali.kfs.fp.businessobject.CapitalAssetInformationDetail;
 import org.kuali.kfs.fp.document.CapitalAccountingLinesDocumentBase;
 import org.kuali.kfs.fp.document.CapitalAssetEditable;
 import org.kuali.kfs.fp.document.CapitalAssetInformationDocumentBase;
+import org.kuali.kfs.integration.cab.CapitalAssetBuilderModuleService;
 import org.kuali.kfs.integration.cam.businessobject.Asset;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
@@ -71,7 +75,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
      * selected asset numbers, the system control amount is redistributed equally among the assets
      * when the distribution method is "distribute cost equally".
      * 
-     * @see org.kuali.kfs.kns.web.struts.action.KualiAction#refresh(org.apache.struts.action.ActionMapping,
+     * @see org.kuali.rice.kns.web.struts.action.KualiAction#refresh(org.apache.struts.action.ActionMapping,
      *      org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
@@ -1064,7 +1068,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
 
     /**
      * Overridden to guarantee that form of copied document is set to whatever the entry mode of the document is
-     * @see org.kuali.kfs.kns.web.struts.action.KualiTransactionalDocumentActionBase#copy(org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see org.kuali.rice.kns.web.struts.action.KualiTransactionalDocumentActionBase#copy(org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
     public ActionForward copy(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -1309,6 +1313,9 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
     
     /**
+     *
+     * Finds a Capital Asset Information that matches the given capitalAccountingLine.
+     *
      * @param capitalAccountingLine
      * @param capitalAssetInformation
      * @return return existingCapitalAsset
@@ -1428,6 +1435,8 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     
     /**
      * 
+     * Checks to see if all the capital assets' distributed amount is the same as
+     * the capital accounting lines (there is only one lines, of course).
      * @param kadfb
      * @param capitalAssetsInformation
      * @return true if accounting line amount equals to capital asset amount, else false.
@@ -1445,7 +1454,9 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     
     /**
      * 
-     * 
+     * Returns the amount of the group accounting line from the capital asset information that
+     * matches the capital accounting lines (only one lines, of course). If none exists, zero is returned.
+     *
      * @param capitalAsset
      * @param capitalAccountingLine
      * @return accountLineAmount
@@ -1571,6 +1582,8 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
 
         List<CapitalAssetInformation> currentCapitalAssetInformation =  this.getCurrentCapitalAssetInformationObject(kadfb);
         
+        SpringContext.getBean(CapitalAssetBuilderModuleService.class).filterNonCapitalAssets(currentCapitalAssetInformation);
+
         calfb.setCreatedAssetsControlAmount(KualiDecimal.ZERO);
         calfb.setSystemControlAmount(KualiDecimal.ZERO);
 
@@ -1586,6 +1599,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
             } else {
                    CapitalAssetInformation existingCapitalAsset = getCapitalAssetCreated(capitalAccountingLine, currentCapitalAssetInformation);
                    if (ObjectUtils.isNotNull(existingCapitalAsset)) {
+                       // There is a CapitalAssetInformation matching the current accounting line.
                        capitalAccountingLine.setSelectLine(true);
                    } else {
                        capitalAccountingLine.setAccountLinePercent(null);
@@ -1594,6 +1608,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
             }
             
             if (capitalAccountingLineAmountDistributed(capitalAccountingLine, currentCapitalAssetInformation)) {
+                // all the money from this accounting line is distributed among the assets
                 capitalAccountingLine.setAmountDistributed(true);
             } else {
                 capitalAccountingLine.setAmountDistributed(false);
