@@ -29,13 +29,11 @@ import org.kuali.kfs.coa.businessobject.A21IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.validation.impl.KfsMaintenanceDocumentRuleBase;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.kns.service.DictionaryValidationService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -58,7 +56,7 @@ abstract public class IndirectCostRecoveryAccountsRule extends KfsMaintenanceDoc
     /**
      * Custom processing for adding collection lines
      * 
-     * @see org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomAddCollectionLineBusinessRules(org.kuali.kfs.kns.document.MaintenanceDocument, java.lang.String, org.kuali.kfs.krad.bo.PersistableBusinessObject)
+     * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomAddCollectionLineBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument, java.lang.String, org.kuali.rice.krad.bo.PersistableBusinessObject)
      */
     public boolean processCustomAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName, PersistableBusinessObject bo) {
         boolean success = true;
@@ -76,7 +74,7 @@ abstract public class IndirectCostRecoveryAccountsRule extends KfsMaintenanceDoc
     /**
      * This method calls the rule: KFSPropertyConstants.INDIRECT_COST_RECOVERY_ACCOUNT
      * 
-     * @see org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomRouteDocumentBusinessRules(org.kuali.kfs.kns.document.MaintenanceDocument)
+     * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomRouteDocumentBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument)
      */
     protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {
         boolean success = true;
@@ -116,7 +114,7 @@ abstract public class IndirectCostRecoveryAccountsRule extends KfsMaintenanceDoc
      * @param args
      * @return
      */
-    protected boolean checkICRCollectionExistWithErrorMessage(boolean expectFilled, String errorMessage, String args) {
+    protected boolean checkICRCollectionExistWithErrorMessage(boolean expectFilled, String errorMessage, String... args) {
         boolean success = true;
         success = checkICRCollectionExist(expectFilled);
         if (!success){
@@ -201,6 +199,7 @@ abstract public class IndirectCostRecoveryAccountsRule extends KfsMaintenanceDoc
      * 1. Check each account with rule: checkIndirectCostRecoveryAccount
      * 2. Total distributions from all the account should be 100
      * 
+     * @param activeIndirectCostRecoveryAccountList
      * @param document
      * @return
      */
@@ -210,9 +209,7 @@ abstract public class IndirectCostRecoveryAccountsRule extends KfsMaintenanceDoc
         if (ObjectUtils.isNull(activeIndirectCostRecoveryAccountList) || (activeIndirectCostRecoveryAccountList.size() == 0)) {
             return result;
         }
-        
-        DictionaryValidationService dvService = super.getDictionaryValidationService();
-        
+
         int i=0;
         BigDecimal totalDistribution = BigDecimal.ZERO;
        
@@ -223,7 +220,9 @@ abstract public class IndirectCostRecoveryAccountsRule extends KfsMaintenanceDoc
 	            checkIndirectCostRecoveryAccount(icra);
 	            GlobalVariables.getMessageMap().removeFromErrorPath(errorPath);
 	            
-	            totalDistribution = totalDistribution.add(icra.getAccountLinePercent());
+                if (!ObjectUtils.isNull(icra.getAccountLinePercent())) {
+                    totalDistribution = totalDistribution.add(icra.getAccountLinePercent());
+                }
             }
         	i++;
 
