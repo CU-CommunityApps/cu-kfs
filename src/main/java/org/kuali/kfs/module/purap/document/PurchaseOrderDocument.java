@@ -99,6 +99,7 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kew.api.action.ActionRequestType;
@@ -107,15 +108,20 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.framework.postprocessor.ActionTakenEvent;
 import org.kuali.rice.kew.framework.postprocessor.DocumentRouteLevelChange;
 import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
+import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.dao.DocumentDao;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.KRADServiceLocatorInternal;
+import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.NoteType;
@@ -223,7 +229,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     }
 
     /**
-     * @see org.kuali.kfs.krad.document.DocumentBase#getDocumentTitle()
+     * @see org.kuali.rice.krad.document.DocumentBase#getDocumentTitle()
      */
     @Override
     public String getDocumentTitle() {
@@ -697,7 +703,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                 // DOCUMENT DISAPPROVED
                 else if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isDisapproved()) {
                     String nodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(this.getFinancialSystemDocumentHeader().getWorkflowDocument());
-                    String disapprovalStatus = PurapConstants.PurchaseOrderStatuses.getPurchaseOrderAppDocDisapproveStatuses().get(nodeName);
+                    String disapprovalStatus = findDisapprovalStatus(nodeName);
 
                     if (ObjectUtils.isNotNull(disapprovalStatus)) {
                         //update the appDocStatus and save the workflow data
@@ -730,6 +736,10 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
             SpringContext.getBean(PurchaseOrderService.class).sendAdhocFyi(this);
         }
     }
+
+	protected String findDisapprovalStatus(String nodeName) {
+		return PurapConstants.PurchaseOrderStatuses.getPurchaseOrderAppDocDisapproveStatuses().get(nodeName);
+	}
 
     protected boolean shouldAdhocFyi() {
         Collection<String> excludeList = new ArrayList<String>();
@@ -777,16 +787,24 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
      * @throws WorkflowException
      */
     public void appSpecificRouteDocumentToUser(WorkflowDocument workflowDocument, String routePrincipalId, String annotation, String responsibility) throws WorkflowException {
-        boolean isActiveUser = this.isActiveUser(routePrincipalId);
-        if(!isActiveUser){
-            LOG.info("cannot send FYI to the inactive user: " + routePrincipalId + "; Annotation: " + annotation);
-            return;
-        }
         if (ObjectUtils.isNotNull(workflowDocument)) {
-            String annotationNote = (ObjectUtils.isNull(annotation)) ? "" : annotation;
-            String responsibilityNote = (ObjectUtils.isNull(responsibility)) ? "" : responsibility;
-            String currentNodeName = getCurrentRouteNodeName(workflowDocument);
-            workflowDocument.adHocToPrincipal( ActionRequestType.FYI, currentNodeName, annotationNote, routePrincipalId, responsibilityNote, true);
+            boolean isActiveUser = this.isActiveUser(routePrincipalId);
+            Map<String, String> permissionDetails = new HashMap<String, String>();
+            permissionDetails.put(KimConstants.AttributeConstants.DOCUMENT_TYPE_NAME, workflowDocument.getDocumentTypeName());
+            permissionDetails.put(KimConstants.AttributeConstants.ACTION_REQUEST_CD, KewApiConstants.ACTION_REQUEST_FYI_REQ);
+            boolean canReceiveAdHocRequest = KimApiServiceLocator.getPermissionService().isAuthorizedByTemplate(routePrincipalId, KewApiConstants.KEW_NAMESPACE, KewApiConstants.AD_HOC_REVIEW_PERMISSION, permissionDetails, new HashMap<String, String>());
+            if (!isActiveUser || !canReceiveAdHocRequest) {
+                String principalName = SpringContext.getBean(PersonService.class).getPerson(routePrincipalId).getName();
+                String errorText = "cannot send FYI to the user: " + principalName + "; Annotation: " + annotation;
+                LOG.info(errorText);
+                Note note = SpringContext.getBean(DocumentService.class).createNoteFromDocument(this, errorText);
+                this.addNote(SpringContext.getBean(NoteService.class).save(note));
+            } else {
+                String annotationNote = (ObjectUtils.isNull(annotation)) ? "" : annotation;
+                String responsibilityNote = (ObjectUtils.isNull(responsibility)) ? "" : responsibility;
+                String currentNodeName = getCurrentRouteNodeName(workflowDocument);
+                workflowDocument.adHocToPrincipal( ActionRequestType.FYI, currentNodeName, annotationNote, routePrincipalId, responsibilityNote, true);
+            }
         }
     }
 
@@ -797,7 +815,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     }
 
     /**
-     * @see org.kuali.kfs.krad.document.DocumentBase#handleRouteLevelChange(org.kuali.rice.kew.clientapp.vo.DocumentRouteLevelChangeDTO)
+     * @see org.kuali.rice.krad.document.DocumentBase#handleRouteLevelChange(org.kuali.rice.kew.clientapp.vo.DocumentRouteLevelChangeDTO)
      */
     @Override
     public void doRouteLevelChange(DocumentRouteLevelChange levelChangeEvent) {
@@ -835,7 +853,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         }
 
     /**
-     * @see org.kuali.kfs.krad.document.DocumentBase#doActionTaken(org.kuali.rice.kew.clientapp.vo.ActionTakenEventDTO)
+     * @see org.kuali.rice.krad.document.DocumentBase#doActionTaken(org.kuali.rice.kew.clientapp.vo.ActionTakenEventDTO)
      */
     @Override
     public void doActionTaken(ActionTakenEvent event) {
@@ -1582,25 +1600,20 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         }
 
         explicitEntry.setTransactionLedgerEntryAmount(accountTotalGLEntryAmount);
-        String debitCreditCode = GL_DEBIT_CODE;
-
-        // if the amount is negative, flip the D/C indicator
-        if (accountTotalGLEntryAmount.doubleValue() < 0) {
-            if (GL_CREDIT_CODE.equals(debitCreditCode)) {
-                if (GL_CREDIT_CODE.equals(debitCreditCode)) {
-                    explicitEntry.setTransactionDebitCreditCode(GL_DEBIT_CODE);
-                }
-            }
-            else {
-                explicitEntry.setTransactionDebitCreditCode(GL_CREDIT_CODE);
-            }
-        }
-        else {
-            explicitEntry.setTransactionDebitCreditCode(debitCreditCode);
-        }
+        handleNegativeEntryAmount(explicitEntry);
 
         // don't think i should have to override this, but default isn't getting the right PO doc
         explicitEntry.setFinancialDocumentTypeCode(PurapDocTypeCodes.PO_DOCUMENT);
+    }
+
+    protected void handleNegativeEntryAmount(GeneralLedgerPendingEntry explicitEntry) {
+        if (explicitEntry.getTransactionLedgerEntryAmount().doubleValue() < 0) {
+                explicitEntry.setTransactionDebitCreditCode(GL_CREDIT_CODE);
+            explicitEntry.setTransactionLedgerEntryAmount(explicitEntry.getTransactionLedgerEntryAmount().abs());
+        }
+        else {
+            explicitEntry.setTransactionDebitCreditCode(GL_DEBIT_CODE);
+        }
     }
 
     @Override
