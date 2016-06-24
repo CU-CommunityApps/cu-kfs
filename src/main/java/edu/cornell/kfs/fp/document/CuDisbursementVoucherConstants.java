@@ -38,6 +38,7 @@ public interface CuDisbursementVoucherConstants extends DisbursementVoucherConst
         public static final String RENTAL_PAYMENT = "T";
         public static final String TRAVEL_HONORARIUM = "X";
     }
-
+    
+    public static final String PAYMENT_REASONS_THAT_DO_NOT_REQUIRE_TAX_REVIEW_FOR_FOREIGN_VENDOR = "PAYMENT_REASONS_THAT_DO_NOT_REQUIRE_TAX_REVIEW_FOR_FOREIGN_VENDOR";
 
 }
