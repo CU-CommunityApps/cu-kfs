@@ -9,6 +9,9 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
@@ -48,6 +51,7 @@ import org.kuali.kfs.krad.service.PersistenceService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants;
@@ -383,6 +387,29 @@ public class CuRequisitionDocument extends RequisitionDocument {
 			logAndThrowRuntimeException("Error saving app doc status while changing route level for document with id " + getDocumentNumber(), e);
 		}
     	
+    }
+
+    /**
+     * Overridden to also pre-populate note IDs on unsaved notes lacking attachments,
+     * to avoid persistence problems with note extended attributes. This is necessary
+     * because of the OJB behavior of trying to persist the 1-1 reference object
+     * prior to the parent object, which can interfere with saving auto-generated
+     * notes (like "copied from document" notes).
+     *
+     * @see org.kuali.kfs.module.purap.document.PurchasingDocumentBase#prepareForSave(org.kuali.rice.krad.rules.rule.event.KualiDocumentEvent)
+     */
+    @Override
+    public void prepareForSave(KualiDocumentEvent event) {
+        super.prepareForSave(event);
+        SequenceAccessorService sequenceAccessorService = SpringContext.getBean(SequenceAccessorService.class);
+        for (Note note : getNotes()) {
+            if (note.getNoteIdentifier() == null && ObjectUtils.isNull(note.getAttachment())) {
+                // Pre-populate IDs on unsaved notes without attachments, as well as their extended attributes.
+                Long newNoteId = sequenceAccessorService.getNextAvailableSequenceNumber(CUKFSConstants.NOTE_SEQUENCE_NAME);
+                note.setNoteIdentifier(newNoteId);
+                ((NoteExtendedAttribute) note.getExtension()).setNoteIdentifier(newNoteId);
+            }
+        }
     }
 
     @Override

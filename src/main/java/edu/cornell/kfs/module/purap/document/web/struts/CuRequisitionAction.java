@@ -43,6 +43,7 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.document.CuRequisitionDocument;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
@@ -210,6 +211,25 @@ public class CuRequisitionAction extends RequisitionAction {
         return mapping.findForward(RiceConstants.MAPPING_BASIC);
     }
 
+    @Override
+    public ActionForward insertBONote(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        Note newNote = kualiDocumentFormBase.getNewNote();
+        NoteExtendedAttribute extendedAttribute = (NoteExtendedAttribute) newNote.getExtension();
+
+        ActionForward forward = super.insertBONote(mapping, form, request, response);
+
+        if (newNote != kualiDocumentFormBase.getNewNote()) {
+            Note addedNote = kualiDocumentFormBase.getDocument().getNotes().get(kualiDocumentFormBase.getDocument().getNotes().size() - 1);
+            extendedAttribute.setNoteIdentifier(addedNote.getNoteIdentifier());
+            addedNote.setExtension(extendedAttribute);
+            SpringContext.getBean(BusinessObjectService.class).save(extendedAttribute);
+            addedNote.refreshReferenceObject("extension");
+        }
+
+        return forward;
+    }
 
 }
 

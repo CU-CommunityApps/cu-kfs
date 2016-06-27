@@ -200,5 +200,39 @@
     	</reference-descriptor> 
     	
     </class-descriptor>
-     
+
+    <class-descriptor class="org.kuali.kfs.krad.bo.Note" table="KRNS_NTE_T">
+        <field-descriptor name="noteIdentifier" column="NTE_ID" jdbc-type="BIGINT" primarykey="true" indexed="true" autoincrement="true"
+                          sequence-name="KRNS_NTE_S" />
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true" />
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+        <field-descriptor name="remoteObjectIdentifier" column="RMT_OBJ_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="authorUniversalIdentifier" column="AUTH_PRNCPL_ID" jdbc-type="VARCHAR" />
+        <field-descriptor name="notePostedTimestamp" column="POST_TS" jdbc-type="TIMESTAMP" />
+        <field-descriptor name="noteTypeCode" column="NTE_TYP_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="noteText" column="TXT" jdbc-type="VARCHAR" />
+        <field-descriptor name="notePurgeCode" column="PRG_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="noteTopicText" column="TPC_TXT" jdbc-type="VARCHAR" />
+        <reference-descriptor name="noteType" class-ref="org.kuali.kfs.krad.bo.NoteType" auto-retrieve="true" auto-update="none" auto-delete="none">
+            <foreignkey field-ref="noteTypeCode" />
+        </reference-descriptor>
+        <!-- fdocAttachmentIdentifier ABOVE AND REFERENCE BELOW ARE TEMPORARY B/C THIS SHOULD BE 1 TO MANY -->
+        <reference-descriptor name="attachment" class-ref="org.kuali.kfs.krad.bo.Attachment" auto-retrieve="true" auto-update="object" auto-delete="object">
+            <foreignkey field-ref="noteIdentifier" />
+        </reference-descriptor>
+
+        <reference-descriptor name="extension" class-ref="edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute"
+                              auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+            <foreignkey field-ref="noteIdentifier" />
+        </reference-descriptor>
+    </class-descriptor>
+
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute" table="KRNS_NTE_TX">
+        <field-descriptor name="noteIdentifier" column="NTE_ID" jdbc-type="BIGINT" primarykey="true" indexed="true" />
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true" />
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+        <field-descriptor name="copyNoteIndicator" column="COPY_IND" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    </class-descriptor>
+
 </descriptor-repository>
