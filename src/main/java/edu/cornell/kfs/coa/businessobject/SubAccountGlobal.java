@@ -14,13 +14,18 @@ import org.kuali.kfs.coa.businessobject.ReportingCode;
 import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.krad.bo.GlobalBusinessObject;
 import org.kuali.rice.krad.bo.GlobalBusinessObjectDetail;
+import org.kuali.rice.krad.bo.GlobalBusinessObjectDetailBase;
 import org.kuali.rice.krad.bo.PersistableBusinessObject;
 import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.rice.krad.service.PersistenceStructureService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
-public class SubAccountGlobal extends PersistableBusinessObjectBase implements GlobalBusinessObject {
+import edu.cornell.kfs.coa.service.GlobalObjectWithIndirectCostRecoveryAccountsService;
+import edu.cornell.kfs.sys.CUKFSPropertyConstants;
+
+
+public class SubAccountGlobal extends PersistableBusinessObjectBase implements GlobalObjectWithIndirectCostRecoveryAccounts {
 	protected String documentNumber;
 	
 	protected boolean inactivate;    
@@ -35,8 +40,8 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 	protected Organization org;
 	protected Chart financialReportChart;
   
+	protected List<IndirectCostRecoveryAccountChange> indirectCostRecoveryAccounts;
     protected List<SubAccountGlobalDetail> subAccountGlobalDetails;
-    protected List<IndirectCostRecoveryAccountChange> indirectCostRecoveryAccounts;
     
     /**
      * Constructs a SubAccountGlobal object.
@@ -121,83 +126,63 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 		    	subAccount.getA21SubAccount().setCostShareSourceSubAccountNumber(a21SubAccount.costShareSourceSubAccountNumber);
 		    }
 		    
-    		// update icr account collections
-		    List<A21IndirectCostRecoveryAccount> a21IcrAccounts = subAccountGlobalDetail.getSubAccount().getA21SubAccount().getA21IndirectCostRecoveryAccounts();
+		    List<IndirectCostRecoveryAccount> icrAccounts = new ArrayList<IndirectCostRecoveryAccount>();
+		    
+		    for(IndirectCostRecoveryAccount icrAccount : subAccountGlobalDetail.getSubAccount().getA21SubAccount().getA21IndirectCostRecoveryAccounts()){
+		    	icrAccounts.add(icrAccount);
+		    }
 
-			Map<Integer, Integer> alreadyUpdatedIndexes = new HashMap<Integer, Integer>();
-			List<A21IndirectCostRecoveryAccount> addList = new ArrayList<A21IndirectCostRecoveryAccount>();
-
-			// if there are any icr accounts entered on the global doc
-			if (indirectCostRecoveryAccounts.size() > 0) {
-				for (IndirectCostRecoveryAccountChange newICR : indirectCostRecoveryAccounts) {
-					boolean found = false;
-
-					int temp = -1;
-					int i = 0;
-
-					while (i < a21IcrAccounts.size() && (!found || (found && temp!=-1))) {
-						if (!alreadyUpdatedIndexes.containsKey(i)) {
-							A21IndirectCostRecoveryAccount existingICR = a21IcrAccounts.get(i);
-							// check if we have a match on chart, account and percentage
-							if (existingICR.getIndirectCostRecoveryFinCoaCode().equalsIgnoreCase(newICR.getIndirectCostRecoveryFinCoaCode()) 
-									&& existingICR.getIndirectCostRecoveryAccountNumber().equalsIgnoreCase(newICR.getIndirectCostRecoveryAccountNumber()) 
-									&& existingICR.getAccountLinePercent().equals(newICR.getAccountLinePercent())) {
-								// set this to true if we have found a match
-								found = true;
-								// check if the they don't already both have the same active indicator
-								if (newICR.isActive() == existingICR.isActive()) {
-									// both the same, save position in temp and keep looking, if an entry exists that matches on chart, account and percentage but not same active indicator then we will update that one, otherwise we will consider a match on this temp entry
-									temp = i;
-								} else {
-									// done, stop looking and update the active indicator
-									existingICR.setActive(newICR.isActive());
-									alreadyUpdatedIndexes.put(i, i);
-									
-									// reset temp since we have found a better match
-									if(temp != -1){
-										temp = -1;
-									}
-								}
-							}
-						}
-						i++;
-					}
-
-					if (found && temp != -1) {
-						// no need to update but we will add the index in already updated since there was a match
-						alreadyUpdatedIndexes.put(temp, temp);
-					}
-
-					if (!found) {
-						// add to active add or inactive add list
-						A21IndirectCostRecoveryAccount icrAccount = createA21IndirectCostRecoveryAccountFromChange(subAccountGlobalDetail, newICR);
-						addList.add(icrAccount);
-
-					}
-
-				}
-				
-				List<A21IndirectCostRecoveryAccount> updatedA21IcrAccounts = new ArrayList<A21IndirectCostRecoveryAccount>();
-				updatedA21IcrAccounts.addAll(subAccountGlobalDetail.getSubAccount().getA21SubAccount().getA21IndirectCostRecoveryAccounts());
-				updatedA21IcrAccounts.addAll(addList);
-
-				subAccountGlobalDetail.getSubAccount().getA21SubAccount().setA21IndirectCostRecoveryAccounts(updatedA21IcrAccounts);
-			}
+		    updateIcrAccounts(subAccountGlobalDetail, icrAccounts);
 		    
 			changesToPersist.add(subAccount);
 		}
 		
 		return changesToPersist;
 	}
+	
+    public List<IndirectCostRecoveryAccountChange> getActiveIndirectCostRecoveryAccounts() {
+    	return SpringContext.getBean(GlobalObjectWithIndirectCostRecoveryAccountsService.class).getActiveIndirectCostRecoveryAccounts(this);
+    }
+    
+	public boolean hasIcrAccounts(){
+		return ObjectUtils.isNotNull(indirectCostRecoveryAccounts) && indirectCostRecoveryAccounts.size() > 0;
+	}
 
-	/**
-	 * Creates an A21IndirectCostRecoveryAccount from the global icr change object.
-	 * 
-	 * @param subAccountGlobalDetail
-	 * @param newICR
-	 * @return an A21IndirectCostRecoveryAccount
-	 */
-	private A21IndirectCostRecoveryAccount createA21IndirectCostRecoveryAccountFromChange(SubAccountGlobalDetail subAccountGlobalDetail, IndirectCostRecoveryAccountChange newICR) {
+	@Override
+	public Map<GlobalBusinessObjectDetailBase, List<IndirectCostRecoveryAccount>> getGlobalObjectDetailsAndIcrAccountsMap() {
+		Map<GlobalBusinessObjectDetailBase, List<IndirectCostRecoveryAccount>> globalObjectDetailsAndIcrAccountsMap = new HashMap<GlobalBusinessObjectDetailBase, List<IndirectCostRecoveryAccount>>();
+		List<SubAccountGlobalDetail> subAccountGlobalDetails = getSubAccountGlobalDetails();
+		
+		if (ObjectUtils.isNotNull(subAccountGlobalDetails)&& !subAccountGlobalDetails.isEmpty()) {
+			for (GlobalBusinessObjectDetailBase globalDetail : subAccountGlobalDetails) {
+				List<IndirectCostRecoveryAccount> existingIcrAccounts = new ArrayList<IndirectCostRecoveryAccount>();
+
+				SubAccountGlobalDetail subAccountGlobalDetail = (SubAccountGlobalDetail) globalDetail;
+
+				subAccountGlobalDetail.refreshReferenceObject(KFSPropertyConstants.SUB_ACCOUNT);
+
+				List<A21IndirectCostRecoveryAccount> a21IcrAccounts = subAccountGlobalDetail.getSubAccount().getA21SubAccount().getA21IndirectCostRecoveryAccounts();
+
+				for (A21IndirectCostRecoveryAccount a21ICRAccount : a21IcrAccounts) {
+					IndirectCostRecoveryAccount icrAcct = new IndirectCostRecoveryAccount();
+					icrAcct.setChartOfAccountsCode(a21ICRAccount.getChartOfAccountsCode());
+					icrAcct.setAccountNumber(a21ICRAccount.getAccountNumber());
+					icrAcct.setIndirectCostRecoveryAccountNumber(a21ICRAccount.getIndirectCostRecoveryAccountNumber());
+					icrAcct.setIndirectCostRecoveryFinCoaCode(a21ICRAccount.getIndirectCostRecoveryFinCoaCode());
+					icrAcct.setAccountLinePercent(a21ICRAccount.getAccountLinePercent());
+					icrAcct.setActive(a21ICRAccount.isActive());
+					existingIcrAccounts.add(icrAcct);
+				}
+				globalObjectDetailsAndIcrAccountsMap.put(globalDetail,existingIcrAccounts);
+			}
+
+		}
+		return globalObjectDetailsAndIcrAccountsMap;
+	}
+
+	@Override
+	public IndirectCostRecoveryAccount createIndirectCostRecoveryAccountFromChange(GlobalBusinessObjectDetailBase globalDetail, IndirectCostRecoveryAccountChange newICR) {		
+		SubAccountGlobalDetail subAccountGlobalDetail = (SubAccountGlobalDetail) globalDetail;
 		String chart = subAccountGlobalDetail.getChartOfAccountsCode();
 		String account = subAccountGlobalDetail.getAccountNumber();
 
@@ -210,8 +195,24 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 		icrAccount.setAccountLinePercent(newICR.getAccountLinePercent());
 
 		return icrAccount;
-	}	
+	}
 
+	@Override
+	public void updateGlobalDetailICRAccountCollection(
+			GlobalBusinessObjectDetailBase globalDetail,
+			List<IndirectCostRecoveryAccount> updatedIcrAccounts) {
+		SubAccountGlobalDetail subAccountGlobalDetail = (SubAccountGlobalDetail)globalDetail;
+		List<A21IndirectCostRecoveryAccount> updatedA21IcrAccounts = new ArrayList<A21IndirectCostRecoveryAccount>();
+		for(IndirectCostRecoveryAccount icrAccount : updatedIcrAccounts){
+			updatedA21IcrAccounts.add(A21IndirectCostRecoveryAccount.copyICRAccount(icrAccount));
+		}
+		subAccountGlobalDetail.getSubAccount().getA21SubAccount().setA21IndirectCostRecoveryAccounts(updatedA21IcrAccounts);
+	}
+	
+	public void updateIcrAccounts(GlobalBusinessObjectDetailBase globalDetail, List<IndirectCostRecoveryAccount> icrAccounts){
+		SpringContext.getBean(GlobalObjectWithIndirectCostRecoveryAccountsService.class).updateIcrAccounts(this, globalDetail, icrAccounts);
+	}
+	
 	/** 
 	 * @see org.kuali.rice.krad.bo.GlobalBusinessObject#getAllDetailObjects()
 	 */
@@ -366,24 +367,6 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 	}
 
 	/**
-	 * Gets indirectCostRecoveryAccounts.
-	 * 
-	 * @return indirectCostRecoveryAccounts
-	 */
-	public List<IndirectCostRecoveryAccountChange> getIndirectCostRecoveryAccounts() {
-		return indirectCostRecoveryAccounts;
-	}
-
-	/**
-	 * Sets indirectCostRecoveryAccounts
-	 * 
-	 * @param indirectCostRecoveryAccounts
-	 */
-	public void setIndirectCostRecoveryAccounts(List<IndirectCostRecoveryAccountChange> indirectCostRecoveryAccounts) {
-		this.indirectCostRecoveryAccounts = indirectCostRecoveryAccounts;
-	}
-
-	/**
 	 * Gets a21SubAccount.
 	 * 
 	 * @return a21SubAccount
@@ -455,19 +438,23 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 		this.financialReportChart = financialReportChart;
 	}
 	
-    /**
-     * Gets the active indirectCostRecoveryAccounts.
-     * 
-     * @return the active indirectCostRecoveryAccounts
-     */
-    public List<IndirectCostRecoveryAccountChange> getActiveIndirectCostRecoveryAccounts() {
-        List<IndirectCostRecoveryAccountChange> activeList = new ArrayList<IndirectCostRecoveryAccountChange>();
-        for (IndirectCostRecoveryAccountChange icr : getIndirectCostRecoveryAccounts()){
-            if (icr.isActive()){
-                activeList.add(IndirectCostRecoveryAccountChange.copyICRAccount(icr));
-            }
-        }
-        return activeList;
-    }
+	@Override
+	public List<? extends GlobalBusinessObjectDetailBase> getGlobalObjectDetails() {		
+		return getSubAccountGlobalDetails();
+	}
+
+	@Override
+	public String getGlobalDetailsPropertyName() {
+		return CUKFSPropertyConstants.SUB_ACCOUNT_GLBL_CHANGE_DETAILS;
+	}
+
+	public List<IndirectCostRecoveryAccountChange> getIndirectCostRecoveryAccounts() {
+		return indirectCostRecoveryAccounts;
+	}
+
+	public void setIndirectCostRecoveryAccounts(
+			List<IndirectCostRecoveryAccountChange> indirectCostRecoveryAccounts) {
+		this.indirectCostRecoveryAccounts = indirectCostRecoveryAccounts;
+	}
 
 }
