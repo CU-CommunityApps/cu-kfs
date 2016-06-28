@@ -9,14 +9,10 @@ import org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherAccountingLi
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.krad.util.GlobalVariables;
 
-import edu.cornell.kfs.fp.businessobject.ScheduledAccountingLine;
-import edu.cornell.kfs.fp.businessobject.ScheduledSourceAccountingLine;
-import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuDisbursementVoucherAccountingLineTotalsValidation extends DisbursementVoucherAccountingLineTotalsValidation {
@@ -68,26 +64,8 @@ public class CuDisbursementVoucherAccountingLineTotalsValidation extends Disburs
                 return true; 
             }
         }
-        
-        if (dvDocument instanceof RecurringDisbursementVoucherDocument) {
-        	RecurringDisbursementVoucherDocument recurringDV = (RecurringDisbursementVoucherDocument) dvDocument;
-        	if (!doesAccountingLineTotalEqualDVTotalDollarAmount(recurringDV)) {
-        		String propertyName = KFSPropertyConstants.DOCUMENT + "." + KFSPropertyConstants.DISB_VCHR_CHECK_TOTAL_AMOUNT;
-        		GlobalVariables.getMessageMap().putError(propertyName, CUKFSKeyConstants.ERROR_DV_CHECK_TOTAL_MUST_EQUAL_ACCOUNTING_LINE_TOTAL);
-        		return false;
-        	}
-        }
 
        return super.validate(event);
-    }
-    
-    private boolean doesAccountingLineTotalEqualDVTotalDollarAmount(RecurringDisbursementVoucherDocument recurringDV) {
-    	KualiDecimal calculatedTotal = KualiDecimal.ZERO;
-    	for (Object accountingLine : recurringDV.getSourceAccountingLines()) {
-			ScheduledSourceAccountingLine scheduledAccountingLine = (ScheduledSourceAccountingLine)accountingLine;	
-			calculatedTotal = calculatedTotal.add(scheduledAccountingLine.getAmount());
-    	}
-    	return  calculatedTotal.equals(recurringDV.getTotalDollarAmount());
     }
 
 }
