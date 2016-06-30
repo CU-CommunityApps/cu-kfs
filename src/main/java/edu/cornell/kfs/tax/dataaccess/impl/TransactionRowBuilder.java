@@ -21,7 +21,9 @@ import org.kuali.kfs.coa.service.OrganizationService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.core.api.encryption.EncryptionService;
+import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.KEWPropertyConstants;
+import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.document.Document;
 import org.kuali.rice.kew.api.document.WorkflowDocumentService;
@@ -32,6 +34,7 @@ import org.kuali.rice.kim.api.identity.IdentityService;
 import org.kuali.rice.kim.api.identity.principal.EntityNamePrincipalName;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.krad.util.BeanPropertyComparator;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
@@ -44,9 +47,9 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
  */
 abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
     static final int INSERTION_BATCH_SIZE = 500;
-    private static final int DOC_SEARCH_BATCH_SIZE = 500;
     private static final int DOC_ID_CRITERIA_SIZE = 5000;
     private static final int MAX_AUTO_TAXNUM_DIGITS = 8;
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TransactionRowBuilder.class);
 
     // Convenience map for associating payee IDs with auto-generated tax ID, in the event of encountering a vendor with a blank tax ID.
     private Map<String,String> nullTaxNumberReplacementsByPayeeId;
@@ -77,6 +80,8 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
     private EncryptionService encryptionService;
     private AccountService accountService;
     private OrganizationService organizationService;
+    
+    private Integer maxSearchResultSize;
 
 
 
@@ -334,7 +339,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
                     // If still greater than cached ID and more unfetched docs exist, perform next bulk retrieval.
                     if (idCompareResult > 0 && documentIdsForBulkQuery.hasNext()) {
                         StringBuilder docIdCriteria = new StringBuilder(DOC_ID_CRITERIA_SIZE);
-                        for (int i = 0; documentIdsForBulkQuery.hasNext() && i < DOC_SEARCH_BATCH_SIZE; i++) {
+                        for (int i = 0; documentIdsForBulkQuery.hasNext() && i < getMaxSearchSize(); i++) {
                             // Build a docId criteria string with "|" (Kuali lookup OR) as the separator.
                             docIdCriteria.append(documentIdsForBulkQuery.next()).append('|');
                         }
@@ -446,6 +451,27 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
         stats.put(TaxStatType.NUM_NO_ORG, Integer.valueOf(numNoOrg));
         
         return stats;
+    }
+    
+    protected int getMaxSearchSize() {
+    	if (maxSearchResultSize == null) {
+	    	String searchLimit = getParameterService().getParameterValueAsString(KewApiConstants.KEW_NAMESPACE, 
+	        		KRADConstants.DetailTypes.DOCUMENT_SEARCH_DETAIL_TYPE, KewApiConstants.DOC_SEARCH_RESULT_CAP);
+	    	try {
+	    		LOG.debug("Found a value for KewApiConstants.DOC_SEARCH_RESULT_CAP, and it is '" + searchLimit + "'");
+	    		maxSearchResultSize = new Integer(searchLimit);
+	    	} catch (Exception e) {
+	    		LOG.error("Unable to convert '" + searchLimit + 
+	    				"' to an integer.  Returning value of KewApiConstants.DOCUMENT_LOOKUP_DEFAULT_RESULT_CAP which is " + 
+	    				KewApiConstants.DOCUMENT_LOOKUP_DEFAULT_RESULT_CAP);
+	    		maxSearchResultSize = new Integer(KewApiConstants.DOCUMENT_LOOKUP_DEFAULT_RESULT_CAP);
+	    	}
+    	}
+    	return maxSearchResultSize.intValue();
+    }
+    
+    protected ParameterService getParameterService() {
+    	return SpringContext.getBean(ParameterService.class);
     }
 
 }
