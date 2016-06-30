@@ -168,8 +168,4 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
 
     // KFSPTS-4792   
     public static final String ERROR_DOCUMENT_GLB_MAINT_ICR_ACCOUNT_TOTAL_NOT_100_PERCENT = "error.document.global.indirectCostRecoveryAccounts.totalNot100Percent";
-
-    // KFSPTS-4484
-    public static final String QUESTION_OVERSIZED_CHECK_STUB_TEXT = "question.dv.confirm.oversizedCheckStubText";
-
 }
