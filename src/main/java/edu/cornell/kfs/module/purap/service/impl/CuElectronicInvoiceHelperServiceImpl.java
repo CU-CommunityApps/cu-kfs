@@ -1430,9 +1430,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         finalText.append("======================================\n");
         finalText.append("               TOTALS\n");
         finalText.append("======================================\n\n");
-        finalText.append(ACCEPT).append("           : ").append(loadCounts.get(ACCEPT)!=null?loadCounts.get(ACCEPT):0).append("\n");
-        finalText.append(REJECT).append("           : ").append(loadCounts.get(REJECT)!=null?loadCounts.get(REJECT):0).append("\n");
-        finalText.append(EXTRACT_FAILURES).append(" : ").append(loadCounts.get(EXTRACT_FAILURES)!=null?loadCounts.get(EXTRACT_FAILURES):0).append("\n");
+        finalText.append(ACCEPT).append("           : ").append((Integer)(loadCounts.get(ACCEPT)!=null?loadCounts.get(ACCEPT):0)).append("\n");
+        finalText.append(REJECT).append("           : ").append((Integer)(loadCounts.get(REJECT)!=null?loadCounts.get(REJECT):0)).append("\n");
+        finalText.append(EXTRACT_FAILURES).append(" : ").append((Integer)(loadCounts.get(EXTRACT_FAILURES)!=null?loadCounts.get(EXTRACT_FAILURES):0)).append("\n");
         finalText.append("\n");
         finalText.append("\n");
         finalText.append("======================================\n");
