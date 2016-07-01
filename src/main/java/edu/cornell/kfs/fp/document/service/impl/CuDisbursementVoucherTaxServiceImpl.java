@@ -3,22 +3,16 @@ package edu.cornell.kfs.fp.document.service.impl;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.service.impl.DisbursementVoucherTaxServiceImpl;
+import org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherNonResidentAlienInformationValidation;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.MessageMap;
 
-import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
-import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
 import edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherNonResidentAlienInformationValidation;
 
-public class CuDisbursementVoucherTaxServiceImpl extends DisbursementVoucherTaxServiceImpl implements CuDisbursementVoucherTaxService{
-	
-	protected VendorService vendorService;
-	protected ParameterEvaluatorService parameterEvaluatorService;
+public class CuDisbursementVoucherTaxServiceImpl extends DisbursementVoucherTaxServiceImpl{
 
     public void processNonResidentAlienTax(DisbursementVoucherDocument document) {
         if (validateNRATaxInformation(document)) {
@@ -86,43 +80,4 @@ public class CuDisbursementVoucherTaxServiceImpl extends DisbursementVoucherTaxS
         }
         return true;
     }
-    
-    @Override
-	public boolean isForeignVendorAndTaxReviewRequired(String payeeTypeCode,
-			String paymentReasonCode, Integer vendorHeaderId) {
-
-		return isForeignVendor(payeeTypeCode, vendorHeaderId) && !paymentReasonDoesNotRequireTaxReviewForForeignVendor(paymentReasonCode);
-	}
-	
-    @Override
-	public boolean isForeignVendorAndTaxReviewNotRequired(String payeeTypeCode,
-			String paymentReasonCode, Integer vendorHeaderId) {
-
-		return isForeignVendor(payeeTypeCode, vendorHeaderId) && paymentReasonDoesNotRequireTaxReviewForForeignVendor(paymentReasonCode);
-	}
-	
-	protected boolean isForeignVendor(String payeeTypeCode, Integer vendorHeaderId){
-		return payeeTypeCode.equals(KFSConstants.PaymentPayeeTypes.VENDOR) && vendorService.isVendorForeign(vendorHeaderId);
-	}
-	
-	protected boolean paymentReasonDoesNotRequireTaxReviewForForeignVendor(String paymentReasonCode){
-		return parameterEvaluatorService.getParameterEvaluator(DisbursementVoucherDocument.class, CuDisbursementVoucherConstants.PAYMENT_REASONS_THAT_DO_NOT_REQUIRE_TAX_REVIEW_FOR_FOREIGN_VENDOR, paymentReasonCode).evaluationSucceeds();
-	}
-
-	public VendorService getVendorService() {
-		return vendorService;
-	}
-
-	public void setVendorService(VendorService vendorService) {
-		this.vendorService = vendorService;
-	}
-
-	public ParameterEvaluatorService getParameterEvaluatorService() {
-		return parameterEvaluatorService;
-	}
-
-	public void setParameterEvaluatorService(
-			ParameterEvaluatorService parameterEvaluatorService) {
-		this.parameterEvaluatorService = parameterEvaluatorService;
-	}
 }
