@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
 import org.easymock.IMockBuilder;
 import org.easymock.Mock;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -118,6 +119,11 @@ public class CuDisbursementVoucherDocumentTest {
         cuDisbursementVoucherDocument.setDisbursementVoucherPayeeService(disbursementVoucherPayeeService);
         cuDisbursementVoucherDocument.setDvPymentReasonService(disbursementVoucherPaymentReasonService);
         cuDisbursementVoucherDocument.setDocumentHelperService(documentHelperService);
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        cuDisbursementVoucherDocument.setDocumentHelperService(null);
     }
 
     protected static UserSession createMockUserSession(Person person) {
