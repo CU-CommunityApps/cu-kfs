@@ -1,4 +1,4 @@
-package org.kuali.kfs.gl.batch.service.impl;
+package edu.cornell.kfs.gl.batch.service.impl;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -11,8 +11,10 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.gl.batch.ScrubberStep;
+import org.kuali.kfs.gl.batch.service.impl.ScrubberProcessImpl;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.gl.businessobject.OriginEntryInformation;
+import org.kuali.kfs.gl.businessobject.ScrubberProcessTransactionError;
 import org.kuali.kfs.gl.businessobject.Transaction;
 import org.kuali.kfs.gl.service.ScrubberReportData;
 import org.kuali.kfs.gl.service.impl.StringHelper;
@@ -33,7 +35,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 /**
  * Cornell's implementation of ScrubberProcess that extends from the KFS-delivered ScrubberProcessImpl.
  * 
- * NOTE: Because ScrubberProcessImpl declares an internal TransactionError class with default (package-private)
+ * NOTE: Because ScrubberProcessImpl declares an internal ScrubberProcessTransactionError class with default (package-private)
  * visibility, this subclass has to be in the same package as ScrubberProcessImpl in order to use that
  * internal class. If future versions of KFS update that class with a higher visibility, then move
  * this subclass into a more appropriate package.
@@ -51,7 +53,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
      *         org.kuali.kfs.gl.businessobject.OriginEntryInformation, org.kuali.kfs.gl.service.ScrubberReportData)
      */
     @Override
-    protected TransactionError generateCostShareEntries(OriginEntryInformation scrubbedEntry, ScrubberReportData scrubberReport) {
+    protected ScrubberProcessTransactionError generateCostShareEntries(OriginEntryInformation scrubbedEntry, ScrubberReportData scrubberReport) {
         // 3000-COST-SHARE to 3100-READ-OFSD in the cobol Generate Cost Share Entries
         LOG.debug("generateCostShareEntries() started");
         try {
@@ -105,7 +107,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
 
                     Message m = new Message(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_OFFSET_DEFINITION_OBJECT_CODE_NOT_FOUND) + " (" + objectCodeKey.toString() + ")", Message.TYPE_FATAL);
                     LOG.debug("generateCostShareEntries() Error 1 object not found");
-                    return new TransactionError(costShareEntry, m);
+                    return new ScrubberProcessTransactionError(costShareEntry, m);
                 }
 
                 costShareOffsetEntry.setFinancialObjectCode(offsetDefinition.getFinancialObjectCode());
@@ -125,7 +127,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
                 Message m = new Message(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_OFFSET_DEFINITION_NOT_FOUND) + " (" + offsetKey.toString() + ")", Message.TYPE_FATAL);
 
                 LOG.debug("generateCostShareEntries() Error 2 offset not found");
-                return new TransactionError(costShareEntry, m);
+                return new ScrubberProcessTransactionError(costShareEntry, m);
             }
 
             costShareOffsetEntry.setFinancialObjectTypeCode(offsetDefinition.getFinancialObject().getFinancialObjectTypeCode());
@@ -145,7 +147,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("generateCostShareEntries() Cost Share Transfer Flexible Offset Error: " + e.getMessage());
                 }
-                return new TransactionError(costShareEntry, m);
+                return new ScrubberProcessTransactionError(costShareEntry, m);
             }
 
             createOutputEntry(costShareOffsetEntry, OUTPUT_GLE_FILE_ps);
@@ -160,7 +162,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
             costShareSourceAccountEntry.setTransactionLedgerEntryDescription(description.toString());
 
             // CU Customization: If Cost Share account is closed, use its continuation account instead.
-            TransactionError continuationError = setupEntryWithPotentialContinuation(costShareSourceAccountEntry, scrubbedEntryA21SubAccount);
+            ScrubberProcessTransactionError continuationError = setupEntryWithPotentialContinuation(costShareSourceAccountEntry, scrubbedEntryA21SubAccount);
             if (continuationError != null) {
                 return continuationError;
             }
@@ -214,7 +216,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
                     Message m = new Message(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_OFFSET_DEFINITION_OBJECT_CODE_NOT_FOUND) + " (" + objectCodeKey.toString() + ")", Message.TYPE_FATAL);
 
                     LOG.debug("generateCostShareEntries() Error 3 object not found");
-                    return new TransactionError(costShareSourceAccountEntry, m);
+                    return new ScrubberProcessTransactionError(costShareSourceAccountEntry, m);
                 }
 
                 costShareSourceAccountOffsetEntry.setFinancialObjectCode(offsetDefinition.getFinancialObjectCode());
@@ -234,7 +236,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
                 Message m = new Message(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_OFFSET_DEFINITION_NOT_FOUND) + " (" + offsetKey.toString() + ")", Message.TYPE_FATAL);
 
                 LOG.debug("generateCostShareEntries() Error 4 offset not found");
-                return new TransactionError(costShareSourceAccountEntry, m);
+                return new ScrubberProcessTransactionError(costShareSourceAccountEntry, m);
             }
 
             costShareSourceAccountOffsetEntry.setFinancialObjectTypeCode(offsetDefinition.getFinancialObject().getFinancialObjectTypeCode());
@@ -254,7 +256,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("generateCostShareEntries() Cost Share Transfer Account Flexible Offset Error: " + e.getMessage());
                 }
-                return new TransactionError(costShareEntry, m);
+                return new ScrubberProcessTransactionError(costShareEntry, m);
             }
 
             createOutputEntry(costShareSourceAccountOffsetEntry, OUTPUT_GLE_FILE_ps);
@@ -276,9 +278,9 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
      * 
      * @param costShareSourceAccountEntry The origin entry to configure.
      * @param scrubbedEntryA21SubAccount The A21 sub-account from the original scrubbed origin entry.
-     * @return A TransactionError if a valid cost share or continuation account could not be found, null otherwise.
+     * @return A ScrubberProcessTransactionError if a valid cost share or continuation account could not be found, null otherwise.
      */
-    protected TransactionError setupEntryWithPotentialContinuation(OriginEntryFull costShareSourceAccountEntry, A21SubAccount scrubbedEntryA21SubAccount) {
+    protected ScrubberProcessTransactionError setupEntryWithPotentialContinuation(OriginEntryFull costShareSourceAccountEntry, A21SubAccount scrubbedEntryA21SubAccount) {
         Account costShareAccount = accountingCycleCachingService.getAccount(
                 scrubbedEntryA21SubAccount.getCostShareChartOfAccountCode(), scrubbedEntryA21SubAccount.getCostShareSourceAccountNumber());
         if (ObjectUtils.isNotNull(costShareAccount) && costShareAccount.isClosed()) {
@@ -290,7 +292,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
             }
             if (ObjectUtils.isNull(continuationAccount) || costShareAccount == continuationAccount || continuationAccount.isClosed()) {
                 // Could not find a valid Cost Share continuation account; return an error.
-                return new TransactionError(costShareSourceAccountEntry, new Message(MessageFormat.format(
+                return new ScrubberProcessTransactionError(costShareSourceAccountEntry, new Message(MessageFormat.format(
                         configurationService.getPropertyValueAsString(CUKFSKeyConstants.ERROR_CSACCOUNT_CONTINUATION_ACCOUNT_CLOSED),
                                 scrubbedEntryA21SubAccount.getCostShareChartOfAccountCode(), scrubbedEntryA21SubAccount.getCostShareSourceAccountNumber()),
                         Message.TYPE_FATAL));
