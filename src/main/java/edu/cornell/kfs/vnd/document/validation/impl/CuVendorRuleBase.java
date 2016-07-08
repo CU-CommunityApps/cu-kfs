@@ -1,4 +1,4 @@
-package org.kuali.kfs.vnd.document.validation.impl;
+package edu.cornell.kfs.vnd.document.validation.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.VendorKeyConstants;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.kfs.vnd.document.validation.impl.VendorRule;
 import org.kuali.rice.core.api.criteria.CriteriaLookupService;
 import org.kuali.rice.core.api.criteria.Predicate;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
@@ -33,7 +34,7 @@ public abstract class CuVendorRuleBase extends VendorRule {
      */
     @SuppressWarnings("deprecation")
     @Override
-    boolean validateParentVendorTaxNumber(VendorDetail vendorDetail) {
+    protected boolean validateParentVendorTaxNumber(VendorDetail vendorDetail) {
         boolean valid = true;
         boolean isParent = vendorDetail.isVendorParentIndicator();
 
