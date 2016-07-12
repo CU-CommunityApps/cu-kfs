@@ -116,6 +116,7 @@ public class CuDisbursementVoucherDocumentTest {
 
     @AfterClass
     public static void tearDown() {
+        cuDisbursementVoucherDocument.setVendorService(null);
         cuDisbursementVoucherDocument.setDocumentHelperService(null);
     }
 
