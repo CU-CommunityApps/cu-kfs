@@ -8,25 +8,26 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
+import org.kuali.kfs.krad.datadictionary.DocumentEntry;
 import org.kuali.rice.core.api.util.RiceConstants;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.kns.document.authorization.DocumentAuthorizer;
-import org.kuali.rice.kns.util.WebUtils;
-import org.kuali.rice.kns.web.struts.action.KualiMaintenanceDocumentAction;
-import org.kuali.rice.kns.web.struts.form.KualiDocumentFormBase;
-import org.kuali.rice.krad.bo.Attachment;
-import org.kuali.rice.krad.bo.DocumentHeader;
-import org.kuali.rice.krad.bo.Note;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.datadictionary.DataDictionary;
-import org.kuali.rice.krad.document.Document;
-import org.kuali.rice.krad.rules.rule.event.AddNoteEvent;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.KRADConstants;
-import org.kuali.rice.krad.util.KRADPropertyConstants;
-import org.kuali.rice.krad.util.NoteType;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
+import org.kuali.kfs.kns.util.WebUtils;
+import org.kuali.kfs.kns.web.struts.action.KualiMaintenanceDocumentAction;
+import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
+import org.kuali.kfs.krad.bo.Attachment;
+import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.datadictionary.DataDictionary;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.rules.rule.event.AddNoteEvent;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.KRADPropertyConstants;
+import org.kuali.kfs.krad.util.NoteType;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -47,7 +48,7 @@ public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocume
      * and remove certain comments, but other than that and the changes stated above,
      * this method is the same as the one from KualiDocumentActionBase.
      * 
-     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#insertBONote(
+     * @see org.kuali.kfs.kns.web.struts.action.KualiDocumentActionBase#insertBONote(
      *      org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm,
      *      javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
@@ -102,7 +103,7 @@ public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocume
         }
 
         DataDictionary dataDictionary = getDataDictionaryService().getDataDictionary();
-        org.kuali.rice.krad.datadictionary.DocumentEntry entry = dataDictionary.getDocumentEntry(document.getClass().getName());
+        DocumentEntry entry = dataDictionary.getDocumentEntry(document.getClass().getName());
 
         if (entry.getDisplayTopicFieldInNotes()) {
             String topicText = kualiDocumentFormBase.getNewNote().getNoteTopicText();
@@ -189,7 +190,7 @@ public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocume
      * but other than that and the changes stated above,
      * this method is the same as the one from KualiDocumentActionBase.
      * 
-     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#deleteBONote(
+     * @see org.kuali.kfs.kns.web.struts.action.KualiDocumentActionBase#deleteBONote(
      *      org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm,
      *      javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */

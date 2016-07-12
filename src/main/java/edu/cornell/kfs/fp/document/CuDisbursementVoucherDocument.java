@@ -583,20 +583,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         return paymentMethodGeneralLedgerPendingEntryService;
     }
 
-    protected DisbursementVoucherTaxService getDisbursementVoucherTaxService() {
-        if ( disbursementVoucherTaxService == null ) {
-            disbursementVoucherTaxService = SpringContext.getBean(DisbursementVoucherTaxService.class);
-        }
-        return disbursementVoucherTaxService;
-    }
-
-    protected DisbursementVoucherPayeeService getDisbursementVoucherPayeeService() {
-        if ( disbursementVoucherPayeeService == null ) {
-            disbursementVoucherPayeeService = SpringContext.getBean(DisbursementVoucherPayeeService.class);
-        }
-        return disbursementVoucherPayeeService;
-    }
-
     protected DocumentHelperService getDocumentHelperService() {
         if (documentHelperService == null) {
             documentHelperService = SpringContext.getBean(DocumentHelperService.class);
@@ -956,6 +942,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
     public static void setPaymentMethodGeneralLedgerPendingEntryService(CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService) {
         CuDisbursementVoucherDocument.paymentMethodGeneralLedgerPendingEntryService = paymentMethodGeneralLedgerPendingEntryService;
+    }
+
+    public static void setDocumentHelperService(DocumentHelperService documentHelperService) {
+        CuDisbursementVoucherDocument.documentHelperService = documentHelperService;
     }
 
 }

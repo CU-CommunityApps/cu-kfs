@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.kuali.kfs.coa.businessobject.A21IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.businessobject.A21SubAccount;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 public enum A21SubAccountFixture {
 	A21_SUB_ACCOUNT_1111111_2222222_98_2(

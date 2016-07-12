@@ -125,4 +125,12 @@ public class CUKFSConstants {
     public static final String NOTE_SEQUENCE_NAME = "KRNS_NTE_S";
 
     public static final Set<String> OBJECTS_WITH_IMMEDIATE_BO_LEVEL_NOTE_UPDATE = Collections.singleton("org.kuali.kfs.coa.businessobject.Account");
+
+    public static class A21SubAccountDocumentConstants {
+        public static final String OFF_CAMPUS_INDICATOR_QUESTION_ID = "OffCampusIndicatorQuestion";
+    }
+
+    public static class AccountDocumentConstants {
+        public static final String OFF_CAMPUS_INDICATOR_QUESTION_ID = "OffCampusIndicatorQuestion";
+    }
 }

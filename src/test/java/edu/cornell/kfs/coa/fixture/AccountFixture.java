@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 public enum AccountFixture {
 	ACCOUNT_1111111_2222222_98_2(

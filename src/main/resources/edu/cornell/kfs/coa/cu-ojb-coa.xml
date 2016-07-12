@@ -540,7 +540,7 @@
 			jdbc-type="DATE" />
 		<field-descriptor name="accountOffCampusIndicator"
 			column="ACCT_OFF_CMP_IND" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="closed" column="ACCT_CLOSED_IND"
 			jdbc-type="VARCHAR"
 			conversion="org.kuali.kfs.coa.util.OjbAccountActiveIndicatorConversion" />
@@ -554,7 +554,7 @@
 			column="CONTR_CTRLACCT_NBR" jdbc-type="VARCHAR" />
 		<field-descriptor name="accountsFringesBnftIndicator"
 			column="ACCT_FRNG_BNFT_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="reportsToChartOfAccountsCode"
 			column="RPTS_TO_FIN_COA_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="reportsToAccountNumber"
@@ -577,16 +577,16 @@
 			column="BDGT_REC_LVL_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="extrnlFinEncumSufficntFndIndicator"
 			column="FIN_EXT_ENC_SF_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="intrnlFinEncumSufficntFndIndicator"
 			column="FIN_INT_ENC_SF_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="finPreencumSufficientFundIndicator"
 			column="FIN_PRE_ENC_SF_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="financialObjectivePrsctrlIndicator"
 			column="FIN_OBJ_PRSCTRL_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="contractsAndGrantsAccountResponsibilityId"
 			column="CG_ACCT_RESP_ID" jdbc-type="INTEGER" />
 		<field-descriptor name="invoiceTypeCode" column="INV_TYPE_CD"
@@ -595,18 +595,18 @@
 			column="CSTSH_PRJ_NBR" jdbc-type="BIGINT" index="true" />
 		<field-descriptor name="removeAccountExpirationDate"
 			column="RM_EXP_DT_IND" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="removeContinuationChartAndAccount"
 			column="RM_CNT_CHRT_ACCT_IND" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="financialIcrSeriesIdentifier"
 			column="FIN_SERIES_ID" jdbc-type="VARCHAR" />
 		<field-descriptor name="everify" column="E_VERIFY_IND"
 			jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="removeIncomeStreamChartAndAccount"
 			column="RM_INC_STR_CHRT_ACCT_IND" jdbc-type="VARCHAR"
-			conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 
 		<reference-descriptor name="financialDocument"
 			class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader"

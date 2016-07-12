@@ -3,7 +3,7 @@ package edu.cornell.kfs.fp.businessobject;
 import java.sql.Date;
 
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 public class RecurringDisbursementVoucherDetail extends PersistableBusinessObjectBase implements Comparable<RecurringDisbursementVoucherDetail> {
 	

@@ -16,13 +16,13 @@ import java.util.Map;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.kuali.kfs.module.cg.CGConstants;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.coreservice.impl.parameter.ParameterServiceImpl;
-import org.kuali.rice.krad.service.impl.BusinessObjectServiceImpl;
-import org.kuali.rice.krad.service.impl.DocumentServiceImpl;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.impl.parameter.ParameterServiceImpl;
+import org.kuali.kfs.krad.service.impl.BusinessObjectServiceImpl;
+import org.kuali.kfs.krad.service.impl.DocumentServiceImpl;
 
 import edu.cornell.kfs.module.cg.CuCGParameterConstants;
 import edu.cornell.kfs.module.ezra.dataaccess.impl.EzraAwardProposalDaoOjb;
@@ -139,7 +139,7 @@ public class EzraCGCodeMappingParametersTest {
         
         for (ParameterNameAndMultiValue parameter : parameters) {
             EasyMock.expect(parameterService.getParameterValuesAsString(
-                    CGConstants.CG_NAMESPACE_CODE, KfsParameterConstants.BATCH_COMPONENT, parameter.name
+                    KFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS, KfsParameterConstants.BATCH_COMPONENT, parameter.name
                     )).andStubReturn(createParameterValueStrings(parameter.values));
         }
         

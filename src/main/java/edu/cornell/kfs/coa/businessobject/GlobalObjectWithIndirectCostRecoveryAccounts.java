@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
-import org.kuali.rice.krad.bo.GlobalBusinessObject;
-import org.kuali.rice.krad.bo.GlobalBusinessObjectDetailBase;
+import org.kuali.kfs.krad.bo.GlobalBusinessObject;
+import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
 
 public interface GlobalObjectWithIndirectCostRecoveryAccounts extends GlobalBusinessObject {
 

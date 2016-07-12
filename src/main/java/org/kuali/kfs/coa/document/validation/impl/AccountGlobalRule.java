@@ -857,7 +857,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * This method calls checkAccountDetails checkExpirationDate checkOnlyOneChartAddLineErrorWrapper whenever a new
 	 * {@link AccountGlobalDetail} is added to this global
 	 *
-	 * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomAddCollectionLineBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument,
+	 * @see org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomAddCollectionLineBusinessRules(org.kuali.kfs.kns.document.MaintenanceDocument,
 	 *      java.lang.String, org.kuali.kfs.krad.bo.PersistableBusinessObject)
 	 */
 	@Override

@@ -3,7 +3,7 @@ package edu.cornell.kfs.tax.service.impl;
 import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.service.DocumentType1099BoxService;

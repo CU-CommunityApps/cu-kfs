@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
-import org.kuali.rice.krad.bo.GlobalBusinessObjectDetailBase;
+import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
 
 import edu.cornell.kfs.coa.businessobject.GlobalObjectWithIndirectCostRecoveryAccounts;
 import edu.cornell.kfs.coa.businessobject.IndirectCostRecoveryAccountChange;

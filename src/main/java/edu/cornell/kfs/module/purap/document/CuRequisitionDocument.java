@@ -396,7 +396,7 @@ public class CuRequisitionDocument extends RequisitionDocument {
      * prior to the parent object, which can interfere with saving auto-generated
      * notes (like "copied from document" notes).
      *
-     * @see org.kuali.kfs.module.purap.document.PurchasingDocumentBase#prepareForSave(org.kuali.rice.krad.rules.rule.event.KualiDocumentEvent)
+     * @see org.kuali.kfs.module.purap.document.PurchasingDocumentBase#prepareForSave(org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent)
      */
     @Override
     public void prepareForSave(KualiDocumentEvent event) {

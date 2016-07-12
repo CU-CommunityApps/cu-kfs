@@ -6,8 +6,8 @@ import java.util.Collection;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.coreservice.impl.parameter.ParameterServiceImpl;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.impl.parameter.ParameterServiceImpl;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 

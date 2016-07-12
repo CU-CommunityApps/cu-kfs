@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Organization;
-import org.kuali.kfs.module.cg.CGConstants;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.AwardAccount;
@@ -694,7 +693,7 @@ public class EzraServiceImpl implements EzraService {
     protected Map<String,String> getKeyValueMappingsFromParameter(String parameterName) {
         Map<String,String> mappings = new HashMap<String,String>();
         Collection<String> keyValuePairs = parameterService.getParameterValuesAsString(
-                CGConstants.CG_NAMESPACE_CODE, KfsParameterConstants.BATCH_COMPONENT, parameterName);
+				KFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS, KfsParameterConstants.BATCH_COMPONENT, parameterName);
         for (String keyValuePair : keyValuePairs) {
             int equalsSignIndex = keyValuePair.indexOf('=');
             mappings.put(keyValuePair.substring(0, equalsSignIndex), keyValuePair.substring(equalsSignIndex + 1));

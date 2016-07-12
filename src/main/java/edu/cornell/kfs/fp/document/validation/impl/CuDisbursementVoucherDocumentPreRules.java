@@ -42,7 +42,7 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
      *
      * @param document submitted document
      * @return true if pre-rules execute successfully
-     * @see org.kuali.rice.kns.rules.PromptBeforeValidationBase#doRules(org.kuali.rice.kns.document.MaintenanceDocument)
+     * @see org.kuali.kfs.kns.rules.PromptBeforeValidationBase#doRules(org.kuali.kfs.kns.document.MaintenanceDocument)
      */
     @Override
     public boolean doPrompts(Document document) {

@@ -25,12 +25,12 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kew.api.document.DocumentStatus;
 import org.kuali.rice.kew.impl.document.WorkflowDocumentImpl;
-import org.kuali.rice.kns.maintenance.Maintainable;
-import org.kuali.rice.krad.bo.DocumentHeader;
-import org.kuali.rice.krad.bo.Note;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.document.Document;
-import org.kuali.rice.krad.util.NoteType;
+import org.kuali.kfs.kns.maintenance.Maintainable;
+import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.util.NoteType;
 
 @SuppressWarnings("deprecation")
 public class CuFinancialMaintenanceDocumentActionTest {
@@ -201,8 +201,8 @@ public class CuFinancialMaintenanceDocumentActionTest {
         EasyMock.replay(testNote);
     }
 
-    protected org.kuali.rice.krad.bo.NoteType createMockNoteTypeBo(NoteType noteTypeEnum) {
-        org.kuali.rice.krad.bo.NoteType noteTypeBo = EasyMock.createMock(org.kuali.rice.krad.bo.NoteType.class);
+    protected org.kuali.kfs.krad.bo.NoteType createMockNoteTypeBo(NoteType noteTypeEnum) {
+        org.kuali.kfs.krad.bo.NoteType noteTypeBo = EasyMock.createMock(org.kuali.kfs.krad.bo.NoteType.class);
         EasyMock.expect(noteTypeBo.getNoteTypeCode()).andStubReturn(noteTypeEnum.getCode());
         EasyMock.replay(noteTypeBo);
         return noteTypeBo;

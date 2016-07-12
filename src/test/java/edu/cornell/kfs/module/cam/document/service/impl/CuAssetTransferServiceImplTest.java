@@ -21,12 +21,12 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.sys.service.impl.UniversityDateServiceImpl;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
-import org.kuali.rice.coreservice.api.parameter.EvaluationOperator;
-import org.kuali.rice.coreservice.api.parameter.Parameter;
-import org.kuali.rice.coreservice.api.parameter.ParameterType;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.coreservice.impl.parameter.ParameterServiceImpl;
-import org.kuali.rice.krad.service.impl.BusinessObjectServiceImpl;
+import org.kuali.kfs.coreservice.api.parameter.EvaluationOperator;
+import org.kuali.kfs.coreservice.api.parameter.Parameter;
+import org.kuali.kfs.coreservice.api.parameter.ParameterType;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.impl.parameter.ParameterServiceImpl;
+import org.kuali.kfs.krad.service.impl.BusinessObjectServiceImpl;
 
 import edu.cornell.kfs.module.cam.CuCamsConstants;
 

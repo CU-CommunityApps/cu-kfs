@@ -3,7 +3,7 @@ package edu.cornell.kfs.coa.fixture;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.businessobject.CuAccountGlobal;
 import edu.cornell.kfs.coa.businessobject.GlobalObjectWithIndirectCostRecoveryAccounts;
