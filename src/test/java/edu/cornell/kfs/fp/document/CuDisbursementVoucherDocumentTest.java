@@ -26,7 +26,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
-import org.kuali.kfs.fp.businessobject.PaymentReasonCode;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService;
@@ -51,7 +50,6 @@ import org.kuali.kfs.kns.document.authorization.DocumentPresentationController;
 import org.kuali.kfs.kns.document.authorization.TransactionalDocumentAuthorizer;
 import org.kuali.kfs.kns.document.authorization.TransactionalDocumentPresentationController;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
-import org.kuali.kfs.kns.util.MessageList;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
@@ -63,7 +61,6 @@ import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
 import edu.cornell.kfs.fp.document.authorization.CuDisbursementVoucherDocumentPresentationController;
 import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
-import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuDisbursementVoucherDocumentTest {
 
@@ -86,16 +83,15 @@ public class CuDisbursementVoucherDocumentTest {
     private static UserSession mo14Session;
     private static VendorService vendorService;
     private static DisbursementVoucherPayeeService disbursementVoucherPayeeService;
-    private static DisbursementVoucherPaymentReasonService disbursementVoucherPaymentReasonService;
     private static TestDocumentHelperService documentHelperService;
-    private static CuDisbursementVoucherPayeeDetail dvPayeeDetail;
 
     @BeforeClass
     public static void setUp() throws Exception {
         ArrayList<String> methodNames = new ArrayList<>();
         Set<String> mockingBlacklist = new HashSet<>(Arrays.asList("refreshPayeeTypeSuffixIfPaymentIsEditable", "createVendorPayeeTypeSuffix"));
         for (Method method : CuDisbursementVoucherDocument.class.getMethods()) {
-            if (!Modifier.isFinal(method.getModifiers()) && !method.getName().startsWith("set") && !method.getName().startsWith("get") && !method.getName().equals("toCopy")) {
+            if (!Modifier.isFinal(method.getModifiers()) && !method.getName().startsWith("set") && !method.getName().startsWith("get") && !method.getName().equals("toCopy")
+                    && !mockingBlacklist.contains(method.getName())) {
                 methodNames.add(method.getName());
             }
         }
@@ -109,8 +105,12 @@ public class CuDisbursementVoucherDocumentTest {
         ccs1Session = createMockUserSession(ccs1Person);
         mo14Session = createMockUserSession(mo14Person);
 
+        vendorService = new TestVendorService();
+        disbursementVoucherPayeeService = new TestDisbursementVoucherPayeeService();
         documentHelperService = new TestDocumentHelperService();
 
+        cuDisbursementVoucherDocument.setVendorService(vendorService);
+        cuDisbursementVoucherDocument.setDisbursementVoucherPayeeService(disbursementVoucherPayeeService);
         cuDisbursementVoucherDocument.setDocumentHelperService(documentHelperService);
     }
 
@@ -303,6 +303,207 @@ public class CuDisbursementVoucherDocumentTest {
 
     protected Set<String> createEditModeSet(String... values) {
         return new HashSet<String>(Arrays.asList(values));
+    }
+
+    private static class TestVendorService implements VendorService {
+
+        @Override
+        public void saveVendorHeader(VendorDetail vendorDetail) {
+
+        }
+
+        @Override
+        public VendorDetail getByVendorNumber(String s) {
+            return getVendorDetail(s);
+        }
+
+        @Override
+        public VendorDetail getVendorDetail(String s) {
+            try {
+                return getVendorDetail(
+                        Integer.valueOf(StringUtils.substringBefore(s, "-")),
+                        Integer.valueOf(StringUtils.substringAfter(s, "-")));
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+
+        @Override
+        public VendorDetail getVendorDetail(Integer integer, Integer integer1) {
+            if (integer == 23456) {
+                return null;
+            } else {
+                VendorType vendorType = new VendorType();
+                vendorType.setVendorTypeCode(VENDOR_TYPE_CODE_DV);
+                vendorType.setVendorTypeDescription(VENDOR_TYPE_DESCRIPTION_DV);
+
+                VendorHeader vendorHeader = new VendorHeader();
+                vendorHeader.setVendorHeaderGeneratedIdentifier(integer);
+                vendorHeader.setVendorTypeCode(VENDOR_TYPE_CODE_DV);
+                vendorHeader.setVendorType(vendorType);
+
+                VendorDetail vendorDetail = new VendorDetail();
+                vendorDetail.setVendorHeaderGeneratedIdentifier(integer);
+                vendorDetail.setVendorDetailAssignedIdentifier(integer1);
+                vendorDetail.setVendorHeader(vendorHeader);
+                return vendorDetail;
+            }
+        }
+
+        @Override
+        public VendorDetail getParentVendor(Integer integer) {
+            return null;
+        }
+
+        @Override
+        public VendorDetail getVendorByDunsNumber(String s) {
+            return null;
+        }
+
+        @Override
+        public KualiDecimal getApoLimitFromContract(Integer integer, String s, String s1) {
+            return null;
+        }
+
+        @Override
+        public VendorAddress getVendorDefaultAddress(Integer integer, Integer integer1, String s, String s1) {
+            return null;
+        }
+
+        @Override
+        public VendorAddress getVendorDefaultAddress(Collection<VendorAddress> collection, String s, String s1) {
+            return null;
+        }
+
+        @Override
+        public boolean shouldVendorRouteForApproval(String s) {
+            return false;
+        }
+
+        @Override
+        public boolean equalMemberLists(List<? extends VendorRoutingComparable> list, List<? extends VendorRoutingComparable> list1) {
+            return false;
+        }
+
+        @Override
+        public boolean noRouteSignificantChangeOccurred(VendorDetail vendorDetail, VendorHeader vendorHeader, VendorDetail vendorDetail1, VendorHeader vendorHeader1) {
+            return false;
+        }
+
+        @Override
+        public boolean isVendorInstitutionEmployee(Integer integer) {
+            return false;
+        }
+
+        @Override
+        public boolean isVendorForeign(Integer integer) {
+            return false;
+        }
+
+        @Override
+        public boolean isSubjectPaymentVendor(Integer integer) {
+            return false;
+        }
+
+        @Override
+        public boolean isRevolvingFundCodeVendor(Integer integer) {
+            return false;
+        }
+
+        @Override
+        public VendorContract getVendorB2BContract(VendorDetail vendorDetail, String s) {
+            return null;
+        }
+
+        @Override
+        public List<Note> getVendorNotes(VendorDetail vendorDetail) {
+            return null;
+        }
+
+        @Override
+        public boolean isVendorContractExpired(Document document, Integer integer, VendorDetail vendorDetail) {
+            return false;
+        }
+
+        @Override
+        public VendorAddress getVendorDefaultAddress(Integer integer, Integer integer1, String s, String s1, boolean b) {
+            return null;
+        }
+    }
+
+    private static class TestDisbursementVoucherPayeeService implements DisbursementVoucherPayeeService {
+
+        @Override
+        public String getPayeeTypeDescription(String s) {
+            if (StringUtils.isNotBlank(s)) {
+                if (KFSConstants.PaymentPayeeTypes.VENDOR.equals(s)) {
+                    return "Vendor";
+                }
+            }
+            return StringUtils.EMPTY;
+        }
+
+        @Override
+        public boolean isEmployee(DisbursementVoucherPayeeDetail disbursementVoucherPayeeDetail) {
+            return false;
+        }
+
+        @Override
+        public boolean isEmployee(DisbursementPayee disbursementPayee) {
+            return false;
+        }
+
+        @Override
+        public boolean isVendor(DisbursementVoucherPayeeDetail disbursementVoucherPayeeDetail) {
+            return false;
+        }
+
+        @Override
+        public boolean isVendor(DisbursementPayee disbursementPayee) {
+            return false;
+        }
+
+        @Override
+        public boolean isPayeeIndividualVendor(DisbursementVoucherPayeeDetail disbursementVoucherPayeeDetail) {
+            return false;
+        }
+
+        @Override
+        public boolean isPayeeIndividualVendor(DisbursementPayee disbursementPayee) {
+            return false;
+        }
+
+        @Override
+        public void checkPayeeAddressForChanges(DisbursementVoucherDocument disbursementVoucherDocument) {
+
+        }
+
+        @Override
+        public String getVendorOwnershipTypeCode(DisbursementPayee disbursementPayee) {
+            return null;
+        }
+
+        @Override
+        public Map<String, String> getFieldConversionBetweenPayeeAndVendor() {
+            return null;
+        }
+
+        @Override
+        public Map<String, String> getFieldConversionBetweenPayeeAndPerson() {
+            return null;
+        }
+
+        @Override
+        public DisbursementPayee getPayeeFromVendor(VendorDetail vendorDetail) {
+            CuDisbursementPayee cuDisbursementPayee = new CuDisbursementPayee();
+            cuDisbursementPayee.setPayeeIdNumber(vendorDetail.getVendorNumber());
+            return cuDisbursementPayee;
+        }
+
+        @Override
+        public DisbursementPayee getPayeeFromPerson(Person person) {
+            return null;
+        }
     }
 
     private static class TestDisbursementVoucherPayeeDetail extends CuDisbursementVoucherPayeeDetail {
