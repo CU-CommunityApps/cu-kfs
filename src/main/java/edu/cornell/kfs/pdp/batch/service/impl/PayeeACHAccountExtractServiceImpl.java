@@ -48,6 +48,7 @@ import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.uif.util.ObjectPropertyUtils;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.pdp.CUPdpParameterConstants;
@@ -70,6 +71,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     private AchBankService achBankService;
 
     // Portions of this method are based on code and logic from CustomerLoadServiceImpl.
+    @Transactional
     @Override
     public boolean processACHBatchDetails() {
         LOG.info("Beginning processing of ACH input files");

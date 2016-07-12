@@ -29,6 +29,7 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DerivedValuesRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorAddressRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorRow;
+import edu.cornell.kfs.tax.service.DocumentType1099BoxService;
 import edu.cornell.kfs.tax.service.PaymentReason1099BoxService;
 
 /**
@@ -242,6 +243,7 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
     private OriginSpecificStats currentStats;
 
 	private PaymentReason1099BoxService paymentReason1099BoxService;
+    private DocumentType1099BoxService documentType1099BoxService;
 
 
 
@@ -925,7 +927,13 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         int idx;
         
         // Find tax box.
-        if (getPaymentReason1099BoxService().isPaymentReasonMappedTo1099Box(paymentReasonCodeP.value)) {
+        if (getDocumentType1099BoxService().isDocumentTypeMappedTo1099Box(docTypeP.value)) {
+            String docType1099Box = getDocumentType1099BoxService().getDocumentType1099Box(docTypeP.value);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Found explicit doc-type-based mapping to tax box " + docType1099Box + " for row with key: " + rowKey);
+            }
+            taxBox = summary.getBoxNumberConstant(docType1099Box);
+        } else if (getPaymentReason1099BoxService().isPaymentReasonMappedTo1099Box(paymentReasonCodeP.value)) {
         	String mappedBox = getPaymentReason1099BoxService().getPaymentReason1099Box(paymentReasonCodeP.value);
 			LOG.debug("Overriding to tax box " + mappedBox + "  because of payment reason " + paymentReasonCodeP.value + " for vendor " + vendorNameForOutput);
 			taxBox = summary.getBoxNumberConstant(mappedBox);
@@ -1606,4 +1614,14 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
 		this.paymentReason1099BoxService = paymentReason1099BoxService;
 	}
 
+    public DocumentType1099BoxService getDocumentType1099BoxService() {
+        if (documentType1099BoxService == null) {
+            documentType1099BoxService = SpringContext.getBean(DocumentType1099BoxService.class);
+        }
+        return documentType1099BoxService;
+    }
+
+    public void setDocumentType1099BoxService(DocumentType1099BoxService documentType1099BoxService) {
+        this.documentType1099BoxService = documentType1099BoxService;
+    }
 }

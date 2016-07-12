@@ -1,5 +1,8 @@
 package edu.cornell.kfs.sys;
 
+import java.util.Collections;
+import java.util.Set;
+
 public class CUKFSConstants {
         
     public static final String COMMODITY_CODE_FILE_TYPE_INDENTIFIER = "commodityCodeInputFileType";
@@ -13,8 +16,6 @@ public class CUKFSConstants {
     public static final String RULE_CODE_CA = "CA";
     
     public static class SysKimApiConstants {
-        public static final String ESHOP_USER_ROLE_NAME = "eShop User (cu)";
-        public static final String ESHOP_SUPER_USER_ROLE_NAME = "eShop Plus User(cu)";
         public static final String CONTRACTS_AND_GRANTS_PROCESSOR = "Contracts & Grants Processor";
         public static final String ADVANCE_DEPOSIT_ORGANIZATION_REVIEWER_ROLE_NAME = "Advanced Deposit Organization Review";
         public static final String CREATE_DONE_FILE_PERMISSION_TEMPLATE_NAME = "Create Done File";
@@ -123,11 +124,5 @@ public class CUKFSConstants {
 
     public static final String NOTE_SEQUENCE_NAME = "KRNS_NTE_S";
 
-    public static class A21SubAccountDocumentConstants {
-        public static final String OFF_CAMPUS_INDICATOR_QUESTION_ID = "OffCampusIndicatorQuestion";
-    }
-
-    public static class AccountDocumentConstants {
-        public static final String OFF_CAMPUS_INDICATOR_QUESTION_ID = "OffCampusIndicatorQuestion";
-    }
+    public static final Set<String> OBJECTS_WITH_IMMEDIATE_BO_LEVEL_NOTE_UPDATE = Collections.singleton("org.kuali.kfs.coa.businessobject.Account");
 }

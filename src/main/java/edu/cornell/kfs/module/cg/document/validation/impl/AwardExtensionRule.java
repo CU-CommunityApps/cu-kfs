@@ -21,6 +21,7 @@ import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.module.cg.service.CuAwardAccountService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
+import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
 @SuppressWarnings("deprecation")
 public class AwardExtensionRule extends AwardRule {
@@ -35,6 +36,8 @@ public class AwardExtensionRule extends AwardRule {
         success &= checkAccountsNotUsedOnOtherAwards();
         success &= checkForDuplicateAwardProjectDirector();
         success &= checkForDuplicateAwardOrganization();
+        success &= checkEndAfterBegin(((AwardExtendedAttribute) newAwardCopy.getExtension()).getBudgetBeginningDate(),
+                ((AwardExtendedAttribute) newAwardCopy.getExtension()).getBudgetEndingDate(), CUKFSPropertyConstants.AWARD_EXTENSION_BUDGET_ENDING_DATE);
     	
     	return success;
     }

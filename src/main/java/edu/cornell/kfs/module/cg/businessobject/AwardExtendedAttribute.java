@@ -5,6 +5,7 @@ package edu.cornell.kfs.module.cg.businessobject;
 
 import java.sql.Date;
 
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
 
 
@@ -20,6 +21,9 @@ public class AwardExtendedAttribute extends PersistableBusinessObjectExtensionBa
 	private Date finalFiscalReportDate;
 	private String locAccountId;
 	private Long proposalNumber;
+	private Date budgetBeginningDate;
+	private Date budgetEndingDate;
+	private KualiDecimal budgetTotalAmount;
 
 	public boolean isCostShareRequired() {
 		return costShareRequired;
@@ -60,8 +64,29 @@ public class AwardExtendedAttribute extends PersistableBusinessObjectExtensionBa
 	public void setProposalNumber(Long proposalNumber) {
 		this.proposalNumber = proposalNumber;
 	}
-	
-	
-	
-	
+
+	public Date getBudgetBeginningDate() {
+		return budgetBeginningDate;
+	}
+
+	public void setBudgetBeginningDate(Date budgetBeginningDate) {
+		this.budgetBeginningDate = budgetBeginningDate;
+	}
+
+	public Date getBudgetEndingDate() {
+		return budgetEndingDate;
+	}
+
+	public void setBudgetEndingDate(Date budgetEndingDate) {
+		this.budgetEndingDate = budgetEndingDate;
+	}
+
+	public KualiDecimal getBudgetTotalAmount() {
+		return budgetTotalAmount;
+	}
+
+	public void setBudgetTotalAmount(KualiDecimal budgetTotalAmount) {
+		this.budgetTotalAmount = budgetTotalAmount;
+	}
+
 }

@@ -30,4 +30,6 @@ public class CUPurapParameterConstants extends PurapParameterConstants {
     
     public static final String ROUTE_REQS_WITH_EXPIRED_CONTRACT_TO_CM = "ROUTE_REQS_WITH_EXPIRED_CONTRACT_TO_CM";
 
+    public static final String DEFAULT_PURCHASE_ORDER_POS_APRVL_LMT_FOR_PREQ = "DEFAULT_PURCHASE_ORDER_POS_APRVL_LMT_FOR_PREQ";
+
 }

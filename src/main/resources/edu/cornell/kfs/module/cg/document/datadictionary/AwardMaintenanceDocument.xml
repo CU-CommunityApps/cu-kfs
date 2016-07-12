@@ -71,6 +71,29 @@
                        </list>
                    </property>
                </bean>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="maintainableItems" />
+                   <property name="element">
+                           <bean parent="MaintainableFieldDefinition" p:name="awardEndingDate" />
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+        				  <bean parent="MaintainableFieldDefinition" p:name="extension.budgetBeginningDate"/>
+        				  <bean parent="MaintainableFieldDefinition" p:name="extension.budgetEndingDate"/>
+                       </list>
+                   </property>
+               </bean>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="maintainableItems" />
+                   <property name="element">
+                           <bean parent="MaintainableFieldDefinition" p:name="awardTotalAmount" />
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+        				  <bean parent="MaintainableFieldDefinition" p:name="extension.budgetTotalAmount"/>
+                       </list>
+                   </property>
+               </bean>
            </list>
        </property>
    </bean>

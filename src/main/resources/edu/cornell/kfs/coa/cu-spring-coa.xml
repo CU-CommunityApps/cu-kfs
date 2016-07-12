@@ -192,5 +192,10 @@
     <bean id="subAccountTrickleDownInactivationService" parent="subAccountTrickleDownInactivationService-parentBean" class="edu.cornell.kfs.coa.service.impl.CuSubAccountTrickleDownInactivationServiceImpl"/>
     
     <bean id="subObjectTrickleDownInactivationService" parent="subObjectTrickleDownInactivationService-parentBean" class="edu.cornell.kfs.coa.service.impl.CuSubObjectTrickleDownInactivationServiceImpl"/>
+    
+    <bean name="globalObjectWithIndirectCostRecoveryAccountsService" parent="globalObjectWithIndirectCostRecoveryAccountsService-parentBean" />
+	<bean name="globalObjectWithIndirectCostRecoveryAccountsService-parentBean" abstract="true" 
+		class="edu.cornell.kfs.coa.service.impl.GlobalObjectWithIndirectCostRecoveryAccountsServiceImpl">	
+    </bean>
 
 </beans>

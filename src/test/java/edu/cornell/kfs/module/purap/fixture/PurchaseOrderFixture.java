@@ -17,10 +17,15 @@ public enum PurchaseOrderFixture {
 	PO_NON_B2B_OPEN_WITH_ITEMS(RequisitionFixture.REQ_NON_B2B_WITH_ITEMS, 10, true, "Description", PurchaseOrderStatuses.APPDOC_OPEN),
 	PO_NON_B2B_IN_PROCESS(RequisitionFixture.REQ_NON_B2B, 10, true, "Description", PurchaseOrderStatuses.APPDOC_IN_PROCESS),
 	PO_NON_B2B_OPEN_TRADE_IN_ITEMS(RequisitionFixture.REQ_NON_B2B_TRADE_IN_ITEMS, 10, true, "Description", PurchaseOrderStatuses.APPDOC_OPEN),
-	PO_NON_B2B_OPEN_WITH_NON_QTY_ITEM(RequisitionFixture.REQ_NON_B2B_WITH_NON_QTY_ITEM, 10, true, "Description", PurchaseOrderStatuses.APPDOC_OPEN),
-	PO_NON_B2B_OPEN_WITH_ITEM_BELOW_5K(RequisitionFixture.REQ_NON_B2B_WITH_ITEM_BELOW_5K, 10, true, "Description", PurchaseOrderStatuses.APPDOC_OPEN),
-	PO_NON_B2B_OPEN_WITH_ITEM_AT_5K(RequisitionFixture.REQ_NON_B2B_WITH_ITEM_AT_5K, 10, true, "Description", PurchaseOrderStatuses.APPDOC_OPEN),
-	PO_NON_B2B_OPEN_WITH_ITEM_ABOVE_5K(RequisitionFixture.REQ_NON_B2B_WITH_ITEM_ABOVE_5K, 10, true, "Description", PurchaseOrderStatuses.APPDOC_OPEN),;
+	PO_NON_B2B_OPEN_WITH_NON_QTY_ITEM_BELOW_5K(RequisitionFixture.REQ_NON_B2B_WITH_NON_QTY_ITEM_BELOW_5K,
+			10, true, "Description", PurchaseOrderStatuses.APPDOC_OPEN),
+	PO_NON_B2B_OPEN_WITH_NON_QTY_ITEM_AT_5K(RequisitionFixture.REQ_NON_B2B_WITH_NON_QTY_ITEM_AT_5K,
+			10, true, "Description", PurchaseOrderStatuses.APPDOC_OPEN),
+	PO_NON_B2B_OPEN_WITH_NON_QTY_ITEM_ABOVE_5K(RequisitionFixture.REQ_NON_B2B_WITH_NON_QTY_ITEM_ABOVE_5K,
+			10, true, "Description", PurchaseOrderStatuses.APPDOC_OPEN),
+	PO_NON_B2B_OPEN_WITH_QTY_ITEM_BELOW_5K(RequisitionFixture.REQ_NON_B2B_WITH_QTY_ITEM_BELOW_5K, 10, true, "Description", PurchaseOrderStatuses.APPDOC_OPEN),
+	PO_NON_B2B_OPEN_WITH_QTY_ITEM_AT_5K(RequisitionFixture.REQ_NON_B2B_WITH_QTY_ITEM_AT_5K, 10, true, "Description", PurchaseOrderStatuses.APPDOC_OPEN),
+	PO_NON_B2B_OPEN_WITH_QTY_ITEM_ABOVE_5K(RequisitionFixture.REQ_NON_B2B_WITH_QTY_ITEM_ABOVE_5K, 10, true, "Description", PurchaseOrderStatuses.APPDOC_OPEN),;
 
 	public final RequisitionFixture requisitionFixture;
 	public final Integer contractManagerCode;

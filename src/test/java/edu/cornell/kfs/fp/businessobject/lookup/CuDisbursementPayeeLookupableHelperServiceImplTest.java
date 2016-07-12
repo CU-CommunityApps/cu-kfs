@@ -28,7 +28,15 @@ public class CuDisbursementPayeeLookupableHelperServiceImplTest extends KualiTes
 
 	private PersonService personService;
 	private UnitTestSqlDao unitTestSqlDao;
-	private String alumniSql = "SELECT dv_payee_id_nbr FROM FP_DV_PAYEE_DTL_T where dv_payee_typ_cd = 'A' and rownum <= 1";
+	private String alumniSql = "SELECT f.dv_payee_id_nbr " +
+			"FROM kfs.FP_DV_PAYEE_DTL_T f, cynergy.krim_entity_afltn_t k " +
+			"where f.dv_payee_typ_cd = 'A' " +
+			"and f.dv_payee_id_nbr = k.entity_id " +
+			"and k.afltn_typ_cd = 'ALUMNI' " +
+			"and k.dflt_ind = 'Y' " +
+			"and k.actv_ind = 'Y' " +
+			"and rownum <= 1";
+
 	private String vendorSql = "select VNDR_NM from PUR_VNDR_DTL_T where dobj_maint_cd_actv_ind = 'Y' and rownum <= 1";
 	@SuppressWarnings("deprecation")
 	private LookupableHelperService cuDisbursementPayeeLookupableHelperService;

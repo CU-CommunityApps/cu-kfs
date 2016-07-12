@@ -21,7 +21,7 @@
   <bean id="CuYearEndSalaryExpenseTransferDocument" parent="YearEndSalaryExpenseTransferDocument-parentBean">
     <property name="documentClass" value="edu.cornell.kfs.module.ld.document.CuYearEndSalaryExpenseTransferDocument"/>
     <property name="baseDocumentClass" value="edu.cornell.kfs.module.ld.document.CuYearEndSalaryExpenseTransferDocument"/>
-    <property name="promptBeforeValidationClass" value="edu.cornell.kfs.module.ld.document.validation.impl.CUSalaryExpenseTransferDocumentPreRules"/>
+
     <property name="workflowAttributes">
       <ref bean="CuYearEndSalaryExpenseTransferDocument-workflowAttributes"/>
     </property>
@@ -39,7 +39,6 @@
         </entry>
       </map>
     </property>
-
   </bean>
   
   <bean id="CuYearEndSalaryExpenseTransferDocument-targetAccountingLineGroup" parent="SalaryExpenseTransferDocument-targetAccountingLineGroup-parentBean">
@@ -62,8 +61,7 @@
     </property>
   </bean>
 
-  <!-- Workflow -->
-    <bean id="CuYearEndSalaryExpenseTransferDocument-workflowAttributes" parent="YearEndSalaryExpenseTransferDocument-workflowAttributes-parentBean">
+  <bean id="CuYearEndSalaryExpenseTransferDocument-workflowAttributes" parent="YearEndSalaryExpenseTransferDocument-workflowAttributes-parentBean">
     <property name="routingTypeDefinitions">
       <map>
         <entry key="Account" value-ref="RoutingType-AccountingDocument-Account"/>

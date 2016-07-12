@@ -23,6 +23,9 @@
         <ref bean="Award-extension-finalFiscalReportDate"/>
         <ref bean="Award-extension-finalFinancialReportRequired"/>
         <ref bean="Award-extension-locAccountId"/>
+        <ref bean="Award-extension-budgetBeginningDate"/>
+        <ref bean="Award-extension-budgetEndingDate"/>
+        <ref bean="Award-extension-budgetTotalAmount"/>
      </list>
      </property>  
 </bean>
@@ -51,6 +54,24 @@
   	<property name="name" value="extension.locAccountId"/>
   </bean>
   
+  <bean id="Award-extension-budgetBeginningDate" parent="Award-extension-budgetBeginningDate-parentBean"/>
+
+  <bean id="Award-extension-budgetBeginningDate-parentBean" abstract="true" parent="AwardExtendedAttribute-budgetBeginningDate">
+  	<property name="name" value="extension.budgetBeginningDate"/>
+  </bean>
+
+  <bean id="Award-extension-budgetEndingDate" parent="Award-extension-budgetEndingDate-parentBean"/>
+
+  <bean id="Award-extension-budgetEndingDate-parentBean" abstract="true" parent="AwardExtendedAttribute-budgetEndingDate">
+  	<property name="name" value="extension.budgetEndingDate"/>
+  </bean>
+
+  <bean id="Award-extension-budgetTotalAmount" parent="Award-extension-budgetTotalAmount-parentBean"/>
+
+  <bean id="Award-extension-budgetTotalAmount-parentBean" abstract="true" parent="AwardExtendedAttribute-budgetTotalAmount">
+  	<property name="name" value="extension.budgetTotalAmount"/>
+  </bean>
+
     <bean parent="DataDictionaryBeanOverride">
       <property name="beanName" value="Award-inquirySectionDefinition-awardDetails" />
       <property name="fieldOverrides">
@@ -69,8 +90,33 @@
                           <bean parent="FieldDefinition" p:attributeName="extension.finalFinancialReportRequired"/>
                       </list>
                   </property>
-                  </bean>
-             </list>
+              </bean>
+              <bean parent="FieldOverrideForListElementInsert">
+                  <property name="propertyName" value="inquiryFields" />
+                  <property name="propertyNameForElementCompare" value="attributeName" />
+                  <property name="element">
+                      <bean parent="FieldDefinition" p:attributeName="awardEndingDate" />
+                  </property>
+                  <property name="insertAfter">
+                      <list>
+                          <bean parent="FieldDefinition" p:attributeName="extension.budgetBeginningDate"/>
+                          <bean parent="FieldDefinition" p:attributeName="extension.budgetEndingDate"/>
+                      </list>
+                  </property>
+              </bean>
+              <bean parent="FieldOverrideForListElementInsert">
+                  <property name="propertyName" value="inquiryFields" />
+                  <property name="propertyNameForElementCompare" value="attributeName" />
+                  <property name="element">
+                      <bean parent="FieldDefinition" p:attributeName="awardTotalAmount" />
+                  </property>
+                  <property name="insertAfter">
+                      <list>
+                          <bean parent="FieldDefinition" p:attributeName="extension.budgetTotalAmount"/>
+                      </list>
+                  </property>
+              </bean>
+          </list>
       </property>
   </bean>
 </beans>

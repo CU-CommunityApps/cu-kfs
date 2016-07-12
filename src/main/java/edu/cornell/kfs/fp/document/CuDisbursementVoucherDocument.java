@@ -4,19 +4,15 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 
-import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
-import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.fp.businessobject.DisbursementPayee;
-import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService;
-import org.kuali.kfs.fp.document.service.DisbursementVoucherPaymentReasonService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTaxService;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.KfsAuthorizationConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
@@ -30,7 +26,7 @@ import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.vnd.document.service.VendorService;
+import org.kuali.kfs.vnd.businessobject.VendorType;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.core.api.parameter.ParameterEvaluator;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
@@ -47,6 +43,8 @@ import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.address.EntityAddress;
 import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
+import org.kuali.kfs.kns.document.authorization.TransactionalDocumentAuthorizer;
+import org.kuali.kfs.kns.document.authorization.TransactionalDocumentPresentationController;
 import org.kuali.kfs.kns.service.DocumentHelperService;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -57,6 +55,8 @@ import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtensi
 import edu.cornell.kfs.fp.businessobject.DisbursementVoucherWireTransferExtendedAttribute;
 import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
 import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
+import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
+import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
@@ -88,6 +88,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     protected String tripId;
 
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
+    private static DisbursementVoucherPayeeService disbursementVoucherPayeeService;
+    private static DisbursementVoucherTaxService disbursementVoucherTaxService;
+    private static DocumentHelperService documentHelperService;
 
     public CuDisbursementVoucherDocument() {
         super();
@@ -144,6 +147,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(vendor.getVendorNumber());
         ((CuDisbursementVoucherPayeeDetailExtension) this.getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(
                 CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_VENDOR);
+        ((CuDisbursementVoucherPayeeDetailExtension) this.getDvPayeeDetail().getExtension()).setPayeeTypeSuffix(
+                createVendorPayeeTypeSuffix(vendor.getVendorHeader().getVendorType()));
         this.getDvPayeeDetail().setDisbVchrPayeePersonName(vendor.getVendorName());
 
         this.getDvPayeeDetail().setDisbVchrAlienPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
@@ -225,6 +230,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             ((CuDisbursementVoucherPayeeDetailExtension) this.getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(
                     CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_ENTITY);
         }
+        ((CuDisbursementVoucherPayeeDetailExtension) this.getDvPayeeDetail().getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
         // Changed this from employee.getName to employee.getNameUnmasked() otherwise "Xxxxxx" appears on the DV!
         this.getDvPayeeDetail().setDisbVchrPayeePersonName(employee.getNameUnmasked());
 
@@ -309,6 +315,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(student.getPrincipalId());
         ((CuDisbursementVoucherPayeeDetailExtension) this.getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(
                 CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_ENTITY);
+        ((CuDisbursementVoucherPayeeDetailExtension) this.getDvPayeeDetail().getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
 
         this.getDvPayeeDetail().setDisbVchrPayeePersonName(student.getNameUnmasked());
 
@@ -388,6 +395,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(alumni.getPrincipalId());
         ((CuDisbursementVoucherPayeeDetailExtension) this.getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(
                 CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_ENTITY);
+        ((CuDisbursementVoucherPayeeDetailExtension) this.getDvPayeeDetail().getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
 
         // Changed this from employee.getName to employee.getNameUnmasked() otherwise "Xxxxxx" appears on the DV!
         this.getDvPayeeDetail().setDisbVchrPayeePersonName(alumni.getNameUnmasked());
@@ -500,7 +508,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             // need to check whether the user has the permission to edit the bank code
             // if so, don't synchronize since we can't tell whether the value coming in
             // was entered by the user or not.
-            DocumentAuthorizer docAuth = SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(this);
+            DocumentAuthorizer docAuth = getDocumentHelperService().getDocumentAuthorizer(this);
             if ( !docAuth.isAuthorizedByTemplate(this,
                     KFSConstants.ParameterNamespaces.KFS,
                     KFSConstants.PermissionTemplate.EDIT_BANK_CODE.name,
@@ -509,6 +517,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             } else {
                 refreshReferenceObject( "bank" );
             }
+            refreshPayeeTypeSuffixIfPaymentIsEditable();
         }
     }
 
@@ -531,6 +540,68 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
                 setBank(null);
             }
         }
+    }
+
+    public void refreshPayeeTypeSuffixIfPaymentIsEditable() {
+        TransactionalDocumentAuthorizer docAuthorizer = getDvDocumentAuthorizer();
+        if (docAuthorizer.canEdit(this, GlobalVariables.getUserSession().getPerson())) {
+            Set<String> editModes = getDvDocumentPresentationController().getEditModes(this);
+            editModes = docAuthorizer.getEditModes(this, GlobalVariables.getUserSession().getPerson(), editModes);
+            if (editModes.contains(KfsAuthorizationConstants.DisbursementVoucherEditMode.PAYEE_ENTRY)) {
+                String newSuffix;
+                if (getDvPayeeDetail().isVendor()) {
+                    VendorDetail vendor = getVendorService().getByVendorNumber(getDvPayeeDetail().getDisbVchrPayeeIdNumber());
+                    if (ObjectUtils.isNotNull(vendor)) {
+                        newSuffix = createVendorPayeeTypeSuffix(vendor.getVendorHeader().getVendorType());
+                    } else {
+                        newSuffix = StringUtils.EMPTY;
+                    }
+                } else {
+                    newSuffix = StringUtils.EMPTY;
+                }
+                ((CuDisbursementVoucherPayeeDetailExtension) getDvPayeeDetail().getExtension()).setPayeeTypeSuffix(newSuffix);
+            }
+        }
+    }
+
+    public String createVendorPayeeTypeSuffix(VendorType vendorType) {
+        return vendorType.getVendorTypeCode() + " - " + vendorType.getVendorTypeDescription();
+    }
+
+    protected TransactionalDocumentPresentationController getDvDocumentPresentationController() {
+        return (TransactionalDocumentPresentationController) getDocumentHelperService().getDocumentPresentationController(this);
+    }
+
+    protected TransactionalDocumentAuthorizer getDvDocumentAuthorizer() {
+        return (TransactionalDocumentAuthorizer) getDocumentHelperService().getDocumentAuthorizer(this);
+    }
+
+    protected CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
+        if ( paymentMethodGeneralLedgerPendingEntryService == null ) {
+            paymentMethodGeneralLedgerPendingEntryService = SpringContext.getBean(CUPaymentMethodGeneralLedgerPendingEntryService.class);
+        }
+        return paymentMethodGeneralLedgerPendingEntryService;
+    }
+
+    protected DisbursementVoucherTaxService getDisbursementVoucherTaxService() {
+        if ( disbursementVoucherTaxService == null ) {
+            disbursementVoucherTaxService = SpringContext.getBean(DisbursementVoucherTaxService.class);
+        }
+        return disbursementVoucherTaxService;
+    }
+
+    protected DisbursementVoucherPayeeService getDisbursementVoucherPayeeService() {
+        if ( disbursementVoucherPayeeService == null ) {
+            disbursementVoucherPayeeService = SpringContext.getBean(DisbursementVoucherPayeeService.class);
+        }
+        return disbursementVoucherPayeeService;
+    }
+
+    protected DocumentHelperService getDocumentHelperService() {
+        if (documentHelperService == null) {
+            documentHelperService = SpringContext.getBean(DocumentHelperService.class);
+        }
+        return documentHelperService;
     }
 
     public CuDisbursementVoucherPayeeDetail getDvPayeeDetail() {
@@ -594,6 +665,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
     protected void clearDvPayeeIdType() {
         ((CuDisbursementVoucherPayeeDetailExtension)getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(StringUtils.EMPTY);
+        ((CuDisbursementVoucherPayeeDetailExtension)getDvPayeeDetail().getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
     }
 
     public void initiateDocument() {
@@ -808,6 +880,56 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         return false;
     }
 
+    @Override
+    protected boolean isTaxReviewRequired() {
+        if (isPayeePurchaseOrderVendorHasWithholding()) {
+            return true;
+        }
+
+        String payeeTypeCode = this.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode();
+        if (payeeTypeCode.equals(KFSConstants.PaymentPayeeTypes.EMPLOYEE)) {
+            return false;
+        } else if (payeeTypeCode.equals(KFSConstants.PaymentPayeeTypes.VENDOR)) {
+            if(getVendorService().isVendorInstitutionEmployee(this.getDvPayeeDetail().getDisbVchrVendorHeaderIdNumberAsInteger())){
+                return true;
+            }
+        }
+
+        String paymentReasonCode = this.getDvPayeeDetail().getDisbVchrPaymentReasonCode();
+        Integer vendorHeaderId = getDvPayeeDetail().getDisbVchrVendorHeaderIdNumberAsInteger();
+        if (getCuDisbursementVoucherTaxService().isForeignVendorAndTaxReviewRequired(payeeTypeCode, paymentReasonCode, vendorHeaderId)) {
+        	return true;
+        }
+
+        String taxControlCode = this.getDisbVchrPayeeTaxControlCode();
+        if (StringUtils.equals(taxControlCode, DisbursementVoucherDocument.TAX_CONTROL_BACKUP_HOLDING) || StringUtils.equals(taxControlCode,DisbursementVoucherDocument.TAX_CONTROL_HOLD_PAYMENTS)) {
+            return true;
+        }
+
+
+        if (this.getDisbursementVoucherPaymentReasonService().isDecedentCompensationPaymentReason(paymentReasonCode)) {
+            return true;
+        }
+
+        if (this.getDisbursementVoucherPaymentReasonService().isMovingPaymentReason(paymentReasonCode) && taxedCampusForMovingReimbursements()) {
+            return true;
+        }
+
+        if (getParameterEvaluatorService().getParameterEvaluator(this.getClass(), DisbursementVoucherDocument.PAYMENT_REASONS_REQUIRING_TAX_REVIEW_PARAMETER_NAME, paymentReasonCode).evaluationSucceeds()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected CuDisbursementVoucherTaxService getCuDisbursementVoucherTaxService() {
+        return SpringContext.getBean(CuDisbursementVoucherTaxService.class);
+    }
+
+    protected ParameterEvaluatorService getParameterEvaluatorService(){
+    	return SpringContext.getBean(ParameterEvaluatorService.class);
+    }
+
 
     public void setDvPayeeDetail(CuDisbursementVoucherPayeeDetail dvPayeeDetail) {
         this.dvPayeeDetail = dvPayeeDetail;
@@ -830,13 +952,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
     public void setTripId(String tripId) {
         this.tripId = tripId;
-    }
-
-    protected CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
-        if ( paymentMethodGeneralLedgerPendingEntryService == null ) {
-            paymentMethodGeneralLedgerPendingEntryService = SpringContext.getBean(CUPaymentMethodGeneralLedgerPendingEntryService.class);
-        }
-        return paymentMethodGeneralLedgerPendingEntryService;
     }
 
     public static void setPaymentMethodGeneralLedgerPendingEntryService(CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService) {
