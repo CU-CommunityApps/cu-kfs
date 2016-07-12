@@ -255,5 +255,19 @@
 	<bean id="postalCodeValidationService-parentBean" class="org.kuali.kfs.sys.service.impl.PostalCodeValidationServiceImpl" abstract="true">
 		<property name="stateService" ref="stateService" />
     </bean>
-	
+
+	<bean id="documentstoreClient" parent="documentstoreClient-parentBean"/>
+		<bean id="documentstoreClient-parentBean" abstract="true" class="${kfs.documentstore.client.class}">
+			<constructor-arg value="${kfs.documentstore.host}" type="java.lang.String" />
+		    <constructor-arg value="${kfs.documentstore.port}" type="int" />
+		    <constructor-arg value="${kfs.documentstore.dbname}" type="java.lang.String" />
+		    <constructor-arg value="${kfs.documentstore.username}" type="java.lang.String" />
+		    <constructor-arg value="${kfs.documentstore.password}" type="java.lang.String" />
+		</bean>
+
+	<bean id="preferencesDao" parent="preferencesDao-parentBean"/>
+	<bean id="preferencesDao-parentBean" abstract="true" class="${kfs.documentstore.class}">
+		<property name="documentstoreClient" ref="documentstoreClient" />
+	</bean>
+
 </beans>
