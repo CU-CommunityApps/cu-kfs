@@ -17,12 +17,10 @@
 <xsd:schema elementFormDefault="qualified"
     targetNamespace="http://www.kuali.org/kfs/pdp/payment"
     xmlns:kfs="http://www.kuali.org/kfs/sys/types"
-    xmlns:dd="http://www.kuali.org/kfs/sys/ddTypes"
     xmlns="http://www.kuali.org/kfs/pdp/payment" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
-    <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="../../xsd/sys/types.xsd" />
-    <xsd:import namespace="http://www.kuali.org/kfs/sys/ddTypes" schemaLocation="../../xsd/sys/ddTypes.xsd" />
-        
+    <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="classpath:org/kuali/kfs/sys/types.xsd" />
+
     <!-- simple data types -->
     <xsd:simpleType name="versionType">
         <xsd:restriction base="xsd:string">
