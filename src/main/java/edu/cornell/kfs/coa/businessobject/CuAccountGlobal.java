@@ -124,9 +124,38 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 			if(ObjectUtils.isNotNull(this.getIndirectCostRecoveryAccounts()) && this.getIndirectCostRecoveryAccounts().size() > 0){
 				updateIcrAccounts(globalDetail, account.getIndirectCostRecoveryAccounts());
 			}
+
+			if (ObjectUtils.isNotNull(this.accountRestrictedStatusCode)) {
+				updateAccountRestrictedStatusCodeForAccountBeingEdited(this.accountRestrictedStatusCode, account);
+			}
 		}
 
 		return account;
+	}
+
+	/**
+	 * The business rules for the accountRestrictedStatusCode is as follows:
+	 * If the sub-fund of the account listed in the edit list of accounts on
+	 * the global maintenance edoc is one that has a default accountRestrictedStatusCode
+	 * listed, then any change entered in the global account maintenance edoc is ignored.
+	 *
+	 * If the sub-fund of the account listed in the edit list of accounts on
+	 * the global maintenance edoc is one that does NOT have a default accountRestrictedStatusCode
+	 * listed, then any change entered in the global account maintenance edoc overwrites
+	 * the accountRestrictedStatusCode value on that particular account from the edit list.
+	 *
+	 * @param globalAccountMaintenanceDocRestrictedStatusCode
+	 * @param accountBeingEdited
+	 */
+	private void updateAccountRestrictedStatusCodeForAccountBeingEdited(String globalAccountMaintenanceDocRestrictedStatusCode, Account accountBeingEdited)
+	{
+		if (ObjectUtils.isNotNull(accountBeingEdited.getSubFundGroup()) && StringUtils.isNotBlank(accountBeingEdited.getSubFundGroup().getAccountRestrictedStatusCode())) {
+			//ignore the global account maintenance edoc user entered value because the sub-fund for the account already has a default value listed that should be used
+		}
+		else {
+			//sub-fund associated to the account does NOT have a default accountRestrictedStatusCode identified, utilize the user entered value from the  global account maintenance edoc
+			accountBeingEdited.setAccountRestrictedStatusCode(globalAccountMaintenanceDocRestrictedStatusCode);
+		}
 	}
 
 	private void updateAccountBasicFields(Account account) {
@@ -247,9 +276,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		    account.setReportsToAccountNumber(reportsToAccountNumber);
 		}
 
-		if (StringUtils.isNotBlank(accountRestrictedStatusCode)) {
-		    account.setAccountRestrictedStatusCode(accountRestrictedStatusCode);
-		}
+		// Method determineAccountRestrictedStatusCodeForAccountBeingEdited will determine the appropriate value to use.
 
 		if (ObjectUtils.isNotNull(accountRestrictedStatusDate)) {
 		    account.setAccountRestrictedStatusDate(accountRestrictedStatusDate);

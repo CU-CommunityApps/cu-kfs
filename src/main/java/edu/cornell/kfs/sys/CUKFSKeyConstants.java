@@ -203,5 +203,4 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_REMOVE_INC_STR_CHART_AND_ACCT_CHECKED_WHEN_INC_STR_REQ = "error.document.accountGlobalMaintenance.removeIncStrChartAndAcctChecked.incStrReq";
     public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_REMOVE_INC_STR_CHART_AND_ACCT_CHECKED_WHEN_INC_STR_REQ_FOR_ACCT = "error.document.accountGlobalMaintenance.removeIncStrChartAndAcctChecked.incStrReqForAcct";
     public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_CLOSED_CHECKED_WHEN_ACCOUNT_HAS_OPEN_ENCUMBRENCES = "error.document.accountGlobalMaintenance.accountCannotCloseOpenEncumbrance";
-    public static final String ERROR_DOCUMENT_GLB_MAINT_CANNOT_BE_CLOSED_EXP_DATE_INVALID = "error.document.accountGlobalMaintenance.accountCannotBeClosedExpDateInvalid";
 }

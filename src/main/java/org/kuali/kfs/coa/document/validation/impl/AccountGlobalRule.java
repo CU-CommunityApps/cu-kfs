@@ -611,29 +611,6 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 			}
 
-			// If creating a new account if acct_expiration_dt is set and the fund_group is not "CG" then
-			// the acct_expiration_dt must be changed to a date that is today or later
-			// unless the date was valid upon submission, this is an approval action
-			// and the approver hasn't changed the value
-			if (maintenanceDocument.isNew() && ObjectUtils.isNotNull(newExpDate)) {
-				if (ObjectUtils.isNull(prevExpDate) || !prevExpDate.equals(newExpDate)) {
-					if (ObjectUtils.isNotNull(newExpDate) && ObjectUtils.isNull(newAccountGlobal.getSubFundGroup())) {
-						if (ObjectUtils.isNotNull(account.getSubFundGroup())) {
-							if (!account.isForContractsAndGrants()) {
-								// KFSUPGRADE-925 check parameter to see if back date is allowed
-								Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(Account.class, CUKFSConstants.ChartApcParms.EXPIRATION_DATE_BACKDATING_FUND_GROUPS);
-								if (fundGroups == null || (ObjectUtils.isNotNull(account.getSubFundGroup()) && !fundGroups.contains(account.getSubFundGroup().getFundGroupCode()))) {
-									if (!newExpDate.after(today) && !newExpDate.equals(today)) {
-										putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_TODAY_LATER);
-										success &= false;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
 			// acct_expiration_dt can not be before acct_effect_dt
 			Date effectiveDate = null;
 			if (ObjectUtils.isNotNull(newAccountGlobal.getAccountEffectiveDate())) {
@@ -1556,7 +1533,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		 }
 
 	     // on an account being closed, the expiration date must be valid
-	     success &= checkAccountExpirationDateValidTodayOrEarlier(detail);
+	     success &= checkAccountExpirationDateValidTodayOrEarlier(newAccountGlobal);
 	     
 		 // when closing an account, a continuation account is required
 		 if (StringUtils.isBlank(newAccountGlobal.getContinuationAccountNumber()) && StringUtils.isBlank( detail.getAccount().getContinuationAccountNumber())) {
@@ -1607,49 +1584,21 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	  * @return fails if the expiration date is null or after today's date
 	  */
 	protected boolean checkAccountExpirationDateValidTodayOrEarlier(CuAccountGlobal newAccount) {
-		// get the expiration date, if any
-		Date expirationDate = newAccount.getAccountExpirationDate();
-		if (ObjectUtils.isNotNull(expirationDate)) {
-
-			Date todaysDate = new Date(getDateTimeService().getCurrentDate().getTime());
-			todaysDate.setTime(DateUtils.truncate(todaysDate,Calendar.DAY_OF_MONTH).getTime());
-
-			// when closing an account, the account expiration date must be the
-			// current date or earlier
-			expirationDate.setTime(DateUtils.truncate(expirationDate, Calendar.DAY_OF_MONTH).getTime());
-			if (expirationDate.after(todaysDate)) {
-				putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_CANNOT_BE_CLOSED_EXP_DATE_INVALID);
-				return false;
-			}
-		}
-
-		return true;
-	}
-	
-    protected boolean checkAccountExpirationDateValidTodayOrEarlier(AccountGlobalDetail accountGlobalDetail) {
-
         // get today's date, with no time component
         Date todaysDate = new Date(getDateTimeService().getCurrentDate().getTime());
         todaysDate.setTime(DateUtils.truncate(todaysDate, Calendar.DAY_OF_MONTH).getTime());
-        // TODO: convert this to using Wes' Kuali KfsDateUtils once we're using Date's instead of Timestamp
-        
-        accountGlobalDetail.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
-        Account existingAccount = accountGlobalDetail.getAccount();
 
         // get the expiration date, if any
-        Date expirationDate = existingAccount.getAccountExpirationDate();
+        Date expirationDate = newAccount.getAccountExpirationDate();
         if (ObjectUtils.isNull(expirationDate)) {
-        	expirationDate = newAccountGlobal.getAccountExpirationDate();
-        	if (ObjectUtils.isNull(expirationDate)) {
-            putFieldError("accountExpirationDate", CUKFSKeyConstants.ERROR_DOCUMENT_GLB_MAINT_CANNOT_BE_CLOSED_EXP_DATE_INVALID, new String[]{existingAccount.getChartOfAccountsCode(), existingAccount.getAccountNumber()});
+        	putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_CANNOT_BE_CLOSED_EXP_DATE_INVALID);
             return false;
-        	}
         }
 
         // when closing an account, the account expiration date must be the current date or earlier
         expirationDate.setTime(DateUtils.truncate(expirationDate, Calendar.DAY_OF_MONTH).getTime());
         if (expirationDate.after(todaysDate)) {
-            putFieldError(KFSPropertyConstants.ACCOUNT_CHANGE_DETAILS, CUKFSKeyConstants.ERROR_DOCUMENT_GLB_MAINT_CANNOT_BE_CLOSED_EXP_DATE_INVALID,  new String[]{existingAccount.getChartOfAccountsCode(), existingAccount.getAccountNumber()});
+        	putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_CANNOT_BE_CLOSED_EXP_DATE_INVALID);
             return false;
         }
 
