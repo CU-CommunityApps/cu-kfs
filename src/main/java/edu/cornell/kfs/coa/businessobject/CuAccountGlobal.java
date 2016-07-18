@@ -16,6 +16,7 @@ import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryType;
 import org.kuali.kfs.coa.businessobject.RestrictedStatus;
+import org.kuali.kfs.coa.businessobject.SubFundGroup;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -127,6 +128,50 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		}
 
 		return account;
+	}
+
+	/**
+	 * The business rules for the accountRestrictedStatusCode is as follows:
+	 * If the sub-fund of the account listed in the edit list of accounts on
+	 * the global maintenance edoc is one that has a default accountRestrictedStatusCode
+	 * listed, then any change entered in the global account maintenance edoc is ignored.
+	 *
+	 * If the sub-fund of the account listed in the edit list of accounts on
+	 * the global maintenance edoc is one that does NOT have a default accountRestrictedStatusCode
+	 * listed, then any change entered in the global account maintenance edoc overwrites
+	 * the accountRestrictedStatusCode value on that particular account from the edit list.
+	 *
+	 * @param globalAccountMaintenanceDocRestrictedStatusCode
+	 * @param accountBeingEdited
+	 */
+	private void updateAccountRestrictedStatusCodeForAccountBeingEdited(SubFundGroup globalAccountMaintenanceDocSubFundGroup, String globalAccountMaintenanceDocRestrictedStatusCode, Account accountBeingEdited)
+	{
+		if (ObjectUtils.isNull(globalAccountMaintenanceDocSubFundGroup)) {
+			//user is not changing the subFund so use the data already on the account for the business rule.
+			if ( !isDefaultAccountRestrictedStatusCodeSetOnSubFundGroup(accountBeingEdited.getSubFundGroup()) ) {
+				//sub-fund associated to the account does NOT have a default accountRestrictedStatusCode identified, utilize the user entered value from the global account maintenance edoc
+				accountBeingEdited.setAccountRestrictedStatusCode(globalAccountMaintenanceDocRestrictedStatusCode);
+			}
+		}
+		else {
+			//sub-fund being changed by account global edoc, use that value for the business rule
+			if ( !isDefaultAccountRestrictedStatusCodeSetOnSubFundGroup(globalAccountMaintenanceDocSubFundGroup) ) {
+				//sub-fund entered does NOT have a default accountRestrictedStatusCode identified, utilize the user entered value from the global account maintenance edoc
+				accountBeingEdited.setAccountRestrictedStatusCode(globalAccountMaintenanceDocRestrictedStatusCode);
+			}
+		}
+	}
+
+	/**
+	 *
+	 * @param subFundGroup
+	 * @return true when a default account restricted status code set on the sub-fund; false otherwise
+	 */
+	private boolean isDefaultAccountRestrictedStatusCodeSetOnSubFundGroup(SubFundGroup subFundGroup) {
+		if (ObjectUtils.isNotNull(subFundGroup) && StringUtils.isNotBlank(subFundGroup.getAccountRestrictedStatusCode())) {
+			return true;
+		}
+		return false;
 	}
 
 	private void updateAccountBasicFields(Account account) {
@@ -248,7 +293,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		}
 
 		if (StringUtils.isNotBlank(accountRestrictedStatusCode)) {
-		    account.setAccountRestrictedStatusCode(accountRestrictedStatusCode);
+			updateAccountRestrictedStatusCodeForAccountBeingEdited(subFundGroup, accountRestrictedStatusCode, account);
 		}
 
 		if (ObjectUtils.isNotNull(accountRestrictedStatusDate)) {
