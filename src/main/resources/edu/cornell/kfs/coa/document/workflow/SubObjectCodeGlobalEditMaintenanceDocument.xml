@@ -19,7 +19,7 @@
     <documentType>
       <name>GSOI</name>
       <parent>COA</parent>
-      <label>Global Sub-Object Code Inactivation</label>
+      <label>Sub-Object Code Global Inactivation</label>
       <routePaths>
         <routePath>
           <start name="AdHoc" nextNode="Account" />
