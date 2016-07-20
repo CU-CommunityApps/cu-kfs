@@ -78,7 +78,7 @@
      </bean>
                 
      <bean id="laborLedgerBatchFileLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
-         <property name="cf.lookupableHelperService">
+         <property name="lookupableHelperService">
            <ref bean="laborLedgerBatchFileLookupableHelperService" />
          </property>
      </bean>

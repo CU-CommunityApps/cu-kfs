@@ -132,7 +132,7 @@
    <bean id="unitOfMeasureLookupHelperService" class="edu.cornell.kfs.module.purap.businessobject.lookup.UnitOfMeasureLookupableHelperServiceImpl" scope="prototype" parent="cf.lookupableHelperService" />
 	
     <bean id="unitOfMeasureLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
-		<property name="cf.lookupableHelperService">
+		<property name="lookupableHelperService">
 			<ref bean="unitOfMeasureLookupHelperService" />
 		</property>
 	</bean>
@@ -162,7 +162,7 @@
     </bean>
     
 	<bean id="iWantDocVendorLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
-        <property name="cf.lookupableHelperService">
+        <property name="lookupableHelperService">
             <ref bean="iWantDocVendorLookupableHelperService" />
         </property>
     </bean>

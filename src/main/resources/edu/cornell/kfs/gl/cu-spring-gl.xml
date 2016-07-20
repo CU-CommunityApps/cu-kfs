@@ -257,7 +257,7 @@
  	 	 	 		 <property name="lookupService" ref="lookupService" />
  	 	 	 		 </bean>
  	 	 	 		 <bean id="glCurrentAccountBalanceLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
- 	 	 	 		 <property name="cf.lookupableHelperService">
+ 	 	 	 		 <property name="lookupableHelperService">
  	 	 	 		         <ref bean="glCurrentAccountBalanceLookupableHelperService" />
  	 	 	 		 </property>
  	 	 	 		 </bean>
