@@ -86,6 +86,9 @@
         "documentTypeCode": "YEGE",
         "linkType": "kfs"
       }, {
+        "documentTypeCode": "YEJV",
+        "linkType": "kfs"
+      }, {
         "documentTypeCode": "YETF",
         "linkType": "kfs"
       }],
@@ -134,8 +137,16 @@
           }
         }
       }, {
-        "businessObjectClass": "org.kuali.kfs.gl.businessobject.CurrentAccountBalance",
-        "linkType": "kfs"
+        "label": "Current Fund Balance",
+        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=edu.cornell.kfs.gl.businessobject.CurrentAccountBalance&docFormKey=88888888&hideReturnLink=true",
+        "linkType": "kfs",
+        "permission": {
+          "templateNamespace": "KR-NS",
+          "templateName": "Look Up Records",
+          "details": {
+            "namespaceCode": "KFS*"
+          }
+        }
       }, {
         "label": "General Ledger Balance",
         "link": "glBalanceInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.gl.businessobject.Balance&docFormKey=88888888&hideReturnLink=true",
@@ -235,6 +246,9 @@
         "documentTypeCode": "CCVN",
         "linkType": "kfs"
       }, {
+        "businessObjectClass": "com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchDefault",
+        "linkType": "kfs"
+      }, {
         "documentTypeCode": "DVPR",
         "linkType": "kfs"
       }, {
@@ -264,7 +278,13 @@
           }
         }
       }, {
+        "documentTypeCode": "IWAM",
+        "linkType": "kfs"
+      }, {
         "documentTypeCode": "DVTX",
+        "linkType": "kfs"
+      }, {
+        "documentTypeCode": "PMCD",
         "linkType": "kfs"
       }, {
         "documentTypeCode": "PCDM",
@@ -278,6 +298,28 @@
           "templateName": "Upload Batch Input File(s)",
           "details": {
             "beanName": "procurementCardInputFileType"
+          }
+        }
+      }, {
+        "label": "Procurement Card Flat Upload",
+        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=procurementCardFlatInputFileType",
+        "linkType": "kfs",
+        "permission": {
+          "templateNamespace": "KR-NS",
+          "templateName": "Upload Batch Input File(s)",
+          "details": {
+            "beanName": "procurementCardFlatInputFileType"
+          }
+        }
+      }, {
+        "label": "Disbursement Voucher Upload",
+        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=disbursementVoucherInputFileType",
+        "linkType": "kfs",
+        "permission": {
+          "templateNamespace": "KR-NS",
+          "templateName": "Upload Batch Input File(s)",
+          "details": {
+            "beanName": "disbursementVoucherInputFileType"
           }
         }
       }]
@@ -522,7 +564,7 @@
         }
       }, {
         "label": "Asset Global (add)",
-        "link": "kr/lookup.do?businessObjectClassName=org.kuali.kfs.module.cam.businessobject.AssetAcquisitionType&conversionFields=acquisitionTypeCode:acquisitionTypeCode&returnLocation=portal.do&docFormKey=88888888",
+        "link": "kr/lookup.do?businessObjectClassName=org.kuali.kfs.module.cam.businessobject.AssetAcquisitionType&conversionFields=acquisitionTypeCode:acquisitionTypeCode&docFormKey=88888888",
         "linkType": "kfs",
         "permission": {
           "templateNamespace": "KR-SYS",
@@ -542,7 +584,7 @@
         "linkType": "kfs"
       }, {
         "label": "Asset Retirement Global",
-        "link": "kr/lookup.do?businessObjectClassName=org.kuali.kfs.module.cam.businessobject.AssetRetirementReason&conversionFields=retirementReasonCode:retirementReasonCode&returnLocation=portal.do&docFormKey=88888888",
+        "link": "kr/lookup.do?businessObjectClassName=org.kuali.kfs.module.cam.businessobject.AssetRetirementReason&conversionFields=retirementReasonCode:retirementReasonCode&docFormKey=88888888",
         "linkType": "kfs",
         "permission": {
           "templateNamespace": "KR-SYS",
@@ -646,6 +688,9 @@
         "documentTypeCode": "ORGN",
         "linkType": "kfs"
       }, {
+        "documentTypeCode": "GORG",
+        "linkType": "kfs"
+      }, {
         "documentTypeCode": "ORR",
         "linkType": "kfs"
       }, {
@@ -655,13 +700,28 @@
         "documentTypeCode": "SACC",
         "linkType": "kfs"
       }, {
+        "documentTypeCode": "GSACC",
+        "linkType": "kfs"
+      }, {
         "documentTypeCode": "SOBJ",
         "linkType": "kfs"
       }, {
         "documentTypeCode": "GSOB",
         "linkType": "kfs"
+      }, {
+        "documentTypeCode": "GSOI",
+        "linkType": "kfs"
+      }, {
+        "documentTypeCode": "UPPM",
+        "linkType": "kfs"
       }],
       "administration": [{
+        "documentTypeCode": "ACCR",
+        "linkType": "kfs"
+      }, {
+        "documentTypeCode": "GARV",
+        "linkType": "kfs"
+      }, {
         "documentTypeCode": "ATYP",
         "linkType": "kfs"
       }, {
@@ -669,6 +729,20 @@
         "linkType": "kfs"
       }, {
         "documentTypeCode": "AFUN",
+        "linkType": "kfs"
+      }, {
+        "label": "Account Reversion File Upload",
+        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=accountReversionInputFileType",
+        "linkType": "kfs",
+        "permission": {
+          "templateNamespace": "KR-NS",
+          "templateName": "Upload Batch Input File(s)",
+          "details": {
+            "beanName": "accountReversionInputFileType"
+          }
+        }
+      }, {
+        "documentTypeCode": "APPA",
         "linkType": "kfs"
       }, {
         "documentTypeCode": "BTYP",
@@ -683,6 +757,17 @@
         "documentTypeCode": "BRL",
         "linkType": "kfs"
       }, {
+        "label": "CG Reporting Code",
+        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=edu.cornell.kfs.coa.businessobject.ContractGrantReportingCode&docFormKey=88888888&hideReturnLink=true",
+        "linkType": "kfs",
+        "permission": {
+          "templateNamespace": "KR-NS",
+          "templateName": "Look Up Records",
+          "details": {
+            "namespaceCode": "KFS*"
+          }
+        }
+      }, {
         "documentTypeCode": "COAT",
         "linkType": "kfs"
       }, {
@@ -696,6 +781,9 @@
         "linkType": "kfs"
       }, {
         "documentTypeCode": "HEFN",
+        "linkType": "kfs"
+      }, {
+        "documentTypeCode": "MAC",
         "linkType": "kfs"
       }, {
         "documentTypeCode": "MTE",
@@ -737,10 +825,16 @@
         "documentTypeCode": "RSTA",
         "linkType": "kfs"
       }, {
+        "businessObjectClass": "edu.cornell.kfs.coa.businessobject.ReversionCategory",
+        "linkType": "kfs"
+      }, {
         "documentTypeCode": "SOF",
         "linkType": "kfs"
       }, {
         "documentTypeCode": "SFGR",
+        "linkType": "kfs"
+      }, {
+        "documentTypeCode": "SFPR",
         "linkType": "kfs"
       }, {
         "documentTypeCode": "SFGT",
@@ -751,6 +845,25 @@
       }, {
         "documentTypeCode": "UFUN",
         "linkType": "kfs"
+      }]
+    }
+  }, {
+    "label": "Check Reconciliation",
+    "links": {
+      "administration": [{
+        "businessObjectClass": "com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation",
+        "linkType": "kfs"
+      }, {
+        "label": "Reconciliation Report",
+        "link": "crCheckReconciliationReport.do",
+        "linkType": "kfs",
+        "permission": {
+          "templateNamespace": "KR-NS",
+          "templateName": "Use Screen",
+          "details": {
+            "actionClass": "com.rsmart.kuali.kfs.cr.document.web.struts.CheckReconciliationReportAction"
+          }
+        }
       }]
     }
   }, {
@@ -812,6 +925,12 @@
         "linkType": "kfs"
       }, {
         "documentTypeCode": "INST",
+        "linkType": "kfs"
+      }, {
+        "businessObjectClass": "edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency",
+        "linkType": "kfs"
+      }, {
+        "businessObjectClass": "edu.cornell.kfs.module.cg.businessobject.InvoiceType",
         "linkType": "kfs"
       }, {
         "documentTypeCode": "LOCF",
@@ -1384,6 +1503,17 @@
         "documentTypeCode": "BENT",
         "linkType": "kfs"
       }, {
+        "label": "Create Disencumbrance",
+        "link": "disencumbranceBatchUploadFileSet.do?methodToCall=start&batchUpload.batchInputTypeName=disencumbranceEnterpriseFeederFileSetType",
+        "linkType": "kfs",
+        "permission": {
+          "templateNamespace": "KR-NS",
+          "templateName": "Upload Batch Input File(s)",
+          "details": {
+            "beanName": "disencumbranceEnterpriseFeederFileSetType"
+          }
+        }
+      }, {
         "label": "Labor Enterprise Feed Upload",
         "link": "laborBatchUploadFileSet.do?methodToCall=start&batchUpload.batchInputTypeName=laborEnterpriseFeederFileSetType",
         "linkType": "kfs",
@@ -1440,7 +1570,7 @@
           }
         }
       }, {
-        "label": "Shop Catalogs",
+        "label": "e-SHOP",
         "link": "b2b.do?methodToCall=shopCatalogs",
         "linkType": "kfs",
         "permission": {
@@ -1450,6 +1580,9 @@
             "actionClass": "org.kuali.kfs.module.purap.web.struts.B2BAction"
           }
         }
+      }, {
+        "documentTypeCode": "IWNT",
+        "linkType": "kfs"
       }, {
         "label": "Vendor Credit Memo",
         "link": "purapVendorCreditMemo.do?methodToCall=docHandler&command=initiate&docTypeName=CM",
@@ -1703,6 +1836,9 @@
         "businessObjectClass": "org.kuali.kfs.sys.batch.BatchFile",
         "linkType": "kfs"
       }, {
+        "businessObjectClass": "edu.cornell.kfs.sys.batch.CreateDoneBatchFile",
+        "linkType": "kfs"
+      }, {
         "label": "Batch Semaphore File Upload",
         "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=semaphoreInputFileTypeError",
         "linkType": "kfs",
@@ -1781,6 +1917,17 @@
           "templateName": "Use Screen",
           "details": {
             "actionClass": "org.kuali.rice.kew.documentoperation.web.DocumentOperationAction"
+          }
+        }
+      }, {
+        "label": "Document Reindex File Upload",
+        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=documentReindexFlatFileInputFileType",
+        "linkType": "kfs",
+        "permission": {
+          "templateNamespace": "KR-NS",
+          "templateName": "Upload Batch Input File(s)",
+          "details": {
+            "beanName": "documentReindexFlatFileInputFileType"
           }
         }
       }, {
@@ -2047,6 +2194,29 @@
       }]
     }
   }, {
+      "label": "Tax Reporting",
+      "links": {
+        "reference": [{
+          "businessObjectClass": "edu.cornell.kfs.tax.businessobject.ObjectCodeBucketMapping",
+          "linkType": "kfs"
+        }, {
+          "businessObjectClass": "edu.cornell.kfs.tax.businessobject.TransactionOverride",
+          "linkType": "kfs"
+        }],
+        "administration": [{
+          "label": "Transaction Override Upload",
+          "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=bulkTransactionOverrideFileType",
+          "linkType": "kfs",
+          "permission": {
+            "templateNamespace": "KR-NS",
+            "templateName": "Upload Batch Input File(s)",
+            "details": {
+              "beanName": "bulkTransactionOverrideFileType"
+            }
+          }
+        }]
+      }
+  }, {
     "label": "Travel",
     "links": {
       "activities": [{
@@ -2241,6 +2411,17 @@
         "documentTypeCode": "PMCC",
         "linkType": "kfs"
       }, {
+        "label": "Commodity Code File Upload",
+        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=commodityCodeInputFileType",
+        "linkType": "kfs",
+        "permission": {
+          "templateNamespace": "KR-NS",
+          "templateName": "Upload Batch Input File(s)",
+          "details": {
+            "beanName": "commodityCodeInputFileType"
+          }
+        }
+      }, {
         "documentTypeCode": "PMCT",
         "linkType": "kfs"
       }, {
@@ -2280,6 +2461,17 @@
         "businessObjectClass": "org.kuali.kfs.vnd.businessobject.DebarredUnmatchedVendor",
         "linkType": "kfs"
       }, {
+        "label": "Vendor Inactive or Convert File Upload",
+        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=vendorInactivateConvertBatchCsvInputFileType",
+        "linkType": "kfs",
+        "permission": {
+          "templateNamespace": "KR-NS",
+          "templateName": "Upload Batch Input File(s)",
+          "details": {
+            "beanName": "vendorInactivateConvertBatchCsvInputFileType"
+          }
+        }
+      }, {
         "documentTypeCode": "PMIR",
         "linkType": "kfs"
       }, {
@@ -2288,7 +2480,8 @@
       }, {
         "documentTypeCode": "PVFT",
         "linkType": "kfs"
-      }]
+      }
+      ]
     }
   }],
   "menu": [{
