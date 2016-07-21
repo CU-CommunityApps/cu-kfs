@@ -1,24 +1,22 @@
 package edu.cornell.kfs.module.purap.document.web.struts;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
+import edu.cornell.kfs.module.purap.businessobject.IWantItem;
+import edu.cornell.kfs.module.purap.document.IWantDocument;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.kns.web.ui.ExtraButton;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase;
 import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.rice.kew.api.KewApiConstants.SearchableAttributeConstants;
-import org.kuali.kfs.kns.web.ui.ExtraButton;
-import org.kuali.kfs.krad.service.KRADServiceLocatorWeb;
-import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
-import edu.cornell.kfs.module.purap.businessobject.IWantItem;
-import edu.cornell.kfs.module.purap.document.IWantDocument;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormBase {
@@ -153,28 +151,6 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
             }
         }
         return StringUtils.EMPTY;
-    }
-
-    /**
-     * Returns the title at the top of the IWant Document.
-     * 
-     * @return
-     */
-    public String getHeaderTitle() {
-        String iwntTitle = headerTitle;
-        if (CUPurapConstants.IWantDocumentSteps.CUSTOMER_DATA_STEP.equals(step)) {
-            iwntTitle = "Welcome to the I Want Doc! Submit your order request in just 4 easy steps. <br/>I Want Document Step #1";
-        } else if (CUPurapConstants.IWantDocumentSteps.ITEMS_AND_ACCT_DATA_STEP.equals(step)) {
-            iwntTitle = "I Want Document Step #2";
-        } else if (CUPurapConstants.IWantDocumentSteps.VENDOR_STEP.equals(step)) {
-            iwntTitle = "I Want Document Step #3";
-        } else if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equals(step)) {
-            iwntTitle = "I Want Document Step #4";
-        } else if (CUPurapConstants.IWantDocumentSteps.REGULAR.equals(step)) {
-            //iwntTitle = getDocument().getDocumentTitle();
-            iwntTitle = KRADServiceLocatorWeb.getDataDictionaryService().getDocumentLabelByClass(IWantDocument.class);
-        }
-        return iwntTitle;
     }
 
     /**
@@ -316,7 +292,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         clearButton.setExtraButtonProperty("methodToCall.route");
         clearButton.setExtraButtonSource("${" + KFSConstants.RICE_EXTERNALIZABLE_IMAGES_URL_KEY
                 + "}buttonsmall_submit.gif");
-        clearButton.setExtraButtonAltText("Back");
+        clearButton.setExtraButtonAltText("Submit");
         return clearButton;
     }
 

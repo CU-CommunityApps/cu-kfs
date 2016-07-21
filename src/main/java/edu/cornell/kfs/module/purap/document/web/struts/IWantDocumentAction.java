@@ -1,22 +1,33 @@
 package edu.cornell.kfs.module.purap.document.web.struts;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
+import edu.cornell.kfs.module.purap.businessobject.IWantDocUserOptions;
+import edu.cornell.kfs.module.purap.businessobject.IWantItem;
+import edu.cornell.kfs.module.purap.businessobject.LevelOrganization;
+import edu.cornell.kfs.module.purap.document.IWantDocument;
+import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
+import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
+import edu.cornell.kfs.module.purap.util.PurApFavoriteAccountLineBuilderForIWantDocument;
+import edu.cornell.kfs.sys.util.ConfidentialAttachmentUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.kns.rule.event.KualiAddLineEvent;
+import org.kuali.kfs.kns.util.KNSGlobalVariables;
+import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
+import org.kuali.kfs.krad.UserSessionUtils;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
+import org.kuali.kfs.krad.service.KualiRuleService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentActionBase;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
@@ -31,34 +42,21 @@ import org.kuali.rice.kim.api.identity.employment.EntityEmployment;
 import org.kuali.rice.kim.api.identity.entity.Entity;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.kfs.kns.rule.event.KualiAddLineEvent;
-import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
-import org.kuali.kfs.krad.UserSessionUtils;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
-import org.kuali.kfs.krad.service.KualiRuleService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
-import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
-import edu.cornell.kfs.module.purap.businessobject.IWantDocUserOptions;
-import edu.cornell.kfs.module.purap.businessobject.IWantItem;
-import edu.cornell.kfs.module.purap.businessobject.LevelOrganization;
-import edu.cornell.kfs.module.purap.document.IWantDocument;
-import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
-import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
-import edu.cornell.kfs.module.purap.util.PurApFavoriteAccountLineBuilderForIWantDocument;
-import edu.cornell.kfs.sys.util.ConfidentialAttachmentUtil;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings("deprecation")
 public class IWantDocumentAction extends FinancialSystemTransactionalDocumentActionBase {
 
     private static final String IWANT_DEPT_ORGS_TO_EXCLUDE_PARM = "IWANT_DEPT_ORGS_TO_EXCLUDE";
-
-    private static final int DOCUMENT_DESCRIPTION_MAX_LENGTH = 40;
 
     /**
      * @see org.kuali.kfs.kns.web.struts.action.KualiDocumentActionBase#loadDocument(org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase)
@@ -227,7 +225,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     }
 
     /**
-     * 
+     *
      * @see org.kuali.kfs.kns.web.struts.action.KualiAction#execute(org.apache.struts.action.ActionMapping,
      * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)
@@ -273,12 +271,24 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                     }
                 }
             }
-
-            //setIWantDocumentDescription(iWantDoc);
-
+            setupDocumentMessages(documentForm.getStep());
         }
 
+
         return actionForward;
+    }
+
+    private void setupDocumentMessages(String step) {
+        if (CUPurapConstants.IWantDocumentSteps.CUSTOMER_DATA_STEP.equals(step)) {
+            KNSGlobalVariables.getMessageList().add(KFSKeyConstants.ERROR_CUSTOM, "Welcome to the I Want Doc! Submit your order request in just 4 easy steps.");
+            KNSGlobalVariables.getMessageList().add(KFSKeyConstants.ERROR_CUSTOM, "I Want Document Step #1");
+        } else if (CUPurapConstants.IWantDocumentSteps.ITEMS_AND_ACCT_DATA_STEP.equals(step)) {
+            KNSGlobalVariables.getMessageList().add(KFSKeyConstants.ERROR_CUSTOM, "I Want Document Step #2");
+        } else if (CUPurapConstants.IWantDocumentSteps.VENDOR_STEP.equals(step)) {
+            KNSGlobalVariables.getMessageList().add(KFSKeyConstants.ERROR_CUSTOM, "I Want Document Step #3");
+        } else if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equals(step)) {
+            KNSGlobalVariables.getMessageList().add(KFSKeyConstants.ERROR_CUSTOM, "I Want Document Step #4");
+        }
     }
 
 
@@ -689,7 +699,14 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         }
         ActionForward actionForward = super.route(mapping, form, request, response);
 
-        return (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)) ? mapping.findForward("finish") : actionForward;
+        if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)) {
+            iWantDocForm.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
+            iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
+
+            return mapping.findForward("finish");
+        }
+
+        return actionForward;
     }
     
     private void saveUserOption(String principalId, String userOptionName, String userOptionValue) {
@@ -714,8 +731,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             HttpServletResponse response) throws Exception {
 
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
-        @SuppressWarnings("unused")
-        IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
 
         //insert adhoc route person first and the route
         if (StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())) {
@@ -730,8 +745,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             HttpServletResponse response) throws Exception {
 
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
-        @SuppressWarnings("unused")
-        IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
 
         //insert adhoc route person first and then approve
         if (StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())) {
@@ -962,8 +975,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
-        @SuppressWarnings("unused")
-        IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
 
         // Make sure a related requisition does not already exist before creating one.
         if (StringUtils.isNotBlank(iWantDocument.getReqsDocId())) {
