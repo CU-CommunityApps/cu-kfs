@@ -253,10 +253,7 @@
 		</property>
 	</bean> 
 
-	<bean id="disbursementVoucherTaxService"  parent="disbursementVoucherTaxService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherTaxServiceImpl">
-	    <property name="vendorService" ref="vendorService" />
-        <property name="parameterEvaluatorService" ref="parameterEvaluatorService" />
-	</bean>
+	<bean id="disbursementVoucherTaxService"  parent="disbursementVoucherTaxService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherTaxServiceImpl"/>
 	
 	<bean id="disbursementVoucherDao" class="edu.cornell.kfs.fp.dataaccess.impl.CuDisbursementVoucherDaoOjb" parent="platformAwareDao" />
 
