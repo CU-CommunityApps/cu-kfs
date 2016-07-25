@@ -18,8 +18,8 @@
 
   <properties>
 	<job.name>${project.artifactId}</job.name>
-	<rice.version>2.5.8</rice.version>
-	<cynergy.version>2.3.4</cynergy.version>
+	<rice.version>2.5.10</rice.version>
+	<cynergy.version>2.5.10</cynergy.version>
 	<cynergy.version.suffix>current</cynergy.version.suffix>
 	<kfs.version>2016-07-14</kfs.version>
 	<cynergy.development>true</cynergy.development>
@@ -366,7 +366,6 @@
           <groupId>edu.cornell.cynergy </groupId>
           <artifactId>cynergy-customizations</artifactId>
           <version>${cynergy.version}-${cynergy.version.suffix}</version>
-          <scope>test</scope>
           <exclusions>
               <exclusion>
                   <groupId>org.kuali.rice</groupId>
@@ -491,6 +490,14 @@
               <exclusion>
                   <groupId>org.kuali.rice</groupId>
                   <artifactId>rice-core-web</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-krad-data</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-krad-service-impl</artifactId>
               </exclusion>
           </exclusions>
       </dependency>
