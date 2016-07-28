@@ -29,9 +29,6 @@ public class CUKFSPropertyConstants extends KFSPropertyConstants {
     
     // KFSUPGRADE-779
     public static final String DOC_HDR_FINANCIAL_DOCUMENT_STATUS_CODE = "documentHeader.financialDocumentStatusCode";
-    
-    public static final String PROGRAM_CODE = "programCode";
-    public static final String APPROPRIATION_ACCT_NUMBER = "appropriationAccountNumber";
 
     public static final String ACCT_REVERSION_CHART_OF_ACCT_CODE = "chartOfAccountsCode";
     public static final String ACCT_REVERSION_BUDGET_REVERSION_CHART_OF_ACCT_CODE = "budgetReversionChartOfAccountsCode";
@@ -51,8 +48,5 @@ public class CUKFSPropertyConstants extends KFSPropertyConstants {
     
     public static final String RECURRING_DV_PARTIAL_TRANSACTION_COUNT_FIELD_NAME = "partialTransactionCount";
     public static final String RECURRING_DV_PAYMENT_CANCEL_REASON_FIELD_NAME = "paymentCancelReason";
-
-    public static final String CONTRACTS_AND_GRANTS_ACCOUNT_RESPOSIBILITY_ID = "contractsAndGrantsAccountResponsibilityId";
-    public static final String REMOVE_INCOME_STREAM_CHART_AND_ACCOUNT = "removeIncomeStreamChartAndAccount";
-    public static final String REMOVE_CONTINUATION_CHART_AND_ACCOUNT = "removeContinuationChartAndAccount";
 }
+
