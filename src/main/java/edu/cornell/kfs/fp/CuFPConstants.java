@@ -1,11 +1,5 @@
 package edu.cornell.kfs.fp;
 
-import java.util.Calendar;
-
-import org.apache.commons.lang.StringUtils;
-
-import edu.cornell.kfs.sys.CUKFSConstants.PreEncumbranceSourceAccountingLineConstants;
-
 /**
  Copyright Cornell University
  This program is free software: you can redistribute it and/or modify
@@ -95,43 +89,6 @@ public class CuFPConstants {
         public static final int ACH_TRN_PAYER_NM_DB_SIZE = 40;
         public static final String PAYER_TYPE_PE = "PE";
         public static final String PAYER_TYPE_PR = "PR";
-    }
-    
-    public static class ScheduledSourceAccountingLineConstants extends PreEncumbranceSourceAccountingLineConstants {
-    	public static final String SCHEDULE_TYPE = "scheduleType";
-    	
-    	public enum ScheduleTypes {
-    		DAILY("Daily", Calendar.DATE, 1),
-    		BIWEEKLY("Bi-Weekly", Calendar.DATE, 14),
-    		MONTHLY("Monthly", Calendar.MONTH, 1),
-    		YEARLY("Yearly", Calendar.YEAR, 1);
-    		
-        	public final String name;
-        	public final int calendarIncrementorType;
-        	public final int calendarIncrementorMutliplier;
-        	private ScheduleTypes(String name, int calendarIncrementorType, int calendarIncrementorMutliplier) {
-                this.name = name;
-                this.calendarIncrementorType = calendarIncrementorType;
-                this.calendarIncrementorMutliplier = calendarIncrementorMutliplier;
-            }
-        	
-        	public static ScheduleTypes fromName(String name) {
-        		for (ScheduleTypes st : ScheduleTypes.values()) {
-        			if (StringUtils.equals(name, st.name)) {
-        				return st;
-        			}
-        		}
-        		throw new IllegalArgumentException("invalid schedule type: "  + name);
-        	}
-    	}
-    }
-
-    public static class RecurringDisbursementVoucherDocumentConstants {
-        public static final String RECURRING_DV_COMPONENT_NAME = "RecurringDisbursementVoucher";
-        public static final String RECURRING_DV_PAYMENT_METHOD_FILTER_PARAMETER_NAME = "RECURRING DV PAYMENT METHOD FILTER";
-        public static final String RECURRING_DV_MAX_FUTURE_DATE = "RECURRING DV MAX FUTURE DATE";
-        public static final String RECURRING_DV_DOCUMENT_TYPE_NAME = "RCDV";
-        public static final String RECURRING_DV_CANCEL_PARMENTS_PERMISSION_NAME = "CANCEL RECURRING DISBURSEMENT VOUCHER PAYMENTS";
     }
 
 }

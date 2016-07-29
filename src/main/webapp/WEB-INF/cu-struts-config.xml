@@ -29,9 +29,6 @@
             
         <form-bean name="CuDisbursementVoucherForm"
             type="edu.cornell.kfs.fp.document.web.struts.CuDisbursementVoucherForm" />
-        
-        <form-bean name="RecurringDisbursementVoucherForm" type="edu.cornell.kfs.fp.document.web.struts.RecurringDisbursementVoucherForm"/>    
-        
         <form-bean name="CuDistributionOfIncomeAndExpenseForm"
             type="edu.cornell.kfs.fp.document.web.struts.CuDistributionOfIncomeAndExpenseForm" />
             
@@ -119,14 +116,6 @@
 			parameter="methodToCall" validate="true" attribute="KualiForm">
 			<set-property property="cancellable" value="true" />
 			<forward name="basic" path="/jsp/fp/DisbursementVoucher.jsp" />
-			<forward name="error" path="/jsp/module/purap/dvCreationError.jsp" />
-		</action>
-		
-		<action path="/financialRecurringDisbursementVoucher" name="RecurringDisbursementVoucherForm" input="/jsp/fp/RecurringDisbursementVoucher.jsp"
-			type="edu.cornell.kfs.fp.document.web.struts.RecurringDisbursementVoucherAction" scope="request"
-			parameter="methodToCall" validate="true" attribute="KualiForm">
-			<set-property property="cancellable" value="true" />
-			<forward name="basic" path="/jsp/fp/RecurringDisbursementVoucher.jsp" />
 			<forward name="error" path="/jsp/module/purap/dvCreationError.jsp" />
 		</action>
 

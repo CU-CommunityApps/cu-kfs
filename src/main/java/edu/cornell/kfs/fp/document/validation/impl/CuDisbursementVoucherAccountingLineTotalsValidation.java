@@ -1,36 +1,21 @@
 package edu.cornell.kfs.fp.document.validation.impl;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.cxf.common.util.StringUtils;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherAccountingLineTotalsValidation;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent;
-import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseConstants;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.krad.util.GlobalVariables;
 
-import edu.cornell.kfs.fp.businessobject.ScheduledAccountingLine;
-import edu.cornell.kfs.fp.businessobject.ScheduledSourceAccountingLine;
-import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
-import edu.cornell.kfs.gl.service.ScheduledAccountingLineService;
-import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
-import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
 public class CuDisbursementVoucherAccountingLineTotalsValidation extends DisbursementVoucherAccountingLineTotalsValidation {
-	
-	protected transient ScheduledAccountingLineService scheduledAccountingLineService;
 
     @Override
     public boolean validate(AttributedDocumentEvent event) {
@@ -80,69 +65,7 @@ public class CuDisbursementVoucherAccountingLineTotalsValidation extends Disburs
             }
         }
 
-        if (dvDocument instanceof RecurringDisbursementVoucherDocument) {
-            RecurringDisbursementVoucherDocument recurringDV = (RecurringDisbursementVoucherDocument) dvDocument;
-            if (!doesAccountingLineTotalEqualDVTotalDollarAmount(recurringDV)) {
-                String propertyName = KFSPropertyConstants.DOCUMENT + "." + KFSPropertyConstants.DISB_VCHR_CHECK_TOTAL_AMOUNT;
-                GlobalVariables.getMessageMap().putError(propertyName, CUKFSKeyConstants.ERROR_DV_CHECK_TOTAL_MUST_EQUAL_ACCOUNTING_LINE_TOTAL);
-                return false;
-            }
-            if(StringUtils.isEmpty(recurringDV.getDisbVchrCheckStubText()) && !recurringDV.getSourceAccountingLines().isEmpty()) {
-                String propertyName = KFSPropertyConstants.DOCUMENT + "." + KFSPropertyConstants.DISB_VCHR_CHECK_STUB_TEXT;
-                GlobalVariables.getMessageMap().putError(propertyName, CUKFSKeyConstants.ERROR_DV_CHECK_STUB_REQUIRED);
-                return false;
-            }
-            if(!isAccountingLineEndDateValid(recurringDV)) {
-                return false;
-            }
-        }
-
        return super.validate(event);
-    }
-    
-    private boolean doesAccountingLineTotalEqualDVTotalDollarAmount(RecurringDisbursementVoucherDocument recurringDV) {
-        KualiDecimal calculatedTotal = KualiDecimal.ZERO;
-        for (Object accountingLine : recurringDV.getSourceAccountingLines()) {
-            ScheduledSourceAccountingLine scheduledAccountingLine = (ScheduledSourceAccountingLine)accountingLine;	
-            calculatedTotal = calculatedTotal.add(scheduledAccountingLine.getAmount());
-        }
-        return  calculatedTotal.equals(recurringDV.getTotalDollarAmount());
-    }
-
-    private boolean isAccountingLineEndDateValid(RecurringDisbursementVoucherDocument recurringDV) {
-        boolean valid = true;
-        int counter = 0;
-        Date maximumScheduledAccountingLineEndDate = getScheduledAccountingLineService().getMaximumScheduledAccountingLineEndDate();
-        SimpleDateFormat dateFormater = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_MMDDYYYY);
-        for (Object accountingLine : recurringDV.getSourceAccountingLines()) {
-            ScheduledSourceAccountingLine scheduledAccountingLine = (ScheduledSourceAccountingLine)accountingLine;
-            scheduledAccountingLine.setEndDate(getScheduledAccountingLineService().generateEndDate(scheduledAccountingLine));
-            if (maximumScheduledAccountingLineEndDate.before(scheduledAccountingLine.getEndDate())) {
-                valid = false;
-                GlobalVariables.getMessageMap().putError(buildTransactionCountFieldName(counter), CUKFSKeyConstants.ERROR_RCDV_END_DATE_PASSED_MAX_END_DATE, 
-                        dateFormater.format(scheduledAccountingLine.getEndDate()), dateFormater.format(maximumScheduledAccountingLineEndDate));
-            }
-            counter++;
-        }
-        return valid;
-
-    }
-
-    private String buildTransactionCountFieldName(int sourceAccountingLineListElement) {
-        return AccountingDocumentRuleBaseConstants.ERROR_PATH.DOCUMENT_ERROR_PREFIX + KFSConstants.EXISTING_SOURCE_ACCT_LINE_PROPERTY_NAME + 
-                KFSConstants.SQUARE_BRACKET_LEFT + sourceAccountingLineListElement + KFSConstants.SQUARE_BRACKET_RIGHT + 
-                AccountingDocumentRuleBaseConstants.ERROR_PATH.DELIMITER + CUKFSPropertyConstants.RECURRING_DV_PARTIAL_TRANSACTION_COUNT_FIELD_NAME;
-    }
-
-    protected ScheduledAccountingLineService getScheduledAccountingLineService() {
-        if (scheduledAccountingLineService == null) {
-            scheduledAccountingLineService =  SpringContext.getBean(ScheduledAccountingLineService.class);
-        }
-        return scheduledAccountingLineService;
-    }
-
-    public void setScheduledAccountingLineService(ScheduledAccountingLineService scheduledAccountingLineService) {
-        this.scheduledAccountingLineService = scheduledAccountingLineService;
     }
 
 }

@@ -64,12 +64,6 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String ERROR_DOCUMENT_PREENCUMBER_NEEDS_REFERENCE_NUMBER = "error.document.preEncumbrance.referenceNumberRequired";
     public static final String ERROR_DOCUMENT_PREENCUMBER_WRONG_COUNT = "error.document.preEncumbrance.count";
     public static final String ERROR_DV_CHECK_TOTAL_NO_CHANGE = "error.dv.checkTotalNoChange";
-    public static final String ERROR_DV_CHECK_TOTAL_MUST_EQUAL_ACCOUNTING_LINE_TOTAL = "error.dv.checkTotalMustEqualAccountingLineTotal";
-    public static final String ERROR_DV_CHECK_STUB_REQUIRED ="error.dv.checkStubRequired";
-    public static final String ERROR_RCDV_END_DATE_PASSED_MAX_END_DATE = "error.rcdv_end_date_passed_max_end_date";
-    public static final String ERROR_RCDV_PAYMENT_CANCEL_REASON_REQUIRED = "error.rcdv_paymeent_cancel_reason_required";
-    public static final String INFO_RCDV_NO_PAYMENTS_CANCELED = "info.rcdv_no_payments_canceled";
-    public static final String INFO_RCDV_LIST_OF_PAYMENT_GROUPS_CANCELED = "info.rcdv_list_of_payment_groups_canceled";
     
     // KFSPTS-1786
     public static final String ERROR_CURRBALANCE_LOOKUP_CRITERIA_REQD = "error.currentbalance.lookup.criteria.required";

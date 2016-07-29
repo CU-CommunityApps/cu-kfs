@@ -15,13 +15,9 @@
 --%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
-<%@ attribute name="dvAttributes" required="false" type="java.lang.Object" %>
-<c:if test="${empty dvAttributes}" >
- <c:set var="dvAttributes" value="${DataDictionary.CuDisbursementVoucherDocument.attributes}" />
-</c:if>
-
 <c:set var="payeeAttributesEx" value="${DataDictionary.CuDisbursementVoucherPayeeDetailExtension.attributes}" />
 <c:set var="payeeAttributes" value="${DataDictionary.CuDisbursementVoucherPayeeDetail.attributes}" />
+<c:set var="dvAttributes" value="${DataDictionary.CuDisbursementVoucherDocument.attributes}" />
 <c:set var="payeeAttributes" value="${DataDictionary.CuDisbursementVoucherPayeeDetail.attributes}" />
 <c:set var="travelEntryMode" value="${(not empty KualiForm.editingMode['travelEntry'])}" />
 <c:set var="travelSystemGeneratedEntryMode" value="${(not empty KualiForm.editingMode['travelSystemGeneratedEntry'])}" />

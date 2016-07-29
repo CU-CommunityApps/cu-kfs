@@ -38,11 +38,9 @@ import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 
-import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
-import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 
 
@@ -532,25 +530,5 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 	       // Split the chopped words into individual segments.
 	       return builder.toString().split("\\n");
 	   }
-	   
-	   @Override
-	   public boolean shouldExtractPayment(DisbursementVoucherDocument paymentSource) {
-	       LOG.debug("paymentSource: " + paymentSource.getClass());
-	       if (isRecurringDV(paymentSource)) {
-	           LOG.debug("shouldExtractPayment: found a recurring DV, returning false for " + paymentSource.getDocumentNumber());
-	           return false;
-	       }
-	       boolean shouldExtract = super.shouldExtractPayment(paymentSource);
-	       LOG.debug("shouldExtractPayment: Found a non recurring DV with a document number of " + paymentSource.getDocumentNumber() + " and returning " + shouldExtract);
-	       return shouldExtract;
-	   }
-	   
-	   private boolean isRecurringDV(DisbursementVoucherDocument paymentSource) {
-	       boolean isRecurringDV = false;
-	       if (CuFPConstants.RecurringDisbursementVoucherDocumentConstants.RECURRING_DV_DOCUMENT_TYPE_NAME.equalsIgnoreCase(
-                   paymentSource.getDocumentHeader().getWorkflowDocument().getDocumentTypeName())) {
-               isRecurringDV = true;
-           }
-	       return isRecurringDV;
-	   }
+
 }
