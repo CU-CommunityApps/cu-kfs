@@ -1581,8 +1581,16 @@
           }
         }
       }, {
-        "documentTypeCode": "IWNT",
-        "linkType": "kfs"
+        "label": "I Want",
+        "link": "purapIWant.do?methodToCall=docHandler&command=initiate&docTypeName=IWNT&step=customerDataStep",
+        "linkType": "kfs",
+        "permission": {
+          "templateNamespace": "KR-SYS",
+          "templateName": "Initiate Document",
+          "details": {
+            "documentTypeName": "IWNT"
+          }
+        }
       }, {
         "label": "Vendor Credit Memo",
         "link": "purapVendorCreditMemo.do?methodToCall=docHandler&command=initiate&docTypeName=CM",

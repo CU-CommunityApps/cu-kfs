@@ -588,7 +588,7 @@
   <bean id="IWantDocument-noteLabel-parentBean" abstract="true" parent="Note-noteText">
     <property name="name" value="noteLabel"/>
     <property name="required" value="false"/>
-    <property name="label" value="Note"/>
+    <property name="label" value="Note Text"/>
   </bean>
   
   <bean id="IWantDocument-completed" parent="IWantDocument-completed-parentBean"/>
