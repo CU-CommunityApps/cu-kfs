@@ -284,6 +284,13 @@
     <bean id="cUPaymentMethodGeneralLedgerPendingEntryService" class="edu.cornell.kfs.fp.service.impl.CUPaymentMethodGeneralLedgerPendingEntryServiceImpl">
      
     </bean>
+    <bean id="recurringDisbursementVoucherDocumentService" parent="recurringDisbursementVoucherDocumentService-parentBean"/>
+	<bean id="recurringDisbursementVoucherDocumentService-parentBean" abstract="true" class="edu.cornell.kfs.fp.service.impl.RecurringDisbursementVoucherDocumentServiceImpl">
+		<property name="documentService" ref="documentService"/>
+		<property name="scheduledAccountingLineService" ref="scheduledAccountingLineService"/>
+		<property name="businessObjectService" ref="businessObjectService"/>
+		<property name="accountingPeriodService" ref="accountingPeriodService"/>
+	</bean>
 
     <!-- KFSUPGRADE-973 -->
 	<bean id="disbursementVoucherExtractionHelperService" parent="disbursementVoucherExtractionHelperService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherExtractionHelperServiceImpl">
@@ -588,4 +595,6 @@
         <property name="titleKey" value="message.batchUpload.title.achIncome"/>
         <property name="processor" ref="advanceDepositService"/>
     </bean>
+    
+    <bean id="scheduledAccountingLineService" class="edu.cornell.kfs.fp.service.impl.ScheduledAccountingLineServiceImpl"/>
 </beans>

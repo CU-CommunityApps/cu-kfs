@@ -24,6 +24,7 @@ import org.kuali.rice.krad.util.KRADPropertyConstants;
  * Property name constants.
  */
 public class CUKFSPropertyConstants extends KFSPropertyConstants {
+    
     public static final String CURRENT_ACCOUNT_BALANCE_REQUIRED_FIELDS = "currentAccountBalanceRequiredFields";
     
     // KFSUPGRADE-779
@@ -47,6 +48,8 @@ public class CUKFSPropertyConstants extends KFSPropertyConstants {
     public static final String DOCUMENT_FAVORITE_ACCOUNT_LINE_IDENTIFIER = "document.favoriteAccountLineIdentifier";
 
     public static final String AWARD_EXTENSION_BUDGET_ENDING_DATE = "extension.budgetEndingDate";
+    
+    public static final String RECURRING_DV_PARTIAL_TRANSACTION_COUNT_FIELD_NAME = "partialTransactionCount";
 
     public static final String CONTRACTS_AND_GRANTS_ACCOUNT_RESPOSIBILITY_ID = "contractsAndGrantsAccountResponsibilityId";
     public static final String REMOVE_INCOME_STREAM_CHART_AND_ACCOUNT = "removeIncomeStreamChartAndAccount";
