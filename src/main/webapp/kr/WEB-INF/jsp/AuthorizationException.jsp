@@ -1,6 +1,6 @@
 <%--
 
-    Copyright 2005-2013 The Kuali Foundation
+    Copyright 2005-2015 The Kuali Foundation
 
     Licensed under the Educational Community License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -14,6 +14,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
+--%>
+<%--
+    Modified by Cornell University 2013-2016 to add custom error message.
 --%>
 <%@ page import="org.kuali.kfs.krad.exception.AuthorizationException"%>
 <%@ include file="/kr/WEB-INF/jsp/tldHeader.jsp" %>
@@ -39,45 +42,19 @@
 
 	<html:hidden property="message" write="false" value="${message}" />
 
-    <div class="topblurb">
-        <div align="center">
-			<font color="blue" size="3">
-			We're sorry, you are currently not authorized to perform this KFS function.
-			</font>
-			<br/><br/>
-			<font color="blue" size="2">
-			If you were performing a lookup, be sure you click on "return value" to make your selection.
-			<br/>
-			If you feel you should have access to this function, please contact your Financial Transaction Center or Business Service Center.
-			</font>
-        </div>
-		<div align="center">
-			<table cellpadding="10" cellspacing="0" border="0" class="container2">
-				<tr>
-					<td>
-						<div align="left" valign="top">
-							<strong>Error Message</strong>
-						</div>
-					</td>
-					<td align="left">
-						<div align="left">
-							<font color="red">${message}</font>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						&nbsp;
-					</td>
-					<td align="left">
-						<div>
-							<input type="image" name="cancel" value="true" class="tinybutton"
-								   src="${ConfigProperties.kr.externalizable.images.url}buttonsmall_close.gif"
-								   class="globalbuttons" title="close" alt="Close">
-						</div>
-					</td>
-				</tr>
-			</table>
-		</div>
+	<div class="center">
+		<font color="blue" size="3">
+		We're sorry, you are currently not authorized to perform this KFS function.
+		</font>
+		<br/><br/>
+		<font color="blue" size="2">
+		If you were performing a lookup, be sure you click on "return value" to make your selection.
+		<br/>
+		If you feel you should have access to this function, please contact your Financial Transaction Center or Business Service Center.
+		</font>
+	</div>
+	<div class="center">
+		<strong>Error Message:</strong>
+			${message}
 	</div>
 </kul:page>
