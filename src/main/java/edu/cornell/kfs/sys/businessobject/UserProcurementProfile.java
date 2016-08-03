@@ -18,6 +18,7 @@ public class UserProcurementProfile extends PersistableBusinessObjectBase {
     private List<FavoriteAccount> favoriteAccounts;
 	private String personName;
 	private boolean personSelected;
+	private boolean active;
 	private FavoriteAccount newSourceLine;
     private Person profileUser;
     private FavoriteAccount resultAccount;
@@ -27,85 +28,57 @@ public class UserProcurementProfile extends PersistableBusinessObjectBase {
         this.favoriteAccounts = new ArrayList<FavoriteAccount>();
         newSourceLine = new FavoriteAccount();
 
-    }
-
-    
+    }   
 
 	public Integer getUserProfileId() {
 		return userProfileId;
 	}
 
-
 	public void setUserProfileId(Integer userProfileId) {
 		this.userProfileId = userProfileId;
 	}
-
 
 	public String getPrincipalId() {
 		return principalId;
 	}
 
-
 	public void setPrincipalId(String principalId) {
 		this.principalId = principalId;
 	}
-
-//    public FavoriteAccount getFavoriteAccount(int index) {
-//        if (index >= favoriteAccounts.size()) {
-//            for (int i = favoriteAccounts.size(); i <= index; i++) {
-//            	favoriteAccounts.add(new FavoriteAccount());
-//            }
-//        }
-//        return favoriteAccounts.get(index);
-//    }
 
 	public List<FavoriteAccount> getFavoriteAccounts() {
 		return favoriteAccounts;
 	}
 
-
 	public void setFavoriteAccounts(
 			List<FavoriteAccount> favoriteAccounts) {
 		this.favoriteAccounts = favoriteAccounts;
 	}
-
 	
 	@SuppressWarnings("rawtypes")
 	protected LinkedHashMap toStringMapper() {
 		return null;
 	}
 
-
-
 	public String getPersonName() {
 		return personName;
 	}
-
-
 
 	public void setPersonName(String personName) {
 		this.personName = personName;
 	}
 
-
-
 	public boolean isPersonSelected() {
 		return personSelected;
 	}
-
-
 
 	public void setPersonSelected(boolean personSelected) {
 		this.personSelected = personSelected;
 	}
 
-
-
 	public FavoriteAccount getNewSourceLine() {
 		return newSourceLine;
 	}
-
-
 
 	public void setNewSourceLine(FavoriteAccount newSourceLine) {
 		this.newSourceLine = newSourceLine;
@@ -118,14 +91,10 @@ public class UserProcurementProfile extends PersistableBusinessObjectBase {
 
     }
 
-
-
 	public Person getProfileUser() {
 		profileUser = SpringContext.getBean(PersonService.class).updatePersonIfNecessary(principalId, profileUser);
 		return profileUser;
 	}
-
-
 
 	public void setProfileUser(Person profileUser) {
 		this.profileUser = profileUser;
@@ -134,21 +103,20 @@ public class UserProcurementProfile extends PersistableBusinessObjectBase {
 	public FavoriteAccount getResultAccount() {
 		if (resultAccount ==null) {
 			resultAccount = new FavoriteAccount();
-//			resultAccount.setAccountNumber("dispacct");
 		}
 		return resultAccount;
 	}
-
-
 
 	public void setResultAccount(FavoriteAccount resultAccount) {
 		this.resultAccount = resultAccount;
 	}
 
+	public boolean isActive() {
+		return active;
+	}
 
-
-
-
-
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 
 }
