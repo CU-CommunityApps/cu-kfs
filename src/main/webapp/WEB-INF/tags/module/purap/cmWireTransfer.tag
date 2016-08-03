@@ -30,8 +30,11 @@
                     </td>
                 </tr>
                 <tr>
-                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.cmBankRoutingNumber}"/>
-                        <c:if test="${fullEntryMode||wireEntryMode||frnEntryMode}"><br/> *required for US bank</c:if>
+                    <th scope=row class="bord-l-b">
+                        <div align="right">
+                            <kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.cmBankRoutingNumber}"/>
+                            <c:if test="${fullEntryMode||wireEntryMode||frnEntryMode}"><br/> *required for US bank</c:if>
+                        </div>
                     </th>
                     <td class="datacell">
                         <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.cmBankRoutingNumber}" property="document.cmWireTransfer.cmBankRoutingNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
@@ -53,8 +56,11 @@
                     </td>
                 </tr>
                 <tr>
-                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.cmBankStateCode}"/>
-                        <c:if test="${fullEntryMode||wireEntryMode||frnEntryMode}"><br/> *required for US bank</c:if>
+                    <th scope=row class="bord-l-b">
+                        <div align="right">
+                            <kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.cmBankStateCode}"/>
+                            <c:if test="${fullEntryMode||wireEntryMode||frnEntryMode}"><br/> *required for US bank</c:if>
+                        </div>
                     </th>
                     <td class="datacell">
                         <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.cmBankStateCode}" property="document.cmWireTransfer.cmBankStateCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
