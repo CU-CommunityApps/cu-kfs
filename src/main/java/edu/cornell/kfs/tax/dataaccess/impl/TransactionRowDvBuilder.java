@@ -80,7 +80,7 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
         Map<String,java.sql.Timestamp> datesMap = routeHeaderService.getFinalizedDatesForDocumentType(DisbursementVoucherConstants.DOCUMENT_TYPE_CODE,
                 new java.sql.Timestamp(summary.getStartDate().getTime()), new java.sql.Timestamp(endDateTime.getTime().getTime()));
         // Filter results to only include Foreign Draft and Wire Transfer DVs.
-        finalizedDvDocuments = processingDao.findForeignDraftsAndWireTransfers(new ArrayList<String>(datesMap.keySet()), summary);
+        finalizedDvDocuments = processingDao.findForeignDraftsAndWireTransfers(new ArrayList<String>(datesMap.keySet()), summary, DisbursementVoucherConstants.DOCUMENT_TYPE_CODE);
         if (finalizedDvDocuments.isEmpty()) {
             // If no matching DV documents were found, then just add a dummy value to prevent query generation problems.
             finalizedDvDocuments.add(CUTaxConstants.DOC_ID_ZERO);
@@ -460,10 +460,10 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
         
         stats.put(TaxStatType.NUM_DV_CHECK_STUB_TEXTS_ALTERED, Integer.valueOf(numDvCheckStubTextsAltered));
         stats.put(TaxStatType.NUM_DV_CHECK_STUB_TEXTS_NOT_ALTERED, Integer.valueOf(numDvCheckStubTextsNotAltered));
-        stats.put(TaxStatType.NUM_FOREIGN_DRAFTS_SELECTED, Integer.valueOf(numForeignDraftsSelected));
-        stats.put(TaxStatType.NUM_FOREIGN_DRAFTS_IGNORED, Integer.valueOf(numForeignDraftsIgnored));
-        stats.put(TaxStatType.NUM_WIRE_TRANSFERS_SELECTED, Integer.valueOf(numWireTransfersSelected));
-        stats.put(TaxStatType.NUM_WIRE_TRANSFERS_IGNORED, Integer.valueOf(numWireTransfersIgnored));
+        stats.put(TaxStatType.NUM_DV_FOREIGN_DRAFTS_SELECTED, Integer.valueOf(numForeignDraftsSelected));
+        stats.put(TaxStatType.NUM_DV_FOREIGN_DRAFTS_IGNORED, Integer.valueOf(numForeignDraftsIgnored));
+        stats.put(TaxStatType.NUM_DV_WIRE_TRANSFERS_SELECTED, Integer.valueOf(numWireTransfersSelected));
+        stats.put(TaxStatType.NUM_DV_WIRE_TRANSFERS_IGNORED, Integer.valueOf(numWireTransfersIgnored));
         
         return stats;
     }
