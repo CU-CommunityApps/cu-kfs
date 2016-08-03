@@ -117,6 +117,54 @@
         <field name="org.kuali.kfs.sys.businessobject.UniversityDate::universityDate" alias="universityDate" />
     </row>
     <!--
+        =================================================================
+        The definition pertaining to the retrieval of PRNC tax source data.
+        =================================================================
+     -->
+    <row id="PRNC">
+        <objectClasses>
+            <objectClass name="org.kuali.kfs.module.purap.businessobject.PaymentRequestItem" />
+            <objectClass name="org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount" />
+            <objectClass name="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument" />
+            <objectClass name="org.kuali.kfs.vnd.businessobject.VendorHeader" />
+            <objectClass name="org.kuali.kfs.sys.businessobject.UniversityDate" />
+        </objectClasses>
+        
+        <!-- ==== Fields from AP_PMT_RQST_ACCT_T ==== -->
+        <field name="org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount::accountIdentifier" alias="accountIdentifier"/>
+        <field name="org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount::itemIdentifier" alias="accountItemIdentifier" />
+        <field name="org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount::amount" alias="amount" />
+        <field name="org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount::chartOfAccountsCode" alias="chartOfAccountsCode" />
+        <field name="org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount::accountNumber" alias="accountNumber" />
+        <field name="org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount::financialObjectCode" alias="financialObjectCode" />
+        
+        <!-- ==== Fields from AP_PMT_RQST_ITM_T ==== -->
+        <field name="org.kuali.kfs.module.purap.businessobject.PaymentRequestItem::purapDocumentIdentifier" alias="purapDocumentIdentifier"/>
+        <field name="org.kuali.kfs.module.purap.businessobject.PaymentRequestItem::itemIdentifier" alias="itemIdentifier" />
+        
+        <!-- ==== Fields from AP_PMT_RQST_T ==== -->
+        <field name="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument::documentNumber" alias="preq.documentNumber" />
+        <field name="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument::purapDocumentIdentifier" alias="preqPurapDocumentIdentifier" />
+        
+        <field name="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument::paymentMethodCode" alias="document.paymentMethodCode" />       
+        <field name="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument::taxClassificationCode" alias="document.taxClassificationCode" />
+        <field name="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument::vendorHeaderGeneratedIdentifier" alias="document.vendorHeaderGeneratedIdentifier" />
+        <field name="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument::vendorDetailAssignedIdentifier" alias="document.vendorDetailAssignedIdentifier" />
+        <field name="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument::vendorName" alias="preqVendorName" />
+        <field name="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument::vendorLine1Address" alias="vendorLine1Address" />
+        <field name="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument::vendorCountryCode" alias="vendorCountryCode" />
+
+        <!-- ==== Fields from PUR_VNDR_HDR_T ==== -->
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorHeaderGeneratedIdentifier" alias="vendorHeaderGeneratedIdentifier" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorTaxNumber" alias="vendorTaxNumber" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorTypeCode" alias="vendorTypeCode" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorOwnershipCode" alias="vendorOwnershipCode" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorOwnershipCategoryCode" alias="vendorOwnershipCategoryCode" />
+        <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorForeignIndicator" alias="vendorForeignIndicator" />
+        <!-- ==== Fields from SH_UNIV_DATE_T ==== -->
+        <field name="org.kuali.kfs.sys.businessobject.UniversityDate::universityDate" alias="universityDate" />
+    </row>
+    <!--
         ===============================================================
         The definition pertaining to the retrieval of vendor data only.
         ===============================================================
