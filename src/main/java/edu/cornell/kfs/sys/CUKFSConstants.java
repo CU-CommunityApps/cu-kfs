@@ -15,6 +15,7 @@ public class CUKFSConstants {
     public static final String CASH_REVERSION_OBJECT_CD = "CASH_REVERSION_OBJECT_CD";
     public static final String RULE_CODE_CA = "CA";
     public static final String DELIMITER = ".";
+    public static final String DATE_FORMAT_YYYY = "YYYY";
 
     public static class SysKimApiConstants {
         public static final String CONTRACTS_AND_GRANTS_PROCESSOR = "Contracts & Grants Processor";
