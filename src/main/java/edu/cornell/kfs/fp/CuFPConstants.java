@@ -42,7 +42,6 @@ public class CuFPConstants {
     public static final String YES = "Y";
     public static final String NO = "N";
     public static final String OPEN = "OPEN";
-    public static final String PERIOD_DELIMITER = ".";
     public static final String INTERDEPARTMENTAL_PAYMENT = "interdepartmentalPayment";
     public static final String DISPLAY_ON_DV_DOCUMENT = "displayOnDisbursementVoucherDocument";
     public static final String DISPLAY_ON_VENDOR_DOCUMENT = "displayOnVendorDocument";

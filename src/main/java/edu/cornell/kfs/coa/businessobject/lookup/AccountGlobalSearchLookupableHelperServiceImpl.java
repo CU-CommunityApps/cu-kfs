@@ -19,11 +19,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.lookup.KualiAccountLookupableHelperServiceImpl;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.core.web.format.BooleanFormatter;
-import org.kuali.rice.kns.util.KNSConstants;
+import org.kuali.rice.kim.api.identity.principal.Principal;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.krad.bo.BusinessObject;
 import org.kuali.rice.krad.util.BeanPropertyComparator;
 import org.kuali.rice.krad.util.GlobalVariables;
@@ -76,14 +78,19 @@ public class AccountGlobalSearchLookupableHelperServiceImpl extends KualiAccount
                 }
                 parameters.remove("useOrgHierarchy");
 
-                List<? extends BusinessObject> searchResults = (List<? extends BusinessObject>) accountGlobalSearchDao.getAccountsByOrgHierarchy(chartOfAccountsCode, organizationCode, parameters);
+                List<? extends BusinessObject> searchResults;
 
-                // sort list if default sort column given
-                List defaultSortColumns = getDefaultSortColumns();
-                if (defaultSortColumns.size() > 0) {
-                    Collections.sort(searchResults, new BeanPropertyComparator(defaultSortColumns, true));
+                if (fixPrincipalNameParameters(parameters)) {
+                    searchResults = (List<? extends BusinessObject>) accountGlobalSearchDao.getAccountsByOrgHierarchy(chartOfAccountsCode, organizationCode, parameters);
+
+                    List defaultSortColumns = getDefaultSortColumns();
+                    if (defaultSortColumns.size() > 0) {
+                        Collections.sort(searchResults, new BeanPropertyComparator(defaultSortColumns, true));
+                    }
+                } else {
+                    searchResults = Collections.EMPTY_LIST;
                 }
-                
+
                 return searchResults;
             }
         }
@@ -92,6 +99,28 @@ public class AccountGlobalSearchLookupableHelperServiceImpl extends KualiAccount
         return super.getSearchResults(parameters);
     }
 
+    private boolean fixPrincipalNameParameters(Map<String, String> parameters) {
+        return fixPrincipalNameParameters(parameters, KFSPropertyConstants.ACCOUNT_FISCAL_OFFICER_USER, KFSPropertyConstants.ACCOUNT_FISCAL_OFFICER_SYSTEM_IDENTIFIER)
+            && fixPrincipalNameParameters(parameters, KFSPropertyConstants.ACCOUNT_SUPERVISORY_USER, KFSPropertyConstants.ACCOUNTS_SUPERVISORY_SYSTEMS_IDENTIFIER)
+            && fixPrincipalNameParameters(parameters, KFSPropertyConstants.ACCOUNT_MANAGER_USER, KFSPropertyConstants.ACCOUNT_MANAGER_SYSTEM_IDENTIFIER);
+    }
+
+    private boolean fixPrincipalNameParameters(Map<String, String> parameters, String userPrefix, String userIdentifierKey) {
+        final String principalName = parameters.get(userPrefix + CUKFSConstants.DELIMITER + KFSPropertyConstants.KUALI_USER_PERSON_USER_IDENTIFIER);
+
+        if (StringUtils.isNotBlank(principalName)) {
+            final Principal principal = KimApiServiceLocator.getIdentityService().getPrincipalByPrincipalName(principalName);
+
+            if (principal == null) {
+                return false;
+            }
+
+            parameters.put(userIdentifierKey, principal.getPrincipalId());
+            parameters.remove(userPrefix + CUKFSConstants.DELIMITER + KFSPropertyConstants.KUALI_USER_PERSON_USER_IDENTIFIER);
+        }
+
+        return true;
+    }
 
     /**
      * @see org.kuali.rice.kns.lookup.AbstractLookupableHelperServiceImpl#validateSearchParameters(java.util.Map)
