@@ -15,6 +15,7 @@ public class CUKFSConstants {
     public static final String CASH_REVERSION_OBJECT_CD = "CASH_REVERSION_OBJECT_CD";
     public static final String RULE_CODE_CA = "CA";
     public static final String DELIMITER = ".";
+    public static final String DATE_FORMAT_YYYY = "YYYY";
 
     public static class SysKimApiConstants {
         public static final String CONTRACTS_AND_GRANTS_PROCESSOR = "Contracts & Grants Processor";
@@ -130,5 +131,8 @@ public class CUKFSConstants {
     public static final String NOTE_SEQUENCE_NAME = "KRNS_NTE_S";
 
     public static final Set<String> OBJECTS_WITH_IMMEDIATE_BO_LEVEL_NOTE_UPDATE = Collections.singleton("org.kuali.kfs.coa.businessobject.Account");
+    
+    public static final String DOCUMENT_HEADER_EXPLANATION_FIELD = "EXPLANATION";
+    public static final String DOCUMENT_HEADER_DESCRIPTION_FIELD = "FDOC_DESC";
     
 }
