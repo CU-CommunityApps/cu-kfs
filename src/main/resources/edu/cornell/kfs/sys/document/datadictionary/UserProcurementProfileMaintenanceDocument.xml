@@ -58,14 +58,15 @@
     <property name="title" value="User Favorites Profile"/>
     <property name="maintainableItems">
       <list>
-     	<bean parent="MaintainableFieldDefinition" p:name="profileUser.principalName" p:required="true"/>	                        
+     	<bean parent="MaintainableFieldDefinition" p:name="profileUser.principalName" p:required="true"/>	
+     	<bean parent="MaintainableFieldDefinition" p:name="active" p:required="true" p:defaultValue="true"/>                        
       </list>
 	</property>
   </bean>
 
 
 
-   <bean id="UserProcurementProfileMaintenanceDocument-FavoriteAccounts" parent="UserProcurementProfileMaintenanceDocument-FavoriteAccounts-parentBean"/>
+  <bean id="UserProcurementProfileMaintenanceDocument-FavoriteAccounts" parent="UserProcurementProfileMaintenanceDocument-FavoriteAccounts-parentBean"/>
 
   <bean id="UserProcurementProfileMaintenanceDocument-FavoriteAccounts-parentBean" abstract="true" parent="MaintainableSectionDefinition">
     <property name="id" value="Favorite Account"/>
@@ -74,24 +75,21 @@
       <list>
         <bean parent="MaintainableCollectionDefinition">
           <property name="name" value="favoriteAccounts"/>
-     <!--    <property name="sourceClassName" value="edu.cornell.kfs.sys.businessobject.FavoriteAccount"/> -->  
           <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.FavoriteAccount"/>
-        <property name="alwaysAllowCollectionDeletion" value="true"/>
-	<!-- 	  <property name="includeAddLine" value="true"/>
-		  <property name="includeMultipleLookupLine" value="false"/>  --> 
+          <property name="alwaysAllowCollectionDeletion" value="true"/>
           <property name="maintainableFields">
             <list>
-        <bean parent="MaintainableFieldDefinition" p:name="description"/>
-        <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true"/>
-        <!-- <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true"/> -->
-        <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true" p:template="accountNumber" p:webUILeaveFieldFunction="loadAccountName"/>
-        <bean parent="MaintainableFieldDefinition" p:name="account.accountName" p:unconditionallyReadOnly="true" p:template="accountName"/>
-        <bean parent="MaintainableFieldDefinition" p:name="subAccountNumber"/>
-        <bean parent="MaintainableFieldDefinition" p:name="financialObjectCode"/>
-        <bean parent="MaintainableFieldDefinition" p:name="financialSubObjectCode"/>
-        <bean parent="MaintainableFieldDefinition" p:name="projectCode"/>
-        <bean parent="MaintainableFieldDefinition" p:name="organizationReferenceId"/> 
-        <bean parent="MaintainableFieldDefinition" p:name="primaryInd"/> 
+		        <bean parent="MaintainableFieldDefinition" p:name="description"/>
+		        <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true"/>
+		        <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true" p:template="accountNumber" p:webUILeaveFieldFunction="loadAccountName"/>
+		        <bean parent="MaintainableFieldDefinition" p:name="account.accountName" p:unconditionallyReadOnly="true" p:template="accountName"/>
+		        <bean parent="MaintainableFieldDefinition" p:name="subAccountNumber"/>
+		        <bean parent="MaintainableFieldDefinition" p:name="financialObjectCode"/>
+		        <bean parent="MaintainableFieldDefinition" p:name="financialSubObjectCode"/>
+		        <bean parent="MaintainableFieldDefinition" p:name="projectCode"/>
+		        <bean parent="MaintainableFieldDefinition" p:name="organizationReferenceId"/> 
+		        <bean parent="MaintainableFieldDefinition" p:name="primaryInd"/> 
+		        <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/> 
             </list>
           </property>
         </bean>
