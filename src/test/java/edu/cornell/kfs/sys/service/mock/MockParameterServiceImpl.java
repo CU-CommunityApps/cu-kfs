@@ -1,18 +1,16 @@
 package edu.cornell.kfs.sys.service.mock;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
+import edu.cornell.kfs.fp.CuFPParameterConstants;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.vnd.VendorParameterConstants;
 import org.kuali.rice.coreservice.api.parameter.Parameter;
 import org.kuali.rice.coreservice.framework.parameter.ParameterService;
 
-import edu.cornell.kfs.fp.CuFPParameterConstants;
-import edu.cornell.kfs.pdp.CUPdpParameterConstants;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MockParameterServiceImpl implements ParameterService {
 
@@ -27,14 +25,6 @@ public class MockParameterServiceImpl implements ParameterService {
         parameters.put(CuFPParameterConstants.AchIncome.ACH_INCOME_SUMMARY_FROM_EMAIL_ADDRESS, "achIncomeTest@cornell.edu");
         parameters.put(CuFPParameterConstants.AchIncome.ACH_INCOME_SUMMARY_EMAIL_SUBJECT, "Advance Deposit Service Test Summary Email");
         parameters.put(CuFPParameterConstants.AchIncome.ACH_INCOME_SUMMARY_TO_EMAIL_ADDRESSES, "achIncomeTest@cornell.edu");
-        parameters.put(CUPdpParameterConstants.ACH_PERSONAL_CHECKING_TRANSACTION_CODE, "22PPD");
-        parameters.put(CUPdpParameterConstants.ACH_PERSONAL_SAVINGS_TRANSACTION_CODE, "32PPD");
-        parameters.put(CUPdpParameterConstants.ACH_DIRECT_DEPOSIT_TRANSACTION_TYPE, "PRAP");
-        parameters.put(CUPdpParameterConstants.GENERATED_PAYEE_ACH_ACCOUNT_DOC_NOTE_TEXT, "Created from Workday ACH data extract.");
-        parameters.put(CUPdpParameterConstants.NEW_PAYEE_ACH_ACCOUNT_EMAIL_SUBJECT, "New ACH Account in KFS.");
-        parameters.put(CUPdpParameterConstants.NEW_PAYEE_ACH_ACCOUNT_EMAIL_BODY,
-                "Payment for [payeeIdentifierTypeCode] of [payeeIdNumber] will go to [bankAccountTypeCode] account at [bankRouting.bankName].");
-        
     }
 
     @Override
