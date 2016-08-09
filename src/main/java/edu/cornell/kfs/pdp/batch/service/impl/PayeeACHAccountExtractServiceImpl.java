@@ -190,7 +190,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
      */
     protected boolean processACHBatchDetail(PayeeACHAccountExtractDetail achDetail) {
         Person payee = personService.getPersonByPrincipalName(achDetail.getNetID());
-        
+
         if (!validateACHBatchDetail(achDetail, payee)) {
             return false;
         }
@@ -248,7 +248,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
                         "\" in input file, but has an employee ID of \"").append(payee.getEmployeeId()).append("\" in KFS. ");
             }
         }
-        
+
         if (!CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_DIRECT_DEPOSIT_PAYMENT_TYPE.equalsIgnoreCase(achDetail.getPaymentType())) {
             // Input file payment type is not "Direct Deposit".
             appendFailurePrefix(failureMessage, achDetail.getNetID(), listIndex++);
@@ -256,21 +256,37 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
                     CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_DIRECT_DEPOSIT_PAYMENT_TYPE).append("\". ");
         }
         
-        if (ObjectUtils.isNull(achBankService.getByPrimaryId(achDetail.getBankRoutingNumber()))) {
-            // Could not find bank.
+        if (StringUtils.isBlank(achDetail.getBankName())) {
+            appendFailurePrefix(failureMessage, achDetail.getNetID(), listIndex++);
+            failureMessage.append(" Bank Name was not supplied. ");
+        }
+
+        if (StringUtils.isBlank(achDetail.getBankRoutingNumber())) {
+            appendFailurePrefix(failureMessage, achDetail.getNetID(), listIndex++);
+            failureMessage.append(" Bank routing number was not supplied. ");
+        } else if (!StringUtils.isNumeric(achDetail.getBankRoutingNumber())) {
+            appendFailurePrefix(failureMessage, achDetail.getNetID(), listIndex++);
+            failureMessage.append(" Bank routing number must contain only digits. ");
+        } else if (ObjectUtils.isNull(achBankService.getByPrimaryId(achDetail.getBankRoutingNumber()))) {
             appendFailurePrefix(failureMessage, achDetail.getNetID(), listIndex++);
             failureMessage.append(" Could not find bank \"").append(achDetail.getBankName()).append("\" under the given routing number. ");
         }
         
+        if (StringUtils.isBlank(achDetail.getBankAccountNumber())) {
+            appendFailurePrefix(failureMessage, achDetail.getNetID(), listIndex++);
+            failureMessage.append(" Bank account number was not supplied. ");
+        } else if (!StringUtils.isAlphanumeric(achDetail.getBankAccountNumber())) {
+            appendFailurePrefix(failureMessage, achDetail.getNetID(), listIndex++);
+            failureMessage.append(" Bank account number can only contain letters or digits. ");
+        } 
+
         if (!CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_BALANCE_ACCOUNT_YES_INDICATOR.equals(achDetail.getBalanceAccount())) {
-            // ACH detail is not for a balance account.
             appendFailurePrefix(failureMessage, achDetail.getNetID(), listIndex++);
             failureMessage.append(" Account is not a balance account. ");
         }
         
         if (!CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_CHECKING_ACCOUNT_TYPE.equalsIgnoreCase(achDetail.getBankAccountType())
                 && !CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_SAVINGS_ACCOUNT_TYPE.equalsIgnoreCase(achDetail.getBankAccountType())) {
-            // ACH detail is not for a checking or savings account.
             appendFailurePrefix(failureMessage, achDetail.getNetID(), listIndex++);
             failureMessage.append(" Account is not a checking or savings account. ");
         }
