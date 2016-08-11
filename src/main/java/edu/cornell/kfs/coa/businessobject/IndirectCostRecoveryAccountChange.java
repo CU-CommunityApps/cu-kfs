@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
-import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.rice.krad.bo.GlobalBusinessObjectDetailBase;
 import org.springframework.beans.BeanUtils;
 
@@ -108,10 +107,5 @@ public class IndirectCostRecoveryAccountChange extends GlobalBusinessObjectDetai
 		this.indirectCostRecoveryAccountGeneratedIdentifier = indirectCostRecoveryAccountGeneratedIdentifier;
 	}
 	
-	public boolean matchesICRAccount(IndirectCostRecoveryAccount icrAccount) {
-		return this.getIndirectCostRecoveryFinCoaCode().equalsIgnoreCase(icrAccount.getIndirectCostRecoveryFinCoaCode())
-				&& this.getIndirectCostRecoveryAccountNumber().equalsIgnoreCase(icrAccount.getIndirectCostRecoveryAccountNumber())
-				&& this.getAccountLinePercent().equals(icrAccount.getAccountLinePercent());
-	}
 
 }
