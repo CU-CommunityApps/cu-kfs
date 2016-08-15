@@ -42,6 +42,10 @@ public class RecurringDisbursementVoucherForm extends CuDisbursementVoucherForm 
 		return !((RecurringDisbursementVoucherDocument)this.getDocument()).getRecurringDisbursementVoucherDetails().isEmpty();
 	}
 	
+	public int getRecurringDVDetailsSize() {
+	    return ((RecurringDisbursementVoucherDocument)this.getDocument()).getRecurringDisbursementVoucherDetails().size();
+	}
+	
 	public boolean isPreDisbursementProcessorTabDefaultOpen() {
 	    return !getPdpStatuses().isEmpty();
 	}
