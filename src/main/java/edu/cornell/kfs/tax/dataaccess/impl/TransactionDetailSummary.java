@@ -30,6 +30,7 @@ import edu.cornell.kfs.tax.batch.TaxDataRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DerivedValuesRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DocumentNoteRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DvSourceRow;
+import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.PRNCSourceRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.PdpSourceRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorAddressRow;
@@ -58,6 +59,8 @@ abstract class TransactionDetailSummary {
     final PdpSourceRow pdpRow;
     // DV tax source row metadata.
     final DvSourceRow dvRow;
+    // PRNC tax source row metadata.
+    final PRNCSourceRow prncRow;
     // Vendor object metadata.
     final VendorRow vendorRow;
     // Vendor address object metadata.
@@ -131,6 +134,7 @@ abstract class TransactionDetailSummary {
         TaxTableMetadataService tableMetadataService = SpringContext.getBean(TaxTableMetadataService.class);
         this.pdpRow = tableMetadataService.getRowFromData(dataRows.get(TaxFieldSource.PDP.name()), PdpSourceRow.class);
         this.dvRow = tableMetadataService.getRowFromData(dataRows.get(TaxFieldSource.DV.name()), DvSourceRow.class);
+        this.prncRow = tableMetadataService.getRowFromData(dataRows.get(TaxFieldSource.PRNC.name()), PRNCSourceRow.class);
         this.vendorRow = tableMetadataService.getRowFromData(dataRows.get(TaxFieldSource.VENDOR.name()), VendorRow.class);
         this.vendorAddressRow = tableMetadataService.getRowFromData(dataRows.get(TaxFieldSource.VENDOR_ANY_ADDRESS.name()), VendorAddressRow.class);
         this.documentNoteRow = tableMetadataService.getRowFromData(dataRows.get(TaxFieldSource.DOCUMENT_NOTE.name()), DocumentNoteRow.class);

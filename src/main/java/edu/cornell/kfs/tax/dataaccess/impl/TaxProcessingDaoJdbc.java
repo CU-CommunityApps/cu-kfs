@@ -14,6 +14,9 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 import org.springframework.jdbc.core.ConnectionCallback;
@@ -50,7 +53,7 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
             getJdbcTemplate().update(TaxSqlUtils.getTransactionDetailDeleteSql(taxType, summary.transactionDetailRow), Integer.valueOf(reportYear));
             // Create new transaction rows, retrieving summary statistics as needed.
             stats = createTransactionRows(summary, Arrays.<Class<? extends TransactionRowBuilder<Transaction1099Summary>>>asList(
-                    TransactionRowPdpBuilder.For1099.class, TransactionRowDvBuilder.For1099.class));
+                    TransactionRowPdpBuilder.For1099.class, TransactionRowDvBuilder.For1099.class, TransactionRowPRNCBuilder.For1099.class));
             // Create 1099 output data from the transaction rows and send it to the file(s), retrieving summary statistics as needed.
             tempDefinition = taxProcessingService.getOutputDefinition(CUTaxKeyConstants.TAX_FORMAT_1099_PREFIX, reportYear);
             stats.add(processTransactionRows(processingStartDate, summary, TransactionRow1099Processor.class, tempDefinition));
@@ -67,7 +70,7 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
             getJdbcTemplate().update(TaxSqlUtils.getTransactionDetailDeleteSql(taxType, summary.transactionDetailRow), Integer.valueOf(reportYear));
             // Create new transaction rows, retrieving summary statistics as needed.
             stats = createTransactionRows(summary, Arrays.<Class<? extends TransactionRowBuilder<Transaction1042SSummary>>>asList(
-                    TransactionRowPdpBuilder.For1042S.class, TransactionRowDvBuilder.For1042S.class));
+                    TransactionRowPdpBuilder.For1042S.class, TransactionRowDvBuilder.For1042S.class, TransactionRowPRNCBuilder.For1042S.class));
             // Create 1042S output data from the transaction rows and send it to the file(s), retrieving summary statistics as needed.
             tempDefinition = taxProcessingService.getOutputDefinition(CUTaxKeyConstants.TAX_FORMAT_1042S_PREFIX, reportYear);
             stats.add(processTransactionRows(processingStartDate, summary, TransactionRow1042SProcessor.class, tempDefinition));
@@ -93,8 +96,9 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
      * @see edu.cornell.kfs.tax.dataaccess.TaxProcessingDao#findForeignDraftsAndWireTransfers(java.util.List, java.lang.Object)
      */
     @Override
-    public List<String> findForeignDraftsAndWireTransfers(final List<String> documentIds, Object helperObject) {
+    public List<String> findForeignDraftsAndWireTransfers(final List<String> documentIds, Object helperObject, String docType) {
         final TransactionDetailSummary summary = (TransactionDetailSummary) helperObject;
+        final String documentType = docType;
         if (documentIds.isEmpty()) {
             return new ArrayList<String>();
         }
@@ -110,7 +114,9 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
                 try {
                     // Do larger-batch retrievals first.
                     if (documentIds.size() >= DOCID_MAX_BATCH_SIZE) {
-                        selectStatement = con.prepareStatement(getForeignDraftAndWireTransferSelectSql(DOCID_MAX_BATCH_SIZE, summary));
+                    	String selectStatementSql = getForeignDraftAndWireTransferSelectSql(DOCID_MAX_BATCH_SIZE, summary, documentType);
+                    	LOG.debug(selectStatementSql);
+                        selectStatement = con.prepareStatement(selectStatementSql);
                         int largeBatchLimit = documentIds.size() - (documentIds.size() % DOCID_MAX_BATCH_SIZE);
                         
                         for (largeBatchCounter = 0; largeBatchCounter < largeBatchLimit; largeBatchCounter += DOCID_MAX_BATCH_SIZE) {
@@ -131,7 +137,9 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
                     
                     // Do a smaller-batch retrieval last if necessary.
                     if (documentIds.size() % DOCID_MAX_BATCH_SIZE > 0) {
-                        selectStatement = con.prepareStatement(getForeignDraftAndWireTransferSelectSql(documentIds.size() % DOCID_MAX_BATCH_SIZE, summary));
+                    	String selectStatementSql = getForeignDraftAndWireTransferSelectSql(documentIds.size() % DOCID_MAX_BATCH_SIZE, summary, documentType);
+                    	LOG.debug(selectStatementSql);
+                        selectStatement = con.prepareStatement(selectStatementSql);
                         
                         for (int i = (documentIds.size() % DOCID_MAX_BATCH_SIZE) - 1; i >= 0; i--) {
                             selectStatement.setString(i + 1, documentIds.get(largeBatchCounter + i));
@@ -149,14 +157,14 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
                         try {
                             rs.close();
                         } catch (SQLException e) {
-                            LOG.error("Could not close DV ResultSet");
+                            LOG.error("Could not close ResultSet");
                         }
                     }
                     if (selectStatement != null) {
                         try {
                             selectStatement.close();
                         } catch (SQLException e) {
-                            LOG.error("Could not close DV selection PreparedStatement");
+                            LOG.error("Could not close selection PreparedStatement");
                         }
                     }
                 }
@@ -166,13 +174,26 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
         });
     }
 
-    private String getForeignDraftAndWireTransferSelectSql(int paramSize, TransactionDetailSummary summary) {
-        return TaxSqlUtils.getQueryWithoutColumnPrefixes(SqlText.SELECT, summary.dvRow.dvDocumentNumber,
-                SqlText.FROM, summary.dvRow.tables.get(TaxSqlUtils.getTableIndexForField(summary.dvRow.dvDocumentNumber)),
-                SqlText.WHERE,
-                        TaxSqlUtils.getInListCriteria(summary.dvRow.dvDocumentNumber, paramSize, true, false),
-                SqlText.AND,
-                        summary.dvRow.documentDisbVchrPaymentMethodCode, SqlText.IN, "('F','W')");
+    private String getForeignDraftAndWireTransferSelectSql(int paramSize, TransactionDetailSummary summary, String docType) {
+    	 if(DisbursementVoucherConstants.DOCUMENT_TYPE_CODE.equalsIgnoreCase(docType)){
+    		return TaxSqlUtils.getQueryWithoutColumnPrefixes(SqlText.SELECT, summary.dvRow.dvDocumentNumber,
+                    SqlText.FROM, summary.dvRow.tables.get(TaxSqlUtils.getTableIndexForField(summary.dvRow.dvDocumentNumber)),
+                    SqlText.WHERE,
+                            TaxSqlUtils.getInListCriteria(summary.dvRow.dvDocumentNumber, paramSize, true, false),
+                    SqlText.AND,
+                            summary.dvRow.documentDisbVchrPaymentMethodCode, SqlText.IN, "('F','W')");
+    	}
+    	else if(PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equalsIgnoreCase(docType)){
+    		return TaxSqlUtils.getQueryWithoutColumnPrefixes(SqlText.SELECT, summary.prncRow.preqDocumentNumber,
+    				SqlText.FROM, summary.prncRow.tables.get(TaxSqlUtils.getTableIndexForField(summary.prncRow.preqDocumentNumber)),
+    				SqlText.WHERE,
+    				TaxSqlUtils.getInListCriteria(summary.prncRow.preqDocumentNumber, paramSize, true, false),
+    				SqlText.AND,
+    				summary.prncRow.paymentMethodCode, SqlText.IN, "('F','W')");
+    	}
+    	else {
+    		return StringUtils.EMPTY;
+    	}
     }
 
 
@@ -210,7 +231,8 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
                         
                         // Setup the retrieval statement.
                         selectStatement = con.prepareStatement(builder.getSqlForSelect(summary));
-                        setParameters(selectStatement, builder.getParameterValuesForSelect(summary));
+                        Object[][] parameterValues = builder.getParameterValuesForSelect(summary);
+                        setParameters(selectStatement, parameterValues);
                         
                         // Get the results.
                         rs = selectStatement.executeQuery();
