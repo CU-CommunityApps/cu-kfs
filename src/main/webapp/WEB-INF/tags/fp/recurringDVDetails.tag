@@ -15,7 +15,7 @@
 --%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
-<kul:tab tabTitle="Recurring Details (${KualiForm.document.recurringDisbursementVoucherDetails.size() })" defaultOpen="${KualiForm.recurringDVDetailsDefaultOpen}">
+<kul:tab tabTitle="Recurring Details (${KualiForm.recurringDVDetailsSize })" defaultOpen="${KualiForm.recurringDVDetailsDefaultOpen}">
 	<c:set var="recurringDVAttributes" value="${DataDictionary.RecurringDisbursementVoucherDetail.attributes}" />
 	<div class="tab-container" align=center > 
 		<table cellpadding=0 class="datatable" summary="Recurring DV Details">
